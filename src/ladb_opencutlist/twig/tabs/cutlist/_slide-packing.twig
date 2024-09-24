@@ -51,9 +51,9 @@
                                 <div class="col-xs-6">
                                     <span style="margin-left: 10px;">&nbsp;</span>
                                     <ul>
-                                        <li><strong>cost : </strong>{{ summary.cost|number_format(2, ',', ' ') }}</li>
-                                        <li><strong>profit : </strong>{{ summary.profit|number_format(2, ',', ' ') }}</li>
-                                        <li><strong>full_waste_percentage : </strong>{{ (summary.full_waste_percentage * 100)|number_format(2) }}%</li>
+                                        <li><strong>cost : </strong>{{ summary.cost|number_format(2, capabilities.decimal_separator, ' ') }}</li>
+                                        <li><strong>profit : </strong>{{ summary.profit|number_format(2, capabilities.decimal_separator, ' ') }}</li>
+                                        <li><strong>efficiency : </strong>{{ (summary.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
                                     </ul>
                                 </div>
                             </div>
@@ -90,6 +90,14 @@
                 <tbody>
                 <tr>
                     <td>{{ bin.svg|raw }}</td>
+                </tr>
+                <tr>
+                    <td colspan="{{ colspan }}">
+                        <span class="ladb-horizontal-left-separator pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ (bin.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</span>
+                        <span class="pull-left"><i class="ladb-opencutlist-icon-grained-{{ group.material_grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(group.material_grained ? '1' : '0'))|i18next }}</span>
+{#                        {% if not options.trimming|slice(0, 1) == '0' %}<span class="ladb-horizontal-left-separator pull-left"><strong>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }} : </strong>{{ options.trimming }}</span>{% endif %}#}
+                        <span class="ladb-horizontal-left-separator pull-left">{{ ('tab.cutlist.cuttingdiagram.list.parts')|i18next({ 'count':bin.number_of_items }) }}</span>
+                    </td>
                 </tr>
                 </tbody>
             </table>

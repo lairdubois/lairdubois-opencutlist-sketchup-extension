@@ -320,9 +320,10 @@ module Ladb::OpenCutList
               (raw_cut['length'] ? _from_packy(raw_cut['length']) : bin_def.width).to_l,
               raw_cut.fetch('orientation', 'vertical'),
               )
-          } : []
+          } : [],
+          raw_bin['efficiency']
         )
-      }.sort_by { |bin| [ -bin.def.type, bin.def.length, -bin.copies ] }
+      }.sort_by { |bin| [ -bin.def.type, bin.def.length, -bin.efficiency, -bin.copies ] }
 
       {
         :summary => {
@@ -332,13 +333,15 @@ module Ladb::OpenCutList
           :cost => output['cost'],
           :number_of_items => output['number_of_items'],
           :profit => output['profit'],
-          :full_waste_percentage => output['full_waste_percentage']
+          :efficiency => output['efficiency']
         },
         :bins => bins.map { |bin| {
           count: bin.copies,
           length: bin.def.length.to_l.to_s,
           width: bin.def.width.to_l.to_s,
           type: bin.def.type,
+          number_of_items: bin.items.length,
+          efficiency: bin.efficiency,
           svg: _bin_to_svg(bin)
         } }
       }
@@ -400,7 +403,12 @@ module Ladb::OpenCutList
         svg += "<g class='bin'>"
           svg += "<rect class='bin-outer' x='-1' y='-1' width='#{px_bin_length + 2}' height='#{px_bin_width + 2}' />"
           svg += "<rect class='bin-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' fill='url(#pattern_bin_bg)'/>"
-          svg += "<rect class='bin-trimming' x='#{px_trimming}' y='#{px_trimming}' width='#{px_bin_length - px_trimming * 2}' height='#{px_bin_width - px_trimming * 2}' fill='none' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
+          if is_1d
+            svg += "<line class='bin-trimming' x1='#{px_trimming}' y1='0' x2='#{px_trimming}' y2='#{px_bin_width}' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
+            svg += "<line class='bin-trimming' x1='#{px_bin_length - px_trimming}' y1='0' x2='#{px_bin_length - px_trimming}' y2='#{px_bin_width}' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
+          elsif is_2d
+            svg += "<rect class='bin-trimming' x='#{px_trimming}' y='#{px_trimming}' width='#{px_bin_length - px_trimming * 2}' height='#{px_bin_width - px_trimming * 2}' fill='none' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
+          end
         svg += '</g>'
         bin.items.each do |item|
 
@@ -411,7 +419,7 @@ module Ladb::OpenCutList
 
           svg += "<g class='item' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item.angle})#{' scale(-1 1)' if item.mirror}' data-toggle='tooltip' data-html='true' title='<div>#{item.def.data.name}</div><div>x = #{item.x}</div><div>y = #{item.y}</div>'>"
             svg += "<rect class='item-outer' x='0' y='-#{px_item_width}' width='#{px_item_length}' height='#{px_item_width}' />" unless is_irregular
-            if display_projection
+            if display_projection && !item.def.projection_def.nil?
               svg += "<g class='item-projection'#{" transform='translate(#{_to_px((item.def.data.def.cutting_size.length - item.def.data.def.size.length) / 2)} -#{_to_px((item.def.data.def.cutting_size.width - item.def.data.def.size.width) / 2)})'" unless is_irregular}>"
                 svg += "<path stroke='black' fill='#{ColorUtils.color_to_hex(item.def.color)}' stroke-width='0.5' class='item-projection-shape' d='#{item.def.projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
               svg += '</g>'

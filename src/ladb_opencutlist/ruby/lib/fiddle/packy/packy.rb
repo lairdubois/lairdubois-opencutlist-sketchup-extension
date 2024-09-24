@@ -11,8 +11,8 @@ module Ladb::OpenCutList::Fiddle
     PROBLEM_TYPE_IRREGULAR = 'irregular'
     PROBLEM_TYPE_ONEDIMENSIONAL = 'onedimensional'
 
-    @@cache = {}
-    @@running_input_md5 = nil
+    @cache = {}
+    @running_input_md5 = nil
 
     def self._lib_name
       'Packy'
@@ -43,19 +43,19 @@ module Ladb::OpenCutList::Fiddle
       _load_lib
       input_json = input.to_json
       input_md5 = Digest::MD5.hexdigest(input_json)
-      if !no_cache && @@cache.key?(input_md5)
-        return @@cache[input_md5]
+      if !no_cache && @cache.key?(input_md5)
+        return @cache[input_md5]
       end
-      @@running_input_md5 = input_md5
+      @running_input_md5 = input_md5
       JSON.parse(c_optimize_start(input_json).to_s)
     end
 
     def self.optimize_advance
       _load_lib
       output = JSON.parse(c_optimize_advance.to_s)
-      if !@@running_input_md5.nil? && !output['running'] && !output['cancelled']
-        @@cache[@@running_input_md5] = output
-        @@running_input_md5 = nil
+      if !@running_input_md5.nil? && !output['running'] && !output['cancelled']
+        @cache[@running_input_md5] = output
+        @running_input_md5 = nil
       end
       output
     end
@@ -69,7 +69,7 @@ module Ladb::OpenCutList::Fiddle
     BinDef = Struct.new(:length, :width, :type)
     ItemDef = Struct.new(:projection_def, :data, :color)
 
-    Bin = Struct.new(:def, :copies, :items, :cuts)
+    Bin = Struct.new(:def, :copies, :items, :cuts, :efficiency)
     Item = Struct.new(:def, :x, :y, :angle, :mirror)
     Cut = Struct.new(:depth, :x, :y, :length, :orientation)
 
