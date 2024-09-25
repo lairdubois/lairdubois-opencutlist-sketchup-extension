@@ -23,8 +23,6 @@ module Ladb::OpenCutList
       @currency_precision = settings_model['currency_precision'].to_i
     end
 
-    # fetch_currency_options
-
     # -----
 
     # Take a float containing a price

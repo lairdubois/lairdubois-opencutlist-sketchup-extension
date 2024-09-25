@@ -144,8 +144,6 @@
       end
     end
 
-    fetch_options
-
     # -----
 
     def self.ocl_length_precision

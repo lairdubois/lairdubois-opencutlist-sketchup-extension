@@ -32,8 +32,6 @@ module Ladb::OpenCutList
       @mass_precision = settings_model['mass_precision'].to_i
     end
 
-    # fetch_mass_options
-
     # -----
 
     def self.get_symbol
