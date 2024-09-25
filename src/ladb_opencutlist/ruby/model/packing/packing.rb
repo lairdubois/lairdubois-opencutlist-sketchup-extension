@@ -50,7 +50,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :time, :number_of_bins, :number_of_different_bins, :cost, :number_of_items, :profit, :efficiency, :total_cut_length
+    attr_reader :time, :number_of_bins, :number_of_different_bins, :cost, :number_of_items, :profit, :efficiency, :number_of_cuts, :total_cut_length
 
     def initialize(_def)
       @_def = _def
@@ -63,6 +63,7 @@ module Ladb::OpenCutList
       @number_of_items = _def.number_of_items
       @profit = _def.profit
       @efficiency = _def.efficiency
+      @number_of_cuts = _def.number_of_cuts
 
       @total_cut_length = _def.total_cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_cut_length) : nil
 
@@ -77,7 +78,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :copies, :efficiency, :items, :cuts, :svg, :total_cut_length
+    attr_reader :copies, :efficiency, :items, :cuts, :parts, :svg, :total_cut_length
 
     def initialize(_def)
       @_def = _def
@@ -91,6 +92,7 @@ module Ladb::OpenCutList
 
       @items = _def.item_defs.map { |item_def| item_def.create_item }
       @cuts = _def.cut_defs.map { |cut_def| cut_def.create_cut }
+      @parts = _def.part_defs.map { |part_def| part_def.create_bin_part }
 
       @svg = _def.svg
       @total_cut_length = _def.total_cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_cut_length) : nil
@@ -138,6 +140,25 @@ module Ladb::OpenCutList
       @y = _def.y.to_s
       @length = _def.length
       @orientation = _def.orientation
+
+    end
+
+  end
+
+  # -----
+
+  class PackingBinPart
+
+    include DefHelper
+    include HashableHelper
+
+    attr_reader :part, :count
+
+    def initialize(_def)
+      @_def = _def
+
+      @part = _def.part
+      @count = _def.count
 
     end
 

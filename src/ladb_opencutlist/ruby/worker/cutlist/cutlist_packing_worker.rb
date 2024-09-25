@@ -352,7 +352,15 @@ module Ladb::OpenCutList
                 (raw_cut['length'] ? _from_packy(raw_cut['length']) : bin_type_def.width).to_l,
                 raw_cut.fetch('orientation', 'vertical'),
                 )
-            }.sort_by { |cut_def| cut_def.depth } : []
+            }.sort_by { |cut_def| cut_def.depth } : [],
+            raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
+              @item_type_defs[raw_item['item_type_id']]
+            }.group_by{ |i| i }.map{ |item_type_def,v|
+              PackingBinPartDef.new(
+                item_type_def.part,
+                v.length
+              )
+            }.sort_by{ |bin_part_def| bin_part_def._sorter } : []
           )
         }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.copies ] }
       )
@@ -364,6 +372,7 @@ module Ladb::OpenCutList
         bin_def.total_cut_length = bin_def.cut_defs.map(&:length).inject(0, :+)  # .map(&:length).inject(0, :+) == .sum { |bin_def| bin_def.length } compatible with ruby < 2.4
       end
 
+      packing_def.summary_def.number_of_cuts = packing_def.bin_defs.sum { |bin_def| bin_def.cut_defs.length * bin_def.copies } # TODO remove sum
       packing_def.summary_def.total_cut_length = packing_def.bin_defs.sum { |bin_def| bin_def.total_cut_length * bin_def.copies } # TODO remove sum
 
       packing_def.create_packing.to_hash
@@ -401,13 +410,13 @@ module Ladb::OpenCutList
       px_cut_outline_width = 2
       px_edge_width = 2
 
-      max_bin_length = bin_def.bin_type_def.length # TODO
+      px_max_bin_length = _to_px(bin_def.bin_type_def.length) # TODO
 
       px_bin_length = _to_px(bin_def.bin_type_def.length)
       px_bin_width = _to_px(bin_def.bin_type_def.width)
       px_trimming = _to_px(@trimming)
 
-      vb_offset_x = (max_bin_length - px_bin_length) / 2
+      vb_offset_x = (px_max_bin_length - px_bin_length) / 2
       vb_x = (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_x) * -1
       vb_y = (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size) * -1
       vb_width = px_bin_length + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_x) * 2

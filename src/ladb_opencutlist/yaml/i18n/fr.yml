@@ -353,6 +353,7 @@ tab:
       select_parts_in_cutlist: Sélectionner la pièce dans la fiche de débit
       select_parts_in_cutlist_plural: "Sélectionner les {{ count }} pièces dans la fiche de débit"
       setup_group_cuttingdiagram: "Configurer le calepinage de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      setup_group_packing: "Configurer le calepinage de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Ouvrir l'URL de la pièce
     menu:
       show_all_groups: Afficher tous les groupes
@@ -370,6 +371,7 @@ tab:
       group_numbers_save: Mémoriser les numéros de pièces du groupe
       group_numbers_reset: Réinitialiser les numéros de pièces du groupe
       group_cuttingdiagram: Calepinage
+      group_packing: Calepinage
       group_labels: Imprimer les étiquettes des pièces du groupe
       edit_material: "Éditer la matière '{{ material_name }}'"
       expand_all: Déplier toutes les lignes
@@ -1000,6 +1002,23 @@ tab:
       option_verbosity_level: Verbosity level
       option_verbosity_level_help: |
         ...
+      list:
+        summary: Récapitulatif
+        trimming: Marge
+        stats: Statistiques
+        total_cut_count: Nombre de coupes
+        total_cut_length: Longueur de coupe
+        efficiency: Efficacité
+        bin_1d_dimensional_type_0: Barre standard
+        bin_1d_dimensional_type_1: Reste de barre
+        bin_1d_edge_type_0: Bande standard
+        bin_1d_edge_type_1: Reste de bande
+        bin_2d_sheet_good_type_0: Panneau standard
+        bin_2d_sheet_good_type_1: Reste de panneau
+        bin_2d_veneer_type_0: Feuille standard
+        bin_2d_veneer_type_1: Reste de feuille
+        parts: "{{ count }} pièce"
+        parts_plural: "{{ count }} pièces"
       error:
         no_parts: Aucune pièce.
     labels:

@@ -51,7 +51,7 @@ module Ladb::OpenCutList
   class PackingSummaryDef
 
     attr_reader :time, :number_of_bins, :number_of_different_bins, :cost, :number_of_items, :profit, :efficiency
-    attr_accessor :total_cut_length
+    attr_accessor :number_of_cuts, :total_cut_length
 
     def initialize(time, number_of_bins, number_of_different_bins, cost, number_of_items, profit, efficiency)
 
@@ -65,6 +65,7 @@ module Ladb::OpenCutList
 
       # Computed
 
+      @number_of_cuts = 0
       @total_cut_length = 0
 
     end
@@ -81,10 +82,10 @@ module Ladb::OpenCutList
 
   class PackingBinDef
 
-    attr_reader :bin_type_def, :copies, :efficiency, :item_defs, :cut_defs
-    attr_accessor :svg, :total_cut_length
+    attr_reader :bin_type_def, :copies, :efficiency, :item_defs, :cut_defs, :part_defs
+    attr_accessor :svg, :total_cut_length, :parts
 
-    def initialize(bin_type_def, copies, efficiency, item_defs, cut_defs)
+    def initialize(bin_type_def, copies, efficiency, item_defs, cut_defs, part_defs)
 
       @bin_type_def = bin_type_def
 
@@ -93,6 +94,7 @@ module Ladb::OpenCutList
 
       @item_defs = item_defs
       @cut_defs = cut_defs
+      @part_defs = part_defs
 
       # Computed
 
@@ -155,6 +157,29 @@ module Ladb::OpenCutList
 
     def create_cut
       PackingCut.new(self)
+    end
+
+  end
+
+  # -----
+
+  class PackingBinPartDef
+
+    attr_reader :_sorter, :part, :count
+
+    def initialize(part, count)
+
+      @_sorter = part.number.to_i > 0 ? part.number.to_i : part.number.rjust(4)  # Use a special "_sorter" property because number could be a letter. In this case, rjust it.
+
+      @part = part
+      @count = count
+
+    end
+
+    # ---
+
+    def create_bin_part
+      PackingBinPart.new(self)
     end
 
   end

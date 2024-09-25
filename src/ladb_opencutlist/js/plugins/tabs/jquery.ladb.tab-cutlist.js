@@ -2368,7 +2368,7 @@
     LadbTabCutlist.prototype.renderSelectionOnGroup = function (id) {
         var that = this;
         var $group = $('#ladb_group_' + id, this.$page);
-        var defs = [ 'cuttingdiagram1d', 'cuttingdiagram2d', 'nesting2d', 'labels', 'layout' ];
+        var defs = [ 'packing', 'labels', 'layout' ];
         $.each(defs, function () {
             var $btn = $('button.ladb-btn-group-' + this, $group);
             var $i = $('i', $btn);
@@ -4631,7 +4631,7 @@
                     $selectObjective.selectpicker('val', options.objective);
                     $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
                     $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
-                    $selectIrregularAllowedRotations.selectpicker('val', options.irregular_allowed_rotations);
+                    $selectIrregularAllowedRotations.selectpicker('val', fnValidIrregularAllowedRotations(options.irregular_allowed_rotations));
                     $selectIrregularAllowMirroring.selectpicker('val', options.irregular_allow_mirroring ? '1' : '0');
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
@@ -4652,6 +4652,13 @@
                         return 'onedimensional';
                     }
                     return problemType;
+                }
+                var fnValidIrregularAllowedRotations = function (irregularAllowedRotations) {
+                    if ((group.material_grained || group.material_is_1d)
+                        && (irregularAllowedRotations === '90' || irregularAllowedRotations === '45')) {
+                        return '180';
+                    }
+                    return irregularAllowedRotations;
                 }
                 var fnEditMaterial = function (callback) {
 
@@ -4684,9 +4691,10 @@
                         }
                     }
                 }
+
                 $inputStdBinSizes.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputScrapBinSizes.ladbTextinputTokenfield({format: group.material_is_1d ? 'dxq' : 'dxdxq'});
-                $inputScrapBinSizes.ladbTextinputTokenfield('setTokens', group.material_is_1d ? packingOptions.scrap_1d_bin_sizes : packingOptions.scrap_2d_bin_sizes);
+                $inputScrapBinSizes.ladbTextinputTokenfield('setTokens', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes);
                 $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
@@ -4754,9 +4762,15 @@
                     var fnCreateSlide = function (response) {
 
                         var $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
+                            capabilities: that.dialog.capabilities,
+                            generateOptions: that.generateOptions,
+                            dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
                             filename: that.filename,
                             modelName: that.modelName,
+                            modelDescription: that.modelDescription,
+                            modelActivePath: that.modelActivePath,
                             pageName: that.pageName,
+                            pageDescription: that.pageDescription,
                             isEntitySelection: that.isEntitySelection,
                             lengthUnit: that.lengthUnit,
                             generatedAt: new Date().getTime() / 1000,
@@ -4767,11 +4781,36 @@
 
                         // Fetch UI elements
                         var $btnPacking = $('#ladb_btn_packing', $slide);
+                        var $btnPrint = $('#ladb_btn_print', $slide);
+                        var $btnLabels = $('#ladb_btn_labels', $slide);
                         var $btnClose = $('#ladb_btn_close', $slide);
 
                         // Bind buttons
                         $btnPacking.on('click', function () {
                             that.packingGroup(groupId);
+                        });
+                        $btnPrint.on('click', function () {
+                            $(this).blur();
+                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.packing.title'));
+                        });
+                        $btnLabels.on('click', function () {
+
+                            // Compute label bins (a list of sheet or bar index attached to part id)
+                            let binDefs = {};
+                            let binIndex = 0;
+                            $.each(response.bins, function () {
+                                for (var i = 0 ; i < this.copies; i++) {
+                                    binIndex++;
+                                    $.each(this.parts, function () {
+                                        if (!binDefs[this.id]) {
+                                            binDefs[this.id] = [];
+                                        }
+                                        binDefs[this.id].push(binIndex);
+                                    });
+                                }
+                            });
+
+                            that.labelsGroup(groupId, binDefs);
                         });
                         $btnClose.on('click', function () {
                             that.popSlide();
