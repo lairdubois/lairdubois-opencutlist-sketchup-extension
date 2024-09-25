@@ -71,11 +71,11 @@ module Ladb::OpenCutList
       @_def = _def
 
       @total_used_count = _def.total_used_count
-      @total_used_length = DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
+      @total_used_length = DimensionUtils.format_to_readable_length(_def.total_used_length)
       @total_used_part_count = _def.total_used_part_count
 
       @total_cut_count = _def.total_cut_count
-      @total_cut_length = DimensionUtils.instance.format_to_readable_length(_def.total_cut_length)
+      @total_cut_length = DimensionUtils.format_to_readable_length(_def.total_cut_length)
 
       @overall_efficiency = _def.overall_efficiency
 
@@ -100,8 +100,8 @@ module Ladb::OpenCutList
       @type_id = _def.type_id
       @type = _def.type
       @count = _def.count
-      @length = DimensionUtils.instance.format_to_readable_length(_def.length)
-      @total_length = DimensionUtils.instance.format_to_readable_length(_def.total_length)
+      @length = DimensionUtils.format_to_readable_length(_def.length)
+      @total_length = DimensionUtils.format_to_readable_length(_def.total_length)
       @total_part_count = _def.total_part_count
       @is_used = _def.is_used
 
@@ -127,7 +127,7 @@ module Ladb::OpenCutList
       @length = _def.length.to_l.to_s
       @width = _def.width.to_l.to_s
       @efficiency = _def.efficiency
-      @total_cut_length = DimensionUtils.instance.format_to_readable_length(_def.total_cut_length)
+      @total_cut_length = DimensionUtils.format_to_readable_length(_def.total_cut_length)
 
       @slices = _def.slice_defs.map { |slice_def| slice_def.create_slice }
       @parts = _def.part_defs.map { |part_def| part_def.create_part }

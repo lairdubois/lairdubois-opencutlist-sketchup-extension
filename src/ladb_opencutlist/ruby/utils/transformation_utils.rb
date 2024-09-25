@@ -3,7 +3,7 @@ module Ladb::OpenCutList
   require_relative '../model/geom/scale3d'
   require_relative 'axis_utils'
 
-  class TransformationUtils
+  module TransformationUtils
 
     def self.flipped?(transformation)
       AxisUtils.flipped?(transformation.xaxis, transformation.yaxis, transformation.zaxis)

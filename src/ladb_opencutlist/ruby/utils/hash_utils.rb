@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class HashUtils
+  module HashUtils
 
     def self.symbolize_keys(hash)
       return hash.transform_keys { |k| k.to_sym } if hash.respond_to?(:transform_keys)

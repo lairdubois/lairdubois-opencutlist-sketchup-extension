@@ -77,11 +77,11 @@ module Ladb::OpenCutList
       @_def = _def
 
       @total_used_count = _def.total_used_count
-      @total_used_area = DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
+      @total_used_area = DimensionUtils.format_to_readable_area(_def.total_used_area)
       @total_used_part_count = _def.total_used_part_count
 
       @total_cut_count = _def.total_cut_count
-      @total_cut_length = DimensionUtils.instance.format_to_readable_length(_def.total_cut_length)
+      @total_cut_length = DimensionUtils.format_to_readable_length(_def.total_cut_length)
 
       @overall_efficiency = _def.overall_efficiency
 
@@ -108,7 +108,7 @@ module Ladb::OpenCutList
       @count = _def.count
       @length = _def.length.to_l.to_s
       @width = _def.width.to_l.to_s
-      @total_area = DimensionUtils.instance.format_to_readable_area(_def.total_area)
+      @total_area = DimensionUtils.format_to_readable_area(_def.total_area)
       @total_part_count = _def.total_part_count
       @is_used = _def.is_used
 
@@ -134,7 +134,7 @@ module Ladb::OpenCutList
       @length = _def.length.to_l.to_s
       @width = _def.width.to_l.to_s
       @efficiency = _def.efficiency
-      @total_cut_length = DimensionUtils.instance.format_to_readable_length(_def.total_cut_length)
+      @total_cut_length = DimensionUtils.format_to_readable_length(_def.total_cut_length)
 
       @parts = _def.part_defs.map { |part_def| part_def.create_part }
       @grouped_parts = _def.grouped_part_defs.values.map { |part_def| part_def.create_listed_part }.sort_by { |part| [ part.def._sorter ] }
@@ -269,7 +269,7 @@ module Ladb::OpenCutList
 
       @length = _def.length.to_l.to_s
       @width = _def.width.to_l.to_s
-      @area = DimensionUtils.instance.format_to_readable_area(_def.area)
+      @area = DimensionUtils.format_to_readable_area(_def.area)
 
       @count = _def.count * _def.sheet_def.count
 

@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class StringUtils
+  module StringUtils
 
     # -- Dimensions --
 

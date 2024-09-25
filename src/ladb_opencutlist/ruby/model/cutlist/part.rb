@@ -55,7 +55,7 @@ module Ladb::OpenCutList
       @face_std_dimensions = _def.face_std_dimensions
       @face_decrements = { :thickness => _def.face_thickness_decrement > 0 ? _def.face_thickness_decrement.to_s : nil }
       @entity_names = _def.entity_names.sort_by { |k, v| [ k ] }
-      @final_area = _def.final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.final_area)
+      @final_area = _def.final_area == 0 ? nil : DimensionUtils.format_to_readable_area(_def.final_area)
       @l_ratio = _def.size.length / [_def.size.length, _def.size.width].max
       @w_ratio = _def.size.width / [_def.size.length, _def.size.width].max
 

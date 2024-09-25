@@ -30,7 +30,7 @@ module Ladb::OpenCutList
       # Setup caches
       @material_attributes_cache = {}
       @definition_attributes_cache = {}
-      @model_unit_is_metric = DimensionUtils.instance.model_unit_is_metric
+      @model_unit_is_metric = DimensionUtils.model_unit_is_metric
 
     end
 
@@ -209,9 +209,9 @@ module Ladb::OpenCutList
       case s_unit
 
       when MassUtils::UNIT_STRIPPEDNAME_KILOGRAM
-        f_value = MassUtils.instance.kg_to_model_unit(f_value)
+        f_value = MassUtils.kg_to_model_unit(f_value)
       when MassUtils::UNIT_STRIPPEDNAME_POUND
-        f_value = MassUtils.instance.lb_to_model_unit(f_value)
+        f_value = MassUtils.lb_to_model_unit(f_value)
 
       end
 
@@ -231,21 +231,21 @@ module Ladb::OpenCutList
       case unit_denominator
 
       when DimensionUtils::UNIT_STRIPPEDNAME_METER_3
-        f_value = DimensionUtils.instance.m3_to_inch3(f_value)
+        f_value = DimensionUtils.m3_to_inch3(f_value)
       when DimensionUtils::UNIT_STRIPPEDNAME_FEET_3
-        f_value = DimensionUtils.instance.ft3_to_inch3(f_value)
+        f_value = DimensionUtils.ft3_to_inch3(f_value)
       when DimensionUtils::UNIT_STRIPPEDNAME_BOARD_FEET
-        f_value = DimensionUtils.instance.fbm_to_inch3(f_value)
+        f_value = DimensionUtils.fbm_to_inch3(f_value)
 
       when DimensionUtils::UNIT_STRIPPEDNAME_METER_2
-        f_value = inch_thickness == 0 ? 0 : DimensionUtils.instance.m2_to_inch2(f_value) / inch_thickness
+        f_value = inch_thickness == 0 ? 0 : DimensionUtils.m2_to_inch2(f_value) / inch_thickness
       when DimensionUtils::UNIT_STRIPPEDNAME_FEET_2
-        f_value = inch_thickness == 0 ? 0 : DimensionUtils.instance.ft2_to_inch2(f_value) / inch_thickness
+        f_value = inch_thickness == 0 ? 0 : DimensionUtils.ft2_to_inch2(f_value) / inch_thickness
 
       when DimensionUtils::UNIT_STRIPPEDNAME_METER
-        f_value = inch_thickness * inch_width == 0 ? 0 : DimensionUtils.instance.m_to_inch(f_value) / inch_thickness / inch_width
+        f_value = inch_thickness * inch_width == 0 ? 0 : DimensionUtils.m_to_inch(f_value) / inch_thickness / inch_width
       when DimensionUtils::UNIT_STRIPPEDNAME_FEET
-        f_value = inch_thickness * inch_width == 0 ? 0 : DimensionUtils.instance.ft_to_inch(f_value) / inch_thickness / inch_width
+        f_value = inch_thickness * inch_width == 0 ? 0 : DimensionUtils.ft_to_inch(f_value) / inch_thickness / inch_width
 
       when 'i', 'p'
         f_value = inch_thickness * inch_width * inch_length == 0 ? 0 : f_value / inch_thickness / inch_width / inch_length

@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class AxisUtils
+  module AxisUtils
 
     def self.flipped?(x_axis, y_axis, z_axis)
       if skewed?(x_axis, y_axis, z_axis)

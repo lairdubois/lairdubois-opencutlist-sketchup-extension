@@ -13,10 +13,10 @@ module Ladb::OpenCutList
     def initialize(_def)
       @_def = _def
 
-      @total_mass = _def.total_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_mass)
-      @total_used_mass = _def.total_used_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_used_mass)
-      @total_cost = _def.total_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_cost)
-      @total_used_cost = _def.total_used_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_used_cost)
+      @total_mass = _def.total_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_mass)
+      @total_used_mass = _def.total_used_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_used_mass)
+      @total_cost = _def.total_cost == 0 ? nil : PriceUtils.format_to_readable_price(_def.total_cost)
+      @total_used_cost = _def.total_used_cost == 0 ? nil : PriceUtils.format_to_readable_price(_def.total_used_cost)
 
     end
 
@@ -70,8 +70,8 @@ module Ladb::OpenCutList
       @std_volumic_mass = format_std_volumic_mass(_def.std_volumic_mass)
       @std_price = format_std_price(_def.std_price)
 
-      @total_volume = _def.total_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(_def.total_volume, @material_type)
-      @total_used_volume = _def.total_used_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(_def.total_used_volume, @material_type)
+      @total_volume = _def.total_volume == 0 ? nil : DimensionUtils.format_to_readable_volume(_def.total_volume, @material_type)
+      @total_used_volume = _def.total_used_volume == 0 ? nil : DimensionUtils.format_to_readable_volume(_def.total_used_volume, @material_type)
 
     end
 
@@ -87,8 +87,8 @@ module Ladb::OpenCutList
       super(_def)
 
       @total_count = _def.total_count == 0 ? nil : _def.total_count
-      @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
-      @total_used_area = _def.total_used_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
+      @total_area = _def.total_area == 0 ? nil : DimensionUtils.format_to_readable_area(_def.total_area)
+      @total_used_area = _def.total_used_area == 0 ? nil : DimensionUtils.format_to_readable_area(_def.total_used_area)
 
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }
 
@@ -114,8 +114,8 @@ module Ladb::OpenCutList
       @width = _def.width.to_l.to_s
 
       @count = _def.count
-      @total_area = DimensionUtils.instance.format_to_readable_area(_def.total_area)
-      @total_used_area = DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
+      @total_area = DimensionUtils.format_to_readable_area(_def.total_area)
+      @total_used_area = DimensionUtils.format_to_readable_area(_def.total_used_area)
 
     end
 
@@ -131,8 +131,8 @@ module Ladb::OpenCutList
       super(_def)
 
       @total_count = _def.total_count == 0 ? nil : _def.total_count
-      @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
-      @total_used_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
+      @total_length = _def.total_length == 0 ? nil : DimensionUtils.format_to_readable_length(_def.total_length)
+      @total_used_length = _def.total_length == 0 ? nil : DimensionUtils.format_to_readable_length(_def.total_used_length)
 
       @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }
 
@@ -157,8 +157,8 @@ module Ladb::OpenCutList
       @length = _def.length.to_l.to_s
 
       @count = _def.count
-      @total_length = DimensionUtils.instance.format_to_readable_length(_def.total_length)
-      @total_used_length = DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
+      @total_length = DimensionUtils.format_to_readable_length(_def.total_length)
+      @total_used_length = DimensionUtils.format_to_readable_length(_def.total_used_length)
 
     end
 
@@ -174,8 +174,8 @@ module Ladb::OpenCutList
       super(_def)
 
       @total_count = _def.total_count == 0 ? nil : _def.total_count
-      @total_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_length)
-      @total_used_length = _def.total_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
+      @total_length = _def.total_length == 0 ? nil : DimensionUtils.format_to_readable_length(_def.total_length)
+      @total_used_length = _def.total_length == 0 ? nil : DimensionUtils.format_to_readable_length(_def.total_used_length)
 
       @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }
 
@@ -200,8 +200,8 @@ module Ladb::OpenCutList
       @length = _def.length.to_l.to_s
 
       @count = _def.count
-      @total_length = DimensionUtils.instance.format_to_readable_length(_def.total_length)
-      @total_used_length = DimensionUtils.instance.format_to_readable_length(_def.total_used_length)
+      @total_length = DimensionUtils.format_to_readable_length(_def.total_length)
+      @total_used_length = DimensionUtils.format_to_readable_length(_def.total_used_length)
 
     end
 
@@ -262,8 +262,8 @@ module Ladb::OpenCutList
       super(_def)
 
       @total_count = _def.total_count == 0 ? nil : _def.total_count
-      @total_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_area)
-      @total_used_area = _def.total_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
+      @total_area = _def.total_area == 0 ? nil : DimensionUtils.format_to_readable_area(_def.total_area)
+      @total_used_area = _def.total_area == 0 ? nil : DimensionUtils.format_to_readable_area(_def.total_used_area)
 
       @sheets = _def.sheet_defs.values.map { |sheet_def| sheet_def.create_sheet }
 
@@ -289,8 +289,8 @@ module Ladb::OpenCutList
       @width = _def.width.to_l.to_s
 
       @count = _def.count
-      @total_area = DimensionUtils.instance.format_to_readable_area(_def.total_area)
-      @total_used_area = DimensionUtils.instance.format_to_readable_area(_def.total_used_area)
+      @total_area = DimensionUtils.format_to_readable_area(_def.total_area)
+      @total_used_area = DimensionUtils.format_to_readable_area(_def.total_used_area)
 
     end
 

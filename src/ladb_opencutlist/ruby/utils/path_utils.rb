@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class PathUtils
+  module PathUtils
 
     SEPARATOR = '>'.freeze
 

@@ -282,7 +282,7 @@ module Ladb::OpenCutList
           raise "Error loading defaults file (file='#{file_path}') : #{e.message}."
         end
 
-        model_unit_is_metric = DimensionUtils.instance.model_unit_is_metric
+        model_unit_is_metric = DimensionUtils.model_unit_is_metric
 
         defaults = {}
         if data.has_key?(section)
@@ -366,13 +366,13 @@ module Ladb::OpenCutList
 
             case preprocessors[key]
               when PRESETS_PREPROCESSOR_D
-                processed_values[key] = DimensionUtils.instance.d_add_units(values[key])
+                processed_values[key] = DimensionUtils.d_add_units(values[key])
               when PRESETS_PREPROCESSOR_DXQ
-                processed_values[key] = DimensionUtils.instance.dxq_add_units(values[key])
+                processed_values[key] = DimensionUtils.dxq_add_units(values[key])
               when PRESETS_PREPROCESSOR_DXD
-                processed_values[key] = DimensionUtils.instance.dxd_add_units(values[key])
+                processed_values[key] = DimensionUtils.dxd_add_units(values[key])
               when PRESETS_PREPROCESSOR_DXDXQ
-                processed_values[key] = DimensionUtils.instance.dxdxq_add_units(values[key])
+                processed_values[key] = DimensionUtils.dxdxq_add_units(values[key])
             else
               processed_values[key] = values[key]
             end
@@ -1500,7 +1500,7 @@ module Ladb::OpenCutList
           :locale => Sketchup.get_locale,
           :language => PLUGIN.language,
           :available_languages => PLUGIN.get_available_languages,
-          :decimal_separator => DimensionUtils.instance.decimal_separator,
+          :decimal_separator => DimensionUtils.decimal_separator,
       }
 
       case dialog_type
@@ -1605,10 +1605,10 @@ module Ladb::OpenCutList
       params.each do |key, string_length|
         if string_length.index('x')
           # Convert string "size" to inch float array
-          float_lengths[key] = string_length.split('x').map { |v| DimensionUtils.instance.d_to_ifloats(v).to_l.to_f }
+          float_lengths[key] = string_length.split('x').map { |v| DimensionUtils.d_to_ifloats(v).to_l.to_f }
         else
           # Convert string length to inch float
-          float_lengths[key] = DimensionUtils.instance.d_to_ifloats(string_length).to_l.to_f
+          float_lengths[key] = DimensionUtils.d_to_ifloats(string_length).to_l.to_f
         end
       end
       float_lengths
@@ -1626,8 +1626,8 @@ module Ladb::OpenCutList
     def compute_size_aspect_ratio_command(width: '1m', height: '1m', ratio: 1, is_width_master: true)    # Expected params = { width: WIDTH, height: HEIGHT, ratio: W_ON_H_RATIO, is_width_master: BOOL }
 
       # Convert input values to Length
-      w = DimensionUtils.instance.d_to_ifloats(width).to_l
-      h = DimensionUtils.instance.d_to_ifloats(height).to_l
+      w = DimensionUtils.d_to_ifloats(width).to_l
+      h = DimensionUtils.d_to_ifloats(height).to_l
 
       if is_width_master
         h = (w / ratio).to_l

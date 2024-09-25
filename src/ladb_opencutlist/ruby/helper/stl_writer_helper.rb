@@ -22,7 +22,7 @@ module Ladb::OpenCutList
       when DimensionUtils::METER
         unit_factor = 1.0.to_l.to_m
       else
-        unit_factor = DimensionUtils.instance.length_to_model_unit_float(1.0.to_l)
+        unit_factor = DimensionUtils.length_to_model_unit_float(1.0.to_l)
       end
 
       Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, unit_factor)

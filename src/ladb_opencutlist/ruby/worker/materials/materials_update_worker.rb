@@ -122,8 +122,8 @@ module Ladb::OpenCutList
 
       unless material.texture.nil? || @texture_width.nil? || @texture_height.nil?
 
-        texture_width = DimensionUtils.instance.d_to_ifloats(@texture_width).to_l
-        texture_height = DimensionUtils.instance.d_to_ifloats(@texture_height).to_l
+        texture_width = DimensionUtils.d_to_ifloats(@texture_width).to_l
+        texture_height = DimensionUtils.d_to_ifloats(@texture_height).to_l
 
         # Set only if positive and not null dimensions
         if texture_width > 0 && texture_height > 0

@@ -187,7 +187,7 @@
     end
 
     def l_thickness
-      DimensionUtils.instance.d_to_ifloats(thickness).to_l
+      DimensionUtils.d_to_ifloats(thickness).to_l
     end
 
     def length_increase
@@ -200,7 +200,7 @@
     end
 
     def l_length_increase
-      DimensionUtils.instance.d_to_ifloats(length_increase).to_l
+      DimensionUtils.d_to_ifloats(length_increase).to_l
     end
 
     def width_increase
@@ -213,7 +213,7 @@
     end
 
     def l_width_increase
-      DimensionUtils.instance.d_to_ifloats(width_increase).to_l
+      DimensionUtils.d_to_ifloats(width_increase).to_l
     end
 
     def thickness_increase
@@ -226,7 +226,7 @@
     end
 
     def l_thickness_increase
-      DimensionUtils.instance.d_to_ifloats(thickness_increase).to_l
+      DimensionUtils.d_to_ifloats(thickness_increase).to_l
     end
 
     def std_lengths
@@ -245,7 +245,7 @@
     def l_std_lengths
       a = []
       @std_lengths.split(';').each { |std_length|
-        a << DimensionUtils.instance.d_to_ifloats(std_length).to_l
+        a << DimensionUtils.d_to_ifloats(std_length).to_l
       }
       a.sort_by! { |v| v.to_f }   # Force sort on true float value
       a
@@ -267,7 +267,7 @@
     def l_std_widths
       a = []
       @std_widths.split(';').each { |std_width|
-        a << DimensionUtils.instance.d_to_ifloats(std_width).to_l
+        a << DimensionUtils.d_to_ifloats(std_width).to_l
       }
       a.sort_by! { |v| v.to_f }   # Force sort on true float value
       a
@@ -289,7 +289,7 @@
     def l_std_thicknesses
       a = []
       @std_thicknesses.split(';').each { |std_thickness|
-        a << DimensionUtils.instance.d_to_ifloats(std_thickness).to_l
+        a << DimensionUtils.d_to_ifloats(std_thickness).to_l
       }
       a.sort_by! { |v| v.to_f }   # Force sort on true float value
       a
@@ -311,7 +311,7 @@
     def l_std_sections
       a = []
       @std_sections.split(';').each { |std_section|
-        a << Section.new(DimensionUtils.instance.dxd_to_ifloats(std_section))
+        a << Section.new(DimensionUtils.dxd_to_ifloats(std_section))
       }
       a
     end
@@ -328,7 +328,7 @@
     def l_std_sizes
       a = []
       @std_sizes.split(';').each { |std_size|
-        a << Size2d.new(DimensionUtils.instance.dxd_to_ifloats(std_size))
+        a << Size2d.new(DimensionUtils.dxd_to_ifloats(std_size))
       }
       a
     end
@@ -459,15 +459,15 @@
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type', @type)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'description', @description)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'url', @url)
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness', DimensionUtils.instance.str_add_units(@thickness))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.instance.str_add_units(@width_increase))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', DimensionUtils.instance.str_add_units(@thickness_increase))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_lengths', DimensionUtils.instance.d_add_units(@std_lengths))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_widths', DimensionUtils.instance.d_add_units(@std_widths))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_thicknesses', DimensionUtils.instance.d_add_units(@std_thicknesses))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sections', DimensionUtils.instance.dxd_add_units(@std_sections))
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', DimensionUtils.instance.dxd_add_units(@std_sizes))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness', DimensionUtils.str_add_units(@thickness))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.str_add_units(@length_increase))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.str_add_units(@width_increase))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', DimensionUtils.str_add_units(@thickness_increase))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_lengths', DimensionUtils.d_add_units(@std_lengths))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_widths', DimensionUtils.d_add_units(@std_widths))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_thicknesses', DimensionUtils.d_add_units(@std_thicknesses))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sections', DimensionUtils.dxd_add_units(@std_sections))
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_sizes', DimensionUtils.dxd_add_units(@std_sizes))
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', @grained)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decremented', @edge_decremented)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'raw_estimated', @raw_estimated)

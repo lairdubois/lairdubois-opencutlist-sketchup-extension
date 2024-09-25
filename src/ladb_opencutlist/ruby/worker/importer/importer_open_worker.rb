@@ -11,7 +11,7 @@ module Ladb::OpenCutList
 
       response = {
           :errors => [],
-          :length_unit => DimensionUtils.instance.length_unit,
+          :length_unit => DimensionUtils.length_unit,
       }
 
       # Ask for open file path

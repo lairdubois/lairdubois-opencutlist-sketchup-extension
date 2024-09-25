@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class UnitUtils
+  module UnitUtils
 
     # Separators
     UV_SEPARATOR = ' '.freeze
@@ -45,7 +45,7 @@ module Ladb::OpenCutList
 
         # Price
         when PriceUtils::UNIT_STRIPPEDNAME
-          PriceUtils.instance.get_symbol
+          PriceUtils.currency_symbol
 
         # Length
         when DimensionUtils::UNIT_STRIPPEDNAME_INCHES
@@ -88,7 +88,7 @@ module Ladb::OpenCutList
     def self.format_readable_value(f_value, precision = 0, show_rounded_sign = false)
       return nil if f_value.nil?
       rounded_value = f_value.round(precision)
-      (show_rounded_sign && (f_value - rounded_value).abs > 0.0001 ? '~ ' : '') + ("%.#{precision}f" % rounded_value).tr('.', DimensionUtils.instance.decimal_separator)
+      (show_rounded_sign && (f_value - rounded_value).abs > 0.0001 ? '~ ' : '') + ("%.#{precision}f" % rounded_value).tr('.', DimensionUtils.decimal_separator)
     end
 
     def self.format_readable(f_value, s_unit, precision = 0, precision_small = 3, show_rounded_sign = false)

@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class MaterialUtils
+  module MaterialUtils
 
     def self.get_material_from_path(path) # path is Array<Sketchup::Drawingelement>
       return nil if path.nil? || !path.is_a?(Array)

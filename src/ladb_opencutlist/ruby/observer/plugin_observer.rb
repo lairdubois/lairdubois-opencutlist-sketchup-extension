@@ -23,10 +23,10 @@ module Ladb::OpenCutList
       # puts "onModelPresetChanged: #{dictonary}, #{section}"
 
       # Fetch new mass options
-      MassUtils.instance.fetch_mass_options
+      MassUtils.fetch_mass_options
 
       # Fetch new currency options
-      PriceUtils.instance.fetch_currency_options
+      PriceUtils.fetch_currency_options
 
       # Trigger event to JS
       PLUGIN.trigger_event(ON_MODEL_PRESET_CHANGED, { :dictionary => dictonary, :section => section })

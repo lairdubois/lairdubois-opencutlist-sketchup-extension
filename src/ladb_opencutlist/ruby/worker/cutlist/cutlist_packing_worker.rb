@@ -71,14 +71,14 @@ module Ladb::OpenCutList
 
       @group_id = group_id
       @part_ids = part_ids
-      @std_bin_sizes = DimensionUtils.instance.dxd_to_ifloats(std_bin_sizes)
-      @scrap_bin_sizes = DimensionUtils.instance.dxdxq_to_ifloats(scrap_bin_sizes)
+      @std_bin_sizes = DimensionUtils.dxd_to_ifloats(std_bin_sizes)
+      @scrap_bin_sizes = DimensionUtils.dxdxq_to_ifloats(scrap_bin_sizes)
 
       @problem_type = problem_type
       @optimization_mode = optimization_mode
       @objective = objective
-      @spacing = DimensionUtils.instance.str_to_ifloat(spacing).to_l.to_f
-      @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
+      @spacing = DimensionUtils.str_to_ifloat(spacing).to_l.to_f
+      @trimming = DimensionUtils.str_to_ifloat(trimming).to_l.to_f
       @time_limit = [ 1 , time_limit.to_i ].max
       @not_anytime_tree_search_queue_size = [ 1 , not_anytime_tree_search_queue_size.to_i ].max
       @verbosity_level = verbosity_level.to_i

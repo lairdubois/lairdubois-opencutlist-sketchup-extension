@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class ColorUtils
+  module ColorUtils
 
     COLOR_BLACK = Sketchup::Color.new.freeze
     COLOR_WHITE = Sketchup::Color.new(255, 255, 255).freeze

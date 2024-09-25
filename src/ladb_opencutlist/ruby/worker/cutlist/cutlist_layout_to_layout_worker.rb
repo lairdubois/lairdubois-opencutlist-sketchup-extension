@@ -178,9 +178,9 @@ module Ladb::OpenCutList
           page_info.left_margin = page_left_margin
 
           # Set document's units and precision
-          case DimensionUtils.instance.length_unit
+          case DimensionUtils.length_unit
           when DimensionUtils::INCHES
-            if DimensionUtils.instance.length_format == DimensionUtils::FRACTIONAL
+            if DimensionUtils.length_format == DimensionUtils::FRACTIONAL
               doc.units = Layout::Document::FRACTIONAL_INCHES
             else
               doc.units = Layout::Document::DECIMAL_INCHES
@@ -194,7 +194,7 @@ module Ladb::OpenCutList
           when DimensionUtils::METER
             doc.units = Layout::Document::DECIMAL_METERS
           end
-          doc.precision = _to_layout_length_precision(DimensionUtils.instance.length_precision)
+          doc.precision = _to_layout_length_precision(DimensionUtils.length_precision)
 
           page = doc.pages.first
           layer = doc.layers.first
@@ -204,7 +204,7 @@ module Ladb::OpenCutList
 
           # Set auto text definitions
           doc.auto_text_definitions.add('OpenCutListGeneratedAt', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @generated_at
-          doc.auto_text_definitions.add('OpenCutListLengthUnit', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = PLUGIN.get_i18n_string("default.unit_#{DimensionUtils.instance.length_unit}")
+          doc.auto_text_definitions.add('OpenCutListLengthUnit', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = PLUGIN.get_i18n_string("default.unit_#{DimensionUtils.length_unit}")
           doc.auto_text_definitions.add('OpenCutListScale', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = _camera_zoom_to_scale(@camera_zoom)
           doc.auto_text_definitions.add('OpenCutListModelDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.model_description
           doc.auto_text_definitions.add('OpenCutListPageDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.page_description
@@ -306,10 +306,10 @@ module Ladb::OpenCutList
             'arrow.end.size' => { :type => 6, :value => 2 },
             'arrow.end.type' => { :type => 2, :value => 17 },
             'stroke.width' => { :type => 6, :value => 0.5 },
-            'dimension.units.unit' => { :type => 2, :value => DimensionUtils.instance.length_unit },
-            'dimension.units.format' => { :type => 2, :value => DimensionUtils.instance.length_format },
-            'dimension.units.precision' => { :type => 4, :value => DimensionUtils.instance.length_precision },
-            'dimension.units.suppression' => { :type => 2, :value => DimensionUtils.instance.length_suppress_unit_display ? 1 : 0 },
+            'dimension.units.unit' => { :type => 2, :value => DimensionUtils.length_unit },
+            'dimension.units.format' => { :type => 2, :value => DimensionUtils.length_format },
+            'dimension.units.precision' => { :type => 4, :value => DimensionUtils.length_precision },
+            'dimension.units.suppression' => { :type => 2, :value => DimensionUtils.length_suppress_unit_display ? 1 : 0 },
             'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
             'dimension.startoffsettype' => { :type => 4, :value => 0 },
             'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },

@@ -1,8 +1,6 @@
 ﻿module Ladb::OpenCutList
 
-  require 'singleton'
-
-  class DimensionUtils
+  module DimensionUtils
 
     # Formats - just here for convenience
     DECIMAL       = Length::Decimal
@@ -84,40 +82,50 @@
     UNIT_STRIPPEDNAME_METER_3 = 'm3'
     UNIT_STRIPPEDNAME_LITER = 'l'
 
-    include Singleton
-
-    attr_accessor :decimal_separator,
-                  :length_unit, :length_format, :length_precision, :length_suppress_unit_display,
-                  :area_unit, :area_precision,
-                  :volume_unit, :volume_precision
-
     LENGTH_MIN_PRECISION = 3
 
     # Separators
     LIST_SEPARATOR = ';'.freeze
     DXD_SEPARATOR = 'x'.freeze
 
-    @decimal_separator
+    @decimal_separator = Sketchup::RegionalSettings.decimal_separator
 
-    @length_unit
-    @length_format
-    @length_precision
-    @length_suppress_unit_display
+    # - Getters
 
-    @area_unit
-    @area_precision
+    def self.decimal_separator
+      @decimal_separator
+    end
 
-    @volume_unit
-    @volume_precision
+    def self.length_unit
+      @length_unit
+    end
+    def self.length_format
+      @length_format
+    end
+    def self.length_precision
+      @length_precision
+    end
+    def self.length_suppress_unit_display
+      @length_suppress_unit_display
+    end
+
+    def self.area_unit
+      @area_unit
+    end
+    def self.area_precision
+      @area_precision
+    end
+
+    def self.volume_unit
+      @volume_unit
+    end
+    def self.volume_precision
+      @volume_precision
+    end
 
     # -----
 
-    def initialize
-      @decimal_separator = Sketchup::RegionalSettings.decimal_separator
-      fetch_options
-    end
-
-    def fetch_options
+    def self.fetch_options
       model = Sketchup.active_model
       @length_unit = model ? model.options['UnitsOptions']['LengthUnit'] : MILLIMETER
       @length_format = model ? model.options['UnitsOptions']['LengthFormat'] : DECIMAL
@@ -136,31 +144,33 @@
       end
     end
 
+    fetch_options
+
     # -----
 
-    def ocl_length_precision
+    def self.ocl_length_precision
       [ LENGTH_MIN_PRECISION, @length_precision ].max
     end
 
     # Take a Length, convert to float in inches rounded to "OpenCutList" precision
-    def to_ocl_precision_f(l)
+    def self.to_ocl_precision_f(l)
       l.to_f.round(ocl_length_precision)
     end
 
     # Take a Length, convert to string representation in model unit rounded to "OpenCutList" precision
-    def to_ocl_precision_s(l)
+    def self.to_ocl_precision_s(l)
       Sketchup.format_length(l, ocl_length_precision).gsub(/~ /, '') # Remove ~ if it exists
     end
 
     # Check if given length value is rounded by model precision
-    def rounded_by_model_precision?(f)
+    def self.rounded_by_model_precision?(f)
       precision = ocl_length_precision
       f.to_l.to_s.to_l.to_f.round(precision) != f.to_l.to_f.round(precision)
     end
 
     # -----
 
-    def model_units_to_inches(i)
+    def self.model_units_to_inches(i)
       case @length_unit
       when MILLIMETER
         return i / 25.4
@@ -177,7 +187,7 @@
       end
     end
 
-    def model_unit_is_metric
+    def self.model_unit_is_metric
       case @length_unit
         when MILLIMETER, CENTIMETER, METER
           return true
@@ -186,7 +196,7 @@
       end
     end
 
-    def unit_sign
+    def self.unit_sign
       case @length_unit
       when MILLIMETER
         return UNIT_SYMBOL_MILLIMETER
@@ -207,7 +217,7 @@
     # 1. add units if none are present, assuming that no units means model units
     # 2. convert garbage into 0
     #
-    def str_add_units(s)
+    def self.str_add_units(s)
       return '0' if !s.is_a?(String) || s.is_a?(String) && s.empty?
 
       s = s.strip
@@ -239,7 +249,7 @@
     # decimal inch.
     # Returns the float as a string
     #
-    def str_to_ifloat(s)
+    def self.str_to_ifloat(s)
       return '0' if !s.is_a?(String) || s.is_a?(String) && s.empty?
 
       s = s.sub(/~/, '') # strip approximate sign away
@@ -263,7 +273,7 @@
     # Takes a single number in a string and converts it to a string
     # in Sketchup internal format (inches, decimal) with unit sign
     #
-    def str_to_istr(s)
+    def self.str_to_istr(s)
       str_to_ifloat(s)
     end
 
@@ -271,7 +281,7 @@
     # into single d's and applies the function fn to each element
     # returns the concatenated string in the same format
     #
-    def d_transform(i, fn)
+    def self.d_transform(i, fn)
       return '' if i.nil?
       a = i.split(LIST_SEPARATOR)
       r = []
@@ -281,11 +291,11 @@
       r.join(LIST_SEPARATOR)
     end
 
-    def d_add_units(i)
+    def self.d_add_units(i)
       d_transform(i, :str_add_units)
     end
 
-    def d_to_ifloats(i)
+    def self.d_to_ifloats(i)
       d_transform(i, :str_to_ifloat)
     end
 
@@ -293,7 +303,7 @@
     # into single d's and applies the function fn to each element
     # returns the concatenated string in the same format
     #
-    def dxd_transform(i, fn)
+    def self.dxd_transform(i, fn)
       return '' if i.nil?
       a = i.split(LIST_SEPARATOR)
       r = []
@@ -310,7 +320,7 @@
     # and make sure they all have units and are not empty
     # without units, model units are assumed and added
     #
-    def dxd_add_units(i)
+    def self.dxd_add_units(i)
       dxd_transform(i, :str_add_units)
     end
 
@@ -319,7 +329,7 @@
     # format)
     # the number is returned as a string NOT a length or float
     #
-    def dxd_to_ifloats(i)
+    def self.dxd_to_ifloats(i)
       dxd_transform(i, :str_to_ifloat)
     end
 
@@ -327,7 +337,7 @@
     # into single d's and applies the function fn to each element. q stay unchanged.
     # returns the concatenated string in the same format
     #
-    def dxq_transform(i, fn)
+    def self.dxq_transform(i, fn)
       return '' if i.nil?
       a = i.split(LIST_SEPARATOR)
       r = []
@@ -344,7 +354,7 @@
     # and make sure they all have units and are not empty
     # without units, model units are assumed and added
     #
-    def dxq_add_units(i)
+    def self.dxq_add_units(i)
       dxq_transform(i, :str_add_units)
     end
 
@@ -353,7 +363,7 @@
     # format)
     # the number is returned as a string NOT a length or float
     #
-    def dxq_to_ifloats(i)
+    def self.dxq_to_ifloats(i)
       dxq_transform(i, :str_to_ifloat)
     end
 
@@ -361,7 +371,7 @@
     # into single d's and applies the function f to each element. q stay unchanged.
     # returns the concatenated string in the same format
     #
-    def dxdxq_transform(i, f)
+    def self.dxdxq_transform(i, f)
       return '' if i.nil?
       a = i.split(LIST_SEPARATOR)
       r = []
@@ -379,7 +389,7 @@
     # and make sure they all have units and are not empty
     # without units, model units are assumed and added
     #
-    def dxdxq_add_units(i)
+    def self.dxdxq_add_units(i)
       dxdxq_transform(i, :str_add_units)
     end
 
@@ -388,39 +398,39 @@
     # format)
     # the number is returned as a string NOT a length or float
     #
-    def dxdxq_to_ifloats(i)
+    def self.dxdxq_to_ifloats(i)
       dxdxq_transform(i, :str_to_ifloat)
     end
 
     # -----
 
-    def m3_to_inch3(f)
+    def self.m3_to_inch3(f)
       f * 0.0254**3
     end
 
-    def ft3_to_inch3(f)
+    def self.ft3_to_inch3(f)
       f / 12**3
     end
 
-    def fbm_to_inch3(f)
+    def self.fbm_to_inch3(f)
       f / 12**2
     end
 
 
-    def m2_to_inch2(f)
+    def self.m2_to_inch2(f)
       f * 0.0254**2
     end
 
-    def ft2_to_inch2(f)
+    def self.ft2_to_inch2(f)
       f / 12**2
     end
 
 
-    def m_to_inch(f)
+    def self.m_to_inch(f)
       f * 0.0254
     end
 
-    def ft_to_inch(f)
+    def self.ft_to_inch(f)
       f / 12
     end
 
@@ -430,7 +440,7 @@
     # and convert it to a string representation according to the
     # model unit settings.
     #
-    def format_to_readable_length(f)
+    def self.format_to_readable_length(f)
       if f.nil?
         return nil
       end
@@ -450,7 +460,7 @@
     # and convert it to a string representation according to the
     # model unit settings.
     #
-    def format_to_readable_area(f2)
+    def self.format_to_readable_area(f2)
       if f2.nil?
         return nil
       end
@@ -470,7 +480,7 @@
     # and convert it to a string representation according to the
     # model unit settings and the material_type (for Board Foot).
     #
-    def format_to_readable_volume(f3, material_type = nil)
+    def self.format_to_readable_volume(f3, material_type = nil)
       if f3.nil?
         return nil
       end
@@ -496,7 +506,7 @@
 
     # Take a Length object and returns is float representation
     # in current model unit.
-    def length_to_model_unit_float(length)
+    def self.length_to_model_unit_float(length)
       return nil unless length.is_a?(Length)
       case @length_unit
       when INCHES
@@ -516,7 +526,7 @@
 
     # Take a float value that represent a length in current
     # model unit and convert it to a Length object.
-    def model_unit_float_to_length(f)
+    def self.model_unit_float_to_length(f)
       return nil unless f.is_a?(Float)
       case @length_unit
       when INCHES
@@ -535,4 +545,5 @@
     end
 
   end
+
 end

@@ -40,10 +40,10 @@ module Ladb::OpenCutList
       @std_dimension_rounded = _def.std_dimension_rounded
       @std_width = _def.std_width.to_s.gsub(/~ /, '') # Remove ~ if it exists
       @std_thickness = _def.std_thickness.to_s.gsub(/~ /, '') # Remove ~ if it exists
-      @total_cutting_length = _def.total_cutting_length == 0 ? nil : DimensionUtils.instance.format_to_readable_length(_def.total_cutting_length)
-      @total_cutting_area = _def.total_cutting_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_cutting_area)
-      @total_cutting_volume = _def.total_cutting_volume == 0 ? nil : DimensionUtils.instance.format_to_readable_volume(_def.total_cutting_volume, _def.material_attributes.type)
-      @total_final_area = _def.total_final_area == 0 ? nil : DimensionUtils.instance.format_to_readable_area(_def.total_final_area)
+      @total_cutting_length = _def.total_cutting_length == 0 ? nil : DimensionUtils.format_to_readable_length(_def.total_cutting_length)
+      @total_cutting_area = _def.total_cutting_area == 0 ? nil : DimensionUtils.format_to_readable_area(_def.total_cutting_area)
+      @total_cutting_volume = _def.total_cutting_volume == 0 ? nil : DimensionUtils.format_to_readable_volume(_def.total_cutting_volume, _def.material_attributes.type)
+      @total_final_area = _def.total_final_area == 0 ? nil : DimensionUtils.format_to_readable_area(_def.total_final_area)
       @invalid_final_area_part_count = _def.invalid_final_area_part_count
       @show_cutting_dimensions = _def.show_cutting_dimensions
       @show_edges = _def.show_edges

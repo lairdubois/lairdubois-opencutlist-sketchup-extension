@@ -19,14 +19,14 @@ module Ladb::OpenCutList
 
       @solid_wood_coefficient = UnitUtils.format_readable_value(_def.solid_wood_coefficient, 1)
 
-      @total_mass = _def.total_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_mass)
-      @total_used_mass = _def.total_used_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_used_mass)
-      @total_unused_mass = _def.total_unused_mass == 0 ? nil : MassUtils.instance.format_to_readable_mass(_def.total_unused_mass)
+      @total_mass = _def.total_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_mass)
+      @total_used_mass = _def.total_used_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_used_mass)
+      @total_unused_mass = _def.total_unused_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_unused_mass)
       @total_unused_mass_ratio = _def.total_unused_mass == 0 ? nil : _def.total_unused_mass / _def.total_mass
 
-      @total_cost = _def.total_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_cost)
-      @total_used_cost = _def.total_used_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_used_cost)
-      @total_unused_cost = _def.total_unused_cost == 0 ? nil : PriceUtils.instance.format_to_readable_price(_def.total_unused_cost)
+      @total_cost = _def.total_cost == 0 ? nil : PriceUtils.format_to_readable_price(_def.total_cost)
+      @total_used_cost = _def.total_used_cost == 0 ? nil : PriceUtils.format_to_readable_price(_def.total_used_cost)
+      @total_unused_cost = _def.total_unused_cost == 0 ? nil : PriceUtils.format_to_readable_price(_def.total_unused_cost)
       @total_unused_cost_ratio = _def.total_unused_cost == 0 ? nil : _def.total_unused_cost / _def.total_cost
 
       @groups = _def.group_defs.values.select { |group_def| !group_def.entry_defs.empty? }.map { |group_def|

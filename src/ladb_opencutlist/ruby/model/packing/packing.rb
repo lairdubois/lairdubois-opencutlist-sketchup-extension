@@ -91,7 +91,7 @@ module Ladb::OpenCutList
       @cuts = _def.cut_defs.map { |cut_def| cut_def.create_cut }
 
       @svg = _def.svg
-      @total_cut_length = DimensionUtils.instance.format_to_readable_length(_def.total_cut_length)
+      @total_cut_length = DimensionUtils.format_to_readable_length(_def.total_cut_length)
 
     end
 

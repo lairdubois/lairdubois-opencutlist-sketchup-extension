@@ -1,8 +1,6 @@
 module Ladb::OpenCutList
 
-  require 'singleton'
-
-  class MassUtils
+  module MassUtils
 
     # Units
     KILOGRAM = 0
@@ -16,21 +14,29 @@ module Ladb::OpenCutList
     UNIT_STRIPPEDNAME_KILOGRAM = 'kg'
     UNIT_STRIPPEDNAME_POUND = 'lb'
 
-    include Singleton
+    # -----
+
+    def self.mass_unit
+      @mass_unit
+    end
+
+    def self.mass_precision
+      @mass_precision
+    end
 
     # -----
 
-    def initialize
-      fetch_mass_options
-    end
-
-    def fetch_mass_options
+    def self.fetch_mass_options
       settings_model = PLUGIN.get_model_preset('settings_model')
       @mass_unit = settings_model['mass_unit'].to_i
       @mass_precision = settings_model['mass_precision'].to_i
     end
 
-    def get_symbol
+    # fetch_mass_options
+
+    # -----
+
+    def self.get_symbol
       case @mass_unit
       when KILOGRAM
         return UNIT_SYMBOL_KILOGRAM
@@ -41,7 +47,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def get_strippedname
+    def self.get_strippedname
       case @mass_unit
       when KILOGRAM
         return UNIT_STRIPPEDNAME_KILOGRAM
@@ -54,7 +60,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def kg_to_model_unit(f)
+    def self.kg_to_model_unit(f)
       case @mass_unit
       when KILOGRAM
         return f
@@ -65,7 +71,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def lb_to_model_unit(f)
+    def self.lb_to_model_unit(f)
       case @mass_unit
       when KILOGRAM
         return f * 0.45359237
@@ -82,10 +88,11 @@ module Ladb::OpenCutList
     # and convert it to a string representation according to the
     # local unit settings.
     #
-    def format_to_readable_mass(f)
+    def self.format_to_readable_mass(f)
       UnitUtils.format_readable(f, get_strippedname, @mass_precision, [ 2, @mass_precision ].max)
     end
 
   end
+
 end
 

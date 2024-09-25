@@ -20,7 +20,7 @@ module Ladb::OpenCutList
     # -----
 
     def to_ocl_precision_s
-      DimensionUtils.instance.to_ocl_precision_s(@width) + ' x ' + DimensionUtils.instance.to_ocl_precision_s(@height)
+      DimensionUtils.to_ocl_precision_s(@width) + ' x ' + DimensionUtils.to_ocl_precision_s(@height)
     end
 
     def to_s

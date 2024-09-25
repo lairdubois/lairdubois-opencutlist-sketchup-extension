@@ -37,10 +37,10 @@ module Ladb::OpenCutList
 
       @group_id = group_id
       @part_ids = part_ids
-      @std_bar_length = DimensionUtils.instance.str_to_ifloat(std_bar).to_l.to_f
-      @scrap_bar_lengths = DimensionUtils.instance.dxq_to_ifloats(scrap_bar_lengths)
-      @saw_kerf = DimensionUtils.instance.str_to_ifloat(saw_kerf).to_l.to_f
-      @trimming = DimensionUtils.instance.str_to_ifloat(trimming).to_l.to_f
+      @std_bar_length = DimensionUtils.str_to_ifloat(std_bar).to_l.to_f
+      @scrap_bar_lengths = DimensionUtils.dxq_to_ifloats(scrap_bar_lengths)
+      @saw_kerf = DimensionUtils.str_to_ifloat(saw_kerf).to_l.to_f
+      @trimming = DimensionUtils.str_to_ifloat(trimming).to_l.to_f
       @bar_folding = bar_folding
       @hide_part_list = hide_part_list
       @part_drawing_type = part_drawing_type.to_i
@@ -48,7 +48,7 @@ module Ladb::OpenCutList
       @full_width_diagram = full_width_diagram
       @hide_cross = hide_cross
       @origin_corner = origin_corner
-      @wrap_length = DimensionUtils.instance.str_to_ifloat(wrap_length).to_l.to_f
+      @wrap_length = DimensionUtils.str_to_ifloat(wrap_length).to_l.to_f
 
     end
 

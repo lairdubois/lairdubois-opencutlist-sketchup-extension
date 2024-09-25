@@ -104,15 +104,15 @@ module Ladb::OpenCutList
     end
 
     def l_length_increase
-      DimensionUtils.instance.d_to_ifloats(length_increase).to_l
+      DimensionUtils.d_to_ifloats(length_increase).to_l
     end
 
     def l_width_increase
-      DimensionUtils.instance.d_to_ifloats(width_increase).to_l
+      DimensionUtils.d_to_ifloats(width_increase).to_l
     end
 
     def l_thickness_increase
-      DimensionUtils.instance.d_to_ifloats(thickness_increase).to_l
+      DimensionUtils.d_to_ifloats(thickness_increase).to_l
     end
 
     def h_mass
@@ -185,9 +185,9 @@ module Ladb::OpenCutList
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'ignore_grain_direction', @ignore_grain_direction)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @tags)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
-        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.instance.str_add_units(@length_increase))
-        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.instance.str_add_units(@width_increase))
-        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', DimensionUtils.instance.str_add_units(@thickness_increase))
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.str_add_units(@length_increase))
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.str_add_units(@width_increase))
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', DimensionUtils.str_add_units(@thickness_increase))
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_layer_count', @thickness_layer_count)
       end
     end

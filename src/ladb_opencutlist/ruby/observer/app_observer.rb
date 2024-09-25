@@ -18,7 +18,7 @@ module Ladb::OpenCutList
     ON_ACTIVATE_MODEL = 'on_activate_model'.freeze
 
     def initialize()
-      add_model_observers(Sketchup.active_model)
+      onActivateModel(Sketchup.active_model) unless Sketchup.active_model.nil?
     end
 
     # -----
@@ -31,13 +31,13 @@ module Ladb::OpenCutList
       PLUGIN.clear_model_presets_cache
 
       # Fetch new length options
-      DimensionUtils.instance.fetch_options
+      DimensionUtils.fetch_options
 
       # Fetch new mass options
-      MassUtils.instance.fetch_mass_options
+      MassUtils.fetch_mass_options
 
       # Fetch new currency options
-      PriceUtils.instance.fetch_currency_options
+      PriceUtils.fetch_currency_options
 
       # Trigger event to JS
       PLUGIN.trigger_event(ON_NEW_MODEL, nil)
@@ -52,13 +52,13 @@ module Ladb::OpenCutList
       PLUGIN.clear_model_presets_cache
 
       # Fetch new length options
-      DimensionUtils.instance.fetch_options
+      DimensionUtils.fetch_options
 
       # Fetch new mass options
-      MassUtils.instance.fetch_mass_options
+      MassUtils.fetch_mass_options
 
       # Fetch new currency options
-      PriceUtils.instance.fetch_currency_options
+      PriceUtils.fetch_currency_options
 
       # Trigger event to JS
       PLUGIN.trigger_event(ON_OPEN_MODEL, { :name => model.name })
@@ -72,13 +72,13 @@ module Ladb::OpenCutList
       PLUGIN.clear_model_presets_cache
 
       # Fetch new length options
-      DimensionUtils.instance.fetch_options
+      DimensionUtils.fetch_options
 
       # Fetch new mass options
-      MassUtils.instance.fetch_mass_options
+      MassUtils.fetch_mass_options
 
       # Fetch new currency options
-      PriceUtils.instance.fetch_currency_options
+      PriceUtils.fetch_currency_options
 
       # Trigger event to JS
       PLUGIN.trigger_event(ON_ACTIVATE_MODEL, { :name => model.name })
@@ -95,8 +95,6 @@ module Ladb::OpenCutList
         model.selection.add_observer(SelectionObserver.instance) if model.selection
         model.pages.add_observer(PagesObserver.instance) if model.pages
         model.layers.add_observer(LayersObserver.instance) if model.layers
-        # EntitiesObserver.instance.reset
-        # EntitiesObserver.instance.add_entities_observers(model)
       end
     end
 

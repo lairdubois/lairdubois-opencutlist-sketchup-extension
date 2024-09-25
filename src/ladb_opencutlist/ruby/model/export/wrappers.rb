@@ -275,7 +275,7 @@ module Ladb::OpenCutList
 
     def to_s
       return '' if @value == 0
-      return DimensionUtils.instance.format_to_readable_length(@value) unless @output_to_model_unit
+      return DimensionUtils.format_to_readable_length(@value) unless @output_to_model_unit
       @value.to_l.to_s.gsub(/^~ /, '')  # Remove ~ character if it exists
     end
 
@@ -331,7 +331,7 @@ module Ladb::OpenCutList
 
     def to_s
       return '' if @value == 0
-      DimensionUtils.instance.format_to_readable_area(@value)
+      DimensionUtils.format_to_readable_area(@value)
     end
 
     def export
@@ -382,7 +382,7 @@ module Ladb::OpenCutList
 
     def to_s
       return '' if @value == 0
-      DimensionUtils.instance.format_to_readable_volume(@value)
+      DimensionUtils.format_to_readable_volume(@value)
     end
 
     def export

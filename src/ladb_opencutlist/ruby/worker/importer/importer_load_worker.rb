@@ -78,7 +78,7 @@ module Ladb::OpenCutList
           :errors => [],
           :path => @path,
           :filename => @filename,
-          :length_unit => DimensionUtils.instance.length_unit,
+          :length_unit => DimensionUtils.length_unit,
           :columns => [],
           :parts => [],
           :importable_part_count => 0,
@@ -171,7 +171,7 @@ module Ladb::OpenCutList
                     end
                   when DATA_TYPE_LENGTH
                     begin
-                      length_value = DimensionUtils.instance.d_to_ifloats(value).to_l
+                      length_value = DimensionUtils.d_to_ifloats(value).to_l
                       valid = !value.empty? && length_value > 0
                       value = length_value if valid
                     rescue => e

@@ -130,9 +130,9 @@ module Ladb::OpenCutList
       end
 
       # Retrieve model infos
-      length_unit = DimensionUtils.instance.length_unit
-      mass_unit_strippedname = MassUtils.instance.get_strippedname
-      currency_symbol = PriceUtils.instance.get_symbol
+      length_unit = DimensionUtils.length_unit
+      mass_unit_strippedname = MassUtils.get_strippedname
+      currency_symbol = PriceUtils.currency_symbol
       dir, filename = File.split(model && !model.path.empty? ? model.path : PLUGIN.get_i18n_string('default.empty_filename'))
       model_name = model ? model.name : ''
       model_description = model ? model.description : ''
@@ -410,8 +410,8 @@ module Ladb::OpenCutList
                 :available => std_thickness_info[:available],
                 :dimension_stipped_name => 'thickness',
                 :dimension => std_thickness_info[:value].to_s.gsub(/~ /, ''), # Remove ~ if it exists
-                :dimension_real => DimensionUtils.instance.to_ocl_precision_s(std_thickness_info[:value]),
-                :dimension_rounded => DimensionUtils.instance.rounded_by_model_precision?(std_thickness_info[:value]),
+                :dimension_real => DimensionUtils.to_ocl_precision_s(std_thickness_info[:value]),
+                :dimension_rounded => DimensionUtils.rounded_by_model_precision?(std_thickness_info[:value]),
                 :width => 0,
                 :thickness => std_thickness_info[:value],
                 :cutting_size => Size3d.new(
@@ -433,7 +433,7 @@ module Ladb::OpenCutList
                 :dimension_stipped_name => 'section',
                 :dimension => std_section_info[:value].to_s.gsub(/~ /, ''), # Remove ~ if it exists
                 :dimension_real => std_section_info[:value].to_ocl_precision_s,
-                :dimension_rounded => DimensionUtils.instance.rounded_by_model_precision?(std_section_info[:value].width) || DimensionUtils.instance.rounded_by_model_precision?(std_section_info[:value].height),
+                :dimension_rounded => DimensionUtils.rounded_by_model_precision?(std_section_info[:value].width) || DimensionUtils.rounded_by_model_precision?(std_section_info[:value].height),
                 :width => std_section_info[:value].width,
                 :thickness => std_section_info[:value].height,
                 :cutting_size => Size3d.new(
@@ -1168,9 +1168,9 @@ module Ladb::OpenCutList
     # -- Std utils --
 
     def _find_std_value(value, std_values, nearest_highest)
-      value_f = DimensionUtils.instance.to_ocl_precision_f(value)
+      value_f = DimensionUtils.to_ocl_precision_f(value)
       std_values.each { |std_value|
-        std_value_f = DimensionUtils.instance.to_ocl_precision_f(std_value)
+        std_value_f = DimensionUtils.to_ocl_precision_f(std_value)
         if value_f <= std_value_f
           if nearest_highest
             return {
@@ -1192,13 +1192,13 @@ module Ladb::OpenCutList
     end
 
     def _find_std_section(width, thickness, std_sections)
-      width_f = DimensionUtils.instance.to_ocl_precision_f(width)
-      thickness_f = DimensionUtils.instance.to_ocl_precision_f(thickness)
+      width_f = DimensionUtils.to_ocl_precision_f(width)
+      thickness_f = DimensionUtils.to_ocl_precision_f(thickness)
       std_sections.each do |std_section|
         std_section_width = [ std_section.width, std_section.height ].max   # Force width to be max dim
         std_section_height = [ std_section.width, std_section.height ].min  # Force height to be min dim
-        std_width_f = DimensionUtils.instance.to_ocl_precision_f(std_section_width)
-        std_height_f = DimensionUtils.instance.to_ocl_precision_f(std_section_height)
+        std_width_f = DimensionUtils.to_ocl_precision_f(std_section_width)
+        std_height_f = DimensionUtils.to_ocl_precision_f(std_section_height)
         if width_f == std_width_f && thickness_f == std_height_f || width_f == std_height_f && thickness_f == std_width_f
           return {
               :available => true,
@@ -1320,8 +1320,8 @@ module Ladb::OpenCutList
           :available => std_width_info[:available],
           :dimension_stipped_name => 'width',
           :dimension => std_width_info[:value].to_s.gsub(/~ /, ''), # Remove ~ if it exists
-          :dimension_real => DimensionUtils.instance.to_ocl_precision_s(std_width_info[:value]),
-          :dimension_rounded => DimensionUtils.instance.rounded_by_model_precision?(std_width_info[:value]),
+          :dimension_real => DimensionUtils.to_ocl_precision_s(std_width_info[:value]),
+          :dimension_rounded => DimensionUtils.rounded_by_model_precision?(std_width_info[:value]),
           :width => std_width_info[:value],
           :thickness => material_attributes.l_thickness,
       }
@@ -1388,8 +1388,8 @@ module Ladb::OpenCutList
           :available => std_thickness_info[:available],
           :dimension_stipped_name => 'thickness',
           :dimension => std_thickness_info[:value].to_s.gsub(/~ /, ''), # Remove ~ if it exists
-          :dimension_real => DimensionUtils.instance.to_ocl_precision_s(std_thickness_info[:value]),
-          :dimension_rounded => DimensionUtils.instance.rounded_by_model_precision?(std_thickness_info[:value]),
+          :dimension_real => DimensionUtils.to_ocl_precision_s(std_thickness_info[:value]),
+          :dimension_rounded => DimensionUtils.rounded_by_model_precision?(std_thickness_info[:value]),
           :width => 0,
           :thickness => std_thickness_info[:value],
       }
