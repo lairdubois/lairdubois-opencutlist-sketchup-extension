@@ -50,7 +50,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :time, :number_of_bins, :number_of_different_bins, :cost, :number_of_items, :profit, :efficiency
+    attr_reader :time, :number_of_bins, :number_of_different_bins, :cost, :number_of_items, :profit, :efficiency, :total_cut_length
 
     def initialize(_def)
       @_def = _def
@@ -63,6 +63,8 @@ module Ladb::OpenCutList
       @number_of_items = _def.number_of_items
       @profit = _def.profit
       @efficiency = _def.efficiency
+
+      @total_cut_length = _def.total_cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_cut_length) : nil
 
     end
 
@@ -91,7 +93,7 @@ module Ladb::OpenCutList
       @cuts = _def.cut_defs.map { |cut_def| cut_def.create_cut }
 
       @svg = _def.svg
-      @total_cut_length = DimensionUtils.format_to_readable_length(_def.total_cut_length)
+      @total_cut_length = _def.total_cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_cut_length) : nil
 
     end
 

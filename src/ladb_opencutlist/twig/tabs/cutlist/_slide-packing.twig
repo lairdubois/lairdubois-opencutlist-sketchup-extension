@@ -54,6 +54,7 @@
                                         <li><strong>cost : </strong>{{ summary.cost|number_format(2, capabilities.decimal_separator, ' ') }}</li>
                                         <li><strong>profit : </strong>{{ summary.profit|number_format(2, capabilities.decimal_separator, ' ') }}</li>
                                         <li><strong>efficiency : </strong>{{ (summary.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
+                                        {% if summary.total_cut_length %}<li><strong>total_cut_length : </strong>{{ summary.total_cut_length }}</li>{% endif %}
                                     </ul>
                                 </div>
                             </div>
@@ -67,7 +68,7 @@
         {% set binIndex = 1 %}
         {% set binStrippedname = 'good' %}
         {% for bin in bins %}
-            <table id="ladb_cuttingdiagram_group_{{ bin.type_id }}" data-group-id="{{ group.id }}_{{ bin.type_id }}" data-bin-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cutlist-packing-group">
+            <table id="ladb_packing_group_{{ bin.type_id }}" data-group-id="{{ group.id }}_{{ bin.type_id }}" data-bin-index="{{ loop.index }}" class="table table-bordered ladb-cutlist-group ladb-cutlist-packing-group">
                 <thead>
                 <tr class="table-heading">
                     <td colspan="{{ colspan }}">
@@ -94,7 +95,7 @@
                 <tr>
                     <td colspan="{{ colspan }}">
                         <span class="ladb-horizontal-left-separator pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ (bin.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</span>
-                        {% if bin.cuts is not empty %}<span class="pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_length'|i18next }} : </strong>{{ bin.total_cut_length }}</span>{% endif %}
+                        {% if bin.total_cut_length %}<span class="pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_length'|i18next }} : </strong>{{ bin.total_cut_length }}</span>{% endif %}
                         {% if group.material_is_2d %}<span class="pull-left"><i class="ladb-opencutlist-icon-grained-{{ group.material_grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(group.material_grained ? '1' : '0'))|i18next }}</span>{% endif %}
                         {% if not options.trimming|slice(0, 1) == '0' %}<span class="ladb-horizontal-left-separator pull-left"><strong>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }} : </strong>{{ options.trimming }}</span>{% endif %}
                         <span class="ladb-horizontal-left-separator pull-left">{{ ('tab.cutlist.cuttingdiagram.list.parts')|i18next({ 'count':bin.items|length }) }}</span>

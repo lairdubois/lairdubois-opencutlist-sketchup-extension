@@ -48,7 +48,8 @@ module Ladb::OpenCutList
                    group_id:,
                    part_ids: nil,
                    std_bin_sizes: '',
-                   scrap_bin_sizes: '',
+                   scrap_bin_1d_sizes: '',
+                   scrap_bin_2d_sizes: '',
 
                    problem_type: Packy::PROBLEM_TYPE_RECTANGLE,
                    optimization_mode: 'not-anytime',
@@ -72,7 +73,8 @@ module Ladb::OpenCutList
       @group_id = group_id
       @part_ids = part_ids
       @std_bin_sizes = DimensionUtils.dxd_to_ifloats(std_bin_sizes)
-      @scrap_bin_sizes = DimensionUtils.dxdxq_to_ifloats(scrap_bin_sizes)
+      @scrap_bin_1d_sizes = DimensionUtils.dxq_to_ifloats(scrap_bin_1d_sizes)
+      @scrap_bin_2d_sizes = DimensionUtils.dxdxq_to_ifloats(scrap_bin_2d_sizes)
 
       @problem_type = problem_type
       @optimization_mode = optimization_mode
@@ -120,12 +122,20 @@ module Ladb::OpenCutList
         bin_types = []
 
         # Create bins from scrap sheets
-        @scrap_bin_sizes.split(';').each do |scrap_bin_size|
+        scrap_bin_sizes = group.material_is_1d ? @scrap_bin_1d_sizes : @scrap_bin_2d_sizes
+        scrap_bin_sizes.split(';').each do |scrap_bin_size|
 
-          ddq = scrap_bin_size.split('x')
-          length = ddq[0].strip.to_l.to_f
-          width = ddq[1].strip.to_l.to_f
-          copies = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
+          if group.material_is_1d
+            dq = scrap_bin_size.split(DimensionUtils::DXD_SEPARATOR)
+            length = dq[0].strip.to_l.to_f
+            width = group.def.std_width.to_f
+            copies = [ 1, (dq[2].nil? || dq[2].strip.to_i == 0) ? 1 : dq[2].strip.to_i ].max
+          else
+            ddq = scrap_bin_size.split(DimensionUtils::DXD_SEPARATOR)
+            length = ddq[0].strip.to_l.to_f
+            width = ddq[1].strip.to_l.to_f
+            copies = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
+          end
 
           next if length == 0 || width == 0 || copies == 0
 
@@ -347,10 +357,14 @@ module Ladb::OpenCutList
         }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.copies ] }
       )
 
+      # Computed values
+
       packing_def.bin_defs.each do |bin_def|
         bin_def.svg = _render_bin_def_svg(bin_def)
-        bin_def.total_cut_length = bin_def.cut_defs.sum { |cut_def| cut_def.length }
+        bin_def.total_cut_length = bin_def.cut_defs.map(&:length).inject(0, :+)  # .map(&:length).inject(0, :+) == .sum { |bin_def| bin_def.length } compatible with ruby < 2.4
       end
+
+      packing_def.summary_def.total_cut_length = packing_def.bin_defs.sum { |bin_def| bin_def.total_cut_length * bin_def.copies } # TODO remove sum
 
       packing_def.create_packing.to_hash
     end

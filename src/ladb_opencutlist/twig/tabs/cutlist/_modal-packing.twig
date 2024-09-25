@@ -2,13 +2,8 @@
 
 {% set id = 'ladb_cutlist_modal_packing' %}
 {% set title = ('tab.cutlist.packing.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
-{% if group.material_type == 3 or group.material_type == 4 %} {# 3 = TYPE_DIMENSIONAL , 4 = TYPE_EDGE #}
-    {% set binSuffix1 = '1d' %}
-    {% set binSuffix2 = group.material_type == 3 ? 'dimensional' : 'edge' %}
-{% elseif group.material_type == 2 or group.material_type == 6 %} {# 2 = TYPE_SHEET_GOOD , 4 = TYPE_VENEER #}
-    {% set binSuffix1 = '2d' %}
-    {% set binSuffix2 = group.material_type == 2 ? 'sheet_good' : 'veneer' %}
-{% endif %}
+{% set binSuffix1 = group.material_is_1d ? '1d' : '2d' %}
+{% set binSuffix2 = group.material_type_strippedname %}
 
 {% block headerToolsInner %}
     {% include 'components/_widget-preset.twig' %}
@@ -21,10 +16,10 @@
         <label>{{ 'tab.cutlist.packing.option_problem_type'|i18next }}</label>
         <div>
             <div class="btn-group btn-group-justified" data-toggle="buttons">
-                <label class="btn btn-radio">
+                <label class="btn btn-radio{% if group.material_is_1d %} disabled{% endif %}">
                     <input type="radio" name="ladb_radios_problem_type" value="rectangleguillotine"><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i> {{ 'tab.cutlist.packing.option_problem_type_rectangleguillotine'|i18next }}
                 </label>
-                <label class="btn btn-radio">
+                <label class="btn btn-radio{% if group.material_is_1d %} disabled{% endif %}">
                     <input type="radio" name="ladb_radios_problem_type" value="rectangle"><i class="ladb-opencutlist-icon-packing-rectangle"></i> {{ 'tab.cutlist.packing.option_problem_type_rectangle'|i18next }}
                 </label>
                 <label class="btn btn-radio">
@@ -55,12 +50,12 @@
                     <label class="control-label col-xs-4">{{ ('tab.cutlist.packing.option_std_bin_'~binSuffix1~'_'~binSuffix2)|i18next }}</label>
                     <div class="col-xs-7">
                         <select class="form-control" id="ladb_select_std_bin_sizes">
-                            {% if material_attributes.std_lengths is not empty %}
+                            {% if group.material_is_1d %}
                                 {% for std_length in material_attributes.std_lengths|split(';') %}
                                     <option value="{{ std_length|escape('html') }}x{{ group.std_width }}" data-content="<strong>{{ group.material_name|truncate(18)|escape('html') }}</strong> {{ std_length|escape('html') }}"></option>
                                 {% endfor %}
                                 <option data-divider="true"></option>
-                            {% elseif material_attributes.std_sizes is not empty %}
+                            {% else %}
                                 {% for std_size in material_attributes.std_sizes|split(';') %}
                                     <option value="{{ std_size|escape('html') }}" data-content="<i class='ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}'></i> <strong>{{ group.material_name|truncate(18)|escape('html') }}</strong> {{ std_size|escape('html') }}"></option>
                                 {% endfor %}
@@ -70,9 +65,6 @@
                             <option data-divider="true"></option>
                             <option value="0x0" data-content="{{ ('tab.cutlist.packing.option_std_bin_'~binSuffix1~'_none')|i18next }}"{% if material_attributes.std_lengths|length == 0 and material_attributes.std_sizes|length == 0 %} selected{% endif %}></option>
                         </select>
-                        <input type="hidden" class="form-control" id="ladb_input_std_sheet_length">
-                        <input type="hidden" class="form-control" id="ladb_input_std_sheet_width">
-                        <input type="hidden" class="form-control" id="ladb_input_grained">
                     </div>
                 </div>
                 <div class="form-group">

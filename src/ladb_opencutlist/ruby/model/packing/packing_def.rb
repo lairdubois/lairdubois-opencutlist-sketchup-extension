@@ -51,6 +51,7 @@ module Ladb::OpenCutList
   class PackingSummaryDef
 
     attr_reader :time, :number_of_bins, :number_of_different_bins, :cost, :number_of_items, :profit, :efficiency
+    attr_accessor :total_cut_length
 
     def initialize(time, number_of_bins, number_of_different_bins, cost, number_of_items, profit, efficiency)
 
@@ -61,6 +62,10 @@ module Ladb::OpenCutList
       @number_of_items = number_of_items
       @profit = profit
       @efficiency = efficiency
+
+      # Computed
+
+      @total_cut_length = 0
 
     end
 

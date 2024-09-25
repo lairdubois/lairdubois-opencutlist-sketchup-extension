@@ -123,6 +123,25 @@
       end
     end
 
+    def self.type_strippedname(type)
+      case type
+      when TYPE_SOLID_WOOD
+        'solid_wood'
+      when TYPE_SHEET_GOOD
+        'sheet_good'
+      when TYPE_DIMENSIONAL
+        'dimensional'
+      when TYPE_EDGE
+        'edge'
+      when TYPE_HARDWARE
+        'hardware'
+      when TYPE_VENEER
+        'veneer'
+      else
+        'unknow'
+      end
+    end
+
     def self.is_virtual?(value)
       if value.is_a?(MaterialAttributes)
         type = value.type

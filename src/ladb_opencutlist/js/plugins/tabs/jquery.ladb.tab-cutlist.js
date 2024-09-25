@@ -4583,6 +4583,7 @@
                 var $widgetPreset = $('.ladb-widget-preset', $modal);
                 var $inputStdBinSizes = $('#ladb_select_std_bin_sizes', $modal);
                 var $inputScrapBinSizes = $('#ladb_input_scrap_bin_sizes', $modal);
+                var $btnsProblemType = $('label.btn-radio', $modal);
                 var $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
                 var $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
                 var $selectObjective = $('#ladb_select_objective', $modal);
@@ -4603,7 +4604,14 @@
 
                 var fnFetchOptions = function (options) {
                     options.std_bin_sizes = $inputStdBinSizes.val();
-                    options.scrap_bin_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
+                    if (group.material_is_1d) {
+                        options.scrap_bin_1d_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
+                        options.scrap_bin_2d_sizes = '';
+                    }
+                    if (group.material_is_2d) {
+                        options.scrap_bin_1d_sizes = '';
+                        options.scrap_bin_2d_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
+                    }
                     options.problem_type = $radiosProblemType.filter(':checked').val();
                     options.optimization_mode = $selectOptimizationMode.val();
                     options.objective = $selectObjective.val();
@@ -4618,7 +4626,7 @@
                     options.verbosity_level = $selectVerbisotyLevel.val();
                 }
                 var fnFillInputs = function (options) {
-                    $radiosProblemType.filter('[value=' + options.problem_type + ']').click();
+                    $radiosProblemType.filter('[value=' + fnValidProblemType(options.problem_type) + ']').click();
                     $selectOptimizationMode.selectpicker('val', options.optimization_mode);
                     $selectObjective.selectpicker('val', options.objective);
                     $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
@@ -4638,6 +4646,13 @@
                     if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
                     if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
                 };
+                var fnValidProblemType = function (problemType) {
+                    if (group.material_is_1d
+                        && (problemType === 'rectangleguillotine' || problemType === 'rectangle')) {
+                        return 'onedimensional';
+                    }
+                    return problemType;
+                }
                 var fnEditMaterial = function (callback) {
 
                     // Hide modal
@@ -4670,8 +4685,8 @@
                     }
                 }
                 $inputStdBinSizes.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputScrapBinSizes.ladbTextinputTokenfield({format: 'dxdxq'});
-                $inputScrapBinSizes.ladbTextinputTokenfield('setTokens', packingOptions.scrap_bin_sizes);
+                $inputScrapBinSizes.ladbTextinputTokenfield({format: group.material_is_1d ? 'dxq' : 'dxdxq'});
+                $inputScrapBinSizes.ladbTextinputTokenfield('setTokens', group.material_is_1d ? packingOptions.scrap_1d_bin_sizes : packingOptions.scrap_2d_bin_sizes);
                 $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
@@ -4687,6 +4702,12 @@
                 fnFillInputs(packingOptions);
 
                 // Bind radios
+                $btnsProblemType.on('click', function (e) {
+                    if ($(this).hasClass('disabled')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
                 $radiosProblemType.on('change', fnUpdateFieldsVisibility);
 
                 // Bind tabs
