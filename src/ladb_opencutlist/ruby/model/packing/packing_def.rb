@@ -77,7 +77,7 @@ module Ladb::OpenCutList
   class PackingBinDef
 
     attr_reader :bin_type_def, :copies, :efficiency, :item_defs, :cut_defs
-    attr_accessor :svg
+    attr_accessor :svg, :total_cut_length
 
     def initialize(bin_type_def, copies, efficiency, item_defs, cut_defs)
 
@@ -89,7 +89,11 @@ module Ladb::OpenCutList
       @item_defs = item_defs
       @cut_defs = cut_defs
 
+      # Computed
+
       @svg = ''
+
+      @total_cut_length = 0
 
     end
 

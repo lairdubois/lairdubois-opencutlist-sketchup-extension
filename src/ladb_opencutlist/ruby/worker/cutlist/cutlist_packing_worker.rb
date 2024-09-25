@@ -349,6 +349,7 @@ module Ladb::OpenCutList
 
       packing_def.bin_defs.each do |bin_def|
         bin_def.svg = _render_bin_def_svg(bin_def)
+        bin_def.total_cut_length = bin_def.cut_defs.sum { |cut_def| cut_def.length }
       end
 
       packing_def.create_packing.to_hash

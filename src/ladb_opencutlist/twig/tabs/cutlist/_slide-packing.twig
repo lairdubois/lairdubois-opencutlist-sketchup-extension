@@ -94,8 +94,9 @@
                 <tr>
                     <td colspan="{{ colspan }}">
                         <span class="ladb-horizontal-left-separator pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.efficiency'|i18next }} : </strong>{{ (bin.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</span>
-                        <span class="pull-left"><i class="ladb-opencutlist-icon-grained-{{ group.material_grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(group.material_grained ? '1' : '0'))|i18next }}</span>
-{#                        {% if not options.trimming|slice(0, 1) == '0' %}<span class="ladb-horizontal-left-separator pull-left"><strong>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }} : </strong>{{ options.trimming }}</span>{% endif %}#}
+                        {% if bin.cuts is not empty %}<span class="pull-right"><strong>{{ 'tab.cutlist.cuttingdiagram.list.total_cut_length'|i18next }} : </strong>{{ bin.total_cut_length }}</span>{% endif %}
+                        {% if group.material_is_2d %}<span class="pull-left"><i class="ladb-opencutlist-icon-grained-{{ group.material_grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(group.material_grained ? '1' : '0'))|i18next }}</span>{% endif %}
+                        {% if not options.trimming|slice(0, 1) == '0' %}<span class="ladb-horizontal-left-separator pull-left"><strong>{{ 'tab.cutlist.cuttingdiagram.list.trimming'|i18next }} : </strong>{{ options.trimming }}</span>{% endif %}
                         <span class="ladb-horizontal-left-separator pull-left">{{ ('tab.cutlist.cuttingdiagram.list.parts')|i18next({ 'count':bin.items|length }) }}</span>
                     </td>
                 </tr>

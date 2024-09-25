@@ -136,6 +136,32 @@
       type == TYPE_EDGE || type == TYPE_VENEER
     end
 
+    def self.is_1d?(value)
+      if value.is_a?(MaterialAttributes)
+        type = value.type
+      elsif value.is_a?(Sketchup::Material)
+        type = MaterialAttributes.new(value).type
+      elsif value.is_a?(Integer)
+        type = value
+      else
+        return false
+      end
+      type == TYPE_DIMENSIONAL || type == TYPE_EDGE
+    end
+
+    def self.is_2d?(value)
+      if value.is_a?(MaterialAttributes)
+        type = value.type
+      elsif value.is_a?(Sketchup::Material)
+        type = MaterialAttributes.new(value).type
+      elsif value.is_a?(Integer)
+        type = value
+      else
+        return false
+      end
+      type == TYPE_SHEET_GOOD || type == TYPE_VENEER
+    end
+
     # -----
 
     def uuid
