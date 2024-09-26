@@ -4844,6 +4844,26 @@
                             $(this).blur();
                             return false;
                         });
+                        $('a.ladb-btn-highlight-part', $slide).on('click', function () {
+                            $(this).blur();
+                            var $part = $(this).parents('.ladb-cutlist-row');
+                            var partId = $part.data('part-id');
+                            that.highlightPart(partId);
+                            return false;
+                        });
+                        $('.ladb-cutlist-row', $slide).on('click', function () {
+                            $('.ladb-click-tool', $(this)).click();
+                            $(this).blur();
+                            return false;
+                        });
+
+                        // SVG
+                        $('SVG .item', $slide).on('click', function () {
+                            var partId = $(this).data('part-id');
+                            that.highlightPart(partId);
+                            $(this).blur();
+                            return false;
+                        });
 
                         // Finish progress feedback
                         that.dialog.finishProgress();

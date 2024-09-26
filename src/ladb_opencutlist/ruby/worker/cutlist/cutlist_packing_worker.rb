@@ -452,7 +452,7 @@ module Ladb::OpenCutList
           px_item_length = _to_px(part.def.cutting_size.length)
           px_item_width = _to_px(is_1d ? bin_def.bin_type_def.width : part.def.cutting_size.width)
 
-          svg += "<g class='item' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item_def.angle})#{' scale(-1 1)' if item_def.mirror}' data-toggle='tooltip' data-html='true' title='<div>#{part.name}</div><div>x = #{item_def.x}</div><div>y = #{item_def.y}</div>'>"
+          svg += "<g class='item' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item_def.angle})#{' scale(-1 1)' if item_def.mirror}' data-toggle='tooltip' data-html='true' title='<div>#{part.name}</div><div>x = #{item_def.x}</div><div>y = #{item_def.y}</div>' data-part-id='#{part.id}'>"
             svg += "<rect class='item-outer' x='0' y='-#{px_item_width}' width='#{px_item_length}' height='#{px_item_width}' />" unless is_irregular
             if display_projection && !projection_def.nil?
               svg += "<g class='item-projection'#{" transform='translate(#{_to_px((part.def.cutting_size.length - part.def.size.length) / 2)} -#{_to_px((part.def.cutting_size.width - part.def.size.width) / 2)})'" unless is_irregular}>"
