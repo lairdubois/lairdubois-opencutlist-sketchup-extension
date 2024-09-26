@@ -26,8 +26,10 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 * 6.3.0 (WIP)
 
   * Added **Vietnamese** language
+  * Improved part shape 2D projection when using cuts opening components
   * Fixed SVG/DXF cutting diagram export when part number are numeric
   * Fixed cutting diagram bug
+  * Fixed SketchUp defaults read when exception occurs
 
 * 6.2.0 (2024-03-22)
 

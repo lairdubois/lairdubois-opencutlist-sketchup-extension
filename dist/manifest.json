@@ -1,10 +1,10 @@
 {
-  "version": "6.2.0",
-  "build": "202403210933",
-  "url": "https://www.lairdubois.fr/opencutlist/download",
+  "version": "6.3.0-dev",
+  "build": "202409101221",
+  "url": "https://www.lairdubois.fr/opencutlist/download-dev",
   "sponsor": {
     "objectiveName": "7.0",
-    "objectiveGoal": 10000,
+    "objectiveGoal": 20000,
     "objectiveCurrency": "USD"
   }
 }
