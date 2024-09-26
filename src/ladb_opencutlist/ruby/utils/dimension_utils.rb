@@ -97,29 +97,37 @@
     end
 
     def self.length_unit
+      fetch_options if @length_unit.nil?
       @length_unit
     end
     def self.length_format
+      fetch_options if @length_format.nil?
       @length_format
     end
     def self.length_precision
+      fetch_options if @length_precision.nil?
       @length_precision
     end
     def self.length_suppress_unit_display
+      fetch_options if @length_suppress_unit_display.nil?
       @length_suppress_unit_display
     end
 
     def self.area_unit
+      fetch_options if @area_unit.nil?
       @area_unit
     end
     def self.area_precision
+      fetch_options if @area_precision.nil?
       @area_precision
     end
 
     def self.volume_unit
+      fetch_options if @volume_unit.nil?
       @volume_unit
     end
     def self.volume_precision
+      fetch_options if @volume_precision.nil?
       @volume_precision
     end
 
@@ -147,7 +155,7 @@
     # -----
 
     def self.ocl_length_precision
-      [ LENGTH_MIN_PRECISION, @length_precision ].max
+      [ LENGTH_MIN_PRECISION, length_precision ].max
     end
 
     # Take a Length, convert to float in inches rounded to "OpenCutList" precision
@@ -169,7 +177,7 @@
     # -----
 
     def self.model_units_to_inches(i)
-      case @length_unit
+      case length_unit
       when MILLIMETER
         return i / 25.4
       when CENTIMETER
@@ -186,7 +194,7 @@
     end
 
     def self.model_unit_is_metric
-      case @length_unit
+      case length_unit
         when MILLIMETER, CENTIMETER, METER
           return true
         else
@@ -195,7 +203,7 @@
     end
 
     def self.unit_sign
-      case @length_unit
+      case length_unit
       when MILLIMETER
         return UNIT_SYMBOL_MILLIMETER
       when CENTIMETER
@@ -219,8 +227,8 @@
       return '0' if !s.is_a?(String) || s.is_a?(String) && s.empty?
 
       s = s.strip
-      s = s.gsub(/,/, @decimal_separator) # convert separator to native
-      s = s.gsub(/\./, @decimal_separator) # convert separator to native
+      s = s.gsub(/,/, decimal_separator) # convert separator to native
+      s = s.gsub(/\./, decimal_separator) # convert separator to native
 
       unit_present = false
       if (match = s.match(/^*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
@@ -252,8 +260,8 @@
 
       s = s.sub(/~/, '') # strip approximate sign away
       s = s.strip
-      s = s.gsub(/,/, @decimal_separator) # convert separator to native
-      s = s.gsub(/\./, @decimal_separator) # convert separator to native
+      s = s.gsub(/,/, decimal_separator) # convert separator to native
+      s = s.gsub(/\./, decimal_separator) # convert separator to native
 
       # Make sure the entry starts with the proper magic
       s = s.gsub(/\s*\/\s*/, '/') # remove blanks around /
@@ -265,7 +273,7 @@
         # puts("OCL [dimension input error]: #{e}")
         return '0'
       end
-      s.gsub(/\./, @decimal_separator) + UNIT_SYMBOL_INCHES
+      s.gsub(/\./, decimal_separator) + UNIT_SYMBOL_INCHES
     end
 
     # Takes a single number in a string and converts it to a string
@@ -444,11 +452,11 @@
       end
       if model_unit_is_metric
         multiplier = 0.0254
-        precision = [2, @length_precision].max
+        precision = [2, length_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_METER
       else
         multiplier = 1 / 12.0
-        precision = [2, @length_precision].max
+        precision = [2, length_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_FEET
       end
       UnitUtils.format_readable(f * multiplier, unit_strippedname, precision, precision)
@@ -464,11 +472,11 @@
       end
       if model_unit_is_metric
         multiplier = 0.0254**2
-        precision = [2, @area_precision].max
+        precision = [2, area_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_METER_2
       else
         multiplier = 1 / 144.0
-        precision = [2, @area_precision].max
+        precision = [2, area_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_FEET_2
       end
       UnitUtils.format_readable(f2 * multiplier, unit_strippedname, precision, precision)
@@ -484,16 +492,16 @@
       end
       if model_unit_is_metric
         multiplier = 0.0254**3
-        precision = [2, @volume_precision].max
+        precision = [2, volume_precision].max
         unit_strippedname = UNIT_STRIPPEDNAME_METER_3
       else
         if material_type == MaterialAttributes::TYPE_SOLID_WOOD
           multiplier = 1 / 144.0
-          precision = [2, @volume_precision].max
+          precision = [2, volume_precision].max
           unit_strippedname = UNIT_STRIPPEDNAME_BOARD_FEET
         else
           multiplier = 1 / 1728.0
-          precision = [2, @volume_precision].max
+          precision = [2, volume_precision].max
           unit_strippedname = UNIT_STRIPPEDNAME_FEET_3
         end
       end
@@ -506,7 +514,7 @@
     # in current model unit.
     def self.length_to_model_unit_float(length)
       return nil unless length.is_a?(Length)
-      case @length_unit
+      case length_unit
       when INCHES
         length.to_inch
       when FEET
@@ -526,7 +534,7 @@
     # model unit and convert it to a Length object.
     def self.model_unit_float_to_length(f)
       return nil unless f.is_a?(Float)
-      case @length_unit
+      case length_unit
       when INCHES
         f.to_l
       when FEET

@@ -17,10 +17,12 @@ module Ladb::OpenCutList
     # -----
 
     def self.mass_unit
+      fetch_mass_options if @mass_unit.nil?
       @mass_unit
     end
 
     def self.mass_precision
+      fetch_mass_options if @mass_precision.nil?
       @mass_precision
     end
 
@@ -35,7 +37,7 @@ module Ladb::OpenCutList
     # -----
 
     def self.get_symbol
-      case @mass_unit
+      case mass_unit
       when KILOGRAM
         return UNIT_SYMBOL_KILOGRAM
       when POUND
@@ -46,7 +48,7 @@ module Ladb::OpenCutList
     end
 
     def self.get_strippedname
-      case @mass_unit
+      case mass_unit
       when KILOGRAM
         return UNIT_STRIPPEDNAME_KILOGRAM
       when POUND
@@ -59,7 +61,7 @@ module Ladb::OpenCutList
     # -----
 
     def self.kg_to_model_unit(f)
-      case @mass_unit
+      case mass_unit
       when KILOGRAM
         return f
       when POUND
@@ -70,7 +72,7 @@ module Ladb::OpenCutList
     end
 
     def self.lb_to_model_unit(f)
-      case @mass_unit
+      case mass_unit
       when KILOGRAM
         return f * 0.45359237
       when POUND
@@ -87,7 +89,7 @@ module Ladb::OpenCutList
     # local unit settings.
     #
     def self.format_to_readable_mass(f)
-      UnitUtils.format_readable(f, get_strippedname, @mass_precision, [ 2, @mass_precision ].max)
+      UnitUtils.format_readable(f, get_strippedname, mass_precision, [ 2, mass_precision ].max)
     end
 
   end
