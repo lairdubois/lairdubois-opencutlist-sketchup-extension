@@ -50,23 +50,27 @@ module Ladb::OpenCutList
 
   class PackingSummaryDef
 
-    attr_reader :time, :number_of_bins, :number_of_different_bins, :cost, :number_of_items, :profit, :efficiency
-    attr_accessor :number_of_cuts, :total_cut_length
+    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :bin_type_defs
+    attr_accessor :total_cut_count, :total_cut_length, :total_used_count, :total_used_area, :total_used_length, :total_used_item_count
 
-    def initialize(time, number_of_bins, number_of_different_bins, cost, number_of_items, profit, efficiency)
+    def initialize(time, total_bin_count, total_item_count, total_efficiency)
 
       @time = time
-      @number_of_bins = number_of_bins
-      @number_of_different_bins = number_of_different_bins
-      @cost = cost
-      @number_of_items = number_of_items
-      @profit = profit
-      @efficiency = efficiency
+      @total_bin_count = total_bin_count
+      @total_item_count = total_item_count
+      @total_efficiency = total_efficiency
 
       # Computed
 
-      @number_of_cuts = 0
+      @total_cut_count = 0
       @total_cut_length = 0
+
+      @total_used_count = 0
+      @total_used_area = 0
+      @total_used_length = 0
+      @total_used_item_count = 0
+
+      @bin_type_defs = []
 
     end
 
@@ -80,16 +84,42 @@ module Ladb::OpenCutList
 
   # -----
 
+  class PackingSummaryBinTypeDef
+
+    attr_reader :bin_type_def, :count, :used, :total_area, :total_length, :total_item_count
+
+    def initialize(bin_type_def, count, used, total_item_count = 0)
+
+      @bin_type_def = bin_type_def
+      @count = count
+      @used = used
+
+      @total_area = bin_type_def.length * bin_type_def.width * count
+      @total_length = bin_type_def.length * count
+      @total_item_count = total_item_count
+
+    end
+
+    # ---
+
+    def create_summary_bin_type
+      PackingSummaryBinType.new(self)
+    end
+
+  end
+
+  # -----
+
   class PackingBinDef
 
-    attr_reader :bin_type_def, :copies, :efficiency, :item_defs, :cut_defs, :part_defs
+    attr_reader :bin_type_def, :count, :efficiency, :item_defs, :cut_defs, :part_defs
     attr_accessor :svg, :total_cut_length, :parts
 
-    def initialize(bin_type_def, copies, efficiency, item_defs, cut_defs, part_defs)
+    def initialize(bin_type_def, count, efficiency, item_defs, cut_defs, part_defs)
 
       @bin_type_def = bin_type_def
 
-      @copies = copies
+      @count = count
       @efficiency = efficiency
 
       @item_defs = item_defs

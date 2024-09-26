@@ -50,22 +50,51 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :time, :number_of_bins, :number_of_different_bins, :cost, :number_of_items, :profit, :efficiency, :number_of_cuts, :total_cut_length
+    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :total_cut_count, :total_cut_length, :total_used_area, :total_used_area, :total_used_length, :total_used_item_count, :bin_types
 
     def initialize(_def)
       @_def = _def
 
       @time = _def.time
-      @number_of_bins = _def.number_of_bins
-      @number_of_different_bins = _def.number_of_different_bins
-      @cost = _def.cost
-      @profit = _def.profit
-      @number_of_items = _def.number_of_items
-      @profit = _def.profit
-      @efficiency = _def.efficiency
-      @number_of_cuts = _def.number_of_cuts
+      @total_bin_count = _def.total_bin_count
+      @total_item_count = _def.total_item_count
+      @total_efficiency = _def.total_efficiency
 
+      @total_cut_count = _def.total_cut_count
       @total_cut_length = _def.total_cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_cut_length) : nil
+
+      @total_used_count = _def.total_used_count
+      @total_used_area = _def.total_used_area > 0 ? DimensionUtils.format_to_readable_area(_def.total_used_area) : nil
+      @total_used_length = _def.total_used_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_used_length) : nil
+      @total_used_item_count = _def.total_used_item_count
+
+      @bin_types = _def.bin_type_defs.map { |bin_type_def| bin_type_def.create_summary_bin_type }
+
+    end
+
+  end
+
+  # -----
+
+  class PackingSummaryBinType
+
+    include DefHelper
+    include HashableHelper
+
+    attr_reader :type, :count, :length, :width, :used, :total_area, :total_length, :total_item_count
+
+    def initialize(_def)
+      @_def = _def
+
+      @type = _def.bin_type_def.type
+      @count = _def.count
+      @length = _def.bin_type_def.length.to_l.to_s
+      @width = _def.bin_type_def.width.to_l.to_s
+      @used = _def.used
+
+      @total_area = _def.total_area > 0 ? DimensionUtils.format_to_readable_area(_def.total_area) : nil
+      @total_length = _def.total_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_length) : nil
+      @total_item_count = _def.total_item_count
 
     end
 
@@ -78,7 +107,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :copies, :efficiency, :items, :cuts, :parts, :svg, :total_cut_length
+    attr_reader :type, :length, :width, :count, :efficiency, :items, :cuts, :parts, :svg, :total_cut_length
 
     def initialize(_def)
       @_def = _def
@@ -87,7 +116,7 @@ module Ladb::OpenCutList
       @length = _def.bin_type_def.length.to_l.to_s
       @width = _def.bin_type_def.width.to_l.to_s
 
-      @copies = _def.copies
+      @count = _def.count
       @efficiency = _def.efficiency
 
       @items = _def.item_defs.map { |item_def| item_def.create_item }

@@ -4761,6 +4761,8 @@
 
                     var fnCreateSlide = function (response) {
 
+                        console.log(response);
+
                         var $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
                             capabilities: that.dialog.capabilities,
                             generateOptions: that.generateOptions,

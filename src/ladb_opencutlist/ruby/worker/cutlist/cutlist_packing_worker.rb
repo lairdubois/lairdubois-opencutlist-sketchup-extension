@@ -123,24 +123,24 @@ module Ladb::OpenCutList
 
         # Create bins from scrap sheets
         scrap_bin_sizes = group.material_is_1d ? @scrap_bin_1d_sizes : @scrap_bin_2d_sizes
-        scrap_bin_sizes.split(';').each do |scrap_bin_size|
+        scrap_bin_sizes.split(DimensionUtils::LIST_SEPARATOR).each do |scrap_bin_size|
 
           if group.material_is_1d
             dq = scrap_bin_size.split(DimensionUtils::DXD_SEPARATOR)
             length = dq[0].strip.to_l.to_f
             width = group.def.std_width.to_f
-            copies = [ 1, (dq[2].nil? || dq[2].strip.to_i == 0) ? 1 : dq[2].strip.to_i ].max
+            count = [ 1, (dq[1].nil? || dq[1].strip.to_i == 0) ? 1 : dq[1].strip.to_i ].max
           else
             ddq = scrap_bin_size.split(DimensionUtils::DXD_SEPARATOR)
             length = ddq[0].strip.to_l.to_f
             width = ddq[1].strip.to_l.to_f
-            copies = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
+            count = [ 1, (ddq[2].nil? || ddq[2].strip.to_i == 0) ? 1 : ddq[2].strip.to_i ].max
           end
 
-          next if length == 0 || width == 0 || copies == 0
+          next if length == 0 || width == 0 || count == 0
 
           bin_type = {
-            copies: copies,
+            copies: count,
             width: _to_packy(length),
             height: _to_packy(width),
           }
@@ -150,12 +150,12 @@ module Ladb::OpenCutList
             bin_type[:type] = 'rectangle'
           end
           bin_types << bin_type
-          @bin_type_defs << BinTypeDef.new(length, width, 1) # 1 = user defined
+          @bin_type_defs << BinTypeDef.new(length, width, count, 1) # 1 = user defined
 
         end
 
         # Create bins from std sheets
-        @std_bin_sizes.split(';').each do |std_bin_size|
+        @std_bin_sizes.split(DimensionUtils::LIST_SEPARATOR).each do |std_bin_size|
 
           dd = std_bin_size.split(DimensionUtils::DXD_SEPARATOR)
           length = dd[0].strip.to_l.to_f
@@ -174,7 +174,7 @@ module Ladb::OpenCutList
             bin_type[:type] = 'rectangle'
           end
           bin_types << bin_type
-          @bin_type_defs << BinTypeDef.new(length, width, 0) # 0 = Standard
+          @bin_type_defs << BinTypeDef.new(length, width, -1, 0) # 0 = Standard
 
         end
 
@@ -214,7 +214,7 @@ module Ladb::OpenCutList
 
           end
 
-          @item_type_defs << ItemTypeDef.new(projection_def, part, ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8))
+          @item_type_defs << ItemTypeDef.new(part, projection_def, ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8))
 
         }
         parts.each { |part|
@@ -314,6 +314,8 @@ module Ladb::OpenCutList
       return { :errors => [ output['error'] ] } if output.has_key?('error')
       return { :errors => [ 'tab.cutlist.cuttingdiagram.error.no_placement_possible_2d' ] } if output['bins'].nil? || output['bins'].empty?
 
+      # Create PackingDef from output
+
       packing_def = PackingDef.new(
         PackingOptionsDef.new(
           @problem_type,
@@ -323,10 +325,7 @@ module Ladb::OpenCutList
         PackingSummaryDef.new(
           output['time'],
           output['number_of_bins'],
-          output['number_of_different_bins'],
-          output['cost'],
           output['number_of_items'],
-          output['profit'],
           output['efficiency']
         ),
         output['bins'].map { |raw_bin|
@@ -355,25 +354,52 @@ module Ladb::OpenCutList
             }.sort_by { |cut_def| cut_def.depth } : [],
             raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
               @item_type_defs[raw_item['item_type_id']]
-            }.group_by{ |i| i }.map{ |item_type_def,v|
+            }.group_by { |i| i }.map { |item_type_def, v|
               PackingBinPartDef.new(
                 item_type_def.part,
                 v.length
               )
-            }.sort_by{ |bin_part_def| bin_part_def._sorter } : []
+            }.sort_by { |bin_part_def| bin_part_def._sorter } : []
           )
-        }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.copies ] }
+        }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.count ] }
       )
 
       # Computed values
 
+      bin_type_uses = @bin_type_defs.map { |bin_type_def| [ bin_type_def, [ 0, 0 ] ] }.to_h
+
       packing_def.bin_defs.each do |bin_def|
+
+        bin_type_uses[bin_def.bin_type_def][0] += bin_def.count                             # used_count
+        bin_type_uses[bin_def.bin_type_def][1] += bin_def.count * bin_def.item_defs.length  # total_item_count
+
         bin_def.svg = _render_bin_def_svg(bin_def)
         bin_def.total_cut_length = bin_def.cut_defs.map(&:length).inject(0, :+)  # .map(&:length).inject(0, :+) == .sum { |bin_def| bin_def.length } compatible with ruby < 2.4
+
+        packing_def.summary_def.total_cut_count += bin_def.cut_defs.length
+        packing_def.summary_def.total_cut_length += bin_def.total_cut_length
+
       end
 
-      packing_def.summary_def.number_of_cuts = packing_def.bin_defs.sum { |bin_def| bin_def.cut_defs.length * bin_def.copies } # TODO remove sum
-      packing_def.summary_def.total_cut_length = packing_def.bin_defs.sum { |bin_def| bin_def.total_cut_length * bin_def.copies } # TODO remove sum
+      bin_type_uses.each do |bin_type_def, counters|
+
+        used_count, total_item_count = counters
+        unused_count = bin_type_def.count < 0 ? 0 : bin_type_def.count - used_count
+
+        if unused_count > 0
+          packing_def.summary_def.bin_type_defs << PackingSummaryBinTypeDef.new(bin_type_def, unused_count, false)
+        end
+
+        if used_count > 0
+          packing_def.summary_def.bin_type_defs << PackingSummaryBinTypeDef.new(bin_type_def, used_count, true, total_item_count)
+          packing_def.summary_def.total_used_count += used_count
+          packing_def.summary_def.total_used_area += packing_def.summary_def.bin_type_defs.last.total_area
+          packing_def.summary_def.total_used_length += packing_def.summary_def.bin_type_defs.last.total_length
+          packing_def.summary_def.total_used_item_count += total_item_count
+        end
+
+      end
+      packing_def.summary_def.bin_type_defs.sort_by!{ |bin_type_def| bin_type_def.used ? 1 : 0 }
 
       packing_def.create_packing.to_hash
     end
@@ -511,8 +537,8 @@ module Ladb::OpenCutList
 
     # -----
 
-    BinTypeDef = Struct.new(:length, :width, :type)
-    ItemTypeDef = Struct.new(:projection_def, :part, :color)
+    BinTypeDef = Struct.new(:length, :width, :count, :type)
+    ItemTypeDef = Struct.new(:part, :projection_def, :color)
 
   end
 
