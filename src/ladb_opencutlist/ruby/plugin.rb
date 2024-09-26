@@ -344,7 +344,11 @@ module Ladb::OpenCutList
     end
 
     def read_default(key, default_value = nil, section = DEFAULT_SECTION)
-      Sketchup.read_default(section, key, default_value)
+      begin
+        Sketchup.read_default(section, key, default_value)
+      rescue => e
+        return default_value
+      end
     end
 
     # -----
