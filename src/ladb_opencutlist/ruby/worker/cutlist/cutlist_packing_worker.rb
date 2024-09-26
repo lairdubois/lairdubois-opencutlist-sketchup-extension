@@ -157,7 +157,7 @@ module Ladb::OpenCutList
         # Create bins from std sheets
         @std_bin_sizes.split(';').each do |std_bin_size|
 
-          dd = std_bin_size.split('x')
+          dd = std_bin_size.split(DimensionUtils::DXD_SEPARATOR)
           length = dd[0].strip.to_l.to_f
           width = dd[1].strip.to_l.to_f
 
