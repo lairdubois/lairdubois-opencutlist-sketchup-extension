@@ -34,6 +34,7 @@
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_packing_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ 'tab.cutlist.packing.options_material'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_packing_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.packing.options_config'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'display' %} class="active"{% endif %}><a href="#tab_packing_options_display" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-cutlist"></i> {{ 'tab.cutlist.packing.options_display'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'tuning' %} class="active"{% endif %}><a href="#tab_packing_options_tuning" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-bug"></i> {{ 'tab.cutlist.packing.options_tuning'|i18next }}</a></li>
     </ul>
 {% endblock %}
@@ -147,6 +148,38 @@
                     <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_trimming'|i18next }}</label>
                     <div class="col-xs-6">
                         <input type="text" class="form-control" id="ladb_input_trimming">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane{% if tab == 'display' %} active{% endif %}" id="tab_packing_options_display">
+            <div class="form form-horizontal" style="margin-top: 15px;">
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.packing.option_hide_part_list_'~binSuffix1~'_help')|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_hide_part_list'|i18next }}</label>
+                    <div class="col-xs-6">
+                        <select class="form-control" id="ladb_select_hide_part_list">
+                            <option value="1" data-content="{{ 'tab.cutlist.packing.option_hide_part_list_1'|i18next }}"></option>
+                            <option value="0" data-content="{{ ('tab.cutlist.packing.option_hide_part_list_'~binSuffix1~'_'~binSuffix2~'_0')|i18next }}"></option>
+                        </select>
+                    </div>
+                </div>
+                {% set partDrawingTypeDisabled = group.edge_decremented and (not group.material_length_increased or not group.material_width_increased) %}
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw">
+                        {% if partDrawingTypeDisabled %}
+                            <a tabindex="-1" data-toggle="tooltip" title="{{ 'tab.cutlist.labels.warning.formula_not_available'|i18next }}"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i></a>
+                        {% else %}
+                            <a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_part_drawing_type_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a>
+                        {% endif %}
+                    </div>
+                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_part_drawing_type'|i18next }}</label>
+                    <div class="col-xs-6">
+                        <select class="form-control" id="ladb_select_part_drawing_type"{% if partDrawingTypeDisabled %} disabled{% endif %}>
+                            <option value="0" data-content="{{ 'tab.cutlist.packing.option_part_drawing_type_0'|i18next }}"></option>
+                            <option value="1" data-content="<i class='ladb-opencutlist-icon-face-10'></i> {{ 'tab.cutlist.packing.option_part_drawing_type_1'|i18next }}"></option>
+                            <option value="2" data-content="<i class='ladb-opencutlist-icon-face-01'></i> {{ 'tab.cutlist.packing.option_part_drawing_type_2'|i18next }}"></option>
+                        </select>
                     </div>
                 </div>
             </div>

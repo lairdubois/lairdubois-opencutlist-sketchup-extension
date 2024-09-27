@@ -937,6 +937,7 @@ tab:
       option_problem_type_irregular: Imbriqué
       options_material: Matière
       options_config: Configuration
+      options_display: Affichage
       options_tuning: Tuning
       option_std_bin_1d_dimensional: Barre standard
       option_std_bin_1d_edge: Bande standard
@@ -993,6 +994,22 @@ tab:
       option_trimming: Marge
       option_trimming_1d_help: Marge à chaque extrémité de la barre ou bande à considérer comme chute.
       option_trimming_2d_help: Marge autour du panneau à considérer comme chute.
+      option_hide_part_list: Liste des pièces
+      option_hide_part_list_1d_dimensional_0: Affichée pour chaque barre
+      option_hide_part_list_1d_edge_0: Affichée pour chaque bande
+      option_hide_part_list_2d_sheet_good_0: Affichée pour chaque panneau
+      option_hide_part_list_2d_veneer_0: Affichée pour chaque feuille
+      option_hide_part_list_1: Masquée
+      option_hide_part_list_1d_help: Affiche ou masque la liste des pièces présentes dans chaque barre ou bande.
+      option_hide_part_list_2d_help: Affiche ou masque la liste des pièces présentes dans chaque panneau ou feuille.
+      option_part_drawing_type: Formes des pièces
+      option_part_drawing_type_0: Masquées
+      option_part_drawing_type_1: Dessinées Vue Face
+      option_part_drawing_type_2: Dessinées Vue Contre-face
+      option_part_drawing_type_help: |
+        Permet d'afficher ou masquer la forme réelle des pièces ainsi que leurs usinages sur le diagramme.
+
+        *Cette option doit être activée pour que les formes puissent être exportées.*
       option_time_limit: Time limit
       option_time_limit_help: |
         ...
@@ -1009,18 +1026,30 @@ tab:
         total_cut_count: Nombre de coupes
         total_cut_length: Longueur de coupe
         efficiency: Efficacité
+        count: Qte.
+        length: Longueur
+        width: Largeur
+        total_length: Σ Longueurs
+        total_area: Σ Surfaces
+        total_part_count: Σ Pièces
+        bin_1d_dimensional: Barre
         bin_1d_dimensional_type_0: Barre standard
         bin_1d_dimensional_type_1: Reste de barre
+        bin_1d_edge: Bande
         bin_1d_edge_type_0: Bande standard
         bin_1d_edge_type_1: Reste de bande
+        bin_2d_sheet_good: Panneau
         bin_2d_sheet_good_type_0: Panneau standard
         bin_2d_sheet_good_type_1: Reste de panneau
+        bin_2d_veneer: Feuille
         bin_2d_veneer_type_0: Feuille standard
         bin_2d_veneer_type_1: Reste de feuille
         parts: "{{ count }} pièce"
         parts_plural: "{{ count }} pièces"
       error:
         no_parts: Aucune pièce.
+      warning:
+        is_part_selection: Ce calepinage se limite aux **pièces sélectionnées**.
     labels:
       title: Etiquettes
       options_layout: Composition

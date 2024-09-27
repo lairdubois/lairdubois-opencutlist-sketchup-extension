@@ -4595,6 +4595,8 @@
                 var $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
+                var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
+                var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
                 var $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 var $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
                 var $selectVerbisotyLevel = $('#ladb_select_verbosity_level', $modal);
@@ -4621,6 +4623,8 @@
                     options.irregular_allow_mirroring = $selectIrregularAllowMirroring.val() === '1';
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
+                    options.hide_part_list = $selectHidePartList.val() === '1';
+                    options.part_drawing_type = $selectPartDrawingType.val();
                     options.time_limit = $inputTimeLimit.val();
                     options.not_anytime_tree_search_queue_size = $inputNotAnytimeTreeSearchQueueSize.val();
                     options.verbosity_level = $selectVerbisotyLevel.val();
@@ -4635,6 +4639,8 @@
                     $selectIrregularAllowMirroring.selectpicker('val', options.irregular_allow_mirroring ? '1' : '0');
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
+                    $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
+                    $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                     $inputTimeLimit.val(options.time_limit);
                     $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
                     $selectVerbisotyLevel.selectpicker('val', options.verbosity_level);
@@ -4703,6 +4709,8 @@
                 $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
+                $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputTimeLimit.ladbTextinputText();
                 $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
                 $selectVerbisotyLevel.selectpicker(SELECT_PICKER_OPTIONS);

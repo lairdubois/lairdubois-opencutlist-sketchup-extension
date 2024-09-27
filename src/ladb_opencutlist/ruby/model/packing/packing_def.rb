@@ -27,14 +27,17 @@ module Ladb::OpenCutList
 
   class PackingOptionsDef
 
-    attr_reader :problem_type, :spacing, :trimming
+    attr_reader :problem_type, :spacing, :trimming, :hide_part_list, :part_drawing_type
 
-    def initialize(problem_type, spacing, trimming)
+    def initialize(problem_type, spacing, trimming, hide_part_list, part_drawing_type)
 
       @problem_type = problem_type
 
       @spacing = spacing
       @trimming = trimming
+
+      @hide_part_list = hide_part_list
+      @part_drawing_type = part_drawing_type
 
     end
 

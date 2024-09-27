@@ -29,7 +29,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :problem_type, :spacing, :trimming
+    attr_reader :problem_type, :spacing, :trimming, :hide_part_list, :part_drawing_type
 
     def initialize(_def)
       @_def = _def
@@ -38,6 +38,9 @@ module Ladb::OpenCutList
 
       @spacing = _def.spacing.to_l.to_s
       @trimming = _def.trimming.to_l.to_s
+
+      @hide_part_list = _def.hide_part_list
+      @part_drawing_type = _def.part_drawing_type
 
     end
 

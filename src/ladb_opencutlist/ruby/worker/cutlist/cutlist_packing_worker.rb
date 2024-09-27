@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require 'json'
+  require 'cgi'
   require_relative '../../helper/part_drawing_helper'
   require_relative '../../helper/pixel_converter_helper'
   require_relative '../../utils/dimension_utils'
@@ -60,6 +61,9 @@ module Ladb::OpenCutList
                    not_anytime_tree_search_queue_size: 16,
                    verbosity_level: 0,
 
+                   hide_part_list: false,
+                   part_drawing_type: PART_DRAWING_TYPE_NONE,
+
                    rectangleguillotine_cut_type: 'exact',
                    rectangleguillotine_first_stage_orientation: 'horizontal',
 
@@ -84,6 +88,9 @@ module Ladb::OpenCutList
       @time_limit = [ 1 , time_limit.to_i ].max
       @not_anytime_tree_search_queue_size = [ 1 , not_anytime_tree_search_queue_size.to_i ].max
       @verbosity_level = verbosity_level.to_i
+
+      @hide_part_list = hide_part_list
+      @part_drawing_type = part_drawing_type.to_i
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_first_stage_orientation = rectangleguillotine_first_stage_orientation
@@ -185,7 +192,7 @@ module Ladb::OpenCutList
         # Add items from parts
         fn_add_items = lambda { |part|
 
-          projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part, compute_shell: true)
+          projection_def = _compute_part_projection_def(@part_drawing_type, part, compute_shell: true)
 
           if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
 
@@ -320,7 +327,9 @@ module Ladb::OpenCutList
         PackingOptionsDef.new(
           @problem_type,
           @spacing,
-          @trimming
+          @trimming,
+          @hide_part_list,
+          @part_drawing_type
         ),
         PackingSummaryDef.new(
           output['time'],
@@ -414,9 +423,7 @@ module Ladb::OpenCutList
       l.mm / 10.0
     end
 
-    def _render_bin_def_svg(bin_def,
-                            display_projection: true
-    )
+    def _render_bin_def_svg(bin_def)
 
       is_1d = @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
       is_2d = !is_1d
@@ -455,8 +462,8 @@ module Ladb::OpenCutList
             svg += "<path d='M0,10L10,0' style='fill:none;stroke:#ddd;stroke-width:0.5px;'/>"
           svg += "</pattern>"
         svg += "</defs>"
-        svg += "<text class='bin-dimension' x='#{px_bin_length / 2}' y='-#{px_bin_outline_width + px_bin_dimension_offset}' font-size='#{px_bin_dimension_font_size}' text-anchor='middle' dominant-baseline='alphabetic'>#{bin_def.bin_type_def.length.to_l}</text>"
-        svg += "<text class='bin-dimension' x='-#{px_bin_outline_width + px_bin_dimension_offset}' y='#{px_bin_width / 2}' font-size='#{px_bin_dimension_font_size}' text-anchor='middle' dominant-baseline='alphabetic' transform='rotate(-90 -#{px_bin_outline_width + px_bin_dimension_offset},#{px_bin_width / 2})'>#{bin_def.bin_type_def.width.to_l}</text>"
+        svg += "<text class='bin-dimension' x='#{px_bin_length / 2}' y='#{-(px_bin_outline_width + px_bin_dimension_offset)}' font-size='#{px_bin_dimension_font_size}' text-anchor='middle' dominant-baseline='alphabetic'>#{bin_def.bin_type_def.length.to_l}</text>"
+        svg += "<text class='bin-dimension' x='#{-(px_bin_outline_width + px_bin_dimension_offset)}' y='#{px_bin_width / 2}' font-size='#{px_bin_dimension_font_size}' text-anchor='middle' dominant-baseline='alphabetic' transform='rotate(-90 -#{px_bin_outline_width + px_bin_dimension_offset},#{px_bin_width / 2})'>#{bin_def.bin_type_def.width.to_l}</text>"
         svg += "<g class='bin'>"
           svg += "<rect class='bin-outer' x='-1' y='-1' width='#{px_bin_length + 2}' height='#{px_bin_width + 2}' />"
           svg += "<rect class='bin-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' fill='url(#pattern_bin_bg)'/>"
@@ -478,22 +485,22 @@ module Ladb::OpenCutList
           px_item_length = _to_px(part.def.cutting_size.length)
           px_item_width = _to_px(is_1d ? bin_def.bin_type_def.width : part.def.cutting_size.width)
 
-          svg += "<g class='item' transform='translate(#{px_item_x} #{px_item_y}) rotate(-#{item_def.angle})#{' scale(-1 1)' if item_def.mirror}' data-toggle='tooltip' data-html='true' title='<div>#{part.name}</div><div>x = #{item_def.x}</div><div>y = #{item_def.y}</div>' data-part-id='#{part.id}'>"
-            svg += "<rect class='item-outer' x='0' y='-#{px_item_width}' width='#{px_item_length}' height='#{px_item_width}' />" unless is_irregular
-            if display_projection && !projection_def.nil?
-              svg += "<g class='item-projection'#{" transform='translate(#{_to_px((part.def.cutting_size.length - part.def.size.length) / 2)} -#{_to_px((part.def.cutting_size.width - part.def.size.width) / 2)})'" unless is_irregular}>"
+          svg += "<g class='item' transform='translate(#{px_item_x} #{px_item_y}) rotate(#{-item_def.angle})#{' scale(-1 1)' if item_def.mirror}' data-toggle='tooltip' data-html='true' title='#{_render_item_def_tooltip(item_def)}' data-part-id='#{part.id}'>"
+            svg += "<rect class='item-outer' x='0' y='#{-px_item_width}' width='#{px_item_length}' height='#{px_item_width}' />" unless is_irregular
+            unless @part_drawing_type == PART_DRAWING_TYPE_NONE || projection_def.nil?
+              svg += "<g class='item-projection'#{" transform='translate(#{_to_px((part.def.cutting_size.length - part.def.size.length) / 2)} #{is_2d ? -_to_px((part.def.cutting_size.width - part.def.size.width) / 2) : 0})'" unless is_irregular}>"
                 svg += "<path stroke='black' fill='#{ColorUtils.color_to_hex(item_type_def.color)}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
               svg += '</g>'
             end
             unless is_irregular
               if is_2d
-                svg += "<text class='item-dimension' x='#{px_item_length - px_item_dimension_offset}' y='-#{px_item_width - px_item_dimension_offset}' font-size='#{px_item_dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{part.cutting_length.gsub(/~ /, '')}</text>"
-                svg += "<text class='item-dimension' x='#{px_item_dimension_offset}' y='-#{px_item_dimension_offset}' font-size='#{px_item_dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_item_dimension_offset} -#{px_item_dimension_offset})'>#{part.cutting_width.gsub(/~ /, '')}</text>"
+                svg += "<text class='item-dimension' x='#{px_item_length - px_item_dimension_offset}' y='#{-(px_item_width - px_item_dimension_offset)}' font-size='#{px_item_dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{part.cutting_length.gsub(/~ /, '')}</text>"
+                svg += "<text class='item-dimension' x='#{px_item_dimension_offset}' y='#{-px_item_dimension_offset}' font-size='#{px_item_dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_item_dimension_offset} -#{px_item_dimension_offset})'>#{part.cutting_width.gsub(/~ /, '')}</text>"
               elsif is_1d
                 svg += "<text class='item-dimension' x='#{px_item_length / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_item_dimension_font_size}' text-anchor='middle' dominant-baseline='hanging'>#{part.cutting_length.gsub(/~ /, '')}</text>"
               end
             end
-            svg += "<text class='item-number' x='#{px_item_length / 2}' y='-#{px_item_width / 2}' font-size='#{[ px_item_number_font_size, [ px_item_width * 0.8 , 6 ].max ].min}' text-anchor='middle' dominant-baseline='central'>#{part.number}</text>"
+            svg += "<text class='item-number' x='#{px_item_length / 2}' y='#{-px_item_width / 2}' font-size='#{[ px_item_number_font_size, [ px_item_width * 0.8 , 6 ].max ].min}' text-anchor='middle' dominant-baseline='central'>#{part.number}</text>"
           svg += '</g>'
 
         end
@@ -524,7 +531,7 @@ module Ladb::OpenCutList
             clazz = ''
           end
 
-          svg += "<g class='cut#{clazz}' data-toggle='tooltip' title='depth = #{cut_def.depth}'>"
+          svg += "<g class='cut#{clazz}' data-toggle='tooltip' data-html='true' title='#{_render_cut_def_tooltip(cut_def)}'>"
             svg += "<rect class='cut-outer' x='#{px_cut_x - px_cut_outline_width}' y='#{px_rect_y - px_cut_outline_width}' width='#{px_rect_width + px_cut_outline_width * 2}' height='#{px_rect_height + px_cut_outline_width * 2}' />"
             svg += "<rect class='cut-inner' x='#{px_cut_x}' y='#{px_rect_y}' width='#{px_rect_width}' height='#{px_rect_height}' />"
           svg += "</g>"
@@ -533,6 +540,19 @@ module Ladb::OpenCutList
       svg += '</svg>'
 
       svg
+    end
+
+    def _render_item_def_tooltip(item_def)
+      part = item_def.item_type_def.part
+      tt = "<div class=\"tt-header\"><span class=\"tt-number\">#{part.number}</span><span class=\"tt-name\">#{CGI::escape_html(part.name)}</span></div>"
+      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-size-length-width\"></i> #{CGI::escape_html(part.cutting_length)}&nbsp;x&nbsp;#{CGI::escape_html(part.cutting_width)}</div>"
+      tt += "<div>x = #{CGI::escape_html(item_def.x.to_l.to_s)}</div><div>y = #{CGI::escape_html(item_def.y.to_l.to_s)}</div>"
+      tt
+    end
+
+    def _render_cut_def_tooltip(cut_def)
+      tt = "<div>depth = #{cut_def.depth}</div>"
+      tt
     end
 
     # -----

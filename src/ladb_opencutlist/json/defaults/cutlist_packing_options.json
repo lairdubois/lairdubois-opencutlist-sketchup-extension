@@ -23,6 +23,8 @@
     "irregular_allow_mirroring": false,
     "spacing": { "metric": "20mm", "imperial": "1\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
+    "hide_part_list": false,
+    "part_drawing_type": 0, /* PART_DRAWING_TYPE_NONE */
     "time_limit": 20,
     "not_anytime_tree_search_queue_size": 16,
     "verbosity_level": 0
