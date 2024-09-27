@@ -1019,6 +1019,9 @@ tab:
       option_verbosity_level: Verbosity level
       option_verbosity_level_help: |
         ...
+      tooltip:
+        scroll_to_block_1d: Défiler vers la première barre ou bande
+        scroll_to_block_2d: Défiler vers le premier panneau ou feuille
       list:
         summary: Récapitulatif
         trimming: Marge
