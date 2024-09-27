@@ -730,6 +730,7 @@
             // Fetch UI elements
             var $tabs = $('a[data-toggle="tab"]', $modal);
             var $widgetPreset = $('.ladb-widget-preset', $modal);
+            var $radiosSource = $('input[name=ladb_radios_source]', $modal);
             var $selectSource = $('#ladb_cutlist_export_select_source', $modal);
             var $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
             var $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
@@ -783,7 +784,7 @@
                 }
             };
             var fnFetchOptions = function (options) {
-                options.source = parseInt($selectSource.val());
+                options.source = parseInt($radiosSource.filter(':checked').val());
                 options.col_sep = parseInt($selectColSep.val());
                 options.encoding = parseInt($selectEncoding.val());
 
@@ -796,7 +797,7 @@
 
             }
             var fnFillInputs = function (options) {
-                $selectSource.selectpicker('val', options.source);
+                $radiosSource.filter('[value=' + options.source + ']').click();
                 $selectColSep.selectpicker('val', options.col_sep);
                 $selectEncoding.selectpicker('val', options.encoding);
                 $editorSummary.ladbEditorExport('setColDefs', [ options.source_col_defs[0] ])
@@ -811,7 +812,6 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $selectSource.selectpicker(SELECT_PICKER_OPTIONS);
             $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
             $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
             $editorSummary.ladbEditorExport({
@@ -921,9 +921,9 @@
                 that.lastExportOptionsTab = $(e.target).attr('href').substring('#tab_export_options_'.length);
             });
 
-            // Bind select
-            $selectSource.on('change', function () {
-                fnComputeSorterVisibility($(this).val());
+            // Bind radios
+            $radiosSource.on('change', function () {
+                fnComputeSorterVisibility($radiosSource.filter(':checked').val());
             });
 
             // Bind buttons

@@ -29,8 +29,9 @@
 
   &.btn-radio {
     color: #444;
-    background: none;
+    background: #eee;
     box-shadow: none;
+    border-radius: 10px;
 
     &:hover {
       background-color: #eee;
@@ -42,9 +43,8 @@
     }
 
     &.disabled {
-      color: #444;
-      background: none !important;
-      opacity: 0.3;
+      color: lighten(#444, 50%);
+      opacity: 1.0;
     }
 
   }
