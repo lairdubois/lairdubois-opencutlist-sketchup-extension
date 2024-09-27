@@ -56,7 +56,7 @@
                                         <li><strong>time : </strong>{{ summary.time|number_format(3, capabilities.decimal_separator, ' ') }}s</li>
                                         <li><strong>total_bin_count : </strong>{{ summary.total_bin_count }}</li>
                                         <li><strong>total_item_count : </strong>{{ summary.total_item_count }}</li>
-                                        <li><strong>total_cut_count : </strong>{{ summary.total_cut_count }}</li>
+                                        {% if summary.total_cut_count > 0 %}<li><strong>total_cut_count : </strong>{{ summary.total_cut_count }}</li>{% endif %}
                                     </ul>
                                 </div>
                                 <div class="col-xs-6">
@@ -89,7 +89,7 @@
                             <i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>{% if not generateOptions.hide_material_colors %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}{% endif %} {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2~'_type_'~bin_type.type)|i18next }}
                             {% if bin_type.used %}
                                 <div class="ladb-minitools ladb-minitools-right no-print">
-                                    <a href="#ladb_cuttingdiagram_group_{{ bin_type.type_id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.cuttingdiagram.tooltip.scroll_to_block_2d'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
+                                    <a href="#ladb_packing_group_{{ bin_type.type_id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.cuttingdiagram.tooltip.scroll_to_block_2d'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
                                 </div>
                             {% endif %}
                         </td>

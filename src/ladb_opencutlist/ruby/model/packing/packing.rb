@@ -81,11 +81,12 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type, :count, :length, :width, :used, :total_area, :total_length, :total_item_count
+    attr_reader :type_id, :type, :count, :length, :width, :used, :total_area, :total_length, :total_item_count
 
     def initialize(_def)
       @_def = _def
 
+      @type_id = _def.bin_type_def.id
       @type = _def.bin_type_def.type
       @count = _def.count
       @length = _def.bin_type_def.length.to_l.to_s
@@ -107,11 +108,12 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type, :length, :width, :count, :efficiency, :items, :cuts, :parts, :svg, :total_cut_length
+    attr_reader :type_id, :type, :length, :width, :count, :efficiency, :items, :cuts, :parts, :svg, :total_cut_length
 
     def initialize(_def)
       @_def = _def
 
+      @type_id = _def.bin_type_def.id
       @type = _def.bin_type_def.type
       @length = _def.bin_type_def.length.to_l.to_s
       @width = _def.bin_type_def.width.to_l.to_s

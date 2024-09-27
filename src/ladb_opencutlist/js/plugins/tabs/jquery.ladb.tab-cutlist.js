@@ -4761,8 +4761,6 @@
 
                     var fnCreateSlide = function (response) {
 
-                        console.log(response);
-
                         var $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
                             capabilities: that.dialog.capabilities,
                             generateOptions: that.generateOptions,
@@ -4801,13 +4799,15 @@
                             let binDefs = {};
                             let binIndex = 0;
                             $.each(response.bins, function () {
-                                for (var i = 0 ; i < this.copies; i++) {
+                                for (var i = 0 ; i < this.count; i++) {
                                     binIndex++;
-                                    $.each(this.parts, function () {
-                                        if (!binDefs[this.id]) {
-                                            binDefs[this.id] = [];
+                                    $.each(this.parts, function (v) {
+                                        for (var j = 0 ; j < this.count; j++) {
+                                            if (!binDefs[this.part.id]) {
+                                                binDefs[this.part.id] = [];
+                                            }
+                                            binDefs[this.part.id].push(binIndex);
                                         }
-                                        binDefs[this.id].push(binIndex);
                                     });
                                 }
                             });
@@ -4851,6 +4851,15 @@
                             var $part = $(this).parents('.ladb-cutlist-row');
                             var partId = $part.data('part-id');
                             that.highlightPart(partId);
+                            return false;
+                        });
+                        $('a.ladb-btn-scrollto', $slide).on('click', function () {
+                            var $target = $($(this).attr('href'));
+                            if ($target.data('group-id')) {
+                                that.showGroup($target, false);
+                            }
+                            that.scrollSlideToTarget($slide, $target, true, true);
+                            $(this).blur();
                             return false;
                         });
                         $('.ladb-cutlist-row', $slide).on('click', function () {

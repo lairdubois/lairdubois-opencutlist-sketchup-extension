@@ -150,7 +150,7 @@ module Ladb::OpenCutList
             bin_type[:type] = 'rectangle'
           end
           bin_types << bin_type
-          @bin_type_defs << BinTypeDef.new(length, width, count, 1) # 1 = user defined
+          @bin_type_defs << BinTypeDef.new(Digest::MD5.hexdigest("#{length}_#{width}_1"), length, width, count, 1) # 1 = user defined
 
         end
 
@@ -174,7 +174,7 @@ module Ladb::OpenCutList
             bin_type[:type] = 'rectangle'
           end
           bin_types << bin_type
-          @bin_type_defs << BinTypeDef.new(length, width, -1, 0) # 0 = Standard
+          @bin_type_defs << BinTypeDef.new(Digest::MD5.hexdigest("#{length}_#{width}_0"), length, width, -1, 0) # 0 = Standard
 
         end
 
@@ -399,7 +399,7 @@ module Ladb::OpenCutList
         end
 
       end
-      packing_def.summary_def.bin_type_defs.sort_by!{ |bin_type_def| bin_type_def.used ? 1 : 0 }
+      packing_def.summary_def.bin_type_defs.sort_by!{ |bin_type_def| [ bin_type_def.used ? 1 : 0, -bin_type_def.bin_type_def.type, bin_type_def.bin_type_def.length ]}
 
       packing_def.create_packing.to_hash
     end
@@ -537,7 +537,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    BinTypeDef = Struct.new(:length, :width, :count, :type)
+    BinTypeDef = Struct.new(:id, :length, :width, :count, :type)
     ItemTypeDef = Struct.new(:part, :projection_def, :color)
 
   end
