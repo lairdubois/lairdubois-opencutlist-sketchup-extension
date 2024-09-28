@@ -63,6 +63,7 @@ module Ladb::OpenCutList
 
                    hide_part_list: false,
                    part_drawing_type: PART_DRAWING_TYPE_NONE,
+                   colored_part: true,
 
                    rectangleguillotine_cut_type: 'exact',
                    rectangleguillotine_first_stage_orientation: 'horizontal',
@@ -91,6 +92,7 @@ module Ladb::OpenCutList
 
       @hide_part_list = hide_part_list
       @part_drawing_type = part_drawing_type.to_i
+      @colored_part = colored_part
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_first_stage_orientation = rectangleguillotine_first_stage_orientation
@@ -221,7 +223,7 @@ module Ladb::OpenCutList
 
           end
 
-          @item_type_defs << ItemTypeDef.new(part, projection_def, ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8))
+          @item_type_defs << ItemTypeDef.new(part, projection_def, @colored_part ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil)
 
         }
         parts.each { |part|
@@ -489,7 +491,7 @@ module Ladb::OpenCutList
             svg += "<rect class='item-outer' x='0' y='#{-px_item_width}' width='#{px_item_length}' height='#{px_item_width}' />" unless is_irregular
             unless @part_drawing_type == PART_DRAWING_TYPE_NONE || projection_def.nil?
               svg += "<g class='item-projection'#{" transform='translate(#{_to_px((part.def.cutting_size.length - part.def.size.length) / 2)} #{is_2d ? -_to_px((part.def.cutting_size.width - part.def.size.width) / 2) : 0})'" unless is_irregular}>"
-                svg += "<path stroke='black' fill='#{ColorUtils.color_to_hex(item_type_def.color)}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
+                svg += "<path stroke='black' fill='#{@colored_part ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
               svg += '</g>'
             end
             unless is_irregular

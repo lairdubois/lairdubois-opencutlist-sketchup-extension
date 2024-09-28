@@ -25,6 +25,7 @@
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
     "hide_part_list": false,
     "part_drawing_type": 1, /* PART_DRAWING_TYPE_2D_TOP */
+    "colored_part": true,
     "time_limit": 20,
     "not_anytime_tree_search_queue_size": 16,
     "verbosity_level": 0

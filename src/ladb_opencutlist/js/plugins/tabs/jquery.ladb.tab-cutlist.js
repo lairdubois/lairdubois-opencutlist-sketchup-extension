@@ -4597,6 +4597,7 @@
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
                 var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                 var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
+                var $selectColoredPart = $('#ladb_select_colored_part', $modal);
                 var $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 var $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
                 var $selectVerbisotyLevel = $('#ladb_select_verbosity_level', $modal);
@@ -4625,6 +4626,7 @@
                     options.trimming = $inputTrimming.val();
                     options.hide_part_list = $selectHidePartList.val() === '1';
                     options.part_drawing_type = $selectPartDrawingType.val();
+                    options.colored_part = $selectColoredPart.val() === '1';
                     options.time_limit = $inputTimeLimit.val();
                     options.not_anytime_tree_search_queue_size = $inputNotAnytimeTreeSearchQueueSize.val();
                     options.verbosity_level = $selectVerbisotyLevel.val();
@@ -4641,6 +4643,7 @@
                     $inputTrimming.val(options.trimming);
                     $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
+                    $selectColoredPart.selectpicker('val', options.colored_part ? '1' : '0');
                     $inputTimeLimit.val(options.time_limit);
                     $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
                     $selectVerbisotyLevel.selectpicker('val', options.verbosity_level);
@@ -4711,6 +4714,7 @@
                 $inputTrimming.ladbTextinputDimension();
                 $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectColoredPart.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputTimeLimit.ladbTextinputText();
                 $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
                 $selectVerbisotyLevel.selectpicker(SELECT_PICKER_OPTIONS);
