@@ -53,7 +53,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :total_cut_count, :total_cut_length, :total_used_area, :total_used_area, :total_used_length, :total_used_item_count, :bin_types
+    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_area, :total_used_area, :total_used_length, :total_used_item_count, :bin_types
 
     def initialize(_def)
       @_def = _def
@@ -63,6 +63,7 @@ module Ladb::OpenCutList
       @total_item_count = _def.total_item_count
       @total_efficiency = _def.total_efficiency
 
+      @total_leftover_count = _def.total_leftover_count
       @total_cut_count = _def.total_cut_count
       @total_cut_length = _def.total_cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_cut_length) : nil
 
@@ -152,6 +153,27 @@ module Ladb::OpenCutList
       @y = _def.y.to_s
       @angle = _def.angle
       @mirror = _def.mirror
+
+    end
+
+  end
+
+  # -----
+
+  class PackingLeftover
+
+    include DefHelper
+    include HashableHelper
+
+    attr_reader :x, :y, :length, :width
+
+    def initialize(_def)
+      @_def = _def
+
+      @x = _def.x.to_s
+      @y = _def.y.to_s
+      @length = _def.length
+      @width = _def.width
 
     end
 

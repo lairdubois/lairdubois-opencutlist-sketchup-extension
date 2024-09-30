@@ -105,6 +105,18 @@
 
     }
 
+    /* .leftover */
+
+    .leftover {
+      fill: none;
+      stroke: none;
+
+      .leftover-dimension {
+        fill: #999;
+      }
+
+    }
+
     /* .cut */
 
     .cut {
@@ -177,7 +189,7 @@
         fill: #ffffff;
         fill-opacity: 0.01;
       }
-      .cut-inner {
+      &:not(.cut-lg) .cut-inner {
         fill: #555;
       }
 

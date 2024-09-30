@@ -731,7 +731,6 @@
             var $tabs = $('a[data-toggle="tab"]', $modal);
             var $widgetPreset = $('.ladb-widget-preset', $modal);
             var $radiosSource = $('input[name=ladb_radios_source]', $modal);
-            var $selectSource = $('#ladb_cutlist_export_select_source', $modal);
             var $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
             var $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
             var $editorSummary = $('#ladb_cutlist_export_editor_summary', $modal);
@@ -4589,6 +4588,7 @@
                 var $selectObjective = $('#ladb_select_objective', $modal);
                 var $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
                 var $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
+                var $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
                 var $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
                 var $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
                 var $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
@@ -4619,6 +4619,7 @@
                     options.optimization_mode = $selectOptimizationMode.val();
                     options.objective = $selectObjective.val();
                     options.rectangleguillotine_cut_type = $selectRectangleguillotineCutType.val();
+                    options.rectangleguillotine_number_of_stages = parseInt($selectRectangleguillotineNumberOfStages.val());
                     options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
                     options.irregular_allowed_rotations = $selectIrregularAllowedRotations.val();
                     options.irregular_allow_mirroring = $selectIrregularAllowMirroring.val() === '1';
@@ -4627,15 +4628,16 @@
                     options.hide_part_list = $selectHidePartList.val() === '1';
                     options.part_drawing_type = $selectPartDrawingType.val();
                     options.colored_part = $selectColoredPart.val() === '1';
-                    options.time_limit = $inputTimeLimit.val();
-                    options.not_anytime_tree_search_queue_size = $inputNotAnytimeTreeSearchQueueSize.val();
-                    options.verbosity_level = $selectVerbisotyLevel.val();
+                    options.time_limit = parseInt($inputTimeLimit.val());
+                    options.not_anytime_tree_search_queue_size = parseInt($inputNotAnytimeTreeSearchQueueSize.val());
+                    options.verbosity_level = parseInt($selectVerbisotyLevel.val());
                 }
                 var fnFillInputs = function (options) {
                     $radiosProblemType.filter('[value=' + fnValidProblemType(options.problem_type) + ']').click();
                     $selectOptimizationMode.selectpicker('val', options.optimization_mode);
                     $selectObjective.selectpicker('val', options.objective);
                     $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
+                    $selectRectangleguillotineNumberOfStages.selectpicker('val', options.rectangleguillotine_number_of_stages);
                     $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
                     $selectIrregularAllowedRotations.selectpicker('val', fnValidIrregularAllowedRotations(options.irregular_allowed_rotations));
                     $selectIrregularAllowMirroring.selectpicker('val', options.irregular_allow_mirroring ? '1' : '0');
@@ -4707,6 +4709,7 @@
                 $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectRectangleguillotineNumberOfStages.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectIrregularAllowedRotations.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_OPTIONS);
@@ -4736,7 +4739,7 @@
                 });
 
                 // Bind select
-                $inputStdBinSizes.on('changed.bs.select', function () {
+                $inputStdBinSizes.on('changed.bs.select', function (event, clickedIndex, isSelected, previousValue) {
                     var value = $inputStdBinSizes.val();
                     if (value === 'add') {
                         fnEditMaterial(function ($editMaterialModal) {

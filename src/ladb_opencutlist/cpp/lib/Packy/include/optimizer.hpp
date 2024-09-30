@@ -250,6 +250,20 @@ namespace Packy {
 
         }
 
+        void read_instance_parameters(
+                basic_json<>& j
+        ) override {
+            TypedOptimizer::read_instance_parameters(j);
+
+            if (j.contains("fake_trimming")) {
+                fake_trimming_ = j["fake_trimming"].template get<Length>();
+            }
+            if (j.contains("fake_spacing")) {
+                fake_spacing_ = j["fake_spacing"].template get<Length>();
+            }
+
+        }
+
         void read_bin_type(
                 basic_json<>& j
         ) override {
@@ -261,12 +275,54 @@ namespace Packy {
             BinPos copies = j.value("copies", 1);
             BinPos copies_min = j.value("copies_min", 0);
 
-            instance_builder_.add_bin_type(
+            if (fake_trimming_ > 0) {
+                width -= fake_trimming_ * 2;
+                height -= fake_trimming_ * 2;
+            }
+            if (fake_spacing_ > 0) {
+                width += fake_spacing_;
+                height += fake_spacing_;
+            }
+
+            BinTypeId bin_type_id = instance_builder_.add_bin_type(
                     width,
                     height,
                     cost,
                     copies,
                     copies_min
+            );
+
+            // Defects
+
+            if (j.contains("defects")) {
+                for (auto& j_item: j["defects"].items()) {
+                    read_defect(bin_type_id, j_item.value());
+                }
+            }
+
+        }
+
+        void read_defect(
+                BinTypeId bin_type_id,
+                basic_json<>& j
+                ) {
+
+            Length x = j.value("x", -1);
+            Length y = j.value("y", -1);
+            Length width = j.value("width", -1);
+            Length height = j.value("height", -1);
+
+            if (fake_spacing_ > 0) {
+                width += fake_spacing_;
+                height += fake_spacing_;
+            }
+
+            instance_builder_.add_defect(
+                    bin_type_id,
+                    x,
+                    y,
+                    width,
+                    height
             );
 
         }
@@ -281,6 +337,11 @@ namespace Packy {
             Profit profit = j.value("profit", -1);
             ItemPos copies = j.value("copies", 1);
             bool oriented = j.value("oriented", false);
+
+            if (fake_spacing_ > 0) {
+                width += fake_spacing_;
+                height += fake_spacing_;
+            }
 
             instance_builder_.add_item_type(
                     width,
@@ -305,6 +366,9 @@ namespace Packy {
         }
 
     protected:
+
+        Length fake_trimming_;
+        Length fake_spacing_;
 
         json to_json(
                 const rectangle::Output& output
@@ -342,15 +406,15 @@ namespace Packy {
                     if (item.rotate) {
                         j_items.emplace_back(json{
                                 {"item_type_id", item.item_type_id},
-                                {"x",            item.bl_corner.x + item_type.rect.y},
-                                {"y",            item.bl_corner.y},
+                                {"x",            fake_trimming_ + item.bl_corner.x + item_type.rect.y - fake_spacing_},
+                                {"y",            fake_trimming_ + item.bl_corner.y},
                                 {"angle",        90.0}
                         });
                     } else {
                         j_items.emplace_back(json{
                                 {"item_type_id", item.item_type_id},
-                                {"x",            item.bl_corner.x},
-                                {"y",            item.bl_corner.y},
+                                {"x",            fake_trimming_ + item.bl_corner.x},
+                                {"y",            fake_trimming_ + item.bl_corner.y},
                                 {"angle",        0}
                         });
                     }
@@ -427,7 +491,7 @@ namespace Packy {
             BinPos copies = j.value("copies", 1);
             BinPos copies_min = j.value("copies_min", 0);
 
-            BinTypeId bin_id = instance_builder_.add_bin_type(
+            BinTypeId bin_type_id = instance_builder_.add_bin_type(
                     width,
                     height,
                     cost,
@@ -478,7 +542,7 @@ namespace Packy {
             }
 
             instance_builder_.add_trims(
-                    bin_id,
+                    bin_type_id,
                     left_trim,
                     left_trim_type,
                     right_trim,
@@ -493,14 +557,15 @@ namespace Packy {
 
             if (j.contains("defects")) {
                 for (auto& j_item: j["defects"].items()) {
-                    read_defect(bin_id, j_item.value());
+                    read_defect(bin_type_id, j_item.value());
                 }
             }
 
         }
 
         void read_defect(
-                BinTypeId bin_id, basic_json<>& j
+                BinTypeId bin_type_id,
+                basic_json<>& j
         ) {
 
             Length x = j.value("x", -1);
@@ -509,7 +574,7 @@ namespace Packy {
             Length height = j.value("height", -1);
 
             instance_builder_.add_defect(
-                    bin_id,
+                    bin_type_id,
                     x,
                     y,
                     width,
@@ -584,8 +649,9 @@ namespace Packy {
                         {"efficiency",  (double) item_area / bin_type.area()}
                 });
 
-                // Items & Cuts.
+                // Items, Leftovers & Cuts.
                 basic_json<>& j_items = j_bin["items"] = json::array();
+                basic_json<>& j_leftovers = j_bin["leftovers"] = json::array();
                 basic_json<>& j_cuts = j_bin["cuts"] = json::array();
                 for (const auto& node: bin.nodes) {
 
@@ -607,6 +673,34 @@ namespace Packy {
                                     {"x",            node.l},
                                     {"y",            node.b},
                                     {"angle",        0.0},
+                            });
+                        }
+
+                    } else if (node.d > 0 && node.children.empty()) {
+
+                        Length l = node.l;
+                        Length b = node.b;
+                        if (node.f >= 0) {
+
+                            const SolutionNode& parent_node = bin.nodes[node.f];
+
+                            if (node.l != parent_node.l) {
+                                l += instance.cut_thickness();
+                            }
+                            if (node.b != parent_node.b) {
+                                b += instance.cut_thickness();
+                            }
+
+                        }
+
+                        Length width = node.r - l;
+                        Length height = node.t - b;
+                        if (width > 0 && height > 0) {
+                            j_leftovers.push_back(json{
+                                    {"x",      l},
+                                    {"y",      b},
+                                    {"width",  width},
+                                    {"height", height}
                             });
                         }
 
@@ -697,6 +791,20 @@ namespace Packy {
 
         }
 
+        void read_instance_parameters(
+                basic_json<>& j
+        ) override {
+            TypedOptimizer::read_instance_parameters(j);
+
+            if (j.contains("fake_trimming")) {
+                fake_trimming_ = j["fake_trimming"].template get<Length>();
+            }
+            if (j.contains("fake_spacing")) {
+                fake_spacing_ = j["fake_spacing"].template get<Length>();
+            }
+
+        }
+
         void read_bin_type(
                 basic_json<>& j
         ) override {
@@ -706,6 +814,13 @@ namespace Packy {
             Profit cost = j.value("cost", -1);
             BinPos copies = j.value("copies", 1);
             BinPos copies_min = j.value("copies_min", 0);
+
+            if (fake_trimming_ > 0) {
+                width -= fake_trimming_ * 2;
+            }
+            if (fake_spacing_ > 0) {
+                width += fake_spacing_;
+            }
 
             instance_builder_.add_bin_type(
                     width,
@@ -724,6 +839,10 @@ namespace Packy {
             Length width = j.value("width", -1);
             Profit profit = j.value("profit", -1);
             ItemPos copies = j.value("copies", 1);
+
+            if (fake_spacing_ > 0) {
+                width += fake_spacing_;
+            }
 
             instance_builder_.add_item_type(
                     width,
@@ -746,6 +865,9 @@ namespace Packy {
         }
 
     protected:
+
+        Length fake_trimming_;
+        Length fake_spacing_;
 
         json to_json(
                 const onedimensional::Output& output
@@ -776,7 +898,14 @@ namespace Packy {
                 });
 
                 basic_json<>& j_items = j_bin["items"] = json::array();
+                basic_json<>& j_leftovers = j_bin["leftovers"] = json::array();
                 basic_json<>& j_cuts = j_bin["cuts"] = json::array();
+                if (fake_trimming_ > 0) {
+                    j_cuts.emplace_back(json{
+                            {"depth", 0},
+                            {"x",     fake_trimming_ - fake_spacing_}
+                    });
+                }
                 for (const auto& item: bin.items) {
 
                     const ItemType& item_type = instance.item_type(item.item_type_id);
@@ -784,15 +913,24 @@ namespace Packy {
                     // Item
                     j_items.emplace_back(json{
                             {"item_type_id", item.item_type_id},
-                            {"x",            item.start},
+                            {"x",            fake_trimming_ + item.start},
                     });
 
                     // Cut
                     if (item.start + item_type.length < bin_type.length) {
                         j_cuts.emplace_back(json{
                                 {"depth", 1},
-                                {"x",     item.start + item_type.length}
+                                {"x",     fake_trimming_ + item.start + item_type.length - fake_spacing_}
                         });
+
+                        // Leftover
+                        if (&item == &bin.items.back()) {
+                            j_leftovers.emplace_back(json{
+                                    {"x",     fake_trimming_ + item.start + item_type.length},
+                                    {"width", bin_type.length - (item.start + item_type.length)},
+                            });
+                        }
+
                     }
 
                 }

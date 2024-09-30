@@ -30,6 +30,11 @@ module Ladb::OpenCutList::Fiddle
       ]
     end
 
+    def self.unload
+      super
+      @cached_outputs = {}
+    end
+
     # -- Debug --
 
     def self.version

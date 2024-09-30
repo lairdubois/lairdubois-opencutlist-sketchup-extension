@@ -56,12 +56,15 @@
                                         <li><strong>time : </strong>{{ summary.time|number_format(3, capabilities.decimal_separator, ' ') }}s</li>
                                         <li><strong>total_bin_count : </strong>{{ summary.total_bin_count }}</li>
                                         <li><strong>total_item_count : </strong>{{ summary.total_item_count }}</li>
+                                        {% if summary.total_leftover_count > 0 %}<li><strong>total_leftover_count : </strong>{{ summary.total_leftover_count }}</li>{% endif %}
                                         {% if summary.total_cut_count > 0 %}<li><strong>total_cut_count : </strong>{{ summary.total_cut_count }}</li>{% endif %}
                                     </ul>
                                 </div>
                                 <div class="col-xs-6">
                                     <span style="margin-left: 10px;">&nbsp;</span>
                                     <ul>
+                                        <li><strong>trimming : </strong>{{ options.trimming }}</li>
+                                        <li><strong>spacing : </strong>{{ options.spacing }}</li>
                                         <li><strong>total_efficiency : </strong>{{ (summary.total_efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
                                         {% if summary.total_cut_length %}<li><strong>total_cut_length : </strong>{{ summary.total_cut_length }}</li>{% endif %}
                                     </ul>

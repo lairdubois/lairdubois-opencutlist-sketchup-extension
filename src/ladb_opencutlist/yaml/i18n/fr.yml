@@ -122,6 +122,7 @@ core:
 
       Pour signaler un bug : <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
+    extern: "Erreur externe : **{{ error }}**"
     feature_unavailable: "Cette fonctionnalité nécessite SketchUp {{ version }} ou plus"
     failed_export_to: |
       Une erreur s'est produite lors de l'exportation vers *{{ path }}*.
@@ -980,6 +981,9 @@ tab:
       option_rectangleguillotine_cut_type: Cut Type
       option_rectangleguillotine_cut_type_help: |
         ...
+      option_rectangleguillotine_number_of_stages: Number of stages
+      option_rectangleguillotine_number_of_stages_help: |
+        ...
       option_rectangleguillotine_first_stage_orientation: Première coupe
       option_rectangleguillotine_first_stage_orientation_help: |
         ...
@@ -1055,7 +1059,10 @@ tab:
         parts: "{{ count }} pièce"
         parts_plural: "{{ count }} pièces"
       error:
-        no_parts: Aucune pièce.
+        no_part: Aucune pièce.
+        no_bin_1d: Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.
+        no_bin_2d: Aucun panneau ou aucune feuille standard n'est sélectionné et aucun reste n'est défini.
+        no_solution: Aucune solution n'a été trouvée.
       warning:
         is_part_selection: Ce calepinage se limite aux **pièces sélectionnées**.
     labels:
