@@ -313,6 +313,8 @@ namespace Packy {
             Length height = j.value("height", -1);
 
             if (fake_spacing_ > 0) {
+                x -= fake_spacing_ / 2;
+                y -= fake_spacing_ / 2;
                 width += fake_spacing_;
                 height += fake_spacing_;
             }

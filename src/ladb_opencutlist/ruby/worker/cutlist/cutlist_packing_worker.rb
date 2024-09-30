@@ -594,12 +594,13 @@ module Ladb::OpenCutList
       part = item_def.item_type_def.part
       tt = "<div class=\"tt-header\"><span class=\"tt-number\">#{part.number}</span><span class=\"tt-name\">#{CGI::escape_html(part.name)}</span></div>"
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-size-length-width\"></i> #{CGI::escape_html(part.cutting_length)}&nbsp;x&nbsp;#{CGI::escape_html(part.cutting_width)}</div>"
-      tt += "<div>x = #{CGI::escape_html(item_def.x.to_l.to_s)}</div><div>y = #{CGI::escape_html(item_def.y.to_l.to_s)}</div>"
       tt
     end
 
     def _render_cut_def_tooltip(cut_def)
-      tt = "<div>depth = #{cut_def.depth}</div>"
+      tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string("tab.cutlist.cuttingdiagram.list.cut#{(cut_def.depth == 0 ? '_trimming' : (cut_def.depth == 1 ? '_bounding' : (cut_def.depth == 2 ? '_internal_through' : '')))}")}</span></div>"
+      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-saw\"></i> #{CGI::escape_html(@spacing.to_l.to_s)}</div>"
+      tt += "<div>depth = #{cut_def.depth}</div>"
       tt
     end
 
