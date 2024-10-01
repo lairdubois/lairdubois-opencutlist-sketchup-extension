@@ -28,23 +28,28 @@
         </div>
     </div>
     <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_export_options_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.export.options'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'customize' %} class="active"{% endif %}><a href="#tab_export_options_customize" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.export.options_customize'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_export_options_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.export.options'|i18next }}</a></li>
     </ul>
 {% endblock %}
 
 {% block bodyInner %}
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_export_options_general">
-            {% if isGroupSelection %}
-                <div class="alert alert-info text-center">{{ 'tab.cutlist.export.warning.is_group_selection'|i18next }}</div>
-            {% endif %}
-            <div class="row">
-                <div class="col-xs-push-1 col-xs-10">
-                    {{ 'tab.cutlist.export.info_0'|i18next }}
-                </div>
+        {% if isGroupSelection %}
+            <div class="alert alert-info text-center">{{ 'tab.cutlist.export.warning.is_group_selection'|i18next }}</div>
+        {% endif %}
+        <div class="row">
+            <div class="col-xs-push-1 col-xs-10">
+                {{ 'tab.cutlist.export.info_0'|i18next }}
             </div>
-            <hr>
+        </div>
+        <hr>
+        <div role="tabpanel" class="tab-pane{% if tab == 'customize' %} active{% endif %}" id="tab_export_options_customize">
+            <div id="ladb_cutlist_export_editor_summary" class="ladb-editor-export" style="display: none;"></div>
+            <div id="ladb_cutlist_export_editor_cutlist" class="ladb-editor-export" style="display: none;"></div>
+            <div id="ladb_cutlist_export_editor_instances_list" class="ladb-editor-export" style="display: none;"></div>
+        </div>
+        <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_export_options_general">
             <div class="form form-horizontal">
                 <div class="form-group">
                     <label class="control-label col-xs-4">{{ 'tab.cutlist.export.option_col_sep'|i18next }}</label>
@@ -67,11 +72,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div role="tabpanel" class="tab-pane{% if tab == 'customize' %} active{% endif %}" id="tab_export_options_customize">
-            <div id="ladb_cutlist_export_editor_summary" class="ladb-editor-export" style="display: none;"></div>
-            <div id="ladb_cutlist_export_editor_cutlist" class="ladb-editor-export" style="display: none;"></div>
-            <div id="ladb_cutlist_export_editor_instances_list" class="ladb-editor-export" style="display: none;"></div>
         </div>
     </div>
 {% endblock %}

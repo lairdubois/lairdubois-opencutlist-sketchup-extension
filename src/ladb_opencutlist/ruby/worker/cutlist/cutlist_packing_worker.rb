@@ -10,6 +10,8 @@ module Ladb::OpenCutList
   require_relative '../../lib/fiddle/clippy/clippy'
   require_relative '../../lib/geometrix/geometrix'
   require_relative '../../model/packing/packing_def'
+  require_relative '../../model/export/wrappers'
+
 
   class CutlistPackingWorker
 
@@ -48,11 +50,12 @@ module Ladb::OpenCutList
 
                    group_id:,
                    part_ids: nil,
+
                    std_bin_sizes: '',
                    scrap_bin_1d_sizes: '',
                    scrap_bin_2d_sizes: '',
 
-                   problem_type: Packy::PROBLEM_TYPE_RECTANGLE,
+                   problem_type: Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE,
                    optimization_mode: 'not-anytime',
                    objective: 'bin-packing',
                    spacing: '20mm',
@@ -61,6 +64,7 @@ module Ladb::OpenCutList
                    not_anytime_tree_search_queue_size: 16,
                    verbosity_level: 0,
 
+                   items_formula: 'id',
                    hide_part_list: false,
                    part_drawing_type: PART_DRAWING_TYPE_NONE,
                    colored_part: true,
@@ -78,6 +82,7 @@ module Ladb::OpenCutList
 
       @group_id = group_id
       @part_ids = part_ids
+
       @std_bin_sizes = DimensionUtils.dxd_to_ifloats(std_bin_sizes)
       @scrap_bin_1d_sizes = DimensionUtils.dxq_to_ifloats(scrap_bin_1d_sizes)
       @scrap_bin_2d_sizes = DimensionUtils.dxdxq_to_ifloats(scrap_bin_2d_sizes)
@@ -91,6 +96,7 @@ module Ladb::OpenCutList
       @not_anytime_tree_search_queue_size = [ 1 , not_anytime_tree_search_queue_size.to_i ].max
       @verbosity_level = verbosity_level.to_i
 
+      @items_formula = items_formula.empty? ? '@number' : items_formula
       @hide_part_list = hide_part_list
       @part_drawing_type = part_drawing_type.to_i
       @colored_part = colored_part
@@ -514,6 +520,9 @@ module Ladb::OpenCutList
           px_item_length = _to_px(part.def.cutting_size.length)
           px_item_width = is_1d ? px_bin_width : _to_px(part.def.cutting_size.width)
 
+          item_text = _evaluate_item_text(part)
+          item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" if item_text.is_a?(Hash)
+
           svg += "<g class='item' transform='translate(#{px_item_x} #{px_item_y}) rotate(#{-item_def.angle})#{' scale(-1 1)' if item_def.mirror}' data-toggle='tooltip' data-html='true' title='#{_render_item_def_tooltip(item_def)}' data-part-id='#{part.id}'>"
             svg += "<rect class='item-outer' x='0' y='#{-px_item_width}' width='#{px_item_length}' height='#{px_item_width}' />" unless is_irregular
             unless @part_drawing_type == PART_DRAWING_TYPE_NONE || projection_def.nil?
@@ -529,7 +538,7 @@ module Ladb::OpenCutList
                 svg += "<text class='item-dimension' x='#{px_item_length / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_item_dimension_font_size}' text-anchor='middle' dominant-baseline='hanging'>#{part.cutting_length.gsub(/~ /, '')}</text>"
               end
             end
-            svg += "<text class='item-number' x='#{px_item_length / 2}' y='#{-px_item_width / 2}' font-size='#{[ px_item_number_font_size, [ px_item_width * 0.8 , 6 ].max ].min}' text-anchor='middle' dominant-baseline='central'>#{part.number}</text>"
+            svg += "<text class='item-number' x='#{px_item_length / 2}' y='#{-px_item_width / 2}' font-size='#{[ px_item_number_font_size, [ px_item_width * 0.8 , 6 ].max ].min}' text-anchor='middle' dominant-baseline='central'>#{item_text}</text>"
           svg += '</g>'
 
         end
@@ -540,11 +549,17 @@ module Ladb::OpenCutList
           px_leftover_length = _to_px(leftover_def.length)
           px_leftover_width = is_1d ? px_bin_width : _to_px(leftover_def.width)
 
+          length_text = leftover_def.length.to_s.gsub(/~ /, '')
+          width_text = leftover_def.width.to_s.gsub(/~ /, '')
+
+          px_length_text_length = length_text.length * px_leftover_dimension_font_size * 0.7
+          px_width_text_length = length_text.length * px_leftover_dimension_font_size * 0.7
+
           svg += "<g class='leftover' transform='translate(#{px_leftover_x} #{px_leftover_y})'>"
             svg += "<rect x='0' y='#{-px_leftover_width}' width='#{px_leftover_length}' height='#{px_leftover_width}'/>"
             if is_2d
-              svg += "<text class='leftover-dimension' x='#{px_leftover_length - px_leftover_dimension_offset}' y='#{-(px_leftover_width - px_leftover_dimension_offset)}' font-size='#{px_leftover_dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{leftover_def.length.to_s.gsub(/~ /, '')}</text>"
-              svg += "<text class='leftover-dimension' x='#{px_leftover_dimension_offset}' y='#{-px_leftover_dimension_offset}' font-size='#{px_leftover_dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_leftover_dimension_offset} -#{px_leftover_dimension_offset})'>#{leftover_def.width.to_s.gsub(/~ /, '')}</text>"
+              svg += "<text class='leftover-dimension' x='#{px_leftover_length - px_leftover_dimension_offset}' y='#{-(px_leftover_width - px_leftover_dimension_offset)}' font-size='#{px_leftover_dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{length_text}</text>" if px_leftover_length > px_length_text_length && px_leftover_width > px_leftover_dimension_font_size
+              svg += "<text class='leftover-dimension' x='#{px_leftover_dimension_offset}' y='#{-px_leftover_dimension_offset}' font-size='#{px_leftover_dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_leftover_dimension_offset} -#{px_leftover_dimension_offset})'>#{width_text}</text>" if px_leftover_length > px_leftover_dimension_font_size && px_leftover_width > px_width_text_length
             elsif is_1d
               svg += "<text class='leftover-dimension' x='#{px_leftover_length / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_leftover_dimension_font_size}' text-anchor='middle' dominant-baseline='hanging'>#{leftover_def.length.to_s.gsub(/~ /, '')}</text>"
             end
@@ -601,13 +616,126 @@ module Ladb::OpenCutList
       tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string("tab.cutlist.cuttingdiagram.list.cut#{(cut_def.depth == 0 ? '_trimming' : (cut_def.depth == 1 ? '_bounding' : (cut_def.depth == 2 ? '_internal_through' : '')))}")}</span></div>"
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-saw\"></i> #{CGI::escape_html(@spacing.to_l.to_s)}</div>"
       tt += "<div>depth = #{cut_def.depth}</div>"
+      tt += "<div>x = #{cut_def.x}</div>" if cut_def.vertical?
+      tt += "<div>y = #{cut_def.y}</div>" if cut_def.horizontal?
       tt
+    end
+
+    # -----
+
+    def _evaluate_item_text(part)
+
+      data = PackingData.new(
+
+        number: StringWrapper.new(part.number),
+        name: StringWrapper.new(part.name),
+        cutting_length: LengthWrapper.new(part.def.cutting_length),
+        cutting_width: LengthWrapper.new(part.def.cutting_width),
+        cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
+        edge_cutting_length: LengthWrapper.new(part.def.edge_cutting_length),
+        edge_cutting_width: LengthWrapper.new(part.def.edge_cutting_width),
+        bbox_length: LengthWrapper.new(part.def.size.length),
+        bbox_width: LengthWrapper.new(part.def.size.width),
+        bbox_thickness: LengthWrapper.new(part.def.size.thickness),
+        final_area: AreaWrapper.new(part.def.final_area),
+        material: MaterialWrapper.new(part.group.def.material, part.group.def),
+        description: StringWrapper.new(part.description),
+        url: StringWrapper.new(part.url),
+        tags: ArrayWrapper.new(part.tags),
+        edge_ymin: EdgeWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
+        edge_ymax: EdgeWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
+        edge_xmin: EdgeWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
+        edge_xmax: EdgeWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
+        face_zmin: VeneerWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
+        face_zmax: VeneerWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
+
+        component_definition: ComponentDefinitionWrapper.new(part.def.definition),
+
+      )
+
+      begin
+        text = eval(@items_formula, data.get_binding)
+        text = text.export if text.is_a?(Wrapper)
+        text = text.to_s if !text.is_a?(String) && text.respond_to?(:to_s)
+      rescue Exception => e
+        text = { :error => e.message.split(/cutlist_packing_worker[.]rb:\d+:/).last } # Remove path in exception message
+      end
+
+      text
     end
 
     # -----
 
     BinTypeDef = Struct.new(:id, :length, :width, :count, :type)
     ItemTypeDef = Struct.new(:part, :projection_def, :color)
+
+    # -----
+
+    class PackingData
+
+      def initialize(
+
+        number:,
+        name:,
+        cutting_length:,
+        cutting_width:,
+        cutting_thickness:,
+        edge_cutting_length:,
+        edge_cutting_width:,
+        bbox_length:,
+        bbox_width:,
+        bbox_thickness:,
+        final_area:,
+        material:,
+        description:,
+        url:,
+        tags:,
+        edge_ymin:,
+        edge_ymax:,
+        edge_xmin:,
+        edge_xmax:,
+        face_zmin:,
+        face_zmax:,
+
+        component_definition:
+
+      )
+
+        @number =  number
+        @name = name
+        @cutting_length = cutting_length
+        @cutting_width = cutting_width
+        @cutting_thickness = cutting_thickness
+        @edge_cutting_length = edge_cutting_length
+        @edge_cutting_width = edge_cutting_width
+        @bbox_length = bbox_length
+        @bbox_width = bbox_width
+        @bbox_thickness = bbox_thickness
+        @final_area = final_area
+        @material = material
+        @material_type = material.type
+        @material_name = material.name
+        @material_description = material.description
+        @material_url = material.url
+        @description = description
+        @url = url
+        @tags = tags
+        @edge_ymin = edge_ymin
+        @edge_ymax = edge_ymax
+        @edge_xmin = edge_xmin
+        @edge_xmax = edge_xmax
+        @face_zmin = face_zmin
+        @face_zmax = face_zmax
+
+        @component_definition = component_definition
+
+      end
+
+      def get_binding
+        binding
+      end
+
+    end
 
   end
 

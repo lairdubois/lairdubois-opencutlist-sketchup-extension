@@ -36,6 +36,8 @@ namespace Packy {
 
         virtual optimizationtools::Parameters& parameters() = 0;
 
+        virtual std::vector<json> solutions() = 0;
+
         /*
          * Read:
          */
@@ -115,7 +117,7 @@ namespace Packy {
 
     typedef std::shared_ptr<Optimizer> OptimizerPtr;
 
-    template<typename InstanceBuilder, typename OptimizeParameters, typename Output>
+    template<typename InstanceBuilder, typename Instance, typename OptimizeParameters, typename Output, typename Solution>
     class TypedOptimizer : public Optimizer {
 
     public:
@@ -129,6 +131,10 @@ namespace Packy {
 
         optimizationtools::Parameters& parameters() override {
             return parameters_;
+        };
+
+        std::vector<json> solutions() override {
+            return solutions_;
         };
 
         /*
@@ -182,6 +188,16 @@ namespace Packy {
                 parameters_.not_anytime_dichotomic_search_subproblem_queue_size = j["not_anytime_dichotomic_search_subproblem_queue_size"].template get<Counter>();
             }
 
+            if (parameters_.optimization_mode == OptimizationMode::Anytime) {
+                parameters_.new_solution_callback = [&](
+                        const packingsolver::Output<Instance, Solution>& output
+                ) {
+                    json j;
+                    write_best_solution(j, dynamic_cast<const Output&>(output));
+                    solutions_.push_back(j);
+                };
+            }
+
         }
 
         void read_instance(
@@ -207,28 +223,32 @@ namespace Packy {
         /** Parameters. */
         OptimizeParameters parameters_;
 
+        /** Solutions. */
+        std::vector<json> solutions_;
+
         /*
          * Output
          */
-        virtual json to_json(
+        virtual void write_best_solution(
+                json &j,
                 const Output& output
         ) {
-            const auto& best_solution = output.solution_pool.best();
-            json j = {
-                    {"time",                     output.time},
-                    {"number_of_bins",           best_solution.number_of_bins()},
-                    {"number_of_different_bins", best_solution.number_of_different_bins()},
-                    {"cost",                     best_solution.cost()},
-                    {"number_of_items",          best_solution.number_of_items()},
-                    {"profit",                   best_solution.profit()},
-                    {"efficiency",               1 - best_solution.full_waste_percentage()},
-            };
-            return std::move(j);
+
+            const auto& solution = output.solution_pool.best();
+
+            j["time"] = output.time;
+            j["number_of_bins"] = solution.number_of_bins();
+            j["number_of_different_bins"] = solution.number_of_different_bins();
+            j["cost"] = solution.cost();
+            j["number_of_items"] = solution.number_of_items();
+            j["profit"] = solution.profit();
+            j["efficiency"] = 1 - solution.full_waste_percentage();
+
         }
 
     };
 
-    class RectangleOptimizer : public TypedOptimizer<rectangle::InstanceBuilder, rectangle::OptimizeParameters, rectangle::Output> {
+    class RectangleOptimizer : public TypedOptimizer<rectangle::InstanceBuilder, rectangle::Instance, rectangle::OptimizeParameters, rectangle::Output, rectangle::Solution> {
 
     public:
 
@@ -276,12 +296,12 @@ namespace Packy {
             BinPos copies_min = j.value("copies_min", 0);
 
             if (fake_trimming_ > 0) {
-                width -= fake_trimming_ * 2;
-                height -= fake_trimming_ * 2;
+                if (width >= 0) width -= fake_trimming_ * 2;
+                if (height >= 0) height -= fake_trimming_ * 2;
             }
             if (fake_spacing_ > 0) {
-                width += fake_spacing_;
-                height += fake_spacing_;
+                if (width >= 0) width += fake_spacing_;
+                if (height >= 0) height += fake_spacing_;
             }
 
             BinTypeId bin_type_id = instance_builder_.add_bin_type(
@@ -313,10 +333,10 @@ namespace Packy {
             Length height = j.value("height", -1);
 
             if (fake_spacing_ > 0) {
-                x -= fake_spacing_ / 2;
-                y -= fake_spacing_ / 2;
-                width += fake_spacing_;
-                height += fake_spacing_;
+                if (x >= 0) x -= fake_spacing_ / 2;
+                if (y >= 0) y -= fake_spacing_ / 2;
+                if (width >= 0) width += fake_spacing_;
+                if (height >= 0) height += fake_spacing_;
             }
 
             instance_builder_.add_defect(
@@ -341,8 +361,8 @@ namespace Packy {
             bool oriented = j.value("oriented", false);
 
             if (fake_spacing_ > 0) {
-                width += fake_spacing_;
-                height += fake_spacing_;
+                if (width >= 0) width += fake_spacing_;
+                if (height >= 0) height += fake_spacing_;
             }
 
             instance_builder_.add_item_type(
@@ -364,18 +384,19 @@ namespace Packy {
             const rectangle::Instance instance = instance_builder_.build();
             const rectangle::Output output = rectangle::optimize(instance, parameters_);
 
-            return to_json(output);
+            json j;
+            write_best_solution(j, output);
+
+            return std::move(j);
         }
 
     protected:
 
-        Length fake_trimming_;
-        Length fake_spacing_;
-
-        json to_json(
+        void write_best_solution(
+                json& j,
                 const rectangle::Output& output
         ) override {
-            json j = TypedOptimizer::to_json(output);
+            TypedOptimizer::write_best_solution(j, output);
 
             using namespace rectangle;
 
@@ -425,12 +446,16 @@ namespace Packy {
 
             }
 
-            return j;
         }
+
+    private:
+
+        Length fake_trimming_ = 0;
+        Length fake_spacing_ = 0;
 
     };
 
-    class RectangleguillotineOptimizer : public TypedOptimizer<rectangleguillotine::InstanceBuilder, rectangleguillotine::OptimizeParameters, rectangleguillotine::Output> {
+    class RectangleguillotineOptimizer : public TypedOptimizer<rectangleguillotine::InstanceBuilder, rectangleguillotine::Instance, rectangleguillotine::OptimizeParameters, rectangleguillotine::Output, rectangleguillotine::Solution> {
 
     public:
 
@@ -615,15 +640,19 @@ namespace Packy {
             const rectangleguillotine::Instance instance = instance_builder_.build();
             const rectangleguillotine::Output output = rectangleguillotine::optimize(instance, parameters_);
 
-            return to_json(output);
+            json j;
+            write_best_solution(j, output);
+
+            return std::move(j);
         }
 
     protected:
 
-        json to_json(
+        void write_best_solution(
+                json &j,
                 const rectangleguillotine::Output& output
         ) override {
-            json j = TypedOptimizer::to_json(output);
+            TypedOptimizer::write_best_solution(j, output);
 
             using namespace rectangleguillotine;
 
@@ -766,12 +795,11 @@ namespace Packy {
 
             }
 
-            return j;
         }
 
     };
 
-    class OnedimensionalOptimizer : public TypedOptimizer<onedimensional::InstanceBuilder, onedimensional::OptimizeParameters, onedimensional::Output> {
+    class OnedimensionalOptimizer : public TypedOptimizer<onedimensional::InstanceBuilder, onedimensional::Instance, onedimensional::OptimizeParameters, onedimensional::Output, onedimensional::Solution> {
 
     public:
 
@@ -818,10 +846,10 @@ namespace Packy {
             BinPos copies_min = j.value("copies_min", 0);
 
             if (fake_trimming_ > 0) {
-                width -= fake_trimming_ * 2;
+                if (width >= 0) width -= fake_trimming_ * 2;
             }
             if (fake_spacing_ > 0) {
-                width += fake_spacing_;
+                if (width >= 0) width += fake_spacing_;
             }
 
             instance_builder_.add_bin_type(
@@ -843,7 +871,7 @@ namespace Packy {
             ItemPos copies = j.value("copies", 1);
 
             if (fake_spacing_ > 0) {
-                width += fake_spacing_;
+                if (width >= 0) width += fake_spacing_;
             }
 
             instance_builder_.add_item_type(
@@ -863,18 +891,19 @@ namespace Packy {
             const onedimensional::Instance instance = instance_builder_.build();
             const onedimensional::Output output = onedimensional::optimize(instance, parameters_);
 
-            return to_json(output);
+            json j;
+            write_best_solution(j, output);
+
+            return std::move(j);
         }
 
     protected:
 
-        Length fake_trimming_;
-        Length fake_spacing_;
-
-        json to_json(
+        void write_best_solution(
+                json& j,
                 const onedimensional::Output& output
         ) override {
-            json j = TypedOptimizer::to_json(output);
+            TypedOptimizer::write_best_solution(j, output);
 
             using namespace onedimensional;
 
@@ -939,12 +968,16 @@ namespace Packy {
 
             }
 
-            return j;
         }
+
+    private:
+
+        Length fake_trimming_ = 0;
+        Length fake_spacing_ = 0;
 
     };
 
-    class IrregularOptimizer : public TypedOptimizer<irregular::InstanceBuilder, irregular::OptimizeParameters, irregular::Output> {
+    class IrregularOptimizer : public TypedOptimizer<irregular::InstanceBuilder, irregular::Instance, irregular::OptimizeParameters, irregular::Output, irregular::Solution> {
 
     public:
 
@@ -1058,15 +1091,19 @@ namespace Packy {
             const irregular::Instance instance = instance_builder_.build();
             const irregular::Output output = irregular::optimize(instance, parameters_);
 
-            return to_json(output);
+            json j;
+            write_best_solution(j, output);
+
+            return std::move(j);
         }
 
     protected:
 
-        json to_json(
+        void write_best_solution(
+                json& j,
                 const irregular::Output& output
         ) override {
-            json j = TypedOptimizer::to_json(output);
+            TypedOptimizer::write_best_solution(j, output);
 
             using namespace irregular;
 
@@ -1106,7 +1143,6 @@ namespace Packy {
 
             }
 
-            return j;
         }
 
     private:

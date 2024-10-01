@@ -724,7 +724,7 @@
 
             var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig', {
                 isGroupSelection: isGroupSelection,
-                tab: forceDefaultTab || that.lastExportOptionsTab == null ? 'general' : that.lastExportOptionsTab
+                tab: forceDefaultTab || that.lastExportOptionsTab == null ? 'customize' : that.lastExportOptionsTab
             });
 
             // Fetch UI elements
@@ -4595,6 +4595,7 @@
                 var $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
+                var $textareaItemsFormula = $('#ladb_textarea_items_formula', $modal);
                 var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                 var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
                 var $selectColoredPart = $('#ladb_select_colored_part', $modal);
@@ -4625,6 +4626,7 @@
                     options.irregular_allow_mirroring = $selectIrregularAllowMirroring.val() === '1';
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
+                    options.items_formula = $textareaItemsFormula.val();
                     options.hide_part_list = $selectHidePartList.val() === '1';
                     options.part_drawing_type = $selectPartDrawingType.val();
                     options.colored_part = $selectColoredPart.val() === '1';
@@ -4643,6 +4645,7 @@
                     $selectIrregularAllowMirroring.selectpicker('val', options.irregular_allow_mirroring ? '1' : '0');
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
+                    $textareaItemsFormula.ladbTextinputCode('val', [ typeof options.items_formula == 'string' ? options.items_formula : '' ]);
                     $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                     $selectColoredPart.selectpicker('val', options.colored_part ? '1' : '0');
@@ -4650,6 +4653,20 @@
                     $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
                     $selectVerbisotyLevel.selectpicker('val', options.verbosity_level);
                     fnUpdateFieldsVisibility();
+                }
+                var fnConvertToVariableDefs = function (vars) {
+
+                    // Generate variableDefs for formula editor
+                    var variableDefs = [];
+                    for (var i = 0; i < vars.length; i++) {
+                        variableDefs.push({
+                            text: vars[i].name,
+                            displayText: i18next.t('tab.cutlist.export.' + vars[i].name),
+                            type: vars[i].type
+                        });
+                    }
+
+                    return variableDefs;
                 }
                 var fnUpdateFieldsVisibility = function () {
                     var isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
@@ -4715,6 +4732,45 @@
                 $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
                 $inputTrimming.ladbTextinputDimension();
+                $textareaItemsFormula.ladbTextinputCode({
+                    variableDefs: fnConvertToVariableDefs([
+                        { name: 'number', type: 'string' },
+                        { name: 'name', type: 'string' },
+                        { name: 'cutting_length', type: 'length' },
+                        { name: 'cutting_width', type: 'length' },
+                        { name: 'cutting_thickness', type: 'length' },
+                        { name: 'edge_cutting_length', type: 'length' },
+                        { name: 'edge_cutting_width', type: 'length' },
+                        { name: 'bbox_length', type: 'length' },
+                        { name: 'bbox_width', type: 'length' },
+                        { name: 'bbox_thickness', type: 'length' },
+                        { name: 'final_area', type: 'area' },
+                        { name: 'material', type: 'material' },
+                        { name: 'material_type', type: 'material-type' },
+                        { name: 'material_name', type: 'string' },
+                        { name: 'material_description', type: 'string' },
+                        { name: 'material_url', type: 'string' },
+                        { name: 'description', type: 'string' },
+                        { name: 'url', type: 'string' },
+                        { name: 'tags', type: 'array' },
+                        { name: 'edge_ymin', type: 'edge' },
+                        { name: 'edge_ymax', type: 'edge' },
+                        { name: 'edge_xmin', type: 'edge' },
+                        { name: 'edge_xmax', type: 'edge' },
+                        { name: 'face_zmax', type: 'veneer' },
+                        { name: 'face_zmin', type: 'veneer' },
+                        { name: 'component_definition', type: 'component_definition' },
+                    ]),
+                    snippetDefs: [
+                        { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
+                        { name: i18next.t('tab.cutlist.snippet.name'), value: '@name' },
+                        { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
+                        { name: '-' },
+                        { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
+                        { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
+                        { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
+                    ]
+                });
                 $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectColoredPart.selectpicker(SELECT_PICKER_OPTIONS);

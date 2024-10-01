@@ -53,6 +53,14 @@ module Ladb::OpenCutList
 
     def run
       return { :errors => [ 'default.error' ] } unless @cutlist
+      return { :errors => [ 'tab.cutlist.error.obsolete_cutlist' ] } if @cutlist.obsolete?
+
+      model = Sketchup.active_model
+      return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
+
+      # Retrieve parts
+      parts = @cutlist.get_real_parts(@part_ids)
+      return { :errors => [ 'tab.cutlist.error.no_part' ] } if parts.empty?
 
       response = {
           :errors => [],

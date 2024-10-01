@@ -998,6 +998,9 @@ tab:
       option_trimming: Marge
       option_trimming_1d_help: Marge à chaque extrémité de la barre ou bande à considérer comme chute.
       option_trimming_2d_help: Marge autour du panneau à considérer comme chute.
+      option_items_formula: Formule
+      option_items_formula_help: |
+        ...
       option_hide_part_list: Liste des pièces
       option_hide_part_list_1d_dimensional_0: Affichée pour chaque barre
       option_hide_part_list_1d_edge_0: Affichée pour chaque bande
@@ -1044,6 +1047,7 @@ tab:
         total_length: Σ Longueurs
         total_area: Σ Surfaces
         total_part_count: Σ Pièces
+        total_used: Total utilisé
         bin_1d_dimensional: Barre
         bin_1d_dimensional_type_0: Barre standard
         bin_1d_dimensional_type_1: Reste de barre

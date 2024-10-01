@@ -211,6 +211,14 @@ module Ladb::OpenCutList
 
     end
 
+    def vertical?
+      @orientation == 'vertical'
+    end
+
+    def horizontal?
+      @orientation == 'horizontal'
+    end
+
     # ---
 
     def create_cut
