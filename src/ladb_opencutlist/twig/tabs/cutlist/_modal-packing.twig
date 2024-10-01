@@ -16,6 +16,9 @@
         <label>{{ 'tab.cutlist.packing.option_problem_type'|i18next }}</label>
         <div>
             <div class="btn-group btn-group-justified" data-toggle="buttons">
+                <label class="btn btn-radio">
+                    <input type="radio" name="ladb_radios_problem_type" value="onedimensional"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i> {{ 'tab.cutlist.packing.option_problem_type_onedimensional'|i18next }}
+                </label>
                 <label class="btn btn-radio{% if group.material_is_1d %} disabled{% endif %}">
                     <input type="radio" name="ladb_radios_problem_type" value="rectangleguillotine"><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i> {{ 'tab.cutlist.packing.option_problem_type_rectangleguillotine'|i18next }}
                 </label>
@@ -24,9 +27,6 @@
                 </label>
                 <label class="btn btn-radio">
                     <input type="radio" name="ladb_radios_problem_type" value="irregular"><i class="ladb-opencutlist-icon-packing-irregular"></i> {{ 'tab.cutlist.packing.option_problem_type_irregular'|i18next }}
-                </label>
-                <label class="btn btn-radio">
-                    <input type="radio" name="ladb_radios_problem_type" value="onedimensional"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i> {{ 'tab.cutlist.packing.option_problem_type_onedimensional'|i18next }}
                 </label>
             </div>
         </div>

@@ -70,11 +70,11 @@ DLL_EXPORTS char* c_optimize_advance() {
 
     std::future_status status = optimize_future_.wait_for(std::chrono::milliseconds(0));
     if (status == std::future_status::ready) {
-//        if (optimize_cancelled_) {
-//            optimize_str_output_ = json{{"cancelled", true}}.dump();
-//        } else {
+        if (optimize_cancelled_) {
+            optimize_str_output_ = json{{"cancelled", true}}.dump();
+        } else {
             optimize_str_output_ = optimize_future_.get().dump();
-//        }
+        }
     } else {
         json j = json{{"running", true}};
         if (optimizer_ptr_ != nullptr && (*optimizer_ptr_).solutions().size() > last_send_solution_pos_) {
