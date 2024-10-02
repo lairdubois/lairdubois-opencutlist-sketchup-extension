@@ -25,6 +25,7 @@
     "spacing": { "metric": "20mm", "imperial": "1\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
     "items_formula": "",
+    "origin_corner": 0, /* ORIGIN_CORNER_TOP_LEFT */
     "hide_part_list": false,
     "part_drawing_type": 1, /* PART_DRAWING_TYPE_2D_TOP */
     "colored_part": true,

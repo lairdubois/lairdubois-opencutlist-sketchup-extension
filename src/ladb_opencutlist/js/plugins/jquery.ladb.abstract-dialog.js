@@ -126,6 +126,13 @@ LadbAbstractDialog.prototype.finishProgress = function () {
     }
 };
 
+LadbAbstractDialog.prototype.previewProgress = function (html) {
+    if (this.$progress) {
+        $('.ladb-progress-preview', this.$progress).remove();
+        $('.ladb-progress-box', this.$progress).append($('<div class="ladb-progress-preview">' + html + '</div>'));
+    }
+};
+
 // Modal /////
 
 LadbAbstractDialog.prototype.appendModal = function (id, twigFile, renderParams) {

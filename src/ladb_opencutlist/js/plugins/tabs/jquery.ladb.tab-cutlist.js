@@ -4596,6 +4596,7 @@
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
                 var $inputTrimming = $('#ladb_input_trimming', $modal);
                 var $textareaItemsFormula = $('#ladb_textarea_items_formula', $modal);
+                var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
                 var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                 var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
                 var $selectColoredPart = $('#ladb_select_colored_part', $modal);
@@ -4627,8 +4628,9 @@
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
                     options.items_formula = $textareaItemsFormula.val();
+                    options.origin_corner = parseInt($selectOriginCorner.val());
                     options.hide_part_list = $selectHidePartList.val() === '1';
-                    options.part_drawing_type = $selectPartDrawingType.val();
+                    options.part_drawing_type = parseInt($selectPartDrawingType.val());
                     options.colored_part = $selectColoredPart.val() === '1';
                     options.time_limit = parseInt($inputTimeLimit.val());
                     options.not_anytime_tree_search_queue_size = parseInt($inputNotAnytimeTreeSearchQueueSize.val());
@@ -4646,6 +4648,7 @@
                     $inputSpacing.val(options.spacing);
                     $inputTrimming.val(options.trimming);
                     $textareaItemsFormula.ladbTextinputCode('val', [ typeof options.items_formula == 'string' ? options.items_formula : '' ]);
+                    $selectOriginCorner.selectpicker('val', options.origin_corner);
                     $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                     $selectColoredPart.selectpicker('val', options.colored_part ? '1' : '0');
@@ -4771,6 +4774,7 @@
                         { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
                     ]
                 });
+                $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectColoredPart.selectpicker(SELECT_PICKER_OPTIONS);
@@ -4869,7 +4873,7 @@
                             // Compute label bins (a list of sheet or bar index attached to part id)
                             let binDefs = {};
                             let binIndex = 0;
-                            $.each(response.bins, function () {
+                            $.each(response.solution.bins, function () {
                                 for (var i = 0 ; i < this.count; i++) {
                                     binIndex++;
                                     $.each(this.parts, function (v) {
@@ -4970,6 +4974,17 @@
 
                                             // Advance progress feedback
                                             that.dialog.advanceProgress(1);
+
+                                            if (response.solution) {
+                                                var html = '<div>' + response.solution.bins[0].svg + '<div>#1</div></div>';
+                                                if (response.solution.bins.length > 1) {
+                                                    if (response.solution.bins.length > 2) {
+                                                        html += '<div>...</div>';
+                                                    }
+                                                    html += '<div>' + response.solution.bins[response.solution.bins.length - 1].svg + '<div>#' + response.solution.bins.length + '</div></div>';
+                                                }
+                                                that.dialog.previewProgress(html);
+                                            }
 
                                         } else if (response.cancelled) {
 

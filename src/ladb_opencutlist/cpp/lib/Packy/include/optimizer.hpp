@@ -188,7 +188,7 @@ namespace Packy {
                 parameters_.not_anytime_dichotomic_search_subproblem_queue_size = j["not_anytime_dichotomic_search_subproblem_queue_size"].template get<Counter>();
             }
 
-            if (parameters_.optimization_mode == OptimizationMode::Anytime) {
+//            if (parameters_.optimization_mode == OptimizationMode::Anytime) {
                 parameters_.new_solution_callback = [&](
                         const packingsolver::Output<Instance, Solution>& output
                 ) {
@@ -196,7 +196,7 @@ namespace Packy {
                     write_best_solution(j, dynamic_cast<const Output&>(output));
                     solutions_.push_back(j);
                 };
-            }
+//            }
 
         }
 
