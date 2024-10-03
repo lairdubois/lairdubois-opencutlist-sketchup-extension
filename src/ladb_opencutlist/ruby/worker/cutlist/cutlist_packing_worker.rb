@@ -474,7 +474,7 @@ module Ladb::OpenCutList
       px_bin_dimension_font_size = 16
       px_item_dimension_font_size = 12
       px_leftover_dimension_font_size = 12
-      px_item_number_font_size = 24
+      px_item_number_font_size_max = 24
       px_item_number_font_size_min = 8
 
       px_bin_dimension_offset = 10
@@ -563,11 +563,11 @@ module Ladb::OpenCutList
 
           px_item_rect_width = bounds.width.to_f
           px_item_rect_height = bounds.height.to_f
-          px_item_rect_x = _compute_x_with_origin_corner(@origin_corner, px_item_x + bounds.min.x.to_f, px_item_rect_width, px_bin_length)
-          px_item_rect_y = px_bin_width - _compute_y_with_origin_corner(@origin_corner, px_item_y + bounds.min.y.to_f, px_item_rect_height, px_bin_width)
+          px_item_rect_x = _compute_x_with_origin_corner(px_item_x + bounds.min.x.to_f, px_item_rect_width, px_bin_length)
+          px_item_rect_y = px_bin_width - _compute_y_with_origin_corner(px_item_y + bounds.min.y.to_f, px_item_rect_height, px_bin_width)
 
           svg += "<g class='item' transform='translate(#{px_item_rect_x} #{px_item_rect_y})' data-toggle='tooltip' data-html='true' title='#{_render_item_def_tooltip(item_def)}' data-part-id='#{part.id}'>"
-            svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" fill='#eee'" if running}/>" unless is_irregular
+            svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" fill='#eee' stroke='#555'" if running}/>" unless is_irregular
 
             unless @part_drawing_type == PART_DRAWING_TYPE_NONE || projection_def.nil?
               svg += "<g class='item-projection' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2})#{' scale(-1 1)' if item_def.mirror}  rotate(#{-item_def.angle}) translate(#{-px_part_length / 2} #{px_part_width / 2})'>"
@@ -585,7 +585,7 @@ module Ladb::OpenCutList
                 end
               end
 
-              svg += "<text class='item-number' x='0' y='0' font-size='#{[ px_item_number_font_size, [ px_item_width * 0.8 , 6 ].max ].min}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2})#{" rotate(#{-item_def.angle})" unless is_irregular}'>#{item_text}</text>"
+              svg += "<text class='item-number' x='0' y='0' font-size='#{[ [ px_item_number_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_item_number_font_size_min ].max}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
             end
 
           svg += "</g>"
@@ -596,8 +596,8 @@ module Ladb::OpenCutList
 
           px_leftover_length = _to_px(leftover_def.length)
           px_leftover_width = is_1d ? px_bin_width : _to_px(leftover_def.width)
-          px_leftover_x = _compute_x_with_origin_corner(@origin_corner, _to_px(leftover_def.x), px_leftover_length, px_bin_length)
-          px_leftover_y = px_bin_width - _compute_y_with_origin_corner(@origin_corner, _to_px(leftover_def.y), px_leftover_width, px_bin_width)
+          px_leftover_x = _compute_x_with_origin_corner(_to_px(leftover_def.x), px_leftover_length, px_bin_length)
+          px_leftover_y = px_bin_width - _compute_y_with_origin_corner(_to_px(leftover_def.y), px_leftover_width, px_bin_width)
 
           length_text = leftover_def.length.to_s.gsub(/~ /, '')
           width_text = leftover_def.width.to_s.gsub(/~ /, '')
@@ -630,8 +630,8 @@ module Ladb::OpenCutList
             px_cut_rect_width = px_cut_width
             px_cut_rect_height = px_cut_length
           end
-          px_cut_rect_x = _compute_x_with_origin_corner(@origin_corner, px_cut_x, px_cut_rect_width, px_bin_length)
-          px_cut_rect_y = _compute_y_with_origin_corner(@origin_corner, px_cut_y - px_cut_rect_height, px_cut_rect_height, px_bin_width)
+          px_cut_rect_x = _compute_x_with_origin_corner(px_cut_x, px_cut_rect_width, px_bin_length)
+          px_cut_rect_y = _compute_y_with_origin_corner(px_cut_y - px_cut_rect_height, px_cut_rect_height, px_bin_width)
 
           case cut_def.depth
           when 0
@@ -657,8 +657,9 @@ module Ladb::OpenCutList
       svg
     end
 
-    def _compute_x_with_origin_corner(origin_corner, x, x_size, x_translation)
-      case origin_corner
+    def _compute_x_with_origin_corner(x, x_size, x_translation)
+      return x if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+      case @origin_corner
       when ORIGIN_CORNER_TOP_RIGHT, ORIGIN_CORNER_BOTTOM_RIGHT
         x_translation - x - x_size
       else
@@ -666,8 +667,9 @@ module Ladb::OpenCutList
       end
     end
 
-    def _compute_y_with_origin_corner(origin_corner, y, y_size, y_translation)
-      case origin_corner
+    def _compute_y_with_origin_corner(y, y_size, y_translation)
+      return y if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+      case @origin_corner
       when ORIGIN_CORNER_TOP_LEFT, ORIGIN_CORNER_TOP_RIGHT
         y_translation - y - y_size
       else

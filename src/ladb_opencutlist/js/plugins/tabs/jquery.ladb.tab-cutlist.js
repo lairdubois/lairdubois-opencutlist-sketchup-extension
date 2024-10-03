@@ -4591,6 +4591,7 @@
                 var $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
                 var $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
                 var $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
+                var $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
                 var $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
                 var $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
                 var $inputSpacing = $('#ladb_input_spacing', $modal);
@@ -4674,8 +4675,12 @@
                 var fnUpdateFieldsVisibility = function () {
                     var isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
                     var isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
+                    if (isIrregular) $formGroupNotIrregular.hide(); else $formGroupNotIrregular.show();
                     if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
                     if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
+                    $('option[value=0]', $selectPartDrawingType).prop('disabled', isIrregular);
+                    if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);
+                    $selectPartDrawingType.selectpicker('refresh');
                 };
                 var fnValidProblemType = function (problemType) {
                     if (group.material_is_1d
