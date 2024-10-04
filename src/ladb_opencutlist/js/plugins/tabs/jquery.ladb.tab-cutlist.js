@@ -4743,6 +4743,8 @@
                 $textareaItemsFormula.ladbTextinputCode({
                     variableDefs: fnConvertToVariableDefs([
                         { name: 'number', type: 'string' },
+                        { name: 'path', type: 'array' },
+                        { name: 'instance_name', type: 'string' },
                         { name: 'name', type: 'string' },
                         { name: 'cutting_length', type: 'length' },
                         { name: 'cutting_width', type: 'length' },
@@ -4767,7 +4769,9 @@
                         { name: 'edge_xmax', type: 'edge' },
                         { name: 'face_zmax', type: 'veneer' },
                         { name: 'face_zmin', type: 'veneer' },
+                        { name: 'layer', type: 'string' },
                         { name: 'component_definition', type: 'component_definition' },
+                        { name: 'component_instance', type: 'component_instance' },
                     ]),
                     snippetDefs: [
                         { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },

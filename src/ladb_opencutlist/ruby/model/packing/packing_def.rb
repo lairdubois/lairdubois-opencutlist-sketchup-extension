@@ -151,11 +151,12 @@ module Ladb::OpenCutList
 
   class PackingItemDef
 
-    attr_reader :item_type_def, :x, :y, :angle, :mirror
+    attr_reader :item_type_def, :instance_info, :x, :y, :angle, :mirror
 
-    def initialize(item_type_def, x, y, angle, mirror)
+    def initialize(item_type_def, instance_info, x, y, angle, mirror)
 
       @item_type_def = item_type_def
+      @instance_info = instance_info
 
       @x = x
       @y = y

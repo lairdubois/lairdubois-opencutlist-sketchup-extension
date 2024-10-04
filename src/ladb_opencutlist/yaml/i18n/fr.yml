@@ -594,7 +594,7 @@ tab:
       options_customize: Personnalisation
       option_source: Source
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: Liste des pièces
       option_source_instances_list: Liste des instances
       option_col_sep: Séparateur
       option_col_sep_tab: Tabulation

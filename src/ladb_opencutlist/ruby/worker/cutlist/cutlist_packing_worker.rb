@@ -357,6 +357,15 @@ module Ladb::OpenCutList
 
       # Create PackingDef from solution
 
+      instance_info_by_item_type_def = {}
+      @item_type_defs.each do |item_type_def|
+        instance_infos = []
+        item_type_def.part.def.thickness_layer_count.times do
+          instance_infos += item_type_def.part.def.instance_infos.values
+        end
+        instance_info_by_item_type_def[item_type_def] = instance_infos
+      end
+
       packing_def = PackingDef.new(
         PackingOptionsDef.new(
           @problem_type,
@@ -378,8 +387,10 @@ module Ladb::OpenCutList
             raw_bin['copies'],
             raw_bin['efficiency'],
             raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
+              item_type_def = @item_type_defs[raw_item['item_type_id']]
               PackingItemDef.new(
-                @item_type_defs[raw_item['item_type_id']],
+                item_type_def,
+                instance_info_by_item_type_def[item_type_def].is_a?(Array) ? instance_info_by_item_type_def[item_type_def].shift : nil,
                 _from_packy(raw_item.fetch('x', 0)).to_l,
                 _from_packy(raw_item.fetch('y', 0)).to_l,
                 raw_item.fetch('angle', 0),
@@ -538,7 +549,7 @@ module Ladb::OpenCutList
           projection_def = item_type_def.projection_def
           part = item_type_def.part
 
-          item_text = _evaluate_item_text(part)
+          item_text = _evaluate_item_text(part, item_def.instance_info)
           item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" if item_text.is_a?(Hash)
 
           px_item_length = _to_px(item_type_def.length)
@@ -695,11 +706,13 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _evaluate_item_text(part)
+    def _evaluate_item_text(part, instance_info)
 
       data = PackingData.new(
 
         number: StringWrapper.new(part.number),
+        path: instance_info.nil? ? nil : PathWrapper.new(instance_info.named_path.split('.')),
+        instance_name: instance_info.nil? ? nil : StringWrapper.new(instance_info.entity.name),
         name: StringWrapper.new(part.name),
         cutting_length: LengthWrapper.new(part.def.cutting_length),
         cutting_width: LengthWrapper.new(part.def.cutting_width),
@@ -720,8 +733,10 @@ module Ladb::OpenCutList
         edge_xmax: EdgeWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
         face_zmin: VeneerWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
         face_zmax: VeneerWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
+        layer: instance_info.nil? ? nil : StringWrapper.new(instance_info.layer.name),
 
         component_definition: ComponentDefinitionWrapper.new(part.def.definition),
+        component_instance: instance_info.nil? ? nil : ComponentInstanceWrapper.new(instance_info.entity),
 
       )
 
@@ -748,6 +763,8 @@ module Ladb::OpenCutList
       def initialize(
 
         number:,
+        path:,
+        instance_name:,
         name:,
         cutting_length:,
         cutting_width:,
@@ -768,12 +785,17 @@ module Ladb::OpenCutList
         edge_xmax:,
         face_zmin:,
         face_zmax:,
+        layer:,
 
-        component_definition:
+        component_definition:,
+        component_instance:
 
-      )
+
+        )
 
         @number =  number
+        @path = path
+        @instance_name = instance_name
         @name = name
         @cutting_length = cutting_length
         @cutting_width = cutting_width
@@ -798,8 +820,10 @@ module Ladb::OpenCutList
         @edge_xmax = edge_xmax
         @face_zmin = face_zmin
         @face_zmax = face_zmax
+        @layer = layer
 
         @component_definition = component_definition
+        @component_instance = component_instance
 
       end
 
