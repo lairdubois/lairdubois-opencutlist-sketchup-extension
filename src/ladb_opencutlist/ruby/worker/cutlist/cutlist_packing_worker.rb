@@ -508,7 +508,7 @@ module Ladb::OpenCutList
       is_1d = @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
       is_2d = !is_1d
       is_irregular = @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-      is_cut_lg = px_spacing >= 3
+      is_cut_lg = px_spacing >= 3 && !running
 
       vb_offset_x = (px_max_bin_length - px_bin_length) / 2
       vb_x = (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_x) * -1
@@ -517,25 +517,25 @@ module Ladb::OpenCutList
       vb_height = px_bin_width + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size) * 2
 
       svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}' style='max-height: #{vb_height}px' class='problem-type-#{@problem_type}'>"
-        svg += "<defs>"
-          svg += "<pattern id='pattern_bin_bg' width='10' height='10' patternUnits='userSpaceOnUse'>"
-            svg += "<rect x='0' y='0' width='10' height='10' fill='white' />"
-            svg += "<path d='M0,10L10,0' style='fill:none;stroke:#ddd;stroke-width:0.5px;'/>"
-          svg += "</pattern>"
-          if is_cut_lg
-            svg += "<pattern id='pattern_cut_bg' width='5' height='5' patternUnits='userSpaceOnUse'>"
-              svg += "<rect x='0' y='0' width='5' height='5' fill='white'/>"
-              svg += "<path d='M0,5L5,0' style='fill:none;stroke:#000;stroke-width:0.5px;'/>"
-            svg += "</pattern>"
-          end
-        svg += "</defs>"
         unless running
+          svg += "<defs>"
+            svg += "<pattern id='pattern_bin_bg' width='10' height='10' patternUnits='userSpaceOnUse'>"
+              svg += "<rect x='0' y='0' width='10' height='10' fill='white' />"
+              svg += "<path d='M0,10L10,0' style='fill:none;stroke:#ddd;stroke-width:0.5px;'/>"
+            svg += "</pattern>"
+            if is_cut_lg
+              svg += "<pattern id='pattern_cut_bg' width='5' height='5' patternUnits='userSpaceOnUse'>"
+                svg += "<rect x='0' y='0' width='5' height='5' fill='white'/>"
+                svg += "<path d='M0,5L5,0' style='fill:none;stroke:#000;stroke-width:0.5px;'/>"
+              svg += "</pattern>"
+            end
+          svg += "</defs>"
           svg += "<text class='bin-dimension' x='#{px_bin_length / 2}' y='#{-(px_bin_outline_width + px_bin_dimension_offset)}' font-size='#{px_bin_dimension_font_size}' text-anchor='middle' dominant-baseline='alphabetic'>#{bin_def.bin_type_def.length.to_l}</text>"
           svg += "<text class='bin-dimension' x='#{-(px_bin_outline_width + px_bin_dimension_offset)}' y='#{px_bin_width / 2}' font-size='#{px_bin_dimension_font_size}' text-anchor='middle' dominant-baseline='alphabetic' transform='rotate(-90 -#{px_bin_outline_width + px_bin_dimension_offset},#{px_bin_width / 2})'>#{bin_def.bin_type_def.width.to_l}</text>"
         end
         svg += "<g class='bin'>"
           svg += "<rect class='bin-outer' x='-1' y='-1' width='#{px_bin_length + 2}' height='#{px_bin_width + 2}' />"
-          svg += "<rect class='bin-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' fill='url(#pattern_bin_bg)'/>"
+          svg += "<rect class='bin-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{running ? '#fff' : 'url(#pattern_bin_bg)'}'/>"
           if is_1d
             svg += "<line class='bin-trimming' x1='#{px_trimming}' y1='0' x2='#{px_trimming}' y2='#{px_bin_width}' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
             svg += "<line class='bin-trimming' x1='#{px_bin_length - px_trimming}' y1='0' x2='#{px_bin_length - px_trimming}' y2='#{px_bin_width}' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
@@ -548,6 +548,7 @@ module Ladb::OpenCutList
           item_type_def = item_def.item_type_def
           projection_def = item_type_def.projection_def
           part = item_type_def.part
+          colored_part = @colored_part && !running
 
           item_text = _evaluate_item_text(part, item_def.instance_info)
           item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" if item_text.is_a?(Hash)
@@ -582,7 +583,7 @@ module Ladb::OpenCutList
 
             unless @part_drawing_type == PART_DRAWING_TYPE_NONE || projection_def.nil?
               svg += "<g class='item-projection' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2})#{' scale(-1 1)' if item_def.mirror}  rotate(#{-item_def.angle}) translate(#{-px_part_length / 2} #{px_part_width / 2})'>"
-                svg += "<path stroke='#{@colored_part && !is_irregular ? ColorUtils.color_to_hex(ColorUtils.color_darken(item_type_def.color, 0.4)) : '#000'}' fill='#{@colored_part ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
+                svg += "<path stroke='#{colored_part && !is_irregular ? ColorUtils.color_to_hex(ColorUtils.color_darken(item_type_def.color, 0.4)) : '#000'}' fill='#{colored_part ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
               svg += '</g>'
             end
 

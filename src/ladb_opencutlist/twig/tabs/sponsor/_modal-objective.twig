@@ -15,6 +15,9 @@
     {% if objectiveImage %}
         <p class="text-center"><img src="../img/{{ objectiveImage }}" style="width: 60%;"></p>
     {% endif %}
+    {% if objectiveVideoId %}
+        <p class="text-center"><iframe width="560" height="315" src="https://www.youtube.com/embed/{{ objectiveVideoId }}?autoplay=1&cc_load_policy=1" frameborder="0" allowfullscreen></iframe></p>
+    {% endif %}
     <p>{{ 'tab.sponsor.objective_crowdfunding'|i18next }}</p>
     {% include 'tabs/sponsor/_widget-objective.twig' with { 'hideBtnInfo':true } %}
     <p>{{ 'tab.sponsor.objective_thanks'|i18next }}</p>
