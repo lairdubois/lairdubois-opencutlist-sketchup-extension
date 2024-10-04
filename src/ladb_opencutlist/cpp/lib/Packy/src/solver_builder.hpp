@@ -1,13 +1,13 @@
 #pragma once
 
-#include "optimizer.hpp"
+#include "solver.hpp"
 
 using namespace packingsolver;
 using namespace nlohmann;
 
 namespace Packy {
 
-    class OptimizerBuilder {
+    class SolverBuilder {
 
     public:
 
@@ -15,23 +15,23 @@ namespace Packy {
          * Build:
          */
 
-        OptimizerPtr build(
+        SolverPtr build(
                 const std::string& filepath
         ) {
 
-            std::ifstream file(filepath);
-            if (!file.good()) {
+            std::ifstream ifs(filepath);
+            if (!ifs.good()) {
                 throw std::runtime_error("Unable to open file path \"" + filepath + "\".");
             }
 
-            return build(file);
+            return build(ifs);
         }
 
-        OptimizerPtr build(
+        SolverPtr build(
                 std::istream& is
         ) {
 
-            nlohmann::json j;
+            json j;
             is >> j;
 
             if (j.contains("problem_type")) {
@@ -41,30 +41,30 @@ namespace Packy {
                 ss >> problem_type;
 
                 if (problem_type == ProblemType::Rectangle) {
-                    optimizer_ptr_ = std::make_shared<RectangleOptimizer>();
+                    solver_ptr_ = std::make_shared<RectangleSolver>();
                 } else if (problem_type == ProblemType::RectangleGuillotine) {
-                    optimizer_ptr_ = std::make_shared<RectangleguillotineOptimizer>();
+                    solver_ptr_ = std::make_shared<RectangleguillotineSolver>();
                 } else if (problem_type == ProblemType::OneDimensional) {
-                    optimizer_ptr_ = std::make_shared<OnedimensionalOptimizer>();
+                    solver_ptr_ = std::make_shared<OnedimensionalSolver>();
                 } else if (problem_type == ProblemType::Irregular) {
-                    optimizer_ptr_ = std::make_shared<IrregularOptimizer>();
+                    solver_ptr_ = std::make_shared<IrregularSolver>();
                 } else {
                     throw std::runtime_error("Unavailable problem type \"" + ss.str() + "\".");
                 }
 
-                (*optimizer_ptr_).read(j);
+                (*solver_ptr_).read(j);
 
             } else {
                 throw std::invalid_argument("Missing \"problem_type\" parameter.");
             }
 
-            return optimizer_ptr_;
+            return solver_ptr_;
         }
 
     private:
 
         /** Optimizer. */
-        OptimizerPtr optimizer_ptr_;
+        SolverPtr solver_ptr_;
 
     };
 

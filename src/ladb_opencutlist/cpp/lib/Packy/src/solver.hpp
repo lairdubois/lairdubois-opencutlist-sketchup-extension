@@ -23,12 +23,12 @@ using namespace nlohmann;
 
 namespace Packy {
 
-    class Optimizer {
+    class Solver {
 
     public:
 
         /** Destructor. */
-        virtual ~Optimizer() = default;
+        virtual ~Solver() = default;
 
         /*
          * Getters
@@ -115,15 +115,15 @@ namespace Packy {
 
     };
 
-    typedef std::shared_ptr<Optimizer> OptimizerPtr;
+    typedef std::shared_ptr<Solver> SolverPtr;
 
     template<typename InstanceBuilder, typename Instance, typename OptimizeParameters, typename Output, typename Solution>
-    class TypedOptimizer : public Optimizer {
+    class TypedSolver : public Solver {
 
     public:
 
         /** Constructor. */
-        TypedOptimizer() = default;
+        TypedSolver() = default;
 
         /*
          * Getters
@@ -188,15 +188,13 @@ namespace Packy {
                 parameters_.not_anytime_dichotomic_search_subproblem_queue_size = j["not_anytime_dichotomic_search_subproblem_queue_size"].template get<Counter>();
             }
 
-//            if (parameters_.optimization_mode == OptimizationMode::Anytime) {
-                parameters_.new_solution_callback = [&](
-                        const packingsolver::Output<Instance, Solution>& output
-                ) {
-                    json j;
-                    write_best_solution(j, dynamic_cast<const Output&>(output));
-                    solutions_.push_back(j);
-                };
-//            }
+            parameters_.new_solution_callback = [&](
+                    const packingsolver::Output<Instance, Solution>& output
+            ) {
+                json j;
+                write_best_solution(j, dynamic_cast<const Output&>(output));
+                solutions_.push_back(j);
+            };
 
         }
 
@@ -211,7 +209,7 @@ namespace Packy {
                 instance_builder_.set_objective(objective);
             }
 
-            Optimizer::read_instance(j);
+            Solver::read_instance(j);
 
         }
 
@@ -248,7 +246,7 @@ namespace Packy {
 
     };
 
-    class RectangleOptimizer : public TypedOptimizer<rectangle::InstanceBuilder, rectangle::Instance, rectangle::OptimizeParameters, rectangle::Output, rectangle::Solution> {
+    class RectangleSolver : public TypedSolver<rectangle::InstanceBuilder, rectangle::Instance, rectangle::OptimizeParameters, rectangle::Output, rectangle::Solution> {
 
     public:
 
@@ -259,7 +257,7 @@ namespace Packy {
         void read_parameters(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_parameters(j);
+            TypedSolver::read_parameters(j);
 
             if (j.contains("sequential_value_correction_subproblem_queue_size")) {
                 parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].template get<NodeId>();
@@ -273,7 +271,7 @@ namespace Packy {
         void read_instance_parameters(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_instance_parameters(j);
+            TypedSolver::read_instance_parameters(j);
 
             if (j.contains("fake_trimming")) {
                 fake_trimming_ = j["fake_trimming"].template get<Length>();
@@ -287,7 +285,7 @@ namespace Packy {
         void read_bin_type(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_bin_type(j);
+            TypedSolver::read_bin_type(j);
 
             Length width = j.value("width", -1);
             Length height = j.value("height", -1);
@@ -352,7 +350,7 @@ namespace Packy {
         void read_item_type(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_item_type(j);
+            TypedSolver::read_item_type(j);
 
             Length width = j.value("width", -1);
             Length height = j.value("height", -1);
@@ -396,7 +394,7 @@ namespace Packy {
                 json& j,
                 const rectangle::Output& output
         ) override {
-            TypedOptimizer::write_best_solution(j, output);
+            TypedSolver::write_best_solution(j, output);
 
             using namespace rectangle;
 
@@ -455,7 +453,7 @@ namespace Packy {
 
     };
 
-    class RectangleguillotineOptimizer : public TypedOptimizer<rectangleguillotine::InstanceBuilder, rectangleguillotine::Instance, rectangleguillotine::OptimizeParameters, rectangleguillotine::Output, rectangleguillotine::Solution> {
+    class RectangleguillotineSolver : public TypedSolver<rectangleguillotine::InstanceBuilder, rectangleguillotine::Instance, rectangleguillotine::OptimizeParameters, rectangleguillotine::Output, rectangleguillotine::Solution> {
 
     public:
 
@@ -508,7 +506,7 @@ namespace Packy {
         void read_bin_type(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_bin_type(j);
+            TypedSolver::read_bin_type(j);
 
             using namespace rectangleguillotine;
 
@@ -613,7 +611,7 @@ namespace Packy {
         void read_item_type(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_item_type(j);
+            TypedSolver::read_item_type(j);
 
             Length width = j.value("width", -1);
             Length height = j.value("height", -1);
@@ -652,7 +650,7 @@ namespace Packy {
                 json &j,
                 const rectangleguillotine::Output& output
         ) override {
-            TypedOptimizer::write_best_solution(j, output);
+            TypedSolver::write_best_solution(j, output);
 
             using namespace rectangleguillotine;
 
@@ -799,7 +797,7 @@ namespace Packy {
 
     };
 
-    class OnedimensionalOptimizer : public TypedOptimizer<onedimensional::InstanceBuilder, onedimensional::Instance, onedimensional::OptimizeParameters, onedimensional::Output, onedimensional::Solution> {
+    class OnedimensionalSolver : public TypedSolver<onedimensional::InstanceBuilder, onedimensional::Instance, onedimensional::OptimizeParameters, onedimensional::Output, onedimensional::Solution> {
 
     public:
 
@@ -810,7 +808,7 @@ namespace Packy {
         void read_parameters(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_parameters(j);
+            TypedSolver::read_parameters(j);
 
             if (j.contains("sequential_value_correction_subproblem_queue_size")) {
                 parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].template get<NodeId>();
@@ -824,7 +822,7 @@ namespace Packy {
         void read_instance_parameters(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_instance_parameters(j);
+            TypedSolver::read_instance_parameters(j);
 
             if (j.contains("fake_trimming")) {
                 fake_trimming_ = j["fake_trimming"].template get<Length>();
@@ -838,7 +836,7 @@ namespace Packy {
         void read_bin_type(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_bin_type(j);
+            TypedSolver::read_bin_type(j);
 
             Length width = j.value("width", -1);
             Profit cost = j.value("cost", -1);
@@ -864,7 +862,7 @@ namespace Packy {
         void read_item_type(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_item_type(j);
+            TypedSolver::read_item_type(j);
 
             Length width = j.value("width", -1);
             Profit profit = j.value("profit", -1);
@@ -903,7 +901,7 @@ namespace Packy {
                 json& j,
                 const onedimensional::Output& output
         ) override {
-            TypedOptimizer::write_best_solution(j, output);
+            TypedSolver::write_best_solution(j, output);
 
             using namespace onedimensional;
 
@@ -977,7 +975,7 @@ namespace Packy {
 
     };
 
-    class IrregularOptimizer : public TypedOptimizer<irregular::InstanceBuilder, irregular::Instance, irregular::OptimizeParameters, irregular::Output, irregular::Solution> {
+    class IrregularSolver : public TypedSolver<irregular::InstanceBuilder, irregular::Instance, irregular::OptimizeParameters, irregular::Output, irregular::Solution> {
 
     public:
 
@@ -988,7 +986,7 @@ namespace Packy {
         void read_parameters(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_parameters(j);
+            TypedSolver::read_parameters(j);
 
             if (j.contains("sequential_value_correction_subproblem_queue_size")) {
                 parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].template get<NodeId>();
@@ -1002,7 +1000,7 @@ namespace Packy {
         void read_instance_parameters(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_instance_parameters(j);
+            TypedSolver::read_instance_parameters(j);
 
             if (j.contains("item_item_minimum_spacing")) {
                 instance_builder_.set_item_item_minimum_spacing(j["item_item_minimum_spacing"].template get<irregular::LengthDbl>());
@@ -1016,7 +1014,7 @@ namespace Packy {
         void read_bin_type(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_bin_type(j);
+            TypedSolver::read_bin_type(j);
 
             using namespace irregular;
 
@@ -1037,7 +1035,7 @@ namespace Packy {
         void read_item_type(
                 basic_json<>& j
         ) override {
-            TypedOptimizer::read_item_type(j);
+            TypedSolver::read_item_type(j);
 
             using namespace irregular;
 
@@ -1103,7 +1101,7 @@ namespace Packy {
                 json& j,
                 const irregular::Output& output
         ) override {
-            TypedOptimizer::write_best_solution(j, output);
+            TypedSolver::write_best_solution(j, output);
 
             using namespace irregular;
 

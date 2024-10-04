@@ -17,8 +17,8 @@ endif()
 # Library headers
 set(LIBRARY_HEADERS
         include/packy.hpp
-        include/optimizer.hpp
-        include/optimizer_builder.hpp
+        src/solver.hpp
+        src/solver_builder.hpp
 )
 source_group("Headers" FILES ${LIBRARY_HEADERS})
 

@@ -2,7 +2,7 @@
 #include <future>
 
 #include "packy.hpp"
-#include "optimizer_builder.hpp"
+#include "solver_builder.hpp"
 
 using namespace Packy;
 using namespace nlohmann;
@@ -15,8 +15,8 @@ int main() {
 
 //  try {
 
-    OptimizerBuilder optimizer_builder;
-    Optimizer& optimizer = (*optimizer_builder.build(std::string("input.json")));
+    SolverBuilder optimizer_builder;
+    Solver& optimizer = (*optimizer_builder.build(std::string("input.json")));
 
     json j_ouput = optimizer.optimize();
 
