@@ -4,6 +4,7 @@
     {% for tabDef in tabDefs if tabDef.bar == 'leftbar' %}
         <a id="ladb_tab_btn_{{ tabDef.name }}"{% if tabDef.classes %} class="{{ tabDef.classes }}"{% endif %} href="#"><i class="{{ tabDef.icon }}"></i><div>{{ ('tab.'~tabDef.name~'.label')|i18next }}</div></a>
     {% endfor %}
+    <a id="ladb_tab_btn_outliner" class="ladb-sponsored" href="#"><i class="ladb-opencutlist-icon-outliner"></i><div>{{ 'tab.outliner.label'|i18next }}</div></a>
     <div id="ladb_leftbar_bottom" class="ladb-leftbar-bottom" style="display: none;">
         <a href="#" data-help-page=""><i class="ladb-opencutlist-icon-help"></i><div>{{ 'core.leftbar.more_docs'|i18next }}</div></a>
         <div id="ladb_leftbar_btn_more" class="ladb-leftbar-subbar ladb-leftbar-subbar-{% if capabilities.language == 'fr' %}8{% else %}6{% endif %}">

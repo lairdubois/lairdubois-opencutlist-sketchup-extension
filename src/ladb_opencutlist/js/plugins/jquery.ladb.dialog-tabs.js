@@ -53,13 +53,6 @@
                 sponsorAd: true
             },
             {
-                name: 'outliner',
-                bar: 'leftbar',
-                icon: 'ladb-opencutlist-icon-outliner',
-                classes: 'ladb-sponsored',
-                sponsorAd: false
-            },
-            {
                 name: 'importer',
                 bar: 'leftbar',
                 icon: 'ladb-opencutlist-icon-import',
@@ -599,6 +592,16 @@
         $('a[data-ladb-tab-name]', this.$element).on('click', function() {
             var tabName = $(this).data('ladb-tab-name');
             that.selectTab(tabName);
+        });
+        $('#ladb_tab_btn_outliner', this.$element).on('click', function() {
+
+            // Show Objective modal
+            that.executeCommandOnTab('sponsor', 'show_objective_modal', {
+                objectiveStrippedName: 'outliner',
+                objectiveIcon: 'outliner',
+                objectiveVideoId: '7iXH7ZBH27k',
+            }, null, true);
+
         });
 
         // Bind dialog maximized events

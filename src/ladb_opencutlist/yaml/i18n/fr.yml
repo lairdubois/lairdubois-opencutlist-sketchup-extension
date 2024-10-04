@@ -1480,7 +1480,8 @@ tab:
     objective_title:
       default: Objectifs
       cuttingdiagram_export: Financement des exports de calepinage
-      packing: Financement des du calepinage Imbriqué
+      outliner: Financement de le fonction Structure
+      packing: Financement du Calepinage Imbriqué
     objective_details:
       default: |
         L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour !
@@ -1488,12 +1489,14 @@ tab:
         Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
         Pour élargir encore les possibilités, nous souhaitons permettre d'exporter les diagrammes de calepinage au format **SVG** et **DXF**.
         En nous fournissant les moyens de travailler sur ces exports, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
-      layout: |
-        L'objectif de ce module est de vous permettre d'imprimer facilement un aperçu de votre projet en **vue éclatée** avec identification des pièces par leur numéro généré dans la fiche de débit.
+      outliner: |
+        Un modèle peut être assez complexe et naviguer dans sa structure avec le panneau Structure natif de SketchUp n'est pas toujours très pratique.
+        Dans SketchUp, vous pouvez appliquer du matériel et des balises sur les instances, une description, une url et des badges sur les définitions, mais ils ne sont pas affichés dans la structure.
+        La vidéo vous montrera comment nous aimerions améliorer ça dans le menu Structure, accessible directement depuis OpenCutList.
       packing: |
         Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
-        Pour élargir encore les possibilités, nous souhaitons implémenter un algorithme d'imbrication pour optimiser les pièces ayant de forme quelconque.
-        En nous fournissant les moyens de travailler sur ces exports, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
+        Pour élargir encore les possibilités, nous souhaitons implémenter un **algorithme d'imbrication** pour optimiser la découpe des pièces de forme quelconque.
+        En nous fournissant les moyens de travailler sur cette fonctionnalité, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
     objective_crowdfunding: |
       Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
     objective_thanks: |
