@@ -46,17 +46,18 @@
                 icon: 'ladb-opencutlist-icon-materials',
                 sponsorAd: false
             },
-            // {
-            //     name: 'outliner',
-            //     bar: 'leftbar',
-            //     icon: 'ladb-opencutlist-icon-outliner',
-            //     sponsorAd: false
-            // },
             {
                 name: 'cutlist',
                 bar: 'leftbar',
                 icon: 'ladb-opencutlist-icon-cutlist',
                 sponsorAd: true
+            },
+            {
+                name: 'outliner',
+                bar: 'leftbar',
+                icon: 'ladb-opencutlist-icon-outliner',
+                classes: 'ladb-sponsored',
+                sponsorAd: false
             },
             {
                 name: 'importer',

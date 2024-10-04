@@ -1480,6 +1480,7 @@ tab:
     objective_title:
       default: Objectifs
       cuttingdiagram_export: Financement des exports de calepinage
+      packing: Financement des du calepinage Imbriqué
     objective_details:
       default: |
         L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour !
@@ -1489,6 +1490,10 @@ tab:
         En nous fournissant les moyens de travailler sur ces exports, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
       layout: |
         L'objectif de ce module est de vous permettre d'imprimer facilement un aperçu de votre projet en **vue éclatée** avec identification des pièces par leur numéro généré dans la fiche de débit.
+      packing: |
+        Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
+        Pour élargir encore les possibilités, nous souhaitons implémenter un algorithme d'imbrication pour optimiser les pièces ayant de forme quelconque.
+        En nous fournissant les moyens de travailler sur ces exports, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
     objective_crowdfunding: |
       Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
     objective_thanks: |

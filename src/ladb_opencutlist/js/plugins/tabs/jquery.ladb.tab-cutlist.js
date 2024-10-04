@@ -594,6 +594,16 @@
                     var groupId = $group.data('group-id');
                     that.cuttingdiagram2dGroup(groupId, true);
                 });
+                $('button.ladb-btn-group-packing', that.$page).on('click', function () {
+
+                    // Show Objective modal
+                    that.dialog.executeCommandOnTab('sponsor', 'show_objective_modal', {
+                        objectiveStrippedName: 'packing',
+                        objectiveIcon: 'packing-irregular',
+                        objectiveImage: 'sponsor-objective-packing.png',
+                    }, null, true);
+
+                });
                 $('button.ladb-btn-group-labels', that.$page).on('click', function () {
                     $(this).blur();
                     var $group = $(this).parents('.ladb-cutlist-group');

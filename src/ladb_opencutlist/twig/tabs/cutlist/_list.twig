@@ -232,9 +232,11 @@
                 <div class="btn-group pull-right">
                     {% if group.material_type == 2 or group.material_type == 6 %}    {# 2 = TYPE_SHEET_GOOD, 6 = TYPE_VENEER #}
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-packing btn-sponsored"><i class="ladb-opencutlist-icon-packing-irregular"></i></button>
                     {% endif %}
                     {% if group.material_type == 3 or group.material_type == 4 %}    {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram1d"><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-packing btn-sponsored"><i class="ladb-opencutlist-icon-packing-irregular"></i></button>
                     {% endif %}
                     {% if group.material_type > 0 and group.material_type != 5 %}    {# 5 = TYPE_HARDWARE #}
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-labels" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.group_labels'|i18next }}..."><i class="ladb-opencutlist-icon-labels" style="font-size: 14px;"></i></button>

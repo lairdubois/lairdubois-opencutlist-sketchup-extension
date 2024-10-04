@@ -43,6 +43,21 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-qr-code:before {
+  content: "\e9b1";
+}
+.ladb-opencutlist-icon-align-left:before {
+  content: "\e98f";
+}
+.ladb-opencutlist-icon-align-center:before {
+  content: "\e990";
+}
+.ladb-opencutlist-icon-align-right:before {
+  content: "\e991";
+}
+.ladb-opencutlist-icon-target:before {
+  content: "\e9b0";
+}
 .ladb-opencutlist-icon-raw-estimated-0:before {
   content: "\e9ab";
 }
@@ -382,15 +397,6 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-material-type-5:before {
   content: "\e950";
 }
-.ladb-opencutlist-icon-align-left:before {
-  content: "\e98f";
-}
-.ladb-opencutlist-icon-align-center:before {
-  content: "\e990";
-}
-.ladb-opencutlist-icon-align-right:before {
-  content: "\e991";
-}
 .ladb-opencutlist-icon-zzz:before {
   content: "\e952";
 }
@@ -408,6 +414,18 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-cuttingdiagram2d-selection:before {
   content: "\e957";
+}
+.ladb-opencutlist-icon-packing-rectangle:before {
+  content: "\e9b2";
+}
+.ladb-opencutlist-icon-packing-rectangle-selection:before {
+  content: "\e9b3";
+}
+.ladb-opencutlist-icon-packing-irregular:before {
+  content: "\e9ad";
+}
+.ladb-opencutlist-icon-packing-irregular-selection:before {
+  content: "\e9ae";
 }
 .ladb-opencutlist-icon-asterisk:before {
   content: "\e958";
@@ -484,8 +502,11 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-dimensions-help:before {
   content: "\e96a";
 }
-.ladb-opencutlist-icon-tag:before {
+.ladb-opencutlist-icon-layer:before {
   content: "\e96b";
+}
+.ladb-opencutlist-icon-tag:before {
+  content: "\e9af";
 }
 .ladb-opencutlist-icon-minus:before {
   content: "\e96c";
