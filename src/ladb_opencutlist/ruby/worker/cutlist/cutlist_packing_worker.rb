@@ -372,7 +372,9 @@ module Ladb::OpenCutList
           @spacing,
           @trimming,
           @hide_part_list,
-          @part_drawing_type
+          @part_drawing_type,
+          @colored_part,
+          @origin_corner
         ),
         PackingSummaryDef.new(
           solution['time'],
