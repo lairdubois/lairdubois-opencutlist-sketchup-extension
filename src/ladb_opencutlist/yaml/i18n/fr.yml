@@ -575,7 +575,7 @@ tab:
     export:
       title: Exportation
       info_0: |
-        Cette fonctionnalité vous permet d'exporter votre *fiche de débit* sous forme d'une *liste de pièces* dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+        Cette fonctionnalité vous permet d'exporter les données de la *fiche de débit* vers le presse papier ou dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
         Réordonnez, Masquez, Ajoutez, Retirez ou Sélectionnez une colonne dans la liste pour personnaliser son **titre** et la **formule** générant la valeur affichée pour chaque ligne exportée.
       add_column: Ajouter une colonne

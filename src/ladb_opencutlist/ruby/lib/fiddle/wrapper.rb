@@ -48,10 +48,10 @@ module Ladb::OpenCutList::Fiddle
 
         case Sketchup.platform
         when :platform_osx
-          lib_dir = File.join(Ladb::OpenCutList::PLUGIN_DIR,'bin', 'osx', 'lib')
+          lib_dir = File.join(Ladb::OpenCutList::PLUGIN_DIR, 'bin', 'osx', 'lib')
           lib_file = "lib#{_lib_name}.dylib"
         when :platform_win
-          lib_dir = File.join(Ladb::OpenCutList::PLUGIN_DIR,'bin', 'win', 'lib')
+          lib_dir = File.join(Ladb::OpenCutList::PLUGIN_DIR, 'bin', 'win', 'lib')
           lib_file = "#{_lib_name}.dll"
         else
           raise "Invalid platform : #{Sketchup.platform}"

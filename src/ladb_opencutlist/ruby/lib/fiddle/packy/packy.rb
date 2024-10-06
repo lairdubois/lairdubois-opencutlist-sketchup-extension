@@ -62,9 +62,6 @@ module Ladb::OpenCutList::Fiddle
         @cached_outputs[@running_input_md5] = output
         @running_input_md5 = nil
       end
-      if output['solution']
-        puts "SOLUTION time=#{output['solution']['time']} bins=#{output['solution']['bins'].length} efficiency=#{output['solution']['efficiency']}"
-      end
       output
     end
 
