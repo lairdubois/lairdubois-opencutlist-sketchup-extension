@@ -1243,7 +1243,7 @@ module Ladb::OpenCutList
       material = nil
       if entity.is_a?(Sketchup::Group) || (entity.is_a?(Sketchup::ComponentInstance) && (level == 0 || entity.definition.behavior.cuts_opening?))
 
-        materials = {}
+        materials_type_and_count = {}
 
         # Entity is a group : check its children
         if entity.is_a?(Sketchup::ComponentInstance)
@@ -1251,28 +1251,23 @@ module Ladb::OpenCutList
         else
           entities = entity.entities
         end
-        entities.each { |child_entity|
+        entities.each do |child_entity|
           child_material = _get_dominant_child_material(child_entity, level + 1, no_virtual)
-          if child_material
-            unless materials.has_key?(child_material.name)
-              materials[child_material.name] = {
-                  :material => child_material,
-                  :count => 0
-              }
-            end
-            materials[child_material.name][:count] += 1
+          next if child_material.nil?
+          unless materials_type_and_count.has_key?(child_material)
+            materials_type_and_count[child_material] = {
+              :type => _get_material_attributes(child_material).type,
+              :count => 0
+            }
           end
-        }
+          materials_type_and_count[child_material][:count] += 1
+        end
 
-        if materials.length > 0
-          material = nil
-          material_count = 0
-          materials.each { |k, v|
-            if v[:count] > material_count
-              material = v[:material]
-              material_count = v[:count]
-            end
-          }
+        if materials_type_and_count.length > 0
+
+          # Extract the most used material with priority on its type
+          material, _ = materials_type_and_count.sort_by { |k, v| [ -v[:count], MaterialAttributes.type_order(v[:type]) ] }.first
+
         elsif level > 0
 
           # Entity is a group or component instance : return entity's material if it isn't virtual
