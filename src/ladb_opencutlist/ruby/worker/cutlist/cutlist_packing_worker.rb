@@ -38,16 +38,6 @@ module Ladb::OpenCutList
         { start: 90, end: 90 },
         { start: 180, end: 180 },
         { start: 270, end: 270 },
-      ],
-      "45" => [
-        { start: 0, end: 0 },
-        { start: 45, end: 45 },
-        { start: 90, end: 90 },
-        { start: 135, end: 135 },
-        { start: 180, end: 180 },
-        { start: 22, end: 225 },
-        { start: 270, end: 270 },
-        { start: 315, end: 315 },
       ]
     }
 
