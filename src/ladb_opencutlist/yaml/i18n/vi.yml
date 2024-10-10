@@ -82,7 +82,6 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
-      edit_part_instance_properties: Sửa thuộc tính phiên bản
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -133,7 +132,6 @@ core:
     material_change: Ít nhất một vật liệu đã được thay đổi.
     selection_change: Lựa chọn trong mô hình hoạt động đã được thay đổi.
     layers_change: Các thẻ trong mô hình đang hoạt động đã thay đổi.
-    drawing_change: Thiết kế của mô hình hoạt động đã được sửa đổi.
   upgrade:
     unavailable: Không thể tìm thấy phiên bản mới nhất của *OpenCutList*.
     available: |
@@ -182,9 +180,9 @@ core:
     dictionary:
       component_textinput_color: Bảng màu
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
+      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -612,7 +610,6 @@ tab:
       final_area: Diện tích - hoàn thiện
       count: Số lượng
       part_count: Số lượng các bộ phận
-      material: Vật liệu
       material_type: Loại vật liệu
       material_name: Tên vật liệu
       material_description: Ghi chú vật liệu
@@ -742,13 +739,9 @@ tab:
         *Tùy chọn này phải được bật để xuất hình dạng.*
       option_saw_kerf: Độ dày của lưỡi cắt
       option_saw_kerf_help: Chiều rộng của vật liệu được loại bỏ bởi lưỡi cưa cắt.
-      option_spacing: Khoảng cách
-      option_spacing_help: Khoảng cách tối thiểu giữa các bộ phận.
       option_trimming: Cắt tỉa
       option_trimming_help_1d: Lượng vật liệu ở mỗi đầu của bảng hoặc dải cạnh được xử lý như chất thải.
       option_trimming_help_2d: Lượng vật liệu bao quanh biên tấm thô được xử lý như chất thải.
-      option_rotations: Xoay
-      option_rotations_help_2d: Số vòng quay có thể có cho mỗi bộ phận.
       option_optimization: Mức độ tối ưu hóa
       option_optimization_help: "Mức tối ưu hóa xác định số lượng khả năng được tính toán và do đó cũng xác định thời gian tính toán."
       option_optimization_0: Vừa
@@ -839,7 +832,7 @@ tab:
         parts: "{{ count }} bộ phận"
         parts_plural: "{{ count }} bộ phận"
         settings: Cài đặt
-      write:
+      export:
         title: Xuất sơ đồ cắt
         info_0: |
           Mô-đun này cho phép bạn xuất **các hình học** của *sơ đồ cắt* dưới dạng tệp ở định dạng [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) hoặc định dạng [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF).
@@ -1102,11 +1095,6 @@ tab:
       option_anchor_1: Trục gốc hình chiếu các bộ phận
       option_anchor_help: |
         Cho phép lấy gốc trục hình chiếu của bộ phận làm điểm neo.
-      option_switch_yz: Trục đứng
-      option_switch_yz_0: Trục Z
-      option_switch_yz_1: Trục Y
-      option_switch_yz_help: |
-        Hoán đổi trục Y và Z để xác định trục đứng của chi tiết.
       option_smoothing: Làm mịn
       option_smoothing_0: Không có
       option_smoothing_1: Làm mịn đường tròn và cung tròn (Thực nghiệm)
@@ -1136,9 +1124,7 @@ tab:
         Chọn màu của mũi khoan.
       option_parts_paths: Đường dẫn
       option_parts_paths_help: |
-        Cho phép bạn chọn màu tô. 
-
-        *Màu tô sẽ chỉ được sử dụng cho các đường dẫn đã đóng.*
+        Cho phép bạn chọn màu tô.
       error:
         no_part: Không có bộ phận nào để xuất
       warning:
@@ -1202,7 +1188,7 @@ tab:
       texture_load: Tải texture mới
       texture_clear: Xóa bỏ texture
       edit: "Chỉnh sửa thuộc tính của '{{ name }}'"
-      set_current: "Các bộ phận tô màu '{{ name }}'."
+      set_current: "Các bộ phận tô màu '{{ name }}'"
       open_url: Mở URL vật liệu
     menu:
       import_from_skm: Nhập vật liệu (.skm)
@@ -1303,9 +1289,6 @@ tab:
     export_to_skm:
       title: Xuất tệp .skm
     option:
-      minimize_on_smart_paint: Giảm sau * 'Các bộ phận tô màu....'*
-      minimize_on_smart_paint_help: "Nếu tùy chọn này được bật, cửa sổ OpenCutList sẽ được thu nhỏ khi sử dụng chức năng *'Color parts with...'*."
-      general: Chung
       material_order_strategy: Sắp xếp vật liệu
       material_order_strategy_help: |
         Sắp xếp lại các ô để xác định chiến lược sắp xếp cho danh sách vật liệu.
@@ -1334,7 +1317,7 @@ tab:
     title: Kết cấu
     list: Cấu trúc cây của các thực thể
     nodes: Các phiên bản
-    toggle_hidden: Các phiên bản bị ẩn
+    part_count: Số lượng
     type_0: Mô hình
     type_1: Group
     type_2: Component
@@ -1348,11 +1331,9 @@ tab:
       preview: Xem trước
       name: Tên
       instance_name: Phiên bản
-      material: Vật liệu
       definition_name: Định nghĩa
       description: Mô tả
       url: URL
-      tags: Nhãn hiệu
       layer_name: Thẻ
       explode: Phân tách
       explode_message: "Bạn có xác nhận phân tách phiên bản **{{ name }}**?"
@@ -1497,6 +1478,8 @@ tab:
     objective_title:
       default: Mục tiêu
       cuttingdiagram_export: Kinh phí của sơ đồ cắt được xuất
+      outliner: Funding of the Structure function
+      packing: Funding of Nesting in Cutting Diagrams
     objective_details:
       default: |
         Sự cải tiến liên tục của *OpenCutList* rất quan trọng đối với chúng tôi và dự án tiếp tục cần sự trợ giúp của bạn cho bản cập nhật tiếp theo!
@@ -1504,8 +1487,14 @@ tab:
         Điều quan trọng đối với chúng tôi là *OpenCutList* có thể được điều chỉnh cho phù hợp với những kỳ vọng rất khác nhau của người dùng đối với chức năng *Sơ đồ cắt*.
         Để tiếp tục mở rộng các chức năng, chúng tôi muốn cho phép xuất sơ đồ cắt ở định dạng **SVG** và **DXF**.
         Bằng cách cung cấp cho chúng tôi phương tiện để xử lý các bản xuất này, bạn đang cho chúng tôi cơ hội giúp bạn tận dụng tối đa *OpenCutList*.
-      layout: |
-        Mục tiêu của mô-đun này là cho phép bạn dễ dàng in bản xem trước của dự án dưới dạng **chế độ xem bùng nổ** với nhận dạng từ thông tin được tạo trong danh sách các bộ phận.
+      outliner: |
+        A model can be quite complex, and navigating its structure with SketchUp's native Structure panel is not always very practical.
+        In SketchUp, you can apply material and tags to instances, description, url and badges to definitions, but they're not displayed in the structure.
+        The video will show you how we'd like to improve this in the Structure menu, accessible directly from OpenCutList.
+      packing: |
+        It's important to us that *OpenCutList* can adapt to the wide variety of user requirements for its *cutting diagram* function.
+        To further extend the possibilities, we'd like to implement a **nesting algorithm** to optimize the cutting of parts of any shape.
+        By providing us with the means to work on this functionality, you're giving us the opportunity to help you get the most out of *OpenCutList*.
     objective_crowdfunding: |
       Việc phát triển các tính năng mới sẽ được thực hiện thông qua **Gây quỹ** và sẽ bắt đầu khi đạt được **Mục tiêu tài chính**.
     objective_thanks: |
@@ -1681,8 +1670,6 @@ tool:
     action_2_status: Nhấp vào một bộ phận để hoán đổi mặt trước với mặt sau của nó
     action_3: Điều chỉnh trục
     action_3_status: Nhắm mục tiêu một mặt của một bộ phận và nhấp vào một cạnh để điều chỉnh trục của nó
-    action_4: Di chuyển điểm gốc
-    action_4_status: Nhắm mục tiêu một bề mặt của một bộ phận và nhấp vào một điểm để đặt điểm gốc của nó ở đó.
     action_option_group_direction: Hướng
     action_option_direction_0: L
     action_option_direction_1: W

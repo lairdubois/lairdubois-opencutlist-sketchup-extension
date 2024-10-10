@@ -75,14 +75,14 @@ core:
     submenu: 72 - OpenCutList
     item:
       generate_cutlist: 73 - Створити список деталей
-      edit_part_properties: "$t(tab.cutlist.edit_part_properties)"
-      edit_part_axes_properties: "$t(tab.cutlist.edit_part_axes_properties)"
-      edit_part_size_increase_properties: "$t(tab.cutlist.edit_part_size_increase_properties)"
-      edit_part_edges_properties: "$t(tab.cutlist.edit_part_edges_properties)"
-      edit_part_faces_properties: "$t(tab.cutlist.edit_part_faces_properties)"
-      smart_paint: "$t(core.toolbar.command.smart_paint)"
-      smart_axes: "$t(core.toolbar.command.smart_axes)"
-      smart_export: "$t(core.toolbar.command.smart_export)"
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: 82 - Скинути позицію вікна
   toolbar:
     name: 83 - OpenCutList
@@ -177,25 +177,25 @@ core:
       delete: 137 - Видалити пресет '{{ name }}'
     dictionary:
       component_textinput_color: 138 - Палітра кольорів
-      cutlist_cuttingdiagram1d_options: 139 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: 140 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
-      cutlist_cuttingdiagram2d_options: 141 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: 142 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
-      cutlist_export_options: "$t(tab.cutlist.label) / $t(tab.cutlist.export.title)"
-      cutlist_labels_options: "$t(tab.cutlist.label) / $t(tab.cutlist.labels.title)"
-      cutlist_layout_options: "$t(tab.cutlist.label) / $t(tab.cutlist.layout.title)"
-      cutlist_options: "$t(tab.cutlist.label) / $t(default.options)"
-      cutlist_report_options: "$t(tab.cutlist.label) / $t(tab.cutlist.report.title)"
-      cutlist_write2d_options: 148 - $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
-      cutlist_write3d_options: 149 - $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: "$t(tab.importer.label) / $t(default.import)"
-      importer_load_options: "$t(tab.importer.label) / $t(default.open)"
-      materials_material_attributes: "$t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)"
-      materials_options: "$t(tab.materials.label) / $t(default.options)"
-      settings_model: 154 - $t(tab.settings.label) / Модель
-      tool_smart_paint_options: "$t(core.toolbar.command.smart_paint)"
-      tool_smart_axes_options: "$t(core.toolbar.command.smart_axes)"
-      tool_smart_export_options: "$t(core.toolbar.command.smart_export)"
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Модель
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: 158 - Глобальний розрахунок
   component:
@@ -266,26 +266,26 @@ tab:
         205 - Додайте січення *{{ std_dimension }}*
         до матеріалу '{{ material_name }}'
       rounded_std_width: |
-        206 - Ширина *{{ std_dimension }}* округлюється відповідно до точності моделі.
+        Ширина *{{ std_dimension }}* округлюється відповідно до точності моделі.
         Справжня ширина: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
-        207 - Товщина *{{ std_dimension }}* округлюється відповідно до точності моделі.
+        Товщина *{{ std_dimension }}* округлюється відповідно до точності моделі.
         Справжня товщина: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
-        208 - Січення *{{ std_dimension }}* округлюється відповідно до точності моделі.
+        Січення *{{ std_dimension }}* округлюється відповідно до точності моделі.
         Справжнє січення: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_footer: 209 - Задайте точність у параметрі *Інформація про модель* або перевірте розміри деталей у цій групі.
-      highlight_part: "$t(tab.cutlist.highlight_part)"
-      highlight_parts: "$t(tab.cutlist.highlight_parts)"
-      edit_part_properties: "$t(tab.cutlist.edit_part_properties)"
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: 213 - Редагування властивостей групи деталей
-      edit_material: "$t(tab.cutlist.menu.edit_material)"
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: 215 - Розгорнути / Згорнути
       material_origin_1: 216 - Матеріал цієї деталі визначено на її екземплярах
       material_origin_2: 217 - Матеріал цієї деталі успадковано від одного з її батьківських елементів
@@ -349,7 +349,7 @@ tab:
       hide_all_other_groups: 274 - Приховати всі інші групи
       numbers_save: 275 - Запам'ятати номери деталей
       numbers_reset: 276 - Скинути номери деталей
-      highlight_parts: "$t(tab.cutlist.highlight_parts)"
+      highlight_parts: $t(tab.cutlist.highlight_parts)
       write_2d: 278 - Проекція 2D
       write_3d: 279 - Креслення 3D
       write_2d_parts: 280 - Експорт 2D проекції деталей
@@ -375,15 +375,14 @@ tab:
       title_multiple: 296 - Властивості групи деталей
       multiple_alert: 297 - Загальні властивості групи {{ part_count }} деталей.
       general: 298 - Загальні
-      extra_help: 299 - Список властивостей, що залежать від типу матеріалу "**$t(tab.materials.type_{{ material_type }})**".
+      extra_help: Список властивостей, що залежать від типу матеріалу "**$t(tab.materials.type_{{ material_type }})**".
       edges: 300 - Крайки
       faces: 301 - Поверхні
       name: 302 - Ім’я
       material: 303 - Матеріал
       cumulable: 304 - Підсумувати
-      cumulable_help: '305 - Якщо цей параметр активовано, **довжина** або **ширина** буде розглядатися під час сортування списку елементів як одинична **довжина** або **ширина** списку, помножена на кількість.
-
-        '
+      cumulable_help: |
+        305 - Якщо цей параметр активовано, **довжина** або **ширина** буде розглядатися під час сортування списку елементів як одинична **довжина** або **ширина** списку, помножена на кількість.
       cumulable_0: 306 - Не підсумовувати
       cumulable_1: 307 - Підсумувати по довжині
       cumulable_2: 308 - Підсумувати по ширині
@@ -407,13 +406,11 @@ tab:
         *Приклад:* Якщо для намальованої деталі товщиною *38мм* ви бажаєте склеїти дві панелі *19мм*, вкажіть у цьому полі **2**.
         *Тоді OpenCutList зарахує 2 деталі товщиною 19 мм замість 1 деталі 38 мм.*
       description: 319 - Опис
-      description_help: '320 - *Опис* використовується для надання персоналізованої інформації щодо визначення кожної деталі.
-
-        '
+      description_help: |
+        320 - *Опис* використовується для надання персоналізованої інформації щодо визначення кожної деталі.
       url: 321 - URL
-      url_help: '322 - *URL* дозволяє надати персоналізоване посилання на зовнішню сторінку для кожного визначення деталі.
-
-        '
+      url_help: |
+        322 - *URL* дозволяє надати персоналізоване посилання на зовнішню сторінку для кожного визначення деталі.
       tags: 323 - Мітки
       tags_help: |
         324 - *Мітки* дозволяють додавати власні ключові слова до визначення кожної деталі.
@@ -430,13 +427,11 @@ tab:
         - *ширина* на осі <span style='color:green'>зелена</span>
         - *товщина* на осі <span style='color:blue'>синя</span>
       symmetrical: 329 - Вимкнути розпізнавання дзеркальних деталей
-      symmetrical_help: '330 - Якщо цей прапорець встановлено, виявлення *дзеркальної деталі* не буде застосовано до цієї деталі.
-
-        '
+      symmetrical_help: |
+        330 - Якщо цей прапорець встановлено, виявлення *дзеркальної деталі* не буде застосовано до цієї деталі.
       ignore_grain_direction: 331 - Не враховувати напрямок текстури
-      ignore_grain_direction_help: '332 - Якщо цей прапорець встановлено, напрямок текстури на деталі ігнорується.
-
-        '
+      ignore_grain_direction_help: |
+        332 - Якщо цей прапорець встановлено, напрямок текстури на деталі ігнорується.
       size_increase: 333 - Припуски
       size_increase_help: |
         334 - Припуски дозволяють збільшити допустимі розміри деталі.
@@ -475,9 +470,8 @@ tab:
         - *ширина* на осі <span style='color:green'>зелена</span>
         - *товщина* на осі <span style='color:blue'>синя</span>
       flipped_detection: 357 - Виявлення дзеркальних деталей
-      flipped_detection_help: '358 - Якщо цей параметр увімкнено, дзеркальні деталі буде виявлено та відображено як нову деталь.
-
-        '
+      flipped_detection_help: |
+        358 - Якщо цей параметр увімкнено, дзеркальні деталі буде виявлено та відображено як нову деталь.
       smart_material: 359 - *Розумне* призначення матеріалу
       smart_material_help: 360 - Якщо цей параметр активовано, деталям без визначеного матеріалу можна призначити основний матеріал дочірніх елементів або матеріал, успадкований від батьківських елементів.
       dynamic_attributes_name: 361 - Використовувати атрибут *Name* динамічних компонентів
@@ -512,17 +506,16 @@ tab:
       hide_faces_help: 384 - Якщо цей параметр увімкнено, то **Стовпці шпону** у деталях типу *Листовий* не відображаються.
       hide_material_colors: 385 - Приховати кольори матеріалів
       hide_material_colors_help: 386 - Якщо ця опція включена, кольори матеріалів не будуть відображатися.
-      minimize_on_highlight: 387 - Стовпці після *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: 388 - Якщо цей параметр увімкнено, вікно OpenCutList буде згорнуто під час використання функції *'$t(tab.cutlist.highlight_part)'*.
+      minimize_on_highlight: Стовпці після *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: Якщо цей параметр увімкнено, вікно OpenCutList буде згорнуто під час використання функції *'$t(tab.cutlist.highlight_part)'*.
       general: 389 - Загальні
       part_order_strategy: 390 - Сортування деталей
       part_order_strategy_help: |
         391 - Переставте наступні властивості, щоб визначити стратегію сортування для деталей у кожній групі.
         Властивості можуть бути впорядковані в <i class="ladb-opencutlist-icon-sort-asc"></i> *зростаючому* або <i class="ladb-opencutlist-icon-sort-desc"></i> *спадному* порядку.
       dimension_column_order_strategy: 392 - Співвідношення розміру
-      dimension_column_order_strategy_help: '393 - Переставте наступні властивості, щоб установити порядок відображення стовпців розмірів.
-
-        '
+      dimension_column_order_strategy_help: |
+        393 - Переставте наступні властивості, щоб установити порядок відображення стовпців розмірів.
       property_thickness: 394 - Товщина
       property_length: 395 - Довжина
       property_width: 396 - Ширина
@@ -568,30 +561,26 @@ tab:
       faces: 435 - Поверхні
     export:
       title: 436 - Експорт
-      info_0: '437 - Ця функція дозволяє експортувати ваш *Розкрій* у формі *Списку деталей* у файл формату [CSV](https://uk.wikipedia.org/wiki/CSV).
-
-        '
-      customize_help: '438 - Змініть порядок, приховайте, додайте, видаліть або виберіть стовпчик у списку, щоб налаштувати його **назву** та **формулу**, яка генерує відображене значення для кожного експортованого рядка.
-
-        '
+      info_0: |
+        437 - Ця функція дозволяє експортувати ваш *Розкрій* у формі *Списку деталей* у файл формату [CSV](https://uk.wikipedia.org/wiki/CSV).
+      customize_help: |
+        438 - Змініть порядок, приховайте, додайте, видаліть або виберіть стовпчик у списку, щоб налаштувати його **назву** та **формулу**, яка генерує відображене значення для кожного експортованого рядка.
       add_column: 439 - Додати стовпчик
       add_native_columns: 440 - Додайте власний стовпчик
       remove_column: 441 - Видалити
       remove_all_columns: 442 - Видалити все
       columns: 443 - Стовпці
       column_title: 444 - Заголовок
-      column_title_help: '445 - Поле **Заголовок** дозволяє налаштувати заголовок стовпця.
-
-        '
+      column_title_help: |
+        445 - Поле **Заголовок** дозволяє налаштувати заголовок стовпця.
       column_formula: 446 - Формула
-      column_formula_help: '447 - Поле **Формула** дозволяє написати код *Ruby* для налаштування значення стовпця.
-
-        '
+      column_formula_help: |
+        447 - Поле **Формула** дозволяє написати код *Ruby* для налаштування значення стовпця.
       options: 448 - Опції експорту
       options_customize: 449 - Налаштування
       option_source: 450 - Джерело
-      option_source_summary: "$t(tab.cutlist.list.summary)"
-      option_source_cutlist: "$t(tab.cutlist.title)"
+      option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: $t(tab.cutlist.title)
       option_source_instances_list: 453 - Список екземплярів
       option_col_sep: 454 - Роздільник
       option_col_sep_tab: 455 - Табулятор
@@ -651,13 +640,12 @@ tab:
         is_group_selection: 507 - Деталі, що містяться в **прихованих групах** вашої карти розкрою, не будуть експортовані.
     report:
       title: 508 - Кошторис
-      info_0: '509 - Створіть оцінку **ваги** та **вартості** **сировини**, необхідної для виготовлення деталей зі *списку деталей*.
-
-        '
+      info_0: |
+        509 - Створіть оцінку **ваги** та **вартості** **сировини**, необхідної для виготовлення деталей зі *списку деталей*.
       options_general: 510 - Загальні
-      options_solid_wood: "$t(tab.materials.type_1)"
-      option_solid_wood_coefficient: 512 - Коефіцієнт для *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: 513 - Використовується для розрахунку маси деталей як коефіцієнт щільності для матеріалів типу "**$t(tab.materials.type_1)**".
+      options_solid_wood: $t(tab.materials.type_1)
+      option_solid_wood_coefficient: Коефіцієнт для *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: Використовується для розрахунку маси деталей як коефіцієнт щільності для матеріалів типу "**$t(tab.materials.type_1)**".
       raw_materials: 514 - Сировина
       coefficient: 515 - Коефіцієнт
       total: 516 - Всього
@@ -673,7 +661,7 @@ tab:
       tooltip:
         incompatible_unit: 526 - Одиниця несумісна з параметрами оцінки матеріалу
       error:
-        no_typed_material_parts: 527 - Для складання кошторису деталі повинні мати певний тип матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**).
+        no_typed_material_parts: Для складання кошторису деталі повинні мати певний тип матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**).
         entry_error: '528 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилка**.'
         entry_error_plural: '529 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилок**.'
       warning:
@@ -767,7 +755,7 @@ tab:
       option_std_bar_dimensional: 609 - Стандартний розмір дошки
       option_std_bar_edge: 610 - Стандартний розмір крайки
       option_std_bar_help: |
-        611 - Виберіть тут розмір стандартної планки або стрічки, яка буде дублюватися, щоб найкращим чином вмістити всі деталі.
+        Виберіть тут розмір стандартної планки або стрічки, яка буде дублюватися, щоб найкращим чином вмістити всі деталі.
         Цей перелік визначається полем **$t(tab.materials.edit_material.std_lengths)** матеріалу.
         Відредагуйте матеріал '{{ material_name }}', щоб оновити цей список.
       option_std_bar_add: 612 - Додати розмір
@@ -783,7 +771,7 @@ tab:
       option_std_sheet_good: 618 - Стандартний розмір листа
       option_std_sheet_veneer: 619 - Стандартний лист
       option_std_sheet_help: |
-        620 - Оберіть тут стандартну панель або лист, який буде скопійовано, щоб найкраще вмістити всі деталі.
+        Оберіть тут стандартну панель або лист, який буде скопійовано, щоб найкраще вмістити всі деталі.
         Цей список визначається полем **$t(tab.materials.edit_material.std_sizes)** матеріалу.
         Відредагуйте матеріал '{{ material_name }}', щоб оновити цей список.
       option_std_sheet_add: 621 - Додати розмір
@@ -844,11 +832,10 @@ tab:
         settings: 670 - Параметри
       export:
         title: 671 - Експорт розкладки
-        info_0: '672 - Цей модуль дозволяє експортувати **геометрію** *розкладку* у вигляді списку файлів у форматі [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) або [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-
-          '
-        option_file_format: "$t(tab.cutlist.write.option_file_format)"
-        option_file_format_help: "$t(tab.cutlist.write.option_file_format_help)"
+        info_0: |
+          672 - Цей модуль дозволяє експортувати **геометрію** *розкладку* у вигляді списку файлів у форматі [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) або [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
         option_dxf_structure: 675 - Структура DXF
         option_dxf_structure_1: 676 - Шари
         option_dxf_structure_2: 677 - Шари + Блоки
@@ -857,58 +844,49 @@ tab:
 
           - Структура **Шари** малює всі лінії на площині, розрізняючи різні типи ліній лише за допомогою шарів. *Ця структура забезпечує кращу сумісність з програмним забезпеченням сторонніх виробників.*
           - Структура **Шари + Блоки** створює блок для кожної деталі і вставляє ці блоки стільки разів, скільки деталей повторюються. *Ця структура надає більшу гнучкість для зміни файлу.*
-        option_unit: "$t(tab.cutlist.write.option_unit)"
-        option_unit_help: "$t(tab.cutlist.write.option_unit_help)"
-        option_smoothing: "$t(tab.cutlist.write.option_smoothing)"
-        option_smoothing_0: "$t(tab.cutlist.write.option_smoothing_0)"
-        option_smoothing_1: "$t(tab.cutlist.write.option_smoothing_1)"
-        option_smoothing_help: "$t(tab.cutlist.write.option_smoothing_help)"
-        option_merge_holes: "$t(tab.cutlist.write.option_merge_holes)"
-        option_merge_holes_0: "$t(tab.cutlist.write.option_merge_holes_0)"
-        option_merge_holes_1: "$t(tab.cutlist.write.option_merge_holes_1)"
-        option_merge_holes_help: "$t(tab.cutlist.write.option_merge_holes_help)"
-        option_include_paths: "$t(tab.cutlist.write.option_include_paths)"
-        option_include_paths_0: "$t(tab.cutlist.write.option_include_paths_0)"
-        option_include_paths_1: "$t(tab.cutlist.write.option_include_paths_1)"
-        option_include_paths_help: "$t(tab.cutlist.write.option_include_paths_help)"
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: 693 - Листовий
-        option_sheet_good_help: '694 - Дозволяє експорт панелі та вибір кольору.
-
-          '
+        option_sheet_good_help: |
+          694 - Дозволяє експорт панелі та вибір кольору.
         option_sheet_veneer: 695 - Шпон
-        option_sheet_veneer_help: '696 - Дозволяє активувати експорт листа та вибрати його кольори.
-
-          '
+        option_sheet_veneer_help: |
+          696 - Дозволяє активувати експорт листа та вибрати його кольори.
         option_bar_dimensional: 697 - Погонаж
-        option_bar_dimensional_help: '698 - Дозволяє активувати експорт дошки та вибрати її кольори.
-
-          '
+        option_bar_dimensional_help: |
+          698 - Дозволяє активувати експорт дошки та вибрати її кольори.
         option_bar_band: 699 - Крайка
-        option_bar_band_help: '700 - Дозволяє активувати експорт крайки та вибрати її кольори.
-
-          '
+        option_bar_band_help: |
+          700 - Дозволяє активувати експорт крайки та вибрати її кольори.
         option_parts: 701 - Деталі
-        option_parts_help: '702 - Дозволяє активувати експорт деталей та вибрати їх кольори.
-
-          '
+        option_parts_help: |
+          702 - Дозволяє активувати експорт деталей та вибрати їх кольори.
         option_parts_holes: 703 - Свердління
-        option_parts_holes_help: '704 - Дозволяє вибрати колір отворів деталей.
-
-          '
-        option_parts_paths: "$t(tab.cutlist.write.option_parts_paths)"
-        option_parts_paths_help: "$t(tab.cutlist.write.option_parts_paths_help)"
+        option_parts_holes_help: |
+          704 - Дозволяє вибрати колір отворів деталей.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: 707 - Ідентифікації
-        option_texts_help: '708 - Дозволяє активувати експорт текстів ідентифікації деталей та вибрати їх кольори.
-
-          '
+        option_texts_help: |
+          708 - Дозволяє активувати експорт текстів ідентифікації деталей та вибрати їх кольори.
         option_leftovers: 709 - Залишки
-        option_leftovers_help: '710 - Дозволяє активувати експорт залишків та вибрати їхні кольори.
-
-          '
+        option_leftovers_help: |
+          710 - Дозволяє активувати експорт залишків та вибрати їхні кольори.
         option_cuts: 711 - Розрізи
-        option_cuts_help: '712 - Дозволяє активувати експорт розрізів та вибрати їх колір.
-
-          '
+        option_cuts_help: |
+          712 - Дозволяє активувати експорт розрізів та вибрати їх колір.
         warning:
           is_sheet_selection: 713 - Приховані **панелі** не будуть експортовані.
       error:
@@ -1092,36 +1070,29 @@ tab:
         is_part_selection: 874 - Це креслення обмежено **вибраними деталями**.
     write:
       title: 875 - Експорт деталей
-      info_2d: '876 - Цей модуль дозволяє експортувати **2D проекцію** деталей у форматі файлів [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) або [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-
-        '
-      info_3d: '877 - Цей модуль дозволяє експортувати **3D-геометрію** деталей у форматі файлів [STL](https://wikipedia.org/wiki/STL_(file_format)) або [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
-
-        '
+      info_2d: |
+        876 - Цей модуль дозволяє експортувати **2D проекцію** деталей у форматі файлів [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) або [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+      info_3d: |
+        877 - Цей модуль дозволяє експортувати **3D-геометрію** деталей у форматі файлів [STL](https://wikipedia.org/wiki/STL_(file_format)) або [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
       option_file_format: 878 - Формат
-      option_file_format_help: '879 - Дозволяє вибрати формат файлу для експорту.
-
-        '
+      option_file_format_help: |
+        879 - Дозволяє вибрати формат файлу для експорту.
       option_unit: 880 - Одиниці
-      option_unit_help: '881 - Дозволяє вибрати одиницю, яка використовується у експортованому файлі.
-
-        '
+      option_unit_help: |
+        881 - Дозволяє вибрати одиницю, яка використовується у експортованому файлі.
       option_part_drawing_type: 882 - Проекція
-      option_part_drawing_type_help: '883 - Дозволяє вибрати експортований вид.
-
-        '
+      option_part_drawing_type_help: |
+        883 - Дозволяє вибрати експортований вид.
       option_faces: 884 - Поверхні
       option_faces_0: 885 - Використовуйте лише цільову грань
       option_faces_1: 886 - Використовуйте всі грані деталі
-      option_faces_help: '887 - Дозволяє вибрати, чи проводити пошук форми деталі на всіх її гранях, чи тільки на цільовій грані.
-
-        '
+      option_faces_help: |
+        887 - Дозволяє вибрати, чи проводити пошук форми деталі на всіх її гранях, чи тільки на цільовій грані.
       option_anchor: 888 - Точка прив’язки
       option_anchor_0: 889 - За замовчуванням
       option_anchor_1: 890 - Проектувати походження деталі
-      option_anchor_help: '891 - Дозволяє активувати проекцію початку координат деталі як точку прив’язки.
-
-        '
+      option_anchor_help: |
+        891 - Дозволяє активувати проекцію початку координат деталі як точку прив’язки.
       option_smoothing: 892 - Згладжування
       option_smoothing_0: 893 - Ні
       option_smoothing_1: 894 - Згладити кола та дуги (Експериментально)
@@ -1141,21 +1112,17 @@ tab:
       option_include_paths: 900 - Траєкторії
       option_include_paths_0: 901 - Ні
       option_include_paths_1: 902 - Використовуйте ребра, не пов’язані з гранями
-      option_include_paths_help: '903 - Дозволяє активувати використання ребер, що не пов''язані з гранями, що містяться в деталі, для експорту як траєкторії.
-
-        '
+      option_include_paths_help: |
+        903 - Дозволяє активувати використання ребер, що не пов'язані з гранями, що містяться в деталі, для експорту як траєкторії.
       option_parts: 904 - Деталі
-      option_parts_help: '905 - Дозволяє вибрати кольори деталей.
-
-        '
+      option_parts_help: |
+        905 - Дозволяє вибрати кольори деталей.
       option_parts_holes: 906 - Свердління
-      option_parts_holes_help: '907 - Дозволяє вибрати кольори отворів деталей.
-
-        '
+      option_parts_holes_help: |
+        907 - Дозволяє вибрати кольори отворів деталей.
       option_parts_paths: 908 - Траєкторії
-      option_parts_paths_help: '909 - Дозволяє вибрати колір ліній-траєкторій.
-
-        '
+      option_parts_paths_help: |
+        909 - Дозволяє вибрати колір ліній-траєкторій.
       error:
         no_part: 910 - Немає жодної деталі для експорту.
       warning:
@@ -1179,8 +1146,8 @@ tab:
       obsolete_cutlist: 926 - Неможливо, список елементів не актуальний. Розрахувати знову.
     warning:
       is_entity_selection: 927 - Було враховано лише елементи, вибрані у вашій моделі.
-      no_typed_materials_in_model: 928 - У вашій моделі відсутні матеріали з визначеним типом (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 929 - У вашому виборі відсутні матеріали з визначеним типом (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**).
+      no_typed_materials_in_model: У вашій моделі відсутні матеріали з визначеним типом (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: У вашому виборі відсутні матеріали з визначеним типом (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**).
       export_empty: 930 - Ваш експорт не містить деталей.
     success:
       part_selected: 931 - {{ count }} деталь вибрана в списку деталей.
@@ -1190,7 +1157,7 @@ tab:
         933 - Деталі, які ви хочете відобразити на *карті розкрою*, мають бути екземплярами **компонента**.
         Якщо ви використовуєте лише групи, перетворіть їх на компоненти.
         Використання компонентів дозволяє тиражувати ідентичні деталі без їх дублювання.
-      no_typed_materials: 934 - Нанесіть матеріал на деталі, які ви хочете бачити у своєму списку деталей. Встановіть тип цього матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**) у вкладці <i class="ladb-opencutlist-icon-materials"></i> **Матеріали**.
+      no_typed_materials: Нанесіть матеріал на деталі, які ви хочете бачити у своєму списку деталей. Встановіть тип цього матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**) у вкладці <i class="ladb-opencutlist-icon-materials"></i> **Матеріали**.
     obsolete_base: 935 - Щоб підтримувати синхронізацію, необхідно повторно створити Список елементів.
   materials:
     label: 936 - Матеріали
@@ -1204,15 +1171,15 @@ tab:
     type_5: 944 - Фурнітура
     type_6: 945 - Лист шпону
     tooltip:
-      type_0: 946 - Тип матеріалу '$t(tab.materials.type_0)'
-      type_1: 947 - Тип матеріалу '$t(tab.materials.type_1)'
-      type_2: 948 - Тип матеріалу '$t(tab.materials.type_2)'
-      type_3: 949 - Тип матеріалу '$t(tab.materials.type_3)'
-      type_4: 950 - Тип матеріалу '$t(tab.materials.type_4)'
-      type_5: 951 - Тип матеріалу '$t(tab.materials.type_5)'
-      type_6: 952 - Тип матеріалу '$t(tab.materials.type_6)'
-      grained_0: "$t(tab.materials.edit_material.grained_0)"
-      grained_1: "$t(tab.materials.edit_material.grained_1)"
+      type_0: Тип матеріалу '$t(tab.materials.type_0)'
+      type_1: Тип матеріалу '$t(tab.materials.type_1)'
+      type_2: Тип матеріалу '$t(tab.materials.type_2)'
+      type_3: Тип матеріалу '$t(tab.materials.type_3)'
+      type_4: Тип матеріалу '$t(tab.materials.type_4)'
+      type_5: Тип матеріалу '$t(tab.materials.type_5)'
+      type_6: Тип матеріалу '$t(tab.materials.type_6)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: 955 - Напрямок фактури
       raw_estimated_0: 956 - Розрахунок корисного обсягу
       colorized: 957 - Цей відтінок буде застосовано до текстури цього матеріалу під час візуалізації в моделі
@@ -1333,9 +1300,8 @@ tab:
         1037 - Ви збираєтеся видалити матеріал **{{ material_name }}** зі своєї моделі.
         Підтвердьте, щоб продовжити.
     duplicate:
-      message: '1038 - Встановіть назву нової копії матеріалу **{{ material_name }}**.
-
-        '
+      message: |
+        1038 - Встановіть назву нової копії матеріалу **{{ material_name }}**.
     error:
       no_model: 1039 - Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
       no_materials: 1040 - Ваша модель не містить жодного матеріалу.
@@ -1463,9 +1429,8 @@ tab:
   tutorials:
     label: 1132 - Навчальні матеріали
     title: 1133 - Навчальні матеріали
-    help: '1134 - Тут можна знайти неповний список відео, створених спільнотою про використання *OpenCutList*.
-
-      '
+    help: |
+      1134 - Тут можна знайти неповний список відео, створених спільнотою про використання *OpenCutList*.
     submit: 1135 - Запропонувати відео
     submit_info: |
       1136 - Ви зробили відеопрезентацію використання **OpenCutList** і хочете, щоб вона з’явилася тут?
@@ -1477,18 +1442,16 @@ tab:
   news:
     label: 1138 - Новини
     title: 1139 - Новини
-    help: '1140 - Дивіться тут новини про *OpenCutList*.
-
-      '
+    help: |
+      1140 - Дивіться тут новини про *OpenCutList*.
     comment: 1141 - Коментар
     error:
       fail_to_load_list: 1142 - Не вдалося завантажити сторінку новин.
   forum:
     label: 1143 - Форум
     title: 1144 - Форум
-    help: '1145 - Цей майданчик дозволяє обмінюватися ідеями між спільнотою користувачів і командою *OpenCutList*.
-
-      '
+    help: |
+      1145 - Цей майданчик дозволяє обмінюватися ідеями між спільнотою користувачів і командою *OpenCutList*.
     create_conversation: 1146 - Створити тему
     reply: 1147 - Відповідь
     tags: 1148 - Теги
@@ -1515,102 +1478,105 @@ tab:
     objective_title:
       default: 1160 - Цілі
       cuttingdiagram_export: 1161 - Фінансування розробки нових функцй
+      outliner: 1162 - Funding of the Structure function
+      packing: 1163 - Funding of Nesting in Cutting Diagrams
     objective_details:
-      default: '1162 - Постійне вдосконалення *OpenCutList* є важливим для нас і проект продовжує потребувати вашої участі для наступного оновлення!
-
-        '
+      default: |
+        1164 - Постійне вдосконалення *OpenCutList* є важливим для нас і проект продовжує потребувати вашої участі для наступного оновлення!
       cuttingdiagram_export: |
-        1163 - Для нас важливо, щоб *OpenCutList* міг адаптуватися до дуже різноманітних очікувань користувачів щодо функції *layout*.
+        1165 - Для нас важливо, щоб *OpenCutList* міг адаптуватися до дуже різноманітних очікувань користувачів щодо функції *layout*.
         Щоб ще більше розширити можливості, ми хотіли б мати можливість експортувати карти розкрою у форматі **SVG** та **DXF**.
         Надаючи нам засоби для роботи над цим експортом, ви даєте нам можливість дозволити вам отримати максимальну віддачу від *OpenCutList*.
-      layout: '1164 - Мета цього модуля — дозволити вам легко надрукувати огляд вашого проекту в **рознесеному вигляді** з ідентифікацією частин за їх номерами, згенерованими в списку елементів.
-
-        '
-    objective_crowdfunding: '1165 - Розробка нових продуктів здійснюватиметься завдяки **краудфандингу** і може розпочатися після досягнення **Фінансової цілі**.
-
-      '
-    objective_thanks: '1166 - Дякуємо за ваш внесок!
-
-      '
-    objective_funded_progress: 1167 - Накопичено коштів {{ progress }}%
+      outliner: |
+        1166 - A model can be quite complex, and navigating its structure with SketchUp's native Structure panel is not always very practical.
+        In SketchUp, you can apply material and tags to instances, description, url and badges to definitions, but they're not displayed in the structure.
+        The video will show you how we'd like to improve this in the Structure menu, accessible directly from OpenCutList.
+      packing: |
+        1167 - It's important to us that *OpenCutList* can adapt to the wide variety of user requirements for its *cutting diagram* function.
+        To further extend the possibilities, we'd like to implement a **nesting algorithm** to optimize the cutting of parts of any shape.
+        By providing us with the means to work on this functionality, you're giving us the opportunity to help you get the most out of *OpenCutList*.
+    objective_crowdfunding: |
+      1168 - Розробка нових продуктів здійснюватиметься завдяки **краудфандингу** і може розпочатися після досягнення **Фінансової цілі**.
+    objective_thanks: |
+      1169 - Дякуємо за ваш внесок!
+    objective_funded_progress: 1170 - Накопичено коштів {{ progress }}%
   settings:
-    label: 1168 - Налаштування
-    title: 1169 - Налаштування
-    global_settings: 1170 - Загальні налаштування
-    language: 1171 - Мова
-    language_auto: 1172 - Автоматичний
-    zoom: 1173 - Розмір тексту
-    zoom_normal: 1174 - Нормальний
-    zoom_small: 1175 - Мала
-    zoom_tiny: 1176 - Дуже малий
-    print_margin: 1177 - Поля друку
-    print_margin_normal: 1178 - Нормальні
-    print_margin_small: 1179 - Малі
-    table_row_size: 1180 - Розмір рядків таблиці
-    table_row_size_normal: 1181 - Нормальний
-    table_row_size_compact: 1182 - Компактний
-    size_and_position: 1183 - Розмір і розташування вікна
-    model_settings: 1184 - Параметри моделі
-    length_unit: 1185 - Одиниця вимірювання довжини
-    length_format: 1186 - Формат
-    length_format_0: 1187 - Десятковий
-    length_format_1: 1188 - Архітектурний
-    length_format_2: 1189 - Інженерний
-    length_format_3: 1190 - Дробовий
-    length_precision: 1191 - Точність
-    suppress_units_display: 1192 - Показати одиниці вимірювання для кожного значення
-    mass_unit: 1193 - Одиниця маси
-    mass_precision: 1194 - Точність
-    currency_symbol: 1195 - Символ валюти
-    currency_precision: 1196 - Точність
+    label: 1171 - Налаштування
+    title: 1172 - Налаштування
+    global_settings: 1173 - Загальні налаштування
+    language: 1174 - Мова
+    language_auto: 1175 - Автоматичний
+    zoom: 1176 - Розмір тексту
+    zoom_normal: 1177 - Нормальний
+    zoom_small: 1178 - Мала
+    zoom_tiny: 1179 - Дуже малий
+    print_margin: 1180 - Поля друку
+    print_margin_normal: 1181 - Нормальні
+    print_margin_small: 1182 - Малі
+    table_row_size: 1183 - Розмір рядків таблиці
+    table_row_size_normal: 1184 - Нормальний
+    table_row_size_compact: 1185 - Компактний
+    size_and_position: 1186 - Розмір і розташування вікна
+    model_settings: 1187 - Параметри моделі
+    length_unit: 1188 - Одиниця вимірювання довжини
+    length_format: 1189 - Формат
+    length_format_0: 1190 - Десятковий
+    length_format_1: 1191 - Архітектурний
+    length_format_2: 1192 - Інженерний
+    length_format_3: 1193 - Дробовий
+    length_precision: 1194 - Точність
+    suppress_units_display: 1195 - Показати одиниці вимірювання для кожного значення
+    mass_unit: 1196 - Одиниця маси
+    mass_precision: 1197 - Точність
+    currency_symbol: 1198 - Символ валюти
+    currency_precision: 1199 - Точність
     presets:
-      export_global_presets: 1197 - Експорт пресетів
+      export_global_presets: 1200 - Експорт пресетів
       export_global_presets_help: |
-        1198 - Ця функція дозволяє експортувати ваші пресети у файл **.json**.
+        1201 - Ця функція дозволяє експортувати ваші пресети у файл **.json**.
         Виберіть пресети, які потрібно експортувати.
-      export_global_presets_success: 1199 - Попередні налаштування успішно експортовано.
-      import_global_presets: 1200 - Імпорт пресетів
+      export_global_presets_success: 1202 - Попередні налаштування успішно експортовано.
+      import_global_presets: 1203 - Імпорт пресетів
       import_global_presets_help: |
-        1201 - Виберіть пресети у файлі **.json**, які ви хочете імпортувати.
+        1204 - Виберіть пресети у файлі **.json**, які ви хочете імпортувати.
         Увага, якщо пресет із такою назвою вже існує, його буде замінено імпортованою версією.
       import_global_presets_success: |
-        1202 - Пресети *OpenCutList* успішно імпортовано.
+        1205 - Пресети *OpenCutList* успішно імпортовано.
         Щоб врахувати зміни, потрібно **закрити** та **знову відкрити** вікно OpenCutList.
-      dump_global_presets: 1203 - Дамп пресетів
-      dump_model_presets: 1204 - Дамп пресетів моделі
-      reset_global_presets: 1205 - Скинути попередні налаштування
+      dump_global_presets: 1206 - Дамп пресетів
+      dump_model_presets: 1207 - Дамп пресетів моделі
+      reset_global_presets: 1208 - Скинути попередні налаштування
       reset_global_presets_confirm: |
-        1206 - Ви збираєтеся скинути всі збережені попередні налаштування *OpenCutList*.
+        1209 - Ви збираєтеся скинути всі збережені попередні налаштування *OpenCutList*.
         Ця дія є остаточною. **Усі попередні налаштування буде втрачено.**
         Підтвердьте, щоб продовжити.
       reset_global_presets_success: |
-        1207 - Попередні налаштування *OpenCutList* скинуто.
+        1210 - Попередні налаштування *OpenCutList* скинуто.
         Щоб застосувати всі зміни, ви повинні **закрити** та **знову відкрити** вікно OpenCutList.
-      reset_model_presets: 1208 - Скинути налаштування моделі
+      reset_model_presets: 1211 - Скинути налаштування моделі
       reset_model_presets_confirm: |
-        1209 - Ви збираєтеся скинути всі налаштування *OpenCutList* для поточної моделі.
+        1212 - Ви збираєтеся скинути всі налаштування *OpenCutList* для поточної моделі.
         Ця дія є остаточною. **Усі налаштування буде відновлено до значень за замовчуванням.**
         Підтвердьте, щоб продовжити.
       reset_model_presets_success: |
-        1210 - Налаштування *OpenCutList* поточної моделі скинуто.
+        1213 - Налаштування *OpenCutList* поточної моделі скинуто.
         Щоб застосувати всі зміни, потрібно **закрити** та **знову відкрити** вікно OpenCutList.
       error:
-        no_preset_to_export: 1211 - Немає пресету для експорту.
-        no_preset_to_import: 1212 - Немає пресету для імпорту.
-        failed_to_import: '1213 - Не вдалося імпортувати пресет: **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1214 - Цей файл було змінено. Його не можна імпортувати.
-        failed_to_import_bad_file_format: 1215 - Недійсний формат файлу.
+        no_preset_to_export: 1214 - Немає пресету для експорту.
+        no_preset_to_import: 1215 - Немає пресету для імпорту.
+        failed_to_import: '1216 - Не вдалося імпортувати пресет: **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1217 - Цей файл було змінено. Його не можна імпортувати.
+        failed_to_import_bad_file_format: 1218 - Недійсний формат файлу.
   about:
-    label: 1216 - Пропозиції
-    title: 1217 - Пропозиції
-    version: 1218 - Версія
-    credits: 1219 - Технічні характеристики
-    credits_authors: '1220 - *OpenCutList* розроблений [Борис Болант](https://www.lairdubois.fr/@borisbeaulant) і [Мартін Мюллер](https://www.lairdubois.fr/@mobilarte). *Список [співавторів](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
-
-      '
-    credits_translations: 1221 - Переклади
+    label: 1219 - Пропозиції
+    title: 1220 - Пропозиції
+    version: 1221 - Версія
+    credits: 1222 - Технічні характеристики
+    credits_authors: |
+      1223 - *OpenCutList* розроблений [Борис Болант](https://www.lairdubois.fr/@borisbeaulant) і [Мартін Мюллер](https://www.lairdubois.fr/@mobilarte). *Список [співавторів](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: 1224 - Переклади
     credits_translators: |
-      1222 - - Андрій Топорівський, Костянтин Щербей (*українська*)
+      1225 - - Андрій Топорівський, Костянтин Щербей (*українська*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*англійська*, *німецька*)
       - Gildas Boureau (*французька* документація)
       - Vladimir Badulya (*російська*)
@@ -1625,128 +1591,127 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*спрощена китайська*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*голландський*)
     credits_description: |
-      1223 - Розробка цього розширення є частиною проекту платформи спільного доступу [L'Air du Bois](https://www.lairdubois.fr).
+      1226 - Розробка цього розширення є частиною проекту платформи спільного доступу [L'Air du Bois](https://www.lairdubois.fr).
       І як такий, він також є *Open Source* і доступний під [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) на своєму [репозиторій GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1224 - Виконання
-    credits_development: 1225 - Розробка
-    credits_vendors: '1226 - Але ця пригода була б неможливою без роботи авторів наступних блоків програмного забезпечення *Open Source*:
-
-      '
+    credits_runtime: 1227 - Виконання
+    credits_development: 1228 - Розробка
+    credits_vendors: |
+      1229 - Але ця пригода була б неможливою без роботи авторів наступних блоків програмного забезпечення *Open Source*:
     credits_thanks: |
-      1227 - Особлива подяка:
+      1230 - Особлива подяка:
       - [JetBrains](https://www.jetbrains.com) за підтримку цього проекту через [Спеціальну ліцензію для проектів з відкритим кодом](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) за підтримку проекту з відкритим кодом.
       - [GitBook](https://www.gitbook.com) за підтримку проекту з відкритим кодом.
 tool:
   default:
-    transparency: 1228 - Прозорість
-    zoom_extents: 1229 - Наблизити
-    toggle_depth: 1230 - Деталі на задньому плані
-    more: 1231 - Ще
+    transparency: 1231 - Прозорість
+    zoom_extents: 1232 - Наблизити
+    toggle_depth: 1233 - Деталі на задньому плані
+    more: 1234 - Ще
   highlight:
-    transparency: "$t(tool.default.transparency)"
-    zoom_extents: "$t(tool.default.zoom_extents)"
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: 1234 - Покриття
-    default_material: 1235 - Матеріал не заданий
-    filters: 1236 - Фільтри
-    filter_0: 1237 - Не визначений
-    filter_1: "$t(tab.materials.type_1)"
-    filter_2: "$t(tab.materials.type_2)"
-    filter_3: "$t(tab.materials.type_3)"
-    filter_4: "$t(tab.materials.type_4)"
-    filter_5: "$t(tab.materials.type_5)"
-    filter_6: "$t(tab.materials.type_6)"
-    action_0: 1244 - Покриття деталей
-    action_0_status: 1245 - Натисніть на деталь, щоб застосувати матеріал до її екземпляра
-    action_1: 1246 - Покриття торців
-    action_1_status: 1247 - Натисніть на торець деталі, щоб застосувати до неї матеріал«$t(tab.materials.type_4)»
-    action_2: 1248 - Покриття граней
-    action_2_status: 1249 - Натисніть на награні деталі, щоб застосувати до неї матеріал «$t(tab.materials.type_6)»
-    action_3: 1250 - Очистити деталь
-    action_3_status: 1251 - Натисніть на грані, щоб взяти зразок матеріалу
-    action_4: 1252 - Очистити
-    action_4_status: 1253 - Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів
-    action_option_group_instances: 1254 - Кількість екземплярів
-    action_option_group_edges: 1255 - Кількість крайки
-    action_option_group_faces: 1256 - Кількість граней
-    action_option_instances_0_status: 1257 - Покриття лише екземпляра цільової деталі
-    action_option_instances_1_status: 1258 - Покриття всіх екземплярів цільової деталі
-    action_option_edges_0_status: 1259 - Покриття лише цільової крайки
-    action_option_edges_1_status: 1260 - Покриття цільової крайки та протилежної крайки у деталі
-    action_option_edges_2_status: 1261 - Покриття всіх 4 країв деталі, яку ви вибрали
-    action_option_faces_0_status: 1262 - Покриття лише цільової грані
-    action_option_faces_1_status: 1263 - Покриття 2 граней цільової деталі
-    edges: 1264 - {{ count }} торець
-    edges_plural: 1265 - {{ count }} торців
-    edge_ymin: 1266 - Довжина 1
-    edge_ymax: 1267 - Довжина 2
-    edge_xmin: 1268 - Ширина 1
-    edge_xmax: 1269 - Ширина 2
-    faces: 1270 - {{ count }} грань
-    faces_plural: 1271 - {{ count }} граней
-    face_zmin: 1272 - Тил
-    face_zmax: 1273 - Лице
+    title: 1237 - Покриття
+    default_material: 1238 - Матеріал не заданий
+    filters: 1239 - Фільтри
+    filter_0: 1240 - Не визначений
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
+    action_0: 1247 - Покриття деталей
+    action_0_status: 1248 - Натисніть на деталь, щоб застосувати матеріал до її екземпляра
+    action_1: 1249 - Покриття торців
+    action_1_status: Натисніть на торець деталі, щоб застосувати до неї матеріал«$t(tab.materials.type_4)»
+    action_2: 1251 - Покриття граней
+    action_2_status: Натисніть на награні деталі, щоб застосувати до неї матеріал «$t(tab.materials.type_6)»
+    action_3: 1253 - Очистити деталь
+    action_3_status: 1254 - Натисніть на грані, щоб взяти зразок матеріалу
+    action_4: 1255 - Очистити
+    action_4_status: 1256 - Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів
+    action_option_group_instances: 1257 - Кількість екземплярів
+    action_option_group_edges: 1258 - Кількість крайки
+    action_option_group_faces: 1259 - Кількість граней
+    action_option_instances_0_status: 1260 - Покриття лише екземпляра цільової деталі
+    action_option_instances_1_status: 1261 - Покриття всіх екземплярів цільової деталі
+    action_option_edges_0_status: 1262 - Покриття лише цільової крайки
+    action_option_edges_1_status: 1263 - Покриття цільової крайки та протилежної крайки у деталі
+    action_option_edges_2_status: 1264 - Покриття всіх 4 країв деталі, яку ви вибрали
+    action_option_faces_0_status: 1265 - Покриття лише цільової грані
+    action_option_faces_1_status: 1266 - Покриття 2 граней цільової деталі
+    edges: 1267 - {{ count }} торець
+    edges_plural: 1268 - {{ count }} торців
+    edge_ymin: 1269 - Довжина 1
+    edge_ymax: 1270 - Довжина 2
+    edge_xmin: 1271 - Ширина 1
+    edge_xmax: 1272 - Ширина 2
+    faces: 1273 - {{ count }} грань
+    faces_plural: 1274 - {{ count }} граней
+    face_zmin: 1275 - Тил
+    face_zmax: 1276 - Лице
     warning:
-      no_material: 1274 - Ваша модель не містить матеріалів!
-      no_material_type: 1275 - Незалежно від типу '{{ type }}'
+      no_material: 1277 - Ваша модель не містить матеріалів!
+      no_material_type: 1278 - Незалежно від типу '{{ type }}'
     error:
-      not_part: 1276 - Об'єкт, на який наведено, не є деталлю (компонентом)
-      not_edge: 1277 - Вказана грань не є торцем панелі
-      not_face: 1278 - Вказана грань не є площиною панелі
-      wrong_material_type: 1279 - Вказана деталь має бути типу '{{ type }}'
+      not_part: 1279 - Об'єкт, на який наведено, не є деталлю (компонентом)
+      not_edge: 1280 - Вказана грань не є торцем панелі
+      not_face: 1281 - Вказана грань не є площиною панелі
+      wrong_material_type: 1282 - Вказана деталь має бути типу '{{ type }}'
   smart_axes:
-    title: 1280 - Орієнтація
-    action_0: 1281 - Скасувати
-    action_0_status: 1282 - Натисніть на деталь, щоб перевернути її екземпляр уздовж одного з її розмірів
-    action_1: 1283 - Поміняти довжину ↔ ширину
-    action_1_status: 1284 - Натисніть на деталь, щоб поміняти її довжину на ширину
-    action_2: 1285 - Поміняйте Лице ↔ Тил
-    action_2_status: 1286 - Клацніть на деталі, щоб поміняти читання її лиця на зворотню сторону
-    action_3: 1287 - Адаптувати осі
-    action_3_status: 1288 - Натисніть на грань або край деталі, щоб пристосувати до нього осі
-    action_option_group_direction: 1289 - Напрямок
-    action_option_direction_0: 1290 - Д
-    action_option_direction_1: 1291 - Ш
-    action_option_direction_2: 1292 - Т
-    action_option_direction_0_status: 1293 - Повернути деталь у довжину
-    action_option_direction_1_status: 1294 - Повернути деталь у ширину
-    action_option_direction_2_status: 1295 - Повернути деталь у її товщині
+    title: 1283 - Орієнтація
+    action_0: 1284 - Скасувати
+    action_0_status: 1285 - Натисніть на деталь, щоб перевернути її екземпляр уздовж одного з її розмірів
+    action_1: 1286 - Поміняти довжину ↔ ширину
+    action_1_status: 1287 - Натисніть на деталь, щоб поміняти її довжину на ширину
+    action_2: 1288 - Поміняйте Лице ↔ Тил
+    action_2_status: 1289 - Клацніть на деталі, щоб поміняти читання її лиця на зворотню сторону
+    action_3: 1290 - Адаптувати осі
+    action_3_status: 1291 - Натисніть на грань або край деталі, щоб пристосувати до нього осі
+    action_option_group_direction: 1292 - Напрямок
+    action_option_direction_0: 1293 - Д
+    action_option_direction_1: 1294 - Ш
+    action_option_direction_2: 1295 - Т
+    action_option_direction_0_status: 1296 - Повернути деталь у довжину
+    action_option_direction_1_status: 1297 - Повернути деталь у ширину
+    action_option_direction_2_status: 1298 - Повернути деталь у її товщині
     warning:
-      more_entities: 1296 - {{ count_used }} екземпляри, що мають однакове визначення, будуть змінені
+      more_entities: 1299 - {{ count_used }} екземпляри, що мають однакове визначення, будуть змінені
     error:
-      not_part: 1297 - Об'єкт, на який наведено, не є деталлю (компонентом)
-      not_orientable: 1298 - Тип цієї деталі не дозволяє її зорієнтувати
+      not_part: 1300 - Об'єкт, на який наведено, не є деталлю (компонентом)
+      not_orientable: 1301 - Тип цієї деталі не дозволяє її зорієнтувати
   smart_export:
-    title: 1299 - Експорт
-    action_0: 1300 - Експортувати деталь 3D
-    action_0_status: 1301 - Натисніть на деталь
-    action_1: 1302 - Експортувати деталь 2D
-    action_1_status: 1303 - Натисніть на одну грань деталі
-    action_2: 1304 - Експортувати грань
-    action_2_status: 1305 - Натисніть на одну грань
-    action_3: 1306 - Експортувати шлях
-    action_3_status: 1307 - Натисніть на ребро
-    action_option_group_file_format: 1308 - Формат
-    action_option_group_unit: 1309 - Одиниці
-    action_option_group_faces: 1310 - Грані
-    action_option_group_options: 1311 - Опції
-    action_option_file_format_dxf_status: 1312 - Експорт до файлу DXF
-    action_option_file_format_stl_status: 1313 - Експортувати в файл STL
-    action_option_file_format_obj_status: 1314 - Експортувати до файлу OBJ
-    action_option_file_format_svg_status: 1315 - Експортувати до файлу SVG
-    action_option_unit_0_status: "$t(default.unit_0)"
-    action_option_unit_1_status: "$t(default.unit_1)"
-    action_option_unit_2_status: "$t(default.unit_2)"
-    action_option_unit_3_status: "$t(default.unit_3)"
-    action_option_unit_4_status: "$t(default.unit_4)"
-    action_option_faces_0_status: "$t(tab.cutlist.write.option_faces_0)"
-    action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
-    action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
-    action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: 1325 - Виокремити отвори, що проходять крізь і злити глибини для кожної порожнини
-    action_option_options_include_paths_status: 1326 - Експортувати як шляхи непов'язаних з гранню ребер, що містяться в деталі
+    title: 1302 - Експорт
+    action_0: 1303 - Експортувати деталь 3D
+    action_0_status: 1304 - Натисніть на деталь
+    action_1: 1305 - Експортувати деталь 2D
+    action_1_status: 1306 - Натисніть на одну грань деталі
+    action_2: 1307 - Експортувати грань
+    action_2_status: 1308 - Натисніть на одну грань
+    action_3: 1309 - Експортувати шлях
+    action_3_status: 1310 - Натисніть на ребро
+    action_option_group_file_format: 1311 - Формат
+    action_option_group_unit: 1312 - Одиниці
+    action_option_group_faces: 1313 - Грані
+    action_option_group_options: 1314 - Опції
+    action_option_file_format_dxf_status: 1315 - Експорт до файлу DXF
+    action_option_file_format_stl_status: 1316 - Експортувати в файл STL
+    action_option_file_format_obj_status: 1317 - Експортувати до файлу OBJ
+    action_option_file_format_svg_status: 1318 - Експортувати до файлу SVG
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
+    action_option_options_merge_holes_status: 1328 - Виокремити отвори, що проходять крізь і злити глибини для кожної порожнини
+    action_option_options_include_paths_status: 1329 - Експортувати як шляхи непов'язаних з гранню ребер, що містяться в деталі
     error:
-      not_part: 1327 - Ця площина не є частиною деталі (компонента)
-      not_flat_face: 1328 - Ця грань не є плоскою
-      incompatible_active_path: 1329 - Шлях активний не дозволяє експортувати цей елемент
+      not_part: 1330 - Ця площина не є частиною деталі (компонента)
+      not_flat_face: 1331 - Ця грань не є плоскою
+      incompatible_active_path: 1332 - Шлях активний не дозволяє експортувати цей елемент

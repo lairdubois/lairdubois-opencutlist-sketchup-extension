@@ -113,7 +113,7 @@ core:
     report_a_bug: الإبلاغ عن خطأ
   warning:
     dev: |
-      *OpenCutList* أنت تستعمل نسخة **ما زالت تحت التطوير** من 
+      *OpenCutList* أنت تستعمل نسخة **ما زالت تحت التطوير** من
       هذه النسخة متوفرة فقط لغرض التجريب
       لا ينصح باستعمالها في الإنتاج
 
@@ -138,7 +138,7 @@ core:
       هناك نسخة جديدة من *OpenCutList* متوفرة الآن
       ! حدّث للحصول إلى آخر الميزات
     up_to_date: |
-      *OpenCutList* لديك حاليا آخر نسخة من 
+      *OpenCutList* لديك حاليا آخر نسخة من
 
       !*ضع في اعتبارك رعاية هذا المشروع لمساعدتنا في إضافة المزيد من الميزات*
     downloading: التحميل جارٍ
@@ -148,7 +148,7 @@ core:
     manual_download: تحميل يدوي
     zzz: "SketchUp أنا حاليا في وضع السكون بعد التحديث. لإعادتي إلى الوضع الطبيعي، عليك أن تعيد تشغيل "
     success: |
-      ! لقد اكتمل تحديث OpenCutList 
+      ! لقد اكتمل تحديث OpenCutList
 
       أعد تشغيل SKETCHUP لتفعيل التغييرات
     error:
@@ -842,9 +842,9 @@ tab:
         option_dxf_structure_1: الطبقات
         option_dxf_structure_2: الطبقات + الكتل
         option_dxf_structure_help: |
-          DXF يساعد الخيار على تحديد بُنية ملف الـ 
+          DXF يساعد الخيار على تحديد بُنية ملف الـ
 
-          - بُنية **الطبقات** تُسطِّح كل الخطوط، و تميز بين أنواع الخطوط المختلفة باستعمال الطبقات فقط. *توفر هذه البُنية توافقا أكبر مع البرامج المُساعِدة* 
+          - بُنية **الطبقات** تُسطِّح كل الخطوط، و تميز بين أنواع الخطوط المختلفة باستعمال الطبقات فقط. *توفر هذه البُنية توافقا أكبر مع البرامج المُساعِدة*
           - بُنية ** الطبقات + الكتل ** تنشئ كتلة واحدة لكل قِطعة، و تضيف هذه الكتل عدة مرات حسب تكرار القِطع. *توفر هذه البنية مرونة أكبر لتعديل الملف*
         option_unit: $t(tab.cutlist.write.option_unit)
         option_unit_help: $t(tab.cutlist.write.option_unit_help)
@@ -1089,7 +1089,7 @@ tab:
       option_faces_0: استعمل الوجه المستهدف فقط
       option_faces_1: استعمل كل وجوه القِطعة
       option_faces_help: |
-        يتيح لك اختيار ما إذا كان البحث عن شكل القِطعة يتم على جميع وجوهها أم على الوجه المستهدف فقط 
+        يتيح لك اختيار ما إذا كان البحث عن شكل القِطعة يتم على جميع وجوهها أم على الوجه المستهدف فقط
       option_anchor: نقطة الارتساء
       option_anchor_0: افتراضي
       option_anchor_1: صدر مبدأ القِطعة
@@ -1432,11 +1432,11 @@ tab:
     label: شروحات توضيحية
     title: شروحات توضيحية
     help: |
-      *OpenCutList* جِد هنا قائمة غير مستفيضة من الفيديوهات المنتجة من قبل المجتمع عن طريقة استخدام 
+      *OpenCutList* جِد هنا قائمة غير مستفيضة من الفيديوهات المنتجة من قبل المجتمع عن طريقة استخدام
     submit: أرسل فيديو
     submit_info: |
       صممت فيديو يقدم لاستعمال **OpenCutList** و تريده أن يظهر هنا؟
-      **opencutlist@lairdubois.fr**! أعلمنا بمراسلتنا عبر 
+      **opencutlist@lairdubois.fr**! أعلمنا بمراسلتنا عبر
 
       *يجب أن يكون الفيديو على اليوتيوب و أن يكون وضعه عامًّا*.
     error:
@@ -1445,7 +1445,7 @@ tab:
     label: الأخبار
     title: الأخبار
     help: |
-      *OpenCutList* آخر الأخبار عن 
+      *OpenCutList* آخر الأخبار عن
     comment: تعليق
     error:
       fail_to_load_list: تعذر تحميل قائمة الأخبار.
@@ -1453,7 +1453,7 @@ tab:
     label: المنتدى
     title: المنتدى
     help: |
-      *OpenCutList* تتيح لك هذه المساحة تبادل الحوار مع مجتمع المستخدمين و فريق 
+      *OpenCutList* تتيح لك هذه المساحة تبادل الحوار مع مجتمع المستخدمين و فريق
     create_conversation: البدء في محادثة
     reply: الرد
     tags: الوسوم
@@ -1469,8 +1469,8 @@ tab:
     label: رعاية
     title: رعاية
     description: |
-      <a href="https://opencollective.com/" target="_blank">Open Collective</a> هو برنامج *مفتوح المصدر* ممول من قبل مستخدمين عبر المنصة **OpenCutList** 
-      ! ادعموا هذا البرنامج عبر مساهمة مالية 
+      <a href="https://opencollective.com/" target="_blank">Open Collective</a> هو برنامج *مفتوح المصدر* ممول من قبل مستخدمين عبر المنصة **OpenCutList**
+      ! ادعموا هذا البرنامج عبر مساهمة مالية
     contribute: ساهم
     backers: "{{ count }} مساهما بالمال"
     backers_plural: "{{ count }} مساهمين / مساهما بالمال"
@@ -1480,6 +1480,8 @@ tab:
     objective_title:
       default: الأهداف
       cuttingdiagram_export: تمويل تصدير رسومات التقطيعِ التخطيطيةِ
+      outliner: Funding of the Structure function
+      packing: Funding of Nesting in Cutting Diagrams
     objective_details:
       default: |
         تحسين *OpenCutList* المستمر مهم لنا، و المشروع بحاجة لمساعدتكم من أجل الإصدار التالي
@@ -1487,11 +1489,17 @@ tab:
         يهمنا أن يمكن تكييف خاصية *رسم التقطيعِ التخطيطيّ* في *OpenCutList* مع توقعات المستعملين المختلفة.
         لتوسيع الاحتمالات بشكل أكبر، نود تمكين تصدير مخططات التقطيع بتنسيق **SVG** و **DXF**.
         من خلال تزويدنا بالموارد للعمل على هذه الصادرات ، فإنك تمنحنا الفرصة لمساعدتك في تحقيق أقصى استفادة من *OpenCutList*.
-      layout: |
-        الهدف من هذا الجزء هو تسهيل طباعة معاينة لمشروعك و إظهار **منظرٍ مُفجَّرٍ** له مع تعيين للقِطَعِ وفقا لرقمها المعطى لها في قائمة القِطع.
+      outliner: |
+        A model can be quite complex, and navigating its structure with SketchUp's native Structure panel is not always very practical.
+        In SketchUp, you can apply material and tags to instances, description, url and badges to definitions, but they're not displayed in the structure.
+        The video will show you how we'd like to improve this in the Structure menu, accessible directly from OpenCutList.
+      packing: |
+        It's important to us that *OpenCutList* can adapt to the wide variety of user requirements for its *cutting diagram* function.
+        To further extend the possibilities, we'd like to implement a **nesting algorithm** to optimize the cutting of parts of any shape.
+        By providing us with the means to work on this functionality, you're giving us the opportunity to help you get the most out of *OpenCutList*.
     objective_crowdfunding: |
       سيجري تطوير هذه الوظائف الجديدة عبر **التمويل التشاركي** و ستكون البداية عند بلوغ **الهدف المالي**.
-    objective_thanks: |2
+    objective_thanks: |
        ! شكرا لمساهمتك
     objective_funded_progress: "مموَّل بنسبة % {{ progress }}"
   settings:
@@ -1527,12 +1535,12 @@ tab:
     presets:
       export_global_presets: تصدير الإعدادات المسبقة
       export_global_presets_help: |
-        **json.** تتيح لك هذه الخاصية تصدير إعداداتك المسبقة إلى ملف بصيغة 
+        **json.** تتيح لك هذه الخاصية تصدير إعداداتك المسبقة إلى ملف بصيغة
         حدد الإعدادات التي تريد تصديرها إليه
       export_global_presets_success: نجح تصدير الإعدادات المسبقة
       import_global_presets: استيراد إعدادات مسبقة
       import_global_presets_help: |
-        **json.**حدد الإعدادات المسبقة التي تريد استيرادها من ملف الـ 
+        **json.**حدد الإعدادات المسبقة التي تريد استيرادها من ملف الـ
         رجاء انتبه إلى أن الإعداد الموجود من قبل سيُستبدَلُ بالنسخة المستوردة إن كانا يحملان الاسم ذاته
       import_global_presets_success: |
         لقد استوردت إعدادات *OpenCutList* المسبقة بنجاح
@@ -1546,7 +1554,7 @@ tab:
         أكّد من أجل المواصلة.
       reset_global_presets_success: |
         لقد أُعيد تعيين إعدادات *OpenCutList* المسبقة
-        OpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة 
+        OpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة
       reset_model_presets: إعادة تهيئة إعدادات النموذج المسبقة
       reset_model_presets_confirm: |
         أنت مقبل على إعادة تعيين كل إعدادات *OpenCutList* للنموذج الحالي.
@@ -1554,7 +1562,7 @@ tab:
         أكّد من أجل المواصلة.
       reset_model_presets_success: |
         لقد أُعيد تعيين إعدادات *OpenCutList* للنموذج الحالي
-        OpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة 
+        OpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة
       error:
         no_preset_to_export: لا إعدادات مسبقة للتصدير
         no_preset_to_import: لا إعدادات مسبقة للاستيراد
@@ -1585,7 +1593,7 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*الصينية المبسطة*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*الهولندية*)
     credits_description: |
-      [L'Air du Bois](https://www.lairdubois.fr) تطوير هذه الإضافة مرتبط بمشروع منصة المشاركة 
+      [L'Air du Bois](https://www.lairdubois.fr) تطوير هذه الإضافة مرتبط بمشروع منصة المشاركة
        [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) على [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) هذه الإضافة *مفتوحة المصدر* و متوفرة ضمن
     credits_runtime: وقت التشغيل
     credits_development: تطوير

@@ -1480,6 +1480,8 @@ tab:
     objective_title:
       default: Ziele
       cuttingdiagram_export: Finanzierung von Schnittplan-Exporten
+      outliner: Finanzierung der Funktion Struktur
+      packing: Finanzierung des Nestings (Verschachtelung)
     objective_details:
       default: |
         Die kontinuierliche Verbesserung von *OpenCutList* ist uns wichtig und das Projekt braucht weiterhin Ihre Hilfe für das nächste Update!
@@ -1487,8 +1489,14 @@ tab:
         Es ist uns wichtig, dass *OpenCutList* an die vielfältigen Anforderungen der Anwender an die *Schnittplan*-Funktion angepasst werden kann.
         Um die Möglichkeiten weiter auszubauen, möchten wir den Export von Schnittplänen im **SVG**- und **DXF**-Format ermöglichen.
         Indem Sie uns die Mittel zur Verfügung stellen, um diese Exporte zu bearbeiten, geben Sie uns die Möglichkeit, Ihnen zu helfen, das Beste aus *OpenCutList* herauszuholen.
-      layout: |
-        Ziel dieses Moduls ist es, dass Sie auf einfache Weise eine Übersicht Ihres Projekts in **explodierter Ansicht** ausdrucken können, wobei die Teile anhand der Information aus der Holzliste identifiziert werden.
+      outliner: |
+        Ein Modell kann ziemlich komplex sein und das Navigieren durch seine Struktur mit dem nativen Struktur-Panel von SketchUp ist nicht immer sehr praktisch.
+        In SketchUp können Sie Material und Tags auf Instanzen anwenden, eine Beschreibung, eine Url und Badges auf Definitionen, aber sie werden nicht in der Struktur angezeigt.
+        Das Video zeigt Ihnen, wie wir das im Menü Struktur, das direkt von OpenCutList aus aufgerufen werden kann, verbessern möchten.
+      packing: |
+        Es ist uns wichtig, dass *OpenCutList* sich an die sehr unterschiedlichen Erwartungen der Benutzer an die *Schnittplanfunktion* anpassen kann.
+        Um die Möglichkeiten noch zu erweitern, möchten wir einen **Verschachtelungsalgorithmus** implementieren, um das Zuschneiden von beliebig geformten Teilen zu optimieren.
+        Indem Sie uns die Mittel zur Verfügung stellen, um an dieser Funktionalität zu arbeiten, geben Sie uns die Möglichkeit, dass Sie das Beste aus *OpenCutList* herausholen können.
     objective_crowdfunding: |
       Die Entwicklung von neuen Funktionen wird durch **Beteiligungsfinanzierung** erfolgen und kann beginnen, sobald das **Finanzielle Ziel** erreicht ist.
     objective_thanks: |
