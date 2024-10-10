@@ -1480,6 +1480,8 @@ tab:
     objective_title:
       default: Objetivo
       cuttingdiagram_export: Financiamento das exportações de planos de corte
+      outliner: Funding of the Structure function
+      packing: Funding of Nesting in Cutting Diagrams
     objective_details:
       default: |
         A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização!
@@ -1487,8 +1489,14 @@ tab:
         É importante para nós que o *OpenCutList* se possa adaptar à grande variedade de requisitos dos utilizadores para a função *Plano de Corte*.
         Para ampliar ainda mais as possibilidades, gostaríamos de poder exportar planos de layout nos formatos **SVG** e **DXF**.
         Ao fornecer-nos os meios para efetuar estas exportações, estará ao mesmo tempo dando-nos a oportunidade de ajudá-lo a tirar o máximo proveito da *OpenCutList*.
-      layout: |
-        O objetivo deste módulo é permitir que você imprima facilmente uma visualização de seu projeto como uma **visão explodida** com identificação a partir das informações geradas na lista de peças.
+      outliner: |
+        A model can be quite complex, and navigating its structure with SketchUp's native Structure panel is not always very practical.
+        In SketchUp, you can apply material and tags to instances, description, url and badges to definitions, but they're not displayed in the structure.
+        The video will show you how we'd like to improve this in the Structure menu, accessible directly from OpenCutList.
+      packing: |
+        It's important to us that *OpenCutList* can adapt to the wide variety of user requirements for its *cutting diagram* function.
+        To further extend the possibilities, we'd like to implement a **nesting algorithm** to optimize the cutting of parts of any shape.
+        By providing us with the means to work on this functionality, you're giving us the opportunity to help you get the most out of *OpenCutList*.
     objective_crowdfunding: |
       O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo** e poderá começar quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |

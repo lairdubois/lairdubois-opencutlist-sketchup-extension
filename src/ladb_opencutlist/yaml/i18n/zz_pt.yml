@@ -75,14 +75,14 @@ core:
     submenu: 72 - OpenCutList
     item:
       generate_cutlist: 73 - Gerar a lista de peças
-      edit_part_properties: "$t(tab.cutlist.edit_part_properties)"
-      edit_part_axes_properties: "$t(tab.cutlist.edit_part_axes_properties)"
-      edit_part_size_increase_properties: "$t(tab.cutlist.edit_part_size_increase_properties)"
-      edit_part_edges_properties: "$t(tab.cutlist.edit_part_edges_properties)"
-      edit_part_faces_properties: "$t(tab.cutlist.edit_part_faces_properties)"
-      smart_paint: "$t(core.toolbar.command.smart_paint)"
-      smart_axes: "$t(core.toolbar.command.smart_axes)"
-      smart_export: "$t(core.toolbar.command.smart_export)"
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: 82 - Reinicializar a posição da janela
   toolbar:
     name: 83 - OpenCutList
@@ -177,25 +177,25 @@ core:
       delete: 137 - Apagar as definições '{{ name }}'
     dictionary:
       component_textinput_color: 138 - Paleta de cores
-      cutlist_cuttingdiagram1d_options: 139 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: 140 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
-      cutlist_cuttingdiagram2d_options: 141 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: 142 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
-      cutlist_export_options: "$t(tab.cutlist.label) / $t(tab.cutlist.export.title)"
-      cutlist_labels_options: "$t(tab.cutlist.label) / $t(tab.cutlist.labels.title)"
-      cutlist_layout_options: "$t(tab.cutlist.label) / $t(tab.cutlist.layout.title)"
-      cutlist_options: "$t(tab.cutlist.label) / $t(default.options)"
-      cutlist_report_options: "$t(tab.cutlist.label) / $t(tab.cutlist.report.title)"
-      cutlist_write2d_options: 148 - $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
-      cutlist_write3d_options: 149 - $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: "$t(tab.importer.label) / $t(default.import)"
-      importer_load_options: "$t(tab.importer.label) / $t(default.open)"
-      materials_material_attributes: "$t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)"
-      materials_options: "$t(tab.materials.label) / $t(default.options)"
-      settings_model: 154 - $t(tab.settings.label) / Modelo
-      tool_smart_paint_options: "$t(core.toolbar.command.smart_paint)"
-      tool_smart_axes_options: "$t(core.toolbar.command.smart_axes)"
-      tool_smart_export_options: "$t(core.toolbar.command.smart_export)"
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Modelo
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
     please_wait: 158 - Calculando... Por favor aguarde
   component:
@@ -266,26 +266,26 @@ tab:
         205 - Acrescentar seção *{{ std_dimension }}*
         ao material '{{ material_name }}'
       rounded_std_width: |
-        206 - A largura *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
+        A largura *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
         Largura real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
-        207 - A espessura *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
+        A espessura *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
         Espessura real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
-        208 - A seção cruzada *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
+        A seção cruzada *{{ std_dimension }}* é arredondada pela precisão da unidade modelo.
         Seção cruzada real: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_footer: 209 - Defina a precisão na *Informações do modelo* ou verifique as dimensões das peças deste grupo.
-      highlight_part: "$t(tab.cutlist.highlight_part)"
-      highlight_parts: "$t(tab.cutlist.highlight_parts)"
-      edit_part_properties: "$t(tab.cutlist.edit_part_properties)"
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_parts_properties: 213 - Editar propriedades de um grupo de peças
-      edit_material: "$t(tab.cutlist.menu.edit_material)"
+      edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: 215 - Expandir / Recolher
       material_origin_1: 216 - O material desta peça é definido em suas instâncias
       material_origin_2: 217 - O material considerado para esta peça é atualmente herdado de um de seus elementos parentes
@@ -349,7 +349,7 @@ tab:
       hide_all_other_groups: 274 - Esconder todos os outros grupos
       numbers_save: 275 - Salve os números das peças
       numbers_reset: 276 - Reinicialize os números da peça
-      highlight_parts: "$t(tab.cutlist.highlight_parts)"
+      highlight_parts: $t(tab.cutlist.highlight_parts)
       write_2d: 278 - Projeção 2D
       write_3d: 279 - Geometria 3D
       write_2d_parts: 280 - Exportar a projeção 2D das peças
@@ -375,15 +375,14 @@ tab:
       title_multiple: 296 - Propriedades do grupo de peças
       multiple_alert: 297 - Propriedades comuns do grupo de {{ part_count }} peças.
       general: 298 - Geral
-      extra_help: 299 - Lista de propriedades específicas do tipo de material "**$t(tab.materials.type_{{ material_type }})**".
+      extra_help: Lista de propriedades específicas do tipo de material "**$t(tab.materials.type_{{ material_type }})**".
       edges: 300 - Fita de Borda
       faces: 301 - Faces
       name: 302 - Nome
       material: 303 - Material
       cumulable: 304 - Pode somar
-      cumulable_help: '305 - Se esta opção for selecionada, o **comprimento** ou o **largura** serão considerados **comprimento** ou **largura** multiplicados pela contagem ao ordenar a Planilha de Produção.
-
-        '
+      cumulable_help: |
+        305 - Se esta opção for selecionada, o **comprimento** ou o **largura** serão considerados **comprimento** ou **largura** multiplicados pela contagem ao ordenar a Planilha de Produção.
       cumulable_0: 306 - Não somam
       cumulable_1: 307 - Soma ao comprimento
       cumulable_2: 308 - Soma à largura
@@ -407,13 +406,11 @@ tab:
         *Exemplo:* Se você quiser fazer um desenho com *38mm* de espessura colando dois painéis de *19mm*, digite **2** neste campo.
         *OpenCutList contará então 2 peças de 19mm de espessura ao invés de 1 peça de 38mm de espessura*
       description: 319 - Descrição
-      description_help: '320 - A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
-
-        '
+      description_help: |
+        320 - A *Descrição* permite que você forneça informações personalizadas sobre cada definição de peça.
       url: 321 - URL
-      url_help: '322 - O *URL* permite fornecer um link personalizado para uma página externa em cada definição de peça.
-
-        '
+      url_help: |
+        322 - O *URL* permite fornecer um link personalizado para uma página externa em cada definição de peça.
       tags: 323 - Identificação
       tags_help: |
         324 - *Identificação* são palavras-chave personalizadas que podem ser adicionadas a cada definição de peça.
@@ -430,13 +427,11 @@ tab:
         - *largura* está no eixo <span style='color:green'>verde</span>
         - *espessura* está no eixo <span style='color:blue'>azul</span>
       symmetrical: 329 - Desativar a detecção de peças espelhadas nesta parte
-      symmetrical_help: '330 - Se esta caixa estiver marcada, a detecção da *peça espelhada* não terá efeito nesta parte.
-
-        '
+      symmetrical_help: |
+        330 - Se esta caixa estiver marcada, a detecção da *peça espelhada* não terá efeito nesta parte.
       ignore_grain_direction: 331 - Ignorar a direção dos veios
-      ignore_grain_direction_help: '332 - Se esta caixa estiver marcada, a direção dos veios é ignorada.
-
-        '
+      ignore_grain_direction_help: |
+        332 - Se esta caixa estiver marcada, a direção dos veios é ignorada.
       size_increase: 333 - Superdimensionar
       size_increase_help: |
         334 - O superdimensionamento permite aumentar as dimensões de uma única parte.
@@ -475,9 +470,8 @@ tab:
         - *largura* está no eixo <span style='color:green'>verde</span>
         - *espessura* está no eixo <span style='color:blue'>azul</span>
       flipped_detection: 357 - Detecção de peças espelhadas
-      flipped_detection_help: '358 - Se esta opção for ativada, as peças espelhadas serão detectadas e exibidas como peças novas.
-
-        '
+      flipped_detection_help: |
+        358 - Se esta opção for ativada, as peças espelhadas serão detectadas e exibidas como peças novas.
       smart_material: 359 - Atribuição *inteligente* de material
       smart_material_help: 360 - Se esta opção estiver ativada, as peças sem um material definido podem ter o material principal de seus elementos filhos ou aquele herdado de seus elementos pais automaticamente atribuídos à elas.
       dynamic_attributes_name: 361 - Use o atributo *Nome* dos componentes dinâmicos
@@ -512,17 +506,16 @@ tab:
       hide_faces_help: 384 - Se esta opção for selecionada, as **colunas face** das peças do tipo *Chapas* ficarão ocultas.
       hide_material_colors: 385 - Ocultar as cores dos materiais
       hide_material_colors_help: 386 - Se esta opção estiver habilitada, as cores do material não serão exibidas.
-      minimize_on_highlight: 387 - Mimimize após *'$t(tab.cutlist.highlight_part) ...'*
-      minimize_on_highlight_help: 388 - Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$t(tab.cutlist.highlight_part)'* for aplicada.
+      minimize_on_highlight: Mimimize após *'$t(tab.cutlist.highlight_part) ...'*
+      minimize_on_highlight_help: Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$t(tab.cutlist.highlight_part)'* for aplicada.
       general: 389 - Geral
       part_order_strategy: 390 - Classificação de peças
       part_order_strategy_help: |
         391 - Reorganizar as seguintes propriedades para definir a ordem de classificação dentro de cada grupo.
         As propriedades podem ser ordenados en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *descendente*.
       dimension_column_order_strategy: 392 - Ordenação de Dimensões
-      dimension_column_order_strategy_help: '393 - Reorganize as seguintes propriedades para definir a ordem de exibição das colunas de dimensão.
-
-        '
+      dimension_column_order_strategy_help: |
+        393 - Reorganize as seguintes propriedades para definir a ordem de exibição das colunas de dimensão.
       property_thickness: 394 - Espessura
       property_length: 395 - Comprimento
       property_width: 396 - Largura
@@ -568,30 +561,26 @@ tab:
       faces: 435 - Faces
     export:
       title: 436 - Exportar
-      info_0: '437 - Este recurso permite exportar sua *folha de dados* como uma *Planilha de Produção* para um arquivo em formato [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
-
-        '
-      customize_help: '438 - Reordenar, Esconder, Adicionar, Remover ou Seleccionar uma coluna da lista para personalizar o seu **título** e a **fórmula** gerando o valor apresentado para cada linha exportada.
-
-        '
+      info_0: |
+        437 - Este recurso permite exportar sua *folha de dados* como uma *Planilha de Produção* para um arquivo em formato [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
+      customize_help: |
+        438 - Reordenar, Esconder, Adicionar, Remover ou Seleccionar uma coluna da lista para personalizar o seu **título** e a **fórmula** gerando o valor apresentado para cada linha exportada.
       add_column: 439 - Acrescentar uma coluna
       add_native_columns: 440 - Acrescentar uma coluna nativa
       remove_column: 441 - Remover
       remove_all_columns: 442 - Remover tudo
       columns: 443 - Colunas
       column_title: 444 - Título
-      column_title_help: '445 - O campo **Título** permite personalizar o título da coluna.
-
-        '
+      column_title_help: |
+        445 - O campo **Título** permite personalizar o título da coluna.
       column_formula: 446 - Fórmula
-      column_formula_help: '447 - O campo **Fórmula** permite usar o código *Ruby* para personalizar o valor da coluna.
-
-        '
+      column_formula_help: |
+        447 - O campo **Fórmula** permite usar o código *Ruby* para personalizar o valor da coluna.
       options: 448 - Opções de exportação
       options_customize: 449 - Nome do modelo
       option_source: 450 - Fonte
-      option_source_summary: "$t(tab.cutlist.list.summary)"
-      option_source_cutlist: "$t(tab.cutlist.title)"
+      option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: $t(tab.cutlist.title)
       option_source_instances_list: 453 - Lista de instâncias
       option_col_sep: 454 - Separador
       option_col_sep_tab: 455 - Tabulador
@@ -651,13 +640,12 @@ tab:
         is_group_selection: 507 - As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão exportadas.
     report:
       title: 508 - Orçamento
-      info_0: '509 - Gerar um orçamento do **peso** e do **custo** da **matéria prima** necessária para a produção das peças da *lista de peças*.
-
-        '
+      info_0: |
+        509 - Gerar um orçamento do **peso** e do **custo** da **matéria prima** necessária para a produção das peças da *lista de peças*.
       options_general: 510 - Geral
-      options_solid_wood: "$t(tab.materials.type_1)"
-      option_solid_wood_coefficient: 512 - Coeficiente de perda para madeira bruta *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: 513 - Permite indicar o coeficiente de multiplicação aplicado ao volume bruto medido para materiais do tipo "**$t(tab.materials.type_1)**" para contabilizar defeitos e desperdícios.
+      options_solid_wood: $t(tab.materials.type_1)
+      option_solid_wood_coefficient: Coeficiente de perda para madeira bruta *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: Permite indicar o coeficiente de multiplicação aplicado ao volume bruto medido para materiais do tipo "**$t(tab.materials.type_1)**" para contabilizar defeitos e desperdícios.
       raw_materials: 514 - Matéria prima
       coefficient: 515 - Fator
       total: 516 - Total
@@ -673,7 +661,7 @@ tab:
       tooltip:
         incompatible_unit: 526 - Unidade incompatível com as opções de orçamento de material
       error:
-        no_typed_material_parts: 527 - Nenhuma peça com o tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar a estimativa.
+        no_typed_material_parts: Nenhuma peça com o tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar a estimativa.
         entry_error: '528 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**.'
         entry_error_plural: '529 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**.'
       warning:
@@ -767,7 +755,7 @@ tab:
       option_std_bar_dimensional: 609 - Barra padrão
       option_std_bar_edge: 610 - Fita de borda padrão
       option_std_bar_help: |
-        611 - Selecione aqui o tamanho padrão da barra ou fita de borda que será duplicada para melhor conter todas as partes.
+        Selecione aqui o tamanho padrão da barra ou fita de borda que será duplicada para melhor conter todas as partes.
         Esta lista é definida pelo campo **$t(tab.materials.edit_material.std_lengths)** do material.
         Editar o material '{{ material_name }}' para atualizar esta lista.
       option_std_bar_add: 612 - Adicionar um tamanho de painel
@@ -783,7 +771,7 @@ tab:
       option_std_sheet_good: 618 - Chapa de tamanho padrão
       option_std_sheet_veneer: 619 - Laminado padrão
       option_std_sheet_help: |
-        620 - Selecione a chapa padrão ou laminado padrão que será duplicado para conter todas as partes.
+        Selecione a chapa padrão ou laminado padrão que será duplicado para conter todas as partes.
         Esta lista é definida no campo **$t(tab.materials.edit_material.std_sizes)** do material.
         Edite o material '{{ material_name }}' para atualizar esta lista.
       option_std_sheet_add: 621 - Adicionar um tamanho de painel
@@ -844,11 +832,10 @@ tab:
         settings: 670 - Configurações
       export:
         title: 671 - Exportação do layout
-        info_0: '672 - Este módulo permite exportar a **geometria** do *layout* como uma lista de arquivos em [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-
-          '
-        option_file_format: "$t(tab.cutlist.write.option_file_format)"
-        option_file_format_help: "$t(tab.cutlist.write.option_file_format_help)"
+        info_0: |
+          672 - Este módulo permite exportar a **geometria** do *layout* como uma lista de arquivos em [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
         option_dxf_structure: 675 - Estrutura DXF
         option_dxf_structure_1: 676 - Camadas
         option_dxf_structure_2: 677 - Camadas + Blocos
@@ -857,58 +844,49 @@ tab:
 
           - a estrutura **Layers** desenha todas as linhas planas, distinguindo os diferentes tipos de linhas apenas por camadas. *Essa estrutura oferece melhor compatibilidade com softwares de terceiros.*
           - A estrutura **Camadas + Blocos** cria um bloco por peça e insere esses blocos quantas vezes as peças forem repetidas. *Essa estrutura oferece mais flexibilidade para edição do arquivo.*
-        option_unit: "$t(tab.cutlist.write.option_unit)"
-        option_unit_help: "$t(tab.cutlist.write.option_unit_help)"
-        option_smoothing: "$t(tab.cutlist.write.option_smoothing)"
-        option_smoothing_0: "$t(tab.cutlist.write.option_smoothing_0)"
-        option_smoothing_1: "$t(tab.cutlist.write.option_smoothing_1)"
-        option_smoothing_help: "$t(tab.cutlist.write.option_smoothing_help)"
-        option_merge_holes: "$t(tab.cutlist.write.option_merge_holes)"
-        option_merge_holes_0: "$t(tab.cutlist.write.option_merge_holes_0)"
-        option_merge_holes_1: "$t(tab.cutlist.write.option_merge_holes_1)"
-        option_merge_holes_help: "$t(tab.cutlist.write.option_merge_holes_help)"
-        option_include_paths: "$t(tab.cutlist.write.option_include_paths)"
-        option_include_paths_0: "$t(tab.cutlist.write.option_include_paths_0)"
-        option_include_paths_1: "$t(tab.cutlist.write.option_include_paths_1)"
-        option_include_paths_help: "$t(tab.cutlist.write.option_include_paths_help)"
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_sheet_good: 693 - Chapa
-        option_sheet_good_help: '694 - Permite habilitar a exportação da chapa e escolher suas cores.
-
-          '
+        option_sheet_good_help: |
+          694 - Permite habilitar a exportação da chapa e escolher suas cores.
         option_sheet_veneer: 695 - Folha
-        option_sheet_veneer_help: '696 - Permite habilitar a exportação da planilha e escolher suas cores.
-
-          '
+        option_sheet_veneer_help: |
+          696 - Permite habilitar a exportação da planilha e escolher suas cores.
         option_bar_dimensional: 697 - Barra
-        option_bar_dimensional_help: '698 - Permite ativar a exportação da barra e também escolher suas cores.
-
-          '
+        option_bar_dimensional_help: |
+          698 - Permite ativar a exportação da barra e também escolher suas cores.
         option_bar_band: 699 - Fita de Borda
-        option_bar_band_help: '700 - Permite ativar a exportação da fita de borda e também escolher suas cores.
-
-          '
+        option_bar_band_help: |
+          700 - Permite ativar a exportação da fita de borda e também escolher suas cores.
         option_parts: 701 - Peças
-        option_parts_help: '702 - Permite ativar a exportação de peças e escolher suas cores.
-
-          '
+        option_parts_help: |
+          702 - Permite ativar a exportação de peças e escolher suas cores.
         option_parts_holes: 703 - Perfurações
-        option_parts_holes_help: '704 - Permite escolher a cor dos furos da peça.
-
-          '
-        option_parts_paths: "$t(tab.cutlist.write.option_parts_paths)"
-        option_parts_paths_help: "$t(tab.cutlist.write.option_parts_paths_help)"
+        option_parts_holes_help: |
+          704 - Permite escolher a cor dos furos da peça.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: 707 - Identificações
-        option_texts_help: '708 - Permite ativar a exportação dos textos de identificação das peças e também escolher suas cores.
-
-          '
+        option_texts_help: |
+          708 - Permite ativar a exportação dos textos de identificação das peças e também escolher suas cores.
         option_leftovers: 709 - Sobras
-        option_leftovers_help: '710 - Permite ativar a exportação das sobras e também escolher suas cores.
-
-          '
+        option_leftovers_help: |
+          710 - Permite ativar a exportação das sobras e também escolher suas cores.
         option_cuts: 711 - Cortes
-        option_cuts_help: '712 - Permite ativar a exportação dos cortes e escolher sua cor.
-
-          '
+        option_cuts_help: |
+          712 - Permite ativar a exportação dos cortes e escolher sua cor.
         warning:
           is_sheet_selection: 713 - As **chapas mascaradas** não serão exportadas.
       error:
@@ -1092,36 +1070,29 @@ tab:
         is_part_selection: 874 - Esta visão geral é limitada às **peças selecionadas**.
     write:
       title: 875 - Exportação de Peças
-      info_2d: '876 - Este módulo permite exportar a **projeção 2D** das peças como arquivos no formato [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-
-        '
-      info_3d: '877 - Este módulo permite exportar a **geometria 3D** das peças como arquivos no formato [STL](https://wikipedia.org/wiki/STL_(file_format)) ou [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
-
-        '
+      info_2d: |
+        876 - Este módulo permite exportar a **projeção 2D** das peças como arquivos no formato [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+      info_3d: |
+        877 - Este módulo permite exportar a **geometria 3D** das peças como arquivos no formato [STL](https://wikipedia.org/wiki/STL_(file_format)) ou [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
       option_file_format: 878 - Formato
-      option_file_format_help: '879 - Permite que você escolha o formato do arquivo a ser exportado.
-
-        '
+      option_file_format_help: |
+        879 - Permite que você escolha o formato do arquivo a ser exportado.
       option_unit: 880 - Unidades
-      option_unit_help: '881 - Permite escolher a unidade usada no arquivo exportado.
-
-        '
+      option_unit_help: |
+        881 - Permite escolher a unidade usada no arquivo exportado.
       option_part_drawing_type: 882 - Projeção
-      option_part_drawing_type_help: '883 - Permite que você escolha a visualização exportada.
-
-        '
+      option_part_drawing_type_help: |
+        883 - Permite que você escolha a visualização exportada.
       option_faces: 884 - Faces
       option_faces_0: 885 - Usar apenas a face alvo
       option_faces_1: 886 - Usar todas as faces da peça
-      option_faces_help: '887 - Permite escolher se a busca da forma da peça é feita em todas as suas faces ou apenas na face selecionada.
-
-        '
+      option_faces_help: |
+        887 - Permite escolher se a busca da forma da peça é feita em todas as suas faces ou apenas na face selecionada.
       option_anchor: 888 - Ponto de ancoragem
       option_anchor_0: 889 - Por padrão
       option_anchor_1: 890 - Projetar a origem da peça
-      option_anchor_help: '891 - Permite ativar a projeção da origem dos eixos da peça como ponto de ancoragem.
-
-        '
+      option_anchor_help: |
+        891 - Permite ativar a projeção da origem dos eixos da peça como ponto de ancoragem.
       option_smoothing: 892 - Suavização
       option_smoothing_0: 893 - Nenhum
       option_smoothing_1: 894 - Suavizar os círculos e arcos (Experimental)
@@ -1141,21 +1112,17 @@ tab:
       option_include_paths: 900 - Traçados
       option_include_paths_0: 901 - Nenhum
       option_include_paths_1: 902 - Utilizar as arestas não associadas a uma face
-      option_include_paths_help: '903 - Permite ativar o uso das arestas não associadas a uma face e contidas na peça, para exportá-las como traçado.
-
-        '
+      option_include_paths_help: |
+        903 - Permite ativar o uso das arestas não associadas a uma face e contidas na peça, para exportá-las como traçado.
       option_parts: 904 - Peças
-      option_parts_help: '905 - Permite escolher as cores das peças.
-
-        '
+      option_parts_help: |
+        905 - Permite escolher as cores das peças.
       option_parts_holes: 906 - Perfurações
-      option_parts_holes_help: '907 - Permite escolher as cores dos furos das peças.
-
-        '
+      option_parts_holes_help: |
+        907 - Permite escolher as cores dos furos das peças.
       option_parts_paths: 908 - Traçados
-      option_parts_paths_help: '909 - Permite escolher a cor dos traçados.
-
-        '
+      option_parts_paths_help: |
+        909 - Permite escolher a cor dos traçados.
       error:
         no_part: 910 - Nenhuma peça para exportar
       warning:
@@ -1179,8 +1146,8 @@ tab:
       obsolete_cutlist: 926 - Impossível, a Planilha de Produção está obsoleta. Gere novamente.
     warning:
       is_entity_selection: 927 - Somente os elementos selecionados em seu modelo foram levados em conta.
-      no_typed_materials_in_model: 928 - Seu modelo não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 929 - Sua seleção não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
+      no_typed_materials_in_model: Seu modelo não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: Sua seleção não utiliza nenhum material com um tipo definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
       export_empty: 930 - Sua exportação não contém nenhuma peça.
     success:
       part_selected: 931 - {{ count }} Peça selecionada na planilha de produção.
@@ -1190,7 +1157,7 @@ tab:
         933 - As peças que você deseja que apareçam na *Planilha de Produção* devem ser instâncias de **componente**.
         Se você usar apenas grupos, converta-os em componentes.
         Ao utilizar componentes para peças, elas podem ser replicadas sem serem duplicadas.
-      no_typed_materials: 934 - Aplique um material nas peças que você deseja ver em sua Planilha de Produção e defina o tipo deste material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**) na aba <i class="ladb-opencutlist-icon-materials"></i> **Materiais**.
+      no_typed_materials: Aplique um material nas peças que você deseja ver em sua Planilha de Produção e defina o tipo deste material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**) na aba <i class="ladb-opencutlist-icon-materials"></i> **Materiais**.
     obsolete_base: 935 - Para permanecer sincronizado, você deve gerar novamente a Planilha de Produção.
   materials:
     label: 936 - Materiais
@@ -1204,15 +1171,15 @@ tab:
     type_5: 944 - Acessório
     type_6: 945 - Laminado
     tooltip:
-      type_0: 946 - Tipo de material '$t(tab.materials.type_0)'
-      type_1: 947 - Tipo de material '$t(tab.materials.type_1)'
-      type_2: 948 - Tipo de material '$t(tab.materials.type_2)'
-      type_3: 949 - Tipo de material '$t(tab.materials.type_3)'
-      type_4: 950 - Tipo de material '$t(tab.materials.type_4)'
-      type_5: 951 - Tipo de material '$t(tab.materials.type_5)'
-      type_6: 952 - Tipo de material '$t(tab.materials.type_6)'
-      grained_0: "$t(tab.materials.edit_material.grained_0)"
-      grained_1: "$t(tab.materials.edit_material.grained_1)"
+      type_0: Tipo de material '$t(tab.materials.type_0)'
+      type_1: Tipo de material '$t(tab.materials.type_1)'
+      type_2: Tipo de material '$t(tab.materials.type_2)'
+      type_3: Tipo de material '$t(tab.materials.type_3)'
+      type_4: Tipo de material '$t(tab.materials.type_4)'
+      type_5: Tipo de material '$t(tab.materials.type_5)'
+      type_6: Tipo de material '$t(tab.materials.type_6)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: 955 - Direção dos veios
       raw_estimated_0: 956 - Estimado pelo volume útil cortado.
       colorized: 957 - Este tom será aplicado à textura deste material quando for renderizado no modelo
@@ -1333,9 +1300,8 @@ tab:
         1037 - Você está prestes a suprimir o material **{{ material_name }}** de seu modelo.
         Confirme para continuar.
     duplicate:
-      message: '1038 - Selecione o nome do novo material, que será copiado de **{{ material_name }}**.
-
-        '
+      message: |
+        1038 - Selecione o nome do novo material, que será copiado de **{{ material_name }}**.
     error:
       no_model: 1039 - Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_materials: 1040 - O modelo não contém nenhum material.
@@ -1463,9 +1429,8 @@ tab:
   tutorials:
     label: 1132 - Tutoriais
     title: 1133 - Tutoriais
-    help: '1134 - Encontre aqui uma lista não exaustiva de vídeos feitos pela comunidade em torno da utilização de *OpenCutList*.
-
-      '
+    help: |
+      1134 - Encontre aqui uma lista não exaustiva de vídeos feitos pela comunidade em torno da utilização de *OpenCutList*.
     submit: 1135 - Enviar um vídeo
     submit_info: |
       1136 - Você fez um vídeo apresentando o uso de **OpenCutList** e gostaria de vê-lo aparecer aqui?
@@ -1477,18 +1442,16 @@ tab:
   news:
     label: 1138 - Notícias
     title: 1139 - Notícias
-    help: '1140 - As últimas notícias da *OpenCutList*.
-
-      '
+    help: |
+      1140 - As últimas notícias da *OpenCutList*.
     comment: 1141 - Comentar
     error:
       fail_to_load_list: 1142 - Incapaz de carregar a lista de notícias.
   forum:
     label: 1143 - Fórum
     title: 1144 - Fórum
-    help: '1145 - Este fórum permite a troca com a comunidade de usuários e a equipe *OpenCutList*.
-
-      '
+    help: |
+      1145 - Este fórum permite a troca com a comunidade de usuários e a equipe *OpenCutList*.
     create_conversation: 1146 - Iniciar uma conversação
     reply: 1147 - Responder
     tags: 1148 - Tags
@@ -1515,102 +1478,105 @@ tab:
     objective_title:
       default: 1160 - Objetivo
       cuttingdiagram_export: 1161 - Financiamento das exportações de planos de corte
+      outliner: 1162 - Funding of the Structure function
+      packing: 1163 - Funding of Nesting in Cutting Diagrams
     objective_details:
-      default: '1162 - A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização!
-
-        '
+      default: |
+        1164 - A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização!
       cuttingdiagram_export: |
-        1163 - É importante para nós que o *OpenCutList* se possa adaptar à grande variedade de requisitos dos utilizadores para a função *Plano de Corte*.
+        1165 - É importante para nós que o *OpenCutList* se possa adaptar à grande variedade de requisitos dos utilizadores para a função *Plano de Corte*.
         Para ampliar ainda mais as possibilidades, gostaríamos de poder exportar planos de layout nos formatos **SVG** e **DXF**.
         Ao fornecer-nos os meios para efetuar estas exportações, estará ao mesmo tempo dando-nos a oportunidade de ajudá-lo a tirar o máximo proveito da *OpenCutList*.
-      layout: '1164 - O objetivo deste módulo é permitir que você imprima facilmente uma visualização de seu projeto como uma **visão explodida** com identificação a partir das informações geradas na lista de peças.
-
-        '
-    objective_crowdfunding: '1165 - O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo** e poderá começar quando seu **Objetivo financeiro** for alcançado.
-
-      '
-    objective_thanks: '1166 - Obrigado por sua contribuição!
-
-      '
-    objective_funded_progress: 1167 - financiado a {{ progress }}%
+      outliner: |
+        1166 - A model can be quite complex, and navigating its structure with SketchUp's native Structure panel is not always very practical.
+        In SketchUp, you can apply material and tags to instances, description, url and badges to definitions, but they're not displayed in the structure.
+        The video will show you how we'd like to improve this in the Structure menu, accessible directly from OpenCutList.
+      packing: |
+        1167 - It's important to us that *OpenCutList* can adapt to the wide variety of user requirements for its *cutting diagram* function.
+        To further extend the possibilities, we'd like to implement a **nesting algorithm** to optimize the cutting of parts of any shape.
+        By providing us with the means to work on this functionality, you're giving us the opportunity to help you get the most out of *OpenCutList*.
+    objective_crowdfunding: |
+      1168 - O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo** e poderá começar quando seu **Objetivo financeiro** for alcançado.
+    objective_thanks: |
+      1169 - Obrigado por sua contribuição!
+    objective_funded_progress: 1170 - financiado a {{ progress }}%
   settings:
-    label: 1168 - Preferências
-    title: 1169 - Preferências
-    global_settings: 1170 - Preferências Globais
-    language: 1171 - Idioma
-    language_auto: 1172 - Automático
-    zoom: 1173 - Tamanho da fonte
-    zoom_normal: 1174 - Normal
-    zoom_small: 1175 - Pequena
-    zoom_tiny: 1176 - Minúscula
-    print_margin: 1177 - Margens de impressão
-    print_margin_normal: 1178 - Normais
-    print_margin_small: 1179 - Pequenas
-    table_row_size: 1180 - Tamanho das linhas da tabela
-    table_row_size_normal: 1181 - Normal
-    table_row_size_compact: 1182 - Compacto
-    size_and_position: 1183 - Tamanho e posição da janela
-    model_settings: 1184 - Preferências de modelo
-    length_unit: 1185 - Unidade de comprimento
-    length_format: 1186 - Formato
-    length_format_0: 1187 - Decimal
-    length_format_1: 1188 - Arquitetura
-    length_format_2: 1189 - Engenharia
-    length_format_3: 1190 - Fracionário
-    length_precision: 1191 - Precisão
-    suppress_units_display: 1192 - Exibir a unidade de comprimento em cada valor
-    mass_unit: 1193 - Unidade de massa
-    mass_precision: 1194 - Precisão
-    currency_symbol: 1195 - Símbolo da moeda
-    currency_precision: 1196 - Precisão
+    label: 1171 - Preferências
+    title: 1172 - Preferências
+    global_settings: 1173 - Preferências Globais
+    language: 1174 - Idioma
+    language_auto: 1175 - Automático
+    zoom: 1176 - Tamanho da fonte
+    zoom_normal: 1177 - Normal
+    zoom_small: 1178 - Pequena
+    zoom_tiny: 1179 - Minúscula
+    print_margin: 1180 - Margens de impressão
+    print_margin_normal: 1181 - Normais
+    print_margin_small: 1182 - Pequenas
+    table_row_size: 1183 - Tamanho das linhas da tabela
+    table_row_size_normal: 1184 - Normal
+    table_row_size_compact: 1185 - Compacto
+    size_and_position: 1186 - Tamanho e posição da janela
+    model_settings: 1187 - Preferências de modelo
+    length_unit: 1188 - Unidade de comprimento
+    length_format: 1189 - Formato
+    length_format_0: 1190 - Decimal
+    length_format_1: 1191 - Arquitetura
+    length_format_2: 1192 - Engenharia
+    length_format_3: 1193 - Fracionário
+    length_precision: 1194 - Precisão
+    suppress_units_display: 1195 - Exibir a unidade de comprimento em cada valor
+    mass_unit: 1196 - Unidade de massa
+    mass_precision: 1197 - Precisão
+    currency_symbol: 1198 - Símbolo da moeda
+    currency_precision: 1199 - Precisão
     presets:
-      export_global_presets: 1197 - Exportar predefinições
+      export_global_presets: 1200 - Exportar predefinições
       export_global_presets_help: |
-        1198 - Esta característica permite exportar suas predefinições para um arquivo **.json**.
+        1201 - Esta característica permite exportar suas predefinições para um arquivo **.json**.
         Selecione as predefinições que você deseja exportar.
-      export_global_presets_success: 1199 - As predefinições foram exportadas com sucesso.
-      import_global_presets: 1200 - Importar predefinições
+      export_global_presets_success: 1202 - As predefinições foram exportadas com sucesso.
+      import_global_presets: 1203 - Importar predefinições
       import_global_presets_help: |
-        1201 - Selecione as predefinições no arquivo **.json** que você deseja importar.
+        1204 - Selecione as predefinições no arquivo **.json** que você deseja importar.
         Observe que se já existir uma predefinição com um nome idêntico, ela será substituída pela versão importada.
       import_global_presets_success: |
-        1202 - As predefinições da *OpenCutList* foram importadas com sucesso.
+        1205 - As predefinições da *OpenCutList* foram importadas com sucesso.
         Para que as mudanças sejam efetivadas, é necessário **fechar** e **reabrir** a janela OpenCutList.
-      dump_global_presets: 1203 - Eliminar predefinições
-      dump_model_presets: 1204 - Eliminar predefinições de modelos
-      reset_global_presets: 1205 - Redefinir predefinições
+      dump_global_presets: 1206 - Eliminar predefinições
+      dump_model_presets: 1207 - Eliminar predefinições de modelos
+      reset_global_presets: 1208 - Redefinir predefinições
       reset_global_presets_confirm: |
-        1206 - Está prestes a redefinir todas as suas predefinições *OpenCutList* salfvas.
+        1209 - Está prestes a redefinir todas as suas predefinições *OpenCutList* salfvas.
         Esta ação é definitiva. **Todos os ajustes predefinidos serão perdidos.**
         Confirme para continuar.
       reset_global_presets_success: |
-        1207 - Aa predefinições do *OpenCutList* foram reajustadas.
+        1210 - Aa predefinições do *OpenCutList* foram reajustadas.
         Para efetivar as alterações, é necessário **fechar** e **reabrir** a janela do OpenCutList.
-      reset_model_presets: 1208 - Redefinir as predefinições do modelo
+      reset_model_presets: 1211 - Redefinir as predefinições do modelo
       reset_model_presets_confirm: |
-        1209 - Você está prestes a redefinir todas as predefinições *OpenCutList* para o modelo atual.
+        1212 - Você está prestes a redefinir todas as predefinições *OpenCutList* para o modelo atual.
         Esta ação é definitiva. **Todas as definições serão restauradas aos valores originais.**
         Confirmar para continuar.
       reset_model_presets_success: |
-        1210 - As predefinições do modelo atual *OpenCutList* foram reajustadas.
+        1213 - As predefinições do modelo atual *OpenCutList* foram reajustadas.
         Para efetivar as alterações, é necessário **fechar** e **reabrir** a janela do OpenCutList.
       error:
-        no_preset_to_export: 1211 - Não há predefinições para exportar.
-        no_preset_to_import: 1212 - Não há predefinições para importar.
-        failed_to_import: '1213 - Não foi possível importar as predefinições : **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1214 - Este arquivo foi modificado. Não pode ser importado.
-        failed_to_import_bad_file_format: 1215 - Formato de arquivo inválido.
+        no_preset_to_export: 1214 - Não há predefinições para exportar.
+        no_preset_to_import: 1215 - Não há predefinições para importar.
+        failed_to_import: '1216 - Não foi possível importar as predefinições : **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1217 - Este arquivo foi modificado. Não pode ser importado.
+        failed_to_import_bad_file_format: 1218 - Formato de arquivo inválido.
   about:
-    label: 1216 - Sobre
-    title: 1217 - Sobre
-    version: 1218 - Versão
-    credits: 1219 - Créditos Técnicos
-    credits_authors: '1220 - *OpenCutList* é desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) o [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
-
-      '
-    credits_translations: 1221 - Traduções
+    label: 1219 - Sobre
+    title: 1220 - Sobre
+    version: 1221 - Versão
+    credits: 1222 - Créditos Técnicos
+    credits_authors: |
+      1223 - *OpenCutList* é desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) o [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: 1224 - Traduções
     credits_translators: |
-      1222 - - Nayton Sanches Barbosa, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Ferreira (*Português*)
+      1225 - - Nayton Sanches Barbosa, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Ferreira (*Português*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Inglês*, *Alemão*)
       - Gildas Boureau (documentação *francesa*)
       - Vladimir Badulya (*Russo*)
@@ -1625,128 +1591,127 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*chinês simplificado*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holandês*)
     credits_description: |
-      1223 - O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
+      1226 - O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
       E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub].(https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1224 - Ambiente de execução
-    credits_development: 1225 - Desenvolvimento
-    credits_vendors: '1226 - A aventura não seria possível sem o trabalho dos autores dos seguintes componentes *Open Source*:
-
-      '
+    credits_runtime: 1227 - Ambiente de execução
+    credits_development: 1228 - Desenvolvimento
+    credits_vendors: |
+      1229 - A aventura não seria possível sem o trabalho dos autores dos seguintes componentes *Open Source*:
     credits_thanks: |
-      1227 - Um agradecimento especial vai para:
+      1230 - Um agradecimento especial vai para:
       - [JetBrains](https://www.jetbrains.com) por seu apoio a este projeto através de sua [Licença de Código Aberto Grátis](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) por seu apoio a projetos de código aberto.
       - [GitBook](https://www.gitbook.com) por seu apoio a projetos de código aberto.
 tool:
   default:
-    transparency: 1228 - Transparência
-    zoom_extents: 1229 - Limite do zoom
-    toggle_depth: 1230 - Peças de fundo
-    more: 1231 - Mais
+    transparency: 1231 - Transparência
+    zoom_extents: 1232 - Limite do zoom
+    toggle_depth: 1233 - Peças de fundo
+    more: 1234 - Mais
   highlight:
-    transparency: "$t(tool.default.transparency)"
-    zoom_extents: "$t(tool.default.zoom_extents)"
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: 1234 - Pintar
-    default_material: 1235 - Nenhum material definido
-    filters: 1236 - Filtros
-    filter_0: 1237 - Sem tipo
-    filter_1: "$t(tab.materials.type_1)"
-    filter_2: "$t(tab.materials.type_2)"
-    filter_3: "$t(tab.materials.type_3)"
-    filter_4: "$t(tab.materials.type_4)"
-    filter_5: "$t(tab.materials.type_5)"
-    filter_6: "$t(tab.materials.type_6)"
-    action_0: 1244 - Pintar peças
-    action_0_status: 1245 - Clique em uma peça para aplicar um material à sua instância
-    action_1: 1246 - Pintar bordas
-    action_1_status: 1247 - Clique na borda de uma peça da chapa para aplicar um material '$t(tab.materials.type_4)' ao mesmo
-    action_2: 1248 - Pintar faces
-    action_2_status: 1249 - Clique na face de uma peça da chapa para aplicar um material '$t(tab.materials.type_6)' a ela
-    action_3: 1250 - Amostra
-    action_3_status: 1251 - Clique em uma face para obter uma amostra do material
-    action_4: 1252 - Limpar
-    action_4_status: 1253 - Clique em uma peça para remover todos os materiais do desenho e de todas as suas instâncias
-    action_option_group_instances: 1254 - Nome da instância
-    action_option_group_edges: 1255 - Número de bordas
-    action_option_group_faces: 1256 - Número de faces
-    action_option_instances_0_status: 1257 - Pintar apenas a instância da peça selecionada
-    action_option_instances_1_status: 1258 - Pintar todas as instâncias da peça selecionada.
-    action_option_edges_0_status: 1259 - Pintar apenas a borda selecionada
-    action_option_edges_1_status: 1260 - Pintar a borda alvo, e a borda oposta da peça
-    action_option_edges_2_status: 1261 - Pintar os 4 cantos da peça selecionada
-    action_option_faces_0_status: 1262 - Pintar apenas a face selecionada
-    action_option_faces_1_status: 1263 - Pintar as 2 faces da peça selecionada
-    edges: 1264 - {{ count }} canto
-    edges_plural: 1265 - {{ count }} cantos
-    edge_ymin: 1266 - Comprimento 1
-    edge_ymax: 1267 - Comprimento 2
-    edge_xmin: 1268 - Largura 1
-    edge_xmax: 1269 - Largura 2
-    faces: 1270 - {{ count }} frente
-    faces_plural: 1271 - {{ count }} frentes
-    face_zmin: 1272 - Verso
-    face_zmax: 1273 - Frente
+    title: 1237 - Pintar
+    default_material: 1238 - Nenhum material definido
+    filters: 1239 - Filtros
+    filter_0: 1240 - Sem tipo
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
+    action_0: 1247 - Pintar peças
+    action_0_status: 1248 - Clique em uma peça para aplicar um material à sua instância
+    action_1: 1249 - Pintar bordas
+    action_1_status: Clique na borda de uma peça da chapa para aplicar um material '$t(tab.materials.type_4)' ao mesmo
+    action_2: 1251 - Pintar faces
+    action_2_status: Clique na face de uma peça da chapa para aplicar um material '$t(tab.materials.type_6)' a ela
+    action_3: 1253 - Amostra
+    action_3_status: 1254 - Clique em uma face para obter uma amostra do material
+    action_4: 1255 - Limpar
+    action_4_status: 1256 - Clique em uma peça para remover todos os materiais do desenho e de todas as suas instâncias
+    action_option_group_instances: 1257 - Nome da instância
+    action_option_group_edges: 1258 - Número de bordas
+    action_option_group_faces: 1259 - Número de faces
+    action_option_instances_0_status: 1260 - Pintar apenas a instância da peça selecionada
+    action_option_instances_1_status: 1261 - Pintar todas as instâncias da peça selecionada.
+    action_option_edges_0_status: 1262 - Pintar apenas a borda selecionada
+    action_option_edges_1_status: 1263 - Pintar a borda alvo, e a borda oposta da peça
+    action_option_edges_2_status: 1264 - Pintar os 4 cantos da peça selecionada
+    action_option_faces_0_status: 1265 - Pintar apenas a face selecionada
+    action_option_faces_1_status: 1266 - Pintar as 2 faces da peça selecionada
+    edges: 1267 - {{ count }} canto
+    edges_plural: 1268 - {{ count }} cantos
+    edge_ymin: 1269 - Comprimento 1
+    edge_ymax: 1270 - Comprimento 2
+    edge_xmin: 1271 - Largura 1
+    edge_xmax: 1272 - Largura 2
+    faces: 1273 - {{ count }} frente
+    faces_plural: 1274 - {{ count }} frentes
+    face_zmin: 1275 - Verso
+    face_zmax: 1276 - Frente
     warning:
-      no_material: 1274 - Nenhum material definido
-      no_material_type: 1275 - Nenhum tipo de material '{{ type }}'
+      no_material: 1277 - Nenhum material definido
+      no_material_type: 1278 - Nenhum tipo de material '{{ type }}'
     error:
-      not_part: 1276 - O objeto de destino não é uma peça (componente)
-      not_edge: 1277 - A face selecionada não é a borda da peça
-      not_face: 1278 - A face selecionada não é a face da da peça
-      wrong_material_type: 1279 - A peça de destino deve ser do tipo '{{ type }}'
+      not_part: 1279 - O objeto de destino não é uma peça (componente)
+      not_edge: 1280 - A face selecionada não é a borda da peça
+      not_face: 1281 - A face selecionada não é a face da da peça
+      wrong_material_type: 1282 - A peça de destino deve ser do tipo '{{ type }}'
   smart_axes:
-    title: 1280 - Orientação
-    action_0: 1281 - Inverter
-    action_0_status: 1282 - Clique em uma peça para virar sua instância ao longo de uma de suas dimensões
-    action_1: 1283 - Inverter Comprimento ↔ Largura
-    action_1_status: 1284 - Clique em uma peça para inverter o comprimento pela largura
-    action_2: 1285 - Trocar frente ↔ Fundo
-    action_2_status: 1286 - Clique em uma peça para trocar a Frente pelo seu Fundo
-    action_3: 1287 - Adaptar os eixos
-    action_3_status: 1288 - Clique na face ou na borda de uma peça para alterar seus eixos
-    action_option_group_direction: 1289 - Direção
-    action_option_direction_0: 1290 - C
-    action_option_direction_1: 1291 - L
-    action_option_direction_2: 1292 - E
-    action_option_direction_0_status: 1293 - Vire a peça no sentido do comprimento
-    action_option_direction_1_status: 1294 - Vire a peça no sentido da largura
-    action_option_direction_2_status: 1295 - Vire a peça no sentido da espessura
+    title: 1283 - Orientação
+    action_0: 1284 - Inverter
+    action_0_status: 1285 - Clique em uma peça para virar sua instância ao longo de uma de suas dimensões
+    action_1: 1286 - Inverter Comprimento ↔ Largura
+    action_1_status: 1287 - Clique em uma peça para inverter o comprimento pela largura
+    action_2: 1288 - Trocar frente ↔ Fundo
+    action_2_status: 1289 - Clique em uma peça para trocar a Frente pelo seu Fundo
+    action_3: 1290 - Adaptar os eixos
+    action_3_status: 1291 - Clique na face ou na borda de uma peça para alterar seus eixos
+    action_option_group_direction: 1292 - Direção
+    action_option_direction_0: 1293 - C
+    action_option_direction_1: 1294 - L
+    action_option_direction_2: 1295 - E
+    action_option_direction_0_status: 1296 - Vire a peça no sentido do comprimento
+    action_option_direction_1_status: 1297 - Vire a peça no sentido da largura
+    action_option_direction_2_status: 1298 - Vire a peça no sentido da espessura
     warning:
-      more_entities: 1296 - {{ count_used }} as instâncias que compartilham a mesma definição serão modificadas
+      more_entities: 1299 - {{ count_used }} as instâncias que compartilham a mesma definição serão modificadas
     error:
-      not_part: 1297 - O objeto de destino não é uma peça (componente)
-      not_orientable: 1298 - O tipo desta peça não permite que a orientação seja modificada
+      not_part: 1300 - O objeto de destino não é uma peça (componente)
+      not_orientable: 1301 - O tipo desta peça não permite que a orientação seja modificada
   smart_export:
-    title: 1299 - Exportar
-    action_0: 1300 - Exportar uma peça 3D
-    action_0_status: 1301 - Clique em uma peça
-    action_1: 1302 - Exportar uma peça 2D
-    action_1_status: 1303 - Clique na face de uma peça
-    action_2: 1304 - Exportar uma face
-    action_2_status: 1305 - Clique em uma face
-    action_3: 1306 - Exportar um gráfico
-    action_3_status: 1307 - Clique em uma aresta
-    action_option_group_file_format: 1308 - Formato
-    action_option_group_unit: 1309 - Unidades
-    action_option_group_faces: 1310 - Faces
-    action_option_group_options: 1311 - Opções
-    action_option_file_format_dxf_status: 1312 - Exportar para arquivo DXF
-    action_option_file_format_stl_status: 1313 - Exportar para arquivo STL
-    action_option_file_format_obj_status: 1314 - Exportar para arquivo OBJ
-    action_option_file_format_svg_status: 1315 - Exportar para arquivo SVG
-    action_option_unit_0_status: "$t(default.unit_0)"
-    action_option_unit_1_status: "$t(default.unit_1)"
-    action_option_unit_2_status: "$t(default.unit_2)"
-    action_option_unit_3_status: "$t(default.unit_3)"
-    action_option_unit_4_status: "$t(default.unit_4)"
-    action_option_faces_0_status: "$t(tab.cutlist.write.option_faces_0)"
-    action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
-    action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
-    action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: 1325 - Isolar os furos passantes e mesclar as profundidades para cada cavidade
-    action_option_options_include_paths_status: 1326 - Exportar como traço as arestas não associadas a uma face contida na peça
+    title: 1302 - Exportar
+    action_0: 1303 - Exportar uma peça 3D
+    action_0_status: 1304 - Clique em uma peça
+    action_1: 1305 - Exportar uma peça 2D
+    action_1_status: 1306 - Clique na face de uma peça
+    action_2: 1307 - Exportar uma face
+    action_2_status: 1308 - Clique em uma face
+    action_3: 1309 - Exportar um gráfico
+    action_3_status: 1310 - Clique em uma aresta
+    action_option_group_file_format: 1311 - Formato
+    action_option_group_unit: 1312 - Unidades
+    action_option_group_faces: 1313 - Faces
+    action_option_group_options: 1314 - Opções
+    action_option_file_format_dxf_status: 1315 - Exportar para arquivo DXF
+    action_option_file_format_stl_status: 1316 - Exportar para arquivo STL
+    action_option_file_format_obj_status: 1317 - Exportar para arquivo OBJ
+    action_option_file_format_svg_status: 1318 - Exportar para arquivo SVG
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
+    action_option_options_merge_holes_status: 1328 - Isolar os furos passantes e mesclar as profundidades para cada cavidade
+    action_option_options_include_paths_status: 1329 - Exportar como traço as arestas não associadas a uma face contida na peça
     error:
-      not_part: 1327 - Esta face não faz parte de uma peça (componente)
-      not_flat_face: 1328 - Esta superfície não é plana
-      incompatible_active_path: 1329 - O caminho ativo não permite exportar esta peça
+      not_part: 1330 - Esta face não faz parte de uma peça (componente)
+      not_flat_face: 1331 - Esta superfície não é plana
+      incompatible_active_path: 1332 - O caminho ativo não permite exportar esta peça

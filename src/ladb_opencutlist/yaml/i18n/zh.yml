@@ -1480,6 +1480,8 @@ tab:
     objective_title:
       default: 目标
       cuttingdiagram_export: 切割图导出的资金支持
+      outliner: Funding of the Structure function
+      packing: Funding of Nesting in Cutting Diagrams
     objective_details:
       default: |
         *OpenCutList* 的持续改进对我们很重要，该项目的下一次更新仍然需要您的帮助!
@@ -1487,8 +1489,14 @@ tab:
         对于 *OpenCutList* 的用户来说, 能够适应不同的期望, 尤其是对于 *切割图* 功能, 这一点对我们非常重要.
         为了进一步拓展功能, 我们希望能够支持以 **SVG** 和 **DXF** 格式导出布局图.
         通过向我们提供处理这些导出的方法, 通过向我们提供处理这些导出的方法, 您将让我们有机会帮助您充分利用 *OpenCutList*.
-      layout: |
-        本模块的目的是使您能够轻松地将项目预览打印为 **分解视图** 并根据部件清单中生成的信息进行识别.
+      outliner: |
+        A model can be quite complex, and navigating its structure with SketchUp's native Structure panel is not always very practical.
+        In SketchUp, you can apply material and tags to instances, description, url and badges to definitions, but they're not displayed in the structure.
+        The video will show you how we'd like to improve this in the Structure menu, accessible directly from OpenCutList.
+      packing: |
+        It's important to us that *OpenCutList* can adapt to the wide variety of user requirements for its *cutting diagram* function.
+        To further extend the possibilities, we'd like to implement a **nesting algorithm** to optimize the cutting of parts of any shape.
+        By providing us with the means to work on this functionality, you're giving us the opportunity to help you get the most out of *OpenCutList*.
     objective_crowdfunding: |
       新功能的开发将通过 **筹款** 完成，并将在达到 **筹款目标** 时开始.
     objective_thanks: |

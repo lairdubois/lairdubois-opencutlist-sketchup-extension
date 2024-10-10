@@ -1480,6 +1480,8 @@ tab:
     objective_title:
       default: Objetivo
       cuttingdiagram_export: Financiación de las exportaciones del diagrama de corte
+      outliner: Funding of the Structure function
+      packing: Funding of Nesting in Cutting Diagrams
     objective_details:
       default: |
         ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización!
@@ -1487,8 +1489,14 @@ tab:
         Es importante para nosotros que *OpenCutList* pueda adaptarse a las muy diferentes expectativas de los usuarios para la función de *diagrama de corte*.
         Para ampliar aún más las posibilidades, nos gustaría permitir la exportación de diagramas de corte en formato **SVG** y **DXF**.
         Al proporcionarnos los medios para trabajar en estas exportaciones, nos está dando la oportunidad de ayudarle a sacar el máximo provecho de *OpenCutList*.
-      layout: |
-        El objetivo de este módulo es permitirle imprimir fácilmente una vista general de su proyecto en **vista explosionada** con identificación de las piezas por su número generado en el listatod de partes.
+      outliner: |
+        A model can be quite complex, and navigating its structure with SketchUp's native Structure panel is not always very practical.
+        In SketchUp, you can apply material and tags to instances, description, url and badges to definitions, but they're not displayed in the structure.
+        The video will show you how we'd like to improve this in the Structure menu, accessible directly from OpenCutList.
+      packing: |
+        It's important to us that *OpenCutList* can adapt to the wide variety of user requirements for its *cutting diagram* function.
+        To further extend the possibilities, we'd like to implement a **nesting algorithm** to optimize the cutting of parts of any shape.
+        By providing us with the means to work on this functionality, you're giving us the opportunity to help you get the most out of *OpenCutList*.
     objective_crowdfunding: |
       El desarrollo de nuevas funcionalidades se realizará gracias a la **Recaudación de fondos** y comenzará cuando se alcance su **Meta financiera**.
     objective_thanks: |

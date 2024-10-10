@@ -1188,9 +1188,7 @@ tab:
       texture_load: Load a new texture
       texture_clear: Remove texture
       edit: "Edit the properties of '{{ name }}'"
-      set_current: |
-        Paint parts with '{{ name }}'
-        *Double-click to minimize*
+      set_current: "Paint parts with '{{ name }}'"
       open_url: Open material URL
     menu:
       import_from_skm: Import material (.skm)
@@ -1480,6 +1478,8 @@ tab:
     objective_title:
       default: Objectives
       cuttingdiagram_export: Funding of cutting diagram exports
+      outliner: Funding of the Structure function
+      packing: Funding of Nesting in Cutting Diagrams
     objective_details:
       default: |
         The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update!
@@ -1487,8 +1487,14 @@ tab:
         It is important to us that *OpenCutList* can be adapted to the very different expectations of the users for the *cutting diagram* function.
         To further expand the possibilities, we would like to enable the export of layout diagrams in **SVG** and **DXF** format.
         By providing us with the means to work on these exports, you are giving us the opportunity to help you get the most out of *OpenCutList*.
-      layout: |
-        The objective of this module is to allow you to easily print a preview of your project as an **exploded view** with identification from information generated in the parts list.
+      outliner: |
+        A model can be quite complex, and navigating its structure with SketchUp's native Structure panel is not always very practical.
+        In SketchUp, you can apply material and tags to instances, description, url and badges to definitions, but they're not displayed in the structure.
+        The video will show you how we'd like to improve this in the Structure menu, accessible directly from OpenCutList.
+      packing: |
+        It's important to us that *OpenCutList* can adapt to the wide variety of user requirements for its *cutting diagram* function.
+        To further extend the possibilities, we'd like to implement a **nesting algorithm** to optimize the cutting of parts of any shape.
+        By providing us with the means to work on this functionality, you're giving us the opportunity to help you get the most out of *OpenCutList*.
     objective_crowdfunding: |
       The development of new features will be done through **Fundraising** and will start when the **Financial Goal** is reached.
     objective_thanks: |

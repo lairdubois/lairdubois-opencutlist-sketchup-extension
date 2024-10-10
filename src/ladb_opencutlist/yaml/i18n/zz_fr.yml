@@ -1515,102 +1515,109 @@ tab:
     objective_title:
       default: 1160 - Objectifs
       cuttingdiagram_export: 1161 - Financement des exports de calepinage
+      outliner: 1162 - Financement de le fonction Structure
+      packing: 1163 - Financement du Calepinage Imbriqué
     objective_details:
-      default: '1162 - L''amélioration en continue d''*OpenCutList* nous tient à coeur et le projet continue d''avoir besoin de vous pour sa prochaine mise à jour !
+      default: '1164 - L''amélioration en continue d''*OpenCutList* nous tient à coeur et le projet continue d''avoir besoin de vous pour sa prochaine mise à jour !
 
         '
       cuttingdiagram_export: |
-        1163 - Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
+        1165 - Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
         Pour élargir encore les possibilités, nous souhaitons permettre d'exporter les diagrammes de calepinage au format **SVG** et **DXF**.
         En nous fournissant les moyens de travailler sur ces exports, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
-      layout: '1164 - L''objectif de ce module est de vous permettre d''imprimer facilement un aperçu de votre projet en **vue éclatée** avec identification des pièces par leur numéro généré dans la fiche de débit.
-
-        '
-    objective_crowdfunding: '1165 - Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
+      outliner: |
+        1166 - Un modèle peut être assez complexe et naviguer dans sa structure avec le panneau Structure natif de SketchUp n'est pas toujours très pratique.
+        Dans SketchUp, vous pouvez appliquer du matériel et des balises sur les instances, une description, une url et des badges sur les définitions, mais ils ne sont pas affichés dans la structure.
+        La vidéo vous montrera comment nous aimerions améliorer ça dans le menu Structure, accessible directement depuis OpenCutList.
+      packing: |
+        1167 - Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
+        Pour élargir encore les possibilités, nous souhaitons implémenter un **algorithme d'imbrication** pour optimiser la découpe des pièces de forme quelconque.
+        En nous fournissant les moyens de travailler sur cette fonctionnalité, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
+    objective_crowdfunding: '1168 - Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
 
       '
-    objective_thanks: '1166 - Merci pour votre contribution !
+    objective_thanks: '1169 - Merci pour votre contribution !
 
       '
-    objective_funded_progress: 1167 - financé à {{ progress }}%
+    objective_funded_progress: 1170 - financé à {{ progress }}%
   settings:
-    label: 1168 - Préférences
-    title: 1169 - Préférences
-    global_settings: 1170 - Préférences globales
-    language: 1171 - Langue
-    language_auto: 1172 - Automatique
-    zoom: 1173 - Taille de texte
-    zoom_normal: 1174 - Normale
-    zoom_small: 1175 - Petite
-    zoom_tiny: 1176 - Très petite
-    print_margin: 1177 - Marges d'impression
-    print_margin_normal: 1178 - Normales
-    print_margin_small: 1179 - Petites
-    table_row_size: 1180 - Taille des lignes de tableau
-    table_row_size_normal: 1181 - Normale
-    table_row_size_compact: 1182 - Compacte
-    size_and_position: 1183 - Taille et position de la fenêtre
-    model_settings: 1184 - Préférences du modèle
-    length_unit: 1185 - Unité de longueur
-    length_format: 1186 - Format
-    length_format_0: 1187 - Décimal
-    length_format_1: 1188 - Architecture
-    length_format_2: 1189 - Ingénierie
-    length_format_3: 1190 - Fractionnel
-    length_precision: 1191 - Précision
-    suppress_units_display: 1192 - Afficher l'unité de longueur à chaque valeur
-    mass_unit: 1193 - Unité de masse
-    mass_precision: 1194 - Précision
-    currency_symbol: 1195 - Symbole monétaire
-    currency_precision: 1196 - Précision
+    label: 1171 - Préférences
+    title: 1172 - Préférences
+    global_settings: 1173 - Préférences globales
+    language: 1174 - Langue
+    language_auto: 1175 - Automatique
+    zoom: 1176 - Taille de texte
+    zoom_normal: 1177 - Normale
+    zoom_small: 1178 - Petite
+    zoom_tiny: 1179 - Très petite
+    print_margin: 1180 - Marges d'impression
+    print_margin_normal: 1181 - Normales
+    print_margin_small: 1182 - Petites
+    table_row_size: 1183 - Taille des lignes de tableau
+    table_row_size_normal: 1184 - Normale
+    table_row_size_compact: 1185 - Compacte
+    size_and_position: 1186 - Taille et position de la fenêtre
+    model_settings: 1187 - Préférences du modèle
+    length_unit: 1188 - Unité de longueur
+    length_format: 1189 - Format
+    length_format_0: 1190 - Décimal
+    length_format_1: 1191 - Architecture
+    length_format_2: 1192 - Ingénierie
+    length_format_3: 1193 - Fractionnel
+    length_precision: 1194 - Précision
+    suppress_units_display: 1195 - Afficher l'unité de longueur à chaque valeur
+    mass_unit: 1196 - Unité de masse
+    mass_precision: 1197 - Précision
+    currency_symbol: 1198 - Symbole monétaire
+    currency_precision: 1199 - Précision
     presets:
-      export_global_presets: 1197 - Exporter les préréglages
+      export_global_presets: 1200 - Exporter les préréglages
       export_global_presets_help: |
-        1198 - Cette fonctionnalité vous permet d'exporter vos préréglages vers un fichier **.json**.
+        1201 - Cette fonctionnalité vous permet d'exporter vos préréglages vers un fichier **.json**.
         Sélectionnez les préréglages que vous souhaitez y exporter.
-      export_global_presets_success: 1199 - Les préréglages ont été exportés avec succès.
-      import_global_presets: 1200 - Importer des préréglages
+      export_global_presets_success: 1202 - Les préréglages ont été exportés avec succès.
+      import_global_presets: 1203 - Importer des préréglages
       import_global_presets_help: |
-        1201 - Sélectionnez les préréglages présents dans le fichier **.json** que vous souhaitez importer.
+        1204 - Sélectionnez les préréglages présents dans le fichier **.json** que vous souhaitez importer.
         Attention, si un préréglage avec un nom identique existe déjà, il sera remplacé par la version importée.
       import_global_presets_success: |
-        1202 - Les préréglages *OpenCutList* ont été importés avec succès.
+        1205 - Les préréglages *OpenCutList* ont été importés avec succès.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
-      dump_global_presets: 1203 - Dump des préréglages
-      dump_model_presets: 1204 - Dump des réglages du modèle
-      reset_global_presets: 1205 - Réinitialiser les préréglages
+      dump_global_presets: 1206 - Dump des préréglages
+      dump_model_presets: 1207 - Dump des réglages du modèle
+      reset_global_presets: 1208 - Réinitialiser les préréglages
       reset_global_presets_confirm: |
-        1206 - Vous êtes sur le point de réinitialiser tous vos préréglages *OpenCutList* enregistrés.
+        1209 - Vous êtes sur le point de réinitialiser tous vos préréglages *OpenCutList* enregistrés.
         Cette action est définitive. **Tous les préréglages seront perdus.**
         Confirmez pour continuer.
       reset_global_presets_success: |
-        1207 - Les préréglages *OpenCutList* ont été réinitialisés.
+        1210 - Les préréglages *OpenCutList* ont été réinitialisés.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
-      reset_model_presets: 1208 - Réinitialiser les réglages du modèle
+      reset_model_presets: 1211 - Réinitialiser les réglages du modèle
       reset_model_presets_confirm: |
-        1209 - Vous êtes sur le point de réinitialiser tous les réglages *OpenCutList* du modèle courant.
+        1212 - Vous êtes sur le point de réinitialiser tous les réglages *OpenCutList* du modèle courant.
         Cette action est définitive. **Tous les réglages seront rétablis à leur valeur par défaut.**
         Confirmez pour continuer.
       reset_model_presets_success: |
-        1210 - Les réglages *OpenCutList* du modèle courant ont été réinitialisés.
+        1213 - Les réglages *OpenCutList* du modèle courant ont été réinitialisés.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
       error:
-        no_preset_to_export: 1211 - Aucun préréglage à exporter.
-        no_preset_to_import: 1212 - Aucun préréglage à importer.
-        failed_to_import: '1213 - Impossible d''importer les préréglages : **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1214 - Ce fichier a été modifié. Il ne peut pas être importé.
-        failed_to_import_bad_file_format: 1215 - Format de fichier invalide.
+        no_preset_to_export: 1214 - Aucun préréglage à exporter.
+        no_preset_to_import: 1215 - Aucun préréglage à importer.
+        failed_to_import: '1216 - Impossible d''importer les préréglages : **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1217 - Ce fichier a été modifié. Il ne peut pas être importé.
+        failed_to_import_bad_file_format: 1218 - Format de fichier invalide.
   about:
-    label: 1216 - A propos
-    title: 1217 - A propos
-    version: 1218 - Version
-    credits: 1219 - Crédits techniques
-    credits_authors: '1220 - *OpenCutList* est développé par [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) et [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    label: 1219 - A propos
+    title: 1220 - A propos
+    version: 1221 - Version
+    credits: 1222 - Crédits techniques
+    credits_authors: '1223 - *OpenCutList* est développé par [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) et [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
 
       '
-    credits_translations: 1221 - Traductions
+    credits_translations: 1224 - Traductions
     credits_translators: |
-      1222 - - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglais*, *allemand*)
+      1225 - - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglais*, *allemand*)
       - Gildas Boureau (documentation *française*)
       - Vladimir Badulya (*russe*)
       - Pierluigi Colombo (*italien*)
@@ -1625,116 +1632,116 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*chinois simplifié*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*néerlandais*)
     credits_description: |
-      1223 - Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
+      1226 - Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
       Et à ce titre, il est également *Open Source* et disponible sous licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1224 - Exécution
-    credits_development: 1225 - Développement
-    credits_vendors: '1226 - Mais l''aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
+    credits_runtime: 1227 - Exécution
+    credits_development: 1228 - Développement
+    credits_vendors: '1229 - Mais l''aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
 
       '
     credits_thanks: |
-      1227 - Un remerciement particulier à :
+      1230 - Un remerciement particulier à :
       - [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) pour leur soutien de projet Open Source.
       - [GitBook](https://www.gitbook.com) pour leur soutien de projet Open Source.
 tool:
   default:
-    transparency: 1228 - Transparence
-    zoom_extents: 1229 - Zoom étendu
-    toggle_depth: 1230 - Pièces en arrière plan
-    more: 1231 - Plus
+    transparency: 1231 - Transparence
+    zoom_extents: 1232 - Zoom étendu
+    toggle_depth: 1233 - Pièces en arrière plan
+    more: 1234 - Plus
   highlight:
     transparency: "$t(tool.default.transparency)"
     zoom_extents: "$t(tool.default.zoom_extents)"
   smart_paint:
-    title: 1234 - Colorier
-    default_material: 1235 - Sans matière
-    filters: 1236 - Filtres
-    filter_0: 1237 - Sans type
+    title: 1237 - Colorier
+    default_material: 1238 - Sans matière
+    filters: 1239 - Filtres
+    filter_0: 1240 - Sans type
     filter_1: "$t(tab.materials.type_1)"
     filter_2: "$t(tab.materials.type_2)"
     filter_3: "$t(tab.materials.type_3)"
     filter_4: "$t(tab.materials.type_4)"
     filter_5: "$t(tab.materials.type_5)"
     filter_6: "$t(tab.materials.type_6)"
-    action_0: 1244 - Colorier pièces
-    action_0_status: 1245 - Cliquez sur une pièce pour appliquer une matière à son instance
-    action_1: 1246 - Colorier chants
-    action_1_status: 1247 - Cliquez sur un chant d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_4)'
-    action_2: 1248 - Colorier faces
-    action_2_status: 1249 - Cliquez sur une face d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
-    action_3: 1250 - Prélever
-    action_3_status: 1251 - Cliquez sur une face pour prélever un échantillon de la matière
-    action_4: 1252 - Nettoyer
-    action_4_status: 1253 - Cliquez sur une pièce pour supprimer toutes les matières de sa définition et de toutes ses instances
-    action_option_group_instances: 1254 - Nombre d'instances
-    action_option_group_edges: 1255 - Nombre de chants
-    action_option_group_faces: 1256 - Nombre de faces
-    action_option_instances_0_status: 1257 - Colorier seulement l'instance de la pièce ciblée
-    action_option_instances_1_status: 1258 - Colorier toutes les instances de la pièce ciblée
-    action_option_edges_0_status: 1259 - Colorier seulement le chant ciblé
-    action_option_edges_1_status: 1260 - Colorier le chant ciblé et le chant opposé de la pièce
-    action_option_edges_2_status: 1261 - Colorier les 4 chants de la pièce ciblée
-    action_option_faces_0_status: 1262 - Colorier seulement la face ciblée
-    action_option_faces_1_status: 1263 - Colorier les 2 faces de la pièce ciblée
-    edges: 1264 - {{ count }} chant
-    edges_plural: 1265 - {{ count }} chants
-    edge_ymin: 1266 - Longueur 1
-    edge_ymax: 1267 - Longueur 2
-    edge_xmin: 1268 - Largeur 1
-    edge_xmax: 1269 - Largeur 2
-    faces: 1270 - {{ count }} face
-    faces_plural: 1271 - {{ count }} faces
-    face_zmin: 1272 - Contre-face
-    face_zmax: 1273 - Face
+    action_0: 1247 - Colorier pièces
+    action_0_status: 1248 - Cliquez sur une pièce pour appliquer une matière à son instance
+    action_1: 1249 - Colorier chants
+    action_1_status: 1250 - Cliquez sur un chant d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_4)'
+    action_2: 1251 - Colorier faces
+    action_2_status: 1252 - Cliquez sur une face d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
+    action_3: 1253 - Prélever
+    action_3_status: 1254 - Cliquez sur une face pour prélever un échantillon de la matière
+    action_4: 1255 - Nettoyer
+    action_4_status: 1256 - Cliquez sur une pièce pour supprimer toutes les matières de sa définition et de toutes ses instances
+    action_option_group_instances: 1257 - Nombre d'instances
+    action_option_group_edges: 1258 - Nombre de chants
+    action_option_group_faces: 1259 - Nombre de faces
+    action_option_instances_0_status: 1260 - Colorier seulement l'instance de la pièce ciblée
+    action_option_instances_1_status: 1261 - Colorier toutes les instances de la pièce ciblée
+    action_option_edges_0_status: 1262 - Colorier seulement le chant ciblé
+    action_option_edges_1_status: 1263 - Colorier le chant ciblé et le chant opposé de la pièce
+    action_option_edges_2_status: 1264 - Colorier les 4 chants de la pièce ciblée
+    action_option_faces_0_status: 1265 - Colorier seulement la face ciblée
+    action_option_faces_1_status: 1266 - Colorier les 2 faces de la pièce ciblée
+    edges: 1267 - {{ count }} chant
+    edges_plural: 1268 - {{ count }} chants
+    edge_ymin: 1269 - Longueur 1
+    edge_ymax: 1270 - Longueur 2
+    edge_xmin: 1271 - Largeur 1
+    edge_xmax: 1272 - Largeur 2
+    faces: 1273 - {{ count }} face
+    faces_plural: 1274 - {{ count }} faces
+    face_zmin: 1275 - Contre-face
+    face_zmax: 1276 - Face
     warning:
-      no_material: 1274 - Aucune matière
-      no_material_type: 1275 - Aucune matière de type '{{ type }}'
+      no_material: 1277 - Aucune matière
+      no_material_type: 1278 - Aucune matière de type '{{ type }}'
     error:
-      not_part: 1276 - L'objet ciblé n'est pas une pièce (composant)
-      not_edge: 1277 - La face ciblée n'est pas un chant de panneau
-      not_face: 1278 - La face ciblée n'est pas une face de panneau
-      wrong_material_type: 1279 - La pièce ciblée doit être du type '{{ type }}'
+      not_part: 1279 - L'objet ciblé n'est pas une pièce (composant)
+      not_edge: 1280 - La face ciblée n'est pas un chant de panneau
+      not_face: 1281 - La face ciblée n'est pas une face de panneau
+      wrong_material_type: 1282 - La pièce ciblée doit être du type '{{ type }}'
   smart_axes:
-    title: 1280 - Orienter
-    action_0: 1281 - Retourner
-    action_0_status: 1282 - Cliquez sur une pièce pour retourner son instance le long de l'une de ses dimensions
-    action_1: 1283 - Permuter Longueur ↔ Largeur
-    action_1_status: 1284 - Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
-    action_2: 1285 - Permuter Face ↔ Contre-face
-    action_2_status: 1286 - Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
-    action_3: 1287 - Adapter les axes
-    action_3_status: 1288 - Cliquez sur la face ou une arête d'une pièce pour y adapter ses axes
-    action_option_group_direction: 1289 - Direction
-    action_option_direction_0: 1290 - Lo
-    action_option_direction_1: 1291 - La
-    action_option_direction_2: 1292 - Ep
-    action_option_direction_0_status: 1293 - Retourner la pièce dans sa longueur
-    action_option_direction_1_status: 1294 - Retourner la pièce dans sa largeur
-    action_option_direction_2_status: 1295 - Retourner la pièce dans son épaisseur
+    title: 1283 - Orienter
+    action_0: 1284 - Retourner
+    action_0_status: 1285 - Cliquez sur une pièce pour retourner son instance le long de l'une de ses dimensions
+    action_1: 1286 - Permuter Longueur ↔ Largeur
+    action_1_status: 1287 - Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
+    action_2: 1288 - Permuter Face ↔ Contre-face
+    action_2_status: 1289 - Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
+    action_3: 1290 - Adapter les axes
+    action_3_status: 1291 - Cliquez sur la face ou une arête d'une pièce pour y adapter ses axes
+    action_option_group_direction: 1292 - Direction
+    action_option_direction_0: 1293 - Lo
+    action_option_direction_1: 1294 - La
+    action_option_direction_2: 1295 - Ep
+    action_option_direction_0_status: 1296 - Retourner la pièce dans sa longueur
+    action_option_direction_1_status: 1297 - Retourner la pièce dans sa largeur
+    action_option_direction_2_status: 1298 - Retourner la pièce dans son épaisseur
     warning:
-      more_entities: 1296 - {{ count_used }} instances partageant la même définition seront modifiées
+      more_entities: 1299 - {{ count_used }} instances partageant la même définition seront modifiées
     error:
-      not_part: 1297 - L'objet ciblé n'est pas une pièce (composant)
-      not_orientable: 1298 - Le type de cette pièce ne permet pas de l'orienter
+      not_part: 1300 - L'objet ciblé n'est pas une pièce (composant)
+      not_orientable: 1301 - Le type de cette pièce ne permet pas de l'orienter
   smart_export:
-    title: 1299 - Exporter
-    action_0: 1300 - Exporter une pièce 3D
-    action_0_status: 1301 - Cliquez sur une pièce
-    action_1: 1302 - Exporter une pièce 2D
-    action_1_status: 1303 - Cliquez sur la face d'une pièce
-    action_2: 1304 - Exporter une face
-    action_2_status: 1305 - Cliquez sur une face
-    action_3: 1306 - Exporter un tracé
-    action_3_status: 1307 - Cliquez sur une arête
-    action_option_group_file_format: 1308 - Format
-    action_option_group_unit: 1309 - Unité
-    action_option_group_faces: 1310 - Faces
-    action_option_group_options: 1311 - Options
-    action_option_file_format_dxf_status: 1312 - Exporter vers un fichier DXF
-    action_option_file_format_stl_status: 1313 - Exporter vers un fichier STL
-    action_option_file_format_obj_status: 1314 - Exporter vers un fichier OBJ
-    action_option_file_format_svg_status: 1315 - Exporter vers un fichier SVG
+    title: 1302 - Exporter
+    action_0: 1303 - Exporter une pièce 3D
+    action_0_status: 1304 - Cliquez sur une pièce
+    action_1: 1305 - Exporter une pièce 2D
+    action_1_status: 1306 - Cliquez sur la face d'une pièce
+    action_2: 1307 - Exporter une face
+    action_2_status: 1308 - Cliquez sur une face
+    action_3: 1309 - Exporter un tracé
+    action_3_status: 1310 - Cliquez sur une arête
+    action_option_group_file_format: 1311 - Format
+    action_option_group_unit: 1312 - Unité
+    action_option_group_faces: 1313 - Faces
+    action_option_group_options: 1314 - Options
+    action_option_file_format_dxf_status: 1315 - Exporter vers un fichier DXF
+    action_option_file_format_stl_status: 1316 - Exporter vers un fichier STL
+    action_option_file_format_obj_status: 1317 - Exporter vers un fichier OBJ
+    action_option_file_format_svg_status: 1318 - Exporter vers un fichier SVG
     action_option_unit_0_status: "$t(default.unit_0)"
     action_option_unit_1_status: "$t(default.unit_1)"
     action_option_unit_2_status: "$t(default.unit_2)"
@@ -1744,9 +1751,9 @@ tool:
     action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
     action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
     action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: 1325 - Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
-    action_option_options_include_paths_status: 1326 - Exporter comme tracé les arêtes non associées à une face contenues dans la pièce
+    action_option_options_merge_holes_status: 1328 - Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
+    action_option_options_include_paths_status: 1329 - Exporter comme tracé les arêtes non associées à une face contenues dans la pièce
     error:
-      not_part: 1327 - Cette face ne fait pas partie d'une pièce (composant)
-      not_flat_face: 1328 - Cette surface n'est pas plane
-      incompatible_active_path: 1329 - Le chemin actif ne permet pas d'exporter cette pièce
+      not_part: 1330 - Cette face ne fait pas partie d'une pièce (composant)
+      not_flat_face: 1331 - Cette surface n'est pas plane
+      incompatible_active_path: 1332 - Le chemin actif ne permet pas d'exporter cette pièce
