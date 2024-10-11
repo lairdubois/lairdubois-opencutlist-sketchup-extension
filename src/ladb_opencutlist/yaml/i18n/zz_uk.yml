@@ -1478,8 +1478,8 @@ tab:
     objective_title:
       default: 1160 - Цілі
       cuttingdiagram_export: 1161 - Фінансування розробки нових функцй
-      outliner: 1162 - Funding of the Structure function
-      packing: 1163 - Funding of Nesting in Cutting Diagrams
+      outliner: 1162 - Фінансування функції "Структура"
+      packing: 1163 - Фінансування функції Nesting
     objective_details:
       default: |
         1164 - Постійне вдосконалення *OpenCutList* є важливим для нас і проект продовжує потребувати вашої участі для наступного оновлення!
@@ -1488,13 +1488,13 @@ tab:
         Щоб ще більше розширити можливості, ми хотіли б мати можливість експортувати карти розкрою у форматі **SVG** та **DXF**.
         Надаючи нам засоби для роботи над цим експортом, ви даєте нам можливість дозволити вам отримати максимальну віддачу від *OpenCutList*.
       outliner: |
-        1166 - A model can be quite complex, and navigating its structure with SketchUp's native Structure panel is not always very practical.
-        In SketchUp, you can apply material and tags to instances, description, url and badges to definitions, but they're not displayed in the structure.
-        The video will show you how we'd like to improve this in the Structure menu, accessible directly from OpenCutList.
+        1166 - Модель може бути досить складною, і навігація по її структурі за допомогою рідної панелі «Структура» SketchUp не завжди зручна.
+        У SketchUp ви можете застосувати матеріал і теги до екземплярів, опис, URL-адресу та значки до визначень, але вони не відображаються в структурі.
+        Відео покаже вам, як ми хочемо покращити це в меню «Структура», доступне безпосередньо з OpenCutList.
       packing: |
-        1167 - It's important to us that *OpenCutList* can adapt to the wide variety of user requirements for its *cutting diagram* function.
-        To further extend the possibilities, we'd like to implement a **nesting algorithm** to optimize the cutting of parts of any shape.
-        By providing us with the means to work on this functionality, you're giving us the opportunity to help you get the most out of *OpenCutList*.
+        1167 - Для нас важливо, щоб *OpenCutList* міг адаптуватися до дуже різноманітних очікувань користувачів щодо функції *карти розпилу*.
+        Щоб ще більше розширити можливості, ми хочемо реалізувати **алгоритм вкладеності** для оптимізації вирізання деталей будь-якої форми.
+        Надаючи нам засоби для роботи над цією функцією, ви даєте нам можливість допомогти вам отримати максимальну віддачу від *OpenCutList*.
     objective_crowdfunding: |
       1168 - Розробка нових продуктів здійснюватиметься завдяки **краудфандингу** і може розпочатися після досягнення **Фінансової цілі**.
     objective_thanks: |

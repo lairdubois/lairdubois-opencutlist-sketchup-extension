@@ -1478,8 +1478,8 @@ tab:
     objective_title:
       default: 1160 - Цель
       cuttingdiagram_export: 1161 - Финансирование разработки новой функции
-      outliner: 1162 - Funding of the Structure function
-      packing: 1163 - Funding of Nesting in Cutting Diagrams
+      outliner: '1162 - Финансирование функции «Структура» '
+      packing: 1163 - Финансирование Карты раскроя с вложениями
     objective_details:
       default: |
         1164 - Постоянное совершенствование *OpenCutList* очень важно для всех нас и Ваша финансовая помощь, по-прежнему, станет основой для следующего обновления !
@@ -1488,13 +1488,13 @@ tab:
         Для расширения возможностей плагина мы хотели бы сделать возможным экспорт карт раскроя в формате **SVG** и **DXF**.
         Помогая нам финансово, вы даете нам возможность расширить функционал плагина, чтобы в итоге получить максимальную отдачу от *OpenCutList*.
       outliner: |
-        1166 - A model can be quite complex, and navigating its structure with SketchUp's native Structure panel is not always very practical.
-        In SketchUp, you can apply material and tags to instances, description, url and badges to definitions, but they're not displayed in the structure.
-        The video will show you how we'd like to improve this in the Structure menu, accessible directly from OpenCutList.
+        1166 - Модель может быть довольно сложной, и навигация по ее структуре с помощью встроенной в SketchUp панели Structure не всегда удобна.
+        В SketchUp вы можете применить материал и теги к экземплярам, описание, url и метки к определениям, но они не отображаются в структуре.
+        В видеоролике мы покажем вам, возможность улучшить это в меню «Структура», доступном прямо из OpenCutList.
       packing: |
-        1167 - It's important to us that *OpenCutList* can adapt to the wide variety of user requirements for its *cutting diagram* function.
-        To further extend the possibilities, we'd like to implement a **nesting algorithm** to optimize the cutting of parts of any shape.
-        By providing us with the means to work on this functionality, you're giving us the opportunity to help you get the most out of *OpenCutList*.
+        1167 - Для нас важно, чтобы *OpenCutList* соответствовал ожиданиям пользователей, использующих *карту раскроя*.
+        Чтобы еще больше расширить возможности, мы хотели бы реализовать **алгоритм вложения** для оптимизации раскроя деталей любой формы.
+        Помогая нам финансово вы даете нам возможность расширить функционал плагина, чтобы в итоге получить максимальную отдачу от *OpenCutList*.
     objective_crowdfunding: |
       1168 - Разработка новых опций будет осуществляться за счет собранных средств через **краудфандинг** и начнется, когда будет достигнута **финансовая цель**.
     objective_thanks: |
