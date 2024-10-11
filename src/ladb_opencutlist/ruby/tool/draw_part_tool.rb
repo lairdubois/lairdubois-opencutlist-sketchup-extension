@@ -6,7 +6,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/plane_manipulator'
 
-  class BoxTool < Kuix::KuixTool
+  class DrawPartTool < Kuix::KuixTool
 
     COLOR_BRAND = Sketchup::Color.new(247, 127, 0).freeze
     COLOR_BRAND_DARK = Sketchup::Color.new(62, 59, 51).freeze
@@ -124,17 +124,20 @@ module Ladb::OpenCutList
       super
 
       @mouse_ip = Sketchup::InputPoint.new
+      @snap_ip = Sketchup::InputPoint.new
       @picked_first_ip = Sketchup::InputPoint.new
       @picked_second_ip = Sketchup::InputPoint.new
       @picked_third_ip = Sketchup::InputPoint.new
 
       @locked_normal = nil
 
+      @rectangle_centred = false
+      @box_centred = false
+
       @direction = nil
       @normal = _get_active_z_axis
 
       _update_status_text
-      SKETCHUP_CONSOLE.clear
 
       set_root_cursor(CURSOR_PENCIL_RECTANGLE)
 
@@ -163,6 +166,7 @@ module Ladb::OpenCutList
       @mouse_x = x
       @mouse_y = y
 
+      @snap_ip.clear
       @mouse_ip.pick(view, x, y)
 
       SKETCHUP_CONSOLE.clear
@@ -173,6 +177,7 @@ module Ladb::OpenCutList
       puts "instance_path.length = #{@mouse_ip.instance_path.length}"
       puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
       puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
+      puts "view.inference_locked? = #{view.inference_locked?}"
       puts "---"
 
       @space.remove_all
@@ -185,16 +190,16 @@ module Ladb::OpenCutList
           @mouse_ip.instance_path.length == 0 ||
           @mouse_ip.position.on_plane?([ @picked_second_ip.position, @normal ]) ||
           @mouse_ip.face && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(@normal)
-          _, picked_point = Geom::closest_points([ @picked_second_ip.position, @normal ], view.pickray(x, y))
-          @picked_third_ip = Sketchup::InputPoint.new(picked_point)
+          picked_point, _ = Geom::closest_points([ @picked_second_ip.position, @normal ], view.pickray(x, y))
+          @snap_ip = Sketchup::InputPoint.new(picked_point)
         else
-          @picked_third_ip.copy!(@mouse_ip)
+          @snap_ip.copy!(@mouse_ip)
         end
 
         t = _get_transformation
         ti = t.inverse
 
-        points = picked_points
+        points = _get_picked_points
         p1 = points[0].transform(ti)
         p2 = points[1].transform(ti)
         p3 = points[2].transform(ti)
@@ -207,8 +212,8 @@ module Ladb::OpenCutList
         box = Kuix::BoxMotif.new
         box.bounds.origin.copy!(bounds.min)
         box.bounds.size.set!(bounds.width, bounds.height, bounds.depth)
-        box.line_width = 2
-        box.color = Kuix::COLOR_DARK_GREY
+        box.line_width = 1.5
+        box.color = Kuix::COLOR_BLACK
         box.transformation = t
         @space.append(box)
 
@@ -218,136 +223,189 @@ module Ladb::OpenCutList
 
         # Pick second point
 
-        z_plane = [ @picked_first_ip.position, _get_active_z_axis ]
+        ground_plane = [ @picked_first_ip.position, _get_active_z_axis ]
 
-        if @mouse_ip.position.on_plane?(z_plane)
+        if @mouse_ip.vertex
 
-          @normal = _get_active_z_axis
+          if @locked_normal
 
-        elsif @mouse_ip.vertex
+            locked_plane = [ @picked_first_ip.position, @locked_normal ]
 
-          vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
+            @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
+            @normal = @locked_normal
 
-          vertex_preview = Kuix::Points.new
-          vertex_preview.add_points([ vertex_manipulator.point ])
-          vertex_preview.size = 30
-          vertex_preview.style = Kuix::POINT_STYLE_OPEN_SQUARE
-          vertex_preview.color = Kuix::COLOR_MAGENTA
-          @space.append(vertex_preview)
+          elsif @mouse_ip.position.on_plane?(ground_plane)
 
-          if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
+            @normal = _get_active_z_axis
 
-            face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+          else
 
-            face_preview = Kuix::Mesh.new
-            face_preview.add_triangles(face_manipulator.triangles)
-            face_preview.background_color = Sketchup::Color.new(255, 255, 0, 50)
-            @space.append(face_preview)
+            # vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
+            #
+            # vertex_preview = Kuix::Points.new
+            # vertex_preview.add_points([ vertex_manipulator.point ])
+            # vertex_preview.size = 30
+            # vertex_preview.style = Kuix::POINT_STYLE_OPEN_SQUARE
+            # vertex_preview.color = Kuix::COLOR_MAGENTA
+            # @space.append(vertex_preview)
+            #
+            # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
+            #
+            #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+            #
+            #   face_preview = Kuix::Mesh.new
+            #   face_preview.add_triangles(face_manipulator.triangles)
+            #   face_preview.background_color = Sketchup::Color.new(255, 255, 0, 50)
+            #   @space.append(face_preview)
+            #
+            # end
 
           end
 
         elsif @mouse_ip.edge
 
-          t = @mouse_ip.transformation
-          ps = @mouse_ip.edge.start.position.transform(t)
-          pe = @mouse_ip.edge.end.position.transform(t)
+          if @locked_normal
 
-          edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
-          plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_first_ip.position, ps, pe ]))
+            locked_plane = [ @picked_first_ip.position, @locked_normal ]
 
-          @direction = ps.vector_to(pe)
-          @normal = plane_manipulator.normal
+            @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
+            @normal = @locked_normal
 
-          pts = Kuix::Points.new
-          pts.add_points([ @picked_first_ip.position, ps, pe ])
-          pts.size = 30
-          pts.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
-          pts.color = Kuix::COLOR_BLUE
-          @space.append(pts)
+          elsif @mouse_ip.position.on_plane?(ground_plane)
 
-          edge_preview = Kuix::Segments.new
-          edge_preview.add_segments(edge_manipulator.segment)
-          edge_preview.color = Kuix::COLOR_MAGENTA
-          edge_preview.line_width = 4
-          edge_preview.on_top = true
-          @space.append(edge_preview)
+            @normal = _get_active_z_axis
+
+          else
+
+            t = @mouse_ip.transformation
+            ps = @mouse_ip.edge.start.position.transform(t)
+            pe = @mouse_ip.edge.end.position.transform(t)
+
+            edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
+            plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_first_ip.position, ps, pe ]))
+
+            @direction = ps.vector_to(pe)
+            @normal = plane_manipulator.normal
+
+            # pts = Kuix::Points.new
+            # pts.add_points([ @picked_first_ip.position, ps, pe ])
+            # pts.size = 30
+            # pts.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
+            # pts.color = Kuix::COLOR_BLUE
+            # @space.append(pts)
+
+            # edge_preview = Kuix::Segments.new
+            # edge_preview.add_segments(edge_manipulator.segment)
+            # edge_preview.color = Kuix::COLOR_MAGENTA
+            # edge_preview.line_width = 4
+            # edge_preview.on_top = true
+            # @space.append(edge_preview)
+
+          end
 
         elsif @mouse_ip.face && @mouse_ip.instance_path.length > 0
 
-          face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+          if @locked_normal
 
-          if @picked_first_ip.position.on_plane?(face_manipulator.plane)
+            locked_plane = [ @picked_first_ip.position, @locked_normal ]
 
-            @normal = face_manipulator.normal
-            @direction = nil unless @direction.nil? || @direction.perpendicular?(@normal)
+            @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
+            @normal = @locked_normal
 
           else
 
-            p1 = @picked_first_ip.position
-            p2 = @mouse_ip.position
-            p3 = @mouse_ip.position.project_to_plane(z_plane)
+            face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
 
-            pts = Kuix::Points.new
-            pts.add_points([ p1, p2, p3 ])
-            pts.size = 30
-            pts.style = Kuix::POINT_STYLE_PLUS
-            pts.color = Kuix::COLOR_RED
-            @space.append(pts)
+            if @picked_first_ip.position.on_plane?(face_manipulator.plane)
 
-            plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
-            plane_manipulator = PlaneManipulator.new(plane)
+              @normal = face_manipulator.normal
 
-            @direction = _get_active_z_axis
-            @normal = plane_manipulator.normal
+            else
+
+              p1 = @picked_first_ip.position
+              p2 = @mouse_ip.position
+              p3 = @mouse_ip.position.project_to_plane(ground_plane)
+
+              # pts = Kuix::Points.new
+              # pts.add_points([ p1, p2, p3 ])
+              # pts.size = 30
+              # pts.style = Kuix::POINT_STYLE_PLUS
+              # pts.color = Kuix::COLOR_RED
+              # @space.append(pts)
+
+              plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
+              plane_manipulator = PlaneManipulator.new(plane)
+
+              @direction = _get_active_z_axis
+              @normal = plane_manipulator.normal
+
+            end
+
+            # face_preview = Kuix::Mesh.new
+            # face_preview.add_triangles(face_manipulator.triangles)
+            # face_preview.background_color = Sketchup::Color.new(255, 0, 255, 50)
+            # @space.append(face_preview)
 
           end
-
-          face_preview = Kuix::Mesh.new
-          face_preview.add_triangles(face_manipulator.triangles)
-          face_preview.background_color = Sketchup::Color.new(255, 0, 255, 50)
-          @space.append(face_preview)
 
         else
 
-          if @mouse_ip.degrees_of_freedom > 2
-            picked_point = Geom::intersect_line_plane(view.pickray(x, y), z_plane)
-            @mouse_ip = Sketchup::InputPoint.new(picked_point) unless picked_point.nil?
-          end
+          if @locked_normal
 
-          if !@mouse_ip.position.on_plane?(z_plane)
+            ground_plane = [ @picked_first_ip.position, @locked_normal ]
 
-            p1 = @picked_first_ip.position
-            p2 = @mouse_ip.position
-            p3 = @mouse_ip.position.project_to_plane(z_plane)
-
-            pts = Kuix::Points.new
-            pts.add_points([ p1, p2, p3 ])
-            pts.size = 30
-            pts.style = Kuix::POINT_STYLE_CROSS
-            pts.color = Kuix::COLOR_RED
-            @space.append(pts)
-
-            plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
-            plane_manipulator = PlaneManipulator.new(plane)
-
-            @direction = _get_active_z_axis
-            @normal = plane_manipulator.normal
+            if @mouse_ip.degrees_of_freedom > 2
+              @snap_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), ground_plane))
+            else
+              @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(ground_plane))
+            end
+            @normal = @locked_normal
 
           else
 
-            @direction = nil
-            @normal = _get_active_z_axis
+            if @mouse_ip.degrees_of_freedom > 2
+              picked_point = Geom::intersect_line_plane(view.pickray(x, y), ground_plane)
+              @mouse_ip = Sketchup::InputPoint.new(picked_point) unless picked_point.nil?
+            end
 
-          end
+            if !@mouse_ip.position.on_plane?(ground_plane)
+
+              p1 = @picked_first_ip.position
+              p2 = @mouse_ip.position
+              p3 = @mouse_ip.position.project_to_plane(ground_plane)
+
+              # pts = Kuix::Points.new
+              # pts.add_points([ p1, p2, p3 ])
+              # pts.size = 30
+              # pts.style = Kuix::POINT_STYLE_CROSS
+              # pts.color = Kuix::COLOR_RED
+              # @space.append(pts)
+
+              plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
+              plane_manipulator = PlaneManipulator.new(plane)
+
+              @direction = _get_active_z_axis
+              @normal = plane_manipulator.normal
+
+            else
+
+              @direction = nil
+              @normal = _get_active_z_axis
+
+            end
 
         end
+
+        end
+
+        @snap_ip.copy!(@mouse_ip) unless @snap_ip.valid?
 
         t = _get_transformation
         ti = t.inverse
 
-        points = picked_points
-        p1 = points.first.transform(ti)
-        p2 = points.last.transform(ti)
+        points = _get_picked_points
+        p1 = points[0].transform(ti)
+        p2 = points[1].transform(ti)
 
         bounds = Geom::BoundingBox.new
         bounds.add(p1, p2)
@@ -355,8 +413,16 @@ module Ladb::OpenCutList
         rect = Kuix::RectangleMotif.new
         rect.bounds.origin.copy!(bounds.min)
         rect.bounds.size.set!(bounds.width, bounds.height, 0)
-        rect.line_width = 2
-        rect.color = Kuix::COLOR_DARK_GREY
+        rect.line_width = @locked_normal ? 3 : 1.5
+        if @normal.parallel?(_get_active_x_axis)
+          rect.color = Kuix::COLOR_RED
+        elsif @normal.parallel?(_get_active_y_axis)
+          rect.color = Kuix::COLOR_GREEN
+        elsif @normal.parallel?(_get_active_z_axis)
+          rect.color = Kuix::COLOR_BLUE
+        else
+          rect.color = Kuix::COLOR_BLACK
+        end
         rect.transformation = t
         @space.append(rect)
 
@@ -370,34 +436,34 @@ module Ladb::OpenCutList
 
           vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
 
-          vertex_preview = Kuix::Points.new
-          vertex_preview.add_points([ vertex_manipulator.point ])
-          vertex_preview.size = 30
-          vertex_preview.style = Kuix::POINT_STYLE_OPEN_SQUARE
-          vertex_preview.color = Kuix::COLOR_MAGENTA
-          @space.append(vertex_preview)
+          # vertex_preview = Kuix::Points.new
+          # vertex_preview.add_points([ vertex_manipulator.point ])
+          # vertex_preview.size = 30
+          # vertex_preview.style = Kuix::POINT_STYLE_OPEN_SQUARE
+          # vertex_preview.color = Kuix::COLOR_MAGENTA
+          # @space.append(vertex_preview)
 
-          if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
-
-            face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
-
-            face_preview = Kuix::Mesh.new
-            face_preview.add_triangles(face_manipulator.triangles)
-            face_preview.background_color = Sketchup::Color.new(255, 255, 0, 50)
-            @space.append(face_preview)
-
-          end
+          # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
+          #
+          #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+          #
+          #   face_preview = Kuix::Mesh.new
+          #   face_preview.add_triangles(face_manipulator.triangles)
+          #   face_preview.background_color = Sketchup::Color.new(255, 255, 0, 50)
+          #   @space.append(face_preview)
+          #
+          # end
 
         elsif @mouse_ip.edge
 
-          edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
-
-          edge_preview = Kuix::Segments.new
-          edge_preview.add_segments(edge_manipulator.segment)
-          edge_preview.color = Kuix::COLOR_MAGENTA
-          edge_preview.line_width = 4
-          edge_preview.on_top = true
-          @space.append(edge_preview)
+          # edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
+          #
+          # edge_preview = Kuix::Segments.new
+          # edge_preview.add_segments(edge_manipulator.segment)
+          # edge_preview.color = Kuix::COLOR_MAGENTA
+          # edge_preview.line_width = 4
+          # edge_preview.on_top = true
+          # @space.append(edge_preview)
 
           if @mouse_ip.face && @mouse_ip.edge.faces.include?(@mouse_ip.face)
 
@@ -405,10 +471,10 @@ module Ladb::OpenCutList
 
             @normal = face_manipulator.normal
 
-            face_preview = Kuix::Mesh.new
-            face_preview.add_triangles(face_manipulator.triangles)
-            face_preview.background_color = Sketchup::Color.new(255, 255, 0, 50)
-            @space.append(face_preview)
+            # face_preview = Kuix::Mesh.new
+            # face_preview.add_triangles(face_manipulator.triangles)
+            # face_preview.background_color = Sketchup::Color.new(255, 255, 0, 50)
+            # @space.append(face_preview)
 
           end
 
@@ -418,23 +484,34 @@ module Ladb::OpenCutList
 
           @normal = face_manipulator.normal
 
-          face_preview = Kuix::Mesh.new
-          face_preview.add_triangles(face_manipulator.triangles)
-          face_preview.background_color = Sketchup::Color.new(255, 0, 255, 50)
-          @space.append(face_preview)
+          # face_preview = Kuix::Mesh.new
+          # face_preview.add_triangles(face_manipulator.triangles)
+          # face_preview.background_color = Sketchup::Color.new(255, 0, 255, 50)
+          # @space.append(face_preview)
 
-        else
+        elsif @locked_normal.nil?
+
           @direction = nil
           @normal = _get_active_z_axis
+
         end
+
+        @snap_ip.copy!(@mouse_ip) unless @snap_ip.valid?
 
       end
 
-      axes_helper = Kuix::AxesHelper.new
-      axes_helper.transformation = Geom::Transformation.axes(ORIGIN, *_get_axes)
-      @space.append(axes_helper)
+      # pts = Kuix::Points.new
+      # pts.add_points([ @snap_ip.position ])
+      # pts.size = 30
+      # pts.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
+      # pts.color = Kuix::COLOR_YELLOW
+      # @space.append(pts)
 
-      view.tooltip = @mouse_ip.tooltip if @mouse_ip.valid?
+      # axes_helper = Kuix::AxesHelper.new
+      # axes_helper.transformation = Geom::Transformation.axes(ORIGIN, *_get_axes)
+      # @space.append(axes_helper)
+
+      view.tooltip = @snap_ip.tooltip if @snap_ip.valid?
       view.invalidate
     end
 
@@ -442,13 +519,14 @@ module Ladb::OpenCutList
       return true if super
 
       if _picked_first_point? && _picked_second_point?
+        @picked_third_ip.copy!(@snap_ip)
         _create_entity
         _reset
       else
         if !_picked_first_point?
-          @picked_first_ip.copy!(@mouse_ip)
+          @picked_first_ip.copy!(@snap_ip)
         elsif !_picked_second_point?
-          @picked_second_ip.copy!(@mouse_ip)
+          @picked_second_ip.copy!(@snap_ip)
           push_cursor(CURSOR_PENCIL_PUSHPULL)
         end
       end
@@ -458,18 +536,37 @@ module Ladb::OpenCutList
     end
 
     def onKeyDown(key, repeat, flags, view)
-      if key == VK_RIGHT
-        @locked_normal = _get_active_x_axis
-        @normal = @locked_normal
+      if key == VK_ALT
+        @rectangle_centred = !@rectangle_centred if _picked_first_point? && !_picked_second_point?
+        @box_centred = !@box_centred if _picked_second_point?
         _refresh
-      elsif key == VK_LEFT
-        @locked_normal = _get_active_y_axis
-        @normal = @locked_normal
-        _refresh
-      elsif key == VK_UP
-        @locked_normal = _get_active_z_axis
-        @normal = @locked_normal
-        _refresh
+      end
+      unless _picked_second_point?
+        if key == VK_RIGHT
+          x_axis = _get_active_x_axis
+          if @locked_normal == x_axis
+            @locked_normal = nil
+          else
+            @locked_normal = x_axis
+          end
+          _refresh
+        elsif key == VK_LEFT
+          y_axis = _get_active_y_axis
+          if @locked_normal == y_axis
+            @locked_normal = nil
+          else
+            @locked_normal = y_axis
+          end
+          _refresh
+        elsif key == VK_UP
+          z_axis = _get_active_z_axis
+          if @locked_normal == z_axis
+            @locked_normal = nil
+          else
+            @locked_normal = z_axis
+          end
+          _refresh
+        end
       end
     end
 
@@ -482,14 +579,16 @@ module Ladb::OpenCutList
         t = _get_transformation
         ti = t.inverse
 
-        p2 = @picked_second_ip.position.transform(ti)
-        p3 = @picked_third_ip.position.transform(ti)
+        points = _get_picked_points
+        p2 = points[1].transform(ti)
+        p3 = points[2].transform(ti)
 
         thickness *= -1 if p3.z < p2.z
 
         thickness = p3.z - p2.z if thickness == 0
+        thickness /= 2 if @box_centred
 
-        @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
+        @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, thickness).transform(t))
 
         _create_entity
         _reset
@@ -509,7 +608,7 @@ module Ladb::OpenCutList
           ti = t.inverse
 
           p1 = @picked_first_ip.position.transform(ti)
-          p2 = @mouse_ip.position.transform(ti)
+          p2 = @snap_ip.position.transform(ti)
 
           length *= -1 if p2.x < p1.x
           width *= -1 if p2.y < p1.y
@@ -554,11 +653,7 @@ module Ladb::OpenCutList
 
     def draw(view)
       super
-      if @picked_third_ip.valid?
-        @picked_third_ip.draw(view)
-      elsif @mouse_ip.valid?
-        @mouse_ip.draw(view)
-      end
+      @mouse_ip.draw(view) if @mouse_ip.valid?
     end
 
     def enableVCB?
@@ -566,9 +661,9 @@ module Ladb::OpenCutList
     end
 
     def getExtents
-      return super if picked_points.empty?
+      return super if _get_picked_points.empty?
       bounds = Geom::BoundingBox.new
-      bounds.add(picked_points)
+      bounds.add(_get_picked_points)
       bounds
     end
 
@@ -624,6 +719,7 @@ module Ladb::OpenCutList
 
     def _reset
       @mouse_ip.clear
+      @snap_ip.clear
       @picked_first_ip.clear
       @picked_second_ip.clear
       @picked_third_ip.clear
@@ -648,12 +744,22 @@ module Ladb::OpenCutList
       @picked_third_ip.valid?
     end
 
-    def picked_points
+    def _get_picked_points
       points = []
       points << @picked_first_ip.position if _picked_first_point?
       points << @picked_second_ip.position if _picked_second_point?
-      points << @picked_third_ip.position if @picked_third_ip.valid?
-      points << @mouse_ip.position if @mouse_ip.valid?
+      points << @picked_third_ip.position if _picked_third_point?
+      points << @snap_ip.position if @snap_ip.valid?
+
+      if @rectangle_centred && _picked_first_point? && points.length > 1
+        points[0] = points[0].offset(points[1].vector_to(points[0]))
+      end
+      if @box_centred && _picked_second_point? && points.length > 2
+        offset = points[2].vector_to(points[1])
+        points[0] = points[0].offset(offset)
+        points[1] = points[1].offset(offset)
+      end
+
       points
     end
 
@@ -665,15 +771,12 @@ module Ladb::OpenCutList
       t = _get_transformation
       ti = t.inverse
 
-      points = picked_points
+      points = _get_picked_points
       p1 = points[0].transform(ti)
-      p2 = points[1].transform(ti)
       p3 = points[2].transform(ti)
 
-      pe = Geom::Point3d.new(p2.x, p2.y, p3.z)
-
       bounds = Geom::BoundingBox.new
-      bounds.add(p1, pe)
+      bounds.add(p1, p3)
 
       definition = model.definitions.add('Part')
 
@@ -683,7 +786,7 @@ module Ladb::OpenCutList
                                        bounds.corner(3),
                                        bounds.corner(2)
                                      ])
-      face.pushpull(p1.z < pe.z ? -bounds.depth : bounds.depth, bounds.corner(0).vector_to(bounds.corner(0)))
+      face.pushpull(p1.z >= 0 && p1.z < p3.z ? -bounds.depth : bounds.depth, bounds.corner(0).vector_to(bounds.corner(0)))
       face.reverse! if face.normal.samedirection?(Z_AXIS)
 
       model.active_entities.add_instance(definition, t)

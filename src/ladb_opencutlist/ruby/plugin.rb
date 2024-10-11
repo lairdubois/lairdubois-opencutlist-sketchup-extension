@@ -23,7 +23,7 @@ module Ladb::OpenCutList
   require_relative 'tool/smart_paint_tool'
   require_relative 'tool/smart_axes_tool'
   require_relative 'tool/smart_export_tool'
-  require_relative 'tool/box_tool'
+  require_relative 'tool/draw_part_tool'
 
   class Plugin
     
@@ -798,7 +798,7 @@ module Ladb::OpenCutList
       }
       submenu.add_separator
       submenu.add_item('Dessiner une pièce') {
-        Sketchup.active_model.select_tool(BoxTool.new) if Sketchup.active_model
+        Sketchup.active_model.select_tool(DrawPartTool.new) if Sketchup.active_model
       }
       submenu.add_separator
       submenu.add_item(get_i18n_string('core.menu.item.smart_paint')) {
@@ -900,7 +900,7 @@ module Ladb::OpenCutList
 
       cmd = UI::Command.new(get_i18n_string('BOX')) {
         if Sketchup.active_model
-          Sketchup.active_model.select_tool(BoxTool.new)
+          Sketchup.active_model.select_tool(DrawPartTool.new)
           Sketchup.focus if Sketchup.respond_to?(:focus)
         end
       }
