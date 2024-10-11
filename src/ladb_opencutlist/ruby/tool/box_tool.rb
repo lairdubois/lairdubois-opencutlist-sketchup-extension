@@ -266,6 +266,7 @@ module Ladb::OpenCutList
 
           if @picked_first_ip.position.on_plane?(face_manipulator.plane)
             @normal = face_manipulator.normal
+            @direction = nil unless @direction.nil? || @direction.perpendicular?(@normal)
           else
 
             z_plane = [ @picked_first_ip.position, Z_AXIS ]
