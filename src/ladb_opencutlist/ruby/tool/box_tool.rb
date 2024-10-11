@@ -131,9 +131,9 @@ module Ladb::OpenCutList
       @locked_normal = nil
 
       @direction = nil
-      @normal = Z_AXIS
+      @normal = _get_active_z_axis
 
-      update_ui
+      _update_status_text
       SKETCHUP_CONSOLE.clear
 
       set_root_cursor(CURSOR_PENCIL_RECTANGLE)
@@ -142,18 +142,19 @@ module Ladb::OpenCutList
 
     def onResume(view)
       super
-      update_ui
+      _update_status_text
     end
 
     def onCancel(reason, view)
-      if picked_second_point?
+      if _picked_second_point?
         @picked_second_ip.clear
-      elsif picked_first_point?
+        pop_to_root_cursor
+      elsif _picked_first_point?
         @picked_first_ip.clear
       else
-        reset_tool
+        _reset
       end
-      refresh
+      _refresh
     end
 
     def onMouseMove(flags, x, y, view)
@@ -172,10 +173,13 @@ module Ladb::OpenCutList
       puts "instance_path.length = #{@mouse_ip.instance_path.length}"
       puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
       puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
+      puts "---"
 
       @space.remove_all
 
-      if picked_second_point?
+      if _picked_second_point?
+
+        # Pick third point
 
         if @mouse_ip.degrees_of_freedom > 2 ||
           @mouse_ip.instance_path.length == 0 ||
@@ -187,7 +191,7 @@ module Ladb::OpenCutList
           @picked_third_ip.copy!(@mouse_ip)
         end
 
-        t = get_transformation
+        t = _get_transformation
         ti = t.inverse
 
         points = picked_points
@@ -210,9 +214,17 @@ module Ladb::OpenCutList
 
         Sketchup.vcb_value = bounds.depth
 
-      elsif picked_first_point?
+      elsif _picked_first_point?
 
-        if @mouse_ip.vertex
+        # Pick second point
+
+        z_plane = [ @picked_first_ip.position, _get_active_z_axis ]
+
+        if @mouse_ip.position.on_plane?(z_plane)
+
+          @normal = _get_active_z_axis
+
+        elsif @mouse_ip.vertex
 
           vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
 
@@ -265,11 +277,11 @@ module Ladb::OpenCutList
           face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
 
           if @picked_first_ip.position.on_plane?(face_manipulator.plane)
+
             @normal = face_manipulator.normal
             @direction = nil unless @direction.nil? || @direction.perpendicular?(@normal)
-          else
 
-            z_plane = [ @picked_first_ip.position, Z_AXIS ]
+          else
 
             p1 = @picked_first_ip.position
             p2 = @mouse_ip.position
@@ -285,7 +297,7 @@ module Ladb::OpenCutList
             plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
             plane_manipulator = PlaneManipulator.new(plane)
 
-            @direction = Z_AXIS
+            @direction = _get_active_z_axis
             @normal = plane_manipulator.normal
 
           end
@@ -297,7 +309,11 @@ module Ladb::OpenCutList
 
         else
 
-          z_plane = [ @picked_first_ip.position, Z_AXIS ]
+          if @mouse_ip.degrees_of_freedom > 2
+            picked_point = Geom::intersect_line_plane(view.pickray(x, y), z_plane)
+            @mouse_ip = Sketchup::InputPoint.new(picked_point) unless picked_point.nil?
+          end
+
           if !@mouse_ip.position.on_plane?(z_plane)
 
             p1 = @picked_first_ip.position
@@ -314,17 +330,19 @@ module Ladb::OpenCutList
             plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
             plane_manipulator = PlaneManipulator.new(plane)
 
-            @direction = Z_AXIS
+            @direction = _get_active_z_axis
             @normal = plane_manipulator.normal
 
           else
+
             @direction = nil
-            @normal = Z_AXIS
+            @normal = _get_active_z_axis
+
           end
 
         end
 
-        t = get_transformation
+        t = _get_transformation
         ti = t.inverse
 
         points = picked_points
@@ -345,6 +363,8 @@ module Ladb::OpenCutList
         Sketchup.vcb_value = "#{bounds.width};#{bounds.height}"
 
       else
+
+        # Pick first point
 
         if @mouse_ip.vertex
 
@@ -405,13 +425,13 @@ module Ladb::OpenCutList
 
         else
           @direction = nil
-          @normal = Z_AXIS
+          @normal = _get_active_z_axis
         end
 
       end
 
       axes_helper = Kuix::AxesHelper.new
-      axes_helper.transformation = Geom::Transformation.axes(ORIGIN, *get_axes)
+      axes_helper.transformation = Geom::Transformation.axes(ORIGIN, *_get_axes)
       @space.append(axes_helper)
 
       view.tooltip = @mouse_ip.tooltip if @mouse_ip.valid?
@@ -420,42 +440,46 @@ module Ladb::OpenCutList
 
     def onLButtonDown(flags, x, y, view)
       return true if super
-      if picked_first_point? && picked_second_point?
-        create_entity
-        reset_tool
+
+      if _picked_first_point? && _picked_second_point?
+        _create_entity
+        _reset
       else
-        if !picked_first_point?
+        if !_picked_first_point?
           @picked_first_ip.copy!(@mouse_ip)
-        elsif !picked_second_point?
+        elsif !_picked_second_point?
           @picked_second_ip.copy!(@mouse_ip)
           push_cursor(CURSOR_PENCIL_PUSHPULL)
         end
       end
 
-      update_ui
+      _update_status_text
       view.invalidate
     end
 
     def onKeyDown(key, repeat, flags, view)
       if key == VK_RIGHT
-        @locked_normal = X_AXIS
+        @locked_normal = _get_active_x_axis
         @normal = @locked_normal
+        _refresh
       elsif key == VK_LEFT
-        @locked_normal = Y_AXIS
+        @locked_normal = _get_active_y_axis
         @normal = @locked_normal
+        _refresh
       elsif key == VK_UP
-        @locked_normal = Z_AXIS
+        @locked_normal = _get_active_z_axis
         @normal = @locked_normal
+        _refresh
       end
     end
 
     def onUserText(text, view)
 
-      if picked_second_point?
+      if _picked_second_point?
 
         thickness = text.to_l
 
-        t = get_transformation
+        t = _get_transformation
         ti = t.inverse
 
         p2 = @picked_second_ip.position.transform(ti)
@@ -467,12 +491,12 @@ module Ladb::OpenCutList
 
         @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
 
-        create_entity
-        reset_tool
+        _create_entity
+        _reset
 
         Sketchup.vcb_value = ''
 
-      elsif picked_first_point?
+      elsif _picked_first_point?
 
         d1, d2, d3 = text.split(';')
 
@@ -481,7 +505,7 @@ module Ladb::OpenCutList
           length = d1 ? d1.to_l : 0
           width = d2 ? d2.to_l : 0
 
-          t = get_transformation
+          t = _get_transformation
           ti = t.inverse
 
           p1 = @picked_first_ip.position.transform(ti)
@@ -499,14 +523,14 @@ module Ladb::OpenCutList
 
           Sketchup.vcb_value = ''
 
-          refresh
+          _refresh
 
         end
         if d3
 
           thickness = d3.to_l
 
-          t = get_transformation
+          t = _get_transformation
           ti = t.inverse
 
           p2 = @picked_second_ip.position.transform(ti)
@@ -518,8 +542,8 @@ module Ladb::OpenCutList
 
           @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
 
-          create_entity
-          reset_tool
+          _create_entity
+          _reset
 
           Sketchup.vcb_value = ''
 
@@ -527,18 +551,6 @@ module Ladb::OpenCutList
       end
 
     end
-
-    # Here we have hard coded a special ID for the pencil cursor in SketchUp.
-    # Normally you would use `UI.create_cursor(cursor_path, 0, 0)` instead
-    # with your own custom cursor bitmap:
-    #
-    #   CURSOR_PENCIL = UI.create_cursor(cursor_path, 0, 0)
-    # def onSetCursor
-    #   # Note that `onSetCursor` is called frequently so you should not do much
-    #   # work here. At most you switch between different cursor representing
-    #   # the state of the tool.
-    #   UI.set_cursor(CURSOR_PENCIL)
-    # end
 
     def draw(view)
       super
@@ -550,7 +562,7 @@ module Ladb::OpenCutList
     end
 
     def enableVCB?
-      picked_first_point?
+      _picked_first_point?
     end
 
     def getExtents
@@ -562,9 +574,21 @@ module Ladb::OpenCutList
 
     private
 
-    def get_axes
+    def _get_active_x_axis
+      X_AXIS.transform(_get_edit_transformation)
+    end
 
-      if @direction.nil?
+    def _get_active_y_axis
+      Y_AXIS.transform(_get_edit_transformation)
+    end
+
+    def _get_active_z_axis
+      Z_AXIS.transform(_get_edit_transformation)
+    end
+
+    def _get_axes
+
+      if @direction.nil? || !@direction.perpendicular?(@normal)
         x_axis, y_axis, z_axis = @normal.axes
       else
         x_axis = @direction
@@ -575,67 +599,71 @@ module Ladb::OpenCutList
       [ x_axis, y_axis, z_axis ]
     end
 
-    def get_transformation
-      t = Geom::Transformation.axes(@picked_first_ip.position, *get_axes)
-      # t *= Sketchup.active_model.edit_transform unless Sketchup.active_model.edit_transform.nil?
-      t
+    def _get_edit_transformation
+      return IDENTITY if Sketchup.active_model.nil? || Sketchup.active_model.edit_transform.nil?
+      Sketchup.active_model.edit_transform
     end
 
-    def update_ui
-      if picked_second_point?
+    def _get_transformation
+      Geom::Transformation.axes(@picked_first_ip.position, *_get_axes)
+    end
+
+    def _update_status_text
+      if _picked_second_point?
         Sketchup.status_text = 'Select end point.'
-      elsif picked_first_point?
+      elsif _picked_first_point?
         Sketchup.status_text = 'Select second point.'
       else
         Sketchup.status_text = 'Select start point.'
       end
     end
 
-    def refresh
+    def _refresh
       onMouseMove(0, @mouse_x, @mouse_y, Sketchup.active_model.active_view)
     end
 
-    def reset_tool
+    def _reset
       @mouse_ip.clear
       @picked_first_ip.clear
       @picked_second_ip.clear
       @picked_third_ip.clear
       @direction = nil
       @locked_normal = nil
-      @normal = Z_AXIS
-      Sketchup.active_model.active_view.lock_inference
+      @normal = _get_active_z_axis
       @space.remove_all
-      update_ui
+      _update_status_text
       Sketchup.vcb_value = ''
       pop_to_root_cursor
     end
 
-    def picked_first_point?
+    def _picked_first_point?
       @picked_first_ip.valid?
     end
 
-    def picked_second_point?
+    def _picked_second_point?
       @picked_second_ip.valid?
+    end
+
+    def _picked_third_point?
+      @picked_third_ip.valid?
     end
 
     def picked_points
       points = []
-      points << @picked_first_ip.position if picked_first_point?
-      points << @picked_second_ip.position if picked_second_point?
+      points << @picked_first_ip.position if _picked_first_point?
+      points << @picked_second_ip.position if _picked_second_point?
       points << @picked_third_ip.position if @picked_third_ip.valid?
       points << @mouse_ip.position if @mouse_ip.valid?
       points
     end
 
-    def create_entity
+    def _create_entity
 
       model = Sketchup.active_model
       model.start_operation('Create Part', true)
 
-      t = get_transformation
+      t = _get_transformation
       ti = t.inverse
-      et = model.edit_transform ? model.edit_transform : IDENTITY
-      eti = et.inverse
 
       points = picked_points
       p1 = points[0].transform(ti)
@@ -655,8 +683,8 @@ module Ladb::OpenCutList
                                        bounds.corner(3),
                                        bounds.corner(2)
                                      ])
-      face.pushpull(p1.z < pe.z ? -bounds.depth : bounds.depth, bounds.corner(4) - bounds.corner(0))
-      face.reverse! if face.normal.samedirection?(Z_AXIS.transform(et))
+      face.pushpull(p1.z < pe.z ? -bounds.depth : bounds.depth, bounds.corner(0).vector_to(bounds.corner(0)))
+      face.reverse! if face.normal.samedirection?(Z_AXIS)
 
       model.active_entities.add_instance(definition, t)
 
