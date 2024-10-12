@@ -189,11 +189,17 @@ module Ladb::OpenCutList
         if @mouse_ip.degrees_of_freedom > 2 ||
           @mouse_ip.instance_path.length == 0 ||
           @mouse_ip.position.on_plane?([ @picked_second_ip.position, @normal ]) ||
-          @mouse_ip.face && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(@normal)
+          @mouse_ip.face && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(@normal) ||
+          @mouse_ip.edge && @mouse_ip.degrees_of_freedom == 1 && !@mouse_ip.edge.start.position.vector_to(@mouse_ip.edge.end.position).transform(@mouse_ip.transformation).perpendicular?(@normal)
+
           picked_point, _ = Geom::closest_points([ @picked_second_ip.position, @normal ], view.pickray(x, y))
           @snap_ip = Sketchup::InputPoint.new(picked_point)
+          @mouse_ip.copy!(@snap_ip) # Set display? to false
+
         else
-          @snap_ip.copy!(@mouse_ip)
+
+          @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_line([ @picked_second_ip.position, @normal ]))
+
         end
 
         t = _get_transformation
@@ -203,6 +209,7 @@ module Ladb::OpenCutList
 
           k_points = Kuix::Points.new
           k_points.add_point(@picked_first_ip.position)
+          k_points.line_width = 1
           k_points.size = 20
           k_points.style = Kuix::POINT_STYLE_PLUS
           @space.append(k_points)
@@ -439,6 +446,7 @@ module Ladb::OpenCutList
 
           k_points = Kuix::Points.new
           k_points.add_point(@picked_first_ip.position)
+          k_points.line_width = 1
           k_points.size = 20
           k_points.style = Kuix::POINT_STYLE_PLUS
           @space.append(k_points)
