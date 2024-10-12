@@ -199,6 +199,22 @@ module Ladb::OpenCutList
         t = _get_transformation
         ti = t.inverse
 
+        if @rectangle_centred || @box_centred
+
+          k_points = Kuix::Points.new
+          k_points.add_point(@picked_first_ip.position)
+          k_points.size = 20
+          k_points.style = Kuix::POINT_STYLE_PLUS
+          @space.append(k_points)
+
+          k_line = Kuix::LineMotif.new
+          k_line.start.copy!(@picked_first_ip.position)
+          k_line.end.copy!(@snap_ip.position)
+          k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          @space.append(k_line)
+
+        end
+
         points = _get_picked_points
         p1 = points[0].transform(ti)
         p2 = points[1].transform(ti)
@@ -209,13 +225,13 @@ module Ladb::OpenCutList
         bounds = Geom::BoundingBox.new
         bounds.add(p1, pe)
 
-        box = Kuix::BoxMotif.new
-        box.bounds.origin.copy!(bounds.min)
-        box.bounds.size.set!(bounds.width, bounds.height, bounds.depth)
-        box.line_width = 1.5
-        box.color = Kuix::COLOR_BLACK
-        box.transformation = t
-        @space.append(box)
+        k_box = Kuix::BoxMotif.new
+        k_box.bounds.origin.copy!(bounds.min)
+        k_box.bounds.size.set!(bounds.width, bounds.height, bounds.depth)
+        k_box.line_width = 1.5
+        k_box.color = _get_normal_color
+        k_box.transformation = t
+        @space.append(k_box)
 
         Sketchup.vcb_value = bounds.depth
 
@@ -237,6 +253,14 @@ module Ladb::OpenCutList
           elsif @mouse_ip.position.on_plane?(ground_plane)
 
             @normal = _get_active_z_axis
+
+          elsif @mouse_ip.position.on_plane?([ @picked_first_ip.position, _get_active_x_axis ])
+
+            @normal = _get_active_x_axis
+
+          elsif @mouse_ip.position.on_plane?([ @picked_first_ip.position, _get_active_y_axis ])
+
+            @normal = _get_active_y_axis
 
           else
 
@@ -275,6 +299,14 @@ module Ladb::OpenCutList
 
             @normal = _get_active_z_axis
 
+          elsif @mouse_ip.position.on_plane?([ @picked_first_ip.position, _get_active_x_axis ])
+
+            @normal = _get_active_x_axis
+
+          elsif @mouse_ip.position.on_plane?([ @picked_first_ip.position, _get_active_y_axis ])
+
+            @normal = _get_active_y_axis
+
           else
 
             t = @mouse_ip.transformation
@@ -287,12 +319,12 @@ module Ladb::OpenCutList
             @direction = ps.vector_to(pe)
             @normal = plane_manipulator.normal
 
-            # pts = Kuix::Points.new
-            # pts.add_points([ @picked_first_ip.position, ps, pe ])
-            # pts.size = 30
-            # pts.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
-            # pts.color = Kuix::COLOR_BLUE
-            # @space.append(pts)
+            # k_points = Kuix::Points.new
+            # k_points.add_points([ @picked_first_ip.position, ps, pe ])
+            # k_points.size = 30
+            # k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
+            # k_points.color = Kuix::COLOR_BLUE
+            # @space.append(k_points)
 
             # edge_preview = Kuix::Segments.new
             # edge_preview.add_segments(edge_manipulator.segment)
@@ -326,12 +358,12 @@ module Ladb::OpenCutList
               p2 = @mouse_ip.position
               p3 = @mouse_ip.position.project_to_plane(ground_plane)
 
-              # pts = Kuix::Points.new
-              # pts.add_points([ p1, p2, p3 ])
-              # pts.size = 30
-              # pts.style = Kuix::POINT_STYLE_PLUS
-              # pts.color = Kuix::COLOR_RED
-              # @space.append(pts)
+              # k_points = Kuix::Points.new
+              # k_points.add_points([ p1, p2, p3 ])
+              # k_points.size = 30
+              # k_points.style = Kuix::POINT_STYLE_PLUS
+              # k_points.color = Kuix::COLOR_RED
+              # @space.append(k_points)
 
               plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
               plane_manipulator = PlaneManipulator.new(plane)
@@ -352,12 +384,12 @@ module Ladb::OpenCutList
 
           if @locked_normal
 
-            ground_plane = [ @picked_first_ip.position, @locked_normal ]
+            locked_plane = [ @picked_first_ip.position, @locked_normal ]
 
             if @mouse_ip.degrees_of_freedom > 2
-              @snap_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), ground_plane))
+              @snap_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), locked_plane))
             else
-              @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(ground_plane))
+              @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
             end
             @normal = @locked_normal
 
@@ -374,12 +406,12 @@ module Ladb::OpenCutList
               p2 = @mouse_ip.position
               p3 = @mouse_ip.position.project_to_plane(ground_plane)
 
-              # pts = Kuix::Points.new
-              # pts.add_points([ p1, p2, p3 ])
-              # pts.size = 30
-              # pts.style = Kuix::POINT_STYLE_CROSS
-              # pts.color = Kuix::COLOR_RED
-              # @space.append(pts)
+              # k_points = Kuix::Points.new
+              # k_points.add_points([ p1, p2, p3 ])
+              # k_points.size = 30
+              # k_points.style = Kuix::POINT_STYLE_CROSS
+              # k_points.color = Kuix::COLOR_RED
+              # @space.append(k_points)
 
               plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
               plane_manipulator = PlaneManipulator.new(plane)
@@ -394,7 +426,7 @@ module Ladb::OpenCutList
 
             end
 
-        end
+          end
 
         end
 
@@ -403,6 +435,22 @@ module Ladb::OpenCutList
         t = _get_transformation
         ti = t.inverse
 
+        if @rectangle_centred
+
+          k_points = Kuix::Points.new
+          k_points.add_point(@picked_first_ip.position)
+          k_points.size = 20
+          k_points.style = Kuix::POINT_STYLE_PLUS
+          @space.append(k_points)
+
+          k_line = Kuix::LineMotif.new
+          k_line.start.copy!(@picked_first_ip.position)
+          k_line.end.copy!(@snap_ip.position)
+          k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          @space.append(k_line)
+
+        end
+
         points = _get_picked_points
         p1 = points[0].transform(ti)
         p2 = points[1].transform(ti)
@@ -410,21 +458,13 @@ module Ladb::OpenCutList
         bounds = Geom::BoundingBox.new
         bounds.add(p1, p2)
 
-        rect = Kuix::RectangleMotif.new
-        rect.bounds.origin.copy!(bounds.min)
-        rect.bounds.size.set!(bounds.width, bounds.height, 0)
-        rect.line_width = @locked_normal ? 3 : 1.5
-        if @normal.parallel?(_get_active_x_axis)
-          rect.color = Kuix::COLOR_RED
-        elsif @normal.parallel?(_get_active_y_axis)
-          rect.color = Kuix::COLOR_GREEN
-        elsif @normal.parallel?(_get_active_z_axis)
-          rect.color = Kuix::COLOR_BLUE
-        else
-          rect.color = Kuix::COLOR_BLACK
-        end
-        rect.transformation = t
-        @space.append(rect)
+        k_rectangle = Kuix::RectangleMotif.new
+        k_rectangle.bounds.origin.copy!(bounds.min)
+        k_rectangle.bounds.size.set!(bounds.width, bounds.height, 0)
+        k_rectangle.line_width = @locked_normal ? 3 : 1.5
+        k_rectangle.color = _get_normal_color
+        k_rectangle.transformation = t
+        @space.append(k_rectangle)
 
         Sketchup.vcb_value = "#{bounds.width};#{bounds.height}"
 
@@ -500,16 +540,16 @@ module Ladb::OpenCutList
 
       end
 
-      # pts = Kuix::Points.new
-      # pts.add_points([ @snap_ip.position ])
-      # pts.size = 30
-      # pts.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
-      # pts.color = Kuix::COLOR_YELLOW
-      # @space.append(pts)
+      k_points = Kuix::Points.new
+      k_points.add_points([ @snap_ip.position ])
+      k_points.size = 30
+      k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
+      k_points.color = Kuix::COLOR_YELLOW
+      @space.append(k_points)
 
-      # axes_helper = Kuix::AxesHelper.new
-      # axes_helper.transformation = Geom::Transformation.axes(ORIGIN, *_get_axes)
-      # @space.append(axes_helper)
+      # k_axes_helper = Kuix::AxesHelper.new
+      # k_axes_helper.transformation = Geom::Transformation.axes(ORIGIN, *_get_axes)
+      # @space.append(k_axes_helper)
 
       view.tooltip = @snap_ip.tooltip if @snap_ip.valid?
       view.invalidate
@@ -518,21 +558,29 @@ module Ladb::OpenCutList
     def onLButtonDown(flags, x, y, view)
       return true if super
 
-      if _picked_first_point? && _picked_second_point?
+      @mouse_x = x
+      @mouse_y = y
+
+      if !_picked_first_point?
+        @picked_first_ip.copy!(@snap_ip)
+        _refresh
+      elsif !_picked_second_point?
+        if _valid_rectangle?
+          @picked_second_ip.copy!(@snap_ip)
+          push_cursor(CURSOR_PENCIL_PUSHPULL)
+          _refresh
+        else
+          UI.beep
+        end
+      elsif _valid_box?
         @picked_third_ip.copy!(@snap_ip)
         _create_entity
         _reset
       else
-        if !_picked_first_point?
-          @picked_first_ip.copy!(@snap_ip)
-        elsif !_picked_second_point?
-          @picked_second_ip.copy!(@snap_ip)
-          push_cursor(CURSOR_PENCIL_PUSHPULL)
-        end
+        UI.beep
       end
 
       _update_status_text
-      view.invalidate
     end
 
     def onKeyDown(key, repeat, flags, view)
@@ -564,6 +612,13 @@ module Ladb::OpenCutList
             @locked_normal = nil
           else
             @locked_normal = z_axis
+          end
+          _refresh
+        elsif key == VK_DOWN
+          if @locked_normal
+            @locked_normal = nil
+          else
+            @locked_normal = @normal
           end
           _refresh
         end
@@ -744,6 +799,34 @@ module Ladb::OpenCutList
       @picked_third_ip.valid?
     end
 
+    def _valid_rectangle?
+
+      points = _get_picked_points
+      return false if points.length < 2
+
+      t = _get_transformation
+      ti = t.inverse
+
+      p1 = points[0].transform(ti)
+      p2 = points[1].transform(ti)
+
+      p2.x - p1.x != 0 && p2.y - p1.y != 0
+    end
+
+    def _valid_box?
+
+      points = _get_picked_points
+      return false if points.length < 3
+
+      t = _get_transformation
+      ti = t.inverse
+
+      p1 = points[0].transform(ti)
+      p3 = points[2].transform(ti)
+
+      p3.x - p1.x != 0 && p3.y - p1.y != 0 && p3.z - p1.z != 0
+    end
+
     def _get_picked_points
       points = []
       points << @picked_first_ip.position if _picked_first_point?
@@ -761,6 +844,14 @@ module Ladb::OpenCutList
       end
 
       points
+    end
+
+    def _get_normal_color
+      return Kuix::COLOR_RED if @normal.parallel?(_get_active_x_axis)
+      return Kuix::COLOR_GREEN if @normal.parallel?(_get_active_y_axis)
+      return Kuix::COLOR_BLUE if @normal.parallel?(_get_active_z_axis)
+      return Kuix::COLOR_MAGENTA if @normal == @locked_normal
+      Kuix::COLOR_BLACK
     end
 
     def _create_entity

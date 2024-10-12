@@ -21,6 +21,10 @@ module Ladb::OpenCutList::Kuix
 
     end
 
+    def add_point(point) # Geom::Point3d
+      @points.push(point)
+    end
+
     def add_points(points) # Array<Geom::Point3d>
       @points.concat(points)
     end
