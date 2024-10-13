@@ -198,15 +198,14 @@ module Ladb::OpenCutList
 
         else
 
+          # Force picked point to be projected to second picked point normal line
           @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_line([ @picked_second_ip.position, @normal ]))
 
         end
 
-        t = _get_transformation
-        ti = t.inverse
-
         if @rectangle_centred || @box_centred
 
+          # Draw first picked point
           k_points = Kuix::Points.new
           k_points.add_point(@picked_first_ip.position)
           k_points.line_width = 1
@@ -214,6 +213,7 @@ module Ladb::OpenCutList
           k_points.style = Kuix::POINT_STYLE_PLUS
           @space.append(k_points)
 
+          # Draw line from first picked point to snap point
           k_line = Kuix::LineMotif.new
           k_line.start.copy!(@picked_first_ip.position)
           k_line.end.copy!(@snap_ip.position)
@@ -221,6 +221,9 @@ module Ladb::OpenCutList
           @space.append(k_line)
 
         end
+
+        t = _get_transformation
+        ti = t.inverse
 
         points = _get_picked_points
         p1 = points[0].transform(ti)
@@ -273,21 +276,21 @@ module Ladb::OpenCutList
 
             # vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
             #
-            # vertex_preview = Kuix::Points.new
-            # vertex_preview.add_points([ vertex_manipulator.point ])
-            # vertex_preview.size = 30
-            # vertex_preview.style = Kuix::POINT_STYLE_OPEN_SQUARE
-            # vertex_preview.color = Kuix::COLOR_MAGENTA
-            # @space.append(vertex_preview)
+            # k_points = Kuix::Points.new
+            # k_points.add_points([ vertex_manipulator.point ])
+            # k_points.size = 30
+            # k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+            # k_points.color = Kuix::COLOR_MAGENTA
+            # @space.append(k_points)
             #
             # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
             #
             #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
             #
-            #   face_preview = Kuix::Mesh.new
-            #   face_preview.add_triangles(face_manipulator.triangles)
-            #   face_preview.background_color = Sketchup::Color.new(255, 255, 0, 50)
-            #   @space.append(face_preview)
+            #   k_mesh = Kuix::Mesh.new
+            #   k_mesh.add_triangles(face_manipulator.triangles)
+            #   k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
+            #   @space.append(k_mesh)
             #
             # end
 
@@ -320,11 +323,20 @@ module Ladb::OpenCutList
             ps = @mouse_ip.edge.start.position.transform(t)
             pe = @mouse_ip.edge.end.position.transform(t)
 
-            edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
-            plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_first_ip.position, ps, pe ]))
+            if !@picked_first_ip.position.on_line?([ ps, ps.vector_to(pe) ])
 
-            @direction = ps.vector_to(pe)
-            @normal = plane_manipulator.normal
+              plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_first_ip.position, ps, pe ]))
+
+              @direction = ps.vector_to(pe)
+              @normal = plane_manipulator.normal
+
+            else
+
+              # TODO handle this case
+
+            end
+
+            # edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
 
             # k_points = Kuix::Points.new
             # k_points.add_points([ @picked_first_ip.position, ps, pe ])
@@ -333,12 +345,12 @@ module Ladb::OpenCutList
             # k_points.color = Kuix::COLOR_BLUE
             # @space.append(k_points)
 
-            # edge_preview = Kuix::Segments.new
-            # edge_preview.add_segments(edge_manipulator.segment)
-            # edge_preview.color = Kuix::COLOR_MAGENTA
-            # edge_preview.line_width = 4
-            # edge_preview.on_top = true
-            # @space.append(edge_preview)
+            # k_segments = Kuix::Segments.new
+            # k_segments.add_segments(edge_manipulator.segment)
+            # k_segments.color = Kuix::COLOR_MAGENTA
+            # k_segments.line_width = 4
+            # k_segments.on_top = true
+            # @space.append(k_segments)
 
           end
 
@@ -380,10 +392,10 @@ module Ladb::OpenCutList
 
             end
 
-            # face_preview = Kuix::Mesh.new
-            # face_preview.add_triangles(face_manipulator.triangles)
-            # face_preview.background_color = Sketchup::Color.new(255, 0, 255, 50)
-            # @space.append(face_preview)
+            # k_mesh = Kuix::Mesh.new
+            # k_mesh.add_triangles(face_manipulator.triangles)
+            # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
+            # @space.append(k_mesh)
 
           end
 
@@ -484,21 +496,21 @@ module Ladb::OpenCutList
 
           vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
 
-          # vertex_preview = Kuix::Points.new
-          # vertex_preview.add_points([ vertex_manipulator.point ])
-          # vertex_preview.size = 30
-          # vertex_preview.style = Kuix::POINT_STYLE_OPEN_SQUARE
-          # vertex_preview.color = Kuix::COLOR_MAGENTA
-          # @space.append(vertex_preview)
+          # k_points = Kuix::Points.new
+          # k_points.add_points([ vertex_manipulator.point ])
+          # k_points.size = 30
+          # k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+          # k_points.color = Kuix::COLOR_MAGENTA
+          # @space.append(k_points)
 
           # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
           #
           #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
           #
-          #   face_preview = Kuix::Mesh.new
-          #   face_preview.add_triangles(face_manipulator.triangles)
-          #   face_preview.background_color = Sketchup::Color.new(255, 255, 0, 50)
-          #   @space.append(face_preview)
+          #   k_mesh = Kuix::Mesh.new
+          #   k_mesh.add_triangles(face_manipulator.triangles)
+          #   k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
+          #   @space.append(k_mesh)
           #
           # end
 
@@ -506,12 +518,12 @@ module Ladb::OpenCutList
 
           # edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
           #
-          # edge_preview = Kuix::Segments.new
-          # edge_preview.add_segments(edge_manipulator.segment)
-          # edge_preview.color = Kuix::COLOR_MAGENTA
-          # edge_preview.line_width = 4
-          # edge_preview.on_top = true
-          # @space.append(edge_preview)
+          # k_segments = Kuix::Segments.new
+          # k_segments.add_segments(edge_manipulator.segment)
+          # k_segments.color = Kuix::COLOR_MAGENTA
+          # k_segments.line_width = 4
+          # k_segments.on_top = true
+          # @space.append(k_segments)
 
           if @mouse_ip.face && @mouse_ip.edge.faces.include?(@mouse_ip.face)
 
@@ -519,10 +531,10 @@ module Ladb::OpenCutList
 
             @normal = face_manipulator.normal
 
-            # face_preview = Kuix::Mesh.new
-            # face_preview.add_triangles(face_manipulator.triangles)
-            # face_preview.background_color = Sketchup::Color.new(255, 255, 0, 50)
-            # @space.append(face_preview)
+            # k_mesh = Kuix::Mesh.new
+            # k_mesh.add_triangles(face_manipulator.triangles)
+            # k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
+            # @space.append(k_mesh)
 
           end
 
@@ -532,10 +544,10 @@ module Ladb::OpenCutList
 
           @normal = face_manipulator.normal
 
-          # face_preview = Kuix::Mesh.new
-          # face_preview.add_triangles(face_manipulator.triangles)
-          # face_preview.background_color = Sketchup::Color.new(255, 0, 255, 50)
-          # @space.append(face_preview)
+          # k_mesh = Kuix::Mesh.new
+          # k_mesh.add_triangles(face_manipulator.triangles)
+          # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
+          # @space.append(k_mesh)
 
         elsif @locked_normal.nil?
 
@@ -548,12 +560,12 @@ module Ladb::OpenCutList
 
       end
 
-      k_points = Kuix::Points.new
-      k_points.add_points([ @snap_ip.position ])
-      k_points.size = 30
-      k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
-      k_points.color = Kuix::COLOR_YELLOW
-      @space.append(k_points)
+      # k_points = Kuix::Points.new
+      # k_points.add_points([ @snap_ip.position ])
+      # k_points.size = 30
+      # k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
+      # k_points.color = Kuix::COLOR_YELLOW
+      # @space.append(k_points)
 
       # k_axes_helper = Kuix::AxesHelper.new
       # k_axes_helper.transformation = Geom::Transformation.axes(ORIGIN, *_get_axes)
