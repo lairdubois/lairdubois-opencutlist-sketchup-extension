@@ -18,10 +18,6 @@ module Ladb::OpenCutList
 
     def initialize
       super(false, false)
-
-      @mouse_x = -1
-      @mouse_y = -1
-
     end
 
     def get_unit(view = nil)
@@ -57,6 +53,11 @@ module Ladb::OpenCutList
       @canvas.layout = Kuix::StaticLayout.new
 
       unit = get_unit(view)
+
+      @overlay_panel = Kuix::Panel.new
+      @overlay_panel.layout_data = Kuix::StaticLayoutData.new
+      @overlay_panel.layout = Kuix::StaticLayout.new
+      @canvas.append(@overlay_panel)
 
       # -- TOP
 
@@ -123,6 +124,9 @@ module Ladb::OpenCutList
     def onActivate(view)
       super
 
+      @mouse_x = -1
+      @mouse_y = -1
+
       @mouse_ip = Sketchup::InputPoint.new
       @snap_ip = Sketchup::InputPoint.new
       @picked_first_ip = Sketchup::InputPoint.new
@@ -130,6 +134,8 @@ module Ladb::OpenCutList
       @picked_third_ip = Sketchup::InputPoint.new
 
       @locked_normal = nil
+
+      @construction = false
 
       @rectangle_centred = false
       @box_centred = false
@@ -180,6 +186,7 @@ module Ladb::OpenCutList
       puts "view.inference_locked? = #{view.inference_locked?}"
       puts "---"
 
+      @overlay_panel.remove_all
       @space.remove_all
 
       if _picked_second_point?
@@ -227,23 +234,32 @@ module Ladb::OpenCutList
 
         points = _get_picked_points
         p1 = points[0].transform(ti)
-        p2 = points[1].transform(ti)
         p3 = points[2].transform(ti)
 
-        pe = Geom::Point3d.new(p2.x, p2.y, p3.z)
-
         bounds = Geom::BoundingBox.new
-        bounds.add(p1, pe)
+        bounds.add(p1, p3)
 
         k_box = Kuix::BoxMotif.new
         k_box.bounds.origin.copy!(bounds.min)
         k_box.bounds.size.set!(bounds.width, bounds.height, bounds.depth)
         k_box.line_width = 1.5
+        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if @construction
         k_box.color = _get_normal_color
         k_box.transformation = t
         @space.append(k_box)
 
         Sketchup.vcb_value = bounds.depth
+
+        d_screen_point = view.screen_coords(bounds.min.offset(Z_AXIS, bounds.depth / 2).transform(t))
+
+        k_label_d = Kuix::Label.new
+        k_label_d.text = bounds.depth.to_s
+        k_label_d.layout_data = Kuix::StaticLayoutData.new(d_screen_point.x, d_screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        k_label_d.set_style_attribute(:color, Kuix::COLOR_Z)
+        k_label_d.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+        k_label_d.padding.set_all!(@unit * 0.5)
+        k_label_d.text_size = @unit * 2.5
+        @overlay_panel.append(k_label_d)
 
       elsif _picked_first_point?
 
@@ -298,6 +314,8 @@ module Ladb::OpenCutList
 
         elsif @mouse_ip.edge
 
+          edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
+
           if @locked_normal
 
             locked_plane = [ @picked_first_ip.position, @locked_normal ]
@@ -305,41 +323,32 @@ module Ladb::OpenCutList
             @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
             @normal = @locked_normal
 
-          elsif @mouse_ip.position.on_plane?(ground_plane)
+          elsif @mouse_ip.position.on_plane?([ @picked_first_ip.position, _get_active_z_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_z_axis)
 
             @normal = _get_active_z_axis
 
-          elsif @mouse_ip.position.on_plane?([ @picked_first_ip.position, _get_active_x_axis ])
+          elsif @mouse_ip.position.on_plane?([ @picked_first_ip.position, _get_active_x_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_x_axis)
 
             @normal = _get_active_x_axis
 
-          elsif @mouse_ip.position.on_plane?([ @picked_first_ip.position, _get_active_y_axis ])
+          elsif @mouse_ip.position.on_plane?([ @picked_first_ip.position, _get_active_y_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_y_axis)
 
             @normal = _get_active_y_axis
 
           else
 
-            t = @mouse_ip.transformation
-            ps = @mouse_ip.edge.start.position.transform(t)
-            pe = @mouse_ip.edge.end.position.transform(t)
+            unless @picked_first_ip.position.on_line?(edge_manipulator.line)
 
-            if !@picked_first_ip.position.on_line?([ ps, ps.vector_to(pe) ])
+              plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_first_ip.position, edge_manipulator.start_point, edge_manipulator.end_point ]))
 
-              plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_first_ip.position, ps, pe ]))
-
-              @direction = ps.vector_to(pe)
               @normal = plane_manipulator.normal
-
-            else
-
-              # TODO handle this case
 
             end
 
-            # edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
+            @direction = edge_manipulator.direction
 
             # k_points = Kuix::Points.new
-            # k_points.add_points([ @picked_first_ip.position, ps, pe ])
+            # k_points.add_points([ @picked_first_ip.position, edge_manipulator.start_point, edge_manipulator.end_point ])
             # k_points.size = 30
             # k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
             # k_points.color = Kuix::COLOR_BLUE
@@ -482,11 +491,33 @@ module Ladb::OpenCutList
         k_rectangle.bounds.origin.copy!(bounds.min)
         k_rectangle.bounds.size.set!(bounds.width, bounds.height, 0)
         k_rectangle.line_width = @locked_normal ? 3 : 1.5
+        k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if @construction
         k_rectangle.color = _get_normal_color
         k_rectangle.transformation = t
         @space.append(k_rectangle)
 
-        Sketchup.vcb_value = "#{bounds.width};#{bounds.height}"
+        Sketchup.vcb_value = "#{bounds.width}; #{bounds.height}"
+
+        w_screen_point = view.screen_coords(bounds.min.offset(X_AXIS, bounds.width / 2).transform(t))
+        h_screen_point = view.screen_coords(bounds.min.offset(Y_AXIS, bounds.height / 2).transform(t))
+
+        k_label_w = Kuix::Label.new
+        k_label_w.text = bounds.width.to_s
+        k_label_w.layout_data = Kuix::StaticLayoutData.new(w_screen_point.x, w_screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        k_label_w.set_style_attribute(:color, Kuix::COLOR_X)
+        k_label_w.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+        k_label_w.padding.set_all!(@unit * 0.5)
+        k_label_w.text_size = @unit * 2.5
+        @overlay_panel.append(k_label_w)
+
+        k_label_h = Kuix::Label.new
+        k_label_h.text = bounds.height.to_s
+        k_label_h.layout_data = Kuix::StaticLayoutData.new(h_screen_point.x, h_screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        k_label_h.set_style_attribute(:color, Kuix::COLOR_Y)
+        k_label_h.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+        k_label_h.padding.set_all!(@unit * 0.5)
+        k_label_h.text_size = @unit * 2.5
+        @overlay_panel.append(k_label_h)
 
       else
 
@@ -567,9 +598,9 @@ module Ladb::OpenCutList
       # k_points.color = Kuix::COLOR_YELLOW
       # @space.append(k_points)
 
-      # k_axes_helper = Kuix::AxesHelper.new
-      # k_axes_helper.transformation = Geom::Transformation.axes(ORIGIN, *_get_axes)
-      # @space.append(k_axes_helper)
+      k_axes_helper = Kuix::AxesHelper.new
+      k_axes_helper.transformation = Geom::Transformation.axes(ORIGIN, *_get_axes)
+      @space.append(k_axes_helper)
 
       view.tooltip = @snap_ip.tooltip if @snap_ip.valid?
       view.invalidate
@@ -607,6 +638,9 @@ module Ladb::OpenCutList
       if key == VK_ALT
         @rectangle_centred = !@rectangle_centred if _picked_first_point? && !_picked_second_point?
         @box_centred = !@box_centred if _picked_second_point?
+        _refresh
+      elsif key == VK_COMMAND
+        @construction = !@construction
         _refresh
       end
       unless _picked_second_point?
@@ -759,14 +793,19 @@ module Ladb::OpenCutList
     def _get_axes
 
       if @direction.nil? || !@direction.perpendicular?(@normal)
-        x_axis, y_axis, z_axis = @normal.axes
+
+        active_x_axis = _get_active_x_axis
+        active_x_axis = _get_active_y_axis if active_x_axis.parallel?(@normal)
+
+        x_axis = ORIGIN.vector_to(ORIGIN.offset(active_x_axis).project_to_plane([ ORIGIN, @normal ]))
+
       else
         x_axis = @direction
-        z_axis = @normal
-        y_axis = z_axis * x_axis
       end
+      z_axis = @normal
+      y_axis = z_axis * x_axis
 
-      [ x_axis, y_axis, z_axis ]
+      [ x_axis.normalize!, y_axis.normalize!, z_axis.normalize! ]
     end
 
     def _get_edit_transformation
@@ -801,6 +840,7 @@ module Ladb::OpenCutList
       @direction = nil
       @locked_normal = nil
       @normal = _get_active_z_axis
+      @overlay_panel.remove_all
       @space.remove_all
       _update_status_text
       Sketchup.vcb_value = ''
@@ -867,9 +907,9 @@ module Ladb::OpenCutList
     end
 
     def _get_normal_color
-      return Kuix::COLOR_RED if @normal.parallel?(_get_active_x_axis)
-      return Kuix::COLOR_GREEN if @normal.parallel?(_get_active_y_axis)
-      return Kuix::COLOR_BLUE if @normal.parallel?(_get_active_z_axis)
+      return Kuix::COLOR_X if @normal.parallel?(_get_active_x_axis)
+      return Kuix::COLOR_Y if @normal.parallel?(_get_active_y_axis)
+      return Kuix::COLOR_Z if @normal.parallel?(_get_active_z_axis)
       return Kuix::COLOR_MAGENTA if @normal == @locked_normal
       Kuix::COLOR_BLACK
     end
@@ -889,18 +929,42 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
       bounds.add(p1, p3)
 
-      definition = model.definitions.add('Part')
+      if @construction
 
-      face = definition.entities.add_face([
-                                       bounds.corner(0),
-                                       bounds.corner(1),
-                                       bounds.corner(3),
-                                       bounds.corner(2)
-                                     ])
-      face.pushpull(p1.z >= 0 && p1.z < p3.z ? -bounds.depth : bounds.depth, bounds.corner(0).vector_to(bounds.corner(0)))
-      face.reverse! if face.normal.samedirection?(Z_AXIS)
+        group = model.active_entities.add_group
+        group.transformation = t
 
-      model.active_entities.add_instance(definition, t)
+        group.entities.add_cline(bounds.corner(0), bounds.corner(1))
+        group.entities.add_cline(bounds.corner(1), bounds.corner(3))
+        group.entities.add_cline(bounds.corner(3), bounds.corner(2))
+        group.entities.add_cline(bounds.corner(2), bounds.corner(0))
+
+        group.entities.add_cline(bounds.corner(4), bounds.corner(5))
+        group.entities.add_cline(bounds.corner(5), bounds.corner(7))
+        group.entities.add_cline(bounds.corner(7), bounds.corner(6))
+        group.entities.add_cline(bounds.corner(6), bounds.corner(4))
+
+        group.entities.add_cline(bounds.corner(0), bounds.corner(4))
+        group.entities.add_cline(bounds.corner(1), bounds.corner(5))
+        group.entities.add_cline(bounds.corner(3), bounds.corner(7))
+        group.entities.add_cline(bounds.corner(2), bounds.corner(6))
+
+      else
+
+        definition = model.definitions.add('Part')
+
+        face = definition.entities.add_face([
+                                              bounds.corner(0),
+                                              bounds.corner(1),
+                                              bounds.corner(3),
+                                              bounds.corner(2)
+                                            ])
+        face.reverse! if face.normal.samedirection?(Z_AXIS)
+        face.pushpull(-bounds.depth)
+
+        model.active_entities.add_instance(definition, t)
+
+      end
 
       model.commit_operation
 
