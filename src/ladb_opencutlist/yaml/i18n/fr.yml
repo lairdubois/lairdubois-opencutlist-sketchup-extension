@@ -1782,6 +1782,9 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_draw:
+    title: Dessiner
+    action_0: Boîte
   smart_paint:
     title: Colorier
     default_material: Sans matière

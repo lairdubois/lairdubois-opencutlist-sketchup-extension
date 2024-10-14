@@ -20,10 +20,10 @@ module Ladb::OpenCutList
   require_relative 'utils/dimension_utils'
   require_relative 'utils/path_utils'
   require_relative 'utils/hash_utils'
+  require_relative 'tool/smart_draw_tool'
   require_relative 'tool/smart_paint_tool'
   require_relative 'tool/smart_axes_tool'
   require_relative 'tool/smart_export_tool'
-  require_relative 'tool/draw_part_tool'
 
   class Plugin
     
@@ -798,7 +798,7 @@ module Ladb::OpenCutList
       }
       submenu.add_separator
       submenu.add_item('Dessiner une pièce') {
-        Sketchup.active_model.select_tool(DrawPartTool.new) if Sketchup.active_model
+        Sketchup.active_model.select_tool(SmartDrawTool.new) if Sketchup.active_model
       }
       submenu.add_separator
       submenu.add_item(get_i18n_string('core.menu.item.smart_paint')) {
@@ -847,6 +847,23 @@ module Ladb::OpenCutList
       cmd.menu_text = get_i18n_string('core.toolbar.command.dialog')
       toolbar = toolbar.add_item(cmd)
 
+      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_draw')) {
+        if Sketchup.active_model
+          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartDrawTool)
+            Sketchup.active_model.select_tool(nil)
+          else
+            Sketchup.active_model.select_tool(SmartDrawTool.new)
+          end
+          Sketchup.focus if Sketchup.respond_to?(:focus)
+        end
+      }
+      cmd.small_icon = '../img/icon-draw-part-72x72.png'
+      cmd.large_icon = '../img/icon-draw-part-114x114.png'
+      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_draw')
+      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_draw')
+      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_draw')
+      toolbar = toolbar.add_item(cmd)
+
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_paint')) {
         if Sketchup.active_model
           if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartPaintTool)
@@ -893,19 +910,6 @@ module Ladb::OpenCutList
       }
       cmd.small_icon = '../img/icon-smart-export-72x72.png'
       cmd.large_icon = '../img/icon-smart-export-114x114.png'
-      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_export')
-      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_export')
-      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_export')
-      toolbar = toolbar.add_item(cmd)
-
-      cmd = UI::Command.new(get_i18n_string('BOX')) {
-        if Sketchup.active_model
-          Sketchup.active_model.select_tool(DrawPartTool.new)
-          Sketchup.focus if Sketchup.respond_to?(:focus)
-        end
-      }
-      cmd.small_icon = '../img/icon-draw-part-72x72.png'
-      cmd.large_icon = '../img/icon-draw-part-114x114.png'
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_export')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_export')
       cmd.menu_text = get_i18n_string('core.toolbar.command.smart_export')

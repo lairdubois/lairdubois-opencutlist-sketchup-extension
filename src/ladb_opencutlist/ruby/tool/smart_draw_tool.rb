@@ -1,12 +1,20 @@
 module Ladb::OpenCutList
 
-  require_relative '../lib/kuix/kuix'
+  require_relative 'smart_tool'
   require_relative '../manipulator/vertex_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/plane_manipulator'
 
-  class DrawPartTool < Kuix::KuixTool
+  class SmartDrawTool < SmartTool
+
+    ACTION_BOX = 0
+
+    ACTIONS = [
+      {
+        :action => ACTION_BOX
+      }
+    ].freeze
 
     COLOR_BRAND = Sketchup::Color.new(247, 127, 0).freeze
     COLOR_BRAND_DARK = Sketchup::Color.new(62, 59, 51).freeze
@@ -16,8 +24,32 @@ module Ladb::OpenCutList
     CURSOR_PENCIL_RECTANGLE = 637
     CURSOR_PENCIL_PUSHPULL = 639
 
+    # -----
+
+    @global_rectangle_offset = 0
+
+    def self.global_rectangle_offset
+      @global_rectangle_offset
+    end
+
+    def self.global_rectangle_offset=(offset)
+      @global_rectangle_offset = offset
+    end
+
+    # -----
+
     def initialize
-      super(false, false)
+      super
+    end
+
+    def get_stripped_name
+      'draw'
+    end
+
+    # -- Actions --
+
+    def get_action_defs
+      ACTIONS
     end
 
     def get_unit(view = nil)
@@ -46,78 +78,15 @@ module Ladb::OpenCutList
     end
 
     def setup_entities(view)
+      super
 
       # 2D
       # --------
 
-      @canvas.layout = Kuix::StaticLayout.new
-
-      unit = get_unit(view)
-
-      @overlay_panel = Kuix::Panel.new
-      @overlay_panel.layout_data = Kuix::StaticLayoutData.new
-      @overlay_panel.layout = Kuix::StaticLayout.new
-      @canvas.append(@overlay_panel)
-
-      # -- TOP
-
-      @top_panel = Kuix::Panel.new
-      @top_panel.layout_data = Kuix::StaticLayoutData.new(0, 0, 1.0, -1)
-      @top_panel.layout = Kuix::BorderLayout.new
-      @canvas.append(@top_panel)
-
-        # Actions panel
-
-        actions_panel = Kuix::Panel.new
-        actions_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::NORTH)
-        actions_panel.layout = Kuix::BorderLayout.new
-        actions_panel.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-        @actions_panel = actions_panel
-        @top_panel.append(actions_panel)
-
-          actions_lbl = Kuix::Label.new
-          actions_lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
-          actions_lbl.padding.set!(0, unit * 4, 0, unit * 4)
-          actions_lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-          actions_lbl.text = "DESSINER"
-          actions_lbl.text_size = unit * 3 * get_text_unit_factor
-          actions_lbl.text_bold = true
-          actions_panel.append(actions_lbl)
-
-          actions_btns_panel = Kuix::Panel.new
-          actions_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
-          actions_btns_panel.layout = Kuix::InlineLayout.new(true, 0, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-          actions_panel.append(actions_btns_panel)
-
-            actions_btn = Kuix::Button.new
-            actions_btn.layout = Kuix::BorderLayout.new
-            actions_btn.border.set!(0, unit / 4, 0, unit / 4)
-            actions_btn.min_size.set_all!(unit * 10)
-            actions_btn.set_style_attribute(:border_color, COLOR_BRAND_DARK.blend(Kuix::COLOR_WHITE, 0.8))
-            actions_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :hover)
-            actions_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
-            actions_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-            actions_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-            actions_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
-            lbl = actions_btn.append_static_label("Rectangle", unit * 3 * get_text_unit_factor)
-            lbl.padding.set!(0, unit * 4, 0, unit * 4)
-            lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-            lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-            lbl.set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
-            actions_btns_panel.append(actions_btn)
-
-          # Help Button
-
-          help_btn = Kuix::Button.new
-          help_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-          help_btn.layout = Kuix::GridLayout.new
-          help_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-          help_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-          lbl = help_btn.append_static_label(PLUGIN.get_i18n_string("default.help").upcase, unit * 3 * get_text_unit_factor)
-          lbl.min_size.set!(unit * 15, 0)
-          lbl.padding.set!(0, unit * 4, 0, unit * 4)
-          lbl.set_style_attribute(:color, COLOR_BRAND_DARK)
-          actions_panel.append(help_btn)
+      @overlay_layer = Kuix::Panel.new
+      @overlay_layer.layout_data = Kuix::StaticLayoutData.new
+      @overlay_layer.layout = Kuix::StaticLayout.new
+      @canvas.append(@overlay_layer)
 
     end
 
@@ -139,6 +108,9 @@ module Ladb::OpenCutList
 
       @rectangle_centred = false
       @box_centred = false
+
+      @rectangle_offset = self.class.global_rectangle_offset
+      @box_offset = 0
 
       @direction = nil
       @normal = _get_active_z_axis
@@ -186,8 +158,10 @@ module Ladb::OpenCutList
       puts "view.inference_locked? = #{view.inference_locked?}"
       puts "---"
 
-      @overlay_panel.remove_all
+      @overlay_layer.remove_all
       @space.remove_all
+
+      Sketchup.vcb_value = ''
 
       if _picked_second_point?
 
@@ -239,9 +213,26 @@ module Ladb::OpenCutList
         bounds = Geom::BoundingBox.new
         bounds.add(p1, p3)
 
+        if @rectangle_offset != 0
+          k_box = Kuix::BoxMotif.new
+          k_box.bounds.origin.copy!(bounds.min)
+          k_box.bounds.size.set!(bounds.width, bounds.height, bounds.depth)
+          k_box.line_width = 1.5
+          k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          k_box.color = _get_normal_color
+          k_box.transformation = t
+          @space.append(k_box)
+        end
+
+        o_min = bounds.min.offset(X_AXIS, -@rectangle_offset).offset!(Y_AXIS, -@rectangle_offset)
+        o_max = bounds.max.offset(X_AXIS, @rectangle_offset).offset!(Y_AXIS, @rectangle_offset)
+
+        o_bounds = Geom::BoundingBox.new
+        o_bounds.add(o_min, o_max)
+
         k_box = Kuix::BoxMotif.new
-        k_box.bounds.origin.copy!(bounds.min)
-        k_box.bounds.size.set!(bounds.width, bounds.height, bounds.depth)
+        k_box.bounds.origin.copy!(o_bounds.min)
+        k_box.bounds.size.set!(o_bounds.width, o_bounds.height, o_bounds.depth)
         k_box.line_width = 1.5
         k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if @construction
         k_box.color = _get_normal_color
@@ -257,9 +248,11 @@ module Ladb::OpenCutList
         k_label_d.layout_data = Kuix::StaticLayoutData.new(d_screen_point.x, d_screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
         k_label_d.set_style_attribute(:color, Kuix::COLOR_Z)
         k_label_d.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-        k_label_d.padding.set_all!(@unit * 0.5)
+        k_label_d.set_style_attribute(:border_color, _get_normal_color)
+        k_label_d.border.set_all!(@unit * 0.25)
+        k_label_d.padding.set!(@unit * 0.5, @unit * 0.5, @unit * 0.3, @unit * 0.5)
         k_label_d.text_size = @unit * 2.5
-        @overlay_panel.append(k_label_d)
+        @overlay_layer.append(k_label_d)
 
       elsif _picked_first_point?
 
@@ -487,9 +480,26 @@ module Ladb::OpenCutList
         bounds = Geom::BoundingBox.new
         bounds.add(p1, p2)
 
+        if @rectangle_offset != 0
+          k_rectangle = Kuix::RectangleMotif.new
+          k_rectangle.bounds.origin.copy!(bounds.min)
+          k_rectangle.bounds.size.set!(bounds.width, bounds.height, 0)
+          k_rectangle.line_width = 1.5
+          k_rectangle.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          k_rectangle.color = _get_normal_color
+          k_rectangle.transformation = t
+          @space.append(k_rectangle)
+        end
+
+        o_min = bounds.min.offset(X_AXIS, -@rectangle_offset).offset!(Y_AXIS, -@rectangle_offset)
+        o_max = bounds.max.offset(X_AXIS, @rectangle_offset).offset!(Y_AXIS, @rectangle_offset)
+
+        o_bounds = Geom::BoundingBox.new
+        o_bounds.add(o_min, o_max)
+
         k_rectangle = Kuix::RectangleMotif.new
-        k_rectangle.bounds.origin.copy!(bounds.min)
-        k_rectangle.bounds.size.set!(bounds.width, bounds.height, 0)
+        k_rectangle.bounds.origin.copy!(o_bounds.min)
+        k_rectangle.bounds.size.set!(o_bounds.width, o_bounds.height, 0)
         k_rectangle.line_width = @locked_normal ? 3 : 1.5
         k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if @construction
         k_rectangle.color = _get_normal_color
@@ -506,18 +516,22 @@ module Ladb::OpenCutList
         k_label_w.layout_data = Kuix::StaticLayoutData.new(w_screen_point.x, w_screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
         k_label_w.set_style_attribute(:color, Kuix::COLOR_X)
         k_label_w.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-        k_label_w.padding.set_all!(@unit * 0.5)
+        k_label_w.set_style_attribute(:border_color, _get_normal_color)
+        k_label_w.border.set_all!(@unit * 0.25)
+        k_label_w.padding.set!(@unit * 0.5, @unit * 0.5, @unit * 0.3, @unit * 0.5)
         k_label_w.text_size = @unit * 2.5
-        @overlay_panel.append(k_label_w)
+        @overlay_layer.append(k_label_w)
 
         k_label_h = Kuix::Label.new
         k_label_h.text = bounds.height.to_s
         k_label_h.layout_data = Kuix::StaticLayoutData.new(h_screen_point.x, h_screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
         k_label_h.set_style_attribute(:color, Kuix::COLOR_Y)
         k_label_h.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-        k_label_h.padding.set_all!(@unit * 0.5)
+        k_label_h.set_style_attribute(:border_color, _get_normal_color)
+        k_label_h.border.set_all!(@unit * 0.25)
+        k_label_h.padding.set!(@unit * 0.5, @unit * 0.5, @unit * 0.3, @unit * 0.5)
         k_label_h.text_size = @unit * 2.5
-        @overlay_panel.append(k_label_h)
+        @overlay_layer.append(k_label_h)
 
       else
 
@@ -598,9 +612,9 @@ module Ladb::OpenCutList
       # k_points.color = Kuix::COLOR_YELLOW
       # @space.append(k_points)
 
-      k_axes_helper = Kuix::AxesHelper.new
-      k_axes_helper.transformation = Geom::Transformation.axes(ORIGIN, *_get_axes)
-      @space.append(k_axes_helper)
+      # k_axes_helper = Kuix::AxesHelper.new
+      # k_axes_helper.transformation = Geom::Transformation.axes(@picked_first_ip.position, *_get_axes)
+      # @space.append(k_axes_helper)
 
       view.tooltip = @snap_ip.tooltip if @snap_ip.valid?
       view.invalidate
@@ -634,7 +648,12 @@ module Ladb::OpenCutList
       _update_status_text
     end
 
+    def onKeyUp(key, repeat, flags, view)
+      return true if super
+    end
+
     def onKeyDown(key, repeat, flags, view)
+      return true if super
       if key == VK_ALT
         @rectangle_centred = !@rectangle_centred if _picked_first_point? && !_picked_second_point?
         @box_centred = !@box_centred if _picked_second_point?
@@ -681,81 +700,98 @@ module Ladb::OpenCutList
 
     def onUserText(text, view)
 
-      if _picked_second_point?
+      if text.end_with?('@')
 
-        thickness = text.to_l
+        offset = text[0..-2].to_l
 
-        t = _get_transformation
-        ti = t.inverse
+        self.class.global_rectangle_offset = offset unless _picked_first_point?
 
-        points = _get_picked_points
-        p2 = points[1].transform(ti)
-        p3 = points[2].transform(ti)
+        @rectangle_offset = offset
+        _refresh
 
-        thickness *= -1 if p3.z < p2.z
+        notify("OFFSET = #{offset}", MESSAGE_TYPE_SUCCESS)
 
-        thickness = p3.z - p2.z if thickness == 0
-        thickness /= 2 if @box_centred
+      else
 
-        @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, thickness).transform(t))
+        if _picked_second_point?
 
-        _create_entity
-        _reset
-
-        Sketchup.vcb_value = ''
-
-      elsif _picked_first_point?
-
-        d1, d2, d3 = text.split(';')
-
-        if d1 || d2
-
-          length = d1 ? d1.to_l : 0
-          width = d2 ? d2.to_l : 0
+          thickness = text.to_l
 
           t = _get_transformation
           ti = t.inverse
 
-          p1 = @picked_first_ip.position.transform(ti)
-          p2 = @snap_ip.position.transform(ti)
-
-          length *= -1 if p2.x < p1.x
-          width *= -1 if p2.y < p1.y
-
-          length = p2.x - p1.x if length == 0
-          width = p2.y - p1.y if width == 0
-
-          @picked_second_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t))
-
-          push_cursor(CURSOR_PENCIL_PUSHPULL) unless d3
-
-          Sketchup.vcb_value = ''
-
-          _refresh
-
-        end
-        if d3
-
-          thickness = d3.to_l
-
-          t = _get_transformation
-          ti = t.inverse
-
-          p2 = @picked_second_ip.position.transform(ti)
-          p3 = @picked_third_ip.position.transform(ti)
+          points = _get_picked_points
+          p2 = points[1].transform(ti)
+          p3 = points[2].transform(ti)
 
           thickness *= -1 if p3.z < p2.z
 
           thickness = p3.z - p2.z if thickness == 0
+          thickness /= 2 if @box_centred
 
-          @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
+          @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, thickness).transform(t))
 
           _create_entity
           _reset
 
           Sketchup.vcb_value = ''
 
+        elsif _picked_first_point?
+
+          d1, d2, d3 = text.split(';')
+
+          if d1 || d2
+
+            length = d1 ? d1.to_l : 0
+            width = d2 ? d2.to_l : 0
+
+            t = _get_transformation
+            ti = t.inverse
+
+            p1 = @picked_first_ip.position.transform(ti)
+            p2 = @snap_ip.position.transform(ti)
+
+            length *= -1 if p2.x < p1.x
+            length = p2.x - p1.x if length == 0
+            length = length / 2 if @rectangle_centred
+
+            width *= -1 if p2.y < p1.y
+            width = p2.y - p1.y if width == 0
+            width = width / 2 if @rectangle_centred
+
+            @picked_second_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t))
+
+            push_cursor(CURSOR_PENCIL_PUSHPULL) unless d3
+
+            Sketchup.vcb_value = ''
+
+            _refresh
+
+          end
+          if d3
+
+            thickness = d3.to_l
+
+            t = _get_transformation
+            ti = t.inverse
+
+            p2 = @picked_second_ip.position.transform(ti)
+            p3 = @picked_third_ip.position.transform(ti)
+
+            thickness *= -1 if p3.z < p2.z
+            thickness = p3.z - p2.z if thickness == 0
+            thickness = thickness / 2 if @box_centred
+
+            @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
+
+            _create_entity
+            _reset
+
+            Sketchup.vcb_value = ''
+
+          end
         end
+
       end
 
     end
@@ -766,7 +802,7 @@ module Ladb::OpenCutList
     end
 
     def enableVCB?
-      _picked_first_point?
+      true
     end
 
     def getExtents
@@ -840,7 +876,7 @@ module Ladb::OpenCutList
       @direction = nil
       @locked_normal = nil
       @normal = _get_active_z_axis
-      @overlay_panel.remove_all
+      @overlay_layer.remove_all
       @space.remove_all
       _update_status_text
       Sketchup.vcb_value = ''
@@ -929,38 +965,44 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
       bounds.add(p1, p3)
 
+      o_min = bounds.min.offset(X_AXIS, -@rectangle_offset).offset!(Y_AXIS, -@rectangle_offset)
+      o_max = bounds.max.offset(X_AXIS, @rectangle_offset).offset!(Y_AXIS, @rectangle_offset)
+
+      o_bounds = Geom::BoundingBox.new
+      o_bounds.add(o_min, o_max)
+
       if @construction
 
         group = model.active_entities.add_group
         group.transformation = t
 
-        group.entities.add_cline(bounds.corner(0), bounds.corner(1))
-        group.entities.add_cline(bounds.corner(1), bounds.corner(3))
-        group.entities.add_cline(bounds.corner(3), bounds.corner(2))
-        group.entities.add_cline(bounds.corner(2), bounds.corner(0))
+        group.entities.add_cline(o_bounds.corner(0), o_bounds.corner(1))
+        group.entities.add_cline(o_bounds.corner(1), o_bounds.corner(3))
+        group.entities.add_cline(o_bounds.corner(3), o_bounds.corner(2))
+        group.entities.add_cline(o_bounds.corner(2), o_bounds.corner(0))
 
-        group.entities.add_cline(bounds.corner(4), bounds.corner(5))
-        group.entities.add_cline(bounds.corner(5), bounds.corner(7))
-        group.entities.add_cline(bounds.corner(7), bounds.corner(6))
-        group.entities.add_cline(bounds.corner(6), bounds.corner(4))
+        group.entities.add_cline(o_bounds.corner(4), o_bounds.corner(5))
+        group.entities.add_cline(o_bounds.corner(5), o_bounds.corner(7))
+        group.entities.add_cline(o_bounds.corner(7), o_bounds.corner(6))
+        group.entities.add_cline(o_bounds.corner(6), o_bounds.corner(4))
 
-        group.entities.add_cline(bounds.corner(0), bounds.corner(4))
-        group.entities.add_cline(bounds.corner(1), bounds.corner(5))
-        group.entities.add_cline(bounds.corner(3), bounds.corner(7))
-        group.entities.add_cline(bounds.corner(2), bounds.corner(6))
+        group.entities.add_cline(o_bounds.corner(0), o_bounds.corner(4))
+        group.entities.add_cline(o_bounds.corner(1), o_bounds.corner(5))
+        group.entities.add_cline(o_bounds.corner(3), o_bounds.corner(7))
+        group.entities.add_cline(o_bounds.corner(2), o_bounds.corner(6))
 
       else
 
         definition = model.definitions.add('Part')
 
         face = definition.entities.add_face([
-                                              bounds.corner(0),
-                                              bounds.corner(1),
-                                              bounds.corner(3),
-                                              bounds.corner(2)
+                                              o_bounds.corner(0),
+                                              o_bounds.corner(1),
+                                              o_bounds.corner(3),
+                                              o_bounds.corner(2)
                                             ])
         face.reverse! if face.normal.samedirection?(Z_AXIS)
-        face.pushpull(-bounds.depth)
+        face.pushpull(-o_bounds.depth)
 
         model.active_entities.add_instance(definition, t)
 

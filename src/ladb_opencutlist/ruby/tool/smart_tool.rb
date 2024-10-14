@@ -680,6 +680,7 @@ module Ladb::OpenCutList
         lbl = Kuix::Label.new
         lbl.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::WEST)
         lbl.margin.left = unit * 4
+        lbl.margin.right = unit * 4 if button_defs.empty?
         lbl.text_size = unit * 3.5 * get_text_unit_factor
         lbl.text = text
         case type
@@ -1179,7 +1180,7 @@ module Ladb::OpenCutList
 
       # Action
       unless is_action_none?
-        @picker.onMouseMove(flags, x, y, view) if @picker
+        @picker.onMouseMove(flags, x, y, view) unless @picker.nil?
       end
 
       false
@@ -1206,7 +1207,7 @@ module Ladb::OpenCutList
     end
 
     def onActionChanged(action)
-      @picker.do_pick
+      @picker.do_pick unless @picker.nil?
     end
 
     def onPickerChanged(picker)
