@@ -10,8 +10,12 @@ module Ladb::OpenCutList
 
     ACTION_DRAW_BOX = 0
 
+    ACTION_OPTION_TOOLS = 'tools'
     ACTION_OPTION_OFFSET = 'offset'
     ACTION_OPTION_OPTIONS = 'options'
+
+    ACTION_OPTION_TOOLS_PUSHPULL = 'pushpull'
+    ACTION_OPTION_TOOLS_MOVE = 'move'
 
     ACTION_OPTION_OFFSET_SECTION_OFFSET = 'section_offset'
 
@@ -23,6 +27,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_DRAW_BOX,
         :options => {
+          ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SECTION_OFFSET ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED ],
         }
@@ -36,6 +41,8 @@ module Ladb::OpenCutList
     CURSOR_PENCIL = 632
     CURSOR_PENCIL_RECTANGLE = 637
     CURSOR_PENCIL_PUSHPULL = 639
+    CURSOR_MOVE = 641
+    CURSOR_MOVE_PLUS = 642
 
     # -----
 
@@ -88,6 +95,13 @@ module Ladb::OpenCutList
     def get_action_option_btn_child(action, option_group, option)
 
       case option_group
+      when ACTION_OPTION_TOOLS
+        case option
+        when ACTION_OPTION_TOOLS_PUSHPULL
+          return Kuix::Label.new('P')
+        when ACTION_OPTION_TOOLS_MOVE
+          return Kuix::Label.new('M')
+        end
       when ACTION_OPTION_OFFSET
         case option
         when ACTION_OPTION_OFFSET_SECTION_OFFSET
@@ -124,6 +138,7 @@ module Ladb::OpenCutList
       @picked_first_ip = Sketchup::InputPoint.new
       @picked_second_ip = Sketchup::InputPoint.new
       @picked_third_ip = Sketchup::InputPoint.new
+      @picked_fourth_ip = Sketchup::InputPoint.new
 
       @locked_normal = nil
 
@@ -142,7 +157,10 @@ module Ladb::OpenCutList
     end
 
     def onCancel(reason, view)
-      if _picked_second_point?
+      if _picked_third_point?
+        @picked_third_ip.clear
+        _reset
+      elsif _picked_second_point?
         @picked_second_ip.clear
         pop_to_root_cursor
       elsif _picked_first_point?
@@ -178,7 +196,64 @@ module Ladb::OpenCutList
 
       Sketchup.vcb_value = ''
 
-      if _picked_second_point?
+      if _picked_third_point?
+
+        @snap_ip.copy!(@mouse_ip)
+
+        t = _get_transformation
+        ti = t.inverse
+
+        points = _get_picked_points
+        p1 = points[0].transform(ti)
+        p3 = points[2].transform(ti)
+        p4 = points[3].transform(ti)
+
+        mt = Geom::Transformation.translation(p3.vector_to(p4))
+
+        bounds = Geom::BoundingBox.new
+        bounds.add(p1, p3)
+
+        section_offset = _fetch_section_offset
+        if section_offset != 0
+          k_box = Kuix::BoxMotif.new
+          k_box.bounds.origin.copy!(bounds.min)
+          k_box.bounds.size.set!(bounds.width, bounds.height, bounds.depth)
+          k_box.line_width = 1.5
+          k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          k_box.color = _get_normal_color
+          k_box.transformation = t * mt
+          @space.append(k_box)
+        end
+
+        o_min = bounds.min.offset(X_AXIS, -section_offset).offset!(Y_AXIS, -section_offset)
+        o_max = bounds.max.offset(X_AXIS, section_offset).offset!(Y_AXIS, section_offset)
+
+        o_bounds = Geom::BoundingBox.new
+        o_bounds.add(o_min, o_max)
+
+        k_box = Kuix::BoxMotif.new
+        k_box.bounds.origin.copy!(o_bounds.min)
+        k_box.bounds.size.set!(o_bounds.width, o_bounds.height, o_bounds.depth)
+        k_box.line_width = 1.5
+        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
+        k_box.color = _get_normal_color
+        k_box.transformation = t * mt
+        @space.append(k_box)
+
+        unless view.inference_locked?
+
+          k_line = Kuix::LineMotif.new
+          k_line.start.copy!(@picked_third_ip.position)
+          k_line.end.copy!(@snap_ip.position)
+          k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+          k_line.color = Kuix::COLOR_BLACK
+          @space.append(k_line)
+
+        end
+
+        Sketchup.vcb_value = p3.vector_to(p4).length
+
+      elsif _picked_second_point?
 
         # Pick third point
 
@@ -649,18 +724,41 @@ module Ladb::OpenCutList
       elsif !_picked_second_point?
         if _valid_rectangle?
           @picked_second_ip.copy!(@snap_ip)
-          push_cursor(CURSOR_PENCIL_PUSHPULL)
-          _refresh
+          if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_PUSHPULL)
+            push_cursor(CURSOR_PENCIL_PUSHPULL)
+            _refresh
+          elsif fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_MOVE)
+            @picked_third_ip.copy!(@snap_ip)
+            push_cursor(CURSOR_MOVE)
+            _refresh
+          else
+            _reset
+          end
         else
           UI.beep
         end
-      elsif _valid_box?
-        @picked_third_ip.copy!(@snap_ip)
-        _create_entity
+      elsif !_picked_third_point?
+        if _valid_box?
+          @picked_third_ip.copy!(@snap_ip)
+          _create_entity
+          if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_MOVE)
+            push_cursor(CURSOR_MOVE)
+            _refresh
+          else
+            _reset
+          end
+        else
+          UI.beep
+        end
+      elsif !_picked_fourth_point?
+        @picked_fourth_ip.copy!(@snap_ip)
+        _copy_entity
         _reset
       else
         UI.beep
       end
+
+      view.lock_inference if view.inference_locked?
 
       _update_status_text
     end
@@ -676,7 +774,22 @@ module Ladb::OpenCutList
         store_action_option_value(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED, !fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED), true) if _picked_first_point? && _picked_second_point?
         _refresh
       end
-      unless _picked_second_point?
+      if _picked_third_point?
+        if view.inference_locked?
+          view.lock_inference
+        else
+          if key == VK_RIGHT
+            view.lock_inference(@picked_third_ip, Sketchup::InputPoint.new(@picked_third_ip.position.offset(_get_active_x_axis)))
+            _refresh
+          elsif key == VK_LEFT
+            view.lock_inference(@picked_third_ip, Sketchup::InputPoint.new(@picked_third_ip.position.offset(_get_active_y_axis)))
+            _refresh
+          elsif key == VK_UP
+            view.lock_inference(@picked_third_ip, Sketchup::InputPoint.new(@picked_third_ip.position.offset(_get_active_z_axis)))
+            _refresh
+          end
+        end
+      else
         if key == VK_RIGHT
           x_axis = _get_active_x_axis
           if @locked_normal == x_axis
@@ -714,7 +827,29 @@ module Ladb::OpenCutList
 
     def onUserText(text, view)
 
-      if _picked_second_point?
+      if _picked_third_point?
+
+        distance = text.to_l
+
+        t = _get_transformation
+        ti = t.inverse
+
+        points = _get_picked_points
+        p3 = points[2].transform(ti)
+        p4 = points[3].transform(ti)
+
+        v = p3.vector_to(p4)
+
+        distance = v.length if distance == 0
+
+        @picked_fourth_ip = Sketchup::InputPoint.new(p3.offset(v, distance).transform(t))
+
+        _copy_entity
+        _reset
+
+        Sketchup.vcb_value = ''
+
+      elsif _picked_second_point?
 
         thickness = text.to_l
 
@@ -733,7 +868,13 @@ module Ladb::OpenCutList
         @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, thickness).transform(t))
 
         _create_entity
-        _reset
+
+        if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_MOVE)
+          push_cursor(CURSOR_MOVE)
+          _refresh
+        else
+          _reset
+        end
 
         Sketchup.vcb_value = ''
 
@@ -876,6 +1017,7 @@ module Ladb::OpenCutList
       @picked_first_ip.clear
       @picked_second_ip.clear
       @picked_third_ip.clear
+      @picked_fourth_ip.clear
       @direction = nil
       @locked_normal = nil
       @normal = _get_active_z_axis
@@ -896,6 +1038,10 @@ module Ladb::OpenCutList
 
     def _picked_third_point?
       @picked_third_ip.valid?
+    end
+
+    def _picked_fourth_point?
+      @picked_fourth_ip.valid?
     end
 
     def _valid_rectangle?
@@ -931,6 +1077,7 @@ module Ladb::OpenCutList
       points << @picked_first_ip.position if _picked_first_point?
       points << @picked_second_ip.position if _picked_second_point?
       points << @picked_third_ip.position if _picked_third_point?
+      points << @picked_fourth_ip.position if _picked_fourth_point?
       points << @snap_ip.position if @snap_ip.valid?
 
       if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED) && _picked_first_point? && points.length > 1
@@ -995,6 +1142,8 @@ module Ladb::OpenCutList
         group.entities.add_cline(o_bounds.corner(3), o_bounds.corner(7))
         group.entities.add_cline(o_bounds.corner(2), o_bounds.corner(6))
 
+        @entity = group
+
       else
 
         definition = model.definitions.add('Part')
@@ -1008,9 +1157,28 @@ module Ladb::OpenCutList
         face.reverse! if face.normal.samedirection?(Z_AXIS)
         face.pushpull(-o_bounds.depth)
 
-        model.active_entities.add_instance(definition, t)
+        @entity = model.active_entities.add_instance(definition, t)
 
       end
+
+      model.commit_operation
+
+    end
+
+    def _copy_entity
+      return if @entity.nil?
+
+      t = _get_transformation
+      ti = t.inverse
+
+      points = _get_picked_points
+      p3 = points[2].transform(ti)
+      p4 = points[3].transform(ti)
+
+      model = Sketchup.active_model
+      model.start_operation('Copy Part', true)
+
+      model.active_entities.add_instance(@entity.definition, @entity.transformation * Geom::Transformation.translation(p3.vector_to(p4)))
 
       model.commit_operation
 

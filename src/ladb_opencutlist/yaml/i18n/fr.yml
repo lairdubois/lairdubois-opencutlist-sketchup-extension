@@ -1788,8 +1788,13 @@ tool:
   smart_draw:
     title: Dessiner
     action_0: Rectangle
+    action_0_status: Dessiner un volume sur la base d'une section rectangulaire
+    action_option_group_tools: Outils
     action_option_group_offset: Décalage
     action_option_group_options: Options
+    action_option_tools_pushpull_status: Activer Pousser/Tirer après le dessin de la section
+    action_option_tools_move_status: Activer Copier/Déplacer après la création de la pièce
+    action_option_offset_section_offset_status: Permet d'appliquer un décalage au tracé de la section dessinée
     action_option_options_construction_status: Dessiner un squelette de construction
     action_option_options_rectangle_centered_status: Centrer le rectangle sur le premier point
     action_option_options_box_centered_status: Centrer l'élévation sur le premier point

@@ -76,6 +76,12 @@
 
             });
 
+            // Focus
+            if (that.options.focused_field && that.options.focused_field.option === 'section_offset') {
+                $inputSectionOffset.focus();
+                $inputSectionOffset.select();
+            }
+
         });
 
     };

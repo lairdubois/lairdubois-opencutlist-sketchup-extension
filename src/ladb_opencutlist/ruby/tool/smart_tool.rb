@@ -273,7 +273,7 @@ module Ladb::OpenCutList
                         store_action_option_value(action, option_group, option, button.selected?)
                       end
                     else
-                      PLUGIN.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action })
+                      PLUGIN.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action, :focused_field => { :option_group => option_group, :option => option } })
                     end
                   }
                   btn.on(:enter) { |button|
