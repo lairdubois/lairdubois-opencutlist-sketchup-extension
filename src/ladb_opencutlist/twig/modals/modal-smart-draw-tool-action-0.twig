@@ -1,0 +1,59 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_modal_'~modalName %}
+{% set title = ('tool.smart_draw.action_'~action)|i18next %}
+
+{% block headerToolsInner %}
+    {% include 'components/_widget-preset.twig' %}
+    <button class="btn btn-default btn-xs" data-help-page="tool.smart-export"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block bodyInner %}
+    <div class="tab-content">
+        <div class="form form-horizontal" style="margin-top: 15px;">
+            <div class="form-group">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.write.option_rectangle_offset_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label class="control-label col-xs-4">Décalage</label>
+                <div class="col-xs-7">
+                    <input type="text" class="form-control" id="ladb_input_rectangle_offset">
+                </div>
+            </div>
+            <hr>
+            <div class="form-group">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.write.option_construction_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label class="control-label col-xs-4">Squelette de construction</label>
+                <div class="col-xs-7">
+                    <select class="form-control" id="ladb_select_construction">
+                        <option value="0" data-content="Non"></option>
+                        <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_construction_status'|i18next }}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.write.option_rectangle_centered_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label class="control-label col-xs-4">Rectangle centré</label>
+                <div class="col-xs-7">
+                    <select class="form-control" id="ladb_select_rectangle_centered">
+                        <option value="0" data-content="Non"></option>
+                        <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_rectangle_centered_status'|i18next }}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.write.option_box_centered_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <label class="control-label col-xs-4">Elévation centrée</label>
+                <div class="col-xs-7">
+                    <select class="form-control" id="ladb_select_box_centered">
+                        <option value="0" data-content="Non"></option>
+                        <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_box_centered_status'|i18next }}"></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary btn-validate-modal" id="ladb_btn_validate">{{ 'default.validate'|i18next }}</button>
+{% endblock %}

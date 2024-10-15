@@ -75,19 +75,9 @@
                     return;
                 }
 
-                // Try to retrieve the current top modal (1. from global dialog modal, 2. from active tab inner modal)
-                var $modal = null;
-                if (that._$modal) {
-                    $modal = that._$modal;
-                } else {
-                    if (that.$modal) {
-                        $modal = that.$modal._$modal;
-                    }
-                }
-
-                if ($modal) {
+                if (that.$modal) {
                     // A modal is shown, try to click on first "dismiss" button
-                    $('[data-dismiss="modal"]', $modal).first().click();
+                    $('[data-dismiss="modal"]', that.$modal).first().click();
                 } else {
                     // No modal, hide the dialog
                     that.hide();
@@ -104,18 +94,8 @@
                 // Prevent default behavior
                 e.preventDefault();
 
-                // Try to retrieve the current top modal (1. from global dialog modal, 2. from active tab inner modal)
-                var $modal = null;
-                if (that._$modal) {
-                    $modal = that._$modal;
-                } else {
-                    if (that.$modal) {
-                        $modal = that.$modal._$modal;
-                    }
-                }
-
-                if ($modal) {
-                    var $btnValidate = $('.btn-validate-modal', $modal).first();
+                if (that.$modal) {
+                    var $btnValidate = $('.btn-validate-modal', that.$modal).first();
                     if ($btnValidate && $btnValidate.is(':enabled')) {
                         $btnValidate.click();
                     }

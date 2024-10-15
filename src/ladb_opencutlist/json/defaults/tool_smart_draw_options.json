@@ -1,0 +1,11 @@
+{
+  "_preprocessors": {
+    "rectangle_offset": 5 /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
+  },
+  "action_0": { /* ACTION_DRAW_BOX */
+    "rectangle_offset": "0",
+    "construction": false,
+    "rectangle_centered": false,
+    "box_centered": false
+  }
+}

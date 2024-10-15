@@ -140,6 +140,13 @@ module Ladb::OpenCutList
 
       unit = get_unit(view)
 
+      # -- FLOATING
+
+      @floating_panel = Kuix::Panel.new
+      @floating_panel.layout_data = Kuix::StaticLayoutData.new
+      @floating_panel.layout = Kuix::StaticLayout.new
+      @canvas.append(@floating_panel)
+
       # -- TOP
 
       @top_panel = Kuix::Panel.new
@@ -247,22 +254,26 @@ module Ladb::OpenCutList
                   btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
                   btn.border.set_all!(unit * 0.5)
                   btn.data = { :option_group => option_group, :option => option }
-                  btn.selected = fetch_action_option_enabled(action, option_group, option)
+                  btn.selected = fetch_action_option_enabled(action, option_group, option) if get_action_option_toggle?(action, option_group, option)
                   btn.on(:click) { |button|
-                    if get_action_option_group_unique?(action, option_group)
-                      b = button.parent.child
-                      until b.nil? do
-                        if b.is_a?(Kuix::Button)&& !b.data.nil? && b.data[:option_group] == option_group
-                          b.selected = false
+                    if get_action_option_toggle?(action, option_group, option)
+                      if get_action_option_group_unique?(action, option_group)
+                        b = button.parent.child
+                        until b.nil? do
+                          if b.is_a?(Kuix::Button) && !b.data.nil? && b.data[:option_group] == option_group
+                            b.selected = false
+                          end
+                          b = b.next
                         end
-                        b = b.next
+                        button.selected = true
+                        store_action_option_value(action, option_group, option)
+                        set_root_action(fetch_action)
+                      else
+                        button.selected = !button.selected?
+                        store_action_option_value(action, option_group, option, button.selected?)
                       end
-                      button.selected = true
-                      store_action_option_value(action, option_group, option)
-                      set_root_action(fetch_action)
                     else
-                      button.selected = !button.selected?
-                      store_action_option_value(action, option_group, option, button.selected?)
+                      PLUGIN.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action })
                     end
                   }
                   btn.on(:enter) { |button|
@@ -278,7 +289,7 @@ module Ladb::OpenCutList
                       if child.is_a?(Kuix::Label)
                         child.text_size = unit * 3 * get_text_unit_factor if child.respond_to?(:text_size=)
                         child.padding.set!(unit, unit * 2, unit, unit * 2)
-                        child.min_size.width = unit * 6
+                        # child.min_size.width = unit * 6
                       elsif child.is_a?(Kuix::Motif2d)
                         child.line_width = @unit <= 4 ? 0.5 : 1.0
                         child.margin.set_all!(unit)
@@ -287,7 +298,6 @@ module Ladb::OpenCutList
                       child.set_style_attribute(:color, Kuix::COLOR_BLACK)
                       child.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
                       btn.append(child)
-
                     end
 
                 end
@@ -836,6 +846,10 @@ module Ladb::OpenCutList
       false
     end
 
+    def get_action_option_toggle?(action, option_group, option)
+      true
+    end
+
     def get_action_option_btn_child(action, option_group, option)
       nil
     end
@@ -852,7 +866,7 @@ module Ladb::OpenCutList
       @current_action
     end
 
-    def store_action_option_value(action, option_group, option, value = nil)
+    def store_action_option_value(action, option_group, option, value = nil, fire_event = false)
       dictionary = "tool_smart_#{get_stripped_name}_options"
       section = "action_#{action}"
       preset = PLUGIN.get_global_preset(dictionary, nil, section)
@@ -861,7 +875,7 @@ module Ladb::OpenCutList
       else
         preset.store(option.to_s, value)
       end
-      PLUGIN.set_global_preset(dictionary, preset, nil, section)
+      PLUGIN.set_global_preset(dictionary, preset, nil, section, fire_event)
     end
 
     def fetch_action_option_value(action, option_group, option = nil)
@@ -1056,8 +1070,16 @@ module Ladb::OpenCutList
             action = actions_options_panel.data[:action]
             b = actions_options_panel.child
             until b.nil? do
-              if b.is_a?(Kuix::Button) && !b.data.nil?
-                b.selected = fetch_action_option_enabled(action, b.data[:option_group], b.data[:option])
+              unless b.data.nil?
+                if b.is_a?(Kuix::Button)
+                  if get_action_option_toggle?(action, b.data[:option_group], b.data[:option])
+                    b.selected = fetch_action_option_enabled(action, b.data[:option_group], b.data[:option])
+                  else
+                    value = fetch_action_option_value(action, b.data[:option_group], b.data[:option])
+                    b.child.text = value.to_s if b.child.is_a?(Kuix::Label)
+                    b.selected = value != '0'
+                  end
+                end
               end
               b = b.next
             end

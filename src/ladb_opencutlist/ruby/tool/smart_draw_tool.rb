@@ -8,11 +8,24 @@ module Ladb::OpenCutList
 
   class SmartDrawTool < SmartTool
 
-    ACTION_BOX = 0
+    ACTION_DRAW_BOX = 0
+
+    ACTION_OPTION_OFFSET = 'offset'
+    ACTION_OPTION_OPTIONS = 'options'
+
+    ACTION_OPTION_OFFSET_RECTANGLE_OFFSET = 'rectangle_offset'
+
+    ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
+    ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED = 'rectangle_centered'
+    ACTION_OPTION_OPTIONS_BOX_CENTRED = 'box_centered'
 
     ACTIONS = [
       {
-        :action => ACTION_BOX
+        :action => ACTION_DRAW_BOX,
+        :options => {
+          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_RECTANGLE_OFFSET ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED ],
+        }
       }
     ].freeze
 
@@ -23,18 +36,6 @@ module Ladb::OpenCutList
     CURSOR_PENCIL = 632
     CURSOR_PENCIL_RECTANGLE = 637
     CURSOR_PENCIL_PUSHPULL = 639
-
-    # -----
-
-    @global_rectangle_offset = 0
-
-    def self.global_rectangle_offset
-      @global_rectangle_offset
-    end
-
-    def self.global_rectangle_offset=(offset)
-      @global_rectangle_offset = offset
-    end
 
     # -----
 
@@ -52,43 +53,65 @@ module Ladb::OpenCutList
       ACTIONS
     end
 
-    def get_unit(view = nil)
-      return @unit unless @unit.nil?
-      return 3 if view && Sketchup.active_model.nil?
-      view = Sketchup.active_model.active_view if view.nil?
-      if view.vpheight > 2000
-        @unit = 8
-      elsif view.vpheight > 1000
-        @unit = 6
-      elsif view.vpheight > 500
-        @unit = 4
-      else
-        @unit = 3
-      end
-      @unit
-    end
+    def get_action_status(action)
 
-    def get_text_unit_factor
-      case PLUGIN.language
-      when 'ar'
-        return 1.5
-      else
-        return 1.0
-      end
-    end
-
-    def setup_entities(view)
       super
-
-      # 2D
-      # --------
-
-      @overlay_layer = Kuix::Panel.new
-      @overlay_layer.layout_data = Kuix::StaticLayoutData.new
-      @overlay_layer.layout = Kuix::StaticLayout.new
-      @canvas.append(@overlay_layer)
-
     end
+
+    def get_action_cursor(action)
+
+      super
+    end
+
+    def get_action_options_modal?(action)
+      true
+    end
+
+    def get_action_option_group_unique?(action, option_group)
+
+      super
+    end
+
+    def get_action_option_toggle?(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_OFFSET
+        case option
+        when ACTION_OPTION_OFFSET_RECTANGLE_OFFSET
+          return false
+        end
+      end
+
+      super
+    end
+
+    def get_action_option_btn_child(action, option_group, option)
+
+      case option_group
+      when ACTION_OPTION_OFFSET
+        case option
+        when ACTION_OPTION_OFFSET_RECTANGLE_OFFSET
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option))
+        end
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_CONSTRUCTION
+          return Kuix::Label.new("C")
+        when ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED
+          return Kuix::Label.new("R")
+        when ACTION_OPTION_OPTIONS_BOX_CENTRED
+          return Kuix::Label.new("B")
+        end
+      end
+
+      super
+    end
+
+    def is_action_draw_box?
+      fetch_action == ACTION_DRAW_BOX
+    end
+
+    # -- Events --
 
     def onActivate(view)
       super
@@ -103,14 +126,6 @@ module Ladb::OpenCutList
       @picked_third_ip = Sketchup::InputPoint.new
 
       @locked_normal = nil
-
-      @construction = false
-
-      @rectangle_centred = false
-      @box_centred = false
-
-      @rectangle_offset = self.class.global_rectangle_offset
-      @box_offset = 0
 
       @direction = nil
       @normal = _get_active_z_axis
@@ -158,7 +173,7 @@ module Ladb::OpenCutList
       puts "view.inference_locked? = #{view.inference_locked?}"
       puts "---"
 
-      @overlay_layer.remove_all
+      @floating_panel.remove_all
       @space.remove_all
 
       Sketchup.vcb_value = ''
@@ -184,7 +199,7 @@ module Ladb::OpenCutList
 
         end
 
-        if @rectangle_centred || @box_centred
+        if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED) || fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED)
 
           # Draw first picked point
           k_points = Kuix::Points.new
@@ -213,7 +228,8 @@ module Ladb::OpenCutList
         bounds = Geom::BoundingBox.new
         bounds.add(p1, p3)
 
-        if @rectangle_offset != 0
+        rectangle_offset = _fetch_rectangle_offset
+        if rectangle_offset != 0
           k_box = Kuix::BoxMotif.new
           k_box.bounds.origin.copy!(bounds.min)
           k_box.bounds.size.set!(bounds.width, bounds.height, bounds.depth)
@@ -224,8 +240,8 @@ module Ladb::OpenCutList
           @space.append(k_box)
         end
 
-        o_min = bounds.min.offset(X_AXIS, -@rectangle_offset).offset!(Y_AXIS, -@rectangle_offset)
-        o_max = bounds.max.offset(X_AXIS, @rectangle_offset).offset!(Y_AXIS, @rectangle_offset)
+        o_min = bounds.min.offset(X_AXIS, -rectangle_offset).offset!(Y_AXIS, -rectangle_offset)
+        o_max = bounds.max.offset(X_AXIS, rectangle_offset).offset!(Y_AXIS, rectangle_offset)
 
         o_bounds = Geom::BoundingBox.new
         o_bounds.add(o_min, o_max)
@@ -234,7 +250,7 @@ module Ladb::OpenCutList
         k_box.bounds.origin.copy!(o_bounds.min)
         k_box.bounds.size.set!(o_bounds.width, o_bounds.height, o_bounds.depth)
         k_box.line_width = 1.5
-        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if @construction
+        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
         k_box.color = _get_normal_color
         k_box.transformation = t
         @space.append(k_box)
@@ -252,7 +268,7 @@ module Ladb::OpenCutList
         k_label_d.border.set_all!(@unit * 0.25)
         k_label_d.padding.set!(@unit * 0.5, @unit * 0.5, @unit * 0.3, @unit * 0.5)
         k_label_d.text_size = @unit * 2.5
-        @overlay_layer.append(k_label_d)
+        @floating_panel.append(k_label_d)
 
       elsif _picked_first_point?
 
@@ -456,7 +472,7 @@ module Ladb::OpenCutList
         t = _get_transformation
         ti = t.inverse
 
-        if @rectangle_centred
+        if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
 
           k_points = Kuix::Points.new
           k_points.add_point(@picked_first_ip.position)
@@ -480,7 +496,8 @@ module Ladb::OpenCutList
         bounds = Geom::BoundingBox.new
         bounds.add(p1, p2)
 
-        if @rectangle_offset != 0
+        rectangle_offset = _fetch_rectangle_offset
+        if rectangle_offset != 0
           k_rectangle = Kuix::RectangleMotif.new
           k_rectangle.bounds.origin.copy!(bounds.min)
           k_rectangle.bounds.size.set!(bounds.width, bounds.height, 0)
@@ -491,8 +508,8 @@ module Ladb::OpenCutList
           @space.append(k_rectangle)
         end
 
-        o_min = bounds.min.offset(X_AXIS, -@rectangle_offset).offset!(Y_AXIS, -@rectangle_offset)
-        o_max = bounds.max.offset(X_AXIS, @rectangle_offset).offset!(Y_AXIS, @rectangle_offset)
+        o_min = bounds.min.offset(X_AXIS, -rectangle_offset).offset!(Y_AXIS, -rectangle_offset)
+        o_max = bounds.max.offset(X_AXIS, rectangle_offset).offset!(Y_AXIS, rectangle_offset)
 
         o_bounds = Geom::BoundingBox.new
         o_bounds.add(o_min, o_max)
@@ -501,7 +518,7 @@ module Ladb::OpenCutList
         k_rectangle.bounds.origin.copy!(o_bounds.min)
         k_rectangle.bounds.size.set!(o_bounds.width, o_bounds.height, 0)
         k_rectangle.line_width = @locked_normal ? 3 : 1.5
-        k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if @construction
+        k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
         k_rectangle.color = _get_normal_color
         k_rectangle.transformation = t
         @space.append(k_rectangle)
@@ -520,7 +537,7 @@ module Ladb::OpenCutList
         k_label_w.border.set_all!(@unit * 0.25)
         k_label_w.padding.set!(@unit * 0.5, @unit * 0.5, @unit * 0.3, @unit * 0.5)
         k_label_w.text_size = @unit * 2.5
-        @overlay_layer.append(k_label_w)
+        @floating_panel.append(k_label_w)
 
         k_label_h = Kuix::Label.new
         k_label_h.text = bounds.height.to_s
@@ -531,7 +548,7 @@ module Ladb::OpenCutList
         k_label_h.border.set_all!(@unit * 0.25)
         k_label_h.padding.set!(@unit * 0.5, @unit * 0.5, @unit * 0.3, @unit * 0.5)
         k_label_h.text_size = @unit * 2.5
-        @overlay_layer.append(k_label_h)
+        @floating_panel.append(k_label_h)
 
       else
 
@@ -655,11 +672,8 @@ module Ladb::OpenCutList
     def onKeyDown(key, repeat, flags, view)
       return true if super
       if key == VK_ALT
-        @rectangle_centred = !@rectangle_centred if _picked_first_point? && !_picked_second_point?
-        @box_centred = !@box_centred if _picked_second_point?
-        _refresh
-      elsif key == VK_COMMAND
-        @construction = !@construction
+        store_action_option_value(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED), true) if _picked_first_point? && !_picked_second_point?
+        store_action_option_value(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED, !fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED), true) if _picked_first_point? && _picked_second_point?
         _refresh
       end
       unless _picked_second_point?
@@ -700,98 +714,83 @@ module Ladb::OpenCutList
 
     def onUserText(text, view)
 
-      if text.end_with?('@')
+      if _picked_second_point?
 
-        offset = text[0..-2].to_l
+        thickness = text.to_l
 
-        self.class.global_rectangle_offset = offset unless _picked_first_point?
+        t = _get_transformation
+        ti = t.inverse
 
-        @rectangle_offset = offset
-        _refresh
+        points = _get_picked_points
+        p2 = points[1].transform(ti)
+        p3 = points[2].transform(ti)
 
-        notify("OFFSET = #{offset}", MESSAGE_TYPE_SUCCESS)
+        thickness *= -1 if p3.z < p2.z
 
-      else
+        thickness = p3.z - p2.z if thickness == 0
+        thickness /= 2 if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED)
 
-        if _picked_second_point?
+        @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, thickness).transform(t))
 
-          thickness = text.to_l
+        _create_entity
+        _reset
+
+        Sketchup.vcb_value = ''
+
+      elsif _picked_first_point?
+
+        d1, d2, d3 = text.split(';')
+
+        if d1 || d2
+
+          length = d1 ? d1.to_l : 0
+          width = d2 ? d2.to_l : 0
 
           t = _get_transformation
           ti = t.inverse
 
-          points = _get_picked_points
-          p2 = points[1].transform(ti)
-          p3 = points[2].transform(ti)
+          p1 = @picked_first_ip.position.transform(ti)
+          p2 = @snap_ip.position.transform(ti)
+
+          length *= -1 if p2.x < p1.x
+          length = p2.x - p1.x if length == 0
+          length = length / 2 if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
+
+          width *= -1 if p2.y < p1.y
+          width = p2.y - p1.y if width == 0
+          width = width / 2 if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
+
+          @picked_second_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t))
+
+          push_cursor(CURSOR_PENCIL_PUSHPULL) unless d3
+
+          Sketchup.vcb_value = ''
+
+          _refresh
+
+        end
+        if d3
+
+          thickness = d3.to_l
+
+          t = _get_transformation
+          ti = t.inverse
+
+          p2 = @picked_second_ip.position.transform(ti)
+          p3 = @picked_third_ip.position.transform(ti)
 
           thickness *= -1 if p3.z < p2.z
-
           thickness = p3.z - p2.z if thickness == 0
-          thickness /= 2 if @box_centred
+          thickness = thickness / 2 if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED)
 
-          @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, thickness).transform(t))
+          @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
 
           _create_entity
           _reset
 
           Sketchup.vcb_value = ''
 
-        elsif _picked_first_point?
-
-          d1, d2, d3 = text.split(';')
-
-          if d1 || d2
-
-            length = d1 ? d1.to_l : 0
-            width = d2 ? d2.to_l : 0
-
-            t = _get_transformation
-            ti = t.inverse
-
-            p1 = @picked_first_ip.position.transform(ti)
-            p2 = @snap_ip.position.transform(ti)
-
-            length *= -1 if p2.x < p1.x
-            length = p2.x - p1.x if length == 0
-            length = length / 2 if @rectangle_centred
-
-            width *= -1 if p2.y < p1.y
-            width = p2.y - p1.y if width == 0
-            width = width / 2 if @rectangle_centred
-
-            @picked_second_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t))
-
-            push_cursor(CURSOR_PENCIL_PUSHPULL) unless d3
-
-            Sketchup.vcb_value = ''
-
-            _refresh
-
-          end
-          if d3
-
-            thickness = d3.to_l
-
-            t = _get_transformation
-            ti = t.inverse
-
-            p2 = @picked_second_ip.position.transform(ti)
-            p3 = @picked_third_ip.position.transform(ti)
-
-            thickness *= -1 if p3.z < p2.z
-            thickness = p3.z - p2.z if thickness == 0
-            thickness = thickness / 2 if @box_centred
-
-            @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
-
-            _create_entity
-            _reset
-
-            Sketchup.vcb_value = ''
-
-          end
         end
-
       end
 
     end
@@ -813,6 +812,10 @@ module Ladb::OpenCutList
     end
 
     private
+
+    def _fetch_rectangle_offset
+      fetch_action_option_value(ACTION_DRAW_BOX, ACTION_OPTION_OFFSET, ACTION_OPTION_OFFSET_RECTANGLE_OFFSET).to_l
+    end
 
     def _get_active_x_axis
       X_AXIS.transform(_get_edit_transformation)
@@ -876,7 +879,7 @@ module Ladb::OpenCutList
       @direction = nil
       @locked_normal = nil
       @normal = _get_active_z_axis
-      @overlay_layer.remove_all
+      @floating_panel.remove_all
       @space.remove_all
       _update_status_text
       Sketchup.vcb_value = ''
@@ -930,10 +933,10 @@ module Ladb::OpenCutList
       points << @picked_third_ip.position if _picked_third_point?
       points << @snap_ip.position if @snap_ip.valid?
 
-      if @rectangle_centred && _picked_first_point? && points.length > 1
+      if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED) && _picked_first_point? && points.length > 1
         points[0] = points[0].offset(points[1].vector_to(points[0]))
       end
-      if @box_centred && _picked_second_point? && points.length > 2
+      if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED) && _picked_second_point? && points.length > 2
         offset = points[2].vector_to(points[1])
         points[0] = points[0].offset(offset)
         points[1] = points[1].offset(offset)
@@ -965,13 +968,14 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
       bounds.add(p1, p3)
 
-      o_min = bounds.min.offset(X_AXIS, -@rectangle_offset).offset!(Y_AXIS, -@rectangle_offset)
-      o_max = bounds.max.offset(X_AXIS, @rectangle_offset).offset!(Y_AXIS, @rectangle_offset)
+      rectangle_offset = _fetch_rectangle_offset
+      o_min = bounds.min.offset(X_AXIS, -rectangle_offset).offset!(Y_AXIS, -rectangle_offset)
+      o_max = bounds.max.offset(X_AXIS, rectangle_offset).offset!(Y_AXIS, rectangle_offset)
 
       o_bounds = Geom::BoundingBox.new
       o_bounds.add(o_min, o_max)
 
-      if @construction
+      if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
 
         group = model.active_entities.add_group
         group.transformation = t

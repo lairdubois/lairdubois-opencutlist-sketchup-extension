@@ -40,6 +40,7 @@ module Ladb::OpenCutList
 
     PRESETS_PREPROCESSOR_NONE = 0
     PRESETS_PREPROCESSOR_D = 1                   # 1D dimension
+    PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED = 5  # 1D dimension (negative value allowed)
     PRESETS_PREPROCESSOR_DXQ = 2                 # 1D dimension with quantity
     PRESETS_PREPROCESSOR_DXD = 3                 # 2D dimension
     PRESETS_PREPROCESSOR_DXDXQ = 4               # 2D dimension with quantity
@@ -372,6 +373,10 @@ module Ladb::OpenCutList
             case preprocessors[key]
               when PRESETS_PREPROCESSOR_D
                 processed_values[key] = DimensionUtils.d_add_units(values[key])
+              when PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED
+                negative = values[key].is_a?(String) && values[key].start_with?('-')
+                processed_value = DimensionUtils.d_add_units(negative ? values[key][1..-1] : values[key])
+                processed_values[key] = "#{'-' if negative && processed_value != '0'}#{processed_value}"
               when PRESETS_PREPROCESSOR_DXQ
                 processed_values[key] = DimensionUtils.dxq_add_units(values[key])
               when PRESETS_PREPROCESSOR_DXD
@@ -797,10 +802,9 @@ module Ladb::OpenCutList
         end
       }
       submenu.add_separator
-      submenu.add_item('Dessiner une pièce') {
+      submenu.add_item(get_i18n_string('core.menu.item.smart_draw')) {
         Sketchup.active_model.select_tool(SmartDrawTool.new) if Sketchup.active_model
       }
-      submenu.add_separator
       submenu.add_item(get_i18n_string('core.menu.item.smart_paint')) {
         Sketchup.active_model.select_tool(SmartPaintTool.new) if Sketchup.active_model
       }

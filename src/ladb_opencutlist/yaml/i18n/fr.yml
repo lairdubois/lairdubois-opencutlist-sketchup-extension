@@ -85,6 +85,7 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance_properties: Editer les propriétés de l'instance
+      smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -93,6 +94,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
+      smart_draw: Dessiner des pièces
       smart_paint: Colorier des pièces
       smart_axes: Orienter des pièces
       smart_export: Exporter des pièces
@@ -200,6 +202,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modèle
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -1785,6 +1788,11 @@ tool:
   smart_draw:
     title: Dessiner
     action_0: Boîte
+    action_option_group_offset: Décalage
+    action_option_group_options: Options
+    action_option_options_construction_status: Dessiner un squelette de construction
+    action_option_options_rectangle_centered_status: Centrer le rectangle sur le premier point
+    action_option_options_box_centered_status: Centrer l'élévation sur le premier point
   smart_paint:
     title: Colorier
     default_material: Sans matière

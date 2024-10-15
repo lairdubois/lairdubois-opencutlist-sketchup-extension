@@ -1,5 +1,5 @@
 {
-  "action_0": {  /* ACTION_OPTION_DIRECTION */
+  "action_0": {  /* ACTION_FLIP */
     "direction": 0 /* ACTION_OPTION_DIRECTION_LENGTH */
   }
 }
