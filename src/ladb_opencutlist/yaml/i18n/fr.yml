@@ -1787,7 +1787,7 @@ tool:
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
     title: Dessiner
-    action_0: Boîte
+    action_0: Rectangle
     action_option_group_offset: Décalage
     action_option_group_options: Options
     action_option_options_construction_status: Dessiner un squelette de construction

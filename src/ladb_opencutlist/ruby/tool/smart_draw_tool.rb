@@ -13,7 +13,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OFFSET = 'offset'
     ACTION_OPTION_OPTIONS = 'options'
 
-    ACTION_OPTION_OFFSET_RECTANGLE_OFFSET = 'rectangle_offset'
+    ACTION_OPTION_OFFSET_SECTION_OFFSET = 'section_offset'
 
     ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED = 'rectangle_centered'
@@ -23,7 +23,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_DRAW_BOX,
         :options => {
-          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_RECTANGLE_OFFSET ],
+          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SECTION_OFFSET ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED ],
         }
       }
@@ -77,7 +77,7 @@ module Ladb::OpenCutList
       case option_group
       when ACTION_OPTION_OFFSET
         case option
-        when ACTION_OPTION_OFFSET_RECTANGLE_OFFSET
+        when ACTION_OPTION_OFFSET_SECTION_OFFSET
           return false
         end
       end
@@ -90,17 +90,17 @@ module Ladb::OpenCutList
       case option_group
       when ACTION_OPTION_OFFSET
         case option
-        when ACTION_OPTION_OFFSET_RECTANGLE_OFFSET
+        when ACTION_OPTION_OFFSET_SECTION_OFFSET
           return Kuix::Label.new(fetch_action_option_value(action, option_group, option))
         end
       when ACTION_OPTION_OPTIONS
         case option
         when ACTION_OPTION_OPTIONS_CONSTRUCTION
-          return Kuix::Label.new("C")
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,1L0,1L0,0.833 M0,0.667L0,0.333 M0,0.167L0,0L0.167,0 M0.333,0L0.667,0 M0.833,0L1,0L1,0.167 M1,0.333L1,0.667 M1,0.833L1,1L0.833,1 M0.333,1L0.667,1'))
         when ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED
-          return Kuix::Label.new("R")
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0L1,1L0,1L0,0 M0.5,0.667L0.5,0.333 M0.333,0.5L0.667,0.5 '))
         when ACTION_OPTION_OPTIONS_BOX_CENTRED
-          return Kuix::Label.new("B")
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         end
       end
 
@@ -228,8 +228,8 @@ module Ladb::OpenCutList
         bounds = Geom::BoundingBox.new
         bounds.add(p1, p3)
 
-        rectangle_offset = _fetch_rectangle_offset
-        if rectangle_offset != 0
+        section_offset = _fetch_section_offset
+        if section_offset != 0
           k_box = Kuix::BoxMotif.new
           k_box.bounds.origin.copy!(bounds.min)
           k_box.bounds.size.set!(bounds.width, bounds.height, bounds.depth)
@@ -240,8 +240,8 @@ module Ladb::OpenCutList
           @space.append(k_box)
         end
 
-        o_min = bounds.min.offset(X_AXIS, -rectangle_offset).offset!(Y_AXIS, -rectangle_offset)
-        o_max = bounds.max.offset(X_AXIS, rectangle_offset).offset!(Y_AXIS, rectangle_offset)
+        o_min = bounds.min.offset(X_AXIS, -section_offset).offset!(Y_AXIS, -section_offset)
+        o_max = bounds.max.offset(X_AXIS, section_offset).offset!(Y_AXIS, section_offset)
 
         o_bounds = Geom::BoundingBox.new
         o_bounds.add(o_min, o_max)
@@ -496,8 +496,8 @@ module Ladb::OpenCutList
         bounds = Geom::BoundingBox.new
         bounds.add(p1, p2)
 
-        rectangle_offset = _fetch_rectangle_offset
-        if rectangle_offset != 0
+        section_offset = _fetch_section_offset
+        if section_offset != 0
           k_rectangle = Kuix::RectangleMotif.new
           k_rectangle.bounds.origin.copy!(bounds.min)
           k_rectangle.bounds.size.set!(bounds.width, bounds.height, 0)
@@ -508,8 +508,8 @@ module Ladb::OpenCutList
           @space.append(k_rectangle)
         end
 
-        o_min = bounds.min.offset(X_AXIS, -rectangle_offset).offset!(Y_AXIS, -rectangle_offset)
-        o_max = bounds.max.offset(X_AXIS, rectangle_offset).offset!(Y_AXIS, rectangle_offset)
+        o_min = bounds.min.offset(X_AXIS, -section_offset).offset!(Y_AXIS, -section_offset)
+        o_max = bounds.max.offset(X_AXIS, section_offset).offset!(Y_AXIS, section_offset)
 
         o_bounds = Geom::BoundingBox.new
         o_bounds.add(o_min, o_max)
@@ -813,8 +813,8 @@ module Ladb::OpenCutList
 
     private
 
-    def _fetch_rectangle_offset
-      fetch_action_option_value(ACTION_DRAW_BOX, ACTION_OPTION_OFFSET, ACTION_OPTION_OFFSET_RECTANGLE_OFFSET).to_l
+    def _fetch_section_offset
+      fetch_action_option_value(ACTION_DRAW_BOX, ACTION_OPTION_OFFSET, ACTION_OPTION_OFFSET_SECTION_OFFSET).to_l
     end
 
     def _get_active_x_axis
@@ -968,9 +968,9 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
       bounds.add(p1, p3)
 
-      rectangle_offset = _fetch_rectangle_offset
-      o_min = bounds.min.offset(X_AXIS, -rectangle_offset).offset!(Y_AXIS, -rectangle_offset)
-      o_max = bounds.max.offset(X_AXIS, rectangle_offset).offset!(Y_AXIS, rectangle_offset)
+      section_offset = _fetch_section_offset
+      o_min = bounds.min.offset(X_AXIS, -section_offset).offset!(Y_AXIS, -section_offset)
+      o_max = bounds.max.offset(X_AXIS, section_offset).offset!(Y_AXIS, section_offset)
 
       o_bounds = Geom::BoundingBox.new
       o_bounds.add(o_min, o_max)

@@ -254,7 +254,7 @@ module Ladb::OpenCutList
                   btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
                   btn.border.set_all!(unit * 0.5)
                   btn.data = { :option_group => option_group, :option => option }
-                  btn.selected = fetch_action_option_enabled(action, option_group, option) if get_action_option_toggle?(action, option_group, option)
+                  btn.selected = fetch_action_option_enabled(action, option_group, option)
                   btn.on(:click) { |button|
                     if get_action_option_toggle?(action, option_group, option)
                       if get_action_option_group_unique?(action, option_group)
@@ -893,6 +893,7 @@ module Ladb::OpenCutList
       return false if value.nil?
       return option == value if get_action_option_group_unique?(action, option_group)
       return value if value.is_a?(TrueClass)
+      return true if value.is_a?(String) && !value.empty? && value != '0'
       false
     end
 
@@ -1072,13 +1073,10 @@ module Ladb::OpenCutList
             until b.nil? do
               unless b.data.nil?
                 if b.is_a?(Kuix::Button)
-                  if get_action_option_toggle?(action, b.data[:option_group], b.data[:option])
-                    b.selected = fetch_action_option_enabled(action, b.data[:option_group], b.data[:option])
-                  else
-                    value = fetch_action_option_value(action, b.data[:option_group], b.data[:option])
-                    b.child.text = value.to_s if b.child.is_a?(Kuix::Label)
-                    b.selected = value != '0'
+                  unless get_action_option_toggle?(action, b.data[:option_group], b.data[:option])
+                    b.child.text = fetch_action_option_value(action, b.data[:option_group], b.data[:option]).to_s if b.child.is_a?(Kuix::Label)
                   end
+                  b.selected = fetch_action_option_enabled(action, b.data[:option_group], b.data[:option])
                 end
               end
               b = b.next
