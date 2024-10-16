@@ -8,7 +8,9 @@ module Ladb::OpenCutList
 
   class SmartDrawTool < SmartTool
 
-    ACTION_DRAW_BOX = 0
+    ACTION_DRAW_RECTANGLE = 0
+    ACTION_DRAW_CIRCLE = 1
+    ACTION_DRAW_POLYGON = 2
 
     ACTION_OPTION_TOOLS = 'tools'
     ACTION_OPTION_OFFSET = 'offset'
@@ -25,11 +27,27 @@ module Ladb::OpenCutList
 
     ACTIONS = [
       {
-        :action => ACTION_DRAW_BOX,
+        :action => ACTION_DRAW_RECTANGLE,
         :options => {
           ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SECTION_OFFSET ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED ],
+        }
+      },
+      {
+        :action => ACTION_DRAW_CIRCLE,
+        :options => {
+          ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
+          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SECTION_OFFSET ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_BOX_CENTRED ],
+        }
+      },
+      {
+        :action => ACTION_DRAW_POLYGON,
+        :options => {
+          ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
+          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SECTION_OFFSET ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_BOX_CENTRED ],
         }
       }
     ].freeze
@@ -39,10 +57,10 @@ module Ladb::OpenCutList
     COLOR_BRAND_LIGHT = Sketchup::Color.new(214, 212, 205).freeze
 
     CURSOR_PENCIL = 632
-    CURSOR_PENCIL_RECTANGLE = 637
-    CURSOR_PENCIL_PUSHPULL = 639
+    CURSOR_RECTANGLE = 637
+    CURSOR_PUSHPULL = 639
     CURSOR_MOVE = 641
-    CURSOR_MOVE_PLUS = 642
+    CURSOR_MOVE_COPY = 642
 
     # -----
 
@@ -121,8 +139,8 @@ module Ladb::OpenCutList
       super
     end
 
-    def is_action_draw_box?
-      fetch_action == ACTION_DRAW_BOX
+    def is_action_draw_rectangle?
+      fetch_action == ACTION_DRAW_RECTANGLE
     end
 
     # -- Events --
@@ -147,7 +165,7 @@ module Ladb::OpenCutList
 
       _update_status_text
 
-      set_root_cursor(CURSOR_PENCIL_RECTANGLE)
+      set_root_cursor(CURSOR_RECTANGLE)
 
     end
 
@@ -235,7 +253,7 @@ module Ladb::OpenCutList
         k_box.bounds.origin.copy!(o_bounds.min)
         k_box.bounds.size.set!(o_bounds.width, o_bounds.height, o_bounds.depth)
         k_box.line_width = 1.5
-        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
+        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
         k_box.color = _get_normal_color
         k_box.transformation = t * mt
         @space.append(k_box)
@@ -274,7 +292,7 @@ module Ladb::OpenCutList
 
         end
 
-        if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED) || fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED)
+        if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED) || fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED)
 
           # Draw first picked point
           k_points = Kuix::Points.new
@@ -325,7 +343,7 @@ module Ladb::OpenCutList
         k_box.bounds.origin.copy!(o_bounds.min)
         k_box.bounds.size.set!(o_bounds.width, o_bounds.height, o_bounds.depth)
         k_box.line_width = 1.5
-        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
+        k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
         k_box.color = _get_normal_color
         k_box.transformation = t
         @space.append(k_box)
@@ -547,7 +565,7 @@ module Ladb::OpenCutList
         t = _get_transformation
         ti = t.inverse
 
-        if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
+        if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
 
           k_points = Kuix::Points.new
           k_points.add_point(@picked_first_ip.position)
@@ -593,7 +611,7 @@ module Ladb::OpenCutList
         k_rectangle.bounds.origin.copy!(o_bounds.min)
         k_rectangle.bounds.size.set!(o_bounds.width, o_bounds.height, 0)
         k_rectangle.line_width = @locked_normal ? 3 : 1.5
-        k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
+        k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
         k_rectangle.color = _get_normal_color
         k_rectangle.transformation = t
         @space.append(k_rectangle)
@@ -724,15 +742,19 @@ module Ladb::OpenCutList
       elsif !_picked_second_point?
         if _valid_rectangle?
           @picked_second_ip.copy!(@snap_ip)
-          if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_PUSHPULL)
-            push_cursor(CURSOR_PENCIL_PUSHPULL)
-            _refresh
-          elsif fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_MOVE)
-            @picked_third_ip.copy!(@snap_ip)
-            push_cursor(CURSOR_MOVE)
+          if fetch_action_option_enabled(fetch_action, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_PUSHPULL)
+            push_cursor(CURSOR_PUSHPULL)
             _refresh
           else
-            _reset
+            if fetch_action_option_enabled(fetch_action, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_MOVE)
+              @picked_third_ip.copy!(@snap_ip)
+              _create_entity
+              push_cursor(CURSOR_MOVE)
+              _refresh
+            else
+              _create_entity
+              _reset
+            end
           end
         else
           UI.beep
@@ -741,10 +763,11 @@ module Ladb::OpenCutList
         if _valid_box?
           @picked_third_ip.copy!(@snap_ip)
           _create_entity
-          if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_MOVE)
+          if fetch_action_option_enabled(fetch_action, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_MOVE)
             push_cursor(CURSOR_MOVE)
             _refresh
           else
+            _create_entity
             _reset
           end
         else
@@ -770,8 +793,8 @@ module Ladb::OpenCutList
     def onKeyDown(key, repeat, flags, view)
       return true if super
       if key == VK_ALT
-        store_action_option_value(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED), true) if _picked_first_point? && !_picked_second_point?
-        store_action_option_value(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED, !fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED), true) if _picked_first_point? && _picked_second_point?
+        store_action_option_value(ACTION_DRAW_RECTANGLE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED), true) if _picked_first_point? && !_picked_second_point?
+        store_action_option_value(ACTION_DRAW_RECTANGLE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED, !fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED), true) if _picked_first_point? && _picked_second_point?
         _refresh
       end
       if _picked_third_point?
@@ -863,13 +886,13 @@ module Ladb::OpenCutList
         thickness *= -1 if p3.z < p2.z
 
         thickness = p3.z - p2.z if thickness == 0
-        thickness /= 2 if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED)
+        thickness /= 2 if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED)
 
         @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, thickness).transform(t))
 
         _create_entity
 
-        if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_MOVE)
+        if fetch_action_option_enabled(fetch_action, ACTION_OPTION_TOOLS, ACTION_OPTION_TOOLS_MOVE)
           push_cursor(CURSOR_MOVE)
           _refresh
         else
@@ -895,15 +918,15 @@ module Ladb::OpenCutList
 
           length *= -1 if p2.x < p1.x
           length = p2.x - p1.x if length == 0
-          length = length / 2 if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
+          length = length / 2 if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
 
           width *= -1 if p2.y < p1.y
           width = p2.y - p1.y if width == 0
-          width = width / 2 if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
+          width = width / 2 if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
 
           @picked_second_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t))
 
-          push_cursor(CURSOR_PENCIL_PUSHPULL) unless d3
+          push_cursor(CURSOR_PUSHPULL) unless d3
 
           Sketchup.vcb_value = ''
 
@@ -922,7 +945,7 @@ module Ladb::OpenCutList
 
           thickness *= -1 if p3.z < p2.z
           thickness = p3.z - p2.z if thickness == 0
-          thickness = thickness / 2 if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED)
+          thickness = thickness / 2 if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED)
 
           @picked_third_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
 
@@ -955,7 +978,7 @@ module Ladb::OpenCutList
     private
 
     def _fetch_section_offset
-      fetch_action_option_value(ACTION_DRAW_BOX, ACTION_OPTION_OFFSET, ACTION_OPTION_OFFSET_SECTION_OFFSET).to_l
+      fetch_action_option_value(ACTION_DRAW_RECTANGLE, ACTION_OPTION_OFFSET, ACTION_OPTION_OFFSET_SECTION_OFFSET).to_l
     end
 
     def _get_active_x_axis
@@ -1080,10 +1103,10 @@ module Ladb::OpenCutList
       points << @picked_fourth_ip.position if _picked_fourth_point?
       points << @snap_ip.position if @snap_ip.valid?
 
-      if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED) && _picked_first_point? && points.length > 1
+      if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED) && _picked_first_point? && points.length > 1
         points[0] = points[0].offset(points[1].vector_to(points[0]))
       end
-      if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED) && _picked_second_point? && points.length > 2
+      if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_BOX_CENTRED) && _picked_second_point? && points.length > 2
         offset = points[2].vector_to(points[1])
         points[0] = points[0].offset(offset)
         points[1] = points[1].offset(offset)
@@ -1122,7 +1145,7 @@ module Ladb::OpenCutList
       o_bounds = Geom::BoundingBox.new
       o_bounds.add(o_min, o_max)
 
-      if fetch_action_option_enabled(ACTION_DRAW_BOX, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
+      if fetch_action_option_enabled(fetch_action, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_CONSTRUCTION)
 
         group = model.active_entities.add_group
         group.transformation = t
@@ -1132,15 +1155,19 @@ module Ladb::OpenCutList
         group.entities.add_cline(o_bounds.corner(3), o_bounds.corner(2))
         group.entities.add_cline(o_bounds.corner(2), o_bounds.corner(0))
 
-        group.entities.add_cline(o_bounds.corner(4), o_bounds.corner(5))
-        group.entities.add_cline(o_bounds.corner(5), o_bounds.corner(7))
-        group.entities.add_cline(o_bounds.corner(7), o_bounds.corner(6))
-        group.entities.add_cline(o_bounds.corner(6), o_bounds.corner(4))
+        if o_bounds.depth > 0
 
-        group.entities.add_cline(o_bounds.corner(0), o_bounds.corner(4))
-        group.entities.add_cline(o_bounds.corner(1), o_bounds.corner(5))
-        group.entities.add_cline(o_bounds.corner(3), o_bounds.corner(7))
-        group.entities.add_cline(o_bounds.corner(2), o_bounds.corner(6))
+          group.entities.add_cline(o_bounds.corner(4), o_bounds.corner(5))
+          group.entities.add_cline(o_bounds.corner(5), o_bounds.corner(7))
+          group.entities.add_cline(o_bounds.corner(7), o_bounds.corner(6))
+          group.entities.add_cline(o_bounds.corner(6), o_bounds.corner(4))
+
+          group.entities.add_cline(o_bounds.corner(0), o_bounds.corner(4))
+          group.entities.add_cline(o_bounds.corner(1), o_bounds.corner(5))
+          group.entities.add_cline(o_bounds.corner(3), o_bounds.corner(7))
+          group.entities.add_cline(o_bounds.corner(2), o_bounds.corner(6))
+
+        end
 
         @entity = group
 
@@ -1154,8 +1181,17 @@ module Ladb::OpenCutList
                                               o_bounds.corner(3),
                                               o_bounds.corner(2)
                                             ])
-        face.reverse! if face.normal.samedirection?(Z_AXIS)
-        face.pushpull(-o_bounds.depth)
+
+        if o_bounds.depth > 0
+
+          face.reverse! if face.normal.samedirection?(Z_AXIS)
+          face.pushpull(-o_bounds.depth)
+
+        else
+
+          face.reverse! unless face.normal.samedirection?(Z_AXIS)
+
+        end
 
         @entity = model.active_entities.add_instance(definition, t)
 
