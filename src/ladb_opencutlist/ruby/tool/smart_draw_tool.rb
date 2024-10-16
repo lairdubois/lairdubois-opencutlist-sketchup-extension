@@ -98,9 +98,9 @@ module Ladb::OpenCutList
       when ACTION_OPTION_TOOLS
         case option
         when ACTION_OPTION_TOOLS_PUSHPULL
-          return Kuix::Label.new('P')
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.611L0,0.778L0.5,1L1,0.778L1,0.611 M0.333,0.5L0,0.611L0.5,0.778L1,0.611L0.667,0.5 M0.583,0.583L0.583,0.333L0.75,0.333L0.5,0L0.25,0.333L0.417,0.333L0.417,0.583L0.583,0.583'))
         when ACTION_OPTION_TOOLS_MOVE
-          return Kuix::Label.new('M')
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0.357L0.5,0 M0.357,0.143L0.5,0L0.643,0.143 M0.643,0.5L1,0.5 M0.857,0.357L1,0.5L0.857,0.643 M0.357,0.5L0,0.5 M0.143,0.357L0,0.5L0.143,0.643 M0.5,0.643L0.5,1 M0.357,0.857L0.5,1L0.643,0.857'))
         end
       when ACTION_OPTION_OFFSET
         case option

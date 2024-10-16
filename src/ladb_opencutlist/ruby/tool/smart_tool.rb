@@ -289,11 +289,11 @@ module Ladb::OpenCutList
                       if child.is_a?(Kuix::Label)
                         child.text_size = unit * 3 * get_text_unit_factor if child.respond_to?(:text_size=)
                         child.padding.set!(unit, unit * 2, unit, unit * 2)
-                        # child.min_size.width = unit * 6
+                        child.min_size.set!(unit * 6, unit * 4)
                       elsif child.is_a?(Kuix::Motif2d)
                         child.line_width = @unit <= 4 ? 0.5 : 1.0
                         child.margin.set_all!(unit)
-                        child.min_size.width = unit * 4
+                        child.min_size.set!(unit * 4, unit * 4)
                       end
                       child.set_style_attribute(:color, Kuix::COLOR_BLACK)
                       child.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
