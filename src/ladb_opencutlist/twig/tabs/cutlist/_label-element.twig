@@ -37,7 +37,7 @@
             </g>
         {% else %}
             <rect x="0" y="0" width="{{ max(0, rectPartWidth) }}" height="{{ max(0, rectPartHeight) }}" fill="#ffffff" stroke="none" />
-            {% if group.material_grained %}
+            {% if entry.group.material_grained %}
                 <g{% if (entry.part.flipped b-xor entry.part.axes_flipped) == 1 %} transform="translate({{ rectPartWidth }}, 0) scale(-1,1)"{% endif %}>
                     {% set arrowMargin = minUnit / 4 %}
                     {% set arrowX = arrowMargin %}
@@ -125,7 +125,7 @@
     {% elseif terms[0] == 'group' %}
         {% set key = terms[1] %}
         {% if key == 'material' %}
-            {% set value = group.material_name~' / '~group.std_dimension %}
+            {% set value = entry.group.material_name~' / '~entry.group.std_dimension %}
         {% else %}
             {% set value = group[key] %}
         {% endif %}

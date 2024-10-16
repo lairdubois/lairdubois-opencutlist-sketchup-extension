@@ -486,6 +486,9 @@
                     console.log(response.errors);
                 }
                 if (response.entries) {
+                    for (const entry of response.entries) {
+                        entry.group = that.options.group;
+                    }
                     var index = that.elementDefs.indexOf(elementDef);
                     that.entry.custom_values[index] = response.entries[0].custom_values[0];
                     that.appendFormula(svgContentGroup, elementDef);
@@ -626,6 +629,7 @@
             }
             if (response.entries) {
                 that.entry = response.entries[0];
+                that.entry.group = that.options.group;
             }
 
             // Empty the container

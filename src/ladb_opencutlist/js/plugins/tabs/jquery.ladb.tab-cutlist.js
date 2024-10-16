@@ -2426,7 +2426,7 @@
             });
             $editorLabelLayout.ladbEditorLabelLayout({
                 dialog: that.dialog,
-                group: context.targetGroup,
+                group: that.findGroupAndPartById(partIds[0]).group,
                 partId: partIds[0],
                 hideMaterialColors: that.generateOptions.hide_material_colors
             });
@@ -2610,16 +2610,17 @@
                                 });
                                 gIndex++;
                             }
-                            $.each(entries, function (index) {
+                            for (const entry of entries) {
+                                entry.group = that.findGroupById(entry.group_id, true);
                                 if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                     page = {
                                         entries: []
                                     }
                                     pages.push(page);
                                 }
-                                page.entries.push(this);
+                                page.entries.push(entry);
                                 gIndex++;
-                            })
+                            }
 
                             fnRenderSlide();
 
