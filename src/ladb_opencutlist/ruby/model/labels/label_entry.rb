@@ -17,8 +17,10 @@ module Ladb::OpenCutList
     # -----
 
     def self.entry_order(entry_a, entry_b, strategy)
-      a_values = []
-      b_values = []
+      a_group_def = entry_a.part.group.def
+      b_group_def = entry_b.part.group.def
+      a_values = [ MaterialAttributes.type_order(a_group_def.material_attributes.type), a_group_def.material_name.empty? ? '~' : a_group_def.material_name.downcase, -a_group_def.std_width, -a_group_def.std_thickness ]
+      b_values = [ MaterialAttributes.type_order(b_group_def.material_attributes.type), b_group_def.material_name.empty? ? '~' : b_group_def.material_name.downcase, -b_group_def.std_width, -b_group_def.std_thickness ]
       if strategy
         properties = strategy.split('>')
         properties.each { |property|

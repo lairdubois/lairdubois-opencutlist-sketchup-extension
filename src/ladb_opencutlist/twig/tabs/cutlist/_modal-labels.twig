@@ -1,7 +1,10 @@
 {% extends 'core/_modal.twig' %}
 
 {% set id = 'ladb_cutlist_modal_labels' %}
-{% set title = ('tab.cutlist.labels.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
+{% set title = 'tab.cutlist.labels.title'|i18next %}
+{% if group and group.material_type != 0 %} {# 0 = TYPE_UNKNOW #}
+    {% set title = title~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~(group.std_dimension ? ' / '~group.std_dimension : '')~'</small>' %}
+{% endif %}
 
 {% block headerToolsInner %}
     {% include 'components/_widget-preset.twig' %}
@@ -19,6 +22,9 @@
 {% endblock %}
 
 {% block bodyInner %}
+    {% if isGroupSelection %}
+        <div class="alert alert-info text-center">{{ 'tab.cutlist.labels.warning.is_group_selection'|i18next }}</div>
+    {% endif %}
     {% if isPartSelection %}
         <div class="alert alert-info text-center">{{ 'tab.cutlist.labels.warning.is_part_selection'|i18next }}</div>
     {% endif %}

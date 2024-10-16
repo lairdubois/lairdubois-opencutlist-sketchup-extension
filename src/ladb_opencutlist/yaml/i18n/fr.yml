@@ -365,6 +365,7 @@ tab:
       numbers_save: Mémoriser les numéros de pièces
       numbers_reset: Réinitialiser les numéros de pièces
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: Imprimer les étiquettes
       write_2d: Projection 2D
       write_3d: Géométrie 3D
       write_2d_parts: Exporter la projection 2D des pièces
@@ -1162,6 +1163,7 @@ tab:
       error:
         invalid_size: Les paramètres de configuration saisis ne permettent pas de définir une taille d'étiquette valide.
       warning:
+        is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit n'auront pas d'étiquette.
         is_part_selection: Ces étiquettes se limitent aux **pièces sélectionnées**.
         formula_not_available: Non disponible dans ce context
     layout:
