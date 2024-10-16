@@ -127,7 +127,7 @@
         {% if key == 'material' %}
             {% set value = entry.group.material_name~' / '~entry.group.std_dimension %}
         {% else %}
-            {% set value = group[key] %}
+            {% set value = entry.group[key] %}
         {% endif %}
     {% elseif terms[0] == 'filename' %}
         {% set value = filename %}
