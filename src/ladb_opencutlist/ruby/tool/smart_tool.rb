@@ -80,8 +80,8 @@ module Ladb::OpenCutList
       @picker = nil
 
       # Mouse
-      @last_mouse_x = 0
-      @last_mouse_y = 0
+      @last_mouse_x = -1
+      @last_mouse_y = -1
 
     end
 
@@ -1052,7 +1052,6 @@ module Ladb::OpenCutList
 
       # Create pick helpers
       @pick_helper = view.pick_helper
-      @input_point = Sketchup::InputPoint.new
 
       # Set startup cursor
       set_root_action(get_startup_action)
@@ -1204,6 +1203,14 @@ module Ladb::OpenCutList
       end
 
       false
+    end
+
+    def onLButtonDown(flags, x, y, view)
+
+      @last_mouse_x = x
+      @last_mouse_y = y
+
+      super
     end
 
     def onMouseWheel(flags, delta, x, y, view)
