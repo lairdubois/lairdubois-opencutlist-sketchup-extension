@@ -177,11 +177,11 @@ module Ladb::OpenCutList::Fiddle
       )
       solution = CPathsDSolution.new(solution_ptr)
 
-      closed_rpath, len = _cpaths_to_rpaths(solution.closed_paths)
+      closed_rpaths, len = _cpaths_to_rpaths(solution.closed_paths)
 
       c_dispose_paths_solution(solution_ptr)
 
-      closed_rpath
+      closed_rpaths
     end
 
     def self.is_rpath_positive?(rpath)

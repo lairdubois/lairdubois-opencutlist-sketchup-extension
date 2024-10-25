@@ -1797,6 +1797,7 @@ tool:
     action_2_status: Dessiner un volume sur la base d'une section polygonale
     action_option_group_tools: Outils
     action_option_group_offset: Décalage
+    action_option_group_segments: Segments
     action_option_group_options: Options
     action_option_tools_pushpull_status: Activer Pousser/Tirer après le dessin de la section
     action_option_tools_move_status: Activer Copier/Déplacer après la création de la pièce
