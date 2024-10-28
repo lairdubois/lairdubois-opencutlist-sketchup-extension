@@ -1434,6 +1434,17 @@ module Ladb::OpenCutList
 
   # -----
 
+  class SmartActionHandler
+
+    def initialize(action, tool)
+      @action = action
+      @tool = tool
+    end
+
+  end
+
+  # -----
+
   class SmartPicker
 
     attr_reader :pick_position

@@ -1,11 +1,11 @@
 {
   "_preprocessors": {
-    "section_offset": 5 /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
+    "shape_offset": 5 /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
   },
   "action_0": { /* ACTION_DRAW_RECTANGLE */
     "pushpull": true,
     "move": false,
-    "section_offset": "0",
+    "shape_offset": "0",
     "construction": false,
     "rectangle_centered": false,
     "box_centered": false
@@ -13,7 +13,7 @@
   "action_1": { /* ACTION_DRAW_CIRCLE */
     "pushpull": true,
     "move": false,
-    "section_offset": "0",
+    "shape_offset": "0",
     "segment_count": 24,
     "construction": false,
     "box_centered": false
@@ -21,7 +21,7 @@
   "action_2": { /* ACTION_DRAW_POLYGON */
     "pushpull": true,
     "move": false,
-    "section_offset": "0",
+    "shape_offset": "0",
     "construction": false,
     "box_centered": false
   }
