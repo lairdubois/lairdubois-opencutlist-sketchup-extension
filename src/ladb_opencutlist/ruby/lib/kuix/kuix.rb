@@ -5,6 +5,7 @@ module Ladb::OpenCutList
     # Key constants
 
     VK_TAB = 9
+    VK_ENTER = 13
     if Sketchup.platform == :platform_osx
       VK_NUMPAD0 = 48
       VK_NUMPAD1 = 49

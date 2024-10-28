@@ -2012,6 +2012,15 @@ module Ladb::OpenCutList
 
     end
 
+    def onKeyDown(key, repeat, flags, view)
+
+      if key == Kuix::VK_ENTER && !_picked_section_last_point? && @picked_ips.length >= 3
+        # TODO
+      end
+
+      super
+    end
+
     def onUserText(text, view)
       super
 
@@ -2293,7 +2302,6 @@ module Ladb::OpenCutList
           plane = Geom::fit_plane_to_points(p1, p2, p3)
           plane_manipulator = PlaneManipulator.new(plane)
 
-          @direction = p1.vector_to(p2)
           @normal = plane_manipulator.normal
 
         end

@@ -1789,11 +1789,11 @@ tool:
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
     title: Dessiner
-    action_0: Rectangle
+    action_0: Dessiner un Rectangle
     action_0_status: Dessiner un volume sur la base d'une section rectangulaire
-    action_1: Cercle
+    action_1: Dessiner un Cercle
     action_1_status: Dessiner un volume sur la base d'une section circulaire
-    action_2: Polygône
+    action_2: Dessiner un Polygône
     action_2_status: Dessiner un volume sur la base d'une section polygonale
     action_option_group_tools: Outils
     action_option_group_offset: Décalage
