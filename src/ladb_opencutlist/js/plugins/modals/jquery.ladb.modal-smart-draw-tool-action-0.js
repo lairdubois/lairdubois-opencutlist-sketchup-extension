@@ -31,7 +31,7 @@
             var $widgetPreset = $('.ladb-widget-preset', that.$element);
             var $selectPushPull = $('#ladb_select_pushpull', that.$element);
             var $selectMove = $('#ladb_select_move', that.$element);
-            var $inputSectionOffset = $('#ladb_input_section_offset', that.$element);
+            var $inputShapeOffset = $('#ladb_input_shape_offset', that.$element);
             var $selectConstrution = $('#ladb_select_construction', that.$element);
             var $selectRectangleCentered = $('#ladb_select_rectangle_centered', that.$element);
             var $selectBoxCentered = $('#ladb_select_box_centered', that.$element);
@@ -40,7 +40,7 @@
             var fnFetchOptions = function (options) {
                 options.pushpull = $selectPushPull.val() === '1';
                 options.move = $selectMove.val() === '1';
-                options.section_offset = $inputSectionOffset.val();
+                options.shape_offset = $inputShapeOffset.val();
                 options.construction = $selectConstrution.val() === '1';
                 options.rectangle_centered = $selectRectangleCentered.val() === '1';
                 options.box_centered = $selectBoxCentered.val() === '1';
@@ -48,7 +48,7 @@
             var fnFillInputs = function (options) {
                 $selectPushPull.selectpicker('val', options.pushpull ? '1' : '0');
                 $selectMove.selectpicker('val', options.move ? '1' : '0');
-                $inputSectionOffset.val(options.section_offset);
+                $inputShapeOffset.val(options.shape_offset);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
                 $selectRectangleCentered.selectpicker('val', options.rectangle_centered ? '1' : '0');
                 $selectBoxCentered.selectpicker('val', options.box_centered ? '1' : '0');
@@ -63,7 +63,7 @@
             });
             $selectPushPull.selectpicker(SELECT_PICKER_OPTIONS);
             $selectMove.selectpicker(SELECT_PICKER_OPTIONS);
-            $inputSectionOffset.ladbTextinputDimension();
+            $inputShapeOffset.ladbTextinputDimension();
             $selectConstrution.selectpicker(SELECT_PICKER_OPTIONS);
             $selectRectangleCentered.selectpicker(SELECT_PICKER_OPTIONS);
             $selectBoxCentered.selectpicker(SELECT_PICKER_OPTIONS);
@@ -86,9 +86,9 @@
 
             // Focus
             if (that.options.focused_field) {
-                if (that.options.focused_field.option === 'section_offset') {
-                    $inputSectionOffset.focus();
-                    $inputSectionOffset.select();
+                if (that.options.focused_field.option === 'shape_offset') {
+                    $inputShapeOffset.focus();
+                    $inputShapeOffset.select();
                 }
             }
 

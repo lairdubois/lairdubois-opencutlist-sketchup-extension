@@ -31,8 +31,8 @@
             var $widgetPreset = $('.ladb-widget-preset', that.$element);
             var $selectPushPull = $('#ladb_select_pushpull', that.$element);
             var $selectMove = $('#ladb_select_move', that.$element);
-            var $inputSectionOffset = $('#ladb_input_section_offset', that.$element);
-            var $inputSegmentCount = $('#ladb_input_segment_count', that.$element);
+            var $inputSectionOffset = $('#ladb_input_shape_offset', that.$element);
+            var $inputShapeOffset = $('#ladb_input_segment_count', that.$element);
             var $selectConstrution = $('#ladb_select_construction', that.$element);
             var $selectBoxCentered = $('#ladb_select_box_centered', that.$element);
             var $btnValidate = $('#ladb_btn_validate', that.$element);
@@ -40,16 +40,16 @@
             var fnFetchOptions = function (options) {
                 options.pushpull = $selectPushPull.val() === '1';
                 options.move = $selectMove.val() === '1';
-                options.section_offset = $inputSectionOffset.val();
-                options.segment_count = parseInt($inputSegmentCount.val());
+                options.shape_offset = $inputSectionOffset.val();
+                options.segment_count = parseInt($inputShapeOffset.val());
                 options.construction = $selectConstrution.val() === '1';
                 options.box_centered = $selectBoxCentered.val() === '1';
             };
             var fnFillInputs = function (options) {
                 $selectPushPull.selectpicker('val', options.pushpull ? '1' : '0');
                 $selectMove.selectpicker('val', options.move ? '1' : '0');
-                $inputSectionOffset.val(options.section_offset);
-                $inputSegmentCount.val(options.segment_count);
+                $inputSectionOffset.val(options.shape_offset);
+                $inputShapeOffset.val(options.segment_count);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
                 $selectBoxCentered.selectpicker('val', options.box_centered ? '1' : '0');
             };
@@ -64,7 +64,7 @@
             $selectPushPull.selectpicker(SELECT_PICKER_OPTIONS);
             $selectMove.selectpicker(SELECT_PICKER_OPTIONS);
             $inputSectionOffset.ladbTextinputDimension();
-            $inputSegmentCount.ladbTextinputNumberWithUnit({
+            $inputShapeOffset.ladbTextinputNumberWithUnit({
                 resetValue: '24'
             });
             $selectConstrution.selectpicker(SELECT_PICKER_OPTIONS);
@@ -93,12 +93,12 @@
 
             // Focus
             if (that.options.focused_field) {
-                if (that.options.focused_field.option === 'section_offset') {
+                if (that.options.focused_field.option === 'shape_offset') {
                     $inputSectionOffset.focus();
                     $inputSectionOffset.select();
                 } else if (that.options.focused_field.option === 'segment_count') {
-                    $inputSegmentCount.focus();
-                    $inputSegmentCount.select();
+                    $inputShapeOffset.focus();
+                    $inputShapeOffset.select();
                 }
             }
 
