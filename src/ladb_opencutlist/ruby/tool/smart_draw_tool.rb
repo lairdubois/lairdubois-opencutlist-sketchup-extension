@@ -686,18 +686,18 @@ module Ladb::OpenCutList
 
       if @mouse_ip.degrees_of_freedom > 2 ||
         @mouse_ip.instance_path.length == 0 ||
-        @mouse_ip.position.on_plane?([@picked_shape_last_ip.position, @normal ]) ||
+        @mouse_ip.position.on_plane?([ @picked_shape_last_ip.position, @normal ]) ||
         @mouse_ip.face && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(@normal) ||
         @mouse_ip.edge && @mouse_ip.degrees_of_freedom == 1 && !@mouse_ip.edge.start.position.vector_to(@mouse_ip.edge.end.position).transform(@mouse_ip.transformation).perpendicular?(@normal)
 
-        picked_point, _ = Geom::closest_points([@picked_shape_last_ip.position, @normal ], view.pickray(x, y))
+        picked_point, _ = Geom::closest_points([ @picked_shape_last_ip.position, @normal ], view.pickray(x, y))
         @snap_ip = Sketchup::InputPoint.new(picked_point)
         @mouse_ip.copy!(@snap_ip) # Set display? to false
 
       else
 
         # Force picked point to be projected to shape last picked point normal line
-        @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_line([@picked_shape_last_ip.position, @normal ]))
+        @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_line([ @picked_shape_last_ip.position, @normal ]))
 
       end
 
@@ -785,7 +785,7 @@ module Ladb::OpenCutList
 
       unit = @tool.get_unit
 
-      d_screen_point = view.screen_coords(bounds.min.offset(Z_AXIS, bounds.depth / 2).transform(t))
+      d_screen_point = view.screen_coords(p1.project_to_plane([ bounds.min, Z_AXIS ]).offset(Z_AXIS, bounds.depth / 2).transform(t))
 
       k_label_d = Kuix::Label.new
       k_label_d.text = bounds.depth.to_s
@@ -1158,13 +1158,13 @@ module Ladb::OpenCutList
 
     def _snap_shape_points(flags, x, y, view)
 
-      ground_plane = [@picked_shape_first_ip.position, _get_active_z_axis ]
+      ground_plane = [ @picked_shape_first_ip.position, _get_active_z_axis ]
 
       if @mouse_ip.vertex
 
         if @locked_normal
 
-          locked_plane = [@picked_shape_first_ip.position, @locked_normal ]
+          locked_plane = [ @picked_shape_first_ip.position, @locked_normal ]
 
           @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
           @normal = @locked_normal
@@ -1173,11 +1173,11 @@ module Ladb::OpenCutList
 
           @normal = _get_active_z_axis
 
-        elsif @mouse_ip.position.on_plane?([@picked_shape_first_ip.position, _get_active_x_axis ])
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_ip.position, _get_active_x_axis ])
 
           @normal = _get_active_x_axis
 
-        elsif @mouse_ip.position.on_plane?([@picked_shape_first_ip.position, _get_active_y_axis ])
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_ip.position, _get_active_y_axis ])
 
           @normal = _get_active_y_axis
 
@@ -1211,20 +1211,20 @@ module Ladb::OpenCutList
 
         if @locked_normal
 
-          locked_plane = [@picked_shape_first_ip.position, @locked_normal ]
+          locked_plane = [ @picked_shape_first_ip.position, @locked_normal ]
 
           @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
           @normal = @locked_normal
 
-        elsif @mouse_ip.position.on_plane?([@picked_shape_first_ip.position, _get_active_z_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_z_axis)
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_ip.position, _get_active_z_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_z_axis)
 
           @normal = _get_active_z_axis
 
-        elsif @mouse_ip.position.on_plane?([@picked_shape_first_ip.position, _get_active_x_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_x_axis)
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_ip.position, _get_active_x_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_x_axis)
 
           @normal = _get_active_x_axis
 
-        elsif @mouse_ip.position.on_plane?([@picked_shape_first_ip.position, _get_active_y_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_y_axis)
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_ip.position, _get_active_y_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_y_axis)
 
           @normal = _get_active_y_axis
 
@@ -1232,7 +1232,7 @@ module Ladb::OpenCutList
 
           unless @picked_shape_first_ip.position.on_line?(edge_manipulator.line)
 
-            plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([@picked_shape_first_ip.position, edge_manipulator.start_point, edge_manipulator.end_point ]))
+            plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_first_ip.position, edge_manipulator.start_point, edge_manipulator.end_point ]))
 
             @normal = plane_manipulator.normal
 
@@ -1260,7 +1260,7 @@ module Ladb::OpenCutList
 
         if @locked_normal
 
-          locked_plane = [@picked_shape_first_ip.position, @locked_normal ]
+          locked_plane = [ @picked_shape_first_ip.position, @locked_normal ]
 
           @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
           @normal = @locked_normal
@@ -1305,7 +1305,7 @@ module Ladb::OpenCutList
 
         if @locked_normal
 
-          locked_plane = [@picked_shape_first_ip.position, @locked_normal ]
+          locked_plane = [ @picked_shape_first_ip.position, @locked_normal ]
 
           if @mouse_ip.degrees_of_freedom > 2
             @snap_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), locked_plane))
@@ -1648,7 +1648,7 @@ module Ladb::OpenCutList
 
       if @locked_normal
 
-        locked_plane = [@picked_shape_first_ip.position, @locked_normal ]
+        locked_plane = [ @picked_shape_first_ip.position, @locked_normal ]
 
         if @mouse_ip.degrees_of_freedom > 2
           @snap_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), locked_plane))
@@ -1659,7 +1659,7 @@ module Ladb::OpenCutList
 
       else
 
-        plane = [@picked_shape_first_ip.position, @normal ]
+        plane = [ @picked_shape_first_ip.position, @normal ]
 
         if @mouse_ip.degrees_of_freedom > 2
           @snap_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), plane))
@@ -1790,7 +1790,7 @@ module Ladb::OpenCutList
       p1 = points[0].transform(ti)
       p2 = points[1].transform(ti)
 
-      segment_count = [ _fetch_option_segment_count, 3 ].max
+      segment_count = [ 999, [ _fetch_option_segment_count, 3 ].max ].min
       unit_angle = Geometrix::TWO_PI / segment_count
       start_angle = X_AXIS.angle_between(Geom::Vector3d.new(*p2.to_a))
       start_angle *= -1 if p2.y < 0
@@ -1888,15 +1888,6 @@ module Ladb::OpenCutList
 
     end
 
-    def onKeyDown(key, repeat, flags, view)
-
-      if key == Kuix::VK_ENTER && !_picked_shape_last_point? && @picked_ips.length >= 3
-        # TODO
-      end
-
-      super
-    end
-
     def onUserText(text, view)
       return true if super
 
@@ -1925,6 +1916,117 @@ module Ladb::OpenCutList
     protected
 
     def _snap_shape_points(flags, x, y, view)
+
+      if @picked_ips.length >= 1
+
+        ph = view.pick_helper(x, y, 50)
+
+        # Test previously picked points
+        @picked_ips.each do |ip|
+          if ph.test_point(ip.position)
+
+            k_points = Kuix::Points.new
+            k_points.add_point(ip.position)
+            k_points.size = 20
+            k_points.style = Kuix::POINT_STYLE_FILLED_SQUARE
+            k_points.color = Kuix::COLOR_BLACK
+            @tool.append_3d(k_points)
+
+            k_points = Kuix::Points.new
+            k_points.add_point(ip.position)
+            k_points.size = 20
+            k_points.line_width = 1
+            k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+            k_points.color = Kuix::COLOR_WHITE
+            @tool.append_3d(k_points)
+
+            @snap_ip.copy!(ip)
+            @mouse_ip.clear
+
+            return
+          end
+        end
+
+        # Test axis alignment
+        p1 = @picked_ips.last.position
+        p2 = @mouse_ip.position
+
+        x_axis = _get_active_x_axis
+        p2_x = p2.project_to_line([ p1, x_axis ])
+        if ph.test_point(p2_x)
+
+          k_line = Kuix::Line.new
+          k_line.position = p2_x
+          k_line.direction = x_axis
+          k_line.color = Kuix::COLOR_X
+          k_line.line_width = 1.5
+          k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          @tool.append_3d(k_line)
+
+          k_points = Kuix::Points.new
+          k_points.add_point(p2_x)
+          k_points.size = 20
+          k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+          k_points.color = Kuix::COLOR_X
+          @tool.append_3d(k_points)
+
+          @snap_ip = Sketchup::InputPoint.new(p2_x)
+          @mouse_ip.clear
+
+          return
+        end
+
+        y_axis = _get_active_y_axis
+        p2_y = p2.project_to_line([ p1, y_axis ])
+        if ph.test_point(p2_y)
+
+          k_line = Kuix::Line.new
+          k_line.position = p2_y
+          k_line.direction = y_axis
+          k_line.color = Kuix::COLOR_Y
+          k_line.line_width = 1.5
+          k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          @tool.append_3d(k_line)
+
+          k_points = Kuix::Points.new
+          k_points.add_point(p2_y)
+          k_points.size = 20
+          k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+          k_points.color = Kuix::COLOR_Y
+          @tool.append_3d(k_points)
+
+          @snap_ip = Sketchup::InputPoint.new(p2_y)
+          @mouse_ip.clear
+
+          return
+        end
+
+        z_axis = _get_active_z_axis
+        p2_z = p2.project_to_line([ p1, z_axis ])
+        if ph.test_point(p2_z)
+
+          k_line = Kuix::Line.new
+          k_line.position = p2_z
+          k_line.direction = z_axis
+          k_line.color = Kuix::COLOR_Z
+          k_line.line_width = 1.5
+          k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          @tool.append_3d(k_line)
+
+          k_points = Kuix::Points.new
+          k_points.add_point(p2_z)
+          k_points.size = 20
+          k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+          k_points.color = Kuix::COLOR_Z
+          @tool.append_3d(k_points)
+
+          @snap_ip = Sketchup::InputPoint.new(p2_z)
+          @mouse_ip.clear
+
+          return
+        end
+
+      end
 
       if @picked_ips.length < 2
 
@@ -2149,43 +2251,12 @@ module Ladb::OpenCutList
 
       else
 
-        # Test previously picked points
-        ph = view.pick_helper(x, y, 50)
-        @picked_ips.each do |ip|
-          if ph.test_point(ip.position)
+        plane = [ @picked_shape_first_ip.position, @normal ]
 
-            k_points = Kuix::Points.new
-            k_points.add_point(ip.position)
-            k_points.size = 20
-            k_points.style = Kuix::POINT_STYLE_FILLED_SQUARE
-            k_points.color = Kuix::COLOR_BLACK
-            @tool.append_3d(k_points)
-
-            k_points = Kuix::Points.new
-            k_points.add_point(ip.position)
-            k_points.size = 20
-            k_points.line_width = 1
-            k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
-            k_points.color = Kuix::COLOR_WHITE
-            @tool.append_3d(k_points)
-
-            @snap_ip.copy!(ip)
-            @mouse_ip.copy!(ip)
-
-            break
-          end
-        end
-
-        unless @snap_ip.valid?
-
-          plane = [ @picked_shape_first_ip.position, @normal ]
-
-          if @mouse_ip.degrees_of_freedom > 2
-            @snap_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), plane))
-          else
-            @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(plane))
-          end
-
+        if @mouse_ip.degrees_of_freedom > 2
+          @snap_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), plane))
+        else
+          @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(plane))
         end
 
       end
