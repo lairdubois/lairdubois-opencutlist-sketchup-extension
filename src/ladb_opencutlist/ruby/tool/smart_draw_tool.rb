@@ -68,6 +68,13 @@ module Ladb::OpenCutList
 
     def initialize
       super
+
+      # Create cursors
+      @cursor_pencil = create_cursor('pencil', 0, 31)
+      @cursor_pencil_rectangle = create_cursor('pencil-rectangle', 0, 31)
+      @cursor_pencil_circle = create_cursor('pencil-circle', 0, 31)
+      @cursor_pencil_polygon = create_cursor('pencil-polygon', 0, 31)
+
     end
 
     def get_stripped_name
@@ -84,11 +91,11 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_DRAW_RECTANGLE
-          return CURSOR_RECTANGLE
+          return @cursor_pencil_rectangle
       when ACTION_DRAW_CIRCLE
-          return CURSOR_RECTANGLE
+          return @cursor_pencil_circle
       when ACTION_DRAW_POLYGON
-          return CURSOR_PENCIL
+          return @cursor_pencil_polygon
       end
 
       super
