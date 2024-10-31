@@ -321,8 +321,6 @@ module Ladb::OpenCutList
       puts "instance_path.length = #{@mouse_ip.instance_path.length}"
       puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
       puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
-      puts "view.inference_locked? = #{view.inference_locked?}"
-      puts "@down_ip.valid? = #{@down_ip.valid?}"
       puts "---"
 
       @tool.remove_all_3d
@@ -1948,83 +1946,86 @@ module Ladb::OpenCutList
         end
 
         # Test axis alignment
-        p1 = @picked_ips.last.position
-        p2 = @mouse_ip.position
-
-        x_axis = _get_active_x_axis
-        p2_x = p2.project_to_line([ p1, x_axis ])
-        if ph.test_point(p2_x)
-
-          k_line = Kuix::Line.new
-          k_line.position = p2_x
-          k_line.direction = x_axis
-          k_line.color = Kuix::COLOR_X
-          k_line.line_width = 1.5
-          k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-          @tool.append_3d(k_line)
-
-          k_points = Kuix::Points.new
-          k_points.add_point(p2_x)
-          k_points.size = 20
-          k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
-          k_points.color = Kuix::COLOR_X
-          @tool.append_3d(k_points)
-
-          @snap_ip = Sketchup::InputPoint.new(p2_x)
-          @mouse_ip.clear
-
-          return
-        end
-
-        y_axis = _get_active_y_axis
-        p2_y = p2.project_to_line([ p1, y_axis ])
-        if ph.test_point(p2_y)
-
-          k_line = Kuix::Line.new
-          k_line.position = p2_y
-          k_line.direction = y_axis
-          k_line.color = Kuix::COLOR_Y
-          k_line.line_width = 1.5
-          k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-          @tool.append_3d(k_line)
-
-          k_points = Kuix::Points.new
-          k_points.add_point(p2_y)
-          k_points.size = 20
-          k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
-          k_points.color = Kuix::COLOR_Y
-          @tool.append_3d(k_points)
-
-          @snap_ip = Sketchup::InputPoint.new(p2_y)
-          @mouse_ip.clear
-
-          return
-        end
-
-        z_axis = _get_active_z_axis
-        p2_z = p2.project_to_line([ p1, z_axis ])
-        if ph.test_point(p2_z)
-
-          k_line = Kuix::Line.new
-          k_line.position = p2_z
-          k_line.direction = z_axis
-          k_line.color = Kuix::COLOR_Z
-          k_line.line_width = 1.5
-          k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-          @tool.append_3d(k_line)
-
-          k_points = Kuix::Points.new
-          k_points.add_point(p2_z)
-          k_points.size = 20
-          k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
-          k_points.color = Kuix::COLOR_Z
-          @tool.append_3d(k_points)
-
-          @snap_ip = Sketchup::InputPoint.new(p2_z)
-          @mouse_ip.clear
-
-          return
-        end
+        # p1 = @picked_ips.last.position
+        # ray = view.pickray(x, y)
+        #
+        # x_axis = _get_active_x_axis
+        # z_plane = [ p1, _get_active_z_axis ]
+        # p2_x = Geom.intersect_line_plane(ray, z_plane).project_to_line([ p1, x_axis ])
+        # if ph.test_point(p2_x)
+        #
+        #   k_line = Kuix::Line.new
+        #   k_line.position = p2_x
+        #   k_line.direction = x_axis
+        #   k_line.color = Kuix::COLOR_X
+        #   k_line.line_width = 1.5
+        #   k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        #   @tool.append_3d(k_line)
+        #
+        #   k_points = Kuix::Points.new
+        #   k_points.add_point(p2_x)
+        #   k_points.size = 20
+        #   k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+        #   k_points.color = Kuix::COLOR_X
+        #   @tool.append_3d(k_points)
+        #
+        #   @snap_ip = Sketchup::InputPoint.new(p2_x)
+        #   @mouse_ip.clear
+        #
+        #   return
+        # end
+        #
+        # y_axis = _get_active_y_axis
+        # z_plane = [ p1, _get_active_z_axis ]
+        # p2_y = Geom.intersect_line_plane(ray, z_plane).project_to_line([ p1, y_axis ])
+        # if ph.test_point(p2_y)
+        #
+        #   k_line = Kuix::Line.new
+        #   k_line.position = p2_y
+        #   k_line.direction = y_axis
+        #   k_line.color = Kuix::COLOR_Y
+        #   k_line.line_width = 1.5
+        #   k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        #   @tool.append_3d(k_line)
+        #
+        #   k_points = Kuix::Points.new
+        #   k_points.add_point(p2_y)
+        #   k_points.size = 20
+        #   k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+        #   k_points.color = Kuix::COLOR_Y
+        #   @tool.append_3d(k_points)
+        #
+        #   @snap_ip = Sketchup::InputPoint.new(p2_y)
+        #   @mouse_ip.clear
+        #
+        #   return
+        # end
+        #
+        # z_axis = _get_active_z_axis
+        # x_plane = [ p1, _get_active_x_axis ]
+        # p2_z = Geom.intersect_line_plane(ray, x_plane).project_to_line([ p1, z_axis ])
+        # if ph.test_point(p2_z)
+        #
+        #   k_line = Kuix::Line.new
+        #   k_line.position = p2_z
+        #   k_line.direction = z_axis
+        #   k_line.color = Kuix::COLOR_Z
+        #   k_line.line_width = 1.5
+        #   k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        #   @tool.append_3d(k_line)
+        #
+        #   k_points = Kuix::Points.new
+        #   k_points.add_point(p2_z)
+        #   k_points.size = 20
+        #   k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+        #   k_points.color = Kuix::COLOR_Z
+        #   @tool.append_3d(k_points)
+        #
+        #   @snap_ip = Sketchup::InputPoint.new(p2_z)
+        #   @mouse_ip.clear
+        #
+        #   return
+        # end
 
       end
 
