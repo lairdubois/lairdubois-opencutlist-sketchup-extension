@@ -129,7 +129,7 @@ module Ladb::OpenCutList
       when ACTION_OPTION_OFFSET
         case option
         when ACTION_OPTION_OFFSET_SHAPE_OFFSET
-          return Kuix::Label.new(fetch_action_option_value(action, option_group, option))
+          return Kuix::Label.new(fetch_action_option_value(action, option_group, option).to_s)
         end
       when ACTION_OPTION_SEGMENTS
         case option
@@ -505,10 +505,10 @@ module Ladb::OpenCutList
 
     def onUserText(text, view)
 
-      if text.end_with?('o')
+      if text.end_with?('x')
 
         offset = text.to_i
-        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset, true)
+        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset.to_s, true)
         _refresh
 
         return true
@@ -1917,11 +1917,11 @@ module Ladb::OpenCutList
 
       if @picked_ips.length >= 1
 
-        ph = view.pick_helper(x, y, 50)
+        ph = view.pick_helper
 
         # Test previously picked points
         @picked_ips.each do |ip|
-          if ph.test_point(ip.position)
+          if ph.test_point(ip.position, x, y, 50)
 
             k_points = Kuix::Points.new
             k_points.add_point(ip.position)
@@ -1952,7 +1952,7 @@ module Ladb::OpenCutList
         # x_axis = _get_active_x_axis
         # z_plane = [ p1, _get_active_z_axis ]
         # p2_x = Geom.intersect_line_plane(ray, z_plane).project_to_line([ p1, x_axis ])
-        # if ph.test_point(p2_x)
+        # if ph.test_point(p2_x, x, y, 50))
         #
         #   k_line = Kuix::Line.new
         #   k_line.position = p2_x
@@ -1978,7 +1978,7 @@ module Ladb::OpenCutList
         # y_axis = _get_active_y_axis
         # z_plane = [ p1, _get_active_z_axis ]
         # p2_y = Geom.intersect_line_plane(ray, z_plane).project_to_line([ p1, y_axis ])
-        # if ph.test_point(p2_y)
+        # if ph.test_point(p2_y, x, y, 50))
         #
         #   k_line = Kuix::Line.new
         #   k_line.position = p2_y
@@ -2004,7 +2004,7 @@ module Ladb::OpenCutList
         # z_axis = _get_active_z_axis
         # x_plane = [ p1, _get_active_x_axis ]
         # p2_z = Geom.intersect_line_plane(ray, x_plane).project_to_line([ p1, z_axis ])
-        # if ph.test_point(p2_z)
+        # if ph.test_point(p2_z, x, y, 50))
         #
         #   k_line = Kuix::Line.new
         #   k_line.position = p2_z
@@ -2368,8 +2368,9 @@ module Ladb::OpenCutList
       shape_offset = _fetch_option_shape_offset
       points = _get_local_shape_points
       return points if shape_offset == 0 || points.length < 3
+      paths, _ = Fiddle::Clippy.execute_union( closed_subjects: [ Fiddle::Clippy.points_to_rpath(points) ] )
       Fiddle::Clippy.rpath_to_points(Fiddle::Clippy.inflate_paths(
-        paths: [ Fiddle::Clippy.points_to_rpath(points) ],
+        paths: paths,
         delta: shape_offset,
         join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
         miter_limit: 100.0
