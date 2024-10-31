@@ -16,7 +16,7 @@ DLL_EXPORTS CPathsDSolution* c_boolean_op(
         CPathD clips
 ) {
 
-    auto* solution = (CPathsDSolution*) malloc(sizeof(CPathsDSolution));
+    auto* solution = CreateEmptyCPathsDSolution();
 
     solution->error = Clipper2Lib::BooleanOpD(
             clip_type,
@@ -42,7 +42,7 @@ DLL_EXPORTS CPolyTreeDSolution* c_boolean_op_polytree(
         CPathD clips
 ) {
 
-    auto* solution = (CPolyTreeDSolution*) malloc(sizeof(CPolyTreeDSolution));
+    auto* solution = CreateEmptyCPolyTreeDSolution();
 
     solution->error = Clipper2Lib::BooleanOp_PolyTreeD(
             clip_type,
@@ -68,7 +68,7 @@ DLL_EXPORTS CPathsDSolution* c_inflate_paths(
         int reverse_solution
 ) {
 
-    auto* solution = (CPathsDSolution*) malloc(sizeof(CPathsDSolution));
+    auto* solution = CreateEmptyCPathsDSolution();
 
     solution->error = Clipper2Lib::InflatePathsD(
             paths,

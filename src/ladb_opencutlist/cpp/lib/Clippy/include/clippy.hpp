@@ -20,6 +20,22 @@ typedef struct {
     int error;
 } CPolyTreeDSolution;
 
+static CPathsDSolution* CreateEmptyCPathsDSolution() {
+    auto* solution = (CPathsDSolution*) malloc(sizeof(CPathsDSolution));
+    solution->closed_paths = nullptr;
+    solution->open_paths = nullptr;
+    solution->error = 0;
+    return solution;
+}
+
+static CPolyTreeDSolution* CreateEmptyCPolyTreeDSolution() {
+    auto* solution = (CPolyTreeDSolution*) malloc(sizeof(CPolyTreeDSolution));
+    solution->polytree = nullptr;
+    solution->open_paths = nullptr;
+    solution->error = 0;
+    return solution;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
