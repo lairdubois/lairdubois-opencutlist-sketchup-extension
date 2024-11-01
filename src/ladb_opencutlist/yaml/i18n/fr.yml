@@ -1802,6 +1802,7 @@ tool:
     action_option_tools_pushpull_status: Activer Pousser/Tirer après le dessin de la forme
     action_option_tools_move_status: Activer Copier/Déplacer après la création de la pièce
     action_option_offset_shape_offset_status: Permet d'appliquer un décalage au tracé de la forme dessinée
+    action_option_segments_segment_count_status: Permet de définir le nombre de segments du cercle
     action_option_options_construction_status: Dessiner un squelette de construction
     action_option_options_rectangle_centered_status: Centrer le rectangle sur le premier point
     action_option_options_box_centered_status: Centrer l'élévation sur le premier point
