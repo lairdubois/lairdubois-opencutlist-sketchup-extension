@@ -169,6 +169,10 @@ module Ladb::OpenCutList
       fetch_action == ACTION_DRAW_POLYGON
     end
 
+    def set_action_handler(action_handler)
+      @action_handler = action_handler
+    end
+
     # -- Events --
 
     def onActivate(view)
@@ -223,11 +227,11 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_DRAW_RECTANGLE
-        @action_handler = SmartDrawRectangleActionHandler.new(self)
+        set_action_handler(SmartDrawRectangleActionHandler.new(self))
       when ACTION_DRAW_CIRCLE
-        @action_handler = SmartDrawCircleActionHandler.new(self)
+        set_action_handler(SmartDrawCircleActionHandler.new(self))
       when ACTION_DRAW_POLYGON
-        @action_handler = SmartDrawPolygonActionHandler.new(self)
+        set_action_handler(SmartDrawPolygonActionHandler.new(self))
       end
 
       super
@@ -281,8 +285,10 @@ module Ladb::OpenCutList
 
   class SmartDrawActionHandler < SmartActionHandler
 
-    def initialize(action, tool)
-      super
+    def initialize(action, tool, action_handler = nil)
+      super(action, tool)
+
+      @previous_action_handler = action_handler
 
       @mouse_ip = Sketchup::InputPoint.new
       @down_ip = Sketchup::InputPoint.new
@@ -297,6 +303,8 @@ module Ladb::OpenCutList
 
       @direction = nil
       @normal = _get_active_z_axis
+
+      @instances = []
 
     end
 
@@ -318,17 +326,17 @@ module Ladb::OpenCutList
     def onMouseMove(flags, x, y, view)
 
       @snap_ip.clear
-      @mouse_ip.pick(view, x, y)
+      @mouse_ip.pick(view, x, y, _get_previous_input_point)
 
-      SKETCHUP_CONSOLE.clear
-      puts "---"
-      puts "vertex = #{@mouse_ip.vertex}"
-      puts "edge = #{@mouse_ip.edge}"
-      puts "face = #{@mouse_ip.face}"
-      puts "instance_path.length = #{@mouse_ip.instance_path.length}"
-      puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
-      puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
-      puts "---"
+      # SKETCHUP_CONSOLE.clear
+      # puts "---"
+      # puts "vertex = #{@mouse_ip.vertex}"
+      # puts "edge = #{@mouse_ip.edge}"
+      # puts "face = #{@mouse_ip.face}"
+      # puts "instance_path.length = #{@mouse_ip.instance_path.length}"
+      # puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
+      # puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
+      # puts "---"
 
       @tool.remove_all_3d
       @tool.remove_all_2d
@@ -393,7 +401,7 @@ module Ladb::OpenCutList
               _refresh
             else
               _create_entity
-              _reset
+              _restart
             end
           end
         else
@@ -407,7 +415,7 @@ module Ladb::OpenCutList
             @tool.push_cursor(SmartDrawTool::CURSOR_MOVE)
             _refresh
           else
-            _reset
+            _restart
           end
         else
           UI.beep
@@ -415,7 +423,7 @@ module Ladb::OpenCutList
       elsif !_picked_move_point?
         @picked_move_ip.copy!(@snap_ip)
         _copy_entity
-        _reset
+        _restart
       else
         UI.beep
       end
@@ -512,6 +520,22 @@ module Ladb::OpenCutList
 
     def onUserText(text, view)
 
+      if !_picked_shape_first_point? && @previous_action_handler
+
+        if @previous_action_handler._picked_move_point?
+
+          if (match = /^([*\/])(\d+)$/.match(text))
+
+            operator, value = match[1, 2]
+            @previous_action_handler._copy_entity(operator, value.to_i)
+
+          end
+
+        end
+
+        return
+      end
+
       if text.end_with?('x')
 
         offset = text.to_i
@@ -535,7 +559,7 @@ module Ladb::OpenCutList
         @picked_move_ip = Sketchup::InputPoint.new(p3.offset(v, distance).transform(t))
 
         _copy_entity
-        _reset
+        _restart
 
         Sketchup.vcb_value = ''
 
@@ -563,7 +587,7 @@ module Ladb::OpenCutList
           @tool.push_cursor(SmartDrawTool::CURSOR_MOVE)
           _refresh
         else
-          _reset
+          _restart
         end
 
         Sketchup.vcb_value = ''
@@ -588,6 +612,11 @@ module Ladb::OpenCutList
 
     protected
 
+    def _get_previous_input_point
+      return @picked_pushpull_ip if _picked_pushpull_point? && !_picked_move_point?
+      nil
+    end
+
     def _picked_shape_first_point?
       @picked_shape_first_ip.valid?
     end
@@ -608,40 +637,59 @@ module Ladb::OpenCutList
 
     def _snap_first_shape_point(flags, x, y, view)
 
-      if @mouse_ip.vertex
+      if @locked_normal
 
-        vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
+        @normal = @locked_normal
 
-        # k_points = Kuix::Points.new
-        # k_points.add_points([ vertex_manipulator.point ])
-        # k_points.size = 30
-        # k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
-        # k_points.color = Kuix::COLOR_MAGENTA
-        # @tool.append_3d(k_points)
+      else
 
-        # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
-        #
-        #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
-        #
-        #   k_mesh = Kuix::Mesh.new
-        #   k_mesh.add_triangles(face_manipulator.triangles)
-        #   k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
-        #   @tool.append_3d(k_mesh)
-        #
-        # end
+        if @mouse_ip.vertex
 
-      elsif @mouse_ip.edge
+          vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
 
-        # edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
-        #
-        # k_segments = Kuix::Segments.new
-        # k_segments.add_segments(edge_manipulator.segment)
-        # k_segments.color = Kuix::COLOR_MAGENTA
-        # k_segments.line_width = 4
-        # k_segments.on_top = true
-        # @tool.append_3d(k_segments)
+          # k_points = Kuix::Points.new
+          # k_points.add_points([ vertex_manipulator.point ])
+          # k_points.size = 30
+          # k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+          # k_points.color = Kuix::COLOR_MAGENTA
+          # @tool.append_3d(k_points)
 
-        if @mouse_ip.face && @mouse_ip.edge.faces.include?(@mouse_ip.face)
+          # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
+          #
+          #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+          #
+          #   k_mesh = Kuix::Mesh.new
+          #   k_mesh.add_triangles(face_manipulator.triangles)
+          #   k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
+          #   @tool.append_3d(k_mesh)
+          #
+          # end
+
+        elsif @mouse_ip.edge
+
+          # edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
+          #
+          # k_segments = Kuix::Segments.new
+          # k_segments.add_segments(edge_manipulator.segment)
+          # k_segments.color = Kuix::COLOR_MAGENTA
+          # k_segments.line_width = 4
+          # k_segments.on_top = true
+          # @tool.append_3d(k_segments)
+
+          if @mouse_ip.face && @mouse_ip.edge.faces.include?(@mouse_ip.face)
+
+            face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+
+            @normal = face_manipulator.normal
+
+            # k_mesh = Kuix::Mesh.new
+            # k_mesh.add_triangles(face_manipulator.triangles)
+            # k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
+            # @tool.append_3d(k_mesh)
+
+          end
+
+        elsif @mouse_ip.face && @mouse_ip.instance_path.length > 0
 
           face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
 
@@ -649,26 +697,15 @@ module Ladb::OpenCutList
 
           # k_mesh = Kuix::Mesh.new
           # k_mesh.add_triangles(face_manipulator.triangles)
-          # k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
+          # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
           # @tool.append_3d(k_mesh)
 
+        elsif @locked_normal.nil?
+
+          @direction = nil
+          @normal = _get_active_z_axis
+
         end
-
-      elsif @mouse_ip.face && @mouse_ip.instance_path.length > 0
-
-        face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
-
-        @normal = face_manipulator.normal
-
-        # k_mesh = Kuix::Mesh.new
-        # k_mesh.add_triangles(face_manipulator.triangles)
-        # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
-        # @tool.append_3d(k_mesh)
-
-      elsif @locked_normal.nil?
-
-        @direction = nil
-        @normal = _get_active_z_axis
 
       end
 
@@ -937,6 +974,15 @@ module Ladb::OpenCutList
       @direction = nil
       @locked_normal = nil
       @normal = _get_active_z_axis
+      @instances.clear
+      @tool.remove_all_2d
+      @tool.remove_all_3d
+      @tool.pop_to_root_cursor
+      Sketchup.vcb_value = ''
+    end
+
+    def _restart
+      @tool.set_action_handler(self.class.new(@tool, self))
       @tool.remove_all_2d
       @tool.remove_all_3d
       @tool.pop_to_root_cursor
@@ -1004,7 +1050,7 @@ module Ladb::OpenCutList
 
         end
 
-        @entity = group
+        @instances << group
 
       else
 
@@ -1023,7 +1069,7 @@ module Ladb::OpenCutList
 
         end
 
-        @entity = model.active_entities.add_instance(definition, t)
+        @instances << model.active_entities.add_instance(definition, t)
 
       end
 
@@ -1031,8 +1077,8 @@ module Ladb::OpenCutList
 
     end
 
-    def _copy_entity
-      return if @entity.nil?
+    def _copy_entity(operator = '*', number = 1)
+      return if @instances.empty?
 
       t = _get_transformation
       ti = t.inverse
@@ -1040,11 +1086,29 @@ module Ladb::OpenCutList
       points = _get_picked_points
       p3 = points[2].transform(ti)
       p4 = points[3].transform(ti)
+      v = p3.vector_to(p4)
+      instance = @instances.first
 
       model = Sketchup.active_model
       model.start_operation('Copy Part', true)
 
-      model.active_entities.add_instance(@entity.definition, @entity.transformation * Geom::Transformation.translation(p3.vector_to(p4)))
+      if @instances.length > 1
+        @instances[1..-1].each { |instance| instance.erase! }
+        @instances.clear
+        @instances << instance
+      end
+
+      if operator == '*'
+        ut = Geom::Transformation.translation(v)
+      elsif operator == '/'
+        vv = Geom::Vector3d.new(v)
+        vv.length /= number
+        ut = Geom::Transformation.translation(vv)
+      end
+
+      number.times do
+        @instances << model.active_entities.add_instance(instance.definition, @instances.last.transformation * ut)
+      end
 
       model.commit_operation
 
@@ -1111,8 +1175,8 @@ module Ladb::OpenCutList
 
   class SmartDrawRectangleActionHandler < SmartDrawActionHandler
 
-    def initialize(tool)
-      super(SmartDrawTool::ACTION_DRAW_RECTANGLE, tool)
+    def initialize(tool, action_handler = nil)
+      super(SmartDrawTool::ACTION_DRAW_RECTANGLE, tool, action_handler)
     end
 
     def onKeyUp(key, repeat, flags, view)
@@ -1160,13 +1224,13 @@ module Ladb::OpenCutList
             Sketchup.vcb_value = ''
           else
             @picked_pushpull_ip.copy!(@picked_shape_last_ip)
+            _create_entity
             if _fetch_option_tool_move
               @tool.push_cursor(SmartDrawTool::CURSOR_MOVE)
               _refresh
               Sketchup.vcb_value = ''
             else
-              _create_entity
-              _reset
+              _restart
             end
           end
 
@@ -1185,7 +1249,7 @@ module Ladb::OpenCutList
           @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
 
           _create_entity
-          _reset
+          _restart
 
           Sketchup.vcb_value = ''
 
@@ -1404,6 +1468,25 @@ module Ladb::OpenCutList
       super
     end
 
+    # -----
+
+    def _preview_first_point(view)
+
+      width = view.pixels_to_model(20, @snap_ip.position)
+      height = width * 2.0
+
+      k_rectangle = Kuix::RectangleMotif.new
+      k_rectangle.bounds.size.set!(width, height)
+      k_rectangle.line_width = @locked_normal ? 3 : 1.5
+      k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
+      k_rectangle.color = _get_normal_color
+      k_rectangle.on_top = true
+      k_rectangle.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@snap_ip.position.to_a)) * _get_transformation
+      k_rectangle.transformation *= Geom::Transformation.translation(Geom::Vector3d.new(-width / 2, -height / 2)) if _fetch_option_rectangle_centered
+      @tool.append_3d(k_rectangle)
+
+    end
+
     def _preview_shape(view)
 
       if _fetch_option_rectangle_centered
@@ -1605,8 +1688,8 @@ module Ladb::OpenCutList
 
   class SmartDrawCircleActionHandler < SmartDrawActionHandler
 
-    def initialize(tool)
-      super(SmartDrawTool::ACTION_DRAW_CIRCLE, tool)
+    def initialize(tool, action_handler = nil)
+      super(SmartDrawTool::ACTION_DRAW_CIRCLE, tool, action_handler)
     end
 
     # -----
@@ -1652,7 +1735,7 @@ module Ladb::OpenCutList
                 Sketchup.vcb_value = ''
               else
                 _create_entity
-                _reset
+                _restart
               end
             end
           end
@@ -1671,7 +1754,7 @@ module Ladb::OpenCutList
           @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
 
           _create_entity
-          _reset
+          _restart
 
           Sketchup.vcb_value = ''
 
@@ -1757,6 +1840,21 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _preview_first_point(view)
+
+      diameter = view.pixels_to_model(40, @snap_ip.position)
+
+      k_circle = Kuix::CircleMotif.new(_fetch_option_segment_count)
+      k_circle.bounds.size.set_all!(diameter)
+      k_circle.line_width = @locked_normal ? 3 : 1.5
+      k_circle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
+      k_circle.color = _get_normal_color
+      k_circle.on_top = true
+      k_circle.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@snap_ip.position.to_a)) * _get_transformation * Geom::Transformation.translation(Geom::Vector3d.new(-diameter / 2, -diameter / 2))
+      @tool.append_3d(k_circle)
+
+    end
 
     def _preview_shape(view)
 
@@ -1918,8 +2016,8 @@ module Ladb::OpenCutList
 
   class SmartDrawPolygonActionHandler < SmartDrawActionHandler
 
-    def initialize(tool)
-      super(SmartDrawTool::ACTION_DRAW_POLYGON, tool)
+    def initialize(tool, action_handler = nil)
+      super(SmartDrawTool::ACTION_DRAW_POLYGON, tool, action_handler)
 
       @picked_ips = []
 
@@ -2408,6 +2506,11 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _get_previous_input_point
+      return super if _picked_shape_last_point?
+      @picked_ips.last
+    end
 
     def _get_picked_points
 

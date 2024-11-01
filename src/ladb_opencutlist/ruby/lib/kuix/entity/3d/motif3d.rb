@@ -107,6 +107,19 @@ module Ladb::OpenCutList::Kuix
 
   end
 
+  class CircleMotif < Motif3d
+
+    def initialize(segment_count = 24, id = nil)
+      delta = 2 * Math::PI / segment_count
+      super([
+
+               Array.new(segment_count + 1) { |i| Geom::Point3d.new(0.5 + 0.5 * Math.cos(i * delta), 0.5 + 0.5 * Math.sin(i * delta)) },
+
+             ], id)
+    end
+
+  end
+
   class RectangleMotif < Motif3d
 
     def initialize(id = nil)
