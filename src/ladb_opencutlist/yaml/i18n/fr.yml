@@ -1806,6 +1806,15 @@ tool:
     action_option_options_construction_status: Dessiner un squelette de construction
     action_option_options_rectangle_centered_status: Centrer le rectangle sur le premier point
     action_option_options_box_centered_status: Centrer l'élévation sur le premier point
+    vcb_size: Cotations
+    vcb_radius: Rayon
+    vcb_distance: Distance
+    error:
+      invalid_length: "La longueur {{ value }} est invalide"
+      invalid_multiplicator: "Le multiplicateur {{ value }} est invalide"
+      invalid_divider: "Le diviseur {{ value }} est invalide"
+      invalid_offset: "Le décalage {{ value }} est invalide"
+      invalid_segment_count: "Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999."
   smart_paint:
     title: Colorier
     default_material: Sans matière

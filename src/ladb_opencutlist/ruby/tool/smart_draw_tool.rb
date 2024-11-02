@@ -301,9 +301,13 @@ module Ladb::OpenCutList
       @locked_normal = nil
       @locked_axis = nil
 
+      @move_anchor = 2
+      @move_copy = true
+
       @direction = nil
       @normal = _get_active_z_axis
 
+      @definition = nil
       @instances = []
 
     end
@@ -328,19 +332,22 @@ module Ladb::OpenCutList
       @snap_ip.clear
       @mouse_ip.pick(view, x, y, _get_previous_input_point)
 
-      # SKETCHUP_CONSOLE.clear
-      # puts "---"
-      # puts "vertex = #{@mouse_ip.vertex}"
-      # puts "edge = #{@mouse_ip.edge}"
-      # puts "face = #{@mouse_ip.face}"
-      # puts "instance_path.length = #{@mouse_ip.instance_path.length}"
-      # puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
-      # puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
-      # puts "---"
+      SKETCHUP_CONSOLE.clear
+      puts "---"
+      puts "vertex = #{@mouse_ip.vertex}"
+      puts "edge = #{@mouse_ip.edge}"
+      puts "face = #{@mouse_ip.face}"
+      puts "instance_path.length = #{@mouse_ip.instance_path.length}"
+      puts "instance_path.leaf = #{@mouse_ip.instance_path.leaf}"
+      puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
+      puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
+      puts "best_picked = #{view.pick_helper(x, y).best_picked}"
+      puts "---"
 
       @tool.remove_all_3d
       @tool.remove_all_2d
 
+      Sketchup.vcb_label = ''
       Sketchup.vcb_value = ''
 
       if _picked_pushpull_point?
@@ -451,6 +458,7 @@ module Ladb::OpenCutList
             view.lock_inference(@picked_pushpull_ip, Sketchup::InputPoint.new(@picked_pushpull_ip.position.offset(x_axis)))
           end
           _refresh
+          return true
         elsif key == VK_LEFT
           y_axis = _get_active_y_axis
           if @locked_axis == y_axis
@@ -461,6 +469,7 @@ module Ladb::OpenCutList
             view.lock_inference(@picked_pushpull_ip, Sketchup::InputPoint.new(@picked_pushpull_ip.position.offset(y_axis)))
           end
           _refresh
+          return true
         elsif key == VK_UP
           z_axis = _get_active_z_axis
           if @locked_axis == z_axis
@@ -471,6 +480,16 @@ module Ladb::OpenCutList
             view.lock_inference(@picked_pushpull_ip, Sketchup::InputPoint.new(@picked_pushpull_ip.position.offset(z_axis)))
           end
           _refresh
+          return true
+        elsif key == ALT_MODIFIER_KEY
+          @move_anchor = (@move_anchor + 1) % 3
+          _refresh
+          return true
+        elsif key == COPY_MODIFIER_KEY
+          @move_copy = !@move_copy
+          @instances.first.visible = @move_copy
+          _refresh
+          return true
         end
       else
         if key == VK_RIGHT
@@ -481,6 +500,7 @@ module Ladb::OpenCutList
             @locked_normal = x_axis
           end
           _refresh
+          return true
         elsif key == VK_LEFT
           y_axis = _get_active_y_axis
           if @locked_normal == y_axis
@@ -489,6 +509,7 @@ module Ladb::OpenCutList
             @locked_normal = y_axis
           end
           _refresh
+          return true
         elsif key == VK_UP
           z_axis = _get_active_z_axis
           if @locked_normal == z_axis
@@ -497,6 +518,7 @@ module Ladb::OpenCutList
             @locked_normal = z_axis
           end
           _refresh
+          return true
         elsif key == VK_DOWN
           if @locked_normal
             @locked_normal = nil
@@ -504,6 +526,7 @@ module Ladb::OpenCutList
             @locked_normal = @normal
           end
           _refresh
+          return true
         end
       end
 
@@ -524,47 +547,59 @@ module Ladb::OpenCutList
 
         if @previous_action_handler._picked_move_point?
 
-          if (match = /^([*\/])(\d+)$/.match(text))
+          if (match = /^([x*\/])(.+)$/.match(text))
 
             operator, value = match[1, 2]
-            @previous_action_handler._copy_entity(operator, value.to_i)
+            factor = value.to_i
+            if factor > 0
+              @previous_action_handler._copy_entity(operator, factor)
+              Sketchup.vcb_value = ''
+            else
+              UI.beep
+              @tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
+            end
 
+            return true
           end
 
         end
 
-        return
       end
 
-      if text.end_with?('x')
+      if (match = /^(.+)x$/.match(text))
 
-        offset = text.to_i
-        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset.to_s, true)
-        _refresh
+        value = match[1]
+
+        begin
+          offset = value.to_l
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset.to_s, true)
+          _refresh
+        rescue ArgumentError
+          UI.beep
+          @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_offset', { :value => value } ] ])
+        end
 
         return true
       elsif _picked_pushpull_point?
 
-        t = _get_transformation
-        ti = t.inverse
+        # Move
 
-        points = _get_picked_points
-        p3 = points[2].transform(ti)
-        p4 = points[3].transform(ti)
-
-        v = p3.vector_to(p4)
+        ps = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ][@move_anchor]
+        pe = @snap_ip.position
+        v = ps.vector_to(pe)
 
         distance = _read_user_text_length(text, v.length)
+        return true if distance.nil?
 
-        @picked_move_ip = Sketchup::InputPoint.new(p3.offset(v, distance).transform(t))
+        @picked_move_ip = Sketchup::InputPoint.new(ps.offset(v, distance))
 
         _copy_entity
         _restart
 
-        Sketchup.vcb_value = ''
-
         return true
       elsif _picked_shape_last_point?
+
+        # PushPull
 
         t = _get_transformation
         ti = t.inverse
@@ -577,6 +612,7 @@ module Ladb::OpenCutList
 
         base_thickness = p3.z - p2.z
         thickness = _read_user_text_length(text, base_thickness)
+        return true if thickness.nil?
         thickness /= 2 if box_centered
 
         @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, thickness).transform(t))
@@ -613,7 +649,9 @@ module Ladb::OpenCutList
     protected
 
     def _get_previous_input_point
-      return @picked_pushpull_ip if _picked_pushpull_point? && !_picked_move_point?
+      return @picked_shape_first_ip if _picked_shape_first_point? && !_picked_shape_last_point?
+      return @picked_shape_last_ip if _picked_shape_last_point? && !_picked_pushpull_point?
+      return [ @picked_shape_first_ip, @picked_shape_last_ip, @picked_pushpull_ip ][@move_anchor] if _picked_pushpull_point? && !_picked_move_point?
       nil
     end
 
@@ -645,15 +683,15 @@ module Ladb::OpenCutList
 
         if @mouse_ip.vertex
 
-          vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
-
+          # vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
+          #
           # k_points = Kuix::Points.new
           # k_points.add_points([ vertex_manipulator.point ])
           # k_points.size = 30
           # k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
           # k_points.color = Kuix::COLOR_MAGENTA
           # @tool.append_3d(k_points)
-
+          #
           # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
           #
           #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
@@ -722,14 +760,14 @@ module Ladb::OpenCutList
     def _snap_pushpull_point(flags, x, y, view)
 
       if @mouse_ip.degrees_of_freedom > 2 ||
-        @mouse_ip.instance_path.length == 0 ||
+        @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1 ||
         @mouse_ip.position.on_plane?([ @picked_shape_last_ip.position, @normal ]) ||
         @mouse_ip.face && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(@normal) ||
         @mouse_ip.edge && @mouse_ip.degrees_of_freedom == 1 && !@mouse_ip.edge.start.position.vector_to(@mouse_ip.edge.end.position).transform(@mouse_ip.transformation).perpendicular?(@normal)
 
         picked_point, _ = Geom::closest_points([ @picked_shape_last_ip.position, @normal ], view.pickray(x, y))
         @snap_ip = Sketchup::InputPoint.new(picked_point)
-        @mouse_ip.copy!(@snap_ip) # Set display? to false
+        @mouse_ip.clear
 
       else
 
@@ -742,7 +780,7 @@ module Ladb::OpenCutList
 
     def _snap_move_point(flags, x, y, view)
 
-      @snap_ip.copy!(@mouse_ip)
+      @snap_ip.copy!(@mouse_ip) unless @snap_ip.valid?
 
     end
 
@@ -843,6 +881,12 @@ module Ladb::OpenCutList
 
     def _preview_move(view)
 
+      anchors = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ]
+
+      ps = anchors[@move_anchor]
+      pe = @snap_ip.position
+      v = ps.vector_to(pe)
+
       t = _get_transformation
       ti = t.inverse
 
@@ -856,10 +900,24 @@ module Ladb::OpenCutList
       bounds.add(p1, p3)
 
       tt = Geom::Transformation.translation(p2.vector_to(p3))
-      mt = Geom::Transformation.translation(p3.vector_to(p4))
+      mt = Geom::Transformation.translation(ps.transform(ti).vector_to(p4))
 
       o_shape_points = _get_local_shape_points_with_offset
       o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
+
+      unless @move_copy
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(_points_to_segments(o_shape_points))
+        k_segments.add_segments(_points_to_segments(o_top_shape_points))
+        k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
+        k_segments.line_width = 1
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_segments.color = Kuix::COLOR_DARK_GREY
+        k_segments.transformation = t
+        @tool.append_3d(k_segments)
+
+      end
 
       k_segments = Kuix::Segments.new
       k_segments.add_segments(_points_to_segments(o_shape_points))
@@ -867,11 +925,60 @@ module Ladb::OpenCutList
       k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
       k_segments.line_width = 1.5
       k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
-      k_segments.color = _get_normal_color
+      k_segments.color = Kuix::COLOR_BLACK
       k_segments.transformation = t * mt
       @tool.append_3d(k_segments)
 
-      Sketchup.vcb_value = p3.vector_to(p4).length
+      distance = v.length
+
+      unless view.inference_locked? && @mouse_ip.degrees_of_freedom != 1
+
+        # Move line
+
+        k_line = Kuix::LineMotif.new
+        k_line.start.copy!(ps)
+        k_line.end.copy!(pe)
+        k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_line.color = _get_vector_color(v)
+        k_line.on_top = true
+        @tool.append_3d(k_line)
+
+      end
+
+      anchors.each_with_index do |p, i|
+
+        # Anchor points
+
+        k_points = Kuix::Points.new
+        k_points.add_point(p)
+        k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+        k_points.size = 20
+        k_points.line_width = 1.5
+        k_points.color = p == ps ? Kuix::COLOR_RED : Kuix::COLOR_BLACK
+        @tool.append_3d(k_points)
+
+      end
+
+      Sketchup.vcb_value = distance
+
+      if distance > 0
+
+        unit = @tool.get_unit
+
+        screen_point = view.screen_coords(ps.offset(v, distance / 2))
+
+        k_label = Kuix::Label.new
+        k_label.text = distance.to_s
+        k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        k_label.set_style_attribute(:color, Kuix::COLOR_X)
+        k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+        k_label.set_style_attribute(:border_color, _get_vector_color(v))
+        k_label.border.set_all!(unit * 0.25)
+        k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
+        k_label.text_size = unit * 2.5
+        @tool.append_2d(k_label)
+
+      end
 
     end
 
@@ -941,18 +1048,20 @@ module Ladb::OpenCutList
     end
 
     def _get_normal_color
-      return Kuix::COLOR_X if @normal.parallel?(_get_active_x_axis)
-      return Kuix::COLOR_Y if @normal.parallel?(_get_active_y_axis)
-      return Kuix::COLOR_Z if @normal.parallel?(_get_active_z_axis)
-      return Kuix::COLOR_MAGENTA if @normal == @locked_normal
-      Kuix::COLOR_BLACK
+      color = _get_vector_color(@normal)
+      return Kuix::COLOR_MAGENTA if @normal == @locked_normal && color == Kuix::COLOR_BLACK
+      color
     end
 
     def _get_direction_color
-      unless @direction.nil?
-        return Kuix::COLOR_X if @direction.parallel?(_get_active_x_axis)
-        return Kuix::COLOR_Y if @direction.parallel?(_get_active_y_axis)
-        return Kuix::COLOR_Z if @direction.parallel?(_get_active_z_axis)
+      _get_vector_color(@direction)
+    end
+
+    def _get_vector_color(vector)
+      if vector.is_a?(Geom::Vector3d) && vector.valid?
+        return Kuix::COLOR_X if vector.parallel?(_get_active_x_axis)
+        return Kuix::COLOR_Y if vector.parallel?(_get_active_y_axis)
+        return Kuix::COLOR_Z if vector.parallel?(_get_active_z_axis)
       end
       Kuix::COLOR_BLACK
     end
@@ -973,12 +1082,17 @@ module Ladb::OpenCutList
       @picked_move_ip.clear
       @direction = nil
       @locked_normal = nil
+      @locked_axis = nil
+      @move_anchor = 2
+      @direction = nil
       @normal = _get_active_z_axis
       @instances.clear
       @tool.remove_all_2d
       @tool.remove_all_3d
       @tool.pop_to_root_cursor
+      Sketchup.vcb_label = ''
       Sketchup.vcb_value = ''
+      Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
     end
 
     def _restart
@@ -986,7 +1100,9 @@ module Ladb::OpenCutList
       @tool.remove_all_2d
       @tool.remove_all_3d
       @tool.pop_to_root_cursor
+      Sketchup.vcb_label = ''
       Sketchup.vcb_value = ''
+      Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
     end
 
     # -----
@@ -1050,6 +1166,7 @@ module Ladb::OpenCutList
 
         end
 
+        @definition = group.definition
         @instances << group
 
       else
@@ -1069,6 +1186,7 @@ module Ladb::OpenCutList
 
         end
 
+        @definition = definition
         @instances << model.active_entities.add_instance(definition, t)
 
       end
@@ -1083,27 +1201,26 @@ module Ladb::OpenCutList
       t = _get_transformation
       ti = t.inverse
 
-      points = _get_picked_points
-      p3 = points[2].transform(ti)
-      p4 = points[3].transform(ti)
-      v = p3.vector_to(p4)
+      ps = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ][@move_anchor].transform(ti)
+      pe = @picked_move_ip.position.transform(ti)
+      v = ps.vector_to(pe)
       instance = @instances.first
 
       model = Sketchup.active_model
       model.start_operation('Copy Part', true)
 
       if @instances.length > 1
-        @instances[1..-1].each { |instance| instance.erase! }
+        @instances[1..-1].each { |instance| instance.erase! unless instance.deleted? }
         @instances.clear
         @instances << instance
       end
 
-      if operator == '*'
-        ut = Geom::Transformation.translation(v)
-      elsif operator == '/'
+      if operator == '/'
         vv = Geom::Vector3d.new(v)
         vv.length /= number
         ut = Geom::Transformation.translation(vv)
+      else
+        ut = Geom::Transformation.translation(v)
       end
 
       number.times do
@@ -1120,20 +1237,22 @@ module Ladb::OpenCutList
       length = base_length
 
       if text.is_a?(String)
-        if (match = /^([*\/])(\d+(?:[.,]\d+)*)/.match(text))
+        if (match = /^([x*\/])(\d+(?:[.,]\d+)*$)/.match(text))
           operator, value = match[1, 2]
           factor = value.sub(',', '.').to_f
-          if factor != 0
+          if factor > 0
             case operator
-            when '*'
+            when 'x', '*'
               length = base_length * factor
             when '/'
               length = base_length / factor
             end
           else
             UI.beep
+            @tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
+            return nil
           end
-        elsif (match = /^([+-])(.+)/.match(text))
+        elsif (match = /^([+-])(.+)$/.match(text))
           operator, value = match[1, 2]
           begin
             length = value.to_l
@@ -1146,6 +1265,8 @@ module Ladb::OpenCutList
             end
           rescue ArgumentError
             UI.beep
+            @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => value} ] ])
+            return nil
           end
         else
           begin
@@ -1157,6 +1278,8 @@ module Ladb::OpenCutList
             end
           rescue ArgumentError
             UI.beep
+            @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => text } ] ])
+            return nil
           end
         end
       end
@@ -1166,7 +1289,7 @@ module Ladb::OpenCutList
 
     def _points_to_segments(points, closed = true, flatten = true)
       segments = points.each_cons(2).to_a
-      segments << [ points.last, points.first ] if closed
+      segments << [ points.last, points.first ] if closed && !points.empty?
       segments.flatten!(1) if flatten
       segments
     end
@@ -1209,26 +1332,30 @@ module Ladb::OpenCutList
           base_length = p2.x - p1.x
           base_length *= 2 if rectangle_centred
           length = _read_user_text_length(d1, base_length)
+          return true if length.nil?
           length = length / 2 if rectangle_centred
 
           base_width = p2.y - p1.y
           base_width *= 2 if rectangle_centred
           width = _read_user_text_length(d2, base_width)
+          return true if width.nil?
           width = width / 2 if rectangle_centred
 
           @picked_shape_last_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t))
 
           if _fetch_option_tool_pushpull
             @tool.push_cursor(SmartDrawTool::CURSOR_PUSHPULL)
-            _refresh
+            Sketchup.vcb_label = PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
             Sketchup.vcb_value = ''
+            _refresh
           else
             @picked_pushpull_ip.copy!(@picked_shape_last_ip)
             _create_entity
             if _fetch_option_tool_move
               @tool.push_cursor(SmartDrawTool::CURSOR_MOVE)
-              _refresh
+              Sketchup.vcb_label = PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
               Sketchup.vcb_value = ''
+              _refresh
             else
               _restart
             end
@@ -1244,14 +1371,13 @@ module Ladb::OpenCutList
           p3 = @picked_pushpull_ip.position.transform(ti)
 
           thickness = _read_user_text_length(d3, p3.z - p2.z)
+          return true if thickness.nil?
           thickness = thickness / 2 if _fetch_option_box_centered
 
           @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
 
           _create_entity
           _restart
-
-          Sketchup.vcb_value = ''
 
         end
 
@@ -1522,7 +1648,7 @@ module Ladb::OpenCutList
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(segments)
-        k_segments.line_width = @locked_normal ? 3 : 1.5
+        k_segments.line_width = 1.5
         k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_segments.color = _get_normal_color
         k_segments.transformation = t
@@ -1696,9 +1822,17 @@ module Ladb::OpenCutList
 
     def onUserText(text, view)
 
-      if text.end_with?('s')
+      if (match = /^(.+)s$/.match(text))
 
-        segment_count = text.to_i
+        value = match[1]
+        segment_count = value.to_i
+
+        if segment_count < 3 || segment_count > 999
+          UI.beep
+          @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_segment_count', { :value => value } ] ])
+          return true
+        end
+
         @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_SEGMENTS, SmartDrawTool::ACTION_OPTION_SEGMENTS_SEGMENT_COUNT, segment_count, true)
         _refresh
 
@@ -1719,20 +1853,23 @@ module Ladb::OpenCutList
           p2 = @snap_ip.position.transform(ti)
 
           radius = _read_user_text_length(d1, p2.x - p1.x)
+          return true if radius.nil?
 
           @picked_shape_last_ip = Sketchup::InputPoint.new(p1.offset(p1.vector_to(p2), radius).transform(t))
 
           if d2.nil?
             if _fetch_option_tool_pushpull
               @tool.push_cursor(SmartDrawTool::CURSOR_PUSHPULL)
-              _refresh
+              Sketchup.vcb_label = PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
               Sketchup.vcb_value = ''
+              _refresh
             else
               @picked_pushpull_ip.copy!(@picked_shape_last_ip)
               if _fetch_option_tool_move
                 @tool.push_cursor(SmartDrawTool::CURSOR_MOVE)
-                _refresh
+                Sketchup.vcb_label = PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
                 Sketchup.vcb_value = ''
+                _refresh
               else
                 _create_entity
                 _restart
@@ -1750,13 +1887,12 @@ module Ladb::OpenCutList
           p3 = @picked_pushpull_ip.position.transform(ti)
 
           thickness = _read_user_text_length(d2, p3.z - p2.z)
+          return true if thickness.nil?
 
           @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
 
           _create_entity
           _restart
-
-          Sketchup.vcb_value = ''
 
         end
 
@@ -1774,64 +1910,10 @@ module Ladb::OpenCutList
 
       plane = [ @picked_shape_first_ip.position, @normal ]
 
-      # Test axis alignment
-      if @mouse_ip.degrees_of_freedom >= 2
-
-        ph = view.pick_helper
-        p1 = @picked_shape_first_ip.position
-        ray = view.pickray(x, y)
-
-        x_axis = _get_active_x_axis
-        if @mouse_ip.degrees_of_freedom == 3 || x_axis.perpendicular?(@normal)
-          p2_x = Geom.intersect_line_plane(ray, plane).project_to_line([ p1, x_axis ])
-          if ph.test_point(p2_x, x, y, 50)
-
-            @snap_ip = Sketchup::InputPoint.new(p2_x)
-            @mouse_ip.clear
-
-          end
-        end
-
-        unless @snap_ip.valid?
-
-          y_axis = _get_active_y_axis
-          if @mouse_ip.degrees_of_freedom == 3 || y_axis.perpendicular?(@normal)
-            p2_y = Geom.intersect_line_plane(ray, plane).project_to_line([ p1, y_axis ])
-            if ph.test_point(p2_y, x, y, 50)
-
-              @snap_ip = Sketchup::InputPoint.new(p2_y)
-              @mouse_ip.clear
-
-            end
-          end
-
-        end
-
-        unless @snap_ip.valid?
-
-          z_axis = _get_active_z_axis
-          if @mouse_ip.degrees_of_freedom == 3 || z_axis.perpendicular?(@normal)
-            p2_z = Geom.intersect_line_plane(ray, plane).project_to_line([ p1, z_axis ])
-            if ph.test_point(p2_z, x, y, 50)
-
-              @snap_ip = Sketchup::InputPoint.new(p2_z)
-              @mouse_ip.clear
-
-            end
-          end
-
-        end
-
-      end
-
-      unless @snap_ip.valid?
-
-        if @mouse_ip.degrees_of_freedom > 2
-          @snap_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), plane))
-        else
-          @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(plane))
-        end
-
+      if @mouse_ip.degrees_of_freedom > 2
+        @snap_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), plane))
+      else
+        @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(plane))
       end
 
       @direction = @picked_shape_first_ip.position.vector_to(@snap_ip.position)
@@ -1880,7 +1962,7 @@ module Ladb::OpenCutList
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(segments)
-        k_segments.line_width = @locked_normal ? 3 : 1.5
+        k_segments.line_width = 1.1
         k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_segments.color = _get_normal_color
         k_segments.transformation = t
@@ -2093,6 +2175,7 @@ module Ladb::OpenCutList
         end
 
         length = _read_user_text_length(text, v.length)
+        return true if length.nil?
 
         @picked_ips << Sketchup::InputPoint.new(p1.offset(v, length).transform(t))
         _refresh
@@ -2449,7 +2532,7 @@ module Ladb::OpenCutList
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(segments)
-        k_segments.line_width = @locked_normal ? 3 : 1.5
+        k_segments.line_width = 1.5
         k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_segments.color = _get_normal_color
         k_segments.transformation = t
@@ -2547,12 +2630,14 @@ module Ladb::OpenCutList
       points = _get_local_shape_points
       return points if shape_offset == 0 || points.length < 3
       paths, _ = Fiddle::Clippy.execute_union( closed_subjects: [ Fiddle::Clippy.points_to_rpath(points) ] )
-      Fiddle::Clippy.rpath_to_points(Fiddle::Clippy.inflate_paths(
+      o_paths = Fiddle::Clippy.inflate_paths(
         paths: paths,
         delta: shape_offset,
         join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
         miter_limit: 100.0
-      ).first)
+      )
+      return Fiddle::Clippy.rpath_to_points(o_paths.first) if o_paths.any?
+      []
     end
 
   end

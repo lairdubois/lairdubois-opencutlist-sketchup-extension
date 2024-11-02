@@ -15,7 +15,7 @@ module Ladb::OpenCutList::Fiddle
     # Convert Array<Integer> (x1, y1, x2, y2, ...) to Array<Geom::Point3d>
     def rpath_to_points(rpath, z = 0.0)
       points = []
-      rpath.each_slice(2) { |coord_x, coord_y| points << Geom::Point3d.new(coord_x, coord_y, z) }
+      rpath.each_slice(2) { |coord_x, coord_y| points << Geom::Point3d.new(coord_x, coord_y, z) } if rpath.is_a?(Array)
       points
     end
 
