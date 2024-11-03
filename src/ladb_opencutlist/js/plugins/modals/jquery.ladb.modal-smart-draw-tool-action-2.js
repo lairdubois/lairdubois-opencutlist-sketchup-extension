@@ -34,6 +34,7 @@
             var $inputShapeOffset = $('#ladb_input_shape_offset', that.$element);
             var $selectConstrution = $('#ladb_select_construction', that.$element);
             var $selectBoxCentered = $('#ladb_select_box_centered', that.$element);
+            var $selectMoveArray = $('#ladb_select_move_array', that.$element);
             var $btnValidate = $('#ladb_btn_validate', that.$element);
 
             var fnFetchOptions = function (options) {
@@ -42,6 +43,7 @@
                 options.shape_offset = $inputShapeOffset.val();
                 options.construction = $selectConstrution.val() === '1';
                 options.box_centered = $selectBoxCentered.val() === '1';
+                options.move_array = $selectMoveArray.val() === '1';
             };
             var fnFillInputs = function (options) {
                 $selectPushPull.selectpicker('val', options.pushpull ? '1' : '0');
@@ -49,6 +51,7 @@
                 $inputShapeOffset.val(options.shape_offset);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
                 $selectBoxCentered.selectpicker('val', options.box_centered ? '1' : '0');
+                $selectMoveArray.selectpicker('val', options.move_array ? '1' : '0');
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -63,6 +66,7 @@
             $inputShapeOffset.ladbTextinputDimension();
             $selectConstrution.selectpicker(SELECT_PICKER_OPTIONS);
             $selectBoxCentered.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectMoveArray.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(options);
 

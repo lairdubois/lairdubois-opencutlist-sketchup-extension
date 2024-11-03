@@ -412,19 +412,19 @@ module Ladb::OpenCutList
           r_color = COLOR_ACTION
           f_color = COLOR_ACTION_FILL
 
-          if fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_LENGTH)
+          if fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_LENGTH)
             r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Y_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Y_AXIS) * 2
             r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Z_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Z_AXIS) * 2
             r_t *= Geom::Transformation.rotation(ORIGIN, Z_AXIS, 90.degrees) * Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)
             r_color = COLOR_LENGTH
             f_color = COLOR_LENGTH_FILL
-          elsif fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_WIDTH)
+          elsif fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_WIDTH)
             r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, X_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, X_AXIS) * 2
             r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Z_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Z_AXIS) * 2
             r_t *= Geom::Transformation.rotation(ORIGIN, X_AXIS, 90.degrees)
             r_color = COLOR_WIDTH
             f_color = COLOR_WIDTH_FILL
-          elsif fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_THICKNESS)
+          elsif fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_THICKNESS)
             r_width += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, X_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, X_AXIS) * 2
             r_height += _get_bounds_dim_along_axis(instance_info, instance_info.definition_bounds, Y_AXIS) + _get_bounds_dim_along_axis(instance_info, rect_offset_bounds, Y_AXIS) * 2
             r_color = COLOR_THICKNESS
@@ -620,11 +620,11 @@ module Ladb::OpenCutList
                 Y_AXIS => 1,
                 Z_AXIS => 1,
               }
-              if fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_LENGTH)
+              if fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_LENGTH)
                 scaling[size.oriented_axis(X_AXIS)] = -1
-              elsif fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_WIDTH)
+              elsif fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_WIDTH)
                 scaling[size.oriented_axis(Y_AXIS)] = -1
-              elsif fetch_action_option_enabled(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_THICKNESS)
+              elsif fetch_action_option_boolean(ACTION_FLIP, ACTION_OPTION_DIRECTION, ACTION_OPTION_DIRECTION_THICKNESS)
                 scaling[size.oriented_axis(Z_AXIS)] = -1
               end
 

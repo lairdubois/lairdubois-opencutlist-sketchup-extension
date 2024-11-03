@@ -260,7 +260,7 @@ module Ladb::OpenCutList
                   btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
                   btn.border.set_all!(unit * 0.5)
                   btn.data = { :option_group => option_group, :option => option }
-                  btn.selected = fetch_action_option_enabled(action, option_group, option)
+                  btn.selected = fetch_action_option_boolean(action, option_group, option)
                   btn.on(:click) { |button|
                     if get_action_option_toggle?(action, option_group, option)
                       if get_action_option_group_unique?(action, option_group)
@@ -894,13 +894,31 @@ module Ladb::OpenCutList
       nil
     end
 
-    def fetch_action_option_enabled(action, option_group, option)
+    def fetch_action_option_boolean(action, option_group, option)
       value = fetch_action_option_value(action, option_group, option)
       return false if value.nil?
       return option == value if get_action_option_group_unique?(action, option_group)
       return value if value.is_a?(TrueClass)
       return true if value.is_a?(String) && !value.empty? && value != '0'
       false
+    end
+
+    def fetch_action_option_integer(action, option_group, option)
+      fetch_action_option_value(action, option_group, option).to_i
+    end
+
+    def fetch_action_option_float(action, option_group, option)
+      fetch_action_option_value(action, option_group, option).to_f
+    end
+
+    def fetch_action_option_string(action, option_group, option)
+      fetch_action_option_value(action, option_group, option).to_s
+    end
+
+    def fetch_action_option_length(action, option_group, option)
+      fetch_action_option_value(action, option_group, option).to_s.to_l
+    rescue ArgumentError
+      0.to_l
     end
 
     def get_startup_action
@@ -1081,7 +1099,7 @@ module Ladb::OpenCutList
                   unless get_action_option_toggle?(action, b.data[:option_group], b.data[:option])
                     b.child.text = fetch_action_option_value(action, b.data[:option_group], b.data[:option]).to_s if b.child.is_a?(Kuix::Label)
                   end
-                  b.selected = fetch_action_option_enabled(action, b.data[:option_group], b.data[:option])
+                  b.selected = fetch_action_option_boolean(action, b.data[:option_group], b.data[:option])
                 end
               end
               b = b.next
@@ -1141,29 +1159,33 @@ module Ladb::OpenCutList
               modifier_option_group = action_defs[action_index][:options].keys.first
               modifier_options = action_defs[action_index][:options][modifier_option_group]
 
-              modifier_option = modifier_options.detect { |option| fetch_action_option_enabled(action, modifier_option_group, option) }
-              modifier_option_index = modifier_options.index(modifier_option)
-              unless modifier_option_index.nil?
+              if get_action_option_group_unique?(action, modifier_option_group)
 
-                next_modifier_option_index = (modifier_option_index + (is_key_down?(CONSTRAIN_MODIFIER_KEY) ? -1 : 1)) % modifier_options.length
-                next_modifier_option = modifier_options[next_modifier_option_index]
+                modifier_option = modifier_options.detect { |option| fetch_action_option_boolean(action, modifier_option_group, option) }
+                modifier_option_index = modifier_options.index(modifier_option)
+                unless modifier_option_index.nil?
 
-                @actions_options_panels.each do |actions_options_panel|
-                  if actions_options_panel.data[:action] == action
+                  next_modifier_option_index = (modifier_option_index + (is_key_down?(CONSTRAIN_MODIFIER_KEY) ? -1 : 1)) % modifier_options.length
+                  next_modifier_option = modifier_options[next_modifier_option_index]
 
-                    b = actions_options_panel.child
-                    until b.nil? do
-                      if b.is_a?(Kuix::Button) && b.data[:option_group] == modifier_option_group && b.data[:option] == next_modifier_option
-                        b.fire(:click, flags)
-                        break
+                  @actions_options_panels.each do |actions_options_panel|
+                    if actions_options_panel.data[:action] == action
+
+                      b = actions_options_panel.child
+                      until b.nil? do
+                        if b.is_a?(Kuix::Button) && b.data[:option_group] == modifier_option_group && b.data[:option] == next_modifier_option
+                          b.fire(:click, flags)
+                          break
+                        end
+                        b = b.next
                       end
-                      b = b.next
-                    end
 
+                    end
                   end
+
+                  return true
                 end
 
-                return true
               end
 
             end

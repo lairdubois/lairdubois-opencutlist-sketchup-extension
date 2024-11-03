@@ -8,7 +8,8 @@
     "shape_offset": "0",
     "construction": false,
     "rectangle_centered": false,
-    "box_centered": false
+    "box_centered": false,
+    "move_array": false
   },
   "action_1": { /* ACTION_DRAW_CIRCLE */
     "pushpull": true,
@@ -16,13 +17,15 @@
     "shape_offset": "0",
     "segment_count": 24,
     "construction": false,
-    "box_centered": false
+    "box_centered": false,
+    "move_array": false
   },
   "action_2": { /* ACTION_DRAW_POLYGON */
     "pushpull": true,
     "move": false,
     "shape_offset": "0",
     "construction": false,
-    "box_centered": false
+    "box_centered": false,
+    "move_array": false
   }
 }

@@ -29,6 +29,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED = 'rectangle_centered'
     ACTION_OPTION_OPTIONS_BOX_CENTRED = 'box_centered'
+    ACTION_OPTION_OPTIONS_MOVE_ARRAY = 'move_array'
 
     ACTIONS = [
       {
@@ -36,7 +37,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
       },
       {
@@ -45,7 +46,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_SEGMENTS => [ ACTION_OPTION_SEGMENTS_SEGMENT_COUNT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_BOX_CENTRED ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
       },
       {
@@ -53,7 +54,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_BOX_CENTRED ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
       }
     ].freeze
@@ -151,6 +152,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0L1,1L0,1L0,0 M0.5,0.667L0.5,0.333 M0.333,0.5L0.667,0.5 '))
         when ACTION_OPTION_OPTIONS_BOX_CENTRED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
+        when ACTION_OPTION_OPTIONS_MOVE_ARRAY
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.167L0.583,0.167 '))
         end
       end
 
@@ -285,6 +288,11 @@ module Ladb::OpenCutList
 
   class SmartDrawActionHandler < SmartActionHandler
 
+    STATE_SHAPE_FIRST_POINT = 0
+    STATE_SHAPE_POINTS = 1
+    STATE_PUSHPULL = 2
+    STATE_MOVE = 3
+
     def initialize(action, tool, action_handler = nil)
       super(action, tool)
 
@@ -301,14 +309,15 @@ module Ladb::OpenCutList
       @locked_normal = nil
       @locked_axis = nil
 
-      @move_anchor = 2
-      @move_copy = true
-
       @direction = nil
       @normal = _get_active_z_axis
 
+      @move_anchor = 2
+      @move_copy = true
+
       @definition = nil
-      @instances = []
+
+      onStateChanged(STATE_SHAPE_FIRST_POINT)
 
     end
 
@@ -318,9 +327,10 @@ module Ladb::OpenCutList
         _reset
       elsif _picked_shape_last_point?
         @picked_shape_last_ip.clear
-        @tool.pop_cursor
+        onStateChanged(STATE_SHAPE_POINTS)
       elsif _picked_shape_first_point?
         @picked_shape_first_ip.clear
+        onStateChanged(STATE_SHAPE_FIRST_POINT)
       else
         _reset
       end
@@ -332,23 +342,22 @@ module Ladb::OpenCutList
       @snap_ip.clear
       @mouse_ip.pick(view, x, y, _get_previous_input_point)
 
-      SKETCHUP_CONSOLE.clear
-      puts "---"
-      puts "vertex = #{@mouse_ip.vertex}"
-      puts "edge = #{@mouse_ip.edge}"
-      puts "face = #{@mouse_ip.face}"
-      puts "instance_path.length = #{@mouse_ip.instance_path.length}"
-      puts "instance_path.leaf = #{@mouse_ip.instance_path.leaf}"
-      puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
-      puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
-      puts "best_picked = #{view.pick_helper(x, y).best_picked}"
-      puts "---"
+      # SKETCHUP_CONSOLE.clear
+      # puts "---"
+      # puts "vertex = #{@mouse_ip.vertex}"
+      # puts "edge = #{@mouse_ip.edge}"
+      # puts "face = #{@mouse_ip.face}"
+      # puts "instance_path.length = #{@mouse_ip.instance_path.length}"
+      # puts "instance_path.leaf = #{@mouse_ip.instance_path.leaf}"
+      # puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
+      # puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
+      # puts "best_picked = #{view.pick_helper(x, y).best_picked}"
+      # puts "---"
 
       @tool.remove_all_3d
       @tool.remove_all_2d
 
-      Sketchup.vcb_label = ''
-      Sketchup.vcb_value = ''
+      Sketchup.set_status_text('', SB_VCB_VALUE)
 
       if _picked_pushpull_point?
         _snap_move_point(flags, x, y, view)
@@ -393,18 +402,19 @@ module Ladb::OpenCutList
       if !_picked_shape_first_point?
         @picked_shape_first_ip.copy!(@down_ip)
         @down_ip.clear
+        onStateChanged(STATE_SHAPE_POINTS)
         _refresh
       elsif !_picked_shape_last_point?
         if _valid_shape?
           @picked_shape_last_ip.copy!(@snap_ip)
           if _fetch_option_tool_pushpull
-            @tool.push_cursor(SmartDrawTool::CURSOR_PUSHPULL)
+            onStateChanged(STATE_PUSHPULL)
             _refresh
           else
             if _fetch_option_tool_move
               @picked_pushpull_ip.copy!(@snap_ip)
               _create_entity
-              @tool.push_cursor(SmartDrawTool::CURSOR_MOVE)
+              onStateChanged(STATE_MOVE)
               _refresh
             else
               _create_entity
@@ -419,7 +429,7 @@ module Ladb::OpenCutList
           @picked_pushpull_ip.copy!(@snap_ip)
           _create_entity
           if _fetch_option_tool_move
-            @tool.push_cursor(SmartDrawTool::CURSOR_MOVE)
+            onStateChanged(STATE_MOVE)
             _refresh
           else
             _restart
@@ -483,12 +493,15 @@ module Ladb::OpenCutList
           return true
         elsif key == ALT_MODIFIER_KEY
           @move_anchor = (@move_anchor + 1) % 3
+          view.lock_inference if view.inference_locked?
           _refresh
           return true
         elsif key == COPY_MODIFIER_KEY
-          @move_copy = !@move_copy
-          @instances.first.visible = @move_copy
-          _refresh
+          unless _fetch_option_move_array
+            @move_copy = !@move_copy
+            @definition.instances.first.visible = @move_copy if !@definition.nil? && @definition.instances.any?
+            _refresh
+          end
           return true
         end
       else
@@ -534,8 +547,8 @@ module Ladb::OpenCutList
 
     def onKeyUp(key, repeat, flags, view)
 
-      if key == VK_ALT
-        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED, !_fetch_option_box_centered, true) if _picked_shape_first_point? && _picked_shape_last_point? && !_picked_pushpull_point?
+      if key == COPY_MODIFIER_KEY
+        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED, !_fetch_option_box_centered, true) if _picked_shape_last_point? && !_picked_pushpull_point?
         _refresh
       end
 
@@ -543,95 +556,25 @@ module Ladb::OpenCutList
 
     def onUserText(text, view)
 
-      if !_picked_shape_first_point? && @previous_action_handler
-
-        if @previous_action_handler._picked_move_point?
-
-          if (match = /^([x*\/])(.+)$/.match(text))
-
-            operator, value = match[1, 2]
-            factor = value.to_i
-            if factor > 0
-              @previous_action_handler._copy_entity(operator, factor)
-              Sketchup.vcb_value = ''
-            else
-              UI.beep
-              @tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
-            end
-
-            return true
-          end
-
-        end
-
-      end
-
-      if (match = /^(.+)x$/.match(text))
-
-        value = match[1]
-
-        begin
-          offset = value.to_l
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset.to_s, true)
-          _refresh
-        rescue ArgumentError
-          UI.beep
-          @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_offset', { :value => value } ] ])
-        end
-
+      if !_picked_shape_first_point? && @previous_action_handler && @previous_action_handler._picked_move_point? && _read_move_copy(text)
+        return true
+      elsif _read_offset(text)
         return true
       elsif _picked_pushpull_point?
-
-        # Move
-
-        ps = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ][@move_anchor]
-        pe = @snap_ip.position
-        v = ps.vector_to(pe)
-
-        distance = _read_user_text_length(text, v.length)
-        return true if distance.nil?
-
-        @picked_move_ip = Sketchup::InputPoint.new(ps.offset(v, distance))
-
-        _copy_entity
-        _restart
-
-        return true
+        return _read_move(text)
       elsif _picked_shape_last_point?
-
-        # PushPull
-
-        t = _get_transformation
-        ti = t.inverse
-
-        points = _get_picked_points
-        p2 = points[1].transform(ti)
-        p3 = points[2].transform(ti)
-
-        box_centered = _fetch_option_box_centered
-
-        base_thickness = p3.z - p2.z
-        thickness = _read_user_text_length(text, base_thickness)
-        return true if thickness.nil?
-        thickness /= 2 if box_centered
-
-        @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, thickness).transform(t))
-
-        _create_entity
-
-        if _fetch_option_tool_move
-          @tool.push_cursor(SmartDrawTool::CURSOR_MOVE)
-          _refresh
-        else
-          _restart
-        end
-
-        Sketchup.vcb_value = ''
-
-        return true
+        return _read_pushpull(text)
+      elsif _picked_shape_first_point?
+        return _read_shape(text)
       end
 
       false
+    end
+
+    def onStateChanged(state)
+      @tool.set_root_cursor(_get_state_cursor(state))
+      Sketchup.set_status_text(_get_state_vcb_label(state), SB_VCB_LABEL)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
     end
 
     def draw(view)
@@ -647,6 +590,8 @@ module Ladb::OpenCutList
     end
 
     protected
+
+    # -----
 
     def _get_previous_input_point
       return @picked_shape_first_ip if _picked_shape_first_point? && !_picked_shape_last_point?
@@ -856,7 +801,7 @@ module Ladb::OpenCutList
       k_segments.transformation = t
       @tool.append_3d(k_segments)
 
-      Sketchup.vcb_value = bounds.depth
+      Sketchup.set_status_text(bounds.depth, SB_VCB_VALUE)
 
       if bounds.depth > 0
 
@@ -900,48 +845,147 @@ module Ladb::OpenCutList
       bounds.add(p1, p3)
 
       tt = Geom::Transformation.translation(p2.vector_to(p3))
-      mt = Geom::Transformation.translation(ps.transform(ti).vector_to(p4))
 
       o_shape_points = _get_local_shape_points_with_offset
       o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
 
-      unless @move_copy
+      if _fetch_option_move_array
+
+        bounds = Geom::BoundingBox.new
+        bounds.add(ps.transform(ti), pe.transform(ti))
+
+        # Move rectangle
+
+        k_rectangle = Kuix::RectangleMotif.new
+        k_rectangle.bounds.origin.copy!(bounds.min)
+        k_rectangle.bounds.size.copy!(bounds)
+        k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_rectangle.color = _get_normal_color
+        k_rectangle.on_top = true
+        k_rectangle.transformation = t
+        @tool.append_3d(k_rectangle)
+
+        (0..3).each do |i|
+
+          p = bounds.corner(i)
+          next if p == ps.transform(ti)
+
+          mt = Geom::Transformation.translation(ps.transform(ti).vector_to(p))
+
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments(_points_to_segments(o_shape_points))
+          k_segments.add_segments(_points_to_segments(o_top_shape_points))
+          k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
+          k_segments.line_width = 1.5
+          k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
+          k_segments.color = Kuix::COLOR_BLACK
+          k_segments.transformation = t * mt
+          @tool.append_3d(k_segments)
+
+        end
+
+        Sketchup.set_status_text("#{bounds.width}; #{bounds.height}", SB_VCB_VALUE)
+
+        unit = @tool.get_unit
+
+        if bounds.width > 0
+
+          screen_point = view.screen_coords(bounds.min.offset(X_AXIS, bounds.width / 2).transform(t))
+
+          k_label = Kuix::Label.new
+          k_label.text = bounds.width.to_s
+          k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+          k_label.set_style_attribute(:color, Kuix::COLOR_X)
+          k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+          k_label.set_style_attribute(:border_color, _get_normal_color)
+          k_label.border.set_all!(unit * 0.25)
+          k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
+          k_label.text_size = unit * 2.5
+          @tool.append_2d(k_label)
+
+        end
+
+        if bounds.height > 0
+
+          screen_point = view.screen_coords(bounds.min.offset(Y_AXIS, bounds.height / 2).transform(t))
+
+          k_label = Kuix::Label.new
+          k_label.text = bounds.height.to_s
+          k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+          k_label.set_style_attribute(:color, Kuix::COLOR_Y)
+          k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+          k_label.set_style_attribute(:border_color, _get_normal_color)
+          k_label.border.set_all!(unit * 0.25)
+          k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
+          k_label.text_size = unit * 2.5
+          @tool.append_2d(k_label)
+
+        end
+
+      else
+
+        unless @move_copy
+
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments(_points_to_segments(o_shape_points))
+          k_segments.add_segments(_points_to_segments(o_top_shape_points))
+          k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
+          k_segments.line_width = 1.5
+          k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          k_segments.color = Kuix::COLOR_DARK_GREY
+          k_segments.transformation = t
+          @tool.append_3d(k_segments)
+
+        end
+
+        mt = Geom::Transformation.translation(ps.transform(ti).vector_to(p4))
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(_points_to_segments(o_shape_points))
         k_segments.add_segments(_points_to_segments(o_top_shape_points))
         k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
-        k_segments.line_width = 1
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        k_segments.color = Kuix::COLOR_DARK_GREY
-        k_segments.transformation = t
+        k_segments.line_width = 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
+        k_segments.color = Kuix::COLOR_BLACK
+        k_segments.transformation = t * mt
         @tool.append_3d(k_segments)
-
-      end
-
-      k_segments = Kuix::Segments.new
-      k_segments.add_segments(_points_to_segments(o_shape_points))
-      k_segments.add_segments(_points_to_segments(o_top_shape_points))
-      k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
-      k_segments.line_width = 1.5
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
-      k_segments.color = Kuix::COLOR_BLACK
-      k_segments.transformation = t * mt
-      @tool.append_3d(k_segments)
-
-      distance = v.length
-
-      unless view.inference_locked? && @mouse_ip.degrees_of_freedom != 1
 
         # Move line
 
-        k_line = Kuix::LineMotif.new
-        k_line.start.copy!(ps)
-        k_line.end.copy!(pe)
-        k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_line.color = _get_vector_color(v)
-        k_line.on_top = true
-        @tool.append_3d(k_line)
+        unless view.inference_locked? && @mouse_ip.degrees_of_freedom != 1
+
+          k_line = Kuix::LineMotif.new
+          k_line.start.copy!(ps)
+          k_line.end.copy!(pe)
+          k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+          k_line.color = _get_vector_color(v)
+          k_line.on_top = true
+          @tool.append_3d(k_line)
+
+        end
+
+        distance = v.length
+
+        Sketchup.set_status_text(distance, SB_VCB_VALUE)
+
+        if distance > 0
+
+          unit = @tool.get_unit
+
+          screen_point = view.screen_coords(ps.offset(v, distance / 2))
+
+          k_label = Kuix::Label.new
+          k_label.text = distance.to_s
+          k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+          k_label.set_style_attribute(:color, Kuix::COLOR_X)
+          k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+          k_label.set_style_attribute(:border_color, _get_vector_color(v))
+          k_label.border.set_all!(unit * 0.25)
+          k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
+          k_label.text_size = unit * 2.5
+          @tool.append_2d(k_label)
+
+        end
 
       end
 
@@ -959,51 +1003,192 @@ module Ladb::OpenCutList
 
       end
 
-      Sketchup.vcb_value = distance
+    end
 
-      if distance > 0
+    # -----
 
-        unit = @tool.get_unit
+    def _read_shape(text)
+    end
 
-        screen_point = view.screen_coords(ps.offset(v, distance / 2))
+    def _read_pushpull(text)
 
-        k_label = Kuix::Label.new
-        k_label.text = distance.to_s
-        k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-        k_label.set_style_attribute(:color, Kuix::COLOR_X)
-        k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-        k_label.set_style_attribute(:border_color, _get_vector_color(v))
-        k_label.border.set_all!(unit * 0.25)
-        k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
-        k_label.text_size = unit * 2.5
-        @tool.append_2d(k_label)
+      t = _get_transformation
+      ti = t.inverse
+
+      points = _get_picked_points
+      p2 = points[1].transform(ti)
+      p3 = points[2].transform(ti)
+
+      box_centered = _fetch_option_box_centered
+
+      base_thickness = p3.z - p2.z
+      thickness = _read_user_text_length(text, base_thickness)
+      return true if thickness.nil?
+      thickness /= 2 if box_centered
+
+      @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, thickness).transform(t))
+
+      _create_entity
+
+      if _fetch_option_tool_move
+        onStateChanged(STATE_MOVE)
+        _refresh
+      else
+        _restart
+      end
+
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+
+      true
+    end
+
+    def _read_move(text)
+
+      t = _get_transformation
+      ti = t.inverse
+
+      ps = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ][@move_anchor].transform(ti)
+      pe = @snap_ip.position.transform(ti)
+      v = ps.vector_to(pe)
+
+      if _fetch_option_move_array
+
+        d1, d2 = text.split(';')
+
+        if d1 || d2
+
+          distance_x = _read_user_text_length(d1, v.x)
+          return true if distance_x.nil?
+
+          distance_y = _read_user_text_length(d2, v.y)
+          return true if distance_y.nil?
+
+          @picked_move_ip = Sketchup::InputPoint.new(ps.offset(Geom::Vector3d.new(distance_x, distance_y)).transform(t))
+
+        end
+
+      else
+
+        distance = _read_user_text_length(text, v.length)
+        return true if distance.nil?
+
+        @picked_move_ip = Sketchup::InputPoint.new(ps.offset(v, distance).transform(t))
 
       end
 
+      _copy_entity
+      _restart
+
+      true
+    end
+
+    def _read_move_copy(text)
+
+      if (match = /^(?:([x*\/])(\d+))?(?:;|;([x*\/])(\d+))?$/.match(text))
+
+        operator_1, value_1, operator_2, value_2 = match[1, 4]
+        number_1 = value_1.to_i
+        number_2 = value_2.to_i
+
+        if !value_1.nil? && number_1 == 0
+          UI.beep
+          @tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator_1 == '/' ? 'divider' : 'multiplicator'}", { :value => value_1 } ] ])
+          return true
+        end
+        if !value_2.nil? && number_2 == 0
+          UI.beep
+          @tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator_2 == '/' ? 'divider' : 'multiplicator'}", { :value => value_2 } ] ])
+          return true
+        end
+
+        has_separator = text.include?(';')
+
+        operator_1 = operator_1.nil? ? '*' : operator_1
+        operator_2 = operator_2.nil? ? (has_separator ? '*' : operator_1) : operator_2
+
+        number_1 = number_1 == 0 ? 1 : number_1
+        number_2 = number_2 == 0 ? (has_separator ? 1 : number_1) : number_2
+
+        @previous_action_handler._copy_entity(operator_1, number_1, operator_2, number_2)
+        Sketchup.set_status_text('', SB_VCB_VALUE)
+
+        return true
+      end
+
+      false
+    end
+
+    def _read_offset(text)
+
+      if (match = /^(.+)x$/.match(text))
+
+        value = match[1]
+
+        begin
+          offset = value.to_l
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset.to_s, true)
+          _refresh
+        rescue ArgumentError
+          UI.beep
+          @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_offset', { :value => value } ] ])
+        end
+
+        return true
+      end
+
+      false
     end
 
     # -----
 
     def _fetch_option_tool_pushpull
-      @tool.fetch_action_option_enabled(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_PUSHPULL)
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_PUSHPULL)
     end
 
     def _fetch_option_tool_move
-      @tool.fetch_action_option_enabled(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_MOVE)
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_MOVE)
     end
 
     def _fetch_option_shape_offset
-      @tool.fetch_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET).to_s.to_l
-    rescue ArgumentError
-      0.to_l
+      @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET)
     end
 
     def _fetch_option_construction
-      @tool.fetch_action_option_enabled(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION)
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION)
     end
 
     def _fetch_option_box_centered
-      @tool.fetch_action_option_enabled(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED)
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED)
+    end
+
+    def _fetch_option_move_array
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MOVE_ARRAY)
+    end
+
+    # -----
+
+    def _get_state_vcb_label(state)
+
+      case state
+      when STATE_SHAPE_POINTS
+        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_radius')
+      when STATE_PUSHPULL, STATE_MOVE
+        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
+      end
+
+      ''
+    end
+
+    def _get_state_cursor(state)
+
+      case state
+      when STATE_PUSHPULL
+        return SmartDrawTool::CURSOR_PUSHPULL
+      when STATE_MOVE
+        return SmartDrawTool::CURSOR_MOVE
+      end
+
+      @tool.get_action_cursor(@action)
     end
 
     # -----
@@ -1022,7 +1207,7 @@ module Ladb::OpenCutList
 
     def _get_axes
 
-      if @direction.nil? || !@direction.perpendicular?(@normal)
+      if @direction.nil? || !@direction.valid? || !@direction.perpendicular?(@normal)
 
         active_x_axis = _get_active_x_axis
         active_x_axis = _get_active_y_axis if active_x_axis.parallel?(@normal)
@@ -1086,12 +1271,9 @@ module Ladb::OpenCutList
       @move_anchor = 2
       @direction = nil
       @normal = _get_active_z_axis
-      @instances.clear
       @tool.remove_all_2d
       @tool.remove_all_3d
-      @tool.pop_to_root_cursor
-      Sketchup.vcb_label = ''
-      Sketchup.vcb_value = ''
+      onStateChanged(STATE_SHAPE_FIRST_POINT)
       Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
     end
 
@@ -1099,9 +1281,6 @@ module Ladb::OpenCutList
       @tool.set_action_handler(self.class.new(@tool, self))
       @tool.remove_all_2d
       @tool.remove_all_3d
-      @tool.pop_to_root_cursor
-      Sketchup.vcb_label = ''
-      Sketchup.vcb_value = ''
       Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
     end
 
@@ -1167,7 +1346,6 @@ module Ladb::OpenCutList
         end
 
         @definition = group.definition
-        @instances << group
 
       else
 
@@ -1187,7 +1365,7 @@ module Ladb::OpenCutList
         end
 
         @definition = definition
-        @instances << model.active_entities.add_instance(definition, t)
+        model.active_entities.add_instance(definition, t)
 
       end
 
@@ -1195,8 +1373,8 @@ module Ladb::OpenCutList
 
     end
 
-    def _copy_entity(operator = '*', number = 1)
-      return if @instances.empty?
+    def _copy_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
+      return if @definition.nil?
 
       t = _get_transformation
       ti = t.inverse
@@ -1204,27 +1382,54 @@ module Ladb::OpenCutList
       ps = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ][@move_anchor].transform(ti)
       pe = @picked_move_ip.position.transform(ti)
       v = ps.vector_to(pe)
-      instance = @instances.first
 
       model = Sketchup.active_model
       model.start_operation('Copy Part', true)
 
-      if @instances.length > 1
-        @instances[1..-1].each { |instance| instance.erase! unless instance.deleted? }
-        @instances.clear
-        @instances << instance
-      end
+      @definition.entities.erase_entities(@definition.instances)
 
-      if operator == '/'
-        vv = Geom::Vector3d.new(v)
-        vv.length /= number
-        ut = Geom::Transformation.translation(vv)
+      if _fetch_option_move_array
+
+        bounds = Geom::BoundingBox.new
+        bounds.add(ps, pe)
+
+        if operator_1 == '/'
+          ux = v.x / number_1
+        else
+          ux = v.x
+        end
+        if operator_2 == '/'
+          uy = v.y / number_2
+        else
+          uy = v.y
+        end
+
+        (0..number_1).each do |x|
+          (0..number_2).each do |y|
+            model.active_entities.add_instance(@definition, t * Geom::Transformation.translation(Geom::Vector3d.new(ux * x, uy * y)))
+          end
+        end
+
       else
-        ut = Geom::Transformation.translation(v)
-      end
 
-      number.times do
-        @instances << model.active_entities.add_instance(instance.definition, @instances.last.transformation * ut)
+        if operator_1 == '/'
+          ux = v.x / number_1
+          uy = v.y / number_1
+          uz = v.z / number_1
+        else
+          ux = v.x
+          uy = v.y
+          uz = v.z
+        end
+
+        if @move_copy
+          model.active_entities.add_instance(@definition, t)
+        end
+
+        (1..number_1).each do |i|
+          model.active_entities.add_instance(@definition, t * Geom::Transformation.translation(Geom::Vector3d.new(ux * i, uy * i, uz * i)))
+        end
+
       end
 
       model.commit_operation
@@ -1305,86 +1510,11 @@ module Ladb::OpenCutList
     def onKeyUp(key, repeat, flags, view)
       super
 
-      if key == VK_ALT
-        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !_fetch_option_rectangle_centered, true) if _picked_shape_first_point? && !_picked_shape_last_point?
+      if key == COPY_MODIFIER_KEY
+        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !_fetch_option_rectangle_centered, true) unless _picked_shape_last_point?
         _refresh
       end
 
-    end
-
-    def onUserText(text, view)
-      return true if super
-
-      if _picked_shape_first_point?
-
-        d1, d2, d3 = text.split(';')
-
-        if d1 || d2
-
-          t = _get_transformation
-          ti = t.inverse
-
-          p1 = @picked_shape_first_ip.position.transform(ti)
-          p2 = @snap_ip.position.transform(ti)
-
-          rectangle_centred = _fetch_option_rectangle_centered
-
-          base_length = p2.x - p1.x
-          base_length *= 2 if rectangle_centred
-          length = _read_user_text_length(d1, base_length)
-          return true if length.nil?
-          length = length / 2 if rectangle_centred
-
-          base_width = p2.y - p1.y
-          base_width *= 2 if rectangle_centred
-          width = _read_user_text_length(d2, base_width)
-          return true if width.nil?
-          width = width / 2 if rectangle_centred
-
-          @picked_shape_last_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t))
-
-          if _fetch_option_tool_pushpull
-            @tool.push_cursor(SmartDrawTool::CURSOR_PUSHPULL)
-            Sketchup.vcb_label = PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
-            Sketchup.vcb_value = ''
-            _refresh
-          else
-            @picked_pushpull_ip.copy!(@picked_shape_last_ip)
-            _create_entity
-            if _fetch_option_tool_move
-              @tool.push_cursor(SmartDrawTool::CURSOR_MOVE)
-              Sketchup.vcb_label = PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
-              Sketchup.vcb_value = ''
-              _refresh
-            else
-              _restart
-            end
-          end
-
-        end
-        if d3
-
-          t = _get_transformation
-          ti = t.inverse
-
-          p2 = @picked_shape_last_ip.position.transform(ti)
-          p3 = @picked_pushpull_ip.position.transform(ti)
-
-          thickness = _read_user_text_length(d3, p3.z - p2.z)
-          return true if thickness.nil?
-          thickness = thickness / 2 if _fetch_option_box_centered
-
-          @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
-
-          _create_entity
-          _restart
-
-        end
-
-        return true
-      end
-
-      false
     end
 
     def getExtents
@@ -1666,7 +1796,7 @@ module Ladb::OpenCutList
       k_segments.transformation = t
       @tool.append_3d(k_segments)
 
-      Sketchup.vcb_value = "#{bounds.width}; #{bounds.height}"
+      Sketchup.set_status_text("#{bounds.width}; #{bounds.height}", SB_VCB_VALUE)
 
       if bounds.valid?
 
@@ -1712,8 +1842,87 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _read_shape(text)
+
+      d1, d2, d3 = text.split(';')
+
+      if d1 || d2
+
+        t = _get_transformation
+        ti = t.inverse
+
+        p1 = @picked_shape_first_ip.position.transform(ti)
+        p2 = @snap_ip.position.transform(ti)
+
+        rectangle_centred = _fetch_option_rectangle_centered
+
+        base_length = p2.x - p1.x
+        base_length *= 2 if rectangle_centred
+        length = _read_user_text_length(d1, base_length)
+        return true if length.nil?
+        length = length / 2 if rectangle_centred
+
+        base_width = p2.y - p1.y
+        base_width *= 2 if rectangle_centred
+        width = _read_user_text_length(d2, base_width)
+        return true if width.nil?
+        width = width / 2 if rectangle_centred
+
+        @picked_shape_last_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t))
+
+        if _fetch_option_tool_pushpull
+          onStateChanged(STATE_PUSHPULL)
+          _refresh
+        else
+          @picked_pushpull_ip.copy!(@picked_shape_last_ip)
+          _create_entity
+          if _fetch_option_tool_move
+            onStateChanged(STATE_MOVE)
+            _refresh
+          else
+            _restart
+          end
+        end
+
+      end
+      if d3
+
+        t = _get_transformation
+        ti = t.inverse
+
+        p2 = @picked_shape_last_ip.position.transform(ti)
+        p3 = @picked_pushpull_ip.position.transform(ti)
+
+        thickness = _read_user_text_length(d3, p3.z - p2.z)
+        return true if thickness.nil?
+        thickness = thickness / 2 if _fetch_option_box_centered
+
+        @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
+
+        _create_entity
+        _restart
+
+      end
+
+      true
+    end
+
+    # -----
+
     def _fetch_option_rectangle_centered
-      @tool.fetch_action_option_enabled(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
+    end
+
+    # -----
+
+    def _get_state_vcb_label(state)
+
+      case state
+      when STATE_SHAPE_POINTS
+        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_size')
+      end
+
+      super
     end
 
     # -----
@@ -1821,85 +2030,8 @@ module Ladb::OpenCutList
     # -----
 
     def onUserText(text, view)
-
-      if (match = /^(.+)s$/.match(text))
-
-        value = match[1]
-        segment_count = value.to_i
-
-        if segment_count < 3 || segment_count > 999
-          UI.beep
-          @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_segment_count', { :value => value } ] ])
-          return true
-        end
-
-        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_SEGMENTS, SmartDrawTool::ACTION_OPTION_SEGMENTS_SEGMENT_COUNT, segment_count, true)
-        _refresh
-
-      elsif super
-
-        return true
-
-      elsif _picked_shape_first_point?
-
-        d1, d2 = text.split(';')
-
-        if d1
-
-          t = _get_transformation
-          ti = t.inverse
-
-          p1 = @picked_shape_first_ip.position.transform(ti)
-          p2 = @snap_ip.position.transform(ti)
-
-          radius = _read_user_text_length(d1, p2.x - p1.x)
-          return true if radius.nil?
-
-          @picked_shape_last_ip = Sketchup::InputPoint.new(p1.offset(p1.vector_to(p2), radius).transform(t))
-
-          if d2.nil?
-            if _fetch_option_tool_pushpull
-              @tool.push_cursor(SmartDrawTool::CURSOR_PUSHPULL)
-              Sketchup.vcb_label = PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
-              Sketchup.vcb_value = ''
-              _refresh
-            else
-              @picked_pushpull_ip.copy!(@picked_shape_last_ip)
-              if _fetch_option_tool_move
-                @tool.push_cursor(SmartDrawTool::CURSOR_MOVE)
-                Sketchup.vcb_label = PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
-                Sketchup.vcb_value = ''
-                _refresh
-              else
-                _create_entity
-                _restart
-              end
-            end
-          end
-
-        end
-        if d2
-
-          t = _get_transformation
-          ti = t.inverse
-
-          p2 = @picked_shape_last_ip.position.transform(ti)
-          p3 = @picked_pushpull_ip.position.transform(ti)
-
-          thickness = _read_user_text_length(d2, p3.z - p2.z)
-          return true if thickness.nil?
-
-          @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
-
-          _create_entity
-          _restart
-
-        end
-
-        return true
-      end
-
-      false
+      return true if _read_segment_count(text)
+      super
     end
 
     protected
@@ -1983,7 +2115,7 @@ module Ladb::OpenCutList
       radius_vector = @picked_shape_first_ip.position.vector_to(@snap_ip.position)
       radius = radius_vector.length
 
-      Sketchup.vcb_value = "#{radius}"
+      Sketchup.set_status_text("#{radius}", SB_VCB_VALUE)
 
       if radius > 0
 
@@ -2008,8 +2140,98 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _read_shape(text)
+
+      d1, d2 = text.split(';')
+
+      if d1
+
+        t = _get_transformation
+        ti = t.inverse
+
+        p1 = @picked_shape_first_ip.position.transform(ti)
+        p2 = @snap_ip.position.transform(ti)
+
+        radius = _read_user_text_length(d1, p2.x - p1.x)
+        return true if radius.nil?
+
+        @picked_shape_last_ip = Sketchup::InputPoint.new(p1.offset(p1.vector_to(p2), radius).transform(t))
+
+        if d2.nil?
+          if _fetch_option_tool_pushpull
+            onStateChanged(STATE_PUSHPULL)
+            _refresh
+          else
+            @picked_pushpull_ip.copy!(@picked_shape_last_ip)
+            if _fetch_option_tool_move
+              onStateChanged(STATE_MOVE)
+              _refresh
+            else
+              _create_entity
+              _restart
+            end
+          end
+        end
+
+      end
+      if d2
+
+        t = _get_transformation
+        ti = t.inverse
+
+        p2 = @picked_shape_last_ip.position.transform(ti)
+        p3 = @picked_pushpull_ip.position.transform(ti)
+
+        thickness = _read_user_text_length(d2, p3.z - p2.z)
+        return true if thickness.nil?
+
+        @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
+
+        _create_entity
+        _restart
+
+      end
+
+      true
+    end
+
+    def _read_segment_count(text)
+      if (match = /^(.+)s$/.match(text))
+
+        value = match[1]
+        segment_count = value.to_i
+
+        if segment_count < 3 || segment_count > 999
+          UI.beep
+          @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_segment_count', { :value => value } ] ])
+          return true
+        end
+
+        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_SEGMENTS, SmartDrawTool::ACTION_OPTION_SEGMENTS_SEGMENT_COUNT, segment_count, true)
+        _refresh
+
+        return true
+      end
+
+      false
+    end
+
+    # -----
+
     def _fetch_option_segment_count
-      [ 999, [ @tool.fetch_action_option_value(@action, SmartDrawTool::ACTION_OPTION_SEGMENTS, SmartDrawTool::ACTION_OPTION_SEGMENTS_SEGMENT_COUNT).to_i, 3 ].max ].min
+      [ 999, [ @tool.fetch_action_option_integer(@action, SmartDrawTool::ACTION_OPTION_SEGMENTS, SmartDrawTool::ACTION_OPTION_SEGMENTS_SEGMENT_COUNT), 3 ].max ].min
+    end
+
+    # -----
+
+    def _get_state_vcb_label(state)
+
+      case state
+      when STATE_SHAPE_POINTS
+        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_radius')
+      end
+
+      super
     end
 
     # -----
@@ -2155,35 +2377,6 @@ module Ladb::OpenCutList
         onLButtonUp(flags, x, y, view)
       end
 
-    end
-
-    def onUserText(text, view)
-      return true if super
-
-      if _picked_shape_first_point?
-
-        t = _get_transformation
-        ti = t.inverse
-
-        p1 = @picked_ips.last.position.transform(ti)
-        p2 = @snap_ip.position.transform(ti)
-        v = p1.vector_to(p2)
-
-        unless v.valid?
-          UI.beep
-          return true
-        end
-
-        length = _read_user_text_length(text, v.length)
-        return true if length.nil?
-
-        @picked_ips << Sketchup::InputPoint.new(p1.offset(v, length).transform(t))
-        _refresh
-
-        return true
-      end
-
-      false
     end
 
     protected
@@ -2558,7 +2751,7 @@ module Ladb::OpenCutList
 
         length = edge_vector.length
 
-        Sketchup.vcb_value = "#{edge_vector.length}"
+        Sketchup.set_status_text("#{edge_vector.length}", SB_VCB_VALUE)
 
         if edge_vector.valid?
 
@@ -2579,6 +2772,43 @@ module Ladb::OpenCutList
 
       end
 
+    end
+
+    # -----
+
+    def _read_shape(text)
+
+      t = _get_transformation
+      ti = t.inverse
+
+      p1 = @picked_ips.last.position.transform(ti)
+      p2 = @snap_ip.position.transform(ti)
+      v = p1.vector_to(p2)
+
+      unless v.valid?
+        UI.beep
+        return true
+      end
+
+      length = _read_user_text_length(text, v.length)
+      return true if length.nil?
+
+      @picked_ips << Sketchup::InputPoint.new(p1.offset(v, length).transform(t))
+      _refresh
+
+      true
+    end
+
+    # -----
+
+    def _get_state_vcb_label(state)
+
+      case state
+      when STATE_SHAPE_POINTS
+        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_length')
+      end
+
+      super
     end
 
     # -----

@@ -122,29 +122,29 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_EXPORT_PART_3D
-        if fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_STL)
+        if fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_STL)
           return @cursor_export_stl
-        elsif fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_OBJ)
+        elsif fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_OBJ)
           return @cursor_export_obj
-        elsif fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+        elsif fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return @cursor_export_dxf
         end
       when ACTION_EXPORT_PART_2D
-        if fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+        if fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
           return @cursor_export_svg
-        elsif fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+        elsif fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return @cursor_export_dxf
         end
       when ACTION_EXPORT_FACE
-        if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+        if fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
           return @cursor_export_svg
-        elsif fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+        elsif fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return @cursor_export_dxf
         end
       when ACTION_EXPORT_PATHS
-        if fetch_action_option_enabled(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
+        if fetch_action_option_boolean(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_SVG)
           return @cursor_export_svg
-        elsif fetch_action_option_enabled(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
+        elsif fetch_action_option_boolean(ACTION_EXPORT_PATHS, ACTION_OPTION_FILE_FORMAT, ACTION_OPTION_FILE_FORMAT_DXF)
           return @cursor_export_dxf
         end
       end
@@ -294,7 +294,7 @@ module Ladb::OpenCutList
           # Part 3D
 
           @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
-            origin_position: fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
+            origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
             ignore_surfaces: true,
             ignore_edges: true
           ).run
@@ -342,17 +342,17 @@ module Ladb::OpenCutList
             input_local_z_axis: local_z_axis,
             input_plane_manipulator: @picker.picked_plane_manipulator,
             input_line_manipulator: @picker.picked_line_manipulator,
-            face_validator: fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
-            ignore_edges: !fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
-            edge_validator: fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
+            face_validator: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
+            ignore_edges: !fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
+            edge_validator: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
           ).run
           if @active_drawing_def.is_a?(DrawingDef)
 
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
             projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def,
-              origin_position: fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
-              merge_holes: fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
+              origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
+              merge_holes: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
             ).run
             if projection_def.is_a?(DrawingProjectionDef)
 
@@ -390,7 +390,7 @@ module Ladb::OpenCutList
 
                   line_stipple = poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw? ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
 
-                  if fetch_action_option_enabled(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+                  if fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                     poly_def.curve_def.portions.each do |portion|
                       fn_append_segments.call(portion.segments, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
                     end
@@ -522,7 +522,7 @@ module Ladb::OpenCutList
 
                 line_stipple = poly_def.ccw? ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_SHORT_DASHES
 
-                if fetch_action_option_enabled(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+                if fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                   poly_def.curve_def.portions.each do |portion|
                     fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
                   end
@@ -648,7 +648,7 @@ module Ladb::OpenCutList
 
                 line_stipple = Kuix::LINE_STIPPLE_SOLID
 
-                if fetch_action_option_enabled(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && !poly_def.curve_def.nil?
+                if fetch_action_option_boolean(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && !poly_def.curve_def.nil?
                   poly_def.curve_def.portions.each do |portion|
                     fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
                   end
@@ -830,7 +830,7 @@ module Ladb::OpenCutList
           file_name = _get_active_part_name(true)
           file_format = fetch_action_option_value(ACTION_EXPORT_PART_3D, ACTION_OPTION_FILE_FORMAT)
           unit = fetch_action_option_value(ACTION_EXPORT_PART_3D, ACTION_OPTION_UNIT)
-          switch_yz = fetch_action_option_enabled(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SWITCH_YZ)
+          switch_yz = fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SWITCH_YZ)
 
           worker = CommonWriteDrawing3dWorker.new(@active_drawing_def,
             file_name: file_name,

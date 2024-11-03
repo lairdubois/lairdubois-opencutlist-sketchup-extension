@@ -361,15 +361,15 @@ module Ladb::OpenCutList
       when ACTION_PAINT_PARTS
         return @cursor_paint_part_id
       when ACTION_PAINT_EDGES
-        if fetch_action_option_enabled(ACTION_PAINT_EDGES, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_4)
+        if fetch_action_option_boolean(ACTION_PAINT_EDGES, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_4)
           return @cursor_paint_edge_4_id
-        elsif fetch_action_option_enabled(ACTION_PAINT_EDGES, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_2)
+        elsif fetch_action_option_boolean(ACTION_PAINT_EDGES, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_2)
           return @cursor_paint_edge_2_id
         else
           return @cursor_paint_edge_1_id
         end
       when ACTION_PAINT_FACES
-        if fetch_action_option_enabled(ACTION_PAINT_FACES, ACTION_OPTION_FACES, ACTION_OPTION_FACES_2)
+        if fetch_action_option_boolean(ACTION_PAINT_FACES, ACTION_OPTION_FACES, ACTION_OPTION_FACES_2)
           return @cursor_paint_face_2_id
         else
           return @cursor_paint_face_1_id
@@ -783,7 +783,7 @@ module Ladb::OpenCutList
           show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name ], @active_material && @active_material.name == part.material_name ? MESSAGE_TYPE_SUCCESS : MESSAGE_TYPE_DEFAULT)
 
           active_instance = @active_part_entity_path.last
-          instances = fetch_action_option_enabled(ACTION_PAINT_PARTS, ACTION_OPTION_INSTANCES, ACTION_OPTION_INSTANCES_ALL) ? active_instance.definition.instances : [active_instance ]
+          instances = fetch_action_option_boolean(ACTION_PAINT_PARTS, ACTION_OPTION_INSTANCES, ACTION_OPTION_INSTANCES_ALL) ? active_instance.definition.instances : [active_instance ]
           instance_paths = []
           _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
 
@@ -799,7 +799,7 @@ module Ladb::OpenCutList
 
           end
 
-          if fetch_action_option_enabled(ACTION_PAINT_PARTS, ACTION_OPTION_INSTANCES, ACTION_OPTION_INSTANCES_ALL)
+          if fetch_action_option_boolean(ACTION_PAINT_PARTS, ACTION_OPTION_INSTANCES, ACTION_OPTION_INSTANCES_ALL)
             definition = Sketchup.active_model.definitions[part.def.definition_id]
             if definition && definition.count_used_instances > 1
               show_message("⚠ #{PLUGIN.get_i18n_string('tool.smart_axes.warning.more_entities', { :count_used => definition.count_used_instances })}", MESSAGE_TYPE_WARNING)
@@ -820,7 +820,7 @@ module Ladb::OpenCutList
 
             sides = []
             faces = []
-            if fetch_action_option_enabled(fetch_action, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_1) || fetch_action_option_enabled(fetch_action, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_2)
+            if fetch_action_option_boolean(fetch_action, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_1) || fetch_action_option_boolean(fetch_action, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_2)
 
               picked_side = nil
               edge_faces.each { |k, v|
@@ -835,7 +835,7 @@ module Ladb::OpenCutList
 
               if picked_side
                 sides << picked_side unless edge_faces[picked_side].nil?
-                if fetch_action_option_enabled(fetch_action, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_2)
+                if fetch_action_option_boolean(fetch_action, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_2)
                   sides << :ymin if picked_side == :ymax && !edge_faces[:ymin].nil?
                   sides << :ymax if picked_side == :ymin && !edge_faces[:ymax].nil?
                   sides << :xmin if picked_side == :xmax && !edge_faces[:xmin].nil?
@@ -843,7 +843,7 @@ module Ladb::OpenCutList
                 end
               end
 
-            elsif fetch_action_option_enabled(fetch_action, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_4)
+            elsif fetch_action_option_boolean(fetch_action, ACTION_OPTION_EDGES, ACTION_OPTION_EDGES_4)
               sides << :ymin unless edge_faces[:ymin].nil?
               sides << :ymax unless edge_faces[:ymax].nil?
               sides << :xmin unless edge_faces[:xmin].nil?
@@ -912,7 +912,7 @@ module Ladb::OpenCutList
 
             sides = []
             faces = []
-            if fetch_action_option_enabled(fetch_action, ACTION_OPTION_FACES, ACTION_OPTION_EDGES_1)
+            if fetch_action_option_boolean(fetch_action, ACTION_OPTION_FACES, ACTION_OPTION_EDGES_1)
 
               picked_side = nil
               face_faces.each { |k, v|
@@ -929,7 +929,7 @@ module Ladb::OpenCutList
                 sides << picked_side unless face_faces[picked_side].nil?
               end
 
-            elsif fetch_action_option_enabled(fetch_action, ACTION_OPTION_FACES, ACTION_OPTION_FACES_2)
+            elsif fetch_action_option_boolean(fetch_action, ACTION_OPTION_FACES, ACTION_OPTION_FACES_2)
               sides << :zmax unless face_faces[:zmax].nil?
               sides << :zmin unless face_faces[:zmin].nil?
             end
