@@ -67,14 +67,16 @@ module Ladb::OpenCutList
 
     # -----
 
+    attr_reader :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pushpull
+
     def initialize
       super
 
       # Create cursors
-      @cursor_pencil = create_cursor('pencil', 0, 31)
       @cursor_pencil_rectangle = create_cursor('pencil-rectangle', 0, 31)
       @cursor_pencil_circle = create_cursor('pencil-circle', 0, 31)
       @cursor_pencil_polygon = create_cursor('pencil-polygon', 0, 31)
+      @cursor_pushpull = create_cursor('pushpull', 15, 3)
 
     end
 
@@ -195,6 +197,11 @@ module Ladb::OpenCutList
     def onMouseMove(flags, x, y, view)
       return true if super
       @action_handler.onMouseMove(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseMove)
+    end
+
+    def onMouseLeave(view)
+      return true if super
+      @action_handler.onMouseLeave(view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseLeave)
     end
 
     def onLButtonDown(flags, x, y, view)
@@ -374,6 +381,7 @@ module Ladb::OpenCutList
         if @down_ip.valid? && @snap_ip.position.distance(@down_ip.position) > view.pixels_to_model(20, @snap_ip.position)  # Drag handled only if distance is > 20px
           @picked_shape_first_ip.copy!(@down_ip)
           @down_ip.clear
+          onStateChanged(STATE_SHAPE_POINTS)
         end
       end
 
@@ -391,6 +399,12 @@ module Ladb::OpenCutList
       view.tooltip = @snap_ip.tooltip if @snap_ip.valid?
       view.invalidate
 
+    end
+
+    def onMouseLeave(view)
+      @tool.remove_all_2d
+      @tool.remove_all_3d
+      return true
     end
 
     def onLButtonDown(flags, x, y, view)
@@ -1183,7 +1197,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_PUSHPULL
-        return SmartDrawTool::CURSOR_PUSHPULL
+        return @tool.cursor_pushpull
       when STATE_MOVE
         return SmartDrawTool::CURSOR_MOVE
       end
