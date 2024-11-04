@@ -256,7 +256,6 @@ module Ladb::OpenCutList
                   btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :selected)
                   btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
                   btn.set_style_attribute(:background_color, COLOR_BRAND, :active)
-                  btn.set_style_attribute(:border_color, COLOR_BRAND, :hover)
                   btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
                   btn.border.set_all!(unit * 0.5)
                   btn.data = { :option_group => option_group, :option => option }
@@ -317,7 +316,6 @@ module Ladb::OpenCutList
                 btn.set_style_attribute(:background_color, Sketchup::Color.new(240, 240, 240))
                 btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
                 btn.set_style_attribute(:background_color, COLOR_BRAND, :active)
-                btn.set_style_attribute(:border_color, COLOR_BRAND, :hover)
                 btn.border.set_all!(unit * 0.5)
                 btn.on(:click) { |button|
                   PLUGIN.show_modal_dialog("smart_#{get_stripped_name}_tool_action_#{action}", { :action => action })
