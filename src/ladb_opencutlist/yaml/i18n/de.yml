@@ -23,7 +23,9 @@ default:
   preview: Übersicht
   options: Optionen
   caution: Vorsicht
-  remove: Löschen
+  remove: Entfernen
+  remove_all: Alles entfernen
+  delete: Löschen
   create: Anlegen
   duplicate: Duplizieren
   ignore: Ignorieren
@@ -83,6 +85,7 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance_properties: Instanzeigenschaften bearbeiten
+      smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -91,6 +94,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
+      smart_draw: Teile zeichnen
       smart_paint: Teile einfärben
       smart_axes: Teile orientieren
       smart_export: Teile exportieren
@@ -120,6 +124,7 @@ core:
 
       Um einen Fehler zu melden: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
+    extern: "Externer Fehler: **{{ error }}**"
     feature_unavailable: "Diese Funktion erfordert SketchUp {{ version }} oder höher"
     failed_export_to: |
       Beim Exportieren in die Datei, *{{ path }}*, ist ein Fehler aufgetreten.
@@ -197,6 +202,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modell
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -253,7 +259,11 @@ tab:
     edit_part_faces_properties: Eigenschaften (Flächen) des Teils bearbeiten
     part_drawing_type_1: 2D Vorderansicht
     part_drawing_type_2: 2D Rückansicht
-    part_drawing_type_3: 3D
+    part_drawing_type_3: 2D Seitelinks
+    part_drawing_type_4: 2D Seiterechts
+    part_drawing_type_5: 2D Vorderseite
+    part_drawing_type_6: 2D Rückansicht
+    part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Gruppe anzeigen / ausblenden
       scroll_to_block: Zur Gruppe blättern
@@ -338,7 +348,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       face_zmin: Rückseite
-      face_zmax: Vorderansicht
+      face_zmax: Vorderseite
       dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die anderen Kanten zu übertragen"
       dblclick_to_copy_all_faces: "Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen"
       dblclick_to_sort_axes: "Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen"
@@ -347,6 +357,7 @@ tab:
       select_parts_in_cutlist: Teil aus der Holzliste auswählen
       select_parts_in_cutlist_plural: "{{ count }} Teile aus der Holzliste auswählen"
       setup_group_cuttingdiagram: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' konfigurieren"
+      setup_group_packing: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: URL des Teils öffnen
     menu:
       show_all_groups: Alle Gruppen einblenden
@@ -354,6 +365,7 @@ tab:
       numbers_save: Nummern der Teile speichern
       numbers_reset: Nummern der Teile neu zuweisen
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: Etiketten drucken
       write_2d: 2D-Projektion
       write_3d: 3D-Geometrie
       write_2d_parts: 2D-Teileprojektion exportieren
@@ -364,6 +376,7 @@ tab:
       group_numbers_save: Nummern der Gruppenteile speichern
       group_numbers_reset: Nummern der Gruppenteile neu zuweisen
       group_cuttingdiagram: Schnittplan
+      group_packing: Schnittplan
       group_labels: Etiketten der Gruppenteile drucken
       edit_material: "Material '{{ material_name }}' bearbeiten"
       expand_all: Alle Zeilen aufklappen
@@ -571,8 +584,9 @@ tab:
         Umordnen, Ausblenden, Hinzufügen, Entfernen oder Auswählen einer Spalte in der Liste, um ihren **Titel** und die **Formel** anzupassen, die den angezeigten Wert für jede exportierte Zeile erzeugt.
       add_column: Spalte hinzufügen
       add_native_columns: Native Spalte hinzufügen
-      remove_column: Entfernen
-      remove_all_columns: Alles entfernen
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
       columns: Spalten
       column_title: Titel
       column_title_help: |
@@ -632,6 +646,8 @@ tab:
       layers: Tags
       batch: Los
       bin: Behälter
+      component_definition: Definition der Komponente
+      component_instance: Instanz der Komponente
       filename: Dateiname
       model_name: Modellname
       model_description: Modellbeschreibung
@@ -747,8 +763,6 @@ tab:
       option_trimming: Randabfallbreite
       option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
       option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
-      option_rotations: Drehungen
-      option_rotations_help_2d: Anzahl der möglichen Drehungen für jedes Teil.
       option_optimization: Optimierungsstufe
       option_optimization_help: "Die Optimierungsstufe definiert die Anzahl der berechneten Möglichkeiten und damit auch die Berechnungszeit."
       option_optimization_0: Mittel
@@ -783,7 +797,7 @@ tab:
         Wählen Sie die Standard-Platte oder das Standard-Furnierblatt, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
         Bearbeiten Sie das Material '{{ material_name }}' um diese Liste zu ergänzen.
-      option_std_sheet_add: Länge hinzufügen
+      option_std_sheet_add: Größe hinzufügen
       option_std_sheet_none: Keine
       option_scrap_sheet_good_sizes: Plattenreste
       option_scrap_sheet_veneer_sizes: Furnierreste
@@ -793,6 +807,9 @@ tab:
         Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
         Die Mengenangabe ist optional.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      option_problem_type: Typ
+      option_problem_type_help: |
+        ...
       tooltip:
         scroll_to_block_1d: Zur ersten Stange oder Kantenband blättern
         scroll_to_block_2d: Zur ersten Platte blättern
@@ -915,6 +932,146 @@ tab:
         cutting_dimensions_increase_1d: "Übermaß wurde auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß von (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "Übermaße wurden auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß (**{{ length_increase }}**) und Breitenzumaß (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Maße reduziert um die Materialstärke der Kantenbänder. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    packing:
+      title: Schnittplan
+      option_problem_type: Typ
+      option_problem_type_rectangle: Rechteck
+      option_problem_type_rectangleguillotine: Guillotine
+      option_problem_type_onedimensional: Stange
+      option_problem_type_irregular: Verschachtelt
+      options_material: Material
+      options_config: Konfiguration
+      options_display: Anzeige
+      options_tuning: Tuning
+      option_std_bin_1d_dimensional: Standard-Stange
+      option_std_bin_1d_edge: Standard-Kantenband
+      option_std_bin_1d_help: |
+        Wählen Sie hier die Standardstangenware oder das Standardkantenband, welche dupliziert werden um alle Teile zu enthalten.
+        Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
+        Editieren Sie das Material '{{ material_name }}' um diese Liste zu aktualisieren.
+      option_std_bin_1d_add: Länge hinzufügen
+      option_std_bin_1d_none: Keine
+      option_scrap_bin_1d_dimensional_sizes: Stangenreste
+      option_scrap_bin_1d_edge_sizes: Kantenbandreste
+      option_scrap_bin_1d_sizes_placeholder: Länge x Anzahl ; ...
+      option_scrap_bin_1d_sizes_help: |
+        Geben Sie hier die Stangenreste oder Kantenbandreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
+        Erwartetes Format : **L**x**M**, wo **L** die *Länge* des Rests ist und **M** die Menge.
+        Die Mengenangabe ist optional.
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      option_std_bin_2d_sheet_good: Standard-Platte
+      option_std_bin_2d_veneer: Standard-Furnierblatt
+      option_std_bin_2d_help: |
+        Wählen Sie die Standard-Platte oder das Standard-Furnierblatt, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
+        Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
+        Bearbeiten Sie das Material '{{ material_name }}' um diese Liste zu ergänzen.
+      option_std_bin_2d_add: Größe hinzufügen
+      option_std_bin_2d_none: Keine
+      option_scrap_bin_2d_sheet_good_sizes: Plattenreste
+      option_scrap_bin_2d_veneer_sizes: Furnierreste
+      option_scrap_bin_2d_sizes_placeholder: Länge x Breite x Anzahl ; ...
+      option_scrap_bin_2d_sizes_help: |
+        Geben Sie hier die Liste der Platten- oder Furnierreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
+        Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
+        Die Mengenangabe ist optional.
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      option_optimization_mode: Optimierungsmodus
+      option_optimization_mode_help: |
+        ...
+      option_objective: Ziel
+      option_objective_help: |
+        ...
+      option_rectangleguillotine_cut_type: Schnitttyp
+      option_rectangleguillotine_cut_type_help: |
+        ...
+      option_rectangleguillotine_number_of_stages: Anzahl der Stufen
+      option_rectangleguillotine_number_of_stages_help: |
+        ...
+      option_rectangleguillotine_first_stage_orientation: Erster Schnitt
+      option_rectangleguillotine_first_stage_orientation_help: |
+        Bestimmt die Richtung des ersten Schnittes.
+      option_irregular_allowed_rotations: Drehungen
+      option_irregular_allowed_rotations_help: |
+        Bestimmt die erlaubten Drehungen eines Teils.
+      option_irregular_allow_mirroring: Spiegelung
+      option_irregular_allow_mirroring_help: |
+        Bestimmt ob eine Spiegelung des Teils erlaubt ist.
+      option_spacing: Abstand
+      option_spacing_help: Minimaler Abstand zwischen den Teilen.
+      option_trimming: Randabfallbreite
+      option_trimming_1d_help: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
+      option_trimming_2d_help: Breite des Säuberungsschnittes auf allen vier Seiten der Platte oder des Furnierblattes.
+      option_items_formula: Formel
+      option_items_formula_help: |
+        ...
+      option_hide_part_list: Liste der Teile
+      option_hide_part_list_1d_dimensional_0: Anzeigen für jede Stange
+      option_hide_part_list_1d_edge_0: Anzeigen für jedes Kantenband
+      option_hide_part_list_2d_sheet_good_0: Anzeigen für jede Platte
+      option_hide_part_list_2d_veneer_0: Anzeigen für jedes Furnierblatt
+      option_hide_part_list_1: Maskiert
+      option_hide_part_list_1d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Stange oder jedes Kantenband.
+      option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte oder jedes Furnierblatt.
+      option_part_drawing_type: Form der Teile
+      option_part_drawing_type_0: Maskiert
+      option_part_drawing_type_1: Draufsicht
+      option_part_drawing_type_2: Untersicht
+      option_part_drawing_type_help: |
+        Ermöglicht es, die tatsächliche Form der Teile sowie ihre Bearbeitungen im Diagramm ein- oder auszublenden.
+
+        *Diese Option muss aktiviert sein, damit die Formen exportiert werden können.*
+      option_colored_part: Teile einfärben
+      option_colored_part_0: Nein
+      option_colored_part_1: Ja
+      option_colored_part_help: |
+        ...
+      option_time_limit: Zeitbegrenzung
+      option_time_limit_help: |
+        ...
+      option_not_anytime_tree_search_queue_size: Länge der Warteschlange
+      option_not_anytime_tree_search_queue_size_help: |
+        ...
+      option_verbosity_level: Ausführlichkeit
+      option_verbosity_level_help: |
+        ...
+      tooltip:
+        scroll_to_block_1d: Zur ersten Stange oder Kantenband blättern
+        scroll_to_block_2d: Zur ersten Platte oder Furnierblatt blättern
+      list:
+        summary: Zusammenfassung
+        trimming: Rand
+        stats: Statistiken
+        total_cut_count: Anzahl Schnitte
+        total_cut_length: Schnittlänge
+        efficiency: Effizienz
+        count: Anz.
+        length: Länge
+        width: Breite
+        total_length: Σ Längen
+        total_area: Σ Flächen
+        total_part_count: "# Teile"
+        total_used: Insgesamt verwendet
+        bin_1d_dimensional: Stange
+        bin_1d_dimensional_type_0: Standard-Stange
+        bin_1d_dimensional_type_1: Stangenrest
+        bin_1d_edge: Kantenband
+        bin_1d_edge_type_0: Standard-Kantenband
+        bin_1d_edge_type_1: Kantenbandrest
+        bin_2d_sheet_good: Platte
+        bin_2d_sheet_good_type_0: Standard-Platte
+        bin_2d_sheet_good_type_1: Plattenrest
+        bin_2d_veneer: Furnierblatt
+        bin_2d_veneer_type_0: Standar-Furnierblatt
+        bin_2d_veneer_type_1: Furnierrest
+        parts: "{{ count }} Teil"
+        parts_plural: "{{ count }} Teile"
+      error:
+        no_part: Kein Teil.
+        no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zu Verfügung.
+        no_bin_2d: Keine Standard-Platte oder -Furnierblatt wurde ausgewählt und es stehen keine Reste zu Verfügung.
+        no_solution: Keine Lösung gefunden.
+      warning:
+        is_part_selection: Dieser Schnittplan beschränkt sich auf die **ausgewählten Teile**.
     labels:
       title: Etiketten
       options_layout: Gestaltung
@@ -923,8 +1080,9 @@ tab:
       options_offset: Versatz
       size: Tatsächliche Etikettengröße
       add_element: Element hinzufügen
-      remove_element: Entfernen
-      remove_all_elements: Alles entfernen
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         Die Sortierreihenfolge der Etiketten wird durch die Anordnung der folgenden Kacheln definiert.
         Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
@@ -965,6 +1123,7 @@ tab:
       option_color: Farbe
       formula:
         custom: Formel
+        custom_qr_code: QR Code
         part_number: Nummer
         part_name: Bezeichnung
         part_description: Beschreibung
@@ -1004,6 +1163,7 @@ tab:
       error:
         invalid_size: Mit den eingegebenen Konfigurationsparametern kann keine gültige Etikettengröße festgelegt werden.
       warning:
+        is_group_selection: Teile, die in den**maskierten Gruppen** ihrer Holzliste enthalten sind, erhalten kein Etikett.
         is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
         formula_not_available: Formel steht in diesem Kontext nicht zu Verfügung
     layout:
@@ -1089,6 +1249,11 @@ tab:
       option_unit: Einheit
       option_unit_help: |
         Auswahl der in der exportierten Datei verwendeten Einheit.
+      option_use_count: Anzahl
+      option_use_count_0: Eine Datei pro Teil
+      option_use_count_1: Eine Datei pro Teilinstanz
+      option_use_count_help: |
+        Auswahl ob die Anzahl der Instanzen berücksichtigt wird.
       option_part_drawing_type: Projektion
       option_part_drawing_type_help: |
         Auswahl der Ansicht, die exportiert werden soll.
@@ -1312,7 +1477,7 @@ tab:
         Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
       property_type: Typ
       property_name: Bezeichnung
-    remove:
+    delete:
       message: |
         Sie sind dabei das Material **{{ material_name }}** aus Ihrem Modell zu entfernen.
         Bestätigen Sie, um fortzufahren.
@@ -1325,7 +1490,7 @@ tab:
       material_not_found: Kein Material gefunden.
       failed_import_skm_file: "Beim Importieren der .skm-Datei ist ein Fehler aufgetreten. **{{ error }}**"
       failed_export_skm_file: "Beim Exportieren der .skm Datei ist ein Fehler aufgetreten. **{{ error }}**"
-      failed_removing_material: "Beim Löschen des Materials ist ein Fehler aufgetreten. **{{ error }}**"
+      failed_deleting_material: "Beim Löschen des Materials ist ein Fehler aufgetreten. **{{ error }}**"
       failed_duplicating_material: "Beim Duplizieren des Materials ist ein Fehler aufgetreten. **{{ error }}**"
       invalid_image_file: Ungültiges Bild
     obsolete_base: "Um synchron zu bleiben, müssen Sie die Materialliste aktualisieren."
@@ -1622,6 +1787,36 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_draw:
+    title: Zeichnen
+    action_0: Rechteck zeichnen
+    action_0_status: Volumen auf der Basis einer Rechteckform zeichnen
+    action_1: Kreis zeichnen
+    action_1_status: Volumen auf der Basis einer Kreisform zeichnen
+    action_2: Polygon zeichnen
+    action_2_status: Volumen auf der Basis einer polygonalen Form zeichnen
+    action_option_group_tools: Werkzeuge
+    action_option_group_offset: Verschiebung
+    action_option_group_segments: Segmente
+    action_option_group_options: Optionen
+    action_option_tools_pushpull_status: Aktivieren Drücken/Ziehen nach dem Zeichnen der Form
+    action_option_tools_move_status: Aktivieren Kopieren/Verschieben nach dem Zeichnen der Form
+    action_option_offset_shape_offset_status: Ermöglicht die Anwendung einer Verschiebung auf die gezeichnete Form
+    action_option_segments_segment_count_status: Ermöglicht das Festlegen der Anzahl der Kreissegmente
+    action_option_options_construction_status: In Konstruktionslinien zeichnen
+    action_option_options_rectangle_centered_status: Rechteck auf den ersten Punkt zentrieren
+    action_option_options_box_centered_status: Erhebung auf den ersten Punkt zentrieren
+    action_option_options_move_array_status: Kopieren des Teils in ein rechteckiges Netz
+    vcb_length: Länge
+    vcb_size: Kotierungen
+    vcb_radius: Radius
+    vcb_distance: Distanz
+    error:
+      invalid_length: "Die Länge {{ value }} ist ungültig"
+      invalid_multiplicator: "Der Faktor {{ value }} ist ungültig"
+      invalid_divider: "Der Teiler {{ value }} ist ungültig"
+      invalid_offset: "Die Verschiebung {{ value }} ist ungültig"
+      invalid_segment_count: "Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein."
   smart_paint:
     title: Malen
     default_material: Kein Material definiert

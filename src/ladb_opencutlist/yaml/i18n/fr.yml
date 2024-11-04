@@ -975,7 +975,7 @@ tab:
         Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      option_optimization_mode: Optimizarion Mode
+      option_optimization_mode: Optimization Mode
       option_optimization_mode_help: |
         ...
       option_objective: Objectif
@@ -1302,7 +1302,7 @@ tab:
       option_parts_paths: Tracés
       option_parts_paths_help: |
         Permet de choisir les couleurs des tracés.
-        
+
         *La couleur de remplissage ne sera utilisée que pour les tracés fermés.*
       error:
         no_part: Aucune pièce à exporter.
