@@ -579,7 +579,7 @@ tab:
     export:
       title: Export
       info_0: |
-        Mit dieser Funktion können Sie Ihre *Holzliste* als *Stückliste* in eine Datei im Format [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) exportieren.
+        Mit dieser Funktion können Sie Ihre Holzliste als *Stückliste* in eine Datei im Format [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) exportieren.
       customize_help: |
         Umordnen, Ausblenden, Hinzufügen, Entfernen oder Auswählen einer Spalte in der Liste, um ihren **Titel** und die **Formel** anzupassen, die den angezeigten Wert für jede exportierte Zeile erzeugt.
       add_column: Spalte hinzufügen

@@ -24,6 +24,8 @@ default:
   options: Options
   caution: Caution
   remove: Remove
+  remove_all: Remove all
+  delete: Delete
   create: Create
   duplicate: Duplicate
   ignore: Ignore
@@ -83,6 +85,7 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance_properties: Edit instance properties
+      smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -91,6 +94,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
+      smart_draw: Draw Parts
       smart_paint: Paint Parts
       smart_axes: Orient Parts
       smart_export: Export Parts
@@ -120,6 +124,7 @@ core:
 
       To report a bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
+    extern: "External error: **{{ error }}**"
     feature_unavailable: "This function requires SketchUp {{ version }} or higher"
     failed_export_to: |
       An error occurred while exporting to *{{ path }}*.
@@ -197,6 +202,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Model
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -253,7 +259,11 @@ tab:
     edit_part_faces_properties: Edit the properties (faces) of the part
     part_drawing_type_1: 2D Front View
     part_drawing_type_2: 2D Rear View
-    part_drawing_type_3: 3D
+    part_drawing_type_3: 3D Left Side View
+    part_drawing_type_4: 2D Right Side View
+    part_drawing_type_5: 2D Front View
+    part_drawing_type_6: 2D Back View
+    part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Show / Hide group
       scroll_to_block: Scroll to group
@@ -347,6 +357,7 @@ tab:
       select_parts_in_cutlist: Select part in the Parts List
       select_parts_in_cutlist_plural: "Select {{ count }} parts in the Parts List"
       setup_group_cuttingdiagram: "Configure the cutting diagram of '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      setup_group_packing: "Configure the cutting diagram of '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Open part URL
     menu:
       show_all_groups: Show all groups
@@ -354,6 +365,7 @@ tab:
       numbers_save: Save part numbers
       numbers_reset: Reset the part numbers
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: Print labels
       write_2d: 2D Projection
       write_3d: 3D Geometry
       write_2d_parts: Export 2D part projections
@@ -364,6 +376,7 @@ tab:
       group_numbers_save: Save part numbers of this group
       group_numbers_reset: Reinitialize the part numbers of this group
       group_cuttingdiagram: Cutting Diagram
+      group_packing: Cutting Diagram
       group_labels: Print labels of parts in group
       edit_material: "Edit material '{{ material_name }}'"
       expand_all: Unfold all lines
@@ -566,13 +579,14 @@ tab:
     export:
       title: Export
       info_0: |
-        With this function the *Parts List* can be exported as a *list of parts* into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
+        With this function the *Parts List* can be exported as a list of parts into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
       customize_help: |
         Reorder, Hide, Add, Remove or Select a column from the list to customize its **title** and the **formula** that will generate the values for each exported row.
       add_column: Add a column
       add_native_columns: Add a native column
-      remove_column: Remove
-      remove_all_columns: Remove all
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
       columns: Columns
       column_title: Title
       column_title_help: |
@@ -632,6 +646,8 @@ tab:
       layers: Tags
       batch: Batch
       bin: Bin
+      component_definition: Component definition
+      component_instance: Component instance
       filename: File name
       model_name: Model name
       model_description: Model description
@@ -642,7 +658,7 @@ tab:
         no_column_formula_native: "Native value of column '{{ col_name }}'"
         no_column_formula: Enter a formula
       warning:
-        is_group_selection: Parts contained in the **hidden groups** of the Parts List will not be exported.
+        is_group_selection: Parts contained in **hidden groups** of the Parts List will not be exported.
     report:
       title: Estimate
       info_0: |
@@ -747,8 +763,6 @@ tab:
       option_trimming: Trimming
       option_trimming_help_1d: The amount of material at each end of the board or edge banding to be treated as waste.
       option_trimming_help_2d: The amount of material around the raw panel to be treated as waste.
-      option_rotations: Rotations
-      option_rotations_help_2d: Number of possible rotations for each part.
       option_optimization: Optimization Level
       option_optimization_help: "The optimization level defines the number of computed possibilities, and therefore also the calculation time."
       option_optimization_0: Medium
@@ -793,6 +807,9 @@ tab:
         Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the panel and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
+      option_problem_type: Type
+      option_problem_type_help: |
+        ...
       tooltip:
         scroll_to_block_1d: Scroll to first board or edge banding
         scroll_to_block_2d: Scroll to first panel
@@ -915,6 +932,146 @@ tab:
         cutting_dimensions_increase_1d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Dimensions reduced by the thickness of the edge banding. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    packing:
+      title: Calepinage
+      option_problem_type: Type
+      option_problem_type_rectangle: Rectangle
+      option_problem_type_rectangleguillotine: Guillotine
+      option_problem_type_onedimensional: One
+      option_problem_type_irregular: Nesting
+      options_material: Material
+      options_config: Configuration
+      options_display: Display
+      options_tuning: Tuning
+      option_std_bin_1d_dimensional: Standard Dimensional
+      option_std_bin_1d_edge: Standard Edge Banding
+      option_std_bin_1d_help: |
+        Select the standard board or edge banding, which will be duplicated to contain all the parts.
+        This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
+        Edit the material '{{ material_name }}' to update this list.
+      option_std_bin_1d_add: Add a size
+      option_std_bin_1d_none: None
+      option_scrap_bin_1d_dimensional_sizes: Offcut boards
+      option_scrap_bin_1d_edge_sizes: Offcut Edge Bandings
+      option_scrap_bin_1d_sizes_placeholder: length x quantity ; ...
+      option_scrap_bin_1d_sizes_help: |
+        List the offcut boards or edge bandings which should be considered first in the cutting diagram.
+        Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
+        Quantity is optional.
+        *Sizes without units are considered to be in model units.*
+      option_std_bin_2d_sheet_good: Standard sheet
+      option_std_bin_2d_veneer: Standard veneer sheet
+      option_std_bin_2d_help: |
+        Select the standard panel or veneer sheet which will be duplicated to calculate the best possible placement.
+        This list is defined by the **$t(tab.materials.edit_material.std_sizes)** field of the material.
+        Edit the material '{{ material_name }}' to complete this list.
+      option_std_bin_2d_add: Add a size
+      option_std_bin_2d_none: None
+      option_scrap_bin_2d_sheet_good_sizes: Panel Offcuts
+      option_scrap_bin_2d_veneer_sizes: Veneer Offcuts
+      option_scrap_bin_2d_sizes_placeholder: length x width x quantity ; ...
+      option_scrap_bin_2d_sizes_help: |
+        List all offcut sheet goods or veneers you would like to be considered in priority for the cutting diagram.
+        Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the panel and **Q** the quantity.
+        Quantity is optional.
+        *Sizes without units are considered to be in model units.*
+      option_optimization_mode: Optimization Mode
+      option_optimization_mode_help: |
+        ...
+      option_objective: Objectif
+      option_objective_help: |
+        ...
+      option_rectangleguillotine_cut_type: Cut Type
+      option_rectangleguillotine_cut_type_help: |
+        ...
+      option_rectangleguillotine_number_of_stages: Number of stages
+      option_rectangleguillotine_number_of_stages_help: |
+        ...
+      option_rectangleguillotine_first_stage_orientation: First cut
+      option_rectangleguillotine_first_stage_orientation_help: |
+        ...
+      option_irregular_allowed_rotations: Rotations
+      option_irregular_allowed_rotations_help: |
+        ...
+      option_irregular_allow_mirroring: Mirroring
+      option_irregular_allow_mirroring_help: |
+        ...
+      option_spacing: Spacing
+      option_spacing_help: Minimal spacing between each part.
+      option_trimming: Margin
+      option_trimming_1d_help: The amount of material at each end of the board or edge banding to be treated as waste.
+      option_trimming_2d_help: The amount of material around the raw panel or veneer sheet to be treated as waste.
+      option_items_formula: Formula
+      option_items_formula_help: |
+        ...
+      option_hide_part_list: Parts List
+      option_hide_part_list_1d_dimensional_0: Displayed for each board
+      option_hide_part_list_1d_edge_0: Displayed for each edge banding
+      option_hide_part_list_2d_sheet_good_0: Displayed for each panel
+      option_hide_part_list_2d_veneer_0: Displayed for each veneer sheet
+      option_hide_part_list_1: Hidden
+      option_hide_part_list_1d_help: Display or hide the list of parts for each board or edge banding.
+      option_hide_part_list_2d_help: Display or hide the list of parts for each panel or veneer sheet.
+      option_part_drawing_type: Shape of parts
+      option_part_drawing_type_0: Hidden
+      option_part_drawing_type_1: Displaying front face
+      option_part_drawing_type_2: Displaying rear face
+      option_part_drawing_type_help: |
+        Shows or hides the actual shape of parts and their machining on the diagram.
+
+        *This option must be enabled for shapes to be exported.*
+      option_colored_part: Paint parts
+      option_colored_part_0: No
+      option_colored_part_1: Yes
+      option_colored_part_help: |
+        ...
+      option_time_limit: Time limit
+      option_time_limit_help: |
+        ...
+      option_not_anytime_tree_search_queue_size: Queue size
+      option_not_anytime_tree_search_queue_size_help: |
+        ...
+      option_verbosity_level: Verbosity level
+      option_verbosity_level_help: |
+        ...
+      tooltip:
+        scroll_to_block_1d: Scroll to first board or edge banding
+        scroll_to_block_2d: Scroll to first panel or veneer sheet
+      list:
+        summary: Summary
+        trimming: Trimming
+        stats: Statistics
+        total_cut_count: Number of cuts
+        total_cut_length: Length of cuts
+        efficiency: Efficiency
+        count: Qty
+        length: Length
+        width: Width
+        total_length: Σ Length
+        total_area: Σ Areas
+        total_part_count: "# Parts"
+        total_used: Total used
+        bin_1d_dimensional: Dimensional
+        bin_1d_dimensional_type_0: Standard Dimensional
+        bin_1d_dimensional_type_1: Offcut Board
+        bin_1d_edge: Bande
+        bin_1d_edge_type_0: Standard Edge Band
+        bin_1d_edge_type_1: Offcut Edge Band
+        bin_2d_sheet_good: Panel
+        bin_2d_sheet_good_type_0: Standard Panel
+        bin_2d_sheet_good_type_1: Panel Offcut
+        bin_2d_veneer: Veneer Sheet
+        bin_2d_veneer_type_0: Standard Veneer Sheet
+        bin_2d_veneer_type_1: Offcut Veneer Sheet
+        parts: "{{ count }} part"
+        parts_plural: "{{ count }} parts"
+      error:
+        no_part: No part.
+        no_bin_1d: No standard board or edge banding was selected and no offcuts were available.
+        no_bin_2d: No standard panel or veneer sheet was selected and no offcuts were available.
+        no_solution: No solution was found.
+      warning:
+        is_part_selection: This cutting diagram is limited to **selected parts**.
     labels:
       title: Labels
       options_layout: Layout
@@ -923,8 +1080,9 @@ tab:
       options_offset: Offset
       size: Real size of label
       add_element: Add element
-      remove_element: Remove
-      remove_all_elements: Remove all
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         Reorganize the tiles to define the sort order of labels.
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *increasing* or <i class="ladb-opencutlist-icon-sort-desc"></i> *decreasing* order.
@@ -965,6 +1123,7 @@ tab:
       option_color: Color
       formula:
         custom: Formula
+        custom_qr_code: QR Code
         part_number: Number
         part_name: Designation
         part_description: Description
@@ -1004,6 +1163,7 @@ tab:
       error:
         invalid_size: The configuration parameters entered do not allow a valid label size to be set.
       warning:
+        is_group_selection: Parts contained in **hidden groups** of the Parts List will not get labels.
         is_part_selection: These labels are limited to the **selected parts**.
         formula_not_available: Not available in this context
     layout:
@@ -1075,7 +1235,7 @@ tab:
 
           **Make sure the file is not open in Layout.**
       warning:
-        is_group_selection: The parts inside of **hidden groups** of your parts list will not be drawn.
+        is_group_selection: Parts containe in **hidden groups** of the Parts List will not be drawn.
         is_part_selection: This overview drawing is limited to the **selected parts**.
     write:
       title: Parts Export
@@ -1089,6 +1249,11 @@ tab:
       option_unit: Unit
       option_unit_help: |
         Select the unit used in the exported file.
+      option_use_count: Quantity
+      option_use_count_0: One file per part
+      option_use_count_1: One file per part instance
+      option_use_count_help: |
+        Selects whether the number of instances of a part is considered.
       option_part_drawing_type: Projection
       option_part_drawing_type_help: |
         Select the view to be exported.
@@ -1136,13 +1301,13 @@ tab:
         Select the color of drillings.
       option_parts_paths: Paths
       option_parts_paths_help: |
-        Allows you to choose plot colors. 
+        Allows you to choose plot colors.
 
         *The fill color will only be used for closed paths.*
       error:
         no_part: No part to export.
       warning:
-        is_group_selection: Parts contained in the **hidden groups** of parts list will not be exported.
+        is_group_selection: Parts contained in **hidden groups** of Parts List will not be exported.
         is_part_selection: The export is limited to the **selected parts**.
     snippet:
       hello: Hello
@@ -1312,9 +1477,9 @@ tab:
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       property_type: Type
       property_name: Name
-    remove:
+    delete:
       message: |
-        You are about to remove the material **{{ material_name }}** from your model.
+        You are about to delete the material **{{ material_name }}** from your model.
         Confirm to continue.
     duplicate:
       message: |
@@ -1325,7 +1490,7 @@ tab:
       material_not_found: No material found.
       failed_import_skm_file: "An error occurred while importing from the .skm file. **{{ error }}**"
       failed_export_skm_file: "An error occurred while exporting to .skm file. **{{ error }}**"
-      failed_removing_material: "An error occurred while suppressing this material. **{{ error }}**"
+      failed_deleting_material: "An error occurred while deleting this material. **{{ error }}**"
       failed_duplicating_material: "An error occured while duplicating the material. **{{ error }}**"
       invalid_image_file: Invalid image
     obsolete_base: "To stay in sync, you need to refresh the material list."
@@ -1622,6 +1787,36 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_draw:
+    title: Draw
+    action_0: Draw rectangle
+    action_0_status: Draw a volume on a rectangular shape
+    action_1: Draw circle
+    action_1_status: Draw a volume on a circular shape
+    action_2: Draw polygon
+    action_2_status: Draw a volume on a polygonal shape
+    action_option_group_tools: Tools
+    action_option_group_offset: Offset
+    action_option_group_segments: Segments
+    action_option_group_options: Options
+    action_option_tools_pushpull_status: Activate Push/Pull after shape drawing
+    action_option_tools_move_status: Activate Copy/Move after part creation
+    action_option_offset_shape_offset_status: Apply an offset to the shape line
+    action_option_segments_segment_count_status: Define the number of segments of a circle
+    action_option_options_construction_status: Drawing in construction lines
+    action_option_options_rectangle_centered_status: Center rectangle on the first point
+    action_option_options_box_centered_status: Center elevation on the first point
+    action_option_options_move_array_status: Copy part in a rectangular mesh
+    vcb_length: Length
+    vcb_size: Size
+    vcb_radius: Radius
+    vcb_distance: Distance
+    error:
+      invalid_length: "Length {{ value }} is invalid"
+      invalid_multiplicator: "Factor {{ value }} is invalid"
+      invalid_divider: "Divisor {{ value }} is invalid"
+      invalid_offset: "Offset {{ value }} is invalid"
+      invalid_segment_count: "The number of segments {{ value }} is invalid. It must be between 3 and 999."
   smart_paint:
     title: Paint
     default_material: No material defined
