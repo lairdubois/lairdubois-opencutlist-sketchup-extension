@@ -1812,6 +1812,7 @@ tool:
     vcb_radius: Rayon
     vcb_distance: Distance
     error:
+      no_direction: Veuillez indiquer une direction avec la souris
       invalid_length: "La longueur {{ value }} est invalide"
       invalid_multiplicator: "Le multiplicateur {{ value }} est invalide"
       invalid_divider: "Le diviseur {{ value }} est invalide"

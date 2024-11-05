@@ -1022,6 +1022,12 @@ module Ladb::OpenCutList
     # -----
 
     def _read_shape(text)
+      if @picked_shape_first_ip.position == @snap_ip.position
+        UI.beep
+        @tool.notify_errors([ "tool.smart_draw.error.no_direction" ])
+        return true
+      end
+      false
     end
 
     def _read_pushpull(text)
@@ -1857,6 +1863,7 @@ module Ladb::OpenCutList
     # -----
 
     def _read_shape(text)
+      return true if super
 
       d1, d2, d3 = text.split(';')
 
@@ -2155,6 +2162,7 @@ module Ladb::OpenCutList
     # -----
 
     def _read_shape(text)
+      return true if super
 
       d1, d2 = text.split(';')
 
@@ -2791,6 +2799,7 @@ module Ladb::OpenCutList
     # -----
 
     def _read_shape(text)
+      return true if super
 
       t = _get_transformation
       ti = t.inverse
