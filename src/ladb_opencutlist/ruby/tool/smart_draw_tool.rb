@@ -59,15 +59,9 @@ module Ladb::OpenCutList
       }
     ].freeze
 
-    CURSOR_PENCIL = 632
-    CURSOR_RECTANGLE = 637
-    CURSOR_PUSHPULL = 639
-    CURSOR_MOVE = 641
-    CURSOR_MOVE_COPY = 642
-
     # -----
 
-    attr_reader :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pushpull
+    attr_reader :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pushpull, :cursor_move, :cursor_move_copy
 
     def initialize
       super
@@ -76,7 +70,9 @@ module Ladb::OpenCutList
       @cursor_pencil_rectangle = create_cursor('pencil-rectangle', 0, 31)
       @cursor_pencil_circle = create_cursor('pencil-circle', 0, 31)
       @cursor_pencil_polygon = create_cursor('pencil-polygon', 0, 31)
-      @cursor_pushpull = create_cursor('pushpull', 15, 3)
+      @cursor_pushpull = create_cursor('pushpull', 16, 3)
+      @cursor_move = create_cursor('move', 16, 16)
+      @cursor_move_copy = create_cursor('move-copy', 16, 16)
 
     end
 
@@ -514,6 +510,7 @@ module Ladb::OpenCutList
           unless _fetch_option_move_array
             @move_copy = !@move_copy
             @definition.instances.first.visible = @move_copy if !@definition.nil? && @definition.instances.any?
+            @tool.set_root_cursor(_get_state_cursor(STATE_MOVE))
             _refresh
           end
           return true
@@ -1205,7 +1202,7 @@ module Ladb::OpenCutList
       when STATE_PUSHPULL
         return @tool.cursor_pushpull
       when STATE_MOVE
-        return SmartDrawTool::CURSOR_MOVE
+        return @move_copy ? @tool.cursor_move_copy : @tool.cursor_move
       end
 
       @tool.get_action_cursor(@action)
