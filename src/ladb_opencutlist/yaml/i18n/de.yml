@@ -257,11 +257,11 @@ tab:
     edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
     edit_part_edges_properties: Eigenschaften (Kanten) des Teils bearbeiten
     edit_part_faces_properties: Eigenschaften (Flächen) des Teils bearbeiten
-    part_drawing_type_1: 2D Vorderansicht
-    part_drawing_type_2: 2D Rückansicht
+    part_drawing_type_1: 2D Draufsicht
+    part_drawing_type_2: 2D Untersicht
     part_drawing_type_3: 2D Seitelinks
     part_drawing_type_4: 2D Seiterechts
-    part_drawing_type_5: 2D Vorderseite
+    part_drawing_type_5: 2D Vorderansicht
     part_drawing_type_6: 2D Rückansicht
     part_drawing_type_7: 3D
     tooltip:
@@ -579,7 +579,7 @@ tab:
     export:
       title: Export
       info_0: |
-        Mit dieser Funktion können Sie Ihre Holzliste als *Stückliste* in eine Datei im Format [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) exportieren.
+        Mit dieser Funktion können Sie Daten der *Holzliste* in die Zwischenablage oder in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportieren.
       customize_help: |
         Umordnen, Ausblenden, Hinzufügen, Entfernen oder Auswählen einer Spalte in der Liste, um ihren **Titel** und die **Formel** anzupassen, die den angezeigten Wert für jede exportierte Zeile erzeugt.
       add_column: Spalte hinzufügen
@@ -598,7 +598,7 @@ tab:
       options_customize: Spalten einrichten
       option_source: Quelle
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: Liste der Teile
       option_source_instances_list: Liste der Instanzen
       option_col_sep: Trennzeichen
       option_col_sep_tab: Tabulator
@@ -658,7 +658,7 @@ tab:
         no_column_formula_native: "Nativer Wert der Spalte '{{ col_name }}'"
         no_column_formula: Formel eingeben
       warning:
-        is_group_selection: "Teile, die in den **versteckten Gruppen** der Teileliste enthalten sind, werden nicht exportiert."
+        is_group_selection: "Teile, die in **versteckten Gruppen** der Teileliste enthalten sind, werden nicht exportiert."
     report:
       title: Kalkulation
       info_0: |
@@ -686,7 +686,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
       warning:
-        is_group_selection: Die in **ausgeblendeten Gruppen** enthaltenen Teile der Holzliste werden nicht berücksichtigt.
+        is_group_selection: Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht berücksichtigt.
       tip:
         not_enough_data: |
           Damit sich diese Kalkulation richtig berechnen lässt, müssen:
@@ -1163,7 +1163,7 @@ tab:
       error:
         invalid_size: Mit den eingegebenen Konfigurationsparametern kann keine gültige Etikettengröße festgelegt werden.
       warning:
-        is_group_selection: Teile, die in den**maskierten Gruppen** ihrer Holzliste enthalten sind, erhalten kein Etikett.
+        is_group_selection: Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, erhalten kein Etikett.
         is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
         formula_not_available: Formel steht in diesem Kontext nicht zu Verfügung
     layout:
@@ -1235,7 +1235,7 @@ tab:
 
           **Prüfen Sie, dass die Datei nicht in Layout geöffnet ist.**
       warning:
-        is_group_selection: Die Teile innerhalb der **maskierten Gruppen** Ihrer Teileliste werden nicht gezeichnet.
+        is_group_selection: Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht gezeichnet.
         is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
     write:
       title: Teile-Export
@@ -1812,6 +1812,7 @@ tool:
     vcb_radius: Radius
     vcb_distance: Distanz
     error:
+      no_direction: Bitte geben Sie eine Richtung mit der Maus an
       invalid_length: "Die Länge {{ value }} ist ungültig"
       invalid_multiplicator: "Der Faktor {{ value }} ist ungültig"
       invalid_divider: "Der Teiler {{ value }} ist ungültig"
