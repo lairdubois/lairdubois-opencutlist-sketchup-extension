@@ -1793,7 +1793,7 @@ tool:
     action_0_status: Dessiner un volume sur la base d'une forme rectangulaire
     action_1: Dessiner un Cercle
     action_1_status: Dessiner un volume sur la base d'une forme circulaire
-    action_2: Dessiner un Polygône
+    action_2: Dessiner un Polygone
     action_2_status: Dessiner un volume sur la base d'une forme polygonale
     action_option_group_tools: Outils
     action_option_group_offset: Décalage
