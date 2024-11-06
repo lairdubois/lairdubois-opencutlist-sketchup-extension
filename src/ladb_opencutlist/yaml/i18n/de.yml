@@ -173,7 +173,7 @@ core:
       *Durch das Erstellen einer benutzerdefinierten Voreinstellung können Sie die aktuellen Formulareinstellungen global beibehalten, damit Sie diese in allen Ihren Modellen wiederverwenden können.*
 
       Geben Sie den Namen der Voreinstellung ein:
-    delete_confirm_title: Löschen
+    delete_confirm_title: Löschung
     delete_confirm: "Möchten Sie die Voreinstellung **\"{{ name }}\"** wirklich löschen?"
     override_confirm_title: Aktualisierung
     override_confirm: "Bestätigen Sie die Aktualisierung der Voreinstellung **\"{{ name }}\"** mit den Formularparametern?"
@@ -348,7 +348,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       face_zmin: Rückseite
-      face_zmax: Vorderseite
+      face_zmax: Vorderansicht
       dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die anderen Kanten zu übertragen"
       dblclick_to_copy_all_faces: "Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen"
       dblclick_to_sort_axes: "Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen"
@@ -658,7 +658,7 @@ tab:
         no_column_formula_native: "Nativer Wert der Spalte '{{ col_name }}'"
         no_column_formula: Formel eingeben
       warning:
-        is_group_selection: "Teile, die in **versteckten Gruppen** der Teileliste enthalten sind, werden nicht exportiert."
+        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht exportiert."
     report:
       title: Kalkulation
       info_0: |
@@ -686,7 +686,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
       warning:
-        is_group_selection: Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht berücksichtigt.
+        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht berücksichtigt."
       tip:
         not_enough_data: |
           Damit sich diese Kalkulation richtig berechnen lässt, müssen:
@@ -1307,7 +1307,7 @@ tab:
       error:
         no_part: Kein Teil zum Exportieren.
       warning:
-        is_group_selection: "Teile, die in den **versteckten Gruppen** der Teileliste enthalten sind, werden nicht exportiert."
+        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht exportiert."
         is_part_selection: Der Export beschränkt sich auf die **ausgewählten Teile**.
     snippet:
       hello: Hallo
@@ -1479,7 +1479,7 @@ tab:
       property_name: Bezeichnung
     delete:
       message: |
-        Sie sind dabei das Material **{{ material_name }}** aus Ihrem Modell zu entfernen.
+        Sie sind dabei das Material **{{ material_name }}** aus Ihrem Modell zu löschen.
         Bestätigen Sie, um fortzufahren.
     duplicate:
       message: |

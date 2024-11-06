@@ -173,7 +173,7 @@ core:
       *The creation of a custom preset allows you to retain the current form settings globally, so that you can reuse them in all your templates later.*
 
       Enter preset name:
-    delete_confirm_title: Removal
+    delete_confirm_title: Deletion
     delete_confirm: "Are you sure you want to delete the preset **\"{{ name }}\"**?"
     override_confirm_title: Update
     override_confirm: "Do you confirm preset **\"{{ name }}\"** update with the form parameters?"
@@ -1307,7 +1307,7 @@ tab:
       error:
         no_part: No part to export.
       warning:
-        is_group_selection: Parts contained in **hidden groups** of Parts List will not be exported.
+        is_group_selection: Parts contained in **hidden groups** of the Parts List will not be exported.
         is_part_selection: The export is limited to the **selected parts**.
     snippet:
       hello: Hello
