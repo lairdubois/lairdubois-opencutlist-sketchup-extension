@@ -200,3 +200,34 @@
   }
 
 }
+
+@media print {
+
+  .ladb-cutlist-packing-group svg {
+
+    &.full-width-diagram {
+      max-height: 86vh !important;
+    }
+
+    .item {
+      .item-outer, .item-inner {
+        fill: #fff;
+      }
+      .item-projection-shape, .item-projection-machining {
+        fill: none;
+        stroke: #aaa;
+      }
+    }
+
+    .cut {
+      .cut-inner {
+        fill: #000;
+      }
+      .cut-outer {
+        fill: none !important;
+      }
+    }
+
+  }
+
+}
