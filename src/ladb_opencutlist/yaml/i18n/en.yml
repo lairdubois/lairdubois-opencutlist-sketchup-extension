@@ -257,9 +257,9 @@ tab:
     edit_part_size_increase_properties: Edit the properties (oversizes) of the part
     edit_part_edges_properties: Edit the properties (edges) of the part
     edit_part_faces_properties: Edit the properties (faces) of the part
-    part_drawing_type_1: 2D Front View
-    part_drawing_type_2: 2D Rear View
-    part_drawing_type_3: 3D Left Side View
+    part_drawing_type_1: 2D Top View
+    part_drawing_type_2: 2D Bottom View
+    part_drawing_type_3: 2D Left Side View
     part_drawing_type_4: 2D Right Side View
     part_drawing_type_5: 2D Front View
     part_drawing_type_6: 2D Back View
@@ -579,7 +579,7 @@ tab:
     export:
       title: Export
       info_0: |
-        With this function the *Parts List* can be exported as a list of parts into a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
+        This feature allows you to export data from the *Parts List* to the clipboard or to a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
       customize_help: |
         Reorder, Hide, Add, Remove or Select a column from the list to customize its **title** and the **formula** that will generate the values for each exported row.
       add_column: Add a column
@@ -598,7 +598,7 @@ tab:
       options_customize: Customization
       option_source: Source
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: List of Parts
       option_source_instances_list: List of Instances
       option_col_sep: Separator
       option_col_sep_tab: Tabulator
@@ -1235,7 +1235,7 @@ tab:
 
           **Make sure the file is not open in Layout.**
       warning:
-        is_group_selection: Parts containe in **hidden groups** of the Parts List will not be drawn.
+        is_group_selection: Parts contained in **hidden groups** of the Parts List will not be drawn.
         is_part_selection: This overview drawing is limited to the **selected parts**.
     write:
       title: Parts Export
@@ -1253,7 +1253,7 @@ tab:
       option_use_count_0: One file per part
       option_use_count_1: One file per part instance
       option_use_count_help: |
-        Selects whether the number of instances of a part is considered.
+        Select whether the number of instances of a part is considered.
       option_part_drawing_type: Projection
       option_part_drawing_type_help: |
         Select the view to be exported.
@@ -1812,6 +1812,7 @@ tool:
     vcb_radius: Radius
     vcb_distance: Distance
     error:
+      no_direction: Please indicate a direction with your mouse
       invalid_length: "Length {{ value }} is invalid"
       invalid_multiplicator: "Factor {{ value }} is invalid"
       invalid_divider: "Divisor {{ value }} is invalid"
