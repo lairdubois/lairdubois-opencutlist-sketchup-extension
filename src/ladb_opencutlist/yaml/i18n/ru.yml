@@ -24,6 +24,8 @@ default:
   options: Опции
   caution: Внимание!
   remove: Удалить
+  remove_all: Удалить все
+  delete: Удалить
   create: Создать
   duplicate: Дубликат
   ignore: Пропустить
@@ -83,6 +85,7 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance_properties: Редактирование свойств экземпляра
+      smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -91,12 +94,13 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
+      smart_draw: Детали чертежа
       smart_paint: Раскраска деталей
       smart_axes: Ориентация деталей
       smart_export: Экспорт деталей
   messagebox:
     dir_override: |
-      "{{ target }}" уже существует. Хотите ли вы заменить его? 
+      "{{ target }}" уже существует. Хотите ли вы заменить его?
 
       Папка с таким именем уже находится в папке {{ parent }}. Если вы замените ее, исходное содержимое будет потеряно.
   savepanel:
@@ -120,6 +124,7 @@ core:
 
       Найдена ошибка - сообщите мне:<a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
+    extern: "Внешняя ошибка : **{{ error }}**"
     feature_unavailable: "Для работы этой функции требуется SketchUp {{ version }} или выше"
     failed_export_to: |
       Произошла ошибка при экспорте в *{{ path }}*.
@@ -197,6 +202,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Шаблон
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -253,7 +259,11 @@ tab:
     edit_part_faces_properties: Редактировать свойства детали (Шпон)
     part_drawing_type_1: 2D Вид спереди
     part_drawing_type_2: 2D Вид сзади
-    part_drawing_type_3: 3D
+    part_drawing_type_3: 2D Вид слева
+    part_drawing_type_4: 2D Вид справа
+    part_drawing_type_5: 2D Вид спереди
+    part_drawing_type_6: 2D Вид сзади
+    part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Показать / Скрыть эту группу
       scroll_to_block: Прокрутка в группу
@@ -571,8 +581,9 @@ tab:
         В этой вкладке можно изменять порядок столбцов, скрывать их, а также добавлять и удалять. Выберите столбец в списке, чтобы настроить его **название** и **формулу**, определяющую значение каждой экспортируемой строки.
       add_column: Добавить столбец
       add_native_columns: Добавить уникальный столбец
-      remove_column: Удалить
-      remove_all_columns: Удалить все
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
       columns: Столбцы
       column_title: Заголовок
       column_title_help: |
@@ -584,7 +595,7 @@ tab:
       options_customize: Состав экспорта
       option_source: Источник
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: Список деталей
       option_source_instances_list: Список экземпляров
       option_col_sep: Разделитель
       option_col_sep_tab: Табулятор
@@ -923,8 +934,9 @@ tab:
       options_offset: Смещение
       size: Фактический размер этикетки
       add_element: Добавить элемент
-      remove_element: Удалить
-      remove_all_elements: Удалить все
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         Измените следующие свойства, чтобы задать порядок сортировки этикеток.
         Каждое свойство может быть отсортировано <i class="ladb-opencutlist-icon-sort-asc"></i> *по возрастанию* или <i class="ladb-opencutlist-icon-sort-desc"></i> *по убыванию*.
@@ -965,6 +977,7 @@ tab:
       option_color: Цвет
       formula:
         custom: Формула
+        custom_qr_code: QR код
         part_number: Номер
         part_name: Определение
         part_description: Описание
@@ -1004,6 +1017,7 @@ tab:
       error:
         invalid_size: Введенные параметры конфигурации не позволяют определить действительный размер этикетки.
       warning:
+        is_group_selection: "Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут иметь пометки."
         is_part_selection: Эти этикетки соответствуют **выделенным деталям**.
         formula_not_available: Недоступно в данном контексте
     layout:
@@ -1089,6 +1103,11 @@ tab:
       option_unit: Единицы
       option_unit_help: |
         Позволяет выбрать единицы измерения, используемые в экспортируемом файле.
+      option_use_count: Количество
+      option_use_count_0: Все в один файл
+      option_use_count_1: Для каждого экземпляра детали отдельный файл
+      option_use_count_help: |
+        Функция определяет, учитывать ли количество экземпляров детали.
       option_part_drawing_type: Проекция
       option_part_drawing_type_help: |
         Позволяет выбрать экспортируемый вид.
@@ -1312,7 +1331,7 @@ tab:
         Свойства могут быть отсортированы в <i class="ladb-opencutlist-icon-sort-asc"></i> *по возрастанию* или <i class="ladb-opencutlist-icon-sort-desc"></i> *по убыванию*.
       property_type: Тип
       property_name: Определение
-    remove:
+    delete:
       message: |
         Вы собираетесь удалить материал **{{ material_name }}** из вашей модели.
         Подтвердите для продолжения.
@@ -1325,7 +1344,7 @@ tab:
       material_not_found: Материал не найден.
       failed_import_skm_file: "Ошибка произошла при импорте из .skm файла. **{{ error }}**"
       failed_export_skm_file: "Ошибка произошла при экспорте в .skm файл. **{{ error }}**"
-      failed_removing_material: "При скрытии этого материала произошла ошибка. **{{ error }}**"
+      failed_deleting_material: "При скрытии этого материала произошла ошибка. **{{ error }}**"
       failed_duplicating_material: "Произошла ошибка при дублировании материала. **{{ error }}**"
       invalid_image_file: Недопустимое изображение
     obsolete_base: "Чтобы поддерживать синхронизацию, необходимо обновить список материалов."
@@ -1497,6 +1516,8 @@ tab:
     objective_title:
       default: Цель
       cuttingdiagram_export: Финансирование разработки новой функции
+      outliner: "Финансирование функции «Структура» "
+      packing: Финансирование Карты раскроя с вложениями
     objective_details:
       default: |
         Постоянное совершенствование *OpenCutList* очень важно для всех нас и Ваша финансовая помощь, по-прежнему, станет основой для следующего обновления !
@@ -1504,8 +1525,14 @@ tab:
         Для нас важно, чтобы *OpenCutList* соответствовал ожиданиям пользователей, использующих расчет *карт раскроя*.
         Для расширения возможностей плагина мы хотели бы сделать возможным экспорт карт раскроя в формате **SVG** и **DXF**.
         Помогая нам финансово, вы даете нам возможность расширить функционал плагина, чтобы в итоге получить максимальную отдачу от *OpenCutList*.
-      layout: |
-        Этот модуль позволит вам продемонстрировать ваш проект в **разнесённом виде** и идентифицировать детали в проекте с их номерами, сгенерированными в карте раскроя при ее расчете.
+      outliner: |
+        Модель может быть довольно сложной, и навигация по ее структуре с помощью встроенной в SketchUp панели Structure не всегда удобна.
+        В SketchUp вы можете применить материал и теги к экземплярам, описание, url и метки к определениям, но они не отображаются в структуре.
+        В видеоролике мы покажем вам, возможность улучшить это в меню «Структура», доступном прямо из OpenCutList.
+      packing: |
+        Для нас важно, чтобы *OpenCutList* соответствовал ожиданиям пользователей, использующих *карту раскроя*.
+        Чтобы еще больше расширить возможности, мы хотели бы реализовать **алгоритм вложения** для оптимизации раскроя деталей любой формы.
+        Помогая нам финансово вы даете нам возможность расширить функционал плагина, чтобы в итоге получить максимальную отдачу от *OpenCutList*.
     objective_crowdfunding: |
       Разработка новых опций будет осуществляться за счет собранных средств через **краудфандинг** и начнется, когда будет достигнута **финансовая цель**.
     objective_thanks: |
