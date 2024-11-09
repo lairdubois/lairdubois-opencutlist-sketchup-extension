@@ -1803,7 +1803,7 @@ tool:
     action_option_segments_segment_count_status: 1393 - Ermöglicht das Festlegen der Anzahl der Kreissegmente
     action_option_options_construction_status: 1394 - In Konstruktionslinien zeichnen
     action_option_options_rectangle_centered_status: 1395 - Rechteck auf den ersten Punkt zentrieren
-    action_option_options_box_centered_status: 1396 - Erhebung auf den ersten Punkt zentrieren
+    action_option_options_solid_centered_status: 1396 - Erhebung auf den ersten Punkt zentrieren
     action_option_options_move_array_status: 1397 - Kopieren des Teils in ein rechteckiges Netz
     vcb_length: 1398 - Länge
     vcb_size: 1399 - Kotierungen

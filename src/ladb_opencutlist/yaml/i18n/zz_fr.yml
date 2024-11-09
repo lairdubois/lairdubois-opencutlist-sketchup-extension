@@ -1803,7 +1803,7 @@ tool:
     action_option_segments_segment_count_status: 1393 - Permet de définir le nombre de segments du cercle
     action_option_options_construction_status: 1394 - Dessiner en traits de construction
     action_option_options_rectangle_centered_status: 1395 - Centrer le rectangle sur le premier point
-    action_option_options_box_centered_status: 1396 - Centrer l'élévation sur le premier point
+    action_option_options_solid_centered_status: 1396 - Centrer l'élévation sur le premier point
     action_option_options_move_array_status: 1397 - Copier la pièce en réseau rectangulaire
     vcb_length: 1398 - Longueur
     vcb_size: 1399 - Cotations

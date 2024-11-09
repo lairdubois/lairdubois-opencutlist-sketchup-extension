@@ -28,7 +28,7 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED = 'rectangle_centered'
-    ACTION_OPTION_OPTIONS_BOX_CENTRED = 'box_centered'
+    ACTION_OPTION_OPTIONS_BOX_CENTRED = 'solid_centered'
     ACTION_OPTION_OPTIONS_MOVE_ARRAY = 'move_array'
 
     ACTIONS = [
@@ -559,7 +559,7 @@ module Ladb::OpenCutList
     def onKeyUp(key, repeat, flags, view)
 
       if key == COPY_MODIFIER_KEY
-        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED, !_fetch_option_box_centered, true) if _picked_shape_last_point? && !_picked_pushpull_point?
+        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED, !_fetch_option_solid_centered, true) if _picked_shape_last_point? && !_picked_pushpull_point?
         _refresh
       end
 
@@ -750,7 +750,7 @@ module Ladb::OpenCutList
 
     def _preview_pushpull(view)
 
-      if _fetch_option_box_centered
+      if _fetch_option_solid_centered
 
         # Draw first picked point
         k_points = Kuix::Points.new
@@ -1036,12 +1036,12 @@ module Ladb::OpenCutList
       p2 = points[1].transform(ti)
       p3 = points[2].transform(ti)
 
-      box_centered = _fetch_option_box_centered
+      solid_centered = _fetch_option_solid_centered
 
       base_thickness = p3.z - p2.z
       thickness = _read_user_text_length(text, base_thickness)
       return true if thickness.nil?
-      thickness /= 2 if box_centered
+      thickness /= 2 if solid_centered
 
       @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, thickness).transform(t))
 
@@ -1174,7 +1174,7 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION)
     end
 
-    def _fetch_option_box_centered
+    def _fetch_option_solid_centered
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED)
     end
 
@@ -1487,7 +1487,7 @@ module Ladb::OpenCutList
             end
           rescue ArgumentError
             UI.beep
-            @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => value} ] ])
+            @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => value } ] ])
             return nil
           end
         else
@@ -1913,7 +1913,7 @@ module Ladb::OpenCutList
 
         thickness = _read_user_text_length(d3, p3.z - p2.z)
         return true if thickness.nil?
-        thickness = thickness / 2 if _fetch_option_box_centered
+        thickness = thickness / 2 if _fetch_option_solid_centered
 
         @picked_pushpull_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t))
 
@@ -1987,7 +1987,7 @@ module Ladb::OpenCutList
       if _fetch_option_rectangle_centered && _picked_shape_first_point? && points.length > 1
         points[0] = points[0].offset(points[1].vector_to(points[0]))
       end
-      if _fetch_option_box_centered && _picked_shape_last_point? && points.length > 2
+      if _fetch_option_solid_centered && _picked_shape_last_point? && points.length > 2
         offset = points[2].vector_to(points[1])
         points[0] = points[0].offset(offset)
         points[1] = points[1].offset(offset)
@@ -2282,7 +2282,7 @@ module Ladb::OpenCutList
       points << @picked_move_ip.position if _picked_move_point?
       points << @snap_ip.position if @snap_ip.valid?
 
-      if _fetch_option_box_centered && _picked_shape_last_point? && points.length > 2
+      if _fetch_option_solid_centered && _picked_shape_last_point? && points.length > 2
         offset = points[2].vector_to(points[1])
         points[0] = points[0].offset(offset)
         points[1] = points[1].offset(offset)
@@ -2856,7 +2856,7 @@ module Ladb::OpenCutList
       points << @picked_move_ip.position if _picked_move_point?
       points << @snap_ip.position if @snap_ip.valid?
 
-      if _fetch_option_box_centered && _picked_shape_last_point? && points.length > 2
+      if _fetch_option_solid_centered && _picked_shape_last_point? && points.length > 2
         offset = points[2].vector_to(points[1])
         points[0] = points[0].offset(offset)
         points[1] = points[1].offset(offset)

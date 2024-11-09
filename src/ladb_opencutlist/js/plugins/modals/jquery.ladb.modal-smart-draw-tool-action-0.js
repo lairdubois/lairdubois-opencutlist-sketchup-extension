@@ -34,7 +34,7 @@
             var $inputShapeOffset = $('#ladb_input_shape_offset', that.$element);
             var $selectConstrution = $('#ladb_select_construction', that.$element);
             var $selectRectangleCentered = $('#ladb_select_rectangle_centered', that.$element);
-            var $selectBoxCentered = $('#ladb_select_box_centered', that.$element);
+            var $selectSolidCentered = $('#ladb_select_solid_centered', that.$element);
             var $selectMoveArray = $('#ladb_select_move_array', that.$element);
             var $btnValidate = $('#ladb_btn_validate', that.$element);
 
@@ -44,7 +44,7 @@
                 options.shape_offset = $inputShapeOffset.val();
                 options.construction = $selectConstrution.val() === '1';
                 options.rectangle_centered = $selectRectangleCentered.val() === '1';
-                options.box_centered = $selectBoxCentered.val() === '1';
+                options.solid_centered = $selectSolidCentered.val() === '1';
                 options.move_array = $selectMoveArray.val() === '1';
             };
             var fnFillInputs = function (options) {
@@ -53,7 +53,7 @@
                 $inputShapeOffset.val(options.shape_offset);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
                 $selectRectangleCentered.selectpicker('val', options.rectangle_centered ? '1' : '0');
-                $selectBoxCentered.selectpicker('val', options.box_centered ? '1' : '0');
+                $selectSolidCentered.selectpicker('val', options.solid_centered ? '1' : '0');
                 $selectMoveArray.selectpicker('val', options.move_array ? '1' : '0');
             };
 
@@ -69,7 +69,7 @@
             $inputShapeOffset.ladbTextinputDimension();
             $selectConstrution.selectpicker(SELECT_PICKER_OPTIONS);
             $selectRectangleCentered.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectBoxCentered.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectSolidCentered.selectpicker(SELECT_PICKER_OPTIONS);
             $selectMoveArray.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(options);

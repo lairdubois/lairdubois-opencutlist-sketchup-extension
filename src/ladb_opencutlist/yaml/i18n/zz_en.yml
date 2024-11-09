@@ -1803,7 +1803,7 @@ tool:
     action_option_segments_segment_count_status: 1393 - Define the number of segments of a circle
     action_option_options_construction_status: 1394 - Drawing in construction lines
     action_option_options_rectangle_centered_status: 1395 - Center rectangle on the first point
-    action_option_options_box_centered_status: 1396 - Center elevation on the first point
+    action_option_options_solid_centered_status: 1396 - Center elevation on the first point
     action_option_options_move_array_status: 1397 - Copy part in a rectangular mesh
     vcb_length: 1398 - Length
     vcb_size: 1399 - Size
