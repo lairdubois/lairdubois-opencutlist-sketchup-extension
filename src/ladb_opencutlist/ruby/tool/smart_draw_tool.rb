@@ -1996,6 +1996,8 @@ module Ladb::OpenCutList
       points
     end
 
+    # -----
+
     def _get_local_shape_points
 
       t = _get_transformation

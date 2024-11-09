@@ -842,6 +842,10 @@ module Ladb::OpenCutList
       nil
     end
 
+    def get_action_options_dictionary_and_section(action)
+      [ "tool_smart_#{get_stripped_name}_options", "action_#{action}" ] # [ DICTIONARY, SECTION ]
+    end
+
     def get_action_options_modal?(action)
       false
     end
@@ -871,8 +875,7 @@ module Ladb::OpenCutList
     end
 
     def store_action_option_value(action, option_group, option, value = nil, fire_event = false)
-      dictionary = "tool_smart_#{get_stripped_name}_options"
-      section = "action_#{action}"
+      dictionary, section = get_action_options_dictionary_and_section(action)
       preset = PLUGIN.get_global_preset(dictionary, nil, section)
       if get_action_option_group_unique?(action, option_group)
         preset.store(option_group.to_s, option)
@@ -883,8 +886,7 @@ module Ladb::OpenCutList
     end
 
     def fetch_action_option_value(action, option_group, option = nil)
-      dictionary = "tool_smart_#{get_stripped_name}_options"
-      section = "action_#{action}"
+      dictionary, section = get_action_options_dictionary_and_section(action)
       preset = PLUGIN.get_global_preset(dictionary, nil, section)
       return nil if preset.nil?
       return preset.fetch(option_group.to_s, nil) if get_action_option_group_unique?(action, option_group)
@@ -1050,6 +1052,11 @@ module Ladb::OpenCutList
           require_relative '../model/outliner/outliner_node_def'
           PLUGIN.execute_tabs_dialog_command_on_tab('outliner', 'edit_node', "{ node_id: '#{OutlinerNodePartDef.generate_node_id(@active_part_entity_path)}', tab: 'general' }")
         }
+        unless Sketchup.version_number < 2000000000
+          menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance')) {
+            Sketchup.active_model.active_path = @active_part_entity_path
+          }
+        end
       else
         menu.add_item(PLUGIN.get_i18n_string('default.close')) {
           quit
@@ -1086,18 +1093,21 @@ module Ladb::OpenCutList
 
       # Add event callbacks
       @event_callback = PLUGIN.add_event_callback(PluginObserver::ON_GLOBAL_PRESET_CHANGED) do |params|
-        if params[:dictionary] == "tool_smart_#{get_stripped_name}_options" && params[:section] == "action_#{fetch_action}"
+        dictionary, section = get_action_options_dictionary_and_section(fetch_action)
+        if params[:dictionary] == dictionary && params[:section] == section
           @actions_options_panels.each do |actions_options_panel|
 
             action = actions_options_panel.data[:action]
+            next unless action == fetch_action
+
             b = actions_options_panel.child
             until b.nil? do
               unless b.data.nil?
+                option_group = b.data[:option_group]
+                option = b.data[:option]
                 if b.is_a?(Kuix::Button)
-                  unless get_action_option_toggle?(action, b.data[:option_group], b.data[:option])
-                    b.child.text = fetch_action_option_value(action, b.data[:option_group], b.data[:option]).to_s if b.child.is_a?(Kuix::Label)
-                  end
-                  b.selected = fetch_action_option_boolean(action, b.data[:option_group], b.data[:option])
+                  b.child.text = fetch_action_option_string(action, option_group, option) if !get_action_option_toggle?(action, option_group, option) && b.child.is_a?(Kuix::Label)
+                  b.selected = fetch_action_option_boolean(action, option_group, option)
                 end
               end
               b = b.next
@@ -1167,18 +1177,17 @@ module Ladb::OpenCutList
                   next_modifier_option = modifier_options[next_modifier_option_index]
 
                   @actions_options_panels.each do |actions_options_panel|
-                    if actions_options_panel.data[:action] == action
+                    next unless actions_options_panel.data[:action] == action
 
-                      b = actions_options_panel.child
-                      until b.nil? do
-                        if b.is_a?(Kuix::Button) && b.data[:option_group] == modifier_option_group && b.data[:option] == next_modifier_option
-                          b.fire(:click, flags)
-                          break
-                        end
-                        b = b.next
+                    b = actions_options_panel.child
+                    until b.nil? do
+                      if b.is_a?(Kuix::Button) && b.data[:option_group] == modifier_option_group && b.data[:option] == next_modifier_option
+                        b.fire(:click, flags)
+                        break
                       end
-
+                      b = b.next
                     end
+
                   end
 
                   return true
