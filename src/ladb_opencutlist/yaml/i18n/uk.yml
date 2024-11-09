@@ -24,6 +24,8 @@ default:
   options: Опції
   caution: Увага!
   remove: Видалити
+  remove_all: Видалити все
+  delete: Видалити
   create: Створити
   duplicate: Дублікат
   ignore: Пропустити
@@ -83,6 +85,7 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance_properties: Редагувати властивості екземпляра
+      smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -91,6 +94,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
+      smart_draw: Креслення деталей
       smart_paint: Нанесення матеріалів на деталі
       smart_axes: Орієнтація деталей
       smart_export: Експорт деталей
@@ -120,6 +124,7 @@ core:
 
       Щоб повідомити про помилку: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
+    extern: "Зовнішня помилка: **{{ error }}**"
     feature_unavailable: "Для цієї функції потрібен SketchUp {{ version }} або новіше"
     failed_export_to: |
       Під час експортування до *{{ path }}* сталася помилка.
@@ -197,6 +202,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Модель
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -253,7 +259,11 @@ tab:
     edit_part_faces_properties: Редагувати властивості деталі (грані)
     part_drawing_type_1: 2D Вигляд з Лиця
     part_drawing_type_2: 2D Вигляд Задньої сторони
-    part_drawing_type_3: 3D
+    part_drawing_type_3: 2D Вид Зліва
+    part_drawing_type_4: 2D Вид Справа
+    part_drawing_type_5: 2D Вид Спереду
+    part_drawing_type_6: 2D Вид Ззаду
+    part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Показати / Приховати цю групу
       scroll_to_block: Перейти до групи
@@ -571,8 +581,9 @@ tab:
         Змініть порядок, приховайте, додайте, видаліть або виберіть стовпчик у списку, щоб налаштувати його **назву** та **формулу**, яка генерує відображене значення для кожного експортованого рядка.
       add_column: Додати стовпчик
       add_native_columns: Додайте власний стовпчик
-      remove_column: Видалити
-      remove_all_columns: Видалити все
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
       columns: Стовпці
       column_title: Заголовок
       column_title_help: |
@@ -584,7 +595,7 @@ tab:
       options_customize: Налаштування
       option_source: Джерело
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: Список деталей
       option_source_instances_list: Список екземплярів
       option_col_sep: Роздільник
       option_col_sep_tab: Табулятор
@@ -923,8 +934,9 @@ tab:
       options_offset: Зміщення
       size: Фактичний розмір етикетки
       add_element: Додати елемент
-      remove_element: Видалити
-      remove_all_elements: Видалити все
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         Перевпорядкуйте наведені нижче властивості, щоб установити політику сортування етикеток.
         Кожну властивість можна відсортувати за <i class="ladb-opencutlist-icon-sort-asc"></i> *за зростанням* або <i class="ladb-opencutlist-icon-sort-desc"></i> *за спаданням*.
@@ -965,6 +977,7 @@ tab:
       option_color: Колір
       formula:
         custom: Формула
+        custom_qr_code: QR Code
         part_number: Номер
         part_name: Позначення
         part_description: Опис
@@ -1004,6 +1017,7 @@ tab:
       error:
         invalid_size: Введені параметри конфігурації не дозволяють встановити дійсний розмір етикетки.
       warning:
+        is_group_selection: "Деталі, що містяться в **прихованих групах** вашого списку деталей, не матимуть міток."
         is_part_selection: Ці етикетки сформовані на основі **вибраних деталей**.
         formula_not_available: Недоступно в цьому контексті
     layout:
@@ -1089,6 +1103,11 @@ tab:
       option_unit: Одиниці
       option_unit_help: |
         Дозволяє вибрати одиницю, яка використовується у експортованому файлі.
+      option_use_count: Кількість
+      option_use_count_0: Один файл на деталь
+      option_use_count_1: Один файл на екземпляр деталі
+      option_use_count_help: |
+        Дозволяє вибрати, чи враховуватиметься кількість екземплярів деталі.
       option_part_drawing_type: Проекція
       option_part_drawing_type_help: |
         Дозволяє вибрати експортований вид.
@@ -1312,7 +1331,7 @@ tab:
         Кожну властивість можна відсортувати <i class="ladb-opencutlist-icon-sort-asc"></i> *за зростанням* або <i class="ladb-opencutlist-icon-sort-desc"></i> *за спаданням*.
       property_type: Тип
       property_name: Ім’я
-    remove:
+    delete:
       message: |
         Ви збираєтеся видалити матеріал **{{ material_name }}** зі своєї моделі.
         Підтвердьте, щоб продовжити.
@@ -1325,7 +1344,7 @@ tab:
       material_not_found: Матеріал не знайдено.
       failed_import_skm_file: "Під час імпорту файлу .skm сталася помилка. **{{ error }}**"
       failed_export_skm_file: "Під час експорту файлу .skm сталася помилка. **{{ error }}**"
-      failed_removing_material: "Під час видалення матеріалу сталася помилка. **{{ error }}**"
+      failed_deleting_material: "Під час видалення матеріалу сталася помилка. **{{ error }}**"
       failed_duplicating_material: "Під час копіювання матеріалу сталася помилка. **{{ error }}**"
       invalid_image_file: Неприпустиме зображення
     obsolete_base: "Щоб підтримувати синхронізацію, потрібно оновити список матеріалів."
@@ -1497,6 +1516,8 @@ tab:
     objective_title:
       default: Цілі
       cuttingdiagram_export: Фінансування розробки нових функцй
+      outliner: Фінансування функції "Структура"
+      packing: Фінансування функції Nesting
     objective_details:
       default: |
         Постійне вдосконалення *OpenCutList* є важливим для нас і проект продовжує потребувати вашої участі для наступного оновлення!
@@ -1504,8 +1525,14 @@ tab:
         Для нас важливо, щоб *OpenCutList* міг адаптуватися до дуже різноманітних очікувань користувачів щодо функції *layout*.
         Щоб ще більше розширити можливості, ми хотіли б мати можливість експортувати карти розкрою у форматі **SVG** та **DXF**.
         Надаючи нам засоби для роботи над цим експортом, ви даєте нам можливість дозволити вам отримати максимальну віддачу від *OpenCutList*.
-      layout: |
-        Мета цього модуля — дозволити вам легко надрукувати огляд вашого проекту в **рознесеному вигляді** з ідентифікацією частин за їх номерами, згенерованими в списку елементів.
+      outliner: |
+        Модель може бути досить складною, і навігація по її структурі за допомогою рідної панелі «Структура» SketchUp не завжди зручна.
+        У SketchUp ви можете застосувати матеріал і теги до екземплярів, опис, URL-адресу та значки до визначень, але вони не відображаються в структурі.
+        Відео покаже вам, як ми хочемо покращити це в меню «Структура», доступне безпосередньо з OpenCutList.
+      packing: |
+        Для нас важливо, щоб *OpenCutList* міг адаптуватися до дуже різноманітних очікувань користувачів щодо функції *карти розпилу*.
+        Щоб ще більше розширити можливості, ми хочемо реалізувати **алгоритм вкладеності** для оптимізації вирізання деталей будь-якої форми.
+        Надаючи нам засоби для роботи над цією функцією, ви даєте нам можливість допомогти вам отримати максимальну віддачу від *OpenCutList*.
     objective_crowdfunding: |
       Розробка нових продуктів здійснюватиметься завдяки **краудфандингу** і може розпочатися після досягнення **Фінансової цілі**.
     objective_thanks: |
