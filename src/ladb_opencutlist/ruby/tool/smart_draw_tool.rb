@@ -597,7 +597,31 @@ module Ladb::OpenCutList
     end
 
     def getExtents
-      Sketchup.active_model.bounds
+      return Sketchup.active_model.bounds if _get_picked_points.empty?
+
+      t = _get_transformation
+
+      shape_points = _get_local_shape_points
+
+      bounds = Geom::BoundingBox.new
+      bounds.add(shape_points.map { |point| point.transform(t) })
+
+      if _picked_shape_last_point?
+
+        ti = t.inverse
+
+        picked_points = _get_picked_points
+        p2 = picked_points[1].transform(ti)
+        p3 = picked_points[2].transform(ti)
+
+        tt = Geom::Transformation.translation(p2.vector_to(p3))
+
+        top_shape_points = shape_points.map { |point| point.transform(tt) }
+
+        bounds.add(top_shape_points.map { |point| point.transform(t) })
+
+      end
+      bounds
     end
 
     protected
@@ -609,6 +633,24 @@ module Ladb::OpenCutList
       return @picked_shape_last_ip if _picked_shape_last_point? && !_picked_pushpull_point?
       return [ @picked_shape_first_ip, @picked_shape_last_ip, @picked_pushpull_ip ][@move_anchor] if _picked_pushpull_point? && !_picked_move_point?
       nil
+    end
+
+    def _get_picked_points
+
+      points = []
+      points << @picked_shape_first_ip.position if _picked_shape_first_point?
+      points << @picked_shape_last_ip.position if _picked_shape_last_point?
+      points << @picked_pushpull_ip.position if _picked_pushpull_point?
+      points << @picked_move_ip.position if _picked_move_point?
+      points << @snap_ip.position if @snap_ip.valid?
+
+      if _fetch_option_solid_centered && _picked_shape_last_point? && points.length > 2
+        offset = points[2].vector_to(points[1])
+        points[0] = points[0].offset(offset)
+        points[1] = points[1].offset(offset)
+      end
+
+      points
     end
 
     def _picked_shape_first_point?
@@ -1534,13 +1576,6 @@ module Ladb::OpenCutList
 
     end
 
-    def getExtents
-      return super if _get_picked_points.empty?
-      bounds = Geom::BoundingBox.new
-      bounds.add(_get_picked_points)
-      bounds
-    end
-
     protected
 
     def _snap_shape_points(flags, x, y, view)
@@ -1976,21 +2011,10 @@ module Ladb::OpenCutList
     # -----
 
     def _get_picked_points
-
-      points = []
-      points << @picked_shape_first_ip.position if _picked_shape_first_point?
-      points << @picked_shape_last_ip.position if _picked_shape_last_point?
-      points << @picked_pushpull_ip.position if _picked_pushpull_point?
-      points << @picked_move_ip.position if _picked_move_point?
-      points << @snap_ip.position if @snap_ip.valid?
+      points = super
 
       if _fetch_option_rectangle_centered && _picked_shape_first_point? && points.length > 1
         points[0] = points[0].offset(points[1].vector_to(points[0]))
-      end
-      if _fetch_option_solid_centered && _picked_shape_last_point? && points.length > 2
-        offset = points[2].vector_to(points[1])
-        points[0] = points[0].offset(offset)
-        points[1] = points[1].offset(offset)
       end
 
       points
@@ -2269,26 +2293,6 @@ module Ladb::OpenCutList
       p2 = points[1].transform(ti)
 
       p1.distance(p2).round(6) > 0
-    end
-
-    # -----
-
-    def _get_picked_points
-
-      points = []
-      points << @picked_shape_first_ip.position if _picked_shape_first_point?
-      points << @picked_shape_last_ip.position if _picked_shape_last_point?
-      points << @picked_pushpull_ip.position if _picked_pushpull_point?
-      points << @picked_move_ip.position if _picked_move_point?
-      points << @snap_ip.position if @snap_ip.valid?
-
-      if _fetch_option_solid_centered && _picked_shape_last_point? && points.length > 2
-        offset = points[2].vector_to(points[1])
-        points[0] = points[0].offset(offset)
-        points[1] = points[1].offset(offset)
-      end
-
-      points
     end
 
     # -----
@@ -2847,34 +2851,25 @@ module Ladb::OpenCutList
       @picked_ips.last
     end
 
-    def _get_picked_points
-
-      points = []
-      points << @picked_shape_first_ip.position if _picked_shape_first_point?
-      points << @picked_shape_last_ip.position if _picked_shape_last_point?
-      points << @picked_pushpull_ip.position if _picked_pushpull_point?
-      points << @picked_move_ip.position if _picked_move_point?
-      points << @snap_ip.position if @snap_ip.valid?
-
-      if _fetch_option_solid_centered && _picked_shape_last_point? && points.length > 2
-        offset = points[2].vector_to(points[1])
-        points[0] = points[0].offset(offset)
-        points[1] = points[1].offset(offset)
-      end
-
-      points
-    end
-
     # -----
 
     def _get_local_shape_points
       t = _get_transformation
       ti = t.inverse
-      if @picked_shape_last_ip.valid?
-        @picked_ips.map { |ip| ip.position.transform(ti) }
+      if _picked_shape_last_point?
+        points = @picked_ips.map { |ip| ip.position.transform(ti) }
+
+        if _fetch_option_solid_centered
+          picked_points = _get_picked_points
+          p1 = picked_points[0].transform(ti)
+          points.each { |point| point.z = p1.z }
+        end
+
       else
-        (@picked_ips + [ @snap_ip ]).map { |ip| ip.position.transform(ti) }
+        points = (@picked_ips + [ @snap_ip ]).map { |ip| ip.position.transform(ti) }
       end
+
+      points
     end
 
     def _get_local_shape_points_with_offset
@@ -2888,7 +2883,7 @@ module Ladb::OpenCutList
         join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
         miter_limit: 100.0
       )
-      return Fiddle::Clippy.rpath_to_points(o_paths.first) if o_paths.any?
+      return Fiddle::Clippy.rpath_to_points(o_paths.first, points[0].z) if o_paths.any?
       []
     end
 
