@@ -602,7 +602,7 @@ module Ladb::OpenCutList
       t = _get_transformation
       ti = t.inverse
 
-      shape_points = _get_local_shape_points
+      shape_points = _fetch_option_shape_offset > 0 ? _get_local_shape_points_with_offset : _get_local_shape_points
 
       bounds = Geom::BoundingBox.new
       bounds.add(shape_points.map { |point| point.transform(t) })
