@@ -629,8 +629,8 @@ module Ladb::OpenCutList
 
         anchors = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ]
 
-        ps = anchors[@move_anchor].transform(ti)
-        pe = @snap_ip.position.transform(ti)
+        ps = anchors[@move_anchor]
+        pe = @snap_ip.position
         v = ps.vector_to(pe)
 
         pmin = bounds.min
