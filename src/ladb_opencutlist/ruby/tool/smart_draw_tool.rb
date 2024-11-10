@@ -600,6 +600,7 @@ module Ladb::OpenCutList
       return Sketchup.active_model.bounds if _get_picked_points.empty?
 
       t = _get_transformation
+      ti = t.inverse
 
       shape_points = _get_local_shape_points
 
@@ -608,7 +609,7 @@ module Ladb::OpenCutList
 
       if _picked_shape_last_point?
 
-        ti = t.inverse
+        # Add Pushpull solid
 
         picked_points = _get_picked_points
         p2 = picked_points[1].transform(ti)
@@ -621,6 +622,25 @@ module Ladb::OpenCutList
         bounds.add(top_shape_points.map { |point| point.transform(t) })
 
       end
+
+      if _picked_pushpull_point?
+
+        # Add Move solid
+
+        anchors = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ]
+
+        ps = anchors[@move_anchor].transform(ti)
+        pe = @snap_ip.position.transform(ti)
+        v = ps.vector_to(pe)
+
+        pmin = bounds.min
+        pmax = bounds.max
+
+        bounds.add(pmin.offset(v))
+        bounds.add(pmax.offset(v))
+
+      end
+
       bounds
     end
 
