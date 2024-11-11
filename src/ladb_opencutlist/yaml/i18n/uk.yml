@@ -84,6 +84,7 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: Модифікувати екземпляр
       edit_part_instance_properties: Редагувати властивості екземпляра
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -364,6 +365,7 @@ tab:
       numbers_save: Запам'ятати номери деталей
       numbers_reset: Скинути номери деталей
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: Друк етикеток
       write_2d: Проекція 2D
       write_3d: Креслення 3D
       write_2d_parts: Експорт 2D проекції деталей
@@ -576,7 +578,7 @@ tab:
     export:
       title: Експорт
       info_0: |
-        Ця функція дозволяє експортувати ваш *Розкрій* у формі *Списку деталей* у файл формату [CSV](https://uk.wikipedia.org/wiki/CSV).
+        Ця функція дозволяє експортувати дані з *Розкрою* в буфер обміну або у файл у форматі [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
         Змініть порядок, приховайте, додайте, видаліть або виберіть стовпчик у списку, щоб налаштувати його **назву** та **формулу**, яка генерує відображене значення для кожного експортованого рядка.
       add_column: Додати стовпчик
@@ -643,6 +645,8 @@ tab:
       layers: Теги
       batch: Пакет
       bin: Контейнер
+      component_definition: Визначення компонента
+      component_instance: Екземпляр компонента
       filename: Назва файлу
       model_name: Назва моделі
       model_description: Опис моделі
