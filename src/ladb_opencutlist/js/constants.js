@@ -22,7 +22,8 @@ var TOKENFIELD_OPTIONS = {
 
 var SORTABLE_OPTIONS = {
     cursor: 'ns-resize',
-    handle: '.ladb-handle'
+    handle: '.ladb-handle',
+    items: '> :not(.ladb-state-sticky)'
 };
 
 var SLIDER_OPTIONS = {

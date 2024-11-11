@@ -20,6 +20,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
     * Added Duplicate column in export editor
     * Added Labels button from whole parts list
     * Added _use_count_ parameter to 2D and 3D drawing writers
+    * Added handle to manually reorder material prices list 
     * Improved labels formulas
     * Improved smart tools picker
     * Improved surface detection

@@ -36,6 +36,7 @@
         var $row = $(Twig.twig({ref: 'components/_editor-std-attributes-row-0.twig'}).render({
             strippedName: this.options.strippedName
         }));
+        $row.data('std-attribute', stdAttribute);
         this.$rows.prepend($row);
 
         // Fetch UI elements
@@ -71,6 +72,7 @@
             stdsA: this.stdsA,
             stdsB: this.stdsB,
         }));
+        $row.data('std-attribute', stdAttribute);
         this.$rows.append($row);
 
         // Fetch UI elements
@@ -330,14 +332,13 @@
 
     LadbEditorStdAttributes.prototype.getStdAttributes = function () {
 
-        // Cleanup input
         var stdAttributes = [];
-        for (var i = 0; i < this.stdAttributes.length; i++) {
-            var stdAttribute = this.stdAttributes[i];
-            if (stdAttribute.dim == null || stdAttribute.val != null && stdAttribute.val.length > 0 && stdAttribute.dim.length > 0) {
+        this.$rows.children().each(function () {
+            var stdAttribute = $(this).data('std-attribute');
+            if (stdAttribute !== undefined && (stdAttribute.dim == null || stdAttribute.val != null && stdAttribute.val.length > 0 && stdAttribute.dim.length > 0)) {
                 stdAttributes.push(stdAttribute);
             }
-        }
+        })
 
         return stdAttributes;
     };
@@ -356,6 +357,9 @@
             $('input', $row).focus();
             this.blur();
         });
+
+        // Bind sortable
+        this.$rows.sortable(SORTABLE_OPTIONS);
 
     };
 

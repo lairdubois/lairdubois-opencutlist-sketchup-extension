@@ -1,16 +1,21 @@
 <div class="ladb-editor-std-attributes-row row">
-    <div class="col-xs-6 col-xs-push-6">
+    <div class="col-xs-1">
+        <div class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></div>
+    </div>
+    <div class="col-xs-6">
+        <select class="ladb-editor-std-attributes-select-dim form-control" title="{{ 'tab.materials.edit_material.std_attributes_dim_placeholder'|i18next }}"">
+            {% for stdAK, stdAV in stdsA %}
+                {% if stdsB|length > 1 and not loop.first %}<option data-divider="true">{% endif %}
+                {% for stdBK, stdBV in stdsB %}
+                    {% set dim = stdAV~';'~stdBV %}
+                    <option data-content="<span class='std-a'>{{ stdAK|escape('html') }}</span>{% if stdBK|length > 0 %}<span class='std-b ladb-horizontal-left-separator'>{{ stdBK|escape('html') }}</span>{% endif %}"{% if stdPrice.dim == dim %} selected{% endif %}>{{ dim }}</option>
+                {% endfor %}
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-xs-5">
         <input type="text" class="form-control text-right">
     </div>
-    <select class="col-xs-6 col-xs-pull-6 ladb-editor-std-attributes-select-dim" title="{{ 'tab.materials.edit_material.std_attributes_dim_placeholder'|i18next }}">
-        {% for stdAK, stdAV in stdsA %}
-            {% if stdsB|length > 1 and not loop.first %}<option data-divider="true">{% endif %}
-            {% for stdBK, stdBV in stdsB %}
-                {% set dim = stdAV~';'~stdBV %}
-                <option data-content="<span class='std-a'>{{ stdAK|escape('html') }}</span>{% if stdBK|length > 0 %}<span class='std-b ladb-horizontal-left-separator'>{{ stdBK|escape('html') }}</span>{% endif %}"{% if stdPrice.dim == dim %} selected{% endif %}>{{ dim }}</option>
-            {% endfor %}
-        {% endfor %}
-    </select>
     <div class="ladb-minitools">
         <a href="#" class="ladb-editor-std-attributes-row-remove"><i class="ladb-opencutlist-icon-clear"></i></a>
     </div>
