@@ -7,28 +7,37 @@
 using namespace Packy;
 using namespace nlohmann;
 
-int main() {
+int main(int argc, char *argv[], char *envp[])
+{
 
-    std::cout << "---------------------------------" << std::endl;
-    std::cout << "             PACKY" << std::endl;
-    std::cout << "---------------------------------" << std::endl;
+    // default input filename
+    std::string infile = "input.json";
 
-//  try {
+    // the program takes a single argument the input filename
+    if (argc == 2)
+    {
+        infile = argv[1];
+    }
 
-    SolverBuilder optimizer_builder;
-    Solver& optimizer = (*optimizer_builder.build(std::string("input.json")));
+    if (!std::filesystem::exists(infile))
+    {
+        std::cout << "Input file does not exist: " << infile << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
-    json j_ouput = optimizer.optimize();
+    try
+    {
+        SolverBuilder optimizer_builder;
+        Solver &optimizer = (*optimizer_builder.build(infile));
 
-    std::cout << "###################################" << std::endl;
-    std::cout << j_ouput.dump(1, ' ') << std::endl;
-    std::cout << "###################################" << std::endl;
+        json j_output = optimizer.optimize();
 
-//  } catch(const std::exception& e) {
-//    std::cout << "\033[1;31mError: " + std::string(e.what()) + "\033[0m" << std::endl;
-//  } catch( ... ) {
-//    std::cout << "\033[1;31mUnknow Error\033[0m" << std::endl;
-//  }
+        std::cout << j_output.dump(1, ' ') << std::endl;
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << "Internal error: " << std::string(e.what()) << std::endl;
+    }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
