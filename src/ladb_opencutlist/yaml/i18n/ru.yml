@@ -84,6 +84,7 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: Изменить экземпляр
       edit_part_instance_properties: Редактирование свойств экземпляра
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -364,6 +365,7 @@ tab:
       numbers_save: Сохранение номеров деталей
       numbers_reset: Обновить нумерацию деталей
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: Печать этикеток
       write_2d: Проекция 2D
       write_3d: Чертёж 3D
       write_2d_parts: Экспорт 2D-проекций деталей
@@ -576,7 +578,8 @@ tab:
     export:
       title: Экспорт
       info_0: |
-        Эта функция позволяет вам экспортировать ваш *раскрой* в виде *списка деталей* в файл формата [CSV](https://ru.wikipedia.org/wiki/CSV).
+        Эта функция позволяет экспортировать данные из *списка деталей* в буфер обмена или в файл в формате [CSV].
+        (https://ru.wikipedia.org/wiki/CSV).
       customize_help: |
         В этой вкладке можно изменять порядок столбцов, скрывать их, а также добавлять и удалять. Выберите столбец в списке, чтобы настроить его **название** и **формулу**, определяющую значение каждой экспортируемой строки.
       add_column: Добавить столбец
@@ -643,6 +646,8 @@ tab:
       layers: Маяки
       batch: Деталей в раскрое
       bin: Грубый размер
+      component_definition: Описание компонента
+      component_instance: Экземпляр компонента
       filename: Имя файла
       model_name: Название модели
       model_description: Описание модели
