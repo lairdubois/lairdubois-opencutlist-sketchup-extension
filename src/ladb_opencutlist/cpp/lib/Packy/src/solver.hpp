@@ -482,17 +482,17 @@ namespace Packy {
                 ss >> first_stage_orientation;
                 instance_builder_.set_first_stage_orientation(first_stage_orientation);
             }
-            if (j.contains("min1cut")) {
-                instance_builder_.set_min1cut(j["min1cut"].template get<Length>());
+            if (j.contains("minimum_distance_1_cuts")) {
+                instance_builder_.set_minimum_distance_1_cuts(j["minimum_distance_1_cuts"].template get<Length>());
             }
-            if (j.contains("max1cut")) {
-                instance_builder_.set_max1cut(j["max1cut"].template get<Length>());
+            if (j.contains("maximum_distance_1_cuts")) {
+                instance_builder_.set_maximum_distance_1_cuts(j["maximum_distance_1_cuts"].template get<Length>());
             }
-            if (j.contains("min2cut")) {
-                instance_builder_.set_min2cut(j["min2cut"].template get<Length>());
+            if (j.contains("minimum_distance_2_cuts")) {
+                instance_builder_.set_minimum_distance_2_cuts(j["minimum_distance_2_cuts"].template get<Length>());
             }
-            if (j.contains("max2cut")) {
-                instance_builder_.set_max2cut(j["max2cut"].template get<Length>());
+            if (j.contains("minimum_waste_length")) {
+                instance_builder_.set_minimum_waste_length(j["minimum_waste_length"].template get<Length>());
             }
             if (j.contains("cut_through_defects")) {
                 instance_builder_.set_cut_through_defects(j["cut_through_defects"].template get<bool>());
@@ -714,10 +714,10 @@ namespace Packy {
                             const SolutionNode& parent_node = bin.nodes[node.f];
 
                             if (node.l != parent_node.l) {
-                                l += instance.cut_thickness();
+                                l += instance.parameters().cut_thickness;
                             }
                             if (node.b != parent_node.b) {
-                                b += instance.cut_thickness();
+                                b += instance.parameters().cut_thickness;
                             }
 
                         }
@@ -744,18 +744,18 @@ namespace Packy {
                             // Bottom
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
-                                    {"x",           node.l - (instance.first_stage_orientation() == CutOrientation::Horizontal ? bin_type.left_trim : 0)},
-                                    {"y",           node.b - instance.cut_thickness()},
-                                    {"length",      node.r + (instance.first_stage_orientation() == CutOrientation::Horizontal ? bin_type.right_trim : 0)},
+                                    {"x",           node.l - (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0)},
+                                    {"y",           node.b - instance.parameters().cut_thickness},
+                                    {"length",      node.r + (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.right_trim : 0)},
                                     {"orientation", "horizontal"}
                             });
 
                             // Left
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
-                                    {"x",           node.l - instance.cut_thickness()},
-                                    {"y",           node.b - (instance.first_stage_orientation() == CutOrientation::Vertical ? bin_type.bottom_trim : 0)},
-                                    {"length",      node.t + (instance.first_stage_orientation() == CutOrientation::Vertical ? bin_type.top_trim : 0)},
+                                    {"x",           node.l - instance.parameters().cut_thickness},
+                                    {"y",           node.b - (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0)},
+                                    {"length",      node.t + (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.top_trim : 0)},
                                     {"orientation", "vertical"},
                             });
 
