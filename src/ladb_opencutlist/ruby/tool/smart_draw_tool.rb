@@ -310,6 +310,7 @@ module Ladb::OpenCutList
       @picked_move_ip = Sketchup::InputPoint.new
 
       @locked_normal = nil
+      @locked_direction = nil
       @locked_axis = nil
 
       @direction = nil
@@ -345,17 +346,17 @@ module Ladb::OpenCutList
       @snap_ip.clear
       @mouse_ip.pick(view, x, y, _get_previous_input_point)
 
-      # SKETCHUP_CONSOLE.clear
-      # puts "---"
-      # puts "vertex = #{@mouse_ip.vertex}"
-      # puts "edge = #{@mouse_ip.edge}"
-      # puts "face = #{@mouse_ip.face}"
-      # puts "instance_path.length = #{@mouse_ip.instance_path.length}"
-      # puts "instance_path.leaf = #{@mouse_ip.instance_path.leaf}"
-      # puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
-      # puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
-      # puts "best_picked = #{view.pick_helper(x, y).best_picked}"
-      # puts "---"
+      SKETCHUP_CONSOLE.clear
+      puts "---"
+      puts "vertex = #{@mouse_ip.vertex}"
+      puts "edge = #{@mouse_ip.edge}"
+      puts "face = #{@mouse_ip.face}"
+      puts "instance_path.length = #{@mouse_ip.instance_path.length}"
+      puts "instance_path.leaf = #{@mouse_ip.instance_path.leaf}"
+      puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
+      puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
+      puts "best_picked = #{view.pick_helper(x, y).best_picked}"
+      puts "---"
 
       @tool.remove_all_3d
       @tool.remove_all_2d
@@ -723,8 +724,8 @@ module Ladb::OpenCutList
 
         elsif @mouse_ip.edge
 
-          # edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
-          #
+          edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
+
           # k_segments = Kuix::Segments.new
           # k_segments.add_segments(edge_manipulator.segment)
           # k_segments.color = Kuix::COLOR_MAGENTA
@@ -745,7 +746,10 @@ module Ladb::OpenCutList
 
           end
 
-        elsif @mouse_ip.face && @mouse_ip.instance_path.length > 0
+          @direction = edge_manipulator.direction
+          @locked_direction = @direction
+
+        elsif @mouse_ip.face && @mouse_ip.degrees_of_freedom == 2
 
           face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
 
@@ -1379,7 +1383,7 @@ module Ladb::OpenCutList
       []
     end
 
-    def _get_local_shape_points_with_offset
+    def _get_local_shape_points_with_offset(shape_offset = nil)
       []
     end
 
@@ -1680,15 +1684,15 @@ module Ladb::OpenCutList
 
           end
 
-          @direction = edge_manipulator.direction
+          @direction = edge_manipulator.direction if @locked_direction.nil?
 
           # k_points = Kuix::Points.new
-          # k_points.add_points([ @picked_first_ip.position, edge_manipulator.start_point, edge_manipulator.end_point ])
+          # k_points.add_points([ @picked_shape_first_ip.position, edge_manipulator.start_point, edge_manipulator.end_point ])
           # k_points.size = 30
           # k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
           # k_points.color = Kuix::COLOR_BLUE
           # @tool.append_3d(k_points)
-
+          #
           # k_segments = Kuix::Segments.new
           # k_segments.add_segments(edge_manipulator.segment)
           # k_segments.color = Kuix::COLOR_MAGENTA
@@ -1698,7 +1702,7 @@ module Ladb::OpenCutList
 
         end
 
-      elsif @mouse_ip.face && @mouse_ip.instance_path.length > 0
+      elsif @mouse_ip.face && @mouse_ip.degrees_of_freedom == 2
 
         if @locked_normal
 
@@ -1731,7 +1735,7 @@ module Ladb::OpenCutList
             plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
             plane_manipulator = PlaneManipulator.new(plane)
 
-            @direction = _get_active_z_axis
+            @direction = _get_active_z_axis if @locked_direction.nil?
             @normal = plane_manipulator.normal
 
           end
@@ -1779,12 +1783,12 @@ module Ladb::OpenCutList
             plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
             plane_manipulator = PlaneManipulator.new(plane)
 
-            @direction = _get_active_z_axis
+            @direction = _get_active_z_axis if @locked_direction.nil?
             @normal = plane_manipulator.normal
 
           else
 
-            @direction = nil
+            @direction = @locked_direction
             @normal = _get_active_z_axis
 
           end
@@ -2062,12 +2066,11 @@ module Ladb::OpenCutList
       ]
     end
 
-    def _get_local_shape_points_with_offset
+    def _get_local_shape_points_with_offset(shape_offset = nil)
+      shape_offset = _fetch_option_shape_offset if shape_offset.nil?
 
       bounds = Geom::BoundingBox.new
       bounds.add(_get_local_shape_points)
-
-      shape_offset = _fetch_option_shape_offset
 
       o_min = bounds.min.offset(X_AXIS, -shape_offset).offset!(Y_AXIS, -shape_offset)
       o_max = bounds.max.offset(X_AXIS, shape_offset).offset!(Y_AXIS, shape_offset)
@@ -2318,24 +2321,11 @@ module Ladb::OpenCutList
     # -----
 
     def _get_local_shape_points
-
-      t = _get_transformation
-      ti = t.inverse
-
-      points = _get_picked_points
-      p1 = points[0].transform(ti)
-      p2 = points[1].transform(ti)
-
-      segment_count = _fetch_option_segment_count
-      unit_angle = Geometrix::TWO_PI / segment_count
-      start_angle = X_AXIS.angle_between(Geom::Vector3d.new(p2.x, p2.y, 0))
-      start_angle *= -1 if p2.y < 0
-      circle_def = Geometrix::CircleDef.new(p1, p1.distance(p2))
-
-      Array.new(segment_count) { |i| Geometrix::CircleFinder.circle_point_at_angle(circle_def, start_angle + i * unit_angle) }
+      _get_local_shape_points_with_offset(0)
     end
 
-    def _get_local_shape_points_with_offset
+    def _get_local_shape_points_with_offset(shape_offset = nil)
+      shape_offset = _fetch_option_shape_offset if shape_offset.nil?
 
       t = _get_transformation
       ti = t.inverse
@@ -2348,7 +2338,7 @@ module Ladb::OpenCutList
       unit_angle = Geometrix::TWO_PI / segment_count
       start_angle = X_AXIS.angle_between(Geom::Vector3d.new(p2.x, p2.y, 0))
       start_angle *= -1 if p2.y < 0
-      circle_def = Geometrix::CircleDef.new(p1, p1.distance(p2) + _fetch_option_shape_offset)
+      circle_def = Geometrix::CircleDef.new(p1, p1.distance(p2) + shape_offset)
 
       Array.new(segment_count) { |i| Geometrix::CircleFinder.circle_point_at_angle(circle_def, start_angle + i * unit_angle) }
     end
@@ -2458,67 +2448,6 @@ module Ladb::OpenCutList
           end
         end
 
-        # Test axis alignment
-        # p1 = @picked_ips.last.position
-        # ray = view.pickray(x, y)
-        #
-        # x_axis = _get_active_x_axis
-        # z_plane = [ p1, _get_active_z_axis ]
-        # p2_x = Geom.intersect_line_plane(ray, z_plane).project_to_line([ p1, x_axis ])
-        # if ph.test_point(p2_x, x, y, 50)
-        #
-        #   k_line = Kuix::Line.new
-        #   k_line.position = p2_x
-        #   k_line.direction = x_axis
-        #   k_line.color = Kuix::COLOR_X
-        #   k_line.line_width = 1.5
-        #   k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        #   @tool.append_3d(k_line)
-        #
-        #   @snap_ip = Sketchup::InputPoint.new(p2_x)
-        #   @mouse_ip.clear
-        #
-        #   return
-        # end
-        #
-        # y_axis = _get_active_y_axis
-        # z_plane = [ p1, _get_active_z_axis ]
-        # p2_y = Geom.intersect_line_plane(ray, z_plane).project_to_line([ p1, y_axis ])
-        # if ph.test_point(p2_y, x, y, 50)
-        #
-        #   k_line = Kuix::Line.new
-        #   k_line.position = p2_y
-        #   k_line.direction = y_axis
-        #   k_line.color = Kuix::COLOR_Y
-        #   k_line.line_width = 1.5
-        #   k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        #   @tool.append_3d(k_line)
-        #
-        #   @snap_ip = Sketchup::InputPoint.new(p2_y)
-        #   @mouse_ip.clear
-        #
-        #   return
-        # end
-        #
-        # z_axis = _get_active_z_axis
-        # x_plane = [ p1, _get_active_x_axis ]
-        # p2_z = Geom.intersect_line_plane(ray, x_plane).project_to_line([ p1, z_axis ])
-        # if ph.test_point(p2_z, x, y, 50)
-        #
-        #   k_line = Kuix::Line.new
-        #   k_line.position = p2_z
-        #   k_line.direction = z_axis
-        #   k_line.color = Kuix::COLOR_Z
-        #   k_line.line_width = 1.5
-        #   k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        #   @tool.append_3d(k_line)
-        #
-        #   @snap_ip = Sketchup::InputPoint.new(p2_z)
-        #   @mouse_ip.clear
-        #
-        #   return
-        # end
-
       end
 
       if @picked_ips.length < 2
@@ -2606,7 +2535,7 @@ module Ladb::OpenCutList
             @direction = edge_manipulator.direction
 
             # k_points = Kuix::Points.new
-            # k_points.add_points([ @picked_first_ip.position, edge_manipulator.start_point, edge_manipulator.end_point ])
+            # k_points.add_points([ @picked_shape_first_ip.position, edge_manipulator.start_point, edge_manipulator.end_point ])
             # k_points.size = 30
             # k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
             # k_points.color = Kuix::COLOR_BLUE
@@ -2621,7 +2550,7 @@ module Ladb::OpenCutList
 
           end
 
-        elsif @mouse_ip.face && @mouse_ip.instance_path.length > 0
+        elsif @mouse_ip.face && @mouse_ip.degrees_of_freedom == 2
 
           if @locked_normal
 
@@ -2892,8 +2821,8 @@ module Ladb::OpenCutList
       points
     end
 
-    def _get_local_shape_points_with_offset
-      shape_offset = _fetch_option_shape_offset
+    def _get_local_shape_points_with_offset(shape_offset = nil)
+      shape_offset = _fetch_option_shape_offset if shape_offset.nil?
       points = _get_local_shape_points
       return points if shape_offset == 0 || points.length < 3
       paths, _ = Fiddle::Clippy.execute_union( closed_subjects: [ Fiddle::Clippy.points_to_rpath(points) ] )
