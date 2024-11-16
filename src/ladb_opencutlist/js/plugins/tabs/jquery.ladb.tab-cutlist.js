@@ -5374,12 +5374,13 @@
                                             that.dialog.advanceProgress(1);
 
                                             if (response.solution) {
-                                                var html = '<div>' + response.solution.bins[0].svg + '<div>#1</div></div>';
-                                                if (response.solution.bins.length > 1) {
-                                                    if (response.solution.bins.length > 2) {
+                                                let total_used_count = response.solution.summary.total_used_count;
+                                                let html = '<div>' + response.solution.bins[0].svg + '<div>#1</div></div>';
+                                                if (total_used_count > 1) {
+                                                    if (total_used_count > 2) {
                                                         html += '<div>...</div>';
                                                     }
-                                                    html += '<div>' + response.solution.bins[response.solution.bins.length - 1].svg + '<div>#' + response.solution.bins.length + '</div></div>';
+                                                    html += '<div>' + response.solution.bins[response.solution.bins.length - 1].svg + '<div>#' + total_used_count + '</div></div>';
                                                 }
                                                 that.dialog.previewProgress(html);
                                             }
