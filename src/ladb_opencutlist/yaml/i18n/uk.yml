@@ -7,6 +7,8 @@ default:
   minimize: Згорнути
   maximize: Розгорнути
   cancel: Відмінити
+  # stop computation and return best result so far
+  stop: Зупинити
   validate: Прийняти
   confirm: Підтвердити
   ok: Ok
@@ -44,7 +46,9 @@ default:
   good: Добре
   bad: Погано
   by: тло
+  # date format in use for language
   date_format: "d/m/Y G:i"
+  # short date format in use for language
   date_format_short: d/m/Y
   unit_0: Дюйм
   unit_1: Фут
@@ -85,6 +89,9 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Модифікувати екземпляр
+      edit_parent_part_instance: "Редагувати групу/компонент, що містить екземпляр"
+      hide_part_instance: Приховати екземпляр
+      unhide_part_instance: Показати екземпляр
       edit_part_instance_properties: Редагувати властивості екземпляра
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -357,7 +364,10 @@ tab:
       select_unselect_all_parts: Виділити/Зняти виділення з усіх деталей у групі
       select_parts_in_cutlist: Виберіть деталь у списку деталей
       select_parts_in_cutlist_plural: "Виберіть {{ count }} деталей у списку деталей"
+      # used in estimate to setup the cutting diagram
       setup_group_cuttingdiagram: "Налаштування розкрою '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      # used in estimate to setup the new packing
+      setup_group_packing: "Налаштування розкрою '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Відкрити URL деталі
     menu:
       show_all_groups: Показати всі групи
@@ -376,6 +386,7 @@ tab:
       group_numbers_save: Зберегти номери деталей цієї групи
       group_numbers_reset: Скинути номери деталей групи
       group_cuttingdiagram: Карта розкрою
+      group_packing: Карта розкрою
       group_labels: Друк етикеток згрупованих деталей
       edit_material: "Редагувати матеріал '{{ material_name }}'"
       expand_all: Розгорнути всі рядки
@@ -762,8 +773,6 @@ tab:
       option_trimming: Обрізка листа
       option_trimming_help_1d: "Розмір обрізки на кінці дошки або крайки, для видалення дефектного краю."
       option_trimming_help_2d: Розмір обрізки листа по периметру для видалення дефектів зовнішнього вигляду листа та його прямокутного вирівнювання.
-      option_rotations: Обертання
-      option_rotations_help_2d: Кількість можливих обертів для кожної деталі.
       option_optimization: Рівень оптимізації
       option_optimization_help: "Рівень оптимізації визначає кількість обчислених можливостей, а отже, і час розрахунку."
       option_optimization_0: Середній
