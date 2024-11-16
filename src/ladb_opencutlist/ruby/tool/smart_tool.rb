@@ -1056,7 +1056,13 @@ module Ladb::OpenCutList
           menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance')) {
             Sketchup.active_model.active_path = @active_part_entity_path
           }
+          menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_parent_part_instance')) {
+            Sketchup.active_model.active_path = @active_part_entity_path[0...-1]
+          }
         end
+        menu.add_item(PLUGIN.get_i18n_string("core.menu.item.#{@active_part_entity_path.last.visible? ? "hide" : "unhide"}_part_instance")) {
+          @active_part_entity_path.last.visible = !@active_part_entity_path.last.visible?
+        }
       else
         menu.add_item(PLUGIN.get_i18n_string('default.close')) {
           quit

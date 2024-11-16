@@ -85,6 +85,9 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Modifier l'instance
+      edit_parent_part_instance: Modifier le groupe/composant contenant l'instance
+      hide_part_instance: Masquer l'instance
+      unhide_part_instance: Révéler l'instance
       edit_part_instance_properties: Editer les propriétés de l'instance
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
