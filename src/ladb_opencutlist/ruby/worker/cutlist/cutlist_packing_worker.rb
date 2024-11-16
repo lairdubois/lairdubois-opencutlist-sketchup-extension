@@ -474,13 +474,13 @@ module Ladb::OpenCutList
 
     def _render_bin_def_svg(bin_def, running)
 
-      px_bin_dimension_font_size = 16
+      px_bin_dimension_font_size = running ? 0 : 16
       px_item_dimension_font_size = 12
       px_leftover_dimension_font_size = 12
       px_item_number_font_size_max = 24
       px_item_number_font_size_min = 8
 
-      px_bin_dimension_offset = 10
+      px_bin_dimension_offset = running ? 0 : 10
       px_item_dimension_offset = 3
       px_leftover_dimension_offset = 3
       px_leftover_bullet_offset = 10
@@ -540,6 +540,7 @@ module Ladb::OpenCutList
           item_type_def = item_def.item_type_def
           projection_def = item_type_def.projection_def
           part = item_type_def.part
+          part_def = part.def
           colored_part = @colored_part && !running
 
           item_text = _evaluate_item_text(part, item_def.instance_info)
@@ -550,8 +551,8 @@ module Ladb::OpenCutList
           px_item_x = _to_px(item_def.x)
           px_item_y = _to_px(item_def.y)
 
-          px_part_length = _to_px(part.def.size.length)
-          px_part_width = _to_px(part.def.size.width)
+          px_part_length = _to_px(part_def.size.length)
+          px_part_width = _to_px(part_def.size.width)
 
           t = Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees)
           t *= Geom::Transformation.scaling(-1.0, 1.0, 1.0) if item_def.mirror
@@ -581,11 +582,15 @@ module Ladb::OpenCutList
 
             unless running
               unless is_irregular
+                dim_x = item_def.angle == 0 ? part_def.cutting_length : part_def.cutting_width
+                dim_y = item_def.angle == 0 ? part_def.cutting_width : part_def.cutting_length
+                is_cutting_dim_x = dim_x != (item_def.angle == 0 ? part_def.size.length : part_def.size.width)
+                is_cutting_dim_y = dim_y != (item_def.angle == 0 ? part_def.size.width : part_def.size.length)
                 if is_2d
-                  svg += "<text class='item-dimension' x='#{px_item_rect_width - px_item_dimension_offset}' y='#{-(px_item_rect_height - px_item_dimension_offset)}' font-size='#{px_item_dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{part.cutting_length.gsub(/~ /, '')}</text>"
-                  svg += "<text class='item-dimension' x='#{px_item_dimension_offset}' y='#{-px_item_dimension_offset}' font-size='#{px_item_dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_item_dimension_offset} -#{px_item_dimension_offset})'>#{part.cutting_width.gsub(/~ /, '')}</text>"
+                  svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_x}' x='#{px_item_rect_width - px_item_dimension_offset}' y='#{-(px_item_rect_height - px_item_dimension_offset)}' font-size='#{px_item_dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{dim_x.to_s.gsub(/~ /, '')}</text>"
+                  svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_y}' x='#{px_item_dimension_offset}' y='#{-px_item_dimension_offset}' font-size='#{px_item_dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_item_dimension_offset} -#{px_item_dimension_offset})'>#{dim_y.to_s.gsub(/~ /, '')}</text>"
                 elsif is_1d
-                  svg += "<text class='item-dimension' x='#{px_item_rect_width / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_item_dimension_font_size}' text-anchor='middle' dominant-baseline='hanging'>#{part.cutting_length.gsub(/~ /, '')}</text>"
+                  svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_x}' x='#{px_item_rect_width / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_item_dimension_font_size}' text-anchor='middle' dominant-baseline='hanging'>#{dim_x.to_s.gsub(/~ /, '')}</text>"
                 end
               end
 

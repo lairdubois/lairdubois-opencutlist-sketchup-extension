@@ -97,7 +97,7 @@ LadbAbstractDialog.prototype.startProgress = function (maxSteps, cancelCallback)
     this.progressStep = 0;
 
     this.$progress = $(Twig.twig({ref: 'core/_progress.twig'}).render({
-        hiddenProgressBar: true, //this.progressMaxSteps <= 1
+        hiddenProgressBar: true,
         noCancelButton: typeof cancelCallback != 'function'
     }));
     this.$progressBar = $('.progress-bar', this.$progress);
@@ -130,6 +130,12 @@ LadbAbstractDialog.prototype.previewProgress = function (html) {
     if (this.$progress) {
         $('.ladb-progress-preview', this.$progress).remove();
         $('.ladb-progress-box', this.$progress).append($('<div class="ladb-progress-preview">' + html + '</div>'));
+    }
+};
+
+LadbAbstractDialog.prototype.changeCancelBtnLabelProgress = function (html) {
+    if (this.$progress) {
+        $('.ladb-progress-btn', this.$progress).html(html);
     }
 };
 

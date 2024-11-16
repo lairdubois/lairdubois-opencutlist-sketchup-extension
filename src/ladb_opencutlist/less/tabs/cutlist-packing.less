@@ -86,6 +86,11 @@
 
       .item-dimension {
         fill: #000;
+
+        &.item-dimension-cutting {
+          fill: #f00;
+        }
+
       }
 
     }
@@ -211,17 +216,17 @@
 
     .item {
       .item-outer, .item-inner {
-        fill: #fff;
+        fill: #fff !important;
       }
       .item-projection-shape, .item-projection-machining {
-        fill: none;
-        stroke: #aaa;
+        fill: none !important;
+        stroke: #aaa !important;
       }
     }
 
     .cut {
       .cut-inner {
-        fill: #000;
+        fill: #000 !important;
       }
       .cut-outer {
         fill: none !important;
