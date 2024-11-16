@@ -597,7 +597,7 @@ module Ladb::OpenCutList
     end
 
     def getExtents
-      return Sketchup.active_model.bounds if _get_picked_points.empty?
+      return Sketchup.active_model.bounds unless _picked_shape_first_point?
 
       t = _get_transformation
       ti = t.inverse
@@ -2112,7 +2112,7 @@ module Ladb::OpenCutList
         @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(plane))
       end
 
-      @direction = @picked_shape_first_ip.position.vector_to(@snap_ip.position)
+      @direction = @picked_shape_first_ip.position.vector_to(@snap_ip.position.project_to_plane([ @picked_shape_first_ip.position, @normal ])).normalize!
 
       super
     end
@@ -2328,7 +2328,7 @@ module Ladb::OpenCutList
 
       segment_count = _fetch_option_segment_count
       unit_angle = Geometrix::TWO_PI / segment_count
-      start_angle = X_AXIS.angle_between(Geom::Vector3d.new(*p2.to_a))
+      start_angle = X_AXIS.angle_between(Geom::Vector3d.new(p2.x, p2.y, 0))
       start_angle *= -1 if p2.y < 0
       circle_def = Geometrix::CircleDef.new(p1, p1.distance(p2))
 
@@ -2346,7 +2346,7 @@ module Ladb::OpenCutList
 
       segment_count = _fetch_option_segment_count
       unit_angle = Geometrix::TWO_PI / segment_count
-      start_angle = X_AXIS.angle_between(Geom::Vector3d.new(*p2.to_a))
+      start_angle = X_AXIS.angle_between(Geom::Vector3d.new(p2.x, p2.y, 0))
       start_angle *= -1 if p2.y < 0
       circle_def = Geometrix::CircleDef.new(p1, p1.distance(p2) + _fetch_option_shape_offset)
 
