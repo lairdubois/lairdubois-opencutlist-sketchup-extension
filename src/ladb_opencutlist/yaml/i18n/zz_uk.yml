@@ -5,186 +5,190 @@ default:
   minimize: 4 - Згорнути
   maximize: 5 - Розгорнути
   cancel: 6 - Відмінити
-  validate: 7 - Прийняти
-  confirm: 8 - Підтвердити
-  ok: 9 - Ok
-  open: 10 - Відкрити
-  see: 11 - Перегляд
-  close: 12 - Закрити
-  clear: 13 - Стерти
-  refresh: 14 - Оновити
-  generate: 15 - Розрахувати
-  print: 16 - Друк
-  export: 17 - Експорт
-  import: 18 - Імпорт
-  load: 19 - Завантаження
-  preview: 20 - Огляд
-  options: 21 - Опції
-  caution: 22 - Увага!
-  remove: 23 - Видалити
-  remove_all: 24 - Видалити все
-  delete: 25 - Видалити
-  create: 26 - Створити
-  duplicate: 27 - Дублікат
-  ignore: 28 - Пропустити
-  download: 29 - Завантажити
-  upgrade: 30 - Оновлення
-  copy: 31 - Копіювати
-  select_all: 32 - Вибрати все
-  unselect_all: 33 - Нічого не виділяти
-  draw: 34 - Креслення
-  estimate: 35 - Кошторис
-  empty_filename: 36 - Безіменний.skp
-  help: 37 - Допомога
-  error: 38 - Виправити!
-  warning: 39 - Увага!
-  tip: 40 - Порада
-  good: 41 - Добре
-  bad: 42 - Погано
-  by: 43 - тло
-  date_format: 44 - d/m/Y G:i
-  date_format_short: 45 - d/m/Y
-  unit_0: 46 - Дюйм
-  unit_1: 47 - Фут
-  unit_2: 48 - Міліметр
-  unit_3: 49 - Сантиметр
-  unit_4: 50 - Метр
-  unit_5: 51 - Ярд
-  unit_mass_0: 52 - Кілограм
-  unit_mass_1: 53 - Фунт
-  unit_angle_0: 54 - Рівень
-  instance_single: 55 - одиниця
-  instance_plural: 56 - одиниці
-  part_single: 57 - деталь
-  part_plural: 58 - деталі
-  thickness_layer_single: 59 - шар
-  thickness_layer_plural: 60 - шари
-  setup_model_units: 61 - Налаштування одиниць виміру моделі
-  load_more: 62 - Завантажити більше
-  reset_to_app_defaults: 63 - Відновити до початкових значень
-  constrain_key: 64 - Зміщення
-  copy_key_win: 65 - Ctrl
-  copy_key_mac: 66 - Опції
-  alt_key_win: 67 - Alt
-  alt_key_mac: 68 - Команда
-  tab_key: 69 - Tab
-  file: 70 - Файл
-  file_plural: 71 - Файли
-  stroke_color: 72 - Колір лінії
-  fill_color: 73 - Колір заливки
+  stop: 7 - Зупинити
+  validate: 8 - Прийняти
+  confirm: 9 - Підтвердити
+  ok: 10 - Ok
+  open: 11 - Відкрити
+  see: 12 - Перегляд
+  close: 13 - Закрити
+  clear: 14 - Стерти
+  refresh: 15 - Оновити
+  generate: 16 - Розрахувати
+  print: 17 - Друк
+  export: 18 - Експорт
+  import: 19 - Імпорт
+  load: 20 - Завантаження
+  preview: 21 - Огляд
+  options: 22 - Опції
+  caution: 23 - Увага!
+  remove: 24 - Видалити
+  remove_all: 25 - Видалити все
+  delete: 26 - Видалити
+  create: 27 - Створити
+  duplicate: 28 - Дублікат
+  ignore: 29 - Пропустити
+  download: 30 - Завантажити
+  upgrade: 31 - Оновлення
+  copy: 32 - Копіювати
+  select_all: 33 - Вибрати все
+  unselect_all: 34 - Нічого не виділяти
+  draw: 35 - Креслення
+  estimate: 36 - Кошторис
+  empty_filename: 37 - Безіменний.skp
+  help: 38 - Допомога
+  error: 39 - Виправити!
+  warning: 40 - Увага!
+  tip: 41 - Порада
+  good: 42 - Добре
+  bad: 43 - Погано
+  by: 44 - тло
+  date_format: 45 - d/m/Y G:i
+  date_format_short: 46 - d/m/Y
+  unit_0: 47 - Дюйм
+  unit_1: 48 - Фут
+  unit_2: 49 - Міліметр
+  unit_3: 50 - Сантиметр
+  unit_4: 51 - Метр
+  unit_5: 52 - Ярд
+  unit_mass_0: 53 - Кілограм
+  unit_mass_1: 54 - Фунт
+  unit_angle_0: 55 - Рівень
+  instance_single: 56 - одиниця
+  instance_plural: 57 - одиниці
+  part_single: 58 - деталь
+  part_plural: 59 - деталі
+  thickness_layer_single: 60 - шар
+  thickness_layer_plural: 61 - шари
+  setup_model_units: 62 - Налаштування одиниць виміру моделі
+  load_more: 63 - Завантажити більше
+  reset_to_app_defaults: 64 - Відновити до початкових значень
+  constrain_key: 65 - Зміщення
+  copy_key_win: 66 - Ctrl
+  copy_key_mac: 67 - Опції
+  alt_key_win: 68 - Alt
+  alt_key_mac: 69 - Команда
+  tab_key: 70 - Tab
+  file: 71 - Файл
+  file_plural: 72 - Файли
+  stroke_color: 73 - Колір лінії
+  fill_color: 74 - Колір заливки
 core:
   menu:
-    submenu: 74 - OpenCutList
+    submenu: 75 - OpenCutList
     item:
-      generate_cutlist: 75 - Створити список деталей
+      generate_cutlist: 76 - Створити список деталей
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
-      edit_part_instance: 81 - Модифікувати екземпляр
-      edit_part_instance_properties: 82 - Редагувати властивості екземпляра
+      edit_part_instance: 82 - Модифікувати екземпляр
+      edit_parent_part_instance: 83 - Редагувати групу/компонент, що містить екземпляр
+      hide_part_instance: 84 - Приховати екземпляр
+      unhide_part_instance: 85 - Показати екземпляр
+      edit_part_instance_properties: 86 - Редагувати властивості екземпляра
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
-      reset_dialog_position: 87 - Скинути позицію вікна
+      reset_dialog_position: 91 - Скинути позицію вікна
   toolbar:
-    name: 88 - OpenCutList
+    name: 92 - OpenCutList
     command:
-      dialog: 89 - OpenCutList
-      smart_draw: 90 - Креслення деталей
-      smart_paint: 91 - Нанесення матеріалів на деталі
-      smart_axes: 92 - Орієнтація деталей
-      smart_export: 93 - Експорт деталей
+      dialog: 93 - OpenCutList
+      smart_draw: 94 - Креслення деталей
+      smart_paint: 95 - Нанесення матеріалів на деталі
+      smart_axes: 96 - Орієнтація деталей
+      smart_export: 97 - Експорт деталей
   messagebox:
     dir_override: |
-      94 - « {{ target }} » вже існує. Бажаєте замінити його?
+      98 - « {{ target }} » вже існує. Бажаєте замінити його?
 
       У папці {{ parent }} вже є папка з таким самим ім'ям. Якщо ви заміните її, вміст буде втрачено.
   savepanel:
-    export_to_file: 95 - Експортувати до файлу {{ file_format }}
+    export_to_file: 99 - Експортувати до файлу {{ file_format }}
   dialog:
-    title: 96 - OpenCutList by L'Air du Bois
+    title: 100 - OpenCutList by L'Air du Bois
   leftbar:
-    more: 97 - Ще
-    more_docs: 98 - Документи
-    more_reviews: 99 - Огляди
-    more_plans: 100 - Проєкти
-    more_extensions: 101 - Плагіни
-    more_update: 102 - Оновлення
+    more: 101 - Ще
+    more_docs: 102 - Документи
+    more_reviews: 103 - Огляди
+    more_plans: 104 - Проєкти
+    more_extensions: 105 - Плагіни
+    more_update: 106 - Оновлення
   bottombar:
-    report_a_bug: 103 - Повідомити про помилку
+    report_a_bug: 107 - Повідомити про помилку
   warning:
     dev: |
-      104 - Ви використовуєте версію *OpenCutList*, яка **розробляється**.
+      108 - Ви використовуєте версію *OpenCutList*, яка **розробляється**.
       Ця версія доступна лише для тестування.
       Не рекомендується використовувати її у виробництві.
 
       Щоб повідомити про помилку: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
-    extern: '105 - Зовнішня помилка: **{{ error }}**'
-    feature_unavailable: 106 - Для цієї функції потрібен SketchUp {{ version }} або новіше
+    extern: '109 - Зовнішня помилка: **{{ error }}**'
+    feature_unavailable: 110 - Для цієї функції потрібен SketchUp {{ version }} або новіше
     failed_export_to: |
-      107 - Під час експортування до *{{ path }}* сталася помилка.
+      111 - Під час експортування до *{{ path }}* сталася помилка.
       **{{ error }}**
   success:
-    exported_to: 108 - Експорт успішно виконано до {{ path }}.
-    copied_to_clipboard: 109 - Скопійовано в буфер обміну
+    exported_to: 112 - Експорт успішно виконано до {{ path }}.
+    copied_to_clipboard: 113 - Скопійовано в буфер обміну
   event:
-    model_change: 110 - Активна модель була змінена.
-    options_change: 111 - Параметри моделі змінено.
-    material_change: 112 - Принаймні, один матеріал було змінено.
-    selection_change: 113 - Виділення в активній моделі було змінено.
-    layers_change: 114 - Теги в активній моделі змінилися.
-    drawing_change: 115 - Конструкція активної моделі була змінена.
+    model_change: 114 - Активна модель була змінена.
+    options_change: 115 - Параметри моделі змінено.
+    material_change: 116 - Принаймні, один матеріал було змінено.
+    selection_change: 117 - Виділення в активній моделі було змінено.
+    layers_change: 118 - Теги в активній моделі змінилися.
+    drawing_change: 119 - Конструкція активної моделі була змінена.
   upgrade:
-    unavailable: 116 - Неможливо знайти останню версію *OpenCutList*.
+    unavailable: 120 - Неможливо знайти останню версію *OpenCutList*.
     available: |
-      117 - Доступна нова версія *OpenCutList*.
+      121 - Доступна нова версія *OpenCutList*.
       Оновіть, щоб отримати найновіші функції!
     up_to_date: |
-      118 - Ви вже маєте останню версію *OpenCutList*.
+      122 - Ви вже маєте останню версію *OpenCutList*.
 
       *Подумайте про спонсорство цього проекту, щоб допомогти нам додати ще більше можливостей!*
-    downloading: 119 - Завантаження триває
-    changelog: 120 - Що нового?
-    ignore_update: 121 - Пропустити це оновлення
-    download_rescue: 122 - Проблеми із завантаженням?
-    manual_download: 123 - Завантаження вручну
-    zzz: 124 - Наразі я відпочиваю після оновлення. Щоб розбудити мене, потрібно перезапустити SketchUp.
+    downloading: 123 - Завантаження триває
+    changelog: 124 - Що нового?
+    ignore_update: 125 - Пропустити це оновлення
+    download_rescue: 126 - Проблеми із завантаженням?
+    manual_download: 127 - Завантаження вручну
+    zzz: 128 - Наразі я відпочиваю після оновлення. Щоб розбудити мене, потрібно перезапустити SketchUp.
     success: |
-      125 - Оновлення OpenCutList завершено!
+      129 - Оновлення OpenCutList завершено!
 
       Перезавантажте SKETCHUP, щоб активувати зміни.
     error:
-      download: 126 - Помилка при завантаженні архіву.
-      unzip: 127 - Помилка при розпакуванні архіву.
+      download: 130 - Помилка при завантаженні архіву.
+      unzip: 131 - Помилка при розпакуванні архіву.
   preset:
-    label: 128 - Пресети
-    manage: 129 - Керування пресетами
-    save_to: 130 - Зберегти
-    restore_from: 131 - Відновити з
-    app_defaults: 132 - Пресет за замовчуванням
-    user_defaults: 133 - Мій пресет за замовчуванням
-    new: 134 - Новий пресет
+    label: 132 - Пресети
+    manage: 133 - Керування пресетами
+    save_to: 134 - Зберегти
+    restore_from: 135 - Відновити з
+    app_defaults: 136 - Пресет за замовчуванням
+    user_defaults: 137 - Мій пресет за замовчуванням
+    new: 138 - Новий пресет
     new_prompt: |
-      135 - *Створення користувацького пресета дозволяє зберегти поточні налаштування глобально, щоб згодом ви могли повторно використовувати їх у всіх своїх шаблонах.*
+      139 - *Створення користувацького пресета дозволяє зберегти поточні налаштування глобально, щоб згодом ви могли повторно використовувати їх у всіх своїх шаблонах.*
 
       Введіть назву пресета:
-    delete_confirm_title: 136 - Видалити
-    delete_confirm: 137 - Ви впевнені, що хочете видалити попередньо встановлений пресет **"{{ name }}"**?
-    override_confirm_title: 138 - Оновити
-    override_confirm: 139 - Чи підтверджуєте ви оновлення попередньо встановленого пресету **"{{ name }}"** з параметрами форми?
-    new_success: 140 - Пресет **"{{ name }}"** створено
-    override_success: 141 - Пресет **"{{ name }}"** оновлено
-    restore_success: 142 - Форма була заповнена пресетом **"{{ name }}"**
-    delete_success: 143 - Пресет **"{{ name }}"** видалено
+    delete_confirm_title: 140 - Видалити
+    delete_confirm: 141 - Ви впевнені, що хочете видалити попередньо встановлений пресет **"{{ name }}"**?
+    override_confirm_title: 142 - Оновити
+    override_confirm: 143 - Чи підтверджуєте ви оновлення попередньо встановленого пресету **"{{ name }}"** з параметрами форми?
+    new_success: 144 - Пресет **"{{ name }}"** створено
+    override_success: 145 - Пресет **"{{ name }}"** оновлено
+    restore_success: 146 - Форма була заповнена пресетом **"{{ name }}"**
+    delete_success: 147 - Пресет **"{{ name }}"** видалено
     tooltip:
-      save_to: 144 - Оновити пресет '{{ name }}'
-      delete: 145 - Видалити пресет '{{ name }}'
+      save_to: 148 - Оновити пресет '{{ name }}'
+      delete: 149 - Видалити пресет '{{ name }}'
     dictionary:
-      component_textinput_color: 146 - Палітра кольорів
+      component_textinput_color: 150 - Палітра кольорів
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
       cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
@@ -206,663 +210,663 @@ core:
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
-    please_wait: 167 - Глобальний розрахунок
+    please_wait: 171 - Глобальний розрахунок
   component:
     textinput:
-      reset: 168 - Скинути це значення
+      reset: 172 - Скинути це значення
     textinput_color:
-      store: 169 - Запам'ятати цей колір
-      remove: 170 - Видалити цей колір
+      store: 173 - Запам'ятати цей колір
+      remove: 174 - Видалити цей колір
     textinput_code:
-      snippets: 171 - Приклади формул
-      help: 172 - Натисніть **@**, щоб відкрити введення змінних даних.
+      snippets: 175 - Приклади формул
+      help: 176 - Натисніть **@**, щоб відкрити введення змінних даних.
     three_viewer:
-      view: 173 - Вид {{ view }}
-      view_isometric: 174 - Ізометрія
-      view_top: 175 - Зверху
-      view_bottom: 176 - Знизу
-      view_front: 177 - Фронт
-      view_back: 178 - Ззаду
-      view_left: 179 - Ліворуч
-      view_right: 180 - Праворуч
-      zoom: 181 - Маштаб {{ zoom }}
-      explode_factor: 182 - Величина рознесення
-      toggle_box_helper: 183 - Показати або приховати панель інструментів
-      toggle_box_dimensions_helper: 184 - Показати або приховати доступні розміри
-      toggle_axes_helper: 185 - Показати або приховати осі
+      view: 177 - Вид {{ view }}
+      view_isometric: 178 - Ізометрія
+      view_top: 179 - Зверху
+      view_bottom: 180 - Знизу
+      view_front: 181 - Фронт
+      view_back: 182 - Ззаду
+      view_left: 183 - Ліворуч
+      view_right: 184 - Праворуч
+      zoom: 185 - Маштаб {{ zoom }}
+      explode_factor: 186 - Величина рознесення
+      toggle_box_helper: 187 - Показати або приховати панель інструментів
+      toggle_box_dimensions_helper: 188 - Показати або приховати доступні розміри
+      toggle_axes_helper: 189 - Показати або приховати осі
   docs:
     error:
       failed_to_load: |
-        186 - Неможливо відкрити документацію.
+        190 - Неможливо відкрити документацію.
         Перевірте, чи підключені Ви до Інтернету.
 tab:
   cutlist:
-    label: 187 - Деталі
-    title: 188 - Список елементів
+    label: 191 - Деталі
+    title: 192 - Список елементів
     help: |
-      189 - Виберіть у своїй сцені компонент для створення списку елементів. Потім натисніть кнопку **Розрахувати**.
+      193 - Виберіть у своїй сцені компонент для створення списку елементів. Потім натисніть кнопку **Розрахувати**.
       Якщо жоден компонент не вибрано, будуть розглянуті всі компоненти, видимі на сцені.
-    is_selection: 190 - Вибірка
-    select_part: 191 - Вибрати деталь
-    select_part_plural: 192 - Вибрати деталі
-    material_undefined: 193 - Матеріал не заданий
-    not_available_std_width: 194 - Ширина не задана
-    not_available_std_thickness: 195 - Товщина не задана
-    not_available_std_section: 196 - Січення не задано
-    highlight_part: 197 - Перегляд деталі в моделі
-    highlight_parts: 198 - Перегляд деталей в моделі
-    edit_part_properties: 199 - Редагувати властивості деталі
-    edit_part_axes_properties: 200 - Редагувати властивості (осі) деталі
-    edit_part_size_increase_properties: 201 - Редагувати властивості (розміри) деталі
-    edit_part_edges_properties: 202 - Редагувати властивості (крайки) деталі
-    edit_part_faces_properties: 203 - Редагувати властивості деталі (грані)
-    part_drawing_type_1: 204 - 2D Вигляд з Лиця
-    part_drawing_type_2: 205 - 2D Вигляд Задньої сторони
-    part_drawing_type_3: 206 - 2D Вид Зліва
-    part_drawing_type_4: 207 - 2D Вид Справа
-    part_drawing_type_5: 208 - 2D Вид Спереду
-    part_drawing_type_6: 209 - 2D Вид Ззаду
-    part_drawing_type_7: 210 - 3D
+    is_selection: 194 - Вибірка
+    select_part: 195 - Вибрати деталь
+    select_part_plural: 196 - Вибрати деталі
+    material_undefined: 197 - Матеріал не заданий
+    not_available_std_width: 198 - Ширина не задана
+    not_available_std_thickness: 199 - Товщина не задана
+    not_available_std_section: 200 - Січення не задано
+    highlight_part: 201 - Перегляд деталі в моделі
+    highlight_parts: 202 - Перегляд деталей в моделі
+    edit_part_properties: 203 - Редагувати властивості деталі
+    edit_part_axes_properties: 204 - Редагувати властивості (осі) деталі
+    edit_part_size_increase_properties: 205 - Редагувати властивості (розміри) деталі
+    edit_part_edges_properties: 206 - Редагувати властивості (крайки) деталі
+    edit_part_faces_properties: 207 - Редагувати властивості деталі (грані)
+    part_drawing_type_1: 208 - 2D Вигляд з Лиця
+    part_drawing_type_2: 209 - 2D Вигляд Задньої сторони
+    part_drawing_type_3: 210 - 2D Вид Зліва
+    part_drawing_type_4: 211 - 2D Вид Справа
+    part_drawing_type_5: 212 - 2D Вид Спереду
+    part_drawing_type_6: 213 - 2D Вид Ззаду
+    part_drawing_type_7: 214 - 3D
     tooltip:
-      show_hide_block: 211 - Показати / Приховати цю групу
-      scroll_to_block: 212 - Перейти до групи
-      not_available_std_width: 213 - Ширина *{{ std_dimension_real }}* не визначена в стандартній ширині матеріалу '{{ material_name }}'
-      not_available_std_thickness: 214 - Товщина *{{ std_dimension_real }}* не визначена в стандартній товщині матеріалу '{{ material_name }}'
-      not_available_std_section: 215 - Січення *{{ std_dimension_real }}* не визначено в стандартних січеннях матеріалу '{{ material_name }}'
+      show_hide_block: 215 - Показати / Приховати цю групу
+      scroll_to_block: 216 - Перейти до групи
+      not_available_std_width: 217 - Ширина *{{ std_dimension_real }}* не визначена в стандартній ширині матеріалу '{{ material_name }}'
+      not_available_std_thickness: 218 - Товщина *{{ std_dimension_real }}* не визначена в стандартній товщині матеріалу '{{ material_name }}'
+      not_available_std_section: 219 - Січення *{{ std_dimension_real }}* не визначено в стандартних січеннях матеріалу '{{ material_name }}'
       add_std_width_to_material: |
-        216 - Додайте ширину *{{ std_dimension }}*
+        220 - Додайте ширину *{{ std_dimension }}*
         до матеріалу '{{ material_name }}'
       add_std_thickness_to_material: |
-        217 - Додайте товщину *{{ std_dimension }}*
+        221 - Додайте товщину *{{ std_dimension }}*
         до матеріалу '{{ material_name }}'
       add_std_section_to_material: |
-        218 - Додайте січення *{{ std_dimension }}*
+        222 - Додайте січення *{{ std_dimension }}*
         до матеріалу '{{ material_name }}'
       rounded_std_width: |
-        219 - Ширина *{{ std_dimension }}* округлюється відповідно до точності моделі.
+        223 - Ширина *{{ std_dimension }}* округлюється відповідно до точності моделі.
         Справжня ширина: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
-        220 - Товщина *{{ std_dimension }}* округлюється відповідно до точності моделі.
+        224 - Товщина *{{ std_dimension }}* округлюється відповідно до точності моделі.
         Справжня товщина: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
-        221 - Січення *{{ std_dimension }}* округлюється відповідно до точності моделі.
+        225 - Січення *{{ std_dimension }}* округлюється відповідно до точності моделі.
         Справжнє січення: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_footer: 222 - Задайте точність у параметрі *Інформація про модель* або перевірте розміри деталей у цій групі.
+      rounded_std_footer: 226 - Задайте точність у параметрі *Інформація про модель* або перевірте розміри деталей у цій групі.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
-      edit_parts_properties: 226 - Редагування властивостей групи деталей
+      edit_parts_properties: 230 - Редагування властивостей групи деталей
       edit_material: $t(tab.cutlist.menu.edit_material)
-      folding_part: 228 - Розгорнути / Згорнути
-      material_origin_1: 229 - Матеріал цієї деталі визначено на її екземплярах
-      material_origin_2: 230 - Матеріал цієї деталі успадковано від одного з її батьківських елементів
-      material_origin_3: 231 - Матеріал цієї деталі скопійовано з її дочірних елементів
-      orientation_locked_on_axis: 232 - Орієнтація цієї деталі прив'язана до її системи координат
-      number_saved: 233 - Нумерація цієї деталі збережена
-      number_hidden: 234 - Збережений номер '{{ number }}' цієї деталі не може бути використаний, тому що він уже використовується
-      number_generated: 235 - Нумерацію цієї деталі згенеровано автоматично
-      resized: 236 - Розмір цієї деталі змінено відповідно до її зміни визначення у моделі
-      flipped: 237 - Ця деталь є дзеркальним відображенням компонента, що є у моделі
-      symmetrical: 238 - Для цього елемента вимкнено опцію виявлення дзеркальної деталі
-      ignore_grain_direction: 239 - Напрямок текстури цієї деталі ігнорується
-      auto_oriented: 240 - Ця деталь була автоматично переорієнтована
-      oko_label_filter: 241 - Включити / Виключити цей значок
-      add_label_filter: 242 - Фільтрувати за '{{ label }}'
-      remove_label_filter: 243 - Видалити фільтрацію по '{{ label }}'
-      add_edge_material_name_filter: 244 - Фільтрувати за '{{ material_name }}'
-      remove_edge_material_name_filter: 245 - Видалити фільтрацію по '{{ material_name }}'
-      add_veneer_material_name_filter: 246 - Фільтрувати за '{{ material_name }}'
-      remove_veneer_material_name_filter: 247 - Видалити фільтрацію по '{{ material_name }}'
-      not_aligned_on_axes: 248 - Увага, ця деталь може бути неправильно орієнтована відносно осей компонента
-      instance_count_by_part: 249 - Ця деталь враховується комплектом по **{{ count }}** одиниць.
-      unused_instance_count: 250 - Зверніть увагу, що **{{ count }}** одиниця з останнього комплекту не утворює комплект.
-      unused_instance_count_plural: 251 - Зверніть увагу, що **{{ count }}** одиниці з останнього комплекту не утворюють комплект.
-      used_instance_count: 252 - **{{ count }}** / {{ total }} використовувана одиниця
-      used_instance_count_plural: 253 - **{{ count }}** / {{ total }} використовувані одиниці
-      thickness_layer_count: 254 - Готова деталь складається з **{{ count }}** шарів по товщині
-      thickness_layered: 255 - Тут відображено загальну кількість деталей, які потрібно розрізати, щоб отримати всі шари багатошарової деталі.
-      thickness_layered_equation: 256 - **{{ count }}** *деталь* x **{{ layerCount }}** *шар* = **{{ cuttingPartCount }}**
-      thickness_layered_equation_plural: 257 - **{{ count }}** *деталей* x **{{ layerCount }}** *шарів* = **{{ cuttingPartCount }}**
-      multiple_content_layers: 258 - Увага, ця деталь складається з підгруп, що присутні в {{ count }} різних шарах:<br>{{ layers }}
-      children_warnings: 259 - Обережно, у згрупованих деталях є {{ count }} попередження
-      children_warnings_plural: 260 - Обережно, у згрупованих деталях є {{ count }} попереджень
-      children_size_increase: 261 - Цей розмір збільшується на розмір {{ count }} згрупованих деталей
-      invalid_final_area: 262 - Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталь (із {{ total }}) має некоректну площу
-      invalid_final_area_plural: 263 - Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталей (із {{ total }}) мають некоректну площу
-      is_dynamic_attributes_name: 264 - Позначення цієї деталі взято з атрибуту 'Name' динамічного компонента
-      size_increased: 265 - Розмір збільшено на {{ value }}
-      has_edges: 266 - Ця деталь містить {{ count }} крайку
-      has_edges_plural: 267 - Ця деталь містить {{ count }} крайки
-      has_faces: 268 - Ця деталь містить {{ count }} облицьовану поверхню
-      has_faces_plural: 269 - Ця деталь містить {{ count }} облицьовані поверхні
-      edge_decremented: 270 - Віднімається товщина крайки ({{ decrement }})
-      edge_ymin: 271 - Крайка по довжині 1
-      edge_ymax: 272 - Крайка по довжині 2
-      edge_xmin: 273 - Крайка по ширині 1
-      edge_xmax: 274 - Крайка по ширині 2
-      face_zmin: 275 - Тил
-      face_zmax: 276 - Лице
-      dblclick_to_copy_all_edges: 277 - Двічі клацніть тут, щоб скопіювати це значення для всіх інших крайок
-      dblclick_to_copy_all_faces: 278 - Двічі клацніть тут, щоб скопіювати це значення на іншу поверхню
-      dblclick_to_sort_axes: 279 - Двічі клацніть тут, щоб автоматично орієнтувати осі відповідно до розмірів деталі
-      part_axes: 280 - Внутрішні осі деталі
-      select_unselect_all_parts: 281 - Виділити/Зняти виділення з усіх деталей у групі
-      select_parts_in_cutlist: 282 - Виберіть деталь у списку деталей
-      select_parts_in_cutlist_plural: 283 - Виберіть {{ count }} деталей у списку деталей
-      setup_group_cuttingdiagram: 284 - Налаштування розкрою '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
-      open_part_url: 285 - Відкрити URL деталі
+      folding_part: 232 - Розгорнути / Згорнути
+      material_origin_1: 233 - Матеріал цієї деталі визначено на її екземплярах
+      material_origin_2: 234 - Матеріал цієї деталі успадковано від одного з її батьківських елементів
+      material_origin_3: 235 - Матеріал цієї деталі скопійовано з її дочірних елементів
+      orientation_locked_on_axis: 236 - Орієнтація цієї деталі прив'язана до її системи координат
+      number_saved: 237 - Нумерація цієї деталі збережена
+      number_hidden: 238 - Збережений номер '{{ number }}' цієї деталі не може бути використаний, тому що він уже використовується
+      number_generated: 239 - Нумерацію цієї деталі згенеровано автоматично
+      resized: 240 - Розмір цієї деталі змінено відповідно до її зміни визначення у моделі
+      flipped: 241 - Ця деталь є дзеркальним відображенням компонента, що є у моделі
+      symmetrical: 242 - Для цього елемента вимкнено опцію виявлення дзеркальної деталі
+      ignore_grain_direction: 243 - Напрямок текстури цієї деталі ігнорується
+      auto_oriented: 244 - Ця деталь була автоматично переорієнтована
+      oko_label_filter: 245 - Включити / Виключити цей значок
+      add_label_filter: 246 - Фільтрувати за '{{ label }}'
+      remove_label_filter: 247 - Видалити фільтрацію по '{{ label }}'
+      add_edge_material_name_filter: 248 - Фільтрувати за '{{ material_name }}'
+      remove_edge_material_name_filter: 249 - Видалити фільтрацію по '{{ material_name }}'
+      add_veneer_material_name_filter: 250 - Фільтрувати за '{{ material_name }}'
+      remove_veneer_material_name_filter: 251 - Видалити фільтрацію по '{{ material_name }}'
+      not_aligned_on_axes: 252 - Увага, ця деталь може бути неправильно орієнтована відносно осей компонента
+      instance_count_by_part: 253 - Ця деталь враховується комплектом по **{{ count }}** одиниць.
+      unused_instance_count: 254 - Зверніть увагу, що **{{ count }}** одиниця з останнього комплекту не утворює комплект.
+      unused_instance_count_plural: 255 - Зверніть увагу, що **{{ count }}** одиниці з останнього комплекту не утворюють комплект.
+      used_instance_count: 256 - **{{ count }}** / {{ total }} використовувана одиниця
+      used_instance_count_plural: 257 - **{{ count }}** / {{ total }} використовувані одиниці
+      thickness_layer_count: 258 - Готова деталь складається з **{{ count }}** шарів по товщині
+      thickness_layered: 259 - Тут відображено загальну кількість деталей, які потрібно розрізати, щоб отримати всі шари багатошарової деталі.
+      thickness_layered_equation: 260 - **{{ count }}** *деталь* x **{{ layerCount }}** *шар* = **{{ cuttingPartCount }}**
+      thickness_layered_equation_plural: 261 - **{{ count }}** *деталей* x **{{ layerCount }}** *шарів* = **{{ cuttingPartCount }}**
+      multiple_content_layers: 262 - Увага, ця деталь складається з підгруп, що присутні в {{ count }} різних шарах:<br>{{ layers }}
+      children_warnings: 263 - Обережно, у згрупованих деталях є {{ count }} попередження
+      children_warnings_plural: 264 - Обережно, у згрупованих деталях є {{ count }} попереджень
+      children_size_increase: 265 - Цей розмір збільшується на розмір {{ count }} згрупованих деталей
+      invalid_final_area: 266 - Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталь (із {{ total }}) має некоректну площу
+      invalid_final_area_plural: 267 - Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталей (із {{ total }}) мають некоректну площу
+      is_dynamic_attributes_name: 268 - Позначення цієї деталі взято з атрибуту 'Name' динамічного компонента
+      size_increased: 269 - Розмір збільшено на {{ value }}
+      has_edges: 270 - Ця деталь містить {{ count }} крайку
+      has_edges_plural: 271 - Ця деталь містить {{ count }} крайки
+      has_faces: 272 - Ця деталь містить {{ count }} облицьовану поверхню
+      has_faces_plural: 273 - Ця деталь містить {{ count }} облицьовані поверхні
+      edge_decremented: 274 - Віднімається товщина крайки ({{ decrement }})
+      edge_ymin: 275 - Крайка по довжині 1
+      edge_ymax: 276 - Крайка по довжині 2
+      edge_xmin: 277 - Крайка по ширині 1
+      edge_xmax: 278 - Крайка по ширині 2
+      face_zmin: 279 - Тил
+      face_zmax: 280 - Лице
+      dblclick_to_copy_all_edges: 281 - Двічі клацніть тут, щоб скопіювати це значення для всіх інших крайок
+      dblclick_to_copy_all_faces: 282 - Двічі клацніть тут, щоб скопіювати це значення на іншу поверхню
+      dblclick_to_sort_axes: 283 - Двічі клацніть тут, щоб автоматично орієнтувати осі відповідно до розмірів деталі
+      part_axes: 284 - Внутрішні осі деталі
+      select_unselect_all_parts: 285 - Виділити/Зняти виділення з усіх деталей у групі
+      select_parts_in_cutlist: 286 - Виберіть деталь у списку деталей
+      select_parts_in_cutlist_plural: 287 - Виберіть {{ count }} деталей у списку деталей
+      setup_group_cuttingdiagram: 288 - Налаштування розкрою '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
+      setup_group_packing: 289 - Налаштування розкрою '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
+      open_part_url: 290 - Відкрити URL деталі
     menu:
-      show_all_groups: 286 - Показати всі групи
-      hide_all_other_groups: 287 - Приховати всі інші групи
-      numbers_save: 288 - Запам'ятати номери деталей
-      numbers_reset: 289 - Скинути номери деталей
+      show_all_groups: 291 - Показати всі групи
+      hide_all_other_groups: 292 - Приховати всі інші групи
+      numbers_save: 293 - Запам'ятати номери деталей
+      numbers_reset: 294 - Скинути номери деталей
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      labels_parts: 291 - Друк етикеток
-      write_2d: 292 - Проекція 2D
-      write_3d: 293 - Креслення 3D
-      write_2d_parts: 294 - Експорт 2D проекції деталей
-      write_3d_parts: 295 - Експорт 3D-геометрії деталей
-      group_write_2d_parts: 296 - Експорт 2D проекції деталей групи
-      group_write_3d_parts: 297 - Експортувати 3D-геометрію деталей групи
-      group_layout_parts: 298 - Друк загального креслення деталей групи
-      group_numbers_save: 299 - Зберегти номери деталей цієї групи
-      group_numbers_reset: 300 - Скинути номери деталей групи
-      group_cuttingdiagram: 301 - Карта розкрою
-      group_labels: 302 - Друк етикеток згрупованих деталей
-      edit_material: 303 - Редагувати матеріал '{{ material_name }}'
-      expand_all: 304 - Розгорнути всі рядки
-      collapse_all: 305 - Згорнути всі рядки
-      reset_prices: 306 - Скинути параметри ціни у всіх матеріалів
+      labels_parts: 296 - Друк етикеток
+      write_2d: 297 - Проекція 2D
+      write_3d: 298 - Креслення 3D
+      write_2d_parts: 299 - Експорт 2D проекції деталей
+      write_3d_parts: 300 - Експорт 3D-геометрії деталей
+      group_write_2d_parts: 301 - Експорт 2D проекції деталей групи
+      group_write_3d_parts: 302 - Експортувати 3D-геометрію деталей групи
+      group_layout_parts: 303 - Друк загального креслення деталей групи
+      group_numbers_save: 304 - Зберегти номери деталей цієї групи
+      group_numbers_reset: 305 - Скинути номери деталей групи
+      group_cuttingdiagram: 306 - Карта розкрою
+      group_packing: 307 - Карта розкрою
+      group_labels: 308 - Друк етикеток згрупованих деталей
+      edit_material: 309 - Редагувати матеріал '{{ material_name }}'
+      expand_all: 310 - Розгорнути всі рядки
+      collapse_all: 311 - Згорнути всі рядки
+      reset_prices: 312 - Скинути параметри ціни у всіх матеріалів
       reset_prices_confirm: |
-        307 - Ви збираєтеся скинути ціни на всі матеріали вашої моделі.
+        313 - Ви збираєтеся скинути ціни на всі матеріали вашої моделі.
         Ця дія є остаточною. **Усі ціни будуть скинуті.**
         Підтвердьте, щоб продовжити.
-      reset_prices_success: 308 - Ціни на всі матеріали скинуто.
+      reset_prices_success: 314 - Ціни на всі матеріали скинуто.
     edit_part:
-      title: 309 - Властивості деталі '{{ name }}'
-      title_multiple: 310 - Властивості групи деталей
-      multiple_alert: 311 - Загальні властивості групи {{ part_count }} деталей.
-      general: 312 - Загальні
-      extra_help: 313 - Список властивостей, що залежать від типу матеріалу "**$t(tab.materials.type_{{ material_type }})**".
-      edges: 314 - Крайки
-      faces: 315 - Поверхні
-      name: 316 - Ім’я
-      material: 317 - Матеріал
-      cumulable: 318 - Підсумувати
+      title: 315 - Властивості деталі '{{ name }}'
+      title_multiple: 316 - Властивості групи деталей
+      multiple_alert: 317 - Загальні властивості групи {{ part_count }} деталей.
+      general: 318 - Загальні
+      extra_help: 319 - Список властивостей, що залежать від типу матеріалу "**$t(tab.materials.type_{{ material_type }})**".
+      edges: 320 - Крайки
+      faces: 321 - Поверхні
+      name: 322 - Ім’я
+      material: 323 - Матеріал
+      cumulable: 324 - Підсумувати
       cumulable_help: |
-        319 - Якщо цей параметр активовано, **довжина** або **ширина** буде розглядатися під час сортування списку елементів як одинична **довжина** або **ширина** списку, помножена на кількість.
-      cumulable_0: 320 - Не підсумовувати
-      cumulable_1: 321 - Підсумувати по довжині
-      cumulable_2: 322 - Підсумувати по ширині
-      instance_count_by_part: 323 - Комплект
+        325 - Якщо цей параметр активовано, **довжина** або **ширина** буде розглядатися під час сортування списку елементів як одинична **довжина** або **ширина** списку, помножена на кількість.
+      cumulable_0: 326 - Не підсумовувати
+      cumulable_1: 327 - Підсумувати по довжині
+      cumulable_2: 328 - Підсумувати по ширині
+      instance_count_by_part: 329 - Комплект
       instance_count_by_part_help: |
-        324 - Дозволяє розглядати деталь як *лот* з однієї або кількох *одиниць*.
+        330 - Дозволяє розглядати деталь як *лот* з однієї або кількох *одиниць*.
         Таким чином, кількість, пов’язана з деталлю в списку, представлятиме кількість цілих партій, необхідних для вмісту кількості одиниць, фактично присутніх у моделі.
 
         *Приклад: щоб підрахувати лише 1 шт. для пари напрямних ящиків:
         Комплект = 2 шт.*
-      instance_count_by_part_1: 325 - 1 одиниця в комплекті
-      instance_count_by_part_2: 326 - 2 одиниці в комплекті
-      mass: 327 - Маса
-      mass_help: 328 - Маса деталі буде враховуватися під час створення звіту **Кошторис**.
-      price: 329 - Ціна
-      price_help: 330 - Ціна деталі буде врахована під час створення звіту **Кошторис**.
-      thickness_layer_count: 331 - Число шарів
+      instance_count_by_part_1: 331 - 1 одиниця в комплекті
+      instance_count_by_part_2: 332 - 2 одиниці в комплекті
+      mass: 333 - Маса
+      mass_help: 334 - Маса деталі буде враховуватися під час створення звіту **Кошторис**.
+      price: 335 - Ціна
+      price_help: 336 - Ціна деталі буде врахована під час створення звіту **Кошторис**.
+      thickness_layer_count: 337 - Число шарів
       thickness_layer_count_help: |
-        332 - Встановіть тут кількість шарів, які розділяють намальовану деталь по її товщині.
+        338 - Встановіть тут кількість шарів, які розділяють намальовану деталь по її товщині.
 
         *Приклад:* Якщо для намальованої деталі товщиною *38мм* ви бажаєте склеїти дві панелі *19мм*, вкажіть у цьому полі **2**.
         *Тоді OpenCutList зарахує 2 деталі товщиною 19 мм замість 1 деталі 38 мм.*
-      description: 333 - Опис
+      description: 339 - Опис
       description_help: |
-        334 - *Опис* використовується для надання персоналізованої інформації щодо визначення кожної деталі.
-      url: 335 - URL
+        340 - *Опис* використовується для надання персоналізованої інформації щодо визначення кожної деталі.
+      url: 341 - URL
       url_help: |
-        336 - *URL* дозволяє надати персоналізоване посилання на зовнішню сторінку для кожного визначення деталі.
-      tags: 337 - Мітки
+        342 - *URL* дозволяє надати персоналізоване посилання на зовнішню сторінку для кожного визначення деталі.
+      tags: 343 - Мітки
       tags_help: |
-        338 - *Мітки* дозволяють додавати власні ключові слова до визначення кожної деталі.
+        344 - *Мітки* дозволяють додавати власні ключові слова до визначення кожної деталі.
         Ви можете додати скільки завгодно міток.
         Потім ви можете відфільтрувати деталі, видимі у вашому списку деталей, за цими мітками.
-      tags_multiple_info: 339 - Видимі лише загальні мітки
-      orientation: 340 - Орієнтація
-      orientation_locked_on_axis: 341 - Блокування орієнтації по осях деталі
+      tags_multiple_info: 345 - Видимі лише загальні мітки
+      orientation: 346 - Орієнтація
+      orientation_locked_on_axis: 347 - Блокування орієнтації по осях деталі
       orientation_locked_on_axis_help: |
-        342 - Якщо встановлено цей прапорець, *Автоматична орієнтація деталі* не вплине на цю деталь.
+        348 - Якщо встановлено цей прапорець, *Автоматична орієнтація деталі* не вплине на цю деталь.
 
         І так,
         - *довжина* буде на осі <span style='color:red'>червона</span>
         - *ширина* на осі <span style='color:green'>зелена</span>
         - *товщина* на осі <span style='color:blue'>синя</span>
-      symmetrical: 343 - Вимкнути розпізнавання дзеркальних деталей
+      symmetrical: 349 - Вимкнути розпізнавання дзеркальних деталей
       symmetrical_help: |
-        344 - Якщо цей прапорець встановлено, виявлення *дзеркальної деталі* не буде застосовано до цієї деталі.
-      ignore_grain_direction: 345 - Не враховувати напрямок текстури
+        350 - Якщо цей прапорець встановлено, виявлення *дзеркальної деталі* не буде застосовано до цієї деталі.
+      ignore_grain_direction: 351 - Не враховувати напрямок текстури
       ignore_grain_direction_help: |
-        346 - Якщо цей прапорець встановлено, напрямок текстури на деталі ігнорується.
-      size_increase: 347 - Припуски
+        352 - Якщо цей прапорець встановлено, напрямок текстури на деталі ігнорується.
+      size_increase: 353 - Припуски
       size_increase_help: |
-        348 - Припуски дозволяють збільшити допустимі розміри деталі.
+        354 - Припуски дозволяють збільшити допустимі розміри деталі.
         (*Приклад: Додатковий матеріал до довжини плінтусу для товщини пили, який слід врахувати під час розпилу.*)
-      length_increase: 349 - Припуск по довжині
-      length_increase_help: 350 - Припуск застосовується до фактичної довжини, щоб визначити **пильну довжину**.
-      width_increase: 351 - Припуск по ширині
-      width_increase_help: 352 - Припуск застосовується до фактичної ширини, щоб визначити **пильну ширину**.
-      thickness_increase: 353 - Припуск по товщині
-      thickness_increase_help: 354 - Припуск застосовується до фактичної товщини, щоб визначити **пильну товщину**.
-      axes: 355 - Осі
-      axes_help: 356 - Встановіть розміри так, щоб вони відповідали кольорам осей вашої деталі.
+      length_increase: 355 - Припуск по довжині
+      length_increase_help: 356 - Припуск застосовується до фактичної довжини, щоб визначити **пильну довжину**.
+      width_increase: 357 - Припуск по ширині
+      width_increase_help: 358 - Припуск застосовується до фактичної ширини, щоб визначити **пильну ширину**.
+      thickness_increase: 359 - Припуск по товщині
+      thickness_increase_help: 360 - Припуск застосовується до фактичної товщини, щоб визначити **пильну товщину**.
+      axes: 361 - Осі
+      axes_help: 362 - Встановіть розміри так, щоб вони відповідали кольорам осей вашої деталі.
       axes_tip: |
-        357 - Важливо зауважити, що якщо опція *Автоматичної орієнтації* не активована або якщо деталь *Зафіксована на своїх осях* то:
+        363 - Важливо зауважити, що якщо опція *Автоматичної орієнтації* не активована або якщо деталь *Зафіксована на своїх осях* то:
         - **Довжина** зчитується на осі <strong style='color:red'>червона</strong>
         - **Ширина** читається на осі <strong style='color:green'>зелена</strong>
         - **Товщина** читається на осі <strong style='color:blue'>синя</strong>
-      axes_origin_position_none: 358 - Не змінювати початок координат
-      axes_origin_position_min: 359 - Розміщення початку координат по кутку
-      axes_origin_position_center: 360 - Розміщення початку координат у центрі
-      axes_origin_position_front_min: 361 - Помістіть початок координат у торець
-      axes_origin_position_front_center: 362 - Помістіть початок координат у центр
-      over_length: 363 - По довжині
-      over_width: 364 - По ширині
-      edge_disabled_help: 365 - Ця крайка не налаштовується, тому що в моделі не було виявлено жодної поверхні, яка могла б нести у собі матеріал крайки.
-      face_disabled_help: 366 - Цю поверхню неможливо налаштувати, оскільки на цьому краю деталі в моделі не було виявлено поверхню, що має матеріал.
-      multiple_values: 367 - Множинні значення
-      loading_preview: 368 - Завантаження попереднього перегляду
+      axes_origin_position_none: 364 - Не змінювати початок координат
+      axes_origin_position_min: 365 - Розміщення початку координат по кутку
+      axes_origin_position_center: 366 - Розміщення початку координат у центрі
+      axes_origin_position_front_min: 367 - Помістіть початок координат у торець
+      axes_origin_position_front_center: 368 - Помістіть початок координат у центр
+      over_length: 369 - По довжині
+      over_width: 370 - По ширині
+      edge_disabled_help: 371 - Ця крайка не налаштовується, тому що в моделі не було виявлено жодної поверхні, яка могла б нести у собі матеріал крайки.
+      face_disabled_help: 372 - Цю поверхню неможливо налаштувати, оскільки на цьому краю деталі в моделі не було виявлено поверхню, що має матеріал.
+      multiple_values: 373 - Множинні значення
+      loading_preview: 374 - Завантаження попереднього перегляду
     option:
-      auto_orient: 369 - Автоматична орієнтація деталей
+      auto_orient: 375 - Автоматична орієнтація деталей
       auto_orient_help: |
-        370 - Якщо цей параметр активовано, три виміри деталей сортуються таким чином, що найбільший відповідає *довжині*, а найменший — *товщині*.
+        376 - Якщо цей параметр активовано, три виміри деталей сортуються таким чином, що найбільший відповідає *довжині*, а найменший — *товщині*.
 
         Інакше,
         - *довжина* читається на осі<span style='color:red'>червона</span>
         - *ширина* на осі <span style='color:green'>зелена</span>
         - *товщина* на осі <span style='color:blue'>синя</span>
-      flipped_detection: 371 - Виявлення дзеркальних деталей
+      flipped_detection: 377 - Виявлення дзеркальних деталей
       flipped_detection_help: |
-        372 - Якщо цей параметр увімкнено, дзеркальні деталі буде виявлено та відображено як нову деталь.
-      smart_material: 373 - *Розумне* призначення матеріалу
-      smart_material_help: 374 - Якщо цей параметр активовано, деталям без визначеного матеріалу можна призначити основний матеріал дочірніх елементів або матеріал, успадкований від батьківських елементів.
-      dynamic_attributes_name: 375 - Використовувати атрибут *Name* динамічних компонентів
+        378 - Якщо цей параметр увімкнено, дзеркальні деталі буде виявлено та відображено як нову деталь.
+      smart_material: 379 - *Розумне* призначення матеріалу
+      smart_material_help: 380 - Якщо цей параметр активовано, деталям без визначеного матеріалу можна призначити основний матеріал дочірніх елементів або матеріал, успадкований від батьківських елементів.
+      dynamic_attributes_name: 381 - Використовувати атрибут *Name* динамічних компонентів
       dynamic_attributes_name_help: |
-        376 - Якщо цей параметр активовано, позначення деталей, які є динамічними компонентами, буде взято з атрибута *Name*, якщо він визначений.
+        382 - Якщо цей параметр активовано, позначення деталей, які є динамічними компонентами, буде взято з атрибута *Name*, якщо він визначений.
 
         <i class='ladb-opencutlist-icon-warning'></i> Екземпляри деталей з однаковим визначенням компонента будуть розділені, якщо атрибут *Name* не має однакового значення.
-      part_number_with_letters: 377 - Для нумерації деталей використовувати букви
-      part_number_with_letters_help: 378 - Якщо ця опція активована, деталі нумеруються літерами (A, B, C, ... Z, AA, AB, ...).
-      part_number_sequence_by_group: 379 - Нумерація деталей по групам
-      part_number_sequence_by_group_help: 380 - Якщо цей параметр активовано, нумерація деталей буде починатись на 1 (або A) у кожній окремій групі (список деталей з однаковим матеріалом і товщиною).
-      part_folding: 381 - Згрупувати однакові деталі
+      part_number_with_letters: 383 - Для нумерації деталей використовувати букви
+      part_number_with_letters_help: 384 - Якщо ця опція активована, деталі нумеруються літерами (A, B, C, ... Z, AA, AB, ...).
+      part_number_sequence_by_group: 385 - Нумерація деталей по групам
+      part_number_sequence_by_group_help: 386 - Якщо цей параметр активовано, нумерація деталей буде починатись на 1 (або A) у кожній окремій групі (список деталей з однаковим матеріалом і товщиною).
+      part_folding: 387 - Згрупувати однакові деталі
       part_folding_help: |
-        382 - Якщо параметр увімкнено, то деталі з **суцільної деревини, листів або дошок**, що мають **однаковий допустимий розмір**, з **однаковими мітками** та **однаковою обробленою поверхнею** *( якщо область відображення не прихована)* буде згруповано в одному рядку в *Списку деталей*.
+        388 - Якщо параметр увімкнено, то деталі з **суцільної деревини, листів або дошок**, що мають **однаковий допустимий розмір**, з **однаковими мітками** та **однаковою обробленою поверхнею** *( якщо область відображення не прихована)* буде згруповано в одному рядку в *Списку деталей*.
 
         Деталі залишатимуться різними для редагування та макету етикетки.
-      hide_entity_names: 383 - Приховати імена невизначених екземплярів
-      hide_entity_names_help: 384 - Якщо цей параметр активовано, **назви невизначених екземплярів** деталей не відображаються.
-      hide_descriptions: 385 - Сховати описи
-      hide_descriptions_help: 386 - Якщо цю опцію активовано, **описи**, розміщені на деталях, не відображаються.
-      hide_tags: 387 - Приховати мітки
-      hide_tags_help: 388 - Якщо цю опцію активовано, **мітки**, розміщені на деталях, не відображаються.
-      hide_cutting_dimensions: 389 - Приховати пильні розміри
-      hide_cutting_dimensions_help: 390 - Якщо цю опцію активовано, **пильні** розміри деталей не відображаються.
-      hide_bbox_dimensions: 391 - Приховати габаритні розміри
-      hide_bbox_dimensions_help: 392 - Якщо цю опцію активовано, **габаритні** розміри деталей не відображаються.
-      hide_final_areas: 393 - Приховати фактичну площу деталей з *Листової*
-      hide_final_areas_help: 394 - Якщо ця опція активована, то **фактична площа** деталей з типом *Листовий* буде прихована.
-      hide_edges: 395 - Приховати стовпчик крайок
-      hide_edges_help: 396 - Якщо ця опція активована, то **стовпці крайок** деталей з типом *Листовий* будуть приховані.
-      hide_faces: 397 - Сховати стовпці з облицюванням
-      hide_faces_help: 398 - Якщо цей параметр увімкнено, то **Стовпці шпону** у деталях типу *Листовий* не відображаються.
-      hide_material_colors: 399 - Приховати кольори матеріалів
-      hide_material_colors_help: 400 - Якщо ця опція включена, кольори матеріалів не будуть відображатися.
-      minimize_on_highlight: 401 - Стовпці після *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: 402 - Якщо цей параметр увімкнено, вікно OpenCutList буде згорнуто під час використання функції *'$t(tab.cutlist.highlight_part)'*.
-      general: 403 - Загальні
-      part_order_strategy: 404 - Сортування деталей
+      hide_entity_names: 389 - Приховати імена невизначених екземплярів
+      hide_entity_names_help: 390 - Якщо цей параметр активовано, **назви невизначених екземплярів** деталей не відображаються.
+      hide_descriptions: 391 - Сховати описи
+      hide_descriptions_help: 392 - Якщо цю опцію активовано, **описи**, розміщені на деталях, не відображаються.
+      hide_tags: 393 - Приховати мітки
+      hide_tags_help: 394 - Якщо цю опцію активовано, **мітки**, розміщені на деталях, не відображаються.
+      hide_cutting_dimensions: 395 - Приховати пильні розміри
+      hide_cutting_dimensions_help: 396 - Якщо цю опцію активовано, **пильні** розміри деталей не відображаються.
+      hide_bbox_dimensions: 397 - Приховати габаритні розміри
+      hide_bbox_dimensions_help: 398 - Якщо цю опцію активовано, **габаритні** розміри деталей не відображаються.
+      hide_final_areas: 399 - Приховати фактичну площу деталей з *Листової*
+      hide_final_areas_help: 400 - Якщо ця опція активована, то **фактична площа** деталей з типом *Листовий* буде прихована.
+      hide_edges: 401 - Приховати стовпчик крайок
+      hide_edges_help: 402 - Якщо ця опція активована, то **стовпці крайок** деталей з типом *Листовий* будуть приховані.
+      hide_faces: 403 - Сховати стовпці з облицюванням
+      hide_faces_help: 404 - Якщо цей параметр увімкнено, то **Стовпці шпону** у деталях типу *Листовий* не відображаються.
+      hide_material_colors: 405 - Приховати кольори матеріалів
+      hide_material_colors_help: 406 - Якщо ця опція включена, кольори матеріалів не будуть відображатися.
+      minimize_on_highlight: 407 - Стовпці після *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: 408 - Якщо цей параметр увімкнено, вікно OpenCutList буде згорнуто під час використання функції *'$t(tab.cutlist.highlight_part)'*.
+      general: 409 - Загальні
+      part_order_strategy: 410 - Сортування деталей
       part_order_strategy_help: |
-        405 - Переставте наступні властивості, щоб визначити стратегію сортування для деталей у кожній групі.
+        411 - Переставте наступні властивості, щоб визначити стратегію сортування для деталей у кожній групі.
         Властивості можуть бути впорядковані в <i class="ladb-opencutlist-icon-sort-asc"></i> *зростаючому* або <i class="ladb-opencutlist-icon-sort-desc"></i> *спадному* порядку.
-      dimension_column_order_strategy: 406 - Співвідношення розміру
+      dimension_column_order_strategy: 412 - Співвідношення розміру
       dimension_column_order_strategy_help: |
-        407 - Переставте наступні властивості, щоб установити порядок відображення стовпців розмірів.
-      property_thickness: 408 - Товщина
-      property_length: 409 - Довжина
-      property_width: 410 - Ширина
-      property_name: 411 - Позначення
-      property_count: 412 - Кількість
-      property_edge_pattern: 413 - Кількість крайки
-      property_tags: 414 - Мітки
-      property_thickness_layer_count: 415 - Кількість шарів
-      tags: 416 - Мітки
-      tags_help: 417 - Налаштований список міток, що пропонується у вікні властивостей деталі.
-      tags_placeholder: 418 - Додати мітку
+        413 - Переставте наступні властивості, щоб установити порядок відображення стовпців розмірів.
+      property_thickness: 414 - Товщина
+      property_length: 415 - Довжина
+      property_width: 416 - Ширина
+      property_name: 417 - Позначення
+      property_count: 418 - Кількість
+      property_edge_pattern: 419 - Кількість крайки
+      property_tags: 420 - Мітки
+      property_thickness_layer_count: 421 - Кількість шарів
+      tags: 422 - Мітки
+      tags_help: 423 - Налаштований список міток, що пропонується у вікні властивостей деталі.
+      tags_placeholder: 424 - Додати мітку
     list:
-      filters: 419 - Фільтри
-      filters_warning_0: 420 - Цей фільтр приховує усі деталі !
-      filters_warning: 421 - Ця фільтрація відображає лише **{{ count }}** деталь із загальної кількості {{ total }}.
-      filters_warning_plural: 422 - Ця фільтрація відображає лише **{{ count }}** деталей із загальної кількості {{ total }}.
-      edge_material_names_filter: 423 - Фільтр по матеріалу крайок
-      veneer_material_names_filter: 424 - Фільтр по матеріалу шпона
-      tags_filter: 425 - Фільтр по Міткам
-      dimensions_help: 426 - Ілюстрація розмірів
-      summary: 427 - Звіт
-      material_type: 428 - Тип
-      material_thickness: 429 - Матеріал / Міра
-      part_count: 430 - Кількість
-      area: 431 - Площа
-      area_short: 432 - Площа
-      volume: 433 - Об’єм
-      number: 434 - N°
-      name: 435 - Позначення
-      count: 436 - К-ть
-      cutting: 437 - Деталі
-      bbox: 438 - Габаритний
-      final: 439 - Фактичний
-      total_cutting: 440 - Σ Пильний
-      total_final: 441 - Σ Фактичний
-      length: 442 - Довжина
-      length_short: 443 - Д
-      width: 444 - Ширина
-      width_short: 445 - Ш
-      thickness: 446 - Товщина
-      thickness_short: 447 - Т
-      edges: 448 - Крайки
-      faces: 449 - Поверхні
+      filters: 425 - Фільтри
+      filters_warning_0: 426 - Цей фільтр приховує усі деталі !
+      filters_warning: 427 - Ця фільтрація відображає лише **{{ count }}** деталь із загальної кількості {{ total }}.
+      filters_warning_plural: 428 - Ця фільтрація відображає лише **{{ count }}** деталей із загальної кількості {{ total }}.
+      edge_material_names_filter: 429 - Фільтр по матеріалу крайок
+      veneer_material_names_filter: 430 - Фільтр по матеріалу шпона
+      tags_filter: 431 - Фільтр по Міткам
+      dimensions_help: 432 - Ілюстрація розмірів
+      summary: 433 - Звіт
+      material_type: 434 - Тип
+      material_thickness: 435 - Матеріал / Міра
+      part_count: 436 - Кількість
+      area: 437 - Площа
+      area_short: 438 - Площа
+      volume: 439 - Об’єм
+      number: 440 - N°
+      name: 441 - Позначення
+      count: 442 - К-ть
+      cutting: 443 - Деталі
+      bbox: 444 - Габаритний
+      final: 445 - Фактичний
+      total_cutting: 446 - Σ Пильний
+      total_final: 447 - Σ Фактичний
+      length: 448 - Довжина
+      length_short: 449 - Д
+      width: 450 - Ширина
+      width_short: 451 - Ш
+      thickness: 452 - Товщина
+      thickness_short: 453 - Т
+      edges: 454 - Крайки
+      faces: 455 - Поверхні
     export:
-      title: 450 - Експорт
+      title: 456 - Експорт
       info_0: |
-        451 - Ця функція дозволяє експортувати дані з *Розкрою* в буфер обміну або у файл у форматі [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+        457 - Ця функція дозволяє експортувати дані з *Розкрою* в буфер обміну або у файл у форматі [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
-        452 - Змініть порядок, приховайте, додайте, видаліть або виберіть стовпчик у списку, щоб налаштувати його **назву** та **формулу**, яка генерує відображене значення для кожного експортованого рядка.
-      add_column: 453 - Додати стовпчик
-      add_native_columns: 454 - Додайте власний стовпчик
+        458 - Змініть порядок, приховайте, додайте, видаліть або виберіть стовпчик у списку, щоб налаштувати його **назву** та **формулу**, яка генерує відображене значення для кожного експортованого рядка.
+      add_column: 459 - Додати стовпчик
+      add_native_columns: 460 - Додайте власний стовпчик
       duplicate_column: $t(default.duplicate)
       remove_column: $t(default.remove)
       remove_all_columns: $t(default.remove_all)
-      columns: 458 - Стовпці
-      column_title: 459 - Заголовок
+      columns: 464 - Стовпці
+      column_title: 465 - Заголовок
       column_title_help: |
-        460 - Поле **Заголовок** дозволяє налаштувати заголовок стовпця.
-      column_formula: 461 - Формула
+        466 - Поле **Заголовок** дозволяє налаштувати заголовок стовпця.
+      column_formula: 467 - Формула
       column_formula_help: |
-        462 - Поле **Формула** дозволяє написати код *Ruby* для налаштування значення стовпця.
-      options: 463 - Опції експорту
-      options_customize: 464 - Налаштування
-      option_source: 465 - Джерело
+        468 - Поле **Формула** дозволяє написати код *Ruby* для налаштування значення стовпця.
+      options: 469 - Опції експорту
+      options_customize: 470 - Налаштування
+      option_source: 471 - Джерело
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: 467 - Список деталей
-      option_source_instances_list: 468 - Список екземплярів
-      option_col_sep: 469 - Роздільник
-      option_col_sep_tab: 470 - Табулятор
-      option_col_sep_comma: 471 - Кома
-      option_col_sep_semicolon: 472 - Крапка з комою
-      option_encoding: 473 - Кодування
-      copy_all: 474 - Все
-      copy_values: 475 - Тільки значення
-      number: 476 - N°
-      path: 477 - Шлях
-      instance_name: 478 - Екземпляр
-      name: 479 - Позначення
-      total_cutting_length: 480 - Сумарна довжина різів
-      total_cutting_area: 481 - Сумарна площа розкрою
-      total_cutting_volume: 482 - Сумарний об’єм розкрою
-      total_final_area: 483 - Сумарна площа залишків
-      cutting_length: 484 - Довжина - пильна
-      cutting_width: 485 - Ширина - пильна
-      cutting_thickness: 486 - Товщина - пильна
-      edge_cutting_length: 487 - Довжина крайки - пильна
-      edge_cutting_width: 488 - Ширина крайки - пильна
-      bbox_length: 489 - Довжина - фактична
-      bbox_width: 490 - Ширина - фактична
-      bbox_thickness: 491 - Товщина - фактична
-      final_area: 492 - Площа - фактична
-      count: 493 - Кількість
-      part_count: 494 - Кількість деталей
-      material: 495 - Матеріал
-      material_type: 496 - Тип матеріалу
-      material_name: 497 - Назва матеріалу
-      material_description: 498 - Опис матеріалу
-      material_url: 499 - URL матеріалу
-      material_std_dimension: 500 - Стандартні розміри
-      entity_names: 501 - Назва
-      description: 502 - Опис
-      url: 503 - URL
-      tags: 504 - Мітки
-      edge_ymin: 505 - Крайка по довжині 1
-      edge_ymax: 506 - Крайка по довжині 2
-      edge_xmin: 507 - Крайка по ширині 1
-      edge_xmax: 508 - Крайка по ширині 2
-      face_zmin: 509 - Тил
-      face_zmax: 510 - Лице
-      layer: 511 - Тег
-      layers: 512 - Теги
-      batch: 513 - Пакет
-      bin: 514 - Контейнер
-      component_definition: 515 - Визначення компонента
-      component_instance: 516 - Екземпляр компонента
-      filename: 517 - Назва файлу
-      model_name: 518 - Назва моделі
-      model_description: 519 - Опис моделі
-      page_name: 520 - Назва сцени
-      page_description: 521 - Опис сцени
+      option_source_cutlist: 473 - Список деталей
+      option_source_instances_list: 474 - Список екземплярів
+      option_col_sep: 475 - Роздільник
+      option_col_sep_tab: 476 - Табулятор
+      option_col_sep_comma: 477 - Кома
+      option_col_sep_semicolon: 478 - Крапка з комою
+      option_encoding: 479 - Кодування
+      copy_all: 480 - Все
+      copy_values: 481 - Тільки значення
+      number: 482 - N°
+      path: 483 - Шлях
+      instance_name: 484 - Екземпляр
+      name: 485 - Позначення
+      total_cutting_length: 486 - Сумарна довжина різів
+      total_cutting_area: 487 - Сумарна площа розкрою
+      total_cutting_volume: 488 - Сумарний об’єм розкрою
+      total_final_area: 489 - Сумарна площа залишків
+      cutting_length: 490 - Довжина - пильна
+      cutting_width: 491 - Ширина - пильна
+      cutting_thickness: 492 - Товщина - пильна
+      edge_cutting_length: 493 - Довжина крайки - пильна
+      edge_cutting_width: 494 - Ширина крайки - пильна
+      bbox_length: 495 - Довжина - фактична
+      bbox_width: 496 - Ширина - фактична
+      bbox_thickness: 497 - Товщина - фактична
+      final_area: 498 - Площа - фактична
+      count: 499 - Кількість
+      part_count: 500 - Кількість деталей
+      material: 501 - Матеріал
+      material_type: 502 - Тип матеріалу
+      material_name: 503 - Назва матеріалу
+      material_description: 504 - Опис матеріалу
+      material_url: 505 - URL матеріалу
+      material_std_dimension: 506 - Стандартні розміри
+      entity_names: 507 - Назва
+      description: 508 - Опис
+      url: 509 - URL
+      tags: 510 - Мітки
+      edge_ymin: 511 - Крайка по довжині 1
+      edge_ymax: 512 - Крайка по довжині 2
+      edge_xmin: 513 - Крайка по ширині 1
+      edge_xmax: 514 - Крайка по ширині 2
+      face_zmin: 515 - Тил
+      face_zmax: 516 - Лице
+      layer: 517 - Тег
+      layers: 518 - Теги
+      batch: 519 - Пакет
+      bin: 520 - Контейнер
+      component_definition: 521 - Визначення компонента
+      component_instance: 522 - Екземпляр компонента
+      filename: 523 - Назва файлу
+      model_name: 524 - Назва моделі
+      model_description: 525 - Опис моделі
+      page_name: 526 - Назва сцени
+      page_description: 527 - Опис сцени
       placeholder:
-        no_column_title: 522 - Введіть назву
-        no_column_formula_native: 523 - Власне значення стовпця '{{ col_name }}'
-        no_column_formula: 524 - Введіть формулу
+        no_column_title: 528 - Введіть назву
+        no_column_formula_native: 529 - Власне значення стовпця '{{ col_name }}'
+        no_column_formula: 530 - Введіть формулу
       warning:
-        is_group_selection: 525 - Деталі, що містяться в **прихованих групах** вашої карти розкрою, не будуть експортовані.
+        is_group_selection: 531 - Деталі, що містяться в **прихованих групах** вашої карти розкрою, не будуть експортовані.
     report:
-      title: 526 - Кошторис
+      title: 532 - Кошторис
       info_0: |
-        527 - Створіть оцінку **ваги** та **вартості** **сировини**, необхідної для виготовлення деталей зі *списку деталей*.
-      options_general: 528 - Загальні
+        533 - Створіть оцінку **ваги** та **вартості** **сировини**, необхідної для виготовлення деталей зі *списку деталей*.
+      options_general: 534 - Загальні
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: 530 - Коефіцієнт для *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: 531 - Використовується для розрахунку маси деталей як коефіцієнт щільності для матеріалів типу "**$t(tab.materials.type_1)**".
-      raw_materials: 532 - Сировина
-      coefficient: 533 - Коефіцієнт
-      total: 534 - Всього
-      total_used: 535 - Використаний
-      total_unused: 536 - Невикористаний
-      total_mass: 537 - Σ Маса
-      total_cost: 538 - Σ Ціна
-      total_count: 539 - К-ть
-      total_instance_count: 540 - Σ Одиниць
-      total_volume: 541 - Σ Об’ємів
-      total_area: 542 - Σ Площь
-      total_length: 543 - Σ Довжин
+      option_solid_wood_coefficient: 536 - Коефіцієнт для *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: 537 - Використовується для розрахунку маси деталей як коефіцієнт щільності для матеріалів типу "**$t(tab.materials.type_1)**".
+      raw_materials: 538 - Сировина
+      coefficient: 539 - Коефіцієнт
+      total: 540 - Всього
+      total_used: 541 - Використаний
+      total_unused: 542 - Невикористаний
+      total_mass: 543 - Σ Маса
+      total_cost: 544 - Σ Ціна
+      total_count: 545 - К-ть
+      total_instance_count: 546 - Σ Одиниць
+      total_volume: 547 - Σ Об’ємів
+      total_area: 548 - Σ Площь
+      total_length: 549 - Σ Довжин
       tooltip:
-        incompatible_unit: 544 - Одиниця несумісна з параметрами оцінки матеріалу
+        incompatible_unit: 550 - Одиниця несумісна з параметрами оцінки матеріалу
       error:
-        no_typed_material_parts: 545 - Для складання кошторису деталі повинні мати певний тип матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**).
-        entry_error: '546 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилка**.'
-        entry_error_plural: '547 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилок**.'
+        no_typed_material_parts: 551 - Для складання кошторису деталі повинні мати певний тип матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**).
+        entry_error: '552 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилка**.'
+        entry_error_plural: '553 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилок**.'
       warning:
-        is_group_selection: 548 - Деталі, які містяться в **прихованих групах**, не будуть зараховані.
+        is_group_selection: 554 - Деталі, які містяться в **прихованих групах**, не будуть зараховані.
       tip:
         not_enough_data: |
-          549 - Щоб цей звіт можна було правильно розрахувати:
+          555 - Щоб цей звіт можна було правильно розрахувати:
           - Використовувані матеріали повинні мати хоча б налаштовану щільність і ціну.
           - Використовувана фурнітура повинна мати хоча б одну масу і одну ціну.
     cuttingdiagram:
-      title: 550 - Карта розкрою
-      start_msg: 551 - Триває оптимізація
-      end_msg: 552 - Оптимізацію завершено
-      options_material: 553 - Матеріал
-      options_config: 554 - Конфігурація
-      options_display: 555 - Перегляд
-      option_bar_folding_dimensional: 556 - Групувати однакові дошки
-      option_bar_folding_edge: 557 - Групувати однакові крайки
-      option_bar_folding_0: 558 - Ні
-      option_bar_folding_1: 559 - Так
-      option_bar_folding_help: 560 - Дозволяє групувати дошки або крайки, що містять однакові деталі та однакові розрізи.
-      option_sheet_folding_good: 561 - Згрупувати однакові панелі
-      option_sheet_folding_veneer: 562 - Групувати одинакові листи
-      option_sheet_folding_0: 563 - Ні
-      option_sheet_folding_1: 564 - Так
-      option_sheet_folding_help: 565 - Використовується для групування панелей або листів, що містять однакові деталі та розрізи.
-      option_hide_part_list: 566 - Список деталей
-      option_hide_part_list_1d_dimensional_0: 567 - Відображати для кожної дошки
-      option_hide_part_list_1d_edge_0: 568 - Відображати для кожної крайки
-      option_hide_part_list_2d_good_0: 569 - Відображати для кожної панелі
-      option_hide_part_list_2d_veneer_0: 570 - Відображати для кожного листа
-      option_hide_part_list_1: 571 - Приховати
-      option_hide_part_list_1d_help: 572 - Показує або приховує список деталей для кожної дошки або крайки.
-      option_hide_part_list_2d_help: 573 - Показує або приховує список деталей на кожній панелі або листі.
-      option_use_names: 574 - Ідентифікація деталей
-      option_use_names_0: 575 - Використовувати нумерацію
-      option_use_names_1: 576 - Використовувати позначення
-      option_use_names_help: 577 - Дозволяє вибирати між **номером** і **позначенням** для визначення деталей на карті розкрою.
-      option_origin_corner: 578 - Початкова позиція
-      option_origin_corner_1d_0: 579 - Ліворуч
-      option_origin_corner_1d_1: 580 - Праворуч
-      option_origin_corner_2d_0: 581 - Верхній лівий кут
-      option_origin_corner_2d_1: 582 - Нижній лівий кут
-      option_origin_corner_2d_2: 583 - Верхній правий кут
-      option_origin_corner_2d_3: 584 - Нижній правий кут
-      option_origin_corner_1d_help: 585 - Дозволяє вибрати вихідне розміщення для деталей в окремій смузі або дошці.
-      option_origin_corner_2d_help: 586 - Дозволяє обрати кут, від якого розміщуються деталі на листі.
-      option_full_width_diagram: 587 - Повномаштабний екран
-      option_full_width_diagram_0: 588 - Ні
-      option_full_width_diagram_1: 589 - Так
-      option_full_width_diagram_help: 590 - Якщо цю опцію активовано, карти відображаються на повну доступну ширину. В іншому випадку їх ширина визначається фіксованим масштабним коефіцієнтом їх фактичного розміру.
-      option_wrap_length: 591 - Довжина розбивки
-      option_wrap_length_help: 592 - Максимальна довжина, при якій дошка або крайка відображатиметься на кількох відрізках.
-      option_hide_cross: 593 - Залишки
-      option_hide_cross_0: 594 - Розміри та перехрестя
-      option_hide_cross_1: 595 - Тільки розміри
-      option_hide_cross_help: 596 - Показує або приховує діагональне перехрестя на карті розкрою, що позначає деталі, визначені на схемі як залишки.
-      option_highlight_primary_cuts: 597 - Основні різи
-      option_highlight_primary_cuts_0: 598 - Тільки огляд
-      option_highlight_primary_cuts_1: 599 - Завжди видимий
-      option_highlight_primary_cuts_help: 600 - Дозволяє завжди виділяти первинні різи.
-      option_hide_edges_preview: 601 - Індикатори крайок
-      option_hide_edges_preview_0: 602 - Відобразити на діаграмі
-      option_hide_edges_preview_1: 603 - Приховати на діаграмі
-      option_hide_edges_preview_help: 604 - Дозволяє відображати або приховувати візуальну індикацію крайок, які потрібно облицювати для кожної деталі діаграми.
-      option_part_drawing_type: 605 - Форми деталей
-      option_part_drawing_type_0: 606 - Приховані
-      option_part_drawing_type_1: 607 - Креслення - Вигляд з лиця
-      option_part_drawing_type_2: 608 - Креслення - Вигляд ззаді
+      title: 556 - Карта розкрою
+      start_msg: 557 - Триває оптимізація
+      end_msg: 558 - Оптимізацію завершено
+      options_material: 559 - Матеріал
+      options_config: 560 - Конфігурація
+      options_display: 561 - Перегляд
+      option_bar_folding_dimensional: 562 - Групувати однакові дошки
+      option_bar_folding_edge: 563 - Групувати однакові крайки
+      option_bar_folding_0: 564 - Ні
+      option_bar_folding_1: 565 - Так
+      option_bar_folding_help: 566 - Дозволяє групувати дошки або крайки, що містять однакові деталі та однакові розрізи.
+      option_sheet_folding_good: 567 - Згрупувати однакові панелі
+      option_sheet_folding_veneer: 568 - Групувати одинакові листи
+      option_sheet_folding_0: 569 - Ні
+      option_sheet_folding_1: 570 - Так
+      option_sheet_folding_help: 571 - Використовується для групування панелей або листів, що містять однакові деталі та розрізи.
+      option_hide_part_list: 572 - Список деталей
+      option_hide_part_list_1d_dimensional_0: 573 - Відображати для кожної дошки
+      option_hide_part_list_1d_edge_0: 574 - Відображати для кожної крайки
+      option_hide_part_list_2d_good_0: 575 - Відображати для кожної панелі
+      option_hide_part_list_2d_veneer_0: 576 - Відображати для кожного листа
+      option_hide_part_list_1: 577 - Приховати
+      option_hide_part_list_1d_help: 578 - Показує або приховує список деталей для кожної дошки або крайки.
+      option_hide_part_list_2d_help: 579 - Показує або приховує список деталей на кожній панелі або листі.
+      option_use_names: 580 - Ідентифікація деталей
+      option_use_names_0: 581 - Використовувати нумерацію
+      option_use_names_1: 582 - Використовувати позначення
+      option_use_names_help: 583 - Дозволяє вибирати між **номером** і **позначенням** для визначення деталей на карті розкрою.
+      option_origin_corner: 584 - Початкова позиція
+      option_origin_corner_1d_0: 585 - Ліворуч
+      option_origin_corner_1d_1: 586 - Праворуч
+      option_origin_corner_2d_0: 587 - Верхній лівий кут
+      option_origin_corner_2d_1: 588 - Нижній лівий кут
+      option_origin_corner_2d_2: 589 - Верхній правий кут
+      option_origin_corner_2d_3: 590 - Нижній правий кут
+      option_origin_corner_1d_help: 591 - Дозволяє вибрати вихідне розміщення для деталей в окремій смузі або дошці.
+      option_origin_corner_2d_help: 592 - Дозволяє обрати кут, від якого розміщуються деталі на листі.
+      option_full_width_diagram: 593 - Повномаштабний екран
+      option_full_width_diagram_0: 594 - Ні
+      option_full_width_diagram_1: 595 - Так
+      option_full_width_diagram_help: 596 - Якщо цю опцію активовано, карти відображаються на повну доступну ширину. В іншому випадку їх ширина визначається фіксованим масштабним коефіцієнтом їх фактичного розміру.
+      option_wrap_length: 597 - Довжина розбивки
+      option_wrap_length_help: 598 - Максимальна довжина, при якій дошка або крайка відображатиметься на кількох відрізках.
+      option_hide_cross: 599 - Залишки
+      option_hide_cross_0: 600 - Розміри та перехрестя
+      option_hide_cross_1: 601 - Тільки розміри
+      option_hide_cross_help: 602 - Показує або приховує діагональне перехрестя на карті розкрою, що позначає деталі, визначені на схемі як залишки.
+      option_highlight_primary_cuts: 603 - Основні різи
+      option_highlight_primary_cuts_0: 604 - Тільки огляд
+      option_highlight_primary_cuts_1: 605 - Завжди видимий
+      option_highlight_primary_cuts_help: 606 - Дозволяє завжди виділяти первинні різи.
+      option_hide_edges_preview: 607 - Індикатори крайок
+      option_hide_edges_preview_0: 608 - Відобразити на діаграмі
+      option_hide_edges_preview_1: 609 - Приховати на діаграмі
+      option_hide_edges_preview_help: 610 - Дозволяє відображати або приховувати візуальну індикацію крайок, які потрібно облицювати для кожної деталі діаграми.
+      option_part_drawing_type: 611 - Форми деталей
+      option_part_drawing_type_0: 612 - Приховані
+      option_part_drawing_type_1: 613 - Креслення - Вигляд з лиця
+      option_part_drawing_type_2: 614 - Креслення - Вигляд ззаді
       option_part_drawing_type_help: |
-        609 - Дозволяє відображати або приховувати фактичну форму деталей та їх обробку на діаграмі.
+        615 - Дозволяє відображати або приховувати фактичну форму деталей та їх обробку на діаграмі.
 
         *Цю опцію потрібно активувати, щоб форми могли бути експортовані.*
-      option_saw_kerf: 610 - Товщина пили
-      option_saw_kerf_help: 611 - Ширина матеріалу, втрачена пропилом.
-      option_spacing: 612 - Інтервал
-      option_spacing_help: 613 - Мінімальна відстань між кожною деталлю.
-      option_trimming: 614 - Обрізка листа
-      option_trimming_help_1d: 615 - Розмір обрізки на кінці дошки або крайки, для видалення дефектного краю.
-      option_trimming_help_2d: 616 - Розмір обрізки листа по периметру для видалення дефектів зовнішнього вигляду листа та його прямокутного вирівнювання.
-      option_rotations: 617 - Обертання
-      option_rotations_help_2d: 618 - Кількість можливих обертів для кожної деталі.
-      option_optimization: 619 - Рівень оптимізації
-      option_optimization_help: 620 - Рівень оптимізації визначає кількість обчислених можливостей, а отже, і час розрахунку.
-      option_optimization_0: 621 - Середній
-      option_optimization_1: 622 - Глибокий
-      option_stacking: 623 - Згрупувати одинакові деталі
-      option_stacking_help: 624 - Напрямок укладання деталей одинакової довжини або ширини.
-      option_stacking_0: 625 - Без преференцій
-      option_stacking_1: 626 - По довжині
-      option_stacking_2: 627 - По ширині
-      option_stacking_3: 628 - Всі можливості
-      option_keep: 629 - Розмір мінімальних залишків
-      option_keep_help: 630 - Залишки, які мають обидва розміри більші за мінімальний розмір, будуть позначені **зберегти**.
-      option_std_bar_dimensional: 631 - Стандартний розмір дошки
-      option_std_bar_edge: 632 - Стандартний розмір крайки
+      option_saw_kerf: 616 - Товщина пили
+      option_saw_kerf_help: 617 - Ширина матеріалу, втрачена пропилом.
+      option_spacing: 618 - Інтервал
+      option_spacing_help: 619 - Мінімальна відстань між кожною деталлю.
+      option_trimming: 620 - Обрізка листа
+      option_trimming_help_1d: 621 - Розмір обрізки на кінці дошки або крайки, для видалення дефектного краю.
+      option_trimming_help_2d: 622 - Розмір обрізки листа по периметру для видалення дефектів зовнішнього вигляду листа та його прямокутного вирівнювання.
+      option_optimization: 623 - Рівень оптимізації
+      option_optimization_help: 624 - Рівень оптимізації визначає кількість обчислених можливостей, а отже, і час розрахунку.
+      option_optimization_0: 625 - Середній
+      option_optimization_1: 626 - Глибокий
+      option_stacking: 627 - Згрупувати одинакові деталі
+      option_stacking_help: 628 - Напрямок укладання деталей одинакової довжини або ширини.
+      option_stacking_0: 629 - Без преференцій
+      option_stacking_1: 630 - По довжині
+      option_stacking_2: 631 - По ширині
+      option_stacking_3: 632 - Всі можливості
+      option_keep: 633 - Розмір мінімальних залишків
+      option_keep_help: 634 - Залишки, які мають обидва розміри більші за мінімальний розмір, будуть позначені **зберегти**.
+      option_std_bar_dimensional: 635 - Стандартний розмір дошки
+      option_std_bar_edge: 636 - Стандартний розмір крайки
       option_std_bar_help: |
-        633 - Виберіть тут розмір стандартної планки або стрічки, яка буде дублюватися, щоб найкращим чином вмістити всі деталі.
+        637 - Виберіть тут розмір стандартної планки або стрічки, яка буде дублюватися, щоб найкращим чином вмістити всі деталі.
         Цей перелік визначається полем **$t(tab.materials.edit_material.std_lengths)** матеріалу.
         Відредагуйте матеріал '{{ material_name }}', щоб оновити цей список.
-      option_std_bar_add: 634 - Додати розмір
-      option_std_bar_none: 635 - Ні
-      option_scrap_bar_dimensional_lengths: 636 - Залишок
-      option_scrap_bar_edge_lengths: 637 - Залишок крайки
-      option_scrap_bar_lengths_placeholder: 638 - довжина х кількість ; ...
+      option_std_bar_add: 638 - Додати розмір
+      option_std_bar_none: 639 - Ні
+      option_scrap_bar_dimensional_lengths: 640 - Залишок
+      option_scrap_bar_edge_lengths: 641 - Залишок крайки
+      option_scrap_bar_lengths_placeholder: 642 - довжина х кількість ; ...
       option_scrap_bar_lengths_help: |
-        639 - Вкажіть тут список ваших залишків планок або смуг, які слід розглядати як пріоритетні для розкрою.
+        643 - Вкажіть тут список ваших залишків планок або смуг, які слід розглядати як пріоритетні для розкрою.
         Очікуваний формат: **Д**x**К**. Де **Д** — *довжина* залишку, а **К** — кількість.
         Кількість необов'язкова.
         *Якщо одиниця виміру не вказана, буде врахована модельна одиниця.*
-      option_std_sheet_good: 640 - Стандартний розмір листа
-      option_std_sheet_veneer: 641 - Стандартний лист
+      option_std_sheet_good: 644 - Стандартний розмір листа
+      option_std_sheet_veneer: 645 - Стандартний лист
       option_std_sheet_help: |
-        642 - Оберіть тут стандартну панель або лист, який буде скопійовано, щоб найкраще вмістити всі деталі.
+        646 - Оберіть тут стандартну панель або лист, який буде скопійовано, щоб найкраще вмістити всі деталі.
         Цей список визначається полем **$t(tab.materials.edit_material.std_sizes)** матеріалу.
         Відредагуйте матеріал '{{ material_name }}', щоб оновити цей список.
-      option_std_sheet_add: 643 - Додати розмір
-      option_std_sheet_none: 644 - Ні
-      option_scrap_sheet_good_sizes: 645 - Залишки
-      option_scrap_sheet_veneer_sizes: 646 - Залишки листа
-      option_scrap_sheet_sizes_placeholder: 647 - довжина х ширина х кількість ; ...
+      option_std_sheet_add: 647 - Додати розмір
+      option_std_sheet_none: 648 - Ні
+      option_scrap_sheet_good_sizes: 649 - Залишки
+      option_scrap_sheet_veneer_sizes: 650 - Залишки листа
+      option_scrap_sheet_sizes_placeholder: 651 - довжина х ширина х кількість ; ...
       option_scrap_sheet_sizes_help: |
-        648 - Вкажіть тут список панелей або листів, які слід розглядати як пріоритетні для карти розкрою.
+        652 - Вкажіть тут список панелей або листів, які слід розглядати як пріоритетні для карти розкрою.
         Очікуваний формат: **Д**x**Ш**x**К**. Де **Д** і **Ш** відповідно *довжина* і *ширина* залишку, а **К** - кількість.
         Кількість необов'язкова.
         *Якщо для кожного розміру не вказано одиницю вимірювання, то буде враховано одиницю моделі.*
       tooltip:
-        scroll_to_block_1d: 649 - Прокрутка до першої дошки або крайки
-        scroll_to_block_2d: 650 - Прокрутка до першої панелі
-        copy_leftovers_to_clipboard: 651 - Копіювати залишки в буфер обміну
+        scroll_to_block_1d: 653 - Прокрутка до першої дошки або крайки
+        scroll_to_block_2d: 654 - Прокрутка до першої панелі
+        copy_leftovers_to_clipboard: 655 - Копіювати залишки в буфер обміну
       list:
-        unplaced_parts: 652 - Нерозміщені деталі
-        summary: 653 - Звіт
-        count: 654 - К-ть
-        bar: 655 - Погонаж
-        sheet: 656 - Листовий
-        length: 657 - Довжина
-        width: 658 - Ширина
-        total_length: 659 - Σ Довжин
-        total_area: 660 - Σ Площь
-        total_part_count: 661 - Σ Деталей
-        total_used: 662 - Всього використано
-        trimming: 663 - Обрізка
-        stats: 664 - Статистика
-        total_cut_count: 665 - Кількість різів
-        total_cut_length: 666 - Довжина різів
-        overall_efficiency: 667 - Загальна ефективність
-        efficiency: 668 - Ефективність
-        leftover: 669 - Залишок
-        leftover_to_keep: 670 - Зберегти перепад
-        leftover_to_keep_plural: 671 - Зберегти залишки
-        leftover_to_throw_away: 672 - Скинути перепади
-        cut: 673 - Розріз
-        cut_plural: 674 - Розрізи
-        cut_trimming: 675 - Чистий різ
-        cut_bounding: 676 - Первинний розріз (рівень 1)
-        cut_bounding_plural: 677 - Первинні розрізи (рівень 1)
-        cut_internal_through: 678 - Первинний розріз (рівень 2)
-        cut_internal_through_plural: 679 - Первинні розрізи (рівень 2)
-        cut_none: 680 - Ні
-        bar_dimensional_type_0: 681 - Стандартний розмір дошки
-        bar_dimensional_type_1: 682 - Обрізок
-        bar_edge_type_0: 683 - Стандартний розмір крайки
-        bar_edge_type_1: 684 - Обрізок крайки
-        sheet_good_type_0: 685 - Стандартний розмір листа
-        sheet_good_type_1: 686 - Залишок
-        sheet_veneer_type_0: 687 - Стандартний лист
-        sheet_veneer_type_1: 688 - Залишок листа
-        unused: 689 - Невикористаний
-        parts: 690 - {{ count }} деталь
-        parts_plural: 691 - {{ count }} деталей
-        settings: 692 - Параметри
+        unplaced_parts: 656 - Нерозміщені деталі
+        summary: 657 - Звіт
+        count: 658 - К-ть
+        bar: 659 - Погонаж
+        sheet: 660 - Листовий
+        length: 661 - Довжина
+        width: 662 - Ширина
+        total_length: 663 - Σ Довжин
+        total_area: 664 - Σ Площь
+        total_part_count: 665 - Σ Деталей
+        total_used: 666 - Всього використано
+        trimming: 667 - Обрізка
+        stats: 668 - Статистика
+        total_cut_count: 669 - Кількість різів
+        total_cut_length: 670 - Довжина різів
+        overall_efficiency: 671 - Загальна ефективність
+        efficiency: 672 - Ефективність
+        leftover: 673 - Залишок
+        leftover_to_keep: 674 - Зберегти перепад
+        leftover_to_keep_plural: 675 - Зберегти залишки
+        leftover_to_throw_away: 676 - Скинути перепади
+        cut: 677 - Розріз
+        cut_plural: 678 - Розрізи
+        cut_trimming: 679 - Чистий різ
+        cut_bounding: 680 - Первинний розріз (рівень 1)
+        cut_bounding_plural: 681 - Первинні розрізи (рівень 1)
+        cut_internal_through: 682 - Первинний розріз (рівень 2)
+        cut_internal_through_plural: 683 - Первинні розрізи (рівень 2)
+        cut_none: 684 - Ні
+        bar_dimensional_type_0: 685 - Стандартний розмір дошки
+        bar_dimensional_type_1: 686 - Обрізок
+        bar_edge_type_0: 687 - Стандартний розмір крайки
+        bar_edge_type_1: 688 - Обрізок крайки
+        sheet_good_type_0: 689 - Стандартний розмір листа
+        sheet_good_type_1: 690 - Залишок
+        sheet_veneer_type_0: 691 - Стандартний лист
+        sheet_veneer_type_1: 692 - Залишок листа
+        unused: 693 - Невикористаний
+        parts: 694 - {{ count }} деталь
+        parts_plural: 695 - {{ count }} деталей
+        settings: 696 - Параметри
       write:
-        title: 693 - Експорт розкладки
+        title: 697 - Експорт розкладки
         info_0: |
-          694 - Цей модуль дозволяє експортувати **геометрію** *розкладку* у вигляді списку файлів у форматі [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) або [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+          698 - Цей модуль дозволяє експортувати **геометрію** *розкладку* у вигляді списку файлів у форматі [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) або [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
         option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: 697 - Структура DXF
-        option_dxf_structure_1: 698 - Шари
-        option_dxf_structure_2: 699 - Шари + Блоки
+        option_dxf_structure: 701 - Структура DXF
+        option_dxf_structure_1: 702 - Шари
+        option_dxf_structure_2: 703 - Шари + Блоки
         option_dxf_structure_help: |
-          700 - Дозволяє вибрати структуру файлу DXF.
+          704 - Дозволяє вибрати структуру файлу DXF.
 
           - Структура **Шари** малює всі лінії на площині, розрізняючи різні типи ліній лише за допомогою шарів. *Ця структура забезпечує кращу сумісність з програмним забезпеченням сторонніх виробників.*
           - Структура **Шари + Блоки** створює блок для кожної деталі і вставляє ці блоки стільки разів, скільки деталей повторюються. *Ця структура надає більшу гнучкість для зміни файлу.*
@@ -880,743 +884,743 @@ tab:
         option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
         option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
         option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
-        option_sheet_good: 715 - Листовий
+        option_sheet_good: 719 - Листовий
         option_sheet_good_help: |
-          716 - Дозволяє експорт панелі та вибір кольору.
-        option_sheet_veneer: 717 - Шпон
+          720 - Дозволяє експорт панелі та вибір кольору.
+        option_sheet_veneer: 721 - Шпон
         option_sheet_veneer_help: |
-          718 - Дозволяє активувати експорт листа та вибрати його кольори.
-        option_bar_dimensional: 719 - Погонаж
+          722 - Дозволяє активувати експорт листа та вибрати його кольори.
+        option_bar_dimensional: 723 - Погонаж
         option_bar_dimensional_help: |
-          720 - Дозволяє активувати експорт дошки та вибрати її кольори.
-        option_bar_band: 721 - Крайка
+          724 - Дозволяє активувати експорт дошки та вибрати її кольори.
+        option_bar_band: 725 - Крайка
         option_bar_band_help: |
-          722 - Дозволяє активувати експорт крайки та вибрати її кольори.
-        option_parts: 723 - Деталі
+          726 - Дозволяє активувати експорт крайки та вибрати її кольори.
+        option_parts: 727 - Деталі
         option_parts_help: |
-          724 - Дозволяє активувати експорт деталей та вибрати їх кольори.
-        option_parts_holes: 725 - Свердління
+          728 - Дозволяє активувати експорт деталей та вибрати їх кольори.
+        option_parts_holes: 729 - Свердління
         option_parts_holes_help: |
-          726 - Дозволяє вибрати колір отворів деталей.
+          730 - Дозволяє вибрати колір отворів деталей.
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: 729 - Ідентифікації
+        option_texts: 733 - Ідентифікації
         option_texts_help: |
-          730 - Дозволяє активувати експорт текстів ідентифікації деталей та вибрати їх кольори.
-        option_leftovers: 731 - Залишки
+          734 - Дозволяє активувати експорт текстів ідентифікації деталей та вибрати їх кольори.
+        option_leftovers: 735 - Залишки
         option_leftovers_help: |
-          732 - Дозволяє активувати експорт залишків та вибрати їхні кольори.
-        option_cuts: 733 - Розрізи
+          736 - Дозволяє активувати експорт залишків та вибрати їхні кольори.
+        option_cuts: 737 - Розрізи
         option_cuts_help: |
-          734 - Дозволяє активувати експорт розрізів та вибрати їх колір.
+          738 - Дозволяє активувати експорт розрізів та вибрати їх колір.
         warning:
-          is_sheet_selection: 735 - Приховані **панелі** не будуть експортовані.
+          is_sheet_selection: 739 - Приховані **панелі** не будуть експортовані.
       error:
-        no_bar_dimensional: 736 - Стандартна планка налаштована неправильно і залишки не визначені.
-        no_bar_edge: 737 - Стандартна крайка не налаштована належним чином і залишки не визначені.
-        parameters: 738 - Налаштування неправильні. Маржа перевищує 25% від найбільшої планки або смуги.
-        no_parts: 739 - Нема деталі.
-        no_sheet: 740 - Стандартні розміри панелі неправильно введені, тому вона не визначена у розкрої.
-        no_placement_possible_1d: 741 - Не вдалося розмістити жодну деталь (стандартна планка замала, поле завелике, пиляльне полотно затовсте, ...).
-        no_placement_possible_2d: 742 - Не вдалося розмістити жодну деталь (стандартний лист замалий, обрізка листа завелика, пиляльне полотно затовсте...).
-        bad_error: 743 - Помилка алгоритму. Звертайтеся до розробників, так як це цікавий випадок.
-        unplaced_parts: 744 - **1 деталь** завелика для розміщення.
-        unplaced_parts_plural: 745 - **{{ count }} деталей** завеликі, щоб розмістити їх.
+        no_bar_dimensional: 740 - Стандартна планка налаштована неправильно і залишки не визначені.
+        no_bar_edge: 741 - Стандартна крайка не налаштована належним чином і залишки не визначені.
+        parameters: 742 - Налаштування неправильні. Маржа перевищує 25% від найбільшої планки або смуги.
+        no_parts: 743 - Нема деталі.
+        no_sheet: 744 - Стандартні розміри панелі неправильно введені, тому вона не визначена у розкрої.
+        no_placement_possible_1d: 745 - Не вдалося розмістити жодну деталь (стандартна планка замала, поле завелике, пиляльне полотно затовсте, ...).
+        no_placement_possible_2d: 746 - Не вдалося розмістити жодну деталь (стандартний лист замалий, обрізка листа завелика, пиляльне полотно затовсте...).
+        bad_error: 747 - Помилка алгоритму. Звертайтеся до розробників, так як це цікавий випадок.
+        unplaced_parts: 748 - **1 деталь** завелика для розміщення.
+        unplaced_parts_plural: 749 - **{{ count }} деталей** завеликі, щоб розмістити їх.
       warning:
-        is_part_selection: 746 - Цей звіт обмежено **вибраними деталями**.
-        cutting_dimensions: 747 - Ця карта розкрою відображає деталі з їх **пильними** розмірами.
-        cutting_dimensions_increase_1d: 748 - Ці пиляльні розміри налаштовані для матеріалу '{{ material_name }}'. Припуск до довжини (**{{ length_increase }}**).
-        cutting_dimensions_increase_2d: 749 - Ці пиляльні розміри налаштовані для матеріалу '{{ material_name }}'. Припуск до довжини (**{{ length_increase }}**) та Припуск до ширини (**{{ width_increase }}**).
-        cutting_dimensions_edge_decrement: 750 - Розміри зменшено на товщину крайки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: 750 - Цей звіт обмежено **вибраними деталями**.
+        cutting_dimensions: 751 - Ця карта розкрою відображає деталі з їх **пильними** розмірами.
+        cutting_dimensions_increase_1d: 752 - Ці пиляльні розміри налаштовані для матеріалу '{{ material_name }}'. Припуск до довжини (**{{ length_increase }}**).
+        cutting_dimensions_increase_2d: 753 - Ці пиляльні розміри налаштовані для матеріалу '{{ material_name }}'. Припуск до довжини (**{{ length_increase }}**) та Припуск до ширини (**{{ width_increase }}**).
+        cutting_dimensions_edge_decrement: 754 - Розміри зменшено на товщину крайки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      title: 751 - Етикетки
-      options_layout: 752 - Склад
-      options_settings: 753 - Конфігурація
-      options_part_order_strategy: 754 - Сортування
-      options_offset: 755 - Зміщення
-      size: 756 - Фактичний розмір етикетки
-      add_element: 757 - Додати елемент
+      title: 755 - Етикетки
+      options_layout: 756 - Склад
+      options_settings: 757 - Конфігурація
+      options_part_order_strategy: 758 - Сортування
+      options_offset: 759 - Зміщення
+      size: 760 - Фактичний розмір етикетки
+      add_element: 761 - Додати елемент
       duplicate_element: $t(default.duplicate)
       remove_element: $t(default.remove)
       remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
-        761 - Перевпорядкуйте наведені нижче властивості, щоб установити політику сортування етикеток.
+        765 - Перевпорядкуйте наведені нижче властивості, щоб установити політику сортування етикеток.
         Кожну властивість можна відсортувати за <i class="ladb-opencutlist-icon-sort-asc"></i> *за зростанням* або <i class="ladb-opencutlist-icon-sort-desc"></i> *за спаданням*.
       offset_help: |
-        762 - *зміщення* дозволяє встановити положення **першої мітки** на **першій сторінці**.
+        766 - *зміщення* дозволяє встановити положення **першої мітки** на **першій сторінці**.
         Виберіть поле, яке відповідає вашому вибору.
-      option_page: 763 - Папір
-      option_page_format: 764 - Формат
-      option_page_format_portrait: 765 - Портрет
-      option_page_format_landscape: 766 - Альбом
-      option_page_format_custom: 767 - Персоналізований
-      option_page_width: 768 - Ширина
-      option_page_height: 769 - Висота
-      option_margin: 770 - Поля
-      option_margin_top: 771 - Зверху
-      option_margin_right: 772 - Праворуч
-      option_margin_bottom: 773 - Знизу
-      option_margin_left: 774 - Ліворуч
-      option_spacing: 775 - Інтервали
-      option_spacing_h: 776 - По горизонталі
-      option_spacing_v: 777 - По вертикалі
-      option_grid: 778 - Етикеток на сторінці
-      option_col_count: 779 - Стовпці
-      option_row_count: 780 - Рядки
-      option_cutting_marks: 781 - Маркери
-      option_cutting_marks_0: 782 - Ні
-      option_cutting_marks_1: 783 - Роздрукувати
-      option_formula: 784 - Ім'я поля
-      option_size: 785 - Розмір
-      option_custom_formula: 786 - Формула
-      option_anchor: 787 - Позиція прив'язки
-      option_anchor_start: 788 - Початок - Внизу
-      option_anchor_middle: 789 - Посередині - Внизу
-      option_anchor_end: 790 - Вкінці - Внизу
-      option_anchor_start_top: 791 - Початок - Вверху
-      option_anchor_middle_top: 792 - Посередині - Вверху
-      option_anchor_end_top: 793 - Вкінці - Вверху
-      option_color: 794 - Колір
+      option_page: 767 - Папір
+      option_page_format: 768 - Формат
+      option_page_format_portrait: 769 - Портрет
+      option_page_format_landscape: 770 - Альбом
+      option_page_format_custom: 771 - Персоналізований
+      option_page_width: 772 - Ширина
+      option_page_height: 773 - Висота
+      option_margin: 774 - Поля
+      option_margin_top: 775 - Зверху
+      option_margin_right: 776 - Праворуч
+      option_margin_bottom: 777 - Знизу
+      option_margin_left: 778 - Ліворуч
+      option_spacing: 779 - Інтервали
+      option_spacing_h: 780 - По горизонталі
+      option_spacing_v: 781 - По вертикалі
+      option_grid: 782 - Етикеток на сторінці
+      option_col_count: 783 - Стовпці
+      option_row_count: 784 - Рядки
+      option_cutting_marks: 785 - Маркери
+      option_cutting_marks_0: 786 - Ні
+      option_cutting_marks_1: 787 - Роздрукувати
+      option_formula: 788 - Ім'я поля
+      option_size: 789 - Розмір
+      option_custom_formula: 790 - Формула
+      option_anchor: 791 - Позиція прив'язки
+      option_anchor_start: 792 - Початок - Внизу
+      option_anchor_middle: 793 - Посередині - Внизу
+      option_anchor_end: 794 - Вкінці - Внизу
+      option_anchor_start_top: 795 - Початок - Вверху
+      option_anchor_middle_top: 796 - Посередині - Вверху
+      option_anchor_end_top: 797 - Вкінці - Вверху
+      option_color: 798 - Колір
       formula:
-        custom: 795 - Формула
-        custom_qr_code: 796 - QR Code
-        part_number: 797 - Номер
-        part_name: 798 - Позначення
-        part_description: 799 - Опис
-        part_entity_named_path: 800 - Шлях до екземпляра
-        part_entity_name: 801 - Ім'я екземпляра
-        part_bin: 802 - Контейнер
-        part_cutting_size: 803 - Розмір елемента
-        part_cutting_length: 804 - Довжина елемента
-        part_cutting_width: 805 - Ширина елемента
-        part_cutting_thickness: 806 - Товщина елемента
-        part_edge_cutting_size: 807 - Розмір крайки
-        part_edge_cutting_length: 808 - Довжина крайки - пильна
-        part_edge_cutting_width: 809 - Ширина крайки - пильна
-        part_size: 810 - Доступний розмір
-        part_length: 811 - Довжина - фактична
-        part_width: 812 - Ширина - фактична
-        part_thickness: 813 - Товщина
-        part_tags: 814 - Мітки
-        part_batch: 815 - Пакет
-        part_edge_ymin: 816 - Крайка по довжині 1
-        part_edge_ymax: 817 - Крайка по довжині 2
-        part_edge_xmin: 818 - Крайка по ширині 1
-        part_edge_xmax: 819 - Крайка по ширині 2
-        part_face_zmin: 820 - Тильний шпон
-        part_face_zmax: 821 - Лицьовий шпон
-        thumbnail_proportional_drawing: 822 - Перегляд мініатюр
-        thumbnail_proportional: 823 - Мініатюра прямокутна
-        thumbnail_square: 824 - Мініатюра квадратна
-        group_material: 825 - Матеріал / Міра
-        group_material_name: 826 - Назва матеріалу
-        group_std_dimension: 827 - Стандартні розміри
-        filename: 828 - Ім'я файлу
-        model_name: 829 - Назва моделі
-        page_name: 830 - Назва сцени
-        length_unit: 831 - Одиниці
-        generated_at: 832 - Дата і час
+        custom: 799 - Формула
+        custom_qr_code: 800 - QR Code
+        part_number: 801 - Номер
+        part_name: 802 - Позначення
+        part_description: 803 - Опис
+        part_entity_named_path: 804 - Шлях до екземпляра
+        part_entity_name: 805 - Ім'я екземпляра
+        part_bin: 806 - Контейнер
+        part_cutting_size: 807 - Розмір елемента
+        part_cutting_length: 808 - Довжина елемента
+        part_cutting_width: 809 - Ширина елемента
+        part_cutting_thickness: 810 - Товщина елемента
+        part_edge_cutting_size: 811 - Розмір крайки
+        part_edge_cutting_length: 812 - Довжина крайки - пильна
+        part_edge_cutting_width: 813 - Ширина крайки - пильна
+        part_size: 814 - Доступний розмір
+        part_length: 815 - Довжина - фактична
+        part_width: 816 - Ширина - фактична
+        part_thickness: 817 - Товщина
+        part_tags: 818 - Мітки
+        part_batch: 819 - Пакет
+        part_edge_ymin: 820 - Крайка по довжині 1
+        part_edge_ymax: 821 - Крайка по довжині 2
+        part_edge_xmin: 822 - Крайка по ширині 1
+        part_edge_xmax: 823 - Крайка по ширині 2
+        part_face_zmin: 824 - Тильний шпон
+        part_face_zmax: 825 - Лицьовий шпон
+        thumbnail_proportional_drawing: 826 - Перегляд мініатюр
+        thumbnail_proportional: 827 - Мініатюра прямокутна
+        thumbnail_square: 828 - Мініатюра квадратна
+        group_material: 829 - Матеріал / Міра
+        group_material_name: 830 - Назва матеріалу
+        group_std_dimension: 831 - Стандартні розміри
+        filename: 832 - Ім'я файлу
+        model_name: 833 - Назва моделі
+        page_name: 834 - Назва сцени
+        length_unit: 835 - Одиниці
+        generated_at: 836 - Дата і час
       error:
-        invalid_size: 833 - Введені параметри конфігурації не дозволяють встановити дійсний розмір етикетки.
+        invalid_size: 837 - Введені параметри конфігурації не дозволяють встановити дійсний розмір етикетки.
       warning:
-        is_group_selection: 834 - Деталі, що містяться в **прихованих групах** вашого списку деталей, не матимуть міток.
-        is_part_selection: 835 - Ці етикетки сформовані на основі **вибраних деталей**.
-        formula_not_available: 836 - Недоступно в цьому контексті
+        is_group_selection: 838 - Деталі, що містяться в **прихованих групах** вашого списку деталей, не матимуть міток.
+        is_part_selection: 839 - Ці етикетки сформовані на основі **вибраних деталей**.
+        formula_not_available: 840 - Недоступно в цьому контексті
     layout:
-      title: 837 - Креслення
-      to_layout: 838 - Експорт до Layout
-      options_layout: 839 - Склад
-      options_settings: 840 - Конфігурація
-      option_parts: 841 - Деталі
-      option_parts_colored: 842 - Колір
-      option_parts_colored_0: 843 - Безбарвний
-      option_parts_colored_1: 844 - Колір матеріалу
-      option_parts_colored_help: 845 - Дозволяє вибрати зовнішній вигляд деталей.
-      option_parts_opacity: 846 - Прозорість
-      option_parts_opacity_0: 847 - Прозорий
-      option_parts_opacity_1: 848 - Непрозорий
-      option_parts_opacity_help: 849 - Дозволяє вибрати прозорість деталей.
-      option_pins: 850 - Шпильки
-      option_pins_hidden: 851 - Перегляд
-      option_pins_hidden_0: 852 - Зі шпильками
-      option_pins_hidden_1: 853 - Без шпильки
-      option_pins_hidden_help: 854 - Показує або ховає шпильки, що вказують на частини, щоб вказати їх номер або позначення.
-      option_pins_colored: 855 - Колір
-      option_pins_colored_0: 856 - Безбарвний
-      option_pins_colored_1: 857 - Колір деталі
-      option_pins_colored_help: 858 - Дозволяє вибрати колір шпильок.
-      option_pins_formula: 859 - Формула
-      option_pins_formula_help: 860 - Дозволяє писати код *Ruby* для налаштування тексту етикеток.
-      option_pins_length: 861 - Довжина
-      option_pins_length_0: 862 - Без стрілки
-      option_pins_length_1: 863 - Мала
-      option_pins_length_2: 864 - Середня
-      option_pins_length_3: 865 - Велика
-      option_pins_length_help: 866 - Дозволяє вибрати довжину стрілки шпильок.
-      option_pins_direction: 867 - Напрямок
-      option_pins_direction_0: 868 - По Червоній осі
-      option_pins_direction_1: 869 - По Зеленій осі
-      option_pins_direction_2: 870 - По Синій осі
-      option_pins_direction_3: 871 - Вказує на центр батьківської групи
-      option_pins_direction_4: 872 - Вказує на центр виділення
-      option_pins_direction_help: 873 - Дозволяє вибрати напрямок шпильок, щоб адаптувати їх читання відповідно до креслення.
-      option_page: 874 - Папір
-      option_page_format: 875 - Формат
-      option_page_format_portrait: 876 - Портрет
-      option_page_format_landscape: 877 - Альбом
-      option_page_format_custom: 878 - Персоналізований
-      option_page_width: 879 - Ширина
-      option_page_height: 880 - Висота
-      option_page_header: 881 - Заголовок
-      option_page_header_0: 882 - Без заголовку
-      option_page_header_1: 883 - Із заголовком
+      title: 841 - Креслення
+      to_layout: 842 - Експорт до Layout
+      options_layout: 843 - Склад
+      options_settings: 844 - Конфігурація
+      option_parts: 845 - Деталі
+      option_parts_colored: 846 - Колір
+      option_parts_colored_0: 847 - Безбарвний
+      option_parts_colored_1: 848 - Колір матеріалу
+      option_parts_colored_help: 849 - Дозволяє вибрати зовнішній вигляд деталей.
+      option_parts_opacity: 850 - Прозорість
+      option_parts_opacity_0: 851 - Прозорий
+      option_parts_opacity_1: 852 - Непрозорий
+      option_parts_opacity_help: 853 - Дозволяє вибрати прозорість деталей.
+      option_pins: 854 - Шпильки
+      option_pins_hidden: 855 - Перегляд
+      option_pins_hidden_0: 856 - Зі шпильками
+      option_pins_hidden_1: 857 - Без шпильки
+      option_pins_hidden_help: 858 - Показує або ховає шпильки, що вказують на частини, щоб вказати їх номер або позначення.
+      option_pins_colored: 859 - Колір
+      option_pins_colored_0: 860 - Безбарвний
+      option_pins_colored_1: 861 - Колір деталі
+      option_pins_colored_help: 862 - Дозволяє вибрати колір шпильок.
+      option_pins_formula: 863 - Формула
+      option_pins_formula_help: 864 - Дозволяє писати код *Ruby* для налаштування тексту етикеток.
+      option_pins_length: 865 - Довжина
+      option_pins_length_0: 866 - Без стрілки
+      option_pins_length_1: 867 - Мала
+      option_pins_length_2: 868 - Середня
+      option_pins_length_3: 869 - Велика
+      option_pins_length_help: 870 - Дозволяє вибрати довжину стрілки шпильок.
+      option_pins_direction: 871 - Напрямок
+      option_pins_direction_0: 872 - По Червоній осі
+      option_pins_direction_1: 873 - По Зеленій осі
+      option_pins_direction_2: 874 - По Синій осі
+      option_pins_direction_3: 875 - Вказує на центр батьківської групи
+      option_pins_direction_4: 876 - Вказує на центр виділення
+      option_pins_direction_help: 877 - Дозволяє вибрати напрямок шпильок, щоб адаптувати їх читання відповідно до креслення.
+      option_page: 878 - Папір
+      option_page_format: 879 - Формат
+      option_page_format_portrait: 880 - Портрет
+      option_page_format_landscape: 881 - Альбом
+      option_page_format_custom: 882 - Персоналізований
+      option_page_width: 883 - Ширина
+      option_page_height: 884 - Висота
+      option_page_header: 885 - Заголовок
+      option_page_header_0: 886 - Без заголовку
+      option_page_header_1: 887 - Із заголовком
       option_page_header_help: |
-        884 - Дозволяє вибрати, чи міститиме сторінка для друку заголовок із назвою документа, його описом, датою, одиницею та масштабом.
+        888 - Дозволяє вибрати, чи міститиме сторінка для друку заголовок із назвою документа, його описом, датою, одиницею та масштабом.
         Без заголовка загальний малюнок займе всю сторінку.
-      option_camera: 885 - Камера
-      option_camera_view: 886 - Вид
-      option_camera_view_custom: 887 - Персоналізований
-      option_camera_zoom: 888 - Маштаб
-      option_camera_zoom_auto: 889 - Автоматичний
-      option_camera_zoom_custom: 890 - Персоналізований
-      option_camera_target: 891 - Положення
-      option_camera_target_auto: 892 - Автоматичний
-      option_camera_target_custom: 893 - Персоналізований
-      option_explode: 894 - Рознесений вид
+      option_camera: 889 - Камера
+      option_camera_view: 890 - Вид
+      option_camera_view_custom: 891 - Персоналізований
+      option_camera_zoom: 892 - Маштаб
+      option_camera_zoom_auto: 893 - Автоматичний
+      option_camera_zoom_custom: 894 - Персоналізований
+      option_camera_target: 895 - Положення
+      option_camera_target_auto: 896 - Автоматичний
+      option_camera_target_custom: 897 - Персоналізований
+      option_explode: 898 - Рознесений вид
       error:
-        no_part: 895 - Немає деталей для відображення.
-        failed_to_save_as_skp: 896 - Не вдалося записати файл SKP для відправки в Layout.
+        no_part: 899 - Немає деталей для відображення.
+        failed_to_save_as_skp: 900 - Не вдалося записати файл SKP для відправки в Layout.
         failed_to_layout: |
-          897 - Помилка запису файлу Layout : *{{ error }}*
+          901 - Помилка запису файлу Layout : *{{ error }}*
 
           **Переконайтеся, що файл не відкрито в Layout.**
       warning:
-        is_group_selection: 898 - Деталі, що містяться в **прихованих групах** вашого списку деталей, не будуть виведені.
-        is_part_selection: 899 - Це креслення обмежено **вибраними деталями**.
+        is_group_selection: 902 - Деталі, що містяться в **прихованих групах** вашого списку деталей, не будуть виведені.
+        is_part_selection: 903 - Це креслення обмежено **вибраними деталями**.
     write:
-      title: 900 - Експорт деталей
+      title: 904 - Експорт деталей
       info_2d: |
-        901 - Цей модуль дозволяє експортувати **2D проекцію** деталей у форматі файлів [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) або [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        905 - Цей модуль дозволяє експортувати **2D проекцію** деталей у форматі файлів [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) або [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
       info_3d: |
-        902 - Цей модуль дозволяє експортувати **3D-геометрію** деталей у форматі файлів [STL](https://wikipedia.org/wiki/STL_(file_format)) або [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
-      option_file_format: 903 - Формат
+        906 - Цей модуль дозволяє експортувати **3D-геометрію** деталей у форматі файлів [STL](https://wikipedia.org/wiki/STL_(file_format)) або [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
+      option_file_format: 907 - Формат
       option_file_format_help: |
-        904 - Дозволяє вибрати формат файлу для експорту.
-      option_unit: 905 - Одиниці
+        908 - Дозволяє вибрати формат файлу для експорту.
+      option_unit: 909 - Одиниці
       option_unit_help: |
-        906 - Дозволяє вибрати одиницю, яка використовується у експортованому файлі.
-      option_use_count: 907 - Кількість
-      option_use_count_0: 908 - Один файл на деталь
-      option_use_count_1: 909 - Один файл на екземпляр деталі
+        910 - Дозволяє вибрати одиницю, яка використовується у експортованому файлі.
+      option_use_count: 911 - Кількість
+      option_use_count_0: 912 - Один файл на деталь
+      option_use_count_1: 913 - Один файл на екземпляр деталі
       option_use_count_help: |
-        910 - Дозволяє вибрати, чи враховуватиметься кількість екземплярів деталі.
-      option_part_drawing_type: 911 - Проекція
+        914 - Дозволяє вибрати, чи враховуватиметься кількість екземплярів деталі.
+      option_part_drawing_type: 915 - Проекція
       option_part_drawing_type_help: |
-        912 - Дозволяє вибрати експортований вид.
-      option_faces: 913 - Поверхні
-      option_faces_0: 914 - Використовуйте лише цільову грань
-      option_faces_1: 915 - Використовуйте всі грані деталі
+        916 - Дозволяє вибрати експортований вид.
+      option_faces: 917 - Поверхні
+      option_faces_0: 918 - Використовуйте лише цільову грань
+      option_faces_1: 919 - Використовуйте всі грані деталі
       option_faces_help: |
-        916 - Дозволяє вибрати, чи проводити пошук форми деталі на всіх її гранях, чи тільки на цільовій грані.
-      option_anchor: 917 - Точка прив’язки
-      option_anchor_0: 918 - За замовчуванням
-      option_anchor_1: 919 - Проектувати походження деталі
+        920 - Дозволяє вибрати, чи проводити пошук форми деталі на всіх її гранях, чи тільки на цільовій грані.
+      option_anchor: 921 - Точка прив’язки
+      option_anchor_0: 922 - За замовчуванням
+      option_anchor_1: 923 - Проектувати походження деталі
       option_anchor_help: |
-        920 - Дозволяє активувати проекцію початку координат деталі як точку прив’язки.
-      option_switch_yz: 921 - Вертикальна вісь
-      option_switch_yz_0: 922 - Z вертикальна
-      option_switch_yz_1: 923 - Y вертикальний
+        924 - Дозволяє активувати проекцію початку координат деталі як точку прив’язки.
+      option_switch_yz: 925 - Вертикальна вісь
+      option_switch_yz_0: 926 - Z вертикальна
+      option_switch_yz_1: 927 - Y вертикальний
       option_switch_yz_help: |
-        924 - Дозволяє поміняти місцями осі Y і Z, щоб визначити вертикальну вісь деталі.
-      option_smoothing: 925 - Згладжування
-      option_smoothing_0: 926 - Ні
-      option_smoothing_1: 927 - Згладити кола та дуги (Експериментально)
+        928 - Дозволяє поміняти місцями осі Y і Z, щоб визначити вертикальну вісь деталі.
+      option_smoothing: 929 - Згладжування
+      option_smoothing_0: 930 - Ні
+      option_smoothing_1: 931 - Згладити кола та дуги (Експериментально)
       option_smoothing_help: |
-        928 - Дозволяє активувати виявлення кола і дуги.
+        932 - Дозволяє активувати виявлення кола і дуги.
 
         *Ця опція не дозволяє виявляти інші типи кривих.*
-      option_merge_holes: 929 - Режим злиття
-      option_merge_holes_0: 930 - За замовчуванням
-      option_merge_holes_1: 931 - Контур + Свердління + Злиття
+      option_merge_holes: 933 - Режим злиття
+      option_merge_holes_0: 934 - За замовчуванням
+      option_merge_holes_1: 935 - Контур + Свердління + Злиття
       option_merge_holes_help: |
-        932 - **За замовчуванням**
+        936 - **За замовчуванням**
         Форма деталі експортується з одним шаром на глибину.
 
         **Контур + Отвори + Злиття**
         Активує розділення зовнішнього контуру деталей від їх отворів, а також злиття глибин для кожної виїмки.
-      option_include_paths: 933 - Траєкторії
-      option_include_paths_0: 934 - Ні
-      option_include_paths_1: 935 - Використовуйте ребра, не пов’язані з гранями
+      option_include_paths: 937 - Траєкторії
+      option_include_paths_0: 938 - Ні
+      option_include_paths_1: 939 - Використовуйте ребра, не пов’язані з гранями
       option_include_paths_help: |
-        936 - Дозволяє активувати використання ребер, що не пов'язані з гранями, що містяться в деталі, для експорту як траєкторії.
-      option_parts: 937 - Деталі
+        940 - Дозволяє активувати використання ребер, що не пов'язані з гранями, що містяться в деталі, для експорту як траєкторії.
+      option_parts: 941 - Деталі
       option_parts_help: |
-        938 - Дозволяє вибрати кольори деталей.
-      option_parts_holes: 939 - Свердління
+        942 - Дозволяє вибрати кольори деталей.
+      option_parts_holes: 943 - Свердління
       option_parts_holes_help: |
-        940 - Дозволяє вибрати кольори отворів деталей.
-      option_parts_paths: 941 - Траєкторії
+        944 - Дозволяє вибрати кольори отворів деталей.
+      option_parts_paths: 945 - Траєкторії
       option_parts_paths_help: |
-        942 - Дозволяє вибирати кольори шляхів.
+        946 - Дозволяє вибирати кольори шляхів.
 
         *Колір заливки використовуватиметься лише для закритих контурів.*
       error:
-        no_part: 943 - Немає жодної деталі для експорту.
+        no_part: 947 - Немає жодної деталі для експорту.
       warning:
-        is_group_selection: 944 - Деталі, що містяться в **прихованих групах** вашої карти розкрою, не будуть експортовані.
-        is_part_selection: 945 - Експорт обмежений до **вибраних деталей**.
+        is_group_selection: 948 - Деталі, що містяться в **прихованих групах** вашої карти розкрою, не будуть експортовані.
+        is_part_selection: 949 - Експорт обмежений до **вибраних деталей**.
     snippet:
-      hello: 946 - Привіт
-      number: 947 - Номер
-      name: 948 - Позначення
-      number_and_name: 949 - Номер і позначення
-      number_without_hardware: 950 - Кількість (без фурнітури)
-      size: 951 - Доступний розмір
-      area: 952 - Площа
-      volume: 953 - Об'єм
+      hello: 950 - Привіт
+      number: 951 - Номер
+      name: 952 - Позначення
+      number_and_name: 953 - Номер і позначення
+      number_without_hardware: 954 - Кількість (без фурнітури)
+      size: 955 - Доступний розмір
+      area: 956 - Площа
+      volume: 957 - Об'єм
     error:
-      no_model: 954 - Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
-      no_entities: 955 - Ваша модель порожня. Вам доведеться дати мені трохи більше інформації ;)
-      no_component_in_selection: 956 - Видимих екземплярів компонентів у виділенні не виявлено.
-      no_component_in_model: 957 - Видимих екземплярів компонентів на сцені не виявлено.
-      unknow_part: 958 - Виділеної деталі немає у списку деталей.
-      obsolete_cutlist: 959 - Неможливо, список елементів не актуальний. Розрахувати знову.
+      no_model: 958 - Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
+      no_entities: 959 - Ваша модель порожня. Вам доведеться дати мені трохи більше інформації ;)
+      no_component_in_selection: 960 - Видимих екземплярів компонентів у виділенні не виявлено.
+      no_component_in_model: 961 - Видимих екземплярів компонентів на сцені не виявлено.
+      unknow_part: 962 - Виділеної деталі немає у списку деталей.
+      obsolete_cutlist: 963 - Неможливо, список елементів не актуальний. Розрахувати знову.
     warning:
-      is_entity_selection: 960 - Було враховано лише елементи, вибрані у вашій моделі.
-      no_typed_materials_in_model: 961 - У вашій моделі відсутні матеріали з визначеним типом (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 962 - У вашому виборі відсутні матеріали з визначеним типом (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**).
-      export_empty: 963 - Ваш експорт не містить деталей.
+      is_entity_selection: 964 - Було враховано лише елементи, вибрані у вашій моделі.
+      no_typed_materials_in_model: 965 - У вашій моделі відсутні матеріали з визначеним типом (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 966 - У вашому виборі відсутні матеріали з визначеним типом (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**).
+      export_empty: 967 - Ваш експорт не містить деталей.
     success:
-      part_selected: 964 - {{ count }} деталь вибрана в списку деталей.
-      part_selected_plural: 965 - {{ count }} деталей вибрано в списку деталей.
+      part_selected: 968 - {{ count }} деталь вибрана в списку деталей.
+      part_selected_plural: 969 - {{ count }} деталей вибрано в списку деталей.
     tip:
       no_component: |
-        966 - Деталі, які ви хочете відобразити на *карті розкрою*, мають бути екземплярами **компонента**.
+        970 - Деталі, які ви хочете відобразити на *карті розкрою*, мають бути екземплярами **компонента**.
         Якщо ви використовуєте лише групи, перетворіть їх на компоненти.
         Використання компонентів дозволяє тиражувати ідентичні деталі без їх дублювання.
-      no_typed_materials: 967 - Нанесіть матеріал на деталі, які ви хочете бачити у своєму списку деталей. Встановіть тип цього матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**) у вкладці <i class="ladb-opencutlist-icon-materials"></i> **Матеріали**.
-    obsolete_base: 968 - Щоб підтримувати синхронізацію, необхідно повторно створити Список елементів.
+      no_typed_materials: 971 - Нанесіть матеріал на деталі, які ви хочете бачити у своєму списку деталей. Встановіть тип цього матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** або **$t(tab.materials.type_5)**) у вкладці <i class="ladb-opencutlist-icon-materials"></i> **Матеріали**.
+    obsolete_base: 972 - Щоб підтримувати синхронізацію, необхідно повторно створити Список елементів.
   materials:
-    label: 969 - Матеріали
-    title: 970 - Матеріали
-    new: 971 - Новий матеріал
-    type_0: 972 - Не визначений
-    type_1: 973 - Масив дерева
-    type_2: 974 - Листовий
-    type_3: 975 - Погонаж
-    type_4: 976 - Кромкооблицювальний
-    type_5: 977 - Фурнітура
-    type_6: 978 - Лист шпону
+    label: 973 - Матеріали
+    title: 974 - Матеріали
+    new: 975 - Новий матеріал
+    type_0: 976 - Не визначений
+    type_1: 977 - Масив дерева
+    type_2: 978 - Листовий
+    type_3: 979 - Погонаж
+    type_4: 980 - Кромкооблицювальний
+    type_5: 981 - Фурнітура
+    type_6: 982 - Лист шпону
     tooltip:
-      type_0: 979 - Тип матеріалу '$t(tab.materials.type_0)'
-      type_1: 980 - Тип матеріалу '$t(tab.materials.type_1)'
-      type_2: 981 - Тип матеріалу '$t(tab.materials.type_2)'
-      type_3: 982 - Тип матеріалу '$t(tab.materials.type_3)'
-      type_4: 983 - Тип матеріалу '$t(tab.materials.type_4)'
-      type_5: 984 - Тип матеріалу '$t(tab.materials.type_5)'
-      type_6: 985 - Тип матеріалу '$t(tab.materials.type_6)'
+      type_0: 983 - Тип матеріалу '$t(tab.materials.type_0)'
+      type_1: 984 - Тип матеріалу '$t(tab.materials.type_1)'
+      type_2: 985 - Тип матеріалу '$t(tab.materials.type_2)'
+      type_3: 986 - Тип матеріалу '$t(tab.materials.type_3)'
+      type_4: 987 - Тип матеріалу '$t(tab.materials.type_4)'
+      type_5: 988 - Тип матеріалу '$t(tab.materials.type_5)'
+      type_6: 989 - Тип матеріалу '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: 988 - Напрямок фактури
-      raw_estimated_0: 989 - Розрахунок корисного обсягу
-      colorized: 990 - Цей відтінок буде застосовано до текстури цього матеріалу під час візуалізації в моделі
-      texture_load: 991 - Завантажити нову текстуру
-      texture_clear: 992 - Видалити текстуру
-      edit: 993 - Редагувати властивості '{{ name }}'
-      set_current: 994 - Розфарбуйте деталі за допомогою '{{ name }}'.
-      open_url: 995 - Відкрити URL матеріалу
+      grain_direction: 992 - Напрямок фактури
+      raw_estimated_0: 993 - Розрахунок корисного обсягу
+      colorized: 994 - Цей відтінок буде застосовано до текстури цього матеріалу під час візуалізації в моделі
+      texture_load: 995 - Завантажити нову текстуру
+      texture_clear: 996 - Видалити текстуру
+      edit: 997 - Редагувати властивості '{{ name }}'
+      set_current: 998 - Розфарбуйте деталі за допомогою '{{ name }}'.
+      open_url: 999 - Відкрити URL матеріалу
     menu:
-      import_from_skm: 996 - Імпорт матеріалу (.skm)
-      purge_unused: 997 - Очистити невикористані матеріали
-      reset_prices: 998 - Обнулити ціни на всі матеріали
+      import_from_skm: 1000 - Імпорт матеріалу (.skm)
+      purge_unused: 1001 - Очистити невикористані матеріали
+      reset_prices: 1002 - Обнулити ціни на всі матеріали
       reset_prices_confirm: |
-        999 - Ви збираєтеся обнулити ціни на всі матеріали у вашій моделі.
+        1003 - Ви збираєтеся обнулити ціни на всі матеріали у вашій моделі.
         Ця дія є остаточною. **Усі ціни будуть обнулені.**
         Підтвердьте, щоб продовжити.
-      reset_prices_success: 1000 - Ціни на всі матеріали були обнулені.
+      reset_prices_success: 1004 - Ціни на всі матеріали були обнулені.
     new_material:
-      title: 1001 - Створити новий матеріал
-      name: 1002 - Ім’я
-      name_warning: 1003 - Неприпустиме ім'я
-      color: 1004 - Колір
-      color_warning: 1005 - Неприпустимий колір
-      type: 1006 - Тип
+      title: 1005 - Створити новий матеріал
+      name: 1006 - Ім’я
+      name_warning: 1007 - Неприпустиме ім'я
+      color: 1008 - Колір
+      color_warning: 1009 - Неприпустимий колір
+      type: 1010 - Тип
     edit_material:
-      title: 1007 - Властивості матеріалу '{{ name }}'
-      general: 1008 - Загальні
-      texture: 1009 - Текстура
-      no_texture: 1010 - Без текстури
-      name: 1011 - Ім’я
-      type: 1012 - Тип
-      description: 1013 - Опис
-      url: 1014 - URL
-      cut_options: 1015 - Параметри розкрою
-      estimate_options: 1016 - Опції оцінки
-      attributes: 1017 - Атрибути
-      thickness: 1018 - Товщина
+      title: 1011 - Властивості матеріалу '{{ name }}'
+      general: 1012 - Загальні
+      texture: 1013 - Текстура
+      no_texture: 1014 - Без текстури
+      name: 1015 - Ім’я
+      type: 1016 - Тип
+      description: 1017 - Опис
+      url: 1018 - URL
+      cut_options: 1019 - Параметри розкрою
+      estimate_options: 1020 - Опції оцінки
+      attributes: 1021 - Атрибути
+      thickness: 1022 - Товщина
       thickness_help: |
-        1019 - Готова товщина матеріалу.
+        1023 - Готова товщина матеріалу.
         *Якщо одиниці не вказано, буде враховано одиницю моделі.*
-      length_increase: 1020 - Припуск по довжині
-      length_increase_help: 1021 - Припуск додається до фактичної довжини для розрахунку **пильної довжини**.
-      width_increase: 1022 - Припуск по ширині
-      width_increase_help: 1023 - Припуск до фактичної ширини для розрахунку **пильної ширини**.
-      thickness_increase: 1024 - Припуск по товщині
-      thickness_increase_help: 1025 - Припуск до фактичної товщини для розрахунку **пильної товщини**.
-      std_lengths: 1026 - Стандартні довжини
-      std_lengths_placeholder: 1027 - довжина ; ...
+      length_increase: 1024 - Припуск по довжині
+      length_increase_help: 1025 - Припуск додається до фактичної довжини для розрахунку **пильної довжини**.
+      width_increase: 1026 - Припуск по ширині
+      width_increase_help: 1027 - Припуск до фактичної ширини для розрахунку **пильної ширини**.
+      thickness_increase: 1028 - Припуск по товщині
+      thickness_increase_help: 1029 - Припуск до фактичної товщини для розрахунку **пильної товщини**.
+      std_lengths: 1030 - Стандартні довжини
+      std_lengths_placeholder: 1031 - довжина ; ...
       std_lengths_help: |
-        1028 - Стандартні довжини дошок або крайок.
+        1032 - Стандартні довжини дошок або крайок.
         *Якщо одиниці не вказано, буде враховано одиницю моделі.*
-      std_widths: 1029 - Стандартні ширини
-      std_widths_placeholder: 1030 - ширина ; ...
+      std_widths: 1033 - Стандартні ширини
+      std_widths_placeholder: 1034 - ширина ; ...
       std_widths_help: |
-        1031 - Стандартна ширина крайки.
+        1035 - Стандартна ширина крайки.
         *Якщо одиниця не вказана, буде враховано одиницю моделі.*
-      std_thicknesses: 1032 - Стандартні товщини
-      std_thicknesses_placeholder: 1033 - товщина ; ...
+      std_thicknesses: 1036 - Стандартні товщини
+      std_thicknesses_placeholder: 1037 - товщина ; ...
       std_thicknesses_help: |
-        1034 - Стандартна **сира** товщина.
+        1038 - Стандартна **сира** товщина.
         *Якщо одиниця не вказана, буде враховано одиницю моделі.*
-      std_sections: 1035 - Стандартні січення
-      std_sections_placeholder: 1036 - ширина х висота; ...
+      std_sections: 1039 - Стандартні січення
+      std_sections_placeholder: 1040 - ширина х висота; ...
       std_sections_help: |
-        1037 - Очікуваний формат: **Ш**x**В**. Де **Ш** і **В** — *ширина* і *висота* січення відповідно.
+        1041 - Очікуваний формат: **Ш**x**В**. Де **Ш** і **В** — *ширина* і *висота* січення відповідно.
         *Якщо для кожного виміру не вказано жодної одиниці, враховується одиниця моделі.*
-      std_sizes: 1038 - Стандартні розміри
-      std_sizes_placeholder: 1039 - довжина х ширина; ...
+      std_sizes: 1042 - Стандартні розміри
+      std_sizes_placeholder: 1043 - довжина х ширина; ...
       std_sizes_help: |
-        1040 - Очікуваний формат: **Д**x**Ш**. Де **Д** і **Ш** — *довжина* і *ширина* панелі відповідно.
+        1044 - Очікуваний формат: **Д**x**Ш**. Де **Д** і **Ш** — *довжина* і *ширина* панелі відповідно.
         *Якщо для кожного розміру не вказано одиницю, буде враховано одиницю моделі.*
-      grained: 1041 - Напрямок текстури
-      grained_help: 1042 - Визначає орієнтацію зображення фактури матеріалу волокон відносно довжини панелі.
-      grained_0: 1043 - Без фактури
-      grained_1: 1044 - По довжині
-      edge_decremented: 1045 - Враховувати крайки
-      edge_decremented_help: 1046 - Дозволяє вказати, чи потрібно зменшити розміри деталей на товщину крайок.
-      edge_decremented_0: 1047 - Не враховувати
-      edge_decremented_1: 1048 - Відняти товщину крайок
-      raw_estimated: 1049 - Загальний обсяг
+      grained: 1045 - Напрямок текстури
+      grained_help: 1046 - Визначає орієнтацію зображення фактури матеріалу волокон відносно довжини панелі.
+      grained_0: 1047 - Без фактури
+      grained_1: 1048 - По довжині
+      edge_decremented: 1049 - Враховувати крайки
+      edge_decremented_help: 1050 - Дозволяє вказати, чи потрібно зменшити розміри деталей на товщину крайок.
+      edge_decremented_0: 1051 - Не враховувати
+      edge_decremented_1: 1052 - Відняти товщину крайок
+      raw_estimated: 1053 - Загальний обсяг
       raw_estimated_help: |
-        1050 - Дозволяє розрахувати об'єм для оцінки маси та вартості деталей з цього матеріалу. , погонажу або кромок після розкрою.
+        1054 - Дозволяє розрахувати об'єм для оцінки маси та вартості деталей з цього матеріалу. , погонажу або кромок після розкрою.
 
         **Корисний обсяг матеріалу**
         Розрахунок загального обсягу із суми обсягів деталей картки розкрою.
 
         **Обсяг використаного матеріалу
         **Сума обсягів деталей з панелей, листів, погонажу або кромок після розкрою.
-      raw_estimated_0: 1051 - Корисний обсяг матеріалу
-      raw_estimated_1: 1052 - Об'єм використаного матеріалу
-      std_attributes_dim_placeholder: 1053 - Виберіть розмір
-      std_volumic_masses: 1054 - Густина
-      std_volumic_masses_help: 1055 - Дозволяє визначити масу об'єму для всіх розмірів, а також для кожного типорозміру матеріалу.
-      std_volumic_masses_add: 1056 - Додати густину
-      std_prices: 1057 - Ціна
-      std_prices_help: 1058 - Дозволяє визначити ціну як для всіх розмірів, так і для кожного типорозміру матеріалу.
-      std_prices_add: 1059 - Додати ціну
-      texture_width: 1060 - Ширина
-      texture_height: 1061 - Висота
-      export_to_skm: 1062 - Експорт (.skm)
+      raw_estimated_0: 1055 - Корисний обсяг матеріалу
+      raw_estimated_1: 1056 - Об'єм використаного матеріалу
+      std_attributes_dim_placeholder: 1057 - Виберіть розмір
+      std_volumic_masses: 1058 - Густина
+      std_volumic_masses_help: 1059 - Дозволяє визначити масу об'єму для всіх розмірів, а також для кожного типорозміру матеріалу.
+      std_volumic_masses_add: 1060 - Додати густину
+      std_prices: 1061 - Ціна
+      std_prices_help: 1062 - Дозволяє визначити ціну як для всіх розмірів, так і для кожного типорозміру матеріалу.
+      std_prices_add: 1063 - Додати ціну
+      texture_width: 1064 - Ширина
+      texture_height: 1065 - Висота
+      export_to_skm: 1066 - Експорт (.skm)
     texture_load:
-      title: 1063 - Завантажити зображення
+      title: 1067 - Завантажити зображення
     import_from_skm:
-      title: 1064 - Імпорт файлу .skm
+      title: 1068 - Імпорт файлу .skm
     export_to_skm:
-      title: 1065 - Експорт файлу .skm
+      title: 1069 - Експорт файлу .skm
     option:
-      minimize_on_smart_paint: 1066 - Згорнути після *'Розфарбовування деталей за допомогою...'*
-      minimize_on_smart_paint_help: 1067 - Якщо цей параметр увімкнено, вікно OpenCutList буде згорнуто, коли використовується функція *'Розфарбувати деталі з...'*.
-      general: 1068 - Загальні
-      material_order_strategy: 1069 - Сортування матеріалів
+      minimize_on_smart_paint: 1070 - Згорнути після *'Розфарбовування деталей за допомогою...'*
+      minimize_on_smart_paint_help: 1071 - Якщо цей параметр увімкнено, вікно OpenCutList буде згорнуто, коли використовується функція *'Розфарбувати деталі з...'*.
+      general: 1072 - Загальні
+      material_order_strategy: 1073 - Сортування матеріалів
       material_order_strategy_help: |
-        1070 - Переставте наступні властивості, щоб установити стратегію сортування матеріалів у списку.
+        1074 - Переставте наступні властивості, щоб установити стратегію сортування матеріалів у списку.
         Кожну властивість можна відсортувати <i class="ladb-opencutlist-icon-sort-asc"></i> *за зростанням* або <i class="ladb-opencutlist-icon-sort-desc"></i> *за спаданням*.
-      property_type: 1071 - Тип
-      property_name: 1072 - Ім’я
+      property_type: 1075 - Тип
+      property_name: 1076 - Ім’я
     delete:
       message: |
-        1073 - Ви збираєтеся видалити матеріал **{{ material_name }}** зі своєї моделі.
+        1077 - Ви збираєтеся видалити матеріал **{{ material_name }}** зі своєї моделі.
         Підтвердьте, щоб продовжити.
     duplicate:
       message: |
-        1074 - Встановіть назву нової копії матеріалу **{{ material_name }}**.
+        1078 - Встановіть назву нової копії матеріалу **{{ material_name }}**.
     error:
-      no_model: 1075 - Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
-      no_materials: 1076 - Ваша модель не містить жодного матеріалу.
-      material_not_found: 1077 - Матеріал не знайдено.
-      failed_import_skm_file: 1078 - Під час імпорту файлу .skm сталася помилка. **{{ error }}**
-      failed_export_skm_file: 1079 - Під час експорту файлу .skm сталася помилка. **{{ error }}**
-      failed_deleting_material: 1080 - Під час видалення матеріалу сталася помилка. **{{ error }}**
-      failed_duplicating_material: 1081 - Під час копіювання матеріалу сталася помилка. **{{ error }}**
-      invalid_image_file: 1082 - Неприпустиме зображення
-    obsolete_base: 1083 - Щоб підтримувати синхронізацію, потрібно оновити список матеріалів.
+      no_model: 1079 - Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
+      no_materials: 1080 - Ваша модель не містить жодного матеріалу.
+      material_not_found: 1081 - Матеріал не знайдено.
+      failed_import_skm_file: 1082 - Під час імпорту файлу .skm сталася помилка. **{{ error }}**
+      failed_export_skm_file: 1083 - Під час експорту файлу .skm сталася помилка. **{{ error }}**
+      failed_deleting_material: 1084 - Під час видалення матеріалу сталася помилка. **{{ error }}**
+      failed_duplicating_material: 1085 - Під час копіювання матеріалу сталася помилка. **{{ error }}**
+      invalid_image_file: 1086 - Неприпустиме зображення
+    obsolete_base: 1087 - Щоб підтримувати синхронізацію, потрібно оновити список матеріалів.
   outliner:
-    label: 1084 - Структура
-    title: 1085 - Структура
-    list: 1086 - Дерево сутностей
-    nodes: 1087 - Екземпляри
-    toggle_hidden: 1088 - Приховані екземпляри
-    type_0: 1089 - Модель
-    type_1: 1090 - Група
-    type_2: 1091 - Компонент
-    type_3: 1092 - Деталь
+    label: 1088 - Структура
+    title: 1089 - Структура
+    list: 1090 - Дерево сутностей
+    nodes: 1091 - Екземпляри
+    toggle_hidden: 1092 - Приховані екземпляри
+    type_0: 1093 - Модель
+    type_1: 1094 - Група
+    type_2: 1095 - Компонент
+    type_3: 1096 - Деталь
     tooltip:
-      open_node_url: 1093 - Відкрити URL деталі
+      open_node_url: 1097 - Відкрити URL деталі
     edit_node:
-      title_model: 1094 - Властивості моделі
-      title_instance: 1095 - Властивості екземпляра **{{ name }}**
-      general: 1096 - Загальні
-      preview: 1097 - Огляд
-      name: 1098 - Ім’я
-      instance_name: 1099 - Екземпляр
-      material: 1100 - Матеріал
-      definition_name: 1101 - Визначення
-      description: 1102 - Опис
-      url: 1103 - URL
-      tags: 1104 - Мітки
-      layer_name: 1105 - Тег
-      explode: 1106 - Рознести
-      explode_message: 1107 - Підтверджуєте розрив екземпляра **{{ name }}**?
+      title_model: 1098 - Властивості моделі
+      title_instance: 1099 - Властивості екземпляра **{{ name }}**
+      general: 1100 - Загальні
+      preview: 1101 - Огляд
+      name: 1102 - Ім’я
+      instance_name: 1103 - Екземпляр
+      material: 1104 - Матеріал
+      definition_name: 1105 - Визначення
+      description: 1106 - Опис
+      url: 1107 - URL
+      tags: 1108 - Мітки
+      layer_name: 1109 - Тег
+      explode: 1110 - Рознести
+      explode_message: 1111 - Підтверджуєте розрив екземпляра **{{ name }}**?
     error:
-      no_model: 1108 - Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
-      no_entities: 1109 - Ваша модель порожня!
-      node_not_found: 1110 - Вузол не знайдено
-      entity_not_found: 1111 - Екземпляр не знайдено
-      obsolete_outliner: 1112 - Неможливо. Згенерована структура застаріла. Перегенеруйте її.
+      no_model: 1112 - Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
+      no_entities: 1113 - Ваша модель порожня!
+      node_not_found: 1114 - Вузол не знайдено
+      entity_not_found: 1115 - Екземпляр не знайдено
+      obsolete_outliner: 1116 - Неможливо. Згенерована структура застаріла. Перегенеруйте її.
     tip:
       no_node: |
-        1113 - Ваша модель наразі не має жодного екземпляру для відображення тут.
+        1117 - Ваша модель наразі не має жодного екземпляру для відображення тут.
         Екземпляр - це **група** або **компонент**, розміщений на сцені.
-    obsolete_base: 1114 - Щоб залишатися синхронізованим, вам потрібно повторно згенерувати структуру.
+    obsolete_base: 1118 - Щоб залишатися синхронізованим, вам потрібно повторно згенерувати структуру.
   importer:
-    label: 1115 - Імпорт
-    title: 1116 - Імпорт деталей
+    label: 1119 - Імпорт
+    title: 1120 - Імпорт деталей
     help: |
-      1117 - Ця функція дозволяє вам імпортувати деталі (паралелепіпедної форми) у вашу модель із файлу [CSV](https://uk.wikipedia.org/wiki/CSV).
+      1121 - Ця функція дозволяє вам імпортувати деталі (паралелепіпедної форми) у вашу модель із файлу [CSV](https://uk.wikipedia.org/wiki/CSV).
       Таким чином, ви зможете використовувати функціоеальність *OpenCutList*, генеруючи свої деталі за допомогою стороннього програмного забезпечення, відмінного від *SketchUp*.
       Щоб розпочати, натисніть кнопку **Відкрити файл CSV**.
-    open_csv: 1118 - Відкрити файл CSV
-    import_to_model: 1119 - Імпорт в модель
+    open_csv: 1122 - Відкрити файл CSV
+    import_to_model: 1123 - Імпорт в модель
     load:
-      title: 1120 - Завантажити файл CSV
+      title: 1124 - Завантажити файл CSV
       info_0: |
-        1121 - Виберіть параметри, необхідні для правильного читання файлу:
+        1125 - Виберіть параметри, необхідні для правильного читання файлу:
         **{{ filename }}**.
       info_1: |
-        1122 - *Одиниця виміру, налаштована в шаблоні: **{{ unit }}**.
+        1126 - *Одиниця виміру, налаштована в шаблоні: **{{ unit }}**.
         Ця одиниця буде використана для розмірів, одиниця яких не вказана*.
-      options: 1123 - Параметри завантаження
-      option_col_sep: 1124 - Роздільник
-      option_col_sep_tab: 1125 - Табулятор
-      option_col_sep_comma: 1126 - Кома
-      option_col_sep_semicolon: 1127 - Крапка з комою
-      option_first_line_headers: 1128 - Заголовок рядка
-      option_first_line_headers_0: 1129 - Дані
-      option_first_line_headers_1: 1130 - Заголовки стовпців
+      options: 1127 - Параметри завантаження
+      option_col_sep: 1128 - Роздільник
+      option_col_sep_tab: 1129 - Табулятор
+      option_col_sep_comma: 1130 - Кома
+      option_col_sep_semicolon: 1131 - Крапка з комою
+      option_first_line_headers: 1132 - Заголовок рядка
+      option_first_line_headers_0: 1133 - Дані
+      option_first_line_headers_1: 1134 - Заголовки стовпців
     import:
-      title: 1131 - Імпорт деталей у модель
+      title: 1135 - Імпорт деталей у модель
       info_0: |
-        1132 - Ви збираєтеся імпортувати **{{ count }} деталь** у модель.
+        1136 - Ви збираєтеся імпортувати **{{ count }} деталь** у модель.
         Цю деталь буде розміщено на головній сцені.
       info_0_plural: |
-        1133 - Ви збираєтеся імпортувати **{{ count }} деталей** у модель.
+        1137 - Ви збираєтеся імпортувати **{{ count }} деталей** у модель.
         Ці деталі будуть розміщені на головній сцені.
-      info_1: 1134 - Натисніть **Імпорт** для підтвердження дії.
+      info_1: 1138 - Натисніть **Імпорт** для підтвердження дії.
       options: |
-        1135 - Модель вже містить *деталі*, *визначення* або *матеріали*.
+        1139 - Модель вже містить *деталі*, *визначення* або *матеріали*.
         Виберіть параметри імпорту, які відповідають вашим потребам.
-      option_remove_all_?: 1136 - Що робити?
-      option_remove_all_false: 1137 - Додати деталі до існуючих
-      option_remove_all_true: 1138 - Відмінити все!
-      option_keep_definitions_settings: 1139 - Зберегти налаштування визначень
-      option_keep_materials_settings: 1140 - Зберегти налаштування матеріалів
+      option_remove_all_?: 1140 - Що робити?
+      option_remove_all_false: 1141 - Додати деталі до існуючих
+      option_remove_all_true: 1142 - Відмінити все!
+      option_keep_definitions_settings: 1143 - Зберегти налаштування визначень
+      option_keep_materials_settings: 1144 - Зберегти налаштування матеріалів
     column:
-      unused: 1141 - Невикористаний
-      mandatory: 1142 - Обов'язкові поля
-      optional: 1143 - Необов'язкові поля
-      name: 1144 - Позначення
-      count: 1145 - Кількість
-      bbox_length: 1146 - Довжина - фактична
-      bbox_width: 1147 - Ширина - фактична
-      bbox_thickness: 1148 - Товщина - фактична
-      material: 1149 - Матеріал
-      tags: 1150 - Мітки
+      unused: 1145 - Невикористаний
+      mandatory: 1146 - Обов'язкові поля
+      optional: 1147 - Необов'язкові поля
+      name: 1148 - Позначення
+      count: 1149 - Кількість
+      bbox_length: 1150 - Довжина - фактична
+      bbox_width: 1151 - Ширина - фактична
+      bbox_thickness: 1152 - Товщина - фактична
+      material: 1153 - Матеріал
+      tags: 1154 - Мітки
     tooltip:
-      errors: 1151 - Ця деталь не буде імпортована, оскільки містить помилки
-      warnings: 1152 - Ця деталь буде імпортована, але вона містить наступні попередження
+      errors: 1155 - Ця деталь не буде імпортована, оскільки містить помилки
+      warnings: 1156 - Ця деталь буде імпортована, але вона містить наступні попередження
     error:
-      no_model: 1153 - Жодна модель не відкрита. Неможливо завантажити деталі в порожнечу ;)
-      file_not_found: '1154 - Файл не знайдено: **{{ filename }}**'
-      bad_extension: 1155 - Файл *{{ filename }}* не має розширення **.CSV** або **.TSV**.
+      no_model: 1157 - Жодна модель не відкрита. Неможливо завантажити деталі в порожнечу ;)
+      file_not_found: '1158 - Файл не знайдено: **{{ filename }}**'
+      bad_extension: 1159 - Файл *{{ filename }}* не має розширення **.CSV** або **.TSV**.
       failed_to_load_csv_file: |
-        1156 - Не вдається завантажити файл CSV: **{{ error }}**
+        1160 - Не вдається завантажити файл CSV: **{{ error }}**
         *Перевірте, чи вибрали ви правильний роздільник даних.*
-      empty_file: 1157 - Файл, здається, порожній або його неможливо прочитати правильно.
-      no_importable_part: 1158 - Жодні деталі не можна імпортувати. Призначте обов'язкові поля у відповідних стовпцях.
-      invalid_name: 1159 - Недійсне позначення
-      invalid_length: 1160 - Недійсна довжина
-      invalid_width: 1161 - Недійсна ширина
-      invalid_thickness: 1162 - Недійсна товщина
-      failed_to_import: 1163 - Помилка імпорту.
+      empty_file: 1161 - Файл, здається, порожній або його неможливо прочитати правильно.
+      no_importable_part: 1162 - Жодні деталі не можна імпортувати. Призначте обов'язкові поля у відповідних стовпцях.
+      invalid_name: 1163 - Недійсне позначення
+      invalid_length: 1164 - Недійсна довжина
+      invalid_width: 1165 - Недійсна ширина
+      invalid_thickness: 1166 - Недійсна товщина
+      failed_to_import: 1167 - Помилка імпорту.
     warning:
-      invalid_count: 1164 - Недійсна кількість
-      invalid_material: 1165 - Недійсний матеріал
+      invalid_count: 1168 - Недійсна кількість
+      invalid_material: 1169 - Недійсний матеріал
     success:
-      imported_title: 1166 - Імпорт завершено
-      imported_body: 1167 - {{ count }} деталь успішно імпортовано!
-      imported_body_plural: 1168 - {{ count }} деталей успішно імпортовано!
-    obsolete_base: 1169 - Щоб зберегти синхронізацію, ви повинні перезавантажити файл CSV.
+      imported_title: 1170 - Імпорт завершено
+      imported_body: 1171 - {{ count }} деталь успішно імпортовано!
+      imported_body_plural: 1172 - {{ count }} деталей успішно імпортовано!
+    obsolete_base: 1173 - Щоб зберегти синхронізацію, ви повинні перезавантажити файл CSV.
   tutorials:
-    label: 1170 - Навчальні матеріали
-    title: 1171 - Навчальні матеріали
+    label: 1174 - Навчальні матеріали
+    title: 1175 - Навчальні матеріали
     help: |
-      1172 - Тут можна знайти неповний список відео, створених спільнотою про використання *OpenCutList*.
-    submit: 1173 - Запропонувати відео
+      1176 - Тут можна знайти неповний список відео, створених спільнотою про використання *OpenCutList*.
+    submit: 1177 - Запропонувати відео
     submit_info: |
-      1174 - Ви зробили відеопрезентацію використання **OpenCutList** і хочете, щоб вона з’явилася тут?
+      1178 - Ви зробили відеопрезентацію використання **OpenCutList** і хочете, щоб вона з’явилася тут?
       Повідомте нас, написавши нам на адресу **opencutlist@lairdubois.fr**!
 
       *Відео має бути загальнодоступним і розміщеним на YouTube*.
     error:
-      fail_to_load_list: 1175 - Не вдається завантажити список відео.
+      fail_to_load_list: 1179 - Не вдається завантажити список відео.
   news:
-    label: 1176 - Новини
-    title: 1177 - Новини
+    label: 1180 - Новини
+    title: 1181 - Новини
     help: |
-      1178 - Дивіться тут новини про *OpenCutList*.
-    comment: 1179 - Коментар
+      1182 - Дивіться тут новини про *OpenCutList*.
+    comment: 1183 - Коментар
     error:
-      fail_to_load_list: 1180 - Не вдалося завантажити сторінку новин.
+      fail_to_load_list: 1184 - Не вдалося завантажити сторінку новин.
   forum:
-    label: 1181 - Форум
-    title: 1182 - Форум
+    label: 1185 - Форум
+    title: 1186 - Форум
     help: |
-      1183 - Цей майданчик дозволяє обмінюватися ідеями між спільнотою користувачів і командою *OpenCutList*.
-    create_conversation: 1184 - Створити тему
-    reply: 1185 - Відповідь
-    tags: 1186 - Теги
+      1187 - Цей майданчик дозволяє обмінюватися ідеями між спільнотою користувачів і командою *OpenCutList*.
+    create_conversation: 1188 - Створити тему
+    reply: 1189 - Відповідь
+    tags: 1190 - Теги
     redirection: |
-      1187 - Ви будете перенаправлені на платформу **Open Collective**, на якій розміщено цей дискусійний форум.
+      1191 - Ви будете перенаправлені на платформу **Open Collective**, на якій розміщено цей дискусійний форум.
       Щоб *створити або відповісти* у *обговореннях*, вам потрібно буде створити обліковий запис і увійти в систему.
       *Це безкоштовно, без зобов’язань, достатньо простої адреси електронної пошти.*
 
       Спробуйте, щоб продовжити.
     error:
-      fail_to_load_list: 1188 - Не вдалося завантажити сторінку обговорень.
+      fail_to_load_list: 1192 - Не вдалося завантажити сторінку обговорень.
   sponsor:
-    label: 1189 - Підтримати
-    title: 1190 - Підтримати
+    label: 1193 - Підтримати
+    title: 1194 - Підтримати
     description: |
-      1191 - **OpenCutList** — це *відкрите* програмне забезпечення, яке фінансується користувачами через платформу <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      1195 - **OpenCutList** — це *відкрите* програмне забезпечення, яке фінансується користувачами через платформу <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
       Підтримайте цей проект, долучившись також до його фінансування!
-    contribute: 1192 - Підтримати проект
-    backers: 1193 - {{ count }} спонсор
-    backers_plural: 1194 - {{ count }} спонсорів
-    ad: 1195 - Вам подобається OpenCutList?
-    objective: 1196 - Мета
-    objective_slogan: 1197 - OpenCutList - це всі ми
+    contribute: 1196 - Підтримати проект
+    backers: 1197 - {{ count }} спонсор
+    backers_plural: 1198 - {{ count }} спонсорів
+    ad: 1199 - Вам подобається OpenCutList?
+    objective: 1200 - Мета
+    objective_slogan: 1201 - OpenCutList - це всі ми
     objective_title:
-      default: 1198 - Цілі
-      cuttingdiagram_export: 1199 - Фінансування розробки нових функцй
-      outliner: 1200 - Фінансування функції "Структура"
-      packing: 1201 - Фінансування функції Nesting
+      default: 1202 - Цілі
+      cuttingdiagram_export: 1203 - Фінансування розробки нових функцй
+      outliner: 1204 - Фінансування функції "Структура"
+      packing: 1205 - Фінансування функції Nesting
     objective_details:
       default: |
-        1202 - Постійне вдосконалення *OpenCutList* є важливим для нас і проект продовжує потребувати вашої участі для наступного оновлення!
+        1206 - Постійне вдосконалення *OpenCutList* є важливим для нас і проект продовжує потребувати вашої участі для наступного оновлення!
       cuttingdiagram_export: |
-        1203 - Для нас важливо, щоб *OpenCutList* міг адаптуватися до дуже різноманітних очікувань користувачів щодо функції *layout*.
+        1207 - Для нас важливо, щоб *OpenCutList* міг адаптуватися до дуже різноманітних очікувань користувачів щодо функції *layout*.
         Щоб ще більше розширити можливості, ми хотіли б мати можливість експортувати карти розкрою у форматі **SVG** та **DXF**.
         Надаючи нам засоби для роботи над цим експортом, ви даєте нам можливість дозволити вам отримати максимальну віддачу від *OpenCutList*.
       outliner: |
-        1204 - Модель може бути досить складною, і навігація по її структурі за допомогою рідної панелі «Структура» SketchUp не завжди зручна.
+        1208 - Модель може бути досить складною, і навігація по її структурі за допомогою рідної панелі «Структура» SketchUp не завжди зручна.
         У SketchUp ви можете застосувати матеріал і теги до екземплярів, опис, URL-адресу та значки до визначень, але вони не відображаються в структурі.
         Відео покаже вам, як ми хочемо покращити це в меню «Структура», доступне безпосередньо з OpenCutList.
       packing: |
-        1205 - Для нас важливо, щоб *OpenCutList* міг адаптуватися до дуже різноманітних очікувань користувачів щодо функції *карти розпилу*.
+        1209 - Для нас важливо, щоб *OpenCutList* міг адаптуватися до дуже різноманітних очікувань користувачів щодо функції *карти розпилу*.
         Щоб ще більше розширити можливості, ми хочемо реалізувати **алгоритм вкладеності** для оптимізації вирізання деталей будь-якої форми.
         Надаючи нам засоби для роботи над цією функцією, ви даєте нам можливість допомогти вам отримати максимальну віддачу від *OpenCutList*.
     objective_crowdfunding: |
-      1206 - Розробка нових продуктів здійснюватиметься завдяки **краудфандингу** і може розпочатися після досягнення **Фінансової цілі**.
+      1210 - Розробка нових продуктів здійснюватиметься завдяки **краудфандингу** і може розпочатися після досягнення **Фінансової цілі**.
     objective_thanks: |
-      1207 - Дякуємо за ваш внесок!
-    objective_funded_progress: 1208 - Накопичено коштів {{ progress }}%
+      1211 - Дякуємо за ваш внесок!
+    objective_funded_progress: 1212 - Накопичено коштів {{ progress }}%
   settings:
-    label: 1209 - Налаштування
-    title: 1210 - Налаштування
-    global_settings: 1211 - Загальні налаштування
-    language: 1212 - Мова
-    language_auto: 1213 - Автоматичний
-    zoom: 1214 - Розмір тексту
-    zoom_normal: 1215 - Нормальний
-    zoom_small: 1216 - Мала
-    zoom_tiny: 1217 - Дуже малий
-    print_margin: 1218 - Поля друку
-    print_margin_normal: 1219 - Нормальні
-    print_margin_small: 1220 - Малі
-    table_row_size: 1221 - Розмір рядків таблиці
-    table_row_size_normal: 1222 - Нормальний
-    table_row_size_compact: 1223 - Компактний
-    size_and_position: 1224 - Розмір і розташування вікна
-    model_settings: 1225 - Параметри моделі
-    length_unit: 1226 - Одиниця вимірювання довжини
-    length_format: 1227 - Формат
-    length_format_0: 1228 - Десятковий
-    length_format_1: 1229 - Архітектурний
-    length_format_2: 1230 - Інженерний
-    length_format_3: 1231 - Дробовий
-    length_precision: 1232 - Точність
-    suppress_units_display: 1233 - Показати одиниці вимірювання для кожного значення
-    mass_unit: 1234 - Одиниця маси
-    mass_precision: 1235 - Точність
-    currency_symbol: 1236 - Символ валюти
-    currency_precision: 1237 - Точність
+    label: 1213 - Налаштування
+    title: 1214 - Налаштування
+    global_settings: 1215 - Загальні налаштування
+    language: 1216 - Мова
+    language_auto: 1217 - Автоматичний
+    zoom: 1218 - Розмір тексту
+    zoom_normal: 1219 - Нормальний
+    zoom_small: 1220 - Мала
+    zoom_tiny: 1221 - Дуже малий
+    print_margin: 1222 - Поля друку
+    print_margin_normal: 1223 - Нормальні
+    print_margin_small: 1224 - Малі
+    table_row_size: 1225 - Розмір рядків таблиці
+    table_row_size_normal: 1226 - Нормальний
+    table_row_size_compact: 1227 - Компактний
+    size_and_position: 1228 - Розмір і розташування вікна
+    model_settings: 1229 - Параметри моделі
+    length_unit: 1230 - Одиниця вимірювання довжини
+    length_format: 1231 - Формат
+    length_format_0: 1232 - Десятковий
+    length_format_1: 1233 - Архітектурний
+    length_format_2: 1234 - Інженерний
+    length_format_3: 1235 - Дробовий
+    length_precision: 1236 - Точність
+    suppress_units_display: 1237 - Показати одиниці вимірювання для кожного значення
+    mass_unit: 1238 - Одиниця маси
+    mass_precision: 1239 - Точність
+    currency_symbol: 1240 - Символ валюти
+    currency_precision: 1241 - Точність
     presets:
-      export_global_presets: 1238 - Експорт пресетів
+      export_global_presets: 1242 - Експорт пресетів
       export_global_presets_help: |
-        1239 - Ця функція дозволяє експортувати ваші пресети у файл **.json**.
+        1243 - Ця функція дозволяє експортувати ваші пресети у файл **.json**.
         Виберіть пресети, які потрібно експортувати.
-      export_global_presets_success: 1240 - Попередні налаштування успішно експортовано.
-      import_global_presets: 1241 - Імпорт пресетів
+      export_global_presets_success: 1244 - Попередні налаштування успішно експортовано.
+      import_global_presets: 1245 - Імпорт пресетів
       import_global_presets_help: |
-        1242 - Виберіть пресети у файлі **.json**, які ви хочете імпортувати.
+        1246 - Виберіть пресети у файлі **.json**, які ви хочете імпортувати.
         Увага, якщо пресет із такою назвою вже існує, його буде замінено імпортованою версією.
       import_global_presets_success: |
-        1243 - Пресети *OpenCutList* успішно імпортовано.
+        1247 - Пресети *OpenCutList* успішно імпортовано.
         Щоб врахувати зміни, потрібно **закрити** та **знову відкрити** вікно OpenCutList.
-      dump_global_presets: 1244 - Дамп пресетів
-      dump_model_presets: 1245 - Дамп пресетів моделі
-      reset_global_presets: 1246 - Скинути попередні налаштування
+      dump_global_presets: 1248 - Дамп пресетів
+      dump_model_presets: 1249 - Дамп пресетів моделі
+      reset_global_presets: 1250 - Скинути попередні налаштування
       reset_global_presets_confirm: |
-        1247 - Ви збираєтеся скинути всі збережені попередні налаштування *OpenCutList*.
+        1251 - Ви збираєтеся скинути всі збережені попередні налаштування *OpenCutList*.
         Ця дія є остаточною. **Усі попередні налаштування буде втрачено.**
         Підтвердьте, щоб продовжити.
       reset_global_presets_success: |
-        1248 - Попередні налаштування *OpenCutList* скинуто.
+        1252 - Попередні налаштування *OpenCutList* скинуто.
         Щоб застосувати всі зміни, ви повинні **закрити** та **знову відкрити** вікно OpenCutList.
-      reset_model_presets: 1249 - Скинути налаштування моделі
+      reset_model_presets: 1253 - Скинути налаштування моделі
       reset_model_presets_confirm: |
-        1250 - Ви збираєтеся скинути всі налаштування *OpenCutList* для поточної моделі.
+        1254 - Ви збираєтеся скинути всі налаштування *OpenCutList* для поточної моделі.
         Ця дія є остаточною. **Усі налаштування буде відновлено до значень за замовчуванням.**
         Підтвердьте, щоб продовжити.
       reset_model_presets_success: |
-        1251 - Налаштування *OpenCutList* поточної моделі скинуто.
+        1255 - Налаштування *OpenCutList* поточної моделі скинуто.
         Щоб застосувати всі зміни, потрібно **закрити** та **знову відкрити** вікно OpenCutList.
       error:
-        no_preset_to_export: 1252 - Немає пресету для експорту.
-        no_preset_to_import: 1253 - Немає пресету для імпорту.
-        failed_to_import: '1254 - Не вдалося імпортувати пресет: **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1255 - Цей файл було змінено. Його не можна імпортувати.
-        failed_to_import_bad_file_format: 1256 - Недійсний формат файлу.
+        no_preset_to_export: 1256 - Немає пресету для експорту.
+        no_preset_to_import: 1257 - Немає пресету для імпорту.
+        failed_to_import: '1258 - Не вдалося імпортувати пресет: **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1259 - Цей файл було змінено. Його не можна імпортувати.
+        failed_to_import_bad_file_format: 1260 - Недійсний формат файлу.
   about:
-    label: 1257 - Пропозиції
-    title: 1258 - Пропозиції
-    version: 1259 - Версія
-    credits: 1260 - Технічні характеристики
+    label: 1261 - Пропозиції
+    title: 1262 - Пропозиції
+    version: 1263 - Версія
+    credits: 1264 - Технічні характеристики
     credits_authors: |
-      1261 - *OpenCutList* розроблений [Борис Болант](https://www.lairdubois.fr/@borisbeaulant) і [Мартін Мюллер](https://www.lairdubois.fr/@mobilarte). *Список [співавторів](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
-    credits_translations: 1262 - Переклади
+      1265 - *OpenCutList* розроблений [Борис Болант](https://www.lairdubois.fr/@borisbeaulant) і [Мартін Мюллер](https://www.lairdubois.fr/@mobilarte). *Список [співавторів](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: 1266 - Переклади
     credits_translators: |
-      1263 - - Андрій Топорівський, Костянтин Щербей (*українська*)
+      1267 - - Андрій Топорівський, Костянтин Щербей (*українська*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*англійська*, *німецька*)
       - Gildas Boureau (*французька* документація)
       - Vladimir Badulya (*російська*)
@@ -1631,117 +1635,117 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*спрощена китайська*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*голландський*)
     credits_description: |
-      1264 - Розробка цього розширення є частиною проекту платформи спільного доступу [L'Air du Bois](https://www.lairdubois.fr).
+      1268 - Розробка цього розширення є частиною проекту платформи спільного доступу [L'Air du Bois](https://www.lairdubois.fr).
       І як такий, він також є *Open Source* і доступний під [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) на своєму [репозиторій GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1265 - Виконання
-    credits_development: 1266 - Розробка
+    credits_runtime: 1269 - Виконання
+    credits_development: 1270 - Розробка
     credits_vendors: |
-      1267 - Але ця пригода була б неможливою без роботи авторів наступних блоків програмного забезпечення *Open Source*:
+      1271 - Але ця пригода була б неможливою без роботи авторів наступних блоків програмного забезпечення *Open Source*:
     credits_thanks: |
-      1268 - Особлива подяка:
+      1272 - Особлива подяка:
       - [JetBrains](https://www.jetbrains.com) за підтримку цього проекту через [Спеціальну ліцензію для проектів з відкритим кодом](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) за підтримку проекту з відкритим кодом.
       - [GitBook](https://www.gitbook.com) за підтримку проекту з відкритим кодом.
 tool:
   default:
-    transparency: 1269 - Прозорість
-    zoom_extents: 1270 - Наблизити
-    toggle_depth: 1271 - Деталі на задньому плані
-    more: 1272 - Ще
+    transparency: 1273 - Прозорість
+    zoom_extents: 1274 - Наблизити
+    toggle_depth: 1275 - Деталі на задньому плані
+    more: 1276 - Ще
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: 1275 - Покриття
-    default_material: 1276 - Матеріал не заданий
-    filters: 1277 - Фільтри
-    filter_0: 1278 - Не визначений
+    title: 1279 - Покриття
+    default_material: 1280 - Матеріал не заданий
+    filters: 1281 - Фільтри
+    filter_0: 1282 - Не визначений
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1285 - Покриття деталей
-    action_0_status: 1286 - Натисніть на деталь, щоб застосувати матеріал до її екземпляра
-    action_1: 1287 - Покриття торців
-    action_1_status: 1288 - Натисніть на торець деталі, щоб застосувати до неї матеріал«$t(tab.materials.type_4)»
-    action_2: 1289 - Покриття граней
-    action_2_status: 1290 - Натисніть на награні деталі, щоб застосувати до неї матеріал «$t(tab.materials.type_6)»
-    action_3: 1291 - Очистити деталь
-    action_3_status: 1292 - Натисніть на грані, щоб взяти зразок матеріалу
-    action_4: 1293 - Очистити
-    action_4_status: 1294 - Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів
-    action_option_group_instances: 1295 - Кількість екземплярів
-    action_option_group_edges: 1296 - Кількість крайки
-    action_option_group_faces: 1297 - Кількість граней
-    action_option_instances_0_status: 1298 - Покриття лише екземпляра цільової деталі
-    action_option_instances_1_status: 1299 - Покриття всіх екземплярів цільової деталі
-    action_option_edges_0_status: 1300 - Покриття лише цільової крайки
-    action_option_edges_1_status: 1301 - Покриття цільової крайки та протилежної крайки у деталі
-    action_option_edges_2_status: 1302 - Покриття всіх 4 країв деталі, яку ви вибрали
-    action_option_faces_0_status: 1303 - Покриття лише цільової грані
-    action_option_faces_1_status: 1304 - Покриття 2 граней цільової деталі
-    edges: 1305 - {{ count }} торець
-    edges_plural: 1306 - {{ count }} торців
-    edge_ymin: 1307 - Довжина 1
-    edge_ymax: 1308 - Довжина 2
-    edge_xmin: 1309 - Ширина 1
-    edge_xmax: 1310 - Ширина 2
-    faces: 1311 - {{ count }} грань
-    faces_plural: 1312 - {{ count }} граней
-    face_zmin: 1313 - Тил
-    face_zmax: 1314 - Лице
+    action_0: 1289 - Покриття деталей
+    action_0_status: 1290 - Натисніть на деталь, щоб застосувати матеріал до її екземпляра
+    action_1: 1291 - Покриття торців
+    action_1_status: 1292 - Натисніть на торець деталі, щоб застосувати до неї матеріал«$t(tab.materials.type_4)»
+    action_2: 1293 - Покриття граней
+    action_2_status: 1294 - Натисніть на награні деталі, щоб застосувати до неї матеріал «$t(tab.materials.type_6)»
+    action_3: 1295 - Очистити деталь
+    action_3_status: 1296 - Натисніть на грані, щоб взяти зразок матеріалу
+    action_4: 1297 - Очистити
+    action_4_status: 1298 - Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів
+    action_option_group_instances: 1299 - Кількість екземплярів
+    action_option_group_edges: 1300 - Кількість крайки
+    action_option_group_faces: 1301 - Кількість граней
+    action_option_instances_0_status: 1302 - Покриття лише екземпляра цільової деталі
+    action_option_instances_1_status: 1303 - Покриття всіх екземплярів цільової деталі
+    action_option_edges_0_status: 1304 - Покриття лише цільової крайки
+    action_option_edges_1_status: 1305 - Покриття цільової крайки та протилежної крайки у деталі
+    action_option_edges_2_status: 1306 - Покриття всіх 4 країв деталі, яку ви вибрали
+    action_option_faces_0_status: 1307 - Покриття лише цільової грані
+    action_option_faces_1_status: 1308 - Покриття 2 граней цільової деталі
+    edges: 1309 - {{ count }} торець
+    edges_plural: 1310 - {{ count }} торців
+    edge_ymin: 1311 - Довжина 1
+    edge_ymax: 1312 - Довжина 2
+    edge_xmin: 1313 - Ширина 1
+    edge_xmax: 1314 - Ширина 2
+    faces: 1315 - {{ count }} грань
+    faces_plural: 1316 - {{ count }} граней
+    face_zmin: 1317 - Тил
+    face_zmax: 1318 - Лице
     warning:
-      no_material: 1315 - Ваша модель не містить матеріалів!
-      no_material_type: 1316 - Незалежно від типу '{{ type }}'
+      no_material: 1319 - Ваша модель не містить матеріалів!
+      no_material_type: 1320 - Незалежно від типу '{{ type }}'
     error:
-      not_part: 1317 - Об'єкт, на який наведено, не є деталлю (компонентом)
-      not_edge: 1318 - Вказана грань не є торцем панелі
-      not_face: 1319 - Вказана грань не є площиною панелі
-      wrong_material_type: 1320 - Вказана деталь має бути типу '{{ type }}'
+      not_part: 1321 - Об'єкт, на який наведено, не є деталлю (компонентом)
+      not_edge: 1322 - Вказана грань не є торцем панелі
+      not_face: 1323 - Вказана грань не є площиною панелі
+      wrong_material_type: 1324 - Вказана деталь має бути типу '{{ type }}'
   smart_axes:
-    title: 1321 - Орієнтація
-    action_0: 1322 - Скасувати
-    action_0_status: 1323 - Натисніть на деталь, щоб перевернути її екземпляр уздовж одного з її розмірів
-    action_1: 1324 - Поміняти довжину ↔ ширину
-    action_1_status: 1325 - Натисніть на деталь, щоб поміняти її довжину на ширину
-    action_2: 1326 - Поміняйте Лице ↔ Тил
-    action_2_status: 1327 - Клацніть на деталі, щоб поміняти читання її лиця на зворотню сторону
-    action_3: 1328 - Адаптувати осі
-    action_3_status: 1329 - Наведіть на грань деталі та натисніть на ребро, щоб адаптувати осі
-    action_4: 1330 - Змінити початок координат
-    action_4_status: 1331 - Наведіть вказівник на грань деталі та клацніть на точці, щоб розташувати її початок координат
-    action_option_group_direction: 1332 - Напрямок
-    action_option_direction_0: 1333 - Д
-    action_option_direction_1: 1334 - Ш
-    action_option_direction_2: 1335 - Т
-    action_option_direction_0_status: 1336 - Повернути деталь у довжину
-    action_option_direction_1_status: 1337 - Повернути деталь у ширину
-    action_option_direction_2_status: 1338 - Повернути деталь у її товщині
+    title: 1325 - Орієнтація
+    action_0: 1326 - Скасувати
+    action_0_status: 1327 - Натисніть на деталь, щоб перевернути її екземпляр уздовж одного з її розмірів
+    action_1: 1328 - Поміняти довжину ↔ ширину
+    action_1_status: 1329 - Натисніть на деталь, щоб поміняти її довжину на ширину
+    action_2: 1330 - Поміняйте Лице ↔ Тил
+    action_2_status: 1331 - Клацніть на деталі, щоб поміняти читання її лиця на зворотню сторону
+    action_3: 1332 - Адаптувати осі
+    action_3_status: 1333 - Наведіть на грань деталі та натисніть на ребро, щоб адаптувати осі
+    action_4: 1334 - Змінити початок координат
+    action_4_status: 1335 - Наведіть вказівник на грань деталі та клацніть на точці, щоб розташувати її початок координат
+    action_option_group_direction: 1336 - Напрямок
+    action_option_direction_0: 1337 - Д
+    action_option_direction_1: 1338 - Ш
+    action_option_direction_2: 1339 - Т
+    action_option_direction_0_status: 1340 - Повернути деталь у довжину
+    action_option_direction_1_status: 1341 - Повернути деталь у ширину
+    action_option_direction_2_status: 1342 - Повернути деталь у її товщині
     warning:
-      more_entities: 1339 - {{ count_used }} екземпляри, що мають однакове визначення, будуть змінені
+      more_entities: 1343 - {{ count_used }} екземпляри, що мають однакове визначення, будуть змінені
     error:
-      not_part: 1340 - Об'єкт, на який наведено, не є деталлю (компонентом)
-      not_orientable: 1341 - Тип цієї деталі не дозволяє її зорієнтувати
+      not_part: 1344 - Об'єкт, на який наведено, не є деталлю (компонентом)
+      not_orientable: 1345 - Тип цієї деталі не дозволяє її зорієнтувати
   smart_export:
-    title: 1342 - Експорт
-    action_0: 1343 - Експортувати деталь 3D
-    action_0_status: 1344 - Натисніть на деталь
-    action_1: 1345 - Експортувати деталь 2D
-    action_1_status: 1346 - Натисніть на одну грань деталі
-    action_2: 1347 - Експортувати грань
-    action_2_status: 1348 - Натисніть на одну грань
-    action_3: 1349 - Експортувати шлях
-    action_3_status: 1350 - Натисніть на ребро
-    action_option_group_file_format: 1351 - Формат
-    action_option_group_unit: 1352 - Одиниці
-    action_option_group_faces: 1353 - Грані
-    action_option_group_options: 1354 - Опції
-    action_option_file_format_dxf_status: 1355 - Експорт до файлу DXF
-    action_option_file_format_stl_status: 1356 - Експортувати в файл STL
-    action_option_file_format_obj_status: 1357 - Експортувати до файлу OBJ
-    action_option_file_format_svg_status: 1358 - Експортувати до файлу SVG
+    title: 1346 - Експорт
+    action_0: 1347 - Експортувати деталь 3D
+    action_0_status: 1348 - Натисніть на деталь
+    action_1: 1349 - Експортувати деталь 2D
+    action_1_status: 1350 - Натисніть на одну грань деталі
+    action_2: 1351 - Експортувати грань
+    action_2_status: 1352 - Натисніть на одну грань
+    action_3: 1353 - Експортувати шлях
+    action_3_status: 1354 - Натисніть на ребро
+    action_option_group_file_format: 1355 - Формат
+    action_option_group_unit: 1356 - Одиниці
+    action_option_group_faces: 1357 - Грані
+    action_option_group_options: 1358 - Опції
+    action_option_file_format_dxf_status: 1359 - Експорт до файлу DXF
+    action_option_file_format_stl_status: 1360 - Експортувати в файл STL
+    action_option_file_format_obj_status: 1361 - Експортувати до файлу OBJ
+    action_option_file_format_svg_status: 1362 - Експортувати до файлу SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -1751,9 +1755,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1368 - Виокремити отвори, що проходять крізь і злити глибини для кожної порожнини
-    action_option_options_include_paths_status: 1369 - Експортувати як шляхи непов'язаних з гранню ребер, що містяться в деталі
+    action_option_options_merge_holes_status: 1372 - Виокремити отвори, що проходять крізь і злити глибини для кожної порожнини
+    action_option_options_include_paths_status: 1373 - Експортувати як шляхи непов'язаних з гранню ребер, що містяться в деталі
     error:
-      not_part: 1370 - Ця площина не є частиною деталі (компонента)
-      not_flat_face: 1371 - Ця грань не є плоскою
-      incompatible_active_path: 1372 - Шлях активний не дозволяє експортувати цей елемент
+      not_part: 1374 - Ця площина не є частиною деталі (компонента)
+      not_flat_face: 1375 - Ця грань не є плоскою
+      incompatible_active_path: 1376 - Шлях активний не дозволяє експортувати цей елемент
