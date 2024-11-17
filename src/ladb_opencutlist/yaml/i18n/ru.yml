@@ -7,6 +7,8 @@ default:
   minimize: Свернуть
   maximize: Развернуть
   cancel: Отмена
+  # stop computation and return best result so far
+  stop: Стоп
   validate: Принять
   confirm: Подтвердить
   ok: Ok
@@ -25,7 +27,7 @@ default:
   caution: Внимание!
   remove: Удалить
   remove_all: Удалить все
-  delete: Удалить
+  delete: Добавить
   create: Создать
   duplicate: Дубликат
   ignore: Пропустить
@@ -44,7 +46,9 @@ default:
   good: Хороший
   bad: Плохой
   by: фон
+  # date format in use for language
   date_format: "d/m/Y G:i"
+  # short date format in use for language
   date_format_short: d/m/Y
   unit_0: Дюйм
   unit_1: Фут
@@ -85,6 +89,9 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Изменить экземпляр
+      edit_parent_part_instance: "Измените группу/компонент, содержащие экземпляр"
+      hide_part_instance: Скрыть экземпляр
+      unhide_part_instance: Раскрыть экземпляр
       edit_part_instance_properties: Редактирование свойств экземпляра
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -357,7 +364,10 @@ tab:
       select_unselect_all_parts: Выделение/отмена выделения всех деталей в группе
       select_parts_in_cutlist: Выделите деталь на карте раскроя
       select_parts_in_cutlist_plural: "Выделено {{ count }} детали на карте раскроя"
+      # used in estimate to setup the cutting diagram
       setup_group_cuttingdiagram: "Настройка раскроя '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      # used in estimate to setup the new packing
+      setup_group_packing: "Настройка раскроя '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Открыть URL-адрес детали
     menu:
       show_all_groups: Показать все группы
@@ -376,6 +386,7 @@ tab:
       group_numbers_save: Сохранить номера деталей этой группы
       group_numbers_reset: Повторная индексация номеров деталей этой группы
       group_cuttingdiagram: Карта раскроя
+      group_packing: Карта раскроя
       group_labels: Печать этикеток для деталей в группе
       edit_material: "Редактировать материал '{{ material_name }}'"
       expand_all: Развернуть все строки
@@ -763,8 +774,6 @@ tab:
       option_trimming: Обрезка
       option_trimming_help_1d: "Размер обрезки на конце доски или кромочной ленты, для удаления дефектного края."
       option_trimming_help_2d: Размер обрезки листа по периметру для удаления дефектов внешнего вида листа и его прямоугольного выравнивания.
-      option_rotations: Вращение
-      option_rotations_help_2d: Минимальное расстояние между деталями.
       option_optimization: Уровень оптимизации
       option_optimization_help: "Уровень оптимизации определяет объем цифровой обработки данных модели, что влияет на продолжительность расчета."
       option_optimization_0: Средний
@@ -1473,7 +1482,7 @@ tab:
     label: Инструкции
     title: Инструкции
     help: |
-      Вот пополняемый список видео, просмотр которых поможет научиться использовать возможности *OpenCutList*.
+      Представляем подборку видео, просмотр которых поможет эффективнее использовать возможности *OpenCutList*.
     submit: Отправить видео
     submit_info: |
       Вы создали видео, которое поможет эффективно использовать **OpenCutList**, и хотите, чтобы оно появилось здесь.
