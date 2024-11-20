@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabMaterials = function (element, options, dialog) {
+    const LadbTabMaterials = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.currencySymbol = '';
@@ -36,7 +36,7 @@
     // List /////
 
     LadbTabMaterials.prototype.loadList = function (callback) {
-        var that = this;
+        const that = this;
 
         this.materials = [];
         this.$page.empty();
@@ -50,11 +50,11 @@
 
             rubyCallCommand('materials_list', that.generateOptions, function (response) {
 
-                var errors = response.errors;
-                var warnings = response.warnings;
-                var filename = response.filename;
-                var modelName = response.model_name;
-                var materials = response.materials;
+                const errors = response.errors;
+                const warnings = response.warnings;
+                const filename = response.filename;
+                const modelName = response.model_name;
+                const materials = response.materials;
 
                 // Keep useful data
                 that.lengthUnitStrippedname = response.length_unit_strippedname;
@@ -86,7 +86,7 @@
 
                 // Bind rows
                 $('.ladb-material-box', that.$page).each(function (index) {
-                    var $box = $(this);
+                    const $box = $(this);
                     $box.on('click', function (e) {
                         $(this).blur();
                         $('.ladb-click-tool', $(this)).click();
@@ -95,14 +95,14 @@
                 });
                 $('.ladb-btn-edit-material', that.$page).on('click', function() {
                     $(this).blur();
-                    var materialId = $(this).closest('.ladb-material-box').data('material-id');
+                    const materialId = $(this).closest('.ladb-material-box').data('material-id');
                     that.editMaterial(materialId);
                     return false;
                 });
                 $('.ladb-btn-set-current', that.$page)
                     .on('click', function () {
                         $(this).blur();
-                        var materialId = $(this).closest('.ladb-material-box').data('material-id');
+                        const materialId = $(this).closest('.ladb-material-box').data('material-id');
                         that.setCurrentMaterial(materialId);
                         if (that.generateOptions.minimize_on_smart_paint) {
                             that.dialog.minimize();
@@ -139,9 +139,9 @@
     // Material /////
 
     LadbTabMaterials.prototype.newMaterial = function (name, color, type) {
-        var that = this;
+        const that = this;
 
-        var material = {
+        const material = {
             name: name ? name : '',
             color: color ? color : '#ffffff',
             attributes: {
@@ -151,7 +151,7 @@
             }
         };
 
-        var $modal = this.appendModalInside('ladb_materials_modal_new', 'tabs/materials/_modal-new.twig', {
+        const $modal = this.appendModalInside('ladb_materials_modal_new', 'tabs/materials/_modal-new.twig', {
             capabilities: that.dialog.capabilities,
             mass_unit_strippedname: that.massUnitStrippedname,
             length_unit_strippedname: that.lengthUnitStrippedname,
@@ -159,15 +159,15 @@
         });
 
         // Fetch UI elements
-        var $btnCreate = $('#ladb_materials_create', $modal);
+        const $btnCreate = $('#ladb_materials_create', $modal);
 
         // Define useful functions
-        var fnUpdateBtnCreateStatus = function() {
+        const fnUpdateBtnCreateStatus = function() {
             $btnCreate.prop('disabled', $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
         };
 
         // Bind form
-        var $inputs = this.bindMaterialPropertiesForm($modal, material, true);
+        const $inputs = this.bindMaterialPropertiesForm($modal, material, true);
 
         // Bind inputs
         $inputs.inputName.on('keyup change', fnUpdateBtnCreateStatus);
@@ -229,9 +229,9 @@
     };
 
     LadbTabMaterials.prototype.editMaterial = function (id, tab, propertiesTab, callback, updatedCallback) {
-        var that = this;
+        const that = this;
 
-        var material = this.findMaterialById(id);
+        const material = this.findMaterialById(id);
         if (material) {
 
             if (tab === undefined) {
@@ -253,7 +253,7 @@
             // Keep the edited material
             this.editedMaterial = material;
 
-            var $modal = this.appendModalInside('ladb_materials_modal_edit', 'tabs/materials/_modal-edit.twig', {
+            const $modal = this.appendModalInside('ladb_materials_modal_edit', 'tabs/materials/_modal-edit.twig', {
                 capabilities: that.dialog.capabilities,
                 mass_unit_strippedname: that.massUnitStrippedname,
                 length_unit_strippedname: that.lengthUnitStrippedname,
@@ -263,34 +263,34 @@
             });
 
             // Fetch UI elements
-            var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
-            var $btnTabTexture = $('#ladb_materials_btn_tab_texture', $modal);
-            var $inputTextureChanged = $('#ladb_materials_input_texture_changed', $modal);
-            var $inputTextureRatio = $('#ladb_materials_input_texture_ratio', $modal);
-            var $inputTextureRotation = $('#ladb_materials_input_texture_rotation', $modal);
-            var $divTextureThumbnail = $('#ladb_materials_div_texture_thumbnail', $modal);
-            var $imgTexture = $('#ladb_materials_img_texture', $modal);
-            var $spanTextureWidth = $('#ladb_materials_span_texture_width', $modal);
-            var $spanTextureHeight = $('#ladb_materials_span_texture_height', $modal);
-            var $btnTextureLoad = $('#ladb_materials_btn_texture_load', $modal);
-            var $btnTextureClear = $('#ladb_materials_btn_texture_clear', $modal);
-            var $btnTextureRotateLeft = $('#ladb_materials_btn_texture_rotate_left', $modal);
-            var $btnTextureRotateRight = $('#ladb_materials_btn_texture_rotate_right', $modal);
-            var $inputTextureWidth = $('#ladb_materials_input_texture_width', $modal);
-            var $inputTextureHeight = $('#ladb_materials_input_texture_height', $modal);
-            var $btnTextureSizeLock = $('#ladb_material_btn_texture_size_lock', $modal);
-            var $btnDelete = $('#ladb_materials_delete', $modal);
-            var $btnDuplicate = $('#ladb_materials_duplicate', $modal);
-            var $btnExportToSkm = $('#ladb_materials_export_to_skm', $modal);
-            var $btnUpdate = $('#ladb_materials_update', $modal);
+            const $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
+            const $btnTabTexture = $('#ladb_materials_btn_tab_texture', $modal);
+            const $inputTextureChanged = $('#ladb_materials_input_texture_changed', $modal);
+            const $inputTextureRatio = $('#ladb_materials_input_texture_ratio', $modal);
+            const $inputTextureRotation = $('#ladb_materials_input_texture_rotation', $modal);
+            const $divTextureThumbnail = $('#ladb_materials_div_texture_thumbnail', $modal);
+            const $imgTexture = $('#ladb_materials_img_texture', $modal);
+            const $spanTextureWidth = $('#ladb_materials_span_texture_width', $modal);
+            const $spanTextureHeight = $('#ladb_materials_span_texture_height', $modal);
+            const $btnTextureLoad = $('#ladb_materials_btn_texture_load', $modal);
+            const $btnTextureClear = $('#ladb_materials_btn_texture_clear', $modal);
+            const $btnTextureRotateLeft = $('#ladb_materials_btn_texture_rotate_left', $modal);
+            const $btnTextureRotateRight = $('#ladb_materials_btn_texture_rotate_right', $modal);
+            const $inputTextureWidth = $('#ladb_materials_input_texture_width', $modal);
+            const $inputTextureHeight = $('#ladb_materials_input_texture_height', $modal);
+            const $btnTextureSizeLock = $('#ladb_material_btn_texture_size_lock', $modal);
+            const $btnDelete = $('#ladb_materials_delete', $modal);
+            const $btnDuplicate = $('#ladb_materials_duplicate', $modal);
+            const $btnExportToSkm = $('#ladb_materials_export_to_skm', $modal);
+            const $btnUpdate = $('#ladb_materials_update', $modal);
 
             // Bind form
-            var $inputs = this.bindMaterialPropertiesForm($modal, material, false, function () {
+            const $inputs = this.bindMaterialPropertiesForm($modal, material, false, function () {
                 $btnExportToSkm.prop('disabled', true);
             });
 
             // Define useful functions
-            var fnFetchAttributes = function (attributes) {
+            const fnFetchAttributes = function (attributes) {
                 attributes.type = parseInt($inputs.selectType.val());
                 attributes.description = $inputs.inputDescription.val();
                 attributes.url = $inputs.inputUrl.val();
@@ -309,13 +309,13 @@
                 attributes.std_volumic_masses = $inputs.editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
                 attributes.std_prices = $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
             };
-            var fnResetTextureRotation = function () {
-                var rotation = parseInt($inputTextureRotation.val());
+            const fnResetTextureRotation = function () {
+                const rotation = parseInt($inputTextureRotation.val());
                 $imgTexture.parent().removeClass("ladb-rotate" + rotation);
                 $inputTextureRotation.val(0);
             }
-            var fnRotateTexture = function (angle) {
-                var rotation = parseInt($inputTextureRotation.val());
+            const fnRotateTexture = function (angle) {
+                let rotation = parseInt($inputTextureRotation.val());
                 $imgTexture.parent().removeClass("ladb-rotate" + rotation);
                 if (angle < 0 && rotation === 0) {
                     rotation = 360;
@@ -324,14 +324,14 @@
                 $imgTexture.parent().addClass("ladb-rotate" + rotation);
                 $inputTextureRotation.val(rotation);
                 if (Math.abs(angle) === 90) {
-                    var tw = $inputTextureWidth.val();
-                    var th = $inputTextureHeight.val();
+                    const tw = $inputTextureWidth.val();
+                    const th = $inputTextureHeight.val();
                     $inputTextureWidth.val(th);
                     $inputTextureHeight.val(tw);
                     material.texture_ratio = 1 / material.texture_ratio;
                 }
             };
-            var fnGetMaterialTexture = function () {
+            const fnGetMaterialTexture = function () {
                 if (material.textured) {
                     rubyCallCommand('materials_get_texture_command', {
                         name: material.name
@@ -355,7 +355,7 @@
                     fnUpdateTextureTab();
                 }
             };
-            var fnComputeSizeAspectRatio = function (isWidthMaster) {
+            const fnComputeSizeAspectRatio = function (isWidthMaster) {
                 if ($btnTextureSizeLock.data('locked')) {
                     rubyCallCommand('core_compute_size_aspect_ratio', {
                         width: $inputTextureWidth.val() ? $inputTextureWidth.val() : '1m',
@@ -368,10 +368,10 @@
                     });
                 }
             };
-            var fnUpdateBtnUpdateStatus = function() {
+            const fnUpdateBtnUpdateStatus = function() {
                 $btnUpdate.prop('disabled', $inputs.inputName.data('ladb-invalid') || $inputs.inputColor.data('ladb-invalid'))
             };
-            var fnUpdateTextureTab = function () {
+            const fnUpdateTextureTab = function () {
                 if ($imgTexture.attr('src') !== '') {
                     $('.ladb-hidden-no-texture', $modal).show();
                     $('.ladb-hidden-textured', $modal).hide();
@@ -470,7 +470,7 @@
 
             });
             $btnTextureSizeLock.on('click', function () {
-                var $i = $('i', $btnTextureSizeLock);
+                const $i = $('i', $btnTextureSizeLock);
                 if ($btnTextureSizeLock.data('locked')) {
                     $i.addClass('ladb-opencutlist-icon-unlock');
                     $i.removeClass('ladb-opencutlist-icon-lock');
@@ -502,7 +502,7 @@
             });
             $btnUpdate.on('click', function () {
 
-                var material = {
+                const material = {
                     name: that.editedMaterial.name,
                     display_name: $inputs.inputName.val().trim(),
                     color: $inputs.inputColor.val(),
@@ -532,7 +532,7 @@
                         } else {
 
                             // Reload the list
-                            var materialId = that.editedMaterial.id;
+                            const materialId = that.editedMaterial.id;
                             that.loadList(function() {
                                 that.scrollSlideToTarget(null, $('#ladb_material_' + materialId, that.$page), false, true);
                             });
@@ -572,7 +572,7 @@
     };
 
     LadbTabMaterials.prototype.duplicateMaterial = function (material) {
-        var that = this;
+        const that = this;
 
         this.dialog.prompt(i18next.t('default.duplicate'), i18next.t('tab.materials.duplicate.message', { material_name: material.display_name }), material.display_name, function (value) {
 
@@ -592,7 +592,7 @@
                 } else {
 
                     // Reload the list
-                    var materialId = response.id;
+                    const materialId = response.id;
                     that.loadList(function() {
                         that.scrollSlideToTarget(null, $('#ladb_material_' + materialId, that.$page), false, true);
                     });
@@ -608,7 +608,7 @@
     };
 
     LadbTabMaterials.prototype.deleteMaterial = function (material) {
-        var that = this;
+        const that = this;
 
         this.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.materials.delete.message', { material_name: material.display_name }), function () {
 
@@ -641,7 +641,7 @@
     };
 
     LadbTabMaterials.prototype.importFromSkm = function () {
-        var that = this;
+        const that = this;
 
         // Flag to ignore next material change event
         that.ignoreNextMaterialEvents = true;
@@ -655,7 +655,7 @@
                 that.dialog.notifyErrors(response.errors);
             } else {
                 that.loadList(function() {
-                    var $material = $('#ladb_material_' + response.material_id, that.$page);
+                    const $material = $('#ladb_material_' + response.material_id, that.$page);
                     that.scrollSlideToTarget(null, $material, true, true);
                 });
             }
@@ -664,7 +664,7 @@
     };
 
     LadbTabMaterials.prototype.exportToSkm = function (material) {
-        var that = this;
+        const that = this;
 
         rubyCallCommand('materials_export_to_skm', {
             name: material.name,
@@ -682,7 +682,7 @@
     };
 
     LadbTabMaterials.prototype.setCurrentMaterial = function (materialId) {
-        var material = this.findMaterialById(materialId);
+        const material = this.findMaterialById(materialId);
         if (material) {
             rubyCallCommand('materials_smart_paint_command', {
                 tab_name_to_show_on_quit: this.generateOptions.minimize_on_smart_paint ? 'materials' : null,
@@ -692,7 +692,7 @@
     };
 
     LadbTabMaterials.prototype.purgeUnused = function () {
-        var that = this;
+        const that = this;
 
         // Flag to ignore next material change event
         that.ignoreNextMaterialEvents = true;
@@ -714,7 +714,7 @@
     // Options /////
 
     LadbTabMaterials.prototype.loadOptions = function (callback) {
-        var that = this;
+        const that = this;
 
         rubyCallCommand('core_get_model_preset', { dictionary: 'materials_options' }, function (response) {
 
@@ -730,7 +730,7 @@
     };
 
     LadbTabMaterials.prototype.editOptions = function (tab) {
-        var that = this;
+        const that = this;
 
         if (tab === undefined) {
             tab = this.lastOptionsTab;
@@ -740,30 +740,30 @@
         }
         this.lastOptionsTab = tab;
 
-        var $modal = that.appendModalInside('ladb_materials_modal_options', 'tabs/materials/_modal-options.twig', {
+        const $modal = that.appendModalInside('ladb_materials_modal_options', 'tabs/materials/_modal-options.twig', {
             tab: tab
         });
 
         // Fetch UI elements
-        var $tabs = $('a[data-toggle="tab"]', $modal);
-        var $widgetPreset = $('.ladb-widget-preset', $modal);
-        var $inputMinimizeOnSmartPaint = $('#ladb_input_minimize_on_smart_paint', $modal);
-        var $sortableMaterialOrderStrategy = $('#ladb_sortable_material_order_strategy', $modal);
-        var $btnUpdate = $('#ladb_materials_options_update', $modal);
+        const $tabs = $('a[data-toggle="tab"]', $modal);
+        const $widgetPreset = $('.ladb-widget-preset', $modal);
+        const $inputMinimizeOnSmartPaint = $('#ladb_input_minimize_on_smart_paint', $modal);
+        const $sortableMaterialOrderStrategy = $('#ladb_sortable_material_order_strategy', $modal);
+        const $btnUpdate = $('#ladb_materials_options_update', $modal);
 
         // Define useful functions
-        var fnFetchOptions = function (options) {
+        const fnFetchOptions = function (options) {
 
             options.minimize_on_smart_paint = $inputMinimizeOnSmartPaint.is(':checked');
 
-            var properties = [];
+            const properties = [];
             $sortableMaterialOrderStrategy.children('li').each(function () {
                 properties.push($(this).data('property'));
             });
             options.material_order_strategy = properties.join('>');
 
         };
-        var fnFillInputs = function (options) {
+        const fnFillInputs = function (options) {
 
             // Checkboxes
 
@@ -771,7 +771,7 @@
 
             // Sortables
 
-            var properties, property, i;
+            let properties, property, i;
 
             // Material order sortables
 
@@ -785,9 +785,9 @@
                 }));
             }
             $sortableMaterialOrderStrategy.find('a').on('click', function () {
-                var $item = $(this).parent().parent();
-                var $icon = $('i', $(this));
-                var property = $item.data('property');
+                const $item = $(this).parent().parent();
+                const $icon = $('i', $(this));
+                let property = $item.data('property');
                 if (property.startsWith('-')) {
                     property = property.substring(1);
                     $icon.addClass('ladb-opencutlist-icon-sort-asc');
@@ -850,8 +850,8 @@
     // Internals /////
 
     LadbTabMaterials.prototype.findMaterialById = function (id) {
-        var material;
-        for (var i = 0; i < this.materials.length; i++) {
+        let material;
+        for (let i = 0; i < this.materials.length; i++) {
             material = this.materials[i];
             if (material.id === id) {
                 return material;
@@ -863,17 +863,17 @@
     LadbTabMaterials.prototype.showObsolete = function (messageI18nKey, forced) {
         if (!this.isObsolete() || forced) {
 
-            var that = this;
+            const that = this;
 
             // Set tab as obsolete
             this.setObsolete(true);
 
-            var $modal = this.appendModalInside('ladb_materials_modal_obsolete', 'tabs/materials/_modal-obsolete.twig', {
+            const $modal = this.appendModalInside('ladb_materials_modal_obsolete', 'tabs/materials/_modal-obsolete.twig', {
                 messageI18nKey: messageI18nKey
             });
 
             // Fetch UI elements
-            var $btnRefresh = $('#ladb_materials_obsolete_refresh', $modal);
+            const $btnRefresh = $('#ladb_materials_obsolete_refresh', $modal);
 
             // Bind buttons
             $btnRefresh.on('click', function () {
@@ -888,47 +888,47 @@
     };
 
     LadbTabMaterials.prototype.bindMaterialPropertiesForm = function ($modal, material, setAttributeToDefaults, inputChangeCallback) {
-        var that = this;
+        const that = this;
 
         // Fetch UI elements
-        var $tabs = $('section a[data-toggle="tab"]', $modal);
-        var $navTabEstimateOptions = $('#nav_tab_edit_material_general_estimate_options', $modal);
-        var $widgetPreset = $('.ladb-widget-preset', $modal);
-        var $btnTabAttributes = $('#ladb_materials_btn_tab_general_attributes', $modal);
-        var $inputName = $('#ladb_materials_input_name', $modal);
-        var $inputNameWarning = $('#ladb_materials_input_name_warning', $modal);
-        var $inputColor = $('#ladb_materials_input_color', $modal);
-        var $inputColorWarning = $('#ladb_materials_input_color_warning', $modal);
-        var $selectType = $('#ladb_materials_input_type', $modal);
-        var $inputDescription = $('#ladb_materials_input_description', $modal);
-        var $inputUrl = $('#ladb_materials_input_url', $modal);
-        var $inputThickness = $('#ladb_materials_input_thickness', $modal);
-        var $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
-        var $inputWidthIncrease = $('#ladb_materials_input_width_increase', $modal);
-        var $inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', $modal);
-        var $inputStdLengths = $('#ladb_materials_input_std_lengths', $modal);
-        var $inputStdWidths = $('#ladb_materials_input_std_widths', $modal);
-        var $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $modal);
-        var $inputStdSections = $('#ladb_materials_input_std_sections', $modal);
-        var $inputStdSizes = $('#ladb_materials_input_std_sizes', $modal);
-        var $selectGrained = $('#ladb_materials_select_grained', $modal);
-        var $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
-        var $selectRawEstimated = $('#ladb_materials_select_raw_estimated', $modal);
-        var $editorStdVolumicMasses = $('#ladb_materials_editor_std_volumic_masses', $modal);
-        var $editorStdPrices = $('#ladb_materials_editor_std_prices', $modal);
+        const $tabs = $('section a[data-toggle="tab"]', $modal);
+        const $navTabEstimateOptions = $('#nav_tab_edit_material_general_estimate_options', $modal);
+        const $widgetPreset = $('.ladb-widget-preset', $modal);
+        const $btnTabAttributes = $('#ladb_materials_btn_tab_general_attributes', $modal);
+        const $inputName = $('#ladb_materials_input_name', $modal);
+        const $inputNameWarning = $('#ladb_materials_input_name_warning', $modal);
+        const $inputColor = $('#ladb_materials_input_color', $modal);
+        const $inputColorWarning = $('#ladb_materials_input_color_warning', $modal);
+        const $selectType = $('#ladb_materials_input_type', $modal);
+        const $inputDescription = $('#ladb_materials_input_description', $modal);
+        const $inputUrl = $('#ladb_materials_input_url', $modal);
+        const $inputThickness = $('#ladb_materials_input_thickness', $modal);
+        const $inputLengthIncrease = $('#ladb_materials_input_length_increase', $modal);
+        const $inputWidthIncrease = $('#ladb_materials_input_width_increase', $modal);
+        const $inputThicknessIncrease = $('#ladb_materials_input_thickness_increase', $modal);
+        const $inputStdLengths = $('#ladb_materials_input_std_lengths', $modal);
+        const $inputStdWidths = $('#ladb_materials_input_std_widths', $modal);
+        const $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $modal);
+        const $inputStdSections = $('#ladb_materials_input_std_sections', $modal);
+        const $inputStdSizes = $('#ladb_materials_input_std_sizes', $modal);
+        const $selectGrained = $('#ladb_materials_select_grained', $modal);
+        const $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
+        const $selectRawEstimated = $('#ladb_materials_select_raw_estimated', $modal);
+        const $editorStdVolumicMasses = $('#ladb_materials_editor_std_volumic_masses', $modal);
+        const $editorStdPrices = $('#ladb_materials_editor_std_prices', $modal);
 
         // Define useful functions
-        var fnFetchType = function (options) {
+        const fnFetchType = function (options) {
             options.type = parseInt($selectType.val());
         };
-        var fnFetchStds = function (options) {
+        const fnFetchStds = function (options) {
             options.std_lengths = $inputStdLengths.ladbTextinputTokenfield('getValidTokensList');
             options.std_widths = $inputStdWidths.ladbTextinputTokenfield('getValidTokensList');
             options.std_thicknesses = $inputStdThicknesses.ladbTextinputTokenfield('getValidTokensList');
             options.std_sections = $inputStdSections.ladbTextinputTokenfield('getValidTokensList');
             options.std_sizes = $inputStdSizes.ladbTextinputTokenfield('getValidTokensList');
         };
-        var fnFetchOptions = function (options) {
+        const fnFetchOptions = function (options) {
             fnFetchType(options);
             options.thickness = $inputThickness.val();
             options.length_increase = $inputLengthIncrease.val();
@@ -941,8 +941,8 @@
             options.std_volumic_masses = $editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
             options.std_prices = $editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
         };
-        var fnFillInputs = function (options) {
-            var fnSetTokens = function ($input, tokens) {
+        const fnFillInputs = function (options) {
+            const fnSetTokens = function ($input, tokens) {
                 // Workaround for empty string tokens
                 $input.tokenfield('setTokens', tokens === '' ? ' ' : tokens);
             };
@@ -962,11 +962,11 @@
             $editorStdVolumicMasses.ladbEditorStdAttributes('setStdAttributes', [ options.std_volumic_masses ]);
             $editorStdPrices.ladbEditorStdAttributes('setStdAttributes', [ options.std_prices ]);
         };
-        var fnSetStdAttributesTypeAndStds = function () {
-            var options = {};
+        const fnSetStdAttributesTypeAndStds = function () {
+            const options = {};
             fnFetchType(options);
             fnFetchStds(options);
-            var stds = {
+            const stds = {
                 stdLengths: options.std_lengths ? options.std_lengths.split(';') : [],
                 stdWidths: options.std_widths ? options.std_widths.split(';') : [],
                 stdThicknesses: options.std_thicknesses ? options.std_thicknesses.split(';') : [],
@@ -976,7 +976,7 @@
             $editorStdVolumicMasses.ladbEditorStdAttributes('setTypeAndStds', [ options.type, stds ]);
             $editorStdPrices.ladbEditorStdAttributes('setTypeAndStds', [ options.type, stds ]);
         };
-        var fnComputeFieldsVisibility = function (type) {
+        const fnComputeFieldsVisibility = function (type) {
             switch (type) {
                 case 0:   // TYPE_UNKNOWN
                     $inputThickness.closest('section').hide();
@@ -1081,7 +1081,7 @@
                     $inputThickness.closest('section').hide();
             }
         };
-        var fnCheckInputNameValue = function(verbose) {
+        const fnCheckInputNameValue = function(verbose) {
             if ($inputName.val().length > 0) {
                 $inputName.data('ladb-invalid', false);
                 if (verbose) {
@@ -1094,7 +1094,7 @@
                 }
             }
         };
-        var fnCheckInputColorValue = function(verbose) {
+        const fnCheckInputColorValue = function(verbose) {
             if ($inputColor.val().match(/^#[0-9a-f]{6}$/i)) {
                 $inputColor.data('ladb-invalid', false);
                 if (verbose) {
@@ -1151,7 +1151,7 @@
                     case 3: /* TYPE_DIMENSIONAL */
                     case 4: /* TYPE_EDGE */
                     case 6: /* TYPE_VENEER */
-                        var unitKeys = [ 'kg_m3', 'kg_ft3', 'lb_ft3', 'lb_m3' ];
+                        const unitKeys = [ 'kg_m3', 'kg_ft3', 'lb_ft3', 'lb_m3' ];
                         if (rowPos === 'N') {
                             unitKeys.push('kg_i');
                             unitKeys.push('lb_i');
@@ -1200,7 +1200,7 @@
                     case 3: /* TYPE_DIMENSIONAL */
                     case 4: /* TYPE_EDGE */
                     case 6: /* TYPE_VENEER */
-                        var unitKeys = [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3' ];
+                        const unitKeys = [ '$_m', '$_m2', '$_m3', '$_ft', '$_ft2', '$_ft3' ];
                         if (rowPos === 'N') {
                             unitKeys.push('$_i');
                         }
@@ -1221,7 +1221,7 @@
 
         // Bind select
         $selectType.on('change', function () {
-            var options = {};
+            const options = {};
             fnFetchType(options);
 
             fnComputeFieldsVisibility(options.type);
@@ -1324,22 +1324,22 @@
     LadbTabMaterials.prototype.registerCommands = function () {
         LadbAbstractTab.prototype.registerCommands.call(this);
 
-        var that = this;
+        const that = this;
 
         this.registerCommand('new_material', function (parameters) {
             setTimeout(function () {     // Use setTimeout to give time to UI to refresh
-                var name = parameters ? parameters.name : null;
-                var color = parameters ? parameters.color : null;
-                var type = parameters ? parameters.type : null;
+                const name = parameters ? parameters.name : null;
+                const color = parameters ? parameters.color : null;
+                const type = parameters ? parameters.type : null;
                 that.newMaterial(name, color, type);
             }, 1);
         });
         this.registerCommand('edit_material', function (parameters) {
-            var materialId = parameters.materialId;
-            var tab = parameters.tab;
-            var propertiesTab = parameters.propertiesTab;
-            var callback = parameters.callback;
-            var updatedCallback = parameters.updatedCallback;
+            const materialId = parameters.materialId;
+            const tab = parameters.tab;
+            const propertiesTab = parameters.propertiesTab;
+            const callback = parameters.callback;
+            const updatedCallback = parameters.updatedCallback;
             window.requestAnimationFrame(function () {
                 that.loadList(function () {
                     that.editMaterial(materialId, tab, propertiesTab, callback, updatedCallback);
@@ -1351,7 +1351,7 @@
     LadbTabMaterials.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
-        var that = this;
+        const that = this;
 
         // Bind buttons
         this.$btnList.on('click', function () {
@@ -1421,7 +1421,7 @@
         });
         addEventCallback([ 'on_material_set_current' ], function (params) {
             if (that.materials) {
-                for (var i = 0; i < that.materials.length; i++) {
+                for (let i = 0; i < that.materials.length; i++) {
                     if (that.materials[i].name === params.material_name) {
                         if (that.currentMaterial !== that.materials[i]) {
                             that.currentMaterial = that.materials[i];
@@ -1437,7 +1437,7 @@
     };
 
     LadbTabMaterials.prototype.processInitializedCallback = function (initializedCallback) {
-        var that = this;
+        const that = this;
 
         // Load Options
         that.loadOptions(function () {
@@ -1459,9 +1459,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbTabMaterials.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -1477,7 +1477,7 @@
         })
     }
 
-    var old = $.fn.ladbTabMaterials;
+    const old = $.fn.ladbTabMaterials;
 
     $.fn.ladbTabMaterials = Plugin;
     $.fn.ladbTabMaterials.Constructor = LadbTabMaterials;

@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbModalSmartExportToolAction2 = function (element, options, dialog) {
+    const LadbModalSmartExportToolAction2 = function (element, options, dialog) {
         LadbAbstractModal.call(this, element, options, dialog);
 
     };
@@ -17,33 +17,33 @@
     LadbModalSmartExportToolAction2.prototype.init = function () {
         LadbAbstractModal.prototype.init.call(this);
 
-        var that = this;
+        const that = this;
 
-        var dictonary = 'tool_smart_export_options';
-        var section = 'action_2';
+        const dictonary = 'tool_smart_export_options';
+        const section = 'action_2';
 
         // Retrieve options
         rubyCallCommand('core_get_global_preset', { dictionary: dictonary, section: section }, function (response) {
 
-            var options = response.preset;
+            const options = response.preset;
 
             // Fetch UI elements
-            var $widgetPreset = $('.ladb-widget-preset', that.$element);
-            var $selectFileFormat = $('#ladb_select_file_format', that.$element);
-            var $selectUnit = $('#ladb_select_unit', that.$element);
-            var $selectSmoothing = $('#ladb_select_smoothing', that.$element);
-            var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', that.$element);
-            var $inputPartsFillColor = $('#ladb_input_parts_fill_color', that.$element);
-            var $btnValidate = $('#ladb_btn_validate', that.$element);
+            const $widgetPreset = $('.ladb-widget-preset', that.$element);
+            const $selectFileFormat = $('#ladb_select_file_format', that.$element);
+            const $selectUnit = $('#ladb_select_unit', that.$element);
+            const $selectSmoothing = $('#ladb_select_smoothing', that.$element);
+            const $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', that.$element);
+            const $inputPartsFillColor = $('#ladb_input_parts_fill_color', that.$element);
+            const $btnValidate = $('#ladb_btn_validate', that.$element);
 
-            var fnFetchOptions = function (options) {
+            const fnFetchOptions = function (options) {
                 options.file_format = $selectFileFormat.val();
                 options.unit = parseInt($selectUnit.val());
                 options.smoothing = $selectSmoothing.val() === '1';
                 options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
                 options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
             };
-            var fnFillInputs = function (options) {
+            const fnFillInputs = function (options) {
                 $selectFileFormat.selectpicker('val', options.file_format);
                 $selectUnit.selectpicker('val', options.unit);
                 $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
@@ -89,9 +89,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbModalSmartExportToolAction2.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbModalSmartExportToolAction2.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -107,7 +107,7 @@
         })
     }
 
-    var old = $.fn.ladbModalSmartExportToolAction2;
+    const old = $.fn.ladbModalSmartExportToolAction2;
 
     $.fn.ladbModalSmartExportToolAction2 = Plugin;
     $.fn.ladbModalSmartExportToolAction2.Constructor = LadbModalSmartExportToolAction2;

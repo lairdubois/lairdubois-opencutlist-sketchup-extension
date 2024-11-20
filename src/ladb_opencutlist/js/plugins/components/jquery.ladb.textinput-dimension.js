@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTextinputDimension = function (element, options) {
+    const LadbTextinputDimension = function (element, options) {
         LadbTextinputAbstract.call(this, element, options);
     };
     LadbTextinputDimension.prototype = new LadbTextinputAbstract;
@@ -22,11 +22,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.textinputDimension');
-            var options = $.extend({}, LadbTextinputDimension.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.textinputDimension');
+            const options = $.extend({}, LadbTextinputDimension.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.textinputDimension', (data = new LadbTextinputDimension(this, options)));
@@ -40,7 +40,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbTextinputDimension;
+    const old = $.fn.ladbTextinputDimension;
 
     $.fn.ladbTextinputDimension = Plugin;
     $.fn.ladbTextinputDimension.Constructor = LadbTextinputDimension;

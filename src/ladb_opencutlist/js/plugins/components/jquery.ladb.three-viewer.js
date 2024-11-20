@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbThreeViewer = function (element, options, dialog) {
+    const LadbThreeViewer = function (element, options, dialog) {
         this.options = options;
         this.$element = $(element);
         this.dialog = dialog;
@@ -32,9 +32,9 @@
     };
 
     LadbThreeViewer.prototype.callCommand = function (command, params, callback) {
-        var that = this;
+        const that = this;
         if (callback !== undefined) {
-            var fnCallback = function (e) {
+            const fnCallback = function (e) {
                 callback(e.data);
                 that.$iframe.get(0).removeEventListener('callback.' + command, fnCallback);
             }
@@ -55,7 +55,7 @@
     };
 
     LadbThreeViewer.prototype.bind = function () {
-        var that = this;
+        const that = this;
 
         // Bind iframe
         this.$iframe
@@ -94,8 +94,8 @@
 
             // Update buttons status
             $('[data-command="set_view"]', that.$element).each(function (index, el) {
-                var $btn = $(el);
-                var params = $btn.data('params');
+                const $btn = $(el);
+                const params = $btn.data('params');
                 if (JSON.stringify(params.view) === JSON.stringify(e.data.cameraView)) {
                     $btn.addClass('active');
                 } else {
@@ -103,8 +103,8 @@
                 }
             });
             $('[data-command="set_zoom"]', that.$element).each(function (index, el) {
-                var $btn = $(el);
-                var params = $btn.data('params');
+                const $btn = $(el);
+                const params = $btn.data('params');
                 if (params.zoom === e.data.cameraZoom || params.zoom == null && e.data.cameraZoomIsAuto) {
                     $btn.addClass('active');
                 } else {
@@ -114,7 +114,7 @@
 
             // Update slider status
             $('[data-command="set_explode_factor"]', that.$element).each(function (index, el) {
-                var $input = $(el);
+                const $input = $(el);
                 $input.slider('setValue', e.data.explodeFactor);
             });
 
@@ -126,8 +126,8 @@
 
             // Update buttons status
             $('[data-command="set_box_helper_visible"]', that.$element).each(function (index, el) {
-                var $btn = $(el);
-                var params = $btn.data('params');
+                const $btn = $(el);
+                const params = $btn.data('params');
                 if (params.visible == null && e.data.boxHelperVisible) {
                     $btn.addClass('active');
                 } else {
@@ -135,8 +135,8 @@
                 }
             });
             $('[data-command="set_box_dimensions_helper_visible"]', that.$element).each(function (index, el) {
-                var $btn = $(el);
-                var params = $btn.data('params');
+                const $btn = $(el);
+                const params = $btn.data('params');
                 if (params.visible == null && e.data.boxDimensionsHelperVisible) {
                     $btn.addClass('active');
                 } else {
@@ -144,8 +144,8 @@
                 }
             });
             $('[data-command="set_axes_helper_visible"]', that.$element).each(function (index, el) {
-                var $btn = $(el);
-                var params = $btn.data('params');
+                const $btn = $(el);
+                const params = $btn.data('params');
                 if (params.visible == null && e.data.axesHelperVisible) {
                     $btn.addClass('active');
                 } else {
@@ -161,17 +161,17 @@
         // Bind buttons
         $('button[data-command]', this.$element).on('click', function () {
             this.blur();
-            var command = $(this).data('command');
-            var params = $(this).data('params');
+            const command = $(this).data('command');
+            const params = $(this).data('params');
             that.callCommand(command, params);
         });
 
         // Bind sliders
         $('input[data-command]', this.$element).on('change', function () {
             this.blur();
-            var command = $(this).data('command');
-            var paramName = $(this).data('param-name');
-            var params = {};
+            const command = $(this).data('command');
+            const paramName = $(this).data('param-name');
+            const params = {};
             params[paramName] = $(this).slider('getValue');
             that.callCommand(command, params);
         });
@@ -199,11 +199,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.threeviewer');
-            var options = $.extend({}, LadbThreeViewer.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.threeviewer');
+            const options = $.extend({}, LadbThreeViewer.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -220,7 +220,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbThreeViewer;
+    const old = $.fn.ladbThreeViewer;
 
     $.fn.ladbThreeViewer = Plugin;
     $.fn.ladbThreeViewer.Constructor = LadbThreeViewer;

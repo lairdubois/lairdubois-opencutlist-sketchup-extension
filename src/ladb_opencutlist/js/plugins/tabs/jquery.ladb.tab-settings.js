@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabSettings = function (element, options, dialog) {
+    const LadbTabSettings = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.initialLanguage = this.dialog.capabilities.language;
@@ -18,29 +18,29 @@
     LadbTabSettings.DEFAULTS = {};
 
     LadbTabSettings.prototype.showReloadAlert = function () {
-        var $reloadAlert = $('#ladb_reload_alert', this.$element);
+        const $reloadAlert = $('#ladb_reload_alert', this.$element);
         $reloadAlert
             .show()
             .effect('highlight', {}, 1500);
         $('.ladb-reaload-msg', $reloadAlert).hide();
-        var language = this.dialog.capabilities.language === 'auto' ? this.initialLanguage : this.dialog.capabilities.language;
+        const language = this.dialog.capabilities.language === 'auto' ? this.initialLanguage : this.dialog.capabilities.language;
         $('.ladb-reaload-msg-' + language, $reloadAlert).show();
     };
 
     LadbTabSettings.prototype.bindExportImportGlobalPresetModal = function (actionName, presets, btnActionCallback) {
-        var that = this;
+        const that = this;
 
-        var $modal = that.appendModalInside('ladb_settings_modal_global_presets', 'tabs/settings/_modal-global-presets.twig', {
+        const $modal = that.appendModalInside('ladb_settings_modal_global_presets', 'tabs/settings/_modal-global-presets.twig', {
             actionName: actionName,
             presets: presets
         });
 
         // Fetch UI elements
-        var $btnSelectAll = $('#ladb_settings_btn_select_all', $modal);
-        var $btnUnselectAll = $('#ladb_settings_btn_unselect_all', $modal);
-        var $btnAction = $('#ladb_settings_btn_action', $modal);
+        const $btnSelectAll = $('#ladb_settings_btn_select_all', $modal);
+        const $btnUnselectAll = $('#ladb_settings_btn_unselect_all', $modal);
+        const $btnAction = $('#ladb_settings_btn_action', $modal);
 
-        var fnUpdateRow = function ($row, selected) {
+        const fnUpdateRow = function ($row, selected) {
             if (selected === undefined) {    // Undefined  = toggle
                 $row.toggleClass('selected')
                 selected = $row.hasClass('selected');
@@ -51,7 +51,7 @@
                     $row.removeClass('selected');
                 }
             }
-            var $i = $('i', $row);
+            const $i = $('i', $row);
             if (selected) {
                 $i.addClass('ladb-opencutlist-icon-check-box-with-check-sign');
                 $i.removeClass('ladb-opencutlist-icon-check-box');
@@ -60,7 +60,7 @@
                 $i.addClass('ladb-opencutlist-icon-check-box');
             }
         };
-        var fnUpdateActionStatus = function () {
+        const fnUpdateActionStatus = function () {
             $btnAction.prop('disabled', $('.ladb-preset-row.selected').length === 0);
         }
 
@@ -83,10 +83,10 @@
         });
         $btnAction.on('click', function () {
 
-            var pathsFilter = []
+            const pathsFilter = []
             $('.ladb-preset-row', $modal).each(function () {
                 if ($(this).hasClass('selected')) {
-                    var path = $(this).data('path');
+                    const path = $(this).data('path');
                     pathsFilter.push(path);
                 }
             });
@@ -110,7 +110,7 @@
     };
 
     LadbTabSettings.prototype.exportGlobalPresets = function () {
-        var that = this;
+        const that = this;
 
         rubyCallCommand('settings_get_global_presets', null, function (response) {
 
@@ -135,7 +135,7 @@
     };
 
     LadbTabSettings.prototype.importGlobalPresets = function () {
-        var that = this;
+        const that = this;
 
         rubyCallCommand('settings_load_global_presets_from_json', null, function (response) {
 
@@ -149,9 +149,9 @@
                     } else {
                         that.bindExportImportGlobalPresetModal('import', response, function (pathsFilter) {
 
-                            for (var dictionary in response) {
-                                for (var section in response[dictionary]) {
-                                    for (var name in response[dictionary][section]) {
+                            for (const dictionary in response) {
+                                for (const section in response[dictionary]) {
+                                    for (const name in response[dictionary][section]) {
                                         if (pathsFilter.includes(dictionary + '|' + section + '|' + name)) {
                                             rubyCallCommand('core_set_global_preset', {
                                                 dictionary: dictionary,
@@ -185,7 +185,7 @@
     LadbTabSettings.prototype.registerCommands = function () {
         LadbAbstractTab.prototype.registerCommands.call(this);
 
-        var that = this;
+        const that = this;
 
         this.registerCommand('highlight_panel', function (parameters) {
             setTimeout(function () {     // Use setTimeout to give time to UI to refresh
@@ -204,7 +204,7 @@
     LadbTabSettings.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
-        var that = this;
+        const that = this;
 
         // Menu /////
 
@@ -249,21 +249,21 @@
 
         // Global settings /////
 
-        var $btnReset = $('#ladb_btn_reset', this.$element);
-        var $selectLanguage = $('#ladb_select_language', this.$element);
-        var $selectPrintMargin = $('#ladb_select_print_margin', this.$element);
-        var $selectTableRowSize = $('#ladb_select_table_row_size', this.$element);
-        var $btnWidthUp = $('#ladb_btn_width_up', this.$element);
-        var $btnWidthDown = $('#ladb_btn_width_down', this.$element);
-        var $btnHeightUp = $('#ladb_btn_height_up', this.$element);
-        var $btnHeightDown = $('#ladb_btn_height_down', this.$element);
-        var $btnLeftUp = $('#ladb_btn_left_up', this.$element);
-        var $btnLeftDown = $('#ladb_btn_left_down', this.$element);
-        var $btnTopUp = $('#ladb_btn_top_up', this.$element);
-        var $btnTopDown = $('#ladb_btn_top_down', this.$element);
-        var $btnLeftTopReset = $('#ladb_btn_left_top_reset', this.$element);
+        const $btnReset = $('#ladb_btn_reset', this.$element);
+        const $selectLanguage = $('#ladb_select_language', this.$element);
+        const $selectPrintMargin = $('#ladb_select_print_margin', this.$element);
+        const $selectTableRowSize = $('#ladb_select_table_row_size', this.$element);
+        const $btnWidthUp = $('#ladb_btn_width_up', this.$element);
+        const $btnWidthDown = $('#ladb_btn_width_down', this.$element);
+        const $btnHeightUp = $('#ladb_btn_height_up', this.$element);
+        const $btnHeightDown = $('#ladb_btn_height_down', this.$element);
+        const $btnLeftUp = $('#ladb_btn_left_up', this.$element);
+        const $btnLeftDown = $('#ladb_btn_left_down', this.$element);
+        const $btnTopUp = $('#ladb_btn_top_up', this.$element);
+        const $btnTopDown = $('#ladb_btn_top_down', this.$element);
+        const $btnLeftTopReset = $('#ladb_btn_left_top_reset', this.$element);
 
-        var fnGlobalUpdate = function () {
+        const fnGlobalUpdate = function () {
 
             // Send to ruby
             rubyCallCommand('settings_dialog_settings', {
@@ -275,7 +275,7 @@
             that.dialog.setCompact(that.dialog.capabilities.tabs_dialog_table_row_size === 1);
 
         };
-        var fnGlobalFillInputs = function () {
+        const fnGlobalFillInputs = function () {
             $selectLanguage.selectpicker('val', that.dialog.capabilities.language);
             $selectPrintMargin.selectpicker('val', that.dialog.capabilities.tabs_dialog_print_margin);
             $selectTableRowSize.selectpicker('val', that.dialog.capabilities.tabs_dialog_table_row_size);
@@ -383,33 +383,33 @@
 
         // Model Settings /////
 
-        var modelSettings = {};
-        var modelLengthFormat = 0;
+        const modelSettings = {};
+        let modelLengthFormat = 0;
 
         // Fetch UI elements
-        var $widgetPreset = $('.ladb-widget-preset', that.$element);
-        var $selectLengthUnit = $('#ladb_model_select_length_unit', that.$element);
-        var $selectLengthFormat = $('#ladb_model_select_length_format', that.$element);
-        var $selectLengthPrecision = $('#ladb_model_select_length_precision', that.$element);
-        var $inputSuppressUnitsDisplay = $('#ladb_model_input_suppress_units_display', that.$element);
-        var $selectMassUnit = $('#ladb_model_select_mass_unit', that.$element);
-        var $selectMassPrecision = $('#ladb_model_select_mass_precision', that.$element);
-        var $inputCurrencySymbol = $('#ladb_model_input_currency_symbol', that.$element);
-        var $selectCurrencyPrecision = $('#ladb_model_select_currency_precision', that.$element);
+        const $widgetPreset = $('.ladb-widget-preset', that.$element);
+        const $selectLengthUnit = $('#ladb_model_select_length_unit', that.$element);
+        const $selectLengthFormat = $('#ladb_model_select_length_format', that.$element);
+        const $selectLengthPrecision = $('#ladb_model_select_length_precision', that.$element);
+        const $inputSuppressUnitsDisplay = $('#ladb_model_input_suppress_units_display', that.$element);
+        const $selectMassUnit = $('#ladb_model_select_mass_unit', that.$element);
+        const $selectMassPrecision = $('#ladb_model_select_mass_precision', that.$element);
+        const $inputCurrencySymbol = $('#ladb_model_input_currency_symbol', that.$element);
+        const $selectCurrencyPrecision = $('#ladb_model_select_currency_precision', that.$element);
 
-        var fnFetchOptions = function (options) {
+        const fnFetchOptions = function (options) {
             options.mass_unit = parseInt($selectMassUnit.selectpicker('val'));
             options.mass_precision = parseInt($selectMassPrecision.selectpicker('val'));
             options.currency_symbol = $inputCurrencySymbol.val();
             options.currency_precision = parseInt($selectCurrencyPrecision.val());
         };
-        var fnFillInputs = function (options) {
+        const fnFillInputs = function (options) {
             $selectMassUnit.selectpicker('val', options.mass_unit);
             $selectMassPrecision.selectpicker('val', options.mass_precision);
             $inputCurrencySymbol.val(options.currency_symbol);
             $selectCurrencyPrecision.selectpicker('val', options.currency_precision);
         };
-        var fnAdaptLengthPrecisionToFormat = function () {
+        const fnAdaptLengthPrecisionToFormat = function () {
             if (modelLengthFormat === 0 /* DECIMAL */ || modelLengthFormat === 2 /* ENGINEERING */) {
                 $('.length-unit-decimal', that.$element).show();
                 $('.length-unit-fractional', that.$element).hide();
@@ -418,7 +418,7 @@
                 $('.length-unit-fractional', that.$element).show();
             }
         }
-        var fnFillLengthSettings = function(settings) {
+        const fnFillLengthSettings = function(settings) {
 
             $selectLengthUnit
                 .selectpicker('val', settings.length_unit)
@@ -436,7 +436,7 @@
             fnAdaptLengthPrecisionToFormat(modelLengthFormat);
 
         }
-        var fnRetrieveModelOptions = function () {
+        const fnRetrieveModelOptions = function () {
 
             // Retrieve SU options
             rubyCallCommand('settings_get_length_settings', null, function (response) {
@@ -454,7 +454,7 @@
                 // Retrieve OCL options
                 rubyCallCommand('core_get_model_preset', { dictionary: 'settings_model' }, function (response) {
 
-                    var modelOptions = response.preset;
+                    const modelOptions = response.preset;
                     fnFillInputs(modelOptions);
 
                 });
@@ -462,7 +462,7 @@
             });
 
         };
-        var fnSaveOptions = function () {
+        const fnSaveOptions = function () {
 
             // Fetch options
             fnFetchOptions(modelSettings);
@@ -493,7 +493,7 @@
         // Bind input & select
         $selectLengthUnit
             .on('change', function () {
-                var lengthUnit = parseInt($selectLengthUnit.selectpicker('val'));
+                const lengthUnit = parseInt($selectLengthUnit.selectpicker('val'));
 
                 rubyCallCommand('settings_set_length_settings', { length_unit: lengthUnit }, fnFillLengthSettings);
 
@@ -501,7 +501,7 @@
         ;
         $selectLengthFormat
             .on('change', function () {
-                var lengthFormat = parseInt($selectLengthFormat.selectpicker('val'));
+                const lengthFormat = parseInt($selectLengthFormat.selectpicker('val'));
 
                 rubyCallCommand('settings_set_length_settings', { length_format: lengthFormat }, fnFillLengthSettings);
 
@@ -509,7 +509,7 @@
         ;
         $selectLengthPrecision
             .on('change', function () {
-                var lengthPrecision = parseInt($selectLengthPrecision.selectpicker('val'));
+                const lengthPrecision = parseInt($selectLengthPrecision.selectpicker('val'));
 
                 rubyCallCommand('settings_set_length_settings', { length_precision: lengthPrecision }, fnFillLengthSettings);
 
@@ -520,7 +520,7 @@
         ;
         $inputSuppressUnitsDisplay
             .on('change', function () {
-                var suppressUnitsDisplay = !($inputSuppressUnitsDisplay.is(':checked'));
+                const suppressUnitsDisplay = !($inputSuppressUnitsDisplay.is(':checked'));
 
                 rubyCallCommand('settings_set_length_settings', { suppress_units_display: suppressUnitsDisplay }, fnFillLengthSettings);
 
@@ -548,9 +548,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabSettings.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbTabSettings.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -566,7 +566,7 @@
         })
     }
 
-    var old = $.fn.ladbTabSettings;
+    const old = $.fn.ladbTabSettings;
 
     $.fn.ladbTabSettings = Plugin;
     $.fn.ladbTabSettings.Constructor = LadbTabSettings;

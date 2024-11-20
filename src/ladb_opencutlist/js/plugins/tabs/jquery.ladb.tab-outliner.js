@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabOutliner = function (element, options, dialog) {
+    const LadbTabOutliner = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.editedNode = null;
@@ -26,7 +26,7 @@
     // List /////
 
     LadbTabOutliner.prototype.generateOutliner = function (callback) {
-        var that = this;
+        const that = this;
 
         this.rootNode = null;
         this.$page.empty();
@@ -40,14 +40,14 @@
 
             rubyCallCommand('outliner_generate', {}, function (response) {
 
-                var errors = response.errors;
-                var warnings = response.warnings;
-                var tips = response.tips;
-                var filename = response.filename;
-                var modelName = response.model_name;
-                var root_node = response.root_node;
-                var available_materials = response.available_materials;
-                var available_layers = response.available_layers;
+                const errors = response.errors;
+                const warnings = response.warnings;
+                const tips = response.tips;
+                const filename = response.filename;
+                const modelName = response.model_name;
+                const root_node = response.root_node;
+                const available_materials = response.available_materials;
+                const available_layers = response.available_layers;
 
                 // Keep useful data
                 that.rootNode = root_node;
@@ -55,7 +55,7 @@
                 that.availableLayers = available_layers;
 
                 if (false && root_node) {
-                    var fn_set_parent = function (node, parent) {
+                    const fn_set_parent = function (node, parent) {
                         node.parent = parent;
                         for (const child of node.children) {
                             fn_set_parent(child, node);
@@ -84,7 +84,7 @@
 
                 that.renderNodes();
 
-                var $toggleHiddenBtn = $('#ladb_btn_toggle_hidden')
+                const $toggleHiddenBtn = $('#ladb_btn_toggle_hidden')
                 if (that.showHiddenInstances) {
                     $('i', $toggleHiddenBtn).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
                 }
@@ -123,13 +123,13 @@
     };
 
     LadbTabOutliner.prototype.refreshOutliner = function () {
-        var that = this;
+        const that = this;
 
         rubyCallCommand('outliner_refresh', {}, function (response) {
 
-            var root_node = response.root_node;
-            var available_materials = response.available_materials;
-            var available_layers = response.available_layers;
+            const root_node = response.root_node;
+            const available_materials = response.available_materials;
+            const available_layers = response.available_layers;
 
             // Keep useful data
             that.rootNode = root_node;
@@ -143,19 +143,19 @@
     };
 
     LadbTabOutliner.prototype.renderNodes = function () {
-        var that = this;
+        const that = this;
 
         this.$tbody.empty();
 
         if (this.rootNode) {
 
-            var fnRenderNode = function (node, activeOnly) {
+            const fnRenderNode = function (node, activeOnly) {
 
                 if (!node.computed_visible && !that.showHiddenInstances) {
                     return;
                 }
 
-                var $row = $(Twig.twig({ref: "tabs/outliner/_list-row-node.twig"}).render({
+                const $row = $(Twig.twig({ref: "tabs/outliner/_list-row-node.twig"}).render({
                     capabilities: that.dialog.capabilities,
                     node: node
                 }));
@@ -254,7 +254,7 @@
     }
 
     LadbTabOutliner.prototype.editNode = function (node, tab) {
-        var that = this;
+        const that = this;
 
         if (tab === undefined) {
             tab = this.lastEditNodeTab;
@@ -276,7 +276,7 @@
                 // Update node ID in case of group made unique
                 // that.editedNode.id = response.node_id;
 
-                var $modal = that.appendModalInside('ladb_outliner_modal_edit', 'tabs/outliner/_modal-edit.twig', {
+                const $modal = that.appendModalInside('ladb_outliner_modal_edit', 'tabs/outliner/_modal-edit.twig', {
                     capabilities: that.dialog.capabilities,
                     mass_unit_strippedname: that.massUnitStrippedname,
                     length_unit_strippedname: that.lengthUnitStrippedname,
@@ -286,19 +286,19 @@
                 });
 
                 // Fetch UI elements
-                var $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
-                var $inputName = $('#ladb_outliner_node_input_name', $modal);
-                var $selectMaterialName = $('#ladb_outliner_node_select_material_name', $modal);
-                var $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
-                var $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
-                var $inputDescription = $('#ladb_outliner_node_input_description', $modal);
-                var $inputUrl = $('#ladb_outliner_node_input_url', $modal);
-                var $inputTags = $('#ladb_outliner_node_input_tags', $modal);
-                var $btnExplode = $('#ladb_outliner_node_explode', $modal);
-                var $btnUpdate = $('#ladb_outliner_node_update', $modal);
+                const $tabs = $('.modal-header a[data-toggle="tab"]', $modal);
+                const $inputName = $('#ladb_outliner_node_input_name', $modal);
+                const $selectMaterialName = $('#ladb_outliner_node_select_material_name', $modal);
+                const $inputDefinitionName = $('#ladb_outliner_node_input_definition_name', $modal);
+                const $inputLayerName = $('#ladb_outliner_node_input_layer_name', $modal);
+                const $inputDescription = $('#ladb_outliner_node_input_description', $modal);
+                const $inputUrl = $('#ladb_outliner_node_input_url', $modal);
+                const $inputTags = $('#ladb_outliner_node_input_tags', $modal);
+                const $btnExplode = $('#ladb_outliner_node_explode', $modal);
+                const $btnUpdate = $('#ladb_outliner_node_update', $modal);
 
                 // Utils function
-                var fnNewCheck = function($select, type) {
+                const fnNewCheck = function($select, type) {
                     if ($select.val() === 'new') {
                         that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
                         $modal.modal('hide');
@@ -347,12 +347,12 @@
                 // Bind buttons
                 $btnExplode.on('click', function () {
 
-                    var names = [];
+                    const names = [];
                     if (that.editedNode.name) {
                         names.push(that.editedNode.name);
                     }
                     if (that.editedNode.definition_name) {
-                        var definitionName = that.editedNode.definition_name
+                        let definitionName = that.editedNode.definition_name
                         if (that.editedNode.type === 2 || that.editedNode.type === 3) {   // 2 = TYPE_COMPONENT, 3 = TYPE_PART
                             definitionName = '<' + definitionName + '>'
                         }
@@ -388,7 +388,7 @@
                 });
                 $btnUpdate.on('click', function () {
 
-                    var data = {
+                    const data = {
                         id: that.editedNode.id,
                         name: $inputName.val(),
                         material_name: $selectMaterialName.val()
@@ -450,7 +450,7 @@
             return parent;
         }
         for (const child of parent.children) {
-            var node = this.findNodeById(id, child);
+            const node = this.findNodeById(id, child);
             if (node) {
                 return node;
             }
@@ -461,17 +461,17 @@
     LadbTabOutliner.prototype.showObsolete = function (messageI18nKey, forced) {
         if (!this.isObsolete() || forced) {
 
-            var that = this;
+            const that = this;
 
             // Set tab as obsolete
             this.setObsolete(true);
 
-            var $modal = this.appendModalInside('ladb_outliner_modal_obsolete', 'tabs/outliner/_modal-obsolete.twig', {
+            const $modal = this.appendModalInside('ladb_outliner_modal_obsolete', 'tabs/outliner/_modal-obsolete.twig', {
                 messageI18nKey: messageI18nKey
             });
 
             // Fetch UI elements
-            var $btnGenerate = $('#ladb_outliner_obsolete_generate', $modal);
+            const $btnGenerate = $('#ladb_outliner_obsolete_generate', $modal);
 
             // Bind buttons
             $btnGenerate.on('click', function () {
@@ -490,14 +490,14 @@
     LadbTabOutliner.prototype.registerCommands = function () {
         LadbAbstractTab.prototype.registerCommands.call(this);
 
-        var that = this;
+        const that = this;
 
         this.registerCommand('edit_node', function (parameters) {
-            var nodeId = parameters.node_id;
-            var tab = parameters.tab;
+            const nodeId = parameters.node_id;
+            const tab = parameters.tab;
             window.requestAnimationFrame(function () {
                 that.generateOutliner(function () {
-                    var node = that.findNodeById(nodeId)
+                    const node = that.findNodeById(nodeId)
                     that.editNode(node, tab);
                 });
             });
@@ -508,7 +508,7 @@
     LadbTabOutliner.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
-        var that = this;
+        const that = this;
 
         // Bind buttons
         this.$btnGenerate.on('click', function () {
@@ -548,9 +548,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabOutliner.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbTabOutliner.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -566,7 +566,7 @@
         })
     }
 
-    var old = $.fn.ladbTabOutliner;
+    const old = $.fn.ladbTabOutliner;
 
     $.fn.ladbTabOutliner = Plugin;
     $.fn.ladbTabOutliner.Constructor = LadbTabOutliner;

@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTextinputUrl = function(element, options) {
+    const LadbTextinputUrl = function(element, options) {
         LadbTextinputAbstract.call(this, element, options);
     };
     LadbTextinputUrl.prototype = new LadbTextinputAbstract;
@@ -21,11 +21,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.textinputUrl');
-            var options = $.extend({}, LadbTextinputUrl.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.textinputUrl');
+            const options = $.extend({}, LadbTextinputUrl.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.textinputUrl', (data = new LadbTextinputUrl(this, options)));
@@ -39,7 +39,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbTextinputUrl;
+    const old = $.fn.ladbTextinputUrl;
 
     $.fn.ladbTextinputUrl             = Plugin;
     $.fn.ladbTextinputUrl.Constructor = LadbTextinputUrl;

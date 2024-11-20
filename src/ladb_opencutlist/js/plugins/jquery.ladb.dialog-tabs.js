@@ -4,18 +4,18 @@
     // CONSTANTS
     // ======================
 
-    var EW_URL = 'https://www.lairdubois.fr/opencutlist';
+    const EW_URL = 'https://www.lairdubois.fr/opencutlist';
 
-    var MANIFEST_URL = 'https://www.lairdubois.fr/opencutlist/manifest'
-    var MANIFEST_DEV_URL = 'https://www.lairdubois.fr/opencutlist/manifest-dev'
+    const MANIFEST_URL = 'https://www.lairdubois.fr/opencutlist/manifest'
+    const MANIFEST_DEV_URL = 'https://www.lairdubois.fr/opencutlist/manifest-dev'
 
-    var SETTING_KEY_MUTED_UPDATE_BUILD = 'core.muted_update_build';
-    var SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP = 'core.last_listed_news_timestamp';
+    const SETTING_KEY_MUTED_UPDATE_BUILD = 'core.muted_update_build';
+    const SETTING_KEY_LAST_LISTED_NEWS_TIMESTAMP = 'core.last_listed_news_timestamp';
 
     // CLASS DEFINITION
     // ======================
 
-    var LadbDialogTabs = function (element, options) {
+    const LadbDialogTabs = function (element, options) {
         LadbAbstractDialog.call(this, element, $.extend({
             noty_layout: 'dialogTabs'
         }, options));
@@ -107,7 +107,7 @@
     // Manifest /////
 
     LadbDialogTabs.prototype.loadManifest = function () {
-        var that = this;
+        const that = this;
 
         if (this.capabilities.manifest == null && this.capabilities.update_available == null) {
             $.getJSON(this.appendOclMetasToUrlQueryParams(this.capabilities.is_dev ? MANIFEST_DEV_URL : MANIFEST_URL), function (data) {
@@ -163,7 +163,7 @@
     // News /////
 
     LadbDialogTabs.prototype.checkNews = function () {
-        var that = this;
+        const that = this;
 
         if (this.capabilities.last_news_timestamp == null) {
             $.ajax({
@@ -188,7 +188,7 @@
                 success: function (response) {
                     if (response.data && response.data.collective.updates.nodes.length > 0) {
 
-                        var lastNewsTimestamp = Date.parse(response.data.collective.updates.nodes[0].publishedAt);
+                        const lastNewsTimestamp = Date.parse(response.data.collective.updates.nodes[0].publishedAt);
 
                         if (that.lastListedNewsTimestamp == null) {
 
@@ -198,7 +198,7 @@
                         } else if (lastNewsTimestamp > that.lastListedNewsTimestamp) {
 
                             // Fresh news are available, notify it :)
-                            that.$leftbar.ladbLeftbar('pushNotification', ['#ladb_leftbar_btn_news'])
+                            that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_news' ])
 
                         }
 
@@ -238,7 +238,7 @@
     // Actions /////
 
     LadbDialogTabs.prototype.minimize = function () {
-        var that = this;
+        const that = this;
         if (that.maximized && !that.minimizing) {
             that.minimizing = true;
             that.$element.trigger(jQuery.Event('minimizing.ladb.dialog'));
@@ -253,7 +253,7 @@
     };
 
     LadbDialogTabs.prototype.maximize = function () {
-        var that = this;
+        const that = this;
         if (!that.maximized && !that.maximizing) {
             that.maximizing = true;
             that.$element.trigger(jQuery.Event('maximizing.ladb.dialog'));
@@ -267,8 +267,8 @@
     };
 
     LadbDialogTabs.prototype.getTabDef = function (tabName) {
-        for (var i = 0; i < this.options.tabDefs.length; i++) {
-            var tabDef = this.options.tabDefs[i];
+        for (let i = 0; i < this.options.tabDefs.length; i++) {
+            const tabDef = this.options.tabDefs[i];
             if (tabDef.name === tabName) {
                 return tabDef;
             }
@@ -298,7 +298,7 @@
             $('[data-ladb-tab-name="' + this.activeTabName + '"]').removeClass('ladb-active');
 
             // Hide active tab
-            var $tab = this.getActiveTab().hide();
+            const $tab = this.getActiveTab().hide();
 
             // Trigger event
             $tab.trigger(jQuery.Event('hidden.ladb.tab'));
@@ -312,7 +312,7 @@
             return;
         }
 
-        var $tab = this.$tabs[tabName];
+        let $tab = this.$tabs[tabName];
         if (!$tab) {
 
             // Render and append tab
@@ -325,7 +325,7 @@
             $tab = $('#ladb_tab_' + tabName, this.$wrapperSlides);
 
             // Initialize tab (with its jQuery plugin)
-            var jQueryPluginFn = 'ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+            const jQueryPluginFn = 'ladbTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
             $tab[jQueryPluginFn]({
                 dialog: this,
                 initializedCallback: callback
@@ -362,19 +362,19 @@
             return;
         }
 
-        var $tab = this.$tabs[tabName];
-        var $freshTab = false;
+        let $tab = this.$tabs[tabName];
+        let isFreshTab = false;
         if (tabName !== this.activeTabName) {
             if (this.activeTabName) {
                 this.unselectActiveTab();
             }
             if ($tab) {
 
-                $freshTab = false;
+                isFreshTab = false;
 
             } else {
 
-                $freshTab = true;
+                isFreshTab = true;
 
                 // Load tab
                 $tab = this.loadTab(tabName, callback);
@@ -395,14 +395,14 @@
         this.maximize();
 
         // If fresh tab, callback is invoke through 'initializedCallback'
-        if (!$freshTab) {
+        if (!isFreshTab) {
 
             // Callback
             if (typeof callback === 'function') {
                 callback($tab);
             } else {
 
-                var jQueryPlugin = this.getTabPlugin($tab);
+                const jQueryPlugin = this.getTabPlugin($tab);
                 if (jQueryPlugin && !jQueryPlugin.defaultInitializedCallbackCalled) {
                     jQueryPlugin.defaultInitializedCallback();
                 }
@@ -412,7 +412,7 @@
         } else {
 
             // Try to show sponsor ad
-            var tabDef = this.getTabDef(tabName);
+            const tabDef = this.getTabDef(tabName);
             if (tabDef && tabDef.sponsorAd && callback === undefined) {
                 this.showSponsorAd();
             }
@@ -431,10 +431,10 @@
     };
 
     LadbDialogTabs.prototype.executeCommandOnTab = function (tabName, command, parameters, callback, keepTabInBackground) {
-        var that = this;
+        const that = this;
 
-        var fnExecute = function ($tab) {
-            var jQueryPlugin = that.getTabPlugin($tab);
+        const fnExecute = function ($tab) {
+            const jQueryPlugin = that.getTabPlugin($tab);
             if (jQueryPlugin) {
                 jQueryPlugin.executeCommand(command, parameters, callback);
             }
@@ -471,23 +471,23 @@
     // Modal /////
 
     LadbDialogTabs.prototype.showUpgradeModal = function () {
-        var that = this;
+        const that = this;
 
         // Append modal
-        var $modal = this.appendModal('ladb_core_modal_upgrade', 'core/_modal-upgrade.twig', {
+        const $modal = this.appendModal('ladb_core_modal_upgrade', 'core/_modal-upgrade.twig', {
             capabilities: this.capabilities,
         });
 
         // Fetch UI elements
-        var $panelInfos = $('#ladb_panel_infos', $modal);
-        var $panelProgress = $('#ladb_panel_progress', $modal);
-        var $footer = $('.modal-footer', $modal);
-        var $btnIgnoreUpdate = $('#ladb_btn_ignore_update', $modal);
-        var $btnUpgrade = $('#ladb_btn_upgrade', $modal);
-        var $btnDownload = $('.ladb-btn-download', $modal);
-        var $btnSponsor = $('#ladb_btn_sponsor', $modal);
-        var $linkChangelog = $('#ladb_link_changelog', $modal);
-        var $progressBar = $('div[role=progressbar]', $modal);
+        const $panelInfos = $('#ladb_panel_infos', $modal);
+        const $panelProgress = $('#ladb_panel_progress', $modal);
+        const $footer = $('.modal-footer', $modal);
+        const $btnIgnoreUpdate = $('#ladb_btn_ignore_update', $modal);
+        const $btnUpgrade = $('#ladb_btn_upgrade', $modal);
+        const $btnDownload = $('.ladb-btn-download', $modal);
+        const $btnSponsor = $('#ladb_btn_sponsor', $modal);
+        const $linkChangelog = $('#ladb_link_changelog', $modal);
+        const $progressBar = $('div[role=progressbar]', $modal);
 
         // Bind buttons
         $btnIgnoreUpdate.on('click', function () {
@@ -527,10 +527,10 @@
 
                 } else {
 
-                    var fnProgress = function (params) {
+                    const fnProgress = function (params) {
                         $progressBar.css('width', (params.current / params.total * 100) + '%');
                     };
-                    var fnCancelled = function (params) {
+                    const fnCancelled = function (params) {
 
                         // Close and remove modal
                         $modal.modal('hide');
@@ -584,7 +584,7 @@
     // Internals /////
 
     LadbDialogTabs.prototype.bind = function () {
-        var that = this;
+        const that = this;
 
         // Bind buttons
         $.each(this.$tabBtns, function (tabName, $tabBtn) {
@@ -599,7 +599,7 @@
 
         // Bind fake tabs
         $('a[data-ladb-tab-name]', this.$element).on('click', function() {
-            var tabName = $(this).data('ladb-tab-name');
+            const tabName = $(this).data('ladb-tab-name');
             that.selectTab(tabName);
         });
 
@@ -629,11 +629,11 @@
                 }
 
                 // Try to retrieve the current top modal (1. from global dialog modal, 2. from active tab inner modal)
-                var $modal = null;
+                let $modal = null;
                 if (that._$modal) {
                     $modal = that._$modal;
                 } else {
-                    var jQueryPlugin = that.getTabPlugin(that.getActiveTab());
+                    const jQueryPlugin = that.getTabPlugin(that.getActiveTab());
                     if (jQueryPlugin) {
                         $modal = jQueryPlugin._$modal;
                     }
@@ -649,7 +649,7 @@
 
             } else if (e.keyCode === 13) {   // Only intercept "enter" key
 
-                var $target = $(e.target);
+                const $target = $(e.target);
                 if (!$target.is('input[type=text]')) {  // Only intercept if focus is on input[type=text] field
                     return;
                 }
@@ -659,18 +659,18 @@
                 e.preventDefault();
 
                 // Try to retrieve the current top modal (1. from global dialog modal, 2. from active tab inner modal)
-                var $modal = null;
+                let $modal = null;
                 if (that._$modal) {
                     $modal = that._$modal;
                 } else {
-                    var jQueryPlugin = that.getTabPlugin(that.getActiveTab());
+                    const jQueryPlugin = that.getTabPlugin(that.getActiveTab());
                     if (jQueryPlugin) {
                         $modal = jQueryPlugin._$modal;
                     }
                 }
 
                 if ($modal) {
-                    var $btnValidate = $('.btn-validate-modal', $modal).first();
+                    const $btnValidate = $('.btn-validate-modal', $modal).first();
                     if ($btnValidate && $btnValidate.is(':enabled')) {
                         $btnValidate.click();
                     }
@@ -684,11 +684,11 @@
     LadbDialogTabs.prototype.init = function () {
         LadbAbstractDialog.prototype.init.call(this);
 
-        var that = this;
+        const that = this;
 
         // Add twig functions
         Twig.extendFunction('qr_code_svg', function(msg, dim, color, bgColor) {
-            var qrCode = new QRCode({
+            const qrCode = new QRCode({
                 msg: msg,
                 dim: dim,
                 pal: [ color === undefined ? '#000' : color, bgColor === undefined ? '#fff' : bgColor ],
@@ -716,7 +716,7 @@
                     that.$element.append(Twig.twig({ref: 'core/layout-zzz.twig'}).render());
 
                     // Fetch useful elements
-                    var $btnZzz = $('.ladb-zzz a', that.$element);
+                    const $btnZzz = $('.ladb-zzz a', that.$element);
 
                     // Bind button
                     $btnZzz.on('click', function() {
@@ -735,8 +735,8 @@
                     that.$wrapper = $('#ladb_wrapper', that.$element);
                     that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
                     that.$leftbar = $('#ladb_leftbar', that.$element).ladbLeftbar({ dialog: that });
-                    for (var i = 0; i < that.options.tabDefs.length; i++) {
-                        var tabDef = that.options.tabDefs[i];
+                    for (let i = 0; i < that.options.tabDefs.length; i++) {
+                        const tabDef = that.options.tabDefs[i];
                         that.$tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
                     }
 
@@ -763,11 +763,11 @@
                     }
 
                     // Dev alert
-                    var $devAlert = $('#ladb_dev_alert');
+                    const $devAlert = $('#ladb_dev_alert');
                     if ($devAlert.length > 0) {
-                        var devAlertTotalTime = 20000;
-                        var devAlertRemaining = devAlertTotalTime;
-                        var fnDevAlertCountdown = function () {
+                        const devAlertTotalTime = 20000;
+                        let devAlertRemaining = devAlertTotalTime;
+                        const fnDevAlertCountdown = function () {
                             if ($devAlert.is(':visible')) {
                                 devAlertRemaining -= 200;
                                 $('.countdown-bar', $devAlert).css('width', Math.max((devAlertRemaining / devAlertTotalTime) * 100, 0) + '%');
@@ -795,9 +795,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.dialog');
-            var options = $.extend({}, LadbDialogTabs.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.dialog');
+            const options = $.extend({}, LadbDialogTabs.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.dialog', (data = new LadbDialogTabs(this, options)));
@@ -810,7 +810,7 @@
         })
     }
 
-    var old = $.fn.ladbDialogTabs;
+    const old = $.fn.ladbDialogTabs;
 
     $.fn.ladbDialogTabs = Plugin;
     $.fn.ladbDialogTabs.Constructor = LadbDialogTabs;

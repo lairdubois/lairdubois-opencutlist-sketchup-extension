@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbModalSmartExportToolAction0 = function (element, options, dialog) {
+    const LadbModalSmartExportToolAction0 = function (element, options, dialog) {
         LadbAbstractModal.call(this, element, options, dialog);
 
     };
@@ -17,31 +17,31 @@
     LadbModalSmartExportToolAction0.prototype.init = function () {
         LadbAbstractModal.prototype.init.call(this);
 
-        var that = this;
+        const that = this;
 
-        var dictonary = 'tool_smart_export_options';
-        var section = 'action_0';
+        const dictonary = 'tool_smart_export_options';
+        const section = 'action_0';
 
         // Retrieve options
         rubyCallCommand('core_get_global_preset', { dictionary: dictonary, section: section }, function (response) {
 
-            var options = response.preset;
+            const options = response.preset;
 
             // Fetch UI elements
-            var $widgetPreset = $('.ladb-widget-preset', that.$element);
-            var $selectFileFormat = $('#ladb_select_file_format', that.$element);
-            var $selectUnit = $('#ladb_select_unit', that.$element);
-            var $selectAnchor = $('#ladb_select_anchor', that.$element);
-            var $selectSwitchYZ = $('#ladb_select_switch_yz', that.$element);
-            var $btnValidate = $('#ladb_btn_validate', that.$element);
+            const $widgetPreset = $('.ladb-widget-preset', that.$element);
+            const $selectFileFormat = $('#ladb_select_file_format', that.$element);
+            const $selectUnit = $('#ladb_select_unit', that.$element);
+            const $selectAnchor = $('#ladb_select_anchor', that.$element);
+            const $selectSwitchYZ = $('#ladb_select_switch_yz', that.$element);
+            const $btnValidate = $('#ladb_btn_validate', that.$element);
 
-            var fnFetchOptions = function (options) {
+            const fnFetchOptions = function (options) {
                 options.file_format = $selectFileFormat.val();
                 options.unit = parseInt($selectUnit.val());
                 options.anchor = $selectAnchor.val() === '1';
                 options.switch_yz = $selectSwitchYZ.val() === '1';
             };
-            var fnFillInputs = function (options) {
+            const fnFillInputs = function (options) {
                 $selectFileFormat.selectpicker('val', options.file_format);
                 $selectUnit.selectpicker('val', options.unit);
                 $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
@@ -85,9 +85,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbModalSmartExportToolAction0.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbModalSmartExportToolAction0.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -103,7 +103,7 @@
         })
     }
 
-    var old = $.fn.ladbModalSmartExportToolAction0;
+    const old = $.fn.ladbModalSmartExportToolAction0;
 
     $.fn.ladbModalSmartExportToolAction0 = Plugin;
     $.fn.ladbModalSmartExportToolAction0.Constructor = LadbModalSmartExportToolAction0;

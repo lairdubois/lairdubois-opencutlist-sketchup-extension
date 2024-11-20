@@ -4,12 +4,12 @@
     // CONSTANTS
     // ======================
 
-    var UPDATES_PAGE_SIZE = 5;
+    const UPDATES_PAGE_SIZE = 5;
 
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabNews = function (element, options, dialog) {
+    const LadbTabNews = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.$page = $('.ladb-page', this.$element);
@@ -20,10 +20,10 @@
     LadbTabNews.DEFAULTS = {};
 
     LadbTabNews.prototype.loadUpdates = function (page) {
-        var that = this;
+        const that = this;
 
         // Fetch UI elements
-        var $loading = $('.ladb-loading', this.$page);
+        const $loading = $('.ladb-loading', this.$page);
 
         // Show loading
         $loading.show();
@@ -78,14 +78,14 @@
 
                     // First page, keep last listed news timestamp
                     if (page === 0) {
-                        var lastNewsTimestamp = Date.parse(response.data.collective.updates.nodes[0].publishedAt);
+                        const lastNewsTimestamp = Date.parse(response.data.collective.updates.nodes[0].publishedAt);
                         that.dialog.setLastListedNewsTimestamp(lastNewsTimestamp);
                     }
 
-                    var nextPage = ((page + 1) * UPDATES_PAGE_SIZE < response.data.collective.updates.totalCount) ? page + 1 : null;
+                    const nextPage = ((page + 1) * UPDATES_PAGE_SIZE < response.data.collective.updates.totalCount) ? page + 1 : null;
 
                     // Render updates list
-                    var $list = $(Twig.twig({ref: 'tabs/news/_updates-' + (page === 0 ? '0' : 'n') + '.twig'}).render({
+                    const $list = $(Twig.twig({ref: 'tabs/news/_updates-' + (page === 0 ? '0' : 'n') + '.twig'}).render({
                         updates: response.data.collective.updates,
                         nextPage: nextPage,
                     }));
@@ -101,19 +101,19 @@
                         $(this).parent().remove();
                     });
                     $('.ladb-news-comment-btn', $list).on('click', function () {
-                        var slug = $(this).closest('.ladb-news-update-box').data('update-slug');
+                        const slug = $(this).closest('.ladb-news-update-box').data('update-slug');
                         rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/updates/' + slug });
                         return false;
                     });
 
                     // Bind box
                     $('.ladb-news-update-box', $list).on('click', function(e) {
-                        var $closestAnchor = $(e.target.closest('a'));
+                        const $closestAnchor = $(e.target.closest('a'));
                         if ($closestAnchor.length > 0) {
                             rubyCallCommand('core_open_url', { url: $closestAnchor.attr('href') });
                             return false;
                         }
-                        var slug = $(this).data('update-slug');
+                        const slug = $(this).data('update-slug');
                         rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/updates/' + slug });
                     });
 
@@ -147,9 +147,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabNews.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbTabNews.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -165,7 +165,7 @@
         })
     }
 
-    var old = $.fn.ladbTabNews;
+    const old = $.fn.ladbTabNews;
 
     $.fn.ladbTabNews = Plugin;
     $.fn.ladbTabNews.Constructor = LadbTabNews;

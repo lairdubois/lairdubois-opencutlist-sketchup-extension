@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbLeftbar = function (element, options, dialog) {
+    const LadbLeftbar = function (element, options, dialog) {
         this.options = options;
         this.$element = $(element);
         this.dialog = dialog;
@@ -22,15 +22,15 @@
 
     LadbLeftbar.prototype.pushNotification = function (btnSelector, options) {
 
-        var muted = options ? options['muted'] : false;
-        var silent = muted || (options ? options['silent'] : false);
+        const muted = options ? options['muted'] : false;
+        const silent = muted || (options ? options['silent'] : false);
 
-        var isNew = false;
+        let isNew = false;
 
         // Notification on target btn /////
 
-        var $btn = $(btnSelector, this.$element);
-        var $btnBadge = $('.badge.badge-notification', $btn);
+        const $btn = $(btnSelector, this.$element);
+        let $btnBadge = $('.badge.badge-notification', $btn);
         if ($btnBadge.length === 0) {
 
             // Append badge to btn
@@ -50,11 +50,11 @@
 
         // Notification on subar handle if it exists /////
 
-        var $subbar = $btn.closest('.ladb-leftbar-subbar');
-        var $subbarHandle = $('.ladb-toggle-handle', $subbar);
+        const $subbar = $btn.closest('.ladb-leftbar-subbar');
+        const $subbarHandle = $('.ladb-toggle-handle', $subbar);
         if ($subbarHandle.length > 0) {
 
-            var $handleBadge = $('.badge.badge-notification', $subbarHandle);
+            let $handleBadge = $('.badge.badge-notification', $subbarHandle);
             if ($handleBadge.length === 0) {
 
                 // Append badge to subbar handle
@@ -100,17 +100,17 @@
 
     LadbLeftbar.prototype.muteNotification = function (btnSelector) {
 
-        var $btn = $(btnSelector, this.$element);
-        var $btnBadge = $('.badge.badge-notification', $btn);
+        const $btn = $(btnSelector, this.$element);
+        const $btnBadge = $('.badge.badge-notification', $btn);
         if ($btnBadge.length > 0) {
 
             $btnBadge.addClass('badge-notification-muted');
 
-            var $subbar = $btn.closest('.ladb-leftbar-subbar');
-            var $subbarHandle = $('.ladb-toggle-handle', $subbar);
+            const $subbar = $btn.closest('.ladb-leftbar-subbar');
+            const $subbarHandle = $('.ladb-toggle-handle', $subbar);
             if ($subbarHandle.length > 0) {
 
-                var $handleBadge = $('.badge.badge-notification', $subbarHandle);
+                const $handleBadge = $('.badge.badge-notification', $subbarHandle);
                 if ($handleBadge.length > 0) {
 
                     $handleBadge.data('count-muted', $handleBadge.data('count-muted') + $btnBadge.data('count'));
@@ -130,20 +130,20 @@
 
     LadbLeftbar.prototype.clearNotification = function (btnSelector) {
 
-        var $btn = $(btnSelector, this.$element);
-        var $btnBadge = $('.badge.badge-notification', $btn);
+        const $btn = $(btnSelector, this.$element);
+        const $btnBadge = $('.badge.badge-notification', $btn);
         if ($btnBadge.length > 0) {
 
-            var count = $btnBadge.data('count');
+            const count = $btnBadge.data('count');
 
             // Remove badge
             $btnBadge.remove();
 
-            var $subbar = $btn.closest('.ladb-leftbar-subbar');
-            var $subbarHandle = $('.ladb-toggle-handle', $subbar);
+            const $subbar = $btn.closest('.ladb-leftbar-subbar');
+            const $subbarHandle = $('.ladb-toggle-handle', $subbar);
             if ($subbarHandle.length > 0) {
 
-                var $handleBadge = $('.badge.badge-notification', $subbarHandle);
+                const $handleBadge = $('.badge.badge-notification', $subbarHandle);
                 if ($handleBadge.length > 0) {
 
                     $handleBadge.data('count', $handleBadge.data('count') - count);
@@ -171,7 +171,7 @@
     };
 
     LadbLeftbar.prototype.bind = function () {
-        var that = this;
+        const that = this;
 
         // Bind buttons
         this.$btnMinimize.on('click', function () {
@@ -221,9 +221,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.leftbar');
-            var options = $.extend({}, LadbLeftbar.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.leftbar');
+            const options = $.extend({}, LadbLeftbar.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.leftbar', (data = new LadbLeftbar(this, options, options.dialog)));
@@ -236,7 +236,7 @@
         })
     }
 
-    var old = $.fn.ladbLeftbar;
+    const old = $.fn.ladbLeftbar;
 
     $.fn.ladbLeftbar = Plugin;
     $.fn.ladbLeftbar.Constructor = LadbLeftbar;

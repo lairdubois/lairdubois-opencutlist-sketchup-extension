@@ -6,12 +6,12 @@
 
     // Various Consts
 
-    var MULTIPLE_VALUE = '-1';
+    const MULTIPLE_VALUE = '-1';
 
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabCutlist = function (element, options, dialog) {
+    const LadbTabCutlist = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.generateFilters = {
@@ -78,7 +78,7 @@
     // Cutlist /////
 
     LadbTabCutlist.prototype.generateCutlist = function (callback) {
-        var that = this;
+        const that = this;
 
         // Destroy previously created tokenfields
         $('#ladb_cutlist_tags_filter', that.$page).tokenfield('destroy');
@@ -101,29 +101,29 @@
                 that.generateAt = new Date().getTime() / 1000;
                 that.setObsolete(false);
 
-                var errors = response.errors;
-                var warnings = response.warnings;
-                var tips = response.tips;
-                var filename = response.filename;
-                var modelName = response.model_name;
-                var modelDescription = response.model_description;
-                var modelActivePath = response.model_active_path;
-                var pageName = response.page_name;
-                var pageDescription = response.page_description;
-                var isEntitySelection = response.is_entity_selection;
-                var lengthUnit = response.length_unit;
-                var massUnitStrippedname = response.mass_unit_strippedname;
-                var currencySymbol = response.currency_symbol;
-                var instanceCount = response.instance_count;
-                var ignoredInstanceCount = response.ignored_instance_count;
-                var usedTags = response.used_tags;
-                var materialUsages = response.material_usages;
-                var groups = response.groups;
-                var solidWoodMaterialCount = response.solid_wood_material_count;
-                var sheetGoodMaterialCount = response.sheet_good_material_count;
-                var dimensionalMaterialCount = response.dimensional_material_count;
-                var edgeMaterialCount = response.edge_material_count;
-                var hardwareMaterialCount = response.hardware_material_count;
+                const errors = response.errors;
+                const warnings = response.warnings;
+                const tips = response.tips;
+                const filename = response.filename;
+                const modelName = response.model_name;
+                const modelDescription = response.model_description;
+                const modelActivePath = response.model_active_path;
+                const pageName = response.page_name;
+                const pageDescription = response.page_description;
+                const isEntitySelection = response.is_entity_selection;
+                const lengthUnit = response.length_unit;
+                const massUnitStrippedname = response.mass_unit_strippedname;
+                const currencySymbol = response.currency_symbol;
+                const instanceCount = response.instance_count;
+                const ignoredInstanceCount = response.ignored_instance_count;
+                const usedTags = response.used_tags;
+                const materialUsages = response.material_usages;
+                const groups = response.groups;
+                const solidWoodMaterialCount = response.solid_wood_material_count;
+                const sheetGoodMaterialCount = response.sheet_good_material_count;
+                const dimensionalMaterialCount = response.dimensional_material_count;
+                const edgeMaterialCount = response.edge_material_count;
+                const hardwareMaterialCount = response.hardware_material_count;
 
                 // Keep useful data
                 that.filename = filename;
@@ -144,14 +144,14 @@
                 that.groups = groups;
 
                 // Compute usedEdgeMaterialDisplayNames
-                for (var i = 0; i < materialUsages.length; i++) {
+                for (let i = 0; i < materialUsages.length; i++) {
                     if (materialUsages[i].type === 4 && materialUsages[i].use_count > 0) {     // 4 = TYPE_EDGE
                         that.usedEdgeMaterialDisplayNames.push(materialUsages[i].display_name);
                     }
                 }
 
                 // Compute usedVeneerMaterialDisplayNames
-                for (var i = 0; i < materialUsages.length; i++) {
+                for (let i = 0; i < materialUsages.length; i++) {
                     if (materialUsages[i].type === 6 && materialUsages[i].use_count > 0) {     // 6 = TYPE_VENEER
                         that.usedVeneerMaterialDisplayNames.push(materialUsages[i].display_name);
                     }
@@ -217,13 +217,13 @@
                 that.renderSelection();
 
                 // Cleanup nonexistent hidden group ids
-                var hiddenGroupIdsLength = that.generateOptions.hidden_group_ids.length;
-                for (var i = hiddenGroupIdsLength - 1 ; i >= 0; i--) {
+                const hiddenGroupIdsLength = that.generateOptions.hidden_group_ids.length;
+                for (let i = hiddenGroupIdsLength - 1 ; i >= 0; i--) {
                     if (that.generateOptions.hidden_group_ids[i] == null || that.generateOptions.hidden_group_ids[i].endsWith('summary')) {
                         continue;
                     }
-                    var exists = false;
-                    for (var j = 0; j < groups.length; j++) {
+                    let exists = false;
+                    for (let j = 0; j < groups.length; j++) {
                         if (that.generateOptions.hidden_group_ids[i] === groups[j].id) {
                             exists = true;
                             break;
@@ -238,8 +238,8 @@
                 }
 
                 // Useful function
-                var fnGenerateWithTagsFilter = function () {
-                    var tokenList = $('#ladb_cutlist_tags_filter', that.$page).tokenfield('getTokensList');
+                const fnGenerateWithTagsFilter = function () {
+                    const tokenList = $('#ladb_cutlist_tags_filter', that.$page).tokenfield('getTokensList');
                     that.generateFilters.tags_filter = tokenList.length === 0 ? [] : tokenList.split(';');
                     that.generateCutlist(function () {
                         $('#ladb_cutlist_tags_filter-tokenfield', that.$page).focus();
@@ -250,7 +250,7 @@
                 $('#ladb_cutlist_tags_filter', that.$page)
                     .on('tokenfield:createtoken', function (e) {
 
-                        var m = e.attrs.value.match(/([+-])(.*)/);
+                        const m = e.attrs.value.match(/([+-])(.*)/);
                         if (m) {
                             e.attrs.oko = m[1]
                             e.attrs.label = m[2];
@@ -261,7 +261,7 @@
                         }
 
                         // Unique token
-                        var tokens = $(this).tokenfield('getTokens');
+                        const tokens = $(this).tokenfield('getTokens');
                         if (Array.isArray(tokens)) {
                             $.each(tokens, function (index, token) {
                                 if (token.label === e.attrs.label) {
@@ -279,7 +279,7 @@
 
                     })
                     .on('tokenfield:createdtoken', function (e) {
-                        var $okoBtn = $('<a href="#" class="oko" data-toggle="tooltip" title="' + i18next.t('tab.cutlist.tooltip.oko_label_filter') + '"></a>')
+                        const $okoBtn = $('<a href="#" class="oko" data-toggle="tooltip" title="' + i18next.t('tab.cutlist.tooltip.oko_label_filter') + '"></a>')
                             .on('click', function () {
                                 e.attrs.value = (e.attrs.oko === '+' ? '-' : '+') + e.attrs.label;
                                 fnGenerateWithTagsFilter();
@@ -316,7 +316,7 @@
                     .on('tokenfield:createtoken', function (e) {
 
                         // Unique token
-                        var tokens = $(this).tokenfield('getTokens');
+                        const tokens = $(this).tokenfield('getTokens');
                         if (Array.isArray(tokens)) {
                             $.each(tokens, function (index, token) {
                                 if (token.label === e.attrs.label) {
@@ -334,7 +334,7 @@
 
                     })
                     .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
-                        var tokenList = $(this).tokenfield('getTokensList');
+                        const tokenList = $(this).tokenfield('getTokensList');
                         that.generateFilters.edge_material_names_filter = tokenList.length === 0 ? [] : tokenList.split(';');
                         that.generateCutlist(function () {
                             $('#ladb_cutlist_edge_material_names_filter-tokenfield', that.$page).focus();
@@ -352,7 +352,7 @@
                     .on('tokenfield:createtoken', function (e) {
 
                         // Unique token
-                        var tokens = $(this).tokenfield('getTokens');
+                        const tokens = $(this).tokenfield('getTokens');
                         if (Array.isArray(tokens)) {
                             $.each(tokens, function (index, token) {
                                 if (token.label === e.attrs.label) {
@@ -370,7 +370,7 @@
 
                     })
                     .on('tokenfield:createdtoken tokenfield:removedtoken', function (e) {
-                        var tokenList = $(this).tokenfield('getTokensList');
+                        const tokenList = $(this).tokenfield('getTokensList');
                         that.generateFilters.veneer_material_names_filter = tokenList.length === 0 ? [] : tokenList.split(';');
                         that.generateCutlist(function () {
                             $('#ladb_cutlist_veneer_material_names_filter-tokenfield', that.$page).focus();
@@ -400,7 +400,7 @@
                 });
                 $('.ladb-btn-toggle-no-print', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
+                    const $group = $(this).parents('.ladb-cutlist-group');
                     if ($group.hasClass('no-print')) {
                         that.showGroup($group);
                     } else {
@@ -414,7 +414,7 @@
                 });
                 $('a.ladb-btn-scrollto', that.$page).on('click', function () {
                     $(this).blur();
-                    var $target = $($(this).attr('href'));
+                    const $target = $($(this).attr('href'));
                     if ($target.data('group-id')) {
                         that.showGroup($target);
                     }
@@ -423,8 +423,8 @@
                 });
                 $('a.ladb-btn-edge-material-filter', that.$page).on('click', function () {
                     $(this).blur();
-                    var materialFilter = $(this).data('material-display-name');
-                    var indexOf = that.generateFilters.edge_material_names_filter.indexOf(materialFilter);
+                    const materialFilter = $(this).data('material-display-name');
+                    const indexOf = that.generateFilters.edge_material_names_filter.indexOf(materialFilter);
                     if (indexOf > -1) {
                         that.generateFilters.edge_material_names_filter.splice(indexOf, 1);
                     } else {
@@ -435,8 +435,8 @@
                 });
                 $('a.ladb-btn-veneer-material-filter', that.$page).on('click', function () {
                     $(this).blur();
-                    var materialFilter = $(this).data('material-display-name');
-                    var indexOf = that.generateFilters.veneer_material_names_filter.indexOf(materialFilter);
+                    const materialFilter = $(this).data('material-display-name');
+                    const indexOf = that.generateFilters.veneer_material_names_filter.indexOf(materialFilter);
                     if (indexOf > -1) {
                         that.generateFilters.veneer_material_names_filter.splice(indexOf, 1);
                     } else {
@@ -451,7 +451,7 @@
                     // Flag to ignore next material change event
                     that.ignoreNextMaterialEvents = true;
 
-                    var materialId = $(this).data('material-id');
+                    const materialId = $(this).data('material-id');
                     that.dialog.executeCommandOnTab('materials', 'edit_material', {
                         materialId: materialId,
                         updatedCallback: function () {
@@ -468,16 +468,16 @@
                 });
                 $('a.ladb-btn-add-std-dimension-to-material', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
-                    var group = that.findGroupById(groupId);
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
+                    const group = that.findGroupById(groupId);
                     if (group) {
 
                         // Flag to ignore next material change event
                         that.ignoreNextMaterialEvents = true;
 
                         // Use real std dimension if dimension is rounded
-                        var std_dimension = group.std_dimension_rounded ? group.std_dimension_real : group.std_dimension;
+                        const std_dimension = group.std_dimension_rounded ? group.std_dimension_real : group.std_dimension;
 
                         rubyCallCommand('materials_add_std_dimension_command', { material_name: group.material_name, std_dimension: std_dimension }, function (response) {
 
@@ -488,13 +488,13 @@
                                 that.dialog.notifyErrors(response.errors);
                             } else {
 
-                                var wTop = $group.offset().top - $(window).scrollTop();
+                                const wTop = $group.offset().top - $(window).scrollTop();
 
                                 // Refresh the list
                                 that.generateCutlist(function () {
 
                                     // Try to scroll to the edited group's block
-                                    var $group = $('#ladb_group_' + groupId, that.$page);
+                                    const $group = $('#ladb_group_' + groupId, that.$page);
                                     if ($group.length > 0) {
                                         that.$rootSlide.animate({ scrollTop: $group.offset().top - wTop }, 0).promise().then(function () {
                                             $group.effect('highlight', {}, 1500);
@@ -514,9 +514,9 @@
                     // Flag to ignore next material change event
                     that.ignoreNextMaterialEvents = true;
 
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
-                    var group = that.findGroupById(groupId);
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
+                    const group = that.findGroupById(groupId);
                     if (group) {
                         that.dialog.executeCommandOnTab('materials', 'edit_material', {
                             materialId: group.material_id,
@@ -533,27 +533,27 @@
                     }
                 });
                 $('a.ladb-item-highlight-group-parts', that.$page).on('click', function () {
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
                     that.highlightGroupParts(groupId);
                     $(this).blur();
                 });
                 $('a.ladb-item-export-2d-group-parts', that.$page).on('click', function () {
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
                     that.writeGroupParts(groupId, true);
                     $(this).blur();
                 });
                 $('a.ladb-item-export-3d-group-parts', that.$page).on('click', function () {
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
                     that.writeGroupParts(groupId, false);
                     $(this).blur();
                 });
                 $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
                     that.hideAllGroups(groupId);
                     that.scrollSlideToTarget(null, $group, true, false);
                 });
@@ -563,85 +563,85 @@
                 });
                 $('a.ladb-item-dimensions-help', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
                     that.dimensionsHelpGroup(groupId);
                 });
                 $('a.ladb-item-numbers-save', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
-                    var wTop = $group.offset().top - $(window).scrollTop();
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
+                    const wTop = $group.offset().top - $(window).scrollTop();
                     that.numbersSave({ group_id: groupId }, function () {
                         that.$rootSlide.animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
                     });
                 });
                 $('a.ladb-item-numbers-reset', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
-                    var wTop = $group.offset().top - $(window).scrollTop();
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
+                    const wTop = $group.offset().top - $(window).scrollTop();
                     that.numbersReset({ group_id: groupId }, function () {
                         that.$rootSlide.animate({ scrollTop: $('#ladb_group_' + groupId).offset().top - wTop }, 0);
                     });
                 });
                 $('button.ladb-btn-group-cuttingdiagram1d', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
                     that.cuttingdiagram1dGroup(groupId, true);
                 });
                 $('button.ladb-btn-group-cuttingdiagram2d', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
                     that.cuttingdiagram2dGroup(groupId, true);
                 });
                 $('button.ladb-btn-group-packing', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
                     that.packingGroup(groupId, true);
                 });
                 $('button.ladb-btn-group-labels', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
                     that.labelsGroupParts(groupId);
                 });
                 $('button.ladb-btn-group-layout', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
                     that.layoutGroupParts(groupId);
                 });
                 $('.ladb-minitools a[data-tab]', that.$page).on('click', function () {
                     $(this).blur();
-                    var $part = $(this).parents('.ladb-cutlist-row');
-                    var partId = $part.data('part-id');
-                    var tab = $(this).data('tab');
+                    const $part = $(this).parents('.ladb-cutlist-row');
+                    const partId = $part.data('part-id');
+                    const tab = $(this).data('tab');
                     that.editPart(partId, undefined, tab);
                     return false;
                 });
                 $('a.ladb-btn-select-group-parts', that.$page).on('click', function () {
                     $(this).blur();
-                    var $group = $(this).parents('.ladb-cutlist-group');
-                    var groupId = $group.data('group-id');
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
                     that.selectGroupParts(groupId);
                     return false;
                 });
                 $('a.ladb-btn-select-part, td.ladb-btn-select-part', that.$page)
                     .on('click', function () {
                         $(this).blur();
-                        var $part = $(this).parents('.ladb-cutlist-row');
-                        var partId = $part.data('part-id');
+                        const $part = $(this).parents('.ladb-cutlist-row');
+                        const partId = $part.data('part-id');
                         that.selectPart(partId);
                         return false;
                     })
                     .on('dblclick', function() {
                         $(this).blur();
-                        var $group = $(this).parents('.ladb-cutlist-group');
-                        var groupId = $group.data('group-id');
+                        const $group = $(this).parents('.ladb-cutlist-group');
+                        const groupId = $group.data('group-id');
                         that.selectGroupParts(groupId);
                         return false;
                     })
@@ -653,28 +653,28 @@
                 });
                 $('a.ladb-btn-highlight-part', that.$page).on('click', function () {
                     $(this).blur();
-                    var $part = $(this).parents('.ladb-cutlist-row');
-                    var partId = $part.data('part-id');
+                    const $part = $(this).parents('.ladb-cutlist-row');
+                    const partId = $part.data('part-id');
                     that.highlightPart(partId);
                     return false;
                 });
                 $('a.ladb-btn-edit-part', that.$page).on('click', function () {
                     $(this).blur();
-                    var $part = $(this).parents('.ladb-cutlist-row');
-                    var partId = $part.data('part-id');
+                    const $part = $(this).parents('.ladb-cutlist-row');
+                    const partId = $part.data('part-id');
                     that.editPart(partId);
                     return false;
                 });
                 $('a.ladb-btn-folding-toggle-row', that.$page).on('click', function () {
                     $(this).blur();
-                    var $part = $(this).parents('.ladb-cutlist-row-folder');
+                    const $part = $(this).parents('.ladb-cutlist-row-folder');
                     that.toggleFoldingRow($part);
                     return false;
                 });
                 $('a.ladb-btn-label-filter', that.$page).on('click', function () {
                     $(this).blur();
-                    var labelFilter = '+' + $(this).html();
-                    var indexOf = that.generateFilters.tags_filter.indexOf(labelFilter);
+                    const labelFilter = '+' + $(this).html();
+                    const indexOf = that.generateFilters.tags_filter.indexOf(labelFilter);
                     if (indexOf > -1) {
                         that.generateFilters.tags_filter.splice(indexOf, 1);
                     } else {
@@ -714,36 +714,36 @@
     };
 
     LadbTabCutlist.prototype.exportCutlist = function (forceDefaultTab) {
-        var that = this;
+        const that = this;
 
-        var isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
+        const isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
             || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
 
         // Retrieve export option options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_export_options' }, function (response) {
 
-            var exportOptions = response.preset;
+            const exportOptions = response.preset;
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig', {
+            const $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig', {
                 isGroupSelection: isGroupSelection,
                 tab: forceDefaultTab || that.lastExportOptionsTab == null ? 'customize' : that.lastExportOptionsTab
             });
 
             // Fetch UI elements
-            var $tabs = $('a[data-toggle="tab"]', $modal);
-            var $widgetPreset = $('.ladb-widget-preset', $modal);
-            var $radiosSource = $('input[name=ladb_radios_source]', $modal);
-            var $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
-            var $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
-            var $editorSummary = $('#ladb_cutlist_export_editor_summary', $modal);
-            var $editorCutlist = $('#ladb_cutlist_export_editor_cutlist', $modal);
-            var $editorInstancesList = $('#ladb_cutlist_export_editor_instances_list', $modal);
-            var $btnPreview = $('#ladb_cutlist_export_btn_preview', $modal);
-            var $btnExport = $('#ladb_cutlist_export_btn_export', $modal);
+            const $tabs = $('a[data-toggle="tab"]', $modal);
+            const $widgetPreset = $('.ladb-widget-preset', $modal);
+            const $radiosSource = $('input[name=ladb_radios_source]', $modal);
+            const $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
+            const $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
+            const $editorSummary = $('#ladb_cutlist_export_editor_summary', $modal);
+            const $editorCutlist = $('#ladb_cutlist_export_editor_cutlist', $modal);
+            const $editorInstancesList = $('#ladb_cutlist_export_editor_instances_list', $modal);
+            const $btnPreview = $('#ladb_cutlist_export_btn_preview', $modal);
+            const $btnExport = $('#ladb_cutlist_export_btn_export', $modal);
 
             // Define useful functions
 
-            var fnComputeSorterVisibility = function (source) {
+            const fnComputeSorterVisibility = function (source) {
                 switch (parseInt(source)) {
                     case 0: // EXPORT_OPTION_SOURCE_SUMMARY
                         $editorSummary.show();
@@ -762,8 +762,8 @@
                         break;
                 }
             };
-            var fnFetchLastExportOptionsEditingItem = function (source) {
-                var index = null;
+            const fnFetchLastExportOptionsEditingItem = function (source) {
+                let index = null;
                 switch (parseInt(source)) {
                     case 0: // EXPORT_OPTION_SOURCE_SUMMARY
                         index = $editorSummary.ladbEditorExport('getEditingItemIndex');
@@ -784,7 +784,7 @@
                     that.lastExportOptionsEditingItem = null;
                 }
             };
-            var fnFetchOptions = function (options) {
+            const fnFetchOptions = function (options) {
                 options.source = parseInt($radiosSource.filter(':checked').val());
                 options.col_sep = parseInt($selectColSep.val());
                 options.encoding = parseInt($selectEncoding.val());
@@ -797,7 +797,7 @@
                 options.source_col_defs[2] = $editorInstancesList.ladbEditorExport('getColDefs');
 
             }
-            var fnFillInputs = function (options) {
+            const fnFillInputs = function (options) {
                 $radiosSource.filter('[value=' + options.source + ']').click();
                 $selectColSep.selectpicker('val', options.col_sep);
                 $selectEncoding.selectpicker('val', options.encoding);
@@ -951,7 +951,7 @@
                     }
                     if (response.rows) {
 
-                        var $slide = that.pushNewSlide('ladb_cutlist_slide_export', 'tabs/cutlist/_slide-export.twig', $.extend({
+                        const $slide = that.pushNewSlide('ladb_cutlist_slide_export', 'tabs/cutlist/_slide-export.twig', $.extend({
                             errors: response.errors,
                             filename: that.filename,
                             modelName: that.modelName,
@@ -967,7 +967,7 @@
 
                         });
 
-                        var fnCopyToClipboard = function(noHeader) {
+                        const fnCopyToClipboard = function(noHeader) {
                             rubyCallCommand('cutlist_export', {
                                 source: exportOptions.source,
                                 col_defs: exportOptions.source_col_defs[exportOptions.source],
@@ -985,10 +985,10 @@
                         }
 
                         // Fetch UI elements
-                        var $btnExport = $('#ladb_btn_export', $slide);
-                        var $itemCopyAll = $('#ladb_item_copy_all', $slide);
-                        var $itemCopyValues = $('#ladb_item_copy_values', $slide);
-                        var $btnClose = $('#ladb_btn_close', $slide);
+                        const $btnExport = $('#ladb_btn_export', $slide);
+                        const $itemCopyAll = $('#ladb_item_copy_all', $slide);
+                        const $itemCopyValues = $('#ladb_item_copy_values', $slide);
+                        const $btnClose = $('#ladb_btn_close', $slide);
 
                         // Bind buttons
                         $btnExport.on('click', function () {
@@ -1081,31 +1081,31 @@
     };
 
     LadbTabCutlist.prototype.reportCutlist = function (forceDefaultTab) {
-        var that = this;
+        const that = this;
 
-        var isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
+        const isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
             || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
 
         // Retrieve label options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_report_options' }, function (response) {
 
-            var reportOptions = response.preset;
+            const reportOptions = response.preset;
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig', {
+            const $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig', {
                 isGroupSelection: isGroupSelection,
                 tab: forceDefaultTab || that.lastReportOptionsTab == null ? 'general' : that.lastReportOptionsTab,
             });
 
             // Fetch UI elements
-            var $tabs = $('a[data-toggle="tab"]', $modal);
-            var $widgetPreset = $('.ladb-widget-preset', $modal);
-            var $inputSolidWoodCoefficient = $('#ladb_input_solid_wood_coefficient', $modal);
-            var $btnGenerate = $('#ladb_cutlist_report_btn_generate', $modal);
+            const $tabs = $('a[data-toggle="tab"]', $modal);
+            const $widgetPreset = $('.ladb-widget-preset', $modal);
+            const $inputSolidWoodCoefficient = $('#ladb_input_solid_wood_coefficient', $modal);
+            const $btnGenerate = $('#ladb_cutlist_report_btn_generate', $modal);
 
-            var fnFetchOptions = function (options) {
+            const fnFetchOptions = function (options) {
                 options.solid_wood_coefficient = Math.max(1.0, $inputSolidWoodCoefficient.val() === '' ? 1.0 : parseFloat($inputSolidWoodCoefficient.val().replace(',', '.')));
             }
-            var fnFillInputs = function (options) {
+            const fnFillInputs = function (options) {
                 $inputSolidWoodCoefficient.val(options.solid_wood_coefficient);
             }
 
@@ -1154,15 +1154,15 @@
     };
 
     LadbTabCutlist.prototype.generateReportCutlist = function (reportOptions, callback) {
-        var that = this;
+        const that = this;
 
-        var fnAdvance = function () {
+        const fnAdvance = function () {
             window.requestAnimationFrame(function () {
                 rubyCallCommand('cutlist_report_advance', null, function (response) {
 
                     if (response.remaining_step === 0 || response.remaining_step === undefined) {
 
-                        var $slide = that.pushNewSlide('ladb_cutlist_slide_report', 'tabs/cutlist/_slide-report.twig', $.extend({
+                        const $slide = that.pushNewSlide('ladb_cutlist_slide_report', 'tabs/cutlist/_slide-report.twig', $.extend({
                             generateOptions: that.generateOptions,
                             errors: response.errors,
                             filename: that.filename,
@@ -1187,9 +1187,9 @@
                         });
 
                         // Fetch UI elements
-                        var $btnReport = $('#ladb_btn_report', $slide);
-                        var $btnPrint = $('#ladb_btn_print', $slide);
-                        var $btnClose = $('#ladb_btn_close', $slide);
+                        const $btnReport = $('#ladb_btn_report', $slide);
+                        const $btnPrint = $('#ladb_btn_print', $slide);
+                        const $btnClose = $('#ladb_btn_close', $slide);
 
                         // Bind buttons
                         $btnReport.on('click', function () {
@@ -1207,7 +1207,7 @@
                             that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                         });
                         $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                            var $group = $(this).parents('.ladb-cutlist-group');
+                            const $group = $(this).parents('.ladb-cutlist-group');
                             if ($group.hasClass('no-print')) {
                                 that.showGroup($group, true);
                             } else {
@@ -1217,7 +1217,7 @@
                         });
                         $('a.ladb-btn-folding-toggle-row', $slide).on('click', function () {
                             $(this).blur();
-                            var $row = $(this).parents('.ladb-cutlist-row-folder');
+                            const $row = $(this).parents('.ladb-cutlist-row-folder');
                             that.toggleFoldingRow($row, 'entry-id');
                             return false;
                         });
@@ -1228,8 +1228,8 @@
                         });
                         $('a.ladb-item-hide-all-other-groups', $slide).on('click', function () {
                             $(this).blur();
-                            var $group = $(this).parents('.ladb-cutlist-group');
-                            var groupId = $group.data('group-id');
+                            const $group = $(this).parents('.ladb-cutlist-group');
+                            const groupId = $group.data('group-id');
                             that.hideAllGroups(groupId, $slide, true);
                             that.scrollSlideToTarget($slide, $group, true, false);
                         });
@@ -1251,8 +1251,8 @@
                             // Flag to ignore next material change event
                             that.ignoreNextMaterialEvents = true;
 
-                            var materialId = $(this).data('material-id');
-                            var propertiesTab = $(this).data('properties-tab');
+                            const materialId = $(this).data('material-id');
+                            const propertiesTab = $(this).data('properties-tab');
                             that.dialog.executeCommandOnTab('materials', 'edit_material', {
                                 materialId: materialId,
                                 propertiesTab: propertiesTab,
@@ -1274,7 +1274,7 @@
                         });
                         $('a.ladb-btn-cuttingdiagram-1d', $slide).on('click', function () {
                             $(this).blur();
-                            var groupId = $(this).data('group-id');
+                            const groupId = $(this).data('group-id');
                             that.cuttingdiagram1dGroup(groupId, true, function () {
                                 that.generateReportCutlist(reportOptions);
                             });
@@ -1282,7 +1282,7 @@
                         });
                         $('a.ladb-btn-cuttingdiagram-2d', $slide).on('click', function () {
                             $(this).blur();
-                            var groupId = $(this).data('group-id');
+                            const groupId = $(this).data('group-id');
                             that.cuttingdiagram2dGroup(groupId, true, function () {
                                 that.generateReportCutlist(reportOptions);
                             });
@@ -1295,13 +1295,13 @@
                         });
                         $('a.ladb-btn-highlight-part', $slide).on('click', function () {
                             $(this).blur();
-                            var partId = $(this).data('part-id');
+                            const partId = $(this).data('part-id');
                             that.highlightPart(partId);
                             return false;
                         });
                         $('a.ladb-btn-edit-part', $slide).on('click', function () {
                             $(this).blur();
-                            var partId = $(this).data('part-id');
+                            const partId = $(this).data('part-id');
                             that.editPart(partId, undefined, undefined, function () {
 
                                 // Refresh the list
@@ -1354,16 +1354,16 @@
     };
 
     LadbTabCutlist.prototype.highlightPart = function (partId) {
-        var groupAndPart = this.findGroupAndPartById(partId);
+        const groupAndPart = this.findGroupAndPartById(partId);
         if (groupAndPart) {
 
-            var group = groupAndPart.group;
-            var part = groupAndPart.part;
+            const group = groupAndPart.group;
+            const part = groupAndPart.part;
 
-            var isFolder = part.children && part.children.length > 0;
-            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(partId) && this.selectionPartIds.length > 1;
+            const isFolder = part.children && part.children.length > 0;
+            const isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(partId) && this.selectionPartIds.length > 1;
 
-            var partIds;
+            let partIds;
             if (isFolder) {
                 partIds = [ partId ];
             } else if (isSelected) {
@@ -1378,9 +1378,9 @@
     };
 
     LadbTabCutlist.prototype.highlightParts = function (partIds, context) { // partIds ignored if groupId is defined
-        var that = this;
+        const that = this;
 
-        var groupId = context && context.targetGroup ? context.targetGroup.id : null;
+        const groupId = context && context.targetGroup ? context.targetGroup.id : null;
 
         rubyCallCommand('cutlist_highlight_parts', { tab_name_to_show_on_quit: this.generateOptions.minimize_on_highlight ? 'cutlist' : null, part_ids: partIds }, function (response) {
 
@@ -1407,16 +1407,16 @@
     };
 
     LadbTabCutlist.prototype.layoutParts = function (partIds, context, forceDefaultTab) {
-        var that = this;
+        const that = this;
 
-        var section = context && context.targetGroup ? context.targetGroup.id : null;
+        const section = context && context.targetGroup ? context.targetGroup.id : null;
 
         // Retrieve layout options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_layout_options', section: section }, function (response) {
 
-            var layoutOptions = response.preset;
+            const layoutOptions = response.preset;
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_layout', 'tabs/cutlist/_modal-layout.twig', {
+            const $modal = that.appendModalInside('ladb_cutlist_modal_layout', 'tabs/cutlist/_modal-layout.twig', {
                 group: context.targetGroup,
                 isGroupSelection: context ? context.isGroupSelection : false,
                 isPartSelection: context ? context.isPartSelection : false,
@@ -1425,31 +1425,31 @@
             });
 
             // Fetch UI elements
-            var $tabs = $('a[data-toggle="tab"]', $modal);
-            var $widgetPreset = $('.ladb-widget-preset', $modal);
-            var $selectPageFormat = $('#ladb_select_page_format', $modal);
-            var $inputPageWidth = $('#ladb_input_page_width', $modal);
-            var $inputPageHeight = $('#ladb_input_page_height', $modal);
-            var $selectPageHeader = $('#ladb_select_page_header', $modal);
-            var $selectPartsColored = $('#ladb_select_parts_colored', $modal);
-            var $selectPartsOpacity = $('#ladb_select_parts_opacity', $modal);
-            var $selectPinsHidden = $('#ladb_select_pins_hidden', $modal);
-            var $selectPinsColored = $('#ladb_select_pins_colored', $modal);
-            var $textareaPinsFormula = $('#ladb_textarea_pins_formula', $modal);
-            var $selectPinsLength = $('#ladb_select_pins_length', $modal);
-            var $selectPinsDirection = $('#ladb_select_pins_direction', $modal);
-            var $selectCameraView = $('#ladb_select_camera_view', $modal);
-            var $selectCameraZoom = $('#ladb_select_camera_zoom', $modal);
-            var $selectCameraTarget = $('#ladb_select_camera_target', $modal);
-            var $inputCameraView = $('#ladb_input_camera_view', $modal);
-            var $inputCameraZoom = $('#ladb_input_camera_zoom', $modal);
-            var $inputCameraTarget = $('#ladb_input_camera_target', $modal);
-            var $inputExplodeFactor = $('#ladb_input_explode_factor', $modal);
-            var $formGroupPins = $('.ladb-cutlist-layout-form-group-pins', $modal);
-            var $formGroupPinsDirection = $('.ladb-cutlist-layout-form-group-pins-direction', $modal);
-            var $btnGenerate = $('#ladb_cutlist_layout_btn_generate', $modal);
+            const $tabs = $('a[data-toggle="tab"]', $modal);
+            const $widgetPreset = $('.ladb-widget-preset', $modal);
+            const $selectPageFormat = $('#ladb_select_page_format', $modal);
+            const $inputPageWidth = $('#ladb_input_page_width', $modal);
+            const $inputPageHeight = $('#ladb_input_page_height', $modal);
+            const $selectPageHeader = $('#ladb_select_page_header', $modal);
+            const $selectPartsColored = $('#ladb_select_parts_colored', $modal);
+            const $selectPartsOpacity = $('#ladb_select_parts_opacity', $modal);
+            const $selectPinsHidden = $('#ladb_select_pins_hidden', $modal);
+            const $selectPinsColored = $('#ladb_select_pins_colored', $modal);
+            const $textareaPinsFormula = $('#ladb_textarea_pins_formula', $modal);
+            const $selectPinsLength = $('#ladb_select_pins_length', $modal);
+            const $selectPinsDirection = $('#ladb_select_pins_direction', $modal);
+            const $selectCameraView = $('#ladb_select_camera_view', $modal);
+            const $selectCameraZoom = $('#ladb_select_camera_zoom', $modal);
+            const $selectCameraTarget = $('#ladb_select_camera_target', $modal);
+            const $inputCameraView = $('#ladb_input_camera_view', $modal);
+            const $inputCameraZoom = $('#ladb_input_camera_zoom', $modal);
+            const $inputCameraTarget = $('#ladb_input_camera_target', $modal);
+            const $inputExplodeFactor = $('#ladb_input_explode_factor', $modal);
+            const $formGroupPins = $('.ladb-cutlist-layout-form-group-pins', $modal);
+            const $formGroupPinsDirection = $('.ladb-cutlist-layout-form-group-pins-direction', $modal);
+            const $btnGenerate = $('#ladb_cutlist_layout_btn_generate', $modal);
 
-            var fnUpdatePageSizeFieldsAvailability = function () {
+            const fnUpdatePageSizeFieldsAvailability = function () {
                 if ($selectPageFormat.selectpicker('val') == null) {
                     $selectPageFormat.selectpicker('val', '0');
                     $inputPageWidth.ladbTextinputDimension('enable');
@@ -1459,7 +1459,7 @@
                     $inputPageHeight.ladbTextinputDimension('disable');
                 }
             }
-            var fnUpdateFieldsVisibility = function () {
+            const fnUpdateFieldsVisibility = function () {
                 if ($selectPinsHidden.val() === '1') {
                     $formGroupPins.hide();
                 } else {
@@ -1471,7 +1471,7 @@
                     }
                 }
             }
-            var fnConvertPageSettings = function(pageWidth, pageHeight, callback) {
+            const fnConvertPageSettings = function(pageWidth, pageHeight, callback) {
                 rubyCallCommand('core_length_to_float', {
                     page_width: pageWidth,
                     page_height: pageHeight
@@ -1479,11 +1479,11 @@
                     callback(response.page_width, response.page_height);
                 });
             }
-            var fnConvertToVariableDefs = function (vars) {
+            const fnConvertToVariableDefs = function (vars) {
 
                 // Generate variableDefs for formula editor
-                var variableDefs = [];
-                for (var i = 0; i < vars.length; i++) {
+                const variableDefs = [];
+                for (let i = 0; i < vars.length; i++) {
                     variableDefs.push({
                         text: vars[i].name,
                         displayText: i18next.t('tab.cutlist.export.' + vars[i].name),
@@ -1493,7 +1493,7 @@
 
                 return variableDefs;
             }
-            var fnFetchOptions = function (options) {
+            const fnFetchOptions = function (options) {
                 options.page_width = $inputPageWidth.val();
                 options.page_height = $inputPageHeight.val();
                 options.page_header = $selectPageHeader.val() === '1';
@@ -1509,7 +1509,7 @@
                 options.camera_target = JSON.parse($inputCameraTarget.val());
                 options.explode_factor = $inputExplodeFactor.slider('getValue');
             }
-            var fnFillInputs = function (options) {
+            const fnFillInputs = function (options) {
                 $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
                 $inputPageWidth.val(options.page_width);
                 $inputPageHeight.val(options.page_height);
@@ -1611,11 +1611,11 @@
 
             // Bind select
             $selectPageFormat.on('change', function () {
-                var format = $(this).val();
+                const format = $(this).val();
                 if (format !== '0') {
                     $inputPageWidth.ladbTextinputDimension('disable');
                     $inputPageHeight.ladbTextinputDimension('disable');
-                    var dimensions = format.split('x');
+                    const dimensions = format.split('x');
                     $inputPageWidth.val(dimensions[0]);
                     $inputPageHeight.val(dimensions[1]);
                 } else {
@@ -1662,13 +1662,13 @@
                             pins_formula: layoutOptions.pins_formula
                         }, function (response) {
 
-                            var controlsData = {
+                            const controlsData = {
                                 zoom: layoutOptions.camera_zoom,
                                 target: layoutOptions.camera_target,
                                 exploded_model_radius: 1
                             }
 
-                            var $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
+                            const $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
                                 capabilities: that.dialog.capabilities,
                                 errors: response.errors,
                                 filename: that.filename,
@@ -1691,12 +1691,12 @@
                             });
 
                             // Fetch UI elements
-                            var $btnLayout = $('#ladb_btn_layout', $slide);
-                            var $btnPrint = $('#ladb_btn_print', $slide);
-                            var $btnExport = $('#ladb_btn_export', $slide);
-                            var $btnClose = $('#ladb_btn_close', $slide);
-                            var $viewer = $('.ladb-three-viewer', $slide);
-                            var $lblScale = $('.ladb-lbl-scale', $slide);
+                            const $btnLayout = $('#ladb_btn_layout', $slide);
+                            const $btnPrint = $('#ladb_btn_print', $slide);
+                            const $btnExport = $('#ladb_btn_export', $slide);
+                            const $btnClose = $('#ladb_btn_close', $slide);
+                            const $viewer = $('.ladb-three-viewer', $slide);
+                            const $lblScale = $('.ladb-lbl-scale', $slide);
 
                             // Bind buttons
                             $btnLayout.on('click', function () {
@@ -1767,7 +1767,7 @@
                             });
 
                             // Bind viewer
-                            var storeOptionsTimeoutId = null;
+                            let storeOptionsTimeoutId = null;
                             $viewer.ladbThreeViewer({
                                 autoload: false,
                                 dialog: that.dialog,
@@ -1811,7 +1811,7 @@
 
                                 }
 
-                                var scale;
+                                let scale;
                                 if (data.cameraZoom > 1) {
                                     scale = Number.parseFloat(data.cameraZoom.toFixed(3)) + ':1';
                                 } else if (data.cameraZoom < 1) {
@@ -1828,7 +1828,7 @@
                                 $viewer.ladbThreeViewer('destroy');
                             });
 
-                            var $paperPage = $('.ladb-paper-page', $viewer)
+                            const $paperPage = $('.ladb-paper-page', $viewer)
                             if ($paperPage.length > 0 && pageWidth && pageHeight) {
 
                                 $paperPage.outerWidth(pageWidth + 'in');
@@ -1836,7 +1836,7 @@
                                 $paperPage.css('padding', '0.25in');
 
                                 // Scale frame to fit viewer on window resize
-                                var fnScaleFrame = function (e) {
+                                const fnScaleFrame = function (e) {
 
                                     // Auto remove listener
                                     if (e && !$paperPage.get(0).isConnected) {
@@ -1857,11 +1857,11 @@
                                         return;
                                     }
 
-                                    var spaceIW = $viewer.innerWidth();
-                                    var spaceIH = $viewer.innerHeight();
-                                    var frameOW = $paperPage.outerWidth();
-                                    var frameOH = $paperPage.outerHeight();
-                                    var scale = Math.min(
+                                    const spaceIW = $viewer.innerWidth();
+                                    const spaceIH = $viewer.innerHeight();
+                                    const frameOW = $paperPage.outerWidth();
+                                    const frameOH = $paperPage.outerHeight();
+                                    const scale = Math.min(
                                         spaceIW / frameOW,
                                         spaceIH / frameOH,
                                         1.0
@@ -1927,16 +1927,16 @@
     };
 
     LadbTabCutlist.prototype.writePart = function (partId, is2d) {
-        var groupAndPart = this.findGroupAndPartById(partId);
+        const groupAndPart = this.findGroupAndPartById(partId);
         if (groupAndPart) {
 
-            var group = groupAndPart.group;
-            var part = groupAndPart.part;
+            const group = groupAndPart.group;
+            const part = groupAndPart.part;
 
-            var isFolder = part.children && part.children.length > 0;
-            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(partId) && this.selectionPartIds.length > 1;
+            const isFolder = part.children && part.children.length > 0;
+            const isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(partId) && this.selectionPartIds.length > 1;
 
-            var partIds;
+            let partIds;
             if (isFolder) {
                 partIds = [ partId ];
             } else if (isSelected) {
@@ -1951,12 +1951,12 @@
     };
 
     LadbTabCutlist.prototype.writeParts = function (partIds, context, is2d) {
-        var that = this;
+        const that = this;
 
-        var partCount = 0;
-        var partInstanceCount = 0;
-        for (var i = 0 ; i < partIds.length; i++) {
-            var groupAndPart = this.findGroupAndPartById(partIds[i]);
+        let partCount = 0;
+        let partInstanceCount = 0;
+        for (let i = 0 ; i < partIds.length; i++) {
+            const groupAndPart = this.findGroupAndPartById(partIds[i]);
             if (groupAndPart) {
                 if (groupAndPart.part.children) {
                     partCount += groupAndPart.part.children.length;
@@ -1972,42 +1972,42 @@
             return;
         }
 
-        var section = context && context.targetGroup ? context.targetGroup.id : null;
+        const section = context && context.targetGroup ? context.targetGroup.id : null;
 
         if (is2d) {
 
             // Retrieve write2d options
             rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_write2d_options', section: section }, function (response) {
 
-                var write2dOptions = response.preset;
+                const write2dOptions = response.preset;
 
-                var $modal = that.appendModalInside('ladb_cutlist_modal_write_2d', 'tabs/cutlist/_modal-write-2d.twig', {
+                const $modal = that.appendModalInside('ladb_cutlist_modal_write_2d', 'tabs/cutlist/_modal-write-2d.twig', {
                     group: context ? context.targetGroup : null,
                     isGroupSelection: context ? context.isGroupSelection : false,
                     isPartSelection: context ? context.isPartSelection : false,
                 });
 
                 // Fetch UI elements
-                var $widgetPreset = $('.ladb-widget-preset', $modal);
-                var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
-                var $selectFileFormat = $('#ladb_select_file_format', $modal);
-                var $selectUnit = $('#ladb_select_unit', $modal);
-                var $selectUseCount = $('#ladb_select_use_count', $modal);
-                var $selectAnchor = $('#ladb_select_anchor', $modal);
-                var $selectSmoothing = $('#ladb_select_smoothing', $modal);
-                var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
-                var $selectIncludePaths = $('#ladb_select_include_paths', $modal);
-                var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
-                var $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
-                var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
-                var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
-                var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
-                var $formGroupPartsPaths = $('#ladb_form_group_parts_paths', that.$element);
-                var $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', that.$element);
-                var $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', that.$element);
-                var $btnExport = $('#ladb_btn_export', $modal);
+                const $widgetPreset = $('.ladb-widget-preset', $modal);
+                const $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
+                const $selectFileFormat = $('#ladb_select_file_format', $modal);
+                const $selectUnit = $('#ladb_select_unit', $modal);
+                const $selectUseCount = $('#ladb_select_use_count', $modal);
+                const $selectAnchor = $('#ladb_select_anchor', $modal);
+                const $selectSmoothing = $('#ladb_select_smoothing', $modal);
+                const $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
+                const $selectIncludePaths = $('#ladb_select_include_paths', $modal);
+                const $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
+                const $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
+                const $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
+                const $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
+                const $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
+                const $formGroupPartsPaths = $('#ladb_form_group_parts_paths', that.$element);
+                const $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', that.$element);
+                const $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', that.$element);
+                const $btnExport = $('#ladb_btn_export', $modal);
 
-                var fnFetchOptions = function (options) {
+                const fnFetchOptions = function (options) {
                     options.part_drawing_type = $selectPartDrawingType.val();
                     options.file_format = $selectFileFormat.val();
                     options.unit = parseInt($selectUnit.val());
@@ -2023,7 +2023,7 @@
                     options.parts_paths_stroke_color = $inputPartsPathsStrokeColor.ladbTextinputColor('val');
                     options.parts_paths_fill_color = $inputPartsPathsFillColor.ladbTextinputColor('val');
                 };
-                var fnFillInputs = function (options) {
+                const fnFillInputs = function (options) {
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                     $selectFileFormat.selectpicker('val', options.file_format);
                     $selectUnit.selectpicker('val', options.unit);
@@ -2040,10 +2040,10 @@
                     $inputPartsPathsFillColor.ladbTextinputColor('val', options.parts_paths_fill_color);
                     fnUpdateFieldsVisibility();
                 };
-                var fnUpdateFieldsVisibility = function () {
-                    var isDxf = $selectFileFormat.val() === 'dxf';
-                    var isMergeHoles = $selectMergeHoles.val() === '1';
-                    var isIncludePaths = $selectIncludePaths.val() === '1';
+                const fnUpdateFieldsVisibility = function () {
+                    const isDxf = $selectFileFormat.val() === 'dxf';
+                    const isMergeHoles = $selectMergeHoles.val() === '1';
+                    const isIncludePaths = $selectIncludePaths.val() === '1';
                     if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
                     $inputPartsHolesStrokeColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
                     $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
@@ -2052,7 +2052,7 @@
                     $inputPartsPathsFillColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
                     $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
                 };
-                var fnUpdateButtonLabel = function () {
+                const fnUpdateButtonLabel = function () {
                     let fileCount = $selectUseCount.val() === '1' ? partInstanceCount : partCount;
                     $('#ladb_btn_export_file_format', $btnExport).html($selectFileFormat.val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
                 }
@@ -2137,34 +2137,34 @@
             // Retrieve write3d options
             rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_write3d_options', section: section }, function (response) {
 
-                var write3dOptions = response.preset;
+                const write3dOptions = response.preset;
 
-                var $modal = that.appendModalInside('ladb_cutlist_modal_write_3d', 'tabs/cutlist/_modal-write-3d.twig', {
+                const $modal = that.appendModalInside('ladb_cutlist_modal_write_3d', 'tabs/cutlist/_modal-write-3d.twig', {
                     group: context ? context.targetGroup : null,
                     isGroupSelection: context ? context.isGroupSelection : false,
                     isPartSelection: context ? context.isPartSelection : false,
                 });
 
                 // Fetch UI elements
-                var $widgetPreset = $('.ladb-widget-preset', $modal);
-                var $selectFileFormat = $('#ladb_select_file_format', $modal);
-                var $formGroupUnit = $('#ladb_form_group_unit', $modal);
-                var $selectUnit = $('#ladb_select_unit', $modal);
-                var $selectUseCount = $('#ladb_select_use_count', $modal);
-                var $formGroupAnchor = $('#ladb_form_group_anchor', $modal);
-                var $selectAnchor = $('#ladb_select_anchor', $modal);
-                var $formGroupSwitchYZ = $('#ladb_form_group_switch_yz', $modal);
-                var $selectSwitchYZ = $('#ladb_select_switch_yz', $modal);
-                var $btnExport = $('#ladb_btn_export', $modal);
+                const $widgetPreset = $('.ladb-widget-preset', $modal);
+                const $selectFileFormat = $('#ladb_select_file_format', $modal);
+                const $formGroupUnit = $('#ladb_form_group_unit', $modal);
+                const $selectUnit = $('#ladb_select_unit', $modal);
+                const $selectUseCount = $('#ladb_select_use_count', $modal);
+                const $formGroupAnchor = $('#ladb_form_group_anchor', $modal);
+                const $selectAnchor = $('#ladb_select_anchor', $modal);
+                const $formGroupSwitchYZ = $('#ladb_form_group_switch_yz', $modal);
+                const $selectSwitchYZ = $('#ladb_select_switch_yz', $modal);
+                const $btnExport = $('#ladb_btn_export', $modal);
 
-                var fnFetchOptions = function (options) {
+                const fnFetchOptions = function (options) {
                     options.file_format = $selectFileFormat.val();
                     options.unit = parseInt($selectUnit.val());
                     options.use_count = $selectUseCount.val() === '1';
                     options.anchor = $selectAnchor.val() === '1';
                     options.switch_yz = $selectSwitchYZ.val() === '1';
                 };
-                var fnFillInputs = function (options) {
+                const fnFillInputs = function (options) {
                     $selectFileFormat.selectpicker('val', options.file_format);
                     $selectUnit.selectpicker('val', options.unit);
                     $selectUseCount.selectpicker('val', options.use_count ? '1' : '0');
@@ -2172,13 +2172,13 @@
                     $selectSwitchYZ.selectpicker('val', options.switch_yz ? '1' : '0');
                     fnUpdateFieldsVisibility();
                 };
-                var fnUpdateFieldsVisibility = function () {
-                    var isSkp = $selectFileFormat.val() === 'skp';
+                const fnUpdateFieldsVisibility = function () {
+                    const isSkp = $selectFileFormat.val() === 'skp';
                     if (isSkp) $formGroupUnit.hide(); else $formGroupUnit.show();
                     if (isSkp) $formGroupAnchor.hide(); else $formGroupAnchor.show();
                     if (isSkp) $formGroupSwitchYZ.hide(); else $formGroupSwitchYZ.show();
                 };
-                var fnUpdateButtonLabel = function () {
+                const fnUpdateButtonLabel = function () {
                     let fileCount = $selectUseCount.val() === '1' ? partInstanceCount : partCount;
                     $('#ladb_btn_export_file_format', $btnExport).html($selectFileFormat.val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
                 }
@@ -2267,18 +2267,18 @@
     }
 
     LadbTabCutlist.prototype.labelsParts = function (partIds, context, binDefs, forceDefaultTab) {
-        var that = this;
+        const that = this;
 
-        var isBinSorterDisabled = !binDefs;
+        const isBinSorterDisabled = !binDefs;
 
-        var section = context && context.targetGroup ? context.targetGroup.id : null;
+        const section = context && context.targetGroup ? context.targetGroup.id : null;
 
         // Retrieve label options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_labels_options', section: section }, function (response) {
 
-            var labelsOptions = response.preset;
+            const labelsOptions = response.preset;
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_labels', 'tabs/cutlist/_modal-labels.twig', {
+            const $modal = that.appendModalInside('ladb_cutlist_modal_labels', 'tabs/cutlist/_modal-labels.twig', {
                 group: context.targetGroup,
                 isGroupSelection: context ? context.isGroupSelection : false,
                 isPartSelection: context ? context.isPartSelection : false,
@@ -2287,31 +2287,31 @@
             });
 
             // Fetch UI elements
-            var $widgetPreset = $('.ladb-widget-preset', $modal);
-            var $editorLabelLayout = $('#ladb_editor_label_layout', $modal);
-            var $selectPageFormat = $('#ladb_select_page_format', $modal);
-            var $inputPageWidth = $('#ladb_input_page_width', $modal);
-            var $inputPageHeight = $('#ladb_input_page_height', $modal);
-            var $inputMarginTop = $('#ladb_input_margin_top', $modal);
-            var $inputMarginRight = $('#ladb_input_margin_right', $modal);
-            var $inputMarginBottom = $('#ladb_input_margin_bottom', $modal);
-            var $inputMarginLeft = $('#ladb_input_margin_left', $modal);
-            var $inputSpacingH = $('#ladb_input_spacing_h', $modal);
-            var $inputSpacingV = $('#ladb_input_spacing_v', $modal);
-            var $inputColCount = $('#ladb_input_col_count', $modal);
-            var $inputRowCount = $('#ladb_input_row_count', $modal);
-            var $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
-            var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
-            var $editorLabelOffset = $('#ladb_editor_label_offset', $modal);
-            var $btnGenerate = $('#ladb_cutlist_labels_btn_generate', $modal);
+            const $widgetPreset = $('.ladb-widget-preset', $modal);
+            const $editorLabelLayout = $('#ladb_editor_label_layout', $modal);
+            const $selectPageFormat = $('#ladb_select_page_format', $modal);
+            const $inputPageWidth = $('#ladb_input_page_width', $modal);
+            const $inputPageHeight = $('#ladb_input_page_height', $modal);
+            const $inputMarginTop = $('#ladb_input_margin_top', $modal);
+            const $inputMarginRight = $('#ladb_input_margin_right', $modal);
+            const $inputMarginBottom = $('#ladb_input_margin_bottom', $modal);
+            const $inputMarginLeft = $('#ladb_input_margin_left', $modal);
+            const $inputSpacingH = $('#ladb_input_spacing_h', $modal);
+            const $inputSpacingV = $('#ladb_input_spacing_v', $modal);
+            const $inputColCount = $('#ladb_input_col_count', $modal);
+            const $inputRowCount = $('#ladb_input_row_count', $modal);
+            const $selectCuttingMarks = $('#ladb_select_cutting_marks', $modal);
+            const $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
+            const $editorLabelOffset = $('#ladb_editor_label_offset', $modal);
+            const $btnGenerate = $('#ladb_cutlist_labels_btn_generate', $modal);
 
-            var fnValidOffset = function (offset, colCount, rowCount) {
+            const fnValidOffset = function (offset, colCount, rowCount) {
                 if (offset >= colCount * rowCount) {
                     offset = 0;
                 }
                 return offset;
             }
-            var fnUpdatePageSizeFieldsAvailability = function () {
+            const fnUpdatePageSizeFieldsAvailability = function () {
                 if ($selectPageFormat.selectpicker('val') == null) {
                     $selectPageFormat.selectpicker('val', '0');
                     $inputPageWidth.ladbTextinputDimension('enable');
@@ -2321,7 +2321,7 @@
                     $inputPageHeight.ladbTextinputDimension('disable');
                 }
             }
-            var fnConvertPageSettings = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, callback) {
+            const fnConvertPageSettings = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, callback) {
                 rubyCallCommand('core_length_to_float', {
                     page_width: pageWidth,
                     page_height: pageHeight,
@@ -2337,14 +2337,14 @@
                     callback(response, colCount, rowCount);
                 });
             }
-            var fnComputeLabelSize = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, callback) {
+            const fnComputeLabelSize = function(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, callback) {
                 fnConvertPageSettings(pageWidth, pageHeight, marginTop, marginRight, marginBottom, marginLeft, spacingH, spacingV, colCount, rowCount, function (response, colCount, rowCount) {
-                    var labelWidth = (response.page_width - response.margin_left - response.margin_right - response.spacing_v * (colCount - 1)) / colCount;
-                    var labelHeight = (response.page_height - response.margin_top - response.margin_bottom - response.spacing_h * (rowCount - 1)) / rowCount;
+                    const labelWidth = (response.page_width - response.margin_left - response.margin_right - response.spacing_v * (colCount - 1)) / colCount;
+                    const labelHeight = (response.page_height - response.margin_top - response.margin_bottom - response.spacing_h * (rowCount - 1)) / rowCount;
                     callback(labelWidth, labelHeight, response);
                 });
             }
-            var fnFetchOptions = function (options) {
+            const fnFetchOptions = function (options) {
                 options.page_width = $inputPageWidth.val();
                 options.page_height = $inputPageHeight.val();
                 options.margin_top = $inputMarginTop.val();
@@ -2359,14 +2359,14 @@
                 options.layout = $editorLabelLayout.ladbEditorLabelLayout('getElementDefs');
                 options.offset = fnValidOffset($editorLabelOffset.ladbEditorLabelOffset('getOffset'), options.col_count, options.row_count);
 
-                var properties = [];
+                const properties = [];
                 $sortablePartOrderStrategy.children('li').each(function () {
                     properties.push($(this).data('property'));
                 });
                 options.part_order_strategy = properties.join('>');
 
             }
-            var fnFillInputs = function (options) {
+            const fnFillInputs = function (options) {
                 $selectPageFormat.selectpicker('val', options.page_width.replace(',', '.') + 'x' + options.page_height.replace(',', '.'));
                 $inputPageWidth.val(options.page_width);
                 $inputPageHeight.val(options.page_height);
@@ -2389,10 +2389,10 @@
 
                 // Part order sortables
 
-                var properties = options.part_order_strategy.split('>');
+                const properties = options.part_order_strategy.split('>');
                 $sortablePartOrderStrategy.empty();
-                for (var i = 0; i < properties.length; i++) {
-                    var property = properties[i];
+                for (let i = 0; i < properties.length; i++) {
+                    const property = properties[i];
                     $sortablePartOrderStrategy.append(Twig.twig({ref: "tabs/cutlist/_labels-option-part-order-strategy-property.twig"}).render({
                         order: property.startsWith('-') ? '-' : '',
                         property: property.startsWith('-') ? property.substring(1) : property,
@@ -2400,9 +2400,9 @@
                     }));
                 }
                 $sortablePartOrderStrategy.find('a').on('click', function () {
-                    var $item = $(this).parent().parent();
-                    var $icon = $('i', $(this));
-                    var property = $item.data('property');
+                    const $item = $(this).parent().parent();
+                    const $icon = $('i', $(this));
+                    let property = $item.data('property');
                     if (property.startsWith('-')) {
                         property = property.substring(1);
                         $icon.addClass('ladb-opencutlist-icon-sort-asc');
@@ -2452,7 +2452,7 @@
 
             // Bind tabs
             $('a[data-toggle=tab]', $modal).on('shown.bs.tab', function (e) {
-                var tabId = $(e.target).attr('href');
+                const tabId = $(e.target).attr('href');
                 that.lastLabelsOptionsTab = tabId.substring('#tab_labels_options_'.length);
                 if (that.lastLabelsOptionsTab === 'layout') {
 
@@ -2472,11 +2472,11 @@
 
             // Bind select
             $selectPageFormat.on('change', function () {
-                var format = $(this).val();
+                const format = $(this).val();
                 if (format !== '0') {
                     $inputPageWidth.ladbTextinputDimension('disable');
                     $inputPageHeight.ladbTextinputDimension('disable');
-                    var dimensions = format.split('x');
+                    const dimensions = format.split('x');
                     $inputPageWidth.val(dimensions[0]);
                     $inputPageHeight.val(dimensions[1]);
                 } else {
@@ -2505,9 +2505,9 @@
                     labelsOptions.spacing_h = response.spacing_h;
                     labelsOptions.spacing_v = response.spacing_v;
 
-                    var errors = [];
-                    var warnings = [];
-                    var pages = [];
+                    const errors = [];
+                    const warnings = [];
+                    const pages = [];
 
                     if (context ? context.isGroupSelection : false) {
 
@@ -2522,9 +2522,9 @@
 
                     }
 
-                    var fnRenderSlide = function () {
+                    const fnRenderSlide = function () {
 
-                        var $slide = that.pushNewSlide('ladb_cutlist_slide_labels', 'tabs/cutlist/_slide-labels.twig', $.extend({
+                        const $slide = that.pushNewSlide('ladb_cutlist_slide_labels', 'tabs/cutlist/_slide-labels.twig', $.extend({
                             errors: errors,
                             warnings: warnings,
                             filename: that.filename,
@@ -2541,9 +2541,9 @@
                         });
 
                         // Fetch UI elements
-                        var $btnLabels = $('#ladb_btn_labels', $slide);
-                        var $btnPrint = $('#ladb_btn_print', $slide);
-                        var $btnClose = $('#ladb_btn_close', $slide);
+                        const $btnLabels = $('#ladb_btn_labels', $slide);
+                        const $btnPrint = $('#ladb_btn_print', $slide);
+                        const $btnClose = $('#ladb_btn_close', $slide);
 
                         // Bind buttons
                         $btnLabels.on('click', function () {
@@ -2561,7 +2561,7 @@
                             that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                         });
                         $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                            var $page = $(this).parents('.ladb-cutlist-group');
+                            const $page = $(this).parents('.ladb-cutlist-group');
                             if ($page.hasClass('no-print')) {
                                 that.showGroup($page, true);
                             } else {
@@ -2586,7 +2586,7 @@
 
                         rubyCallCommand('cutlist_labels', { part_ids: partIds, layout: labelsOptions.layout, part_order_strategy: labelsOptions.part_order_strategy, bin_defs: binDefs }, function (response) {
 
-                            var entries = [];
+                            let entries = [];
 
                             if (response.errors) {
                                 errors.push(response.errors);
@@ -2596,9 +2596,9 @@
                             }
 
                             // Split part infos into pages
-                            var page;
-                            var gIndex = 0;
-                            for (var i = 1; i <= labelsOptions.offset; i++) {
+                            let page;
+                            let gIndex = 0;
+                            for (let i = 1; i <= labelsOptions.offset; i++) {
                                 if (gIndex % (labelsOptions.row_count * labelsOptions.col_count) === 0) {
                                     page = {
                                         entries: []
@@ -2644,7 +2644,7 @@
     // Parts /////
 
     LadbTabCutlist.prototype.grabVisiblePartIdsWithContext = function (groupId, materialFilter) {
-        var that = this;
+        const that = this;
 
         let partIds = [];
         let targetGroup = null;
@@ -2712,15 +2712,15 @@
     }
 
     LadbTabCutlist.prototype.findGroupAndPartById = function (id) {
-        for (var i = 0; i < this.groups.length; i++) {
-            var group = this.groups[i];
-            for (var j = 0; j < group.parts.length; j++) {
-                var part = group.parts[j];
+        for (let i = 0; i < this.groups.length; i++) {
+            const group = this.groups[i];
+            for (let j = 0; j < group.parts.length; j++) {
+                const part = group.parts[j];
                 if (part.id === id) {
                     return { group: group, part: part };
                 } else if (part.children !== undefined) {
-                    for (var k = 0; k < part.children.length; k++) {
-                        var childPart = part.children[k];
+                    for (let k = 0; k < part.children.length; k++) {
+                        const childPart = part.children[k];
                         if (childPart.id === id) {
                             return { group: group, part: childPart };
                         }
@@ -2732,13 +2732,13 @@
     };
 
     LadbTabCutlist.prototype.findGroupAndPartBySerializedPath = function (serializedPath) {
-        for (var i = 0; i < this.groups.length; i++) {
-            var group = this.groups[i];
-            for (var j = 0; j < group.parts.length; j++) {
-                var part = group.parts[j];
+        for (let i = 0; i < this.groups.length; i++) {
+            const group = this.groups[i];
+            for (let j = 0; j < group.parts.length; j++) {
+                const part = group.parts[j];
                 if (part.children !== undefined) {
-                    for (var k = 0; k < part.children.length; k++) {
-                        var childPart = part.children[k];
+                    for (let k = 0; k < part.children.length; k++) {
+                        const childPart = part.children[k];
                         if (childPart.entity_serialized_paths.includes(serializedPath)) {
                             return { group: group, part: childPart };
                         }
@@ -2754,14 +2754,14 @@
     };
 
     LadbTabCutlist.prototype.renderSelectionOnGroup = function (id) {
-        var that = this;
-        var $group = $('#ladb_group_' + id, this.$page);
-        var defs = [ 'packing', 'labels', 'layout' ];
+        const that = this;
+        const $group = $('#ladb_group_' + id, this.$page);
+        const defs = [ 'packing', 'labels', 'layout' ];
         $.each(defs, function () {
-            var $btn = $('button.ladb-btn-group-' + this, $group);
-            var $i = $('i', $btn);
-            var clazz = 'ladb-opencutlist-icon-' + this + '-selection';
-            var doEffet = false;
+            const $btn = $('button.ladb-btn-group-' + this, $group);
+            const $i = $('i', $btn);
+            const clazz = 'ladb-opencutlist-icon-' + this + '-selection';
+            let doEffet = false;
             if (that.selectionPartIds.length > 0) {
                 doEffet = !$i.hasClass(clazz);
                 $i.addClass(clazz);
@@ -2776,10 +2776,10 @@
     };
 
     LadbTabCutlist.prototype.renderSelectionOnPart = function (id, selected) {
-        var $row = $('#ladb_part_' + id, this.$page);
-        var $highlightPartBtn = $('a.ladb-btn-highlight-part', $row);
-        var $editPartBtn = $('a.ladb-btn-edit-part', $row);
-        var $selectPartBtn = $('a.ladb-btn-select-part', $row);
+        const $row = $('#ladb_part_' + id, this.$page);
+        const $highlightPartBtn = $('a.ladb-btn-highlight-part', $row);
+        const $editPartBtn = $('a.ladb-btn-edit-part', $row);
+        const $selectPartBtn = $('a.ladb-btn-select-part', $row);
 
         if (selected) {
             $selectPartBtn.addClass('ladb-active');
@@ -2814,13 +2814,13 @@
         if (this.selectionGroupId) {
             this.renderSelectionOnGroup(this.selectionGroupId);
         }
-        for (var i = 0; i < this.selectionPartIds.length; i++) {
+        for (let i = 0; i < this.selectionPartIds.length; i++) {
             this.renderSelectionOnPart(this.selectionPartIds[i], true);
         }
     };
 
     LadbTabCutlist.prototype.cleanupSelection = function () {
-        for (var i = this.selectionPartIds.length - 1; i >= 0 ; i--) {
+        for (let i = this.selectionPartIds.length - 1; i >= 0 ; i--) {
             if (!this.findGroupAndPartById(this.selectionPartIds[i])) {
                 this.selectionPartIds.splice(i, 1)
             }
@@ -2828,7 +2828,7 @@
     };
 
     LadbTabCutlist.prototype.selectPart = function (partId, state /* undefined = TOGGLE, true = SELECT, false = UNSELECT */) {
-        var groupAndPart = this.findGroupAndPartById(partId);
+        const groupAndPart = this.findGroupAndPartById(partId);
         if (groupAndPart) {
 
             // Unselect other group selection
@@ -2837,7 +2837,7 @@
             }
 
             // Manage selection
-            var selected = this.selectionGroupId === groupAndPart.group.id && this.selectionPartIds.includes(partId);
+            let selected = this.selectionGroupId === groupAndPart.group.id && this.selectionPartIds.includes(partId);
             if (selected) {
                 if (state === undefined || state === false) {
                     this.selectionPartIds.splice(this.selectionPartIds.indexOf(partId), 1);
@@ -2865,13 +2865,13 @@
     };
 
     LadbTabCutlist.prototype.selectGroupParts = function (groupId, state /* undefined = TOGGLE, true = SELECT, false = UNSELECT */) {
-        var group = this.findGroupById(groupId);
+        const group = this.findGroupById(groupId);
         if (group) {
 
             if (state === undefined) {
                 state = !(this.selectionGroupId === group.id && this.selectionPartIds.length > 0);
             }
-            for (var i = 0 ; i < group.parts.length; i++) {
+            for (let i = 0 ; i < group.parts.length; i++) {
                 this.selectPart(group.parts[i].id, state);
             }
 
@@ -2879,31 +2879,31 @@
     };
 
     LadbTabCutlist.prototype.editPart = function (id, serializedPath, tab, updatedCallback) {
-        var that = this;
+        const that = this;
 
-        var groupAndPart = id ? this.findGroupAndPartById(id) : (serializedPath ? this.findGroupAndPartBySerializedPath(serializedPath) : null);
+        const groupAndPart = id ? this.findGroupAndPartById(id) : (serializedPath ? this.findGroupAndPartBySerializedPath(serializedPath) : null);
         if (groupAndPart) {
 
-            var group = groupAndPart.group;
-            var part = groupAndPart.part;
+            const group = groupAndPart.group;
+            const part = groupAndPart.part;
 
-            var isFolder = part.children && part.children.length > 0;
-            var isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(part.id) && this.selectionPartIds.length > 1;
-            var multiple = isFolder || isSelected;
+            const isFolder = part.children && part.children.length > 0;
+            const isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(part.id) && this.selectionPartIds.length > 1;
+            const multiple = isFolder || isSelected;
 
-            var editedPart = JSON.parse(JSON.stringify(isFolder ? part.children[0] : part));
-            var editedParts = [];
+            const editedPart = JSON.parse(JSON.stringify(isFolder ? part.children[0] : part));
+            const editedParts = [];
             if (multiple) {
                 if (isFolder && !isSelected) {
-                    for (var i = 0; i < part.children.length; i++) {
+                    for (let i = 0; i < part.children.length; i++) {
                         editedParts.push(part.children[i]);
                     }
                 } else if (isSelected) {
-                    for (var i = 0; i < this.selectionPartIds.length; i++) {
-                        var groupAndPart = that.findGroupAndPartById(this.selectionPartIds[i]);
+                    for (let i = 0; i < this.selectionPartIds.length; i++) {
+                        const groupAndPart = that.findGroupAndPartById(this.selectionPartIds[i]);
                         if (groupAndPart) {
                             if (groupAndPart.part.children) {
-                                for (var j = 0; j < groupAndPart.part.children.length; j++) {
+                                for (let j = 0; j < groupAndPart.part.children.length; j++) {
                                     editedParts.push(groupAndPart.part.children[j]);
                                 }
                             } else {
@@ -2916,14 +2916,14 @@
                 editedParts.push(editedPart);
             }
 
-            for (var i = 0; i < editedParts.length; i++) {
-                var ownedMaterialCount = 0;
-                for (var j = 0; j < editedParts[i].material_origins.length; j++) {
+            for (let i = 0; i < editedParts.length; i++) {
+                let ownedMaterialCount = 0;
+                for (let j = 0; j < editedParts[i].material_origins.length; j++) {
                     if (editedParts[i].material_origins[j] === 1) {    // 1 = MATERIAL_ORIGIN_OWNED
                         ownedMaterialCount++;
                     }
                 }
-                var materialName = null;
+                let materialName = null;
                 if (ownedMaterialCount === editedParts[i].material_origins.length) {
                     materialName = editedPart.material_name;
                 } else if (ownedMaterialCount > 0) {
@@ -3009,7 +3009,7 @@
             }
             this.lastEditPartTab = tab;
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
+            const $modal = that.appendModalInside('ladb_cutlist_modal_part', 'tabs/cutlist/_modal-part.twig', {
                 group: group,
                 part: editedPart,
                 partCount: editedParts.length,
@@ -3019,75 +3019,75 @@
             });
 
             // Fetch UI elements
-            var $tabs = $('a[data-toggle="tab"]', $modal);
-            var $divPartThumbnail = $('#ladb_cutlist_part_thumbnail', $modal);
-            var $inputName = $('#ladb_cutlist_part_input_name', $modal);
-            var $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
-            var $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
-            var $inputInstanceCountByPart = $('#ladb_cutlist_part_input_instance_count_by_part', $modal);
-            var $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
-            var $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
-            var $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
-            var $inputDescription = $('#ladb_cutlist_part_input_description', $modal);
-            var $inputUrl = $('#ladb_cutlist_part_input_url', $modal);
-            var $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
-            var $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
-            var $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
-            var $inputIgnoreGrainDirection = $('#ladb_cutlist_part_input_ignore_grain_direction', $modal);
-            var $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
-            var $sortableAxes = $('#ladb_sortable_axes', $modal);
-            var $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
-            var $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
-            var $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
-            var $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
-            var $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
-            var $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
-            var $selectEdgeYmax = $('#ladb_cutlist_part_select_edge_ymax', $modal);
-            var $selectEdgeYmin = $('#ladb_cutlist_part_select_edge_ymin', $modal);
-            var $selectEdgeXmin = $('#ladb_cutlist_part_select_edge_xmin', $modal);
-            var $selectEdgeXmax = $('#ladb_cutlist_part_select_edge_xmax', $modal);
-            var $selectFaceZmin = $('#ladb_cutlist_part_select_face_zmin', $modal);
-            var $selectFaceZmax = $('#ladb_cutlist_part_select_face_zmax', $modal);
-            var $formGroupFaceZminTextureAngle = $('#ladb_cutlist_part_form_group_face_zmin_texture_angle', $modal);
-            var $formGroupFaceZmaxTextureAngle = $('#ladb_cutlist_part_form_group_face_zmax_texture_angle', $modal);
-            var $inputFaceZminTextureAngle = $('#ladb_cutlist_part_input_face_zmin_texture_angle', $modal);
-            var $inputFaceZmaxTextureAngle = $('#ladb_cutlist_part_input_face_zmax_texture_angle', $modal);
-            var $rectIncreaseLength = $('svg .increase-length', $modal);
-            var $rectIncreaseWidth = $('svg .increase-width', $modal);
-            var $rectEdgeYmin = $('svg .edge-ymin', $modal);
-            var $rectEdgeYmax = $('svg .edge-ymax', $modal);
-            var $rectEdgeXmin = $('svg .edge-xmin', $modal);
-            var $rectEdgeXmax = $('svg .edge-xmax', $modal);
-            var $rectFaceZmin = $('svg .face-zmin', $modal);
-            var $rectFaceZmax = $('svg .face-zmax', $modal);
-            var $rectFaceZminGrain = $('svg .face-zmin .face-grain', $modal);
-            var $rectFaceZmaxGrain = $('svg .face-zmax .face-grain', $modal);
-            var $patternFaceZminGrain = $('#pattern_face_zmin_grain', $modal);
-            var $patternFaceZmaxGrain = $('#pattern_face_zmax_grain', $modal);
-            var $labelEdgeYmax = $('#ladb_cutlist_part_label_edge_ymax', $modal);
-            var $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
-            var $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
-            var $labelEdgeXmax = $('#ladb_cutlist_part_label_edge_xmax', $modal);
-            var $labelFaceZmin = $('#ladb_cutlist_part_label_face_zmin', $modal);
-            var $labelFaceZmax = $('#ladb_cutlist_part_label_face_zmax', $modal);
-            var $labelFaceZminTextureAngle = $('#ladb_cutlist_part_label_face_zmin_texture_angle', $modal);
-            var $labelFaceZmaxTextureAngle = $('#ladb_cutlist_part_label_face_zmax_texture_angle', $modal);
-            var $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
-            var $btnExportToFile = $('a.ladb-cutlist-write-parts', $modal);
-            var $btnUpdate = $('#ladb_cutlist_part_update', $modal);
+            const $tabs = $('a[data-toggle="tab"]', $modal);
+            const $divPartThumbnail = $('#ladb_cutlist_part_thumbnail', $modal);
+            const $inputName = $('#ladb_cutlist_part_input_name', $modal);
+            const $selectMaterialName = $('#ladb_cutlist_part_select_material_name', $modal);
+            const $selectCumulable = $('#ladb_cutlist_part_select_cumulable', $modal);
+            const $inputInstanceCountByPart = $('#ladb_cutlist_part_input_instance_count_by_part', $modal);
+            const $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
+            const $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
+            const $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
+            const $inputDescription = $('#ladb_cutlist_part_input_description', $modal);
+            const $inputUrl = $('#ladb_cutlist_part_input_url', $modal);
+            const $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
+            const $inputOrientationLockedOnAxis = $('#ladb_cutlist_part_input_orientation_locked_on_axis', $modal);
+            const $inputSymmetrical = $('#ladb_cutlist_part_input_symmetrical', $modal);
+            const $inputIgnoreGrainDirection = $('#ladb_cutlist_part_input_ignore_grain_direction', $modal);
+            const $inputPartAxes = $('#ladb_cutlist_part_input_axes', $modal);
+            const $sortableAxes = $('#ladb_sortable_axes', $modal);
+            const $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
+            const $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
+            const $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
+            const $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
+            const $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
+            const $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
+            const $selectEdgeYmax = $('#ladb_cutlist_part_select_edge_ymax', $modal);
+            const $selectEdgeYmin = $('#ladb_cutlist_part_select_edge_ymin', $modal);
+            const $selectEdgeXmin = $('#ladb_cutlist_part_select_edge_xmin', $modal);
+            const $selectEdgeXmax = $('#ladb_cutlist_part_select_edge_xmax', $modal);
+            const $selectFaceZmin = $('#ladb_cutlist_part_select_face_zmin', $modal);
+            const $selectFaceZmax = $('#ladb_cutlist_part_select_face_zmax', $modal);
+            const $formGroupFaceZminTextureAngle = $('#ladb_cutlist_part_form_group_face_zmin_texture_angle', $modal);
+            const $formGroupFaceZmaxTextureAngle = $('#ladb_cutlist_part_form_group_face_zmax_texture_angle', $modal);
+            const $inputFaceZminTextureAngle = $('#ladb_cutlist_part_input_face_zmin_texture_angle', $modal);
+            const $inputFaceZmaxTextureAngle = $('#ladb_cutlist_part_input_face_zmax_texture_angle', $modal);
+            const $rectIncreaseLength = $('svg .increase-length', $modal);
+            const $rectIncreaseWidth = $('svg .increase-width', $modal);
+            const $rectEdgeYmin = $('svg .edge-ymin', $modal);
+            const $rectEdgeYmax = $('svg .edge-ymax', $modal);
+            const $rectEdgeXmin = $('svg .edge-xmin', $modal);
+            const $rectEdgeXmax = $('svg .edge-xmax', $modal);
+            const $rectFaceZmin = $('svg .face-zmin', $modal);
+            const $rectFaceZmax = $('svg .face-zmax', $modal);
+            const $rectFaceZminGrain = $('svg .face-zmin .face-grain', $modal);
+            const $rectFaceZmaxGrain = $('svg .face-zmax .face-grain', $modal);
+            const $patternFaceZminGrain = $('#pattern_face_zmin_grain', $modal);
+            const $patternFaceZmaxGrain = $('#pattern_face_zmax_grain', $modal);
+            const $labelEdgeYmax = $('#ladb_cutlist_part_label_edge_ymax', $modal);
+            const $labelEdgeYmin = $('#ladb_cutlist_part_label_edge_ymin', $modal);
+            const $labelEdgeXmin = $('#ladb_cutlist_part_label_edge_xmin', $modal);
+            const $labelEdgeXmax = $('#ladb_cutlist_part_label_edge_xmax', $modal);
+            const $labelFaceZmin = $('#ladb_cutlist_part_label_face_zmin', $modal);
+            const $labelFaceZmax = $('#ladb_cutlist_part_label_face_zmax', $modal);
+            const $labelFaceZminTextureAngle = $('#ladb_cutlist_part_label_face_zmin_texture_angle', $modal);
+            const $labelFaceZmaxTextureAngle = $('#ladb_cutlist_part_label_face_zmax_texture_angle', $modal);
+            const $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
+            const $btnExportToFile = $('a.ladb-cutlist-write-parts', $modal);
+            const $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
-            var thumbnailLoaded = false;
+            let thumbnailLoaded = false;
 
             // Utils function
-            var fnComputeAxesOrder = function () {
-                var axes = [];
+            const fnComputeAxesOrder = function () {
+                const axes = [];
                 $sortablePartAxes.children('li').each(function () {
                     axes.push($(this).data('axis'));
                 });
                 $inputPartAxes.val(axes);
                 return axes;
             };
-            var fnDisplayAxisDimensions = function () {
+            const fnDisplayAxisDimensions = function () {
                 if (!that.generateOptions.auto_orient || $inputOrientationLockedOnAxis.is(':checked')) {
                     $sortablePartAxes.closest('div').switchClass('col-xs-12', 'col-xs-10', 0);
                     $sortablePartAxesExtra.closest('div').show();
@@ -3102,7 +3102,7 @@
                     });
                 }
             };
-            var fnUpdateEdgesPreview = function() {
+            const fnUpdateEdgesPreview = function() {
                 if ($selectEdgeYmax.val() === '') {
                     $rectEdgeYmax.removeClass('ladb-active');
                 } else {
@@ -3124,7 +3124,7 @@
                     $rectEdgeXmax.addClass('ladb-active');
                 }
             };
-            var fnIsMaterialTexturedAndGrained = function(name) {
+            const fnIsMaterialTexturedAndGrained = function(name) {
                 for (let materialUsage of that.materialUsages) {
                     if (materialUsage.name === name) {
                         return materialUsage.textured && materialUsage.grained;
@@ -3132,7 +3132,7 @@
                 }
                 return false;
             };
-            var fnUpdateFacesPreview = function() {
+            const fnUpdateFacesPreview = function() {
                 if ($selectFaceZmin.val() === '') {
                     $rectFaceZmin.removeClass('ladb-active');
                     $rectFaceZminGrain.hide();
@@ -3164,7 +3164,7 @@
                     }
                 }
             };
-            var fnUpdateIncreasesPreview = function() {
+            const fnUpdateIncreasesPreview = function() {
                 if ($inputLengthIncrease.val() == null || $inputLengthIncrease.val().length === 0 || $inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
                     $rectIncreaseLength.removeClass('ladb-active');
                 } else {
@@ -3176,7 +3176,7 @@
                     $rectIncreaseWidth.addClass('ladb-active');
                 }
             };
-            var fnNewCheck = function($select, type) {
+            const fnNewCheck = function($select, type) {
                 if ($select.val() === 'new') {
                     that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
                     $modal.modal('hide');
@@ -3184,7 +3184,7 @@
                 }
                 return false;
             };
-            var fnMaterialNameCopyToAllEdges = function(materialName) {
+            const fnMaterialNameCopyToAllEdges = function(materialName) {
                 if (materialName !== MULTIPLE_VALUE) {
                     if (!$selectEdgeYmax.prop('disabled')) {
                         $selectEdgeYmax.selectpicker('val', materialName);
@@ -3201,7 +3201,7 @@
                     fnUpdateEdgesPreview();
                 }
             };
-            var fnMaterialNameCopyToAllVeneers = function(materialName) {
+            const fnMaterialNameCopyToAllVeneers = function(materialName) {
                 if (materialName !== MULTIPLE_VALUE) {
                     if (!$selectFaceZmax.prop('disabled')) {
                         $selectFaceZmax.selectpicker('val', materialName);
@@ -3212,18 +3212,17 @@
                     fnUpdateFacesPreview();
                 }
             };
-            var fnIncrementVeneerTextureAngleInputValue = function($input, inc) {
+            const fnIncrementVeneerTextureAngleInputValue = function($input, inc) {
                 let angle = parseInt($input.val());
                 if (!isNaN(angle)) {
                     $input.val((angle + inc) % 360);
                     fnUpdateFacesPreview();
                 }
             }
-            var fnOnAxiesOrderChanged = function () {
-                var axes = fnComputeAxesOrder();
+            const fnOnAxiesOrderChanged = function () {
+                const axes = fnComputeAxesOrder();
 
-                var oriented = editedPart.axes_to_values[axes[0]] >= editedPart.axes_to_values[axes[1]]
-                    &&  editedPart.axes_to_values[axes[1]] >= editedPart.axes_to_values[axes[2]];
+                const oriented = editedPart.axes_to_values[axes[0]] >= editedPart.axes_to_values[axes[1]] && editedPart.axes_to_values[axes[1]] >= editedPart.axes_to_values[axes[2]];
 
                 // Check Orientation Locked On Axis option if needed
                 $inputOrientationLockedOnAxis.prop('checked', !oriented);
@@ -3236,7 +3235,7 @@
                 ;
 
             }
-            var fnLoadThumbnail = function () {
+            const fnLoadThumbnail = function () {
                 if (!thumbnailLoaded && !multiple && !part.virtual) {
 
                     // Generate and Retrieve part thumbnail file
@@ -3245,12 +3244,12 @@
                         id: part.id
                     }, function (response) {
 
-                        var threeModelDef = response['three_model_def'];
-                        var thumbnailFile = response['thumbnail_file'];
+                        const threeModelDef = response['three_model_def'];
+                        const thumbnailFile = response['thumbnail_file'];
 
                         if (threeModelDef) {
 
-                            var $viewer = $(Twig.twig({ref: 'tabs/cutlist/_three-viewer-modal-part.twig'}).render({
+                            const $viewer = $(Twig.twig({ref: 'tabs/cutlist/_three-viewer-modal-part.twig'}).render({
                                 THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS,
                                 group: group,
                                 part: part
@@ -3269,7 +3268,7 @@
 
                         } else if (thumbnailFile) {
 
-                                var $img = $('<img>')
+                                const $img = $('<img>')
                                     .attr('src', thumbnailFile)
                                 ;
                                 if (part.flipped) {
@@ -3472,12 +3471,12 @@
 
             // Bind sorter
             $sortableAxes.on('dblclick', function () {
-               var sortedNormals = Object.keys(editedPart.axes_to_values).sort(function (a, b) {
+               const sortedNormals = Object.keys(editedPart.axes_to_values).sort(function (a, b) {
                    return editedPart.axes_to_values[b] - editedPart.axes_to_values[a]
                });
-               var $rowX = $('li[data-axis="' + sortedNormals[0] + '"]', $sortablePartAxes);
-               var $rowY = $('li[data-axis="' + sortedNormals[1] + '"]', $sortablePartAxes);
-               var $rowZ = $('li[data-axis="' + sortedNormals[2] + '"]', $sortablePartAxes);
+               const $rowX = $('li[data-axis="' + sortedNormals[0] + '"]', $sortablePartAxes);
+               const $rowY = $('li[data-axis="' + sortedNormals[1] + '"]', $sortablePartAxes);
+               const $rowZ = $('li[data-axis="' + sortedNormals[2] + '"]', $sortablePartAxes);
                 $rowY.insertBefore($rowZ);
                 $rowX.insertBefore($rowY);
                 fnOnAxiesOrderChanged();
@@ -3529,7 +3528,7 @@
             });
             $btnUpdate.on('click', function () {
 
-                for (var i = 0; i < editedParts.length; i++) {
+                for (let i = 0; i < editedParts.length; i++) {
 
                     if (!multiple && !part.virtual) {
 
@@ -3571,7 +3570,7 @@
                             editedParts[i].url = $inputUrl.val().trim();
                         }
 
-                        var untouchTags = editedParts[i].tags.filter(function (tag) {
+                        const untouchTags = editedParts[i].tags.filter(function (tag) {
                             return !editedPart.tags.includes(tag)
                         });
                         editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
@@ -3629,14 +3628,14 @@
                             updatedCallback()
                         } else {
 
-                            var partId = editedPart.id;
-                            var wTop = $('#ladb_part_' + partId).offset().top - $(window).scrollTop();
+                            const partId = editedPart.id;
+                            const wTop = $('#ladb_part_' + partId).offset().top - $(window).scrollTop();
 
                             // Refresh the list
                             that.generateCutlist(function () {
 
                                 // Try to scroll to the edited part's row
-                                var $part = $('#ladb_part_' + partId, that.$page);
+                                const $part = $('#ladb_part_' + partId, that.$page);
                                 if ($part.length > 0) {
                                     if ($part.hasClass('hide')) {
                                         that.expandFoldingRow($('#ladb_part_' + $part.data('folder-id')));
@@ -3683,7 +3682,7 @@
 
         } else {
 
-            var $modal = this.appendModalInside('ladb_cutlist_modal_unknow_part', 'tabs/cutlist/_modal-unknow-part.twig');
+            const $modal = this.appendModalInside('ladb_cutlist_modal_unknow_part', 'tabs/cutlist/_modal-unknow-part.twig');
 
             // Show modal
             $modal.modal('show');
@@ -3692,8 +3691,8 @@
     };
 
     LadbTabCutlist.prototype.toggleFoldingRow = function ($row, dataKey) {
-        var $btn = $('.ladb-btn-folding-toggle-row', $row);
-        var $i = $('i', $btn);
+        const $btn = $('.ladb-btn-folding-toggle-row', $row);
+        const $i = $('i', $btn);
 
         if ($i.hasClass('ladb-opencutlist-icon-arrow-down')) {
             this.expandFoldingRow($row, dataKey);
@@ -3703,9 +3702,9 @@
     };
 
     LadbTabCutlist.prototype.expandFoldingRow = function ($row, dataKey) {
-        var rowId = $row.data(dataKey ? dataKey : 'part-id');
-        var $btn = $('.ladb-btn-folding-toggle-row', $row);
-        var $i = $('i', $btn);
+        const rowId = $row.data(dataKey ? dataKey : 'part-id');
+        const $btn = $('.ladb-btn-folding-toggle-row', $row);
+        const $i = $('i', $btn);
 
         $i.addClass('ladb-opencutlist-icon-arrow-up');
         $i.removeClass('ladb-opencutlist-icon-arrow-down');
@@ -3716,9 +3715,9 @@
     };
 
     LadbTabCutlist.prototype.collapseFoldingRow = function ($row, dataKey) {
-        var rowId = $row.data(dataKey ? dataKey : 'part-id');
-        var $btn = $('.ladb-btn-folding-toggle-row', $row);
-        var $i = $('i', $btn);
+        const rowId = $row.data(dataKey ? dataKey : 'part-id');
+        const $btn = $('.ladb-btn-folding-toggle-row', $row);
+        const $i = $('i', $btn);
 
         $i.addClass('ladb-opencutlist-icon-arrow-down');
         $i.removeClass('ladb-opencutlist-icon-arrow-up');
@@ -3729,14 +3728,14 @@
     };
 
     LadbTabCutlist.prototype.expandAllFoldingRows = function ($slide, dataKey) {
-        var that = this;
+        const that = this;
         $('.ladb-cutlist-row-folder', $slide === undefined ? this.$page : $slide).each(function () {
             that.expandFoldingRow($(this), dataKey);
         });
     };
 
     LadbTabCutlist.prototype.collapseAllFoldingRows = function ($slide, dataKey) {
-        var that = this;
+        const that = this;
         $('.ladb-cutlist-row-folder', $slide === undefined ? this.$page : $slide).each(function () {
             that.collapseFoldingRow($(this), dataKey);
         });
@@ -3745,8 +3744,8 @@
     // Groups /////
 
     LadbTabCutlist.prototype.findGroupById = function (id) {
-        for (var i = 0 ; i < this.groups.length; i++) {
-            var group = this.groups[i];
+        for (let i = 0 ; i < this.groups.length; i++) {
+            const group = this.groups[i];
             if (group.id === id) {
                 return group;
             }
@@ -3760,10 +3759,10 @@
     };
 
     LadbTabCutlist.prototype.showGroup = function ($group, doNotSaveState, doNotFlushSettings) {
-        var groupId = $group.data('group-id');
-        var $btn = $('.ladb-btn-toggle-no-print', $group);
-        var $i = $('i', $btn);
-        var $summaryRow = $('#' + $group.attr('id') + '_summary');
+        const groupId = $group.data('group-id');
+        const $btn = $('.ladb-btn-toggle-no-print', $group);
+        const $i = $('i', $btn);
+        const $summaryRow = $('#' + $group.attr('id') + '_summary');
 
         $group.removeClass('no-print');
         $i.addClass('ladb-opencutlist-icon-eye-close');
@@ -3771,7 +3770,7 @@
         $summaryRow.removeClass('ladb-mute');
 
         if (doNotSaveState === undefined || !doNotSaveState) {
-            var idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
+            const idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
             if (idx !== -1) {
                 this.generateOptions.hidden_group_ids.splice(idx, 1);
                 if (doNotFlushSettings === undefined || !doNotFlushSettings) {
@@ -3783,10 +3782,10 @@
     };
 
     LadbTabCutlist.prototype.hideGroup = function ($group, doNotSaveState, doNotFlushSettings) {
-        var groupId = $group.data('group-id');
-        var $btn = $('.ladb-btn-toggle-no-print', $group);
-        var $i = $('i', $btn);
-        var $summaryRow = $('#' + $group.attr('id') + '_summary');
+        const groupId = $group.data('group-id');
+        const $btn = $('.ladb-btn-toggle-no-print', $group);
+        const $i = $('i', $btn);
+        const $summaryRow = $('#' + $group.attr('id') + '_summary');
 
         $group.addClass('no-print');
         $i.removeClass('ladb-opencutlist-icon-eye-close');
@@ -3794,7 +3793,7 @@
         $summaryRow.addClass('ladb-mute');
 
         if (doNotSaveState === undefined || !doNotSaveState) {
-            var idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
+            const idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
             if (idx === -1) {
                 this.generateOptions.hidden_group_ids.push(groupId);
                 if (doNotFlushSettings === undefined || !doNotFlushSettings) {
@@ -3806,7 +3805,7 @@
     };
 
     LadbTabCutlist.prototype.showAllGroups = function ($slide, doNotSaveState) {
-        var that = this;
+        const that = this;
         $('.ladb-cutlist-group', $slide === undefined ? this.$page : $slide).each(function () {
             that.showGroup($(this), doNotSaveState === undefined  ? false : doNotSaveState,true);
         }).promise().done( function (){
@@ -3815,9 +3814,9 @@
     };
 
     LadbTabCutlist.prototype.hideAllGroups = function (exceptedGroupId, $slide, doNotSaveState) {
-        var that = this;
+        const that = this;
         $('.ladb-cutlist-group', $slide === undefined ? this.$page : $slide).each(function () {
-            var groupId = $(this).data('group-id');
+            const groupId = $(this).data('group-id');
             if (exceptedGroupId && groupId !== exceptedGroupId) {
                 that.hideGroup($(this), doNotSaveState === undefined  ? false : doNotSaveState,true);
             }
@@ -3829,19 +3828,19 @@
     };
 
     LadbTabCutlist.prototype.cuttingdiagram1dGroup = function (groupId, forceDefaultTab, generateCallback) {
-        var that = this;
+        const that = this;
 
-        var group = this.findGroupById(groupId);
-        var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
+        const group = this.findGroupById(groupId);
+        const isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve cutting diagram options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_options', section: groupId }, function (response) {
 
-            var cuttingdiagram1dOptions = response.preset;
+            const cuttingdiagram1dOptions = response.preset;
 
             rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-                var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d', 'tabs/cutlist/_modal-cuttingdiagram-1d.twig', {
+                const $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d', 'tabs/cutlist/_modal-cuttingdiagram-1d.twig', {
                     material_attributes: response,
                     group: group,
                     isPartSelection: isPartSelection,
@@ -3849,24 +3848,24 @@
                 });
 
                 // Fetch UI elements
-                var $tabs = $('a[data-toggle="tab"]', $modal);
-                var $widgetPreset = $('.ladb-widget-preset', $modal);
-                var $inputStdBar = $('#ladb_select_std_bar', $modal);
-                var $inputScrapBarLengths = $('#ladb_input_scrap_bar_lengths', $modal);
-                var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
-                var $inputTrimming = $('#ladb_input_trimming', $modal);
-                var $selectBarFolding = $('#ladb_select_bar_folding', $modal);
-                var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
-                var $selectUseNames = $('#ladb_select_use_names', $modal);
-                var $selectFullWidthDiagram = $('#ladb_select_full_width_diagram', $modal);
-                var $selectHideCross = $('#ladb_select_hide_cross', $modal);
-                var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
-                var $inputWrapLength = $('#ladb_input_wrap_length', $modal);
-                var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
-                var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
-                var $btnGenerate = $('#ladb_btn_generate', $modal);
+                const $tabs = $('a[data-toggle="tab"]', $modal);
+                const $widgetPreset = $('.ladb-widget-preset', $modal);
+                const $inputStdBar = $('#ladb_select_std_bar', $modal);
+                const $inputScrapBarLengths = $('#ladb_input_scrap_bar_lengths', $modal);
+                const $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
+                const $inputTrimming = $('#ladb_input_trimming', $modal);
+                const $selectBarFolding = $('#ladb_select_bar_folding', $modal);
+                const $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
+                const $selectUseNames = $('#ladb_select_use_names', $modal);
+                const $selectFullWidthDiagram = $('#ladb_select_full_width_diagram', $modal);
+                const $selectHideCross = $('#ladb_select_hide_cross', $modal);
+                const $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
+                const $inputWrapLength = $('#ladb_input_wrap_length', $modal);
+                const $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
+                const $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
+                const $btnGenerate = $('#ladb_btn_generate', $modal);
 
-                var fnFetchOptions = function (options) {
+                const fnFetchOptions = function (options) {
                     options.std_bar = $inputStdBar.val();
                     options.scrap_bar_lengths = $inputScrapBarLengths.ladbTextinputTokenfield('getValidTokensList');
                     options.saw_kerf = $inputSawKerf.val();
@@ -3880,7 +3879,7 @@
                     options.wrap_length = $inputWrapLength.val();
                     options.part_drawing_type = parseInt($selectPartDrawingType.val());
                 }
-                var fnFillInputs = function (options) {
+                const fnFillInputs = function (options) {
                     $inputSawKerf.val(options.saw_kerf);
                     $inputTrimming.val(options.trimming);
                     $selectUseNames.selectpicker('val', options.use_names ? '1' : '0');
@@ -3892,7 +3891,7 @@
                     $inputWrapLength.val(options.wrap_length);
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                 }
-                var fnEditMaterial = function (callback) {
+                const fnEditMaterial = function (callback) {
 
                     // Hide modal
                     $modal.modal('hide');
@@ -3913,7 +3912,7 @@
                     fnFillInputs: fnFillInputs
                 });
                 if (cuttingdiagram1dOptions.std_bar) {
-                    var defaultValue = $inputStdBar.val();
+                    const defaultValue = $inputStdBar.val();
                     $inputStdBar.val(cuttingdiagram1dOptions.std_bar);
                     if ($inputStdBar.val() == null) {
                         if (response.std_lengths.length === 0) {
@@ -3946,7 +3945,7 @@
 
                 // Bind select
                 $inputStdBar.on('changed.bs.select', function () {
-                    var value = $inputStdBar.val();
+                    const value = $inputStdBar.val();
                     if (value === 'add') {
                         fnEditMaterial(function ($editMaterialModal) {
                             $('#ladb_materials_input_std_lengths', $editMaterialModal).siblings('.token-input').focus();
@@ -3970,15 +3969,15 @@
                         generateCallback();
                     } else {
 
-                        var fnAdvance = function () {
+                        const fnAdvance = function () {
                             window.requestAnimationFrame(function () {
                                 rubyCallCommand('cutlist_group_cuttingdiagram1d_advance', null, function (response) {
 
-                                    var barCount = response.bars.length;
+                                    const barCount = response.bars.length;
 
                                     if (response.errors && response.errors.length > 0 || response.bars && response.bars.length > 0) {
 
-                                        var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_1d', 'tabs/cutlist/_slide-cuttingdiagram-1d.twig', $.extend({
+                                        const $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_1d', 'tabs/cutlist/_slide-cuttingdiagram-1d.twig', $.extend({
                                             capabilities: that.dialog.capabilities,
                                             generateOptions: that.generateOptions,
                                             dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
@@ -3997,11 +3996,11 @@
                                         });
 
                                         // Fetch UI elements
-                                        var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
-                                        var $btnPrint = $('#ladb_btn_print', $slide);
-                                        var $btnExport = $('#ladb_btn_export', $slide);
-                                        var $btnLabels = $('#ladb_btn_labels', $slide);
-                                        var $btnClose = $('#ladb_btn_close', $slide);
+                                        const $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
+                                        const $btnPrint = $('#ladb_btn_print', $slide);
+                                        const $btnExport = $('#ladb_btn_export', $slide);
+                                        const $btnLabels = $('#ladb_btn_labels', $slide);
+                                        const $btnClose = $('#ladb_btn_close', $slide);
 
                                         // Bind buttons
                                         $btnCuttingDiagram.on('click', function () {
@@ -4015,56 +4014,56 @@
                                             $(this).blur();
 
                                             // Count hidden groups
-                                            var hiddenBarIndices = [];
+                                            const hiddenBarIndices = [];
                                             $('.ladb-cutlist-cuttingdiagram-group', $slide).each(function () {
                                                 if ($(this).hasClass('no-print')) {
                                                     hiddenBarIndices.push($(this).data('bar-index'));
                                                 }
                                             });
-                                            var isBarSelection = hiddenBarIndices.length > 0
+                                            const isBarSelection = hiddenBarIndices.length > 0
 
                                             // Retrieve cutting diagram options
                                             rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram1d_write_options', section: groupId }, function (response) {
 
-                                                var writeOptions = response.preset;
+                                                const writeOptions = response.preset;
 
-                                                var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d_export', 'tabs/cutlist/_modal-cuttingdiagram-1d-write.twig', {
+                                                const $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_1d_export', 'tabs/cutlist/_modal-cuttingdiagram-1d-write.twig', {
                                                     group: group,
                                                     isBarSelection: isBarSelection,
                                                 });
 
                                                 // Fetch UI elements
-                                                var $widgetPreset = $('.ladb-widget-preset', $modal);
-                                                var $selectFileFormat = $('#ladb_select_file_format', $modal);
-                                                var $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
-                                                var $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
-                                                var $selectUnit = $('#ladb_select_unit', $modal);
-                                                var $selectSmoothing = $('#ladb_select_smoothing', $modal);
-                                                var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
-                                                var $selectIncludePaths = $('#ladb_select_include_paths', $modal);
-                                                var $inputBarHidden = $('#ladb_input_bar_hidden', $modal);
-                                                var $inputBarStrokeColor = $('#ladb_input_bar_stroke_color', $modal);
-                                                var $inputBarFillColor = $('#ladb_input_bar_fill_color', $modal);
-                                                var $inputPartsHidden = $('#ladb_input_parts_hidden', $modal);
-                                                var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
-                                                var $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
-                                                var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
-                                                var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
-                                                var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
-                                                var $formGroupPartsPaths = $('#ladb_form_group_parts_paths', $modal);
-                                                var $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', $modal);
-                                                var $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', $modal);
-                                                var $formGroupTexts = $('#ladb_form_group_texts', $modal);
-                                                var $inputTextsHidden = $('#ladb_input_texts_hidden', $modal);
-                                                var $inputTextsColor = $('#ladb_input_texts_color', $modal);
-                                                var $inputLeftoversHidden = $('#ladb_input_leftovers_hidden', $modal);
-                                                var $inputLeftoversStrokeColor = $('#ladb_input_leftovers_stroke_color', $modal);
-                                                var $inputLeftoversFillColor = $('#ladb_input_leftovers_fill_color', $modal);
-                                                var $inputCutsHidden = $('#ladb_input_cuts_hidden', $modal);
-                                                var $inputCutsColor = $('#ladb_input_cuts_color', $modal);
-                                                var $btnExport = $('#ladb_btn_export', $modal);
+                                                const $widgetPreset = $('.ladb-widget-preset', $modal);
+                                                const $selectFileFormat = $('#ladb_select_file_format', $modal);
+                                                const $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
+                                                const $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
+                                                const $selectUnit = $('#ladb_select_unit', $modal);
+                                                const $selectSmoothing = $('#ladb_select_smoothing', $modal);
+                                                const $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
+                                                const $selectIncludePaths = $('#ladb_select_include_paths', $modal);
+                                                const $inputBarHidden = $('#ladb_input_bar_hidden', $modal);
+                                                const $inputBarStrokeColor = $('#ladb_input_bar_stroke_color', $modal);
+                                                const $inputBarFillColor = $('#ladb_input_bar_fill_color', $modal);
+                                                const $inputPartsHidden = $('#ladb_input_parts_hidden', $modal);
+                                                const $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
+                                                const $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
+                                                const $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
+                                                const $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
+                                                const $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
+                                                const $formGroupPartsPaths = $('#ladb_form_group_parts_paths', $modal);
+                                                const $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', $modal);
+                                                const $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', $modal);
+                                                const $formGroupTexts = $('#ladb_form_group_texts', $modal);
+                                                const $inputTextsHidden = $('#ladb_input_texts_hidden', $modal);
+                                                const $inputTextsColor = $('#ladb_input_texts_color', $modal);
+                                                const $inputLeftoversHidden = $('#ladb_input_leftovers_hidden', $modal);
+                                                const $inputLeftoversStrokeColor = $('#ladb_input_leftovers_stroke_color', $modal);
+                                                const $inputLeftoversFillColor = $('#ladb_input_leftovers_fill_color', $modal);
+                                                const $inputCutsHidden = $('#ladb_input_cuts_hidden', $modal);
+                                                const $inputCutsColor = $('#ladb_input_cuts_color', $modal);
+                                                const $btnExport = $('#ladb_btn_export', $modal);
 
-                                                var fnFetchOptions = function (options) {
+                                                const fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
                                                     options.dxf_structure = parseInt($selectDxfStructure.val());
                                                     options.unit = parseInt($selectUnit.val());
@@ -4089,7 +4088,7 @@
                                                     options.cuts_hidden = !$inputCutsHidden.is(':checked');
                                                     options.cuts_color = $inputCutsColor.ladbTextinputColor('val');
                                                 };
-                                                var fnFillInputs = function (options) {
+                                                const fnFillInputs = function (options) {
                                                     $selectFileFormat.selectpicker('val', options.file_format);
                                                     $selectDxfStructure.selectpicker('val', options.dxf_structure);
                                                     $selectUnit.selectpicker('val', options.unit);
@@ -4115,15 +4114,15 @@
                                                     $inputCutsColor.ladbTextinputColor('val', options.cuts_color);
                                                     fnUpdateFieldsVisibility();
                                                 };
-                                                var fnUpdateFieldsVisibility = function () {
-                                                    var isDxf = $selectFileFormat.val() === 'dxf';
-                                                    var isMergeHoles = $selectMergeHoles.val() === '1';
-                                                    var isIncludePaths = $selectIncludePaths.val() === '1';
-                                                    var isBarHidden = !$inputBarHidden.is(':checked');
-                                                    var isPartsHidden = !$inputPartsHidden.is(':checked');
-                                                    var isTextHidden = !$inputTextsHidden.is(':checked');
-                                                    var isLeftoversHidden = !$inputLeftoversHidden.is(':checked');
-                                                    var isCutsHidden = !$inputCutsHidden.is(':checked');
+                                                const fnUpdateFieldsVisibility = function () {
+                                                    const isDxf = $selectFileFormat.val() === 'dxf';
+                                                    const isMergeHoles = $selectMergeHoles.val() === '1';
+                                                    const isIncludePaths = $selectIncludePaths.val() === '1';
+                                                    const isBarHidden = !$inputBarHidden.is(':checked');
+                                                    const isPartsHidden = !$inputPartsHidden.is(':checked');
+                                                    const isTextHidden = !$inputTextsHidden.is(':checked');
+                                                    const isLeftoversHidden = !$inputLeftoversHidden.is(':checked');
+                                                    const isCutsHidden = !$inputCutsHidden.is(':checked');
                                                     if (isDxf) $formGroupDxfStructure.show(); else $formGroupDxfStructure.hide();
                                                     $inputBarStrokeColor.ladbTextinputColor(isBarHidden ? 'disable' : 'enable');
                                                     $inputBarFillColor.ladbTextinputColor(isBarHidden || isDxf ? 'disable' : 'enable');
@@ -4152,7 +4151,7 @@
                                                 $selectFileFormat
                                                     .selectpicker(SELECT_PICKER_OPTIONS)
                                                     .on('changed.bs.select', function () {
-                                                        var fileCount = barCount - hiddenBarIndices.length;
+                                                        const fileCount = barCount - hiddenBarIndices.length;
                                                         $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
                                                         fnUpdateFieldsVisibility();
                                                     })
@@ -4236,7 +4235,7 @@
                                             let binDefs = {};
                                             let barIndex = 0;
                                             $.each(response.bars, function () {
-                                                for (var i = 0 ; i < this.count; i++) {
+                                                for (let i = 0 ; i < this.count; i++) {
                                                     barIndex++;
                                                     $.each(this.parts, function () {
                                                         if (!binDefs[this.id]) {
@@ -4257,7 +4256,7 @@
                                             that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                                         });
                                         $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                                            var $group = $(this).parents('.ladb-cutlist-group');
+                                            const $group = $(this).parents('.ladb-cutlist-group');
                                             if ($group.hasClass('no-print')) {
                                                 that.showGroup($group, true);
                                             } else {
@@ -4266,9 +4265,9 @@
                                             $(this).blur();
                                         });
                                         $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
-                                            var $group = $(this).parents('.ladb-cutlist-group');
-                                            var groupId = $group.data('bar-index');
-                                            var $target = $('.ladb-cutlist-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) - 1) + ']');
+                                            const $group = $(this).parents('.ladb-cutlist-group');
+                                            const groupId = $group.data('bar-index');
+                                            const $target = $('.ladb-cutlist-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) - 1) + ']');
                                             $slide.animate({scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20}, 200).promise().then(function () {
                                                 $target.effect('highlight', {}, 1500);
                                             });
@@ -4276,9 +4275,9 @@
                                             return false;
                                         });
                                         $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
-                                            var $group = $(this).parents('.ladb-cutlist-group');
-                                            var groupId = $group.data('bar-index');
-                                            var $target = $('.ladb-cutlist-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) + 1) + ']');
+                                            const $group = $(this).parents('.ladb-cutlist-group');
+                                            const groupId = $group.data('bar-index');
+                                            const $target = $('.ladb-cutlist-cuttingdiagram-group[data-bar-index=' + (parseInt(groupId) + 1) + ']');
                                             $slide.animate({scrollTop: $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20}, 200).promise().then(function () {
                                                 $target.effect('highlight', {}, 1500);
                                             });
@@ -4287,13 +4286,13 @@
                                         });
                                         $('a.ladb-btn-highlight-part', $slide).on('click', function () {
                                             $(this).blur();
-                                            var $part = $(this).parents('.ladb-cutlist-row');
-                                            var partId = $part.data('part-id');
+                                            const $part = $(this).parents('.ladb-cutlist-row');
+                                            const partId = $part.data('part-id');
                                             that.highlightPart(partId);
                                             return false;
                                         });
                                         $('a.ladb-btn-scrollto', $slide).on('click', function () {
-                                            var $target = $($(this).attr('href'));
+                                            const $target = $($(this).attr('href'));
                                             if ($target.data('group-id')) {
                                                 that.showGroup($target, false);
                                             }
@@ -4322,7 +4321,7 @@
 
                                         // SVG
                                         $('SVG .part', $slide).on('click', function () {
-                                            var partId = $(this).data('part-id');
+                                            const partId = $(this).data('part-id');
                                             that.highlightPart(partId);
                                             $(this).blur();
                                             return false;
@@ -4378,19 +4377,19 @@
     };
 
     LadbTabCutlist.prototype.cuttingdiagram2dGroup = function (groupId, forceDefaultTab, generateCallback) {
-        var that = this;
+        const that = this;
 
-        var group = this.findGroupById(groupId);
-        var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
+        const group = this.findGroupById(groupId);
+        const isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve cutting diagram options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_options', section: groupId }, function (response) {
 
-            var cuttingdiagram2dOptions = response.preset;
+            const cuttingdiagram2dOptions = response.preset;
 
             rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-                var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', {
+                const $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d', 'tabs/cutlist/_modal-cuttingdiagram-2d.twig', {
                     material_attributes: response,
                     group: group,
                     isPartSelection: isPartSelection,
@@ -4398,29 +4397,29 @@
                 });
 
                 // Fetch UI elements
-                var $tabs = $('a[data-toggle="tab"]', $modal);
-                var $widgetPreset = $('.ladb-widget-preset', $modal);
-                var $inputStdSheet = $('#ladb_select_std_sheet', $modal);
-                var $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
-                var $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
-                var $inputTrimming = $('#ladb_input_trimming', $modal);
-                var $selectOptimization = $('#ladb_select_optimization', $modal);
-                var $selectStacking = $('#ladb_select_stacking', $modal);
-                var $inputKeepLength = $('#ladb_input_keep_length', $modal);
-                var $inputKeepWidth = $('#ladb_input_keep_width', $modal);
-                var $selectSheetFolding = $('#ladb_select_sheet_folding', $modal);
-                var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
-                var $selectUseNames = $('#ladb_select_use_names', $modal);
-                var $selectFullWidthDiagram = $('#ladb_select_full_width_diagram', $modal);
-                var $selectHideCross = $('#ladb_select_hide_cross', $modal);
-                var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
-                var $selectHighlightPrimaryCuts = $('#ladb_select_highlight_primary_cuts', $modal);
-                var $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
-                var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
-                var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
-                var $btnGenerate = $('#ladb_btn_generate', $modal);
+                const $tabs = $('a[data-toggle="tab"]', $modal);
+                const $widgetPreset = $('.ladb-widget-preset', $modal);
+                const $inputStdSheet = $('#ladb_select_std_sheet', $modal);
+                const $inputScrapSheetSizes = $('#ladb_input_scrap_sheet_sizes', $modal);
+                const $inputSawKerf = $('#ladb_input_saw_kerf', $modal);
+                const $inputTrimming = $('#ladb_input_trimming', $modal);
+                const $selectOptimization = $('#ladb_select_optimization', $modal);
+                const $selectStacking = $('#ladb_select_stacking', $modal);
+                const $inputKeepLength = $('#ladb_input_keep_length', $modal);
+                const $inputKeepWidth = $('#ladb_input_keep_width', $modal);
+                const $selectSheetFolding = $('#ladb_select_sheet_folding', $modal);
+                const $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
+                const $selectUseNames = $('#ladb_select_use_names', $modal);
+                const $selectFullWidthDiagram = $('#ladb_select_full_width_diagram', $modal);
+                const $selectHideCross = $('#ladb_select_hide_cross', $modal);
+                const $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
+                const $selectHighlightPrimaryCuts = $('#ladb_select_highlight_primary_cuts', $modal);
+                const $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
+                const $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
+                const $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
+                const $btnGenerate = $('#ladb_btn_generate', $modal);
 
-                var fnFetchOptions = function (options) {
+                const fnFetchOptions = function (options) {
                     options.std_sheet = $inputStdSheet.val();
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
                     options.saw_kerf = $inputSawKerf.val();
@@ -4439,7 +4438,7 @@
                     options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
                     options.part_drawing_type = parseInt($selectPartDrawingType.val());
                 }
-                var fnFillInputs = function (options) {
+                const fnFillInputs = function (options) {
                     $inputSawKerf.val(options.saw_kerf);
                     $inputTrimming.val(options.trimming);
                     $selectOptimization.selectpicker('val', options.optimization);
@@ -4456,7 +4455,7 @@
                     $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                 }
-                var fnEditMaterial = function (callback) {
+                const fnEditMaterial = function (callback) {
 
                     // Hide modal
                     $modal.modal('hide');
@@ -4477,7 +4476,7 @@
                     fnFillInputs: fnFillInputs
                 });
                 if (cuttingdiagram2dOptions.std_sheet) {
-                    var defaultValue = $inputStdSheet.val();
+                    const defaultValue = $inputStdSheet.val();
                     $inputStdSheet.val(cuttingdiagram2dOptions.std_sheet);
                     if ($inputStdSheet.val() == null) {
                         if (response.std_sizes.length === 0) {
@@ -4515,7 +4514,7 @@
 
                 // Bind select
                 $inputStdSheet.on('changed.bs.select', function () {
-                    var value = $inputStdSheet.val();
+                    const value = $inputStdSheet.val();
                     if (value === 'add') {
                         fnEditMaterial(function ($editMaterialModal) {
                             $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
@@ -4539,15 +4538,15 @@
                         generateCallback();
                     } else {
 
-                        var fnAdvance = function () {
+                        const fnAdvance = function () {
                             window.requestAnimationFrame(function () {
                                 rubyCallCommand('cutlist_group_cuttingdiagram2d_advance', null, function (response) {
 
                                     if (response.errors && response.errors.length > 0 || response.sheets && response.sheets.length > 0) {
 
-                                        var sheetCount = response.sheets.length;
+                                        const sheetCount = response.sheets.length;
 
-                                        var $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
+                                        const $slide = that.pushNewSlide('ladb_cutlist_slide_cuttingdiagram_2d', 'tabs/cutlist/_slide-cuttingdiagram-2d.twig', $.extend({
                                             capabilities: that.dialog.capabilities,
                                             generateOptions: that.generateOptions,
                                             dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
@@ -4566,11 +4565,11 @@
                                         });
 
                                         // Fetch UI elements
-                                        var $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
-                                        var $btnPrint = $('#ladb_btn_print', $slide);
-                                        var $btnExport = $('#ladb_btn_export', $slide);
-                                        var $btnLabels = $('#ladb_btn_labels', $slide);
-                                        var $btnClose = $('#ladb_btn_close', $slide);
+                                        const $btnCuttingDiagram = $('#ladb_btn_cuttingdiagram', $slide);
+                                        const $btnPrint = $('#ladb_btn_print', $slide);
+                                        const $btnExport = $('#ladb_btn_export', $slide);
+                                        const $btnLabels = $('#ladb_btn_labels', $slide);
+                                        const $btnClose = $('#ladb_btn_close', $slide);
 
                                         // Bind buttons
                                         $btnCuttingDiagram.on('click', function () {
@@ -4584,56 +4583,56 @@
                                             $(this).blur();
 
                                             // Count hidden groups
-                                            var hiddenSheetIndices = [];
+                                            const hiddenSheetIndices = [];
                                             $('.ladb-cutlist-cuttingdiagram-group', $slide).each(function () {
                                                 if ($(this).hasClass('no-print')) {
                                                     hiddenSheetIndices.push($(this).data('sheet-index'));
                                                 }
                                             });
-                                            var isSheetSelection = hiddenSheetIndices.length > 0
+                                            const isSheetSelection = hiddenSheetIndices.length > 0
 
                                             // Retrieve cutting diagram options
                                             rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_cuttingdiagram2d_write_options', section: groupId }, function (response) {
 
-                                                var writeOptions = response.preset;
+                                                const writeOptions = response.preset;
 
-                                                var $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_export', 'tabs/cutlist/_modal-cuttingdiagram-2d-write.twig', {
+                                                const $modal = that.appendModalInside('ladb_cutlist_modal_cuttingdiagram_2d_export', 'tabs/cutlist/_modal-cuttingdiagram-2d-write.twig', {
                                                     group: group,
                                                     isSheetSelection: isSheetSelection,
                                                 });
 
                                                 // Fetch UI elements
-                                                var $widgetPreset = $('.ladb-widget-preset', $modal);
-                                                var $selectFileFormat = $('#ladb_select_file_format', $modal);
-                                                var $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
-                                                var $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
-                                                var $selectUnit = $('#ladb_select_unit', $modal);
-                                                var $selectSmoothing = $('#ladb_select_smoothing', $modal);
-                                                var $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
-                                                var $selectIncludePaths = $('#ladb_select_include_paths', $modal);
-                                                var $inputSheetHidden = $('#ladb_input_sheet_hidden', $modal);
-                                                var $inputSheetStrokeColor = $('#ladb_input_sheet_stroke_color', $modal);
-                                                var $inputSheetFillColor = $('#ladb_input_sheet_fill_color', $modal);
-                                                var $inputPartsHidden = $('#ladb_input_parts_hidden', $modal);
-                                                var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
-                                                var $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
-                                                var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
-                                                var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
-                                                var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
-                                                var $formGroupPartsPaths = $('#ladb_form_group_parts_paths', $modal);
-                                                var $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', $modal);
-                                                var $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', $modal);
-                                                var $formGroupTexts = $('#ladb_form_group_texts', $modal);
-                                                var $inputTextsHidden = $('#ladb_input_texts_hidden', $modal);
-                                                var $inputTextsColor = $('#ladb_input_texts_color', $modal);
-                                                var $inputLeftoversHidden = $('#ladb_input_leftovers_hidden', $modal);
-                                                var $inputLeftoversStrokeColor = $('#ladb_input_leftovers_stroke_color', $modal);
-                                                var $inputLeftoversFillColor = $('#ladb_input_leftovers_fill_color', $modal);
-                                                var $inputCutsHidden = $('#ladb_input_cuts_hidden', $modal);
-                                                var $inputCutsColor = $('#ladb_input_cuts_color', $modal);
-                                                var $btnExport = $('#ladb_btn_export', $modal);
+                                                const $widgetPreset = $('.ladb-widget-preset', $modal);
+                                                const $selectFileFormat = $('#ladb_select_file_format', $modal);
+                                                const $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
+                                                const $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
+                                                const $selectUnit = $('#ladb_select_unit', $modal);
+                                                const $selectSmoothing = $('#ladb_select_smoothing', $modal);
+                                                const $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
+                                                const $selectIncludePaths = $('#ladb_select_include_paths', $modal);
+                                                const $inputSheetHidden = $('#ladb_input_sheet_hidden', $modal);
+                                                const $inputSheetStrokeColor = $('#ladb_input_sheet_stroke_color', $modal);
+                                                const $inputSheetFillColor = $('#ladb_input_sheet_fill_color', $modal);
+                                                const $inputPartsHidden = $('#ladb_input_parts_hidden', $modal);
+                                                const $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
+                                                const $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
+                                                const $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
+                                                const $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
+                                                const $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
+                                                const $formGroupPartsPaths = $('#ladb_form_group_parts_paths', $modal);
+                                                const $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', $modal);
+                                                const $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', $modal);
+                                                const $formGroupTexts = $('#ladb_form_group_texts', $modal);
+                                                const $inputTextsHidden = $('#ladb_input_texts_hidden', $modal);
+                                                const $inputTextsColor = $('#ladb_input_texts_color', $modal);
+                                                const $inputLeftoversHidden = $('#ladb_input_leftovers_hidden', $modal);
+                                                const $inputLeftoversStrokeColor = $('#ladb_input_leftovers_stroke_color', $modal);
+                                                const $inputLeftoversFillColor = $('#ladb_input_leftovers_fill_color', $modal);
+                                                const $inputCutsHidden = $('#ladb_input_cuts_hidden', $modal);
+                                                const $inputCutsColor = $('#ladb_input_cuts_color', $modal);
+                                                const $btnExport = $('#ladb_btn_export', $modal);
 
-                                                var fnFetchOptions = function (options) {
+                                                const fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
                                                     options.dxf_structure = parseInt($selectDxfStructure.val());
                                                     options.unit = parseInt($selectUnit.val());
@@ -4658,7 +4657,7 @@
                                                     options.cuts_hidden = !$inputCutsHidden.is(':checked');
                                                     options.cuts_color = $inputCutsColor.ladbTextinputColor('val');
                                                 };
-                                                var fnFillInputs = function (options) {
+                                                const fnFillInputs = function (options) {
                                                     $selectFileFormat.selectpicker('val', options.file_format);
                                                     $selectDxfStructure.selectpicker('val', options.dxf_structure);
                                                     $selectUnit.selectpicker('val', options.unit);
@@ -4684,15 +4683,15 @@
                                                     $inputCutsColor.ladbTextinputColor('val', options.cuts_color);
                                                     fnUpdateFieldsVisibility();
                                                 };
-                                                var fnUpdateFieldsVisibility = function () {
-                                                    var isDxf = $selectFileFormat.val() === 'dxf';
-                                                    var isMergeHoles = $selectMergeHoles.val() === '1';
-                                                    var isIncludePaths = $selectIncludePaths.val() === '1';
-                                                    var isSheetHidden = !$inputSheetHidden.is(':checked');
-                                                    var isPartsHidden = !$inputPartsHidden.is(':checked');
-                                                    var isTextsHidden = !$inputTextsHidden.is(':checked');
-                                                    var isLeftoversHidden = !$inputLeftoversHidden.is(':checked');
-                                                    var isCutsHidden = !$inputCutsHidden.is(':checked');
+                                                const fnUpdateFieldsVisibility = function () {
+                                                    const isDxf = $selectFileFormat.val() === 'dxf';
+                                                    const isMergeHoles = $selectMergeHoles.val() === '1';
+                                                    const isIncludePaths = $selectIncludePaths.val() === '1';
+                                                    const isSheetHidden = !$inputSheetHidden.is(':checked');
+                                                    const isPartsHidden = !$inputPartsHidden.is(':checked');
+                                                    const isTextsHidden = !$inputTextsHidden.is(':checked');
+                                                    const isLeftoversHidden = !$inputLeftoversHidden.is(':checked');
+                                                    const isCutsHidden = !$inputCutsHidden.is(':checked');
                                                     if (isDxf) $formGroupDxfStructure.show(); else $formGroupDxfStructure.hide();
                                                     $inputSheetStrokeColor.ladbTextinputColor(isSheetHidden ? 'disable' : 'enable');
                                                     $inputSheetFillColor.ladbTextinputColor(isSheetHidden || isDxf ? 'disable' : 'enable');
@@ -4721,7 +4720,7 @@
                                                 $selectFileFormat
                                                     .selectpicker(SELECT_PICKER_OPTIONS)
                                                     .on('changed.bs.select', function () {
-                                                        var fileCount = sheetCount - hiddenSheetIndices.length;
+                                                        const fileCount = sheetCount - hiddenSheetIndices.length;
                                                         $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', { count: fileCount }).toLowerCase() + ' )</small>');
                                                         fnUpdateFieldsVisibility();
                                                     })
@@ -4805,7 +4804,7 @@
                                             let binDefs = {};
                                             let sheetIndex = 0;
                                             $.each(response.sheets, function () {
-                                                for (var i = 0 ; i < this.count; i++) {
+                                                for (let i = 0 ; i < this.count; i++) {
                                                     sheetIndex++;
                                                     $.each(this.parts, function () {
                                                         if (!binDefs[this.id]) {
@@ -4826,7 +4825,7 @@
                                             that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                                         });
                                         $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                                            var $group = $(this).parents('.ladb-cutlist-group');
+                                            const $group = $(this).parents('.ladb-cutlist-group');
                                             if ($group.hasClass('no-print')) {
                                                 that.showGroup($group, true);
                                             } else {
@@ -4835,30 +4834,30 @@
                                             $(this).blur();
                                         });
                                         $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
-                                            var $group = $(this).parents('.ladb-cutlist-group');
-                                            var groupId = $group.data('sheet-index');
-                                            var $target = $('.ladb-cutlist-cuttingdiagram-group[data-sheet-index=' + (parseInt(groupId) - 1) + ']');
+                                            const $group = $(this).parents('.ladb-cutlist-group');
+                                            const groupId = $group.data('sheet-index');
+                                            const $target = $('.ladb-cutlist-cuttingdiagram-group[data-sheet-index=' + (parseInt(groupId) - 1) + ']');
                                             that.scrollSlideToTarget($slide, $target, true, true);
                                             $(this).blur();
                                             return false;
                                         });
                                         $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
-                                            var $group = $(this).parents('.ladb-cutlist-group');
-                                            var groupId = $group.data('sheet-index');
-                                            var $target = $('.ladb-cutlist-cuttingdiagram-group[data-sheet-index=' + (parseInt(groupId) + 1) + ']');
+                                            const $group = $(this).parents('.ladb-cutlist-group');
+                                            const groupId = $group.data('sheet-index');
+                                            const $target = $('.ladb-cutlist-cuttingdiagram-group[data-sheet-index=' + (parseInt(groupId) + 1) + ']');
                                             that.scrollSlideToTarget($slide, $target, true, true);
                                             $(this).blur();
                                             return false;
                                         });
                                         $('a.ladb-btn-highlight-part', $slide).on('click', function () {
                                             $(this).blur();
-                                            var $part = $(this).parents('.ladb-cutlist-row');
-                                            var partId = $part.data('part-id');
+                                            const $part = $(this).parents('.ladb-cutlist-row');
+                                            const partId = $part.data('part-id');
                                             that.highlightPart(partId);
                                             return false;
                                         });
                                         $('a.ladb-btn-scrollto', $slide).on('click', function () {
-                                            var $target = $($(this).attr('href'));
+                                            const $target = $($(this).attr('href'));
                                             if ($target.data('group-id')) {
                                                 that.showGroup($target, false);
                                             }
@@ -4883,7 +4882,7 @@
                                             ]);
                                         });
                                         $('#ladb_btn_copy_leftovers_to_clipboard', $slide).on('click', function () {
-                                            var items = [];
+                                            const items = [];
                                             $.each(response.to_keep_leftovers, function (index, leftover) {
                                                 items.push(leftover.length + 'x' + leftover.width + 'x' + leftover.count);
                                             });
@@ -4892,7 +4891,7 @@
 
                                         // SVG
                                         $('SVG .part', $slide).on('click', function () {
-                                            var partId = $(this).data('part-id');
+                                            const partId = $(this).data('part-id');
                                             that.highlightPart(partId);
                                             $(this).blur();
                                             return false;
@@ -4947,19 +4946,19 @@
     };
 
     LadbTabCutlist.prototype.packingGroup = function (groupId, forceDefaultTab) {
-        var that = this;
+        const that = this;
 
-        var group = this.findGroupById(groupId);
-        var isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
+        const group = this.findGroupById(groupId);
+        const isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
         // Retrieve cutting diagram options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_packing_options', section: groupId }, function (response) {
 
-            var packingOptions = response.preset;
+            const packingOptions = response.preset;
 
             rubyCallCommand('materials_get_attributes_command', {name: group.material_name}, function (response) {
 
-                var $modal = that.appendModalInside('ladb_cutlist_modal_packing', 'tabs/cutlist/_modal-packing.twig', {
+                const $modal = that.appendModalInside('ladb_cutlist_modal_packing', 'tabs/cutlist/_modal-packing.twig', {
                     material_attributes: response,
                     group: group,
                     isPartSelection: isPartSelection,
@@ -4967,37 +4966,37 @@
                 });
 
                 // Fetch UI elements
-                var $tabs = $('a[data-toggle="tab"]', $modal);
-                var $widgetPreset = $('.ladb-widget-preset', $modal);
-                var $inputStdBinSizes = $('#ladb_select_std_bin_sizes', $modal);
-                var $inputScrapBinSizes = $('#ladb_input_scrap_bin_sizes', $modal);
-                var $btnsProblemType = $('label.btn-radio', $modal);
-                var $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
-                var $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
-                var $selectObjective = $('#ladb_select_objective', $modal);
-                var $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
-                var $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
-                var $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
-                var $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
-                var $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
-                var $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
-                var $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
-                var $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
-                var $inputSpacing = $('#ladb_input_spacing', $modal);
-                var $inputTrimming = $('#ladb_input_trimming', $modal);
-                var $textareaItemsFormula = $('#ladb_textarea_items_formula', $modal);
-                var $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
-                var $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
-                var $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
-                var $selectColoredPart = $('#ladb_select_colored_part', $modal);
-                var $inputTimeLimit = $('#ladb_input_time_limit', $modal);
-                var $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
-                var $selectVerbisotyLevel = $('#ladb_select_verbosity_level', $modal);
-                var $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
-                var $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
-                var $btnGenerate = $('#ladb_btn_generate', $modal);
+                const $tabs = $('a[data-toggle="tab"]', $modal);
+                const $widgetPreset = $('.ladb-widget-preset', $modal);
+                const $inputStdBinSizes = $('#ladb_select_std_bin_sizes', $modal);
+                const $inputScrapBinSizes = $('#ladb_input_scrap_bin_sizes', $modal);
+                const $btnsProblemType = $('label.btn-radio', $modal);
+                const $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
+                const $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
+                const $selectObjective = $('#ladb_select_objective', $modal);
+                const $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
+                const $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
+                const $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
+                const $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
+                const $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
+                const $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
+                const $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
+                const $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
+                const $inputSpacing = $('#ladb_input_spacing', $modal);
+                const $inputTrimming = $('#ladb_input_trimming', $modal);
+                const $textareaItemsFormula = $('#ladb_textarea_items_formula', $modal);
+                const $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
+                const $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
+                const $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
+                const $selectColoredPart = $('#ladb_select_colored_part', $modal);
+                const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
+                const $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
+                const $selectVerbisotyLevel = $('#ladb_select_verbosity_level', $modal);
+                const $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
+                const $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
+                const $btnGenerate = $('#ladb_btn_generate', $modal);
 
-                var fnFetchOptions = function (options) {
+                const fnFetchOptions = function (options) {
                     options.std_bin_sizes = $inputStdBinSizes.val();
                     if (group.material_is_1d) {
                         options.scrap_bin_1d_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
@@ -5026,7 +5025,7 @@
                     options.not_anytime_tree_search_queue_size = parseInt($inputNotAnytimeTreeSearchQueueSize.val());
                     options.verbosity_level = parseInt($selectVerbisotyLevel.val());
                 }
-                var fnFillInputs = function (options) {
+                const fnFillInputs = function (options) {
                     $radiosProblemType.filter('[value=' + fnValidProblemType(options.problem_type) + ']').click();
                     $selectOptimizationMode.selectpicker('val', options.optimization_mode);
                     $selectObjective.selectpicker('val', options.objective);
@@ -5047,11 +5046,11 @@
                     $selectVerbisotyLevel.selectpicker('val', options.verbosity_level);
                     fnUpdateFieldsVisibility();
                 }
-                var fnConvertToVariableDefs = function (vars) {
+                const fnConvertToVariableDefs = function (vars) {
 
                     // Generate variableDefs for formula editor
-                    var variableDefs = [];
-                    for (var i = 0; i < vars.length; i++) {
+                    const variableDefs = [];
+                    for (let i = 0; i < vars.length; i++) {
                         variableDefs.push({
                             text: vars[i].name,
                             displayText: i18next.t('tab.cutlist.export.' + vars[i].name),
@@ -5061,9 +5060,9 @@
 
                     return variableDefs;
                 }
-                var fnUpdateFieldsVisibility = function () {
-                    var isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
-                    var isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
+                const fnUpdateFieldsVisibility = function () {
+                    const isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
+                    const isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
                     if (isIrregular) $formGroupNotIrregular.hide(); else $formGroupNotIrregular.show();
                     if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
                     if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
@@ -5071,21 +5070,21 @@
                     if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);
                     $selectPartDrawingType.selectpicker('refresh');
                 };
-                var fnValidProblemType = function (problemType) {
+                const fnValidProblemType = function (problemType) {
                     if (group.material_is_1d
                         && (problemType === 'rectangleguillotine' || problemType === 'rectangle')) {
                         return 'onedimensional';
                     }
                     return problemType;
                 }
-                var fnValidIrregularAllowedRotations = function (irregularAllowedRotations) {
+                const fnValidIrregularAllowedRotations = function (irregularAllowedRotations) {
                     if ((group.material_grained || group.material_is_1d)
                         && (irregularAllowedRotations === '90' || irregularAllowedRotations === '45')) {
                         return '180';
                     }
                     return irregularAllowedRotations;
                 }
-                var fnEditMaterial = function (callback) {
+                const fnEditMaterial = function (callback) {
 
                     // Hide modal
                     $modal.modal('hide');
@@ -5106,7 +5105,7 @@
                     fnFillInputs: fnFillInputs
                 });
                 if (packingOptions.std_bin_sizes) {
-                    var defaultValue = $inputStdBinSizes.val();
+                    const defaultValue = $inputStdBinSizes.val();
                     $inputStdBinSizes.val(packingOptions.std_bin_sizes.split(';'));
                     if ($inputStdBinSizes.val() == null) {
                         if (response.std_lengths.length > 0 || response.std_sizes.length > 0) {
@@ -5198,7 +5197,7 @@
 
                 // Bind select
                 $inputStdBinSizes.on('changed.bs.select', function (event, clickedIndex, isSelected, previousValue) {
-                    var value = $inputStdBinSizes.val();
+                    const value = $inputStdBinSizes.val();
                     if (value === 'add') {
                         fnEditMaterial(function ($editMaterialModal) {
                             $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
@@ -5226,15 +5225,11 @@
                     fnFetchOptions(packingOptions);
 
                     // Store options
-                    rubyCallCommand('core_set_model_preset', {
-                        dictionary: 'cutlist_packing_options',
-                        values: packingOptions,
-                        section: groupId
-                    });
+                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_packing_options', values: packingOptions, section: groupId });
 
-                    var fnCreateSlide = function (response) {
+                    let fnCreateSlide = function (response) {
 
-                        var $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
+                        let $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
                             capabilities: that.dialog.capabilities,
                             generateOptions: that.generateOptions,
                             dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
@@ -5253,10 +5248,10 @@
                         });
 
                         // Fetch UI elements
-                        var $btnPacking = $('#ladb_btn_packing', $slide);
-                        var $btnPrint = $('#ladb_btn_print', $slide);
-                        var $btnLabels = $('#ladb_btn_labels', $slide);
-                        var $btnClose = $('#ladb_btn_close', $slide);
+                        let $btnPacking = $('#ladb_btn_packing', $slide);
+                        let $btnPrint = $('#ladb_btn_print', $slide);
+                        let $btnLabels = $('#ladb_btn_labels', $slide);
+                        let $btnClose = $('#ladb_btn_close', $slide);
 
                         // Bind buttons
                         $btnPacking.on('click', function () {
@@ -5272,10 +5267,10 @@
                             let binDefs = {};
                             let binIndex = 0;
                             $.each(response.solution.bins, function () {
-                                for (var i = 0 ; i < this.count; i++) {
+                                for (let i = 0 ; i < this.count; i++) {
                                     binIndex++;
                                     $.each(this.parts, function (v) {
-                                        for (var j = 0 ; j < this.count; j++) {
+                                        for (let j = 0 ; j < this.count; j++) {
                                             if (!binDefs[this.part.id]) {
                                                 binDefs[this.part.id] = [];
                                             }
@@ -5295,7 +5290,7 @@
                             that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
                         });
                         $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                            var $group = $(this).parents('.ladb-cutlist-group');
+                            const $group = $(this).parents('.ladb-cutlist-group');
                             if ($group.hasClass('no-print')) {
                                 that.showGroup($group, true);
                             } else {
@@ -5304,30 +5299,30 @@
                             $(this).blur();
                         });
                         $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
-                            var $group = $(this).parents('.ladb-cutlist-group');
-                            var groupId = $group.data('bin-index');
-                            var $target = $('.ladb-cutlist-packing-group[data-bin-index=' + (parseInt(groupId) - 1) + ']');
+                            const $group = $(this).parents('.ladb-cutlist-group');
+                            const groupId = $group.data('bin-index');
+                            const $target = $('.ladb-cutlist-packing-group[data-bin-index=' + (parseInt(groupId) - 1) + ']');
                             that.scrollSlideToTarget($slide, $target, true, true);
                             $(this).blur();
                             return false;
                         });
                         $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
-                            var $group = $(this).parents('.ladb-cutlist-group');
-                            var groupId = $group.data('bin-index');
-                            var $target = $('.ladb-cutlist-packing-group[data-bin-index=' + (parseInt(groupId) + 1) + ']');
+                            const $group = $(this).parents('.ladb-cutlist-group');
+                            const groupId = $group.data('bin-index');
+                            const $target = $('.ladb-cutlist-packing-group[data-bin-index=' + (parseInt(groupId) + 1) + ']');
                             that.scrollSlideToTarget($slide, $target, true, true);
                             $(this).blur();
                             return false;
                         });
                         $('a.ladb-btn-highlight-part', $slide).on('click', function () {
                             $(this).blur();
-                            var $part = $(this).parents('.ladb-cutlist-row');
-                            var partId = $part.data('part-id');
+                            const $part = $(this).parents('.ladb-cutlist-row');
+                            const partId = $part.data('part-id');
                             that.highlightPart(partId);
                             return false;
                         });
                         $('a.ladb-btn-scrollto', $slide).on('click', function () {
-                            var $target = $($(this).attr('href'));
+                            const $target = $($(this).attr('href'));
                             if ($target.data('group-id')) {
                                 that.showGroup($target, false);
                             }
@@ -5343,7 +5338,7 @@
 
                         // SVG
                         $('SVG .item', $slide).on('click', function () {
-                            var partId = $(this).data('part-id');
+                            const partId = $(this).data('part-id');
                             that.highlightPart(partId);
                             $(this).blur();
                             return false;
@@ -5364,7 +5359,7 @@
                         }, packingOptions), function (response) {
 
                             if (response.running || response.cancelled) {
-                                var interval = setInterval(function () {
+                                const interval = setInterval(function () {
 
                                     rubyCallCommand('cutlist_group_packing_advance', null, function (response) {
 
@@ -5435,18 +5430,18 @@
     };
 
     LadbTabCutlist.prototype.dimensionsHelpGroup = function (groupId) {
-        var that = this;
+        const that = this;
 
-        var group = this.findGroupById(groupId);
+        const group = this.findGroupById(groupId);
 
         rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
-            var $modal = that.appendModalInside('ladb_cutlist_modal_help', 'tabs/cutlist/_modal-dimensions-help.twig', { material_attributes: response, group: group, generateOptions: that.generateOptions });
+            const $modal = that.appendModalInside('ladb_cutlist_modal_help', 'tabs/cutlist/_modal-dimensions-help.twig', { material_attributes: response, group: group, generateOptions: that.generateOptions });
 
             // Fetch UI elements
-            var $btnCuttingToggle = $('#ladb_btn_cutting_toggle', $modal);
-            var $btnBboxToggle = $('#ladb_btn_bbox_toggle', $modal);
-            var $btnFinalToggle = $('#ladb_btn_final_toggle', $modal);
+            const $btnCuttingToggle = $('#ladb_btn_cutting_toggle', $modal);
+            const $btnBboxToggle = $('#ladb_btn_bbox_toggle', $modal);
+            const $btnFinalToggle = $('#ladb_btn_final_toggle', $modal);
 
             // Bind buttons
             $btnCuttingToggle.on('click', function () {
@@ -5478,7 +5473,7 @@
     // Numbers /////
 
     LadbTabCutlist.prototype.numbersSave = function (params, callback) {
-        var that = this;
+        const that = this;
 
         rubyCallCommand('cutlist_numbers_save', params ? params : {}, function (response) {
 
@@ -5493,7 +5488,7 @@
     };
 
     LadbTabCutlist.prototype.numbersReset = function (params, callback) {
-        var that = this;
+        const that = this;
 
         rubyCallCommand('cutlist_numbers_reset', params ? params : {}, function (response) {
 
@@ -5510,7 +5505,7 @@
     // Options /////
 
     LadbTabCutlist.prototype.loadOptions = function (callback) {
-        var that = this;
+        const that = this;
 
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_options' }, function (response) {
 
@@ -5526,7 +5521,7 @@
     };
 
     LadbTabCutlist.prototype.editOptions = function (tab) {
-        var that = this;
+        const that = this;
 
         if (tab === undefined) {
             tab = this.lastOptionsTab;
@@ -5536,38 +5531,38 @@
         }
         this.lastOptionsTab = tab;
 
-        var $modal = that.appendModalInside('ladb_cutlist_modal_options', 'tabs/cutlist/_modal-options.twig', {
+        const $modal = that.appendModalInside('ladb_cutlist_modal_options', 'tabs/cutlist/_modal-options.twig', {
             tab: tab
         });
 
         // Fetch UI elements
-        var $tabs = $('a[data-toggle="tab"]', $modal);
-        var $widgetPreset = $('.ladb-widget-preset', $modal);
-        var $inputAutoOrient = $('#ladb_input_auto_orient', $modal);
-        var $inputFlippedDetection = $('#ladb_input_flipped_detection', $modal);
-        var $inputSmartMaterial = $('#ladb_input_smart_material', $modal);
-        var $inputDynamicAttributesName = $('#ladb_input_dynamic_attributes_name', $modal);
-        var $inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', $modal);
-        var $inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', $modal);
-        var $inputPartFolding = $('#ladb_input_part_folding', $modal);
-        var $inputHideInstanceNames = $('#ladb_input_hide_entity_names', $modal);
-        var $inputHideDescriptions = $('#ladb_input_hide_descriptions', $modal);
-        var $inputHideTags = $('#ladb_input_hide_tags', $modal);
-        var $inputHideCuttingDimensions = $('#ladb_input_hide_cutting_dimensions', $modal);
-        var $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
-        var $inputHideFinalAreas = $('#ladb_input_hide_final_areas', $modal);
-        var $inputHideEdges = $('#ladb_input_hide_edges', $modal);
-        var $inputHideFaces = $('#ladb_input_hide_faces', $modal);
-        var $inputHideMaterialColors = $('#ladb_input_hide_material_colors', $modal);
-        var $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
-        var $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
-        var $inputTags = $('#ladb_input_tags', $modal);
-        var $sortableDimensionColumnOrderStrategy = $('#ladb_sortable_dimension_column_order_strategy', $modal);
-        var $btnSetupModelUnits = $('#ladb_cutlist_options_setup_model_units', $modal);
-        var $btnUpdate = $('#ladb_cutlist_options_update', $modal);
+        const $tabs = $('a[data-toggle="tab"]', $modal);
+        const $widgetPreset = $('.ladb-widget-preset', $modal);
+        const $inputAutoOrient = $('#ladb_input_auto_orient', $modal);
+        const $inputFlippedDetection = $('#ladb_input_flipped_detection', $modal);
+        const $inputSmartMaterial = $('#ladb_input_smart_material', $modal);
+        const $inputDynamicAttributesName = $('#ladb_input_dynamic_attributes_name', $modal);
+        const $inputPartNumberWithLetters = $('#ladb_input_part_number_with_letters', $modal);
+        const $inputPartNumberSequenceByGroup = $('#ladb_input_part_number_sequence_by_group', $modal);
+        const $inputPartFolding = $('#ladb_input_part_folding', $modal);
+        const $inputHideInstanceNames = $('#ladb_input_hide_entity_names', $modal);
+        const $inputHideDescriptions = $('#ladb_input_hide_descriptions', $modal);
+        const $inputHideTags = $('#ladb_input_hide_tags', $modal);
+        const $inputHideCuttingDimensions = $('#ladb_input_hide_cutting_dimensions', $modal);
+        const $inputHideBBoxDimensions = $('#ladb_input_hide_bbox_dimensions', $modal);
+        const $inputHideFinalAreas = $('#ladb_input_hide_final_areas', $modal);
+        const $inputHideEdges = $('#ladb_input_hide_edges', $modal);
+        const $inputHideFaces = $('#ladb_input_hide_faces', $modal);
+        const $inputHideMaterialColors = $('#ladb_input_hide_material_colors', $modal);
+        const $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
+        const $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
+        const $inputTags = $('#ladb_input_tags', $modal);
+        const $sortableDimensionColumnOrderStrategy = $('#ladb_sortable_dimension_column_order_strategy', $modal);
+        const $btnSetupModelUnits = $('#ladb_cutlist_options_setup_model_units', $modal);
+        const $btnUpdate = $('#ladb_cutlist_options_update', $modal);
 
         // Define useful functions
-        var fnFetchOptions = function (options) {
+        const fnFetchOptions = function (options) {
             options.auto_orient = $inputAutoOrient.is(':checked');
             options.flipped_detection = $inputFlippedDetection.is(':checked');
             options.smart_material = $inputSmartMaterial.is(':checked');
@@ -5587,7 +5582,7 @@
             options.minimize_on_highlight = $inputMinimizeOnHighlight.is(':checked');
             options.tags = $inputTags.tokenfield('getTokensList').split(';');
 
-            var properties = [];
+            let properties = [];
             $sortablePartOrderStrategy.children('li').each(function () {
                 properties.push($(this).data('property'));
             });
@@ -5600,7 +5595,7 @@
             options.dimension_column_order_strategy = properties.join('>');
 
         };
-        var fnFillInputs = function (options) {
+        const fnFillInputs = function (options) {
 
             // Checkboxes
 
@@ -5625,7 +5620,7 @@
 
             // Sortables
 
-            var properties, property, i;
+            let properties, property, i;
 
             // Part order sortables
 
@@ -5639,9 +5634,9 @@
                 }));
             }
             $sortablePartOrderStrategy.find('a').on('click', function () {
-                var $item = $(this).parent().parent();
-                var $icon = $('i', $(this));
-                var property = $item.data('property');
+                const $item = $(this).parent().parent();
+                const $icon = $('i', $(this));
+                let property = $item.data('property');
                 if (property.startsWith('-')) {
                     property = property.substring(1);
                     $icon.addClass('ladb-opencutlist-icon-sort-asc');
@@ -5734,17 +5729,17 @@
     LadbTabCutlist.prototype.showObsolete = function (messageI18nKey, forced) {
         if (!this.isObsolete() || forced) {
 
-            var that = this;
+            const that = this;
 
             // Set tab as obsolete
             this.setObsolete(true);
 
-            var $modal = this.appendModalInside('ladb_cutlist_modal_obsolete', 'tabs/cutlist/_modal-obsolete.twig', {
+            const $modal = this.appendModalInside('ladb_cutlist_modal_obsolete', 'tabs/cutlist/_modal-obsolete.twig', {
                 messageI18nKey: messageI18nKey
             });
 
             // Fetch UI elements
-            var $btnGenerate = $('#ladb_cutlist_obsolete_generate', $modal);
+            const $btnGenerate = $('#ladb_cutlist_obsolete_generate', $modal);
 
             // Bind buttons
             $btnGenerate.on('click', function () {
@@ -5763,19 +5758,19 @@
     LadbTabCutlist.prototype.registerCommands = function () {
         LadbAbstractTab.prototype.registerCommands.call(this);
 
-        var that = this;
+        const that = this;
 
         this.registerCommand('generate_cutlist', function (parameters) {
-            var callback = parameters ? parameters.callback : null;
+            const callback = parameters ? parameters.callback : null;
             setTimeout(function () {     // Use setTimeout to give time to UI to refresh
                 that.generateCutlist(callback);
             }, 1);
         });
         this.registerCommand('edit_part', function (parameters) {
-            var partId = parameters.part_id;
-            var partSerializedPath = parameters.part_serialized_path;
-            var tab = parameters.tab;
-            var dontGenerate = parameters.dontGenerate;
+            const partId = parameters.part_id;
+            const partSerializedPath = parameters.part_serialized_path;
+            const tab = parameters.tab;
+            const dontGenerate = parameters.dontGenerate;
             window.requestAnimationFrame(function () {
                 if (dontGenerate) {
                     that.editPart(partId, partSerializedPath, tab);
@@ -5792,7 +5787,7 @@
     LadbTabCutlist.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
-        var that = this;
+        const that = this;
 
         // Bind buttons
         this.$btnGenerate.on('click', function () {
@@ -5936,7 +5931,7 @@
     };
 
     LadbTabCutlist.prototype.processInitializedCallback = function (initializedCallback) {
-        var that = this;
+        const that = this;
 
         // Load Options
         this.loadOptions(function () {
@@ -5951,9 +5946,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbTabCutlist.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -5969,7 +5964,7 @@
         })
     }
 
-    var old = $.fn.ladbTabCutlist;
+    const old = $.fn.ladbTabCutlist;
 
     $.fn.ladbTabCutlist = Plugin;
     $.fn.ladbTabCutlist.Constructor = LadbTabCutlist;

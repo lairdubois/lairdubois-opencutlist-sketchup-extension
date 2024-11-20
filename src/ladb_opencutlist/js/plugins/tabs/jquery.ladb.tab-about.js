@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabAbout = function (element, options, dialog) {
+    const LadbTabAbout = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.$linkChangelog = $('#ladb_link_changelog', this.$element);
@@ -19,7 +19,7 @@
     LadbTabAbout.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
-        var that = this;
+        const that = this;
 
         // Bind buttons
         this.$linkChangelog.on('click', function () {
@@ -33,9 +33,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabAbout.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbTabAbout.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -51,7 +51,7 @@
         })
     }
 
-    var old = $.fn.ladbTabAbout;
+    const old = $.fn.ladbTabAbout;
 
     $.fn.ladbTabAbout = Plugin;
     $.fn.ladbTabAbout.Constructor = LadbTabAbout;

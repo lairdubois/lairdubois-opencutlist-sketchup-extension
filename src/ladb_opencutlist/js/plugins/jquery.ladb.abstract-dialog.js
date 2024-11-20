@@ -3,11 +3,11 @@
 // CONSTANTS
 // ======================
 
-var DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs';
-var DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev';
+const DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs';
+const DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev';
 
-var CHANGELOG_URL = 'https://www.lairdubois.fr/opencutlist/changelog';
-var CHANGELOG_DEV_URL = 'https://www.lairdubois.fr/opencutlist/changelog-dev';
+const CHANGELOG_URL = 'https://www.lairdubois.fr/opencutlist/changelog';
+const CHANGELOG_DEV_URL = 'https://www.lairdubois.fr/opencutlist/changelog-dev';
 
 function LadbAbstractDialog(element, options) {
     this.options = options;
@@ -48,13 +48,13 @@ function LadbAbstractDialog(element, options) {
 // Settings /////
 
 LadbAbstractDialog.prototype.pullSettings = function (keys, callback) {
-    var that = this;
+    const that = this;
 
     // Read settings values from SU default or Model attributes according to the strategy
     rubyCallCommand('core_read_settings', { keys: keys }, function (data) {
-        var values = data.values;
-        for (var i = 0; i < values.length; i++) {
-            var value = values[i];
+        const values = data.values;
+        for (let i = 0; i < values.length; i++) {
+            const value = values[i];
             that.settings[value.key] = value.value;
         }
         if (typeof callback === 'function') {
@@ -64,8 +64,8 @@ LadbAbstractDialog.prototype.pullSettings = function (keys, callback) {
 };
 
 LadbAbstractDialog.prototype.setSettings = function (settings) {
-    for (var i = 0; i < settings.length; i++) {
-        var setting = settings[i];
+    for (let i = 0; i < settings.length; i++) {
+        const setting = settings[i];
         this.settings[setting.key] = setting.value;
     }
     // Write settings values to SU default or Model attributes according to the strategy
@@ -77,7 +77,7 @@ LadbAbstractDialog.prototype.setSetting = function (key, value) {
 };
 
 LadbAbstractDialog.prototype.getSetting = function (key, defaultValue) {
-    var value = this.settings[key];
+    const value = this.settings[key];
     if (value != null) {
         if (defaultValue !== undefined) {
             if (typeof defaultValue === 'number' && isNaN(value)) {
@@ -142,7 +142,7 @@ LadbAbstractDialog.prototype.changeCancelBtnLabelProgress = function (html) {
 // Modal /////
 
 LadbAbstractDialog.prototype.appendModal = function (id, twigFile, renderParams) {
-    var that = this;
+    const that = this;
 
     // Hide previously opened modal
     if (this._$modal) {
@@ -173,14 +173,14 @@ LadbAbstractDialog.prototype.appendModal = function (id, twigFile, renderParams)
 LadbAbstractDialog.prototype.alert = function (title, text, callback, options) {
 
     // Append modal
-    var $modal = this.appendModal('ladb_core_modal_alert', 'core/_modal-alert.twig', {
+    const $modal = this.appendModal('ladb_core_modal_alert', 'core/_modal-alert.twig', {
         title: title,
         text: text,
         options: options
     });
 
     // Fetch UI elements
-    var $btnOk = $('#ladb_confirm_btn_ok', $modal);
+    const $btnOk = $('#ladb_confirm_btn_ok', $modal);
 
     // Bind buttons
     $btnOk.on('click', function() {
@@ -202,14 +202,14 @@ LadbAbstractDialog.prototype.alert = function (title, text, callback, options) {
 LadbAbstractDialog.prototype.confirm = function (title, text, callback, options) {
 
     // Append modal
-    var $modal = this.appendModal('ladb_core_modal_confirm', 'core/_modal-confirm.twig', {
+    const $modal = this.appendModal('ladb_core_modal_confirm', 'core/_modal-confirm.twig', {
         title: title,
         text: text,
         options: options
     });
 
     // Fetch UI elements
-    var $btnConfirm = $('#ladb_confirm_btn_confirm', $modal);
+    const $btnConfirm = $('#ladb_confirm_btn_confirm', $modal);
 
     // Bind buttons
     $btnConfirm.on('click', function() {
@@ -231,7 +231,7 @@ LadbAbstractDialog.prototype.confirm = function (title, text, callback, options)
 LadbAbstractDialog.prototype.prompt = function (title, text, value, callback, options) {
 
     // Append modal
-    var $modal = this.appendModal('ladb_core_modal_prompt', 'core/_modal-prompt.twig', {
+    const $modal = this.appendModal('ladb_core_modal_prompt', 'core/_modal-prompt.twig', {
         title: title,
         text: text,
         value: value,
@@ -239,8 +239,8 @@ LadbAbstractDialog.prototype.prompt = function (title, text, value, callback, op
     });
 
     // Fetch UI elements
-    var $input = $('#ladb_prompt_input', $modal);
-    var $btnValidate = $('#ladb_prompt_btn_validate', $modal);
+    const $input = $('#ladb_prompt_input', $modal);
+    const $btnValidate = $('#ladb_prompt_btn_validate', $modal);
 
     // Bind input
     $input.on('keyup change', function () {
@@ -283,7 +283,7 @@ LadbAbstractDialog.prototype.notify = function (text, type, buttons, timeout) {
     if (undefined === timeout) {
         timeout = 5000;
     }
-    var n = new Noty({
+    const n = new Noty({
         type: type,
         layout: this.options.noty_layout,
         theme: 'bootstrap-v3',
@@ -297,10 +297,10 @@ LadbAbstractDialog.prototype.notify = function (text, type, buttons, timeout) {
 
 LadbAbstractDialog.prototype.notifyErrors = function (errors) {
     if (Array.isArray(errors)) {
-        for (var i = 0; i < errors.length; i++) {
-            var error = errors[i];
-            var key = error;
-            var options = {};
+        for (let i = 0; i < errors.length; i++) {
+            const error = errors[i];
+            let key = error;
+            let options = {};
             if (Array.isArray(error) && error.length > 0) {
                 key = error[0];
                 if (error.length > 1) {
@@ -367,7 +367,7 @@ LadbAbstractDialog.prototype.getChangelogUrl = function () {
 }
 
 LadbAbstractDialog.prototype.bindHelpButtonsInParent = function ($parent) {
-    var that = this;
+    const that = this;
     let $btns = $('[data-help-page]', $parent);
     $btns.on('click', function () {
         let page = $(this).data('help-page');
@@ -386,7 +386,7 @@ LadbAbstractDialog.prototype.bindHelpButtonsInParent = function ($parent) {
 
 LadbAbstractDialog.prototype.copyToClipboard = function (text, notifySuccess) {
     // Create new element
-    var el = document.createElement('textarea');
+    const el = document.createElement('textarea');
     // Set value (string to be copied)
     el.value = text;
     // Set non-editable to avoid focus and move outside of view
@@ -419,7 +419,7 @@ LadbAbstractDialog.prototype.measureText = function (text, fontSize /* default =
 
 LadbAbstractDialog.prototype.init = function () {
 
-    var that = this;
+    const that = this;
 
     // Add twig functions
     Twig.extendFunction('compatible_with', function(value) {
@@ -440,8 +440,8 @@ LadbAbstractDialog.prototype.init = function () {
             @param: num         => the number to conver to hex
             @returns: string    => the hex representation of the provided number
         */
-        var fnIntToHex = function (num) {
-            var hex = Math.round(num).toString(16);
+        const fnIntToHex = function (num) {
+            let hex = Math.round(num).toString(16);
             if (hex.length === 1)
                 hex = '0' + hex;
             return hex;
@@ -479,7 +479,7 @@ LadbAbstractDialog.prototype.init = function () {
         color2 = [parseInt(color2[0] + color2[1], 16), parseInt(color2[2] + color2[3], 16), parseInt(color2[4] + color2[5], 16)];
 
         // 4: blend
-        var color3 = [
+        let color3 = [
             (1 - percentage) * color1[0] + percentage * color2[0],
             (1 - percentage) * color1[1] + percentage * color2[1],
             (1 - percentage) * color1[2] + percentage * color2[2]
@@ -501,9 +501,9 @@ LadbAbstractDialog.prototype.init = function () {
     });
     // Add ... filter
     Twig.extendFilter('url_beautify', function (value) {
-        var parser = document.createElement('a');
+        const parser = document.createElement('a');
         parser.href = value;
-        var str = '<span class="ladb-url-host">' + parser.host + '</span>';
+        let str = '<span class="ladb-url-host">' + parser.host + '</span>';
         if (parser.pathname && parser.pathname !== '/') {
             str += '<span class="ladb-url-path">' + parser.pathname + '</span>';
         }

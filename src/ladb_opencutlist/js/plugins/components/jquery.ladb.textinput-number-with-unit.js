@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTextinputNumberWithUnit = function (element, options) {
+    const LadbTextinputNumberWithUnit = function (element, options) {
         LadbTextinputAbstract.call(this, element, options, /^\d*[.,]?\d*$/);
 
         this.$spanUnit = null;
@@ -34,15 +34,15 @@
 
     LadbTextinputNumberWithUnit.prototype.val = function (value) {
         if (value === undefined) {
-            var val = this.$element.val();
+            let val = this.$element.val();
             if (val !== undefined) {
                 val = val.trim();
             }
             return val ? val + ' ' + this.unit : '';
         }
 
-        var unit = this.options.defaultUnit;
-        var valueAndUnit = value.split(' ');
+        let unit = this.options.defaultUnit;
+        const valueAndUnit = value.split(' ');
         if (valueAndUnit.length > 1) {
             unit = valueAndUnit[valueAndUnit.length - 1];
             if (unit === undefined || this.getUnitLabel(unit) === '') {
@@ -67,7 +67,7 @@
     };
 
     LadbTextinputNumberWithUnit.prototype.getUnitLabel = function (unit) {
-        var label = '';
+        let label = '';
         if (this.hasUnit()) {
             $.each(this.options.units, function (index, unitGroup) {
                 if (unitGroup[unit]) {
@@ -86,10 +86,10 @@
     };
 
     LadbTextinputNumberWithUnit.prototype.appendLeftTools = function ($toolsContainer) {
-        var that = this;
+        const that = this;
 
-        var $span = $('<span />')
-        var $dropdown = $('<ul class="dropdown-menu" />');
+        const $span = $('<span />')
+        const $dropdown = $('<ul class="dropdown-menu" />');
         $.each(this.options.units, function (index, unitGroup) {
             if (index > 0) {
                 $dropdown.append('<li class="divider" />');
@@ -122,7 +122,7 @@
     LadbTextinputNumberWithUnit.prototype.init = function () {
         LadbTextinputAbstract.prototype.init.call(this);
 
-        var value = this.$element.val();
+        const value = this.$element.val();
         if (!value) {
             this.resetUnit();
         }
@@ -134,11 +134,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.textinputNumberWithUnit');
-            var options = $.extend({}, LadbTextinputNumberWithUnit.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.textinputNumberWithUnit');
+            const options = $.extend({}, LadbTextinputNumberWithUnit.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.textinputNumberWithUnit', (data = new LadbTextinputNumberWithUnit(this, options)));
@@ -152,7 +152,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbTextinputNumberWithUnit;
+    const old = $.fn.ladbTextinputNumberWithUnit;
 
     $.fn.ladbTextinputNumberWithUnit = Plugin;
     $.fn.ladbTextinputNumberWithUnit.Constructor = LadbTextinputNumberWithUnit;

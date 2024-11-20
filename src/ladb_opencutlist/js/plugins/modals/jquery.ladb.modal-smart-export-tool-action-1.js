@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbModalSmartExportToolAction1 = function (element, options, dialog) {
+    const LadbModalSmartExportToolAction1 = function (element, options, dialog) {
         LadbAbstractModal.call(this, element, options, dialog);
 
     };
@@ -17,36 +17,36 @@
     LadbModalSmartExportToolAction1.prototype.init = function () {
         LadbAbstractModal.prototype.init.call(this);
 
-        var that = this;
+        const that = this;
 
-        var dictonary = 'tool_smart_export_options';
-        var section = 'action_1';
+        const dictonary = 'tool_smart_export_options';
+        const section = 'action_1';
 
         // Retrieve options
         rubyCallCommand('core_get_global_preset', { dictionary: dictonary, section: section }, function (response) {
 
-            var options = response.preset;
+            const options = response.preset;
 
             // Fetch UI elements
-            var $widgetPreset = $('.ladb-widget-preset', that.$element);
-            var $selectFileFormat = $('#ladb_select_file_format', that.$element);
-            var $selectUnit = $('#ladb_select_unit', that.$element);
-            var $selectFaces = $('#ladb_select_faces', that.$element);
-            var $selectAnchor = $('#ladb_select_anchor', that.$element);
-            var $selectSmoothing = $('#ladb_select_smoothing', that.$element);
-            var $selectMergeHoles = $('#ladb_select_merge_holes', that.$element);
-            var $selectIncludePaths = $('#ladb_select_include_paths', that.$element);
-            var $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', that.$element);
-            var $inputPartsFillColor = $('#ladb_input_parts_fill_color', that.$element);
-            var $formGroupPartsHoles = $('#ladb_form_group_parts_holes', that.$element);
-            var $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', that.$element);
-            var $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', that.$element);
-            var $formGroupPartsPaths = $('#ladb_form_group_parts_paths', that.$element);
-            var $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', that.$element);
-            var $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', that.$element);
-            var $btnValidate = $('#ladb_btn_validate', that.$element);
+            const $widgetPreset = $('.ladb-widget-preset', that.$element);
+            const $selectFileFormat = $('#ladb_select_file_format', that.$element);
+            const $selectUnit = $('#ladb_select_unit', that.$element);
+            const $selectFaces = $('#ladb_select_faces', that.$element);
+            const $selectAnchor = $('#ladb_select_anchor', that.$element);
+            const $selectSmoothing = $('#ladb_select_smoothing', that.$element);
+            const $selectMergeHoles = $('#ladb_select_merge_holes', that.$element);
+            const $selectIncludePaths = $('#ladb_select_include_paths', that.$element);
+            const $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', that.$element);
+            const $inputPartsFillColor = $('#ladb_input_parts_fill_color', that.$element);
+            const $formGroupPartsHoles = $('#ladb_form_group_parts_holes', that.$element);
+            const $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', that.$element);
+            const $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', that.$element);
+            const $formGroupPartsPaths = $('#ladb_form_group_parts_paths', that.$element);
+            const $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', that.$element);
+            const $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', that.$element);
+            const $btnValidate = $('#ladb_btn_validate', that.$element);
 
-            var fnFetchOptions = function (options) {
+            const fnFetchOptions = function (options) {
                 options.file_format = $selectFileFormat.val();
                 options.unit = parseInt($selectUnit.val());
                 options.faces = parseInt($selectFaces.val());
@@ -61,7 +61,7 @@
                 options.parts_paths_stroke_color = $inputPartsPathsStrokeColor.ladbTextinputColor('val');
                 options.parts_paths_fill_color = $inputPartsPathsFillColor.ladbTextinputColor('val');
             };
-            var fnFillInputs = function (options) {
+            const fnFillInputs = function (options) {
                 $selectFileFormat.selectpicker('val', options.file_format);
                 $selectUnit.selectpicker('val', options.unit);
                 $selectFaces.selectpicker('val', options.faces);
@@ -77,10 +77,10 @@
                 $inputPartsPathsFillColor.ladbTextinputColor('val', options.parts_paths_fill_color);
                 fnUpdateFieldsVisibility();
             };
-            var fnUpdateFieldsVisibility = function () {
-                var isDxf = $selectFileFormat.val() === 'dxf';
-                var isMergeHoles = $selectMergeHoles.val() === '1';
-                var isIncludePaths = $selectIncludePaths.val() === '1';
+            const fnUpdateFieldsVisibility = function () {
+                const isDxf = $selectFileFormat.val() === 'dxf';
+                const isMergeHoles = $selectMergeHoles.val() === '1';
+                const isIncludePaths = $selectIncludePaths.val() === '1';
                 if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
                 if (!isIncludePaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
                 $inputPartsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
@@ -146,9 +146,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbModalSmartExportToolAction1.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbModalSmartExportToolAction1.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -164,7 +164,7 @@
         })
     }
 
-    var old = $.fn.ladbModalSmartExportToolAction1;
+    const old = $.fn.ladbModalSmartExportToolAction1;
 
     $.fn.ladbModalSmartExportToolAction1 = Plugin;
     $.fn.ladbModalSmartExportToolAction1.Constructor = LadbModalSmartExportToolAction1;

@@ -1,20 +1,20 @@
 +function ($) {
     'use strict';
 
-    var FORMAT_DEFAULT = 'default';
-    var FORMAT_D = 'd';
-    var FORMAT_DXQ = 'dxq';
-    var FORMAT_DXD = 'dxd';
-    var FORMAT_DXDXQ = 'dxdxq';
+    const FORMAT_DEFAULT = 'default';
+    const FORMAT_D = 'd';
+    const FORMAT_DXQ = 'dxq';
+    const FORMAT_DXD = 'dxd';
+    const FORMAT_DXDXQ = 'dxdxq';
 
-    var REGEXP_PATTERN_MULTIPLICATOR = '[×xX*]';
-    var REGEXP_PATTERN_LENGTH = '(\\d*\\s*\'\\s*\\d*\\s*\\d+\/\\d+\\s*"|\\d*\\s*\\d+\/\\d+(?:\\s*(?:\'|"))?|(?:\\d*[\.,]?)?\\d+(?:\\s*(?:mm|cm|m|\'|"))?)';   // Fractional or Decimal
-    var REGEXP_PATTERN_QUANTITY = '(?:\\s*' + REGEXP_PATTERN_MULTIPLICATOR + '\\s*(\\d+))?';
+    const REGEXP_PATTERN_MULTIPLICATOR = '[×xX*]';
+    const REGEXP_PATTERN_LENGTH = '(\\d*\\s*\'\\s*\\d*\\s*\\d+\/\\d+\\s*"|\\d*\\s*\\d+\/\\d+(?:\\s*(?:\'|"))?|(?:\\d*[\.,]?)?\\d+(?:\\s*(?:mm|cm|m|\'|"))?)';   // Fractional or Decimal
+    const REGEXP_PATTERN_QUANTITY = '(?:\\s*' + REGEXP_PATTERN_MULTIPLICATOR + '\\s*(\\d+))?';
 
     // CLASS DEFINITION
     // ======================
 
-    var LadbTextinputTokenfield = function (element, options) {
+    const LadbTextinputTokenfield = function (element, options) {
         this.options = options;
         this.$element = $(element);
     };
@@ -25,7 +25,7 @@
     });
 
     LadbTextinputTokenfield.prototype.getTokenRegExp = function() {
-        var pattern;
+        let pattern;
         switch (this.options.format) {
             case FORMAT_D:
                 pattern = REGEXP_PATTERN_LENGTH;
@@ -46,10 +46,10 @@
     }
 
     LadbTextinputTokenfield.prototype.getValidTokensList = function () {
-        var re = this.getTokenRegExp();
-        var validTokens = [];
-        var tokens = this.$element.tokenfield('getTokens');
-        for (var i = 0; i < tokens.length; i++) {
+        const re = this.getTokenRegExp();
+        const validTokens = [];
+        const tokens = this.$element.tokenfield('getTokens');
+        for (let i = 0; i < tokens.length; i++) {
             if (re.test(tokens[i].value)) {
                 validTokens.push(tokens[i].value);
             }
@@ -62,8 +62,8 @@
     };
 
     LadbTextinputTokenfield.prototype.tokenfieldSanitizer = function (e) {
-        var re = this.getTokenRegExp();
-        var m;
+        const re = this.getTokenRegExp();
+        let m;
         if ((m = re.exec(e.attrs.value)) !== null) {
 
             switch (this.options.format) {
@@ -84,8 +84,8 @@
     };
 
     LadbTextinputTokenfield.prototype.tokenfieldValidator = function (e) {
-        var re = this.getTokenRegExp();
-        var valid = re.test(e.attrs.value);
+        const re = this.getTokenRegExp();
+        const valid = re.test(e.attrs.value);
         if (!valid) {
             $(e.relatedTarget)
                 .addClass('invalid')
@@ -100,13 +100,13 @@
     };
 
     LadbTextinputTokenfield.prototype.init = function () {
-        var that = this;
+        const that = this;
 
         this.$element.tokenfield(this.options)
             .on('tokenfield:createtoken', function (e) {
                 that.tokenfieldSanitizer(e);
                 if (that.options.unique) {
-                    var existingTokens = $(this).tokenfield('getTokens');
+                    const existingTokens = $(this).tokenfield('getTokens');
                     $.each(existingTokens, function (index, token) {
                         if (token.value === e.attrs.value) {
                             e.preventDefault();
@@ -126,11 +126,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.textinputTokenfield');
-            var options = $.extend({}, LadbTextinputTokenfield.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.textinputTokenfield');
+            const options = $.extend({}, LadbTextinputTokenfield.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.textinputTokenfield', (data = new LadbTextinputTokenfield(this, options)));
@@ -144,7 +144,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbTextinputTokenfield;
+    const old = $.fn.ladbTextinputTokenfield;
 
     $.fn.ladbTextinputTokenfield = Plugin;
     $.fn.ladbTextinputTokenfield.Constructor = LadbTextinputTokenfield;

@@ -12,7 +12,7 @@ function LadbAbstractModal(element, options, dialog) {
 // Init /////
 
 LadbAbstractModal.prototype.bind = function () {
-    var that = this;
+    const that = this;
 
     // Bind buttons
     $('[data-dismiss="modal"]', this.$element).on('click', function () {
@@ -31,7 +31,7 @@ LadbAbstractModal.prototype.init = function () {
 // Modal /////
 
 LadbAbstractModal.prototype.appendModalInside = function (id, twigFile, renderParams) {
-    var that = this;
+    const that = this;
 
     // Hide previously opened modal
     if (this._$modal) {

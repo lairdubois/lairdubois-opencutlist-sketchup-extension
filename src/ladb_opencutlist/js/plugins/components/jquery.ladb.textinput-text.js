@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTextinputText = function(element, options) {
+    const LadbTextinputText = function(element, options) {
         LadbTextinputAbstract.call(this, element, options);
     };
     LadbTextinputText.prototype = new LadbTextinputAbstract;
@@ -21,7 +21,7 @@
 
         if (this.options.autocomplete) {
 
-            var autocompleteOptions = this.options.autocomplete;
+            const autocompleteOptions = this.options.autocomplete;
             $.widget("ui.autocomplete", $.ui.autocomplete, {
                 _create: function () {
                     this._super();
@@ -44,13 +44,13 @@
                         }
                         return a > b ? 1 : a === b ? 0 : -1;
                     })
-                    var uiAutocomplete = this;
-                    var currentCategory = "";
+                    const uiAutocomplete = this;
+                    let currentCategory = "";
                     $.each(items, function (index, item) {
-                        var li;
+                        let li;
                         if (item.category) {
                             if (item.category !== currentCategory) {
-                                var categoryIcon = '';
+                                let categoryIcon = '';
                                 if (autocompleteOptions.categoryIcon) {
                                     categoryIcon = '<i class="ladb-opencutlist-icon-' + autocompleteOptions.categoryIcon + '"></i> ';
                                 }
@@ -87,11 +87,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.textinputText');
-            var options = $.extend({}, LadbTextinputText.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.textinputText');
+            const options = $.extend({}, LadbTextinputText.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.textinputText', (data = new LadbTextinputText(this, options)));
@@ -105,7 +105,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbTextinputText;
+    const old = $.fn.ladbTextinputText;
 
     $.fn.ladbTextinputText             = Plugin;
     $.fn.ladbTextinputText.Constructor = LadbTextinputText;

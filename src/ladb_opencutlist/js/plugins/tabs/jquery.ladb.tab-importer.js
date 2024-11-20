@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabImporter = function (element, options, dialog) {
+    const LadbTabImporter = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.loadOptions = null;
@@ -25,11 +25,11 @@
     LadbTabImporter.DEFAULTS = {};
 
     LadbTabImporter.prototype.openCSV = function () {
-        var that = this;
+        const that = this;
 
         rubyCallCommand('importer_open', null, function (response) {
 
-            var i;
+            let i;
 
             if (response.errors.length > 0) {
 
@@ -56,31 +56,31 @@
             }
             if (response.path) {
 
-                var path = response.path;
-                var filename = response.filename;
-                var lengthUnit = response.length_unit;
+                const path = response.path;
+                const filename = response.filename;
+                const lengthUnit = response.length_unit;
 
                 // Retrieve load options
                 rubyCallCommand('core_get_model_preset', { dictionary: 'importer_load_options' }, function (response) {
 
-                    var loadOptions = response.preset;
+                    const loadOptions = response.preset;
                     loadOptions.path = path;
                     loadOptions.filename = filename;
 
-                    var $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', $.extend({ lengthUnit: lengthUnit }, loadOptions));
+                    const $modal = that.appendModalInside('ladb_importer_modal_load', 'tabs/importer/_modal-load.twig', $.extend({ lengthUnit: lengthUnit }, loadOptions));
 
                     // Fetch UI elements
-                    var $widgetPreset = $('.ladb-widget-preset', $modal);
-                    var $selectColSep = $('#ladb_importer_load_select_col_sep', $modal);
-                    var $selectFirstLineHeaders = $('#ladb_importer_load_select_first_line_headers', $modal);
-                    var $btnLoad = $('#ladb_importer_load', $modal);
+                    const $widgetPreset = $('.ladb-widget-preset', $modal);
+                    const $selectColSep = $('#ladb_importer_load_select_col_sep', $modal);
+                    const $selectFirstLineHeaders = $('#ladb_importer_load_select_first_line_headers', $modal);
+                    const $btnLoad = $('#ladb_importer_load', $modal);
 
                     // Define useful functions
-                    var fnFetchOptions = function (options) {
+                    const fnFetchOptions = function (options) {
                         options.col_sep = $selectColSep.val();
                         options.first_line_headers = $selectFirstLineHeaders.val() === '1';
                     };
-                    var fnFillInputs = function (options) {
+                    const fnFillInputs = function (options) {
                         $selectColSep.selectpicker('val', options.col_sep);
                         $selectFirstLineHeaders.selectpicker('val', options.first_line_headers ? '1' : '0');
                         loadOptions.column_mapping = options.column_mapping;
@@ -123,7 +123,7 @@
     };
 
     LadbTabImporter.prototype.loadCSV = function (loadOptions) {
-        var that = this;
+        const that = this;
 
         // Store options
         rubyCallCommand('core_set_model_preset', { dictionary: 'importer_load_options', values: loadOptions });
@@ -132,18 +132,18 @@
 
             that.setObsolete(false);
 
-            var i;
+            let i;
 
             if (response.path) {
 
-                var errors = response.errors;
-                var warnings = response.warnings;
-                var filename = response.filename;
-                var columns = response.columns;
-                var parts = response.parts;
-                var importablePartCount = response.importable_part_count;
-                var model_is_empty = response.model_is_empty;
-                var lengthUnit = response.length_unit;
+                const errors = response.errors;
+                const warnings = response.warnings;
+                const filename = response.filename;
+                const columns = response.columns;
+                const parts = response.parts;
+                const importablePartCount = response.importable_part_count;
+                const model_is_empty = response.model_is_empty;
+                const lengthUnit = response.length_unit;
 
                 // Keep useful data
                 that.loadOptions = loadOptions;
@@ -176,13 +176,13 @@
 
                 // Apply column mapping
                 for (i = 0; i < columns.length; i++) {
-                    var $select = $('#ladb_select_column_' + i, that.$page);
+                    const $select = $('#ladb_select_column_' + i, that.$page);
                     $select
                         .val(columns[i].mapping)
                         .on('changed.bs.select', function(e, clickedIndex, isSelected, previousValue) {
-                            var column = $(e.currentTarget).data('column');
-                            var mapping = $(e.currentTarget).selectpicker('val');
-                            for (var k in loadOptions.column_mapping) {
+                            const column = $(e.currentTarget).data('column');
+                            const mapping = $(e.currentTarget).selectpicker('val');
+                            for (const k in loadOptions.column_mapping) {
                                 if (loadOptions.column_mapping[k] === column) {
                                     delete loadOptions.column_mapping[k];
                                 }
@@ -221,34 +221,34 @@
     };
 
     LadbTabImporter.prototype.importParts = function () {
-        var that = this;
+        const that = this;
 
         // Retrieve load option options
         rubyCallCommand('core_get_model_preset', { dictionary: 'importer_import_options' }, function (response) {
 
-            var importOptions = response.preset;
+            const importOptions = response.preset;
 
             importOptions.remove_all = false;      // This option is not stored to force user to know the option status
 
-            var $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', $.extend({
+            const $modal = that.appendModalInside('ladb_importer_modal_import', 'tabs/importer/_modal-import.twig', $.extend({
                 importablePartCount: that.importablePartCount,
                 model_is_empty: that.model_is_empty
             }, importOptions));
 
             // Fetch UI elements
-            var $widgetPreset = $('.ladb-widget-preset', $modal);
-            var $selectRemoveAll = $('#ladb_importer_import_select_remove_all', $modal);
-            var $inputKeepDefinitionsSettings = $('#ladb_importer_import_input_keep_definitions_settings', $modal);
-            var $inputKeepMaterialsSettings = $('#ladb_importer_import_input_keep_materials_settings', $modal);
-            var $btnImport = $('#ladb_importer_import', $modal);
+            const $widgetPreset = $('.ladb-widget-preset', $modal);
+            const $selectRemoveAll = $('#ladb_importer_import_select_remove_all', $modal);
+            const $inputKeepDefinitionsSettings = $('#ladb_importer_import_input_keep_definitions_settings', $modal);
+            const $inputKeepMaterialsSettings = $('#ladb_importer_import_input_keep_materials_settings', $modal);
+            const $btnImport = $('#ladb_importer_import', $modal);
 
             // Define useful functions
-            var fnFetchOptions = function (options) {
+            const fnFetchOptions = function (options) {
                 options.remove_all = $selectRemoveAll.selectpicker('val') === '1';
                 options.keep_definitions_settings = $inputKeepDefinitionsSettings.prop('checked');
                 options.keep_materials_settings = $inputKeepMaterialsSettings.prop('checked');
             };
-            var fnFillInputs = function (options) {
+            const fnFillInputs = function (options) {
                 $selectRemoveAll.prop('val', options.remove_all ? '1' : '0');
                 $inputKeepDefinitionsSettings.prop('checked', options.keep_definitions_settings);
                 $inputKeepMaterialsSettings.prop('checked', options.keep_materials_settings);
@@ -267,7 +267,7 @@
             // Bind select
             $selectRemoveAll
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-                    var removeAll = $(e.currentTarget).selectpicker('val');
+                    const removeAll = $(e.currentTarget).selectpicker('val');
                     if (removeAll === '1') {
                         $inputKeepDefinitionsSettings.closest('.form-group').show();
                     } else {
@@ -286,8 +286,6 @@
                 rubyCallCommand('core_set_model_preset', { dictionary: 'importer_import_options', values: importOptions });
 
                 rubyCallCommand('importer_import', importOptions, function (response) {
-
-                    var i;
 
                     if (response.errors.length > 0) {
                         that.dialog.notifyErrors(response.errors);
@@ -348,17 +346,17 @@
     LadbTabImporter.prototype.showObsolete = function (messageI18nKey, forced) {
         if (!this.isObsolete() || forced) {
 
-            var that = this;
+            const that = this;
 
             // Set tab as obsolete
             this.setObsolete(true);
 
-            var $modal = this.appendModalInside('ladb_importer_modal_obsolete', 'tabs/importer/_modal-obsolete.twig', {
+            const $modal = this.appendModalInside('ladb_importer_modal_obsolete', 'tabs/importer/_modal-obsolete.twig', {
                 messageI18nKey: messageI18nKey
             });
 
             // Fetch UI elements
-            var $btnLoad = $('#ladb_importer_obsolete_load', $modal);
+            const $btnLoad = $('#ladb_importer_obsolete_load', $modal);
 
             // Bind buttons
             $btnLoad.on('click', function () {
@@ -377,7 +375,7 @@
     LadbTabImporter.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
-        var that = this;
+        const that = this;
 
         // Bind buttons
         this.$btnOpen.on('click', function () {
@@ -405,9 +403,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabImporter.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbTabImporter.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -423,7 +421,7 @@
         })
     }
 
-    var old = $.fn.ladbTabImporter;
+    const old = $.fn.ladbTabImporter;
 
     $.fn.ladbTabImporter = Plugin;
     $.fn.ladbTabImporter.Constructor = LadbTabImporter;

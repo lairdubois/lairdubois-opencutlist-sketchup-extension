@@ -37,9 +37,9 @@ LadbAbstractTab.prototype.registerCommands = function () {
 };
 
 LadbAbstractTab.prototype.bind = function () {
-    var that = this;
+    const that = this;
 
-    var fnComputeStuckSlideHeadersWidth = function (event) {
+    const fnComputeStuckSlideHeadersWidth = function (event) {
 
         // Recompute stuck slides header width
         $('.ladb-slide:visible', that.$element).each(function (index) {
@@ -83,7 +83,7 @@ LadbAbstractTab.prototype.topSlide = function () {
 LadbAbstractTab.prototype.pushNewSlide = function (id, twigFile, renderParams, callback) {
 
     // Check if top slide has the same id
-    var $topSlide = this.topSlide();
+    const $topSlide = this.topSlide();
     if ($topSlide.attr('id') === id) {
         $topSlide.attr('id', id + '_obsolete');
         $topSlide.data('remove-after-animation', true);
@@ -93,15 +93,15 @@ LadbAbstractTab.prototype.pushNewSlide = function (id, twigFile, renderParams, c
     this.$element.append(Twig.twig({ref: twigFile}).render(renderParams));
 
     // Fetch UI elements
-    var $slide = $('#' + id, this.$element).first();
+    const $slide = $('#' + id, this.$element).first();
 
     return this.pushSlide($slide, callback);
 };
 
 LadbAbstractTab.prototype.pushSlide = function ($slide, callback) {
-    var that = this;
+    const that = this;
 
-    var $topSlide = this.topSlide();
+    const $topSlide = this.topSlide();
 
     // Push in slides stack
     this._$slides.push($slide);
@@ -134,8 +134,8 @@ LadbAbstractTab.prototype.pushSlide = function ($slide, callback) {
 LadbAbstractTab.prototype.popToRootSlide = function () {
     if (this._$slides.length > 2) {
         // Remove hidden slides
-        var $removedSlides = this._$slides.splice(1, this._$slides.length - 2);
-        for (var i = 0; i < $removedSlides.length; i++) {
+        const $removedSlides = this._$slides.splice(1, this._$slides.length - 2);
+        for (let i = 0; i < $removedSlides.length; i++) {
             $removedSlides[i].remove(); // Remove from DOM
         }
     }
@@ -144,8 +144,8 @@ LadbAbstractTab.prototype.popToRootSlide = function () {
 
 LadbAbstractTab.prototype.popSlide = function (noAnimation) {
     if (this._$slides.length > 1) {
-        var $poppedSlide = this._$slides.pop();
-        var $topSlide = this.topSlide();
+        const $poppedSlide = this._$slides.pop();
+        const $topSlide = this.topSlide();
         if ($topSlide) {
             $topSlide.show();
             this.computeStuckSlideHeaderWidth($topSlide);
@@ -168,18 +168,18 @@ LadbAbstractTab.prototype.popSlide = function (noAnimation) {
 };
 
 LadbAbstractTab.prototype.removeSlide = function ($slide) {
-    var $removedSlides = this._$slides.splice(this._$slides.indexOf($slide), 1);    // Remove from slide stack
+    const $removedSlides = this._$slides.splice(this._$slides.indexOf($slide), 1);    // Remove from slide stack
     if ($removedSlides.length > 0) {
         $removedSlides[0].remove(); // Remove from DOM
     }
 };
 
 LadbAbstractTab.prototype.stickSlideHeader = function ($slide) {
-    var $headerWrapper = $('.ladb-header-wrapper', $slide).first();
-    var $header = $('.ladb-header', $slide).first();
-    var $container = $('.ladb-container', $slide).first();
-    var outerWidth = $container.outerWidth();
-    var outerHeight = $header.outerHeight();
+    const $headerWrapper = $('.ladb-header-wrapper', $slide).first();
+    const $header = $('.ladb-header', $slide).first();
+    const $container = $('.ladb-container', $slide).first();
+    const outerWidth = $container.outerWidth();
+    const outerHeight = $header.outerHeight();
     $headerWrapper
         .css('height', outerHeight);
     $header
@@ -188,8 +188,8 @@ LadbAbstractTab.prototype.stickSlideHeader = function ($slide) {
 };
 
 LadbAbstractTab.prototype.unstickSlideHeader = function ($slide) {
-    var $headerWrapper = $('.ladb-header-wrapper', $slide).first();
-    var $header = $('.ladb-header', $slide).first();
+    const $headerWrapper = $('.ladb-header-wrapper', $slide).first();
+    const $header = $('.ladb-header', $slide).first();
     $headerWrapper
         .css('height', 'auto');
     $header
@@ -200,9 +200,9 @@ LadbAbstractTab.prototype.unstickSlideHeader = function ($slide) {
 LadbAbstractTab.prototype.computeStuckSlideHeaderWidth = function ($slide) {
 
     // Compute stuck slide header width
-    var $header = $('.ladb-header', $slide).first();
+    const $header = $('.ladb-header', $slide).first();
     if ($header.hasClass('stuck')) {
-        var $container = $('.ladb-container', $slide).first();
+        const $container = $('.ladb-container', $slide).first();
         $header
             .css('width', $container.outerWidth());
     }
@@ -215,11 +215,11 @@ LadbAbstractTab.prototype.scrollSlideToTarget = function($slide, $target, animat
             $slide = this.topSlide();   // No slide, use topSlide
         }
         if ($slide) {
-            var scrollTop = $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20;
-            var highlightFn = function () {
+            const scrollTop = $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20;
+            const highlightFn = function () {
                 if (onAfterHighlight) {
-                    var $highlightable = $('.ladb-highlightable', $target);
-                    var $effectTarget = $highlightable.length > 0 ? $highlightable.first() : $target;
+                    const $highlightable = $('.ladb-highlightable', $target);
+                    const $effectTarget = $highlightable.length > 0 ? $highlightable.first() : $target;
                     $effectTarget.effect('highlight', {}, 1500);
                 }
             }
@@ -236,7 +236,7 @@ LadbAbstractTab.prototype.scrollSlideToTarget = function($slide, $target, animat
 // Modal /////
 
 LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderParams) {
-    var that = this;
+    const that = this;
 
     // Hide previously opened modal
     if (this._$modal) {
@@ -303,7 +303,7 @@ LadbAbstractTab.prototype.print = function (title, margin, size) {
     }
 
     // Retrieve and modifiy Page rule to set margin and size to desired one
-    var cssPageRuleStyle = document.styleSheets[0].cssRules[0].style;
+    const cssPageRuleStyle = document.styleSheets[0].cssRules[0].style;
     cssPageRuleStyle.margin = margin;
     cssPageRuleStyle.size = size;
 
@@ -330,7 +330,7 @@ LadbAbstractTab.prototype.executeCommand = function (command, parameters, callba
     if (this._commands.hasOwnProperty(command)) {
 
         // Retrieve action block
-        var block = this._commands[command];
+        const block = this._commands[command];
 
         // Execute action block with parameters
         block(parameters);

@@ -4,12 +4,12 @@
     // CONSTANTS
     // ======================
 
-    var UPDATES_PAGE_SIZE = 5;
+    const UPDATES_PAGE_SIZE = 5;
 
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabForum = function (element, options, dialog) {
+    const LadbTabForum = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.$btnCreateConversation = $('#ladb_btn_create_conversation', this.$element);
@@ -24,10 +24,10 @@
     LadbTabForum.DEFAULTS = {};
 
     LadbTabForum.prototype.loadConversations = function (tagFilter, page) {
-        var that = this;
+        const that = this;
 
         // Fetch UI elements
-        var $loading = $('.ladb-loading', this.$page);
+        const $loading = $('.ladb-loading', this.$page);
 
         // Show loading
         $loading.show();
@@ -100,18 +100,18 @@
                 if (response.data) {
 
                     // Cache conversations
-                    var conversation = null;
-                    for (var i = 0; i < response.data.collective.conversations.nodes.length; i++) {
+                    let conversation = null;
+                    for (let i = 0; i < response.data.collective.conversations.nodes.length; i++) {
 
                         conversation = response.data.collective.conversations.nodes[i];
                         that.conversations[conversation.id] = conversation;
 
                     }
 
-                    var nextPage = ((page + 1) * UPDATES_PAGE_SIZE < response.data.collective.conversations.totalCount) ? page + 1 : null;
+                    const nextPage = ((page + 1) * UPDATES_PAGE_SIZE < response.data.collective.conversations.totalCount) ? page + 1 : null;
 
                     // Render conversations list
-                    var $list = $(Twig.twig({ref: 'tabs/forum/_conversations-' + (page === 0 ? '0' : 'n') + '.twig'}).render({
+                    const $list = $(Twig.twig({ref: 'tabs/forum/_conversations-' + (page === 0 ? '0' : 'n') + '.twig'}).render({
                         conversationsTags: response.data.collective.conversationsTags,
                         conversations: response.data.collective.conversations,
                         tagFilter: tagFilter,
@@ -135,12 +135,12 @@
 
                     // Bind box
                     $('.ladb-forum-conversation-box', $list).on('click', function(e) {
-                        var $closestAnchor = $(e.target.closest('a'));
+                        const $closestAnchor = $(e.target.closest('a'));
                         if ($closestAnchor.length > 0) {
                             rubyCallCommand('core_open_url', { url: $closestAnchor.attr('href') });
                             return false;
                         }
-                        var id = $(this).data('conversation-id');
+                        const id = $(this).data('conversation-id');
                         that.showConversationModal(id)
                     });
 
@@ -163,17 +163,17 @@
     }
 
     LadbTabForum.prototype.showConversationModal = function (id) {
-        var that = this;
-        var conversation = this.conversations[id];
+        const that = this;
+        const conversation = this.conversations[id];
 
-        var $modal = this.appendModalInside('ladb_forum_conversation', 'tabs/forum/_modal-conversation.twig', {
+        const $modal = this.appendModalInside('ladb_forum_conversation', 'tabs/forum/_modal-conversation.twig', {
             conversation: conversation
         });
 
         // Bind buttons
         $('#ladb_forum_conversation_reply', $modal).on('click', function () {
-            var slug = $(this).data('conversation-slug');
-            var id = $(this).data('conversation-id');
+            const slug = $(this).data('conversation-slug');
+            const id = $(this).data('conversation-id');
 
             that.showRedirectionModal(function() {
                 rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + GRAPHQL_SLUG + '/conversations/' + slug + '-' + id });
@@ -189,7 +189,7 @@
 
     LadbTabForum.prototype.showRedirectionModal = function (callback) {
 
-        var $modal = this.appendModalInside('ladb_forum_redirection', 'tabs/forum/_modal-redirection.twig', {
+        const $modal = this.appendModalInside('ladb_forum_redirection', 'tabs/forum/_modal-redirection.twig', {
         });
 
         // Bind buttons
@@ -212,11 +212,11 @@
     LadbTabForum.prototype.registerCommands = function () {
         LadbAbstractTab.prototype.registerCommands.call(this);
 
-        var that = this;
+        const that = this;
 
         this.registerCommand('load_conversations', function (parameters) {
             setTimeout(function () {     // Use setTimeout to give time to UI to refresh
-                var tagFilter = parameters ? parameters.tagFilter : null;
+                const tagFilter = parameters ? parameters.tagFilter : null;
                 that.loadConversations(tagFilter);
             }, 1);
         });
@@ -225,7 +225,7 @@
     LadbTabForum.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
-        var that = this;
+        const that = this;
 
         // Bind buttons
         this.$btnCreateConversation.on('click', function () {
@@ -249,9 +249,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabForum.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbTabForum.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -267,7 +267,7 @@
         })
     }
 
-    var old = $.fn.ladbTabForum;
+    const old = $.fn.ladbTabForum;
 
     $.fn.ladbTabForum = Plugin;
     $.fn.ladbTabForum.Constructor = LadbTabForum;

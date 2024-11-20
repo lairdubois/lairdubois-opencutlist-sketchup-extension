@@ -1,11 +1,11 @@
 // CONSTANTS
 // ======================
 
-var EXTENSION_BUILD = '202411040758';   // /!\ Auto-generated line, do not edit //
+const EXTENSION_BUILD = '202411040758';   // /!\ Auto-generated line, do not edit //
 
 // UI /////
 
-var SELECT_PICKER_OPTIONS = {
+const SELECT_PICKER_OPTIONS = {
     size: 10,
     iconBase: 'ladb-opencutlist-icon',
     tickIcon: 'ladb-opencutlist-icon-tick',
@@ -13,35 +13,35 @@ var SELECT_PICKER_OPTIONS = {
     dropupAuto: false
 };
 
-var TOKENFIELD_OPTIONS = {
+const TOKENFIELD_OPTIONS = {
     delimiter: ';',
     createTokensOnBlur: true,
     beautify: false,
     minWidth: 250
 };
 
-var SORTABLE_OPTIONS = {
+const SORTABLE_OPTIONS = {
     cursor: 'ns-resize',
     handle: '.ladb-handle',
     items: '> :not(.ladb-state-sticky)'
 };
 
-var SLIDER_OPTIONS = {
+const SLIDER_OPTIONS = {
     tooltip: 'hide'
 };
 
-var TEXTINPUT_COLOR_OPTIONS = {
+const TEXTINPUT_COLOR_OPTIONS = {
     resetValue: null
 };
 
 // GraphQL /////
 
-var GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
-var GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
+const GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';
+const GRAPHQL_SLUG = 'lairdubois-opencutlist-sketchup-extension';
 
 // Materials /////
 
-var REAL_MATERIALS_FILTER = [
+const REAL_MATERIALS_FILTER = [
     0,  // TYPE_UNKNOWN
     1,  // TYPE_SOLID_WOOD
     2,  // TYPE_SHEET_GOOD
@@ -51,7 +51,7 @@ var REAL_MATERIALS_FILTER = [
 
 // Three JS /////
 
-var THREE_CAMERA_VIEWS = {
+const THREE_CAMERA_VIEWS = {
     none: [ 0, 0, 0 ],
     isometric: [ 0.5774, -0.5774, 0.5774 ],
     top: [ 0, 0, 1 ],

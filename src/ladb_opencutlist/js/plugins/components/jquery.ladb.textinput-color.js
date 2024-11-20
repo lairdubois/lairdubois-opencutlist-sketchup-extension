@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTextinputColor = function(element, options) {
+    const LadbTextinputColor = function(element, options) {
         LadbTextinputAbstract.call(this, element, options, /^#[0-9a-f]*$/i);
 
         this.$inputColor = null;
@@ -41,14 +41,14 @@
     LadbTextinputColor.prototype.val = function (value) {
 
         if (value === undefined) {
-            var val = LadbTextinputAbstract.prototype.val.call(this);
+            const val = LadbTextinputAbstract.prototype.val.call(this);
             if (val.match(/^#[0-9a-f]{6}$/i)) {
                 return val;
             }
             return this.options.resetValue;
         }
 
-        var r = LadbTextinputAbstract.prototype.val.call(this, value);
+        const r = LadbTextinputAbstract.prototype.val.call(this, value);
         this.updatePreviewAndButtons();
         return r;
     };
@@ -71,8 +71,8 @@
             @param: num         => the number to conver to hex
             @returns: string    => the hex representation of the provided number
         */
-        var fnIntToHex = function (num) {
-            var hex = Math.round(num).toString(16);
+        const fnIntToHex = function (num) {
+            let hex = Math.round(num).toString(16);
             if (hex.length === 1)
                 hex = '0' + hex;
             return hex;
@@ -110,7 +110,7 @@
         color2 = [parseInt(color2[0] + color2[1], 16), parseInt(color2[2] + color2[3], 16), parseInt(color2[4] + color2[5], 16)];
 
         // 4: blend
-        var color3 = [
+        let color3 = [
             (1 - percentage) * color1[0] + percentage * color2[0],
             (1 - percentage) * color1[1] + percentage * color2[1],
             (1 - percentage) * color1[2] + percentage * color2[2]
@@ -124,7 +124,7 @@
     }
 
     LadbTextinputColor.prototype.updatePreviewAndButtons = function() {
-        var color = this.sanitizeColor(this.$element.val());
+        const color = this.sanitizeColor(this.$element.val());
         if (color) {
 
             // Preview
@@ -149,7 +149,7 @@
             }
 
             // Buttons
-            var index = this.options.colors.indexOf(color);
+            const index = this.options.colors.indexOf(color);
             if (this.$storeBtn) {
                 if (index === -1) {
                     this.$storeBtn.show();
@@ -183,7 +183,7 @@
     };
 
     LadbTextinputColor.prototype.generatePicker = function() {
-        var that = this;
+        const that = this;
 
         this.removePicker();
 
@@ -214,7 +214,7 @@
 
     LadbTextinputColor.prototype.showPicker = function() {
         if (this.$picker) {
-            var pos = this.$wrapper.position();
+            const pos = this.$wrapper.position();
             this.$picker.css({
                 top: this.$wrapper.outerHeight(false)
             });
@@ -249,7 +249,7 @@
     LadbTextinputColor.prototype.appendRightTools = function($toolsContainer) {
         LadbTextinputAbstract.prototype.appendRightTools.call(this, $toolsContainer);
 
-        var that = this;
+        const that = this;
 
         this.$storeBtn = $('<div class="ladb-textinput-tool ladb-textinput-tool-btn" tabindex="-1" data-toggle="tooltip" title="' + i18next.t('core.component.textinput_color.store') + '"><i class="ladb-opencutlist-icon-plus"></i></div>')
             .on('mousedown', function (e) {
@@ -257,8 +257,8 @@
             })
             .on('click', function() {
 
-                var color = that.sanitizeColor(that.$element.val());
-                var index = that.options.colors.indexOf(color);
+                const color = that.sanitizeColor(that.$element.val());
+                const index = that.options.colors.indexOf(color);
                 if (index === -1) {
 
                     that.options.colors.push(color);
@@ -287,8 +287,8 @@
             })
             .on('click', function() {
 
-                var color = that.sanitizeColor(that.$element.val());
-                var index = that.options.colors.indexOf(color);
+                const color = that.sanitizeColor(that.$element.val());
+                const index = that.options.colors.indexOf(color);
                 if (index !== -1) {
 
                     that.options.colors.splice(index, 1);
@@ -316,7 +316,7 @@
     LadbTextinputColor.prototype.init = function() {
         LadbTextinputAbstract.prototype.init.call(this);
 
-        var that = this;
+        const that = this;
 
         // Retrieve options
         rubyCallCommand('core_get_global_preset', { dictionary: 'component_textinput_color' }, function (response) {
@@ -355,11 +355,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.textinputColor');
-            var options = $.extend({}, LadbTextinputColor.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.textinputColor');
+            const options = $.extend({}, LadbTextinputColor.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.textinputColor', (data = new LadbTextinputColor(this, options)));
@@ -373,7 +373,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.LadbTextinputColor;
+    const old = $.fn.LadbTextinputColor;
 
     $.fn.ladbTextinputColor             = Plugin;
     $.fn.ladbTextinputColor.Constructor = LadbTextinputColor;

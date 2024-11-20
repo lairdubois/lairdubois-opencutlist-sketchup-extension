@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbDialogModal = function (element, options) {
+    const LadbDialogModal = function (element, options) {
         LadbAbstractDialog.call(this, element, $.extend({
             noty_layout: 'dialogModal'
         }, options));
@@ -32,10 +32,10 @@
         }, typeof params === 'object' && params)));
 
         // Fetch tab
-        var $modal = $('#ladb_modal_' + modalName, this.$wrapper);
+        const $modal = $('#ladb_modal_' + modalName, this.$wrapper);
 
         // Initialize modal (with its jQuery plugin)
-        var jQueryPluginFn = 'ladbModal' + modalName.camelize().capitalize();
+        const jQueryPluginFn = 'ladbModal' + modalName.camelize().capitalize();
         $modal[jQueryPluginFn]($.extend({ dialog: this }, typeof params === 'object' && params));
 
         // Setup tooltips & popovers
@@ -54,7 +54,7 @@
     // Internals /////
 
     LadbDialogModal.prototype.bind = function () {
-        var that = this;
+        const that = this;
 
         // Bind validate with enter on modals
         $('body').on('keydown', function (e) {
@@ -85,7 +85,7 @@
 
             } else if (e.keyCode === 13) {   // Only intercept "enter" key
 
-                var $target = $(e.target);
+                const $target = $(e.target);
                 if (!$target.is('input[type=text]')) {  // Only intercept if focus is on input[type=text] field
                     return;
                 }
@@ -95,7 +95,7 @@
                 e.preventDefault();
 
                 if (that.$modal) {
-                    var $btnValidate = $('.btn-validate-modal', that.$modal).first();
+                    const $btnValidate = $('.btn-validate-modal', that.$modal).first();
                     if ($btnValidate && $btnValidate.is(':enabled')) {
                         $btnValidate.click();
                     }
@@ -109,7 +109,7 @@
     LadbDialogModal.prototype.init = function () {
         LadbAbstractDialog.prototype.init.call(this);
 
-        var that = this;
+        const that = this;
 
         // Render and append layout template
         this.$element.append(Twig.twig({ref: 'core/layout-modal.twig'}).render({
@@ -134,9 +134,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.dialog-modal');
-            var options = $.extend({}, LadbDialogModal.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.dialog-modal');
+            const options = $.extend({}, LadbDialogModal.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.dialog', (data = new LadbDialogModal(this, options)));
@@ -149,7 +149,7 @@
         })
     }
 
-    var old = $.fn.ladbDialogModal;
+    const old = $.fn.ladbDialogModal;
 
     $.fn.ladbDialogModal = Plugin;
     $.fn.ladbDialogModal.Constructor = LadbDialogModal;

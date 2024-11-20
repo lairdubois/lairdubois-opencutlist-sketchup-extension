@@ -4,13 +4,13 @@
     // CONSTANTS
     // ======================
 
-    var TUTORIALS_URL = 'https://www.lairdubois.fr/opencutlist/tutorials'
-    var TUTORIALS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/tutorials-dev'
+    const TUTORIALS_URL = 'https://www.lairdubois.fr/opencutlist/tutorials'
+    const TUTORIALS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/tutorials-dev'
 
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabTutorials = function (element, options, dialog) {
+    const LadbTabTutorials = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.$btnSubmit = $('#ladb_btn_submit', this.$element);
@@ -25,19 +25,19 @@
     LadbTabTutorials.DEFAULTS = {};
 
     LadbTabTutorials.prototype.loadTutorials = function () {
-        var that = this;
+        const that = this;
 
         $.getJSON(this.dialog.appendOclMetasToUrlQueryParams(this.dialog.capabilities.is_dev ? TUTORIALS_DEV_URL : TUTORIALS_URL), function (data) {
 
             that.tutorials = data.tutorials;
 
             // Sort tutorials according to native index and corresponding language
-            for (var index = 0; index < that.tutorials.length; index++) {
-                var tutorial = that.tutorials[index];
+            for (let index = 0; index < that.tutorials.length; index++) {
+                const tutorial = that.tutorials[index];
                 tutorial.native_index = index;
                 tutorial.prefered = tutorial.language === that.dialog.capabilities.language ? 1 : 0;
             }
-            var sortBy = [{
+            const sortBy = [{
                 prop: 'prefered',
                 dir: -1
             }, {
@@ -45,7 +45,7 @@
                 dir: 1
             }];
             that.tutorials.sort(function (a, b) {
-                var i = 0, result = 0;
+                let i = 0, result = 0;
                 while (i < sortBy.length && result === 0) {
                     result = sortBy[i].dir * (a[sortBy[i].prop] < b[sortBy[i].prop] ? -1 : (a[sortBy[i].prop] > b[sortBy[i].prop] ? 1 : 0));
                     i++;
@@ -60,7 +60,7 @@
 
             // Bind
             $('.ladb-tutorial-box', that.$page).each(function (index) {
-                var $box = $(this);
+                const $box = $(this);
                 $box.on('click', function (e) {
                     if (e.target.tagName !== 'A') {
                         $(this).blur();
@@ -71,7 +71,7 @@
             });
             $('.ladb-btn-play', that.$page).on('click', function () {
                 $(this).blur();
-                var tutorialId = $(this).closest('.ladb-tutorial-box').data('tutorial-id');
+                const tutorialId = $(this).closest('.ladb-tutorial-box').data('tutorial-id');
                 that.playTutorials(tutorialId);
                 return false;
             });
@@ -86,9 +86,9 @@
     }
 
     LadbTabTutorials.prototype.playTutorials = function (id) {
-        var tutorial = this.tutorials[id];
+        const tutorial = this.tutorials[id];
 
-        var $modal = this.appendModalInside('ladb_tutorial_play', 'tabs/tutorials/_modal-play.twig', {
+        const $modal = this.appendModalInside('ladb_tutorial_play', 'tabs/tutorials/_modal-play.twig', {
             tutorial: tutorial
         });
 
@@ -100,12 +100,12 @@
     LadbTabTutorials.prototype.bind = function () {
         LadbAbstractTab.prototype.bind.call(this);
 
-        var that = this;
+        const that = this;
 
         // Bind buttons
         this.$btnSubmit.on('click', function () {
 
-            var $modal = that.appendModalInside('ladb_tutorials_modal_submit', 'tabs/tutorials/_modal-submit.twig');
+            const $modal = that.appendModalInside('ladb_tutorials_modal_submit', 'tabs/tutorials/_modal-submit.twig');
 
             // Show modal
             $modal.modal('show');
@@ -126,9 +126,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabTutorials.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbTabTutorials.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -144,7 +144,7 @@
         })
     }
 
-    var old = $.fn.ladbTabTutorials;
+    const old = $.fn.ladbTabTutorials;
 
     $.fn.ladbTabTutorials = Plugin;
     $.fn.ladbTabTutorials.Constructor = LadbTabTutorials;

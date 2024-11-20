@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTextinputArea = function(element, options) {
+    const LadbTextinputArea = function(element, options) {
         LadbTextinputAbstract.call(this, element, options);
     };
     LadbTextinputArea.prototype = new LadbTextinputAbstract;
@@ -14,7 +14,7 @@
 
     LadbTextinputArea.prototype.getParentOverflows = function(el) {
 
-        var arr = [];
+        const arr = [];
 
         while (el && el.parentNode && el.parentNode instanceof Element) {
             if (el.parentNode.scrollTop) {
@@ -31,7 +31,7 @@
 
     LadbTextinputArea.prototype.autoHeight = function() {
 
-        var overflows = this.getParentOverflows(this.$element[0]);
+        const overflows = this.getParentOverflows(this.$element[0]);
 
         this.$element
             .css('height', '')
@@ -48,7 +48,7 @@
     LadbTextinputArea.prototype.init = function() {
         LadbTextinputAbstract.prototype.init.call(this);
 
-        var that = this;
+        const that = this;
 
         this.$element
             .css('overflow-y', 'hidden')
@@ -68,11 +68,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.textinputArea');
-            var options = $.extend({}, LadbTextinputArea.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.textinputArea');
+            const options = $.extend({}, LadbTextinputArea.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.textinputArea', (data = new LadbTextinputArea(this, options)));
@@ -86,7 +86,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbTextinputArea;
+    const old = $.fn.ladbTextinputArea;
 
     $.fn.ladbTextinputArea             = Plugin;
     $.fn.ladbTextinputArea.Constructor = LadbTextinputArea;

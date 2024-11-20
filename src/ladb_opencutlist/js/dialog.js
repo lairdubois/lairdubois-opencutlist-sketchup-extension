@@ -3,13 +3,13 @@
 
 // -- Commands
 
-var commandId = 0;
-var commandCallbacks = {};
-var commandCallStack = [];
-var commandRunning = false;
+let commandId = 0;
+const commandCallbacks = {};
+const commandCallStack = [];
+let commandRunning = false;
 
 function rubyCallCommand(command, params, callback) {
-    var call = {
+    const call = {
         id: commandId,
         command: command,
         params: params
@@ -21,9 +21,9 @@ function rubyCallCommand(command, params, callback) {
 }
 
 function rubyCommandCallback(id, encodedResponse) {
-    var callback = commandCallbacks[id];
+    const callback = commandCallbacks[id];
     if (typeof callback == 'function') {
-        var response = encodedResponse ? JSON.parse(Base64.decode(encodedResponse)) : {};
+        const response = encodedResponse ? JSON.parse(Base64.decode(encodedResponse)) : {};
         callback(response);
         commandCallbacks[id] = null;
     }
@@ -33,11 +33,11 @@ function rubyCommandCallback(id, encodedResponse) {
 
 function shiftCommandCallStack() {
     if (!commandRunning) {
-        var call = commandCallStack.shift();
+        const call = commandCallStack.shift();
         if (call) {
             commandRunning = true;
-            var call_json = JSON.stringify(call);
-            var encoded_call_json = encodeURIComponent(call_json);
+            const call_json = JSON.stringify(call);
+            const encoded_call_json = encodeURIComponent(call_json);
             window.location.href = "skp:ladb_opencutlist_command@" + encoded_call_json;
         }
     }
@@ -45,18 +45,18 @@ function shiftCommandCallStack() {
 
 // -- Events
 
-var eventCallbacks = {};
+const eventCallbacks = {};
 
 function addEventCallback(event, callback) {
     if (typeof callback == 'function') {
-        var events;
+        let events;
         if ($.isArray(event)) {
             events = event;
         } else {
             events = [ event ];
         }
-        for (var i = 0; i < events.length; i++) {
-            var callbacks = eventCallbacks[events[i]];
+        for (let i = 0; i < events.length; i++) {
+            let callbacks = eventCallbacks[events[i]];
             if (!callbacks) {
                 callbacks = [];
                 eventCallbacks[events[i]] = callbacks;
@@ -67,16 +67,16 @@ function addEventCallback(event, callback) {
 }
 
 function removeEventCallback(event, callback) {
-    var events;
+    let events;
     if ($.isArray(event)) {
         events = event;
     } else {
         events = [ event ];
     }
-    for (var i = 0; i < events.length; i++) {
-        var callbacks = eventCallbacks[events[i]];
+    for (let i = 0; i < events.length; i++) {
+        const callbacks = eventCallbacks[events[i]];
         if (callbacks) {
-            for (var j = 0; i < callbacks.length; i++) {
+            for (const j = 0; i < callbacks.length; i++) {
                 if (callbacks[j] === callback) {
                     callbacks.splice(i, 1);
                     return;
@@ -87,10 +87,10 @@ function removeEventCallback(event, callback) {
 }
 
 function triggerEvent(event, encodedParams) {
-    var callbacks = eventCallbacks[event];
+    const callbacks = eventCallbacks[event];
     if (callbacks) {
-        var params = encodedParams ? JSON.parse(Base64.decode(encodedParams)) : {};
-        for (var i = 0; i < callbacks.length; i++) {
+        const params = encodedParams ? JSON.parse(Base64.decode(encodedParams)) : {};
+        for (let i = 0; i < callbacks.length; i++) {
             callbacks[i](params);
         }
     }
@@ -100,11 +100,11 @@ function triggerEvent(event, encodedParams) {
 
 function setDialogContext(type, encodedParams) {
 
-    var params = encodedParams ? JSON.parse(Base64.decode(encodedParams)) : {};
-    var webglAvailable;
+    const params = encodedParams ? JSON.parse(Base64.decode(encodedParams)) : {};
+    let webglAvailable;
     try {
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('webgl');
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('webgl');
         webglAvailable = context && context instanceof WebGLRenderingContext;
     } catch (e) {
         webglAvailable = false;

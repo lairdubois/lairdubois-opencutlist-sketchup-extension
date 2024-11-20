@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbWidgetPreset = function (element, options, dialog) {
+    const LadbWidgetPreset = function (element, options, dialog) {
         this.options = options;
         this.$element = $(element);
         this.dialog = dialog;
@@ -22,7 +22,7 @@
     };
 
     LadbWidgetPreset.prototype.deletePreset = function (name, noNotification) {
-        var that = this;
+        const that = this;
 
         this.dialog.confirm(i18next.t('core.preset.delete_confirm_title'), i18next.t('core.preset.delete_confirm', { name: name }), function () {
             rubyCallCommand('core_set_global_preset', {
@@ -44,10 +44,10 @@
     };
 
     LadbWidgetPreset.prototype.saveToPreset = function (name, isNew, noNotification) {
-        var that = this;
+        const that = this;
 
-        var fnDoSave = function () {
-            var values = {};
+        const fnDoSave = function () {
+            const values = {};
             that.options.fnFetchOptions(values);
             rubyCallCommand('core_set_global_preset', {
                 dictionary: that.options.dictionary,
@@ -79,7 +79,7 @@
     };
 
     LadbWidgetPreset.prototype.restoreFromPreset = function (name, noNotification) {
-        var that = this;
+        const that = this;
         rubyCallCommand('core_get_global_preset', {
             dictionary: that.options.dictionary,
             section: that.options.section,
@@ -93,7 +93,7 @@
     };
 
     LadbWidgetPreset.prototype.refresh = function () {
-        var that = this;
+        const that = this;
 
         rubyCallCommand('core_list_global_preset_names', { dictionary: this.options.dictionary, section: this.options.section }, function (response) {
 
@@ -125,8 +125,8 @@
                 that.saveToPreset(null);
             });
             $('.ladb-widget-preset-item', that.$dropdown).each(function (index) {
-                var $item = $(this);
-                var name = $item.data('name');
+                const $item = $(this);
+                const name = $item.data('name');
 
                 $('.ladb-widget-preset-btn-restore', $item).on('click', function () {
                     that.restoreFromPreset(name);
@@ -165,11 +165,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.widgetPreset');
-            var options = $.extend({}, LadbWidgetPreset.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.widgetPreset');
+            const options = $.extend({}, LadbWidgetPreset.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -186,7 +186,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbWidgetPreset;
+    const old = $.fn.ladbWidgetPreset;
 
     $.fn.ladbWidgetPreset = Plugin;
     $.fn.ladbWidgetPreset.Constructor = LadbWidgetPreset;

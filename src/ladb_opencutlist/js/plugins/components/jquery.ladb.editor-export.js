@@ -4,12 +4,12 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbEditorExport = function (element, options, dialog) {
+    const LadbEditorExport = function (element, options, dialog) {
         this.options = options;
         this.$element = $(element);
         this.dialog = dialog;
 
-        this.variableDefs = [];
+        this.constiableDefs = [];
 
         this.$editingItem = null;
         this.$editingForm = null;
@@ -21,7 +21,7 @@
     };
 
     LadbEditorExport.prototype.setColDefs = function (colDefs) {
-        var that = this;
+        const that = this;
 
         // Cancel editing
         this.editColumn(null);
@@ -38,7 +38,7 @@
     };
 
     LadbEditorExport.prototype.getColDefs = function () {
-        var colDefs = [];
+        const colDefs = [];
         this.$sortable.children('li').each(function () {
             colDefs.push({
                 name: $(this).data('name'),
@@ -52,7 +52,7 @@
     };
 
     LadbEditorExport.prototype.setEditingItemIndex = function (index) {
-        var $item = $(this.$sortable.children().get(index));
+        const $item = $(this.$sortable.children().get(index));
         if ($item.length) {
             this.editColumn($item);
         }
@@ -63,10 +63,10 @@
     }
 
     LadbEditorExport.prototype.appendColumnItem = function (appendAfterEditingItem, name, title, formula, align, hidden) {
-        var that = this;
+        const that = this;
 
         // Create and append row
-        var $item = $(Twig.twig({ref: "components/_editor-export-column-item.twig"}).render({
+        const $item = $(Twig.twig({ref: "components/_editor-export-column-item.twig"}).render({
             name: name || '',
             title: title || '',
             formula: formula || '',
@@ -91,8 +91,8 @@
             return false;
         });
         $('a.ladb-editor-export-column-item-align-btn', $item).on('click', function () {
-            var $icon = $('i', $(this));
-            var align = $item.data('align');
+            const $icon = $('i', $(this));
+            let align = $item.data('align');
             $icon.removeClass('ladb-opencutlist-icon-align-' + align);
             switch (align) {
                 case 'left':
@@ -110,8 +110,8 @@
             return false;
         });
         $('a.ladb-editor-export-column-item-visibility-btn', $item).on('click', function () {
-            var $icon = $('i', $(this));
-            var hidden = Boolean($item.data('hidden'));
+            const $icon = $('i', $(this));
+            let hidden = Boolean($item.data('hidden'));
             if (hidden === true) {
                 hidden = false;
                 $item.removeClass('ladb-inactive');
@@ -133,7 +133,7 @@
     LadbEditorExport.prototype.addColumn = function (name) {
 
         // Create and append item
-        var $item = this.appendColumnItem(true, name);
+        const $item = this.appendColumnItem(true, name);
 
         // Edit column
         this.editColumn($item);
@@ -142,14 +142,14 @@
 
     LadbEditorExport.prototype.duplicateColumn = function ($item) {
 
-        var name = $item.data('name');
-        var title = $item.data('title');
-        var formula = $item.data('formula');
-        var align = $item.data('align');
-        var hidden = Boolean($item.data('hidden'));
+        const name = $item.data('name');
+        const title = $item.data('title');
+        const formula = $item.data('formula');
+        const align = $item.data('align');
+        const hidden = Boolean($item.data('hidden'));
 
         // Create and append item
-        var $newItem = this.appendColumnItem(true, name, title, formula, align, hidden);
+        const $newItem = this.appendColumnItem(true, name, title, formula, align, hidden);
 
         // Edit column
         this.editColumn($newItem);
@@ -157,7 +157,7 @@
     };
 
     LadbEditorExport.prototype.editColumn = function ($item, focusTo) {
-        var that = this;
+        const that = this;
 
         // Cleanup
         if (this.$editingForm) {
@@ -181,13 +181,13 @@
             this.$editingItem.addClass('ladb-selected');
 
             // Buttons
-            var $btnDuplicate = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-copy"></i> ' + i18next.t('tab.cutlist.export.duplicate_column') + '</button>');
+            const $btnDuplicate = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-copy"></i> ' + i18next.t('tab.cutlist.export.duplicate_column') + '</button>');
             $btnDuplicate
                 .on('click', function () {
                     that.duplicateColumn($item);
                 })
             ;
-            var $btnRemove = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.export.remove_column') + '</button>');
+            const $btnRemove = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.export.remove_column') + '</button>');
             $btnRemove
                 .on('click', function () {
                     that.removeColumn($item);
@@ -205,8 +205,8 @@
             }));
             this.$element.append(this.$editingForm);
 
-            var $inputHeader = $('#ladb_input_title', this.$editingForm);
-            var $inputFormula = $('#ladb_textarea_formula', this.$editingForm);
+            const $inputHeader = $('#ladb_input_title', this.$editingForm);
+            const $inputFormula = $('#ladb_textarea_formula', this.$editingForm);
 
             // Bind inputs
             $inputHeader
@@ -224,7 +224,7 @@
             ;
             $inputFormula
                 .ladbTextinputCode({
-                    variableDefs: this.variableDefs,
+                    constiableDefs: this.constiableDefs,
                     snippetDefs: this.options.snippetDefs
                 })
                 .on('change', function () {
@@ -278,7 +278,7 @@
     LadbEditorExport.prototype.removeColumn = function ($item) {
 
         // Retrieve sibling item if possible
-        var $siblingItem = $item.next();
+        let $siblingItem = $item.next();
         if ($siblingItem.length === 0) {
             $siblingItem = $item.prev();
             if ($siblingItem.length === 0) {
@@ -295,12 +295,12 @@
     };
 
     LadbEditorExport.prototype.init = function () {
-        var that = this;
+        const that = this;
 
-        // Generate variableDefs for formula editor
-        this.variableDefs = [];
-        for (var i = 0; i < this.options.vars.length; i++) {
-            this.variableDefs.push({
+        // Generate constiableDefs for formula editor
+        this.constiableDefs = [];
+        for (let i = 0; i < this.options.vars.length; i++) {
+            this.constiableDefs.push({
                 text: this.options.vars[i].name,
                 displayText: i18next.t('tab.cutlist.export.' + this.options.vars[i].name),
                 type: this.options.vars[i].type
@@ -311,7 +311,7 @@
 
         this.$element.addClass('row');
 
-        var $header = $('<div class="ladb-editor-export-columns-header">' + i18next.t('tab.cutlist.export.columns') + '</div>')
+        const $header = $('<div class="ladb-editor-export-columns-header">' + i18next.t('tab.cutlist.export.columns') + '</div>')
             .on('click', function (e) {
                 that.editColumn(null);
             });
@@ -329,12 +329,12 @@
 
         // Buttons
 
-        var $btnAdd = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.export.add_column') + '</button>')
+        const $btnAdd = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.export.add_column') + '</button>')
             .on('click', function () {
                 that.addColumn('');
             });
 
-        var $dropDown = $('<ul class="dropdown-menu dropdown-menu-right">');
+        const $dropDown = $('<ul class="dropdown-menu dropdown-menu-right">');
         $dropDown.append(
             $('<li class="dropdown-header">' + i18next.t('tab.cutlist.export.add_native_columns') + '</li>')
         )
@@ -350,12 +350,12 @@
             )
         });
 
-        var $btnGroup = $('<div class="btn-group">')
+        const $btnGroup = $('<div class="btn-group">')
             .append($btnAdd)
             .append($('<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>'))
             .append($dropDown)
 
-        var $btnRemoveAll = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.export.remove_all_columns') + '</button>')
+        const $btnRemoveAll = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.export.remove_all_columns') + '</button>')
             .on('click', function () {
                 $(this).blur();
                 that.$sortable.empty();
@@ -363,7 +363,7 @@
                 return false;
             });
 
-        var $btnContainer = $('<div style="display: inline-block" />');
+        const $btnContainer = $('<div style="display: inline-block" />');
 
         this.$element.append(
             $('<div class="col-xs-10 col-xs-push-1">').append(
@@ -389,11 +389,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.editorExport');
-            var options = $.extend({}, LadbEditorExport.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.editorExport');
+            const options = $.extend({}, LadbEditorExport.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.editorExport', (data = new LadbEditorExport(this, options, options.dialog)));
@@ -407,7 +407,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbEditorExport;
+    const old = $.fn.ladbEditorExport;
 
     $.fn.ladbEditorExport = Plugin;
     $.fn.ladbEditorExport.Constructor = LadbEditorExport;

@@ -1,15 +1,15 @@
 +function ($) {
     'use strict';
 
-    var XMLNS = "http://www.w3.org/2000/svg";
-    var GRID_DIVISION = 12;
-    var LABEL_MAX_WIDTH = 400;
-    var LABEL_MAX_HEIGHT = 300;
+    const XMLNS = "http://www.w3.org/2000/svg";
+    const GRID_DIVISION = 12;
+    const LABEL_MAX_WIDTH = 400;
+    const LABEL_MAX_HEIGHT = 300;
 
     // CLASS DEFINITION
     // ======================
 
-    var LadbEditorLabelLayout = function (element, options, dialog) {
+    const LadbEditorLabelLayout = function (element, options, dialog) {
         this.options = options;
         this.$element = $(element);
         this.dialog = dialog;
@@ -30,7 +30,7 @@
     };
 
     LadbEditorLabelLayout.prototype.createSvg = function () {
-        var that = this;
+        const that = this;
 
         // Check invalid size
         if (this.options.labelWidth <= 0 || isNaN(this.options.labelWidth) || this.options.labelHeight <= 0 || isNaN(this.options.labelHeight)) {
@@ -42,7 +42,7 @@
             return;
         }
 
-        var $sizeContainer = $('<div class="ladb-editor-label-layout-size">');
+        const $sizeContainer = $('<div class="ladb-editor-label-layout-size">');
         that.$element.prepend($sizeContainer);
 
         rubyCallCommand('core_float_to_length', {
@@ -54,10 +54,10 @@
 
         })
 
-        var $svgContainer = $('<div class="ladb-editor-label-layout-preview"></div>');
+        const $svgContainer = $('<div class="ladb-editor-label-layout-preview"></div>');
         this.$element.append($svgContainer);
 
-        var svg = document.createElementNS(XMLNS, 'svg');
+        const svg = document.createElementNS(XMLNS, 'svg');
         $svgContainer.append(svg);
         svg.setAttributeNS(null, 'focusable', 'true');
         svg.setAttributeNS(null, 'tabindex', '-1');
@@ -72,7 +72,7 @@
 
         this.svg = svg;
 
-        var svgLabel = document.createElementNS(XMLNS, 'g');
+        const svgLabel = document.createElementNS(XMLNS, 'g');
         svg.appendChild(svgLabel);
         svgLabel.setAttributeNS(null, 'transform', 'translate(' + this.options.labelWidth / 2 + ' ' + this.options.labelHeight / 2 + ')');
 
@@ -80,11 +80,11 @@
 
         // Grid lines
 
-        var svgGrid = document.createElementNS(XMLNS, 'g');
+        const svgGrid = document.createElementNS(XMLNS, 'g');
         svgLabel.appendChild(svgGrid);
 
-        var fnDrawLine = function (x1, y1, x2, y2, stroke) {
-            var svgLine = document.createElementNS(XMLNS, 'line');
+        const fnDrawLine = function (x1, y1, x2, y2, stroke) {
+            const svgLine = document.createElementNS(XMLNS, 'line');
             svgGrid.appendChild(svgLine);
             svgLine.setAttributeNS(null, 'x1', x1);
             svgLine.setAttributeNS(null, 'y1', y1);
@@ -95,7 +95,7 @@
             svgLine.setAttributeNS(null, 'stroke-dasharray', that.options.minUnit / 10);
         }
 
-        var y = 0;
+        let y = 0;
         while (y < this.options.labelHeight / 2) {
             if (y > 0) {
                 fnDrawLine(-this.options.labelWidth / 2, -y, this.options.labelWidth / 2, -y);
@@ -103,7 +103,7 @@
             fnDrawLine(-this.options.labelWidth / 2, y, this.options.labelWidth / 2, y, y === 0 ? '#999' : null);
             y = y + this.options.minUnit;
         }
-        var x = 0;
+        let x = 0;
         while (x < this.options.labelWidth / 2) {
             if (x > 0) {
                 fnDrawLine(-x, -this.options.labelHeight / 2, -x, this.options.labelHeight / 2);
@@ -112,19 +112,19 @@
             x = x + this.options.minUnit;
         }
 
-        var fnGetMousePosition = function (e) {
-            var CTM = svg.getScreenCTM();
+        const fnGetMousePosition = function (e) {
+            const CTM = svg.getScreenCTM();
             return {
                 x: (e.clientX - CTM.e) / CTM.a,
                 y: (e.clientY - CTM.f) / CTM.d
             };
         }
 
-        var selectedElement, selectedElementDef, offset, transform;
-        var dragging = false;
+        let selectedElement, selectedElementDef, offset, transform;
+        let dragging = false;
         $(svg)
             .on('mousedown', function (e) {
-                var $draggable = $(e.target).closest('.draggable');
+                const $draggable = $(e.target).closest('.draggable');
                 if ($draggable.length > 0) {
 
                     selectedElement = $draggable[0];
@@ -134,13 +134,13 @@
                     that.editElement(selectedElement, selectedElementDef);
 
                     // Get all the transforms currently on this element
-                    var transforms = selectedElement.transform.baseVal;
+                    const transforms = selectedElement.transform.baseVal;
 
                     // Ensure the first transform is a translate transform
                     if (transforms.length === 0 || transforms.getItem(0).type !== SVGTransform.SVG_TRANSFORM_TRANSLATE) {
 
                         // Create an transform that translates by (0, 0)
-                        var translate = svg.createSVGTransform();
+                        const translate = svg.createSVGTransform();
                         translate.setTranslate(0, 0);
 
                         // Add the translation to the front of the transforms list
@@ -164,9 +164,9 @@
             .on('mousemove', function (e) {
                 if (dragging && selectedElement) {
                     e.preventDefault();
-                    var coord = fnGetMousePosition(e);
-                    var gridX = Math.round((coord.x - offset.x) / that.options.minUnit);
-                    var gridY = Math.round((coord.y - offset.y) / that.options.minUnit);
+                    const coord = fnGetMousePosition(e);
+                    const gridX = Math.round((coord.x - offset.x) / that.options.minUnit);
+                    const gridY = Math.round((coord.y - offset.y) / that.options.minUnit);
 
                     // Update def
                     selectedElementDef.x = Math.min(Math.max(gridX * that.options.minUnit / that.options.labelWidth, -0.5), 0.5);
@@ -183,8 +183,8 @@
             .on('keydown', function (e) {
                 if (selectedElement) {
 
-                    var dx = 0;
-                    var dy = 0;
+                    let dx = 0;
+                    let dy = 0;
                     switch (e.key) {
                         case "Down": // IE/Edge specific value
                         case "ArrowDown":
@@ -210,8 +210,8 @@
                     e.preventDefault();
 
                     // Snap to grid
-                    var gridX = Math.round(selectedElementDef.x * that.options.labelWidth / that.options.minUnit + dx);
-                    var gridY = Math.round(selectedElementDef.y * that.options.labelHeight / that.options.minUnit + dy);
+                    const gridX = Math.round(selectedElementDef.x * that.options.labelWidth / that.options.minUnit + dx);
+                    const gridY = Math.round(selectedElementDef.y * that.options.labelHeight / that.options.minUnit + dy);
 
                     // Update def
                     selectedElementDef.x = Math.min(Math.max(gridX * that.options.minUnit / that.options.labelWidth, -0.5), 0.5);
@@ -225,15 +225,15 @@
         ;
 
         // Append elementDefs
-        for (var i = 0; i < this.elementDefs.length; i++) {
+        for (let i = 0; i < this.elementDefs.length; i++) {
             this.appendElementDef(this.elementDefs[i]);
         }
 
-        var $btnAdd = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.labels.add_element') + '</button>');
+        const $btnAdd = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.labels.add_element') + '</button>');
         $btnAdd
             .on('click', function () {
 
-                var elementDef = {
+                const elementDef = {
                     formula: 'part.name',
                     x: 0,
                     y: 0,
@@ -248,7 +248,7 @@
 
             })
         ;
-        var $btnRemoveAll = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.labels.remove_all_elements') + '</button>');
+        const $btnRemoveAll = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.labels.remove_all_elements') + '</button>');
         $btnRemoveAll
             .on('click', function () {
 
@@ -258,7 +258,7 @@
             })
         ;
 
-        var $btnContainer = $('<div style="display: inline-block" />')
+        const $btnContainer = $('<div style="display: inline-block" />')
 
         this.$element.append(
             $('<div class="ladb-editor-label-layout-buttons" style="margin: 10px;"></div>')
@@ -274,7 +274,7 @@
     };
 
     LadbEditorLabelLayout.prototype.appendElementDef = function (elementDef) {
-        var svgGroup, svgCrossLineV, svgCrossLineH, svgContentGroup;
+        let svgGroup, svgCrossLineV, svgCrossLineH, svgContentGroup;
 
         svgGroup = document.createElementNS(XMLNS, 'g');
         svgGroup.setAttributeNS(null, 'class', 'draggable');
@@ -312,7 +312,7 @@
 
     LadbEditorLabelLayout.prototype.appendFormula = function (svgContentGroup, elementDef) {
 
-        var formula = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
+        const formula = Twig.twig({ref: 'tabs/cutlist/_label-element.twig'}).render($.extend({
             index: this.elementDefs ? this.elementDefs.indexOf(elementDef) : 0,
             elementDef: elementDef,
             entry: this.entry,
@@ -323,17 +323,17 @@
         // Workaround to avoid use of innerHtml on an svg element (not implemented on IE and Safari)
         svgContentGroup.innerHTML = ''; // doesn't work in IE but works on Chrome
         svgContentGroup.textContent = ''; // works on IE
-        var tmpDiv = document.createElement('div');
-        var tmpSvg = '<svg>' + formula + '</svg>';
+        const tmpDiv = document.createElement('div');
+        const tmpSvg = '<svg>' + formula + '</svg>';
         tmpDiv.innerHTML = '' + tmpSvg;
         Array.prototype.slice.call(tmpDiv.childNodes[0].childNodes).forEach(function (el) {
             svgContentGroup.appendChild(el)
         })
 
-        var svgContent = $(svgContentGroup).children('.ladb-label-element')[0];
+        const svgContent = $(svgContentGroup).children('.ladb-label-element')[0];
         if (svgContent) {
-            var bbox = svgContent.getBBox();
-            var svgSelectionRect = document.createElementNS(XMLNS, 'rect');
+            const bbox = svgContent.getBBox();
+            const svgSelectionRect = document.createElementNS(XMLNS, 'rect');
             svgSelectionRect.setAttributeNS(null, 'class', 'selection');
             svgSelectionRect.setAttributeNS(null, 'x', bbox.x - 0.02);
             svgSelectionRect.setAttributeNS(null, 'y', bbox.y - 0.02);
@@ -350,7 +350,7 @@
     }
 
     LadbEditorLabelLayout.prototype.editElement = function (svgElement, elementDef) {
-        var that = this;
+        const that = this;
 
         // Cleanup
         if (this.$editingForm) {
@@ -378,24 +378,24 @@
         this.$editingSvgGroup = $(svgElement)
         this.$editingSvgGroup.addClass('active');
 
-        var svgContentGroup = this.$editingSvgGroup.children('g')[0];
+        const svgContentGroup = this.$editingSvgGroup.children('g')[0];
 
         // Buttons
 
-        var $btnDuplicate = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-copy"></i> ' + i18next.t('tab.cutlist.labels.duplicate_element') + '</button>');
+        const $btnDuplicate = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-copy"></i> ' + i18next.t('tab.cutlist.labels.duplicate_element') + '</button>');
         $btnDuplicate
             .on('click', function () {
 
-                var newElementDef = JSON.parse(JSON.stringify(elementDef));
-                var dx = that.options.minUnit / that.options.labelWidth;
-                var dy = that.options.minUnit / that.options.labelHeight;
+                const newElementDef = JSON.parse(JSON.stringify(elementDef));
+                const dx = that.options.minUnit / that.options.labelWidth;
+                const dy = that.options.minUnit / that.options.labelHeight;
                 if (newElementDef.x < 0) newElementDef.x += dx; else newElementDef.x -= dx;
                 if (newElementDef.y < 0) newElementDef.y += dy; else newElementDef.y -= dy;
 
                 that.elementDefs.push(newElementDef);
 
-                var index = that.elementDefs.indexOf(elementDef);
-                var newIndex = that.elementDefs.indexOf(newElementDef);
+                const index = that.elementDefs.indexOf(elementDef);
+                const newIndex = that.elementDefs.indexOf(newElementDef);
                 that.entry.custom_values[newIndex] = that.entry.custom_values[index];
 
                 that.editElement(that.appendElementDef(newElementDef), newElementDef);
@@ -403,7 +403,7 @@
             })
         ;
 
-        var $btnRemove = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.labels.remove_element') + '</button>');
+        const $btnRemove = $('<button class="btn btn-danger"><i class="ladb-opencutlist-icon-clear"></i> ' + i18next.t('tab.cutlist.labels.remove_element') + '</button>');
         $btnRemove
             .on('click', function () {
                 that.elementDefs.splice(that.elementDefs.indexOf(elementDef), 1);
@@ -412,7 +412,7 @@
             })
         ;
 
-        var $btnRotateLeft = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left" style="font-size: 120%"></i></button>');
+        const $btnRotateLeft = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-left" style="font-size: 120%"></i></button>');
         $btnRotateLeft
             .on('click', function () {
                 if (elementDef.rotation === undefined) {
@@ -424,7 +424,7 @@
             })
         ;
 
-        var $btnRotateRight = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-right" style="font-size: 120%"></i></button>');
+        const $btnRotateRight = $('<button class="btn btn-default"><i class="ladb-opencutlist-icon-rotate-right" style="font-size: 120%"></i></button>');
         $btnRotateRight
             .on('click', function () {
                 if (elementDef.rotation === undefined) {
@@ -451,18 +451,18 @@
         this.$element.append(this.$editingForm);
 
         // UI
-        var $selectFormula = $('#ladb_select_formula', this.$editingForm);
-        var $selectSize = $('#ladb_select_size', this.$editingForm);
-        var $divCustomFormula = $('#ladb_div_custom_formula', this.$editingForm);
-        var $textareaCustomFormula = $('#ladb_textarea_custom_formula', this.$editingForm);
-        var $selectAnchor = $('#ladb_select_anchor', this.$editingForm);
-        var $inputColor = $('#ladb_input_color', this.$editingForm);
+        const $selectFormula = $('#ladb_select_formula', this.$editingForm);
+        const $selectSize = $('#ladb_select_size', this.$editingForm);
+        const $divCustomFormula = $('#ladb_div_custom_formula', this.$editingForm);
+        const $textareaCustomFormula = $('#ladb_textarea_custom_formula', this.$editingForm);
+        const $selectAnchor = $('#ladb_select_anchor', this.$editingForm);
+        const $inputColor = $('#ladb_input_color', this.$editingForm);
 
-        var fnConvertToVariableDefs = function (vars) {
+        const fnConvertToVariableDefs = function (vars) {
 
             // Generate variableDefs for formula editor
-            var variableDefs = [];
-            for (var i = 0; i < vars.length; i++) {
+            const variableDefs = [];
+            for (let i = 0; i < vars.length; i++) {
                 variableDefs.push({
                     text: vars[i].name,
                     displayText: i18next.t('tab.cutlist.export.' + vars[i].name),
@@ -472,14 +472,14 @@
 
             return variableDefs;
         }
-        var fnUpdateCustomFormulaVisibility = function () {
+        const fnUpdateCustomFormulaVisibility = function () {
             if (elementDef.formula.startsWith('custom')) {
                 $divCustomFormula.show();
             } else {
                 $divCustomFormula.hide();
             }
         }
-        var fnComputeCustomFormula = function () {
+        const fnComputeCustomFormula = function () {
             rubyCallCommand('cutlist_labels', { part_ids: [ that.options.partId ], layout: [ elementDef ], compute_first_instance_only: true }, function (response) {
 
                 if (response.errors) {
@@ -489,7 +489,7 @@
                     for (const entry of response.entries) {
                         entry.group = that.options.group;
                     }
-                    var index = that.elementDefs.indexOf(elementDef);
+                    const index = that.elementDefs.indexOf(elementDef);
                     that.entry.custom_values[index] = response.entries[0].custom_values[0];
                     that.appendFormula(svgContentGroup, elementDef);
                     fnUpdateCustomFormulaVisibility();
@@ -618,7 +618,7 @@
     };
 
     LadbEditorLabelLayout.prototype.updateSizeAndElementDefs = function (labelWidth, labelHeight, elementDefs) {
-        var that = this;
+        const that = this;
 
         this.elementDefs = elementDefs;
 
@@ -650,11 +650,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.editorLabelLayout');
-            var options = $.extend({}, LadbEditorLabelLayout.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.editorLabelLayout');
+            const options = $.extend({}, LadbEditorLabelLayout.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.editorLabelLayout', (data = new LadbEditorLabelLayout(this, options, options.dialog)));
@@ -668,7 +668,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbEditorLabelLayout;
+    const old = $.fn.ladbEditorLabelLayout;
 
     $.fn.ladbEditorLabelLayout = Plugin;
     $.fn.ladbEditorLabelLayout.Constructor = LadbEditorLabelLayout;

@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbEditorStdAttributes = function (element, options) {
+    const LadbEditorStdAttributes = function (element, options) {
         this.options = options;
         this.$element = $(element);
 
@@ -31,16 +31,16 @@
     };
 
     LadbEditorStdAttributes.prototype.prependAttributeRow0 = function (stdAttribute) {
-        var that = this;
+        const that = this;
 
-        var $row = $(Twig.twig({ref: 'components/_editor-std-attributes-row-0.twig'}).render({
+        const $row = $(Twig.twig({ref: 'components/_editor-std-attributes-row-0.twig'}).render({
             strippedName: this.options.strippedName
         }));
         $row.data('std-attribute', stdAttribute);
         this.$rows.prepend($row);
 
         // Fetch UI elements
-        var $input = $('input', $row);
+        const $input = $('input', $row);
 
         // Bind
         $input
@@ -66,9 +66,9 @@
     };
 
     LadbEditorStdAttributes.prototype.appendAttributeRowN = function (stdAttribute) {
-        var that = this;
+        const that = this;
 
-        var $row = $(Twig.twig({ref: 'components/_editor-std-attributes-row-n.twig'}).render({
+        const $row = $(Twig.twig({ref: 'components/_editor-std-attributes-row-n.twig'}).render({
             stdsA: this.stdsA,
             stdsB: this.stdsB,
         }));
@@ -76,13 +76,13 @@
         this.$rows.append($row);
 
         // Fetch UI elements
-        var $select = $('select', $row);
-        var $input = $('input', $row);
+        const $select = $('select', $row);
+        const $input = $('input', $row);
 
         // Bind button
         $('.ladb-editor-std-attributes-row-remove', $row).on('click', function () {
            $row.remove();
-           var index = that.stdAttributes.indexOf(stdAttribute);
+           const index = that.stdAttributes.indexOf(stdAttribute);
            if (index > -1) {
                that.stdAttributes.splice(index, 1);
            }
@@ -95,14 +95,14 @@
         ;
         $select
             .on('change', function () {
-                var newDim = $(this).selectpicker('val');
+                const newDim = $(this).selectpicker('val');
                 $('select', that.$element).each(function () {
                     if (this === $select[0]) {
                         return;
                     }
-                    var $tmpSelect = $(this);
+                    const $tmpSelect = $(this);
                     $('option', $(this)).each(function () {
-                        var $option = $(this);
+                        const $option = $(this);
                         if ($option.html() === stdAttribute.dim) {
                             $option.prop('disabled', false);
                         } else if ($option.html() === newDim) {
@@ -140,12 +140,12 @@
         ;
 
         // Disable used options
-        var $options = $('option', $select);
-        for (var i = 0; i < this.stdAttributes.length; i++) {
-            var tmpStdAttribute = this.stdAttributes[i];
+        const $options = $('option', $select);
+        for (let i = 0; i < this.stdAttributes.length; i++) {
+            const tmpStdAttribute = this.stdAttributes[i];
             if (tmpStdAttribute !== stdAttribute) {
                 $options.each(function () {
-                    var $option = $(this);
+                    const $option = $(this);
                     if ($option.html() === tmpStdAttribute.dim) {
                         $option.prop('disabled', true);
                     }
@@ -161,8 +161,8 @@
 
         // Render rows
         this.$rows.empty();
-        for (var i = 0; i < this.stdAttributes.length; i++) {
-            var stdAttribute = this.stdAttributes[i];
+        for (let i = 0; i < this.stdAttributes.length; i++) {
+            const stdAttribute = this.stdAttributes[i];
             if (stdAttribute.dim == null) {
                 this.prependAttributeRow0(stdAttribute);
             } else {
@@ -178,15 +178,15 @@
     };
 
     LadbEditorStdAttributes.prototype.setStds = function (stds) {
-        var that = this;
+        const that = this;
 
         this.stds = stds;
         this.stdsA = [];
         this.stdsB = [];
 
-        var stdsA = {};
-        var stdsB = {};
-        var i;
+        const stdsA = {};
+        const stdsB = {};
+        let i;
         switch (this.type) {
 
             case 1: /* TYPE_SOLID_WOOD */
@@ -232,11 +232,12 @@
 
         this.defaultUnit = this.options.defaultUnitByTypeCallback(this.type);
 
+        let enabledUnitKeys;
         this.enabledUnitsRow0 = [];
-        var enabledUnitKeys = this.options.enabledUnitsByTypeCallback(this.type, '0');
+        enabledUnitKeys = this.options.enabledUnitsByTypeCallback(this.type, '0');
         if (enabledUnitKeys) {
             $.each(this.options.units, function (index, unitGroup) {
-                var g = {};
+                const g = {};
                 $.each(unitGroup, function (key, value) {
                     if (enabledUnitKeys.includes(key)) {
                         g[key] = value;
@@ -248,10 +249,10 @@
             });
         }
         this.enabledUnitsRowN = [];
-        var enabledUnitKeys = this.options.enabledUnitsByTypeCallback(this.type, 'N');
+        enabledUnitKeys = this.options.enabledUnitsByTypeCallback(this.type, 'N');
         if (enabledUnitKeys) {
             $.each(this.options.units, function (index, unitGroup) {
-                var g = {};
+                const g = {};
                 $.each(unitGroup, function (key, value) {
                     if (enabledUnitKeys.includes(key)) {
                         g[key] = value;
@@ -301,9 +302,9 @@
 
         // Cleanup input
         this.stdAttributes = [];
-        var stdAttribute;
-        var has0 = false;
-        for (var i = 0; i < stdAttributes.length; i++) {
+        let stdAttribute;
+        let has0 = false;
+        for (let i = 0; i < stdAttributes.length; i++) {
             stdAttribute = stdAttributes[i];
             if (stdAttribute != null) {
                 if (stdAttribute.dim == null) {
@@ -332,9 +333,9 @@
 
     LadbEditorStdAttributes.prototype.getStdAttributes = function () {
 
-        var stdAttributes = [];
+        const stdAttributes = [];
         this.$rows.children().each(function () {
-            var stdAttribute = $(this).data('std-attribute');
+            const stdAttribute = $(this).data('std-attribute');
             if (stdAttribute !== undefined && (stdAttribute.dim == null || stdAttribute.val != null && stdAttribute.val.length > 0 && stdAttribute.dim.length > 0)) {
                 stdAttributes.push(stdAttribute);
             }
@@ -344,16 +345,16 @@
     };
 
     LadbEditorStdAttributes.prototype.init = function () {
-        var that = this;
+        const that = this;
 
         // Bind button
         $('button', this.$element).on('click', function () {
-            var stdAttribute = {
+            const stdAttribute = {
                 val: '',
                 dim: ''
             }
             that.stdAttributes.push(stdAttribute);
-            var $row = that.appendAttributeRowN(stdAttribute);
+            const $row = that.appendAttributeRowN(stdAttribute);
             $('input', $row).focus();
             this.blur();
         });
@@ -367,11 +368,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.editorStdAttributes');
-            var options = $.extend({}, LadbEditorStdAttributes.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.editorStdAttributes');
+            const options = $.extend({}, LadbEditorStdAttributes.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.editorStdAttributes', (data = new LadbEditorStdAttributes(this, options)));
@@ -385,7 +386,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbEditorStdAttributes;
+    const old = $.fn.ladbEditorStdAttributes;
 
     $.fn.ladbEditorStdAttributes = Plugin;
     $.fn.ladbEditorStdAttributes.Constructor = LadbEditorStdAttributes;

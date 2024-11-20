@@ -4,12 +4,12 @@
     // CONSTANTS
     // ======================
 
-    var BACKERS_PAGE_SIZE = 16;
+    const BACKERS_PAGE_SIZE = 16;
 
     // CLASS DEFINITION
     // ======================
 
-    var LadbTabSponsor = function (element, options, dialog) {
+    const LadbTabSponsor = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.$widgetObjective = $('.ladb-sponsor-objective-widget', this.$element);
@@ -21,20 +21,20 @@
     LadbTabSponsor.DEFAULTS = {};
 
     LadbTabSponsor.prototype.bindObjectiveWidget = function ($widget) {
-        var that = this;
+        const that = this;
 
-        var objectiveName = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveName ? this.dialog.capabilities.manifest.sponsor.objectiveName : '';
-        var objectiveGoal = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveGoal ? this.dialog.capabilities.manifest.sponsor.objectiveGoal : 10000;
-        var objectiveCurrency = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveCurrency ? this.dialog.capabilities.manifest.sponsor.objectiveCurrency : 'USD';
+        const objectiveName = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveName ? this.dialog.capabilities.manifest.sponsor.objectiveName : '';
+        const objectiveGoal = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveGoal ? this.dialog.capabilities.manifest.sponsor.objectiveGoal : 10000;
+        const objectiveCurrency = this.dialog.capabilities.manifest.sponsor && this.dialog.capabilities.manifest.sponsor.objectiveCurrency ? this.dialog.capabilities.manifest.sponsor.objectiveCurrency : 'USD';
 
         // Fetch UI elements
-        var $loading = $('.ladb-loading', $widget);
-        var $btnInfo = $('.ladb-sponsor-objective-info-btn', $widget);
-        var $labelObjective = $('.ladb-sponsor-objective-label', $widget);
-        var $labelObjectiveGoal = $('.ladb-sponsor-objective-goal-label', $widget);
-        var $labelObjectiveProgress = $('.ladb-sponsor-objective-progress-label', $widget);
-        var $progressObjective = $('.progress', $widget);
-        var $progressBarObjective = $('.progress-bar', $widget);
+        const $loading = $('.ladb-loading', $widget);
+        const $btnInfo = $('.ladb-sponsor-objective-info-btn', $widget);
+        const $labelObjective = $('.ladb-sponsor-objective-label', $widget);
+        const $labelObjectiveGoal = $('.ladb-sponsor-objective-goal-label', $widget);
+        const $labelObjectiveProgress = $('.ladb-sponsor-objective-progress-label', $widget);
+        const $progressObjective = $('.progress', $widget);
+        const $progressBarObjective = $('.progress-bar', $widget);
 
         // Append objective name
         $labelObjective.append(' ' + objectiveName);
@@ -68,9 +68,9 @@
             success: function (response) {
                 if (response.data) {
 
-                    var balance = response.data.collective.stats.balance.value;
-                    var objectiveProgress100 = Math.round(balance / objectiveGoal * 100);
-                    var objectiveReached = objectiveProgress100 >= 100;
+                    const balance = response.data.collective.stats.balance.value;
+                    const objectiveProgress100 = Math.round(balance / objectiveGoal * 100);
+                    const objectiveReached = objectiveProgress100 >= 100;
 
                     $progressObjective.show();
                     $progressBarObjective
@@ -99,10 +99,10 @@
     };
 
     LadbTabSponsor.prototype.loadBackers = function (page) {
-        var that = this;
+        const that = this;
 
         // Fetch UI elements
-        var $loading = $('.ladb-loading', this.$widgetBackers);
+        const $loading = $('.ladb-loading', this.$widgetBackers);
 
         // Show loading
         $loading.show();
@@ -146,10 +146,10 @@
             success: function (response) {
                 if (response.data) {
 
-                    var nextPage = ((page + 1) * BACKERS_PAGE_SIZE < response.data.collective.members.totalCount) ? page + 1 : null;
+                    const nextPage = ((page + 1) * BACKERS_PAGE_SIZE < response.data.collective.members.totalCount) ? page + 1 : null;
 
                     // Render members list
-                    var $list = $(Twig.twig({ref: 'tabs/sponsor/_members-' + (page === 0 ? '0' : 'n') + '.twig'}).render({
+                    const $list = $(Twig.twig({ref: 'tabs/sponsor/_members-' + (page === 0 ? '0' : 'n') + '.twig'}).render({
                         members: response.data.collective.members,
                         nextPage: nextPage,
                     }));
@@ -167,12 +167,12 @@
 
                     // Bind box
                     $('.ladb-sponsor-member-box', $list).on('click', function(e) {
-                        var $closestAnchor = $(e.target.closest('a'));
+                        const $closestAnchor = $(e.target.closest('a'));
                         if ($closestAnchor.length > 0) {
                             rubyCallCommand('core_open_url', { url: $closestAnchor.attr('href') });
                             return false;
                         }
-                        var slug = $(this).data('member-slug');
+                        const slug = $(this).data('member-slug');
                         rubyCallCommand('core_open_url', { url: 'https://opencollective.com/' + slug });
                     });
 
@@ -194,7 +194,7 @@
 
     LadbTabSponsor.prototype.showObjectiveModal = function (objectiveStrippedName, objectiveIcon, objectiveImage, objectiveVideoId) {
 
-        var $modal = this.dialog.appendModal('ladb_sponsor_modal_objective', 'tabs/sponsor/_modal-objective.twig', {
+        const $modal = this.dialog.appendModal('ladb_sponsor_modal_objective', 'tabs/sponsor/_modal-objective.twig', {
             objectiveStrippedName: objectiveStrippedName ? objectiveStrippedName : 'default',
             objectiveIcon: objectiveIcon ? objectiveIcon : 'default',
             objectiveImage: objectiveImage,
@@ -202,8 +202,8 @@
         });
 
         // Fetch UI elements
-        var $widgetObjective = $('.ladb-sponsor-objective-widget', $modal);
-        var $btnSponsor = $('#ladb_sponsor_btn', $modal);
+        const $widgetObjective = $('.ladb-sponsor-objective-widget', $modal);
+        const $btnSponsor = $('#ladb_sponsor_btn', $modal);
 
         // Bind objective widget
         this.bindObjectiveWidget($widgetObjective);
@@ -226,7 +226,7 @@
     LadbTabSponsor.prototype.registerCommands = function () {
         LadbAbstractTab.prototype.registerCommands.call(this);
 
-        var that = this;
+        const that = this;
 
         this.registerCommand('show_objective_modal', function (parameters) {
             that.showObjectiveModal(parameters.objectiveStrippedName, parameters.objectiveIcon, parameters.objectiveImage, parameters.objectiveVideoId);
@@ -248,9 +248,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbTabSponsor.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbTabSponsor.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -266,7 +266,7 @@
         })
     }
 
-    var old = $.fn.ladbTabSponsor;
+    const old = $.fn.ladbTabSponsor;
 
     $.fn.ladbTabSponsor = Plugin;
     $.fn.ladbTabSponsor.Constructor = LadbTabSponsor;

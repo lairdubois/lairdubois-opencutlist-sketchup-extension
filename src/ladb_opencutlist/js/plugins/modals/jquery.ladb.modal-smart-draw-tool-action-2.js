@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbModalSmartDrawToolAction2 = function (element, options, dialog) {
+    const LadbModalSmartDrawToolAction2 = function (element, options, dialog) {
         LadbAbstractModal.call(this, element, options, dialog);
 
     };
@@ -17,27 +17,27 @@
     LadbModalSmartDrawToolAction2.prototype.init = function () {
         LadbAbstractModal.prototype.init.call(this);
 
-        var that = this;
+        const that = this;
 
-        var dictonary = 'tool_smart_draw_options';
-        var section = 'action_2';
+        const dictonary = 'tool_smart_draw_options';
+        const section = 'action_2';
 
         // Retrieve options
         rubyCallCommand('core_get_global_preset', { dictionary: dictonary, section: section }, function (response) {
 
-            var options = response.preset;
+            const options = response.preset;
 
             // Fetch UI elements
-            var $widgetPreset = $('.ladb-widget-preset', that.$element);
-            var $selectPushPull = $('#ladb_select_pushpull', that.$element);
-            var $selectMove = $('#ladb_select_move', that.$element);
-            var $inputShapeOffset = $('#ladb_input_shape_offset', that.$element);
-            var $selectConstrution = $('#ladb_select_construction', that.$element);
-            var $selectSolidCentered = $('#ladb_select_solid_centered', that.$element);
-            var $selectMoveArray = $('#ladb_select_move_array', that.$element);
-            var $btnValidate = $('#ladb_btn_validate', that.$element);
+            const $widgetPreset = $('.ladb-widget-preset', that.$element);
+            const $selectPushPull = $('#ladb_select_pushpull', that.$element);
+            const $selectMove = $('#ladb_select_move', that.$element);
+            const $inputShapeOffset = $('#ladb_input_shape_offset', that.$element);
+            const $selectConstrution = $('#ladb_select_construction', that.$element);
+            const $selectSolidCentered = $('#ladb_select_solid_centered', that.$element);
+            const $selectMoveArray = $('#ladb_select_move_array', that.$element);
+            const $btnValidate = $('#ladb_btn_validate', that.$element);
 
-            var fnFetchOptions = function (options) {
+            const fnFetchOptions = function (options) {
                 options.pushpull = $selectPushPull.val() === '1';
                 options.move = $selectMove.val() === '1';
                 options.shape_offset = $inputShapeOffset.val();
@@ -45,7 +45,7 @@
                 options.solid_centered = $selectSolidCentered.val() === '1';
                 options.move_array = $selectMoveArray.val() === '1';
             };
-            var fnFillInputs = function (options) {
+            const fnFillInputs = function (options) {
                 $selectPushPull.selectpicker('val', options.pushpull ? '1' : '0');
                 $selectMove.selectpicker('val', options.move ? '1' : '0');
                 $inputShapeOffset.val(options.shape_offset);
@@ -106,9 +106,9 @@
 
     function Plugin(option, params) {
         return this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.tab.plugin');
-            var options = $.extend({}, LadbModalSmartDrawToolAction2.DEFAULTS, $this.data(), typeof option === 'object' && option);
+            const $this = $(this);
+            let data = $this.data('ladb.tab.plugin');
+            const options = $.extend({}, LadbModalSmartDrawToolAction2.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 if (undefined === options.dialog) {
@@ -124,7 +124,7 @@
         })
     }
 
-    var old = $.fn.ladbModalSmartDrawToolAction2;
+    const old = $.fn.ladbModalSmartDrawToolAction2;
 
     $.fn.ladbModalSmartDrawToolAction2 = Plugin;
     $.fn.ladbModalSmartDrawToolAction2.Constructor = LadbModalSmartDrawToolAction2;

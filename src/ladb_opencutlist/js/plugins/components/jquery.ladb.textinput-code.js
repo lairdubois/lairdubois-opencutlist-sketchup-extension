@@ -4,7 +4,7 @@
     // CLASS DEFINITION
     // ======================
 
-    var LadbTextinputCode = function(element, options) {
+    const LadbTextinputCode = function(element, options) {
         LadbTextinputAbstract.call(this, element, options);
     };
     LadbTextinputCode.prototype = new LadbTextinputAbstract;
@@ -37,16 +37,16 @@
     };
 
     LadbTextinputCode.prototype.appendRightTools = function ($toolsContainer) {
-        var that = this;
+        const that = this;
 
         if (this.options.snippetDefs && this.options.snippetDefs.length > 0) {
 
-            var $snippetDropdownBtn = $('<div data-toggle="dropdown">')
+            const $snippetDropdownBtn = $('<div data-toggle="dropdown">')
                 .append('<i class="ladb-opencutlist-icon-snippets">')
             ;
-            var $snippetDropdown = $('<ul class="dropdown-menu dropdown-menu-right">');
+            const $snippetDropdown = $('<ul class="dropdown-menu dropdown-menu-right">');
 
-            for (var i = 0; i < this.options.snippetDefs.length; i++) {
+            for (let i = 0; i < this.options.snippetDefs.length; i++) {
                 let snippetDef = that.options.snippetDefs[i];
                 if (snippetDef.name === '-') {
                     $snippetDropdown
@@ -68,7 +68,7 @@
                 }
             }
 
-            var $snippetBtn = $('<div class="ladb-textinput-tool ladb-textinput-tool-btn dropdown" tabindex="-1" data-toggle="tooltip" title="' + i18next.t('core.component.textinput_code.snippets') + '">')
+            const $snippetBtn = $('<div class="ladb-textinput-tool ladb-textinput-tool-btn dropdown" tabindex="-1" data-toggle="tooltip" title="' + i18next.t('core.component.textinput_code.snippets') + '">')
                 .append($snippetDropdownBtn)
                 .append($snippetDropdown)
             ;
@@ -82,11 +82,11 @@
     LadbTextinputCode.prototype.init = function() {
         LadbTextinputAbstract.prototype.init.call(this);
 
-        var that = this;
+        const that = this;
 
         /////
 
-        var fnRefreshVariableMarks = function (cm, from, to) {
+        const fnRefreshVariableMarks = function (cm, from, to) {
             if (from === undefined) {
                 from = { line: 0, ch: 0 }
             }
@@ -138,7 +138,7 @@
 
         /////
 
-        var hints = [];
+        const hints = [];
         for (let variableDef of this.options.variableDefs) {
             hints.push({
                 text: variableDef.text,
@@ -149,14 +149,14 @@
         }
 
         CodeMirror.registerHelper('hint', 'opencutlist', function(cm) {
-            var cur = cm.getCursor();
-            var curLine = cm.getLine(cur.line);
-            var start = cur.ch;
-            var end = start;
+            const cur = cm.getCursor();
+            const curLine = cm.getLine(cur.line);
+            let start = cur.ch;
+            let end = start;
             while (end < curLine.length && /[A-Za-zÀ-ÖØ-öø-ÿ]/.test(curLine.charAt(end))) ++end;
             while (start && /[A-Za-zÀ-ÖØ-öø-ÿ]/.test(curLine.charAt(start - 1))) --start;
-            var curWord = start !== end && curLine.slice(start, end).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-            var regExp = new RegExp(curWord, 'i');
+            const curWord = start !== end && curLine.slice(start, end).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            const regExp = new RegExp(curWord, 'i');
             return {
                 list: (!curWord ? hints : hints.filter(function(hint) {
                     return hint.normalizedText.match(regExp);
@@ -221,11 +221,11 @@
     // =======================
 
     function Plugin(option, params) {
-        var value;
-        var elements = this.each(function () {
-            var $this = $(this);
-            var data = $this.data('ladb.textinputCode');
-            var options = $.extend({}, LadbTextinputCode.DEFAULTS, $this.data(), typeof option === 'object' && option);
+        let value;
+        const elements = this.each(function () {
+            const $this = $(this);
+            let data = $this.data('ladb.textinputCode');
+            const options = $.extend({}, LadbTextinputCode.DEFAULTS, $this.data(), typeof option === 'object' && option);
 
             if (!data) {
                 $this.data('ladb.textinputCode', (data = new LadbTextinputCode(this, options)));
@@ -239,7 +239,7 @@
         return typeof value !== 'undefined' ? value : elements;
     }
 
-    var old = $.fn.ladbTextinputCode;
+    const old = $.fn.ladbTextinputCode;
 
     $.fn.ladbTextinputCode             = Plugin;
     $.fn.ladbTextinputCode.Constructor = LadbTextinputCode;

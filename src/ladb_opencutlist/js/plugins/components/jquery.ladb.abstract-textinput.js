@@ -3,7 +3,7 @@
 // CLASS DEFINITION
 // ======================
 
-var LadbTextinputAbstract = function (element, options, inputRegex) {
+const LadbTextinputAbstract = function (element, options, inputRegex) {
     this.options = options;
     this.$element = $(element);
 
@@ -55,7 +55,7 @@ LadbTextinputAbstract.prototype.isMultiple = function () {
 /////
 
 LadbTextinputAbstract.prototype.createLeftToolsContainer = function () {
-    var $toolsContainer = $('<div class="ladb-textinput-tools ladb-textinput-tools-left" />');
+    const $toolsContainer = $('<div class="ladb-textinput-tools ladb-textinput-tools-left" />');
     this.appendLeftTools($toolsContainer);
     this.$inputWrapper
         .before($toolsContainer)
@@ -66,7 +66,7 @@ LadbTextinputAbstract.prototype.appendLeftTools = function ($toolsContainer) {
 };
 
 LadbTextinputAbstract.prototype.createRightToolsContainer = function () {
-    var $toolsContainer = $('<div class="ladb-textinput-tools ladb-textinput-tools-right" />');
+    const $toolsContainer = $('<div class="ladb-textinput-tools ladb-textinput-tools-right" />');
     this.appendRightTools($toolsContainer);
     this.$inputWrapper
         .after($toolsContainer)
@@ -74,9 +74,9 @@ LadbTextinputAbstract.prototype.createRightToolsContainer = function () {
 };
 
 LadbTextinputAbstract.prototype.appendRightTools = function ($toolsContainer) {
-    var that = this;
+    const that = this;
 
-    var $resetBtn =
+    const $resetBtn =
         $('<div class="ladb-textinput-tool ladb-textinput-tool-btn ladb-btn-reset" tabindex="-1" data-toggle="tooltip" title="' + i18next.t('core.component.textinput.reset') + '"><i class="ladb-opencutlist-icon-clear"></i></div>')
             .on('click', function() {
                 that.reset();
@@ -90,7 +90,7 @@ LadbTextinputAbstract.prototype.appendRightTools = function ($toolsContainer) {
 };
 
 LadbTextinputAbstract.prototype.init = function () {
-    var that = this;
+    const that = this;
 
     this.$element
         .wrap('<div class="ladb-textinput-input" />')
@@ -105,7 +105,7 @@ LadbTextinputAbstract.prototype.init = function () {
     this.createLeftToolsContainer();
     this.createRightToolsContainer();
 
-    var value = this.$element.val();
+    const value = this.$element.val();
     if (value) {
         this.val(value);
     }
