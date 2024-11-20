@@ -1065,6 +1065,7 @@ tab:
         bin_2d_veneer: Feuille
         bin_2d_veneer_type_0: Feuille standard
         bin_2d_veneer_type_1: Reste de feuille
+        unused: Inutilisée
         parts: "{{ count }} pièce"
         parts_plural: "{{ count }} pièces"
       error:

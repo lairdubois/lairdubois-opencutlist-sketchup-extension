@@ -441,7 +441,7 @@ module Ladb::OpenCutList
         used_count, total_item_count = counters
         unused_count = bin_type_def.count < 0 ? 0 : bin_type_def.count - used_count
 
-        if unused_count > 0
+        if unused_count > 0 || used_count == 0
           packing_def.summary_def.bin_type_defs << PackingSummaryBinTypeDef.new(bin_type_def, unused_count, false)
         end
 

@@ -4997,7 +4997,7 @@
                 const $btnGenerate = $('#ladb_btn_generate', $modal);
 
                 const fnFetchOptions = function (options) {
-                    options.std_bin_sizes = $inputStdBinSizes.val();
+                    options.std_bin_sizes = Array.isArray($inputStdBinSizes.val()) ? $inputStdBinSizes.val().join(';') : $inputStdBinSizes.val();
                     if (group.material_is_1d) {
                         options.scrap_bin_1d_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
                         options.scrap_bin_2d_sizes = '';
@@ -5106,7 +5106,7 @@
                 });
                 if (packingOptions.std_bin_sizes) {
                     const defaultValue = $inputStdBinSizes.val();
-                    $inputStdBinSizes.val(packingOptions.std_bin_sizes.split(';'));
+                    $inputStdBinSizes.val(Array.isArray(packingOptions.std_bin_sizes) ? packingOptions.std_bin_sizes : packingOptions.std_bin_sizes.split(';'));
                     if ($inputStdBinSizes.val() == null) {
                         if (response.std_lengths.length > 0 || response.std_sizes.length > 0) {
                             $inputStdBinSizes.val(defaultValue);
@@ -5358,10 +5358,17 @@
                             part_ids: isPartSelection ? that.selectionPartIds : null
                         }, packingOptions), function (response) {
 
-                            if (response.running || response.cancelled) {
+                            if (response.running) {
+                                let waiting_for_response = false;
                                 const interval = setInterval(function () {
 
+                                    if (waiting_for_response) {
+                                        return;
+                                    }
+
                                     rubyCallCommand('cutlist_group_packing_advance', null, function (response) {
+
+                                        waiting_for_response = false;
 
                                         if (response.running) {
 
@@ -5398,8 +5405,14 @@
                                         }
 
                                     });
+                                    waiting_for_response = true;
 
                                 }, 250);
+                            } else if (response.cancelled) {
+
+                                // Finish progress feedback
+                                that.dialog.finishProgress();
+
                             } else {
                                 fnCreateSlide(response);
                             }

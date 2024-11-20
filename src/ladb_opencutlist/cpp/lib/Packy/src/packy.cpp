@@ -18,7 +18,7 @@ static std::shared_future<json> optimize_future_;
 static std::string optimize_str_output_;
 static bool optimize_cancelled_ = false;
 static SolverPtr solver_ptr_;
-static int last_send_solution_pos_ = 0;
+static size_t last_send_solution_pos_ = 0;
 
 DLL_EXPORTS char* c_optimize_start(
         char* s_input
@@ -77,9 +77,12 @@ DLL_EXPORTS char* c_optimize_advance() {
         }
     } else {
         json j_output = json{{"running", true}};
-        if (solver_ptr_ != nullptr && (*solver_ptr_).solutions().size() > last_send_solution_pos_) {
-            j_output["solution"] = (*solver_ptr_).solutions().back();
-            last_send_solution_pos_ = (int) (*solver_ptr_).solutions().size();
+        if (solver_ptr_ != nullptr) {
+            size_t solutions_size = (*solver_ptr_).solutions_size();
+            if (solutions_size > last_send_solution_pos_) {
+                j_output["solution"] = (*solver_ptr_).solutions_back();
+                last_send_solution_pos_ = solutions_size;
+            }
         }
         optimize_str_output_ = j_output.dump();
     }

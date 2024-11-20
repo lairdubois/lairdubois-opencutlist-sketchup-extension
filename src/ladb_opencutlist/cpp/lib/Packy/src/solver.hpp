@@ -18,6 +18,8 @@
 #include "packingsolver/irregular/instance.hpp"
 #include "packingsolver/irregular/optimize.hpp"
 
+#include <mutex>
+
 using namespace packingsolver;
 using namespace nlohmann;
 
@@ -36,7 +38,8 @@ namespace Packy {
 
         virtual optimizationtools::Parameters& parameters() = 0;
 
-        virtual std::vector<json> solutions() = 0;
+        virtual size_t solutions_size()  = 0;
+        virtual json solutions_back() = 0;
 
         /*
          * Read:
@@ -133,8 +136,14 @@ namespace Packy {
             return parameters_;
         };
 
-        std::vector<json> solutions() override {
-            return solutions_;
+        size_t solutions_size() override {
+            std::lock_guard<std::mutex> lock(solutions_mutex_);
+            return solutions_.size();
+        };
+
+        json solutions_back() override {
+            std::lock_guard<std::mutex> lock(solutions_mutex_);
+            return std::move(solutions_.back());
         };
 
         /*
@@ -191,6 +200,7 @@ namespace Packy {
             parameters_.new_solution_callback = [&](
                     const packingsolver::Output<Instance, Solution>& output
             ) {
+                std::lock_guard<std::mutex> lock(solutions_mutex_);
                 json j;
                 write_best_solution(j, dynamic_cast<const Output&>(output));
                 solutions_.push_back(j);
@@ -224,11 +234,14 @@ namespace Packy {
         /** Solutions. */
         std::vector<json> solutions_;
 
+        /** TODO : find a better solution ? */
+        std::mutex solutions_mutex_;
+
         /*
          * Output
          */
         virtual void write_best_solution(
-                json &j,
+                json& j,
                 const Output& output
         ) {
 

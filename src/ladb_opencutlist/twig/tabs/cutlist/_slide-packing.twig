@@ -97,7 +97,7 @@
                             {% endif %}
                         </td>
                         <td class="text-center">
-                            {{ bin_type.count }}
+                            {{ bin_type.count == 0 ? '∞' : bin_type.count }}
                         </td>
                         <td class="ladb-cutlist-value ladb-cutlist-value-right">
                             {{ bin_type.length }}
