@@ -1065,6 +1065,7 @@ tab:
         bin_2d_veneer: Veneer Sheet
         bin_2d_veneer_type_0: Standard Veneer Sheet
         bin_2d_veneer_type_1: Offcut Veneer Sheet
+        unused: Unused
         parts: "{{ count }} part"
         parts_plural: "{{ count }} parts"
       error:
