@@ -403,8 +403,8 @@ module Ladb::OpenCutList
                 _from_packy(raw_cut.fetch('x', 0)).to_l,
                 _from_packy(raw_cut.fetch('y', 0)).to_l,
                 (raw_cut['length'] ? _from_packy(raw_cut['length']) : bin_type_def.width).to_l,
-                raw_cut.fetch('orientation', 'vertical'),
-                )
+                raw_cut.fetch('orientation', 'vertical')
+              )
             }.sort_by { |cut_def| cut_def.depth } : [],
             raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
               @item_type_defs[raw_item['item_type_id']]
@@ -457,7 +457,7 @@ module Ladb::OpenCutList
       packing_def.summary_def.bin_type_defs.sort_by!{ |bin_type_def| [ bin_type_def.used ? 1 : 0, -bin_type_def.bin_type_def.type, bin_type_def.bin_type_def.length ]}
 
       {
-        :running => output['running'],
+        :running => output.fetch('running', false),
         :solution => packing_def.create_packing.to_hash
       }
     end

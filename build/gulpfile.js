@@ -205,7 +205,7 @@ gulp.task('version', function () {
 
     // Update version property in constants.rb
     return gulp.src('../src/ladb_opencutlist/js/constants.js')
-        .pipe(replace(/var EXTENSION_BUILD = '[0-9]{12}?';/g, "var EXTENSION_BUILD = '" + build + "';"))
+        .pipe(replace(/const EXTENSION_BUILD = '[0-9]{12}?';/g, "const EXTENSION_BUILD = '" + build + "';"))
         .pipe(gulp.dest('../src/ladb_opencutlist/js'))
         .pipe(touch());
 });
