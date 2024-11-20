@@ -87,8 +87,8 @@ core:
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Instanz bearbeiten
       edit_parent_part_instance: Ändern der Gruppe/Komponente, die die Instanz enthält
-      hide_part_instance: Masquer l'instance
-      unhide_part_instance: Révéler l'instance
+      hide_part_instance: Instanz ausblenden
+      unhide_part_instance: Instanz einblenden
       edit_part_instance_properties: Instanzeigenschaften bearbeiten
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -150,9 +150,9 @@ core:
       Eine neue Version von *OpenCutList* ist verfügbar.
       Aktualisieren Sie, um die neuesten Funktionen zu erhalten!
     up_to_date: |
-      Sie verfügen über die neueste Version von *OpenCutList*.
+      Sie haben die neueste Version von *OpenCutList*.
 
-      *Beteiligen Sie sich finanziell am Projekt, damit wir noch mehr Verbesserungen für Sie einbauen können!*
+      *Unterstützen Sie das Projekt finanziell, damit wir noch mehr Verbesserungen für Sie einbauen können!*
     downloading: Ladevorgang läuft
     changelog: "Was gibt's Neues?"
     ignore_update: Diese Aktualisierung überspringen
@@ -362,7 +362,7 @@ tab:
       select_parts_in_cutlist: Teil aus der Holzliste auswählen
       select_parts_in_cutlist_plural: "{{ count }} Teile aus der Holzliste auswählen"
       setup_group_cuttingdiagram: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' konfigurieren"
-      setup_group_packing: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      setup_group_packing: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' konfigurieren"
       open_part_url: URL des Teils öffnen
     menu:
       show_all_groups: Alle Gruppen einblenden
@@ -1065,6 +1065,7 @@ tab:
         bin_2d_veneer: Furnierblatt
         bin_2d_veneer_type_0: Standar-Furnierblatt
         bin_2d_veneer_type_1: Furnierrest
+        unused: Nicht verwendet
         parts: "{{ count }} Teil"
         parts_plural: "{{ count }} Teile"
       error:
