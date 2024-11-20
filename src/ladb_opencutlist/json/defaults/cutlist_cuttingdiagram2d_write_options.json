@@ -2,7 +2,7 @@
   "0": {
     "file_format": "svg",
     "dxf_structure": 1, /* DXF_STRUCTURE_LAYER */
-    "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
+    "unit": { "metric": 2 /* Length::Millimeter */, "imperial": 0 /* Length::Inches */ },
     "smoothing": false,
     "merge_holes": false,
     "include_paths": false,

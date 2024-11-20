@@ -279,9 +279,6 @@
             $selectLanguage.selectpicker('val', that.dialog.capabilities.language);
             $selectPrintMargin.selectpicker('val', that.dialog.capabilities.tabs_dialog_print_margin);
             $selectTableRowSize.selectpicker('val', that.dialog.capabilities.tabs_dialog_table_row_size);
-
-            console.log(that.dialog.capabilities);
-
         }
 
         $selectLanguage.selectpicker($.extend(SELECT_PICKER_OPTIONS, { size: that.dialog.capabilities.available_languages.length + 1 }));

@@ -2,6 +2,14 @@
   "_preprocessors": {
     "shape_offset": 5 /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
   },
+  "_sharers": {
+    "pushpull": 1,
+    "move": 1,
+    "shape_offset": 1,
+    "construction": 1,
+    "solid_centered": 1,
+    "move_array": 1
+  },
   "action_0": { /* ACTION_DRAW_RECTANGLE */
     "pushpull": true,
     "move": false,

@@ -1,6 +1,6 @@
 {
   "0": {
-    "col_sep": 1,             /* LOAD_OPTION_COL_SEP_COMMA */
+    "col_sep": 1, /* LOAD_OPTION_COL_SEP_COMMA */
     "first_line_headers": true,
     "column_mapping": {}
   }

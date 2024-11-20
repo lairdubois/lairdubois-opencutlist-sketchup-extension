@@ -358,8 +358,8 @@ module Ladb::OpenCutList
       # Try to synchronize values with app defaults
       begin
         app_defaults = get_app_defaults(dictionary, section)
-        preprocessors = get_app_defaults(dictionary, '_preprocessors', false)
         storages = get_app_defaults(dictionary, '_storages', false)
+        preprocessors = get_app_defaults(dictionary, '_preprocessors', false)
         processed_values = {}
         values.keys.each do |key|
 
@@ -371,18 +371,18 @@ module Ladb::OpenCutList
               (!is_global && storage == PRESETS_STORAGE_MODEL_ONLY))
 
             case preprocessors[key]
-              when PRESETS_PREPROCESSOR_D
-                processed_values[key] = DimensionUtils.d_add_units(values[key])
-              when PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED
-                negative = values[key].is_a?(String) && values[key].start_with?('-')
-                processed_value = DimensionUtils.d_add_units(negative ? values[key][1..-1] : values[key])
-                processed_values[key] = "#{'-' if negative && processed_value != '0'}#{processed_value}"
-              when PRESETS_PREPROCESSOR_DXQ
-                processed_values[key] = DimensionUtils.dxq_add_units(values[key])
-              when PRESETS_PREPROCESSOR_DXD
-                processed_values[key] = DimensionUtils.dxd_add_units(values[key])
-              when PRESETS_PREPROCESSOR_DXDXQ
-                processed_values[key] = DimensionUtils.dxdxq_add_units(values[key])
+            when PRESETS_PREPROCESSOR_D
+              processed_values[key] = DimensionUtils.d_add_units(values[key])
+            when PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED
+              negative = values[key].is_a?(String) && values[key].start_with?('-')
+              processed_value = DimensionUtils.d_add_units(negative ? values[key][1..-1] : values[key])
+              processed_values[key] = "#{'-' if negative && processed_value != '0'}#{processed_value}"
+            when PRESETS_PREPROCESSOR_DXQ
+              processed_values[key] = DimensionUtils.dxq_add_units(values[key])
+            when PRESETS_PREPROCESSOR_DXD
+              processed_values[key] = DimensionUtils.dxd_add_units(values[key])
+            when PRESETS_PREPROCESSOR_DXDXQ
+              processed_values[key] = DimensionUtils.dxdxq_add_units(values[key])
             else
               processed_values[key] = values[key]
             end
@@ -485,16 +485,12 @@ module Ladb::OpenCutList
       section = '0' if section.nil?
       section = section.to_s unless section.is_a?(String)
 
-      # Read global presets cache if not previouly cached
+      # Read global presets cache if not previously cached
       read_global_presets if @global_presets_cache.nil?
 
-      # Create preset tree if it desn't exists
-      unless @global_presets_cache.has_key?(dictionary)
-        @global_presets_cache[dictionary] = {}
-      end
-      unless @global_presets_cache[dictionary].has_key?(section)
-        @global_presets_cache[dictionary][section] = {}
-      end
+      # Create preset tree if it doesn't exist
+      @global_presets_cache[dictionary] = {} unless @global_presets_cache.has_key?(dictionary)
+      @global_presets_cache[dictionary][section] = {} unless @global_presets_cache[dictionary].has_key?(section)
 
       if values.nil?
 
@@ -529,7 +525,7 @@ module Ladb::OpenCutList
       section = '0' if section.nil?
       section = section.to_s unless section.is_a?(String)
 
-      # Read global presets cache if not previouly cached
+      # Read global presets cache if not previously cached
       read_global_presets if @global_presets_cache.nil?
 
       if name == PRESETS_DEFAULT_NAME
@@ -619,16 +615,12 @@ module Ladb::OpenCutList
       section = section.to_s unless section.is_a?(String)
       app_defaults_section = '0' if app_defaults_section.nil?
 
-      # Read model presets cache if not previouly cached
+      # Read model presets cache if not previously cached
       read_model_presets if @model_presets_cache.nil?
 
-      # Create preset tree if it desn't exists
-      unless @model_presets_cache.has_key?(dictionary)
-        @model_presets_cache[dictionary] = {}
-      end
-      unless @model_presets_cache[dictionary].has_key?(section)
-        @model_presets_cache[dictionary][section] = {}
-      end
+      # Create preset tree if it doesn't exist
+      @model_presets_cache[dictionary] = {} unless @model_presets_cache.has_key?(dictionary)
+      @model_presets_cache[dictionary][section] = {} unless @model_presets_cache[dictionary].has_key?(section)
 
       if values.nil?
 
@@ -661,7 +653,7 @@ module Ladb::OpenCutList
       section = section.to_s unless section.is_a?(String)
       app_defaults_section = '0' if app_defaults_section.nil?
 
-      # Read model presets cache if not previouly cached
+      # Read model presets cache if not previously cached
       read_model_presets if @model_presets_cache.nil?
 
       default_values = get_global_preset(dictionary, nil, app_defaults_section)

@@ -309,14 +309,14 @@ module Ladb::OpenCutList
       @picked_pushpull_ip = Sketchup::InputPoint.new
       @picked_move_ip = Sketchup::InputPoint.new
 
-      @locked_normal = nil
       @locked_direction = nil
+      @locked_normal = nil
       @locked_axis = nil
 
       @direction = nil
       @normal = _get_active_z_axis
 
-      @move_anchor = 2
+      @move_anchor_index = 2
       @move_copy = true
 
       @definition = nil
@@ -503,7 +503,7 @@ module Ladb::OpenCutList
           _refresh
           return true
         elsif key == ALT_MODIFIER_KEY
-          @move_anchor = (@move_anchor + 1) % 3
+          @move_anchor_index = (@move_anchor_index + 1) % 3
           view.lock_inference if view.inference_locked?
           _refresh
           return true
@@ -630,7 +630,7 @@ module Ladb::OpenCutList
 
         anchors = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ]
 
-        ps = anchors[@move_anchor]
+        ps = anchors[@move_anchor_index]
         pe = @snap_ip.position
         v = ps.vector_to(pe)
 
@@ -652,7 +652,7 @@ module Ladb::OpenCutList
     def _get_previous_input_point
       return @picked_shape_first_ip if _picked_shape_first_point? && !_picked_shape_last_point?
       return @picked_shape_last_ip if _picked_shape_last_point? && !_picked_pushpull_point?
-      return [ @picked_shape_first_ip, @picked_shape_last_ip, @picked_pushpull_ip ][@move_anchor] if _picked_pushpull_point? && !_picked_move_point?
+      return [ @picked_shape_first_ip, @picked_shape_last_ip, @picked_pushpull_ip ][@move_anchor_index] if _picked_pushpull_point? && !_picked_move_point?
       nil
     end
 
@@ -753,6 +753,7 @@ module Ladb::OpenCutList
 
           face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
 
+          @locked_direction = nil
           @normal = face_manipulator.normal
 
           # k_mesh = Kuix::Mesh.new
@@ -762,6 +763,7 @@ module Ladb::OpenCutList
 
         elsif @locked_normal.nil?
 
+          @locked_direction = nil
           @direction = nil
           @normal = _get_active_z_axis
 
@@ -905,7 +907,7 @@ module Ladb::OpenCutList
 
       anchors = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ]
 
-      ps = anchors[@move_anchor]
+      ps = anchors[@move_anchor_index]
       pe = @snap_ip.position
       v = ps.vector_to(pe)
 
@@ -1130,7 +1132,7 @@ module Ladb::OpenCutList
       t = _get_transformation
       ti = t.inverse
 
-      ps = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ][@move_anchor].transform(ti)
+      ps = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ][@move_anchor_index].transform(ti)
       pe = @snap_ip.position.transform(ti)
       v = ps.vector_to(pe)
 
@@ -1349,11 +1351,11 @@ module Ladb::OpenCutList
       @picked_pushpull_ip.clear
       @picked_move_ip.clear
       @direction = nil
+      @normal = _get_active_z_axis
+      @locked_direction = nil
       @locked_normal = nil
       @locked_axis = nil
-      @move_anchor = 2
-      @direction = nil
-      @normal = _get_active_z_axis
+      @move_anchor_index = 2
       @tool.remove_all_2d
       @tool.remove_all_3d
       onStateChanged(STATE_SHAPE_FIRST_POINT)
@@ -1462,7 +1464,7 @@ module Ladb::OpenCutList
       t = _get_transformation
       ti = t.inverse
 
-      ps = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ][@move_anchor].transform(ti)
+      ps = [ @picked_shape_first_ip.position, @picked_shape_last_ip.position, @picked_pushpull_ip.position ][@move_anchor_index].transform(ti)
       pe = @picked_move_ip.position.transform(ti)
       v = ps.vector_to(pe)
 

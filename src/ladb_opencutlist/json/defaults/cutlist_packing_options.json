@@ -22,7 +22,7 @@
     "rectangleguillotine_first_stage_orientation": "horizontal",
     "irregular_allowed_rotations": "0",
     "irregular_allow_mirroring": false,
-    "spacing": { "metric": "20mm", "imperial": "1\"" },
+    "spacing": { "metric": "3mm", "imperial": "1/8\"" },
     "trimming": { "metric": "10mm", "imperial": "1/2\"" },
     "items_formula": "",
     "origin_corner": 0, /* ORIGIN_CORNER_TOP_LEFT */

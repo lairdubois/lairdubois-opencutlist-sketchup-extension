@@ -1,13 +1,13 @@
 {
   "action_0": {  /* ACTION_EXPORT_PART_3D */
     "file_format": "stl",
-    "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
+    "unit": { "metric": 2 /* Length::Millimeter */, "imperial": 0 /* Length::Inches */ },
     "anchor": false,
     "switch_yz": true
   },
   "action_1": {  /* ACTION_EXPORT_PART_2D */
     "file_format": "svg",
-    "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
+    "unit": { "metric": 2 /* Length::Millimeter */, "imperial": 0 /* Length::Inches */ },
     "faces": 1, /* ACTION_OPTION_FACES_ALL */
     "anchor": false,
     "smoothing": false,
@@ -22,14 +22,14 @@
   },
   "action_2": {   /* ACTION_EXPORT_FACE */
     "file_format": "svg",
-    "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
+    "unit": { "metric": 2 /* Length::Millimeter */, "imperial": 0 /* Length::Inches */ },
     "smoothing": false,
     "parts_stroke_color": null,
     "parts_fill_color": "#000000"
   },
   "action_3": {   /* ACTION_EXPORT_PATHS */
     "file_format": "svg",
-    "unit": { "metric": 2, "imperial": 0 }, /* Length::Millimeter , Length::Inches*/
+    "unit": { "metric": 2 /* Length::Millimeter */, "imperial": 0 /* Length::Inches */ },
     "smoothing": false,
     "parts_paths_stroke_color": "#0068FF",
     "parts_paths_fill_color": null
