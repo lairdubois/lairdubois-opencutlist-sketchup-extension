@@ -1648,7 +1648,7 @@ module Ladb::OpenCutList
 
             if context_locked
 
-              # External lines are considered only if contex is locked
+              # External lines are considered only if context is locked
 
               if @pick_clines && picked_cline_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::ConstructionLine)
                 picked_cline = @pick_helper.leaf_at(index)
