@@ -1,6 +1,13 @@
 # -------------------------------------------------------------------
 #                       Clipper2Wrapper
 
+# -------------------------------------------------------------------
+#                             extern
+
+add_subdirectory(extern)
+
+# -------------------------------------------------------------------
+
 # Library headers
 set(LIBRARY_HEADERS
         include/clipper2/clipper.wrapper.hpp

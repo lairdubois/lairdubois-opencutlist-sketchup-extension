@@ -5,7 +5,7 @@
 {% set slideClasses = 'ladb-slide-fullpage print-no-header' %}
 
 {% block headerHeadingInner %}
-    {{ 'tab.cutlist.layout.title'|i18next}}{% if group and group.material_type != 0 %} {# 0 = TYPE_UNKNOW #} <small>| {{ group.material_name|escape('html') }}{% if group.std_dimension %} / <strong>{{ group.std_dimension}}</strong>{% endif %}</small>{% endif %}
+    {{ 'tab.cutlist.layout.title'|i18next}}{% if group and group.material_type != 0 %} {# 0 = TYPE_UNKNOWN #} <small>| {{ group.material_name|escape('html') }}{% if group.std_dimension %} / <strong>{{ group.std_dimension}}</strong>{% endif %}</small>{% endif %}
 {% endblock %}
 
 {% block headerToolsInner %}

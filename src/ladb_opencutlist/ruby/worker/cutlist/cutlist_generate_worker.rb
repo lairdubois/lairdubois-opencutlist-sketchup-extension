@@ -20,7 +20,7 @@ module Ladb::OpenCutList
     include BoundingBoxHelper
     include LayerVisibilityHelper
 
-    MATERIAL_ORIGIN_UNKNOW = 0
+    MATERIAL_ORIGIN_UNKNOWN = 0
     MATERIAL_ORIGIN_OWNED = 1
     MATERIAL_ORIGIN_INHERITED = 2
     MATERIAL_ORIGIN_CHILD = 3
@@ -1216,15 +1216,15 @@ module Ladb::OpenCutList
 
     def _get_material(path, smart = true, no_virtual = true)
       unless path
-        return nil, MATERIAL_ORIGIN_UNKNOW
+        return nil, MATERIAL_ORIGIN_UNKNOWN
       end
       entity = path.last
       unless entity.is_a?(Sketchup::Drawingelement)
-        return nil, MATERIAL_ORIGIN_UNKNOW
+        return nil, MATERIAL_ORIGIN_UNKNOWN
       end
       material = entity.material
       material = nil if no_virtual && MaterialAttributes.is_virtual?(_get_material_attributes(material))
-      material_origin = material ? MATERIAL_ORIGIN_OWNED : MATERIAL_ORIGIN_UNKNOW
+      material_origin = material ? MATERIAL_ORIGIN_OWNED : MATERIAL_ORIGIN_UNKNOWN
       unless material || !smart
         material = _get_dominant_child_material(entity, 0, no_virtual)
         if material

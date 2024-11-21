@@ -464,6 +464,7 @@ module Ladb::OpenCutList
     end
 
     def onLButtonDoubleClick(flags, x, y, view)
+      false
     end
 
     def onKeyDown(key, repeat, flags, view)
@@ -555,6 +556,7 @@ module Ladb::OpenCutList
         end
       end
 
+      false
     end
 
     def onKeyUp(key, repeat, flags, view)

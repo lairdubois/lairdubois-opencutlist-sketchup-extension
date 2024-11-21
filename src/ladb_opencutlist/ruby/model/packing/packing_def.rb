@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class PackingDef
 
-    attr_accessor :options_def, :summary_def, :bin_defs
+    attr_reader :options_def, :summary_def, :bin_defs, :unplaced_part_info_defs
 
     def initialize(options_def, summary_def, bin_defs)
 
@@ -12,6 +12,10 @@ module Ladb::OpenCutList
       @summary_def = summary_def
 
       @bin_defs = bin_defs
+
+      # Computed
+
+      @unplaced_part_info_defs = []
 
     end
 
@@ -118,10 +122,10 @@ module Ladb::OpenCutList
 
   class PackingBinDef
 
-    attr_reader :bin_type_def, :count, :efficiency, :item_defs, :leftover_defs, :cut_defs, :part_defs
-    attr_accessor :svg, :total_cut_length, :parts
+    attr_reader :bin_type_def, :count, :efficiency, :item_defs, :leftover_defs, :cut_defs, :part_info_defs
+    attr_accessor :svg, :total_cut_length
 
-    def initialize(bin_type_def, count, efficiency, item_defs, leftover_defs, cut_defs, part_defs)
+    def initialize(bin_type_def, count, efficiency, item_defs, leftover_defs, cut_defs, part_info_defs)
 
       @bin_type_def = bin_type_def
 
@@ -131,7 +135,7 @@ module Ladb::OpenCutList
       @item_defs = item_defs
       @leftover_defs = leftover_defs
       @cut_defs = cut_defs
-      @part_defs = part_defs
+      @part_info_defs = part_info_defs
 
       # Computed
 
@@ -170,7 +174,7 @@ module Ladb::OpenCutList
     # ---
 
     def create_item
-      PackingItem.new(self)
+      Packingtem.new(self)
     end
 
   end
@@ -192,7 +196,7 @@ module Ladb::OpenCutList
 
     # ---
 
-    def create_cut
+    def create_leftover
       PackingLeftover.new(self)
     end
 
@@ -232,7 +236,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingBinPartDef
+  class PackingPartInfoDef
 
     attr_reader :_sorter, :part, :count
 
@@ -247,8 +251,8 @@ module Ladb::OpenCutList
 
     # ---
 
-    def create_bin_part
-      PackingBinPart.new(self)
+    def create_part_info
+      PackingPartInfo.new(self)
     end
 
   end

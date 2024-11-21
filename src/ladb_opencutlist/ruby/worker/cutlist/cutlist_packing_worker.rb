@@ -409,20 +409,25 @@ module Ladb::OpenCutList
             raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
               @item_type_defs[raw_item['item_type_id']]
             }.group_by { |i| i }.map { |item_type_def, v|
-              PackingBinPartDef.new(
+              PackingPartInfoDef.new(
                 item_type_def.part,
                 v.length
               )
-            }.sort_by { |bin_part_def| bin_part_def._sorter } : []
+            }.sort_by { |part_info_def| part_info_def._sorter } : []
           )
         }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.count ] }
       )
 
       # Computed values
 
+      item_type_uses = @item_type_defs.map { |item_type_def| [ item_type_def, 0 ] }.to_h
       bin_type_uses = @bin_type_defs.map { |bin_type_def| [ bin_type_def, [ 0, 0 ] ] }.to_h
 
       packing_def.bin_defs.each do |bin_def|
+
+        bin_def.item_defs.each do |item_def|
+          item_type_uses[item_def.item_type_def] += bin_def.count # placed_count
+        end
 
         bin_type_uses[bin_def.bin_type_def][0] += bin_def.count                             # used_count
         bin_type_uses[bin_def.bin_type_def][1] += bin_def.count * bin_def.item_defs.length  # total_item_count
@@ -435,6 +440,14 @@ module Ladb::OpenCutList
         packing_def.summary_def.total_cut_length += bin_def.total_cut_length
 
       end
+
+      item_type_uses.each do |item_type_def, placed_count|
+
+        unplaced_count = item_type_def.count - placed_count
+        packing_def.unplaced_part_info_defs << PackingPartInfoDef.new(item_type_def.part, unplaced_count) if unplaced_count > 0
+
+      end
+      packing_def.unplaced_part_info_defs.sort_by! { |part_info_def| part_info_def._sorter }
 
       bin_type_uses.each do |bin_type_def, counters|
 

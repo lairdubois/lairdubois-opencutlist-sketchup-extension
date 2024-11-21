@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :options, :summary, :bins
+    attr_reader :options, :summary, :bins, :unplaced_parts
 
     def initialize(_def)
       @_def = _def
@@ -17,6 +17,8 @@ module Ladb::OpenCutList
       @summary = _def.summary_def.create_summary
 
       @bins = _def.bin_defs.map { |bin_def| bin_def.create_bin }
+
+      @unplaced_part_infos = _def.unplaced_part_info_defs.map { |part_info_def| part_info_def.create_part_info }
 
     end
 
@@ -114,7 +116,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type_id, :type, :length, :width, :count, :efficiency, :items, :cuts, :parts, :svg, :total_cut_length
+    attr_reader :type_id, :type, :length, :width, :count, :efficiency, :items, :leftovers, :cuts, :part_infos, :total_cut_length, :svg
 
     def initialize(_def)
       @_def = _def
@@ -128,11 +130,13 @@ module Ladb::OpenCutList
       @efficiency = _def.efficiency
 
       @items = _def.item_defs.map { |item_def| item_def.create_item }
+      @leftovers = _def.leftover_defs.map { |leftover_def| leftover_def.create_leftover }
       @cuts = _def.cut_defs.map { |cut_def| cut_def.create_cut }
-      @parts = _def.part_defs.map { |part_def| part_def.create_bin_part }
+      @part_infos = _def.part_info_defs.map { |part_info_def| part_info_def.create_part_info }
+
+      @total_cut_length = _def.total_cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_cut_length) : nil
 
       @svg = _def.svg
-      @total_cut_length = _def.total_cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_cut_length) : nil
 
     end
 
@@ -141,7 +145,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingItem
+  class Packingtem
 
     include DefHelper
     include HashableHelper
@@ -205,7 +209,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingBinPart
+  class PackingPartInfo
 
     include DefHelper
     include HashableHelper
