@@ -41,7 +41,7 @@ module Ladb::OpenCutList
 
       end
 
-      dir = dir.gsub(/ /, '%20') if PLUGIN.platform_is_mac
+      dir = dir.gsub(/ /, '%20') if PLUGIN.platform_is_mac?
 
       path = UI.openpanel(PLUGIN.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
       if path

@@ -163,15 +163,15 @@ module Ladb::OpenCutList
       available_languages.sort
     end
 
-    def webgl_available
+    def webgl_available?
       @webgl_available
     end
 
-    def platform_is_win
+    def platform_is_win?
       Sketchup.platform == :platform_win
     end
 
-    def platform_is_mac
+    def platform_is_mac?
       Sketchup.platform == :platform_osx
     end
 
@@ -749,6 +749,16 @@ module Ladb::OpenCutList
 
     # -----
 
+    def add_observer(observer)
+      @observers << observer unless @observers.include?(observer)
+    end
+
+    def remove_observer(observer)
+      @observers.delete(observer)
+    end
+
+    # -----
+
     def setup
 
       # Setup Menu
@@ -927,8 +937,8 @@ module Ladb::OpenCutList
 
         # -- Observers --
 
+        add_observer(PluginObserver.instance)
         Sketchup.add_observer(AppObserver.instance)
-        @observers.push(PluginObserver.instance)
 
         # -- Controllers --
 
@@ -1083,9 +1093,7 @@ module Ladb::OpenCutList
 
       return if @tabs_dialog.nil? && !auto_create
 
-      unless @tabs_dialog
-        create_tabs_dialog
-      end
+      create_tabs_dialog unless @tabs_dialog
 
       if @tabs_dialog.visible?
 
@@ -1096,7 +1104,7 @@ module Ladb::OpenCutList
         end
 
         if ready_block
-          # Immediatly invoke the ready block
+          # Immediately invoke the ready block
           ready_block.call
         end
 
@@ -1122,16 +1130,13 @@ module Ladb::OpenCutList
     def hide_tabs_dialog
       if @tabs_dialog
         @tabs_dialog.close
-        true
-      else
-        false
+        return true
       end
+      false
     end
 
     def toggle_tabs_dialog
-      unless hide_tabs_dialog
-        show_tabs_dialog
-      end
+      show_tabs_dialog unless hide_tabs_dialog
     end
 
     def tabs_dialog_reset_position
@@ -1146,14 +1151,14 @@ module Ladb::OpenCutList
     end
 
     def tabs_dialog_store_size(width, height)
-      @tabs_dialog_maximized_width = [width, TABS_DIALOG_DEFAULT_MAXIMIZED_WIDTH ].max
-      @tabs_dialog_maximized_height = [height, TABS_DIALOG_DEFAULT_MAXIMIZED_HEIGHT ].max
+      @tabs_dialog_maximized_width = [ width, TABS_DIALOG_DEFAULT_MAXIMIZED_WIDTH ].max
+      @tabs_dialog_maximized_height = [ height, TABS_DIALOG_DEFAULT_MAXIMIZED_HEIGHT ].max
       write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH, width)
       write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, height)
     end
 
     def tabs_dialog_store_current_size
-      if @tabs_dialog && @tabs_dialog.respond_to?('get_size') && @tabs_dialog_maximized
+      if @tabs_dialog && @tabs_dialog.respond_to?(:get_size) && @tabs_dialog_maximized
         width, height = @tabs_dialog.get_size
         return if width.nil? || height.nil?
         tabs_dialog_store_size(width, height) if width >= TABS_DIALOG_MINIMIZED_WIDTH && height >= TABS_DIALOG_MINIMIZED_HEIGHT
@@ -1161,16 +1166,12 @@ module Ladb::OpenCutList
     end
 
     def tabs_dialog_set_size(width, height)
-      if @tabs_dialog
-        @tabs_dialog.set_size(width, height)
-      end
+      @tabs_dialog.set_size(width, height) if @tabs_dialog
     end
 
     def tabs_dialog_inc_maximized_size(inc_width = 0, inc_height = 0)
       tabs_dialog_store_size(@tabs_dialog_maximized_width + inc_width, @tabs_dialog_maximized_height + inc_height)
-      if @tabs_dialog_maximized
-        tabs_dialog_set_size(@tabs_dialog_maximized_width, @tabs_dialog_maximized_height)
-      end
+      tabs_dialog_set_size(@tabs_dialog_maximized_width, @tabs_dialog_maximized_height) if @tabs_dialog_maximized
     end
 
     def tabs_dialog_store_position(left, top)
@@ -1181,8 +1182,8 @@ module Ladb::OpenCutList
     end
 
     def tabs_dialog_store_current_position
-      if @tabs_dialog && @tabs_dialog.respond_to?('get_position')
-        if @tabs_dialog.respond_to?('get_size')
+      if @tabs_dialog && @tabs_dialog.respond_to?(:get_position)
+        if @tabs_dialog.respond_to?(:get_size)
           width, height = @tabs_dialog.get_size
           return if width.nil? || height.nil?
           return if width < TABS_DIALOG_MINIMIZED_WIDTH || height < TABS_DIALOG_MINIMIZED_HEIGHT  # Do not store the position if dialog size is smaller than minimized size
@@ -1591,7 +1592,7 @@ module Ladb::OpenCutList
     def open_external_file_command(path:)    # Expected params = { path: PATH_TO_FILE }
       return unless path.is_a?(String)
       url = "file:///#{path}"
-      url = URI::DEFAULT_PARSER.escape(url) if platform_is_mac && Sketchup.version_number >= 1800000000
+      url = URI::DEFAULT_PARSER.escape(url) if platform_is_mac? && Sketchup.version_number >= 1800000000
       UI.openURL(url)
     end
 

@@ -394,7 +394,7 @@
         // By default maximize the dialog
         this.maximize();
 
-        // If fresh tab, callback is invoke through 'initializedCallback'
+        // If fresh tab, callback is invoked through 'initializedCallback'
         if (!isFreshTab) {
 
             // Callback

@@ -7,7 +7,6 @@ module Ladb::OpenCutList
   require_relative 'selection_observer'
   require_relative 'pages_observer'
   require_relative 'layers_observer'
-  require_relative 'entities_observer'
 
   class AppObserver < Sketchup::AppObserver
 
@@ -17,7 +16,7 @@ module Ladb::OpenCutList
     ON_OPEN_MODEL = 'on_open_model'.freeze
     ON_ACTIVATE_MODEL = 'on_activate_model'.freeze
 
-    def initialize()
+    def initialize
       onActivateModel(Sketchup.active_model) unless Sketchup.active_model.nil?
     end
 

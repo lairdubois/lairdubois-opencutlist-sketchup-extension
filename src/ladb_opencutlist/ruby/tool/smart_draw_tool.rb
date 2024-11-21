@@ -225,6 +225,11 @@ module Ladb::OpenCutList
       @action_handler.onKeyUp(key, repeat, flags, view) if !@action_handler.nil? && @action_handler.respond_to?(:onKeyUp)
     end
 
+    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+      return true if super
+      @action_handler.onKeyUpExtended(key, repeat, flags, view, after_down, is_quick) if !@action_handler.nil? && @action_handler.respond_to?(:onKeyUpExtended)
+    end
+
     def onUserText(text, view)
       @action_handler.onUserText(text, view) if !@action_handler.nil? && @action_handler.respond_to?(:onUserText)
     end
@@ -469,6 +474,21 @@ module Ladb::OpenCutList
 
     def onKeyDown(key, repeat, flags, view)
 
+      if key <= 128
+        key_char = key.chr
+        if key_char == 'P' && @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_PUSHPULL, !_fetch_option_tool_pushpull, true)
+          return true
+        elsif key_char == 'M' && @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_MOVE, !_fetch_option_tool_move, true)
+          return true
+        elsif key_char == 'X' && @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION, !_fetch_option_construction, true)
+          _refresh
+          return true
+        end
+      end
+
       if _picked_pushpull_point?
         if key == VK_RIGHT
           x_axis = _get_active_x_axis
@@ -559,13 +579,15 @@ module Ladb::OpenCutList
       false
     end
 
-    def onKeyUp(key, repeat, flags, view)
+    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
 
       if key == COPY_MODIFIER_KEY
         @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED, !_fetch_option_solid_centered, true) if _picked_shape_last_point? && !_picked_pushpull_point?
         _refresh
+        return true
       end
 
+      false
     end
 
     def onUserText(text, view)

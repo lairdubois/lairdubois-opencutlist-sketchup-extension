@@ -34,7 +34,7 @@ module Ladb::OpenCutList
       definition = definitions[@definition_id]
       if definition
 
-        if Sketchup.version_number >= 1800000000 && PLUGIN.webgl_available
+        if Sketchup.version_number >= 1800000000 && PLUGIN.webgl_available?
 
           # Convert part drawing to ThreeJS
 

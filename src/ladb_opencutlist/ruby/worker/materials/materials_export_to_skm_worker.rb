@@ -48,7 +48,7 @@ module Ladb::OpenCutList
 
       end
 
-      dir = dir.gsub(/ /, '%20') if PLUGIN.platform_is_mac
+      dir = dir.gsub(/ /, '%20') if PLUGIN.platform_is_mac?
 
       # Open save panel
       path = UI.savepanel(PLUGIN.get_i18n_string('tab.materials.export_to_skm.title'), dir, @display_name + '.skm')
