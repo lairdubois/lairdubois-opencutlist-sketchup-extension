@@ -1616,14 +1616,16 @@ module Ladb::OpenCutList
       super(SmartDrawTool::ACTION_DRAW_RECTANGLE, tool, action_handler)
     end
 
-    def onKeyUp(key, repeat, flags, view)
-      super
+    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+      return true if super
 
       if key == COPY_MODIFIER_KEY
         @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !_fetch_option_rectangle_centered, true) unless _picked_shape_last_point?
         _refresh
+        return true
       end
 
+      false
     end
 
     protected
