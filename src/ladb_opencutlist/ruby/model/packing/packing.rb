@@ -8,6 +8,29 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
+    attr_reader :errors, :running, :cancelled, :solution
+
+    def initialize(_def)
+      @_def = _def
+
+      @errors = _def.errors
+
+      @running = _def.running
+      @cancelled = _def.cancelled
+
+      @solution = _def.solution_def.create_solution if _def.solution_def.is_a?(PackingSolutionDef)
+
+    end
+
+  end
+
+  # -----
+
+  class PackingSolution
+
+    include DefHelper
+    include HashableHelper
+
     attr_reader :options, :summary, :bins, :unplaced_parts
 
     def initialize(_def)

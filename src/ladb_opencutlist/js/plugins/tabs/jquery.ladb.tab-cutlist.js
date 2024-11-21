@@ -5335,6 +5335,17 @@
                             $(this).blur();
                             return false;
                         });
+                        $('#ladb_btn_select_unplaced_parts', $slide).on('click', function () {
+                            that.cleanupSelection();
+                            $.each(response.solution.unplaced_part_infos, function (index, part_info) {
+                                that.selectPart(part_info.part.id, true);
+                            });
+                            that.dialog.notifySuccess(i18next.t('tab.cutlist.success.part_selected', { count: response.solution.unplaced_part_infos.length }), [
+                                Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
+                                    $btnClose.click();
+                                })
+                            ]);
+                        });
 
                         // SVG
                         $('SVG .item', $slide).on('click', function () {

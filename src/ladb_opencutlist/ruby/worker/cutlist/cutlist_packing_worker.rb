@@ -115,21 +115,21 @@ module Ladb::OpenCutList
 
     # -----
 
-    def run(action)
+    def run(action = :start)
       case action
       when :start
 
-        return { :errors => [ 'default.error' ] } if @_running
-        return { :errors => [ 'default.error' ] } unless @cutlist
+        return _process_ouput(errors: [ 'default.error' ]) if @_running
+        return _process_ouput(errors: [ 'default.error' ]) unless @cutlist
 
         model = Sketchup.active_model
-        return{ :errors => [ 'default.error' ] } unless model
+        return _process_ouput(errors: [ 'default.error' ]) unless model
 
         group = @cutlist.get_group(@group_id)
-        return { :errors => [ 'default.error' ] } unless group
+        return _process_ouput(errors: [ 'default.error' ]) unless group
 
         parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
-        return { :errors => [ 'default.error' ] } if parts.empty?
+        return _process_ouput(errors: [ 'tab.cutlist.packing.error.no_part' ]) if parts.empty?
 
         parts_count = parts.map(&:count).inject(0, :+)  # .map(&:count).inject(0, :+) == .sum { |portion| part.count } compatible with ruby < 2.4
 
@@ -192,7 +192,7 @@ module Ladb::OpenCutList
 
         end
 
-        return { :errors => [ "tab.cutlist.packing.error.no_bin_#{group.material_is_1d ? '1d' : '2d'}" ] } if bin_types.empty?
+        return _process_ouput(errors: [ "tab.cutlist.packing.error.no_bin_#{group.material_is_1d ? '1d' : '2d'}" ]) if bin_types.empty?
 
         item_types = []
 
@@ -248,7 +248,7 @@ module Ladb::OpenCutList
           end
         }
 
-        return { :errors => [ 'tab.cutlist.packing.error.no_part' ] } if item_types.empty?
+        return _process_ouput(errors: [ 'tab.cutlist.packing.error.no_part' ]) if item_types.empty?
 
         instance_parameters = {}
         if @problem_type == Packy::PROBLEM_TYPE_RECTANGLE || @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
@@ -303,34 +303,35 @@ module Ladb::OpenCutList
 
         @_running = true
 
-        return _process_ouput(output)
+        return _process_ouput(output: output)
 
       when :advance
 
-        return { :errors => [ 'default.error' ] } unless @_running
+        return _process_ouput(errors: [ 'default.error' ]) unless @_running
 
         output = Packy.optimize_advance
 
-        return _process_ouput(output)
+        return _process_ouput(output: output)
 
       when :cancel
 
-        return { :errors => [ 'default.error' ] } unless @_running
+        return _process_ouput(errors: [ 'default.error' ]) unless @_running
 
         Packy.optimize_cancel
 
-        return { :cancelled => true }
+        return _process_ouput(output: { 'cancelled' => true })
       end
 
-      { :errors => [ 'default.error' ] }
+      _process_ouput(errors: [ 'default.error' ])
     end
 
     private
 
-    def _process_ouput(output)
+    def _process_ouput(output: {}, errors: nil)
 
-      return output if output['cancelled']
-      return output if output['running'] && output['solution'].nil?
+      return PackingDef.new(errors: errors).create_packing if errors.is_a?(Array)
+      return PackingDef.new(cancelled: true).create_packing if output['cancelled']
+      return PackingDef.new(running: true).create_packing if output['running'] && output['solution'].nil?
 
       if @verbosity_level > 0
         puts ' '
@@ -339,11 +340,11 @@ module Ladb::OpenCutList
         puts '-- output --'
       end
 
-      return { :errors => [ [ 'core.error.extern', { 'error' => output['error'] } ] ] } if output.has_key?('error')
+      return PackingDef.new(errors: [ [ 'core.error.extern', { 'error' => output['error'] } ] ]).create_packing if output.has_key?('error')
 
       solution = output['solution']
 
-      return { :errors => [ 'tab.cutlist.packing.error.no_solution' ] } if solution['bins'].nil? || solution['bins'].empty?
+      return PackingDef.new(errors: [ 'tab.cutlist.packing.error.no_solution' ]).create_packing if solution['bins'].nil? || solution['bins'].empty?
 
       # Create PackingDef from solution
 
@@ -357,65 +358,68 @@ module Ladb::OpenCutList
       end
 
       packing_def = PackingDef.new(
-        PackingOptionsDef.new(
-          @problem_type,
-          @spacing,
-          @trimming,
-          @hide_part_list,
-          @part_drawing_type,
-          @colored_part,
-          @origin_corner
-        ),
-        PackingSummaryDef.new(
-          solution['time'],
-          solution['number_of_bins'],
-          solution['number_of_items'],
-          solution['efficiency']
-        ),
-        solution['bins'].map { |raw_bin|
-          bin_type_def = @bin_type_defs[raw_bin['bin_type_id']]
-          PackingBinDef.new(
-            bin_type_def,
-            raw_bin['copies'],
-            raw_bin['efficiency'],
-            raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
-              item_type_def = @item_type_defs[raw_item['item_type_id']]
-              PackingItemDef.new(
-                item_type_def,
-                instance_info_by_item_type_def[item_type_def].is_a?(Array) ? instance_info_by_item_type_def[item_type_def].shift : nil,
-                _from_packy(raw_item.fetch('x', 0)).to_l,
-                _from_packy(raw_item.fetch('y', 0)).to_l,
-                raw_item.fetch('angle', 0),
-                raw_item.fetch('mirror', false)
-              )
-            } : [],
-            raw_bin['leftovers'].is_a?(Array) ? raw_bin['leftovers'].map { |raw_leftover|
-              PackingLeftoverDef.new(
-                _from_packy(raw_leftover.fetch('x', 0)).to_l,
-                _from_packy(raw_leftover.fetch('y', 0)).to_l,
-                _from_packy(raw_leftover.fetch('width', 0)).to_l,
-                _from_packy(raw_leftover.fetch('height', 0)).to_l
-              )
-            } : [],
-            raw_bin['cuts'].is_a?(Array) ? raw_bin['cuts'].map { |raw_cut|
-              PackingCutDef.new(
-                raw_cut['depth'],
-                _from_packy(raw_cut.fetch('x', 0)).to_l,
-                _from_packy(raw_cut.fetch('y', 0)).to_l,
-                (raw_cut['length'] ? _from_packy(raw_cut['length']) : bin_type_def.width).to_l,
-                raw_cut.fetch('orientation', 'vertical')
-              )
-            }.sort_by { |cut_def| cut_def.depth } : [],
-            raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
-              @item_type_defs[raw_item['item_type_id']]
-            }.group_by { |i| i }.map { |item_type_def, v|
-              PackingPartInfoDef.new(
-                item_type_def.part,
-                v.length
-              )
-            }.sort_by { |part_info_def| part_info_def._sorter } : []
-          )
-        }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.count ] }
+        running: output.fetch('running', false),
+        solution_def: PackingSolutionDef.new(
+          options_def: PackingOptionsDef.new(
+            problem_type: @problem_type,
+            spacing: @spacing,
+            trimming: @trimming,
+            hide_part_list: @hide_part_list,
+            part_drawing_type: @part_drawing_type,
+            colored_part: @colored_part,
+            origin_corner: @origin_corner
+          ),
+          summary_def: PackingSummaryDef.new(
+            time: solution['time'],
+            total_bin_count: solution['number_of_bins'],
+            total_item_count: solution['number_of_items'],
+            total_efficiency: solution['efficiency']
+          ),
+          bin_defs: solution['bins'].map { |raw_bin|
+            bin_type_def = @bin_type_defs[raw_bin['bin_type_id']]
+            PackingBinDef.new(
+              bin_type_def: bin_type_def,
+              count: raw_bin['copies'],
+              efficiency: raw_bin['efficiency'],
+              item_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
+                item_type_def = @item_type_defs[raw_item['item_type_id']]
+                PackingItemDef.new(
+                  item_type_def: item_type_def,
+                  instance_info: instance_info_by_item_type_def[item_type_def].is_a?(Array) ? instance_info_by_item_type_def[item_type_def].shift : nil,
+                  x: _from_packy(raw_item.fetch('x', 0)).to_l,
+                  y: _from_packy(raw_item.fetch('y', 0)).to_l,
+                  angle: raw_item.fetch('angle', 0),
+                  mirror: raw_item.fetch('mirror', false)
+                )
+              } : [],
+              leftover_defs: raw_bin['leftovers'].is_a?(Array) ? raw_bin['leftovers'].map { |raw_leftover|
+                PackingLeftoverDef.new(
+                  x: _from_packy(raw_leftover.fetch('x', 0)).to_l,
+                  y: _from_packy(raw_leftover.fetch('y', 0)).to_l,
+                  length: _from_packy(raw_leftover.fetch('width', 0)).to_l,
+                  width: _from_packy(raw_leftover.fetch('height', 0)).to_l
+                )
+              } : [],
+              cut_defs: raw_bin['cuts'].is_a?(Array) ? raw_bin['cuts'].map { |raw_cut|
+                PackingCutDef.new(
+                  depth: raw_cut['depth'],
+                  x: _from_packy(raw_cut.fetch('x', 0)).to_l,
+                  y: _from_packy(raw_cut.fetch('y', 0)).to_l,
+                  length: (raw_cut['length'] ? _from_packy(raw_cut['length']) : bin_type_def.width).to_l,
+                  orientation: raw_cut.fetch('orientation', 'vertical')
+                )
+              }.sort_by { |cut_def| cut_def.depth } : [],
+              part_info_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
+                @item_type_defs[raw_item['item_type_id']]
+              }.group_by { |i| i }.map { |item_type_def, v|
+                PackingPartInfoDef.new(
+                  part: item_type_def.part,
+                  count: v.length
+                )
+              }.sort_by { |part_info_def| part_info_def._sorter } : []
+            )
+          }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.count ] }
+        )
       )
 
       # Computed values
@@ -423,7 +427,7 @@ module Ladb::OpenCutList
       item_type_uses = @item_type_defs.map { |item_type_def| [ item_type_def, 0 ] }.to_h
       bin_type_uses = @bin_type_defs.map { |bin_type_def| [ bin_type_def, [ 0, 0 ] ] }.to_h
 
-      packing_def.bin_defs.each do |bin_def|
+      packing_def.solution_def.bin_defs.each do |bin_def|
 
         bin_def.item_defs.each do |item_def|
           item_type_uses[item_def.item_type_def] += bin_def.count # placed_count
@@ -435,44 +439,43 @@ module Ladb::OpenCutList
         bin_def.svg = _render_bin_def_svg(bin_def, output['running'])
         bin_def.total_cut_length = bin_def.cut_defs.map(&:length).inject(0, :+)  # .map(&:length).inject(0, :+) == .sum { |bin_def| bin_def.length } compatible with ruby < 2.4
 
-        packing_def.summary_def.total_leftover_count += bin_def.leftover_defs.length
-        packing_def.summary_def.total_cut_count += bin_def.cut_defs.length
-        packing_def.summary_def.total_cut_length += bin_def.total_cut_length
+        packing_def.solution_def.summary_def.total_leftover_count += bin_def.leftover_defs.length
+        packing_def.solution_def.summary_def.total_cut_count += bin_def.cut_defs.length
+        packing_def.solution_def.summary_def.total_cut_length += bin_def.total_cut_length
 
       end
 
+      # Process items usage
       item_type_uses.each do |item_type_def, placed_count|
 
         unplaced_count = item_type_def.count - placed_count
-        packing_def.unplaced_part_info_defs << PackingPartInfoDef.new(item_type_def.part, unplaced_count) if unplaced_count > 0
+        packing_def.solution_def.unplaced_part_info_defs << PackingPartInfoDef.new(part: item_type_def.part, count: unplaced_count) if unplaced_count > 0
 
       end
-      packing_def.unplaced_part_info_defs.sort_by! { |part_info_def| part_info_def._sorter }
+      packing_def.solution_def.unplaced_part_info_defs.sort_by! { |part_info_def| part_info_def._sorter }
 
+      # Process bins usage
       bin_type_uses.each do |bin_type_def, counters|
 
         used_count, total_item_count = counters
         unused_count = bin_type_def.count < 0 ? 0 : bin_type_def.count - used_count
 
         if unused_count > 0 || used_count == 0
-          packing_def.summary_def.bin_type_defs << PackingSummaryBinTypeDef.new(bin_type_def, unused_count, false)
+          packing_def.solution_def.summary_def.bin_type_defs << PackingSummaryBinTypeDef.new(bin_type_def: bin_type_def, count: unused_count, used: false)
         end
 
         if used_count > 0
-          packing_def.summary_def.bin_type_defs << PackingSummaryBinTypeDef.new(bin_type_def, used_count, true, total_item_count)
-          packing_def.summary_def.total_used_count += used_count
-          packing_def.summary_def.total_used_area += packing_def.summary_def.bin_type_defs.last.total_area
-          packing_def.summary_def.total_used_length += packing_def.summary_def.bin_type_defs.last.total_length
-          packing_def.summary_def.total_used_item_count += total_item_count
+          packing_def.solution_def.summary_def.bin_type_defs << PackingSummaryBinTypeDef.new(bin_type_def: bin_type_def, count: used_count, used: true, total_item_count: total_item_count)
+          packing_def.solution_def.summary_def.total_used_count += used_count
+          packing_def.solution_def.summary_def.total_used_area += packing_def.solution_def.summary_def.bin_type_defs.last.total_area
+          packing_def.solution_def.summary_def.total_used_length += packing_def.solution_def.summary_def.bin_type_defs.last.total_length
+          packing_def.solution_def.summary_def.total_used_item_count += total_item_count
         end
 
       end
-      packing_def.summary_def.bin_type_defs.sort_by!{ |bin_type_def| [ bin_type_def.used ? 1 : 0, -bin_type_def.bin_type_def.type, bin_type_def.bin_type_def.length ]}
+      packing_def.solution_def.summary_def.bin_type_defs.sort_by!{ |bin_type_def| [ bin_type_def.used ? 1 : 0, -bin_type_def.bin_type_def.type, bin_type_def.bin_type_def.length ]}
 
-      {
-        :running => output.fetch('running', false),
-        :solution => packing_def.create_packing.to_hash
-      }
+      packing_def.create_packing
     end
 
     def _to_packy(l)

@@ -348,21 +348,27 @@ module Ladb::OpenCutList
       @packing_worker = CutlistPackingWorker.new(@cutlist, **settings)
 
       # Run !
-      @packing_worker.run(:start)
+      packing = @packing_worker.run(:start)
+
+      packing.to_hash
     end
 
     def group_packing_advance_command
       return { :errors => [ 'default.error' ] } unless @packing_worker
 
       # Run !
-      @packing_worker.run(:advance)
+      packing = @packing_worker.run(:advance)
+
+      packing.to_hash
     end
 
     def group_packing_cancel_command
       return { :errors => [ 'default.error' ] } unless @packing_worker
 
       # Run !
-      @packing_worker.run(:cancel)
+      packing = @packing_worker.run(:cancel)
+
+      packing.to_hash
     end
 
   end

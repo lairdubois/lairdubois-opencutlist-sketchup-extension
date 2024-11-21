@@ -4,9 +4,34 @@ module Ladb::OpenCutList
 
   class PackingDef
 
+    attr_reader :errors, :running, :cancelled, :solution_def
+
+    def initialize(errors: [], running: false, cancelled: false, solution_def: nil)
+
+      @errors = errors
+
+      @running = running
+      @cancelled = cancelled
+
+      @solution_def = solution_def
+
+    end
+
+    # ---
+
+    def create_packing
+      Packing.new(self)
+    end
+
+  end
+
+  # -----
+
+  class PackingSolutionDef
+
     attr_reader :options_def, :summary_def, :bin_defs, :unplaced_part_info_defs
 
-    def initialize(options_def, summary_def, bin_defs)
+    def initialize(options_def:, summary_def:, bin_defs:)
 
       @options_def = options_def
       @summary_def = summary_def
@@ -21,8 +46,8 @@ module Ladb::OpenCutList
 
     # ---
 
-    def create_packing
-      Packing.new(self)
+    def create_solution
+      PackingSolution.new(self)
     end
 
   end
@@ -33,7 +58,7 @@ module Ladb::OpenCutList
 
     attr_reader :problem_type, :spacing, :trimming, :hide_part_list, :part_drawing_type, :colored_part, :origin_corner
 
-    def initialize(problem_type, spacing, trimming, hide_part_list, part_drawing_type, colored_part, origin_corner)
+    def initialize(problem_type:, spacing:, trimming:, hide_part_list:, part_drawing_type:, colored_part:, origin_corner:)
 
       @problem_type = problem_type
 
@@ -62,7 +87,7 @@ module Ladb::OpenCutList
     attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :bin_type_defs
     attr_accessor :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_count, :total_used_area, :total_used_length, :total_used_item_count
 
-    def initialize(time, total_bin_count, total_item_count, total_efficiency)
+    def initialize(time:, total_bin_count:, total_item_count:, total_efficiency:)
 
       @time = time
       @total_bin_count = total_bin_count
@@ -98,7 +123,7 @@ module Ladb::OpenCutList
 
     attr_reader :bin_type_def, :count, :used, :total_area, :total_length, :total_item_count
 
-    def initialize(bin_type_def, count, used, total_item_count = 0)
+    def initialize(bin_type_def:, count:, used:, total_item_count: 0)
 
       @bin_type_def = bin_type_def
       @count = count
@@ -125,7 +150,7 @@ module Ladb::OpenCutList
     attr_reader :bin_type_def, :count, :efficiency, :item_defs, :leftover_defs, :cut_defs, :part_info_defs
     attr_accessor :svg, :total_cut_length
 
-    def initialize(bin_type_def, count, efficiency, item_defs, leftover_defs, cut_defs, part_info_defs)
+    def initialize(bin_type_def:, count:, efficiency:, item_defs:, leftover_defs:, cut_defs:, part_info_defs:)
 
       @bin_type_def = bin_type_def
 
@@ -159,7 +184,7 @@ module Ladb::OpenCutList
 
     attr_reader :item_type_def, :instance_info, :x, :y, :angle, :mirror
 
-    def initialize(item_type_def, instance_info, x, y, angle, mirror)
+    def initialize(item_type_def:, instance_info:, x:, y:, angle:, mirror:)
 
       @item_type_def = item_type_def
       @instance_info = instance_info
@@ -185,7 +210,7 @@ module Ladb::OpenCutList
 
     attr_reader :x, :y, :length, :width
 
-    def initialize(x, y, length, width)
+    def initialize(x:, y:, length:, width:)
 
       @x = x
       @y = y
@@ -208,7 +233,7 @@ module Ladb::OpenCutList
 
     attr_reader :depth, :x, :y, :length, :orientation
 
-    def initialize(depth, x, y, length, orientation)
+    def initialize(depth:, x:, y:, length:, orientation:)
 
       @depth = depth
       @x = x
@@ -240,7 +265,7 @@ module Ladb::OpenCutList
 
     attr_reader :_sorter, :part, :count
 
-    def initialize(part, count)
+    def initialize(part:, count:)
 
       @_sorter = part.number.to_i > 0 ? part.number.to_i : part.number.rjust(4)  # Use a special "_sorter" property because number could be a letter. In this case, rjust it.
 
