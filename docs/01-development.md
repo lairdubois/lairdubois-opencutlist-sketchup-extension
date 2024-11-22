@@ -114,7 +114,7 @@ There is more than one enviroment you can use to compile the C++ code. This is j
 
     Reboot the computer after this change!
   
-- start the x64 Native Tools Command Prompt and type
+- start the **x64 Native Tools Command Prompt** and type
 
 ``` bash
     cd lairdubois-opencutlist-sketchup-extension\build
@@ -132,7 +132,7 @@ After compiling the project (see 4.), your new language will appear in the **Pre
 
 Note: this does **NOT** change the SketchUp language. It may even support a language not supported by SketchUp.
 
-## 6. Use OpenCutList from the Source Folder
+## 7. Use OpenCutList from the Source Folder
 
 ### Prerequisite
 
