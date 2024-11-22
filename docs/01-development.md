@@ -1,6 +1,6 @@
 # Development Environment Setup Instructions
 
-To rebuild the plugin, you will first need to install a few tools. The plugin itself is written in **JavaScript** and **ruby**, but the distribution archive `dist/ladb_opencutlist.rbz` is built by a **gulp** task.
+To rebuild the plugin, you will first need to install a few tools. The plugin itself is written in **JavaScript**, **ruby** and **C++**, but the distribution archive `dist/ladb_opencutlist.rbz` is built by a **gulp** task.
 
 The following describes the tools and steps required to successfully create this plugin.
 
@@ -12,12 +12,12 @@ Read this short note about [Installing Node](https://docs.npmjs.com/getting-star
 
 ``` bash
     $ node -v
-    v20.11.0
+    v22.11.0
     $ npm -v
-    10.2.0
+    10.9.0
     $ npm install npm@latest -g
     $ npm -v
-    10.3.0
+    10.9.1
 ```
 
 On Windows you *may* also have to install `gulp-cli` to be able to run **gulp** from the command line.
@@ -92,7 +92,36 @@ If you wish to build the development archive, run these commands.
 
 The default behavior of the **gulp** task (without argument) is to *compile* and then *build*.
 
-## 5. Adding a New Language
+## 5. Compiling C++ DLLs/Libs
+
+Some features of OpenCutList depend on code implemented in C++. Shared DLLs/Libs need
+to be compiled for that purpose.
+
+### Mac
+
+To be done.
+
+### Windows 11
+
+There is more than one enviroment you can use to compile the C++ code. This is just a working setup.
+
+- install Visual Studio Community 2022, add the **Desktop Development with C++**
+  (may be added at a later time from Tools -> Get Tools and Features ...
+  in Visual Studio 2022).
+- enable `LongPathsEnabled` in the registry by changing this key:
+    
+    `Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled => 1`
+
+    Reboot the computer after this change!
+  
+- start the x64 Native Tools Command Prompt and type
+
+``` bash
+    cd lairdubois-opencutlist-sketchup-extension\build
+    gulp c_libs
+``` 
+
+## 6. Adding a New Language
 
 Note: If you just want to add a new language to **OpenCutList** and you would like to volunteer for the translation, then becoming a translator via [Transifex](https://www.transifex.com/opencutlist/opencutlist/) is a much better way. Your translation may help other users and you will get assistance from the **OpenCutList** team.
 
