@@ -33,6 +33,7 @@ endif()
 option(BUILD_SHARED_LIBS ON)
 
 message(STATUS "--------------- General configuration -------------")
+message(STATUS "CMake Version:                  ${CMAKE_VERSION}")
 message(STATUS "CMake Generator:                ${CMAKE_GENERATOR}")
 message(STATUS "CMake Generator Plateform:      ${CMAKE_GENERATOR_PLATFORM}")
 message(STATUS "Compiler:                       ${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}")
