@@ -201,9 +201,9 @@ namespace Packy {
                     const packingsolver::Output<Instance, Solution>& output
             ) {
                 std::lock_guard<std::mutex> lock(solutions_mutex_);
-                json j;
-                write_best_solution(j, dynamic_cast<const Output&>(output));
-                solutions_.push_back(j);
+                json j_solution;
+                write_best_solution(j_solution, dynamic_cast<const Output&>(output));
+                solutions_.push_back(j_solution);
             };
 
         }
