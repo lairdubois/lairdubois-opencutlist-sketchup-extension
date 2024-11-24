@@ -39,12 +39,21 @@ jobs:
 
     steps:
       - name: Support longpaths
-        run: | 
+        run: |
           git config --global core.longpaths true
         if: ${{ (matrix.os == 'windows-latest') }}
 
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Link for Windows
+        # Hard-coded link, may fail in the future!
+        run: |
+          New-Item -Path D:/a/ladb -ItemType SymbolicLink -Value D:/a/lairdubois-opencutlist-sketchup-extension/lairdubois-opencutlist-sketchup-extension
+        if: ${{ (matrix.os == 'windows-latest') }}
+
+      - name: Select Env
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Check LongPathsEnabled (Windows)
         run: |
@@ -55,28 +64,35 @@ jobs:
         # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
         id: strings
         shell: bash
-        run: |
-          echo "build-output-dir=${{ github.workspace }}/build/cmake-build" >> "$GITHUB_OUTPUT"
+        if [[ "$RUNNER_OS" == "Windows" ]]; then
+            echo "build_output_dir=D:/a/ladb/build/cmake-build" >> "$GITHUB_OUTPUT"
+            echo "src_dir=D:/a/ladb" >> "$GITHUB_OUTPUT"
+          else
+            echo "build_output_dir=${{ github.workspace }}/build/cmake-build" >> "$GITHUB_OUTPUT"
+            echo "src_dir=${{ github.workspace }}" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          RUNNER_OS: ${{ runner.os }}
 
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
         run: >
-          cmake -B ${{ steps.strings.outputs.build-output-dir }}
+          cmake -B ${{ steps.strings.outputs.build_output_dir }}
           -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
           -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          -S ${{ github.workspace }}
+          -S ${{ steps.strings.outputs.src_dir }}
 
       - name: Build
         # Build your program with the given configuration. Note that --config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
-        run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+        run: cmake --build ${{ steps.strings.outputs.build_output_dir }} --config ${{ matrix.build_type }}
 
       - name: Install
         # Install your program with the given configuration.
-        run: cmake --install ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+        run: cmake --install ${{ steps.strings.outputs.build_output_dir }} --config ${{ matrix.build_type }}
 
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-build-artifact
-          path: ${{ github.workspace }}/${{ matrix.install_dir }}
+          path: ${{ steps.strings.outputs.src_dir}}/${{ matrix.install_dir }}
