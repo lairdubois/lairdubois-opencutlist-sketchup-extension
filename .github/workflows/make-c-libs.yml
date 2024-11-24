@@ -64,7 +64,7 @@ jobs:
         # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
         id: strings
         shell: bash
-        if [[ "$RUNNER_OS" == "Windows" ]]; then
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
             echo "build_output_dir=D:/a/ladb/build/cmake-build" >> "$GITHUB_OUTPUT"
             echo "src_dir=D:/a/ladb" >> "$GITHUB_OUTPUT"
           else
