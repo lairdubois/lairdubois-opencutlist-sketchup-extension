@@ -52,10 +52,6 @@ jobs:
           New-Item -Path D:/a/ocl -ItemType SymbolicLink -Value D:/a/lairdubois-opencutlist-sketchup-extension/lairdubois-opencutlist-sketchup-extension
         if: ${{ (matrix.os == 'windows-latest') }}
 
-      - name: Configuring Developer Command Prompt for Microsoft Visual C++
-        uses: ilammy/msvc-dev-cmd@v1
-        if: ${{ (matrix.os == 'windows-latest') }}
-
       - name: Check LongPathsEnabled (Windows)
         run: |
           (Get-ItemProperty "HKLM:System\CurrentControlSet\Control\FileSystem").LongPathsEnabled
