@@ -3,7 +3,7 @@ module Ladb::OpenCutList::Kuix
   class Graphics3d < Graphics
 
     def initialize(view)
-      super(view)
+      super
     end
 
     # -- Drawing --

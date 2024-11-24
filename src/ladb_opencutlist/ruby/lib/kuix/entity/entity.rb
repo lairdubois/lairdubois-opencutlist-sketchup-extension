@@ -38,9 +38,7 @@ module Ladb::OpenCutList::Kuix
       throw 'Entity.append can\'t append nil' if entity.nil?
 
       # Remove widget from previous parent
-      if entity.parent
-        entity.remove
-      end
+      entity.remove if entity.parent
 
       # Append widget to linked list
       entity.parent = self
@@ -63,9 +61,7 @@ module Ladb::OpenCutList::Kuix
       throw 'Entity.append can\'t prepend nil' if entity.nil?
 
       # Remove widget from previous parent
-      if entity.parent
-        entity.remove
-      end
+      entity.remove if entity.parent
 
       # Prepend widget to linked list
       entity.parent = self

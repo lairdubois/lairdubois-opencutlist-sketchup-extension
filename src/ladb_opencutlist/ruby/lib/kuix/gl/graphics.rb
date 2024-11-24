@@ -22,10 +22,6 @@ module Ladb::OpenCutList::Kuix
       @view.line_stipple = line_stipple
     end
 
-    def draw_text(x, y, text, text_options)
-      @view.draw_text(Geom::Point3d.new(@origin.x + x, @origin.y + y, 0), text, text_options)
-    end
-
   end
 
 end

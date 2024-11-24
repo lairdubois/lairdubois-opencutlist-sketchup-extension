@@ -3,7 +3,7 @@ module Ladb::OpenCutList::Kuix
   class Graphics2d < Graphics
 
     def initialize(view)
-      super(view)
+      super
       @origin = Point2d.new
     end
 
@@ -12,6 +12,10 @@ module Ladb::OpenCutList::Kuix
     end
 
     # -- Drawing --
+
+    def draw_text(x, y, text, text_options)
+      @view.draw_text(Geom::Point3d.new(@origin.x + x, @origin.y + y, 0), text, text_options)
+    end
 
     def draw_line_strip(points, color = nil, line_width = nil, line_stripple = '')
       set_drawing_color(color) if color
