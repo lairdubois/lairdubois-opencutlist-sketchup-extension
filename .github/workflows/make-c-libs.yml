@@ -49,11 +49,12 @@ jobs:
       - name: Link for Windows
         # Hard-coded link, may fail in the future!
         run: |
-          New-Item -Path D:/a/ladb -ItemType SymbolicLink -Value D:/a/lairdubois-opencutlist-sketchup-extension/lairdubois-opencutlist-sketchup-extension
+          New-Item -Path D:/a/ocl -ItemType SymbolicLink -Value D:/a/lairdubois-opencutlist-sketchup-extension/lairdubois-opencutlist-sketchup-extension
         if: ${{ (matrix.os == 'windows-latest') }}
 
-      - name: Select Env
+      - name: Configuring Developer Command Prompt for Microsoft Visual C++
         uses: ilammy/msvc-dev-cmd@v1
+        if: ${{ (matrix.os == 'windows-latest') }}
 
       - name: Check LongPathsEnabled (Windows)
         run: |
@@ -66,8 +67,8 @@ jobs:
         shell: bash
         run: |
           if [[ "$RUNNER_OS" == "Windows" ]]; then
-            echo "build_output_dir=D:/a/ladb/build/cmake-build" >> "$GITHUB_OUTPUT"
-            echo "src_dir=D:/a/ladb" >> "$GITHUB_OUTPUT"
+            echo "build_output_dir=D:/a/ocl/build/cmake-build" >> "$GITHUB_OUTPUT"
+            echo "src_dir=D:/a/ocl" >> "$GITHUB_OUTPUT"
           else
             echo "build_output_dir=${{ github.workspace }}/build/cmake-build" >> "$GITHUB_OUTPUT"
             echo "src_dir=${{ github.workspace }}" >> "$GITHUB_OUTPUT"
