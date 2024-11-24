@@ -119,17 +119,17 @@ module Ladb::OpenCutList
       case action
       when :start
 
-        return _process_ouput(errors: [ 'default.error' ]) if @_running
-        return _process_ouput(errors: [ 'default.error' ]) unless @cutlist
+        return _create_packing(errors: ['default.error' ]) if @_running
+        return _create_packing(errors: ['default.error' ]) unless @cutlist
 
         model = Sketchup.active_model
-        return _process_ouput(errors: [ 'default.error' ]) unless model
+        return _create_packing(errors: ['default.error' ]) unless model
 
         group = @cutlist.get_group(@group_id)
-        return _process_ouput(errors: [ 'default.error' ]) unless group
+        return _create_packing(errors: ['default.error' ]) unless group
 
         parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
-        return _process_ouput(errors: [ 'tab.cutlist.packing.error.no_part' ]) if parts.empty?
+        return _create_packing(errors: ['tab.cutlist.packing.error.no_part' ]) if parts.empty?
 
         parts_count = parts.map(&:count).inject(0, :+)  # .map(&:count).inject(0, :+) == .sum { |portion| part.count } compatible with ruby < 2.4
 
@@ -192,7 +192,7 @@ module Ladb::OpenCutList
 
         end
 
-        return _process_ouput(errors: [ "tab.cutlist.packing.error.no_bin_#{group.material_is_1d ? '1d' : '2d'}" ]) if bin_types.empty?
+        return _create_packing(errors: ["tab.cutlist.packing.error.no_bin_#{group.material_is_1d ? '1d' : '2d'}" ]) if bin_types.empty?
 
         item_types = []
 
@@ -248,7 +248,7 @@ module Ladb::OpenCutList
           end
         }
 
-        return _process_ouput(errors: [ 'tab.cutlist.packing.error.no_part' ]) if item_types.empty?
+        return _create_packing(errors: ['tab.cutlist.packing.error.no_part' ]) if item_types.empty?
 
         instance_parameters = {}
         if @problem_type == Packy::PROBLEM_TYPE_RECTANGLE || @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
@@ -303,31 +303,31 @@ module Ladb::OpenCutList
 
         @_running = true
 
-        return _process_ouput(output: output)
+        return _create_packing(output: output)
 
       when :advance
 
-        return _process_ouput(errors: [ 'default.error' ]) unless @_running
+        return _create_packing(errors: ['default.error' ]) unless @_running
 
         output = Packy.optimize_advance
 
-        return _process_ouput(output: output)
+        return _create_packing(output: output)
 
       when :cancel
 
-        return _process_ouput(errors: [ 'default.error' ]) unless @_running
+        return _create_packing(errors: ['default.error' ]) unless @_running
 
         Packy.optimize_cancel
 
-        return _process_ouput(output: { 'cancelled' => true })
+        return _create_packing(output: { 'cancelled' => true })
       end
 
-      _process_ouput(errors: [ 'default.error' ])
+      _create_packing(errors: ['default.error' ])
     end
 
     private
 
-    def _process_ouput(output: {}, errors: nil)
+    def _create_packing(output: {}, errors: nil)
 
       return PackingDef.new(errors: errors).create_packing if errors.is_a?(Array)
       return PackingDef.new(cancelled: true).create_packing if output['cancelled']

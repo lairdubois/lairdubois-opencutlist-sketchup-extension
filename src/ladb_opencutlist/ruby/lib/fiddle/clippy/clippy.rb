@@ -6,7 +6,7 @@ module Ladb::OpenCutList::Fiddle
     extend ClipperWrapper
 
     # https://angusj.com/clipper2/Docs/Units/Clipper/Types/ClipType.htm
-    CLIP_TYPE_NONE = 0
+    CLIP_TYPE_NO_CLIP = 0
     CLIP_TYPE_INTERSECTION = 1
     CLIP_TYPE_UNION = 2
     CLIP_TYPE_DIFFERENCE = 3

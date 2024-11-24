@@ -121,8 +121,8 @@ namespace Clipper2Lib {
     );
 
     int BooleanOp64(
-            uint8_t cliptype,
-            uint8_t fillrule,
+            uint8_t clip_type,
+            uint8_t fill_rule,
             const CPaths64 subjects,
             const CPaths64 subjects_open,
             const CPaths64 clips,
@@ -133,8 +133,8 @@ namespace Clipper2Lib {
     );
 
     int BooleanOp_PolyTree64(
-            uint8_t cliptype,
-            uint8_t fillrule,
+            uint8_t clip_type,
+            uint8_t fill_rule,
             const CPaths64 subjects,
             const CPaths64 subjects_open,
             const CPaths64 clips,
@@ -145,8 +145,8 @@ namespace Clipper2Lib {
     );
 
     int BooleanOpD(
-            uint8_t cliptype,
-            uint8_t fillrule,
+            uint8_t clip_type,
+            uint8_t fill_rule,
             const CPathsD subjects,
             const CPathsD subjects_open,
             const CPathsD clips,
@@ -158,8 +158,8 @@ namespace Clipper2Lib {
     );
 
     int BooleanOp_PolyTreeD(
-            uint8_t cliptype,
-            uint8_t fillrule,
+            uint8_t clip_type,
+            uint8_t fill_rule,
             const CPathsD subjects,
             const CPathsD subjects_open,
             const CPathsD clips,
@@ -175,8 +175,8 @@ namespace Clipper2Lib {
             const CPaths64 paths,
             double delta,
             CPaths64& solution,
-            uint8_t jointype,
-            uint8_t endtype,
+            uint8_t join_type,
+            uint8_t end_type,
             double miter_limit = 2.0,
             double arc_tolerance = 0.0,
             bool preserve_collinear = false,

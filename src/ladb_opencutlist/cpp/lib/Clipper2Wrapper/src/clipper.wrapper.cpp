@@ -19,8 +19,8 @@ namespace Clipper2Lib {
     }
 
     int BooleanOp64(
-            uint8_t cliptype,
-            uint8_t fillrule,
+            uint8_t clip_type,
+            uint8_t fill_rule,
             const CPaths64 subjects,
             const CPaths64 subjects_open,
             const CPaths64 clips,
@@ -30,8 +30,8 @@ namespace Clipper2Lib {
             bool reverse_solution
     ) {
 
-        if (cliptype > static_cast<uint8_t>(ClipType::Xor)) return -4;
-        if (fillrule > static_cast<uint8_t>(FillRule::Negative)) return -3;
+        if (clip_type > static_cast<uint8_t>(ClipType::Xor)) return -4;
+        if (fill_rule > static_cast<uint8_t>(FillRule::Negative)) return -3;
 
         Paths64 sub, sub_open, clp, sol, sol_open;
         sub = ConvertCPaths(subjects);
@@ -44,7 +44,7 @@ namespace Clipper2Lib {
         if (sub.size() > 0) clipper.AddSubject(sub);
         if (sub_open.size() > 0) clipper.AddOpenSubject(sub_open);
         if (clp.size() > 0) clipper.AddClip(clp);
-        if (!clipper.Execute(ClipType(cliptype), FillRule(fillrule), sol, sol_open))
+        if (!clipper.Execute(ClipType(clip_type), FillRule(fill_rule), sol, sol_open))
             return -1; // clipping bug - should never happen :)
         solution = CreateCPaths(sol);
         solution_open = CreateCPaths(sol_open);
@@ -53,8 +53,8 @@ namespace Clipper2Lib {
     }
 
     int BooleanOp_PolyTree64(
-            uint8_t cliptype,
-            uint8_t fillrule,
+            uint8_t clip_type,
+            uint8_t fill_rule,
             const CPaths64 subjects,
             const CPaths64 subjects_open,
             const CPaths64 clips,
@@ -64,8 +64,8 @@ namespace Clipper2Lib {
             bool reverse_solution
     ) {
 
-        if (cliptype > static_cast<uint8_t>(ClipType::Xor)) return -4;
-        if (fillrule > static_cast<uint8_t>(FillRule::Negative)) return -3;
+        if (clip_type > static_cast<uint8_t>(ClipType::Xor)) return -4;
+        if (fill_rule > static_cast<uint8_t>(FillRule::Negative)) return -3;
 
         Paths64 sub, sub_open, clp, sol_open;
         sub = ConvertCPaths(subjects);
@@ -79,7 +79,7 @@ namespace Clipper2Lib {
         if (sub.size() > 0) clipper.AddSubject(sub);
         if (sub_open.size() > 0) clipper.AddOpenSubject(sub_open);
         if (clp.size() > 0) clipper.AddClip(clp);
-        if (!clipper.Execute(ClipType(cliptype), FillRule(fillrule), tree, sol_open))
+        if (!clipper.Execute(ClipType(clip_type), FillRule(fill_rule), tree, sol_open))
             return -1; // clipping bug - should never happen :)
 
         sol_tree = CreateCPolyTree(tree, (int64_t) 1);
@@ -89,8 +89,8 @@ namespace Clipper2Lib {
     }
 
     int BooleanOpD(
-            uint8_t cliptype,
-            uint8_t fillrule,
+            uint8_t clip_type,
+            uint8_t fill_rule,
             const CPathsD subjects,
             const CPathsD subjects_open,
             const CPathsD clips,
@@ -102,8 +102,8 @@ namespace Clipper2Lib {
     ) {
 
         if (precision < -8 || precision > 8) return -5;
-        if (cliptype > static_cast<uint8_t>(ClipType::Xor)) return -4;
-        if (fillrule > static_cast<uint8_t>(FillRule::Negative)) return -3;
+        if (clip_type > static_cast<uint8_t>(ClipType::Xor)) return -4;
+        if (fill_rule > static_cast<uint8_t>(FillRule::Negative)) return -3;
 
         const double scale = std::pow(10, precision);
         const double inv_scale = 1 / scale;
@@ -119,7 +119,7 @@ namespace Clipper2Lib {
         if (sub.size() > 0) clipper.AddSubject(sub);
         if (sub_open.size() > 0) clipper.AddOpenSubject(sub_open);
         if (clp.size() > 0) clipper.AddClip(clp);
-        if (!clipper.Execute(ClipType(cliptype), FillRule(fillrule), sol, sol_open)) return -1;
+        if (!clipper.Execute(ClipType(clip_type), FillRule(fill_rule), sol, sol_open)) return -1;
 
         solution = CreateCPathsDFromPaths64(sol, inv_scale);
         solution_open = CreateCPathsDFromPaths64(sol_open, inv_scale);
@@ -128,8 +128,8 @@ namespace Clipper2Lib {
     }
 
     int BooleanOp_PolyTreeD(
-            uint8_t cliptype,
-            uint8_t fillrule,
+            uint8_t clip_type,
+            uint8_t fill_rule,
             const CPathsD subjects,
             const CPathsD subjects_open,
             const CPathsD clips,
@@ -141,8 +141,8 @@ namespace Clipper2Lib {
     ) {
 
         if (precision < -8 || precision > 8) return -5;
-        if (cliptype > static_cast<uint8_t>(ClipType::Xor)) return -4;
-        if (fillrule > static_cast<uint8_t>(FillRule::Negative)) return -3;
+        if (clip_type > static_cast<uint8_t>(ClipType::Xor)) return -4;
+        if (fill_rule > static_cast<uint8_t>(FillRule::Negative)) return -3;
 
         const double scale = std::pow(10, precision);
         const double inv_scale = 1 / scale;
@@ -159,7 +159,7 @@ namespace Clipper2Lib {
         if (sub.size() > 0) clipper.AddSubject(sub);
         if (sub_open.size() > 0) clipper.AddOpenSubject(sub_open);
         if (clp.size() > 0) clipper.AddClip(clp);
-        if (!clipper.Execute(ClipType(cliptype), FillRule(fillrule), tree, sol_open))
+        if (!clipper.Execute(ClipType(clip_type), FillRule(fill_rule), tree, sol_open))
             return -1; // clipping bug - should never happen :)
 
         solution = CreateCPolyTree(tree, inv_scale);
@@ -173,20 +173,20 @@ namespace Clipper2Lib {
             const CPaths64 paths,
             double delta,
             CPaths64& solution,
-            uint8_t jointype,
-            uint8_t endtype,
+            uint8_t join_type,
+            uint8_t end_type,
             double miter_limit,
             double arc_tolerance,
             bool preserve_collinear,
             bool reverse_solution
     ) {
 
-        if (jointype > static_cast<uint8_t>(JoinType::Miter)) return -4;
-        if (endtype > static_cast<uint8_t>(EndType::Round)) return -3;
+        if (join_type > static_cast<uint8_t>(JoinType::Miter)) return -4;
+        if (end_type > static_cast<uint8_t>(EndType::Round)) return -3;
 
         Paths64 input = ConvertCPaths(paths);
         ClipperOffset offset(miter_limit, arc_tolerance, preserve_collinear, reverse_solution);
-        offset.AddPaths(input, JoinType(jointype), EndType(endtype));
+        offset.AddPaths(input, JoinType(join_type), EndType(end_type));
         Paths64 result;
         offset.Execute(delta, result);
 

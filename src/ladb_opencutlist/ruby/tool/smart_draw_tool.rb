@@ -581,8 +581,8 @@ module Ladb::OpenCutList
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
 
-      if key == COPY_MODIFIER_KEY
-        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED, !_fetch_option_solid_centered, true) if _picked_shape_last_point? && !_picked_pushpull_point?
+      if key == COPY_MODIFIER_KEY && _picked_shape_last_point? && !_picked_pushpull_point?
+        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED, !_fetch_option_solid_centered, true)
         _refresh
         return true
       end
@@ -1617,15 +1617,14 @@ module Ladb::OpenCutList
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
-      return true if super
 
-      if key == COPY_MODIFIER_KEY
-        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !_fetch_option_rectangle_centered, true) unless _picked_shape_last_point?
+      if key == COPY_MODIFIER_KEY && !_picked_shape_last_point?
+        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !_fetch_option_rectangle_centered, true)
         _refresh
         return true
       end
 
-      false
+      super
     end
 
     protected
