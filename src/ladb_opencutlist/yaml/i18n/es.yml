@@ -7,6 +7,8 @@ default:
   minimize: Minimizar
   maximize: Maximizar
   cancel: Cancelar
+  # stop computation and return best result so far
+  stop: Stop
   validate: Aplicar
   confirm: Confirmar
   ok: Ok
@@ -23,7 +25,9 @@ default:
   preview: Vista previa
   options: Opciones
   caution: Advertencia
-  remove: Remover
+  remove: Eliminar
+  remove_all: Retirar todo
+  delete: Remover
   create: Crear
   duplicate: Duplicar
   ignore: Ignorar
@@ -42,7 +46,9 @@ default:
   good: Bien
   bad: Mal
   by: por
+  # date format in use for language
   date_format: "d/m/Y g:ia"
+  # short date format in use for language
   date_format_short: d/m/Y
   unit_0: Pulgada
   unit_1: Pie
@@ -82,6 +88,12 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: Modificar la instancia
+      edit_parent_part_instance: Modificar el grupo/componente que contiene la instancia
+      hide_part_instance: Ocultar instancia
+      unhide_part_instance: Revelar instancia
+      edit_part_instance_properties: Editar las propiedades de la instancia
+      smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -90,6 +102,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
+      smart_draw: Dibujar piezas
       smart_paint: Colorear piezas
       smart_axes: Orientar piezas
       smart_export: Exportar piezas
@@ -119,6 +132,7 @@ core:
 
       Para informar de un error: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
+    extern: "Error externo: **{{ error }}**"
     feature_unavailable: "Esta función requiere SketchUp {{ version }} o superior"
     failed_export_to: |
       Se ha producido un error durante la exportación a *{{ path }}*.
@@ -132,6 +146,7 @@ core:
     material_change: Se ha cambiado al menos un material.
     selection_change: Se ha modificado la selección en el modelo activo.
     layers_change: Las etiquetas en el modelo activo han cambiado.
+    drawing_change: Se ha modificado el diseño del modelo activo.
   upgrade:
     unavailable: Imposible encontrar la última versión de *OpenCutList*.
     available: |
@@ -180,9 +195,9 @@ core:
     dictionary:
       component_textinput_color: Paleta de colores
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
+      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -195,6 +210,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modelo
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -214,7 +230,7 @@ core:
       view_isometric: Isométrica
       view_top: Planta
       view_bottom: Abajo
-      view_front: Frente
+      view_front: Frontal
       view_back: Atrás
       view_left: Izquierda
       view_right: Derecha
@@ -251,7 +267,11 @@ tab:
     edit_part_faces_properties: Edita las propiedades (chapas de madera) de la pieza
     part_drawing_type_1: 2D Vista frontal
     part_drawing_type_2: 2D Vista trasera
-    part_drawing_type_3: 3D
+    part_drawing_type_3: 2D Vista izquierda
+    part_drawing_type_4: Vista 2D Derecha
+    part_drawing_type_5: 2D Vista frontal
+    part_drawing_type_6: 2D Vista trasera
+    part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Mostrar / Ocultar
       scroll_to_block: Desplaza al grupo
@@ -344,7 +364,10 @@ tab:
       select_unselect_all_parts: Selecciona/Deselecciona todas las partes del grupo
       select_parts_in_cutlist: Seleccionar la pieza en la tabla de despiece
       select_parts_in_cutlist_plural: "Seleccionar las {{ count }} piezas en la tabla de despiece"
+      # used in estimate to setup the cutting diagram
       setup_group_cuttingdiagram: "Configure el diagrama de corte de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      # used in estimate to setup the new packing
+      setup_group_packing: "Configure el diagrama de corte de '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Abrir la URL de la pieza
     menu:
       show_all_groups: Mostrar todos los grupos
@@ -352,6 +375,7 @@ tab:
       numbers_save: Guarde los números de pieza
       numbers_reset: Reinicializar los números de pieza
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: Imprimir etiquetas
       write_2d: Proyección 2D
       write_3d: Geometría 3D
       write_2d_parts: Exportar la proyección 2D de las piezas
@@ -362,6 +386,7 @@ tab:
       group_numbers_save: Guarde los números de pieza de este grupo
       group_numbers_reset: Reinicializar los números de pieza de este grupo
       group_cuttingdiagram: Diagrama de corte
+      group_packing: Diagrama de corte
       group_labels: Imprimir etiquetas para las piezas del grupo
       edit_material: "Editar material '{{ material_name }}'"
       expand_all: Dividir todas las líneas
@@ -564,13 +589,14 @@ tab:
     export:
       title: Exportación
       info_0: |
-        Esta función permite exportar la *tabla de despiece* como una *lista de piezas* a un fichero con formato [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
+        Esta función permite exportar la *tabla de despiece* al portapapeles o a un archivo en formato [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
       customize_help: |
         Reordenar, Ocultar, Añadir, Eliminar o Seleccionar una columna de la lista para personalizar su **título** y la **fórmula** que genera el valor mostrado para cada fila exportada.
       add_column: Añadir una columna
       add_native_columns: Añadir una columna nativa
-      remove_column: Eliminar
-      remove_all_columns: Retirar todo
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
       columns: Columnas
       column_title: Título
       column_title_help: |
@@ -582,7 +608,7 @@ tab:
       options_customize: Personalización
       option_source: Fuente
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: Lista de partes
       option_source_instances_list: Lista de instancias
       option_col_sep: Separador
       option_col_sep_tab: Tabulador
@@ -610,8 +636,9 @@ tab:
       final_area: Area - final
       count: Cantidad
       part_count: Cantidad
-      material_type: Tipo
-      material_name: Material
+      material: Material
+      material_type: Tipo de material
+      material_name: Nombre del material
       material_description: Descripción del material
       material_url: URL del material
       material_std_dimension: Dimensiones estándar
@@ -629,6 +656,8 @@ tab:
       layers: Etiquetas
       batch: Lote
       bin: Contenedor
+      component_definition: Definición del componente
+      component_instance: Instancia del componente
       filename: Nombre de archivo
       model_name: Nombre del modelo
       model_description: Descripción del modelo
@@ -739,6 +768,8 @@ tab:
         *Esta opción debe activarse para que las formas puedan ser exportadas.*
       option_saw_kerf: Espesor de la hoja
       option_saw_kerf_help: El ancho del material eliminado por el corte de la hoja de sierra.
+      option_spacing: Espacio
+      option_spacing_help: Espacio mínimo entre cada pieza.
       option_trimming: Margen
       option_trimming_help_1d: La cantidad de material en cada extremo del tablero o tira de canto que se tratará como desecho.
       option_trimming_help_2d: La cantidad de material alrededor del panel en bruto que se tratará como residuo.
@@ -832,7 +863,7 @@ tab:
         parts: "{{ count }} parte"
         parts_plural: "{{ count }} partes"
         settings: Configuraciones
-      export:
+      write:
         title: Exportación del diseño
         info_0: |
           Este módulo le permite exportar la **geometría** del *diseño* en forma de lista de archivos en formato [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) o [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
@@ -916,8 +947,9 @@ tab:
       options_offset: Desplazamiento
       size: Tamaño real de la etiqueta
       add_element: Añadir un elemento
-      remove_element: Eliminar
-      remove_all_elements: Retirar todo
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         Reorganice las siguientes propiedades para definir el orden de clasificación de etiquetas.
         Las propiedades se pueden clasificar en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *desascendente*.
@@ -958,6 +990,7 @@ tab:
       option_color: Color
       formula:
         custom: Fórmula
+        custom_qr_code: Código QR
         part_number: Número
         part_name: Designación
         part_description: Descripción
@@ -997,6 +1030,7 @@ tab:
       error:
         invalid_size: Los parámetros de configuración ingresados ​​no permiten establecer un tamaño de etiqueta válido.
       warning:
+        is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no tendrán etiqueta.
         is_part_selection: Estas etiquetas se limitan a las **piezas seleccionadas**.
         formula_not_available: No disponible en este contexto
     layout:
@@ -1082,6 +1116,11 @@ tab:
       option_unit: Unidad
       option_unit_help: |
         Permite elegir la unidad empleada en el archivo exportado.
+      option_use_count: Cantidades
+      option_use_count_0: Un fichero por pieza
+      option_use_count_1: Un fichero por instancia de pieza
+      option_use_count_help: |
+        Selecciona si se tiene en cuenta el número de instancias de una pieza.
       option_part_drawing_type: Proyección
       option_part_drawing_type_help: |
         Permite elegir la vista exportada.
@@ -1095,6 +1134,11 @@ tab:
       option_anchor_1: Proyectar el origen de la pieza
       option_anchor_help: |
         Permite activar la proyección del origen de los ejes de la pieza como punto de anclaje.
+      option_switch_yz: Eje vertical
+      option_switch_yz_0: Z vertical
+      option_switch_yz_1: Y vertical
+      option_switch_yz_help: |
+        Conmuta los ejes Y y Z para definir el eje vertical de la pieza.
       option_smoothing: Regularizado
       option_smoothing_0: No
       option_smoothing_1: Alisar los círculos y arcos (Experimental)
@@ -1124,7 +1168,9 @@ tab:
         Permite elegir el color de las perforaciones de las piezas.
       option_parts_paths: Trazados
       option_parts_paths_help: |
-        Permite elegir el color de los trazados.
+        Permite elegir los colores de los trazados.
+
+        *El color de relleno sólo se utilizará para los trazados cerrados.*
       error:
         no_part: No hay piezas para exportar.
       warning:
@@ -1188,9 +1234,7 @@ tab:
       texture_load: Cargar una nueva textura
       texture_clear: Borrar la textura
       edit: "Edita las propiedades de '{{ name }}'"
-      set_current: |
-        Colorear partes con '{{ name }}'.
-        *Doble clic para colapsar*
+      set_current: "Colorea las partes con '{{ name }}'"
       open_url: Abrir la URL del material
     menu:
       import_from_skm: Importar material (.skm)
@@ -1291,13 +1335,16 @@ tab:
     export_to_skm:
       title: Exportar a fichero .skm
     option:
+      minimize_on_smart_paint: Reducir después de *'Colorear partes con...'*
+      minimize_on_smart_paint_help: "Si esta opción está activada, la ventana OpenCutList se minimizará cuando se utilice la función *'Colorear partes con...'*."
+      general: General
       material_order_strategy: Clasificación de materiales
       material_order_strategy_help: |
         Reorganice las siguientes propiedades para definir el orden de clasificación dentro de cada grupo.
         Las propiedades se pueden ordenar en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i> *descendiente*.
       property_type: Tipo
       property_name: Nombre
-    remove:
+    delete:
       message: |
         Estás a punto de eliminar el material **{{ material_name }}** de su modelo.
         Confirma para continuar.
@@ -1310,7 +1357,7 @@ tab:
       material_not_found: No se encontró ningún material.
       failed_import_skm_file: "Se produjo un error al importar desde el archivo .skm. **{{ error }}**"
       failed_export_skm_file: "Ocurrió un error al exportar a un archivo .skm. **{{ error }}**"
-      failed_removing_material: "Se produjo un error al eliminar este material. **{{ error }}**"
+      failed_deleting_material: "Se produjo un error al eliminar este material. **{{ error }}**"
       failed_duplicating_material: "Se ha producido un error al duplicar el material. **{{ error }}**"
       invalid_image_file: Imagen inválida
     obsolete_base: "Para permanecer sincronizado, debe actualizar la lista de materiales."
@@ -1319,13 +1366,13 @@ tab:
     title: Estructura
     list: Estructura en árbol de los elementos
     nodes: Elemento
-    part_count: Número de piezas
+    toggle_hidden: Instancias ocultas
     type_0: Modelo
     type_1: Grupo
     type_2: Componente
     type_3: Pieza
     tooltip:
-      open_node_url: Abrir la URL del elemento
+      open_node_url: Abrir la URL de la pieza
     edit_node:
       title_model: "Propiedades del modelo"
       title_instance: "Propiedades del elemento **{{ name }}**"
@@ -1333,9 +1380,11 @@ tab:
       preview: Vista previa
       name: Nombre
       instance_name: Instancia
+      material: Material
       definition_name: Definición
       description: Descripción
       url: URL
+      tags: Etiquetas
       layer_name: Etiqueta
       explode: Desmontar
       explode_message: "¿Confirma el desmontaje del elemento **{{ name }}**?"
@@ -1480,6 +1529,8 @@ tab:
     objective_title:
       default: Objetivo
       cuttingdiagram_export: Financiación de las exportaciones del diagrama de corte
+      outliner: Financiación de la función Estructura
+      packing: Financiación de diseños imbricados
     objective_details:
       default: |
         ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización!
@@ -1487,8 +1538,14 @@ tab:
         Es importante para nosotros que *OpenCutList* pueda adaptarse a las muy diferentes expectativas de los usuarios para la función de *diagrama de corte*.
         Para ampliar aún más las posibilidades, nos gustaría permitir la exportación de diagramas de corte en formato **SVG** y **DXF**.
         Al proporcionarnos los medios para trabajar en estas exportaciones, nos está dando la oportunidad de ayudarle a sacar el máximo provecho de *OpenCutList*.
-      layout: |
-        El objetivo de este módulo es permitirle imprimir fácilmente una vista general de su proyecto en **vista explosionada** con identificación de las piezas por su número generado en el listatod de partes.
+      outliner: |
+        Un modelo puede ser bastante complejo y navegar por su estructura con el panel Estructura nativo de SketchUp no siempre resulta muy práctico.
+        En SketchUp, puedes aplicar material y etiquetas a las instancias, una descripción, una url e insignias a las definiciones, pero no se muestran en la estructura.
+        El vídeo te mostrará cómo nos gustaría mejorar esto en el menú Estructura, accesible directamente desde OpenCutList.
+      packing: |
+        Es importante para nosotros que *OpenCutList* sea capaz de adaptarse a la gran variedad de requisitos de los usuarios para la función de *escalado*.
+        Para ampliar aún más las posibilidades, nos gustaría implementar un **algoritmo de anidamiento** para optimizar el corte de piezas de cualquier forma.
+        Al proporcionarnos los medios para trabajar en esta funcionalidad, nos está dando la oportunidad de ayudarle a sacar el máximo partido de *OpenCutList*.
     objective_crowdfunding: |
       El desarrollo de nuevas funcionalidades se realizará gracias a la **Recaudación de fondos** y comenzará cuando se alcance su **Meta financiera**.
     objective_thanks: |
@@ -1663,7 +1720,9 @@ tool:
     action_2: Cambiar anverso ↔ reverso
     action_2_status: Haga clic en una pieza para intercambiar su anverso por su reverso
     action_3: Adaptar los ejes
-    action_3_status: Haga clic en la cara o en una arista de una pieza para adaptar sus ejes
+    action_3_status: Apunte a una cara de una pieza y haga clic en una arista para adaptar sus ejes
+    action_4: Mover origen
+    action_4_status: Apunte a una cara de una pieza y haga clic en un punto para colocar allí su origen
     action_option_group_direction: Dirección
     action_option_direction_0: L
     action_option_direction_1: A
