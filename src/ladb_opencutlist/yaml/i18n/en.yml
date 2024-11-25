@@ -1051,6 +1051,7 @@ tab:
         width: Width
         total_length: Σ Length
         total_area: Σ Areas
+        total_cost: Σ Cost
         total_part_count: "# Parts"
         total_used: Total used
         bin_1d_dimensional: Dimensional

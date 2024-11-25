@@ -1051,7 +1051,7 @@ tab:
         width: Largeur
         total_length: Σ Longueurs
         total_area: Σ Surfaces
-        total_cost: Σ coûts
+        total_cost: Σ Coûts
         total_part_count: Σ Pièces
         total_used: Total utilisé
         bin_1d_dimensional: Barre
