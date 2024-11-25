@@ -1051,6 +1051,7 @@ tab:
         width: Breite
         total_length: Σ Längen
         total_area: Σ Flächen
+        total_cost: Σ Kosten
         total_part_count: "# Teile"
         total_used: Insgesamt verwendet
         bin_1d_dimensional: Stange
