@@ -7,22 +7,22 @@ module Ladb::OpenCutList
 
     DEFAULT_AXES = [ X_AXIS, Y_AXIS, Z_AXIS ]
 
-    attr_accessor :thickness, :axes
+    attr_reader :thickness, :axes
 
     def initialize(length = 0, width = 0, thickness = 0, axes = DEFAULT_AXES)
       if length.is_a?(String)    # String representation of a size "LxLxL"
         s_length, s_width, s_thickness = StringUtils.split_dxdxd(length)
         length = s_length.to_l
         width = s_width.to_l
-        thickness = s_thickness.to_l
+        thickness = s_thickness
       elsif length.is_a?(Array) && length.length >= 3  # Array(3) of inch float
-        a_size = length
-        length = a_size[0].to_l
-        width = a_size[1].to_l
-        thickness = a_size[2].to_l
+        f_length, f_width, f_thickness = length
+        length = f_length
+        width = f_width
+        thickness = f_thickness
       end
       super(length, width)
-      @thickness = thickness
+      @thickness = thickness.to_l
       @axes = axes
     end
 
@@ -31,13 +31,13 @@ module Ladb::OpenCutList
     def self.create_from_bounds(bounds, scale, auto_orient = false)
       if auto_orient
         ordered = [
-            { :value => (bounds.width * scale.x).to_l, :axis => X_AXIS, :sub_sort_index => 2 },
-            { :value => (bounds.height * scale.y).to_l, :axis => Y_AXIS, :sub_sort_index => 1 },
-            { :value => (bounds.depth * scale.z).to_l, :axis => Z_AXIS, :sub_sort_index => 0 }
+            { :value => bounds.width * scale.x, :axis => X_AXIS, :sub_sort_index => 2 },
+            { :value => bounds.height * scale.y, :axis => Y_AXIS, :sub_sort_index => 1 },
+            { :value => bounds.depth * scale.z, :axis => Z_AXIS, :sub_sort_index => 0 }
         ].sort_by { |item| [ item[:value], item[:sub_sort_index] ] }   # Added sub_sort_index as sort parameter to sort equals values in default axes order.
         Size3d.new(ordered[2][:value], ordered[1][:value], ordered[0][:value], [ ordered[2][:axis], ordered[1][:axis], ordered[0][:axis] ])
       else
-        Size3d.new((bounds.width * scale.x).to_l, (bounds.height * scale.y).to_l, (bounds.depth * scale.z).to_l)
+        Size3d.new(bounds.width * scale.x, bounds.height * scale.y, bounds.depth * scale.z)
       end
     end
 
@@ -124,11 +124,7 @@ module Ladb::OpenCutList
     # -----
 
     def ==(o)
-      super(o) && o.thickness == @thickness
-    end
-
-    def to_s
-      'Size3d(' + @length.to_l.to_s + ', ' + @width.to_l.to_s + ', ' + @thickness.to_l.to_s + ')'
+      super && o.thickness == @thickness
     end
 
   end

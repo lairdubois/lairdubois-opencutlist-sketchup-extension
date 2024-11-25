@@ -302,7 +302,7 @@ namespace Packy {
 
             Length width = j.value("width", -1);
             Length height = j.value("height", -1);
-            Profit cost = j.value("cost", -1);
+            Profit cost = j.value("cost", -1.0);
             BinPos copies = j.value("copies", 1);
             BinPos copies_min = j.value("copies_min", 0);
 
@@ -525,7 +525,7 @@ namespace Packy {
 
             Length width = j.value("width", -1);
             Length height = j.value("height", -1);
-            Profit cost = j.value("cost", -1);
+            Profit cost = j.value("cost", -1.0);
             BinPos copies = j.value("copies", 1);
             BinPos copies_min = j.value("copies_min", 0);
 
@@ -852,7 +852,7 @@ namespace Packy {
             TypedSolver::read_bin_type(j);
 
             Length width = j.value("width", -1);
-            Profit cost = j.value("cost", -1);
+            Profit cost = j.value("cost", -1.0);
             BinPos copies = j.value("copies", 1);
             BinPos copies_min = j.value("copies_min", 0);
 
@@ -1032,7 +1032,7 @@ namespace Packy {
             using namespace irregular;
 
             Shape shape = read_shape(j);
-            Profit cost = j.value("cost", -1);
+            Profit cost = j.value("cost", -1.0);
             BinPos copies = j.value("copies", 1);
             BinPos copies_min = j.value("copies_min", 0);
 

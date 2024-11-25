@@ -409,7 +409,7 @@
                 if d.index('x').nil?
                   dim << d.to_f.to_l
                 else
-                  dim << Size2d.new(d.split('x').map { |l| l.to_f })
+                  dim << Section.new(d.split('x').map { |l| l.to_f })
                 end
               end
             }

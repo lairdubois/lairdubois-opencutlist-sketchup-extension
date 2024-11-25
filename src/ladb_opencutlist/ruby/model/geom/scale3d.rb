@@ -47,12 +47,6 @@ module Ladb::OpenCutList
       @z = self.z * scale.z
     end
 
-    # -----
-
-    def to_s
-      'Scale3d(' + @x.to_s + ', ' + @y.to_s + ', ' + @z.to_s + ')'
-    end
-
   end
 
 end

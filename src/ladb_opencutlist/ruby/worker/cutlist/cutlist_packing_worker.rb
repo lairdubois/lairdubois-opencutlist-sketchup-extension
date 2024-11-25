@@ -139,7 +139,7 @@ module Ladb::OpenCutList
 
         bin_types = []
 
-        # Create bins from scrap sheets
+        # Create bins from scrap bins
         scrap_bin_sizes = group.material_is_1d ? @scrap_bin_1d_sizes : @scrap_bin_2d_sizes
         scrap_bin_sizes.split(DimensionUtils::LIST_SEPARATOR).each do |scrap_bin_size|
 
@@ -163,7 +163,7 @@ module Ladb::OpenCutList
             copies: count,
             width: _to_packy_length(length),
             height: _to_packy_length(width),
-            cost: _to_packy_cost(cost)
+            cost: cost
           }
           if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
             bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy_length(@trimming)
@@ -183,7 +183,7 @@ module Ladb::OpenCutList
 
         end
 
-        # Create bins from std sheets
+        # Create bins from std bins
         @std_bin_sizes.split(DimensionUtils::LIST_SEPARATOR).each do |std_bin_size|
 
           dd = std_bin_size.split(DimensionUtils::DXD_SEPARATOR)
@@ -198,7 +198,7 @@ module Ladb::OpenCutList
             copies: parts_count,
             width: _to_packy_length(length),
             height: _to_packy_length(width),
-            cost: _to_packy_cost(cost)
+            cost: cost
           }
           if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
             bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy_length(@trimming)
@@ -273,9 +273,7 @@ module Ladb::OpenCutList
         }
         parts.each { |part|
           if part.instance_of?(FolderPart)
-            part.children.each { |child_part|
-              fn_add_items.call(child_part)
-            }
+            part.children.each { |child_part| fn_add_items.call(child_part) }
           else
             fn_add_items.call(part)
           end
@@ -362,9 +360,11 @@ module Ladb::OpenCutList
 
     def _create_packing(output: {}, errors: nil)
 
+      running = output.fetch('running', false)
+
       return PackingDef.new(errors: errors).create_packing if errors.is_a?(Array)
       return PackingDef.new(cancelled: true).create_packing if output['cancelled']
-      return PackingDef.new(running: true).create_packing if output['running'] && output['solution'].nil?
+      return PackingDef.new(running: true).create_packing if running && output['solution'].nil?
 
       if @verbosity_level > 0
         puts ' '
@@ -375,9 +375,9 @@ module Ladb::OpenCutList
 
       return PackingDef.new(errors: [ [ 'core.error.extern', { 'error' => output['error'] } ] ]).create_packing if output.has_key?('error')
 
-      solution = output['solution']
+      raw_solution = output['solution']
 
-      return PackingDef.new(errors: [ 'tab.cutlist.packing.error.no_solution' ]).create_packing if solution['bins'].nil? || solution['bins'].empty?
+      return PackingDef.new(errors: [ 'tab.cutlist.packing.error.no_solution' ]).create_packing if raw_solution['bins'].nil? || raw_solution['bins'].empty?
 
       # Create PackingDef from solution
 
@@ -391,7 +391,7 @@ module Ladb::OpenCutList
       end
 
       packing_def = PackingDef.new(
-        running: output.fetch('running', false),
+        running: running,
         solution_def: PackingSolutionDef.new(
           options_def: PackingOptionsDef.new(
             problem_type: @problem_type,
@@ -403,12 +403,12 @@ module Ladb::OpenCutList
             origin_corner: @origin_corner
           ),
           summary_def: PackingSummaryDef.new(
-            time: solution['time'],
-            total_bin_count: solution['number_of_bins'],
-            total_item_count: solution['number_of_items'],
-            total_efficiency: solution['efficiency']
+            time: raw_solution['time'],
+            total_bin_count: raw_solution['number_of_bins'],
+            total_item_count: raw_solution['number_of_items'],
+            total_efficiency: raw_solution['efficiency']
           ),
-          bin_defs: solution['bins'].map { |raw_bin|
+          bin_defs: raw_solution['bins'].map { |raw_bin|
             bin_type_def = @bin_type_defs[raw_bin['bin_type_id']]
             PackingBinDef.new(
               bin_type_def: bin_type_def,
@@ -469,7 +469,7 @@ module Ladb::OpenCutList
         bin_type_uses[bin_def.bin_type_def][0] += bin_def.count                             # used_count
         bin_type_uses[bin_def.bin_type_def][1] += bin_def.count * bin_def.item_defs.length  # total_item_count
 
-        bin_def.svg = _render_bin_def_svg(bin_def, output['running'])
+        bin_def.svg = _render_bin_def_svg(bin_def, running)
         bin_def.total_cut_length = bin_def.cut_defs.map(&:length).inject(0, :+)  # .map(&:length).inject(0, :+) == .sum { |bin_def| bin_def.length } compatible with ruby < 2.4
 
         packing_def.solution_def.summary_def.total_leftover_count += bin_def.leftover_defs.length
@@ -522,15 +522,6 @@ module Ladb::OpenCutList
       l.mm / 10.0
     end
 
-    def _to_packy_cost(c)
-      return c if c <= 0
-      c.round(2) * 100
-    end
-
-    def _from_packy_cost(c)
-      c / 100.0
-    end
-
     def _compute_bin_cost(group, inch_length = 0, inch_width = 0, inch_thickness = 0)
       std_price = nil
       cost = -1
@@ -541,19 +532,21 @@ module Ladb::OpenCutList
 
         if group.material_is_1d
           if group.def.std_dimension_stipped_name == 'section'
-            std_dimension = Size2d.new(group.def.std_dimension)
+            std_dimension = Section.new(group.def.std_dimension)
           else
             std_dimension = group.def.std_dimension.to_l
           end
           dim = [ std_dimension, inch_length ]
         elsif group.material_is_2d
-          dim = [ inch_thickness, Size2d.new(inch_length, inch_width) ]
+          dim = [ inch_thickness, Section.new(inch_length, inch_width) ]
         else
-          return [ cost, std_price ]
+          dim = nil
         end
-        std_price = _get_std_price(dim, material_attributes)
-        price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], inch_thickness, inch_width, inch_length)
-        cost = (inch_length * inch_width * inch_thickness * price_per_inch3).round(2)
+        unless dim.nil?
+          std_price = _get_std_price(dim, material_attributes)
+          price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], inch_thickness, inch_width, inch_length)
+          cost = (inch_length * inch_width * inch_thickness * price_per_inch3).round(2)
+        end
 
       end
       [ cost, std_price ]
@@ -659,9 +652,9 @@ module Ladb::OpenCutList
           px_item_rect_y = px_bin_width - _compute_y_with_origin_corner(px_item_y + bounds.min.y.to_f, px_item_rect_height, px_bin_width)
 
           svg += "<g class='item' transform='translate(#{px_item_rect_x} #{px_item_rect_y})' data-toggle='tooltip' data-html='true' title='#{_render_item_def_tooltip(item_def)}' data-part-id='#{part.id}'>"
-            svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" fill='#eee' stroke='#555'" if running}/>" unless is_irregular
+            svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" style='fill:#{projection_def.nil? && colored_part ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'};stroke:#555'" if running || (projection_def.nil? && colored_part)}/>" unless is_irregular
 
-            unless @part_drawing_type == PART_DRAWING_TYPE_NONE || projection_def.nil?
+            unless projection_def.nil?
               svg += "<g class='item-projection' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2})#{" rotate(#{-item_def.angle})" if item_def.angle != 0}#{' scale(-1 1)' if item_def.mirror} translate(#{-px_part_length / 2} #{px_part_width / 2})'>"
                 svg += "<path stroke='#{colored_part && !is_irregular ? ColorUtils.color_to_hex(ColorUtils.color_darken(item_type_def.color, 0.4)) : '#000'}' fill='#{colored_part ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
               svg += '</g>'
@@ -690,61 +683,61 @@ module Ladb::OpenCutList
         unless running
           bin_def.leftover_defs.each do |leftover_def|
 
-          px_leftover_length = _to_px(leftover_def.length)
-          px_leftover_width = is_1d ? px_bin_width : _to_px(leftover_def.width)
-          px_leftover_x = _compute_x_with_origin_corner(_to_px(leftover_def.x), px_leftover_length, px_bin_length)
-          px_leftover_y = px_bin_width - _compute_y_with_origin_corner(_to_px(leftover_def.y), px_leftover_width, px_bin_width)
+            px_leftover_length = _to_px(leftover_def.length)
+            px_leftover_width = is_1d ? px_bin_width : _to_px(leftover_def.width)
+            px_leftover_x = _compute_x_with_origin_corner(_to_px(leftover_def.x), px_leftover_length, px_bin_length)
+            px_leftover_y = px_bin_width - _compute_y_with_origin_corner(_to_px(leftover_def.y), px_leftover_width, px_bin_width)
 
-          length_text = leftover_def.length.to_s.gsub(/~ /, '')
-          width_text = leftover_def.width.to_s.gsub(/~ /, '')
+            length_text = leftover_def.length.to_s.gsub(/~ /, '')
+            width_text = leftover_def.width.to_s.gsub(/~ /, '')
 
-          px_length_text_length = length_text.length * px_leftover_dimension_font_size * 0.7
-          px_width_text_length = length_text.length * px_leftover_dimension_font_size * 0.7
+            px_length_text_length = length_text.length * px_leftover_dimension_font_size * 0.7
+            px_width_text_length = length_text.length * px_leftover_dimension_font_size * 0.7
 
-          svg += "<g class='leftover' transform='translate(#{px_leftover_x} #{px_leftover_y})'>"
-            svg += "<rect x='0' y='#{-px_leftover_width}' width='#{px_leftover_length}' height='#{px_leftover_width}'/>"
-            if is_2d
-              svg += "<text class='leftover-dimension' x='#{px_leftover_length - px_leftover_dimension_offset}' y='#{-(px_leftover_width - px_leftover_dimension_offset)}' font-size='#{px_leftover_dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{length_text}</text>" if px_leftover_length > px_length_text_length && px_leftover_width > px_leftover_dimension_font_size
-              svg += "<text class='leftover-dimension' x='#{px_leftover_dimension_offset}' y='#{-px_leftover_dimension_offset}' font-size='#{px_leftover_dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_leftover_dimension_offset} -#{px_leftover_dimension_offset})'>#{width_text}</text>" if px_leftover_length > px_leftover_dimension_font_size && px_leftover_width > px_width_text_length
-            elsif is_1d
-              svg += "<text class='leftover-dimension' x='#{px_leftover_length / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_leftover_dimension_font_size}' text-anchor='middle' dominant-baseline='hanging'>#{leftover_def.length.to_s.gsub(/~ /, '')}</text>"
-            end
-          svg += '</g>'
+            svg += "<g class='leftover' transform='translate(#{px_leftover_x} #{px_leftover_y})'>"
+              svg += "<rect x='0' y='#{-px_leftover_width}' width='#{px_leftover_length}' height='#{px_leftover_width}'/>"
+              if is_2d
+                svg += "<text class='leftover-dimension' x='#{px_leftover_length - px_leftover_dimension_offset}' y='#{-(px_leftover_width - px_leftover_dimension_offset)}' font-size='#{px_leftover_dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{length_text}</text>" if px_leftover_length > px_length_text_length && px_leftover_width > px_leftover_dimension_font_size
+                svg += "<text class='leftover-dimension' x='#{px_leftover_dimension_offset}' y='#{-px_leftover_dimension_offset}' font-size='#{px_leftover_dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_leftover_dimension_offset} -#{px_leftover_dimension_offset})'>#{width_text}</text>" if px_leftover_length > px_leftover_dimension_font_size && px_leftover_width > px_width_text_length
+              elsif is_1d
+                svg += "<text class='leftover-dimension' x='#{px_leftover_length / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_leftover_dimension_font_size}' text-anchor='middle' dominant-baseline='hanging'>#{leftover_def.length.to_s.gsub(/~ /, '')}</text>"
+              end
+            svg += '</g>'
 
-        end
+          end
           bin_def.cut_defs.each do |cut_def|
 
-          px_cut_x = _to_px(cut_def.x)
-          px_cut_y = px_bin_width - _to_px(cut_def.y)
-          px_cut_length = _to_px(cut_def.length)
-          px_cut_width = [ 1, px_spacing ].max
+            px_cut_x = _to_px(cut_def.x)
+            px_cut_y = px_bin_width - _to_px(cut_def.y)
+            px_cut_length = _to_px(cut_def.length)
+            px_cut_width = [ 1, px_spacing ].max
 
-          if cut_def.orientation == 'horizontal'
-            px_cut_rect_width = px_cut_length
-            px_cut_rect_height = px_cut_width
-          else
-            px_cut_rect_width = px_cut_width
-            px_cut_rect_height = px_cut_length
-          end
-          px_cut_rect_x = _compute_x_with_origin_corner(px_cut_x, px_cut_rect_width, px_bin_length)
-          px_cut_rect_y = _compute_y_with_origin_corner(px_cut_y - px_cut_rect_height, px_cut_rect_height, px_bin_width)
+            if cut_def.orientation == 'horizontal'
+              px_cut_rect_width = px_cut_length
+              px_cut_rect_height = px_cut_width
+            else
+              px_cut_rect_width = px_cut_width
+              px_cut_rect_height = px_cut_length
+            end
+            px_cut_rect_x = _compute_x_with_origin_corner(px_cut_x, px_cut_rect_width, px_bin_length)
+            px_cut_rect_y = _compute_y_with_origin_corner(px_cut_y - px_cut_rect_height, px_cut_rect_height, px_bin_width)
 
-          case cut_def.depth
-          when 0
-            clazz = ' cut-trimming'
-          when 1
-            clazz = ' cut-bounding'
-          when 2
-            clazz = ' cut-internal-through'
-          else
-            clazz = ''
-          end
-          clazz += ' cut-lg' if is_cut_lg
+            case cut_def.depth
+            when 0
+              clazz = ' cut-trimming'
+            when 1
+              clazz = ' cut-bounding'
+            when 2
+              clazz = ' cut-internal-through'
+            else
+              clazz = ''
+            end
+            clazz += ' cut-lg' if is_cut_lg
 
-          svg += "<g class='cut#{clazz}' data-toggle='tooltip' data-html='true' title='#{_render_cut_def_tooltip(cut_def)}'>"
-            svg += "<rect class='cut-outer' x='#{px_cut_rect_x - px_cut_outline_width}' y='#{px_cut_rect_y - px_cut_outline_width}' width='#{px_cut_rect_width + px_cut_outline_width * 2}' height='#{px_cut_rect_height + px_cut_outline_width * 2}' />"
-            svg += "<rect class='cut-inner' x='#{px_cut_rect_x}' y='#{px_cut_rect_y}' width='#{px_cut_rect_width}' height='#{px_cut_rect_height}'#{" fill='url(#pattern_cut_bg)'" if is_cut_lg}/>"
-          svg += "</g>"
+            svg += "<g class='cut#{clazz}' data-toggle='tooltip' data-html='true' title='#{_render_cut_def_tooltip(cut_def)}'>"
+              svg += "<rect class='cut-outer' x='#{px_cut_rect_x - px_cut_outline_width}' y='#{px_cut_rect_y - px_cut_outline_width}' width='#{px_cut_rect_width + px_cut_outline_width * 2}' height='#{px_cut_rect_height + px_cut_outline_width * 2}' />"
+              svg += "<rect class='cut-inner' x='#{px_cut_rect_x}' y='#{px_cut_rect_y}' width='#{px_cut_rect_width}' height='#{px_cut_rect_height}'#{" fill='url(#pattern_cut_bg)'" if is_cut_lg}/>"
+            svg += "</g>"
 
           end
         end

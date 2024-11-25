@@ -4,7 +4,7 @@ module Ladb::OpenCutList
 
   class Size2d
 
-    attr_accessor :length, :width
+    attr_reader :length, :width
 
     def initialize(length = 0, width = 0)
       if length.is_a?(String)    # String representation of a size "LxL"
@@ -12,9 +12,9 @@ module Ladb::OpenCutList
         length = s_length.to_l
         width = s_width.to_l
       elsif length.is_a?(Array) && length.length >= 2  # Array(2) of inch float
-        a_size = length
-        length = a_size[0].to_l
-        width = a_size[1].to_l
+        f_length, f_width = length
+        length = f_length.to_l
+        width = f_width.to_l
       end
       @length = length.to_l
       @width = width.to_l
@@ -44,10 +44,7 @@ module Ladb::OpenCutList
       o.class == self.class && o.length == @length && o.width == @width
     end
 
-    def to_s
-      'Size2d(' + @length.to_l.to_s + ', ' + @width.to_l.to_s + ')'
-    end
-
   end
 
 end
+
