@@ -5,8 +5,15 @@ module Ladb::OpenCutList
   require_relative '../../model/report/report_def'
   require_relative '../../model/report/report_entry_def'
   require_relative '../../utils/hash_utils'
+  require_relative '../../helper/material_attributes_caching_helper'
+  require_relative '../../helper/definition_attributes_caching_helper'
+  require_relative '../../helper/estimation_helper'
 
   class CutlistReportWorker
+
+    include MaterialAttributesCachingHelper
+    include DefinitionAttributesCachingHelper
+    include EstimationHelper
 
     def initialize(cutlist,
 
@@ -26,11 +33,6 @@ module Ladb::OpenCutList
 
       @report_def = ReportDef.new
       @report_def.solid_wood_coefficient = @solid_wood_coefficient
-
-      # Setup caches
-      @material_attributes_cache = {}
-      @definition_attributes_cache = {}
-      @model_unit_is_metric = DimensionUtils.model_unit_is_metric
 
     end
 
@@ -150,110 +152,7 @@ module Ladb::OpenCutList
 
     private
 
-    # -- Cache Utils --
-
-    # MaterialAttributes
-
-    def _get_material_attributes(material_name)
-      material = Sketchup.active_model.materials[material_name]
-      key = material ? material.name : '$EMPTY$'
-      unless @material_attributes_cache.has_key?(key)
-        @material_attributes_cache[key] = MaterialAttributes.new(material)
-      end
-      @material_attributes_cache[key]
-    end
-
-    # DefinitionAttributes
-
-    def _get_definition_attributes(definition_name)
-      definition = Sketchup.active_model.definitions[definition_name]
-      key = definition ? definition.name : '$EMPTY$'
-      unless @definition_attributes_cache.has_key?(key)
-        @definition_attributes_cache[key] = DefinitionAttributes.new(definition, true)
-      end
-      @definition_attributes_cache[key]
-    end
-
     # -----
-
-    def _get_std_volumic_mass(dim, material_attributes)
-
-      h_std_volumic_masses = material_attributes.h_std_volumic_masses
-      unless  dim.nil?
-        h_std_volumic_masses.each do |std_volumic_masses|
-          if std_volumic_masses[:dim] == dim
-            return std_volumic_masses
-          end
-        end
-      end
-
-      h_std_volumic_masses[0]
-    end
-
-    def _get_std_price(dim, material_attributes)
-
-      h_std_prices = material_attributes.h_std_prices
-      unless  dim.nil?
-        h_std_prices.each do |std_price|
-          if std_price[:dim] == dim
-            return std_price
-          end
-        end
-      end
-
-      h_std_prices[0]
-    end
-
-    def _uv_mass_to_model_unit(s_unit, f_value)
-
-      case s_unit
-
-      when MassUtils::UNIT_STRIPPEDNAME_KILOGRAM
-        f_value = MassUtils.kg_to_model_unit(f_value)
-      when MassUtils::UNIT_STRIPPEDNAME_POUND
-        f_value = MassUtils.lb_to_model_unit(f_value)
-
-      end
-
-      f_value
-    end
-
-    def _uv_to_inch3(s_unit, f_value, inch_thickness = 0, inch_width = 0, inch_length = 0)
-
-      return 0 if s_unit.nil?   # Invalid input
-
-      unit_numerator, unit_denominator = s_unit.split('_')
-
-      # Process mass if needed
-      f_value = _uv_mass_to_model_unit(unit_numerator, f_value)
-
-      # Process volume / area / length / instance or part
-      case unit_denominator
-
-      when DimensionUtils::UNIT_STRIPPEDNAME_METER_3
-        f_value = DimensionUtils.m3_to_inch3(f_value)
-      when DimensionUtils::UNIT_STRIPPEDNAME_FEET_3
-        f_value = DimensionUtils.ft3_to_inch3(f_value)
-      when DimensionUtils::UNIT_STRIPPEDNAME_BOARD_FEET
-        f_value = DimensionUtils.fbm_to_inch3(f_value)
-
-      when DimensionUtils::UNIT_STRIPPEDNAME_METER_2
-        f_value = inch_thickness == 0 ? 0 : DimensionUtils.m2_to_inch2(f_value) / inch_thickness
-      when DimensionUtils::UNIT_STRIPPEDNAME_FEET_2
-        f_value = inch_thickness == 0 ? 0 : DimensionUtils.ft2_to_inch2(f_value) / inch_thickness
-
-      when DimensionUtils::UNIT_STRIPPEDNAME_METER
-        f_value = inch_thickness * inch_width == 0 ? 0 : DimensionUtils.m_to_inch(f_value) / inch_thickness / inch_width
-      when DimensionUtils::UNIT_STRIPPEDNAME_FEET
-        f_value = inch_thickness * inch_width == 0 ? 0 : DimensionUtils.ft_to_inch(f_value) / inch_thickness / inch_width
-
-      when 'i', 'p'
-        f_value = inch_thickness * inch_width * inch_length == 0 ? 0 : f_value / inch_thickness / inch_width / inch_length
-
-      end
-
-      f_value
-    end
 
     def _compute_1d(cutlist_group, report_group_def, entry_def_class_name, item_def_class_name)
 

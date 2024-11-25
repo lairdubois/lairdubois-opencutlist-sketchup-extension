@@ -85,7 +85,7 @@ module Ladb::OpenCutList
   class PackingSummaryDef
 
     attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :bin_type_defs
-    attr_accessor :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_count, :total_used_area, :total_used_length, :total_used_item_count
+    attr_accessor :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_count, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count
 
     def initialize(time:, total_bin_count:, total_item_count:, total_efficiency:)
 
@@ -103,6 +103,7 @@ module Ladb::OpenCutList
       @total_used_count = 0
       @total_used_area = 0
       @total_used_length = 0
+      @total_used_cost = 0
       @total_used_item_count = 0
 
       @bin_type_defs = []
@@ -121,7 +122,7 @@ module Ladb::OpenCutList
 
   class PackingSummaryBinTypeDef
 
-    attr_reader :bin_type_def, :count, :used, :total_area, :total_length, :total_item_count
+    attr_reader :bin_type_def, :count, :used, :std_price, :total_area, :total_length, :total_cost, :total_item_count
 
     def initialize(bin_type_def:, count:, used:, total_item_count: 0)
 
@@ -129,8 +130,11 @@ module Ladb::OpenCutList
       @count = count
       @used = used
 
+      @std_price = bin_type_def.std_price
+
       @total_area = bin_type_def.length * bin_type_def.width * count
       @total_length = bin_type_def.length * count
+      @total_cost = @used ? bin_type_def.cost * count : 0
       @total_item_count = total_item_count
 
     end

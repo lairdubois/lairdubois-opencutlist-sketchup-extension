@@ -107,7 +107,7 @@
             <table id="ladb_packing_summary" data-group-id="packing_summary" class="{% if 'packing_summary' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark ladb-cutlist-group-summary">
                 <thead>
                 <tr class="table-heading">
-                    <td colspan="6">
+                    <td colspan="7">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                         <div class="ladb-heading">{{ 'tab.cutlist.packing.list.summary'|i18next }}</div>
                     </td>
@@ -115,7 +115,7 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td colspan="6">
+                    <td colspan="7">
                         <small>
                             <div class="row">
                                 <div class="col-xs-6">
@@ -144,14 +144,15 @@
                 <tr>
                     <td class="text-center" style="vertical-align: middle !important;">{{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2)|i18next }}</td>
                     <td class="text-center" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.packing.list.count'|i18next }}</td>
-                    <td class="text-center" width="12%">{{ 'tab.cutlist.packing.list.length'|i18next }}</td>
+                    <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.length'|i18next }}</td>
                     {% if group.material_is_1d %}
-                        <td class="text-center" width="12%">{{ 'tab.cutlist.packing.list.total_length'|i18next }}</td>
+                        <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.total_length'|i18next }}</td>
                     {% else %}
-                        <td class="text-center" width="12%">{{ 'tab.cutlist.packing.list.width'|i18next }}</td>
-                        <td class="text-center" width="12%">{{ 'tab.cutlist.packing.list.total_area'|i18next }}</td>
+                        <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.width'|i18next }}</td>
+                        <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.total_area'|i18next }}</td>
                     {% endif %}
-                    <td class="text-center" width="12%">{{ 'tab.cutlist.packing.list.total_part_count'|i18next }}</td>
+                    <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.total_cost'|i18next }}</td>
+                    <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.total_part_count'|i18next }}</td>
                 </tr>
                 {% set isFirstUsed = solution.summary.bin_types|length > 0 and solution.summary.bin_types[0].used %}
                 {% for bin_type in solution.summary.bin_types %}
@@ -165,23 +166,26 @@
                             {% endif %}
                         </td>
                         <td class="text-center">
-                            {{ bin_type.count == 0 ? '∞' : bin_type.count }}
+                            {{ bin_type.count ? bin_type.count : '-' }}
                         </td>
                         <td class="ladb-cutlist-value ladb-cutlist-value-right">
                             {{ bin_type.length }}
                         </td>
                         {% if group.material_is_1d %}
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                                {{ bin_type.total_length }}
+                                {{ bin_type.total_length ? bin_type.total_length : '-' }}
                             </td>
                         {% else %}
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">
                                 {{ bin_type.width }}
                             </td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                                {{ bin_type.total_area }}
+                                {{ bin_type.total_area ? bin_type.total_area : '-' }}
                             </td>
                         {% endif %}
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bin_type.std_price %} data-toggle="tooltip" data-html="true" title="{{ bin_type.std_price }}"{% endif %}>
+                            {{ bin_type.total_cost ? bin_type.total_cost : '-' }}
+                        </td>
                         <td class="ladb-cutlist-value ladb-cutlist-value-right">
                             {{ bin_type.total_item_count ? bin_type.total_item_count : '-' }}
                         </td>
@@ -198,6 +202,7 @@
                             <td></td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ solution.summary.total_used_area }}</td>
                         {% endif %}
+                        <td class="text-right">{{ solution.summary.total_used_cost ? solution.summary.total_used_cost : '-' }}</td>
                         <td class="text-right">{{ solution.summary.total_used_item_count }}</td>
                     </tr>
                 {% endif %}

@@ -378,6 +378,11 @@
       _std_vd_to_uvd(@std_prices)
     end
 
+    def has_std_prices?
+      return true unless h_std_prices.find { |std_price| std_price[:val] > 0 }.nil?
+      false
+    end
+
     # -----
 
     def _std_vd_to_uvd(std_vd)

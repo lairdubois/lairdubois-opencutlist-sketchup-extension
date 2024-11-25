@@ -4,6 +4,8 @@ module Ladb::OpenCutList
   require 'cgi'
   require_relative '../../helper/part_drawing_helper'
   require_relative '../../helper/pixel_converter_helper'
+  require_relative '../../helper/material_attributes_caching_helper'
+  require_relative '../../helper/estimation_helper'
   require_relative '../../utils/dimension_utils'
   require_relative '../../utils/string_utils'
   require_relative '../../lib/fiddle/packy/packy'
@@ -17,6 +19,8 @@ module Ladb::OpenCutList
 
     include PartDrawingHelper
     include PixelConverterHelper
+    include MaterialAttributesCachingHelper
+    include EstimationHelper
 
     Packy = Fiddle::Packy
 
@@ -119,17 +123,17 @@ module Ladb::OpenCutList
       case action
       when :start
 
-        return _create_packing(errors: ['default.error' ]) if @_running
-        return _create_packing(errors: ['default.error' ]) unless @cutlist
+        return _create_packing(errors: [ 'default.error' ]) if @_running
+        return _create_packing(errors: [ 'default.error' ]) unless @cutlist
 
         model = Sketchup.active_model
-        return _create_packing(errors: ['default.error' ]) unless model
+        return _create_packing(errors: [ 'default.error' ]) unless model
 
         group = @cutlist.get_group(@group_id)
-        return _create_packing(errors: ['default.error' ]) unless group
+        return _create_packing(errors: [ 'default.error' ]) unless group
 
         parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
-        return _create_packing(errors: ['tab.cutlist.packing.error.no_part' ]) if parts.empty?
+        return _create_packing(errors: [ 'tab.cutlist.packing.error.no_part' ]) if parts.empty?
 
         parts_count = parts.map(&:count).inject(0, :+)  # .map(&:count).inject(0, :+) == .sum { |portion| part.count } compatible with ruby < 2.4
 
@@ -153,18 +157,29 @@ module Ladb::OpenCutList
 
           next if length == 0 || width == 0 || count == 0
 
+          cost, std_price = _compute_bin_cost(group, length, width)
+
           bin_type = {
             copies: count,
-            width: _to_packy(length),
-            height: _to_packy(width),
+            width: _to_packy_length(length),
+            height: _to_packy_length(width),
+            cost: _to_packy_cost(cost)
           }
           if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
-            bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy(@trimming)
+            bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy_length(@trimming)
           elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
             bin_type[:type] = 'rectangle'
           end
           bin_types << bin_type
-          @bin_type_defs << BinTypeDef.new(Digest::MD5.hexdigest("#{length}_#{width}_1"), length, width, count, 1) # 1 = user defined
+          @bin_type_defs << BinTypeDef.new(
+            Digest::MD5.hexdigest("#{length}_#{width}_1"),
+            length,
+            width,
+            count,
+            cost,
+            std_price,
+            1 # 1 = Bin "user defined"
+          )
 
         end
 
@@ -177,22 +192,33 @@ module Ladb::OpenCutList
 
           next if length == 0 || width == 0
 
+          cost, std_price = _compute_bin_cost(group, length, width)
+
           bin_type = {
             copies: parts_count,
-            width: _to_packy(length),
-            height: _to_packy(width),
+            width: _to_packy_length(length),
+            height: _to_packy_length(width),
+            cost: _to_packy_cost(cost)
           }
           if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
-            bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy(@trimming)
+            bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy_length(@trimming)
           elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
             bin_type[:type] = 'rectangle'
           end
           bin_types << bin_type
-          @bin_type_defs << BinTypeDef.new(Digest::MD5.hexdigest("#{length}_#{width}_0"), length, width, -1, 0) # 0 = Standard
+          @bin_type_defs << BinTypeDef.new(
+            Digest::MD5.hexdigest("#{length}_#{width}_0"),
+            length,
+            width,
+            -1,
+            cost,
+            std_price,
+            0 # 0 = Bin "Standard"
+          )
 
         end
 
-        return _create_packing(errors: ["tab.cutlist.packing.error.no_bin_#{group.material_is_1d ? '1d' : '2d'}" ]) if bin_types.empty?
+        return _create_packing(errors: [ "tab.cutlist.packing.error.no_bin_#{group.material_is_1d ? '1d' : '2d'}" ]) if bin_types.empty?
 
         item_types = []
 
@@ -211,10 +237,10 @@ module Ladb::OpenCutList
               copies: part.count,
               shapes: projection_def.shell_def.shape_defs.map { |shape_def| {
                 type: 'polygon',
-                vertices: shape_def.outer_poly_def.points.map { |point| { x: _to_packy(point.x), y: _to_packy(point.y) } },
+                vertices: shape_def.outer_poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } },
                 holes: shape_def.holes_poly_defs.map { |poly_def| {
                   type: 'polygon',
-                  vertices: poly_def.points.map { |point| { x: _to_packy(point.x), y: _to_packy(point.y) } }
+                  vertices: poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } }
                 }},
               }},
               allowed_rotations: @irregular_allowed_rotations,
@@ -228,14 +254,21 @@ module Ladb::OpenCutList
 
             item_types << {
               copies: count,
-              width: _to_packy(length),
-              height: _to_packy(width),
+              width: _to_packy_length(length),
+              height: _to_packy_length(width),
               oriented: (group.material_grained && !part.ignore_grain_direction) ? true : false
             }
 
           end
 
-          @item_type_defs << ItemTypeDef.new(length, width, count, part, projection_def, @colored_part ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil)
+          @item_type_defs << ItemTypeDef.new(
+            length,
+            width,
+            count,
+            part,
+            projection_def,
+            @colored_part ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil
+          )
 
         }
         parts.each { |part|
@@ -248,25 +281,25 @@ module Ladb::OpenCutList
           end
         }
 
-        return _create_packing(errors: ['tab.cutlist.packing.error.no_part' ]) if item_types.empty?
+        return _create_packing(errors: [ 'tab.cutlist.packing.error.no_part' ]) if item_types.empty?
 
         instance_parameters = {}
         if @problem_type == Packy::PROBLEM_TYPE_RECTANGLE || @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
           instance_parameters = {
-            fake_trimming: _to_packy(@trimming),
-            fake_spacing: _to_packy(@spacing)
+            fake_trimming: _to_packy_length(@trimming),
+            fake_spacing: _to_packy_length(@spacing)
           }
           elsif @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
           instance_parameters = {
             cut_type: @rectangleguillotine_cut_type,
-            cut_thickness: _to_packy(@spacing),
+            cut_thickness: _to_packy_length(@spacing),
             number_of_stages: @rectangleguillotine_number_of_stages,
             first_stage_orientation: @rectangleguillotine_first_stage_orientation,
           }
         elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
           instance_parameters = {
-            item_bin_minimum_spacing: _to_packy(@trimming),
-            item_item_minimum_spacing: _to_packy(@spacing)
+            item_bin_minimum_spacing: _to_packy_length(@trimming),
+            item_item_minimum_spacing: _to_packy_length(@spacing)
           }
         end
 
@@ -307,7 +340,7 @@ module Ladb::OpenCutList
 
       when :advance
 
-        return _create_packing(errors: ['default.error' ]) unless @_running
+        return _create_packing(errors: [ 'default.error' ]) unless @_running
 
         output = Packy.optimize_advance
 
@@ -315,14 +348,14 @@ module Ladb::OpenCutList
 
       when :cancel
 
-        return _create_packing(errors: ['default.error' ]) unless @_running
+        return _create_packing(errors: [ 'default.error' ]) unless @_running
 
         Packy.optimize_cancel
 
         return _create_packing(output: { 'cancelled' => true })
       end
 
-      _create_packing(errors: ['default.error' ])
+      _create_packing(errors: [ 'default.error' ])
     end
 
     private
@@ -386,26 +419,26 @@ module Ladb::OpenCutList
                 PackingItemDef.new(
                   item_type_def: item_type_def,
                   instance_info: instance_info_by_item_type_def[item_type_def].is_a?(Array) ? instance_info_by_item_type_def[item_type_def].shift : nil,
-                  x: _from_packy(raw_item.fetch('x', 0)).to_l,
-                  y: _from_packy(raw_item.fetch('y', 0)).to_l,
+                  x: _from_packy_length(raw_item.fetch('x', 0)).to_l,
+                  y: _from_packy_length(raw_item.fetch('y', 0)).to_l,
                   angle: raw_item.fetch('angle', 0),
                   mirror: raw_item.fetch('mirror', false)
                 )
               } : [],
               leftover_defs: raw_bin['leftovers'].is_a?(Array) ? raw_bin['leftovers'].map { |raw_leftover|
                 PackingLeftoverDef.new(
-                  x: _from_packy(raw_leftover.fetch('x', 0)).to_l,
-                  y: _from_packy(raw_leftover.fetch('y', 0)).to_l,
-                  length: _from_packy(raw_leftover.fetch('width', 0)).to_l,
-                  width: _from_packy(raw_leftover.fetch('height', 0)).to_l
+                  x: _from_packy_length(raw_leftover.fetch('x', 0)).to_l,
+                  y: _from_packy_length(raw_leftover.fetch('y', 0)).to_l,
+                  length: _from_packy_length(raw_leftover.fetch('width', 0)).to_l,
+                  width: _from_packy_length(raw_leftover.fetch('height', 0)).to_l
                 )
               } : [],
               cut_defs: raw_bin['cuts'].is_a?(Array) ? raw_bin['cuts'].map { |raw_cut|
                 PackingCutDef.new(
                   depth: raw_cut['depth'],
-                  x: _from_packy(raw_cut.fetch('x', 0)).to_l,
-                  y: _from_packy(raw_cut.fetch('y', 0)).to_l,
-                  length: (raw_cut['length'] ? _from_packy(raw_cut['length']) : bin_type_def.width).to_l,
+                  x: _from_packy_length(raw_cut.fetch('x', 0)).to_l,
+                  y: _from_packy_length(raw_cut.fetch('y', 0)).to_l,
+                  length: (raw_cut['length'] ? _from_packy_length(raw_cut['length']) : bin_type_def.width).to_l,
                   orientation: raw_cut.fetch('orientation', 'vertical')
                 )
               }.sort_by { |cut_def| cut_def.depth } : [],
@@ -469,6 +502,7 @@ module Ladb::OpenCutList
           packing_def.solution_def.summary_def.total_used_count += used_count
           packing_def.solution_def.summary_def.total_used_area += packing_def.solution_def.summary_def.bin_type_defs.last.total_area
           packing_def.solution_def.summary_def.total_used_length += packing_def.solution_def.summary_def.bin_type_defs.last.total_length
+          packing_def.solution_def.summary_def.total_used_cost += packing_def.solution_def.summary_def.bin_type_defs.last.total_cost
           packing_def.solution_def.summary_def.total_used_item_count += total_item_count
         end
 
@@ -478,14 +512,51 @@ module Ladb::OpenCutList
       packing_def.create_packing
     end
 
-    def _to_packy(l)
+    def _to_packy_length(l)
       return l.to_f.round(8) if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
       (l.to_l.to_mm * 10.0).to_i
     end
 
-    def _from_packy(l)
+    def _from_packy_length(l)
       return l if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
       l.mm / 10.0
+    end
+
+    def _to_packy_cost(c)
+      return c if c <= 0
+      c.round(2) * 100
+    end
+
+    def _from_packy_cost(c)
+      c / 100.0
+    end
+
+    def _compute_bin_cost(group, inch_length = 0, inch_width = 0, inch_thickness = 0)
+      std_price = nil
+      cost = -1
+      if (material_attributes = _get_material_attributes(group.material_name)).has_std_prices?
+
+        inch_thickness = group.def.std_thickness if inch_thickness == 0
+        inch_width = group.def.std_width if inch_width == 0
+
+        if group.material_is_1d
+          if group.def.std_dimension_stipped_name == 'section'
+            std_dimension = Size2d.new(group.def.std_dimension)
+          else
+            std_dimension = group.def.std_dimension.to_l
+          end
+          dim = [ std_dimension, inch_length ]
+        elsif group.material_is_2d
+          dim = [ inch_thickness, Size2d.new(inch_length, inch_width) ]
+        else
+          return [ cost, std_price ]
+        end
+        std_price = _get_std_price(dim, material_attributes)
+        price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], inch_thickness, inch_width, inch_length)
+        cost = (inch_length * inch_width * inch_thickness * price_per_inch3).round(2)
+
+      end
+      [ cost, std_price ]
     end
 
     def _render_bin_def_svg(bin_def, running)
@@ -767,7 +838,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    BinTypeDef = Struct.new(:id, :length, :width, :count, :type)
+    BinTypeDef = Struct.new(:id, :length, :width, :count, :cost, :std_price, :type)
     ItemTypeDef = Struct.new(:length, :width, :count, :part, :projection_def, :color)
 
     # -----

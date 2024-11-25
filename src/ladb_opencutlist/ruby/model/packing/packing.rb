@@ -2,6 +2,9 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
+  require_relative '../../utils/dimension_utils'
+  require_relative '../../utils/price_utils'
+  require_relative '../../utils/unit_utils'
 
   class Packing
 
@@ -80,7 +83,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_area, :total_used_area, :total_used_length, :total_used_item_count, :bin_types
+    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_area, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :bin_types
 
     def initialize(_def)
       @_def = _def
@@ -97,6 +100,7 @@ module Ladb::OpenCutList
       @total_used_count = _def.total_used_count
       @total_used_area = _def.total_used_area > 0 ? DimensionUtils.format_to_readable_area(_def.total_used_area) : nil
       @total_used_length = _def.total_used_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_used_length) : nil
+      @total_used_cost = _def.total_used_cost > 0 ? PriceUtils.format_to_readable_price(_def.total_used_cost) : nil
       @total_used_item_count = _def.total_used_item_count
 
       @bin_types = _def.bin_type_defs.map { |bin_type_def| bin_type_def.create_summary_bin_type }
@@ -112,20 +116,23 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type_id, :type, :count, :length, :width, :used, :total_area, :total_length, :total_item_count
+    attr_reader :type_id, :type, :count, :length, :width, :used, :std_price, :total_area, :total_length, :total_item_count
 
     def initialize(_def)
       @_def = _def
 
       @type_id = _def.bin_type_def.id
       @type = _def.bin_type_def.type
-      @count = _def.count
+      @count = _def.count > 0 ? _def.count : nil
       @length = _def.bin_type_def.length.to_l.to_s
       @width = _def.bin_type_def.width.to_l.to_s
       @used = _def.used
 
+      @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
+
       @total_area = _def.total_area > 0 ? DimensionUtils.format_to_readable_area(_def.total_area) : nil
       @total_length = _def.total_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_length) : nil
+      @total_cost = _def.total_cost > 0 ? PriceUtils.format_to_readable_price(_def.total_cost) : nil
       @total_item_count = _def.total_item_count
 
     end

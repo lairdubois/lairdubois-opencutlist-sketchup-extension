@@ -2,6 +2,8 @@ module Ladb::OpenCutList
 
   require_relative '../../helper/bounding_box_helper'
   require_relative '../../helper/layer_visibility_helper'
+  require_relative '../../helper/material_attributes_caching_helper'
+  require_relative '../../helper/definition_attributes_caching_helper'
   require_relative '../../model/attributes/material_attributes'
   require_relative '../../model/attributes/definition_attributes'
   require_relative '../../model/geom/size3d'
@@ -19,6 +21,8 @@ module Ladb::OpenCutList
 
     include BoundingBoxHelper
     include LayerVisibilityHelper
+    include MaterialAttributesCachingHelper
+    include DefinitionAttributesCachingHelper
 
     MATERIAL_ORIGIN_UNKNOWN = 0
     MATERIAL_ORIGIN_OWNED = 1
@@ -84,8 +88,6 @@ module Ladb::OpenCutList
       @instance_infos_cache = {}
       @group_defs_cache = {}
       @material_usages_cache = {}
-      @material_attributes_cache = {}
-      @definition_attributes_cache = {}
 
       # Reset materials and definitions used UUIDS
       MaterialAttributes::reset_used_uuids
@@ -942,22 +944,6 @@ module Ladb::OpenCutList
     def _get_material_usage(name)
       return @material_usages_cache[name] if @material_usages_cache.has_key?(name)
       nil
-    end
-
-    # MaterialAttributes
-
-    def _get_material_attributes(material)
-      key = material ? material.name : '$EMPTY$'
-      @material_attributes_cache[key] = MaterialAttributes.new(material, true) unless @material_attributes_cache.has_key?(key)
-      @material_attributes_cache[key]
-    end
-
-    # DefinitionAttributes
-
-    def _get_definition_attributes(definition)
-      key = definition ? definition.name : '$EMPTY$'
-      @definition_attributes_cache[key] = DefinitionAttributes.new(definition, true) unless @definition_attributes_cache.has_key?(key)
-      @definition_attributes_cache[key]
     end
 
     # -- Components utils --
