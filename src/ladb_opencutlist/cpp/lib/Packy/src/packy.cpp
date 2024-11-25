@@ -38,7 +38,7 @@ DLL_EXPORTS char* c_optimize_start(
             Solver& solver = *solver_ptr_;
 
             // Link the cancelled boolean
-            solver.parameters().timer.set_end_boolean(&optimize_cancelled_);
+            solver.parameters().timer.add_end_boolean(&optimize_cancelled_);
 
             // Reset cancelled status
             optimize_cancelled_ = false;
