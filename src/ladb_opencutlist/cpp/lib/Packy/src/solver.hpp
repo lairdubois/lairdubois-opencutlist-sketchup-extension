@@ -38,8 +38,11 @@ namespace Packy {
 
         virtual optimizationtools::Parameters& parameters() = 0;
 
-        virtual size_t solutions_size()  = 0;
+        virtual size_t solutions_size() = 0;
         virtual json solutions_back() = 0;
+
+        virtual bool messages_to_solution() = 0;
+        virtual std::string messages() = 0;
 
         /*
          * Read:
@@ -146,6 +149,14 @@ namespace Packy {
             return std::move(solutions_.back());
         };
 
+        bool messages_to_solution() override {
+            return messages_to_solution_;
+        }
+
+        std::string messages() override {
+            return messages_stream_.str();
+        }
+
         /*
          * Read:
          */
@@ -162,6 +173,12 @@ namespace Packy {
             }
             if (j.contains("messages_to_stdout")) {
                 parameters_.messages_to_stdout = j["messages_to_stdout"].template get<bool>();
+            }
+            if (j.contains("messages_to_solution")) {
+                messages_to_solution_ = j["messages_to_solution"].template get<bool>();
+                if (messages_to_solution_) {
+                    parameters_.messages_streams.push_back(&messages_stream_);
+                }
             }
             if (j.contains("messages_path")) {
                 parameters_.messages_path = j["messages_path"].template get<std::string>();
@@ -249,6 +266,10 @@ namespace Packy {
         /** TODO : find a better solution ? */
         std::mutex solutions_mutex_;
 
+        /** Messages */
+        bool messages_to_solution_ = false;
+        std::stringstream messages_stream_;
+
         /*
          * Output
          */
@@ -266,6 +287,10 @@ namespace Packy {
             j["number_of_items"] = solution.number_of_items();
             j["profit"] = solution.profit();
             j["efficiency"] = 1 - solution.full_waste_percentage();
+
+            if (messages_to_solution_) {
+                j["messages"] = messages();
+            }
 
         }
 
