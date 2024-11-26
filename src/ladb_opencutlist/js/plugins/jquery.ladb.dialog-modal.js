@@ -60,6 +60,11 @@
         $('body').on('keydown', function (e) {
             if (e.keyCode === 27) {   // "escape" key
 
+                // Progress cancel detection
+                if (that.cancelProgress()) {
+                    return;
+                }
+
                 // Dropdown detection
                 if ($(e.target).hasClass('dropdown')) {
                     return;

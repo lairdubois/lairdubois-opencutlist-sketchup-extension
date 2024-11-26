@@ -109,6 +109,17 @@ LadbAbstractDialog.prototype.startProgress = function (maxSteps, cancelCallback)
 
 };
 
+LadbAbstractDialog.prototype.cancelProgress = function () {
+    if (this.$progress) {
+        const $btn = $('.ladb-progress-btn', this.$progress);
+        if ($btn.length > 0) {
+            $btn.click();
+            return true;
+        }
+    }
+    return false;
+}
+
 LadbAbstractDialog.prototype.advanceProgress = function (step) {
     if (this.$progress) {
         this.progressStep = Math.min(this.progressMaxSteps, this.progressStep + step);
@@ -123,6 +134,7 @@ LadbAbstractDialog.prototype.finishProgress = function () {
         this.progressMaxSteps = 0;
         this.progressStep = 0;
         this.$progress.remove();
+        this.$progress = null;
     }
 };
 

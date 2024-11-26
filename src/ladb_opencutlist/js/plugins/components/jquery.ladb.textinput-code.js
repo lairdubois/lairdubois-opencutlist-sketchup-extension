@@ -6,9 +6,6 @@
 
     const LadbTextinputCode = function(element, options) {
         LadbTextinputAbstract.call(this, element, options);
-
-        console.log(options);
-
     };
     LadbTextinputCode.prototype = new LadbTextinputAbstract;
 
