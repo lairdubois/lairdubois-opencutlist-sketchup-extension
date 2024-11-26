@@ -59,7 +59,8 @@ target_compile_features(Packy PRIVATE cxx_std_17)
 
 install(TARGETS Packy RUNTIME DESTINATION lib)
 
-# Debug executable
+# -------------------------------------------------------------------
+#                           Debug executable
 
 add_executable(PackyMain ${LIBRARY_HEADERS} ${LIBRARY_SOURCES} src/main.cpp)
 target_include_directories(PackyMain PUBLIC include)
@@ -71,5 +72,3 @@ target_link_libraries(PackyMain PUBLIC Boost::program_options)
 target_compile_features(PackyMain PRIVATE cxx_std_17)
 
 install(TARGETS PackyMain RUNTIME DESTINATION lib)
-
-

@@ -452,6 +452,9 @@
 
         // Render ad in bottombar
         $('#ladb_bottombar').append(Twig.twig({ ref: "tabs/sponsor/_ad.twig" }).render());
+        setTimeout(function () {
+            $('#ladb_sponsor_ad').effect('bounce', { times: 3, distance: 10 }, 500);
+        }, 100);
 
         // Auto hide on next mouse down
         $(window).on('mousedown', this.hideSponsorAd);
@@ -461,7 +464,7 @@
     LadbDialogTabs.prototype.hideSponsorAd = function () {
 
         // Remove ad
-        $('#ladb_sponsor_ad').remove();
+        $('#ladb_sponsor_ad').hide('slide', { direction: 'down'}, 300);
 
         // Unbind auto hide
         $(window).off('mousedown', this.hideSponsorAd);

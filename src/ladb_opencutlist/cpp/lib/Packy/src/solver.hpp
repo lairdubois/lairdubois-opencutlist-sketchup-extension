@@ -170,9 +170,13 @@ namespace Packy {
             }
             if (j.contains("verbosity_level")) {
                 parameters_.verbosity_level = j["verbosity_level"].template get<int>();
+            } else {
+                parameters_.verbosity_level = 0;            // Override default PackingSolver value
             }
             if (j.contains("messages_to_stdout")) {
                 parameters_.messages_to_stdout = j["messages_to_stdout"].template get<bool>();
+            } else {
+                parameters_.messages_to_stdout = false;     // Override default PackingSolver value
             }
             if (j.contains("messages_to_solution")) {
                 messages_to_solution_ = j["messages_to_solution"].template get<bool>();
@@ -185,6 +189,8 @@ namespace Packy {
             }
             if (j.contains("log_to_stderr")) {
                 parameters_.log_to_stderr = j["log_to_stderr"].template get<bool>();
+            } else {
+                parameters_.log_to_stderr = false;           // Override default PackingSolver value
             }
             if (j.contains("log_path")) {
                 parameters_.log_path = j["log_path"].template get<std::string>();
@@ -224,6 +230,10 @@ namespace Packy {
             }
             if (j.contains("not_anytime_dichotomic_search_subproblem_queue_size")) {
                 parameters_.not_anytime_dichotomic_search_subproblem_queue_size = j["not_anytime_dichotomic_search_subproblem_queue_size"].template get<Counter>();
+            }
+
+            if (j.contains("maximum_size_of_the_solution_pool")) {
+                parameters_.maximum_size_of_the_solution_pool = j["maximum_size_of_the_solution_pool"].template get<Counter>();
             }
 
             parameters_.new_solution_callback = [&](

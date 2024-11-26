@@ -387,9 +387,10 @@ module Ladb::OpenCutList
 
         # Compute transformation, scale and sizes
 
-        size = instance_info.size.clone
-        size.thickness = [size.thickness - veneers_def[:thickness_decrement], 0].max.to_l if veneers_def && veneers_def[:thickness_decrement]
-        size.thickness = (size.thickness / definition_attributes.thickness_layer_count).to_l if definition_attributes.thickness_layer_count > 1
+        thickness = instance_info.size.thickness
+        thickness = [ thickness - veneers_def[:thickness_decrement], 0 ].max.to_l if veneers_def && veneers_def[:thickness_decrement]
+        thickness = (thickness / definition_attributes.thickness_layer_count).to_l if definition_attributes.thickness_layer_count > 1
+        size = Size3d.new(instance_info.size.length, instance_info.size.width, thickness, instance_info.size.axes)
         length_increased = false
         width_increased = false
         thickness_increased = false

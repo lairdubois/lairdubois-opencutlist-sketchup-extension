@@ -2447,11 +2447,11 @@ module Ladb::OpenCutList
 
       if @picked_ips.length >= 1
 
-        ph = view.pick_helper
+        ph = view.pick_helper(x, y, 50)
 
         # Test previously picked points
         @picked_ips.each do |ip|
-          if ph.test_point(ip.position, x, y, 50)
+          if ph.test_point(ip.position)
 
             k_points = Kuix::Points.new
             k_points.add_point(ip.position)

@@ -9,7 +9,7 @@
         this.$element = $(element);
         this.dialog = dialog;
 
-        this.constiableDefs = [];
+        this.variableDefs = [];
 
         this.$editingItem = null;
         this.$editingForm = null;
@@ -224,7 +224,7 @@
             ;
             $inputFormula
                 .ladbTextinputCode({
-                    constiableDefs: this.constiableDefs,
+                    variableDefs: this.variableDefs,
                     snippetDefs: this.options.snippetDefs
                 })
                 .on('change', function () {
@@ -297,10 +297,10 @@
     LadbEditorExport.prototype.init = function () {
         const that = this;
 
-        // Generate constiableDefs for formula editor
-        this.constiableDefs = [];
+        // Generate variableDefs for formula editor
+        this.variableDefs = [];
         for (let i = 0; i < this.options.vars.length; i++) {
-            this.constiableDefs.push({
+            this.variableDefs.push({
                 text: this.options.vars[i].name,
                 displayText: i18next.t('tab.cutlist.export.' + this.options.vars[i].name),
                 type: this.options.vars[i].type
