@@ -273,7 +273,7 @@ namespace Packy {
         /** Solutions. */
         std::vector<json> solutions_;
 
-        /** TODO : find a better solution ? */
+        /** TODO : find a better solution to prevent solution concurrency ? */
         std::mutex solutions_mutex_;
 
         /** Messages */
@@ -347,11 +347,11 @@ namespace Packy {
         ) override {
             TypedSolver::read_bin_type(j);
 
-            Length width = j.value("width", -1);
-            Length height = j.value("height", -1);
-            Profit cost = j.value("cost", -1.0);
-            BinPos copies = j.value("copies", 1);
-            BinPos copies_min = j.value("copies_min", 0);
+            Length width = j.value("width", static_cast<Length>(-1));
+            Length height = j.value("height", static_cast<Length>(-1));
+            Profit cost = j.value("cost", static_cast<Profit>(-1));
+            BinPos copies = j.value("copies", static_cast<BinPos>(1));
+            BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
             if (fake_trimming_ > 0) {
                 if (width >= 0) width -= fake_trimming_ * 2;
@@ -383,12 +383,12 @@ namespace Packy {
         void read_defect(
                 BinTypeId bin_type_id,
                 basic_json<>& j
-                ) {
+        ) {
 
-            Length x = j.value("x", -1);
-            Length y = j.value("y", -1);
-            Length width = j.value("width", -1);
-            Length height = j.value("height", -1);
+            Length x = j.value("x", static_cast<Length>(-1));
+            Length y = j.value("y", static_cast<Length>(-1));
+            Length width = j.value("width", static_cast<Length>(-1));
+            Length height = j.value("height", static_cast<Length>(-1));
 
             if (fake_spacing_ > 0) {
                 if (x >= 0) x -= fake_spacing_ / 2;
@@ -412,11 +412,12 @@ namespace Packy {
         ) override {
             TypedSolver::read_item_type(j);
 
-            Length width = j.value("width", -1);
-            Length height = j.value("height", -1);
-            Profit profit = j.value("profit", -1);
-            ItemPos copies = j.value("copies", 1);
+            Length width = j.value("width", static_cast<Length>(-1));
+            Length height = j.value("height", static_cast<Length>(-1));
+            Profit profit = j.value("profit", static_cast<Profit>(-1));
+            ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
             bool oriented = j.value("oriented", false);
+            GroupId group_id = j.value("group_id", static_cast<GroupId>(-1));
 
             if (fake_spacing_ > 0) {
                 if (width >= 0) width += fake_spacing_;
@@ -428,7 +429,8 @@ namespace Packy {
                     height,
                     profit,
                     copies,
-                    oriented
+                    oriented,
+                    group_id
             );
 
         }
@@ -458,7 +460,7 @@ namespace Packy {
 
             using namespace rectangle;
 
-            const rectangle::Solution& solution = output.solution_pool.best();
+            const Solution& solution = output.solution_pool.best();
             const Instance& instance = solution.instance();
 
             basic_json<>& j_bins = j["bins"];
@@ -570,11 +572,11 @@ namespace Packy {
 
             using namespace rectangleguillotine;
 
-            Length width = j.value("width", -1);
-            Length height = j.value("height", -1);
-            Profit cost = j.value("cost", -1.0);
-            BinPos copies = j.value("copies", 1);
-            BinPos copies_min = j.value("copies_min", 0);
+            Length width = j.value("width", static_cast<Length>(-1));
+            Length height = j.value("height", static_cast<Length>(-1));
+            Profit cost = j.value("cost", static_cast<Profit>(-1));
+            BinPos copies = j.value("copies", static_cast<BinPos>(1));
+            BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
             BinTypeId bin_type_id = instance_builder_.add_bin_type(
                     width,
@@ -588,7 +590,7 @@ namespace Packy {
 
             Length left_trim = 0;
             if (j.contains("left_trim")) {
-                left_trim = (Length) j.value("left_trim", 0);
+                left_trim = j.value("left_trim", static_cast<Length>(0));
             }
             TrimType left_trim_type = TrimType::Hard;
             if (j.contains("left_trim_type")) {
@@ -598,7 +600,7 @@ namespace Packy {
 
             Length right_trim = 0;
             if (j.contains("right_trim")) {
-                right_trim = (Length) j.value("right_trim", 0);
+                right_trim = j.value("right_trim", static_cast<Length>(0));
             }
             TrimType right_trim_type = TrimType::Soft;
             if (j.contains("right_trim_type")) {
@@ -608,7 +610,7 @@ namespace Packy {
 
             Length bottom_trim = 0;
             if (j.contains("bottom_trim")) {
-                bottom_trim = (Length) j.value("bottom_trim", 0);
+                bottom_trim = j.value("bottom_trim", static_cast<Length>(0));
             }
             TrimType bottom_trim_type = TrimType::Hard;
             if (j.contains("bottom_trim_type")) {
@@ -618,7 +620,7 @@ namespace Packy {
 
             Length top_trim = 0;
             if (j.contains("top_trim")) {
-                top_trim = (Length) j.value("top_trim", 0);
+                top_trim = j.value("top_trim", static_cast<Length>(0));
             }
             TrimType top_trim_type = TrimType::Soft;
             if (j.contains("top_trim_type")) {
@@ -653,10 +655,10 @@ namespace Packy {
                 basic_json<>& j
         ) {
 
-            Length x = j.value("x", -1);
-            Length y = j.value("y", -1);
-            Length width = j.value("width", -1);
-            Length height = j.value("height", -1);
+            Length x = j.value("x", static_cast<Length>(-1));
+            Length y = j.value("y", static_cast<Length>(-1));
+            Length width = j.value("width", static_cast<Length>(-1));
+            Length height = j.value("height", static_cast<Length>(-1));
 
             instance_builder_.add_defect(
                     bin_type_id,
@@ -673,18 +675,20 @@ namespace Packy {
         ) override {
             TypedSolver::read_item_type(j);
 
-            Length width = j.value("width", -1);
-            Length height = j.value("height", -1);
-            Profit profit = j.value("profit", -1);
-            ItemPos copies = j.value("copies", 1);
+            Length width = j.value("width", static_cast<Length>(-1));
+            Length height = j.value("height", static_cast<Length>(-1));
+            Profit profit = j.value("profit", static_cast<Profit>(-1));
+            ItemPos copies = j.value("copies", static_cast<ItemPos>(-1));
             bool oriented = j.value("oriented", false);
+            StackId stack_id = j.value("stack_id", static_cast<StackId>(-1));
 
             instance_builder_.add_item_type(
                     width,
                     height,
                     profit,
                     copies,
-                    oriented
+                    oriented,
+                    stack_id
             );
 
         }
@@ -714,7 +718,7 @@ namespace Packy {
 
             using namespace rectangleguillotine;
 
-            const rectangleguillotine::Solution& solution = output.solution_pool.best();
+            const Solution& solution = output.solution_pool.best();
             const Instance& instance = solution.instance();
 
             // Bins.
@@ -898,10 +902,10 @@ namespace Packy {
         ) override {
             TypedSolver::read_bin_type(j);
 
-            Length width = j.value("width", -1);
-            Profit cost = j.value("cost", -1.0);
-            BinPos copies = j.value("copies", 1);
-            BinPos copies_min = j.value("copies_min", 0);
+            Length width = j.value("width", static_cast<Length>(-1));
+            Profit cost = j.value("cost", static_cast<Profit>(-1));
+            BinPos copies = j.value("copies", static_cast<BinPos>(1));
+            BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
             if (fake_trimming_ > 0) {
                 if (width >= 0) width -= fake_trimming_ * 2;
@@ -924,9 +928,9 @@ namespace Packy {
         ) override {
             TypedSolver::read_item_type(j);
 
-            Length width = j.value("width", -1);
-            Profit profit = j.value("profit", -1);
-            ItemPos copies = j.value("copies", 1);
+            Length width = j.value("width", static_cast<Length>(-1));
+            Profit profit = j.value("profit", static_cast<Profit>(-1));
+            ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
 
             if (fake_spacing_ > 0) {
                 if (width >= 0) width += fake_spacing_;
@@ -965,7 +969,7 @@ namespace Packy {
 
             using namespace onedimensional;
 
-            const onedimensional::Solution& solution = output.solution_pool.best();
+            const Solution& solution = output.solution_pool.best();
             const Instance& instance = solution.instance();
 
             basic_json<>& j_bins = j["bins"] = json::array();
@@ -1079,9 +1083,9 @@ namespace Packy {
             using namespace irregular;
 
             Shape shape = read_shape(j);
-            Profit cost = j.value("cost", -1.0);
-            BinPos copies = j.value("copies", 1);
-            BinPos copies_min = j.value("copies_min", 0);
+            Profit cost = j.value("cost", static_cast<Profit>(-1));
+            BinPos copies = j.value("copies", static_cast<BinPos>(1));
+            BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
             instance_builder_.add_bin_type(
                     shape,
@@ -1114,15 +1118,15 @@ namespace Packy {
 
             }
 
-            Profit profit = j.value("profit", -1);
-            ItemPos copies = j.value("copies", 1);
+            Profit profit = j.value("profit", static_cast<Profit>(-1));
+            ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
 
             // Read allowed rotations. (Angles are read in degrees)
             std::vector<std::pair<Angle, Angle>> allowed_rotations;
             if (j.contains("allowed_rotations")) {
                 for (auto& j_item: j["allowed_rotations"].items()) {
                     auto& j_angles = j_item.value();
-                    Angle angle_start = j_angles.value("start", 0.0);
+                    Angle angle_start = j_angles.value("start", static_cast<Angle>(0));
                     Angle angle_end = j_angles.value("end", angle_start);
                     allowed_rotations.emplace_back(angle_start, angle_end);
                 }
@@ -1165,7 +1169,7 @@ namespace Packy {
 
             using namespace irregular;
 
-            const irregular::Solution& solution = output.solution_pool.best();
+            const Solution& solution = output.solution_pool.best();
             const Instance& instance = solution.instance();
 
             basic_json<>& j_bins = j["bins"] = json::array();
@@ -1214,7 +1218,7 @@ namespace Packy {
             Shape shape;
             if (j["type"] == "circle") {
 
-                LengthDbl radius = j.value("radius", -1.0);
+                LengthDbl radius = j.value("radius", static_cast<LengthDbl>(-1));
 
                 ShapeElement element;
                 element.type = ShapeElementType::CircularArc;
@@ -1225,8 +1229,8 @@ namespace Packy {
 
             } else if (j["type"] == "rectangle") {
 
-                LengthDbl width = j.value("width", -1.0);
-                LengthDbl height = j.value("height", -1.0);
+                LengthDbl width = j.value("width", static_cast<LengthDbl>(-1));
+                LengthDbl height = j.value("height", static_cast<LengthDbl>(-1));
 
                 ShapeElement element_1;
                 ShapeElement element_2;
