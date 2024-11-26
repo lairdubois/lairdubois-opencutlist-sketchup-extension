@@ -67,6 +67,7 @@ target_link_libraries(PackyMain PUBLIC PackingSolver::onedimensional)
 target_link_libraries(PackyMain PUBLIC PackingSolver::rectangle)
 target_link_libraries(PackyMain PUBLIC PackingSolver::rectangleguillotine)
 target_link_libraries(PackyMain PUBLIC PackingSolver::irregular)
+target_link_libraries(PackyMain PUBLIC Boost::program_options)
 target_compile_features(PackyMain PRIVATE cxx_std_17)
 
 install(TARGETS PackyMain RUNTIME DESTINATION lib)

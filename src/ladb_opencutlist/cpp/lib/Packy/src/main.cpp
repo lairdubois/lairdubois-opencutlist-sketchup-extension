@@ -1,37 +1,58 @@
 #include <iostream>
 
-#include "packy.hpp"
 #include "solver_builder.hpp"
+
+#include <boost/program_options.hpp>
 
 using namespace Packy;
 using namespace nlohmann;
 
-int main(int argc, char* argv[], char* envp[]) {
+namespace po = boost::program_options;
 
-    // Default input filename
-    std::string infile = "input.json";
+int main(int argc, char* argv[]) {
 
-    // The program takes a single argument the input filename
-    if (argc == 2) {
-        infile = argv[1];
+    po::options_description desc("Allowed options");
+    desc.add_options()
+        ("help,h", "Produce help message")
+
+        ("input,i", po::value<std::string>(), "Input path (default: input.json)")
+        ("output,o", po::value<std::string>(), "Output path (default: stdout)")
+    ;
+
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    if (vm.count("help")) {
+        std::cout << desc << std::endl;
+        return EXIT_FAILURE;
+    }
+    try {
+        po::notify(vm);
+    } catch (const po::required_option& e) {
+        std::cout << desc << std::endl;
+        return EXIT_FAILURE;
     }
 
-    if (!std::filesystem::exists(infile)) {
-        std::cout << "Input file does not exist: " << infile << std::endl;
-        exit(EXIT_FAILURE);
-    }
+    std::string input_path = (vm.count("input"))? vm["input"].as<std::string>() : "input.json";
 
     try {
 
         SolverBuilder optimizer_builder;
-        Solver& optimizer = (*optimizer_builder.build(infile));
+        Solver& optimizer = (*optimizer_builder.build(input_path));
 
         json j_output = optimizer.optimize();
 
-        std::cout << j_output.dump(1, ' ') << std::endl;
+        std::string output_path = (vm.count("output"))? vm["output"].as<std::string>() : "";
+        if (output_path.empty()) {
+            std::cout << j_output.dump(1, ' ') << std::endl;
+        } else {
+            std::ofstream ofs;
+            ofs.open(output_path);
+            ofs << j_output.dump(1, ' ');
+            ofs.close();
+        }
 
     } catch (const std::exception& e) {
-        std::cout << "Internal error: " << std::string(e.what()) << std::endl;
+        std::cerr << "Internal error: " << std::string(e.what()) << std::endl;
     }
 
     return EXIT_SUCCESS;
