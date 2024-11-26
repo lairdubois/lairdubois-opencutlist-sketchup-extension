@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
         json j_output = optimizer.optimize();
 
         std::string output_path = (vm.count("output"))? vm["output"].as<std::string>() : "";
-        if (output_path.empty()) {
+        if (output_path.empty() || output_path == "stdout") {
             std::cout << j_output.dump(1, ' ') << std::endl;
         } else {
             std::ofstream ofs;
