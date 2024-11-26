@@ -160,6 +160,18 @@ namespace Packy {
             if (j.contains("verbosity_level")) {
                 parameters_.verbosity_level = j["verbosity_level"].template get<int>();
             }
+            if (j.contains("messages_to_stdout")) {
+                parameters_.messages_to_stdout = j["messages_to_stdout"].template get<bool>();
+            }
+            if (j.contains("messages_path")) {
+                parameters_.messages_path = j["messages_path"].template get<std::string>();
+            }
+            if (j.contains("log_to_stderr")) {
+                parameters_.log_to_stderr = j["log_to_stderr"].template get<bool>();
+            }
+            if (j.contains("log_path")) {
+                parameters_.log_path = j["log_path"].template get<std::string>();
+            }
 
             if (j.contains("optimization_mode")) {
                 OptimizationMode optimization_mode;
