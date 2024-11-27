@@ -200,6 +200,11 @@ module Ladb::OpenCutList
       @action_handler.onMouseLeave(view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseLeave)
     end
 
+    def onMouseLeaveSpace(view)
+      return true if super
+      @action_handler.onMouseLeave(view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseLeave)
+    end
+
     def onLButtonDown(flags, x, y, view)
       return true if super
       @action_handler.onLButtonDown(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onLButtonDown)
@@ -218,11 +223,6 @@ module Ladb::OpenCutList
     def onKeyDown(key, repeat, flags, view)
       return true if super
       @action_handler.onKeyDown(key, repeat, flags, view) if !@action_handler.nil? && @action_handler.respond_to?(:onKeyDown)
-    end
-
-    def onKeyUp(key, repeat, flags, view)
-      return true if super
-      @action_handler.onKeyUp(key, repeat, flags, view) if !@action_handler.nil? && @action_handler.respond_to?(:onKeyUp)
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)

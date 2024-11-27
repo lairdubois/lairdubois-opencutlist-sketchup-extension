@@ -249,10 +249,12 @@ module Ladb::OpenCutList
 
     def onKeyDown(key, repeat, flags, view)
       return true if super
+      false
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       return true if super
+      false
     end
 
     def onLButtonDown(flags, x, y, view)
@@ -260,6 +262,7 @@ module Ladb::OpenCutList
       unless is_action_none?
         _handle_mouse_event(:l_button_down)
       end
+      false
     end
 
     def onLButtonUp(flags, x, y, view)
@@ -267,12 +270,21 @@ module Ladb::OpenCutList
       unless is_action_none?
         _handle_mouse_event(:l_button_up)
       end
+      false
     end
 
     def onMouseLeave(view)
       return true if super
       _reset_active_part
       _reset_active_face
+      false
+    end
+
+    def onMouseLeaveSpace(view)
+      return true if super
+      _reset_active_part
+      _reset_active_face
+      false
     end
 
     def onPickerChanged(picker)

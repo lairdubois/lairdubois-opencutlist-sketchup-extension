@@ -87,7 +87,7 @@
                 $inputPartsHolesStrokeColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
                 $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles || isDxf ? 'disable' : 'enable');
                 $inputPartsPathsStrokeColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
-                $inputPartsPathsFillColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
+                $inputPartsPathsFillColor.ladbTextinputColor(!isIncludePaths || isDxf ? 'disable' : 'enable');
                 $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
             };
 

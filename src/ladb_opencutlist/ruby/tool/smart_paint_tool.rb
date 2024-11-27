@@ -685,9 +685,7 @@ module Ladb::OpenCutList
           return true
         end
       elsif key == ALT_MODIFIER_KEY
-        unless is_action_pick?
-          push_action(ACTION_PICK)
-        end
+        push_action(ACTION_PICK) unless is_action_pick?
         return true
       elsif repeat == 1
         if key == Kuix::VK_ADD && is_action_part?
@@ -695,35 +693,40 @@ module Ladb::OpenCutList
           return true
         end
       end
+      false
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       return true if super
       if key == ALT_MODIFIER_KEY
-        if is_action_pick?
-          pop_action
-        end
+        pop_action if is_action_pick?
         return true
       end
+      false
     end
 
     def onLButtonDown(flags, x, y, view)
       return true if super
-      unless is_action_none?
-        _handle_mouse_event(:l_button_down)
-      end
+      _handle_mouse_event(:l_button_down) unless is_action_none?
+      false
     end
 
     def onLButtonUp(flags, x, y, view)
       return true if super
-      unless is_action_none?
-        _handle_mouse_event(:l_button_up)
-      end
+      _handle_mouse_event(:l_button_up) unless is_action_none?
+      false
     end
 
     def onMouseLeave(view)
       return true if super
       _reset_active_part
+      false
+    end
+
+    def onMouseLeaveSpace(view)
+      return true if super
+      _reset_active_part
+      false
     end
 
     def onPickerChanged(picker)

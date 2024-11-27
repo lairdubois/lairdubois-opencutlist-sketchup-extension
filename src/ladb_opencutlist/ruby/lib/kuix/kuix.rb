@@ -128,6 +128,7 @@ module Ladb::OpenCutList
 
         @mouse_down_widget = nil
         @mouse_hover_widget = nil
+        @mouse_is_outside = true
 
         @key_down_times = {}
 
@@ -294,18 +295,18 @@ module Ladb::OpenCutList
 
       def onKeyDown(key, repeat, flags, view)
         @key_down_times[key] = Time.new if repeat == 1
-        return false
+        false
       end
 
       def onKeyUp(key, repeat, flags, view)
         key_down_time = @key_down_times[key]
         after_down = key_down_time.is_a?(Time)
         @key_down_times.delete(key)
-        return onKeyUpExtended(key, repeat, flags, view, after_down, after_down && (Time.new - key_down_time) <= 0.15) # < 150ms
+        onKeyUpExtended(key, repeat, flags, view, after_down, after_down && (Time.new - key_down_time) <= 0.15) # < 150ms
       end
 
       def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
-        return false
+        false
       end
 
       def onLButtonDown(flags, x, y, view)
@@ -315,7 +316,7 @@ module Ladb::OpenCutList
           @mouse_down_widget.onMouseDown(flags)
           return true
         end
-        return false
+        false
       end
 
       def onLButtonUp(flags, x, y, view)
@@ -326,7 +327,7 @@ module Ladb::OpenCutList
           return true
         end
         @mouse_down_widget = nil
-        return false
+        false
       end
 
       def onLButtonDoubleClick(flags, x, y, view)
@@ -337,12 +338,13 @@ module Ladb::OpenCutList
           return true
         end
         @mouse_down_widget = nil
-        return false
+        false
       end
 
       def onMouseMove(flags, x, y, view)
         hit_widget = @canvas.hit_widget(x, y)
         if hit_widget
+          onMouseLeaveSpace(view) if @mouse_hover_widget.nil? && !@mouse_is_outside
           if hit_widget != @mouse_hover_widget
             if @mouse_hover_widget && @mouse_hover_widget.in_dom?
               @mouse_hover_widget.onMouseLeave
@@ -352,6 +354,7 @@ module Ladb::OpenCutList
             @mouse_hover_widget.onMouseEnter(flags)
             push_cursor(@cursor_select_id)
           end
+          @mouse_is_outside = false
           return true
         else
           if @mouse_hover_widget && @mouse_hover_widget.in_dom?
@@ -359,21 +362,29 @@ module Ladb::OpenCutList
             pop_cursor
           end
           @mouse_hover_widget = nil
+          @mouse_is_outside = false
         end
-        return false
+        false
       end
 
       def onMouseLeave(view)
         if @mouse_hover_widget && @mouse_hover_widget.in_dom?
           @mouse_hover_widget.onMouseLeave
           pop_cursor
+        else
+          onMouseLeaveSpace(view)
         end
         @mouse_hover_widget = nil
-        return false
+        @mouse_is_outside = true
+        false
+      end
+
+      def onMouseLeaveSpace(view)
+        false
       end
 
       def onMouseWheel(flags, delta, x, y, view)
-        return false
+        false
       end
 
       def onSetCursor

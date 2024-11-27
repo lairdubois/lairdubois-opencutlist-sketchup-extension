@@ -1222,7 +1222,7 @@ module Ladb::OpenCutList
         end
         return true
       end
-      return false
+      false
     end
 
     def onMouseMove(flags, x, y, view)
@@ -1239,11 +1239,19 @@ module Ladb::OpenCutList
       move_tooltip(x, y)
 
       # Action
-      unless is_action_none?
-        @picker.onMouseMove(flags, x, y, view) unless @picker.nil?
-      end
+      @picker.onMouseMove(flags, x, y, view) unless is_action_none? || @picker.nil?
 
       false
+    end
+
+    def onMouseLeave(view)
+      return true if super
+      @picker.onMouseLeave(view) unless is_action_none? || @picker.nil?
+    end
+
+    def onMouseLeaveSpace(view)
+      return true if super
+      @picker.onMouseLeave(view) unless is_action_none? || @picker.nil?
     end
 
     def onLButtonDown(flags, x, y, view)
@@ -1257,11 +1265,10 @@ module Ladb::OpenCutList
     def onMouseWheel(flags, delta, x, y, view)
       return true if super
       if flags & COPY_MODIFIER_MASK == COPY_MODIFIER_MASK
-        if @active_part_entity_path
-          _pick_deeper(delta)
-        end
+        _pick_deeper(delta) if @active_part_entity_path
         return true
       end
+      false
     end
 
     def onViewChanged(view)
@@ -1561,10 +1568,39 @@ module Ladb::OpenCutList
       @pick_position.x = x
       @pick_position.y = y
       do_pick
+      false
+    end
+
+    def onMouseLeave(view)
+
+      @pick_position.x = 0
+      @pick_position.y = 0
+
+      @pick_ip.clear if @pick_ip
+
+      changed = @picked_face_path != nil || @picked_point != nil || @picked_edge_path != nil || @picked_cline_path != nil || @picked_axes_path != nil || @picked_axes_line != nil
+
+      @picked_face = nil
+      @picked_face_path = nil
+      @picked_point = nil
+      @picked_point_path = nil
+      @picked_edge = nil
+      @picked_edge_path = nil
+      @picked_cline = nil
+      @picked_cline_path = nil
+      @picked_axes = nil
+      @picked_axes_line = nil
+      @picked_axes_path = nil
+
+      # Fire change event
+      @smart_tool.onPickerChanged(self) if changed
+
+      false
     end
 
     def onKeyUp(key, repeat, flags, view)
       do_pick if key == VK_SHIFT
+      false
     end
 
     # -- UI --

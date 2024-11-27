@@ -226,41 +226,49 @@ module Ladb::OpenCutList
     def onKeyDown(key, repeat, flags, view)
       return true if super
       if key == ALT_MODIFIER_KEY
-        unless is_action_adapt_axes?
-          push_action(ACTION_ADAPT_AXES)
-        end
+        push_action(ACTION_ADAPT_AXES) unless is_action_adapt_axes?
         return true
       end
+      false
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       return true if super
       if key == ALT_MODIFIER_KEY
-        if is_action_adapt_axes?
-          pop_action
-        end
+        pop_action if is_action_adapt_axes?
         return true
       end
+      false
     end
 
     def onLButtonDown(flags, x, y, view)
       return true if super
       _handle_mouse_event(:l_button_down)
+      false
     end
 
     def onLButtonUp(flags, x, y, view)
       return true if super
       _handle_mouse_event(:l_button_up)
+      false
     end
 
     def onLButtonDoubleClick(flags, x, y, view)
       return true if super
       _handle_mouse_event(:l_button_dblclick)
+      false
     end
 
     def onMouseLeave(view)
       return true if super
       _reset_active_part
+      false
+    end
+
+    def onMouseLeaveSpace(view)
+      return true if super
+      _reset_active_part
+      false
     end
 
     def onPickerChanged(picker)
