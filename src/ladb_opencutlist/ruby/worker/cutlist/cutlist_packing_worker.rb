@@ -377,7 +377,7 @@ module Ladb::OpenCutList
 
       raw_solution = output['solution']
 
-      return PackingDef.new(errors: [ 'tab.cutlist.packing.error.no_solution' ]).create_packing if raw_solution['bins'].nil? || raw_solution['bins'].empty?
+      return PackingDef.new(errors: [ 'tab.cutlist.packing.error.no_solution' ]).create_packing if raw_solution.nil? || raw_solution['bins'].nil? || raw_solution['bins'].empty?
 
       # Create PackingDef from solution
 
