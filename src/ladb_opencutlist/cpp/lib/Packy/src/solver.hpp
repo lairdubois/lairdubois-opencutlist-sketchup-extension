@@ -1286,7 +1286,7 @@ namespace Packy {
                 }
 
             } else {
-                throw std::invalid_argument("Unknow shape type");
+                throw std::invalid_argument("Unknown shape type");
             }
 
             return std::move(shape);

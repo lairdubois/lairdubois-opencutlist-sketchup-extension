@@ -52,7 +52,7 @@ DLL_EXPORTS char* c_optimize_start(
         } catch (const std::exception& e) {
             j_ouput["error"] = e.what();
         } catch (...) {
-            j_ouput["error"] = "Unknow Error";
+            j_ouput["error"] = "Unknown Error";
         }
 
         // Reset optimizer ptr
