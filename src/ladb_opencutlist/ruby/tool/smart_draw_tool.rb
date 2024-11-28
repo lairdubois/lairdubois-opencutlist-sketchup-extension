@@ -1948,7 +1948,7 @@ module Ladb::OpenCutList
     def _read_shape(text)
       return true if super
 
-      d1, d2, d3 = text.split(';')
+      d1, d2, d3 = text.split(/[;x]/)
 
       if d1 || d2
 
@@ -2237,7 +2237,7 @@ module Ladb::OpenCutList
     def _read_shape(text)
       return true if super
 
-      d1, d2 = text.split(';')
+      d1, d2 = text.split(/[;x]/)
 
       if d1
 
