@@ -417,7 +417,7 @@ namespace Packy {
             Profit profit = j.value("profit", static_cast<Profit>(-1));
             ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
             bool oriented = j.value("oriented", false);
-            GroupId group_id = j.value("group_id", static_cast<GroupId>(-1));
+            GroupId group_id = j.value("group_id", static_cast<GroupId>(0));
 
             if (fake_spacing_ > 0) {
                 if (width >= 0) width += fake_spacing_;
