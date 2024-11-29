@@ -22,20 +22,22 @@ module Ladb::OpenCutList::Fiddle
     # ---
 
     # Convert PolyTree to Array<PolyShape>
+    # PolyShape first path is outer others are holes
     def polytree_to_polyshapes(polytree)
       polyshapes = []
-      stack = [ polytree ]
+      stack = [ [ polytree, nil ] ]
       until stack.empty?
-        current = stack.pop
-        current.children.each { |child| stack.push(child) }
-        if current.is_a?(PolyPath)
-          if current.hole?
-            if polyshapes.last && !polyshapes.last.paths.empty?
-              polyshapes.last.paths << current.path
-            end
+        current_node, current_polyshape = stack.pop
+        if current_node.is_a?(PolyPath)
+          if current_node.hole?
+            current_polyshape.paths << current_node.path if current_polyshape && current_polyshape.paths.any?
           else
-            polyshapes << PolyShape.new([ current.path ])
+            current_polyshape = PolyShape.new([ current_node.path ])
+            polyshapes << current_polyshape
           end
+        end
+        current_node.children.each do |child|
+          stack.push([ child, current_polyshape ])
         end
       end
       polyshapes
