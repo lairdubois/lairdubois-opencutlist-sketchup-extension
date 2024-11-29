@@ -8,6 +8,8 @@ using namespace Clipper2Lib;
 
 constexpr auto CLIPPY_VERSION = "1.0.0";
 
+constexpr auto CLIPPY_PRECISION = 8;
+
 typedef struct {
     CPathsD closed_paths;
     CPathsD open_paths;

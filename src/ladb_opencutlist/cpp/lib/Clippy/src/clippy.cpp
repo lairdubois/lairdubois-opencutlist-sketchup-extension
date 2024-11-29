@@ -26,7 +26,7 @@ DLL_EXPORTS CPathsDSolution* c_boolean_op(
             clips,
             solution->closed_paths,
             solution->open_paths,
-            8,
+            CLIPPY_PRECISION,
             false,
             false
     );
@@ -76,7 +76,7 @@ DLL_EXPORTS CPathsDSolution* c_inflate_paths(
             solution->closed_paths,
             join_type,
             end_type,
-            8,
+            CLIPPY_PRECISION,
             miter_limit,
             arc_tolerance,
             preserve_collinear,

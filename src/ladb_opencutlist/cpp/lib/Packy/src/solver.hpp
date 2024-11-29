@@ -299,7 +299,7 @@ namespace Packy {
             j["efficiency"] = 1 - solution.full_waste_percentage();
 
             if (messages_to_solution_) {
-                j["messages"] = messages();
+                j["messages"] = messages(); // Export PackingSolver output messages to Packy solution
             }
 
         }
@@ -478,7 +478,7 @@ namespace Packy {
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"efficiency",  (double) item_area / bin_type.area()}
+                        {"efficiency",  static_cast<double>(item_area) / bin_type.area()}
                 });
 
                 basic_json<>& j_items = j_bin["items"] = json::array();
@@ -739,7 +739,7 @@ namespace Packy {
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"efficiency",  (double) item_area / bin_type.area()}
+                        {"efficiency",  static_cast<double>(item_area) / bin_type.area()}
                 });
 
                 // Items, Leftovers & Cuts.
@@ -987,7 +987,7 @@ namespace Packy {
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"efficiency",  (double) item_length / bin_type.length}
+                        {"efficiency",  static_cast<double>(item_length) / bin_type.length}
                 });
 
                 basic_json<>& j_items = j_bin["items"] = json::array();
