@@ -67,6 +67,9 @@ namespace Packy {
 
             if (j.contains("length_truncate_factor")) {
                 length_truncate_factor_ = j.value("length_truncate_factor", 1.0);
+                if (length_truncate_factor_ < 1.0) {
+                    length_truncate_factor_ = 1.0;
+                }
             }
 
         };
@@ -124,15 +127,15 @@ namespace Packy {
                 const std::string& key,
                 Length default_length = 0
         ) const {
-            return length_dbl_to_length(j.value(key, static_cast<double>(default_length)));
+            return to_length(j.value(key, static_cast<double>(default_length)));
         }
 
         /*
          * Utils:
          */
 
-        Length length_dbl_to_length(
-                double length_dbl
+        Length to_length(
+                const double length_dbl
         ) const {
             if (length_dbl > 0) {
                 return static_cast<Length>(std::ceil(length_dbl * length_truncate_factor_));
@@ -140,16 +143,32 @@ namespace Packy {
             return static_cast<Length>(length_dbl);
         }
 
-        double length_to_length_dbl(
-                Length length
+        double to_length_dbl(
+                const Length length,
+                const int precision = 8
         ) const {
-            return round(static_cast<double>(length) / length_truncate_factor_);
+            return round(static_cast<double>(length) / length_truncate_factor_, precision);
         }
 
-        double area_to_area_dbl(
-                Area area
+        static double to_length_dbl(
+                const double length_dbl,
+                const int precision = 8
+        ) {
+            return round(length_dbl, precision);
+        }
+
+        double to_area_dbl(
+                const Area area,
+                const int precision = 8
         ) const {
-            return round(static_cast<double>(area) / (length_truncate_factor_ * length_truncate_factor_));
+            return round(static_cast<double>(area) / (length_truncate_factor_ * length_truncate_factor_), precision);
+        }
+
+        static double to_area_dbl(
+                const double area_dbl,
+                const int precision = 8
+        ) {
+            return round(area_dbl, precision);
         }
 
         static double round(
@@ -344,8 +363,8 @@ namespace Packy {
 
             j["time"] = output.time;
 
+            j["full_waste"] = to_area_dbl(solution.full_waste());
             j["full_efficiency"] = 1 - solution.full_waste_percentage();
-            j["full_waste"] = solution.full_waste();
             j["cost"] = solution.cost();
             j["profit"] = solution.profit();
 
@@ -357,8 +376,8 @@ namespace Packy {
                 const auto& bin_type = instance.bin_type(bin_type_id);
                 if (bin_type.copies > solution.bin_copies(bin_type_id)) {
                     j_unused_bin_types.emplace_back(json{
-                        {"bin_type_id",  bin_type_id},
-                        {"copies",          bin_type.copies - solution.bin_copies(bin_type_id)},
+                        {"bin_type_id", bin_type_id},
+                        {"copies",         bin_type.copies - solution.bin_copies(bin_type_id)},
                     });
                 }
             }
@@ -554,8 +573,8 @@ namespace Packy {
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"space",       area_to_area_dbl(bin_type.space())},
-                        {"waste",       area_to_area_dbl(bin_type.space() - item_space)},
+                        {"space",       to_area_dbl(bin_type.space())},
+                        {"waste",       to_area_dbl(bin_type.space() - item_space)},
                         {"efficiency",  static_cast<double>(item_space) / bin_type.space()}
                 });
 
@@ -567,15 +586,15 @@ namespace Packy {
                     if (item.rotate) {
                         j_items.emplace_back(json{
                                 {"item_type_id", item.item_type_id},
-                                {"x",            length_to_length_dbl(fake_trimming_ + item.bl_corner.x + item_type.rect.y - fake_spacing_)},
-                                {"y",            length_to_length_dbl(fake_trimming_ + item.bl_corner.y)},
+                                {"x",            to_length_dbl(fake_trimming_ + item.bl_corner.x + item_type.rect.y - fake_spacing_)},
+                                {"y",            to_length_dbl(fake_trimming_ + item.bl_corner.y)},
                                 {"angle",        90.0}
                         });
                     } else {
                         j_items.emplace_back(json{
                                 {"item_type_id", item.item_type_id},
-                                {"x",            length_to_length_dbl(fake_trimming_ + item.bl_corner.x)},
-                                {"y",            length_to_length_dbl(fake_trimming_ + item.bl_corner.y)},
+                                {"x",            to_length_dbl(fake_trimming_ + item.bl_corner.x)},
+                                {"y",            to_length_dbl(fake_trimming_ + item.bl_corner.y)},
                                 {"angle",        0}
                         });
                     }
@@ -817,8 +836,8 @@ namespace Packy {
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"space",       area_to_area_dbl(bin_type.space())},
-                        {"waste",       area_to_area_dbl(bin_type.space() - item_space)},
+                        {"space",       to_area_dbl(bin_type.space())},
+                        {"waste",       to_area_dbl(bin_type.space() - item_space)},
                         {"efficiency",  static_cast<double>(item_space) / bin_type.space()}
                 });
 
@@ -836,15 +855,15 @@ namespace Packy {
                         if (rotated) {
                             j_items.push_back(json{
                                     {"item_type_id", node.item_type_id},
-                                    {"x",            length_to_length_dbl(node.r)},
-                                    {"y",            length_to_length_dbl(node.b)},
+                                    {"x",            to_length_dbl(node.r)},
+                                    {"y",            to_length_dbl(node.b)},
                                     {"angle",        90.0},
                             });
                         } else {
                             j_items.push_back(json{
                                     {"item_type_id", node.item_type_id},
-                                    {"x",            length_to_length_dbl(node.l)},
-                                    {"y",            length_to_length_dbl(node.b)},
+                                    {"x",            to_length_dbl(node.l)},
+                                    {"y",            to_length_dbl(node.b)},
                                     {"angle",        0.0},
                             });
                         }
@@ -870,10 +889,10 @@ namespace Packy {
                         Length height = node.t - b;
                         if (width > 0 && height > 0) {
                             j_leftovers.push_back(json{
-                                    {"x",      length_to_length_dbl(l)},
-                                    {"y",      length_to_length_dbl(b)},
-                                    {"width",  length_to_length_dbl(width)},
-                                    {"height", length_to_length_dbl(height)}
+                                    {"x",      to_length_dbl(l)},
+                                    {"y",      to_length_dbl(b)},
+                                    {"width",  to_length_dbl(width)},
+                                    {"height", to_length_dbl(height)}
                             });
                         }
 
@@ -888,18 +907,18 @@ namespace Packy {
                             // Bottom
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
-                                    {"x",           length_to_length_dbl(node.l - (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
-                                    {"y",           length_to_length_dbl(node.b - instance.parameters().cut_thickness)},
-                                    {"length",      length_to_length_dbl(node.r + (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.right_trim : 0))},
+                                    {"x",           to_length_dbl(node.l - (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
+                                    {"y",           to_length_dbl(node.b - instance.parameters().cut_thickness)},
+                                    {"length",      to_length_dbl(node.r + (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.right_trim : 0))},
                                     {"orientation", "horizontal"}
                             });
 
                             // Left
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
-                                    {"x",           length_to_length_dbl(node.l - instance.parameters().cut_thickness)},
-                                    {"y",           length_to_length_dbl(node.b - (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
-                                    {"length",      length_to_length_dbl(node.t + (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.top_trim : 0))},
+                                    {"x",           to_length_dbl(node.l - instance.parameters().cut_thickness)},
+                                    {"y",           to_length_dbl(node.b - (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
+                                    {"length",      to_length_dbl(node.t + (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.top_trim : 0))},
                                     {"orientation", "vertical"},
                             });
 
@@ -913,9 +932,9 @@ namespace Packy {
                         if (node.r != parent_node.r) {
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
-                                    {"x",           length_to_length_dbl(node.r)},
-                                    {"y",           length_to_length_dbl(node.b)},
-                                    {"length",      length_to_length_dbl(node.t + (node.d == 1 ? bin_type.top_trim : 0) - node.b)},
+                                    {"x",           to_length_dbl(node.r)},
+                                    {"y",           to_length_dbl(node.b)},
+                                    {"length",      to_length_dbl(node.t + (node.d == 1 ? bin_type.top_trim : 0) - node.b)},
                                     {"orientation", "vertical"}
                             });
                         }
@@ -923,9 +942,9 @@ namespace Packy {
                         if (node.t != parent_node.t) {
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
-                                    {"x",           length_to_length_dbl(node.l)},
-                                    {"y",           length_to_length_dbl(node.t)},
-                                    {"length",      length_to_length_dbl(node.r + (node.d == 1 ? bin_type.right_trim : 0) - node.l)},
+                                    {"x",           to_length_dbl(node.l)},
+                                    {"y",           to_length_dbl(node.t)},
+                                    {"length",      to_length_dbl(node.r + (node.d == 1 ? bin_type.right_trim : 0) - node.l)},
                                     {"orientation", "horizontal"},
                             });
                         }
@@ -1067,8 +1086,8 @@ namespace Packy {
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"space",       length_to_length_dbl(bin_type.space())},
-                        {"waste",       length_to_length_dbl(bin_type.space() - item_space)},
+                        {"space",       to_length_dbl(bin_type.space())},
+                        {"waste",       to_length_dbl(bin_type.space() - item_space)},
                         {"efficiency",  static_cast<double>(item_space) / bin_type.space()}
                 });
 
@@ -1078,7 +1097,7 @@ namespace Packy {
                 if (fake_trimming_ > 0) {
                     j_cuts.emplace_back(json{
                             {"depth", 0},
-                            {"x",     fake_trimming_ - fake_spacing_}
+                            {"x",     to_length_dbl(fake_trimming_ - fake_spacing_)}
                     });
                 }
                 for (const auto& item: bin.items) {
@@ -1088,21 +1107,21 @@ namespace Packy {
                     // Item
                     j_items.emplace_back(json{
                             {"item_type_id", item.item_type_id},
-                            {"x",            fake_trimming_ + item.start},
+                            {"x",            to_length_dbl(fake_trimming_ + item.start)},
                     });
 
                     // Cut
                     if (item.start + item_type.length < bin_type.length) {
                         j_cuts.emplace_back(json{
                                 {"depth", 1},
-                                {"x",     fake_trimming_ + item.start + item_type.length - fake_spacing_}
+                                {"x",     to_length_dbl(fake_trimming_ + item.start + item_type.length - fake_spacing_)}
                         });
 
                         // Leftover
                         if (&item == &bin.items.back()) {
                             j_leftovers.emplace_back(json{
                                     {"x",     fake_trimming_ + item.start + item_type.length},
-                                    {"width", bin_type.length - (item.start + item_type.length)},
+                                    {"width", to_length_dbl(bin_type.length - (item.start + item_type.length))},
                             });
                         }
 
@@ -1295,8 +1314,8 @@ namespace Packy {
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"space",       bin_type.space()},
-                        {"waste",       bin_type.space() - item_space},
+                        {"space",       to_area_dbl(bin_type.space())},
+                        {"waste",       to_area_dbl(bin_type.space() - item_space)},
                         {"efficiency",  item_space / bin_type.space()}
                 });
 
@@ -1305,8 +1324,8 @@ namespace Packy {
 
                     j_items.emplace_back(json{
                             {"item_type_id", item.item_type_id},
-                            {"x",            item.bl_corner.x},
-                            {"y",            item.bl_corner.y},
+                            {"x",            to_length_dbl(item.bl_corner.x)},
+                            {"y",            to_length_dbl(item.bl_corner.y)},
                             {"angle",        item.angle},  // Returns angle in degrees
                             {"mirror",       item.mirror}
                     });

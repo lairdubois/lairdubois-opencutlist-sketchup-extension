@@ -420,26 +420,26 @@ module Ladb::OpenCutList
                 PackingItemDef.new(
                   item_type_def: item_type_def,
                   instance_info: instance_info_by_item_type_def[item_type_def].is_a?(Array) ? instance_info_by_item_type_def[item_type_def].shift : nil,
-                  x: _from_packy_length(raw_item.fetch('x', 0)).to_l,
-                  y: _from_packy_length(raw_item.fetch('y', 0)).to_l,
+                  x: _from_packy_length(raw_item.fetch('x', 0)),
+                  y: _from_packy_length(raw_item.fetch('y', 0)),
                   angle: raw_item.fetch('angle', 0),
                   mirror: raw_item.fetch('mirror', false)
                 )
               } : [],
               leftover_defs: raw_bin['leftovers'].is_a?(Array) ? raw_bin['leftovers'].map { |raw_leftover|
                 PackingLeftoverDef.new(
-                  x: _from_packy_length(raw_leftover.fetch('x', 0)).to_l,
-                  y: _from_packy_length(raw_leftover.fetch('y', 0)).to_l,
-                  length: _from_packy_length(raw_leftover.fetch('width', 0)).to_l,
-                  width: _from_packy_length(raw_leftover.fetch('height', 0)).to_l
+                  x: _from_packy_length(raw_leftover.fetch('x', 0)),
+                  y: _from_packy_length(raw_leftover.fetch('y', 0)),
+                  length: _from_packy_length(raw_leftover.fetch('width', 0)),
+                  width: _from_packy_length(raw_leftover.fetch('height', 0))
                 )
               } : [],
               cut_defs: raw_bin['cuts'].is_a?(Array) ? raw_bin['cuts'].map { |raw_cut|
                 PackingCutDef.new(
                   depth: raw_cut['depth'],
-                  x: _from_packy_length(raw_cut.fetch('x', 0)).to_l,
-                  y: _from_packy_length(raw_cut.fetch('y', 0)).to_l,
-                  length: (raw_cut['length'] ? _from_packy_length(raw_cut['length']) : bin_type_def.width).to_l,
+                  x: _from_packy_length(raw_cut.fetch('x', 0)),
+                  y: _from_packy_length(raw_cut.fetch('y', 0)),
+                  length: (raw_cut['length'] ? _from_packy_length(raw_cut['length']) : bin_type_def.width),
                   orientation: raw_cut.fetch('orientation', 'vertical')
                 )
               }.sort_by { |cut_def| cut_def.depth } : [],
@@ -515,16 +515,10 @@ module Ladb::OpenCutList
 
     def _to_packy_length(l)
       l.to_f.round(8)
-      # return l.to_f.round(8) if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR    # type = float, unit = Inches
-      # return (l.to_mm * 10.0).round.to_i if DimensionUtils.model_unit_is_metric   # type = integer, unit = 1/10 Millimeters
-      # (l.to_f * 100.0).round.to_i                                                 # type = integer, unit = 1/100 Inches
     end
 
     def _from_packy_length(l)
-      l
-      # return l if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR  # unit = Inches
-      # return l.mm / 10.0 if DimensionUtils.model_unit_is_metric   # unit = 1/10 Millimeters
-      # l / 100.0                                                   # unit = 1/100 Inches
+      l.to_l
     end
 
     def _compute_bin_cost(group, inch_length = 0, inch_width = 0, inch_thickness = 0)
