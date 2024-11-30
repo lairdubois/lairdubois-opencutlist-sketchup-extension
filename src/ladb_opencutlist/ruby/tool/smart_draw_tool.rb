@@ -351,17 +351,17 @@ module Ladb::OpenCutList
       @snap_ip.clear
       @mouse_ip.pick(view, x, y, _get_previous_input_point)
 
-      SKETCHUP_CONSOLE.clear
-      puts "---"
-      puts "vertex = #{@mouse_ip.vertex}"
-      puts "edge = #{@mouse_ip.edge}"
-      puts "face = #{@mouse_ip.face}"
-      puts "instance_path.length = #{@mouse_ip.instance_path.length}"
-      puts "instance_path.leaf = #{@mouse_ip.instance_path.leaf}"
-      puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
-      puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
-      puts "best_picked = #{view.pick_helper(x, y).best_picked}"
-      puts "---"
+      # SKETCHUP_CONSOLE.clear
+      # puts "---"
+      # puts "vertex = #{@mouse_ip.vertex}"
+      # puts "edge = #{@mouse_ip.edge}"
+      # puts "face = #{@mouse_ip.face}"
+      # puts "instance_path.length = #{@mouse_ip.instance_path.length}"
+      # puts "instance_path.leaf = #{@mouse_ip.instance_path.leaf}"
+      # puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
+      # puts "degrees_of_freedom = #{@mouse_ip.degrees_of_freedom}"
+      # puts "best_picked = #{view.pick_helper(x, y).best_picked}"
+      # puts "---"
 
       @tool.remove_all_3d
       @tool.remove_all_2d
@@ -987,7 +987,7 @@ module Ladb::OpenCutList
 
         end
 
-        Sketchup.set_status_text("#{bounds.width}; #{bounds.height}", SB_VCB_VALUE)
+        Sketchup.set_status_text("#{bounds.width}#{Sketchup::RegionalSettings.list_separator} #{bounds.height}", SB_VCB_VALUE)
 
         unit = @tool.get_unit
 
@@ -1162,7 +1162,8 @@ module Ladb::OpenCutList
 
       if _fetch_option_move_array
 
-        d1, d2 = text.split(';')
+
+        d1, d2 = text.split(Sketchup::RegionalSettings.list_separator)
 
         if d1 || d2
 
@@ -1193,7 +1194,7 @@ module Ladb::OpenCutList
 
     def _read_move_copy(text)
 
-      if (match = /^(?:([x*\/])(\d+))?(?:;|;([x*\/])(\d+))?$/.match(text))
+      if (match = Regexp.new("^(?:([x*\/])(\d+))?(?:#{Sketchup::RegionalSettings.list_separator}|#{Sketchup::RegionalSettings.list_separator}([x*\/])(\d+))?$").match(text))
 
         operator_1, value_1, operator_2, value_2 = match[1, 4]
         number_1 = value_1.to_i
@@ -1210,7 +1211,7 @@ module Ladb::OpenCutList
           return true
         end
 
-        has_separator = text.include?(';')
+        has_separator = text.include?(Sketchup::RegionalSettings.list_separator)
 
         operator_1 = operator_1.nil? ? '*' : operator_1
         operator_2 = operator_2.nil? ? (has_separator ? '*' : operator_1) : operator_2
@@ -1899,7 +1900,7 @@ module Ladb::OpenCutList
       k_segments.transformation = t
       @tool.append_3d(k_segments)
 
-      Sketchup.set_status_text("#{bounds.width}; #{bounds.height}", SB_VCB_VALUE)
+      Sketchup.set_status_text("#{bounds.width}#{Sketchup::RegionalSettings.list_separator} #{bounds.height}", SB_VCB_VALUE)
 
       if bounds.valid?
 
@@ -1948,7 +1949,7 @@ module Ladb::OpenCutList
     def _read_shape(text)
       return true if super
 
-      d1, d2, d3 = text.split(/[;x]/)
+      d1, d2, d3 = text.split(Sketchup::RegionalSettings.list_separator)
 
       if d1 || d2
 
@@ -2237,7 +2238,7 @@ module Ladb::OpenCutList
     def _read_shape(text)
       return true if super
 
-      d1, d2 = text.split(/[;x]/)
+      d1, d2 = text.split(Sketchup::RegionalSettings.list_separator)
 
       if d1
 
