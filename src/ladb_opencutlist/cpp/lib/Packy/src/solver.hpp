@@ -63,7 +63,13 @@ namespace Packy {
 
         virtual void read_parameters(
                 basic_json<>& j
-        ) {};
+        ) {
+
+            if (j.contains("length_truncate_factor")) {
+                length_truncate_factor_ = j.value("length_truncate_factor", 1.0);
+            }
+
+        };
 
         virtual void read_instance(
                 basic_json<>& j
@@ -72,30 +78,16 @@ namespace Packy {
             if (j.contains("parameters")) {
                 read_instance_parameters(j["parameters"]);
             }
-            if (j.contains("bin_types")) {
-                read_bin_types(j["bin_types"]);
-            }
             if (j.contains("item_types")) {
                 read_item_types(j["item_types"]);
+            }
+            if (j.contains("bin_types")) {
+                read_bin_types(j["bin_types"]);
             }
 
         }
 
         virtual void read_instance_parameters(
-                basic_json<>& j
-        ) {};
-
-        virtual void read_bin_types(
-                basic_json<>& j
-        ) {
-
-            for (auto& j_item: j.items()) {
-                read_bin_type(j_item.value());
-            }
-
-        }
-
-        virtual void read_bin_type(
                 basic_json<>& j
         ) {};
 
@@ -113,11 +105,69 @@ namespace Packy {
                 basic_json<>& j
         ) {};
 
+        virtual void read_bin_types(
+                basic_json<>& j
+        ) {
+
+            for (auto& j_item: j.items()) {
+                read_bin_type(j_item.value());
+            }
+
+        }
+
+        virtual void read_bin_type(
+                basic_json<>& j
+        ) {};
+
+        Length read_length(
+                basic_json<>& j,
+                const std::string& key,
+                Length default_length = 0
+        ) const {
+            return length_dbl_to_length(j.value(key, static_cast<double>(default_length)));
+        }
+
+        /*
+         * Utils:
+         */
+
+        Length length_dbl_to_length(
+                double length_dbl
+        ) const {
+            if (length_dbl > 0) {
+                return static_cast<Length>(std::ceil(length_dbl * length_truncate_factor_));
+            }
+            return static_cast<Length>(length_dbl);
+        }
+
+        double length_to_length_dbl(
+                Length length
+        ) const {
+            return round(static_cast<double>(length) / length_truncate_factor_);
+        }
+
+        double area_to_area_dbl(
+                Area area
+        ) const {
+            return round(static_cast<double>(area) / (length_truncate_factor_ * length_truncate_factor_));
+        }
+
+        static double round(
+                const double value,
+                const int precision = 8
+        ) {
+            return std::round(value * std::pow(10, precision)) / std::pow(10, precision);
+        }
+
         /*
          * Optimize:
          */
 
         virtual json optimize() = 0;
+
+    protected:
+
+        double length_truncate_factor_ = 1.0;
 
     };
 
@@ -164,6 +214,7 @@ namespace Packy {
         void read_parameters(
                 basic_json<>& j
         ) override {
+            Solver::read_parameters(j);
 
             if (j.contains("time_limit")) {
                 parameters_.timer.set_time_limit(j["time_limit"].template get<double>());
@@ -289,14 +340,39 @@ namespace Packy {
         ) {
 
             const auto& solution = output.solution_pool.best();
+            const auto& instance = solution.instance();
 
             j["time"] = output.time;
-            j["number_of_bins"] = solution.number_of_bins();
-            j["number_of_different_bins"] = solution.number_of_different_bins();
+
+            j["full_efficiency"] = 1 - solution.full_waste_percentage();
+            j["full_waste"] = solution.full_waste();
             j["cost"] = solution.cost();
-            j["number_of_items"] = solution.number_of_items();
             j["profit"] = solution.profit();
-            j["efficiency"] = 1 - solution.full_waste_percentage();
+
+            j["number_of_bins"] = solution.number_of_bins();
+            j["number_of_items"] = solution.number_of_items();
+
+            basic_json<>& j_unused_bin_types = j["unused_bin_types"] = json::array();
+            for (BinTypeId bin_type_id = 0; bin_type_id < instance.number_of_bin_types(); ++bin_type_id) {
+                const auto& bin_type = instance.bin_type(bin_type_id);
+                if (bin_type.copies > solution.bin_copies(bin_type_id)) {
+                    j_unused_bin_types.emplace_back(json{
+                        {"bin_type_id",  bin_type_id},
+                        {"copies",          bin_type.copies - solution.bin_copies(bin_type_id)},
+                    });
+                }
+            }
+
+            basic_json<>& j_unused_item_types = j["unused_item_types"] = json::array();
+            for (ItemTypeId item_type_id = 0; item_type_id < instance.number_of_item_types(); ++item_type_id) {
+                const auto& item_type = instance.item_type(item_type_id);
+                if (item_type.copies > solution.item_copies(item_type_id)) {
+                    j_unused_item_types.emplace_back(json{
+                        {"item_type_id", item_type_id},
+                        {"copies",          item_type.copies - solution.item_copies(item_type_id)},
+                    });
+                }
+            }
 
             if (messages_to_solution_) {
                 j["messages"] = messages(); // Export PackingSolver output messages to Packy solution
@@ -334,11 +410,39 @@ namespace Packy {
             TypedSolver::read_instance_parameters(j);
 
             if (j.contains("fake_trimming")) {
-                fake_trimming_ = j["fake_trimming"].template get<Length>();
+                fake_trimming_ = read_length(j, "fake_trimming", 0);
             }
             if (j.contains("fake_spacing")) {
-                fake_spacing_ = j["fake_spacing"].template get<Length>();
+                fake_spacing_ = read_length(j, "fake_spacing", 0);
             }
+
+        }
+
+        void read_item_type(
+                basic_json<>& j
+        ) override {
+            TypedSolver::read_item_type(j);
+
+            Length width = read_length(j, "width", -1);
+            Length height = read_length(j, "height", -1);
+            Profit profit = j.value("profit", static_cast<Profit>(-1));
+            ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
+            bool oriented = j.value("oriented", false);
+            GroupId group_id = j.value("group_id", static_cast<GroupId>(0));
+
+            if (fake_spacing_ > 0) {
+                if (width >= 0) width += fake_spacing_;
+                if (height >= 0) height += fake_spacing_;
+            }
+
+            instance_builder_.add_item_type(
+                    width,
+                    height,
+                    profit,
+                    copies,
+                    oriented,
+                    group_id
+            );
 
         }
 
@@ -347,8 +451,8 @@ namespace Packy {
         ) override {
             TypedSolver::read_bin_type(j);
 
-            Length width = j.value("width", static_cast<Length>(-1));
-            Length height = j.value("height", static_cast<Length>(-1));
+            Length width = read_length(j, "width", -1);
+            Length height = read_length(j, "height", -1);
             Profit cost = j.value("cost", static_cast<Profit>(-1));
             BinPos copies = j.value("copies", static_cast<BinPos>(1));
             BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
@@ -385,10 +489,10 @@ namespace Packy {
                 basic_json<>& j
         ) {
 
-            Length x = j.value("x", static_cast<Length>(-1));
-            Length y = j.value("y", static_cast<Length>(-1));
-            Length width = j.value("width", static_cast<Length>(-1));
-            Length height = j.value("height", static_cast<Length>(-1));
+            Length x = read_length(j, "x", -1);
+            Length y = read_length(j, "y", -1);
+            Length width = read_length(j, "width", -1);
+            Length height = read_length(j, "height", -1);
 
             if (fake_spacing_ > 0) {
                 if (x >= 0) x -= fake_spacing_ / 2;
@@ -403,34 +507,6 @@ namespace Packy {
                     y,
                     width,
                     height
-            );
-
-        }
-
-        void read_item_type(
-                basic_json<>& j
-        ) override {
-            TypedSolver::read_item_type(j);
-
-            Length width = j.value("width", static_cast<Length>(-1));
-            Length height = j.value("height", static_cast<Length>(-1));
-            Profit profit = j.value("profit", static_cast<Profit>(-1));
-            ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
-            bool oriented = j.value("oriented", false);
-            GroupId group_id = j.value("group_id", static_cast<GroupId>(0));
-
-            if (fake_spacing_ > 0) {
-                if (width >= 0) width += fake_spacing_;
-                if (height >= 0) height += fake_spacing_;
-            }
-
-            instance_builder_.add_item_type(
-                    width,
-                    height,
-                    profit,
-                    copies,
-                    oriented,
-                    group_id
             );
 
         }
@@ -469,16 +545,18 @@ namespace Packy {
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
-                Area item_area = 0;
+                Area item_space = 0;
                 for (const auto& item : bin.items) {
                     const ItemType& item_type = instance.item_type(item.item_type_id);
-                    item_area += item_type.area();
+                    item_space += item_type.space();
                 }
 
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"efficiency",  static_cast<double>(item_area) / bin_type.area()}
+                        {"space",       area_to_area_dbl(bin_type.space())},
+                        {"waste",       area_to_area_dbl(bin_type.space() - item_space)},
+                        {"efficiency",  static_cast<double>(item_space) / bin_type.space()}
                 });
 
                 basic_json<>& j_items = j_bin["items"] = json::array();
@@ -489,15 +567,15 @@ namespace Packy {
                     if (item.rotate) {
                         j_items.emplace_back(json{
                                 {"item_type_id", item.item_type_id},
-                                {"x",            fake_trimming_ + item.bl_corner.x + item_type.rect.y - fake_spacing_},
-                                {"y",            fake_trimming_ + item.bl_corner.y},
+                                {"x",            length_to_length_dbl(fake_trimming_ + item.bl_corner.x + item_type.rect.y - fake_spacing_)},
+                                {"y",            length_to_length_dbl(fake_trimming_ + item.bl_corner.y)},
                                 {"angle",        90.0}
                         });
                     } else {
                         j_items.emplace_back(json{
                                 {"item_type_id", item.item_type_id},
-                                {"x",            fake_trimming_ + item.bl_corner.x},
-                                {"y",            fake_trimming_ + item.bl_corner.y},
+                                {"x",            length_to_length_dbl(fake_trimming_ + item.bl_corner.x)},
+                                {"y",            length_to_length_dbl(fake_trimming_ + item.bl_corner.y)},
                                 {"angle",        0}
                         });
                     }
@@ -545,23 +623,46 @@ namespace Packy {
                 instance_builder_.set_first_stage_orientation(first_stage_orientation);
             }
             if (j.contains("minimum_distance_1_cuts")) {
-                instance_builder_.set_minimum_distance_1_cuts(j["minimum_distance_1_cuts"].template get<Length>());
+                instance_builder_.set_minimum_distance_1_cuts(read_length(j, "minimum_distance_1_cuts"));
             }
             if (j.contains("maximum_distance_1_cuts")) {
-                instance_builder_.set_maximum_distance_1_cuts(j["maximum_distance_1_cuts"].template get<Length>());
+                instance_builder_.set_maximum_distance_1_cuts(read_length(j, "maximum_distance_1_cuts"));
             }
             if (j.contains("minimum_distance_2_cuts")) {
-                instance_builder_.set_minimum_distance_2_cuts(j["minimum_distance_2_cuts"].template get<Length>());
+                instance_builder_.set_minimum_distance_2_cuts(read_length(j, "minimum_distance_2_cuts"));
             }
             if (j.contains("minimum_waste_length")) {
-                instance_builder_.set_minimum_waste_length(j["minimum_waste_length"].template get<Length>());
+                instance_builder_.set_minimum_waste_length(read_length(j, "minimum_waste_length"));
             }
             if (j.contains("cut_through_defects")) {
                 instance_builder_.set_cut_through_defects(j["cut_through_defects"].template get<bool>());
             }
             if (j.contains("cut_thickness")) {
-                instance_builder_.set_cut_thickness(j["cut_thickness"].template get<Length>());
+                instance_builder_.set_cut_thickness(read_length(j, "cut_thickness"));
             }
+
+        }
+
+        void read_item_type(
+                basic_json<>& j
+        ) override {
+            TypedSolver::read_item_type(j);
+
+            Length width = read_length(j, "width", -1);
+            Length height = read_length(j, "height", -1);
+            Profit profit = j.value("profit", static_cast<Profit>(-1));
+            ItemPos copies = j.value("copies", static_cast<ItemPos>(-1));
+            bool oriented = j.value("oriented", false);
+            StackId stack_id = j.value("stack_id", static_cast<StackId>(-1));
+
+            instance_builder_.add_item_type(
+                    width,
+                    height,
+                    profit,
+                    copies,
+                    oriented,
+                    stack_id
+            );
 
         }
 
@@ -572,8 +673,8 @@ namespace Packy {
 
             using namespace rectangleguillotine;
 
-            Length width = j.value("width", static_cast<Length>(-1));
-            Length height = j.value("height", static_cast<Length>(-1));
+            Length width = read_length(j, "width", -1);
+            Length height = read_length(j, "height", -1);
             Profit cost = j.value("cost", static_cast<Profit>(-1));
             BinPos copies = j.value("copies", static_cast<BinPos>(1));
             BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
@@ -590,7 +691,7 @@ namespace Packy {
 
             Length left_trim = 0;
             if (j.contains("left_trim")) {
-                left_trim = j.value("left_trim", static_cast<Length>(0));
+                left_trim = read_length(j, "left_trim");
             }
             TrimType left_trim_type = TrimType::Hard;
             if (j.contains("left_trim_type")) {
@@ -600,7 +701,7 @@ namespace Packy {
 
             Length right_trim = 0;
             if (j.contains("right_trim")) {
-                right_trim = j.value("right_trim", static_cast<Length>(0));
+                right_trim = read_length(j, "right_trim");
             }
             TrimType right_trim_type = TrimType::Soft;
             if (j.contains("right_trim_type")) {
@@ -610,7 +711,7 @@ namespace Packy {
 
             Length bottom_trim = 0;
             if (j.contains("bottom_trim")) {
-                bottom_trim = j.value("bottom_trim", static_cast<Length>(0));
+                bottom_trim = read_length(j, "bottom_trim");
             }
             TrimType bottom_trim_type = TrimType::Hard;
             if (j.contains("bottom_trim_type")) {
@@ -620,7 +721,7 @@ namespace Packy {
 
             Length top_trim = 0;
             if (j.contains("top_trim")) {
-                top_trim = j.value("top_trim", static_cast<Length>(0));
+                top_trim = read_length(j, "top_trim");
             }
             TrimType top_trim_type = TrimType::Soft;
             if (j.contains("top_trim_type")) {
@@ -655,10 +756,10 @@ namespace Packy {
                 basic_json<>& j
         ) {
 
-            Length x = j.value("x", static_cast<Length>(-1));
-            Length y = j.value("y", static_cast<Length>(-1));
-            Length width = j.value("width", static_cast<Length>(-1));
-            Length height = j.value("height", static_cast<Length>(-1));
+            Length x = read_length(j, "x", -1);
+            Length y = read_length(j, "y", -1);
+            Length width = read_length(j, "width", -1);
+            Length height = read_length(j, "height", -1);
 
             instance_builder_.add_defect(
                     bin_type_id,
@@ -666,29 +767,6 @@ namespace Packy {
                     y,
                     width,
                     height
-            );
-
-        }
-
-        void read_item_type(
-                basic_json<>& j
-        ) override {
-            TypedSolver::read_item_type(j);
-
-            Length width = j.value("width", static_cast<Length>(-1));
-            Length height = j.value("height", static_cast<Length>(-1));
-            Profit profit = j.value("profit", static_cast<Profit>(-1));
-            ItemPos copies = j.value("copies", static_cast<ItemPos>(-1));
-            bool oriented = j.value("oriented", false);
-            StackId stack_id = j.value("stack_id", static_cast<StackId>(-1));
-
-            instance_builder_.add_item_type(
-                    width,
-                    height,
-                    profit,
-                    copies,
-                    oriented,
-                    stack_id
             );
 
         }
@@ -728,18 +806,20 @@ namespace Packy {
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
-                Area item_area = 0;
+                Area item_space = 0;
                 for (const auto& node : bin.nodes) {
                     if (node.item_type_id >= 0) {
                         const ItemType& item_type = instance.item_type(node.item_type_id);
-                        item_area += item_type.area();
+                        item_space += item_type.space();
                     }
                 }
 
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"efficiency",  static_cast<double>(item_area) / bin_type.area()}
+                        {"space",       area_to_area_dbl(bin_type.space())},
+                        {"waste",       area_to_area_dbl(bin_type.space() - item_space)},
+                        {"efficiency",  static_cast<double>(item_space) / bin_type.space()}
                 });
 
                 // Items, Leftovers & Cuts.
@@ -756,15 +836,15 @@ namespace Packy {
                         if (rotated) {
                             j_items.push_back(json{
                                     {"item_type_id", node.item_type_id},
-                                    {"x",            node.r},
-                                    {"y",            node.b},
+                                    {"x",            length_to_length_dbl(node.r)},
+                                    {"y",            length_to_length_dbl(node.b)},
                                     {"angle",        90.0},
                             });
                         } else {
                             j_items.push_back(json{
                                     {"item_type_id", node.item_type_id},
-                                    {"x",            node.l},
-                                    {"y",            node.b},
+                                    {"x",            length_to_length_dbl(node.l)},
+                                    {"y",            length_to_length_dbl(node.b)},
                                     {"angle",        0.0},
                             });
                         }
@@ -790,10 +870,10 @@ namespace Packy {
                         Length height = node.t - b;
                         if (width > 0 && height > 0) {
                             j_leftovers.push_back(json{
-                                    {"x",      l},
-                                    {"y",      b},
-                                    {"width",  width},
-                                    {"height", height}
+                                    {"x",      length_to_length_dbl(l)},
+                                    {"y",      length_to_length_dbl(b)},
+                                    {"width",  length_to_length_dbl(width)},
+                                    {"height", length_to_length_dbl(height)}
                             });
                         }
 
@@ -808,18 +888,18 @@ namespace Packy {
                             // Bottom
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
-                                    {"x",           node.l - (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0)},
-                                    {"y",           node.b - instance.parameters().cut_thickness},
-                                    {"length",      node.r + (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.right_trim : 0)},
+                                    {"x",           length_to_length_dbl(node.l - (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
+                                    {"y",           length_to_length_dbl(node.b - instance.parameters().cut_thickness)},
+                                    {"length",      length_to_length_dbl(node.r + (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.right_trim : 0))},
                                     {"orientation", "horizontal"}
                             });
 
                             // Left
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
-                                    {"x",           node.l - instance.parameters().cut_thickness},
-                                    {"y",           node.b - (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0)},
-                                    {"length",      node.t + (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.top_trim : 0)},
+                                    {"x",           length_to_length_dbl(node.l - instance.parameters().cut_thickness)},
+                                    {"y",           length_to_length_dbl(node.b - (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
+                                    {"length",      length_to_length_dbl(node.t + (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.top_trim : 0))},
                                     {"orientation", "vertical"},
                             });
 
@@ -833,9 +913,9 @@ namespace Packy {
                         if (node.r != parent_node.r) {
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
-                                    {"x",           node.r},
-                                    {"y",           node.b},
-                                    {"length",      node.t + (node.d == 1 ? bin_type.top_trim : 0) - node.b},
+                                    {"x",           length_to_length_dbl(node.r)},
+                                    {"y",           length_to_length_dbl(node.b)},
+                                    {"length",      length_to_length_dbl(node.t + (node.d == 1 ? bin_type.top_trim : 0) - node.b)},
                                     {"orientation", "vertical"}
                             });
                         }
@@ -843,9 +923,9 @@ namespace Packy {
                         if (node.t != parent_node.t) {
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
-                                    {"x",           node.l},
-                                    {"y",           node.t},
-                                    {"length",      node.r + (node.d == 1 ? bin_type.right_trim : 0) - node.l},
+                                    {"x",           length_to_length_dbl(node.l)},
+                                    {"y",           length_to_length_dbl(node.t)},
+                                    {"length",      length_to_length_dbl(node.r + (node.d == 1 ? bin_type.right_trim : 0) - node.l)},
                                     {"orientation", "horizontal"},
                             });
                         }
@@ -889,11 +969,32 @@ namespace Packy {
             TypedSolver::read_instance_parameters(j);
 
             if (j.contains("fake_trimming")) {
-                fake_trimming_ = j["fake_trimming"].template get<Length>();
+                fake_trimming_ = read_length(j, "fake_trimming");
             }
             if (j.contains("fake_spacing")) {
-                fake_spacing_ = j["fake_spacing"].template get<Length>();
+                fake_spacing_ = read_length(j, "fake_spacing");
             }
+
+        }
+
+        void read_item_type(
+                basic_json<>& j
+        ) override {
+            TypedSolver::read_item_type(j);
+
+            Length width = read_length(j, "width", -1);
+            Profit profit = j.value("profit", static_cast<Profit>(-1));
+            ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
+
+            if (fake_spacing_ > 0) {
+                if (width >= 0) width += fake_spacing_;
+            }
+
+            instance_builder_.add_item_type(
+                    width,
+                    profit,
+                    copies
+            );
 
         }
 
@@ -902,7 +1003,7 @@ namespace Packy {
         ) override {
             TypedSolver::read_bin_type(j);
 
-            Length width = j.value("width", static_cast<Length>(-1));
+            Length width = read_length(j, "width", -1);
             Profit cost = j.value("cost", static_cast<Profit>(-1));
             BinPos copies = j.value("copies", static_cast<BinPos>(1));
             BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
@@ -919,27 +1020,6 @@ namespace Packy {
                     cost,
                     copies,
                     copies_min
-            );
-
-        }
-
-        void read_item_type(
-                basic_json<>& j
-        ) override {
-            TypedSolver::read_item_type(j);
-
-            Length width = j.value("width", static_cast<Length>(-1));
-            Profit profit = j.value("profit", static_cast<Profit>(-1));
-            ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
-
-            if (fake_spacing_ > 0) {
-                if (width >= 0) width += fake_spacing_;
-            }
-
-            instance_builder_.add_item_type(
-                    width,
-                    profit,
-                    copies
             );
 
         }
@@ -978,16 +1058,18 @@ namespace Packy {
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
-                Length item_length = 0;
+                Length item_space = 0;
                 for (const auto& item : bin.items) {
                     const ItemType& item_type = instance.item_type(item.item_type_id);
-                    item_length += item_type.length;
+                    item_space += item_type.space();
                 }
 
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"efficiency",  static_cast<double>(item_length) / bin_type.length}
+                        {"space",       length_to_length_dbl(bin_type.space())},
+                        {"waste",       length_to_length_dbl(bin_type.space() - item_space)},
+                        {"efficiency",  static_cast<double>(item_space) / bin_type.space()}
                 });
 
                 basic_json<>& j_items = j_bin["items"] = json::array();
@@ -1075,27 +1157,6 @@ namespace Packy {
 
         }
 
-        void read_bin_type(
-                basic_json<>& j
-        ) override {
-            TypedSolver::read_bin_type(j);
-
-            using namespace irregular;
-
-            Shape shape = read_shape(j);
-            Profit cost = j.value("cost", static_cast<Profit>(-1));
-            BinPos copies = j.value("copies", static_cast<BinPos>(1));
-            BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
-
-            instance_builder_.add_bin_type(
-                    shape,
-                    cost,
-                    copies,
-                    copies_min
-            );
-
-        }
-
         void read_item_type(
                 basic_json<>& j
         ) override {
@@ -1144,6 +1205,53 @@ namespace Packy {
 
         }
 
+        void read_bin_type(
+                basic_json<>& j
+        ) override {
+            TypedSolver::read_bin_type(j);
+
+            using namespace irregular;
+
+            Shape shape = read_shape(j);
+            Profit cost = j.value("cost", static_cast<Profit>(-1));
+            BinPos copies = j.value("copies", static_cast<BinPos>(1));
+            BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
+
+            BinTypeId bin_type_id = instance_builder_.add_bin_type(
+                    shape,
+                    cost,
+                    copies,
+                    copies_min
+            );
+
+            // Defects
+
+            if (j.contains("defects")) {
+                for (auto& j_item: j["defects"].items()) {
+                    read_defect(bin_type_id, j_item.value());
+                }
+            }
+
+        }
+
+        void read_defect(
+                BinTypeId bin_type_id,
+                basic_json<>& j
+        ) {
+
+            using namespace irregular;
+
+            auto [shape, holes, type] = read_defect(j);
+
+            instance_builder_.add_defect(
+                    bin_type_id,
+                    type,
+                    shape,
+                    holes
+            );
+
+        }
+
         /*
          * Optimize:
          */
@@ -1178,16 +1286,18 @@ namespace Packy {
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
-                AreaDbl item_area = 0;
+                AreaDbl item_space = 0;
                 for (const auto& item : bin.items) {
                     const ItemType& item_type = instance.item_type(item.item_type_id);
-                    item_area += item_type.area;
+                    item_space += item_type.space();
                 }
 
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"efficiency",  item_area / bin_type.area}
+                        {"space",       bin_type.space()},
+                        {"waste",       bin_type.space() - item_space},
+                        {"efficiency",  item_space / bin_type.space()}
                 });
 
                 basic_json<>& j_items = j_bin["items"] = json::array();
@@ -1309,6 +1419,27 @@ namespace Packy {
             }
 
             return std::move(item_shape);
+        }
+
+        static irregular::Defect read_defect(
+                basic_json<>& j
+        ) {
+
+            using namespace irregular;
+
+            Defect defect;
+            defect.shape = read_shape(j);
+
+            if (j.contains("holes")) {
+                for (auto& j_item: j["holes"].items()) {
+                    Shape hole = read_shape(j_item.value());
+                    defect.holes.push_back(hole);
+                }
+            }
+
+            defect.type = j.value("type", static_cast<DefectTypeId>(0));
+
+            return std::move(defect);
         }
 
     };

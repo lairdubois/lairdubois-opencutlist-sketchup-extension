@@ -304,6 +304,7 @@ module Ladb::OpenCutList
         input = {
           problem_type: @problem_type,
           parameters: {
+            length_truncate_factor: DimensionUtils.model_unit_is_metric ? 254.0 : 100.0,
             optimization_mode: @optimization_mode,
             time_limit: @time_limit,
             not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
@@ -513,15 +514,17 @@ module Ladb::OpenCutList
     end
 
     def _to_packy_length(l)
-      return l.to_f.round(8) if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR    # type = float, unit = Inches
-      return (l.to_mm * 10.0).round.to_i if DimensionUtils.model_unit_is_metric   # type = integer, unit = 1/10 Millimeters
-      (l.to_f * 100.0).round.to_i                                                 # type = integer, unit = 1/100 Inches
+      l.to_f.round(8)
+      # return l.to_f.round(8) if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR    # type = float, unit = Inches
+      # return (l.to_mm * 10.0).round.to_i if DimensionUtils.model_unit_is_metric   # type = integer, unit = 1/10 Millimeters
+      # (l.to_f * 100.0).round.to_i                                                 # type = integer, unit = 1/100 Inches
     end
 
     def _from_packy_length(l)
-      return l if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR  # unit = Inches
-      return l.mm / 10.0 if DimensionUtils.model_unit_is_metric   # unit = 1/10 Millimeters
-      l / 100.0                                                   # unit = 1/100 Inches
+      l
+      # return l if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR  # unit = Inches
+      # return l.mm / 10.0 if DimensionUtils.model_unit_is_metric   # unit = 1/10 Millimeters
+      # l / 100.0                                                   # unit = 1/100 Inches
     end
 
     def _compute_bin_cost(group, inch_length = 0, inch_width = 0, inch_thickness = 0)
