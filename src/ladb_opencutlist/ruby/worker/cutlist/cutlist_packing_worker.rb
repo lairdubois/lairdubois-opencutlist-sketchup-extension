@@ -513,13 +513,15 @@ module Ladb::OpenCutList
     end
 
     def _to_packy_length(l)
-      return l.to_f.round(8) if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-      (l.to_l.to_mm * 10.0).to_i
+      return l.to_f.round(8) if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR    # type = float, unit = Inches
+      return (l.to_mm * 10.0).round.to_i if DimensionUtils.model_unit_is_metric   # type = integer, unit = 1/10 Millimeters
+      (l.to_f * 100.0).round.to_i                                                 # type = integer, unit = 1/100 Inches
     end
 
     def _from_packy_length(l)
-      return l if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-      l.mm / 10.0
+      return l if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR  # unit = Inches
+      return l.mm / 10.0 if DimensionUtils.model_unit_is_metric   # unit = 1/10 Millimeters
+      l / 100.0                                                   # unit = 1/100 Inches
     end
 
     def _compute_bin_cost(group, inch_length = 0, inch_width = 0, inch_thickness = 0)
