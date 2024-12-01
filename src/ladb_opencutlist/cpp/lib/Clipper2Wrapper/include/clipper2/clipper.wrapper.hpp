@@ -94,12 +94,12 @@ namespace Clipper2Lib {
     typedef CRect<double> CRectD;
 
     template<typename T>
-    inline bool CRectIsEmpty(const CRect<T>& rect) {
-        return (rect.right <= rect.left) || (rect.bottom <= rect.top);
+    bool CRectIsEmpty(const CRect<T>& rect) {
+        return rect.right <= rect.left || rect.bottom <= rect.top;
     }
 
     template<typename T>
-    inline Rect<T> CRectToRect(const CRect<T>& rect) {
+    Rect<T> CRectToRect(const CRect<T>& rect) {
         Rect<T> result;
         result.left = rect.left;
         result.top = rect.top;
@@ -123,9 +123,9 @@ namespace Clipper2Lib {
     int BooleanOp64(
             uint8_t clip_type,
             uint8_t fill_rule,
-            const CPaths64 subjects,
-            const CPaths64 subjects_open,
-            const CPaths64 clips,
+            CPaths64 subjects,
+            CPaths64 subjects_open,
+            CPaths64 clips,
             CPaths64& solution,
             CPaths64& solution_open,
             bool preserve_collinear = true,
@@ -135,9 +135,9 @@ namespace Clipper2Lib {
     int BooleanOp_PolyTree64(
             uint8_t clip_type,
             uint8_t fill_rule,
-            const CPaths64 subjects,
-            const CPaths64 subjects_open,
-            const CPaths64 clips,
+            CPaths64 subjects,
+            CPaths64 subjects_open,
+            CPaths64 clips,
             CPolyTree64& sol_tree,
             CPaths64& solution_open,
             bool preserve_collinear = false,
@@ -147,9 +147,9 @@ namespace Clipper2Lib {
     int BooleanOpD(
             uint8_t clip_type,
             uint8_t fill_rule,
-            const CPathsD subjects,
-            const CPathsD subjects_open,
-            const CPathsD clips,
+            CPathsD subjects,
+            CPathsD subjects_open,
+            CPathsD clips,
             CPathsD& solution,
             CPathsD& solution_open,
             int precision = 8,
@@ -160,9 +160,9 @@ namespace Clipper2Lib {
     int BooleanOp_PolyTreeD(
             uint8_t clip_type,
             uint8_t fill_rule,
-            const CPathsD subjects,
-            const CPathsD subjects_open,
-            const CPathsD clips,
+            CPathsD subjects,
+            CPathsD subjects_open,
+            CPathsD clips,
             CPolyTreeD& solution,
             CPathsD& solution_open,
             int precision = 8,
@@ -172,7 +172,7 @@ namespace Clipper2Lib {
 
 
     int InflatePaths64(
-            const CPaths64 paths,
+            CPaths64 paths,
             double delta,
             CPaths64& solution,
             uint8_t join_type,
@@ -184,7 +184,7 @@ namespace Clipper2Lib {
     );
 
     int InflatePathsD(
-            const CPathsD paths,
+            CPathsD paths,
             double delta,
             CPathsD& solution,
             uint8_t join_type,
@@ -198,23 +198,25 @@ namespace Clipper2Lib {
 
 
     CPaths64 RectClip64(
-            const CRect64& rect,
-            const CPaths64 paths
+            CRect64& rect,
+            CPaths64 paths
     );
 
     CPathsD RectClipD(
-            const CRectD& rect,
-            const CPathsD paths, int precision = 8
+            CRectD& rect,
+            CPathsD paths,
+            int precision = 8
     );
 
     CPaths64 RectClipLines64(
-            const CRect64& rect,
-            const CPaths64 paths
+            CRect64& rect,
+            CPaths64 paths
     );
 
     CPathsD RectClipLinesD(
-            const CRectD& rect,
-            const CPathsD paths, int precision = 8
+            CRectD& rect,
+            CPathsD paths,
+            int precision = 8
     );
 
     // -- Internal functions ---
@@ -296,7 +298,7 @@ namespace Clipper2Lib {
         *v++ = (double) array_len;
         *v++ = (double) cnt;
         for (const Path64& path: paths) {
-            if (!path.size()) continue;
+            if (path.empty()) continue;
             *v = (double) path.size();
             ++v;
             *v++ = 0;
@@ -317,12 +319,12 @@ namespace Clipper2Lib {
         Path<T> result;
         if (!path) return result;
         T* v = path;
-        size_t cnt = static_cast<size_t>(*v);
+        auto cnt = static_cast<size_t>(*v);
         v += 2; // skip 0 value
         result.reserve(cnt);
         for (size_t j = 0; j < cnt; ++j) {
             T x = *v++, y = *v++;
-            result.push_back(Point<T>(x, y));
+            result.emplace_back(x, y);
         }
 
         return result;
@@ -337,16 +339,16 @@ namespace Clipper2Lib {
         if (!paths) return result;
         T* v = paths;
         ++v;
-        size_t cnt = static_cast<size_t>(*v++);
+        auto cnt = static_cast<size_t>(*v++);
         result.reserve(cnt);
         for (size_t i = 0; i < cnt; ++i) {
-            size_t cnt2 = static_cast<size_t>(*v);
+            auto cnt2 = static_cast<size_t>(*v);
             v += 2;
             Path<T> path;
             path.reserve(cnt2);
             for (size_t j = 0; j < cnt2; ++j) {
                 T x = *v++, y = *v++;
-                path.push_back(Point<T>(x, y));
+                path.emplace_back(x, y);
             }
             result.push_back(path);
         }
@@ -355,7 +357,7 @@ namespace Clipper2Lib {
     }
 
     static Paths64 ConvertCPathsDToPaths64(
-            const CPathsD paths,
+            CPathsD paths,
             double scale
     ) {
 
@@ -363,17 +365,17 @@ namespace Clipper2Lib {
         if (!paths) return result;
         double* v = paths;
         ++v; // skip the first value (0)
-        size_t cnt = static_cast<size_t>(*v++);
+        const auto cnt = static_cast<size_t>(*v++);
         result.reserve(cnt);
         for (size_t i = 0; i < cnt; ++i) {
-            size_t cnt2 = static_cast<size_t>(*v);
+            auto cnt2 = static_cast<size_t>(*v);
             v += 2;
             Path64 path;
             path.reserve(cnt2);
             for (size_t j = 0; j < cnt2; ++j) {
                 double x = *v++ * scale;
                 double y = *v++ * scale;
-                path.push_back(Point64(x, y));
+                path.emplace_back(x, y);
             }
             result.push_back(path);
         }

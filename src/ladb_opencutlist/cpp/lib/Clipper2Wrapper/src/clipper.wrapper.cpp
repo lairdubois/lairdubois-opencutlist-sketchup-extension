@@ -21,13 +21,13 @@ namespace Clipper2Lib {
     int BooleanOp64(
             uint8_t clip_type,
             uint8_t fill_rule,
-            const CPaths64 subjects,
-            const CPaths64 subjects_open,
-            const CPaths64 clips,
+            CPaths64 subjects,
+            CPaths64 subjects_open,
+            CPaths64 clips,
             CPaths64& solution,
             CPaths64& solution_open,
-            bool preserve_collinear,
-            bool reverse_solution
+            const bool preserve_collinear,
+            const bool reverse_solution
     ) {
 
         if (clip_type > static_cast<uint8_t>(ClipType::Xor)) return -4;
@@ -41,10 +41,10 @@ namespace Clipper2Lib {
         Clipper64 clipper;
         clipper.PreserveCollinear(preserve_collinear);
         clipper.ReverseSolution(reverse_solution);
-        if (sub.size() > 0) clipper.AddSubject(sub);
-        if (sub_open.size() > 0) clipper.AddOpenSubject(sub_open);
-        if (clp.size() > 0) clipper.AddClip(clp);
-        if (!clipper.Execute(ClipType(clip_type), FillRule(fill_rule), sol, sol_open))
+        if (!sub.empty()) clipper.AddSubject(sub);
+        if (!sub_open.empty()) clipper.AddOpenSubject(sub_open);
+        if (!clp.empty()) clipper.AddClip(clp);
+        if (!clipper.Execute(static_cast<ClipType>(clip_type), static_cast<FillRule>(fill_rule), sol, sol_open))
             return -1; // clipping bug - should never happen :)
         solution = CreateCPaths(sol);
         solution_open = CreateCPaths(sol_open);
@@ -55,13 +55,13 @@ namespace Clipper2Lib {
     int BooleanOp_PolyTree64(
             uint8_t clip_type,
             uint8_t fill_rule,
-            const CPaths64 subjects,
-            const CPaths64 subjects_open,
-            const CPaths64 clips,
+            CPaths64 subjects,
+            CPaths64 subjects_open,
+            CPaths64 clips,
             CPolyTree64& sol_tree,
             CPaths64& solution_open,
-            bool preserve_collinear,
-            bool reverse_solution
+            const bool preserve_collinear,
+            const bool reverse_solution
     ) {
 
         if (clip_type > static_cast<uint8_t>(ClipType::Xor)) return -4;
@@ -76,9 +76,9 @@ namespace Clipper2Lib {
         Clipper64 clipper;
         clipper.PreserveCollinear(preserve_collinear);
         clipper.ReverseSolution(reverse_solution);
-        if (sub.size() > 0) clipper.AddSubject(sub);
-        if (sub_open.size() > 0) clipper.AddOpenSubject(sub_open);
-        if (clp.size() > 0) clipper.AddClip(clp);
+        if (!sub.empty()) clipper.AddSubject(sub);
+        if (!sub_open.empty()) clipper.AddOpenSubject(sub_open);
+        if (!clp.empty()) clipper.AddClip(clp);
         if (!clipper.Execute(ClipType(clip_type), FillRule(fill_rule), tree, sol_open))
             return -1; // clipping bug - should never happen :)
 
@@ -91,14 +91,14 @@ namespace Clipper2Lib {
     int BooleanOpD(
             uint8_t clip_type,
             uint8_t fill_rule,
-            const CPathsD subjects,
-            const CPathsD subjects_open,
-            const CPathsD clips,
+            CPathsD subjects,
+            CPathsD subjects_open,
+            CPathsD clips,
             CPathsD& solution,
             CPathsD& solution_open,
-            int precision,
-            bool preserve_collinear,
-            bool reverse_solution
+            const int precision,
+            const bool preserve_collinear,
+            const bool reverse_solution
     ) {
 
         if (precision < -8 || precision > 8) return -5;
@@ -116,10 +116,10 @@ namespace Clipper2Lib {
         Clipper64 clipper;
         clipper.PreserveCollinear(preserve_collinear);
         clipper.ReverseSolution(reverse_solution);
-        if (sub.size() > 0) clipper.AddSubject(sub);
-        if (sub_open.size() > 0) clipper.AddOpenSubject(sub_open);
-        if (clp.size() > 0) clipper.AddClip(clp);
-        if (!clipper.Execute(ClipType(clip_type), FillRule(fill_rule), sol, sol_open)) return -1;
+        if (!sub.empty()) clipper.AddSubject(sub);
+        if (!sub_open.empty()) clipper.AddOpenSubject(sub_open);
+        if (!clp.empty()) clipper.AddClip(clp);
+        if (!clipper.Execute(static_cast<ClipType>(clip_type), static_cast<FillRule>(fill_rule), sol, sol_open)) return -1;
 
         solution = CreateCPathsDFromPaths64(sol, inv_scale);
         solution_open = CreateCPathsDFromPaths64(sol_open, inv_scale);
@@ -130,14 +130,14 @@ namespace Clipper2Lib {
     int BooleanOp_PolyTreeD(
             uint8_t clip_type,
             uint8_t fill_rule,
-            const CPathsD subjects,
-            const CPathsD subjects_open,
-            const CPathsD clips,
+            CPathsD subjects,
+            CPathsD subjects_open,
+            CPathsD clips,
             CPolyTreeD& solution,
             CPathsD& solution_open,
-            int precision,
-            bool preserve_collinear,
-            bool reverse_solution
+            const int precision,
+            const bool preserve_collinear,
+            const bool reverse_solution
     ) {
 
         if (precision < -8 || precision > 8) return -5;
@@ -156,10 +156,10 @@ namespace Clipper2Lib {
         Clipper64 clipper;
         clipper.PreserveCollinear(preserve_collinear);
         clipper.ReverseSolution(reverse_solution);
-        if (sub.size() > 0) clipper.AddSubject(sub);
-        if (sub_open.size() > 0) clipper.AddOpenSubject(sub_open);
-        if (clp.size() > 0) clipper.AddClip(clp);
-        if (!clipper.Execute(ClipType(clip_type), FillRule(fill_rule), tree, sol_open))
+        if (!sub.empty()) clipper.AddSubject(sub);
+        if (!sub_open.empty()) clipper.AddOpenSubject(sub_open);
+        if (!clp.empty()) clipper.AddClip(clp);
+        if (!clipper.Execute(static_cast<ClipType>(clip_type), static_cast<FillRule>(fill_rule), tree, sol_open))
             return -1; // clipping bug - should never happen :)
 
         solution = CreateCPolyTree(tree, inv_scale);
@@ -170,7 +170,7 @@ namespace Clipper2Lib {
 
 
     int InflatePaths64(
-            const CPaths64 paths,
+            CPaths64 paths,
             double delta,
             CPaths64& solution,
             uint8_t join_type,
@@ -186,7 +186,7 @@ namespace Clipper2Lib {
 
         Paths64 input = ConvertCPaths(paths);
         ClipperOffset offset(miter_limit, arc_tolerance, preserve_collinear, reverse_solution);
-        offset.AddPaths(input, JoinType(join_type), EndType(end_type));
+        offset.AddPaths(input, static_cast<JoinType>(join_type), static_cast<EndType>(end_type));
         Paths64 result;
         offset.Execute(delta, result);
 
@@ -196,16 +196,16 @@ namespace Clipper2Lib {
     }
 
     int InflatePathsD(
-            const CPathsD paths,
-            double delta,
+            CPathsD paths,
+            const double delta,
             CPathsD& solution,
-            uint8_t join_type,
-            uint8_t end_type,
-            int precision,
-            double miter_limit,
-            double arc_tolerance,
-            bool preserve_collinear,
-            bool reverse_solution
+            const uint8_t join_type,
+            const uint8_t end_type,
+            const int precision,
+            const double miter_limit,
+            const double arc_tolerance,
+            const bool preserve_collinear,
+            const bool reverse_solution
     ) {
 
         if (precision < -8 || precision > 8) return -5;
@@ -217,7 +217,7 @@ namespace Clipper2Lib {
 
         ClipperOffset offset(miter_limit, arc_tolerance, preserve_collinear, reverse_solution);
         Paths64 input = ConvertCPathsDToPaths64(paths, scale);
-        offset.AddPaths(input, JoinType(join_type), EndType(end_type));
+        offset.AddPaths(input, static_cast<JoinType>(join_type), static_cast<EndType>(end_type));
         Paths64 result;
         offset.Execute(delta * scale, result);
 
@@ -229,7 +229,7 @@ namespace Clipper2Lib {
 
     CPaths64 RectClip64(
             const CRect64& rect,
-            const CPaths64 paths
+            CPaths64 paths
     ) {
 
         if (CRectIsEmpty(rect) || !paths) return nullptr;
@@ -243,8 +243,8 @@ namespace Clipper2Lib {
 
     CPathsD RectClipD(
             const CRectD& rect,
-            const CPathsD paths,
-            int precision
+            CPathsD paths,
+            const int precision
     ) {
 
         if (CRectIsEmpty(rect) || !paths) return nullptr;
@@ -264,7 +264,7 @@ namespace Clipper2Lib {
 
     CPaths64 RectClipLines64(
             const CRect64& rect,
-            const CPaths64 paths
+            CPaths64 paths
     ) {
 
         if (CRectIsEmpty(rect) || !paths) return nullptr;
@@ -279,8 +279,8 @@ namespace Clipper2Lib {
 
     CPathsD RectClipLinesD(
             const CRectD& rect,
-            const CPathsD paths,
-            int precision
+            CPathsD paths,
+            const int precision
     ) {
 
         if (CRectIsEmpty(rect) || !paths) return nullptr;
@@ -301,12 +301,12 @@ namespace Clipper2Lib {
     CPaths64 MinkowskiSum64(
             const CPath64& cpattern,
             const CPath64& cpath,
-            bool is_closed
+            const bool is_closed
     ) {
 
-        Path64 path = ConvertCPath(cpath);
-        Path64 pattern = ConvertCPath(cpattern);
-        Paths64 solution = MinkowskiSum(pattern, path, is_closed);
+        const Path64 path = ConvertCPath(cpath);
+        const Path64 pattern = ConvertCPath(cpattern);
+        const Paths64 solution = MinkowskiSum(pattern, path, is_closed);
 
         return CreateCPaths(solution);
     }
@@ -314,12 +314,12 @@ namespace Clipper2Lib {
     CPaths64 MinkowskiDiff64(
             const CPath64& cpattern,
             const CPath64& cpath,
-            bool is_closed
+            const bool is_closed
     ) {
 
-        Path64 path = ConvertCPath(cpath);
-        Path64 pattern = ConvertCPath(cpattern);
-        Paths64 solution = MinkowskiDiff(pattern, path, is_closed);
+        const Path64 path = ConvertCPath(cpath);
+        const Path64 pattern = ConvertCPath(cpattern);
+        const Paths64 solution = MinkowskiDiff(pattern, path, is_closed);
 
         return CreateCPaths(solution);
     }
