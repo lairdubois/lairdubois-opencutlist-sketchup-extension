@@ -157,7 +157,7 @@ module Ladb::OpenCutList
 
           next if length == 0 || width == 0 || count == 0
 
-          cost, std_price = _compute_bin_cost(group, length, width)
+          cost, std_price = _compute_bin_type_cost(group, length, width)
 
           bin_type = {
             copies: count,
@@ -192,7 +192,7 @@ module Ladb::OpenCutList
 
           next if length == 0 || width == 0
 
-          cost, std_price = _compute_bin_cost(group, length, width)
+          cost, std_price = _compute_bin_type_cost(group, length, width)
 
           bin_type = {
             copies: parts_count,
@@ -407,7 +407,7 @@ module Ladb::OpenCutList
             time: raw_solution['time'],
             total_bin_count: raw_solution['number_of_bins'],
             total_item_count: raw_solution['number_of_items'],
-            total_efficiency: raw_solution['efficiency']
+            total_efficiency: raw_solution['full_efficiency']
           ),
           bin_defs: raw_solution['bins'].map { |raw_bin|
             bin_type_def = @bin_type_defs[raw_bin['bin_type_id']]
@@ -521,7 +521,7 @@ module Ladb::OpenCutList
       l.to_l
     end
 
-    def _compute_bin_cost(group, inch_length = 0, inch_width = 0, inch_thickness = 0)
+    def _compute_bin_type_cost(group, inch_length = 0, inch_width = 0, inch_thickness = 0)
       std_price = nil
       cost = -1
       if (material_attributes = _get_material_attributes(group.material_name)).has_std_prices?
@@ -745,6 +745,22 @@ module Ladb::OpenCutList
       svg
     end
 
+    def _render_item_def_tooltip(item_def)
+      part = item_def.item_type_def.part
+      tt = "<div class=\"tt-header\"><span class=\"tt-number\">#{part.number}</span><span class=\"tt-name\">#{CGI::escape_html(part.name)}</span></div>"
+      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-size-length-width\"></i> #{CGI::escape_html(part.cutting_length)}&nbsp;x&nbsp;#{CGI::escape_html(part.cutting_width)}</div>"
+      tt
+    end
+
+    def _render_cut_def_tooltip(cut_def)
+      tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string("tab.cutlist.cuttingdiagram.list.cut#{(cut_def.depth == 0 ? '_trimming' : (cut_def.depth == 1 ? '_bounding' : (cut_def.depth == 2 ? '_internal_through' : '')))}")}</span></div>"
+      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-saw\"></i> #{CGI::escape_html(@spacing.to_l.to_s)}</div>"
+      tt += "<div>depth = #{cut_def.depth}</div>"
+      tt += "<div>x = #{cut_def.x}</div>" if cut_def.vertical?
+      tt += "<div>y = #{cut_def.y}</div>" if cut_def.horizontal?
+      tt
+    end
+
     def _compute_x_with_origin_corner(x, x_size, x_translation)
       return x if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
       case @origin_corner
@@ -763,22 +779,6 @@ module Ladb::OpenCutList
       else
         y
       end
-    end
-
-    def _render_item_def_tooltip(item_def)
-      part = item_def.item_type_def.part
-      tt = "<div class=\"tt-header\"><span class=\"tt-number\">#{part.number}</span><span class=\"tt-name\">#{CGI::escape_html(part.name)}</span></div>"
-      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-size-length-width\"></i> #{CGI::escape_html(part.cutting_length)}&nbsp;x&nbsp;#{CGI::escape_html(part.cutting_width)}</div>"
-      tt
-    end
-
-    def _render_cut_def_tooltip(cut_def)
-      tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string("tab.cutlist.cuttingdiagram.list.cut#{(cut_def.depth == 0 ? '_trimming' : (cut_def.depth == 1 ? '_bounding' : (cut_def.depth == 2 ? '_internal_through' : '')))}")}</span></div>"
-      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-saw\"></i> #{CGI::escape_html(@spacing.to_l.to_s)}</div>"
-      tt += "<div>depth = #{cut_def.depth}</div>"
-      tt += "<div>x = #{cut_def.x}</div>" if cut_def.vertical?
-      tt += "<div>y = #{cut_def.y}</div>" if cut_def.horizontal?
-      tt
     end
 
     # -----
