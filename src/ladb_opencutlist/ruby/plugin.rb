@@ -1194,9 +1194,7 @@ module Ladb::OpenCutList
     end
 
     def tabs_dialog_set_position(left, top)
-      if @tabs_dialog
-        @tabs_dialog.set_position(left, top)
-      end
+      @tabs_dialog.set_position(left, top) if @tabs_dialog
     end
 
     def tabs_dialog_inc_position(inc_left = 0, inc_top = 0)
