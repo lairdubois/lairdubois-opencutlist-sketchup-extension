@@ -131,6 +131,14 @@ namespace Packy {
         }
 
         /*
+         * Optimize:
+         */
+
+        virtual json optimize() = 0;
+
+    protected:
+
+        /*
          * Utils:
          */
 
@@ -178,13 +186,7 @@ namespace Packy {
             return std::round(value * std::pow(10, precision)) / std::pow(10, precision);
         }
 
-        /*
-         * Optimize:
-         */
-
-        virtual json optimize() = 0;
-
-    protected:
+    private:
 
         double length_truncate_factor_ = 1.0;
 
@@ -564,6 +566,7 @@ namespace Packy {
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
+                Area bin_space = bin_type.rect.x * bin_type.rect.y;
                 Area item_space = 0;
                 for (const auto& item : bin.items) {
                     const ItemType& item_type = instance.item_type(item.item_type_id);
@@ -573,9 +576,9 @@ namespace Packy {
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"space",       to_area_dbl(bin_type.space())},
-                        {"waste",       to_area_dbl(bin_type.space() - item_space)},
-                        {"efficiency",  static_cast<double>(item_space) / bin_type.space()}
+                        {"space",       to_area_dbl(bin_space)},
+                        {"waste",       to_area_dbl(bin_space - item_space)},
+                        {"efficiency",  static_cast<double>(item_space) / bin_space}
                 });
 
                 basic_json<>& j_items = j_bin["items"] = json::array();
@@ -825,6 +828,7 @@ namespace Packy {
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
+                Area bin_space = bin_type.rect.w * bin_type.rect.h; // Workaround to PackingSolver bin_type.space() function that subtract trims
                 Area item_space = 0;
                 for (const auto& node : bin.nodes) {
                     if (node.item_type_id >= 0) {
@@ -836,9 +840,9 @@ namespace Packy {
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"space",       to_area_dbl(bin_type.space())},
-                        {"waste",       to_area_dbl(bin_type.space() - item_space)},
-                        {"efficiency",  static_cast<double>(item_space) / bin_type.space()}
+                        {"space",       to_area_dbl(bin_space)},
+                        {"waste",       to_area_dbl(bin_space - item_space)},
+                        {"efficiency",  static_cast<double>(item_space) / bin_space}
                 });
 
                 // Items, Leftovers & Cuts.
@@ -1077,6 +1081,7 @@ namespace Packy {
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
+                Length bin_space = bin_type.length;
                 Length item_space = 0;
                 for (const auto& item : bin.items) {
                     const ItemType& item_type = instance.item_type(item.item_type_id);
@@ -1086,9 +1091,9 @@ namespace Packy {
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"space",       to_length_dbl(bin_type.space())},
-                        {"waste",       to_length_dbl(bin_type.space() - item_space)},
-                        {"efficiency",  static_cast<double>(item_space) / bin_type.space()}
+                        {"space",       to_length_dbl(bin_space)},
+                        {"waste",       to_length_dbl(bin_space - item_space)},
+                        {"efficiency",  static_cast<double>(item_space) / bin_space}
                 });
 
                 basic_json<>& j_items = j_bin["items"] = json::array();
