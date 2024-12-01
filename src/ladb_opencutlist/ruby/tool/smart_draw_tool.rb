@@ -1162,7 +1162,6 @@ module Ladb::OpenCutList
 
       if _fetch_option_move_array
 
-
         d1, d2 = text.split(Sketchup::RegionalSettings.list_separator)
 
         if d1 || d2
@@ -1194,7 +1193,7 @@ module Ladb::OpenCutList
 
     def _read_move_copy(text)
 
-      if (match = Regexp.new("^(?:([x*\/])(\d+))?(?:#{Sketchup::RegionalSettings.list_separator}|#{Sketchup::RegionalSettings.list_separator}([x*\/])(\d+))?$").match(text))
+      if (match = Regexp.new("^(?:([x*\\/])(\\d+))?(?:#{Sketchup::RegionalSettings.list_separator}|#{Sketchup::RegionalSettings.list_separator}([x*\\/])(\\d+))?$").match(text))
 
         operator_1, value_1, operator_2, value_2 = match[1, 4]
         number_1 = value_1.to_i
