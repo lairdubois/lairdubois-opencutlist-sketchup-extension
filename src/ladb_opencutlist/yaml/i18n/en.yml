@@ -37,6 +37,8 @@ default:
   unselect_all: Unselect all
   draw: Draw
   estimate: Estimate
+  yes: Yes
+  no: No
   empty_filename: Untitled.skp
   help: Help
   error: Darn!
@@ -1801,14 +1803,22 @@ tool:
     action_option_group_offset: Offset
     action_option_group_segments: Segments
     action_option_group_options: Options
+    action_option_tools_pushpull: Push/Pull
     action_option_tools_pushpull_status: Activate Push/Pull after shape drawing
+    action_option_tools_move: Copy/Move
     action_option_tools_move_status: Activate Copy/Move after part creation
+    action_option_offset_shape_offset: Offset
     action_option_offset_shape_offset_status: Apply an offset to the shape line
+    action_option_segments_segment_count: Number of Segments
     action_option_segments_segment_count_status: Define the number of segments of a circle
+    action_option_options_construction: Construction Lines
     action_option_options_construction_status: Drawing in construction lines
+    action_option_options_rectangle_centered: Rectangle centered
     action_option_options_rectangle_centered_status: Center rectangle on the first point
+    action_option_options_solid_centered: Elevation Centered
     action_option_options_solid_centered_status: Center elevation on the first point
-    action_option_options_move_array_status: Copy part in a rectangular mesh
+    action_option_options_move_array: Copy in Grid
+    action_option_options_move_array_status: Copying the part into a rectangular grid
     vcb_length: Length
     vcb_size: Size
     vcb_radius: Radius
