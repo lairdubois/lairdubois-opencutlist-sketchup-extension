@@ -44,8 +44,8 @@ namespace Clipper2Lib {
         if (!sub.empty()) clipper.AddSubject(sub);
         if (!sub_open.empty()) clipper.AddOpenSubject(sub_open);
         if (!clp.empty()) clipper.AddClip(clp);
-        if (!clipper.Execute(static_cast<ClipType>(clip_type), static_cast<FillRule>(fill_rule), sol, sol_open))
-            return -1; // clipping bug - should never happen :)
+        if (!clipper.Execute(static_cast<ClipType>(clip_type), static_cast<FillRule>(fill_rule), sol, sol_open)) return -1;
+
         solution = CreateCPaths(sol);
         solution_open = CreateCPaths(sol_open);
 
@@ -79,8 +79,7 @@ namespace Clipper2Lib {
         if (!sub.empty()) clipper.AddSubject(sub);
         if (!sub_open.empty()) clipper.AddOpenSubject(sub_open);
         if (!clp.empty()) clipper.AddClip(clp);
-        if (!clipper.Execute(ClipType(clip_type), FillRule(fill_rule), tree, sol_open))
-            return -1; // clipping bug - should never happen :)
+        if (!clipper.Execute(ClipType(clip_type), FillRule(fill_rule), tree, sol_open)) return -1;
 
         sol_tree = CreateCPolyTree(tree, (int64_t) 1);
         solution_open = CreateCPaths(sol_open);
@@ -121,6 +120,8 @@ namespace Clipper2Lib {
         if (!clp.empty()) clipper.AddClip(clp);
         if (!clipper.Execute(static_cast<ClipType>(clip_type), static_cast<FillRule>(fill_rule), sol, sol_open)) return -1;
 
+        sol = InflatePaths(InflatePaths(sol, 1, JoinType::Square, EndType::Polygon), -1, JoinType::Square, EndType::Polygon);
+
         solution = CreateCPathsDFromPaths64(sol, inv_scale);
         solution_open = CreateCPathsDFromPaths64(sol_open, inv_scale);
 
@@ -159,8 +160,7 @@ namespace Clipper2Lib {
         if (!sub.empty()) clipper.AddSubject(sub);
         if (!sub_open.empty()) clipper.AddOpenSubject(sub_open);
         if (!clp.empty()) clipper.AddClip(clp);
-        if (!clipper.Execute(static_cast<ClipType>(clip_type), static_cast<FillRule>(fill_rule), tree, sol_open))
-            return -1; // clipping bug - should never happen :)
+        if (!clipper.Execute(static_cast<ClipType>(clip_type), static_cast<FillRule>(fill_rule), tree, sol_open)) return -1;
 
         solution = CreateCPolyTree(tree, inv_scale);
         solution_open = CreateCPathsDFromPaths64(sol_open, inv_scale);
