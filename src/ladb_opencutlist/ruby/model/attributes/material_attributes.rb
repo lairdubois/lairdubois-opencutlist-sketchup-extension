@@ -383,6 +383,25 @@
       false
     end
 
+    # std_dim is used as key in 'h_std_volumic_masses' and 'h_std_prices'
+    def compute_std_dim(inch_length, inch_width, inch_thickness)
+      case @type
+      when MaterialAttributes::TYPE_SOLID_WOOD
+        dim = [ inch_thickness ]                                        # Thickness
+      when MaterialAttributes::TYPE_SHEET_GOOD
+        dim = [ inch_thickness, Size2d.new(inch_length, inch_width) ]   # Thickness, Size
+      when MaterialAttributes::TYPE_DIMENSIONAL
+        dim = [ Section.new(inch_width, inch_thickness), inch_length ]  # Section, Length
+      when MaterialAttributes::TYPE_EDGE
+        dim = [ inch_width, inch_length ]                               # Width, Length
+      when MaterialAttributes::TYPE_VENEER
+        dim = [ Size2d.new(inch_length, inch_width) ]                   # Size
+      else
+        dim = nil
+      end
+      dim
+    end
+
     # -----
 
     def _std_vd_to_uvd(std_vd)
@@ -404,15 +423,18 @@
           else
             dim = []
             a = std_attribute['dim'].split(';')
-            a.each { |d|
-              unless d.nil?
-                if d.index('x').nil?
-                  dim << d.to_f.to_l
-                else
-                  dim << Section.new(d.split('x').map { |l| l.to_f })
-                end
-              end
-            }
+            case @type
+            when TYPE_SOLID_WOOD
+              dim = [ a[0].to_f.to_l ] if a.length>= 1                                                    # Thickness
+            when TYPE_SHEET_GOOD
+              dim = [ a[0].to_f.to_l, Size2d.new(a[1].split('x').map { |l| l.to_f }) ] if a.length >= 2   # Thickness, Size
+            when TYPE_DIMENSIONAL
+              dim = [ Section.new(a[0].split('x').map { |l| l.to_f }), a[1].to_f.to_l ] if a.length >= 2  # Section, Length
+            when TYPE_EDGE
+              dim = [ a[0].to_f.to_l, a[1].to_f.to_l ] if a.length >= 2                                   # Width, Length
+            when TYPE_VENEER
+              dim = [ Size2d.new(a[0].split('x').map { |l| l.to_f }) ] if a.length >= 1                   # Size
+            end
             if dim.length > 0
               unit, val = UnitUtils.split_unit_and_value(std_attribute['val'])
               std_uvd << { :unit => unit, :val => val, :dim => dim }

@@ -529,18 +529,7 @@ module Ladb::OpenCutList
         inch_thickness = group.def.std_thickness if inch_thickness == 0
         inch_width = group.def.std_width if inch_width == 0
 
-        if group.material_is_1d
-          if group.def.std_dimension_stipped_name == 'section'
-            std_dimension = Section.new(group.def.std_dimension)
-          else
-            std_dimension = group.def.std_dimension.to_l
-          end
-          dim = [ std_dimension, inch_length ]
-        elsif group.material_is_2d
-          dim = [ inch_thickness, Section.new(inch_length, inch_width) ]
-        else
-          dim = nil
-        end
+        dim = material_attributes.compute_std_dim
         unless dim.nil?
           std_price = _get_std_price(dim, material_attributes)
           price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], inch_thickness, inch_width, inch_length)

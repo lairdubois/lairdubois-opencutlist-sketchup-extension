@@ -182,18 +182,17 @@ module Ladb::OpenCutList
 
       cuttingdiagram1d.bars.each do |cuttingdiagram1d_bar|
 
-        if cutlist_group.def.std_dimension_stipped_name == 'section'
-          std_dimension = Size2d.new(cutlist_group.def.std_dimension)
+        # Only standard bar uses dim volumic mass and prices
+        if cuttingdiagram1d_bar.type == BinPacking1D::BIN_TYPE_AUTO_GENERATED
+          dim = material_attributes.compute_std_dim(cuttingdiagram1d_bar.def.length, cutlist_group.def.std_width, cutlist_group.def.std_thickness)
         else
-          std_dimension = cutlist_group.def.std_dimension.to_l
+          dim = nil
         end
 
-        # Only standard bar uses dim volumic mass
-        std_volumic_mass = _get_std_volumic_mass(cuttingdiagram1d_bar.type == BinPacking1D::BIN_TYPE_AUTO_GENERATED ? [ std_dimension, cuttingdiagram1d_bar.def.length ] : nil, material_attributes)
+        std_volumic_mass = _get_std_volumic_mass(dim, material_attributes)
         mass_per_inch3 = std_volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(std_volumic_mass[:unit], std_volumic_mass[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width, cuttingdiagram1d_bar.def.length)
 
-        # Only standard bar uses dim prices
-        std_price = _get_std_price(cuttingdiagram1d_bar.type == BinPacking1D::BIN_TYPE_AUTO_GENERATED ? [ std_dimension, cuttingdiagram1d_bar.def.length ] : nil, material_attributes)
+        std_price = _get_std_price(dim, material_attributes)
         price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width, cuttingdiagram1d_bar.def.length)
 
         report_entry_bar_def = report_entry_def.bar_defs[cuttingdiagram1d_bar.type_id]
@@ -275,12 +274,17 @@ module Ladb::OpenCutList
 
       cuttingdiagram2d.sheets.each do |cuttingdiagram2d_sheet|
 
-        # Only standard sheet uses dim volumic mass
-        std_volumic_mass = _get_std_volumic_mass(cuttingdiagram2d_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_sheet.def.length, cuttingdiagram2d_sheet.def.width) ] : nil, material_attributes)
+        # Only standard sheet uses dim volumic mass and prices
+        if cuttingdiagram2d_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED
+          dim = material_attributes.compute_std_dim(cuttingdiagram2d_sheet.def.length, cuttingdiagram2d_sheet.def.width, cutlist_group.def.std_thickness)
+        else
+          dim = nil
+        end
+
+        std_volumic_mass = _get_std_volumic_mass(dim, material_attributes)
         mass_per_inch3 = std_volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(std_volumic_mass[:unit], std_volumic_mass[:val], cutlist_group.def.std_thickness, cuttingdiagram2d_sheet.def.width, cuttingdiagram2d_sheet.def.length)
 
-        # Only standard sheet uses dim prices
-        std_price = _get_std_price(cuttingdiagram2d_sheet.type == BinPacking2D::BIN_TYPE_AUTO_GENERATED ? [ cutlist_group.def.std_thickness, Size2d.new(cuttingdiagram2d_sheet.def.length, cuttingdiagram2d_sheet.def.width) ] : nil, material_attributes)
+        std_price = _get_std_price(dim, material_attributes)
         price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cuttingdiagram2d_sheet.def.width, cuttingdiagram2d_sheet.def.length)
 
         report_entry_sheet_def = report_entry_def.sheet_defs[cuttingdiagram2d_sheet.type_id]
@@ -338,10 +342,12 @@ module Ladb::OpenCutList
 
       material_attributes = _get_material_attributes(cutlist_group.material_name)
 
-      std_volumic_mass = _get_std_volumic_mass([ cutlist_group.def.std_thickness ], material_attributes)
+      dim = material_attributes.compute_std_dim(0, cutlist_group.def.std_width, cutlist_group.def.std_thickness)
+
+      std_volumic_mass = _get_std_volumic_mass(dim, material_attributes)
       mass_per_inch3 = std_volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(std_volumic_mass[:unit], std_volumic_mass[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width)
 
-      std_price = _get_std_price([ cutlist_group.def.std_thickness ], material_attributes)
+      std_price = _get_std_price(dim, material_attributes)
       price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], cutlist_group.def.std_thickness, cutlist_group.def.std_width)
 
       report_entry_def = Object.const_get(entry_def_class_name).new(cutlist_group)
