@@ -37,6 +37,7 @@ default:
   unselect_all: Rien sélectionner
   draw: Dessiner
   estimate: Estimer
+  yes: Oui
   no: Non
   empty_filename: Sans titre.skp
   help: Aide

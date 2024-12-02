@@ -37,6 +37,8 @@ default:
   unselect_all: Nichts auswählen
   draw: Zeichnen
   estimate: Schätzen
+  yes: Ja
+  no: Nein
   empty_filename: Unbenannt.skp
   help: Hilfe
   error: Verflixt!
@@ -1801,14 +1803,22 @@ tool:
     action_option_group_offset: Verschiebung
     action_option_group_segments: Segmente
     action_option_group_options: Optionen
+    action_option_tools_pushpull: Drücken/Ziehen
     action_option_tools_pushpull_status: Aktivieren Drücken/Ziehen nach dem Zeichnen der Form
-    action_option_tools_move_status: Aktivieren Kopieren/Verschieben nach dem Zeichnen der Form
-    action_option_offset_shape_offset_status: Ermöglicht die Anwendung einer Verschiebung auf die gezeichnete Form
+    action_option_tools_move: Kopieren/Verschieben
+    action_option_tools_move_status:  Kopieren/Verschieben nach der Erstellung des Teils aktivieren
+    action_option_offset_shape_offset: Versatz
+    action_option_offset_shape_offset_status: Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden
+    action_option_segments_segment_count: Anzahl Segmente
     action_option_segments_segment_count_status: Ermöglicht das Festlegen der Anzahl der Kreissegmente
+    action_option_options_construction: Konstruktionslinien
     action_option_options_construction_status: In Konstruktionslinien zeichnen
+    action_option_options_rectangle_centered: Rechteck zentriert
     action_option_options_rectangle_centered_status: Rechteck auf den ersten Punkt zentrieren
+    action_option_options_solid_centered: Erhebung zentriert
     action_option_options_solid_centered_status: Erhebung auf den ersten Punkt zentrieren
-    action_option_options_move_array_status: Kopieren des Teils in ein rechteckiges Netz
+    action_option_options_move_array: Rasterkopien
+    action_option_options_move_array_status: Kopieren des Teils in ein rechteckiges Raster
     vcb_length: Länge
     vcb_size: Kotierungen
     vcb_radius: Radius
