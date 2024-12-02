@@ -6,7 +6,7 @@ var markdownIt = require('markdown-it');
 var externalLinks = require('markdown-it-external-links');
 var md = markdownIt({
     html: true,
-    linkify: true,
+    linkify: false,
     typographer: true,
     breaks: true
 }).use(externalLinks, {
