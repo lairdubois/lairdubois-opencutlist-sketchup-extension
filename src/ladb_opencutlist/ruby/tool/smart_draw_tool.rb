@@ -1834,8 +1834,32 @@ module Ladb::OpenCutList
       width = view.pixels_to_model(20, @snap_ip.position)
       height = width * 2.0
 
+      shape_offset = _fetch_option_shape_offset
+      if shape_offset > 0
+        offset = width * 0.2
+      elsif shape_offset < 0
+        offset = width * -0.2
+      else
+        offset = 0
+      end
+
+      if offset != 0
+
+        k_rectangle = Kuix::RectangleMotif.new
+        k_rectangle.bounds.size.set!(width, height)
+        k_rectangle.line_width = 1
+        k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_rectangle.color = _get_normal_color
+        k_rectangle.on_top = true
+        k_rectangle.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@snap_ip.position.to_a)) * _get_transformation
+        k_rectangle.transformation *= Geom::Transformation.translation(Geom::Vector3d.new(-width / 2, -height / 2)) if _fetch_option_rectangle_centered
+        @tool.append_3d(k_rectangle)
+
+      end
+
       k_rectangle = Kuix::RectangleMotif.new
-      k_rectangle.bounds.size.set!(width, height)
+      k_rectangle.bounds.origin.set!(-offset, -offset)
+      k_rectangle.bounds.size.set!(width + 2 * offset, height + 2 * offset)
       k_rectangle.line_width = @locked_normal ? 3 : 1.5
       k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
       k_rectangle.color = _get_normal_color
@@ -2153,13 +2177,35 @@ module Ladb::OpenCutList
 
       diameter = view.pixels_to_model(40, @snap_ip.position)
 
+      shape_offset = _fetch_option_shape_offset
+      if shape_offset > 0
+        offset = diameter * 0.2
+      elsif shape_offset < 0
+        offset = diameter * -0.2
+      else
+        offset = 0
+      end
+
+      if offset != 0
+
+        k_circle = Kuix::CircleMotif.new(_fetch_option_segment_count)
+        k_circle.bounds.size.set_all!(diameter)
+        k_circle.line_width = 1
+        k_circle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_circle.color = _get_normal_color
+        k_circle.on_top = true
+        k_circle.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@snap_ip.position.to_a)) * _get_transformation * Geom::Transformation.translation(Geom::Vector3d.new(-diameter / 2, -diameter / 2))
+        @tool.append_3d(k_circle)
+
+      end
+
       k_circle = Kuix::CircleMotif.new(_fetch_option_segment_count)
-      k_circle.bounds.size.set_all!(diameter)
+      k_circle.bounds.size.set_all!(diameter + offset)
       k_circle.line_width = @locked_normal ? 3 : 1.5
       k_circle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
       k_circle.color = _get_normal_color
       k_circle.on_top = true
-      k_circle.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@snap_ip.position.to_a)) * _get_transformation * Geom::Transformation.translation(Geom::Vector3d.new(-diameter / 2, -diameter / 2))
+      k_circle.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@snap_ip.position.to_a)) * _get_transformation * Geom::Transformation.translation(Geom::Vector3d.new(-(diameter + offset) / 2, -(diameter + offset) / 2))
       @tool.append_3d(k_circle)
 
     end
