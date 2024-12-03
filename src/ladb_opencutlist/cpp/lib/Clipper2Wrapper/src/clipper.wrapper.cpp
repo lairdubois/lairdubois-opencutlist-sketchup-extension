@@ -120,7 +120,8 @@ namespace Clipper2Lib {
         if (!clp.empty()) clipper.AddClip(clp);
         if (!clipper.Execute(static_cast<ClipType>(clip_type), static_cast<FillRule>(fill_rule), sol, sol_open)) return -1;
 
-        sol = InflatePaths(InflatePaths(sol, 1, JoinType::Square, EndType::Polygon), -1, JoinType::Square, EndType::Polygon);
+        // TODO : Find a better solution to cleanup paths after non accurate union
+        // sol = InflatePaths(InflatePaths(sol, 1, JoinType::Square, EndType::Polygon), -1, JoinType::Square, EndType::Polygon);
 
         solution = CreateCPathsDFromPaths64(sol, inv_scale);
         solution_open = CreateCPathsDFromPaths64(sol_open, inv_scale);

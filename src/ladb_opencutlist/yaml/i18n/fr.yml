@@ -1795,10 +1795,17 @@ tool:
     title: Dessiner
     action_0: Dessiner un Rectangle
     action_0_status: Dessiner un volume sur la base d'une forme rectangulaire
+    action_0_state_1_status: Cliquez pour définir l'angle opposé ou entrez une longueur, largeur
     action_1: Dessiner un Cercle
     action_1_status: Dessiner un volume sur la base d'une forme circulaire
+    action_1_state_1_status: Cliquez pour définir le rayon ou entrez une distance
     action_2: Dessiner un Polygone
     action_2_status: Dessiner un volume sur la base d'une forme polygonale
+    action_2_state_1_status: Cliquez pour définir un nouveau point ou entrez une distance
+    action_x_state_2_status: Cliquez pour définir l'élévation ou entrez une distance
+    action_x_state_3_status: Cliquez pour déplacer la pièce ou entrez une distance
+    action_x_state_3_move_copy_status: Cliquez pour placer la copie de la pièce ou entrez une distance
+    action_x_state_3_move_array_status: Cliquez pour placer les copies de la pièce ou entrez une longueur, largeur
     action_option_group_tools: Outils
     action_option_group_offset: Décalage
     action_option_group_segments: Segments

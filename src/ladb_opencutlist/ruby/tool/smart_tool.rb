@@ -1489,6 +1489,38 @@ module Ladb::OpenCutList
       @tool = tool
     end
 
+    # -- STATE --
+
+    def set_state(state)
+      @state = state
+      onStateChanged(state)
+    end
+
+    def fetch_state
+      @state
+    end
+
+    def get_state_cursor(state)
+      @tool.get_action_cursor(@action)
+    end
+
+    def get_state_status(state)
+      @tool.get_action_status(@action)
+    end
+
+    def get_state_vcb_label(state)
+      ''
+    end
+
+    # -----
+
+    def onStateChanged(state)
+      @tool.set_root_cursor(get_state_cursor(state))
+      Sketchup.set_status_text(get_state_status(state), SB_PROMPT)
+      Sketchup.set_status_text(get_state_vcb_label(state), SB_VCB_LABEL)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+    end
+
   end
 
   # -----

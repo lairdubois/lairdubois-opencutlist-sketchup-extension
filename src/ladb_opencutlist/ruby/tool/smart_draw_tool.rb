@@ -326,9 +326,54 @@ module Ladb::OpenCutList
 
       @definition = nil
 
-      onStateChanged(STATE_SHAPE_FIRST_POINT)
+      set_state(STATE_SHAPE_FIRST_POINT)
 
     end
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_PUSHPULL
+        return @tool.cursor_pushpull
+      when STATE_MOVE
+        return @move_copy ? @tool.cursor_move_copy : @tool.cursor_move
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+
+      case state
+      when STATE_SHAPE_POINTS
+        return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_1_status") + '.'
+      when STATE_PUSHPULL
+        return PLUGIN.get_i18n_string('tool.smart_draw.action_x_state_2_status') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_solid_centered_status') + '.'
+      when STATE_MOVE
+        return PLUGIN.get_i18n_string('tool.smart_draw.action_x_state_3_move_array_status') + '.' if _fetch_option_move_array
+        return PLUGIN.get_i18n_string('tool.smart_draw.action_x_state_3_move_copy_status') + '.' if @move_copy
+        return PLUGIN.get_i18n_string('tool.smart_draw.action_x_state_3_status') + '.'
+      end
+
+      super
+    end
+
+    def get_state_vcb_label(state)
+
+      case state
+      when STATE_SHAPE_POINTS
+        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_radius')
+      when STATE_PUSHPULL, STATE_MOVE
+        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
+      end
+
+      super
+    end
+
+    # -----
 
     def onCancel(reason, view)
       if _picked_pushpull_point?
@@ -336,10 +381,10 @@ module Ladb::OpenCutList
         _reset
       elsif _picked_shape_last_point?
         @picked_shape_last_ip.clear
-        onStateChanged(STATE_SHAPE_POINTS)
+        set_state(STATE_SHAPE_POINTS)
       elsif _picked_shape_first_point?
         @picked_shape_first_ip.clear
-        onStateChanged(STATE_SHAPE_FIRST_POINT)
+        set_state(STATE_SHAPE_FIRST_POINT)
       else
         _reset
       end
@@ -383,7 +428,7 @@ module Ladb::OpenCutList
         if @down_ip.valid? && @snap_ip.position.distance(@down_ip.position) > view.pixels_to_model(20, @snap_ip.position)  # Drag handled only if distance is > 20px
           @picked_shape_first_ip.copy!(@down_ip)
           @down_ip.clear
-          onStateChanged(STATE_SHAPE_POINTS)
+          set_state(STATE_SHAPE_POINTS)
         end
       end
 
@@ -418,19 +463,19 @@ module Ladb::OpenCutList
       if !_picked_shape_first_point?
         @picked_shape_first_ip.copy!(@down_ip)
         @down_ip.clear
-        onStateChanged(STATE_SHAPE_POINTS)
+        set_state(STATE_SHAPE_POINTS)
         _refresh
       elsif !_picked_shape_last_point?
         if _valid_shape?
           @picked_shape_last_ip.copy!(@snap_ip)
           if _fetch_option_tool_pushpull
-            onStateChanged(STATE_PUSHPULL)
+            set_state(STATE_PUSHPULL)
             _refresh
           else
             if _fetch_option_tool_move
               @picked_pushpull_ip.copy!(@snap_ip)
               _create_entity
-              onStateChanged(STATE_MOVE)
+              set_state(STATE_MOVE)
               _refresh
             else
               _create_entity
@@ -445,7 +490,7 @@ module Ladb::OpenCutList
           @picked_pushpull_ip.copy!(@snap_ip)
           _create_entity
           if _fetch_option_tool_move
-            onStateChanged(STATE_MOVE)
+            set_state(STATE_MOVE)
             _refresh
           else
             _restart
@@ -532,7 +577,8 @@ module Ladb::OpenCutList
           unless _fetch_option_move_array
             @move_copy = !@move_copy
             @definition.instances.first.visible = @move_copy if !@definition.nil? && @definition.instances.any?
-            @tool.set_root_cursor(_get_state_cursor(STATE_MOVE))
+            @tool.set_root_cursor(get_state_cursor(STATE_MOVE))
+            Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
             _refresh
           end
           return true
@@ -605,12 +651,6 @@ module Ladb::OpenCutList
       end
 
       false
-    end
-
-    def onStateChanged(state)
-      @tool.set_root_cursor(_get_state_cursor(state))
-      Sketchup.set_status_text(_get_state_vcb_label(state), SB_VCB_LABEL)
-      Sketchup.set_status_text('', SB_VCB_VALUE)
     end
 
     def draw(view)
@@ -1140,7 +1180,7 @@ module Ladb::OpenCutList
       _create_entity
 
       if _fetch_option_tool_move
-        onStateChanged(STATE_MOVE)
+        set_state(STATE_MOVE)
         _refresh
       else
         _restart
@@ -1276,32 +1316,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_state_vcb_label(state)
-
-      case state
-      when STATE_SHAPE_POINTS
-        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_radius')
-      when STATE_PUSHPULL, STATE_MOVE
-        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
-      end
-
-      ''
-    end
-
-    def _get_state_cursor(state)
-
-      case state
-      when STATE_PUSHPULL
-        return @tool.cursor_pushpull
-      when STATE_MOVE
-        return @move_copy ? @tool.cursor_move_copy : @tool.cursor_move
-      end
-
-      @tool.get_action_cursor(@action)
-    end
-
-    # -----
-
     def _get_active_x_axis
       X_AXIS.transform(_get_edit_transformation)
     end
@@ -1382,7 +1396,7 @@ module Ladb::OpenCutList
       @move_anchor_index = 2
       @tool.remove_all_2d
       @tool.remove_all_3d
-      onStateChanged(STATE_SHAPE_FIRST_POINT)
+      set_state(STATE_SHAPE_FIRST_POINT)
       Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
     end
 
@@ -1615,6 +1629,21 @@ module Ladb::OpenCutList
     def initialize(tool, action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_RECTANGLE, tool, action_handler)
     end
+
+    # -- State --
+
+    def get_state_status(state)
+
+      case state
+      when STATE_SHAPE_POINTS
+        return super +
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_rectangle_centered_status') + '.'
+      end
+
+      super
+    end
+
+    # -----
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
 
@@ -1999,13 +2028,13 @@ module Ladb::OpenCutList
         @picked_shape_last_ip = Sketchup::InputPoint.new(Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t))
 
         if _fetch_option_tool_pushpull
-          onStateChanged(STATE_PUSHPULL)
+          set_state(STATE_PUSHPULL)
           _refresh
         else
           @picked_pushpull_ip.copy!(@picked_shape_last_ip)
           _create_entity
           if _fetch_option_tool_move
-            onStateChanged(STATE_MOVE)
+            set_state(STATE_MOVE)
             _refresh
           else
             _restart
@@ -2043,7 +2072,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_state_vcb_label(state)
+    def get_state_vcb_label(state)
 
       case state
       when STATE_SHAPE_POINTS
@@ -2300,12 +2329,12 @@ module Ladb::OpenCutList
 
         if d2.nil?
           if _fetch_option_tool_pushpull
-            onStateChanged(STATE_PUSHPULL)
+            set_state(STATE_PUSHPULL)
             _refresh
           else
             @picked_pushpull_ip.copy!(@picked_shape_last_ip)
             if _fetch_option_tool_move
-              onStateChanged(STATE_MOVE)
+              set_state(STATE_MOVE)
               _refresh
             else
               _create_entity
@@ -2365,7 +2394,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_state_vcb_label(state)
+    def get_state_vcb_label(state)
 
       case state
       when STATE_SHAPE_POINTS
@@ -2849,7 +2878,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_state_vcb_label(state)
+    def get_state_vcb_label(state)
 
       case state
       when STATE_SHAPE_POINTS
