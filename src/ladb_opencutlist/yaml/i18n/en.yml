@@ -1795,10 +1795,17 @@ tool:
     title: Draw
     action_0: Draw rectangle
     action_0_status: Draw a volume on a rectangular shape
+    action_0_state_1_status: Click to define opposite angle or enter length, width
     action_1: Draw circle
     action_1_status: Draw a volume on a circular shape
+    action_1_state_1_status: Click to set radius or enter distance
     action_2: Draw polygon
     action_2_status: Draw a volume on a polygonal shape
+    action_2_state_1_status: Click to define a new point or enter a distance
+    action_x_state_2_status: Click to set elevation or enter distance
+    action_x_state_3_status: Click to move the part or enter a distance
+    action_x_state_3_move_copy_status: Click to place copy of the part or enter distance
+    action_x_state_3_move_array_status: Click to place copies of the part, or enter a length, width
     action_option_group_tools: Tools
     action_option_group_offset: Offset
     action_option_group_segments: Segments
