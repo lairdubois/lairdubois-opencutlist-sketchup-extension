@@ -1795,10 +1795,17 @@ tool:
     title: Zeichnen
     action_0: Rechteck zeichnen
     action_0_status: Volumen auf der Basis einer Rechteckform zeichnen
+    action_0_state_1_status: Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein
     action_1: Kreis zeichnen
     action_1_status: Volumen auf der Basis einer Kreisform zeichnen
+    action_1_state_1_status: Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
     action_2: Polygon zeichnen
     action_2_status: Volumen auf der Basis einer polygonalen Form zeichnen
+    action_2_state_1_status: Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
+    action_x_state_2_status: Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
+    action_x_state_3_status: Klicken Sie, um das Teil zu verschieben, oder geben Sie einen Abstand ein
+    action_x_state_3_move_copy_status: Klicken Sie, um die Kopie zu platzieren, oder geben Sie einen Abstand ein
+    action_x_state_3_move_array_status: Klicken Sie, um die Kopien zu platzieren, oder geben Sie Länge, Breite ein
     action_option_group_tools: Werkzeuge
     action_option_group_offset: Verschiebung
     action_option_group_segments: Segmente
