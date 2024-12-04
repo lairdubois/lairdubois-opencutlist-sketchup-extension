@@ -1798,7 +1798,8 @@ tool:
     action_0_state_1_status: Cliquez pour définir l'angle opposé ou entrez une longueur, largeur
     action_1: Dessiner un Cercle
     action_1_status: Dessiner un volume sur la base d'une forme circulaire
-    action_1_state_1_status: Cliquez pour définir le rayon ou entrez une distance
+    action_1_state_1_radius_status: Cliquez pour définir le rayon ou entrez une distance
+    action_1_state_1_diameter_status: Cliquez pour définir le diamètre ou entrez une distance
     action_2: Dessiner un Polygone
     action_2_status: Dessiner un volume sur la base d'une forme polygonale
     action_2_state_1_status: Cliquez pour définir un nouveau point ou entrez une distance
@@ -1822,6 +1823,8 @@ tool:
     action_option_options_construction_status: Dessiner en traits de construction
     action_option_options_rectangle_centered: Rectangle centré
     action_option_options_rectangle_centered_status: Centrer le rectangle sur le premier point
+    action_option_options_circle_by_diameter: Mesure par le diamètre
+    action_option_options_circle_by_diameter_status: Mesurer le cercle par son diamètre
     action_option_options_solid_centered: Elévation centrée
     action_option_options_solid_centered_status: Centrer l'élévation sur le premier point
     action_option_options_move_array: Copie en grille
@@ -1829,6 +1832,7 @@ tool:
     vcb_length: Longueur
     vcb_size: Cotations
     vcb_radius: Rayon
+    vcb_diameter: Diamètre
     vcb_distance: Distance
     error:
       no_direction: Veuillez indiquer une direction avec la souris

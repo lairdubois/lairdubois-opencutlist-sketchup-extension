@@ -25,6 +25,7 @@
     "shape_offset": "0",
     "segment_count": 24,
     "construction": false,
+    "circle_by_diameter": false,
     "solid_centered": false,
     "move_array": false
   },

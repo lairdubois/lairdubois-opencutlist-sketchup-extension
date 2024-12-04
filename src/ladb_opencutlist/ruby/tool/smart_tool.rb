@@ -296,7 +296,6 @@ module Ladb::OpenCutList
                         child.padding.set!(unit, unit * 2, unit, unit * 2)
                         child.min_size.height = unit * 4
                       elsif child.is_a?(Kuix::Motif2d)
-                        child.line_width = @unit <= 4 ? 0.5 : 1.0
                         child.margin.set_all!(unit)
                         child.min_size.set!(unit * 4, unit * 4)
                       end
@@ -1513,6 +1512,10 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def onResume(view)
+      set_state(fetch_state)
+    end
 
     def onStateChanged(state)
       @tool.set_root_cursor(get_state_cursor(state))
