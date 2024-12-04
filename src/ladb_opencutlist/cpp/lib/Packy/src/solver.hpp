@@ -911,9 +911,9 @@ namespace Packy {
                             // Bottom
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
-                                    {"x",           to_length_dbl(node.l - (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
+                                    {"x",           to_length_dbl(node.l - (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
                                     {"y",           to_length_dbl(node.b - instance.parameters().cut_thickness)},
-                                    {"length",      to_length_dbl(node.r + (instance.parameters().first_stage_orientation == CutOrientation::Horizontal ? bin_type.right_trim : 0))},
+                                    {"length",      to_length_dbl(node.r + (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.right_trim : 0))},
                                     {"orientation", "horizontal"}
                             });
 
@@ -921,8 +921,8 @@ namespace Packy {
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
                                     {"x",           to_length_dbl(node.l - instance.parameters().cut_thickness)},
-                                    {"y",           to_length_dbl(node.b - (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
-                                    {"length",      to_length_dbl(node.t + (instance.parameters().first_stage_orientation == CutOrientation::Vertical ? bin_type.top_trim : 0))},
+                                    {"y",           to_length_dbl(node.b - (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
+                                    {"length",      to_length_dbl(node.t + (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.top_trim : 0))},
                                     {"orientation", "vertical"},
                             });
 

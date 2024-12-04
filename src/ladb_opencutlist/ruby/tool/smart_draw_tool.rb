@@ -2821,7 +2821,7 @@ module Ladb::OpenCutList
 
       if @picked_ips.length >= 1
 
-        p1 = @picked_ips[-1].position.transform(ti)
+        p1 = @picked_ips.last.position.transform(ti)
         p2 = @snap_ip.position.transform(ti)
         edge_vector = p1.vector_to(p2)
 
