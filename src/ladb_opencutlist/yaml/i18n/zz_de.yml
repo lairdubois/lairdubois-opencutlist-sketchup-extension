@@ -1796,136 +1796,140 @@ tool:
     action_0_state_1_status: 1388 - Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein
     action_1: 1389 - Kreis zeichnen
     action_1_status: 1390 - Volumen auf der Basis einer Kreisform zeichnen
-    action_1_state_1_status: 1391 - Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
-    action_2: 1392 - Polygon zeichnen
-    action_2_status: 1393 - Volumen auf der Basis einer polygonalen Form zeichnen
-    action_2_state_1_status: 1394 - Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
-    action_x_state_2_status: 1395 - Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
-    action_x_state_3_status: 1396 - Klicken Sie, um das Teil zu verschieben, oder geben Sie einen Abstand ein
-    action_x_state_3_move_copy_status: 1397 - Klicken Sie, um die Kopie zu platzieren, oder geben Sie einen Abstand ein
-    action_x_state_3_move_array_status: 1398 - Klicken Sie, um die Kopien zu platzieren, oder geben Sie Länge, Breite ein
-    action_option_group_tools: 1399 - Werkzeuge
-    action_option_group_offset: 1400 - Verschiebung
-    action_option_group_segments: 1401 - Segmente
-    action_option_group_options: 1402 - Optionen
-    action_option_tools_pushpull: 1403 - Drücken/Ziehen
-    action_option_tools_pushpull_status: 1404 - Aktivieren Drücken/Ziehen nach dem Zeichnen der Form
-    action_option_tools_move: 1405 - Kopieren/Verschieben
-    action_option_tools_move_status: 1406 - Kopieren/Verschieben nach der Erstellung des Teils aktivieren
-    action_option_offset_shape_offset: 1407 - Versatz
-    action_option_offset_shape_offset_status: 1408 - Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden
-    action_option_segments_segment_count: 1409 - Anzahl Segmente
-    action_option_segments_segment_count_status: 1410 - Ermöglicht das Festlegen der Anzahl der Kreissegmente
-    action_option_options_construction: 1411 - Konstruktionslinien
-    action_option_options_construction_status: 1412 - In Konstruktionslinien zeichnen
-    action_option_options_rectangle_centered: 1413 - Rechteck zentriert
-    action_option_options_rectangle_centered_status: 1414 - Rechteck auf den ersten Punkt zentrieren
-    action_option_options_solid_centered: 1415 - Erhebung zentriert
-    action_option_options_solid_centered_status: 1416 - Erhebung auf den ersten Punkt zentrieren
-    action_option_options_move_array: 1417 - Rasterkopien
-    action_option_options_move_array_status: 1418 - Kopieren des Teils in ein rechteckiges Raster
-    vcb_length: 1419 - Länge
-    vcb_size: 1420 - Kotierungen
-    vcb_radius: 1421 - Radius
-    vcb_distance: 1422 - Distanz
+    action_1_state_1_radius_status: 1391 - Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
+    action_1_state_1_diameter_status: 1392 - Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein
+    action_2: 1393 - Polygon zeichnen
+    action_2_status: 1394 - Volumen auf der Basis einer polygonalen Form zeichnen
+    action_2_state_1_status: 1395 - Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
+    action_x_state_2_status: 1396 - Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
+    action_x_state_3_status: 1397 - Klicken Sie, um das Teil zu verschieben, oder geben Sie einen Abstand ein
+    action_x_state_3_move_copy_status: 1398 - Klicken Sie, um die Kopie zu platzieren, oder geben Sie einen Abstand ein
+    action_x_state_3_move_array_status: 1399 - Klicken Sie, um die Kopien zu platzieren, oder geben Sie Länge, Breite ein
+    action_option_group_tools: 1400 - Werkzeuge
+    action_option_group_offset: 1401 - Verschiebung
+    action_option_group_segments: 1402 - Segmente
+    action_option_group_options: 1403 - Optionen
+    action_option_tools_pushpull: 1404 - Drücken/Ziehen
+    action_option_tools_pushpull_status: 1405 - Aktivieren Drücken/Ziehen nach dem Zeichnen der Form
+    action_option_tools_move: 1406 - Kopieren/Verschieben
+    action_option_tools_move_status: 1407 - Kopieren/Verschieben nach der Erstellung des Teils aktivieren
+    action_option_offset_shape_offset: 1408 - Versatz
+    action_option_offset_shape_offset_status: 1409 - Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden
+    action_option_segments_segment_count: 1410 - Anzahl Segmente
+    action_option_segments_segment_count_status: 1411 - Ermöglicht das Festlegen der Anzahl der Kreissegmente
+    action_option_options_construction: 1412 - Konstruktionslinien
+    action_option_options_construction_status: 1413 - In Konstruktionslinien zeichnen
+    action_option_options_rectangle_centered: 1414 - Rechteck zentriert
+    action_option_options_rectangle_centered_status: 1415 - Rechteck auf den ersten Punkt zentrieren
+    action_option_options_solid_centered: 1416 - Erhebung zentriert
+    action_option_options_circle_by_diameter: 1417 - Messung nach den Durchmesser
+    action_option_options_circle_by_diameter_status: 1418 - Den Kreis nach seinem Durchmesser messen
+    action_option_options_solid_centered_status: 1419 - Erhebung auf den ersten Punkt zentrieren
+    action_option_options_move_array: 1420 - Rasterkopien
+    action_option_options_move_array_status: 1421 - Kopieren des Teils in ein rechteckiges Raster
+    vcb_length: 1422 - Länge
+    vcb_size: 1423 - Kotierungen
+    vcb_radius: 1424 - Radius
+    vcb_diameter: 1425 - Durchmesser
+    vcb_distance: 1426 - Distanz
     error:
-      no_direction: 1423 - Bitte geben Sie eine Richtung mit der Maus an
-      invalid_length: 1424 - Die Länge {{ value }} ist ungültig
-      invalid_multiplicator: 1425 - Der Faktor {{ value }} ist ungültig
-      invalid_divider: 1426 - Der Teiler {{ value }} ist ungültig
-      invalid_offset: 1427 - Die Verschiebung {{ value }} ist ungültig
-      invalid_segment_count: 1428 - Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein.
+      no_direction: 1427 - Bitte geben Sie eine Richtung mit der Maus an
+      invalid_length: 1428 - Die Länge {{ value }} ist ungültig
+      invalid_multiplicator: 1429 - Der Faktor {{ value }} ist ungültig
+      invalid_divider: 1430 - Der Teiler {{ value }} ist ungültig
+      invalid_offset: 1431 - Die Verschiebung {{ value }} ist ungültig
+      invalid_segment_count: 1432 - Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein.
   smart_paint:
-    title: 1429 - Malen
-    default_material: 1430 - Kein Material definiert
-    filters: 1431 - Filter
-    filter_0: 1432 - Ohne Typ
+    title: 1433 - Malen
+    default_material: 1434 - Kein Material definiert
+    filters: 1435 - Filter
+    filter_0: 1436 - Ohne Typ
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1439 - Teile bemalen
-    action_0_status: 1440 - Klicken Sie auf ein Teil, um die Instanz einzufärben
-    action_1: 1441 - Kanten bemalen
-    action_1_status: 1442 - Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden
-    action_2: 1443 - Flächen bemalen
-    action_2_status: 1444 - Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden
-    action_3: 1445 - Entnehmen
-    action_3_status: 1446 - Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
-    action_4: 1447 - Säubern
-    action_4_status: 1448 - Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu entfernen
-    action_option_group_instances: 1449 - Anzahl der Instanzen
-    action_option_group_edges: 1450 - Anzahl Kantenbänder
-    action_option_group_faces: 1451 - Anzahl der Flächen
-    action_option_instances_0_status: 1452 - Nur die Instanz des ausgewählten Teils einfärben
-    action_option_instances_1_status: 1453 - Alle Instanzen des ausgewählten Teils einfärben
-    action_option_edges_0_status: 1454 - Nur die ausgewählte Kante einfärben
-    action_option_edges_1_status: 1455 - Einfärben der Zielkante und der gegenüberliegenden Kante
-    action_option_edges_2_status: 1456 - Einfärben der 4 Kanten des Zielteils
-    action_option_faces_0_status: 1457 - Nur die Zielfläche einfärben
-    action_option_faces_1_status: 1458 - Einfärben der 2 Zielflächen
-    edges: 1459 - {{ count }} Kante
-    edges_plural: 1460 - {{ count }} Kanten
-    edge_ymin: 1461 - Länge 1
-    edge_ymax: 1462 - Länge 2
-    edge_xmin: 1463 - Breite 1
-    edge_xmax: 1464 - Breite 2
-    faces: 1465 - {{ count }} Fläche
-    faces_plural: 1466 - {{ count }} Flächen
-    face_zmin: 1467 - Rückseite
-    face_zmax: 1468 - Vorderansicht
+    action_0: 1443 - Teile bemalen
+    action_0_status: 1444 - Klicken Sie auf ein Teil, um die Instanz einzufärben
+    action_1: 1445 - Kanten bemalen
+    action_1_status: 1446 - Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden
+    action_2: 1447 - Flächen bemalen
+    action_2_status: 1448 - Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden
+    action_3: 1449 - Entnehmen
+    action_3_status: 1450 - Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
+    action_4: 1451 - Säubern
+    action_4_status: 1452 - Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu entfernen
+    action_option_group_instances: 1453 - Anzahl der Instanzen
+    action_option_group_edges: 1454 - Anzahl Kantenbänder
+    action_option_group_faces: 1455 - Anzahl der Flächen
+    action_option_instances_0_status: 1456 - Nur die Instanz des ausgewählten Teils einfärben
+    action_option_instances_1_status: 1457 - Alle Instanzen des ausgewählten Teils einfärben
+    action_option_edges_0_status: 1458 - Nur die ausgewählte Kante einfärben
+    action_option_edges_1_status: 1459 - Einfärben der Zielkante und der gegenüberliegenden Kante
+    action_option_edges_2_status: 1460 - Einfärben der 4 Kanten des Zielteils
+    action_option_faces_0_status: 1461 - Nur die Zielfläche einfärben
+    action_option_faces_1_status: 1462 - Einfärben der 2 Zielflächen
+    edges: 1463 - {{ count }} Kante
+    edges_plural: 1464 - {{ count }} Kanten
+    edge_ymin: 1465 - Länge 1
+    edge_ymax: 1466 - Länge 2
+    edge_xmin: 1467 - Breite 1
+    edge_xmax: 1468 - Breite 2
+    faces: 1469 - {{ count }} Fläche
+    faces_plural: 1470 - {{ count }} Flächen
+    face_zmin: 1471 - Rückseite
+    face_zmax: 1472 - Vorderansicht
     warning:
-      no_material: 1469 - Kein Material
-      no_material_type: 1470 - Kein Material des Typs '{{ type }}'
+      no_material: 1473 - Kein Material
+      no_material_type: 1474 - Kein Material des Typs '{{ type }}'
     error:
-      not_part: 1471 - Das Zielobjekt ist kein Teil
-      not_edge: 1472 - Die Zielfläche ist keine Plattenkante
-      not_face: 1473 - Die Zielfläche ist keine Plattenfläche
-      wrong_material_type: 1474 - Das Zielteil hat nicht den Typ '{{ type }}'
+      not_part: 1475 - Das Zielobjekt ist kein Teil (Komponente)
+      not_edge: 1476 - Die Zielfläche ist keine Plattenkante
+      not_face: 1477 - Die Zielfläche ist keine Plattenfläche
+      wrong_material_type: 1478 - Das Zielteil hat nicht den Typ '{{ type }}'
   smart_axes:
-    title: 1475 - Ausrichten
-    action_0: 1476 - Spiegeln
-    action_0_status: 1477 - Klicken Sie auf ein Teil, um die Instanz entlang einer seiner Dimensionen zu spiegeln
-    action_1: 1478 - Länge ↔ Breite vertauschen
-    action_1_status: 1479 - Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen
-    action_2: 1480 - Vorderseite ↔ Rückseite vertauschen
-    action_2_status: 1481 - Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen
-    action_3: 1482 - Achsen ausrichten
-    action_3_status: 1483 - Zielen Sie auf die Fläche eines Teils und klicken Sie auf eine Kante, um die Achsen des Teils anzupassen.
-    action_4: 1484 - Ursprung verschieben
-    action_4_status: 1485 - Zielen Sie auf die Fläche eines Teils und klicken Sie auf einen Punkt, um den Ursprung dort zu platzieren.
-    action_option_group_direction: 1486 - Ausrichtung
-    action_option_direction_0: 1487 - L
-    action_option_direction_1: 1488 - B
-    action_option_direction_2: 1489 - D
-    action_option_direction_0_status: 1490 - Teil der Länge nach wenden
-    action_option_direction_1_status: 1491 - Teil der Breite nach wenden
-    action_option_direction_2_status: 1492 - Teil der Dicke nach wenden
+    title: 1479 - Ausrichten
+    action_0: 1480 - Spiegeln
+    action_0_status: 1481 - Klicken Sie auf ein Teil, um die Instanz entlang einer seiner Dimensionen zu spiegeln
+    action_1: 1482 - Länge ↔ Breite vertauschen
+    action_1_status: 1483 - Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen
+    action_2: 1484 - Vorderseite ↔ Rückseite vertauschen
+    action_2_status: 1485 - Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen
+    action_3: 1486 - Achsen ausrichten
+    action_3_status: 1487 - Zielen Sie auf die Fläche eines Teils und klicken Sie auf eine Kante, um die Achsen des Teils anzupassen.
+    action_4: 1488 - Ursprung verschieben
+    action_4_status: 1489 - Zielen Sie auf die Fläche eines Teils und klicken Sie auf einen Punkt, um den Ursprung dort zu platzieren.
+    action_option_group_direction: 1490 - Ausrichtung
+    action_option_direction_0: 1491 - L
+    action_option_direction_1: 1492 - B
+    action_option_direction_2: 1493 - D
+    action_option_direction_0_status: 1494 - Teil der Länge nach wenden
+    action_option_direction_1_status: 1495 - Teil der Breite nach wenden
+    action_option_direction_2_status: 1496 - Teil der Dicke nach wenden
     warning:
-      more_entities: 1493 - {{ count_used }} Instanzen mit derselben Definition werden geändert
+      more_entities: 1497 - {{ count_used }} Instanzen mit derselben Definition werden geändert
     error:
-      not_part: 1494 - Das Zielobjekt ist kein Teil
-      not_orientable: 1495 - Der Typ dieses Teils lässt keine Orientierung zu
+      not_part: 1498 - Das Zielobjekt ist kein Teil (Komponente)
+      not_orientable: 1499 - Der Typ dieses Teils lässt keine Orientierung zu
   smart_export:
-    title: 1496 - Export
-    action_0: 1497 - 3D Teil exportieren
-    action_0_status: 1498 - Auf Teil klicken
-    action_1: 1499 - 2D Teil exportieren
-    action_1_status: 1500 - Auf Fläche eines Teils klicken
-    action_2: 1501 - Fläche exportieren
-    action_2_status: 1502 - Auf Fläche klicken
-    action_3: 1503 - Pfad exportieren
-    action_3_status: 1504 - Auf Kante klicken
-    action_option_group_file_format: 1505 - Format
-    action_option_group_unit: 1506 - Einheit
-    action_option_group_faces: 1507 - Flächen
-    action_option_group_options: 1508 - Optionen
-    action_option_file_format_dxf_status: 1509 - In DXF-Datei exportieren
-    action_option_file_format_stl_status: 1510 - In STL-Datei exportieren
-    action_option_file_format_obj_status: 1511 - In OBJ-Datei exportieren
-    action_option_file_format_svg_status: 1512 - In SVG-Datei exportieren
+    title: 1500 - Export
+    action_0: 1501 - 3D Teil exportieren
+    action_0_status: 1502 - Auf Teil klicken
+    action_1: 1503 - 2D Teil exportieren
+    action_1_status: 1504 - Auf Fläche eines Teils klicken
+    action_2: 1505 - Fläche exportieren
+    action_2_status: 1506 - Auf Fläche klicken
+    action_3: 1507 - Pfad exportieren
+    action_3_status: 1508 - Auf Kante klicken
+    action_option_group_file_format: 1509 - Format
+    action_option_group_unit: 1510 - Einheit
+    action_option_group_faces: 1511 - Flächen
+    action_option_group_options: 1512 - Optionen
+    action_option_file_format_dxf_status: 1513 - In DXF-Datei exportieren
+    action_option_file_format_stl_status: 1514 - In STL-Datei exportieren
+    action_option_file_format_obj_status: 1515 - In OBJ-Datei exportieren
+    action_option_file_format_svg_status: 1516 - In SVG-Datei exportieren
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -1935,9 +1939,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1522 - Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
-    action_option_options_include_paths_status: 1523 - Im Teil enthaltene, nicht mit einer Fläche verknüpfte Kanten als Plot exportieren
+    action_option_options_merge_holes_status: 1526 - Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
+    action_option_options_include_paths_status: 1527 - Im Teil enthaltene, nicht mit einer Fläche verknüpfte Kanten als Plot exportieren
     error:
-      not_part: 1524 - Diese Fläche gehört nicht zu einem Teil (Komponente)
-      not_flat_face: 1525 - Diese Fläche ist nicht eben
-      incompatible_active_path: 1526 - Der aktive Pfad ermöglicht es nicht, dieses Teil zu exportieren
+      not_part: 1528 - Diese Fläche gehört nicht zu einem Teil (Komponente)
+      not_flat_face: 1529 - Diese Fläche ist nicht eben
+      incompatible_active_path: 1530 - Der aktive Pfad ermöglicht es nicht, dieses Teil zu exportieren
