@@ -955,20 +955,15 @@ module Ladb::OpenCutList
 
       if bounds.depth > 0
 
-        unit = @tool.get_unit
+        screen_point = view.screen_coords(p1.project_to_plane([ bounds.min, Z_AXIS ]).offset(Z_AXIS, bounds.depth / 2).transform(t))
 
-        d_screen_point = view.screen_coords(p1.project_to_plane([ bounds.min, Z_AXIS ]).offset(Z_AXIS, bounds.depth / 2).transform(t))
-
-        k_label_d = Kuix::Label.new
-        k_label_d.text = bounds.depth.to_s
-        k_label_d.layout_data = Kuix::StaticLayoutData.new(d_screen_point.x, d_screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-        k_label_d.set_style_attribute(:color, Kuix::COLOR_Z)
-        k_label_d.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-        k_label_d.set_style_attribute(:border_color, _get_normal_color)
-        k_label_d.border.set_all!(unit * 0.25)
-        k_label_d.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
-        k_label_d.text_size = unit * 2.5
-        @tool.append_2d(k_label_d)
+        k_label = _create_floating_label(
+          screen_point: screen_point,
+          text: bounds.depth,
+          text_color: Kuix::COLOR_Z,
+          border_color: _get_normal_color
+        )
+        @tool.append_2d(k_label)
 
       end
 
@@ -1036,21 +1031,16 @@ module Ladb::OpenCutList
 
         Sketchup.set_status_text("#{bounds.width}#{Sketchup::RegionalSettings.list_separator} #{bounds.height}", SB_VCB_VALUE)
 
-        unit = @tool.get_unit
-
         if bounds.width > 0
 
           screen_point = view.screen_coords(bounds.min.offset(X_AXIS, bounds.width / 2).transform(t))
 
-          k_label = Kuix::Label.new
-          k_label.text = bounds.width.to_s
-          k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-          k_label.set_style_attribute(:color, Kuix::COLOR_X)
-          k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-          k_label.set_style_attribute(:border_color, _get_normal_color)
-          k_label.border.set_all!(unit * 0.25)
-          k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
-          k_label.text_size = unit * 2.5
+          k_label = _create_floating_label(
+            screen_point: screen_point,
+            text: bounds.width,
+            text_color: Kuix::COLOR_X,
+            border_color: _get_normal_color
+          )
           @tool.append_2d(k_label)
 
         end
@@ -1059,15 +1049,12 @@ module Ladb::OpenCutList
 
           screen_point = view.screen_coords(bounds.min.offset(Y_AXIS, bounds.height / 2).transform(t))
 
-          k_label = Kuix::Label.new
-          k_label.text = bounds.height.to_s
-          k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-          k_label.set_style_attribute(:color, Kuix::COLOR_Y)
-          k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-          k_label.set_style_attribute(:border_color, _get_normal_color)
-          k_label.border.set_all!(unit * 0.25)
-          k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
-          k_label.text_size = unit * 2.5
+          k_label = _create_floating_label(
+            screen_point: screen_point,
+            text: bounds.height,
+            text_color: Kuix::COLOR_Y,
+            border_color: _get_normal_color
+          )
           @tool.append_2d(k_label)
 
         end
@@ -1120,19 +1107,14 @@ module Ladb::OpenCutList
 
         if distance > 0
 
-          unit = @tool.get_unit
-
           screen_point = view.screen_coords(ps.offset(v, distance / 2))
 
-          k_label = Kuix::Label.new
-          k_label.text = distance.to_s
-          k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-          k_label.set_style_attribute(:color, Kuix::COLOR_X)
-          k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-          k_label.set_style_attribute(:border_color, _get_vector_color(v))
-          k_label.border.set_all!(unit * 0.25)
-          k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
-          k_label.text_size = unit * 2.5
+          k_label = _create_floating_label(
+            screen_point: screen_point,
+            text: distance,
+            text_color: Kuix::COLOR_X,
+            border_color: _get_vector_color(v)
+          )
           @tool.append_2d(k_label)
 
         end
@@ -1143,16 +1125,57 @@ module Ladb::OpenCutList
 
         # Anchor points
 
-        k_points = Kuix::Points.new
-        k_points.add_point(p)
-        k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
-        k_points.size = 20
-        k_points.line_width = 1.5
-        k_points.color = p == ps ? Kuix::COLOR_RED : Kuix::COLOR_BLACK
+        k_points = _create_floating_points(
+          points: [ p ],
+          color: p == ps ? Kuix::COLOR_RED : Kuix::COLOR_BLACK
+        )
         @tool.append_3d(k_points)
 
       end
 
+    end
+
+    # -----
+
+    def _create_floating_points(
+      points:,
+      style: Kuix::POINT_STYLE_OPEN_SQUARE,
+      color: Kuix::COLOR_BLACK
+    )
+
+      unit = @tool.get_unit
+
+      k_points = Kuix::Points.new
+      k_points.add_points(points) if points.is_a?(Array)
+      k_points.add_point(points) if points.is_a?(Geom::Point3d)
+      k_points.style = style
+      k_points.size = 2.5 * unit
+      k_points.line_width = 1.5
+      k_points.color = color
+
+      k_points
+    end
+
+    def _create_floating_label(
+      screen_point:,
+      text:,
+      text_color: Kuix::COLOR_BLACK,
+      border_color: Kuix::COLOR_BLACK
+    )
+
+      unit = @tool.get_unit
+
+      k_label = Kuix::Label.new
+      k_label.text = text.to_s
+      k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      k_label.set_style_attribute(:color, text_color)
+      k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+      k_label.set_style_attribute(:border_color, border_color)
+      k_label.border.set_all!(unit * 0.25)
+      k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
+      k_label.text_size = unit * 2.5
+
+      k_label
     end
 
     # -----
@@ -1372,13 +1395,13 @@ module Ladb::OpenCutList
       _get_vector_color(@direction)
     end
 
-    def _get_vector_color(vector)
+    def _get_vector_color(vector, default = Kuix::COLOR_BLACK)
       if vector.is_a?(Geom::Vector3d) && vector.valid?
         return Kuix::COLOR_X if vector.parallel?(_get_active_x_axis)
         return Kuix::COLOR_Y if vector.parallel?(_get_active_y_axis)
         return Kuix::COLOR_Z if vector.parallel?(_get_active_z_axis)
       end
-      Kuix::COLOR_BLACK
+      default
     end
 
     # -----
@@ -1910,11 +1933,10 @@ module Ladb::OpenCutList
 
       if _fetch_option_rectangle_centered
 
-        k_points = Kuix::Points.new
-        k_points.add_point(@picked_shape_first_ip.position)
-        k_points.line_width = 1
-        k_points.size = 20
-        k_points.style = Kuix::POINT_STYLE_PLUS
+        k_points = _create_floating_points(
+          points: @picked_shape_first_ip.position,
+          style: Kuix::POINT_STYLE_PLUS
+        )
         @tool.append_3d(k_points)
 
         k_line = Kuix::LineMotif.new
@@ -1963,21 +1985,16 @@ module Ladb::OpenCutList
 
       if bounds.valid?
 
-        unit = @tool.get_unit
-
         if bounds.width != 0
 
           screen_point = view.screen_coords(bounds.min.offset(X_AXIS, bounds.width / 2).transform(t))
 
-          k_label = Kuix::Label.new
-          k_label.text = bounds.width.to_s
-          k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-          k_label.set_style_attribute(:color, Kuix::COLOR_X)
-          k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-          k_label.set_style_attribute(:border_color, _get_normal_color)
-          k_label.border.set_all!(unit * 0.25)
-          k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
-          k_label.text_size = unit * 2.5
+          k_label = _create_floating_label(
+            screen_point: screen_point,
+            text: bounds.width,
+            text_color: Kuix::COLOR_X,
+            border_color: _get_normal_color
+          )
           @tool.append_2d(k_label)
 
         end
@@ -1986,15 +2003,12 @@ module Ladb::OpenCutList
 
           screen_point = view.screen_coords(bounds.min.offset(Y_AXIS, bounds.height / 2).transform(t))
 
-          k_label = Kuix::Label.new
-          k_label.text = bounds.height.to_s
-          k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-          k_label.set_style_attribute(:color, Kuix::COLOR_Y)
-          k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-          k_label.set_style_attribute(:border_color, _get_normal_color)
-          k_label.border.set_all!(unit * 0.25)
-          k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
-          k_label.text_size = unit * 2.5
+          k_label = _create_floating_label(
+            screen_point: screen_point,
+            text: bounds.height,
+            text_color: Kuix::COLOR_Y,
+            border_color: _get_normal_color
+          )
           @tool.append_2d(k_label)
 
         end
@@ -2288,11 +2302,10 @@ module Ladb::OpenCutList
       measure_vector = measure_start.vector_to(@snap_ip.position)
       measure = measure_vector.length
 
-      k_points = Kuix::Points.new
-      k_points.add_point(@picked_shape_first_ip.position)
-      k_points.line_width = 1
-      k_points.size = 20
-      k_points.style = Kuix::POINT_STYLE_PLUS
+      k_points = _create_floating_points(
+        points: @picked_shape_first_ip.position,
+        style: Kuix::POINT_STYLE_PLUS
+      )
       @tool.append_3d(k_points)
 
       k_line = Kuix::LineMotif.new
@@ -2332,19 +2345,14 @@ module Ladb::OpenCutList
 
       if measure > 0
 
-        unit = @tool.get_unit
-
         screen_point = view.screen_coords(measure_start.offset(measure_vector, measure / 2))
 
-        k_label = Kuix::Label.new
-        k_label.text = measure.to_s
-        k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-        k_label.set_style_attribute(:color, Kuix::COLOR_X)
-        k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-        k_label.set_style_attribute(:border_color, _get_direction_color)
-        k_label.border.set_all!(unit * 0.25)
-        k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
-        k_label.text_size = unit * 2.5
+        k_label = _create_floating_label(
+          screen_point: screen_point,
+          text: measure,
+          text_color: Kuix::COLOR_X,
+          border_color: _get_direction_color
+        )
         @tool.append_2d(k_label)
 
       end
@@ -2597,19 +2605,18 @@ module Ladb::OpenCutList
         @picked_ips.each do |ip|
           if ph.test_point(ip.position)
 
-            k_points = Kuix::Points.new
-            k_points.add_point(ip.position)
-            k_points.size = 20
-            k_points.style = Kuix::POINT_STYLE_FILLED_SQUARE
-            k_points.color = Kuix::COLOR_BLACK
+            k_points = _create_floating_points(
+              points: ip.position,
+              style: Kuix::POINT_STYLE_FILLED_SQUARE,
+              color: Kuix::COLOR_BLACK
+            )
             @tool.append_3d(k_points)
 
-            k_points = Kuix::Points.new
-            k_points.add_point(ip.position)
-            k_points.size = 20
-            k_points.line_width = 1
-            k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
-            k_points.color = Kuix::COLOR_WHITE
+            k_points = _create_floating_points(
+              points: ip.position,
+              style: Kuix::POINT_STYLE_OPEN_SQUARE,
+              color: Kuix::COLOR_WHITE
+            )
             @tool.append_3d(k_points)
 
             @snap_ip.copy!(ip)
@@ -2895,11 +2902,10 @@ module Ladb::OpenCutList
 
         Sketchup.set_status_text("#{measure}", SB_VCB_VALUE)
 
-        k_points = Kuix::Points.new
-        k_points.add_point(measure_start)
-        k_points.line_width = 1
-        k_points.size = 20
-        k_points.style = Kuix::POINT_STYLE_PLUS
+        k_points = _create_floating_points(
+          points: measure_start,
+          style: Kuix::POINT_STYLE_PLUS
+        )
         @tool.append_3d(k_points)
 
         if measure_vector.valid?
@@ -2908,20 +2914,16 @@ module Ladb::OpenCutList
           k_line.position = measure_start
           k_line.direction = measure_vector
           k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-          k_line.color = _get_vector_color(measure_vector)
+          k_line.color = _get_vector_color(measure_vector, Kuix::COLOR_DARK_GREY)
           @tool.append_3d(k_line)
 
-          unit = @tool.get_unit
           screen_point = view.screen_coords(measure_start.offset(measure_vector, measure / 2))
 
-          k_label = Kuix::Label.new
-          k_label.text = measure.to_s
-          k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-          k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-          k_label.set_style_attribute(:border_color, _get_normal_color)
-          k_label.border.set_all!(unit * 0.25)
-          k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
-          k_label.text_size = unit * 2.5
+          k_label = _create_floating_label(
+            screen_point: screen_point,
+            text: measure,
+            border_color: _get_normal_color
+          )
           @tool.append_2d(k_label)
 
         end
