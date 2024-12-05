@@ -28,7 +28,8 @@ module Ladb::OpenCutList
 
     ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED = 'rectangle_centered'
-    ACTION_OPTION_OPTIONS_CIRCLE_BY_DIAMETER = 'circle_by_diameter'
+    ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER = 'measure_from_diameter'
+    ACTION_OPTION_OPTIONS_MEASURE_FROM_FIRST = 'measure_from_first'
     ACTION_OPTION_OPTIONS_BOX_CENTRED = 'solid_centered'
     ACTION_OPTION_OPTIONS_MOVE_ARRAY = 'move_array'
 
@@ -47,7 +48,7 @@ module Ladb::OpenCutList
           ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_SEGMENTS => [ ACTION_OPTION_SEGMENTS_SEGMENT_COUNT ],
-          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_CIRCLE_BY_DIAMETER, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
       },
       {
@@ -55,7 +56,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_FIRST, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
       }
     ].freeze
@@ -149,8 +150,10 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,1L0,1L0,0.833 M0,0.667L0,0.333 M0,0.167L0,0L0.167,0 M0.333,0L0.667,0 M0.833,0L1,0L1,0.167 M1,0.333L1,0.667 M1,0.833L1,1L0.833,1 M0.333,1L0.667,1'))
         when ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0L1,1L0,1L0,0 M0.5,0.667L0.5,0.333 M0.333,0.5L0.667,0.5'))
-        when ACTION_OPTION_OPTIONS_CIRCLE_BY_DIAMETER
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M1,0.5L0.933,0.25L0.75,0.067L0.5,0L0.25,0.067L0.067,0.25L0,0.5L0.067,0.75L0.25,0.933L0.5,1L0.75,0.933L0.933,0.75L1,0.5 M0.5,0.667L0.5,0.333 M0.333,0.5L0.667,0.5 M0.083,0.917L0.333,0.667 M0.917,0.083L0.667,0.333'))
+        when ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833 M0.25,0.5L0.75,0 M0.25,0.25L0.323,0.427L0.5,0.5L0.677,0.427L0.75,0.25L0.677,0.073L0.5,0L0.323,0.073L0.25,0.25'))
+        when ACTION_OPTION_OPTIONS_MEASURE_FROM_FIRST
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.333,0.167L0.5,0L0.5,0.417L0.333,0.417L0.667,0.417 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833'))
         when ACTION_OPTION_OPTIONS_BOX_CENTRED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         when ACTION_OPTION_OPTIONS_MOVE_ARRAY
@@ -2184,8 +2187,8 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SHAPE_POINTS
-        return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_1_#{_fetch_option_circle_by_diameter ? 'diameter' : 'radius'}_status") + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_circle_by_diameter_status') + '.'
+        return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_1_#{_fetch_option_measure_from_diameter ? 'diameter' : 'radius'}_status") + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_draw.action_option_options_measure_from_#{_fetch_option_measure_from_diameter ? 'radius' : 'diameter'}_status") + '.'
       end
 
       super
@@ -2195,7 +2198,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SHAPE_POINTS
-        return PLUGIN.get_i18n_string("tool.smart_draw.vcb_#{_fetch_option_circle_by_diameter ? 'diameter' : 'radius'}")
+        return PLUGIN.get_i18n_string("tool.smart_draw.vcb_#{_fetch_option_measure_from_diameter ? 'diameter' : 'radius'}")
       end
 
       super
@@ -2206,7 +2209,7 @@ module Ladb::OpenCutList
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
 
       if key == COPY_MODIFIER_KEY && !_picked_shape_last_point?
-        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CIRCLE_BY_DIAMETER, !_fetch_option_circle_by_diameter, true)
+        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, !_fetch_option_measure_from_diameter, true)
         Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
         Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)
         _refresh
@@ -2281,7 +2284,7 @@ module Ladb::OpenCutList
 
     def _preview_shape(view)
 
-      measure_start = _fetch_option_circle_by_diameter ? @picked_shape_first_ip.position.offset(@snap_ip.position.vector_to(@picked_shape_first_ip.position)) : @picked_shape_first_ip.position
+      measure_start = _fetch_option_measure_from_diameter ? @picked_shape_first_ip.position.offset(@snap_ip.position.vector_to(@picked_shape_first_ip.position)) : @picked_shape_first_ip.position
       measure_vector = measure_start.vector_to(@snap_ip.position)
       measure = measure_vector.length
 
@@ -2357,13 +2360,13 @@ module Ladb::OpenCutList
 
       if d1
 
-        measure_start = _fetch_option_circle_by_diameter ? @picked_shape_first_ip.position.offset(@snap_ip.position.vector_to(@picked_shape_first_ip.position)) : @picked_shape_first_ip.position
+        measure_start = _fetch_option_measure_from_diameter ? @picked_shape_first_ip.position.offset(@snap_ip.position.vector_to(@picked_shape_first_ip.position)) : @picked_shape_first_ip.position
         measure_vector = measure_start.vector_to(@snap_ip.position)
         measure = measure_vector.length
         measure = _read_user_text_length(d1, measure)
         return true if measure.nil?
 
-        @picked_shape_last_ip = Sketchup::InputPoint.new(@picked_shape_first_ip.position.offset(measure_vector, _fetch_option_circle_by_diameter ? measure / 2.0 : measure))
+        @picked_shape_last_ip = Sketchup::InputPoint.new(@picked_shape_first_ip.position.offset(measure_vector, _fetch_option_measure_from_diameter ? measure / 2.0 : measure))
 
         if d2.nil?
           if _fetch_option_tool_pushpull
@@ -2430,8 +2433,8 @@ module Ladb::OpenCutList
       [ 999, [ @tool.fetch_action_option_integer(@action, SmartDrawTool::ACTION_OPTION_SEGMENTS, SmartDrawTool::ACTION_OPTION_SEGMENTS_SEGMENT_COUNT), 3 ].max ].min
     end
 
-    def _fetch_option_circle_by_diameter
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CIRCLE_BY_DIAMETER)
+    def _fetch_option_measure_from_diameter
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER)
     end
 
     # -----
@@ -2496,6 +2499,29 @@ module Ladb::OpenCutList
 
     # -----
 
+    def get_state_status(state)
+
+      case state
+      when STATE_SHAPE_POINTS
+        return super +
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_draw.action_option_options_measure_from_#{_fetch_option_measure_from_first ? 'previous' : 'first'}_status") + '.'
+      end
+
+      super
+    end
+
+    def get_state_vcb_label(state)
+
+      case state
+      when STATE_SHAPE_POINTS
+        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_length')
+      end
+
+      super
+    end
+
+    # -----
+
     def onCancel(reason, view)
       if !_picked_shape_last_point? && @picked_ips.any?
         @picked_ips.pop
@@ -2544,6 +2570,19 @@ module Ladb::OpenCutList
         onLButtonUp(flags, x, y, view)
       end
 
+    end
+
+    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+
+      if key == COPY_MODIFIER_KEY && !_picked_shape_last_point?
+        @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_FIRST, !_fetch_option_measure_from_first, true)
+        Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
+        Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)
+        _refresh
+        return true
+      end
+
+      super
     end
 
     protected
@@ -2823,7 +2862,6 @@ module Ladb::OpenCutList
     def _preview_shape(view)
 
       t = _get_transformation
-      ti = t.inverse
 
       if _fetch_option_shape_offset != 0
 
@@ -2851,21 +2889,33 @@ module Ladb::OpenCutList
 
       if @picked_ips.length >= 1
 
-        p1 = @picked_ips.last.position.transform(ti)
-        p2 = @snap_ip.position.transform(ti)
-        edge_vector = p1.vector_to(p2)
+        measure_start = _fetch_option_measure_from_first ? @picked_shape_first_ip.position : @picked_ips.last.position
+        measure_vector = measure_start.vector_to(@snap_ip.position)
+        measure = measure_vector.length
 
-        length = edge_vector.length
+        Sketchup.set_status_text("#{measure}", SB_VCB_VALUE)
 
-        Sketchup.set_status_text("#{edge_vector.length}", SB_VCB_VALUE)
+        k_points = Kuix::Points.new
+        k_points.add_point(measure_start)
+        k_points.line_width = 1
+        k_points.size = 20
+        k_points.style = Kuix::POINT_STYLE_PLUS
+        @tool.append_3d(k_points)
 
-        if edge_vector.valid?
+        if measure_vector.valid?
+
+          k_line = Kuix::Line.new
+          k_line.position = measure_start
+          k_line.direction = measure_vector
+          k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          k_line.color = _get_vector_color(measure_vector)
+          @tool.append_3d(k_line)
 
           unit = @tool.get_unit
-          screen_point = view.screen_coords(p1.offset(edge_vector, length / 2).transform(t))
+          screen_point = view.screen_coords(measure_start.offset(measure_vector, measure / 2))
 
           k_label = Kuix::Label.new
-          k_label.text = length.to_s
+          k_label.text = measure.to_s
           k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
           k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
           k_label.set_style_attribute(:border_color, _get_normal_color)
@@ -2885,22 +2935,13 @@ module Ladb::OpenCutList
     def _read_shape(text)
       return true if super
 
-      t = _get_transformation
-      ti = t.inverse
+      measure_start = _fetch_option_measure_from_first ? @picked_shape_first_ip.position : @picked_ips.last.position
+      measure_vector = measure_start.vector_to(@snap_ip.position)
+      measure = measure_vector.length
+      measure = _read_user_text_length(text, measure)
+      return true if measure.nil?
 
-      p1 = @picked_ips.last.position.transform(ti)
-      p2 = @snap_ip.position.transform(ti)
-      v = p1.vector_to(p2)
-
-      unless v.valid?
-        UI.beep
-        return true
-      end
-
-      length = _read_user_text_length(text, v.length)
-      return true if length.nil?
-
-      @picked_ips << Sketchup::InputPoint.new(p1.offset(v, length).transform(t))
+      @picked_ips << Sketchup::InputPoint.new(measure_start.offset(measure_vector, measure))
       _refresh
 
       true
@@ -2908,14 +2949,8 @@ module Ladb::OpenCutList
 
     # -----
 
-    def get_state_vcb_label(state)
-
-      case state
-      when STATE_SHAPE_POINTS
-        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_length')
-      end
-
-      super
+    def _fetch_option_measure_from_first
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_FIRST)
     end
 
     # -----
@@ -2929,7 +2964,7 @@ module Ladb::OpenCutList
 
     def _get_previous_input_point
       return super if _picked_shape_last_point?
-      @picked_ips.last
+      _fetch_option_measure_from_first ? @picked_shape_first_ip : @picked_ips.last
     end
 
     # -----

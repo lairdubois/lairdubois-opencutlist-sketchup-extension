@@ -1823,8 +1823,12 @@ tool:
     action_option_options_construction_status: Dessiner en traits de construction
     action_option_options_rectangle_centered: Rectangle centré
     action_option_options_rectangle_centered_status: Centrer le rectangle sur le premier point
-    action_option_options_circle_by_diameter: Mesure par le diamètre
-    action_option_options_circle_by_diameter_status: Mesurer le cercle par son diamètre
+    action_option_options_measure_from_diameter: Mesure
+    action_option_options_measure_from_diameter_status: Mesurer le cercle par son diamètre
+    action_option_options_measure_from_radius_status: Mesurer le cercle par son rayon
+    action_option_options_measure_from_first: Mesure
+    action_option_options_measure_from_first_status: Mesurer depuis le premier point
+    action_option_options_measure_from_previous_status: Mesurer depuis le point précédent
     action_option_options_solid_centered: Elévation centrée
     action_option_options_solid_centered_status: Centrer l'élévation sur le premier point
     action_option_options_move_array: Copie en grille

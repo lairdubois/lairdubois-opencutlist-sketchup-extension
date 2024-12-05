@@ -1822,8 +1822,8 @@ tool:
     action_option_options_rectangle_centered: 1414 - Rechteck zentriert
     action_option_options_rectangle_centered_status: 1415 - Rechteck auf den ersten Punkt zentrieren
     action_option_options_solid_centered: 1416 - Erhebung zentriert
-    action_option_options_circle_by_diameter: 1417 - Messung nach den Durchmesser
-    action_option_options_circle_by_diameter_status: 1418 - Den Kreis nach seinem Durchmesser messen
+    action_option_options_measure_from_diameter: 1417 - Messung nach den Durchmesser
+    action_option_options_measure_from_diameter_status: 1418 - Den Kreis nach seinem Durchmesser messen
     action_option_options_solid_centered_status: 1419 - Erhebung auf den ersten Punkt zentrieren
     action_option_options_move_array: 1420 - Rasterkopien
     action_option_options_move_array_status: 1421 - Kopieren des Teils in ein rechteckiges Raster

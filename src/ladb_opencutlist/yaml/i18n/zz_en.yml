@@ -1821,8 +1821,8 @@ tool:
     action_option_options_construction_status: 1413 - Drawing in construction lines
     action_option_options_rectangle_centered: 1414 - Rectangle Centered
     action_option_options_rectangle_centered_status: 1415 - Center rectangle on the first point
-    action_option_options_circle_by_diameter: 1416 - Measure by diameter
-    action_option_options_circle_by_diameter_status: 1417 - Measure circle by its diameter
+    action_option_options_measure_from_diameter: 1416 - Measure by diameter
+    action_option_options_measure_from_diameter_status: 1417 - Measure circle by its diameter
     action_option_options_solid_centered: 1418 - Elevation Centered
     action_option_options_solid_centered_status: 1419 - Center elevation on the first point
     action_option_options_move_array: 1420 - Copy in Grid

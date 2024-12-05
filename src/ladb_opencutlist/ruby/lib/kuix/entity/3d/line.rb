@@ -9,7 +9,7 @@ module Ladb::OpenCutList::Kuix
     def initialize(id = nil)
       super(id)
 
-      @color = nil
+      @color = COLOR_BLACK
       @line_width = 1
       @line_stipple = LINE_STIPPLE_SOLID
       @position = nil   # Geom::Point3d
@@ -62,9 +62,9 @@ module Ladb::OpenCutList::Kuix
         p2 = Geom.intersect_line_line(line, bottom_line)
         p2 = Geom.intersect_line_line(line, right_line) if p2.nil?
 
-        graphics.set_drawing_color(@color)
-        graphics.set_line_width(@line_width)
-        graphics.set_line_stipple(@line_stipple)
+        graphics.set_drawing_color(@color) unless @color.nil?
+        graphics.set_line_width(@line_width) unless @line_width.nil?
+        graphics.set_line_stipple(@line_stipple) unless @line_stipple.nil?
         graphics.view.draw2d(GL_LINE_LOOP, [ p1, p2 ])
 
       end
