@@ -2184,7 +2184,8 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SHAPE_POINTS
-        return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_1_#{_fetch_option_circle_by_diameter ? 'diameter' : 'radius'}_status") + '.'
+        return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_1_#{_fetch_option_circle_by_diameter ? 'diameter' : 'radius'}_status") + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_circle_by_diameter_status') + '.'
       end
 
       super
