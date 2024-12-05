@@ -1829,7 +1829,7 @@ tool:
     action_option_options_measure_from_first: Mesure
     action_option_options_measure_from_first_status: Mesurer depuis le premier point
     action_option_options_measure_from_previous_status: Mesurer depuis le point précédent
-    action_option_options_solid_centered: Elévation centrée
+    action_option_options_solid_centered: Élévation centrée
     action_option_options_solid_centered_status: Centrer l'élévation sur le premier point
     action_option_options_move_array: Copie en grille
     action_option_options_move_array_status: Copier la pièce en grille

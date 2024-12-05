@@ -38,6 +38,8 @@ default:
   unselect_all: בטל בחירה
   draw: שרטוט
   estimate: להעריך
+  yes: כן
+  no: לא
   empty_filename: ללא שם.skp
   help: עזרה
   error: לתקן!
@@ -1140,7 +1142,7 @@ tab:
       option_switch_yz_help: |
         מאפשר להחליף את צירי Y ו-Z כדי להגדיר את הציר האנכי של החלק.
       option_smoothing: החלקה
-      option_smoothing_0: אין
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: החלקת מעגלים וקשתות (ניסיוני)
       option_smoothing_help: |
         מאפשר להפעיל את זיהוי המעגלים והקשתות.
@@ -1156,7 +1158,7 @@ tab:
         **קונטור + קדחים + מיזוג**
         מפעיל את ההפרדה של קו המתאר החיצוני של החלקים מהקדחים שלהם ואת מיזוג המעמקים עבור כל חלל.
       option_include_paths: קווי מתאר
-      option_include_paths_0: אין
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: השתמש בקצוות שאינם קשורים לחזית
       option_include_paths_help: |
         מאפשר להפעיל את השימוש בקצוות שאינם קשורים לחזיתות הכלולות בחלק, כדי לייצא אותם כקו מתאר.

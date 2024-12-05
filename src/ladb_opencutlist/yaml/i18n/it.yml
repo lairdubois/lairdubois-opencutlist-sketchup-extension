@@ -38,6 +38,8 @@ default:
   unselect_all: Deseleziona tutto
   draw: Disegna
   estimate: Preventivo
+  yes: Si
+  no: No
   empty_filename: Senza titolo.skp
   help: Aiuto
   error: OOps!
@@ -1140,7 +1142,7 @@ tab:
       option_switch_yz_help: |
         Permette di scambiare gli assi Y e Z per definire l'asse verticale della parte.
       option_smoothing: Levigatezza
-      option_smoothing_0: Nessuna
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: Levigatezza di archi e cerchi (Valutazione)
       option_smoothing_help: |
         Abilita l'individuazione degli archi e dei cerchi
@@ -1156,7 +1158,7 @@ tab:
         **Profilo + Forature + Unione**
         Attiva la separazione del profilo esterno degli elementi dalla foratura e unisce le profondità di ogni recesso.
       option_include_paths: Percorsi
-      option_include_paths_0: Nessuna
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: Utilizzare bordi non associati a una faccia
       option_include_paths_help: |
         Consente di esportare come tracciato i bordi non associati a una faccia contenuta nella parte.

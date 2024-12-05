@@ -38,6 +38,8 @@ default:
   unselect_all: Отменить выбор
   draw: Чертеж
   estimate: Сметчик
+  yes: Да
+  no: Нет
   empty_filename: Безымянный.skp
   help: Помощь
   error: Исправить!
@@ -1140,7 +1142,7 @@ tab:
       option_switch_yz_help: |
         Используется, чтобы поменять местами оси Y и Z для определения вертикальной оси детали.
       option_smoothing: Сглаживание
-      option_smoothing_0: Нет
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: Сглаживание окружностей и дуг (Экспериментальный)
       option_smoothing_help: |
         Позволяет включить обнаружение окружностей и дуг.
@@ -1156,7 +1158,7 @@ tab:
         **Контур + Отверстия + Слияние**
         Активирует разделение внешнего контура деталей от их отверстий, а также слияние расстояний для каждой полости.
       option_include_paths: Трассы
-      option_include_paths_0: Нет
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: "Использовать ребра, не связанные с гранью"
       option_include_paths_help: |
         Позволяет активировать использование ребер, не связанных с гранями, содержащимися в детали, для экспорта в виде контура.
