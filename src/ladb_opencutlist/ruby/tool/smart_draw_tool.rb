@@ -2913,7 +2913,7 @@ module Ladb::OpenCutList
           k_line = Kuix::Line.new
           k_line.position = measure_start
           k_line.direction = measure_vector
-          k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
           k_line.color = _get_vector_color(measure_vector, Kuix::COLOR_DARK_GREY)
           @tool.append_3d(k_line)
 

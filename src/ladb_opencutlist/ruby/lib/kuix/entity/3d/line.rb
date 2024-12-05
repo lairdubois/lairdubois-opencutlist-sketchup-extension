@@ -23,7 +23,7 @@ module Ladb::OpenCutList::Kuix
     # -- LAYOUT --
 
     def do_layout(transformation)
-      if @position.nil? || @direction.nil?
+      if !@position.is_a?(Geom::Point3d) || !@direction.is_a?(Geom::Vector3d) || !@direction.valid?
         @_lp1_3d = nil
         @_lp2_3d = nil
       else
@@ -65,7 +65,7 @@ module Ladb::OpenCutList::Kuix
         graphics.set_drawing_color(@color) unless @color.nil?
         graphics.set_line_width(@line_width) unless @line_width.nil?
         graphics.set_line_stipple(@line_stipple) unless @line_stipple.nil?
-        graphics.view.draw2d(GL_LINE_LOOP, [ p1, p2 ])
+        graphics.view.draw2d(GL_LINE_STRIP, [ p1, p2 ])
 
       end
       super
