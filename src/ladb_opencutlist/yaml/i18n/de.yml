@@ -1279,7 +1279,7 @@ tab:
       option_switch_yz_help: |
         Ermöglicht das Vertauschen der Y- und Z-Achse, um die vertikale Achse des Teils zu definieren.
       option_smoothing: Glättung
-      option_smoothing_0: Keine
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: Glätten von Kreisen und Bögen (Experimentell)
       option_smoothing_help: |
         Auswahl des Glättungsmodus.
@@ -1295,7 +1295,7 @@ tab:
         **Kontur + Bohrungen + Zusammenführen**
         Aktiviert die Trennung der Außenkontur von Teilen und ihren Bohrungen sowie die Zusammenführung der Tiefen für jede Kavität.
       option_include_paths: Pfade
-      option_include_paths_0: Keine
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: "Kanten verwenden, die nicht mit einer Fläche verbunden sind"
       option_include_paths_help: |
         Aktiviert die Verwendung von im Teil enthaltenen, nicht mit einer Fläche verknüpften Kanten, um sie als Pfad zu exportieren.
@@ -1798,7 +1798,8 @@ tool:
     action_0_state_1_status: Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein
     action_1: Kreis zeichnen
     action_1_status: Volumen auf der Basis einer Kreisform zeichnen
-    action_1_state_1_status: Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
+    action_1_state_1_radius_status: Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
+    action_1_state_1_diameter_status: Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein
     action_2: Polygon zeichnen
     action_2_status: Volumen auf der Basis einer polygonalen Form zeichnen
     action_2_state_1_status: Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
@@ -1823,12 +1824,15 @@ tool:
     action_option_options_rectangle_centered: Rechteck zentriert
     action_option_options_rectangle_centered_status: Rechteck auf den ersten Punkt zentrieren
     action_option_options_solid_centered: Erhebung zentriert
+    action_option_options_circle_by_diameter: Messung nach den Durchmesser
+    action_option_options_circle_by_diameter_status: Den Kreis nach seinem Durchmesser messen
     action_option_options_solid_centered_status: Erhebung auf den ersten Punkt zentrieren
     action_option_options_move_array: Rasterkopien
     action_option_options_move_array_status: Kopieren des Teils in ein rechteckiges Raster
     vcb_length: Länge
     vcb_size: Kotierungen
     vcb_radius: Radius
+    vcb_diameter: Durchmesser
     vcb_distance: Distanz
     error:
       no_direction: Bitte geben Sie eine Richtung mit der Maus an
@@ -1882,7 +1886,7 @@ tool:
       no_material: Kein Material
       no_material_type: "Kein Material des Typs '{{ type }}'"
     error:
-      not_part: Das Zielobjekt ist kein Teil
+      not_part: Das Zielobjekt ist kein Teil (Komponente)
       not_edge: Die Zielfläche ist keine Plattenkante
       not_face: Die Zielfläche ist keine Plattenfläche
       wrong_material_type: "Das Zielteil hat nicht den Typ '{{ type }}'"
@@ -1908,7 +1912,7 @@ tool:
     warning:
       more_entities: "{{ count_used }} Instanzen mit derselben Definition werden geändert"
     error:
-      not_part: Das Zielobjekt ist kein Teil
+      not_part: Das Zielobjekt ist kein Teil (Komponente)
       not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
   smart_export:
     title: Export

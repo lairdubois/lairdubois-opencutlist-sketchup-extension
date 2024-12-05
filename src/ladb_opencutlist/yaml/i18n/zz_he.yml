@@ -5,1610 +5,1622 @@ default:
   minimize: 4 - מזער
   maximize: 5 - הגדל
   cancel: 6 - ביטול
-  validate: 7 - אישור
-  confirm: 8 - לאשר
-  ok: 9 - Ok
-  open: 10 - לפתוח
-  see: 11 - צפייה
-  close: 12 - לסגור
-  clear: 13 - לנקות
-  refresh: 14 - לרענן
-  generate: 15 - לחשב
-  print: 16 - הדפסה
-  export: 17 - ייצוא
-  import: 18 - ייבוא
-  load: 19 - טעינה
-  preview: 20 - סקירה כללית
-  options: 21 - אפשרויות
-  caution: 22 - שים לב
-  remove: 23 - למחוק
-  create: 24 - ליצור
-  duplicate: 25 - כפילות
-  ignore: 26 - לדלג
-  download: 27 - להוריד
-  upgrade: 28 - עדכון
-  copy: 29 - להעתיק
-  select_all: 30 - בחר הכל
-  unselect_all: 31 - בטל בחירה
-  draw: 32 - שרטוט
-  estimate: 33 - להעריך
-  empty_filename: 34 - ללא שם.skp
-  help: 35 - עזרה
-  error: 36 - לתקן!
-  warning: 37 - שים לב
-  tip: 38 - עצה
-  good: 39 - טוב
-  bad: 40 - גרוע
-  by: 41 - ע"י
-  date_format: 42 - d/m/Y G:i
-  date_format_short: 43 - d/m/Y
-  unit_0: 44 - אינצ'ים
-  unit_1: 45 - רגליים
-  unit_2: 46 - מילימטר
-  unit_3: 47 - סנטימטר
-  unit_4: 48 - מטר
-  unit_5: 49 - יארד
-  unit_mass_0: 50 - קילוגרם
-  unit_mass_1: 51 - לירה
-  unit_angle_0: 52 - רמה
-  instance_single: 53 - יחידה
-  instance_plural: 54 - יחידות
-  part_single: 55 - חלק
-  part_plural: 56 - חלקים
-  thickness_layer_single: 57 - שכבה
-  thickness_layer_plural: 58 - שכבות
-  setup_model_units: 59 - הגדרת יחידות במודל
-  load_more: 60 - טען עוד
-  reset_to_app_defaults: 61 - לשחזר ערכים מקוריים
-  constrain_key: 62 - הסטה
-  copy_key_win: 63 - Ctrl
-  copy_key_mac: 64 - אופציה
-  alt_key_win: 65 - Alt
-  alt_key_mac: 66 - פקודה
-  tab_key: 67 - Tab
-  file: 68 - קובץ
-  file_plural: 69 - קבצים
-  stroke_color: 70 - צבע קו
-  fill_color: 71 - צבע מילוי
+  stop: 7 - הפסק
+  validate: 8 - אישור
+  confirm: 9 - לאשר
+  ok: 10 - Ok
+  open: 11 - לפתוח
+  see: 12 - צפייה
+  close: 13 - לסגור
+  clear: 14 - לנקות
+  refresh: 15 - לרענן
+  generate: 16 - לחשב
+  print: 17 - הדפסה
+  export: 18 - ייצוא
+  import: 19 - ייבוא
+  load: 20 - טעינה
+  preview: 21 - סקירה כללית
+  options: 22 - אפשרויות
+  caution: 23 - שים לב
+  remove: 24 - להסיר
+  remove_all: 25 - הסר הכל
+  delete: 26 - למחוק
+  create: 27 - ליצור
+  duplicate: 28 - כפילות
+  ignore: 29 - לדלג
+  download: 30 - להוריד
+  upgrade: 31 - עדכון
+  copy: 32 - להעתיק
+  select_all: 33 - בחר הכל
+  unselect_all: 34 - בטל בחירה
+  draw: 35 - שרטוט
+  estimate: 36 - להעריך
+  empty_filename: 37 - ללא שם.skp
+  help: 38 - עזרה
+  error: 39 - לתקן!
+  warning: 40 - שים לב
+  tip: 41 - עצה
+  good: 42 - טוב
+  bad: 43 - גרוע
+  by: 44 - ע"י
+  date_format: 45 - d/m/Y G:i
+  date_format_short: 46 - d/m/Y
+  unit_0: 47 - אינצ'ים
+  unit_1: 48 - רגליים
+  unit_2: 49 - מילימטר
+  unit_3: 50 - סנטימטר
+  unit_4: 51 - מטר
+  unit_5: 52 - יארד
+  unit_mass_0: 53 - קילוגרם
+  unit_mass_1: 54 - לירה
+  unit_angle_0: 55 - רמה
+  instance_single: 56 - יחידה
+  instance_plural: 57 - יחידות
+  part_single: 58 - חלק
+  part_plural: 59 - חלקים
+  thickness_layer_single: 60 - שכבה
+  thickness_layer_plural: 61 - שכבות
+  setup_model_units: 62 - הגדרת יחידות במודל
+  load_more: 63 - טען עוד
+  reset_to_app_defaults: 64 - לשחזר ערכים מקוריים
+  constrain_key: 65 - הסטה
+  copy_key_win: 66 - Ctrl
+  copy_key_mac: 67 - אופציה
+  alt_key_win: 68 - Alt
+  alt_key_mac: 69 - פקודה
+  tab_key: 70 - Tab
+  file: 71 - קובץ
+  file_plural: 72 - קבצים
+  stroke_color: 73 - צבע קו
+  fill_color: 74 - צבע מילוי
 core:
   menu:
-    submenu: 72 - OpenCutList
+    submenu: 75 - OpenCutList
     item:
-      generate_cutlist: 73 - צור תוכנית חיתוך
-      edit_part_properties: "$t(tab.cutlist.edit_part_properties)"
-      edit_part_axes_properties: "$t(tab.cutlist.edit_part_axes_properties)"
-      edit_part_size_increase_properties: "$t(tab.cutlist.edit_part_size_increase_properties)"
-      edit_part_edges_properties: "$t(tab.cutlist.edit_part_edges_properties)"
-      edit_part_faces_properties: "$t(tab.cutlist.edit_part_faces_properties)"
-      smart_paint: "$t(core.toolbar.command.smart_paint)"
-      smart_axes: "$t(core.toolbar.command.smart_axes)"
-      smart_export: "$t(core.toolbar.command.smart_export)"
-      reset_dialog_position: 82 - אפס את מיקום החלון
+      generate_cutlist: 76 - צור תוכנית חיתוך
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: 82 - ערוך פריט
+      edit_parent_part_instance: 83 - ערוך את הקבוצה/הרכיב שמכיל את הפריט
+      hide_part_instance: 84 - הסתר פריט
+      unhide_part_instance: 85 - חשוף פריט
+      edit_part_instance_properties: 86 - ערוך מאפייני חלק
+      smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_export: $t(core.toolbar.command.smart_export)
+      reset_dialog_position: 91 - אפס את מיקום החלון
   toolbar:
-    name: 83 - OpenCutList
+    name: 92 - OpenCutList
     command:
-      dialog: 84 - OpenCutList
-      smart_paint: 85 - צביעת חלקים
-      smart_axes: 86 - כוון חלקים
-      smart_export: 87 - יצוא חלקים
+      dialog: 93 - OpenCutList
+      smart_draw: 94 - צייר חלקים
+      smart_paint: 95 - צביעת חלקים
+      smart_axes: 96 - כוון חלקים
+      smart_export: 97 - יצוא חלקים
   messagebox:
     dir_override: |
-      88 - "{{ target }}" כבר קיים. האם תרצה להחליף אותו?
+      98 - "{{ target }}" כבר קיים. האם תרצה להחליף אותו?
 
       תיקייה עם אותו שם כבר נמצאת בתיקייה {{ parent }}. אם תחליף אותו, התוכן המקורי יאבד.
   savepanel:
-    export_to_file: 89 - ייצוא לקובץ {{ file_format }}
+    export_to_file: 99 - ייצוא לקובץ {{ file_format }}
   dialog:
-    title: 90 - OpenCutList מאת L'Air du Bois
+    title: 100 - OpenCutList מאת L'Air du Bois
   leftbar:
-    more: 91 - עוד
-    more_docs: 92 - מסמכים
-    more_reviews: 93 - ביקורות
-    more_plans: 94 - תוכניות
-    more_extensions: 95 - תוספים
-    more_update: 96 - עדכונים
+    more: 101 - עוד
+    more_docs: 102 - מסמכים
+    more_reviews: 103 - ביקורות
+    more_plans: 104 - תוכניות
+    more_extensions: 105 - תוספים
+    more_update: 106 - עדכונים
   bottombar:
-    report_a_bug: 97 - דווח על שגיאה
+    report_a_bug: 107 - דווח על שגיאה
   warning:
     dev: |
-      98 - אתה משתמש בגרסת **פיתוח** של *OpenCutList*.
+      108 - אתה משתמש בגרסת **פיתוח** של *OpenCutList*.
       גרסה זו זמינה רק לבדיקה.
       לא מומלץ להשתמש בה בייצור.
 
       לדיווח על שגיאה: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
-    feature_unavailable: 99 - תכונה זו דורשת גרסת SketchUp {{ version }} ומעלה
+    extern: '109 - שגיאה חיצונית: **{{ error }}**'
+    feature_unavailable: 110 - תכונה זו דורשת גרסת SketchUp {{ version }} ומעלה
     failed_export_to: |
-      100 - אירעה שגיאה במהלך הייצוא אל *{{ path }}*.
+      111 - אירעה שגיאה במהלך הייצוא אל *{{ path }}*.
       **{{ error }}**
   success:
-    exported_to: 101 - ייצוא מוצלח אל {{ path }}.
-    copied_to_clipboard: 102 - הועתק ללוח כתיבה
+    exported_to: 112 - ייצוא מוצלח אל {{ path }}.
+    copied_to_clipboard: 113 - הועתק ללוח כתיבה
   event:
-    model_change: 103 - המודל הפעיל השתנה.
-    options_change: 104 - אפשרויות המודל שונו.
-    material_change: 105 - לפחות חומר אחד שונה.
-    selection_change: 106 - הבחירה במודל הפעיל שונתה.
-    layers_change: 107 - התגים במודל הפעיל השתנו.
+    model_change: 114 - המודל הפעיל השתנה.
+    options_change: 115 - אפשרויות המודל שונו.
+    material_change: 116 - לפחות חומר אחד שונה.
+    selection_change: 117 - הבחירה במודל הפעיל שונתה.
+    layers_change: 118 - התגים במודל הפעיל השתנו.
+    drawing_change: 119 - המבנה של המודל הפעיל שונה.
   upgrade:
-    unavailable: 108 - לא ניתן למצוא גרסה אחרונה של *OpenCutList*.
+    unavailable: 120 - לא ניתן למצוא גרסה אחרונה של *OpenCutList*.
     available: |
-      109 - גרסה חדשה של *OpenCutList* זמינה.
+      121 - גרסה חדשה של *OpenCutList* זמינה.
       הורידו אותה כדי לקבל את התכונות העדכניות ביותר!
     up_to_date: |
-      110 - כבר יש לך את הגרסה האחרונה של *OpenCutList*.
+      122 - כבר יש לך את הגרסה האחרונה של *OpenCutList*.
 
       *תשקלו לתת חסות לפרויקט זה כדי לתמוך בנו כלכלית ולעזור לנו לשפר את הפונקציונליות שלו!*
-    downloading: 111 - הורדה בתהליך
-    changelog: 112 - מה חדש?
-    ignore_update: 113 - להתעלם מעדכון זה
-    download_rescue: 114 - בעיות בהורדה?
-    manual_download: 115 - הורדה ידנית
-    zzz: 116 - כרגע אני נח לאחר העדכון. כדי להעיר אותי, עליכם להפעיל מחדש את SketchUp.
+    downloading: 123 - הורדה בתהליך
+    changelog: 124 - מה חדש?
+    ignore_update: 125 - להתעלם מעדכון זה
+    download_rescue: 126 - בעיות בהורדה?
+    manual_download: 127 - הורדה ידנית
+    zzz: 128 - כרגע אני נח לאחר העדכון. כדי להעיר אותי, עליכם להפעיל מחדש את SketchUp.
     success: |
-      117 - עדכון OpenCutList הושלם!
+      129 - עדכון OpenCutList הושלם!
 
       הפעל מחדש את SketchUp להפעלת השינויים.
     error:
-      download: 118 - שגיאה בטעינת הארכיון.
-      unzip: 119 - שגיאה בפתיחת הארכיון.
+      download: 130 - שגיאה בטעינת הארכיון.
+      unzip: 131 - שגיאה בפתיחת הארכיון.
   preset:
-    label: 120 - הגדרות קבועות מראש
-    manage: 121 - נהל הגדרות קבועות מראש
-    save_to: 122 - לשמור ל-
-    restore_from: 123 - שחזר מ-
-    app_defaults: 124 - הגדרות ברירת מחדל
-    user_defaults: 125 - הגדרות ברירת מחדל שלי
-    new: 126 - הגדרות חדשות
+    label: 132 - הגדרות קבועות מראש
+    manage: 133 - נהל הגדרות קבועות מראש
+    save_to: 134 - לשמור ל-
+    restore_from: 135 - שחזר מ-
+    app_defaults: 136 - הגדרות ברירת מחדל
+    user_defaults: 137 - הגדרות ברירת מחדל שלי
+    new: 138 - הגדרות חדשות
     new_prompt: |
-      127 - *יצירת הגדרה קבועה מראש מאפשרת לך לשמור על הגדרות נוכחיות בכל מקום, כך שתוכל לעשות בהן שימוש חוזר בכל התבניות שלך.*
+      139 - *יצירת הגדרה קבועה מראש מאפשרת לך לשמור על הגדרות נוכחיות בכל מקום, כך שתוכל לעשות בהן שימוש חוזר בכל התבניות שלך.*
 
       הזן את שם ההגדרה:
-    delete_confirm_title: 128 - הסרה
-    delete_confirm: 129 - האם אתה בטוח שברצונך למחוק את ההגדרה **"{{ name }}"**?
-    override_confirm_title: 130 - עדכון
-    override_confirm: 131 - האם אתה מאשר לעדכן את ההגדרה **"{{ name }}"** בפרמטרים של הטופס?
-    new_success: 132 - הגדרה **"{{ name }}"** נוצרה
-    override_success: 133 - הגדרה **"{{ name }}"** עודכנה
-    restore_success: 134 - הטופס מולא עם ההגדרה **"{{ name }}"**
-    delete_success: 135 - הגדרה **"{{ name }}"** נמחקה
+    delete_confirm_title: 140 - הסרה
+    delete_confirm: 141 - האם אתה בטוח שברצונך למחוק את ההגדרה **"{{ name }}"**?
+    override_confirm_title: 142 - עדכון
+    override_confirm: 143 - האם אתה מאשר לעדכן את ההגדרה **"{{ name }}"** בפרמטרים של הטופס?
+    new_success: 144 - הגדרה **"{{ name }}"** נוצרה
+    override_success: 145 - הגדרה **"{{ name }}"** עודכנה
+    restore_success: 146 - הטופס מולא עם ההגדרה **"{{ name }}"**
+    delete_success: 147 - הגדרה **"{{ name }}"** נמחקה
     tooltip:
-      save_to: 136 - עדכן הגדרה '{{ name }}'
-      delete: 137 - למחק הגדרה '{{ name }}'
+      save_to: 148 - עדכן הגדרה '{{ name }}'
+      delete: 149 - למחק הגדרה '{{ name }}'
     dictionary:
-      component_textinput_color: 138 - פלטת צבע
-      cutlist_cuttingdiagram1d_options: 139 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: 140 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
-      cutlist_cuttingdiagram2d_options: 141 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: 142 - $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
-      cutlist_export_options: "$t(tab.cutlist.label) / $t(tab.cutlist.export.title)"
-      cutlist_labels_options: "$t(tab.cutlist.label) / $t(tab.cutlist.labels.title)"
-      cutlist_layout_options: "$t(tab.cutlist.label) / $t(tab.cutlist.layout.title)"
-      cutlist_options: "$t(tab.cutlist.label) / $t(default.options)"
-      cutlist_report_options: "$t(tab.cutlist.label) / $t(tab.cutlist.report.title)"
-      cutlist_write2d_options: 148 - $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
-      cutlist_write3d_options: 149 - $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
-      importer_import_options: "$t(tab.importer.label) / $t(default.import)"
-      importer_load_options: "$t(tab.importer.label) / $t(default.open)"
-      materials_material_attributes: "$t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)"
-      materials_options: "$t(tab.materials.label) / $t(default.options)"
-      settings_model: 154 - $t(tab.settings.label) / Modèle
-      tool_smart_paint_options: "$t(core.toolbar.command.smart_paint)"
-      tool_smart_axes_options: "$t(core.toolbar.command.smart_axes)"
-      tool_smart_export_options: "$t(core.toolbar.command.smart_export)"
+      component_textinput_color: 150 - פלטת צבע
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Modèle
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
-    please_wait: 158 - חישוב של עולם של שלום
+    please_wait: 171 - חישוב של עולם של שלום
   component:
     textinput:
-      reset: 159 - אפס את הערך
+      reset: 172 - אפס את הערך
     textinput_color:
-      store: 160 - שמור צבע
-      remove: 161 - תשכח צבע
+      store: 173 - שמור צבע
+      remove: 174 - תשכח צבע
     textinput_code:
-      snippets: 162 - דוגמאות לנוסחאות
-      help: 163 - הקש **@**, כדי לפתוח את רשימת המשתנים.
+      snippets: 175 - דוגמאות לנוסחאות
+      help: 176 - הקש **@**, כדי לפתוח את רשימת המשתנים.
     three_viewer:
-      view: 164 - מבט {{ view }}
-      view_isometric: 165 - איזומטרי
-      view_top: 166 - למלה
-      view_bottom: 167 - למטה
-      view_front: 168 - חזית הפורניר
-      view_back: 169 - גב
-      view_left: 170 - משמאל
-      view_right: 171 - מימין
-      zoom: 172 - קנה מדה {{ zoom }}
-      explode_factor: 173 - גודל פיצוץ
-      toggle_box_helper: 174 - הצג/הסתר תיבה תוחמת
-      toggle_box_dimensions_helper: 175 - הסתר מידות סופיות
-      toggle_axes_helper: 176 - הצג/הסתר צירי חלק
+      view: 177 - מבט {{ view }}
+      view_isometric: 178 - איזומטרי
+      view_top: 179 - למלה
+      view_bottom: 180 - למטה
+      view_front: 181 - לפני
+      view_back: 182 - גב
+      view_left: 183 - משמאל
+      view_right: 184 - מימין
+      zoom: 185 - קנה מדה {{ zoom }}
+      explode_factor: 186 - גודל פיצוץ
+      toggle_box_helper: 187 - הצג/הסתר תיבה תוחמת
+      toggle_box_dimensions_helper: 188 - הסתר מידות סופיות
+      toggle_axes_helper: 189 - הצג/הסתר צירי חלק
   docs:
     error:
       failed_to_load: |
-        177 - לא ניתן לפתוח את התיעוד.
+        190 - לא ניתן לפתוח את התיעוד.
         ודא שאתה מחובר לאינטרנט.
 tab:
   cutlist:
-    label: 178 - מידת חיתוך
-    title: 179 - רשימת חיתוך
+    label: 191 - מידת חיתוך
+    title: 192 - רשימת חיתוך
     help: |
-      180 - בחר את החלקים הדרושים לתוכנית חיתוך ולחץ על כפתור **חשב**.
+      193 - בחר את החלקים הדרושים לתוכנית חיתוך ולחץ על כפתור **חשב**.
       אם לא נעשתה בחירה, כל החלקים הגלויים ייכללו ברשימת החלקים.
-    is_selection: 181 - בחירה בלבד
-    select_part: 182 - בחר חלק
-    select_part_plural: 183 - בחר חלקים
-    material_undefined: 184 - חומר לא מוגדר
-    not_available_std_width: 185 - רוחב לא מוגדר
-    not_available_std_thickness: 186 - עובי לא מוגדר
-    not_available_std_section: 187 - חתך לא מוגדר
-    highlight_part: 188 - ראה את החלק במודל
-    highlight_parts: 189 - ראה את החלקים במודל
-    edit_part_properties: 190 - לערוך מאפייני חלק
-    edit_part_axes_properties: 191 - ערוך את המאפיינים (צירים) של החלק
-    edit_part_size_increase_properties: 192 - ערוך את המאפיינים (מידות יתר) של החלק
-    edit_part_edges_properties: 193 - ערוך את המאפיינים (קאנטים) של החלק
-    edit_part_faces_properties: 194 - עריכת מאפייני חלק (פורנירים)
-    part_drawing_type_1: 195 - מבט 2D קדמי
-    part_drawing_type_2: 196 - מבט 2D אחורי
-    part_drawing_type_3: 197 - 3D
+    is_selection: 194 - בחירה בלבד
+    select_part: 195 - בחר חלק
+    select_part_plural: 196 - בחר חלקים
+    material_undefined: 197 - חומר לא מוגדר
+    not_available_std_width: 198 - רוחב לא מוגדר
+    not_available_std_thickness: 199 - עובי לא מוגדר
+    not_available_std_section: 200 - חתך לא מוגדר
+    highlight_part: 201 - ראה את החלק במודל
+    highlight_parts: 202 - ראה את החלקים במודל
+    edit_part_properties: 203 - לערוך מאפייני חלק
+    edit_part_axes_properties: 204 - ערוך את המאפיינים (צירים) של החלק
+    edit_part_size_increase_properties: 205 - ערוך את המאפיינים (מידות יתר) של החלק
+    edit_part_edges_properties: 206 - ערוך את המאפיינים (קאנטים) של החלק
+    edit_part_faces_properties: 207 - עריכת מאפייני חלק (פורנירים)
+    part_drawing_type_1: 208 - מבט 2D קדמי
+    part_drawing_type_2: 209 - מבט 2D אחורי
+    part_drawing_type_3: 210 - מבט שמאל 2D
+    part_drawing_type_4: 211 - מבט ימין 2D
+    part_drawing_type_5: 212 - מבט פנים 2D
+    part_drawing_type_6: 213 - מבט אחורי 2D
+    part_drawing_type_7: 214 - 3D
     tooltip:
-      show_hide_block: 198 - הצג / הסתר קבוצה
-      scroll_to_block: 199 - גלול לקבוצה
-      not_available_std_width: 200 - הרוחב *{{ std_dimension_real }}* אינו מוגדר ברוחב הסטנדרטי של החומר '{{ material_name }}'
-      not_available_std_thickness: 201 - יהעובי *{{ std_dimension_real }}* אינו מוגדר בעוב הסטנדרטי של החומר '{{ material_name }}'
-      not_available_std_section: 202 - החתך *{{ std_dimension_real }}* אינו מוגדר בחתך הסטנדרטי של החומר '{{ material_name }}'
+      show_hide_block: 215 - הצג / הסתר קבוצה
+      scroll_to_block: 216 - גלול לקבוצה
+      not_available_std_width: 217 - הרוחב *{{ std_dimension_real }}* אינו מוגדר ברוחב הסטנדרטי של החומר '{{ material_name }}'
+      not_available_std_thickness: 218 - יהעובי *{{ std_dimension_real }}* אינו מוגדר בעוב הסטנדרטי של החומר '{{ material_name }}'
+      not_available_std_section: 219 - החתך *{{ std_dimension_real }}* אינו מוגדר בחתך הסטנדרטי של החומר '{{ material_name }}'
       add_std_width_to_material: |
-        203 - להוסיף רוחב *{{ std_dimension }}*
+        220 - להוסיף רוחב *{{ std_dimension }}*
         לחומר '{{ material_name }}'
       add_std_thickness_to_material: |
-        204 - להוסיף עובי *{{ std_dimension }}*
+        221 - להוסיף עובי *{{ std_dimension }}*
         לחומר '{{ material_name }}'
       add_std_section_to_material: |
-        205 - להוסיף חתך *{{ std_dimension }}*
+        222 - להוסיף חתך *{{ std_dimension }}*
         לחומר '{{ material_name }}'
       rounded_std_width: |
-        206 - רוחב *{{ std_dimension }}* מעוגל בדיוק של יחידות המודל.
+        223 - רוחב *{{ std_dimension }}* מעוגל בדיוק של יחידות המודל.
         רוחב בפועל: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
-        207 - עובי *{{ std_dimension }}* מעוגל בדיוק של יחידות המודל.
+        224 - עובי *{{ std_dimension }}* מעוגל בדיוק של יחידות המודל.
         עובי בפועל: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
-        208 - חתך *{{ std_dimension }}* מעוגל בדיוק של יחידות המודל.
+        225 - חתך *{{ std_dimension }}* מעוגל בדיוק של יחידות המודל.
         חתך בפועל: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_footer: 209 - התאם את הדיוק ב-*Model Info* או בדוק את מידות החלקים בקבוצה זו.
-      highlight_part: "$t(tab.cutlist.highlight_part)"
-      highlight_parts: "$t(tab.cutlist.highlight_parts)"
-      edit_part_properties: "$t(tab.cutlist.edit_part_properties)"
-      edit_parts_properties: 213 - עריכת מאפיינים של קבוצת חלקים
-      edit_material: "$t(tab.cutlist.menu.edit_material)"
-      folding_part: 215 - הגדל / מזער
-      material_origin_1: 216 - החומר של החלק מוגדר על מקריו
-      material_origin_2: 217 - החומר של החלק עבר בירושה מאחת האלמנטיים המקוריים
-      material_origin_3: 218 - החומר של החלק עבר בירושה מאחת האלמנטיים הצאצאים
-      orientation_locked_on_axis: 219 - אוריינטציה של החלק קשורה לציריו
-      number_saved: 220 - מספר החלק נשמר
-      number_hidden: 221 - לא ניתן להשתמש במספר '{{ number }}' של החלק מכיוון שהוא כבר מוקצה
-      number_generated: 222 - מספר החלק נוצר באופן אוטומטי
-      resized: 223 - החלק שונה על פי הגדרת מרכיביו
-      flipped: 224 - החלק משתקף בהתאם להגדרות שלו
-      symmetrical: 225 - בחלק הזה לא מופעל זיהוי חלק משתקף
-      ignore_grain_direction: 226 - בחלק הזה מתעלמים מכיוון המרקם
-      auto_oriented: 227 - החלק עבר הכוונה אוטומטית
-      oko_label_filter: 228 - תכלול/אל תכלול תג זה
-      add_label_filter: 229 - לסנן לפי '{{ label }}'
-      remove_label_filter: 230 - הסר סינון לפי '{{ label }}'
-      add_edge_material_name_filter: 231 - לסנן לפי '{{ material_name }}'
-      remove_edge_material_name_filter: 232 - לא לסנן לפי '{{ material_name }}'
-      add_veneer_material_name_filter: 233 - לסנן לפי '{{ material_name }}'
-      remove_veneer_material_name_filter: 234 - לא לסנן לפי '{{ material_name }}'
-      not_aligned_on_axes: 235 - שים לב, יתכן והחלק אינו מכוון נכון ביחס לציריו
-      instance_count_by_part: 236 - החלק נספר בחבילות של **{{ count }}** פריטים.
-      unused_instance_count: 237 - שים לב, כי לא ייעשה שימוש בפריט **{{ count }}** מהחבילה האחרונה.
-      unused_instance_count_plural: 238 - שים לב, כי לא ייעשה שימוש ב-**{{ count }}** פריטים מהחבילה האחרונה.
-      used_instance_count: 239 - פריט **{{ count }}** מתוך {{ total }} בשימוש
-      used_instance_count_plural: 240 - **{{ count }}** פריטים מתוך {{ total }} בשימוש
-      thickness_layer_count: 241 - החלק האחרון בנוי מ-**{{ count }}** שכבות בעובי
-      thickness_layered: 242 - הכמות כאן מייצגת את מספר החלקים שיש לחתוך כדי לקבל את כל השכבות.
-      thickness_layered_equation: 243 - **{{ count }}** *חלק* x **{{ layerCount }}** *שכבות* = **{{ cuttingPartCount }}**
-      thickness_layered_equation_plural: 244 - **{{ count }}** *חלקים* x **{{ layerCount }}** *שכבות* = **{{ cuttingPartCount }}**
-      multiple_content_layers: '245 - שים לב, החלק מורכב מתת-חלקים הקיימים ב-{{ count }} שכבות שונות: <br> {{ layers }}'
-      children_warnings: 246 - שים לב, קיימת התראה {{ count }} בחלקים מקובצים
-      children_warnings_plural: 247 - שים לב, קיימות {{ count }} התראות בחלקים מקובצים
-      children_size_increase: 248 - המידה מוגדלת במידת יתר עבור {{ count }} חלקים מקובצים
-      invalid_final_area: 249 - שים לב, לא ניתן לחשב שטח כולל מכיוון שחלק {{ count }} (מתוך {{ total }}) כולל שטח שגוי
-      invalid_final_area_plural: 250 - שים לב, לא ניתן לחשב שטח כולל מכיוון של-{{ count }} חלקים (מתוך {{ total }}) יש שטח שגוי
-      is_dynamic_attributes_name: 251 - התיאור של החלק מופק מהתכונה 'Name' של הרכיב הדינמי
-      size_increased: 252 - המידה עלתה ב-{{ value }}
-      has_edges: 253 - החלק מכיל קאנט {{ count }}
-      has_edges_plural: 254 - החלק מכיל {{ count }} קאנטים
-      has_faces: 255 - החלק מכיל משטח פורניר {{ count }}
-      has_faces_plural: 256 - החלק מכיל {{ count }} משטחי פורניר
-      edge_decremented: 257 - עובי קאנט מופחת ({{ decrement }})
-      edge_ymin: 258 - קאנט לאורך 1
-      edge_ymax: 259 - קאנט לאורך 2
-      edge_xmin: 260 - קאנט לרוחב 1
-      edge_xmax: 261 - קאנט לרוחב 2
-      face_zmin: 262 - גב
-      face_zmax: 263 - חזית הפורניר
-      dblclick_to_copy_all_edges: 264 - לחיצה כפולה כאן כדי להעתיק את הערך לכל הקאנטים
-      dblclick_to_copy_all_faces: 265 - לחץ פעמיים כאן כדי לשכפל ערך זה למשטח אחר
-      dblclick_to_sort_axes: 266 - לחץ פעמיים כאן כדי לסדר מחדש את הצירים באופן אוטומטי בהתאם למידות החלק
-      part_axes: 267 - צירים פנימיים של החלק
-      select_unselect_all_parts: 268 - בחר / בטל את כל החלקים בקבוצה
-      select_parts_in_cutlist: 269 - בחר את החלק בתוכנית חיתוך
-      select_parts_in_cutlist_plural: 270 - בחר {{ count }} חלקים בתוכנית חיתוך
-      setup_group_cuttingdiagram: 271 - הגדר את הפריסה של '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
-      open_part_url: 272 - פתח קישור של החלק
+      rounded_std_footer: 226 - התאם את הדיוק ב-*Model Info* או בדוק את מידות החלקים בקבוצה זו.
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: 230 - עריכת מאפיינים של קבוצת חלקים
+      edit_material: $t(tab.cutlist.menu.edit_material)
+      folding_part: 232 - הגדל / מזער
+      material_origin_1: 233 - החומר של החלק מוגדר על מקריו
+      material_origin_2: 234 - החומר של החלק עבר בירושה מאחת האלמנטיים המקוריים
+      material_origin_3: 235 - החומר של החלק עבר בירושה מאחת האלמנטיים הצאצאים
+      orientation_locked_on_axis: 236 - אוריינטציה של החלק קשורה לציריו
+      number_saved: 237 - מספר החלק נשמר
+      number_hidden: 238 - לא ניתן להשתמש במספר '{{ number }}' של החלק מכיוון שהוא כבר מוקצה
+      number_generated: 239 - מספר החלק נוצר באופן אוטומטי
+      resized: 240 - החלק שונה על פי הגדרת מרכיביו
+      flipped: 241 - החלק משתקף בהתאם להגדרות שלו
+      symmetrical: 242 - בחלק הזה לא מופעל זיהוי חלק משתקף
+      ignore_grain_direction: 243 - בחלק הזה מתעלמים מכיוון המרקם
+      auto_oriented: 244 - החלק עבר הכוונה אוטומטית
+      oko_label_filter: 245 - תכלול/אל תכלול תג זה
+      add_label_filter: 246 - לסנן לפי '{{ label }}'
+      remove_label_filter: 247 - הסר סינון לפי '{{ label }}'
+      add_edge_material_name_filter: 248 - לסנן לפי '{{ material_name }}'
+      remove_edge_material_name_filter: 249 - לא לסנן לפי '{{ material_name }}'
+      add_veneer_material_name_filter: 250 - לסנן לפי '{{ material_name }}'
+      remove_veneer_material_name_filter: 251 - לא לסנן לפי '{{ material_name }}'
+      not_aligned_on_axes: 252 - שים לב, יתכן והחלק אינו מכוון נכון ביחס לציריו
+      instance_count_by_part: 253 - החלק נספר בחבילות של **{{ count }}** פריטים.
+      unused_instance_count: 254 - שים לב, כי לא ייעשה שימוש בפריט **{{ count }}** מהחבילה האחרונה.
+      unused_instance_count_plural: 255 - שים לב, כי לא ייעשה שימוש ב-**{{ count }}** פריטים מהחבילה האחרונה.
+      used_instance_count: 256 - פריט **{{ count }}** מתוך {{ total }} בשימוש
+      used_instance_count_plural: 257 - **{{ count }}** פריטים מתוך {{ total }} בשימוש
+      thickness_layer_count: 258 - החלק האחרון בנוי מ-**{{ count }}** שכבות בעובי
+      thickness_layered: 259 - הכמות כאן מייצגת את מספר החלקים שיש לחתוך כדי לקבל את כל השכבות.
+      thickness_layered_equation: 260 - **{{ count }}** *חלק* x **{{ layerCount }}** *שכבות* = **{{ cuttingPartCount }}**
+      thickness_layered_equation_plural: 261 - **{{ count }}** *חלקים* x **{{ layerCount }}** *שכבות* = **{{ cuttingPartCount }}**
+      multiple_content_layers: '262 - שים לב, החלק מורכב מתת-חלקים הקיימים ב-{{ count }} שכבות שונות: <br> {{ layers }}'
+      children_warnings: 263 - שים לב, קיימת התראה {{ count }} בחלקים מקובצים
+      children_warnings_plural: 264 - שים לב, קיימות {{ count }} התראות בחלקים מקובצים
+      children_size_increase: 265 - המידה מוגדלת במידת יתר עבור {{ count }} חלקים מקובצים
+      invalid_final_area: 266 - שים לב, לא ניתן לחשב שטח כולל מכיוון שחלק {{ count }} (מתוך {{ total }}) כולל שטח שגוי
+      invalid_final_area_plural: 267 - שים לב, לא ניתן לחשב שטח כולל מכיוון של-{{ count }} חלקים (מתוך {{ total }}) יש שטח שגוי
+      is_dynamic_attributes_name: 268 - התיאור של החלק מופק מהתכונה 'Name' של הרכיב הדינמי
+      size_increased: 269 - המידה עלתה ב-{{ value }}
+      has_edges: 270 - החלק מכיל קאנט {{ count }}
+      has_edges_plural: 271 - החלק מכיל {{ count }} קאנטים
+      has_faces: 272 - החלק מכיל משטח פורניר {{ count }}
+      has_faces_plural: 273 - החלק מכיל {{ count }} משטחי פורניר
+      edge_decremented: 274 - עובי קאנט מופחת ({{ decrement }})
+      edge_ymin: 275 - קאנט לאורך 1
+      edge_ymax: 276 - קאנט לאורך 2
+      edge_xmin: 277 - קאנט לרוחב 1
+      edge_xmax: 278 - קאנט לרוחב 2
+      face_zmin: 279 - גב
+      face_zmax: 280 - חזית הפורניר
+      dblclick_to_copy_all_edges: 281 - לחיצה כפולה כאן כדי להעתיק את הערך לכל הקאנטים
+      dblclick_to_copy_all_faces: 282 - לחץ פעמיים כאן כדי לשכפל ערך זה למשטח אחר
+      dblclick_to_sort_axes: 283 - לחץ פעמיים כאן כדי לסדר מחדש את הצירים באופן אוטומטי בהתאם למידות החלק
+      part_axes: 284 - צירים פנימיים של החלק
+      select_unselect_all_parts: 285 - בחר / בטל את כל החלקים בקבוצה
+      select_parts_in_cutlist: 286 - בחר את החלק בתוכנית חיתוך
+      select_parts_in_cutlist_plural: 287 - בחר {{ count }} חלקים בתוכנית חיתוך
+      setup_group_cuttingdiagram: 288 - הגדר את הפריסה של '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
+      setup_group_packing: 289 - הגדר את הפריסה של '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
+      open_part_url: 290 - פתח קישור של החלק
     menu:
-      show_all_groups: 273 - הצג את כל הקבוצות
-      hide_all_other_groups: 274 - הסתר את כל שאר הקבוצות
-      numbers_save: 275 - שמור את מספרי החלקים
-      numbers_reset: 276 - עדכן את מספרי החלקים
-      highlight_parts: "$t(tab.cutlist.highlight_parts)"
-      write_2d: 278 - מבט 2D
-      write_3d: 279 - שרטוט 3D
-      write_2d_parts: 280 - ייצא חלקים למבט 2D
-      write_3d_parts: 281 - ייצוא חלקים למבט 3D
-      group_write_2d_parts: 282 - ייצא חלקי קבוצה למבט 2D
-      group_write_3d_parts: 283 - ייצא חלקי קבוצה למבט 3D
-      group_layout_parts: 284 - הדפס שרטוט הרכבה של חלקי קבוצה
-      group_numbers_save: 285 - שמור את מספרי החלקים בקבוצה
-      group_numbers_reset: 286 - עדכן את מספרי החלקים בקבוצה
-      group_cuttingdiagram: 287 - תוכנית חיתוך
-      group_labels: 288 - הדפס תוויות עבור חלקים בקבוצה
-      edit_material: 289 - ערוך חומר '{{ material_name }}'
-      expand_all: 290 - פתח את כל השורות
-      collapse_all: 291 - קפל את כל השורות
-      reset_prices: 292 - איפוס מחירים של כל החלקים
+      show_all_groups: 291 - הצג את כל הקבוצות
+      hide_all_other_groups: 292 - הסתר את כל שאר הקבוצות
+      numbers_save: 293 - שמור את מספרי החלקים
+      numbers_reset: 294 - עדכן את מספרי החלקים
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: 296 - הדפס תוויות
+      write_2d: 297 - מבט 2D
+      write_3d: 298 - שרטוט 3D
+      write_2d_parts: 299 - ייצא חלקים למבט 2D
+      write_3d_parts: 300 - ייצוא חלקים למבט 3D
+      group_write_2d_parts: 301 - ייצא חלקי קבוצה למבט 2D
+      group_write_3d_parts: 302 - ייצא חלקי קבוצה למבט 3D
+      group_layout_parts: 303 - הדפס שרטוט הרכבה של חלקי קבוצה
+      group_numbers_save: 304 - שמור את מספרי החלקים בקבוצה
+      group_numbers_reset: 305 - עדכן את מספרי החלקים בקבוצה
+      group_cuttingdiagram: 306 - תוכנית חיתוך
+      group_packing: 307 - תוכנית חיתוך
+      group_labels: 308 - הדפס תוויות עבור חלקים בקבוצה
+      edit_material: 309 - ערוך חומר '{{ material_name }}'
+      expand_all: 310 - פתח את כל השורות
+      collapse_all: 311 - קפל את כל השורות
+      reset_prices: 312 - איפוס מחירים של כל החלקים
       reset_prices_confirm: |
-        293 - אתה עומד לאפס את המחירים של כל החלקים.
+        313 - אתה עומד לאפס את המחירים של כל החלקים.
         פעולה זו היא סופית. **כל המחירים יאופסו.**
         אשר כדי להמשיך.
-      reset_prices_success: 294 - המחירים של כל החלקים אופסו.
+      reset_prices_success: 314 - המחירים של כל החלקים אופסו.
     edit_part:
-      title: 295 - מאפייני חלק '{{ name }}'
-      title_multiple: 296 - מאפייני קבוצת חלקים
-      multiple_alert: 297 - מאפייני קבוצה של {{ part_count }} חלקים.
-      general: 298 - כללי
-      extra_help: 299 - רשימת מאפיינים ספציפיים לסוג החומר "**$t(tab.materials.type_{{ material_type }})**".
-      edges: 300 - קאנטים
-      faces: 301 - פורנירים
-      name: 302 - תיאור
-      material: 303 - חומר
-      cumulable: 304 - לצבור
-      cumulable_help: '305 - אם האפשרות מופעלת, **אורך** או **רוחב** ייחשב בתוכנית חיתוך כ-**אורך** או **רוחב** כפול הכמות.
-
-        '
-      cumulable_0: 306 - לא לצבור
-      cumulable_1: 307 - לצבור לאורך
-      cumulable_2: 308 - לצבור לרוחב
-      instance_count_by_part: 309 - אריזה
+      title: 315 - מאפייני חלק '{{ name }}'
+      title_multiple: 316 - מאפייני קבוצת חלקים
+      multiple_alert: 317 - מאפייני קבוצה של {{ part_count }} חלקים.
+      general: 318 - כללי
+      extra_help: 319 - רשימת מאפיינים ספציפיים לסוג החומר "**$t(tab.materials.type_{{ material_type }})**".
+      edges: 320 - קאנטים
+      faces: 321 - פורנירים
+      name: 322 - תיאור
+      material: 323 - חומר
+      cumulable: 324 - לצבור
+      cumulable_help: |
+        325 - אם האפשרות מופעלת, **אורך** או **רוחב** ייחשב בתוכנית חיתוך כ-**אורך** או **רוחב** כפול הכמות.
+      cumulable_0: 326 - לא לצבור
+      cumulable_1: 327 - לצבור לאורך
+      cumulable_2: 328 - לצבור לרוחב
+      instance_count_by_part: 329 - אריזה
       instance_count_by_part_help: |
-        310 - מאפשר להחשיב את החלק כ-*חבילה* של אחד או יותר *פריטים*.
+        330 - מאפשר להחשיב את החלק כ-*חבילה* של אחד או יותר *פריטים*.
         הכמות המשויכת לחלק בתוכנית חיתוך תייצג לכן את מספר החבילות השלמות הדרושות להשגת מספר הפריטים שנמצאים בפועל במודל.
 
         *דוגמה: לספור רק חלק 1 בלבד עבור זוג מסילות מגירה:
         חבילה = 2 פריטים / חלק*
-      instance_count_by_part_1: 311 - פריט 1 בחלק
-      instance_count_by_part_2: 312 - 2 פריטים בחלק
-      mass: 313 - משקל
-      mass_help: 314 - המסה של החלק תשמש בעת יצירת **הערכה**.
-      price: 315 - מחיר
-      price_help: 316 - המחיר של החלק ישמש בעת הפקת **הערכה**.
-      thickness_layer_count: 317 - Nb של שכבות
+      instance_count_by_part_1: 331 - פריט 1 בחלק
+      instance_count_by_part_2: 332 - 2 פריטים בחלק
+      mass: 333 - משקל
+      mass_help: 334 - המסה של החלק תשמש בעת יצירת **הערכה**.
+      price: 335 - מחיר
+      price_help: 336 - המחיר של החלק ישמש בעת הפקת **הערכה**.
+      thickness_layer_count: 337 - Nb של שכבות
       thickness_layer_count_help: |
-        318 - הגדירו כאן את מספר השכבות המחלקות את החלק המצויר בעוביו.
+        338 - הגדירו כאן את מספר השכבות המחלקות את החלק המצויר בעוביו.
 
         *דוגמה:* אם עבור חלק מצויר בעובי *38 מ"מ*, ברצונך להשיג זאת על ידי הדבקת שני לוחות של *19 מ"מ*, ציין **2** בשדה זה.
         *OpenCutList יספור 2 חתיכות בעובי 19 מ"מ במקום חתיכה אחת בעובי 38 מ"מ.*
-      description: 319 - תיאור
-      description_help: '320 - *התיאור* מאפשר לך לספק מידע מותאם אישית על כל הגדרת חלק.
-
-        '
-      url: 321 - קישור
-      url_help: '322 - *קישור* מספק קישור ספציפי לעמוד חיצוני לכל הגדרת החלק.
-
-        '
-      tags: 323 - תגים
+      description: 339 - תיאור
+      description_help: |
+        340 - *התיאור* מאפשר לך לספק מידע מותאם אישית על כל הגדרת חלק.
+      url: 341 - קישור
+      url_help: |
+        342 - *קישור* מספק קישור ספציפי לעמוד חיצוני לכל הגדרת החלק.
+      tags: 343 - תגים
       tags_help: |
-        324 - *תגים* מאפשרים לך להוסיף מילות מפתח מותאמות אישית לכל הגדרת חלק.
+        344 - *תגים* מאפשרים לך להוסיף מילות מפתח מותאמות אישית לכל הגדרת חלק.
         אתה יכול להוסיף כמה תגים שאתה רוצה.
         לאחר מכן ניתן לסנן את החלקים הגלויים ברשימת החלקים שלך מול תגים אלה.
-      tags_multiple_info: 325 - רק תגים נפוצים מוצגים
-      orientation: 326 - אורינטציה
-      orientation_locked_on_axis: 327 - נעילת אורינטציה של צירי החלק
+      tags_multiple_info: 345 - רק תגים נפוצים מוצגים
+      orientation: 346 - אורינטציה
+      orientation_locked_on_axis: 347 - נעילת אורינטציה של צירי החלק
       orientation_locked_on_axis_help: |
-        328 - אם אפשרות זו מופעלת, אז *אורינטציה אוטומטית של חלקים* לא ישפיע על החלק,
+        348 - אם אפשרות זו מופעלת, אז *אורינטציה אוטומטית של חלקים* לא ישפיע על החלק,
 
         מכאן, במערכת הקואורדינטות המקומית:
         - *אורך* תואם את הציר <span style='color:red'>אדום</span>
         - *רוחב* תואם את הציר <span style='color:green'>ירוק</span>
         - *עובי* תואם את הציר <span style='color:blue'>כחול</span>
-      symmetrical: 329 - השבת זיהוי חלקים משתקפים
-      symmetrical_help: '330 - אם התיבה מסומנת, זיהוי *חלק משתקף* לא יופעל.
-
-        '
-      ignore_grain_direction: 331 - אל תשים לב על כיוון המרקם
-      ignore_grain_direction_help: '332 - אם תיבה זו מסומנת, כיוון המרקם בחלק זה מתעלם.
-
-        '
-      size_increase: 333 - תוספות
+      symmetrical: 349 - השבת זיהוי חלקים משתקפים
+      symmetrical_help: |
+        350 - אם התיבה מסומנת, זיהוי *חלק משתקף* לא יופעל.
+      ignore_grain_direction: 351 - אל תשים לב על כיוון המרקם
+      ignore_grain_direction_help: |
+        352 - אם תיבה זו מסומנת, כיוון המרקם בחלק זה מתעלם.
+      size_increase: 353 - תוספות
       size_increase_help: |
-        334 - תוספות מאפשרות להגדיל מידות מחושבות של החלק.
+        354 - תוספות מאפשרות להגדיל מידות מחושבות של החלק.
         (*דוגמה: תוספת חייבת לקחת בחשבון את גודל פאנל, כרכוב או עקמומיות הקיר.*)
-      length_increase: 335 - תוספת לאורך
-      length_increase_help: 336 - תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
-      width_increase: 337 - תוספת לרוחב
-      width_increase_help: 338 - תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.
-      thickness_increase: 339 - תוספת לעובי
-      thickness_increase_help: 340 - תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**.
-      axes: 341 - צירים
-      axes_help: 342 - הגדר את המידות כך שיתאימו לצבעי הציר של החלק.
+      length_increase: 355 - תוספת לאורך
+      length_increase_help: 356 - תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
+      width_increase: 357 - תוספת לרוחב
+      width_increase_help: 358 - תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.
+      thickness_increase: 359 - תוספת לעובי
+      thickness_increase_help: 360 - תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**.
+      axes: 361 - צירים
+      axes_help: 362 - הגדר את המידות כך שיתאימו לצבעי הציר של החלק.
       axes_tip: |
-        343 - שים לב, אם האפשרות *אורינטציה אוטומטית של חלקים* אינה פעילה או שהחלק *נעול לאורך ציריו*, אז:
+        363 - שים לב, אם האפשרות *אורינטציה אוטומטית של חלקים* אינה פעילה או שהחלק *נעול לאורך ציריו*, אז:
         - **אורך** תואם את הציר <strong style='color:red'>אדום</strong>
         - **רוחב** תואם את הציר <strong style='color:green'>ירוק</strong>
         - **עובי** תואם את הציר <strong style='color:blue'>כחול</strong>
-      axes_origin_position_none: 344 - לא לשנות ראשית הצירים
-      axes_origin_position_min: 345 - מיקום ראשית הצירים לפי זווית
-      axes_origin_position_center: 346 - מיקום ראשית הצירים במרכז
-      axes_origin_position_front_min: 347 - תניח את ראשית הצירים בקצה החזית
-      axes_origin_position_front_center: 348 - תניח את ראשית הצירים במרכז החזית
-      over_length: 349 - לכל האורך
-      over_width: 350 - לכל הרוחב
-      edge_disabled_help: 351 - לא ניתן להגדיר את הקאנט מכיוון שבמודל לא נמצא משטח שכולל חומר הקאנט.
-      face_disabled_help: 352 - משטח זה אינו ניתן להגדרה מכיוון שלא זוהו פנים נושאי חומר בקצה זה של החלק בדגם.
-      multiple_values: 353 - ערכים מרובים
-      loading_preview: 354 - טוען תצוגה מקדימה
+      axes_origin_position_none: 364 - לא לשנות ראשית הצירים
+      axes_origin_position_min: 365 - מיקום ראשית הצירים לפי זווית
+      axes_origin_position_center: 366 - מיקום ראשית הצירים במרכז
+      axes_origin_position_front_min: 367 - תניח את ראשית הצירים בקצה החזית
+      axes_origin_position_front_center: 368 - תניח את ראשית הצירים במרכז החזית
+      over_length: 369 - לכל האורך
+      over_width: 370 - לכל הרוחב
+      edge_disabled_help: 371 - לא ניתן להגדיר את הקאנט מכיוון שבמודל לא נמצא משטח שכולל חומר הקאנט.
+      face_disabled_help: 372 - משטח זה אינו ניתן להגדרה מכיוון שלא זוהו פנים נושאי חומר בקצה זה של החלק בדגם.
+      multiple_values: 373 - ערכים מרובים
+      loading_preview: 374 - טוען תצוגה מקדימה
     option:
-      auto_orient: 355 - אורינטציה אוטומטית של חלקים
+      auto_orient: 375 - אורינטציה אוטומטית של חלקים
       auto_orient_help: |
-        356 - אם נבחרה אפשרות זו, מידות החלקים ממוינים כך שהגדול ביותר הוא *אורך* והקטן ביותר הוא *עובי*.
+        376 - אם נבחרה אפשרות זו, מידות החלקים ממוינים כך שהגדול ביותר הוא *אורך* והקטן ביותר הוא *עובי*.
 
         אם האופציה אינה פעילה, צירי החלק יכוונו באופן הבא
         - *אורך* יהיה על הציר <span style='color:red'>אדום</span>
         - *רוחב* יהיה על הציר <span style='color:green'>ירוק</span>
         - *עובי* יהיה על הציר <span style='color:blue'>כחול</span>
-      flipped_detection: 357 - זיהוי חלקים משתקפים
-      flipped_detection_help: '358 - אם נבחרת אפשרות זו, חלקים משתקפים יאותרו ויוצגו כחלק חדש.
-
-        '
-      smart_material: 359 - הגדרת חומר *חכמה*
-      smart_material_help: 360 - אם האפשרות מופעלת, ניתן להקצות לחלקים שאין להם חומר מוגדר את החומר העיקרי של אלמנטים צאצאים או את זה שעובר בירושה מאלמנטים האב שלהם.
-      dynamic_attributes_name: 361 - השתמש בתכונה *Name* של רכיבים דינמיים
+      flipped_detection: 377 - זיהוי חלקים משתקפים
+      flipped_detection_help: |
+        378 - אם נבחרת אפשרות זו, חלקים משתקפים יאותרו ויוצגו כחלק חדש.
+      smart_material: 379 - הגדרת חומר *חכמה*
+      smart_material_help: 380 - אם האפשרות מופעלת, ניתן להקצות לחלקים שאין להם חומר מוגדר את החומר העיקרי של אלמנטים צאצאים או את זה שעובר בירושה מאלמנטים האב שלהם.
+      dynamic_attributes_name: 381 - השתמש בתכונה *Name* של רכיבים דינמיים
       dynamic_attributes_name_help: |
-        362 - אם האפשרות מופעלת, ייעוד החלקים שהם רכיבים דינמיים יחולץ מהתכונה *Name* אם היא מוגדרת.
+        382 - אם האפשרות מופעלת, ייעוד החלקים שהם רכיבים דינמיים יחולץ מהתכונה *Name* אם היא מוגדרת.
 
         <i class='ladb-opencutlist-icon-warning'></i> חלקים עם אותה הגדרה יופרדו, אם לתכונה *Name* אין אותו ערך.
-      part_number_with_letters: 363 - השתמש באותיות כדי למספר חלקים
-      part_number_with_letters_help: 364 - אם האפשרות מופעלת, חלקים בקבוצה ממוספרים באמצעות אותיות (A, B, C, ... Z, AA, AB, ...).
-      part_number_sequence_by_group: 365 - מספור של כל קבוצה
-      part_number_sequence_by_group_help: 366 - אם האפשרות מופעלת, מספור החלקים מאופס ל- 1 (או A) עבור כל קבוצה (רשימת חלקים בעלי אותו חומר ועובי).
-      part_folding: 367 - קבץ מחדש חלקים זהים
+      part_number_with_letters: 383 - השתמש באותיות כדי למספר חלקים
+      part_number_with_letters_help: 384 - אם האפשרות מופעלת, חלקים בקבוצה ממוספרים באמצעות אותיות (A, B, C, ... Z, AA, AB, ...).
+      part_number_sequence_by_group: 385 - מספור של כל קבוצה
+      part_number_sequence_by_group_help: 386 - אם האפשרות מופעלת, מספור החלקים מאופס ל- 1 (או A) עבור כל קבוצה (רשימת חלקים בעלי אותו חומר ועובי).
+      part_folding: 387 - קבץ מחדש חלקים זהים
       part_folding_help: |
-        368 - אם אפשרות זו מופעלת, חלקים עשויים מ-**מטר קוב, מטר מרובע או מטר רץ**, בעלי **אותן מידות כלליות**, עם **אותם תגים** ו**אותו משטח מוגמר** *( אם התצוגה של משטח זה לא מוסתרת)* תקובץ על אותה שורה ברשימת החלקים*.
+        388 - אם אפשרות זו מופעלת, חלקים עשויים מ-**מטר קוב, מטר מרובע או מטר רץ**, בעלי **אותן מידות כלליות**, עם **אותם תגים** ו**אותו משטח מוגמר** *( אם התצוגה של משטח זה לא מוסתרת)* תקובץ על אותה שורה ברשימת החלקים*.
 
         החלקים עדיין ייחשבו שונים למטרות תיוג ותוכנית חיתוך.
-      hide_entity_names: 369 - הסתר שמות אדגם
-      hide_entity_names_help: 370 - אם האפשרות מופעלת, **שמות מופעים** של החלקים אינם מוצגים.
-      hide_descriptions: 371 - הסתר תיאורים
-      hide_descriptions_help: 372 - אם בוחרים באפשרות זו, **התיאורים** המוצבים על החלקים לא יוצגו.
-      hide_tags: 373 - הסתר תגים
-      hide_tags_help: 374 - אם אפשרות זו מופעלת, **תגים** המוצבים על החלקים לא יוצגו.
-      hide_cutting_dimensions: 375 - הסתר מידות חיתוך
-      hide_cutting_dimensions_help: 376 - אם האפשרות מופעלת, מידות **חיתוך** של החלקים אינם מוצגים.
-      hide_bbox_dimensions: 377 - הסתר מידות סופיות
-      hide_bbox_dimensions_help: 378 - אם האפשרות מופעלת, מידות **סופיות** של החלקים אינם מוצגים.
-      hide_final_areas: 379 - הסתר שטח בפועל של *מטר מרובע*
-      hide_final_areas_help: 380 - אם האפשרות מופעלת, **שטח בפועל** של חלקים מסוג *מטר מרובע* אינו מוצג.
-      hide_edges: 381 - הסתר עמודות קאנטים
-      hide_edges_help: 382 - אם האפשרות מופעלת, **עמודות קאנטים** של חלקים מסוג *מטר מרובע* אינן מוצגות.
-      hide_faces: 383 - הסתר עמודי פורניר
-      hide_faces_help: 384 - אם אפשרות זו מופעלת, **עמודות פורניר** של החלקים מסוג *מטר מרובע* לא יוצגו.
-      hide_material_colors: 385 - הסתר צבעי החומר
-      hide_material_colors_help: 386 - אם אפשרות זו מופעלת, צבעי החומר לא יוצגו.
-      minimize_on_highlight: 387 - כווץ אחרי *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: 388 - אם האפשרות מופעלת, חלון OpenCutList ימוזער כאשר משתמשים בפונקציה *'$t(tab.cutlist.highlight_part)'*.
-      general: 389 - כללי
-      part_order_strategy: 390 - מיון חלקים
+      hide_entity_names: 389 - הסתר שמות אדגם
+      hide_entity_names_help: 390 - אם האפשרות מופעלת, **שמות מופעים** של החלקים אינם מוצגים.
+      hide_descriptions: 391 - הסתר תיאורים
+      hide_descriptions_help: 392 - אם בוחרים באפשרות זו, **התיאורים** המוצבים על החלקים לא יוצגו.
+      hide_tags: 393 - הסתר תגים
+      hide_tags_help: 394 - אם אפשרות זו מופעלת, **תגים** המוצבים על החלקים לא יוצגו.
+      hide_cutting_dimensions: 395 - הסתר מידות חיתוך
+      hide_cutting_dimensions_help: 396 - אם האפשרות מופעלת, מידות **חיתוך** של החלקים אינם מוצגים.
+      hide_bbox_dimensions: 397 - הסתר מידות סופיות
+      hide_bbox_dimensions_help: 398 - אם האפשרות מופעלת, מידות **סופיות** של החלקים אינם מוצגים.
+      hide_final_areas: 399 - הסתר שטח בפועל של *מטר מרובע*
+      hide_final_areas_help: 400 - אם האפשרות מופעלת, **שטח בפועל** של חלקים מסוג *מטר מרובע* אינו מוצג.
+      hide_edges: 401 - הסתר עמודות קאנטים
+      hide_edges_help: 402 - אם האפשרות מופעלת, **עמודות קאנטים** של חלקים מסוג *מטר מרובע* אינן מוצגות.
+      hide_faces: 403 - הסתר עמודי פורניר
+      hide_faces_help: 404 - אם אפשרות זו מופעלת, **עמודות פורניר** של החלקים מסוג *מטר מרובע* לא יוצגו.
+      hide_material_colors: 405 - הסתר צבעי החומר
+      hide_material_colors_help: 406 - אם אפשרות זו מופעלת, צבעי החומר לא יוצגו.
+      minimize_on_highlight: 407 - כווץ אחרי *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: 408 - אם האפשרות מופעלת, חלון OpenCutList ימוזער כאשר משתמשים בפונקציה *'$t(tab.cutlist.highlight_part)'*.
+      general: 409 - כללי
+      part_order_strategy: 410 - מיון חלקים
       part_order_strategy_help: |
-        391 - סדר מחדש את המאפיינים הבאים כדי להגדיר מיון לחלקים בכל קבוצה.
+        411 - סדר מחדש את המאפיינים הבאים כדי להגדיר מיון לחלקים בכל קבוצה.
         ניתן למיין מאפיינים לפי סדר <i class="ladb-opencutlist-icon-sort-asc"></i> *עולה* או <i class="ladb-opencutlist-icon-sort-desc"></i> *יורד*.
-      dimension_column_order_strategy: 392 - סדר עמודות
-      dimension_column_order_strategy_help: '393 - סדר מחדש את המאפיינים הבאים כדי להגדיר את סדר התצוגה של עמודות המידות.
-
-        '
-      property_thickness: 394 - עובי
-      property_length: 395 - אורך
-      property_width: 396 - רוחב
-      property_name: 397 - תיאור
-      property_count: 398 - כמות
-      property_edge_pattern: 399 - כמות קאנטים
-      property_tags: 400 - תגים
-      property_thickness_layer_count: 401 - מספר שכבות
-      tags: 402 - תגים
-      tags_help: 403 - רשימה מותאמת אישית של תגים המוצעים בחלון מאפייני החלק.
-      tags_placeholder: 404 - הוסף תג
+      dimension_column_order_strategy: 412 - סדר עמודות
+      dimension_column_order_strategy_help: |
+        413 - סדר מחדש את המאפיינים הבאים כדי להגדיר את סדר התצוגה של עמודות המידות.
+      property_thickness: 414 - עובי
+      property_length: 415 - אורך
+      property_width: 416 - רוחב
+      property_name: 417 - תיאור
+      property_count: 418 - כמות
+      property_edge_pattern: 419 - כמות קאנטים
+      property_tags: 420 - תגים
+      property_thickness_layer_count: 421 - מספר שכבות
+      tags: 422 - תגים
+      tags_help: 423 - רשימה מותאמת אישית של תגים המוצעים בחלון מאפייני החלק.
+      tags_placeholder: 424 - הוסף תג
     list:
-      filters: 405 - סינון
-      filters_warning_0: 406 - סינון הזה מסתיר את כל החלקים!
-      filters_warning: 407 - הסינון מציג רק חלק **{{ count }}** מתוך {{ total }}.
-      filters_warning_plural: 408 - הסינון מציג רק חלקים **{{ count }}** מתוך {{ total }}.
-      edge_material_names_filter: 409 - סינון לפי חומר קאנט
-      veneer_material_names_filter: 410 - סינון חומרי פורניר
-      tags_filter: 411 - סנן לפי תגים
-      dimensions_help: 412 - הבנת מידות
-      summary: 413 - חישוב
-      material_type: 414 - סוג
-      material_thickness: 415 - חומר / עובי
-      part_count: 416 - כמות חלקים
-      area: 417 - שטח
-      area_short: 418 - משטח
-      volume: 419 - נפח
-      number: 420 - מס'
-      name: 421 - תיאור
-      count: 422 - כמות
-      cutting: 423 - מידת חיתוך
-      bbox: 424 - מידה כללית
-      final: 425 - בפועל
-      total_cutting: 426 - סה"כ בחיתוך
-      total_final: 427 - סה"כ בפועל
-      length: 428 - אורך
-      length_short: '429 - אורך:'
-      width: 430 - רוחב
-      width_short: '431 - רוחב:'
-      thickness: 432 - עובי
-      thickness_short: '433 - עובי:'
-      edges: 434 - קאנטים
-      faces: 435 - פורנירים
+      filters: 425 - סינון
+      filters_warning_0: 426 - סינון הזה מסתיר את כל החלקים!
+      filters_warning: 427 - הסינון מציג רק חלק **{{ count }}** מתוך {{ total }}.
+      filters_warning_plural: 428 - הסינון מציג רק חלקים **{{ count }}** מתוך {{ total }}.
+      edge_material_names_filter: 429 - סינון לפי חומר קאנט
+      veneer_material_names_filter: 430 - סינון חומרי פורניר
+      tags_filter: 431 - סנן לפי תגים
+      dimensions_help: 432 - הבנת מידות
+      summary: 433 - חישוב
+      material_type: 434 - סוג
+      material_thickness: 435 - חומר / עובי
+      part_count: 436 - כמות חלקים
+      area: 437 - שטח
+      area_short: 438 - משטח
+      volume: 439 - נפח
+      number: 440 - מס'
+      name: 441 - תיאור
+      count: 442 - כמות
+      cutting: 443 - מידת חיתוך
+      bbox: 444 - מידה כללית
+      final: 445 - בפועל
+      total_cutting: 446 - סה"כ בחיתוך
+      total_final: 447 - סה"כ בפועל
+      length: 448 - אורך
+      length_short: '449 - אורך:'
+      width: 450 - רוחב
+      width_short: '451 - רוחב:'
+      thickness: 452 - עובי
+      thickness_short: '453 - עובי:'
+      edges: 454 - קאנטים
+      faces: 455 - פורנירים
     export:
-      title: 436 - יצוא
-      info_0: '437 - הפונקציונליות מאפשרת לייצא *תוכנית חיתוך* כ*רשימת חלקים* לקובץ בפורמט [CSV](https://he.wikipedia.org/wiki/CSV).
-
-        '
-      customize_help: '438 - סדר מחדש, הסתר, הוסף, הסר או בחר עמודה מהרשימה כדי להגדיר את **הכותרת** שלה ואת **הנוסחה** שתיצור את הערכים עבור כל שורה מיוצאת.
-
-        '
-      add_column: 439 - הוסף עמודה
-      add_native_columns: 440 - הוסף עמודה מקורית
-      remove_column: 441 - להסיר
-      remove_all_columns: 442 - הסר הכל
-      columns: 443 - עמודות
-      column_title: 444 - כותרת
-      column_title_help: '445 - השדה **כותרת** מאפשר לשנות את כותרת העמודה.
-
-        '
-      column_formula: 446 - נוסחה
-      column_formula_help: '447 - השדה **נוסחה** מאפשר לכתוב קוד *Ruby* כדי לשנות את ערך העמודה.
-
-        '
-      options: 448 - אפשרויות ייצוא
-      options_customize: 449 - הגדרות
-      option_source: 450 - מקור
-      option_source_summary: "$t(tab.cutlist.list.summary)"
-      option_source_cutlist: "$t(tab.cutlist.title)"
-      option_source_instances_list: 453 - רשימת עותקים
-      option_col_sep: 454 - מפריד
-      option_col_sep_tab: 455 - טבלר
-      option_col_sep_comma: 456 - פסיק
-      option_col_sep_semicolon: 457 - נקודה פסיק
-      option_encoding: 458 - קדוד
-      copy_all: 459 - הכל
-      copy_values: 460 - רק ערכים
-      number: 461 - מס'
-      path: 462 - מסלול
-      instance_name: 463 - אדגם
-      name: 464 - תיאור
-      total_cutting_length: 465 - אורך חיתוך מצטבר
-      total_cutting_area: 466 - שטח חיתוך מצטבר
-      total_cutting_volume: 467 - נפח חיתוך מצטבר
-      total_final_area: 468 - סה"כ שטח פחת
-      cutting_length: 469 - אורך חיתוך
-      cutting_width: 470 - רוחב חיתוך
-      cutting_thickness: 471 - עובי חיתוך
-      edge_cutting_length: 472 - אורך חיתוך קאנטים
-      edge_cutting_width: 473 - רוחב חיתוך קאנטים
-      bbox_length: 474 - אורך חיתוך
-      bbox_width: 475 - רוחב חיתוך
-      bbox_thickness: 476 - עובי חיתוך
-      final_area: 477 - שטח נטו
-      count: 478 - כמות
-      part_count: 479 - כמות חלקים
-      material_type: 480 - סוג
-      material_name: 481 - חומר
-      material_description: 482 - תיאור החומר
-      material_url: 483 - קישור החומר
-      material_std_dimension: 484 - מידות תקן
-      entity_names: 485 - שמות עותקים
-      description: 486 - תיאור
-      url: 487 - קישור
-      tags: 488 - תגים
-      edge_ymin: 489 - קאנט לאורך 1
-      edge_ymax: 490 - קאנט לאורך 2
-      edge_xmin: 491 - קאנט לרוחב 1
-      edge_xmax: 492 - קאנט לרוחב 2
-      face_zmin: 493 - גב
-      face_zmax: 494 - חזית הפורניר
-      layer: 495 - תג
-      layers: 496 - תגים
-      batch: 497 - קבוצה
-      bin: 498 - פח
-      filename: 499 - שם הקובץ
-      model_name: 500 - שם המודל
-      model_description: 501 - תיאור החלק
-      page_name: 502 - שם הסצנה
-      page_description: 503 - תיאור הסצנה
+      title: 456 - יצוא
+      info_0: |
+        457 - התכונה מאפשרת לייצא את הנתונים מ*רשימת חלקים* ללוח כתיבה או לקובץ בפורמט [CSV](https://he.wikipedia.org/wiki/CSV).
+      customize_help: |
+        458 - סדר מחדש, הסתר, הוסף, הסר או בחר עמודה מהרשימה כדי להגדיר את **הכותרת** שלה ואת **הנוסחה** שתיצור את הערכים עבור כל שורה מיוצאת.
+      add_column: 459 - הוסף עמודה
+      add_native_columns: 460 - הוסף עמודה מקורית
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
+      columns: 464 - עמודות
+      column_title: 465 - כותרת
+      column_title_help: |
+        466 - השדה **כותרת** מאפשר לשנות את כותרת העמודה.
+      column_formula: 467 - נוסחה
+      column_formula_help: |
+        468 - השדה **נוסחה** מאפשר לכתוב קוד *Ruby* כדי לשנות את ערך העמודה.
+      options: 469 - אפשרויות ייצוא
+      options_customize: 470 - הגדרות
+      option_source: 471 - מקור
+      option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: 473 - רשימת חלקים
+      option_source_instances_list: 474 - רשימת עותקים
+      option_col_sep: 475 - מפריד
+      option_col_sep_tab: 476 - טבלר
+      option_col_sep_comma: 477 - פסיק
+      option_col_sep_semicolon: 478 - נקודה פסיק
+      option_encoding: 479 - קדוד
+      copy_all: 480 - הכל
+      copy_values: 481 - רק ערכים
+      number: 482 - מס'
+      path: 483 - מסלול
+      instance_name: 484 - אדגם
+      name: 485 - תיאור
+      total_cutting_length: 486 - אורך חיתוך מצטבר
+      total_cutting_area: 487 - שטח חיתוך מצטבר
+      total_cutting_volume: 488 - נפח חיתוך מצטבר
+      total_final_area: 489 - סה"כ שטח פחת
+      cutting_length: 490 - אורך חיתוך
+      cutting_width: 491 - רוחב חיתוך
+      cutting_thickness: 492 - עובי חיתוך
+      edge_cutting_length: 493 - אורך חיתוך קאנטים
+      edge_cutting_width: 494 - רוחב חיתוך קאנטים
+      bbox_length: 495 - אורך חיתוך
+      bbox_width: 496 - רוחב חיתוך
+      bbox_thickness: 497 - עובי חיתוך
+      final_area: 498 - שטח נטו
+      count: 499 - כמות
+      part_count: 500 - כמות חלקים
+      material: 501 - חומר
+      material_type: 502 - סוג חומר
+      material_name: 503 - שם החומר
+      material_description: 504 - תיאור החומר
+      material_url: 505 - קישור החומר
+      material_std_dimension: 506 - מידות תקן
+      entity_names: 507 - שמות עותקים
+      description: 508 - תיאור
+      url: 509 - קישור
+      tags: 510 - תגים
+      edge_ymin: 511 - קאנט לאורך 1
+      edge_ymax: 512 - קאנט לאורך 2
+      edge_xmin: 513 - קאנט לרוחב 1
+      edge_xmax: 514 - קאנט לרוחב 2
+      face_zmin: 515 - גב
+      face_zmax: 516 - חזית הפורניר
+      layer: 517 - תג
+      layers: 518 - תגים
+      batch: 519 - קבוצה
+      bin: 520 - פח
+      component_definition: 521 - הגדרת רכיב
+      component_instance: 522 - פריט של רכיב
+      filename: 523 - שם הקובץ
+      model_name: 524 - שם המודל
+      model_description: 525 - תיאור החלק
+      page_name: 526 - שם הסצנה
+      page_description: 527 - תיאור הסצנה
       placeholder:
-        no_column_title: 504 - הזן כותרת
-        no_column_formula_native: 505 - ערך מקורי של העמודה '{{ col_name }}'
-        no_column_formula: 506 - הזן נוסחה
+        no_column_title: 528 - הזן כותרת
+        no_column_formula_native: 529 - ערך מקורי של העמודה '{{ col_name }}'
+        no_column_formula: 530 - הזן נוסחה
       warning:
-        is_group_selection: 507 - חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא ייוצאו.
+        is_group_selection: 531 - חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא ייוצאו.
     report:
-      title: 508 - הערכה
-      info_0: 509 - תכונה זו מאפשרת לך להפיק אומדן של **המסה** ו**העלות** של **חומרי הגלם** הדרושים לייצור החלקים של *תוכנית חיתוך*.
-      options_general: 510 - כללי
-      options_solid_wood: "$t(tab.materials.type_1)"
-      option_solid_wood_coefficient: 512 - מקדם *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: 513 - משמש לציון המקדם הכפל המופעל על הנפח הגולמי שנמדד עבור חומרים מסוג "**$t(tab.materials.type_1)**".
-      raw_materials: 514 - חומר גלם
-      coefficient: 515 - מקדם
-      total: 516 - סך הכל
-      total_used: 517 - בשימוש
-      total_unused: 518 - לא בשימוש
-      total_mass: 519 - סה"כ משקל
-      total_cost: 520 - סה"כ מחיר
-      total_count: 521 - כמות
-      total_instance_count: 522 - סכום יחידות
-      total_volume: 523 - סה"כ נפח
-      total_area: 524 - שטח כללי
-      total_length: 525 - סה"כ אורכים
+      title: 532 - הערכה
+      info_0: |
+        533 - תכונה זו מאפשרת לך להפיק אומדן של **המסה** ו**העלות** של **חומרי הגלם** הדרושים לייצור החלקים של *תוכנית חיתוך*.
+      options_general: 534 - כללי
+      options_solid_wood: $t(tab.materials.type_1)
+      option_solid_wood_coefficient: 536 - מקדם *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: 537 - משמש לציון המקדם הכפל המופעל על הנפח הגולמי שנמדד עבור חומרים מסוג "**$t(tab.materials.type_1)**".
+      raw_materials: 538 - חומר גלם
+      coefficient: 539 - מקדם
+      total: 540 - סך הכל
+      total_used: 541 - בשימוש
+      total_unused: 542 - לא בשימוש
+      total_mass: 543 - סה"כ משקל
+      total_cost: 544 - סה"כ מחיר
+      total_count: 545 - כמות
+      total_instance_count: 546 - סכום יחידות
+      total_volume: 547 - סה"כ נפח
+      total_area: 548 - שטח כללי
+      total_length: 549 - סה"כ אורכים
       tooltip:
-        incompatible_unit: 526 - יחידה לא תואמת לאפשרויות הערכת חומר
+        incompatible_unit: 550 - יחידה לא תואמת לאפשרויות הערכת חומר
       error:
-        no_typed_material_parts: 527 - אין חלק בעל חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** או **$t(tab.materials.type_5)**) מסופקים כדי ליצור את ההערכה.
-        entry_error: '528 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאה**.'
-        entry_error_plural: '529 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאות**.'
+        no_typed_material_parts: 551 - אין חלק בעל חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** או **$t(tab.materials.type_5)**) מסופקים כדי ליצור את ההערכה.
+        entry_error: '552 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאה**.'
+        entry_error_plural: '553 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאות**.'
       warning:
-        is_group_selection: 530 - חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא יובאו בחשבון.
+        is_group_selection: 554 - חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא יובאו בחשבון.
       tip:
         not_enough_data: |
-          531 - כדי שאומדן זה יחושב נכון:
+          555 - כדי שאומדן זה יחושב נכון:
           - החומרים המשמשים חייבים להיות בעלי צפיפות ומחיר מוגדרים אחד לפחות.
           - האביזרים המשמשים חייבים להיות בעלי מסה ומחיר לפחות.
     cuttingdiagram:
-      title: 532 - תוכנית חיתוך
-      start_msg: 533 - אופטימיזציה פועלת
-      end_msg: 534 - נעשה אופטימיזציה
-      options_material: 535 - חומר
-      options_config: 536 - תצורה
-      options_display: 537 - להציג
-      option_bar_folding_dimensional: 538 - לערוך מחדש קרשים זהים
-      option_bar_folding_edge: 539 - קבץ קאנטים זהים
-      option_bar_folding_0: 540 - לא
-      option_bar_folding_1: 541 - כן
-      option_bar_folding_help: 542 - מאפשר לקבץ את הלוחות או הקאנטים המכילים אותם חלקים ואותם חתכים.
-      option_sheet_folding_good: 543 - לערוך מחדש לוחות זהים
-      option_sheet_folding_veneer: 544 - קבץ לוחות פורניר זהים
-      option_sheet_folding_0: 545 - לא
-      option_sheet_folding_1: 546 - כן
-      option_sheet_folding_help: 547 - משמש לקיבוץ פאנלים או לוחות המכילים את אותם חלקים וחתכים.
-      option_hide_part_list: 548 - רשימת חלקים
-      option_hide_part_list_1d_dimensional_0: 549 - הצג לכל קרש
-      option_hide_part_list_1d_edge_0: 550 - מוצג לכל קאנט
-      option_hide_part_list_2d_good_0: 551 - הצג לכל פאנל
-      option_hide_part_list_2d_veneer_0: 552 - מוצג עבור כל פורניר
-      option_hide_part_list_1: 553 - הסתר
-      option_hide_part_list_1d_help: 554 - הצג או הסר את רשימת החלקים לכל לוח או קאנט.
-      option_hide_part_list_2d_help: 555 - מציג או מסתיר את רשימת החלקים הקיימים בכל לוח.
-      option_use_names: 556 - זיהוי חלקים
-      option_use_names_0: 557 - השתמש במספר
-      option_use_names_1: 558 - השתמש בייעוד
-      option_use_names_help: 559 - מאפשר לך לבחור בין **מספר** ל-**ייעוד** לזיהוי חלקים ברשימת חיתוך.
-      option_origin_corner: 560 - עמדת התחלה
-      option_origin_corner_1d_0: 561 - משמאל
-      option_origin_corner_1d_1: 562 - מימין
-      option_origin_corner_2d_0: 563 - שמאלי עליון
-      option_origin_corner_2d_1: 564 - שמאל תחתון
-      option_origin_corner_2d_2: 565 - ימני עליון
-      option_origin_corner_2d_3: 566 - ימני תחתון
-      option_origin_corner_1d_help: 567 - קובע את מיקום של ראשית הצירים לחלקים בלוחות או קאנטים ספציפיים.
-      option_origin_corner_2d_help: 568 - מאפשר לבחור זווית התחלתית למיקום חלקים על הלוח.
-      option_full_width_diagram: 569 - תצוגת רוחב מלא
-      option_full_width_diagram_0: 570 - לא
-      option_full_width_diagram_1: 571 - כן
-      option_full_width_diagram_help: 572 - אם האפשרות מופעלת, הדיאגרמות מוצגות עם כל הרוחב הזמין. אחרת, רוחבם מוגדר על ידי גורם קנה מידה קבוע של גודלם בפועל.
-      option_wrap_length: 573 - אורך היקף
-      option_wrap_length_help: 574 - אורך מקסימלי בו מוצגים לוח או קאנט במספר שורות.
-      option_hide_cross: 575 - שאריות
-      option_hide_cross_0: 576 - מידות וצלב
-      option_hide_cross_1: 577 - רק מידות
-      option_hide_cross_help: 578 - הצג או הסתר את הצלב המציין את החלקים המוגדרים כשאריות.
-      option_highlight_primary_cuts: 579 - חיתוכים ראשוניים
-      option_highlight_primary_cuts_0: 580 - מבט כללי
-      option_highlight_primary_cuts_1: 581 - תמיד מוצג
-      option_highlight_primary_cuts_help: 582 - מאפשר תמיד להדגיש חיתוכים ראשוניים.
-      option_hide_edges_preview: 583 - מחווני קצה לקאנטים
-      option_hide_edges_preview_0: 584 - מוצג בתוכנית החיתוך
-      option_hide_edges_preview_1: 585 - מוסתר בתוכנית החיתוך
-      option_hide_edges_preview_help: 586 - מאפשר לך להציג או להסתיר את האינדיקציה החזותית של הקצוות לציפוי עבור כל חלק בתוכנית חיתוך.
-      option_part_drawing_type: 587 - צורות חלקים
-      option_part_drawing_type_0: 588 - הסתר
-      option_part_drawing_type_1: 589 - ציורים - מבט חזית
-      option_part_drawing_type_2: 590 - ציורים - מבט גב
+      title: 556 - תוכנית חיתוך
+      start_msg: 557 - אופטימיזציה פועלת
+      end_msg: 558 - נעשה אופטימיזציה
+      options_material: 559 - חומר
+      options_config: 560 - תצורה
+      options_display: 561 - להציג
+      option_bar_folding_dimensional: 562 - לערוך מחדש קרשים זהים
+      option_bar_folding_edge: 563 - קבץ קאנטים זהים
+      option_bar_folding_0: 564 - לא
+      option_bar_folding_1: 565 - כן
+      option_bar_folding_help: 566 - מאפשר לקבץ את הלוחות או הקאנטים המכילים אותם חלקים ואותם חתכים.
+      option_sheet_folding_good: 567 - לערוך מחדש לוחות זהים
+      option_sheet_folding_veneer: 568 - קבץ לוחות פורניר זהים
+      option_sheet_folding_0: 569 - לא
+      option_sheet_folding_1: 570 - כן
+      option_sheet_folding_help: 571 - משמש לקיבוץ פאנלים או לוחות המכילים את אותם חלקים וחתכים.
+      option_hide_part_list: 572 - רשימת חלקים
+      option_hide_part_list_1d_dimensional_0: 573 - הצג לכל קרש
+      option_hide_part_list_1d_edge_0: 574 - מוצג לכל קאנט
+      option_hide_part_list_2d_good_0: 575 - הצג לכל פאנל
+      option_hide_part_list_2d_veneer_0: 576 - מוצג עבור כל פורניר
+      option_hide_part_list_1: 577 - הסתר
+      option_hide_part_list_1d_help: 578 - הצג או הסר את רשימת החלקים לכל לוח או קאנט.
+      option_hide_part_list_2d_help: 579 - מציג או מסתיר את רשימת החלקים הקיימים בכל לוח.
+      option_use_names: 580 - זיהוי חלקים
+      option_use_names_0: 581 - השתמש במספר
+      option_use_names_1: 582 - השתמש בייעוד
+      option_use_names_help: 583 - מאפשר לך לבחור בין **מספר** ל-**ייעוד** לזיהוי חלקים ברשימת חיתוך.
+      option_origin_corner: 584 - עמדת התחלה
+      option_origin_corner_1d_0: 585 - משמאל
+      option_origin_corner_1d_1: 586 - מימין
+      option_origin_corner_2d_0: 587 - שמאלי עליון
+      option_origin_corner_2d_1: 588 - שמאל תחתון
+      option_origin_corner_2d_2: 589 - ימני עליון
+      option_origin_corner_2d_3: 590 - ימני תחתון
+      option_origin_corner_1d_help: 591 - קובע את מיקום של ראשית הצירים לחלקים בלוחות או קאנטים ספציפיים.
+      option_origin_corner_2d_help: 592 - מאפשר לבחור זווית התחלתית למיקום חלקים על הלוח.
+      option_full_width_diagram: 593 - תצוגת רוחב מלא
+      option_full_width_diagram_0: 594 - לא
+      option_full_width_diagram_1: 595 - כן
+      option_full_width_diagram_help: 596 - אם האפשרות מופעלת, הדיאגרמות מוצגות עם כל הרוחב הזמין. אחרת, רוחבם מוגדר על ידי גורם קנה מידה קבוע של גודלם בפועל.
+      option_wrap_length: 597 - אורך היקף
+      option_wrap_length_help: 598 - אורך מקסימלי בו מוצגים לוח או קאנט במספר שורות.
+      option_hide_cross: 599 - שאריות
+      option_hide_cross_0: 600 - מידות וצלב
+      option_hide_cross_1: 601 - רק מידות
+      option_hide_cross_help: 602 - הצג או הסתר את הצלב המציין את החלקים המוגדרים כשאריות.
+      option_highlight_primary_cuts: 603 - חיתוכים ראשוניים
+      option_highlight_primary_cuts_0: 604 - מבט כללי
+      option_highlight_primary_cuts_1: 605 - תמיד מוצג
+      option_highlight_primary_cuts_help: 606 - מאפשר תמיד להדגיש חיתוכים ראשוניים.
+      option_hide_edges_preview: 607 - מחווני קצה לקאנטים
+      option_hide_edges_preview_0: 608 - מוצג בתוכנית החיתוך
+      option_hide_edges_preview_1: 609 - מוסתר בתוכנית החיתוך
+      option_hide_edges_preview_help: 610 - מאפשר לך להציג או להסתיר את האינדיקציה החזותית של הקצוות לציפוי עבור כל חלק בתוכנית חיתוך.
+      option_part_drawing_type: 611 - צורות חלקים
+      option_part_drawing_type_0: 612 - הסתר
+      option_part_drawing_type_1: 613 - ציורים - מבט חזית
+      option_part_drawing_type_2: 614 - ציורים - מבט גב
       option_part_drawing_type_help: |
-        591 - מאפשר להציג או להסתיר את הצורה האמיתית של החלקים כמו גם את העיבוד שלהם בתרשים.
+        615 - מאפשר להציג או להסתיר את הצורה האמיתית של החלקים כמו גם את העיבוד שלהם בתרשים.
 
         *אפשרות זו חייבת להיות מופעלת כדי לייצא צורות.*
-      option_saw_kerf: 592 - עובי להב המסור
-      option_saw_kerf_help: 593 - רוחב החומר שיורד על ידי המסור.
-      option_trimming: 594 - שוליים
-      option_trimming_help_1d: 595 - כמות החומר בכל קצה הלוח או קאנט שיש להיחשב בהם כפחת.
-      option_trimming_help_2d: 596 - גודל שוליים בהיקף לחיתוך פגמים ויישור מלבני.
-      option_optimization: 597 - רמת אופטימיזציה
-      option_optimization_help: 598 - רמת האופטימיזציה מגדירה את מספר האפשרויות המחושבות, ולכן גם את זמן החישוב.
-      option_optimization_0: 599 - בינוני
-      option_optimization_1: 600 - מתקדם
-      option_stacking: 601 - לכלול חלקים זהים
-      option_stacking_help: 602 - כיוון הערימה של חלקים בעלי אורך או רוחב משותפים.
-      option_stacking_0: 603 - ללא העדפות
-      option_stacking_1: 604 - לכל האורך
-      option_stacking_2: 605 - לכל הרוחב
-      option_stacking_3: 606 - כל האפשרויות
-      option_keep: 607 - גודל שאריות מינימלי
-      option_keep_help: 608 - שאריות גדולות מגודל המינימלי יסומנו כ-**לשמור**.
-      option_std_bar_dimensional: 609 - קרש סטנדרטי
-      option_std_bar_edge: 610 - קאנט סטנדרטי
+      option_saw_kerf: 616 - עובי להב המסור
+      option_saw_kerf_help: 617 - רוחב החומר שיורד על ידי המסור.
+      option_spacing: 618 - מרווחים
+      option_spacing_help: 619 - מרווח מינימלי בין כל חלק.
+      option_trimming: 620 - שוליים
+      option_trimming_help_1d: 621 - כמות החומר בכל קצה הלוח או קאנט שיש להיחשב בהם כפחת.
+      option_trimming_help_2d: 622 - גודל שוליים בהיקף לחיתוך פגמים ויישור מלבני.
+      option_optimization: 623 - רמת אופטימיזציה
+      option_optimization_help: 624 - רמת האופטימיזציה מגדירה את מספר האפשרויות המחושבות, ולכן גם את זמן החישוב.
+      option_optimization_0: 625 - בינוני
+      option_optimization_1: 626 - מתקדם
+      option_stacking: 627 - לכלול חלקים זהים
+      option_stacking_help: 628 - כיוון הערימה של חלקים בעלי אורך או רוחב משותפים.
+      option_stacking_0: 629 - ללא העדפות
+      option_stacking_1: 630 - לכל האורך
+      option_stacking_2: 631 - לכל הרוחב
+      option_stacking_3: 632 - כל האפשרויות
+      option_keep: 633 - גודל שאריות מינימלי
+      option_keep_help: 634 - שאריות גדולות מגודל המינימלי יסומנו כ-**לשמור**.
+      option_std_bar_dimensional: 635 - קרש סטנדרטי
+      option_std_bar_edge: 636 - קאנט סטנדרטי
       option_std_bar_help: |
-        611 - בחר את גודל הלוח או קאנט שישוכפלו כדי להכיל בצורה הטובה ביותר את כל החלקים.
+        637 - בחר את גודל הלוח או קאנט שישוכפלו כדי להכיל בצורה הטובה ביותר את כל החלקים.
         רשימה זו מוגדרת על ידי השדה **$t(tab.materials.edit_material.std_lengths)** של החומר.
         ערוך את החומר '{{ material_name }}' כדי לעדכן את הרשימה.
-      option_std_bar_add: 612 - הוסף גודל הלוח
-      option_std_bar_none: 613 - אין
-      option_scrap_bar_dimensional_lengths: 614 - פחת הקרש
-      option_scrap_bar_edge_lengths: 615 - פחת קאנטים
-      option_scrap_bar_lengths_placeholder: 616 - אורך x כמות ; ...
+      option_std_bar_add: 638 - הוסף גודל הלוח
+      option_std_bar_none: 639 - אין
+      option_scrap_bar_dimensional_lengths: 640 - פחת הקרש
+      option_scrap_bar_edge_lengths: 641 - פחת קאנטים
+      option_scrap_bar_lengths_placeholder: 642 - אורך x כמות ; ...
       option_scrap_bar_lengths_help: |
-        617 - ציין את הפחת הלוח או קאנט שייחושבו כעדיפות לחיתוך.
+        643 - ציין את הפחת הלוח או קאנט שייחושבו כעדיפות לחיתוך.
         פורמט צפוי: **L**x**Q**, איפה **L** הוא *אורך* של פחת ו-**Q** הכמות.
         הכמות אופציונלית.
         *מידות ללא יחידות יהיו ביחידות המודל.*
-      option_std_sheet_good: 618 - לוח סטנדרטי
-      option_std_sheet_veneer: 619 - פורניר סטנדרטי
+      option_std_sheet_good: 644 - לוח סטנדרטי
+      option_std_sheet_veneer: 645 - פורניר סטנדרטי
       option_std_sheet_help: |
-        620 - בחר כאן את הלוח או פורניר הסטנדרטיים שישוכפלו כדי להכיל בצורה הטובה ביותר את כל החלקים.
+        646 - בחר כאן את הלוח או פורניר הסטנדרטיים שישוכפלו כדי להכיל בצורה הטובה ביותר את כל החלקים.
         רשימה זו מוגדרת על ידי השדה **$t(tab.materials.edit_material.std_sizes)** של החומר.
         ערוך את החומר '{{ material_name }}' כדי לעדכן רשימה זו.
-      option_std_sheet_add: 621 - הוסף גודל הלוח
-      option_std_sheet_none: 622 - אין
-      option_scrap_sheet_good_sizes: 623 - פחת יעיל
-      option_scrap_sheet_veneer_sizes: 624 - פחת פורניר
-      option_scrap_sheet_sizes_placeholder: 625 - אורך x רוחב x כמות ; ...
+      option_std_sheet_add: 647 - הוסף גודל הלוח
+      option_std_sheet_none: 648 - אין
+      option_scrap_sheet_good_sizes: 649 - פחת יעיל
+      option_scrap_sheet_veneer_sizes: 650 - פחת פורניר
+      option_scrap_sheet_sizes_placeholder: 651 - אורך x רוחב x כמות ; ...
       option_scrap_sheet_sizes_help: |
-        626 - ציין כאן את רשימת פחת הלוח או פורניר שלך שיש להתייחס אליהם כעדיפות לפריסה.
+        652 - ציין כאן את רשימת פחת הלוח או פורניר שלך שיש להתייחס אליהם כעדיפות לפריסה.
         פורמט צפוי: **L**x**W**x**Q**. כאשר **L** ו-**W** הם *אורך* ו-*רוחב* בהתאם של הלוח ו-**Q** הכמות.
         הכמות היא אופציונלית.
         *מידות ללא יחידות, יוגדרו ביחידות המודל.*
       tooltip:
-        scroll_to_block_1d: 627 - גלול ללוח או קאנט ראשון
-        scroll_to_block_2d: 628 - גלול ללוח הראשונה
-        copy_leftovers_to_clipboard: 629 - העתק פחת ללוח כתיבה
+        scroll_to_block_1d: 653 - גלול ללוח או קאנט ראשון
+        scroll_to_block_2d: 654 - גלול ללוח הראשונה
+        copy_leftovers_to_clipboard: 655 - העתק פחת ללוח כתיבה
       list:
-        unplaced_parts: 630 - חלקים לא ממוקמים
-        summary: 631 - סיכום
-        count: 632 - כמות
-        bar: 633 - מטר רץ
-        sheet: 634 - מטר מרובע
-        length: 635 - אורך
-        width: 636 - רוחב
-        total_length: 637 - סה"כ אורכים
-        total_area: 638 - שטח כללי
-        total_part_count: 639 - סה"כ חלקים
-        total_used: 640 - סה"כ בשימוש
-        trimming: 641 - שוליים
-        stats: 642 - סטטיסטיקה
-        total_cut_count: 643 - מספר חיתוכים
-        total_cut_length: 644 - אורך חיתוך
-        overall_efficiency: 645 - יעילות כללית
-        efficiency: 646 - יעילות
-        leftover: 647 - פחת
-        leftover_to_keep: 648 - פחת יעיל
-        leftover_to_keep_plural: 649 - פחת יעיל
-        leftover_to_throw_away: 650 - פחת לפסולת
-        cut: 651 - חיתוך
-        cut_plural: 652 - חיתוכים
-        cut_trimming: 653 - ניתוך נטו
-        cut_bounding: 654 - חיתוך ראשוני (רמה 1)
-        cut_bounding_plural: 655 - חתכים ראשוניים (רמה 1)
-        cut_internal_through: 656 - חיתוך ראשוני (רמה 2)
-        cut_internal_through_plural: 657 - חתכים ראשוניים (רמה 2)
-        cut_none: 658 - אין
-        bar_dimensional_type_0: 659 - קרש סטנדרטי
-        bar_dimensional_type_1: 660 - פחת הקרש
-        bar_edge_type_0: 661 - קאנט סטנדרטי
-        bar_edge_type_1: 662 - פחת קאנט
-        sheet_good_type_0: 663 - לוח סטנדרטי
-        sheet_good_type_1: 664 - פחת הלוח
-        sheet_veneer_type_0: 665 - פורניר סטנדרטי
-        sheet_veneer_type_1: 666 - פחת פורניר
-        unused: 667 - לא בשימוש
-        parts: 668 - חלק {{ count }}
-        parts_plural: 669 - {{ count }} חלקים
-        settings: 670 - הגדרות
-      export:
-        title: 671 - ייצוא תוכנית חיתוך
-        info_0: '672 - מודול זה מאפשר לך לייצא את **השרטוט** של *תוכנית חיתוך* כרשימה של קבצים ב- [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) או [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-
-          '
-        option_file_format: "$t(tab.cutlist.write.option_file_format)"
-        option_file_format_help: "$t(tab.cutlist.write.option_file_format_help)"
-        option_dxf_structure: 675 - מבנה DXF
-        option_dxf_structure_1: 676 - שכבות
-        option_dxf_structure_2: 677 - שכבות + בלוקים
+        unplaced_parts: 656 - חלקים לא ממוקמים
+        summary: 657 - סיכום
+        count: 658 - כמות
+        bar: 659 - מטר רץ
+        sheet: 660 - מטר מרובע
+        length: 661 - אורך
+        width: 662 - רוחב
+        total_length: 663 - סה"כ אורכים
+        total_area: 664 - שטח כללי
+        total_part_count: 665 - סה"כ חלקים
+        total_used: 666 - סה"כ בשימוש
+        trimming: 667 - שוליים
+        stats: 668 - סטטיסטיקה
+        total_cut_count: 669 - מספר חיתוכים
+        total_cut_length: 670 - אורך חיתוך
+        overall_efficiency: 671 - יעילות כללית
+        efficiency: 672 - יעילות
+        leftover: 673 - פחת
+        leftover_to_keep: 674 - פחת יעיל
+        leftover_to_keep_plural: 675 - פחת יעיל
+        leftover_to_throw_away: 676 - פחת לפסולת
+        cut: 677 - חיתוך
+        cut_plural: 678 - חיתוכים
+        cut_trimming: 679 - ניתוך נטו
+        cut_bounding: 680 - חיתוך ראשוני (רמה 1)
+        cut_bounding_plural: 681 - חתכים ראשוניים (רמה 1)
+        cut_internal_through: 682 - חיתוך ראשוני (רמה 2)
+        cut_internal_through_plural: 683 - חתכים ראשוניים (רמה 2)
+        cut_none: 684 - אין
+        bar_dimensional_type_0: 685 - קרש סטנדרטי
+        bar_dimensional_type_1: 686 - פחת הקרש
+        bar_edge_type_0: 687 - קאנט סטנדרטי
+        bar_edge_type_1: 688 - פחת קאנט
+        sheet_good_type_0: 689 - לוח סטנדרטי
+        sheet_good_type_1: 690 - פחת הלוח
+        sheet_veneer_type_0: 691 - פורניר סטנדרטי
+        sheet_veneer_type_1: 692 - פחת פורניר
+        unused: 693 - לא בשימוש
+        parts: 694 - חלק {{ count }}
+        parts_plural: 695 - {{ count }} חלקים
+        settings: 696 - הגדרות
+      write:
+        title: 697 - ייצוא תוכנית חיתוך
+        info_0: |
+          698 - מודול זה מאפשר לך לייצא את **השרטוט** של *תוכנית חיתוך* כרשימה של קבצים ב- [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) או [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: 701 - מבנה DXF
+        option_dxf_structure_1: 702 - שכבות
+        option_dxf_structure_2: 703 - שכבות + בלוקים
         option_dxf_structure_help: |
-          678 - מאפשר לבחור את המבנה של קובץ DXF.
+          704 - מאפשר לבחור את המבנה של קובץ DXF.
 
           - מבנה **שכבות** משרטט את כל הקווים שטוחים, ומבדיל בין סוגי הקווים השונים רק לפי שכבות. *מבנה זה מספק תאימות טובה יותר לתוכנות של צד שלישי.*
           - המבנה **שכבות + בלוקים** יוצר בלוק אחד לכל חלק ומכניס את הבלוקים הללו כמה פעמים שהחלקים חוזרים על עצמם. *מבנה זה מספק יותר גמישות לעריכת הקובץ.*
-        option_unit: "$t(tab.cutlist.write.option_unit)"
-        option_unit_help: "$t(tab.cutlist.write.option_unit_help)"
-        option_smoothing: "$t(tab.cutlist.write.option_smoothing)"
-        option_smoothing_0: "$t(tab.cutlist.write.option_smoothing_0)"
-        option_smoothing_1: "$t(tab.cutlist.write.option_smoothing_1)"
-        option_smoothing_help: "$t(tab.cutlist.write.option_smoothing_help)"
-        option_merge_holes: "$t(tab.cutlist.write.option_merge_holes)"
-        option_merge_holes_0: "$t(tab.cutlist.write.option_merge_holes_0)"
-        option_merge_holes_1: "$t(tab.cutlist.write.option_merge_holes_1)"
-        option_merge_holes_help: "$t(tab.cutlist.write.option_merge_holes_help)"
-        option_include_paths: "$t(tab.cutlist.write.option_include_paths)"
-        option_include_paths_0: "$t(tab.cutlist.write.option_include_paths_0)"
-        option_include_paths_1: "$t(tab.cutlist.write.option_include_paths_1)"
-        option_include_paths_help: "$t(tab.cutlist.write.option_include_paths_help)"
-        option_sheet_good: 693 - מטר מרובע
-        option_sheet_good_help: '694 - מאפשר להפעיל את הייצוא של הפאנל ולבחור את הצבעים שלו.
-
-          '
-        option_sheet_veneer: 695 - פורניר
-        option_sheet_veneer_help: '696 - מאפשר להפעיל את הייצוא של הפורניר ולבחור את הצבעים שלו.
-
-          '
-        option_bar_dimensional: 697 - מטר רץ
-        option_bar_dimensional_help: '698 - מאפשר להפעיל את הייצוא של הקרש ולבחור את הצבעים שלו.
-
-          '
-        option_bar_band: 699 - קאנט
-        option_bar_band_help: '700 - מאפשר להפעיל את הייצוא של הקאנט ולבחור את הצבעים שלו.
-
-          '
-        option_parts: 701 - חלקים
-        option_parts_help: '702 - מאפשר להפעיל ייצוא של חלקים ולבחור את הצבעים שלהם.
-
-          '
-        option_parts_holes: 703 - קדחים
-        option_parts_holes_help: '704 - מאפשר לבחור את הצבע של קדחים בחלקים.
-
-          '
-        option_parts_paths: "$t(tab.cutlist.write.option_parts_paths)"
-        option_parts_paths_help: "$t(tab.cutlist.write.option_parts_paths_help)"
-        option_texts: 707 - זיהויים
-        option_texts_help: '708 - מאפשר להפעיל ייצוא של טקסטים לזיהוי חלקים ולבחור את הצבעים שלהם.
-
-          '
-        option_leftovers: 709 - פחת
-        option_leftovers_help: '710 - מאפשר להפעיל ייצוא של פחת ולבחור את הצבעים שלו.
-
-          '
-        option_cuts: 711 - חיתוכים
-        option_cuts_help: '712 - מאפשר להפעיל את ייצוא החתכים ולבחור את הצבעים שלהם.
-
-          '
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_sheet_good: 719 - מטר מרובע
+        option_sheet_good_help: |
+          720 - מאפשר להפעיל את הייצוא של הפאנל ולבחור את הצבעים שלו.
+        option_sheet_veneer: 721 - פורניר
+        option_sheet_veneer_help: |
+          722 - מאפשר להפעיל את הייצוא של הפורניר ולבחור את הצבעים שלו.
+        option_bar_dimensional: 723 - מטר רץ
+        option_bar_dimensional_help: |
+          724 - מאפשר להפעיל את הייצוא של הקרש ולבחור את הצבעים שלו.
+        option_bar_band: 725 - קאנט
+        option_bar_band_help: |
+          726 - מאפשר להפעיל את הייצוא של הקאנט ולבחור את הצבעים שלו.
+        option_parts: 727 - חלקים
+        option_parts_help: |
+          728 - מאפשר להפעיל ייצוא של חלקים ולבחור את הצבעים שלהם.
+        option_parts_holes: 729 - קדחים
+        option_parts_holes_help: |
+          730 - מאפשר לבחור את הצבע של קדחים בחלקים.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: 733 - זיהויים
+        option_texts_help: |
+          734 - מאפשר להפעיל ייצוא של טקסטים לזיהוי חלקים ולבחור את הצבעים שלהם.
+        option_leftovers: 735 - פחת
+        option_leftovers_help: |
+          736 - מאפשר להפעיל ייצוא של פחת ולבחור את הצבעים שלו.
+        option_cuts: 737 - חיתוכים
+        option_cuts_help: |
+          738 - מאפשר להפעיל את ייצוא החתכים ולבחור את הצבעים שלהם.
         warning:
-          is_sheet_selection: 713 - **פאנלים נסתרים** לא ייוצאו.
+          is_sheet_selection: 739 - **פאנלים נסתרים** לא ייוצאו.
       error:
-        no_bar_dimensional: 714 - הקרש הסטנדרטי אינו מוגדר כהלכה ולא מוגדר שום פחת.
-        no_bar_edge: 715 - הקאנט הסטנדרטי אינו מוגדר כהלכה וגם הפחת לא הוגדר.
-        parameters: 716 - ההגדרות שגויות. גודל החיתוך עולה על 25% של הקרש או קאנט הארוכים ביותר.
-        no_parts: 717 - אין חלק.
-        no_sheet: 718 - הלוח הסטנדרטי אינו מוגדר כהלכה ולא מוגדר שום פחת.
-        no_placement_possible_1d: 719 - לא ניתן היה להניח חלק (חומר גלם קטן מדי, השוליים גדולים מדי, להב המסור עבה מדי, ...).
-        no_placement_possible_2d: 720 - לא ניתן היה להציב חלק (לוח רגיל קטן מדי, שוליים גדולים מדי, להב מסור עבה מדי, ...).
-        bad_error: 721 - שגיאת חישוב. אנא צרו קשר עם המפתחים, מכיוון שיש לכם מקרה מעניין.
-        unplaced_parts: 722 - **חלק 1** גדולה מכדי למקם אותו.
-        unplaced_parts_plural: 723 - **{{ count }} חלקים** גדולים מכדי למקם.
+        no_bar_dimensional: 740 - הקרש הסטנדרטי אינו מוגדר כהלכה ולא מוגדר שום פחת.
+        no_bar_edge: 741 - הקאנט הסטנדרטי אינו מוגדר כהלכה וגם הפחת לא הוגדר.
+        parameters: 742 - ההגדרות שגויות. גודל החיתוך עולה על 25% של הקרש או קאנט הארוכים ביותר.
+        no_parts: 743 - אין חלק.
+        no_sheet: 744 - הלוח הסטנדרטי אינו מוגדר כהלכה ולא מוגדר שום פחת.
+        no_placement_possible_1d: 745 - לא ניתן היה להניח חלק (חומר גלם קטן מדי, השוליים גדולים מדי, להב המסור עבה מדי, ...).
+        no_placement_possible_2d: 746 - לא ניתן היה להציב חלק (לוח רגיל קטן מדי, שוליים גדולים מדי, להב מסור עבה מדי, ...).
+        bad_error: 747 - שגיאת חישוב. אנא צרו קשר עם המפתחים, מכיוון שיש לכם מקרה מעניין.
+        unplaced_parts: 748 - **חלק 1** גדולה מכדי למקם אותו.
+        unplaced_parts_plural: 749 - **{{ count }} חלקים** גדולים מכדי למקם.
       warning:
-        is_part_selection: 724 - תוכנית חיתוך מוגבלת ל-**חלקים הנבחרים**.
-        cutting_dimensions: 725 - תוכנית חיתוך זו משתמשת במידות **גולמיות** של החלקים.
-        cutting_dimensions_increase_1d: '726 - מידות גולמיות אלו הוגדרו בחומר ''{{ material_name }}'': אורך יתר (**{{ length_increase }}**).'
-        cutting_dimensions_increase_2d: '727 - מידות גולמיות אלו הוגדרו בחומר ''{{ material_name }}'': אורך יתר (**{{ length_increase }}**) ורוחב יתר (**{{ width_increase }}**).'
-        cutting_dimensions_edge_decrement: 728 - מידות מופחתות בעובי הקאנט. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: 750 - תוכנית חיתוך מוגבלת ל-**חלקים הנבחרים**.
+        cutting_dimensions: 751 - תוכנית חיתוך זו משתמשת במידות **גולמיות** של החלקים.
+        cutting_dimensions_increase_1d: '752 - מידות גולמיות אלו הוגדרו בחומר ''{{ material_name }}'': אורך יתר (**{{ length_increase }}**).'
+        cutting_dimensions_increase_2d: '753 - מידות גולמיות אלו הוגדרו בחומר ''{{ material_name }}'': אורך יתר (**{{ length_increase }}**) ורוחב יתר (**{{ width_increase }}**).'
+        cutting_dimensions_edge_decrement: 754 - מידות מופחתות בעובי הקאנט. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      title: 729 - תוויות
-      options_layout: 730 - הרכב
-      options_settings: 731 - תצורה
-      options_part_order_strategy: 732 - מיון
-      options_offset: 733 - קיזוז
-      size: 734 - גודל התווית בפועל
-      add_element: 735 - הוסף פריט
-      remove_element: 736 - להסיר
-      remove_all_elements: 737 - הסר הכל
+      title: 755 - תוויות
+      options_layout: 756 - הרכב
+      options_settings: 757 - תצורה
+      options_part_order_strategy: 758 - מיון
+      options_offset: 759 - קיזוז
+      size: 760 - גודל התווית בפועל
+      add_element: 761 - הוסף פריט
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
-        738 - ארגן מחדש את המאפיינים כדי להגדיר את סדר המיון של התוויות.
+        765 - ארגן מחדש את המאפיינים כדי להגדיר את סדר המיון של התוויות.
         ניתן למיין מאפיינים לפי סדר <i class="ladb-opencutlist-icon-sort-asc"></i> *עולה* או <i class="ladb-opencutlist-icon-sort-desc"></i> *יורד*.
       offset_help: |
-        739 - *הקיזוז* מאפשר לקבוע את המיקום של התווית הראשונה **בדף הראשון**.
+        766 - *הקיזוז* מאפשר לקבוע את המיקום של התווית הראשונה **בדף הראשון**.
         בחר בתיבה התואמת לבחירתך.
-      option_page: 740 - נייר
-      option_page_format: 741 - פורמט
-      option_page_format_portrait: 742 - לאורך
-      option_page_format_landscape: 743 - לרוחב
-      option_page_format_custom: 744 - מותאם אישית
-      option_page_width: 745 - רוחב
-      option_page_height: 746 - גובה
-      option_margin: 747 - שוליים
-      option_margin_top: 748 - מלמלה
-      option_margin_right: 749 - מימין
-      option_margin_bottom: 750 - מלמטה
-      option_margin_left: 751 - משמאל
-      option_spacing: 752 - רווחים
-      option_spacing_h: 753 - אופקי
-      option_spacing_v: 754 - אנכי
-      option_grid: 755 - תוויות לפי עמוד
-      option_col_count: 756 - עמודות
-      option_row_count: 757 - שורות
-      option_cutting_marks: 758 - תגים
-      option_cutting_marks_0: 759 - אין
-      option_cutting_marks_1: 760 - הדפסה
-      option_formula: 761 - ערך
-      option_size: 762 - גודל
-      option_custom_formula: 763 - נוסחה
-      option_anchor: 764 - עוגן
-      option_anchor_start: 765 - קצה שמאלית - תחתונה
-      option_anchor_middle: 766 - אמצע - למטה
-      option_anchor_end: 767 - קצה ימנית - תחתונה
-      option_anchor_start_top: 768 - קצה שמאלית - עליונה
-      option_anchor_middle_top: 769 - אמצע - למלה
-      option_anchor_end_top: 770 - קצה ימנית - עליונה
-      option_color: 771 - צבע
+      option_page: 767 - נייר
+      option_page_format: 768 - פורמט
+      option_page_format_portrait: 769 - לאורך
+      option_page_format_landscape: 770 - לרוחב
+      option_page_format_custom: 771 - מותאם אישית
+      option_page_width: 772 - רוחב
+      option_page_height: 773 - גובה
+      option_margin: 774 - שוליים
+      option_margin_top: 775 - מלמלה
+      option_margin_right: 776 - מימין
+      option_margin_bottom: 777 - מלמטה
+      option_margin_left: 778 - משמאל
+      option_spacing: 779 - רווחים
+      option_spacing_h: 780 - אופקי
+      option_spacing_v: 781 - אנכי
+      option_grid: 782 - תוויות לפי עמוד
+      option_col_count: 783 - עמודות
+      option_row_count: 784 - שורות
+      option_cutting_marks: 785 - תגים
+      option_cutting_marks_0: 786 - אין
+      option_cutting_marks_1: 787 - הדפסה
+      option_formula: 788 - ערך
+      option_size: 789 - גודל
+      option_custom_formula: 790 - נוסחה
+      option_anchor: 791 - עוגן
+      option_anchor_start: 792 - קצה שמאלית - תחתונה
+      option_anchor_middle: 793 - אמצע - למטה
+      option_anchor_end: 794 - קצה ימנית - תחתונה
+      option_anchor_start_top: 795 - קצה שמאלית - עליונה
+      option_anchor_middle_top: 796 - אמצע - למלה
+      option_anchor_end_top: 797 - קצה ימנית - עליונה
+      option_color: 798 - צבע
       formula:
-        custom: 772 - נוסחה
-        part_number: 773 - מספר
-        part_name: 774 - תיאור
-        part_description: 775 - תיאור
-        part_entity_named_path: 776 - מסלול לפריט
-        part_entity_name: 777 - שם פריט
-        part_bin: 778 - פח
-        part_cutting_size: 779 - מידות כלליות
-        part_cutting_length: 780 - אורך כללי
-        part_cutting_width: 781 - רוחב כללי
-        part_cutting_thickness: 782 - עובי כללי
-        part_edge_cutting_size: 783 - גודל חיתוך קאנטים
-        part_edge_cutting_length: 784 - אורך חיתוך קאנטים
-        part_edge_cutting_width: 785 - רוחב חיתוך קאנטים
-        part_size: 786 - גודל זמין
-        part_length: 787 - אורך חיתוך
-        part_width: 788 - רוחב חיתוך
-        part_thickness: 789 - עובי זמין
-        part_tags: 790 - תגים
-        part_batch: 791 - קבוצה
-        part_edge_ymin: 792 - קאנט לאורך 1
-        part_edge_ymax: 793 - קאנט לאורך 2
-        part_edge_xmin: 794 - קאנט לרוחב 1
-        part_edge_xmax: 795 - קאנט לרוחב 2
-        part_face_zmin: 796 - פורניר גב
-        part_face_zmax: 797 - פורניר חזית
-        thumbnail_proportional_drawing: 798 - תצוגה מקדימה של תמונה ממוזערת
-        thumbnail_proportional: 799 - דוגמית פרופורציונלית
-        thumbnail_square: 800 - דוגמית מרובעת
-        group_material: 801 - חומר / עובי
-        group_material_name: 802 - שם החומר
-        group_std_dimension: 803 - מידות תקן
-        filename: 804 - שם הקובץ
-        model_name: 805 - שם המודל
-        page_name: 806 - שם הסצנה
-        length_unit: 807 - יחידות
-        generated_at: 808 - תאריך ושעה
+        custom: 799 - נוסחה
+        custom_qr_code: 800 - קוד QR
+        part_number: 801 - מספר
+        part_name: 802 - תיאור
+        part_description: 803 - תיאור
+        part_entity_named_path: 804 - מסלול לפריט
+        part_entity_name: 805 - שם פריט
+        part_bin: 806 - פח
+        part_cutting_size: 807 - מידות כלליות
+        part_cutting_length: 808 - אורך כללי
+        part_cutting_width: 809 - רוחב כללי
+        part_cutting_thickness: 810 - עובי כללי
+        part_edge_cutting_size: 811 - גודל חיתוך קאנטים
+        part_edge_cutting_length: 812 - אורך חיתוך קאנטים
+        part_edge_cutting_width: 813 - רוחב חיתוך קאנטים
+        part_size: 814 - גודל זמין
+        part_length: 815 - אורך חיתוך
+        part_width: 816 - רוחב חיתוך
+        part_thickness: 817 - עובי זמין
+        part_tags: 818 - תגים
+        part_batch: 819 - קבוצה
+        part_edge_ymin: 820 - קאנט לאורך 1
+        part_edge_ymax: 821 - קאנט לאורך 2
+        part_edge_xmin: 822 - קאנט לרוחב 1
+        part_edge_xmax: 823 - קאנט לרוחב 2
+        part_face_zmin: 824 - פורניר גב
+        part_face_zmax: 825 - פורניר חזית
+        thumbnail_proportional_drawing: 826 - תצוגה מקדימה של תמונה ממוזערת
+        thumbnail_proportional: 827 - דוגמית פרופורציונלית
+        thumbnail_square: 828 - דוגמית מרובעת
+        group_material: 829 - חומר / עובי
+        group_material_name: 830 - שם החומר
+        group_std_dimension: 831 - מידות תקן
+        filename: 832 - שם הקובץ
+        model_name: 833 - שם המודל
+        page_name: 834 - שם הסצנה
+        length_unit: 835 - יחידות
+        generated_at: 836 - תאריך ושעה
       error:
-        invalid_size: 809 - פרמטרי התצורה שהוזנו אינם מאפשרים להגדיר גודל תווית חוקי.
+        invalid_size: 837 - פרמטרי התצורה שהוזנו אינם מאפשרים להגדיר גודל תווית חוקי.
       warning:
-        is_part_selection: 810 - תוויות האלה מוגבלות ל-**חלקים נבחרים**.
-        formula_not_available: 811 - נוסחה לא זמינה בהקשר זה
+        is_group_selection: 838 - למסמכים הכלולים ב**קבוצות הנסתרות** של תוכנית חיתוך שלך לא תהיה תווית.
+        is_part_selection: 839 - תוויות האלה מוגבלות ל-**חלקים נבחרים**.
+        formula_not_available: 840 - נוסחה לא זמינה בהקשר זה
     layout:
-      title: 812 - שרטוט
-      to_layout: 813 - ייצוא לפריסה
-      options_layout: 814 - הרכב
-      options_settings: 815 - תצורה
-      option_parts: 816 - חלקים
-      option_parts_colored: 817 - צבע
-      option_parts_colored_0: 818 - ללא צבע
-      option_parts_colored_1: 819 - צבע החומר שלהם
-      option_parts_colored_help: 820 - מאפשר לבחור את המראה של החלקים.
-      option_parts_opacity: 821 - שקיפות
-      option_parts_opacity_0: 822 - שקוף
-      option_parts_opacity_1: 823 - מט
-      option_parts_opacity_help: 824 - מאפשר לבחור את השקיפות של החלקים.
-      option_pins: 825 - סיכות
-      option_pins_hidden: 826 - להציג
-      option_pins_hidden_0: 827 - עם סיכות
-      option_pins_hidden_1: 828 - ללא סיכות
-      option_pins_hidden_help: 829 - מציג או מסתיר סיכות המצביעות על חלקים כדי לציין את מספרם או ייעודם.
-      option_pins_colored: 830 - צבע
-      option_pins_colored_0: 831 - ללא צבע
-      option_pins_colored_1: 832 - צבע חלק
-      option_pins_colored_help: 833 - מאפשר לך לבחור את צבע ראש הסיכות.
-      option_pins_formula: 834 - נוסחה
-      option_pins_formula_help: 835 - מאפשר לך לכתוב קוד *Ruby* כדי להגדיר את הטקסט על הסיכה.
-      option_pins_length: 836 - אורך
-      option_pins_length_0: 837 - ללא חץ
-      option_pins_length_1: 838 - קטן
-      option_pins_length_2: 839 - בינונית
-      option_pins_length_3: 840 - גדולה
-      option_pins_length_help: 841 - מאפשר לבחור את אורך החץ של הסיכות.
-      option_pins_direction: 842 - כיוון
-      option_pins_direction_0: 843 - לאורך הציר האדום
-      option_pins_direction_1: 844 - לאורך הציר הירוק
-      option_pins_direction_2: 845 - לאורך הציר הכחול
-      option_pins_direction_3: 846 - מצביע על מרכז הקבוצה המקורית
-      option_pins_direction_4: 847 - מצביע על מרכז הבחירה
-      option_pins_direction_help: 848 - מאפשר לבחור את כיוון הסיכות על מנת להתאים את קריאותם לפי השרטוט.
-      option_page: 849 - נייר
-      option_page_format: 850 - פורמט
-      option_page_format_portrait: 851 - לאורך
-      option_page_format_landscape: 852 - לרוחב
-      option_page_format_custom: 853 - מותאם אישית
-      option_page_width: 854 - רוחב
-      option_page_height: 855 - גובה
-      option_page_header: 856 - כותרת
-      option_page_header_0: 857 - ללא
-      option_page_header_1: 858 - עם
+      title: 841 - שרטוט
+      to_layout: 842 - ייצוא לפריסה
+      options_layout: 843 - הרכב
+      options_settings: 844 - תצורה
+      option_parts: 845 - חלקים
+      option_parts_colored: 846 - צבע
+      option_parts_colored_0: 847 - ללא צבע
+      option_parts_colored_1: 848 - צבע החומר שלהם
+      option_parts_colored_help: 849 - מאפשר לבחור את המראה של החלקים.
+      option_parts_opacity: 850 - שקיפות
+      option_parts_opacity_0: 851 - שקוף
+      option_parts_opacity_1: 852 - מט
+      option_parts_opacity_help: 853 - מאפשר לבחור את השקיפות של החלקים.
+      option_pins: 854 - סיכות
+      option_pins_hidden: 855 - להציג
+      option_pins_hidden_0: 856 - עם סיכות
+      option_pins_hidden_1: 857 - ללא סיכות
+      option_pins_hidden_help: 858 - מציג או מסתיר סיכות המצביעות על חלקים כדי לציין את מספרם או ייעודם.
+      option_pins_colored: 859 - צבע
+      option_pins_colored_0: 860 - ללא צבע
+      option_pins_colored_1: 861 - צבע חלק
+      option_pins_colored_help: 862 - מאפשר לך לבחור את צבע ראש הסיכות.
+      option_pins_formula: 863 - נוסחה
+      option_pins_formula_help: 864 - מאפשר לך לכתוב קוד *Ruby* כדי להגדיר את הטקסט על הסיכה.
+      option_pins_length: 865 - אורך
+      option_pins_length_0: 866 - ללא חץ
+      option_pins_length_1: 867 - קטן
+      option_pins_length_2: 868 - בינונית
+      option_pins_length_3: 869 - גדולה
+      option_pins_length_help: 870 - מאפשר לבחור את אורך החץ של הסיכות.
+      option_pins_direction: 871 - כיוון
+      option_pins_direction_0: 872 - לאורך הציר האדום
+      option_pins_direction_1: 873 - לאורך הציר הירוק
+      option_pins_direction_2: 874 - לאורך הציר הכחול
+      option_pins_direction_3: 875 - מצביע על מרכז הקבוצה המקורית
+      option_pins_direction_4: 876 - מצביע על מרכז הבחירה
+      option_pins_direction_help: 877 - מאפשר לבחור את כיוון הסיכות על מנת להתאים את קריאותם לפי השרטוט.
+      option_page: 878 - נייר
+      option_page_format: 879 - פורמט
+      option_page_format_portrait: 880 - לאורך
+      option_page_format_landscape: 881 - לרוחב
+      option_page_format_custom: 882 - מותאם אישית
+      option_page_width: 883 - רוחב
+      option_page_height: 884 - גובה
+      option_page_header: 885 - כותרת
+      option_page_header_0: 886 - ללא
+      option_page_header_1: 887 - עם
       option_page_header_help: |
-        859 - מאפשר לבחור אם העמוד שיודפס יכיל כותרת עם שם המסמך, תיאורו, התאריך, היחידה והקנה מידה.
+        888 - מאפשר לבחור אם העמוד שיודפס יכיל כותרת עם שם המסמך, תיאורו, התאריך, היחידה והקנה מידה.
         ללא כותרת, הפרויקט יתפוס את כל העמוד.
-      option_camera: 860 - מצלמה
-      option_camera_view: 861 - תצוגה
-      option_camera_view_custom: 862 - מותאם אישית
-      option_camera_zoom: 863 - קנה מידה
-      option_camera_zoom_auto: 864 - אוטומטי
-      option_camera_zoom_custom: 865 - מותאם אישית
-      option_camera_target: 866 - מיקום
-      option_camera_target_auto: 867 - אוטומטי
-      option_camera_target_custom: 868 - מותאם אישית
-      option_explode: 869 - תצוגה מפוצצת
+      option_camera: 889 - מצלמה
+      option_camera_view: 890 - תצוגה
+      option_camera_view_custom: 891 - מותאם אישית
+      option_camera_zoom: 892 - קנה מידה
+      option_camera_zoom_auto: 893 - אוטומטי
+      option_camera_zoom_custom: 894 - מותאם אישית
+      option_camera_target: 895 - מיקום
+      option_camera_target_auto: 896 - אוטומטי
+      option_camera_target_custom: 897 - מותאם אישית
+      option_explode: 898 - תצוגה מפוצצת
       error:
-        no_part: 870 - אין חלקים לצייר.
-        failed_to_save_as_skp: 871 - כתיבת קובץ SKP לשליחה ל-Layout נכשלה.
+        no_part: 899 - אין חלקים לצייר.
+        failed_to_save_as_skp: 900 - כתיבת קובץ SKP לשליחה ל-Layout נכשלה.
         failed_to_layout: |
-          872 - שגיאה בכתיבת קובץ Layout : *{{ error }}*
+          901 - שגיאה בכתיבת קובץ Layout : *{{ error }}*
 
           **ודא שהקובץ לא פתוח ב-Layout.**
       warning:
-        is_group_selection: 873 - חלקים הכלולים ב**קבוצות נסתרות** של תוכנית חיתוך שלך לא יוצגו.
-        is_part_selection: 874 - שרטוט ההרכבה מוגבל ל-**חלקים נבחרים**.
+        is_group_selection: 902 - חלקים הכלולים ב**קבוצות נסתרות** של תוכנית חיתוך שלך לא יוצגו.
+        is_part_selection: 903 - שרטוט ההרכבה מוגבל ל-**חלקים נבחרים**.
     write:
-      title: 875 - ייצוא חלקים
-      info_2d: '876 - מודול זה מאפשר לך לייצא את **מבט 2D** של החלקים כקבצים בפורמט [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) או [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-
-        '
-      info_3d: '877 - מודול זה מאפשר לך לייצא את **שרטוט 3D** של חלקים כקבצים בפורמט [STL](https://wikipedia.org/wiki/STL_(file_format)) או [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
-
-        '
-      option_file_format: 878 - פורמט
-      option_file_format_help: '879 - מאפשר לבחור את פורמט הקובץ לייצוא.
-
-        '
-      option_unit: 880 - יחידות
-      option_unit_help: '881 - מאפשר לבחור את היחידות מדידה המשמשות בקובץ המיוצא.
-
-        '
-      option_part_drawing_type: 882 - מבט
-      option_part_drawing_type_help: '883 - מאפשר לך לבחור את התצוגה המיוצאת.
-
-        '
-      option_faces: 884 - פורנירים
-      option_faces_0: 885 - השתמש במשטח נבחר בלבד
-      option_faces_1: 886 - השתמש בכל הצדדים של החלק
-      option_faces_help: '887 - מאפשר לבחור האם החיפוש אחר צורת החלק נעשה על כל צדיו או רק על החזית.
-
-        '
-      option_anchor: 888 - נקודת עוגן
-      option_anchor_0: 889 - כברירת מחדל
-      option_anchor_1: 890 - הצג את מקור החלק
-      option_anchor_help: '891 - מאפשר להפעיל את התצוגת רשית הצירים של החלק כנקודת עוגן.
-
-        '
-      option_smoothing: 892 - החלקה
-      option_smoothing_0: 893 - אין
-      option_smoothing_1: 894 - החלקת מעגלים וקשתות (ניסיוני)
+      title: 904 - ייצוא חלקים
+      info_2d: |
+        905 - מודול זה מאפשר לך לייצא את **מבט 2D** של החלקים כקבצים בפורמט [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) או [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+      info_3d: |
+        906 - מודול זה מאפשר לך לייצא את **שרטוט 3D** של חלקים כקבצים בפורמט [STL](https://wikipedia.org/wiki/STL_(file_format)) או [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
+      option_file_format: 907 - פורמט
+      option_file_format_help: |
+        908 - מאפשר לבחור את פורמט הקובץ לייצוא.
+      option_unit: 909 - יחידות
+      option_unit_help: |
+        910 - מאפשר לבחור את היחידות מדידה המשמשות בקובץ המיוצא.
+      option_use_count: 911 - כמויות
+      option_use_count_0: 912 - רק קובץ אחד לחלק
+      option_use_count_1: 913 - קובץ אחד לכל פריט של חלק
+      option_use_count_help: |
+        914 - התכונה מגדירה אם להתחשב בכמות הפריטים של חלק.
+      option_part_drawing_type: 915 - מבט
+      option_part_drawing_type_help: |
+        916 - מאפשר לך לבחור את התצוגה המיוצאת.
+      option_faces: 917 - פורנירים
+      option_faces_0: 918 - השתמש במשטח נבחר בלבד
+      option_faces_1: 919 - השתמש בכל הצדדים של החלק
+      option_faces_help: |
+        920 - מאפשר לבחור האם החיפוש אחר צורת החלק נעשה על כל צדיו או רק על החזית.
+      option_anchor: 921 - נקודת עוגן
+      option_anchor_0: 922 - כברירת מחדל
+      option_anchor_1: 923 - הצג את מקור החלק
+      option_anchor_help: |
+        924 - מאפשר להפעיל את התצוגת רשית הצירים של החלק כנקודת עוגן.
+      option_switch_yz: 925 - ציר אנכי
+      option_switch_yz_0: 926 - ציר Z
+      option_switch_yz_1: 927 - ציר Y
+      option_switch_yz_help: |
+        928 - מאפשר להחליף את צירי Y ו-Z כדי להגדיר את הציר האנכי של החלק.
+      option_smoothing: 929 - החלקה
+      option_smoothing_0: 930 - אין
+      option_smoothing_1: 931 - החלקת מעגלים וקשתות (ניסיוני)
       option_smoothing_help: |
-        895 - מאפשר להפעיל את זיהוי המעגלים והקשתות.
+        932 - מאפשר להפעיל את זיהוי המעגלים והקשתות.
 
         *אפשרות זו אינה מזהה סוגים אחרים של עקומות.*
-      option_merge_holes: 896 - פיצוץ
-      option_merge_holes_0: 897 - כברירת מחדל
-      option_merge_holes_1: 898 - קונטור + קדחים + מיזוג
+      option_merge_holes: 933 - פיצוץ
+      option_merge_holes_0: 934 - כברירת מחדל
+      option_merge_holes_1: 935 - קונטור + קדחים + מיזוג
       option_merge_holes_help: |
-        899 - **כברירת מחדל**
+        936 - **כברירת מחדל**
         צורת החלק מיוצאת עם שכבה אחת לכל עומק.
 
         **קונטור + קדחים + מיזוג**
         מפעיל את ההפרדה של קו המתאר החיצוני של החלקים מהקדחים שלהם ואת מיזוג המעמקים עבור כל חלל.
-      option_include_paths: 900 - קווי מתאר
-      option_include_paths_0: 901 - אין
-      option_include_paths_1: 902 - השתמש בקצוות שאינם קשורים לחזית
-      option_include_paths_help: '903 - מאפשר להפעיל את השימוש בקצוות שאינם קשורים לחזיתות הכלולות בחלק, כדי לייצא אותם כקו מתאר.
+      option_include_paths: 937 - קווי מתאר
+      option_include_paths_0: 938 - אין
+      option_include_paths_1: 939 - השתמש בקצוות שאינם קשורים לחזית
+      option_include_paths_help: |
+        940 - מאפשר להפעיל את השימוש בקצוות שאינם קשורים לחזיתות הכלולות בחלק, כדי לייצא אותם כקו מתאר.
+      option_parts: 941 - חלקים
+      option_parts_help: |
+        942 - מאפשר לבחור את צבעי החלקים.
+      option_parts_holes: 943 - קידוחים
+      option_parts_holes_help: |
+        944 - מאפשר לבחור את הצבעים של קדחי החלקים.
+      option_parts_paths: 945 - קווי מתאר
+      option_parts_paths_help: |
+        946 - מאפשר לבחור את צבעי הקווים.
 
-        '
-      option_parts: 904 - חלקים
-      option_parts_help: '905 - מאפשר לבחור את צבעי החלקים.
-
-        '
-      option_parts_holes: 906 - קידוחים
-      option_parts_holes_help: '907 - מאפשר לבחור את הצבעים של קדחי החלקים.
-
-        '
-      option_parts_paths: 908 - קווי מתאר
-      option_parts_paths_help: '909 - מאפשר לבחור את צבע קווי מתאר.
-
-        '
+        *צבע המילוי ישמש רק בקווים סגורים.*
       error:
-        no_part: 910 - אין חלקים לייצא.
+        no_part: 947 - אין חלקים לייצא.
       warning:
-        is_group_selection: 911 - חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא ייוצאו.
-        is_part_selection: 912 - הייצוא מוגבל ל-**חלקים נבחרים**.
+        is_group_selection: 948 - חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא ייוצאו.
+        is_part_selection: 949 - הייצוא מוגבל ל-**חלקים נבחרים**.
     snippet:
-      hello: 913 - בוקר טוב
-      number: 914 - מספר
-      name: 915 - תיאור
-      number_and_name: 916 - מספר ויעוד
-      number_without_hardware: 917 - כמות (ללא אביזרים)
-      size: 918 - גודל זמין
-      area: 919 - שטח משוער
-      volume: 920 - נפח משוער
+      hello: 950 - בוקר טוב
+      number: 951 - מספר
+      name: 952 - תיאור
+      number_and_name: 953 - מספר ויעוד
+      number_without_hardware: 954 - כמות (ללא אביזרים)
+      size: 955 - גודל זמין
+      area: 956 - שטח משוער
+      volume: 957 - נפח משוער
     error:
-      no_model: 921 - אין מודל פתוח. אתה תצטרך לתת לי קצת יותר מידע ;)
-      no_entities: 922 - המודל ריק. אתה תצטרך לתת לי קצת יותר מידע ;)
-      no_component_in_selection: 923 - בבחירתך לא נמצא פריט גלוי.
-      no_component_in_model: 924 - לא התגלה שום רכיב גלוי על הסצנה.
-      unknow_part: 925 - החלק שנבחר אינו קיים בתוכנית חיתוך.
-      obsolete_cutlist: 926 - לא ניתן לבצע, תוכנית חיתוך לא מעודכנת. נא לחדש.
+      no_model: 958 - אין מודל פתוח. אתה תצטרך לתת לי קצת יותר מידע ;)
+      no_entities: 959 - המודל ריק. אתה תצטרך לתת לי קצת יותר מידע ;)
+      no_component_in_selection: 960 - בבחירתך לא נמצא פריט גלוי.
+      no_component_in_model: 961 - לא התגלה שום רכיב גלוי על הסצנה.
+      unknow_part: 962 - החלק שנבחר אינו קיים בתוכנית חיתוך.
+      obsolete_cutlist: 963 - לא ניתן לבצע, תוכנית חיתוך לא מעודכנת. נא לחדש.
     warning:
-      is_entity_selection: 927 - רק החלקים הנבחרים בדגם שלך נלקחו בחשבון.
-      no_typed_materials_in_model: 928 - המודל לא משתמש בשום חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 929 - הבחירה אינה משתמשת בשום חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**).
-      export_empty: 930 - הייצוא אינו מכיל חלקים כלשהם.
+      is_entity_selection: 964 - רק החלקים הנבחרים בדגם שלך נלקחו בחשבון.
+      no_typed_materials_in_model: 965 - המודל לא משתמש בשום חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 966 - הבחירה אינה משתמשת בשום חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**).
+      export_empty: 967 - הייצוא אינו מכיל חלקים כלשהם.
     success:
-      part_selected: 931 - בתוכנית חיתוך נבחר חלק {{ count }}.
-      part_selected_plural: 932 - בתוכנית חיתוך נבחרו {{ count }} חלקים.
+      part_selected: 968 - בתוכנית חיתוך נבחר חלק {{ count }}.
+      part_selected_plural: 969 - בתוכנית חיתוך נבחרו {{ count }} חלקים.
     tip:
       no_component: |
-        933 - החלקים שברצונך להופיע בתוכנית חיתוך *חייבים להיות כ-**רכיב**.
+        970 - החלקים שברצונך להופיע בתוכנית חיתוך *חייבים להיות כ-**רכיב**.
         אם משתמשים רק בקבוצות, המירו אותן לרכיבים.
         שימוש ברכיבים מאפשר לעתיק חלקים זהים מבלי לשכפל אותם.
-      no_typed_materials: 934 - החל חומר על החלקים שצריך לראות בתוכנית חיתוך. הגדר את סוג החומר הזה (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**) בכרטיסייה <i class="ladb-opencutlist-icon-materials"></i>**חומרים**.
-    obsolete_base: 935 - כדי לסנכרן שינויים, עליך לחשב מחדש את התוכנית חיתוך.
+      no_typed_materials: 971 - החל חומר על החלקים שצריך לראות בתוכנית חיתוך. הגדר את סוג החומר הזה (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** או **$t(tab.materials.type_5)**) בכרטיסייה <i class="ladb-opencutlist-icon-materials"></i>**חומרים**.
+    obsolete_base: 972 - כדי לסנכרן שינויים, עליך לחשב מחדש את התוכנית חיתוך.
   materials:
-    label: 936 - חומרים
-    title: 937 - חומרים
-    new: 938 - חומר חדש
-    type_0: 939 - לא מוגדר
-    type_1: 940 - מטר קוב
-    type_2: 941 - מטר מרובע
-    type_3: 942 - מטר רץ
-    type_4: 943 - קאנט
-    type_5: 944 - אבזר
-    type_6: 945 - לוח פורניר
+    label: 973 - חומרים
+    title: 974 - חומרים
+    new: 975 - חומר חדש
+    type_0: 976 - לא מוגדר
+    type_1: 977 - מטר קוב
+    type_2: 978 - מטר מרובע
+    type_3: 979 - מטר רץ
+    type_4: 980 - קאנט
+    type_5: 981 - אבזר
+    type_6: 982 - לוח פורניר
     tooltip:
-      type_0: 946 - סוג החומר '$t(tab.materials.type_0)'
-      type_1: 947 - סוג החומר '$t(tab.materials.type_1)'
-      type_2: 948 - סוג החומר '$t(tab.materials.type_2)'
-      type_3: 949 - סוג החומר '$t(tab.materials.type_3)'
-      type_4: 950 - סוג החומר '$t(tab.materials.type_4)'
-      type_5: 951 - סוג החומר '$t(tab.materials.type_5)'
-      type_6: 952 - סוג החומר '$t(tab.materials.type_6)'
-      grained_0: "$t(tab.materials.edit_material.grained_0)"
-      grained_1: "$t(tab.materials.edit_material.grained_1)"
-      grain_direction: 955 - כיוון סיבים
-      raw_estimated_0: 956 - מוערך לפי נפח היעיל
-      colorized: 957 - ציור הצללה זה יוחל על המרקם של החומר שיופיע במודל
-      texture_load: 958 - טען מרקם חדש
-      texture_clear: 959 - הסר מרקם
-      edit: 960 - ערוך מאפיינים של '{{ name }}'
-      set_current: |
-        961 - צבע חלקים עם '{{ name }}'
-        *לחץ פעמיים כדי לכווץ*
-      open_url: 962 - פתח את הקישור של החומר
+      type_0: 983 - סוג החומר '$t(tab.materials.type_0)'
+      type_1: 984 - סוג החומר '$t(tab.materials.type_1)'
+      type_2: 985 - סוג החומר '$t(tab.materials.type_2)'
+      type_3: 986 - סוג החומר '$t(tab.materials.type_3)'
+      type_4: 987 - סוג החומר '$t(tab.materials.type_4)'
+      type_5: 988 - סוג החומר '$t(tab.materials.type_5)'
+      type_6: 989 - סוג החומר '$t(tab.materials.type_6)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: 992 - כיוון סיבים
+      raw_estimated_0: 993 - מוערך לפי נפח היעיל
+      colorized: 994 - ציור הצללה זה יוחל על המרקם של החומר שיופיע במודל
+      texture_load: 995 - טען מרקם חדש
+      texture_clear: 996 - הסר מרקם
+      edit: 997 - ערוך מאפיינים של '{{ name }}'
+      set_current: 998 - צביעה של חלקים עם '{{ name }}'
+      open_url: 999 - פתח את הקישור של החומר
     menu:
-      import_from_skm: 963 - ייבוא חומר (skm.)
-      purge_unused: 964 - נקה חומרים שאינם בשימוש
-      reset_prices: 965 - איפוס מחירים של כל החומרים
+      import_from_skm: 1000 - ייבוא חומר (skm.)
+      purge_unused: 1001 - נקה חומרים שאינם בשימוש
+      reset_prices: 1002 - איפוס מחירים של כל החומרים
       reset_prices_confirm: |
-        966 - אתה עומד לאפס את המחירים של כל החומרים.
+        1003 - אתה עומד לאפס את המחירים של כל החומרים.
         פעולה זו היא סופית. **כל המחירים יאופסו.**
         אשר כדי להמשיך.
-      reset_prices_success: 967 - המחירים של כל החומרים אופסו.
+      reset_prices_success: 1004 - המחירים של כל החומרים אופסו.
     new_material:
-      title: 968 - צור חומר חדש
-      name: 969 - תיאור
-      name_warning: 970 - שם לא חוקי
-      color: 971 - צבע
-      color_warning: 972 - צבע לא חוקי
-      type: 973 - סוג
+      title: 1005 - צור חומר חדש
+      name: 1006 - תיאור
+      name_warning: 1007 - שם לא חוקי
+      color: 1008 - צבע
+      color_warning: 1009 - צבע לא חוקי
+      type: 1010 - סוג
     edit_material:
-      title: 974 - מאפייני חומר '{{ name }}'
-      general: 975 - כללי
-      texture: 976 - מרקם
-      no_texture: 977 - ללא מרקם
-      name: 978 - תיאור
-      type: 979 - סוג
-      description: 980 - תיאור
-      url: 981 - קישור
-      cut_options: 982 - הגדרות חיתוך
-      estimate_options: 983 - אפשרויות הערכה
-      attributes: 984 - תכונות
-      thickness: 985 - עובי
+      title: 1011 - מאפייני חומר '{{ name }}'
+      general: 1012 - כללי
+      texture: 1013 - מרקם
+      no_texture: 1014 - ללא מרקם
+      name: 1015 - תיאור
+      type: 1016 - סוג
+      description: 1017 - תיאור
+      url: 1018 - קישור
+      cut_options: 1019 - הגדרות חיתוך
+      estimate_options: 1020 - אפשרויות הערכה
+      attributes: 1021 - תכונות
+      thickness: 1022 - עובי
       thickness_help: |
-        986 - עובי מוגמר של החומר.
+        1023 - עובי מוגמר של החומר.
         *אם לא צוינו יחידות, יחידת המודל תילקח בחשבון.*
-      length_increase: 987 - תוספת לאורך
-      length_increase_help: 988 - תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
-      width_increase: 989 - תוספת לרוחב
-      width_increase_help: 990 - תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.
-      thickness_increase: 991 - תוספת לעובי
-      thickness_increase_help: 992 - תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**.
-      std_lengths: 993 - אורכים סטנדרטיים
-      std_lengths_placeholder: 994 - אורך ; ...
+      length_increase: 1024 - תוספת לאורך
+      length_increase_help: 1025 - תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
+      width_increase: 1026 - תוספת לרוחב
+      width_increase_help: 1027 - תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.
+      thickness_increase: 1028 - תוספת לעובי
+      thickness_increase_help: 1029 - תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**.
+      std_lengths: 1030 - אורכים סטנדרטיים
+      std_lengths_placeholder: 1031 - אורך ; ...
       std_lengths_help: |
-        995 - אורכים סטנדרטיים של לוחות או קאנטים.
+        1032 - אורכים סטנדרטיים של לוחות או קאנטים.
         *מידות ללא יחידות יהיו ביחידות המודל.*
-      std_widths: 996 - רוחבים סטנדרטיים
-      std_widths_placeholder: 997 - רוחב ; ...
+      std_widths: 1033 - רוחבים סטנדרטיים
+      std_widths_placeholder: 1034 - רוחב ; ...
       std_widths_help: |
-        998 - רוחבי קאנטים סטנדרטיים.
+        1035 - רוחבי קאנטים סטנדרטיים.
         *מידות ללא יחידות יהיו ביחידות המודל.*
-      std_thicknesses: 999 - עוביים סטנדרטיים
-      std_thicknesses_placeholder: 1000 - עובי ; ...
+      std_thicknesses: 1036 - עוביים סטנדרטיים
+      std_thicknesses_placeholder: 1037 - עובי ; ...
       std_thicknesses_help: |
-        1001 - עובי **גולמי** סטנדרטי.
+        1038 - עובי **גולמי** סטנדרטי.
         *מידות ללא יחידות יהיו ביחידות המודל.*
-      std_sections: 1002 - מידות חתך סטנדרטיות
-      std_sections_placeholder: 1003 - רוחב x גובה ; ...
+      std_sections: 1039 - מידות חתך סטנדרטיות
+      std_sections_placeholder: 1040 - רוחב x גובה ; ...
       std_sections_help: |
-        1004 - פורמט צפוי: **ר**x**ג**. כאשר **ר** ו-**ג** הם *רוחב* ו-*גובה* של החתך בהתאם.
+        1041 - פורמט צפוי: **ר**x**ג**. כאשר **ר** ו-**ג** הם *רוחב* ו-*גובה* של החתך בהתאם.
         *מידות ללא יחידות יהיו ביחידות המודל.*
-      std_sizes: 1005 - גדלים סטנדרטיים
-      std_sizes_placeholder: 1006 - אורך x רוחב ; ...
+      std_sizes: 1042 - גדלים סטנדרטיים
+      std_sizes_placeholder: 1043 - אורך x רוחב ; ...
       std_sizes_help: |
-        1007 - פורמט צפוי: **א**x**ר**. כאשר **א** ו-**ר** הם *אורך* ו-*רוחב* של הלוח בהתאם.
+        1044 - פורמט צפוי: **א**x**ר**. כאשר **א** ו-**ר** הם *אורך* ו-*רוחב* של הלוח בהתאם.
         *מידות ללא יחידות יהיו ביחידות המודל.*
-      grained: 1008 - כיוון סיבים
-      grained_help: 1009 - מגדיר את כיוון הסיבים של מרקם החומר.
-      grained_0: 1010 - ללא מרקם
-      grained_1: 1011 - סיבים לאורך
-      edge_decremented: 1012 - הפחתה
-      edge_decremented_help: 1013 - משמש כדי לציין אם יש להפחית את מידות החיתוך של החלקים בעובי הקאנט.
-      edge_decremented_0: 1014 - ללא הפחתה
-      edge_decremented_1: 1015 - הפחתת עובי הקאנט
-      raw_estimated: 1016 - נפח כללי
+      grained: 1045 - כיוון סיבים
+      grained_help: 1046 - מגדיר את כיוון הסיבים של מרקם החומר.
+      grained_0: 1047 - ללא מרקם
+      grained_1: 1048 - סיבים לאורך
+      edge_decremented: 1049 - הפחתה
+      edge_decremented_help: 1050 - משמש כדי לציין אם יש להפחית את מידות החיתוך של החלקים בעובי הקאנט.
+      edge_decremented_0: 1051 - ללא הפחתה
+      edge_decremented_1: 1052 - הפחתת עובי הקאנט
+      raw_estimated: 1053 - נפח כללי
       raw_estimated_help: |
-        1017 - מאפשר להגדיר את הנפח הכללי להערכת המסה והעלות הכוללת של חלקים מחומר זה.
+        1054 - מאפשר להגדיר את הנפח הכללי להערכת המסה והעלות הכוללת של חלקים מחומר זה.
 
         **נפח היעיל**
         הנפח הכולל יהיה סכום נפחי החלקים של תוכנית חיתוך.
 
         **נפח חומר גלם נדרש**
         הנפח הכולל יהיה סכום הנפחים של הלוחות, הפורנירים, הקרשים או הקאנטים של החלקים לאחר החיתוך.
-      raw_estimated_0: 1018 - נפח יעיל של החומר
-      raw_estimated_1: 1019 - נפח חומר גלם נדרש
-      std_attributes_dim_placeholder: 1020 - בחר מידה
-      std_volumic_masses: 1021 - צפיפות
-      std_volumic_masses_help: 1022 - מאפשר להגדיר את הצפיפות עבור כל הגדלים וכן עבור כל גודל סטנדרטי של החומר.
-      std_volumic_masses_add: 1023 - הוסף צפיפות
-      std_prices: 1024 - מחיר
-      std_prices_help: 1025 - מאפשר להגדיר את המחיר לכל הערכים כמו כן לכל ערך החומר הסטנדרטי.
-      std_prices_add: 1026 - הוסף מחיר
-      texture_width: 1027 - רוחב
-      texture_height: 1028 - גובה
-      export_to_skm: 1029 - ייצוא ​​(skm.)
+      raw_estimated_0: 1055 - נפח יעיל של החומר
+      raw_estimated_1: 1056 - נפח חומר גלם נדרש
+      std_attributes_dim_placeholder: 1057 - בחר מידה
+      std_volumic_masses: 1058 - צפיפות
+      std_volumic_masses_help: 1059 - מאפשר להגדיר את הצפיפות עבור כל הגדלים וכן עבור כל גודל סטנדרטי של החומר.
+      std_volumic_masses_add: 1060 - הוסף צפיפות
+      std_prices: 1061 - מחיר
+      std_prices_help: 1062 - מאפשר להגדיר את המחיר לכל הערכים כמו כן לכל ערך החומר הסטנדרטי.
+      std_prices_add: 1063 - הוסף מחיר
+      texture_width: 1064 - רוחב
+      texture_height: 1065 - גובה
+      export_to_skm: 1066 - ייצוא ​​(skm.)
     texture_load:
-      title: 1030 - טען תמונה
+      title: 1067 - טען תמונה
     import_from_skm:
-      title: 1031 - ייבוא קובץ skm.
+      title: 1068 - ייבוא קובץ skm.
     export_to_skm:
-      title: 1032 - ייצוא לקובץ skm.
+      title: 1069 - ייצוא לקובץ skm.
     option:
-      material_order_strategy: 1033 - מיון חומרים
+      minimize_on_smart_paint: 1070 - כיווץ לאחר *'צביעת חלקים עם...'*
+      minimize_on_smart_paint_help: 1071 - אם אפשרות זו מופעלת, חלון OpenCutList יצטמצם כאשר נעשה שימוש בפונקציה *'צבע חלקים עם...'*.
+      general: 1072 - כללי
+      material_order_strategy: 1073 - מיון חומרים
       material_order_strategy_help: |
-        1034 - סדר מחדש את המאפיינים הבאים כדי להגדיר את המיון של החומרים ברשימה.
+        1074 - סדר מחדש את המאפיינים הבאים כדי להגדיר את המיון של החומרים ברשימה.
         ניתן למיין לפי סדר <i class="ladb-opencutlist-icon-sort-asc"></i>*עולה* או <i class="ladb-opencutlist-icon-sort-desc"></i>*יורד*.
-      property_type: 1035 - סוג
-      property_name: 1036 - תיאור
-    remove:
+      property_type: 1075 - סוג
+      property_name: 1076 - תיאור
+    delete:
       message: |
-        1037 - אתם עומדים להסיר את החומר **{{ material_name }}** מהמודל.
+        1077 - אתם עומדים להסיר את החומר **{{ material_name }}** מהמודל.
         אשרו להמשיך.
     duplicate:
-      message: '1038 - בחר את השם של העתק החומר החדש מ-**{{ material_name }}**.
-
-        '
+      message: |
+        1078 - בחר את השם של העתק החומר החדש מ-**{{ material_name }}**.
     error:
-      no_model: 1039 - אין מודל פתוח. אתה תצטרך לתת לי קצת יותר מידע ;)
-      no_materials: 1040 - המודל אינו מכיל שום חומר.
-      material_not_found: 1041 - חומר לא נמצא.
-      failed_import_skm_file: 1042 - **{{ error }}** אירעה שגיאה בייבוא ​​קובץ skm.
-      failed_export_skm_file: 1043 - **{{ error }}** אירעה שגיאה בייצוא קובץ skm.
-      failed_removing_material: 1044 - אירעה שגיאה בעת מחיקת החומר. **{{ error }}**
-      failed_duplicating_material: 1045 - אירעה שגיאה בעת שכפול החומר. **{{ error }}**
-      invalid_image_file: 1046 - תמונה לא חוקית
-    obsolete_base: 1047 - כדי לתמוך בסנכרון, עליך לרענן את רשימת החומרים.
+      no_model: 1079 - אין מודל פתוח. אתה תצטרך לתת לי קצת יותר מידע ;)
+      no_materials: 1080 - המודל אינו מכיל שום חומר.
+      material_not_found: 1081 - חומר לא נמצא.
+      failed_import_skm_file: 1082 - **{{ error }}** אירעה שגיאה בייבוא ​​קובץ skm.
+      failed_export_skm_file: 1083 - **{{ error }}** אירעה שגיאה בייצוא קובץ skm.
+      failed_deleting_material: 1084 - אירעה שגיאה בעת מחיקת החומר. **{{ error }}**
+      failed_duplicating_material: 1085 - אירעה שגיאה בעת שכפול החומר. **{{ error }}**
+      invalid_image_file: 1086 - תמונה לא חוקית
+    obsolete_base: 1087 - כדי לתמוך בסנכרון, עליך לרענן את רשימת החומרים.
   outliner:
-    label: 1048 - מבנה
-    title: 1049 - מבנה
-    list: 1050 - מבנה עץ של ישויות
-    nodes: 1051 - פריטים
-    part_count: 1052 - כמות חלקים
-    type_0: 1053 - דגם
-    type_1: 1054 - קבוצה
-    type_2: 1055 - רכיב
-    type_3: 1056 - חלק
+    label: 1088 - מבנה
+    title: 1089 - מבנה
+    list: 1090 - מבנה עץ של ישויות
+    nodes: 1091 - פריטים
+    toggle_hidden: 1092 - חלקים נסתרים
+    type_0: 1093 - דגם
+    type_1: 1094 - קבוצה
+    type_2: 1095 - רכיב
+    type_3: 1096 - חלק
     tooltip:
-      open_node_url: 1057 - פתח קישור של פריט
+      open_node_url: 1097 - פתח קישור של החלק
     edit_node:
-      title_model: 1058 - מאפייני דגם
-      title_instance: 1059 - מאפייני דגם **{{ name }}**
-      general: 1060 - כללי
-      preview: 1061 - סקירה כללית
-      name: 1062 - תיאור
-      instance_name: 1063 - אדגם
-      definition_name: 1064 - הגדרה
-      description: 1065 - תיאור
-      url: 1066 - קישור
-      layer_name: 1067 - תג
-      explode: 1068 - פיצול
-      explode_message: 1069 - האם אתה מאשר את הפיצול של הפריט **{{ name }}**?
+      title_model: 1098 - מאפייני דגם
+      title_instance: 1099 - מאפייני דגם **{{ name }}**
+      general: 1100 - כללי
+      preview: 1101 - סקירה כללית
+      name: 1102 - תיאור
+      instance_name: 1103 - אדגם
+      material: 1104 - חומר
+      definition_name: 1105 - הגדרה
+      description: 1106 - תיאור
+      url: 1107 - קישור
+      tags: 1108 - תגים
+      layer_name: 1109 - תג
+      explode: 1110 - פיצול
+      explode_message: 1111 - האם אתה מאשר את הפיצול של הפריט **{{ name }}**?
     error:
-      no_model: 1070 - אין מודל פתוח. אתה תצטרך לתת לי קצת יותר מידע ;)
-      no_entities: 1071 - הדגם שלך ריק!
-      node_not_found: 1072 - הצומת לא נמצא
-      entity_not_found: 1073 - פריט לא נמצא
-      obsolete_outliner: 1074 - בלתי אפשרי, המבנה שנוצר מיושן. תחשב מחדש.
+      no_model: 1112 - אין מודל פתוח. אתה תצטרך לתת לי קצת יותר מידע ;)
+      no_entities: 1113 - הדגם שלך ריק!
+      node_not_found: 1114 - הצומת לא נמצא
+      entity_not_found: 1115 - פריט לא נמצא
+      obsolete_outliner: 1116 - בלתי אפשרי, המבנה שנוצר מיושן. תחשב מחדש.
     tip:
       no_node: |
-        1075 - לדגם שלך אין כרגע פריטים להצגה.
+        1117 - לדגם שלך אין כרגע פריטים להצגה.
         פריט הוא **קבוצה** או **רכיב** המוצב בסצנה.
-    obsolete_base: 1076 - כדי להישאר מסונכרן, עליך ליצור מחדש את המבנה.
+    obsolete_base: 1118 - כדי להישאר מסונכרן, עליך ליצור מחדש את המבנה.
   importer:
-    label: 1077 - ייבוא
-    title: 1078 - ייבוא חלקים
+    label: 1119 - ייבוא
+    title: 1120 - ייבוא חלקים
     help: |
-      1079 - הדף מאפשר לייבא סדרה של חלקים (בבחירה מלבנית) למודל מקובץ [CSV](https://he.wikipedia.org/wiki/CSV).
+      1121 - הדף מאפשר לייבא סדרה של חלקים (בבחירה מלבנית) למודל מקובץ [CSV](https://he.wikipedia.org/wiki/CSV).
       ניתן להשתמש ביכולות של *OpenCutList* לחלקים שנוצרו לא בעזרת *SketchUp*.
       לחץ על הלחצן **פתח קובץ CSV** כדי להתחיל.
-    open_csv: 1080 - פתח קובץ CSV
-    import_to_model: 1081 - ייבוא למודל
+    open_csv: 1122 - פתח קובץ CSV
+    import_to_model: 1123 - ייבוא למודל
     load:
-      title: 1082 - טען קובץ CSV
+      title: 1124 - טען קובץ CSV
       info_0: |
-        1083 - בחר באפשרויות הדרושות לקריאה נכונה של הקובץ:
+        1125 - בחר באפשרויות הדרושות לקריאה נכונה של הקובץ:
         **{{ filename }}**.
       info_1: |
-        1084 - *היחידה שהוגדרה במודל היא: **{{ unit }}**.
+        1126 - *היחידה שהוגדרה במודל היא: **{{ unit }}**.
         היחידה תשמש למידות שעבורן לא מוגדרות יחידות*.
-      options: 1085 - אפשרויות טעינה
-      option_col_sep: 1086 - מפריד
-      option_col_sep_tab: 1087 - טבלר
-      option_col_sep_comma: 1088 - פסיק
-      option_col_sep_semicolon: 1089 - נקודה פסיק
-      option_first_line_headers: 1090 - כותרת שורה
-      option_first_line_headers_0: 1091 - נתונים
-      option_first_line_headers_1: 1092 - כותרות עמודות
+      options: 1127 - אפשרויות טעינה
+      option_col_sep: 1128 - מפריד
+      option_col_sep_tab: 1129 - טבלר
+      option_col_sep_comma: 1130 - פסיק
+      option_col_sep_semicolon: 1131 - נקודה פסיק
+      option_first_line_headers: 1132 - כותרת שורה
+      option_first_line_headers_0: 1133 - נתונים
+      option_first_line_headers_1: 1134 - כותרות עמודות
     import:
-      title: 1093 - ייבוא ​​חלקים למודל
+      title: 1135 - ייבוא ​​חלקים למודל
       info_0: |
-        1094 - אתם עומדים לייבא **{{ count }}** חלק למודל.
+        1136 - אתם עומדים לייבא **{{ count }}** חלק למודל.
         החלק יוצב בראשית הצירים של הסצנה.
       info_0_plural: |
-        1095 - אתם עומדים לייבא **{{ count }}** חלקים למודל.
+        1137 - אתם עומדים לייבא **{{ count }}** חלקים למודל.
         החלקים יוצבו בראשית הצירים של הסצנה.
-      info_1: 1096 - לחץ על **ייבוא** כדי לאשר את הפעולה.
+      info_1: 1138 - לחץ על **ייבוא** כדי לאשר את הפעולה.
       options: |
-        1097 - המודל כבר מכיל *חלקים*, *הגדרות* או *חומרים*.
+        1139 - המודל כבר מכיל *חלקים*, *הגדרות* או *חומרים*.
         בחר באפשרויות ייבוא הנדרשות​​.
-      option_remove_all_?: 1098 - מה לעשות?
-      option_remove_all_false: 1099 - הוסף חלקים לקיימים
-      option_remove_all_true: 1100 - לאפס הכל !
-      option_keep_definitions_settings: 1101 - שמור פרמטרים בהגדרות
-      option_keep_materials_settings: 1102 - שמור הגדרות החומרים
+      option_remove_all_?: 1140 - מה לעשות?
+      option_remove_all_false: 1141 - הוסף חלקים לקיימים
+      option_remove_all_true: 1142 - לאפס הכל !
+      option_keep_definitions_settings: 1143 - שמור פרמטרים בהגדרות
+      option_keep_materials_settings: 1144 - שמור הגדרות החומרים
     column:
-      unused: 1103 - לא בשימוש
-      mandatory: 1104 - שדות חובה
-      optional: 1105 - שדות נוספים
-      name: 1106 - תיאור
-      count: 1107 - כמות
-      bbox_length: 1108 - אורך חיתוך
-      bbox_width: 1109 - רוחב חיתוך
-      bbox_thickness: 1110 - עובי חיתוך
-      material: 1111 - חומר
-      tags: 1112 - תגים
+      unused: 1145 - לא בשימוש
+      mandatory: 1146 - שדות חובה
+      optional: 1147 - שדות נוספים
+      name: 1148 - תיאור
+      count: 1149 - כמות
+      bbox_length: 1150 - אורך חיתוך
+      bbox_width: 1151 - רוחב חיתוך
+      bbox_thickness: 1152 - עובי חיתוך
+      material: 1153 - חומר
+      tags: 1154 - תגים
     tooltip:
-      errors: 1113 - החלק לא יובא מכיוון שהוא מכיל את השגיאות הבאות
-      warnings: 1114 - החלק יובא אך הוא מכיל את האזהרות הבאות
+      errors: 1155 - החלק לא יובא מכיוון שהוא מכיל את השגיאות הבאות
+      warnings: 1156 - החלק יובא אך הוא מכיל את האזהרות הבאות
     error:
-      no_model: 1115 - שום מודל לא פתוח. לא ניתן לייבא חלקים מן הריק ;)
-      file_not_found: '1116 - הקובץ לא נמצא : **{{ filename }}**'
-      bad_extension: 1117 - לקובץ *{{ filename }}* אין סיומת **CSV.** או **TSV.**.
+      no_model: 1157 - שום מודל לא פתוח. לא ניתן לייבא חלקים מן הריק ;)
+      file_not_found: '1158 - הקובץ לא נמצא : **{{ filename }}**'
+      bad_extension: 1159 - לקובץ *{{ filename }}* אין סיומת **CSV.** או **TSV.**.
       failed_to_load_csv_file: |
-        1118 - טעינת קובץ CSV נכשלה: **{{ error }}**
+        1160 - טעינת קובץ CSV נכשלה: **{{ error }}**
         *בדוק שבחרת במפריד הנתונים הנכון.*
-      empty_file: 1119 - נראה שהקובץ ריק או בפורמט לא קריא.
-      no_importable_part: 1120 - לא ניתן לייבא חלקים. הקצה את השדות הנדרשים בעמודות המתאימות.
-      invalid_name: 1121 - תיאור לא תקין
-      invalid_length: 1122 - אורך לא תקין
-      invalid_width: 1123 - רוחב לא תקין
-      invalid_thickness: 1124 - עובי לא תקין
-      failed_to_import: 1125 - הייבוא ​​נכשל.
+      empty_file: 1161 - נראה שהקובץ ריק או בפורמט לא קריא.
+      no_importable_part: 1162 - לא ניתן לייבא חלקים. הקצה את השדות הנדרשים בעמודות המתאימות.
+      invalid_name: 1163 - תיאור לא תקין
+      invalid_length: 1164 - אורך לא תקין
+      invalid_width: 1165 - רוחב לא תקין
+      invalid_thickness: 1166 - עובי לא תקין
+      failed_to_import: 1167 - הייבוא ​​נכשל.
     warning:
-      invalid_count: 1126 - כמות לא תקינה
-      invalid_material: 1127 - חומר לא תקין
+      invalid_count: 1168 - כמות לא תקינה
+      invalid_material: 1169 - חומר לא תקין
     success:
-      imported_title: 1128 - הייבוא ​​הושלם
-      imported_body: 1129 - {{ count }} חלק מיובא בהצלחה!
-      imported_body_plural: 1130 - {{ count }} חלקים מיובאים בהצלחה!
-    obsolete_base: 1131 - כדי לתמוך בסנכרון, עליך לטעון מחדש את הקובץ CSV.
+      imported_title: 1170 - הייבוא ​​הושלם
+      imported_body: 1171 - {{ count }} חלק מיובא בהצלחה!
+      imported_body_plural: 1172 - {{ count }} חלקים מיובאים בהצלחה!
+    obsolete_base: 1173 - כדי לתמוך בסנכרון, עליך לטעון מחדש את הקובץ CSV.
   tutorials:
-    label: 1132 - הוראות
-    title: 1133 - הוראות
-    help: '1134 - מצא כאן רשימת סרטונים שנעשו על ידי הקהילה סביב השימוש ב-*OpenCutList*.
-
-      '
-    submit: 1135 - שלח סרטון
+    label: 1174 - הוראות
+    title: 1175 - הוראות
+    help: |
+      1176 - מצא כאן רשימת סרטונים שנעשו על ידי הקהילה סביב השימוש ב-*OpenCutList*.
+    submit: 1177 - שלח סרטון
     submit_info: |
-      1136 - ערכתם סרטון על השימוש ב-**OpenCutList** ואתם רוצים לראות את זה מופיע כאן?
+      1178 - ערכתם סרטון על השימוש ב-**OpenCutList** ואתם רוצים לראות את זה מופיע כאן?
       נא לידע לכתובת **opencutlist@lairdubois.fr**!
 
       *על הסרטון להיות משותף ונמצא ב- YouTube*.
     error:
-      fail_to_load_list: 1137 - לא ניתן לטעון את רשימת הסרטונים.
+      fail_to_load_list: 1179 - לא ניתן לטעון את רשימת הסרטונים.
   news:
-    label: 1138 - חדשות
-    title: 1139 - חדשות
-    help: '1140 - חדשות אחרונות מ-*OpenCutList*.
-
-      '
-    comment: 1141 - תגובה
+    label: 1180 - חדשות
+    title: 1181 - חדשות
+    help: |
+      1182 - חדשות אחרונות מ-*OpenCutList*.
+    comment: 1183 - תגובה
     error:
-      fail_to_load_list: 1142 - לא ניתן לטעון את רשימת החדשות.
+      fail_to_load_list: 1184 - לא ניתן לטעון את רשימת החדשות.
   forum:
-    label: 1143 - פורום
-    title: 1144 - פורום
-    help: '1145 - הפלטפורמה מאפשרת להחליף מידע בין קהילת המשתמשים והצוות *OpenCutList*.
-
-      '
-    create_conversation: 1146 - התחל שיחה
-    reply: 1147 - השב
-    tags: 1148 - תגים
+    label: 1185 - פורום
+    title: 1186 - פורום
+    help: |
+      1187 - הפלטפורמה מאפשרת להחליף מידע בין קהילת המשתמשים והצוות *OpenCutList*.
+    create_conversation: 1188 - התחל שיחה
+    reply: 1189 - השב
+    tags: 1190 - תגים
     redirection: |
-      1149 - תועבר לפלטפורמת **Open Collective** המארחת פורום הדיונים.
+      1191 - תועבר לפלטפורמת **Open Collective** המארחת פורום הדיונים.
       כדי *להתחיל שיחה* או *לענות* תצטרכו ליצור חשבון ולהיכנס.
       *זה בחינם, אין התחייבות ופשוט מספיקה כתובת דוא"ל.*
 
       אשר כדי להמשיך.
     error:
-      fail_to_load_list: 1150 - לא ניתן לטעון את רשימת השיחות.
+      fail_to_load_list: 1192 - לא ניתן לטעון את רשימת השיחות.
   sponsor:
-    label: 1151 - תמיכה
-    title: 1152 - תמיכה
+    label: 1193 - תמיכה
+    title: 1194 - תמיכה
     description: |
-      1153 - **OpenCutList** היא *תוכנת קוד פתוח* שממומנת על ידי המשתמשים באמצעות פלטפורמת <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      1195 - **OpenCutList** היא *תוכנת קוד פתוח* שממומנת על ידי המשתמשים באמצעות פלטפורמת <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
       תמכו בפרויקט על ידי תרומה !
-    contribute: 1154 - לתרום
-    backers: 1155 - {{ count }} תורם כספי
-    backers_plural: 1156 - {{ count }} תורמים כספיים
-    ad: 1157 - אוהבים Open CutList ?
-    objective: 1158 - יעד
-    objective_slogan: 1159 - OpenCutList - זה כולנו
+    contribute: 1196 - לתרום
+    backers: 1197 - {{ count }} תורם כספי
+    backers_plural: 1198 - {{ count }} תורמים כספיים
+    ad: 1199 - אוהבים Open CutList ?
+    objective: 1200 - יעד
+    objective_slogan: 1201 - OpenCutList - זה כולנו
     objective_title:
-      default: 1160 - מטרות
-      cuttingdiagram_export: 1161 - עלות תוכנית חיתוך ביצוא
+      default: 1202 - מטרות
+      cuttingdiagram_export: 1203 - עלות תוכנית חיתוך ביצוא
+      outliner: 1204 - מימון פונקציית "מבנה"
+      packing: 1205 - מימון פונקציית "תוכנית חיתוך"
     objective_details:
-      default: '1162 - השיפור המתמיד של *OpenCutList* חשוב לנו מאוד והפרויקט ממשיך להזדקק לעזרתכם לעדכון הבא!
-
-        '
+      default: |
+        1206 - השיפור המתמיד של *OpenCutList* חשוב לנו מאוד והפרויקט ממשיך להזדקק לעזרתכם לעדכון הבא!
       cuttingdiagram_export: |
-        1163 - חשוב לנו ש*OpenCutList* יוכל להתאים לציפיות המגוונות מאוד של המשתמשים לפונקציית *תוכנית חיתוך*.
+        1207 - חשוב לנו ש*OpenCutList* יוכל להתאים לציפיות המגוונות מאוד של המשתמשים לפונקציית *תוכנית חיתוך*.
         כדי להרחיב עוד יותר את האפשרויות, נרצה לאפשר לייצא תוכניות חיתוך בפורמט **SVG** ו- **DXF**.
         על ידי מתן האמצעים לעבודה על יצוא אלה, אתה נותן לנו את ההזדמנות לאפשר לך להפיק את המרב מ-*OpenCutList*.
-      layout: '1164 - המטרה של מודול זה היא לאפשר לך להדפיס בקלות תצוגה מקדימה של הפרויקט שלך כ**תצוגה מפוצצת** עם זיהוי ממידע שנוצר ברשימת החלקים.
-
-        '
-    objective_crowdfunding: '1165 - פיתוח אפשרויות חדשות ייעשה באמצעות **מימון המונים** ויכול להתחיל כאשר **היעדים הכספיים** שלו הושגו.
-
-      '
-    objective_thanks: '1166 - תודה על תרומתך !
-
-      '
-    objective_funded_progress: 1167 - ממומן ב-{{ progress }}%
+      outliner: |
+        1208 - מודל יכול להיות מורכב למדי והניווט במבנה שלו עם לוח Structure המקורי של SketchUp אינו תמיד נוח במיוחד.
+        ב-SketchUp, ניתן להחיל חומר ותגים על מופעים, תיאור, כתובת אתר ותגים על הגדרות, אך הם אינם מוצגים במבנה.
+        הסרטון יראה לכם כיצד נרצה לשפר זאת בתפריט Structure, הנגיש ישירות מ-OpenCutList.
+      packing: |
+        1209 - חשוב לנו ש-*OpenCutList* יוכל להתאים לציפיות המגוונות מאוד של המשתמשים לפונקציית *תוכנית חיתוך*.
+        כדי להרחיב עוד יותר את האפשרויות, אנו רוצים ליישם **אלגוריתם קינון** כדי לייעל את החיתוך של חלקים מכל צורה.
+        בכך שאתה מספק לנו את האמצעים לעבוד על תכונה זו, אתה נותן לנו את ההזדמנות לעזור לך להפיק את המרב מ-*OpenCutList*.
+    objective_crowdfunding: |
+      1210 - פיתוח אפשרויות חדשות ייעשה באמצעות **מימון המונים** ויכול להתחיל כאשר **היעדים הכספיים** שלו הושגו.
+    objective_thanks: |
+      1211 - תודה על תרומתך !
+    objective_funded_progress: 1212 - ממומן ב-{{ progress }}%
   settings:
-    label: 1168 - הגדרות
-    title: 1169 - הגדרות
-    global_settings: 1170 - הגדרות כלליות
-    language: 1171 - שפה
-    language_auto: 1172 - אוטומטי
-    zoom: 1173 - גודל טקסט
-    zoom_normal: 1174 - רגיל
-    zoom_small: 1175 - קטן
-    zoom_tiny: 1176 - קטן מאוד
-    print_margin: 1177 - שוליים להדפסה
-    print_margin_normal: 1178 - נורמלי
-    print_margin_small: 1179 - קטן
-    table_row_size: 1180 - גודל שורות הטבלה
-    table_row_size_normal: 1181 - רגיל
-    table_row_size_compact: 1182 - קומפקטי
-    size_and_position: 1183 - גודל ומיקום חלון
-    model_settings: 1184 - הגדרות מודל
-    length_unit: 1185 - יחידת אורך
-    length_format: 1186 - פורמט
-    length_format_0: 1187 - עשרוני
-    length_format_1: 1188 - ארכיטקטורי
-    length_format_2: 1189 - הנדסי
-    length_format_3: 1190 - חלקי
-    length_precision: 1191 - דיוק
-    suppress_units_display: 1192 - הצגת יחידת אורך לכל ערך
-    mass_unit: 1193 - יחידת משקל
-    mass_precision: 1194 - דיוק
-    currency_symbol: 1195 - סמל המטבע
-    currency_precision: 1196 - דיוק
+    label: 1213 - הגדרות
+    title: 1214 - הגדרות
+    global_settings: 1215 - הגדרות כלליות
+    language: 1216 - שפה
+    language_auto: 1217 - אוטומטי
+    zoom: 1218 - גודל טקסט
+    zoom_normal: 1219 - רגיל
+    zoom_small: 1220 - קטן
+    zoom_tiny: 1221 - קטן מאוד
+    print_margin: 1222 - שוליים להדפסה
+    print_margin_normal: 1223 - נורמלי
+    print_margin_small: 1224 - קטן
+    table_row_size: 1225 - גודל שורות הטבלה
+    table_row_size_normal: 1226 - רגיל
+    table_row_size_compact: 1227 - קומפקטי
+    size_and_position: 1228 - גודל ומיקום חלון
+    model_settings: 1229 - הגדרות מודל
+    length_unit: 1230 - יחידת אורך
+    length_format: 1231 - פורמט
+    length_format_0: 1232 - עשרוני
+    length_format_1: 1233 - ארכיטקטורי
+    length_format_2: 1234 - הנדסי
+    length_format_3: 1235 - חלקי
+    length_precision: 1236 - דיוק
+    suppress_units_display: 1237 - הצגת יחידת אורך לכל ערך
+    mass_unit: 1238 - יחידת משקל
+    mass_precision: 1239 - דיוק
+    currency_symbol: 1240 - סמל המטבע
+    currency_precision: 1241 - דיוק
     presets:
-      export_global_presets: 1197 - ייצא הגדרות קבועות מראש
+      export_global_presets: 1242 - ייצא הגדרות קבועות מראש
       export_global_presets_help: |
-        1198 - תכונה זו מאפשרת לך לייצא את ההגדרות המוגדרות מראש שלך לקובץ **.json**.
+        1243 - תכונה זו מאפשרת לך לייצא את ההגדרות המוגדרות מראש שלך לקובץ **.json**.
         בחר את ההגדרות המוגדרות מראש שברצונך לייצא לשם.
-      export_global_presets_success: 1199 - ההגדרות המוגדרות מראש יוצאו בהצלחה.
-      import_global_presets: 1200 - ייבוא ​​הגדרות קבועות מראש
+      export_global_presets_success: 1244 - ההגדרות המוגדרות מראש יוצאו בהצלחה.
+      import_global_presets: 1245 - ייבוא ​​הגדרות קבועות מראש
       import_global_presets_help: |
-        1201 - בחר את המוגדרות מראש הקיימות בקובץ **.json** שברצונך לייבא.
+        1246 - בחר את המוגדרות מראש הקיימות בקובץ **.json** שברצונך לייבא.
         היזהר, אם כבר קיימת הגדרה מראש עם שם זהה, היא תוחלף בגרסה המיובאת.
       import_global_presets_success: |
-        1202 - הגדרות קבועות מראש של *OpenCutList* יובאו בהצלחה.
+        1247 - הגדרות קבועות מראש של *OpenCutList* יובאו בהצלחה.
         על מנת לקחת בחשבון את השינויים, עליך **לסגור** ו**לפתוח מחדש** את חלון OpenCutList.
-      dump_global_presets: 1203 - גיבוי הגדרות קבועות מראש
-      dump_model_presets: 1204 - גיבוי הגדרות מודל
-      reset_global_presets: 1205 - אפס הגדרות קבועות מראש
+      dump_global_presets: 1248 - גיבוי הגדרות קבועות מראש
+      dump_model_presets: 1249 - גיבוי הגדרות מודל
+      reset_global_presets: 1250 - אפס הגדרות קבועות מראש
       reset_global_presets_confirm: |
-        1206 - אתה עומד לאפס את כל הגדרות ה-*OpenCutList* השמורות.
+        1251 - אתה עומד לאפס את כל הגדרות ה-*OpenCutList* השמורות.
         הפעולה בלתי הפיכה. **כל ההגדרות הקבועות מראש יאבדו**.
         אשר להמשיך.
       reset_global_presets_success: |
-        1207 - הגדרות קבועות מראש של *OpenCutList* אופסו.
+        1252 - הגדרות קבועות מראש של *OpenCutList* אופסו.
         על מנת להתחל את השינויים, עליך **לסגור** ו-**לפתח** מחדש את חלון OpenCutList.
-      reset_model_presets: 1208 - אפס את הגדרות המודל
+      reset_model_presets: 1253 - אפס את הגדרות המודל
       reset_model_presets_confirm: |
-        1209 - אתה עומד לאפס את כל הגדרות *OpenCutList* עבור המודל הנוכחי.
+        1254 - אתה עומד לאפס את כל הגדרות *OpenCutList* עבור המודל הנוכחי.
         הפעולה בלתי הפיכה. **כל ההגדרות ישוחזרו לערכי ברירת המחדל**.
         אשר להמשיך.
       reset_model_presets_success: |
-        1210 - הגדרות *OpenCutList* של המודל הנוכחי אופסו.
+        1255 - הגדרות *OpenCutList* של המודל הנוכחי אופסו.
         על מנת להתחל את השינויים, עליך **לסגור** ו-**לפתח** מחדש את חלון OpenCutList.
       error:
-        no_preset_to_export: 1211 - אין הגדרות קבועות מראש לייצוא.
-        no_preset_to_import: 1212 - אין הגדרות קבועות מראש לייבוא.
-        failed_to_import: '1213 - ייבוא ​​הגדרות קבועות מראש נכשל: **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1214 - קובץ זה שונה. לא ניתן לייבא אותו.
-        failed_to_import_bad_file_format: 1215 - פורמט קובץ לא חוקי.
+        no_preset_to_export: 1256 - אין הגדרות קבועות מראש לייצוא.
+        no_preset_to_import: 1257 - אין הגדרות קבועות מראש לייבוא.
+        failed_to_import: '1258 - ייבוא ​​הגדרות קבועות מראש נכשל: **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1259 - קובץ זה שונה. לא ניתן לייבא אותו.
+        failed_to_import_bad_file_format: 1260 - פורמט קובץ לא חוקי.
   about:
-    label: 1216 - אודות
-    title: 1217 - אודות
-    version: 1218 - גרסה
-    credits: 1219 - מפרט טכני
-    credits_authors: '1220 - *OpenCutList* פותח על ידי [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) ו- [Martin Müller](https://www.lairdubois.fr/@mobilarte). *רשום את [התורמים](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
-
-      '
-    credits_translations: 1221 - תרגומים
+    label: 1261 - אודות
+    title: 1262 - אודות
+    version: 1263 - גרסה
+    credits: 1264 - מפרט טכני
+    credits_authors: |
+      1265 - *OpenCutList* פותח על ידי [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) ו- [Martin Müller](https://www.lairdubois.fr/@mobilarte). *רשום את [התורמים](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: 1266 - תרגומים
     credits_translators: |
-      1222 - - Sergey Isupov (*עברית*), ללא ממשק מימין לשמאל
+      1267 - - Sergey Isupov (*עברית*), ללא ממשק מימין לשמאל
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*אנגלית*, *גרמנית*)
       - Gildas Boureau (תיעוד *צרפתי*)
       - Vladimir Badulya (*רוסית*)
@@ -1623,128 +1635,129 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*סינית פשוטה*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*הולנדית*)
     credits_description: |
-      1223 - פיתוח הרחבה זו הוא חלק מפרויקט פלטפורמת השיתוף [L'Air du Bois](https://www.lairdubois.fr).
+      1268 - פיתוח הרחבה זו הוא חלק מפרויקט פלטפורמת השיתוף [L'Air du Bois](https://www.lairdubois.fr).
       ובנוסף, הוא גם *קוד פתוח* וזמין ברישיון [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE)sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1224 - ביצוע
-    credits_development: 1225 - פיתוח
-    credits_vendors: '1226 - ההרפתקה לא תתאפשר ללא עבודתם של מחברי התוכנה *קוד פתוח* הבאים:
-
-      '
+    credits_runtime: 1269 - ביצוע
+    credits_development: 1270 - פיתוח
+    credits_vendors: |
+      1271 - ההרפתקה לא תתאפשר ללא עבודתם של מחברי התוכנה *קוד פתוח* הבאים:
     credits_thanks: |
-      1227 - תודה מיוחדת ל:
+      1272 - תודה מיוחדת ל:
       - [JetBrains](https://www.jetbrains.com) על תמיכתם בפרויקט באמצעות [רישיון מיוחד לפרויקטים קוד פתוח](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) על תמיכתם בפרויקט Open Source.
       - [GitBook](https://www.gitbook.com) על תמיכתם בפרויקט Open Source.
 tool:
   default:
-    transparency: 1228 - שקיפות
-    zoom_extents: 1229 - זום מורחב
-    toggle_depth: 1230 - חלקים ברקע
-    more: 1231 - עוד
+    transparency: 1273 - שקיפות
+    zoom_extents: 1274 - זום מורחב
+    toggle_depth: 1275 - חלקים ברקע
+    more: 1276 - עוד
   highlight:
-    transparency: "$t(tool.default.transparency)"
-    zoom_extents: "$t(tool.default.zoom_extents)"
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: 1234 - גוון
-    default_material: 1235 - חומר לא מוגדר
-    filters: 1236 - סינון
-    filter_0: 1237 - סוג אינו מוגדר
-    filter_1: "$t(tab.materials.type_1)"
-    filter_2: "$t(tab.materials.type_2)"
-    filter_3: "$t(tab.materials.type_3)"
-    filter_4: "$t(tab.materials.type_4)"
-    filter_5: "$t(tab.materials.type_5)"
-    filter_6: "$t(tab.materials.type_6)"
-    action_0: 1244 - צביעת חלקים
-    action_0_status: 1245 - לחץ על חלק כדי לצבוע את הפריטים שלו
-    action_1: 1246 - צבע חלק
-    action_1_status: 1247 - לחץ על הקאנט של החלק כדי להחיל עליו חומר '$t(tab.materials.type_4)'
-    action_2: 1248 - נקה פנים
-    action_2_status: 1249 - לחץ על החזית של חלק בלוח כדי להחיל עליו חומר '$t(tab.materials.type_6)'
-    action_3: 1250 - נקה חלק
-    action_3_status: 1251 - לחץ על החזית כדי לקחת דוגמה מהחומר
-    action_4: 1252 - לנקות
-    action_4_status: 1253 - לחץ על חלק כדי להסיר את כל החומרים מההגדרה שלו ומכל הפריטים
-    action_option_group_instances: 1254 - כמות פריטים
-    action_option_group_edges: 1255 - כמות קאנטים
-    action_option_group_faces: 1256 - כמות צדדים
-    action_option_instances_0_status: 1257 - צבע רק את פריט החלק הממוקד
-    action_option_instances_1_status: 1258 - צבע את כל הפריטים של החלק הממוקד
-    action_option_edges_0_status: 1259 - צבע רק את ההרכב הממוקד
-    action_option_edges_1_status: 1260 - צבעו את החזית וגב של החלק
-    action_option_edges_2_status: 1261 - צבע 4 צדדים של ההחלק הממוקד
-    action_option_faces_0_status: 1262 - צבע רק את החזית הממוקדת
-    action_option_faces_1_status: 1263 - צבע את 2 הצדדים של ההחלק הממוקד
-    edges: 1264 - קאנט {{ count }}
-    edges_plural: 1265 - {{ count }} קאנטים
-    edge_ymin: 1266 - אורך 1
-    edge_ymax: 1267 - אורך 2
-    edge_xmin: 1268 - רוחב 1
-    edge_xmax: 1269 - רוחב 2
-    faces: 1270 - חזית {{ count }}
-    faces_plural: 1271 - {{ count }} חזיתות
-    face_zmin: 1272 - גב
-    face_zmax: 1273 - חזית הפורניר
+    title: 1279 - גוון
+    default_material: 1280 - חומר לא מוגדר
+    filters: 1281 - סינון
+    filter_0: 1282 - סוג אינו מוגדר
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
+    action_0: 1289 - צביעת חלקים
+    action_0_status: 1290 - לחץ על חלק כדי לצבוע את הפריטים שלו
+    action_1: 1291 - צבע חלק
+    action_1_status: 1292 - לחץ על הקאנט של החלק כדי להחיל עליו חומר '$t(tab.materials.type_4)'
+    action_2: 1293 - נקה פנים
+    action_2_status: 1294 - לחץ על החזית של חלק בלוח כדי להחיל עליו חומר '$t(tab.materials.type_6)'
+    action_3: 1295 - נקה חלק
+    action_3_status: 1296 - לחץ על החזית כדי לקחת דוגמה מהחומר
+    action_4: 1297 - לנקות
+    action_4_status: 1298 - לחץ על חלק כדי להסיר את כל החומרים מההגדרה שלו ומכל הפריטים
+    action_option_group_instances: 1299 - כמות פריטים
+    action_option_group_edges: 1300 - כמות קאנטים
+    action_option_group_faces: 1301 - כמות צדדים
+    action_option_instances_0_status: 1302 - צבע רק את פריט החלק הממוקד
+    action_option_instances_1_status: 1303 - צבע את כל הפריטים של החלק הממוקד
+    action_option_edges_0_status: 1304 - צבע רק את ההרכב הממוקד
+    action_option_edges_1_status: 1305 - צבעו את החזית וגב של החלק
+    action_option_edges_2_status: 1306 - צבע 4 צדדים של ההחלק הממוקד
+    action_option_faces_0_status: 1307 - צבע רק את החזית הממוקדת
+    action_option_faces_1_status: 1308 - צבע את 2 הצדדים של ההחלק הממוקד
+    edges: 1309 - קאנט {{ count }}
+    edges_plural: 1310 - {{ count }} קאנטים
+    edge_ymin: 1311 - אורך 1
+    edge_ymax: 1312 - אורך 2
+    edge_xmin: 1313 - רוחב 1
+    edge_xmax: 1314 - רוחב 2
+    faces: 1315 - חזית {{ count }}
+    faces_plural: 1316 - {{ count }} חזיתות
+    face_zmin: 1317 - גב
+    face_zmax: 1318 - חזית הפורניר
     warning:
-      no_material: 1274 - הדגם שלך אינו מכיל חומרים!
-      no_material_type: 1275 - אין חומר מסוג '{{ type }}'
+      no_material: 1319 - הדגם שלך אינו מכיל חומרים!
+      no_material_type: 1320 - אין חומר מסוג '{{ type }}'
     error:
-      not_part: 1276 - אובייקט היעד אינו חלק (רכיב)
-      not_edge: 1277 - משטח היעד אינו קאנט הלוח
-      not_face: 1278 - משטח היעד אינה חזית הלוח
-      wrong_material_type: 1279 - חלק היעד חייב להיות מסוג '{{ type }}'
+      not_part: 1321 - אובייקט היעד אינו חלק (רכיב)
+      not_edge: 1322 - משטח היעד אינו קאנט הלוח
+      not_face: 1323 - משטח היעד אינה חזית הלוח
+      wrong_material_type: 1324 - חלק היעד חייב להיות מסוג '{{ type }}'
   smart_axes:
-    title: 1280 - כוון
-    action_0: 1281 - להפוך
-    action_0_status: 1282 - לחץ על חלק כדי להפוך את הפריט שלו לאורך אחד הממדים שלו
-    action_1: 1283 - החלפה אורך ↔ רוחב
-    action_1_status: 1284 - לחץ על חלק כדי להחליף את האורך שלו עם הרוחב שלו
-    action_2: 1285 - החלפה חזית ↔ גב
-    action_2_status: 1286 - לחץ על חלק כדי להחליף את החזית שלו עם הגב שלו
-    action_3: 1287 - התאם צירים
-    action_3_status: 1288 - לחץ על החזית או קאנט של חלק כדי להתאים את הצירים שלו אליו
-    action_option_group_direction: 1289 - כיוון
-    action_option_direction_0: 1290 - א'
-    action_option_direction_1: 1291 - ר'
-    action_option_direction_2: 1292 - ע'
-    action_option_direction_0_status: 1293 - הפוך את החלק לאורך
-    action_option_direction_1_status: 1294 - הפוך את החלק לרוחב
-    action_option_direction_2_status: 1295 - הופכים את החלק לעובי
+    title: 1325 - כוון
+    action_0: 1326 - להפוך
+    action_0_status: 1327 - לחץ על חלק כדי להפוך את הפריט שלו לאורך אחד הממדים שלו
+    action_1: 1328 - החלפה אורך ↔ רוחב
+    action_1_status: 1329 - לחץ על חלק כדי להחליף את האורך שלו עם הרוחב שלו
+    action_2: 1330 - החלפה חזית ↔ גב
+    action_2_status: 1331 - לחץ על חלק כדי להחליף את החזית שלו עם הגב שלו
+    action_3: 1332 - התאם צירים
+    action_3_status: 1333 - בחר צלע של חלק ולחץ עליו כדי להתאים את הצירים שלו
+    action_4: 1334 - שנה ראשית הצירים
+    action_4_status: 1335 - בחר צד של חלק ולחץ על נקודה כדי למקם את הראשית הצירים שלו
+    action_option_group_direction: 1336 - כיוון
+    action_option_direction_0: 1337 - א'
+    action_option_direction_1: 1338 - ר'
+    action_option_direction_2: 1339 - ע'
+    action_option_direction_0_status: 1340 - הפוך את החלק לאורך
+    action_option_direction_1_status: 1341 - הפוך את החלק לרוחב
+    action_option_direction_2_status: 1342 - הופכים את החלק לעובי
     warning:
-      more_entities: 1296 - {{ count_used }} פריטים החולקים את אותה הגדרה ישונו
+      more_entities: 1343 - {{ count_used }} פריטים החולקים את אותה הגדרה ישונו
     error:
-      not_part: 1297 - אובייקט היעד אינו חלק (רכיב)
-      not_orientable: 1298 - סוג החלק אינו מאפשר לכוון אותו
+      not_part: 1344 - אובייקט היעד אינו חלק (רכיב)
+      not_orientable: 1345 - סוג החלק אינו מאפשר לכוון אותו
   smart_export:
-    title: 1299 - ייצוא
-    action_0: 1300 - ייצא חלק 3D
-    action_0_status: 1301 - לחץ על חלק
-    action_1: 1302 - ייצא חלק 2D
-    action_1_status: 1303 - לחץ על חזית החלק
-    action_2: 1304 - ייצא חזית
-    action_2_status: 1305 - לחץ על חזית
-    action_3: 1306 - ייצא קו מתאר
-    action_3_status: 1307 - לחץ על קצה
-    action_option_group_file_format: 1308 - פורמט
-    action_option_group_unit: 1309 - יחידות
-    action_option_group_faces: 1310 - פורנירים
-    action_option_group_options: 1311 - אפשרויות
-    action_option_file_format_dxf_status: 1312 - ייצוא לקובץ DXF
-    action_option_file_format_stl_status: 1313 - ייצוא לקובץ STL
-    action_option_file_format_obj_status: 1314 - ייצוא לקובץ OBJ
-    action_option_file_format_svg_status: 1315 - ייצוא לקובץ SVG
-    action_option_unit_0_status: "$t(default.unit_0)"
-    action_option_unit_1_status: "$t(default.unit_1)"
-    action_option_unit_2_status: "$t(default.unit_2)"
-    action_option_unit_3_status: "$t(default.unit_3)"
-    action_option_unit_4_status: "$t(default.unit_4)"
-    action_option_faces_0_status: "$t(tab.cutlist.write.option_faces_0)"
-    action_option_faces_1_status: "$t(tab.cutlist.write.option_faces_1)"
-    action_option_options_anchor_status: "$t(tab.cutlist.write.option_anchor_1)"
-    action_option_options_smoothing_status: "$t(tab.cutlist.write.option_smoothing_1)"
-    action_option_options_merge_holes_status: 1325 - לבודד קדחים עוברים ולמזג עומקים עבור כל חלל
-    action_option_options_include_paths_status: 1326 - ייצא כקו מתאר של קצוות שאינם משויכים לחזיתות הכלולות בחלק
+    title: 1346 - ייצוא
+    action_0: 1347 - ייצא חלק 3D
+    action_0_status: 1348 - לחץ על חלק
+    action_1: 1349 - ייצא חלק 2D
+    action_1_status: 1350 - לחץ על חזית החלק
+    action_2: 1351 - ייצא חזית
+    action_2_status: 1352 - לחץ על חזית
+    action_3: 1353 - ייצא קו מתאר
+    action_3_status: 1354 - לחץ על קצה
+    action_option_group_file_format: 1355 - פורמט
+    action_option_group_unit: 1356 - יחידות
+    action_option_group_faces: 1357 - פורנירים
+    action_option_group_options: 1358 - אפשרויות
+    action_option_file_format_dxf_status: 1359 - ייצוא לקובץ DXF
+    action_option_file_format_stl_status: 1360 - ייצוא לקובץ STL
+    action_option_file_format_obj_status: 1361 - ייצוא לקובץ OBJ
+    action_option_file_format_svg_status: 1362 - ייצוא לקובץ SVG
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
+    action_option_options_merge_holes_status: 1372 - לבודד קדחים עוברים ולמזג עומקים עבור כל חלל
+    action_option_options_include_paths_status: 1373 - ייצא כקו מתאר של קצוות שאינם משויכים לחזיתות הכלולות בחלק
     error:
-      not_part: 1327 - חזית הזאת אינה שייכת לחלק (רכיב)
-      not_flat_face: 1328 - משטח זה אינו שטוח
-      incompatible_active_path: 1329 - הנתיב הפעיל אינו מאפשר לייצא את החלק הזה
+      not_part: 1374 - חזית הזאת אינה שייכת לחלק (רכיב)
+      not_flat_face: 1375 - משטח זה אינו שטוח
+      incompatible_active_path: 1376 - הנתיב הפעיל אינו מאפשר לייצא את החלק הזה

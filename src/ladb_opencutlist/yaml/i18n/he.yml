@@ -7,6 +7,8 @@ default:
   minimize: מזער
   maximize: הגדל
   cancel: ביטול
+  # stop computation and return best result so far
+  stop: הפסק
   validate: אישור
   confirm: לאשר
   ok: Ok
@@ -23,7 +25,9 @@ default:
   preview: סקירה כללית
   options: אפשרויות
   caution: שים לב
-  remove: למחוק
+  remove: להסיר
+  remove_all: הסר הכל
+  delete: למחוק
   create: ליצור
   duplicate: כפילות
   ignore: לדלג
@@ -42,7 +46,9 @@ default:
   good: טוב
   bad: גרוע
   by: ע"י
+  # date format in use for language
   date_format: "d/m/Y G:i"
+  # short date format in use for language
   date_format_short: d/m/Y
   unit_0: אינצ'ים
   unit_1: רגליים
@@ -82,6 +88,12 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: ערוך פריט
+      edit_parent_part_instance: ערוך את הקבוצה/הרכיב שמכיל את הפריט
+      hide_part_instance: הסתר פריט
+      unhide_part_instance: חשוף פריט
+      edit_part_instance_properties: ערוך מאפייני חלק
+      smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -90,6 +102,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
+      smart_draw: צייר חלקים
       smart_paint: צביעת חלקים
       smart_axes: כוון חלקים
       smart_export: יצוא חלקים
@@ -119,6 +132,7 @@ core:
 
       לדיווח על שגיאה: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
+    extern: "שגיאה חיצונית: **{{ error }}**"
     feature_unavailable: "תכונה זו דורשת גרסת SketchUp {{ version }} ומעלה"
     failed_export_to: |
       אירעה שגיאה במהלך הייצוא אל *{{ path }}*.
@@ -132,6 +146,7 @@ core:
     material_change: לפחות חומר אחד שונה.
     selection_change: הבחירה במודל הפעיל שונתה.
     layers_change: התגים במודל הפעיל השתנו.
+    drawing_change: המבנה של המודל הפעיל שונה.
   upgrade:
     unavailable: לא ניתן למצוא גרסה אחרונה של *OpenCutList*.
     available: |
@@ -180,9 +195,9 @@ core:
     dictionary:
       component_textinput_color: פלטת צבע
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
+      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -195,6 +210,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modèle
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -214,7 +230,7 @@ core:
       view_isometric: איזומטרי
       view_top: למלה
       view_bottom: למטה
-      view_front: חזית הפורניר
+      view_front: לפני
       view_back: גב
       view_left: משמאל
       view_right: מימין
@@ -251,7 +267,11 @@ tab:
     edit_part_faces_properties: עריכת מאפייני חלק (פורנירים)
     part_drawing_type_1: מבט 2D קדמי
     part_drawing_type_2: מבט 2D אחורי
-    part_drawing_type_3: 3D
+    part_drawing_type_3: מבט שמאל 2D
+    part_drawing_type_4: מבט ימין 2D
+    part_drawing_type_5: מבט פנים 2D
+    part_drawing_type_6: מבט אחורי 2D
+    part_drawing_type_7: 3D
     tooltip:
       show_hide_block: הצג / הסתר קבוצה
       scroll_to_block: גלול לקבוצה
@@ -344,7 +364,10 @@ tab:
       select_unselect_all_parts: בחר / בטל את כל החלקים בקבוצה
       select_parts_in_cutlist: בחר את החלק בתוכנית חיתוך
       select_parts_in_cutlist_plural: "בחר {{ count }} חלקים בתוכנית חיתוך"
+      # used in estimate to setup the cutting diagram
       setup_group_cuttingdiagram: "הגדר את הפריסה של '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      # used in estimate to setup the new packing
+      setup_group_packing: "הגדר את הפריסה של '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: פתח קישור של החלק
     menu:
       show_all_groups: הצג את כל הקבוצות
@@ -352,6 +375,7 @@ tab:
       numbers_save: שמור את מספרי החלקים
       numbers_reset: עדכן את מספרי החלקים
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: הדפס תוויות
       write_2d: מבט 2D
       write_3d: שרטוט 3D
       write_2d_parts: ייצא חלקים למבט 2D
@@ -362,6 +386,7 @@ tab:
       group_numbers_save: שמור את מספרי החלקים בקבוצה
       group_numbers_reset: עדכן את מספרי החלקים בקבוצה
       group_cuttingdiagram: תוכנית חיתוך
+      group_packing: תוכנית חיתוך
       group_labels: הדפס תוויות עבור חלקים בקבוצה
       edit_material: "ערוך חומר '{{ material_name }}'"
       expand_all: פתח את כל השורות
@@ -564,13 +589,14 @@ tab:
     export:
       title: יצוא
       info_0: |
-        הפונקציונליות מאפשרת לייצא *תוכנית חיתוך* כ*רשימת חלקים* לקובץ בפורמט [CSV](https://he.wikipedia.org/wiki/CSV).
+        התכונה מאפשרת לייצא את הנתונים מ*רשימת חלקים* ללוח כתיבה או לקובץ בפורמט [CSV](https://he.wikipedia.org/wiki/CSV).
       customize_help: |
         סדר מחדש, הסתר, הוסף, הסר או בחר עמודה מהרשימה כדי להגדיר את **הכותרת** שלה ואת **הנוסחה** שתיצור את הערכים עבור כל שורה מיוצאת.
       add_column: הוסף עמודה
       add_native_columns: הוסף עמודה מקורית
-      remove_column: להסיר
-      remove_all_columns: הסר הכל
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
       columns: עמודות
       column_title: כותרת
       column_title_help: |
@@ -582,7 +608,7 @@ tab:
       options_customize: הגדרות
       option_source: מקור
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: רשימת חלקים
       option_source_instances_list: רשימת עותקים
       option_col_sep: מפריד
       option_col_sep_tab: טבלר
@@ -610,8 +636,9 @@ tab:
       final_area: שטח נטו
       count: כמות
       part_count: כמות חלקים
-      material_type: סוג
-      material_name: חומר
+      material: חומר
+      material_type: סוג חומר
+      material_name: שם החומר
       material_description: תיאור החומר
       material_url: קישור החומר
       material_std_dimension: מידות תקן
@@ -629,6 +656,8 @@ tab:
       layers: תגים
       batch: קבוצה
       bin: פח
+      component_definition: הגדרת רכיב
+      component_instance: פריט של רכיב
       filename: שם הקובץ
       model_name: שם המודל
       model_description: תיאור החלק
@@ -642,7 +671,7 @@ tab:
         is_group_selection: חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא ייוצאו.
     report:
       title: הערכה
-      info_0: |-
+      info_0: |
         תכונה זו מאפשרת לך להפיק אומדן של **המסה** ו**העלות** של **חומרי הגלם** הדרושים לייצור החלקים של *תוכנית חיתוך*.
       options_general: כללי
       options_solid_wood: $t(tab.materials.type_1)
@@ -739,6 +768,8 @@ tab:
         *אפשרות זו חייבת להיות מופעלת כדי לייצא צורות.*
       option_saw_kerf: עובי להב המסור
       option_saw_kerf_help: רוחב החומר שיורד על ידי המסור.
+      option_spacing: מרווחים
+      option_spacing_help: מרווח מינימלי בין כל חלק.
       option_trimming: שוליים
       option_trimming_help_1d: כמות החומר בכל קצה הלוח או קאנט שיש להיחשב בהם כפחת.
       option_trimming_help_2d: גודל שוליים בהיקף לחיתוך פגמים ויישור מלבני.
@@ -832,7 +863,7 @@ tab:
         parts: "חלק {{ count }}"
         parts_plural: "{{ count }} חלקים"
         settings: הגדרות
-      export:
+      write:
         title: ייצוא תוכנית חיתוך
         info_0: |
           מודול זה מאפשר לך לייצא את **השרטוט** של *תוכנית חיתוך* כרשימה של קבצים ב- [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) או [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
@@ -916,8 +947,9 @@ tab:
       options_offset: קיזוז
       size: גודל התווית בפועל
       add_element: הוסף פריט
-      remove_element: להסיר
-      remove_all_elements: הסר הכל
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         ארגן מחדש את המאפיינים כדי להגדיר את סדר המיון של התוויות.
         ניתן למיין מאפיינים לפי סדר <i class="ladb-opencutlist-icon-sort-asc"></i> *עולה* או <i class="ladb-opencutlist-icon-sort-desc"></i> *יורד*.
@@ -958,6 +990,7 @@ tab:
       option_color: צבע
       formula:
         custom: נוסחה
+        custom_qr_code: קוד QR
         part_number: מספר
         part_name: תיאור
         part_description: תיאור
@@ -997,6 +1030,7 @@ tab:
       error:
         invalid_size: פרמטרי התצורה שהוזנו אינם מאפשרים להגדיר גודל תווית חוקי.
       warning:
+        is_group_selection: למסמכים הכלולים ב**קבוצות הנסתרות** של תוכנית חיתוך שלך לא תהיה תווית.
         is_part_selection: תוויות האלה מוגבלות ל-**חלקים נבחרים**.
         formula_not_available: נוסחה לא זמינה בהקשר זה
     layout:
@@ -1082,6 +1116,11 @@ tab:
       option_unit: יחידות
       option_unit_help: |
         מאפשר לבחור את היחידות מדידה המשמשות בקובץ המיוצא.
+      option_use_count: כמויות
+      option_use_count_0: רק קובץ אחד לחלק
+      option_use_count_1: קובץ אחד לכל פריט של חלק
+      option_use_count_help: |
+        התכונה מגדירה אם להתחשב בכמות הפריטים של חלק.
       option_part_drawing_type: מבט
       option_part_drawing_type_help: |
         מאפשר לך לבחור את התצוגה המיוצאת.
@@ -1095,6 +1134,11 @@ tab:
       option_anchor_1: הצג את מקור החלק
       option_anchor_help: |
         מאפשר להפעיל את התצוגת רשית הצירים של החלק כנקודת עוגן.
+      option_switch_yz: ציר אנכי
+      option_switch_yz_0: ציר Z
+      option_switch_yz_1: ציר Y
+      option_switch_yz_help: |
+        מאפשר להחליף את צירי Y ו-Z כדי להגדיר את הציר האנכי של החלק.
       option_smoothing: החלקה
       option_smoothing_0: אין
       option_smoothing_1: החלקת מעגלים וקשתות (ניסיוני)
@@ -1124,7 +1168,9 @@ tab:
         מאפשר לבחור את הצבעים של קדחי החלקים.
       option_parts_paths: קווי מתאר
       option_parts_paths_help: |
-        מאפשר לבחור את צבע קווי מתאר.
+        מאפשר לבחור את צבעי הקווים.
+
+        *צבע המילוי ישמש רק בקווים סגורים.*
       error:
         no_part: אין חלקים לייצא.
       warning:
@@ -1188,9 +1234,7 @@ tab:
       texture_load: טען מרקם חדש
       texture_clear: הסר מרקם
       edit: "ערוך מאפיינים של '{{ name }}'"
-      set_current: |
-        צבע חלקים עם '{{ name }}'
-        *לחץ פעמיים כדי לכווץ*
+      set_current: "צביעה של חלקים עם '{{ name }}'"
       open_url: פתח את הקישור של החומר
     menu:
       import_from_skm: ייבוא חומר (skm.)
@@ -1291,13 +1335,16 @@ tab:
     export_to_skm:
       title: ייצוא לקובץ skm.
     option:
+      minimize_on_smart_paint: כיווץ לאחר *'צביעת חלקים עם...'*
+      minimize_on_smart_paint_help: "אם אפשרות זו מופעלת, חלון OpenCutList יצטמצם כאשר נעשה שימוש בפונקציה *'צבע חלקים עם...'*."
+      general: כללי
       material_order_strategy: מיון חומרים
       material_order_strategy_help: |
         סדר מחדש את המאפיינים הבאים כדי להגדיר את המיון של החומרים ברשימה.
         ניתן למיין לפי סדר <i class="ladb-opencutlist-icon-sort-asc"></i>*עולה* או <i class="ladb-opencutlist-icon-sort-desc"></i>*יורד*.
       property_type: סוג
       property_name: תיאור
-    remove:
+    delete:
       message: |
         אתם עומדים להסיר את החומר **{{ material_name }}** מהמודל.
         אשרו להמשיך.
@@ -1310,7 +1357,7 @@ tab:
       material_not_found: חומר לא נמצא.
       failed_import_skm_file: "**{{ error }}** אירעה שגיאה בייבוא ​​קובץ skm."
       failed_export_skm_file: "**{{ error }}** אירעה שגיאה בייצוא קובץ skm."
-      failed_removing_material: "אירעה שגיאה בעת מחיקת החומר. **{{ error }}**"
+      failed_deleting_material: "אירעה שגיאה בעת מחיקת החומר. **{{ error }}**"
       failed_duplicating_material: "אירעה שגיאה בעת שכפול החומר. **{{ error }}**"
       invalid_image_file: תמונה לא חוקית
     obsolete_base: "כדי לתמוך בסנכרון, עליך לרענן את רשימת החומרים."
@@ -1319,13 +1366,13 @@ tab:
     title: מבנה
     list: מבנה עץ של ישויות
     nodes: פריטים
-    part_count: כמות חלקים
+    toggle_hidden: חלקים נסתרים
     type_0: דגם
     type_1: קבוצה
     type_2: רכיב
     type_3: חלק
     tooltip:
-      open_node_url: פתח קישור של פריט
+      open_node_url: פתח קישור של החלק
     edit_node:
       title_model: "מאפייני דגם"
       title_instance: "מאפייני דגם **{{ name }}**"
@@ -1333,9 +1380,11 @@ tab:
       preview: סקירה כללית
       name: תיאור
       instance_name: אדגם
+      material: חומר
       definition_name: הגדרה
       description: תיאור
       url: קישור
+      tags: תגים
       layer_name: תג
       explode: פיצול
       explode_message: "האם אתה מאשר את הפיצול של הפריט **{{ name }}**?"
@@ -1480,6 +1529,8 @@ tab:
     objective_title:
       default: מטרות
       cuttingdiagram_export: עלות תוכנית חיתוך ביצוא
+      outliner: מימון פונקציית "מבנה"
+      packing: מימון פונקציית "תוכנית חיתוך"
     objective_details:
       default: |
         השיפור המתמיד של *OpenCutList* חשוב לנו מאוד והפרויקט ממשיך להזדקק לעזרתכם לעדכון הבא!
@@ -1487,8 +1538,14 @@ tab:
         חשוב לנו ש*OpenCutList* יוכל להתאים לציפיות המגוונות מאוד של המשתמשים לפונקציית *תוכנית חיתוך*.
         כדי להרחיב עוד יותר את האפשרויות, נרצה לאפשר לייצא תוכניות חיתוך בפורמט **SVG** ו- **DXF**.
         על ידי מתן האמצעים לעבודה על יצוא אלה, אתה נותן לנו את ההזדמנות לאפשר לך להפיק את המרב מ-*OpenCutList*.
-      layout: |
-        המטרה של מודול זה היא לאפשר לך להדפיס בקלות תצוגה מקדימה של הפרויקט שלך כ**תצוגה מפוצצת** עם זיהוי ממידע שנוצר ברשימת החלקים.
+      outliner: |
+        מודל יכול להיות מורכב למדי והניווט במבנה שלו עם לוח Structure המקורי של SketchUp אינו תמיד נוח במיוחד.
+        ב-SketchUp, ניתן להחיל חומר ותגים על מופעים, תיאור, כתובת אתר ותגים על הגדרות, אך הם אינם מוצגים במבנה.
+        הסרטון יראה לכם כיצד נרצה לשפר זאת בתפריט Structure, הנגיש ישירות מ-OpenCutList.
+      packing: |
+        חשוב לנו ש-*OpenCutList* יוכל להתאים לציפיות המגוונות מאוד של המשתמשים לפונקציית *תוכנית חיתוך*.
+        כדי להרחיב עוד יותר את האפשרויות, אנו רוצים ליישם **אלגוריתם קינון** כדי לייעל את החיתוך של חלקים מכל צורה.
+        בכך שאתה מספק לנו את האמצעים לעבוד על תכונה זו, אתה נותן לנו את ההזדמנות לעזור לך להפיק את המרב מ-*OpenCutList*.
     objective_crowdfunding: |
       פיתוח אפשרויות חדשות ייעשה באמצעות **מימון המונים** ויכול להתחיל כאשר **היעדים הכספיים** שלו הושגו.
     objective_thanks: |
@@ -1663,7 +1720,9 @@ tool:
     action_2: החלפה חזית ↔ גב
     action_2_status: לחץ על חלק כדי להחליף את החזית שלו עם הגב שלו
     action_3: התאם צירים
-    action_3_status: לחץ על החזית או קאנט של חלק כדי להתאים את הצירים שלו אליו
+    action_3_status: בחר צלע של חלק ולחץ עליו כדי להתאים את הצירים שלו
+    action_4: שנה ראשית הצירים
+    action_4_status: בחר צד של חלק ולחץ על נקודה כדי למקם את הראשית הצירים שלו
     action_option_group_direction: כיוון
     action_option_direction_0: א'
     action_option_direction_1: ר'
