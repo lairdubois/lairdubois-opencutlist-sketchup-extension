@@ -1279,7 +1279,7 @@ tab:
       option_switch_yz_help: |
         Ermöglicht das Vertauschen der Y- und Z-Achse, um die vertikale Achse des Teils zu definieren.
       option_smoothing: Glättung
-      option_smoothing_0: Keine
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: Glätten von Kreisen und Bögen (Experimentell)
       option_smoothing_help: |
         Auswahl des Glättungsmodus.
@@ -1295,7 +1295,7 @@ tab:
         **Kontur + Bohrungen + Zusammenführen**
         Aktiviert die Trennung der Außenkontur von Teilen und ihren Bohrungen sowie die Zusammenführung der Tiefen für jede Kavität.
       option_include_paths: Pfade
-      option_include_paths_0: Keine
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: "Kanten verwenden, die nicht mit einer Fläche verbunden sind"
       option_include_paths_help: |
         Aktiviert die Verwendung von im Teil enthaltenen, nicht mit einer Fläche verknüpften Kanten, um sie als Pfad zu exportieren.

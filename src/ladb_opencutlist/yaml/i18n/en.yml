@@ -1279,7 +1279,7 @@ tab:
       option_switch_yz_help: |
         Swap the Y and Z axes to define the vertical axis of the part.
       option_smoothing: Smoothing
-      option_smoothing_0: None
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: Smooth circles and arcs (Experimental)
       option_smoothing_help: |
         Select whether circles and arcs should be detected.
@@ -1295,7 +1295,7 @@ tab:
         **Contour + Holes + Merge**
         Activates the separation of the outer contour of parts from their holes, as well as the merging of depths for each cavity.
       option_include_paths: Paths
-      option_include_paths_0: None
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: Use edges not associated with a face
       option_include_paths_help: |
         Enables the use of edges not associated with a face contained in the part, to export them as a path.
