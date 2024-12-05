@@ -1251,7 +1251,7 @@ tab:
         This module lets you export the **3D geometry** of parts as files in [STL](https://wikipedia.org/wiki/STL_(file_format)) or [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) format.
       option_file_format: Format
       option_file_format_help: |
-        Select the file format of the exported file.
+        Select the format of the exported file.
       option_unit: Unit
       option_unit_help: |
         Select the unit used in the exported file.
@@ -1279,12 +1279,12 @@ tab:
       option_switch_yz_help: |
         Swap the Y and Z axes to define the vertical axis of the part.
       option_smoothing: Smoothing
-      option_smoothing_0: None
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: Smooth circles and arcs (Experimental)
       option_smoothing_help: |
         Select whether circles and arcs should be detected.
 
-        *This option does detect other types of curves.*
+        *This option does not detect other types of curves.*
       option_merge_holes: Merging Mode
       option_merge_holes_0: Default
       option_merge_holes_1: Outline + Drillings + Merge
@@ -1295,7 +1295,7 @@ tab:
         **Contour + Holes + Merge**
         Activates the separation of the outer contour of parts from their holes, as well as the merging of depths for each cavity.
       option_include_paths: Paths
-      option_include_paths_0: None
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: Use edges not associated with a face
       option_include_paths_help: |
         Enables the use of edges not associated with a face contained in the part, to export them as a path.
@@ -1798,7 +1798,8 @@ tool:
     action_0_state_1_status: Click to define opposite angle or enter length, width
     action_1: Draw circle
     action_1_status: Draw a volume on a circular shape
-    action_1_state_1_status: Click to set radius or enter distance
+    action_1_state_1_radius_status: Click to set radius or enter distance
+    action_1_state_1_diameter_status: Click to set diameter or enter distance
     action_2: Draw polygon
     action_2_status: Draw a volume on a polygonal shape
     action_2_state_1_status: Click to define a new point or enter a distance
@@ -1820,8 +1821,10 @@ tool:
     action_option_segments_segment_count_status: Define the number of segments of a circle
     action_option_options_construction: Construction Lines
     action_option_options_construction_status: Drawing in construction lines
-    action_option_options_rectangle_centered: Rectangle centered
+    action_option_options_rectangle_centered: Rectangle Centered
     action_option_options_rectangle_centered_status: Center rectangle on the first point
+    action_option_options_circle_by_diameter: Measure by diameter
+    action_option_options_circle_by_diameter_status: Measure circle by its diameter
     action_option_options_solid_centered: Elevation Centered
     action_option_options_solid_centered_status: Center elevation on the first point
     action_option_options_move_array: Copy in Grid
@@ -1829,6 +1832,7 @@ tool:
     vcb_length: Length
     vcb_size: Size
     vcb_radius: Radius
+    vcb_diameter: Diameter
     vcb_distance: Distance
     error:
       no_direction: Please indicate a direction with your mouse
@@ -1892,11 +1896,11 @@ tool:
     action_0_status: Click on a part to flip its instance along one of its dimensions
     action_1: Swap Length ↔ Width
     action_1_status: Click on a part to swap its Length with its Width
-    action_2: Swap front ↔ backside
+    action_2: Swap Front ↔ Backside
     action_2_status: Click on a part to swap its front with its backside
-    action_3: Adapt axes
+    action_3: Adapt Axes
     action_3_status: Target a face of a part and click on an edge to adapt its axes
-    action_4: Move origin
+    action_4: Move Origin
     action_4_status: Target a face of a part and click on a point to place its origin there.
     action_option_group_direction: Direction
     action_option_direction_0: L
@@ -1918,7 +1922,7 @@ tool:
     action_1_status: Click on the face of a part
     action_2: Export face
     action_2_status: Click on a face
-    action_3: Export a path
+    action_3: Export path
     action_3_status: Click on an edge
     action_option_group_file_format: Format
     action_option_group_unit: Unit
