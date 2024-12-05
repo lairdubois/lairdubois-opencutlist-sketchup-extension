@@ -1133,7 +1133,7 @@ tab:
       option_switch_yz_help: |
         928 - מאפשר להחליף את צירי Y ו-Z כדי להגדיר את הציר האנכי של החלק.
       option_smoothing: 929 - החלקה
-      option_smoothing_0: 930 - אין
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: 931 - החלקת מעגלים וקשתות (ניסיוני)
       option_smoothing_help: |
         932 - מאפשר להפעיל את זיהוי המעגלים והקשתות.
@@ -1149,7 +1149,7 @@ tab:
         **קונטור + קדחים + מיזוג**
         מפעיל את ההפרדה של קו המתאר החיצוני של החלקים מהקדחים שלהם ואת מיזוג המעמקים עבור כל חלל.
       option_include_paths: 937 - קווי מתאר
-      option_include_paths_0: 938 - אין
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: 939 - השתמש בקצוות שאינם קשורים לחזית
       option_include_paths_help: |
         940 - מאפשר להפעיל את השימוש בקצוות שאינם קשורים לחזיתות הכלולות בחלק, כדי לייצא אותם כקו מתאר.

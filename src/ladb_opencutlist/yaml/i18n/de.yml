@@ -1823,9 +1823,13 @@ tool:
     action_option_options_construction_status: In Konstruktionslinien zeichnen
     action_option_options_rectangle_centered: Rechteck zentriert
     action_option_options_rectangle_centered_status: Rechteck auf den ersten Punkt zentrieren
-    action_option_options_solid_centered: Erhebung zentriert
-    action_option_options_measure_from_diameter: Messung nach den Durchmesser
+    action_option_options_measure_from_diameter: Messung nach dem Durchmesser
     action_option_options_measure_from_diameter_status: Den Kreis nach seinem Durchmesser messen
+    action_option_options_measure_from_radius_status: Messung nach dem Radius
+    action_option_options_measure_from_first: Messung
+    action_option_options_measure_from_first_status: Messen vom ersten Punkt aus
+    action_option_options_measure_from_previous_status: Messen vom vorherigen Punkt aus
+    action_option_options_solid_centered: Erhebung zentriert
     action_option_options_solid_centered_status: Erhebung auf den ersten Punkt zentrieren
     action_option_options_move_array: Rasterkopien
     action_option_options_move_array_status: Kopieren des Teils in ein rechteckiges Raster

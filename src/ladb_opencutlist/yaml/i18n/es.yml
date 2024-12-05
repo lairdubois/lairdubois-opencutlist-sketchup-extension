@@ -38,6 +38,8 @@ default:
   unselect_all: Deseleccionar todo
   draw: Dibujar
   estimate: Estimar
+  yes: Si
+  no: No
   empty_filename: Sin título.skp
   help: Ayuda
   error: ¡Upss!
@@ -1140,7 +1142,7 @@ tab:
       option_switch_yz_help: |
         Conmuta los ejes Y y Z para definir el eje vertical de la pieza.
       option_smoothing: Regularizado
-      option_smoothing_0: No
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: Alisar los círculos y arcos (Experimental)
       option_smoothing_help: |
         Permite activar la detección de círculos y arcos.
@@ -1156,7 +1158,7 @@ tab:
         **Contorno + Perforaciones + Fusión**
         Activa la separación del contorno exterior de las piezas de sus perforaciones, así como la fusión de las profundidades de cada oquedad.
       option_include_paths: Trazados
-      option_include_paths_0: No
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: Utilizar aristas no asociadas a una cara
       option_include_paths_help: |
         Permite utilizar las aristas contenidas en la pieza que no están asociadas a una cara, para exportarlas como trazado.
