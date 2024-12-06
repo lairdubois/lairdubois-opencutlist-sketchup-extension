@@ -653,7 +653,7 @@
 
             if (response.errors && response.errors.length > 0) {
                 that.dialog.notifyErrors(response.errors);
-            } else {
+            } else if (!response.cancelled) {
                 that.loadList(function() {
                     const $material = $('#ladb_material_' + response.material_id, that.$page);
                     that.scrollSlideToTarget(null, $material, true, true);

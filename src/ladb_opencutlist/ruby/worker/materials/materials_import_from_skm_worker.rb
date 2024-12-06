@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
-  require 'json'
+  require 'securerandom'
+  require_relative '../../lib/rubyzip/zip'
 
   class MaterialsImportFromSkmWorker
 
@@ -21,7 +22,7 @@ module Ladb::OpenCutList
       materials = model.materials
 
       last_dir = PLUGIN.read_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, nil)
-      if last_dir && File.directory?(last_dir) && File.exist?(last_dir)
+      if last_dir && File.exist?(last_dir) && File.directory?(last_dir)
         dir = last_dir
       else
 
@@ -29,7 +30,7 @@ module Ladb::OpenCutList
         materials_dir = Sketchup.find_support_file('Materials', '')
         if File.directory?(materials_dir)
 
-          # Join with OpenCutList subdir and create it if it dosen't exist
+          # Join with OpenCutList subdir and create it if it doesn't exist
           dir = File.join(materials_dir, 'OpenCutList')
           unless File.directory?(dir)
             FileUtils.mkdir_p(dir)
@@ -49,91 +50,119 @@ module Ladb::OpenCutList
         # Save last dir
         PLUGIN.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
 
-        # Zip::File.open(path, create: false) { |zipfile|
-        #
-        #   require "rexml/document"
-        #
-        #   xml = zipfile.read('document.xml')
-        #
-        #   begin
-        #
-        #     # Parse XML
-        #     doc = REXML::Document.new(xml)
-        #
-        #     # Extract material element
-        #     material_elm = doc.elements['/materialDocument/mat:material']
-        #
-        #     # Retrieve material name
-        #     name = material_elm.attribute('name').value
-        #     puts "MANE = #{name}"
-        #
-        #     # Extract all material attribute dictionaries
-        #     attribute_dictionaries = {}
-        #     material_elm.elements.each("n0:AttributeDictionaries/n0:AttributeDictionary") { |attribute_dictionary_elm|
-        #
-        #       # Create the attribute dictionary
-        #       attribute_dictionary = {}
-        #       attribute_dictionaries.store(
-        #         attribute_dictionary_elm.attribute('name').value,
-        #         attribute_dictionary
-        #       )
-        #
-        #       # Extract all of its attributes
-        #       attribute_dictionary_elm.elements.each("n0:Attribute") { |attribute_elm|
-        #         attribute_dictionary.store(
-        #           attribute_elm.attribute('key').value,
-        #           _extract_element_value(attribute_elm)
-        #         )
-        #       }
-        #
-        #     }
-        #
-        #     pp attribute_dictionaries
-        #
-        #   rescue REXML::ParseException => error
-        #     # Return nil if an exception is thrown
-        #     puts error.message
-        #   end
-        #
-        # }
-        # end
+        if Sketchup.version_number > 1800000000 # RubyZip is not compatible with SU 18-
+
+          # Try to extract material data
+          Zip::File.open(path, create: false) do |zipfile|
+
+            require "rexml/document"
+
+            xml = zipfile.read('document.xml')
+
+            begin
+
+              # Parse XML
+              doc = REXML::Document.new(xml)
+
+              # Extract material element
+              material_elm = doc.elements['/materialDocument/mat:material']
+
+              # Retrieve material name
+              name = material_elm.attribute('name').value
+
+              material_old = materials[name]
+              unless material_old.nil?
+
+                choice = UI.messagebox(PLUGIN.get_i18n_string('tab.materials.import_from_skm.ask_replace', { :name => name }), MB_YESNOCANCEL)
+                if choice == IDYES || choice == IDNO
+
+                  # Rename old material with temp name to free loaded name
+                  material_old.name = materials.unique_name(SecureRandom.uuid)
+
+                  begin
+
+                    # Load material
+                    material_loaded = materials.load(path)
+
+                  rescue RuntimeError => e
+
+                    # Restore old material name
+                    material_old.name = name
+
+                    return { :errors => [ [ 'tab.materials.error.failed_import_skm_file', { :error => e.message } ] ] }
+                  end
+
+                  case choice
+                  when IDYES
+
+                    # Replace the old material attributes and properties by loaded ones
+
+                    # Delete old attributes
+                    attribute_dictionary_names_old = []
+                    material_old.attribute_dictionaries.each { |dictionary| attribute_dictionary_names_old << dictionary.name }
+                    attribute_dictionary_names_old.each { |name| material_old.attribute_dictionaries.delete(name) }
+
+                    # Copy loaded material attributes and properties
+                    material_loaded.attribute_dictionaries.each { |dictionary| dictionary.each { |key, value| material_old.set_attribute(dictionary.name, key, value) } }
+                    material_old.alpha = material_loaded.alpha
+                    material_old.color = material_loaded.color
+                    material_old.colorize_type = material_loaded.colorize_type
+                    material_old.texture = material_loaded.texture.image_rep if !material_loaded.texture.nil? && material_loaded.texture.valid?
+
+                    material = material_old
+
+                  when IDNO
+
+                    # Create a new material and copy loaded attributes and properties to bypass default SU behavior when importing again
+
+                    # Create a new material
+                    material_new = materials.add(materials.unique_name(name))
+
+                    # Copy loaded material attributes and properties
+                    material_loaded.attribute_dictionaries.each { |dictionary| dictionary.each { |key, value| material_new.set_attribute(dictionary.name, key, value) } }
+                    material_new.alpha = material_loaded.alpha
+                    material_new.color = material_loaded.color
+                    material_new.colorize_type = material_loaded.colorize_type
+                    material_new.texture = material_loaded.texture.image_rep if !material_loaded.texture.nil? && material_loaded.texture.valid?
+
+                    material = material_new
+
+                  end
+
+                  # Delete loaded material
+                  materials.remove(material_loaded)
+
+                  # Restore old material name
+                  material_old.name = name
+
+                  return { :material_id => material.entityID }
+
+                elsif choice == IDCANCEL
+
+                  return { :cancelled => true }
+
+                end
+
+              end
+
+            rescue REXML::ParseException => e
+              # Error while parsing XML. Continue with default behavior
+              puts e.message
+            end
+
+          end
+
+        end
 
         begin
           material = materials.load(path)
           return { :material_id => material.entityID }
-        rescue => e
+        rescue RuntimeError => e
           return { :errors => [ [ 'tab.materials.error.failed_import_skm_file', { :error => e.message } ] ] }
         end
       end
 
-      {
-          :cancelled => true
-      }
-    end
-
-    # -----
-
-    private
-
-    def _extract_element_value(elm)
-      case elm.attribute('type').value
-      when ATTRIBUTE_TYPE_INTEGER
-        value = elm.text.to_i
-      when ATTRIBUTE_TYPE_FLOAT
-        value = elm.text.to_f
-      when ATTRIBUTE_TYPE_BOOLEAN
-        value = elm.text.to_s == '1'
-      when ATTRIBUTE_TYPE_STRING
-        value = elm.cdatas.first.to_s
-      when ATTRIBUTE_TYPE_ARRAY
-        value = []
-        elm.elements.each('value') { |value_elm|
-          value.push(_extract_element_value(value_elm))
-        }
-      else
-        value = nil
-      end
-      value
+      { :cancelled => true }
     end
 
   end

@@ -297,99 +297,103 @@ module Ladb::OpenCutList
           return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.inspect } ] ] }
         end
 
-        # Override layout 'LinearDimensionTool' and 'AngularDimensionTool' default style
+        if Sketchup.version_number > 1800000000 # RubyZip is not compatible with SU 18-
 
-        defaults = {
-          'LinearDimensionTool' => {
-            'arrow.start.size' => { :type => 6, :value => 2 },
-            'arrow.start.type' => { :type => 2, :value => 17 },
-            'arrow.end.size' => { :type => 6, :value => 2 },
-            'arrow.end.type' => { :type => 2, :value => 17 },
-            'stroke.width' => { :type => 6, :value => 0.5 },
-            'dimension.units.unit' => { :type => 2, :value => DimensionUtils.length_unit },
-            'dimension.units.format' => { :type => 2, :value => DimensionUtils.length_format },
-            'dimension.units.precision' => { :type => 4, :value => DimensionUtils.length_precision },
-            'dimension.units.suppression' => { :type => 2, :value => DimensionUtils.length_suppress_unit_display ? 1 : 0 },
-            'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
-            'dimension.startoffsettype' => { :type => 4, :value => 0 },
-            'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
-            'dimension.endoffsettype' => { :type => 4, :value => 0 },
-          },
-          'AngularDimensionTool' => {
-            'arrow.start.size' => { :type => 6, :value => 2 },
-            'arrow.start.type' => { :type => 2, :value => 17 },
-            'arrow.end.size' => { :type => 6, :value => 2 },
-            'arrow.end.type' => { :type => 2, :value => 17 },
-            'stroke.width' => { :type => 6, :value => 0.5 },
-            'dimension.units.angleprecision' => { :type => 4, :value => 0 },
-            'dimension.units.angleunit' => { :type => 2, :value => 9 },
-            'dimension.units.suppression' => { :type => 2, :value => 0 },
-            'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
-            'dimension.startoffsettype' => { :type => 4, :value => 0 },
-            'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
-            'dimension.endoffsettype' => { :type => 4, :value => 0 },
+          # Override layout 'LinearDimensionTool' and 'AngularDimensionTool' default style
+
+          defaults = {
+            'LinearDimensionTool' => {
+              'arrow.start.size' => { :type => 6, :value => 2 },
+              'arrow.start.type' => { :type => 2, :value => 17 },
+              'arrow.end.size' => { :type => 6, :value => 2 },
+              'arrow.end.type' => { :type => 2, :value => 17 },
+              'stroke.width' => { :type => 6, :value => 0.5 },
+              'dimension.units.unit' => { :type => 2, :value => DimensionUtils.length_unit },
+              'dimension.units.format' => { :type => 2, :value => DimensionUtils.length_format },
+              'dimension.units.precision' => { :type => 4, :value => DimensionUtils.length_precision },
+              'dimension.units.suppression' => { :type => 2, :value => DimensionUtils.length_suppress_unit_display ? 1 : 0 },
+              'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
+              'dimension.startoffsettype' => { :type => 4, :value => 0 },
+              'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
+              'dimension.endoffsettype' => { :type => 4, :value => 0 },
+            },
+            'AngularDimensionTool' => {
+              'arrow.start.size' => { :type => 6, :value => 2 },
+              'arrow.start.type' => { :type => 2, :value => 17 },
+              'arrow.end.size' => { :type => 6, :value => 2 },
+              'arrow.end.type' => { :type => 2, :value => 17 },
+              'stroke.width' => { :type => 6, :value => 0.5 },
+              'dimension.units.angleprecision' => { :type => 4, :value => 0 },
+              'dimension.units.angleunit' => { :type => 2, :value => 9 },
+              'dimension.units.suppression' => { :type => 2, :value => 0 },
+              'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
+              'dimension.startoffsettype' => { :type => 4, :value => 0 },
+              'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
+              'dimension.endoffsettype' => { :type => 4, :value => 0 },
+            }
           }
-        }
 
-        Zip::File.open(layout_path, create: false) do |zipfile|
+          Zip::File.open(layout_path, create: false) do |zipfile|
 
-          require "rexml/document"
+            require "rexml/document"
 
-          style_manager_filename = 'styleManager.xml'
-          xml = zipfile.read(style_manager_filename)
+            style_manager_filename = 'styleManager.xml'
+            xml = zipfile.read(style_manager_filename)
 
-          begin
+            begin
 
-            # Parse XML
-            xdoc = REXML::Document.new(xml)
+              # Parse XML
+              xdoc = REXML::Document.new(xml)
 
-            # Extract style manager element
-            style_manager_elm = xdoc.elements['/styleManager']
-            if style_manager_elm
+              # Extract style manager element
+              style_manager_elm = xdoc.elements['/styleManager']
+              if style_manager_elm
 
-              defaults.each do |tool, attributes|
+                defaults.each do |tool, attributes|
 
-                # Add new 'Tool' default attributes
+                  # Add new 'Tool' default attributes
 
-                style_attributes_elm = REXML::Element.new('e:styleAttributes')
+                  style_attributes_elm = REXML::Element.new('e:styleAttributes')
 
-                style_value_elm = REXML::Element.new('t:variant')
-                style_value_elm.add_attribute('type', 13)
-                style_value_elm.add_element(style_attributes_elm)
+                  style_value_elm = REXML::Element.new('t:variant')
+                  style_value_elm.add_attribute('type', 13)
+                  style_value_elm.add_element(style_attributes_elm)
 
-                style_elm = REXML::Element.new('t:dicItem')
-                style_elm.add_attribute('key', tool)
-                style_elm.add_element(style_value_elm)
+                  style_elm = REXML::Element.new('t:dicItem')
+                  style_elm.add_attribute('key', tool)
+                  style_elm.add_element(style_value_elm)
 
-                style_manager_elm.add_element(style_elm)
+                  style_manager_elm.add_element(style_elm)
 
-                attributes.each do |attribute, type_and_value|
+                  attributes.each do |attribute, type_and_value|
 
-                  attribute_value_elm = REXML::Element.new('t:variant')
-                  attribute_value_elm.add_attribute('type', type_and_value[:type])
-                  attribute_value_elm.add_text(REXML::Text.new(type_and_value[:value].to_s))
+                    attribute_value_elm = REXML::Element.new('t:variant')
+                    attribute_value_elm.add_attribute('type', type_and_value[:type])
+                    attribute_value_elm.add_text(REXML::Text.new(type_and_value[:value].to_s))
 
-                  attribute_elm = REXML::Element.new('t:dicItem')
-                  attribute_elm.add_attribute('key', attribute)
-                  attribute_elm.add_element(attribute_value_elm)
+                    attribute_elm = REXML::Element.new('t:dicItem')
+                    attribute_elm.add_attribute('key', attribute)
+                    attribute_elm.add_element(attribute_value_elm)
 
-                  style_attributes_elm.add_element(attribute_elm)
+                    style_attributes_elm.add_element(attribute_elm)
+
+                  end
 
                 end
 
+                output = ''
+                xdoc.write(output)
+
+                zipfile.get_output_stream(style_manager_filename){ |f| f.puts output }
+                zipfile.commit
+
               end
 
-              output = ''
-              xdoc.write(output)
-
-              zipfile.get_output_stream(style_manager_filename){ |f| f.puts output }
-              zipfile.commit
-
+            rescue REXML::ParseException => error
+              # Return nil if an exception is thrown
+              puts error.message
             end
 
-          rescue REXML::ParseException => error
-            # Return nil if an exception is thrown
-            puts error.message
           end
 
         end
