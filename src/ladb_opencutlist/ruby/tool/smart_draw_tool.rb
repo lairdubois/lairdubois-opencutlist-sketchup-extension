@@ -1688,6 +1688,13 @@ module Ladb::OpenCutList
 
     protected
 
+    def _get_previous_input_point
+      return nil if _picked_shape_first_point? && !_picked_shape_last_point?
+      super
+    end
+
+    # -----
+
     def _snap_shape_points(flags, x, y, view)
 
       ground_plane = [ @picked_shape_first_ip.position, _get_active_z_axis ]
@@ -1794,7 +1801,7 @@ module Ladb::OpenCutList
 
           locked_plane = [ @picked_shape_first_ip.position, @locked_normal ]
 
-          @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
+          @mouse_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
           @normal = @locked_normal
 
         else
@@ -1824,6 +1831,8 @@ module Ladb::OpenCutList
             @direction = _get_active_z_axis if @locked_direction.nil?
             @normal = plane_manipulator.normal
 
+            @snap_ip.copy!(@mouse_ip)
+
           end
 
           # k_mesh = Kuix::Mesh.new
@@ -1840,9 +1849,9 @@ module Ladb::OpenCutList
           locked_plane = [ @picked_shape_first_ip.position, @locked_normal ]
 
           if @mouse_ip.degrees_of_freedom > 2
-            @snap_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), locked_plane))
+            @mouse_ip = Sketchup::InputPoint.new(Geom.intersect_line_plane(view.pickray(x, y), locked_plane))
           else
-            @snap_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
+            @mouse_ip = Sketchup::InputPoint.new(@mouse_ip.position.project_to_plane(locked_plane))
           end
           @normal = @locked_normal
 
@@ -1879,6 +1888,24 @@ module Ladb::OpenCutList
 
           end
 
+        end
+
+      end
+
+      # Check square
+      if !@snap_ip.valid? && @mouse_ip.degrees_of_freedom >= 2
+
+        t = _get_transformation
+        ti = t.inverse
+
+        p1 = @picked_shape_first_ip.position.transform(ti)
+        p2 = @mouse_ip.position.transform(ti)
+        v = p1.vector_to(p2)
+
+        psqr = Geom::Point3d.new(p1.x + v.x, p1.y + v.x.abs * (v.y < 0 ? -1 : 1)).transform(t)
+
+        if view.pick_helper.test_point(psqr, x, y, 20)
+          @snap_ip = Sketchup::InputPoint.new(psqr)
         end
 
       end
@@ -1931,22 +1958,6 @@ module Ladb::OpenCutList
 
     def _preview_shape(view)
 
-      if _fetch_option_rectangle_centered
-
-        k_points = _create_floating_points(
-          points: @picked_shape_first_ip.position,
-          style: Kuix::POINT_STYLE_PLUS
-        )
-        @tool.append_3d(k_points)
-
-        k_line = Kuix::LineMotif.new
-        k_line.start.copy!(@picked_shape_first_ip.position)
-        k_line.end.copy!(@snap_ip.position)
-        k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        @tool.append_3d(k_line)
-
-      end
-
       t = _get_transformation
       ti = t.inverse
 
@@ -1984,6 +1995,37 @@ module Ladb::OpenCutList
       Sketchup.set_status_text("#{bounds.width}#{Sketchup::RegionalSettings.list_separator} #{bounds.height}", SB_VCB_VALUE)
 
       if bounds.valid?
+
+        if bounds.width == bounds.height && bounds.width != 0
+
+          k_line = Kuix::LineMotif.new
+          k_line.start.copy!(_fetch_option_rectangle_centered ? @picked_shape_first_ip.position.offset(@snap_ip.position.vector_to(@picked_shape_first_ip.position)) : @picked_shape_first_ip.position)
+          k_line.end.copy!(@snap_ip.position)
+          k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_line.color = _get_normal_color
+          @tool.append_3d(k_line)
+
+        end
+
+        if _fetch_option_rectangle_centered
+
+          k_points = _create_floating_points(
+            points: @picked_shape_first_ip.position,
+            style: Kuix::POINT_STYLE_PLUS
+          )
+          @tool.append_3d(k_points)
+
+          if bounds.width != bounds.height
+
+            k_line = Kuix::LineMotif.new
+            k_line.start.copy!(@picked_shape_first_ip.position)
+            k_line.end.copy!(@snap_ip.position)
+            k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            @tool.append_3d(k_line)
+
+          end
+
+        end
 
         if bounds.width != 0
 
