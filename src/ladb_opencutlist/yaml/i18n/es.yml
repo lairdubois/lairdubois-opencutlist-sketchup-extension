@@ -1334,6 +1334,9 @@ tab:
       title: Cargar una imagen
     import_from_skm:
       title: Importar fichero .skm
+      ask_replace: |
+        Ya existe un material "{{ name }}".
+        Desea sustituirlo por el que está importando?
     export_to_skm:
       title: Exportar a fichero .skm
     option:
