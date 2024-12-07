@@ -591,7 +591,7 @@ tab:
     export:
       title: Esportazione
       info_0: |
-        Questa funzione consente di esportare i dati dell'*Lista Parti* negli appunti o in un file [CSV](https://it.wikipedia.org/wiki/Comma-separated_values).
+        Questa funzione consente di copiare negli appunti i dati contenuti nella *Distinta* o di esportarli in un file [CSV](https://it.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
         Riordina, Nascondi, Aggiungi, Rimuovi o Seleziona una colonna per personalizzare il **titolo** e la **formula** che verranno utilizzati per generare titolo e valore di ogni colonna esportata.
       add_column: Aggiungi colonna
@@ -1032,7 +1032,7 @@ tab:
       error:
         invalid_size: Le impostazioni non consentono di formattare le dimensioni dell'etichetta.
       warning:
-        is_group_selection: Le parti contenute nei **gruppi nascosti** del elenco parti non avranno un'etichetta.
+        is_group_selection: Le parti contenute nei **gruppi nascosti** dela Distinta non avranno un'etichetta.
         is_part_selection: Queste etichette sono limitate solo alle **parti selezionate**.
         formula_not_available: La formula non è disponibile in questo contesto
     layout:
@@ -1236,7 +1236,7 @@ tab:
       texture_load: Carica una nuova texture
       texture_clear: Rimuovi texture
       edit: "Modifica le proprietà di '{{ name }}'"
-      set_current: "Colorare le parti con “{{ name }}”."
+      set_current: "Colorare le parti con '{{ name }}'."
       open_url: Apri l'URL del materiale
     menu:
       import_from_skm: Importa materiale (.skm)
@@ -1334,10 +1334,13 @@ tab:
       title: Carica un'immagine
     import_from_skm:
       title: Importa file .skm
+      ask_replace: |
+        Esiste già un materiale "{{ name }}".
+        Si desidera sostituirlo con quello che si sta importando?
     export_to_skm:
       title: Esporta su file .skm
     option:
-      minimize_on_smart_paint: Ridurre dopo * “Colorare le parti con... ”*.
+      minimize_on_smart_paint: Ridurre dopo *'Colorare le parti con...'*
       minimize_on_smart_paint_help: "Se questa opzione è attivata, la finestra OpenCutList verrà ridotta a icona quando viene utilizzata la funzione *'Colora parti con...'*."
       general: Generale
       material_order_strategy: Ordinamento Materiali
@@ -1458,7 +1461,7 @@ tab:
       errors: Questa parte non verrà importata a causa dei seguenti errori
       warnings: Questa parte verrà importata con i seguenti avvertimenti
     error:
-      no_model: Nessun modello aperto. Aprire un modello (anche vuoto) prima di importare ;)
+      no_model: Nessun modello aperto. Aprire un modello prima di importare ;)
       file_not_found: "File mancante : **{{ filename }}**"
       bad_extension: "Il file *{{ filename }}* non ha estensione **.CSV** o **.TSV**."
       failed_to_load_csv_file: |

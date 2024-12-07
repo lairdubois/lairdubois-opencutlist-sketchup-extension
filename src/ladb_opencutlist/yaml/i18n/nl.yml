@@ -7,6 +7,8 @@ default:
   minimize: Minimaliseren
   maximize: Maximaliseren
   cancel: Annuleren
+  # stop computation and return best result so far
+  stop: Stop
   validate: Bevestigen
   confirm: Bevestigen
   ok: OK
@@ -23,7 +25,9 @@ default:
   preview: In zicht
   options: Opties
   caution: Let op
-  remove: Verwijderen
+  remove: Verwijder
+  remove_all: Verwijder alles
+  delete: Verwijderen
   create: Maken
   duplicate: Kopiëren
   ignore: Negeren
@@ -34,6 +38,8 @@ default:
   unselect_all: Alles deselecteren
   draw: Tekenen
   estimate: Schatting
+  yes: Ja
+  no: Nee
   empty_filename: geen bestandnaam.skp
   help: Help
   error: Oeps!
@@ -42,7 +48,9 @@ default:
   good: Goed
   bad: Fout
   by: door
+  # date format in use for language
   date_format: "d/m/Y G:i"
+  # short date format in use for language
   date_format_short: d/m/Y
   unit_0: Duim
   unit_1: Voet
@@ -82,6 +90,12 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: De instantie wijzigen
+      edit_parent_part_instance: De groep/component met de instantie wijzigen
+      hide_part_instance: Instantie verbergen
+      unhide_part_instance: Onthul de instantie
+      edit_part_instance_properties: Instance-eigenschappen bewerken
+      smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -90,12 +104,13 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
+      smart_draw: Onderdelen tekenen
       smart_paint: Kleur de onderdelen
       smart_axes: Oriënt Onderdelen
       smart_export: Onderdelen exporteren
   messagebox:
     dir_override: |
-      “{{ target }}” bestaat al. Wil je deze vervangen?
+      « {{ target }} » bestaat al. Wil je deze vervangen?
 
       Er staat al een map met dezelfde naam in de map {{ parent }}. Als u deze vervangt, gaat de originele inhoud verloren.
   savepanel:
@@ -119,6 +134,7 @@ core:
 
       Om een ​​bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
+    extern: "Externe fout : **{{ error }}**"
     feature_unavailable: "Deze functie vereist SketchUp {{ version }} of hoger"
     failed_export_to: |
       Er is een fout opgetreden tijdens het exporteren naar *{{ path }}*.
@@ -132,6 +148,7 @@ core:
     material_change: Ten minste een materiaal is aangepast.
     selection_change: De selectie is veranderd.
     layers_change: De tags in het actieve model zijn gewijzigd.
+    drawing_change: Het ontwerp van het actieve model is aangepast.
   upgrade:
     unavailable: De laatste versie van *OpenCutList* kan niet gevonden worden.
     available: |
@@ -180,9 +197,9 @@ core:
     dictionary:
       component_textinput_color: Kleurenpalet
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
+      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -195,6 +212,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Model
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -214,7 +232,7 @@ core:
       view_isometric: Isometrisch
       view_top: Bovenaanzicht
       view_bottom: Onderaanzicht
-      view_front: Voorzijde
+      view_front: Voor
       view_back: Achteraanzicht
       view_left: Links
       view_right: Rechts
@@ -251,7 +269,11 @@ tab:
     edit_part_faces_properties: Bewerk de eigenschappen (fineren) van het onderdeel
     part_drawing_type_1: 2D aanzicht
     part_drawing_type_2: 2D aanzicht omgekeerd
-    part_drawing_type_3: 3D
+    part_drawing_type_3: 2D Linkeraanzicht
+    part_drawing_type_4: 2D Rechteaansicht
+    part_drawing_type_5: 2D Vooraanzicht
+    part_drawing_type_6: 2D Achteraanzicht
+    part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Toon / verberg groep
       scroll_to_block: Scroll naar groep
@@ -344,7 +366,10 @@ tab:
       select_unselect_all_parts: Selecteer / De-selecteer alle onderdelen van de groep
       select_parts_in_cutlist: Selecteer het deel op het debetblad
       select_parts_in_cutlist_plural: "Selecteer de {{ count }} delen op het debetblad"
+      # used in estimate to setup the cutting diagram
       setup_group_cuttingdiagram: "Configureer het zaagplan van '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      # used in estimate to setup the new packing
+      setup_group_packing: "Configureer het zaagplan van '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Open onderdeel-URL
     menu:
       show_all_groups: Toon alle groepen
@@ -352,6 +377,7 @@ tab:
       numbers_save: Bewaar de onderdeel nummers
       numbers_reset: Stel de onderdeel nummers opnieuw in
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: Etiketten afdrukken
       write_2d: 2D projectie
       write_3d: 3D projectie
       write_2d_parts: Exporteer de 2D-projectie van de onderdelen
@@ -362,6 +388,7 @@ tab:
       group_numbers_save: Bewaar de onderdeel nummers van deze groep
       group_numbers_reset: Stel de onderdeel nummers van deze groep opnieuw in
       group_cuttingdiagram: Zaagschema
+      group_packing: Zaagschema
       group_labels: Etiketten afdrukken van onderdelen in groep
       edit_material: "Wijzig materiaal '{{ material_name }}'"
       expand_all: Alle lijnen uitklappen
@@ -564,13 +591,14 @@ tab:
     export:
       title: Exporteren
       info_0: |
-        Deze functionaliteit laat u toe om uw *stuklijst* te exporteren naar een *bestand* van het type [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand).
+        Met deze functie kunt u gegevens van het *stuklijst* exporteren naar het klembord of naar een bestand in [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand)-formaat.
       customize_help: |
         Een kolom in de lijst opnieuw ordenen, verbergen, toevoegen, verwijderen of selecteren om de **titel** en de **formule** aan te passen die de weergegeven waarde voor elke geëxporteerde rij genereert.
       add_column: Voeg een afmeting toe
       add_native_columns: Voeg een kolom toe
-      remove_column: Verwijder
-      remove_all_columns: Verwijder alles
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
       columns: Kolommen
       column_title: Titel
       column_title_help: |
@@ -582,7 +610,7 @@ tab:
       options_customize: Personalisering
       option_source: Bron
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: Onderdelen lijst
       option_source_instances_list: Instantielijst
       option_col_sep: Scheidingsteken
       option_col_sep_tab: TAB-teken
@@ -610,8 +638,9 @@ tab:
       final_area: Oppervlakte - afgewerkt
       count: Hoeveelheid
       part_count: Aantal onderdelen
-      material_type: Type
-      material_name: Materiaal
+      material: Materiaal
+      material_type: Type materiaal
+      material_name: Naam van materiaal
       material_description: Beschrijving van het materiaal
       material_url: Materiaal-URL
       material_std_dimension: Standaard afmetingen
@@ -629,6 +658,8 @@ tab:
       layers: Tags
       batch: Lot
       bin: Container
+      component_definition: Component definitie
+      component_instance: Instantie van component
       filename: Bestandsnaam
       model_name: Naam van het model
       model_description: Model Beschrijving
@@ -739,6 +770,8 @@ tab:
          *Deze optie moet ingeschakeld zijn om vormen te kunnen exporteren.*
       option_saw_kerf: Dikte van het zaagblad
       option_saw_kerf_help: Breedte van verwijderd materiaal door het zaagblad.
+      option_spacing: Afstand
+      option_spacing_help: Minimale afstand tussen elk onderdeel.
       option_trimming: Marge
       option_trimming_help_1d: Marge aan beide uiteinden van bekantrecht hout of kantenband dat als overschot behandeld wordt.
       option_trimming_help_2d: Marge rondom het paneel dat beschouwd wordt als afval.
@@ -832,7 +865,7 @@ tab:
         parts: "{{ count }} onderdeel"
         parts_plural: "{{ count }} onderdelen"
         settings: Instellingen
-      export:
+      write:
         title: De lay-out exporteren
         info_0: |
           Met deze module kunt u de **geometrie** van de *lay-out* exporteren als een lijst met bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
@@ -916,8 +949,9 @@ tab:
       options_offset: Offset
       size: Ware grootte van het etiket
       add_element: Voeg een element toe
-      remove_element: Verwijder
-      remove_all_elements: Verwijder alles
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         Rangschik de volgende eigenschappen om de sorteervolgorde van de etiketten te bepalen.
         Elke eigenschap kan <i class="ladb-opencutlist-icon-sort-asc"></i> *oplopend* of <i class="ladb-opencutlist-icon-sort-desc"></i> *aflopend* gesorteerd worden.
@@ -958,6 +992,7 @@ tab:
       option_color: Kleur
       formula:
         custom: Formule
+        custom_qr_code: QR-code
         part_number: Nummer
         part_name: Beschrijving
         part_description: Beschrijving
@@ -997,6 +1032,7 @@ tab:
       error:
         invalid_size: De ingegeven paramaters laten niet toe om geldige label afmetingen in te stellen.
       warning:
+        is_group_selection: De onderdelen in de **verborgen groepen** van je betaalpas hebben geen label.
         is_part_selection: Deze labels zijn beperkt tot **geselecteerde onderdelen**.
         formula_not_available: Formule is in deze context niet beschikbaar
     layout:
@@ -1082,6 +1118,11 @@ tab:
       option_unit: Eenheid
       option_unit_help: |
         Hiermee kunt u de eenheid kiezen die in het geëxporteerde bestand wordt gebruikt.
+      option_use_count: Hoeveelheden
+      option_use_count_0: Eén bestand per onderdeel
+      option_use_count_1: Eén bestand per onderdeelinstantie
+      option_use_count_help: |
+        Bepaalt of er rekening wordt gehouden met het aantal instanties van een component.
       option_part_drawing_type: Projectie
       option_part_drawing_type_help: |
         Hiermee kunt u de geëxporteerde weergave kiezen.
@@ -1095,8 +1136,13 @@ tab:
       option_anchor_1: Projecteer de oorsprong van het onderdeel
       option_anchor_help: |
         Hiermee kunt u de projectie van de oorsprong van de assen van het onderdeel als ankerpunt activeren.
+      option_switch_yz: Verticale as
+      option_switch_yz_0: Z verticaal
+      option_switch_yz_1: Y verticaal
+      option_switch_yz_help: |
+        Wisselt de Y- en Z-as om de verticale as van het onderdeel te definiëren.
       option_smoothing: Gladmaken
-      option_smoothing_0: Geen enkele
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: Gladde cirkels en bogen (experimenteel)
       option_smoothing_help: |
         Hiermee kunt u de detectie van cirkels en bogen activeren.
@@ -1112,7 +1158,7 @@ tab:
         **Contour + Gaten + Samenvoegen**
         Activeert de scheiding van de buitencontour van de onderdelen van hun gaten, evenals de versmelting van de diepten van elke holte.
       option_include_paths: Sporen
-      option_include_paths_0: Geen enkele
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: Gebruik randen die niet aan een gezicht zijn gekoppeld
       option_include_paths_help: |
         Hiermee kunt u het gebruik activeren van randen die niet aan een vlak zijn gekoppeld en wel in het onderdeel zijn opgenomen, en deze als plot exporteren.
@@ -1124,7 +1170,9 @@ tab:
         Hiermee kunt u de kleuren van de onderdeelgaten kiezen.
       option_parts_paths: Sporen
       option_parts_paths_help: |
-        Hiermee kunt u de kleur van de lijnen kiezen.
+        Hiermee kun je de padkleuren kiezen.
+
+        *De vulkleur wordt alleen gebruikt voor gesloten paden.*
       error:
         no_part: Geen onderdelen om te exporteren.
       warning:
@@ -1188,9 +1236,7 @@ tab:
       texture_load: Laad een nieuwe textuur
       texture_clear: Heldere textuur
       edit: "Wijzig de eigenschappen van '{{ name }}'"
-      set_current: |
-        Kleur delen met '{{ name }}'
-         *Dubbelklikken om samen te vouwen*
+      set_current: "Kleur onderdelen met '{{ name }}'."
       open_url: Materiaal-URL openen
     menu:
       import_from_skm: Importeer een materiaal (.skm)
@@ -1288,16 +1334,22 @@ tab:
       title: Upload een afbeelding
     import_from_skm:
       title: Importeer een .skm bestand
+      ask_replace: |
+        Een materiaal met naam "{{ name }}" bestaat al.
+        Wilt u deze vervangen door degene die u importeert?
     export_to_skm:
       title: Exporteer een .skm bestand
     option:
+      minimize_on_smart_paint: Verminderen na *'Kleurdelen met...'*
+      minimize_on_smart_paint_help: "Als deze optie is ingeschakeld, wordt het venster OpenCutList geminimaliseerd wanneer de functie *'Kleur onderdelen met...'* wordt gebruikt."
+      general: Algemeen
       material_order_strategy: Sortering van materialen
       material_order_strategy_help: |
         Herschik de volgende kenmerken om de sorteer strategie te bepalen van de materialen in de lijst.
         Elk kenmerk kan in <i class="ladb-opencutlist-icon-sort-asc"></i> *oplopend* of <i class="ladb-opencutlist-icon-sort-desc"></i> *aflopend* gesorteerd worden.
       property_type: Type
       property_name: Beschrijving
-    remove:
+    delete:
       message: |
         U staat op het punt om het materiaal **{{ material_name }}** uit uw model te verwijderen.
         Bevestig om verder te gaan.
@@ -1310,7 +1362,7 @@ tab:
       material_not_found: Materiaal niet gevonden.
       failed_import_skm_file: "Er heeft zich een fout voorgedaan bij het importeren van het .skm bestand. **{{ error }}**"
       failed_export_skm_file: "Er heeft zich een fout voorgedaan bij het exporteren van het .skm bestand. **{{ error }}**"
-      failed_removing_material: "Er heeft zich een fout voorgedaan bij het verwijderen van het materiaal. **{{ error }}**"
+      failed_deleting_material: "Er heeft zich een fout voorgedaan bij het verwijderen van het materiaal. **{{ error }}**"
       failed_duplicating_material: "Er is een fout opgetreden tijdens het dupliceren van het materiaal. **{{ error }}**"
       invalid_image_file: Ongeldige afbeelding
     obsolete_base: "Om gesynchroniseerd te blijven moet u de materialen lijst verversen."
@@ -1319,13 +1371,13 @@ tab:
     title: Structuur
     list: Boomstructuur entiteiten
     nodes: Instanties
-    part_count: Aantal stukken
+    toggle_hidden: Verborgen instanties
     type_0: Model
     type_1: Groep
     type_2: Onderdeel
     type_3: Stuk
     tooltip:
-      open_node_url: Open instantie-URL
+      open_node_url: Open onderdeel-URL
     edit_node:
       title_model: "Modeleigenschappen"
       title_instance: "**{{ name }}** instantie-eigenschappen"
@@ -1333,9 +1385,11 @@ tab:
       preview: In zicht
       name: Beschrijving
       instance_name: Instantie
+      material: Materiaal
       definition_name: Definitie
       description: Beschrijving
       url: URL
+      tags: Badges
       layer_name: Tag
       explode: Uitbarsten/ splitsing 
       explode_message: "Bevestigt u de splitsing van de **{{ name }}** instantie?"
@@ -1480,6 +1534,8 @@ tab:
     objective_title:
       default: Doelen
       cuttingdiagram_export: Financiering van de uitvoer van zaagschema's
+      outliner: Financiering van de structuurfunctie
+      packing: ""
     objective_details:
       default: |
         De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update!
@@ -1487,8 +1543,8 @@ tab:
         Wij vinden het belangrijk dat *OpenCutList* zich kan aanpassen aan de zeer uiteenlopende verwachtingen van gebruikers voor de *layout*-functie.
         Om de mogelijkheden verder uit te breiden, willen we het mogelijk maken om lay-outdiagrammen in **SVG**- en **DXF**-formaat te exporteren.
         Door ons de middelen te geven om aan deze exporten te werken, geeft u ons de mogelijkheid om u te helpen het maximale uit *OpenCutList* te halen.
-      layout: |
-        Het doel van deze module is om u in staat te stellen eenvoudig een overzicht van uw project af te drukken in **exploded view** met identificatie van de onderdelen aan de hand van hun nummer gegenereerd in het stroomschema.
+      outliner: |
+      packing: |
     objective_crowdfunding: |
       De ontwikkeling van deze nieuwe functie zal gebeuren via **participatiefinanciering** en kan beginnen zodra het **financiële doel** is bereikt.
     objective_thanks: |
@@ -1663,7 +1719,9 @@ tool:
     action_2: Wissel gezicht ↔ Tegengezicht
     action_2_status: Klik op een stuk om de aflezing van de voorkant te verwisselen met de achterkant
     action_3: Pas de assen aan
-    action_3_status: Klik op het vlak of de rand van een onderdeel om de assen eraan aan te passen
+    action_3_status: Richt op een gebied van een onderdeel en klik op een rand om de assen aan te passen.
+    action_4: Oorsprong verplaatsen
+    action_4_status: Richt op een vlak van een onderdeel en klik op een punt om de oorsprong daar te plaatsen
     action_option_group_direction: Richting
     action_option_direction_0: LO
     action_option_direction_1: La
