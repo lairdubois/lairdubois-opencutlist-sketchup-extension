@@ -107,7 +107,10 @@ module Ladb::OpenCutList
                     material_old.alpha = material_loaded.alpha
                     material_old.color = material_loaded.color
                     material_old.colorize_type = material_loaded.colorize_type
-                    material_old.texture = material_loaded.texture.image_rep if !material_loaded.texture.nil? && material_loaded.texture.valid?
+                    if !material_loaded.texture.nil? && material_loaded.texture.valid?
+                      material_old.texture = material_loaded.texture.image_rep
+                      material_old.texture.size = [ material_loaded.texture.width, material_loaded.texture.height ]
+                    end
 
                     material = material_old
 
@@ -123,7 +126,10 @@ module Ladb::OpenCutList
                     material_new.alpha = material_loaded.alpha
                     material_new.color = material_loaded.color
                     material_new.colorize_type = material_loaded.colorize_type
-                    material_new.texture = material_loaded.texture.image_rep if !material_loaded.texture.nil? && material_loaded.texture.valid?
+                    if !material_loaded.texture.nil? && material_loaded.texture.valid?
+                      material_old.texture = material_loaded.texture.image_rep
+                      material_old.texture.size = material_loaded.texture.size
+                    end
 
                     material = material_new
 
