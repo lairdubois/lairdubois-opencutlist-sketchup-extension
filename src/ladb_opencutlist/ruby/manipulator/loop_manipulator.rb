@@ -8,6 +8,7 @@ module Ladb::OpenCutList
 
     def initialize(loop, transformation = IDENTITY)
       super(transformation)
+      raise "loop must be a Sketchup::Loop." unless loop.is_a?(Sketchup::Loop)
       @loop = loop
     end
 

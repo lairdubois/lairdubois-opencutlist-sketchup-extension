@@ -16,6 +16,7 @@ module Ladb::OpenCutList
 
     def initialize(face, transformation = IDENTITY)
       super(face.plane, transformation)
+      raise "face must be a Sketchup::Face." unless face.is_a?(Sketchup::Face)
       @face = face
       @surface_manipulator = nil
     end

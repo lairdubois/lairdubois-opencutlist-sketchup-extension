@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/plane_manipulator'
+  require_relative '../manipulator/cline_manipulator'
   require_relative '../lib/geometrix/finder/circle_finder'
   require_relative '../lib/fiddle/clippy/clippy'
 
@@ -419,6 +420,26 @@ module Ladb::OpenCutList
       @tool.remove_all_2d
 
       Sketchup.set_status_text('', SB_VCB_VALUE)
+
+      if @mouse_ip.instance_path.leaf.is_a?(Sketchup::ConstructionLine)
+
+        cline_manipulator = ClineManipulator.new(@mouse_ip.instance_path.leaf, @mouse_ip.transformation)
+
+        ph = view.pick_helper
+        if ph.test_point(cline_manipulator.middle_point, x, y, 30)
+
+          # @snap_ip = Sketchup::InputPoint.new(middle)
+
+          k_points = Kuix::Points.new
+          k_points.add_point(cline_manipulator.middle_point)
+          k_points.size = 30
+          k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
+          k_points.color = Kuix::COLOR_MAGENTA
+          @tool.append_3d(k_points)
+
+        end
+
+      end
 
       if _picked_pushpull_point?
         _snap_move_point(flags, x, y, view)

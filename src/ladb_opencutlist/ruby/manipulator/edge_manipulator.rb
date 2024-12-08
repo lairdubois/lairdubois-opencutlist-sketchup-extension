@@ -9,6 +9,7 @@ module Ladb::OpenCutList
 
     def initialize(edge, transformation = IDENTITY)
       super(edge.line, transformation)
+      raise "edge must be a Sketchup::Edge." unless edge.is_a?(Sketchup::Edge)
       @edge = edge
     end
 

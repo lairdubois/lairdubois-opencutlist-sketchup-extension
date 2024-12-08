@@ -135,8 +135,6 @@ module Ladb::OpenCutList
         parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
         return _create_packing(errors: [ 'tab.cutlist.packing.error.no_part' ]) if parts.empty?
 
-        parts_count = parts.map(&:count).inject(0, :+)  # .map(&:count).inject(0, :+) == .sum { |portion| part.count } compatible with ruby < 2.4
-
         bin_types = []
 
         # Create bins from scrap bins
@@ -195,7 +193,7 @@ module Ladb::OpenCutList
           cost, std_price = _compute_bin_type_cost(group, length, width)
 
           bin_type = {
-            copies: parts_count,
+            copies: -1,
             width: _to_packy_length(length),
             height: _to_packy_length(width),
             cost: cost

@@ -464,7 +464,7 @@
     LadbDialogTabs.prototype.hideSponsorAd = function () {
 
         // Remove ad
-        $('#ladb_sponsor_ad').hide('slide', { direction: 'down'}, 300);
+        $('#ladb_sponsor_ad').remove();
 
         // Unbind auto hide
         $(window).off('mousedown', this.hideSponsorAd);

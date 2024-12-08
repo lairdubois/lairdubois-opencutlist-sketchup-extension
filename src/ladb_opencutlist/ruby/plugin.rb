@@ -1390,9 +1390,7 @@ module Ladb::OpenCutList
 
             # Prepare file
             downloads_dir = File.join(temp_dir, 'downloads')
-            unless Dir.exist?(downloads_dir)
-              Dir.mkdir(downloads_dir)
-            end
+            Dir.mkdir(downloads_dir) unless Dir.exist?(downloads_dir)
             rbz_file = File.join(downloads_dir, 'ladb_opencutlist.rbz')
 
             # Write result to file

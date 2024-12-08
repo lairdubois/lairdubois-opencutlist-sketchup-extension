@@ -8,6 +8,7 @@ module Ladb::OpenCutList
 
     def initialize(vertex, transformation = IDENTITY)
       super(transformation)
+      raise "vertex must be a Sketchup::Vertex." unless vertex.is_a?(Sketchup::Vertex)
       @vertex = vertex
     end
 

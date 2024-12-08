@@ -8,6 +8,7 @@ module Ladb::OpenCutList
 
     def initialize(curve, transformation = IDENTITY)
       super(transformation)
+      raise "curve must be a Sketchup::Curve." unless curve.is_a?(Sketchup::Curve)
       @curve = curve
     end
 
