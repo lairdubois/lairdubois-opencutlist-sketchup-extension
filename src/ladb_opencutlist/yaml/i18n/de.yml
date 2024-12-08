@@ -1471,11 +1471,11 @@ tab:
       title: Bild laden
     import_from_skm:
       title: Aus .skm Datei importieren
-    export_to_skm:
-      title: In .skm Datei exportieren
       ask_replace: |
         Ein Material "{{ name }}" existiert bereits.
         Möchten Sie es durch das von Ihnen importierte ersetzen?
+    export_to_skm:
+      title: In .skm Datei exportieren
     option:
       minimize_on_smart_paint: Reduzieren nach *'Teile einfärben mit...'*
       minimize_on_smart_paint_help: "Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster verkleinert, wenn die Funktion *'Teile einfärben mit...'* verwendet wird."

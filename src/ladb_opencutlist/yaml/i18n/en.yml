@@ -1471,11 +1471,11 @@ tab:
       title: Load image
     import_from_skm:
       title: Import .skm file
-    export_to_skm:
-      title: Export to .skm file
       ask_replace: |
         A material "{{ name }}" already exists.
         Would you like to replace it with the one you are importing?
+    export_to_skm:
+      title: Export to .skm file
     option:
       minimize_on_smart_paint: Reduce after * 'Color parts with...'*
       minimize_on_smart_paint_help: "If this option is enabled, the OpenCutList window will be minimized when the *'Color parts with...'* function is used."

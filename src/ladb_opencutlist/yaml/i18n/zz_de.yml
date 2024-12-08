@@ -1469,11 +1469,11 @@ tab:
       title: 1177 - Bild laden
     import_from_skm:
       title: 1178 - Aus .skm Datei importieren
-    export_to_skm:
-      title: 1179 - In .skm Datei exportieren
       ask_replace: |
-        1180 - Ein Material "{{ name }}" existiert bereits.
+        1179 - Ein Material "{{ name }}" existiert bereits.
         Möchten Sie es durch das von Ihnen importierte ersetzen?
+    export_to_skm:
+      title: 1180 - In .skm Datei exportieren
     option:
       minimize_on_smart_paint: 1181 - Reduzieren nach *'Teile einfärben mit...'*
       minimize_on_smart_paint_help: 1182 - Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster verkleinert, wenn die Funktion *'Teile einfärben mit...'* verwendet wird.
