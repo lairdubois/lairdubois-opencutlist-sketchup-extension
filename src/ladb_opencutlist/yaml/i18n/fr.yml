@@ -655,6 +655,7 @@ tab:
       bin: Conteneur
       component_definition: Définition du composant
       component_instance: Instance du composant
+      component_instances: Instances du composant
       filename: Nom de fichier
       model_name: Nom du modèle
       model_description: Description du modèle
