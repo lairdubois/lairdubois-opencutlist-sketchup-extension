@@ -167,7 +167,7 @@ module Ladb::OpenCutList
         # Header row
         rows << _evaluate_header unless @no_header
 
-        @cutlist.groups.each { |group|
+        @cutlist.groups.each do |group|
           next if @hidden_group_ids.include?(group.id)
 
           data = SummaryExportRowData.new(
@@ -182,7 +182,7 @@ module Ladb::OpenCutList
           )
 
           rows << _evaluate_row(data)
-        }
+        end
 
       when EXPORT_OPTION_SOURCE_CUTLIST
 
@@ -190,62 +190,68 @@ module Ladb::OpenCutList
         rows << _evaluate_header unless @no_header
 
         # Content rows
-        @cutlist.groups.each { |group|
+        @cutlist.groups.each do |group|
           next if @hidden_group_ids.include?(group.id)
-          group.parts.each { |part|
+          group.parts.each do |part|
 
-            data = CutlistExportRowData.new(
+            parts = part.is_a?(FolderPart) ? part.children : [ part ]
+            parts.each do |part|
 
-              number: StringWrapper.new(part.number),
-              name: StringWrapper.new(part.name),
-              count: IntegerWrapper.new(part.count),
-              cutting_length: LengthWrapper.new(part.def.cutting_length),
-              cutting_width: LengthWrapper.new(part.def.cutting_width),
-              cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
-              edge_cutting_length: LengthWrapper.new(part.def.edge_cutting_length),
-              edge_cutting_width: LengthWrapper.new(part.def.edge_cutting_width),
-              bbox_length: LengthWrapper.new(part.def.size.length),
-              bbox_width: LengthWrapper.new(part.def.size.width),
-              bbox_thickness: LengthWrapper.new(part.def.size.thickness),
-              final_area: AreaWrapper.new(part.def.final_area),
-              material: MaterialWrapper.new(group.def.material, group.def),
-              entity_names: ArrayWrapper.new(part.entity_names.map(&:first)),
-              description: StringWrapper.new(part.description),
-              url: StringWrapper.new(part.url),
-              tags: ArrayWrapper.new(part.tags),
-              edge_ymin: EdgeWrapper.new(
-                part.def.edge_materials[:ymin],
-                part.def.edge_group_defs[:ymin]
-              ),
-              edge_ymax: EdgeWrapper.new(
-                part.def.edge_materials[:ymax],
-                part.def.edge_group_defs[:ymax]
-              ),
-              edge_xmin: EdgeWrapper.new(
-                part.def.edge_materials[:xmin],
-                part.def.edge_group_defs[:xmin]
-              ),
-              edge_xmax: EdgeWrapper.new(
-                part.def.edge_materials[:xmax],
-                part.def.edge_group_defs[:xmax]
-              ),
-              face_zmin: VeneerWrapper.new(
-                part.def.veneer_materials[:zmin],
-                part.def.veneer_group_defs[:zmin]
-              ),
-              face_zmax: VeneerWrapper.new(
-                part.def.veneer_materials[:zmax],
-                part.def.veneer_group_defs[:zmax]
-              ),
-              layers: ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
+              data = CutlistExportRowData.new(
 
-              component_definition: ComponentDefinitionWrapper.new(part.def.definition),
+                number: StringWrapper.new(part.number),
+                name: StringWrapper.new(part.name),
+                count: IntegerWrapper.new(part.count),
+                cutting_length: LengthWrapper.new(part.def.cutting_length),
+                cutting_width: LengthWrapper.new(part.def.cutting_width),
+                cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
+                edge_cutting_length: LengthWrapper.new(part.def.edge_cutting_length),
+                edge_cutting_width: LengthWrapper.new(part.def.edge_cutting_width),
+                bbox_length: LengthWrapper.new(part.def.size.length),
+                bbox_width: LengthWrapper.new(part.def.size.width),
+                bbox_thickness: LengthWrapper.new(part.def.size.thickness),
+                final_area: AreaWrapper.new(part.def.final_area),
+                material: MaterialWrapper.new(group.def.material, group.def),
+                entity_names: ArrayWrapper.new(part.entity_names.map(&:first)),
+                description: StringWrapper.new(part.description),
+                url: StringWrapper.new(part.url),
+                tags: ArrayWrapper.new(part.tags),
+                edge_ymin: EdgeWrapper.new(
+                  part.def.edge_materials[:ymin],
+                  part.def.edge_group_defs[:ymin]
+                ),
+                edge_ymax: EdgeWrapper.new(
+                  part.def.edge_materials[:ymax],
+                  part.def.edge_group_defs[:ymax]
+                ),
+                edge_xmin: EdgeWrapper.new(
+                  part.def.edge_materials[:xmin],
+                  part.def.edge_group_defs[:xmin]
+                ),
+                edge_xmax: EdgeWrapper.new(
+                  part.def.edge_materials[:xmax],
+                  part.def.edge_group_defs[:xmax]
+                ),
+                face_zmin: VeneerWrapper.new(
+                  part.def.veneer_materials[:zmin],
+                  part.def.veneer_group_defs[:zmin]
+                ),
+                face_zmax: VeneerWrapper.new(
+                  part.def.veneer_materials[:zmax],
+                  part.def.veneer_group_defs[:zmax]
+                ),
+                layers: ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
 
-            )
+                component_definition: ComponentDefinitionWrapper.new(part.def.definition),
+                component_instances: part.def.instance_infos.values.map { |instance_info| ComponentInstanceWrapper.new(instance_info.entity) }
 
-            rows << _evaluate_row(data)
-          }
-        }
+              )
+
+              rows << _evaluate_row(data)
+
+            end
+          end
+        end
 
       when EXPORT_OPTION_SOURCE_INSTANCES_LIST
 
@@ -253,14 +259,14 @@ module Ladb::OpenCutList
         rows << _evaluate_header unless @no_header
 
         # Content rows
-        @cutlist.groups.each { |group|
+        @cutlist.groups.each do |group|
           next if @hidden_group_ids.include?(group.id)
           next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
           next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
-          group.parts.each { |part|
+          group.parts.each do |part|
 
             parts = part.is_a?(FolderPart) ? part.children : [ part ]
-            parts.each { |part|
+            parts.each do |part|
 
               # Ungroup parts
               part.def.instance_infos.each { |serialized_path, instance_info|
@@ -318,10 +324,10 @@ module Ladb::OpenCutList
                 rows << _evaluate_row(data)
               }
 
-            }
+            end
 
-          }
-        }
+          end
+        end
 
       end
 
@@ -330,7 +336,7 @@ module Ladb::OpenCutList
 
     def _evaluate_header
       header = []
-      @col_defs.each { |col_def|
+      @col_defs.each do |col_def|
         unless col_def['hidden']
           if col_def['title'].is_a?(String) && !col_def['title'].empty?
             header.push(col_def['title'])
@@ -340,13 +346,13 @@ module Ladb::OpenCutList
             header.push('')
           end
         end
-      }
+      end
       header
     end
 
     def _evaluate_row(data)
       row = []
-      @col_defs.each { |col_def|
+      @col_defs.each do |col_def|
         unless col_def['hidden']
           if col_def['formula'].nil? || col_def['formula'].empty?
             formula = col_def['name'].nil? || col_def['name'].empty? ? '' : '@' + col_def['name']
@@ -361,7 +367,7 @@ module Ladb::OpenCutList
           end
           row.push(value)
         end
-      }
+      end
       row
     end
 
@@ -431,7 +437,8 @@ module Ladb::OpenCutList
       face_zmax:,
       layers:,
 
-      component_definition:
+      component_definition:,
+      component_instances:
 
     )
       @number = number
@@ -463,6 +470,7 @@ module Ladb::OpenCutList
       @face_zmax = face_zmax
       @layers = layers
       @component_definition = component_definition
+      @component_instances = component_instances
     end
 
   end

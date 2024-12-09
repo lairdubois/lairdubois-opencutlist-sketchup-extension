@@ -862,7 +862,8 @@
                     { name: 'face_zmax', type: 'veneer' },
                     { name: 'face_zmin', type: 'veneer' },
                     { name: 'layers', type: 'array' },
-                    { name: 'component_definition', type: 'component_definition' }
+                    { name: 'component_definition', type: 'component_definition' },
+                    { name: 'component_instances', type: 'array' }
                 ],
                 snippetDefs: [
                     { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },

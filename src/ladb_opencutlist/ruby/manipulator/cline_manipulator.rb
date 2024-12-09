@@ -51,7 +51,7 @@ module Ladb::OpenCutList
       return nil if infinite?
       if @third_points.nil?
         v = end_point - start_point
-        @third_points = [ start_point.offset(v, v.length / 3), start_point.offset(v, v.length / 3 * 2) ]
+        @third_points = [ start_point.offset(v, v.length / 3.0), start_point.offset(v, v.length / 3.0 * 2) ]
       end
       @third_points
     end
