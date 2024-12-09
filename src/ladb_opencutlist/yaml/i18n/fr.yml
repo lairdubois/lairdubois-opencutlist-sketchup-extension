@@ -1791,6 +1791,9 @@ tool:
     zoom_extents: Zoom étendu
     toggle_depth: Pièces en arrière plan
     more: Plus
+    end_point: Extrémité
+    middle_point: Point du milieu
+    third_point: Point au tiers
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)

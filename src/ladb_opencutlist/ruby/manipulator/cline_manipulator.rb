@@ -17,6 +17,7 @@ module Ladb::OpenCutList
       @start_point = nil
       @end_point = nil
       @middle_point = nil
+      @third_points = nil
     end
     
     # -----
@@ -44,6 +45,24 @@ module Ladb::OpenCutList
         @middle_point = start_point.offset(v, v.length / 2.0)
       end
       @middle_point
+    end
+
+    def third_points
+      return nil if infinite?
+      if @third_points.nil?
+        v = end_point - start_point
+        @third_points = [ start_point.offset(v, v.length / 3), start_point.offset(v, v.length / 3 * 2) ]
+      end
+      @third_points
+    end
+
+    def length
+      (end_point - start_point).length
+    end
+
+    def segment
+      @segment = [ start_point, end_point ] if @segment.nil?
+      @segment
     end
 
     # -----

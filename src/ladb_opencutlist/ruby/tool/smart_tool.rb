@@ -10,6 +10,7 @@ module Ladb::OpenCutList
   require_relative '../utils/hash_utils'
   require_relative '../utils/transformation_utils'
   require_relative '../model/geom/size3d'
+  require_relative '../manipulator/cline_manipulator'
 
   class SmartTool < Kuix::KuixTool
 
@@ -1522,6 +1523,195 @@ module Ladb::OpenCutList
       Sketchup.set_status_text(get_state_status(state), SB_PROMPT)
       Sketchup.set_status_text(get_state_vcb_label(state), SB_VCB_LABEL)
       Sketchup.set_status_text('', SB_VCB_VALUE)
+    end
+
+  end
+
+  # -----
+
+  class SmartInputPoint
+
+    POSITION_TYPE_NONE = 0
+    POSITION_TYPE_END = 1
+    POSITION_TYPE_MIDDLE = 2
+    POSITION_TYPE_THIRD = 3
+
+    def initialize(*args)
+      @ip = Sketchup::InputPoint.new(*args)
+      @position = nil
+      @position_type = POSITION_TYPE_NONE
+      @cline = nil
+    end
+
+    # -----
+
+    def inputpoint
+      @ip
+    end
+
+    # -----
+
+    def vertex
+      @ip.vertex
+    end
+
+    def edge
+      @ip.edge
+    end
+
+    def face
+      @ip.face
+    end
+
+    def cline
+      @cline
+    end
+
+    # -----
+
+    def degrees_of_freedom
+      @ip.degrees_of_freedom
+    end
+
+    def depth
+      @ip.depth
+    end
+
+    def instance_path
+      @ip.instance_path
+    end
+
+    def position
+      return @position unless @position.nil?
+      @ip.position
+    end
+
+    def position_type
+      @position_type
+    end
+
+    def tooltip
+      case @position_type
+      when POSITION_TYPE_END
+        PLUGIN.get_i18n_string('tool.default.end_point')
+      when POSITION_TYPE_MIDDLE
+        PLUGIN.get_i18n_string('tool.default.middle_point')
+      when POSITION_TYPE_THIRD
+        PLUGIN.get_i18n_string('tool.default.third_point')
+      else
+        @ip.tooltip
+      end
+    end
+
+    def transformation
+      @ip.transformation
+    end
+
+    # -----
+
+    def valid?
+      @ip.valid?
+    end
+
+    def display?
+      @ip.display?
+    end
+
+    def draw(view)
+      if @position.nil?
+        @ip.draw(view)
+      else
+        case @position_type
+        when POSITION_TYPE_START, POSITION_TYPE_END
+          view.draw_points(@position, 20, Kuix::POINT_STYLE_FILLED_SQUARE, 'Green')
+          view.draw_points(@position, 20, Kuix::POINT_STYLE_OPEN_SQUARE, 'White', 2)
+        when POSITION_TYPE_MIDDLE
+          view.draw_points(@position, 20, Kuix::POINT_STYLE_FILLED_SQUARE, 'DarkTurquoise')
+          view.draw_points(@position, 20, Kuix::POINT_STYLE_OPEN_SQUARE, 'White', 2)
+        when POSITION_TYPE_THIRD
+          view.draw_points(@position, 24, Kuix::POINT_STYLE_FILLED_TRIANGLE, 'Orange')
+          view.draw_points(@position, 24, Kuix::POINT_STYLE_OPEN_TRIANGLE, 'White', 2)
+        end
+      end
+    end
+
+    # -----
+
+    def clear
+      @ip.clear
+      @position = nil
+      @position_type = POSITION_TYPE_NONE
+      @cline = nil
+    end
+
+    def copy!(ip)
+      if ip.is_a?(SmartInputPoint)
+        @ip.copy!(ip.inputpoint)
+        @position = ip.position
+        @position_type = ip.position_type
+        @cline = ip.cline
+      elsif ip.is_a?(Sketchup::InputPoint)
+        @ip.copy!(ip)
+        @position = nil
+        @position_type = POSITION_TYPE_NONE
+        @cline = nil
+      end
+    end
+
+    # -----
+
+    def pick(*args)
+
+      view, x, y, inputpoint = args
+      inputpoint = inputpoint.inputpoint if inputpoint.is_a?(SmartInputPoint)
+
+      @ip.pick(view, x, y, inputpoint)
+
+      @position = nil
+      @position_type = POSITION_TYPE_NONE
+      @cline = nil
+
+      if @ip.edge
+
+        edge_manipulator = EdgeManipulator.new(@ip.edge, @ip.transformation)
+
+        ph = view.pick_helper(x, y, 30)
+        unless (position = edge_manipulator.third_points.find { |point| ph.test_point(point) }).nil?
+
+          @position = position
+          @position_type = POSITION_TYPE_THIRD
+
+        end
+
+      elsif @ip.instance_path.leaf.is_a?(Sketchup::ConstructionLine)
+
+        @cline = @ip.instance_path.leaf
+
+        cline_manipulator = ClineManipulator.new(@ip.instance_path.leaf, @ip.transformation)
+        unless cline_manipulator.infinite?
+
+          ph = view.pick_helper(x, y, 30)
+          if !(position = [ cline_manipulator.start_point, cline_manipulator.end_point ].find { |point| ph.test_point(point) }).nil?
+
+            @position = position
+            @position_type = POSITION_TYPE_END
+
+          elsif ph.test_point(cline_manipulator.middle_point)
+
+            @position = cline_manipulator.middle_point
+            @position_type = POSITION_TYPE_MIDDLE
+
+          elsif !(position = cline_manipulator.third_points.find { |point| ph.test_point(point) }).nil?
+
+            @position = position
+            @position_type = POSITION_TYPE_THIRD
+
+          end
+
+        end
+
+      end
+
     end
 
   end
