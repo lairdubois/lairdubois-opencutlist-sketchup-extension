@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  require_relative 'transformation_manipulator'
+  require_relative 'line_manipulator'
 
   class ClineManipulator < LineManipulator
 

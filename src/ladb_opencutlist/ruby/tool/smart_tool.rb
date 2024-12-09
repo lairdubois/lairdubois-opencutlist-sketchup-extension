@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/sanitizer_helper'
+  require_relative '../helper/view_helper'
   require_relative '../worker/cutlist/cutlist_generate_worker'
   require_relative '../utils/axis_utils'
   require_relative '../utils/hash_utils'
@@ -1531,6 +1532,8 @@ module Ladb::OpenCutList
 
   class SmartInputPoint
 
+    include ViewHelper
+
     POSITION_TYPE_NONE = 0
     POSITION_TYPE_END = 1
     POSITION_TYPE_MIDDLE = 2
@@ -1538,6 +1541,7 @@ module Ladb::OpenCutList
 
     def initialize(*args)
       @ip = Sketchup::InputPoint.new(*args)
+      @degrees_of_freedom = nil
       @position = nil
       @position_type = POSITION_TYPE_NONE
       @cline = nil
@@ -1570,6 +1574,7 @@ module Ladb::OpenCutList
     # -----
 
     def degrees_of_freedom
+      return @degrees_of_freedom unless @degrees_of_freedom.nil?
       @ip.degrees_of_freedom
     end
 
@@ -1623,14 +1628,27 @@ module Ladb::OpenCutList
       else
         case @position_type
         when POSITION_TYPE_START, POSITION_TYPE_END
-          view.draw_points(@position, 20, Kuix::POINT_STYLE_FILLED_SQUARE, 'Green')
-          view.draw_points(@position, 20, Kuix::POINT_STYLE_OPEN_SQUARE, 'White', 2)
+          _view_draw_filled_points(
+            view: view,
+            points: @position,
+            style: POINT_STYLE_CIRCLE,
+            fill_color: 'Green'
+          )
         when POSITION_TYPE_MIDDLE
-          view.draw_points(@position, 20, Kuix::POINT_STYLE_FILLED_SQUARE, 'DarkTurquoise')
-          view.draw_points(@position, 20, Kuix::POINT_STYLE_OPEN_SQUARE, 'White', 2)
+          _view_draw_filled_points(
+            view: view,
+            points: @position,
+            style: POINT_STYLE_CIRCLE,
+            fill_color: 'DarkTurquoise'
+          )
         when POSITION_TYPE_THIRD
-          view.draw_points(@position, 24, Kuix::POINT_STYLE_FILLED_TRIANGLE, 'Orange')
-          view.draw_points(@position, 24, Kuix::POINT_STYLE_OPEN_TRIANGLE, 'White', 2)
+          _view_draw_filled_points(
+            view: view,
+            points: @position,
+            size: 13,
+            style: POINT_STYLE_TRIANGLE,
+            fill_color: 'Orange'
+          )
         end
       end
     end
@@ -1639,6 +1657,7 @@ module Ladb::OpenCutList
 
     def clear
       @ip.clear
+      @degrees_of_freedom = nil
       @position = nil
       @position_type = POSITION_TYPE_NONE
       @cline = nil
@@ -1647,11 +1666,13 @@ module Ladb::OpenCutList
     def copy!(ip)
       if ip.is_a?(SmartInputPoint)
         @ip.copy!(ip.inputpoint)
+        @degrees_of_freedom = ip.degrees_of_freedom
         @position = ip.position
         @position_type = ip.position_type
         @cline = ip.cline
       elsif ip.is_a?(Sketchup::InputPoint)
         @ip.copy!(ip)
+        @degrees_of_freedom = nil
         @position = nil
         @position_type = POSITION_TYPE_NONE
         @cline = nil
@@ -1667,6 +1688,7 @@ module Ladb::OpenCutList
 
       @ip.pick(view, x, y, inputpoint)
 
+      @degrees_of_freedom = nil
       @position = nil
       @position_type = POSITION_TYPE_NONE
       @cline = nil
@@ -1675,9 +1697,10 @@ module Ladb::OpenCutList
 
         edge_manipulator = EdgeManipulator.new(@ip.edge, @ip.transformation)
 
-        ph = view.pick_helper(x, y, 30)
+        ph = view.pick_helper(x, y, 40)
         unless (position = edge_manipulator.third_points.find { |point| ph.test_point(point) }).nil?
 
+          @degrees_of_freedom = 0
           @position = position
           @position_type = POSITION_TYPE_THIRD
 
@@ -1690,19 +1713,22 @@ module Ladb::OpenCutList
         cline_manipulator = ClineManipulator.new(@ip.instance_path.leaf, @ip.transformation)
         unless cline_manipulator.infinite?
 
-          ph = view.pick_helper(x, y, 30)
+          ph = view.pick_helper(x, y, 40)
           if !(position = [ cline_manipulator.start_point, cline_manipulator.end_point ].find { |point| ph.test_point(point) }).nil?
 
+            @degrees_of_freedom = 0
             @position = position
             @position_type = POSITION_TYPE_END
 
           elsif ph.test_point(cline_manipulator.middle_point)
 
+            @degrees_of_freedom = 0
             @position = cline_manipulator.middle_point
             @position_type = POSITION_TYPE_MIDDLE
 
           elsif !(position = cline_manipulator.third_points.find { |point| ph.test_point(point) }).nil?
 
+            @degrees_of_freedom = 0
             @position = position
             @position_type = POSITION_TYPE_THIRD
 
