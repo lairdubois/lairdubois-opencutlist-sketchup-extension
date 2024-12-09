@@ -1791,6 +1791,9 @@ tool:
     zoom_extents: Alles zeigen
     toggle_depth: Hintergrundteile
     more: Mehr
+    end_point: Endpunkt
+    middle_point: Mittelpunkt
+    third_point: Punkt auf Drittel
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
