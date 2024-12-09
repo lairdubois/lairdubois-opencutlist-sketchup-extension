@@ -23,7 +23,7 @@ module Ladb::OpenCutList
           screen_point = view.screen_coords(point)
           segment_count = 12
           delta = 2 * Math::PI / segment_count
-          half_size = UI.scale_factor * size / 2.0
+          half_size = size / 2.0
           outer_points = Array.new(segment_count + 1) { |i| Geom::Point3d.new(screen_point.x + half_size * Math.cos(i * delta), screen_point.y + half_size * Math.sin(i * delta)) }
           triangles = outer_points.each_cons(2).to_a.map { |p1, p2| [ p1, p2, screen_point ] }.flatten(1)
 
@@ -46,8 +46,8 @@ module Ladb::OpenCutList
           stroke_style = 6
         end
 
-        view.draw_points(points, UI.scale_factor * size, fill_style, fill_color)
-        view.draw_points(points, UI.scale_factor * size, stroke_style, stroke_color)
+        view.draw_points(points, size, fill_style, fill_color)
+        view.draw_points(points, size, stroke_style, stroke_color)
 
       end
 

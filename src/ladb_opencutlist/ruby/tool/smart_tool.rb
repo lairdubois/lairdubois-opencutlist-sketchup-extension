@@ -1539,18 +1539,13 @@ module Ladb::OpenCutList
     POSITION_TYPE_MIDDLE = 2
     POSITION_TYPE_THIRD = 3
 
-    def initialize(*args)
-      @ip = Sketchup::InputPoint.new(*args)
+    def initialize(tool, point = nil)
+      @tool = tool
+      @ip = Sketchup::InputPoint.new(point)
       @degrees_of_freedom = nil
       @position = nil
       @position_type = POSITION_TYPE_NONE
       @cline = nil
-    end
-
-    # -----
-
-    def inputpoint
-      @ip
     end
 
     # -----
@@ -1627,10 +1622,11 @@ module Ladb::OpenCutList
         @ip.draw(view)
       else
         case @position_type
-        when POSITION_TYPE_START, POSITION_TYPE_END
+        when POSITION_TYPE_END
           _view_draw_filled_points(
             view: view,
             points: @position,
+            size: 3 * @tool.get_unit(view),
             style: POINT_STYLE_CIRCLE,
             fill_color: 'Green'
           )
@@ -1638,6 +1634,7 @@ module Ladb::OpenCutList
           _view_draw_filled_points(
             view: view,
             points: @position,
+            size: 3 * @tool.get_unit(view),
             style: POINT_STYLE_CIRCLE,
             fill_color: 'DarkTurquoise'
           )
@@ -1645,7 +1642,7 @@ module Ladb::OpenCutList
           _view_draw_filled_points(
             view: view,
             points: @position,
-            size: 13,
+            size: 3.5 * @tool.get_unit(view),
             style: POINT_STYLE_TRIANGLE,
             fill_color: 'Orange'
           )
@@ -1663,15 +1660,21 @@ module Ladb::OpenCutList
       @cline = nil
     end
 
-    def copy!(ip)
-      if ip.is_a?(SmartInputPoint)
-        @ip.copy!(ip.inputpoint)
-        @degrees_of_freedom = ip.degrees_of_freedom
-        @position = ip.position
-        @position_type = ip.position_type
-        @cline = ip.cline
-      elsif ip.is_a?(Sketchup::InputPoint)
-        @ip.copy!(ip)
+    def copy!(o)
+      if o.is_a?(Geom::Point3d)
+        @ip.copy!(Sketchup::InputPoint.new(o))
+        @degrees_of_freedom = nil
+        @position = nil
+        @position_type = POSITION_TYPE_NONE
+        @cline = nil
+      elsif o.is_a?(SmartInputPoint)
+        @ip.copy!(o.inputpoint)
+        @degrees_of_freedom = o.degrees_of_freedom
+        @position = o.position
+        @position_type = o.position_type
+        @cline = o.cline
+      elsif o.is_a?(Sketchup::InputPoint)
+        @ip.copy!(o)
         @degrees_of_freedom = nil
         @position = nil
         @position_type = POSITION_TYPE_NONE
