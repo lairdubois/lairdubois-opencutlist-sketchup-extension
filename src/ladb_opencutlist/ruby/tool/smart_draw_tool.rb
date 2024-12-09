@@ -309,6 +309,8 @@ module Ladb::OpenCutList
     STATE_PUSHPULL = 2
     STATE_MOVE = 3
 
+    attr_reader :picked_shape_first_point, :picked_shape_last_point, :picked_pushpull_point, :picked_move_point, :normal, :direction
+
     def initialize(action, tool, action_handler = nil)
       super(action, tool)
 
@@ -528,6 +530,32 @@ module Ladb::OpenCutList
     end
 
     def onLButtonDoubleClick(flags, x, y, view)
+
+      case @state
+
+      when STATE_PUSHPULL
+        unless @previous_action_handler.nil?
+          previous_pushpull_vector = @previous_action_handler.picked_shape_last_point.vector_to(@previous_action_handler.picked_pushpull_point)
+          if previous_pushpull_vector.valid?
+
+            length = previous_pushpull_vector.length
+            length *= -1 unless previous_pushpull_vector.samedirection?(@previous_action_handler.normal)
+
+            @picked_pushpull_point = @picked_shape_last_point.offset(@normal, length)
+            _create_entity
+            if _fetch_option_tool_move
+              set_state(STATE_MOVE)
+              _refresh
+            else
+              _restart
+            end
+
+            return true
+          end
+        end
+
+      end
+
       false
     end
 

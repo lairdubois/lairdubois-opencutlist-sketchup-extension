@@ -1701,6 +1701,8 @@ module Ladb::OpenCutList
       @position_type = POSITION_TYPE_NONE
       @cline = nil
 
+      return if @ip.degrees_of_freedom == 0
+
       if @ip.edge
 
         edge_manipulator = EdgeManipulator.new(@ip.edge, @ip.transformation)
