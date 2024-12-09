@@ -411,6 +411,7 @@ module Ladb::OpenCutList
       # puts "edge = #{@mouse_ip.edge}"
       # puts "face = #{@mouse_ip.face}"
       # puts "cline = #{@mouse_ip.cline}"
+      # puts "depth = #{@mouse_ip.depth}"
       # puts "instance_path.length = #{@mouse_ip.instance_path.length}"
       # puts "instance_path.leaf = #{@mouse_ip.instance_path.leaf}"
       # puts "transformation.identity? = #{@mouse_ip.transformation.identity?}"
@@ -552,7 +553,7 @@ module Ladb::OpenCutList
             view.lock_inference
           else
             @locked_axis = x_axis
-            view.lock_inference(@picked_pushpull_ip, Sketchup::InputPoint.new(@picked_pushpull_ip.position.offset(x_axis)))
+            view.lock_inference(@picked_pushpull_ip.inputpoint, Sketchup::InputPoint.new(@picked_pushpull_ip.position.offset(x_axis)))
           end
           _refresh
           return true
@@ -563,7 +564,7 @@ module Ladb::OpenCutList
             view.lock_inference
           else
             @locked_axis = y_axis
-            view.lock_inference(@picked_pushpull_ip, Sketchup::InputPoint.new(@picked_pushpull_ip.position.offset(y_axis)))
+            view.lock_inference(@picked_pushpull_ip.inputpoint, Sketchup::InputPoint.new(@picked_pushpull_ip.position.offset(y_axis)))
           end
           _refresh
           return true
@@ -574,7 +575,7 @@ module Ladb::OpenCutList
             view.lock_inference
           else
             @locked_axis = z_axis
-            view.lock_inference(@picked_pushpull_ip, Sketchup::InputPoint.new(@picked_pushpull_ip.position.offset(z_axis)))
+            view.lock_inference(@picked_pushpull_ip.inputpoint, Sketchup::InputPoint.new(@picked_pushpull_ip.position.offset(z_axis)))
           end
           _refresh
           return true
