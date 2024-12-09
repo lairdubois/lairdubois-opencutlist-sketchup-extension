@@ -18,6 +18,7 @@ module Ladb::OpenCutList
     def reset_cache
       super
       @points = nil
+      @middle_point = nil
       @third_points = nil
       @z_max = nil
       @segment = nil
@@ -40,10 +41,18 @@ module Ladb::OpenCutList
       points.last
     end
 
+    def middle_point
+      if @middle_point.nil?
+        v = end_point - start_point
+        @middle_point = start_point.offset(v, v.length / 2.0)
+      end
+      @middle_point
+    end
+
     def third_points
       if @third_points.nil?
         v = end_point - start_point
-        @third_points = [ start_point.offset(v, v.length / 3), start_point.offset(v, v.length / 3 * 2) ]
+        @third_points = [ start_point.offset(v, v.length / 3.0), start_point.offset(v, v.length / 3.0 * 2) ]
       end
       @third_points
     end

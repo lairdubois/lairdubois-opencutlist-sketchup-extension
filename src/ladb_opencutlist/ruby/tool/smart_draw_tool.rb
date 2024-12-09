@@ -1618,10 +1618,11 @@ module Ladb::OpenCutList
       length = base_length
 
       if text.is_a?(String)
-        if (match = /^([x*\/])(\d+(?:[.,]\d+)*$)/.match(text))
-          operator, value = match[1, 2]
+        if (match = /^([x*\/])([-]{0,1})(\d+(?:[.,]\d+)*$)/.match(text))
+          operator, sign, value = match[1, 3]
           factor = value.sub(',', '.').to_f
-          if factor > 0
+          factor *= -1 if sign == '-'
+          if factor != 0
             case operator
             when 'x', '*'
               length = base_length * factor

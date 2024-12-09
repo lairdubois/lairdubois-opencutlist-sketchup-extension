@@ -416,14 +416,14 @@ module Ladb::OpenCutList
 
                     entity = Kuix::Points.new
                     entity.add_points([ poly_def.points.first ])
-                    entity.size = 16
+                    entity.size = 2 * @unit
                     entity.style = Kuix::POINT_STYLE_FILLED_SQUARE
                     entity.color = Kuix::COLOR_MEDIUM_GREY
                     points_entities << entity
 
                     entity = Kuix::Points.new
                     entity.add_points([ poly_def.points.last ])
-                    entity.size = 18
+                    entity.size = 2.5 * @unit
                     entity.style = Kuix::POINT_STYLE_OPEN_SQUARE
                     entity.color = Kuix::COLOR_DARK_GREY
                     points_entities << entity
@@ -674,14 +674,14 @@ module Ladb::OpenCutList
 
                   entity = Kuix::Points.new
                   entity.add_points([ poly_def.points.first ])
-                  entity.size = 16
+                  entity.size = 2 * @unit
                   entity.style = Kuix::POINT_STYLE_FILLED_SQUARE
                   entity.color = Kuix::COLOR_MEDIUM_GREY
                   points_entities << entity
 
                   entity = Kuix::Points.new
                   entity.add_points([ poly_def.points.last ])
-                  entity.size = 18
+                  entity.size = 2.5 * @unit
                   entity.style = Kuix::POINT_STYLE_OPEN_SQUARE
                   entity.color = Kuix::COLOR_DARK_GREY
                   points_entities << entity

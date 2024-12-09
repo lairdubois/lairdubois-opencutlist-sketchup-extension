@@ -1135,6 +1135,9 @@ module Ladb::OpenCutList
       # Stop observing rendering options events
       view.model.rendering_options.remove_observer(self)
 
+      # Reset tooltip
+      view.tooltip = ''
+
       # Hide possible modal
       PLUGIN.hide_modal_dialog
 
@@ -1539,6 +1542,8 @@ module Ladb::OpenCutList
     POSITION_TYPE_MIDDLE = 2
     POSITION_TYPE_THIRD = 3
 
+    attr_reader :ip
+
     def initialize(tool, point = nil)
       @tool = tool
       @ip = Sketchup::InputPoint.new(point)
@@ -1687,7 +1692,7 @@ module Ladb::OpenCutList
     def pick(*args)
 
       view, x, y, inputpoint = args
-      inputpoint = inputpoint.inputpoint if inputpoint.is_a?(SmartInputPoint)
+      inputpoint = inputpoint.ip if inputpoint.is_a?(SmartInputPoint)
 
       @ip.pick(view, x, y, inputpoint)
 
@@ -1773,7 +1778,7 @@ module Ladb::OpenCutList
 
       @pick_position = Geom::Point3d.new
       @pick_helper = @view.pick_helper
-      @pick_ip = Sketchup::InputPoint.new if pick_point
+      @pick_ip = SmartInputPoint.new(smart_tool) if pick_point
 
       @pick_context_by_face = pick_context_by_face
       @pick_context_by_edge = pick_context_by_edge
