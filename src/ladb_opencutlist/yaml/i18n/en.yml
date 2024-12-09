@@ -655,6 +655,7 @@ tab:
       bin: Bin
       component_definition: Component definition
       component_instance: Component instance
+      component_instances: Component instances
       filename: File name
       model_name: Model name
       model_description: Model description
