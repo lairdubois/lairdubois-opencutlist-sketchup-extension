@@ -1528,6 +1528,12 @@ module Ladb::OpenCutList
       Sketchup.set_status_text('', SB_VCB_VALUE)
     end
 
+    # -----
+
+    def inspect
+      self.class.inspect  # Simplify exception display
+    end
+
   end
 
   # -----
@@ -1742,6 +1748,12 @@ module Ladb::OpenCutList
 
       end
 
+    end
+
+    # -----
+
+    def inspect
+      self.class.inspect  # Simplify exception display
     end
 
   end
@@ -2011,6 +2023,12 @@ module Ladb::OpenCutList
       # Fire change event
       @smart_tool.onPickerChanged(self) if changed
 
+    end
+
+    # -----
+
+    def inspect
+      self.class.inspect  # Simplify exception display
     end
 
   end

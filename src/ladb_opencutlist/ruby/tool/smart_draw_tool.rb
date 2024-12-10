@@ -30,7 +30,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED = 'rectangle_centered'
     ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER = 'measure_from_diameter'
-    ACTION_OPTION_OPTIONS_MEASURE_FROM_FIRST = 'measure_from_first'
+    ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
     ACTION_OPTION_OPTIONS_BOX_CENTRED = 'solid_centered'
     ACTION_OPTION_OPTIONS_MOVE_ARRAY = 'move_array'
 
@@ -57,7 +57,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_FIRST, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
       }
     ].freeze
@@ -153,8 +153,9 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0L1,1L0,1L0,0 M0.5,0.667L0.5,0.333 M0.333,0.5L0.667,0.5'))
         when ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833 M0.25,0.5L0.75,0 M0.25,0.25L0.323,0.427L0.5,0.5L0.677,0.427L0.75,0.25L0.677,0.073L0.5,0L0.323,0.073L0.25,0.25'))
-        when ACTION_OPTION_OPTIONS_MEASURE_FROM_FIRST
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.333,0.167L0.5,0L0.5,0.417L0.333,0.417L0.667,0.417 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833'))
+        when ACTION_OPTION_OPTIONS_MEASURE_REVERSED
+          # return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.333,0.167L0.5,0L0.5,0.417L0.333,0.417L0.667,0.417 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833'))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833  M0.861,0.292L0.708,0.139L0.5,0.083L0.292,0.139L0.14,0.292 M0.14,0.083L0.14,0.292L0.333,0.292'))
         when ACTION_OPTION_OPTIONS_BOX_CENTRED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         when ACTION_OPTION_OPTIONS_MOVE_ARRAY
@@ -185,6 +186,11 @@ module Ladb::OpenCutList
 
     def onActivate(view)
       @action_handler = nil
+      super
+    end
+
+    def onDeactivate(view)
+      view.lock_inference if view.inference_locked?
       super
     end
 
@@ -650,20 +656,6 @@ module Ladb::OpenCutList
           end
           _refresh
           return true
-        elsif key == ALT_MODIFIER_KEY
-          @move_anchor_index = (@move_anchor_index + 1) % 3
-          view.lock_inference if view.inference_locked?
-          _refresh
-          return true
-        elsif key == COPY_MODIFIER_KEY
-          unless _fetch_option_move_array
-            @move_copy = !@move_copy
-            @definition.instances.first.visible = @move_copy if !@definition.nil? && @definition.instances.any?
-            @tool.set_root_cursor(get_state_cursor(STATE_MOVE))
-            Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
-            _refresh
-          end
-          return true
         end
 
       end
@@ -682,6 +674,23 @@ module Ladb::OpenCutList
           return true
         end
 
+      when STATE_MOVE
+        if key == COPY_MODIFIER_KEY
+          unless _fetch_option_move_array
+            @move_copy = !@move_copy
+            @definition.instances.first.visible = @move_copy if !@definition.nil? && @definition.instances.any?
+            @tool.set_root_cursor(get_state_cursor(STATE_MOVE))
+            Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
+            _refresh
+          end
+          return true
+        elsif key == ALT_MODIFIER_KEY
+          @move_anchor_index = (@move_anchor_index + 1) % 3
+          view.lock_inference if view.inference_locked?
+          _refresh
+          return true
+        end
+
       end
 
       false
@@ -689,22 +698,22 @@ module Ladb::OpenCutList
 
     def onUserText(text, view)
 
-      if !_picked_shape_first_point? && @previous_action_handler && @previous_action_handler._picked_move_point? && _read_move_copy(text)
+      if !_picked_shape_first_point? && @previous_action_handler && @previous_action_handler._picked_move_point? && _read_move_copy(text, view)
         return true
-      elsif _read_offset(text)
+      elsif _read_offset(text, view)
         return true
       end
 
       case @state
 
       when STATE_SHAPE_POINTS
-        return _read_shape(text)
+        return _read_shape(text, view)
 
       when STATE_PUSHPULL
-        return _read_pushpull(text)
+        return _read_pushpull(text, view)
 
-      when STATE_PUSHPULL
-        return _read_move(text)
+      when STATE_MOVE
+        return _read_move(text, view)
 
       end
 
@@ -943,12 +952,11 @@ module Ladb::OpenCutList
       if _fetch_option_solid_centered
 
         # Draw first picked point
-        k_points = Kuix::Points.new
-        k_points.add_point(@picked_shape_first_point)
-        k_points.line_width = 1
-        k_points.size = 20
-        k_points.style = Kuix::POINT_STYLE_PLUS
-        @tool.append_3d(k_points)
+        k_point = _create_floating_points(
+          points: @picked_shape_first_point,
+          style: Kuix::POINT_STYLE_PLUS
+        )
+        @tool.append_3d(k_point)
 
         # Draw line from first picked point to snap point
         k_line = Kuix::LineMotif.new
@@ -1056,8 +1064,16 @@ module Ladb::OpenCutList
         k_rectangle.bounds.origin.copy!(bounds.min)
         k_rectangle.bounds.size.copy!(bounds)
         k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-        k_rectangle.color = _get_normal_color
+        k_rectangle.color = Kuix::COLOR_MEDIUM_GREY
         k_rectangle.on_top = true
+        k_rectangle.transformation = t
+        @tool.append_3d(k_rectangle)
+
+        k_rectangle = Kuix::RectangleMotif.new
+        k_rectangle.bounds.origin.copy!(bounds.min)
+        k_rectangle.bounds.size.copy!(bounds)
+        k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_rectangle.color = _get_normal_color
         k_rectangle.transformation = t
         @tool.append_3d(k_rectangle)
 
@@ -1146,8 +1162,15 @@ module Ladb::OpenCutList
           k_line.start.copy!(ps)
           k_line.end.copy!(pe)
           k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-          k_line.color = _get_vector_color(v)
+          k_line.color = Kuix::COLOR_MEDIUM_GREY
           k_line.on_top = true
+          @tool.append_3d(k_line)
+
+          k_line = Kuix::LineMotif.new
+          k_line.start.copy!(ps)
+          k_line.end.copy!(pe)
+          k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+          k_line.color = _get_vector_color(v)
           @tool.append_3d(k_line)
 
         end
@@ -1192,7 +1215,8 @@ module Ladb::OpenCutList
       points:,
       style: Kuix::POINT_STYLE_SQUARE,
       fill_color: nil,
-      stroke_color: Kuix::COLOR_BLACK
+      stroke_color: Kuix::COLOR_BLACK,
+      stroke_width: 1.5
     )
 
       unit = @tool.get_unit
@@ -1204,7 +1228,7 @@ module Ladb::OpenCutList
       k_points.style = style
       k_points.fill_color = fill_color
       k_points.stroke_color = stroke_color
-      k_points.stroke_width = 1.5
+      k_points.stroke_width = stroke_width
 
       k_points
     end
@@ -1233,7 +1257,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _read_shape(text)
+    def _read_shape(text, view)
       if @picked_shape_first_point == @mouse_snap_point
         UI.beep
         @tool.notify_errors([ "tool.smart_draw.error.no_direction" ])
@@ -1242,7 +1266,7 @@ module Ladb::OpenCutList
       false
     end
 
-    def _read_pushpull(text)
+    def _read_pushpull(text, view)
 
       t = _get_transformation
       ti = t.inverse
@@ -1274,7 +1298,7 @@ module Ladb::OpenCutList
       true
     end
 
-    def _read_move(text)
+    def _read_move(text, view)
 
       t = _get_transformation
       ti = t.inverse
@@ -1314,7 +1338,7 @@ module Ladb::OpenCutList
       true
     end
 
-    def _read_move_copy(text)
+    def _read_move_copy(text, view)
 
       if (match = Regexp.new("^(?:([x*\\/])(\\d+))?(?:#{Sketchup::RegionalSettings.list_separator}|#{Sketchup::RegionalSettings.list_separator}([x*\\/])(\\d+))?$").match(text))
 
@@ -1350,7 +1374,7 @@ module Ladb::OpenCutList
       false
     end
 
-    def _read_offset(text)
+    def _read_offset(text, view)
 
       if (match = /^(.+)x$/.match(text))
 
@@ -2025,14 +2049,14 @@ module Ladb::OpenCutList
 
     def _preview_first_point(view)
 
-      width = view.pixels_to_model(20, @mouse_snap_point)
-      height = width * 2.0
+      width = view.pixels_to_model(40, @mouse_snap_point)
+      height = width / 2
 
       shape_offset = _fetch_option_shape_offset
       if shape_offset > 0
-        offset = width * 0.2
+        offset = width * 0.1
       elsif shape_offset < 0
-        offset = width * -0.2
+        offset = width * -0.1
       else
         offset = 0
       end
@@ -2169,7 +2193,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _read_shape(text)
+    def _read_shape(text, view)
       return true if super
 
       d1, d2, d3 = text.split(Sketchup::RegionalSettings.list_separator)
@@ -2516,7 +2540,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _read_shape(text)
+    def _read_shape(text, view)
       return true if super
 
       d1, d2 = text.split(Sketchup::RegionalSettings.list_separator)
@@ -2656,7 +2680,8 @@ module Ladb::OpenCutList
     def initialize(tool, action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_POLYGON, tool, action_handler)
 
-      @picked_points = []
+      @picked_points = []         # Geometry ordered
+      @picked_points_stack = []   # Pick ordered
 
     end
 
@@ -2667,7 +2692,7 @@ module Ladb::OpenCutList
       case state
       when STATE_SHAPE_POINTS
         return super +
-          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_draw.action_option_options_measure_from_#{_fetch_option_measure_from_first ? 'previous' : 'first'}_status") + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_draw.action_option_options_measure_reversed_status") + '.'
       end
 
       super
@@ -2687,8 +2712,7 @@ module Ladb::OpenCutList
 
     def onCancel(reason, view)
       if !_picked_shape_last_point? && @picked_points.any?
-        @picked_points.pop
-        if @picked_points.empty?
+        if _remove_last_picked_point(view)
           super
         else
           _refresh
@@ -2704,7 +2728,7 @@ module Ladb::OpenCutList
 
       when STATE_SHAPE_FIRST_POINT
         super
-        @picked_points << @picked_shape_first_point if _picked_shape_first_point?
+        _add_picked_point(@picked_shape_first_point, view) if _picked_shape_first_point?
 
       else
         super
@@ -2718,7 +2742,7 @@ module Ladb::OpenCutList
 
       when STATE_SHAPE_FIRST_POINT
         super
-        @picked_points << @picked_shape_first_point if _picked_shape_first_point?
+        _add_picked_point(@picked_shape_first_point, view) if _picked_shape_first_point?
 
       when STATE_SHAPE_POINTS
         if @picked_points.find { |point| point == @mouse_snap_point }
@@ -2728,7 +2752,7 @@ module Ladb::OpenCutList
             return false
           end
         end
-        @picked_points << @mouse_snap_point
+        _add_picked_point(@mouse_snap_point, view)
         _refresh
 
       else
@@ -2749,15 +2773,82 @@ module Ladb::OpenCutList
       super
     end
 
+    def onKeyDown(key, repeat, flags, view)
+
+      case @state
+
+      when STATE_SHAPE_POINTS
+        if key == VK_RIGHT
+          x_axis = _get_active_x_axis
+          unless x_axis.perpendicular?(@normal)
+            UI.beep
+            return true
+          end
+          if @locked_axis == x_axis
+            @locked_axis = nil
+            view.lock_inference
+          else
+            @locked_axis = x_axis
+            p = _fetch_option_measure_reversed ? @picked_shape_first_point : @picked_points.last
+            view.lock_inference(Sketchup::InputPoint.new(p), Sketchup::InputPoint.new(p.offset(x_axis)))
+          end
+          _refresh
+          return true
+        elsif key == VK_LEFT
+          y_axis = _get_active_y_axis
+          unless y_axis.perpendicular?(@normal)
+            UI.beep
+            return true
+          end
+          if @locked_axis == y_axis
+            @locked_axis = nil
+            view.lock_inference
+          else
+            @locked_axis = y_axis
+            p = _fetch_option_measure_reversed ? @picked_shape_first_point : @picked_points.last
+            view.lock_inference(Sketchup::InputPoint.new(p), Sketchup::InputPoint.new(p.offset(y_axis)))
+          end
+          _refresh
+          return true
+        elsif key == VK_UP
+          z_axis = _get_active_z_axis
+          unless z_axis.perpendicular?(@normal)
+            UI.beep
+            return true
+          end
+          if @locked_axis == z_axis
+            @locked_axis = nil
+            view.lock_inference
+          else
+            @locked_axis = z_axis
+            p = _fetch_option_measure_reversed ? @picked_shape_first_point : @picked_points.last
+            view.lock_inference(Sketchup::InputPoint.new(p), Sketchup::InputPoint.new(p.offset(z_axis)))
+          end
+          _refresh
+          return true
+        elsif key == VK_DOWN
+          UI.beep
+          return true
+        end
+
+      end
+
+      super
+    end
+
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
 
       case @state
 
       when STATE_SHAPE_FIRST_POINT, STATE_SHAPE_POINTS
         if key == COPY_MODIFIER_KEY
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_FIRST, !_fetch_option_measure_from_first, true)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed, true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
           Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)
+          if view.inference_locked?
+            p = _fetch_option_measure_reversed ? @picked_shape_first_point : @picked_points.last
+            view.lock_inference(Sketchup::InputPoint.new(p), Sketchup::InputPoint.new(p.offset(@locked_axis)))
+          end
           _refresh
           return true
         end
@@ -2768,6 +2859,39 @@ module Ladb::OpenCutList
     end
 
     protected
+
+    def _add_picked_point(point, view)
+
+      if _fetch_option_measure_reversed
+        # Prepend new point
+        @picked_points.unshift(point)
+      else
+        # Push new point
+        @picked_points << point
+      end
+      @picked_points_stack << point
+
+      # Reset inference
+      view.lock_inference if view.inference_locked?
+      @locked_axis = nil
+
+    end
+
+    def _remove_last_picked_point(view)
+
+      # Pop last picked point
+      point = @picked_points_stack.pop
+      @picked_points.delete(point)
+      @picked_shape_first_point = nil if point == @picked_shape_first_point
+
+      # Reset inference
+      @locked_axis = nil
+      view.lock_inference if view.inference_locked?
+
+      @picked_points.empty?
+    end
+
+    # -----
 
     def _snap_shape_points(flags, x, y, view)
 
@@ -2787,7 +2911,11 @@ module Ladb::OpenCutList
             )
             @tool.append_3d(k_points)
 
-            @mouse_snap_point = point
+            if @locked_axis.nil?
+              @mouse_snap_point = point
+            else
+              @mouse_snap_point = point.project_to_line([_fetch_option_measure_reversed ? @picked_shape_first_point : @picked_points.last , @locked_axis ])
+            end
             @mouse_ip.clear
 
             return
@@ -3088,6 +3216,61 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _preview_first_point(view)
+
+      width = view.pixels_to_model(40, @mouse_snap_point)
+      height = width / 2
+
+      shape_offset = _fetch_option_shape_offset
+      if shape_offset > 0
+        offset = width * 0.1
+      elsif shape_offset < 0
+        offset = width * -0.1
+      else
+        offset = 0
+      end
+
+      if offset != 0
+
+        k_motif = Kuix::Motif3d.new([[
+
+                                       [ 0, 0, 0 ],
+                                       [ 1, 0, 0 ],
+                                       [ 0.5, 1, 0 ],
+                                       [ 0, 1, 0 ],
+                                       [ 0, 0, 0 ]
+
+                                     ]])
+        k_motif.bounds.size.set!(width, height)
+        k_motif.line_width = 1
+        k_motif.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_motif.color = _get_normal_color
+        k_motif.on_top = true
+        k_motif.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@mouse_snap_point.to_a)) * _get_transformation
+        @tool.append_3d(k_motif)
+
+      end
+
+      k_motif = Kuix::Motif3d.new([[
+
+                                     [ 0, 0, 0 ],
+                                     [ 1, 0, 0 ],
+                                     [ 0.5, 1, 0 ],
+                                     [ 0, 1, 0 ],
+                                     [ 0, 0, 0 ]
+
+                                   ]])
+      k_motif.bounds.origin.set!(-offset, -offset)
+      k_motif.bounds.size.set!(width + 2 * offset, height + 2 * offset)
+      k_motif.line_width = @locked_normal ? 3 : 1.5
+      k_motif.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
+      k_motif.color = _get_normal_color
+      k_motif.on_top = true
+      k_motif.transformation = Geom::Transformation.translation(Geom::Vector3d.new(*@mouse_snap_point.to_a)) * _get_transformation
+      @tool.append_3d(k_motif)
+
+    end
+
     def _preview_shape(view)
 
       t = _get_transformation
@@ -3118,7 +3301,7 @@ module Ladb::OpenCutList
 
       if @picked_points.length >= 1
 
-        measure_start = _fetch_option_measure_from_first ? @picked_shape_first_point : @picked_points.last
+        measure_start = _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last
         measure_vector = measure_start.vector_to(@mouse_snap_point)
         measure = measure_vector.length
 
@@ -3139,6 +3322,14 @@ module Ladb::OpenCutList
           k_line.color = _get_vector_color(measure_vector, Kuix::COLOR_DARK_GREY)
           @tool.append_3d(k_line)
 
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments([ measure_start, @mouse_snap_point ])
+          k_segments.line_width = @locked_axis ? 3 : 1.5
+          k_segments.line_stipple = _fetch_option_shape_offset != 0 ? Kuix::LINE_STIPPLE_DOTTED : (_fetch_option_construction ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID)
+          k_segments.color = _get_vector_color(@locked_axis, _get_normal_color)
+          k_segments.on_top = true
+          @tool.append_3d(k_segments)
+
           screen_point = view.screen_coords(measure_start.offset(measure_vector, measure / 2))
 
           k_label = _create_floating_label(
@@ -3156,16 +3347,16 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _read_shape(text)
+    def _read_shape(text, view)
       return true if super
 
-      measure_start = _fetch_option_measure_from_first ? @picked_shape_first_point : @picked_points.last
+      measure_start = _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last
       measure_vector = measure_start.vector_to(@mouse_snap_point)
       measure = measure_vector.length
       measure = _read_user_text_length(text, measure)
       return true if measure.nil?
 
-      @picked_points << measure_start.offset(measure_vector, measure)
+      _add_picked_point(measure_start.offset(measure_vector, measure), view)
       _refresh
 
       true
@@ -3173,8 +3364,8 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _fetch_option_measure_from_first
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_FIRST)
+    def _fetch_option_measure_reversed
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED)
     end
 
     # -----
@@ -3188,7 +3379,7 @@ module Ladb::OpenCutList
 
     def _get_previous_input_point
       return super if _picked_shape_last_point?
-      Sketchup::InputPoint.new(_fetch_option_measure_from_first ? @picked_shape_first_point : @picked_points.last)
+      Sketchup::InputPoint.new(_fetch_option_measure_reversed ? @picked_points.first : @picked_points.last)
     end
 
     # -----

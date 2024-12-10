@@ -1833,9 +1833,8 @@ tool:
     action_option_options_measure_from_diameter: Mesure
     action_option_options_measure_from_diameter_status: Mesurer le cercle par son diamètre
     action_option_options_measure_from_radius_status: Mesurer le cercle par son rayon
-    action_option_options_measure_from_first: Mesure
-    action_option_options_measure_from_first_status: Mesurer depuis le premier point
-    action_option_options_measure_from_previous_status: Mesurer depuis le point précédent
+    action_option_options_measure_reversed: Mesure inversée
+    action_option_options_measure_reversed_status: Inverser la mesure
     action_option_options_solid_centered: Élévation centrée
     action_option_options_solid_centered_status: Centrer l'élévation sur le premier point
     action_option_options_move_array: Copie en grille

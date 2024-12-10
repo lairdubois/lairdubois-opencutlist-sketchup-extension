@@ -1831,9 +1831,8 @@ tool:
     action_option_options_measure_from_diameter: 1421 - Messung nach dem Durchmesser
     action_option_options_measure_from_diameter_status: 1422 - Den Kreis nach seinem Durchmesser messen
     action_option_options_measure_from_radius_status: 1423 - Messung nach dem Radius
-    action_option_options_measure_from_first: 1424 - Messung
-    action_option_options_measure_from_first_status: 1425 - Messen vom ersten Punkt aus
-    action_option_options_measure_from_previous_status: 1426 - Messen vom vorherigen Punkt aus
+    action_option_options_measure_reversed: 1424 - Messung
+    action_option_options_measure_reversed_status: 1425 - Rückwärtsmessung
     action_option_options_solid_centered: 1427 - Erhebung zentriert
     action_option_options_solid_centered_status: 1428 - Erhebung auf den ersten Punkt zentrieren
     action_option_options_move_array: 1429 - Rasterkopien

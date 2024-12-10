@@ -33,7 +33,7 @@
             const $selectMove = $('#ladb_select_move', that.$element);
             const $inputShapeOffset = $('#ladb_input_shape_offset', that.$element);
             const $selectConstrution = $('#ladb_select_construction', that.$element);
-            const $selectMeasureFromFirst = $('#ladb_select_measure_from_first', that.$element);
+            const $selectMeasureReversed = $('#ladb_select_measure_reversed', that.$element);
             const $selectSolidCentered = $('#ladb_select_solid_centered', that.$element);
             const $selectMoveArray = $('#ladb_select_move_array', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
@@ -43,7 +43,7 @@
                 options.move = $selectMove.val() === '1';
                 options.shape_offset = $inputShapeOffset.val();
                 options.construction = $selectConstrution.val() === '1';
-                options.measure_from_first = $selectMeasureFromFirst.val() === '1';
+                options.measure_reversed = $selectMeasureReversed.val() === '1';
                 options.solid_centered = $selectSolidCentered.val() === '1';
                 options.move_array = $selectMoveArray.val() === '1';
             };
@@ -52,7 +52,7 @@
                 $selectMove.selectpicker('val', options.move ? '1' : '0');
                 $inputShapeOffset.val(options.shape_offset);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
-                $selectMeasureFromFirst.selectpicker('val', options.measure_from_first ? '1' : '0');
+                $selectMeasureReversed.selectpicker('val', options.measure_reversed ? '1' : '0');
                 $selectSolidCentered.selectpicker('val', options.solid_centered ? '1' : '0');
                 $selectMoveArray.selectpicker('val', options.move_array ? '1' : '0');
             };
@@ -68,7 +68,7 @@
             $selectMove.selectpicker(SELECT_PICKER_OPTIONS);
             $inputShapeOffset.ladbTextinputDimension();
             $selectConstrution.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectMeasureFromFirst.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectMeasureReversed.selectpicker(SELECT_PICKER_OPTIONS);
             $selectSolidCentered.selectpicker(SELECT_PICKER_OPTIONS);
             $selectMoveArray.selectpicker(SELECT_PICKER_OPTIONS);
 

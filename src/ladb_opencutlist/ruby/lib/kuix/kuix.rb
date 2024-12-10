@@ -391,53 +391,65 @@ module Ladb::OpenCutList
         UI.set_cursor(@cursors.last)
       end
 
+      # -----
+
+      def inspect
+        self.class.inspect  # Simplify exception display
+      end
+
     end
 
     if Sketchup.version_number >= 2300000000
 
       class KuixOverlay < Sketchup::Overlay
 
-      attr_reader :canvas
-      attr_reader :space
+        attr_reader :canvas
+        attr_reader :space
 
-      def initialize(id, name, description: '')
-        super
+        def initialize(id, name, description: '')
+          super
 
-        # Create the root canvas
-        @canvas = Canvas.new(Sketchup.active_model.active_view)
+          # Create the root canvas
+          @canvas = Canvas.new(Sketchup.active_model.active_view)
 
-        # Create the root space
-        @space = Space.new(Sketchup.active_model.active_view)
+          # Create the root space
+          @space = Space.new(Sketchup.active_model.active_view)
 
-      end
-
-      def draw(view)
-
-        # Check if space need to be revalidated
-        if @space.invalidated?
-          @space.do_layout(IDENTITY)
         end
 
-        # Paint the space
-        @space.paint(Graphics3d.new(view))
+        def draw(view)
 
-        return unless @canvas
+          # Check if space need to be revalidated
+          if @space.invalidated?
+            @space.do_layout(IDENTITY)
+          end
 
-        # Check if viewport has changed
-        if view.vpwidth != @canvas.bounds.width || view.vpheight != @canvas.bounds.height
-          @canvas.bounds.set!(0, 0, view.vpwidth, view.vpheight)
-          @canvas.do_layout
+          # Paint the space
+          @space.paint(Graphics3d.new(view))
+
+          return unless @canvas
+
+          # Check if viewport has changed
+          if view.vpwidth != @canvas.bounds.width || view.vpheight != @canvas.bounds.height
+            @canvas.bounds.set!(0, 0, view.vpwidth, view.vpheight)
+            @canvas.do_layout
+          end
+
+          # Check if canvas need to be revalidated
+          if @canvas.invalidated?
+            @canvas.do_layout
+          end
+
+          # Paint the canvas
+          @canvas.paint(Graphics2d.new(view))
+
         end
 
-        # Check if canvas need to be revalidated
-        if @canvas.invalidated?
-          @canvas.do_layout
+        # -----
+
+        def inspect
+          self.class.inspect  # Simplify exception display
         end
-
-        # Paint the canvas
-        @canvas.paint(Graphics2d.new(view))
-
-      end
 
       end
 
