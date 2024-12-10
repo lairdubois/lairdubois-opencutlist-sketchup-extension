@@ -51,7 +51,12 @@ module Ladb::OpenCutList::Kuix
           graphics.set_line_stipple(@line_stipple)
           graphics.view.draw2d(GL_LINE_STRIP, points2d)
         else
-          graphics.draw_line_strip(points, @color, @line_width, @line_stipple)
+          graphics.draw_line_strip(
+            points: points,
+            color: @color,
+            line_width: @line_width,
+            line_stipple: @line_stipple
+          )
         end
       end
       super
@@ -191,7 +196,11 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
-      @_paths.each { |points| graphics.draw_quads(points, @color) }
+      @_paths.each do |points|
+        graphics.draw_quads(
+          points: points,
+          fill_color: @color)
+      end
     end
 
   end

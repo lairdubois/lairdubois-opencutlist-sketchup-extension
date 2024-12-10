@@ -59,13 +59,13 @@ module Ladb::OpenCutList
 
     # Point style constants
 
-    POINT_STYLE_OPEN_SQUARE = 1
-    POINT_STYLE_FILLED_SQUARE = 2
-    POINT_STYLE_PLUS = 3
-    POINT_STYLE_CROSS = 4
-    POINT_STYLE_STAR = 5
-    POINT_STYLE_OPEN_TRIANGLE = 6
-    POINT_STYLE_FILLED_TRIANGLE = 7
+    POINT_STYLE_SQUARE = 1
+    POINT_STYLE_TRIANGLE = 2
+    POINT_STYLE_CIRCLE = 3
+    POINT_STYLE_DIAMOND = 4
+    POINT_STYLE_PLUS = 5
+    POINT_STYLE_CROSS = 6
+    POINT_STYLE_STAR = 7
 
     require_relative 'gl/graphics'
     require_relative 'gl/graphics2d'

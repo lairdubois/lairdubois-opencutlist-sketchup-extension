@@ -27,7 +27,7 @@ module Ladb::OpenCutList::Kuix
       width = (@bounds.width - @margin.left - @border.left - @margin.right - @border.right) * @value / (@max - @min)
       height = @bounds.height - @margin.top - @border.top - @margin.bottom - @border.bottom
 
-      graphics.draw_rect(0, 0, width, height, @color)
+      graphics.draw_rect(x: 0, y: 0, width: width, height: height, fill_color: @color)
       super
     end
 

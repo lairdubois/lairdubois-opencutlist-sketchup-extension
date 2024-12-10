@@ -5,7 +5,6 @@ module Ladb::OpenCutList
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/sanitizer_helper'
-  require_relative '../helper/view_helper'
   require_relative '../worker/cutlist/cutlist_generate_worker'
   require_relative '../utils/axis_utils'
   require_relative '../utils/hash_utils'
@@ -1535,8 +1534,6 @@ module Ladb::OpenCutList
 
   class SmartInputPoint
 
-    include ViewHelper
-
     POSITION_TYPE_NONE = 0
     POSITION_TYPE_END = 1
     POSITION_TYPE_MIDDLE = 2
@@ -1626,29 +1623,28 @@ module Ladb::OpenCutList
       if @position.nil?
         @ip.draw(view)
       else
+        graphics = Kuix::Graphics3d.new(view)
         case @position_type
         when POSITION_TYPE_END
-          _view_draw_filled_points(
-            view: view,
+          graphics.draw_points(
             points: @position,
             size: 3 * @tool.get_unit(view),
-            style: POINT_STYLE_CIRCLE,
+            style: Kuix::POINT_STYLE_CIRCLE,
             fill_color: 'Green'
           )
         when POSITION_TYPE_MIDDLE
-          _view_draw_filled_points(
-            view: view,
+          graphics.draw_points(
             points: @position,
             size: 3 * @tool.get_unit(view),
-            style: POINT_STYLE_CIRCLE,
-            fill_color: 'DarkTurquoise'
+            style: Kuix::POINT_STYLE_CIRCLE,
+            fill_color: 'DarkTurquoise',
+            stroke_width: 1.5
           )
         when POSITION_TYPE_THIRD
-          _view_draw_filled_points(
-            view: view,
+          graphics.draw_points(
             points: @position,
             size: 3.5 * @tool.get_unit(view),
-            style: POINT_STYLE_TRIANGLE,
+            style: Kuix::POINT_STYLE_TRIANGLE,
             fill_color: 'Orange'
           )
         end
@@ -1701,9 +1697,7 @@ module Ladb::OpenCutList
       @position_type = POSITION_TYPE_NONE
       @cline = nil
 
-      return if @ip.degrees_of_freedom == 0
-
-      if @ip.edge
+      if @ip.edge && @ip.degrees_of_freedom != 0
 
         edge_manipulator = EdgeManipulator.new(@ip.edge, @ip.transformation)
 

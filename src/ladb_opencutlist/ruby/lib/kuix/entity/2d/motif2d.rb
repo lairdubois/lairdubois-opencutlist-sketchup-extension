@@ -66,7 +66,14 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
-      @paths.each { |points| graphics.draw_line_strip(points, @color, @line_width, @line_stipple) }
+      @paths.each do |points|
+        graphics.draw_line_strip(
+          points: points,
+          color: @color,
+          line_width: @line_width,
+          line_stipple: @line_stipple
+        )
+      end
       super
     end
 

@@ -13,26 +13,49 @@ module Ladb::OpenCutList::Kuix
 
     # -- Drawing --
 
-    def draw_text(x, y, text, text_options)
+    def draw_text(
+      x:,
+      y:,
+      text:,
+      text_options:
+    )
       @view.draw_text(Geom::Point3d.new(@origin.x + x, @origin.y + y, 0), text, text_options)
     end
 
-    def draw_line_strip(points, color = nil, line_width = nil, line_stripple = '')
+    def draw_line_strip(
+      points:,
+      color: nil,
+      line_width: nil,
+      line_stipple: LINE_STIPPLE_SOLID
+    )
       set_drawing_color(color) if color
       set_line_width(line_width) if line_width
-      set_line_stipple(line_stripple) if line_stripple
+      set_line_stipple(line_stipple) if line_stipple
       @view.draw2d(GL_LINE_STRIP, points.map { |point| Geom::Point3d.new(@origin.x + point.x, @origin.y + point.y, 0) })
     end
 
-    def draw_line_loop(points, color = nil, line_width = nil, line_stripple = '')
+    def draw_line_loop(
+      points:,
+      color: nil,
+      line_width: nil,
+      line_stipple: LINE_STIPPLE_SOLID
+    )
       set_drawing_color(color) if color
       set_line_width(line_width) if line_width
-      set_line_stipple(line_stripple) if line_stripple
+      set_line_stipple(line_stipple) if line_stipple
       @view.draw2d(GL_LINE_LOOP, points.map { |point| Geom::Point3d.new(@origin.x + point.x, @origin.y + point.y, 0) })
     end
 
-    def draw_triangle(x1, y1, x2, y2, x3, y3, color = nil)
-      set_drawing_color(color) if color
+    def draw_triangle(
+      x1:,
+      y1:,
+      x2:,
+      y2:,
+      x3:,
+      y3:,
+      fill_color: nil
+    )
+      set_drawing_color(fill_color) if fill_color
       @view.draw2d(GL_TRIANGLES, [
         Geom::Point3d.new(@origin.x + x1, @origin.y + y1, 0),
         Geom::Point3d.new(@origin.x + x2, @origin.y + y2, 0),
@@ -40,27 +63,20 @@ module Ladb::OpenCutList::Kuix
       ])
     end
 
-    def draw_rect(x, y, width, height, background_color = nil)
-      set_drawing_color(background_color) if background_color
+    def draw_rect(
+      x:,
+      y:,
+      width:,
+      height:,
+      fill_color: nil
+    )
+      set_drawing_color(fill_color) if fill_color
       @view.draw2d(GL_QUADS, Bounds2d.new(
         @origin.x + x,
         @origin.y + y,
         width,
         height
       ).get_points)
-    end
-
-    def draw_bordered_rect(x, y, width, height, background_color, border, border_color)
-      if border_color
-        set_drawing_color(border_color)
-        self.draw_rect(x, y, width - border.right, border.top)
-        self.draw_rect(x + width - border.right, y, border.right, height - border.bottom)
-        self.draw_rect(x + border.left, y + height - border.bottom, width - border.left, border.bottom)
-        self.draw_rect(x, y + border.top, border.left, height - border.top)
-      end
-      if background_color
-        self.draw_rect(x + border.left, y + border.top, width - border.left - border.right, height - border.top - border.bottom, background_color)
-      end
     end
 
   end

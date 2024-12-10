@@ -1373,7 +1373,15 @@ module Ladb::OpenCutList
       width = @bounds.width - @margin.left - @border.left - @margin.right - @border.right
       height = @bounds.height - @margin.top - @border.top - @margin.bottom - @border.bottom
 
-      graphics.draw_triangle(0, 0, 0, height, width, height, @background_color.blend(Sketchup::Color.new(0, 0, 0), 0.9))
+      graphics.draw_triangle(
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: height,
+        x3: width,
+        y3: height,
+        fill_color: @background_color.blend(Sketchup::Color.new(0, 0, 0), 0.9)
+      )
     end
 
   end

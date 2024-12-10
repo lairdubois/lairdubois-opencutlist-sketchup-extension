@@ -8,6 +8,12 @@ module Ladb::OpenCutList::Kuix
       @view = view
     end
 
+    # -- Manipulation --
+
+    def screen_coords(point)
+      @view.screen_coords(point)
+    end
+
     # -- Drawing --
 
     def set_drawing_color(color)

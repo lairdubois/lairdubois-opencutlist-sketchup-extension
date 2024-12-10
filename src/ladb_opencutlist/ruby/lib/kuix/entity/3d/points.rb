@@ -4,17 +4,17 @@ module Ladb::OpenCutList::Kuix
 
     attr_accessor :size
     attr_accessor :style
-    attr_accessor :color
-    attr_accessor :line_width, :line_stipple
+    attr_accessor :fill_color, :stroke_color
+    attr_accessor :stroke_width
 
     def initialize(id = nil)
       super(id)
 
       @size = 6
       @style = POINT_STYLE_PLUS
-      @color = COLOR_BLACK
-      @line_width = 2
-      @line_stipple = LINE_STIPPLE_SOLID
+      @fill_color = nil
+      @stroke_color = COLOR_BLACK
+      @stroke_width = 1
       @points = [] # Array<Geom::Point3d>
 
       @_points = []
@@ -39,7 +39,14 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
-      graphics.draw_points(@_points, @size, @style, @color, @line_width, @line_stipple)
+      graphics.draw_points(
+        points: @_points,
+        size: @size,
+        style: @style,
+        fill_color: @fill_color,
+        stroke_color: @stroke_color,
+        stroke_width: @stroke_width
+      )
       super
     end
 

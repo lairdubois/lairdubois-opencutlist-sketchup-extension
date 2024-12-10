@@ -29,7 +29,10 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
-      graphics.draw_triangles(@_points, @background_color)
+      graphics.draw_triangles(
+        points: @_points,
+        fill_color: @background_color
+      )
       super
     end
 

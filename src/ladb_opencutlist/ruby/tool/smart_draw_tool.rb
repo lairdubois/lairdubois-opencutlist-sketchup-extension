@@ -450,8 +450,8 @@ module Ladb::OpenCutList
       # k_points = Kuix::Points.new
       # k_points.add_point(@mouse_snap_point)
       # k_points.size = 30
-      # k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
-      # k_points.color = Kuix::COLOR_YELLOW
+      # k_points.style = Kuix::POINT_STYLE_TRIANGLE
+      # k_points.stroke_color = Kuix::COLOR_YELLOW
       # @tool.append_3d(k_points)
       #
       # k_axes_helper = Kuix::AxesHelper.new
@@ -829,7 +829,7 @@ module Ladb::OpenCutList
           # k_points = Kuix::Points.new
           # k_points.add_points([ vertex_manipulator.point ])
           # k_points.size = 30
-          # k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
+          # k_points.stroke_style = Kuix::POINT_STYLE_SQUARE
           # k_points.color = Kuix::COLOR_MAGENTA
           # @tool.append_3d(k_points)
           #
@@ -1178,7 +1178,7 @@ module Ladb::OpenCutList
 
         k_points = _create_floating_points(
           points: [ p ],
-          color: p == ps ? Kuix::COLOR_RED : Kuix::COLOR_BLACK
+          stroke_color: p == ps ? Kuix::COLOR_RED : Kuix::COLOR_BLACK
         )
         @tool.append_3d(k_points)
 
@@ -1190,8 +1190,9 @@ module Ladb::OpenCutList
 
     def _create_floating_points(
       points:,
-      style: Kuix::POINT_STYLE_OPEN_SQUARE,
-      color: Kuix::COLOR_BLACK
+      style: Kuix::POINT_STYLE_SQUARE,
+      fill_color: nil,
+      stroke_color: Kuix::COLOR_BLACK
     )
 
       unit = @tool.get_unit
@@ -1199,10 +1200,11 @@ module Ladb::OpenCutList
       k_points = Kuix::Points.new
       k_points.add_points(points) if points.is_a?(Array)
       k_points.add_point(points) if points.is_a?(Geom::Point3d)
-      k_points.style = style
       k_points.size = 2.5 * unit
-      k_points.line_width = 1.5
-      k_points.color = color
+      k_points.style = style
+      k_points.fill_color = fill_color
+      k_points.stroke_color = stroke_color
+      k_points.stroke_width = 1.5
 
       k_points
     end
@@ -1784,8 +1786,8 @@ module Ladb::OpenCutList
           # k_points = Kuix::Points.new
           # k_points.add_points([ vertex_manipulator.point ])
           # k_points.size = 30
-          # k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
-          # k_points.color = Kuix::COLOR_MAGENTA
+          # k_points.style = Kuix::POINT_STYLE_SQUARE
+          # k_points.stroke_color = Kuix::COLOR_MAGENTA
           # @tool.append_3d(k_points)
           #
           # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
@@ -1839,8 +1841,8 @@ module Ladb::OpenCutList
           # k_points = Kuix::Points.new
           # k_points.add_points([ @picked_shape_first_point.position, edge_manipulator.start_point, edge_manipulator.end_point ])
           # k_points.size = 30
-          # k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
-          # k_points.color = Kuix::COLOR_BLUE
+          # k_points.style = Kuix::POINT_STYLE_TRIANGLE
+          # k_points.stroke_color = Kuix::COLOR_BLUE
           # @tool.append_3d(k_points)
           #
           # k_segments = Kuix::Segments.new
@@ -1890,8 +1892,8 @@ module Ladb::OpenCutList
           # k_points = Kuix::Points.new
           # k_points.add_points([ @picked_shape_first_point.position, cline_manipulator.start_point, cline_manipulator.end_point ])
           # k_points.size = 30
-          # k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
-          # k_points.color = Kuix::COLOR_BLUE
+          # k_points.style = Kuix::POINT_STYLE_TRIANGLE
+          # k_points.stroke_color = Kuix::COLOR_BLUE
           # @tool.append_3d(k_points)
           #
           # k_segments = Kuix::Segments.new
@@ -1930,7 +1932,7 @@ module Ladb::OpenCutList
             # k_points.add_points([ p1, p2, p3 ])
             # k_points.size = 30
             # k_points.style = Kuix::POINT_STYLE_PLUS
-            # k_points.color = Kuix::COLOR_RED
+            # k_points.stroke_color = Kuix::COLOR_RED
             # @tool.append_3d(k_points)
 
             plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
@@ -1980,7 +1982,7 @@ module Ladb::OpenCutList
             # k_points.add_points([ p1, p2, p3 ])
             # k_points.size = 30
             # k_points.style = Kuix::POINT_STYLE_CROSS
-            # k_points.color = Kuix::COLOR_RED
+            # k_points.stroke_color = Kuix::COLOR_RED
             # @tool.append_3d(k_points)
 
             plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
@@ -2779,15 +2781,9 @@ module Ladb::OpenCutList
 
             k_points = _create_floating_points(
               points: point,
-              style: Kuix::POINT_STYLE_FILLED_SQUARE,
-              color: Kuix::COLOR_BLACK
-            )
-            @tool.append_3d(k_points)
-
-            k_points = _create_floating_points(
-              points: point,
-              style: Kuix::POINT_STYLE_OPEN_SQUARE,
-              color: Kuix::COLOR_WHITE
+              style: Kuix::POINT_STYLE_SQUARE,
+              fill_color: Kuix::COLOR_BLACK,
+              stroke_color: Kuix::COLOR_WHITE
             )
             @tool.append_3d(k_points)
 
@@ -2832,8 +2828,8 @@ module Ladb::OpenCutList
             # k_points = Kuix::Points.new
             # k_points.add_points([ vertex_manipulator.point ])
             # k_points.size = 30
-            # k_points.style = Kuix::POINT_STYLE_OPEN_SQUARE
-            # k_points.color = Kuix::COLOR_MAGENTA
+            # k_points.style = Kuix::POINT_STYLE_SQUARE
+            # k_points.stroke_color = Kuix::COLOR_MAGENTA
             # @tool.append_3d(k_points)
             #
             # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
@@ -2887,8 +2883,8 @@ module Ladb::OpenCutList
             # k_points = Kuix::Points.new
             # k_points.add_points([ @picked_shape_first_point.position, edge_manipulator.start_point, edge_manipulator.end_point ])
             # k_points.size = 30
-            # k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
-            # k_points.color = Kuix::COLOR_BLUE
+            # k_points.style = Kuix::POINT_STYLE_TRIANGLE
+            # k_points.stroke_color = Kuix::COLOR_BLUE
             # @tool.append_3d(k_points)
 
             # k_segments = Kuix::Segments.new
@@ -2938,8 +2934,8 @@ module Ladb::OpenCutList
             # k_points = Kuix::Points.new
             # k_points.add_points([ @picked_shape_first_point.position, cline_manipulator.start_point, cline_manipulator.end_point ])
             # k_points.size = 30
-            # k_points.style = Kuix::POINT_STYLE_OPEN_TRIANGLE
-            # k_points.color = Kuix::COLOR_BLUE
+            # k_points.style = Kuix::POINT_STYLE_TRIANGLE
+            # k_points.stroke_color = Kuix::COLOR_BLUE
             # @tool.append_3d(k_points)
 
             # k_segments = Kuix::Segments.new
@@ -2978,7 +2974,7 @@ module Ladb::OpenCutList
               # k_points.add_points([ p1, p2, p3 ])
               # k_points.size = 30
               # k_points.style = Kuix::POINT_STYLE_PLUS
-              # k_points.color = Kuix::COLOR_RED
+              # k_points.stroke_color = Kuix::COLOR_RED
               # @tool.append_3d(k_points)
 
               plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
@@ -3026,7 +3022,7 @@ module Ladb::OpenCutList
               # k_points.add_points([ p1, p2, p3 ])
               # k_points.size = 30
               # k_points.style = Kuix::POINT_STYLE_CROSS
-              # k_points.color = Kuix::COLOR_RED
+              # k_points.stroke_color = Kuix::COLOR_RED
               # @tool.append_3d(k_points)
 
               plane = Geom.fit_plane_to_points([ p1, p2, p3 ])

@@ -417,15 +417,17 @@ module Ladb::OpenCutList
                     entity = Kuix::Points.new
                     entity.add_points([ poly_def.points.first ])
                     entity.size = 2 * @unit
-                    entity.style = Kuix::POINT_STYLE_FILLED_SQUARE
-                    entity.color = Kuix::COLOR_MEDIUM_GREY
+                    entity.style = Kuix::POINT_STYLE_SQUARE
+                    entity.fill_color = Kuix::COLOR_MEDIUM_GREY
+                    entity.stroke_color = nil
                     points_entities << entity
 
                     entity = Kuix::Points.new
                     entity.add_points([ poly_def.points.last ])
                     entity.size = 2.5 * @unit
-                    entity.style = Kuix::POINT_STYLE_OPEN_SQUARE
-                    entity.color = Kuix::COLOR_DARK_GREY
+                    entity.style = Kuix::POINT_STYLE_SQUARE
+                    entity.stroke_color = Kuix::COLOR_DARK_GREY
+                    entity.stroke_width = 2
                     points_entities << entity
 
                   end
@@ -675,15 +677,17 @@ module Ladb::OpenCutList
                   entity = Kuix::Points.new
                   entity.add_points([ poly_def.points.first ])
                   entity.size = 2 * @unit
-                  entity.style = Kuix::POINT_STYLE_FILLED_SQUARE
-                  entity.color = Kuix::COLOR_MEDIUM_GREY
+                  entity.style = Kuix::POINT_STYLE_SQUARE
+                  entity.fill_color = Kuix::COLOR_MEDIUM_GREY
+                  entity.stroke_color = nil
                   points_entities << entity
 
                   entity = Kuix::Points.new
                   entity.add_points([ poly_def.points.last ])
                   entity.size = 2.5 * @unit
-                  entity.style = Kuix::POINT_STYLE_OPEN_SQUARE
-                  entity.color = Kuix::COLOR_DARK_GREY
+                  entity.style = Kuix::POINT_STYLE_SQUARE
+                  entity.stroke_color = Kuix::COLOR_DARK_GREY
+                  entity.stroke_width = 2
                   points_entities << entity
 
                 end

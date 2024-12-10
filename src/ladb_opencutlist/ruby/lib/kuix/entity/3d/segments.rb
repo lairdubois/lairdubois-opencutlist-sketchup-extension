@@ -42,7 +42,12 @@ module Ladb::OpenCutList::Kuix
           graphics.set_line_stipple(@line_stipple)
           graphics.view.draw2d(GL_LINE_STRIP, points2d)
         else
-          graphics.draw_lines(@_points, @color, @line_width, @line_stipple)
+          graphics.draw_lines(
+            points: @_points,
+            color: @color,
+            line_width: @line_width,
+            line_stipple: @line_stipple
+          )
         end
       end
       super

@@ -158,10 +158,10 @@ module Ladb::OpenCutList::Kuix
         height = @bounds.height - @margin.top - @margin.bottom
 
         graphics.set_drawing_color(@border_color)
-        graphics.draw_rect(0, 0, width - @border.right, @border.top)
-        graphics.draw_rect(0 + width - @border.right, 0, @border.right, height - @border.bottom)
-        graphics.draw_rect(0 + @border.left, 0 + height - @border.bottom, width - @border.left, @border.bottom)
-        graphics.draw_rect(0, 0 + @border.top, @border.left, height - @border.top)
+        graphics.draw_rect(x: 0, y: 0, width: width - @border.right, height: @border.top)
+        graphics.draw_rect(x: 0 + width - @border.right, y: 0, width: @border.right, height: height - @border.bottom)
+        graphics.draw_rect(x: 0 + @border.left, y: 0 + height - @border.bottom, width: width - @border.left, height: @border.bottom)
+        graphics.draw_rect(x: 0, y: 0 + @border.top, width: @border.left, height: height - @border.top)
       end
     end
 
@@ -171,7 +171,7 @@ module Ladb::OpenCutList::Kuix
         width = @bounds.width - @margin.left - @border.left - @margin.right - @border.right
         height = @bounds.height - @margin.top - @border.top - @margin.bottom - @border.bottom
 
-        graphics.draw_rect(0, 0, width, height, @background_color)
+        graphics.draw_rect(x: 0, y: 0, width: width, height: height, fill_color: @background_color)
       end
     end
 

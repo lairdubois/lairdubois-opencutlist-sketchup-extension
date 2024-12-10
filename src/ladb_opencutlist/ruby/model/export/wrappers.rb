@@ -231,6 +231,10 @@ module Ladb::OpenCutList
       super(value, Sketchup::ComponentDefinition)
     end
 
+    def get_dc_attribute(key)
+      @value.get_attribute('dynamic_attributes', key)
+    end
+
     def export
       return '' if @value.nil?
       self.name
@@ -242,6 +246,10 @@ module Ladb::OpenCutList
 
     def initialize(value)
       super(value, Sketchup::ComponentInstance)
+    end
+
+    def get_dc_attribute(key)
+      @value.get_attribute('dynamic_attributes', key)
     end
 
     def export
