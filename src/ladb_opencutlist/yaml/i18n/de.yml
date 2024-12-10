@@ -655,6 +655,7 @@ tab:
       bin: Behälter
       component_definition: Definition der Komponente
       component_instance: Instanz der Komponente
+      component_instances: Instanzen der Komponente
       filename: Dateiname
       model_name: Modellname
       model_description: Modellbeschreibung
