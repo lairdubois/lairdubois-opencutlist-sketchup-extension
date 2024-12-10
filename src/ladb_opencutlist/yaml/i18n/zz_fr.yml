@@ -653,222 +653,223 @@ tab:
       bin: 522 - Conteneur
       component_definition: 523 - Définition du composant
       component_instance: 524 - Instance du composant
-      filename: 525 - Nom de fichier
-      model_name: 526 - Nom du modèle
-      model_description: 527 - Description du modèle
-      page_name: 528 - Nom de la scène
-      page_description: 529 - Description de la scène
+      component_instances: 525 - Instances du composant
+      filename: 526 - Nom de fichier
+      model_name: 527 - Nom du modèle
+      model_description: 528 - Description du modèle
+      page_name: 529 - Nom de la scène
+      page_description: 530 - Description de la scène
       placeholder:
-        no_column_title: 530 - Saisissez un titre
-        no_column_formula_native: 531 - Valeur native de la colonne '{{ col_name }}'
-        no_column_formula: 532 - Saisissez une formule
+        no_column_title: 531 - Saisissez un titre
+        no_column_formula_native: 532 - Valeur native de la colonne '{{ col_name }}'
+        no_column_formula: 533 - Saisissez une formule
       warning:
-        is_group_selection: 533 - Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
+        is_group_selection: 534 - Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
     report:
-      title: 534 - Estimation
+      title: 535 - Estimation
       info_0: |
-        535 - Cette fonctionnalité vous permet de générer une estimation des **masses** et **coûts** des **matières premières brutes** nécessaires à la réalisation des pièces de la *fiche de débit*.
-      options_general: 536 - Générales
+        536 - Cette fonctionnalité vous permet de générer une estimation des **masses** et **coûts** des **matières premières brutes** nécessaires à la réalisation des pièces de la *fiche de débit*.
+      options_general: 537 - Générales
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: 538 - Coefficient pour *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: 539 - Permet d'indiquer le coefficient multiplicateur appliqué sur le volume brut mesuré pour les matières de type "**$t(tab.materials.type_1)**".
-      raw_materials: 540 - Matières premières brutes
-      coefficient: 541 - Coefficient
-      total: 542 - Total
-      total_used: 543 - Utilisé
-      total_unused: 544 - Non utilisé
-      total_mass: 545 - Σ Masses
-      total_cost: 546 - Σ Coûts
-      total_count: 547 - Qte
-      total_instance_count: 548 - Σ Unités
-      total_volume: 549 - Σ Volumes
-      total_area: 550 - Σ Surfaces
-      total_length: 551 - Σ Longueurs
+      option_solid_wood_coefficient: 539 - Coefficient pour *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: 540 - Permet d'indiquer le coefficient multiplicateur appliqué sur le volume brut mesuré pour les matières de type "**$t(tab.materials.type_1)**".
+      raw_materials: 541 - Matières premières brutes
+      coefficient: 542 - Coefficient
+      total: 543 - Total
+      total_used: 544 - Utilisé
+      total_unused: 545 - Non utilisé
+      total_mass: 546 - Σ Masses
+      total_cost: 547 - Σ Coûts
+      total_count: 548 - Qte
+      total_instance_count: 549 - Σ Unités
+      total_volume: 550 - Σ Volumes
+      total_area: 551 - Σ Surfaces
+      total_length: 552 - Σ Longueurs
       tooltip:
-        incompatible_unit: 552 - Unité incompatible avec les options d'estimation de la matière
+        incompatible_unit: 553 - Unité incompatible avec les options d'estimation de la matière
       error:
-        no_typed_material_parts: 553 - Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer l'estimation.
-        entry_error: '554 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**.'
-        entry_error_plural: '555 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**.'
+        no_typed_material_parts: 554 - Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer l'estimation.
+        entry_error: '555 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**.'
+        entry_error_plural: '556 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**.'
       warning:
-        is_group_selection: 556 - Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas comptabilisées.
+        is_group_selection: 557 - Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas comptabilisées.
       tip:
         not_enough_data: |
-          557 - Pour que cette estimation puisse se calculer correctement :
+          558 - Pour que cette estimation puisse se calculer correctement :
           - Les matières utilisées doivent avoir au moins une masse volumique et un prix configurés.
           - Les accessoires utilisés doivent avoir au moins une masse et un prix.
     cuttingdiagram:
-      title: 558 - Calepinage
-      start_msg: 559 - Optimisation en cours
-      end_msg: 560 - Optimisation terminée
-      options_material: 561 - Matière
-      options_config: 562 - Configuration
-      options_display: 563 - Affichage
-      option_bar_folding_dimensional: 564 - Regrouper les barres identiques
-      option_bar_folding_edge: 565 - Regrouper les bandes identiques
-      option_bar_folding_0: 566 - Non
-      option_bar_folding_1: 567 - Oui
-      option_bar_folding_help: 568 - Permet de regrouper les barres ou bandes contenant les mêmes pièces et les mêmes coupes.
-      option_sheet_folding_good: 569 - Regrouper les panneaux identiques
-      option_sheet_folding_veneer: 570 - Regrouper les feuilles identiques
-      option_sheet_folding_0: 571 - Non
-      option_sheet_folding_1: 572 - Oui
-      option_sheet_folding_help: 573 - Permet de regrouper les panneaux ou les feuilles contenant les mêmes pièces et les mêmes coupes.
-      option_hide_part_list: 574 - Liste des pièces
-      option_hide_part_list_1d_dimensional_0: 575 - Affichée pour chaque barre
-      option_hide_part_list_1d_edge_0: 576 - Affichée pour chaque bande
-      option_hide_part_list_2d_good_0: 577 - Affichée pour chaque panneau
-      option_hide_part_list_2d_veneer_0: 578 - Affichée pour chaque feuille
-      option_hide_part_list_1: 579 - Masquée
-      option_hide_part_list_1d_help: 580 - Affiche ou masque la liste des pièces présentes dans chaque barre ou bande.
-      option_hide_part_list_2d_help: 581 - Affiche ou masque la liste des pièces présentes dans chaque panneau ou feuille.
-      option_use_names: 582 - Identification des pièces
-      option_use_names_0: 583 - Utiliser le numéro
-      option_use_names_1: 584 - Utiliser la désignation
-      option_use_names_help: 585 - Permet de choisir entre le **numéro** et la **désignation** pour identifier les pièces sur le schéma de calepinage.
-      option_origin_corner: 586 - Position de l'origine
-      option_origin_corner_1d_0: 587 - A gauche
-      option_origin_corner_1d_1: 588 - A droite
-      option_origin_corner_2d_0: 589 - En haut à gauche
-      option_origin_corner_2d_1: 590 - En bas à gauche
-      option_origin_corner_2d_2: 591 - En haut à droite
-      option_origin_corner_2d_3: 592 - En bas à droite
-      option_origin_corner_1d_help: 593 - Permet de choisir le coin d'origine de placement des pièces dans les barres ou bandes.
-      option_origin_corner_2d_help: 594 - Permet de choisir le coin d'origine de placement des pièces dans les panneaux.
-      option_full_width_diagram: 595 - Affichage pleine largeur
-      option_full_width_diagram_0: 596 - Non
-      option_full_width_diagram_1: 597 - Oui
-      option_full_width_diagram_help: 598 - Si cette option est activée les schémas sont affichés avec toute la largeur disponible. Sinon, leur largeur est définie par un facteur d'échelle fixe de leur taille réelle.
-      option_wrap_length: 599 - Longueur de césure
-      option_wrap_length_help: 600 - Longueur maximale à laquelle une barre ou bande sera affichée sur plusieurs lignes.
-      option_hide_cross: 601 - Chutes
-      option_hide_cross_0: 602 - Dimensions et Croix
-      option_hide_cross_1: 603 - Dimensions seules
-      option_hide_cross_help: 604 - Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme.
-      option_highlight_primary_cuts: 605 - Coupes primaires
-      option_highlight_primary_cuts_0: 606 - Survol uniquement
-      option_highlight_primary_cuts_1: 607 - Toujours visibles
-      option_highlight_primary_cuts_help: 608 - Permet de mettre en surbrillance toujours visible les coupes primaires.
-      option_hide_edges_preview: 609 - Indicateurs de chants à plaquer
-      option_hide_edges_preview_0: 610 - Affichés sur le diagramme
-      option_hide_edges_preview_1: 611 - Masqués sur le diagramme
-      option_hide_edges_preview_help: 612 - Permet d'afficher ou masquer l'indication visuel des chants à plaquer pour chaque pièce du diagramme.
-      option_part_drawing_type: 613 - Formes des pièces
-      option_part_drawing_type_0: 614 - Masquées
-      option_part_drawing_type_1: 615 - Dessinées Vue Face
-      option_part_drawing_type_2: 616 - Dessinées Vue Contre-face
+      title: 559 - Calepinage
+      start_msg: 560 - Optimisation en cours
+      end_msg: 561 - Optimisation terminée
+      options_material: 562 - Matière
+      options_config: 563 - Configuration
+      options_display: 564 - Affichage
+      option_bar_folding_dimensional: 565 - Regrouper les barres identiques
+      option_bar_folding_edge: 566 - Regrouper les bandes identiques
+      option_bar_folding_0: 567 - Non
+      option_bar_folding_1: 568 - Oui
+      option_bar_folding_help: 569 - Permet de regrouper les barres ou bandes contenant les mêmes pièces et les mêmes coupes.
+      option_sheet_folding_good: 570 - Regrouper les panneaux identiques
+      option_sheet_folding_veneer: 571 - Regrouper les feuilles identiques
+      option_sheet_folding_0: 572 - Non
+      option_sheet_folding_1: 573 - Oui
+      option_sheet_folding_help: 574 - Permet de regrouper les panneaux ou les feuilles contenant les mêmes pièces et les mêmes coupes.
+      option_hide_part_list: 575 - Liste des pièces
+      option_hide_part_list_1d_dimensional_0: 576 - Affichée pour chaque barre
+      option_hide_part_list_1d_edge_0: 577 - Affichée pour chaque bande
+      option_hide_part_list_2d_good_0: 578 - Affichée pour chaque panneau
+      option_hide_part_list_2d_veneer_0: 579 - Affichée pour chaque feuille
+      option_hide_part_list_1: 580 - Masquée
+      option_hide_part_list_1d_help: 581 - Affiche ou masque la liste des pièces présentes dans chaque barre ou bande.
+      option_hide_part_list_2d_help: 582 - Affiche ou masque la liste des pièces présentes dans chaque panneau ou feuille.
+      option_use_names: 583 - Identification des pièces
+      option_use_names_0: 584 - Utiliser le numéro
+      option_use_names_1: 585 - Utiliser la désignation
+      option_use_names_help: 586 - Permet de choisir entre le **numéro** et la **désignation** pour identifier les pièces sur le schéma de calepinage.
+      option_origin_corner: 587 - Position de l'origine
+      option_origin_corner_1d_0: 588 - A gauche
+      option_origin_corner_1d_1: 589 - A droite
+      option_origin_corner_2d_0: 590 - En haut à gauche
+      option_origin_corner_2d_1: 591 - En bas à gauche
+      option_origin_corner_2d_2: 592 - En haut à droite
+      option_origin_corner_2d_3: 593 - En bas à droite
+      option_origin_corner_1d_help: 594 - Permet de choisir le coin d'origine de placement des pièces dans les barres ou bandes.
+      option_origin_corner_2d_help: 595 - Permet de choisir le coin d'origine de placement des pièces dans les panneaux.
+      option_full_width_diagram: 596 - Affichage pleine largeur
+      option_full_width_diagram_0: 597 - Non
+      option_full_width_diagram_1: 598 - Oui
+      option_full_width_diagram_help: 599 - Si cette option est activée les schémas sont affichés avec toute la largeur disponible. Sinon, leur largeur est définie par un facteur d'échelle fixe de leur taille réelle.
+      option_wrap_length: 600 - Longueur de césure
+      option_wrap_length_help: 601 - Longueur maximale à laquelle une barre ou bande sera affichée sur plusieurs lignes.
+      option_hide_cross: 602 - Chutes
+      option_hide_cross_0: 603 - Dimensions et Croix
+      option_hide_cross_1: 604 - Dimensions seules
+      option_hide_cross_help: 605 - Affiche ou masque la croix indiquant les parties définies comme chutes sur le diagramme.
+      option_highlight_primary_cuts: 606 - Coupes primaires
+      option_highlight_primary_cuts_0: 607 - Survol uniquement
+      option_highlight_primary_cuts_1: 608 - Toujours visibles
+      option_highlight_primary_cuts_help: 609 - Permet de mettre en surbrillance toujours visible les coupes primaires.
+      option_hide_edges_preview: 610 - Indicateurs de chants à plaquer
+      option_hide_edges_preview_0: 611 - Affichés sur le diagramme
+      option_hide_edges_preview_1: 612 - Masqués sur le diagramme
+      option_hide_edges_preview_help: 613 - Permet d'afficher ou masquer l'indication visuel des chants à plaquer pour chaque pièce du diagramme.
+      option_part_drawing_type: 614 - Formes des pièces
+      option_part_drawing_type_0: 615 - Masquées
+      option_part_drawing_type_1: 616 - Dessinées Vue Face
+      option_part_drawing_type_2: 617 - Dessinées Vue Contre-face
       option_part_drawing_type_help: |
-        617 - Permet d'afficher ou masquer la forme réelle des pièces ainsi que leurs usinages sur le diagramme.
+        618 - Permet d'afficher ou masquer la forme réelle des pièces ainsi que leurs usinages sur le diagramme.
 
         *Cette option doit être activée pour que les formes puissent être exportées.*
-      option_saw_kerf: 618 - Épaisseur de lame de scie
-      option_saw_kerf_help: 619 - Largeur de matière perdue par le trait de scie.
-      option_spacing: 620 - Espacement
-      option_spacing_help: 621 - Espacement minimal entre chaque pièce.
-      option_trimming: 622 - Marge
-      option_trimming_help_1d: 623 - Marge à chaque extrémité de la barre ou bande à considérer comme chute.
-      option_trimming_help_2d: 624 - Marge autour du panneau à considérer comme chute.
-      option_optimization: 625 - Niveau d'optimisation
-      option_optimization_help: 626 - Le niveau d'optimisation définit le nombre de possibilités calculées, donc aussi le temps de calcul.
-      option_optimization_0: 627 - Moyen
-      option_optimization_1: 628 - Avancé
-      option_stacking: 629 - Empiler les pièces identiques
-      option_stacking_help: 630 - Direction d'empilement des pièces ayant une longueur ou une largeur commune.
-      option_stacking_0: 631 - Aucune préférence
-      option_stacking_1: 632 - Sur la longueur
-      option_stacking_2: 633 - Sur la largeur
-      option_stacking_3: 634 - Toutes les possibilités
-      option_keep: 635 - Taille minimale des chutes
-      option_keep_help: 636 - Les chutes ayant les deux dimensions supérieures à la taille minimale seront marquées **à conserver**.
-      option_std_bar_dimensional: 637 - Barre standard
-      option_std_bar_edge: 638 - Bande standard
+      option_saw_kerf: 619 - Épaisseur de lame de scie
+      option_saw_kerf_help: 620 - Largeur de matière perdue par le trait de scie.
+      option_spacing: 621 - Espacement
+      option_spacing_help: 622 - Espacement minimal entre chaque pièce.
+      option_trimming: 623 - Marge
+      option_trimming_help_1d: 624 - Marge à chaque extrémité de la barre ou bande à considérer comme chute.
+      option_trimming_help_2d: 625 - Marge autour du panneau à considérer comme chute.
+      option_optimization: 626 - Niveau d'optimisation
+      option_optimization_help: 627 - Le niveau d'optimisation définit le nombre de possibilités calculées, donc aussi le temps de calcul.
+      option_optimization_0: 628 - Moyen
+      option_optimization_1: 629 - Avancé
+      option_stacking: 630 - Empiler les pièces identiques
+      option_stacking_help: 631 - Direction d'empilement des pièces ayant une longueur ou une largeur commune.
+      option_stacking_0: 632 - Aucune préférence
+      option_stacking_1: 633 - Sur la longueur
+      option_stacking_2: 634 - Sur la largeur
+      option_stacking_3: 635 - Toutes les possibilités
+      option_keep: 636 - Taille minimale des chutes
+      option_keep_help: 637 - Les chutes ayant les deux dimensions supérieures à la taille minimale seront marquées **à conserver**.
+      option_std_bar_dimensional: 638 - Barre standard
+      option_std_bar_edge: 639 - Bande standard
       option_std_bar_help: |
-        639 - Sélectionnez ici la taille de la barre ou bande standard qui sera dupliquée pour contenir au mieux toutes les pièces.
+        640 - Sélectionnez ici la taille de la barre ou bande standard qui sera dupliquée pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
         Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
-      option_std_bar_add: 640 - Ajouter une taille
-      option_std_bar_none: 641 - Aucune
-      option_scrap_bar_dimensional_lengths: 642 - Restes de barre
-      option_scrap_bar_edge_lengths: 643 - Restes de bande
-      option_scrap_bar_lengths_placeholder: 644 - longueur x quantité ; ...
+      option_std_bar_add: 641 - Ajouter une taille
+      option_std_bar_none: 642 - Aucune
+      option_scrap_bar_dimensional_lengths: 643 - Restes de barre
+      option_scrap_bar_edge_lengths: 644 - Restes de bande
+      option_scrap_bar_lengths_placeholder: 645 - longueur x quantité ; ...
       option_scrap_bar_lengths_help: |
-        645 - Indiquez ici la liste de vos restes de barre ou bande à considérer en priorité pour le calepinage.
+        646 - Indiquez ici la liste de vos restes de barre ou bande à considérer en priorité pour le calepinage.
         Format attendu : **L**x**Q**. Où **L** est la *longueur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      option_std_sheet_good: 646 - Panneau standard
-      option_std_sheet_veneer: 647 - Feuille standard
+      option_std_sheet_good: 647 - Panneau standard
+      option_std_sheet_veneer: 648 - Feuille standard
       option_std_sheet_help: |
-        648 - Sélectionnez ici le panneau ou feuille standard qui sera dupliqué pour contenir au mieux toutes les pièces.
+        649 - Sélectionnez ici le panneau ou feuille standard qui sera dupliqué pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
         Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
-      option_std_sheet_add: 649 - Ajouter une taille
-      option_std_sheet_none: 650 - Aucun
-      option_scrap_sheet_good_sizes: 651 - Restes de panneau
-      option_scrap_sheet_veneer_sizes: 652 - Restes de feuille
-      option_scrap_sheet_sizes_placeholder: 653 - longueur x largeur x quantité ; ...
+      option_std_sheet_add: 650 - Ajouter une taille
+      option_std_sheet_none: 651 - Aucun
+      option_scrap_sheet_good_sizes: 652 - Restes de panneau
+      option_scrap_sheet_veneer_sizes: 653 - Restes de feuille
+      option_scrap_sheet_sizes_placeholder: 654 - longueur x largeur x quantité ; ...
       option_scrap_sheet_sizes_help: |
-        654 - Indiquez ici la liste de vos restes de panneau ou feuille à considérer en priorité pour le calepinage.
+        655 - Indiquez ici la liste de vos restes de panneau ou feuille à considérer en priorité pour le calepinage.
         Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
       tooltip:
-        scroll_to_block_1d: 655 - Défiler vers la première barre ou bande
-        scroll_to_block_2d: 656 - Défiler vers le premier panneau
-        copy_leftovers_to_clipboard: 657 - Copier les chutes dans le presse-papier
+        scroll_to_block_1d: 656 - Défiler vers la première barre ou bande
+        scroll_to_block_2d: 657 - Défiler vers le premier panneau
+        copy_leftovers_to_clipboard: 658 - Copier les chutes dans le presse-papier
       list:
-        unplaced_parts: 658 - Pièces non placées
-        summary: 659 - Récapitulatif
-        count: 660 - Qte.
-        bar: 661 - Barre
-        sheet: 662 - Panneau
-        length: 663 - Longueur
-        width: 664 - Largeur
-        total_length: 665 - Σ Longueurs
-        total_area: 666 - Σ Surfaces
-        total_part_count: 667 - Σ Pièces
-        total_used: 668 - Total utilisé
-        trimming: 669 - Marge
-        stats: 670 - Statistiques
-        total_cut_count: 671 - Nombre de coupes
-        total_cut_length: 672 - Longueur de coupe
-        overall_efficiency: 673 - Efficacité globale
-        efficiency: 674 - Efficacité
-        leftover: 675 - Chute
-        leftover_to_keep: 676 - Chute à conserver
-        leftover_to_keep_plural: 677 - Chutes à conserver
-        leftover_to_throw_away: 678 - Chute à jeter
-        cut: 679 - Coupe
-        cut_plural: 680 - Coupes
-        cut_trimming: 681 - Coupe de propreté
-        cut_bounding: 682 - Coupe primaire (niveau 1)
-        cut_bounding_plural: 683 - Coupes primaires (niveau 1)
-        cut_internal_through: 684 - Coupe primaire (niveau 2)
-        cut_internal_through_plural: 685 - Coupes primaires (niveau 2)
-        cut_none: 686 - Aucune
-        bar_dimensional_type_0: 687 - Barre standard
-        bar_dimensional_type_1: 688 - Reste de barre
-        bar_edge_type_0: 689 - Bande standard
-        bar_edge_type_1: 690 - Reste de bande
-        sheet_good_type_0: 691 - Panneau standard
-        sheet_good_type_1: 692 - Reste de panneau
-        sheet_veneer_type_0: 693 - Feuille standard
-        sheet_veneer_type_1: 694 - Reste de feuille
-        unused: 695 - Inutilisée
-        parts: 696 - {{ count }} pièce
-        parts_plural: 697 - {{ count }} pièces
-        settings: 698 - Paramètres
+        unplaced_parts: 659 - Pièces non placées
+        summary: 660 - Récapitulatif
+        count: 661 - Qte.
+        bar: 662 - Barre
+        sheet: 663 - Panneau
+        length: 664 - Longueur
+        width: 665 - Largeur
+        total_length: 666 - Σ Longueurs
+        total_area: 667 - Σ Surfaces
+        total_part_count: 668 - Σ Pièces
+        total_used: 669 - Total utilisé
+        trimming: 670 - Marge
+        stats: 671 - Statistiques
+        total_cut_count: 672 - Nombre de coupes
+        total_cut_length: 673 - Longueur de coupe
+        overall_efficiency: 674 - Efficacité globale
+        efficiency: 675 - Efficacité
+        leftover: 676 - Chute
+        leftover_to_keep: 677 - Chute à conserver
+        leftover_to_keep_plural: 678 - Chutes à conserver
+        leftover_to_throw_away: 679 - Chute à jeter
+        cut: 680 - Coupe
+        cut_plural: 681 - Coupes
+        cut_trimming: 682 - Coupe de propreté
+        cut_bounding: 683 - Coupe primaire (niveau 1)
+        cut_bounding_plural: 684 - Coupes primaires (niveau 1)
+        cut_internal_through: 685 - Coupe primaire (niveau 2)
+        cut_internal_through_plural: 686 - Coupes primaires (niveau 2)
+        cut_none: 687 - Aucune
+        bar_dimensional_type_0: 688 - Barre standard
+        bar_dimensional_type_1: 689 - Reste de barre
+        bar_edge_type_0: 690 - Bande standard
+        bar_edge_type_1: 691 - Reste de bande
+        sheet_good_type_0: 692 - Panneau standard
+        sheet_good_type_1: 693 - Reste de panneau
+        sheet_veneer_type_0: 694 - Feuille standard
+        sheet_veneer_type_1: 695 - Reste de feuille
+        unused: 696 - Inutilisée
+        parts: 697 - {{ count }} pièce
+        parts_plural: 698 - {{ count }} pièces
+        settings: 699 - Paramètres
       write:
-        title: 699 - Exportation du calepinage
+        title: 700 - Exportation du calepinage
         info_0: |
-          700 - Ce module vous permet d'exporter la **géométrie** du *calepinage* sous forme d'une liste de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+          701 - Ce module vous permet d'exporter la **géométrie** du *calepinage* sous forme d'une liste de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
         option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: 703 - Structure DXF
-        option_dxf_structure_1: 704 - Calques
-        option_dxf_structure_2: 705 - Calques + Blocs
+        option_dxf_structure: 704 - Structure DXF
+        option_dxf_structure_1: 705 - Calques
+        option_dxf_structure_2: 706 - Calques + Blocs
         option_dxf_structure_help: |
-          706 - Permet de choisir la structure du fichier DXF.
+          707 - Permet de choisir la structure du fichier DXF.
 
           - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
           - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
@@ -886,875 +887,878 @@ tab:
         option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
         option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
         option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
-        option_sheet_good: 721 - Panneau
+        option_sheet_good: 722 - Panneau
         option_sheet_good_help: |
-          722 - Permet d'activer l'exportation du panneau ainsi que de choisir ses couleurs.
-        option_sheet_veneer: 723 - Feuille
+          723 - Permet d'activer l'exportation du panneau ainsi que de choisir ses couleurs.
+        option_sheet_veneer: 724 - Feuille
         option_sheet_veneer_help: |
-          724 - Permet d'activer l'exportation de la feuille ainsi que de choisir ses couleurs.
-        option_bar_dimensional: 725 - Barre
+          725 - Permet d'activer l'exportation de la feuille ainsi que de choisir ses couleurs.
+        option_bar_dimensional: 726 - Barre
         option_bar_dimensional_help: |
-          726 - Permet d'activer l'exportation de la barre ainsi que de choisir ses couleurs.
-        option_bar_band: 727 - Bande
+          727 - Permet d'activer l'exportation de la barre ainsi que de choisir ses couleurs.
+        option_bar_band: 728 - Bande
         option_bar_band_help: |
-          728 - Permet d'activer l'exportation de la bande ainsi que de choisir ses couleurs.
-        option_parts: 729 - Pièces
+          729 - Permet d'activer l'exportation de la bande ainsi que de choisir ses couleurs.
+        option_parts: 730 - Pièces
         option_parts_help: |
-          730 - Permet d'activer l'exportation des pièces ainsi que de choisir leurs couleurs.
-        option_parts_holes: 731 - Percements
+          731 - Permet d'activer l'exportation des pièces ainsi que de choisir leurs couleurs.
+        option_parts_holes: 732 - Percements
         option_parts_holes_help: |
-          732 - Permet de choisir la couleur des percements des pièces.
+          733 - Permet de choisir la couleur des percements des pièces.
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: 735 - Identifications
+        option_texts: 736 - Identifications
         option_texts_help: |
-          736 - Permet d'activer l'exportation des textes d'identification des pièces ainsi que de choisir leurs couleurs.
-        option_leftovers: 737 - Chutes
+          737 - Permet d'activer l'exportation des textes d'identification des pièces ainsi que de choisir leurs couleurs.
+        option_leftovers: 738 - Chutes
         option_leftovers_help: |
-          738 - Permet d'activer l'exportation des chutes ainsi que de choisir leurs couleurs.
-        option_cuts: 739 - Coupes
+          739 - Permet d'activer l'exportation des chutes ainsi que de choisir leurs couleurs.
+        option_cuts: 740 - Coupes
         option_cuts_help: |
-          740 - Permet d'activer l'exportation des coupes ainsi que de choisir leur couleur.
+          741 - Permet d'activer l'exportation des coupes ainsi que de choisir leur couleur.
         warning:
-          is_sheet_selection: 741 - Les **panneaux masqués** ne seront pas exportés.
+          is_sheet_selection: 742 - Les **panneaux masqués** ne seront pas exportés.
       error:
-        no_bar_dimensional: 742 - La barre standard n'est pas correctement configurée et aucun reste n'est défini.
-        no_bar_edge: 743 - La bande standard n'est pas correctement configurée et aucun reste n'est défini.
-        parameters: 744 - Les paramètres sont incorrects. La marge dépasse 25 % de la barre ou bande la plus grande.
-        no_parts: 745 - Aucune pièce.
-        no_sheet: 746 - Le panneau standard n'est pas correctement configuré et aucun reste n'est défini.
-        no_placement_possible_1d: 747 - Aucune pièce n'a pu être placée (barre standard trop petite, marge trop grande, lame de scie trop épaisse, ...).
-        no_placement_possible_2d: 748 - Aucune pièce n'a pu être placée (panneau standard trop petit, marge trop grande, lame de scie trop épaisse, ...).
-        bad_error: 749 - Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
-        unplaced_parts: 750 - **1 pièce** est trop grande pour être placée.
-        unplaced_parts_plural: 751 - **{{ count }} pièces** sont trop grandes pour être placées.
+        no_bar_dimensional: 743 - La barre standard n'est pas correctement configurée et aucun reste n'est défini.
+        no_bar_edge: 744 - La bande standard n'est pas correctement configurée et aucun reste n'est défini.
+        parameters: 745 - Les paramètres sont incorrects. La marge dépasse 25 % de la barre ou bande la plus grande.
+        no_parts: 746 - Aucune pièce.
+        no_sheet: 747 - Le panneau standard n'est pas correctement configuré et aucun reste n'est défini.
+        no_placement_possible_1d: 748 - Aucune pièce n'a pu être placée (barre standard trop petite, marge trop grande, lame de scie trop épaisse, ...).
+        no_placement_possible_2d: 749 - Aucune pièce n'a pu être placée (panneau standard trop petit, marge trop grande, lame de scie trop épaisse, ...).
+        bad_error: 750 - Erreur d'algorithme. Veuillez contacter les développeurs, car vous avez là un cas intéressant.
+        unplaced_parts: 751 - **1 pièce** est trop grande pour être placée.
+        unplaced_parts_plural: 752 - **{{ count }} pièces** sont trop grandes pour être placées.
       warning:
-        is_part_selection: 752 - Ce calepinage se limite aux **pièces sélectionnées**.
-        cutting_dimensions: 753 - Ce calepinage présente les pièces dans leurs dimensions de **débit**.
-        cutting_dimensions_increase_1d: 754 - Dimensions majorées par la surcote de longueur (**{{ length_increase }}**) configurée sur la matière '{{ material_name }}'.
-        cutting_dimensions_increase_2d: 755 - Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**).
-        cutting_dimensions_edge_decrement: 756 - Dimensions réduites de l'épaisseur des chants. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: 753 - Ce calepinage se limite aux **pièces sélectionnées**.
+        cutting_dimensions: 754 - Ce calepinage présente les pièces dans leurs dimensions de **débit**.
+        cutting_dimensions_increase_1d: 755 - Dimensions majorées par la surcote de longueur (**{{ length_increase }}**) configurée sur la matière '{{ material_name }}'.
+        cutting_dimensions_increase_2d: 756 - Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**).
+        cutting_dimensions_edge_decrement: 757 - Dimensions réduites de l'épaisseur des chants. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     packing:
-      title: 757 - Calepinage
-      option_problem_type: 758 - Type
-      option_problem_type_rectangle: 759 - Rectangle
-      option_problem_type_rectangleguillotine: 760 - Guillotine
-      option_problem_type_onedimensional: 761 - Barre
-      option_problem_type_irregular: 762 - Imbriqué
-      options_material: 763 - Matière
-      options_config: 764 - Configuration
-      options_display: 765 - Affichage
-      options_tuning: 766 - Tuning
-      option_std_bin_1d_dimensional: 767 - Barre standard
-      option_std_bin_1d_edge: 768 - Bande standard
+      title: 758 - Calepinage
+      option_problem_type: 759 - Type
+      option_problem_type_rectangle: 760 - Rectangle
+      option_problem_type_rectangleguillotine: 761 - Guillotine
+      option_problem_type_onedimensional: 762 - Barre
+      option_problem_type_irregular: 763 - Imbriqué
+      options_material: 764 - Matière
+      options_config: 765 - Configuration
+      options_display: 766 - Affichage
+      options_tuning: 767 - Tuning
+      option_std_bin_1d_dimensional: 768 - Barre standard
+      option_std_bin_1d_edge: 769 - Bande standard
       option_std_bin_1d_help: |
-        769 - Sélectionnez ici la taille de la barre ou bande standard qui sera dupliquée pour contenir au mieux toutes les pièces.
+        770 - Sélectionnez ici la taille de la barre ou bande standard qui sera dupliquée pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
         Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
-      option_std_bin_1d_add: 770 - Ajouter une taille
-      option_std_bin_1d_none: 771 - Aucune
-      option_scrap_bin_1d_dimensional_sizes: 772 - Restes de barre
-      option_scrap_bin_1d_edge_sizes: 773 - Restes de bande
-      option_scrap_bin_1d_sizes_placeholder: 774 - longueur x quantité ; ...
+      option_std_bin_1d_add: 771 - Ajouter une taille
+      option_std_bin_1d_none: 772 - Aucune
+      option_scrap_bin_1d_dimensional_sizes: 773 - Restes de barre
+      option_scrap_bin_1d_edge_sizes: 774 - Restes de bande
+      option_scrap_bin_1d_sizes_placeholder: 775 - longueur x quantité ; ...
       option_scrap_bin_1d_sizes_help: |
-        775 - Indiquez ici la liste de vos restes de barre ou bande à considérer en priorité pour le calepinage.
+        776 - Indiquez ici la liste de vos restes de barre ou bande à considérer en priorité pour le calepinage.
         Format attendu : **L**x**Q**. Où **L** est la *longueur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      option_std_bin_2d_sheet_good: 776 - Panneau standard
-      option_std_bin_2d_veneer: 777 - Feuille standard
+      option_std_bin_2d_sheet_good: 777 - Panneau standard
+      option_std_bin_2d_veneer: 778 - Feuille standard
       option_std_bin_2d_help: |
-        778 - Sélectionnez ici le panneau ou feuille standard qui sera dupliqué pour contenir au mieux toutes les pièces.
+        779 - Sélectionnez ici le panneau ou feuille standard qui sera dupliqué pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
         Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
-      option_std_bin_2d_add: 779 - Ajouter une taille
-      option_std_bin_2d_none: 780 - Aucun
-      option_scrap_bin_2d_sheet_good_sizes: 781 - Restes de panneau
-      option_scrap_bin_2d_veneer_sizes: 782 - Restes de feuille
-      option_scrap_bin_2d_sizes_placeholder: 783 - longueur x largeur x quantité ; ...
+      option_std_bin_2d_add: 780 - Ajouter une taille
+      option_std_bin_2d_none: 781 - Aucun
+      option_scrap_bin_2d_sheet_good_sizes: 782 - Restes de panneau
+      option_scrap_bin_2d_veneer_sizes: 783 - Restes de feuille
+      option_scrap_bin_2d_sizes_placeholder: 784 - longueur x largeur x quantité ; ...
       option_scrap_bin_2d_sizes_help: |
-        784 - Indiquez ici la liste de vos restes de panneau ou feuille à considérer en priorité pour le calepinage.
+        785 - Indiquez ici la liste de vos restes de panneau ou feuille à considérer en priorité pour le calepinage.
         Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      option_optimization_mode: 785 - Optimization Mode
+      option_optimization_mode: 786 - Optimization Mode
       option_optimization_mode_help: |
-        786 - ...
-      option_objective: 787 - Objectif
+        787 - ...
+      option_objective: 788 - Objectif
       option_objective_help: |
-        788 - ...
-      option_rectangleguillotine_cut_type: 789 - Cut Type
+        789 - ...
+      option_rectangleguillotine_cut_type: 790 - Cut Type
       option_rectangleguillotine_cut_type_help: |
-        790 - ...
-      option_rectangleguillotine_number_of_stages: 791 - Number of stages
+        791 - ...
+      option_rectangleguillotine_number_of_stages: 792 - Number of stages
       option_rectangleguillotine_number_of_stages_help: |
-        792 - ...
-      option_rectangleguillotine_first_stage_orientation: 793 - Première coupe
+        793 - ...
+      option_rectangleguillotine_first_stage_orientation: 794 - Première coupe
       option_rectangleguillotine_first_stage_orientation_help: |
-        794 - ...
-      option_irregular_allowed_rotations: 795 - Rotations
+        795 - ...
+      option_irregular_allowed_rotations: 796 - Rotations
       option_irregular_allowed_rotations_help: |
-        796 - ...
-      option_irregular_allow_mirroring: 797 - Mirroring
+        797 - ...
+      option_irregular_allow_mirroring: 798 - Mirroring
       option_irregular_allow_mirroring_help: |
-        798 - ...
-      option_spacing: 799 - Espacement
-      option_spacing_help: 800 - Espacement minimal entre chaque pièce.
-      option_trimming: 801 - Marge
-      option_trimming_1d_help: 802 - Marge à chaque extrémité de la barre ou bande à considérer comme chute.
-      option_trimming_2d_help: 803 - Marge autour du panneau à considérer comme chute.
-      option_items_formula: 804 - Formule
+        799 - ...
+      option_spacing: 800 - Espacement
+      option_spacing_help: 801 - Espacement minimal entre chaque pièce.
+      option_trimming: 802 - Marge
+      option_trimming_1d_help: 803 - Marge à chaque extrémité de la barre ou bande à considérer comme chute.
+      option_trimming_2d_help: 804 - Marge autour du panneau à considérer comme chute.
+      option_items_formula: 805 - Formule
       option_items_formula_help: |
-        805 - ...
-      option_hide_part_list: 806 - Liste des pièces
-      option_hide_part_list_1d_dimensional_0: 807 - Affichée pour chaque barre
-      option_hide_part_list_1d_edge_0: 808 - Affichée pour chaque bande
-      option_hide_part_list_2d_sheet_good_0: 809 - Affichée pour chaque panneau
-      option_hide_part_list_2d_veneer_0: 810 - Affichée pour chaque feuille
-      option_hide_part_list_1: 811 - Masquée
-      option_hide_part_list_1d_help: 812 - Affiche ou masque la liste des pièces présentes dans chaque barre ou bande.
-      option_hide_part_list_2d_help: 813 - Affiche ou masque la liste des pièces présentes dans chaque panneau ou feuille.
-      option_part_drawing_type: 814 - Formes des pièces
-      option_part_drawing_type_0: 815 - Masquées
-      option_part_drawing_type_1: 816 - Dessinées Vue Face
-      option_part_drawing_type_2: 817 - Dessinées Vue Contre-face
+        806 - ...
+      option_hide_part_list: 807 - Liste des pièces
+      option_hide_part_list_1d_dimensional_0: 808 - Affichée pour chaque barre
+      option_hide_part_list_1d_edge_0: 809 - Affichée pour chaque bande
+      option_hide_part_list_2d_sheet_good_0: 810 - Affichée pour chaque panneau
+      option_hide_part_list_2d_veneer_0: 811 - Affichée pour chaque feuille
+      option_hide_part_list_1: 812 - Masquée
+      option_hide_part_list_1d_help: 813 - Affiche ou masque la liste des pièces présentes dans chaque barre ou bande.
+      option_hide_part_list_2d_help: 814 - Affiche ou masque la liste des pièces présentes dans chaque panneau ou feuille.
+      option_part_drawing_type: 815 - Formes des pièces
+      option_part_drawing_type_0: 816 - Masquées
+      option_part_drawing_type_1: 817 - Dessinées Vue Face
+      option_part_drawing_type_2: 818 - Dessinées Vue Contre-face
       option_part_drawing_type_help: |
-        818 - Permet d'afficher ou masquer la forme réelle des pièces ainsi que leurs usinages sur le diagramme.
+        819 - Permet d'afficher ou masquer la forme réelle des pièces ainsi que leurs usinages sur le diagramme.
 
         *Cette option doit être activée pour que les formes puissent être exportées.*
-      option_colored_part: 819 - Colorier les pièces
-      option_colored_part_0: 820 - Non
-      option_colored_part_1: 821 - Oui
+      option_colored_part: 820 - Colorier les pièces
+      option_colored_part_0: 821 - Non
+      option_colored_part_1: 822 - Oui
       option_colored_part_help: |
-        822 - ...
-      option_time_limit: 823 - Time limit
+        823 - ...
+      option_time_limit: 824 - Time limit
       option_time_limit_help: |
-        824 - ...
-      option_not_anytime_tree_search_queue_size: 825 - Queue size
+        825 - ...
+      option_not_anytime_tree_search_queue_size: 826 - Queue size
       option_not_anytime_tree_search_queue_size_help: |
-        826 - ...
-      option_verbosity_level: 827 - Verbosity level
+        827 - ...
+      option_verbosity_level: 828 - Verbosity level
       option_verbosity_level_help: |
-        828 - ...
+        829 - ...
       tooltip:
-        scroll_to_block_1d: 829 - Défiler vers la première barre ou bande
-        scroll_to_block_2d: 830 - Défiler vers le premier panneau ou feuille
+        scroll_to_block_1d: 830 - Défiler vers la première barre ou bande
+        scroll_to_block_2d: 831 - Défiler vers le premier panneau ou feuille
       list:
-        summary: 831 - Récapitulatif
-        trimming: 832 - Marge
-        stats: 833 - Statistiques
-        total_cut_count: 834 - Nombre de coupes
-        total_cut_length: 835 - Longueur de coupe
-        efficiency: 836 - Efficacité
-        count: 837 - Qte.
-        length: 838 - Longueur
-        width: 839 - Largeur
-        total_length: 840 - Σ Longueurs
-        total_area: 841 - Σ Surfaces
-        total_cost: 842 - Σ Coûts
-        total_part_count: 843 - Σ Pièces
-        total_used: 844 - Total utilisé
-        bin_1d_dimensional: 845 - Barre
-        bin_1d_dimensional_type_0: 846 - Barre standard
-        bin_1d_dimensional_type_1: 847 - Reste de barre
-        bin_1d_edge: 848 - Bande
-        bin_1d_edge_type_0: 849 - Bande standard
-        bin_1d_edge_type_1: 850 - Reste de bande
-        bin_2d_sheet_good: 851 - Panneau
-        bin_2d_sheet_good_type_0: 852 - Panneau standard
-        bin_2d_sheet_good_type_1: 853 - Reste de panneau
-        bin_2d_veneer: 854 - Feuille
-        bin_2d_veneer_type_0: 855 - Feuille standard
-        bin_2d_veneer_type_1: 856 - Reste de feuille
-        unused: 857 - Inutilisée
-        parts: 858 - {{ count }} pièce
-        parts_plural: 859 - {{ count }} pièces
+        summary: 832 - Récapitulatif
+        trimming: 833 - Marge
+        stats: 834 - Statistiques
+        total_cut_count: 835 - Nombre de coupes
+        total_cut_length: 836 - Longueur de coupe
+        efficiency: 837 - Efficacité
+        count: 838 - Qte.
+        length: 839 - Longueur
+        width: 840 - Largeur
+        total_length: 841 - Σ Longueurs
+        total_area: 842 - Σ Surfaces
+        total_cost: 843 - Σ Coûts
+        total_part_count: 844 - Σ Pièces
+        total_used: 845 - Total utilisé
+        bin_1d_dimensional: 846 - Barre
+        bin_1d_dimensional_type_0: 847 - Barre standard
+        bin_1d_dimensional_type_1: 848 - Reste de barre
+        bin_1d_edge: 849 - Bande
+        bin_1d_edge_type_0: 850 - Bande standard
+        bin_1d_edge_type_1: 851 - Reste de bande
+        bin_2d_sheet_good: 852 - Panneau
+        bin_2d_sheet_good_type_0: 853 - Panneau standard
+        bin_2d_sheet_good_type_1: 854 - Reste de panneau
+        bin_2d_veneer: 855 - Feuille
+        bin_2d_veneer_type_0: 856 - Feuille standard
+        bin_2d_veneer_type_1: 857 - Reste de feuille
+        unused: 858 - Inutilisée
+        parts: 859 - {{ count }} pièce
+        parts_plural: 860 - {{ count }} pièces
       error:
-        no_part: 860 - Aucune pièce.
-        no_bin_1d: 861 - Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.
-        no_bin_2d: 862 - Aucun panneau ou aucune feuille standard n'est sélectionné et aucun reste n'est défini.
-        no_solution: 863 - Aucune solution n'a été trouvée.
+        no_part: 861 - Aucune pièce.
+        no_bin_1d: 862 - Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.
+        no_bin_2d: 863 - Aucun panneau ou aucune feuille standard n'est sélectionné et aucun reste n'est défini.
+        no_solution: 864 - Aucune solution n'a été trouvée.
       warning:
-        is_part_selection: 864 - Ce calepinage se limite aux **pièces sélectionnées**.
+        is_part_selection: 865 - Ce calepinage se limite aux **pièces sélectionnées**.
     labels:
-      title: 865 - Etiquettes
-      options_layout: 866 - Composition
-      options_settings: 867 - Configuration
-      options_part_order_strategy: 868 - Tri
-      options_offset: 869 - Décalage
-      size: 870 - Taille réelle de l'étiquette
-      add_element: 871 - Ajouter un élément
+      title: 866 - Etiquettes
+      options_layout: 867 - Composition
+      options_settings: 868 - Configuration
+      options_part_order_strategy: 869 - Tri
+      options_offset: 870 - Décalage
+      size: 871 - Taille réelle de l'étiquette
+      add_element: 872 - Ajouter un élément
       duplicate_element: $t(default.duplicate)
       remove_element: $t(default.remove)
       remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
-        875 - Réorganiser les propriétés suivantes pour définir la stratégie de tri des étiquettes.
+        876 - Réorganiser les propriétés suivantes pour définir la stratégie de tri des étiquettes.
         Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
       offset_help: |
-        876 - Le *décalage* vous permet de définir la position de la **première étiquette** sur la **première page**.
+        877 - Le *décalage* vous permet de définir la position de la **première étiquette** sur la **première page**.
         Sélectionnez la case qui correspond à votre choix.
-      option_page: 877 - Papier
-      option_page_format: 878 - Format
-      option_page_format_portrait: 879 - Portrait
-      option_page_format_landscape: 880 - Paysage
-      option_page_format_custom: 881 - Personnalisé
-      option_page_width: 882 - Largeur
-      option_page_height: 883 - Hauteur
-      option_margin: 884 - Marges
-      option_margin_top: 885 - Haut
-      option_margin_right: 886 - Droite
-      option_margin_bottom: 887 - Bas
-      option_margin_left: 888 - Gauche
-      option_spacing: 889 - Espacements
-      option_spacing_h: 890 - Horizontal
-      option_spacing_v: 891 - Vertical
-      option_grid: 892 - Etiquettes par page
-      option_col_count: 893 - Colonnes
-      option_row_count: 894 - Lignes
-      option_cutting_marks: 895 - Repères
-      option_cutting_marks_0: 896 - Aucun
-      option_cutting_marks_1: 897 - Imprimés
-      option_formula: 898 - Valeur
-      option_size: 899 - Taille
-      option_custom_formula: 900 - Formule
-      option_anchor: 901 - Ancrage
-      option_anchor_start: 902 - Début - Bas
-      option_anchor_middle: 903 - Milieu - Bas
-      option_anchor_end: 904 - Fin - Bas
-      option_anchor_start_top: 905 - Début - Haut
-      option_anchor_middle_top: 906 - Milieu - Haut
-      option_anchor_end_top: 907 - Fin - Haut
-      option_color: 908 - Couleur
+      option_page: 878 - Papier
+      option_page_format: 879 - Format
+      option_page_format_portrait: 880 - Portrait
+      option_page_format_landscape: 881 - Paysage
+      option_page_format_custom: 882 - Personnalisé
+      option_page_width: 883 - Largeur
+      option_page_height: 884 - Hauteur
+      option_margin: 885 - Marges
+      option_margin_top: 886 - Haut
+      option_margin_right: 887 - Droite
+      option_margin_bottom: 888 - Bas
+      option_margin_left: 889 - Gauche
+      option_spacing: 890 - Espacements
+      option_spacing_h: 891 - Horizontal
+      option_spacing_v: 892 - Vertical
+      option_grid: 893 - Etiquettes par page
+      option_col_count: 894 - Colonnes
+      option_row_count: 895 - Lignes
+      option_cutting_marks: 896 - Repères
+      option_cutting_marks_0: 897 - Aucun
+      option_cutting_marks_1: 898 - Imprimés
+      option_formula: 899 - Valeur
+      option_size: 900 - Taille
+      option_custom_formula: 901 - Formule
+      option_anchor: 902 - Ancrage
+      option_anchor_start: 903 - Début - Bas
+      option_anchor_middle: 904 - Milieu - Bas
+      option_anchor_end: 905 - Fin - Bas
+      option_anchor_start_top: 906 - Début - Haut
+      option_anchor_middle_top: 907 - Milieu - Haut
+      option_anchor_end_top: 908 - Fin - Haut
+      option_color: 909 - Couleur
       formula:
-        custom: 909 - Formule
-        custom_qr_code: 910 - QR Code
-        part_number: 911 - Numéro
-        part_name: 912 - Désignation
-        part_description: 913 - Description
-        part_entity_named_path: 914 - Chemin d'instance
-        part_entity_name: 915 - Nom d'instance
-        part_bin: 916 - Conteneur
-        part_cutting_size: 917 - Taille de débit
-        part_cutting_length: 918 - Longueur de débit
-        part_cutting_width: 919 - Largeur de débit
-        part_cutting_thickness: 920 - Épaisseur de débit
-        part_edge_cutting_size: 921 - Taille débit chants
-        part_edge_cutting_length: 922 - Longueur débit chants
-        part_edge_cutting_width: 923 - Largeur débit chants
-        part_size: 924 - Taille capable
-        part_length: 925 - Longueur capable
-        part_width: 926 - Largeur capable
-        part_thickness: 927 - Épaisseur capable
-        part_tags: 928 - Badges
-        part_batch: 929 - Lot
-        part_edge_ymin: 930 - Chant longueur 1
-        part_edge_ymax: 931 - Chant longueur 2
-        part_edge_xmin: 932 - Chant largeur 1
-        part_edge_xmax: 933 - Chant largeur 2
-        part_face_zmin: 934 - Placage Contre-face
-        part_face_zmax: 935 - Placage Face
-        thumbnail_proportional_drawing: 936 - Vignette aperçu
-        thumbnail_proportional: 937 - Vignette proportionnelle
-        thumbnail_square: 938 - Vignette carrée
-        group_material: 939 - Matière / Dimension
-        group_material_name: 940 - Nom de matière
-        group_std_dimension: 941 - Dimension standard
-        filename: 942 - Nom du fichier
-        model_name: 943 - Nom du modèle
-        page_name: 944 - Nom de la scène
-        length_unit: 945 - Unité
-        generated_at: 946 - Date et heure
+        custom: 910 - Formule
+        custom_qr_code: 911 - QR Code
+        part_number: 912 - Numéro
+        part_name: 913 - Désignation
+        part_description: 914 - Description
+        part_entity_named_path: 915 - Chemin d'instance
+        part_entity_name: 916 - Nom d'instance
+        part_bin: 917 - Conteneur
+        part_cutting_size: 918 - Taille de débit
+        part_cutting_length: 919 - Longueur de débit
+        part_cutting_width: 920 - Largeur de débit
+        part_cutting_thickness: 921 - Épaisseur de débit
+        part_edge_cutting_size: 922 - Taille débit chants
+        part_edge_cutting_length: 923 - Longueur débit chants
+        part_edge_cutting_width: 924 - Largeur débit chants
+        part_size: 925 - Taille capable
+        part_length: 926 - Longueur capable
+        part_width: 927 - Largeur capable
+        part_thickness: 928 - Épaisseur capable
+        part_tags: 929 - Badges
+        part_batch: 930 - Lot
+        part_edge_ymin: 931 - Chant longueur 1
+        part_edge_ymax: 932 - Chant longueur 2
+        part_edge_xmin: 933 - Chant largeur 1
+        part_edge_xmax: 934 - Chant largeur 2
+        part_face_zmin: 935 - Placage Contre-face
+        part_face_zmax: 936 - Placage Face
+        thumbnail_proportional_drawing: 937 - Vignette aperçu
+        thumbnail_proportional: 938 - Vignette proportionnelle
+        thumbnail_square: 939 - Vignette carrée
+        group_material: 940 - Matière / Dimension
+        group_material_name: 941 - Nom de matière
+        group_std_dimension: 942 - Dimension standard
+        filename: 943 - Nom du fichier
+        model_name: 944 - Nom du modèle
+        page_name: 945 - Nom de la scène
+        length_unit: 946 - Unité
+        generated_at: 947 - Date et heure
       error:
-        invalid_size: 947 - Les paramètres de configuration saisis ne permettent pas de définir une taille d'étiquette valide.
+        invalid_size: 948 - Les paramètres de configuration saisis ne permettent pas de définir une taille d'étiquette valide.
       warning:
-        is_group_selection: 948 - Les pièces contenues dans les **groupes masqués** de votre fiche de débit n'auront pas d'étiquette.
-        is_part_selection: 949 - Ces étiquettes se limitent aux **pièces sélectionnées**.
-        formula_not_available: 950 - Non disponible dans ce context
+        is_group_selection: 949 - Les pièces contenues dans les **groupes masqués** de votre fiche de débit n'auront pas d'étiquette.
+        is_part_selection: 950 - Ces étiquettes se limitent aux **pièces sélectionnées**.
+        formula_not_available: 951 - Non disponible dans ce context
     layout:
-      title: 951 - Dessin
-      to_layout: 952 - Exporter vers Layout
-      options_layout: 953 - Composition
-      options_settings: 954 - Configuration
-      option_parts: 955 - Pièces
-      option_parts_colored: 956 - Couleur
-      option_parts_colored_0: 957 - Sans couleur
-      option_parts_colored_1: 958 - Couleur de leur matière
-      option_parts_colored_help: 959 - Permet de choisir l'aspect des pièces.
-      option_parts_opacity: 960 - Opacité
-      option_parts_opacity_0: 961 - Transparente
-      option_parts_opacity_1: 962 - Opaque
-      option_parts_opacity_help: 963 - Permet de choisir l'opacité des pièces.
-      option_pins: 964 - Epingles
-      option_pins_hidden: 965 - Affichage
-      option_pins_hidden_0: 966 - Avec épingles
-      option_pins_hidden_1: 967 - Sans épingle
-      option_pins_hidden_help: 968 - Affiche ou masque les épingles pointant les pièces pour indiquer leur numéro ou désignation.
-      option_pins_colored: 969 - Couleur
-      option_pins_colored_0: 970 - Sans couleur
-      option_pins_colored_1: 971 - Couleur de la pièce
-      option_pins_colored_help: 972 - Permet de choisir la couleur des pastilles des épingles.
-      option_pins_formula: 973 - Formule
-      option_pins_formula_help: 974 - Permet d'écrire du code *Ruby* pour personnaliser le texte des pastilles des épingles.
-      option_pins_length: 975 - Longueur
-      option_pins_length_0: 976 - Sans flèche
-      option_pins_length_1: 977 - Petite
-      option_pins_length_2: 978 - Moyenne
-      option_pins_length_3: 979 - Grande
-      option_pins_length_help: 980 - Permet de choisir la longueur de la flèche des épingles.
-      option_pins_direction: 981 - Direction
-      option_pins_direction_0: 982 - Le long de l'axe Rouge
-      option_pins_direction_1: 983 - Le long de l'axe Vert
-      option_pins_direction_2: 984 - Le long de l'axe Bleu
-      option_pins_direction_3: 985 - Pointe le centre du groupe parent
-      option_pins_direction_4: 986 - Pointe le centre de la sélection
-      option_pins_direction_help: 987 - Permet de choisir la direction des épingles afin d'adapter leur lisibilité en fonction du dessin.
-      option_page: 988 - Papier
-      option_page_format: 989 - Format
-      option_page_format_portrait: 990 - Portrait
-      option_page_format_landscape: 991 - Paysage
-      option_page_format_custom: 992 - Personnalisé
-      option_page_width: 993 - Largeur
-      option_page_height: 994 - Hauteur
-      option_page_header: 995 - Entête
-      option_page_header_0: 996 - Sans
-      option_page_header_1: 997 - Avec
+      title: 952 - Dessin
+      to_layout: 953 - Exporter vers Layout
+      options_layout: 954 - Composition
+      options_settings: 955 - Configuration
+      option_parts: 956 - Pièces
+      option_parts_colored: 957 - Couleur
+      option_parts_colored_0: 958 - Sans couleur
+      option_parts_colored_1: 959 - Couleur de leur matière
+      option_parts_colored_help: 960 - Permet de choisir l'aspect des pièces.
+      option_parts_opacity: 961 - Opacité
+      option_parts_opacity_0: 962 - Transparente
+      option_parts_opacity_1: 963 - Opaque
+      option_parts_opacity_help: 964 - Permet de choisir l'opacité des pièces.
+      option_pins: 965 - Epingles
+      option_pins_hidden: 966 - Affichage
+      option_pins_hidden_0: 967 - Avec épingles
+      option_pins_hidden_1: 968 - Sans épingle
+      option_pins_hidden_help: 969 - Affiche ou masque les épingles pointant les pièces pour indiquer leur numéro ou désignation.
+      option_pins_colored: 970 - Couleur
+      option_pins_colored_0: 971 - Sans couleur
+      option_pins_colored_1: 972 - Couleur de la pièce
+      option_pins_colored_help: 973 - Permet de choisir la couleur des pastilles des épingles.
+      option_pins_formula: 974 - Formule
+      option_pins_formula_help: 975 - Permet d'écrire du code *Ruby* pour personnaliser le texte des pastilles des épingles.
+      option_pins_length: 976 - Longueur
+      option_pins_length_0: 977 - Sans flèche
+      option_pins_length_1: 978 - Petite
+      option_pins_length_2: 979 - Moyenne
+      option_pins_length_3: 980 - Grande
+      option_pins_length_help: 981 - Permet de choisir la longueur de la flèche des épingles.
+      option_pins_direction: 982 - Direction
+      option_pins_direction_0: 983 - Le long de l'axe Rouge
+      option_pins_direction_1: 984 - Le long de l'axe Vert
+      option_pins_direction_2: 985 - Le long de l'axe Bleu
+      option_pins_direction_3: 986 - Pointe le centre du groupe parent
+      option_pins_direction_4: 987 - Pointe le centre de la sélection
+      option_pins_direction_help: 988 - Permet de choisir la direction des épingles afin d'adapter leur lisibilité en fonction du dessin.
+      option_page: 989 - Papier
+      option_page_format: 990 - Format
+      option_page_format_portrait: 991 - Portrait
+      option_page_format_landscape: 992 - Paysage
+      option_page_format_custom: 993 - Personnalisé
+      option_page_width: 994 - Largeur
+      option_page_height: 995 - Hauteur
+      option_page_header: 996 - Entête
+      option_page_header_0: 997 - Sans
+      option_page_header_1: 998 - Avec
       option_page_header_help: |
-        998 - Permet de choisir si la page à imprimer contient une entête avec le nom du document, sa description, la date, l'unité et l'échelle.
+        999 - Permet de choisir si la page à imprimer contient une entête avec le nom du document, sa description, la date, l'unité et l'échelle.
         Sans entête, le dessin d'ensemble prendra toute la page.
-      option_camera: 999 - Camera
-      option_camera_view: 1000 - Vue
-      option_camera_view_custom: 1001 - Personnalisée
-      option_camera_zoom: 1002 - Echelle
-      option_camera_zoom_auto: 1003 - Automatique
-      option_camera_zoom_custom: 1004 - Personnalisée
-      option_camera_target: 1005 - Position
-      option_camera_target_auto: 1006 - Automatique
-      option_camera_target_custom: 1007 - Personnalisée
-      option_explode: 1008 - Éclaté
+      option_camera: 1000 - Camera
+      option_camera_view: 1001 - Vue
+      option_camera_view_custom: 1002 - Personnalisée
+      option_camera_zoom: 1003 - Echelle
+      option_camera_zoom_auto: 1004 - Automatique
+      option_camera_zoom_custom: 1005 - Personnalisée
+      option_camera_target: 1006 - Position
+      option_camera_target_auto: 1007 - Automatique
+      option_camera_target_custom: 1008 - Personnalisée
+      option_explode: 1009 - Éclaté
       error:
-        no_part: 1009 - Il n'y a aucune pièce à dessiner.
-        failed_to_save_as_skp: 1010 - Echec de l'écriture du fichier SKP à envoyer à Layout.
+        no_part: 1010 - Il n'y a aucune pièce à dessiner.
+        failed_to_save_as_skp: 1011 - Echec de l'écriture du fichier SKP à envoyer à Layout.
         failed_to_layout: |
-          1011 - Erreur lors de l'écriture du fichier Layout : *{{ error }}*
+          1012 - Erreur lors de l'écriture du fichier Layout : *{{ error }}*
 
           **Vérifiez que le fichier n'est pas ouvert dans Layout.**
       warning:
-        is_group_selection: 1012 - Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas dessinées.
-        is_part_selection: 1013 - Ce dessin d'ensemble se limite aux **pièces sélectionnées**.
+        is_group_selection: 1013 - Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas dessinées.
+        is_part_selection: 1014 - Ce dessin d'ensemble se limite aux **pièces sélectionnées**.
     write:
-      title: 1014 - Exportation de pièces
+      title: 1015 - Exportation de pièces
       info_2d: |
-        1015 - Ce module vous permet d'exporter la **projection 2D** des pièces sous forme de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        1016 - Ce module vous permet d'exporter la **projection 2D** des pièces sous forme de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
       info_3d: |
-        1016 - Ce module vous permet d'exporter la **géométrie 3D** des pièces sous forme de fichiers au format [STL](https://wikipedia.org/wiki/STL_(file_format)) ou [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
-      option_file_format: 1017 - Format
+        1017 - Ce module vous permet d'exporter la **géométrie 3D** des pièces sous forme de fichiers au format [STL](https://wikipedia.org/wiki/STL_(file_format)) ou [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
+      option_file_format: 1018 - Format
       option_file_format_help: |
-        1018 - Permet de choisir le format de fichier à exporter.
-      option_unit: 1019 - Unité
+        1019 - Permet de choisir le format de fichier à exporter.
+      option_unit: 1020 - Unité
       option_unit_help: |
-        1020 - Permet de choisir l'unité utilisée dans le fichier exporté.
-      option_use_count: 1021 - Quantités
-      option_use_count_0: 1022 - Un seul fichier par pièce
-      option_use_count_1: 1023 - Un fichier par instance de pièce
+        1021 - Permet de choisir l'unité utilisée dans le fichier exporté.
+      option_use_count: 1022 - Quantités
+      option_use_count_0: 1023 - Un seul fichier par pièce
+      option_use_count_1: 1024 - Un fichier par instance de pièce
       option_use_count_help: |
-        1024 - Permet de choisir si le nombre d'instances d'une pièce est considéré.
-      option_part_drawing_type: 1025 - Projection
+        1025 - Permet de choisir si le nombre d'instances d'une pièce est considéré.
+      option_part_drawing_type: 1026 - Projection
       option_part_drawing_type_help: |
-        1026 - Permet de choisir la vue exportée.
-      option_faces: 1027 - Faces
-      option_faces_0: 1028 - Utiliser uniquement la face ciblée
-      option_faces_1: 1029 - Utiliser toutes les faces de la pièce
+        1027 - Permet de choisir la vue exportée.
+      option_faces: 1028 - Faces
+      option_faces_0: 1029 - Utiliser uniquement la face ciblée
+      option_faces_1: 1030 - Utiliser toutes les faces de la pièce
       option_faces_help: |
-        1030 - Permet de choisir si la recherche de la forme de la pièce se fait sur toutes ses faces ou seulement sur la face ciblée.
-      option_anchor: 1031 - Point d'ancrage
-      option_anchor_0: 1032 - Par défaut
-      option_anchor_1: 1033 - Projeter l'origine de la pièce
+        1031 - Permet de choisir si la recherche de la forme de la pièce se fait sur toutes ses faces ou seulement sur la face ciblée.
+      option_anchor: 1032 - Point d'ancrage
+      option_anchor_0: 1033 - Par défaut
+      option_anchor_1: 1034 - Projeter l'origine de la pièce
       option_anchor_help: |
-        1034 - Permet d'activer la projection de l'origine des axes de la pièce comme point d'ancrage.
-      option_switch_yz: 1035 - Axe vertical
-      option_switch_yz_0: 1036 - Z vertical
-      option_switch_yz_1: 1037 - Y vertical
+        1035 - Permet d'activer la projection de l'origine des axes de la pièce comme point d'ancrage.
+      option_switch_yz: 1036 - Axe vertical
+      option_switch_yz_0: 1037 - Z vertical
+      option_switch_yz_1: 1038 - Y vertical
       option_switch_yz_help: |
-        1038 - Permet de permuter les axes Y et Z pour définir l'axe vertical de la pièce.
-      option_smoothing: 1039 - Lissage
+        1039 - Permet de permuter les axes Y et Z pour définir l'axe vertical de la pièce.
+      option_smoothing: 1040 - Lissage
       option_smoothing_0: $t(default.no)
-      option_smoothing_1: 1041 - Lisser les cercles et arcs (Expérimental)
+      option_smoothing_1: 1042 - Lisser les cercles et arcs (Expérimental)
       option_smoothing_help: |
-        1042 - Permet d'activer la détection des cercles et arcs.
+        1043 - Permet d'activer la détection des cercles et arcs.
 
         *Cette option ne permet pas de détecter les autres types de courbes.*
-      option_merge_holes: 1043 - Décomposition
-      option_merge_holes_0: 1044 - Par défaut
-      option_merge_holes_1: 1045 - Contour + Percements + Fusion
+      option_merge_holes: 1044 - Décomposition
+      option_merge_holes_0: 1045 - Par défaut
+      option_merge_holes_1: 1046 - Contour + Percements + Fusion
       option_merge_holes_help: |
-        1046 - **Par defaut**
+        1047 - **Par defaut**
         La forme de la pièce est exportée avec une couche par profondeur.
 
         **Contour + Percements + Fusion**
         Active la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
-      option_include_paths: 1047 - Tracés
+      option_include_paths: 1048 - Tracés
       option_include_paths_0: $t(default.no)
-      option_include_paths_1: 1049 - Utiliser les arêtes non associées à une face
+      option_include_paths_1: 1050 - Utiliser les arêtes non associées à une face
       option_include_paths_help: |
-        1050 - Permet d'activer l'utilisation des arêtes non associées à une face et contenues dans la pièce, pour les exporter comme tracé.
-      option_parts: 1051 - Pièces
+        1051 - Permet d'activer l'utilisation des arêtes non associées à une face et contenues dans la pièce, pour les exporter comme tracé.
+      option_parts: 1052 - Pièces
       option_parts_help: |
-        1052 - Permet de choisir les couleurs des pièces.
-      option_parts_holes: 1053 - Percements
+        1053 - Permet de choisir les couleurs des pièces.
+      option_parts_holes: 1054 - Percements
       option_parts_holes_help: |
-        1054 - Permet de choisir les couleurs des percements des pièces.
-      option_parts_paths: 1055 - Tracés
+        1055 - Permet de choisir les couleurs des percements des pièces.
+      option_parts_paths: 1056 - Tracés
       option_parts_paths_help: |
-        1056 - Permet de choisir les couleurs des tracés.
+        1057 - Permet de choisir les couleurs des tracés.
 
         *La couleur de remplissage ne sera utilisée que pour les tracés fermés.*
       error:
-        no_part: 1057 - Aucune pièce à exporter.
+        no_part: 1058 - Aucune pièce à exporter.
       warning:
-        is_group_selection: 1058 - Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
-        is_part_selection: 1059 - L'exportation se limitent aux **pièces sélectionnées**.
+        is_group_selection: 1059 - Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
+        is_part_selection: 1060 - L'exportation se limitent aux **pièces sélectionnées**.
     snippet:
-      hello: 1060 - Bonjour
-      number: 1061 - Numéro
-      name: 1062 - Désignation
-      number_and_name: 1063 - Numéro et désignation
-      number_without_hardware: 1064 - Numéro (sans les accessoires)
-      size: 1065 - Taille capable
-      area: 1066 - Surface capable
-      volume: 1067 - Volume capable
+      hello: 1061 - Bonjour
+      number: 1062 - Numéro
+      name: 1063 - Désignation
+      number_and_name: 1064 - Numéro et désignation
+      number_without_hardware: 1065 - Numéro (sans les accessoires)
+      size: 1066 - Taille capable
+      area: 1067 - Surface capable
+      volume: 1068 - Volume capable
     error:
-      no_model: 1068 - Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
-      no_entities: 1069 - Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
-      no_component_in_selection: 1070 - Aucune instance de composant visible n'a été détectée dans votre sélection.
-      no_component_in_model: 1071 - Aucune instance de composant visible n'a été détectée sur votre scène.
-      unknow_part: 1072 - La pièce sélectionnée n'existe pas dans la fiche de débit.
-      obsolete_cutlist: 1073 - Impossible, la fiche de débit générée est obsolète. Re-générez là.
+      no_model: 1069 - Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
+      no_entities: 1070 - Votre modèle est vide. Il va falloir m'en donner un peu plus ;)
+      no_component_in_selection: 1071 - Aucune instance de composant visible n'a été détectée dans votre sélection.
+      no_component_in_model: 1072 - Aucune instance de composant visible n'a été détectée sur votre scène.
+      unknow_part: 1073 - La pièce sélectionnée n'existe pas dans la fiche de débit.
+      obsolete_cutlist: 1074 - Impossible, la fiche de débit générée est obsolète. Re-générez là.
     warning:
-      is_entity_selection: 1074 - Seuls les éléments sélectionnés dans votre modèle ont été pris en compte.
-      no_typed_materials_in_model: 1075 - Votre modèle n'utilise aucune matière ayant un type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 1076 - Votre sélection n'utilise aucune matière ayant un type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
-      export_empty: 1077 - Votre export ne contient aucune pièce.
+      is_entity_selection: 1075 - Seuls les éléments sélectionnés dans votre modèle ont été pris en compte.
+      no_typed_materials_in_model: 1076 - Votre modèle n'utilise aucune matière ayant un type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 1077 - Votre sélection n'utilise aucune matière ayant un type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
+      export_empty: 1078 - Votre export ne contient aucune pièce.
     success:
-      part_selected: 1078 - {{ count }} pièce sélectionnée dans la fiche de débit.
-      part_selected_plural: 1079 - {{ count }} pièces sélectionnées dans la fiche de débit.
+      part_selected: 1079 - {{ count }} pièce sélectionnée dans la fiche de débit.
+      part_selected_plural: 1080 - {{ count }} pièces sélectionnées dans la fiche de débit.
     tip:
       no_component: |
-        1080 - Les pièces que vous souhaitez voir apparaître dans la *fiche de débit* doivent être des instances de **composant**.
+        1081 - Les pièces que vous souhaitez voir apparaître dans la *fiche de débit* doivent être des instances de **composant**.
         Si vous utilisez uniquement des groupes, convertissez-les en composant.
         L'utilisation des composants permet de répliquer les pièces identiques sans les dupliquer.
-      no_typed_materials: 1081 - Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**) dans l'onglet <i class="ladb-opencutlist-icon-materials"></i> **Matières**.
-    obsolete_base: 1082 - Pour rester synchronisé, vous devez re-générer la fiche de débit.
+      no_typed_materials: 1082 - Appliquez une matière sur les pièces que vous souhaitez voir dans votre fiche de débit. Et définissez le type de cette matière (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**) dans l'onglet <i class="ladb-opencutlist-icon-materials"></i> **Matières**.
+    obsolete_base: 1083 - Pour rester synchronisé, vous devez re-générer la fiche de débit.
   materials:
-    label: 1083 - Matières
-    title: 1084 - Matières
-    new: 1085 - Nouvelle matière
-    type_0: 1086 - Non défini
-    type_1: 1087 - Bois massif
-    type_2: 1088 - Panneau
-    type_3: 1089 - Barre
-    type_4: 1090 - Bande de chant
-    type_5: 1091 - Accessoire
-    type_6: 1092 - Feuille de placage
+    label: 1084 - Matières
+    title: 1085 - Matières
+    new: 1086 - Nouvelle matière
+    type_0: 1087 - Non défini
+    type_1: 1088 - Bois massif
+    type_2: 1089 - Panneau
+    type_3: 1090 - Barre
+    type_4: 1091 - Bande de chant
+    type_5: 1092 - Accessoire
+    type_6: 1093 - Feuille de placage
     tooltip:
-      type_0: 1093 - Type de matière '$t(tab.materials.type_0)'
-      type_1: 1094 - Type de matière '$t(tab.materials.type_1)'
-      type_2: 1095 - Type de matière '$t(tab.materials.type_2)'
-      type_3: 1096 - Type de matière '$t(tab.materials.type_3)'
-      type_4: 1097 - Type de matière '$t(tab.materials.type_4)'
-      type_5: 1098 - Type de matière '$t(tab.materials.type_5)'
-      type_6: 1099 - Type de matière '$t(tab.materials.type_6)'
+      type_0: 1094 - Type de matière '$t(tab.materials.type_0)'
+      type_1: 1095 - Type de matière '$t(tab.materials.type_1)'
+      type_2: 1096 - Type de matière '$t(tab.materials.type_2)'
+      type_3: 1097 - Type de matière '$t(tab.materials.type_3)'
+      type_4: 1098 - Type de matière '$t(tab.materials.type_4)'
+      type_5: 1099 - Type de matière '$t(tab.materials.type_5)'
+      type_6: 1100 - Type de matière '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: 1102 - Direction du fil
-      raw_estimated_0: 1103 - Estimé par le volume débité utile
-      colorized: 1104 - Cette teinte sera appliquée à la texture lors du rendu dans le modèle
-      texture_load: 1105 - Charger une nouvelle texture
-      texture_clear: 1106 - Effacer la texture
-      edit: 1107 - Éditer les propriétés de '{{ name }}'
-      set_current: 1108 - Colorier des pièces avec '{{ name }}'
-      open_url: 1109 - Ouvrir l'URL de la matière
+      grain_direction: 1103 - Direction du fil
+      raw_estimated_0: 1104 - Estimé par le volume débité utile
+      colorized: 1105 - Cette teinte sera appliquée à la texture lors du rendu dans le modèle
+      texture_load: 1106 - Charger une nouvelle texture
+      texture_clear: 1107 - Effacer la texture
+      edit: 1108 - Éditer les propriétés de '{{ name }}'
+      set_current: 1109 - Colorier des pièces avec '{{ name }}'
+      open_url: 1110 - Ouvrir l'URL de la matière
     menu:
-      import_from_skm: 1110 - Importer une matière (.skm)
-      purge_unused: 1111 - Purger les matières inutilisées
-      reset_prices: 1112 - Réinitialiser les prix de toutes les matières
+      import_from_skm: 1111 - Importer une matière (.skm)
+      purge_unused: 1112 - Purger les matières inutilisées
+      reset_prices: 1113 - Réinitialiser les prix de toutes les matières
       reset_prices_confirm: |
-        1113 - Vous êtes sur le point de réinitialiser les prix de toutes les matières de votre modèle.
+        1114 - Vous êtes sur le point de réinitialiser les prix de toutes les matières de votre modèle.
         Cette action est définitive. **Tous les prix seront remis à zéro.**
         Confirmez pour continuer.
-      reset_prices_success: 1114 - Les prix de toutes les matières ont été réinitialisés.
+      reset_prices_success: 1115 - Les prix de toutes les matières ont été réinitialisés.
     new_material:
-      title: 1115 - Créer une nouvelle matière
-      name: 1116 - Nom
-      name_warning: 1117 - Nom invalide
-      color: 1118 - Couleur
-      color_warning: 1119 - Couleur invalide
-      type: 1120 - Type
+      title: 1116 - Créer une nouvelle matière
+      name: 1117 - Nom
+      name_warning: 1118 - Nom invalide
+      color: 1119 - Couleur
+      color_warning: 1120 - Couleur invalide
+      type: 1121 - Type
     edit_material:
-      title: 1121 - Propriétés de la matière '{{ name }}'
-      general: 1122 - Générales
-      texture: 1123 - Texture
-      no_texture: 1124 - Sans texture
-      name: 1125 - Nom
-      type: 1126 - Type
-      description: 1127 - Description
-      url: 1128 - URL
-      cut_options: 1129 - Options de débit
-      estimate_options: 1130 - Options d'estimation
-      attributes: 1131 - Attributs
-      thickness: 1132 - Épaisseur
+      title: 1122 - Propriétés de la matière '{{ name }}'
+      general: 1123 - Générales
+      texture: 1124 - Texture
+      no_texture: 1125 - Sans texture
+      name: 1126 - Nom
+      type: 1127 - Type
+      description: 1128 - Description
+      url: 1129 - URL
+      cut_options: 1130 - Options de débit
+      estimate_options: 1131 - Options d'estimation
+      attributes: 1132 - Attributs
+      thickness: 1133 - Épaisseur
       thickness_help: |
-        1133 - Épaisseur finie de la matière.
+        1134 - Épaisseur finie de la matière.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      length_increase: 1134 - Surcote de longueur
-      length_increase_help: 1135 - Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
-      width_increase: 1136 - Surcote de largeur
-      width_increase_help: 1137 - Surcote appliquée sur la largeur capable pour définir la **largeur de débit**.
-      thickness_increase: 1138 - Surcote d'épaisseur
-      thickness_increase_help: 1139 - Surcote appliquée sur l'épaisseur capable pour définir l'**épaisseur de débit**.
-      std_lengths: 1140 - Longueurs standards
-      std_lengths_placeholder: 1141 - longueur ; ...
+      length_increase: 1135 - Surcote de longueur
+      length_increase_help: 1136 - Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
+      width_increase: 1137 - Surcote de largeur
+      width_increase_help: 1138 - Surcote appliquée sur la largeur capable pour définir la **largeur de débit**.
+      thickness_increase: 1139 - Surcote d'épaisseur
+      thickness_increase_help: 1140 - Surcote appliquée sur l'épaisseur capable pour définir l'**épaisseur de débit**.
+      std_lengths: 1141 - Longueurs standards
+      std_lengths_placeholder: 1142 - longueur ; ...
       std_lengths_help: |
-        1142 - Longueurs standards des barres ou bandes.
+        1143 - Longueurs standards des barres ou bandes.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      std_widths: 1143 - Largeurs standards
-      std_widths_placeholder: 1144 - largeur ; ...
+      std_widths: 1144 - Largeurs standards
+      std_widths_placeholder: 1145 - largeur ; ...
       std_widths_help: |
-        1145 - Largeurs standards des bandes.
+        1146 - Largeurs standards des bandes.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      std_thicknesses: 1146 - Épaisseurs standards
-      std_thicknesses_placeholder: 1147 - épaisseur ; ...
+      std_thicknesses: 1147 - Épaisseurs standards
+      std_thicknesses_placeholder: 1148 - épaisseur ; ...
       std_thicknesses_help: |
-        1148 - Épaisseurs **brutes** standards.
+        1149 - Épaisseurs **brutes** standards.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
-      std_sections: 1149 - Sections standards
-      std_sections_placeholder: 1150 - largeur x hauteur ; ...
+      std_sections: 1150 - Sections standards
+      std_sections_placeholder: 1151 - largeur x hauteur ; ...
       std_sections_help: |
-        1151 - Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section.
+        1152 - Format attendu : **L**x**H**. Où **L** et **H** sont respectivement la *largeur* et la *hauteur* de la section.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      std_sizes: 1152 - Tailles standards
-      std_sizes_placeholder: 1153 - longueur x largeur ; ...
+      std_sizes: 1153 - Tailles standards
+      std_sizes_placeholder: 1154 - longueur x largeur ; ...
       std_sizes_help: |
-        1154 - Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau.
+        1155 - Format attendu : **L**x**l**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du panneau.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      grained: 1155 - Fil
-      grained_help: 1156 - Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.
-      grained_0: 1157 - Pas de fil
-      grained_1: 1158 - Le fil suit la longueur
-      edge_decremented: 1159 - Réduction
-      edge_decremented_help: 1160 - Permet d'indiquer si les dimensions de débit des pièces doivent être réduites de l'épaisseur des chants.
-      edge_decremented_0: 1161 - Pas de réduction
-      edge_decremented_1: 1162 - Réduire le débit de l'épaisseur du chant
-      raw_estimated: 1163 - Volume utilisé
+      grained: 1156 - Fil
+      grained_help: 1157 - Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.
+      grained_0: 1158 - Pas de fil
+      grained_1: 1159 - Le fil suit la longueur
+      edge_decremented: 1160 - Réduction
+      edge_decremented_help: 1161 - Permet d'indiquer si les dimensions de débit des pièces doivent être réduites de l'épaisseur des chants.
+      edge_decremented_0: 1162 - Pas de réduction
+      edge_decremented_1: 1163 - Réduire le débit de l'épaisseur du chant
+      raw_estimated: 1164 - Volume utilisé
       raw_estimated_help: |
-        1164 - Permet de définir le volume utilisé pour estimer la masse et le coût total des pièces de cette matière.
+        1165 - Permet de définir le volume utilisé pour estimer la masse et le coût total des pièces de cette matière.
 
         **Volume débité utile**
         Le volume total sera la somme des volumes de débit des pièces.
 
         **Volume de matière première nécessaire**
         Le volume total sera la somme des volumes des panneaux, feuilles, barres ou bandes des pièces après calepinage.
-      raw_estimated_0: 1165 - Volume débité utile
-      raw_estimated_1: 1166 - Volume de matière première nécessaire
-      std_attributes_dim_placeholder: 1167 - Choisissez une taille
-      std_volumic_masses: 1168 - Masse volumique
-      std_volumic_masses_help: 1169 - Permet de définir la masse volumique toutes tailles ainsi que pour chaque taille standard de la matière.
-      std_volumic_masses_add: 1170 - Ajouter une masse volumique
-      std_prices: 1171 - Prix
-      std_prices_help: 1172 - Permet de définir le prix toutes tailles ainsi que pour chaque taille standard de la matière.
-      std_prices_add: 1173 - Ajouter un prix
-      texture_width: 1174 - Largeur
-      texture_height: 1175 - Hauteur
-      export_to_skm: 1176 - Exporter (.skm)
+      raw_estimated_0: 1166 - Volume débité utile
+      raw_estimated_1: 1167 - Volume de matière première nécessaire
+      std_attributes_dim_placeholder: 1168 - Choisissez une taille
+      std_volumic_masses: 1169 - Masse volumique
+      std_volumic_masses_help: 1170 - Permet de définir la masse volumique toutes tailles ainsi que pour chaque taille standard de la matière.
+      std_volumic_masses_add: 1171 - Ajouter une masse volumique
+      std_prices: 1172 - Prix
+      std_prices_help: 1173 - Permet de définir le prix toutes tailles ainsi que pour chaque taille standard de la matière.
+      std_prices_add: 1174 - Ajouter un prix
+      texture_width: 1175 - Largeur
+      texture_height: 1176 - Hauteur
+      export_to_skm: 1177 - Exporter (.skm)
     texture_load:
-      title: 1177 - Charger une image
+      title: 1178 - Charger une image
     import_from_skm:
-      title: 1178 - Importer un fichier .skm
+      title: 1179 - Importer un fichier .skm
+      ask_replace: |
+        1180 - Une matière "{{ name }}" existe déjà.
+        Souhaitez-vous la remplacer par celle que vous importez ?
     export_to_skm:
-      title: 1179 - Exporter un fichier .skm
+      title: 1181 - Exporter un fichier .skm
     option:
-      minimize_on_smart_paint: 1180 - Réduire après *'Colorier des pièces avec...'*
-      minimize_on_smart_paint_help: 1181 - Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'Colorier des pièces avec...'* est utilisée.
-      general: 1182 - Générales
-      material_order_strategy: 1183 - Tri des matières
+      minimize_on_smart_paint: 1182 - Réduire après *'Colorier des pièces avec...'*
+      minimize_on_smart_paint_help: 1183 - Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'Colorier des pièces avec...'* est utilisée.
+      general: 1184 - Générales
+      material_order_strategy: 1185 - Tri des matières
       material_order_strategy_help: |
-        1184 - Réorganiser les propriétés suivantes pour définir la stratégie de tri des matières dans la liste.
+        1186 - Réorganiser les propriétés suivantes pour définir la stratégie de tri des matières dans la liste.
         Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
-      property_type: 1185 - Type
-      property_name: 1186 - Nom
+      property_type: 1187 - Type
+      property_name: 1188 - Nom
     delete:
       message: |
-        1187 - Vous êtes sur le point de supprimer la matière **{{ material_name }}** de votre modèle.
+        1189 - Vous êtes sur le point de supprimer la matière **{{ material_name }}** de votre modèle.
         Confirmez pour continuer.
     duplicate:
       message: |
-        1188 - Choisissez le nom de la nouvelle matière copie de **{{ material_name }}**.
+        1190 - Choisissez le nom de la nouvelle matière copie de **{{ material_name }}**.
     error:
-      no_model: 1189 - Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
-      no_materials: 1190 - Votre modèle ne contient aucune matière.
-      material_not_found: 1191 - Matière introuvable.
-      failed_import_skm_file: 1192 - Une erreur s'est produite lors de l'importation du fichier .skm. **{{ error }}**
-      failed_export_skm_file: 1193 - Une erreur s'est produite lors de l'exportation du fichier .skm. **{{ error }}**
-      failed_deleting_material: 1194 - Une erreur s'est produite lors de la suppression de la matière. **{{ error }}**
-      failed_duplicating_material: 1195 - Une erreur s'est produite lors de duplication de la matière. **{{ error }}**
-      invalid_image_file: 1196 - Image invalide
-    obsolete_base: 1197 - Pour rester synchronisé, vous devez rafraîchir la liste de matières.
+      no_model: 1191 - Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
+      no_materials: 1192 - Votre modèle ne contient aucune matière.
+      material_not_found: 1193 - Matière introuvable.
+      failed_import_skm_file: 1194 - Une erreur s'est produite lors de l'importation du fichier .skm. **{{ error }}**
+      failed_export_skm_file: 1195 - Une erreur s'est produite lors de l'exportation du fichier .skm. **{{ error }}**
+      failed_deleting_material: 1196 - Une erreur s'est produite lors de la suppression de la matière. **{{ error }}**
+      failed_duplicating_material: 1197 - Une erreur s'est produite lors de duplication de la matière. **{{ error }}**
+      invalid_image_file: 1198 - Image invalide
+    obsolete_base: 1199 - Pour rester synchronisé, vous devez rafraîchir la liste de matières.
   outliner:
-    label: 1198 - Structure
-    title: 1199 - Structure
-    list: 1200 - Arborescence des entités
-    nodes: 1201 - Instances
-    toggle_hidden: 1202 - Instances masquées
-    type_0: 1203 - Modèle
-    type_1: 1204 - Groupe
-    type_2: 1205 - Composant
-    type_3: 1206 - Pièce
+    label: 1200 - Structure
+    title: 1201 - Structure
+    list: 1202 - Arborescence des entités
+    nodes: 1203 - Instances
+    toggle_hidden: 1204 - Instances masquées
+    type_0: 1205 - Modèle
+    type_1: 1206 - Groupe
+    type_2: 1207 - Composant
+    type_3: 1208 - Pièce
     tooltip:
-      open_node_url: 1207 - Ouvrir l'URL de la pièce
+      open_node_url: 1209 - Ouvrir l'URL de la pièce
     edit_node:
-      title_model: 1208 - Propriétés du modèle
-      title_instance: 1209 - Propriétés de l'instance **{{ name }}**
-      general: 1210 - Générales
-      preview: 1211 - Aperçu
-      name: 1212 - Nom
-      instance_name: 1213 - Instance
-      material: 1214 - Matière
-      definition_name: 1215 - Définition
-      description: 1216 - Description
-      url: 1217 - URL
-      tags: 1218 - Badges
-      layer_name: 1219 - Balise
-      explode: 1220 - Eclater
-      explode_message: 1221 - Confirmez-vous l'éclatement de l'instance **{{ name }}** ?
+      title_model: 1210 - Propriétés du modèle
+      title_instance: 1211 - Propriétés de l'instance **{{ name }}**
+      general: 1212 - Générales
+      preview: 1213 - Aperçu
+      name: 1214 - Nom
+      instance_name: 1215 - Instance
+      material: 1216 - Matière
+      definition_name: 1217 - Définition
+      description: 1218 - Description
+      url: 1219 - URL
+      tags: 1220 - Badges
+      layer_name: 1221 - Balise
+      explode: 1222 - Eclater
+      explode_message: 1223 - Confirmez-vous l'éclatement de l'instance **{{ name }}** ?
     error:
-      no_model: 1222 - Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
-      no_entities: 1223 - Votre modèle est vide !
-      node_not_found: 1224 - Noeud introuvable
-      entity_not_found: 1225 - Instance introuvable
-      obsolete_outliner: 1226 - Impossible, la structure générée est obsolète. Re-générez là.
+      no_model: 1224 - Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
+      no_entities: 1225 - Votre modèle est vide !
+      node_not_found: 1226 - Noeud introuvable
+      entity_not_found: 1227 - Instance introuvable
+      obsolete_outliner: 1228 - Impossible, la structure générée est obsolète. Re-générez là.
     tip:
       no_node: |
-        1227 - Votre modèle ne dispose pour le moment d'aucune instance à afficher ici.
+        1229 - Votre modèle ne dispose pour le moment d'aucune instance à afficher ici.
         Une instance est un **groupe** ou un **composant** placé dans la scène.
-    obsolete_base: 1228 - Pour rester synchronisé, vous devez re-générer la structure.
+    obsolete_base: 1230 - Pour rester synchronisé, vous devez re-générer la structure.
   importer:
-    label: 1229 - Importer
-    title: 1230 - Importer des pièces
+    label: 1231 - Importer
+    title: 1232 - Importer des pièces
     help: |
-      1231 - Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+      1233 - Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *SketchUp*.
       Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
-    open_csv: 1232 - Ouvrir un fichier CSV
-    import_to_model: 1233 - Importer dans le modèle
+    open_csv: 1234 - Ouvrir un fichier CSV
+    import_to_model: 1235 - Importer dans le modèle
     load:
-      title: 1234 - Chargement d'un fichier CSV
+      title: 1236 - Chargement d'un fichier CSV
       info_0: |
-        1235 - Choisissez les options nécessaires à la bonne lecture du fichier :
+        1237 - Choisissez les options nécessaires à la bonne lecture du fichier :
         **{{ filename }}**.
       info_1: |
-        1236 - *L'unité configurée dans le modèle est : **{{ unit }}**.
+        1238 - *L'unité configurée dans le modèle est : **{{ unit }}**.
         Cette unité sera utilisée pour les dimensions dont l'unité n'est pas précisée*.
-      options: 1237 - Options de chargement
-      option_col_sep: 1238 - Séparateur
-      option_col_sep_tab: 1239 - Tabulation
-      option_col_sep_comma: 1240 - Virgule
-      option_col_sep_semicolon: 1241 - Point virgule
-      option_first_line_headers: 1242 - Première ligne
-      option_first_line_headers_0: 1243 - Données
-      option_first_line_headers_1: 1244 - Titres de colonne
+      options: 1239 - Options de chargement
+      option_col_sep: 1240 - Séparateur
+      option_col_sep_tab: 1241 - Tabulation
+      option_col_sep_comma: 1242 - Virgule
+      option_col_sep_semicolon: 1243 - Point virgule
+      option_first_line_headers: 1244 - Première ligne
+      option_first_line_headers_0: 1245 - Données
+      option_first_line_headers_1: 1246 - Titres de colonne
     import:
-      title: 1245 - Importation des pièces dans le modèle
+      title: 1247 - Importation des pièces dans le modèle
       info_0: |
-        1246 - Vous êtes sur le point d'importer **{{ count }} pièce** dans le modèle.
+        1248 - Vous êtes sur le point d'importer **{{ count }} pièce** dans le modèle.
         Cette pièce va être placée sur la scène principale, à l'origine.
       info_0_plural: |
-        1247 - Vous êtes sur le point d'importer **{{ count }} pièces** dans le modèle.
+        1249 - Vous êtes sur le point d'importer **{{ count }} pièces** dans le modèle.
         Ces pièces vont être empilées sur la scène principale depuis l'origine.
-      info_1: 1248 - Cliquez sur **Importer** pour confirmer l'action.
+      info_1: 1250 - Cliquez sur **Importer** pour confirmer l'action.
       options: |
-        1249 - Le modèle contient déjà des *pièces*, des *définitions* ou des *matières*.
+        1251 - Le modèle contient déjà des *pièces*, des *définitions* ou des *matières*.
         Choisissez les options d'importation qui correspondent à votre besoin.
-      option_remove_all_?: 1250 - Que faire ?
-      option_remove_all_false: 1251 - Ajouter les pièces à l'existant
-      option_remove_all_true: 1252 - Effacer tout !
-      option_keep_definitions_settings: 1253 - Conserver les paramètres sur les définitions
-      option_keep_materials_settings: 1254 - Conserver les paramètres sur les matières
+      option_remove_all_?: 1252 - Que faire ?
+      option_remove_all_false: 1253 - Ajouter les pièces à l'existant
+      option_remove_all_true: 1254 - Effacer tout !
+      option_keep_definitions_settings: 1255 - Conserver les paramètres sur les définitions
+      option_keep_materials_settings: 1256 - Conserver les paramètres sur les matières
     column:
-      unused: 1255 - Non utilisé
-      mandatory: 1256 - Champs obligatoires
-      optional: 1257 - Champs facultatifs
-      name: 1258 - Désignation
-      count: 1259 - Quantité
-      bbox_length: 1260 - Longueur capable
-      bbox_width: 1261 - Largeur capable
-      bbox_thickness: 1262 - Épaisseur capable
-      material: 1263 - Matière
-      tags: 1264 - Badges
+      unused: 1257 - Non utilisé
+      mandatory: 1258 - Champs obligatoires
+      optional: 1259 - Champs facultatifs
+      name: 1260 - Désignation
+      count: 1261 - Quantité
+      bbox_length: 1262 - Longueur capable
+      bbox_width: 1263 - Largeur capable
+      bbox_thickness: 1264 - Épaisseur capable
+      material: 1265 - Matière
+      tags: 1266 - Badges
     tooltip:
-      errors: 1265 - Cette pièce ne sera pas importée car elle contient les erreurs suivantes
-      warnings: 1266 - Cette pièce sera importée mais elle contient les avertissements suivants
+      errors: 1267 - Cette pièce ne sera pas importée car elle contient les erreurs suivantes
+      warnings: 1268 - Cette pièce sera importée mais elle contient les avertissements suivants
     error:
-      no_model: 1267 - Aucun modèle n'est ouvert. Il est impossible d'importer des pièces dans le néant ;)
-      file_not_found: '1268 - Fichier introuvable : **{{ filename }}**'
-      bad_extension: 1269 - Le fichier *{{ filename }}* n'a pas l'extension **.CSV** ou **.TSV**.
+      no_model: 1269 - Aucun modèle n'est ouvert. Il est impossible d'importer des pièces dans le néant ;)
+      file_not_found: '1270 - Fichier introuvable : **{{ filename }}**'
+      bad_extension: 1271 - Le fichier *{{ filename }}* n'a pas l'extension **.CSV** ou **.TSV**.
       failed_to_load_csv_file: |
-        1270 - Impossible de charger le fichier CSV : **{{ error }}**
+        1272 - Impossible de charger le fichier CSV : **{{ error }}**
         *Vérifiez que vous avez choisi le bon séparateur de données.*
-      empty_file: 1271 - Le fichier semble vide ou ne peut pas être correctement lu.
-      no_importable_part: 1272 - Aucune pièce ne peut être importée. Attribuez les champs obligatoires sur les colonnes correspondantes.
-      invalid_name: 1273 - Pas de désignation valide
-      invalid_length: 1274 - Pas de longueur valide
-      invalid_width: 1275 - Pas de largeur valide
-      invalid_thickness: 1276 - Pas d'épaisseur valide
-      failed_to_import: 1277 - L'importation a échoué.
+      empty_file: 1273 - Le fichier semble vide ou ne peut pas être correctement lu.
+      no_importable_part: 1274 - Aucune pièce ne peut être importée. Attribuez les champs obligatoires sur les colonnes correspondantes.
+      invalid_name: 1275 - Pas de désignation valide
+      invalid_length: 1276 - Pas de longueur valide
+      invalid_width: 1277 - Pas de largeur valide
+      invalid_thickness: 1278 - Pas d'épaisseur valide
+      failed_to_import: 1279 - L'importation a échoué.
     warning:
-      invalid_count: 1278 - Pas de quantité valide
-      invalid_material: 1279 - Pas de matière valide
+      invalid_count: 1280 - Pas de quantité valide
+      invalid_material: 1281 - Pas de matière valide
     success:
-      imported_title: 1280 - Importation terminée
-      imported_body: 1281 - {{ count }} pièce importée avec succès !
-      imported_body_plural: 1282 - {{ count }} pièces importées avec succès !
-    obsolete_base: 1283 - Pour rester synchronisé, vous devez recharger le fichier CSV.
+      imported_title: 1282 - Importation terminée
+      imported_body: 1283 - {{ count }} pièce importée avec succès !
+      imported_body_plural: 1284 - {{ count }} pièces importées avec succès !
+    obsolete_base: 1285 - Pour rester synchronisé, vous devez recharger le fichier CSV.
   tutorials:
-    label: 1284 - Tutoriels
-    title: 1285 - Tutoriels
+    label: 1286 - Tutoriels
+    title: 1287 - Tutoriels
     help: |
-      1286 - Retrouvez ici une liste non exhaustive de vidéos réalisées par la communauté autour de l'utilisation d'*OpenCutList*.
-    submit: 1287 - Proposer une vidéo
+      1288 - Retrouvez ici une liste non exhaustive de vidéos réalisées par la communauté autour de l'utilisation d'*OpenCutList*.
+    submit: 1289 - Proposer une vidéo
     submit_info: |
-      1288 - Vous avez réalisé une vidéo de présentation de l'utilisation d'**OpenCutList** et vous souhaitez la voir apparaitre ici ?
+      1290 - Vous avez réalisé une vidéo de présentation de l'utilisation d'**OpenCutList** et vous souhaitez la voir apparaitre ici ?
       Faites nous le savoir en nous écrivant à **opencutlist@lairdubois.fr** !
 
       *La vidéo doit être publique et hébergée sur YouTube*.
     error:
-      fail_to_load_list: 1289 - Impossible de charger la liste des vidéos.
+      fail_to_load_list: 1291 - Impossible de charger la liste des vidéos.
   news:
-    label: 1290 - Actualités
-    title: 1291 - Actualités
+    label: 1292 - Actualités
+    title: 1293 - Actualités
     help: |
-      1292 - Retrouvez ici les actualités d'*OpenCutList*.
-    comment: 1293 - Commenter
+      1294 - Retrouvez ici les actualités d'*OpenCutList*.
+    comment: 1295 - Commenter
     error:
-      fail_to_load_list: 1294 - Impossible de charger la liste des actualités.
+      fail_to_load_list: 1296 - Impossible de charger la liste des actualités.
   forum:
-    label: 1295 - Forum
-    title: 1296 - Forum
+    label: 1297 - Forum
+    title: 1298 - Forum
     help: |
-      1297 - Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
-    create_conversation: 1298 - Démarrer une conversation
-    reply: 1299 - Répondre
-    tags: 1300 - Tags
+      1299 - Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
+    create_conversation: 1300 - Démarrer une conversation
+    reply: 1301 - Répondre
+    tags: 1302 - Tags
     redirection: |
-      1301 - Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
+      1303 - Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
       Pour *démarrer des conversations* ou y *répondre* vous devrez y créer un compte et vous y connecter.
       *C'est gratuit, sans engagement et une simple addresse email suffit.*
 
       Validez pour continuer.
     error:
-      fail_to_load_list: 1302 - Impossible de charger la liste des conversations.
+      fail_to_load_list: 1304 - Impossible de charger la liste des conversations.
   sponsor:
-    label: 1303 - Soutenir
-    title: 1304 - Soutenir
+    label: 1305 - Soutenir
+    title: 1306 - Soutenir
     description: |
-      1305 - **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      1307 - **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
       Soutenez ce projet en contribuant vous aussi à son financement !
-    contribute: 1306 - Contribuer
-    backers: 1307 - {{ count }} contributeur financier
-    backers_plural: 1308 - {{ count }} contributeurs financiers
-    ad: 1309 - OpenCutList n'est pas Gratuit
-    objective: 1310 - Objectif
-    objective_slogan: 1311 - OpenCutList, c'est nous tous
+    contribute: 1308 - Contribuer
+    backers: 1309 - {{ count }} contributeur financier
+    backers_plural: 1310 - {{ count }} contributeurs financiers
+    ad: 1311 - OpenCutList n'est pas Gratuit
+    objective: 1312 - Objectif
+    objective_slogan: 1313 - OpenCutList, c'est nous tous
     objective_title:
-      default: 1312 - Objectifs
-      cuttingdiagram_export: 1313 - Financement des exports de calepinage
+      default: 1314 - Objectifs
+      cuttingdiagram_export: 1315 - Financement des exports de calepinage
     objective_details:
       default: |
-        1314 - L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour !
+        1316 - L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour !
       cuttingdiagram_export: |
-        1315 - Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
+        1317 - Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
         Pour élargir encore les possibilités, nous souhaitons permettre d'exporter les diagrammes de calepinage au format **SVG** et **DXF**.
         En nous fournissant les moyens de travailler sur ces exports, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
     objective_crowdfunding: |
-      1316 - Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
+      1318 - Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
     objective_thanks: |
-      1317 - Merci pour votre contribution !
-    objective_funded_progress: 1318 - financé à {{ progress }}%
+      1319 - Merci pour votre contribution !
+    objective_funded_progress: 1320 - financé à {{ progress }}%
   settings:
-    label: 1319 - Préférences
-    title: 1320 - Préférences
-    global_settings: 1321 - Préférences globales
-    language: 1322 - Langue
-    language_auto: 1323 - Automatique
-    zoom: 1324 - Taille de texte
-    zoom_normal: 1325 - Normale
-    zoom_small: 1326 - Petite
-    zoom_tiny: 1327 - Très petite
-    print_margin: 1328 - Marges d'impression
-    print_margin_normal: 1329 - Normales
-    print_margin_small: 1330 - Petites
-    table_row_size: 1331 - Taille des lignes de tableau
-    table_row_size_normal: 1332 - Normale
-    table_row_size_compact: 1333 - Compacte
-    size_and_position: 1334 - Taille et position de la fenêtre
-    model_settings: 1335 - Préférences du modèle
-    length_unit: 1336 - Unité de longueur
-    length_format: 1337 - Format
-    length_format_0: 1338 - Décimal
-    length_format_1: 1339 - Architecture
-    length_format_2: 1340 - Ingénierie
-    length_format_3: 1341 - Fractionnel
-    length_precision: 1342 - Précision
-    suppress_units_display: 1343 - Afficher l'unité de longueur à chaque valeur
-    mass_unit: 1344 - Unité de masse
-    mass_precision: 1345 - Précision
-    currency_symbol: 1346 - Symbole monétaire
-    currency_precision: 1347 - Précision
+    label: 1321 - Préférences
+    title: 1322 - Préférences
+    global_settings: 1323 - Préférences globales
+    language: 1324 - Langue
+    language_auto: 1325 - Automatique
+    zoom: 1326 - Taille de texte
+    zoom_normal: 1327 - Normale
+    zoom_small: 1328 - Petite
+    zoom_tiny: 1329 - Très petite
+    print_margin: 1330 - Marges d'impression
+    print_margin_normal: 1331 - Normales
+    print_margin_small: 1332 - Petites
+    table_row_size: 1333 - Taille des lignes de tableau
+    table_row_size_normal: 1334 - Normale
+    table_row_size_compact: 1335 - Compacte
+    size_and_position: 1336 - Taille et position de la fenêtre
+    model_settings: 1337 - Préférences du modèle
+    length_unit: 1338 - Unité de longueur
+    length_format: 1339 - Format
+    length_format_0: 1340 - Décimal
+    length_format_1: 1341 - Architecture
+    length_format_2: 1342 - Ingénierie
+    length_format_3: 1343 - Fractionnel
+    length_precision: 1344 - Précision
+    suppress_units_display: 1345 - Afficher l'unité de longueur à chaque valeur
+    mass_unit: 1346 - Unité de masse
+    mass_precision: 1347 - Précision
+    currency_symbol: 1348 - Symbole monétaire
+    currency_precision: 1349 - Précision
     presets:
-      export_global_presets: 1348 - Exporter les préréglages
+      export_global_presets: 1350 - Exporter les préréglages
       export_global_presets_help: |
-        1349 - Cette fonctionnalité vous permet d'exporter vos préréglages vers un fichier **.json**.
+        1351 - Cette fonctionnalité vous permet d'exporter vos préréglages vers un fichier **.json**.
         Sélectionnez les préréglages que vous souhaitez y exporter.
-      export_global_presets_success: 1350 - Les préréglages ont été exportés avec succès.
-      import_global_presets: 1351 - Importer des préréglages
+      export_global_presets_success: 1352 - Les préréglages ont été exportés avec succès.
+      import_global_presets: 1353 - Importer des préréglages
       import_global_presets_help: |
-        1352 - Sélectionnez les préréglages présents dans le fichier **.json** que vous souhaitez importer.
+        1354 - Sélectionnez les préréglages présents dans le fichier **.json** que vous souhaitez importer.
         Attention, si un préréglage avec un nom identique existe déjà, il sera remplacé par la version importée.
       import_global_presets_success: |
-        1353 - Les préréglages *OpenCutList* ont été importés avec succès.
+        1355 - Les préréglages *OpenCutList* ont été importés avec succès.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
-      dump_global_presets: 1354 - Dump des préréglages
-      dump_model_presets: 1355 - Dump des réglages du modèle
-      reset_global_presets: 1356 - Réinitialiser les préréglages
+      dump_global_presets: 1356 - Dump des préréglages
+      dump_model_presets: 1357 - Dump des réglages du modèle
+      reset_global_presets: 1358 - Réinitialiser les préréglages
       reset_global_presets_confirm: |
-        1357 - Vous êtes sur le point de réinitialiser tous vos préréglages *OpenCutList* enregistrés.
+        1359 - Vous êtes sur le point de réinitialiser tous vos préréglages *OpenCutList* enregistrés.
         Cette action est définitive. **Tous les préréglages seront perdus.**
         Confirmez pour continuer.
       reset_global_presets_success: |
-        1358 - Les préréglages *OpenCutList* ont été réinitialisés.
+        1360 - Les préréglages *OpenCutList* ont été réinitialisés.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
-      reset_model_presets: 1359 - Réinitialiser les réglages du modèle
+      reset_model_presets: 1361 - Réinitialiser les réglages du modèle
       reset_model_presets_confirm: |
-        1360 - Vous êtes sur le point de réinitialiser tous les réglages *OpenCutList* du modèle courant.
+        1362 - Vous êtes sur le point de réinitialiser tous les réglages *OpenCutList* du modèle courant.
         Cette action est définitive. **Tous les réglages seront rétablis à leur valeur par défaut.**
         Confirmez pour continuer.
       reset_model_presets_success: |
-        1361 - Les réglages *OpenCutList* du modèle courant ont été réinitialisés.
+        1363 - Les réglages *OpenCutList* du modèle courant ont été réinitialisés.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
       error:
-        no_preset_to_export: 1362 - Aucun préréglage à exporter.
-        no_preset_to_import: 1363 - Aucun préréglage à importer.
-        failed_to_import: '1364 - Impossible d''importer les préréglages : **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1365 - Ce fichier a été modifié. Il ne peut pas être importé.
-        failed_to_import_bad_file_format: 1366 - Format de fichier invalide.
+        no_preset_to_export: 1364 - Aucun préréglage à exporter.
+        no_preset_to_import: 1365 - Aucun préréglage à importer.
+        failed_to_import: '1366 - Impossible d''importer les préréglages : **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1367 - Ce fichier a été modifié. Il ne peut pas être importé.
+        failed_to_import_bad_file_format: 1368 - Format de fichier invalide.
   about:
-    label: 1367 - A propos
-    title: 1368 - A propos
-    version: 1369 - Version
-    credits: 1370 - Crédits techniques
+    label: 1369 - A propos
+    title: 1370 - A propos
+    version: 1371 - Version
+    credits: 1372 - Crédits techniques
     credits_authors: |
-      1371 - *OpenCutList* est développé par [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) et [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
-    credits_translations: 1372 - Traductions
+      1373 - *OpenCutList* est développé par [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) et [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: 1374 - Traductions
     credits_translators: |
-      1373 - - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglais*, *allemand*)
+      1375 - - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglais*, *allemand*)
       - Gildas Boureau (documentation *française*)
       - Vladimir Badulya (*russe*)
       - Pierluigi Colombo (*italien*)
@@ -1769,171 +1773,174 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*chinois simplifié*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*néerlandais*)
     credits_description: |
-      1374 - Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
+      1376 - Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
       Et à ce titre, il est également *Open Source* et disponible sous licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1375 - Exécution
-    credits_development: 1376 - Développement
+    credits_runtime: 1377 - Exécution
+    credits_development: 1378 - Développement
     credits_vendors: |
-      1377 - Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
+      1379 - Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
     credits_thanks: |
-      1378 - Un remerciement particulier à :
+      1380 - Un remerciement particulier à :
       - [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) pour leur soutien de projet Open Source.
       - [GitBook](https://www.gitbook.com) pour leur soutien de projet Open Source.
 tool:
   default:
-    transparency: 1379 - Transparence
-    zoom_extents: 1380 - Zoom étendu
-    toggle_depth: 1381 - Pièces en arrière plan
-    more: 1382 - Plus
+    transparency: 1381 - Transparence
+    zoom_extents: 1382 - Zoom étendu
+    toggle_depth: 1383 - Pièces en arrière plan
+    more: 1384 - Plus
+    end_point: 1385 - Extrémité
+    middle_point: 1386 - Point du milieu
+    third_point: 1387 - Point au tiers
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1385 - Dessiner
-    action_0: 1386 - Dessiner un Rectangle
-    action_0_status: 1387 - Dessiner un volume sur la base d'une forme rectangulaire
-    action_0_state_1_status: 1388 - Cliquez pour définir l'angle opposé ou entrez une longueur, largeur
-    action_1: 1389 - Dessiner un Cercle
-    action_1_status: 1390 - Dessiner un volume sur la base d'une forme circulaire
-    action_1_state_1_radius_status: 1391 - Cliquez pour définir le rayon ou entrez une distance
-    action_1_state_1_diameter_status: 1392 - Cliquez pour définir le diamètre ou entrez une distance
-    action_2: 1393 - Dessiner un Polygone
-    action_2_status: 1394 - Dessiner un volume sur la base d'une forme polygonale
-    action_2_state_1_status: 1395 - Cliquez pour définir un nouveau point ou entrez une distance
-    action_x_state_2_status: 1396 - Cliquez pour définir l'élévation ou entrez une distance
-    action_x_state_3_status: 1397 - Cliquez pour déplacer la pièce ou entrez une distance
-    action_x_state_3_move_copy_status: 1398 - Cliquez pour placer la copie de la pièce ou entrez une distance
-    action_x_state_3_move_array_status: 1399 - Cliquez pour placer les copies de la pièce ou entrez une longueur, largeur
-    action_option_group_tools: 1400 - Outils
-    action_option_group_offset: 1401 - Décalage
-    action_option_group_segments: 1402 - Segments
-    action_option_group_options: 1403 - Options
-    action_option_tools_pushpull: 1404 - Pousser/Tirer
-    action_option_tools_pushpull_status: 1405 - Activer Pousser/Tirer après le dessin de la forme
-    action_option_tools_move: 1406 - Copier/Déplacer
-    action_option_tools_move_status: 1407 - Activer Copier/Déplacer après la création de la pièce
-    action_option_offset_shape_offset: 1408 - Décalage
-    action_option_offset_shape_offset_status: 1409 - Permet d'appliquer un décalage au tracé de la forme dessinée
-    action_option_segments_segment_count: 1410 - Nombre de segments
-    action_option_segments_segment_count_status: 1411 - Permet de définir le nombre de segments du cercle
-    action_option_options_construction: 1412 - Traits de construction
-    action_option_options_construction_status: 1413 - Dessiner en traits de construction
-    action_option_options_rectangle_centered: 1414 - Rectangle centré
-    action_option_options_rectangle_centered_status: 1415 - Centrer le rectangle sur le premier point
-    action_option_options_measure_from_diameter: 1416 - Mesure
-    action_option_options_measure_from_diameter_status: 1417 - Mesurer le cercle par son diamètre
-    action_option_options_measure_from_radius_status: 1418 - Mesurer le cercle par son rayon
-    action_option_options_measure_from_first: 1419 - Mesure
-    action_option_options_measure_from_first_status: 1420 - Mesurer depuis le premier point
-    action_option_options_measure_from_previous_status: 1421 - Mesurer depuis le point précédent
-    action_option_options_solid_centered: 1422 - Élévation centrée
-    action_option_options_solid_centered_status: 1423 - Centrer l'élévation sur le premier point
-    action_option_options_move_array: 1424 - Copie en grille
-    action_option_options_move_array_status: 1425 - Copier la pièce en grille
-    vcb_length: 1426 - Longueur
-    vcb_size: 1427 - Cotations
-    vcb_radius: 1428 - Rayon
-    vcb_diameter: 1429 - Diamètre
-    vcb_distance: 1430 - Distance
+    title: 1390 - Dessiner
+    action_0: 1391 - Dessiner un Rectangle
+    action_0_status: 1392 - Dessiner un volume sur la base d'une forme rectangulaire
+    action_0_state_1_status: 1393 - Cliquez pour définir l'angle opposé ou entrez une longueur, largeur
+    action_1: 1394 - Dessiner un Cercle
+    action_1_status: 1395 - Dessiner un volume sur la base d'une forme circulaire
+    action_1_state_1_radius_status: 1396 - Cliquez pour définir le rayon ou entrez une distance
+    action_1_state_1_diameter_status: 1397 - Cliquez pour définir le diamètre ou entrez une distance
+    action_2: 1398 - Dessiner un Polygone
+    action_2_status: 1399 - Dessiner un volume sur la base d'une forme polygonale
+    action_2_state_1_status: 1400 - Cliquez pour définir un nouveau point ou entrez une distance
+    action_x_state_2_status: 1401 - Cliquez pour définir l'élévation ou entrez une distance
+    action_x_state_3_status: 1402 - Cliquez pour déplacer la pièce ou entrez une distance
+    action_x_state_3_move_copy_status: 1403 - Cliquez pour placer la copie de la pièce ou entrez une distance
+    action_x_state_3_move_array_status: 1404 - Cliquez pour placer les copies de la pièce ou entrez une longueur, largeur
+    action_option_group_tools: 1405 - Outils
+    action_option_group_offset: 1406 - Décalage
+    action_option_group_segments: 1407 - Segments
+    action_option_group_options: 1408 - Options
+    action_option_tools_pushpull: 1409 - Pousser/Tirer
+    action_option_tools_pushpull_status: 1410 - Activer Pousser/Tirer après le dessin de la forme
+    action_option_tools_move: 1411 - Copier/Déplacer
+    action_option_tools_move_status: 1412 - Activer Copier/Déplacer après la création de la pièce
+    action_option_offset_shape_offset: 1413 - Décalage
+    action_option_offset_shape_offset_status: 1414 - Permet d'appliquer un décalage au tracé de la forme dessinée
+    action_option_segments_segment_count: 1415 - Nombre de segments
+    action_option_segments_segment_count_status: 1416 - Permet de définir le nombre de segments du cercle
+    action_option_options_construction: 1417 - Traits de construction
+    action_option_options_construction_status: 1418 - Dessiner en traits de construction
+    action_option_options_rectangle_centered: 1419 - Rectangle centré
+    action_option_options_rectangle_centered_status: 1420 - Centrer le rectangle sur le premier point
+    action_option_options_measure_from_diameter: 1421 - Mesure
+    action_option_options_measure_from_diameter_status: 1422 - Mesurer le cercle par son diamètre
+    action_option_options_measure_from_radius_status: 1423 - Mesurer le cercle par son rayon
+    action_option_options_measure_from_first: 1424 - Mesure
+    action_option_options_measure_from_first_status: 1425 - Mesurer depuis le premier point
+    action_option_options_measure_from_previous_status: 1426 - Mesurer depuis le point précédent
+    action_option_options_solid_centered: 1427 - Élévation centrée
+    action_option_options_solid_centered_status: 1428 - Centrer l'élévation sur le premier point
+    action_option_options_move_array: 1429 - Copie en grille
+    action_option_options_move_array_status: 1430 - Copier la pièce en grille
+    vcb_length: 1431 - Longueur
+    vcb_size: 1432 - Cotations
+    vcb_radius: 1433 - Rayon
+    vcb_diameter: 1434 - Diamètre
+    vcb_distance: 1435 - Distance
     error:
-      no_direction: 1431 - Veuillez indiquer une direction avec la souris
-      invalid_length: 1432 - La longueur {{ value }} est invalide
-      invalid_multiplicator: 1433 - Le multiplicateur {{ value }} est invalide
-      invalid_divider: 1434 - Le diviseur {{ value }} est invalide
-      invalid_offset: 1435 - Le décalage {{ value }} est invalide
-      invalid_segment_count: 1436 - Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999.
+      no_direction: 1436 - Veuillez indiquer une direction avec la souris
+      invalid_length: 1437 - La longueur {{ value }} est invalide
+      invalid_multiplicator: 1438 - Le multiplicateur {{ value }} est invalide
+      invalid_divider: 1439 - Le diviseur {{ value }} est invalide
+      invalid_offset: 1440 - Le décalage {{ value }} est invalide
+      invalid_segment_count: 1441 - Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999.
   smart_paint:
-    title: 1437 - Colorier
-    default_material: 1438 - Sans matière
-    filters: 1439 - Filtres
-    filter_0: 1440 - Sans type
+    title: 1442 - Colorier
+    default_material: 1443 - Sans matière
+    filters: 1444 - Filtres
+    filter_0: 1445 - Sans type
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1447 - Colorier pièces
-    action_0_status: 1448 - Cliquez sur une pièce pour appliquer une matière à son instance
-    action_1: 1449 - Colorier chants
-    action_1_status: 1450 - Cliquez sur un chant d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_4)'
-    action_2: 1451 - Colorier faces
-    action_2_status: 1452 - Cliquez sur une face d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
-    action_3: 1453 - Prélever
-    action_3_status: 1454 - Cliquez sur une face pour prélever un échantillon de la matière
-    action_4: 1455 - Nettoyer
-    action_4_status: 1456 - Cliquez sur une pièce pour supprimer toutes les matières de sa définition et de toutes ses instances
-    action_option_group_instances: 1457 - Nombre d'instances
-    action_option_group_edges: 1458 - Nombre de chants
-    action_option_group_faces: 1459 - Nombre de faces
-    action_option_instances_0_status: 1460 - Colorier seulement l'instance de la pièce ciblée
-    action_option_instances_1_status: 1461 - Colorier toutes les instances de la pièce ciblée
-    action_option_edges_0_status: 1462 - Colorier seulement le chant ciblé
-    action_option_edges_1_status: 1463 - Colorier le chant ciblé et le chant opposé de la pièce
-    action_option_edges_2_status: 1464 - Colorier les 4 chants de la pièce ciblée
-    action_option_faces_0_status: 1465 - Colorier seulement la face ciblée
-    action_option_faces_1_status: 1466 - Colorier les 2 faces de la pièce ciblée
-    edges: 1467 - {{ count }} chant
-    edges_plural: 1468 - {{ count }} chants
-    edge_ymin: 1469 - Longueur 1
-    edge_ymax: 1470 - Longueur 2
-    edge_xmin: 1471 - Largeur 1
-    edge_xmax: 1472 - Largeur 2
-    faces: 1473 - {{ count }} face
-    faces_plural: 1474 - {{ count }} faces
-    face_zmin: 1475 - Contre-face
-    face_zmax: 1476 - Face
+    action_0: 1452 - Colorier pièces
+    action_0_status: 1453 - Cliquez sur une pièce pour appliquer une matière à son instance
+    action_1: 1454 - Colorier chants
+    action_1_status: 1455 - Cliquez sur un chant d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_4)'
+    action_2: 1456 - Colorier faces
+    action_2_status: 1457 - Cliquez sur une face d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
+    action_3: 1458 - Prélever
+    action_3_status: 1459 - Cliquez sur une face pour prélever un échantillon de la matière
+    action_4: 1460 - Nettoyer
+    action_4_status: 1461 - Cliquez sur une pièce pour supprimer toutes les matières de sa définition et de toutes ses instances
+    action_option_group_instances: 1462 - Nombre d'instances
+    action_option_group_edges: 1463 - Nombre de chants
+    action_option_group_faces: 1464 - Nombre de faces
+    action_option_instances_0_status: 1465 - Colorier seulement l'instance de la pièce ciblée
+    action_option_instances_1_status: 1466 - Colorier toutes les instances de la pièce ciblée
+    action_option_edges_0_status: 1467 - Colorier seulement le chant ciblé
+    action_option_edges_1_status: 1468 - Colorier le chant ciblé et le chant opposé de la pièce
+    action_option_edges_2_status: 1469 - Colorier les 4 chants de la pièce ciblée
+    action_option_faces_0_status: 1470 - Colorier seulement la face ciblée
+    action_option_faces_1_status: 1471 - Colorier les 2 faces de la pièce ciblée
+    edges: 1472 - {{ count }} chant
+    edges_plural: 1473 - {{ count }} chants
+    edge_ymin: 1474 - Longueur 1
+    edge_ymax: 1475 - Longueur 2
+    edge_xmin: 1476 - Largeur 1
+    edge_xmax: 1477 - Largeur 2
+    faces: 1478 - {{ count }} face
+    faces_plural: 1479 - {{ count }} faces
+    face_zmin: 1480 - Contre-face
+    face_zmax: 1481 - Face
     warning:
-      no_material: 1477 - Aucune matière
-      no_material_type: 1478 - Aucune matière de type '{{ type }}'
+      no_material: 1482 - Aucune matière
+      no_material_type: 1483 - Aucune matière de type '{{ type }}'
     error:
-      not_part: 1479 - L'objet ciblé n'est pas une pièce (composant)
-      not_edge: 1480 - La face ciblée n'est pas un chant de panneau
-      not_face: 1481 - La face ciblée n'est pas une face de panneau
-      wrong_material_type: 1482 - La pièce ciblée doit être du type '{{ type }}'
+      not_part: 1484 - L'objet ciblé n'est pas une pièce (composant)
+      not_edge: 1485 - La face ciblée n'est pas un chant de panneau
+      not_face: 1486 - La face ciblée n'est pas une face de panneau
+      wrong_material_type: 1487 - La pièce ciblée doit être du type '{{ type }}'
   smart_axes:
-    title: 1483 - Orienter
-    action_0: 1484 - Retourner
-    action_0_status: 1485 - Cliquez sur une pièce pour retourner son instance le long de l'une de ses dimensions
-    action_1: 1486 - Permuter Longueur ↔ Largeur
-    action_1_status: 1487 - Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
-    action_2: 1488 - Permuter Face ↔ Contre-face
-    action_2_status: 1489 - Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
-    action_3: 1490 - Adapter les axes
-    action_3_status: 1491 - Ciblez une face d'une pièce et cliquez sur une arête pour y adapter ses axes
-    action_4: 1492 - Déplacer l'origine
-    action_4_status: 1493 - Ciblez une face d'une pièce et cliquez sur un point pour y placer son origine
-    action_option_group_direction: 1494 - Direction
-    action_option_direction_0: 1495 - Lo
-    action_option_direction_1: 1496 - La
-    action_option_direction_2: 1497 - Ep
-    action_option_direction_0_status: 1498 - Retourner la pièce dans sa longueur
-    action_option_direction_1_status: 1499 - Retourner la pièce dans sa largeur
-    action_option_direction_2_status: 1500 - Retourner la pièce dans son épaisseur
+    title: 1488 - Orienter
+    action_0: 1489 - Retourner
+    action_0_status: 1490 - Cliquez sur une pièce pour retourner son instance le long de l'une de ses dimensions
+    action_1: 1491 - Permuter Longueur ↔ Largeur
+    action_1_status: 1492 - Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
+    action_2: 1493 - Permuter Face ↔ Contre-face
+    action_2_status: 1494 - Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
+    action_3: 1495 - Adapter les axes
+    action_3_status: 1496 - Ciblez une face d'une pièce et cliquez sur une arête pour y adapter ses axes
+    action_4: 1497 - Déplacer l'origine
+    action_4_status: 1498 - Ciblez une face d'une pièce et cliquez sur un point pour y placer son origine
+    action_option_group_direction: 1499 - Direction
+    action_option_direction_0: 1500 - Lo
+    action_option_direction_1: 1501 - La
+    action_option_direction_2: 1502 - Ep
+    action_option_direction_0_status: 1503 - Retourner la pièce dans sa longueur
+    action_option_direction_1_status: 1504 - Retourner la pièce dans sa largeur
+    action_option_direction_2_status: 1505 - Retourner la pièce dans son épaisseur
     warning:
-      more_entities: 1501 - {{ count_used }} instances partageant la même définition seront modifiées
+      more_entities: 1506 - {{ count_used }} instances partageant la même définition seront modifiées
     error:
-      not_part: 1502 - L'objet ciblé n'est pas une pièce (composant)
-      not_orientable: 1503 - Le type de cette pièce ne permet pas de l'orienter
+      not_part: 1507 - L'objet ciblé n'est pas une pièce (composant)
+      not_orientable: 1508 - Le type de cette pièce ne permet pas de l'orienter
   smart_export:
-    title: 1504 - Exporter
-    action_0: 1505 - Exporter une pièce 3D
-    action_0_status: 1506 - Cliquez sur une pièce
-    action_1: 1507 - Exporter une pièce 2D
-    action_1_status: 1508 - Cliquez sur la face d'une pièce
-    action_2: 1509 - Exporter une face
-    action_2_status: 1510 - Cliquez sur une face
-    action_3: 1511 - Exporter un tracé
-    action_3_status: 1512 - Cliquez sur une arête
-    action_option_group_file_format: 1513 - Format
-    action_option_group_unit: 1514 - Unité
-    action_option_group_faces: 1515 - Faces
-    action_option_group_options: 1516 - Options
-    action_option_file_format_dxf_status: 1517 - Exporter vers un fichier DXF
-    action_option_file_format_stl_status: 1518 - Exporter vers un fichier STL
-    action_option_file_format_obj_status: 1519 - Exporter vers un fichier OBJ
-    action_option_file_format_svg_status: 1520 - Exporter vers un fichier SVG
+    title: 1509 - Exporter
+    action_0: 1510 - Exporter une pièce 3D
+    action_0_status: 1511 - Cliquez sur une pièce
+    action_1: 1512 - Exporter une pièce 2D
+    action_1_status: 1513 - Cliquez sur la face d'une pièce
+    action_2: 1514 - Exporter une face
+    action_2_status: 1515 - Cliquez sur une face
+    action_3: 1516 - Exporter un tracé
+    action_3_status: 1517 - Cliquez sur une arête
+    action_option_group_file_format: 1518 - Format
+    action_option_group_unit: 1519 - Unité
+    action_option_group_faces: 1520 - Faces
+    action_option_group_options: 1521 - Options
+    action_option_file_format_dxf_status: 1522 - Exporter vers un fichier DXF
+    action_option_file_format_stl_status: 1523 - Exporter vers un fichier STL
+    action_option_file_format_obj_status: 1524 - Exporter vers un fichier OBJ
+    action_option_file_format_svg_status: 1525 - Exporter vers un fichier SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -1943,9 +1950,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1530 - Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
-    action_option_options_include_paths_status: 1531 - Exporter comme tracé les arêtes non associées à une face contenues dans la pièce
+    action_option_options_merge_holes_status: 1535 - Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
+    action_option_options_include_paths_status: 1536 - Exporter comme tracé les arêtes non associées à une face contenues dans la pièce
     error:
-      not_part: 1532 - Cette face ne fait pas partie d'une pièce (composant)
-      not_flat_face: 1533 - Cette surface n'est pas plane
-      incompatible_active_path: 1534 - Le chemin actif ne permet pas d'exporter cette pièce
+      not_part: 1537 - Cette face ne fait pas partie d'une pièce (composant)
+      not_flat_face: 1538 - Cette surface n'est pas plane
+      incompatible_active_path: 1539 - Le chemin actif ne permet pas d'exporter cette pièce

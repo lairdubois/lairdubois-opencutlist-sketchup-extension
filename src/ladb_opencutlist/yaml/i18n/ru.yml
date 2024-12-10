@@ -1334,6 +1334,9 @@ tab:
       title: Загрузить изображение
     import_from_skm:
       title: Импорт .skm фала
+      ask_replace: |
+        Материал "{{ name }}" уже существует.
+        Заменить его импортируемым?
     export_to_skm:
       title: Экспорт в .skm файл
     option:
