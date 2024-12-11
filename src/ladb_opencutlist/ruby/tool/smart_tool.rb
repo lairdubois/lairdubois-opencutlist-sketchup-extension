@@ -487,7 +487,6 @@ module Ladb::OpenCutList
       @minitool_panel.append(minitool_btn)
 
         motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(icon))
-        motif.line_width = @unit <= 4 ? 0.5 : 1
         motif.set_style_attribute(:color, COLOR_BRAND_DARK)
         minitool_btn.append(motif)
 

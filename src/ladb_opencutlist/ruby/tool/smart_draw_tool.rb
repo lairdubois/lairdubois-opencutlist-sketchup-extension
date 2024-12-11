@@ -185,6 +185,10 @@ module Ladb::OpenCutList
     # -- Events --
 
     def onActivate(view)
+
+      # Clear current selection
+      Sketchup.active_model.selection.clear if Sketchup.active_model
+
       @action_handler = nil
       super
     end
@@ -3006,7 +3010,7 @@ module Ladb::OpenCutList
 
             end
 
-            @direction = cline_manipulator.direction
+            # @direction = cline_manipulator.direction
 
             # k_points = Kuix::Points.new
             # k_points.add_points([ @picked_shape_first_point.position, edge_manipulator.start_point, edge_manipulator.end_point ])
@@ -3057,7 +3061,7 @@ module Ladb::OpenCutList
 
             end
 
-            @direction = cline_manipulator.direction
+            # @direction = cline_manipulator.direction
 
             # k_points = Kuix::Points.new
             # k_points.add_points([ @picked_shape_first_point.position, cline_manipulator.start_point, cline_manipulator.end_point ])
@@ -3254,7 +3258,7 @@ module Ladb::OpenCutList
       k_motif = Kuix::Motif3d.new([[
 
                                      [ 0, 0, 0 ],
-                                     [ 1, 0, 0 ],
+                                     [ shape_offset > 0 ? 1.1 : shape_offset < 0 ? 0.9 : 1, 0, 0 ],
                                      [ 0.5, 1, 0 ],
                                      [ 0, 1, 0 ],
                                      [ 0, 0, 0 ]
