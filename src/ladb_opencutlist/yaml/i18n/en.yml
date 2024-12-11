@@ -938,7 +938,7 @@ tab:
         cutting_dimensions_increase_2d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Dimensions reduced by the thickness of the edge banding. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     packing:
-      title: Calepinage
+      title: Cutting Diagram
       option_problem_type: Type
       option_problem_type_rectangle: Rectangle
       option_problem_type_rectangleguillotine: Guillotine
@@ -1833,8 +1833,8 @@ tool:
     action_option_options_measure_from_diameter: Measure
     action_option_options_measure_from_diameter_status: Measure circle by its diameter
     action_option_options_measure_from_radius_status: Measure circle by its radius
-    action_option_options_measure_reversed: Measure  #TODO
-    action_option_options_measure_reversed_status: Reverse the measurement #TODO
+    action_option_options_measure_reversed: Inverted Measure
+    action_option_options_measure_reversed_status: Reverse the measurement
     action_option_options_solid_centered: Elevation Centered
     action_option_options_solid_centered_status: Center elevation on the first point
     action_option_options_move_array: Copy in Grid

@@ -660,6 +660,7 @@ tab:
       bin: Грубый размер
       component_definition: Описание компонента
       component_instance: Экземпляр компонента
+      component_instances: Экземпляры компонентов
       filename: Имя файла
       model_name: Название модели
       model_description: Описание модели
@@ -1635,7 +1636,7 @@ tab:
       - Владимир Бадюля (*Русский*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Английский*, *Немецкий язык*)
       - Gildas Boureau (*французская* документация)
-      - Pierluigi Colombo (*Итальянский*)
+      - Pierluigi Colombo, Massimo Risca (*Итальянский*)
       - Nayton Sanches Barbosa, исправлено и отредактировано [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Португальский*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Испанский*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Чешский*)
@@ -1664,6 +1665,9 @@ tool:
     zoom_extents: Зум
     toggle_depth: Детали на заднем плане
     more: Ещё
+    end_point: Край
+    middle_point: Средняя точка
+    third_point: Сторонняя точка
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)

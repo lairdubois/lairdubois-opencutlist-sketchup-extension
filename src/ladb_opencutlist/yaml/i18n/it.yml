@@ -660,6 +660,7 @@ tab:
       bin: Cestino
       component_definition: Definizione del componente
       component_instance: Istanza del componente
+      component_instances: Istanze del componente
       filename: Nome del file
       model_name: Personalizzazione
       model_description: Descrizione del modello
@@ -1664,6 +1665,9 @@ tool:
     zoom_extents: Zoom dimensioni
     toggle_depth: Elementi in secondo piano
     more: Altro
+    end_point: Estremità
+    middle_point: Punto medio
+    third_point: Punto terzo
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
