@@ -8,6 +8,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/cline_manipulator'
   require_relative '../lib/geometrix/finder/circle_finder'
   require_relative '../lib/fiddle/clippy/clippy'
+  require_relative '../helper/entities_helper'
 
   class SmartDrawTool < SmartTool
 
@@ -313,6 +314,8 @@ module Ladb::OpenCutList
   # -----
 
   class SmartDrawActionHandler < SmartActionHandler
+
+    include EntitiesHelper
 
     STATE_SHAPE_FIRST_POINT = 0
     STATE_SHAPE_POINTS = 1
@@ -1598,6 +1601,21 @@ module Ladb::OpenCutList
 
         end
 
+        tao = _get_auto_orient_transformation(definition, t)
+        unless tao.identity?
+
+          t = t * tao
+          taoi = tao.inverse
+
+          # Transform definition's entities
+          entities = definition.entities
+          entities.transform_entities(taoi, entities.to_a)
+
+          @normal = t.zaxis
+          @direction = t.xaxis
+
+        end
+
         @definition = definition
         model.active_entities.add_instance(definition, t)
 
@@ -1668,6 +1686,30 @@ module Ladb::OpenCutList
 
       model.commit_operation
 
+    end
+
+    def _get_auto_orient_transformation(definition, transformation = IDENTITY)
+
+      largest_face, inner_path = _find_largest_face(definition, transformation)
+      unless largest_face.nil?
+
+        longest_edge = _find_longest_outer_edge(largest_face, transformation)
+        unless longest_edge.nil?
+
+          face_manipulator = FaceManipulator.new(largest_face)  # Should not be nested in subgroups : no inner transformation
+          edge_manipulator = EdgeManipulator.new(longest_edge)
+
+          z_axis = face_manipulator.normal
+          x_axis = edge_manipulator.direction
+          # TODO avoid x_axis pointing out of the solid
+          y_axis = z_axis * x_axis
+
+          return Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
+        end
+
+      end
+
+      IDENTITY
     end
 
     # -- UTILS --
@@ -2675,6 +2717,11 @@ module Ladb::OpenCutList
       edge = definition.entities.add_circle(p1, Z_AXIS, p1.distance(p2) + _fetch_option_shape_offset, _fetch_option_segment_count).first
       edge.find_faces
       edge.faces.first
+    end
+
+    def _get_auto_orient_transformation(definition, transformation = IDENTITY)
+      # TODO only if elevation > diameter
+      Geom::Transformation.axes(ORIGIN, Z_AXIS, Y_AXIS.reverse, X_AXIS) # Set length (X axis) along elevation
     end
 
   end
