@@ -9,6 +9,12 @@ module Ladb::OpenCutList
       ''
     end
 
+    private
+
+    def _raise_no_method_error(method_name)
+      raise NoMethodError, "undefined method `#{method_name}' for #{self.class}"
+    end
+
   end
 
   # -----
@@ -26,7 +32,7 @@ module Ladb::OpenCutList
     end
 
     def coerce(something)
-      [self, something]
+      [ self, something ]
     end
 
     def to_s
@@ -225,11 +231,111 @@ module Ladb::OpenCutList
 
   # -----
 
-  class ComponentDefinitionWrapper < ValueWrapper
+  class EntityWrapper < ValueWrapper
+
+    def initialize(value, value_class = Sketchup::Entity)
+      super
+    end
+
+    # -- Privatisation
+
+    def set_attribute(*args)
+      _raise_no_method_error(__method__)
+    end
+
+  end
+
+  class DrawingElementWrapper < EntityWrapper
+
+    def initialize(value, value_class = Sketchup::DrawingElement)
+      super
+    end
+
+    # -- Privatisation
+
+    def hidden=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def visible=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def layer=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def material=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def cast_shadows=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def receives_shadows=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def erase!
+      _raise_no_method_error(__method__)
+    end
+
+  end
+
+  class ComponentDefinitionWrapper < DrawingElementWrapper
 
     def initialize(value)
       super(value, Sketchup::ComponentDefinition)
     end
+
+    # -- Privatisation
+
+    def name=(name)
+      _raise_no_method_error(__method__)
+    end
+
+    def description=(description)
+      _raise_no_method_error(__method__)
+    end
+
+    def thumbnail_camera=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def add_classification(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def remove_classification(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def set_classification_value(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def add_observer(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def remove_observer(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def save_as(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def save_copy(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def save_thumbnail(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    # -----
 
     def get_dc_attribute(key)
       @value.get_attribute('dynamic_attributes', key)
@@ -242,11 +348,75 @@ module Ladb::OpenCutList
 
   end
 
-  class ComponentInstanceWrapper < ValueWrapper
+  class ComponentInstanceWrapper < DrawingElementWrapper
 
     def initialize(value)
       super(value, Sketchup::ComponentInstance)
     end
+
+    # -- Privatisation
+
+    def name=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def definition=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def glue_to=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def locked=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def transformation=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def make_unique(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def explode(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def split(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def trim(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def union(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def substract(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def move!(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def transform!(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def add_observer(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def remove_observer(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    # -----
 
     def get_dc_attribute(key)
       @value.get_attribute('dynamic_attributes', key)
@@ -493,7 +663,7 @@ module Ladb::OpenCutList
       @material = material
       @group_def = group_def
 
-      @name = StringWrapper.new(material.nil? ? nil : material.name)
+      @name = StringWrapper.new(material.nil? ? nil : material.display_name)
       @color = ColorWrapper.new(material.nil? ? nil : material.color)
 
       @type = MaterialTypeWrapper.new(group_def.nil? ? MaterialAttributes::TYPE_UNKNOWN : group_def.material_attributes.type)
