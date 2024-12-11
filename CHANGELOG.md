@@ -19,17 +19,17 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
     * Added QRCodes in labels editor
     * Added Duplicate element in labels editor
     * Added Duplicate column in export editor
-    * Added Labels button from whole parts list
+    * Added Labels button to Parts List
     * Added _use_count_ parameter to 2D and 3D drawing writers
-    * Added handle to manually reorder material prices list 
+    * Added handle to manually reorder material prices list
     * Improved labels formulas
     * Improved smart tools picker
     * Improved surface detection
     * Improved Material import from SKM (allows new or replace)
-    * Replaced Highlight Part Tool by Smart Axes Tool
-    * Fixed face untyped material removing when edit sheet good part properties
+    * Replaced Highlight Part Tool with Smart Axes Tool
+    * Fixed face untyped material removing when editing sheet good part properties
 
-* 6.3.0 (WIP)
+* 6.3.0 (2024-10-22)
 
   * Added **Vietnamese** language
   * Improved part shape 2D projection when using cuts opening components
@@ -53,7 +53,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 6.0.1 (2024-02-26)
 
-  * Fixed removed languages selection 
+  * Fixed removed languages selection
 
 * 6.0.0 (2024-02-21)
 
@@ -88,20 +88,20 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 * 5.1.2 (2023-11-29)
 
   * Added teaser cutting diagram "Export" button
-  
+
 * 5.1.1 (2023-10-30)
 
   * Avoid negative dimensions input
-  
+
 * 5.1.0 (2023-10-18)
 
   * Added **Dutch** language (thanks to Dany Dhondt, Eric Lugtigheid and Koen Dejonckheere)
   * Added **Simplified Chinese** language (thanks to liutao91)
-  
+
 * 5.0.4 (2023-09-14)
 
   * Fixed "Export to Layout" hang
-  
+
 * 5.0.3 (2023-09-13)
 
   * Fixed the dimension parser that misinterpret decimal separator
