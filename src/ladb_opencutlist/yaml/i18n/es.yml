@@ -660,6 +660,7 @@ tab:
       bin: Contenedor
       component_definition: Definición del componente
       component_instance: Instancia del componente
+      component_instances: Instancias del componente
       filename: Nombre de archivo
       model_name: Nombre del modelo
       model_description: Descripción del modelo
@@ -1636,7 +1637,7 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglés*, *alemán*)
       - Gildas Boureau (documentación *francesa*)
       - Vladimir Badulya (*ruso*)
-      - Pierluigi Colombo (*italiano*)
+      - Pierluigi Colombo, Massimo Risca (*italiano*)
       - Nayton Sanches Barbosa, corregido y revisado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugués*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*polaco*)
@@ -1664,6 +1665,9 @@ tool:
     zoom_extents: Centrado
     toggle_depth: Piezas en el fondo
     more: Más
+    end_point: Extremidad
+    middle_point: Punto medio
+    third_point: Punto tercero
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
