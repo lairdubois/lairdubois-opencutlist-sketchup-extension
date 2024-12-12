@@ -13,7 +13,7 @@ jobs:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
 
-      # Set up a matrix to run the following 3 configurations:
+      # Set up a matrix to run the following 2 configurations:
       # 1. <Windows, Release, latest MSVC compiler toolchain on the default runner image, default generator>
       # 2. <MacOS, Release, latest Clang compiler toolchain on the default runner image, default generator>
       #
@@ -93,4 +93,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-build-artifact
-          path: ${{ steps.strings.outputs.src_dir}}/${{ matrix.install_dir }}
+          path: ${{ steps.strings.outputs.src_dir }}/${{ matrix.install_dir }}

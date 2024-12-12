@@ -7,6 +7,8 @@ default:
   minimize: Minimizar
   maximize: Maximizar
   cancel: Cancelar
+  # stop computation and return best result so far
+  stop: Parar
   validate: Aplicar
   confirm: Confirmar
   ok: Ok
@@ -24,6 +26,8 @@ default:
   options: Opções
   caution: Atenção
   remove: Remover
+  remove_all: Remover tudo
+  delete: Remover
   create: Criar
   duplicate: Duplicar
   ignore: Ignorar
@@ -34,6 +38,8 @@ default:
   unselect_all: Desmarcar tudo
   draw: Desenhar
   estimate: Estimar
+  yes: Sim
+  no: Não
   empty_filename: Sem nome.skp
   help: Ajuda
   error: Droga!
@@ -42,7 +48,9 @@ default:
   good: Bom
   bad: Ruim
   by: por
+  # date format in use for language
   date_format: "d/m/A G:i"
+  # short date format in use for language
   date_format_short: d/m/Y
   unit_0: Polegada
   unit_1: Pés
@@ -82,6 +90,12 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: Modificar a instância
+      edit_parent_part_instance: Modificar o grupo/componente que contém a instância
+      hide_part_instance: Ocultar instância
+      unhide_part_instance: Revelar a instância
+      edit_part_instance_properties: Editar propriedades da instância
+      smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -90,6 +104,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
+      smart_draw: Desenhar peças
       smart_paint: Pintar peças
       smart_axes: Orientação das peças
       smart_export: Exportar as peças
@@ -119,6 +134,7 @@ core:
 
       Para relatar um bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
+    extern: "Erro externo : **{{ error }}**"
     feature_unavailable: "Este recurso requer SketchUp {{ version }} ou superior"
     failed_export_to: |
       Ocorreu um erro ao exportar para *{{ path }}*.
@@ -132,6 +148,7 @@ core:
     material_change: Pelo menos um material foi alterado.
     selection_change: A seleção no modelo ativo foi alterada.
     layers_change: As tags no modelo ativo foram alteradas.
+    drawing_change: A conceção do modelo ativo foi alterada.
   upgrade:
     unavailable: Impossível encontrar a versão mais recente do *OpenCutList*.
     available: |
@@ -180,9 +197,9 @@ core:
     dictionary:
       component_textinput_color: Paleta de cores
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
+      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -195,6 +212,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modelo
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -214,7 +232,7 @@ core:
       view_isometric: Isométrica
       view_top: Superior
       view_bottom: Inferior
-      view_front: Frente
+      view_front: Frontal
       view_back: Fundo
       view_left: Esquerda
       view_right: Direita
@@ -251,7 +269,11 @@ tab:
     edit_part_faces_properties: Editar as propriedades (laminados) da peça
     part_drawing_type_1: Vista Frontal 2D
     part_drawing_type_2: Vista Traseira 2D
-    part_drawing_type_3: 3D
+    part_drawing_type_3: Vista esquerda 2D
+    part_drawing_type_4: Vista 2D direita
+    part_drawing_type_5: 2D Vista frontal
+    part_drawing_type_6: 2D Vista traseira
+    part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Mostrar / Ocultar este grupo
       scroll_to_block: Role para o grupo
@@ -344,7 +366,10 @@ tab:
       select_unselect_all_parts: Selecione / Desmarque todas as peças do grupo
       select_parts_in_cutlist: Selecione a peça no plano de corte
       select_parts_in_cutlist_plural: "Selecione as peças {{ count }} no plano de corte"
+      # used in estimate to setup the cutting diagram
       setup_group_cuttingdiagram: "Defina o plano de corte para '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension }}'"
+      # used in estimate to setup the new packing
+      setup_group_packing: "Defina o plano de corte para '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension }}'"
       open_part_url: Abrir URL da peça
     menu:
       show_all_groups: Mostrar todos os grupos
@@ -352,6 +377,7 @@ tab:
       numbers_save: Salve os números das peças
       numbers_reset: Reinicialize os números da peça
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: Imprimir etiquetas
       write_2d: Projeção 2D
       write_3d: Geometria 3D
       write_2d_parts: Exportar a projeção 2D das peças
@@ -362,6 +388,7 @@ tab:
       group_numbers_save: Salve os números de peça deste grupo
       group_numbers_reset: Reinicialize os números de peça deste grupo
       group_cuttingdiagram: Plano de Corte
+      group_packing: Plano de Corte
       group_labels: Imprimir as etiquetas das peças neste grupo
       edit_material: "Editar material '{{ material_name }}'"
       expand_all: Expandir todas as linhas
@@ -564,13 +591,14 @@ tab:
     export:
       title: Exportar
       info_0: |
-        Este recurso permite exportar sua *folha de dados* como uma *Planilha de Produção* para um arquivo em formato [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
+        Este recurso permite exportar sua *folha de dados* para a área de transferência ou para um arquivo em formato [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
         Reordenar, Esconder, Adicionar, Remover ou Seleccionar uma coluna da lista para personalizar o seu **título** e a **fórmula** gerando o valor apresentado para cada linha exportada.
       add_column: Acrescentar uma coluna
       add_native_columns: Acrescentar uma coluna nativa
-      remove_column: Remover
-      remove_all_columns: Remover tudo
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
       columns: Colunas
       column_title: Título
       column_title_help: |
@@ -582,7 +610,7 @@ tab:
       options_customize: Nome do modelo
       option_source: Fonte
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: Lista de peças
       option_source_instances_list: Lista de instâncias
       option_col_sep: Separador
       option_col_sep_tab: Tabulador
@@ -610,8 +638,9 @@ tab:
       final_area: Área - final
       count: Quantidade
       part_count: Quantidade
-      material_type: Tipo
-      material_name: Material
+      material: Material
+      material_type: Tipo de material
+      material_name: Nome do Material
       material_description: Descrição do material
       material_url: URL do material
       material_std_dimension: Dimensões padrão
@@ -629,6 +658,9 @@ tab:
       layers: Etiquetas
       batch: Grupo
       bin: Contentor
+      component_definition: Definição de componente
+      component_instance: Instância de componente
+      component_instances: Instâncias de componentes
       filename: Nome da pasta
       model_name: Nome do modelo
       model_description: Descrição do modelo
@@ -739,6 +771,8 @@ tab:
         *Esta opção deve estar ativada para que as formas possam ser exportadas.*
       option_saw_kerf: Espessura da serra
       option_saw_kerf_help: A largura do material removido pelo corte da serra.
+      option_spacing: Espaçamento
+      option_spacing_help: Espaçamento mínimo entre cada peça.
       option_trimming: Apara
       option_trimming_help_1d: Margem em cada extremidade da barra ou fita de borda a ser considerada como sobra.
       option_trimming_help_2d: A quantidade de material ao redor da chapa a ser tratada como sobra.
@@ -832,7 +866,7 @@ tab:
         parts: "{{ count }} peça"
         parts_plural: "{{ count }} peças"
         settings: Configurações
-      export:
+      write:
         title: Exportação do layout
         info_0: |
           Este módulo permite exportar a **geometria** do *layout* como uma lista de arquivos em [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
@@ -916,8 +950,9 @@ tab:
       options_offset: Diferença
       size: Tamanho real da etiqueta
       add_element: Adicionar um elemento
-      remove_element: Remover
-      remove_all_elements: Remover tudo
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         Reorganizar os títulos para definir a ordem de classificação das etiquetas.
         Os títulos podem ser classificados em ordem <i class="ladb-opencutlist-icon-sort-asc"></i> *crescente* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *decrescente*.
@@ -958,6 +993,7 @@ tab:
       option_color: Cor
       formula:
         custom: Fórmula
+        custom_qr_code: Código QR
         part_number: Número
         part_name: Designação
         part_description: Descrição
@@ -997,6 +1033,7 @@ tab:
       error:
         invalid_size: Os parâmetros de configuração inseridos não permitem que um tamanho de etiqueta válido seja definido.
       warning:
+        is_group_selection: As peças dentro dos **grupos mascarados** da sua lista de peças não terão uma etiqueta.
         is_part_selection: Estes etiquetas são limitados a **partes selecionadas** somente.
         formula_not_available: A fórmula não está disponível neste contexto
     layout:
@@ -1082,6 +1119,11 @@ tab:
       option_unit: Unidades
       option_unit_help: |
         Permite escolher a unidade usada no arquivo exportado.
+      option_use_count: Quantidades
+      option_use_count_0: Um ficheiro por peça
+      option_use_count_1: Um ficheiro por instância de peça
+      option_use_count_help: |
+        Seleciona se o número de instâncias de uma peça é tido em conta.
       option_part_drawing_type: Projeção
       option_part_drawing_type_help: |
         Permite que você escolha a visualização exportada.
@@ -1095,8 +1137,13 @@ tab:
       option_anchor_1: Projetar a origem da peça
       option_anchor_help: |
         Permite ativar a projeção da origem dos eixos da peça como ponto de ancoragem.
+      option_switch_yz: Eixo vertical
+      option_switch_yz_0: Z vertical
+      option_switch_yz_1: Y vertical
+      option_switch_yz_help: |
+        Alterna os eixos Y e Z para definir o eixo vertical da peça.
       option_smoothing: Suavização
-      option_smoothing_0: Nenhum
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: Suavizar os círculos e arcos (Experimental)
       option_smoothing_help: |
         Permite ativar a detecção de círculos e arcos.
@@ -1112,7 +1159,7 @@ tab:
         **Contorno + Furos + Fusão**
         Ativa a separação do contorno exterior das peças de seus furos, bem como a fusão das profundidades para cada cavidade.
       option_include_paths: Traçados
-      option_include_paths_0: Nenhum
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: Utilizar as arestas não associadas a uma face
       option_include_paths_help: |
         Permite ativar o uso das arestas não associadas a uma face e contidas na peça, para exportá-las como traçado.
@@ -1124,7 +1171,9 @@ tab:
         Permite escolher as cores dos furos das peças.
       option_parts_paths: Traçados
       option_parts_paths_help: |
-        Permite escolher a cor dos traçados.
+        Pode escolher a cor dos tracados.
+
+        *A cor de preenchimento só será utilizada para tracados fechadas.*
       error:
         no_part: Nenhuma peça para exportar
       warning:
@@ -1188,9 +1237,7 @@ tab:
       texture_load: Carrega uma nova textura
       texture_clear: Remover textura
       edit: "Edite as propriedades de '{{ name }}'"
-      set_current: |
-        Pinta peças com '{{ name }}'.
-        *clique duas vezes para minimizar*
+      set_current: "Colorir peças com '{{ name }}'."
       open_url: Abrir a URL do material
     menu:
       import_from_skm: Importar material (.skm)
@@ -1288,16 +1335,22 @@ tab:
       title: Carregar imagem
     import_from_skm:
       title: Importar arquivo .skm
+      ask_replace: |
+        Já existe um assunto "{{ name }}".
+        Gostaria de o substituir por aquele que está a importar?
     export_to_skm:
       title: Exportar para arquivo .skm
     option:
+      minimize_on_smart_paint: Reduzir depois de *'Colorir peças com... '*
+      minimize_on_smart_paint_help: "Se esta opção estiver activada, a janela OpenCutList será minimizada quando a função *'Colorir peças com...'* for utilizada."
+      general: Geral
       material_order_strategy: Classificação de materiais
       material_order_strategy_help: |
         Reordene as seguintes propriedades para definir a estratégia de classificação dos materiais da lista.
         Cada propriedade pode ser classificada em ordem <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *descendente*.
       property_type: Tipo
       property_name: Nome
-    remove:
+    delete:
       message: |
         Você está prestes a suprimir o material **{{ material_name }}** de seu modelo.
         Confirme para continuar.
@@ -1310,7 +1363,7 @@ tab:
       material_not_found: Nenhum material encontrado.
       failed_import_skm_file: "Ocorreu um erro ao importar do arquivo .skm. **{{ error }}**"
       failed_export_skm_file: "Ocorreu um erro ao exportar para o arquivo .skm. **{{ error }}**"
-      failed_removing_material: "Ocorreu um erro ao suprimir este material. **{{ error }}**"
+      failed_deleting_material: "Ocorreu um erro ao suprimir este material. **{{ error }}**"
       failed_duplicating_material: "Ocorreu um erro ao tentar replicar o material. **{{ error }}**"
       invalid_image_file: Imagem inválida
     obsolete_base: "Para permanecer sincronizado, você deve atualizar a lista de materiais."
@@ -1319,13 +1372,13 @@ tab:
     title: Estrutura
     list: Arborescência das entidades
     nodes: Instâncias
-    part_count: Nb Peças
+    toggle_hidden: Instâncias ocultas
     type_0: Modelo
     type_1: Grupo
     type_2: Componente
     type_3: Peça
     tooltip:
-      open_node_url: Abrir a URL da instância
+      open_node_url: Abrir URL da peça
     edit_node:
       title_model: "Propriedades do modelo"
       title_instance: "Propriedades da instância **{{ name }}**"
@@ -1333,9 +1386,11 @@ tab:
       preview: Visão geral
       name: Nome
       instance_name: Instância
+      material: Material
       definition_name: Definição
       description: Descrição
       url: URL
+      tags: Identificação
       layer_name: Etiqueta
       explode: Explodir
       explode_message: "Você confirma a divisão da instância **{{ name }}** ?"
@@ -1480,6 +1535,8 @@ tab:
     objective_title:
       default: Objetivo
       cuttingdiagram_export: Financiamento das exportações de planos de corte
+      outliner: ""
+      packing: ""
     objective_details:
       default: |
         A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização!
@@ -1487,8 +1544,8 @@ tab:
         É importante para nós que o *OpenCutList* se possa adaptar à grande variedade de requisitos dos utilizadores para a função *Plano de Corte*.
         Para ampliar ainda mais as possibilidades, gostaríamos de poder exportar planos de layout nos formatos **SVG** e **DXF**.
         Ao fornecer-nos os meios para efetuar estas exportações, estará ao mesmo tempo dando-nos a oportunidade de ajudá-lo a tirar o máximo proveito da *OpenCutList*.
-      layout: |
-        O objetivo deste módulo é permitir que você imprima facilmente uma visualização de seu projeto como uma **visão explodida** com identificação a partir das informações geradas na lista de peças.
+      outliner: |
+      packing: |
     objective_crowdfunding: |
       O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo** e poderá começar quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |
@@ -1574,7 +1631,7 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Inglês*, *Alemão*)
       - Gildas Boureau (documentação *francesa*)
       - Vladimir Badulya (*Russo*)
-      - Pierluigi Colombo (*Italiano*)
+      - Pierluigi Colombo, Massimo Risca (*Italiano*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Espanhol*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Tcheco*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polonês*)
@@ -1602,6 +1659,9 @@ tool:
     zoom_extents: Limite do zoom
     toggle_depth: Peças de fundo
     more: Mais
+    end_point: Extremidade
+    middle_point: Ponto médio
+    third_point: Ponto teceiro
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1663,7 +1723,9 @@ tool:
     action_2: Trocar frente ↔ Fundo
     action_2_status: Clique em uma peça para trocar a Frente pelo seu Fundo
     action_3: Adaptar os eixos
-    action_3_status: Clique na face ou na borda de uma peça para alterar seus eixos
+    action_3_status: Selecione uma face de uma peça e clique numa aresta para adaptar os seus eixos.
+    action_4: Mover a origem
+    action_4_status: Selecione uma face de uma peça e clique num ponto para aí colocar a sua origem
     action_option_group_direction: Direção
     action_option_direction_0: C
     action_option_direction_1: L
