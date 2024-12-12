@@ -439,8 +439,6 @@ module Ladb::OpenCutList
       @tool.remove_all_3d
       @tool.remove_all_2d
 
-      Sketchup.set_status_text('', SB_VCB_VALUE)
-
       if _picked_pushpull_point?
         _snap_move_point(flags, x, y, view)
         _preview_move(view)
@@ -466,7 +464,7 @@ module Ladb::OpenCutList
       # k_points.style = Kuix::POINT_STYLE_TRIANGLE
       # k_points.stroke_color = Kuix::COLOR_YELLOW
       # @tool.append_3d(k_points)
-      #
+
       # k_axes_helper = Kuix::AxesHelper.new
       # k_axes_helper.transformation = _get_transformation
       # @tool.append_3d(k_axes_helper)
@@ -602,7 +600,7 @@ module Ladb::OpenCutList
           _refresh
           return true
         elsif key == VK_LEFT
-          y_axis = _get_active_y_axis
+          y_axis = _get_active_y_axis.reverse # Reverse to keep z axis on top
           if @locked_normal == y_axis
             @locked_normal = nil
           else
@@ -1457,7 +1455,7 @@ module Ladb::OpenCutList
       z_axis = @normal
       y_axis = z_axis * x_axis
 
-      [ x_axis.normalize!, y_axis.normalize!, z_axis.normalize! ]
+      [ x_axis.normalize, y_axis.normalize, z_axis.normalize ]
     end
 
     def _get_edit_transformation
@@ -1701,7 +1699,6 @@ module Ladb::OpenCutList
 
           z_axis = face_manipulator.normal
           x_axis = edge_manipulator.direction
-          # TODO avoid x_axis pointing out of the solid
           y_axis = z_axis * x_axis
 
           return Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
@@ -2465,6 +2462,15 @@ module Ladb::OpenCutList
 
     protected
 
+    def _snap_first_shape_point(flags, x, y, view)
+      super
+
+      # Force direction to default
+      @locked_direction = nil
+      @direction = nil
+
+    end
+
     def _snap_shape_points(flags, x, y, view)
 
       @normal = @locked_normal if @locked_normal
@@ -2943,6 +2949,15 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _snap_first_shape_point(flags, x, y, view)
+      super
+
+      # Force direction to default
+      @locked_direction = nil
+      @direction = nil
+
+    end
 
     def _snap_shape_points(flags, x, y, view)
 
