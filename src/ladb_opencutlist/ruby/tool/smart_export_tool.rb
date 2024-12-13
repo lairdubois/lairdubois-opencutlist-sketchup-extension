@@ -156,9 +156,9 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_EXPORT_PART_3D
-        return SmartPicker.new(self)
+        return SmartPicker.new(tool: self)
       when ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE, ACTION_EXPORT_PATHS
-        return SmartPicker.new(self, pick_edges: true, pick_clines: true, pick_axes: true)
+        return SmartPicker.new(tool: self, pick_edges: true, pick_clines: true, pick_axes: true)
       end
 
       super
@@ -287,7 +287,7 @@ module Ladb::OpenCutList
       false
     end
 
-    def onPickerChanged(picker)
+    def onPickerChanged(picker, view)
       super
       _handle_mouse_event(:move)
     end
@@ -314,29 +314,29 @@ module Ladb::OpenCutList
 
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
-            preview = Kuix::Group.new
-            preview.transformation = @active_drawing_def.transformation
-            @overlay_layer.append(preview)
+            k_group = Kuix::Group.new
+            k_group.transformation = @active_drawing_def.transformation
+            @overlay_layer.append(k_group)
 
-            # Highlight faces
-            mesh = Kuix::Mesh.new
-            mesh.add_triangles(@active_drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
-            mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
-            preview.append(mesh)
+              # Highlight faces
+              k_mesh = Kuix::Mesh.new
+              k_mesh.add_triangles(@active_drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
+              k_mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
+              k_group.append(k_mesh)
 
-            # Box helper
-            box = Kuix::BoxMotif.new
-            box.bounds.origin.copy!(@active_drawing_def.bounds.min)
-            box.bounds.size.copy!(@active_drawing_def.bounds)
-            box.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
-            box.color = Kuix::COLOR_BLACK
-            box.line_width = 1
-            box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            preview.append(box)
+              # Box helper
+              k_box = Kuix::BoxMotif.new
+              k_box.bounds.origin.copy!(@active_drawing_def.bounds.min)
+              k_box.bounds.size.copy!(@active_drawing_def.bounds)
+              k_box.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
+              k_box.color = Kuix::COLOR_BLACK
+              k_box.line_width = 1
+              k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+              k_group.append(k_box)
 
-            # Axes helper
-            axes_helper = Kuix::AxesHelper.new
-            preview.append(axes_helper)
+              # Axes helper
+              k_axes_helper = Kuix::AxesHelper.new
+              k_group.append(k_axes_helper)
 
           end
 
@@ -368,19 +368,19 @@ module Ladb::OpenCutList
             ).run
             if projection_def.is_a?(DrawingProjectionDef)
 
-              preview = Kuix::Group.new
-              preview.transformation = @active_drawing_def.transformation * projection_def.transformation
-              @overlay_layer.append(preview)
+              k_group = Kuix::Group.new
+              k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
+              @overlay_layer.append(k_group)
 
               fn_append_segments = lambda do |segments, color, line_width, line_stipple|
 
-                entity = Kuix::Segments.new
-                entity.add_segments(segments)
-                entity.color = color
-                entity.line_width = highlighted ? line_width + 1 : line_width
-                entity.line_stipple = line_stipple
-                entity.on_top = true
-                preview.append(entity)
+                k_segments = Kuix::Segments.new
+                k_segments.add_segments(segments)
+                k_segments.color = color
+                k_segments.line_width = highlighted ? line_width + 1 : line_width
+                k_segments.line_stipple = line_stipple
+                k_segments.on_top = true
+                k_group.append(k_segments)
 
               end
 
@@ -414,70 +414,70 @@ module Ladb::OpenCutList
 
                     # It's a polyline, create 'start' and 'end' points entities
 
-                    entity = Kuix::Points.new
-                    entity.add_points([ poly_def.points.first ])
-                    entity.size = 2 * @unit
-                    entity.style = Kuix::POINT_STYLE_SQUARE
-                    entity.fill_color = Kuix::COLOR_MEDIUM_GREY
-                    entity.stroke_color = nil
-                    points_entities << entity
+                    k_points = Kuix::Points.new
+                    k_points.add_points([ poly_def.points.first ])
+                    k_points.size = 2 * @unit
+                    k_points.style = Kuix::POINT_STYLE_SQUARE
+                    k_points.fill_color = Kuix::COLOR_MEDIUM_GREY
+                    k_points.stroke_color = nil
+                    points_entities << k_points
 
-                    entity = Kuix::Points.new
-                    entity.add_points([ poly_def.points.last ])
-                    entity.size = 2.5 * @unit
-                    entity.style = Kuix::POINT_STYLE_SQUARE
-                    entity.stroke_color = Kuix::COLOR_DARK_GREY
-                    entity.stroke_width = 2
-                    points_entities << entity
+                    k_points = Kuix::Points.new
+                    k_points.add_points([ poly_def.points.last ])
+                    k_points.size = 2.5 * @unit
+                    k_points.style = Kuix::POINT_STYLE_SQUARE
+                    k_points.stroke_color = Kuix::COLOR_DARK_GREY
+                    k_points.stroke_width = 2
+                    points_entities << k_points
 
                   end
 
                 end
 
                 # Append points after to be on top of segments
-                points_entities.each { |entity| preview.append(entity) }
+                points_entities.each { |entity| k_group.append(entity) }
 
               end
 
               # Box helper
-              box = Kuix::RectangleMotif.new
-              box.bounds.origin.copy!(projection_def.bounds.min)
-              box.bounds.size.copy!(projection_def.bounds)
-              box.bounds.apply_offset(inch_offset, inch_offset, 0)
-              box.color = Kuix::COLOR_BLACK
-              box.line_width = 1
-              box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-              preview.append(box)
+              k_box = Kuix::RectangleMotif.new
+              k_box.bounds.origin.copy!(projection_def.bounds.min)
+              k_box.bounds.size.copy!(projection_def.bounds)
+              k_box.bounds.apply_offset(inch_offset, inch_offset, 0)
+              k_box.color = Kuix::COLOR_BLACK
+              k_box.line_width = 1
+              k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+              k_group.append(k_box)
 
               if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
 
                 # Highlight input edge
-                segments = Kuix::Segments.new
-                segments.transformation = projection_def.transformation.inverse
-                segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
-                segments.color = COLOR_ACTION
-                segments.line_width = 3
-                segments.on_top = true
-                preview.append(segments)
+                k_segments = Kuix::Segments.new
+                k_segments.transformation = projection_def.transformation.inverse
+                k_segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
+                k_segments.color = COLOR_ACTION
+                k_segments.line_width = 3
+                k_segments.on_top = true
+                k_group.append(k_segments)
 
               elsif @active_drawing_def.input_line_manipulator.is_a?(LineManipulator)
 
                 # Highlight input line
-                line = Kuix::Line.new
-                line.transformation = projection_def.transformation.inverse
-                line.position = @active_drawing_def.input_line_manipulator.position
-                line.direction = @active_drawing_def.input_line_manipulator.direction
-                line.color = COLOR_ACTION
-                line.line_width = 2
-                preview.append(line)
+                k_line = Kuix::Line.new
+                k_line.transformation = projection_def.transformation.inverse
+                k_line.position = @active_drawing_def.input_line_manipulator.position
+                k_line.direction = @active_drawing_def.input_line_manipulator.direction
+                k_line.color = COLOR_ACTION
+                k_line.line_width = 2
+                k_group.append(k_line)
 
               end
 
               # Axes helper
-              axes_helper = Kuix::AxesHelper.new
-              axes_helper.box_0.visible = false
-              axes_helper.box_z.visible = false
-              preview.append(axes_helper)
+              k_axes_helper = Kuix::AxesHelper.new
+              k_axes_helper.box_0.visible = false
+              k_axes_helper.box_z.visible = false
+              k_group.append(k_axes_helper)
 
             end
 
@@ -515,19 +515,19 @@ module Ladb::OpenCutList
 
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
-            preview = Kuix::Group.new
-            preview.transformation = @active_drawing_def.transformation * projection_def.transformation
-            @overlay_layer.append(preview)
+            k_group = Kuix::Group.new
+            k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
+            @overlay_layer.append(k_group)
 
             fn_append_segments = lambda do |segments, line_width, line_stipple|
 
-              entity = Kuix::Segments.new
-              entity.add_segments(segments)
-              entity.color = COLOR_PART_UPPER
-              entity.line_width = highlighted ? line_width + 1 : line_width
-              entity.line_stipple = line_stipple
-              entity.on_top = true
-              preview.append(entity)
+              k_segments = Kuix::Segments.new
+              k_segments.add_segments(segments)
+              k_segments.color = COLOR_PART_UPPER
+              k_segments.line_width = highlighted ? line_width + 1 : line_width
+              k_segments.line_stipple = line_stipple
+              k_segments.on_top = true
+              k_group.append(k_segments)
 
             end
 
@@ -566,44 +566,44 @@ module Ladb::OpenCutList
             # end
 
             # Box helper
-            box_helper = Kuix::RectangleMotif.new
-            box_helper.bounds.origin.copy!(projection_def.bounds.min)
-            box_helper.bounds.size.copy!(projection_def.bounds)
-            box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
-            box_helper.color = Kuix::COLOR_BLACK
-            box_helper.line_width = 1
-            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            preview.append(box_helper)
+            k_rectangle = Kuix::RectangleMotif.new
+            k_rectangle.bounds.origin.copy!(projection_def.bounds.min)
+            k_rectangle.bounds.size.copy!(projection_def.bounds)
+            k_rectangle.bounds.apply_offset(inch_offset, inch_offset, 0)
+            k_rectangle.color = Kuix::COLOR_BLACK
+            k_rectangle.line_width = 1
+            k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            k_group.append(k_rectangle)
 
             if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
 
               # Highlight input edge
-              segments = Kuix::Segments.new
-              segments.transformation = projection_def.transformation.inverse
-              segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
-              segments.color = COLOR_ACTION
-              segments.line_width = 3
-              segments.on_top = true
-              preview.append(segments)
+              k_segments = Kuix::Segments.new
+              k_segments.transformation = projection_def.transformation.inverse
+              k_segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
+              k_segments.color = COLOR_ACTION
+              k_segments.line_width = 3
+              k_segments.on_top = true
+              k_group.append(k_segments)
 
             elsif @active_drawing_def.input_line_manipulator.is_a?(LineManipulator)
 
               # Highlight input line
-              line = Kuix::Line.new
-              line.transformation = projection_def.transformation.inverse
-              line.position = @active_drawing_def.input_line_manipulator.position
-              line.direction = @active_drawing_def.input_line_manipulator.direction
-              line.color = COLOR_ACTION
-              line.line_width = 2
-              preview.append(line)
+              k_line = Kuix::Line.new
+              k_line.transformation = projection_def.transformation.inverse
+              k_line.position = @active_drawing_def.input_line_manipulator.position
+              k_line.direction = @active_drawing_def.input_line_manipulator.direction
+              k_line.color = COLOR_ACTION
+              k_line.line_width = 2
+              k_group.append(k_line)
 
             end
 
             # Axes helper
-            axes_helper = Kuix::AxesHelper.new
-            axes_helper.box_0.visible = false
-            axes_helper.box_z.visible = false
-            preview.append(axes_helper)
+            k_axes_helper = Kuix::AxesHelper.new
+            k_axes_helper.box_0.visible = false
+            k_axes_helper.box_z.visible = false
+            k_group.append(k_axes_helper)
 
           end
 
@@ -638,19 +638,19 @@ module Ladb::OpenCutList
 
             inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
-            preview = Kuix::Group.new
-            preview.transformation = @active_drawing_def.transformation * projection_def.transformation
-            @overlay_layer.append(preview)
+            k_group = Kuix::Group.new
+            k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
+            @overlay_layer.append(k_group)
 
             fn_append_segments = lambda do |segments, line_width, line_stipple|
 
-              entity = Kuix::Segments.new
-              entity.add_segments(segments)
-              entity.color = COLOR_PART_PATH
-              entity.line_width = highlighted ? line_width + 1 : line_width
-              entity.line_stipple = line_stipple
-              entity.on_top = true
-              preview.append(entity)
+              k_segments = Kuix::Segments.new
+              k_segments.add_segments(segments)
+              k_segments.color = COLOR_PART_PATH
+              k_segments.line_width = highlighted ? line_width + 1 : line_width
+              k_segments.line_stipple = line_stipple
+              k_segments.on_top = true
+              k_group.append(k_segments)
 
             end
 
@@ -674,70 +674,70 @@ module Ladb::OpenCutList
 
                   # It's a polyline, create 'start' and 'end' points entities
 
-                  entity = Kuix::Points.new
-                  entity.add_points([ poly_def.points.first ])
-                  entity.size = 2 * @unit
-                  entity.style = Kuix::POINT_STYLE_SQUARE
-                  entity.fill_color = Kuix::COLOR_MEDIUM_GREY
-                  entity.stroke_color = nil
-                  points_entities << entity
+                  k_points = Kuix::Points.new
+                  k_points.add_points([ poly_def.points.first ])
+                  k_points.size = 2 * @unit
+                  k_points.style = Kuix::POINT_STYLE_SQUARE
+                  k_points.fill_color = Kuix::COLOR_MEDIUM_GREY
+                  k_points.stroke_color = nil
+                  points_entities << k_points
 
-                  entity = Kuix::Points.new
-                  entity.add_points([ poly_def.points.last ])
-                  entity.size = 2.5 * @unit
-                  entity.style = Kuix::POINT_STYLE_SQUARE
-                  entity.stroke_color = Kuix::COLOR_DARK_GREY
-                  entity.stroke_width = 2
-                  points_entities << entity
+                  k_points = Kuix::Points.new
+                  k_points.add_points([ poly_def.points.last ])
+                  k_points.size = 2.5 * @unit
+                  k_points.style = Kuix::POINT_STYLE_SQUARE
+                  k_points.stroke_color = Kuix::COLOR_DARK_GREY
+                  k_points.stroke_width = 2
+                  points_entities << k_points
 
                 end
 
               end
 
               # Append points after to be on top of segments
-              points_entities.each { |entity| preview.append(entity) }
+              points_entities.each { |entity| k_group.append(entity) }
 
             end
 
             # Box helper
-            box_helper = Kuix::RectangleMotif.new
-            box_helper.bounds.origin.copy!(projection_def.bounds.min)
-            box_helper.bounds.size.copy!(projection_def.bounds)
-            box_helper.bounds.apply_offset(inch_offset, inch_offset, 0)
-            box_helper.color = Kuix::COLOR_BLACK
-            box_helper.line_width = 1
-            box_helper.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            preview.append(box_helper)
+            k_rectangle = Kuix::RectangleMotif.new
+            k_rectangle.bounds.origin.copy!(projection_def.bounds.min)
+            k_rectangle.bounds.size.copy!(projection_def.bounds)
+            k_rectangle.bounds.apply_offset(inch_offset, inch_offset, 0)
+            k_rectangle.color = Kuix::COLOR_BLACK
+            k_rectangle.line_width = 1
+            k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            k_group.append(k_rectangle)
 
             if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
 
               # Highlight input edge
-              segments = Kuix::Segments.new
-              segments.transformation = projection_def.transformation.inverse
-              segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
-              segments.color = COLOR_ACTION
-              segments.line_width = 3
-              segments.on_top = true
-              preview.append(segments)
+              k_segments = Kuix::Segments.new
+              k_segments.transformation = projection_def.transformation.inverse
+              k_segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
+              k_segments.color = COLOR_ACTION
+              k_segments.line_width = 3
+              k_segments.on_top = true
+              k_group.append(k_segments)
 
             elsif @active_drawing_def.input_line_manipulator.is_a?(LineManipulator)
 
               # Highlight input line
-              line = Kuix::Line.new
-              line.transformation = projection_def.transformation.inverse
-              line.position = @active_drawing_def.input_line_manipulator.position
-              line.direction = @active_drawing_def.input_line_manipulator.direction
-              line.color = COLOR_ACTION
-              line.line_width = 2
-              preview.append(line)
+              k_line = Kuix::Line.new
+              k_line.transformation = projection_def.transformation.inverse
+              k_line.position = @active_drawing_def.input_line_manipulator.position
+              k_line.direction = @active_drawing_def.input_line_manipulator.direction
+              k_line.color = COLOR_ACTION
+              k_line.line_width = 2
+              k_group.append(k_line)
 
             end
 
             # Axes helper
-            axes_helper = Kuix::AxesHelper.new
-            axes_helper.box_0.visible = false
-            axes_helper.box_z.visible = false
-            preview.append(axes_helper)
+            k_axes_helper = Kuix::AxesHelper.new
+            k_axes_helper.box_0.visible = false
+            k_axes_helper.box_z.visible = false
+            k_group.append(k_axes_helper)
 
           end
 

@@ -10,7 +10,8 @@ module Ladb::OpenCutList
     INPUT_VIEW_FRONT = 'front'.freeze
     INPUT_VIEW_BACK = 'back'.freeze
 
-    attr_reader :faces_bounds, :edges_bounds, :bounds, :face_manipulators, :surface_manipulators, :edge_manipulators, :curve_manipulators
+    attr_reader :faces_bounds, :edges_bounds, :clines_bounds, :bounds,
+                :face_manipulators, :surface_manipulators, :edge_manipulators, :curve_manipulators, :cline_manipulators
     attr_accessor :transformation, :input_plane_manipulator, :input_line_manipulator, :input_view
 
     def initialize
@@ -19,12 +20,14 @@ module Ladb::OpenCutList
 
       @faces_bounds = Geom::BoundingBox.new
       @edges_bounds = Geom::BoundingBox.new
+      @clines_bounds = Geom::BoundingBox.new
       @bounds = Geom::BoundingBox.new
 
       @face_manipulators = []
       @surface_manipulators = []
       @edge_manipulators = []
       @curve_manipulators = []
+      @cline_manipulators = []
 
       @input_plane_manipulator = nil
       @input_line_manipulator = nil
@@ -62,6 +65,13 @@ module Ladb::OpenCutList
         @edges_bounds.add(min, max)
       end
 
+      unless @clines_bounds.empty?
+        min = @clines_bounds.min.transform(ti)
+        max = @clines_bounds.max.transform(ti)
+        @clines_bounds.clear
+        @clines_bounds.add(min, max)
+      end
+
       unless @bounds.empty?
         min = @bounds.min.transform(ti)
         max = @bounds.max.transform(ti)
@@ -81,6 +91,10 @@ module Ladb::OpenCutList
       end
       @curve_manipulators.each do |curve_manipulator|
         curve_manipulator.transformation = ti * curve_manipulator.transformation
+      end
+
+      @cline_manipulators.each do |cline_manipulator|
+        cline_manipulator.transformation = ti * cline_manipulator.transformation
       end
 
     end

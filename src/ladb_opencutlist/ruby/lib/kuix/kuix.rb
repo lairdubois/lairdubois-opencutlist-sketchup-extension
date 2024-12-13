@@ -141,11 +141,11 @@ module Ladb::OpenCutList
       end
 
       def clear_canvas
-        @canvas.remove_all
+        @canvas.remove_all unless @canvas.nil?
       end
 
       def clear_space
-        @space.remove_all
+        @space.remove_all unless @space.nil?
       end
 
       # -- Cursors stuff --

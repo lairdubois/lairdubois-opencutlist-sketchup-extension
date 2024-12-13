@@ -50,7 +50,10 @@ module Ladb::OpenCutList
                    ignore_edges: false,
                    edge_validator: EDGE_VALIDATOR_ALL,
                    edge_recursive: true,
-                   edge_for_part: true
+                   edge_for_part: true,
+
+                   ignore_clines: true,
+                   cline_recursive: true
 
     )
 
@@ -75,6 +78,9 @@ module Ladb::OpenCutList
       @edge_validator = edge_validator
       @edge_recursive = edge_recursive
       @edge_for_part = edge_for_part
+
+      @ignore_clines = ignore_clines
+      @cline_recursive = cline_recursive
 
     end
 
@@ -265,6 +271,15 @@ module Ladb::OpenCutList
 
       end
 
+      # Clines
+      unless @ignore_clines
+
+        validator = nil
+
+        _populate_cline_manipulators(drawing_def, entities, ttai, @cline_recursive, &validator)
+
+      end
+
       # STEP 3 : Compute bounds
 
       drawing_def.bounds.clear
@@ -282,6 +297,12 @@ module Ladb::OpenCutList
           drawing_def.edges_bounds.add(curve_manipulator.points)
         end
         drawing_def.bounds.add(drawing_def.edges_bounds.min, drawing_def.edges_bounds.max)
+      end
+      unless @ignore_clines
+        drawing_def.cline_manipulators.each do |cline_manipulator|
+          drawing_def.clines_bounds.add(cline_manipulator.points)
+        end
+        drawing_def.bounds.add(drawing_def.clines_bounds.min, drawing_def.clines_bounds.max)
       end
 
       # STEP 4 : Customize origin
@@ -367,8 +388,28 @@ module Ladb::OpenCutList
           elsif recursive
             if entity.is_a?(Sketchup::Group)
               _populate_edge_manipulators(drawing_def, entity.entities, transformation * entity.transformation, recursive, &validator)
-            elsif entity.is_a?(Sketchup::ComponentInstance) && (!@face_for_part || entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
+            elsif entity.is_a?(Sketchup::ComponentInstance) && (!@edge_for_part || entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
               _populate_edge_manipulators(drawing_def, entity.definition.entities, transformation * entity.transformation, recursive, &validator)
+            end
+          end
+        end
+      end
+    end
+
+    def _populate_cline_manipulators(drawing_def, entities, transformation = IDENTITY, recursive = true, &validator)
+      entities.each do |entity|
+        if entity.visible? && _layer_visible?(entity.layer)
+          if entity.is_a?(Sketchup::ConstructionLine)
+            next if entity.start.nil? # Exclude infinite Clines
+            manipulator = ClineManipulator.new(entity, transformation)
+            if !block_given? || yield(manipulator)
+              drawing_def.cline_manipulators.push(manipulator)
+            end
+          elsif recursive
+            if entity.is_a?(Sketchup::Group)
+              _populate_cline_manipulators(drawing_def, entity.entities, transformation * entity.transformation, recursive, &validator)
+            elsif entity.is_a?(Sketchup::ComponentInstance) && (!@edge_for_part || entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
+              _populate_cline_manipulators(drawing_def, entity.definition.entities, transformation * entity.transformation, recursive, &validator)
             end
           end
         end

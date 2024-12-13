@@ -1,20 +1,22 @@
 module Ladb::OpenCutList
 
   require_relative 'smart_tool'
+  require_relative '../lib/geometrix/finder/circle_finder'
+  require_relative '../lib/fiddle/clippy/clippy'
   require_relative '../manipulator/vertex_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/plane_manipulator'
   require_relative '../manipulator/cline_manipulator'
-  require_relative '../lib/geometrix/finder/circle_finder'
-  require_relative '../lib/fiddle/clippy/clippy'
   require_relative '../helper/entities_helper'
+  require_relative '../worker/common/common_drawing_decomposition_worker'
 
   class SmartDrawTool < SmartTool
 
     ACTION_DRAW_RECTANGLE = 0
     ACTION_DRAW_CIRCLE = 1
     ACTION_DRAW_POLYGON = 2
+    ACTION_MOVE = 3
 
     ACTION_OPTION_TOOLS = 'tools'
     ACTION_OPTION_OFFSET = 'offset'
@@ -50,27 +52,34 @@ module Ladb::OpenCutList
           ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_SEGMENTS => [ ACTION_OPTION_SEGMENTS_SEGMENT_COUNT ],
-          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
       },
       {
         :action => ACTION_DRAW_POLYGON,
         :options => {
           ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
-          ACTION_OPTION_OFFSET => [ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+        }
+      },
+      {
+        :action => ACTION_MOVE,
+        :options => {
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
       }
     ].freeze
 
     # -----
 
-    attr_reader :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pushpull, :cursor_move, :cursor_move_copy
+    attr_reader :cursor_select, :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pushpull, :cursor_move, :cursor_move_copy
 
     def initialize
       super
 
       # Create cursors
+      @cursor_select = create_cursor('select', 0, 0)
       @cursor_pencil_rectangle = create_cursor('pencil-rectangle', 0, 31)
       @cursor_pencil_circle = create_cursor('pencil-circle', 0, 31)
       @cursor_pencil_polygon = create_cursor('pencil-polygon', 0, 31)
@@ -105,7 +114,7 @@ module Ladb::OpenCutList
     end
 
     def get_action_options_modal?(action)
-      true
+      action != ACTION_MOVE
     end
 
     def get_action_option_toggle?(action, option_group, option)
@@ -179,8 +188,8 @@ module Ladb::OpenCutList
       fetch_action == ACTION_DRAW_POLYGON
     end
 
-    def set_action_handler(action_handler)
-      @action_handler = action_handler
+    def is_action_move?
+      fetch_action == ACTION_MOVE
     end
 
     # -- Events --
@@ -190,67 +199,7 @@ module Ladb::OpenCutList
       # Clear current selection
       Sketchup.active_model.selection.clear if Sketchup.active_model
 
-      @action_handler = nil
       super
-    end
-
-    def onDeactivate(view)
-      view.lock_inference if view.inference_locked?
-      super
-    end
-
-    def onResume(view)
-      refresh
-      @action_handler.onResume(view) if !@action_handler.nil? && @action_handler.respond_to?(:onResume)
-    end
-
-    def onCancel(reason, view)
-      return @action_handler.onCancel(reason, view) if !@action_handler.nil? && @action_handler.respond_to?(:onCancel)
-      super
-    end
-
-    def onMouseMove(flags, x, y, view)
-      return true if super
-      @action_handler.onMouseMove(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseMove)
-    end
-
-    def onMouseLeave(view)
-      return true if super
-      @action_handler.onMouseLeave(view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseLeave)
-    end
-
-    def onMouseLeaveSpace(view)
-      return true if super
-      @action_handler.onMouseLeave(view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseLeave)
-    end
-
-    def onLButtonDown(flags, x, y, view)
-      return true if super
-      @action_handler.onLButtonDown(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onLButtonDown)
-    end
-
-    def onLButtonUp(flags, x, y, view)
-      return true if super
-      @action_handler.onLButtonUp(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onLButtonUp)
-    end
-
-    def onLButtonDoubleClick(flags, x, y, view)
-      return true if super
-      @action_handler.onLButtonDoubleClick(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onLButtonDoubleClick)
-    end
-
-    def onKeyDown(key, repeat, flags, view)
-      return true if super
-      @action_handler.onKeyDown(key, repeat, flags, view) if !@action_handler.nil? && @action_handler.respond_to?(:onKeyDown)
-    end
-
-    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
-      return true if super
-      @action_handler.onKeyUpExtended(key, repeat, flags, view, after_down, is_quick) if !@action_handler.nil? && @action_handler.respond_to?(:onKeyUpExtended)
-    end
-
-    def onUserText(text, view)
-      @action_handler.onUserText(text, view) if !@action_handler.nil? && @action_handler.respond_to?(:onUserText)
     end
 
     def onActionChanged(action)
@@ -262,51 +211,14 @@ module Ladb::OpenCutList
         set_action_handler(SmartDrawCircleActionHandler.new(self))
       when ACTION_DRAW_POLYGON
         set_action_handler(SmartDrawPolygonActionHandler.new(self))
+      when ACTION_MOVE
+        set_action_handler(SmartMoveActionHandler.new(self))
       end
 
       super
 
       refresh
 
-    end
-
-    def draw(view)
-      super
-      @action_handler.draw(view) unless @action_handler.nil? && @action_handler.respond_to?(:draw)
-    end
-
-    def enableVCB?
-      return @action_handler.enableVCB? unless @action_handler.nil? && @action_handler.respond_to?(:enableVCB?)
-      false
-    end
-
-    def getExtents
-      return @action_handler.getExtents unless @action_handler.nil? && @action_handler.respond_to?(:getExtents)
-      super
-    end
-
-    # -----
-
-    def remove_all_3d
-      @space.remove_all
-    end
-
-    def append_3d(entity)
-      @space.append(entity)
-    end
-
-    def remove_all_2d
-      @floating_panel.remove_all
-    end
-
-    def append_2d(entity)
-      @floating_panel.append(entity)
-    end
-
-    # -----
-
-    def refresh
-      onMouseMove(0, @last_mouse_x, @last_mouse_y, Sketchup.active_model.active_view)
     end
 
   end
@@ -402,7 +314,6 @@ module Ladb::OpenCutList
 
     def onCancel(reason, view)
       if _picked_pushpull_point?
-        @picked_pushpull_point = nil
         _reset
       elsif _picked_shape_last_point?
         @picked_shape_last_point = nil
@@ -417,7 +328,6 @@ module Ladb::OpenCutList
     end
 
     def onMouseMove(flags, x, y, view)
-
 
       @mouse_snap_point = nil
       @mouse_ip.pick(view, x, y, _get_previous_input_point)
@@ -477,7 +387,7 @@ module Ladb::OpenCutList
     def onMouseLeave(view)
       @tool.remove_all_2d
       @tool.remove_all_3d
-      true
+      super
     end
 
     def onLButtonDown(flags, x, y, view)
@@ -726,6 +636,7 @@ module Ladb::OpenCutList
     end
 
     def draw(view)
+      super
       @mouse_ip.draw(view) if @mouse_ip.valid?
     end
 
@@ -1009,8 +920,8 @@ module Ladb::OpenCutList
       k_segments.add_segments(_points_to_segments(o_shape_points))
       k_segments.add_segments(_points_to_segments(o_top_shape_points))
       k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
-      k_segments.line_width = 1.5
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
+      k_segments.line_width = _fetch_option_construction ? 1 : 1.5
+      k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
       k_segments.color = _get_normal_color
       k_segments.transformation = t
       @tool.append_3d(k_segments)
@@ -1034,6 +945,12 @@ module Ladb::OpenCutList
     end
 
     def _preview_move(view)
+      return unless @drawing_def.is_a?(DrawingDef)
+
+      is_construction = @drawing_def.cline_manipulators.any?
+
+      manipulators = is_construction ? @drawing_def.cline_manipulators : @drawing_def.edge_manipulators
+      segments = manipulators.map { |manipulator| manipulator.segment }.flatten(1)
 
       anchors = [ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ]
 
@@ -1041,22 +958,16 @@ module Ladb::OpenCutList
       pe = @mouse_snap_point
       v = ps.vector_to(pe)
 
-      t = _get_transformation
+      t = @drawing_def.transformation
       ti = t.inverse
 
       points = _get_picked_points
       p1 = points[0].transform(ti)
-      p2 = points[1].transform(ti)
       p3 = points[2].transform(ti)
       p4 = points[3].transform(ti)
 
       bounds = Geom::BoundingBox.new
       bounds.add(p1, p3)
-
-      tt = Geom::Transformation.translation(p2.vector_to(p3))
-
-      o_shape_points = _get_local_shape_points_with_offset
-      o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
 
       if _fetch_option_move_array
 
@@ -1090,11 +1001,9 @@ module Ladb::OpenCutList
           mt = Geom::Transformation.translation(ps.transform(ti).vector_to(p))
 
           k_segments = Kuix::Segments.new
-          k_segments.add_segments(_points_to_segments(o_shape_points))
-          k_segments.add_segments(_points_to_segments(o_top_shape_points))
-          k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
-          k_segments.line_width = 1.5
-          k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
+          k_segments.add_segments(segments)
+          k_segments.line_width = is_construction ? 1 : 1.5
+          k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if is_construction
           k_segments.color = Kuix::COLOR_BLACK
           k_segments.transformation = t * mt
           @tool.append_3d(k_segments)
@@ -1136,9 +1045,7 @@ module Ladb::OpenCutList
         unless @move_copy
 
           k_segments = Kuix::Segments.new
-          k_segments.add_segments(_points_to_segments(o_shape_points))
-          k_segments.add_segments(_points_to_segments(o_top_shape_points))
-          k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
+          k_segments.add_segments(segments)
           k_segments.line_width = 1.5
           k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
           k_segments.color = Kuix::COLOR_DARK_GREY
@@ -1150,11 +1057,9 @@ module Ladb::OpenCutList
         mt = Geom::Transformation.translation(ps.transform(ti).vector_to(p4))
 
         k_segments = Kuix::Segments.new
-        k_segments.add_segments(_points_to_segments(o_shape_points))
-        k_segments.add_segments(_points_to_segments(o_top_shape_points))
-        k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
-        k_segments.line_width = 1.5
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
+        k_segments.add_segments(segments)
+        k_segments.line_width = is_construction ? 1 : 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if is_construction
         k_segments.color = Kuix::COLOR_BLACK
         k_segments.transformation = t * mt
         @tool.append_3d(k_segments)
@@ -1212,52 +1117,6 @@ module Ladb::OpenCutList
 
       end
 
-    end
-
-    # -----
-
-    def _create_floating_points(
-      points:,
-      style: Kuix::POINT_STYLE_SQUARE,
-      fill_color: nil,
-      stroke_color: Kuix::COLOR_BLACK,
-      stroke_width: 1.5
-    )
-
-      unit = @tool.get_unit
-
-      k_points = Kuix::Points.new
-      k_points.add_points(points) if points.is_a?(Array)
-      k_points.add_point(points) if points.is_a?(Geom::Point3d)
-      k_points.size = 2.5 * unit
-      k_points.style = style
-      k_points.fill_color = fill_color
-      k_points.stroke_color = stroke_color
-      k_points.stroke_width = stroke_width
-
-      k_points
-    end
-
-    def _create_floating_label(
-      screen_point:,
-      text:,
-      text_color: Kuix::COLOR_BLACK,
-      border_color: Kuix::COLOR_BLACK
-    )
-
-      unit = @tool.get_unit
-
-      k_label = Kuix::Label.new
-      k_label.text = text.to_s
-      k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      k_label.set_style_attribute(:color, text_color)
-      k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-      k_label.set_style_attribute(:border_color, border_color)
-      k_label.border.set_all!(unit * 0.25)
-      k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
-      k_label.text_size = unit * 2.5
-
-      k_label
     end
 
     # -----
@@ -1428,18 +1287,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_active_x_axis
-      X_AXIS.transform(_get_edit_transformation)
-    end
-
-    def _get_active_y_axis
-      Y_AXIS.transform(_get_edit_transformation)
-    end
-
-    def _get_active_z_axis
-      Z_AXIS.transform(_get_edit_transformation)
-    end
-
     def _get_axes
 
       if @direction.nil? || !@direction.valid? || !@direction.perpendicular?(@normal)
@@ -1458,11 +1305,6 @@ module Ladb::OpenCutList
       [ x_axis.normalize, y_axis.normalize, z_axis.normalize ]
     end
 
-    def _get_edit_transformation
-      return IDENTITY if Sketchup.active_model.nil? || Sketchup.active_model.edit_transform.nil?
-      Sketchup.active_model.edit_transform
-    end
-
     def _get_transformation
       Geom::Transformation.axes(@picked_shape_first_point.nil? ? ORIGIN : @picked_shape_first_point, *_get_axes)
     end
@@ -1477,20 +1319,7 @@ module Ladb::OpenCutList
       _get_vector_color(@direction)
     end
 
-    def _get_vector_color(vector, default = Kuix::COLOR_BLACK)
-      if vector.is_a?(Geom::Vector3d) && vector.valid?
-        return Kuix::COLOR_X if vector.parallel?(_get_active_x_axis)
-        return Kuix::COLOR_Y if vector.parallel?(_get_active_y_axis)
-        return Kuix::COLOR_Z if vector.parallel?(_get_active_z_axis)
-      end
-      default
-    end
-
     # -----
-
-    def _refresh
-      @tool.refresh
-    end
 
     def _reset
       @mouse_ip.clear
@@ -1506,17 +1335,8 @@ module Ladb::OpenCutList
       @locked_normal = nil
       @locked_axis = nil
       @move_anchor_index = 2
-      @tool.remove_all_2d
-      @tool.remove_all_3d
+      super
       set_state(STATE_SHAPE_FIRST_POINT)
-      Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
-    end
-
-    def _restart
-      @tool.set_action_handler(self.class.new(@tool, self))
-      @tool.remove_all_2d
-      @tool.remove_all_3d
-      Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
     end
 
     # -----
@@ -1580,7 +1400,7 @@ module Ladb::OpenCutList
 
         end
 
-        @definition = group.definition
+        instance = group
 
       else
 
@@ -1609,24 +1429,32 @@ module Ladb::OpenCutList
           entities = definition.entities
           entities.transform_entities(taoi, entities.to_a)
 
-          @normal = t.zaxis
-          @direction = t.xaxis
+          # @normal = t.zaxis
+          # @direction = t.xaxis
 
         end
 
-        @definition = definition
-        model.active_entities.add_instance(definition, t)
+        instance = model.active_entities.add_instance(definition, t)
 
       end
 
       model.commit_operation
 
+      @definition = instance.definition
+
+      @drawing_def = CommonDrawingDecompositionWorker.new((model.active_path.nil? ? [] : model.active_path) + [ instance ],
+        ignore_surfaces: true,
+        ignore_faces: true,
+        ignore_edges: _fetch_option_construction,
+        ignore_clines: !_fetch_option_construction
+      ).run
+
     end
 
     def _copy_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
-      return if @definition.nil?
+      return if @definition.nil? || !@drawing_def.is_a?(DrawingDef)
 
-      t = _get_transformation
+      t = @drawing_def.transformation
       ti = t.inverse
 
       ps = [ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ][@move_anchor_index].transform(ti)
@@ -2161,8 +1989,8 @@ module Ladb::OpenCutList
 
       k_segments = Kuix::Segments.new
       k_segments.add_segments(o_segments)
-      k_segments.line_width = @locked_normal ? 3 : 1.5
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
+      k_segments.line_width = @locked_normal ? 3 : _fetch_option_construction ? 1 : 1.5
+      k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
       k_segments.color = _get_normal_color
       k_segments.transformation = t
       @tool.append_3d(k_segments)
@@ -2566,8 +2394,8 @@ module Ladb::OpenCutList
 
       k_segments = Kuix::Segments.new
       k_segments.add_segments(o_segments)
-      k_segments.line_width = @locked_normal ? 3 : 1.5
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
+      k_segments.line_width = @locked_normal ? 3 : _fetch_option_construction ? 1 : 1.5
+      k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
       k_segments.color = _get_normal_color
       k_segments.transformation = t
       @tool.append_3d(k_segments)
@@ -3359,8 +3187,8 @@ module Ladb::OpenCutList
 
       k_segments = Kuix::Segments.new
       k_segments.add_segments(o_segments)
-      k_segments.line_width = @locked_normal ? 3 : 1.5
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
+      k_segments.line_width = @locked_normal ? 3 : _fetch_option_construction ? 1 : 1.5
+      k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
       k_segments.color = _get_normal_color
       k_segments.transformation = t
       @tool.append_3d(k_segments)
@@ -3390,8 +3218,8 @@ module Ladb::OpenCutList
 
           k_segments = Kuix::Segments.new
           k_segments.add_segments([ measure_start, @mouse_snap_point ])
-          k_segments.line_width = @locked_axis ? 3 : 1.5
-          k_segments.line_stipple = _fetch_option_shape_offset != 0 ? Kuix::LINE_STIPPLE_DOTTED : (_fetch_option_construction ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID)
+          k_segments.line_width = @locked_axis ? 3 : _fetch_option_construction ? 1 : 1.5
+          k_segments.line_stipple = _fetch_option_shape_offset != 0 ? Kuix::LINE_STIPPLE_DOTTED : (_fetch_option_construction ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID)
           k_segments.color = _get_vector_color(@locked_axis, _get_normal_color)
           k_segments.on_top = true
           @tool.append_3d(k_segments)
@@ -3482,6 +3310,183 @@ module Ladb::OpenCutList
       )
       return Fiddle::Clippy.rpath_to_points(o_paths.first, points[0].z) if o_paths.any?
       []
+    end
+
+  end
+
+  class SmartMoveActionHandler < SmartPartActionHandler
+
+    include FaceTrianglesHelper
+
+    STATE_SELECT = 0
+    STATE_MOVE = 1
+
+    def initialize(tool, action_handler = nil)
+      super(SmartDrawTool::ACTION_MOVE, tool)
+
+      @picked_move_start_point = nil
+      @picked_move_end_point = nil
+
+      set_state(STATE_SELECT)
+
+    end
+
+    # -----
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT
+        return @tool.cursor_move
+      when STATE_MOVE
+        return @tool.cursor_move
+      end
+
+      super
+    end
+
+    def get_state_picker(state)
+      SmartPicker.new(tool: @tool, observer: self, pick_point: true)
+    end
+
+    # -----
+
+    def onCancel(reason, view)
+      if @state == STATE_SELECT
+        _reset
+      elsif @state == STATE_MOVE
+        @picked_move_start_point = nil
+        @picked_move_end_point = nil
+        set_state(STATE_SELECT)
+      end
+      _refresh
+    end
+
+    def onLButtonUp(flags, x, y, view)
+
+      case @state
+
+      when STATE_SELECT
+        if @active_part
+          @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
+            ignore_surfaces: true,
+            ignore_faces: true,
+            ignore_edges: false,
+            ignore_clines: false,
+          ).run
+          if @drawing_def.is_a?(DrawingDef)
+            @edge_segments = @drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
+            @cline_segments = @drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
+            @picked_move_start_point = @picker.picked_point
+            set_state(STATE_MOVE)
+          end
+        end
+
+      when STATE_MOVE
+        @picked_move_end_point = @picker.picked_point
+        _copy_part
+        _restart
+      end
+
+    end
+
+    def onPickerChanged(picker, view)
+
+      case @state
+
+      when STATE_SELECT
+        _pick_part(picker, view)
+
+      when STATE_MOVE
+        _preview_move(picker)
+
+      end
+
+      super
+    end
+
+    def onActivePartChanged(part_entity_path, part, highlighted = false)
+      _preview_part(part_entity_path, part, 1, highlighted)
+    end
+
+    protected
+
+    def _preview_move(picker)
+
+      @tool.remove_3d(1)
+
+      unless picker.picked_point.nil?
+
+        k_line = Kuix::LineMotif.new
+        k_line.start.copy!(@picked_move_start_point)
+        k_line.end.copy!(picker.picked_point)
+        k_line.color = Kuix::COLOR_MEDIUM_GREY
+        k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_line.line_width = 1
+        k_line.on_top = true
+        @tool.append_3d(k_line, 1)
+
+        k_line = Kuix::LineMotif.new
+        k_line.start.copy!(@picked_move_start_point)
+        k_line.end.copy!(picker.picked_point)
+        k_line.color = Kuix::COLOR_BLACK
+        k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_line.line_width = 1
+        @tool.append_3d(k_line, 1)
+
+        v = @picked_move_start_point.vector_to(picker.picked_point)
+        t = Geom::Transformation.translation(v) * @drawing_def.transformation
+
+        unless @edge_segments.empty?
+
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments(@edge_segments)
+          k_segments.line_width = 1.5
+          k_segments.color = Kuix::COLOR_BLACK
+          k_segments.transformation = t
+          @tool.append_3d(k_segments, 1)
+
+        end
+
+        unless @cline_segments.empty?
+
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments(@cline_segments)
+          k_segments.line_width = 1
+          k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+          k_segments.color = Kuix::COLOR_BLACK
+          k_segments.transformation = t
+          @tool.append_3d(k_segments, 1)
+
+        end
+
+      end
+
+    end
+
+    def _copy_part
+
+      if @active_part_entity_path.one?
+        parent = Sketchup.active_model
+        entities = parent.entities
+        tp = IDENTITY
+      else
+        parent = @active_part_entity_path[-2]
+        entities = parent.definition.entities
+        tp = parent.transformation
+      end
+      entity = @active_part_entity_path.last
+      definition = entity.definition
+
+      tpi = tp.inverse
+
+      ps = @picked_move_start_point.transform(tpi)
+      pe = @picked_move_end_point.transform(tpi)
+      v = ps.vector_to(pe)
+      t = Geom::Transformation.translation(v) * entity.transformation
+
+      entities.add_instance(definition, t)
+
     end
 
   end

@@ -17,11 +17,10 @@ module Ladb::OpenCutList
 
     def reset_cache
       super
-      @points = nil
       @middle_point = nil
       @third_points = nil
+      @points = nil
       @z_max = nil
-      @segment = nil
     end
 
     # -----
@@ -65,6 +64,8 @@ module Ladb::OpenCutList
       @points
     end
 
+    alias_method :segment, :points
+
     def z_max
       @z_max = points.max { |p1, p2| p1.z <=> p2.z }.z if @z_max.nil?
       @z_max
@@ -72,11 +73,6 @@ module Ladb::OpenCutList
 
     def length
       (end_point - start_point).length
-    end
-
-    def segment
-      @segment = points if @segment.nil?
-      @segment
     end
 
     # -----

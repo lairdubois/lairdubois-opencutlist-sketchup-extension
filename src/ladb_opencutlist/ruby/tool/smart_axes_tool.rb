@@ -152,11 +152,11 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_SWAP_LENGTH_WIDTH, ACTION_SWAP_FRONT_BACK, ACTION_FLIP
-        return SmartPicker.new(self)
+        return SmartPicker.new(tool: self)
       when ACTION_ADAPT_AXES
-        return SmartPicker.new(self, pick_edges: true, pick_clines: true, pick_axes: true)
+        return SmartPicker.new(tool: self, pick_edges: true, pick_clines: true, pick_axes: true)
       when ACTION_MOVE_AXES
-        return SmartPicker.new(self, pick_point: true)
+        return SmartPicker.new(tool: self, pick_point: true)
       end
 
       super
@@ -271,7 +271,7 @@ module Ladb::OpenCutList
       false
     end
 
-    def onPickerChanged(picker)
+    def onPickerChanged(picker, view)
       super
       _handle_mouse_event(:move)
     end
@@ -314,9 +314,9 @@ module Ladb::OpenCutList
           end
         end
 
-        part_helper = Kuix::Group.new
-        part_helper.transformation = instance_info.transformation
-        @overlay_layer.append(part_helper)
+        k_group = Kuix::Group.new
+        k_group.transformation = instance_info.transformation
+        @overlay_layer.append(k_group)
 
         show_axes = true
         if is_action_adapt_axes? && part.group.material_type != MaterialAttributes::TYPE_HARDWARE
@@ -326,11 +326,11 @@ module Ladb::OpenCutList
           if plane_manipulator.is_a?(FaceManipulator)
 
             # Highlight picked face
-            mesh = Kuix::Mesh.new
-            mesh.transformation = instance_info.transformation.inverse
-            mesh.add_triangles(plane_manipulator.triangles)
-            mesh.background_color = COLOR_ACTION_FILL
-            part_helper.append(mesh)
+            k_mesh = Kuix::Mesh.new
+            k_mesh.transformation = instance_info.transformation.inverse
+            k_mesh.add_triangles(plane_manipulator.triangles)
+            k_mesh.background_color = COLOR_ACTION_FILL
+            k_group.append(k_mesh)
 
           end
 
@@ -348,56 +348,56 @@ module Ladb::OpenCutList
             bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
 
             # Front arrow
-            arrow = Kuix::ArrowMotif.new
-            arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
-            arrow.bounds.origin.copy!(bounds.min)
-            arrow.bounds.size.copy!(bounds)
-            arrow.color = COLOR_ACTION
-            arrow.line_width = arrow_line_width
-            arrow.transformation = t
-            part_helper.append(arrow)
+            k_arrow = Kuix::ArrowMotif.new
+            k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
+            k_arrow.bounds.origin.copy!(bounds.min)
+            k_arrow.bounds.size.copy!(bounds)
+            k_arrow.color = COLOR_ACTION
+            k_arrow.line_width = arrow_line_width
+            k_arrow.transformation = t
+            k_group.append(k_arrow)
 
             # Box helper
-            box = Kuix::BoxMotif.new
-            box.bounds.origin.copy!(bounds.min)
-            box.bounds.size.copy!(bounds)
-            box.bounds.size.width += increases[0] / part.def.scale.x
-            box.bounds.size.height += increases[1] / part.def.scale.y
-            box.bounds.size.depth += increases[2] / part.def.scale.z
-            box.color = COLOR_ACTION
-            box.line_width = 1
-            box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            box.transformation = t
-            part_helper.append(box)
+            k_box = Kuix::BoxMotif.new
+            k_box.bounds.origin.copy!(bounds.min)
+            k_box.bounds.size.copy!(bounds)
+            k_box.bounds.size.width += increases[0] / part.def.scale.x
+            k_box.bounds.size.height += increases[1] / part.def.scale.y
+            k_box.bounds.size.depth += increases[2] / part.def.scale.z
+            k_box.color = COLOR_ACTION
+            k_box.line_width = 1
+            k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            k_box.transformation = t
+            k_group.append(k_box)
 
             # Axes helper
-            axes_helper = Kuix::AxesHelper.new
-            axes_helper.transformation = t
-            part_helper.append(axes_helper)
+            k_axes_helper = Kuix::AxesHelper.new
+            k_axes_helper.transformation = t
+            k_group.append(k_axes_helper)
 
           end
 
           if line_manipulator.is_a?(EdgeManipulator)
 
             # Highlight picked edge
-            segments = Kuix::Segments.new
-            segments.transformation = instance_info.transformation.inverse
-            segments.add_segments(line_manipulator.segment)
-            segments.color = COLOR_ACTION
-            segments.line_width = 4
-            segments.on_top = true
-            part_helper.append(segments)
+            k_segments = Kuix::Segments.new
+            k_segments.transformation = instance_info.transformation.inverse
+            k_segments.add_segments(line_manipulator.segment)
+            k_segments.color = COLOR_ACTION
+            k_segments.line_width = 4
+            k_segments.on_top = true
+            k_group.append(k_segments)
 
           elsif line_manipulator.is_a?(LineManipulator)
 
             # Highlight picked line
-            line = Kuix::Line.new
-            line.transformation = instance_info.transformation.inverse
-            line.position = line_manipulator.position
-            line.direction = line_manipulator.direction
-            line.color = COLOR_ACTION
-            line.line_width = 2
-            part_helper.append(line)
+            k_line = Kuix::Line.new
+            k_line.transformation = instance_info.transformation.inverse
+            k_line.position = line_manipulator.position
+            k_line.direction = line_manipulator.direction
+            k_line.color = COLOR_ACTION
+            k_line.line_width = 2
+            k_group.append(k_line)
 
           end
 
@@ -441,21 +441,21 @@ module Ladb::OpenCutList
           r_t *= Geom::Transformation.translation(Geom::Vector3d.new(r_width / -2.0, r_height / -2.0, 0))
           r_t *= Geom::Transformation.scaling(ORIGIN, r_width, r_height, 0)
 
-          rect = Kuix::RectangleMotif.new
-          rect.bounds.size.set!(1, 1, 0)
-          rect.transformation = r_t
-          rect.color = r_color
-          rect.line_width = 2
-          rect.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if instance_info.size.auto_oriented?
-          part_helper.append(rect)
+          k_rectangle = Kuix::RectangleMotif.new
+          k_rectangle.bounds.size.set!(1, 1, 0)
+          k_rectangle.transformation = r_t
+          k_rectangle.color = r_color
+          k_rectangle.line_width = 2
+          k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if instance_info.size.auto_oriented?
+          k_group.append(k_rectangle)
 
-            fill = Kuix::Mesh.new
-            fill.add_triangles([
+            k_mesh = Kuix::Mesh.new
+            k_mesh.add_triangles([
                                  Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(1, 0, 0), Geom::Point3d.new(1, 1, 0),
                                  Geom::Point3d.new(0, 0, 0), Geom::Point3d.new(0, 1, 0), Geom::Point3d.new(1, 1, 0)
                                ])
-            fill.background_color = f_color
-            rect.append(fill)
+            k_mesh.background_color = f_color
+            k_rectangle.append(k_mesh)
 
         end
 
@@ -464,9 +464,9 @@ module Ladb::OpenCutList
           input_point = _get_input_point(instance_info)
           if input_point
 
-            axes_helper = Kuix::AxesHelper.new
-            axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
-            part_helper.append(axes_helper)
+            k_axes_helper = Kuix::AxesHelper.new
+            k_axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
+            k_group.append(k_axes_helper)
 
           end
 
@@ -475,45 +475,45 @@ module Ladb::OpenCutList
         if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
           # Back arrow
-          arrow = Kuix::ArrowMotif.new
-          arrow.patterns_transformation = instance_info.size.oriented_transformation
-          arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
-          arrow.bounds.size.copy!(instance_info.definition_bounds)
-          arrow.color = arrow_color
-          arrow.line_width = arrow_line_width
-          arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          part_helper.append(arrow)
+          k_arrow = Kuix::ArrowMotif.new
+          k_arrow.patterns_transformation = instance_info.size.oriented_transformation
+          k_arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
+          k_arrow.bounds.size.copy!(instance_info.definition_bounds)
+          k_arrow.color = arrow_color
+          k_arrow.line_width = arrow_line_width
+          k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_group.append(k_arrow)
 
           # Front arrow
-          arrow = Kuix::ArrowMotif.new
-          arrow.patterns_transformation = instance_info.size.oriented_transformation
-          arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
-          arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
-          arrow.bounds.size.copy!(instance_info.definition_bounds)
-          arrow.color = arrow_color
-          arrow.line_width = arrow_line_width
-          part_helper.append(arrow)
+          k_arrow = Kuix::ArrowMotif.new
+          k_arrow.patterns_transformation = instance_info.size.oriented_transformation
+          k_arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
+          k_arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
+          k_arrow.bounds.size.copy!(instance_info.definition_bounds)
+          k_arrow.color = arrow_color
+          k_arrow.line_width = arrow_line_width
+          k_group.append(k_arrow)
 
           # Bounding box helper
-          box = Kuix::BoxMotif.new
-          box.bounds.origin.copy!(instance_info.definition_bounds.min)
-          box.bounds.size.copy!(instance_info.definition_bounds)
-          box.bounds.size.width += increases[0] / part.def.scale.x
-          box.bounds.size.height += increases[1] / part.def.scale.y
-          box.bounds.size.depth += increases[2] / part.def.scale.z
-          box.color = COLOR_BOX
-          box.line_width = 1
-          box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          part_helper.append(box)
+          k_box = Kuix::BoxMotif.new
+          k_box.bounds.origin.copy!(instance_info.definition_bounds.min)
+          k_box.bounds.size.copy!(instance_info.definition_bounds)
+          k_box.bounds.size.width += increases[0] / part.def.scale.x
+          k_box.bounds.size.height += increases[1] / part.def.scale.y
+          k_box.bounds.size.depth += increases[2] / part.def.scale.z
+          k_box.color = COLOR_BOX
+          k_box.line_width = 1
+          k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_group.append(k_box)
 
         end
 
         if show_axes
 
           # Axes helper
-          axes_helper = Kuix::AxesHelper.new
-          axes_helper.transformation = Geom::Transformation.scaling(1 / part.def.scale.x, 1 / part.def.scale.y, 1 / part.def.scale.z)
-          part_helper.append(axes_helper)
+          k_axes_helper = Kuix::AxesHelper.new
+          k_axes_helper.transformation = Geom::Transformation.scaling(1 / part.def.scale.x, 1 / part.def.scale.y, 1 / part.def.scale.z)
+          k_group.append(k_axes_helper)
 
         end
 
@@ -536,11 +536,11 @@ module Ladb::OpenCutList
         end
         instance_paths.each do |path|
 
-          mesh = Kuix::Mesh.new
-          mesh.add_triangles(_compute_children_faces_triangles(path.last.definition.entities))
-          mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
-          mesh.transformation = PathUtils::get_transformation(path)
-          @overlay_layer.append(mesh)
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(_compute_children_faces_triangles(path.last.definition.entities))
+          k_mesh.background_color = highlighted ? COLOR_MESH_HIGHLIGHTED : COLOR_MESH
+          k_mesh.transformation = PathUtils::get_transformation(path)
+          @overlay_layer.append(k_mesh)
 
         end
 

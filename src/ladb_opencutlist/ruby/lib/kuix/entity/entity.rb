@@ -33,9 +33,9 @@ module Ladb::OpenCutList::Kuix
 
     # Append given widget to self and returns self
     def append(entity)
-      throw 'Entity.append only supports Entity' unless entity.is_a?(Entity)
-      throw 'Entity.append can\'t append itself' if entity == self
-      throw 'Entity.append can\'t append nil' if entity.nil?
+      raise 'Entity.append only supports Entity' unless entity.is_a?(Entity)
+      raise 'Entity.append can\'t append itself' if entity == self
+      raise 'Entity.append can\'t append nil' if entity.nil?
 
       # Remove widget from previous parent
       entity.remove if entity.parent
@@ -56,9 +56,9 @@ module Ladb::OpenCutList::Kuix
 
     # Prepend given widget to self and returns self
     def prepend(entity)
-      throw 'Entity.append only supports Entity' unless entity.is_a?(Entity)
-      throw 'Entity.append can\'t prepend itself' if entity == self
-      throw 'Entity.append can\'t prepend nil' if entity.nil?
+      raise 'Entity.append only supports Entity' unless entity.is_a?(Entity)
+      raise 'Entity.append can\'t prepend itself' if entity == self
+      raise 'Entity.append can\'t prepend nil' if entity.nil?
 
       # Remove widget from previous parent
       entity.remove if entity.parent

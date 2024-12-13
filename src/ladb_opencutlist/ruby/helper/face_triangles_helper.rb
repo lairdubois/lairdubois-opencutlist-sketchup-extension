@@ -31,7 +31,7 @@ module Ladb::OpenCutList
     #
     def _compute_face_triangles(face, transformation = nil)
 
-      # Thank you @thomthom for this piece of code ;)
+      # Thank you, @thomthom for this piece of code ;)
 
       if face.deleted?
         return []

@@ -6,10 +6,11 @@ module Ladb::OpenCutList
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/sanitizer_helper'
   require_relative '../worker/cutlist/cutlist_generate_worker'
-  require_relative '../utils/axis_utils'
   require_relative '../utils/hash_utils'
-  require_relative '../utils/transformation_utils'
   require_relative '../model/geom/size3d'
+  require_relative '../manipulator/face_manipulator'
+  require_relative '../manipulator/edge_manipulator'
+  require_relative '../manipulator/line_manipulator'
   require_relative '../manipulator/cline_manipulator'
 
   class SmartTool < Kuix::KuixTool
@@ -74,6 +75,9 @@ module Ladb::OpenCutList
       # Setup action stack
       @action_stack = []
 
+      # Action handler
+      @action_handler = nil
+
       # Create cursors
       @cursor_select_error = create_cursor('select-error', 0, 0)
 
@@ -83,6 +87,10 @@ module Ladb::OpenCutList
       # Mouse
       @last_mouse_x = -1
       @last_mouse_y = -1
+
+      # Layers
+      @layers_2d = {}
+      @layers_3d = {}
 
     end
 
@@ -110,7 +118,7 @@ module Ladb::OpenCutList
       else
         @unit = 3
       end
-      @unit /= UI.scale_factor(view) if view.respond_to?(:device_height)
+      @unit /= UI.scale_factor(view) if view.respond_to?(:device_height)  # SU 2025 workaround
       @unit
     end
 
@@ -146,13 +154,6 @@ module Ladb::OpenCutList
       @canvas.layout = Kuix::StaticLayout.new
 
       unit = get_unit(view)
-
-      # -- FLOATING
-
-      @floating_panel = Kuix::Panel.new
-      @floating_panel.layout_data = Kuix::StaticLayoutData.new
-      @floating_panel.layout = Kuix::StaticLayout.new
-      @canvas.append(@floating_panel)
 
       # -- TOP
 
@@ -491,6 +492,46 @@ module Ladb::OpenCutList
         minitool_btn.append(motif)
 
       minitool_btn
+    end
+
+    def append_2d(entity, layer = 0)
+      raise "layer can't be nil" if layer.nil?
+      k_layer = @layers_2d[layer]
+      if k_layer.nil?
+        k_layer = @layers_2d[layer] = Kuix::Panel.new
+        k_layer.layout_data = Kuix::StaticLayoutData.new
+        k_layer.layout = Kuix::StaticLayout.new
+        @canvas.append(k_layer)
+      end
+      k_layer.append(entity)
+    end
+
+    def remove_2d(layer = 0)
+      k_layer = @layers_2d[layer]
+      k_layer.remove_all unless k_layer.nil?
+    end
+
+    def remove_all_2d
+      @layers_2d.each { |layer, k_layer| k_layer.remove_all }
+    end
+
+    def append_3d(entity, layer = 0)
+      raise "layer can't be nil" if layer.nil?
+      k_layer = @layers_3d[layer]
+      if k_layer.nil?
+        k_layer = @layers_3d[layer] = Kuix::Group.new
+        @space.append(k_layer)
+      end
+      k_layer.append(entity)
+    end
+
+    def remove_3d(layer = 0)
+      k_layer = @layers_3d[layer]
+      k_layer.remove_all unless k_layer.nil?
+    end
+
+    def remove_all_3d
+      @layers_3d.each { |layer, k_layer| k_layer.remove_all }
     end
 
     # -- Show --
@@ -989,6 +1030,10 @@ module Ladb::OpenCutList
       fetch_action == ACTION_NONE
     end
 
+    def set_action_handler(action_handler)
+      @action_handler = action_handler
+    end
+
     # -- Menu --
 
     def getMenu(menu, flags, x, y, view)
@@ -1073,10 +1118,24 @@ module Ladb::OpenCutList
 
     def draw(view)
       super
-
-      # Draw picker
       @picker.draw(view) unless @picker.nil?
+      @action_handler.draw(view) if !@action_handler.nil? && @action_handler.respond_to?(:draw)
+    end
 
+    def enableVCB?
+      return @action_handler.enableVCB? if !@action_handler.nil? && @action_handler.respond_to?(:enableVCB?)
+      false
+    end
+
+    def getExtents
+      return @action_handler.getExtents if !@action_handler.nil? && @action_handler.respond_to?(:getExtents)
+      super
+    end
+
+    # -----
+
+    def refresh
+      onMouseMove(0, @last_mouse_x, @last_mouse_y, Sketchup.active_model.active_view)
     end
 
     # -- Events --
@@ -1136,6 +1195,9 @@ module Ladb::OpenCutList
       # Reset tooltip
       view.tooltip = ''
 
+      # Unlock inférence
+      view.lock_inference if view.inference_locked?
+
       # Hide possible modal
       PLUGIN.hide_modal_dialog
 
@@ -1149,7 +1211,19 @@ module Ladb::OpenCutList
 
     def onResume(view)
       super
+      refresh
+      return @action_handler.onResume(view) if !@action_handler.nil? && @action_handler.respond_to?(:onResume)
       set_root_action(fetch_action)  # Force SU status text
+    end
+
+    def onCancel(reason, view)
+      return @action_handler.onCancel(reason, view) if !@action_handler.nil? && @action_handler.respond_to?(:onCancel)
+      super
+    end
+
+    def onKeyDown(key, repeat, flags, view)
+      return true if super
+      @action_handler.onKeyDown(key, repeat, flags, view) if !@action_handler.nil? && @action_handler.respond_to?(:onKeyDown)
     end
 
     def onKeyUp(key, repeat, flags, view)
@@ -1224,7 +1298,7 @@ module Ladb::OpenCutList
         end
         return true
       end
-      false
+      @action_handler.onKeyUpExtended(key, repeat, flags, view, after_down, is_quick) if !@action_handler.nil? && @action_handler.respond_to?(:onKeyUpExtended)
     end
 
     def onMouseMove(flags, x, y, view)
@@ -1243,17 +1317,19 @@ module Ladb::OpenCutList
       # Action
       @picker.onMouseMove(flags, x, y, view) unless is_action_none? || @picker.nil?
 
-      false
+      @action_handler.onMouseMove(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseMove)
     end
 
     def onMouseLeave(view)
       return true if super
       @picker.onMouseLeave(view) unless is_action_none? || @picker.nil?
+      @action_handler.onMouseLeave(view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseLeave)
     end
 
     def onMouseLeaveSpace(view)
       return true if super
       @picker.onMouseLeave(view) unless is_action_none? || @picker.nil?
+      @action_handler.onMouseLeave(view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseLeave)
     end
 
     def onLButtonDown(flags, x, y, view)
@@ -1261,7 +1337,18 @@ module Ladb::OpenCutList
       @last_mouse_x = x
       @last_mouse_y = y
 
-      super
+      return true if super
+      @action_handler.onLButtonDown(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onLButtonDown)
+    end
+
+    def onLButtonUp(flags, x, y, view)
+      return true if super
+      @action_handler.onLButtonUp(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onLButtonUp)
+    end
+
+    def onLButtonDoubleClick(flags, x, y, view)
+      return true if super
+      @action_handler.onLButtonDoubleClick(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onLButtonDoubleClick)
     end
 
     def onMouseWheel(flags, delta, x, y, view)
@@ -1271,6 +1358,10 @@ module Ladb::OpenCutList
         return true
       end
       false
+    end
+
+    def onUserText(text, view)
+      @action_handler.onUserText(text, view) if !@action_handler.nil? && @action_handler.respond_to?(:onUserText)
     end
 
     def onViewChanged(view)
@@ -1287,13 +1378,13 @@ module Ladb::OpenCutList
       @picker.do_pick unless @picker.nil?
     end
 
-    def onPickerChanged(picker)
+    def onPickerChanged(picker, view)
       # Implement in subclasses
     end
 
     # -----
 
-    protected
+    #protected # TODO
 
     def _refresh_active_context(highlighted = false)
       _set_active_context(@active_context_path, highlighted)
@@ -1489,6 +1580,9 @@ module Ladb::OpenCutList
     def initialize(action, tool)
       @action = action
       @tool = tool
+
+      @picker = nil
+
     end
 
     # -- STATE --
@@ -1506,6 +1600,10 @@ module Ladb::OpenCutList
       @tool.get_action_cursor(@action)
     end
 
+    def get_state_picker(state)
+      nil
+    end
+
     def get_state_status(state)
       @tool.get_action_status(@action)
     end
@@ -1520,17 +1618,294 @@ module Ladb::OpenCutList
       set_state(fetch_state)
     end
 
+    def onKeyUp(key, repeat, flags, view)
+      @picker.onKeyUp(key, repeat, flags, view) unless @picker.nil?
+    end
+
+    def onMouseMove(flags, x, y, view)
+      @picker.onMouseMove(flags, x, y, view) unless @picker.nil?
+    end
+
+    def onMouseLeave(view)
+      @picker.onMouseLeave(view) unless @picker.nil?
+    end
+
+    def onMouseLeaveSpace(view)
+      @picker.onMouseLeave(view) unless @picker.nil?
+    end
+
     def onStateChanged(state)
       @tool.set_root_cursor(get_state_cursor(state))
+      @picker = get_state_picker(state)
       Sketchup.set_status_text(get_state_status(state), SB_PROMPT)
       Sketchup.set_status_text(get_state_vcb_label(state), SB_VCB_LABEL)
       Sketchup.set_status_text('', SB_VCB_VALUE)
+    end
+
+    def onPickerChanged(picker, view)
+      view.invalidate
+    end
+
+    # -----
+
+    def draw(view)
+      @picker.draw(view) unless @picker.nil?
     end
 
     # -----
 
     def inspect
       self.class.inspect  # Simplify exception display
+    end
+
+    protected
+
+    def _refresh
+      @tool.refresh
+    end
+
+    def _reset
+      @tool.remove_all_2d
+      @tool.remove_all_3d
+      Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
+    end
+
+    def _restart
+      @tool.set_action_handler(self.class.new(@tool, self))
+      @tool.remove_all_2d
+      @tool.remove_all_3d
+      Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
+    end
+
+    # -----
+
+    def _create_floating_points(
+      points:,
+      style: Kuix::POINT_STYLE_SQUARE,
+      fill_color: nil,
+      stroke_color: Kuix::COLOR_BLACK,
+      stroke_width: 1.5
+    )
+
+      unit = @tool.get_unit
+
+      k_points = Kuix::Points.new
+      k_points.add_points(points) if points.is_a?(Array)
+      k_points.add_point(points) if points.is_a?(Geom::Point3d)
+      k_points.size = 2.5 * unit
+      k_points.style = style
+      k_points.fill_color = fill_color
+      k_points.stroke_color = stroke_color
+      k_points.stroke_width = stroke_width
+
+      k_points
+    end
+
+    def _create_floating_label(
+      screen_point:,
+      text:,
+      text_color: Kuix::COLOR_BLACK,
+      border_color: Kuix::COLOR_BLACK
+    )
+
+      unit = @tool.get_unit
+
+      k_label = Kuix::Label.new
+      k_label.text = text.to_s
+      k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      k_label.set_style_attribute(:color, text_color)
+      k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+      k_label.set_style_attribute(:border_color, border_color)
+      k_label.border.set_all!(unit * 0.25)
+      k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
+      k_label.text_size = unit * 2.5
+
+      k_label
+    end
+
+    # -----
+
+    def _get_edit_transformation
+      return IDENTITY if Sketchup.active_model.nil? || Sketchup.active_model.edit_transform.nil?
+      Sketchup.active_model.edit_transform
+    end
+
+    def _get_active_x_axis
+      X_AXIS.transform(_get_edit_transformation)
+    end
+
+    def _get_active_y_axis
+      Y_AXIS.transform(_get_edit_transformation)
+    end
+
+    def _get_active_z_axis
+      Z_AXIS.transform(_get_edit_transformation)
+    end
+
+    # -----
+
+    def _get_vector_color(vector, default = Kuix::COLOR_BLACK)
+      if vector.is_a?(Geom::Vector3d) && vector.valid?
+        return Kuix::COLOR_X if vector.parallel?(_get_active_x_axis)
+        return Kuix::COLOR_Y if vector.parallel?(_get_active_y_axis)
+        return Kuix::COLOR_Z if vector.parallel?(_get_active_z_axis)
+      end
+      default
+    end
+
+  end
+
+  class SmartPartActionHandler < SmartActionHandler
+
+    COLOR_PART = Sketchup::Color.new(200, 200, 0, 100).freeze
+    COLOR_PART_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
+
+    def initialize(action, tool)
+      super
+
+      @active_part_entity_path = nil
+      @active_part = nil
+
+    end
+
+    # -----
+
+    def onActivePartChanged(part_entity_path, part, highlighted = false)
+      _preview_part(part_entity_path, part, 0, highlighted)
+    end
+
+    protected
+
+    def _reset
+      super
+      @active_part_entity_path = nil
+      @active_part = nil
+    end
+
+    def _pick_part(picker, view)
+      if picker.picked_face_path
+        picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)
+        unless picked_part_entity_path.nil?
+
+          picked_part = _generate_part_from_path(picked_part_entity_path)
+          unless picked_part.nil?
+            _set_active_part(picked_part_entity_path, picked_part)
+            return
+          end
+
+        end
+      end
+      _reset_active_part
+    end
+
+    def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
+      @tool.remove_all_3d
+      if part
+
+        # Mesh
+        instance_paths = [ part_entity_path ]
+        instance_paths.each do |path|
+
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(_compute_children_faces_triangles(path.last.definition.entities))
+          k_mesh.background_color = highlighted ? COLOR_PART_HIGHLIGHTED : COLOR_PART
+          k_mesh.transformation = PathUtils::get_transformation(path)
+          @tool.append_3d(k_mesh)
+
+        end
+
+      end
+    end
+
+    def _refresh_active_part(highlighted = false)
+      _set_active_part(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path), highlighted)
+    end
+
+    def _reset_active_part
+      _set_active_part(nil, nil)
+    end
+
+    def _set_active_part(part_entity_path, part, highlighted = false)
+
+      changed = @active_part_entity_path != part_entity_path
+      if changed
+
+        @active_part_entity_path = part_entity_path
+        @active_part = part
+
+        onActivePartChanged(part_entity_path, part, highlighted)
+
+      end
+
+    end
+
+    def _get_active_part_name(sanitize_for_filename = false)
+      return nil unless @active_part.is_a?(Part)
+      "#{@active_part.saved_number && @active_part.number == @active_part.saved_number ? "#{@active_part.number} - " : ''}#{sanitize_for_filename ? _sanitize_filename(@active_part.name) : @active_part.name}"
+    end
+
+    def _get_active_part_size
+      return nil unless @active_part.is_a?(Part)
+      "#{@active_part.length} x #{@active_part.width} x #{@active_part.thickness}"
+    end
+
+    def _get_active_part_material_name
+      return nil unless @active_part.is_a?(Part) && !@active_part.material_name.empty?
+      "#{@active_part.material_name.strip} (#{PLUGIN.get_i18n_string("tab.materials.type_#{@active_part.group.material_type}")})"
+    end
+
+    def _get_active_part_icons
+      return nil unless @active_part.is_a?(Part)
+      if @active_part.flipped || @active_part.resized || @active_part.auto_oriented
+        icons = []
+        icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2')) if @active_part.flipped
+        icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.6,0L0.4,0 M0.6,0.4L0.8,0.2L0.5,0.2 M0.8,0.2L0.8,0.5 M0.8,0L1,0L1,0.2 M1,0.4L1,0.6 M1,0.8L1,1L0.8,1 M0.2,0L0,0L0,0.2 M0,1L0,0.4L0.6,0.4L0.6,1L0,1')) if @active_part.resized
+        icons << Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.642,0.349L0.642,0.752 M0.541,0.45L0.642,0.349L0.743,0.45 M0.292,0.954L0.642,0.752 M0.43,0.991L0.292,0.954L0.329,0.816 M0.991,0.954L0.642,0.752 M0.853,0.991L0.991,0.954L0.954,0.816 M0.477,0.001L0.584,0.091L0.494,0.198 M0.001,0.477L0.091,0.584L0.198,0.494 M0.091,0.584L0.108,0.456L0.157,0.338L0.235,0.235L0.338,0.157L0.456,0.108L0.584,0.091')) if @active_part.auto_oriented
+        return icons
+      end
+      nil
+    end
+
+    def _select_active_part_entity
+      model = Sketchup.active_model
+      if model && @active_part_entity_path.is_a?(Array) && !@active_part_entity_path.empty?
+        selection = model.selection
+        selection.clear
+        selection.add(@active_part_entity_path.last)
+      end
+    end
+
+    # -----
+
+    def _get_part_entity_path_from_path(path)
+      part_path = path
+      path.reverse_each { |entity|
+        return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
+        part_path = part_path[0...-1]
+      }
+    end
+
+    def _generate_part_from_path(path)
+      return nil unless path.is_a?(Array)
+
+      entity = path.last
+      return nil unless entity.is_a?(Sketchup::Drawingelement)
+
+      worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: entity, active_path: path[0...-1] }))
+      cutlist = worker.run
+
+      part = nil
+      cutlist.groups.each { |group|
+        group.parts.each { |p|
+          if p.def.definition_id == entity.definition.name
+            part = p
+            break
+          end
+        }
+        break unless part.nil?
+      }
+
+      part
     end
 
   end
@@ -1768,7 +2143,8 @@ module Ladb::OpenCutList
     attr_reader :picked_cline, :picked_cline_path
     attr_reader :picked_axes, :picked_axes_line, :picked_axes_path
 
-    def initialize(smart_tool,
+    def initialize(tool:,
+                   observer: nil,
 
                    pick_context_by_face: true,
                    pick_context_by_edge: false,
@@ -1780,12 +2156,13 @@ module Ladb::OpenCutList
 
     )
 
-      @smart_tool = smart_tool
+      @tool = tool
+      @observer = observer.nil? ? @tool : observer
       @view = Sketchup.active_model.active_view
 
-      @pick_position = Geom::Point3d.new
+      @pick_position = Geom::Point3d.new  # Screen coords
       @pick_helper = @view.pick_helper
-      @pick_ip = SmartInputPoint.new(smart_tool) if pick_point
+      @pick_ip = SmartInputPoint.new(tool) if pick_point
 
       @pick_context_by_face = pick_context_by_face
       @pick_context_by_edge = pick_context_by_edge
@@ -1823,7 +2200,7 @@ module Ladb::OpenCutList
 
     def picked_line_manipulator
       return EdgeManipulator.new(@picked_edge, Sketchup::InstancePath.new(@picked_edge_path).transformation) unless @picked_edge.nil? || @picked_edge_path.nil?
-      return LineManipulator.new([ @picked_cline.position, @picked_cline.direction ], Sketchup::InstancePath.new(@picked_cline_path).transformation) unless @picked_cline.nil? || @picked_cline_path.nil?
+      return ClineManipulator.new(@picked_cline, Sketchup::InstancePath.new(@picked_cline_path).transformation) unless @picked_cline.nil? || @picked_cline_path.nil?
       return LineManipulator.new(@picked_axes_line, Sketchup::InstancePath.new(@picked_axes_path).transformation) unless @picked_axes_line.nil? || @picked_axes_path.nil?
       nil
     end
@@ -1859,7 +2236,7 @@ module Ladb::OpenCutList
       @picked_axes_path = nil
 
       # Fire change event
-      @smart_tool.onPickerChanged(self) if changed
+      @observer.onPickerChanged(self, @view) if changed
 
       false
     end
@@ -1881,7 +2258,7 @@ module Ladb::OpenCutList
 
       active_path = @view.model.active_path.nil? ? [] : @view.model.active_path # Picker 'path_at' returns path only in active_path context
 
-      context_locked = @smart_tool.is_key_down?(VK_SHIFT)
+      context_locked = @tool.is_key_down?(VK_SHIFT)
 
       picked_face = context_locked && @pick_context_by_face ? @picked_face : nil
       picked_face_path = context_locked && @pick_context_by_face ? @picked_face_path : nil
@@ -1908,7 +2285,7 @@ module Ladb::OpenCutList
           end
 
           if @pick_context_by_edge && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
-            picked_edge = @pick_helper.left_at(index)
+            picked_edge = @pick_helper.leaf_at(index)
             picked_edge_path = active_path + @pick_helper.path_at(index)
             break
           end
@@ -2020,7 +2397,7 @@ module Ladb::OpenCutList
       @picked_axes_path = picked_axes_path
 
       # Fire change event
-      @smart_tool.onPickerChanged(self) if changed
+      @observer.onPickerChanged(self, @view) if changed
 
     end
 

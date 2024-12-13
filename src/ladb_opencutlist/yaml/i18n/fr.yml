@@ -1810,6 +1810,8 @@ tool:
     action_2: Dessiner un Polygone
     action_2_status: Dessiner un volume sur la base d'une forme polygonale
     action_2_state_1_status: Cliquez pour définir un nouveau point ou entrez une distance
+    action_3: Copier/Déplacer
+    action_3_status: Copier ou Déplacer une pièce
     action_x_state_2_status: Cliquez pour définir l'élévation ou entrez une distance
     action_x_state_3_status: Cliquez pour déplacer la pièce ou entrez une distance
     action_x_state_3_move_copy_status: Cliquez pour placer la copie de la pièce ou entrez une distance

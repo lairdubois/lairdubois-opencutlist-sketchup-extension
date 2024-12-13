@@ -18,6 +18,7 @@ module Ladb::OpenCutList
       @end_point = nil
       @middle_point = nil
       @third_points = nil
+      @points = nil
     end
     
     # -----
@@ -56,13 +57,15 @@ module Ladb::OpenCutList
       @third_points
     end
 
-    def length
-      (end_point - start_point).length
+    def points
+      @points = [ start_point, end_point ] if @points.nil?
+      @points
     end
 
-    def segment
-      @segment = [ start_point, end_point ] if @segment.nil?
-      @segment
+    alias_method :segment, :points
+
+    def length
+      (end_point - start_point).length
     end
 
     # -----

@@ -135,7 +135,7 @@ module Ladb::OpenCutList::Kuix
 
     # Append given entity to self and returns self
     def append(entity)
-      throw 'Widget.append only supports Widget' unless entity.is_a?(Entity2d)
+      raise 'Widget.append only supports Widget' unless entity.is_a?(Entity2d)
       super
     end
 

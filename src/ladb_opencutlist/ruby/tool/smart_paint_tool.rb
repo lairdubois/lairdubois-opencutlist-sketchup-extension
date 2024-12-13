@@ -390,7 +390,7 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_PAINT_PARTS, ACTION_PAINT_EDGES, ACTION_PAINT_FACES, ACTION_PICK, ACTION_PAINT_CLEAN
-        return SmartPicker.new(self)
+        return SmartPicker.new(tool: self)
       end
 
       super
@@ -729,7 +729,7 @@ module Ladb::OpenCutList
       false
     end
 
-    def onPickerChanged(picker)
+    def onPickerChanged(picker, view)
       super
       _handle_mouse_event(:move)
     end
@@ -794,11 +794,11 @@ module Ladb::OpenCutList
 
           instance_paths.each do |path|
 
-            mesh = Kuix::Mesh.new
-            mesh.add_triangles(triangles)
-            mesh.background_color = color
-            mesh.transformation = PathUtils::get_transformation(path)
-            @overlay_layer.append(mesh)
+            k_mesh = Kuix::Mesh.new
+            k_mesh.add_triangles(triangles)
+            k_mesh.background_color = color
+            k_mesh.transformation = PathUtils::get_transformation(path)
+            @overlay_layer.append(k_mesh)
 
           end
 
@@ -883,11 +883,11 @@ module Ladb::OpenCutList
 
               instance_paths.each do |path|
 
-                mesh = Kuix::Mesh.new
-                mesh.add_triangles(triangles)
-                mesh.background_color = color
-                mesh.transformation = PathUtils::get_transformation(path)
-                @overlay_layer.append(mesh)
+                k_mesh = Kuix::Mesh.new
+                k_mesh.add_triangles(triangles)
+                k_mesh.background_color = color
+                k_mesh.transformation = PathUtils::get_transformation(path)
+                @overlay_layer.append(k_mesh)
 
               end
 
@@ -967,11 +967,11 @@ module Ladb::OpenCutList
 
               instance_paths.each do |path|
 
-                mesh = Kuix::Mesh.new
-                mesh.add_triangles(triangles)
-                mesh.background_color = color
-                mesh.transformation = PathUtils::get_transformation(path)
-                @overlay_layer.append(mesh)
+                k_mesh = Kuix::Mesh.new
+                k_mesh.add_triangles(triangles)
+                k_mesh.background_color = color
+                k_mesh.transformation = PathUtils::get_transformation(path)
+                @overlay_layer.append(k_mesh)
 
               end
 
@@ -1004,11 +1004,11 @@ module Ladb::OpenCutList
 
           instance_paths.each do |path|
 
-            mesh = Kuix::Mesh.new
-            mesh.add_triangles(triangles)
-            mesh.background_color = color
-            mesh.transformation = PathUtils::get_transformation(path)
-            @overlay_layer.append(mesh)
+            k_mesh = Kuix::Mesh.new
+            k_mesh.add_triangles(triangles)
+            k_mesh.background_color = color
+            k_mesh.transformation = PathUtils::get_transformation(path)
+            @overlay_layer.append(k_mesh)
 
           end
 
