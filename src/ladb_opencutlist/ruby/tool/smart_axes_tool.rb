@@ -377,30 +377,33 @@ module Ladb::OpenCutList
 
           end
 
-          if line_manipulator.is_a?(EdgeManipulator)
+          if line_manipulator.is_a?(LineManipulator)
 
-            # Highlight picked edge
-            k_segments = Kuix::Segments.new
-            k_segments.transformation = instance_info.transformation.inverse
-            k_segments.add_segments(line_manipulator.segment)
-            k_segments.color = COLOR_ACTION
-            k_segments.line_width = 4
-            k_segments.on_top = true
-            k_group.append(k_segments)
+            if line_manipulator.infinite?
 
-          elsif line_manipulator.is_a?(LineManipulator)
+              # Highlight picked line
+              k_line = Kuix::Line.new
+              k_line.transformation = instance_info.transformation.inverse
+              k_line.position = line_manipulator.position
+              k_line.direction = line_manipulator.direction
+              k_line.color = COLOR_ACTION
+              k_line.line_width = 2
+              k_group.append(k_line)
 
-            # Highlight picked line
-            k_line = Kuix::Line.new
-            k_line.transformation = instance_info.transformation.inverse
-            k_line.position = line_manipulator.position
-            k_line.direction = line_manipulator.direction
-            k_line.color = COLOR_ACTION
-            k_line.line_width = 2
-            k_group.append(k_line)
+            else
+
+              # Highlight picked segment
+              k_segments = Kuix::Segments.new
+              k_segments.transformation = instance_info.transformation.inverse
+              k_segments.add_segments(line_manipulator.segment)
+              k_segments.color = COLOR_ACTION
+              k_segments.line_width = 4
+              k_segments.on_top = true
+              k_group.append(k_segments)
+
+            end
 
           end
-
 
         end
 

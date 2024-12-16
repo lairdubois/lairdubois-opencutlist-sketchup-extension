@@ -32,6 +32,10 @@ module Ladb::OpenCutList
 
     # -----
 
+    def infinite?
+      false
+    end
+
     def start_point
       points.first
     end

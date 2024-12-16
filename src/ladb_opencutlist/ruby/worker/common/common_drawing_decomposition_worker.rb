@@ -48,6 +48,7 @@ module Ladb::OpenCutList
                    face_for_part: true,
 
                    ignore_edges: false,
+                   ignore_soft_edges: true,
                    edge_validator: EDGE_VALIDATOR_ALL,
                    edge_recursive: true,
                    edge_for_part: true,
@@ -75,6 +76,7 @@ module Ladb::OpenCutList
       @face_for_part = face_for_part
 
       @ignore_edges = ignore_edges
+      @ignore_soft_edges = ignore_soft_edges
       @edge_validator = edge_validator
       @edge_recursive = edge_recursive
       @edge_for_part = edge_for_part
@@ -372,7 +374,7 @@ module Ladb::OpenCutList
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Edge)
-            next if entity.soft?
+            next if entity.soft? && @ignore_soft_edges
             manipulator = EdgeManipulator.new(entity, transformation)
             if !block_given? || yield(manipulator)
               if entity.curve.nil? || entity.curve.edges.length < 2  # Exclude curve that contains only one edge.

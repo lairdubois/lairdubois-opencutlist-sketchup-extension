@@ -160,6 +160,12 @@ module Ladb::OpenCutList::Kuix
       "#{self.class.name} (id=#{@id})"
     end
 
+    # -----
+
+    def inspect
+      self.class.inspect  # Simplify exception display
+    end
+
   end
 
 end

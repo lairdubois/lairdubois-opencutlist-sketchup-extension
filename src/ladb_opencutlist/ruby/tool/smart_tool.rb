@@ -1755,18 +1755,10 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartPartActionHandler < SmartActionHandler
+  module SmartActionHandlerPartHelper
 
     COLOR_PART = Sketchup::Color.new(200, 200, 0, 100).freeze
     COLOR_PART_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
-
-    def initialize(action, tool)
-      super
-
-      @active_part_entity_path = nil
-      @active_part = nil
-
-    end
 
     # -----
 
@@ -1799,18 +1791,33 @@ module Ladb::OpenCutList
     end
 
     def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
-      @tool.remove_all_3d
+      @tool.remove_3d(layer)
       if part
 
         # Mesh
         instance_paths = [ part_entity_path ]
         instance_paths.each do |path|
 
+          triangles = _compute_children_faces_triangles(path.last.definition.entities)
+          bounds = Geom::BoundingBox.new
+          bounds.add(triangles)
+          t = PathUtils::get_transformation(path)
+
           k_mesh = Kuix::Mesh.new
-          k_mesh.add_triangles(_compute_children_faces_triangles(path.last.definition.entities))
+          k_mesh.add_triangles(triangles)
           k_mesh.background_color = highlighted ? COLOR_PART_HIGHLIGHTED : COLOR_PART
-          k_mesh.transformation = PathUtils::get_transformation(path)
-          @tool.append_3d(k_mesh)
+          k_mesh.transformation = t
+          @tool.append_3d(k_mesh, layer)
+
+          # Box helper
+          k_box = Kuix::BoxMotif.new
+          k_box.bounds.origin.copy!(bounds.min)
+          k_box.bounds.size.copy!(bounds)
+          k_box.color = Kuix::COLOR_BLACK
+          k_box.line_width = 1
+          k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_box.transformation = t
+          @tool.append_3d(k_box, layer)
 
         end
 
@@ -2164,6 +2171,7 @@ module Ladb::OpenCutList
       @pick_helper = @view.pick_helper
       @pick_ip = SmartInputPoint.new(tool) if pick_point
 
+      @pick_context = pick_context_by_face || pick_context_by_edge
       @pick_context_by_face = pick_context_by_face
       @pick_context_by_edge = pick_context_by_edge
       @pick_point = pick_point
@@ -2249,7 +2257,7 @@ module Ladb::OpenCutList
     # -- UI --
 
     def draw(view)
-      @pick_ip.draw(view) if @pick_ip && @pick_ip.valid?
+      @pick_ip.draw(view) if !@pick_ip.nil? && @pick_ip.valid?
     end
 
     # -- Pick --
@@ -2293,7 +2301,7 @@ module Ladb::OpenCutList
         end
       end
 
-      if picked_face || picked_edge
+      if !@pick_context || picked_face || picked_edge
 
         # Second stage
 
@@ -2308,7 +2316,16 @@ module Ladb::OpenCutList
 
         end
 
-        if @pick_edges || @picked_cline || @pick_axes
+
+      else
+
+        @pick_ip.clear if @pick_ip
+
+      end
+
+      if picked_face || picked_edge
+
+          if @pick_edges || @picked_cline || @pick_axes
 
           # pick "lines" (aperture = 50)
 
@@ -2317,7 +2334,7 @@ module Ladb::OpenCutList
 
             if @pick_edges && picked_edge_path.nil? && @pick_helper.leaf_at(index).is_a?(Sketchup::Edge)
               unless context_locked
-                # External edges are considered only if contex is locked
+                # External edges are considered only if context is locked
                 next if !@pick_helper.leaf_at(index).used_by?(picked_face) || (active_path + @pick_helper.path_at(index))[0...-1] != picked_face_path[0...-1]
               end
               picked_edge = @pick_helper.leaf_at(index)
@@ -2375,10 +2392,6 @@ module Ladb::OpenCutList
           end
 
         end
-
-      else
-
-        @pick_ip.clear if @pick_ip
 
       end
 

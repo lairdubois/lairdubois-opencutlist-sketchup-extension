@@ -27,6 +27,10 @@ module Ladb::OpenCutList
     
     # -----
 
+    def infinite?
+      true
+    end
+
     def line
       @line = [ position, direction ] if @line.nil?
       @line
