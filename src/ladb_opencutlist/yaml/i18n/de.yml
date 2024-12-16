@@ -1839,6 +1839,8 @@ tool:
     action_option_options_solid_centered_status: Erhebung auf den ersten Punkt zentrieren
     action_option_options_move_array: Rasterkopien
     action_option_options_move_array_status: Kopieren des Teils in ein rechteckiges Raster
+    action_option_move_copy_status: Abwechselnd kopieren/verschieben
+    action_option_move_anchor_status: Ankerpunkt ändern
     vcb_length: Länge
     vcb_size: Kotierungen
     vcb_radius: Radius

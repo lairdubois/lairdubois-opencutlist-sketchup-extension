@@ -1172,7 +1172,7 @@ tab:
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit n'auront pas d'étiquette.
         is_part_selection: Ces étiquettes se limitent aux **pièces sélectionnées**.
-        formula_not_available: Non disponible dans ce context
+        formula_not_available: Non disponible dans ce contexte
     layout:
       title: Dessin
       to_layout: Exporter vers Layout
@@ -1315,7 +1315,7 @@ tab:
         no_part: Aucune pièce à exporter.
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
-        is_part_selection: L'exportation se limitent aux **pièces sélectionnées**.
+        is_part_selection: L'exportation se limite aux **pièces sélectionnées**.
     snippet:
       hello: Bonjour
       number: Numéro
