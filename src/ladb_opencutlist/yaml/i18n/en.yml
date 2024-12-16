@@ -1790,11 +1790,11 @@ tool:
   default:
     transparency: Transparency
     zoom_extents: Zoom Extents
-    toggle_depth: Background parts
+    toggle_depth: Background Parts
     more: More
     end_point: Endpoint
-    middle_point: Middle point
-    third_point: One-third point
+    middle_point: Midpoint
+    third_point: One-third Point
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
