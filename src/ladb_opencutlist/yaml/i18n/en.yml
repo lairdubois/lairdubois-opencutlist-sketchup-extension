@@ -1790,11 +1790,11 @@ tool:
   default:
     transparency: Transparency
     zoom_extents: Zoom Extents
-    toggle_depth: Background parts
+    toggle_depth: Background Parts
     more: More
     end_point: Endpoint
-    middle_point: Middle point
-    third_point: One-third point
+    middle_point: Midpoint
+    third_point: One-third Point
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1839,6 +1839,8 @@ tool:
     action_option_options_solid_centered_status: Center elevation on the first point
     action_option_options_move_array: Copy in Grid
     action_option_options_move_array_status: Copying the part to grid
+    action_option_move_copy_status: Toggle between copy/move
+    action_option_move_anchor_status: Change the anchor point
     vcb_length: Length
     vcb_size: Size
     vcb_radius: Radius
