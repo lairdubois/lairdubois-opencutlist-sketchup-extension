@@ -41,7 +41,7 @@ module Ladb::OpenCutList
         :action => ACTION_DRAW_RECTANGLE,
         :options => {
           ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
-          ACTION_OPTION_OFFSET => [ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
+          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
       },
@@ -49,7 +49,7 @@ module Ladb::OpenCutList
         :action => ACTION_DRAW_CIRCLE,
         :options => {
           ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
-          ACTION_OPTION_OFFSET => [ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
+          ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_SEGMENTS => [ ACTION_OPTION_SEGMENTS_SEGMENT_COUNT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
@@ -330,7 +330,7 @@ module Ladb::OpenCutList
       @direction = nil
       @normal = _get_active_z_axis
 
-      @move_anchor_index = 2
+      @move_anchor_index = -1
       @move_copy = true
 
       @definition = nil
@@ -469,6 +469,7 @@ module Ladb::OpenCutList
       @tool.remove_all_2d
       @tool.remove_all_3d
       @mouse_ip.clear
+      view.tooltip = ''
       super
     end
 
@@ -684,7 +685,7 @@ module Ladb::OpenCutList
           end
           return true
         elsif key == ALT_MODIFIER_KEY
-          @move_anchor_index = (@move_anchor_index + 1) % 3
+          @move_anchor_index = (@move_anchor_index + 1) % _get_move_anchors.length
           view.lock_inference if view.inference_locked?
           _refresh
           return true
@@ -759,9 +760,9 @@ module Ladb::OpenCutList
 
         # Add Move solid(s)
 
-        anchors = [ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ]
+        anchors = _get_move_anchors
 
-        ps = anchors[@move_anchor_index]
+        ps = anchors[_get_move_anchor_index]
         pe = @mouse_snap_point
         v = ps.vector_to(pe)
 
@@ -783,7 +784,7 @@ module Ladb::OpenCutList
     def _get_previous_input_point
       return Sketchup::InputPoint.new(@picked_shape_first_point) if _picked_shape_first_point? && !_picked_shape_last_point?
       return Sketchup::InputPoint.new(@picked_shape_last_point) if _picked_shape_last_point? && !_picked_pushpull_point?
-      return Sketchup::InputPoint.new([ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ][@move_anchor_index]) if _picked_pushpull_point? && !_picked_move_point?
+      return Sketchup::InputPoint.new(_get_move_anchors[_get_move_anchor_index]) if _picked_pushpull_point? && !_picked_move_point?
       nil
     end
 
@@ -819,6 +820,16 @@ module Ladb::OpenCutList
 
     def _picked_move_point?
       !@picked_move_point.nil?
+    end
+
+    # -----
+
+    def _get_move_anchors
+      [ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ].compact.uniq
+    end
+
+    def _get_move_anchor_index
+      @move_anchor_index % _get_move_anchors.length
     end
 
     # -----
@@ -937,8 +948,8 @@ module Ladb::OpenCutList
 
       if _fetch_option_move_array
 
-        anchors = [ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ]
-        anchor_point = anchors[@move_anchor_index]
+        anchors = _get_move_anchors
+        anchor_point = anchors[_get_move_anchor_index]
 
         ground_plane = [ anchor_point, _get_active_z_axis ]
 
@@ -1313,9 +1324,9 @@ module Ladb::OpenCutList
       segments += @drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
       segments += @drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
 
-      anchors = [ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ]
+      anchors = _get_move_anchors
 
-      ps = anchors[@move_anchor_index]
+      ps = anchors[_get_move_anchor_index]
       pe = @mouse_snap_point
 
       if _fetch_option_move_array
@@ -1531,7 +1542,7 @@ module Ladb::OpenCutList
 
     def _read_move(text, view)
 
-      ps = [ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ][@move_anchor_index]
+      ps = _get_move_anchors[_get_move_anchor_index]
       pe = @mouse_snap_point
       v = ps.vector_to(pe)
 
@@ -1709,7 +1720,7 @@ module Ladb::OpenCutList
       @locked_direction = nil
       @locked_normal = nil
       @locked_axis = nil
-      @move_anchor_index = 2
+      @move_anchor_index = -1
       super
       set_state(STATE_SHAPE_FIRST_POINT)
     end
@@ -1830,7 +1841,7 @@ module Ladb::OpenCutList
     def _copy_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
       return if @definition.nil? || !@drawing_def.is_a?(DrawingDef)
 
-      ps = [ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ][@move_anchor_index]
+      ps = _get_move_anchors[_get_move_anchor_index]
       pe = @picked_move_point
       v = ps.vector_to(pe)
 
