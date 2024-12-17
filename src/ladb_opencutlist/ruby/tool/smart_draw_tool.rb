@@ -230,7 +230,7 @@ module Ladb::OpenCutList
           operator, sign, value = match[1, 3]
           factor = value.sub(',', '.').to_f
           factor *= -1 if sign == '-'
-          if factor != 0
+          if factor != 0 && base_length != 0
             case operator
             when 'x', '*'
               length = base_length * factor
@@ -277,11 +277,23 @@ module Ladb::OpenCutList
       length
     end
 
+    # Split text with regional list separator.
+    # Allows '=' char to duplicate current value.
+    # Examples :
+    #  50       → [ 50 ]
+    #  ;50      → [ nil, 50 ]
+    #  50=;-12  → [ 50, 50, -12 ]
+    #  50==     → [ 50, 50, 50 ]
     def _split_user_text(text)
       values = text.split(Sketchup::RegionalSettings.list_separator)
-      return Array.new(3) { values.first[0..-3] } if values.one? && values.first.end_with?('==')
-      return Array.new(2) { values.first[0..-2] } if values.one? && values.first.end_with?('=')
-      values
+      values.map { |value|
+        if (match = value.match(/^([^=]+)(=+)$/))
+          v, equals = match[1, 2]
+          Array.new(equals.length + 1) { v }
+        else
+          value
+        end
+      }.flatten(1)
     end
 
   end
@@ -294,6 +306,7 @@ module Ladb::OpenCutList
     STATE_SHAPE_POINTS = 1
     STATE_PUSHPULL = 2
     STATE_MOVE = 3
+    STATE_MOVE_COPY = 4
 
     attr_reader :picked_shape_first_point, :picked_shape_last_point, :picked_pushpull_point, :picked_move_point, :normal, :direction
 
@@ -455,6 +468,7 @@ module Ladb::OpenCutList
     def onMouseLeave(view)
       @tool.remove_all_2d
       @tool.remove_all_3d
+      @mouse_ip.clear
       super
     end
 
@@ -506,6 +520,7 @@ module Ladb::OpenCutList
       elsif !_picked_move_point?
         @picked_move_point = @mouse_snap_point
         _copy_entity
+        set_state(STATE_MOVE_COPY) if @move_copy || _fetch_option_move_array
         _restart
       else
         UI.beep
@@ -682,7 +697,7 @@ module Ladb::OpenCutList
 
     def onUserText(text, view)
 
-      if !_picked_shape_first_point? && @previous_action_handler && @previous_action_handler._picked_move_point? && _read_move_copy(text, view)
+      if !_picked_shape_first_point? && _read_move_copy(text, view)
         return true
       elsif _read_offset(text, view)
         return true
@@ -1551,16 +1566,22 @@ module Ladb::OpenCutList
       end
 
       _copy_entity
+      set_state(STATE_MOVE_COPY) if @move_copy || _fetch_option_move_array
       _restart
 
       true
     end
 
     def _read_move_copy(text, view)
+      return false if @previous_action_handler.nil? || @previous_action_handler.fetch_state != STATE_MOVE_COPY
 
-      if (match = Regexp.new("^(?:([x*\\/])(\\d+))?(?:#{Sketchup::RegionalSettings.list_separator}|#{Sketchup::RegionalSettings.list_separator}([x*\\/])(\\d+))?$").match(text))
+      v1, v2 = _split_user_text(text)
 
-        operator_1, value_1, operator_2, value_2 = match[1, 4]
+      if v1 && (match_1 = v1.match(/^([x*\/])(\d+)$/)) || v2 && (match_2 = v2.match(/^([x*\/])(\d+)$/))
+
+        operator_1, value_1 = match_1 ? match_1[1, 2] : [ nil, nil ]
+        operator_2, value_2 = match_2 ? match_2[1, 2] : [ nil, nil ]
+
         number_1 = value_1.to_i
         number_2 = value_2.to_i
 
@@ -2414,9 +2435,8 @@ module Ladb::OpenCutList
         ti = t.inverse
 
         p2 = @picked_shape_last_point.transform(ti)
-        p3 = @picked_shape_last_point.offset(Z_AXIS)
 
-        thickness = _read_user_text_length(d3, p3.z - p2.z)
+        thickness = _read_user_text_length(d3, 0)
         return true if thickness.nil?
         thickness = thickness / 2 if _fetch_option_solid_centered
 
@@ -2754,6 +2774,7 @@ module Ladb::OpenCutList
               _create_entity
               _restart
             end
+            return true
           end
         end
 
@@ -2764,9 +2785,8 @@ module Ladb::OpenCutList
         ti = t.inverse
 
         p2 = @picked_shape_last_point.transform(ti)
-        p3 = @picked_pushpull_point.transform(ti)
 
-        thickness = _read_user_text_length(d2, p3.z - p2.z)
+        thickness = _read_user_text_length(d2, 0)
         return true if thickness.nil?
 
         @picked_pushpull_point = Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t)
