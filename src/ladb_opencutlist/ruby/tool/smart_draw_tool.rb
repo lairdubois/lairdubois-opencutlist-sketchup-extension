@@ -277,6 +277,13 @@ module Ladb::OpenCutList
       length
     end
 
+    def _split_user_text(text)
+      values = text.split(Sketchup::RegionalSettings.list_separator)
+      return Array.new(3) { values.first[0..-3] } if values.one? && values.first.end_with?('==')
+      return Array.new(2) { values.first[0..-2] } if values.one? && values.first.end_with?('=')
+      values
+    end
+
   end
 
   class SmartDrawShapeActionHandler < SmartDrawActionHandler
@@ -429,12 +436,12 @@ module Ladb::OpenCutList
         end
       end
 
-      k_points = Kuix::Points.new
-      k_points.add_point(@mouse_snap_point)
-      k_points.size = 30
-      k_points.style = Kuix::POINT_STYLE_TRIANGLE
-      k_points.stroke_color = Kuix::COLOR_YELLOW
-      @tool.append_3d(k_points)
+      # k_points = Kuix::Points.new
+      # k_points.add_point(@mouse_snap_point)
+      # k_points.size = 30
+      # k_points.style = Kuix::POINT_STYLE_TRIANGLE
+      # k_points.stroke_color = Kuix::COLOR_YELLOW
+      # @tool.append_3d(k_points)
 
       # k_axes_helper = Kuix::AxesHelper.new
       # k_axes_helper.transformation = _get_transformation
@@ -717,7 +724,7 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
       bounds.add(shape_points.map { |point| point.transform(t) })
 
-      if @state == STATE_PUSHPULL
+      if _picked_shape_last_point?
 
         # Add Pushpull solid
 
@@ -733,9 +740,9 @@ module Ladb::OpenCutList
 
       end
 
-      if @state == STATE_MOVE
+      if _picked_pushpull_point?
 
-        # Add Move solid
+        # Add Move solid(s)
 
         anchors = [ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ]
 
@@ -1295,7 +1302,6 @@ module Ladb::OpenCutList
 
       ps = anchors[@move_anchor_index]
       pe = @mouse_snap_point
-      v = ps.vector_to(pe)
 
       if _fetch_option_move_array
 
@@ -1385,6 +1391,8 @@ module Ladb::OpenCutList
         end
 
       else
+
+        v = ps.vector_to(pe)
 
         unless @move_copy
 
@@ -1510,25 +1518,26 @@ module Ladb::OpenCutList
 
       ps = [ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ][@move_anchor_index]
       pe = @mouse_snap_point
-
-      t = _get_transformation(ps)
-      ti = t.inverse
-
-      v = ps.transform(ti).vector_to(pe.transform(ti))
+      v = ps.vector_to(pe)
 
       if _fetch_option_move_array
 
-        d1, d2 = text.split(Sketchup::RegionalSettings.list_separator)
+        d1, d2 = _split_user_text(text)
 
         if d1 || d2
 
-          distance_x = _read_user_text_length(d1, v.x)
+          t = _get_transformation(ps)
+          ti = t.inverse
+
+          vi = v.transform(ti)
+
+          distance_x = _read_user_text_length(d1, vi.x.abs)
           return true if distance_x.nil?
 
-          distance_y = _read_user_text_length(d2, v.y)
+          distance_y = _read_user_text_length(d2, vi.y.abs)
           return true if distance_y.nil?
 
-          @picked_move_point = ps.offset(Geom::Vector3d.new(distance_x, distance_y)).transform(t)
+          @picked_move_point = ps.offset(Geom::Vector3d.new(vi.x < 0 ? -distance_x : distance_x, vi.y < 0 ? -distance_y : distance_y).transform(t))
 
         end
 
@@ -1537,7 +1546,7 @@ module Ladb::OpenCutList
         distance = _read_user_text_length(text, v.length)
         return true if distance.nil?
 
-        @picked_move_point = ps.offset(v, distance).transform(t)
+        @picked_move_point = ps.offset(v, distance)
 
       end
 
@@ -2357,7 +2366,7 @@ module Ladb::OpenCutList
     def _read_shape(text, view)
       return true if super
 
-      d1, d2, d3 = text.split(Sketchup::RegionalSettings.list_separator)
+      d1, d2, d3 = _split_user_text(text)
 
       if d1 || d2
 
@@ -2395,6 +2404,7 @@ module Ladb::OpenCutList
           else
             _restart
           end
+          return true
         end
 
       end
@@ -2404,7 +2414,7 @@ module Ladb::OpenCutList
         ti = t.inverse
 
         p2 = @picked_shape_last_point.transform(ti)
-        p3 = @picked_pushpull_point.transform(ti)
+        p3 = @picked_shape_last_point.offset(Z_AXIS)
 
         thickness = _read_user_text_length(d3, p3.z - p2.z)
         return true if thickness.nil?
@@ -2413,7 +2423,13 @@ module Ladb::OpenCutList
         @picked_pushpull_point = Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t)
 
         _create_entity
-        _restart
+        if _fetch_option_tool_move
+          set_state(STATE_MOVE)
+          _refresh
+        else
+          _restart
+        end
+        return true
 
       end
 
@@ -2713,7 +2729,7 @@ module Ladb::OpenCutList
     def _read_shape(text, view)
       return true if super
 
-      d1, d2 = text.split(Sketchup::RegionalSettings.list_separator)
+      d1, d2 = _split_user_text(text)
 
       if d1
 
