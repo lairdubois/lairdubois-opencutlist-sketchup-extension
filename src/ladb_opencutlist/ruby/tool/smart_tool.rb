@@ -88,7 +88,7 @@ module Ladb::OpenCutList
       @last_mouse_x = -1
       @last_mouse_y = -1
 
-      # Layers
+      # UI Layers
       @layers_2d = {}
       @layers_3d = {}
 
