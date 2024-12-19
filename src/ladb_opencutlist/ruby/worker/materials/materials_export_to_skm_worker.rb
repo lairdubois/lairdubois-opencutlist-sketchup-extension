@@ -58,9 +58,7 @@ module Ladb::OpenCutList
         PLUGIN.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
 
         # Force "skm" file extension
-        unless path.end_with?('.skm')
-          path = path + '.skm'
-        end
+        path = path + '.skm' unless path.end_with?('.skm')
 
         begin
           success = material.save_as(path)

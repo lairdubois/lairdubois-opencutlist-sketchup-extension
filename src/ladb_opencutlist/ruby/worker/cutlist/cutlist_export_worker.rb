@@ -91,9 +91,7 @@ module Ladb::OpenCutList
         if path
 
           # Force "csv" file extension
-          unless path.end_with?('.csv')
-            path = path + '.csv'
-          end
+          path = path + '.csv' unless path.end_with?('.csv')
 
           begin
 

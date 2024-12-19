@@ -34,9 +34,7 @@ module Ladb::OpenCutList
       if path
 
         # Force "skp" file extension
-        unless path.end_with?('.skp')
-          path = path + '.skp'
-        end
+        path = path + '.skp' unless path.end_with?('.skp')
 
         begin
 

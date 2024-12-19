@@ -17,13 +17,16 @@ module Ladb::OpenCutList
     ON_ACTIVATE_MODEL = 'on_activate_model'.freeze
 
     def initialize
-      onActivateModel(Sketchup.active_model) unless Sketchup.active_model.nil?
+      unless Sketchup.active_model.nil?
+        add_model_observers(Sketchup.active_model)
+        onActivateModel(Sketchup.active_model)
+      end
     end
 
     # -----
 
     def onNewModel(model)
-      # puts "onNewModel: #{model}"
+      puts "onNewModel: #{model}"
       add_model_observers(model)
 
       # Clear model presets cache

@@ -22,9 +22,7 @@ module Ladb::OpenCutList
       if path
 
         # Force "json" file extension
-        unless path.end_with?('.json')
-          path = path + '.json'
-        end
+        path = path + '.json' unless path.end_with?('.json')
 
         # Filter global presets
         filtred_presets = {}

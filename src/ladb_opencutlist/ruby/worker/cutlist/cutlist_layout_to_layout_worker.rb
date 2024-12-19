@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require_relative '../../lib/rubyzip/zip'
   require_relative '../../plugin'
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../helper/sanitizer_helper'
@@ -76,9 +75,7 @@ module Ladb::OpenCutList
       if layout_path
 
         # Force "layout" file extension
-        unless layout_path.end_with?('.layout')
-          layout_path = layout_path + '.layout'
-        end
+        layout_path = layout_path + '.layout' unless layout_path.end_with?('.layout')
 
         # Start model modification operation
         model.start_operation('OCL Export To Layout', true, false, true)
@@ -155,59 +152,112 @@ module Ladb::OpenCutList
 
         return { :errors => [ 'tab.cutlist.layout.error.failed_to_save_as_skp' ] } unless skp_success
 
-        # CREATE LAYOUT FILE
+        page_width = [ 200, [ 1, @page_width ].max ].min     # Layout width limits [0, 200]
+        page_height = [ 200, [ 1, @page_height ].max ].min   # Layout height limits [1, 200]
+        page_top_margin = 0.25
+        page_right_margin = 0.25
+        page_bottom_margin = 0.25
+        page_left_margin = 0.25
+
+        units = _to_layout_length_units(DimensionUtils.length_unit)
+        precision = _to_layout_length_precision(DimensionUtils.length_precision)
+
+        # TRY TO OPEN LAYOUT FILE
+
+        doc = nil
+        page = nil
 
         begin
 
-          doc = Layout::Document.new
+          doc = Layout::Document.open(layout_path)
 
-          page_width = [ 200, [ 1, @page_width ].max ].min     # Layout width limits [0, 200]
-          page_height = [ 200, [ 1, @page_height ].max ].min   # Layout height limits [1, 200]
-          page_top_margin = 0.25
-          page_right_margin = 0.25
-          page_bottom_margin = 0.25
-          page_left_margin = 0.25
+          # File exists : compare settings
 
-          # Set document's page infos
           page_info = doc.page_info
-          page_info.width = page_width
-          page_info.height = page_height
-          page_info.top_margin = page_top_margin
-          page_info.right_margin = page_right_margin
-          page_info.bottom_margin = page_bottom_margin
-          page_info.left_margin = page_left_margin
+          same_page_format = page_info.width == page_width && page_info.height == page_height
+          same_units = doc.units == units
+          same_precision = doc.precision == precision
 
-          # Set document's units and precision
-          case DimensionUtils.length_unit
-          when DimensionUtils::INCHES
-            if DimensionUtils.length_format == DimensionUtils::FRACTIONAL
-              doc.units = Layout::Document::FRACTIONAL_INCHES
+          if same_page_format
+            choice = UI.messagebox(PLUGIN.get_i18n_string('tab.cutlist.layout.message.adding_new_page'), MB_YESNOCANCEL)
+            if choice == IDYES
+              page = doc.pages.add(doc_name)  # Add a new page
+            elsif choice == IDNO
+              doc = nil # New doc
             else
-              doc.units = Layout::Document::DECIMAL_INCHES
+              return { :cancelled => true }
             end
-          when DimensionUtils::FEET
-            doc.units = Layout::Document::DECIMAL_FEET
-          when DimensionUtils::MILLIMETER
-            doc.units = Layout::Document::DECIMAL_MILLIMETERS
-          when DimensionUtils::CENTIMETER
-            doc.units = Layout::Document::DECIMAL_CENTIMETERS
-          when DimensionUtils::METER
-            doc.units = Layout::Document::DECIMAL_METERS
+          else
+            choice = UI.messagebox(PLUGIN.get_i18n_string('tab.cutlist.layout.message.incompatible_page_format', { :old_page_format => "#{page_info.width.to_l} x #{page_info.height.to_l}", :new_page_format => "#{page_width.to_l} x #{page_height.to_l}"  }), MB_OKCANCEL)
+            if choice == IDOK
+              doc = nil # New doc
+            else
+              return { :cancelled => true }
+            end
           end
-          doc.precision = _to_layout_length_precision(DimensionUtils.length_precision)
 
-          page = doc.pages.first
+          unless doc.nil?
+            unless same_units
+              choice = UI.messagebox(PLUGIN.get_i18n_string('tab.cutlist.layout.message.changing_units', { :old_units => PLUGIN.get_i18n_string("default.unit_#{doc.units}"), :new_units => PLUGIN.get_i18n_string("default.unit_#{doc.units}") }), MB_YESNOCANCEL)
+              if choice == IDYES
+                doc.units = units
+              elsif choice == IDNO
+                units = doc.units
+              else
+                return { :cancelled => true }
+              end
+            end
+            unless same_precision
+              choice = UI.messagebox(PLUGIN.get_i18n_string('tab.cutlist.layout.message.changing_precision', { :old_precision => doc.precision, :new_precision => precision  }), MB_YESNOCANCEL)
+              if choice == IDYES
+                doc.precision = precision
+              elsif choice == IDNO
+                precision = doc.precision
+              else
+                return { :cancelled => true }
+              end
+            end
+          end
+
+        rescue ArgumentError => e
+        end
+
+        begin
+
+          if doc.nil? || page.nil?
+
+            # CREATE NEW LAYOUT FILE
+
+            doc = Layout::Document.new
+
+            # Set document's page infos
+            page_info = doc.page_info
+            page_info.width = page_width
+            page_info.height = page_height
+            page_info.top_margin = page_top_margin
+            page_info.right_margin = page_right_margin
+            page_info.bottom_margin = page_bottom_margin
+            page_info.left_margin = page_left_margin
+
+            # Set document's units and precision
+            doc.units = units
+            doc.precision = precision
+
+            # Retrieve first page
+            page = doc.pages.first
+
+            # Set page name
+            page.name = doc_name
+
+            is_new_doc = true
+
+          else
+
+            is_new_doc = false
+
+          end
+
           layer = doc.layers.first
-
-          # Set page name
-          page.name = doc_name
-
-          # Set auto text definitions
-          doc.auto_text_definitions.add('OpenCutListGeneratedAt', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @generated_at
-          doc.auto_text_definitions.add('OpenCutListLengthUnit', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = PLUGIN.get_i18n_string("default.unit_#{DimensionUtils.length_unit}")
-          doc.auto_text_definitions.add('OpenCutListScale', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = _camera_zoom_to_scale(@camera_zoom)
-          doc.auto_text_definitions.add('OpenCutListModelDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.model_description
-          doc.auto_text_definitions.add('OpenCutListPageDescription', Layout::AutoTextDefinition::TYPE_CUSTOM_TEXT).custom_text = @cutlist.page_description
 
           # Add header
           current_y = page_top_margin
@@ -219,18 +269,18 @@ module Ladb::OpenCutList
             draw_text = _add_formated_text(doc, layer, page, PLUGIN.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => font_family, :font_size => 18, :text_alignment => Layout::Style::ALIGN_LEFT })
             current_y = draw_text.drawing_bounds.lower_left.y
 
-            _add_formated_text(doc, layer, page, '<OpenCutListGeneratedAt>  |  <OpenCutListLengthUnit>  |  <OpenCutListScale>', Geom::Point2d.new(page_width - page_right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
+            _add_formated_text(doc, layer, page, "#{@generated_at}  |  #{PLUGIN.get_i18n_string("default.unit_#{units}")}  |  #{_camera_zoom_to_scale(@camera_zoom)}", Geom::Point2d.new(page_width - page_right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
 
             name_text = _add_formated_text(doc, layer, page, '<PageName>', Geom::Point2d.new(page_width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 15, :text_alignment => Layout::Style::ALIGN_CENTER })
             current_y = name_text.drawing_bounds.lower_left.y
 
             unless @cutlist.model_description.empty?
-              model_description_text = _add_formated_text(doc, layer, page, '<OpenCutListModelDescription>', Geom::Point2d.new(page_width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+              model_description_text = _add_formated_text(doc, layer, page, @cutlist.model_description, Geom::Point2d.new(page_width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
               current_y = model_description_text.drawing_bounds.lower_left.y
             end
 
             unless @cutlist.page_description.empty?
-              page_description_text = _add_formated_text(doc, layer, page, '<OpenCutListPageDescription>', Geom::Point2d.new(page_width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+              page_description_text = _add_formated_text(doc, layer, page, @cutlist.page_description, Geom::Point2d.new(page_width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
               current_y = page_description_text.drawing_bounds.lower_left.y
             end
 
@@ -297,103 +347,112 @@ module Ladb::OpenCutList
           return { :errors => [ [ 'tab.cutlist.layout.error.failed_to_layout', { :error => e.inspect } ] ] }
         end
 
-        if Sketchup.version_number > 1800000000 # RubyZip is not compatible with SU 18-
+        if is_new_doc && Sketchup.version_number > 1800000000 # RubyZip is not compatible with SU 18-
 
-          # Override layout 'LinearDimensionTool' and 'AngularDimensionTool' default style
+          begin
 
-          defaults = {
-            'LinearDimensionTool' => {
-              'arrow.start.size' => { :type => 6, :value => 2 },
-              'arrow.start.type' => { :type => 2, :value => 17 },
-              'arrow.end.size' => { :type => 6, :value => 2 },
-              'arrow.end.type' => { :type => 2, :value => 17 },
-              'stroke.width' => { :type => 6, :value => 0.5 },
-              'dimension.units.unit' => { :type => 2, :value => DimensionUtils.length_unit },
-              'dimension.units.format' => { :type => 2, :value => DimensionUtils.length_format },
-              'dimension.units.precision' => { :type => 4, :value => DimensionUtils.length_precision },
-              'dimension.units.suppression' => { :type => 2, :value => DimensionUtils.length_suppress_unit_display ? 1 : 0 },
-              'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
-              'dimension.startoffsettype' => { :type => 4, :value => 0 },
-              'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
-              'dimension.endoffsettype' => { :type => 4, :value => 0 },
-            },
-            'AngularDimensionTool' => {
-              'arrow.start.size' => { :type => 6, :value => 2 },
-              'arrow.start.type' => { :type => 2, :value => 17 },
-              'arrow.end.size' => { :type => 6, :value => 2 },
-              'arrow.end.type' => { :type => 2, :value => 17 },
-              'stroke.width' => { :type => 6, :value => 0.5 },
-              'dimension.units.angleprecision' => { :type => 4, :value => 0 },
-              'dimension.units.angleunit' => { :type => 2, :value => 9 },
-              'dimension.units.suppression' => { :type => 2, :value => 0 },
-              'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
-              'dimension.startoffsettype' => { :type => 4, :value => 0 },
-              'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
-              'dimension.endoffsettype' => { :type => 4, :value => 0 },
+            require_relative '../../lib/rubyzip/zip'
+
+            # Override layout 'LinearDimensionTool' and 'AngularDimensionTool' default style
+
+            defaults = {
+              'LinearDimensionTool' => {
+                'arrow.start.size' => { :type => 6, :value => 2 },
+                'arrow.start.type' => { :type => 2, :value => 17 },
+                'arrow.end.size' => { :type => 6, :value => 2 },
+                'arrow.end.type' => { :type => 2, :value => 17 },
+                'stroke.width' => { :type => 6, :value => 0.5 },
+                'dimension.units.unit' => { :type => 2, :value => DimensionUtils.length_unit },
+                'dimension.units.format' => { :type => 2, :value => DimensionUtils.length_format },
+                'dimension.units.precision' => { :type => 4, :value => DimensionUtils.length_precision },
+                'dimension.units.suppression' => { :type => 2, :value => DimensionUtils.length_suppress_unit_display ? 1 : 0 },
+                'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
+                'dimension.startoffsettype' => { :type => 4, :value => 0 },
+                'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
+                'dimension.endoffsettype' => { :type => 4, :value => 0 },
+              },
+              'AngularDimensionTool' => {
+                'arrow.start.size' => { :type => 6, :value => 2 },
+                'arrow.start.type' => { :type => 2, :value => 17 },
+                'arrow.end.size' => { :type => 6, :value => 2 },
+                'arrow.end.type' => { :type => 2, :value => 17 },
+                'stroke.width' => { :type => 6, :value => 0.5 },
+                'dimension.units.angleprecision' => { :type => 4, :value => 0 },
+                'dimension.units.angleunit' => { :type => 2, :value => 9 },
+                'dimension.units.suppression' => { :type => 2, :value => 0 },
+                'dimension.startoffsetlength' => { :type => 7, :value => 0.125 },
+                'dimension.startoffsettype' => { :type => 4, :value => 0 },
+                'dimension.endoffsetlength' => { :type => 7, :value => 0.125 },
+                'dimension.endoffsettype' => { :type => 4, :value => 0 },
+              }
             }
-          }
 
-          Zip::File.open(layout_path, create: false) do |zipfile|
+            Zip::File.open(layout_path, create: false) do |zipfile|
 
-            require "rexml/document"
+              require "rexml/document"
 
-            style_manager_filename = 'styleManager.xml'
-            xml = zipfile.read(style_manager_filename)
+              style_manager_filename = 'styleManager.xml'
+              xml = zipfile.read(style_manager_filename)
 
-            begin
+              begin
 
-              # Parse XML
-              xdoc = REXML::Document.new(xml)
+                # Parse XML
+                xdoc = REXML::Document.new(xml)
 
-              # Extract style manager element
-              style_manager_elm = xdoc.elements['/styleManager']
-              if style_manager_elm
+                # Extract style manager element
+                style_manager_elm = xdoc.elements['/styleManager']
+                if style_manager_elm
 
-                defaults.each do |tool, attributes|
+                  defaults.each do |tool, attributes|
 
-                  # Add new 'Tool' default attributes
+                    # Add new 'Tool' default attributes
 
-                  style_attributes_elm = REXML::Element.new('e:styleAttributes')
+                    style_attributes_elm = REXML::Element.new('e:styleAttributes')
 
-                  style_value_elm = REXML::Element.new('t:variant')
-                  style_value_elm.add_attribute('type', 13)
-                  style_value_elm.add_element(style_attributes_elm)
+                    style_value_elm = REXML::Element.new('t:variant')
+                    style_value_elm.add_attribute('type', 13)
+                    style_value_elm.add_element(style_attributes_elm)
 
-                  style_elm = REXML::Element.new('t:dicItem')
-                  style_elm.add_attribute('key', tool)
-                  style_elm.add_element(style_value_elm)
+                    style_elm = REXML::Element.new('t:dicItem')
+                    style_elm.add_attribute('key', tool)
+                    style_elm.add_element(style_value_elm)
 
-                  style_manager_elm.add_element(style_elm)
+                    style_manager_elm.add_element(style_elm)
 
-                  attributes.each do |attribute, type_and_value|
+                    attributes.each do |attribute, type_and_value|
 
-                    attribute_value_elm = REXML::Element.new('t:variant')
-                    attribute_value_elm.add_attribute('type', type_and_value[:type])
-                    attribute_value_elm.add_text(REXML::Text.new(type_and_value[:value].to_s))
+                      attribute_value_elm = REXML::Element.new('t:variant')
+                      attribute_value_elm.add_attribute('type', type_and_value[:type])
+                      attribute_value_elm.add_text(REXML::Text.new(type_and_value[:value].to_s))
 
-                    attribute_elm = REXML::Element.new('t:dicItem')
-                    attribute_elm.add_attribute('key', attribute)
-                    attribute_elm.add_element(attribute_value_elm)
+                      attribute_elm = REXML::Element.new('t:dicItem')
+                      attribute_elm.add_attribute('key', attribute)
+                      attribute_elm.add_element(attribute_value_elm)
 
-                    style_attributes_elm.add_element(attribute_elm)
+                      style_attributes_elm.add_element(attribute_elm)
+
+                    end
 
                   end
 
+                  output = ''
+                  xdoc.write(output)
+
+                  zipfile.get_output_stream(style_manager_filename){ |f| f.puts output }
+                  zipfile.commit
+
                 end
 
-                output = ''
-                xdoc.write(output)
-
-                zipfile.get_output_stream(style_manager_filename){ |f| f.puts output }
-                zipfile.commit
-
+              rescue REXML::ParseException => error
+                # Return nil if an exception is thrown
+                puts error.message
               end
 
-            rescue REXML::ParseException => error
-              # Return nil if an exception is thrown
-              puts error.message
             end
 
+          rescue => e
+            puts "Failed to override layout 'LinearDimensionTool' and 'AngularDimensionTool' default style"
+            puts e.inspect
           end
 
         end
@@ -576,8 +635,29 @@ module Ladb::OpenCutList
       entity
     end
 
+    def _to_layout_length_units(su_length_unit)
+      case su_length_unit
+      when DimensionUtils::INCHES
+        if DimensionUtils.length_format == DimensionUtils::FRACTIONAL
+          return Layout::Document::FRACTIONAL_INCHES
+        else
+          return Layout::Document::DECIMAL_INCHES
+        end
+      when DimensionUtils::FEET
+        return Layout::Document::DECIMAL_FEET
+      when DimensionUtils::MILLIMETER
+        return Layout::Document::DECIMAL_MILLIMETERS
+      when DimensionUtils::CENTIMETER
+        return Layout::Document::DECIMAL_CENTIMETERS
+      when DimensionUtils::METER
+        return Layout::Document::DECIMAL_METERS
+      else
+        return Layout::Document::DECIMAL_MILLIMETERS
+      end
+    end
+
     def _to_layout_length_precision(su_length_precision)
-      return 1 if su_length_precision == 0
+      return 1.0 if su_length_precision == 0
       "0.#{'1'.ljust(su_length_precision - 1, '0')}".to_f
     end
 

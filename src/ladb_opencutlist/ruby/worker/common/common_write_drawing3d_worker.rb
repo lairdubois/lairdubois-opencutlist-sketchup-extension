@@ -55,9 +55,7 @@ module Ladb::OpenCutList
       if path
 
         # Force "file_format" file extension
-        unless path.end_with?(".#{@file_format}")
-          path = "#{path}.#{@file_format}"
-        end
+        path = "#{path}.#{@file_format}" unless path.end_with?(".#{@file_format}")
 
         begin
 

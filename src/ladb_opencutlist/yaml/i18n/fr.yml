@@ -1244,6 +1244,30 @@ tab:
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas dessinées.
         is_part_selection: Ce dessin d'ensemble se limite aux **pièces sélectionnées**.
+      message:
+        adding_new_page: |
+          Souhaitez-vous ajouter une nouvelle page ?
+        incompatible_page_format: |
+          Le fichier de destination n'est pas configuré avec le même format de papier.
+          
+          Lu : {{ old_page_format }}
+          Exporté : {{ new_page_format }}
+          
+          Toutes les pages seront effacées.
+        changing_units: |
+          Le fichier de destination n'a pas la même unité par défaut.
+          
+          Lue : {{ old_units }}
+          Exportée : {{ new_units }}
+          
+          Souhaitez utiliser la nouvelle unité ?
+        changing_precision: |
+          Le fichier de destination n'a pas la même précision par défaut.
+          
+          Lue : {{ old_precision }}
+          Exportée : {{ new_precision }}
+          
+          Souhaitez utiliser la nouvelle précision ?
     write:
       title: Exportation de pièces
       info_2d: |
