@@ -198,7 +198,7 @@ module Ladb::OpenCutList
 
           unless doc.nil?
             unless same_units
-              choice = UI.messagebox(PLUGIN.get_i18n_string('tab.cutlist.layout.message.changing_units', { :old_units => PLUGIN.get_i18n_string("default.unit_#{doc.units}"), :new_units => PLUGIN.get_i18n_string("default.unit_#{doc.units}") }), MB_YESNOCANCEL)
+              choice = UI.messagebox(PLUGIN.get_i18n_string('tab.cutlist.layout.message.changing_units', { :old_units => _format_layout_length_units(doc.units), :new_units => _format_layout_length_units(units) }), MB_YESNOCANCEL)
               if choice == IDYES
                 doc.units = units
               elsif choice == IDNO
@@ -269,7 +269,7 @@ module Ladb::OpenCutList
             draw_text = _add_formated_text(doc, layer, page, PLUGIN.get_i18n_string('tab.cutlist.layout.title'), Geom::Point2d.new(page_left_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_LEFT, { :font_family => font_family, :font_size => 18, :text_alignment => Layout::Style::ALIGN_LEFT })
             current_y = draw_text.drawing_bounds.lower_left.y
 
-            _add_formated_text(doc, layer, page, "#{@generated_at}  |  #{PLUGIN.get_i18n_string("default.unit_#{units}")}  |  #{_camera_zoom_to_scale(@camera_zoom)}", Geom::Point2d.new(page_width - page_right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
+            _add_formated_text(doc, layer, page, "#{@generated_at}  |  #{_format_layout_length_units(units)}  |  #{_camera_zoom_to_scale(@camera_zoom)}", Geom::Point2d.new(page_width - page_right_margin, current_y), Layout::FormattedText::ANCHOR_TYPE_BOTTOM_RIGHT, { :font_family => font_family, :font_size => 10, :text_alignment => Layout::Style::ALIGN_RIGHT })
 
             name_text = _add_formated_text(doc, layer, page, '<PageName>', Geom::Point2d.new(page_width / 2, current_y + gutter * 2), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 15, :text_alignment => Layout::Style::ALIGN_CENTER })
             current_y = name_text.drawing_bounds.lower_left.y
@@ -633,6 +633,23 @@ module Ladb::OpenCutList
       # Connect target to model
       entity.connect(Layout::ConnectionPoint.new(skp, target_3d)) unless target_3d == anchor_3d
       entity
+    end
+
+    def _format_layout_length_units(layout_length_units)
+      case layout_length_units
+      when Layout::Document::FRACTIONAL_INCHES
+        return "#{PLUGIN.get_i18n_string("default.unit_#{DimensionUtils::INCHES}")} (#{PLUGIN.get_i18n_string('default.fractional')})"
+      when Layout::Document::DECIMAL_INCHES
+        return "#{PLUGIN.get_i18n_string("default.unit_#{DimensionUtils::INCHES}")} (#{PLUGIN.get_i18n_string('default.decimal')})"
+      when Layout::Document::DECIMAL_FEET
+        return "#{PLUGIN.get_i18n_string("default.unit_#{DimensionUtils::FEET}")}"
+      when Layout::Document::DECIMAL_MILLIMETERS
+        return "#{PLUGIN.get_i18n_string("default.unit_#{DimensionUtils::MILLIMETER}")}"
+      when Layout::Document::DECIMAL_CENTIMETERS
+        return "#{PLUGIN.get_i18n_string("default.unit_#{DimensionUtils::CENTIMETER}")}"
+      when Layout::Document::DECIMAL_METERS
+        return "#{PLUGIN.get_i18n_string("default.unit_#{DimensionUtils::METER}")}"
+      end
     end
 
     def _to_layout_length_units(su_length_unit)

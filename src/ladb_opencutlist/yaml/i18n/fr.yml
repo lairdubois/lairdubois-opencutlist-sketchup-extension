@@ -49,6 +49,8 @@ default:
   by: par
   date_format: "d/m/Y G:i"
   date_format_short: d/m/Y
+  decimal: Décimal
+  fractional: Fractionnel
   unit_0: Pouce
   unit_1: Pied
   unit_2: Millimètre
@@ -1728,10 +1730,10 @@ tab:
     model_settings: Préférences du modèle
     length_unit: Unité de longueur
     length_format: Format
-    length_format_0: Décimal
+    length_format_0: $t(default.decimal)
     length_format_1: Architecture
     length_format_2: Ingénierie
-    length_format_3: Fractionnel
+    length_format_3: $t(default.fractional)
     length_precision: Précision
     suppress_units_display: Afficher l'unité de longueur à chaque valeur
     mass_unit: Unité de masse
