@@ -1865,6 +1865,7 @@ tool:
     action_option_options_solid_centered_status: Centrer l'élévation sur le premier point
     action_option_options_move_array: Copie en grille
     action_option_options_move_array_status: Copier la pièce en grille
+    action_option_pushpull_locked_status: Verrouiller sur la dernière mesure
     action_option_move_copy_status: Alterner entre copier/déplacer
     action_option_move_anchor_status: Changer le point d'ancrage
     vcb_length: Longueur

@@ -308,6 +308,8 @@ module Ladb::OpenCutList
     STATE_MOVE = 3
     STATE_MOVE_COPY = 4
 
+    @@last_pushpull_measure = 0
+
     attr_reader :picked_shape_first_point, :picked_shape_last_point, :picked_pushpull_point, :picked_move_point, :normal, :direction
 
     def initialize(action, tool, action_handler = nil)
@@ -360,6 +362,7 @@ module Ladb::OpenCutList
         return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_1_status") + '.'
       when STATE_PUSHPULL
         return PLUGIN.get_i18n_string('tool.smart_draw.action_x_state_2_status') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_pushpull_locked_status') + '.'
           ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_solid_centered_status') + '.'
       when STATE_MOVE
         if _fetch_option_move_array
@@ -539,24 +542,19 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_PUSHPULL
-        unless @previous_action_handler.nil?
-          previous_pushpull_vector = @previous_action_handler.picked_shape_last_point.vector_to(@previous_action_handler.picked_pushpull_point)
-          if previous_pushpull_vector.valid?
+        unless @@last_pushpull_measure == 0
 
-            length = previous_pushpull_vector.length
-            length *= -1 unless previous_pushpull_vector.samedirection?(@previous_action_handler.normal)
+          @picked_pushpull_point = @picked_shape_last_point.offset(@normal, @@last_pushpull_measure)
 
-            @picked_pushpull_point = @picked_shape_last_point.offset(@normal, length)
-            _create_entity
-            if _fetch_option_tool_move
-              set_state(STATE_MOVE)
-              _refresh
-            else
-              _restart
-            end
-
-            return true
+          _create_entity
+          if _fetch_option_tool_move
+            set_state(STATE_MOVE)
+            _refresh
+          else
+            _restart
           end
+
+          return true
         end
 
       end
@@ -621,6 +619,14 @@ module Ladb::OpenCutList
           return true
         end
 
+      elsif @state == STATE_PUSHPULL
+
+        if key == CONSTRAIN_MODIFIER_KEY
+          UI.beep if @@last_pushpull_measure == 0
+          _refresh
+          return true
+        end
+
       elsif @state == STATE_MOVE && !_fetch_option_move_array
 
         if key == VK_RIGHT
@@ -668,7 +674,10 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_PUSHPULL
-        if key == COPY_MODIFIER_KEY
+        if key == CONSTRAIN_MODIFIER_KEY
+          _refresh
+          return true
+        elsif key == COPY_MODIFIER_KEY
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED, !_fetch_option_solid_centered, true)
           _refresh
           return true
@@ -940,6 +949,13 @@ module Ladb::OpenCutList
         # Force picked point to be projected to shape last picked point normal line
         @mouse_snap_point = @mouse_ip.position.project_to_line([ @picked_shape_last_point, @normal ])
 
+      end
+
+      # Lock on last pushpull measure
+      if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY) && @@last_pushpull_measure > 0
+        measure = @@last_pushpull_measure
+        measure /= 2 if _fetch_option_solid_centered
+        @mouse_snap_point = @picked_shape_last_point.offset(@picked_shape_last_point.vector_to(@mouse_snap_point), measure) if measure > 0
       end
 
     end
@@ -1766,6 +1782,8 @@ module Ladb::OpenCutList
 
       bounds = Geom::BoundingBox.new
       bounds.add(p1, p3)
+
+      @@last_pushpull_measure = bounds.depth
 
       if _fetch_option_construction
 
