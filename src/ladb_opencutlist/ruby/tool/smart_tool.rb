@@ -2097,31 +2097,38 @@ module Ladb::OpenCutList
 
         end
 
-      elsif @ip.instance_path.leaf.is_a?(Sketchup::ConstructionLine)
+      elsif @ip.degrees_of_freedom == 1
 
-        @cline = @ip.instance_path.leaf
+        entity = @ip.instance_path.leaf
+        entity = view.pick_helper(x, y, 40).best_picked if entity.nil?  # Allows to detect ConstructionLines outside a group
 
-        cline_manipulator = ClineManipulator.new(@ip.instance_path.leaf, @ip.transformation)
-        unless cline_manipulator.infinite?
+        if entity.is_a?(Sketchup::ConstructionLine)
 
-          ph = view.pick_helper(x, y, 40)
-          if !(position = [ cline_manipulator.start_point, cline_manipulator.end_point ].find { |point| ph.test_point(point) }).nil?
+          @cline = entity
 
-            @degrees_of_freedom = 0
-            @position = position
-            @position_type = POSITION_TYPE_END
+          cline_manipulator = ClineManipulator.new(entity, @ip.transformation)
+          unless cline_manipulator.infinite?
 
-          elsif ph.test_point(cline_manipulator.middle_point)
+            ph = view.pick_helper(x, y, 40)
+            if !(position = [ cline_manipulator.start_point, cline_manipulator.end_point ].find { |point| ph.test_point(point) }).nil?
 
-            @degrees_of_freedom = 0
-            @position = cline_manipulator.middle_point
-            @position_type = POSITION_TYPE_MIDDLE
+              @degrees_of_freedom = 0
+              @position = position
+              @position_type = POSITION_TYPE_END
 
-          elsif !(position = cline_manipulator.third_points.find { |point| ph.test_point(point) }).nil?
+            elsif ph.test_point(cline_manipulator.middle_point)
 
-            @degrees_of_freedom = 0
-            @position = position
-            @position_type = POSITION_TYPE_THIRD
+              @degrees_of_freedom = 0
+              @position = cline_manipulator.middle_point
+              @position_type = POSITION_TYPE_MIDDLE
+
+            elsif !(position = cline_manipulator.third_points.find { |point| ph.test_point(point) }).nil?
+
+              @degrees_of_freedom = 0
+              @position = position
+              @position_type = POSITION_TYPE_THIRD
+
+            end
 
           end
 
