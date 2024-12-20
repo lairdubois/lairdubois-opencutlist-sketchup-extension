@@ -3008,7 +3008,8 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_POINTS
-        return onLButtonUp(flags, x, y, view)
+        onLButtonUp(flags, x, y, view)  # 1. Complete STATE_SHAPE_POINTS
+        return super                    # 2. Process auto pushpull if possible
 
       end
 
