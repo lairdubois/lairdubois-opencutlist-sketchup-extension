@@ -544,7 +544,9 @@ module Ladb::OpenCutList
       when STATE_PUSHPULL
         unless @@last_pushpull_measure == 0
 
-          @picked_pushpull_point = @picked_shape_last_point.offset(@normal, @@last_pushpull_measure)
+          measure = @@last_pushpull_measure
+          measure /= 2 if _fetch_option_solid_centered
+          @picked_pushpull_point = @picked_shape_last_point.offset(@normal, measure)
 
           _create_entity
           if _fetch_option_tool_move
