@@ -154,7 +154,8 @@ gulp.task('rbz_create', function () {
         'src/**/!(.DS_store|*.less|*.twig|!(*.min).css)',
         '!src/**/less/**',
         '!src/**/twig/**',
-        '!src/**/c/**',
+        '!src/**/cpp/**',
+        '!src/**/bin/**/!(*.dylib|*.dll)',
     ];
     // Exclude not minified .js libs
     blob.push('!src/**/js/lib/!(*.min).js');
