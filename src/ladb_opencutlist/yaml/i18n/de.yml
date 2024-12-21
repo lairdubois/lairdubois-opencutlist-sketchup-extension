@@ -49,6 +49,8 @@ default:
   by: von
   date_format: "Y-m-d G:i"
   date_format_short: Y-m-d
+  decimal: Dezimal
+  fractional: Fraktional
   unit_0: Zoll
   unit_1: Fuß
   unit_2: Millimeter
@@ -1244,6 +1246,30 @@ tab:
       warning:
         is_group_selection: Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht gezeichnet.
         is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
+      message:
+        adding_new_page: |
+          Möchten Sie eine neue Seite hinzufügen?
+        incompatible_page_format: |
+          Die Zieldatei ist nicht mit demselben Papierformat konfiguriert.
+
+          Gelesen: {{ old_page_format }}
+          Exportiert: {{ new_page_format }}
+
+          Alle Seiten werden gelöscht.
+        changing_units: |
+          Die Zieldatei hat standardmäßig nicht die gleiche Einheit.
+
+          Gelesen: {{ old_units }}
+          Exportiert: {{ new_units }}
+
+          Möchten Sie die neue Einheit verwenden?
+        changing_precision: |
+          Die Zieldatei hat standardmäßig nicht die gleiche Genauigkeit.
+
+          Gelesen: {{ old_precision }}
+          Exportiert: {{ new_precision }}
+
+          Möchten Sie die neue Genauigkeit verwenden?
     write:
       title: Teile-Export
       info_2d: |
@@ -1704,10 +1730,10 @@ tab:
     model_settings: Modell-Einstellungen
     length_unit: Längeneinheit
     length_format: Format
-    length_format_0: Dezimal
+    length_format_0: $t(default.decimal)
     length_format_1: Architektonisch
     length_format_2: Ingenieurswesen
-    length_format_3: Fraktional
+    length_format_3: $t(default.fractional)
     length_precision: Genauigkeit
     suppress_units_display: Längeneinheiten für jeden Wert anzeigen
     mass_unit: Masseneinheit
@@ -1839,6 +1865,7 @@ tool:
     action_option_options_solid_centered_status: Erhebung auf den ersten Punkt zentrieren
     action_option_options_move_array: Rasterkopien
     action_option_options_move_array_status: Kopieren des Teils in ein rechteckiges Raster
+    action_option_pushpull_locked_status:  Auf die letzte Messung fixieren
     action_option_move_copy_status: Abwechselnd kopieren/verschieben
     action_option_move_anchor_status: Ankerpunkt ändern
     vcb_length: Länge
