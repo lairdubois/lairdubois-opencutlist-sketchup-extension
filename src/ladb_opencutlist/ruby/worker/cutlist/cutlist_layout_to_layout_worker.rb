@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require_relative '../../plugin'
   require_relative '../../helper/layer_visibility_helper'
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../utils/dimension_utils'
