@@ -9,9 +9,7 @@
 /src/ladb_opencutlist/js/lib/three.js
 /src/ladb_opencutlist/js/lib/bootstrap-slider.js
 /src/ladb_opencutlist/bin/osx/lib/*
-!/src/ladb_opencutlist/bin/osx/lib/*.dylib
 /src/ladb_opencutlist/bin/win/lib/*
-!/src/ladb_opencutlist/bin/win/lib/*.dll
 /docs/skp/*~.skp
 /build/node_modules/
 /build/cmake-build/
