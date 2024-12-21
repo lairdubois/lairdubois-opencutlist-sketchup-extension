@@ -50,6 +50,8 @@ default:
   date_format: "m/d/Y g:ia"
   date_format_short: m/d/Y
   unit_0: Inch
+  decimal: Decimal
+  fractional: Fractional
   unit_1: Foot
   unit_2: Millimeter
   unit_3: Centimeter
@@ -1244,6 +1246,30 @@ tab:
       warning:
         is_group_selection: Parts contained in **hidden groups** of the Parts List will not be drawn.
         is_part_selection: This overview drawing is limited to the **selected parts**.
+      message:
+        adding_new_page: |
+          Would you like to add a new page?
+        incompatible_page_format: |
+          The destination file is not configured with the same paper format.
+
+          Read: {{ old_page_format }}
+          Exported: {{ new_page_format }}
+
+          All pages will be deleted.
+        changing_units: |
+          The destination file does not have the same unit by default.
+
+          Read: {{ old_units }}
+          Exported: {{ new_units }}
+
+          Would you like to use the new units?
+        changing_precision: |
+          The destination file does not have the same precision by default.
+
+          Read: {{ old_precision }}
+          Exported: {{ new_precision }}
+
+          Would you like to use the new precision?
     write:
       title: Parts Export
       info_2d: |
@@ -1704,10 +1730,10 @@ tab:
     model_settings: Model Preferences
     length_unit: Unit of Length
     length_format: Format
-    length_format_0: Decimal
+    length_format_0: $t(default.decimal)
     length_format_1: Architectural
     length_format_2: Engineering
-    length_format_3: Fractional
+    length_format_3: $t(default.fractional)
     length_precision: Precision
     suppress_units_display: Display length unit for each value
     mass_unit: Unit of Weight
@@ -1800,14 +1826,14 @@ tool:
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
     title: Draw
-    action_0: Draw rectangle
+    action_0: Draw Rectangle
     action_0_status: Draw a volume on a rectangular shape
     action_0_state_1_status: Click to define opposite angle or enter length, width
-    action_1: Draw circle
+    action_1: Draw Circle
     action_1_status: Draw a volume on a circular shape
     action_1_state_1_radius_status: Click to set radius or enter distance
     action_1_state_1_diameter_status: Click to set diameter or enter distance
-    action_2: Draw polygon
+    action_2: Draw Polygon
     action_2_status: Draw a volume on a polygonal shape
     action_2_state_1_status: Click to define a new point or enter a distance
     action_x_state_2_status: Click to set elevation or enter distance
@@ -1827,7 +1853,7 @@ tool:
     action_option_segments_segment_count: Number of Segments
     action_option_segments_segment_count_status: Define the number of segments of a circle
     action_option_options_construction: Construction Lines
-    action_option_options_construction_status: Drawing in construction lines
+    action_option_options_construction_status: Draw in construction lines
     action_option_options_rectangle_centered: Rectangle Centered
     action_option_options_rectangle_centered_status: Center rectangle on the first point
     action_option_options_measure_from_diameter: Measure
@@ -1837,8 +1863,9 @@ tool:
     action_option_options_measure_reversed_status: Reverse the measurement
     action_option_options_solid_centered: Elevation Centered
     action_option_options_solid_centered_status: Center elevation on the first point
-    action_option_options_move_array: Copy in Grid
+    action_option_options_move_array: Copy to Grid
     action_option_options_move_array_status: Copying the part to grid
+    action_option_pushpull_locked_status: Lock on last measurement
     action_option_move_copy_status: Toggle between copy/move
     action_option_move_anchor_status: Change the anchor point
     vcb_length: Length
