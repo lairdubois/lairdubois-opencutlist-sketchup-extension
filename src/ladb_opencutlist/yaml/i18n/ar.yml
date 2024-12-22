@@ -7,6 +7,8 @@ default:
   minimize: تصغير
   maximize: تكبير
   cancel: إلغاء
+  # stop computation and return best result so far
+  stop: إيقاف
   validate: تطبيق
   confirm: تأكيد
   ok: موافق
@@ -23,7 +25,9 @@ default:
   preview: معاينة
   options: الخيارات
   caution: تحذير
-  remove: حذف
+  remove: أزل
+  remove_all: أزل الكل
+  delete: حذف
   create: إنشاء
   duplicate: استنسخ
   ignore: تجاهل
@@ -34,6 +38,8 @@ default:
   unselect_all: إزالة تحديد الكل
   draw: ارسم
   estimate: ثمِّن
+  yes: نعم
+  no: لا
   empty_filename: skp.غير معنون
   help: مساعدة
   error: أُفّ !
@@ -42,7 +48,9 @@ default:
   good: جيد
   bad: سيء
   by: من قِبل
+  # date format in use for language
   date_format: "d/m/Y G:i"
+  # short date format in use for language
   date_format_short: d/m/Y
   unit_0: إنش
   unit_1: قدم
@@ -82,6 +90,12 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: عدّل المثيل
+      edit_parent_part_instance: عدّل المجموعة/العنصر الذي يحتوي المثيل
+      hide_part_instance: أخف المثيل
+      unhide_part_instance: أظهر المثيل
+      edit_part_instance_properties: عدّل خصائص المثيل
+      smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -90,6 +104,7 @@ core:
     name: OpenCutList
     command:
       dialog: OpenCutList
+      smart_draw: ارسم قِطعا
       smart_paint: اصبغ القِطع
       smart_axes: وجِّه القطع
       smart_export: صدّر القِطع
@@ -119,6 +134,7 @@ core:
 
        <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a> للتبليغ عن خطإ برمجي:
   error:
+    extern: "خطأ خارجي : **{{ error }}**"
     feature_unavailable: "تتطلب هذه الخاصية توفر النسخة {{ version }} من SketchUp أو أعلى"
     failed_export_to: |2
        أثناء التصدير إلى *{{ path }}* حدث خطأ
@@ -132,6 +148,7 @@ core:
     material_change: هناك خامة واحدة على الأقل قد غُيرت.
     selection_change: لقد غُيّر التحديد في النموذج النشط.
     layers_change: لقد غُيّرت الوسوم في النموذج النشط.
+    drawing_change: لقد عُدّل تصميم النموذج النشط
   upgrade:
     unavailable: "*OpenCutList* لا يتسنى العثور على آخر نسخة من "
     available: |
@@ -180,9 +197,9 @@ core:
     dictionary:
       component_textinput_color: لوحة الألوان
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
+      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -195,6 +212,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / النموذج
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -214,7 +232,7 @@ core:
       view_isometric: متقايس
       view_top: علوي
       view_bottom: سفلي
-      view_front: أمامي
+      view_front: أمام
       view_back: خلفي
       view_left: أيسر
       view_right: أيمن
@@ -251,7 +269,11 @@ tab:
     edit_part_faces_properties: عدّل خصائص القطعة (قشرة الخشب)
     part_drawing_type_1: واجهة ثنائية الأبعاد
     part_drawing_type_2: خلفية ثنائية الأبعاد
-    part_drawing_type_3: ثلاثي الأبعاد
+    part_drawing_type_3: منظر ثنائي الأبعاد - يسار
+    part_drawing_type_4: منظر ثنائي الأبعاد - يمين
+    part_drawing_type_5: واجهة ثنائية الأبعاد
+    part_drawing_type_6: منظر ثنائي الأبعاد - خلف
+    part_drawing_type_7: ثلاثي الأبعاد
     tooltip:
       show_hide_block: أظهر / أخفِ المجموعة
       scroll_to_block: مُرَّ إلى المجموعة
@@ -344,7 +366,10 @@ tab:
       select_unselect_all_parts: حدد / أزل التحديد عن كل القطع في المجموعة
       select_parts_in_cutlist: حدد القِطعة داخل قائمة القِطع
       select_parts_in_cutlist_plural: "حدد {{ count }} قطعة / قِطع في قائمة القِطع"
+      # used in estimate to setup the cutting diagram
       setup_group_cuttingdiagram: "تكوين رسم التقطيع التخطيطي لـ '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
+      # used in estimate to setup the new packing
+      setup_group_packing: "تكوين رسم التقطيع التخطيطي لـ '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: افتح رابط القِطعة
     menu:
       show_all_groups: أظهر كل المجموعات
@@ -352,6 +377,7 @@ tab:
       numbers_save: احفظ أرقام القطع
       numbers_reset: أعد تهيئة أرقام القطع
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: طباعة الملصقات
       write_2d: إسقاط ثنائي الأبعاد
       write_3d: الشكل ثلاثي الأبعاد
       write_2d_parts: صدر الإسقاط ثنائي البعد للقِطَع
@@ -362,6 +388,7 @@ tab:
       group_numbers_save: احفظ أرقام القطع في هذه المجموعة
       group_numbers_reset: أعد تهيئة أرقام القطع في هذه المجموعة
       group_cuttingdiagram: رسم التقطيعِ التخطيطيُ
+      group_packing: رسم التقطيعِ التخطيطيُ
       group_labels: طباعة فقاعات قِطَع المجموعة
       edit_material: "عدّل الخامة '{{ material_name }}'"
       expand_all: نشر كل الأسطر
@@ -412,7 +439,7 @@ tab:
         يتيح لك *الوصف* معلومات معلومات مخصصة عن تعريف كل قطعة.
       url: رابط
       url_help: |
-        الـ URL يسمح بتوفير رابط مخصص إلى صفحة خارجية على كل تعريف لقطعة
+        الـ *URL* يسمح بتوفير رابط مخصص إلى صفحة خارجية على كل تعريف لقطعة
       tags: الوسوم
       tags_help: |
         تمكنك *الوسوم* من إضافة كلمات مفتاحية مخصصة لتعريف كل قطعة.
@@ -564,13 +591,14 @@ tab:
     export:
       title: صدِّر
       info_0: |
-        تتيح لك هذه الوظيفة تصدير *قائمة القِطع* بصيغة [CSV](https://ar.wikipedia.org/wiki/%D9%82%D9%8A%D9%85_%D9%85%D9%81%D8%B5%D9%88%D9%84%D8%A9_%D8%A8%D9%81%D9%88%D8%A7%D8%B5%D9%84).
+        تتيح لك هذه الوظيفة تصدير المعلومات من *قائمة القِطع* إلى الحافظة أو إلى ملف بصيغة [CSV](https://ar.wikipedia.org/wiki/%D9%82%D9%8A%D9%85_%D9%85%D9%81%D8%B5%D9%88%D9%84%D8%A9_%D8%A8%D9%81%D9%88%D8%A7%D8%B5%D9%84).
       customize_help: |
         أعد الترتيب أو أخف أو أضف أو أزل أو حدد عمودا من القائمة لتخصيص **عنوانه** و **صيغته** التي ستستحدث القيم لكل سطر مُصدّر.
       add_column: أضف عمودا
       add_native_columns: أضف عمودا أصليا
-      remove_column: أزل
-      remove_all_columns: أزل الكل
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
       columns: الأعمدة
       column_title: العنوان
       column_title_help: |
@@ -582,7 +610,7 @@ tab:
       options_customize: تخصيص
       option_source: المصدر
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: قائمة القطع
       option_source_instances_list: قائمة المثيلات
       option_col_sep: فاصل
       option_col_sep_tab: أداة تنظيم الجداول
@@ -610,8 +638,9 @@ tab:
       final_area: المساحة - نهائية
       count: العدد
       part_count: عدد القطع
-      material_type: النوع
-      material_name: الخامة
+      material: الخامة
+      material_type: نوع الخامة
+      material_name: اسم الخامة
       material_description: وصف الخامة
       material_url: رابط الخامة
       material_std_dimension: الأبعاد النظامية
@@ -629,6 +658,9 @@ tab:
       layers: وسوم
       batch: طقم
       bin: الحاوية
+      component_definition: تسمية العنصر
+      component_instance: مثيل العنصر
+      component_instances: مثيلات العنصر
       filename: اسم الملف
       model_name: اسم النموذج
       model_description: وصف النموذج
@@ -739,6 +771,8 @@ tab:
         *ينبغي أن يكون الخيار مفعلا ليتم تصدير الأشكال*
       option_saw_kerf: سُمك الشَفرة
       option_saw_kerf_help: عرض المادة المزالة بفعل شفرة المنشار
+      option_spacing: مباعدة
+      option_spacing_help: المباعدة الأدنى بين القِطع
       option_trimming: تقليم
       option_trimming_help_1d: كمية المادّة التي ستعتبر كبواقٍ في طرف كل لوح أو شريط حاشية.
       option_trimming_help_2d: كمية المادّة التي ستعتبر كبواقٍ حول اللوح.
@@ -832,7 +866,7 @@ tab:
         parts: "{{ count }} قطعة"
         parts_plural: "{{ count }} قِطع"
         settings: الإعدادات
-      export:
+      write:
         title: تصدير مخطط التقطيع
         info_0: |
           تسمح لك هذه الوحدة بتصدير **شكل** *رسم التقطيع التخطيطي* في هيئة قائمة من الملفات بتنسيق [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF)
@@ -916,8 +950,9 @@ tab:
       options_offset: إزاحة
       size: الحجم الحقيقي للملصق
       add_element: أضف عنصرا
-      remove_element: أزل
-      remove_all_elements: أزل الكل
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         أعد تنظيم الخصائص التالية لتحديد ترتيب الملصقات.
         يمكن فرز كل خاصية <i class="ladb-opencutlist-icon-sort-asc"></i>*تصاعديا* أو <i class="ladb-opencutlist-icon-sort-desc"></i>*تنازليا*.
@@ -958,6 +993,7 @@ tab:
       option_color: اللون
       formula:
         custom: الصيغة
+        custom_qr_code: رمز الاستجابة السريعة
         part_number: الرقم
         part_name: التسمية
         part_description: تعليق وصفيّ
@@ -997,6 +1033,7 @@ tab:
       error:
         invalid_size: لا تسمح مُعلِّمات التكوين المُدخلة بتعيين حجم صالح للملصق.
       warning:
+        is_group_selection: لن تكون للقِطع الموجودة في المجموعات المخفية داخل قائمة القِطع ملصقات.
         is_part_selection: هذه الملصقات محدودة بـ **القطع المحددة** فحسب
         formula_not_available: المعادلة غير متاحة في هذا السياق
     layout:
@@ -1082,6 +1119,11 @@ tab:
       option_unit: الوحدة
       option_unit_help: |
         حدد الوحدة المستعملة في الملف المُصدَّر
+      option_use_count: العدد
+      option_use_count_0: ملف لكل قِطعة
+      option_use_count_1: ملف لكل مثيل قِطعة
+      option_use_count_help: |
+        حدد ما إذا كان يتم أخذ عدد المثيلات لقِطعة معينة في الاعتبار.
       option_part_drawing_type: إسقاط
       option_part_drawing_type_help: |
         حدد المنظر الذي سيصدَّر
@@ -1095,8 +1137,13 @@ tab:
       option_anchor_1: صدر مبدأ القِطعة
       option_anchor_help: |
         يتيح تفعيل إسقاط مبدإ محاور القِطعة كنقطة ارتساء
+      option_switch_yz: المحور العمودي
+      option_switch_yz_0: عمودي على Z
+      option_switch_yz_1: عمودي على Y
+      option_switch_yz_help: |
+        بدِّل المحورين Y و Z لتحديد محور القطعة العمودي
       option_smoothing: تمليس
-      option_smoothing_0: لا شيء
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: تمليس الدوائر و الأقواس (تجريبي)
       option_smoothing_help: |
         يتيح تفعيل اكتشاف الدوائر والأقواس.
@@ -1112,7 +1159,7 @@ tab:
         **الخط الخارجي + التثقيب + الدمج**
         تفعيل فصل الحاشية الخارجية للقِطع عن الثقوب الخاصة بها بالإضافة إلى دمج الأعماق لكل تثقيب
       option_include_paths: المسارات
-      option_include_paths_0: لا شيء
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: استخدم الحواشي غير المرتبطة بوجه
       option_include_paths_help: |
         تسمح الخاصية بتمكين استخدام الحواف غير المرتبطة بوجهٍ والموجودة في القِطعة لتصديرها كمسار
@@ -1124,7 +1171,9 @@ tab:
         حدد ألوان تثقيب القِطع
       option_parts_paths: المسارات
       option_parts_paths_help: |
-        حدد لون المسارات
+        تتيح لك هذه الخاصية اختيار ألوان الطباعة
+
+        *لن يستعمل لون التعبئة إلا من أجل المسارات المقفلة*
       error:
         no_part: لا توجد قِطعة للتصدير
       warning:
@@ -1188,9 +1237,7 @@ tab:
       texture_load: حمّل هيئة سطحية - تكستشر جديدة
       texture_clear: أزل الهيئة السطحية - التكستشر
       edit: "عدل خصائص '{{ name }}'"
-      set_current: |
-        اصبغ القِطع بـ '{{ name }}'
-        *انقر نقرا مزدوجا للتصغير*
+      set_current: "لوّن القِطع باستعمال '{{ name }}'"
       open_url: افتح رابط الخامة
     menu:
       import_from_skm: استيراد خامة (skm.)
@@ -1288,16 +1335,22 @@ tab:
       title: حمّل صورة
     import_from_skm:
       title: "skm. استيراد ملف "
+      ask_replace: |
+        الخامة "{{ name }}" موجودة مسبقا. 
+        هل ترغب في استبدالها بالخامة التي تستوردها؟
     export_to_skm:
       title: "skm. تصدير إلى ملف "
     option:
+      minimize_on_smart_paint: التصغير بعد توظيف *'لوّن القِطع باستعمال...'*
+      minimize_on_smart_paint_help: "إن كانت هذه الخاصية مفعلة فإن نافذة OpenCutList ستُصغّر عند توظيف *'لوّن القِطع باستعمال...'*"
+      general: عام
       material_order_strategy: فرز الخامات
       material_order_strategy_help: |
         أعد تنظيم الخصائص التالية لتحديد ترتيب فرز الخامات في القائمة.
         يمكن فرز كل خاصية <i class="ladb-opencutlist-icon-sort-asc"></i>*تصاعديا* أو <i class="ladb-opencutlist-icon-sort-desc"></i>*تنازليا*.
       property_type: النوع
       property_name: الإسم
-    remove:
+    delete:
       message: |
         أنت على وشك إزالة الخامة **{{ material_name }}** من نموذجك.
         أكّد لتكمل.
@@ -1310,7 +1363,7 @@ tab:
       material_not_found: لم يُعثر على أي خامة.
       failed_import_skm_file: " أثناء الاستيراد من الملف .skm حدث خطأ. **{{ error }}**."
       failed_export_skm_file: " أثناء التصدير إلى الملف .skm حدث خطأ. **{{ error }}**."
-      failed_removing_material: "حدث خطأ أثناء إزالة هذه الخامة. **{{ error }}**"
+      failed_deleting_material: "حدث خطأ أثناء إزالة هذه الخامة. **{{ error }}**"
       failed_duplicating_material: "وقع خطأ أثناء استنساخ الخامة. **{{ error }}**"
       invalid_image_file: الصورة غير صالحة
     obsolete_base: "لتبقي على حالة المزامنة، عليك أن تحدث قائمة الخامات."
@@ -1319,13 +1372,13 @@ tab:
     title: البُنية
     list: شجرة بُنية الوحدات
     nodes: المثيلات
-    part_count: عدد القِطع
+    toggle_hidden: المثيلات المخفية
     type_0: النموذج
     type_1: المجموعة
     type_2: العُنصُر
     type_3: القِطعة
     tooltip:
-      open_node_url: افتح رابط المثيل
+      open_node_url: افتح رابط القِطعة
     edit_node:
       title_model: "خصائص النموذج"
       title_instance: "خصائص المثيل **{{ name }}**"
@@ -1333,9 +1386,11 @@ tab:
       preview: معاينة
       name: الإسم
       instance_name: مثيل
+      material: الخامة
       definition_name: التعريف
       description: تعليق وصفيّ
       url: رابط
+      tags: الوسوم
       layer_name: وسم
       explode: تفجير
       explode_message: "هل أنت واثق من رغبتك في تفجير المثيل **\"{{ name }}\"**؟"
@@ -1480,6 +1535,8 @@ tab:
     objective_title:
       default: الأهداف
       cuttingdiagram_export: تمويل تصدير رسومات التقطيعِ التخطيطيةِ
+      outliner: تمويل خاصية البنية
+      packing: "تمويل خاصية مداخلة الأشكال داخل مخطط التقطيع "
     objective_details:
       default: |
         تحسين *OpenCutList* المستمر مهم لنا، و المشروع بحاجة لمساعدتكم من أجل الإصدار التالي
@@ -1487,8 +1544,14 @@ tab:
         يهمنا أن يمكن تكييف خاصية *رسم التقطيعِ التخطيطيّ* في *OpenCutList* مع توقعات المستعملين المختلفة.
         لتوسيع الاحتمالات بشكل أكبر، نود تمكين تصدير مخططات التقطيع بتنسيق **SVG** و **DXF**.
         من خلال تزويدنا بالموارد للعمل على هذه الصادرات ، فإنك تمنحنا الفرصة لمساعدتك في تحقيق أقصى استفادة من *OpenCutList*.
-      layout: |
-        الهدف من هذا الجزء هو تسهيل طباعة معاينة لمشروعك و إظهار **منظرٍ مُفجَّرٍ** له مع تعيين للقِطَعِ وفقا لرقمها المعطى لها في قائمة القِطع.
+      outliner: |
+        يمكن أن يكون النموذج معقدًا للغاية، و التنقل عبر بُنيته باستخدام لوحة البُنية الأصلية لـ SketchUp ليس دائمًا عمليًا للغاية.
+         في SketchUp، يمكنك تطبيق الخامات و الطبقات على المثيلات و تطبيق اسم و رابط URL و وسم على التعريفات، لكنها لا تظهر في البُنية.
+        سيعرض لك الفيديو كيف نرغب في تحسين ذلك في قائمة البُنية، التي يمكن الوصول إليها مباشرة من OpenCutList.
+      packing: |
+        يهمنا أن تتكيف *OpenCutList* مع مجموعة واسعة من متطلبات المستخدم لوظيفة *مخطط التقطيع* . 
+        لتوسيع الإمكانيات بشكل أكبر، نود تنفيذ خوارزمية خاصة **بتداخل الأشكال** لاستغلال أمثل في حالة تقطيع الأشكال الكيفية. 
+        من خلال توفير الوسائل للعمل على هذه الوظيفة، فإنك تمنحنا الفرصة لمساعدتك في تحقيق أقصى استفادة من *OpenCutList*.
     objective_crowdfunding: |
       سيجري تطوير هذه الوظائف الجديدة عبر **التمويل التشاركي** و ستكون البداية عند بلوغ **الهدف المالي**.
     objective_thanks: |2
@@ -1574,7 +1637,7 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*الإنجليزية* و *الألمانية*)
       - Gildas Boureau (*وثائق فرنسية*)
       - Vladimir Badulya (*الروسية*)
-      - Pierluigi Colombo (*الإيطالية*)
+      - Pierluigi Colombo, Massimo Risca (*الإيطالية*)
       - Nayton Sanches Barbosa (*البرتغالية*) و صُحّحت من قبل [Carlos Maciel ELT](https://www.inglesonline.pro.br)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*الإسبانية*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*التشيكية*)
@@ -1602,6 +1665,9 @@ tool:
     zoom_extents: نطاقات التكبير و التصغير
     toggle_depth: القِطع في الخلفية
     more: المزيد
+    end_point: الحد
+    middle_point: المنتصف
+    third_point: نقطة في ثلث المسافة
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1663,7 +1729,9 @@ tool:
     action_2: بادل الأمام ↔ الخلف
     action_2_status: انقر على قِطعة معينة لمبادلة أمامِها بخلفها
     action_3: عدِّل المحاور
-    action_3_status: انقر على وجه أو حاشية قِطعة ما لتعديل توجيه محاورها
+    action_3_status: استهدف أحد أوجه قِطعة ما و اضغط على حاشية من حواشيه لتهيئة محاوره
+    action_4: حرّك المبدأ
+    action_4_status: استهدف أحد أوجه قِطعة ما و اضغط على نقطة لتعيين مبدئه فيها
     action_option_group_direction: الاتجاه
     action_option_direction_0: ط
     action_option_direction_1: ع
