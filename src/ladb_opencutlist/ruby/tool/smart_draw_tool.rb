@@ -421,6 +421,7 @@ module Ladb::OpenCutList
       # puts "vertex = #{@mouse_ip.vertex}"
       # puts "edge = #{@mouse_ip.edge}"
       # puts "face = #{@mouse_ip.face}"
+      # puts "face_transformation.identity? = #{@mouse_ip.face_transformation.identity?}"
       # puts "cline = #{@mouse_ip.cline}"
       # puts "depth = #{@mouse_ip.depth}"
       # puts "instance_path.length = #{@mouse_ip.instance_path.length}"
@@ -888,7 +889,7 @@ module Ladb::OpenCutList
 
           if @mouse_ip.face && @mouse_ip.edge.faces.include?(@mouse_ip.face)
 
-            face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+            face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.face_transformation)
 
             @normal = face_manipulator.normal
 
@@ -902,9 +903,29 @@ module Ladb::OpenCutList
           @direction = edge_manipulator.direction
           @locked_direction = @direction
 
-        elsif @mouse_ip.face && @mouse_ip.degrees_of_freedom == 2
+        elsif @mouse_ip.cline
 
-          face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+          cline_manipulator = ClineManipulator.new(@mouse_ip.cline, @mouse_ip.transformation)
+
+          if @mouse_ip.face
+
+            face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.face_transformation)
+
+            @normal = face_manipulator.normal
+
+            # k_mesh = Kuix::Mesh.new
+            # k_mesh.add_triangles(face_manipulator.triangles)
+            # k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
+            # @tool.append_3d(k_mesh)
+
+          end
+
+          @direction = cline_manipulator.direction
+          @locked_direction = @direction
+
+        elsif @mouse_ip.face #&& @mouse_ip.degrees_of_freedom == 2
+
+          face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.face_transformation)
 
           @locked_direction = nil
           @normal = face_manipulator.normal
@@ -2137,7 +2158,7 @@ module Ladb::OpenCutList
 
         else
 
-          unless @picked_shape_first_point.on_line?(cline_manipulator.line)
+          unless cline_manipulator.infinite? || @picked_shape_first_point.on_line?(cline_manipulator.line)
 
             plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_first_point, cline_manipulator.start_point, cline_manipulator.end_point ]))
 
@@ -2174,7 +2195,7 @@ module Ladb::OpenCutList
 
         else
 
-          face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+          face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.face_transformation)
 
           if @picked_shape_first_point.on_plane?(face_manipulator.plane)
 
@@ -3313,7 +3334,7 @@ module Ladb::OpenCutList
 
           else
 
-            unless @picked_shape_first_point.on_line?(cline_manipulator.line)
+            unless cline_manipulator.infinite? || @picked_shape_first_point.on_line?(cline_manipulator.line)
 
               plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_first_point, cline_manipulator.start_point, cline_manipulator.end_point ]))
 

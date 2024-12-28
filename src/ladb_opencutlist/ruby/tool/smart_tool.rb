@@ -1934,6 +1934,7 @@ module Ladb::OpenCutList
       @degrees_of_freedom = nil
       @position = nil
       @position_type = POSITION_TYPE_NONE
+      @face_transformation = IDENTITY
       @cline = nil
     end
 
@@ -1949,6 +1950,10 @@ module Ladb::OpenCutList
 
     def face
       @ip.face
+    end
+
+    def face_transformation
+      @face_transformation
     end
 
     def cline
@@ -2045,6 +2050,7 @@ module Ladb::OpenCutList
       @degrees_of_freedom = nil
       @position = nil
       @position_type = POSITION_TYPE_NONE
+      @face_transformation = IDENTITY
       @cline = nil
     end
 
@@ -2082,13 +2088,16 @@ module Ladb::OpenCutList
       @degrees_of_freedom = nil
       @position = nil
       @position_type = POSITION_TYPE_NONE
+      @face_transformation = @ip.transformation
       @cline = nil
+
+      ph = nil
 
       if @ip.edge && @ip.degrees_of_freedom != 0
 
+        ph = view.pick_helper(x, y, 40) if ph.nil?
         edge_manipulator = EdgeManipulator.new(@ip.edge, @ip.transformation)
 
-        ph = view.pick_helper(x, y, 40)
         unless (position = edge_manipulator.third_points.find { |point| ph.test_point(point) }).nil?
 
           @degrees_of_freedom = 0
@@ -2099,8 +2108,9 @@ module Ladb::OpenCutList
 
       elsif @ip.degrees_of_freedom == 1
 
+        ph = view.pick_helper(x, y, 40) if ph.nil?
         entity = @ip.instance_path.leaf
-        entity = view.pick_helper(x, y, 40).best_picked if entity.nil?  # Allows to detect ConstructionLines outside a group
+        entity = ph.best_picked if entity.nil?  # Allows to detect ConstructionLines outside a group
 
         if entity.is_a?(Sketchup::ConstructionLine)
 
@@ -2109,7 +2119,6 @@ module Ladb::OpenCutList
           cline_manipulator = ClineManipulator.new(entity, @ip.transformation)
           unless cline_manipulator.infinite?
 
-            ph = view.pick_helper(x, y, 40)
             if !(position = [ cline_manipulator.start_point, cline_manipulator.end_point ].find { |point| ph.test_point(point) }).nil?
 
               @degrees_of_freedom = 0
@@ -2136,6 +2145,18 @@ module Ladb::OpenCutList
 
       end
 
+      # Try to retrieve the background face transformation
+      unless @ip.face.nil?
+
+        ph = view.pick_helper(x, y, 40) if ph.nil?
+        ph.count.times do |i|
+          if ph.leaf_at(i) == @ip.face
+            @face_transformation = ph.transformation_at(i)
+            break
+          end
+        end
+
+      end
     end
 
     # -----
