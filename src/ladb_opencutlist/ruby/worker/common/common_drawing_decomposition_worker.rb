@@ -302,7 +302,7 @@ module Ladb::OpenCutList
       end
       unless @ignore_clines
         drawing_def.cline_manipulators.each do |cline_manipulator|
-          drawing_def.clines_bounds.add(cline_manipulator.points)
+          drawing_def.clines_bounds.add(cline_manipulator.points) unless cline_manipulator.infinite?
         end
         drawing_def.bounds.add(drawing_def.clines_bounds.min, drawing_def.clines_bounds.max)
       end

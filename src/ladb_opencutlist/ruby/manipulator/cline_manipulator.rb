@@ -65,6 +65,7 @@ module Ladb::OpenCutList
     alias_method :segment, :points
 
     def length
+      return 0 if infinite?
       (end_point - start_point).length
     end
 

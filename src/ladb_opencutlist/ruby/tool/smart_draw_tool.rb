@@ -156,12 +156,11 @@ module Ladb::OpenCutList
         when ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833 M0.25,0.5L0.75,0 M0.25,0.25L0.323,0.427L0.5,0.5L0.677,0.427L0.75,0.25L0.677,0.073L0.5,0L0.323,0.073L0.25,0.25'))
         when ACTION_OPTION_OPTIONS_MEASURE_REVERSED
-          # return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.333,0.167L0.5,0L0.5,0.417L0.333,0.417L0.667,0.417 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833'))
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833  M0.861,0.292L0.708,0.139L0.5,0.083L0.292,0.139L0.14,0.292 M0.14,0.083L0.14,0.292L0.333,0.292'))
         when ACTION_OPTION_OPTIONS_BOX_CENTRED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         when ACTION_OPTION_OPTIONS_MOVE_ARRAY
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.167L0.583,0.167 '))
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.167L0.583,0.167'))
         end
       end
 
@@ -261,11 +260,7 @@ module Ladb::OpenCutList
         else
           begin
             length = text.to_l
-            if length == 0
-              length = base_length
-            else
-              length *= -1 if base_length < 0
-            end
+            length *= -1 if base_length < 0
           rescue ArgumentError
             UI.beep
             @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => text } ] ])
@@ -1113,7 +1108,7 @@ module Ladb::OpenCutList
 
           else
 
-            unless anchor_point.on_line?(cline_manipulator.line)
+            unless cline_manipulator.infinite? || anchor_point.on_line?(cline_manipulator.line)
 
               plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ anchor_point, cline_manipulator.start_point, cline_manipulator.end_point ]))
 
@@ -1888,6 +1883,50 @@ module Ladb::OpenCutList
         ignore_soft_edges: false,
         ignore_clines: !_fetch_option_construction
       ).run
+
+
+      # unit = @tool.get_unit
+      #
+      # center = @drawing_def.bounds.center.transform(@drawing_def.transformation)
+      # screen_coords = model.active_view.screen_coords(center)
+      #
+      # paths = [
+      #   'M0.5,0.357L0.5,0 M0.357,0.143L0.5,0L0.643,0.143 M0.643,0.5L1,0.5 M0.857,0.357L1,0.5L0.857,0.643 M0.357,0.5L0,0.5 M0.143,0.357L0,0.5L0.143,0.643 M0.5,0.643L0.5,1 M0.357,0.857L0.5,1L0.643,0.857',
+      #   'M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.167L0.583,0.167',
+      #   'M0,0L1,0L1,1L0,1L0,0 M0.5,0.667L0.5,0.333 M0.333,0.5L0.667,0.5'
+      # ]
+      #
+      # k_panel = Kuix::Panel.new
+      # k_panel.layout_data = Kuix::StaticLayoutData.new(screen_coords.x, screen_coords.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      # k_panel.layout = Kuix::GridLayout.new(3, 1)
+      # @tool.canvas.append(k_panel)
+      #
+      # paths.each do |path|
+      #
+      #   k_btn = Kuix::Button.new
+      #   k_btn.layout = Kuix::GridLayout.new
+      #   k_btn.border.set_all!(unit * 0.5)
+      #   k_btn.padding.set_all!(unit)
+      #   k_btn.set_style_attribute(:background_color, ColorUtils.color_translucent(Kuix::COLOR_WHITE, 200))
+      #   k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+      #   k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
+      #   k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
+      #   k_btn.on(:enter) do
+      #     model.selection.clear
+      #     model.selection.add(instance)
+      #   end
+      #   k_btn.on(:leave) do
+      #     model.selection.clear
+      #   end
+      #   k_panel.append(k_btn)
+      #
+      #     k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(path))
+      #     k_motif.min_size.set_all!(unit * 4)
+      #     k_motif.set_style_attribute(:color, Kuix::COLOR_BLACK)
+      #     k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+      #     k_btn.append(k_motif)
+      #
+      # end
 
     end
 
@@ -3065,7 +3104,7 @@ module Ladb::OpenCutList
             view.lock_inference
           else
             @locked_axis = x_axis
-            p = _fetch_option_measure_reversed ? @picked_shape_first_point : @picked_points.last
+            p = _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last
             view.lock_inference(Sketchup::InputPoint.new(p), Sketchup::InputPoint.new(p.offset(x_axis)))
           end
           _refresh
@@ -3081,7 +3120,7 @@ module Ladb::OpenCutList
             view.lock_inference
           else
             @locked_axis = y_axis
-            p = _fetch_option_measure_reversed ? @picked_shape_first_point : @picked_points.last
+            p = _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last
             view.lock_inference(Sketchup::InputPoint.new(p), Sketchup::InputPoint.new(p.offset(y_axis)))
           end
           _refresh
@@ -3097,7 +3136,7 @@ module Ladb::OpenCutList
             view.lock_inference
           else
             @locked_axis = z_axis
-            p = _fetch_option_measure_reversed ? @picked_shape_first_point : @picked_points.last
+            p = _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last
             view.lock_inference(Sketchup::InputPoint.new(p), Sketchup::InputPoint.new(p.offset(z_axis)))
           end
           _refresh
@@ -3122,7 +3161,7 @@ module Ladb::OpenCutList
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
           Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)
           if view.inference_locked?
-            p = _fetch_option_measure_reversed ? @picked_shape_first_point : @picked_points.last
+            p = _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last
             view.lock_inference(Sketchup::InputPoint.new(p), Sketchup::InputPoint.new(p.offset(@locked_axis)))
           end
           _refresh
@@ -3196,10 +3235,10 @@ module Ladb::OpenCutList
             )
             @tool.append_3d(k_points)
 
-            if @locked_axis.nil?
-              @mouse_snap_point = point
+            if @locked_axis
+              @mouse_snap_point = point.project_to_line([ _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last , @locked_axis ])
             else
-              @mouse_snap_point = point.project_to_line([_fetch_option_measure_reversed ? @picked_shape_first_point : @picked_points.last , @locked_axis ])
+              @mouse_snap_point = point
             end
             @mouse_ip.clear
 
@@ -3260,7 +3299,7 @@ module Ladb::OpenCutList
 
         elsif @mouse_ip.edge
 
-          cline_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
+          edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
 
           if @locked_normal
 
@@ -3269,23 +3308,23 @@ module Ladb::OpenCutList
             @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
             @normal = @locked_normal
 
-          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_z_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_z_axis)
+          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_z_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_z_axis)
 
             @normal = _get_active_z_axis
 
-          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_x_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_x_axis)
+          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_x_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_x_axis)
 
             @normal = _get_active_x_axis
 
-          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_y_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_y_axis)
+          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_y_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_y_axis)
 
             @normal = _get_active_y_axis
 
           else
 
-            unless @picked_shape_first_point.on_line?(cline_manipulator.line)
+            unless @picked_shape_first_point.on_line?(edge_manipulator.line)
 
-              plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_first_point, cline_manipulator.start_point, cline_manipulator.end_point ]))
+              plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_first_point, edge_manipulator.start_point, edge_manipulator.end_point ]))
 
               @normal = plane_manipulator.normal
 

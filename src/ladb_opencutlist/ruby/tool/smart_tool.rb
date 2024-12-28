@@ -299,7 +299,7 @@ module Ladb::OpenCutList
                         child.min_size.height = unit * 4
                       elsif child.is_a?(Kuix::Motif2d)
                         child.margin.set_all!(unit)
-                        child.min_size.set!(unit * 4, unit * 4)
+                        child.min_size.set_all!(unit * 4)
                       end
                       child.set_style_attribute(:color, Kuix::COLOR_BLACK)
                       child.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
