@@ -472,26 +472,26 @@ module Ladb::OpenCutList
 
     def append_minitool_btn(icon, &block)
 
-      minitool_btn = Kuix::Button.new
-      minitool_btn.layout = Kuix::GridLayout.new
-      minitool_btn.border.set_all!(@unit * 0.5)
-      minitool_btn.padding.set_all!(@unit * 2)
-      minitool_btn.min_size.set!(@unit * 5, @unit * 5)
-      minitool_btn.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 0.5))
-      minitool_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :hover)
-      minitool_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
-      minitool_btn.set_style_attribute(:border_color, Sketchup::Color.new(255, 255, 255, 0.5))
-      minitool_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE, :hover)
-      minitool_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :active)
-      minitool_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
-      minitool_btn.on([ :click, :doubleclick ], &block)
-      @minitool_panel.append(minitool_btn)
+      k_btn = Kuix::Button.new
+      k_btn.layout = Kuix::GridLayout.new
+      k_btn.border.set_all!(@unit * 0.5)
+      k_btn.padding.set_all!(@unit * 2)
+      k_btn.min_size.set!(@unit * 5, @unit * 5)
+      k_btn.set_style_attribute(:background_color, Sketchup::Color.new(255, 255, 255, 0.5))
+      k_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE, :hover)
+      k_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
+      k_btn.set_style_attribute(:border_color, Sketchup::Color.new(255, 255, 255, 0.5))
+      k_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE, :hover)
+      k_btn.set_style_attribute(:border_color, COLOR_BRAND_LIGHT, :active)
+      k_btn.set_style_attribute(:border_color, COLOR_BRAND, :selected)
+      k_btn.on([ :click, :doubleclick ], &block)
+      @minitool_panel.append(k_btn)
 
         motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(icon))
         motif.set_style_attribute(:color, COLOR_BRAND_DARK)
-        minitool_btn.append(motif)
+        k_btn.append(motif)
 
-      minitool_btn
+      k_btn
     end
 
     def append_2d(entity, layer = 0)
