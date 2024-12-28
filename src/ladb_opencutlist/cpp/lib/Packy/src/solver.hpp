@@ -238,34 +238,37 @@ namespace Packy {
             Solver::read_parameters(j);
 
             if (j.contains("time_limit")) {
-                parameters_.timer.set_time_limit(j["time_limit"].template get<double>());
+                parameters_.timer.set_time_limit(j["time_limit"].get<double>());
             }
             if (j.contains("verbosity_level")) {
-                parameters_.verbosity_level = j["verbosity_level"].template get<int>();
+                parameters_.verbosity_level = j["verbosity_level"].get<int>();
             } else {
                 parameters_.verbosity_level = 0;            // Override default PackingSolver value
             }
             if (j.contains("messages_to_stdout")) {
-                parameters_.messages_to_stdout = j["messages_to_stdout"].template get<bool>();
+                parameters_.messages_to_stdout = j["messages_to_stdout"].get<bool>();
             } else {
                 parameters_.messages_to_stdout = false;     // Override default PackingSolver value
             }
             if (j.contains("messages_to_solution")) {
-                messages_to_solution_ = j["messages_to_solution"].template get<bool>();
+                messages_to_solution_ = j["messages_to_solution"].get<bool>();
                 if (messages_to_solution_) {
                     parameters_.messages_streams.push_back(&messages_stream_);
                 }
             }
             if (j.contains("messages_path")) {
-                parameters_.messages_path = j["messages_path"].template get<std::string>();
+                parameters_.messages_path = j["messages_path"].get<std::string>();
             }
             if (j.contains("log_to_stderr")) {
-                parameters_.log_to_stderr = j["log_to_stderr"].template get<bool>();
+                parameters_.log_to_stderr = j["log_to_stderr"].get<bool>();
             } else {
                 parameters_.log_to_stderr = false;           // Override default PackingSolver value
             }
             if (j.contains("log_path")) {
-                parameters_.log_path = j["log_path"].template get<std::string>();
+                parameters_.log_path = j["log_path"].get<std::string>();
+            }
+            if (j.contains("certificate_path")) {
+                certificate_path_ = j["certificate_path"].get<std::string>();
             }
 
             if (j.contains("optimization_mode")) {
@@ -276,36 +279,36 @@ namespace Packy {
             }
 
             if (j.contains("use_tree_search")) {
-                parameters_.use_tree_search = j["use_tree_search"].template get<bool>();
+                parameters_.use_tree_search = j["use_tree_search"].get<bool>();
             }
             if (j.contains("use_sequential_single_knapsack")) {
-                parameters_.use_sequential_single_knapsack = j["use_sequential_single_knapsack"].template get<bool>();
+                parameters_.use_sequential_single_knapsack = j["use_sequential_single_knapsack"].get<bool>();
             }
             if (j.contains("use_sequential_value_correction")) {
-                parameters_.use_sequential_value_correction = j["use_sequential_value_correction"].template get<bool>();
+                parameters_.use_sequential_value_correction = j["use_sequential_value_correction"].get<bool>();
             }
             if (j.contains("use_column_generation")) {
-                parameters_.use_column_generation = j["use_column_generation"].template get<bool>();
+                parameters_.use_column_generation = j["use_column_generation"].get<bool>();
             }
             if (j.contains("use_dichotomic_search")) {
-                parameters_.use_dichotomic_search = j["use_dichotomic_search"].template get<bool>();
+                parameters_.use_dichotomic_search = j["use_dichotomic_search"].get<bool>();
             }
 
             if (j.contains("not_anytime_tree_search_queue_size")) {
-                parameters_.not_anytime_tree_search_queue_size = j["not_anytime_tree_search_queue_size"].template get<Counter>();
+                parameters_.not_anytime_tree_search_queue_size = j["not_anytime_tree_search_queue_size"].get<Counter>();
             }
             if (j.contains("not_anytime_sequential_single_knapsack_subproblem_queue_size")) {
-                parameters_.not_anytime_sequential_single_knapsack_subproblem_queue_size = j["not_anytime_sequential_single_knapsack_subproblem_queue_size"].template get<Counter>();
+                parameters_.not_anytime_sequential_single_knapsack_subproblem_queue_size = j["not_anytime_sequential_single_knapsack_subproblem_queue_size"].get<Counter>();
             }
             if (j.contains("not_anytime_sequential_value_correction_number_of_iterations")) {
-                parameters_.not_anytime_sequential_value_correction_number_of_iterations = j["not_anytime_sequential_value_correction_number_of_iterations"].template get<Counter>();
+                parameters_.not_anytime_sequential_value_correction_number_of_iterations = j["not_anytime_sequential_value_correction_number_of_iterations"].get<Counter>();
             }
             if (j.contains("not_anytime_dichotomic_search_subproblem_queue_size")) {
-                parameters_.not_anytime_dichotomic_search_subproblem_queue_size = j["not_anytime_dichotomic_search_subproblem_queue_size"].template get<Counter>();
+                parameters_.not_anytime_dichotomic_search_subproblem_queue_size = j["not_anytime_dichotomic_search_subproblem_queue_size"].get<Counter>();
             }
 
             if (j.contains("maximum_size_of_the_solution_pool")) {
-                parameters_.maximum_size_of_the_solution_pool = j["maximum_size_of_the_solution_pool"].template get<Counter>();
+                parameters_.maximum_size_of_the_solution_pool = j["maximum_size_of_the_solution_pool"].get<Counter>();
             }
 
             parameters_.new_solution_callback = [&](
@@ -351,6 +354,9 @@ namespace Packy {
         /** Messages */
         bool messages_to_solution_ = false;
         std::stringstream messages_stream_;
+
+        /** Certificate (native PackingSolver solution write) */
+        std::string certificate_path_;
 
         /*
          * Output
@@ -399,6 +405,10 @@ namespace Packy {
                 j["messages"] = messages(); // Export PackingSolver output messages to Packy solution
             }
 
+            if (!certificate_path_.empty()) {
+                solution.write(certificate_path_);  // Export solution to file with PackingSolver 'write' method
+            }
+
         }
 
     };
@@ -417,10 +427,10 @@ namespace Packy {
             TypedSolver::read_parameters(j);
 
             if (j.contains("sequential_value_correction_subproblem_queue_size")) {
-                parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].template get<NodeId>();
+                parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].get<NodeId>();
             }
             if (j.contains("column_generation_subproblem_queue_size")) {
-                parameters_.column_generation_subproblem_queue_size = j["column_generation_subproblem_queue_size"].template get<NodeId>();
+                parameters_.column_generation_subproblem_queue_size = j["column_generation_subproblem_queue_size"].get<NodeId>();
             }
 
         }
@@ -630,7 +640,7 @@ namespace Packy {
             using namespace rectangleguillotine;
 
             if (j.contains("number_of_stages")) {
-                instance_builder_.set_number_of_stages(j["number_of_stages"].template get<Counter>());
+                instance_builder_.set_number_of_stages(j["number_of_stages"].get<Counter>());
             }
             if (j.contains("cut_type")) {
                 CutType cut_type;
@@ -656,8 +666,11 @@ namespace Packy {
             if (j.contains("minimum_waste_length")) {
                 instance_builder_.set_minimum_waste_length(read_length(j, "minimum_waste_length"));
             }
+            if (j.contains("maximum_number_2_cuts")) {
+                instance_builder_.set_maximum_number_2_cuts(j["maximum_number_2_cuts"].get<bool>());
+            }
             if (j.contains("cut_through_defects")) {
-                instance_builder_.set_cut_through_defects(j["cut_through_defects"].template get<bool>());
+                instance_builder_.set_cut_through_defects(j["cut_through_defects"].get<bool>());
             }
             if (j.contains("cut_thickness")) {
                 instance_builder_.set_cut_thickness(read_length(j, "cut_thickness"));
@@ -851,7 +864,7 @@ namespace Packy {
                 basic_json<>& j_cuts = j_bin["cuts"] = json::array();
                 for (const auto& node: bin.nodes) {
 
-                    if (node.item_type_id >= 0) {
+                    if (node.item_type_id >= 0 && node.f >= 0) {
 
                         const ItemType& item_type = instance.item_type(node.item_type_id);
                         bool rotated = item_type.rect.w != (node.r - node.l);
@@ -978,10 +991,10 @@ namespace Packy {
             TypedSolver::read_parameters(j);
 
             if (j.contains("sequential_value_correction_subproblem_queue_size")) {
-                parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].template get<NodeId>();
+                parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].get<NodeId>();
             }
             if (j.contains("column_generation_subproblem_queue_size")) {
-                parameters_.column_generation_subproblem_queue_size = j["column_generation_subproblem_queue_size"].template get<NodeId>();
+                parameters_.column_generation_subproblem_queue_size = j["column_generation_subproblem_queue_size"].get<NodeId>();
             }
 
         }
@@ -1159,10 +1172,10 @@ namespace Packy {
             TypedSolver::read_parameters(j);
 
             if (j.contains("sequential_value_correction_subproblem_queue_size")) {
-                parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].template get<NodeId>();
+                parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].get<NodeId>();
             }
             if (j.contains("column_generation_subproblem_queue_size")) {
-                parameters_.column_generation_subproblem_queue_size = j["column_generation_subproblem_queue_size"].template get<NodeId>();
+                parameters_.column_generation_subproblem_queue_size = j["column_generation_subproblem_queue_size"].get<NodeId>();
             }
 
         }
@@ -1173,10 +1186,10 @@ namespace Packy {
             TypedSolver::read_instance_parameters(j);
 
             if (j.contains("item_item_minimum_spacing")) {
-                instance_builder_.set_item_item_minimum_spacing(j["item_item_minimum_spacing"].template get<irregular::LengthDbl>());
+                instance_builder_.set_item_item_minimum_spacing(j["item_item_minimum_spacing"].get<irregular::LengthDbl>());
             }
             if (j.contains("item_bin_minimum_spacing")) {
-                instance_builder_.set_item_bin_minimum_spacing(j["item_bin_minimum_spacing"].template get<irregular::LengthDbl>());
+                instance_builder_.set_item_bin_minimum_spacing(j["item_bin_minimum_spacing"].get<irregular::LengthDbl>());
             }
 
         }
