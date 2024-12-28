@@ -1787,28 +1787,43 @@ module Ladb::OpenCutList
 
       @@last_pushpull_measure = bounds.depth
 
-      if _fetch_option_construction
+      if _fetch_option_construction || bounds.depth == 0
 
         tt = Geom::Transformation.translation(p2.vector_to(p3))
 
         group = model.active_entities.add_group
         group.transformation = t
 
-        o_shape_points = _get_local_shape_points_with_offset
-        _points_to_segments(o_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
+        if bounds.depth == 0 && !_fetch_option_construction
 
-        if bounds.depth > 0
+          # Flat drawing, just add to group
 
-          o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
+          face = _create_face(group.definition, p1, p2)
+          face.reverse! unless face.normal.samedirection?(Z_AXIS)
 
-          _points_to_segments(o_top_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
-          o_shape_points.zip(o_top_shape_points).each { |segment| group.entities.add_cline(*segment) }
+        else
+
+          # Construction
+
+          o_shape_points = _get_local_shape_points_with_offset
+          _points_to_segments(o_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
+
+          if bounds.depth > 0
+
+            o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
+
+            _points_to_segments(o_top_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
+            o_shape_points.zip(o_top_shape_points).each { |segment| group.entities.add_cline(*segment) }
+
+          end
 
         end
 
         instance = group
 
       else
+
+        # Solid drawing create a component definition + instance
 
         definition = model.definitions.add('Part')
 
@@ -1834,9 +1849,6 @@ module Ladb::OpenCutList
           # Transform definition's entities
           entities = definition.entities
           entities.transform_entities(taoi, entities.to_a)
-
-          # @normal = t.zaxis
-          # @direction = t.xaxis
 
         end
 
