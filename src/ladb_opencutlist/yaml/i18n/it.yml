@@ -52,6 +52,8 @@ default:
   date_format: "d/m/Y G:i"
   # short date format in use for language
   date_format_short: d/m/Y
+  decimal: Decimale
+  fractional: Frazionario
   unit_0: Pollice
   unit_1: Piede
   unit_2: Millimetro
@@ -1035,7 +1037,7 @@ tab:
       warning:
         is_group_selection: Le parti contenute nei **gruppi nascosti** dela Distinta non avranno un'etichetta.
         is_part_selection: Queste etichette sono limitate solo alle **parti selezionate**.
-        formula_not_available: La formula non è disponibile in questo contesto
+        formula_not_available: Non disponibile in questo contesto
     layout:
       title: Disegno
       to_layout: Esporta a Layout
@@ -1107,6 +1109,30 @@ tab:
       warning:
         is_group_selection: Le parti contenute nei **gruppi nascosti** della distinta non verranno inserite nei disegni.
         is_part_selection: Il disegno complessivo mostra solo le **parti selezionate**.
+      message:
+        adding_new_page: |
+          Volete aggiungere una nuova pagina?
+        incompatible_page_format: |
+          Il file di destinazione non è configurato con lo stesso formato carta.
+
+          Letto: {{ old_page_format }}
+          Esportato: {{ new_page_format }}
+
+          Tutte le pagine verranno eliminate.
+        changing_units: |
+          Il file di destinazione non ha la stessa unità per impostazione predefinita.
+
+          Letto: {{ old_units }}
+          Esportato: {{ new_units }}
+
+          Si desidera utilizzare le nuove unità?
+        changing_precision: |
+          Il file di destinazione non ha la stessa precisione per impostazione predefinita.
+
+          Letto: {{ old_precision }}
+          Esportato: {{ new_precision }}
+
+          Si desidera utilizzare la nuova precisione?
     write:
       title: Esportazione elementi
       info_2d: |
@@ -1535,8 +1561,6 @@ tab:
     objective_title:
       default: Obiettivi
       cuttingdiagram_export: Finanziamento della possibilità di esportare lo schema di taglio
-      outliner: Finanziamento della funzione Struttura
-      packing: Finanziamento del nesting nei diagrammi di taglio
     objective_details:
       default: |
         Per noi il continuo miglioramento di *OpenCutList* è importante e il progetto continua ad avere bisogno del tuo aiuto per il prossimo aggiornamento!
@@ -1544,14 +1568,6 @@ tab:
         Riteniamo importante che l'opzione *schema di taglio* di *OpenCutList* possa soddisfare le esigenze del maggior numero di utenti e per farlo vorremmo aggiungere la possibilità di esportare lo schema in formato **SVG** e **DXF**.
         Tale formato permette di riutilizzare gli schemi di taglio OCL da parte di altri sofware.
         Finanziando la realizzazione di questa interoperabilità si crea un'opportunità per un ulteriore miglioramento di *OpenCutList*.
-      outliner: |
-        Un modello può essere piuttosto complesso e navigare nella sua struttura con il pannello Struttura nativo di SketchUp non è sempre molto pratico.
-        In SketchUp è possibile applicare materiali e tag alle istanze, descrizione, url e badge alle definizioni, ma non vengono visualizzati nella struttura.
-        Il video mostra come vorremmo migliorare questo aspetto nel menu Struttura, accessibile direttamente da OpenCutList.
-      packing: |
-        Per noi è importante che *OpenCutList* possa adattarsi a un'ampia varietà di requisiti dell'utente per la sua funzione di *schema di taglio*.
-        Per estendere ulteriormente le possibilità, vorremmo implementare un **algoritmo di annidamento** per ottimizzare il taglio di parti di qualsiasi forma.
-        Fornendoci i mezzi per lavorare su questa funzionalità, ci darete l'opportunità di aiutarvi a ottenere il massimo da *OpenCutList*.
     objective_crowdfunding: |
       Lo sviluppo di nuove funzionalità grazie al **finanziamento collettivo (crowfunding)** potrà iniziare non appena il **Finanziamento** sarà completato.
     objective_thanks: |

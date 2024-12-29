@@ -1172,7 +1172,7 @@ tab:
       warning:
         is_group_selection: 951 - Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, erhalten kein Etikett.
         is_part_selection: 952 - Diese Etiketten beschränken sich auf **ausgewählte Teile**.
-        formula_not_available: 953 - Formel steht in diesem Kontext nicht zu Verfügung
+        formula_not_available: 953 - In diesem Kontext nicht zu Verfügung
     layout:
       title: 954 - Zeichnung
       to_layout: 955 - Nach Layout exportieren
