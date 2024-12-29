@@ -1174,7 +1174,7 @@ tab:
       warning:
         is_group_selection: Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, erhalten kein Etikett.
         is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
-        formula_not_available: Formel steht in diesem Kontext nicht zu Verfügung
+        formula_not_available: In diesem Kontext nicht zu Verfügung
     layout:
       title: Zeichnung
       to_layout: Nach Layout exportieren

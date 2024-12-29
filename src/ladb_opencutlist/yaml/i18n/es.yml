@@ -52,6 +52,8 @@ default:
   date_format: "d/m/Y g:ia"
   # short date format in use for language
   date_format_short: d/m/Y
+  decimal: Decimal
+  fractional: Fraccional
   unit_0: Pulgada
   unit_1: Pie
   unit_2: Milimetro
@@ -1107,6 +1109,30 @@ tab:
       warning:
         is_group_selection: Las piezas dentro de **grupos enmascarados** de su lista de piezas no se dibujarán.
         is_part_selection: Este plano de conjunto se limita a las **piezas seleccionadas**.
+      message:
+        adding_new_page: |
+          ¿Desea añadir una nueva página?
+        incompatible_page_format: |
+          El archivo de destino no está configurado con el mismo formato de papel.
+
+          Leído: {{ old_page_format }}
+          Exportado: {{ new_page_format }}
+
+          Se eliminarán todas las páginas.
+        changing_units: |
+          El archivo de destino no tiene la misma unidad por defecto.
+
+          Leído: {{ old_units }}
+          Exportado: {{ new_units }}
+
+          ¿Desea utilizar las nuevas unidades?
+        changing_precision: |
+          El archivo de destino no tiene la misma precisión por defecto.
+
+          Leído: {{ old_precision }}
+          Exportado: {{ new_precision }}
+
+          ¿Desea utilizar la nueva precisión?
     write:
       title: Exportación de piezas
       info_2d: |
@@ -1535,8 +1561,6 @@ tab:
     objective_title:
       default: Objetivo
       cuttingdiagram_export: Financiación de las exportaciones del diagrama de corte
-      outliner: Financiación de la función Estructura
-      packing: Financiación de diseños imbricados
     objective_details:
       default: |
         ¡La mejora continua de *OpenCutList* es muy importante para nosotros y el proyecto continúa necesitándote para su próxima actualización!
@@ -1544,14 +1568,6 @@ tab:
         Es importante para nosotros que *OpenCutList* pueda adaptarse a las muy diferentes expectativas de los usuarios para la función de *diagrama de corte*.
         Para ampliar aún más las posibilidades, nos gustaría permitir la exportación de diagramas de corte en formato **SVG** y **DXF**.
         Al proporcionarnos los medios para trabajar en estas exportaciones, nos está dando la oportunidad de ayudarle a sacar el máximo provecho de *OpenCutList*.
-      outliner: |
-        Un modelo puede ser bastante complejo y navegar por su estructura con el panel Estructura nativo de SketchUp no siempre resulta muy práctico.
-        En SketchUp, puedes aplicar material y etiquetas a las instancias, una descripción, una url e insignias a las definiciones, pero no se muestran en la estructura.
-        El vídeo te mostrará cómo nos gustaría mejorar esto en el menú Estructura, accesible directamente desde OpenCutList.
-      packing: |
-        Es importante para nosotros que *OpenCutList* sea capaz de adaptarse a la gran variedad de requisitos de los usuarios para la función de *escalado*.
-        Para ampliar aún más las posibilidades, nos gustaría implementar un **algoritmo de anidamiento** para optimizar el corte de piezas de cualquier forma.
-        Al proporcionarnos los medios para trabajar en esta funcionalidad, nos está dando la oportunidad de ayudarle a sacar el máximo partido de *OpenCutList*.
     objective_crowdfunding: |
       El desarrollo de nuevas funcionalidades se realizará gracias a la **Recaudación de fondos** y comenzará cuando se alcance su **Meta financiera**.
     objective_thanks: |

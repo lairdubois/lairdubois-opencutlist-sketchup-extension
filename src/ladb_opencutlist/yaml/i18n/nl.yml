@@ -52,6 +52,8 @@ default:
   date_format: "d/m/Y G:i"
   # short date format in use for language
   date_format_short: d/m/Y
+  decimal: Decimaal
+  fractional: Fractioneel
   unit_0: Duim
   unit_1: Voet
   unit_2: Millimeter
@@ -660,6 +662,7 @@ tab:
       bin: Container
       component_definition: Component definitie
       component_instance: Instantie van component
+      component_instances: Component instanties
       filename: Bestandsnaam
       model_name: Naam van het model
       model_description: Model Beschrijving
@@ -1034,7 +1037,7 @@ tab:
       warning:
         is_group_selection: De onderdelen in de **verborgen groepen** van je betaalpas hebben geen label.
         is_part_selection: Deze labels zijn beperkt tot **geselecteerde onderdelen**.
-        formula_not_available: Formule is in deze context niet beschikbaar
+        formula_not_available: Niet beschikbaar in deze context
     layout:
       title: Tekening
       to_layout: Exporteren naar Layout
@@ -1106,6 +1109,30 @@ tab:
       warning:
         is_group_selection: De documenten in de **verborgen groepen** van uw debetblad worden niet getekend.
         is_part_selection: Deze totaaltekening is beperkt tot **geselecteerde onderdelen**.
+      message:
+        adding_new_page: |
+          Wil je een nieuwe pagina toevoegen?
+        incompatible_page_format: |
+          Het doelbestand is niet geconfigureerd met hetzelfde papierformaat.
+
+          Gelezen: {{ old_page_format }}
+          Geëxporteerd: {{ new_page_format }}
+
+          Alle pagina's worden verwijderd.
+        changing_units: |
+          Het doelbestand heeft standaard niet dezelfde eenheid.
+
+          Gelezen: {{ old_units }}
+          Geëxporteerd: {{ new_units }}
+
+          Wilt u de nieuwe eenheden gebruiken?
+        changing_precision: |
+          Het doelbestand heeft standaard niet dezelfde precisie.
+
+          Gelezen: {{ old_precision }}
+          Geëxporteerd: {{ new_precision }}
+
+          Wilt u de nieuwe precisie gebruiken?
     write:
       title: Miniatuurvoorbeeld Onderdelen exporteren
       info_2d: |
@@ -1534,8 +1561,6 @@ tab:
     objective_title:
       default: Doelen
       cuttingdiagram_export: Financiering van de uitvoer van zaagschema's
-      outliner: Financiering van de structuurfunctie
-      packing: ""
     objective_details:
       default: |
         De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update!
@@ -1543,8 +1568,6 @@ tab:
         Wij vinden het belangrijk dat *OpenCutList* zich kan aanpassen aan de zeer uiteenlopende verwachtingen van gebruikers voor de *layout*-functie.
         Om de mogelijkheden verder uit te breiden, willen we het mogelijk maken om lay-outdiagrammen in **SVG**- en **DXF**-formaat te exporteren.
         Door ons de middelen te geven om aan deze exporten te werken, geeft u ons de mogelijkheid om u te helpen het maximale uit *OpenCutList* te halen.
-      outliner: |
-      packing: |
     objective_crowdfunding: |
       De ontwikkeling van deze nieuwe functie zal gebeuren via **participatiefinanciering** en kan beginnen zodra het **financiële doel** is bereikt.
     objective_thanks: |
@@ -1630,7 +1653,7 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Engels*, *Duits*)
       - Gildas Boureau (*Franse* documentatie)
       - Vladimir Badulya (*Russisch*)
-      - Pierluigi Colombo (*Italiaans*)
+      - Pierluigi Colombo, Massimo Risca (*Italiaans*)
       - Nayton Sanches Barbosa, gecorrigeerd en beoordeeld door [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portugees*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spaans*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Tsjechisch*)
@@ -1658,6 +1681,9 @@ tool:
     zoom_extents: Alles tonen
     toggle_depth: Onderdelen op de achtergrond
     more: Meer
+    end_point: Einde
+    middle_point: Middelpunt
+    third_point: Punt van derden
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)

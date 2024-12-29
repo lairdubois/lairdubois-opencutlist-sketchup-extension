@@ -52,6 +52,8 @@ default:
   date_format: "d/m/A G:i"
   # short date format in use for language
   date_format_short: d/m/Y
+  decimal: Decimal
+  fractional: Fracionário
   unit_0: Polegada
   unit_1: Pés
   unit_2: Milímetro
@@ -1035,7 +1037,7 @@ tab:
       warning:
         is_group_selection: As peças dentro dos **grupos mascarados** da sua lista de peças não terão uma etiqueta.
         is_part_selection: Estes etiquetas são limitados a **partes selecionadas** somente.
-        formula_not_available: A fórmula não está disponível neste contexto
+        formula_not_available: Não disponível neste contexto
     layout:
       title: Desenho
       to_layout: Exportar para o LayOut
@@ -1107,6 +1109,30 @@ tab:
       warning:
         is_group_selection: As peças dentro dos **grupos mascarados** da sua lista de peças não serão desenhadas.
         is_part_selection: Esta visão geral é limitada às **peças selecionadas**.
+      message:
+        adding_new_page: |
+          Você gostaria de adicionar uma nova página?
+        incompatible_page_format: |
+          O arquivo de destino não está configurado com o mesmo formato de papel.
+
+          Lido: {{ old_page_format }}
+          Exportado: {{ new_page_format }}
+
+          Todas as páginas serão excluídas.
+        changing_units: |
+          Por padrão, o arquivo de destino não tem a mesma unidade.
+
+          Lido: {{ old_units }}
+          Exportado: {{ new_units }}
+
+          Você gostaria de usar as novas unidades?
+        changing_precision: |
+          O arquivo de destino não tem a mesma precisão por padrão.
+
+          Lido: {{ old_precision }}
+          Exportado: {{ new_precision }}
+
+          Você gostaria de usar a nova precisão?
     write:
       title: Exportação de Peças
       info_2d: |
@@ -1627,7 +1653,7 @@ tab:
       *OpenCutList* é desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) o [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traduções
     credits_translators: |
-      - Nayton Sanches Barbosa, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Ferreira (*Português*)
+      - Henny Ferreira, Nayton Sanches Barbosa, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Ferreira (*Português*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Inglês*, *Alemão*)
       - Gildas Boureau (documentação *francesa*)
       - Vladimir Badulya (*Russo*)
