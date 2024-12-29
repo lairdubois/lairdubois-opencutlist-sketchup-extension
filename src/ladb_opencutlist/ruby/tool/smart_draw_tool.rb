@@ -1915,6 +1915,7 @@ module Ladb::OpenCutList
       #   k_btn.set_style_attribute(:background_color, ColorUtils.color_translucent(Kuix::COLOR_WHITE, 200))
       #   k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
       #   k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
+      #   k_btn.set_style_attribute(:border_color, ColorUtils.color_translucent(Kuix::COLOR_WHITE, 200))
       #   k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
       #   k_btn.on(:enter) do
       #     model.selection.clear
