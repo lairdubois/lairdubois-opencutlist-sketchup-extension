@@ -47,139 +47,141 @@ default:
   by: 46 - من قِبل
   date_format: 47 - d/m/Y G:i
   date_format_short: 48 - d/m/Y
-  unit_0: 49 - إنش
-  unit_1: 50 - قدم
-  unit_2: 51 - ملّيمتر
-  unit_3: 52 - سنتيمتر
-  unit_4: 53 - متر
-  unit_5: 54 - ياردة
-  unit_mass_0: 55 - كيلوغرام
-  unit_mass_1: 56 - رطل
-  unit_angle_0: 57 - الدرجات
-  instance_single: 58 - الوحدة
-  instance_plural: 59 - الوحدات
-  part_single: 60 - قطعة
-  part_plural: 61 - القطع
-  thickness_layer_single: 62 - طبقة
-  thickness_layer_plural: 63 - طبقات
-  setup_model_units: 64 - تكوين وحدات النموذج
-  load_more: 65 - رفع إضافي
-  reset_to_app_defaults: 66 - استعادة القيم الأصلية
-  constrain_key: 67 - Shift
-  copy_key_win: 68 - Ctrl
-  copy_key_mac: 69 - Option
-  alt_key_win: 70 - Alt
-  alt_key_mac: 71 - Command
-  tab_key: 72 - Tab
-  file: 73 - ملف
-  file_plural: 74 - ملفات
-  stroke_color: 75 - لون الخط المحيط
-  fill_color: 76 - لون التعبئة
+  decimal: 49 - عُشري
+  fractional: 50 - كسري
+  unit_0: 51 - إنش
+  unit_1: 52 - قدم
+  unit_2: 53 - ملّيمتر
+  unit_3: 54 - سنتيمتر
+  unit_4: 55 - متر
+  unit_5: 56 - ياردة
+  unit_mass_0: 57 - كيلوغرام
+  unit_mass_1: 58 - رطل
+  unit_angle_0: 59 - الدرجات
+  instance_single: 60 - الوحدة
+  instance_plural: 61 - الوحدات
+  part_single: 62 - قطعة
+  part_plural: 63 - القطع
+  thickness_layer_single: 64 - طبقة
+  thickness_layer_plural: 65 - طبقات
+  setup_model_units: 66 - تكوين وحدات النموذج
+  load_more: 67 - رفع إضافي
+  reset_to_app_defaults: 68 - استعادة القيم الأصلية
+  constrain_key: 69 - Shift
+  copy_key_win: 70 - Ctrl
+  copy_key_mac: 71 - Option
+  alt_key_win: 72 - Alt
+  alt_key_mac: 73 - Command
+  tab_key: 74 - Tab
+  file: 75 - ملف
+  file_plural: 76 - ملفات
+  stroke_color: 77 - لون الخط المحيط
+  fill_color: 78 - لون التعبئة
 core:
   menu:
-    submenu: 77 - OpenCutList
+    submenu: 79 - OpenCutList
     item:
-      generate_cutlist: 78 - استحداث قائمة القِطع
+      generate_cutlist: 80 - استحداث قائمة القِطع
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
-      edit_part_instance: 84 - عدّل المثيل
-      edit_parent_part_instance: 85 - عدّل المجموعة/العنصر الذي يحتوي المثيل
-      hide_part_instance: 86 - أخف المثيل
-      unhide_part_instance: 87 - أظهر المثيل
-      edit_part_instance_properties: 88 - عدّل خصائص المثيل
+      edit_part_instance: 86 - عدّل المثيل
+      edit_parent_part_instance: 87 - عدّل المجموعة/العنصر الذي يحتوي المثيل
+      hide_part_instance: 88 - أخف المثيل
+      unhide_part_instance: 89 - أظهر المثيل
+      edit_part_instance_properties: 90 - عدّل خصائص المثيل
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
-      reset_dialog_position: 93 - أعد تعيين موضع النافذة
+      reset_dialog_position: 95 - أعد تعيين موضع النافذة
   toolbar:
-    name: 94 - OpenCutList
+    name: 96 - OpenCutList
     command:
-      dialog: 95 - OpenCutList
-      smart_draw: 96 - ارسم قِطعا
-      smart_paint: 97 - اصبغ القِطع
-      smart_axes: 98 - وجِّه القطع
-      smart_export: 99 - صدّر القِطع
+      dialog: 97 - OpenCutList
+      smart_draw: 98 - ارسم قِطعا
+      smart_paint: 99 - اصبغ القِطع
+      smart_axes: 100 - وجِّه القطع
+      smart_export: 101 - صدّر القِطع
   messagebox:
     dir_override: |
-      100 - « {{ target }} » موجود مسبقا. هل ترغب في استبداله؟
+      102 - « {{ target }} » موجود مسبقا. هل ترغب في استبداله؟
 
       هناك مجلد بنفس الاسم في المجلد {{ parent }}. إن استبدلته، ستفقد المحتوى الأصلي
   savepanel:
-    export_to_file: 101 - التصدير إلى ملف {{ file_format }}
+    export_to_file: 103 - التصدير إلى ملف {{ file_format }}
   dialog:
-    title: 102 - OpenCutList by L'Air du Bois
+    title: 104 - OpenCutList by L'Air du Bois
   leftbar:
-    more: 103 - المزيد
-    more_docs: 104 - مستندات
-    more_reviews: 105 - ملاحظات
-    more_plans: 106 - خطط
-    more_extensions: 107 - إضافات
-    more_update: 108 - ترقية
+    more: 105 - المزيد
+    more_docs: 106 - مستندات
+    more_reviews: 107 - ملاحظات
+    more_plans: 108 - خطط
+    more_extensions: 109 - إضافات
+    more_update: 110 - ترقية
   bottombar:
-    report_a_bug: 109 - الإبلاغ عن خطأ
+    report_a_bug: 111 - الإبلاغ عن خطأ
   warning:
-    dev: "110 - *OpenCutList* أنت تستعمل نسخة **ما زالت تحت التطوير** من \nهذه النسخة متوفرة فقط لغرض التجريب\nلا ينصح باستعمالها في الإنتاج\n\n <a href=\"mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})\" target=\"_blank\">opencutlist@lairdubois.fr</a> للتبليغ عن خطإ برمجي:\n"
+    dev: "112 - *OpenCutList* أنت تستعمل نسخة **ما زالت تحت التطوير** من \nهذه النسخة متوفرة فقط لغرض التجريب\nلا ينصح باستعمالها في الإنتاج\n\n <a href=\"mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})\" target=\"_blank\">opencutlist@lairdubois.fr</a> للتبليغ عن خطإ برمجي:\n"
   error:
-    extern: '111 - خطأ خارجي : **{{ error }}**'
-    feature_unavailable: 112 - تتطلب هذه الخاصية توفر النسخة {{ version }} من SketchUp أو أعلى
+    extern: '113 - خطأ خارجي : **{{ error }}**'
+    feature_unavailable: 114 - تتطلب هذه الخاصية توفر النسخة {{ version }} من SketchUp أو أعلى
     failed_export_to: |
-      113 -  أثناء التصدير إلى *{{ path }}* حدث خطأ
+      115 -  أثناء التصدير إلى *{{ path }}* حدث خطأ
        **{{ error }}**
   success:
-    exported_to: 114 - نجح التصدير إلى {{ path }}.
-    copied_to_clipboard: 115 - تم النسخ إلى الحافظة
+    exported_to: 116 - نجح التصدير إلى {{ path }}.
+    copied_to_clipboard: 117 - تم النسخ إلى الحافظة
   event:
-    model_change: 116 - لقد غُيّر النموذج النشط.
-    options_change: 117 - لقد غُيّرت الخيارات في النموذج.
-    material_change: 118 - هناك خامة واحدة على الأقل قد غُيرت.
-    selection_change: 119 - لقد غُيّر التحديد في النموذج النشط.
-    layers_change: 120 - لقد غُيّرت الوسوم في النموذج النشط.
-    drawing_change: 121 - لقد عُدّل تصميم النموذج النشط
+    model_change: 118 - لقد غُيّر النموذج النشط.
+    options_change: 119 - لقد غُيّرت الخيارات في النموذج.
+    material_change: 120 - هناك خامة واحدة على الأقل قد غُيرت.
+    selection_change: 121 - لقد غُيّر التحديد في النموذج النشط.
+    layers_change: 122 - لقد غُيّرت الوسوم في النموذج النشط.
+    drawing_change: 123 - لقد عُدّل تصميم النموذج النشط
   upgrade:
-    unavailable: '122 - *OpenCutList* لا يتسنى العثور على آخر نسخة من '
+    unavailable: '124 - *OpenCutList* لا يتسنى العثور على آخر نسخة من '
     available: |
-      123 - هناك نسخة جديدة من *OpenCutList* متوفرة الآن
+      125 - هناك نسخة جديدة من *OpenCutList* متوفرة الآن
       ! حدّث للحصول إلى آخر الميزات
-    up_to_date: "124 - *OpenCutList* لديك حاليا آخر نسخة من \n\n!*ضع في اعتبارك رعاية هذا المشروع لمساعدتنا في إضافة المزيد من الميزات*\n"
-    downloading: 125 - التحميل جارٍ
-    changelog: 126 - ما الجديد؟
-    ignore_update: 127 - تجاوز هذا التحديث
-    download_rescue: 128 - مشكلة في التحميل؟
-    manual_download: 129 - تحميل يدوي
-    zzz: '130 - SketchUp أنا حاليا في وضع السكون بعد التحديث. لإعادتي إلى الوضع الطبيعي، عليك أن تعيد تشغيل '
-    success: "131 - ! لقد اكتمل تحديث OpenCutList \n\nأعد تشغيل SKETCHUP لتفعيل التغييرات\n"
+    up_to_date: "126 - *OpenCutList* لديك حاليا آخر نسخة من \n\n!*ضع في اعتبارك رعاية هذا المشروع لمساعدتنا في إضافة المزيد من الميزات*\n"
+    downloading: 127 - التحميل جارٍ
+    changelog: 128 - ما الجديد؟
+    ignore_update: 129 - تجاوز هذا التحديث
+    download_rescue: 130 - مشكلة في التحميل؟
+    manual_download: 131 - تحميل يدوي
+    zzz: '132 - SketchUp أنا حاليا في وضع السكون بعد التحديث. لإعادتي إلى الوضع الطبيعي، عليك أن تعيد تشغيل '
+    success: "133 - ! لقد اكتمل تحديث OpenCutList \n\nأعد تشغيل SKETCHUP لتفعيل التغييرات\n"
     error:
-      download: 132 - خطأ أثناء تحميل الملف المضغوط.
-      unzip: 133 - خطأ أثناء فك الضغط عن الملف.
+      download: 134 - خطأ أثناء تحميل الملف المضغوط.
+      unzip: 135 - خطأ أثناء فك الضغط عن الملف.
   preset:
-    label: 134 - الإعدادات المسبقة
-    manage: 135 - أدِر الإعدادات المسبقة
-    save_to: 136 - حفظ باسم
-    restore_from: 137 - استرجاع من
-    app_defaults: 138 - إعدادات المصنع المسبقة
-    user_defaults: 139 - إعداداتي المسبقة الافتراضية
-    new: 140 - إعداد جديد
+    label: 136 - الإعدادات المسبقة
+    manage: 137 - أدِر الإعدادات المسبقة
+    save_to: 138 - حفظ باسم
+    restore_from: 139 - استرجاع من
+    app_defaults: 140 - إعدادات المصنع المسبقة
+    user_defaults: 141 - إعداداتي المسبقة الافتراضية
+    new: 142 - إعداد جديد
     new_prompt: |
-      141 - *يتيح لك إنشاء إعداد مسبق مخصص الاحتفاظ بمُعلِّمات النموذج الحالية بصفة عامة لتتمكن من إعادة استخدامها في جميع نماذجك*.
+      143 - *يتيح لك إنشاء إعداد مسبق مخصص الاحتفاظ بمُعلِّمات النموذج الحالية بصفة عامة لتتمكن من إعادة استخدامها في جميع نماذجك*.
 
       أدخل اسم الإعداد :
-    delete_confirm_title: 142 - إزالة
-    delete_confirm: 143 - هل أنت واثق من رغبتك في إزالة الإعداد المسبق **"{{ name }}"**؟
-    override_confirm_title: 144 - ترقية
-    override_confirm: 145 - هل تؤكد تحديث الإعداد المسبق **"{{ name }}"** بمُعلِّمات النموذج؟
-    new_success: 146 - لقد اكتمل إنشاء الإعداد **"{{ name }}"**
-    override_success: 147 - لقد اكتمل تحديث الإعداد **"{{ name }}"**
-    restore_success: 148 - لقد مُلِئ النموذج بالإعداد المسبق **"{{ name }}"**
-    delete_success: 149 - لقد اكتمل حذف الإعداد **"{{ name }}"**
+    delete_confirm_title: 144 - إزالة
+    delete_confirm: 145 - هل أنت واثق من رغبتك في إزالة الإعداد المسبق **"{{ name }}"**؟
+    override_confirm_title: 146 - ترقية
+    override_confirm: 147 - هل تؤكد تحديث الإعداد المسبق **"{{ name }}"** بمُعلِّمات النموذج؟
+    new_success: 148 - لقد اكتمل إنشاء الإعداد **"{{ name }}"**
+    override_success: 149 - لقد اكتمل تحديث الإعداد **"{{ name }}"**
+    restore_success: 150 - لقد مُلِئ النموذج بالإعداد المسبق **"{{ name }}"**
+    delete_success: 151 - لقد اكتمل حذف الإعداد **"{{ name }}"**
     tooltip:
-      save_to: 150 - تحديث الإعداد المسبق '{{ name }}'
-      delete: 151 - حذف الإعداد المسبق '{{ name }}'
+      save_to: 152 - تحديث الإعداد المسبق '{{ name }}'
+      delete: 153 - حذف الإعداد المسبق '{{ name }}'
     dictionary:
-      component_textinput_color: 152 - لوحة الألوان
+      component_textinput_color: 154 - لوحة الألوان
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
       cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
@@ -201,663 +203,663 @@ core:
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
-    please_wait: 173 - حساب عالم من السلم
+    please_wait: 175 - حساب عالم من السلم
   component:
     textinput:
-      reset: 174 - أعد تهيئة هذه القيمة
+      reset: 176 - أعد تهيئة هذه القيمة
     textinput_color:
-      store: 175 - احفظ اللون
-      remove: 176 - انس أمر اللون
+      store: 177 - احفظ اللون
+      remove: 178 - انس أمر اللون
     textinput_code:
-      snippets: 177 - أمثلة عن المعادلات
-      help: 178 - اضغط على **@** للحصول على قائمة المتغيرات.
+      snippets: 179 - أمثلة عن المعادلات
+      help: 180 - اضغط على **@** للحصول على قائمة المتغيرات.
     three_viewer:
-      view: 179 - منظر {{ view }}
-      view_isometric: 180 - متقايس
-      view_top: 181 - علوي
-      view_bottom: 182 - سفلي
-      view_front: 183 - أمام
-      view_back: 184 - خلفي
-      view_left: 185 - أيسر
-      view_right: 186 - أيمن
-      zoom: 187 - مقياس {{ zoom }}
-      explode_factor: 188 - مدى التفجير
-      toggle_box_helper: 189 - أظهر / أخفِ مكعب الإحاطة
-      toggle_box_dimensions_helper: 190 - أظهر / أخفِ الأبعاد
-      toggle_axes_helper: 191 - أظهر / أخفِ المحاور
+      view: 181 - منظر {{ view }}
+      view_isometric: 182 - متقايس
+      view_top: 183 - علوي
+      view_bottom: 184 - سفلي
+      view_front: 185 - أمام
+      view_back: 186 - خلفي
+      view_left: 187 - أيسر
+      view_right: 188 - أيمن
+      zoom: 189 - مقياس {{ zoom }}
+      explode_factor: 190 - مدى التفجير
+      toggle_box_helper: 191 - أظهر / أخفِ مكعب الإحاطة
+      toggle_box_dimensions_helper: 192 - أظهر / أخفِ الأبعاد
+      toggle_axes_helper: 193 - أظهر / أخفِ المحاور
   docs:
     error:
       failed_to_load: |
-        192 - تعذر فتح المستندات
+        194 - تعذر فتح المستندات
         تأكد من اتصالك بالإنترنت
 tab:
   cutlist:
-    label: 193 - القِطع
-    title: 194 - قائمة القِطع
+    label: 195 - القِطع
+    title: 196 - قائمة القِطع
     help: |
-      195 - حدد القطع التي ستستعمل في قائمتك في المشهد الحالي و اضغط على **استحداث**
+      197 - حدد القطع التي ستستعمل في قائمتك في المشهد الحالي و اضغط على **استحداث**
       إن لم يكن هناك تحديد، فستدخل كل العناصر المرئية داخل المشهد في حساب قائمة القطع
-    is_selection: 196 - التحديد فحسب
-    select_part: 197 - حدد القِطعة
-    select_part_plural: 198 - حدد القِطع
-    material_undefined: 199 - بلا خامة
-    not_available_std_width: 200 - العرض غير معيّن
-    not_available_std_thickness: 201 - السمك غير معيّن
-    not_available_std_section: 202 - القطاع غير معيّن
-    highlight_part: 203 - ركز على قطعة في النموذج
-    highlight_parts: 204 - ركز على قطع في النموذج
-    edit_part_properties: 205 - عدّل خصائص القطعة
-    edit_part_axes_properties: 206 - عدّل خصائص (محاور) القطعة
-    edit_part_size_increase_properties: 207 - عدّل خصائص (تمديدات) القطعة
-    edit_part_edges_properties: 208 - عدل خصائص (حواشي) القطعة
-    edit_part_faces_properties: 209 - عدّل خصائص القطعة (قشرة الخشب)
-    part_drawing_type_1: 210 - واجهة ثنائية الأبعاد
-    part_drawing_type_2: 211 - خلفية ثنائية الأبعاد
-    part_drawing_type_3: 212 - منظر ثنائي الأبعاد - يسار
-    part_drawing_type_4: 213 - منظر ثنائي الأبعاد - يمين
-    part_drawing_type_5: 214 - واجهة ثنائية الأبعاد
-    part_drawing_type_6: 215 - منظر ثنائي الأبعاد - خلف
-    part_drawing_type_7: 216 - ثلاثي الأبعاد
+    is_selection: 198 - التحديد فحسب
+    select_part: 199 - حدد القِطعة
+    select_part_plural: 200 - حدد القِطع
+    material_undefined: 201 - بلا خامة
+    not_available_std_width: 202 - العرض غير معيّن
+    not_available_std_thickness: 203 - السمك غير معيّن
+    not_available_std_section: 204 - القطاع غير معيّن
+    highlight_part: 205 - ركز على قطعة في النموذج
+    highlight_parts: 206 - ركز على قطع في النموذج
+    edit_part_properties: 207 - عدّل خصائص القطعة
+    edit_part_axes_properties: 208 - عدّل خصائص (محاور) القطعة
+    edit_part_size_increase_properties: 209 - عدّل خصائص (تمديدات) القطعة
+    edit_part_edges_properties: 210 - عدل خصائص (حواشي) القطعة
+    edit_part_faces_properties: 211 - عدّل خصائص القطعة (قشرة الخشب)
+    part_drawing_type_1: 212 - واجهة ثنائية الأبعاد
+    part_drawing_type_2: 213 - خلفية ثنائية الأبعاد
+    part_drawing_type_3: 214 - منظر ثنائي الأبعاد - يسار
+    part_drawing_type_4: 215 - منظر ثنائي الأبعاد - يمين
+    part_drawing_type_5: 216 - واجهة ثنائية الأبعاد
+    part_drawing_type_6: 217 - منظر ثنائي الأبعاد - خلف
+    part_drawing_type_7: 218 - ثلاثي الأبعاد
     tooltip:
-      show_hide_block: 217 - أظهر / أخفِ المجموعة
-      scroll_to_block: 218 - مُرَّ إلى المجموعة
-      not_available_std_width: 219 - لم يحدد العرض *{{ std_dimension_real }}* في العروض النظامية للخامة '{{ material_name }}'.
-      not_available_std_thickness: 220 - لم يحدد السمك *{{ std_dimension_real }}* ضمن السمك النظامي للخامة '{{ material_name }}'.
-      not_available_std_section: 221 - لم يحدد القطاع *{{ std_dimension_real }}* في القطاعات النظامية للخامة '{{ material_name }}'
+      show_hide_block: 219 - أظهر / أخفِ المجموعة
+      scroll_to_block: 220 - مُرَّ إلى المجموعة
+      not_available_std_width: 221 - لم يحدد العرض *{{ std_dimension_real }}* في العروض النظامية للخامة '{{ material_name }}'.
+      not_available_std_thickness: 222 - لم يحدد السمك *{{ std_dimension_real }}* ضمن السمك النظامي للخامة '{{ material_name }}'.
+      not_available_std_section: 223 - لم يحدد القطاع *{{ std_dimension_real }}* في القطاعات النظامية للخامة '{{ material_name }}'
       add_std_width_to_material: |
-        222 - إضافة عرض *{{ std_dimension }}*
+        224 - إضافة عرض *{{ std_dimension }}*
         للخامة '{{ material_name }}'
       add_std_thickness_to_material: |
-        223 - إضافة سمك *{{ std_dimension }}*
+        225 - إضافة سمك *{{ std_dimension }}*
         للخامة '{{ material_name }}'
       add_std_section_to_material: |
-        224 - إضافة قطاع *{{ std_dimension }}*
+        226 - إضافة قطاع *{{ std_dimension }}*
         للخامة '{{ material_name }}'
       rounded_std_width: |
-        225 - وفقا لدقة الوحدات في النموذج*{{ std_dimension }}* يجري تدوير العرض
+        227 - وفقا لدقة الوحدات في النموذج*{{ std_dimension }}* يجري تدوير العرض
         *{{ std_dimension_real }}* :العرض الحقيقي
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
-        226 - وفقا لدقة الوحدات في النموذج*{{ std_dimension }}* يجري تدوير السُمك
+        228 - وفقا لدقة الوحدات في النموذج*{{ std_dimension }}* يجري تدوير السُمك
         *{{ std_dimension_real }}* :السُمك الحقيقي
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
-        227 - وفقا لدقة الوحدات في النموذج*{{ std_dimension }}* يجري تدوير القطاع
+        229 - وفقا لدقة الوحدات في النموذج*{{ std_dimension }}* يجري تدوير القطاع
         *{{ std_dimension_real }}* :القطاع الحقيقي
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
-      rounded_std_footer: 228 - قوِّم الدقة في *Model Info* في سكاتش آب أو تفقّد قياسات القِطع في هذه المجموعة.
+      rounded_std_footer: 230 - قوِّم الدقة في *Model Info* في سكاتش آب أو تفقّد قياسات القِطع في هذه المجموعة.
       highlight_part: $t(tab.cutlist.highlight_part)
       highlight_parts: $t(tab.cutlist.highlight_parts)
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
-      edit_parts_properties: 232 - عدّل خصائص مجموعة قِطع
+      edit_parts_properties: 234 - عدّل خصائص مجموعة قِطع
       edit_material: $t(tab.cutlist.menu.edit_material)
-      folding_part: 234 - اِطوِ / اُنشر
-      material_origin_1: 235 - خامة هذه القطعة معرفة وفقا لمثيلاتها
-      material_origin_2: 236 - خامة هذه القطعة موروثة عن أحد عناصرها الأصلية
-      material_origin_3: 237 - خامة هذه القطعة مأخوذة من أحد عناصرها الفرعية
-      orientation_locked_on_axis: 238 - اتجاه هذا الجزء مقفل على نظام إحداثياته
-      number_saved: 239 - لقد حفظ رقم هذه القطعة
-      number_hidden: 240 - لا يمكن استعمال الرقم المحفوظ في هذه القطعة '{{ number }}' لأنه قد عُيّن أصلا
-      number_generated: 241 - لقد استُحدث رقم هذه القطعة آليا
-      resized: 242 - لقد أُعيد تحجيم هذه القطعة بالنظر إلى تعريف عنصرها
-      flipped: 243 - لقد طبق على هذه القطعة انعكاس مقارنة بتعريف عنصرها
-      symmetrical: 244 - الكشف عن الانعكاس لهذه القطعة معطل
-      ignore_grain_direction: 245 - اتجاه تعرق ألياف هذه القطعة مهمل
-      auto_oriented: 246 - لقد أُعيد توجيه هذه القطعة آليا
-      oko_label_filter: 247 - تضمين / استبعاد هذا الوسم
-      add_label_filter: 248 - تصفية وفق '{{ label }}'
-      remove_label_filter: 249 - إزالة التصفية وفق '{{ label }}'
-      add_edge_material_name_filter: 250 - تصفية وفق '{{ material_name }}'
-      remove_edge_material_name_filter: 251 - إزالة التصفية وفق '{{ material_name }}'
-      add_veneer_material_name_filter: 252 - تصفية وفق '{{ material_name }}'
-      remove_veneer_material_name_filter: 253 - إزالة التصفية وفق '{{ material_name }}'
-      not_aligned_on_axes: 254 - تحذير، قد لا تتم محاذاة هذه القطعة بشكل صحيح على محاورها
-      instance_count_by_part: 255 - هذه القطعة محسوبة في أطقم من **{{ count }}** وحدات
-      unused_instance_count: 256 - انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة من آخر طقم.
-      unused_instance_count_plural: 257 - انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة/ وحدات من آخر طقم.
-      used_instance_count: 258 - الوحدة المستخدمة **{{ count }}** / {{ total }}
-      used_instance_count_plural: 259 - الوحدات المستخدمة **{{ count }}** / {{ total }}
-      thickness_layer_count: 260 - سمك القطعة النهائية مكون من **{{ count }}** من الطبقات
-      thickness_layered: 261 - العدد هنا يمثل عدد القطع اللازمة للحصول على كل الطبقات.
-      thickness_layered_equation: 262 - **{{ count }}** *قطعة* x **{{ layerCount }}** *طبقات* = **{{ cuttingPartCount }}**
-      thickness_layered_equation_plural: 263 - **{{ count }}** *قِطَع* x **{{ layerCount }}** *طبقات* = **{{ cuttingPartCount }}**
-      multiple_content_layers: '264 - تحذير، هذه القطعة مكونة من قطع فرعية موجودة في عدد {{ count }} طبقات مختلفة: {{ layers }}<br>'
-      children_warnings: 265 - تحذير، هناك عدد {{ count }} إنذار في القطع المجموعة
-      children_warnings_plural: 266 - تحذير، هناك {{ count }} إنذارات في القطع المجموعة
-      children_size_increase: 267 - جرى تمديد هذا البعد لـ {{ count }} قِطعٍ / قِطعةً مجموعة
-      invalid_final_area: 268 - تنبيه، لا يمكن حساب هذه المساحة الإجمالية لأن {{ count }} قطعة (من أصل {{ total }}) بها مساحة غير صالحة
-      invalid_final_area_plural: 269 - تنبيه، لا يمكن حساب هذه المساحة الإجمالية لأن {{ count }} قطعة/ قِطع (من أصل {{ total }}) بها مساحة غير صالحة
-      is_dynamic_attributes_name: 270 - وصف هذه القطعة مأخوذ من 'Name' الخاص بالعنصر الديناميكي
-      size_increased: 271 - زاد البعد وفقا لتمديد قدره {{ value }}
-      has_edges: 272 - تحتوي هذه القطعة على {{ count }} حاشية
-      has_edges_plural: 273 - تحتوي هذه القطعة على {{ count }} حواشٍ
-      has_faces: 274 - تحتوي هذه القطعة على {{ count }} سطح مكسو بقشرة خشب
-      has_faces_plural: 275 - تحتوي هذه القطعة على {{ count }} أسطح مكسوة بقشرة خشب
-      edge_decremented: 276 - تقليل بقدر سُمك الحواشي ({{ decrement }})
-      edge_ymin: 277 - طول الحاشية 1
-      edge_ymax: 278 - طول الحاشية 2
-      edge_xmin: 279 - عرض الحاشية 1
-      edge_xmax: 280 - عرض الحاشية 2
-      face_zmin: 281 - ظهر قشرة الخشب
-      face_zmax: 282 - الوجه الأمامي لقشرة الخشب
-      dblclick_to_copy_all_edges: 283 - انقر هنا نقرا مزدوجا لتكرار هذه القيمة لبقية الحواشي
-      dblclick_to_copy_all_faces: 284 - انقر هنا نقرا مزدوجا لاستنساخ هذه القيمة إلى الوجه الآخر
-      dblclick_to_sort_axes: 285 - انقر هنا نقرًا مزدوجًا لإعادة ترتيب المحاور تلقائيًا وفقًا لأبعاد القطعة
-      part_axes: 286 - محاور القطعةِ الداخليةُ
-      select_unselect_all_parts: 287 - حدد / أزل التحديد عن كل القطع في المجموعة
-      select_parts_in_cutlist: 288 - حدد القِطعة داخل قائمة القِطع
-      select_parts_in_cutlist_plural: 289 - حدد {{ count }} قطعة / قِطع في قائمة القِطع
-      setup_group_cuttingdiagram: 290 - تكوين رسم التقطيع التخطيطي لـ '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
-      setup_group_packing: 291 - تكوين رسم التقطيع التخطيطي لـ '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
-      open_part_url: 292 - افتح رابط القِطعة
+      folding_part: 236 - اِطوِ / اُنشر
+      material_origin_1: 237 - خامة هذه القطعة معرفة وفقا لمثيلاتها
+      material_origin_2: 238 - خامة هذه القطعة موروثة عن أحد عناصرها الأصلية
+      material_origin_3: 239 - خامة هذه القطعة مأخوذة من أحد عناصرها الفرعية
+      orientation_locked_on_axis: 240 - اتجاه هذا الجزء مقفل على نظام إحداثياته
+      number_saved: 241 - لقد حفظ رقم هذه القطعة
+      number_hidden: 242 - لا يمكن استعمال الرقم المحفوظ في هذه القطعة '{{ number }}' لأنه قد عُيّن أصلا
+      number_generated: 243 - لقد استُحدث رقم هذه القطعة آليا
+      resized: 244 - لقد أُعيد تحجيم هذه القطعة بالنظر إلى تعريف عنصرها
+      flipped: 245 - لقد طبق على هذه القطعة انعكاس مقارنة بتعريف عنصرها
+      symmetrical: 246 - الكشف عن الانعكاس لهذه القطعة معطل
+      ignore_grain_direction: 247 - اتجاه تعرق ألياف هذه القطعة مهمل
+      auto_oriented: 248 - لقد أُعيد توجيه هذه القطعة آليا
+      oko_label_filter: 249 - تضمين / استبعاد هذا الوسم
+      add_label_filter: 250 - تصفية وفق '{{ label }}'
+      remove_label_filter: 251 - إزالة التصفية وفق '{{ label }}'
+      add_edge_material_name_filter: 252 - تصفية وفق '{{ material_name }}'
+      remove_edge_material_name_filter: 253 - إزالة التصفية وفق '{{ material_name }}'
+      add_veneer_material_name_filter: 254 - تصفية وفق '{{ material_name }}'
+      remove_veneer_material_name_filter: 255 - إزالة التصفية وفق '{{ material_name }}'
+      not_aligned_on_axes: 256 - تحذير، قد لا تتم محاذاة هذه القطعة بشكل صحيح على محاورها
+      instance_count_by_part: 257 - هذه القطعة محسوبة في أطقم من **{{ count }}** وحدات
+      unused_instance_count: 258 - انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة من آخر طقم.
+      unused_instance_count_plural: 259 - انتبه رجاء إلى أنه لن تستعمل **{{ count }}** وِحدة/ وحدات من آخر طقم.
+      used_instance_count: 260 - الوحدة المستخدمة **{{ count }}** / {{ total }}
+      used_instance_count_plural: 261 - الوحدات المستخدمة **{{ count }}** / {{ total }}
+      thickness_layer_count: 262 - سمك القطعة النهائية مكون من **{{ count }}** من الطبقات
+      thickness_layered: 263 - العدد هنا يمثل عدد القطع اللازمة للحصول على كل الطبقات.
+      thickness_layered_equation: 264 - **{{ count }}** *قطعة* x **{{ layerCount }}** *طبقات* = **{{ cuttingPartCount }}**
+      thickness_layered_equation_plural: 265 - **{{ count }}** *قِطَع* x **{{ layerCount }}** *طبقات* = **{{ cuttingPartCount }}**
+      multiple_content_layers: '266 - تحذير، هذه القطعة مكونة من قطع فرعية موجودة في عدد {{ count }} طبقات مختلفة: {{ layers }}<br>'
+      children_warnings: 267 - تحذير، هناك عدد {{ count }} إنذار في القطع المجموعة
+      children_warnings_plural: 268 - تحذير، هناك {{ count }} إنذارات في القطع المجموعة
+      children_size_increase: 269 - جرى تمديد هذا البعد لـ {{ count }} قِطعٍ / قِطعةً مجموعة
+      invalid_final_area: 270 - تنبيه، لا يمكن حساب هذه المساحة الإجمالية لأن {{ count }} قطعة (من أصل {{ total }}) بها مساحة غير صالحة
+      invalid_final_area_plural: 271 - تنبيه، لا يمكن حساب هذه المساحة الإجمالية لأن {{ count }} قطعة/ قِطع (من أصل {{ total }}) بها مساحة غير صالحة
+      is_dynamic_attributes_name: 272 - وصف هذه القطعة مأخوذ من 'Name' الخاص بالعنصر الديناميكي
+      size_increased: 273 - زاد البعد وفقا لتمديد قدره {{ value }}
+      has_edges: 274 - تحتوي هذه القطعة على {{ count }} حاشية
+      has_edges_plural: 275 - تحتوي هذه القطعة على {{ count }} حواشٍ
+      has_faces: 276 - تحتوي هذه القطعة على {{ count }} سطح مكسو بقشرة خشب
+      has_faces_plural: 277 - تحتوي هذه القطعة على {{ count }} أسطح مكسوة بقشرة خشب
+      edge_decremented: 278 - تقليل بقدر سُمك الحواشي ({{ decrement }})
+      edge_ymin: 279 - طول الحاشية 1
+      edge_ymax: 280 - طول الحاشية 2
+      edge_xmin: 281 - عرض الحاشية 1
+      edge_xmax: 282 - عرض الحاشية 2
+      face_zmin: 283 - ظهر قشرة الخشب
+      face_zmax: 284 - الوجه الأمامي لقشرة الخشب
+      dblclick_to_copy_all_edges: 285 - انقر هنا نقرا مزدوجا لتكرار هذه القيمة لبقية الحواشي
+      dblclick_to_copy_all_faces: 286 - انقر هنا نقرا مزدوجا لاستنساخ هذه القيمة إلى الوجه الآخر
+      dblclick_to_sort_axes: 287 - انقر هنا نقرًا مزدوجًا لإعادة ترتيب المحاور تلقائيًا وفقًا لأبعاد القطعة
+      part_axes: 288 - محاور القطعةِ الداخليةُ
+      select_unselect_all_parts: 289 - حدد / أزل التحديد عن كل القطع في المجموعة
+      select_parts_in_cutlist: 290 - حدد القِطعة داخل قائمة القِطع
+      select_parts_in_cutlist_plural: 291 - حدد {{ count }} قطعة / قِطع في قائمة القِطع
+      setup_group_cuttingdiagram: 292 - تكوين رسم التقطيع التخطيطي لـ '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
+      setup_group_packing: 293 - تكوين رسم التقطيع التخطيطي لـ '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
+      open_part_url: 294 - افتح رابط القِطعة
     menu:
-      show_all_groups: 293 - أظهر كل المجموعات
-      hide_all_other_groups: 294 - أخفِ كل المجموعات الأخرى
-      numbers_save: 295 - احفظ أرقام القطع
-      numbers_reset: 296 - أعد تهيئة أرقام القطع
+      show_all_groups: 295 - أظهر كل المجموعات
+      hide_all_other_groups: 296 - أخفِ كل المجموعات الأخرى
+      numbers_save: 297 - احفظ أرقام القطع
+      numbers_reset: 298 - أعد تهيئة أرقام القطع
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      labels_parts: 298 - طباعة الملصقات
-      write_2d: 299 - إسقاط ثنائي الأبعاد
-      write_3d: 300 - الشكل ثلاثي الأبعاد
-      write_2d_parts: 301 - صدر الإسقاط ثنائي البعد للقِطَع
-      write_3d_parts: 302 - صدّر الشكل ثلاثي البعد للقِطَع
-      group_write_2d_parts: 303 - صدر الإسقاط ثنائي البعد لقِطَع المجموعة
-      group_write_3d_parts: 304 - صدر الشكل ثلاثي البعد لقِطَع المجموعة
-      group_layout_parts: 305 - طباعة معاينة قطع المجموعة
-      group_numbers_save: 306 - احفظ أرقام القطع في هذه المجموعة
-      group_numbers_reset: 307 - أعد تهيئة أرقام القطع في هذه المجموعة
-      group_cuttingdiagram: 308 - رسم التقطيعِ التخطيطيُ
-      group_packing: 309 - رسم التقطيعِ التخطيطيُ
-      group_labels: 310 - طباعة فقاعات قِطَع المجموعة
-      edit_material: 311 - عدّل الخامة '{{ material_name }}'
-      expand_all: 312 - نشر كل الأسطر
-      collapse_all: 313 - طيّ كل الأسطر
-      reset_prices: 314 - إعادة تهيئة أسعار كل القِطع
+      labels_parts: 300 - طباعة الملصقات
+      write_2d: 301 - إسقاط ثنائي الأبعاد
+      write_3d: 302 - الشكل ثلاثي الأبعاد
+      write_2d_parts: 303 - صدر الإسقاط ثنائي البعد للقِطَع
+      write_3d_parts: 304 - صدّر الشكل ثلاثي البعد للقِطَع
+      group_write_2d_parts: 305 - صدر الإسقاط ثنائي البعد لقِطَع المجموعة
+      group_write_3d_parts: 306 - صدر الشكل ثلاثي البعد لقِطَع المجموعة
+      group_layout_parts: 307 - طباعة معاينة قطع المجموعة
+      group_numbers_save: 308 - احفظ أرقام القطع في هذه المجموعة
+      group_numbers_reset: 309 - أعد تهيئة أرقام القطع في هذه المجموعة
+      group_cuttingdiagram: 310 - رسم التقطيعِ التخطيطيُ
+      group_packing: 311 - رسم التقطيعِ التخطيطيُ
+      group_labels: 312 - طباعة فقاعات قِطَع المجموعة
+      edit_material: 313 - عدّل الخامة '{{ material_name }}'
+      expand_all: 314 - نشر كل الأسطر
+      collapse_all: 315 - طيّ كل الأسطر
+      reset_prices: 316 - إعادة تهيئة أسعار كل القِطع
       reset_prices_confirm: |
-        315 - أنت مقبل على إعادة تهيئة أسعار كل قِطع نموذجك.
+        317 - أنت مقبل على إعادة تهيئة أسعار كل قِطع نموذجك.
         هذا الإجراء نهائي.** ستعاد تهيئة كل القطع إلى الصفر.**
         أكّد للمواصلة.
-      reset_prices_success: 316 - لقد أعيدت تهيئة أسعار كل القِطع.
+      reset_prices_success: 318 - لقد أعيدت تهيئة أسعار كل القِطع.
     edit_part:
-      title: 317 - خصائص القطعة '{{ name }}'
-      title_multiple: 318 - خصائص مجموعة القطع
-      multiple_alert: 319 - الخصائص المشتركة لعدد {{ part_count }} من القطع.
-      general: 320 - عام
-      extra_help: 321 - "**$t(tab.materials.type_{{ material_type }})**". قائمة الخصائص المحددة لنوع الخامة
-      edges: 322 - الحواشي
-      faces: 323 - قِشرُ الخشب
-      name: 324 - الإسم
-      material: 325 - الخامة
-      cumulable: 326 - مجموع
+      title: 319 - خصائص القطعة '{{ name }}'
+      title_multiple: 320 - خصائص مجموعة القطع
+      multiple_alert: 321 - الخصائص المشتركة لعدد {{ part_count }} من القطع.
+      general: 322 - عام
+      extra_help: 323 - "**$t(tab.materials.type_{{ material_type }})**". قائمة الخصائص المحددة لنوع الخامة
+      edges: 324 - الحواشي
+      faces: 325 - قِشرُ الخشب
+      name: 326 - الإسم
+      material: 327 - الخامة
+      cumulable: 328 - مجموع
       cumulable_help: |
-        327 - إن كان هذا الخيار محددا فإن **الطول** أو **العرض** سيعتبران **وحدة الطول** أو **وحدة العرض** مضروبة في العدد عند الفرز في قائمة القِطع.
-      cumulable_0: 328 - غير مجموع
-      cumulable_1: 329 - مجموع وفقا للطول
-      cumulable_2: 330 - مجموع وفقا للعرض
-      instance_count_by_part: 331 - التعبئة والتغليف
+        329 - إن كان هذا الخيار محددا فإن **الطول** أو **العرض** سيعتبران **وحدة الطول** أو **وحدة العرض** مضروبة في العدد عند الفرز في قائمة القِطع.
+      cumulable_0: 330 - غير مجموع
+      cumulable_1: 331 - مجموع وفقا للطول
+      cumulable_2: 332 - مجموع وفقا للعرض
+      instance_count_by_part: 333 - التعبئة والتغليف
       instance_count_by_part_help: |
-        332 - يسمح لك باعتبار القطعة *طقمًا* مكوّنًا من *وحدة* أو عدة *وحدات*.
+        334 - يسمح لك باعتبار القطعة *طقمًا* مكوّنًا من *وحدة* أو عدة *وحدات*.
         و بالتالي فإن العدد المقترن بالقطعة الموجودة في قائمة القِطع سيمثل العدد الكامل للأطقم اللازمة لاحتواء عدد الوحدات الموجودة بالفعل في النموذج.
 
         *مثال: لحساب زوج من زلاّقات الدُرج على أنه قطعة واحدة فقط :
         الحُزمة = وحدتان / قطعة*
-      instance_count_by_part_1: 333 - وحدة لكل قطعة
-      instance_count_by_part_2: 334 - وحدتان لكل قطعة
-      mass: 335 - الكتلة
-      mass_help: 336 - ستُستعمل كتلة القطعة عند استحداث **التثمين**.
-      price: 337 - السعر
-      price_help: 338 - سيُستعمل سعر القطعة عند استحداث **التثمين**.
-      thickness_layer_count: 339 - عدد الطبقات
+      instance_count_by_part_1: 335 - وحدة لكل قطعة
+      instance_count_by_part_2: 336 - وحدتان لكل قطعة
+      mass: 337 - الكتلة
+      mass_help: 338 - ستُستعمل كتلة القطعة عند استحداث **التثمين**.
+      price: 339 - السعر
+      price_help: 340 - سيُستعمل سعر القطعة عند استحداث **التثمين**.
+      thickness_layer_count: 341 - عدد الطبقات
       thickness_layer_count_help: |
-        340 - حدد هنا عدد الطبقات التي تتكون منها القطعة المرسومة من ناحية السمك.
+        342 - حدد هنا عدد الطبقات التي تتكون منها القطعة المرسومة من ناحية السمك.
 
         *مثال:* إن كانت لديك قطعة سمكها *38 مم* و تريدها أن تتكون من لصق لوحين سمك كل منهما *19 مم* فأدخل **2** في هذا الحقل.
         *عندها ستضع OpenCutList في حسابها أن هناك قطعتين سمكهما 19 مم بدلا من قطعة واحدة سمكها 38 مم.*
-      description: 341 - تعليق وصفيّ
+      description: 343 - تعليق وصفيّ
       description_help: |
-        342 - يتيح لك *الوصف* معلومات معلومات مخصصة عن تعريف كل قطعة.
-      url: 343 - رابط
+        344 - يتيح لك *الوصف* معلومات معلومات مخصصة عن تعريف كل قطعة.
+      url: 345 - رابط
       url_help: |
-        344 - الـ *URL* يسمح بتوفير رابط مخصص إلى صفحة خارجية على كل تعريف لقطعة
-      tags: 345 - الوسوم
+        346 - الـ *URL* يسمح بتوفير رابط مخصص إلى صفحة خارجية على كل تعريف لقطعة
+      tags: 347 - الوسوم
       tags_help: |
-        346 - تمكنك *الوسوم* من إضافة كلمات مفتاحية مخصصة لتعريف كل قطعة.
+        348 - تمكنك *الوسوم* من إضافة كلمات مفتاحية مخصصة لتعريف كل قطعة.
         بوسعك إضافة القدر الذي تشاء من الوسوم.
         يمكن عندها تصفية القطع الظاهرة في قائمة قِطَعِك بالاعتماد على هذه الوسوم.
-      tags_multiple_info: 347 - الوسوم المشتركة فقط هي التي تظهر
-      orientation: 348 - توجيه
-      orientation_locked_on_axis: 349 - قفل التوجيه على محاور القطعة
+      tags_multiple_info: 349 - الوسوم المشتركة فقط هي التي تظهر
+      orientation: 350 - توجيه
+      orientation_locked_on_axis: 351 - قفل التوجيه على محاور القطعة
       orientation_locked_on_axis_help: |
-        350 - إن كان هذا الخيار محددا فلن يكون لخاصية *التوجيه الآلي للقطع* أي تأثير على هذه القطعة
+        352 - إن كان هذا الخيار محددا فلن يكون لخاصية *التوجيه الآلي للقطع* أي تأثير على هذه القطعة
 
         و بالتالي في نظام الإحداثيات المحلي:
         - *الطول* يتبع المحور <span style='color:red'>الأحمر</span>،
         - *العرض* يتبع المحور <span style='color:green'>الأخضر</span>،
         - *السُّمك* يتبع المحور <span style='color:blue'>الأزرق</span>،
-      symmetrical: 351 - عطّل الكشف عن الانعكاس لهذه القطعة
+      symmetrical: 353 - عطّل الكشف عن الانعكاس لهذه القطعة
       symmetrical_help: |
-        352 - إذا تم تحديد هذا المربع، فلن يكون لاكتشاف *قطعة معكوسة* أي تأثير على هذه القطعة.
-      ignore_grain_direction: 353 - تجاهل اتجاه تعرق الألياف في هذه القطعة
+        354 - إذا تم تحديد هذا المربع، فلن يكون لاكتشاف *قطعة معكوسة* أي تأثير على هذه القطعة.
+      ignore_grain_direction: 355 - تجاهل اتجاه تعرق الألياف في هذه القطعة
       ignore_grain_direction_help: |
-        354 - إذا تم تحديد هذا المربع، فإن اتجاه تعرق الألياف في هذه القطعة سيُهمَل.
-      size_increase: 355 - التمديدات
+        356 - إذا تم تحديد هذا المربع، فإن اتجاه تعرق الألياف في هذه القطعة سيُهمَل.
+      size_increase: 357 - التمديدات
       size_increase_help: |
-        356 - تمكنك التمديدات من زيادة أبعاد القطعة.
+        358 - تمكنك التمديدات من زيادة أبعاد القطعة.
         (*مثال: تمديد من أجل وزرة يجب أن تعدل أثناء التركيب*)
-      length_increase: 357 - تمديد الطول
-      length_increase_help: 358 - طُبق تمديد على الطول النهائي لتحديد **الطول الأولي**
-      width_increase: 359 - تمديد العرض
-      width_increase_help: 360 - طُبّق تمديد على العُرض النهائي لتحديد **العرض الأولي**
-      thickness_increase: 361 - تمديد السُمك
-      thickness_increase_help: 362 - طُبّق تمديد على السُّمك النهائي لتحديد **السُّمك الأولي**
-      axes: 363 - المحاور
-      axes_help: 364 - أعد ترتيب الأبعاد لتتناسب مع ألوان المحور المطلوبة في قطعتك.
+      length_increase: 359 - تمديد الطول
+      length_increase_help: 360 - طُبق تمديد على الطول النهائي لتحديد **الطول الأولي**
+      width_increase: 361 - تمديد العرض
+      width_increase_help: 362 - طُبّق تمديد على العُرض النهائي لتحديد **العرض الأولي**
+      thickness_increase: 363 - تمديد السُمك
+      thickness_increase_help: 364 - طُبّق تمديد على السُّمك النهائي لتحديد **السُّمك الأولي**
+      axes: 365 - المحاور
+      axes_help: 366 - أعد ترتيب الأبعاد لتتناسب مع ألوان المحور المطلوبة في قطعتك.
       axes_tip: |
-        365 - لاحظ أن الخيار *التوجيه الآلي للقِطع* غير مفعل أو أن القطعة *مقفلة على نظام الإحداثيات الخاص بها* و بالتالي:
+        367 - لاحظ أن الخيار *التوجيه الآلي للقِطع* غير مفعل أو أن القطعة *مقفلة على نظام الإحداثيات الخاص بها* و بالتالي:
         - **الطول** يُقرأ على المحور <strong style='color:red'>الأحمر</strong>
         - **العرض** يُقرأ على المحور <strong style='color:green'>الأخضر</strong>
         - **السُّمك** يُقرأ على المحور <strong style='color:blue'>الأزرق</strong>
-      axes_origin_position_none: 366 - لا تغير المبدأ
-      axes_origin_position_min: 367 - ضع المبدأ في زاوية
-      axes_origin_position_center: 368 - ضع المبدأ في المركز
-      axes_origin_position_front_min: 369 - ضع المبدأ في إحدى زوايا الوجه الأمامي
-      axes_origin_position_front_center: 370 - ضع المبدأ في منتصف الوجه الأمامي
-      over_length: 371 - على الطول
-      over_width: 372 - على العرض
-      edge_disabled_help: 373 - هذه الحاشية غير قابلة للتكوين لأنه لم يُعثر على وجه حامل للخامة في طرف هذه القطعة داخل النموذج.
-      face_disabled_help: 374 - هذا السطح غير قابل للتكوين لأنه لم يتم اكتشاف أي وجه بوسعه استقبال خامة في حافة هذه القِطعة من النموذج.
-      multiple_values: 375 - قيم متعددة
-      loading_preview: 376 - تحميل المعاينة
+      axes_origin_position_none: 368 - لا تغير المبدأ
+      axes_origin_position_min: 369 - ضع المبدأ في زاوية
+      axes_origin_position_center: 370 - ضع المبدأ في المركز
+      axes_origin_position_front_min: 371 - ضع المبدأ في إحدى زوايا الوجه الأمامي
+      axes_origin_position_front_center: 372 - ضع المبدأ في منتصف الوجه الأمامي
+      over_length: 373 - على الطول
+      over_width: 374 - على العرض
+      edge_disabled_help: 375 - هذه الحاشية غير قابلة للتكوين لأنه لم يُعثر على وجه حامل للخامة في طرف هذه القطعة داخل النموذج.
+      face_disabled_help: 376 - هذا السطح غير قابل للتكوين لأنه لم يتم اكتشاف أي وجه بوسعه استقبال خامة في حافة هذه القِطعة من النموذج.
+      multiple_values: 377 - قيم متعددة
+      loading_preview: 378 - تحميل المعاينة
     option:
-      auto_orient: 377 - توجيه آلي للقطع
+      auto_orient: 379 - توجيه آلي للقطع
       auto_orient_help: |
-        378 - إن كانت هذه الخاصية محددة، فستُفرز أبعاد القطعة الثلاثة بحيث يمثل أطولها *الطول* و أقصرها *السُّمك*.
+        380 - إن كانت هذه الخاصية محددة، فستُفرز أبعاد القطعة الثلاثة بحيث يمثل أطولها *الطول* و أقصرها *السُّمك*.
         و إلاّ،
 
         - *الطول* يُقرأ على المحور <span style='color:red'>الأحمر</span>
         - *العرض* يُقرأ على المحور <span style='color:green'>الأخضر</span>
         - *السُّمك* يُقرأ على المحور <span style='color:blue'>الأزرق</span>
-      flipped_detection: 379 - اكتشاف القطع المنعكسة
+      flipped_detection: 381 - اكتشاف القطع المنعكسة
       flipped_detection_help: |
-        380 - إن كان هذا الخيار محددا، فإن القطع المنعكسة ستحدد و تعرض على أنها قطع جديدة.
-      smart_material: 381 - تخصيص خامات *ذكي*
-      smart_material_help: 382 - إن كانت هذه الخاصية محددة، فإن القطع التي بدون خامة يمكن أن تعيّن وفقا لخامة عنصرها الأساسي أو الفرعي.
-      dynamic_attributes_name: 383 - استخدم السمة *Name* للعناصر الديناميكية
+        382 - إن كان هذا الخيار محددا، فإن القطع المنعكسة ستحدد و تعرض على أنها قطع جديدة.
+      smart_material: 383 - تخصيص خامات *ذكي*
+      smart_material_help: 384 - إن كانت هذه الخاصية محددة، فإن القطع التي بدون خامة يمكن أن تعيّن وفقا لخامة عنصرها الأساسي أو الفرعي.
+      dynamic_attributes_name: 385 - استخدم السمة *Name* للعناصر الديناميكية
       dynamic_attributes_name_help: |
-        384 - إن كانت هذه الخاصية محددة فإن وصف القِطع سيُؤخذ من من صفة الاسم *Name* إن كان محددا.
+        386 - إن كانت هذه الخاصية محددة فإن وصف القِطع سيُؤخذ من من صفة الاسم *Name* إن كان محددا.
 
         <i class='ladb-opencutlist-icon-warning'></i>ستفصل مثيلات القِطع التي تحمل التعريف نفسه إن كانت صفة الاسم *Name* لا تحمل القيمة نفسها.
-      part_number_with_letters: 385 - استخدم الحروف لترقيم القطع
-      part_number_with_letters_help: 386 -  إن كانت هذه الخاصية محددة فإن ترقيم القطع سيعتمد بالحروف (A, B, C, ... Z, AA, AB, ...).
-      part_number_sequence_by_group: 387 - إعادة تعيين ترقيم القِطع لكل مجموعة
-      part_number_sequence_by_group_help: 388 - إن كانت هذه الخاصية محددة فإن ترقيم القِطع سيعاد تعيينه إلى 1 (أو A) في كل مجموعة (قائمة القِطع التي لها نفس الخامة و السمك).
-      part_folding: 389 - جمع القطع المتماثلة
+      part_number_with_letters: 387 - استخدم الحروف لترقيم القطع
+      part_number_with_letters_help: 388 -  إن كانت هذه الخاصية محددة فإن ترقيم القطع سيعتمد بالحروف (A, B, C, ... Z, AA, AB, ...).
+      part_number_sequence_by_group: 389 - إعادة تعيين ترقيم القِطع لكل مجموعة
+      part_number_sequence_by_group_help: 390 - إن كانت هذه الخاصية محددة فإن ترقيم القِطع سيعاد تعيينه إلى 1 (أو A) في كل مجموعة (قائمة القِطع التي لها نفس الخامة و السمك).
+      part_folding: 391 - جمع القطع المتماثلة
       part_folding_help: |
-        390 - إن كانت هذه الخاصية مفعلة، فإن القطع المصنوعة من **خشب الجذوع الصلب و الألواح الخشبية و القضبان الخشبية** و التي تشترك في **نفس البعد** مع **نفس الوسوم** و **نفس المساحة النهائية** *(إن لم يكن عرض المساحة مخفيا)* ستجمع في نفس السطر في *قائمة القِطَع*.
+        392 - إن كانت هذه الخاصية مفعلة، فإن القطع المصنوعة من **خشب الجذوع الصلب و الألواح الخشبية و القضبان الخشبية** و التي تشترك في **نفس البعد** مع **نفس الوسوم** و **نفس المساحة النهائية** *(إن لم يكن عرض المساحة مخفيا)* ستجمع في نفس السطر في *قائمة القِطَع*.
 
         ستبقى القِطع مختلفة من ناحية إنشاء الملصقات و رسم التقطيعِ التخطيطيّ.
-      hide_entity_names: 391 - أخف أسماء المثيلات
-      hide_entity_names_help: 392 - إن كانت هذه الخاصية محددة فإن **أسماء المثيلات** الخاصة بالقِطع لن تعرض.
-      hide_descriptions: 393 - أخف الأوصاف
-      hide_descriptions_help: 394 - إن كان هذا الخيار محددا، فإن **الأوصاف** الموضوعة على القِطَع لن تعرض.
-      hide_tags: 395 - أخف الوسوم
-      hide_tags_help: 396 - إن كانت هذه الخاصية محددة، فستخفى **الوسوم**.
-      hide_cutting_dimensions: 397 - أخف الأبعاد الأولية
-      hide_cutting_dimensions_help: 398 - إن كانت هذه الخاصية محددة فإن الأبعاد **الأولية** للقطع ستخفى.
-      hide_bbox_dimensions: 399 - أخف الأبعاد النهائية
-      hide_bbox_dimensions_help: 400 - إن كانت هذه الخاصية محددة فإن الأبعاد **النهائية** للقِطع ستخفى
-      hide_final_areas: 401 - أخف المساحات النهائية للقطع ضمن تصنيف *لوح*
-      hide_final_areas_help: 402 - إن كانت هذه الخاصية محددة فإن **المساحات النهائية** للقِطع لن تُعرض.
-      hide_edges: 403 - أخف خانات الحواشي
-      hide_edges_help: 404 - إن كانت هذه الخاصية محددة فإن **أعمدة الحواشي** ضمن التصنيف *لوح* لن تُعرض.
-      hide_faces: 405 - أخف أعمدة قِشرِ الخشب
-      hide_faces_help: 406 - إن كانت هذه الخاصية محددة، فستُخفى **أعمدة قِشرِ الخشب** من القطع المندرجة تحت النوع *لوح*
-      hide_material_colors: 407 - أخفِ ألوان الخامات
-      hide_material_colors_help: 408 - إن كانت هذه الخاصية محددة فإن ألوان الخامات ستخفى
-      minimize_on_highlight: 409 - *'$t(tab.cutlist.highlight_part)...'* تصغير بعد
-      minimize_on_highlight_help: 410 - تحديد هذه الخاصية سيُصغّر OpenCutList عند استخدام الوظيفة *'$t(tab.cutlist.highlight_part)'*
-      general: 411 - عام
-      part_order_strategy: 412 - فرز القطع
+      hide_entity_names: 393 - أخف أسماء المثيلات
+      hide_entity_names_help: 394 - إن كانت هذه الخاصية محددة فإن **أسماء المثيلات** الخاصة بالقِطع لن تعرض.
+      hide_descriptions: 395 - أخف الأوصاف
+      hide_descriptions_help: 396 - إن كان هذا الخيار محددا، فإن **الأوصاف** الموضوعة على القِطَع لن تعرض.
+      hide_tags: 397 - أخف الوسوم
+      hide_tags_help: 398 - إن كانت هذه الخاصية محددة، فستخفى **الوسوم**.
+      hide_cutting_dimensions: 399 - أخف الأبعاد الأولية
+      hide_cutting_dimensions_help: 400 - إن كانت هذه الخاصية محددة فإن الأبعاد **الأولية** للقطع ستخفى.
+      hide_bbox_dimensions: 401 - أخف الأبعاد النهائية
+      hide_bbox_dimensions_help: 402 - إن كانت هذه الخاصية محددة فإن الأبعاد **النهائية** للقِطع ستخفى
+      hide_final_areas: 403 - أخف المساحات النهائية للقطع ضمن تصنيف *لوح*
+      hide_final_areas_help: 404 - إن كانت هذه الخاصية محددة فإن **المساحات النهائية** للقِطع لن تُعرض.
+      hide_edges: 405 - أخف خانات الحواشي
+      hide_edges_help: 406 - إن كانت هذه الخاصية محددة فإن **أعمدة الحواشي** ضمن التصنيف *لوح* لن تُعرض.
+      hide_faces: 407 - أخف أعمدة قِشرِ الخشب
+      hide_faces_help: 408 - إن كانت هذه الخاصية محددة، فستُخفى **أعمدة قِشرِ الخشب** من القطع المندرجة تحت النوع *لوح*
+      hide_material_colors: 409 - أخفِ ألوان الخامات
+      hide_material_colors_help: 410 - إن كانت هذه الخاصية محددة فإن ألوان الخامات ستخفى
+      minimize_on_highlight: 411 - *'$t(tab.cutlist.highlight_part)...'* تصغير بعد
+      minimize_on_highlight_help: 412 - تحديد هذه الخاصية سيُصغّر OpenCutList عند استخدام الوظيفة *'$t(tab.cutlist.highlight_part)'*
+      general: 413 - عام
+      part_order_strategy: 414 - فرز القطع
       part_order_strategy_help: |
-        413 - أعد تنظيم الخصائص التالية لتحديد ترتيب الفرز داخل كل مجموعة.
+        415 - أعد تنظيم الخصائص التالية لتحديد ترتيب الفرز داخل كل مجموعة.
         يمكن الفرز <i class="ladb-opencutlist-icon-sort-asc"></i> *تصاعديا* أو <i class="ladb-opencutlist-icon-sort-desc"></i> *تنازليا*.
-      dimension_column_order_strategy: 414 - ترتيب الأعمدة
+      dimension_column_order_strategy: 416 - ترتيب الأعمدة
       dimension_column_order_strategy_help: |
-        415 - أعد تنظيم خصائص الأبعاد التالية لتحديد ترتيب عرض الأعمدة.
-      property_thickness: 416 - السُمك
-      property_length: 417 - الطول
-      property_width: 418 - العرض
-      property_name: 419 - التسمية
-      property_count: 420 - العدد
-      property_edge_pattern: 421 - عدد الحواشي
-      property_tags: 422 - الوسوم
-      property_thickness_layer_count: 423 - عدد الطبقات
-      tags: 424 - الوسوم
-      tags_help: 425 - قائمة الوسوم المخصصة المعروضة في نافذة خصائص القِطع.
-      tags_placeholder: 426 - أضف وسما
+        417 - أعد تنظيم خصائص الأبعاد التالية لتحديد ترتيب عرض الأعمدة.
+      property_thickness: 418 - السُمك
+      property_length: 419 - الطول
+      property_width: 420 - العرض
+      property_name: 421 - التسمية
+      property_count: 422 - العدد
+      property_edge_pattern: 423 - عدد الحواشي
+      property_tags: 424 - الوسوم
+      property_thickness_layer_count: 425 - عدد الطبقات
+      tags: 426 - الوسوم
+      tags_help: 427 - قائمة الوسوم المخصصة المعروضة في نافذة خصائص القِطع.
+      tags_placeholder: 428 - أضف وسما
     list:
-      filters: 427 - مُرَشِّح
-      filters_warning_0: 428 - يخفي هذا المُرَشِّح كل القطع!
-      filters_warning: 429 - يعرض هذا المُرَشِّح فقط **{{ count }}** قطعة من مجموع {{ total }}.
-      filters_warning_plural: 430 - يعرض هذا المُرَشِّح فقط **{{ count }}** قِطع/قطعة من مجموع {{ total }}.
-      edge_material_names_filter: 431 - تصفية وفق خامة الحواشي
-      veneer_material_names_filter: 432 - ترشيح وفقا لخامة قشرة الخشب
-      tags_filter: 433 - تصفية بالوسوم
-      dimensions_help: 434 - فهم الأبعاد
-      summary: 435 - ملخص
-      material_type: 436 - النوع
-      material_thickness: 437 - الخامة / السُمك
-      part_count: 438 - العدد
-      area: 439 - المساحة
-      area_short: 440 - المساحة
-      volume: 441 - الحجم
-      number: 442 - الرقم
-      name: 443 - التسمية
-      count: 444 - العدد
-      cutting: 445 - خام
-      bbox: 446 - منتهٍ
-      final: 447 - نهائي
-      total_cutting: 448 - المجموع الأولي
-      total_final: 449 - المجموع النهائي
-      length: 450 - الطول
-      length_short: 451 - ط
-      width: 452 - العرض
-      width_short: 453 - ع
-      thickness: 454 - السُمك
-      thickness_short: 455 - س
-      edges: 456 - الحواشي
-      faces: 457 - الوجوه
+      filters: 429 - مُرَشِّح
+      filters_warning_0: 430 - يخفي هذا المُرَشِّح كل القطع!
+      filters_warning: 431 - يعرض هذا المُرَشِّح فقط **{{ count }}** قطعة من مجموع {{ total }}.
+      filters_warning_plural: 432 - يعرض هذا المُرَشِّح فقط **{{ count }}** قِطع/قطعة من مجموع {{ total }}.
+      edge_material_names_filter: 433 - تصفية وفق خامة الحواشي
+      veneer_material_names_filter: 434 - ترشيح وفقا لخامة قشرة الخشب
+      tags_filter: 435 - تصفية بالوسوم
+      dimensions_help: 436 - فهم الأبعاد
+      summary: 437 - ملخص
+      material_type: 438 - النوع
+      material_thickness: 439 - الخامة / السُمك
+      part_count: 440 - العدد
+      area: 441 - المساحة
+      area_short: 442 - المساحة
+      volume: 443 - الحجم
+      number: 444 - الرقم
+      name: 445 - التسمية
+      count: 446 - العدد
+      cutting: 447 - خام
+      bbox: 448 - منتهٍ
+      final: 449 - نهائي
+      total_cutting: 450 - المجموع الأولي
+      total_final: 451 - المجموع النهائي
+      length: 452 - الطول
+      length_short: 453 - ط
+      width: 454 - العرض
+      width_short: 455 - ع
+      thickness: 456 - السُمك
+      thickness_short: 457 - س
+      edges: 458 - الحواشي
+      faces: 459 - الوجوه
     export:
-      title: 458 - صدِّر
+      title: 460 - صدِّر
       info_0: |
-        459 - تتيح لك هذه الوظيفة تصدير المعلومات من *قائمة القِطع* إلى الحافظة أو إلى ملف بصيغة [CSV](https://ar.wikipedia.org/wiki/%D9%82%D9%8A%D9%85_%D9%85%D9%81%D8%B5%D9%88%D9%84%D8%A9_%D8%A8%D9%81%D9%88%D8%A7%D8%B5%D9%84).
+        461 - تتيح لك هذه الوظيفة تصدير المعلومات من *قائمة القِطع* إلى الحافظة أو إلى ملف بصيغة [CSV](https://ar.wikipedia.org/wiki/%D9%82%D9%8A%D9%85_%D9%85%D9%81%D8%B5%D9%88%D9%84%D8%A9_%D8%A8%D9%81%D9%88%D8%A7%D8%B5%D9%84).
       customize_help: |
-        460 - أعد الترتيب أو أخف أو أضف أو أزل أو حدد عمودا من القائمة لتخصيص **عنوانه** و **صيغته** التي ستستحدث القيم لكل سطر مُصدّر.
-      add_column: 461 - أضف عمودا
-      add_native_columns: 462 - أضف عمودا أصليا
+        462 - أعد الترتيب أو أخف أو أضف أو أزل أو حدد عمودا من القائمة لتخصيص **عنوانه** و **صيغته** التي ستستحدث القيم لكل سطر مُصدّر.
+      add_column: 463 - أضف عمودا
+      add_native_columns: 464 - أضف عمودا أصليا
       duplicate_column: $t(default.duplicate)
       remove_column: $t(default.remove)
       remove_all_columns: $t(default.remove_all)
-      columns: 466 - الأعمدة
-      column_title: 467 - العنوان
+      columns: 468 - الأعمدة
+      column_title: 469 - العنوان
       column_title_help: |
-        468 - يتيح لك حقل **العنوان** تخصيص عنوان العمود.
-      column_formula: 469 - الصيغة
+        470 - يتيح لك حقل **العنوان** تخصيص عنوان العمود.
+      column_formula: 471 - الصيغة
       column_formula_help: |
-        470 - يتيح لك حقل **الصيغة** كتابة كود بلغة *روبي* البرمجية لتخصيص القيمة في العمود.
-      options: 471 - خصائص التصدير
-      options_customize: 472 - تخصيص
-      option_source: 473 - المصدر
+        472 - يتيح لك حقل **الصيغة** كتابة كود بلغة *روبي* البرمجية لتخصيص القيمة في العمود.
+      options: 473 - خصائص التصدير
+      options_customize: 474 - تخصيص
+      option_source: 475 - المصدر
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: 475 - قائمة القطع
-      option_source_instances_list: 476 - قائمة المثيلات
-      option_col_sep: 477 - فاصل
-      option_col_sep_tab: 478 - أداة تنظيم الجداول
-      option_col_sep_comma: 479 - فاصلة
-      option_col_sep_semicolon: 480 - فاصة منقوطة
-      option_encoding: 481 - ترميز
-      copy_all: 482 - كل شيء
-      copy_values: 483 - القيم فحسب
-      number: 484 - الرقم
-      path: 485 - المسار
-      instance_name: 486 - مثيل
-      name: 487 - التسمية
-      total_cutting_length: 488 - الطول الإجمالي - أولي
-      total_cutting_area: 489 - المساحة الإجمالية - أولية
-      total_cutting_volume: 490 - الحجم الإجمالي - أولي
-      total_final_area: 491 - المساحة الإجمالية - نهائية
-      cutting_length: 492 - الطول - أولي
-      cutting_width: 493 - العرض - أولي
-      cutting_thickness: 494 - السُمك - أولي
-      edge_cutting_length: 495 - طول الحاشية - أولي
-      edge_cutting_width: 496 - عرض الحواشي - أولي
-      bbox_length: 497 - الطول
-      bbox_width: 498 - العرض
-      bbox_thickness: 499 - السمك
-      final_area: 500 - المساحة - نهائية
-      count: 501 - العدد
-      part_count: 502 - عدد القطع
-      material: 503 - الخامة
-      material_type: 504 - نوع الخامة
-      material_name: 505 - اسم الخامة
-      material_description: 506 - وصف الخامة
-      material_url: 507 - رابط الخامة
-      material_std_dimension: 508 - الأبعاد النظامية
-      entity_names: 509 - أسماء المثيلات
-      description: 510 - تعليق وصفيّ
-      url: 511 - رابط
-      tags: 512 - الوسوم
-      edge_ymin: 513 - طول الحاشية 1
-      edge_ymax: 514 - طول الحاشية 2
-      edge_xmin: 515 - عرض الحاشية 1
-      edge_xmax: 516 - عرض الحاشية 2
-      face_zmin: 517 - ظهر قشرة الخشب
-      face_zmax: 518 - أمامي
-      layer: 519 - وسم
-      layers: 520 - وسوم
-      batch: 521 - طقم
-      bin: 522 - الحاوية
-      component_definition: 523 - تسمية العنصر
-      component_instance: 524 - مثيل العنصر
-      component_instances: 525 - مثيلات العنصر
-      filename: 526 - اسم الملف
-      model_name: 527 - اسم النموذج
-      model_description: 528 - وصف النموذج
-      page_name: 529 - اسم المشهد
-      page_description: 530 - وصف المشهد
+      option_source_cutlist: 477 - قائمة القطع
+      option_source_instances_list: 478 - قائمة المثيلات
+      option_col_sep: 479 - فاصل
+      option_col_sep_tab: 480 - أداة تنظيم الجداول
+      option_col_sep_comma: 481 - فاصلة
+      option_col_sep_semicolon: 482 - فاصة منقوطة
+      option_encoding: 483 - ترميز
+      copy_all: 484 - كل شيء
+      copy_values: 485 - القيم فحسب
+      number: 486 - الرقم
+      path: 487 - المسار
+      instance_name: 488 - مثيل
+      name: 489 - التسمية
+      total_cutting_length: 490 - الطول الإجمالي - أولي
+      total_cutting_area: 491 - المساحة الإجمالية - أولية
+      total_cutting_volume: 492 - الحجم الإجمالي - أولي
+      total_final_area: 493 - المساحة الإجمالية - نهائية
+      cutting_length: 494 - الطول - أولي
+      cutting_width: 495 - العرض - أولي
+      cutting_thickness: 496 - السُمك - أولي
+      edge_cutting_length: 497 - طول الحاشية - أولي
+      edge_cutting_width: 498 - عرض الحواشي - أولي
+      bbox_length: 499 - الطول
+      bbox_width: 500 - العرض
+      bbox_thickness: 501 - السمك
+      final_area: 502 - المساحة - نهائية
+      count: 503 - العدد
+      part_count: 504 - عدد القطع
+      material: 505 - الخامة
+      material_type: 506 - نوع الخامة
+      material_name: 507 - اسم الخامة
+      material_description: 508 - وصف الخامة
+      material_url: 509 - رابط الخامة
+      material_std_dimension: 510 - الأبعاد النظامية
+      entity_names: 511 - أسماء المثيلات
+      description: 512 - تعليق وصفيّ
+      url: 513 - رابط
+      tags: 514 - الوسوم
+      edge_ymin: 515 - طول الحاشية 1
+      edge_ymax: 516 - طول الحاشية 2
+      edge_xmin: 517 - عرض الحاشية 1
+      edge_xmax: 518 - عرض الحاشية 2
+      face_zmin: 519 - ظهر قشرة الخشب
+      face_zmax: 520 - أمامي
+      layer: 521 - وسم
+      layers: 522 - وسوم
+      batch: 523 - طقم
+      bin: 524 - الحاوية
+      component_definition: 525 - تسمية العنصر
+      component_instance: 526 - مثيل العنصر
+      component_instances: 527 - مثيلات العنصر
+      filename: 528 - اسم الملف
+      model_name: 529 - اسم النموذج
+      model_description: 530 - وصف النموذج
+      page_name: 531 - اسم المشهد
+      page_description: 532 - وصف المشهد
       placeholder:
-        no_column_title: 531 - أدخل عنوانا
-        no_column_formula_native: 532 -  القيمة الأصلية للعمود '{{ col_name }}'
-        no_column_formula: 533 - أدخل صيغة
+        no_column_title: 533 - أدخل عنوانا
+        no_column_formula_native: 534 -  القيمة الأصلية للعمود '{{ col_name }}'
+        no_column_formula: 535 - أدخل صيغة
       warning:
-        is_group_selection: 534 - لن تصدر القطع المتضمَّنة في **المجموعات المخفية** مع قائمة القطع.
+        is_group_selection: 536 - لن تصدر القطع المتضمَّنة في **المجموعات المخفية** مع قائمة القطع.
     report:
-      title: 535 - تثمين
+      title: 537 - تثمين
       info_0: |
-        536 - تتيح لك هذه الوظيفة إنشاء تثمين **للكتل** و **التكاليف** و **الخامات** اللازمة لإنتاج القطع* المتضمَّنة في قائمة القطع*.
-      options_general: 537 - عام
+        538 - تتيح لك هذه الوظيفة إنشاء تثمين **للكتل** و **التكاليف** و **الخامات** اللازمة لإنتاج القطع* المتضمَّنة في قائمة القطع*.
+      options_general: 539 - عام
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: 539 - *$t(tab.materials.type_1)* معامل الهدر
-      option_solid_wood_coefficient_help: 540 - تُستخدم للدلالة على معامل الضرب المطبق على الحجم الإجمالي المُقاس للخامات من نوع "**$t(tab.materials.type_1)**" لحساب المهدور.
-      raw_materials: 541 - المواد الأولية
-      coefficient: 542 - المعامل
-      total: 543 - الإجمالي
-      total_used: 544 - مستعمل
-      total_unused: 545 - غير مستعمل
-      total_mass: 546 - مجموع الكتل
-      total_cost: 547 - مجموع التكاليف
-      total_count: 548 - العدد
-      total_instance_count: 549 - مجموع الوحدات
-      total_volume: 550 - مجموع الأحجام
-      total_area: 551 - مجموع المساحات
-      total_length: 552 - مجموع الأطوال
+      option_solid_wood_coefficient: 541 - *$t(tab.materials.type_1)* معامل الهدر
+      option_solid_wood_coefficient_help: 542 - تُستخدم للدلالة على معامل الضرب المطبق على الحجم الإجمالي المُقاس للخامات من نوع "**$t(tab.materials.type_1)**" لحساب المهدور.
+      raw_materials: 543 - المواد الأولية
+      coefficient: 544 - المعامل
+      total: 545 - الإجمالي
+      total_used: 546 - مستعمل
+      total_unused: 547 - غير مستعمل
+      total_mass: 548 - مجموع الكتل
+      total_cost: 549 - مجموع التكاليف
+      total_count: 550 - العدد
+      total_instance_count: 551 - مجموع الوحدات
+      total_volume: 552 - مجموع الأحجام
+      total_area: 553 - مجموع المساحات
+      total_length: 554 - مجموع الأطوال
       tooltip:
-        incompatible_unit: 553 - الوحدة غير متوافقة مع خيارات تثمين الخامة
+        incompatible_unit: 555 - الوحدة غير متوافقة مع خيارات تثمين الخامة
       error:
-        no_typed_material_parts: 554 - لا تتوفر أي قطعة ذات خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_4)** أو **$t(tab.materials.type_5)** أو **$t(tab.materials.type_6)**) لإنشاء التثمين
-        entry_error: '555 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**.'
-        entry_error_plural: '556 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**.'
+        no_typed_material_parts: 556 - لا تتوفر أي قطعة ذات خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_4)** أو **$t(tab.materials.type_5)** أو **$t(tab.materials.type_6)**) لإنشاء التثمين
+        entry_error: '557 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**.'
+        entry_error_plural: '558 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**.'
       warning:
-        is_group_selection: 557 - القطع المتضمَّنة في **المجموعات الظاهرة** فقط من ستؤخذ بعين الاعتبار.
+        is_group_selection: 559 - القطع المتضمَّنة في **المجموعات الظاهرة** فقط من ستؤخذ بعين الاعتبار.
       tip:
         not_enough_data: |
-          558 - لتثمين محسوب جيدا:
+          560 - لتثمين محسوب جيدا:
           -يجب على الأقل أن تتوفر كثافة و سعر الخامات المستعملة.
           -يجب على الأقل أن تتوفر كثافة و سعر الملحقات المستعملة.
     cuttingdiagram:
-      title: 559 - رسم التقطيعِ التخطيطيُ
-      start_msg: 560 - تشغيل التحسين
-      end_msg: 561 - تم التحسين
-      options_material: 562 - الخامة
-      options_config: 563 - إعداد
-      options_display: 564 - عرض
-      option_bar_folding_dimensional: 565 - اجمع القضبان المتماثلة
-      option_bar_folding_edge: 566 - اجمع الحواشي المتماثلة
-      option_bar_folding_0: 567 - لا
-      option_bar_folding_1: 568 - نعم
-      option_bar_folding_help: 569 - اجمع القضبان أو أشرطة الحواشي المحتوية على نفس القِطع و التقطيعات.
-      option_sheet_folding_good: 570 - اجمع الألواح المتماثلة
-      option_sheet_folding_veneer: 571 - اجمع قِشر الخشب المتطابق
-      option_sheet_folding_0: 572 - لا
-      option_sheet_folding_1: 573 - نعم
-      option_sheet_folding_help: 574 - اجمع الألواح أو الأوراق المحتوية على نفس القِطع و التقطيعات.
-      option_hide_part_list: 575 - قائمة القطع
-      option_hide_part_list_1d_dimensional_0: 576 - معروض لكل قضيب
-      option_hide_part_list_1d_edge_0: 577 - معروض لكل شريط حاشية
-      option_hide_part_list_2d_good_0: 578 - معروض لكل لوح
-      option_hide_part_list_2d_veneer_0: 579 - معروض لكل ورقة قِشر خشب
-      option_hide_part_list_1: 580 - مخفي
-      option_hide_part_list_1d_help: 581 - اعرض أو أخف قائمة القِطع لكل قضيب أو شريط حاشية.
-      option_hide_part_list_2d_help: 582 - اعرض أو أخف قائمة القِطع لكل لوح أو ورقة قِشر خشب
-      option_use_names: 583 - التعريف بالقطع
-      option_use_names_0: 584 - استعمل الرقم
-      option_use_names_1: 585 - استعمل التسمية
-      option_use_names_help: 586 - تتيح لك الاختيار بين **الرقم** و **التسمية** لتحديد القِطَع في رسم التقطيعِ التخطيطيّ.
-      option_origin_corner: 587 - موضع المبدأ
-      option_origin_corner_1d_0: 588 - إلى اليسار
-      option_origin_corner_1d_1: 589 - إلى اليمين
-      option_origin_corner_2d_0: 590 - الزاوية العلوية اليسرى
-      option_origin_corner_2d_1: 591 - الزاوية السفلية اليسرى
-      option_origin_corner_2d_2: 592 - الزاوية العلوية اليمنى
-      option_origin_corner_2d_3: 593 - الزاوية السفلية اليمنى
-      option_origin_corner_1d_help: 594 - يحدد موضع مبدإ الإحداثيات لعرض القطع على القضبان الخشبية أو أشرطة الحواشي.
-      option_origin_corner_2d_help: 595 - يحدد موضع مبدإ الإحداثيات لعرض القطع على الألواح.
-      option_full_width_diagram: 596 - عَرض كامل للعُرض
-      option_full_width_diagram_0: 597 - لا
-      option_full_width_diagram_1: 598 - نعم
-      option_full_width_diagram_help: 599 - إن كانت هذه الخاصية مفعلة فإن رسومات التقطيع التخطيطية ستعرض باستخدام العُرض المتاح. و إلا، فإن عُرضها سيُحدد وفقا لمقياس ثابت اعتمادا على كل الرسومات التخطيطية.
-      option_wrap_length: 600 - محيط اللوح
-      option_wrap_length_help: 601 - الحد الأقصى للطول الذي سيقسّم قضيب أو شريط حاشية وفقه إلى عدة أسطر.
-      option_hide_cross: 602 - بواقي التقطيع
-      option_hide_cross_0: 603 - أبعاد و تقاطع
-      option_hide_cross_1: 604 - أبعاد فقط
-      option_hide_cross_help: 605 - اعرض أو أخف التقاطع المبين للأجزاء المعرفة على أنها بواقٍ للتقطيع في الرسم التخطيطي.
-      option_highlight_primary_cuts: 606 - التقطيعات الابتدائية
-      option_highlight_primary_cuts_0: 607 - علوي فحسب
-      option_highlight_primary_cuts_1: 608 - ظاهر دائما
-      option_highlight_primary_cuts_help: 609 - يتيح لك التركيز على التقطيعات الابتدائية
-      option_hide_edges_preview: 610 - عرض أشرطة الحواشي
-      option_hide_edges_preview_0: 611 - معروض في مخطط التقطيع
-      option_hide_edges_preview_1: 612 - مخفي من مخطط التقطيع
-      option_hide_edges_preview_help: 613 - يتيح لك إبراز أو إخفاء تصوير أشرطة الحواشي لكل قِطعة في مخطط التقطيع
-      option_part_drawing_type: 614 - شكل القِطع
-      option_part_drawing_type_0: 615 - مخفيّ
-      option_part_drawing_type_1: 616 - عرض الوجه الأمامي
-      option_part_drawing_type_2: 617 - عرض الوجه الخلفي
+      title: 561 - رسم التقطيعِ التخطيطيُ
+      start_msg: 562 - تشغيل التحسين
+      end_msg: 563 - تم التحسين
+      options_material: 564 - الخامة
+      options_config: 565 - إعداد
+      options_display: 566 - عرض
+      option_bar_folding_dimensional: 567 - اجمع القضبان المتماثلة
+      option_bar_folding_edge: 568 - اجمع الحواشي المتماثلة
+      option_bar_folding_0: 569 - لا
+      option_bar_folding_1: 570 - نعم
+      option_bar_folding_help: 571 - اجمع القضبان أو أشرطة الحواشي المحتوية على نفس القِطع و التقطيعات.
+      option_sheet_folding_good: 572 - اجمع الألواح المتماثلة
+      option_sheet_folding_veneer: 573 - اجمع قِشر الخشب المتطابق
+      option_sheet_folding_0: 574 - لا
+      option_sheet_folding_1: 575 - نعم
+      option_sheet_folding_help: 576 - اجمع الألواح أو الأوراق المحتوية على نفس القِطع و التقطيعات.
+      option_hide_part_list: 577 - قائمة القطع
+      option_hide_part_list_1d_dimensional_0: 578 - معروض لكل قضيب
+      option_hide_part_list_1d_edge_0: 579 - معروض لكل شريط حاشية
+      option_hide_part_list_2d_good_0: 580 - معروض لكل لوح
+      option_hide_part_list_2d_veneer_0: 581 - معروض لكل ورقة قِشر خشب
+      option_hide_part_list_1: 582 - مخفي
+      option_hide_part_list_1d_help: 583 - اعرض أو أخف قائمة القِطع لكل قضيب أو شريط حاشية.
+      option_hide_part_list_2d_help: 584 - اعرض أو أخف قائمة القِطع لكل لوح أو ورقة قِشر خشب
+      option_use_names: 585 - التعريف بالقطع
+      option_use_names_0: 586 - استعمل الرقم
+      option_use_names_1: 587 - استعمل التسمية
+      option_use_names_help: 588 - تتيح لك الاختيار بين **الرقم** و **التسمية** لتحديد القِطَع في رسم التقطيعِ التخطيطيّ.
+      option_origin_corner: 589 - موضع المبدأ
+      option_origin_corner_1d_0: 590 - إلى اليسار
+      option_origin_corner_1d_1: 591 - إلى اليمين
+      option_origin_corner_2d_0: 592 - الزاوية العلوية اليسرى
+      option_origin_corner_2d_1: 593 - الزاوية السفلية اليسرى
+      option_origin_corner_2d_2: 594 - الزاوية العلوية اليمنى
+      option_origin_corner_2d_3: 595 - الزاوية السفلية اليمنى
+      option_origin_corner_1d_help: 596 - يحدد موضع مبدإ الإحداثيات لعرض القطع على القضبان الخشبية أو أشرطة الحواشي.
+      option_origin_corner_2d_help: 597 - يحدد موضع مبدإ الإحداثيات لعرض القطع على الألواح.
+      option_full_width_diagram: 598 - عَرض كامل للعُرض
+      option_full_width_diagram_0: 599 - لا
+      option_full_width_diagram_1: 600 - نعم
+      option_full_width_diagram_help: 601 - إن كانت هذه الخاصية مفعلة فإن رسومات التقطيع التخطيطية ستعرض باستخدام العُرض المتاح. و إلا، فإن عُرضها سيُحدد وفقا لمقياس ثابت اعتمادا على كل الرسومات التخطيطية.
+      option_wrap_length: 602 - محيط اللوح
+      option_wrap_length_help: 603 - الحد الأقصى للطول الذي سيقسّم قضيب أو شريط حاشية وفقه إلى عدة أسطر.
+      option_hide_cross: 604 - بواقي التقطيع
+      option_hide_cross_0: 605 - أبعاد و تقاطع
+      option_hide_cross_1: 606 - أبعاد فقط
+      option_hide_cross_help: 607 - اعرض أو أخف التقاطع المبين للأجزاء المعرفة على أنها بواقٍ للتقطيع في الرسم التخطيطي.
+      option_highlight_primary_cuts: 608 - التقطيعات الابتدائية
+      option_highlight_primary_cuts_0: 609 - علوي فحسب
+      option_highlight_primary_cuts_1: 610 - ظاهر دائما
+      option_highlight_primary_cuts_help: 611 - يتيح لك التركيز على التقطيعات الابتدائية
+      option_hide_edges_preview: 612 - عرض أشرطة الحواشي
+      option_hide_edges_preview_0: 613 - معروض في مخطط التقطيع
+      option_hide_edges_preview_1: 614 - مخفي من مخطط التقطيع
+      option_hide_edges_preview_help: 615 - يتيح لك إبراز أو إخفاء تصوير أشرطة الحواشي لكل قِطعة في مخطط التقطيع
+      option_part_drawing_type: 616 - شكل القِطع
+      option_part_drawing_type_0: 617 - مخفيّ
+      option_part_drawing_type_1: 618 - عرض الوجه الأمامي
+      option_part_drawing_type_2: 619 - عرض الوجه الخلفي
       option_part_drawing_type_help: |
-        618 - يتيح هذا الخيار إبراز أو إخفاء الشكل الحقيقي للقِطع داخل رسم التقطيع التخطيطي
+        620 - يتيح هذا الخيار إبراز أو إخفاء الشكل الحقيقي للقِطع داخل رسم التقطيع التخطيطي
 
         *ينبغي أن يكون الخيار مفعلا ليتم تصدير الأشكال*
-      option_saw_kerf: 619 - سُمك الشَفرة
-      option_saw_kerf_help: 620 - عرض المادة المزالة بفعل شفرة المنشار
-      option_spacing: 621 - مباعدة
-      option_spacing_help: 622 - المباعدة الأدنى بين القِطع
-      option_trimming: 623 - تقليم
-      option_trimming_help_1d: 624 - كمية المادّة التي ستعتبر كبواقٍ في طرف كل لوح أو شريط حاشية.
-      option_trimming_help_2d: 625 - كمية المادّة التي ستعتبر كبواقٍ حول اللوح.
-      option_optimization: 626 - مستوى الاستخدام الأمثل
-      option_optimization_help: 627 - يحدد مستوى الاستخدام الأمثل عدد الاحتمالات المحسوبة، و أيضا زمن الحساب.
-      option_optimization_0: 628 - متوسط
-      option_optimization_1: 629 - متقدم
-      option_stacking: 630 - رص القطع المتماثلة
-      option_stacking_help: 631 - اتجاه رص القِطع التي لها طول أو عرض مشترك.
-      option_stacking_0: 632 - بلا تفضيل
-      option_stacking_1: 633 - على الطول
-      option_stacking_2: 634 - على العرض
-      option_stacking_3: 635 - كل الاحتمالات
-      option_keep: 636 - القياس الأدنى لبواقي التقطيع
-      option_keep_help: 637 - ستُعلَّم بواقي التقطيع التي يزيد طولها و عرضها عن الحد الأدنى بـ **تُحفظ**.
-      option_std_bar_dimensional: 638 - قضيب نظامي
-      option_std_bar_edge: 639 - شريط حاشية نظامي
+      option_saw_kerf: 621 - سُمك الشَفرة
+      option_saw_kerf_help: 622 - عرض المادة المزالة بفعل شفرة المنشار
+      option_spacing: 623 - مباعدة
+      option_spacing_help: 624 - المباعدة الأدنى بين القِطع
+      option_trimming: 625 - تقليم
+      option_trimming_help_1d: 626 - كمية المادّة التي ستعتبر كبواقٍ في طرف كل لوح أو شريط حاشية.
+      option_trimming_help_2d: 627 - كمية المادّة التي ستعتبر كبواقٍ حول اللوح.
+      option_optimization: 628 - مستوى الاستخدام الأمثل
+      option_optimization_help: 629 - يحدد مستوى الاستخدام الأمثل عدد الاحتمالات المحسوبة، و أيضا زمن الحساب.
+      option_optimization_0: 630 - متوسط
+      option_optimization_1: 631 - متقدم
+      option_stacking: 632 - رص القطع المتماثلة
+      option_stacking_help: 633 - اتجاه رص القِطع التي لها طول أو عرض مشترك.
+      option_stacking_0: 634 - بلا تفضيل
+      option_stacking_1: 635 - على الطول
+      option_stacking_2: 636 - على العرض
+      option_stacking_3: 637 - كل الاحتمالات
+      option_keep: 638 - القياس الأدنى لبواقي التقطيع
+      option_keep_help: 639 - ستُعلَّم بواقي التقطيع التي يزيد طولها و عرضها عن الحد الأدنى بـ **تُحفظ**.
+      option_std_bar_dimensional: 640 - قضيب نظامي
+      option_std_bar_edge: 641 - شريط حاشية نظامي
       option_std_bar_help: |
-        640 - حدد القضيب النظامي الذي سيُنسخ لاحتواء جميع القِطع
+        642 - حدد القضيب النظامي الذي سيُنسخ لاحتواء جميع القِطع
         هذه القائمة محددة وفقا لحقل الخامة **$t(tab.materials.edit_material.std_lengths)**
         لتحديث هذه القائمة، عدّل الخامة '{{ material_name }}'
-      option_std_bar_add: 641 - أضف طولا
-      option_std_bar_none: 642 - لا شيء
-      option_scrap_bar_dimensional_lengths: 643 - بواقي تقطيع القضبان
-      option_scrap_bar_edge_lengths: 644 - بواقي تقطيع أشرطة الحواشي
-      option_scrap_bar_lengths_placeholder: 645 - الطول x العدد ; ...
+      option_std_bar_add: 643 - أضف طولا
+      option_std_bar_none: 644 - لا شيء
+      option_scrap_bar_dimensional_lengths: 645 - بواقي تقطيع القضبان
+      option_scrap_bar_edge_lengths: 646 - بواقي تقطيع أشرطة الحواشي
+      option_scrap_bar_lengths_placeholder: 647 - الطول x العدد ; ...
       option_scrap_bar_lengths_help: |
-        646 - عيّن هنا قائمة القضبان أو أشرطة الحواشي الباقية ذات الأولوية في رسم التقطيع التخطيطي.
+        648 - عيّن هنا قائمة القضبان أو أشرطة الحواشي الباقية ذات الأولوية في رسم التقطيع التخطيطي.
         الشكل المتوقع **ط**x**عد**، حيث يشير **ط** إلى *الطول* و **عد** إلى *العدد*.
         العدد اختياري.
         *ستؤخذ القياسات التي ليس بها وحدات بوحدة رسم النموذج*.
-      option_std_sheet_good: 647 - لوح نظامي
-      option_std_sheet_veneer: 648 - قشرة خشب قياسية
+      option_std_sheet_good: 649 - لوح نظامي
+      option_std_sheet_veneer: 650 - قشرة خشب قياسية
       option_std_sheet_help: |
-        649 - حدد ورقة قشرة الخشب أو اللوح النظامي الذي سيُنسخ لحساب أفضل احتواء ممكن للقِطع
+        651 - حدد ورقة قشرة الخشب أو اللوح النظامي الذي سيُنسخ لحساب أفضل احتواء ممكن للقِطع
         هذه القائمة محددة وفقا لحقل الخامة **$t(tab.materials.edit_material.std_sizes)**
         لتحديث هذه القائمة ، عدل الخامة '{{ material_name }}'
-      option_std_sheet_add: 650 - أضف طولا
-      option_std_sheet_none: 651 - لا شيء
-      option_scrap_sheet_good_sizes: 652 - بواقي تقطيع الألواح
-      option_scrap_sheet_veneer_sizes: 653 - بواقي قشرة الخشب
-      option_scrap_sheet_sizes_placeholder: 654 - الطول x العرض x العدد ; ...
+      option_std_sheet_add: 652 - أضف طولا
+      option_std_sheet_none: 653 - لا شيء
+      option_scrap_sheet_good_sizes: 654 - بواقي تقطيع الألواح
+      option_scrap_sheet_veneer_sizes: 655 - بواقي قشرة الخشب
+      option_scrap_sheet_sizes_placeholder: 656 - الطول x العرض x العدد ; ...
       option_scrap_sheet_sizes_help: |
-        655 - عيّن هنا قائمة الألواح أو الأوراق الباقية ذات الأولوية في رسم التقطيع التخطيطي.
+        657 - عيّن هنا قائمة الألواح أو الأوراق الباقية ذات الأولوية في رسم التقطيع التخطيطي.
         الشكل المتوقع **ط**x**ع**x**عد**، حيث يشير **ط** و **ع** إلى *الطول* و *العرض* و **عد** إلى *العدد*.
         العدد اختياري.
         *ستؤخذ القياسات التي ليس بها وحدات بوحدة رسم النموذج*.
       tooltip:
-        scroll_to_block_1d: 656 - مرور إلى القضيب أو شريط الحاشية الأول
-        scroll_to_block_2d: 657 - مرور إلى اللوح الأول
-        copy_leftovers_to_clipboard: 658 - انسخ بواقي التقطيع إلى الحافظة
+        scroll_to_block_1d: 658 - مرور إلى القضيب أو شريط الحاشية الأول
+        scroll_to_block_2d: 659 - مرور إلى اللوح الأول
+        copy_leftovers_to_clipboard: 660 - انسخ بواقي التقطيع إلى الحافظة
       list:
-        unplaced_parts: 659 - قِطع غير مُدرجة
-        summary: 660 - ملخص
-        count: 661 - العدد
-        bar: 662 - قضيب خشبي
-        sheet: 663 - لوح
-        length: 664 - الطول
-        width: 665 - العرض
-        total_length: 666 - مجموع الأطوال
-        total_area: 667 - مجموع المساحات
-        total_part_count: 668 - مجموع القطع
-        total_used: 669 - مجموع المُستعمَل
-        trimming: 670 - تقليم
-        stats: 671 - إحصاءات
-        total_cut_count: 672 - عدد القطع
-        total_cut_length: 673 - طول التقطيع
-        overall_efficiency: 674 - المردود الكلّي
-        efficiency: 675 - الفاعلية
-        leftover: 676 - البواقي
-        leftover_to_keep: 677 - باقٍ يحفظ
-        leftover_to_keep_plural: 678 - بواقٍ تحفظ
-        leftover_to_throw_away: 679 - باقٍ يرمى
-        cut: 680 - قطع
-        cut_plural: 681 - قطع
-        cut_trimming: 682 - التَّقليم
-        cut_bounding: 683 - القَطع الابتدائي (المستوى 1)
-        cut_bounding_plural: 684 - التقطيعات الابتدائية (المستوى 1)
-        cut_internal_through: 685 - القَطع الابتدائي (المستوى 2)
-        cut_internal_through_plural: 686 - التقطيعات الابتدائية (المستوى 2)
-        cut_none: 687 - لا شيء
-        bar_dimensional_type_0: 688 - قضيب نظامي
-        bar_dimensional_type_1: 689 - باقي تقطيع القضيب
-        bar_edge_type_0: 690 - شريط حاشية نظامي
-        bar_edge_type_1: 691 - باقي تقطيع شريط الحاشية
-        sheet_good_type_0: 692 - لوح نظامي
-        sheet_good_type_1: 693 - باقي التقطيع
-        sheet_veneer_type_0: 694 - قشرة خشب قياسية
-        sheet_veneer_type_1: 695 - باقي قشرة الخشب
-        unused: 696 - غير مستعمل
-        parts: 697 - {{ count }} قطعة
-        parts_plural: 698 - {{ count }} قِطع
-        settings: 699 - الإعدادات
+        unplaced_parts: 661 - قِطع غير مُدرجة
+        summary: 662 - ملخص
+        count: 663 - العدد
+        bar: 664 - قضيب خشبي
+        sheet: 665 - لوح
+        length: 666 - الطول
+        width: 667 - العرض
+        total_length: 668 - مجموع الأطوال
+        total_area: 669 - مجموع المساحات
+        total_part_count: 670 - مجموع القطع
+        total_used: 671 - مجموع المُستعمَل
+        trimming: 672 - تقليم
+        stats: 673 - إحصاءات
+        total_cut_count: 674 - عدد القطع
+        total_cut_length: 675 - طول التقطيع
+        overall_efficiency: 676 - المردود الكلّي
+        efficiency: 677 - الفاعلية
+        leftover: 678 - البواقي
+        leftover_to_keep: 679 - باقٍ يحفظ
+        leftover_to_keep_plural: 680 - بواقٍ تحفظ
+        leftover_to_throw_away: 681 - باقٍ يرمى
+        cut: 682 - قطع
+        cut_plural: 683 - قطع
+        cut_trimming: 684 - التَّقليم
+        cut_bounding: 685 - القَطع الابتدائي (المستوى 1)
+        cut_bounding_plural: 686 - التقطيعات الابتدائية (المستوى 1)
+        cut_internal_through: 687 - القَطع الابتدائي (المستوى 2)
+        cut_internal_through_plural: 688 - التقطيعات الابتدائية (المستوى 2)
+        cut_none: 689 - لا شيء
+        bar_dimensional_type_0: 690 - قضيب نظامي
+        bar_dimensional_type_1: 691 - باقي تقطيع القضيب
+        bar_edge_type_0: 692 - شريط حاشية نظامي
+        bar_edge_type_1: 693 - باقي تقطيع شريط الحاشية
+        sheet_good_type_0: 694 - لوح نظامي
+        sheet_good_type_1: 695 - باقي التقطيع
+        sheet_veneer_type_0: 696 - قشرة خشب قياسية
+        sheet_veneer_type_1: 697 - باقي قشرة الخشب
+        unused: 698 - غير مستعمل
+        parts: 699 - {{ count }} قطعة
+        parts_plural: 700 - {{ count }} قِطع
+        settings: 701 - الإعدادات
       write:
-        title: 700 - تصدير مخطط التقطيع
+        title: 702 - تصدير مخطط التقطيع
         info_0: |
-          701 - تسمح لك هذه الوحدة بتصدير **شكل** *رسم التقطيع التخطيطي* في هيئة قائمة من الملفات بتنسيق [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF)
+          703 - تسمح لك هذه الوحدة بتصدير **شكل** *رسم التقطيع التخطيطي* في هيئة قائمة من الملفات بتنسيق [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF)
         option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: 704 -  DXF بُنية
-        option_dxf_structure_1: 705 - الطبقات
-        option_dxf_structure_2: 706 - الطبقات + الكتل
-        option_dxf_structure_help: "707 - DXF يساعد الخيار على تحديد بُنية ملف الـ \n\n- بُنية **الطبقات** تُسطِّح كل الخطوط، و تميز بين أنواع الخطوط المختلفة باستعمال الطبقات فقط. *توفر هذه البُنية توافقا أكبر مع البرامج المُساعِدة* \n- بُنية ** الطبقات + الكتل ** تنشئ كتلة واحدة لكل قِطعة، و تضيف هذه الكتل عدة مرات حسب تكرار القِطع. *توفر هذه البنية مرونة أكبر لتعديل الملف*\n"
+        option_dxf_structure: 706 -  DXF بُنية
+        option_dxf_structure_1: 707 - الطبقات
+        option_dxf_structure_2: 708 - الطبقات + الكتل
+        option_dxf_structure_help: "709 - DXF يساعد الخيار على تحديد بُنية ملف الـ \n\n- بُنية **الطبقات** تُسطِّح كل الخطوط، و تميز بين أنواع الخطوط المختلفة باستعمال الطبقات فقط. *توفر هذه البُنية توافقا أكبر مع البرامج المُساعِدة* \n- بُنية ** الطبقات + الكتل ** تنشئ كتلة واحدة لكل قِطعة، و تضيف هذه الكتل عدة مرات حسب تكرار القِطع. *توفر هذه البنية مرونة أكبر لتعديل الملف*\n"
         option_unit: $t(tab.cutlist.write.option_unit)
         option_unit_help: $t(tab.cutlist.write.option_unit_help)
         option_smoothing: $t(tab.cutlist.write.option_smoothing)
@@ -872,723 +874,740 @@ tab:
         option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
         option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
         option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
-        option_sheet_good: 722 - لوح
+        option_sheet_good: 724 - لوح
         option_sheet_good_help: |
-          723 - يتيح هذا الخيار تصدير اللوح و اختيار ألوانه
-        option_sheet_veneer: 724 - قشرة الخشب
+          725 - يتيح هذا الخيار تصدير اللوح و اختيار ألوانه
+        option_sheet_veneer: 726 - قشرة الخشب
         option_sheet_veneer_help: |
-          725 - يتيح هذا الخيار تصدير ورقة قشر الخشب و اختيار اللون
-        option_bar_dimensional: 726 - قضيب خشبي
+          727 - يتيح هذا الخيار تصدير ورقة قشر الخشب و اختيار اللون
+        option_bar_dimensional: 728 - قضيب خشبي
         option_bar_dimensional_help: |
-          727 - يتيح هذا الخيار تصدير القضيب و اختيار ألوانه
-        option_bar_band: 728 - شريط الحاشية
+          729 - يتيح هذا الخيار تصدير القضيب و اختيار ألوانه
+        option_bar_band: 730 - شريط الحاشية
         option_bar_band_help: |
-          729 - يتيح هذا الخيار تصدير شريط الحاشية و اختيار ألوانه
-        option_parts: 730 - القِطع
+          731 - يتيح هذا الخيار تصدير شريط الحاشية و اختيار ألوانه
+        option_parts: 732 - القِطع
         option_parts_help: |
-          731 - يتيح هذا الخيار تصدير القِطع و اختيار ألوانها
-        option_parts_holes: 732 - التثقيب
+          733 - يتيح هذا الخيار تصدير القِطع و اختيار ألوانها
+        option_parts_holes: 734 - التثقيب
         option_parts_holes_help: |
-          733 - حدد لون التثقيب
+          735 - حدد لون التثقيب
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: 736 - المعرفات
+        option_texts: 738 - المعرفات
         option_texts_help: |
-          737 - يتيح تمكين تصدير النصوص الخاصة بالقِطع واختيار ألوانها
-        option_leftovers: 738 - بواقي التقطيع
+          739 - يتيح تمكين تصدير النصوص الخاصة بالقِطع واختيار ألوانها
+        option_leftovers: 740 - بواقي التقطيع
         option_leftovers_help: |
-          739 - يتيح هذا الخيار تصدير بواقي التقطيع و اختيار ألوانها
-        option_cuts: 740 - قطع
+          741 - يتيح هذا الخيار تصدير بواقي التقطيع و اختيار ألوانها
+        option_cuts: 742 - قطع
         option_cuts_help: |
-          741 - يتيح هذا الخيار تصدير رسومات القَطع واختيار لونها
+          743 - يتيح هذا الخيار تصدير رسومات القَطع واختيار لونها
         warning:
-          is_sheet_selection: 742 - لم تُصدَّر ** الألواح المخفية **
+          is_sheet_selection: 744 - لم تُصدَّر ** الألواح المخفية **
       error:
-        no_bar_dimensional: 743 - لم يكوَّن القضيب النظامي بشكل صحيح و لا بواقيَ للقَطع محددةٌ.
-        no_bar_edge: 744 - لم يكوَّن شريط الحاشية النظامي بشكل صحيح و لا بواقيَ للقَطع محددةٌ.
-        parameters: 745 - المؤشرات غير صحيحة، حجم التقليم يفوق 25% من حجم القضيب أو شريط الحاشية الأكبر
-        no_parts: 746 - لا قطعة.
-        no_sheet: 747 - لم يكوَّن اللوح النظامي بشكل صحيح و لا بواقيَ للقِطع محددةٌ.
-        no_placement_possible_1d: 748 - لا يمكن وضع أي قطعة ( حجم التقليم كبير للغاية، اللوح النظامي صغير للغاية، شفرة المنشار سميكة للغاية، ...).
-        no_placement_possible_2d: 749 - لا يمكن وضع أي قطعة ( حجم التقليم كبير للغاية، اللوح النظامي صغير للغاية، شفرة المنشار سميكة للغاية، ...).
-        bad_error: 750 - خطأ لوغاريتمي، اتصل بالمطورين رجاء، فلديك حالة مهمة.
-        unplaced_parts: 751 - هناك **1 قطعة** لا يمكن أن تُدرج لأنها أكبر من أن تُحتوى.
-        unplaced_parts_plural: 752 - هناك **{{ count }} قطع** لا يمكن أن تدرج لأنها أكبر من أن تُحتوى.
+        no_bar_dimensional: 745 - لم يكوَّن القضيب النظامي بشكل صحيح و لا بواقيَ للقَطع محددةٌ.
+        no_bar_edge: 746 - لم يكوَّن شريط الحاشية النظامي بشكل صحيح و لا بواقيَ للقَطع محددةٌ.
+        parameters: 747 - المؤشرات غير صحيحة، حجم التقليم يفوق 25% من حجم القضيب أو شريط الحاشية الأكبر
+        no_parts: 748 - لا قطعة.
+        no_sheet: 749 - لم يكوَّن اللوح النظامي بشكل صحيح و لا بواقيَ للقِطع محددةٌ.
+        no_placement_possible_1d: 750 - لا يمكن وضع أي قطعة ( حجم التقليم كبير للغاية، اللوح النظامي صغير للغاية، شفرة المنشار سميكة للغاية، ...).
+        no_placement_possible_2d: 751 - لا يمكن وضع أي قطعة ( حجم التقليم كبير للغاية، اللوح النظامي صغير للغاية، شفرة المنشار سميكة للغاية، ...).
+        bad_error: 752 - خطأ لوغاريتمي، اتصل بالمطورين رجاء، فلديك حالة مهمة.
+        unplaced_parts: 753 - هناك **1 قطعة** لا يمكن أن تُدرج لأنها أكبر من أن تُحتوى.
+        unplaced_parts_plural: 754 - هناك **{{ count }} قطع** لا يمكن أن تدرج لأنها أكبر من أن تُحتوى.
       warning:
-        is_part_selection: 753 - رسم التقطيعِ التخطيطيُّ هذا محدود بـ **القطع المحددة**
-        cutting_dimensions: 754 - يستخدم رسم التقطيعِ التخطيطيُّ هذا البعد الـ **أولي** للقطع.
-        cutting_dimensions_increase_1d: 755 - عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طوليا (**{{ length_increase }}**).
-        cutting_dimensions_increase_2d: 756 - عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طولا (**{{ length_increase }}**) و عرضا (**{{ width_increase }}**).
-        cutting_dimensions_edge_decrement: 757 - الأبعاد منقّصة بمقدار سمك الحاشية <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: 755 - رسم التقطيعِ التخطيطيُّ هذا محدود بـ **القطع المحددة**
+        cutting_dimensions: 756 - يستخدم رسم التقطيعِ التخطيطيُّ هذا البعد الـ **أولي** للقطع.
+        cutting_dimensions_increase_1d: 757 - عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طوليا (**{{ length_increase }}**).
+        cutting_dimensions_increase_2d: 758 - عُيّنت الأبعاد بتمديد على الخامة '{{ material_name }}' طولا (**{{ length_increase }}**) و عرضا (**{{ width_increase }}**).
+        cutting_dimensions_edge_decrement: 759 - الأبعاد منقّصة بمقدار سمك الحاشية <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      title: 758 - الملصقات
-      options_layout: 759 - النموذج الطباعي
-      options_settings: 760 - إعداد
-      options_part_order_strategy: 761 - ترتيب
-      options_offset: 762 - إزاحة
-      size: 763 - الحجم الحقيقي للملصق
-      add_element: 764 - أضف عنصرا
+      title: 760 - الملصقات
+      options_layout: 761 - النموذج الطباعي
+      options_settings: 762 - إعداد
+      options_part_order_strategy: 763 - ترتيب
+      options_offset: 764 - إزاحة
+      size: 765 - الحجم الحقيقي للملصق
+      add_element: 766 - أضف عنصرا
       duplicate_element: $t(default.duplicate)
       remove_element: $t(default.remove)
       remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
-        768 - أعد تنظيم الخصائص التالية لتحديد ترتيب الملصقات.
+        770 - أعد تنظيم الخصائص التالية لتحديد ترتيب الملصقات.
         يمكن فرز كل خاصية <i class="ladb-opencutlist-icon-sort-asc"></i>*تصاعديا* أو <i class="ladb-opencutlist-icon-sort-desc"></i>*تنازليا*.
       offset_help: |
-        769 - تتيح لك *الإزاحة* تعيين موضع **الملصق الأول** في **الصفحة الأولى**.
+        771 - تتيح لك *الإزاحة* تعيين موضع **الملصق الأول** في **الصفحة الأولى**.
         حدد المربع الموافق لاختيارك.
-      option_page: 770 - حجم الورق
-      option_page_format: 771 - المقاس
-      option_page_format_portrait: 772 - اتجاه عمودي
-      option_page_format_landscape: 773 - اتجاه أفقي
-      option_page_format_custom: 774 - مخصص
-      option_page_width: 775 - العرض
-      option_page_height: 776 - الارتفاع
-      option_margin: 777 - الهوامش
-      option_margin_top: 778 - فوق
-      option_margin_right: 779 - أيمن
-      option_margin_bottom: 780 - تحت
-      option_margin_left: 781 - أيسر
-      option_spacing: 782 - حجم الفراغ
-      option_spacing_h: 783 - أفقي
-      option_spacing_v: 784 - عمودي
-      option_grid: 785 - ملصقات لكل صفحة
-      option_col_count: 786 - الأعمدة
-      option_row_count: 787 - الأسطر
-      option_cutting_marks: 788 - علامات القَطع
-      option_cutting_marks_0: 789 - لا شيء
-      option_cutting_marks_1: 790 - المطبوعة
-      option_formula: 791 - القيمة
-      option_size: 792 - البعد
-      option_custom_formula: 793 - الصيغة
-      option_anchor: 794 - نقطة الإرساء
-      option_anchor_start: 795 - بداية - سفلي
-      option_anchor_middle: 796 - وسط - سفلي
-      option_anchor_end: 797 - نهاية - سفلي
-      option_anchor_start_top: 798 - بداية - علوي
-      option_anchor_middle_top: 799 - وسط - علوي
-      option_anchor_end_top: 800 - نهاية - علوي
-      option_color: 801 - اللون
+      option_page: 772 - حجم الورق
+      option_page_format: 773 - المقاس
+      option_page_format_portrait: 774 - اتجاه عمودي
+      option_page_format_landscape: 775 - اتجاه أفقي
+      option_page_format_custom: 776 - مخصص
+      option_page_width: 777 - العرض
+      option_page_height: 778 - الارتفاع
+      option_margin: 779 - الهوامش
+      option_margin_top: 780 - فوق
+      option_margin_right: 781 - أيمن
+      option_margin_bottom: 782 - تحت
+      option_margin_left: 783 - أيسر
+      option_spacing: 784 - حجم الفراغ
+      option_spacing_h: 785 - أفقي
+      option_spacing_v: 786 - عمودي
+      option_grid: 787 - ملصقات لكل صفحة
+      option_col_count: 788 - الأعمدة
+      option_row_count: 789 - الأسطر
+      option_cutting_marks: 790 - علامات القَطع
+      option_cutting_marks_0: 791 - لا شيء
+      option_cutting_marks_1: 792 - المطبوعة
+      option_formula: 793 - القيمة
+      option_size: 794 - البعد
+      option_custom_formula: 795 - الصيغة
+      option_anchor: 796 - نقطة الإرساء
+      option_anchor_start: 797 - بداية - سفلي
+      option_anchor_middle: 798 - وسط - سفلي
+      option_anchor_end: 799 - نهاية - سفلي
+      option_anchor_start_top: 800 - بداية - علوي
+      option_anchor_middle_top: 801 - وسط - علوي
+      option_anchor_end_top: 802 - نهاية - علوي
+      option_color: 803 - اللون
       formula:
-        custom: 802 - الصيغة
-        custom_qr_code: 803 - رمز الاستجابة السريعة
-        part_number: 804 - الرقم
-        part_name: 805 - التسمية
-        part_description: 806 - تعليق وصفيّ
-        part_entity_named_path: 807 - مسار المثيل
-        part_entity_name: 808 - اسم المثيل
-        part_bin: 809 - الحاوية
-        part_cutting_size: 810 - الأبعاد الأولية
-        part_cutting_length: 811 - الطول الأولي
-        part_cutting_width: 812 - العرض الأولي
-        part_cutting_thickness: 813 - السُمك - أولي
-        part_edge_cutting_size: 814 - أبعاد الحاشية
-        part_edge_cutting_length: 815 - طول الحواشي - أولي
-        part_edge_cutting_width: 816 - عرض الحواشي - أولي
-        part_size: 817 - البعد النهائي
-        part_length: 818 - الطول
-        part_width: 819 - العرض
-        part_thickness: 820 - السُّمك
-        part_tags: 821 - الوسوم
-        part_batch: 822 - طقم
-        part_edge_ymin: 823 - طول الحاشية 1
-        part_edge_ymax: 824 - طول الحاشية 2
-        part_edge_xmin: 825 - عرض الحاشية 1
-        part_edge_xmax: 826 - عرض الحاشية 2
-        part_face_zmin: 827 - ظهر قشرة الخشب
-        part_face_zmax: 828 - وجه قشرة الخشب
-        thumbnail_proportional_drawing: 829 - صورة مصغّرة
-        thumbnail_proportional: 830 - ملصق متناسب
-        thumbnail_square: 831 - ملصق مربع
-        group_material: 832 - الخامة / السُمك
-        group_material_name: 833 - اسم الخامة
-        group_std_dimension: 834 - الأبعاد النظامية
-        filename: 835 - اسم الملف
-        model_name: 836 - اسم النموذج
-        page_name: 837 - اسم المشهد
-        length_unit: 838 - الوحدة
-        generated_at: 839 - التاريخ و الوقت
+        custom: 804 - الصيغة
+        custom_qr_code: 805 - رمز الاستجابة السريعة
+        part_number: 806 - الرقم
+        part_name: 807 - التسمية
+        part_description: 808 - تعليق وصفيّ
+        part_entity_named_path: 809 - مسار المثيل
+        part_entity_name: 810 - اسم المثيل
+        part_bin: 811 - الحاوية
+        part_cutting_size: 812 - الأبعاد الأولية
+        part_cutting_length: 813 - الطول الأولي
+        part_cutting_width: 814 - العرض الأولي
+        part_cutting_thickness: 815 - السُمك - أولي
+        part_edge_cutting_size: 816 - أبعاد الحاشية
+        part_edge_cutting_length: 817 - طول الحواشي - أولي
+        part_edge_cutting_width: 818 - عرض الحواشي - أولي
+        part_size: 819 - البعد النهائي
+        part_length: 820 - الطول
+        part_width: 821 - العرض
+        part_thickness: 822 - السُّمك
+        part_tags: 823 - الوسوم
+        part_batch: 824 - طقم
+        part_edge_ymin: 825 - طول الحاشية 1
+        part_edge_ymax: 826 - طول الحاشية 2
+        part_edge_xmin: 827 - عرض الحاشية 1
+        part_edge_xmax: 828 - عرض الحاشية 2
+        part_face_zmin: 829 - ظهر قشرة الخشب
+        part_face_zmax: 830 - وجه قشرة الخشب
+        thumbnail_proportional_drawing: 831 - صورة مصغّرة
+        thumbnail_proportional: 832 - ملصق متناسب
+        thumbnail_square: 833 - ملصق مربع
+        group_material: 834 - الخامة / السُمك
+        group_material_name: 835 - اسم الخامة
+        group_std_dimension: 836 - الأبعاد النظامية
+        filename: 837 - اسم الملف
+        model_name: 838 - اسم النموذج
+        page_name: 839 - اسم المشهد
+        length_unit: 840 - الوحدة
+        generated_at: 841 - التاريخ و الوقت
       error:
-        invalid_size: 840 - لا تسمح مُعلِّمات التكوين المُدخلة بتعيين حجم صالح للملصق.
+        invalid_size: 842 - لا تسمح مُعلِّمات التكوين المُدخلة بتعيين حجم صالح للملصق.
       warning:
-        is_group_selection: 841 - لن تكون للقِطع الموجودة في المجموعات المخفية داخل قائمة القِطع ملصقات.
-        is_part_selection: 842 - هذه الملصقات محدودة بـ **القطع المحددة** فحسب
-        formula_not_available: 843 - المعادلة غير متاحة في هذا السياق
+        is_group_selection: 843 - لن تكون للقِطع الموجودة في المجموعات المخفية داخل قائمة القِطع ملصقات.
+        is_part_selection: 844 - هذه الملصقات محدودة بـ **القطع المحددة** فحسب
+        formula_not_available: 845 - المعادلة غير متاحة في هذا السياق
     layout:
-      title: 844 - الرسم
-      to_layout: 845 -  Layout التصدير إلى
-      options_layout: 846 - النموذج الطباعي
-      options_settings: 847 - إعداد
-      option_parts: 848 - القِطع
-      option_parts_colored: 849 - اللون
-      option_parts_colored_0: 850 - بلا لون
-      option_parts_colored_1: 851 - لون الخامة
-      option_parts_colored_help: 852 - حدِّد مظهر القِطع.
-      option_parts_opacity: 853 - معدل الشفافية
-      option_parts_opacity_0: 854 - شفَّاف
-      option_parts_opacity_1: 855 - غير شفَّاف
-      option_parts_opacity_help: 856 - حدد معدل شفافية القِطع.
-      option_pins: 857 - البطاقات
-      option_pins_hidden: 858 - عرض
-      option_pins_hidden_0: 859 - بالبطاقات
-      option_pins_hidden_1: 860 - بلا بطاقات
-      option_pins_hidden_help: 861 - أظهر أو أخف بطاقات القِطَعِ المحتوية على رقمها أو وصفها
-      option_pins_colored: 862 - اللون
-      option_pins_colored_0: 863 - بلا لون
-      option_pins_colored_1: 864 - بلون القِطعة
-      option_pins_colored_help: 865 - حدد لون البطاقات
-      option_pins_formula: 866 - الصيغة
-      option_pins_formula_help: 867 - تتيح لك كتابة كود برمجي بلغة *Ruby* لتخصيص النص داخل البطاقة
-      option_pins_length: 868 - الطول
-      option_pins_length_0: 869 - بلا سهم
-      option_pins_length_1: 870 - قصير
-      option_pins_length_2: 871 - متوسط
-      option_pins_length_3: 872 - كبير
-      option_pins_length_help: 873 - حدد طول سهم البطاقة
-      option_pins_direction: 874 - الاتجاه
-      option_pins_direction_0: 875 - وفقا للمحور الأحمر
-      option_pins_direction_1: 876 - وفقا للمحور الأخضر
-      option_pins_direction_2: 877 - وفقا للمحور الأزرق
-      option_pins_direction_3: 878 - التوجه نحو مركز المجموعة الأم
-      option_pins_direction_4: 879 - التوجه نحو مركز التحديد
-      option_pins_direction_help: 880 - حدد اتجاه أسهم البطاقات لقراءة أفضل
-      option_page: 881 - حجم الورق
-      option_page_format: 882 - المقاس
-      option_page_format_portrait: 883 - اتجاه عمودي
-      option_page_format_landscape: 884 - اتجاه أفقي
-      option_page_format_custom: 885 - مخصص
-      option_page_width: 886 - العرض
-      option_page_height: 887 - الارتفاع
-      option_page_header: 888 - رأس الصفحة
-      option_page_header_0: 889 - غير موجود
-      option_page_header_1: 890 - موجود
+      title: 846 - الرسم
+      to_layout: 847 -  Layout التصدير إلى
+      options_layout: 848 - النموذج الطباعي
+      options_settings: 849 - إعداد
+      option_parts: 850 - القِطع
+      option_parts_colored: 851 - اللون
+      option_parts_colored_0: 852 - بلا لون
+      option_parts_colored_1: 853 - لون الخامة
+      option_parts_colored_help: 854 - حدِّد مظهر القِطع.
+      option_parts_opacity: 855 - معدل الشفافية
+      option_parts_opacity_0: 856 - شفَّاف
+      option_parts_opacity_1: 857 - غير شفَّاف
+      option_parts_opacity_help: 858 - حدد معدل شفافية القِطع.
+      option_pins: 859 - البطاقات
+      option_pins_hidden: 860 - عرض
+      option_pins_hidden_0: 861 - بالبطاقات
+      option_pins_hidden_1: 862 - بلا بطاقات
+      option_pins_hidden_help: 863 - أظهر أو أخف بطاقات القِطَعِ المحتوية على رقمها أو وصفها
+      option_pins_colored: 864 - اللون
+      option_pins_colored_0: 865 - بلا لون
+      option_pins_colored_1: 866 - بلون القِطعة
+      option_pins_colored_help: 867 - حدد لون البطاقات
+      option_pins_formula: 868 - الصيغة
+      option_pins_formula_help: 869 - تتيح لك كتابة كود برمجي بلغة *Ruby* لتخصيص النص داخل البطاقة
+      option_pins_length: 870 - الطول
+      option_pins_length_0: 871 - بلا سهم
+      option_pins_length_1: 872 - قصير
+      option_pins_length_2: 873 - متوسط
+      option_pins_length_3: 874 - كبير
+      option_pins_length_help: 875 - حدد طول سهم البطاقة
+      option_pins_direction: 876 - الاتجاه
+      option_pins_direction_0: 877 - وفقا للمحور الأحمر
+      option_pins_direction_1: 878 - وفقا للمحور الأخضر
+      option_pins_direction_2: 879 - وفقا للمحور الأزرق
+      option_pins_direction_3: 880 - التوجه نحو مركز المجموعة الأم
+      option_pins_direction_4: 881 - التوجه نحو مركز التحديد
+      option_pins_direction_help: 882 - حدد اتجاه أسهم البطاقات لقراءة أفضل
+      option_page: 883 - حجم الورق
+      option_page_format: 884 - المقاس
+      option_page_format_portrait: 885 - اتجاه عمودي
+      option_page_format_landscape: 886 - اتجاه أفقي
+      option_page_format_custom: 887 - مخصص
+      option_page_width: 888 - العرض
+      option_page_height: 889 - الارتفاع
+      option_page_header: 890 - رأس الصفحة
+      option_page_header_0: 891 - غير موجود
+      option_page_header_1: 892 - موجود
       option_page_header_help: |
-        891 - يسمح لك الخيار أن تحتوي الصفحة التي ستُطبع على مساحة بها اسم الملف و وصفه و تاريخه و وحدة الرسم و المقياس
+        893 - يسمح لك الخيار أن تحتوي الصفحة التي ستُطبع على مساحة بها اسم الملف و وصفه و تاريخه و وحدة الرسم و المقياس
         بدون رأس للصفحة، يَشغَل الرسم كامل الصفحة
-      option_camera: 892 - كاميرا
-      option_camera_view: 893 - المنظر
-      option_camera_view_custom: 894 - مخصّص
-      option_camera_zoom: 895 - المقياس
-      option_camera_zoom_auto: 896 - تلقائي
-      option_camera_zoom_custom: 897 - مخصّص
-      option_camera_target: 898 - الموضع
-      option_camera_target_auto: 899 - تلقائي
-      option_camera_target_custom: 900 - مخصّص
-      option_explode: 901 - منظر مُفجَّر
+      option_camera: 894 - كاميرا
+      option_camera_view: 895 - المنظر
+      option_camera_view_custom: 896 - مخصّص
+      option_camera_zoom: 897 - المقياس
+      option_camera_zoom_auto: 898 - تلقائي
+      option_camera_zoom_custom: 899 - مخصّص
+      option_camera_target: 900 - الموضع
+      option_camera_target_auto: 901 - تلقائي
+      option_camera_target_custom: 902 - مخصّص
+      option_explode: 903 - منظر مُفجَّر
       error:
-        no_part: 902 - ليست هناك قطعة لتُرسم.
-        failed_to_save_as_skp: '903 - Layout فشلت كتابة الملف SKP الموجه إلى '
+        no_part: 904 - ليست هناك قطعة لتُرسم.
+        failed_to_save_as_skp: '905 - Layout فشلت كتابة الملف SKP الموجه إلى '
         failed_to_layout: |
-          904 - خطأ أثناء كتابة ملف Layout كالتالي: *{{ error }}*
+          906 - خطأ أثناء كتابة ملف Layout كالتالي: *{{ error }}*
 
           **تأكد أن الملف ليس مفتوحا في Layout**
       warning:
-        is_group_selection: 905 - لن تُرسم القِطَعُ المتضمَّنة في **المجموعات المخفية** داخل قائمة القِطَع.
-        is_part_selection: 906 - معاينة هذا الرسم محدودة بـ **القطع المحددة**
+        is_group_selection: 907 - لن تُرسم القِطَعُ المتضمَّنة في **المجموعات المخفية** داخل قائمة القِطَع.
+        is_part_selection: 908 - معاينة هذا الرسم محدودة بـ **القطع المحددة**
+      message:
+        adding_new_page: |
+          909 - هل تريد إضافة صفحة جديدة؟
+        incompatible_page_format: |
+          910 - الملف الوجهة ليس مُعَدًّا بنفس إعدادات الورقة
+
+          المقروء : {{ old_page_format }}
+          المُصدّر : {{ new_page_format }}
+
+          ستحذف كل الصفحات
+        changing_units: |
+          911 - الملف الوجهة لا يحتوي على نفس الوحدة الافتراضية
+
+          المقروء : {{ old_units }}
+          المُصدّر : {{ new_units }}
+
+          هل تريد استعمال الوحدة الجديدة؟
+        changing_precision: |
+          912 - الملف الوجهة لا يملك نفس الدقة الافتراضية
+
+          المقروء : {{ old_precision }}
+          المُصدّر: {{ new_precision }}
+
+          هل تريد استعمال الدقة الافتراضية؟
     write:
-      title: 907 - تصدير القِطع
+      title: 913 - تصدير القِطع
       info_2d: |
-        908 - تسمح لك هذه الوحدة بتصدير **الإسقاط ثنائي الأبعاد** للقِطع في هيئة ملفات بتنسيق [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF)
+        914 - تسمح لك هذه الوحدة بتصدير **الإسقاط ثنائي الأبعاد** للقِطع في هيئة ملفات بتنسيق [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF)
       info_3d: |
-        909 - تسمح لك هذه الوحدة بتصدير **الشكل ثلاثي الأبعاد** للقِطع في هيئة ملفات بتنسيق [STL](https://wikipedia.org/wiki/STL_(file_format)) أو [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file)
-      option_file_format: 910 - المقاس
+        915 - تسمح لك هذه الوحدة بتصدير **الشكل ثلاثي الأبعاد** للقِطع في هيئة ملفات بتنسيق [STL](https://wikipedia.org/wiki/STL_(file_format)) أو [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file)
+      option_file_format: 916 - المقاس
       option_file_format_help: |
-        911 - حدد صيغة الملف المُصدَّر
-      option_unit: 912 - الوحدة
+        917 - حدد صيغة الملف المُصدَّر
+      option_unit: 918 - الوحدة
       option_unit_help: |
-        913 - حدد الوحدة المستعملة في الملف المُصدَّر
-      option_use_count: 914 - العدد
-      option_use_count_0: 915 - ملف لكل قِطعة
-      option_use_count_1: 916 - ملف لكل مثيل قِطعة
+        919 - حدد الوحدة المستعملة في الملف المُصدَّر
+      option_use_count: 920 - العدد
+      option_use_count_0: 921 - ملف لكل قِطعة
+      option_use_count_1: 922 - ملف لكل مثيل قِطعة
       option_use_count_help: |
-        917 - حدد ما إذا كان يتم أخذ عدد المثيلات لقِطعة معينة في الاعتبار.
-      option_part_drawing_type: 918 - إسقاط
+        923 - حدد ما إذا كان يتم أخذ عدد المثيلات لقِطعة معينة في الاعتبار.
+      option_part_drawing_type: 924 - إسقاط
       option_part_drawing_type_help: |
-        919 - حدد المنظر الذي سيصدَّر
-      option_faces: 920 - الوجوه
-      option_faces_0: 921 - استعمل الوجه المستهدف فقط
-      option_faces_1: 922 - استعمل كل وجوه القِطعة
-      option_faces_help: "923 - يتيح لك اختيار ما إذا كان البحث عن شكل القِطعة يتم على جميع وجوهها أم على الوجه المستهدف فقط \n"
-      option_anchor: 924 - نقطة الارتساء
-      option_anchor_0: 925 - افتراضي
-      option_anchor_1: 926 - صدر مبدأ القِطعة
+        925 - حدد المنظر الذي سيصدَّر
+      option_faces: 926 - الوجوه
+      option_faces_0: 927 - استعمل الوجه المستهدف فقط
+      option_faces_1: 928 - استعمل كل وجوه القِطعة
+      option_faces_help: "929 - يتيح لك اختيار ما إذا كان البحث عن شكل القِطعة يتم على جميع وجوهها أم على الوجه المستهدف فقط \n"
+      option_anchor: 930 - نقطة الارتساء
+      option_anchor_0: 931 - افتراضي
+      option_anchor_1: 932 - صدر مبدأ القِطعة
       option_anchor_help: |
-        927 - يتيح تفعيل إسقاط مبدإ محاور القِطعة كنقطة ارتساء
-      option_switch_yz: 928 - المحور العمودي
-      option_switch_yz_0: 929 - عمودي على Z
-      option_switch_yz_1: 930 - عمودي على Y
+        933 - يتيح تفعيل إسقاط مبدإ محاور القِطعة كنقطة ارتساء
+      option_switch_yz: 934 - المحور العمودي
+      option_switch_yz_0: 935 - عمودي على Z
+      option_switch_yz_1: 936 - عمودي على Y
       option_switch_yz_help: |
-        931 - بدِّل المحورين Y و Z لتحديد محور القطعة العمودي
-      option_smoothing: 932 - تمليس
+        937 - بدِّل المحورين Y و Z لتحديد محور القطعة العمودي
+      option_smoothing: 938 - تمليس
       option_smoothing_0: $t(default.no)
-      option_smoothing_1: 934 - تمليس الدوائر و الأقواس (تجريبي)
+      option_smoothing_1: 940 - تمليس الدوائر و الأقواس (تجريبي)
       option_smoothing_help: |
-        935 - يتيح تفعيل اكتشاف الدوائر والأقواس.
+        941 - يتيح تفعيل اكتشاف الدوائر والأقواس.
 
         *لا يتيح هذا الخيار اكتشاف أنواع أخرى من المنحنيات*
-      option_merge_holes: 936 - نمط الدمج
-      option_merge_holes_0: 937 - افتراضي
-      option_merge_holes_1: 938 - الخط الخارجي + التثقيب + الدمج
+      option_merge_holes: 942 - نمط الدمج
+      option_merge_holes_0: 943 - افتراضي
+      option_merge_holes_1: 944 - الخط الخارجي + التثقيب + الدمج
       option_merge_holes_help: |
-        939 - **افتراضيًا**
+        945 - **افتراضيًا**
         يتم تصدير شكل القِطعة بطبقة واحدة لكل عمق
 
         **الخط الخارجي + التثقيب + الدمج**
         تفعيل فصل الحاشية الخارجية للقِطع عن الثقوب الخاصة بها بالإضافة إلى دمج الأعماق لكل تثقيب
-      option_include_paths: 940 - المسارات
+      option_include_paths: 946 - المسارات
       option_include_paths_0: $t(default.no)
-      option_include_paths_1: 942 - استخدم الحواشي غير المرتبطة بوجه
+      option_include_paths_1: 948 - استخدم الحواشي غير المرتبطة بوجه
       option_include_paths_help: |
-        943 - تسمح الخاصية بتمكين استخدام الحواف غير المرتبطة بوجهٍ والموجودة في القِطعة لتصديرها كمسار
-      option_parts: 944 - القِطع
+        949 - تسمح الخاصية بتمكين استخدام الحواف غير المرتبطة بوجهٍ والموجودة في القِطعة لتصديرها كمسار
+      option_parts: 950 - القِطع
       option_parts_help: |
-        945 - حدد ألوان القِطع
-      option_parts_holes: 946 - التثقيب
+        951 - حدد ألوان القِطع
+      option_parts_holes: 952 - التثقيب
       option_parts_holes_help: |
-        947 - حدد ألوان تثقيب القِطع
-      option_parts_paths: 948 - المسارات
+        953 - حدد ألوان تثقيب القِطع
+      option_parts_paths: 954 - المسارات
       option_parts_paths_help: |
-        949 - تتيح لك هذه الخاصية اختيار ألوان الطباعة
+        955 - تتيح لك هذه الخاصية اختيار ألوان الطباعة
 
         *لن يستعمل لون التعبئة إلا من أجل المسارات المقفلة*
       error:
-        no_part: 950 - لا توجد قِطعة للتصدير
+        no_part: 956 - لا توجد قِطعة للتصدير
       warning:
-        is_group_selection: 951 - لن تصدر القطع المتضمَّنة في **المجموعات المخفية** مع قائمة القطع.
-        is_part_selection: 952 - التصدير مقتصر على **القطع المحددة**
+        is_group_selection: 957 - لن تصدر القطع المتضمَّنة في **المجموعات المخفية** مع قائمة القطع.
+        is_part_selection: 958 - التصدير مقتصر على **القطع المحددة**
     snippet:
-      hello: 953 - مرحبا
-      number: 954 - الرقم
-      name: 955 - التسمية
-      number_and_name: 956 - الرقم و الوصف
-      number_without_hardware: 957 - الرقم (بدون الأكسسوارات)
-      size: 958 - البعد النهائي
-      area: 959 - المساحة
-      volume: 960 - الحجم
+      hello: 959 - مرحبا
+      number: 960 - الرقم
+      name: 961 - التسمية
+      number_and_name: 962 - الرقم و الوصف
+      number_without_hardware: 963 - الرقم (بدون الأكسسوارات)
+      size: 964 - البعد النهائي
+      area: 965 - المساحة
+      volume: 966 - الحجم
     error:
-      no_model: 961 - لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
-      no_entities: 962 - نموذجك فارغ. عليك أن تزودني بمعلومات أكثر ;)
-      no_component_in_selection: 963 - لم يُعثر على أي مثيل لعنصر ظاهر في تحديدك.
-      no_component_in_model: 964 - لم يُعثر على أي مثيل لعنصر ظاهر في مشهدك.
-      unknow_part: 965 - القطعة المحددة غير موجودة في قائمة القطع
-      obsolete_cutlist: 966 - مستحيل، قائمة القطع قديمة. أعد استحداثها.
+      no_model: 967 - لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
+      no_entities: 968 - نموذجك فارغ. عليك أن تزودني بمعلومات أكثر ;)
+      no_component_in_selection: 969 - لم يُعثر على أي مثيل لعنصر ظاهر في تحديدك.
+      no_component_in_model: 970 - لم يُعثر على أي مثيل لعنصر ظاهر في مشهدك.
+      unknow_part: 971 - القطعة المحددة غير موجودة في قائمة القطع
+      obsolete_cutlist: 972 - مستحيل، قائمة القطع قديمة. أعد استحداثها.
     warning:
-      is_entity_selection: 967 - وحدها القطع المحددة في نموذجك من أُخذت بالحسبان.
-      no_typed_materials_in_model: 968 - لا يستعمل نموذجك أي خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_5)**)
-      no_typed_materials_in_selection: 969 - لا تستعمل في تحديدك أي خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_5)**)
-      export_empty: 970 - تصديرك لا يحتوي أي قطعة.
+      is_entity_selection: 973 - وحدها القطع المحددة في نموذجك من أُخذت بالحسبان.
+      no_typed_materials_in_model: 974 - لا يستعمل نموذجك أي خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_5)**)
+      no_typed_materials_in_selection: 975 - لا تستعمل في تحديدك أي خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_5)**)
+      export_empty: 976 - تصديرك لا يحتوي أي قطعة.
     success:
-      part_selected: 971 - {{ count }} قطعة محددة في قائمة القِطع
-      part_selected_plural: 972 - {{ count }} قِطع / قِطعة محددة في قائمة القِطع
+      part_selected: 977 - {{ count }} قطعة محددة في قائمة القِطع
+      part_selected_plural: 978 - {{ count }} قِطع / قِطعة محددة في قائمة القِطع
     tip:
       no_component: |
-        973 - يجب أن تكون القِطع المتضمَّمة في *قائمة القِطع* مثيلات**عنصر**.
+        979 - يجب أن تكون القِطع المتضمَّمة في *قائمة القِطع* مثيلات**عنصر**.
         إن كنت تستعمل المجموعات groups فحسب فعليك تحويلها إلى عناصر components.
         استخدام العناصر لإنتاج القِطع، يتيح إعادة إنتاجها بطريقة مماثلة دون نسخها نسخا مطابقا.
-      no_typed_materials: 974 - طبّق خامة على القِطع التي ستُدرج في قائمة القطع و حدد خصائصها (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_5)**) في التبويب<i class="ladb-opencutlist-icon-materials"></i> **الخامات**
-    obsolete_base: 975 - للبقاء في وضعية مزامنة، ينبغي أن تعيد استحداث قائمة القِطع.
+      no_typed_materials: 980 - طبّق خامة على القِطع التي ستُدرج في قائمة القطع و حدد خصائصها (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_5)**) في التبويب<i class="ladb-opencutlist-icon-materials"></i> **الخامات**
+    obsolete_base: 981 - للبقاء في وضعية مزامنة، ينبغي أن تعيد استحداث قائمة القِطع.
   materials:
-    label: 976 - الخامات
-    title: 977 - الخامات
-    new: 978 - خامة جديدة
-    type_0: 979 - غير محدد
-    type_1: 980 - خشب الجذوع الصلب
-    type_2: 981 - لوح
-    type_3: 982 - قضيب خشبي
-    type_4: 983 - شريط حاشية
-    type_5: 984 - عتاد
-    type_6: 985 - قشرة الخشب
+    label: 982 - الخامات
+    title: 983 - الخامات
+    new: 984 - خامة جديدة
+    type_0: 985 - غير محدد
+    type_1: 986 - خشب الجذوع الصلب
+    type_2: 987 - لوح
+    type_3: 988 - قضيب خشبي
+    type_4: 989 - شريط حاشية
+    type_5: 990 - عتاد
+    type_6: 991 - قشرة الخشب
     tooltip:
-      type_0: 986 - '$t(tab.materials.type_0)' نوع الخامة
-      type_1: 987 - '$t(tab.materials.type_1)' نوع الخامة
-      type_2: 988 - '$t(tab.materials.type_2)' نوع الخامة
-      type_3: 989 - '$t(tab.materials.type_3)' نوع الخامة
-      type_4: 990 - '$t(tab.materials.type_4)' نوع الخامة
-      type_5: 991 - '$t(tab.materials.type_5)' نوع الخامة
-      type_6: 992 - '$t(tab.materials.type_6)' نوع الخامة
+      type_0: 992 - '$t(tab.materials.type_0)' نوع الخامة
+      type_1: 993 - '$t(tab.materials.type_1)' نوع الخامة
+      type_2: 994 - '$t(tab.materials.type_2)' نوع الخامة
+      type_3: 995 - '$t(tab.materials.type_3)' نوع الخامة
+      type_4: 996 - '$t(tab.materials.type_4)' نوع الخامة
+      type_5: 997 - '$t(tab.materials.type_5)' نوع الخامة
+      type_6: 998 - '$t(tab.materials.type_6)' نوع الخامة
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: 995 - اتجاه تعرّق الألياف
-      raw_estimated_0: 996 - تم التثمين استنادا إلى الحجم الفعلي المعمول به
-      colorized: 997 - سيضاف هذا اللون إلى الهيئة السطحية -تكستشر- لهذه الخامة عندما يجري تصييرها -رندرتها- في النموذج
-      texture_load: 998 - حمّل هيئة سطحية - تكستشر جديدة
-      texture_clear: 999 - أزل الهيئة السطحية - التكستشر
-      edit: 1000 - عدل خصائص '{{ name }}'
-      set_current: 1001 - لوّن القِطع باستعمال '{{ name }}'
-      open_url: 1002 - افتح رابط الخامة
+      grain_direction: 1001 - اتجاه تعرّق الألياف
+      raw_estimated_0: 1002 - تم التثمين استنادا إلى الحجم الفعلي المعمول به
+      colorized: 1003 - سيضاف هذا اللون إلى الهيئة السطحية -تكستشر- لهذه الخامة عندما يجري تصييرها -رندرتها- في النموذج
+      texture_load: 1004 - حمّل هيئة سطحية - تكستشر جديدة
+      texture_clear: 1005 - أزل الهيئة السطحية - التكستشر
+      edit: 1006 - عدل خصائص '{{ name }}'
+      set_current: 1007 - لوّن القِطع باستعمال '{{ name }}'
+      open_url: 1008 - افتح رابط الخامة
     menu:
-      import_from_skm: 1003 - استيراد خامة (skm.)
-      purge_unused: 1004 - التخلص من الخامات غير المستعملة
-      reset_prices: 1005 - إعادة تهيئة أسعار كل الخامات
+      import_from_skm: 1009 - استيراد خامة (skm.)
+      purge_unused: 1010 - التخلص من الخامات غير المستعملة
+      reset_prices: 1011 - إعادة تهيئة أسعار كل الخامات
       reset_prices_confirm: |
-        1006 - أنت مقبل على إعادة تهيئة أسعار كل خامات نموذجك.
+        1012 - أنت مقبل على إعادة تهيئة أسعار كل خامات نموذجك.
         هذا الإجراء نهائي.** ستعاد تهيئة كل القطع إلى الصفر.**
         أكّد للمواصلة.
-      reset_prices_success: 1007 - لقد أعيدت تهيئة أسعار كل الخامات.
+      reset_prices_success: 1013 - لقد أعيدت تهيئة أسعار كل الخامات.
     new_material:
-      title: 1008 - إنشاء خامة جديدة
-      name: 1009 - الإسم
-      name_warning: 1010 - الإسم غير صحيح
-      color: 1011 - اللون
-      color_warning: 1012 - اللون غير صحيح
-      type: 1013 - النوع
-    edit_material:
-      title: 1014 - خصائص الخامة '{{ name }}'
-      general: 1015 - عام
-      texture: 1016 - الهيئة السطحية -التكستشر-
-      no_texture: 1017 - لا وجود لهيئة سطحية - تكستشر
-      name: 1018 - الإسم
+      title: 1014 - إنشاء خامة جديدة
+      name: 1015 - الإسم
+      name_warning: 1016 - الإسم غير صحيح
+      color: 1017 - اللون
+      color_warning: 1018 - اللون غير صحيح
       type: 1019 - النوع
-      description: 1020 - تعليق وصفيّ
-      url: 1021 - رابط
-      cut_options: 1022 - خيارات التقطيع
-      estimate_options: 1023 - خصائص التثمين
-      attributes: 1024 - السِّمات
-      thickness: 1025 - السُمك
+    edit_material:
+      title: 1020 - خصائص الخامة '{{ name }}'
+      general: 1021 - عام
+      texture: 1022 - الهيئة السطحية -التكستشر-
+      no_texture: 1023 - لا وجود لهيئة سطحية - تكستشر
+      name: 1024 - الإسم
+      type: 1025 - النوع
+      description: 1026 - تعليق وصفيّ
+      url: 1027 - رابط
+      cut_options: 1028 - خيارات التقطيع
+      estimate_options: 1029 - خصائص التثمين
+      attributes: 1030 - السِّمات
+      thickness: 1031 - السُمك
       thickness_help: |
-        1026 - السمك النهائي للخامة.
+        1032 - السمك النهائي للخامة.
         *إن لم تكن هناك أي وحدة محددة فستؤخذ وحدة النموذج بالحسبان*.
-      length_increase: 1027 - تمديد الطول
-      length_increase_help: 1028 - طُبق تمديد على الطول لتحديد **الطول الأولي**.
-      width_increase: 1029 - تمديد العرض
-      width_increase_help: 1030 - طُبق تمديد على العرض لتحديد **العرض الأولي**.
-      thickness_increase: 1031 - تمديد السُمك
-      thickness_increase_help: 1032 - طُبق تمديد على السُّمك لتحديد **السمك الأولي**.
-      std_lengths: 1033 - الأطوال النظامية
-      std_lengths_placeholder: 1034 - الطول ; ...
+      length_increase: 1033 - تمديد الطول
+      length_increase_help: 1034 - طُبق تمديد على الطول لتحديد **الطول الأولي**.
+      width_increase: 1035 - تمديد العرض
+      width_increase_help: 1036 - طُبق تمديد على العرض لتحديد **العرض الأولي**.
+      thickness_increase: 1037 - تمديد السُمك
+      thickness_increase_help: 1038 - طُبق تمديد على السُّمك لتحديد **السمك الأولي**.
+      std_lengths: 1039 - الأطوال النظامية
+      std_lengths_placeholder: 1040 - الطول ; ...
       std_lengths_help: |
-        1035 - الأطوال النظامية للقضبان أو أشرطة الحواشي.
+        1041 - الأطوال النظامية للقضبان أو أشرطة الحواشي.
         *إن لم تكن هناك أي وحدة محددة فستؤخذ وحدة النموذج بالحسبان*.
-      std_widths: 1036 - العروض النظامية
-      std_widths_placeholder: 1037 - العرض ; ...
+      std_widths: 1042 - العروض النظامية
+      std_widths_placeholder: 1043 - العرض ; ...
       std_widths_help: |
-        1038 - العروض النظامية لأشرطة الحواشي
+        1044 - العروض النظامية لأشرطة الحواشي
         *إن لم تكن هناك أي وحدة محددة فستؤخذ وحدة النموذج بالحسبان*.
-      std_thicknesses: 1039 - السمك النظامي
-      std_thicknesses_placeholder: 1040 - السُّمك ; ...
+      std_thicknesses: 1045 - السمك النظامي
+      std_thicknesses_placeholder: 1046 - السُّمك ; ...
       std_thicknesses_help: |
-        1041 - السمك **الأولي** النظامي.
+        1047 - السمك **الأولي** النظامي.
         *إن لم تكن هناك أي وحدة محددة فستؤخذ وحدة النموذج بالحسبان*.
-      std_sections: 1042 - القطاعات النظامية
-      std_sections_placeholder: 1043 - العرض x السُّمك ; ...
+      std_sections: 1048 - القطاعات النظامية
+      std_sections_placeholder: 1049 - العرض x السُّمك ; ...
       std_sections_help: |
-        1044 - الشكل المتوقع : **ع**x**س**، حيث يشير **ع** إلى *العرض* و **س** إلى *السُّمك*.
+        1050 - الشكل المتوقع : **ع**x**س**، حيث يشير **ع** إلى *العرض* و **س** إلى *السُّمك*.
         *ستؤخذ القياسات التي ليس بها وحدات بوحدة رسم النموذج*.
-      std_sizes: 1045 - أحجام الألواحِ النظاميةُ
-      std_sizes_placeholder: 1046 - الطول x العرض ; ...
+      std_sizes: 1051 - أحجام الألواحِ النظاميةُ
+      std_sizes_placeholder: 1052 - الطول x العرض ; ...
       std_sizes_help: |
-        1047 - الشكل المتوقع : **ط**x**ع**، حيث يشير **ط** إلى *الطول* و **ع** إلى *العرض*.
+        1053 - الشكل المتوقع : **ط**x**ع**، حيث يشير **ط** إلى *الطول* و **ع** إلى *العرض*.
         *ستؤخذ القياسات التي ليس بها وحدات بوحدة رسم النموذج*.
-      grained: 1048 - اتجاه تعرّق الألياف
-      grained_help: 1049 - يضبط اتجاه تعرّق الألياف في الخامة وفقا لطول اللوح.
-      grained_0: 1050 - لا تعرّق للألياف
-      grained_1: 1051 - تعرّق الألياف يتبع الطول
-      edge_decremented: 1052 - إنقاص
-      edge_decremented_help: 1053 - تسمح بتحديد ما إذا كان يجب إنقاص الأبعاد وفقا لسُمك الحاشية.
-      edge_decremented_0: 1054 - لا إنقاص
-      edge_decremented_1: 1055 - إنقاص بقدر سمك الحاشية
-      raw_estimated: 1056 - الحجم المستعمل
+      grained: 1054 - اتجاه تعرّق الألياف
+      grained_help: 1055 - يضبط اتجاه تعرّق الألياف في الخامة وفقا لطول اللوح.
+      grained_0: 1056 - لا تعرّق للألياف
+      grained_1: 1057 - تعرّق الألياف يتبع الطول
+      edge_decremented: 1058 - إنقاص
+      edge_decremented_help: 1059 - تسمح بتحديد ما إذا كان يجب إنقاص الأبعاد وفقا لسُمك الحاشية.
+      edge_decremented_0: 1060 - لا إنقاص
+      edge_decremented_1: 1061 - إنقاص بقدر سمك الحاشية
+      raw_estimated: 1062 - الحجم المستعمل
       raw_estimated_help: |
-        1057 - يتيح الخيار تحديد الحجم المستخدم لتثمين الوزن والتكلفة الإجمالية للقِطع المصنوعة من هذا الخامة
+        1063 - يتيح الخيار تحديد الحجم المستخدم لتثمين الوزن والتكلفة الإجمالية للقِطع المصنوعة من هذا الخامة
 
         **الحجم المعمول به**
         سيكون الحجم الإجمالي مجموعَ الحجوم المعمول بها للقِطع
 
         **حجم المادة الخام اللازمة**
         سيكون الحجم الإجمالي مجموعَ حجوم الألواح، الأوراق، القضبان أو أشرطة الحواشي للقِطع بعد التقطيع
-      raw_estimated_0: 1058 - الحجم المعمول به
-      raw_estimated_1: 1059 - حجم المادة الخام اللازمة
-      std_attributes_dim_placeholder: 1060 - حدد مقاسا
-      std_volumic_masses: 1061 - الكثافة
-      std_volumic_masses_help: 1062 - يتيح لك الخيار تعيين كثافة لجميع الأحجام و أيضًا لكل حجم خامة اعتيادي
-      std_volumic_masses_add: 1063 - أضف كثافةً
-      std_prices: 1064 - السعر
-      std_prices_help: 1065 - تتيح لك تعيين السعر لكل القياسات و أيضا لكل قياس نظامي من الخامة.
-      std_prices_add: 1066 - أضف سعرا
-      texture_width: 1067 - العرض
-      texture_height: 1068 - الارتفاع
-      export_to_skm: 1069 - تصدير (skm.)
+      raw_estimated_0: 1064 - الحجم المعمول به
+      raw_estimated_1: 1065 - حجم المادة الخام اللازمة
+      std_attributes_dim_placeholder: 1066 - حدد مقاسا
+      std_volumic_masses: 1067 - الكثافة
+      std_volumic_masses_help: 1068 - يتيح لك الخيار تعيين كثافة لجميع الأحجام و أيضًا لكل حجم خامة اعتيادي
+      std_volumic_masses_add: 1069 - أضف كثافةً
+      std_prices: 1070 - السعر
+      std_prices_help: 1071 - تتيح لك تعيين السعر لكل القياسات و أيضا لكل قياس نظامي من الخامة.
+      std_prices_add: 1072 - أضف سعرا
+      texture_width: 1073 - العرض
+      texture_height: 1074 - الارتفاع
+      export_to_skm: 1075 - تصدير (skm.)
     texture_load:
-      title: 1070 - حمّل صورة
+      title: 1076 - حمّل صورة
     import_from_skm:
-      title: '1071 - skm. استيراد ملف '
-      ask_replace: "1072 - الخامة \"{{ name }}\" موجودة مسبقا. \nهل ترغب في استبدالها بالخامة التي تستوردها؟\n"
+      title: '1077 - skm. استيراد ملف '
+      ask_replace: "1078 - الخامة \"{{ name }}\" موجودة مسبقا. \nهل ترغب في استبدالها بالخامة التي تستوردها؟\n"
     export_to_skm:
-      title: '1073 - skm. تصدير إلى ملف '
+      title: '1079 - skm. تصدير إلى ملف '
     option:
-      minimize_on_smart_paint: 1074 - التصغير بعد توظيف *'لوّن القِطع باستعمال...'*
-      minimize_on_smart_paint_help: 1075 - إن كانت هذه الخاصية مفعلة فإن نافذة OpenCutList ستُصغّر عند توظيف *'لوّن القِطع باستعمال...'*
-      general: 1076 - عام
-      material_order_strategy: 1077 - فرز الخامات
+      minimize_on_smart_paint: 1080 - التصغير بعد توظيف *'لوّن القِطع باستعمال...'*
+      minimize_on_smart_paint_help: 1081 - إن كانت هذه الخاصية مفعلة فإن نافذة OpenCutList ستُصغّر عند توظيف *'لوّن القِطع باستعمال...'*
+      general: 1082 - عام
+      material_order_strategy: 1083 - فرز الخامات
       material_order_strategy_help: |
-        1078 - أعد تنظيم الخصائص التالية لتحديد ترتيب فرز الخامات في القائمة.
+        1084 - أعد تنظيم الخصائص التالية لتحديد ترتيب فرز الخامات في القائمة.
         يمكن فرز كل خاصية <i class="ladb-opencutlist-icon-sort-asc"></i>*تصاعديا* أو <i class="ladb-opencutlist-icon-sort-desc"></i>*تنازليا*.
-      property_type: 1079 - النوع
-      property_name: 1080 - الإسم
+      property_type: 1085 - النوع
+      property_name: 1086 - الإسم
     delete:
       message: |
-        1081 - أنت على وشك إزالة الخامة **{{ material_name }}** من نموذجك.
+        1087 - أنت على وشك إزالة الخامة **{{ material_name }}** من نموذجك.
         أكّد لتكمل.
     duplicate:
       message: |
-        1082 - حدد اسم الخامة الجديدة، و الذي سينسخ من **{{ material_name }}**.
+        1088 - حدد اسم الخامة الجديدة، و الذي سينسخ من **{{ material_name }}**.
     error:
-      no_model: 1083 - لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
-      no_materials: 1084 - إن نموذجك لا يحتوي على أي خامات.
-      material_not_found: 1085 - لم يُعثر على أي خامة.
-      failed_import_skm_file: 1086 -  أثناء الاستيراد من الملف .skm حدث خطأ. **{{ error }}**.
-      failed_export_skm_file: 1087 -  أثناء التصدير إلى الملف .skm حدث خطأ. **{{ error }}**.
-      failed_deleting_material: 1088 - حدث خطأ أثناء إزالة هذه الخامة. **{{ error }}**
-      failed_duplicating_material: 1089 - وقع خطأ أثناء استنساخ الخامة. **{{ error }}**
-      invalid_image_file: 1090 - الصورة غير صالحة
-    obsolete_base: 1091 - لتبقي على حالة المزامنة، عليك أن تحدث قائمة الخامات.
+      no_model: 1089 - لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
+      no_materials: 1090 - إن نموذجك لا يحتوي على أي خامات.
+      material_not_found: 1091 - لم يُعثر على أي خامة.
+      failed_import_skm_file: 1092 -  أثناء الاستيراد من الملف .skm حدث خطأ. **{{ error }}**.
+      failed_export_skm_file: 1093 -  أثناء التصدير إلى الملف .skm حدث خطأ. **{{ error }}**.
+      failed_deleting_material: 1094 - حدث خطأ أثناء إزالة هذه الخامة. **{{ error }}**
+      failed_duplicating_material: 1095 - وقع خطأ أثناء استنساخ الخامة. **{{ error }}**
+      invalid_image_file: 1096 - الصورة غير صالحة
+    obsolete_base: 1097 - لتبقي على حالة المزامنة، عليك أن تحدث قائمة الخامات.
   outliner:
-    label: 1092 - البُنية
-    title: 1093 - البُنية
-    list: 1094 - شجرة بُنية الوحدات
-    nodes: 1095 - المثيلات
-    toggle_hidden: 1096 - المثيلات المخفية
-    type_0: 1097 - النموذج
-    type_1: 1098 - المجموعة
-    type_2: 1099 - العُنصُر
-    type_3: 1100 - القِطعة
+    label: 1098 - البُنية
+    title: 1099 - البُنية
+    list: 1100 - شجرة بُنية الوحدات
+    nodes: 1101 - المثيلات
+    toggle_hidden: 1102 - المثيلات المخفية
+    type_0: 1103 - النموذج
+    type_1: 1104 - المجموعة
+    type_2: 1105 - العُنصُر
+    type_3: 1106 - القِطعة
     tooltip:
-      open_node_url: 1101 - افتح رابط القِطعة
+      open_node_url: 1107 - افتح رابط القِطعة
     edit_node:
-      title_model: 1102 - خصائص النموذج
-      title_instance: 1103 - خصائص المثيل **{{ name }}**
-      general: 1104 - عام
-      preview: 1105 - معاينة
-      name: 1106 - الإسم
-      instance_name: 1107 - مثيل
-      material: 1108 - الخامة
-      definition_name: 1109 - التعريف
-      description: 1110 - تعليق وصفيّ
-      url: 1111 - رابط
-      tags: 1112 - الوسوم
-      layer_name: 1113 - وسم
-      explode: 1114 - تفجير
-      explode_message: 1115 - هل أنت واثق من رغبتك في تفجير المثيل **"{{ name }}"**؟
+      title_model: 1108 - خصائص النموذج
+      title_instance: 1109 - خصائص المثيل **{{ name }}**
+      general: 1110 - عام
+      preview: 1111 - معاينة
+      name: 1112 - الإسم
+      instance_name: 1113 - مثيل
+      material: 1114 - الخامة
+      definition_name: 1115 - التعريف
+      description: 1116 - تعليق وصفيّ
+      url: 1117 - رابط
+      tags: 1118 - الوسوم
+      layer_name: 1119 - وسم
+      explode: 1120 - تفجير
+      explode_message: 1121 - هل أنت واثق من رغبتك في تفجير المثيل **"{{ name }}"**؟
     error:
-      no_model: 1116 - لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
-      no_entities: 1117 - نموذجك فارغ!
-      node_not_found: 1118 - نقطة التقاطع غير موجودة
-      entity_not_found: 1119 - لم يُعثر على أي مثيل
-      obsolete_outliner: 1120 - غير ممكن، البُنية المولّدة قديمة. أعد استحداثها
+      no_model: 1122 - لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
+      no_entities: 1123 - نموذجك فارغ!
+      node_not_found: 1124 - نقطة التقاطع غير موجودة
+      entity_not_found: 1125 - لم يُعثر على أي مثيل
+      obsolete_outliner: 1126 - غير ممكن، البُنية المولّدة قديمة. أعد استحداثها
     tip:
       no_node: |
-        1121 - لا يحتوي نموذجك على أي مثيل ليتم عرضه هنا
+        1127 - لا يحتوي نموذجك على أي مثيل ليتم عرضه هنا
         المثيل هو **مجموعة** أو **عنصر** داخل المشهد
-    obsolete_base: 1122 - للبقاء في وضعية مزامنة، ينبغي عليك إعادة تحديث البُنية
+    obsolete_base: 1128 - للبقاء في وضعية مزامنة، ينبغي عليك إعادة تحديث البُنية
   importer:
-    label: 1123 - استيراد
-    title: 1124 - استيراد القطع
+    label: 1129 - استيراد
+    title: 1130 - استيراد القطع
     help: |
-      1125 - تسمح لك هذه الصفحة باستيراد قطع (محددة بمربع إحاطة) إلى نموذجك عبر ملف [CSV](https://ar.wikipedia.org/wiki/%D9%82%D9%8A%D9%85_%D9%85%D9%81%D8%B5%D9%88%D9%84%D8%A9_%D8%A8%D9%81%D9%88%D8%A7%D8%B5%D9%84)
+      1131 - تسمح لك هذه الصفحة باستيراد قطع (محددة بمربع إحاطة) إلى نموذجك عبر ملف [CSV](https://ar.wikipedia.org/wiki/%D9%82%D9%8A%D9%85_%D9%85%D9%81%D8%B5%D9%88%D9%84%D8%A9_%D8%A8%D9%81%D9%88%D8%A7%D8%B5%D9%84)
       يمكنك عندها الاستفادة من ميزات *OpenCutList*من أجل القطع التي جرى إنشاؤها ببرنامج آخر غير *SketchUp*.
       اضغط على الزر **فتح ملف CSV** للبدء.
-    open_csv: '1126 - CSV فتح ملف '
-    import_to_model: 1127 - استيراد إلى النموذج
+    open_csv: '1132 - CSV فتح ملف '
+    import_to_model: 1133 - استيراد إلى النموذج
     load:
-      title: '1128 - CSV تحميل ملف '
+      title: '1134 - CSV تحميل ملف '
       info_0: |
-        1129 - اختر الخصائص اللازمة لقراءة الملف:
+        1135 - اختر الخصائص اللازمة لقراءة الملف:
          **{{ filename }}** بشكل صحيح.
       info_1: |
-        1130 - *الوحدة في النموذج هي : **{{ unit }}**.
+        1136 - *الوحدة في النموذج هي : **{{ unit }}**.
         ستستعمل هذه الأخيرة في الأبعاد التي بدون وحدة*.
-      options: 1131 - خيارات التحميل
-      option_col_sep: 1132 - فاصل
-      option_col_sep_tab: 1133 - أداة تنظيم الجداول
-      option_col_sep_comma: 1134 - فاصلة
-      option_col_sep_semicolon: 1135 - فاصة منقوطة
-      option_first_line_headers: 1136 - السطر الأول
-      option_first_line_headers_0: 1137 - البيانات
-      option_first_line_headers_1: 1138 - عناوين العمود
+      options: 1137 - خيارات التحميل
+      option_col_sep: 1138 - فاصل
+      option_col_sep_tab: 1139 - أداة تنظيم الجداول
+      option_col_sep_comma: 1140 - فاصلة
+      option_col_sep_semicolon: 1141 - فاصة منقوطة
+      option_first_line_headers: 1142 - السطر الأول
+      option_first_line_headers_0: 1143 - البيانات
+      option_first_line_headers_1: 1144 - عناوين العمود
     import:
-      title: 1139 - استيراد قطع إلى النموذج
+      title: 1145 - استيراد قطع إلى النموذج
       info_0: |
-        1140 - أنت مقبل على استيراد **{{ count }} قطعة** إلى النموذج.
+        1146 - أنت مقبل على استيراد **{{ count }} قطعة** إلى النموذج.
         ستوضع هذه القطعة في مبدإ المشهد الرئيسي.
       info_0_plural: |
-        1141 - أنت مقبل على استيراد **{{ count }} قِطع / قطعة** إلى النموذج.
+        1147 - أنت مقبل على استيراد **{{ count }} قِطع / قطعة** إلى النموذج.
         ستُرصّ هذه القِطع انطلاقا من مبدإ المشهد الرئيسي.
-      info_1: 1142 - اضغط على **استيراد** لتأكيد الإجراء.
+      info_1: 1148 - اضغط على **استيراد** لتأكيد الإجراء.
       options: |
-        1143 - يحتوى النموذج حاليا على *قِطع* أو *تعريفات* أو *خامات*.
+        1149 - يحتوى النموذج حاليا على *قِطع* أو *تعريفات* أو *خامات*.
         اختر خيارات الاستيراد التي تناسب احتياجاتك.
-      option_remove_all_?: 1144 - ما التالي؟
-      option_remove_all_false: 1145 - إضافة القِطع إلى ما هو موجود
-      option_remove_all_true: 1146 - احذف كل شيء !
-      option_keep_definitions_settings: 1147 - احتفظ بإعدادات التعريفات
-      option_keep_materials_settings: 1148 - احتفظ بإعدادات الخامات
+      option_remove_all_?: 1150 - ما التالي؟
+      option_remove_all_false: 1151 - إضافة القِطع إلى ما هو موجود
+      option_remove_all_true: 1152 - احذف كل شيء !
+      option_keep_definitions_settings: 1153 - احتفظ بإعدادات التعريفات
+      option_keep_materials_settings: 1154 - احتفظ بإعدادات الخامات
     column:
-      unused: 1149 - غير مستعمل
-      mandatory: 1150 - حقول إلزامية
-      optional: 1151 - حقول اختيارية
-      name: 1152 - التسمية
-      count: 1153 - العدد
-      bbox_length: 1154 - الطول
-      bbox_width: 1155 - العرض
-      bbox_thickness: 1156 - السمك
-      material: 1157 - الخامة
-      tags: 1158 - الوسوم
+      unused: 1155 - غير مستعمل
+      mandatory: 1156 - حقول إلزامية
+      optional: 1157 - حقول اختيارية
+      name: 1158 - التسمية
+      count: 1159 - العدد
+      bbox_length: 1160 - الطول
+      bbox_width: 1161 - العرض
+      bbox_thickness: 1162 - السمك
+      material: 1163 - الخامة
+      tags: 1164 - الوسوم
     tooltip:
-      errors: 1159 - لن تُستورد هذه القطعة لأنها تحتوي على الأخطاء التالية
-      warnings: 1160 - ستستورد هذه القطعة و لكنها تحتوي على التحذيرات التالية
+      errors: 1165 - لن تُستورد هذه القطعة لأنها تحتوي على الأخطاء التالية
+      warnings: 1166 - ستستورد هذه القطعة و لكنها تحتوي على التحذيرات التالية
     error:
-      no_model: 1161 - لا نموذجَ مفتوحٌ. يستحيل استيراد قِطع في الفراغ ;)
-      file_not_found: '1162 - الملف غير موجود : **{{ filename }}**'
-      bad_extension: 1163 - الملف *{{ filename }}* لا يحتوي على الامتداد **CSV.** أو **TSV.**.
+      no_model: 1167 - لا نموذجَ مفتوحٌ. يستحيل استيراد قِطع في الفراغ ;)
+      file_not_found: '1168 - الملف غير موجود : **{{ filename }}**'
+      bad_extension: 1169 - الملف *{{ filename }}* لا يحتوي على الامتداد **CSV.** أو **TSV.**.
       failed_to_load_csv_file: |
-        1164 - تعذر تحميل ملف الـ CSV : هناك **{{ error }}**
+        1170 - تعذر تحميل ملف الـ CSV : هناك **{{ error }}**
         *تحقق من اختيارك لفاصل البيانات الصحيح.*
-      empty_file: 1165 - يبدو أن الملف فارغ أو لا يمكن قراءته.
-      no_importable_part: 1166 - لا يمكن استيراد أي قطعة. عيّن الحقول الإلزامية في الأعمدة المقابلة.
-      invalid_name: 1167 - وصف غير صالح
-      invalid_length: 1168 - طول غير صالح
-      invalid_width: 1169 - عرض غير صالح
-      invalid_thickness: 1170 - سُمك غير صالح
-      failed_to_import: 1171 - فشِل الاستيراد.
+      empty_file: 1171 - يبدو أن الملف فارغ أو لا يمكن قراءته.
+      no_importable_part: 1172 - لا يمكن استيراد أي قطعة. عيّن الحقول الإلزامية في الأعمدة المقابلة.
+      invalid_name: 1173 - وصف غير صالح
+      invalid_length: 1174 - طول غير صالح
+      invalid_width: 1175 - عرض غير صالح
+      invalid_thickness: 1176 - سُمك غير صالح
+      failed_to_import: 1177 - فشِل الاستيراد.
     warning:
-      invalid_count: 1172 - عدد غير صالح
-      invalid_material: 1173 - خامة غير صالحة
+      invalid_count: 1178 - عدد غير صالح
+      invalid_material: 1179 - خامة غير صالحة
     success:
-      imported_title: 1174 - تم الاستيراد
-      imported_body: 1175 - {{ count }} قطعة قد استوردت بنجاح!
-      imported_body_plural: 1176 - {{ count }} قِطع / قطعة قد استوردت بنجاح!
-    obsolete_base: '1177 - CSV لتبقى في وضع المزامنة ، يجب عليك إعادة تحميل ملف الـ '
+      imported_title: 1180 - تم الاستيراد
+      imported_body: 1181 - {{ count }} قطعة قد استوردت بنجاح!
+      imported_body_plural: 1182 - {{ count }} قِطع / قطعة قد استوردت بنجاح!
+    obsolete_base: '1183 - CSV لتبقى في وضع المزامنة ، يجب عليك إعادة تحميل ملف الـ '
   tutorials:
-    label: 1178 - شروحات توضيحية
-    title: 1179 - شروحات توضيحية
-    help: "1180 - *OpenCutList* جِد هنا قائمة غير مستفيضة من الفيديوهات المنتجة من قبل المجتمع عن طريقة استخدام \n"
-    submit: 1181 - أرسل فيديو
-    submit_info: "1182 - صممت فيديو يقدم لاستعمال **OpenCutList** و تريده أن يظهر هنا؟\n**opencutlist@lairdubois.fr**! أعلمنا بمراسلتنا عبر \n\n*يجب أن يكون الفيديو على اليوتيوب و أن يكون وضعه عامًّا*.\n"
+    label: 1184 - شروحات توضيحية
+    title: 1185 - شروحات توضيحية
+    help: "1186 - *OpenCutList* جِد هنا قائمة غير مستفيضة من الفيديوهات المنتجة من قبل المجتمع عن طريقة استخدام \n"
+    submit: 1187 - أرسل فيديو
+    submit_info: "1188 - صممت فيديو يقدم لاستعمال **OpenCutList** و تريده أن يظهر هنا؟\n**opencutlist@lairdubois.fr**! أعلمنا بمراسلتنا عبر \n\n*يجب أن يكون الفيديو على اليوتيوب و أن يكون وضعه عامًّا*.\n"
     error:
-      fail_to_load_list: 1183 - تعذر تحميل قائمة الفيديوهات.
+      fail_to_load_list: 1189 - تعذر تحميل قائمة الفيديوهات.
   news:
-    label: 1184 - الأخبار
-    title: 1185 - الأخبار
-    help: "1186 - *OpenCutList* آخر الأخبار عن \n"
-    comment: 1187 - تعليق
+    label: 1190 - الأخبار
+    title: 1191 - الأخبار
+    help: "1192 - *OpenCutList* آخر الأخبار عن \n"
+    comment: 1193 - تعليق
     error:
-      fail_to_load_list: 1188 - تعذر تحميل قائمة الأخبار.
+      fail_to_load_list: 1194 - تعذر تحميل قائمة الأخبار.
   forum:
-    label: 1189 - المنتدى
-    title: 1190 - المنتدى
-    help: "1191 - *OpenCutList* تتيح لك هذه المساحة تبادل الحوار مع مجتمع المستخدمين و فريق \n"
-    create_conversation: 1192 - البدء في محادثة
-    reply: 1193 - الرد
-    tags: 1194 - الوسوم
+    label: 1195 - المنتدى
+    title: 1196 - المنتدى
+    help: "1197 - *OpenCutList* تتيح لك هذه المساحة تبادل الحوار مع مجتمع المستخدمين و فريق \n"
+    create_conversation: 1198 - البدء في محادثة
+    reply: 1199 - الرد
+    tags: 1200 - الوسوم
     redirection: |
-      1195 - ستُحوَّل إلى **Open Collective** المنصة المستضيفة لمنتدى النقاش هذا
+      1201 - ستُحوَّل إلى **Open Collective** المنصة المستضيفة لمنتدى النقاش هذا
       من أجل *البدء في النقاش* أو *الرد* ينبغي عليك تسجيل حساب و الولوج إليه
       *إن الأمر مجاني و لا توجد إلزامات و كل المطلوب هو عنوان بريد إلكتروني.*
 
       طبِّق للمتابعة
     error:
-      fail_to_load_list: 1196 - تعذر تحميل قائمة المحادثات.
+      fail_to_load_list: 1202 - تعذر تحميل قائمة المحادثات.
   sponsor:
-    label: 1197 - رعاية
-    title: 1198 - رعاية
-    description: "1199 - <a href=\"https://opencollective.com/\" target=\"_blank\">Open Collective</a> هو برنامج *مفتوح المصدر* ممول من قبل مستخدمين عبر المنصة **OpenCutList** \n! ادعموا هذا البرنامج عبر مساهمة مالية \n"
-    contribute: 1200 - ساهم
-    backers: 1201 - {{ count }} مساهما بالمال
-    backers_plural: 1202 - {{ count }} مساهمين / مساهما بالمال
-    ad: '1203 - OpenCutList؟ هل يعجبك '
-    objective: 1204 - الهدف
-    objective_slogan: 1205 -  هو نحن كلنا OpenCutList
+    label: 1203 - رعاية
+    title: 1204 - رعاية
+    description: "1205 - <a href=\"https://opencollective.com/\" target=\"_blank\">Open Collective</a> هو برنامج *مفتوح المصدر* ممول من قبل مستخدمين عبر المنصة **OpenCutList** \n! ادعموا هذا البرنامج عبر مساهمة مالية \n"
+    contribute: 1206 - ساهم
+    backers: 1207 - {{ count }} مساهما بالمال
+    backers_plural: 1208 - {{ count }} مساهمين / مساهما بالمال
+    ad: '1209 - OpenCutList؟ هل يعجبك '
+    objective: 1210 - الهدف
+    objective_slogan: 1211 -  هو نحن كلنا OpenCutList
     objective_title:
-      default: 1206 - الأهداف
-      cuttingdiagram_export: 1207 - تمويل تصدير رسومات التقطيعِ التخطيطيةِ
-      outliner: 1208 - تمويل خاصية البنية
-      packing: '1209 - تمويل خاصية مداخلة الأشكال داخل مخطط التقطيع '
+      default: 1212 - الأهداف
+      cuttingdiagram_export: 1213 - تمويل تصدير رسومات التقطيعِ التخطيطيةِ
     objective_details:
       default: |
-        1210 - تحسين *OpenCutList* المستمر مهم لنا، و المشروع بحاجة لمساعدتكم من أجل الإصدار التالي
+        1214 - تحسين *OpenCutList* المستمر مهم لنا، و المشروع بحاجة لمساعدتكم من أجل الإصدار التالي
       cuttingdiagram_export: |
-        1211 - يهمنا أن يمكن تكييف خاصية *رسم التقطيعِ التخطيطيّ* في *OpenCutList* مع توقعات المستعملين المختلفة.
+        1215 - يهمنا أن يمكن تكييف خاصية *رسم التقطيعِ التخطيطيّ* في *OpenCutList* مع توقعات المستعملين المختلفة.
         لتوسيع الاحتمالات بشكل أكبر، نود تمكين تصدير مخططات التقطيع بتنسيق **SVG** و **DXF**.
         من خلال تزويدنا بالموارد للعمل على هذه الصادرات ، فإنك تمنحنا الفرصة لمساعدتك في تحقيق أقصى استفادة من *OpenCutList*.
-      outliner: |
-        1212 - يمكن أن يكون النموذج معقدًا للغاية، و التنقل عبر بُنيته باستخدام لوحة البُنية الأصلية لـ SketchUp ليس دائمًا عمليًا للغاية.
-         في SketchUp، يمكنك تطبيق الخامات و الطبقات على المثيلات و تطبيق اسم و رابط URL و وسم على التعريفات، لكنها لا تظهر في البُنية.
-        سيعرض لك الفيديو كيف نرغب في تحسين ذلك في قائمة البُنية، التي يمكن الوصول إليها مباشرة من OpenCutList.
-      packing: "1213 - يهمنا أن تتكيف *OpenCutList* مع مجموعة واسعة من متطلبات المستخدم لوظيفة *مخطط التقطيع* . \nلتوسيع الإمكانيات بشكل أكبر، نود تنفيذ خوارزمية خاصة **بتداخل الأشكال** لاستغلال أمثل في حالة تقطيع الأشكال الكيفية. \nمن خلال توفير الوسائل للعمل على هذه الوظيفة، فإنك تمنحنا الفرصة لمساعدتك في تحقيق أقصى استفادة من *OpenCutList*.\n"
     objective_crowdfunding: |
-      1214 - سيجري تطوير هذه الوظائف الجديدة عبر **التمويل التشاركي** و ستكون البداية عند بلوغ **الهدف المالي**.
+      1216 - سيجري تطوير هذه الوظائف الجديدة عبر **التمويل التشاركي** و ستكون البداية عند بلوغ **الهدف المالي**.
     objective_thanks: |
-      1215 -  ! شكرا لمساهمتك
-    objective_funded_progress: 1216 - مموَّل بنسبة % {{ progress }}
+      1217 -  ! شكرا لمساهمتك
+    objective_funded_progress: 1218 - مموَّل بنسبة % {{ progress }}
   settings:
-    label: 1217 - التفضيلات
-    title: 1218 - التفضيلات
-    global_settings: 1219 - التفضيلات العامة
-    language: 1220 - اللغة
-    language_auto: 1221 - تلقائي
-    zoom: 1222 - حجم الخط
-    zoom_normal: 1223 - عادي
-    zoom_small: 1224 - قصير
-    zoom_tiny: 1225 - بالغ الصغر
-    print_margin: 1226 - هوامش الطباعة
-    print_margin_normal: 1227 - العادية
-    print_margin_small: 1228 - صغيرة
-    table_row_size: 1229 - حجم صفوف الجدول
-    table_row_size_normal: 1230 - عادي
-    table_row_size_compact: 1231 - مدمج
-    size_and_position: 1232 - حجم و موضع النافذة
-    model_settings: 1233 - تفضيلات النموذج
-    length_unit: 1234 - وحدة الطول
-    length_format: 1235 - الصيغة
-    length_format_0: 1236 - عُشري
-    length_format_1: 1237 - معماري
-    length_format_2: 1238 - هندسي
-    length_format_3: 1239 - كسري
-    length_precision: 1240 - الدقة
-    suppress_units_display: 1241 - اعرض وحدة الطول لكل قيمة
-    mass_unit: 1242 - وحدة الكتلة
-    mass_precision: 1243 - الدقة
-    currency_symbol: 1244 - رمز العملة
-    currency_precision: 1245 - الدقة
+    label: 1219 - التفضيلات
+    title: 1220 - التفضيلات
+    global_settings: 1221 - التفضيلات العامة
+    language: 1222 - اللغة
+    language_auto: 1223 - تلقائي
+    zoom: 1224 - حجم الخط
+    zoom_normal: 1225 - عادي
+    zoom_small: 1226 - قصير
+    zoom_tiny: 1227 - بالغ الصغر
+    print_margin: 1228 - هوامش الطباعة
+    print_margin_normal: 1229 - العادية
+    print_margin_small: 1230 - صغيرة
+    table_row_size: 1231 - حجم صفوف الجدول
+    table_row_size_normal: 1232 - عادي
+    table_row_size_compact: 1233 - مدمج
+    size_and_position: 1234 - حجم و موضع النافذة
+    model_settings: 1235 - تفضيلات النموذج
+    length_unit: 1236 - وحدة الطول
+    length_format: 1237 - الصيغة
+    length_format_0: 1238 - عُشري
+    length_format_1: 1239 - معماري
+    length_format_2: 1240 - هندسي
+    length_format_3: 1241 - كسري
+    length_precision: 1242 - الدقة
+    suppress_units_display: 1243 - اعرض وحدة الطول لكل قيمة
+    mass_unit: 1244 - وحدة الكتلة
+    mass_precision: 1245 - الدقة
+    currency_symbol: 1246 - رمز العملة
+    currency_precision: 1247 - الدقة
     presets:
-      export_global_presets: 1246 - تصدير الإعدادات المسبقة
-      export_global_presets_help: "1247 - **json.** تتيح لك هذه الخاصية تصدير إعداداتك المسبقة إلى ملف بصيغة \nحدد الإعدادات التي تريد تصديرها إليه\n"
-      export_global_presets_success: 1248 - نجح تصدير الإعدادات المسبقة
-      import_global_presets: 1249 - استيراد إعدادات مسبقة
-      import_global_presets_help: "1250 - **json.**حدد الإعدادات المسبقة التي تريد استيرادها من ملف الـ \nرجاء انتبه إلى أن الإعداد الموجود من قبل سيُستبدَلُ بالنسخة المستوردة إن كانا يحملان الاسم ذاته\n"
+      export_global_presets: 1248 - تصدير الإعدادات المسبقة
+      export_global_presets_help: "1249 - **json.** تتيح لك هذه الخاصية تصدير إعداداتك المسبقة إلى ملف بصيغة \nحدد الإعدادات التي تريد تصديرها إليه\n"
+      export_global_presets_success: 1250 - نجح تصدير الإعدادات المسبقة
+      import_global_presets: 1251 - استيراد إعدادات مسبقة
+      import_global_presets_help: "1252 - **json.**حدد الإعدادات المسبقة التي تريد استيرادها من ملف الـ \nرجاء انتبه إلى أن الإعداد الموجود من قبل سيُستبدَلُ بالنسخة المستوردة إن كانا يحملان الاسم ذاته\n"
       import_global_presets_success: |
-        1251 - لقد استوردت إعدادات *OpenCutList* المسبقة بنجاح
+        1253 - لقد استوردت إعدادات *OpenCutList* المسبقة بنجاح
         OpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة
-      dump_global_presets: 1252 - مَكَبّ الإعدادات المسبقة
-      dump_model_presets: 1253 - مَكَبّ إعدادات النموذج المسبقة
-      reset_global_presets: 1254 - إعادة تهيئة الإعدادات المسبقة
+      dump_global_presets: 1254 - مَكَبّ الإعدادات المسبقة
+      dump_model_presets: 1255 - مَكَبّ إعدادات النموذج المسبقة
+      reset_global_presets: 1256 - إعادة تهيئة الإعدادات المسبقة
       reset_global_presets_confirm: |
-        1255 - أنت مقبل على إعادة تعيين كل إعدادات *OpenCutList* المسبقة المحفوظة.
+        1257 - أنت مقبل على إعادة تعيين كل إعدادات *OpenCutList* المسبقة المحفوظة.
         هذا الإجراء نهائي. **ستضيع كل الإعدادات المسبقة.**
         أكّد من أجل المواصلة.
-      reset_global_presets_success: "1256 - لقد أُعيد تعيين إعدادات *OpenCutList* المسبقة\nOpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة \n"
-      reset_model_presets: 1257 - إعادة تهيئة إعدادات النموذج المسبقة
+      reset_global_presets_success: "1258 - لقد أُعيد تعيين إعدادات *OpenCutList* المسبقة\nOpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة \n"
+      reset_model_presets: 1259 - إعادة تهيئة إعدادات النموذج المسبقة
       reset_model_presets_confirm: |
-        1258 - أنت مقبل على إعادة تعيين كل إعدادات *OpenCutList* للنموذج الحالي.
+        1260 - أنت مقبل على إعادة تعيين كل إعدادات *OpenCutList* للنموذج الحالي.
         هذا الإجراء نهائي. **ستعاد كل الإعدادات إلى القيم الافتراضية.**
         أكّد من أجل المواصلة.
-      reset_model_presets_success: "1259 - لقد أُعيد تعيين إعدادات *OpenCutList* للنموذج الحالي\nOpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة \n"
+      reset_model_presets_success: "1261 - لقد أُعيد تعيين إعدادات *OpenCutList* للنموذج الحالي\nOpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة \n"
       error:
-        no_preset_to_export: 1260 - لا إعدادات مسبقة للتصدير
-        no_preset_to_import: 1261 - لا إعدادات مسبقة للاستيراد
-        failed_to_import: '1262 - يستحيل استيراد الإعدادات المسبقة : **{{ error }}**'
-        failed_to_import_invalid_hexdigest: 1263 - لقد عُدِّل على هذا الملف. لا يمكن استيراده.
-        failed_to_import_bad_file_format: 1264 - صيغة الملف غير صالحة
+        no_preset_to_export: 1262 - لا إعدادات مسبقة للتصدير
+        no_preset_to_import: 1263 - لا إعدادات مسبقة للاستيراد
+        failed_to_import: '1264 - يستحيل استيراد الإعدادات المسبقة : **{{ error }}**'
+        failed_to_import_invalid_hexdigest: 1265 - لقد عُدِّل على هذا الملف. لا يمكن استيراده.
+        failed_to_import_bad_file_format: 1266 - صيغة الملف غير صالحة
   about:
-    label: 1265 - حول
-    title: 1266 - حول
-    version: 1267 - النسخة
-    credits: 1268 - الاعتمادات التقنية
+    label: 1267 - حول
+    title: 1268 - حول
+    version: 1269 - النسخة
+    credits: 1270 - الاعتمادات التقنية
     credits_authors: |
-      1269 - *OpenCutList* من تطوير [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) و أيضا [Martin Müller](https://www.lairdubois.fr/@mobilarte). *قائمة بجميع [المساهمين](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
-    credits_translations: 1270 - المترجمون
+      1271 - *OpenCutList* من تطوير [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) و أيضا [Martin Müller](https://www.lairdubois.fr/@mobilarte). *قائمة بجميع [المساهمين](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: 1272 - المترجمون
     credits_translators: |
-      1271 - - عصام سول (*العربية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
+      1273 - - عصام سول (*العربية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*الإنجليزية* و *الألمانية*)
       - Gildas Boureau (*وثائق فرنسية*)
       - Vladimir Badulya (*الروسية*)
@@ -1602,119 +1621,119 @@ tab:
       - Andriy Toporivskyi، Kostyantyn Shcherbey (*الأوكرانية*)
       - [刘涛](https://www.liutao91.cn) (*الصينية المبسطة*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*الهولندية*)
-    credits_description: "1272 - [L'Air du Bois](https://www.lairdubois.fr) تطوير هذه الإضافة مرتبط بمشروع منصة المشاركة \n [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) على [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) هذه الإضافة *مفتوحة المصدر* و متوفرة ضمن\n"
-    credits_runtime: 1273 - وقت التشغيل
-    credits_development: 1274 - تطوير
+    credits_description: "1274 - [L'Air du Bois](https://www.lairdubois.fr) تطوير هذه الإضافة مرتبط بمشروع منصة المشاركة \n [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) على [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) هذه الإضافة *مفتوحة المصدر* و متوفرة ضمن\n"
+    credits_runtime: 1275 - وقت التشغيل
+    credits_development: 1276 - تطوير
     credits_vendors: |
-      1275 - لم تكن المغامرة لتكون ممكنة لولا عمل مصممي العناصر *مفتوحة المصدر* التالية:
+      1277 - لم تكن المغامرة لتكون ممكنة لولا عمل مصممي العناصر *مفتوحة المصدر* التالية:
     credits_thanks: |
-      1276 - شكر خاص لـ:
+      1278 - شكر خاص لـ:
       - [JetBrains](https://www.jetbrains.com) على دعم هذا المشروع عبر [رخصة حرة مجانية مفتوحة المصدر](https://www.jetbrains.com/buy/opensource).
       - [Transifex](https://www.transifex.com) على دعم المشاريع مفتوحة المصدر.
       - [GitBook](https://www.gitbook.com) على دعم المشاريع مفتوحة المصدر .
 tool:
   default:
-    transparency: 1277 - الشفافية
-    zoom_extents: 1278 - نطاقات التكبير و التصغير
-    toggle_depth: 1279 - القِطع في الخلفية
-    more: 1280 - المزيد
-    end_point: 1281 - الحد
-    middle_point: 1282 - المنتصف
-    third_point: 1283 - نقطة في ثلث المسافة
+    transparency: 1279 - الشفافية
+    zoom_extents: 1280 - نطاقات التكبير و التصغير
+    toggle_depth: 1281 - القِطع في الخلفية
+    more: 1282 - المزيد
+    end_point: 1283 - الحد
+    middle_point: 1284 - المنتصف
+    third_point: 1285 - نقطة في ثلث المسافة
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_paint:
-    title: 1286 - لوِّن
-    default_material: 1287 - بلا خامة
-    filters: 1288 - مُرَشِّح
-    filter_0: 1289 - بلا نوع محدد
+    title: 1288 - لوِّن
+    default_material: 1289 - بلا خامة
+    filters: 1290 - مُرَشِّح
+    filter_0: 1291 - بلا نوع محدد
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1296 - لوِّن قِطعًا بأكملها
-    action_0_status: 1297 - انقر على قِطعة معينة لتطبق لونا على مثيلتها
-    action_1: 1298 - صباغة قطعةٍ
-    action_1_status: 1299 - '$t(tab.materials.type_4)' انقر على حاشية لوح معين لتطبيق
-    action_2: 1300 - صباغة الوجوه
-    action_2_status: 1301 - '$t(tab.materials.type_6)' انقر على وجه لوح معين لتطبيق
-    action_3: 1302 - تنقية قطعةٍ
-    action_3_status: 1303 - انقر على وجه معين لأخذ عينة من خامته.
-    action_4: 1304 - نقِّ
-    action_4_status: 1305 - انقر على قطعة معينة لتزيل كل الخامات منها و من مثيلاتها
-    action_option_group_instances: 1306 - عدد المثيلات
-    action_option_group_edges: 1307 - عدد الحواشي
-    action_option_group_faces: 1308 - عدد الوجوه
-    action_option_instances_0_status: 1309 - اصبغ مثيل القِطعة المستهدفة فقط
-    action_option_instances_1_status: 1310 - اصبغ كل مثيلات القِطعة المستهدفة
-    action_option_edges_0_status: 1311 - اصبغ الحاشية المستهدفة فقط
-    action_option_edges_1_status: 1312 - اصبغ في هذه القطعة الحاشية المستهدفة و المقابلة لها
-    action_option_edges_2_status: 1313 - اصبغ حواشي القطعة المستهدفة الأربعة
-    action_option_faces_0_status: 1314 - اصبغ الوجه المستهدف فقط
-    action_option_faces_1_status: 1315 - اصبغ وجهي القِطعة المستهدفة
-    edges: 1316 - حاشية {{ count }}
-    edges_plural: 1317 -  حواشٍ {{ count }}
-    edge_ymin: 1318 - الطول 1
-    edge_ymax: 1319 - الطول 2
-    edge_xmin: 1320 - العرض 1
-    edge_xmax: 1321 - العرض 2
-    faces: 1322 - وجه {{ count }}
-    faces_plural: 1323 - وجوه {{ count }}
-    face_zmin: 1324 - ظهر قشرة الخشب
-    face_zmax: 1325 - أمامي
+    action_0: 1298 - لوِّن قِطعًا بأكملها
+    action_0_status: 1299 - انقر على قِطعة معينة لتطبق لونا على مثيلتها
+    action_1: 1300 - صباغة قطعةٍ
+    action_1_status: 1301 - '$t(tab.materials.type_4)' انقر على حاشية لوح معين لتطبيق
+    action_2: 1302 - صباغة الوجوه
+    action_2_status: 1303 - '$t(tab.materials.type_6)' انقر على وجه لوح معين لتطبيق
+    action_3: 1304 - تنقية قطعةٍ
+    action_3_status: 1305 - انقر على وجه معين لأخذ عينة من خامته.
+    action_4: 1306 - نقِّ
+    action_4_status: 1307 - انقر على قطعة معينة لتزيل كل الخامات منها و من مثيلاتها
+    action_option_group_instances: 1308 - عدد المثيلات
+    action_option_group_edges: 1309 - عدد الحواشي
+    action_option_group_faces: 1310 - عدد الوجوه
+    action_option_instances_0_status: 1311 - اصبغ مثيل القِطعة المستهدفة فقط
+    action_option_instances_1_status: 1312 - اصبغ كل مثيلات القِطعة المستهدفة
+    action_option_edges_0_status: 1313 - اصبغ الحاشية المستهدفة فقط
+    action_option_edges_1_status: 1314 - اصبغ في هذه القطعة الحاشية المستهدفة و المقابلة لها
+    action_option_edges_2_status: 1315 - اصبغ حواشي القطعة المستهدفة الأربعة
+    action_option_faces_0_status: 1316 - اصبغ الوجه المستهدف فقط
+    action_option_faces_1_status: 1317 - اصبغ وجهي القِطعة المستهدفة
+    edges: 1318 - حاشية {{ count }}
+    edges_plural: 1319 -  حواشٍ {{ count }}
+    edge_ymin: 1320 - الطول 1
+    edge_ymax: 1321 - الطول 2
+    edge_xmin: 1322 - العرض 1
+    edge_xmax: 1323 - العرض 2
+    faces: 1324 - وجه {{ count }}
+    faces_plural: 1325 - وجوه {{ count }}
+    face_zmin: 1326 - ظهر قشرة الخشب
+    face_zmax: 1327 - أمامي
     warning:
-      no_material: 1326 - لا توجد خامة
-      no_material_type: 1327 - '{{ type }}' لا توجد خامة من نوع
+      no_material: 1328 - لا توجد خامة
+      no_material_type: 1329 - '{{ type }}' لا توجد خامة من نوع
     error:
-      not_part: 1328 - المجسم المستهدف ليس قِطعة (عنصر)
-      not_edge: 1329 - الوجه المستهدف ليس حاشية لوح
-      not_face: 1330 - الوجه المستهدف ليس وجه لوح
-      wrong_material_type: 1331 - يجب أن تكون القِطعة المستهدفة من النوع '{{ type }}'
+      not_part: 1330 - المجسم المستهدف ليس قِطعة (عنصر)
+      not_edge: 1331 - الوجه المستهدف ليس حاشية لوح
+      not_face: 1332 - الوجه المستهدف ليس وجه لوح
+      wrong_material_type: 1333 - يجب أن تكون القِطعة المستهدفة من النوع '{{ type }}'
   smart_axes:
-    title: 1332 - وجِّه
-    action_0: 1333 - اقلِب
-    action_0_status: 1334 - انقر على قِطعة معينة لتقلب مثيلتها تبعا لأحد أبعادها
-    action_1: 1335 - بادِل الطول ↔ العرض
-    action_1_status: 1336 - انقر على قِطعة معينة لمبادلة طولها بعرضها
-    action_2: 1337 - بادل الأمام ↔ الخلف
-    action_2_status: 1338 - انقر على قِطعة معينة لمبادلة أمامِها بخلفها
-    action_3: 1339 - عدِّل المحاور
-    action_3_status: 1340 - استهدف أحد أوجه قِطعة ما و اضغط على حاشية من حواشيه لتهيئة محاوره
-    action_4: 1341 - حرّك المبدأ
-    action_4_status: 1342 - استهدف أحد أوجه قِطعة ما و اضغط على نقطة لتعيين مبدئه فيها
-    action_option_group_direction: 1343 - الاتجاه
-    action_option_direction_0: 1344 - ط
-    action_option_direction_1: 1345 - ع
-    action_option_direction_2: 1346 - س
-    action_option_direction_0_status: 1347 - أدر القِطعة تبعا للطول
-    action_option_direction_1_status: 1348 - أدر القِطعة تبعا للعرض
-    action_option_direction_2_status: 1349 - أدر القِطعة تبعا لسمكها
+    title: 1334 - وجِّه
+    action_0: 1335 - اقلِب
+    action_0_status: 1336 - انقر على قِطعة معينة لتقلب مثيلتها تبعا لأحد أبعادها
+    action_1: 1337 - بادِل الطول ↔ العرض
+    action_1_status: 1338 - انقر على قِطعة معينة لمبادلة طولها بعرضها
+    action_2: 1339 - بادل الأمام ↔ الخلف
+    action_2_status: 1340 - انقر على قِطعة معينة لمبادلة أمامِها بخلفها
+    action_3: 1341 - عدِّل المحاور
+    action_3_status: 1342 - استهدف أحد أوجه قِطعة ما و اضغط على حاشية من حواشيه لتهيئة محاوره
+    action_4: 1343 - حرّك المبدأ
+    action_4_status: 1344 - استهدف أحد أوجه قِطعة ما و اضغط على نقطة لتعيين مبدئه فيها
+    action_option_group_direction: 1345 - الاتجاه
+    action_option_direction_0: 1346 - ط
+    action_option_direction_1: 1347 - ع
+    action_option_direction_2: 1348 - س
+    action_option_direction_0_status: 1349 - أدر القِطعة تبعا للطول
+    action_option_direction_1_status: 1350 - أدر القِطعة تبعا للعرض
+    action_option_direction_2_status: 1351 - أدر القِطعة تبعا لسمكها
     warning:
-      more_entities: 1350 - {{ count_used }} مثيلات تشترك في التعريف ذاته ستُعدّل
+      more_entities: 1352 - {{ count_used }} مثيلات تشترك في التعريف ذاته ستُعدّل
     error:
-      not_part: 1351 - المجسم المستهدف ليس قِطعة (عنصر)
-      not_orientable: 1352 - نوع هذه القِطعة لا يسمح بتوجيهها
+      not_part: 1353 - المجسم المستهدف ليس قِطعة (عنصر)
+      not_orientable: 1354 - نوع هذه القِطعة لا يسمح بتوجيهها
   smart_export:
-    title: 1353 - تصدير
-    action_0: 1354 - صدّر قِطعة ثلاثية البعد
-    action_0_status: 1355 - انقر على قِطعة
-    action_1: 1356 - صدّر قطعة ثنائية البعد
-    action_1_status: 1357 - انقر على وجهِ قطعةٍ
-    action_2: 1358 - صدّر وجهًا
-    action_2_status: 1359 - انقر على وجهٍ
-    action_3: 1360 - صدّر مسارًا
-    action_3_status: 1361 - انقر على حاشية
-    action_option_group_file_format: 1362 - الصيغة
-    action_option_group_unit: 1363 - الوحدة
-    action_option_group_faces: 1364 - الوجوه
-    action_option_group_options: 1365 - الخيارات
-    action_option_file_format_dxf_status: 1366 -  DXF تصدير إلى ملف
-    action_option_file_format_stl_status: '1367 - STL تصدير إلى ملف '
-    action_option_file_format_obj_status: '1368 - OBJ تصدير إلى ملف '
-    action_option_file_format_svg_status: '1369 - SVG تصدير إلى ملف '
+    title: 1355 - تصدير
+    action_0: 1356 - صدّر قِطعة ثلاثية البعد
+    action_0_status: 1357 - انقر على قِطعة
+    action_1: 1358 - صدّر قطعة ثنائية البعد
+    action_1_status: 1359 - انقر على وجهِ قطعةٍ
+    action_2: 1360 - صدّر وجهًا
+    action_2_status: 1361 - انقر على وجهٍ
+    action_3: 1362 - صدّر مسارًا
+    action_3_status: 1363 - انقر على حاشية
+    action_option_group_file_format: 1364 - الصيغة
+    action_option_group_unit: 1365 - الوحدة
+    action_option_group_faces: 1366 - الوجوه
+    action_option_group_options: 1367 - الخيارات
+    action_option_file_format_dxf_status: 1368 -  DXF تصدير إلى ملف
+    action_option_file_format_stl_status: '1369 - STL تصدير إلى ملف '
+    action_option_file_format_obj_status: '1370 - OBJ تصدير إلى ملف '
+    action_option_file_format_svg_status: '1371 - SVG تصدير إلى ملف '
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -1724,9 +1743,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1379 - اعزل الثقوب النافذة و ادمج العمق لكل تثقيب
-    action_option_options_include_paths_status: '1380 - تصدير الحواشي الموجودة في القِطعة و غير المرتبطة بوجه '
+    action_option_options_merge_holes_status: 1381 - اعزل الثقوب النافذة و ادمج العمق لكل تثقيب
+    action_option_options_include_paths_status: '1382 - تصدير الحواشي الموجودة في القِطعة و غير المرتبطة بوجه '
     error:
-      not_part: 1381 - هذا الوجه لا ينتمي إلى قِطعة (عنصر)
-      not_flat_face: 1382 - هذا الوجه ليس مُسطَّحا
-      incompatible_active_path: 1383 - المسار النشط لا يسمح بتصدير هذا القطعة
+      not_part: 1383 - هذا الوجه لا ينتمي إلى قِطعة (عنصر)
+      not_flat_face: 1384 - هذا الوجه ليس مُسطَّحا
+      incompatible_active_path: 1385 - المسار النشط لا يسمح بتصدير هذا القطعة
