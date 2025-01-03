@@ -7,6 +7,6 @@ Set(FETCHCONTENT_QUIET FALSE)
 FetchContent_Declare(
         packingsolver
         GIT_REPOSITORY https://github.com/lairdubois/fontanf-packingsolver.git
-        GIT_TAG ddefec9fc8fb5f1c8a9bd649ff6db0581575363e
+        GIT_TAG ac336aaf87f59fe33fc750e318d816d2e5ec0b6a
         EXCLUDE_FROM_ALL)
 FetchContent_MakeAvailable(packingsolver)
