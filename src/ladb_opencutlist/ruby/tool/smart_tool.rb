@@ -371,9 +371,9 @@ module Ladb::OpenCutList
       # -- MINITOOL
 
       @minitool_panel = Kuix::Panel.new
-      @minitool_panel.layout_data = Kuix::StaticLayoutData.new(1.0, 0.5, -1, -1, Kuix::Anchor.new(Kuix::Anchor::RIGHT))
+      @minitool_panel.layout_data = Kuix::StaticLayoutData.new(0.0, 0.5, -1, -1, Kuix::Anchor.new(Kuix::Anchor::LEFT))
       @minitool_panel.layout = Kuix::GridLayout.new(1, 2, 0, unit)
-      @minitool_panel.margin.right = unit * 2
+      @minitool_panel.margin.left = unit * 2
       @canvas.append(@minitool_panel)
 
         setup_minitools_btns(view)
