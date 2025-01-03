@@ -14,7 +14,8 @@ module Ladb::OpenCutList
       @drawing_def = CommonDrawingDecompositionWorker.new(path,
          face_for_part: false,
          ignore_surfaces: true,
-         ignore_edges: true
+         ignore_edges: true,
+         ignore_clines: false
       ).run
       if @drawing_def
 
@@ -22,25 +23,40 @@ module Ladb::OpenCutList
 
         # 3D
 
-        preview = Kuix::Group.new
-        preview.transformation = @drawing_def.transformation
-        @space.append(preview)
+        k_group = Kuix::Group.new
+        k_group.transformation = @drawing_def.transformation
+        @space.append(k_group)
 
-          # Highlight faces
-          mesh = Kuix::Mesh.new
-          mesh.add_triangles(@drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
-          mesh.background_color = ColorUtils.color_translucent(color, 80)
-          preview.append(mesh)
+          if @drawing_def.face_manipulators.any?
+
+            # Highlight faces
+            k_mesh = Kuix::Mesh.new
+            k_mesh.add_triangles(@drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
+            k_mesh.background_color = ColorUtils.color_translucent(color, 80)
+            k_group.append(k_mesh)
+
+          end
+
+          if @drawing_def.cline_manipulators.any?
+
+            # Highlight clines
+            k_segments = Kuix::Segments.new
+            k_segments.add_segments(@drawing_def.cline_manipulators.flat_map { |cline_manipulator| cline_manipulator.segment })
+            k_segments.color = ColorUtils.color_translucent(color)
+            k_segments.line_width = 2
+            k_group.append(k_segments)
+
+          end
 
           # Box helper
-          box = Kuix::BoxMotif.new
-          box.bounds.origin.copy!(@drawing_def.faces_bounds.min)
-          box.bounds.size.copy!(@drawing_def.faces_bounds)
-          box.color = color
-          box.line_width = 1
-          box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          box.on_top = true
-          preview.append(box)
+          k_box = Kuix::BoxMotif.new
+          k_box.bounds.origin.copy!(@drawing_def.bounds.min)
+          k_box.bounds.size.copy!(@drawing_def.bounds)
+          k_box.color = color
+          k_box.line_width = 1
+          k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_box.on_top = true
+          k_group.append(k_box)
 
         # 2D
 
@@ -87,18 +103,18 @@ module Ladb::OpenCutList
             end
           end
 
-          box = Kuix::Panel.new
-          box.layout_data = Kuix::StaticLayoutData.new(px, py, -1, -1, Kuix::Anchor.new(anchor_position))
-          box.layout = Kuix::GridLayout.new
-          box.padding.set!(unit, unit, unit * 0.7, unit)
-          box.set_style_attribute(:background_color, color)
-          @canvas.append(box)
+          k_box = Kuix::Panel.new
+          k_box.layout_data = Kuix::StaticLayoutData.new(px, py, -1, -1, Kuix::Anchor.new(anchor_position))
+          k_box.layout = Kuix::GridLayout.new
+          k_box.padding.set!(unit, unit, unit * 0.7, unit)
+          k_box.set_style_attribute(:background_color, color)
+          @canvas.append(k_box)
 
             lbl = Kuix::Label.new(text)
             lbl.text_size = unit * 3 * get_text_unit_factor
             lbl.text_align = TextAlignLeft
             lbl.set_style_attribute(:color, ColorUtils.color_is_dark?(color) ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK)
-            box.append(lbl)
+            k_box.append(lbl)
 
         end
 
@@ -107,6 +123,7 @@ module Ladb::OpenCutList
     end
 
     def getExtents
+      return nil if @drawing_def.nil? || !@drawing_def.faces_bounds.valid?
       bounds = Geom::BoundingBox.new
       bounds.add(@drawing_def.faces_bounds.min.transform(@drawing_def.transformation))
       bounds.add(@drawing_def.faces_bounds.max.transform(@drawing_def.transformation))

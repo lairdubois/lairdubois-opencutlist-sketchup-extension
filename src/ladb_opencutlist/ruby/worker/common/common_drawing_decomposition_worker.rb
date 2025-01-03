@@ -17,7 +17,8 @@ module Ladb::OpenCutList
     ORIGIN_POSITION_DEFAULT = 0 # = Drawing Element Origin
     ORIGIN_POSITION_FACES_BOUNDS_MIN = 1
     ORIGIN_POSITION_EDGES_BOUNDS_MIN = 2
-    ORIGIN_POSITION_BOUNDS_MIN = 3
+    ORIGIN_POSITION_CLINES_BOUNDS_MIN = 3
+    ORIGIN_POSITION_BOUNDS_MIN = 4
 
     FACE_VALIDATOR_ALL = 0
     FACE_VALIDATOR_ONE = 1
@@ -285,11 +286,15 @@ module Ladb::OpenCutList
       # STEP 3 : Compute bounds
 
       drawing_def.bounds.clear
+      drawing_def.faces_bounds.clear
+      drawing_def.edges_bounds.clear
+      drawing_def.clines_bounds.clear
+
       unless @ignore_faces
         drawing_def.face_manipulators.each do |face_manipulator|
           drawing_def.faces_bounds.add(face_manipulator.outer_loop_points)
         end
-        drawing_def.bounds.add(drawing_def.faces_bounds.min, drawing_def.faces_bounds.max)
+        drawing_def.bounds.add(drawing_def.faces_bounds.min, drawing_def.faces_bounds.max) if drawing_def.faces_bounds.valid?
       end
       unless @ignore_edges
         drawing_def.edge_manipulators.each do |edge_manipulator|
@@ -298,13 +303,13 @@ module Ladb::OpenCutList
         drawing_def.curve_manipulators.each do |curve_manipulator|
           drawing_def.edges_bounds.add(curve_manipulator.points)
         end
-        drawing_def.bounds.add(drawing_def.edges_bounds.min, drawing_def.edges_bounds.max)
+        drawing_def.bounds.add(drawing_def.edges_bounds.min, drawing_def.edges_bounds.max) if drawing_def.edges_bounds.valid?
       end
       unless @ignore_clines
         drawing_def.cline_manipulators.each do |cline_manipulator|
           drawing_def.clines_bounds.add(cline_manipulator.points) unless cline_manipulator.infinite?
         end
-        drawing_def.bounds.add(drawing_def.clines_bounds.min, drawing_def.clines_bounds.max)
+        drawing_def.bounds.add(drawing_def.clines_bounds.min, drawing_def.clines_bounds.max) if drawing_def.clines_bounds.valid?
       end
 
       # STEP 4 : Customize origin
@@ -312,9 +317,11 @@ module Ladb::OpenCutList
       if @origin_position != ORIGIN_POSITION_DEFAULT
         case @origin_position
         when ORIGIN_POSITION_FACES_BOUNDS_MIN
-          drawing_def.translate_to!(drawing_def.faces_bounds.min)
+          drawing_def.translate_to!(drawing_def.faces_bounds.min) if drawing_def.faces_bounds.valid?
         when ORIGIN_POSITION_EDGES_BOUNDS_MIN
-          drawing_def.translate_to!(drawing_def.edges_bounds.min)
+          drawing_def.translate_to!(drawing_def.edges_bounds.min) if drawing_def.edges_bounds.valid?
+        when ORIGIN_POSITION_CLINES_BOUNDS_MIN
+          drawing_def.translate_to!(drawing_def.edges_bounds.min) if drawing_def.clines_bounds.valid?
         when ORIGIN_POSITION_BOUNDS_MIN
           drawing_def.translate_to!(drawing_def.bounds.min)
         end
