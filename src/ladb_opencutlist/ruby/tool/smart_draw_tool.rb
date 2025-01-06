@@ -751,7 +751,7 @@ module Ladb::OpenCutList
       t = _get_transformation(@picked_shape_first_point)
       ti = t.inverse
 
-      shape_points = _fetch_option_shape_offset > 0 ? _get_local_shape_points_with_offset : _get_local_shape_points
+      shape_points = _fetch_option_shape_offset > 0 ? _get_local_shapes_points_with_offset.flatten(1) : _get_local_shape_points
 
       bounds = Geom::BoundingBox.new
       bounds.add(shape_points.map { |point| point.transform(t) })
@@ -1326,18 +1326,21 @@ module Ladb::OpenCutList
 
       end
 
-      o_shape_points = _get_local_shape_points_with_offset
-      o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
+      _get_local_shapes_points_with_offset.each do |o_shape_points|
 
-      k_segments = Kuix::Segments.new
-      k_segments.add_segments(_points_to_segments(o_shape_points))
-      k_segments.add_segments(_points_to_segments(o_top_shape_points))
-      k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
-      k_segments.line_width = _fetch_option_construction ? 1 : 1.5
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
-      k_segments.color = _get_normal_color
-      k_segments.transformation = t
-      @tool.append_3d(k_segments)
+        o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(_points_to_segments(o_shape_points))
+        k_segments.add_segments(_points_to_segments(o_top_shape_points))
+        k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
+        k_segments.line_width = _fetch_option_construction ? 1 : 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
+        k_segments.color = _get_normal_color
+        k_segments.transformation = t
+        @tool.append_3d(k_segments)
+
+      end
 
       Sketchup.set_status_text(bounds.depth, SB_VCB_VALUE)
 
@@ -1771,7 +1774,7 @@ module Ladb::OpenCutList
     # -----
 
     def _valid_shape?
-      true
+      _get_local_shapes_points_with_offset.any?
     end
 
     def _valid_solid?
@@ -1784,14 +1787,14 @@ module Ladb::OpenCutList
       []
     end
 
-    def _get_local_shape_points_with_offset(shape_offset = nil)
+    def _get_local_shapes_points_with_offset(shape_offset = nil)
       []
     end
 
     # -----
 
-    def _create_face(definition, p1, p2)
-      definition.entities.add_face(_get_local_shape_points_with_offset)
+    def _create_faces(definition, p1, p2)
+      _get_local_shapes_points_with_offset.map { |shape_points| definition.entities.add_face(shape_points) }
     end
 
     def _create_entity
@@ -1823,22 +1826,27 @@ module Ladb::OpenCutList
 
           # Flat drawing, just add to group
 
-          face = _create_face(group.definition, p1, p2)
-          face.reverse! unless face.normal.samedirection?(Z_AXIS)
+          faces = _create_faces(group.definition, p1, p2)
+          faces.each do |face|
+            face.reverse! unless face.normal.samedirection?(Z_AXIS)
+          end
 
         else
 
           # Construction
 
-          o_shape_points = _get_local_shape_points_with_offset
-          _points_to_segments(o_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
+          _get_local_shapes_points_with_offset.each do |o_shape_points|
 
-          if bounds.depth > 0
+            _points_to_segments(o_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
 
-            o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
+            if bounds.depth > 0
 
-            _points_to_segments(o_top_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
-            o_shape_points.zip(o_top_shape_points).each { |segment| group.entities.add_cline(*segment) }
+              o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
+
+              _points_to_segments(o_top_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
+              o_shape_points.zip(o_top_shape_points).each { |segment| group.entities.add_cline(*segment) }
+
+            end
 
           end
 
@@ -1852,16 +1860,19 @@ module Ladb::OpenCutList
 
         definition = model.definitions.add('Part')
 
-        face = _create_face(definition, p1, p2)
+        faces = _create_faces(definition, p1, p2)
+        faces.each do |face|
 
-        if bounds.depth > 0
+          if bounds.depth > 0
 
-          face.reverse! if face.normal.samedirection?(Z_AXIS)
-          face.pushpull(bounds.depth * (p3.z < p1.z ? 1 : -1))
+            face.reverse! if face.normal.samedirection?(Z_AXIS)
+            face.pushpull(bounds.depth * (p3.z < p1.z ? 1 : -1))
 
-        else
+          else
 
-          face.reverse! unless face.normal.samedirection?(Z_AXIS)
+            face.reverse! unless face.normal.samedirection?(Z_AXIS)
+
+          end
 
         end
 
@@ -2418,15 +2429,19 @@ module Ladb::OpenCutList
 
       end
 
-      o_segments = _points_to_segments(_get_local_shape_points_with_offset)
+      _get_local_shapes_points_with_offset.each do |o_shape_points|
 
-      k_segments = Kuix::Segments.new
-      k_segments.add_segments(o_segments)
-      k_segments.line_width = @locked_normal ? 3 : _fetch_option_construction ? 1 : 1.5
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
-      k_segments.color = _get_normal_color
-      k_segments.transformation = t
-      @tool.append_3d(k_segments)
+        o_segments = _points_to_segments(o_shape_points)
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(o_segments)
+        k_segments.line_width = @locked_normal ? 3 : _fetch_option_construction ? 1 : 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
+        k_segments.color = _get_normal_color
+        k_segments.transformation = t
+        @tool.append_3d(k_segments)
+
+      end
 
       Sketchup.set_status_text("#{bounds.width}#{Sketchup::RegionalSettings.list_separator} #{bounds.height}", SB_VCB_VALUE)
 
@@ -2651,7 +2666,7 @@ module Ladb::OpenCutList
       ]
     end
 
-    def _get_local_shape_points_with_offset(shape_offset = nil)
+    def _get_local_shapes_points_with_offset(shape_offset = nil)
       shape_offset = _fetch_option_shape_offset if shape_offset.nil?
 
       bounds = Geom::BoundingBox.new
@@ -2663,12 +2678,12 @@ module Ladb::OpenCutList
       o_bounds = Geom::BoundingBox.new
       o_bounds.add(o_min, o_max)
 
-      [
+      [[
         o_bounds.corner(0),
         o_bounds.corner(1),
         o_bounds.corner(3),
         o_bounds.corner(2)
-      ]
+      ]]
     end
 
   end
@@ -2829,15 +2844,19 @@ module Ladb::OpenCutList
 
       end
 
-      o_segments = _points_to_segments(_get_local_shape_points_with_offset)
+      _get_local_shapes_points_with_offset.each do |o_shape_points|
 
-      k_segments = Kuix::Segments.new
-      k_segments.add_segments(o_segments)
-      k_segments.line_width = @locked_normal ? 3 : _fetch_option_construction ? 1 : 1.5
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
-      k_segments.color = _get_normal_color
-      k_segments.transformation = t
-      @tool.append_3d(k_segments)
+        o_segments = _points_to_segments(o_shape_points)
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(o_segments)
+        k_segments.line_width = @locked_normal ? 3 : _fetch_option_construction ? 1 : 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
+        k_segments.color = _get_normal_color
+        k_segments.transformation = t
+        @tool.append_3d(k_segments)
+
+      end
 
       Sketchup.set_status_text("#{measure}", SB_VCB_VALUE)
 
@@ -2962,10 +2981,10 @@ module Ladb::OpenCutList
     # -----
 
     def _get_local_shape_points
-      _get_local_shape_points_with_offset(0)
+      _get_local_shapes_points_with_offset(0).first
     end
 
-    def _get_local_shape_points_with_offset(shape_offset = nil)
+    def _get_local_shapes_points_with_offset(shape_offset = nil)
       shape_offset = _fetch_option_shape_offset if shape_offset.nil?
 
       t = _get_transformation(@picked_shape_first_point)
@@ -2981,15 +3000,15 @@ module Ladb::OpenCutList
       start_angle *= -1 if p2.y < 0
       circle_def = Geometrix::CircleDef.new(p1, p1.distance(p2) + shape_offset)
 
-      Array.new(segment_count) { |i| Geometrix::CircleFinder.circle_point_at_angle(circle_def, start_angle + i * unit_angle) }
+      [ Array.new(segment_count) { |i| Geometrix::CircleFinder.circle_point_at_angle(circle_def, start_angle + i * unit_angle) } ]
     end
 
     # -----
 
-    def _create_face(definition, p1, p2)
+    def _create_faces(definition, p1, p2)
       edge = definition.entities.add_circle(p1, Z_AXIS, p1.distance(p2) + _fetch_option_shape_offset, _fetch_option_segment_count).first
       edge.find_faces
-      edge.faces.first
+      edge.faces
     end
 
     def _get_auto_orient_transformation(definition, transformation = IDENTITY)
@@ -3623,15 +3642,19 @@ module Ladb::OpenCutList
 
       end
 
-      o_segments = _points_to_segments(_get_local_shape_points_with_offset)
+      _get_local_shapes_points_with_offset.each do |o_shape_points|
 
-      k_segments = Kuix::Segments.new
-      k_segments.add_segments(o_segments)
-      k_segments.line_width = @locked_normal ? 3 : _fetch_option_construction ? 1 : 1.5
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
-      k_segments.color = _get_normal_color
-      k_segments.transformation = t
-      @tool.append_3d(k_segments)
+        o_segments = _points_to_segments(o_shape_points)
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(o_segments)
+        k_segments.line_width = @locked_normal ? 3 : _fetch_option_construction ? 1 : 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
+        k_segments.color = _get_normal_color
+        k_segments.transformation = t
+        @tool.append_3d(k_segments)
+
+      end
 
       if @picked_points.length >= 1
 
@@ -3731,25 +3754,23 @@ module Ladb::OpenCutList
         end
 
       else
-        points = (@picked_points + [@mouse_snap_point ]).map { |point| point.transform(ti) }
+        points = (@picked_points + [ @mouse_snap_point ]).map { |point| point.transform(ti) }
       end
 
       points
     end
 
-    def _get_local_shape_points_with_offset(shape_offset = nil)
+    def _get_local_shapes_points_with_offset(shape_offset = nil)
       shape_offset = _fetch_option_shape_offset if shape_offset.nil?
       points = _get_local_shape_points
-      return points if shape_offset == 0 || points.length < 3
+      return [ points ] if shape_offset == 0 || points.length < 3
       paths, _ = Fiddle::Clippy.execute_union( closed_subjects: [ Fiddle::Clippy.points_to_rpath(points) ] )
-      o_paths = Fiddle::Clippy.inflate_paths(
+      Fiddle::Clippy.inflate_paths(
         paths: paths,
         delta: shape_offset,
         join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
         miter_limit: 100.0
-      )
-      return Fiddle::Clippy.rpath_to_points(o_paths.first, points[0].z) if o_paths.any?
-      []
+      ).map { |o_path| Fiddle::Clippy.rpath_to_points(o_path, points[0].z) }
     end
 
   end
