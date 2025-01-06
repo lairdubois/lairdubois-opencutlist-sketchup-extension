@@ -264,8 +264,12 @@ module Ladb::OpenCutList
           end
         else
           begin
-            length = text.to_l
-            length *= -1 if base_length < 0
+            if text.empty? && !base_length.nil?
+              length = base_length
+            else
+              length = text.to_l
+              length *= -1 if base_length < 0
+            end
           rescue ArgumentError
             UI.beep
             @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => text } ] ])
