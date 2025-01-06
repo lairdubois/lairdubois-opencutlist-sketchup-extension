@@ -37,6 +37,7 @@ default:
   unselect_all: Rien sélectionner
   draw: Dessiner
   estimate: Estimer
+  rename: Renommer
   yes: Oui
   no: Non
   empty_filename: Sans titre.skp
@@ -1880,6 +1881,8 @@ tool:
       invalid_divider: "Le diviseur {{ value }} est invalide"
       invalid_offset: "Le décalage {{ value }} est invalide"
       invalid_segment_count: "Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999."
+    success:
+      part_created: "Nouvelle pièce créée : {{ name }}"
   smart_paint:
     title: Colorier
     default_material: Sans matière

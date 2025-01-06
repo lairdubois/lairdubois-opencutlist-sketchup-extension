@@ -313,6 +313,7 @@ module Ladb::OpenCutList
     STATE_MOVE_COPY = 4
 
     @@last_pushpull_measure = 0
+    @@last_part_name = PLUGIN.get_i18n_string('default.part_single').capitalize
 
     attr_reader :picked_shape_first_point, :picked_shape_last_point, :picked_pushpull_point, :picked_move_point, :normal, :direction
 
@@ -1858,7 +1859,7 @@ module Ladb::OpenCutList
 
         # Solid drawing create a component definition + instance
 
-        definition = model.definitions.add('Part')
+        definition = model.definitions.add(@@last_part_name)
 
         faces = _create_faces(definition, p1, p2)
         faces.each do |face|
@@ -1890,12 +1891,35 @@ module Ladb::OpenCutList
 
         instance = model.active_entities.add_instance(definition, t)
 
+        # Notify part created and propose renaming
+        @tool.notify_success(
+          PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => definition.name }),
+          [
+            {
+              :label => PLUGIN.get_i18n_string('default.rename'),
+              :block => lambda {
+                if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ definition.name ], PLUGIN.get_i18n_string('default.rename')))
+                  name = data.first
+                  if name.empty?
+                    UI.beep
+                  else
+                    definition.name = name
+                    @@last_part_name = name
+                  end
+                end
+              },
+            }
+          ]
+        )
+
       end
 
       model.commit_operation
 
+      # Keep definition
       @definition = instance.definition
 
+      # Compute DrawingDef
       @drawing_def = CommonDrawingDecompositionWorker.new((model.active_path.nil? ? [] : model.active_path) + [ instance ],
         ignore_surfaces: true,
         ignore_faces: true,

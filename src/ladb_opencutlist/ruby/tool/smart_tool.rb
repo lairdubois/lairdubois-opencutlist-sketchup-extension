@@ -842,7 +842,7 @@ module Ladb::OpenCutList
     end
 
     def notify_success(text, button_defs = [])
-      notify('✔ ' + text, MESSAGE_TYPE_SUCCESS, button_defs)
+      notify('✔ ' + text.to_s, MESSAGE_TYPE_SUCCESS, button_defs)
     end
 
     def notify_errors(errors) # errors = [ [ I18N_PATH_KEY, { :VAR1 => value1, :VAR2 => value2, ... } ], ... ]
