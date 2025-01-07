@@ -37,6 +37,7 @@ default:
   unselect_all: Unselect all
   draw: Draw
   estimate: Estimate
+  rename: Rename
   yes: Yes
   no: No
   empty_filename: Untitled.skp
@@ -1880,6 +1881,8 @@ tool:
       invalid_divider: "Divisor {{ value }} is invalid"
       invalid_offset: "Offset {{ value }} is invalid"
       invalid_segment_count: "The number of segments {{ value }} is invalid. It must be between 3 and 999."
+    success:
+      part_created: "New part created: {{ name }}"
   smart_paint:
     title: Paint
     default_material: No material defined

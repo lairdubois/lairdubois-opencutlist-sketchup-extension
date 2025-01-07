@@ -37,6 +37,7 @@ default:
   unselect_all: Nichts auswählen
   draw: Zeichnen
   estimate: Schätzen
+  rename: Umbenennen
   yes: Ja
   no: Nein
   empty_filename: Unbenannt.skp
@@ -1880,6 +1881,8 @@ tool:
       invalid_divider: "Der Teiler {{ value }} ist ungültig"
       invalid_offset: "Die Verschiebung {{ value }} ist ungültig"
       invalid_segment_count: "Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein."
+    success:
+      part_created: "Neu erstelltes Teil: {{ name }}"
   smart_paint:
     title: Malen
     default_material: Kein Material definiert
