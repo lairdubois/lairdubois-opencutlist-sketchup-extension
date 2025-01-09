@@ -23,7 +23,9 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy!(anchor)
-      set!(anchor.position)
+      if anchor.is_a?(self.class)
+        set!(anchor.position)
+      end
     end
 
     # -- Properties --

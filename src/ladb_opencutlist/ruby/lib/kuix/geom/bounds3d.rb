@@ -29,8 +29,13 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy!(bounds)
-      @origin.copy!(bounds.origin)
-      @size.copy!(bounds.size)
+      if bounds.is_a?(Geom::BoundingBox)
+        @origin.copy!(bounds.min)
+        @size.copy!(bounds)
+      elsif bounds.is_a?(self.class)
+        @origin.copy!(bounds.origin)
+        @size.copy!(bounds.size)
+      end
     end
 
     # -- Properties --

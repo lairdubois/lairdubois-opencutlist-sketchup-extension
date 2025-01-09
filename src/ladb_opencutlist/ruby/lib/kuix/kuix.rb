@@ -245,7 +245,7 @@ module Ladb::OpenCutList
       end
 
       def getExtents
-        Sketchup.active_model.bounds
+        nil
       end
 
       # -- Keys --
