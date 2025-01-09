@@ -494,13 +494,14 @@ module Ladb::OpenCutList
       k_btn
     end
 
-    def append_2d(entity, layer = 0, target_3d = nil)
+    def append_2d(entity, layer = 0)
       raise "layer can't be nil" if layer.nil?
       k_layer = @layers_2d[layer]
       if k_layer.nil?
         k_layer = @layers_2d[layer] = Kuix::Panel.new
-        k_layer.layout_data = Kuix::StaticLayoutData.new
+        k_layer.layout_data = Kuix::StaticLayoutData.new(0, 0, 1.0, 1.0)
         k_layer.layout = Kuix::StaticLayout.new
+        k_layer.hittable = false
         @canvas.append(k_layer)
       end
       k_layer.append(entity)
@@ -594,28 +595,28 @@ module Ladb::OpenCutList
         text_color = Kuix::COLOR_BLACK
       end
 
-      box = Kuix::Panel.new
-      box.layout_data = Kuix::StaticLayoutData.new(0, 0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::TOP_LEFT))
-      box.layout = Kuix::InlineLayout.new(false, unit)
-      box.border.set_all!(unit / 4)
-      box.padding.set_all!(unit * 1.5)
-      box.hittable = false
-      box.set_style_attribute(:background_color, background_color)
-      box.set_style_attribute(:border_color, border_color)
+      k_box = Kuix::Panel.new
+      k_box.layout_data = Kuix::StaticLayoutData.new(0, 0, -1, -1, Kuix::Anchor.new(Kuix::Anchor::TOP_LEFT))
+      k_box.layout = Kuix::InlineLayout.new(false, unit)
+      k_box.border.set_all!(unit / 4)
+      k_box.padding.set_all!(unit * 1.5)
+      k_box.hittable = false
+      k_box.set_style_attribute(:background_color, background_color)
+      k_box.set_style_attribute(:border_color, border_color)
 
         fn_create_lbl = lambda do |item|
 
           is_title = item.start_with?('#')
           item = item[1..-1] if is_title
 
-          lbl = Kuix::Label.new
-          lbl.text = item
-          lbl.text_bold = true if is_title
-          lbl.text_size = unit * (is_title || items.one? ? 3 : 2.5) * get_text_unit_factor
-          lbl.text_align = TextAlignLeft
-          lbl.set_style_attribute(:color, text_color)
+          k_lbl = Kuix::Label.new
+          k_lbl.text = item
+          k_lbl.text_bold = true if is_title
+          k_lbl.text_size = unit * (is_title || items.one? ? 3 : 2.5) * get_text_unit_factor
+          k_lbl.text_align = TextAlignLeft
+          k_lbl.set_style_attribute(:color, text_color)
 
-          return lbl
+          return k_lbl
         end
 
         items = [ items ] if items.is_a?(String)
@@ -626,55 +627,55 @@ module Ladb::OpenCutList
 
             if item == '-'
 
-              sep = Kuix::Panel.new
-              sep.border.top = unit / 4
-              sep.set_style_attribute(:border_color, text_color)
+              k_sep = Kuix::Panel.new
+              k_sep.border.top = unit / 4
+              k_sep.set_style_attribute(:border_color, text_color)
 
-              box.append(sep)
+              k_box.append(k_sep)
 
               next
             end
 
-            box.append(fn_create_lbl.call(item))
+            k_box.append(fn_create_lbl.call(item))
 
           elsif item.is_a?(Array)
 
-            panel = Kuix::Panel.new
-            panel.layout = Kuix::InlineLayout.new(true, @unit * 1.5)
+            k_panel = Kuix::Panel.new
+            k_panel.layout = Kuix::InlineLayout.new(true, @unit * 1.5)
 
             item.each do |sub_item|
 
               if sub_item.is_a?(String)
-                panel.append(fn_create_lbl.call(sub_item))
+                k_panel.append(fn_create_lbl.call(sub_item))
               elsif sub_item.is_a?(Kuix::Motif2d)
                 sub_item.padding.set_all!(@unit)
                 sub_item.min_size.set_all!(@unit * get_text_unit_factor * 3)
                 sub_item.line_width = @unit <= 4 ? 0.5 : 1
                 sub_item.set_style_attribute(:background_color, text_color)
                 sub_item.set_style_attribute(:color, Kuix::COLOR_WHITE)
-                panel.append(sub_item)
+                k_panel.append(sub_item)
               end
 
             end
 
-            box.append(panel)
+            k_box.append(k_panel)
 
           elsif item.is_a?(Kuix::Entity2d)
 
             item.min_size.set_all!(@unit * get_text_unit_factor * 4)
             item.set_style_attribute(:color, text_color)
 
-            box.append(item)
+            k_box.append(item)
 
           end
 
         end
 
-      @tooltip_box = box
+      @tooltip_box = k_box
 
       move_tooltip(@last_mouse_x, @last_mouse_y)
 
-      @canvas.append(box)
+      @canvas.append(k_box)
 
     end
 
@@ -1578,9 +1579,10 @@ module Ladb::OpenCutList
 
   class SmartActionHandler
 
-    def initialize(action, tool)
+    def initialize(action, tool, action_handler = nil)
       @action = action
       @tool = tool
+      @previous_action_handler = action_handler
 
       @picker = nil
 
@@ -1616,7 +1618,7 @@ module Ladb::OpenCutList
     # -----
 
     def onResume(view)
-      set_state(fetch_state)
+      true
     end
 
     def onKeyUp(key, repeat, flags, view)
@@ -1720,6 +1722,7 @@ module Ladb::OpenCutList
       k_label.border.set_all!(unit * 0.25)
       k_label.padding.set!(unit * 0.5, unit * 0.5, unit * 0.3, unit * 0.5)
       k_label.text_size = unit * 2.5
+      k_label.hittable = false
 
       k_label
     end
@@ -1814,8 +1817,7 @@ module Ladb::OpenCutList
 
           # Box helper
           k_box = Kuix::BoxMotif.new
-          k_box.bounds.origin.copy!(bounds.min)
-          k_box.bounds.size.copy!(bounds)
+          k_box.bounds.copy!(bounds)
           k_box.color = Kuix::COLOR_BLACK
           k_box.line_width = 1
           k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES

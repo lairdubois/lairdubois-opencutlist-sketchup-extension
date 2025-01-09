@@ -359,8 +359,7 @@ module Ladb::OpenCutList
 
             # Box helper
             k_box = Kuix::BoxMotif.new
-            k_box.bounds.origin.copy!(bounds.min)
-            k_box.bounds.size.copy!(bounds)
+            k_box.bounds.copy!(bounds)
             k_box.bounds.size.width += increases[0] / part.def.scale.x
             k_box.bounds.size.height += increases[1] / part.def.scale.y
             k_box.bounds.size.depth += increases[2] / part.def.scale.z
@@ -499,8 +498,7 @@ module Ladb::OpenCutList
 
           # Bounding box helper
           k_box = Kuix::BoxMotif.new
-          k_box.bounds.origin.copy!(instance_info.definition_bounds.min)
-          k_box.bounds.size.copy!(instance_info.definition_bounds)
+          k_box.bounds.copy!(instance_info.definition_bounds)
           k_box.bounds.size.width += increases[0] / part.def.scale.x
           k_box.bounds.size.height += increases[1] / part.def.scale.y
           k_box.bounds.size.depth += increases[2] / part.def.scale.z

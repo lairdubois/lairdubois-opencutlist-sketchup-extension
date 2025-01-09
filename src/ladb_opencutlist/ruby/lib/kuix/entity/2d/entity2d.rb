@@ -58,7 +58,7 @@ module Ladb::OpenCutList::Kuix
     def get_prefered_size(prefered_width)
       size = Size2d.new
       if @layout
-        @layout.measure_prefered_size(self, prefered_width, size)
+        @layout.measure_preferred_size(self, prefered_width, size)
       else
         insets = self.insets
         size.set!(
@@ -199,8 +199,8 @@ module Ladb::OpenCutList::Kuix
         @bounds.size.height - @margin.top - @margin.bottom
       )
       if self.visible? && hit_bounds.inside?(x, y)
-        if @child
-          widget = @child.hit_widget(
+        if @last_child
+          widget = @last_child.hit_widget(
             x - hit_bounds.origin.x - @border.left - @padding.left,
             y - hit_bounds.origin.y - @border.top - @padding.top
           )
@@ -208,8 +208,9 @@ module Ladb::OpenCutList::Kuix
         if hittable?
           widget = self unless widget
         end
-      elsif @next
-        widget = @next.hit_widget(x, y)
+      end
+      if widget.nil? && @previous
+        widget = @previous.hit_widget(x, y)
       end
       widget
     end

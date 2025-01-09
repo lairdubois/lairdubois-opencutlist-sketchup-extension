@@ -9,6 +9,7 @@ module Ladb::OpenCutList
   require_relative '../manipulator/plane_manipulator'
   require_relative '../manipulator/cline_manipulator'
   require_relative '../helper/entities_helper'
+  require_relative '../helper/user_text_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
 
   class SmartDrawTool < SmartTool
@@ -16,9 +17,6 @@ module Ladb::OpenCutList
     ACTION_DRAW_RECTANGLE = 0
     ACTION_DRAW_CIRCLE = 1
     ACTION_DRAW_POLYGON = 2
-    ACTION_COPY_MOVE = 3
-    ACTION_COPY_ARRAY = 4
-    ACTION_COPY_ALONG = 5
 
     ACTION_OPTION_TOOLS = 'tools'
     ACTION_OPTION_OFFSET = 'offset'
@@ -43,37 +41,28 @@ module Ladb::OpenCutList
       {
         :action => ACTION_DRAW_RECTANGLE,
         :options => {
-          ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
+          # ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED ], #, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
       },
       {
         :action => ACTION_DRAW_CIRCLE,
         :options => {
-          ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
+          # ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_SEGMENTS => [ ACTION_OPTION_SEGMENTS_SEGMENT_COUNT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_BOX_CENTRED ], #, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
       },
       {
         :action => ACTION_DRAW_POLYGON,
         :options => {
-          ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
+          # ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_BOX_CENTRED, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_BOX_CENTRED ], #, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
         }
-      },
-      # {
-      #   :action => ACTION_COPY_MOVE,
-      # },
-      # {
-      #   :action => ACTION_COPY_ARRAY,
-      # },
-      # {
-      #   :action => ACTION_COPY_ALONG,
-      # }
+      }
     ].freeze
 
     # -----
@@ -113,8 +102,6 @@ module Ladb::OpenCutList
           return @cursor_pencil_circle
       when ACTION_DRAW_POLYGON
           return @cursor_pencil_polygon
-      when ACTION_COPY_MOVE, ACTION_COPY_ARRAY, ACTION_COPY_ALONG
-          return @cursor_move_copy
       end
 
       super
@@ -213,12 +200,6 @@ module Ladb::OpenCutList
         set_action_handler(SmartDrawCircleActionHandler.new(self))
       when ACTION_DRAW_POLYGON
         set_action_handler(SmartDrawPolygonActionHandler.new(self))
-      when ACTION_COPY_MOVE
-        set_action_handler(SmartCopyMoveActionHandler.new(self))
-      when ACTION_COPY_ARRAY
-        set_action_handler(SmartCopyArrayActionHandler.new(self))
-      when ACTION_COPY_ALONG
-        set_action_handler(SmartCopyAlongActionHandler.new(self))
       end
 
       super
@@ -238,93 +219,7 @@ module Ladb::OpenCutList
 
   class SmartDrawActionHandler < SmartActionHandler
 
-    def initialize(action, tool, action_handler = nil)
-      super(action, tool)
-
-      @previous_action_handler = action_handler
-
-    end
-
-    # -- UTILS --
-
-    def _read_user_text_length(text, base_length = 0)
-      length = base_length
-
-      if text.is_a?(String)
-        if (match = /^([x*\/])([-]{0,1})(\d+(?:[.,]\d+)*$)/.match(text))
-          operator, sign, value = match[1, 3]
-          factor = value.sub(',', '.').to_f
-          factor *= -1 if sign == '-'
-          if factor != 0 && base_length != 0
-            case operator
-            when 'x', '*'
-              length = base_length * factor
-            when '/'
-              length = base_length / factor
-            end
-          else
-            UI.beep
-            @tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
-            return nil
-          end
-        elsif (match = /^([+-])(.+)$/.match(text))
-          operator, value = match[1, 2]
-          begin
-            length = value.to_l
-            length *= -1 if base_length < 0
-            case operator
-            when '+'
-              length = base_length + length
-            when '-'
-              length = base_length - length
-            end
-          rescue ArgumentError
-            UI.beep
-            @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => value } ] ])
-            return nil
-          end
-        else
-          begin
-            if text.empty? && !base_length.nil?
-              length = base_length
-            else
-              length = text.to_l
-              length *= -1 if base_length < 0
-            end
-          rescue ArgumentError
-            UI.beep
-            @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => text } ] ])
-            return nil
-          end
-        end
-      end
-
-      length
-    end
-
-    # Split text with regional list separator.
-    # Allows '=' char to duplicate current value.
-    # Examples :
-    #  50       → [ 50 ]
-    #  ,50      → [ nil, 50 ]
-    #  50=,-12  → [ 50, 50, -12 ]
-    #  50==     → [ 50, 50, 50 ]
-    def _split_user_text(text)
-      values = text.split(Sketchup::RegionalSettings.list_separator)
-      values.map { |value|
-        if (match = value.match(/^([^=]+)(=+)$/))
-          v, equals = match[1, 2]
-          Array.new(equals.length + 1) { v }
-        else
-          value
-        end
-      }.flatten(1)
-    end
-
-  end
-
-  class SmartDrawShapeActionHandler < SmartDrawActionHandler
-
+    include UserTextHelper
     include EntitiesHelper
 
     STATE_SHAPE_FIRST_POINT = 0
@@ -333,15 +228,15 @@ module Ladb::OpenCutList
     STATE_MOVE = 3
     STATE_MOVE_COPY = 4
 
+    LAYER_2D_DIMENSIONS = 0
+    LAYER_2D_FLOATING_TOOLS = 1
+
     @@last_pushpull_measure = 0
-    @@last_part_name = nil # Initialized after
 
     attr_reader :picked_shape_first_point, :picked_shape_last_point, :picked_pushpull_point, :picked_move_point, :normal, :direction
 
     def initialize(action, tool, action_handler = nil)
       super
-
-      @@last_part_name = PLUGIN.get_i18n_string('default.part_single').capitalize if @@last_part_name.nil?
 
       @mouse_ip = SmartInputPoint.new(@tool)
 
@@ -459,8 +354,8 @@ module Ladb::OpenCutList
       # puts "best_picked = #{view.pick_helper(x, y).best_picked}"
       # puts "---"
 
+      @tool.remove_2d(LAYER_2D_DIMENSIONS)
       @tool.remove_all_3d
-      @tool.remove_all_2d
 
       if _picked_pushpull_point?
         _snap_move_point(flags, x, y, view)
@@ -498,7 +393,7 @@ module Ladb::OpenCutList
     end
 
     def onMouseLeave(view)
-      @tool.remove_all_2d
+      @tool.remove_2d(LAYER_2D_DIMENSIONS)
       @tool.remove_all_3d
       @mouse_ip.clear
       view.tooltip = ''
@@ -758,6 +653,11 @@ module Ladb::OpenCutList
       end
 
       false
+    end
+
+    def onStateChanged(state)
+      super
+      _remove_floating_tools
     end
 
     def draw(view)
@@ -1385,14 +1285,14 @@ module Ladb::OpenCutList
     end
 
     def _preview_move(view)
-      return unless @drawing_def.is_a?(DrawingDef)
+      return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
-      is_construction = @drawing_def.cline_manipulators.any?
+      is_construction = drawing_def.cline_manipulators.any?
 
       segments = []
-      segments += @drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-      segments += @drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-      segments += @drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
+      segments += drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
+      segments += drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
+      segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
 
       anchors = _get_move_anchors
 
@@ -1451,7 +1351,7 @@ module Ladb::OpenCutList
           k_segments.line_width = is_construction ? 1 : 1.5
           k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if is_construction
           k_segments.color = Kuix::COLOR_BLACK
-          k_segments.transformation = mt * @drawing_def.transformation
+          k_segments.transformation = mt * drawing_def.transformation
           @tool.append_3d(k_segments)
 
         end
@@ -1497,7 +1397,7 @@ module Ladb::OpenCutList
           k_segments.line_width = 1.5
           k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
           k_segments.color = Kuix::COLOR_DARK_GREY
-          k_segments.transformation = @drawing_def.transformation
+          k_segments.transformation = drawing_def.transformation
           @tool.append_3d(k_segments)
 
         end
@@ -1509,7 +1409,7 @@ module Ladb::OpenCutList
         k_segments.line_width = is_construction ? 1 : 1.5
         k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if is_construction
         k_segments.color = Kuix::COLOR_BLACK
-        k_segments.transformation = mt * @drawing_def.transformation
+        k_segments.transformation = mt * drawing_def.transformation
         @tool.append_3d(k_segments)
 
         # Move line
@@ -1718,10 +1618,12 @@ module Ladb::OpenCutList
     # -----
 
     def _fetch_option_tool_pushpull
+      return true
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_PUSHPULL)
     end
 
     def _fetch_option_tool_move
+      return false
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_MOVE)
     end
 
@@ -1738,6 +1640,7 @@ module Ladb::OpenCutList
     end
 
     def _fetch_option_move_array
+      return @move_array
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MOVE_ARRAY)
     end
 
@@ -1778,6 +1681,7 @@ module Ladb::OpenCutList
     # -----
 
     def _reset
+      Sketchup.active_model.selection.clear
       @mouse_ip.clear
       @mouse_down_point = nil
       @mouse_snap_point = nil
@@ -1793,6 +1697,13 @@ module Ladb::OpenCutList
       @move_anchor_index = -1
       super
       set_state(STATE_SHAPE_FIRST_POINT)
+    end
+
+    def _restart
+      super
+      if fetch_state < STATE_MOVE && (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+        _append_floating_tools_at(drawing_def.bounds.center.transform(drawing_def.transformation))
+      end
     end
 
     # -----
@@ -1882,7 +1793,7 @@ module Ladb::OpenCutList
 
         # Solid drawing create a component definition + instance
 
-        definition = model.definitions.add(@@last_part_name)
+        definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
 
         faces = _create_faces(definition, p1, p2)
         faces.each do |face|
@@ -1927,7 +1838,6 @@ module Ladb::OpenCutList
                     UI.beep
                   else
                     definition.name = name
-                    @@last_part_name = name
                   end
                 end
               },
@@ -1942,71 +1852,13 @@ module Ladb::OpenCutList
       # Keep definition
       @definition = instance.definition
 
-      # Compute DrawingDef
-      @drawing_def = CommonDrawingDecompositionWorker.new((model.active_path.nil? ? [] : model.active_path) + [ instance ],
-        ignore_surfaces: true,
-        ignore_faces: true,
-        ignore_edges: _fetch_option_construction,
-        ignore_soft_edges: false,
-        ignore_clines: !_fetch_option_construction
-      ).run
-
-
-      unit = @tool.get_unit
-      center = @drawing_def.bounds.center.transform(@drawing_def.transformation)
-
-      k_panel = Kuix::Panel.new
-      k_panel.layout_data = Kuix::StaticLayoutDataWithSnap.new(center, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      k_panel.layout = Kuix::GridLayout.new(2, 1)
-      @tool.canvas.append(k_panel)
-
-      [
-        {
-          path: 'M0.5,0.357L0.5,0 M0.357,0.143L0.5,0L0.643,0.143 M0.643,0.5L1,0.5 M0.857,0.357L1,0.5L0.857,0.643 M0.357,0.5L0,0.5 M0.143,0.357L0,0.5L0.143,0.643 M0.5,0.643L0.5,1 M0.357,0.857L0.5,1L0.643,0.857',
-          block: lambda {
-            @tool.set_action_handler(self)
-            set_state(STATE_MOVE)
-            _refresh
-          }
-        },
-        {
-          path: 'M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.167L0.583,0.167',
-          block: lambda {
-            @tool.set_action_handler(self)
-            set_state(STATE_MOVE)
-            _refresh
-          }
-        }
-      # 'M0,0L1,0L1,1L0,1L0,0 M0.5,0.667L0.5,0.333 M0.333,0.5L0.667,0.5'
-      ].each do |minitool|
-
-        k_btn = Kuix::Button.new
-        k_btn.layout = Kuix::GridLayout.new
-        k_btn.border.set_all!(unit * 0.5)
-        k_btn.padding.set_all!(unit)
-        k_btn.set_style_attribute(:background_color, ColorUtils.color_translucent(Kuix::COLOR_WHITE, 200))
-        k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
-        k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
-        k_btn.set_style_attribute(:border_color, ColorUtils.color_translucent(Kuix::COLOR_WHITE, 200))
-        k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
-        k_btn.on(:click) do
-          k_panel.remove
-          minitool[:block].call
-        end
-        k_panel.append(k_btn)
-
-          k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(minitool[:path]))
-          k_motif.min_size.set_all!(unit * 4)
-          k_motif.set_style_attribute(:color, Kuix::COLOR_BLACK)
-          k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
-          k_btn.append(k_motif)
-
-      end
+      # Reset DrawingDef
+      @drawing_def = nil
 
     end
 
     def _copy_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
-      return if @definition.nil? || !@drawing_def.is_a?(DrawingDef)
+      return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       ps = _get_move_anchors[_get_move_anchor_index]
       pe = @picked_move_point
@@ -2037,7 +1889,7 @@ module Ladb::OpenCutList
 
         (0..number_1).each do |x|
           (0..number_2).each do |y|
-            model.active_entities.add_instance(@definition, Geom::Transformation.translation(Geom::Vector3d.new(ux * x, uy * y).transform(t)) * @drawing_def.transformation)
+            model.active_entities.add_instance(@definition, Geom::Transformation.translation(Geom::Vector3d.new(ux * x, uy * y).transform(t)) * drawing_def.transformation)
           end
         end
 
@@ -2054,17 +1906,44 @@ module Ladb::OpenCutList
         end
 
         if @move_copy
-          model.active_entities.add_instance(@definition, @drawing_def.transformation)
+          model.active_entities.add_instance(@definition, drawing_def.transformation)
         end
 
         (1..number_1).each do |i|
-          model.active_entities.add_instance(@definition, Geom::Transformation.translation(Geom::Vector3d.new(ux * i, uy * i, uz * i)) * @drawing_def.transformation)
+          model.active_entities.add_instance(@definition, Geom::Transformation.translation(Geom::Vector3d.new(ux * i, uy * i, uz * i)) * drawing_def.transformation)
         end
 
       end
 
       model.commit_operation
 
+      # Reset DrawingDef
+      @drawing_def = nil
+
+    end
+
+    def _get_instance
+      return nil if @definition.nil?
+      @definition.instances.first
+    end
+
+    def _get_drawing_def
+      return nil if @definition.nil?
+      return @drawing_def unless @drawing_def.nil?
+
+      model = Sketchup.active_model
+      return nil if model.nil?
+
+      instance = _get_instance
+      instance_path = (model.active_path.nil? ? [] : model.active_path) + [ instance ]
+
+      @drawing_def = CommonDrawingDecompositionWorker.new(instance_path,
+        ignore_surfaces: true,
+        ignore_faces: true,
+        ignore_edges: false,
+        ignore_soft_edges: false,
+        ignore_clines: false
+      ).run
     end
 
     def _get_auto_orient_transformation(definition, transformation = IDENTITY)
@@ -2090,6 +1969,88 @@ module Ladb::OpenCutList
       IDENTITY
     end
 
+    # --
+
+    def _append_floating_tools_at(position)
+
+      unit = @tool.get_unit
+
+      tool_defs = [
+        {
+          path: 'M0,0.667L0.333,0.667L0.333,1L0,1L0,0.667 M0.667,0L1,0L1,0.333L0.667,0.333L0.667,0 M0.417,0.583L0.583,0.417',
+          block: lambda {
+            @tool.set_action_handler(self)
+            @move_array = false
+            @picked_move_point = nil
+            set_state(STATE_MOVE)
+            _refresh
+          },
+          text: 'Copier'
+        },
+        {
+          path: 'M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.833L0.583,0.833',
+          block: lambda {
+            @tool.set_action_handler(self)
+            @move_array = true
+            @picked_move_point = nil
+            set_state(STATE_MOVE)
+            _refresh
+          },
+          text: 'Copier en grille'
+        },
+        # {
+        #   path: 'M0.333,0.333L0.667,0.333L0.667,0.667L0.333,0.667L0.333,0.333 M0.083,0.917L0.25,0.75 M0.75,0.25L0.917,0.083',
+        #   block: lambda {
+        #     @tool.notify('Un bouton qui fait rien 😂')
+        #   },
+        #   text: 'Répartir'
+        # }
+      ]
+
+      k_panel = Kuix::Panel.new
+      k_panel.layout_data = Kuix::StaticLayoutDataWithSnap.new(position, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      k_panel.layout = Kuix::GridLayout.new(tool_defs.length, 1, unit * 0.5)
+      @tool.append_2d(k_panel, LAYER_2D_FLOATING_TOOLS)
+
+      tool_defs.each do |tool_def|
+
+        k_btn = Kuix::Button.new
+        k_btn.layout = Kuix::GridLayout.new
+        k_btn.border.set_all!(unit * 0.5)
+        k_btn.padding.set_all!(unit)
+        k_btn.set_style_attribute(:background_color, ColorUtils.color_translucent(Kuix::COLOR_WHITE, 200))
+        k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+        k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
+        k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND_LIGHT)
+        k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
+        k_btn.on(:enter) do
+          Sketchup.active_model.selection.clear
+          Sketchup.active_model.selection.add(_get_instance)
+        end
+        k_btn.on(:leave) do
+          Sketchup.active_model.selection.clear
+        end
+        k_btn.on(:click) do
+          Sketchup.active_model.selection.clear
+          k_panel.remove
+          tool_def[:block].call
+        end
+        k_panel.append(k_btn)
+
+        k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(tool_def[:path]))
+        k_motif.min_size.set_all!(unit * 4)
+        k_motif.set_style_attribute(:color, Kuix::COLOR_BLACK)
+        k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+        k_btn.append(k_motif)
+
+      end
+
+    end
+
+    def _remove_floating_tools
+      @tool.remove_2d(LAYER_2D_FLOATING_TOOLS)
+    end
+
     # -- UTILS --
 
     def _points_to_segments(points, closed = true, flatten = true)
@@ -2101,7 +2062,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartDrawRectangleActionHandler < SmartDrawShapeActionHandler
+  class SmartDrawRectangleActionHandler < SmartDrawActionHandler
 
     def initialize(tool, action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_RECTANGLE, tool, action_handler)
@@ -2742,7 +2703,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartDrawCircleActionHandler < SmartDrawShapeActionHandler
+  class SmartDrawCircleActionHandler < SmartDrawActionHandler
 
     def initialize(tool, action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_CIRCLE, tool, action_handler)
@@ -3072,7 +3033,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartDrawPolygonActionHandler < SmartDrawShapeActionHandler
+  class SmartDrawPolygonActionHandler < SmartDrawActionHandler
 
     def initialize(tool, action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_POLYGON, tool, action_handler)
@@ -3825,292 +3786,6 @@ module Ladb::OpenCutList
         join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
         miter_limit: 100.0
       ).map { |o_path| Fiddle::Clippy.rpath_to_points(o_path, points[0].z) }
-    end
-
-  end
-
-  # -----
-
-  class SmartCopyActionHandler < SmartDrawActionHandler
-
-    include SmartActionHandlerPartHelper
-
-    STATE_SELECT = 0
-    STATE_COPY = 1
-
-    def initialize(action, tool, action_handler = nil)
-      super
-
-      @mouse_ip = SmartInputPoint.new(@tool)
-
-      @mouse_snap_point = nil
-
-      @picked_copy_first_point = nil
-      @picked_copy_last_point = nil
-
-      set_state(STATE_SELECT)
-
-    end
-
-    # -- STATE --
-
-    def get_state_cursor(state)
-
-      case state
-      when STATE_SELECT
-        return @tool.cursor_select
-      when STATE_COPY
-        return @tool.cursor_move_copy
-      end
-
-      super
-    end
-
-    def get_state_picker(state)
-
-      case state
-      when STATE_SELECT
-        return SmartPicker.new(tool: @tool, pick_point: true)
-      end
-
-      super
-    end
-
-    def get_state_status(state)
-      super
-    end
-
-    def get_state_vcb_label(state)
-      super
-    end
-
-    # -----
-
-    def onMouseMove(flags, x, y, view)
-      super
-
-      if @state == STATE_SELECT
-
-        _pick_part(@picker, view)
-
-        if @active_part_entity_path.is_a?(Array) && @active_part_entity_path.length > 1
-
-          parent = @active_part_entity_path[-2]
-          parent_transformation = PathUtils.get_transformation(@active_part_entity_path[0...-2], IDENTITY)
-
-          k_box = Kuix::BoxMotif.new
-          k_box.bounds.copy!(parent.bounds)
-          k_box.line_width = 1
-          k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-          k_box.transformation = parent_transformation
-          @tool.append_3d(k_box)
-
-        end
-
-      elsif @state == STATE_COPY
-
-        @mouse_snap_point = nil
-        @mouse_ip.pick(view, x, y)
-
-        @tool.remove_3d(1)
-        @tool.remove_all_2d
-
-        _snap_copy_point(flags, x, y, view)
-        _preview_copy(view)
-
-      end
-
-      view.tooltip = @mouse_ip.tooltip
-      view.invalidate
-
-    end
-
-    def onMouseLeave(view)
-      @tool.remove_all_2d
-      @tool.remove_all_3d
-      @mouse_ip.clear
-      view.tooltip = ''
-      super
-    end
-
-    def onLButtonUp(flags, x, y, view)
-
-      if @state == STATE_SELECT
-
-        if @active_part_entity_path.nil?
-          UI.beep
-          return true
-        end
-
-        @definition = @active_part_entity_path.last.definition
-        @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
-                                                            ignore_surfaces: true,
-                                                            ignore_faces: true,
-                                                            ignore_edges: false,
-                                                            ignore_soft_edges: false,
-                                                            ignore_clines: false
-        ).run
-
-        @picked_copy_first_point = @picker.picked_point
-
-        set_state(STATE_COPY)
-        _refresh
-      elsif @state == STATE_COPY
-        @picked_copy_last_point = @mouse_snap_point
-        _copy_entity
-        _restart
-      end
-
-    end
-
-    # -----
-
-    def draw(view)
-      super
-      @mouse_ip.draw(view) if @mouse_ip.valid?
-    end
-
-    def getExtents
-      if @drawing_def.is_a?(DrawingDef)
-
-        min = @drawing_def.bounds.min.transform(@drawing_def.transformation)
-        max = @drawing_def.bounds.max.transform(@drawing_def.transformation)
-
-        bounds = Geom::BoundingBox.new
-        bounds.add(min)
-        bounds.add(max)
-
-        ps = @picked_copy_first_point
-        pe = @picked_copy_last_point.nil? ? @mouse_snap_point : @picked_copy_last_point
-
-        unless ps.nil? || pe.nil?
-
-          v = ps.vector_to(pe)
-          bounds.add(min.offset(v))
-          bounds.add(max.offset(v))
-
-        end
-
-        bounds
-      end
-    end
-
-    # -----
-
-    def _reset
-      @mouse_ip.clear
-      @mouse_snap_point = nil
-      @picked_copy_first_point = nil
-      @picked_copy_last_point = nil
-      super
-      set_state(STATE_SELECT)
-    end
-
-    # -----
-
-    def _snap_copy_point(flags, x, y, view)
-
-      @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
-
-    end
-
-    def _preview_copy(view)
-      return unless @drawing_def.is_a?(DrawingDef)
-
-      ps = @picked_copy_first_point
-      pe = @mouse_snap_point
-      v = ps.vector_to(pe)
-
-      segments = []
-      segments += @drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-      segments += @drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-      segments += @drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
-
-      mt = Geom::Transformation.translation(v)
-
-      k_segments = Kuix::Segments.new
-      k_segments.add_segments(segments)
-      k_segments.line_width = 1.5
-      k_segments.color = Kuix::COLOR_BLACK
-      k_segments.transformation = mt * @drawing_def.transformation
-      @tool.append_3d(k_segments, 1)
-
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(ps)
-      k_line.end.copy!(pe)
-      k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_line.color = Kuix::COLOR_MEDIUM_GREY
-      k_line.on_top = true
-      @tool.append_3d(k_line, 1)
-
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(ps)
-      k_line.end.copy!(pe)
-      k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_line.color = _get_vector_color(v)
-      @tool.append_3d(k_line, 1)
-
-    end
-
-    # -----
-
-    def _copy_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
-      return if @definition.nil? || !@drawing_def.is_a?(DrawingDef)
-
-      ps = @picked_copy_first_point
-      pe = @picked_copy_last_point
-      v = ps.vector_to(pe)
-
-      model = Sketchup.active_model
-      model.start_operation('Copy Part', true)
-
-      if operator_1 == '/'
-        ux = v.x / number_1
-        uy = v.y / number_1
-        uz = v.z / number_1
-      else
-        ux = v.x
-        uy = v.y
-        uz = v.z
-      end
-
-      if @active_part_entity_path.one?
-        entities = model.entities
-        # t = @drawing_def.transformation
-      else
-        entities = @active_part_entity_path[-2].definition.entities
-        # t = @active_part_entity_path[-1].transformation
-      end
-      (1..number_1).each do |i|
-        entities.add_instance(@definition, Geom::Transformation.translation(Geom::Vector3d.new(ux * i, uy * i, uz * i)) * @active_part_entity_path[-1].transformation)
-      end
-
-      model.commit_operation
-
-    end
-
-  end
-
-  class SmartCopyMoveActionHandler < SmartCopyActionHandler
-
-    def initialize(tool, action_handler = nil)
-      super(SmartDrawTool::ACTION_COPY_MOVE, tool, action_handler)
-    end
-
-  end
-
-  class SmartCopyArrayActionHandler < SmartCopyActionHandler
-
-    def initialize(tool, action_handler = nil)
-      super(SmartDrawTool::ACTION_COPY_ARRAY, tool, action_handler)
-    end
-
-  end
-
-  class SmartCopyAlongActionHandler < SmartCopyActionHandler
-
-    def initialize(tool, action_handler = nil)
-      super(SmartDrawTool::ACTION_COPY_ALONG, tool, action_handler)
     end
 
   end

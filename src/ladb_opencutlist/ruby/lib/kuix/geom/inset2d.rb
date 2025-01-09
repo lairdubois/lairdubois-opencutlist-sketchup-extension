@@ -20,9 +20,7 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy!(inset)
-      if inset.is_a?(self.class)
-        set!(inset.top, inset.right, inset.bottom, inset.left)
-      end
+      set!(inset.top, inset.right, inset.bottom, inset.left)
     end
 
     # --

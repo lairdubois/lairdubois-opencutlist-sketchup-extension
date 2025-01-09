@@ -326,8 +326,7 @@ module Ladb::OpenCutList
 
               # Box helper
               k_box = Kuix::BoxMotif.new
-              k_box.bounds.origin.copy!(@active_drawing_def.bounds.min)
-              k_box.bounds.size.copy!(@active_drawing_def.bounds)
+              k_box.bounds.copy!(@active_drawing_def.bounds)
               k_box.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
               k_box.color = Kuix::COLOR_BLACK
               k_box.line_width = 1
