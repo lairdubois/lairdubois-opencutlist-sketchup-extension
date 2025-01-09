@@ -19,9 +19,7 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy!(size)
-      if size.is_a?(self.class)
-        set!(size.width, size.height)
-      end
+      set!(size.width, size.height)
     end
 
     # -- Tests --

@@ -29,10 +29,8 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy!(bounds)
-      if bounds.is_a?(self.class)
-        @origin.copy!(bounds.origin)
-        @size.copy!(bounds.size)
-      end
+      @origin.copy!(bounds.origin)
+      @size.copy!(bounds.size)
     end
 
     # -- Properties --

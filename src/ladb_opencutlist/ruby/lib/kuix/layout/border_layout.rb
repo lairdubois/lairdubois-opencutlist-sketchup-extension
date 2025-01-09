@@ -29,7 +29,7 @@ module Ladb::OpenCutList::Kuix
       @vertical_gap = vertical_gap.to_i
     end
 
-    def measure_prefered_size(target, prefered_width, size)
+    def measure_preferred_size(target, prefered_width, size)
       _compute(target, prefered_width, size, false)
     end
 

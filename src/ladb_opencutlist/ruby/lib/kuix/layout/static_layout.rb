@@ -22,12 +22,12 @@ module Ladb::OpenCutList::Kuix
 
   class StaticLayoutDataWithSnap < StaticLayoutData
 
-    attr_accessor :snap_point
+    attr_accessor :snap_position
 
-    def initialize(snap_point, width = -1, height = -1, anchor = nil)
+    def initialize(snap_position, width = -1, height = -1, anchor = nil)
       super(0, 0, width, height, anchor)
 
-      @snap_point = snap_point
+      @snap_position = snap_position
 
     end
 
@@ -35,8 +35,8 @@ module Ladb::OpenCutList::Kuix
 
   class StaticLayout
 
-    def measure_prefered_size(target, prefered_width, size)
-      _compute(target, prefered_width, size, false)
+    def measure_preferred_size(target, preferred_width, size)
+      _compute(target, preferred_width, size, false)
     end
 
     def do_layout(target)
@@ -66,7 +66,7 @@ module Ladb::OpenCutList::Kuix
             if entity.layout_data.is_a?(StaticLayoutDataWithSnap)
 
               model = Sketchup.active_model
-              entity_bounds.origin.copy!(model.active_view.screen_coords(entity.layout_data.snap_point)) unless model.nil?
+              entity_bounds.origin.copy!(model.active_view.screen_coords(entity.layout_data.snap_position)) unless model.nil?
 
             else
 

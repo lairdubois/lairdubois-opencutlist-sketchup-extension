@@ -50,8 +50,7 @@ module Ladb::OpenCutList
 
           # Box helper
           k_box = Kuix::BoxMotif.new
-          k_box.bounds.origin.copy!(@drawing_def.bounds.min)
-          k_box.bounds.size.copy!(@drawing_def.bounds)
+          k_box.bounds.copy!(@drawing_def.bounds)
           k_box.color = color
           k_box.line_width = 1
           k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
