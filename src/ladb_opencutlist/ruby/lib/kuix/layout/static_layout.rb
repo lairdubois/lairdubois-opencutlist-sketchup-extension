@@ -20,6 +20,19 @@ module Ladb::OpenCutList::Kuix
 
   end
 
+  class StaticLayoutDataWithSnap < StaticLayoutData
+
+    attr_accessor :snap_point
+
+    def initialize(snap_point, width = -1, height = -1, anchor = nil)
+      super(0, 0, width, height, anchor)
+
+      @snap_point = snap_point
+
+    end
+
+  end
+
   class StaticLayout
 
     def measure_prefered_size(target, prefered_width, size)
@@ -50,18 +63,27 @@ module Ladb::OpenCutList::Kuix
 
           if entity.layout_data && entity.layout_data.is_a?(StaticLayoutData)
 
-            # X
-            if entity.layout_data.x.is_a?(Float) && entity.layout_data.x <= 1.0
-              entity_bounds.origin.x = available_width * entity.layout_data.x
-            else
-              entity_bounds.origin.x = entity.layout_data.x
-            end
+            if entity.layout_data.is_a?(StaticLayoutDataWithSnap)
 
-            # Y
-            if entity.layout_data.y.is_a?(Float) && entity.layout_data.y <= 1.0
-              entity_bounds.origin.y = available_height * entity.layout_data.y
+              model = Sketchup.active_model
+              entity_bounds.origin.copy!(model.active_view.screen_coords(entity.layout_data.snap_point)) unless model.nil?
+
             else
-              entity_bounds.origin.y = entity.layout_data.y
+
+              # X
+              if entity.layout_data.x.is_a?(Float) && entity.layout_data.x <= 1.0
+                entity_bounds.origin.x = available_width * entity.layout_data.x
+              else
+                entity_bounds.origin.x = entity.layout_data.x
+              end
+
+              # Y
+              if entity.layout_data.y.is_a?(Float) && entity.layout_data.y <= 1.0
+                entity_bounds.origin.y = available_height * entity.layout_data.y
+              else
+                entity_bounds.origin.y = entity.layout_data.y
+              end
+
             end
 
             # Width

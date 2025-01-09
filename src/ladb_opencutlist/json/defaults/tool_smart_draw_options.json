@@ -29,5 +29,11 @@
     "measure_reversed": false,
     "solid_centered": false,
     "move_array": false
+  },
+  "action_3": { /* ACTION_COPY */
+  },
+  "action_4": { /* ACTION_COPY_ARRAY */
+  },
+  "action_5": { /* ACTION_COPY_ALONG */
   }
 }

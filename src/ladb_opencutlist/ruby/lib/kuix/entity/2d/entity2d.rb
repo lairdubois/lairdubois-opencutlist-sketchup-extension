@@ -143,9 +143,7 @@ module Ladb::OpenCutList::Kuix
 
     def do_layout
       do_style
-      if @layout
-        @layout.do_layout(self)
-      end
+      @layout.do_layout(self) if @layout
       self.invalidated = false
     end
 

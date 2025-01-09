@@ -20,7 +20,9 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy!(point)
-      set!(point.x, point.y, point.z)
+      if point.is_a?(self.class)
+        set!(point.x, point.y, point.z)
+      end
     end
 
     # -- Operations --

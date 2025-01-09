@@ -494,7 +494,7 @@ module Ladb::OpenCutList
       k_btn
     end
 
-    def append_2d(entity, layer = 0)
+    def append_2d(entity, layer = 0, target_3d = nil)
       raise "layer can't be nil" if layer.nil?
       k_layer = @layers_2d[layer]
       if k_layer.nil?
@@ -1365,7 +1365,8 @@ module Ladb::OpenCutList
     end
 
     def onViewChanged(view)
-      # TODO
+      @canvas.invalidate
+      @space.invalidate
     end
 
     def onRenderingOptionsChanged(rendering_options, type)
@@ -1756,6 +1757,8 @@ module Ladb::OpenCutList
   end
 
   module SmartActionHandlerPartHelper
+
+    include FaceTrianglesHelper
 
     COLOR_PART = Sketchup::Color.new(200, 200, 0, 100).freeze
     COLOR_PART_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
