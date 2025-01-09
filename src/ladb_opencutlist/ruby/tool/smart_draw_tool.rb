@@ -1757,7 +1757,7 @@ module Ladb::OpenCutList
         group = model.active_entities.add_group
         group.transformation = t
 
-        if bounds.depth == 0 && !_fetch_option_construction
+        if !_fetch_option_construction
 
           # Flat drawing, just add to group
 
@@ -3139,7 +3139,7 @@ module Ladb::OpenCutList
       when STATE_SHAPE_POINTS
         if key == VK_RIGHT
           x_axis = _get_active_x_axis
-          unless x_axis.perpendicular?(@normal)
+          if !x_axis.perpendicular?(@normal) && @picked_points.length >= 3
             UI.beep
             return true
           end
@@ -3155,7 +3155,7 @@ module Ladb::OpenCutList
           return true
         elsif key == VK_LEFT
           y_axis = _get_active_y_axis
-          unless y_axis.perpendicular?(@normal)
+          if !y_axis.perpendicular?(@normal) && @picked_points.length >= 3
             UI.beep
             return true
           end
@@ -3171,7 +3171,7 @@ module Ladb::OpenCutList
           return true
         elsif key == VK_UP
           z_axis = _get_active_z_axis
-          unless z_axis.perpendicular?(@normal)
+          if !z_axis.perpendicular?(@normal) && @picked_points.length >= 3
             UI.beep
             return true
           end
