@@ -67,7 +67,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    attr_reader :cursor_select, :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pushpull, :cursor_move, :cursor_move_copy
+    attr_reader :cursor_select, :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pushpull, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
 
     def initialize
       super
@@ -80,6 +80,8 @@ module Ladb::OpenCutList
       @cursor_pushpull = create_cursor('pushpull', 16, 3)
       @cursor_move = create_cursor('move', 16, 16)
       @cursor_move_copy = create_cursor('move-copy', 16, 16)
+      @cursor_pin_1 = create_cursor('pin-1', 11, 31)
+      @cursor_pin_2 = create_cursor('pin-2', 11, 31)
 
     end
 
@@ -277,6 +279,10 @@ module Ladb::OpenCutList
         return @tool.cursor_pushpull
       when STATE_MOVE
         return @move_copy ? @tool.cursor_move_copy : @tool.cursor_move
+      when STATE_COPY_ALONG_FIRST_POINT
+        return @tool.cursor_pin_1
+      when STATE_COPY_ALONG_SECOND_POINT
+        return @tool.cursor_pin_2
       end
 
       super
@@ -519,6 +525,7 @@ module Ladb::OpenCutList
 
       when STATE_COPY_ALONG_SECOND_POINT
         @picked_copy_along_second_point = @mouse_snap_point
+        _arrange_entity
         _restart
 
       else
@@ -782,6 +789,9 @@ module Ladb::OpenCutList
 
     def onStateChanged(state)
       super
+      unless (instance = _get_instance).nil?
+        instance.hidden = @state == STATE_COPY_ALONG_FIRST_POINT || @state == STATE_COPY_ALONG_SECOND_POINT
+      end
       _remove_floating_tools
     end
 
@@ -1621,6 +1631,21 @@ module Ladb::OpenCutList
 
     def _preview_copy_along_first_point(view)
 
+      drawing_def = _get_drawing_def
+
+      segments = []
+      segments += drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
+      segments += drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
+      segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
+
+      k_segments = Kuix::Segments.new
+      k_segments.add_segments(segments)
+      k_segments.line_width = 1.5
+      k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+      k_segments.color = Kuix::COLOR_DARK_GREY
+      k_segments.transformation = drawing_def.transformation
+      @tool.append_3d(k_segments)
+
     end
 
     def _preview_copy_along_second_point(view)
@@ -1728,6 +1753,14 @@ module Ladb::OpenCutList
         segments += drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
         segments += drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
         segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.line_width = 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_segments.color = Kuix::COLOR_DARK_GREY
+        k_segments.transformation = drawing_def.transformation
+        @tool.append_3d(k_segments)
 
         [
           mps.offset(mv, mv.length * 1/3),
@@ -2205,6 +2238,98 @@ module Ladb::OpenCutList
 
     end
 
+    def _arrange_entity(count = 2)
+
+      ps = @picked_copy_along_first_point
+      pe = @picked_copy_along_second_point
+      v = ps.vector_to(pe)
+
+      if v.valid?
+
+        drawing_def = _get_drawing_def
+        bounds = drawing_def.bounds
+
+        t = drawing_def.transformation
+        ti = t.inverse
+
+        center = bounds.center.transform(t)
+        corners = (0..6).map { |i| bounds.corner(i).transform(t) }
+        line = [ center , v ]
+
+        k_points = _create_floating_points(points: [ center ], style: Kuix::POINT_STYLE_PLUS)
+        @tool.append_3d(k_points)
+
+        plane_btm = Geom.fit_plane_to_points(corners[0], corners[1], corners[2])
+        ibtm = Geom.intersect_line_plane(line, plane_btm)
+        if !ibtm.nil? && bounds.contains?(ibtm.transform(ti))
+          plane_top = Geom.fit_plane_to_points(corners[4], corners[5], corners[6])
+          itop = Geom.intersect_line_plane(line, plane_top)
+          v1 = center.vector_to(ibtm)
+          v2 = center.vector_to(itop)
+          unless ibtm.vector_to(itop).samedirection?(v)
+            v1.reverse!
+            v2.reverse!
+          end
+        else
+          plane_lft = Geom.fit_plane_to_points(corners[0], corners[2], corners[4])
+          ilft = Geom.intersect_line_plane(line, plane_lft)
+          if !ilft.nil? && bounds.contains?(ilft.transform(ti))
+            plane_rgt = Geom.fit_plane_to_points(corners[1], corners[3], corners[5])
+            irgt = Geom.intersect_line_plane(line, plane_rgt)
+            v1 = center.vector_to(ilft)
+            v2 = center.vector_to(irgt)
+            unless ilft.vector_to(irgt).samedirection?(v)
+              v1.reverse!
+              v2.reverse!
+            end
+          else
+            plane_frt = Geom.fit_plane_to_points(corners[0], corners[1], corners[4])
+            ifrt = Geom.intersect_line_plane(line, plane_frt)
+            if !ifrt.nil? && bounds.contains?(ifrt.transform(ti))
+              plane_bck = Geom.fit_plane_to_points(corners[2], corners[3], corners[6])
+              ibck = Geom.intersect_line_plane(line, plane_bck)
+              v1 = center.vector_to(ifrt)
+              v2 = center.vector_to(ibck)
+              unless ifrt.vector_to(ibck).samedirection?(v)
+                v1.reverse!
+                v2.reverse!
+              end
+            end
+          end
+        end
+
+        lps = ps.project_to_line(line)
+        lpe = pe.project_to_line(line)
+
+        mps = lps.offset(v1)
+        mpe = lpe.offset(v2)
+        mv = mps.vector_to(mpe)
+
+        model = Sketchup.active_model
+        model.start_operation('Copy Part', true)
+
+        @definition.entities.erase_entities(@definition.instances)
+
+        [
+          mps.offset(mv, mv.length * 1/3),
+          mps.offset(mv, mv.length * 2/3),
+        ].each do |point|
+
+          mt = Geom::Transformation.translation(center.vector_to(point))
+
+          model.active_entities.add_instance(@definition, mt * drawing_def.transformation)
+
+        end
+
+        model.commit_operation
+
+        # Reset DrawingDef
+        @drawing_def = nil
+
+      end
+
+    end
+
     def _get_instance
       return nil if @definition.nil?
       @definition.instances.first
@@ -2286,6 +2411,8 @@ module Ladb::OpenCutList
           block: lambda {
             @tool.set_action_handler(self)
             @picked_move_point = nil
+            @picked_copy_along_first_point = nil
+            @picked_copy_along_second_point = nil
             set_state(STATE_COPY_ALONG_FIRST_POINT)
             _refresh
           },
