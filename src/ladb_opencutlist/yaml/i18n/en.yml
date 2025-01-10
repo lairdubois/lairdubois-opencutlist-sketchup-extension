@@ -484,7 +484,7 @@ tab:
       over_length: Lengthwise
       over_width: Widthwise
       edge_disabled_help: This edge banding is not configurable because no material-carrying face has been detected on this edge of the part in the model.
-      face_disabled_help: This surface is not configurable because no material-carrying face has been detected on this edge of the part in the model.
+      face_disabled_help: This surface is not configurable because no material-carrying face has been detected on this face of the part in the model.
       multiple_values: Multiple values
       loading_preview: Loading Preview
     option:
@@ -748,9 +748,9 @@ tab:
       option_wrap_length: Wrap Board Length
       option_wrap_length_help: Maximal length after which a board or edge banding will be wrapped over multiple lines.
       option_hide_cross: Leftovers
-      option_hide_cross_0: Dimensions and cross
-      option_hide_cross_1: Dimensions only
-      option_hide_cross_help: Shows or hides the cross indicating the parts defined as offcuts on the diagram.
+      option_hide_cross_0: Dimensions and Cross
+      option_hide_cross_1: Dimensions Only
+      option_hide_cross_help: Shows or hides the cross indicating parts defined as offcuts on the diagram.
       option_highlight_primary_cuts: Primary Cuts
       option_highlight_primary_cuts_0: Flyover only
       option_highlight_primary_cuts_1: Always visible
@@ -1790,7 +1790,7 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *German*)
       - Gildas Boureau (*French* documentation)
       - Vladimir Badulya (*Russian*)
-      - Pierluigi Colombo (*Italian*)
+      - Pierluigi Colombo, Massimo Risca (*Italian*)
       - Nayton Sanches Barbosa, corrected and revised by [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portuguese*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spanish*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czech*)

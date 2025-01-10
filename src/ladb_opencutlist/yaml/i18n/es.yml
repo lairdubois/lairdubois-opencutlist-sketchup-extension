@@ -8,7 +8,7 @@ default:
   maximize: Maximizar
   cancel: Cancelar
   # stop computation and return best result so far
-  stop: Stop
+  stop: Detener
   validate: Aplicar
   confirm: Confirmar
   ok: Ok
@@ -26,8 +26,8 @@ default:
   options: Opciones
   caution: Advertencia
   remove: Eliminar
-  remove_all: Retirar todo
-  delete: Remover
+  remove_all: Eliminar todo
+  delete: Suprimir
   create: Crear
   duplicate: Duplicar
   ignore: Ignorar
@@ -92,11 +92,11 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
-      edit_part_instance: Modificar la instancia
-      edit_parent_part_instance: Modificar el grupo/componente que contiene la instancia
-      hide_part_instance: Ocultar instancia
-      unhide_part_instance: Revelar instancia
-      edit_part_instance_properties: Editar las propiedades de la instancia
+      edit_part_instance: Modificar el elemento
+      edit_parent_part_instance: Modificar el grupo/componente que contiene el elemento
+      hide_part_instance: Ocultar el elemento
+      unhide_part_instance: Mostrar el elemento
+      edit_part_instance_properties: Editar las propiedades del elemento
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
@@ -272,7 +272,7 @@ tab:
     part_drawing_type_1: 2D Vista frontal
     part_drawing_type_2: 2D Vista trasera
     part_drawing_type_3: 2D Vista izquierda
-    part_drawing_type_4: Vista 2D Derecha
+    part_drawing_type_4: 2D Vista derecha
     part_drawing_type_5: 2D Vista frontal
     part_drawing_type_6: 2D Vista trasera
     part_drawing_type_7: 3D
@@ -593,7 +593,7 @@ tab:
     export:
       title: Exportación
       info_0: |
-        Esta función permite exportar la *tabla de despiece* al portapapeles o a un archivo en formato [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
+        Esta función permite exportar los datos de la *tabla de despiece* al portapapeles o a un archivo en formato [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas).
       customize_help: |
         Reordenar, Ocultar, Añadir, Eliminar o Seleccionar una columna de la lista para personalizar su **título** y la **fórmula** que genera el valor mostrado para cada fila exportada.
       add_column: Añadir una columna
@@ -612,7 +612,7 @@ tab:
       options_customize: Personalización
       option_source: Fuente
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: Lista de partes
+      option_source_cutlist: Listado de piezas
       option_source_instances_list: Lista de instancias
       option_col_sep: Separador
       option_col_sep_tab: Tabulador
@@ -773,7 +773,7 @@ tab:
         *Esta opción debe activarse para que las formas puedan ser exportadas.*
       option_saw_kerf: Espesor de la hoja
       option_saw_kerf_help: El ancho del material eliminado por el corte de la hoja de sierra.
-      option_spacing: Espacio
+      option_spacing: Espaciado
       option_spacing_help: Espacio mínimo entre cada pieza.
       option_trimming: Margen
       option_trimming_help_1d: La cantidad de material en cada extremo del tablero o tira de canto que se tratará como desecho.
@@ -1147,9 +1147,9 @@ tab:
         Permite elegir la unidad empleada en el archivo exportado.
       option_use_count: Cantidades
       option_use_count_0: Un fichero por pieza
-      option_use_count_1: Un fichero por instancia de pieza
+      option_use_count_1: Un fichero por cada repetición de una misma pieza
       option_use_count_help: |
-        Selecciona si se tiene en cuenta el número de instancias de una pieza.
+        Selecciona si se tiene en cuenta el número de repeticiones de una pieza.
       option_part_drawing_type: Proyección
       option_part_drawing_type_help: |
         Permite elegir la vista exportada.
@@ -1197,9 +1197,9 @@ tab:
         Permite elegir el color de las perforaciones de las piezas.
       option_parts_paths: Trazados
       option_parts_paths_help: |
-        Permite elegir los colores de los trazados.
+        Permite elegir los colores de los contornos.
 
-        *El color de relleno sólo se utilizará para los trazados cerrados.*
+        *El color de relleno sólo se utilizará para los contornos cerrados.*
       error:
         no_part: No hay piezas para exportar.
       warning:
@@ -1263,7 +1263,7 @@ tab:
       texture_load: Cargar una nueva textura
       texture_clear: Borrar la textura
       edit: "Edita las propiedades de '{{ name }}'"
-      set_current: "Colorea las partes con '{{ name }}'"
+      set_current: "Colorear las piezas con '{{ name }}'"
       open_url: Abrir la URL del material
     menu:
       import_from_skm: Importar material (.skm)
@@ -1362,12 +1362,12 @@ tab:
     import_from_skm:
       title: Importar fichero .skm
       ask_replace: |
-        Ya existe un material "{{ name }}".
-        Desea sustituirlo por el que está importando?
+        Ya existe el material "{{ name }}".
+        ¿Desea sustituirlo por el que está importando?
     export_to_skm:
       title: Exportar a fichero .skm
     option:
-      minimize_on_smart_paint: Reducir después de *'Colorear partes con...'*
+      minimize_on_smart_paint: Minimizar después de *'Colorear partes con...'*
       minimize_on_smart_paint_help: "Si esta opción está activada, la ventana OpenCutList se minimizará cuando se utilice la función *'Colorear partes con...'*."
       general: General
       material_order_strategy: Clasificación de materiales
@@ -1378,8 +1378,8 @@ tab:
       property_name: Nombre
     delete:
       message: |
-        Estás a punto de eliminar el material **{{ material_name }}** de su modelo.
-        Confirma para continuar.
+        Va a eliminar el material **{{ material_name }}** de su modelo.
+        Confirme para continuar.
     duplicate:
       message: |
         Seleccione el nombre del nuevo material, que se copiará de **{{ material_name }}**.
@@ -1398,7 +1398,7 @@ tab:
     title: Estructura
     list: Estructura en árbol de los elementos
     nodes: Elemento
-    toggle_hidden: Instancias ocultas
+    toggle_hidden: Elementos ocultos
     type_0: Modelo
     type_1: Grupo
     type_2: Componente
@@ -1648,21 +1648,22 @@ tab:
     credits_authors: |
       *OpenCutList* fue desarrollado por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) y [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liste todos los [contribuyentes](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traducciones
-    credits_translators: |
-      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*español*)
+    credits_translators: |+
+      - [Leonardo Romero Giménez](https://latablamarilla.com/), Raquel Caballero Guillén (*español*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglés*, *alemán*)
-      - Gildas Boureau (documentación *francesa*)
+      - Gildas Boureau (documentación *francés*)
       - Vladimir Badulya (*ruso*)
       - Pierluigi Colombo, Massimo Risca (*italiano*)
       - Nayton Sanches Barbosa, corregido y revisado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugués*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*polaco*)
-      - Sergey Isupov (*hebreo*), sin interfaz RTL
-      - Soul Issam (*árabe*), sin interfaz RTL
+      - Sergey Isupov (*hebreo*), sin interfaz de derecha a izquierda - RTL
+      - Soul Issam (*árabe*), sin interfaz de derecha a izquierda - RTL
       - Nguyen Ngoc Tan (*vietnamita*)
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*ucraniano*)
       - [刘涛](https://www.liutao91.cn) (*chino simplificado*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holandés*)
+
     credits_description: |
       El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
       Esta extensión también es de *código abierto* y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1681,9 +1682,9 @@ tool:
     zoom_extents: Centrado
     toggle_depth: Piezas en el fondo
     more: Más
-    end_point: Extremidad
+    end_point: Extremo
     middle_point: Punto medio
-    third_point: Punto tercero
+    third_point: Punto a tercios
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
