@@ -1314,7 +1314,7 @@ module Ladb::OpenCutList
         k_rectangle.bounds.size.copy!(bounds)
         k_rectangle.line_width = @locked_normal ? 2 : 1
         k_rectangle.line_stipple = @locked_normal ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_LONG_DASHES
-        k_rectangle.color = Kuix::COLOR_MEDIUM_GREY
+        k_rectangle.color = ColorUtils.color_translucent(_get_normal_color, 60)
         k_rectangle.on_top = true
         k_rectangle.transformation = t
         @tool.append_3d(k_rectangle)
@@ -1420,7 +1420,7 @@ module Ladb::OpenCutList
           k_line.start.copy!(ps)
           k_line.end.copy!(pe)
           k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-          k_line.color = Kuix::COLOR_MEDIUM_GREY
+          k_line.color = ColorUtils.color_translucent(_get_vector_color(v), 60)
           k_line.on_top = true
           @tool.append_3d(k_line)
 
