@@ -346,8 +346,8 @@ module Ladb::OpenCutList
         if hit_widget
           onMouseLeaveSpace(view) if @mouse_hover_widget.nil? && !@mouse_is_outside
           if hit_widget != @mouse_hover_widget
-            if @mouse_hover_widget && @mouse_hover_widget.in_dom?
-              @mouse_hover_widget.onMouseLeave
+            if @mouse_hover_widget
+              @mouse_hover_widget.onMouseLeave if @mouse_hover_widget.in_dom?
               pop_cursor
             end
             @mouse_hover_widget = hit_widget
@@ -357,8 +357,8 @@ module Ladb::OpenCutList
           @mouse_is_outside = false
           return true
         else
-          if @mouse_hover_widget && @mouse_hover_widget.in_dom?
-            @mouse_hover_widget.onMouseLeave
+          if @mouse_hover_widget
+            @mouse_hover_widget.onMouseLeave if @mouse_hover_widget.in_dom?
             pop_cursor
           end
           @mouse_hover_widget = nil
@@ -368,8 +368,8 @@ module Ladb::OpenCutList
       end
 
       def onMouseLeave(view)
-        if @mouse_hover_widget && @mouse_hover_widget.in_dom?
-          @mouse_hover_widget.onMouseLeave
+        if @mouse_hover_widget
+          @mouse_hover_widget.onMouseLeave if @mouse_hover_widget.in_dom?
           pop_cursor
         else
           onMouseLeaveSpace(view)
