@@ -3515,6 +3515,7 @@ module Ladb::OpenCutList
       when STATE_SHAPE_FIRST_POINT
         super
         _add_picked_point(@picked_shape_first_point, view) if _picked_shape_first_point?
+        return true
 
       end
 
@@ -3528,6 +3529,7 @@ module Ladb::OpenCutList
       when STATE_SHAPE_FIRST_POINT
         super
         _add_picked_point(@picked_shape_first_point, view) if _picked_shape_first_point?
+        return true
 
       when STATE_SHAPE_POINTS
         if @picked_points.find { |point| point == @mouse_snap_point }
@@ -3539,6 +3541,7 @@ module Ladb::OpenCutList
         end
         _add_picked_point(@mouse_snap_point, view)
         _refresh
+        return true
 
       end
 
