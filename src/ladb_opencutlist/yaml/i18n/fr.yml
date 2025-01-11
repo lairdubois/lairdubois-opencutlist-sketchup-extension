@@ -1838,17 +1838,14 @@ tool:
     action_2_status: Dessiner un volume sur la base d'une forme polygonale
     action_2_state_1_status: Cliquez pour définir un nouveau point ou entrez une distance
     action_x_state_2_status: Cliquez pour définir l'élévation ou entrez une distance
-    action_x_state_3_status: Cliquez pour déplacer la pièce ou entrez une distance
-    action_x_state_3_move_copy_status: Cliquez pour placer la copie de la pièce ou entrez une distance
-    action_x_state_3_move_array_status: Cliquez pour placer les copies de la pièce ou entrez une longueur, largeur
-    action_option_group_tools: Outils
+    action_x_state_10_status: Cliquez pour déplacer la pièce ou entrez une distance
+    action_x_state_10_copy_status: Cliquez pour placer la copie de la pièce ou entrez une distance
+    action_x_state_20_status: Cliquez pour placer les copies de la pièce ou entrez une longueur, largeur
+    action_x_state_30_status: Cliquez pour définir le premier point du vecteur de répartition
+    action_x_state_31_status: Cliquez pour répartir les copies ou entrez une distance
     action_option_group_offset: Décalage
     action_option_group_segments: Segments
     action_option_group_options: Options
-    action_option_tools_pushpull: Pousser/Tirer
-    action_option_tools_pushpull_status: Activer Pousser/Tirer après le dessin de la forme
-    action_option_tools_move: Copier/Déplacer
-    action_option_tools_move_status: Activer Copier/Déplacer après la création de la pièce
     action_option_offset_shape_offset: Décalage
     action_option_offset_shape_offset_status: Permet d'appliquer un décalage au tracé de la forme dessinée
     action_option_segments_segment_count: Nombre de segments
@@ -1864,11 +1861,9 @@ tool:
     action_option_options_measure_reversed_status: Inverser la mesure
     action_option_options_solid_centered: Élévation centrée
     action_option_options_solid_centered_status: Centrer l'élévation sur le premier point
-    action_option_options_move_array: Copie en grille
-    action_option_options_move_array_status: Copier la pièce en grille
-    action_option_pushpull_locked_status: Verrouiller sur la dernière mesure
-    action_option_move_copy_status: Alterner entre copier/déplacer
-    action_option_move_anchor_status: Changer le point d'ancrage
+    action_pushpull_locked_status: Verrouiller sur la dernière mesure
+    action_toggle_move_copy_status: Alterner entre copier/déplacer
+    action_change_move_anchor_status: Changer le point d'ancrage
     vcb_length: Longueur
     vcb_size: Cotations
     vcb_radius: Rayon

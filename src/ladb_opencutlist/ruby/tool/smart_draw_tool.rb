@@ -18,13 +18,9 @@ module Ladb::OpenCutList
     ACTION_DRAW_CIRCLE = 1
     ACTION_DRAW_POLYGON = 2
 
-    ACTION_OPTION_TOOLS = 'tools'
     ACTION_OPTION_OFFSET = 'offset'
     ACTION_OPTION_SEGMENTS = 'segments'
     ACTION_OPTION_OPTIONS = 'options'
-
-    ACTION_OPTION_TOOLS_PUSHPULL = 'pushpull'
-    ACTION_OPTION_TOOLS_MOVE = 'move'
 
     ACTION_OPTION_OFFSET_SHAPE_OFFSET = 'shape_offset'
 
@@ -35,32 +31,28 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER = 'measure_from_diameter'
     ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
     ACTION_OPTION_OPTIONS_BOX_CENTRED = 'solid_centered'
-    ACTION_OPTION_OPTIONS_MOVE_ARRAY = 'move_array'
 
     ACTIONS = [
       {
         :action => ACTION_DRAW_RECTANGLE,
         :options => {
-          # ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED ], #, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED ]
         }
       },
       {
         :action => ACTION_DRAW_CIRCLE,
         :options => {
-          # ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_SEGMENTS => [ ACTION_OPTION_SEGMENTS_SEGMENT_COUNT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_BOX_CENTRED ], #, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_BOX_CENTRED ]
         }
       },
       {
         :action => ACTION_DRAW_POLYGON,
         :options => {
-          # ACTION_OPTION_TOOLS => [ ACTION_OPTION_TOOLS_PUSHPULL, ACTION_OPTION_TOOLS_MOVE ],
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_BOX_CENTRED ], #, ACTION_OPTION_OPTIONS_MOVE_ARRAY ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_BOX_CENTRED ]
         }
       }
     ].freeze
@@ -134,13 +126,7 @@ module Ladb::OpenCutList
     def get_action_option_btn_child(action, option_group, option)
 
       case option_group
-      when ACTION_OPTION_TOOLS
-        case option
-        when ACTION_OPTION_TOOLS_PUSHPULL
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.611L0,0.778L0.5,1L1,0.778L1,0.611 M0.333,0.5L0,0.611L0.5,0.778L1,0.611L0.667,0.5 M0.583,0.583L0.583,0.333L0.75,0.333L0.5,0L0.25,0.333L0.417,0.333L0.417,0.583L0.583,0.583'))
-        when ACTION_OPTION_TOOLS_MOVE
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0.357L0.5,0 M0.357,0.143L0.5,0L0.643,0.143 M0.643,0.5L1,0.5 M0.857,0.357L1,0.5L0.857,0.643 M0.357,0.5L0,0.5 M0.143,0.357L0,0.5L0.143,0.643 M0.5,0.643L0.5,1 M0.357,0.857L0.5,1L0.643,0.857'))
-        end
+
       when ACTION_OPTION_OFFSET
         case option
         when ACTION_OPTION_OFFSET_SHAPE_OFFSET
@@ -163,8 +149,6 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833  M0.861,0.292L0.708,0.139L0.5,0.083L0.292,0.139L0.14,0.292 M0.14,0.083L0.14,0.292L0.333,0.292'))
         when ACTION_OPTION_OPTIONS_BOX_CENTRED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
-        when ACTION_OPTION_OPTIONS_MOVE_ARRAY
-          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.167L0.583,0.167'))
         end
       end
 
@@ -227,10 +211,16 @@ module Ladb::OpenCutList
     STATE_SHAPE_FIRST_POINT = 0
     STATE_SHAPE_POINTS = 1
     STATE_PUSHPULL = 2
-    STATE_MOVE = 3
-    STATE_MOVE_COPY = 4
-    STATE_COPY_ALONG_FIRST_POINT = 10
-    STATE_COPY_ALONG_SECOND_POINT = 11
+
+    STATE_MOVE = 10
+    STATE_MOVE_COPIES = 11
+
+    STATE_MOVE_ARRAY = 20
+    STATE_MOVE_ARRAY_COPIES = 21
+
+    STATE_MOVE_ALONG_FIRST_POINT = 30
+    STATE_MOVE_ALONG_SECOND_POINT = 31
+    STATE_MOVE_ALONG_COPIES = 32
 
     LAYER_2D_DIMENSIONS = 0
     LAYER_2D_FLOATING_TOOLS = 1
@@ -275,14 +265,22 @@ module Ladb::OpenCutList
     def get_state_cursor(state)
 
       case state
+
       when STATE_PUSHPULL
         return @tool.cursor_pushpull
+
       when STATE_MOVE
         return @move_copy ? @tool.cursor_move_copy : @tool.cursor_move
-      when STATE_COPY_ALONG_FIRST_POINT
+
+      when STATE_MOVE_ARRAY
+        return @tool.cursor_move_copy
+
+      when STATE_MOVE_ALONG_FIRST_POINT
         return @tool.cursor_pin_1
-      when STATE_COPY_ALONG_SECOND_POINT
+
+      when STATE_MOVE_ALONG_SECOND_POINT
         return @tool.cursor_pin_2
+
       end
 
       super
@@ -291,25 +289,30 @@ module Ladb::OpenCutList
     def get_state_status(state)
 
       case state
+
       when STATE_SHAPE_POINTS
-        return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_1_status") + '.'
+        return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_#{state}_status") + '.'
+
       when STATE_PUSHPULL
-        return PLUGIN.get_i18n_string('tool.smart_draw.action_x_state_2_status') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_pushpull_locked_status') + '.'
+        return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_status") + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_pushpull_locked_status') + '.'
           ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_solid_centered_status') + '.'
+
       when STATE_MOVE
-        if _fetch_option_move_array
-          status = PLUGIN.get_i18n_string('tool.smart_draw.action_x_state_3_move_array_status') + '.' if _fetch_option_move_array
-        else
-          if @move_copy
-            status = PLUGIN.get_i18n_string('tool.smart_draw.action_x_state_3_move_copy_status') + '.'
-          else
-            status = PLUGIN.get_i18n_string('tool.smart_draw.action_x_state_3_status') + '.'
-          end
-          status += ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_move_copy_status') + '.'
-        end
-        return status +
-          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_move_anchor_status') + '.'
+        return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}#{@move_copy ? '_copy' : ''}_status") + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_toggle_move_copy_status') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_change_move_anchor_status') + '.'
+
+      when STATE_MOVE_ARRAY
+        return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_move_array_status") + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_change_move_anchor_status') + '.'
+
+      when STATE_MOVE_ALONG_FIRST_POINT
+        return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_status") + '.'
+
+      when STATE_MOVE_ALONG_SECOND_POINT
+        return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_status") + '.'
+
       end
 
       super
@@ -318,10 +321,13 @@ module Ladb::OpenCutList
     def get_state_vcb_label(state)
 
       case state
+
       when STATE_SHAPE_POINTS
         return PLUGIN.get_i18n_string('tool.smart_draw.vcb_radius')
-      when STATE_PUSHPULL, STATE_MOVE
+
+      when STATE_PUSHPULL, STATE_MOVE, STATE_MOVE_ALONG_SECOND_POINT
         return PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
+
       end
 
       super
@@ -348,14 +354,19 @@ module Ladb::OpenCutList
         _restart
         return true
 
-      when STATE_COPY_ALONG_FIRST_POINT
+      when STATE_MOVE_ARRAY
         set_state(STATE_PUSHPULL)
         _restart
         return true
 
-      when STATE_COPY_ALONG_SECOND_POINT
+      when STATE_MOVE_ALONG_FIRST_POINT
+        set_state(STATE_PUSHPULL)
+        _restart
+        return true
+
+      when STATE_MOVE_ALONG_SECOND_POINT
         @picked_copy_along_first_point = nil
-        set_state(STATE_COPY_ALONG_FIRST_POINT)
+        set_state(STATE_MOVE_ALONG_FIRST_POINT)
 
       end
       _refresh
@@ -384,7 +395,7 @@ module Ladb::OpenCutList
       @tool.remove_2d(LAYER_2D_DIMENSIONS)
       @tool.remove_all_3d
 
-      case fetch_state
+      case @state
 
       when STATE_SHAPE_FIRST_POINT
         _snap_shape_first_point(flags, x, y, view)
@@ -407,37 +418,22 @@ module Ladb::OpenCutList
         _snap_move_point(flags, x, y, view)
         _preview_move(view)
 
-      when STATE_COPY_ALONG_FIRST_POINT
-        _snap_copy_along_first_point(flags, x, y, view)
-        _preview_copy_along_first_point(view)
+      when STATE_MOVE_ARRAY
+        _snap_move_array_point(flags, x, y, view)
+        _preview_move_array(view)
 
-      when STATE_COPY_ALONG_SECOND_POINT
-        _snap_copy_along_second_point(flags, x, y, view)
-        _preview_copy_along_second_point(view)
+      when STATE_MOVE_ALONG_FIRST_POINT
+        _snap_move_along_first_point(flags, x, y, view)
+        _preview_move_along_first_point(view)
+
+      when STATE_MOVE_ALONG_SECOND_POINT
+        _snap_move_along_second_point(flags, x, y, view)
+        _preview_move_along_second_point(view)
 
       else
         puts 'STATE_UNKNOWN'
 
       end
-
-      # if _picked_pushpull_point?
-      #   _snap_move_point(flags, x, y, view)
-      #   _preview_move(view)
-      # elsif _picked_shape_last_point?
-      #   _snap_pushpull_point(flags, x, y, view)
-      #   _preview_pushpull(view)
-      # elsif _picked_shape_first_point?
-      #   _snap_shape_points(flags, x, y, view)
-      #   _preview_shape(view)
-      # else
-      #   _snap_first_shape_point(flags, x, y, view)
-      #   _preview_first_point(view)
-      #   if !@mouse_down_point.nil? && @mouse_snap_point.distance(@mouse_down_point) > view.pixels_to_model(20, @mouse_snap_point)  # Drag handled only if distance is > 20px
-      #     @picked_shape_first_point = @mouse_down_point
-      #     @mouse_down_point = nil
-      #     set_state(STATE_SHAPE_POINTS)
-      #   end
-      # end
 
       # k_points = Kuix::Points.new
       # k_points.add_point(@mouse_snap_point)
@@ -470,7 +466,7 @@ module Ladb::OpenCutList
 
     def onLButtonUp(flags, x, y, view)
 
-      case fetch_state
+      case @state
 
       when STATE_SHAPE_FIRST_POINT
         @picked_shape_first_point = @mouse_down_point
@@ -481,20 +477,8 @@ module Ladb::OpenCutList
       when STATE_SHAPE_POINTS
         if _valid_shape?
           @picked_shape_last_point = @mouse_snap_point
-          if _fetch_option_tool_pushpull
-            set_state(STATE_PUSHPULL)
-            _refresh
-          else
-            if _fetch_option_tool_move
-              @picked_pushpull_point = @mouse_snap_point
-              _create_entity
-              set_state(STATE_MOVE)
-              _refresh
-            else
-              _create_entity
-              _restart
-            end
-          end
+          set_state(STATE_PUSHPULL)
+          _refresh
         else
           UI.beep
         end
@@ -503,12 +487,7 @@ module Ladb::OpenCutList
         if _valid_solid?
           @picked_pushpull_point = @mouse_snap_point
           _create_entity
-          if _fetch_option_tool_move
-            set_state(STATE_MOVE)
-            _refresh
-          else
-            _restart
-          end
+          _restart
         else
           UI.beep
         end
@@ -516,75 +495,29 @@ module Ladb::OpenCutList
       when STATE_MOVE
         @picked_move_point = @mouse_snap_point
         _copy_entity
-        set_state(STATE_MOVE_COPY) if @move_copy || _fetch_option_move_array
+        set_state(STATE_MOVE_COPIES) if @move_copy
         _restart
 
-      when STATE_COPY_ALONG_FIRST_POINT
-        @picked_copy_along_first_point = @mouse_snap_point
-        set_state(STATE_COPY_ALONG_SECOND_POINT)
+      when STATE_MOVE_ARRAY
+        @picked_move_point = @mouse_snap_point
+        _copy_array_entity
+        set_state(STATE_MOVE_ARRAY_COPIES)
+        _restart
 
-      when STATE_COPY_ALONG_SECOND_POINT
+      when STATE_MOVE_ALONG_FIRST_POINT
+        @picked_copy_along_first_point = @mouse_snap_point
+        set_state(STATE_MOVE_ALONG_SECOND_POINT)
+
+      when STATE_MOVE_ALONG_SECOND_POINT
         @picked_copy_along_second_point = @mouse_snap_point
-        _arrange_entity
+        _copy_along_entity
+        set_state(STATE_MOVE_ALONG_COPIES)
         _restart
 
       else
         UI.beep
 
       end
-
-      # if !_picked_shape_first_point?
-      #   @picked_shape_first_point = @mouse_down_point
-      #   @mouse_down_point = nil
-      #   set_state(STATE_SHAPE_POINTS)
-      #   _refresh
-      # elsif !_picked_shape_last_point?
-      #   if _valid_shape?
-      #     @picked_shape_last_point = @mouse_snap_point
-      #     if _fetch_option_tool_pushpull
-      #       set_state(STATE_PUSHPULL)
-      #       _refresh
-      #     else
-      #       if _fetch_option_tool_move
-      #         @picked_pushpull_point = @mouse_snap_point
-      #         _create_entity
-      #         set_state(STATE_MOVE)
-      #         _refresh
-      #       else
-      #         _create_entity
-      #         _restart
-      #       end
-      #     end
-      #   else
-      #     UI.beep
-      #   end
-      # elsif !_picked_pushpull_point?
-      #   if _valid_solid?
-      #     @picked_pushpull_point = @mouse_snap_point
-      #     _create_entity
-      #     if _fetch_option_tool_move
-      #       set_state(STATE_MOVE)
-      #       _refresh
-      #     else
-      #       _restart
-      #     end
-      #   else
-      #     UI.beep
-      #   end
-      # elsif !_picked_move_point?
-      #   @picked_move_point = @mouse_snap_point
-      #   _copy_entity
-      #   set_state(STATE_MOVE_COPY) if @move_copy || _fetch_option_move_array
-      #   _restart
-      # elsif !_picked_copy_along_first_point?
-      #   @picked_copy_along_first_point = @mouse_snap_point
-      #   set_state(STATE_COPY_ALONG_SECOND_POINT)
-      # elsif !_picked_copy_along_second_point?
-      #   @picked_copy_along_second_point = @mouse_snap_point
-      #   _restart
-      # else
-      #   UI.beep
-      # end
 
       @mouse_down_point = nil
 
@@ -605,12 +538,7 @@ module Ladb::OpenCutList
           @picked_pushpull_point = @picked_shape_last_point.offset(@normal, measure)
 
           _create_entity
-          if _fetch_option_tool_move
-            set_state(STATE_MOVE)
-            _refresh
-          else
-            _restart
-          end
+          _restart
 
           return true
         end
@@ -624,20 +552,14 @@ module Ladb::OpenCutList
 
       if key <= 128
         key_char = key.chr
-        if key_char == 'P' && @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY)
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_PUSHPULL, !_fetch_option_tool_pushpull, true)
-          return true
-        elsif key_char == 'M' && @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY)
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_MOVE, !_fetch_option_tool_move, true)
-          return true
-        elsif key_char == 'X' && @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY)
+        if key_char == 'X' && @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY)
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION, !_fetch_option_construction, true)
           _refresh
           return true
         end
       end
 
-      if @state == STATE_SHAPE_FIRST_POINT || @state == STATE_SHAPE_POINTS || @state == STATE_MOVE && _fetch_option_move_array
+      if @state == STATE_SHAPE_FIRST_POINT || @state == STATE_SHAPE_POINTS || @state == STATE_MOVE_ARRAY
 
         if key == VK_RIGHT
           x_axis = _get_active_x_axis
@@ -685,7 +607,7 @@ module Ladb::OpenCutList
           return true
         end
 
-      elsif @state == STATE_MOVE && !_fetch_option_move_array
+      elsif @state == STATE_MOVE
 
         if key == VK_RIGHT
           x_axis = _get_active_x_axis
@@ -743,15 +665,21 @@ module Ladb::OpenCutList
 
       when STATE_MOVE
         if key == COPY_MODIFIER_KEY
-          unless _fetch_option_move_array
-            @move_copy = !@move_copy
-            @definition.instances.first.visible = @move_copy if !@definition.nil? && @definition.instances.any?
-            @tool.set_root_cursor(get_state_cursor(STATE_MOVE))
-            Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
-            _refresh
-          end
+          @move_copy = !@move_copy
+          @definition.instances.first.visible = @move_copy if !@definition.nil? && @definition.instances.any?
+          @tool.set_root_cursor(get_state_cursor(STATE_MOVE))
+          Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
+          _refresh
           return true
         elsif key == ALT_MODIFIER_KEY
+          @move_anchor_index = (@move_anchor_index + 1) % _get_move_anchors.length
+          view.lock_inference if view.inference_locked?
+          _refresh
+          return true
+        end
+
+      when STATE_MOVE_ARRAY
+        if key == ALT_MODIFIER_KEY
           @move_anchor_index = (@move_anchor_index + 1) % _get_move_anchors.length
           view.lock_inference if view.inference_locked?
           _refresh
@@ -765,11 +693,13 @@ module Ladb::OpenCutList
 
     def onUserText(text, view)
 
-      if !_picked_shape_first_point? && _read_move_copy(text, view)
-        return true
-      elsif _read_offset(text, view)
-        return true
+      unless _picked_shape_first_point?
+        return true if _read_move_copies(text, view)
+        return true if _read_move_array_copies(text, view)
+        return true if _read_move_along_copies(text, view)
       end
+
+      return true if _read_offset(text, view)
 
       case @state
 
@@ -782,6 +712,12 @@ module Ladb::OpenCutList
       when STATE_MOVE
         return _read_move(text, view)
 
+      when STATE_MOVE_ARRAY
+        return _read_move_array(text, view)
+
+      when STATE_MOVE_ALONG_SECOND_POINT
+        return _read_move_along(text, view)
+
       end
 
       false
@@ -790,7 +726,7 @@ module Ladb::OpenCutList
     def onStateChanged(state)
       super
       unless (instance = _get_instance).nil?
-        instance.hidden = @state == STATE_COPY_ALONG_FIRST_POINT || @state == STATE_COPY_ALONG_SECOND_POINT
+        instance.hidden = @state == STATE_MOVE_ALONG_FIRST_POINT || @state == STATE_MOVE_ALONG_SECOND_POINT
       end
       _remove_floating_tools
     end
@@ -831,9 +767,9 @@ module Ladb::OpenCutList
 
       end
 
-      case fetch_state
+      case @state
 
-      when STATE_MOVE
+      when STATE_MOVE, STATE_MOVE_ARRAY
 
         # Add Move solid(s)
 
@@ -849,7 +785,7 @@ module Ladb::OpenCutList
         bounds.add(pmin.offset(v))
         bounds.add(pmax.offset(v))
 
-      when STATE_COPY_ALONG_SECOND_POINT
+      when STATE_MOVE_ALONG_SECOND_POINT
 
         bounds.add(@mouse_snap_point)
 
@@ -866,7 +802,7 @@ module Ladb::OpenCutList
       return Sketchup::InputPoint.new(@picked_shape_first_point) if @state == STATE_SHAPE_POINTS
       return Sketchup::InputPoint.new(@picked_shape_last_point) if @state == STATE_PUSHPULL
       return Sketchup::InputPoint.new(_get_move_anchors[_get_move_anchor_index]) if @state == STATE_MOVE
-      return Sketchup::InputPoint.new(@picked_copy_along_first_point) if @state == STATE_COPY_ALONG_SECOND_POINT
+      return Sketchup::InputPoint.new(@picked_copy_along_first_point) if @state == STATE_MOVE_ALONG_SECOND_POINT
       nil
     end
 
@@ -1063,278 +999,280 @@ module Ladb::OpenCutList
 
     def _snap_move_point(flags, x, y, view)
 
-      if _fetch_option_move_array
+      @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
-        anchors = _get_move_anchors
-        anchor_point = anchors[_get_move_anchor_index]
+    end
 
-        ground_plane = [ anchor_point, _get_active_z_axis ]
+    def _snap_move_array_point(flags, x, y, view)
 
-        if @mouse_ip.vertex
+      anchors = _get_move_anchors
+      anchor_point = anchors[_get_move_anchor_index]
 
-          if @locked_normal
+      ground_plane = [ anchor_point, _get_active_z_axis ]
 
-            locked_plane = [ anchor_point, @locked_normal ]
+      if @mouse_ip.vertex
 
-            @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
-            @normal = @locked_normal
+        if @locked_normal
 
-          elsif @mouse_ip.position.on_plane?(ground_plane)
+          locked_plane = [ anchor_point, @locked_normal ]
 
-            @normal = _get_active_z_axis
+          @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
+          @normal = @locked_normal
 
-          elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_x_axis ])
+        elsif @mouse_ip.position.on_plane?(ground_plane)
 
-            @normal = _get_active_x_axis
+          @normal = _get_active_z_axis
 
-          elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_y_axis ])
+        elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_x_axis ])
 
-            @normal = _get_active_y_axis
+          @normal = _get_active_x_axis
 
-          else
+        elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_y_axis ])
 
-            vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
-
-            # k_points = Kuix::Points.new
-            # k_points.add_points([ vertex_manipulator.point ])
-            # k_points.size = 30
-            # k_points.style = Kuix::POINT_STYLE_SQUARE
-            # k_points.stroke_color = Kuix::COLOR_MAGENTA
-            # @tool.append_3d(k_points)
-            #
-            # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
-            #
-            #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
-            #
-            #   k_mesh = Kuix::Mesh.new
-            #   k_mesh.add_triangles(face_manipulator.triangles)
-            #   k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
-            #   @tool.append_3d(k_mesh)
-            #
-            # end
-
-          end
-
-        elsif @mouse_ip.edge
-
-          edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
-
-          if @locked_normal
-
-            locked_plane = [ anchor_point, @locked_normal ]
-
-            @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
-            @normal = @locked_normal
-
-          elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_z_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_z_axis)
-
-            @normal = _get_active_z_axis
-
-          elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_x_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_x_axis)
-
-            @normal = _get_active_x_axis
-
-          elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_y_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_y_axis)
-
-            @normal = _get_active_y_axis
-
-          else
-
-            unless anchor_point.on_line?(edge_manipulator.line)
-
-              plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ anchor_point, edge_manipulator.start_point, edge_manipulator.end_point ]))
-
-              @normal = plane_manipulator.normal
-
-            end
-
-            @direction = edge_manipulator.direction if @locked_direction.nil?
-
-            # k_points = Kuix::Points.new
-            # k_points.add_points([ anchor_point, edge_manipulator.start_point, edge_manipulator.end_point ])
-            # k_points.size = 30
-            # k_points.style = Kuix::POINT_STYLE_TRIANGLE
-            # k_points.stroke_color = Kuix::COLOR_BLUE
-            # @tool.append_3d(k_points)
-            #
-            # k_segments = Kuix::Segments.new
-            # k_segments.add_segments(edge_manipulator.segment)
-            # k_segments.color = Kuix::COLOR_MAGENTA
-            # k_segments.line_width = 4
-            # k_segments.on_top = true
-            # @tool.append_3d(k_segments)
-
-          end
-
-        elsif @mouse_ip.cline
-
-          cline_manipulator = ClineManipulator.new(@mouse_ip.cline, @mouse_ip.transformation)
-
-          if @locked_normal
-
-            locked_plane = [ anchor_point, @locked_normal ]
-
-            @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
-            @normal = @locked_normal
-
-          elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_z_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_z_axis)
-
-            @normal = _get_active_z_axis
-
-          elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_x_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_x_axis)
-
-            @normal = _get_active_x_axis
-
-          elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_y_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_y_axis)
-
-            @normal = _get_active_y_axis
-
-          else
-
-            unless cline_manipulator.infinite? || anchor_point.on_line?(cline_manipulator.line)
-
-              plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ anchor_point, cline_manipulator.start_point, cline_manipulator.end_point ]))
-
-              @normal = plane_manipulator.normal
-
-            end
-
-            @direction = cline_manipulator.direction if @locked_direction.nil?
-
-            # k_points = Kuix::Points.new
-            # k_points.add_points([ anchor_point, cline_manipulator.start_point, cline_manipulator.end_point ])
-            # k_points.size = 30
-            # k_points.style = Kuix::POINT_STYLE_TRIANGLE
-            # k_points.stroke_color = Kuix::COLOR_BLUE
-            # @tool.append_3d(k_points)
-            #
-            # k_segments = Kuix::Segments.new
-            # k_segments.add_segments(cline_manipulator.segment)
-            # k_segments.color = Kuix::COLOR_MAGENTA
-            # k_segments.line_width = 4
-            # k_segments.on_top = true
-            # @tool.append_3d(k_segments)
-
-          end
-
-        elsif @mouse_ip.face && @mouse_ip.degrees_of_freedom == 2
-
-          if @locked_normal
-
-            locked_plane = [ anchor_point, @locked_normal ]
-
-            @mouse_ip.copy!(@mouse_ip.position.project_to_plane(locked_plane))
-            @normal = @locked_normal
-
-          else
-
-            face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
-
-            if anchor_point.on_plane?(face_manipulator.plane)
-
-              @normal = face_manipulator.normal
-
-            else
-
-              p1 = anchor_point
-              p2 = @mouse_ip.position
-              p3 = @mouse_ip.position.project_to_plane(ground_plane)
-
-              # k_points = Kuix::Points.new
-              # k_points.add_points([ p1, p2, p3 ])
-              # k_points.size = 30
-              # k_points.style = Kuix::POINT_STYLE_PLUS
-              # k_points.stroke_color = Kuix::COLOR_RED
-              # @tool.append_3d(k_points)
-
-              plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
-              plane_manipulator = PlaneManipulator.new(plane)
-
-              @direction = _get_active_z_axis if @locked_direction.nil?
-              @normal = plane_manipulator.normal
-
-              @mouse_snap_point = @mouse_ip.position
-
-            end
-
-            # k_mesh = Kuix::Mesh.new
-            # k_mesh.add_triangles(face_manipulator.triangles)
-            # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
-            # @tool.append_3d(k_mesh)
-
-          end
+          @normal = _get_active_y_axis
 
         else
 
-          if @locked_normal
+          vertex_manipulator = VertexManipulator.new(@mouse_ip.vertex, @mouse_ip.transformation)
 
-            locked_plane = [ anchor_point, @locked_normal ]
+          # k_points = Kuix::Points.new
+          # k_points.add_points([ vertex_manipulator.point ])
+          # k_points.size = 30
+          # k_points.style = Kuix::POINT_STYLE_SQUARE
+          # k_points.stroke_color = Kuix::COLOR_MAGENTA
+          # @tool.append_3d(k_points)
+          #
+          # if @mouse_ip.face && @mouse_ip.vertex.faces.include?(@mouse_ip.face)
+          #
+          #   face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+          #
+          #   k_mesh = Kuix::Mesh.new
+          #   k_mesh.add_triangles(face_manipulator.triangles)
+          #   k_mesh.background_color = Sketchup::Color.new(255, 255, 0, 50)
+          #   @tool.append_3d(k_mesh)
+          #
+          # end
 
-            if @mouse_ip.degrees_of_freedom > 2
-              @mouse_ip.copy!(Geom.intersect_line_plane(view.pickray(x, y), locked_plane))
-            else
-              @mouse_ip.copy!(@mouse_ip.position.project_to_plane(locked_plane))
-            end
-            @normal = @locked_normal
+        end
+
+      elsif @mouse_ip.edge
+
+        edge_manipulator = EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation)
+
+        if @locked_normal
+
+          locked_plane = [ anchor_point, @locked_normal ]
+
+          @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
+          @normal = @locked_normal
+
+        elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_z_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_z_axis)
+
+          @normal = _get_active_z_axis
+
+        elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_x_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_x_axis)
+
+          @normal = _get_active_x_axis
+
+        elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_y_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_y_axis)
+
+          @normal = _get_active_y_axis
+
+        else
+
+          unless anchor_point.on_line?(edge_manipulator.line)
+
+            plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ anchor_point, edge_manipulator.start_point, edge_manipulator.end_point ]))
+
+            @normal = plane_manipulator.normal
+
+          end
+
+          @direction = edge_manipulator.direction if @locked_direction.nil?
+
+          # k_points = Kuix::Points.new
+          # k_points.add_points([ anchor_point, edge_manipulator.start_point, edge_manipulator.end_point ])
+          # k_points.size = 30
+          # k_points.style = Kuix::POINT_STYLE_TRIANGLE
+          # k_points.stroke_color = Kuix::COLOR_BLUE
+          # @tool.append_3d(k_points)
+          #
+          # k_segments = Kuix::Segments.new
+          # k_segments.add_segments(edge_manipulator.segment)
+          # k_segments.color = Kuix::COLOR_MAGENTA
+          # k_segments.line_width = 4
+          # k_segments.on_top = true
+          # @tool.append_3d(k_segments)
+
+        end
+
+      elsif @mouse_ip.cline
+
+        cline_manipulator = ClineManipulator.new(@mouse_ip.cline, @mouse_ip.transformation)
+
+        if @locked_normal
+
+          locked_plane = [ anchor_point, @locked_normal ]
+
+          @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
+          @normal = @locked_normal
+
+        elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_z_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_z_axis)
+
+          @normal = _get_active_z_axis
+
+        elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_x_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_x_axis)
+
+          @normal = _get_active_x_axis
+
+        elsif @mouse_ip.position.on_plane?([ anchor_point, _get_active_y_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_y_axis)
+
+          @normal = _get_active_y_axis
+
+        else
+
+          unless cline_manipulator.infinite? || anchor_point.on_line?(cline_manipulator.line)
+
+            plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ anchor_point, cline_manipulator.start_point, cline_manipulator.end_point ]))
+
+            @normal = plane_manipulator.normal
+
+          end
+
+          @direction = cline_manipulator.direction if @locked_direction.nil?
+
+          # k_points = Kuix::Points.new
+          # k_points.add_points([ anchor_point, cline_manipulator.start_point, cline_manipulator.end_point ])
+          # k_points.size = 30
+          # k_points.style = Kuix::POINT_STYLE_TRIANGLE
+          # k_points.stroke_color = Kuix::COLOR_BLUE
+          # @tool.append_3d(k_points)
+          #
+          # k_segments = Kuix::Segments.new
+          # k_segments.add_segments(cline_manipulator.segment)
+          # k_segments.color = Kuix::COLOR_MAGENTA
+          # k_segments.line_width = 4
+          # k_segments.on_top = true
+          # @tool.append_3d(k_segments)
+
+        end
+
+      elsif @mouse_ip.face && @mouse_ip.degrees_of_freedom == 2
+
+        if @locked_normal
+
+          locked_plane = [ anchor_point, @locked_normal ]
+
+          @mouse_ip.copy!(@mouse_ip.position.project_to_plane(locked_plane))
+          @normal = @locked_normal
+
+        else
+
+          face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
+
+          if anchor_point.on_plane?(face_manipulator.plane)
+
+            @normal = face_manipulator.normal
 
           else
 
-            if @mouse_ip.degrees_of_freedom > 2
-              picked_point = Geom::intersect_line_plane(view.pickray(x, y), ground_plane)
-              @mouse_ip.copy!(picked_point) unless picked_point.nil?
-            end
+            p1 = anchor_point
+            p2 = @mouse_ip.position
+            p3 = @mouse_ip.position.project_to_plane(ground_plane)
 
-            if !@mouse_ip.position.on_plane?(ground_plane)
+            # k_points = Kuix::Points.new
+            # k_points.add_points([ p1, p2, p3 ])
+            # k_points.size = 30
+            # k_points.style = Kuix::POINT_STYLE_PLUS
+            # k_points.stroke_color = Kuix::COLOR_RED
+            # @tool.append_3d(k_points)
 
-              p1 = anchor_point
-              p2 = @mouse_ip.position
-              p3 = @mouse_ip.position.project_to_plane(ground_plane)
+            plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
+            plane_manipulator = PlaneManipulator.new(plane)
 
-              # k_points = Kuix::Points.new
-              # k_points.add_points([ p1, p2, p3 ])
-              # k_points.size = 30
-              # k_points.style = Kuix::POINT_STYLE_CROSS
-              # k_points.stroke_color = Kuix::COLOR_RED
-              # @tool.append_3d(k_points)
+            @direction = _get_active_z_axis if @locked_direction.nil?
+            @normal = plane_manipulator.normal
 
-              plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
-              plane_manipulator = PlaneManipulator.new(plane)
+            @mouse_snap_point = @mouse_ip.position
 
-              @direction = _get_active_z_axis if @locked_direction.nil?
-              @normal = plane_manipulator.normal
+          end
 
-            else
+          # k_mesh = Kuix::Mesh.new
+          # k_mesh.add_triangles(face_manipulator.triangles)
+          # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
+          # @tool.append_3d(k_mesh)
 
-              @direction = @locked_direction
-              @normal = _get_active_z_axis
+        end
 
-            end
+      else
+
+        if @locked_normal
+
+          locked_plane = [ anchor_point, @locked_normal ]
+
+          if @mouse_ip.degrees_of_freedom > 2
+            @mouse_ip.copy!(Geom.intersect_line_plane(view.pickray(x, y), locked_plane))
+          else
+            @mouse_ip.copy!(@mouse_ip.position.project_to_plane(locked_plane))
+          end
+          @normal = @locked_normal
+
+        else
+
+          if @mouse_ip.degrees_of_freedom > 2
+            picked_point = Geom::intersect_line_plane(view.pickray(x, y), ground_plane)
+            @mouse_ip.copy!(picked_point) unless picked_point.nil?
+          end
+
+          if !@mouse_ip.position.on_plane?(ground_plane)
+
+            p1 = anchor_point
+            p2 = @mouse_ip.position
+            p3 = @mouse_ip.position.project_to_plane(ground_plane)
+
+            # k_points = Kuix::Points.new
+            # k_points.add_points([ p1, p2, p3 ])
+            # k_points.size = 30
+            # k_points.style = Kuix::POINT_STYLE_CROSS
+            # k_points.stroke_color = Kuix::COLOR_RED
+            # @tool.append_3d(k_points)
+
+            plane = Geom.fit_plane_to_points([ p1, p2, p3 ])
+            plane_manipulator = PlaneManipulator.new(plane)
+
+            @direction = _get_active_z_axis if @locked_direction.nil?
+            @normal = plane_manipulator.normal
+
+          else
+
+            @direction = @locked_direction
+            @normal = _get_active_z_axis
 
           end
 
         end
 
-        # Check square
-        if @mouse_snap_point.nil? && @mouse_ip.degrees_of_freedom >= 2
+      end
 
-          t = _get_transformation(anchor_point)
-          ti = t.inverse
+      # Check square
+      if @mouse_snap_point.nil? && @mouse_ip.degrees_of_freedom >= 2
 
-          p1 = anchor_point.transform(ti)
-          p2 = @mouse_ip.position.transform(ti)
-          v = p1.vector_to(p2)
+        t = _get_transformation(anchor_point)
+        ti = t.inverse
 
-          psqr = Geom::Point3d.new(p1.x + v.x, p1.y + v.x.abs * (v.y < 0 ? -1 : 1)).transform(t)
+        p1 = anchor_point.transform(ti)
+        p2 = @mouse_ip.position.transform(ti)
+        v = p1.vector_to(p2)
 
-          # k_points = _create_floating_points(
-          #   points: psqr,
-          #   fill_color: Kuix::COLOR_RED
-          # )
-          # @tool.append_3d(k_points)
+        psqr = Geom::Point3d.new(p1.x + v.x, p1.y + v.x.abs * (v.y < 0 ? -1 : 1)).transform(t)
 
-          @mouse_snap_point = psqr if view.pick_helper.test_point(psqr, x, y, 20)
+        # k_points = _create_floating_points(
+        #   points: psqr,
+        #   fill_color: Kuix::COLOR_RED
+        # )
+        # @tool.append_3d(k_points)
 
-        end
+        @mouse_snap_point = psqr if view.pick_helper.test_point(psqr, x, y, 20)
 
       end
 
@@ -1342,13 +1280,13 @@ module Ladb::OpenCutList
 
     end
 
-    def _snap_copy_along_first_point(flags, x, y, view)
+    def _snap_move_along_first_point(flags, x, y, view)
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
     end
 
-    def _snap_copy_along_second_point(flags, x, y, view)
+    def _snap_move_along_second_point(flags, x, y, view)
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
@@ -1461,157 +1399,66 @@ module Ladb::OpenCutList
       ps = anchors[_get_move_anchor_index]
       pe = @mouse_snap_point
 
-      if _fetch_option_move_array
+      v = ps.vector_to(pe)
 
-        t = _get_transformation(ps)
-        ti = t.inverse
-
-        bounds = Geom::BoundingBox.new
-        bounds.add(ps.transform(ti), pe.transform(ti))
-
-        # Move rectangle
-
-        k_rectangle = Kuix::RectangleMotif.new
-        k_rectangle.bounds.origin.copy!(bounds.min)
-        k_rectangle.bounds.size.copy!(bounds)
-        k_rectangle.line_width = @locked_normal ? 2 : 1
-        k_rectangle.line_stipple = @locked_normal ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_LONG_DASHES
-        k_rectangle.color = ColorUtils.color_translucent(_get_normal_color, 60)
-        k_rectangle.on_top = true
-        k_rectangle.transformation = t
-        @tool.append_3d(k_rectangle)
-
-        k_rectangle = Kuix::RectangleMotif.new
-        k_rectangle.bounds.origin.copy!(bounds.min)
-        k_rectangle.bounds.size.copy!(bounds)
-        k_rectangle.line_width = @locked_normal ? 2 : 1
-        k_rectangle.line_stipple = @locked_normal ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_LONG_DASHES
-        k_rectangle.color = _get_normal_color
-        k_rectangle.transformation = t
-        @tool.append_3d(k_rectangle)
-
-        if bounds.width == bounds.height && bounds.width != 0
-
-          k_line = Kuix::LineMotif.new
-          k_line.start.copy!(ps)
-          k_line.end.copy!(pe)
-          k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          k_line.color = _get_normal_color
-          @tool.append_3d(k_line)
-
-        end
-
-        (0..3).each do |i|
-
-          p = bounds.corner(i).transform(t)
-          next if p == ps
-
-          mt = Geom::Transformation.translation(ps.vector_to(p))
-
-          k_segments = Kuix::Segments.new
-          k_segments.add_segments(segments)
-          k_segments.line_width = is_construction ? 1 : 1.5
-          k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if is_construction
-          k_segments.color = Kuix::COLOR_BLACK
-          k_segments.transformation = mt * drawing_def.transformation
-          @tool.append_3d(k_segments)
-
-        end
-
-        Sketchup.set_status_text("#{bounds.width}#{Sketchup::RegionalSettings.list_separator} #{bounds.height}", SB_VCB_VALUE)
-
-        if bounds.width > 0
-
-          screen_point = view.screen_coords(bounds.min.offset(X_AXIS, bounds.width / 2).transform(t))
-
-          k_label = _create_floating_label(
-            screen_point: screen_point,
-            text: bounds.width,
-            text_color: Kuix::COLOR_X,
-            border_color: _get_normal_color
-          )
-          @tool.append_2d(k_label)
-
-        end
-
-        if bounds.height > 0
-
-          screen_point = view.screen_coords(bounds.min.offset(Y_AXIS, bounds.height / 2).transform(t))
-
-          k_label = _create_floating_label(
-            screen_point: screen_point,
-            text: bounds.height,
-            text_color: Kuix::COLOR_Y,
-            border_color: _get_normal_color
-          )
-          @tool.append_2d(k_label)
-
-        end
-
-      else
-
-        v = ps.vector_to(pe)
-
-        unless @move_copy
-
-          k_segments = Kuix::Segments.new
-          k_segments.add_segments(segments)
-          k_segments.line_width = 1.5
-          k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-          k_segments.color = Kuix::COLOR_DARK_GREY
-          k_segments.transformation = drawing_def.transformation
-          @tool.append_3d(k_segments)
-
-        end
-
-        mt = Geom::Transformation.translation(v)
+      unless @move_copy
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(segments)
-        k_segments.line_width = is_construction ? 1 : 1.5
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if is_construction
-        k_segments.color = Kuix::COLOR_BLACK
-        k_segments.transformation = mt * drawing_def.transformation
+        k_segments.line_width = 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_segments.color = Kuix::COLOR_DARK_GREY
+        k_segments.transformation = drawing_def.transformation
         @tool.append_3d(k_segments)
 
-        # Move line
+      end
 
-        unless view.inference_locked? && @mouse_ip.degrees_of_freedom != 1
+      mt = Geom::Transformation.translation(v)
 
-          k_line = Kuix::LineMotif.new
-          k_line.start.copy!(ps)
-          k_line.end.copy!(pe)
-          k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-          k_line.color = ColorUtils.color_translucent(_get_vector_color(v), 60)
-          k_line.on_top = true
-          @tool.append_3d(k_line)
+      k_segments = Kuix::Segments.new
+      k_segments.add_segments(segments)
+      k_segments.line_width = is_construction ? 1 : 1.5
+      k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if is_construction
+      k_segments.color = Kuix::COLOR_BLACK
+      k_segments.transformation = mt * drawing_def.transformation
+      @tool.append_3d(k_segments)
 
-          k_line = Kuix::LineMotif.new
-          k_line.start.copy!(ps)
-          k_line.end.copy!(pe)
-          k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-          k_line.color = _get_vector_color(v)
-          @tool.append_3d(k_line)
+      # Move line
 
-        end
+      unless view.inference_locked? && @mouse_ip.degrees_of_freedom != 1
 
-        distance = v.length
+        k_line = Kuix::LineMotif.new
+        k_line.start.copy!(ps)
+        k_line.end.copy!(pe)
+        k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_line.color = ColorUtils.color_translucent(_get_vector_color(v), 60)
+        k_line.on_top = true
+        @tool.append_3d(k_line)
 
-        Sketchup.set_status_text(distance, SB_VCB_VALUE)
+        k_line = Kuix::LineMotif.new
+        k_line.start.copy!(ps)
+        k_line.end.copy!(pe)
+        k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        k_line.color = _get_vector_color(v)
+        @tool.append_3d(k_line)
 
-        if distance > 0
+      end
 
-          screen_point = view.screen_coords(ps.offset(v, distance / 2))
+      distance = v.length
 
-          k_label = _create_floating_label(
-            screen_point: screen_point,
-            text: distance,
-            text_color: Kuix::COLOR_X,
-            border_color: _get_vector_color(v)
-          )
-          @tool.append_2d(k_label)
+      Sketchup.set_status_text(distance, SB_VCB_VALUE)
 
-        end
+      if distance > 0
+
+        screen_point = view.screen_coords(ps.offset(v, distance / 2))
+
+        k_label = _create_floating_label(
+          screen_point: screen_point,
+          text: distance,
+          text_color: Kuix::COLOR_X,
+          border_color: _get_vector_color(v)
+        )
+        @tool.append_2d(k_label)
 
       end
 
@@ -1629,7 +1476,121 @@ module Ladb::OpenCutList
 
     end
 
-    def _preview_copy_along_first_point(view)
+    def _preview_move_array(view)
+      return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+      is_construction = drawing_def.cline_manipulators.any?
+
+      segments = []
+      segments += drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
+      segments += drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
+      segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
+
+      anchors = _get_move_anchors
+
+      ps = anchors[_get_move_anchor_index]
+      pe = @mouse_snap_point
+
+      t = _get_transformation(ps)
+      ti = t.inverse
+
+      bounds = Geom::BoundingBox.new
+      bounds.add(ps.transform(ti), pe.transform(ti))
+
+      # Move rectangle
+
+      k_rectangle = Kuix::RectangleMotif.new
+      k_rectangle.bounds.origin.copy!(bounds.min)
+      k_rectangle.bounds.size.copy!(bounds)
+      k_rectangle.line_width = @locked_normal ? 2 : 1
+      k_rectangle.line_stipple = @locked_normal ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_LONG_DASHES
+      k_rectangle.color = ColorUtils.color_translucent(_get_normal_color, 60)
+      k_rectangle.on_top = true
+      k_rectangle.transformation = t
+      @tool.append_3d(k_rectangle)
+
+      k_rectangle = Kuix::RectangleMotif.new
+      k_rectangle.bounds.origin.copy!(bounds.min)
+      k_rectangle.bounds.size.copy!(bounds)
+      k_rectangle.line_width = @locked_normal ? 2 : 1
+      k_rectangle.line_stipple = @locked_normal ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_LONG_DASHES
+      k_rectangle.color = _get_normal_color
+      k_rectangle.transformation = t
+      @tool.append_3d(k_rectangle)
+
+      if bounds.width == bounds.height && bounds.width != 0
+
+        k_line = Kuix::LineMotif.new
+        k_line.start.copy!(ps)
+        k_line.end.copy!(pe)
+        k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_line.color = _get_normal_color
+        @tool.append_3d(k_line)
+
+      end
+
+      (0..3).each do |i|
+
+        p = bounds.corner(i).transform(t)
+        next if p == ps
+
+        mt = Geom::Transformation.translation(ps.vector_to(p))
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.line_width = is_construction ? 1 : 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if is_construction
+        k_segments.color = Kuix::COLOR_BLACK
+        k_segments.transformation = mt * drawing_def.transformation
+        @tool.append_3d(k_segments)
+
+      end
+
+      Sketchup.set_status_text("#{bounds.width}#{Sketchup::RegionalSettings.list_separator} #{bounds.height}", SB_VCB_VALUE)
+
+      if bounds.width > 0
+
+        screen_point = view.screen_coords(bounds.min.offset(X_AXIS, bounds.width / 2).transform(t))
+
+        k_label = _create_floating_label(
+          screen_point: screen_point,
+          text: bounds.width,
+          text_color: Kuix::COLOR_X,
+          border_color: _get_normal_color
+        )
+        @tool.append_2d(k_label)
+
+      end
+
+      if bounds.height > 0
+
+        screen_point = view.screen_coords(bounds.min.offset(Y_AXIS, bounds.height / 2).transform(t))
+
+        k_label = _create_floating_label(
+          screen_point: screen_point,
+          text: bounds.height,
+          text_color: Kuix::COLOR_Y,
+          border_color: _get_normal_color
+        )
+        @tool.append_2d(k_label)
+
+      end
+
+      anchors.each_with_index do |p, i|
+
+        # Anchor points
+
+        k_points = _create_floating_points(
+          points: [ p ],
+          stroke_color: p == ps ? Kuix::COLOR_RED : Kuix::COLOR_BLACK
+        )
+        @tool.append_3d(k_points)
+
+      end
+
+    end
+
+    def _preview_move_along_first_point(view)
 
       drawing_def = _get_drawing_def
 
@@ -1648,7 +1609,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _preview_copy_along_second_point(view)
+    def _preview_move_along_second_point(view)
 
       ps = @picked_copy_along_first_point
       pe = @mouse_snap_point
@@ -1762,10 +1723,8 @@ module Ladb::OpenCutList
         k_segments.transformation = drawing_def.transformation
         @tool.append_3d(k_segments)
 
-        [
-          mps.offset(mv, mv.length * 1/3),
-          mps.offset(mv, mv.length * 2/3),
-        ].each do |point|
+        count = 1
+        Array.new(count) { |i| mps.offset(mv, mv.length * (i + 1) / (count + 1)) }.each do |point|
 
           mt = Geom::Transformation.translation(center.vector_to(point))
 
@@ -1779,11 +1738,50 @@ module Ladb::OpenCutList
 
         end
 
+        distance = v.length
+
+        Sketchup.set_status_text(distance, SB_VCB_VALUE)
+
+        if distance > 0
+
+          screen_point = view.screen_coords(ps.offset(v, distance / 2))
+
+          k_label = _create_floating_label(
+            screen_point: screen_point,
+            text: distance,
+            text_color: Kuix::COLOR_X,
+            border_color: _get_vector_color(v, Kuix::COLOR_DARK_GREY)
+          )
+          @tool.append_2d(k_label)
+
+        end
+
       end
 
     end
 
     # -----
+
+    def _read_offset(text, view)
+
+      if (match = /^(.+)x$/.match(text))
+
+        value = match[1]
+
+        begin
+          offset = value.to_l
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset.to_s, true)
+          _refresh
+        rescue ArgumentError
+          UI.beep
+          @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_offset', { :value => value } ] ])
+        end
+
+        return true
+      end
+
+      false
+    end
 
     def _read_shape(text, view)
       if @picked_shape_first_point == @mouse_snap_point
@@ -1813,13 +1811,7 @@ module Ladb::OpenCutList
       @picked_pushpull_point = Geom::Point3d.new(p2.x, p2.y, thickness).transform(t)
 
       _create_entity
-
-      if _fetch_option_tool_move
-        set_state(STATE_MOVE)
-        _refresh
-      else
-        _restart
-      end
+      _restart
 
       Sketchup.set_status_text('', SB_VCB_VALUE)
 
@@ -1832,45 +1824,81 @@ module Ladb::OpenCutList
       pe = @mouse_snap_point
       v = ps.vector_to(pe)
 
-      if _fetch_option_move_array
+      distance = _read_user_text_length(text, v.length)
+      return true if distance.nil?
 
-        d1, d2 = _split_user_text(text)
-
-        if d1 || d2
-
-          t = _get_transformation(ps)
-          ti = t.inverse
-
-          vi = v.transform(ti)
-
-          distance_x = _read_user_text_length(d1, vi.x.abs)
-          return true if distance_x.nil?
-
-          distance_y = _read_user_text_length(d2, vi.y.abs)
-          return true if distance_y.nil?
-
-          @picked_move_point = ps.offset(Geom::Vector3d.new(vi.x < 0 ? -distance_x : distance_x, vi.y < 0 ? -distance_y : distance_y).transform(t))
-
-        end
-
-      else
-
-        distance = _read_user_text_length(text, v.length)
-        return true if distance.nil?
-
-        @picked_move_point = ps.offset(v, distance)
-
-      end
+      @picked_move_point = ps.offset(v, distance)
 
       _copy_entity
-      set_state(STATE_MOVE_COPY) if @move_copy || _fetch_option_move_array
+      set_state(STATE_MOVE_COPIES) if @move_copy
       _restart
 
       true
     end
 
-    def _read_move_copy(text, view)
-      return false if @previous_action_handler.nil? || @previous_action_handler.fetch_state != STATE_MOVE_COPY
+    def _read_move_copies(text, view)
+      return false if @previous_action_handler.nil? || @previous_action_handler.fetch_state != STATE_MOVE_COPIES
+
+      v, _ = _split_user_text(text)
+
+      if v && (match = v.match(/^([x*\/])(\d+)$/))
+
+        operator, value = match ? match[1, 2] : [ nil, nil ]
+
+        number = value.to_i
+
+        if !value.nil? && number == 0
+          UI.beep
+          @tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
+          return true
+        end
+
+        operator = operator.nil? ? '*' : operator
+
+        number = number == 0 ? 1 : number
+
+        @previous_action_handler._copy_entity(operator, number)
+        Sketchup.set_status_text('', SB_VCB_VALUE)
+
+        return true
+      end
+
+      false
+    end
+
+    def _read_move_array(text, view)
+
+      ps = _get_move_anchors[_get_move_anchor_index]
+      pe = @mouse_snap_point
+      v = ps.vector_to(pe)
+
+      d1, d2 = _split_user_text(text)
+
+      if d1 || d2
+
+        t = _get_transformation(ps)
+        ti = t.inverse
+
+        vi = v.transform(ti)
+
+        distance_x = _read_user_text_length(d1, vi.x.abs)
+        return true if distance_x.nil?
+
+        distance_y = _read_user_text_length(d2, vi.y.abs)
+        return true if distance_y.nil?
+
+        @picked_move_point = ps.offset(Geom::Vector3d.new(vi.x < 0 ? -distance_x : distance_x, vi.y < 0 ? -distance_y : distance_y).transform(t))
+
+      end
+
+      _copy_entity
+      _restart
+
+      true
+    end
+
+    def _read_move_array_copies(text, view)
+      return false if @previous_action_handler.nil? || @previous_action_handler.fetch_state != STATE_MOVE_ARRAY_COPIES
 
       v1, v2 = _split_user_text(text)
 
@@ -1901,47 +1929,60 @@ module Ladb::OpenCutList
         number_1 = number_1 == 0 ? 1 : number_1
         number_2 = number_2 == 0 ? (has_separator ? 1 : number_1) : number_2
 
-        @previous_action_handler._copy_entity(operator_1, number_1, operator_2, number_2)
+        @previous_action_handler._copy_array_entity(operator_1, number_1, operator_2, number_2)
         Sketchup.set_status_text('', SB_VCB_VALUE)
 
         return true
       end
 
-      false
+      false    end
+
+    def _read_move_along(text, view)
+
+      ps = @picked_copy_along_first_point
+      pe = @mouse_snap_point
+      v = ps.vector_to(pe)
+
+      distance = _read_user_text_length(text, v.length)
+      return true if distance.nil?
+
+      @picked_copy_along_second_point = ps.offset(v, distance)
+
+      _copy_along_entity
+      _restart
+
     end
 
-    def _read_offset(text, view)
+    def _read_move_along_copies(text, view)
+      return false if @previous_action_handler.nil? || @previous_action_handler.fetch_state != STATE_MOVE_ALONG_COPIES
 
-      if (match = /^(.+)x$/.match(text))
+      if text && (match = text.match(/^([x*\/])(\d+)$/))
 
-        value = match[1]
+        operator, value = match ? match[1, 2] : [ nil, nil ]
 
-        begin
-          offset = value.to_l
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset.to_s, true)
-          _refresh
-        rescue ArgumentError
+        number = value.to_i
+
+        if operator == '/' && number < 2
           UI.beep
-          @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_offset', { :value => value } ] ])
+          @tool.notify_errors([ [ "tool.smart_draw.error.invalid_divider", { :value => value } ] ])
+          return true
+        end
+        if number == 0
+          UI.beep
+          @tool.notify_errors([ [ "tool.smart_draw.error.invalid_multiplicator", { :value => value } ] ])
+          return true
         end
 
-        return true
+        count = operator == '/' ? number - 1 : number
+
+        @previous_action_handler._copy_along_entity(count)
+        Sketchup.set_status_text('', SB_VCB_VALUE)
+
       end
 
-      false
     end
 
     # -----
-
-    def _fetch_option_tool_pushpull
-      return true
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_PUSHPULL)
-    end
-
-    def _fetch_option_tool_move
-      return false
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_TOOLS, SmartDrawTool::ACTION_OPTION_TOOLS_MOVE)
-    end
 
     def _fetch_option_shape_offset
       @tool.fetch_action_option_length(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET)
@@ -1953,11 +1994,6 @@ module Ladb::OpenCutList
 
     def _fetch_option_solid_centered
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED)
-    end
-
-    def _fetch_option_move_array
-      return @move_array
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MOVE_ARRAY)
     end
 
     # -----
@@ -2173,7 +2209,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _copy_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
+    def _copy_entity(operator = '*', number = 1)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       ps = _get_move_anchors[_get_move_anchor_index]
@@ -2185,60 +2221,67 @@ module Ladb::OpenCutList
 
       @definition.entities.erase_entities(@definition.instances)
 
-      if _fetch_option_move_array
-
-        t = _get_transformation(ps)
-        ti = t.inverse
-
-        v.transform!(ti)
-
-        if operator_1 == '/'
-          ux = v.x / number_1
-        else
-          ux = v.x
-        end
-        if operator_2 == '/'
-          uy = v.y / number_2
-        else
-          uy = v.y
-        end
-
-        (0..number_1).each do |x|
-          (0..number_2).each do |y|
-            model.active_entities.add_instance(@definition, Geom::Transformation.translation(Geom::Vector3d.new(ux * x, uy * y).transform(t)) * drawing_def.transformation)
-          end
-        end
-
+      if operator == '/'
+        ux = v.x / number
+        uy = v.y / number
+        uz = v.z / number
       else
+        ux = v.x
+        uy = v.y
+        uz = v.z
+      end
 
-        if operator_1 == '/'
-          ux = v.x / number_1
-          uy = v.y / number_1
-          uz = v.z / number_1
-        else
-          ux = v.x
-          uy = v.y
-          uz = v.z
-        end
+      if @move_copy
+        model.active_entities.add_instance(@definition, drawing_def.transformation)
+      end
 
-        if @move_copy
-          model.active_entities.add_instance(@definition, drawing_def.transformation)
-        end
-
-        (1..number_1).each do |i|
-          model.active_entities.add_instance(@definition, Geom::Transformation.translation(Geom::Vector3d.new(ux * i, uy * i, uz * i)) * drawing_def.transformation)
-        end
-
+      (1..number).each do |i|
+        model.active_entities.add_instance(@definition, Geom::Transformation.translation(Geom::Vector3d.new(ux * i, uy * i, uz * i)) * drawing_def.transformation)
       end
 
       model.commit_operation
 
-      # Reset DrawingDef
-      @drawing_def = nil
+    end
+
+    def _copy_array_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
+      return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+      ps = _get_move_anchors[_get_move_anchor_index]
+      pe = @picked_move_point
+      v = ps.vector_to(pe)
+
+      model = Sketchup.active_model
+      model.start_operation('Copy Part', true)
+
+      @definition.entities.erase_entities(@definition.instances)
+
+      t = _get_transformation(ps)
+      ti = t.inverse
+
+      v.transform!(ti)
+
+      if operator_1 == '/'
+        ux = v.x / number_1
+      else
+        ux = v.x
+      end
+      if operator_2 == '/'
+        uy = v.y / number_2
+      else
+        uy = v.y
+      end
+
+      (0..number_1).each do |x|
+        (0..number_2).each do |y|
+          model.active_entities.add_instance(@definition, Geom::Transformation.translation(Geom::Vector3d.new(ux * x, uy * y).transform(t)) * drawing_def.transformation)
+        end
+      end
+
+      model.commit_operation
 
     end
 
-    def _arrange_entity(count = 2)
+    def _copy_along_entity(count = 1)
 
       ps = @picked_copy_along_first_point
       pe = @picked_copy_along_second_point
@@ -2255,9 +2298,6 @@ module Ladb::OpenCutList
         center = bounds.center.transform(t)
         corners = (0..6).map { |i| bounds.corner(i).transform(t) }
         line = [ center , v ]
-
-        k_points = _create_floating_points(points: [ center ], style: Kuix::POINT_STYLE_PLUS)
-        @tool.append_3d(k_points)
 
         plane_btm = Geom.fit_plane_to_points(corners[0], corners[1], corners[2])
         ibtm = Geom.intersect_line_plane(line, plane_btm)
@@ -2310,10 +2350,7 @@ module Ladb::OpenCutList
 
         @definition.entities.erase_entities(@definition.instances)
 
-        [
-          mps.offset(mv, mv.length * 1/3),
-          mps.offset(mv, mv.length * 2/3),
-        ].each do |point|
+        Array.new(count) { |i| mps.offset(mv, mv.length * (i + 1) / (count + 1)) }.each do |point|
 
           mt = Geom::Transformation.translation(center.vector_to(point))
 
@@ -2322,9 +2359,6 @@ module Ladb::OpenCutList
         end
 
         model.commit_operation
-
-        # Reset DrawingDef
-        @drawing_def = nil
 
       end
 
@@ -2388,7 +2422,6 @@ module Ladb::OpenCutList
           path: 'M0,0.667L0.333,0.667L0.333,1L0,1L0,0.667 M0.667,0L1,0L1,0.333L0.667,0.333L0.667,0 M0.417,0.583L0.583,0.417',
           block: lambda {
             @tool.set_action_handler(self)
-            @move_array = false
             @picked_move_point = nil
             set_state(STATE_MOVE)
             _refresh
@@ -2399,9 +2432,8 @@ module Ladb::OpenCutList
           path: 'M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.833L0.583,0.833',
           block: lambda {
             @tool.set_action_handler(self)
-            @move_array = true
             @picked_move_point = nil
-            set_state(STATE_MOVE)
+            set_state(STATE_MOVE_ARRAY)
             _refresh
           },
           text: 'Copier en grille'
@@ -2413,7 +2445,7 @@ module Ladb::OpenCutList
             @picked_move_point = nil
             @picked_copy_along_first_point = nil
             @picked_copy_along_second_point = nil
-            set_state(STATE_COPY_ALONG_FIRST_POINT)
+            set_state(STATE_MOVE_ALONG_FIRST_POINT)
             _refresh
           },
           text: 'Répartir'
@@ -2486,9 +2518,11 @@ module Ladb::OpenCutList
     def get_state_status(state)
 
       case state
+
       when STATE_SHAPE_POINTS
         return super +
           ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_rectangle_centered_status') + '.'
+
       end
 
       super
@@ -2969,20 +3003,8 @@ module Ladb::OpenCutList
 
         @picked_shape_last_point = Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t)
 
-        if _fetch_option_tool_pushpull
-          set_state(STATE_PUSHPULL)
-          _refresh
-        else
-          @picked_pushpull_point = @picked_shape_last_point
-          _create_entity
-          if _fetch_option_tool_move
-            set_state(STATE_MOVE)
-            _refresh
-          else
-            _restart
-          end
-          return true
-        end
+        set_state(STATE_PUSHPULL)
+        _refresh
 
       end
       if d3
@@ -2999,14 +3021,9 @@ module Ladb::OpenCutList
         @picked_pushpull_point = Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t)
 
         _create_entity
-        if _fetch_option_tool_move
-          set_state(STATE_MOVE)
-          _refresh
-        else
-          _restart
-        end
-        return true
+        _restart
 
+        return true
       end
 
       true
@@ -3023,8 +3040,10 @@ module Ladb::OpenCutList
     def get_state_vcb_label(state)
 
       case state
+
       when STATE_SHAPE_POINTS
         return PLUGIN.get_i18n_string('tool.smart_draw.vcb_size')
+
       end
 
       super
@@ -3127,9 +3146,11 @@ module Ladb::OpenCutList
     def get_state_status(state)
 
       case state
+
       when STATE_SHAPE_POINTS
         return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_1_#{_fetch_option_measure_from_diameter ? 'diameter' : 'radius'}_status") + '.' +
           ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_draw.action_option_options_measure_from_#{_fetch_option_measure_from_diameter ? 'radius' : 'diameter'}_status") + '.'
+
       end
 
       super
@@ -3138,8 +3159,10 @@ module Ladb::OpenCutList
     def get_state_vcb_label(state)
 
       case state
+
       when STATE_SHAPE_POINTS
         return PLUGIN.get_i18n_string("tool.smart_draw.vcb_#{_fetch_option_measure_from_diameter ? 'diameter' : 'radius'}")
+
       end
 
       super
@@ -3322,20 +3345,8 @@ module Ladb::OpenCutList
         @picked_shape_last_point = @picked_shape_first_point.offset(measure_vector, _fetch_option_measure_from_diameter ? measure / 2.0 : measure)
 
         if d2.nil?
-          if _fetch_option_tool_pushpull
-            set_state(STATE_PUSHPULL)
-            _refresh
-          else
-            @picked_pushpull_point = @picked_shape_last_point
-            if _fetch_option_tool_move
-              set_state(STATE_MOVE)
-              _refresh
-            else
-              _create_entity
-              _restart
-            end
-            return true
-          end
+          set_state(STATE_PUSHPULL)
+          _refresh
         end
 
       end
@@ -3461,9 +3472,11 @@ module Ladb::OpenCutList
     def get_state_status(state)
 
       case state
+
       when STATE_SHAPE_POINTS
         return super +
           ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_draw.action_option_options_measure_reversed_status") + '.'
+
       end
 
       super
@@ -3472,8 +3485,10 @@ module Ladb::OpenCutList
     def get_state_vcb_label(state)
 
       case state
+
       when STATE_SHAPE_POINTS
         return PLUGIN.get_i18n_string('tool.smart_draw.vcb_length')
+
       end
 
       super
@@ -3501,10 +3516,9 @@ module Ladb::OpenCutList
         super
         _add_picked_point(@picked_shape_first_point, view) if _picked_shape_first_point?
 
-      else
-        super
       end
 
+      super
     end
 
     def onLButtonUp(flags, x, y, view)
@@ -3526,10 +3540,9 @@ module Ladb::OpenCutList
         _add_picked_point(@mouse_snap_point, view)
         _refresh
 
-      else
-        super
       end
 
+      super
     end
 
     def onLButtonDoubleClick(flags, x, y, view)

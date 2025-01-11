@@ -3,37 +3,22 @@
     "shape_offset": 5 /* PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED */
   },
   "action_0": { /* ACTION_DRAW_RECTANGLE */
-    "pushpull": true,
-    "move": false,
     "shape_offset": "0",
     "construction": false,
     "rectangle_centered": false,
-    "solid_centered": false,
-    "move_array": false
+    "solid_centered": false
   },
   "action_1": { /* ACTION_DRAW_CIRCLE */
-    "pushpull": true,
-    "move": false,
     "shape_offset": "0",
     "segment_count": 24,
     "construction": false,
     "measure_from_diameter": false,
-    "solid_centered": false,
-    "move_array": false
+    "solid_centered": false
   },
   "action_2": { /* ACTION_DRAW_POLYGON */
-    "pushpull": true,
-    "move": false,
     "shape_offset": "0",
     "construction": false,
     "measure_reversed": false,
-    "solid_centered": false,
-    "move_array": false
-  },
-  "action_3": { /* ACTION_COPY */
-  },
-  "action_4": { /* ACTION_COPY_ARRAY */
-  },
-  "action_5": { /* ACTION_COPY_ALONG */
+    "solid_centered": false
   }
 }
