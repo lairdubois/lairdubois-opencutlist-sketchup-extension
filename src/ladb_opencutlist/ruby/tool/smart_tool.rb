@@ -559,8 +559,8 @@ module Ladb::OpenCutList
         text_color = COLOR_MESSAGE_TEXT
       end
 
-      @message_lbl.text = text
       @message_panel.visible = !text.empty?
+      @message_lbl.text = text
       @message_lbl.set_style_attribute(:color, text_color)
       @message_lbl.set_style_attribute(:background_color, background_color)
       @message_lbl.set_style_attribute(:border_color, border_color)
