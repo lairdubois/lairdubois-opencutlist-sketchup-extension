@@ -1618,6 +1618,11 @@ module Ladb::OpenCutList
     # -----
 
     def onResume(view)
+      @tool.set_root_cursor(get_state_cursor(@state))
+      Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
+      Sketchup.set_status_text(get_state_vcb_label(@state), SB_VCB_LABEL)
+      Sketchup.set_status_text('', SB_VCB_VALUE)
+      _refresh
       true
     end
 

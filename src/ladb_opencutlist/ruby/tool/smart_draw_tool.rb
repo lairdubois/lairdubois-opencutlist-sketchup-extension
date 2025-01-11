@@ -155,18 +155,6 @@ module Ladb::OpenCutList
       super
     end
 
-    def is_action_draw_rectangle?
-      fetch_action == ACTION_DRAW_RECTANGLE
-    end
-
-    def is_action_draw_circle?
-      fetch_action == ACTION_DRAW_CIRCLE
-    end
-
-    def is_action_draw_polygon?
-      fetch_action == ACTION_DRAW_POLYGON
-    end
-
     # -- Events --
 
     def onActivate(view)
@@ -208,7 +196,7 @@ module Ladb::OpenCutList
     include UserTextHelper
     include EntitiesHelper
 
-    STATE_SHAPE_FIRST_POINT = 0
+    STATE_SHAPE_START_POINT = 0
     STATE_SHAPE_POINTS = 1
     STATE_PUSHPULL = 2
 
@@ -218,8 +206,8 @@ module Ladb::OpenCutList
     STATE_MOVE_ARRAY = 20
     STATE_MOVE_ARRAY_COPIES = 21
 
-    STATE_MOVE_ALONG_FIRST_POINT = 30
-    STATE_MOVE_ALONG_SECOND_POINT = 31
+    STATE_MOVE_ALONG_START_POINT = 30
+    STATE_MOVE_ALONG = 31
     STATE_MOVE_ALONG_COPIES = 32
 
     LAYER_2D_DIMENSIONS = 0
@@ -227,7 +215,7 @@ module Ladb::OpenCutList
 
     @@last_pushpull_measure = 0
 
-    attr_reader :picked_shape_first_point, :picked_shape_last_point, :picked_pushpull_point, :picked_move_point, :normal, :direction
+    attr_reader :picked_shape_start_point, :picked_shape_end_point, :picked_pushpull_end_point, :picked_move_end_point, :normal, :direction
 
     def initialize(action, tool, action_handler = nil)
       super
@@ -237,12 +225,11 @@ module Ladb::OpenCutList
       @mouse_down_point = nil
       @mouse_snap_point = nil
 
-      @picked_shape_first_point = nil
-      @picked_shape_last_point = nil
-      @picked_pushpull_point = nil
-      @picked_move_point = nil
-      @picked_copy_along_first_point = nil
-      @picked_copy_along_second_point = nil
+      @picked_shape_start_point = nil
+      @picked_shape_end_point = nil
+      @picked_pushpull_end_point = nil
+      @picked_move_start_point = nil
+      @picked_move_end_point = nil
 
       @locked_direction = nil
       @locked_normal = nil
@@ -256,7 +243,7 @@ module Ladb::OpenCutList
 
       @definition = nil
 
-      set_state(STATE_SHAPE_FIRST_POINT)
+      set_state(STATE_SHAPE_START_POINT)
 
     end
 
@@ -275,10 +262,10 @@ module Ladb::OpenCutList
       when STATE_MOVE_ARRAY
         return @tool.cursor_move_copy
 
-      when STATE_MOVE_ALONG_FIRST_POINT
+      when STATE_MOVE_ALONG_START_POINT
         return @tool.cursor_pin_1
 
-      when STATE_MOVE_ALONG_SECOND_POINT
+      when STATE_MOVE_ALONG
         return @tool.cursor_pin_2
 
       end
@@ -307,10 +294,10 @@ module Ladb::OpenCutList
         return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_move_array_status") + '.' +
           ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_change_move_anchor_status') + '.'
 
-      when STATE_MOVE_ALONG_FIRST_POINT
+      when STATE_MOVE_ALONG_START_POINT
         return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_status") + '.'
 
-      when STATE_MOVE_ALONG_SECOND_POINT
+      when STATE_MOVE_ALONG
         return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_status") + '.'
 
       end
@@ -325,7 +312,7 @@ module Ladb::OpenCutList
       when STATE_SHAPE_POINTS
         return PLUGIN.get_i18n_string('tool.smart_draw.vcb_radius')
 
-      when STATE_PUSHPULL, STATE_MOVE, STATE_MOVE_ALONG_SECOND_POINT
+      when STATE_PUSHPULL, STATE_MOVE, STATE_MOVE_ALONG
         return PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
 
       end
@@ -338,15 +325,15 @@ module Ladb::OpenCutList
     def onCancel(reason, view)
       case @state
 
-      when STATE_SHAPE_FIRST_POINT
+      when STATE_SHAPE_START_POINT
         _reset
 
       when STATE_SHAPE_POINTS
-        @picked_shape_first_point = nil
-        set_state(STATE_SHAPE_FIRST_POINT)
+        @picked_shape_start_point = nil
+        set_state(STATE_SHAPE_START_POINT)
 
       when STATE_PUSHPULL
-        @picked_shape_last_point = nil
+        @picked_shape_end_point = nil
         set_state(STATE_SHAPE_POINTS)
 
       when STATE_MOVE
@@ -359,14 +346,14 @@ module Ladb::OpenCutList
         _restart
         return true
 
-      when STATE_MOVE_ALONG_FIRST_POINT
+      when STATE_MOVE_ALONG_START_POINT
         set_state(STATE_PUSHPULL)
         _restart
         return true
 
-      when STATE_MOVE_ALONG_SECOND_POINT
-        @picked_copy_along_first_point = nil
-        set_state(STATE_MOVE_ALONG_FIRST_POINT)
+      when STATE_MOVE_ALONG
+        @picked_move_start_point = nil
+        set_state(STATE_MOVE_ALONG_START_POINT)
 
       end
       _refresh
@@ -397,41 +384,38 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SHAPE_FIRST_POINT
-        _snap_shape_first_point(flags, x, y, view)
-        _preview_shape_first_point(view)
+      when STATE_SHAPE_START_POINT
+        _snap_shape_start(flags, x, y, view)
+        _preview_shape_start(view)
         if !@mouse_down_point.nil? && @mouse_snap_point.distance(@mouse_down_point) > view.pixels_to_model(20, @mouse_snap_point)  # Drag handled only if distance is > 20px
-          @picked_shape_first_point = @mouse_down_point
+          @picked_shape_start_point = @mouse_down_point
           @mouse_down_point = nil
           set_state(STATE_SHAPE_POINTS)
         end
 
       when STATE_SHAPE_POINTS
-        _snap_shape_points(flags, x, y, view)
+        _snap_shape(flags, x, y, view)
         _preview_shape(view)
 
       when STATE_PUSHPULL
-        _snap_pushpull_point(flags, x, y, view)
+        _snap_pushpull(flags, x, y, view)
         _preview_pushpull(view)
 
       when STATE_MOVE
-        _snap_move_point(flags, x, y, view)
+        _snap_move(flags, x, y, view)
         _preview_move(view)
 
       when STATE_MOVE_ARRAY
-        _snap_move_array_point(flags, x, y, view)
+        _snap_move_array(flags, x, y, view)
         _preview_move_array(view)
 
-      when STATE_MOVE_ALONG_FIRST_POINT
-        _snap_move_along_first_point(flags, x, y, view)
-        _preview_move_along_first_point(view)
+      when STATE_MOVE_ALONG_START_POINT
+        _snap_move_along_start(flags, x, y, view)
+        _preview_move_along_start(view)
 
-      when STATE_MOVE_ALONG_SECOND_POINT
-        _snap_move_along_second_point(flags, x, y, view)
-        _preview_move_along_second_point(view)
-
-      else
-        puts 'STATE_UNKNOWN'
+      when STATE_MOVE_ALONG
+        _snap_move_along(flags, x, y, view)
+        _preview_move_along(view)
 
       end
 
@@ -468,15 +452,15 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SHAPE_FIRST_POINT
-        @picked_shape_first_point = @mouse_down_point
+      when STATE_SHAPE_START_POINT
+        @picked_shape_start_point = @mouse_down_point
         @mouse_down_point = nil
         set_state(STATE_SHAPE_POINTS)
         _refresh
 
       when STATE_SHAPE_POINTS
         if _valid_shape?
-          @picked_shape_last_point = @mouse_snap_point
+          @picked_shape_end_point = @mouse_snap_point
           set_state(STATE_PUSHPULL)
           _refresh
         else
@@ -485,7 +469,7 @@ module Ladb::OpenCutList
 
       when STATE_PUSHPULL
         if _valid_solid?
-          @picked_pushpull_point = @mouse_snap_point
+          @picked_pushpull_end_point = @mouse_snap_point
           _create_entity
           _restart
         else
@@ -493,24 +477,26 @@ module Ladb::OpenCutList
         end
 
       when STATE_MOVE
-        @picked_move_point = @mouse_snap_point
-        _copy_entity
+        @picked_move_start_point = _get_move_anchors[_get_move_anchor_index]
+        @picked_move_end_point = @mouse_snap_point
+        _move_entity
         set_state(STATE_MOVE_COPIES) if @move_copy
         _restart
 
       when STATE_MOVE_ARRAY
-        @picked_move_point = @mouse_snap_point
-        _copy_array_entity
+        @picked_move_start_point = _get_move_anchors[_get_move_anchor_index]
+        @picked_move_end_point = @mouse_snap_point
+        _move_array_entity
         set_state(STATE_MOVE_ARRAY_COPIES)
         _restart
 
-      when STATE_MOVE_ALONG_FIRST_POINT
-        @picked_copy_along_first_point = @mouse_snap_point
-        set_state(STATE_MOVE_ALONG_SECOND_POINT)
+      when STATE_MOVE_ALONG_START_POINT
+        @picked_move_start_point = @mouse_snap_point
+        set_state(STATE_MOVE_ALONG)
 
-      when STATE_MOVE_ALONG_SECOND_POINT
-        @picked_copy_along_second_point = @mouse_snap_point
-        _copy_along_entity
+      when STATE_MOVE_ALONG
+        @picked_move_end_point = @mouse_snap_point
+        _move_along_entity
         set_state(STATE_MOVE_ALONG_COPIES)
         _restart
 
@@ -535,7 +521,7 @@ module Ladb::OpenCutList
 
           measure = @@last_pushpull_measure
           measure /= 2 if _fetch_option_solid_centered
-          @picked_pushpull_point = @picked_shape_last_point.offset(@normal, measure)
+          @picked_pushpull_end_point = @picked_shape_end_point.offset(@normal, measure)
 
           _create_entity
           _restart
@@ -559,7 +545,9 @@ module Ladb::OpenCutList
         end
       end
 
-      if @state == STATE_SHAPE_FIRST_POINT || @state == STATE_SHAPE_POINTS || @state == STATE_MOVE_ARRAY
+      case @state
+
+      when STATE_SHAPE_START_POINT, STATE_SHAPE_POINTS, STATE_MOVE_ARRAY
 
         if key == VK_RIGHT
           x_axis = _get_active_x_axis
@@ -599,7 +587,7 @@ module Ladb::OpenCutList
           return true
         end
 
-      elsif @state == STATE_PUSHPULL
+      when STATE_PUSHPULL
 
         if key == CONSTRAIN_MODIFIER_KEY
           UI.beep if @@last_pushpull_measure == 0
@@ -607,16 +595,18 @@ module Ladb::OpenCutList
           return true
         end
 
-      elsif @state == STATE_MOVE
+      when STATE_MOVE
 
-        if key == VK_RIGHT
+        if key == ALT_MODIFIER_KEY
+          return true # Avoid Windows native handle
+        elsif key == VK_RIGHT
           x_axis = _get_active_x_axis
           if @locked_axis == x_axis
             @locked_axis = nil
             view.lock_inference
           else
             @locked_axis = x_axis
-            view.lock_inference(Sketchup::InputPoint.new(@picked_pushpull_point), Sketchup::InputPoint.new(@picked_pushpull_point.offset(x_axis)))
+            view.lock_inference(Sketchup::InputPoint.new(@picked_pushpull_end_point), Sketchup::InputPoint.new(@picked_pushpull_end_point.offset(x_axis)))
           end
           _refresh
           return true
@@ -627,7 +617,7 @@ module Ladb::OpenCutList
             view.lock_inference
           else
             @locked_axis = y_axis
-            view.lock_inference(Sketchup::InputPoint.new(@picked_pushpull_point), Sketchup::InputPoint.new(@picked_pushpull_point.offset(y_axis)))
+            view.lock_inference(Sketchup::InputPoint.new(@picked_pushpull_end_point), Sketchup::InputPoint.new(@picked_pushpull_end_point.offset(y_axis)))
           end
           _refresh
           return true
@@ -638,7 +628,7 @@ module Ladb::OpenCutList
             view.lock_inference
           else
             @locked_axis = z_axis
-            view.lock_inference(Sketchup::InputPoint.new(@picked_pushpull_point), Sketchup::InputPoint.new(@picked_pushpull_point.offset(z_axis)))
+            view.lock_inference(Sketchup::InputPoint.new(@picked_pushpull_end_point), Sketchup::InputPoint.new(@picked_pushpull_end_point.offset(z_axis)))
           end
           _refresh
           return true
@@ -693,7 +683,7 @@ module Ladb::OpenCutList
 
     def onUserText(text, view)
 
-      unless _picked_shape_first_point?
+      unless _picked_shape_start_point?
         return true if _read_move_copies(text, view)
         return true if _read_move_array_copies(text, view)
         return true if _read_move_along_copies(text, view)
@@ -715,7 +705,7 @@ module Ladb::OpenCutList
       when STATE_MOVE_ARRAY
         return _read_move_array(text, view)
 
-      when STATE_MOVE_ALONG_SECOND_POINT
+      when STATE_MOVE_ALONG
         return _read_move_along(text, view)
 
       end
@@ -726,7 +716,7 @@ module Ladb::OpenCutList
     def onStateChanged(state)
       super
       unless (instance = _get_instance).nil?
-        instance.hidden = @state == STATE_MOVE_ALONG_FIRST_POINT || @state == STATE_MOVE_ALONG_SECOND_POINT
+        instance.hidden = @state == STATE_MOVE_ALONG_START_POINT || @state == STATE_MOVE_ALONG
       end
       _remove_floating_tools
     end
@@ -741,9 +731,9 @@ module Ladb::OpenCutList
     end
 
     def getExtents
-      return Sketchup.active_model.bounds unless _picked_shape_first_point?
+      return Sketchup.active_model.bounds unless _picked_shape_start_point?
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
 
       shape_points = _fetch_option_shape_offset > 0 ? _get_local_shapes_points_with_offset.flatten(1) : _get_local_shape_points
@@ -751,7 +741,7 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
       bounds.add(shape_points.map { |point| point.transform(t) })
 
-      if _picked_shape_last_point?
+      if _picked_shape_end_point?
 
         # Add Pushpull solid
 
@@ -785,7 +775,7 @@ module Ladb::OpenCutList
         bounds.add(pmin.offset(v))
         bounds.add(pmax.offset(v))
 
-      when STATE_MOVE_ALONG_SECOND_POINT
+      when STATE_MOVE_ALONG
 
         bounds.add(@mouse_snap_point)
 
@@ -799,23 +789,22 @@ module Ladb::OpenCutList
     # -----
 
     def _get_previous_input_point
-      return Sketchup::InputPoint.new(@picked_shape_first_point) if @state == STATE_SHAPE_POINTS
-      return Sketchup::InputPoint.new(@picked_shape_last_point) if @state == STATE_PUSHPULL
-      return Sketchup::InputPoint.new(_get_move_anchors[_get_move_anchor_index]) if @state == STATE_MOVE
-      return Sketchup::InputPoint.new(@picked_copy_along_first_point) if @state == STATE_MOVE_ALONG_SECOND_POINT
+      return Sketchup::InputPoint.new(@picked_shape_start_point) if @state == STATE_SHAPE_POINTS
+      return Sketchup::InputPoint.new(@picked_shape_end_point) if @state == STATE_PUSHPULL
+      return Sketchup::InputPoint.new(_get_move_anchors[_get_move_anchor_index]) if @state == STATE_MOVE || @state == STATE_MOVE_ARRAY
+      return Sketchup::InputPoint.new(@picked_move_start_point) if @state == STATE_MOVE_ALONG
       nil
     end
 
     def _get_picked_points
 
       points = []
-      points << @picked_shape_first_point if _picked_shape_first_point?
-      points << @picked_shape_last_point if _picked_shape_last_point?
-      points << @picked_pushpull_point if _picked_pushpull_point?
-      points << @picked_move_point if _picked_move_point?
+      points << @picked_shape_start_point unless @picked_shape_start_point.nil?
+      points << @picked_shape_end_point unless @picked_shape_end_point.nil?
+      points << @picked_pushpull_end_point unless @picked_pushpull_end_point.nil?
       points << @mouse_snap_point unless @mouse_snap_point.nil?
 
-      if _fetch_option_solid_centered && _picked_shape_last_point? && points.length > 2
+      if _fetch_option_solid_centered && _picked_shape_end_point? && points.length > 2
         offset = points[2].vector_to(points[1])
         points[0] = points[0].offset(offset)
         points[1] = points[1].offset(offset)
@@ -824,34 +813,18 @@ module Ladb::OpenCutList
       points
     end
 
-    def _picked_shape_first_point?
-      !@picked_shape_first_point.nil?
+    def _picked_shape_start_point?
+      !@picked_shape_start_point.nil?
     end
 
-    def _picked_shape_last_point?
-      !@picked_shape_last_point.nil?
-    end
-
-    def _picked_pushpull_point?
-      !@picked_pushpull_point.nil?
-    end
-
-    def _picked_move_point?
-      !@picked_move_point.nil?
-    end
-
-    def _picked_copy_along_first_point?
-      !@picked_copy_along_first_point.nil?
-    end
-
-    def _picked_copy_along_second_point?
-      !@picked_copy_along_second_point.nil?
+    def _picked_shape_end_point?
+      !@picked_shape_end_point.nil?
     end
 
     # -----
 
     def _get_move_anchors
-      [ @picked_shape_first_point, @picked_shape_last_point, @picked_pushpull_point ].compact.uniq
+      [ @picked_shape_start_point, @picked_shape_end_point, @picked_pushpull_end_point ].compact.uniq
     end
 
     def _get_move_anchor_index
@@ -860,7 +833,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _snap_shape_first_point(flags, x, y, view)
+    def _snap_shape_start(flags, x, y, view)
 
       if @locked_normal
 
@@ -963,28 +936,28 @@ module Ladb::OpenCutList
 
     end
 
-    def _snap_shape_points(flags, x, y, view)
+    def _snap_shape(flags, x, y, view)
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
     end
 
-    def _snap_pushpull_point(flags, x, y, view)
+    def _snap_pushpull(flags, x, y, view)
 
       if @mouse_ip.degrees_of_freedom > 2 ||
         @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1 ||
-        @mouse_ip.position.on_plane?([ @picked_shape_last_point, @normal ]) ||
+        @mouse_ip.position.on_plane?([ @picked_shape_end_point, @normal ]) ||
         @mouse_ip.face && @mouse_ip.face == @mouse_ip.instance_path.leaf && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(@normal) ||
         @mouse_ip.edge && @mouse_ip.degrees_of_freedom == 1 && !@mouse_ip.edge.start.position.vector_to(@mouse_ip.edge.end.position).transform(@mouse_ip.transformation).perpendicular?(@normal)
 
-        picked_point, _ = Geom::closest_points([ @picked_shape_last_point, @normal ], view.pickray(x, y))
+        picked_point, _ = Geom::closest_points([ @picked_shape_end_point, @normal ], view.pickray(x, y))
         @mouse_snap_point = picked_point
         @mouse_ip.clear
 
       else
 
         # Force picked point to be projected to shape last picked point normal line
-        @mouse_snap_point = @mouse_ip.position.project_to_line([ @picked_shape_last_point, @normal ])
+        @mouse_snap_point = @mouse_ip.position.project_to_line([ @picked_shape_end_point, @normal ])
 
       end
 
@@ -992,18 +965,18 @@ module Ladb::OpenCutList
       if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY) && @@last_pushpull_measure > 0
         measure = @@last_pushpull_measure
         measure /= 2 if _fetch_option_solid_centered
-        @mouse_snap_point = @picked_shape_last_point.offset(@picked_shape_last_point.vector_to(@mouse_snap_point), measure) if measure > 0
+        @mouse_snap_point = @picked_shape_end_point.offset(@picked_shape_end_point.vector_to(@mouse_snap_point), measure) if measure > 0
       end
 
     end
 
-    def _snap_move_point(flags, x, y, view)
+    def _snap_move(flags, x, y, view)
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
     end
 
-    def _snap_move_array_point(flags, x, y, view)
+    def _snap_move_array(flags, x, y, view)
 
       anchors = _get_move_anchors
       anchor_point = anchors[_get_move_anchor_index]
@@ -1280,13 +1253,13 @@ module Ladb::OpenCutList
 
     end
 
-    def _snap_move_along_first_point(flags, x, y, view)
+    def _snap_move_along_start(flags, x, y, view)
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
     end
 
-    def _snap_move_along_second_point(flags, x, y, view)
+    def _snap_move_along(flags, x, y, view)
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
@@ -1294,7 +1267,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_shape_first_point(view)
+    def _preview_shape_start(view)
     end
 
     def _preview_shape(view)
@@ -1306,21 +1279,21 @@ module Ladb::OpenCutList
 
         # Draw first picked point
         k_point = _create_floating_points(
-          points: @picked_shape_first_point,
+          points: @picked_shape_start_point,
           style: Kuix::POINT_STYLE_PLUS
         )
         @tool.append_3d(k_point)
 
         # Draw line from first picked point to snap point
         k_line = Kuix::LineMotif.new
-        k_line.start.copy!(@picked_shape_first_point)
+        k_line.start.copy!(@picked_shape_start_point)
         k_line.end.copy!(@mouse_snap_point)
         k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
         @tool.append_3d(k_line)
 
       end
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
 
       points = _get_picked_points
@@ -1590,9 +1563,8 @@ module Ladb::OpenCutList
 
     end
 
-    def _preview_move_along_first_point(view)
-
-      drawing_def = _get_drawing_def
+    def _preview_move_along_start(view)
+      return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       segments = []
       segments += drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
@@ -1609,9 +1581,10 @@ module Ladb::OpenCutList
 
     end
 
-    def _preview_move_along_second_point(view)
+    def _preview_move_along(view)
+      return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
-      ps = @picked_copy_along_first_point
+      ps = @picked_move_start_point
       pe = @mouse_snap_point
       v = ps.vector_to(pe)
       color = _get_vector_color(v, Kuix::COLOR_DARK_GREY)
@@ -1626,7 +1599,6 @@ module Ladb::OpenCutList
 
       if v.valid?
 
-        drawing_def = _get_drawing_def
         bounds = drawing_def.bounds
 
         t = drawing_def.transformation
@@ -1784,7 +1756,7 @@ module Ladb::OpenCutList
     end
 
     def _read_shape(text, view)
-      if @picked_shape_first_point == @mouse_snap_point
+      if @picked_shape_start_point == @mouse_snap_point
         UI.beep
         @tool.notify_errors([ "tool.smart_draw.error.no_direction" ])
         return true
@@ -1794,7 +1766,7 @@ module Ladb::OpenCutList
 
     def _read_pushpull(text, view)
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
 
       points = _get_picked_points
@@ -1808,7 +1780,7 @@ module Ladb::OpenCutList
       return true if thickness.nil?
       thickness /= 2 if solid_centered
 
-      @picked_pushpull_point = Geom::Point3d.new(p2.x, p2.y, thickness).transform(t)
+      @picked_pushpull_end_point = Geom::Point3d.new(p2.x, p2.y, thickness).transform(t)
 
       _create_entity
       _restart
@@ -1827,9 +1799,9 @@ module Ladb::OpenCutList
       distance = _read_user_text_length(text, v.length)
       return true if distance.nil?
 
-      @picked_move_point = ps.offset(v, distance)
+      @picked_move_end_point = ps.offset(v, distance)
 
-      _copy_entity
+      _move_entity
       set_state(STATE_MOVE_COPIES) if @move_copy
       _restart
 
@@ -1857,7 +1829,7 @@ module Ladb::OpenCutList
 
         number = number == 0 ? 1 : number
 
-        @previous_action_handler._copy_entity(operator, number)
+        @previous_action_handler._move_entity(operator, number)
         Sketchup.set_status_text('', SB_VCB_VALUE)
 
         return true
@@ -1887,11 +1859,11 @@ module Ladb::OpenCutList
         distance_y = _read_user_text_length(d2, vi.y.abs)
         return true if distance_y.nil?
 
-        @picked_move_point = ps.offset(Geom::Vector3d.new(vi.x < 0 ? -distance_x : distance_x, vi.y < 0 ? -distance_y : distance_y).transform(t))
+        @picked_move_end_point = ps.offset(Geom::Vector3d.new(vi.x < 0 ? -distance_x : distance_x, vi.y < 0 ? -distance_y : distance_y).transform(t))
 
       end
 
-      _copy_entity
+      _move_entity
       _restart
 
       true
@@ -1929,7 +1901,7 @@ module Ladb::OpenCutList
         number_1 = number_1 == 0 ? 1 : number_1
         number_2 = number_2 == 0 ? (has_separator ? 1 : number_1) : number_2
 
-        @previous_action_handler._copy_array_entity(operator_1, number_1, operator_2, number_2)
+        @previous_action_handler._move_array_entity(operator_1, number_1, operator_2, number_2)
         Sketchup.set_status_text('', SB_VCB_VALUE)
 
         return true
@@ -1939,16 +1911,16 @@ module Ladb::OpenCutList
 
     def _read_move_along(text, view)
 
-      ps = @picked_copy_along_first_point
+      ps = @picked_move_start_point
       pe = @mouse_snap_point
       v = ps.vector_to(pe)
 
       distance = _read_user_text_length(text, v.length)
       return true if distance.nil?
 
-      @picked_copy_along_second_point = ps.offset(v, distance)
+      @picked_move_end_point = ps.offset(v, distance)
 
-      _copy_along_entity
+      _move_along_entity
       _restart
 
     end
@@ -1975,7 +1947,7 @@ module Ladb::OpenCutList
 
         count = operator == '/' ? number - 1 : number
 
-        @previous_action_handler._copy_along_entity(count)
+        @previous_action_handler._move_along_entity(count)
         Sketchup.set_status_text('', SB_VCB_VALUE)
 
       end
@@ -2037,10 +2009,12 @@ module Ladb::OpenCutList
       @mouse_ip.clear
       @mouse_down_point = nil
       @mouse_snap_point = nil
-      @picked_shape_first_point = nil
-      @picked_shape_last_point = nil
-      @picked_pushpull_point = nil
-      @picked_move_point = nil
+      @picked_shape_start_point = nil
+      @picked_shape_end_point = nil
+      @picked_pushpull_end_point = nil
+      @picked_move_end_point = nil
+      @picked_move_start_point = nil
+      @picked_move_end_point = nil
       @direction = nil
       @normal = _get_active_z_axis
       @locked_direction = nil
@@ -2048,7 +2022,7 @@ module Ladb::OpenCutList
       @locked_axis = nil
       @move_anchor_index = -1
       super
-      set_state(STATE_SHAPE_FIRST_POINT)
+      set_state(STATE_SHAPE_START_POINT)
     end
 
     def _restart
@@ -2089,7 +2063,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       model.start_operation('Create Part', true)
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
 
       points = _get_picked_points
@@ -2209,11 +2183,11 @@ module Ladb::OpenCutList
 
     end
 
-    def _copy_entity(operator = '*', number = 1)
+    def _move_entity(operator = '*', number = 1)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
-      ps = _get_move_anchors[_get_move_anchor_index]
-      pe = @picked_move_point
+      ps = @picked_move_start_point
+      pe = @picked_move_end_point
       v = ps.vector_to(pe)
 
       model = Sketchup.active_model
@@ -2243,11 +2217,11 @@ module Ladb::OpenCutList
 
     end
 
-    def _copy_array_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
+    def _move_array_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
-      ps = _get_move_anchors[_get_move_anchor_index]
-      pe = @picked_move_point
+      ps = @picked_move_start_point
+      pe = @picked_move_end_point
       v = ps.vector_to(pe)
 
       model = Sketchup.active_model
@@ -2281,15 +2255,15 @@ module Ladb::OpenCutList
 
     end
 
-    def _copy_along_entity(count = 1)
+    def _move_along_entity(count = 1)
+      return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
-      ps = @picked_copy_along_first_point
-      pe = @picked_copy_along_second_point
+      ps = @picked_move_start_point
+      pe = @picked_move_end_point
       v = ps.vector_to(pe)
 
       if v.valid?
 
-        drawing_def = _get_drawing_def
         bounds = drawing_def.bounds
 
         t = drawing_def.transformation
@@ -2422,7 +2396,8 @@ module Ladb::OpenCutList
           path: 'M0,0.667L0.333,0.667L0.333,1L0,1L0,0.667 M0.667,0L1,0L1,0.333L0.667,0.333L0.667,0 M0.417,0.583L0.583,0.417',
           block: lambda {
             @tool.set_action_handler(self)
-            @picked_move_point = nil
+            @picked_move_start_point = nil
+            @picked_move_end_point = nil
             set_state(STATE_MOVE)
             _refresh
           },
@@ -2432,7 +2407,8 @@ module Ladb::OpenCutList
           path: 'M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.833L0.583,0.833',
           block: lambda {
             @tool.set_action_handler(self)
-            @picked_move_point = nil
+            @picked_move_start_point = nil
+            @picked_move_end_point = nil
             set_state(STATE_MOVE_ARRAY)
             _refresh
           },
@@ -2442,10 +2418,9 @@ module Ladb::OpenCutList
           path: 'M0.333,0.333L0.667,0.333L0.667,0.667L0.333,0.667L0.333,0.333 M0.083,0.917L0.25,0.75 M0.75,0.25L0.917,0.083',
           block: lambda {
             @tool.set_action_handler(self)
-            @picked_move_point = nil
-            @picked_copy_along_first_point = nil
-            @picked_copy_along_second_point = nil
-            set_state(STATE_MOVE_ALONG_FIRST_POINT)
+            @picked_move_start_point = nil
+            @picked_move_end_point = nil
+            set_state(STATE_MOVE_ALONG_START_POINT)
             _refresh
           },
           text: 'Répartir'
@@ -2534,7 +2509,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SHAPE_FIRST_POINT, STATE_SHAPE_POINTS
+      when STATE_SHAPE_START_POINT, STATE_SHAPE_POINTS
         if key == COPY_MODIFIER_KEY
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !_fetch_option_rectangle_centered, true)
           _refresh
@@ -2549,21 +2524,21 @@ module Ladb::OpenCutList
     protected
 
     def _get_previous_input_point
-      return nil if _picked_shape_first_point? && !_picked_shape_last_point?
+      return nil if _picked_shape_start_point? && !_picked_shape_end_point?
       super
     end
 
     # -----
 
-    def _snap_shape_points(flags, x, y, view)
+    def _snap_shape(flags, x, y, view)
 
-      ground_plane = [ @picked_shape_first_point, _get_active_z_axis ]
+      ground_plane = [ @picked_shape_start_point, _get_active_z_axis ]
 
       if @mouse_ip.vertex
 
         if @locked_normal
 
-          locked_plane = [ @picked_shape_first_point, @locked_normal ]
+          locked_plane = [ @picked_shape_start_point, @locked_normal ]
 
           @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
           @normal = @locked_normal
@@ -2572,11 +2547,11 @@ module Ladb::OpenCutList
 
           @normal = _get_active_z_axis
 
-        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_x_axis ])
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_x_axis ])
 
           @normal = _get_active_x_axis
 
-        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_y_axis ])
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_y_axis ])
 
           @normal = _get_active_y_axis
 
@@ -2610,28 +2585,28 @@ module Ladb::OpenCutList
 
         if @locked_normal
 
-          locked_plane = [ @picked_shape_first_point, @locked_normal ]
+          locked_plane = [ @picked_shape_start_point, @locked_normal ]
 
           @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
           @normal = @locked_normal
 
-        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_z_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_z_axis)
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_z_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_z_axis)
 
           @normal = _get_active_z_axis
 
-        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_x_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_x_axis)
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_x_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_x_axis)
 
           @normal = _get_active_x_axis
 
-        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_y_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_y_axis)
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_y_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_y_axis)
 
           @normal = _get_active_y_axis
 
         else
 
-          unless @picked_shape_first_point.on_line?(edge_manipulator.line)
+          unless @picked_shape_start_point.on_line?(edge_manipulator.line)
 
-            plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_first_point, edge_manipulator.start_point, edge_manipulator.end_point ]))
+            plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_start_point, edge_manipulator.start_point, edge_manipulator.end_point ]))
 
             @normal = plane_manipulator.normal
 
@@ -2640,7 +2615,7 @@ module Ladb::OpenCutList
           @direction = edge_manipulator.direction if @locked_direction.nil?
 
           # k_points = Kuix::Points.new
-          # k_points.add_points([ @picked_shape_first_point.position, edge_manipulator.start_point, edge_manipulator.end_point ])
+          # k_points.add_points([ @picked_shape_start_point.position, edge_manipulator.start_point, edge_manipulator.end_point ])
           # k_points.size = 30
           # k_points.style = Kuix::POINT_STYLE_TRIANGLE
           # k_points.stroke_color = Kuix::COLOR_BLUE
@@ -2661,28 +2636,28 @@ module Ladb::OpenCutList
 
         if @locked_normal
 
-          locked_plane = [ @picked_shape_first_point, @locked_normal ]
+          locked_plane = [ @picked_shape_start_point, @locked_normal ]
 
           @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
           @normal = @locked_normal
 
-        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_z_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_z_axis)
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_z_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_z_axis)
 
           @normal = _get_active_z_axis
 
-        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_x_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_x_axis)
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_x_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_x_axis)
 
           @normal = _get_active_x_axis
 
-        elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_y_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_y_axis)
+        elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_y_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_y_axis)
 
           @normal = _get_active_y_axis
 
         else
 
-          unless cline_manipulator.infinite? || @picked_shape_first_point.on_line?(cline_manipulator.line)
+          unless cline_manipulator.infinite? || @picked_shape_start_point.on_line?(cline_manipulator.line)
 
-            plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_first_point, cline_manipulator.start_point, cline_manipulator.end_point ]))
+            plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_start_point, cline_manipulator.start_point, cline_manipulator.end_point ]))
 
             @normal = plane_manipulator.normal
 
@@ -2691,7 +2666,7 @@ module Ladb::OpenCutList
           @direction = cline_manipulator.direction if @locked_direction.nil?
 
           # k_points = Kuix::Points.new
-          # k_points.add_points([ @picked_shape_first_point.position, cline_manipulator.start_point, cline_manipulator.end_point ])
+          # k_points.add_points([ @picked_shape_start_point.position, cline_manipulator.start_point, cline_manipulator.end_point ])
           # k_points.size = 30
           # k_points.style = Kuix::POINT_STYLE_TRIANGLE
           # k_points.stroke_color = Kuix::COLOR_BLUE
@@ -2710,7 +2685,7 @@ module Ladb::OpenCutList
 
         if @locked_normal
 
-          locked_plane = [ @picked_shape_first_point, @locked_normal ]
+          locked_plane = [ @picked_shape_start_point, @locked_normal ]
 
           @mouse_ip.copy!(@mouse_ip.position.project_to_plane(locked_plane))
           @normal = @locked_normal
@@ -2719,13 +2694,13 @@ module Ladb::OpenCutList
 
           face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.face_transformation)
 
-          if @picked_shape_first_point.on_plane?(face_manipulator.plane)
+          if @picked_shape_start_point.on_plane?(face_manipulator.plane)
 
             @normal = face_manipulator.normal
 
           else
 
-            p1 = @picked_shape_first_point
+            p1 = @picked_shape_start_point
             p2 = @mouse_ip.position
             p3 = @mouse_ip.position.project_to_plane(ground_plane)
 
@@ -2757,7 +2732,7 @@ module Ladb::OpenCutList
 
         if @locked_normal
 
-          locked_plane = [ @picked_shape_first_point, @locked_normal ]
+          locked_plane = [ @picked_shape_start_point, @locked_normal ]
 
           if @mouse_ip.degrees_of_freedom > 2
             @mouse_ip.copy!(Geom.intersect_line_plane(view.pickray(x, y), locked_plane))
@@ -2775,7 +2750,7 @@ module Ladb::OpenCutList
 
           if !@mouse_ip.position.on_plane?(ground_plane)
 
-            p1 = @picked_shape_first_point
+            p1 = @picked_shape_start_point
             p2 = @mouse_ip.position
             p3 = @mouse_ip.position.project_to_plane(ground_plane)
 
@@ -2806,10 +2781,10 @@ module Ladb::OpenCutList
       # Check square
       if @mouse_snap_point.nil? && @mouse_ip.degrees_of_freedom >= 2
 
-        t = _get_transformation(@picked_shape_first_point)
+        t = _get_transformation(@picked_shape_start_point)
         ti = t.inverse
 
-        p1 = @picked_shape_first_point.transform(ti)
+        p1 = @picked_shape_start_point.transform(ti)
         p2 = @mouse_ip.position.transform(ti)
         v = p1.vector_to(p2)
 
@@ -2824,7 +2799,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_shape_first_point(view)
+    def _preview_shape_start(view)
 
       width = view.pixels_to_model(40, @mouse_snap_point)
       height = width / 2
@@ -2867,7 +2842,7 @@ module Ladb::OpenCutList
 
     def _preview_shape(view)
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
 
       points = _get_picked_points
@@ -2912,7 +2887,7 @@ module Ladb::OpenCutList
         if bounds.width == bounds.height && bounds.width != 0
 
           k_line = Kuix::LineMotif.new
-          k_line.start.copy!(_fetch_option_rectangle_centered ? @picked_shape_first_point.offset(@mouse_snap_point.vector_to(@picked_shape_first_point)) : @picked_shape_first_point)
+          k_line.start.copy!(_fetch_option_rectangle_centered ? @picked_shape_start_point.offset(@mouse_snap_point.vector_to(@picked_shape_start_point)) : @picked_shape_start_point)
           k_line.end.copy!(@mouse_snap_point)
           k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
           k_line.color = _get_normal_color
@@ -2923,7 +2898,7 @@ module Ladb::OpenCutList
         if _fetch_option_rectangle_centered
 
           k_points = _create_floating_points(
-            points: @picked_shape_first_point,
+            points: @picked_shape_start_point,
             style: Kuix::POINT_STYLE_PLUS
           )
           @tool.append_3d(k_points)
@@ -2931,7 +2906,7 @@ module Ladb::OpenCutList
           if bounds.width != bounds.height
 
             k_line = Kuix::LineMotif.new
-            k_line.start.copy!(@picked_shape_first_point)
+            k_line.start.copy!(@picked_shape_start_point)
             k_line.end.copy!(@mouse_snap_point)
             k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
             @tool.append_3d(k_line)
@@ -2981,10 +2956,10 @@ module Ladb::OpenCutList
 
       if d1 || d2
 
-        t = _get_transformation(@picked_shape_first_point)
+        t = _get_transformation(@picked_shape_start_point)
         ti = t.inverse
 
-        p1 = @picked_shape_first_point.transform(ti)
+        p1 = @picked_shape_start_point.transform(ti)
         p2 = @mouse_snap_point.transform(ti)
 
         rectangle_centred = _fetch_option_rectangle_centered
@@ -3001,7 +2976,7 @@ module Ladb::OpenCutList
         return true if width.nil?
         width = width / 2 if rectangle_centred
 
-        @picked_shape_last_point = Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t)
+        @picked_shape_end_point = Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t)
 
         set_state(STATE_PUSHPULL)
         _refresh
@@ -3009,16 +2984,16 @@ module Ladb::OpenCutList
       end
       if d3
 
-        t = _get_transformation(@picked_shape_first_point)
+        t = _get_transformation(@picked_shape_start_point)
         ti = t.inverse
 
-        p2 = @picked_shape_last_point.transform(ti)
+        p2 = @picked_shape_end_point.transform(ti)
 
         thickness = _read_user_text_length(d3, 0)
         return true if thickness.nil?
         thickness = thickness / 2 if _fetch_option_solid_centered
 
-        @picked_pushpull_point = Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t)
+        @picked_pushpull_end_point = Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t)
 
         _create_entity
         _restart
@@ -3056,7 +3031,7 @@ module Ladb::OpenCutList
       points = _get_picked_points
       return false if points.length < 2
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
 
       p1 = points[0].transform(ti)
@@ -3070,7 +3045,7 @@ module Ladb::OpenCutList
       points = _get_picked_points
       return false if points.length < 3
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
 
       p1 = points[0].transform(ti)
@@ -3084,7 +3059,7 @@ module Ladb::OpenCutList
     def _get_picked_points
       points = super
 
-      if _fetch_option_rectangle_centered && _picked_shape_first_point? && points.length > 1
+      if _fetch_option_rectangle_centered && _picked_shape_start_point? && points.length > 1
         points[0] = points[0].offset(points[1].vector_to(points[0]))
       end
 
@@ -3095,7 +3070,7 @@ module Ladb::OpenCutList
 
     def _get_local_shape_points
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
 
       points = _get_picked_points
@@ -3174,7 +3149,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SHAPE_FIRST_POINT, STATE_SHAPE_POINTS
+      when STATE_SHAPE_START_POINT, STATE_SHAPE_POINTS
         if key == COPY_MODIFIER_KEY
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, !_fetch_option_measure_from_diameter, true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
@@ -3195,7 +3170,7 @@ module Ladb::OpenCutList
 
     protected
 
-    def _snap_shape_first_point(flags, x, y, view)
+    def _snap_shape_start(flags, x, y, view)
       super
 
       # Force direction to default
@@ -3204,11 +3179,11 @@ module Ladb::OpenCutList
 
     end
 
-    def _snap_shape_points(flags, x, y, view)
+    def _snap_shape(flags, x, y, view)
 
       @normal = @locked_normal if @locked_normal
 
-      plane = [ @picked_shape_first_point, @normal ]
+      plane = [ @picked_shape_start_point, @normal ]
 
       if @mouse_ip.degrees_of_freedom > 2
         @mouse_snap_point = Geom.intersect_line_plane(view.pickray(x, y), plane)
@@ -3216,14 +3191,14 @@ module Ladb::OpenCutList
         @mouse_snap_point = @mouse_ip.position.project_to_plane(plane)
       end
 
-      @direction = @picked_shape_first_point.vector_to(@mouse_snap_point.project_to_plane([ @picked_shape_first_point, @normal ])).normalize!
+      @direction = @picked_shape_start_point.vector_to(@mouse_snap_point.project_to_plane([ @picked_shape_start_point, @normal ])).normalize!
 
       super
     end
 
     # -----
 
-    def _preview_shape_first_point(view)
+    def _preview_shape_start(view)
 
       diameter = view.pixels_to_model(40, @mouse_snap_point)
 
@@ -3262,12 +3237,12 @@ module Ladb::OpenCutList
 
     def _preview_shape(view)
 
-      measure_start = _fetch_option_measure_from_diameter ? @picked_shape_first_point.offset(@mouse_snap_point.vector_to(@picked_shape_first_point)) : @picked_shape_first_point
+      measure_start = _fetch_option_measure_from_diameter ? @picked_shape_start_point.offset(@mouse_snap_point.vector_to(@picked_shape_start_point)) : @picked_shape_start_point
       measure_vector = measure_start.vector_to(@mouse_snap_point)
       measure = measure_vector.length
 
       k_points = _create_floating_points(
-        points: @picked_shape_first_point,
+        points: @picked_shape_start_point,
         style: Kuix::POINT_STYLE_PLUS
       )
       @tool.append_3d(k_points)
@@ -3279,7 +3254,7 @@ module Ladb::OpenCutList
       k_line.color = _get_direction_color
       @tool.append_3d(k_line)
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
 
       if _fetch_option_shape_offset != 0
 
@@ -3336,13 +3311,13 @@ module Ladb::OpenCutList
 
       if d1
 
-        measure_start = _fetch_option_measure_from_diameter ? @picked_shape_first_point.offset(@mouse_snap_point.vector_to(@picked_shape_first_point)) : @picked_shape_first_point
+        measure_start = _fetch_option_measure_from_diameter ? @picked_shape_start_point.offset(@mouse_snap_point.vector_to(@picked_shape_start_point)) : @picked_shape_start_point
         measure_vector = measure_start.vector_to(@mouse_snap_point)
         measure = measure_vector.length
         measure = _read_user_text_length(d1, measure)
         return true if measure.nil?
 
-        @picked_shape_last_point = @picked_shape_first_point.offset(measure_vector, _fetch_option_measure_from_diameter ? measure / 2.0 : measure)
+        @picked_shape_end_point = @picked_shape_start_point.offset(measure_vector, _fetch_option_measure_from_diameter ? measure / 2.0 : measure)
 
         if d2.nil?
           set_state(STATE_PUSHPULL)
@@ -3352,15 +3327,15 @@ module Ladb::OpenCutList
       end
       if d2
 
-        t = _get_transformation(@picked_shape_first_point)
+        t = _get_transformation(@picked_shape_start_point)
         ti = t.inverse
 
-        p2 = @picked_shape_last_point.transform(ti)
+        p2 = @picked_shape_end_point.transform(ti)
 
         thickness = _read_user_text_length(d2, 0)
         return true if thickness.nil?
 
-        @picked_pushpull_point = Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t)
+        @picked_pushpull_end_point = Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t)
 
         _create_entity
         _restart
@@ -3408,7 +3383,7 @@ module Ladb::OpenCutList
       points = _get_picked_points
       return false if points.length < 2
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
 
       p1 = points[0].transform(ti)
@@ -3426,7 +3401,7 @@ module Ladb::OpenCutList
     def _get_local_shapes_points_with_offset(shape_offset = nil)
       shape_offset = _fetch_option_shape_offset if shape_offset.nil?
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
 
       points = _get_picked_points
@@ -3497,7 +3472,7 @@ module Ladb::OpenCutList
     # -----
 
     def onCancel(reason, view)
-      if !_picked_shape_last_point? && @picked_points.any?
+      if !_picked_shape_end_point? && @picked_points.any?
         if _remove_last_picked_point(view)
           super
         else
@@ -3512,9 +3487,9 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SHAPE_FIRST_POINT
+      when STATE_SHAPE_START_POINT
         super
-        _add_picked_point(@picked_shape_first_point, view) if _picked_shape_first_point?
+        _add_picked_point(@picked_shape_start_point, view) if _picked_shape_start_point?
         return true
 
       end
@@ -3526,9 +3501,9 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SHAPE_FIRST_POINT
+      when STATE_SHAPE_START_POINT
         super
-        _add_picked_point(@picked_shape_first_point, view) if _picked_shape_first_point?
+        _add_picked_point(@picked_shape_start_point, view) if _picked_shape_start_point?
         return true
 
       when STATE_SHAPE_POINTS
@@ -3628,7 +3603,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SHAPE_FIRST_POINT, STATE_SHAPE_POINTS
+      when STATE_SHAPE_START_POINT, STATE_SHAPE_POINTS
         if key == COPY_MODIFIER_KEY
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed, true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
@@ -3670,7 +3645,7 @@ module Ladb::OpenCutList
       # Pop last picked point
       point = @picked_points_stack.pop
       @picked_points.delete(point)
-      @picked_shape_first_point = nil if point == @picked_shape_first_point
+      @picked_shape_start_point = nil if point == @picked_shape_start_point
 
       # Reset inference
       @locked_axis = nil
@@ -3681,7 +3656,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _snap_shape_first_point(flags, x, y, view)
+    def _snap_shape_start(flags, x, y, view)
       super
 
       # Force direction to default
@@ -3690,7 +3665,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _snap_shape_points(flags, x, y, view)
+    def _snap_shape(flags, x, y, view)
 
       if @picked_points.length >= 3
 
@@ -3723,13 +3698,13 @@ module Ladb::OpenCutList
 
       if @picked_points.length < 2
 
-        ground_plane = [ @picked_shape_first_point, _get_active_z_axis ]
+        ground_plane = [ @picked_shape_start_point, _get_active_z_axis ]
 
         if @mouse_ip.vertex
 
           if @locked_normal
 
-            locked_plane = [ @picked_shape_first_point, @locked_normal ]
+            locked_plane = [ @picked_shape_start_point, @locked_normal ]
 
             @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
             @normal = @locked_normal
@@ -3738,11 +3713,11 @@ module Ladb::OpenCutList
 
             @normal = _get_active_z_axis
 
-          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_x_axis ])
+          elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_x_axis ])
 
             @normal = _get_active_x_axis
 
-          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_y_axis ])
+          elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_y_axis ])
 
             @normal = _get_active_y_axis
 
@@ -3776,28 +3751,28 @@ module Ladb::OpenCutList
 
           if @locked_normal
 
-            locked_plane = [ @picked_shape_first_point, @locked_normal ]
+            locked_plane = [ @picked_shape_start_point, @locked_normal ]
 
             @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
             @normal = @locked_normal
 
-          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_z_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_z_axis)
+          elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_z_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_z_axis)
 
             @normal = _get_active_z_axis
 
-          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_x_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_x_axis)
+          elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_x_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_x_axis)
 
             @normal = _get_active_x_axis
 
-          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_y_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_y_axis)
+          elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_y_axis ]) && !edge_manipulator.direction.perpendicular?(_get_active_y_axis)
 
             @normal = _get_active_y_axis
 
           else
 
-            unless @picked_shape_first_point.on_line?(edge_manipulator.line)
+            unless @picked_shape_start_point.on_line?(edge_manipulator.line)
 
-              plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_first_point, edge_manipulator.start_point, edge_manipulator.end_point ]))
+              plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_start_point, edge_manipulator.start_point, edge_manipulator.end_point ]))
 
               @normal = plane_manipulator.normal
 
@@ -3806,7 +3781,7 @@ module Ladb::OpenCutList
             # @direction = cline_manipulator.direction
 
             # k_points = Kuix::Points.new
-            # k_points.add_points([ @picked_shape_first_point.position, edge_manipulator.start_point, edge_manipulator.end_point ])
+            # k_points.add_points([ @picked_shape_start_point.position, edge_manipulator.start_point, edge_manipulator.end_point ])
             # k_points.size = 30
             # k_points.style = Kuix::POINT_STYLE_TRIANGLE
             # k_points.stroke_color = Kuix::COLOR_BLUE
@@ -3827,28 +3802,28 @@ module Ladb::OpenCutList
 
           if @locked_normal
 
-            locked_plane = [ @picked_shape_first_point, @locked_normal ]
+            locked_plane = [ @picked_shape_start_point, @locked_normal ]
 
             @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
             @normal = @locked_normal
 
-          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_z_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_z_axis)
+          elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_z_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_z_axis)
 
             @normal = _get_active_z_axis
 
-          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_x_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_x_axis)
+          elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_x_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_x_axis)
 
             @normal = _get_active_x_axis
 
-          elsif @mouse_ip.position.on_plane?([ @picked_shape_first_point, _get_active_y_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_y_axis)
+          elsif @mouse_ip.position.on_plane?([ @picked_shape_start_point, _get_active_y_axis ]) && !cline_manipulator.direction.perpendicular?(_get_active_y_axis)
 
             @normal = _get_active_y_axis
 
           else
 
-            unless cline_manipulator.infinite? || @picked_shape_first_point.on_line?(cline_manipulator.line)
+            unless cline_manipulator.infinite? || @picked_shape_start_point.on_line?(cline_manipulator.line)
 
-              plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_first_point, cline_manipulator.start_point, cline_manipulator.end_point ]))
+              plane_manipulator = PlaneManipulator.new(Geom.fit_plane_to_points([ @picked_shape_start_point, cline_manipulator.start_point, cline_manipulator.end_point ]))
 
               @normal = plane_manipulator.normal
 
@@ -3857,7 +3832,7 @@ module Ladb::OpenCutList
             # @direction = cline_manipulator.direction
 
             # k_points = Kuix::Points.new
-            # k_points.add_points([ @picked_shape_first_point.position, cline_manipulator.start_point, cline_manipulator.end_point ])
+            # k_points.add_points([ @picked_shape_start_point.position, cline_manipulator.start_point, cline_manipulator.end_point ])
             # k_points.size = 30
             # k_points.style = Kuix::POINT_STYLE_TRIANGLE
             # k_points.stroke_color = Kuix::COLOR_BLUE
@@ -3876,7 +3851,7 @@ module Ladb::OpenCutList
 
           if @locked_normal
 
-            locked_plane = [ @picked_shape_first_point, @locked_normal ]
+            locked_plane = [ @picked_shape_start_point, @locked_normal ]
 
             @mouse_snap_point = @mouse_ip.position.project_to_plane(locked_plane)
             @normal = @locked_normal
@@ -3885,13 +3860,13 @@ module Ladb::OpenCutList
 
             face_manipulator = FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation)
 
-            if @picked_shape_first_point.on_plane?(face_manipulator.plane)
+            if @picked_shape_start_point.on_plane?(face_manipulator.plane)
 
               @normal = face_manipulator.normal
 
             else
 
-              p1 = @picked_shape_first_point
+              p1 = @picked_shape_start_point
               p2 = @mouse_ip.position
               p3 = @mouse_ip.position.project_to_plane(ground_plane)
 
@@ -3921,7 +3896,7 @@ module Ladb::OpenCutList
 
           if @locked_normal
 
-            locked_plane = [ @picked_shape_first_point, @locked_normal ]
+            locked_plane = [ @picked_shape_start_point, @locked_normal ]
 
             if @mouse_ip.degrees_of_freedom > 2
               @mouse_snap_point = Geom.intersect_line_plane(view.pickray(x, y), locked_plane)
@@ -3939,7 +3914,7 @@ module Ladb::OpenCutList
 
             if !@mouse_ip.position.on_plane?(ground_plane)
 
-              p1 = @picked_shape_first_point
+              p1 = @picked_shape_start_point
               p2 = @mouse_ip.position
               p3 = @mouse_ip.position.project_to_plane(ground_plane)
 
@@ -3971,7 +3946,7 @@ module Ladb::OpenCutList
 
         if @locked_normal
 
-          locked_plane = [ @picked_shape_first_point, @locked_normal ]
+          locked_plane = [ @picked_shape_start_point, @locked_normal ]
 
           if @mouse_ip.degrees_of_freedom > 2
             @mouse_snap_point = Geom.intersect_line_plane(view.pickray(x, y), locked_plane)
@@ -3995,7 +3970,7 @@ module Ladb::OpenCutList
 
       else
 
-        plane = [ @picked_shape_first_point, @normal ]
+        plane = [ @picked_shape_start_point, @normal ]
 
         if !@mouse_snap_point.nil?
           @mouse_snap_point = @mouse_snap_point.project_to_plane(plane)
@@ -4013,7 +3988,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _preview_shape_first_point(view)
+    def _preview_shape_start(view)
 
       width = view.pixels_to_model(40, @mouse_snap_point)
       height = width / 2
@@ -4070,7 +4045,7 @@ module Ladb::OpenCutList
 
     def _preview_shape(view)
 
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
 
       if _fetch_option_shape_offset != 0
 
@@ -4179,16 +4154,16 @@ module Ladb::OpenCutList
     # -----
 
     def _get_previous_input_point
-      return super if _picked_shape_last_point?
+      return super if _picked_shape_end_point?
       Sketchup::InputPoint.new(_fetch_option_measure_reversed ? @picked_points.first : @picked_points.last)
     end
 
     # -----
 
     def _get_local_shape_points
-      t = _get_transformation(@picked_shape_first_point)
+      t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
-      if _picked_shape_last_point?
+      if _picked_shape_end_point?
         points = @picked_points.map { |point| point.transform(ti) }
 
         if _fetch_option_solid_centered
