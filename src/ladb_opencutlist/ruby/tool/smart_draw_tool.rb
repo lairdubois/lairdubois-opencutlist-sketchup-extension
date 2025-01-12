@@ -286,7 +286,7 @@ module Ladb::OpenCutList
 
       when STATE_PUSHPULL
         return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_status") + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_pushpull_locked_status') + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_pushpull_locked_status') + '.' +
           ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_solid_centered_status') + '.'
 
       when STATE_MOVE
@@ -1669,6 +1669,7 @@ module Ladb::OpenCutList
         begin
           offset = value.to_l
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OFFSET, SmartDrawTool::ACTION_OPTION_OFFSET_SHAPE_OFFSET, offset.to_s, true)
+          Sketchup.set_status_text('', SB_VCB_VALUE)
           _refresh
         rescue ArgumentError
           UI.beep
@@ -1766,7 +1767,7 @@ module Ladb::OpenCutList
 
     def _read_move_array(text, view)
 
-      ps = @picked_shape_start_point
+      ps = @picked_move_start_point
       pe = @mouse_snap_point
       v = ps.vector_to(pe)
 
@@ -3313,6 +3314,7 @@ module Ladb::OpenCutList
         end
 
         @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_SEGMENTS, SmartDrawTool::ACTION_OPTION_SEGMENTS_SEGMENT_COUNT, segment_count, true)
+        Sketchup.set_status_text('', SB_VCB_VALUE)
         _refresh
 
         return true
