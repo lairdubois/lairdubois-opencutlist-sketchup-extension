@@ -2305,8 +2305,8 @@ module Ladb::OpenCutList
       lps = ps.project_to_line(line)
       lpe = pe.project_to_line(line)
 
-      mps = lps.offset(vs)
-      mpe = lpe.offset(ve)
+      mps = vs.nil? ? lps : lps.offset(vs)
+      mpe = ve.nil? ? lpe : lpe.offset(ve)
       mv = mps.vector_to(mpe)
 
       {
