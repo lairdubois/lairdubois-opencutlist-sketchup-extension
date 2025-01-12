@@ -295,7 +295,7 @@ module Ladb::OpenCutList
           ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_change_move_anchor_status') + '.'
 
       when STATE_MOVE_ARRAY
-        return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_move_array_status") + '.' +
+        return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_status") + '.' +
           ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_change_move_anchor_status') + '.'
 
       when STATE_MOVE_ALONG_START
