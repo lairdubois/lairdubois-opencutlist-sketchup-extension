@@ -1836,25 +1836,22 @@ tool:
     action_1_state_1_diameter_status: Click to set diameter or enter distance
     action_2: Draw Polygon
     action_2_status: Draw a volume on a polygonal shape
-    action_2_state_1_status: Click to define a new point or enter a distance
+    action_2_state_1_status: Click to define a new point or enter distance
     action_x_state_2_status: Click to set elevation or enter distance
-    action_x_state_3_status: Click to move the part or enter a distance
-    action_x_state_3_move_copy_status: Click to place copy of the part or enter distance
-    action_x_state_3_move_array_status: Click to place copies of the part, or enter a length, width
-    action_option_group_tools: Tools
+    action_x_state_10_status: Click to move the part or enter distance
+    action_x_state_10_copy_status: Click to place copy of the part or enter distance
+    action_x_state_20_status: Click to place copies of the part, or enter length, width
+    action_x_state_30_status: Click to define the first point of the scatter vector
+    action_x_state_31_status: Click to spread copies or enter distance
     action_option_group_offset: Offset
     action_option_group_segments: Segments
     action_option_group_options: Options
-    action_option_tools_pushpull: Push/Pull
-    action_option_tools_pushpull_status: Activate Push/Pull after shape drawing
-    action_option_tools_move: Copy/Move
-    action_option_tools_move_status: Activate Copy/Move after part creation
     action_option_offset_shape_offset: Offset
     action_option_offset_shape_offset_status: Apply an offset to the shape line
     action_option_segments_segment_count: Number of Segments
     action_option_segments_segment_count_status: Define the number of segments of a circle
     action_option_options_construction: Construction Lines
-    action_option_options_construction_status: Draw in construction lines
+    action_option_options_construction_status: Draw as construction lines
     action_option_options_rectangle_centered: Rectangle Centered
     action_option_options_rectangle_centered_status: Center rectangle on the first point
     action_option_options_measure_from_diameter: Measure
@@ -1864,11 +1861,9 @@ tool:
     action_option_options_measure_reversed_status: Reverse the measurement
     action_option_options_solid_centered: Elevation Centered
     action_option_options_solid_centered_status: Center elevation on the first point
-    action_option_options_move_array: Copy to Grid
-    action_option_options_move_array_status: Copying the part to grid
-    action_option_pushpull_locked_status: Lock on last measurement
-    action_option_move_copy_status: Toggle between copy/move
-    action_option_move_anchor_status: Change the anchor point
+    action_pushpull_locked_status: Lock on last measurement
+    action_toggle_move_copy_status: Toggle between copy/move
+    action_change_move_anchor_status: Change the anchor point
     vcb_length: Length
     vcb_size: Size
     vcb_radius: Radius
