@@ -228,7 +228,7 @@ core:
       snippets: Beispielformeln
       help: "Drücken Sie **@**, um die Liste der Datenvariablen zu öffnen."
     three_viewer:
-      view: "{{ view }}"
+      view: "Ansicht {{ view }}"
       view_isometric: Isometrisch
       view_top: Draufsicht
       view_bottom: Untersicht
@@ -260,8 +260,8 @@ tab:
     not_available_std_width: Breite nicht verfügbar
     not_available_std_thickness: Dicke nicht verfügbar
     not_available_std_section: Querschnitt nicht verfügbar
-    highlight_part: Im Modell hervorheben
-    highlight_parts: Im Modell hervorheben
+    highlight_part: Teil im Modell hervorheben
+    highlight_parts: Teile im Modell hervorheben
     edit_part_properties: Eigenschaften des Teils bearbeiten
     edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
     edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
@@ -352,14 +352,14 @@ tab:
       has_edges_plural: "Dieses Teil enthält {{ count }} Kantenbänder"
       has_faces: "Dieses Teil enthält {{ count }} furnierte Fläche"
       has_faces_plural: "Dieses Teil enthält {{ count }} furnierte Flächen"
-      edge_decremented: "Um die Kantenbandbreite ({{ decrement }}) verkürzt"
+      edge_decremented: "Um Kantenbandbreite ({{ decrement }}) reduziert"
       edge_ymin: Kantenband Länge 1
       edge_ymax: Kantenband Länge 2
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       face_zmin: Rückseite
       face_zmax: Vorderansicht
-      dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die anderen Kanten zu übertragen"
+      dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die übrigen Kanten zu übertragen"
       dblclick_to_copy_all_faces: "Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen"
       dblclick_to_sort_axes: "Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen"
       part_axes: Interne Achsen des Teils
@@ -396,7 +396,7 @@ tab:
         Sie sind dabei, die Preise für alle Teile Ihres Modells zurückzusetzen.
         Dieser Vorgang ist endgültig. **Alle Preise werden auf Null zurückgesetzt.**
         Bestätigen Sie, um fortzufahren.
-      reset_prices_success: Die Preise für alle Teile wurden zurückgesetzt.
+      reset_prices_success: Die Preise aller Teile wurden zurückgesetzt.
     edit_part:
       title: "Eigenschaften des Teils '{{ name }}'"
       title_multiple: Eigenschaften der Gruppe von Teilen
@@ -420,8 +420,8 @@ tab:
 
         *Beispiel: Um nur 1 Teil für ein Paar Schubladenführungen zu zählen:
         Verpackung = 2 Stücke / Teil*
-      instance_count_by_part_1: 1 Stück
-      instance_count_by_part_2: 2 Stücke
+      instance_count_by_part_1: 1 Einheit pro Stück
+      instance_count_by_part_2: 2 Einheiten pro Stück
       mass: Masse
       mass_help: Die Masse des Teils wird bei der Erstellung der **Kalkulation** verwendet.
       price: Preis
@@ -488,7 +488,7 @@ tab:
       multiple_values: mehrfache Werte
       loading_preview: Vorschau laden
     option:
-      auto_orient: Automatische Orientierung der Teile
+      auto_orient: Automatische Ausrichtung der Teile
       auto_orient_help: |
         Ist diese Option aktiv, werden die Maße so sortiert, dass der größte Wert die *Länge* darstellt und der kleinste Wert die *Dicke*.
 
@@ -506,11 +506,11 @@ tab:
         Ist diese Option aktiv, wird die Bezeichnung aus dem Attribut *Name* der dynamischen Komponenten gelesen, sofern es definiert ist.
 
         <i class='ladb-opencutlist-icon-warning'></i> Die Instanzen von Teilen mit der gleichen Definition werden separat berücksichtigt, falls das Attribut *Name* nicht identisch ist.
-      part_number_with_letters: Buchstaben zur Aufzählung verwenden
+      part_number_with_letters: Buchstaben zur Aufzählung der Teile verwenden
       part_number_with_letters_help: "Ist diese Option aktiv, werden Teile mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) durchnummeriert."
       part_number_sequence_by_group: Teilenummerierung für jede Gruppe neu initialisieren
       part_number_sequence_by_group_help: "Ist diese Option aktiv, wird die Teilenummerierung bei jeder Gruppe (Liste von Teilen mit gleichem Material und gleicher Bruttodicke) auf 1 (oder A) zurückgesetzt."
-      part_folding: Gleiche Teile zusammenfassen
+      part_folding: Identische Teile zusammenfassen
       part_folding_help: |
         Ist diese Option aktiv, werden Teile aus dem Material **Massivholz, Platte oder Stange** mit **gleichen Rohmaßen** und mit **gleichen Badges** und **gleicher Fläche** *(sofern die Anzeige dieser Fläche nicht ausgeblendet ist)* in der *Holzliste* auf einer Zeile zusammengefasst .
 
@@ -522,7 +522,7 @@ tab:
       hide_tags: Badges ausblenden
       hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
       hide_cutting_dimensions: Rohmaße ausblenden
-      hide_cutting_dimensions_help: "Ist diese Option aktiv, werden die **Rohmaße** nicht angezeigt."
+      hide_cutting_dimensions_help: "Ist diese Option aktiv, werden die **Rohmaße** der Teile nicht angezeigt."
       hide_bbox_dimensions: Fertigmaße ausblenden
       hide_bbox_dimensions_help: "Ist diese Option aktiv, werden die **Fertigmaße** der Teile nicht angezeigt."
       hide_final_areas: Effektive Flächen von *Plattenteilen* ausblenden
@@ -531,8 +531,8 @@ tab:
       hide_edges_help: "Ist diese Option aktiv, werden die **Spalten der Kantenbänder** der Teile des Typs *Platte* nicht angezeigt."
       hide_faces: Spalten der Flächen ausblenden
       hide_faces_help: "Ist diese Option aktiv, werden die **Spalten der Flächen** von Teilen des Typs *Platte* nicht angezeigt."
-      hide_material_colors: Farben der Materialien verbergen
-      hide_material_colors_help: "Ist diese Option aktiv, werden die Farben der Materialien angezeigt."
+      hide_material_colors: Farben von Materialien ausblenden
+      hide_material_colors_help: "Ist diese Option aktiv, werden die Farben der Materialien nicht angezeigt."
       minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Ist diese Option aktiv, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
       general: Allgemein
@@ -604,7 +604,7 @@ tab:
       column_formula: Formel
       column_formula_help: |
         Das Feld **Formel** ermöglicht es Ihnen, *Ruby*-Code zu schreiben, um den Wert der Spalte anzupassen.
-      options: Optionen
+      options: Export-Optionen
       options_customize: Spalten einrichten
       option_source: Quelle
       option_source_summary: $t(tab.cutlist.list.summary)
@@ -691,7 +691,7 @@ tab:
       total_area: Σ Flächen
       total_length: Σ Längen
       tooltip:
-        incompatible_unit: Einheit nicht kompatibel mit den Schätzoptionen des Materials
+        incompatible_unit: Einheit nicht kompatibel mit den Kalkulationsoptionen des Materials
       error:
         no_typed_material_parts: "Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um die Kalkulation zu generieren."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
@@ -701,7 +701,7 @@ tab:
       tip:
         not_enough_data: |
           Damit sich diese Kalkulation richtig berechnen lässt, müssen:
-          - die verwendeten Materialien mindestens eine Dichte und einen Preis haben.
+          - die verwendeten Materialien mindestens eine Rohdichte und einen Preis haben.
           - die verwendeten Zubehöre mindestens ein Gewicht und einen Preis haben.
     cuttingdiagram:
       title: Schnittplan
@@ -821,10 +821,10 @@ tab:
       tooltip:
         scroll_to_block_1d: Zur ersten Stange oder Kantenband blättern
         scroll_to_block_2d: Zur ersten Platte blättern
-        copy_leftovers_to_clipboard: Verschnitte die Zwischenablage kopieren
+        copy_leftovers_to_clipboard: Verschnitte in die Zwischenablage kopieren
       list:
         unplaced_parts: Nicht platzierte Teile
-        summary: Übersicht
+        summary: Zusammenfassung
         count: Anz.
         bar: Stangenware
         sheet: Platte
@@ -843,7 +843,7 @@ tab:
         leftover: Verschnitt
         leftover_to_keep: Verschnitt zur Aufbewahrung
         leftover_to_keep_plural: Verschnitte zur Aufbewahrung
-        leftover_to_throw_away: Wegwerfbare Verschnitte
+        leftover_to_throw_away: Wegwerfbarer Verschnitt
         cut: Schnitt
         cut_plural: Schnitte
         cut_trimming: Säuberungsschnitt
@@ -876,7 +876,7 @@ tab:
         option_dxf_structure_help: |
           Auswahl der DXF-Dateistruktur.
 
-          - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layer. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
+          - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layers. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
           - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
         option_unit: $t(tab.cutlist.write.option_unit)
         option_unit_help: $t(tab.cutlist.write.option_unit_help)
@@ -900,10 +900,10 @@ tab:
           Ermöglicht den Export von Furnierblätter zu aktivieren und deren Farbe anzugeben.
         option_bar_dimensional: Stangenware
         option_bar_dimensional_help: |
-          Ermöglicht den Export von Stangen zu aktiviren und deren Farbe anzugeben.
-        option_bar_band: Kante
+          Ermöglicht den Export von Stangen zu aktivieren und deren Farbe anzugeben.
+        option_bar_band: Kantenband
         option_bar_band_help: |
-          Ermöglicht den Export von Kanten zu aktiveren und deren Farbe anzugeben.
+          Ermöglicht den Export von Kanten zu aktivieren und deren Farbe anzugeben.
         option_parts: Teile
         option_parts_help: |
           Ermöglicht den Export von Teilen zu aktivieren und deren Farbe anzugeben.
@@ -1095,7 +1095,7 @@ tab:
       remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         Die Sortierreihenfolge der Etiketten wird durch die Anordnung der folgenden Kacheln definiert.
-        Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
+        Jede Eigenschaft kann in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
       offset_help: |
         Mit dem *Versatz* können Sie die Position des **ersten Etiketts** auf der **ersten Seite** festlegen.
         Wählen Sie das Kästchen aus, das Ihrer Wahl entspricht.
@@ -1106,12 +1106,12 @@ tab:
       option_page_format_custom: Benutzerdefiniert
       option_page_width: Breite
       option_page_height: Höhe
-      option_margin: Randabstände
+      option_margin: Seitenränder
       option_margin_top: Oben
       option_margin_right: Rechts
       option_margin_bottom: Unten
       option_margin_left: Links
-      option_spacing: Zwischenabstände
+      option_spacing: Abstände
       option_spacing_h: Horizontal
       option_spacing_v: Vertikal
       option_grid: Etiketten pro Seite
@@ -1159,15 +1159,15 @@ tab:
         part_edge_xmax: Kantenband Breite 2
         part_face_zmin: Furnier Rückseite
         part_face_zmax: Furnier Vorderseite
-        thumbnail_proportional_drawing: Vignette
-        thumbnail_proportional: Proportionale Vignette
-        thumbnail_square: Quadratische Vignette
+        thumbnail_proportional_drawing: Miniaturbild
+        thumbnail_proportional: Proportionales Miniaturbild
+        thumbnail_square: Quadratisches Miniaturbild
         group_material: Material / Dimensionen
         group_material_name: Materialname
         group_std_dimension: Standarddimensionen
         filename: Dateiname
         model_name: Modellname
-        page_name: Name der Szene
+        page_name: Szenenname
         length_unit: Einheit
         generated_at: Datum und Uhrzeit
       error:
@@ -1405,7 +1405,7 @@ tab:
       open_url: URL des Materials öffnen
     menu:
       import_from_skm: Material importieren (.skm)
-      purge_unused: Unbenutztes Material löschen
+      purge_unused: Unbenutzte Materialien löschen
       reset_prices: Preise für alle Materialien zurücksetzen
       reset_prices_confirm: |
         Sie sind dabei, die Preise aller Materialien Ihres Modells zurückzusetzen.
@@ -1413,7 +1413,7 @@ tab:
         Bestätigen Sie, um fortzufahren.
       reset_prices_success: Die Preise für alle Materialien wurden zurückgesetzt.
     new_material:
-      title: Material erstellen
+      title: Neues Material erstellen
       name: Name
       name_warning: Ungültiger Name
       color: Farbe
@@ -1423,13 +1423,13 @@ tab:
       title: "Eigenschaften des Materials '{{ name }}'"
       general: Allgemein
       texture: Textur
-      no_texture: Keine Textur
+      no_texture: Ohne Textur
       name: Bezeichnung
       type: Typ
       description: Beschreibung
       url: URL
       cut_options: Schnittparameter
-      estimate_options: Schätzoptionen
+      estimate_options: Kalkulationsoptionen
       attributes: Attribute
       thickness: Dicke
       thickness_help: |
@@ -1473,7 +1473,7 @@ tab:
       edge_decremented: Reduzierung der Teile
       edge_decremented_help: "Gibt an, ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder reduziert werden sollen."
       edge_decremented_0: keine Reduzierung
-      edge_decremented_1: Reduzierung um Stärke des Kantenbands
+      edge_decremented_1: Reduzierung um Dicke des Kantenbands
       raw_estimated: Verwendetes Volumen
       raw_estimated_help: |
         Ermöglicht die Festlegung des Volumens, das zur Schätzung der Masse und der Gesamtkosten von Teilen aus diesem Material verwendet wird.
@@ -1487,8 +1487,8 @@ tab:
       raw_estimated_1: Volumen des benötigten Rohmaterials
       std_attributes_dim_placeholder: Wählen Sie eine Größe
       std_volumic_masses: Rohdichte
-      std_volumic_masses_help: Ermöglicht das Festlegen der Dichte für alle Größen sowie für jede Standardgröße des Materials.
-      std_volumic_masses_add: Dichte hinzufügen
+      std_volumic_masses_help: Ermöglicht das Festlegen der Rohdichte für alle Größen sowie für jede Standardgröße des Materials.
+      std_volumic_masses_add: Rohdichte hinzufügen
       std_prices: Preis
       std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede einzelne Standardgröße des Materials.
       std_prices_add: Preis hinzufügen
@@ -1742,12 +1742,12 @@ tab:
     currency_symbol: Währungssymbol
     currency_precision: Genauigkeit
     presets:
-      export_global_presets: Exportieren
+      export_global_presets: Voreinstellungen exportieren
       export_global_presets_help: |
         Mit dieser Funktion können Sie Ihre Voreinstellungen in eine **.json**-Datei exportieren.
-        Wählen Sie die Voreinstellungen aus, die Sie in diese Datei exportieren möchten.
+        Wählen Sie die Voreinstellungen aus, die Sie exportieren möchten.
       export_global_presets_success: Die Voreinstellungen wurden erfolgreich exportiert.
-      import_global_presets: Importieren
+      import_global_presets: Voreinstellungen importieren
       import_global_presets_help: |
         Wählen Sie die Voreinstellungen in der **.json**-Datei aus, die Sie importieren möchten.
         Bitte beachten Sie, dass eine bereits vorhandene Voreinstellung mit identischem Namen durch die importierte Version ersetzt wird.
@@ -1900,7 +1900,7 @@ tool:
     action_4: Säubern
     action_4_status: "Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu entfernen"
     action_option_group_instances: Anzahl der Instanzen
-    action_option_group_edges: Anzahl Kantenbänder
+    action_option_group_edges: Anzahl der Kantenbänder
     action_option_group_faces: Anzahl der Flächen
     action_option_instances_0_status: Nur die Instanz des ausgewählten Teils einfärben
     action_option_instances_1_status: Alle Instanzen des ausgewählten Teils einfärben
@@ -1926,7 +1926,7 @@ tool:
       not_part: Das Zielobjekt ist kein Teil (Komponente)
       not_edge: Die Zielfläche ist keine Plattenkante
       not_face: Die Zielfläche ist keine Plattenfläche
-      wrong_material_type: "Das Zielteil hat nicht den Typ '{{ type }}'"
+      wrong_material_type: "Das Zielteil muss vom Typ '{{ type }}' sein"
   smart_axes:
     title: Ausrichten
     action_0: Spiegeln
@@ -1952,7 +1952,7 @@ tool:
       not_part: Das Zielobjekt ist kein Teil (Komponente)
       not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
   smart_export:
-    title: Export
+    title: Exportieren
     action_0: 3D Teil exportieren
     action_0_status: Auf Teil klicken
     action_1: 2D Teil exportieren
