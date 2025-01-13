@@ -512,7 +512,7 @@ module Ladb::OpenCutList
     end
 
     def _to_packy_length(l)
-      l.to_f.round(8)
+      l.to_f #.round(8)
     end
 
     def _from_packy_length(l)
