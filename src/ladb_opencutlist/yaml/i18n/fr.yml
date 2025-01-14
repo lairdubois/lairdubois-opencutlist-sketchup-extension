@@ -96,6 +96,7 @@ core:
       unhide_part_instance: Révéler l'instance
       edit_part_instance_properties: Editer les propriétés de l'instance
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -105,6 +106,7 @@ core:
     command:
       dialog: OpenCutList
       smart_draw: Dessiner des pièces
+      smart_handle: Manipuler des pièces
       smart_paint: Colorier des pièces
       smart_axes: Orienter des pièces
       smart_export: Exporter des pièces
@@ -1878,6 +1880,19 @@ tool:
       invalid_segment_count: "Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999."
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
+  smart_handle:
+    title: Manipuler
+    action_0: Copier en ligne
+    action_0_status: Cliquez sur une pièce pour la copier le long d'un axe
+    action_1: Copier en grille
+    action_1_status: Cliquez sur une pièce pour la copier le long d'une grille
+    action_2: Répartir
+    action_2_status: Cliquez sur une pièce pour la répartir le long d'un axe
+    action_option_group_measure_type: Mesure
+    action_option_group_options: Options
+    action_option_measure_type_outside_status: Mesure prise à l'extérieure
+    action_option_measure_type_centered_status: Mesure prise de centre à centre
+    action_option_measure_type_inside_status: Mesure prise entre les pièces
   smart_paint:
     title: Colorier
     default_material: Sans matière

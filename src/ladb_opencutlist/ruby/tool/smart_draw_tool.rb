@@ -327,6 +327,7 @@ module Ladb::OpenCutList
     # -----
 
     def onCancel(reason, view)
+
       case @state
 
       when STATE_SHAPE_START
@@ -363,6 +364,7 @@ module Ladb::OpenCutList
 
       end
       _refresh
+
     end
 
     def onMouseMove(flags, x, y, view)
@@ -1369,7 +1371,7 @@ module Ladb::OpenCutList
 
       is_construction = drawing_def.cline_manipulators.any?
 
-      segments = _get_drawing_def_segments
+      segments = _get_drawing_def_segments(drawing_def)
       anchors = _get_move_anchors
 
       ps = anchors[_get_move_anchor_index]
@@ -1455,7 +1457,7 @@ module Ladb::OpenCutList
 
       is_construction = drawing_def.cline_manipulators.any?
 
-      segments = _get_drawing_def_segments
+      segments = _get_drawing_def_segments(drawing_def)
       anchors = _get_move_anchors
 
       ps = anchors[_get_move_anchor_index]
@@ -1559,7 +1561,7 @@ module Ladb::OpenCutList
     def _preview_move_along_start(view)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
-      segments = _get_drawing_def_segments
+      segments = _get_drawing_def_segments(drawing_def)
 
       k_segments = Kuix::Segments.new
       k_segments.add_segments(segments)
@@ -1615,7 +1617,7 @@ module Ladb::OpenCutList
 
       is_construction = drawing_def.cline_manipulators.any?
 
-      segments = _get_drawing_def_segments
+      segments = _get_drawing_def_segments(drawing_def)
 
       k_segments = Kuix::Segments.new
       k_segments.add_segments(segments)
@@ -2235,9 +2237,9 @@ module Ladb::OpenCutList
       ).run
     end
 
-    def _get_drawing_def_segments
+    def _get_drawing_def_segments(drawing_def)
       segments = []
-      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+      if drawing_def.is_a?(DrawingDef)
         segments += drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
         segments += drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
         segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)

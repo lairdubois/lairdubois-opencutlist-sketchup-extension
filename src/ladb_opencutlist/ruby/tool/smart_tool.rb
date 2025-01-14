@@ -274,7 +274,8 @@ module Ladb::OpenCutList
                         end
                         button.selected = true
                         store_action_option_value(action, option_group, option)
-                        set_root_action(fetch_action)
+                        refresh
+                        # set_root_action(fetch_action)
                       else
                         button.selected = !button.selected?
                         store_action_option_value(action, option_group, option, button.selected?)

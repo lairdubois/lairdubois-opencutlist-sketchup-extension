@@ -21,7 +21,7 @@ module Ladb::OpenCutList
   require_relative 'utils/path_utils'
   require_relative 'utils/hash_utils'
   require_relative 'tool/smart_draw_tool'
-  require_relative 'tool/smart_copy_tool'
+  require_relative 'tool/smart_handle_tool'
   require_relative 'tool/smart_paint_tool'
   require_relative 'tool/smart_axes_tool'
   require_relative 'tool/smart_export_tool'
@@ -808,8 +808,8 @@ module Ladb::OpenCutList
       submenu.add_item(get_i18n_string('core.menu.item.smart_draw')) {
         Sketchup.active_model.select_tool(SmartDrawTool.new) if Sketchup.active_model
       }
-      submenu.add_item(get_i18n_string('COPY')) {
-        Sketchup.active_model.select_tool(SmartCopyTool.new) if Sketchup.active_model
+      submenu.add_item(get_i18n_string('core.menu.item.smart_handle')) {
+        Sketchup.active_model.select_tool(SmartHandleTool.new) if Sketchup.active_model
       }
       submenu.add_item(get_i18n_string('core.menu.item.smart_paint')) {
         Sketchup.active_model.select_tool(SmartPaintTool.new) if Sketchup.active_model

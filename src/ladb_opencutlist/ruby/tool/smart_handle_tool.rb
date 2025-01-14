@@ -12,27 +12,44 @@ module Ladb::OpenCutList
   require_relative '../helper/user_text_helper'
   require_relative '../worker/common/common_drawing_decomposition_worker'
 
-  class SmartCopyTool < SmartTool
+  class SmartHandleTool < SmartTool
 
-    ACTION_COPY_MOVE = 1
-    ACTION_COPY_ARRAY = 2
-    ACTION_COPY_ALONG = 3
+    ACTION_COPY_LINE = 0
+    ACTION_COPY_GRID = 1
+    ACTION_DIVIDE = 2
+
+    ACTION_OPTION_MEASURE_TYPE = 'measure_type'
+    ACTION_OPTION_OPTIONS = 'options'
+
+    ACTION_OPTION_MEASURE_TYPE_OUTSIDE = 'outside'
+    ACTION_OPTION_MEASURE_TYPE_CENTERED = 'centered'
+    ACTION_OPTION_MEASURE_TYPE_INSIDE = 'inside'
+
+    ACTION_OPTION_OPTIONS_MIRROR = 'mirror'
 
     ACTIONS = [
       {
-        :action => ACTION_COPY_MOVE,
+        :action => ACTION_COPY_LINE,
+        :options => {
+          ACTION_OPTION_MEASURE_TYPE => [ACTION_OPTION_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_INSIDE ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MIRROR ]
+        }
       },
       {
-        :action => ACTION_COPY_ARRAY,
+        :action => ACTION_COPY_GRID,
+        :options => {
+          ACTION_OPTION_MEASURE_TYPE => [ACTION_OPTION_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_INSIDE ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MIRROR ]
+        }
       },
       {
-        :action => ACTION_COPY_ALONG,
+        :action => ACTION_DIVIDE,
       }
     ].freeze
 
     # -----
 
-    attr_reader :cursor_select, :cursor_move, :cursor_move_copy
+    attr_reader :cursor_select, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
 
     def initialize
       super
@@ -41,11 +58,13 @@ module Ladb::OpenCutList
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_move = create_cursor('move', 16, 16)
       @cursor_move_copy = create_cursor('move-copy', 16, 16)
+      @cursor_pin_1 = create_cursor('pin-1', 11, 31)
+      @cursor_pin_2 = create_cursor('pin-2', 11, 31)
 
     end
 
     def get_stripped_name
-      'copy'
+      'handle'
     end
 
     # -- Actions --
@@ -57,7 +76,7 @@ module Ladb::OpenCutList
     def get_action_cursor(action)
 
       case action
-      when ACTION_COPY_MOVE, ACTION_COPY_ARRAY, ACTION_COPY_ALONG
+      when ACTION_COPY_LINE, ACTION_COPY_GRID, ACTION_DIVIDE
           return @cursor_move_copy
       end
 
@@ -69,10 +88,41 @@ module Ladb::OpenCutList
     end
 
     def get_action_option_toggle?(action, option_group, option)
+      true
+    end
+
+    def get_action_option_group_unique?(action, option_group)
+
+      case option_group
+
+      when ACTION_OPTION_MEASURE_TYPE
+        return true
+
+      end
+
       false
     end
 
     def get_action_option_btn_child(action, option_group, option)
+
+      case option_group
+
+      when ACTION_OPTION_MEASURE_TYPE
+        case option
+        when ACTION_OPTION_MEASURE_TYPE_OUTSIDE
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.333,0.583L0.333,0.917L0,0.917M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917 M0,0.25L1,0.25 M0,0.083L0,0.417 M1,0.083L1,0.417'))
+        when ACTION_OPTION_MEASURE_TYPE_CENTERED
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.333,0.583L0.333,0.917L0,0.917 M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917 M0.167,0.25L0.822,0.25 M0.167,0.083L0.167,0.417 M0.822,0.083L0.822,0.417'))
+        when ACTION_OPTION_MEASURE_TYPE_INSIDE
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.333,0.583L0.333,0.917L0,0.917M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917 M0.333,0.25L0.667,0.25 M0.333,0.083L0.333,0.417 M0.667,0.083L0.667,0.417'))
+        end
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_MIRROR
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2'))
+        end
+      end
+
       super
     end
 
@@ -89,12 +139,12 @@ module Ladb::OpenCutList
     def onActionChanged(action)
 
       case action
-      when ACTION_COPY_MOVE
-        set_action_handler(SmartCopyMoveActionHandler.new(self))
-      when ACTION_COPY_ARRAY
-        set_action_handler(SmartCopyArrayActionHandler.new(self))
-      when ACTION_COPY_ALONG
-        set_action_handler(SmartCopyAlongActionHandler.new(self))
+      when ACTION_COPY_LINE
+        set_action_handler(SmartCopyLineActionHandler.new(self))
+      when ACTION_COPY_GRID
+        set_action_handler(SmartCopyGridActionHandler.new(self))
+      when ACTION_DIVIDE
+        set_action_handler(SmartDivideActionHandler.new(self))
       end
 
       super
@@ -112,18 +162,15 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SmartCopyActionHandler < SmartActionHandler
+  class SmartHandleActionHandler < SmartActionHandler
 
     include UserTextHelper
     include SmartActionHandlerPartHelper
 
     STATE_SELECT = 0
-    STATE_COPY = 1
-    STATE_COPY_COPIES = 2
-
-    TYPE_OUT = 0
-    TYPE_CENTERED = 1
-    TYPE_IN = 2
+    STATE_HANDLE_START = 1
+    STATE_HANDLE = 2
+    STATE_HANDLE_COPIES = 3
 
     def initialize(action, tool, action_handler = nil)
       super
@@ -132,11 +179,8 @@ module Ladb::OpenCutList
 
       @mouse_snap_point = nil
 
-      @picked_copy_start_point = nil
-      @picked_copy_end_point = nil
-
-      @copy_type = TYPE_OUT
-      @copy_mirror = false
+      @picked_handle_start_point = nil
+      @picked_handle_end_point = nil
 
       set_state(STATE_SELECT)
 
@@ -149,7 +193,7 @@ module Ladb::OpenCutList
       case state
       when STATE_SELECT
         return @tool.cursor_select
-      when STATE_COPY
+      when STATE_HANDLE
         return @tool.cursor_move_copy
       end
 
@@ -176,6 +220,25 @@ module Ladb::OpenCutList
 
     # -----
 
+    def onCancel(reason, view)
+
+      case @state
+
+      when STATE_HANDLE_START
+        @picked_shape_start_point = nil
+        set_state(STATE_SELECT)
+        _reset
+
+      when STATE_HANDLE
+        @picked_shape_start_point = nil
+        set_state(STATE_SELECT)
+        _reset
+
+      end
+      _refresh
+
+    end
+
     def onMouseMove(flags, x, y, view)
       super
 
@@ -199,7 +262,7 @@ module Ladb::OpenCutList
 
         end
 
-      when STATE_COPY
+      when STATE_HANDLE_START
 
         @mouse_snap_point = nil
         @mouse_ip.pick(view, x, y)
@@ -207,8 +270,18 @@ module Ladb::OpenCutList
         @tool.remove_all_2d
         @tool.remove_all_3d
 
-        _snap_copy_point(flags, x, y, view)
-        _preview_copy(view)
+        _snap_handle_start(flags, x, y, view)
+
+      when STATE_HANDLE
+
+        @mouse_snap_point = nil
+        @mouse_ip.pick(view, x, y)
+
+        @tool.remove_all_2d
+        @tool.remove_all_3d
+
+        _snap_handle(flags, x, y, view)
+        _preview_handle(view)
 
       end
 
@@ -245,15 +318,14 @@ module Ladb::OpenCutList
                                                             ignore_clines: false
         ).run
 
-        @picked_copy_start_point = @drawing_def.bounds.center.transform(@drawing_def.transformation)
+        puts "GRRR"
 
-        set_state(STATE_COPY)
-        _refresh
+        onPartSelected
 
-      when STATE_COPY
-        @picked_copy_end_point = @mouse_snap_point
+      when STATE_HANDLE
+        @picked_handle_end_point = @mouse_snap_point
         _copy_entity
-        set_state(STATE_COPY_COPIES)
+        set_state(STATE_HANDLE_COPIES)
         _restart
 
       end
@@ -262,30 +334,37 @@ module Ladb::OpenCutList
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
 
-      if key == COPY_MODIFIER_KEY
-        @copy_type = (@copy_type + 1) % 3
+      if key == ALT_MODIFIER_KEY
+        @tool.store_action_option_value(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR, !_fetch_option_mirror, true)
         _refresh
-      elsif key == ALT_MODIFIER_KEY
-        @copy_mirror = !@copy_mirror
-        _refresh
+        return true
       end
 
     end
 
     def onUserText(text, view)
 
-      if @picked_copy_start_point.nil?
-        return true if _read_copy_copies(text, view)
+      if @picked_handle_start_point.nil?
+        return true if _read_handle_copies(text, view)
       end
 
       case @state
 
-      when STATE_COPY
-        return _read_copy(text, view)
+      when STATE_HANDLE
+        return _read_handle(text, view)
 
       end
 
       false
+    end
+
+    def onPartSelected
+
+      @picked_handle_start_point = @drawing_def.bounds.center.transform(@drawing_def.transformation)
+
+      set_state(STATE_HANDLE)
+      _refresh
+
     end
 
     # -----
@@ -309,8 +388,8 @@ module Ladb::OpenCutList
         bounds.add(min)
         bounds.add(max)
 
-        ps = @picked_copy_start_point
-        pe = @picked_copy_end_point.nil? ? @mouse_snap_point : @picked_copy_end_point
+        ps = @picked_handle_start_point
+        pe = @picked_handle_end_point.nil? ? @mouse_snap_point : @picked_handle_end_point
 
         unless ps.nil? || pe.nil?
 
@@ -329,29 +408,45 @@ module Ladb::OpenCutList
     def _reset
       @mouse_ip.clear
       @mouse_snap_point = nil
-      @picked_copy_start_point = nil
-      @picked_copy_end_point = nil
+      @picked_handle_start_point = nil
+      @picked_handle_end_point = nil
       super
       set_state(STATE_SELECT)
     end
 
     # -----
 
-    def _snap_copy_point(flags, x, y, view)
+    def _snap_handle_start(flags, x, y, view)
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
     end
 
-    def _preview_copy(view)
+    def _snap_handle(flags, x, y, view)
+
+      @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
+
     end
 
-    def _read_copy(text, view)
+    def _preview_handle(view)
+    end
+
+    def _read_handle(text, view)
       false
     end
 
-    def _read_copy_copies(text, view)
+    def _read_handle_copies(text, view)
       false
+    end
+
+    # -----
+
+    def _fetch_option_type
+      @tool.fetch_action_option_value(@action, SmartHandleTool::ACTION_OPTION_MEASURE_TYPE)
+    end
+
+    def _fetch_option_mirror
+      @tool.fetch_action_option_boolean(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR)
     end
 
     # -----
@@ -365,38 +460,48 @@ module Ladb::OpenCutList
       @drawing_def
     end
 
+    def _get_drawing_def_segments(drawing_def)
+      segments = []
+      if drawing_def.is_a?(DrawingDef)
+        segments += drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
+        segments += drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
+        segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
+      end
+      segments
+    end
+
   end
 
-  class SmartCopyMoveActionHandler < SmartCopyActionHandler
+  class SmartCopyLineActionHandler < SmartHandleActionHandler
 
     def initialize(tool, action_handler = nil)
-      super(SmartCopyTool::ACTION_COPY_MOVE, tool, action_handler)
+      super(SmartHandleTool::ACTION_COPY_LINE, tool, action_handler)
     end
 
     # -----
 
-    def _snap_copy_point(flags, x, y, view)
+    def _snap_handle(flags, x, y, view)
 
       if @mouse_ip.degrees_of_freedom > 2 ||
         @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1
 
         # Compute axis from 2D projection
 
-        ps = view.screen_coords(@picked_copy_start_point)
+        ps = view.screen_coords(@picked_handle_start_point)
         pe = Geom::Point3d.new(x, y, 0)
 
-        move_axis = [ X_AXIS, Y_AXIS, Z_AXIS ].map! { |axis| { d: pe.distance_to_line([ ps, ps.vector_to(view.screen_coords(@picked_copy_start_point.offset(axis))) ]), axis: axis } }.min { |a, b| a[:d] <=> b[:d] }[:axis]
+        move_axis = [ _get_active_x_axis, _get_active_y_axis, _get_active_z_axis ].map! { |axis| { d: pe.distance_to_line([ ps, ps.vector_to(view.screen_coords(@picked_handle_start_point.offset(axis))) ]), axis: axis } }.min { |a, b| a[:d] <=> b[:d] }[:axis]
 
-        picked_point, _ = Geom::closest_points([ @picked_copy_start_point, move_axis ], view.pickray(x, y))
+        picked_point, _ = Geom::closest_points([@picked_handle_start_point, move_axis ], view.pickray(x, y))
         @mouse_snap_point = picked_point
 
       else
 
         # Compute axis from 3D position
 
-        ps = @picked_copy_start_point
+        ps = @picked_handle_start_point
         pe = @mouse_ip.position
-        move_axis = X_AXIS
+        move_axis = _get_active_x_axis
 
         v = ps.vector_to(pe)
         if v.valid?
@@ -409,24 +514,24 @@ module Ladb::OpenCutList
           plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
           ibtm = Geom.intersect_line_plane(line, plane_btm)
           if !ibtm.nil? && bounds.contains?(ibtm)
-            move_axis = Z_AXIS
+            move_axis = _get_active_z_axis
           else
             plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
             ilft = Geom.intersect_line_plane(line, plane_lft)
             if !ilft.nil? && bounds.contains?(ilft)
-              move_axis = X_AXIS
+              move_axis = _get_active_x_axis
             else
               plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
               ifrt = Geom.intersect_line_plane(line, plane_frt)
               if !ifrt.nil? && bounds.contains?(ifrt)
-                move_axis = Y_AXIS
+                move_axis = _get_active_y_axis
               end
             end
           end
 
         end
 
-        @mouse_snap_point = @mouse_ip.position.project_to_line([[ @picked_copy_start_point, move_axis ]])
+        @mouse_snap_point = @mouse_ip.position.project_to_line([[@picked_handle_start_point, move_axis ]])
 
       end
 
@@ -434,21 +539,18 @@ module Ladb::OpenCutList
 
     end
 
-    def _preview_copy(view)
-      return if (move_def = _get_move_def(@picked_copy_start_point, @mouse_snap_point, @copy_type)).nil?
+    def _preview_handle(view)
+      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_type)).nil?
 
       drawing_def, bounds, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :bounds, :mps, :mpe, :dps, :dpe)
 
       return unless (v = mps.vector_to(mpe)).valid?
       color = _get_vector_color(v)
 
-      segments = []
-      segments += drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-      segments += drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-      segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
+      segments = _get_drawing_def_segments(drawing_def)
 
       mt = Geom::Transformation.translation(v)
-      mt *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 - f.abs * 2 }) if @copy_mirror
+      mt *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 - f.abs * 2 }) if _fetch_option_mirror
 
       k_segments = Kuix::Segments.new
       k_segments.add_segments(segments)
@@ -506,8 +608,8 @@ module Ladb::OpenCutList
 
     end
 
-    def _read_copy(text, view)
-      return false if (move_def = _get_move_def(@picked_copy_start_point, @mouse_snap_point, @copy_type)).nil?
+    def _read_handle(text, view)
+      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_type)).nil?
 
       dps, dpe = move_def.values_at(:dps, :dpe)
       v = dps.vector_to(dpe)
@@ -515,17 +617,17 @@ module Ladb::OpenCutList
       distance = _read_user_text_length(text, v.length)
       return true if distance.nil?
 
-      @picked_copy_end_point = dps.offset(v, distance)
+      @picked_handle_end_point = dps.offset(v, distance)
 
       _copy_entity
-      set_state(STATE_COPY_COPIES)
+      set_state(STATE_HANDLE_COPIES)
       _restart
 
       true
     end
 
-    def _read_copy_copies(text, view)
-      return false if @previous_action_handler.nil? || @previous_action_handler.fetch_state != STATE_COPY_COPIES
+    def _read_handle_copies(text, view)
+      return false if @previous_action_handler.nil? || @previous_action_handler.fetch_state != STATE_HANDLE_COPIES
 
       v, _ = _split_user_text(text)
 
@@ -559,7 +661,7 @@ module Ladb::OpenCutList
     def _copy_entity(operator_1 = '*', number_1 = 1)
       return if @definition.nil? || !@drawing_def.is_a?(DrawingDef)
 
-      return if (move_def = _get_move_def(@picked_copy_start_point, @picked_copy_end_point, @copy_type)).nil?
+      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, _fetch_option_type)).nil?
 
       mps, mpe = move_def.values_at(:mps, :mpe)
       v = mps.vector_to(mpe)
@@ -583,7 +685,7 @@ module Ladb::OpenCutList
         entities = @active_part_entity_path[-2].definition.entities
       end
       t = IDENTITY
-      t *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 - f.abs * 2 }) if @copy_mirror
+      t *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 - f.abs * 2 }) if _fetch_option_mirror
       t *= @active_part_entity_path[-1].transformation
       (1..number_1).each do |i|
         entities.add_instance(@definition, Geom::Transformation.translation(Geom::Vector3d.new(ux * i, uy * i, uz * i)) * t)
@@ -595,40 +697,12 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_move_axis(ps, pe)
-
-      v = ps.vector_to(pe)
-      return X_AXIS unless v.valid?
-
-      bounds = Geom::BoundingBox.new
-      bounds.add([ -1, -1, -1], [ 1, 1, 1 ])
-
-      line = [ ORIGIN, v ]
-
-      plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
-      ibtm = Geom.intersect_line_plane(line, plane_btm)
-      if !ibtm.nil? && bounds.contains?(ibtm)
-        return Z_AXIS
-      else
-        plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
-        ilft = Geom.intersect_line_plane(line, plane_lft)
-        if !ilft.nil? && bounds.contains?(ilft)
-          return X_AXIS
-        else
-          plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
-          ifrt = Geom.intersect_line_plane(line, plane_frt)
-          if !ifrt.nil? && bounds.contains?(ifrt)
-            return Y_AXIS
-          end
-        end
-      end
-
-      X_AXIS
-    end
-
     def _get_move_def(ps, pe, type = 0)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
       return unless (v = ps.vector_to(pe)).valid?
+
+      t = _get_edit_transformation
+      ti = t.inverse
 
       bounds = Geom::BoundingBox.new
       drawing_def.edge_manipulators.each { |edge_manipulator| bounds.add(edge_manipulator.start_point.transform(drawing_def.transformation), edge_manipulator.end_point.transform(drawing_def.transformation)) }
@@ -663,17 +737,17 @@ module Ladb::OpenCutList
       ve = vs.reverse
 
       case type
-      when TYPE_OUT
+      when SmartHandleTool::ACTION_OPTION_MEASURE_TYPE_OUTSIDE
         mps = center
         mpe = lpe.offset(vs)
         dps = lps.offset(vs)
         dpe = lpe
-      when TYPE_CENTERED
+      when SmartHandleTool::ACTION_OPTION_MEASURE_TYPE_CENTERED
         mps = lps
         mpe = lpe
         dps = lps
         dpe = lpe
-      when TYPE_IN
+      when SmartHandleTool::ACTION_OPTION_MEASURE_TYPE_INSIDE
         mps = center
         mpe = lpe.offset(ve)
         dps = lps.offset(ve)
@@ -700,28 +774,41 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartCopyArrayActionHandler < SmartCopyActionHandler
+  class SmartCopyGridActionHandler < SmartHandleActionHandler
 
     def initialize(tool, action_handler = nil)
-      super(SmartCopyTool::ACTION_COPY_ARRAY, tool, action_handler)
+      super(SmartHandleTool::ACTION_COPY_GRID, tool, action_handler)
+
+      @normal = Z_AXIS
+
     end
 
     # -----
 
-    def _snap_copy_point(flags, x, y, view)
+    def _snap_handle(flags, x, y, view)
 
-      plane = [ @picked_copy_start_point, Z_AXIS ]
+      plane = [ @picked_handle_start_point, @normal ]
 
-      @mouse_snap_point = @mouse_ip.position.project_to_plane(plane)
+      if @mouse_ip.degrees_of_freedom > 2 ||
+        @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1
+
+        picked_point = Geom::intersect_line_plane(view.pickray(x, y), plane)
+        @mouse_snap_point = picked_point
+
+      else
+
+        @mouse_snap_point = @mouse_ip.position.project_to_plane(plane)
+
+      end
 
     end
 
-    def _preview_copy(view)
-      return if (move_def = _get_move_def(@picked_copy_start_point, @mouse_snap_point, Z_AXIS, @copy_type)).nil?
+    def _preview_handle(view)
+      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, @normal, _fetch_option_type)).nil?
 
       drawing_def, bounds, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :bounds, :mps, :mpe, :dps, :dpe)
 
-      color = _get_vector_color(Z_AXIS)
+      color = _get_vector_color(@normal)
 
       m_bounds = Geom::BoundingBox.new
       m_bounds.add(mps, mpe)
@@ -729,10 +816,7 @@ module Ladb::OpenCutList
       d_bounds = Geom::BoundingBox.new
       d_bounds.add(dps, dpe)
 
-      segments = []
-      segments += drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-      segments += drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-      segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
+      segments = _get_drawing_def_segments(drawing_def)
 
       (0..3).each do |i|
 
@@ -740,9 +824,9 @@ module Ladb::OpenCutList
         v = mps.vector_to(p)
 
         mt = Geom::Transformation.translation(v)
-        mt *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if @copy_mirror
+        mt *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if _fetch_option_mirror
 
-        # if @copy_mirror
+        # if _fetch_option_options_mirror
         #
         #   k_axes = Kuix::AxesHelper.new
         #   k_axes.transformation = mt * drawing_def.transformation
@@ -820,8 +904,8 @@ module Ladb::OpenCutList
 
     end
 
-    def _read_copy(text, view)
-      return false if (move_def = _get_move_def(@picked_copy_start_point, @mouse_snap_point, Z_AXIS, @copy_type)).nil?
+    def _read_handle(text, view)
+      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, @normal, _fetch_option_type)).nil?
 
       dps, dpe = move_def.values_at(:dps, :dpe)
       v = dps.vector_to(dpe)
@@ -836,10 +920,10 @@ module Ladb::OpenCutList
         distance_y = _read_user_text_length(d2, v.y.abs)
         return true if distance_y.nil?
 
-        @picked_copy_end_point = dps.offset(Geom::Vector3d.new(v.x < 0 ? -distance_x : distance_x, v.y < 0 ? -distance_y : distance_y))
+        @picked_handle_end_point = dps.offset(Geom::Vector3d.new(v.x < 0 ? -distance_x : distance_x, v.y < 0 ? -distance_y : distance_y))
 
         _copy_entity
-        set_state(STATE_COPY_COPIES)
+        set_state(STATE_HANDLE_COPIES)
         _restart
 
         return true
@@ -848,8 +932,8 @@ module Ladb::OpenCutList
       false
     end
 
-    def _read_copy_copies(text, view)
-      return false if @previous_action_handler.nil? || @previous_action_handler.fetch_state != STATE_COPY_COPIES
+    def _read_handle_copies(text, view)
+      return false if @previous_action_handler.nil? || @previous_action_handler.fetch_state != STATE_HANDLE_COPIES
 
       v, _ = _split_user_text(text)
 
@@ -883,7 +967,7 @@ module Ladb::OpenCutList
     def _copy_entity(operator_1 = '*', number_1 = 1)
       return if @definition.nil? || !@drawing_def.is_a?(DrawingDef)
 
-      return if (move_def = _get_move_def(@picked_copy_start_point, @picked_copy_end_point, Z_AXIS, @copy_type)).nil?
+      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, @normal, _fetch_option_type)).nil?
 
       mps, mpe = move_def.values_at(:mps, :mpe)
 
@@ -905,7 +989,7 @@ module Ladb::OpenCutList
             entities = @active_part_entity_path[-2].definition.entities
           end
           t = Geom::Transformation.translation(v)
-          t *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if @copy_mirror
+          t *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if _fetch_option_mirror
           t *= @active_part_entity_path[-1].transformation
 
           entities.add_instance(@definition, t)
@@ -994,17 +1078,17 @@ module Ladb::OpenCutList
       ve = vex + vey
 
       case type
-      when TYPE_OUT
+      when SmartHandleTool::ACTION_OPTION_MEASURE_TYPE_OUTSIDE
         mps = center
         mpe = lpe.offset(vs)
         dps = lps.offset(vs)
         dpe = lpe
-      when TYPE_CENTERED
+      when SmartHandleTool::ACTION_OPTION_MEASURE_TYPE_CENTERED
         mps = lps
         mpe = lpe
         dps = lps
         dpe = lpe
-      when TYPE_IN
+      when SmartHandleTool::ACTION_OPTION_MEASURE_TYPE_INSIDE
         mps = center
         mpe = lpe.offset(ve)
         dps = lps.offset(ve)
@@ -1031,10 +1115,88 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartCopyAlongActionHandler < SmartCopyActionHandler
+  class SmartDivideActionHandler < SmartHandleActionHandler
 
     def initialize(tool, action_handler = nil)
-      super(SmartCopyTool::ACTION_COPY_ALONG, tool, action_handler)
+      super(SmartHandleTool::ACTION_DIVIDE, tool, action_handler)
+    end
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_HANDLE_START
+        return @tool.cursor_pin_1
+      when STATE_HANDLE
+        return @tool.cursor_pin_2
+      end
+
+      super
+    end
+
+    # -----
+
+    def onCancel(reason, view)
+
+      case @state
+
+      when STATE_HANDLE
+        set_state(STATE_HANDLE_START)
+        _refresh
+        return true
+
+      end
+
+      super
+    end
+
+    def onLButtonUp(flags, x, y, view)
+
+      case @state
+
+      when STATE_HANDLE_START
+        @picked_handle_start_point = @mouse_snap_point
+        set_state(STATE_HANDLE)
+        _refresh
+        return true
+
+      end
+
+      super
+    end
+
+    def onPartSelected
+
+      puts "hop"
+
+      set_state(STATE_HANDLE_START)
+      _refresh
+
+    end
+
+    # -----
+
+    def _snap_handle(flags, x, y, view)
+      super
+    end
+
+    def _preview_handle(view)
+
+      ps = @picked_handle_start_point
+      pe = @mouse_snap_point
+      v = ps.vector_to(pe)
+
+      color = _get_vector_color(v)
+
+      k_line = Kuix::LineMotif.new
+      k_line.start.copy!(ps)
+      k_line.end.copy!(pe)
+      k_line.line_width = 1.5
+      k_line.color = color
+      k_line.on_top = true
+      @tool.append_3d(k_line)
+
     end
 
   end
