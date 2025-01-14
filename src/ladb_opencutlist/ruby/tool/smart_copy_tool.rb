@@ -121,6 +121,10 @@ module Ladb::OpenCutList
     STATE_COPY = 1
     STATE_COPY_COPIES = 2
 
+    TYPE_OUT = 0
+    TYPE_CENTERED = 1
+    TYPE_IN = 2
+
     def initialize(action, tool, action_handler = nil)
       super
 
@@ -131,8 +135,7 @@ module Ladb::OpenCutList
       @picked_copy_start_point = nil
       @picked_copy_end_point = nil
 
-      @copy_axis = X_AXIS
-      @copy_type = 0
+      @copy_type = TYPE_OUT
       @copy_mirror = false
 
       set_state(STATE_SELECT)
@@ -374,15 +377,54 @@ module Ladb::OpenCutList
 
     def _snap_copy_point(flags, x, y, view)
 
-      move_axis = _get_move_axis(@picked_copy_start_point, @mouse_ip.position)
-
       if @mouse_ip.degrees_of_freedom > 2 ||
         @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1
+
+        # Compute axis from 2D projection
+
+        ps = view.screen_coords(@picked_copy_start_point)
+        pe = Geom::Point3d.new(x, y, 0)
+
+        move_axis = [ X_AXIS, Y_AXIS, Z_AXIS ].map! { |axis| { d: pe.distance_to_line([ ps, ps.vector_to(view.screen_coords(@picked_copy_start_point.offset(axis))) ]), axis: axis } }.min { |a, b| a[:d] <=> b[:d] }[:axis]
 
         picked_point, _ = Geom::closest_points([ @picked_copy_start_point, move_axis ], view.pickray(x, y))
         @mouse_snap_point = picked_point
 
       else
+
+        # Compute axis from 3D position
+
+        ps = @picked_copy_start_point
+        pe = @mouse_ip.position
+        move_axis = X_AXIS
+
+        v = ps.vector_to(pe)
+        if v.valid?
+
+          bounds = Geom::BoundingBox.new
+          bounds.add([ -1, -1, -1], [ 1, 1, 1 ])
+
+          line = [ ORIGIN, v ]
+
+          plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
+          ibtm = Geom.intersect_line_plane(line, plane_btm)
+          if !ibtm.nil? && bounds.contains?(ibtm)
+            move_axis = Z_AXIS
+          else
+            plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
+            ilft = Geom.intersect_line_plane(line, plane_lft)
+            if !ilft.nil? && bounds.contains?(ilft)
+              move_axis = X_AXIS
+            else
+              plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
+              ifrt = Geom.intersect_line_plane(line, plane_frt)
+              if !ifrt.nil? && bounds.contains?(ifrt)
+                move_axis = Y_AXIS
+              end
+            end
+          end
+
+        end
 
         @mouse_snap_point = @mouse_ip.position.project_to_line([[ @picked_copy_start_point, move_axis ]])
 
@@ -397,7 +439,7 @@ module Ladb::OpenCutList
 
       drawing_def, bounds, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :bounds, :mps, :mpe, :dps, :dpe)
 
-      v = mps.vector_to(mpe)
+      return unless (v = mps.vector_to(mpe)).valid?
       color = _get_vector_color(v)
 
       segments = []
@@ -415,7 +457,7 @@ module Ladb::OpenCutList
       k_segments.transformation = mt * drawing_def.transformation
       @tool.append_3d(k_segments, 1)
 
-      @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_MEDIUM_GREY), 1)
+      @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), 1)
       @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), 1)
 
       k_line = Kuix::LineMotif.new
@@ -586,9 +628,7 @@ module Ladb::OpenCutList
 
     def _get_move_def(ps, pe, type = 0)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-
-      v = ps.vector_to(pe)
-      return unless v.valid?
+      return unless (v = ps.vector_to(pe)).valid?
 
       bounds = Geom::BoundingBox.new
       drawing_def.edge_manipulators.each { |edge_manipulator| bounds.add(edge_manipulator.start_point.transform(drawing_def.transformation), edge_manipulator.end_point.transform(drawing_def.transformation)) }
@@ -623,22 +663,26 @@ module Ladb::OpenCutList
       ve = vs.reverse
 
       case type
-      when 0  # Out
+      when TYPE_OUT
         mps = center
         mpe = lpe.offset(vs)
         dps = lps.offset(vs)
         dpe = lpe
-      when 1  # Centered
+      when TYPE_CENTERED
         mps = lps
         mpe = lpe
         dps = lps
         dpe = lpe
-      when 2  # In
+      when TYPE_IN
         mps = center
         mpe = lpe.offset(ve)
         dps = lps.offset(ve)
         dpe = lpe
+      else
+        return
       end
+
+      return unless mps.vector_to(mpe).valid? # No move
 
       {
         drawing_def: drawing_def,
@@ -724,7 +768,7 @@ module Ladb::OpenCutList
 
       end
 
-      @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_MEDIUM_GREY), 1)
+      @tool.append_3d(_create_floating_points(points: [ m_bounds.corner(0), m_bounds.corner(1), m_bounds.corner(2), m_bounds.corner(3) ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_MEDIUM_GREY), 1)
       @tool.append_3d(_create_floating_points(points: [ d_bounds.corner(0), d_bounds.corner(1), d_bounds.corner(2), d_bounds.corner(3) ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), 1)
 
       k_rectangle = Kuix::RectangleMotif.new
@@ -777,21 +821,31 @@ module Ladb::OpenCutList
     end
 
     def _read_copy(text, view)
-      return false if (move_def = _get_move_def(@picked_copy_start_point, @mouse_snap_point, @copy_type)).nil?
+      return false if (move_def = _get_move_def(@picked_copy_start_point, @mouse_snap_point, Z_AXIS, @copy_type)).nil?
 
       dps, dpe = move_def.values_at(:dps, :dpe)
       v = dps.vector_to(dpe)
 
-      distance = _read_user_text_length(text, v.length)
-      return true if distance.nil?
+      d1, d2 = _split_user_text(text)
 
-      @picked_copy_end_point = dps.offset(v, distance)
+      if d1 || d2
 
-      _copy_entity
-      set_state(STATE_COPY_COPIES)
-      _restart
+        distance_x = _read_user_text_length(d1, v.x.abs)
+        return true if distance_x.nil?
 
-      true
+        distance_y = _read_user_text_length(d2, v.y.abs)
+        return true if distance_y.nil?
+
+        @picked_copy_end_point = dps.offset(Geom::Vector3d.new(v.x < 0 ? -distance_x : distance_x, v.y < 0 ? -distance_y : distance_y))
+
+        _copy_entity
+        set_state(STATE_COPY_COPIES)
+        _restart
+
+        return true
+      end
+
+      false
     end
 
     def _read_copy_copies(text, view)
@@ -888,9 +942,7 @@ module Ladb::OpenCutList
 
     def _get_move_def(ps, pe, n, type = 0)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-
-      v = ps.vector_to(pe)
-      return unless v.valid?
+      return unless ps.vector_to(pe).valid?
 
       bounds = Geom::BoundingBox.new
       drawing_def.edge_manipulators.each { |edge_manipulator| bounds.add(edge_manipulator.start_point.transform(drawing_def.transformation), edge_manipulator.end_point.transform(drawing_def.transformation)) }
@@ -912,19 +964,19 @@ module Ladb::OpenCutList
         ibtm = Geom.intersect_line_plane(line, plane_btm)
         if !ibtm.nil? && bounds.contains?(ibtm)
           vs = ibtm.vector_to(center)
-          vs.reverse! if vs.samedirection?(v)
+          vs.reverse! if v.valid? && vs.samedirection?(v)
         else
           plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
           ilft = Geom.intersect_line_plane(line, plane_lft)
           if !ilft.nil? && bounds.contains?(ilft)
             vs = ilft.vector_to(center)
-            vs.reverse! if vs.samedirection?(v)
+            vs.reverse! if v.valid? && vs.samedirection?(v)
           else
             plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
             ifrt = Geom.intersect_line_plane(line, plane_frt)
             if !ifrt.nil? && bounds.contains?(ifrt)
               vs = ifrt.vector_to(center)
-              vs.reverse! if vs.samedirection?(v)
+              vs.reverse! if v.valid? && vs.samedirection?(v)
             end
           end
         end
@@ -942,22 +994,26 @@ module Ladb::OpenCutList
       ve = vex + vey
 
       case type
-      when 0  # Out
+      when TYPE_OUT
         mps = center
         mpe = lpe.offset(vs)
         dps = lps.offset(vs)
         dpe = lpe
-      when 1  # Centered
+      when TYPE_CENTERED
         mps = lps
         mpe = lpe
         dps = lps
         dpe = lpe
-      when 2  # In
+      when TYPE_IN
         mps = center
         mpe = lpe.offset(ve)
         dps = lps.offset(ve)
         dpe = lpe
+      else
+        return
       end
+
+      return unless mps.vector_to(mpe).valid? # No move
 
       {
         drawing_def: drawing_def,
