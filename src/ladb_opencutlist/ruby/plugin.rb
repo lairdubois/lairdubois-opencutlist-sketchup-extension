@@ -844,7 +844,7 @@ module Ladb::OpenCutList
         end
       end
 
-      # Setup Toolbar
+      # Setup Main Toolbar
       toolbar = UI::Toolbar.new(get_i18n_string('core.toolbar.name'))
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.dialog')) {
@@ -857,6 +857,11 @@ module Ladb::OpenCutList
       cmd.menu_text = get_i18n_string('core.toolbar.command.dialog')
       toolbar = toolbar.add_item(cmd)
 
+      toolbar.restore
+
+      # Setup Tools Toolbar
+      toolbar = UI::Toolbar.new(get_i18n_string('core.toolbar.name') + " - " + get_i18n_string('core.toolbar.tools'))
+
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_draw')) {
         if Sketchup.active_model
           if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartDrawTool)
@@ -867,11 +872,28 @@ module Ladb::OpenCutList
           Sketchup.focus if Sketchup.respond_to?(:focus)
         end
       }
-      cmd.small_icon = '../img/icon-draw-part-72x72.png'
-      cmd.large_icon = '../img/icon-draw-part-114x114.png'
+      cmd.small_icon = '../img/icon-smart-draw-72x72.png'
+      cmd.large_icon = '../img/icon-smart-draw-114x114.png'
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_draw')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_draw')
       cmd.menu_text = get_i18n_string('core.toolbar.command.smart_draw')
+      toolbar = toolbar.add_item(cmd)
+
+      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_handle')) {
+        if Sketchup.active_model
+          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartHandleTool)
+            Sketchup.active_model.select_tool(nil)
+          else
+            Sketchup.active_model.select_tool(SmartHandleTool.new)
+          end
+          Sketchup.focus if Sketchup.respond_to?(:focus)
+        end
+      }
+      cmd.small_icon = '../img/icon-smart-handle-72x72.png'
+      cmd.large_icon = '../img/icon-smart-handle-114x114.png'
+      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_handle')
+      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_handle')
+      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_handle')
       toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_paint')) {

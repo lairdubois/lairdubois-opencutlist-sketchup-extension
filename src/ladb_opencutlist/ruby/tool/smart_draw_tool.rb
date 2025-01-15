@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative 'smart_tool'
+  require_relative 'smart_handle_tool'
   require_relative '../lib/geometrix/finder/circle_finder'
   require_relative '../lib/fiddle/clippy/clippy'
   require_relative '../manipulator/vertex_manipulator'
@@ -2359,33 +2360,42 @@ module Ladb::OpenCutList
         {
           path: 'M0,0.667L0.333,0.667L0.333,1L0,1L0,0.667 M0.667,0L1,0L1,0.333L0.667,0.333L0.667,0 M0.417,0.583L0.583,0.417',
           block: lambda {
-            @tool.set_action_handler(self)
-            @picked_move_start_point = _get_move_anchors[_get_move_anchor_index]
-            @picked_move_end_point = nil
-            set_state(STATE_MOVE)
-            _refresh
+            Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
+              current_action: SmartHandleTool::ACTION_COPY_LINE
+            ))
+            # @tool.set_action_handler(self)
+            # @picked_move_start_point = _get_move_anchors[_get_move_anchor_index]
+            # @picked_move_end_point = nil
+            # set_state(STATE_MOVE)
+            # _refresh
           },
           text: 'Copier'
         },
         {
           path: 'M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.833L0.583,0.833',
           block: lambda {
-            @tool.set_action_handler(self)
-            @picked_move_start_point = _get_move_anchors[_get_move_anchor_index]
-            @picked_move_end_point = nil
-            set_state(STATE_MOVE_ARRAY)
-            _refresh
+            Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
+              current_action: SmartHandleTool::ACTION_COPY_GRID
+            ))
+            # @tool.set_action_handler(self)
+            # @picked_move_start_point = _get_move_anchors[_get_move_anchor_index]
+            # @picked_move_end_point = nil
+            # set_state(STATE_MOVE_ARRAY)
+            # _refresh
           },
           text: 'Copier en grille'
         },
         {
           path: 'M0.333,0.333L0.667,0.333L0.667,0.667L0.333,0.667L0.333,0.333 M0.083,0.917L0.25,0.75 M0.75,0.25L0.917,0.083',
           block: lambda {
-            @tool.set_action_handler(self)
-            @picked_move_start_point = nil
-            @picked_move_end_point = nil
-            set_state(STATE_MOVE_ALONG_START)
-            _refresh
+            Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
+              current_action: SmartHandleTool::ACTION_DIVIDE
+            ))
+            # @tool.set_action_handler(self)
+            # @picked_move_start_point = nil
+            # @picked_move_end_point = nil
+            # set_state(STATE_MOVE_ALONG_START)
+            # _refresh
           },
           text: 'Répartir'
         }
@@ -2415,8 +2425,7 @@ module Ladb::OpenCutList
           Sketchup.active_model.selection.clear
         end
         k_btn.on(:click) do
-          Sketchup.active_model.selection.clear
-          k_panel.remove
+          # k_panel.remove
           tool_def[:block].call
         end
         k_panel.append(k_btn)

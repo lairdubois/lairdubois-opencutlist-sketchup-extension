@@ -103,6 +103,7 @@ core:
       reset_dialog_position: Réinitialiser la position de la fenêtre
   toolbar:
     name: OpenCutList
+    tools: Outils
     command:
       dialog: OpenCutList
       smart_draw: Dessiner des pièces
@@ -1882,17 +1883,20 @@ tool:
       part_created: "Nouvelle pièce créée : {{ name }}"
   smart_handle:
     title: Manipuler
-    action_0: Copier en ligne
-    action_0_status: Cliquez sur une pièce pour la copier le long d'un axe
-    action_1: Copier en grille
-    action_1_status: Cliquez sur une pièce pour la copier le long d'une grille
-    action_2: Répartir
-    action_2_status: Cliquez sur une pièce pour la répartir le long d'un axe
+    action_0: Sélectionner
+    action_0_status: Cliquez sur une pièce pour la sélectionner
+    action_1: Copier en ligne
+    action_1_status: Cliquez sur une pièce pour la copier le long d'un axe
+    action_2: Copier en grille
+    action_2_status: Cliquez sur une pièce pour la copier le long d'une grille
+    action_3: Répartir
+    action_3_status: Cliquez sur une pièce pour la répartir le long d'un axe
     action_option_group_measure_type: Mesure
     action_option_group_options: Options
     action_option_measure_type_outside_status: Mesure prise à l'extérieure
     action_option_measure_type_centered_status: Mesure prise de centre à centre
     action_option_measure_type_inside_status: Mesure prise entre les pièces
+    action_option_options_mirror_status: Copie en symétrie
   smart_paint:
     title: Colorier
     default_material: Sans matière

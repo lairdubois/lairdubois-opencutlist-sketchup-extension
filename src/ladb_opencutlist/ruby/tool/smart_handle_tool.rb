@@ -14,9 +14,10 @@ module Ladb::OpenCutList
 
   class SmartHandleTool < SmartTool
 
-    ACTION_COPY_LINE = 0
-    ACTION_COPY_GRID = 1
-    ACTION_DIVIDE = 2
+    ACTION_SELECT = 0
+    ACTION_COPY_LINE = 1
+    ACTION_COPY_GRID = 2
+    ACTION_DIVIDE = 3
 
     ACTION_OPTION_MEASURE_TYPE = 'measure_type'
     ACTION_OPTION_OPTIONS = 'options'
@@ -28,6 +29,9 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_MIRROR = 'mirror'
 
     ACTIONS = [
+      {
+        :action => ACTION_SELECT,
+      },
       {
         :action => ACTION_COPY_LINE,
         :options => {
@@ -51,7 +55,7 @@ module Ladb::OpenCutList
 
     attr_reader :cursor_select, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
 
-    def initialize
+    def initialize(current_action: nil)
       super
 
       # Create cursors
@@ -131,7 +135,7 @@ module Ladb::OpenCutList
     def onActivate(view)
 
       # Clear current selection
-      Sketchup.active_model.selection.clear if Sketchup.active_model
+      # Sketchup.active_model.selection.clear if Sketchup.active_model
 
       super
     end
@@ -139,12 +143,14 @@ module Ladb::OpenCutList
     def onActionChanged(action)
 
       case action
+      when ACTION_SELECT
+        set_action_handler(SmartHandleSelectActionHandler.new(self))
       when ACTION_COPY_LINE
-        set_action_handler(SmartCopyLineActionHandler.new(self))
+        set_action_handler(SmartHandleCopyLineActionHandler.new(self))
       when ACTION_COPY_GRID
-        set_action_handler(SmartCopyGridActionHandler.new(self))
+        set_action_handler(SmartHandleCopyGridActionHandler.new(self))
       when ACTION_DIVIDE
-        set_action_handler(SmartDivideActionHandler.new(self))
+        set_action_handler(SmartHandleDivideActionHandler.new(self))
       end
 
       super
@@ -183,6 +189,20 @@ module Ladb::OpenCutList
       @picked_handle_end_point = nil
 
       set_state(STATE_SELECT)
+
+      selection = Sketchup.active_model.selection
+      entity = selection.first
+      if entity.is_a?(Sketchup::ComponentInstance)
+        path = (Sketchup.active_model.active_path.is_a?(Array) ? Sketchup.active_model.active_path : []) + [ entity ]
+        part_entity_path = _get_part_entity_path_from_path(path)
+        if (part = _generate_part_from_path(part_entity_path))
+          _set_active_part(part_entity_path, part)
+          onPartSelected
+        end
+      end
+
+      # Clear current selection
+      Sketchup.active_model.selection.clear if Sketchup.active_model
 
     end
 
@@ -223,6 +243,10 @@ module Ladb::OpenCutList
     def onCancel(reason, view)
 
       case @state
+
+      when STATE_SELECT
+        Sketchup.active_model.tools.pop_tool
+        return true
 
       when STATE_HANDLE_START
         @picked_shape_start_point = nil
@@ -309,17 +333,6 @@ module Ladb::OpenCutList
           return true
         end
 
-        @definition = @active_part_entity_path.last.definition
-        @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
-                                                            ignore_surfaces: true,
-                                                            ignore_faces: true,
-                                                            ignore_edges: false,
-                                                            ignore_soft_edges: false,
-                                                            ignore_clines: false
-        ).run
-
-        puts "GRRR"
-
         onPartSelected
 
       when STATE_HANDLE
@@ -359,6 +372,15 @@ module Ladb::OpenCutList
     end
 
     def onPartSelected
+
+      @definition = @active_part_entity_path.last.definition
+      @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
+                                                          ignore_surfaces: true,
+                                                          ignore_faces: true,
+                                                          ignore_edges: false,
+                                                          ignore_soft_edges: false,
+                                                          ignore_clines: false
+      ).run
 
       @picked_handle_start_point = @drawing_def.bounds.center.transform(@drawing_def.transformation)
 
@@ -412,6 +434,11 @@ module Ladb::OpenCutList
       @picked_handle_end_point = nil
       super
       set_state(STATE_SELECT)
+    end
+
+    def _restart
+      super
+      Sketchup.active_model.tools.pop_tool
     end
 
     # -----
@@ -472,7 +499,27 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartCopyLineActionHandler < SmartHandleActionHandler
+  class SmartHandleSelectActionHandler < SmartHandleActionHandler
+
+    def initialize(tool, action_handler = nil)
+      super(SmartHandleTool::ACTION_SELECT, tool, action_handler)
+    end
+
+    # -----
+
+    def onPartSelected
+
+      Sketchup.active_model.selection.clear
+      Sketchup.active_model.selection.add(@active_part_entity_path.last)
+
+      set_state(STATE_SELECT)
+      _refresh
+
+    end
+
+  end
+
+  class SmartHandleCopyLineActionHandler < SmartHandleActionHandler
 
     def initialize(tool, action_handler = nil)
       super(SmartHandleTool::ACTION_COPY_LINE, tool, action_handler)
@@ -774,7 +821,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartCopyGridActionHandler < SmartHandleActionHandler
+  class SmartHandleCopyGridActionHandler < SmartHandleActionHandler
 
     def initialize(tool, action_handler = nil)
       super(SmartHandleTool::ACTION_COPY_GRID, tool, action_handler)
@@ -1115,7 +1162,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartDivideActionHandler < SmartHandleActionHandler
+  class SmartHandleDivideActionHandler < SmartHandleActionHandler
 
     def initialize(tool, action_handler = nil)
       super(SmartHandleTool::ACTION_DIVIDE, tool, action_handler)
@@ -1167,8 +1214,6 @@ module Ladb::OpenCutList
     end
 
     def onPartSelected
-
-      puts "hop"
 
       set_state(STATE_HANDLE_START)
       _refresh

@@ -1,12 +1,14 @@
 {
-  "action_0": { /* ACTION_MOVE_LINE */
+  "action_0": { /* ACTION_SELECT */
+  },
+  "action_1": { /* ACTION_MOVE_LINE */
     "measure_type": "outside",
     "mirror": false
   },
-  "action_1": { /* ACTION_MOVE_GRID */
+  "action_2": { /* ACTION_MOVE_GRID */
     "measure_type": "outside",
     "mirror": false
   },
-  "action_2": { /* ACTION_MOVE_ALONG */
+  "action_3": { /* ACTION_MOVE_ALONG */
   }
 }
