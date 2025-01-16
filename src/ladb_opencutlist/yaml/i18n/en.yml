@@ -96,15 +96,18 @@ core:
       unhide_part_instance: Show Instance
       edit_part_instance_properties: Edit Instance Properties
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Reset Window Position
   toolbar:
     name: OpenCutList
+    tools: Tools
     command:
       dialog: OpenCutList
       smart_draw: Draw Parts
+      smart_handle: Handle Parts
       smart_paint: Paint Parts
       smart_axes: Orient Parts
       smart_export: Export Parts
@@ -635,7 +638,7 @@ tab:
       bbox_thickness: Thickness
       final_area: Area - final
       count: Quantity
-      part_count: Parts quantity
+      part_count: Number of Parts
       material: Material
       material_type: Type of Material
       material_name: Name of Material
@@ -1878,6 +1881,22 @@ tool:
       invalid_segment_count: "The number of segments {{ value }} is invalid. It must be between 3 and 999."
     success:
       part_created: "New part created: {{ name }}"
+  smart_handle:
+    title: Handle
+    action_0: Select
+    action_0_status: Click on a part to select it
+    action_1: Copy in line
+    action_1_status: Click on a part to copy it along an axis
+    action_2: Copy in grid
+    action_2_status: Click on a part to copy it along a grid
+    action_3: Distribute
+    action_3_status: Click on a part to distribute it along an axis
+    action_option_group_measure_type: Measure
+    action_option_group_options: Options
+    action_option_measure_type_outside_status: External measurement
+    action_option_measure_type_centered_status: Central measurement
+    action_option_measure_type_inside_status: Measurement taken between parts
+    action_option_options_mirror_status: Symmetrical copying
   smart_paint:
     title: Paint
     default_material: Without material

@@ -96,15 +96,18 @@ core:
       unhide_part_instance: Instanz einblenden
       edit_part_instance_properties: Instanzeigenschaften bearbeiten
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Fensterposition zurücksetzen
   toolbar:
     name: OpenCutList
+    tools: Werkzeuge
     command:
       dialog: OpenCutList
       smart_draw: Teile zeichnen
+      smart_handle: Teile handhaben
       smart_paint: Teile einfärben
       smart_axes: Teile orientieren
       smart_export: Teile exportieren
@@ -256,7 +259,7 @@ tab:
     is_selection: Nur Auswahl
     select_part: Teil auswählen
     select_part_plural: Teile auswählen
-    material_undefined: Kein Material definiert
+    material_undefined: Ohne Material
     not_available_std_width: Breite nicht verfügbar
     not_available_std_thickness: Dicke nicht verfügbar
     not_available_std_section: Querschnitt nicht verfügbar
@@ -332,10 +335,10 @@ tab:
       remove_veneer_material_name_filter: "Auswahl nach '{{ material_name }}' aufheben"
       not_aligned_on_axes: "Achtung, dieses Teil ist möglicherweise nicht korrekt auf seinen Achsen ausgerichtet"
       instance_count_by_part: "Dieses Teil wird in **{{ count }}** Einheiten pro Packung gezählt."
-      unused_instance_count: "Achtung, **{{ count }}** Stück der letzten Packung wird nicht verwendet."
-      unused_instance_count_plural: "Achtung, **{{ count }}** Stücke der letzten Packung werden nicht verwendet."
-      used_instance_count: "**{{ count }}** / {{ total }} Stücken verwendet"
-      used_instance_count_plural: "**{{ count }}** / {{ total }} Stücken verwendet"
+      unused_instance_count: "Achtung, **{{ count }}** Einheit der letzten Packung wird nicht verwendet."
+      unused_instance_count_plural: "Achtung, **{{ count }}** Einheiten der letzten Packung werden nicht verwendet."
+      used_instance_count: "**{{ count }}** / {{ total }} Einheit verwendet"
+      used_instance_count_plural: "**{{ count }}** / {{ total }} Einheiten verwendet"
       thickness_layer_count: "Das fertige Teil besteht aus **{{ count }}** Lagen in der Dicke"
       thickness_layered: "Die hier angegebene Menge entspricht der Anzahl der zu schneidenden Teile, um alle Lagen zu erhalten."
       thickness_layered_equation: "**{{ count }}** *Teil* x **{{ layerCount }}** *Lagen* = **{{ cuttingPartCount }}**"
@@ -400,7 +403,7 @@ tab:
     edit_part:
       title: "Eigenschaften des Teils '{{ name }}'"
       title_multiple: Eigenschaften der Gruppe von Teilen
-      multiple_alert: "Gemeinsame Eigenschaften von {{ part_count }} Teilen."
+      multiple_alert: "Gemeinsame Eigenschaften der Gruppe von {{ part_count }} Teilen."
       general: Allgemein
       extra_help: "Liste der materialtypspezifischen Eigenschaften \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Kantenbänder
@@ -431,7 +434,7 @@ tab:
         Definieren Sie hier die Anzahl der Schichten, die das gezeichnete Teil in seiner Dicke unterteilen.
 
         *Beispiel:* Wenn Sie ein Teil mit einer Dicke von *38mm* gezeichnet haben und es durch Zusammenkleben von zwei *19mm* Platten herstellen wollen, geben Sie **2** in dieses Feld ein.
-        *OpenCutList zählt dann 2 Teil mit 19mm Dicke anstelle statt 1 Teil mit 38mm Dicke.*
+        *OpenCutList zählt dann 2 Teile mit 19mm Dicke statt 1 Teil mit 38mm Dicke.*
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
@@ -1397,7 +1400,7 @@ tab:
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Faserrichtung
       raw_estimated_0: Geschätzt nach effektivem Volumen
-      colorized: Diese Farbton wird beim Rendern im Modell auf die Textur des Material angewendet
+      colorized: Dieser Farbton wird beim Rendern des Modells auf die Materialtextur angewendet
       texture_load: Neue Textur laden
       texture_clear: Textur löschen
       edit: "Eigenschaften von '{{ name }}' bearbeiten"
@@ -1790,7 +1793,7 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *Deutsch*)
       - Gildas Boureau (*französische* Dokumentation)
       - Vladimir Badulya (*Russisch*)
-      - Pierluigi Colombo (*Italienisch*)
+      - Pierluigi Colombo, Massimo Risca (*Italienisch*)
       - Nayton Sanches Barbosa, korrigiert und überarbeitet von [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portugiesisch*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spanish*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Tschechisch*)
@@ -1878,9 +1881,25 @@ tool:
       invalid_segment_count: "Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein."
     success:
       part_created: "Neu erstelltes Teil: {{ name }}"
+  smart_handle:
+    title: Handhaben
+    action_0: Auswählen
+    action_0_status: Klicken Sie auf ein Teil, um es auszuwählen
+    action_1: In Linie kopieren
+    action_1_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren
+    action_2: In Raster kopieren
+    action_2_status: Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren.
+    action_3: Verteilen
+    action_3_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen.
+    action_option_group_measure_type: Maß
+    action_option_group_options: Optionen
+    action_option_measure_type_outside_status: Außenmessung
+    action_option_measure_type_centered_status: Messung von Mitte zu Mitte
+    action_option_measure_type_inside_status: Messung zwischen den Teilen
+    action_option_options_mirror_status: Symmetrisch kopieren
   smart_paint:
     title: Malen
-    default_material: Kein Material definiert
+    default_material: Ohne Material
     filters: Filter
     filter_0: Ohne Typ
     filter_1: $t(tab.materials.type_1)
