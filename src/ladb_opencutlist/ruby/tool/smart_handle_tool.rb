@@ -329,7 +329,7 @@ module Ladb::OpenCutList
 
     def onToolMouseLeave(tool, view)
       @tool.remove_all_2d
-      @tool.remove_all_3d
+      @tool.remove_3d(1)
       @mouse_ip.clear
       view.tooltip = ''
       super
@@ -570,6 +570,46 @@ module Ladb::OpenCutList
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartHandleTool::ACTION_COPY_LINE, tool, previous_action_handler)
+
+      @locked_axis = nil
+
+    end
+
+    # -----
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      if key == VK_RIGHT
+        x_axis = _get_active_x_axis
+        if @locked_axis == x_axis
+          @locked_axis = nil
+        else
+          @locked_axis = x_axis
+        end
+        _refresh
+        return true
+      elsif key == VK_LEFT
+        y_axis = _get_active_y_axis.reverse # Reverse to keep z axis on top
+        if @locked_axis == y_axis
+          @locked_axis = nil
+        else
+          @locked_axis = y_axis
+        end
+        _refresh
+        return true
+      elsif key == VK_UP
+        z_axis = _get_active_z_axis
+        if @locked_axis == z_axis
+          @locked_axis = nil
+        else
+          @locked_axis = z_axis
+        end
+        _refresh
+        return true
+      elsif key == VK_DOWN
+        UI.beep
+      end
+
     end
 
     # -----
@@ -579,48 +619,64 @@ module Ladb::OpenCutList
       if @mouse_ip.degrees_of_freedom > 2 ||
         @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1
 
-        # Compute axis from 2D projection
+        if @locked_axis
 
-        ps = view.screen_coords(@picked_handle_start_point)
-        pe = Geom::Point3d.new(x, y, 0)
+          move_axis = @locked_axis
 
-        move_axis = [ _get_active_x_axis, _get_active_y_axis, _get_active_z_axis ].map! { |axis| { d: pe.distance_to_line([ ps, ps.vector_to(view.screen_coords(@picked_handle_start_point.offset(axis))) ]), axis: axis } }.min { |a, b| a[:d] <=> b[:d] }[:axis]
+        else
 
-        picked_point, _ = Geom::closest_points([@picked_handle_start_point, move_axis ], view.pickray(x, y))
+          # Compute axis from 2D projection
+
+          ps = view.screen_coords(@picked_handle_start_point)
+          pe = Geom::Point3d.new(x, y, 0)
+
+          move_axis = [ _get_active_x_axis, _get_active_y_axis, _get_active_z_axis ].map! { |axis| { d: pe.distance_to_line([ ps, ps.vector_to(view.screen_coords(@picked_handle_start_point.offset(axis))) ]), axis: axis } }.min { |a, b| a[:d] <=> b[:d] }[:axis]
+
+        end
+
+        picked_point, _ = Geom::closest_points([ @picked_handle_start_point, move_axis ], view.pickray(x, y))
         @mouse_snap_point = picked_point
 
       else
 
-        # Compute axis from 3D position
+        if @locked_axis
 
-        ps = @picked_handle_start_point
-        pe = @mouse_ip.position
-        move_axis = _get_active_x_axis
+          move_axis = @locked_axis
 
-        v = ps.vector_to(pe)
-        if v.valid?
+        else
 
-          bounds = Geom::BoundingBox.new
-          bounds.add([ -1, -1, -1], [ 1, 1, 1 ])
+          # Compute axis from 3D position
 
-          line = [ ORIGIN, v ]
+          ps = @picked_handle_start_point
+          pe = @mouse_ip.position
+          move_axis = _get_active_x_axis
 
-          plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
-          ibtm = Geom.intersect_line_plane(line, plane_btm)
-          if !ibtm.nil? && bounds.contains?(ibtm)
-            move_axis = _get_active_z_axis
-          else
-            plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
-            ilft = Geom.intersect_line_plane(line, plane_lft)
-            if !ilft.nil? && bounds.contains?(ilft)
-              move_axis = _get_active_x_axis
+          v = ps.vector_to(pe)
+          if v.valid?
+
+            bounds = Geom::BoundingBox.new
+            bounds.add([ -1, -1, -1], [ 1, 1, 1 ])
+
+            line = [ ORIGIN, v ]
+
+            plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
+            ibtm = Geom.intersect_line_plane(line, plane_btm)
+            if !ibtm.nil? && bounds.contains?(ibtm)
+              move_axis = _get_active_z_axis
             else
-              plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
-              ifrt = Geom.intersect_line_plane(line, plane_frt)
-              if !ifrt.nil? && bounds.contains?(ifrt)
-                move_axis = _get_active_y_axis
+              plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
+              ilft = Geom.intersect_line_plane(line, plane_lft)
+              if !ilft.nil? && bounds.contains?(ilft)
+                move_axis = _get_active_x_axis
+              else
+                plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
+                ifrt = Geom.intersect_line_plane(line, plane_frt)
+                if !ifrt.nil? && bounds.contains?(ifrt)
+                  move_axis = _get_active_y_axis
+                end
               end
             end
+
           end
 
         end
@@ -660,6 +716,7 @@ module Ladb::OpenCutList
       k_line.start.copy!(dps)
       k_line.end.copy!(dpe)
       k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_line.line_width = 1.5 unless @locked_axis.nil?
       k_line.color = Kuix::COLOR_MEDIUM_GREY
       k_line.on_top = true
       @tool.append_3d(k_line, 1)
@@ -668,6 +725,7 @@ module Ladb::OpenCutList
       k_line.start.copy!(dps)
       k_line.end.copy!(dpe)
       k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_line.line_width = 1.5 unless @locked_axis.nil?
       k_line.color = color
       @tool.append_3d(k_line, 1)
 
@@ -691,7 +749,7 @@ module Ladb::OpenCutList
       if distance > 0
 
         k_label = _create_floating_label(
-          screen_point: view.screen_coords(dps.offset(v, distance / 2)),
+          screen_point: view.screen_coords(dps.offset(dps.vector_to(dpe), distance / 2)),
           text: distance,
           text_color: Kuix::COLOR_X,
           border_color: color
@@ -789,7 +847,7 @@ module Ladb::OpenCutList
 
         (1..number_1).each do |i|
 
-          next if x == 0 && y == 0  # Ignore src instance
+          next if i == 0  # Ignore src instance
 
           vt = Geom::Vector3d.new(ux * i, uy * i, uz * i)
 
@@ -1140,28 +1198,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_axes
-
-      if @direction.nil? || !@direction.valid? || !@direction.perpendicular?(@normal)
-
-        active_x_axis = _get_active_x_axis
-        active_x_axis = _get_active_y_axis if active_x_axis.parallel?(@normal)
-
-        x_axis = ORIGIN.vector_to(ORIGIN.offset(active_x_axis).project_to_plane([ ORIGIN, @normal ]))
-
-      else
-        x_axis = @direction
-      end
-      z_axis = @normal
-      y_axis = z_axis * x_axis
-
-      [ x_axis.normalize, y_axis.normalize, z_axis.normalize ]
-    end
-
-    def _get_transformation(origin = ORIGIN)
-      Geom::Transformation.axes(origin, *_get_axes)
-    end
-
     def _get_move_def(ps, pe, n, type = 0)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
       return unless ps.vector_to(pe).valid?
@@ -1256,6 +1292,9 @@ module Ladb::OpenCutList
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartHandleTool::ACTION_DISTRIBUTE, tool, previous_action_handler)
+
+      @locked_axis = nil
+
     end
 
     # -- STATE --
@@ -1288,6 +1327,41 @@ module Ladb::OpenCutList
       super
     end
 
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      if key == VK_RIGHT
+        x_axis = _get_active_x_axis
+        if @locked_axis == x_axis
+          @locked_axis = nil
+        else
+          @locked_axis = x_axis
+        end
+        _refresh
+        return true
+      elsif key == VK_LEFT
+        y_axis = _get_active_y_axis.reverse # Reverse to keep z axis on top
+        if @locked_axis == y_axis
+          @locked_axis = nil
+        else
+          @locked_axis = y_axis
+        end
+        _refresh
+        return true
+      elsif key == VK_UP
+        z_axis = _get_active_z_axis
+        if @locked_axis == z_axis
+          @locked_axis = nil
+        else
+          @locked_axis = z_axis
+        end
+        _refresh
+        return true
+      elsif key == VK_DOWN
+        UI.beep
+      end
+
+    end
+
     def onPartSelected
 
       instance = @active_part_entity_path.last
@@ -1310,48 +1384,64 @@ module Ladb::OpenCutList
       if @mouse_ip.degrees_of_freedom > 2 ||
         @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1
 
-        # Compute axis from 2D projection
+        if @locked_axis
 
-        ps = view.screen_coords(@picked_handle_start_point)
-        pe = Geom::Point3d.new(x, y, 0)
+          move_axis = @locked_axis
 
-        move_axis = [ _get_active_x_axis, _get_active_y_axis, _get_active_z_axis ].map! { |axis| { d: pe.distance_to_line([ ps, ps.vector_to(view.screen_coords(@picked_handle_start_point.offset(axis))) ]), axis: axis } }.min { |a, b| a[:d] <=> b[:d] }[:axis]
+        else
+
+          # Compute axis from 2D projection
+
+          ps = view.screen_coords(@picked_handle_start_point)
+          pe = Geom::Point3d.new(x, y, 0)
+
+          move_axis = [ _get_active_x_axis, _get_active_y_axis, _get_active_z_axis ].map! { |axis| { d: pe.distance_to_line([ ps, ps.vector_to(view.screen_coords(@picked_handle_start_point.offset(axis))) ]), axis: axis } }.min { |a, b| a[:d] <=> b[:d] }[:axis]
+
+        end
 
         picked_point, _ = Geom::closest_points([@picked_handle_start_point, move_axis ], view.pickray(x, y))
         @mouse_snap_point = picked_point
 
       else
 
-        # Compute axis from 3D position
+        if @locked_axis
 
-        ps = @picked_handle_start_point
-        pe = @mouse_ip.position
-        move_axis = _get_active_x_axis
+          move_axis = @locked_axis
 
-        v = ps.vector_to(pe)
-        if v.valid?
+        else
 
-          bounds = Geom::BoundingBox.new
-          bounds.add([ -1, -1, -1], [ 1, 1, 1 ])
+          # Compute axis from 3D position
 
-          line = [ ORIGIN, v ]
+          ps = @picked_handle_start_point
+          pe = @mouse_ip.position
+          move_axis = _get_active_x_axis
 
-          plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
-          ibtm = Geom.intersect_line_plane(line, plane_btm)
-          if !ibtm.nil? && bounds.contains?(ibtm)
-            move_axis = _get_active_z_axis
-          else
-            plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
-            ilft = Geom.intersect_line_plane(line, plane_lft)
-            if !ilft.nil? && bounds.contains?(ilft)
-              move_axis = _get_active_x_axis
+          v = ps.vector_to(pe)
+          if v.valid?
+
+            bounds = Geom::BoundingBox.new
+            bounds.add([ -1, -1, -1], [ 1, 1, 1 ])
+
+            line = [ ORIGIN, v ]
+
+            plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
+            ibtm = Geom.intersect_line_plane(line, plane_btm)
+            if !ibtm.nil? && bounds.contains?(ibtm)
+              move_axis = _get_active_z_axis
             else
-              plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
-              ifrt = Geom.intersect_line_plane(line, plane_frt)
-              if !ifrt.nil? && bounds.contains?(ifrt)
-                move_axis = _get_active_y_axis
+              plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
+              ilft = Geom.intersect_line_plane(line, plane_lft)
+              if !ilft.nil? && bounds.contains?(ilft)
+                move_axis = _get_active_x_axis
+              else
+                plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
+                ifrt = Geom.intersect_line_plane(line, plane_frt)
+                if !ifrt.nil? && bounds.contains?(ifrt)
+                  move_axis = _get_active_y_axis
+                end
               end
             end
+
           end
 
         end
@@ -1385,6 +1475,7 @@ module Ladb::OpenCutList
       k_line.start.copy!(lps)
       k_line.end.copy!(lpe)
       k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_line.line_width = 1.5 unless @locked_axis.nil?
       k_line.color = color
       @tool.append_3d(k_line, 1)
 
