@@ -248,11 +248,13 @@ module Ladb::OpenCutList
 
       @definition = nil
 
-      set_state(STATE_SHAPE_START)
-
     end
 
     # -- STATE --
+
+    def get_startup_state
+      STATE_SHAPE_START
+    end
 
     def get_state_cursor(state)
 
@@ -327,7 +329,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onCancel(reason, view)
+    def onToolCancel(tool, reason, view)
 
       case @state
 
@@ -368,7 +370,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onMouseMove(flags, x, y, view)
+    def onToolMouseMove(tool, flags, x, y, view)
 
       @mouse_snap_point = nil
       @mouse_ip.pick(view, x, y, _get_previous_input_point)
@@ -444,7 +446,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onMouseLeave(view)
+    def onToolMouseLeave(tool, view)
       @tool.remove_2d(LAYER_2D_DIMENSIONS)
       @tool.remove_all_3d
       @mouse_ip.clear
@@ -452,12 +454,12 @@ module Ladb::OpenCutList
       super
     end
 
-    def onLButtonDown(flags, x, y, view)
+    def onToolLButtonDown(tool, flags, x, y, view)
       @mouse_ip.pick(view, x, y)
       @mouse_down_point = @mouse_ip.position
     end
 
-    def onLButtonUp(flags, x, y, view)
+    def onToolLButtonUp(tool, flags, x, y, view)
 
       case @state
 
@@ -521,7 +523,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onLButtonDoubleClick(flags, x, y, view)
+    def onToolLButtonDoubleClick(tool, flags, x, y, view)
 
       case @state
 
@@ -543,7 +545,7 @@ module Ladb::OpenCutList
       false
     end
 
-    def onKeyDown(key, repeat, flags, view)
+    def onToolKeyDown(tool, key, repeat, flags, view)
 
       if key <= 128
         key_char = key.chr
@@ -648,7 +650,7 @@ module Ladb::OpenCutList
       false
     end
 
-    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
       case @state
 
@@ -692,13 +694,8 @@ module Ladb::OpenCutList
       false
     end
 
-    def onUserText(text, view)
-
-      unless _picked_shape_start_point?
-        return true if _read_move_copies(text, view)
-        return true if _read_move_array_copies(text, view)
-        return true if _read_move_along_copies(text, view)
-      end
+    def onToolUserText(tool, text, view)
+      return true if super
 
       return true if _read_offset(text, view)
 
@@ -731,6 +728,8 @@ module Ladb::OpenCutList
       end
       _remove_floating_tools
     end
+
+    # -----
 
     def draw(view)
       super
@@ -1957,13 +1956,16 @@ module Ladb::OpenCutList
     end
 
     def _restart
-      super
+      new_action_handler = super
+
       @locked_direction = nil
       @locked_normal = nil
       @locked_axis = nil
+
       if fetch_state == STATE_PUSHPULL && (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-        _append_floating_tools_at(drawing_def.bounds.center.transform(drawing_def.transformation))
+        _append_floating_tools_at(drawing_def.bounds.center.transform(drawing_def.transformation), new_action_handler)
       end
+
     end
 
     # -----
@@ -2352,7 +2354,7 @@ module Ladb::OpenCutList
 
     # --
 
-    def _append_floating_tools_at(position)
+    def _append_floating_tools_at(position, callback_action_handler)
 
       unit = @tool.get_unit
 
@@ -2361,13 +2363,9 @@ module Ladb::OpenCutList
           path: 'M0,0.667L0.333,0.667L0.333,1L0,1L0,0.667 M0.667,0L1,0L1,0.333L0.667,0.333L0.667,0 M0.417,0.583L0.583,0.417',
           block: lambda {
             Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
-              current_action: SmartHandleTool::ACTION_COPY_LINE
+              current_action: SmartHandleTool::ACTION_COPY_LINE,
+              callback_action_handler: callback_action_handler
             ))
-            # @tool.set_action_handler(self)
-            # @picked_move_start_point = _get_move_anchors[_get_move_anchor_index]
-            # @picked_move_end_point = nil
-            # set_state(STATE_MOVE)
-            # _refresh
           },
           text: 'Copier'
         },
@@ -2375,13 +2373,9 @@ module Ladb::OpenCutList
           path: 'M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.833L0.583,0.833',
           block: lambda {
             Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
-              current_action: SmartHandleTool::ACTION_COPY_GRID
+              current_action: SmartHandleTool::ACTION_COPY_GRID,
+              callback_action_handler: callback_action_handler
             ))
-            # @tool.set_action_handler(self)
-            # @picked_move_start_point = _get_move_anchors[_get_move_anchor_index]
-            # @picked_move_end_point = nil
-            # set_state(STATE_MOVE_ARRAY)
-            # _refresh
           },
           text: 'Copier en grille'
         },
@@ -2389,13 +2383,9 @@ module Ladb::OpenCutList
           path: 'M0.333,0.333L0.667,0.333L0.667,0.667L0.333,0.667L0.333,0.333 M0.083,0.917L0.25,0.75 M0.75,0.25L0.917,0.083',
           block: lambda {
             Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
-              current_action: SmartHandleTool::ACTION_DIVIDE
+              current_action: SmartHandleTool::ACTION_DISTRIBUTE,
+              callback_action_handler: callback_action_handler
             ))
-            # @tool.set_action_handler(self)
-            # @picked_move_start_point = nil
-            # @picked_move_end_point = nil
-            # set_state(STATE_MOVE_ALONG_START)
-            # _refresh
           },
           text: 'Répartir'
         }
@@ -2425,7 +2415,7 @@ module Ladb::OpenCutList
           Sketchup.active_model.selection.clear
         end
         k_btn.on(:click) do
-          # k_panel.remove
+          k_panel.remove
           tool_def[:block].call
         end
         k_panel.append(k_btn)
@@ -2457,8 +2447,8 @@ module Ladb::OpenCutList
 
   class SmartDrawRectangleActionHandler < SmartDrawActionHandler
 
-    def initialize(tool, action_handler = nil)
-      super(SmartDrawTool::ACTION_DRAW_RECTANGLE, tool, action_handler)
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartDrawTool::ACTION_DRAW_RECTANGLE, tool, previous_action_handler)
     end
 
     # -- State --
@@ -2478,7 +2468,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
       case @state
 
@@ -3081,8 +3071,8 @@ module Ladb::OpenCutList
 
   class SmartDrawCircleActionHandler < SmartDrawActionHandler
 
-    def initialize(tool, action_handler = nil)
-      super(SmartDrawTool::ACTION_DRAW_CIRCLE, tool, action_handler)
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartDrawTool::ACTION_DRAW_CIRCLE, tool, previous_action_handler)
     end
 
     # -----
@@ -3114,7 +3104,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
       case @state
 
@@ -3132,7 +3122,7 @@ module Ladb::OpenCutList
       super
     end
 
-    def onUserText(text, view)
+    def onToolUserText(tool, text, view)
       return true if _read_segment_count(text)
       super
     end
@@ -3402,8 +3392,8 @@ module Ladb::OpenCutList
 
   class SmartDrawPolygonActionHandler < SmartDrawActionHandler
 
-    def initialize(tool, action_handler = nil)
-      super(SmartDrawTool::ACTION_DRAW_POLYGON, tool, action_handler)
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartDrawTool::ACTION_DRAW_POLYGON, tool, previous_action_handler)
 
       @picked_points = []         # Geometry ordered
       @picked_points_stack = []   # Pick ordered
@@ -3439,7 +3429,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onCancel(reason, view)
+    def onToolCancel(tool, reason, view)
       if !_picked_shape_end_point? && @picked_points.any?
         if _remove_last_picked_point(view)
           super
@@ -3451,7 +3441,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def onMouseMove(flags, x, y, view)
+    def onToolMouseMove(tool, flags, x, y, view)
 
       case @state
 
@@ -3465,7 +3455,7 @@ module Ladb::OpenCutList
       super
     end
 
-    def onLButtonUp(flags, x, y, view)
+    def onToolLButtonUp(tool, flags, x, y, view)
 
       case @state
 
@@ -3491,12 +3481,12 @@ module Ladb::OpenCutList
       super
     end
 
-    def onLButtonDoubleClick(flags, x, y, view)
+    def onToolLButtonDoubleClick(tool, flags, x, y, view)
 
       case @state
 
       when STATE_SHAPE
-        onLButtonUp(flags, x, y, view)  # 1. Complete STATE_SHAPE_POINTS
+        onToolLButtonUp(flags, x, y, view)  # 1. Complete STATE_SHAPE_POINTS
         return super                    # 2. Process auto pushpull if possible
 
       end
@@ -3504,7 +3494,7 @@ module Ladb::OpenCutList
       super
     end
 
-    def onKeyDown(key, repeat, flags, view)
+    def onToolKeyDown(tool, key, repeat, flags, view)
 
       case @state
 
@@ -3567,7 +3557,7 @@ module Ladb::OpenCutList
       super
     end
 
-    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
       case @state
 

@@ -1036,6 +1036,10 @@ module Ladb::OpenCutList
       @action_handler = action_handler
     end
 
+    def fetch_action_handler
+      @action_handler
+    end
+
     # -- Menu --
 
     def getMenu(menu, flags, x, y, view)
@@ -1214,23 +1218,23 @@ module Ladb::OpenCutList
     def onResume(view)
       super
       refresh
-      return @action_handler.onResume(view) if !@action_handler.nil? && @action_handler.respond_to?(:onResume)
+      return @action_handler.onToolResume(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolResume)
       set_root_action(fetch_action)  # Force SU status text
     end
 
     def onCancel(reason, view)
-      return @action_handler.onCancel(reason, view) if !@action_handler.nil? && @action_handler.respond_to?(:onCancel)
+      return @action_handler.onToolCancel(self, reason, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolCancel)
       super
     end
 
     def onKeyDown(key, repeat, flags, view)
       return true if super
-      @action_handler.onKeyDown(key, repeat, flags, view) if !@action_handler.nil? && @action_handler.respond_to?(:onKeyDown)
+      @action_handler.onToolKeyDown(self, key, repeat, flags, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolKeyDown)
     end
 
     def onKeyUp(key, repeat, flags, view)
       return true if super
-      @picker.onKeyUp(key, repeat, flags, view) unless @picker.nil?
+      @picker.onToolKeyUp(self, key, repeat, flags, view) unless @picker.nil?
     end
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
@@ -1300,7 +1304,7 @@ module Ladb::OpenCutList
         end
         return true
       end
-      @action_handler.onKeyUpExtended(key, repeat, flags, view, after_down, is_quick) if !@action_handler.nil? && @action_handler.respond_to?(:onKeyUpExtended)
+      @action_handler.onToolKeyUpExtended(self, key, repeat, flags, view, after_down, is_quick) if !@action_handler.nil? && @action_handler.respond_to?(:onToolKeyUpExtended)
     end
 
     def onMouseMove(flags, x, y, view)
@@ -1317,21 +1321,21 @@ module Ladb::OpenCutList
       move_tooltip(x, y)
 
       # Action
-      @picker.onMouseMove(flags, x, y, view) unless is_action_none? || @picker.nil?
+      @picker.onToolMouseMove(self, flags, x, y, view) unless is_action_none? || @picker.nil?
 
-      @action_handler.onMouseMove(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseMove)
+      @action_handler.onToolMouseMove(self, flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolMouseMove)
     end
 
     def onMouseLeave(view)
       return true if super
-      @picker.onMouseLeave(view) unless is_action_none? || @picker.nil?
-      @action_handler.onMouseLeave(view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseLeave)
+      @picker.onToolMouseLeave(self, view) unless is_action_none? || @picker.nil?
+      @action_handler.onToolMouseLeave(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolMouseLeave)
     end
 
     def onMouseLeaveSpace(view)
       return true if super
-      @picker.onMouseLeave(view) unless is_action_none? || @picker.nil?
-      @action_handler.onMouseLeave(view) if !@action_handler.nil? && @action_handler.respond_to?(:onMouseLeave)
+      @picker.onToolMouseLeave(self, view) unless is_action_none? || @picker.nil?
+      @action_handler.onToolMouseLeave(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolMouseLeave)
     end
 
     def onLButtonDown(flags, x, y, view)
@@ -1340,17 +1344,17 @@ module Ladb::OpenCutList
       @last_mouse_y = y
 
       return true if super
-      @action_handler.onLButtonDown(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onLButtonDown)
+      @action_handler.onToolLButtonDown(self, flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolLButtonDown)
     end
 
     def onLButtonUp(flags, x, y, view)
       return true if super
-      @action_handler.onLButtonUp(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onLButtonUp)
+      @action_handler.onToolLButtonUp(self, flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolLButtonUp)
     end
 
     def onLButtonDoubleClick(flags, x, y, view)
       return true if super
-      @action_handler.onLButtonDoubleClick(flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onLButtonDoubleClick)
+      @action_handler.onToolLButtonDoubleClick(self, flags, x, y, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolLButtonDoubleClick)
     end
 
     def onMouseWheel(flags, delta, x, y, view)
@@ -1363,7 +1367,7 @@ module Ladb::OpenCutList
     end
 
     def onUserText(text, view)
-      @action_handler.onUserText(text, view) if !@action_handler.nil? && @action_handler.respond_to?(:onUserText)
+      @action_handler.onToolUserText(self, text, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolUserText)
     end
 
     def onViewChanged(view)
@@ -1580,12 +1584,16 @@ module Ladb::OpenCutList
 
   class SmartActionHandler
 
-    def initialize(action, tool, action_handler = nil)
+    attr_accessor :previous_action_handler
+
+    def initialize(action, tool, previous_action_handler = nil)
       @action = action
       @tool = tool
-      @previous_action_handler = action_handler
+      @previous_action_handler = previous_action_handler
 
       @picker = nil
+
+      set_state(get_startup_state)
 
     end
 
@@ -1598,6 +1606,10 @@ module Ladb::OpenCutList
 
     def fetch_state
       @state
+    end
+
+    def get_startup_state
+      0
     end
 
     def get_state_cursor(state)
@@ -1618,7 +1630,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onResume(view)
+    def onToolResume(tool, view)
       @tool.set_root_cursor(get_state_cursor(@state))
       Sketchup.set_status_text(get_state_status(@state), SB_PROMPT)
       Sketchup.set_status_text(get_state_vcb_label(@state), SB_VCB_LABEL)
@@ -1627,21 +1639,28 @@ module Ladb::OpenCutList
       true
     end
 
-    def onKeyUp(key, repeat, flags, view)
-      @picker.onKeyUp(key, repeat, flags, view) unless @picker.nil?
+    def onToolKeyUp(tool, key, repeat, flags, view)
+      @picker.onToolKeyUp(tool, key, repeat, flags, view) unless @picker.nil?
     end
 
-    def onMouseMove(flags, x, y, view)
-      @picker.onMouseMove(flags, x, y, view) unless @picker.nil?
+    def onToolMouseMove(tool, flags, x, y, view)
+      @picker.onToolMouseMove(tool, flags, x, y, view) unless @picker.nil?
     end
 
-    def onMouseLeave(view)
-      @picker.onMouseLeave(view) unless @picker.nil?
+    def onToolMouseLeave(tool, view)
+      @picker.onToolMouseLeave(tool, view) unless @picker.nil?
     end
 
-    def onMouseLeaveSpace(view)
-      @picker.onMouseLeave(view) unless @picker.nil?
+    def onToolMouseLeaveSpace(tool, view)
+      @picker.onToolMouseLeave(tool, view) unless @picker.nil?
     end
+
+    def onToolUserText(tool, text, view)
+      return true if @state == get_startup_state && !@previous_action_handler.nil? && @previous_action_handler.onToolUserText(tool, text, view)
+      false
+    end
+
+    # -----
 
     def onStateChanged(state)
       @tool.set_root_cursor(get_state_cursor(state))
@@ -1680,10 +1699,16 @@ module Ladb::OpenCutList
     end
 
     def _restart
-      @tool.set_action_handler(self.class.new(@tool, self))
+
       @tool.remove_all_2d
       @tool.remove_all_3d
       Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
+      @previous_action_handler = nil
+
+      new_action_handler = self.class.new(@tool, self)
+      @tool.set_action_handler(new_action_handler)
+
+      new_action_handler
     end
 
     # -----
@@ -2254,14 +2279,14 @@ module Ladb::OpenCutList
 
     # -- Events --
 
-    def onMouseMove(flags, x, y, view)
+    def onToolMouseMove(tool, flags, x, y, view)
       @pick_position.x = x
       @pick_position.y = y
       do_pick
       false
     end
 
-    def onMouseLeave(view)
+    def onToolMouseLeave(tool, view)
 
       @pick_position.x = 0
       @pick_position.y = 0
@@ -2288,7 +2313,7 @@ module Ladb::OpenCutList
       false
     end
 
-    def onKeyUp(key, repeat, flags, view)
+    def onToolKeyUp(tool, key, repeat, flags, view)
       do_pick if key == VK_SHIFT
       false
     end

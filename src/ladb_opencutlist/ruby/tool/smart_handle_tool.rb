@@ -17,7 +17,7 @@ module Ladb::OpenCutList
     ACTION_SELECT = 0
     ACTION_COPY_LINE = 1
     ACTION_COPY_GRID = 2
-    ACTION_DIVIDE = 3
+    ACTION_DISTRIBUTE = 3
 
     ACTION_OPTION_MEASURE_TYPE = 'measure_type'
     ACTION_OPTION_OPTIONS = 'options'
@@ -47,16 +47,19 @@ module Ladb::OpenCutList
         }
       },
       {
-        :action => ACTION_DIVIDE,
+        :action => ACTION_DISTRIBUTE,
       }
     ].freeze
 
     # -----
 
-    attr_reader :cursor_select, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
+    attr_reader :callback_action_handler,
+                :cursor_select, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
 
-    def initialize(current_action: nil)
-      super
+    def initialize(current_action: nil, callback_action_handler: nil)
+      super(current_action: current_action)
+
+      @callback_action_handler = callback_action_handler
 
       # Create cursors
       @cursor_select = create_cursor('select', 0, 0)
@@ -80,7 +83,7 @@ module Ladb::OpenCutList
     def get_action_cursor(action)
 
       case action
-      when ACTION_COPY_LINE, ACTION_COPY_GRID, ACTION_DIVIDE
+      when ACTION_COPY_LINE, ACTION_COPY_GRID, ACTION_DISTRIBUTE
           return @cursor_move_copy
       end
 
@@ -149,8 +152,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartHandleCopyLineActionHandler.new(self))
       when ACTION_COPY_GRID
         set_action_handler(SmartHandleCopyGridActionHandler.new(self))
-      when ACTION_DIVIDE
-        set_action_handler(SmartHandleDivideActionHandler.new(self))
+      when ACTION_DISTRIBUTE
+        set_action_handler(SmartHandleDistributeActionHandler.new(self))
       end
 
       super
@@ -188,7 +191,9 @@ module Ladb::OpenCutList
       @picked_handle_start_point = nil
       @picked_handle_end_point = nil
 
-      set_state(STATE_SELECT)
+      @definition = nil
+      @instances = []
+      @drawing_def = nil
 
       selection = Sketchup.active_model.selection
       entity = selection.first
@@ -207,6 +212,10 @@ module Ladb::OpenCutList
     end
 
     # -- STATE --
+
+    def get_startup_state
+      STATE_SELECT
+    end
 
     def get_state_cursor(state)
 
@@ -240,13 +249,17 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onCancel(reason, view)
+    def onToolCancel(tool, reason, view)
 
       case @state
 
       when STATE_SELECT
-        Sketchup.active_model.tools.pop_tool
-        return true
+        if @tool.callback_action_handler.nil?
+          _reset
+        else
+          Sketchup.active_model.tools.push_tool(@tool.callback_action_handler)
+          return true
+        end
 
       when STATE_HANDLE_START
         @picked_shape_start_point = nil
@@ -263,7 +276,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onMouseMove(flags, x, y, view)
+    def onToolMouseMove(tool, flags, x, y, view)
       super
 
       case @state
@@ -292,7 +305,7 @@ module Ladb::OpenCutList
         @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
-        @tool.remove_all_3d
+        @tool.remove_3d(1)
 
         _snap_handle_start(flags, x, y, view)
 
@@ -302,7 +315,7 @@ module Ladb::OpenCutList
         @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
-        @tool.remove_all_3d
+        @tool.remove_3d(1)
 
         _snap_handle(flags, x, y, view)
         _preview_handle(view)
@@ -314,7 +327,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onMouseLeave(view)
+    def onToolMouseLeave(tool, view)
       @tool.remove_all_2d
       @tool.remove_all_3d
       @mouse_ip.clear
@@ -322,7 +335,7 @@ module Ladb::OpenCutList
       super
     end
 
-    def onLButtonUp(flags, x, y, view)
+    def onToolLButtonUp(tool, flags, x, y, view)
 
       case @state
 
@@ -335,9 +348,14 @@ module Ladb::OpenCutList
 
         onPartSelected
 
+      when STATE_HANDLE_START
+        @picked_handle_start_point = @mouse_snap_point
+        set_state(STATE_HANDLE)
+        _refresh
+
       when STATE_HANDLE
         @picked_handle_end_point = @mouse_snap_point
-        _copy_entity
+        _handle_entity
         set_state(STATE_HANDLE_COPIES)
         _restart
 
@@ -345,7 +363,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
       if key == ALT_MODIFIER_KEY
         @tool.store_action_option_value(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR, !_fetch_option_mirror, true)
@@ -355,16 +373,16 @@ module Ladb::OpenCutList
 
     end
 
-    def onUserText(text, view)
-
-      if @picked_handle_start_point.nil?
-        return true if _read_handle_copies(text, view)
-      end
+    def onToolUserText(tool, text, view)
+      return true if super
 
       case @state
 
       when STATE_HANDLE
         return _read_handle(text, view)
+
+      when STATE_HANDLE_COPIES
+        return _read_handle_copies(text, view)
 
       end
 
@@ -373,16 +391,15 @@ module Ladb::OpenCutList
 
     def onPartSelected
 
-      @definition = @active_part_entity_path.last.definition
-      @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
-                                                          ignore_surfaces: true,
-                                                          ignore_faces: true,
-                                                          ignore_edges: false,
-                                                          ignore_soft_edges: false,
-                                                          ignore_clines: false
-      ).run
+      instance = @active_part_entity_path.last
 
-      @picked_handle_start_point = @drawing_def.bounds.center.transform(@drawing_def.transformation)
+      @instances << instance
+      @definition = instance.definition
+      @drawing_def = nil
+
+      drawing_def = _get_drawing_def
+
+      @picked_handle_start_point = drawing_def.bounds.center.transform(drawing_def.transformation)
 
       set_state(STATE_HANDLE)
       _refresh
@@ -427,18 +444,27 @@ module Ladb::OpenCutList
 
     # -----
 
+    protected
+
     def _reset
       @mouse_ip.clear
       @mouse_snap_point = nil
       @picked_handle_start_point = nil
       @picked_handle_end_point = nil
+      @definition = nil
+      @instances.clear
+      @drawing_def = nil
       super
       set_state(STATE_SELECT)
     end
 
     def _restart
-      super
-      Sketchup.active_model.tools.pop_tool
+      if @tool.callback_action_handler.nil?
+        super
+      else
+        @tool.callback_action_handler.previous_action_handler = self
+        Sketchup.active_model.tools.pop_tool
+      end
     end
 
     # -----
@@ -468,7 +494,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _fetch_option_type
+    def _fetch_option_measure_type
       @tool.fetch_action_option_value(@action, SmartHandleTool::ACTION_OPTION_MEASURE_TYPE)
     end
 
@@ -478,13 +504,25 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _copy_entity(operator_1 = '*', number_1 = 1)
+    def _handle_entity
     end
 
     # -----
 
     def _get_drawing_def
-      @drawing_def
+      return nil if @active_part_entity_path.nil?
+      return @drawing_def unless @drawing_def.nil?
+
+      model = Sketchup.active_model
+      return nil if model.nil?
+
+      @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
+        ignore_surfaces: true,
+        ignore_faces: true,
+        ignore_edges: false,
+        ignore_soft_edges: false,
+        ignore_clines: false
+      ).run
     end
 
     def _get_drawing_def_segments(drawing_def)
@@ -495,6 +533,15 @@ module Ladb::OpenCutList
         segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
       end
       segments
+    end
+
+    # -- UTILS --
+
+    def _copy_instance_properties(src_instance, dst_instance)
+      dst_instance.material = src_instance.material
+      dst_instance.name = src_instance.name
+      dst_instance.layer = src_instance.layer
+      dst_instance.casts_shadows = src_instance.casts_shadows?
     end
 
   end
@@ -521,8 +568,8 @@ module Ladb::OpenCutList
 
   class SmartHandleCopyLineActionHandler < SmartHandleActionHandler
 
-    def initialize(tool, action_handler = nil)
-      super(SmartHandleTool::ACTION_COPY_LINE, tool, action_handler)
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartHandleTool::ACTION_COPY_LINE, tool, previous_action_handler)
     end
 
     # -----
@@ -587,7 +634,7 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
-      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_type)).nil?
+      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_measure_type)).nil?
 
       drawing_def, bounds, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :bounds, :mps, :mpe, :dps, :dpe)
 
@@ -656,7 +703,7 @@ module Ladb::OpenCutList
     end
 
     def _read_handle(text, view)
-      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_type)).nil?
+      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_measure_type)).nil?
 
       dps, dpe = move_def.values_at(:dps, :dpe)
       v = dps.vector_to(dpe)
@@ -666,7 +713,7 @@ module Ladb::OpenCutList
 
       @picked_handle_end_point = dps.offset(v, distance)
 
-      _copy_entity
+      _handle_entity
       set_state(STATE_HANDLE_COPIES)
       _restart
 
@@ -674,7 +721,7 @@ module Ladb::OpenCutList
     end
 
     def _read_handle_copies(text, view)
-      return false if @previous_action_handler.nil? || @previous_action_handler.fetch_state != STATE_HANDLE_COPIES
+      return if @definition.nil?
 
       v, _ = _split_user_text(text)
 
@@ -686,7 +733,7 @@ module Ladb::OpenCutList
 
         if !value.nil? && number == 0
           UI.beep
-          @tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
+          @tool.notify_errors([ [ "tool.default.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
           return true
         end
 
@@ -694,7 +741,7 @@ module Ladb::OpenCutList
 
         number = number == 0 ? 1 : number
 
-        @previous_action_handler._copy_entity(operator, number)
+        _copy_line_entity(operator, number)
         Sketchup.set_status_text('', SB_VCB_VALUE)
 
         return true
@@ -705,10 +752,12 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _copy_entity(operator_1 = '*', number_1 = 1)
-      return if @definition.nil? || !@drawing_def.is_a?(DrawingDef)
+    def _handle_entity
+      _copy_line_entity
+    end
 
-      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, _fetch_option_type)).nil?
+    def _copy_line_entity(operator_1 = '*', number_1 = 1)
+      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, _fetch_option_measure_type)).nil?
 
       mps, mpe = move_def.values_at(:mps, :mpe)
       v = mps.vector_to(mpe)
@@ -716,27 +765,45 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       model.start_operation('Copy Part', true)
 
-      if operator_1 == '/'
-        ux = v.x / number_1
-        uy = v.y / number_1
-        uz = v.z / number_1
-      else
-        ux = v.x
-        uy = v.y
-        uz = v.z
-      end
+        if operator_1 == '/'
+          ux = v.x / number_1
+          uy = v.y / number_1
+          uz = v.z / number_1
+        else
+          ux = v.x
+          uy = v.y
+          uz = v.z
+        end
 
-      if @active_part_entity_path.one?
-        entities = model.entities
-      else
-        entities = @active_part_entity_path[-2].definition.entities
-      end
-      t = IDENTITY
-      t *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 - f.abs * 2 }) if _fetch_option_mirror
-      t *= @active_part_entity_path[-1].transformation
-      (1..number_1).each do |i|
-        entities.add_instance(@definition, Geom::Transformation.translation(Geom::Vector3d.new(ux * i, uy * i, uz * i)) * t)
-      end
+        src_instance = @active_part_entity_path[-1]
+        old_instances = @instances[1..-1]
+
+        if @active_part_entity_path.one?
+          entities = model.entities
+        else
+          entities = @active_part_entity_path[-2].definition.entities
+        end
+
+        entities.erase_entities(old_instances) if old_instances.any?
+        @instances = [ src_instance ]
+
+        (1..number_1).each do |i|
+
+          next if x == 0 && y == 0  # Ignore src instance
+
+          vt = Geom::Vector3d.new(ux * i, uy * i, uz * i)
+
+          mt = Geom::Transformation.translation(vt)
+          mt *= Geom::Transformation.scaling(mps, *vt.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if _fetch_option_mirror
+          mt *= src_instance.transformation
+
+          dst_instance = entities.add_instance(@definition, mt)
+
+          @instances << dst_instance
+
+          _copy_instance_properties(src_instance, dst_instance)
+
+        end
 
       model.commit_operation
 
@@ -747,9 +814,6 @@ module Ladb::OpenCutList
     def _get_move_def(ps, pe, type = 0)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
       return unless (v = ps.vector_to(pe)).valid?
-
-      t = _get_edit_transformation
-      ti = t.inverse
 
       bounds = Geom::BoundingBox.new
       drawing_def.edge_manipulators.each { |edge_manipulator| bounds.add(edge_manipulator.start_point.transform(drawing_def.transformation), edge_manipulator.end_point.transform(drawing_def.transformation)) }
@@ -823,8 +887,8 @@ module Ladb::OpenCutList
 
   class SmartHandleCopyGridActionHandler < SmartHandleActionHandler
 
-    def initialize(tool, action_handler = nil)
-      super(SmartHandleTool::ACTION_COPY_GRID, tool, action_handler)
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartHandleTool::ACTION_COPY_GRID, tool, previous_action_handler)
 
       @normal = Z_AXIS
 
@@ -851,7 +915,7 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
-      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, @normal, _fetch_option_type)).nil?
+      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, @normal, _fetch_option_measure_type)).nil?
 
       drawing_def, bounds, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :bounds, :mps, :mpe, :dps, :dpe)
 
@@ -872,14 +936,6 @@ module Ladb::OpenCutList
 
         mt = Geom::Transformation.translation(v)
         mt *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if _fetch_option_mirror
-
-        # if _fetch_option_options_mirror
-        #
-        #   k_axes = Kuix::AxesHelper.new
-        #   k_axes.transformation = mt * drawing_def.transformation
-        #   @tool.append_3d(k_axes, 1)
-        #
-        # end
 
         k_box = Kuix::BoxMotif.new
         k_box.bounds.copy!(bounds)
@@ -952,7 +1008,7 @@ module Ladb::OpenCutList
     end
 
     def _read_handle(text, view)
-      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, @normal, _fetch_option_type)).nil?
+      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, @normal, _fetch_option_measure_type)).nil?
 
       dps, dpe = move_def.values_at(:dps, :dpe)
       v = dps.vector_to(dpe)
@@ -969,7 +1025,7 @@ module Ladb::OpenCutList
 
         @picked_handle_end_point = dps.offset(Geom::Vector3d.new(v.x < 0 ? -distance_x : distance_x, v.y < 0 ? -distance_y : distance_y))
 
-        _copy_entity
+        _handle_entity
         set_state(STATE_HANDLE_COPIES)
         _restart
 
@@ -980,28 +1036,40 @@ module Ladb::OpenCutList
     end
 
     def _read_handle_copies(text, view)
-      return false if @previous_action_handler.nil? || @previous_action_handler.fetch_state != STATE_HANDLE_COPIES
+      return if @definition.nil?
 
-      v, _ = _split_user_text(text)
+      v1, v2 = _split_user_text(text)
 
-      if v && (match = v.match(/^([x*\/])(\d+)$/))
+      if v1 && (match_1 = v1.match(/^([x*\/])(\d+)$/)) || v2 && (match_2 = v2.match(/^([x*\/])(\d+)$/))
 
-        operator, value = match ? match[1, 2] : [ nil, nil ]
+        operator_1, value_1 = match_1 ? match_1[1, 2] : [ nil, nil ]
+        operator_2, value_2 = match_2 ? match_2[1, 2] : [ nil, nil ]
 
-        number = value.to_i
+        number_1 = value_1.to_i
+        number_2 = value_2.to_i
 
-        if !value.nil? && number == 0
+        if !value_1.nil? && number_1 == 0
           UI.beep
-          @tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
+          @tool.notify_errors([ [ "tool.default.error.invalid_#{operator_1 == '/' ? 'divider' : 'multiplicator'}", { :value => value_1 } ] ])
+          return true
+        end
+        if !value_2.nil? && number_2 == 0
+          UI.beep
+          @tool.notify_errors([ [ "tool.default.error.invalid_#{operator_2 == '/' ? 'divider' : 'multiplicator'}", { :value => value_2 } ] ])
           return true
         end
 
-        operator = operator.nil? ? '*' : operator
+        has_separator = text.include?(Sketchup::RegionalSettings.list_separator)
 
-        number = number == 0 ? 1 : number
+        operator_1 = operator_1.nil? ? '*' : operator_1
+        operator_2 = operator_2.nil? ? (has_separator ? '*' : operator_1) : operator_2
 
-        @previous_action_handler._copy_entity(operator, number)
+        number_1 = number_1 == 0 ? 1 : number_1
+        number_2 = number_2 == 0 ? (has_separator ? 1 : number_1) : number_2
+
+        _copy_grid_entity(operator_1, number_1, operator_2, number_2)
         Sketchup.set_status_text('', SB_VCB_VALUE)
+
 
         return true
       end
@@ -1011,36 +1079,59 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _copy_entity(operator_1 = '*', number_1 = 1)
-      return if @definition.nil? || !@drawing_def.is_a?(DrawingDef)
+    def _handle_entity
+      _copy_grid_entity
+    end
 
-      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, @normal, _fetch_option_type)).nil?
+    def _copy_grid_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
+      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, @normal, _fetch_option_measure_type)).nil?
 
       mps, mpe = move_def.values_at(:mps, :mpe)
-
-      m_bounds = Geom::BoundingBox.new
-      m_bounds.add(mps, mpe)
+      v = mps.vector_to(mpe)
 
       model = Sketchup.active_model
       model.start_operation('Copy Part', true)
 
-        (0..3).each do |i|
+        if operator_1 == '/'
+          ux = v.x / number_1
+        else
+          ux = v.x
+        end
+        if operator_2 == '/'
+          uy = v.y / number_2
+        else
+          uy = v.y
+        end
 
-          p = m_bounds.corner(i)
-          v = mps.vector_to(p)
-          next if p == mps
+        src_instance = @active_part_entity_path[-1]
+        old_instances = @instances[1..-1]
 
-          if @active_part_entity_path.one?
-            entities = model.entities
-          else
-            entities = @active_part_entity_path[-2].definition.entities
+        if @active_part_entity_path.one?
+          entities = model.entities
+        else
+          entities = @active_part_entity_path[-2].definition.entities
+        end
+
+        entities.erase_entities(old_instances) if old_instances.any?
+        @instances = [ src_instance ]
+
+        (0..number_1).each do |x|
+          (0..number_2).each do |y|
+
+            next if x == 0 && y == 0  # Ignore src instance
+
+            vt = Geom::Vector3d.new(ux * x, uy * y)
+
+            mt = Geom::Transformation.translation(vt)
+            mt *= Geom::Transformation.scaling(mps, *vt.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if _fetch_option_mirror
+            mt *= src_instance.transformation
+
+            dst_instance = entities.add_instance(@definition, mt)
+            @instances << dst_instance
+
+            _copy_instance_properties(src_instance, dst_instance)
+
           end
-          t = Geom::Transformation.translation(v)
-          t *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if _fetch_option_mirror
-          t *= @active_part_entity_path[-1].transformation
-
-          entities.add_instance(@definition, t)
-
         end
 
       model.commit_operation
@@ -1111,7 +1202,6 @@ module Ladb::OpenCutList
             end
           end
         end
-        vs
 
         ve = vs.reverse
 
@@ -1162,10 +1252,10 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartHandleDivideActionHandler < SmartHandleActionHandler
+  class SmartHandleDistributeActionHandler < SmartHandleActionHandler
 
-    def initialize(tool, action_handler = nil)
-      super(SmartHandleTool::ACTION_DIVIDE, tool, action_handler)
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartHandleTool::ACTION_DISTRIBUTE, tool, previous_action_handler)
     end
 
     # -- STATE --
@@ -1184,7 +1274,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onCancel(reason, view)
+    def onToolCancel(tool, reason, view)
 
       case @state
 
@@ -1198,22 +1288,15 @@ module Ladb::OpenCutList
       super
     end
 
-    def onLButtonUp(flags, x, y, view)
-
-      case @state
-
-      when STATE_HANDLE_START
-        @picked_handle_start_point = @mouse_snap_point
-        set_state(STATE_HANDLE)
-        _refresh
-        return true
-
-      end
-
-      super
-    end
-
     def onPartSelected
+
+      instance = @active_part_entity_path.last
+
+      @instances << instance
+      @definition = instance.definition
+      @drawing_def = nil
+
+      @src_transformation = instance.transformation
 
       set_state(STATE_HANDLE_START)
       _refresh
@@ -1223,16 +1306,69 @@ module Ladb::OpenCutList
     # -----
 
     def _snap_handle(flags, x, y, view)
-      super
+
+      if @mouse_ip.degrees_of_freedom > 2 ||
+        @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1
+
+        # Compute axis from 2D projection
+
+        ps = view.screen_coords(@picked_handle_start_point)
+        pe = Geom::Point3d.new(x, y, 0)
+
+        move_axis = [ _get_active_x_axis, _get_active_y_axis, _get_active_z_axis ].map! { |axis| { d: pe.distance_to_line([ ps, ps.vector_to(view.screen_coords(@picked_handle_start_point.offset(axis))) ]), axis: axis } }.min { |a, b| a[:d] <=> b[:d] }[:axis]
+
+        picked_point, _ = Geom::closest_points([@picked_handle_start_point, move_axis ], view.pickray(x, y))
+        @mouse_snap_point = picked_point
+
+      else
+
+        # Compute axis from 3D position
+
+        ps = @picked_handle_start_point
+        pe = @mouse_ip.position
+        move_axis = _get_active_x_axis
+
+        v = ps.vector_to(pe)
+        if v.valid?
+
+          bounds = Geom::BoundingBox.new
+          bounds.add([ -1, -1, -1], [ 1, 1, 1 ])
+
+          line = [ ORIGIN, v ]
+
+          plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
+          ibtm = Geom.intersect_line_plane(line, plane_btm)
+          if !ibtm.nil? && bounds.contains?(ibtm)
+            move_axis = _get_active_z_axis
+          else
+            plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
+            ilft = Geom.intersect_line_plane(line, plane_lft)
+            if !ilft.nil? && bounds.contains?(ilft)
+              move_axis = _get_active_x_axis
+            else
+              plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
+              ifrt = Geom.intersect_line_plane(line, plane_frt)
+              if !ifrt.nil? && bounds.contains?(ifrt)
+                move_axis = _get_active_y_axis
+              end
+            end
+          end
+
+        end
+
+        @mouse_snap_point = @mouse_ip.position.project_to_line([[@picked_handle_start_point, move_axis ]])
+
+      end
+
+      @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
+
     end
 
     def _preview_handle(view)
+      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
-      ps = @picked_handle_start_point
-      pe = @mouse_snap_point
-      v = ps.vector_to(pe)
-
-      color = _get_vector_color(v)
+      drawing_def, ps, pe, center, v, lps, lpe, mps, mv = move_def.values_at(:drawing_def, :ps, :pe, :center, :v, :lps, :lpe, :mps, :mv)
+      color = _get_vector_color(v, Kuix::COLOR_DARK_GREY)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(ps)
@@ -1240,8 +1376,225 @@ module Ladb::OpenCutList
       k_line.line_width = 1.5
       k_line.color = color
       k_line.on_top = true
-      @tool.append_3d(k_line)
+      @tool.append_3d(k_line, 1)
 
+      k_points = _create_floating_points(points: [ center ], style: Kuix::POINT_STYLE_PLUS)
+      @tool.append_3d(k_points, 1)
+
+      k_line = Kuix::LineMotif.new
+      k_line.start.copy!(lps)
+      k_line.end.copy!(lpe)
+      k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_line.color = color
+      @tool.append_3d(k_line, 1)
+
+      @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), 1)
+
+      is_construction = drawing_def.cline_manipulators.any?
+
+      segments = _get_drawing_def_segments(drawing_def)
+
+      k_segments = Kuix::Segments.new
+      k_segments.add_segments(segments)
+      k_segments.line_width = 1.5
+      k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+      k_segments.color = Kuix::COLOR_DARK_GREY
+      k_segments.transformation = drawing_def.transformation
+      @tool.append_3d(k_segments, 1)
+
+      count = 1
+      Array.new(count) { |i| mps.offset(mv, mv.length * (i + 1) / (count + 1)) }.each do |point|
+
+        mt = Geom::Transformation.translation(center.vector_to(point))
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(segments)
+        k_segments.line_width = is_construction ? 1 : 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if is_construction
+        k_segments.color = Kuix::COLOR_BLACK
+        k_segments.transformation = mt * drawing_def.transformation
+        @tool.append_3d(k_segments, 1)
+
+      end
+
+      distance = v.length
+
+      Sketchup.set_status_text(distance, SB_VCB_VALUE)
+
+      if distance > 0
+
+        k_label = _create_floating_label(
+          screen_point: view.screen_coords(ps.offset(v, distance / 2)),
+          text: distance,
+          text_color: Kuix::COLOR_X,
+          border_color: _get_vector_color(v, Kuix::COLOR_DARK_GREY)
+        )
+        @tool.append_2d(k_label)
+
+      end
+
+    end
+
+    def _read_handle(text, view)
+      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_measure_type)).nil?
+
+      dps, dpe = move_def.values_at(:dps, :dpe)
+      v = dps.vector_to(dpe)
+
+      distance = _read_user_text_length(text, v.length)
+      return true if distance.nil?
+
+      @picked_handle_end_point = dps.offset(v, distance)
+
+      _handle_entity
+      set_state(STATE_HANDLE_COPIES)
+      _restart
+
+      true
+    end
+
+    def _read_handle_copies(text, view)
+
+      if text && (match = text.match(/^([x*\/])(\d+)$/))
+
+        operator, value = match ? match[1, 2] : [ nil, nil ]
+
+        number = value.to_i
+
+        if operator == '/' && number < 2
+          UI.beep
+          @tool.notify_errors([ [ "tool.smart_draw.error.invalid_divider", { :value => value } ] ])
+          return true
+        end
+        if number == 0
+          UI.beep
+          @tool.notify_errors([ [ "tool.smart_draw.error.invalid_multiplicator", { :value => value } ] ])
+          return true
+        end
+
+        count = operator == '/' ? number - 1 : number
+
+        _distribute_entity(count)
+        Sketchup.set_status_text('', SB_VCB_VALUE)
+
+      end
+
+    end
+
+    # -----
+
+    def _handle_entity
+      _distribute_entity
+    end
+
+    def _distribute_entity(count = 1)
+      return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point)).nil?
+
+      center, mps, mv = move_def.values_at(:center, :mps, :mv)
+
+      model = Sketchup.active_model
+      model.start_operation('Copy Part', true)
+
+        src_instance = @active_part_entity_path[-1]
+        old_instances = @instances[1..-1]
+
+        if @active_part_entity_path.one?
+          entities = model.entities
+        else
+          entities = @active_part_entity_path[-2].definition.entities
+        end
+
+        entities.erase_entities(old_instances) if old_instances.any?
+        @instances = [ src_instance ]
+
+        (0...count).each do |i|
+
+          mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * (i + 1) / (count + 1))))
+          mt *= @src_transformation
+
+          if i == 0
+
+            src_instance.transformation = mt
+
+          else
+
+            dst_instance = entities.add_instance(@definition, mt)
+
+            @instances << dst_instance
+
+            _copy_instance_properties(src_instance, dst_instance)
+
+          end
+
+        end
+
+      model.commit_operation
+
+    end
+
+    # -----
+
+    def _get_move_def(ps, pe)
+      return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+      return unless ps.vector_to(pe).valid?
+
+      v = ps.vector_to(pe)
+      return unless v.valid?
+
+      bounds = drawing_def.bounds
+
+      t = drawing_def.transformation
+      ti = t.inverse
+
+      center = bounds.center.transform(t)
+      corners = (0..6).map { |i| bounds.corner(i).transform(t) }
+      line = [ center , v ]
+
+      plane_btm = Geom.fit_plane_to_points(corners[0], corners[1], corners[2])
+      ibtm = Geom.intersect_line_plane(line, plane_btm)
+      if !ibtm.nil? && bounds.contains?(ibtm.transform(ti))
+        vs = center.vector_to(ibtm)
+        vs.reverse! unless vs.samedirection?(v)
+      else
+        plane_lft = Geom.fit_plane_to_points(corners[0], corners[2], corners[4])
+        ilft = Geom.intersect_line_plane(line, plane_lft)
+        if !ilft.nil? && bounds.contains?(ilft.transform(ti))
+          vs = center.vector_to(ilft)
+          vs.reverse! unless vs.samedirection?(v)
+        else
+          plane_frt = Geom.fit_plane_to_points(corners[0], corners[1], corners[4])
+          ifrt = Geom.intersect_line_plane(line, plane_frt)
+          if !ifrt.nil? && bounds.contains?(ifrt.transform(ti))
+            vs = center.vector_to(ifrt)
+            vs.reverse! unless vs.samedirection?(v)
+          end
+        end
+      end
+
+      ve = vs.reverse
+
+      lps = ps.project_to_line(line)
+      lpe = pe.project_to_line(line)
+
+      mps = vs.nil? ? lps : lps.offset(vs)
+      mpe = ve.nil? ? lpe : lpe.offset(ve)
+      mv = mps.vector_to(mpe)
+
+      {
+        drawing_def: drawing_def,
+        bounds: bounds,
+        ps: ps,
+        pe: pe,
+        center: center,
+        v: v,
+        vs: vs,
+        ve: ve,
+        lps: lps,
+        lpe: lpe,
+        mps: mps,
+        mpe: mpe,
+        mv: mv
+      }
     end
 
   end
