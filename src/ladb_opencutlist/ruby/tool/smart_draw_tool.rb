@@ -225,7 +225,7 @@ module Ladb::OpenCutList
     def initialize(action, tool, action_handler = nil)
       super
 
-      @mouse_ip = SmartInputPoint.new(@tool)
+      @mouse_ip = SmartInputPoint.new(tool)
 
       @mouse_down_point = nil
       @mouse_snap_point = nil
@@ -1936,7 +1936,6 @@ module Ladb::OpenCutList
     # -----
 
     def _reset
-      Sketchup.active_model.selection.clear
       @mouse_ip.clear
       @mouse_down_point = nil
       @mouse_snap_point = nil
@@ -1962,7 +1961,7 @@ module Ladb::OpenCutList
       @locked_normal = nil
       @locked_axis = nil
 
-      if fetch_state == STATE_PUSHPULL && (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+      if @state == STATE_PUSHPULL && (drawing_def = _get_drawing_def).is_a?(DrawingDef)
         _append_floating_tools_at(drawing_def.bounds.center.transform(drawing_def.transformation), new_action_handler)
       end
 

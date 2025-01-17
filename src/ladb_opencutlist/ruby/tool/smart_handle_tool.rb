@@ -54,7 +54,7 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler,
-                :cursor_select, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
+                :cursor_select, :cursor_select_part, :cursor_select_copy_line, :cursor_select_copy_grid, :cursor_select_distribute, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
@@ -63,6 +63,10 @@ module Ladb::OpenCutList
 
       # Create cursors
       @cursor_select = create_cursor('select', 0, 0)
+      @cursor_select_part = create_cursor('select-part', 0, 0)
+      @cursor_select_copy_line = create_cursor('select-copy-line', 0, 0)
+      @cursor_select_copy_grid = create_cursor('select-copy-grid', 0, 0)
+      @cursor_select_distribute = create_cursor('select-distribute', 0, 0)
       @cursor_move = create_cursor('move', 16, 16)
       @cursor_move_copy = create_cursor('move-copy', 16, 16)
       @cursor_pin_1 = create_cursor('pin-1', 11, 31)
@@ -184,7 +188,7 @@ module Ladb::OpenCutList
     def initialize(action, tool, action_handler = nil)
       super
 
-      @mouse_ip = SmartInputPoint.new(@tool)
+      @mouse_ip = SmartInputPoint.new(tool)
 
       @mouse_snap_point = nil
 
@@ -195,10 +199,20 @@ module Ladb::OpenCutList
       @instances = []
       @drawing_def = nil
 
-      selection = Sketchup.active_model.selection
+    end
+
+    # ------
+
+    def start
+      super
+
+      return if (model = Sketchup.active_model).nil?
+
+      # Try to select part from current selection
+      selection = model.selection
       entity = selection.first
       if entity.is_a?(Sketchup::ComponentInstance)
-        path = (Sketchup.active_model.active_path.is_a?(Array) ? Sketchup.active_model.active_path : []) + [ entity ]
+        path = (model.active_path.is_a?(Array) ? model.active_path : []) + [ entity ]
         part_entity_path = _get_part_entity_path_from_path(path)
         if (part = _generate_part_from_path(part_entity_path))
           _set_active_part(part_entity_path, part)
@@ -207,7 +221,7 @@ module Ladb::OpenCutList
       end
 
       # Clear current selection
-      Sketchup.active_model.selection.clear if Sketchup.active_model
+      selection.clear
 
     end
 
@@ -221,9 +235,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SELECT
-        return @tool.cursor_select
-      when STATE_HANDLE
-        return @tool.cursor_move_copy
+        return @tool.cursor_select_part
       end
 
       super
@@ -240,6 +252,14 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
+
+      case state
+
+      when STATE_HANDLE
+        return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_status") + '.'
+
+      end
+
       super
     end
 
@@ -285,17 +305,28 @@ module Ladb::OpenCutList
 
         _pick_part(@picker, view)
 
-        if @active_part_entity_path.is_a?(Array) && @active_part_entity_path.length > 1
+        if @active_part_entity_path.is_a?(Array)
 
-          parent = @active_part_entity_path[-2]
-          parent_transformation = PathUtils.get_transformation(@active_part_entity_path[0...-2], IDENTITY)
+          # Show part infos
+          @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
-          k_box = Kuix::BoxMotif.new
-          k_box.bounds.copy!(parent.bounds)
-          k_box.line_width = 1
-          k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-          k_box.transformation = parent_transformation
-          @tool.append_3d(k_box)
+          if @active_part_entity_path.length > 1
+
+            parent = @active_part_entity_path[-2]
+            parent_transformation = PathUtils.get_transformation(@active_part_entity_path[0...-2], IDENTITY)
+
+            k_box = Kuix::BoxMotif.new
+            k_box.bounds.copy!(parent.bounds)
+            k_box.line_width = 1
+            k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+            k_box.transformation = parent_transformation
+            @tool.append_3d(k_box)
+
+          end
+
+        else
+
+          @tool.remove_tooltip
 
         end
 
@@ -389,9 +420,15 @@ module Ladb::OpenCutList
       false
     end
 
-    def onPartSelected
+    def onStateChanged(state)
+      super
 
-      instance = @active_part_entity_path.last
+      @tool.remove_tooltip
+
+    end
+
+    def onPartSelected
+      return if (instance = _get_instance).nil?
 
       @instances << instance
       @definition = instance.definition
@@ -509,6 +546,11 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _get_instance
+      return @active_part_entity_path.last if @active_part_entity_path.is_a?(Array)
+      nil
+    end
+
     def _get_drawing_def
       return nil if @active_part_entity_path.nil?
       return @drawing_def unless @drawing_def.nil?
@@ -573,6 +615,18 @@ module Ladb::OpenCutList
 
       @locked_axis = nil
 
+    end
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT, STATE_HANDLE
+        return @tool.cursor_select_copy_line
+      end
+
+      super
     end
 
     # -----
@@ -952,6 +1006,18 @@ module Ladb::OpenCutList
 
     end
 
+    # -- STATE --
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT, STATE_HANDLE
+        return @tool.cursor_select_copy_grid
+      end
+
+      super
+    end
+
     # -----
 
     def _snap_handle(flags, x, y, view)
@@ -1297,11 +1363,22 @@ module Ladb::OpenCutList
 
     end
 
+    # -----
+
+    def stop
+      unless (instance = _get_instance).nil?
+        instance.hidden = false
+      end
+      super
+    end
+
     # -- STATE --
 
     def get_state_cursor(state)
 
       case state
+      when STATE_SELECT
+        return @tool.cursor_select_distribute
       when STATE_HANDLE_START
         return @tool.cursor_pin_1
       when STATE_HANDLE
@@ -1362,6 +1439,20 @@ module Ladb::OpenCutList
 
     end
 
+    def onStateChanged(state)
+      super
+
+      unless (instance = _get_instance).nil?
+        if state == STATE_HANDLE
+          @tool.remove_3d(0)  # Remove part preview
+          instance.hidden = true
+        else
+          instance.hidden = false
+        end
+      end
+
+    end
+
     def onPartSelected
 
       instance = @active_part_entity_path.last
@@ -1378,6 +1469,8 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    protected
 
     def _snap_handle(flags, x, y, view)
 
@@ -1457,7 +1550,8 @@ module Ladb::OpenCutList
     def _preview_handle(view)
       return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
-      drawing_def, ps, pe, center, v, lps, lpe, mps, mv = move_def.values_at(:drawing_def, :ps, :pe, :center, :v, :lps, :lpe, :mps, :mv)
+      drawing_def, ps, pe, center, v, lps, lpe, mps, mpe = move_def.values_at(:drawing_def, :ps, :pe, :center, :v, :lps, :lpe, :mps, :mpe)
+      mv = mps.vector_to(mpe)
       color = _get_vector_color(v, Kuix::COLOR_DARK_GREY)
 
       k_line = Kuix::LineMotif.new
@@ -1470,6 +1564,15 @@ module Ladb::OpenCutList
 
       k_points = _create_floating_points(points: [ center ], style: Kuix::POINT_STYLE_PLUS)
       @tool.append_3d(k_points, 1)
+
+      k_line = Kuix::LineMotif.new
+      k_line.start.copy!(lps)
+      k_line.end.copy!(lpe)
+      k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_line.line_width = 1.5 unless @locked_axis.nil?
+      k_line.color = Kuix::COLOR_MEDIUM_GREY
+      k_line.on_top = true
+      @tool.append_3d(k_line, 1)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(lps)
@@ -1527,15 +1630,15 @@ module Ladb::OpenCutList
     end
 
     def _read_handle(text, view)
-      return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_measure_type)).nil?
 
-      dps, dpe = move_def.values_at(:dps, :dpe)
-      v = dps.vector_to(dpe)
+      ps = @picked_handle_start_point
+      pe = @mouse_snap_point
+      v = ps.vector_to(pe)
 
       distance = _read_user_text_length(text, v.length)
       return true if distance.nil?
 
-      @picked_handle_end_point = dps.offset(v, distance)
+      @picked_handle_end_point = ps.offset(v, distance)
 
       _handle_entity
       set_state(STATE_HANDLE_COPIES)
@@ -1581,7 +1684,8 @@ module Ladb::OpenCutList
     def _distribute_entity(count = 1)
       return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point)).nil?
 
-      center, mps, mv = move_def.values_at(:center, :mps, :mv)
+      center, mps, mpe = move_def.values_at(:center, :mps, :mpe)
+      mv = mps.vector_to(mpe)
 
       model = Sketchup.active_model
       model.start_operation('Copy Part', true)
@@ -1627,10 +1731,7 @@ module Ladb::OpenCutList
 
     def _get_move_def(ps, pe)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-      return unless ps.vector_to(pe).valid?
-
-      v = ps.vector_to(pe)
-      return unless v.valid?
+      return unless (v = ps.vector_to(pe)).valid?
 
       bounds = drawing_def.bounds
 
@@ -1645,19 +1746,19 @@ module Ladb::OpenCutList
       ibtm = Geom.intersect_line_plane(line, plane_btm)
       if !ibtm.nil? && bounds.contains?(ibtm.transform(ti))
         vs = center.vector_to(ibtm)
-        vs.reverse! unless vs.samedirection?(v)
+        vs.reverse! if vs.samedirection?(v)
       else
         plane_lft = Geom.fit_plane_to_points(corners[0], corners[2], corners[4])
         ilft = Geom.intersect_line_plane(line, plane_lft)
         if !ilft.nil? && bounds.contains?(ilft.transform(ti))
           vs = center.vector_to(ilft)
-          vs.reverse! unless vs.samedirection?(v)
+          vs.reverse! if vs.samedirection?(v)
         else
           plane_frt = Geom.fit_plane_to_points(corners[0], corners[1], corners[4])
           ifrt = Geom.intersect_line_plane(line, plane_frt)
           if !ifrt.nil? && bounds.contains?(ifrt.transform(ti))
             vs = center.vector_to(ifrt)
-            vs.reverse! unless vs.samedirection?(v)
+            vs.reverse! if vs.samedirection?(v)
           end
         end
       end
@@ -1669,7 +1770,6 @@ module Ladb::OpenCutList
 
       mps = vs.nil? ? lps : lps.offset(vs)
       mpe = ve.nil? ? lpe : lpe.offset(ve)
-      mv = mps.vector_to(mpe)
 
       {
         drawing_def: drawing_def,
@@ -1683,8 +1783,7 @@ module Ladb::OpenCutList
         lps: lps,
         lpe: lpe,
         mps: mps,
-        mpe: mpe,
-        mv: mv
+        mpe: mpe
       }
     end
 

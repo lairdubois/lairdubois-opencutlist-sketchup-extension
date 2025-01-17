@@ -1033,7 +1033,9 @@ module Ladb::OpenCutList
     end
 
     def set_action_handler(action_handler)
+      @action_handler.stop if @action_handler.is_a?(SmartActionHandler)
       @action_handler = action_handler
+      @action_handler.start if @action_handler.is_a?(SmartActionHandler)
     end
 
     def fetch_action_handler
@@ -1191,6 +1193,9 @@ module Ladb::OpenCutList
 
     def onDeactivate(view)
       super
+
+      # Stop current action handler
+      @action_handler.stop if @action_handler.is_a?(SmartActionHandler)
 
       # Stop observing view events
       view.remove_observer(self)
@@ -1593,8 +1598,15 @@ module Ladb::OpenCutList
 
       @picker = nil
 
-      set_state(get_startup_state)
+    end
 
+    # -----
+
+    def start
+      set_state(get_startup_state)
+    end
+
+    def stop
     end
 
     # -- STATE --
