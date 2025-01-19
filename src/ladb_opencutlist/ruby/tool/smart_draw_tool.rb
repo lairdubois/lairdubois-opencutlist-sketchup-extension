@@ -1961,7 +1961,7 @@ module Ladb::OpenCutList
       @locked_normal = nil
       @locked_axis = nil
 
-      if @state == STATE_PUSHPULL && (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+      if @state == STATE_PUSHPULL && (drawing_def = _get_drawing_def).is_a?(DrawingDef) && !_fetch_option_construction
         _append_floating_tools_at(drawing_def.bounds.center.transform(drawing_def.transformation), new_action_handler)
       end
 

@@ -387,7 +387,7 @@ module Ladb::OpenCutList
       when STATE_HANDLE
         @picked_handle_end_point = @mouse_snap_point
         _handle_entity
-        set_state(STATE_HANDLE_COPIES)
+        set_state(STATE_HANDLE_COPIES) unless _fetch_option_mirror
         _restart
 
       end
@@ -833,7 +833,7 @@ module Ladb::OpenCutList
       @picked_handle_end_point = dps.offset(v, distance)
 
       _handle_entity
-      set_state(STATE_HANDLE_COPIES)
+      set_state(STATE_HANDLE_COPIES) unless _fetch_option_mirror
       _restart
 
       true
@@ -1223,7 +1223,7 @@ module Ladb::OpenCutList
         @picked_handle_end_point = dps.offset(Geom::Vector3d.new(dv.x < 0 ? -distance_x : distance_x, dv.y < 0 ? -distance_y : distance_y).transform(t))
 
         _handle_entity
-        set_state(STATE_HANDLE_COPIES)
+        set_state(STATE_HANDLE_COPIES) unless _fetch_option_mirror
         _restart
 
         return true
@@ -1656,26 +1656,23 @@ module Ladb::OpenCutList
       return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
       drawing_def, ps, pe, center, v, lps, lpe, mps, mpe = move_def.values_at(:drawing_def, :ps, :pe, :center, :v, :lps, :lpe, :mps, :mpe)
+      lv = lps.vector_to(lpe)
       mv = mps.vector_to(mpe)
       color = _get_vector_color(v, Kuix::COLOR_DARK_GREY)
 
+      @tool.append_3d(_create_floating_points(points: [ ps ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), 1)
+      @tool.append_3d(_create_floating_points(points: [ ps ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: Kuix::COLOR_DARK_GREY), 1)
+
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(ps)
-      k_line.end.copy!(pe)
-      k_line.line_width = 1
-      k_line.color = Kuix::COLOR_MEDIUM_GREY
+      k_line.end.copy!(lps)
+      k_line.line_width = 1.5
+      k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+      k_line.color = Kuix::COLOR_DARK_GREY
       k_line.on_top = true
       @tool.append_3d(k_line, 1)
 
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(ps)
-      k_line.end.copy!(pe)
-      k_line.line_width = 1
-      k_line.color = color
-      @tool.append_3d(k_line, 1)
-
-      k_points = _create_floating_points(points: [ center ], style: Kuix::POINT_STYLE_PLUS)
-      @tool.append_3d(k_points, 1)
+      @tool.append_3d(_create_floating_points(points: [ center ], style: Kuix::POINT_STYLE_PLUS), 1)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(lps)
@@ -1723,17 +1720,17 @@ module Ladb::OpenCutList
 
       end
 
-      distance = v.length
+      distance = lv.length
 
       Sketchup.set_status_text(distance, SB_VCB_VALUE)
 
       if distance > 0
 
         k_label = _create_floating_label(
-          screen_point: view.screen_coords(ps.offset(v, distance / 2)),
+          screen_point: view.screen_coords(lps.offset(lv, distance / 2)),
           text: distance,
           text_color: Kuix::COLOR_X,
-          border_color: _get_vector_color(v, Kuix::COLOR_DARK_GREY)
+          border_color: _get_vector_color(lv, Kuix::COLOR_DARK_GREY)
         )
         @tool.append_2d(k_label)
 
