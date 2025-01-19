@@ -1255,24 +1255,24 @@ tab:
           Souhaitez-vous ajouter une nouvelle page ?
         incompatible_page_format: |
           Le fichier de destination n'est pas configuré avec le même format de papier.
-          
+
           Lu : {{ old_page_format }}
           Exporté : {{ new_page_format }}
-          
+
           Toutes les pages seront effacées.
         changing_units: |
           Le fichier de destination n'a pas la même unité par défaut.
-          
+
           Lue : {{ old_units }}
           Exportée : {{ new_units }}
-          
+
           Souhaitez utiliser la nouvelle unité ?
         changing_precision: |
           Le fichier de destination n'a pas la même précision par défaut.
-          
+
           Lue : {{ old_precision }}
           Exportée : {{ new_precision }}
-          
+
           Souhaitez utiliser la nouvelle précision ?
     write:
       title: Exportation de pièces
@@ -1887,7 +1887,7 @@ tool:
     action_0_status: Cliquez sur une pièce pour la sélectionner
     action_1: Copier en ligne
     action_1_status: Cliquez sur une pièce pour la copier le long d'un axe
-    action_1_state_2_status: Cliquez pour placer la copies de la pièce ou entrez une longueur
+    action_1_state_2_status: Cliquez pour placer la copie de la pièce ou entrez une longueur
     action_2: Copier en grille
     action_2_status: Cliquez sur une pièce pour la copier le long d'une grille
     action_2_state_2_status: Cliquez pour placer les copies de la pièce ou entrez une longueur, largeur

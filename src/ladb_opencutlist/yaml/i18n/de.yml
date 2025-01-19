@@ -314,14 +314,14 @@ tab:
       edit_parts_properties: Eigenschaften der Gruppe von Teilen bearbeiten
       edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Aufklappen / Zuklappen
-      material_origin_1: Das verwendete Material für dieses Teil ist auf einer Instanz definiert
-      material_origin_2: Das verwendete Material für dieses Teil wird von einem übergeordneten Teil geerbt
-      material_origin_3: Das verwendete Material für dieses Teil wird aus einem enthaltenen Teil extrahiert
+      material_origin_1: Das für dieses Teil verwendete Material ist auf einer Instanz definiert
+      material_origin_2: Das für dieses Teil verwendete Material wird von einem übergeordneten Teil geerbt
+      material_origin_3:  Das für dieses Teil verwendete Material wird aus einem enthaltenen Teil gewonnen
       orientation_locked_on_axis: Die Orientierung dieses Teils ist an sein Koordinatensystem gebunden
       number_saved: Die Nummer dieses Teils wurde gespeichert
       number_hidden: "Die auf diesem Teil gespeicherte Nummer '{{ number }}' kann nicht verwendet werden, da sie bereits vergeben ist"
       number_generated: Die Nummer dieses Teils wurde automatisch zugewiesen
-      resized: Dieses Teil wurde im Bezug zur ursprünglichen Definition als Komponente in der Dimension redimensioniert
+      resized: Dieses Teil wurde gegenüber der ursprünglichen Definition redimensioniert
       flipped: Dieses Teil ist im Vergleich zur ursprünglichen Definition gespiegelt
       symmetrical: Die Erkennung gespiegelter Teile ist bei diesem Teil deaktiviert
       ignore_grain_direction: Die Faserrichtung wird für dieses Teil nicht beachtet
@@ -361,7 +361,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       face_zmin: Rückseite
-      face_zmax: Vorderansicht
+      face_zmax: Vorderseite
       dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die übrigen Kanten zu übertragen"
       dblclick_to_copy_all_faces: "Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen"
       dblclick_to_sort_axes: "Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen"
@@ -461,7 +461,7 @@ tab:
         Wird dieses Kästchen aktiviert, hat die Erkennung von *Spiegelteilen* keine Auswirkung auf dieses Teil.
       ignore_grain_direction: Faserrichtung für dieses Teil nicht beachten
       ignore_grain_direction_help: |
-        Wird dieses Kästchen aktiviert, wird die Faserrichtung für dieses Teil nicht beachtet.
+         Wenn dieses Kästchen aktiviert ist, wird die Faserrichtung für dieses Teil ignoriert.
       size_increase: Übermaße
       size_increase_help: |
         Übermaße vergrössern die Dimensionen eines einzelnen Teils.
@@ -486,8 +486,8 @@ tab:
       axes_origin_position_front_center: Ursprung in der Mitte der Vorderseite anlegen
       over_length: Der Länge nach
       over_width: Der Breite nach
-      edge_disabled_help: "Diese Kante ist nicht konfigurierbar, da an dieser Kante des Teils im Modell keine materialtragende Fläche erkannt wurde."
-      face_disabled_help: "Diese Fläche ist nicht konfigurierbar, da an dieser Seite des Teils im Modell keine materialtragende Fläche erkannt wurde."
+      edge_disabled_help: "Diese Kante ist nicht konfigurierbar, weil dort im Modell keine materialtragende Fläche erkannt wurde."
+      face_disabled_help: "Diese Fläche ist nicht konfigurierbar, weil dort im Modell keine materialtragende Fläche erkannt wurde."
       multiple_values: mehrfache Werte
       loading_preview: Vorschau laden
     option:
@@ -1887,10 +1887,14 @@ tool:
     action_0_status: Klicken Sie auf ein Teil, um es auszuwählen
     action_1: In Linie kopieren
     action_1_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren
+    action_1_state_2_status: Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Länge ein
     action_2: In Raster kopieren
     action_2_status: Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren.
+    action_2_state_2_status:  Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie eine Länge, Breite ein
     action_3: Verteilen
     action_3_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen.
+    action_3_state_1_status: Klicken Sie, um den ersten Punkt zu bestimmen
+    action_3_state_2_status: Klicken Sie, um den zweiten Punkt zu bestimmen, oder geben Sie eine Länge ein
     action_option_group_measure_type: Maß
     action_option_group_options: Optionen
     action_option_measure_type_outside_status: Außenmessung

@@ -1885,107 +1885,111 @@ tool:
     action_0_status: 1452 - Click on a part to select it
     action_1: 1453 - Copy in line
     action_1_status: 1454 - Click on a part to copy it along an axis
-    action_2: 1455 - Copy in grid
-    action_2_status: 1456 - Click on a part to copy it along a grid
-    action_3: 1457 - Distribute
-    action_3_status: 1458 - Click on a part to distribute it along an axis
-    action_option_group_measure_type: 1459 - Measure
-    action_option_group_options: 1460 - Options
-    action_option_measure_type_outside_status: 1461 - External measurement
-    action_option_measure_type_centered_status: 1462 - Central measurement
-    action_option_measure_type_inside_status: 1463 - Measurement taken between parts
-    action_option_options_mirror_status: 1464 - Symmetrical copying
+    action_1_state_2_status: 1455 - Click to place the copy of the part or enter a length
+    action_2: 1456 - Copy in grid
+    action_2_status: 1457 - Click on a part to copy it along a grid
+    action_2_state_2_status: 1458 - Click to place copies of the part, or enter length, width
+    action_3: 1459 - Distribute
+    action_3_status: 1460 - Click on a part to distribute it along an axis
+    action_3_state_1_status: 1461 - Click to set the first point
+    action_3_state_2_status: 1462 - Click to set the second point or enter a length
+    action_option_group_measure_type: 1463 - Measure
+    action_option_group_options: 1464 - Options
+    action_option_measure_type_outside_status: 1465 - External measurement
+    action_option_measure_type_centered_status: 1466 - Central measurement
+    action_option_measure_type_inside_status: 1467 - Measurement taken between parts
+    action_option_options_mirror_status: 1468 - Symmetrical copying
   smart_paint:
-    title: 1465 - Paint
-    default_material: 1466 - Without material
-    filters: 1467 - Filters
-    filter_0: 1468 - Without type
+    title: 1469 - Paint
+    default_material: 1470 - Without material
+    filters: 1471 - Filters
+    filter_0: 1472 - Without type
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1475 - Paint parts
-    action_0_status: 1476 - Click on a part to apply material to its instance
-    action_1: 1477 - Paint edges
-    action_1_status: 1478 - Click on the edge of a panel to apply material '$t(tab.materials.type_4)'
-    action_2: 1479 - Paint faces
-    action_2_status: 1480 - Click on the face of a panel to apply material '$t(tab.materials.type_6)'
-    action_3: 1481 - Sample
-    action_3_status: 1482 - Click on a face to sample its material
-    action_4: 1483 - Clean
-    action_4_status: 1484 - Click on a part to remove all materials from its definition and from all its instances
-    action_option_group_instances: 1485 - Number of instances
-    action_option_group_edges: 1486 - Number of edge bandings
-    action_option_group_faces: 1487 - Number of faces
-    action_option_instances_0_status: 1488 - Color only the instance of the target part
-    action_option_instances_1_status: 1489 - Color all instances of the target part
-    action_option_edges_0_status: 1490 - Color only the target edge
-    action_option_edges_1_status: 1491 - Color the target edge and the opposite edge of the part
-    action_option_edges_2_status: 1492 - Color the 4 edges of the target part
-    action_option_faces_0_status: 1493 - Color only the target face
-    action_option_faces_1_status: 1494 - Color the 2 faces of the target part
-    edges: 1495 - {{ count }} edge
-    edges_plural: 1496 - {{ count }} edges
-    edge_ymin: 1497 - Length 1
-    edge_ymax: 1498 - Length 2
-    edge_xmin: 1499 - Width 1
-    edge_xmax: 1500 - Width 2
-    faces: 1501 - {{ count }} face
-    faces_plural: 1502 - {{ count }} faces
-    face_zmin: 1503 - Backside
-    face_zmax: 1504 - Frontside
+    action_0: 1479 - Paint parts
+    action_0_status: 1480 - Click on a part to apply material to its instance
+    action_1: 1481 - Paint edges
+    action_1_status: 1482 - Click on the edge of a panel to apply material '$t(tab.materials.type_4)'
+    action_2: 1483 - Paint faces
+    action_2_status: 1484 - Click on the face of a panel to apply material '$t(tab.materials.type_6)'
+    action_3: 1485 - Sample
+    action_3_status: 1486 - Click on a face to sample its material
+    action_4: 1487 - Clean
+    action_4_status: 1488 - Click on a part to remove all materials from its definition and from all its instances
+    action_option_group_instances: 1489 - Number of instances
+    action_option_group_edges: 1490 - Number of edge bandings
+    action_option_group_faces: 1491 - Number of faces
+    action_option_instances_0_status: 1492 - Color only the instance of the target part
+    action_option_instances_1_status: 1493 - Color all instances of the target part
+    action_option_edges_0_status: 1494 - Color only the target edge
+    action_option_edges_1_status: 1495 - Color the target edge and the opposite edge of the part
+    action_option_edges_2_status: 1496 - Color the 4 edges of the target part
+    action_option_faces_0_status: 1497 - Color only the target face
+    action_option_faces_1_status: 1498 - Color the 2 faces of the target part
+    edges: 1499 - {{ count }} edge
+    edges_plural: 1500 - {{ count }} edges
+    edge_ymin: 1501 - Length 1
+    edge_ymax: 1502 - Length 2
+    edge_xmin: 1503 - Width 1
+    edge_xmax: 1504 - Width 2
+    faces: 1505 - {{ count }} face
+    faces_plural: 1506 - {{ count }} faces
+    face_zmin: 1507 - Backside
+    face_zmax: 1508 - Frontside
     warning:
-      no_material: 1505 - No material
-      no_material_type: 1506 - No material of type '{{ type }}'
+      no_material: 1509 - No material
+      no_material_type: 1510 - No material of type '{{ type }}'
     error:
-      not_part: 1507 - The target object is not a part (component)
-      not_edge: 1508 - The target face is not a panel edge
-      not_face: 1509 - The target face is not a panel face
-      wrong_material_type: 1510 - The target part must be of type '{{ type }}'
+      not_part: 1511 - The target object is not a part (component)
+      not_edge: 1512 - The target face is not a panel edge
+      not_face: 1513 - The target face is not a panel face
+      wrong_material_type: 1514 - The target part must be of type '{{ type }}'
   smart_axes:
-    title: 1511 - Orient
-    action_0: 1512 - Flip
-    action_0_status: 1513 - Click on a part to flip its instance along one of its dimensions
-    action_1: 1514 - Swap Length ↔ Width
-    action_1_status: 1515 - Click on a part to swap its Length with its Width
-    action_2: 1516 - Swap Front ↔ Backside
-    action_2_status: 1517 - Click on a part to swap its Front with its Backside
-    action_3: 1518 - Adapt Axes
-    action_3_status: 1519 - Target a face of a part and click on an edge to adapt its axes
-    action_4: 1520 - Move Origin
-    action_4_status: 1521 - Target a face of a part and click on a point to place its origin there.
-    action_option_group_direction: 1522 - Direction
-    action_option_direction_0: 1523 - L
-    action_option_direction_1: 1524 - W
-    action_option_direction_2: 1525 - T
-    action_option_direction_0_status: 1526 - Turn the part over lengthwise
-    action_option_direction_1_status: 1527 - Turn the part over widthwise
-    action_option_direction_2_status: 1528 - Turn the part over in its thickness
+    title: 1515 - Orient
+    action_0: 1516 - Flip
+    action_0_status: 1517 - Click on a part to flip its instance along one of its dimensions
+    action_1: 1518 - Swap Length ↔ Width
+    action_1_status: 1519 - Click on a part to swap its Length with its Width
+    action_2: 1520 - Swap Front ↔ Backside
+    action_2_status: 1521 - Click on a part to swap its Front with its Backside
+    action_3: 1522 - Adapt Axes
+    action_3_status: 1523 - Target a face of a part and click on an edge to adapt its axes
+    action_4: 1524 - Move Origin
+    action_4_status: 1525 - Target a face of a part and click on a point to place its origin there.
+    action_option_group_direction: 1526 - Direction
+    action_option_direction_0: 1527 - L
+    action_option_direction_1: 1528 - W
+    action_option_direction_2: 1529 - T
+    action_option_direction_0_status: 1530 - Turn the part over lengthwise
+    action_option_direction_1_status: 1531 - Turn the part over widthwise
+    action_option_direction_2_status: 1532 - Turn the part over in its thickness
     warning:
-      more_entities: 1529 - {{ count_used }} instances sharing the same definition will be modified
+      more_entities: 1533 - {{ count_used }} instances sharing the same definition will be modified
     error:
-      not_part: 1530 - The target object is not a part (component)
-      not_orientable: 1531 - The type of this part does not allow orienting it
+      not_part: 1534 - The target object is not a part (component)
+      not_orientable: 1535 - The type of this part does not allow orienting it
   smart_export:
-    title: 1532 - Export
-    action_0: 1533 - Export 3D part
-    action_0_status: 1534 - Click on a part
-    action_1: 1535 - Export 2D part
-    action_1_status: 1536 - Click on the face of a part
-    action_2: 1537 - Export face
-    action_2_status: 1538 - Click on a face
-    action_3: 1539 - Export path
-    action_3_status: 1540 - Click on an edge
-    action_option_group_file_format: 1541 - Format
-    action_option_group_unit: 1542 - Unit
-    action_option_group_faces: 1543 - Faces
-    action_option_group_options: 1544 - Options
-    action_option_file_format_dxf_status: 1545 - Export to DXF file
-    action_option_file_format_stl_status: 1546 - Export to STL file
-    action_option_file_format_obj_status: 1547 - Export to OBJ file
-    action_option_file_format_svg_status: 1548 - Export to SVG file
+    title: 1536 - Export
+    action_0: 1537 - Export 3D part
+    action_0_status: 1538 - Click on a part
+    action_1: 1539 - Export 2D part
+    action_1_status: 1540 - Click on the face of a part
+    action_2: 1541 - Export face
+    action_2_status: 1542 - Click on a face
+    action_3: 1543 - Export path
+    action_3_status: 1544 - Click on an edge
+    action_option_group_file_format: 1545 - Format
+    action_option_group_unit: 1546 - Unit
+    action_option_group_faces: 1547 - Faces
+    action_option_group_options: 1548 - Options
+    action_option_file_format_dxf_status: 1549 - Export to DXF file
+    action_option_file_format_stl_status: 1550 - Export to STL file
+    action_option_file_format_obj_status: 1551 - Export to OBJ file
+    action_option_file_format_svg_status: 1552 - Export to SVG file
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -1995,9 +1999,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1558 - Isolate through-holes and merge depths for each cavity
-    action_option_options_include_paths_status: 1559 - Export non-face edges contained in the part as a path
+    action_option_options_merge_holes_status: 1562 - Isolate through-holes and merge depths for each cavity
+    action_option_options_include_paths_status: 1563 - Export non-face edges contained in the part as a path
     error:
-      not_part: 1560 - This face does not belong to a part (component)
-      not_flat_face: 1561 - This surface is not flat
-      incompatible_active_path: 1562 - The active path does not allow exporting this part
+      not_part: 1564 - This face does not belong to a part (component)
+      not_flat_face: 1565 - This surface is not flat
+      incompatible_active_path: 1566 - The active path does not allow exporting this part
