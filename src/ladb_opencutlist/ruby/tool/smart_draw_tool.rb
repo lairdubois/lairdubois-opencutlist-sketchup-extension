@@ -658,7 +658,7 @@ module Ladb::OpenCutList
         if key == CONSTRAIN_MODIFIER_KEY
           _refresh
           return true
-        elsif key == COPY_MODIFIER_KEY
+        elsif key == COPY_MODIFIER_KEY && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED, !_fetch_option_solid_centered, true)
           _refresh
           return true
@@ -2472,7 +2472,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START, STATE_SHAPE
-        if key == COPY_MODIFIER_KEY
+        if key == COPY_MODIFIER_KEY && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !_fetch_option_rectangle_centered, true)
           _refresh
           return true
@@ -3108,7 +3108,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START, STATE_SHAPE
-        if key == COPY_MODIFIER_KEY
+        if key == COPY_MODIFIER_KEY && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, !_fetch_option_measure_from_diameter, true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
           Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)
@@ -3561,7 +3561,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START, STATE_SHAPE
-        if key == COPY_MODIFIER_KEY
+        if key == COPY_MODIFIER_KEY && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed, true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
           Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)
