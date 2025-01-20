@@ -1806,8 +1806,6 @@ module Ladb::OpenCutList
 
     include FaceTrianglesHelper
 
-    # COLOR_PART = Sketchup::Color.new(200, 200, 0, 100).freeze
-    # COLOR_PART_HIGHLIGHTED = Sketchup::Color.new(200, 200, 0, 200).freeze
     COLOR_PART = Sketchup::Color.new(254, 222, 11, 200).freeze
     COLOR_PART_HIGHLIGHTED = Sketchup::Color.new(254, 222, 11, 255).freeze
 

@@ -1896,10 +1896,14 @@ tool:
     action_3_state_1_status: Cliquez pour déterminer le premier point
     action_3_state_2_status: Cliquez pour déterminer le second point ou entrez une longueur
     action_option_group_measure_type: Mesure
+    action_option_group_axes: Axes
     action_option_group_options: Options
     action_option_measure_type_outside_status: Mesure prise à l'extérieure
     action_option_measure_type_centered_status: Mesure prise de centre à centre
     action_option_measure_type_inside_status: Mesure prise entre les pièces
+    action_option_axes_world_status: Manipulation des pièces le long des axes de la scène
+    action_option_axes_active_status: Manipulation des pièces le long des axes actifs
+    action_option_axes_parent_status: Manipulation des pièces le long des axes du groupe ou composant contenant la pièce
     action_option_options_mirror_status: Copie en symétrie
   smart_paint:
     title: Colorier

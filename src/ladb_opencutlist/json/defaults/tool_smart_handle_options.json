@@ -3,12 +3,15 @@
   },
   "action_1": { /* ACTION_MOVE_LINE */
     "measure_type": "outside",
+    "axes": "parent",
     "mirror": false
   },
   "action_2": { /* ACTION_MOVE_GRID */
     "measure_type": "outside",
+    "axes": "parent",
     "mirror": false
   },
   "action_3": { /* ACTION_MOVE_ALONG */
+    "axes": "parent"
   }
 }

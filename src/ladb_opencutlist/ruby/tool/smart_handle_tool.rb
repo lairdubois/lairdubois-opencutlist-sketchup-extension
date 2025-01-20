@@ -20,11 +20,16 @@ module Ladb::OpenCutList
     ACTION_DISTRIBUTE = 3
 
     ACTION_OPTION_MEASURE_TYPE = 'measure_type'
+    ACTION_OPTION_AXES = 'axes'
     ACTION_OPTION_OPTIONS = 'options'
 
     ACTION_OPTION_MEASURE_TYPE_OUTSIDE = 'outside'
     ACTION_OPTION_MEASURE_TYPE_CENTERED = 'centered'
     ACTION_OPTION_MEASURE_TYPE_INSIDE = 'inside'
+
+    ACTION_OPTION_AXES_WORLD = 'world'
+    ACTION_OPTION_AXES_ACTIVE = 'active'
+    ACTION_OPTION_AXES_PARENT = 'parent'
 
     ACTION_OPTION_OPTIONS_MIRROR = 'mirror'
 
@@ -35,19 +40,24 @@ module Ladb::OpenCutList
       {
         :action => ACTION_COPY_LINE,
         :options => {
-          ACTION_OPTION_MEASURE_TYPE => [ACTION_OPTION_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_INSIDE ],
+          ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_INSIDE ],
+          ACTION_OPTION_AXES => [ACTION_OPTION_AXES_WORLD, ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MIRROR ]
         }
       },
       {
         :action => ACTION_COPY_GRID,
         :options => {
-          ACTION_OPTION_MEASURE_TYPE => [ACTION_OPTION_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_INSIDE ],
+          ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_INSIDE ],
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_WORLD, ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MIRROR ]
         }
       },
       {
         :action => ACTION_DISTRIBUTE,
+        :options => {
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_WORLD, ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT ]
+        }
       }
     ].freeze
 
@@ -109,6 +119,9 @@ module Ladb::OpenCutList
       when ACTION_OPTION_MEASURE_TYPE
         return true
 
+      when ACTION_OPTION_AXES
+        return true
+
       end
 
       false
@@ -126,6 +139,15 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.333,0.583L0.333,0.917L0,0.917 M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917 M0.167,0.25L0.822,0.25 M0.167,0.083L0.167,0.417 M0.822,0.083L0.822,0.417'))
         when ACTION_OPTION_MEASURE_TYPE_INSIDE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.917L0,0.583L0.333,0.583L0.333,0.917L0,0.917M0.655,0.917L0.655,0.583L0.989,0.583L0.989,0.917L0.655,0.917 M0.333,0.25L0.667,0.25 M0.333,0.083L0.333,0.417 M0.667,0.083L0.667,0.417'))
+        end
+      when ACTION_OPTION_AXES
+        case option
+        when ACTION_OPTION_AXES_WORLD
+          return Kuix::Label.new('W')
+        when ACTION_OPTION_AXES_ACTIVE
+          return Kuix::Label.new('A')
+        when ACTION_OPTION_AXES_PARENT
+          return Kuix::Label.new('P')
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -312,19 +334,25 @@ module Ladb::OpenCutList
           # Show part infos
           @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
-          if @active_part_entity_path.length > 1
+          # Show edit axes
+          k_axes = Kuix::AxesHelper.new
+          k_axes.transformation = _get_edit_transformation
+          @tool.append_3d(k_axes)
 
-            parent = @active_part_entity_path[-2]
-            parent_transformation = PathUtils.get_transformation(@active_part_entity_path[0...-2], IDENTITY)
 
-            k_box = Kuix::BoxMotif.new
-            k_box.bounds.copy!(parent.bounds)
-            k_box.line_width = 1
-            k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-            k_box.transformation = parent_transformation
-            @tool.append_3d(k_box)
-
-          end
+          # if @active_part_entity_path.length > 1
+          #
+          #   # parent = @active_part_entity_path[-2]
+          #   parent_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-2], IDENTITY)
+          #
+          #   # k_box = Kuix::BoxMotif.new
+          #   # k_box.bounds.copy!(parent.bounds)
+          #   # k_box.line_width = 1
+          #   # k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          #   # k_box.transformation = parent_transformation
+          #   # @tool.append_3d(k_box)
+          #
+          # end
 
         else
 
@@ -538,6 +566,10 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_value(@action, SmartHandleTool::ACTION_OPTION_MEASURE_TYPE)
     end
 
+    def _fetch_option_axes
+      @tool.fetch_action_option_value(@action, SmartHandleTool::ACTION_OPTION_AXES)
+    end
+
     def _fetch_option_mirror
       @tool.fetch_action_option_boolean(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR)
     end
@@ -548,6 +580,29 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _get_parent_transformation
+      if @active_part_entity_path.is_a?(Array) &&
+        @active_part_entity_path.length > 1 &&
+        (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-2])
+        return PathUtils.get_transformation(@active_part_entity_path[0..-2], IDENTITY)
+      end
+      IDENTITY
+    end
+
+    def _get_edit_transformation
+      case _fetch_option_axes
+
+      when SmartHandleTool::ACTION_OPTION_AXES_WORLD
+        return IDENTITY
+
+      when SmartHandleTool::ACTION_OPTION_AXES_PARENT
+        t = _get_parent_transformation
+        return t unless t.identity?
+
+      end
+      super
+    end
 
     def _get_instance
       return @active_part_entity_path.last if @active_part_entity_path.is_a?(Array)
@@ -678,6 +733,8 @@ module Ladb::OpenCutList
 
     # -----
 
+    protected
+
     def _snap_handle(flags, x, y, view)
 
       if @mouse_ip.degrees_of_freedom > 2 ||
@@ -715,7 +772,10 @@ module Ladb::OpenCutList
           pe = @mouse_ip.position
           move_axis = _get_active_x_axis
 
-          v = ps.vector_to(pe)
+          et = _get_edit_transformation
+          eti = et.inverse
+
+          v = ps.transform(eti).vector_to(pe.transform(eti))
           if v.valid?
 
             bounds = Geom::BoundingBox.new
@@ -887,6 +947,12 @@ module Ladb::OpenCutList
       return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, _fetch_option_measure_type)).nil?
 
       mps, mpe = move_def.values_at(:mps, :mpe)
+
+      t = _get_parent_transformation
+      ti = t.inverse
+
+      mps = mps.transform(ti)
+      mpe = mpe.transform(ti)
       mv = mps.vector_to(mpe)
 
       model = Sketchup.active_model
@@ -985,22 +1051,18 @@ module Ladb::OpenCutList
       lps = center
       lpe = pe.project_to_line(line)
 
+      mps = lps
+      dpe = lpe
       case type
       when SmartHandleTool::ACTION_OPTION_MEASURE_TYPE_OUTSIDE
-        mps = center
         mpe = lpe.offset(vs)
         dps = lps.offset(vs)
-        dpe = lpe
       when SmartHandleTool::ACTION_OPTION_MEASURE_TYPE_CENTERED
-        mps = lps
         mpe = lpe
         dps = lps
-        dpe = lpe
       when SmartHandleTool::ACTION_OPTION_MEASURE_TYPE_INSIDE
-        mps = center
         mpe = lpe.offset(ve)
         dps = lps.offset(ve)
-        dpe = lpe
       else
         return
       end
@@ -1030,8 +1092,7 @@ module Ladb::OpenCutList
     def initialize(tool, previous_action_handler = nil)
       super(SmartHandleTool::ACTION_COPY_GRID, tool, previous_action_handler)
 
-      @direction = nil
-      @normal = _get_active_z_axis
+      @normal = nil
 
       @locked_normal = nil
 
@@ -1304,10 +1365,11 @@ module Ladb::OpenCutList
     def _copy_grid_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
       return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, _fetch_option_measure_type)).nil?
 
+      mps, mpe = move_def.values_at(:mps, :mpe)
+
       t = _get_transformation
       ti = t.inverse
 
-      mps, mpe = move_def.values_at(:mps, :mpe)
       mv = mps.transform(ti).vector_to(mpe.transform(ti))
 
       model = Sketchup.active_model
@@ -1343,7 +1405,7 @@ module Ladb::OpenCutList
 
             vt = Geom::Vector3d.new(ux * x, uy * y)
 
-            mt = Geom::Transformation.translation(vt.transform(t))
+            mt = Geom::Transformation.translation(vt.transform(t).transform(_get_parent_transformation.inverse))
             mt *= Geom::Transformation.scaling(mps, *vt.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if _fetch_option_mirror
             mt *= src_instance.transformation
 
@@ -1363,17 +1425,11 @@ module Ladb::OpenCutList
 
     def _get_axes
 
-      if @direction.nil? || !@direction.valid? || !@direction.perpendicular?(@normal)
+      active_x_axis = _get_active_x_axis
+      active_x_axis = _get_active_y_axis if active_x_axis.parallel?(@normal)
 
-        active_x_axis = _get_active_x_axis
-        active_x_axis = _get_active_y_axis if active_x_axis.parallel?(@normal)
-
-        x_axis = ORIGIN.vector_to(ORIGIN.offset(active_x_axis).project_to_plane([ ORIGIN, @normal ]))
-
-      else
-        x_axis = @direction
-      end
       z_axis = @normal
+      x_axis = ORIGIN.vector_to(ORIGIN.offset(active_x_axis).project_to_plane([ ORIGIN, z_axis ]))
       y_axis = z_axis * x_axis
 
       [ x_axis.normalize, y_axis.normalize, z_axis.normalize ]
@@ -1592,7 +1648,7 @@ module Ladb::OpenCutList
       @definition = instance.definition
       @drawing_def = nil
 
-      @src_transformation = instance.transformation
+      @src_transformation = Geom::Transformation.new(instance.transformation)
 
       set_state(STATE_HANDLE_START)
       _refresh
@@ -1640,7 +1696,10 @@ module Ladb::OpenCutList
           pe = @mouse_ip.position
           move_axis = _get_active_x_axis
 
-          v = ps.vector_to(pe)
+          et = _get_edit_transformation
+          eti = et.inverse
+
+          v = ps.transform(eti).vector_to(pe.transform(eti))
           if v.valid?
 
             bounds = Geom::BoundingBox.new
@@ -1835,6 +1894,13 @@ module Ladb::OpenCutList
       return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point)).nil?
 
       center, mps, mpe = move_def.values_at(:center, :mps, :mpe)
+
+      t = _get_parent_transformation
+      ti = t.inverse
+
+      center = center.transform(ti)
+      mps = mps.transform(ti)
+      mpe = mpe.transform(ti)
       mv = mps.vector_to(mpe)
 
       model = Sketchup.active_model
@@ -1854,7 +1920,7 @@ module Ladb::OpenCutList
 
         (0...count).each do |i|
 
-          mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * (i + 1) / (count + 1))))
+          mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * (i + 1) / (count + 1.0))))
           mt *= @src_transformation
 
           if i == 0
@@ -1879,12 +1945,16 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _get_transformation
+      _get_edit_transformation
+    end
+
     def _get_move_def(ps, pe)
       return unless (v = ps.vector_to(pe)).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
       return unless (drawing_def_segments = _get_drawing_def_segments(drawing_def)).is_a?(Array)
 
-      et = _get_edit_transformation
+      et = _get_transformation
       eti = et.inverse
 
       # Compute in 'Edit' space
@@ -1893,7 +1963,7 @@ module Ladb::OpenCutList
       eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
 
       center = eb.center
-      line = [ center , v ]
+      line = [ center, v ]
 
       plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
       ibtm = Geom.intersect_line_plane(line, plane_btm)
