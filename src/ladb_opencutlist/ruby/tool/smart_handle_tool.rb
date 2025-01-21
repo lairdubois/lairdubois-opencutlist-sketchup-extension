@@ -27,9 +27,9 @@ module Ladb::OpenCutList
     ACTION_OPTION_MEASURE_TYPE_CENTERED = 'centered'
     ACTION_OPTION_MEASURE_TYPE_INSIDE = 'inside'
 
-    ACTION_OPTION_AXES_WORLD = 'world'
     ACTION_OPTION_AXES_ACTIVE = 'active'
     ACTION_OPTION_AXES_PARENT = 'parent'
+    ACTION_OPTION_AXES_ENTITY = 'entity'
 
     ACTION_OPTION_OPTIONS_MIRROR = 'mirror'
 
@@ -41,7 +41,7 @@ module Ladb::OpenCutList
         :action => ACTION_COPY_LINE,
         :options => {
           ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_INSIDE ],
-          ACTION_OPTION_AXES => [ACTION_OPTION_AXES_WORLD, ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT ],
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT, ACTION_OPTION_AXES_ENTITY ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MIRROR ]
         }
       },
@@ -49,14 +49,14 @@ module Ladb::OpenCutList
         :action => ACTION_COPY_GRID,
         :options => {
           ACTION_OPTION_MEASURE_TYPE => [ ACTION_OPTION_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_MEASURE_TYPE_CENTERED, ACTION_OPTION_MEASURE_TYPE_INSIDE ],
-          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_WORLD, ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT ],
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT, ACTION_OPTION_AXES_ENTITY ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MIRROR ]
         }
       },
       {
         :action => ACTION_DISTRIBUTE,
         :options => {
-          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_WORLD, ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT ]
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT, ACTION_OPTION_AXES_ENTITY ]
         }
       }
     ].freeze
@@ -142,12 +142,12 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_AXES
         case option
-        when ACTION_OPTION_AXES_WORLD
-          return Kuix::Label.new('W')
         when ACTION_OPTION_AXES_ACTIVE
-          return Kuix::Label.new('A')
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1'))
         when ACTION_OPTION_AXES_PARENT
-          return Kuix::Label.new('P')
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1 M0.5,0.083L0.5,0.5L0.917,0.5L0.917,0.083L0.5,0.083'))
+        when ACTION_OPTION_AXES_ENTITY
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.25,0L0.25,0.75L1,0.75 M0.083,0.167L0.25,0L0.417,0.167 M0.833,0.583L1,0.75L0.833,0.917 M0.042,0.5L0.042,0.958L0.5,0.958L0.5,0.5L0.042,0.5'))
         end
       when ACTION_OPTION_OPTIONS
         case option
@@ -581,24 +581,34 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_parent_transformation
+    def _get_parent_transformation(default = IDENTITY)
       if @active_part_entity_path.is_a?(Array) &&
         @active_part_entity_path.length > 1 &&
         (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-2])
         return PathUtils.get_transformation(@active_part_entity_path[0..-2], IDENTITY)
       end
-      IDENTITY
+      default
+    end
+
+    def _get_entity_transformation(default = IDENTITY)
+      if @active_part_entity_path.is_a?(Array) &&
+        @active_part_entity_path.length > 0 &&
+        (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-1])
+        return PathUtils.get_transformation(@active_part_entity_path[0..-1], IDENTITY)
+      end
+      default
     end
 
     def _get_edit_transformation
       case _fetch_option_axes
 
-      when SmartHandleTool::ACTION_OPTION_AXES_WORLD
-        return IDENTITY
-
       when SmartHandleTool::ACTION_OPTION_AXES_PARENT
-        t = _get_parent_transformation
-        return t unless t.identity?
+        t = _get_parent_transformation(nil)
+        return t unless t.nil?
+
+      when SmartHandleTool::ACTION_OPTION_AXES_ENTITY
+        t = _get_entity_transformation(nil)
+        return t unless t.nil?
 
       end
       super
@@ -1014,6 +1024,8 @@ module Ladb::OpenCutList
 
       # Compute in 'Edit' space
 
+      ev = v.transform(eti)
+
       eb = Geom::BoundingBox.new
       eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
 
@@ -1024,19 +1036,19 @@ module Ladb::OpenCutList
       ibtm = Geom.intersect_line_plane(line, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
         vs = ibtm.vector_to(center)
-        vs.reverse! if vs.valid? && vs.samedirection?(v)
+        vs.reverse! if vs.valid? && vs.samedirection?(ev)
       else
         plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
         ilft = Geom.intersect_line_plane(line, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
           vs = ilft.vector_to(center)
-          vs.reverse! if vs.valid? && vs.samedirection?(v)
+          vs.reverse! if vs.valid? && vs.samedirection?(ev)
         else
           plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
           ifrt = Geom.intersect_line_plane(line, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
             vs = ifrt.vector_to(center)
-            vs.reverse! if vs.valid? && vs.samedirection?(v)
+            vs.reverse! if vs.valid? && vs.samedirection?(ev)
           end
         end
       end
@@ -1469,19 +1481,19 @@ module Ladb::OpenCutList
         ibtm = Geom.intersect_line_plane(line, plane_btm)
         if !ibtm.nil? && eb.contains?(ibtm)
           vs = ibtm.vector_to(center)
-          vs.reverse! if v.valid? && vs.samedirection?(v)
+          vs.reverse! if v.valid? && vs.valid? && vs.samedirection?(v)
         else
           plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
           ilft = Geom.intersect_line_plane(line, plane_lft)
           if !ilft.nil? && eb.contains?(ilft)
             vs = ilft.vector_to(center)
-            vs.reverse! if v.valid? && vs.samedirection?(v)
+            vs.reverse! if v.valid? && vs.valid? && vs.samedirection?(v)
           else
             plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
             ifrt = Geom.intersect_line_plane(line, plane_frt)
             if !ifrt.nil? && eb.contains?(ifrt)
               vs = ifrt.vector_to(center)
-              vs.reverse! if v.valid? && vs.samedirection?(v)
+              vs.reverse! if v.valid? && vs.valid? && vs.samedirection?(v)
             end
           end
         end
@@ -1740,10 +1752,10 @@ module Ladb::OpenCutList
     def _preview_handle(view)
       return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
-      drawing_def, drawing_def_segments, et, eb, ps, center, v, lps, lpe, mps, mpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :ps, :center, :v, :lps, :lpe, :mps, :mpe)
+      drawing_def, drawing_def_segments, et, eb, center, lps, lpe, mps, mpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :center, :lps, :lpe, :mps, :mpe)
       lv = lps.vector_to(lpe)
       mv = mps.vector_to(mpe)
-      color = _get_vector_color(v, Kuix::COLOR_DARK_GREY)
+      color = _get_vector_color(lv, Kuix::COLOR_DARK_GREY)
 
       # Preview
 
@@ -1756,9 +1768,9 @@ module Ladb::OpenCutList
       @tool.append_3d(k_segments, 1)
 
       count = 1
-      Array.new(count) { |i| mps.offset(mv, mv.length * (i + 1) / (count + 1)) }.each do |point|
+      (0...count).each do |i|
 
-        mt = Geom::Transformation.translation(center.vector_to(point))
+        mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * (i + 1) / (count + 1.0))))
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(drawing_def_segments)
@@ -1778,11 +1790,11 @@ module Ladb::OpenCutList
 
       # Preview line
 
-      @tool.append_3d(_create_floating_points(points: [ ps ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), 1)
-      @tool.append_3d(_create_floating_points(points: [ ps ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: Kuix::COLOR_DARK_GREY), 1)
+      @tool.append_3d(_create_floating_points(points: [ @picked_handle_start_point ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), 1)
+      @tool.append_3d(_create_floating_points(points: [ @picked_handle_start_point ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: Kuix::COLOR_DARK_GREY), 1)
 
       k_line = Kuix::LineMotif.new
-      k_line.start.copy!(ps)
+      k_line.start.copy!(@picked_handle_start_point)
       k_line.end.copy!(lps)
       k_line.line_width = 1.5
       k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
@@ -1959,29 +1971,31 @@ module Ladb::OpenCutList
 
       # Compute in 'Edit' space
 
+      ev = v.transform(eti)
+
       eb = Geom::BoundingBox.new
       eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
 
       center = eb.center
-      line = [ center, v ]
+      line = [ center, v.transform(eti) ]
 
       plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
       ibtm = Geom.intersect_line_plane(line, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
         vs = center.vector_to(ibtm)
-        vs.reverse! if vs.valid? && vs.samedirection?(v)
+        vs.reverse! if vs.valid? && vs.samedirection?(ev)
       else
         plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
         ilft = Geom.intersect_line_plane(line, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
           vs = center.vector_to(ilft)
-          vs.reverse! if vs.valid? && vs.samedirection?(v)
+          vs.reverse! if vs.valid? && vs.samedirection?(ev)
         else
           plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
           ifrt = Geom.intersect_line_plane(line, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
             vs = center.vector_to(ifrt)
-            vs.reverse! if vs.valid? && vs.samedirection?(v)
+            vs.reverse! vs.valid? && vs.samedirection?(ev)
           end
         end
       end
@@ -1996,16 +2010,14 @@ module Ladb::OpenCutList
       lps = ps.project_to_line(line)
       lpe = pe.project_to_line(line)
 
-      mps = vs.nil? ? lps : lps.offset(vs)
-      mpe = ve.nil? ? lpe : lpe.offset(ve)
+      mps = lps.offset(vs)
+      mpe = lpe.offset(ve)
 
       {
         drawing_def: drawing_def,
         drawing_def_segments: drawing_def_segments,
         et: et,
         eb: eb,   # Expressed in 'Edit' space
-        ps: ps,
-        pe: pe,
         center: center,
         v: v,
         vs: vs,
