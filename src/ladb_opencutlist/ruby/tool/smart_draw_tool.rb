@@ -271,10 +271,10 @@ module Ladb::OpenCutList
       case state
 
       when STATE_SHAPE
-        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_radius')
+        return PLUGIN.get_i18n_string('tool.default.vcb_radius')
 
       when STATE_PUSHPULL
-        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_distance')
+        return PLUGIN.get_i18n_string('tool.default.vcb_distance')
 
       end
 
@@ -1902,7 +1902,7 @@ module Ladb::OpenCutList
       case state
 
       when STATE_SHAPE
-        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_size')
+        return PLUGIN.get_i18n_string('tool.default.vcb_size')
 
       end
 
@@ -2021,7 +2021,7 @@ module Ladb::OpenCutList
       case state
 
       when STATE_SHAPE
-        return PLUGIN.get_i18n_string("tool.smart_draw.vcb_#{_fetch_option_measure_from_diameter ? 'diameter' : 'radius'}")
+        return PLUGIN.get_i18n_string("tool.default.vcb_#{_fetch_option_measure_from_diameter ? 'diameter' : 'radius'}")
 
       end
 
@@ -2346,7 +2346,7 @@ module Ladb::OpenCutList
       case state
 
       when STATE_SHAPE
-        return PLUGIN.get_i18n_string('tool.smart_draw.vcb_length')
+        return PLUGIN.get_i18n_string('tool.default.vcb_length')
 
       end
 

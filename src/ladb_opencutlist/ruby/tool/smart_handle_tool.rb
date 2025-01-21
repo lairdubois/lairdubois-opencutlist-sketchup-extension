@@ -277,7 +277,7 @@ module Ladb::OpenCutList
 
       case state
 
-      when STATE_HANDLE
+      when STATE_HANDLE_START, STATE_HANDLE
         return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_status") + '.'
 
       end
@@ -710,6 +710,18 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_state_vcb_label(state)
+
+      case state
+
+      when STATE_HANDLE
+        return PLUGIN.get_i18n_string('tool.default.vcb_distance')
+
+      end
+
+      super
+    end
+
     # -----
 
     def onToolKeyDown(tool, key, repeat, flags, view)
@@ -1126,6 +1138,18 @@ module Ladb::OpenCutList
       case state
       when STATE_SELECT, STATE_HANDLE
         return @tool.cursor_select_copy_grid
+      end
+
+      super
+    end
+
+    def get_state_vcb_label(state)
+
+      case state
+
+      when STATE_HANDLE
+        return PLUGIN.get_i18n_string('tool.default.vcb_size')
+
       end
 
       super
@@ -1626,6 +1650,18 @@ module Ladb::OpenCutList
         return @tool.cursor_pin_1
       when STATE_HANDLE
         return @tool.cursor_pin_2
+      end
+
+      super
+    end
+
+    def get_state_vcb_label(state)
+
+      case state
+
+      when STATE_HANDLE
+        return PLUGIN.get_i18n_string('tool.default.vcb_distance')
+
       end
 
       super
