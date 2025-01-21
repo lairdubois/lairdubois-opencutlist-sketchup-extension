@@ -1825,6 +1825,11 @@ tool:
     end_point: Endpunkt
     middle_point: Mittelpunkt
     third_point: Punkt auf Drittel
+    vcb_length: Länge
+    vcb_size: Bemaßung
+    vcb_radius: Radius
+    vcb_diameter: Durchmesser
+    vcb_distance: Distanz
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1841,11 +1846,6 @@ tool:
     action_2_status: Volumen auf der Basis einer polygonalen Form zeichnen
     action_2_state_1_status: Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
     action_x_state_2_status: Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
-    action_x_state_10_status: Klicken Sie, um das Teil zu verschieben, oder geben Sie einen Distanz ein
-    action_x_state_10_copy_status: Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie einen Distanz ein
-    action_x_state_20_status: Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie Länge, Breite ein
-    action_x_state_30_status: Klicken Sie, um den ersten Punkt des Verteilungsvektors festzulegen
-    action_x_state_31_status: Klicken Sie, um die Kopien der Teile zu verteilen, oder geben Sie eine Distanz ein
     action_option_group_offset: Verschiebung
     action_option_group_segments: Segmente
     action_option_group_options: Optionen
@@ -1867,11 +1867,6 @@ tool:
     action_pushpull_locked_status:  Auf die letzte Messung fixieren
     action_toggle_move_copy_status: Abwechselnd kopieren/verschieben
     action_change_move_anchor_status: Ankerpunkt ändern
-    vcb_length: Länge
-    vcb_size: Kotierungen
-    vcb_radius: Radius
-    vcb_diameter: Durchmesser
-    vcb_distance: Distanz
     error:
       no_direction: Bitte geben Sie eine Richtung mit der Maus an
       invalid_length: "Die Länge {{ value }} ist ungültig"
@@ -1896,11 +1891,17 @@ tool:
     action_3_state_1_status: Klicken Sie, um den ersten Punkt zu bestimmen
     action_3_state_2_status: Klicken Sie, um den zweiten Punkt zu bestimmen, oder geben Sie eine Länge ein
     action_option_group_measure_type: Maß
+    action_option_group_axes: Achsen
     action_option_group_options: Optionen
     action_option_measure_type_outside_status: Außenmessung
     action_option_measure_type_centered_status: Messung von Mitte zu Mitte
     action_option_measure_type_inside_status: Messung zwischen den Teilen
+    action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
+    action_option_axes_parent_status: Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält
+    action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
     action_option_options_mirror_status: Symmetrisch kopieren
+    error:
+      disabled_by_mirror: Option '$t(tool.smart_handle.action_option_options_mirror_status)' lässt dies nicht zu
   smart_paint:
     title: Malen
     default_material: Ohne Material

@@ -1823,27 +1823,27 @@ tool:
     end_point: 1395 - Extrémité
     middle_point: 1396 - Point du milieu
     third_point: 1397 - Point au tiers
+    vcb_length: 1398 - Longueur
+    vcb_size: 1399 - Cotations
+    vcb_radius: 1400 - Rayon
+    vcb_diameter: 1401 - Diamètre
+    vcb_distance: 1402 - Distance
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1400 - Dessiner
-    action_0: 1401 - Dessiner un Rectangle
-    action_0_status: 1402 - Dessiner un volume sur la base d'une forme rectangulaire
-    action_0_state_1_status: 1403 - Cliquez pour définir l'angle opposé ou entrez une longueur, largeur
-    action_1: 1404 - Dessiner un Cercle
-    action_1_status: 1405 - Dessiner un volume sur la base d'une forme circulaire
-    action_1_state_1_radius_status: 1406 - Cliquez pour définir le rayon ou entrez une distance
-    action_1_state_1_diameter_status: 1407 - Cliquez pour définir le diamètre ou entrez une distance
-    action_2: 1408 - Dessiner un Polygone
-    action_2_status: 1409 - Dessiner un volume sur la base d'une forme polygonale
-    action_2_state_1_status: 1410 - Cliquez pour définir un nouveau point ou entrez une distance
-    action_x_state_2_status: 1411 - Cliquez pour définir l'élévation ou entrez une distance
-    action_x_state_10_status: 1412 - Cliquez pour déplacer la pièce ou entrez une distance
-    action_x_state_10_copy_status: 1413 - Cliquez pour placer la copie de la pièce ou entrez une distance
-    action_x_state_20_status: 1414 - Cliquez pour placer les copies de la pièce ou entrez une longueur, largeur
-    action_x_state_30_status: 1415 - Cliquez pour définir le premier point du vecteur de répartition
-    action_x_state_31_status: 1416 - Cliquez pour répartir les copies ou entrez une distance
+    title: 1405 - Dessiner
+    action_0: 1406 - Dessiner un Rectangle
+    action_0_status: 1407 - Dessiner un volume sur la base d'une forme rectangulaire
+    action_0_state_1_status: 1408 - Cliquez pour définir l'angle opposé ou entrez une longueur, largeur
+    action_1: 1409 - Dessiner un Cercle
+    action_1_status: 1410 - Dessiner un volume sur la base d'une forme circulaire
+    action_1_state_1_radius_status: 1411 - Cliquez pour définir le rayon ou entrez une distance
+    action_1_state_1_diameter_status: 1412 - Cliquez pour définir le diamètre ou entrez une distance
+    action_2: 1413 - Dessiner un Polygone
+    action_2_status: 1414 - Dessiner un volume sur la base d'une forme polygonale
+    action_2_state_1_status: 1415 - Cliquez pour définir un nouveau point ou entrez une distance
+    action_x_state_2_status: 1416 - Cliquez pour définir l'élévation ou entrez une distance
     action_option_group_offset: 1417 - Décalage
     action_option_group_segments: 1418 - Segments
     action_option_group_options: 1419 - Options
@@ -1865,40 +1865,41 @@ tool:
     action_pushpull_locked_status: 1435 - Verrouiller sur la dernière mesure
     action_toggle_move_copy_status: 1436 - Alterner entre copier/déplacer
     action_change_move_anchor_status: 1437 - Changer le point d'ancrage
-    vcb_length: 1438 - Longueur
-    vcb_size: 1439 - Cotations
-    vcb_radius: 1440 - Rayon
-    vcb_diameter: 1441 - Diamètre
-    vcb_distance: 1442 - Distance
     error:
-      no_direction: 1443 - Veuillez indiquer une direction avec la souris
-      invalid_length: 1444 - La longueur {{ value }} est invalide
-      invalid_multiplicator: 1445 - Le multiplicateur {{ value }} est invalide
-      invalid_divider: 1446 - Le diviseur {{ value }} est invalide
-      invalid_offset: 1447 - Le décalage {{ value }} est invalide
-      invalid_segment_count: 1448 - Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999.
+      no_direction: 1438 - Veuillez indiquer une direction avec la souris
+      invalid_length: 1439 - La longueur {{ value }} est invalide
+      invalid_multiplicator: 1440 - Le multiplicateur {{ value }} est invalide
+      invalid_divider: 1441 - Le diviseur {{ value }} est invalide
+      invalid_offset: 1442 - Le décalage {{ value }} est invalide
+      invalid_segment_count: 1443 - Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999.
     success:
-      part_created: '1449 - Nouvelle pièce créée : {{ name }}'
+      part_created: '1444 - Nouvelle pièce créée : {{ name }}'
   smart_handle:
-    title: 1450 - Manipuler
-    action_0: 1451 - Sélectionner
-    action_0_status: 1452 - Cliquez sur une pièce pour la sélectionner
-    action_1: 1453 - Copier en ligne
-    action_1_status: 1454 - Cliquez sur une pièce pour la copier le long d'un axe
-    action_1_state_2_status: 1455 - Cliquez pour placer la copie de la pièce ou entrez une longueur
-    action_2: 1456 - Copier en grille
-    action_2_status: 1457 - Cliquez sur une pièce pour la copier le long d'une grille
-    action_2_state_2_status: 1458 - Cliquez pour placer les copies de la pièce ou entrez une longueur, largeur
-    action_3: 1459 - Répartir
-    action_3_status: 1460 - Cliquez sur une pièce pour la répartir le long d'un axe
-    action_3_state_1_status: 1461 - Cliquez pour déterminer le premier point
-    action_3_state_2_status: 1462 - Cliquez pour déterminer le second point ou entrez une longueur
-    action_option_group_measure_type: 1463 - Mesure
-    action_option_group_options: 1464 - Options
-    action_option_measure_type_outside_status: 1465 - Mesure prise à l'extérieure
-    action_option_measure_type_centered_status: 1466 - Mesure prise de centre à centre
-    action_option_measure_type_inside_status: 1467 - Mesure prise entre les pièces
-    action_option_options_mirror_status: 1468 - Copie en symétrie
+    title: 1445 - Manipuler
+    action_0: 1446 - Sélectionner
+    action_0_status: 1447 - Cliquez sur une pièce pour la sélectionner
+    action_1: 1448 - Copier en ligne
+    action_1_status: 1449 - Cliquez sur une pièce pour la copier le long d'un axe
+    action_1_state_2_status: 1450 - Cliquez pour placer la copie de la pièce ou entrez une longueur
+    action_2: 1451 - Copier en grille
+    action_2_status: 1452 - Cliquez sur une pièce pour la copier le long d'une grille
+    action_2_state_2_status: 1453 - Cliquez pour placer les copies de la pièce ou entrez une longueur, largeur
+    action_3: 1454 - Répartir
+    action_3_status: 1455 - Cliquez sur une pièce pour la répartir le long d'un axe
+    action_3_state_1_status: 1456 - Cliquez pour déterminer le premier point
+    action_3_state_2_status: 1457 - Cliquez pour déterminer le second point ou entrez une longueur
+    action_option_group_measure_type: 1458 - Mesure
+    action_option_group_axes: 1459 - Axes
+    action_option_group_options: 1460 - Options
+    action_option_measure_type_outside_status: 1461 - Mesurer à l'extérieure
+    action_option_measure_type_centered_status: 1462 - Mesurer de centre à centre
+    action_option_measure_type_inside_status: 1463 - Mesurer entre les pièces
+    action_option_axes_active_status: 1464 - Manipuler le long des axes actifs
+    action_option_axes_parent_status: 1465 - Manipuler le long des axes du groupe ou composant contenant la pièce
+    action_option_axes_entity_status: 1466 - Manipuler le long des axes de la pièce
+    action_option_options_mirror_status: 1467 - Copier en symétrie
+    error:
+      disabled_by_mirror: 1468 - L'option '$t(tool.smart_handle.action_option_options_mirror_status)' ne permet pas cette opération
   smart_paint:
     title: 1469 - Colorier
     default_material: 1470 - Sans matière

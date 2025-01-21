@@ -1825,6 +1825,11 @@ tool:
     end_point: Endpoint
     middle_point: Midpoint
     third_point: One-third Point
+    vcb_length: Length
+    vcb_size: Dimensions
+    vcb_radius: Radius
+    vcb_diameter: Diameter
+    vcb_distance: Distance
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1841,11 +1846,6 @@ tool:
     action_2_status: Draw a volume on a polygonal shape
     action_2_state_1_status: Click to define a new point or enter distance
     action_x_state_2_status: Click to set elevation or enter distance
-    action_x_state_10_status: Click to move the part or enter distance
-    action_x_state_10_copy_status: Click to place copy of the part or enter distance
-    action_x_state_20_status: Click to place copies of the part, or enter length, width
-    action_x_state_30_status: Click to define the first point of the scatter vector
-    action_x_state_31_status: Click to spread copies or enter distance
     action_option_group_offset: Offset
     action_option_group_segments: Segments
     action_option_group_options: Options
@@ -1867,11 +1867,6 @@ tool:
     action_pushpull_locked_status: Lock on last measurement
     action_toggle_move_copy_status: Toggle between copy/move
     action_change_move_anchor_status: Change the anchor point
-    vcb_length: Length
-    vcb_size: Size
-    vcb_radius: Radius
-    vcb_diameter: Diameter
-    vcb_distance: Distance
     error:
       no_direction: Please indicate a direction with your mouse
       invalid_length: "Length {{ value }} is invalid"
@@ -1896,11 +1891,17 @@ tool:
     action_3_state_1_status: Click to set the first point
     action_3_state_2_status: Click to set the second point or enter a length
     action_option_group_measure_type: Measure
+    action_option_group_axes: Axes
     action_option_group_options: Options
     action_option_measure_type_outside_status: External measurement
     action_option_measure_type_centered_status: Central measurement
     action_option_measure_type_inside_status: Measurement taken between parts
+    action_option_axes_active_status: Manipulate along active axes
+    action_option_axes_parent_status: Manipulate along the axes of the group or component containing the part
+    action_option_axes_entity_status: Manipulate along part axes
     action_option_options_mirror_status: Symmetrical copying
+    error:
+      disabled_by_mirror: Option '$t(tool.smart_handle.action_option_options_mirror_status)' does not allow this operation
   smart_paint:
     title: Paint
     default_material: Without material

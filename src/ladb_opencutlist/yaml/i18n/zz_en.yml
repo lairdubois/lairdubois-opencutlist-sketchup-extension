@@ -1823,27 +1823,27 @@ tool:
     end_point: 1395 - Endpoint
     middle_point: 1396 - Midpoint
     third_point: 1397 - One-third Point
+    vcb_length: 1398 - Length
+    vcb_size: 1399 - Dimensions
+    vcb_radius: 1400 - Radius
+    vcb_diameter: 1401 - Diameter
+    vcb_distance: 1402 - Distance
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1400 - Draw
-    action_0: 1401 - Draw Rectangle
-    action_0_status: 1402 - Draw a volume on a rectangular shape
-    action_0_state_1_status: 1403 - Click to define opposite angle or enter length, width
-    action_1: 1404 - Draw Circle
-    action_1_status: 1405 - Draw a volume on a circular shape
-    action_1_state_1_radius_status: 1406 - Click to set radius or enter distance
-    action_1_state_1_diameter_status: 1407 - Click to set diameter or enter distance
-    action_2: 1408 - Draw Polygon
-    action_2_status: 1409 - Draw a volume on a polygonal shape
-    action_2_state_1_status: 1410 - Click to define a new point or enter distance
-    action_x_state_2_status: 1411 - Click to set elevation or enter distance
-    action_x_state_10_status: 1412 - Click to move the part or enter distance
-    action_x_state_10_copy_status: 1413 - Click to place copy of the part or enter distance
-    action_x_state_20_status: 1414 - Click to place copies of the part, or enter length, width
-    action_x_state_30_status: 1415 - Click to define the first point of the scatter vector
-    action_x_state_31_status: 1416 - Click to spread copies or enter distance
+    title: 1405 - Draw
+    action_0: 1406 - Draw Rectangle
+    action_0_status: 1407 - Draw a volume on a rectangular shape
+    action_0_state_1_status: 1408 - Click to define opposite angle or enter length, width
+    action_1: 1409 - Draw Circle
+    action_1_status: 1410 - Draw a volume on a circular shape
+    action_1_state_1_radius_status: 1411 - Click to set radius or enter distance
+    action_1_state_1_diameter_status: 1412 - Click to set diameter or enter distance
+    action_2: 1413 - Draw Polygon
+    action_2_status: 1414 - Draw a volume on a polygonal shape
+    action_2_state_1_status: 1415 - Click to define a new point or enter distance
+    action_x_state_2_status: 1416 - Click to set elevation or enter distance
     action_option_group_offset: 1417 - Offset
     action_option_group_segments: 1418 - Segments
     action_option_group_options: 1419 - Options
@@ -1865,40 +1865,41 @@ tool:
     action_pushpull_locked_status: 1435 - Lock on last measurement
     action_toggle_move_copy_status: 1436 - Toggle between copy/move
     action_change_move_anchor_status: 1437 - Change the anchor point
-    vcb_length: 1438 - Length
-    vcb_size: 1439 - Size
-    vcb_radius: 1440 - Radius
-    vcb_diameter: 1441 - Diameter
-    vcb_distance: 1442 - Distance
     error:
-      no_direction: 1443 - Please indicate a direction with your mouse
-      invalid_length: 1444 - Length {{ value }} is invalid
-      invalid_multiplicator: 1445 - Factor {{ value }} is invalid
-      invalid_divider: 1446 - Divisor {{ value }} is invalid
-      invalid_offset: 1447 - Offset {{ value }} is invalid
-      invalid_segment_count: 1448 - The number of segments {{ value }} is invalid. It must be between 3 and 999.
+      no_direction: 1438 - Please indicate a direction with your mouse
+      invalid_length: 1439 - Length {{ value }} is invalid
+      invalid_multiplicator: 1440 - Factor {{ value }} is invalid
+      invalid_divider: 1441 - Divisor {{ value }} is invalid
+      invalid_offset: 1442 - Offset {{ value }} is invalid
+      invalid_segment_count: 1443 - The number of segments {{ value }} is invalid. It must be between 3 and 999.
     success:
-      part_created: '1449 - New part created: {{ name }}'
+      part_created: '1444 - New part created: {{ name }}'
   smart_handle:
-    title: 1450 - Handle
-    action_0: 1451 - Select
-    action_0_status: 1452 - Click on a part to select it
-    action_1: 1453 - Copy in line
-    action_1_status: 1454 - Click on a part to copy it along an axis
-    action_1_state_2_status: 1455 - Click to place the copy of the part or enter a length
-    action_2: 1456 - Copy in grid
-    action_2_status: 1457 - Click on a part to copy it along a grid
-    action_2_state_2_status: 1458 - Click to place copies of the part, or enter length, width
-    action_3: 1459 - Distribute
-    action_3_status: 1460 - Click on a part to distribute it along an axis
-    action_3_state_1_status: 1461 - Click to set the first point
-    action_3_state_2_status: 1462 - Click to set the second point or enter a length
-    action_option_group_measure_type: 1463 - Measure
-    action_option_group_options: 1464 - Options
-    action_option_measure_type_outside_status: 1465 - External measurement
-    action_option_measure_type_centered_status: 1466 - Central measurement
-    action_option_measure_type_inside_status: 1467 - Measurement taken between parts
-    action_option_options_mirror_status: 1468 - Symmetrical copying
+    title: 1445 - Handle
+    action_0: 1446 - Select
+    action_0_status: 1447 - Click on a part to select it
+    action_1: 1448 - Copy in line
+    action_1_status: 1449 - Click on a part to copy it along an axis
+    action_1_state_2_status: 1450 - Click to place the copy of the part or enter a length
+    action_2: 1451 - Copy in grid
+    action_2_status: 1452 - Click on a part to copy it along a grid
+    action_2_state_2_status: 1453 - Click to place copies of the part, or enter length, width
+    action_3: 1454 - Distribute
+    action_3_status: 1455 - Click on a part to distribute it along an axis
+    action_3_state_1_status: 1456 - Click to set the first point
+    action_3_state_2_status: 1457 - Click to set the second point or enter a length
+    action_option_group_measure_type: 1458 - Measure
+    action_option_group_axes: 1459 - Axes
+    action_option_group_options: 1460 - Options
+    action_option_measure_type_outside_status: 1461 - External measurement
+    action_option_measure_type_centered_status: 1462 - Central measurement
+    action_option_measure_type_inside_status: 1463 - Measurement taken between parts
+    action_option_axes_active_status: 1464 - Manipulate along active axes
+    action_option_axes_parent_status: 1465 - Manipulate along the axes of the group or component containing the part
+    action_option_axes_entity_status: 1466 - Manipulate along part axes
+    action_option_options_mirror_status: 1467 - Symmetrical copying
+    error:
+      disabled_by_mirror: 1468 - Option '$t(tool.smart_handle.action_option_options_mirror_status)' does not allow this operation
   smart_paint:
     title: 1469 - Paint
     default_material: 1470 - Without material
