@@ -1086,10 +1086,6 @@ module Ladb::OpenCutList
         drawing_def_segments: drawing_def_segments,
         et: et,
         eb: eb,   # Expressed in 'Edit' space
-        vs: vs,
-        ve: ve,
-        lps: lps,
-        lpe: lpe,
         mps: mps,
         mpe: mpe,
         dps: dps,
@@ -1222,7 +1218,6 @@ module Ladb::OpenCutList
           dp = dps.offset(dv)
 
           mt = Geom::Transformation.translation(mv)
-          mt *= Geom::Transformation.scaling(mps, *mv.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if _fetch_option_mirror
 
           k_box = Kuix::BoxMotif.new
           k_box.bounds.copy!(eb)
@@ -1235,6 +1230,8 @@ module Ladb::OpenCutList
           @tool.append_3d(_create_floating_points(points: [ dp ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), 1)
 
           next if mp == mps
+
+          mt *= Geom::Transformation.scaling(mps, x > 0 ? -1 : 1, y > 0 ? -1 : 1, 1) if _fetch_option_mirror
 
           k_segments = Kuix::Segments.new
           k_segments.add_segments(drawing_def_segments)
@@ -1418,7 +1415,7 @@ module Ladb::OpenCutList
             vt = Geom::Vector3d.new(ux * x, uy * y)
 
             mt = Geom::Transformation.translation(vt.transform(t).transform(_get_parent_transformation.inverse))
-            mt *= Geom::Transformation.scaling(mps, *vt.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if _fetch_option_mirror
+            mt *= Geom::Transformation.scaling(mps, x > 0 ? -1 : 1, y > 0 ? -1 : 1, 1) if _fetch_option_mirror
             mt *= src_instance.transformation
 
             dst_instance = entities.add_instance(@definition, mt)
@@ -1654,7 +1651,7 @@ module Ladb::OpenCutList
 
     def onPartSelected
 
-      instance = @active_part_entity_path.last
+      instance = _get_instance
 
       @instances << instance
       @definition = instance.definition

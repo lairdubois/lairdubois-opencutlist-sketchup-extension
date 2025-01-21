@@ -1727,6 +1727,7 @@ module Ladb::OpenCutList
 
     def _create_floating_points(
       points:,
+      transformation: IDENTITY,
       style: Kuix::POINT_STYLE_SQUARE,
       fill_color: nil,
       stroke_color: Kuix::COLOR_BLACK,
@@ -1743,6 +1744,7 @@ module Ladb::OpenCutList
       k_points.fill_color = fill_color
       k_points.stroke_color = stroke_color
       k_points.stroke_width = stroke_width
+      k_points.transformation = transformation
 
       k_points
     end
