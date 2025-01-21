@@ -441,10 +441,10 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_HANDLE
-        return _read_handle(text, view)
+        return _read_handle(tool, text, view)
 
       when STATE_HANDLE_COPIES
-        return _read_handle_copies(text, view)
+        return _read_handle_copies(tool, text, view)
 
       end
 
@@ -552,11 +552,17 @@ module Ladb::OpenCutList
     def _preview_handle(view)
     end
 
-    def _read_handle(text, view)
+    def _read_handle(tool, text, view)
       false
     end
 
-    def _read_handle_copies(text, view)
+    def _read_handle_copies(tool, text, view)
+
+      if _fetch_option_mirror
+        tool.notify_errors([ [ "tool.smart_handle.error.disabled_by_mirror" ] ])
+        return true
+      end
+
       false
     end
 
@@ -828,11 +834,15 @@ module Ladb::OpenCutList
 
       drawing_def, drawing_def_segments, et, eb, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :mps, :mpe, :dps, :dpe)
 
-      return unless (v = mps.vector_to(mpe)).valid?
-      color = _get_vector_color(v)
+      return unless (mv = mps.vector_to(mpe)).valid?
+      color = _get_vector_color(mv)
 
-      mt = Geom::Transformation.translation(v)
-      mt *= Geom::Transformation.scaling(mps, *v.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if _fetch_option_mirror
+      mt = Geom::Transformation.translation(mv)
+      if _fetch_option_mirror
+        mt = Geom::Transformation.scaling(mpe, *mv.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
+        mt *= Geom::Transformation.rotation(mpe, mv, Geometrix::ONE_PI)
+        mt *= Geom::Transformation.translation(mv)
+      end
 
       # Preview
 
@@ -853,7 +863,7 @@ module Ladb::OpenCutList
       k_line.end.copy!(dpe)
       k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_line.line_width = 1.5 unless @locked_axis.nil?
-      k_line.color = ColorUtils.color_translucent(_get_vector_color(v), 60)
+      k_line.color = ColorUtils.color_translucent(_get_vector_color(mv), 60)
       k_line.on_top = true
       @tool.append_3d(k_line, 1)
 
@@ -899,13 +909,13 @@ module Ladb::OpenCutList
 
     end
 
-    def _read_handle(text, view)
+    def _read_handle(tool, text, view)
       return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_measure_type)).nil?
 
       dps, dpe = move_def.values_at(:dps, :dpe)
       v = dps.vector_to(dpe)
 
-      distance = _read_user_text_length(text, v.length)
+      distance = _read_user_text_length(tool, text, v.length)
       return true if distance.nil?
 
       @picked_handle_end_point = dps.offset(v, distance)
@@ -917,7 +927,8 @@ module Ladb::OpenCutList
       true
     end
 
-    def _read_handle_copies(text, view)
+    def _read_handle_copies(tool, text, view)
+      return true if super
       return if @definition.nil?
 
       v, _ = _split_user_text(text)
@@ -930,7 +941,7 @@ module Ladb::OpenCutList
 
         if !value.nil? && number == 0
           UI.beep
-          @tool.notify_errors([ [ "tool.default.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
+          tool.notify_errors([ [ "tool.default.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
           return true
         end
 
@@ -953,7 +964,7 @@ module Ladb::OpenCutList
       _copy_line_entity
     end
 
-    def _copy_line_entity(operator_1 = '*', number_1 = 1)
+    def _copy_line_entity(operator = '*', number = 1)
       return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, _fetch_option_measure_type)).nil?
 
       mps, mpe = move_def.values_at(:mps, :mpe)
@@ -968,10 +979,10 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       model.start_operation('Copy Part', true)
 
-        if operator_1 == '/'
-          ux = mv.x / number_1
-          uy = mv.y / number_1
-          uz = mv.z / number_1
+        if operator == '/'
+          ux = mv.x / number
+          uy = mv.y / number
+          uz = mv.z / number
         else
           ux = mv.x
           uy = mv.y
@@ -990,14 +1001,16 @@ module Ladb::OpenCutList
         entities.erase_entities(old_instances) if old_instances.any?
         @instances = [ src_instance ]
 
-        (1..number_1).each do |i|
+        (1..number).each do |i|
 
-          next if i == 0  # Ignore src instance
+          mvu = Geom::Vector3d.new(ux * i, uy * i, uz * i)
 
-          vt = Geom::Vector3d.new(ux * i, uy * i, uz * i)
-
-          mt = Geom::Transformation.translation(vt)
-          mt *= Geom::Transformation.scaling(mps, *vt.normalize.to_a.map { |f| 1.0 * (f == 0 ? 1 : -1) }) if _fetch_option_mirror
+          mt = Geom::Transformation.translation(mvu)
+          if _fetch_option_mirror && i == number && number == 1
+            mt = Geom::Transformation.scaling(mpe, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
+            mt *= Geom::Transformation.rotation(mpe, mvu, Geometrix::ONE_PI)
+            mt *= Geom::Transformation.translation(mvu)
+          end
           mt *= src_instance.transformation
 
           dst_instance = entities.add_instance(@definition, mt)
@@ -1211,13 +1224,13 @@ module Ladb::OpenCutList
       (0..1).each do |x|
         (0..1).each do |y|
 
-          mv = Geom::Vector3d.new(mv_2d.x * x, mv_2d.y * y).transform(t)
-          dv = Geom::Vector3d.new(dv_2d.x * x, dv_2d.y * y).transform(t)
+          mvu = Geom::Vector3d.new(mv_2d.x * x, mv_2d.y * y).transform(t)
+          dvu = Geom::Vector3d.new(dv_2d.x * x, dv_2d.y * y).transform(t)
 
-          mp = mps.offset(mv)
-          dp = dps.offset(dv)
+          mp = mps.offset(mvu)
+          dp = dps.offset(dvu)
 
-          mt = Geom::Transformation.translation(mv)
+          mt = Geom::Transformation.translation(mvu)
 
           k_box = Kuix::BoxMotif.new
           k_box.bounds.copy!(eb)
@@ -1229,9 +1242,23 @@ module Ladb::OpenCutList
           @tool.append_3d(_create_floating_points(points: [ mp ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_MEDIUM_GREY), 1)
           @tool.append_3d(_create_floating_points(points: [ dp ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), 1)
 
-          next if mp == mps
+          next if x == 0 && y == 0
 
-          mt *= Geom::Transformation.scaling(mps, x > 0 ? -1 : 1, y > 0 ? -1 : 1, 1) if _fetch_option_mirror
+          if _fetch_option_mirror
+
+            mvux = Geom::Vector3d.new(mv_2d.x * x, 0).transform(t)
+            mvuy = Geom::Vector3d.new(0, dv_2d.y * y).transform(t)
+
+            if x == 1 && y == 1
+              mt *= Geom::Transformation.rotation(mp, mvux * mvuy, Geometrix::ONE_PI)
+              mt *= Geom::Transformation.translation(mvu + mvu)
+            elsif x == 1 || y == 1
+              mt = Geom::Transformation.scaling(mp, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
+              mt *= Geom::Transformation.rotation(mp, x == 1 ? mvux : mvuy, Geometrix::ONE_PI)
+              mt *= Geom::Transformation.translation(mvu)
+            end
+
+          end
 
           k_segments = Kuix::Segments.new
           k_segments.add_segments(drawing_def_segments)
@@ -1292,7 +1319,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _read_handle(text, view)
+    def _read_handle(tool, text, view)
       return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_measure_type)).nil?
 
       t = _get_transformation
@@ -1305,10 +1332,10 @@ module Ladb::OpenCutList
 
       if d1 || d2
 
-        distance_x = _read_user_text_length(d1, dv.x.abs)
+        distance_x = _read_user_text_length(tool, d1, dv.x.abs)
         return true if distance_x.nil?
 
-        distance_y = _read_user_text_length(d2, dv.y.abs)
+        distance_y = _read_user_text_length(tool, d2, dv.y.abs)
         return true if distance_y.nil?
 
         @picked_handle_end_point = dps.offset(Geom::Vector3d.new(dv.x < 0 ? -distance_x : distance_x, dv.y < 0 ? -distance_y : distance_y).transform(t))
@@ -1323,7 +1350,8 @@ module Ladb::OpenCutList
       false
     end
 
-    def _read_handle_copies(text, view)
+    def _read_handle_copies(tool, text, view)
+      return true if super
       return if @definition.nil?
 
       v1, v2 = _split_user_text(text)
@@ -1338,12 +1366,12 @@ module Ladb::OpenCutList
 
         if !value_1.nil? && number_1 == 0
           UI.beep
-          @tool.notify_errors([ [ "tool.default.error.invalid_#{operator_1 == '/' ? 'divider' : 'multiplicator'}", { :value => value_1 } ] ])
+          tool.notify_errors([ [ "tool.default.error.invalid_#{operator_1 == '/' ? 'divider' : 'multiplicator'}", { :value => value_1 } ] ])
           return true
         end
         if !value_2.nil? && number_2 == 0
           UI.beep
-          @tool.notify_errors([ [ "tool.default.error.invalid_#{operator_2 == '/' ? 'divider' : 'multiplicator'}", { :value => value_2 } ] ])
+          tool.notify_errors([ [ "tool.default.error.invalid_#{operator_2 == '/' ? 'divider' : 'multiplicator'}", { :value => value_2 } ] ])
           return true
         end
 
@@ -1358,7 +1386,6 @@ module Ladb::OpenCutList
         _copy_grid_entity(operator_1, number_1, operator_2, number_2)
         Sketchup.set_status_text('', SB_VCB_VALUE)
 
-
         return true
       end
 
@@ -1371,7 +1398,7 @@ module Ladb::OpenCutList
       _copy_grid_entity
     end
 
-    def _copy_grid_entity(operator_1 = '*', number_1 = 1, operator_2 = '*', number_2 = 1)
+    def _copy_grid_entity(operator_x = '*', number_x = 1, operator_y = '*', number_y = 1)
       return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point, _fetch_option_measure_type)).nil?
 
       mps, mpe = move_def.values_at(:mps, :mpe)
@@ -1379,20 +1406,22 @@ module Ladb::OpenCutList
       t = _get_transformation
       ti = t.inverse
 
-      mv = mps.transform(ti).vector_to(mpe.transform(ti))
+      mps_2d = mps.transform(ti)
+      mpe_2d = mpe.transform(ti)
+      mv_2d = mps_2d.vector_to(mpe_2d)
 
       model = Sketchup.active_model
       model.start_operation('Copy Part', true)
 
-        if operator_1 == '/'
-          ux = mv.x / number_1
+        if operator_x == '/'
+          ux = mv_2d.x / number_x
         else
-          ux = mv.x
+          ux = mv_2d.x
         end
-        if operator_2 == '/'
-          uy = mv.y / number_2
+        if operator_y == '/'
+          uy = mv_2d.y / number_y
         else
-          uy = mv.y
+          uy = mv_2d.y
         end
 
         src_instance = @active_part_entity_path[-1]
@@ -1407,15 +1436,33 @@ module Ladb::OpenCutList
         entities.erase_entities(old_instances) if old_instances.any?
         @instances = [ src_instance ]
 
-        (0..number_1).each do |x|
-          (0..number_2).each do |y|
+        pti = _get_parent_transformation.inverse
+
+        (0..number_x).each do |x|
+          (0..number_y).each do |y|
 
             next if x == 0 && y == 0  # Ignore src instance
 
-            vt = Geom::Vector3d.new(ux * x, uy * y)
+            mvu = Geom::Vector3d.new(ux * x, uy * y).transform(t)
 
-            mt = Geom::Transformation.translation(vt.transform(t).transform(_get_parent_transformation.inverse))
-            mt *= Geom::Transformation.scaling(mps, x > 0 ? -1 : 1, y > 0 ? -1 : 1, 1) if _fetch_option_mirror
+            mt = Geom::Transformation.translation(mvu.transform(pti))
+            if _fetch_option_mirror && number_x == 1 && number_y == 1
+
+              mp = mps.offset(mvu)
+
+              mvux = Geom::Vector3d.new(ux * x, 0).transform(t)
+              mvuy = Geom::Vector3d.new(0, uy * y).transform(t)
+
+              if x == number_x && y == number_y
+                mt *= Geom::Transformation.rotation(mp.transform(pti), (mvux * mvuy).transform(pti), Geometrix::ONE_PI)
+                mt *= Geom::Transformation.translation((mvu + mvu).transform(pti))
+              elsif x == number_x || y == number_y
+                mt = Geom::Transformation.scaling(mp.transform(pti), *mvu.transform(pti).normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
+                mt *= Geom::Transformation.rotation(mp.transform(pti), x == number_x ? mvux.transform(pti) : mvuy.transform(pti), Geometrix::ONE_PI)
+                mt *= Geom::Transformation.translation(mvu.transform(pti))
+              end
+
+            end
             mt *= src_instance.transformation
 
             dst_instance = entities.add_instance(@definition, mt)
@@ -1847,13 +1894,13 @@ module Ladb::OpenCutList
 
     end
 
-    def _read_handle(text, view)
+    def _read_handle(tool, text, view)
 
       ps = @picked_handle_start_point
       pe = @mouse_snap_point
       v = ps.vector_to(pe)
 
-      distance = _read_user_text_length(text, v.length)
+      distance = _read_user_text_length(tool, text, v.length)
       return true if distance.nil?
 
       @picked_handle_end_point = ps.offset(v, distance)
@@ -1865,7 +1912,7 @@ module Ladb::OpenCutList
       true
     end
 
-    def _read_handle_copies(text, view)
+    def _read_handle_copies(tool, text, view)
 
       if text && (match = text.match(/^([x*\/])(\d+)$/))
 
@@ -1875,12 +1922,12 @@ module Ladb::OpenCutList
 
         if operator == '/' && number < 2
           UI.beep
-          @tool.notify_errors([ [ "tool.smart_draw.error.invalid_divider", { :value => value } ] ])
+          tool.notify_errors([ [ "tool.smart_draw.error.invalid_divider", { :value => value } ] ])
           return true
         end
         if number == 0
           UI.beep
-          @tool.notify_errors([ [ "tool.smart_draw.error.invalid_multiplicator", { :value => value } ] ])
+          tool.notify_errors([ [ "tool.smart_draw.error.invalid_multiplicator", { :value => value } ] ])
           return true
         end
 
@@ -1889,8 +1936,10 @@ module Ladb::OpenCutList
         _distribute_entity(count)
         Sketchup.set_status_text('', SB_VCB_VALUE)
 
+        return true
       end
 
+      false
     end
 
     # -----
@@ -1899,7 +1948,7 @@ module Ladb::OpenCutList
       _distribute_entity
     end
 
-    def _distribute_entity(count = 1)
+    def _distribute_entity(number = 1)
       return if (move_def = _get_move_def(@picked_handle_start_point, @picked_handle_end_point)).nil?
 
       center, mps, mpe = move_def.values_at(:center, :mps, :mpe)
@@ -1927,9 +1976,9 @@ module Ladb::OpenCutList
         entities.erase_entities(old_instances) if old_instances.any?
         @instances = [ src_instance ]
 
-        (0...count).each do |i|
+        (0...number).each do |i|
 
-          mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * (i + 1) / (count + 1.0))))
+          mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * (i + 1) / (number + 1.0))))
           mt *= @src_transformation
 
           if i == 0
@@ -1992,7 +2041,7 @@ module Ladb::OpenCutList
           ifrt = Geom.intersect_line_plane(line, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
             vs = center.vector_to(ifrt)
-            vs.reverse! vs.valid? && vs.samedirection?(ev)
+            vs.reverse! if vs.valid? && vs.samedirection?(ev)
           end
         end
       end

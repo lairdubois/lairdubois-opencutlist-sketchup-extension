@@ -1898,13 +1898,15 @@ tool:
     action_option_group_measure_type: Mesure
     action_option_group_axes: Axes
     action_option_group_options: Options
-    action_option_measure_type_outside_status: Mesure prise à l'extérieure
-    action_option_measure_type_centered_status: Mesure prise de centre à centre
-    action_option_measure_type_inside_status: Mesure prise entre les pièces
-    action_option_axes_active_status: Utilisation des axes actifs
-    action_option_axes_parent_status: Utilisation des axes du groupe ou composant contenant la pièce
-    action_option_axes_entity_status: Utilisation des axes de la pièce
-    action_option_options_mirror_status: Copie en symétrie
+    action_option_measure_type_outside_status: Mesurer à l'extérieure
+    action_option_measure_type_centered_status: Mesurer de centre à centre
+    action_option_measure_type_inside_status: Mesurer entre les pièces
+    action_option_axes_active_status: Manipuler le long des axes actifs
+    action_option_axes_parent_status: Manipuler le long des axes du groupe ou composant contenant la pièce
+    action_option_axes_entity_status: Manipuler le long des axes de la pièce
+    action_option_options_mirror_status: Copier en symétrie
+    error:
+      disabled_by_mirror: L'option '$t(tool.smart_handle.action_option_options_mirror_status)' ne permet pas cette opération
   smart_paint:
     title: Colorier
     default_material: Sans matière

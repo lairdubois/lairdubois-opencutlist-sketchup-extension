@@ -1861,13 +1861,13 @@ module Ladb::OpenCutList
           @tool.append_3d(k_mesh, layer)
 
           # Box helper
-          k_box = Kuix::BoxMotif.new
-          k_box.bounds.copy!(bounds)
-          k_box.color = Kuix::COLOR_BLACK
-          k_box.line_width = 1
-          k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          k_box.transformation = t
-          @tool.append_3d(k_box, layer)
+          # k_box = Kuix::BoxMotif.new
+          # k_box.bounds.copy!(bounds)
+          # k_box.color = Kuix::COLOR_BLACK
+          # k_box.line_width = 1
+          # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          # k_box.transformation = t
+          # @tool.append_3d(k_box, layer)
 
         end
 

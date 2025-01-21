@@ -9,7 +9,7 @@ module Ladb::OpenCutList
     #  -15   → 'base_length' - 15mm
     #  *3    → 'base_length' * 3
     #  /2    → 'base_length' / 2
-    def _read_user_text_length(text, base_length = 0)
+    def _read_user_text_length(tool, text, base_length = 0)
       length = base_length
 
       if text.is_a?(String)
@@ -26,7 +26,7 @@ module Ladb::OpenCutList
             end
           else
             UI.beep
-            @tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
+            tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
             return nil
           end
         elsif (match = /^([+-])(.+)$/.match(text))
@@ -42,7 +42,7 @@ module Ladb::OpenCutList
             end
           rescue ArgumentError
             UI.beep
-            @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => value } ] ])
+            tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => value } ] ])
             return nil
           end
         else
@@ -55,7 +55,7 @@ module Ladb::OpenCutList
             end
           rescue ArgumentError
             UI.beep
-            @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => text } ] ])
+            tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => text } ] ])
             return nil
           end
         end
@@ -72,15 +72,15 @@ module Ladb::OpenCutList
     #  50=,-12  → [ 50, 50, -12 ]
     #  50==     → [ 50, 50, 50 ]
     def _split_user_text(text)
-  values = text.split(Sketchup::RegionalSettings.list_separator)
-  values.map { |value|
-    if (match = value.match(/^([^=]+)(=+)$/))
-      v, equals = match[1, 2]
-      Array.new(equals.length + 1) { v }
-    else
-      value
-    end
-  }.flatten(1)
+      values = text.split(Sketchup::RegionalSettings.list_separator)
+      values.map { |value|
+        if (match = value.match(/^([^=]+)(=+)$/))
+          v, equals = match[1, 2]
+          Array.new(equals.length + 1) { v }
+        else
+          value
+        end
+      }.flatten(1)
     end
 
   end
