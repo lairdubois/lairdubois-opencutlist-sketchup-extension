@@ -1823,27 +1823,27 @@ tool:
     end_point: 1395 - Endpunkt
     middle_point: 1396 - Mittelpunkt
     third_point: 1397 - Punkt auf Drittel
+    vcb_length: 1398 - Länge
+    vcb_size: 1399 - Bemaßung
+    vcb_radius: 1400 - Radius
+    vcb_diameter: 1401 - Durchmesser
+    vcb_distance: 1402 - Distanz
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1400 - Zeichnen
-    action_0: 1401 - Rechteck zeichnen
-    action_0_status: 1402 - Volumen auf der Basis einer Rechteckform zeichnen
-    action_0_state_1_status: 1403 - Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein
-    action_1: 1404 - Kreis zeichnen
-    action_1_status: 1405 - Volumen auf der Basis einer Kreisform zeichnen
-    action_1_state_1_radius_status: 1406 - Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
-    action_1_state_1_diameter_status: 1407 - Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein
-    action_2: 1408 - Polygon zeichnen
-    action_2_status: 1409 - Volumen auf der Basis einer polygonalen Form zeichnen
-    action_2_state_1_status: 1410 - Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
-    action_x_state_2_status: 1411 - Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
-    action_x_state_10_status: 1412 - Klicken Sie, um das Teil zu verschieben, oder geben Sie einen Distanz ein
-    action_x_state_10_copy_status: 1413 - Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie einen Distanz ein
-    action_x_state_20_status: 1414 - Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie Länge, Breite ein
-    action_x_state_30_status: 1415 - Klicken Sie, um den ersten Punkt des Verteilungsvektors festzulegen
-    action_x_state_31_status: 1416 - Klicken Sie, um die Kopien der Teile zu verteilen, oder geben Sie eine Distanz ein
+    title: 1405 - Zeichnen
+    action_0: 1406 - Rechteck zeichnen
+    action_0_status: 1407 - Volumen auf der Basis einer Rechteckform zeichnen
+    action_0_state_1_status: 1408 - Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein
+    action_1: 1409 - Kreis zeichnen
+    action_1_status: 1410 - Volumen auf der Basis einer Kreisform zeichnen
+    action_1_state_1_radius_status: 1411 - Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
+    action_1_state_1_diameter_status: 1412 - Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein
+    action_2: 1413 - Polygon zeichnen
+    action_2_status: 1414 - Volumen auf der Basis einer polygonalen Form zeichnen
+    action_2_state_1_status: 1415 - Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
+    action_x_state_2_status: 1416 - Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
     action_option_group_offset: 1417 - Verschiebung
     action_option_group_segments: 1418 - Segmente
     action_option_group_options: 1419 - Optionen
@@ -1865,40 +1865,41 @@ tool:
     action_pushpull_locked_status: 1435 - Auf die letzte Messung fixieren
     action_toggle_move_copy_status: 1436 - Abwechselnd kopieren/verschieben
     action_change_move_anchor_status: 1437 - Ankerpunkt ändern
-    vcb_length: 1438 - Länge
-    vcb_size: 1439 - Kotierungen
-    vcb_radius: 1440 - Radius
-    vcb_diameter: 1441 - Durchmesser
-    vcb_distance: 1442 - Distanz
     error:
-      no_direction: 1443 - Bitte geben Sie eine Richtung mit der Maus an
-      invalid_length: 1444 - Die Länge {{ value }} ist ungültig
-      invalid_multiplicator: 1445 - Der Faktor {{ value }} ist ungültig
-      invalid_divider: 1446 - Der Teiler {{ value }} ist ungültig
-      invalid_offset: 1447 - Die Verschiebung {{ value }} ist ungültig
-      invalid_segment_count: 1448 - Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein.
+      no_direction: 1438 - Bitte geben Sie eine Richtung mit der Maus an
+      invalid_length: 1439 - Die Länge {{ value }} ist ungültig
+      invalid_multiplicator: 1440 - Der Faktor {{ value }} ist ungültig
+      invalid_divider: 1441 - Der Teiler {{ value }} ist ungültig
+      invalid_offset: 1442 - Die Verschiebung {{ value }} ist ungültig
+      invalid_segment_count: 1443 - Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein.
     success:
-      part_created: '1449 - Neu erstelltes Teil: {{ name }}'
+      part_created: '1444 - Neu erstelltes Teil: {{ name }}'
   smart_handle:
-    title: 1450 - Handhaben
-    action_0: 1451 - Auswählen
-    action_0_status: 1452 - Klicken Sie auf ein Teil, um es auszuwählen
-    action_1: 1453 - In Linie kopieren
-    action_1_status: 1454 - Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren
-    action_1_state_2_status: 1455 - Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Länge ein
-    action_2: 1456 - In Raster kopieren
-    action_2_status: 1457 - Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren.
-    action_2_state_2_status: 1458 - Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie eine Länge, Breite ein
-    action_3: 1459 - Verteilen
-    action_3_status: 1460 - Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen.
-    action_3_state_1_status: 1461 - Klicken Sie, um den ersten Punkt zu bestimmen
-    action_3_state_2_status: 1462 - Klicken Sie, um den zweiten Punkt zu bestimmen, oder geben Sie eine Länge ein
-    action_option_group_measure_type: 1463 - Maß
-    action_option_group_options: 1464 - Optionen
-    action_option_measure_type_outside_status: 1465 - Außenmessung
-    action_option_measure_type_centered_status: 1466 - Messung von Mitte zu Mitte
-    action_option_measure_type_inside_status: 1467 - Messung zwischen den Teilen
-    action_option_options_mirror_status: 1468 - Symmetrisch kopieren
+    title: 1445 - Handhaben
+    action_0: 1446 - Auswählen
+    action_0_status: 1447 - Klicken Sie auf ein Teil, um es auszuwählen
+    action_1: 1448 - In Linie kopieren
+    action_1_status: 1449 - Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren
+    action_1_state_2_status: 1450 - Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Länge ein
+    action_2: 1451 - In Raster kopieren
+    action_2_status: 1452 - Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren.
+    action_2_state_2_status: 1453 - Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie eine Länge, Breite ein
+    action_3: 1454 - Verteilen
+    action_3_status: 1455 - Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen.
+    action_3_state_1_status: 1456 - Klicken Sie, um den ersten Punkt zu bestimmen
+    action_3_state_2_status: 1457 - Klicken Sie, um den zweiten Punkt zu bestimmen, oder geben Sie eine Länge ein
+    action_option_group_measure_type: 1458 - Maß
+    action_option_group_axes: 1459 - Achsen
+    action_option_group_options: 1460 - Optionen
+    action_option_measure_type_outside_status: 1461 - Außenmessung
+    action_option_measure_type_centered_status: 1462 - Messung von Mitte zu Mitte
+    action_option_measure_type_inside_status: 1463 - Messung zwischen den Teilen
+    action_option_axes_active_status: 1464 - Manipulieren entlang der aktiven Achsen
+    action_option_axes_parent_status: 1465 - Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält
+    action_option_axes_entity_status: 1466 - Manipulieren entlang der Achsen des Teils
+    action_option_options_mirror_status: 1467 - Symmetrisch kopieren
+    error:
+      disabled_by_mirror: 1468 - Option '$t(tool.smart_handle.action_option_options_mirror_status)' lässt dies nicht zu
   smart_paint:
     title: 1469 - Malen
     default_material: 1470 - Ohne Material
