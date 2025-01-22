@@ -162,10 +162,6 @@ module Ladb::OpenCutList
     # -- Events --
 
     def onActivate(view)
-
-      # Clear current selection
-      # Sketchup.active_model.selection.clear if Sketchup.active_model
-
       super
     end
 
@@ -329,44 +325,13 @@ module Ladb::OpenCutList
 
         _pick_part(@picker, view)
 
-        if @active_part_entity_path.is_a?(Array)
-
-          # Show part infos
-          @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
-
-          # Show edit axes
-          k_axes = Kuix::AxesHelper.new
-          k_axes.transformation = _get_edit_transformation
-          @tool.append_3d(k_axes)
-
-
-          # if @active_part_entity_path.length > 1
-          #
-          #   # parent = @active_part_entity_path[-2]
-          #   parent_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-2], IDENTITY)
-          #
-          #   # k_box = Kuix::BoxMotif.new
-          #   # k_box.bounds.copy!(parent.bounds)
-          #   # k_box.line_width = 1
-          #   # k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-          #   # k_box.transformation = parent_transformation
-          #   # @tool.append_3d(k_box)
-          #
-          # end
-
-        else
-
-          @tool.remove_tooltip
-
-        end
-
       when STATE_HANDLE_START
 
         @mouse_snap_point = nil
         @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
-        @tool.remove_3d(1)
+        @tool.remove_3d([ 1, 2 ])
 
         _snap_handle_start(flags, x, y, view)
 
@@ -376,7 +341,7 @@ module Ladb::OpenCutList
         @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
-        @tool.remove_3d(1)
+        @tool.remove_3d([ 1, 2 ])
 
         _snap_handle(flags, x, y, view)
         _preview_handle(view)
@@ -390,7 +355,7 @@ module Ladb::OpenCutList
 
     def onToolMouseLeave(tool, view)
       @tool.remove_all_2d
-      @tool.remove_3d(1)
+      @tool.remove_3d([ 1, 2 ])
       @mouse_ip.clear
       view.tooltip = ''
       super
@@ -537,11 +502,100 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _locked_x?
+      false
+    end
+
+    def _locked_y?
+      false
+    end
+
+    def _locked_z?
+      false
+    end
+
+    # -----
+
+    def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
+      super
+      if part
+
+        # Show part infos
+        @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
+
+        _preview_edit_axes(true, 2)
+
+      else
+
+        @tool.remove_tooltip
+        @tool.remove_3d(2)
+
+      end
+    end
+
+    def _preview_edit_axes(with_box = true, layer = 2)
+      if (drawing_def = _get_drawing_def(false)).is_a?(DrawingDef)
+
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(drawing_def)
+        center = eb.center
+
+        px_offset = Sketchup.active_model.active_view.pixels_to_model(50, center)
+
+        w = eb.width * 0.5 + px_offset
+        h = eb.height * 0.5 + px_offset
+        d = eb.depth * 0.5 + px_offset
+
+        k_line = Kuix::LineMotif.new
+        k_line.start.copy!(center.offset(X_AXIS.reverse, w))
+        k_line.end.copy!(center.offset(X_AXIS, w))
+        k_line.line_width = _locked_x? ? 3 : 1.5
+        k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
+        k_line.color = Kuix::COLOR_X
+        k_line.transformation = et
+        @tool.append_3d(k_line, layer)
+
+        k_line = Kuix::LineMotif.new
+        k_line.start.copy!(center.offset(Y_AXIS, h))
+        k_line.end.copy!(center.offset(Y_AXIS.reverse, h))
+        k_line.line_width = _locked_y? ? 3 : 1.5
+        k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
+        k_line.color = Kuix::COLOR_Y
+        k_line.transformation = et
+        @tool.append_3d(k_line, layer)
+
+        k_line = Kuix::LineMotif.new
+        k_line.start.copy!(center.offset(Z_AXIS, d))
+        k_line.end.copy!(center.offset(Z_AXIS.reverse, d))
+        k_line.line_width = _locked_z? ? 3 : 1.5
+        k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
+        k_line.color = Kuix::COLOR_Z
+        k_line.transformation = et
+        @tool.append_3d(k_line, layer)
+
+        if with_box
+
+          k_box = Kuix::BoxMotif.new
+          k_box.bounds.copy!(eb)
+          k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          k_box.color = Kuix::COLOR_BLACK
+          k_box.transformation = et
+          @tool.append_3d(k_box, layer)
+
+        end
+
+      end
+    end
+
+    # -----
+
     def _snap_handle_start(flags, x, y, view)
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
     end
+
+    # -----
 
     def _snap_handle(flags, x, y, view)
 
@@ -550,6 +604,7 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
+      _preview_edit_axes(false)
     end
 
     def _read_handle(tool, text, view)
@@ -625,9 +680,9 @@ module Ladb::OpenCutList
       nil
     end
 
-    def _get_drawing_def
+    def _get_drawing_def(use_cache = true)
       return nil if @active_part_entity_path.nil?
-      return @drawing_def unless @drawing_def.nil?
+      return @drawing_def unless @drawing_def.nil? || !use_cache
 
       model = Sketchup.active_model
       return nil if model.nil?
@@ -649,6 +704,20 @@ module Ladb::OpenCutList
         segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
       end
       segments
+    end
+
+    def _get_drawing_def_edit_bounds(drawing_def)
+      edit_bounds = Geom::BoundingBox.new
+      if drawing_def.is_a?(DrawingDef) &&
+        (drawing_def_segments = _get_drawing_def_segments(drawing_def)).is_a?(Array)
+
+        et = _get_edit_transformation
+        eti = et.inverse
+
+        edit_bounds.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
+
+      end
+      edit_bounds
     end
 
     # -- UTILS --
@@ -680,11 +749,19 @@ module Ladb::OpenCutList
     def onPartSelected
 
       Sketchup.active_model.selection.clear
-      Sketchup.active_model.selection.add(@active_part_entity_path.last)
+      Sketchup.active_model.selection.add(_get_instance)
 
       set_state(STATE_SELECT)
       _refresh
 
+    end
+
+    # -----
+
+    protected
+
+    def _preview_edit_axes(with_box = nil, layer = nil)
+      # Does nothing
     end
 
   end
@@ -762,6 +839,25 @@ module Ladb::OpenCutList
     # -----
 
     protected
+
+    # -----
+
+    def _locked_x?
+      return false if @locked_axis.nil?
+      _get_active_x_axis.parallel?(@locked_axis)
+    end
+
+    def _locked_y?
+      return false if @locked_axis.nil?
+      _get_active_y_axis.parallel?(@locked_axis)
+    end
+
+    def _locked_z?
+      return false if @locked_axis.nil?
+      _get_active_z_axis.parallel?(@locked_axis)
+    end
+
+    # -----
 
     def _snap_handle(flags, x, y, view)
 
@@ -842,6 +938,7 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
+      super
       return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_measure_type)).nil?
 
       drawing_def, drawing_def_segments, et, eb, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :mps, :mpe, :dps, :dpe)
@@ -1194,6 +1291,27 @@ module Ladb::OpenCutList
 
     # -----
 
+    protected
+
+    # -----
+
+    def _locked_x?
+      return false if @locked_normal.nil?
+      _get_active_x_axis.parallel?(@locked_normal)
+    end
+
+    def _locked_y?
+      return false if @locked_normal.nil?
+      _get_active_y_axis.parallel?(@locked_normal)
+    end
+
+    def _locked_z?
+      return false if @locked_normal.nil?
+      _get_active_z_axis.parallel?(@locked_normal)
+    end
+
+    # -----
+
     def _snap_handle(flags, x, y, view)
 
       if @locked_normal
@@ -1223,6 +1341,7 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
+      super
       return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_measure_type)).nil?
 
       drawing_def, drawing_def_segments, et, eb, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :mps, :mpe, :dps, :dpe)
@@ -1830,6 +1949,7 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
+      super
       return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
       drawing_def, drawing_def_segments, et, eb, center, lps, lpe, mps, mpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :center, :lps, :lpe, :mps, :mpe)

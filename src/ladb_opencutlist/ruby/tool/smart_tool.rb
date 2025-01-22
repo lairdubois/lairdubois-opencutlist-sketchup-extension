@@ -527,9 +527,13 @@ module Ladb::OpenCutList
       k_layer.append(entity)
     end
 
-    def remove_3d(layer = 0)
-      k_layer = @layers_3d[layer]
-      k_layer.remove_all unless k_layer.nil?
+    def remove_3d(layers = 0)
+      layers = [ layers ] if layers.is_a?(Integer)
+      return unless layers.is_a?(Array)
+      layers.each do |layer|
+        k_layer = @layers_3d[layer]
+        k_layer.remove_all unless k_layer.nil?
+      end
     end
 
     def remove_all_3d
@@ -1859,15 +1863,6 @@ module Ladb::OpenCutList
           k_mesh.background_color = highlighted ? COLOR_PART_HIGHLIGHTED : COLOR_PART
           k_mesh.transformation = t
           @tool.append_3d(k_mesh, layer)
-
-          # Box helper
-          # k_box = Kuix::BoxMotif.new
-          # k_box.bounds.copy!(bounds)
-          # k_box.color = Kuix::COLOR_BLACK
-          # k_box.line_width = 1
-          # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          # k_box.transformation = t
-          # @tool.append_3d(k_box, layer)
 
         end
 
