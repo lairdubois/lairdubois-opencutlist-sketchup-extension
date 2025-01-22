@@ -29,32 +29,23 @@
 
             // Fetch UI elements
             const $widgetPreset = $('.ladb-widget-preset', that.$element);
-            // const $selectPushPull = $('#ladb_select_pushpull', that.$element);
-            // const $selectMove = $('#ladb_select_move', that.$element);
             const $inputShapeOffset = $('#ladb_input_shape_offset', that.$element);
             const $selectConstrution = $('#ladb_select_construction', that.$element);
             const $selectRectangleCentered = $('#ladb_select_rectangle_centered', that.$element);
             const $selectSolidCentered = $('#ladb_select_solid_centered', that.$element);
-            // const $selectMoveArray = $('#ladb_select_move_array', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
-                // options.pushpull = $selectPushPull.val() === '1';
-                // options.move = $selectMove.val() === '1';
                 options.shape_offset = $inputShapeOffset.val();
                 options.construction = $selectConstrution.val() === '1';
                 options.rectangle_centered = $selectRectangleCentered.val() === '1';
                 options.solid_centered = $selectSolidCentered.val() === '1';
-                // options.move_array = $selectMoveArray.val() === '1';
             };
             const fnFillInputs = function (options) {
-                // $selectPushPull.selectpicker('val', options.pushpull ? '1' : '0');
-                // $selectMove.selectpicker('val', options.move ? '1' : '0');
                 $inputShapeOffset.val(options.shape_offset);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
                 $selectRectangleCentered.selectpicker('val', options.rectangle_centered ? '1' : '0');
                 $selectSolidCentered.selectpicker('val', options.solid_centered ? '1' : '0');
-                // $selectMoveArray.selectpicker('val', options.move_array ? '1' : '0');
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -64,13 +55,10 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            // $selectPushPull.selectpicker(SELECT_PICKER_OPTIONS);
-            // $selectMove.selectpicker(SELECT_PICKER_OPTIONS);
             $inputShapeOffset.ladbTextinputDimension();
             $selectConstrution.selectpicker(SELECT_PICKER_OPTIONS);
             $selectRectangleCentered.selectpicker(SELECT_PICKER_OPTIONS);
             $selectSolidCentered.selectpicker(SELECT_PICKER_OPTIONS);
-            // $selectMoveArray.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(options);
 

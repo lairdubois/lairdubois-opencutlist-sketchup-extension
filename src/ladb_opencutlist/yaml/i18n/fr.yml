@@ -1882,14 +1882,14 @@ tool:
     action_0_status: Cliquez sur une pièce pour la sélectionner
     action_1: Copier en ligne
     action_1_status: Cliquez sur une pièce pour la copier le long d'un axe
-    action_1_state_2_status: Cliquez pour placer la copie de la pièce ou entrez une longueur
+    action_1_state_2_status: Cliquez pour placer la copie de la pièce ou entrez une distance
     action_2: Copier en grille
     action_2_status: Cliquez sur une pièce pour la copier le long d'une grille
-    action_2_state_2_status: Cliquez pour placer les copies de la pièce ou entrez une longueur, largeur
+    action_2_state_2_status: Cliquez pour placer les copies de la pièce ou entrez deux distances
     action_3: Répartir
     action_3_status: Cliquez sur une pièce pour la répartir le long d'un axe
-    action_3_state_1_status: Cliquez pour déterminer le premier point
-    action_3_state_2_status: Cliquez pour déterminer le second point ou entrez une longueur
+    action_3_state_1_status: Cliquez pour déterminer le premier point de mesure
+    action_3_state_2_status: Cliquez pour déterminer le second point de mesure ou entrez une distance
     action_option_group_measure_type: Mesure
     action_option_group_axes: Axes
     action_option_group_options: Options

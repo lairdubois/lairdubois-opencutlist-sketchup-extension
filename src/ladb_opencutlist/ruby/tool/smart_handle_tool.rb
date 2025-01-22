@@ -549,41 +549,25 @@ module Ladb::OpenCutList
         h = eb.height * 0.5 + px_offset
         d = eb.depth * 0.5 + px_offset
 
-        k_line = Kuix::LineMotif.new
-        k_line.start.copy!(center.offset(X_AXIS.reverse, w))
-        k_line.end.copy!(center.offset(X_AXIS, w))
-        k_line.start_arrow = true
-        k_line.end_arrow = true
-        k_line.arrow_size = unit * 1.5
-        k_line.line_width = _locked_x? ? 3 : 1.5
-        k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
-        k_line.color = Kuix::COLOR_X
-        k_line.transformation = et
-        @tool.append_3d(k_line, layer)
+        fn = lambda do |axis, dim, locked, color|
 
-        k_line = Kuix::LineMotif.new
-        k_line.start.copy!(center.offset(Y_AXIS, h))
-        k_line.end.copy!(center.offset(Y_AXIS.reverse, h))
-        k_line.start_arrow = true
-        k_line.end_arrow = true
-        k_line.arrow_size = unit * 1.5
-        k_line.line_width = _locked_y? ? 3 : 1.5
-        k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
-        k_line.color = Kuix::COLOR_Y
-        k_line.transformation = et
-        @tool.append_3d(k_line, layer)
+          k_line = Kuix::LineMotif.new
+          k_line.start.copy!(center.offset(axis.reverse, dim))
+          k_line.end.copy!(center.offset(axis, dim))
+          k_line.start_arrow = true
+          k_line.end_arrow = true
+          k_line.arrow_size = unit * 1.5
+          k_line.line_width = locked ? 3 : 1.5
+          k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
+          k_line.color = color
+          k_line.transformation = et
+          @tool.append_3d(k_line, layer)
 
-        k_line = Kuix::LineMotif.new
-        k_line.start.copy!(center.offset(Z_AXIS, d))
-        k_line.end.copy!(center.offset(Z_AXIS.reverse, d))
-        k_line.start_arrow = true
-        k_line.end_arrow = true
-        k_line.arrow_size = unit * 1.5
-        k_line.line_width = _locked_z? ? 3 : 1.5
-        k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
-        k_line.color = Kuix::COLOR_Z
-        k_line.transformation = et
-        @tool.append_3d(k_line, layer)
+        end
+
+        fn.call(X_AXIS, w, _locked_x?, Kuix::COLOR_X)
+        fn.call(Y_AXIS, h, _locked_y?, Kuix::COLOR_Y)
+        fn.call(Z_AXIS, d, _locked_z?, Kuix::COLOR_Z)
 
         if with_box
 
@@ -992,7 +976,7 @@ module Ladb::OpenCutList
       k_line.end.copy!(dpe)
       k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_line.line_width = 1.5 unless @locked_axis.nil?
-      k_line.color = ColorUtils.color_translucent(_get_vector_color(mv), 60)
+      k_line.color = ColorUtils.color_translucent(color, 60)
       k_line.on_top = true
       @tool.append_3d(k_line, 1)
 
@@ -1447,7 +1431,7 @@ module Ladb::OpenCutList
       k_rectangle.bounds.copy!(db_2d)
       k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_rectangle.line_width = 1.5 unless @locked_normal.nil?
-      k_rectangle.color = Kuix::COLOR_MEDIUM_GREY
+      k_rectangle.color = ColorUtils.color_translucent(color, 60)
       k_rectangle.on_top = true
       k_rectangle.transformation = t
       @tool.append_3d(k_rectangle, 1)
@@ -1831,6 +1815,7 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
+      return if @state != STATE_HANDLE
 
       if key == VK_RIGHT
         x_axis = _get_active_x_axis
@@ -1868,6 +1853,8 @@ module Ladb::OpenCutList
     def onStateChanged(state)
       super
 
+      @locked_normal = nil
+
       unless (instance = _get_instance).nil?
         if state == STATE_HANDLE
           @tool.remove_3d(0)  # Remove part preview
@@ -1875,6 +1862,7 @@ module Ladb::OpenCutList
         else
           instance.hidden = false
         end
+
       end
 
     end
@@ -1897,6 +1885,25 @@ module Ladb::OpenCutList
     # -----
 
     protected
+
+    # -----
+
+    def _locked_x?
+      return false if @locked_axis.nil?
+      _get_active_x_axis.parallel?(@locked_axis)
+    end
+
+    def _locked_y?
+      return false if @locked_axis.nil?
+      _get_active_y_axis.parallel?(@locked_axis)
+    end
+
+    def _locked_z?
+      return false if @locked_axis.nil?
+      _get_active_z_axis.parallel?(@locked_axis)
+    end
+
+    # -----
 
     def _snap_handle(flags, x, y, view)
 
@@ -2046,7 +2053,7 @@ module Ladb::OpenCutList
       k_line.end.copy!(lpe)
       k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_line.line_width = 1.5 unless @locked_axis.nil?
-      k_line.color = Kuix::COLOR_MEDIUM_GREY
+      k_line.color = ColorUtils.color_translucent(color, 60)
       k_line.on_top = true
       @tool.append_3d(k_line, 1)
 
