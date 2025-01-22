@@ -67,6 +67,8 @@ module Ladb::OpenCutList::Kuix
   class LineMotif < Motif3d
 
     attr_reader :start, :end
+    attr_accessor :start_arrow, :end_arrow,
+                  :arrow_size
 
     def initialize(id = nil)
       super([[
@@ -78,6 +80,11 @@ module Ladb::OpenCutList::Kuix
 
       @start = Point3d.new
       @end = Point3d.new
+
+      @start_arrow = false
+      @end_arrow = false
+
+      @arrow_size = 15
 
     end
 
@@ -110,6 +117,49 @@ module Ladb::OpenCutList::Kuix
 
       end
       super
+    end
+
+    # -- RENDER --
+
+    def paint_content(graphics)
+      super
+
+      return unless @start_arrow || @end_arrow
+
+      view = graphics.view
+
+      ps_3d, pe_3d = @_paths.last
+
+      ps_2d = view.screen_coords(ps_3d)
+      ps_2d.z = 0
+      pe_2d = view.screen_coords(pe_3d)
+      pe_2d.z = 0
+      v_2d = ps_2d.vector_to(pe_2d)
+      v_2d.z = 0
+      a = Math.atan2((X_AXIS * v_2d) % Z_AXIS, v_2d % X_AXIS)
+
+      fn = lambda do |point, p, a|
+
+        t = Geom::Transformation.rotation(p, Z_AXIS, a)
+
+        p1 = p.offset(Geom::Vector3d.new(@arrow_size, @arrow_size)).transform(t)
+        p2 = p.offset(Geom::Vector3d.new(@arrow_size, -@arrow_size)).transform(t)
+
+        ray1 = view.pickray(p1.x, p1.y)
+        ray2 = view.pickray(p2.x, p2.y)
+
+        point1 = Geom.intersect_line_plane(ray1, [ point, ray1.last ])
+        point2 = Geom.intersect_line_plane(ray2, [ point, ray2.last ])
+
+        graphics.draw_line_strip(
+          points: [ point1, point, point2 ]
+        )
+
+      end
+
+      fn.call( ps_3d, ps_2d, a) if @start_arrow
+      fn.call( pe_3d, pe_2d, a + Math::PI) if @end_arrow
+
     end
 
   end

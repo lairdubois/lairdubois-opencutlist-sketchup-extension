@@ -523,6 +523,7 @@ module Ladb::OpenCutList
         # Show part infos
         @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
+        @tool.remove_3d(2)
         _preview_edit_axes(true, 2)
 
       else
@@ -536,11 +537,13 @@ module Ladb::OpenCutList
     def _preview_edit_axes(with_box = true, layer = 2)
       if (drawing_def = _get_drawing_def(false)).is_a?(DrawingDef)
 
+        unit = @tool.get_unit
+
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def)
         center = eb.center
 
-        px_offset = Sketchup.active_model.active_view.pixels_to_model(50, center)
+        px_offset = Sketchup.active_model.active_view.pixels_to_model(50, center.transform(et))
 
         w = eb.width * 0.5 + px_offset
         h = eb.height * 0.5 + px_offset
@@ -549,6 +552,9 @@ module Ladb::OpenCutList
         k_line = Kuix::LineMotif.new
         k_line.start.copy!(center.offset(X_AXIS.reverse, w))
         k_line.end.copy!(center.offset(X_AXIS, w))
+        k_line.start_arrow = true
+        k_line.end_arrow = true
+        k_line.arrow_size = unit * 1.5
         k_line.line_width = _locked_x? ? 3 : 1.5
         k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
         k_line.color = Kuix::COLOR_X
@@ -558,6 +564,9 @@ module Ladb::OpenCutList
         k_line = Kuix::LineMotif.new
         k_line.start.copy!(center.offset(Y_AXIS, h))
         k_line.end.copy!(center.offset(Y_AXIS.reverse, h))
+        k_line.start_arrow = true
+        k_line.end_arrow = true
+        k_line.arrow_size = unit * 1.5
         k_line.line_width = _locked_y? ? 3 : 1.5
         k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
         k_line.color = Kuix::COLOR_Y
@@ -567,6 +576,9 @@ module Ladb::OpenCutList
         k_line = Kuix::LineMotif.new
         k_line.start.copy!(center.offset(Z_AXIS, d))
         k_line.end.copy!(center.offset(Z_AXIS.reverse, d))
+        k_line.start_arrow = true
+        k_line.end_arrow = true
+        k_line.arrow_size = unit * 1.5
         k_line.line_width = _locked_z? ? 3 : 1.5
         k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
         k_line.color = Kuix::COLOR_Z
@@ -802,6 +814,7 @@ module Ladb::OpenCutList
     # -----
 
     def onToolKeyDown(tool, key, repeat, flags, view)
+      return if @state != STATE_HANDLE
 
       if key == VK_RIGHT
         x_axis = _get_active_x_axis
@@ -833,6 +846,13 @@ module Ladb::OpenCutList
       elsif key == VK_DOWN
         UI.beep
       end
+
+    end
+
+    def onStateChanged(state)
+      super
+
+      @locked_axis = nil
 
     end
 
@@ -1255,6 +1275,7 @@ module Ladb::OpenCutList
     # -----
 
     def onToolKeyDown(tool, key, repeat, flags, view)
+      return if @state != STATE_HANDLE
 
       if key == VK_RIGHT
         x_axis = _get_active_x_axis
@@ -1286,6 +1307,13 @@ module Ladb::OpenCutList
       elsif key == VK_DOWN
         UI.beep
       end
+
+    end
+
+    def onStateChanged(state)
+      super
+
+      @locked_normal = nil
 
     end
 
