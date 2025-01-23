@@ -1882,20 +1882,31 @@ tool:
     action_0_status: Klicken Sie auf ein Teil, um es auszuwählen
     action_1: In Linie kopieren
     action_1_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren
+    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Distanz ein
     action_2: In Raster kopieren
     action_2_status: Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren.
+    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status:  Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie zwei Distanzen ein
-    action_3: Verteilen
-    action_3_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen.
-    action_3_state_1_status: Klicken Sie, um den ersten Messpunkt zu setzen
-    action_3_state_2_status: Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein
-    action_option_group_measure_type: Maß
+    action_3: Verschieben
+    action_3_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu verschieben
+    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_state_2_status: Klicken Sie, um das Teil zu platzieren, oder geben Sie eine Distanz ein
+    action_4: Verteilen
+    action_4_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen.
+    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_1_status: Klicken Sie, um den ersten Messpunkt zu setzen
+    action_4_state_2_status: Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein
+    action_option_group_copy_measure_type: Maß
+    action_option_group_move_measure_type: Maß
     action_option_group_axes: Achsen
     action_option_group_options: Optionen
-    action_option_measure_type_outside_status: Außenmessung
-    action_option_measure_type_centered_status: Messung von Mitte zu Mitte
-    action_option_measure_type_inside_status: Messung zwischen den Teilen
+    action_option_copy_measure_type_outside_status: Außenmessung
+    action_option_copy_measure_type_centered_status: Messung von Mitte zu Mitte
+    action_option_copy_measure_type_inside_status: Messung zwischen den Teilen
+    action_option_move_measure_type_outside_status: Außenmessung
+    action_option_move_measure_type_centered_status: Messung in der Mitte
+    action_option_move_measure_type_inside_status: Messung im Inneren
     action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
     action_option_axes_parent_status: Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält
     action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
