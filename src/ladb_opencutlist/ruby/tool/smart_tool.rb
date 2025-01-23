@@ -103,9 +103,6 @@ module Ladb::OpenCutList
     # -- UI stuff --
 
     def get_unit(view = nil)
-
-      @unit = 12
-
       return @unit unless @unit.nil?
       return 3 if view && Sketchup.active_model.nil?
       view = Sketchup.active_model.active_view if view.nil?

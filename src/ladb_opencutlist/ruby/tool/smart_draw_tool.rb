@@ -1299,7 +1299,7 @@ module Ladb::OpenCutList
 
     def _append_floating_tools_at(position, callback_action_handler)
 
-      unit = @tool.get_unit * 0.8
+      unit = @tool.get_unit
 
       tool_defs = [
         {
