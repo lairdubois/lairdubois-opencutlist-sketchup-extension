@@ -1882,15 +1882,19 @@ tool:
     action_0_status: Click on a part to select it
     action_1: Copy in line
     action_1_status: Click on a part to copy it along an axis
+    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: Click to place the copy of the part or enter a distance
     action_2: Copy in grid
     action_2_status: Click on a part to copy it along a grid
+    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: Click to place copies of the part, or enter two distances
     action_3: Move
     action_3_status: Click on a part to move it along a grid
+    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
     action_3_state_2_status: Click to place the part, or enter a distance
     action_4: Distribute
     action_4_status: Click on a part to distribute it along an axis
+    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_1_status: Click to set the first measurement point
     action_4_state_2_status: Click to set the second measurement point or enter a distance
     action_option_group_copy_measure_type: Measure
