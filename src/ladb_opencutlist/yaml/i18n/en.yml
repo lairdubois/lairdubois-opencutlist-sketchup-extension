@@ -1882,14 +1882,14 @@ tool:
     action_0_status: Click on a part to select it
     action_1: Copy in line
     action_1_status: Click on a part to copy it along an axis
-    action_1_state_2_status: Click to place the copy of the part or enter a length
+    action_1_state_2_status: Click to place the copy of the part or enter a distance
     action_2: Copy in grid
     action_2_status: Click on a part to copy it along a grid
-    action_2_state_2_status: Click to place copies of the part, or enter length, width
+    action_2_state_2_status: Click to place copies of the part, or enter two distances
     action_3: Distribute
     action_3_status: Click on a part to distribute it along an axis
-    action_3_state_1_status: Click to set the first point
-    action_3_state_2_status: Click to set the second point or enter a length
+    action_3_state_1_status: Click to set the first measurement point
+    action_3_state_2_status: Click to set the second measurement point or enter a distance
     action_option_group_measure_type: Measure
     action_option_group_axes: Axes
     action_option_group_options: Options

@@ -1880,14 +1880,14 @@ tool:
     action_0_status: 1447 - Klicken Sie auf ein Teil, um es auszuwählen
     action_1: 1448 - In Linie kopieren
     action_1_status: 1449 - Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren
-    action_1_state_2_status: 1450 - Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Länge ein
+    action_1_state_2_status: 1450 - Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Distanz ein
     action_2: 1451 - In Raster kopieren
     action_2_status: 1452 - Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren.
-    action_2_state_2_status: 1453 - Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie eine Länge, Breite ein
+    action_2_state_2_status: 1453 - Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie zwei Distanzen ein
     action_3: 1454 - Verteilen
     action_3_status: 1455 - Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen.
-    action_3_state_1_status: 1456 - Klicken Sie, um den ersten Punkt zu bestimmen
-    action_3_state_2_status: 1457 - Klicken Sie, um den zweiten Punkt zu bestimmen, oder geben Sie eine Länge ein
+    action_3_state_1_status: 1456 - Klicken Sie, um den ersten Messpunkt zu setzen
+    action_3_state_2_status: 1457 - Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein
     action_option_group_measure_type: 1458 - Maß
     action_option_group_axes: 1459 - Achsen
     action_option_group_options: 1460 - Optionen

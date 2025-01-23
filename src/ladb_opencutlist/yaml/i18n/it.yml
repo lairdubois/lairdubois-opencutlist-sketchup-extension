@@ -632,7 +632,7 @@ tab:
       cutting_length: Lunghezza - grezzo
       cutting_width: Larghezza - grezzo
       cutting_thickness: Spessore - grezzo
-      edge_cutting_length: Larghezza bordi - grezza -
+      edge_cutting_length: Larghezza bordi - grezza
       edge_cutting_width: Bordi larghezza - grezzi
       bbox_length: Lunghezza
       bbox_width: Larghezza
@@ -1007,7 +1007,7 @@ tab:
         part_cutting_width: Larghezza grezza
         part_cutting_thickness: Spessore grezzo
         part_edge_cutting_size: Dimensioni del bordo
-        part_edge_cutting_length: Lunghezza bordi - grezza -
+        part_edge_cutting_length: Lunghezza bordi - grezza
         part_edge_cutting_width: Bordi larghezza - grezzi
         part_size: Dimensione
         part_length: Lunghezza
