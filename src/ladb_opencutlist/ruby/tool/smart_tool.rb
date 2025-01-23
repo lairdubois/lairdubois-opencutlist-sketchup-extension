@@ -44,6 +44,8 @@ module Ladb::OpenCutList
     COLOR_ARROW = Kuix::COLOR_WHITE
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239).freeze
 
+    attr_accessor :last_mouse_x, :last_mouse_y
+
     def initialize(
 
                    quit_on_esc: true,
@@ -101,6 +103,9 @@ module Ladb::OpenCutList
     # -- UI stuff --
 
     def get_unit(view = nil)
+
+      @unit = 12
+
       return @unit unless @unit.nil?
       return 3 if view && Sketchup.active_model.nil?
       view = Sketchup.active_model.active_view if view.nil?

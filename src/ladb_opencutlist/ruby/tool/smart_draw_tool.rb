@@ -283,6 +283,23 @@ module Ladb::OpenCutList
 
     # -----
 
+    def onToolResume(tool, view)
+
+      # If resume from SmartHandleTool
+      if @previous_action_handler.is_a?(SmartHandleActionHandler)
+
+        # Remove floating tool
+        _remove_floating_tools
+
+        # Copy last mouse position
+        @tool.last_mouse_x = @previous_action_handler.tool.last_mouse_x
+        @tool.last_mouse_y = @previous_action_handler.tool.last_mouse_y
+
+      end
+
+      super
+    end
+
     def onToolCancel(tool, reason, view)
 
       case @state
@@ -1282,7 +1299,7 @@ module Ladb::OpenCutList
 
     def _append_floating_tools_at(position, callback_action_handler)
 
-      unit = @tool.get_unit
+      unit = @tool.get_unit * 0.8
 
       tool_defs = [
         {
@@ -1325,7 +1342,7 @@ module Ladb::OpenCutList
 
       k_panel = Kuix::Panel.new
       k_panel.layout_data = Kuix::StaticLayoutDataWithSnap.new(position, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      k_panel.layout = Kuix::GridLayout.new(2, 2, unit * 0.5, unit * 0.5)
+      k_panel.layout = Kuix::GridLayout.new(tool_defs.length, 1, unit * 0.5, unit * 0.5)
       @tool.append_2d(k_panel, LAYER_2D_FLOATING_TOOLS)
 
       tool_defs.each do |tool_def|
