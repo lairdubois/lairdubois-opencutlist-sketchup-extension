@@ -1,17 +1,21 @@
 {
   "action_0": { /* ACTION_SELECT */
   },
-  "action_1": { /* ACTION_MOVE_LINE */
-    "measure_type": "outside",
+  "action_1": { /* ACTION_COPY_LINE */
+    "copy_measure_type": "outside",
     "axes": "parent",
     "mirror": false
   },
-  "action_2": { /* ACTION_MOVE_GRID */
-    "measure_type": "outside",
+  "action_2": { /* ACTION_COPY_GRID */
+    "copy_measure_type": "outside",
     "axes": "parent",
     "mirror": false
   },
-  "action_3": { /* ACTION_MOVE_ALONG */
+  "action_3": { /* ACTION_MOVE_LINE */
+    "move_measure_type": "inside",
+    "axes": "parent"
+  },
+  "action_4": { /* ACTION_DISTRIBUTE */
     "axes": "parent"
   }
 }

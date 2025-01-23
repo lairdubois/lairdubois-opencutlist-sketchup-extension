@@ -805,21 +805,22 @@ module Ladb::OpenCutList
         end
       }
       submenu.add_separator
-      submenu.add_item(get_i18n_string('core.menu.item.smart_draw')) {
-        Sketchup.active_model.select_tool(SmartDrawTool.new) if Sketchup.active_model
-      }
-      submenu.add_item(get_i18n_string('core.menu.item.smart_handle')) {
-        Sketchup.active_model.select_tool(SmartHandleTool.new) if Sketchup.active_model
-      }
-      submenu.add_item(get_i18n_string('core.menu.item.smart_paint')) {
-        Sketchup.active_model.select_tool(SmartPaintTool.new) if Sketchup.active_model
-      }
-      submenu.add_item(get_i18n_string('core.menu.item.smart_axes')) {
-        Sketchup.active_model.select_tool(SmartAxesTool.new) if Sketchup.active_model
-      }
-      submenu.add_item(get_i18n_string('core.menu.item.smart_export')) {
-        Sketchup.active_model.select_tool(SmartExportTool.new) if Sketchup.active_model
-      }
+      [ 'draw', 'handle', 'paint', 'axes', 'export' ].each do |striupped_name|
+
+        clazz = Object.const_get("Ladb::OpenCutList::Smart#{striupped_name.capitalize}Tool")
+
+        smart_tool_submenu = submenu.add_submenu(get_i18n_string("core.menu.item.smart_#{striupped_name}"))
+        smart_tool_submenu.add_item(get_i18n_string("core.menu.item.smart_#{striupped_name}")) {
+          Sketchup.active_model.select_tool(clazz.new) if Sketchup.active_model
+        }
+        smart_tool_submenu.add_separator
+        clazz::ACTIONS.each do |action_def|
+          smart_tool_submenu.add_item(get_i18n_string("tool.smart_#{striupped_name}.action_#{action_def[:action]}")) {
+            Sketchup.active_model.select_tool(clazz.new(current_action: action_def[:action])) if Sketchup.active_model
+          }
+        end
+
+      end
       submenu.add_separator
       submenu.add_item(get_i18n_string('core.menu.item.reset_dialog_position')) {
         tabs_dialog_reset_position

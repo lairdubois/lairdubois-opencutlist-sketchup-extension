@@ -1593,6 +1593,7 @@ module Ladb::OpenCutList
 
   class SmartActionHandler
 
+    attr_reader :tool
     attr_accessor :previous_action_handler
 
     def initialize(action, tool, previous_action_handler = nil)

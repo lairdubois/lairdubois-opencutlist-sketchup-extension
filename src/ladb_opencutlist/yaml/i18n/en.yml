@@ -1886,16 +1886,23 @@ tool:
     action_2: Copy in grid
     action_2_status: Click on a part to copy it along a grid
     action_2_state_2_status: Click to place copies of the part, or enter two distances
-    action_3: Distribute
-    action_3_status: Click on a part to distribute it along an axis
-    action_3_state_1_status: Click to set the first measurement point
-    action_3_state_2_status: Click to set the second measurement point or enter a distance
-    action_option_group_measure_type: Measure
+    action_3: Move
+    action_3_status: Click on a part to move it along a grid
+    action_3_state_2_status: Click to place the part, or enter a distance
+    action_4: Distribute
+    action_4_status: Click on a part to distribute it along an axis
+    action_4_state_1_status: Click to set the first measurement point
+    action_4_state_2_status: Click to set the second measurement point or enter a distance
+    action_option_group_copy_measure_type: Measure
+    action_option_group_move_measure_type: Measure
     action_option_group_axes: Axes
     action_option_group_options: Options
-    action_option_measure_type_outside_status: External measurement
-    action_option_measure_type_centered_status: Central measurement
-    action_option_measure_type_inside_status: Measurement taken between parts
+    action_option_copy_measure_type_outside_status: External measurement
+    action_option_copy_measure_type_centered_status: Central measurement
+    action_option_copy_measure_type_inside_status: Measurement taken between parts
+    action_option_move_measure_type_outside_status: External measurement
+    action_option_move_measure_type_centered_status: Central measurement
+    action_option_move_measure_type_inside_status: Internal measurement
     action_option_axes_active_status: Manipulate along active axes
     action_option_axes_parent_status: Manipulate along the axes of the group or component containing the part
     action_option_axes_entity_status: Manipulate along part axes

@@ -62,8 +62,8 @@ module Ladb::OpenCutList
 
     attr_reader :cursor_select, :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pushpull
 
-    def initialize
-      super
+    def initialize(current_action: nil)
+      super(current_action: current_action)
 
       # Create cursors
       @cursor_select = create_cursor('select', 0, 0)
@@ -1292,8 +1292,7 @@ module Ladb::OpenCutList
               current_action: SmartHandleTool::ACTION_COPY_LINE,
               callback_action_handler: callback_action_handler
             ))
-          },
-          text: 'Copier'
+          }
         },
         {
           path: 'M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.833L0.583,0.833',
@@ -1302,8 +1301,16 @@ module Ladb::OpenCutList
               current_action: SmartHandleTool::ACTION_COPY_GRID,
               callback_action_handler: callback_action_handler
             ))
-          },
-          text: 'Copier en grille'
+          }
+        },
+        {
+          path: 'M0.666,0L1,0L1,0.334L0.666,0.334L0.666,0M0.083,0.917L0.583,0.417',
+          block: lambda {
+            Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
+              current_action: SmartHandleTool::ACTION_MOVE_LINE,
+              callback_action_handler: callback_action_handler
+            ))
+          }
         },
         {
           path: 'M0.333,0.333L0.667,0.333L0.667,0.667L0.333,0.667L0.333,0.333 M0.083,0.917L0.25,0.75 M0.75,0.25L0.917,0.083',
@@ -1312,14 +1319,13 @@ module Ladb::OpenCutList
               current_action: SmartHandleTool::ACTION_DISTRIBUTE,
               callback_action_handler: callback_action_handler
             ))
-          },
-          text: 'Répartir'
+          }
         }
       ]
 
       k_panel = Kuix::Panel.new
       k_panel.layout_data = Kuix::StaticLayoutDataWithSnap.new(position, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
-      k_panel.layout = Kuix::GridLayout.new(tool_defs.length, 1, unit * 0.5)
+      k_panel.layout = Kuix::GridLayout.new(2, 2, unit * 0.5, unit * 0.5)
       @tool.append_2d(k_panel, LAYER_2D_FLOATING_TOOLS)
 
       tool_defs.each do |tool_def|
@@ -1341,7 +1347,7 @@ module Ladb::OpenCutList
           Sketchup.active_model.selection.clear
         end
         k_btn.on(:click) do
-          k_panel.remove
+          # k_panel.remove
           tool_def[:block].call
         end
         k_panel.append(k_btn)

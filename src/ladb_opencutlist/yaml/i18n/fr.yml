@@ -1882,20 +1882,31 @@ tool:
     action_0_status: Cliquez sur une pièce pour la sélectionner
     action_1: Copier en ligne
     action_1_status: Cliquez sur une pièce pour la copier le long d'un axe
+    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: Cliquez pour placer la copie de la pièce ou entrez une distance
     action_2: Copier en grille
     action_2_status: Cliquez sur une pièce pour la copier le long d'une grille
+    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: Cliquez pour placer les copies de la pièce ou entrez deux distances
-    action_3: Répartir
-    action_3_status: Cliquez sur une pièce pour la répartir le long d'un axe
-    action_3_state_1_status: Cliquez pour déterminer le premier point de mesure
-    action_3_state_2_status: Cliquez pour déterminer le second point de mesure ou entrez une distance
-    action_option_group_measure_type: Mesure
+    action_3: Déplacer
+    action_3_status: Cliquez sur une pièce pour la déplacer le long d'un axe
+    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_state_2_status: Cliquez pour placer la pièce ou entrez une distance
+    action_4: Répartir
+    action_4_status: Cliquez sur une pièce pour la répartir le long d'un axe
+    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_1_status: Cliquez pour déterminer le premier point de mesure
+    action_4_state_2_status: Cliquez pour déterminer le second point de mesure ou entrez une distance
+    action_option_group_copy_measure_type: Mesure
+    action_option_group_move_measure_type: Mesure
     action_option_group_axes: Axes
     action_option_group_options: Options
-    action_option_measure_type_outside_status: Mesurer à l'extérieure
-    action_option_measure_type_centered_status: Mesurer de centre à centre
-    action_option_measure_type_inside_status: Mesurer entre les pièces
+    action_option_copy_measure_type_outside_status: Mesurer à l'extérieur
+    action_option_copy_measure_type_centered_status: Mesurer de centre à centre
+    action_option_copy_measure_type_inside_status: Mesurer entre les pièces
+    action_option_move_measure_type_outside_status: Mesurer à l'extérieur
+    action_option_move_measure_type_centered_status: Mesurer au centre
+    action_option_move_measure_type_inside_status: Mesurer à l'intérieur
     action_option_axes_active_status: Manipuler le long des axes actifs
     action_option_axes_parent_status: Manipuler le long des axes du groupe ou composant contenant la pièce
     action_option_axes_entity_status: Manipuler le long des axes de la pièce
