@@ -38,6 +38,7 @@ default:
   unselect_all: Alles deselecteren
   draw: Tekenen
   estimate: Schatting
+  rename: Hernoem
   yes: Ja
   no: Nee
   empty_filename: geen bestandnaam.skp
@@ -98,15 +99,18 @@ core:
       unhide_part_instance: Onthul de instantie
       edit_part_instance_properties: Instance-eigenschappen bewerken
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Raampositie opnieuw instellen
   toolbar:
     name: OpenCutList
+    tools: Werktuigen
     command:
       dialog: OpenCutList
       smart_draw: Onderdelen tekenen
+      smart_handle: Onderdelen hanteren
       smart_paint: Kleur de onderdelen
       smart_axes: Oriënt Onderdelen
       smart_export: Onderdelen exporteren
@@ -1593,10 +1597,10 @@ tab:
     model_settings: Modelinstellingen
     length_unit: Lengte-eenheid
     length_format: Formaat
-    length_format_0: Decimaal
+    length_format_0: $t(default.decimal)
     length_format_1: Architectonisch
     length_format_2: Ingenieur
-    length_format_3: Fractioneel
+    length_format_3: $t(default.fractional)
     length_precision: Nauwkeurigheid
     suppress_units_display: Toon de lengte-eenheid voor elke waarde
     mass_unit: Eenheid van massa
@@ -1684,6 +1688,11 @@ tool:
     end_point: Einde
     middle_point: Middelpunt
     third_point: Punt van derden
+    vcb_length: Lengte
+    vcb_size: Afmetingen
+    vcb_radius: Radius
+    vcb_diameter: Diameter
+    vcb_distance: Afstand
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
