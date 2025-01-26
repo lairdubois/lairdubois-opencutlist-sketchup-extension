@@ -38,6 +38,7 @@ default:
   unselect_all: Отменить выбор
   draw: Чертеж
   estimate: Сметчик
+  rename: Переименовать
   yes: Да
   no: Нет
   empty_filename: Безымянный.skp
@@ -98,15 +99,18 @@ core:
       unhide_part_instance: Раскрыть экземпляр
       edit_part_instance_properties: Редактирование свойств экземпляра
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Сброс положения окна
   toolbar:
     name: OpenCutList
+    tools: Инструменты
     command:
       dialog: OpenCutList
       smart_draw: Детали чертежа
+      smart_handle: Обработка деталей
       smart_paint: Раскраска деталей
       smart_axes: Ориентация деталей
       smart_export: Экспорт деталей
@@ -1593,10 +1597,10 @@ tab:
     model_settings: Параметры модели
     length_unit: Единица длины
     length_format: Формат
-    length_format_0: Десятичный
+    length_format_0: $t(default.decimal)
     length_format_1: Архитектурный
     length_format_2: Инженерный
-    length_format_3: Дробный
+    length_format_3: $t(default.fractional)
     length_precision: Точность
     suppress_units_display: Отображать единицу длины для каждого значения
     mass_unit: Единица массы
@@ -1684,6 +1688,11 @@ tool:
     end_point: Край
     middle_point: Средняя точка
     third_point: Сторонняя точка
+    vcb_length: Длина
+    vcb_size: Цитаты
+    vcb_radius: Радиус
+    vcb_diameter: Диаметр
+    vcb_distance: Дистанция
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
