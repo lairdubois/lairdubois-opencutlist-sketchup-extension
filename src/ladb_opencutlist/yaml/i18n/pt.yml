@@ -38,6 +38,7 @@ default:
   unselect_all: Desmarcar tudo
   draw: Desenhar
   estimate: Estimar
+  rename: Renomear
   yes: Sim
   no: Não
   empty_filename: Sem nome.skp
@@ -98,15 +99,18 @@ core:
       unhide_part_instance: Revelar a instância
       edit_part_instance_properties: Editar propriedades da instância
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Reinicializar a posição da janela
   toolbar:
     name: OpenCutList
+    tools: Ferramentas
     command:
       dialog: OpenCutList
       smart_draw: Desenhar peças
+      smart_handle: Manipular peças
       smart_paint: Pintar peças
       smart_axes: Orientação das peças
       smart_export: Exportar as peças
@@ -1561,8 +1565,6 @@ tab:
     objective_title:
       default: Objetivo
       cuttingdiagram_export: Financiamento das exportações de planos de corte
-      outliner: ""
-      packing: ""
     objective_details:
       default: |
         A melhoria contínua da *OpenCutList* é importante para nós e o projeto continua precisando de sua ajuda para sua próxima atualização!
@@ -1570,8 +1572,6 @@ tab:
         É importante para nós que o *OpenCutList* se possa adaptar à grande variedade de requisitos dos utilizadores para a função *Plano de Corte*.
         Para ampliar ainda mais as possibilidades, gostaríamos de poder exportar planos de layout nos formatos **SVG** e **DXF**.
         Ao fornecer-nos os meios para efetuar estas exportações, estará ao mesmo tempo dando-nos a oportunidade de ajudá-lo a tirar o máximo proveito da *OpenCutList*.
-      outliner: |
-      packing: |
     objective_crowdfunding: |
       O desenvolvimento dos novos produtos será feito graças ao **Financiamento participativo** e poderá começar quando seu **Objetivo financeiro** for alcançado.
     objective_thanks: |
@@ -1597,10 +1597,10 @@ tab:
     model_settings: Preferências de modelo
     length_unit: Unidade de comprimento
     length_format: Formato
-    length_format_0: Decimal
+    length_format_0: $t(default.decimal)
     length_format_1: Arquitetura
     length_format_2: Engenharia
-    length_format_3: Fracionário
+    length_format_3: $t(default.fractional)
     length_precision: Precisão
     suppress_units_display: Exibir a unidade de comprimento em cada valor
     mass_unit: Unidade de massa
@@ -1688,6 +1688,11 @@ tool:
     end_point: Extremidade
     middle_point: Ponto médio
     third_point: Ponto teceiro
+    vcb_length: Comprimento
+    vcb_size: Cotações
+    vcb_radius: Raio
+    vcb_diameter: Diâmetro
+    vcb_distance: Distância
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
