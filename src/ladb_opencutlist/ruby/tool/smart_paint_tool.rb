@@ -79,12 +79,15 @@ module Ladb::OpenCutList
 
                    tab_name_to_show_on_quit: nil,
 
-                   material: nil
+                   material: nil,
+
+                   current_action: nil
 
     )
 
       super(
-        tab_name_to_show_on_quit: tab_name_to_show_on_quit
+        tab_name_to_show_on_quit: tab_name_to_show_on_quit,
+        current_action: current_action
       )
 
       # Keep the given material

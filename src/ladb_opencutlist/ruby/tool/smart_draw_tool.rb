@@ -62,8 +62,15 @@ module Ladb::OpenCutList
 
     attr_reader :cursor_select, :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pushpull
 
-    def initialize(current_action: nil)
-      super(current_action: current_action)
+    def initialize(
+
+                   current_action: nil
+
+    )
+
+      super(
+        current_action: current_action
+      )
 
       # Create cursors
       @cursor_select = create_cursor('select', 0, 0)
