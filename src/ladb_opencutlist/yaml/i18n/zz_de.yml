@@ -1860,9 +1860,9 @@ tool:
     action_option_options_measure_from_radius_status: 1430 - Messung nach dem Radius
     action_option_options_measure_reversed: 1431 - Invertierte Messung
     action_option_options_measure_reversed_status: 1432 - Messung invertieren
-    action_option_options_solid_centered: 1433 - Erhebung zentriert
-    action_option_options_solid_centered_status: 1434 - Erhebung auf den ersten Punkt zentrieren
-    action_pushpull_locked_status: 1435 - Auf die letzte Messung fixieren
+    action_option_options_pull_centered: 1433 - Erhebung zentriert
+    action_option_options_pull_centered_status: 1434 - Erhebung auf den ersten Punkt zentrieren
+    action_pull_locked_status: 1435 - Auf die letzte Messung fixieren
     action_toggle_move_copy_status: 1436 - Abwechselnd kopieren/verschieben
     action_change_move_anchor_status: 1437 - Ankerpunkt ändern
     error:
@@ -1906,7 +1906,7 @@ tool:
     action_option_move_measure_type_centered_status: 1473 - Messung in der Mitte
     action_option_move_measure_type_inside_status: 1474 - Messung im Inneren
     action_option_axes_active_status: 1475 - Manipulieren entlang der aktiven Achsen
-    action_option_axes_parent_status: 1476 - Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält
+    action_option_axes_context_status: 1476 - Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält
     action_option_axes_entity_status: 1477 - Manipulieren entlang der Achsen des Teils
     action_option_options_mirror_status: 1478 - Symmetrisch kopieren
     error:
