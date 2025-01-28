@@ -38,6 +38,7 @@ default:
   unselect_all: إزالة تحديد الكل
   draw: ارسم
   estimate: ثمِّن
+  rename: إعادة تسمية
   yes: نعم
   no: لا
   empty_filename: skp.غير معنون
@@ -98,15 +99,18 @@ core:
       unhide_part_instance: أظهر المثيل
       edit_part_instance_properties: عدّل خصائص المثيل
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: أعد تعيين موضع النافذة
   toolbar:
     name: OpenCutList
+    tools: الأدوات
     command:
       dialog: OpenCutList
       smart_draw: ارسم قِطعا
+      smart_handle: تعامل مع القِطع
       smart_paint: اصبغ القِطع
       smart_axes: وجِّه القطع
       smart_export: صدّر القِطع
@@ -1593,10 +1597,10 @@ tab:
     model_settings: تفضيلات النموذج
     length_unit: وحدة الطول
     length_format: الصيغة
-    length_format_0: عُشري
+    length_format_0: $t(default.decimal)
     length_format_1: معماري
     length_format_2: هندسي
-    length_format_3: كسري
+    length_format_3: $t(default.fractional)
     length_precision: الدقة
     suppress_units_display: اعرض وحدة الطول لكل قيمة
     mass_unit: وحدة الكتلة
@@ -1684,6 +1688,11 @@ tool:
     end_point: الحد
     middle_point: المنتصف
     third_point: نقطة في ثلث المسافة
+    vcb_length: الطول
+    vcb_size: الأبعاد
+    vcb_radius: نصف القطر
+    vcb_diameter: القطر
+    vcb_distance: المسافة
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
