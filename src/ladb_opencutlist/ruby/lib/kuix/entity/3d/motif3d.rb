@@ -84,7 +84,7 @@ module Ladb::OpenCutList::Kuix
       @start_arrow = false
       @end_arrow = false
 
-      @arrow_size = 15
+      @arrow_size = 15  # Expressed in pixels
 
     end
 
@@ -138,27 +138,27 @@ module Ladb::OpenCutList::Kuix
       v_2d.z = 0
       a = Math.atan2((X_AXIS * v_2d) % Z_AXIS, v_2d % X_AXIS)
 
-      fn = lambda do |point, p, a|
+      fn_draw_arrow = lambda do |p_3d, p_2d, a|
 
-        t = Geom::Transformation.rotation(p, Z_AXIS, a)
+        t = Geom::Transformation.rotation(p_2d, Z_AXIS, a)
 
-        p1 = p.offset(Geom::Vector3d.new(@arrow_size, @arrow_size)).transform(t)
-        p2 = p.offset(Geom::Vector3d.new(@arrow_size, -@arrow_size)).transform(t)
+        p1_2d = p_2d.offset(Geom::Vector3d.new(@arrow_size, @arrow_size)).transform(t)
+        p2_2d = p_2d.offset(Geom::Vector3d.new(@arrow_size, -@arrow_size)).transform(t)
 
-        ray1 = view.pickray(p1.x, p1.y)
-        ray2 = view.pickray(p2.x, p2.y)
+        ray1 = view.pickray(p1_2d.x, p1_2d.y)
+        ray2 = view.pickray(p2_2d.x, p2_2d.y)
 
-        point1 = Geom.intersect_line_plane(ray1, [ point, ray1.last ])
-        point2 = Geom.intersect_line_plane(ray2, [ point, ray2.last ])
+        p1_3d = Geom.intersect_line_plane(ray1, [ p_3d, ray1.last ])
+        p2_3d = Geom.intersect_line_plane(ray2, [ p_3d, ray2.last ])
 
         graphics.draw_line_strip(
-          points: [ point1, point, point2 ]
+          points: [ p1_3d, p_3d, p2_3d ]
         )
 
       end
 
-      fn.call( ps_3d, ps_2d, a) if @start_arrow
-      fn.call( pe_3d, pe_2d, a + Math::PI) if @end_arrow
+      fn_draw_arrow.call( ps_3d, ps_2d, a) if @start_arrow
+      fn_draw_arrow.call( pe_3d, pe_2d, a + Math::PI) if @end_arrow
 
     end
 

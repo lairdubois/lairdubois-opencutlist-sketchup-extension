@@ -1818,10 +1818,12 @@ module Ladb::OpenCutList
     COLOR_PART = Sketchup::Color.new(254, 222, 11, 200).freeze
     COLOR_PART_HIGHLIGHTED = Sketchup::Color.new(254, 222, 11, 255).freeze
 
+    LAYER_3D_PART_PREVIEW = 0
+
     # -----
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
-      _preview_part(part_entity_path, part, 0, highlighted)
+      _preview_part(part_entity_path, part, LAYER_3D_PART_PREVIEW, highlighted)
     end
 
     protected
@@ -1848,7 +1850,7 @@ module Ladb::OpenCutList
       _reset_active_part
     end
 
-    def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
+    def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted = false)
       @tool.remove_3d(layer)
       if part
 

@@ -189,6 +189,18 @@ module Ladb::OpenCutList
 
     def onActivate(view)
       super
+
+      # Observe model events
+      view.model.add_observer(self)
+
+    end
+
+    def onDeactivate(view)
+      super
+
+      # Stop observing model events
+      view.model.remove_observer(self)
+
     end
 
     def onActionChanged(action)
@@ -217,6 +229,10 @@ module Ladb::OpenCutList
       refresh
     end
 
+    def onTransactionUndo(model)
+      refresh
+    end
+
   end
 
   # -----
@@ -230,6 +246,9 @@ module Ladb::OpenCutList
     STATE_HANDLE_START = 1
     STATE_HANDLE = 2
     STATE_HANDLE_COPIES = 3
+
+    LAYER_3D_HANDLE_PREVIEW = 1
+    LAYER_3D_AXES_PREVIEW = 2
 
     def initialize(action, tool, action_handler = nil)
       super
@@ -355,7 +374,7 @@ module Ladb::OpenCutList
         @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
-        @tool.remove_3d([ 1, 2 ])
+        @tool.remove_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
 
         _snap_handle_start(flags, x, y, view)
 
@@ -365,21 +384,21 @@ module Ladb::OpenCutList
         @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
-        @tool.remove_3d([ 1, 2 ])
+        @tool.remove_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
 
         _snap_handle(flags, x, y, view)
         _preview_handle(view)
 
       end
 
-      view.tooltip = @mouse_ip.tooltip
+        view.tooltip = @mouse_ip.tooltip
       view.invalidate
 
     end
 
     def onToolMouseLeave(tool, view)
       @tool.remove_all_2d
-      @tool.remove_3d([ 1, 2 ])
+      @tool.remove_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
       @mouse_ip.clear
       view.tooltip = ''
       super
@@ -454,9 +473,10 @@ module Ladb::OpenCutList
       @definition = instance.definition
       @drawing_def = nil
 
-      drawing_def = _get_drawing_def
+      et = _get_edit_transformation
+      eb = _get_drawing_def_edit_bounds(_get_drawing_def)
 
-      @picked_handle_start_point = drawing_def.bounds.center.transform(drawing_def.transformation)
+      @picked_handle_start_point = eb.center.transform(et)
 
       set_state(STATE_HANDLE)
       _refresh
@@ -477,8 +497,11 @@ module Ladb::OpenCutList
     def getExtents
       if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
-        min = drawing_def.bounds.min.transform(drawing_def.transformation)
-        max = drawing_def.bounds.max.transform(drawing_def.transformation)
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(drawing_def)
+
+        min = eb.min.transform(et)
+        max = eb.max.transform(et)
 
         bounds = Geom::BoundingBox.new
         bounds.add(min)
@@ -547,18 +570,18 @@ module Ladb::OpenCutList
         # Show part infos
         @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
-        @tool.remove_3d(2)
+        @tool.remove_3d(LAYER_3D_AXES_PREVIEW)
         _preview_edit_axes(true, 2)
 
       else
 
         @tool.remove_tooltip
-        @tool.remove_3d(2)
+        @tool.remove_3d(LAYER_3D_AXES_PREVIEW)
 
       end
     end
 
-    def _preview_edit_axes(with_box = true, layer = 2)
+    def _preview_edit_axes(with_box = true, layer = LAYER_3D_AXES_PREVIEW)
       if (drawing_def = _get_drawing_def(false)).is_a?(DrawingDef)
 
         unit = @tool.get_unit
@@ -731,17 +754,17 @@ module Ladb::OpenCutList
     end
 
     def _get_drawing_def_edit_bounds(drawing_def)
-      edit_bounds = Geom::BoundingBox.new
+      eb = Geom::BoundingBox.new
       if drawing_def.is_a?(DrawingDef) &&
         (drawing_def_segments = _get_drawing_def_segments(drawing_def)).is_a?(Array)
 
         et = _get_edit_transformation
         eti = et.inverse
 
-        edit_bounds.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
+        eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
 
       end
-      edit_bounds
+      eb
     end
 
     # -- UTILS --
@@ -934,10 +957,9 @@ module Ladb::OpenCutList
           v = ps.transform(eti).vector_to(pe.transform(eti))
           if v.valid?
 
-            bounds = Geom::BoundingBox.new
-            bounds.add([ -1, -1, -1], [ 1, 1, 1 ])
+            bounds = _get_drawing_def_edit_bounds(_get_drawing_def)
 
-            line = [ ORIGIN, v ]
+            line = [ bounds.center, v ]
 
             plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
             ibtm = Geom.intersect_line_plane(line, plane_btm)
@@ -992,12 +1014,12 @@ module Ladb::OpenCutList
       k_segments.line_width = 1.5
       k_segments.color = Kuix::COLOR_BLACK
       k_segments.transformation = mt * drawing_def.transformation
-      @tool.append_3d(k_segments, 1)
+      @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
 
       # Preview line
 
-      @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), 1)
-      @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), 1)
+      @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), LAYER_3D_HANDLE_PREVIEW)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(dps)
@@ -1006,7 +1028,7 @@ module Ladb::OpenCutList
       k_line.line_width = 1.5 unless @locked_axis.nil?
       k_line.color = ColorUtils.color_translucent(color, 60)
       k_line.on_top = true
-      @tool.append_3d(k_line, 1)
+      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(dps)
@@ -1014,7 +1036,7 @@ module Ladb::OpenCutList
       k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_line.line_width = 1.5 unless @locked_axis.nil?
       k_line.color = color
-      @tool.append_3d(k_line, 1)
+      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
 
       # Preview bounds
 
@@ -1023,14 +1045,14 @@ module Ladb::OpenCutList
       k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_box.color = color
       k_box.transformation = et
-      @tool.append_3d(k_box, 1)
+      @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
       k_box = Kuix::BoxMotif.new
       k_box.bounds.copy!(eb)
       k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_box.color = color
       k_box.transformation = mt * et
-      @tool.append_3d(k_box, 1)
+      @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
       distance = dps.vector_to(dpe).length
 
@@ -1183,35 +1205,35 @@ module Ladb::OpenCutList
       eb = Geom::BoundingBox.new
       eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
 
-      center = eb.center
-      line = [ center, v.transform(eti) ]
+      ecenter = eb.center
+      eline = [ ecenter, ev ]
 
       plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
-      ibtm = Geom.intersect_line_plane(line, plane_btm)
+      ibtm = Geom.intersect_line_plane(eline, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
-        vs = ibtm.vector_to(center)
-        vs.reverse! if vs.valid? && vs.samedirection?(ev)
+        evs = ibtm.vector_to(ecenter)
+        evs.reverse! if evs.valid? && evs.samedirection?(ev)
       else
         plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
-        ilft = Geom.intersect_line_plane(line, plane_lft)
+        ilft = Geom.intersect_line_plane(eline, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
-          vs = ilft.vector_to(center)
-          vs.reverse! if vs.valid? && vs.samedirection?(ev)
+          evs = ilft.vector_to(ecenter)
+          evs.reverse! if evs.valid? && evs.samedirection?(ev)
         else
           plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
-          ifrt = Geom.intersect_line_plane(line, plane_frt)
+          ifrt = Geom.intersect_line_plane(eline, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
-            vs = ifrt.vector_to(center)
-            vs.reverse! if vs.valid? && vs.samedirection?(ev)
+            evs = ifrt.vector_to(ecenter)
+            evs.reverse! if evs.valid? && evs.samedirection?(ev)
           end
         end
       end
 
       # Restore to 'World' space
 
-      center = center.transform(et)
+      center = ecenter.transform(et)
       line = [ center, v ]
-      vs = vs.transform(et)
+      vs = evs.transform(et)
       ve = vs.reverse
 
       lps = center
@@ -1221,8 +1243,8 @@ module Ladb::OpenCutList
       dpe = lpe
       case type
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
-        mpe = lpe.offset(vs)
-        dps = lps.offset(vs)
+        mpe = lpe.offset(evs)
+        dps = lps.offset(evs)
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED
         mpe = lpe
         dps = lps
@@ -1420,10 +1442,10 @@ module Ladb::OpenCutList
           k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
           k_box.color = color
           k_box.transformation = mt * et
-          @tool.append_3d(k_box, 1)
+          @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
-          @tool.append_3d(_create_floating_points(points: [ mp ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_MEDIUM_GREY), 1)
-          @tool.append_3d(_create_floating_points(points: [ dp ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), 1)
+          @tool.append_3d(_create_floating_points(points: [ mp ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_MEDIUM_GREY), LAYER_3D_HANDLE_PREVIEW)
+          @tool.append_3d(_create_floating_points(points: [ dp ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), LAYER_3D_HANDLE_PREVIEW)
 
           next if x == 0 && y == 0
 
@@ -1433,11 +1455,13 @@ module Ladb::OpenCutList
             mvuy = Geom::Vector3d.new(0, dv_2d.y * y).transform(t)
 
             if x == 1 && y == 1
-              mt *= Geom::Transformation.rotation(mp, mvux * mvuy, Geometrix::ONE_PI)
+              n = mvux * mvuy
+              mt *= Geom::Transformation.rotation(mp, mvux * mvuy, Geometrix::ONE_PI) if n.valid?
               mt *= Geom::Transformation.translation(mvu + mvu)
             elsif x == 1 || y == 1
+              n = x == 1 ? mvux : mvuy
               mt = Geom::Transformation.scaling(mp, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
-              mt *= Geom::Transformation.rotation(mp, x == 1 ? mvux : mvuy, Geometrix::ONE_PI)
+              mt *= Geom::Transformation.rotation(mp, n, Geometrix::ONE_PI) if n.valid?
               mt *= Geom::Transformation.translation(mvu)
             end
 
@@ -1448,7 +1472,7 @@ module Ladb::OpenCutList
           k_segments.line_width = 1.5
           k_segments.color = Kuix::COLOR_BLACK
           k_segments.transformation = mt * drawing_def.transformation
-          @tool.append_3d(k_segments, 1)
+          @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
 
         end
       end
@@ -1462,7 +1486,7 @@ module Ladb::OpenCutList
       k_rectangle.color = ColorUtils.color_translucent(color, 60)
       k_rectangle.on_top = true
       k_rectangle.transformation = t
-      @tool.append_3d(k_rectangle, 1)
+      @tool.append_3d(k_rectangle, LAYER_3D_HANDLE_PREVIEW)
 
       k_rectangle = Kuix::RectangleMotif.new
       k_rectangle.bounds.copy!(db_2d)
@@ -1470,7 +1494,7 @@ module Ladb::OpenCutList
       k_rectangle.line_width = 1.5 unless @locked_normal.nil?
       k_rectangle.color = color
       k_rectangle.transformation = t
-      @tool.append_3d(k_rectangle, 1)
+      @tool.append_3d(k_rectangle, LAYER_3D_HANDLE_PREVIEW)
 
       distance_x = db_2d.width
       distance_y = db_2d.height
@@ -1691,58 +1715,58 @@ module Ladb::OpenCutList
       eb = Geom::BoundingBox.new
       eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
 
-      center = eb.center
-      plane = [ center, Z_AXIS ]
-      line_x = [ center, X_AXIS ]
-      line_y = [ center, Y_AXIS ]
+      ec = eb.center
+      plane = [ ec, Z_AXIS ]
+      line_x = [ ec, X_AXIS ]
+      line_y = [ ec, Y_AXIS ]
 
-      lps = center
-      lpe = pe.transform(eti).project_to_plane(plane)
+      elps = ec
+      elpe = pe.transform(eti).project_to_plane(plane)
 
-      vx = center.vector_to(lpe.project_to_line(line_x))
-      vy = center.vector_to(lpe.project_to_line(line_y))
+      evx = ec.vector_to(elpe.project_to_line(line_x))
+      evy = ec.vector_to(elpe.project_to_line(line_y))
 
       fn_compute = lambda { |line, v|
 
         plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
         ibtm = Geom.intersect_line_plane(line, plane_btm)
         if !ibtm.nil? && eb.contains?(ibtm)
-          vs = ibtm.vector_to(center)
-          vs.reverse! if v.valid? && vs.valid? && vs.samedirection?(v)
+          evs = ibtm.vector_to(ec)
+          evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
         else
           plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
           ilft = Geom.intersect_line_plane(line, plane_lft)
           if !ilft.nil? && eb.contains?(ilft)
-            vs = ilft.vector_to(center)
-            vs.reverse! if v.valid? && vs.valid? && vs.samedirection?(v)
+            evs = ilft.vector_to(ec)
+            evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
           else
             plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
             ifrt = Geom.intersect_line_plane(line, plane_frt)
             if !ifrt.nil? && eb.contains?(ifrt)
-              vs = ifrt.vector_to(center)
-              vs.reverse! if v.valid? && vs.valid? && vs.samedirection?(v)
+              evs = ifrt.vector_to(ec)
+              evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
             end
           end
         end
 
-        ve = vs.reverse
+        eve = evs.reverse
 
-        [ vs, ve ]
+        [ evs, eve ]
       }
 
-      vsx, vex = fn_compute.call(line_x, vx)
-      vsy, vey = fn_compute.call(line_y, vy)
+      evsx, evex = fn_compute.call(line_x, evx)
+      evsy, evey = fn_compute.call(line_y, evy)
 
-      vs = vsx + vsy
-      ve = vex + vey
+      evs = evsx + evsy
+      eve = evex + evey
 
       # Restore to 'World' space
 
-      vs = vs.transform(et)
-      ve = ve.transform(et)
+      vs = evs.transform(et)
+      ve = eve.transform(et)
 
-      lps = lps.transform(et)
-      lpe = lpe.transform(et)
+      lps = elps.transform(et)
+      lpe = elpe.transform(et)
 
       mps = lps
       dpe = lpe
@@ -1867,7 +1891,7 @@ module Ladb::OpenCutList
 
       unless (instance = _get_instance).nil?
         if state == STATE_HANDLE
-          @tool.remove_3d(0)  # Remove part preview
+          @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
           instance.hidden = true
         else
           instance.hidden = false
@@ -2001,12 +2025,12 @@ module Ladb::OpenCutList
       k_segments.line_width = 1.5
       k_segments.color = Kuix::COLOR_BLACK
       k_segments.transformation = mt * drawing_def.transformation
-      @tool.append_3d(k_segments, 1)
+      @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
 
       # Preview line
 
-      @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), 1)
-      @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), 1)
+      @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), LAYER_3D_HANDLE_PREVIEW)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(dps)
@@ -2015,7 +2039,7 @@ module Ladb::OpenCutList
       k_line.line_width = 1.5 unless @locked_axis.nil?
       k_line.color = ColorUtils.color_translucent(color, 60)
       k_line.on_top = true
-      @tool.append_3d(k_line, 1)
+      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(dps)
@@ -2023,7 +2047,7 @@ module Ladb::OpenCutList
       k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_line.line_width = 1.5 unless @locked_axis.nil?
       k_line.color = color
-      @tool.append_3d(k_line, 1)
+      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
 
       # Preview bounds
 
@@ -2032,14 +2056,14 @@ module Ladb::OpenCutList
       k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_box.color = color
       k_box.transformation = et
-      @tool.append_3d(k_box, 1)
+      @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
       k_box = Kuix::BoxMotif.new
       k_box.bounds.copy!(eb)
       k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_box.color = color
       k_box.transformation = mt * et
-      @tool.append_3d(k_box, 1)
+      @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
       distance = dps.vector_to(dpe).length
 
@@ -2063,13 +2087,12 @@ module Ladb::OpenCutList
       return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_move_measure_type)).nil?
 
       dps, dpe = move_def.values_at(:dps, :dpe)
-      v = dps.vector_to(dpe)
+      dv = dps.vector_to(dpe)
 
-      distance = _read_user_text_length(tool, text, v.length)
+      distance = _read_user_text_length(tool, text, dv.length)
       return true if distance.nil?
 
-      @picked_handle_end_point = dps.offset(v, distance)
-
+      @picked_handle_end_point = dps.offset(dv, distance)
       _handle_entity
       set_state(STATE_HANDLE_COPIES)
       _restart
@@ -2126,25 +2149,25 @@ module Ladb::OpenCutList
       eb = Geom::BoundingBox.new
       eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
 
-      center = eb.center
-      line = [ center, v.transform(eti) ]
+      ecenter = eb.center
+      eline = [ ecenter, ev ]
 
       plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
-      ibtm = Geom.intersect_line_plane(line, plane_btm)
+      ibtm = Geom.intersect_line_plane(eline, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
-        vs = ibtm.vector_to(center)
+        vs = ibtm.vector_to(ecenter)
         vs.reverse! if vs.valid? && vs.samedirection?(ev)
       else
         plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
-        ilft = Geom.intersect_line_plane(line, plane_lft)
+        ilft = Geom.intersect_line_plane(eline, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
-          vs = ilft.vector_to(center)
+          vs = ilft.vector_to(ecenter)
           vs.reverse! if vs.valid? && vs.samedirection?(ev)
         else
           plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
-          ifrt = Geom.intersect_line_plane(line, plane_frt)
+          ifrt = Geom.intersect_line_plane(eline, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
-            vs = ifrt.vector_to(center)
+            vs = ifrt.vector_to(ecenter)
             vs.reverse! if vs.valid? && vs.samedirection?(ev)
           end
         end
@@ -2152,7 +2175,7 @@ module Ladb::OpenCutList
 
       # Restore to 'World' space
 
-      center = center.transform(et)
+      center = ecenter.transform(et)
       line = [ center, v ]
       vs = vs.transform(et)
       ve = vs.reverse
@@ -2295,7 +2318,7 @@ module Ladb::OpenCutList
 
       unless (instance = _get_instance).nil?
         if state == STATE_HANDLE
-          @tool.remove_3d(0)  # Remove part preview
+          @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
           instance.hidden = true
         else
           instance.hidden = false
@@ -2437,7 +2460,7 @@ module Ladb::OpenCutList
       k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_segments.color = Kuix::COLOR_DARK_GREY
       k_segments.transformation = drawing_def.transformation
-      @tool.append_3d(k_segments, 1)
+      @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
 
       count = 1
       (0...count).each do |i|
@@ -2449,21 +2472,21 @@ module Ladb::OpenCutList
         k_segments.line_width = 1.5
         k_segments.color = Kuix::COLOR_BLACK
         k_segments.transformation = mt * drawing_def.transformation
-        @tool.append_3d(k_segments, 1)
+        @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
 
         k_box = Kuix::BoxMotif.new
         k_box.bounds.copy!(eb)
         k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_box.color = color
         k_box.transformation = mt * et
-        @tool.append_3d(k_box, 1)
+        @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
       end
 
       # Preview line
 
-      @tool.append_3d(_create_floating_points(points: [ @picked_handle_start_point ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), 1)
-      @tool.append_3d(_create_floating_points(points: [ @picked_handle_start_point ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: Kuix::COLOR_DARK_GREY), 1)
+      @tool.append_3d(_create_floating_points(points: [ @picked_handle_start_point ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: [ @picked_handle_start_point ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(@picked_handle_start_point)
@@ -2472,7 +2495,7 @@ module Ladb::OpenCutList
       k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_line.color = Kuix::COLOR_DARK_GREY
       k_line.on_top = true
-      @tool.append_3d(k_line, 1)
+      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(@mouse_ip.position)
@@ -2481,9 +2504,9 @@ module Ladb::OpenCutList
       k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_line.color = Kuix::COLOR_DARK_GREY
       k_line.on_top = true
-      @tool.append_3d(k_line, 1)
+      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
 
-      @tool.append_3d(_create_floating_points(points: [ center ], style: Kuix::POINT_STYLE_PLUS), 1)
+      @tool.append_3d(_create_floating_points(points: [ center ], style: Kuix::POINT_STYLE_PLUS), LAYER_3D_HANDLE_PREVIEW)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(lps)
@@ -2492,7 +2515,7 @@ module Ladb::OpenCutList
       k_line.line_width = 1.5 unless @locked_axis.nil?
       k_line.color = ColorUtils.color_translucent(color, 60)
       k_line.on_top = true
-      @tool.append_3d(k_line, 1)
+      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(lps)
@@ -2500,9 +2523,9 @@ module Ladb::OpenCutList
       k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_line.line_width = 1.5 unless @locked_axis.nil?
       k_line.color = color
-      @tool.append_3d(k_line, 1)
+      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
 
-      @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), 1)
+      @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), LAYER_3D_HANDLE_PREVIEW)
 
       distance = lv.length
 
@@ -2650,35 +2673,35 @@ module Ladb::OpenCutList
       eb = Geom::BoundingBox.new
       eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
 
-      center = eb.center
-      line = [ center, v.transform(eti) ]
+      ecenter = eb.center
+      eline = [ ecenter, v.transform(eti) ]
 
       plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
-      ibtm = Geom.intersect_line_plane(line, plane_btm)
+      ibtm = Geom.intersect_line_plane(eline, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
-        vs = center.vector_to(ibtm)
-        vs.reverse! if vs.valid? && vs.samedirection?(ev)
+        evs = ecenter.vector_to(ibtm)
+        evs.reverse! if evs.valid? && evs.samedirection?(ev)
       else
         plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
-        ilft = Geom.intersect_line_plane(line, plane_lft)
+        ilft = Geom.intersect_line_plane(eline, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
-          vs = center.vector_to(ilft)
-          vs.reverse! if vs.valid? && vs.samedirection?(ev)
+          evs = ecenter.vector_to(ilft)
+          evs.reverse! if evs.valid? && evs.samedirection?(ev)
         else
           plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
-          ifrt = Geom.intersect_line_plane(line, plane_frt)
+          ifrt = Geom.intersect_line_plane(eline, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
-            vs = center.vector_to(ifrt)
-            vs.reverse! if vs.valid? && vs.samedirection?(ev)
+            evs = ecenter.vector_to(ifrt)
+            evs.reverse! if evs.valid? && evs.samedirection?(ev)
           end
         end
       end
 
       # Restore to 'World' space
 
-      center = center.transform(et)
+      center = ecenter.transform(et)
       line = [ center, v ]
-      vs = vs.transform(et)
+      vs = evs.transform(et)
       ve = vs.reverse
 
       lps = ps.project_to_line(line)

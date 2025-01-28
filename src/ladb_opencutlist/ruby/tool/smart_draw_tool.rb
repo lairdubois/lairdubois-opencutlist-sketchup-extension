@@ -162,15 +162,22 @@ module Ladb::OpenCutList
     # -- Events --
 
     def onActivate(view)
+      super
 
       # Clear current selection
       Sketchup.active_model.selection.clear if Sketchup.active_model
 
-      super
+      # Observe model events
+      view.model.add_observer(self)
+
     end
 
     def onDeactivate(view)
       super
+
+      # Stop observing model events
+      view.model.remove_observer(self)
+
     end
 
     def onActionChanged(action)
@@ -192,6 +199,10 @@ module Ladb::OpenCutList
 
     def onViewChanged(view)
       super
+      refresh
+    end
+
+    def onTransactionUndo(model)
       refresh
     end
 
@@ -1167,7 +1178,7 @@ module Ladb::OpenCutList
     # --
 
     def _get_instance
-      return nil if @definition.nil?
+      return nil if @definition.nil? || @definition.deleted?
       @definition.instances.first
     end
 
@@ -1198,85 +1209,6 @@ module Ladb::OpenCutList
         segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
       end
       segments
-    end
-
-    def _get_move_along_def(ps, pe)
-      return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-
-      v = ps.vector_to(pe)
-      return unless v.valid?
-
-      bounds = drawing_def.bounds
-
-      t = drawing_def.transformation
-      ti = t.inverse
-
-      center = bounds.center.transform(t)
-      corners = (0..6).map { |i| bounds.corner(i).transform(t) }
-      line = [ center , v ]
-
-      plane_btm = Geom.fit_plane_to_points(corners[0], corners[1], corners[2])
-      ibtm = Geom.intersect_line_plane(line, plane_btm)
-      if !ibtm.nil? && bounds.contains?(ibtm.transform(ti))
-        plane_top = Geom.fit_plane_to_points(corners[4], corners[5], corners[6])
-        itop = Geom.intersect_line_plane(line, plane_top)
-        vs = center.vector_to(ibtm)
-        ve = center.vector_to(itop)
-        unless ibtm.vector_to(itop).samedirection?(v)
-          vs.reverse!
-          ve.reverse!
-        end
-        # @tool.append_3d(_create_floating_points(points: [ ibtm, itop ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: Kuix::COLOR_Z))
-      else
-        plane_lft = Geom.fit_plane_to_points(corners[0], corners[2], corners[4])
-        ilft = Geom.intersect_line_plane(line, plane_lft)
-        if !ilft.nil? && bounds.contains?(ilft.transform(ti))
-          plane_rgt = Geom.fit_plane_to_points(corners[1], corners[3], corners[5])
-          irgt = Geom.intersect_line_plane(line, plane_rgt)
-          vs = center.vector_to(ilft)
-          ve = center.vector_to(irgt)
-          unless ilft.vector_to(irgt).samedirection?(v)
-            vs.reverse!
-            ve.reverse!
-          end
-          # @tool.append_3d(_create_floating_points(points: [ ilft, irgt ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: Kuix::COLOR_X))
-        else
-          plane_frt = Geom.fit_plane_to_points(corners[0], corners[1], corners[4])
-          ifrt = Geom.intersect_line_plane(line, plane_frt)
-          if !ifrt.nil? && bounds.contains?(ifrt.transform(ti))
-            plane_bck = Geom.fit_plane_to_points(corners[2], corners[3], corners[6])
-            ibck = Geom.intersect_line_plane(line, plane_bck)
-            vs = center.vector_to(ifrt)
-            ve = center.vector_to(ibck)
-            unless ifrt.vector_to(ibck).samedirection?(v)
-              vs.reverse!
-              ve.reverse!
-            end
-            # @tool.append_3d(_create_floating_points(points: [ ifrt, ibck ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: Kuix::COLOR_Y))
-          end
-        end
-      end
-
-      lps = ps.project_to_line(line)
-      lpe = pe.project_to_line(line)
-
-      mps = vs.nil? ? lps : lps.offset(vs)
-      mpe = ve.nil? ? lpe : lpe.offset(ve)
-      mv = mps.vector_to(mpe)
-
-      {
-        ps: ps,
-        pe: pe,
-        center: center,
-        v: v,
-        vs: vs,
-        ve: ve,
-        lps: lps,
-        lpe: lpe,
-        mps: mps,
-        mpe: mpe,
-        mv: mv
-      }
     end
 
     def _get_auto_orient_transformation(definition, transformation = IDENTITY)
