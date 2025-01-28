@@ -3,19 +3,19 @@
   },
   "action_1": { /* ACTION_COPY_LINE */
     "copy_measure_type": "outside",
-    "axes": "parent",
+    "axes": "context",
     "mirror": false
   },
   "action_2": { /* ACTION_COPY_GRID */
     "copy_measure_type": "outside",
-    "axes": "parent",
+    "axes": "context",
     "mirror": false
   },
   "action_3": { /* ACTION_MOVE_LINE */
     "move_measure_type": "inside",
-    "axes": "parent"
+    "axes": "context"
   },
   "action_4": { /* ACTION_DISTRIBUTE */
-    "axes": "parent"
+    "axes": "context"
   }
 }

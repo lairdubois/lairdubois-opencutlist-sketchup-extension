@@ -6,19 +6,19 @@
     "shape_offset": "0",
     "construction": false,
     "rectangle_centered": false,
-    "solid_centered": false
+    "pull_centered": false
   },
   "action_1": { /* ACTION_DRAW_CIRCLE */
     "shape_offset": "0",
     "segment_count": 24,
     "construction": false,
     "measure_from_diameter": false,
-    "solid_centered": false
+    "pull_centered": false
   },
   "action_2": { /* ACTION_DRAW_POLYGON */
     "shape_offset": "0",
     "construction": false,
     "measure_reversed": false,
-    "solid_centered": false
+    "pull_centered": false
   }
 }

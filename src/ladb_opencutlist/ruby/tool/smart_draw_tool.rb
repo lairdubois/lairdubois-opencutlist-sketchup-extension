@@ -31,14 +31,14 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED = 'rectangle_centered'
     ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER = 'measure_from_diameter'
     ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
-    ACTION_OPTION_OPTIONS_BOX_CENTRED = 'solid_centered'
+    ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
 
     ACTIONS = [
       {
         :action => ACTION_DRAW_RECTANGLE,
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_BOX_CENTRED ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_PULL_CENTRED ]
         }
       },
       {
@@ -46,21 +46,21 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_SEGMENTS => [ ACTION_OPTION_SEGMENTS_SEGMENT_COUNT ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_BOX_CENTRED ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_PULL_CENTRED ]
         }
       },
       {
         :action => ACTION_DRAW_POLYGON,
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_BOX_CENTRED ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_PULL_CENTRED ]
         }
       }
     ].freeze
 
     # -----
 
-    attr_reader :cursor_select, :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pushpull
+    attr_reader :cursor_select, :cursor_pencil_rectangle, :cursor_pencil_circle, :cursor_pencil_rectangle, :cursor_pull
 
     def initialize(
 
@@ -77,7 +77,7 @@ module Ladb::OpenCutList
       @cursor_pencil_rectangle = create_cursor('pencil-rectangle', 0, 31)
       @cursor_pencil_circle = create_cursor('pencil-circle', 0, 31)
       @cursor_pencil_polygon = create_cursor('pencil-polygon', 0, 31)
-      @cursor_pushpull = create_cursor('pushpull', 16, 3)
+      @cursor_pull = create_cursor('pull', 16, 3)
 
     end
 
@@ -151,7 +151,7 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833 M0.25,0.5L0.75,0 M0.25,0.25L0.323,0.427L0.5,0.5L0.677,0.427L0.75,0.25L0.677,0.073L0.5,0L0.323,0.073L0.25,0.25'))
         when ACTION_OPTION_OPTIONS_MEASURE_REVERSED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833  M0.861,0.292L0.708,0.139L0.5,0.083L0.292,0.139L0.14,0.292 M0.14,0.083L0.14,0.292L0.333,0.292'))
-        when ACTION_OPTION_OPTIONS_BOX_CENTRED
+        when ACTION_OPTION_OPTIONS_PULL_CENTRED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         end
       end
@@ -217,14 +217,14 @@ module Ladb::OpenCutList
 
     STATE_SHAPE_START = 0
     STATE_SHAPE = 1
-    STATE_PUSHPULL = 2
+    STATE_PULL = 2
 
     LAYER_2D_DIMENSIONS = 0
     LAYER_2D_FLOATING_TOOLS = 1
 
-    @@last_pushpull_measure = 0
+    @@last_pull_measure = 0
 
-    attr_reader :picked_shape_start_point, :picked_shape_end_point, :picked_pushpull_end_point, :picked_move_end_point, :normal, :direction
+    attr_reader :picked_shape_start_point, :picked_shape_end_point, :picked_pull_end_point, :picked_move_end_point, :normal, :direction
 
     def initialize(action, tool, action_handler = nil)
       super
@@ -236,7 +236,7 @@ module Ladb::OpenCutList
 
       @picked_shape_start_point = nil
       @picked_shape_end_point = nil
-      @picked_pushpull_end_point = nil
+      @picked_pull_end_point = nil
 
       @locked_direction = nil
       @locked_normal = nil
@@ -259,8 +259,8 @@ module Ladb::OpenCutList
 
       case state
 
-      when STATE_PUSHPULL
-        return @tool.cursor_pushpull
+      when STATE_PULL
+        return @tool.cursor_pull
 
       end
 
@@ -274,10 +274,10 @@ module Ladb::OpenCutList
       when STATE_SHAPE
         return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_#{state}_status") + '.'
 
-      when STATE_PUSHPULL
+      when STATE_PULL
         return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_status") + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_pushpull_locked_status') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_solid_centered_status') + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_pull_locked_status') + '.' +
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_pull_centered_status') + '.'
 
       end
 
@@ -291,7 +291,7 @@ module Ladb::OpenCutList
       when STATE_SHAPE
         return PLUGIN.get_i18n_string('tool.default.vcb_radius')
 
-      when STATE_PUSHPULL
+      when STATE_PULL
         return PLUGIN.get_i18n_string('tool.default.vcb_distance')
 
       end
@@ -329,7 +329,7 @@ module Ladb::OpenCutList
         @picked_shape_start_point = nil
         set_state(STATE_SHAPE_START)
 
-      when STATE_PUSHPULL
+      when STATE_PULL
         @picked_shape_end_point = nil
         set_state(STATE_SHAPE)
 
@@ -376,9 +376,9 @@ module Ladb::OpenCutList
         _snap_shape(flags, x, y, view)
         _preview_shape(view)
 
-      when STATE_PUSHPULL
-        _snap_pushpull(flags, x, y, view)
-        _preview_pushpull(view)
+      when STATE_PULL
+        _snap_pull(flags, x, y, view)
+        _preview_pull(view)
 
       end
 
@@ -424,15 +424,15 @@ module Ladb::OpenCutList
       when STATE_SHAPE
         if _valid_shape?
           @picked_shape_end_point = @mouse_snap_point
-          set_state(STATE_PUSHPULL)
+          set_state(STATE_PULL)
           _refresh
         else
           UI.beep
         end
 
-      when STATE_PUSHPULL
+      when STATE_PULL
         if _valid_solid?
-          @picked_pushpull_end_point = @mouse_snap_point
+          @picked_pull_end_point = @mouse_snap_point
           _create_entity
           _restart
         else
@@ -455,12 +455,12 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_PUSHPULL
-        unless @@last_pushpull_measure == 0
+      when STATE_PULL
+        unless @@last_pull_measure == 0
 
-          measure = @@last_pushpull_measure
-          measure /= 2 if _fetch_option_solid_centered
-          @picked_pushpull_end_point = @picked_shape_end_point.offset(@normal, measure)
+          measure = @@last_pull_measure
+          measure /= 2 if _fetch_option_pull_centered
+          @picked_pull_end_point = @picked_shape_end_point.offset(@normal, measure)
 
           _create_entity
           _restart
@@ -526,10 +526,10 @@ module Ladb::OpenCutList
           return true
         end
 
-      when STATE_PUSHPULL
+      when STATE_PULL
 
         if key == CONSTRAIN_MODIFIER_KEY
-          UI.beep if @@last_pushpull_measure == 0
+          UI.beep if @@last_pull_measure == 0
           _refresh
           return true
         end
@@ -543,12 +543,12 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_PUSHPULL
+      when STATE_PULL
         if key == CONSTRAIN_MODIFIER_KEY
           _refresh
           return true
         elsif key == COPY_MODIFIER_KEY && is_quick
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED, !_fetch_option_solid_centered, true)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED, !_fetch_option_pull_centered, true)
           _refresh
           return true
         end
@@ -568,8 +568,8 @@ module Ladb::OpenCutList
       when STATE_SHAPE
         return _read_shape(tool, text, view)
 
-      when STATE_PUSHPULL
-        return _read_pushpull(tool, text, view)
+      when STATE_PULL
+        return _read_pull(tool, text, view)
 
       end
 
@@ -628,7 +628,7 @@ module Ladb::OpenCutList
 
     def _get_previous_input_point
       return Sketchup::InputPoint.new(@picked_shape_start_point) if @state == STATE_SHAPE
-      return Sketchup::InputPoint.new(@picked_shape_end_point) if @state == STATE_PUSHPULL
+      return Sketchup::InputPoint.new(@picked_shape_end_point) if @state == STATE_PULL
       nil
     end
 
@@ -637,10 +637,10 @@ module Ladb::OpenCutList
       points = []
       points << @picked_shape_start_point unless @picked_shape_start_point.nil?
       points << @picked_shape_end_point unless @picked_shape_end_point.nil?
-      points << @picked_pushpull_end_point unless @picked_pushpull_end_point.nil?
+      points << @picked_pull_end_point unless @picked_pull_end_point.nil?
       points << @mouse_snap_point unless @mouse_snap_point.nil?
 
-      if _fetch_option_solid_centered && _picked_shape_end_point? && points.length > 2
+      if _fetch_option_pull_centered && _picked_shape_end_point? && points.length > 2
         offset = points[2].vector_to(points[1])
         points[0] = points[0].offset(offset)
         points[1] = points[1].offset(offset)
@@ -768,7 +768,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _snap_pushpull(flags, x, y, view)
+    def _snap_pull(flags, x, y, view)
 
       if @mouse_ip.degrees_of_freedom > 2 ||
         @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1 ||
@@ -787,10 +787,10 @@ module Ladb::OpenCutList
 
       end
 
-      # Lock on last pushpull measure
-      if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY) && @@last_pushpull_measure > 0
-        measure = @@last_pushpull_measure
-        measure /= 2 if _fetch_option_solid_centered
+      # Lock on last pull measure
+      if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY) && @@last_pull_measure > 0
+        measure = @@last_pull_measure
+        measure /= 2 if _fetch_option_pull_centered
         @mouse_snap_point = @picked_shape_end_point.offset(@picked_shape_end_point.vector_to(@mouse_snap_point), measure) if measure > 0
       end
 
@@ -804,9 +804,9 @@ module Ladb::OpenCutList
     def _preview_shape(view)
     end
 
-    def _preview_pushpull(view)
+    def _preview_pull(view)
 
-      if _fetch_option_solid_centered
+      if _fetch_option_pull_centered
 
         # Draw first picked point
         k_point = _create_floating_points(
@@ -919,7 +919,7 @@ module Ladb::OpenCutList
       false
     end
 
-    def _read_pushpull(tool, text, view)
+    def _read_pull(tool, text, view)
 
       t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
@@ -928,14 +928,12 @@ module Ladb::OpenCutList
       p2 = points[1].transform(ti)
       p3 = points[2].transform(ti)
 
-      solid_centered = _fetch_option_solid_centered
-
       base_thickness = p3.z - p2.z
       thickness = _read_user_text_length(tool, text, base_thickness)
       return true if thickness.nil?
-      thickness /= 2 if solid_centered
+      thickness /= 2 if _fetch_option_pull_centered
 
-      @picked_pushpull_end_point = Geom::Point3d.new(p2.x, p2.y, thickness).transform(t)
+      @picked_pull_end_point = Geom::Point3d.new(p2.x, p2.y, thickness).transform(t)
 
       _create_entity
       _restart
@@ -955,8 +953,8 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION)
     end
 
-    def _fetch_option_solid_centered
-      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_BOX_CENTRED)
+    def _fetch_option_pull_centered
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED)
     end
 
     # -----
@@ -1001,7 +999,7 @@ module Ladb::OpenCutList
       @mouse_snap_point = nil
       @picked_shape_start_point = nil
       @picked_shape_end_point = nil
-      @picked_pushpull_end_point = nil
+      @picked_pull_end_point = nil
       @direction = nil
       @normal = _get_active_z_axis
       @locked_direction = nil
@@ -1018,7 +1016,7 @@ module Ladb::OpenCutList
       @locked_normal = nil
       @locked_axis = nil
 
-      if @state == STATE_PUSHPULL && (drawing_def = _get_drawing_def).is_a?(DrawingDef) && !_fetch_option_construction
+      if @state == STATE_PULL && (drawing_def = _get_drawing_def).is_a?(DrawingDef) && !_fetch_option_construction
         _append_floating_tools_at(drawing_def.bounds.center.transform(drawing_def.transformation), new_action_handler)
       end
 
@@ -1066,7 +1064,7 @@ module Ladb::OpenCutList
       bounds = Geom::BoundingBox.new
       bounds.add(p1, p3)
 
-      @@last_pushpull_measure = bounds.depth
+      @@last_pull_measure = bounds.depth
 
       if _fetch_option_construction || bounds.depth == 0
 
@@ -1825,7 +1823,7 @@ module Ladb::OpenCutList
 
         @picked_shape_end_point = Geom::Point3d.new(p1.x + length, p1.y + width, p1.z).transform(t)
 
-        set_state(STATE_PUSHPULL)
+        set_state(STATE_PULL)
         _refresh
 
       end
@@ -1838,9 +1836,9 @@ module Ladb::OpenCutList
 
         thickness = _read_user_text_length(tool, d3, 0)
         return true if thickness.nil?
-        thickness = thickness / 2 if _fetch_option_solid_centered
+        thickness = thickness / 2 if _fetch_option_pull_centered
 
-        @picked_pushpull_end_point = Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t)
+        @picked_pull_end_point = Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t)
 
         _create_entity
         _restart
@@ -2165,7 +2163,7 @@ module Ladb::OpenCutList
         @picked_shape_end_point = @picked_shape_start_point.offset(measure_vector, _fetch_option_measure_from_diameter ? measure / 2.0 : measure)
 
         if d2.nil?
-          set_state(STATE_PUSHPULL)
+          set_state(STATE_PULL)
           _refresh
         end
 
@@ -2180,7 +2178,7 @@ module Ladb::OpenCutList
         thickness = _read_user_text_length(tool, d2, 0)
         return true if thickness.nil?
 
-        @picked_pushpull_end_point = Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t)
+        @picked_pull_end_point = Geom::Point3d.new(p2.x, p2.y, p2.z + thickness).transform(t)
 
         _create_entity
         _restart
@@ -2375,7 +2373,7 @@ module Ladb::OpenCutList
 
       when STATE_SHAPE
         onToolLButtonUp(flags, x, y, view)  # 1. Complete STATE_SHAPE_POINTS
-        return super                    # 2. Process auto pushpull if possible
+        return super                        # 2. Process auto pull if possible
 
       end
 
@@ -3010,7 +3008,7 @@ module Ladb::OpenCutList
       if _picked_shape_end_point?
         points = @picked_points.map { |point| point.transform(ti) }
 
-        if _fetch_option_solid_centered
+        if _fetch_option_pull_centered
           picked_points = _get_picked_points
           p1 = picked_points[0].transform(ti)
           points.each { |point| point.z = p1.z }

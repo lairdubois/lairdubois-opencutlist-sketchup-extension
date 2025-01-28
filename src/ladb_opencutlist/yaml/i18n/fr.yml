@@ -1862,9 +1862,9 @@ tool:
     action_option_options_measure_from_radius_status: Mesurer le cercle par son rayon
     action_option_options_measure_reversed: Mesure inversée
     action_option_options_measure_reversed_status: Inverser la mesure
-    action_option_options_solid_centered: Élévation centrée
-    action_option_options_solid_centered_status: Centrer l'élévation sur le premier point
-    action_pushpull_locked_status: Verrouiller sur la dernière mesure
+    action_option_options_pull_centered: Élévation centrée
+    action_option_options_pull_centered_status: Centrer l'élévation sur le premier point
+    action_pull_locked_status: Verrouiller sur la dernière mesure
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
     error:
@@ -1908,7 +1908,7 @@ tool:
     action_option_move_measure_type_centered_status: Mesurer au centre
     action_option_move_measure_type_inside_status: Mesurer à l'intérieur
     action_option_axes_active_status: Manipuler le long des axes actifs
-    action_option_axes_parent_status: Manipuler le long des axes du groupe ou composant contenant la pièce
+    action_option_axes_context_status: Manipuler le long des axes du groupe ou composant contenant la pièce
     action_option_axes_entity_status: Manipuler le long des axes de la pièce
     action_option_options_mirror_status: Copier en symétrie
     error:

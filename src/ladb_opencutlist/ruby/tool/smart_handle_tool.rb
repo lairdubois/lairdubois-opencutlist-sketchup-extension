@@ -34,7 +34,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_MOVE_MEASURE_TYPE_INSIDE = 'inside'
 
     ACTION_OPTION_AXES_ACTIVE = 'active'
-    ACTION_OPTION_AXES_PARENT = 'parent'
+    ACTION_OPTION_AXES_CONTEXT = 'context'
     ACTION_OPTION_AXES_ENTITY = 'entity'
 
     ACTION_OPTION_OPTIONS_MIRROR = 'mirror'
@@ -47,7 +47,7 @@ module Ladb::OpenCutList
         :action => ACTION_COPY_LINE,
         :options => {
           ACTION_OPTION_COPY_MEASURE_TYPE => [ ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED, ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE ],
-          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT, ACTION_OPTION_AXES_ENTITY ],
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MIRROR ]
         }
       },
@@ -55,7 +55,7 @@ module Ladb::OpenCutList
         :action => ACTION_COPY_GRID,
         :options => {
           ACTION_OPTION_COPY_MEASURE_TYPE => [ ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED, ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE ],
-          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT, ACTION_OPTION_AXES_ENTITY ],
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ],
           ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MIRROR ]
         }
       },
@@ -63,13 +63,13 @@ module Ladb::OpenCutList
         :action => ACTION_MOVE_LINE,
         :options => {
           ACTION_OPTION_MOVE_MEASURE_TYPE => [ ACTION_OPTION_MOVE_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_MOVE_MEASURE_TYPE_CENTERED, ACTION_OPTION_MOVE_MEASURE_TYPE_INSIDE ],
-          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT, ACTION_OPTION_AXES_ENTITY ]
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ]
         }
       },
       {
         :action => ACTION_DISTRIBUTE,
         :options => {
-          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_PARENT, ACTION_OPTION_AXES_ENTITY ]
+          ACTION_OPTION_AXES => [ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ]
         }
       },
     ].freeze
@@ -170,7 +170,7 @@ module Ladb::OpenCutList
         case option
         when ACTION_OPTION_AXES_ACTIVE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1'))
-        when ACTION_OPTION_AXES_PARENT
+        when ACTION_OPTION_AXES_CONTEXT
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1 M0.5,0.083L0.5,0.5L0.917,0.5L0.917,0.083L0.5,0.083'))
         when ACTION_OPTION_AXES_ENTITY
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.25,0L0.25,0.75L1,0.75 M0.083,0.167L0.25,0L0.417,0.167 M0.833,0.583L1,0.75L0.833,0.917 M0.042,0.5L0.042,0.958L0.5,0.958L0.5,0.5L0.042,0.5'))
@@ -263,6 +263,7 @@ module Ladb::OpenCutList
       @definition = nil
       @instances = []
       @drawing_def = nil
+      @drawing_def_size = nil
 
     end
 
@@ -466,11 +467,21 @@ module Ladb::OpenCutList
 
     end
 
+    def onActivePartChanged(part_entity_path, part, highlighted = false)
+      @global_context_transformation = nil
+      @global_instance_transformation = nil
+      @drawing_def = nil
+      super
+    end
+
     def onPartSelected
       return if (instance = _get_instance).nil?
 
       @instances << instance
       @definition = instance.definition
+
+      @global_context_transformation = nil
+      @global_instance_transformation = nil
       @drawing_def = nil
 
       et = _get_edit_transformation
@@ -533,6 +544,8 @@ module Ladb::OpenCutList
       @picked_handle_end_point = nil
       @definition = nil
       @instances.clear
+      @global_context_transformation = nil
+      @global_instance_transformation = nil
       @drawing_def = nil
       super
       set_state(STATE_SELECT)
@@ -571,7 +584,7 @@ module Ladb::OpenCutList
         @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
         @tool.remove_3d(LAYER_3D_AXES_PREVIEW)
-        _preview_edit_axes(true, 2)
+        _preview_edit_axes(true)
 
       else
 
@@ -581,8 +594,8 @@ module Ladb::OpenCutList
       end
     end
 
-    def _preview_edit_axes(with_box = true, layer = LAYER_3D_AXES_PREVIEW)
-      if (drawing_def = _get_drawing_def(false)).is_a?(DrawingDef)
+    def _preview_edit_axes(with_box = true, with_x = true, with_y = true, with_z = true)
+      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
         unit = @tool.get_unit
 
@@ -591,10 +604,6 @@ module Ladb::OpenCutList
         center = eb.center
 
         px_offset = Sketchup.active_model.active_view.pixels_to_model(50, center.transform(et))
-
-        w = eb.width * 0.5 + px_offset
-        h = eb.height * 0.5 + px_offset
-        d = eb.depth * 0.5 + px_offset
 
         fn = lambda do |axis, dim, locked, color|
 
@@ -608,13 +617,13 @@ module Ladb::OpenCutList
           k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
           k_line.color = color
           k_line.transformation = et
-          @tool.append_3d(k_line, layer)
+          @tool.append_3d(k_line, LAYER_3D_AXES_PREVIEW)
 
         end
 
-        fn.call(X_AXIS, w, _locked_x?, Kuix::COLOR_X)
-        fn.call(Y_AXIS, h, _locked_y?, Kuix::COLOR_Y)
-        fn.call(Z_AXIS, d, _locked_z?, Kuix::COLOR_Z)
+        fn.call(X_AXIS, eb.width * 0.5 + px_offset, _locked_x?, Kuix::COLOR_X) if with_x
+        fn.call(Y_AXIS, eb.height * 0.5 + px_offset, _locked_y?, Kuix::COLOR_Y) if with_y
+        fn.call(Z_AXIS, eb.depth * 0.5 + px_offset, _locked_z?, Kuix::COLOR_Z) if with_z
 
         if with_box
 
@@ -623,7 +632,7 @@ module Ladb::OpenCutList
           k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
           k_box.color = Kuix::COLOR_BLACK
           k_box.transformation = et
-          @tool.append_3d(k_box, layer)
+          @tool.append_3d(k_box, LAYER_3D_AXES_PREVIEW)
 
         end
 
@@ -689,33 +698,37 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_parent_transformation(default = IDENTITY)
+    def _get_global_context_transformation(default = IDENTITY)
+      return @global_context_transformation unless @global_context_transformation.nil?
+      @global_context_transformation = default
       if @active_part_entity_path.is_a?(Array) &&
         @active_part_entity_path.length > 1 &&
         (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-2])
-        return PathUtils.get_transformation(@active_part_entity_path[0..-2], IDENTITY)
+        @global_context_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-2], IDENTITY)
       end
-      default
+      @global_context_transformation
     end
 
-    def _get_entity_transformation(default = IDENTITY)
+    def _get_global_instance_transformation(default = IDENTITY)
+      return @global_instance_transformation unless @global_instance_transformation.nil?
+      @global_instance_transformation = default
       if @active_part_entity_path.is_a?(Array) &&
         @active_part_entity_path.length > 0 &&
         (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-1])
-        return PathUtils.get_transformation(@active_part_entity_path[0..-1], IDENTITY)
+        @global_instance_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-1], IDENTITY)
       end
-      default
+      @global_instance_transformation
     end
 
     def _get_edit_transformation
       case _fetch_option_axes
 
-      when SmartHandleTool::ACTION_OPTION_AXES_PARENT
-        t = _get_parent_transformation(nil)
+      when SmartHandleTool::ACTION_OPTION_AXES_CONTEXT
+        t = _get_global_context_transformation(nil)
         return t unless t.nil?
 
       when SmartHandleTool::ACTION_OPTION_AXES_ENTITY
-        t = _get_entity_transformation(nil)
+        t = _get_global_instance_transformation(nil)
         return t unless t.nil?
 
       end
@@ -727,9 +740,23 @@ module Ladb::OpenCutList
       nil
     end
 
-    def _get_drawing_def(use_cache = true)
+    def _hide_instance
+      return if (instance = _get_instance).nil?
+      _get_global_instance_transformation
+      _get_drawing_def
+      @unhide_local_instance_transformation = Geom::Transformation.new(instance.transformation)
+      instance.move!(Geom::Transformation.scaling(0, 0, 0))
+    end
+
+    def _unhide_instance
+      return if @unhide_local_instance_transformation.nil? || (instance = _get_instance).nil?
+      instance.move!(@unhide_local_instance_transformation)
+      @unhide_local_instance_transformation = nil
+    end
+
+    def _get_drawing_def
       return nil if @active_part_entity_path.nil?
-      return @drawing_def unless @drawing_def.nil? || !use_cache
+      return @drawing_def unless @drawing_def.nil?
 
       model = Sketchup.active_model
       return nil if model.nil?
@@ -769,11 +796,17 @@ module Ladb::OpenCutList
 
     # -- UTILS --
 
-    def _copy_instance_properties(src_instance, dst_instance)
+    def _copy_instance_metas(src_instance, dst_instance)
       dst_instance.material = src_instance.material
       dst_instance.name = src_instance.name
       dst_instance.layer = src_instance.layer
       dst_instance.casts_shadows = src_instance.casts_shadows?
+      dst_instance.receives_shadows = src_instance.receives_shadows?
+      src_instance.attribute_dictionaries.each do |attribute_dictionary|
+        attribute_dictionary.each do |key, value|
+          dst_instance.set_attribute(attribute_dictionary.name, key, value)
+        end
+      end
     end
 
     def _points_to_segments(points, closed = true, flatten = true)
@@ -807,7 +840,7 @@ module Ladb::OpenCutList
 
     protected
 
-    def _preview_edit_axes(with_box = nil, layer = nil)
+    def _preview_edit_axes(with_box)
       # Does nothing
     end
 
@@ -995,7 +1028,7 @@ module Ladb::OpenCutList
       super
       return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
 
-      drawing_def, drawing_def_segments, et, eb, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :mps, :mpe, :dps, :dpe)
+      drawing_def, drawing_def_segments, et, eb, ve, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :ve, :mps, :mpe, :dps, :dpe)
 
       return unless (mv = mps.vector_to(mpe)).valid?
       color = _get_vector_color(mv)
@@ -1053,6 +1086,23 @@ module Ladb::OpenCutList
       k_box.color = color
       k_box.transformation = mt * et
       @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
+
+      # Preview mirror
+
+      if _fetch_option_mirror
+
+        unit = @tool.get_unit(view)
+
+        k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2'))
+        k_motif.layout_data = Kuix::StaticLayoutDataWithSnap.new(mpe.offset(ve, ve.length + view.pixels_to_model(40, mpe)), unit * 5, unit * 5, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        k_motif.padding.set_all!(unit)
+        k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE)
+        k_motif.set_style_attribute(:background_color, color)
+        @tool.append_2d(k_motif)
+
+      end
+
+      # Preview distance
 
       distance = dps.vector_to(dpe).length
 
@@ -1132,11 +1182,11 @@ module Ladb::OpenCutList
 
       mps, mpe = move_def.values_at(:mps, :mpe)
 
-      t = _get_parent_transformation
-      ti = t.inverse
+      ct = _get_global_context_transformation
+      cti = ct.inverse
 
-      mps = mps.transform(ti)
-      mpe = mpe.transform(ti)
+      mps = mps.transform(cti)
+      mpe = mpe.transform(cti)
       mv = mps.vector_to(mpe)
 
       model = Sketchup.active_model
@@ -1180,7 +1230,7 @@ module Ladb::OpenCutList
 
           @instances << dst_instance
 
-          _copy_instance_properties(src_instance, dst_instance)
+          _copy_instance_metas(src_instance, dst_instance)
 
         end
 
@@ -1229,7 +1279,7 @@ module Ladb::OpenCutList
         end
       end
 
-      # Restore to 'World' space
+      # Restore to 'Global' space
 
       center = ecenter.transform(et)
       line = [ center, v ]
@@ -1262,6 +1312,8 @@ module Ladb::OpenCutList
         drawing_def_segments: drawing_def_segments,
         et: et,
         eb: eb,   # Expressed in 'Edit' space
+        vs: vs,
+        ve: ve,
         mps: mps,
         mpe: mpe,
         dps: dps,
@@ -1406,19 +1458,19 @@ module Ladb::OpenCutList
       super
       return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
 
-      drawing_def, drawing_def_segments, et, eb, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :mps, :mpe, :dps, :dpe)
+      drawing_def, drawing_def_segments, et, eb, ve, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :ve, :mps, :mpe, :dps, :dpe)
 
-      t = _get_transformation
-      ti = t.inverse
+      ht = _get_handle_transformation
+      hti = ht.inverse
 
       color = _get_vector_color(@normal)
 
-      mps_2d = mps.transform(ti)
-      mpe_2d = mpe.transform(ti)
+      mps_2d = mps.transform(hti)
+      mpe_2d = mpe.transform(hti)
       mv_2d = mps_2d.vector_to(mpe_2d)
 
-      dps_2d = dps.transform(ti)
-      dpe_2d = dpe.transform(ti)
+      dps_2d = dps.transform(hti)
+      dpe_2d = dpe.transform(hti)
       dv_2d = dps_2d.vector_to(dpe_2d)
 
       db_2d = Geom::BoundingBox.new
@@ -1429,8 +1481,8 @@ module Ladb::OpenCutList
       (0..1).each do |x|
         (0..1).each do |y|
 
-          mvu = Geom::Vector3d.new(mv_2d.x * x, mv_2d.y * y).transform(t)
-          dvu = Geom::Vector3d.new(dv_2d.x * x, dv_2d.y * y).transform(t)
+          mvu = Geom::Vector3d.new(mv_2d.x * x, mv_2d.y * y).transform(ht)
+          dvu = Geom::Vector3d.new(dv_2d.x * x, dv_2d.y * y).transform(ht)
 
           mp = mps.offset(mvu)
           dp = dps.offset(dvu)
@@ -1451,8 +1503,8 @@ module Ladb::OpenCutList
 
           if _fetch_option_mirror
 
-            mvux = Geom::Vector3d.new(mv_2d.x * x, 0).transform(t)
-            mvuy = Geom::Vector3d.new(0, dv_2d.y * y).transform(t)
+            mvux = Geom::Vector3d.new(mv_2d.x * x, 0).transform(ht)
+            mvuy = Geom::Vector3d.new(0, dv_2d.y * y).transform(ht)
 
             if x == 1 && y == 1
               n = mvux * mvuy
@@ -1485,7 +1537,7 @@ module Ladb::OpenCutList
       k_rectangle.line_width = 1.5 unless @locked_normal.nil?
       k_rectangle.color = ColorUtils.color_translucent(color, 60)
       k_rectangle.on_top = true
-      k_rectangle.transformation = t
+      k_rectangle.transformation = ht
       @tool.append_3d(k_rectangle, LAYER_3D_HANDLE_PREVIEW)
 
       k_rectangle = Kuix::RectangleMotif.new
@@ -1493,8 +1545,25 @@ module Ladb::OpenCutList
       k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_rectangle.line_width = 1.5 unless @locked_normal.nil?
       k_rectangle.color = color
-      k_rectangle.transformation = t
+      k_rectangle.transformation = ht
       @tool.append_3d(k_rectangle, LAYER_3D_HANDLE_PREVIEW)
+
+      # Preview mirror
+
+      if _fetch_option_mirror
+
+        unit = @tool.get_unit(view)
+
+        k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2'))
+        k_motif.layout_data = Kuix::StaticLayoutDataWithSnap.new(mpe.offset(ve, ve.length + view.pixels_to_model(40, mpe)), unit * 5, unit * 5, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        k_motif.padding.set_all!(unit)
+        k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE)
+        k_motif.set_style_attribute(:background_color, Kuix::COLOR_BLACK)
+        @tool.append_2d(k_motif)
+
+      end
+
+      # Preview distance
 
       distance_x = db_2d.width
       distance_y = db_2d.height
@@ -1504,7 +1573,7 @@ module Ladb::OpenCutList
       if distance_x > 0
 
         k_label = _create_floating_label(
-          screen_point: view.screen_coords(db_2d.min.offset(X_AXIS, distance_x / 2).transform(t)),
+          screen_point: view.screen_coords(db_2d.min.offset(X_AXIS, distance_x / 2).transform(ht)),
           text: distance_x,
           text_color: Kuix::COLOR_X,
           border_color: color
@@ -1515,7 +1584,7 @@ module Ladb::OpenCutList
       if distance_y > 0
 
         k_label = _create_floating_label(
-          screen_point: view.screen_coords(db_2d.min.offset(Y_AXIS, distance_y / 2).transform(t)),
+          screen_point: view.screen_coords(db_2d.min.offset(Y_AXIS, distance_y / 2).transform(ht)),
           text: distance_y,
           text_color: Kuix::COLOR_Y,
           border_color: color
@@ -1529,7 +1598,7 @@ module Ladb::OpenCutList
     def _read_handle(tool, text, view)
       return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
 
-      t = _get_transformation
+      t = _get_handle_transformation
       ti = t.inverse
 
       dps, dpe = move_def.values_at(:dps, :dpe)
@@ -1610,11 +1679,11 @@ module Ladb::OpenCutList
 
       mps, mpe = move_def.values_at(:mps, :mpe)
 
-      t = _get_transformation
-      ti = t.inverse
+      ht = _get_handle_transformation
+      hti = ht.inverse
 
-      mps_2d = mps.transform(ti)
-      mpe_2d = mpe.transform(ti)
+      mps_2d = mps.transform(hti)
+      mpe_2d = mpe.transform(hti)
       mv_2d = mps_2d.vector_to(mpe_2d)
 
       model = Sketchup.active_model
@@ -1643,30 +1712,31 @@ module Ladb::OpenCutList
         entities.erase_entities(old_instances) if old_instances.any?
         @instances = [ src_instance ]
 
-        pti = _get_parent_transformation.inverse
+        ct = _get_global_context_transformation
+        cti = ct.inverse
 
         (0..number_x).each do |x|
           (0..number_y).each do |y|
 
             next if x == 0 && y == 0  # Ignore src instance
 
-            mvu = Geom::Vector3d.new(ux * x, uy * y).transform(t)
+            mvu = Geom::Vector3d.new(ux * x, uy * y).transform(ht)
 
-            mt = Geom::Transformation.translation(mvu.transform(pti))
+            mt = Geom::Transformation.translation(mvu.transform(cti))
             if _fetch_option_mirror && number_x == 1 && number_y == 1
 
               mp = mps.offset(mvu)
 
-              mvux = Geom::Vector3d.new(ux * x, 0).transform(t)
-              mvuy = Geom::Vector3d.new(0, uy * y).transform(t)
+              mvux = Geom::Vector3d.new(ux * x, 0).transform(ht)
+              mvuy = Geom::Vector3d.new(0, uy * y).transform(ht)
 
               if x == number_x && y == number_y
-                mt *= Geom::Transformation.rotation(mp.transform(pti), (mvux * mvuy).transform(pti), Geometrix::ONE_PI)
-                mt *= Geom::Transformation.translation((mvu + mvu).transform(pti))
+                mt *= Geom::Transformation.rotation(mp.transform(cti), (mvux * mvuy).transform(cti), Geometrix::ONE_PI)
+                mt *= Geom::Transformation.translation((mvu + mvu).transform(cti))
               elsif x == number_x || y == number_y
-                mt = Geom::Transformation.scaling(mp.transform(pti), *mvu.transform(pti).normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
-                mt *= Geom::Transformation.rotation(mp.transform(pti), x == number_x ? mvux.transform(pti) : mvuy.transform(pti), Geometrix::ONE_PI)
-                mt *= Geom::Transformation.translation(mvu.transform(pti))
+                mt = Geom::Transformation.scaling(mp.transform(cti), *mvu.transform(cti).normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
+                mt *= Geom::Transformation.rotation(mp.transform(cti), x == number_x ? mvux.transform(cti) : mvuy.transform(cti), Geometrix::ONE_PI)
+                mt *= Geom::Transformation.translation(mvu.transform(cti))
               end
 
             end
@@ -1675,7 +1745,7 @@ module Ladb::OpenCutList
             dst_instance = entities.add_instance(@definition, mt)
             @instances << dst_instance
 
-            _copy_instance_properties(src_instance, dst_instance)
+            _copy_instance_metas(src_instance, dst_instance)
 
           end
         end
@@ -1686,7 +1756,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_axes
+    def _get_handle_axes
 
       active_x_axis = _get_active_x_axis
       active_x_axis = _get_active_y_axis if active_x_axis.parallel?(@normal)
@@ -1698,8 +1768,8 @@ module Ladb::OpenCutList
       [ x_axis.normalize, y_axis.normalize, z_axis.normalize ]
     end
 
-    def _get_transformation(origin = ORIGIN)
-      Geom::Transformation.axes(origin, *_get_axes)
+    def _get_handle_transformation(origin = ORIGIN)
+      Geom::Transformation.axes(origin, *_get_handle_axes)
     end
 
     def _get_move_def(ps, pe, type = 0)
@@ -1707,13 +1777,13 @@ module Ladb::OpenCutList
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
       return unless (drawing_def_segments = _get_drawing_def_segments(drawing_def)).is_a?(Array)
 
-      et = _get_transformation
-      eti = et.inverse
+      ht = _get_handle_transformation
+      hti = ht.inverse
 
       # Compute in 'Edit' space
 
       eb = Geom::BoundingBox.new
-      eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
+      eb.add(drawing_def_segments.map { |point| point.transform(hti * drawing_def.transformation) })
 
       ec = eb.center
       plane = [ ec, Z_AXIS ]
@@ -1721,7 +1791,7 @@ module Ladb::OpenCutList
       line_y = [ ec, Y_AXIS ]
 
       elps = ec
-      elpe = pe.transform(eti).project_to_plane(plane)
+      elpe = pe.transform(hti).project_to_plane(plane)
 
       evx = ec.vector_to(elpe.project_to_line(line_x))
       evy = ec.vector_to(elpe.project_to_line(line_y))
@@ -1760,13 +1830,13 @@ module Ladb::OpenCutList
       evs = evsx + evsy
       eve = evex + evey
 
-      # Restore to 'World' space
+      # Restore to 'Global' space
 
-      vs = evs.transform(et)
-      ve = eve.transform(et)
+      vs = evs.transform(ht)
+      ve = eve.transform(ht)
 
-      lps = elps.transform(et)
-      lpe = elpe.transform(et)
+      lps = elps.transform(ht)
+      lpe = elpe.transform(ht)
 
       mps = lps
       dpe = lpe
@@ -1789,7 +1859,7 @@ module Ladb::OpenCutList
       {
         drawing_def: drawing_def,
         drawing_def_segments: drawing_def_segments,
-        et: et,
+        et: ht,
         eb: eb,
         lps: lps,
         lpe: lpe,
@@ -1816,9 +1886,7 @@ module Ladb::OpenCutList
     # -----
 
     def stop
-      unless (instance = _get_instance).nil?
-        instance.hidden = false
-      end
+      _unhide_instance
       super
     end
 
@@ -1892,9 +1960,9 @@ module Ladb::OpenCutList
       unless (instance = _get_instance).nil?
         if state == STATE_HANDLE
           @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
-          instance.hidden = true
+          _hide_instance
         else
-          instance.hidden = false
+          _unhide_instance
         end
 
       end
@@ -2111,22 +2179,24 @@ module Ladb::OpenCutList
 
       mps, mpe = move_def.values_at(:mps, :mpe)
 
-      t = _get_parent_transformation
-      ti = t.inverse
+      ct = _get_global_context_transformation
+      cti = ct.inverse
 
-      mps = mps.transform(ti)
-      mpe = mpe.transform(ti)
+      mps = mps.transform(cti)
+      mpe = mpe.transform(cti)
       mv = mps.vector_to(mpe)
+
+      _unhide_instance
 
       model = Sketchup.active_model
       model.start_operation('Move Part', true)
 
-      src_instance = _get_instance
+        src_instance = _get_instance
 
-      mt = Geom::Transformation.translation(mv)
-      mt *= src_instance.transformation
+        mt = Geom::Transformation.translation(mv)
+        mt *= src_instance.transformation
 
-      src_instance.transformation = mt
+        src_instance.transformation = mt
 
       model.commit_operation
 
@@ -2173,7 +2243,7 @@ module Ladb::OpenCutList
         end
       end
 
-      # Restore to 'World' space
+      # Restore to 'Global' space
 
       center = ecenter.transform(et)
       line = [ center, v ]
@@ -2225,9 +2295,7 @@ module Ladb::OpenCutList
     # -----
 
     def stop
-      unless (instance = _get_instance).nil?
-        instance.hidden = false
-      end
+      _unhide_instance
       super
     end
 
@@ -2319,9 +2387,9 @@ module Ladb::OpenCutList
       unless (instance = _get_instance).nil?
         if state == STATE_HANDLE
           @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
-          instance.hidden = true
+          _hide_instance
         else
-          instance.hidden = false
+          _unhide_instance
         end
 
       end
@@ -2604,13 +2672,15 @@ module Ladb::OpenCutList
 
       center, mps, mpe = move_def.values_at(:center, :mps, :mpe)
 
-      t = _get_parent_transformation
-      ti = t.inverse
+      ct = _get_global_context_transformation
+      cti = ct.inverse
 
-      center = center.transform(ti)
-      mps = mps.transform(ti)
-      mpe = mpe.transform(ti)
+      center = center.transform(cti)
+      mps = mps.transform(cti)
+      mpe = mpe.transform(cti)
       mv = mps.vector_to(mpe)
+
+      _unhide_instance
 
       model = Sketchup.active_model
       model.start_operation('Copy Part', true)
@@ -2642,7 +2712,7 @@ module Ladb::OpenCutList
 
             @instances << dst_instance
 
-            _copy_instance_properties(src_instance, dst_instance)
+            _copy_instance_metas(src_instance, dst_instance)
 
           end
 
@@ -2697,7 +2767,7 @@ module Ladb::OpenCutList
         end
       end
 
-      # Restore to 'World' space
+      # Restore to 'Global' space
 
       center = ecenter.transform(et)
       line = [ center, v ]
