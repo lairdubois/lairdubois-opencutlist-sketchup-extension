@@ -1052,7 +1052,7 @@ module Ladb::OpenCutList
       # Preview line
 
       @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
-      @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), LAYER_3D_HANDLE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_HANDLE_PREVIEW)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(dps)
@@ -1476,6 +1476,25 @@ module Ladb::OpenCutList
       db_2d = Geom::BoundingBox.new
       db_2d.add(dps_2d, dpe_2d)
 
+      # Preview rectangle
+
+      k_rectangle = Kuix::RectangleMotif.new
+      k_rectangle.bounds.copy!(db_2d)
+      k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_rectangle.line_width = 1.5 unless @locked_normal.nil?
+      k_rectangle.color = ColorUtils.color_translucent(color, 60)
+      k_rectangle.on_top = true
+      k_rectangle.transformation = ht
+      @tool.append_3d(k_rectangle, LAYER_3D_HANDLE_PREVIEW)
+
+      k_rectangle = Kuix::RectangleMotif.new
+      k_rectangle.bounds.copy!(db_2d)
+      k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_rectangle.line_width = 1.5 unless @locked_normal.nil?
+      k_rectangle.color = color
+      k_rectangle.transformation = ht
+      @tool.append_3d(k_rectangle, LAYER_3D_HANDLE_PREVIEW)
+
       # Preview
 
       (0..1).each do |x|
@@ -1497,7 +1516,7 @@ module Ladb::OpenCutList
           @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
           @tool.append_3d(_create_floating_points(points: [ mp ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_MEDIUM_GREY), LAYER_3D_HANDLE_PREVIEW)
-          @tool.append_3d(_create_floating_points(points: [ dp ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), LAYER_3D_HANDLE_PREVIEW)
+          @tool.append_3d(_create_floating_points(points: [ dp ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_HANDLE_PREVIEW)
 
           next if x == 0 && y == 0
 
@@ -1528,25 +1547,6 @@ module Ladb::OpenCutList
 
         end
       end
-
-      # Preview rectangle
-
-      k_rectangle = Kuix::RectangleMotif.new
-      k_rectangle.bounds.copy!(db_2d)
-      k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_rectangle.line_width = 1.5 unless @locked_normal.nil?
-      k_rectangle.color = ColorUtils.color_translucent(color, 60)
-      k_rectangle.on_top = true
-      k_rectangle.transformation = ht
-      @tool.append_3d(k_rectangle, LAYER_3D_HANDLE_PREVIEW)
-
-      k_rectangle = Kuix::RectangleMotif.new
-      k_rectangle.bounds.copy!(db_2d)
-      k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_rectangle.line_width = 1.5 unless @locked_normal.nil?
-      k_rectangle.color = color
-      k_rectangle.transformation = ht
-      @tool.append_3d(k_rectangle, LAYER_3D_HANDLE_PREVIEW)
 
       # Preview mirror
 
@@ -2098,7 +2098,7 @@ module Ladb::OpenCutList
       # Preview line
 
       @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
-      @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), LAYER_3D_HANDLE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_HANDLE_PREVIEW)
 
       k_line = Kuix::LineMotif.new
       k_line.start.copy!(dps)
@@ -2593,7 +2593,9 @@ module Ladb::OpenCutList
       k_line.color = color
       @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
 
-      @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: color), LAYER_3D_HANDLE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_HANDLE_PREVIEW)
+
+      # Preview distance
 
       distance = lv.length
 

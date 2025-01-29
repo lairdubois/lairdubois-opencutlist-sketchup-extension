@@ -1738,7 +1738,8 @@ module Ladb::OpenCutList
       style: Kuix::POINT_STYLE_SQUARE,
       fill_color: nil,
       stroke_color: Kuix::COLOR_BLACK,
-      stroke_width: 1.5
+      stroke_width: 1.5,
+      size: 2.5 # In unit
     )
 
       unit = @tool.get_unit
@@ -1746,7 +1747,7 @@ module Ladb::OpenCutList
       k_points = Kuix::Points.new
       k_points.add_points(points) if points.is_a?(Array)
       k_points.add_point(points) if points.is_a?(Geom::Point3d)
-      k_points.size = 2.5 * unit
+      k_points.size = size * unit
       k_points.style = style
       k_points.fill_color = fill_color
       k_points.stroke_color = stroke_color
