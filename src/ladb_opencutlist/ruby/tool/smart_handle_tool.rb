@@ -607,17 +607,17 @@ module Ladb::OpenCutList
 
         fn = lambda do |axis, dim, locked, color|
 
-          k_line = Kuix::LineMotif.new
-          k_line.start.copy!(center.offset(axis.reverse, dim))
-          k_line.end.copy!(center.offset(axis, dim))
-          k_line.start_arrow = true
-          k_line.end_arrow = true
-          k_line.arrow_size = unit * 1.5
-          k_line.line_width = locked ? 3 : 1.5
-          k_line.line_stipple = Kuix::LINE_STIPPLE_SOLID
-          k_line.color = color
-          k_line.transformation = et
-          @tool.append_3d(k_line, LAYER_3D_AXES_PREVIEW)
+          k_edge = Kuix::EdgeMotif.new
+          k_edge.start.copy!(center.offset(axis.reverse, dim))
+          k_edge.end.copy!(center.offset(axis, dim))
+          k_edge.start_arrow = true
+          k_edge.end_arrow = true
+          k_edge.arrow_size = unit * 1.5
+          k_edge.line_width = locked ? 3 : 1.5
+          k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
+          k_edge.color = color
+          k_edge.transformation = et
+          @tool.append_3d(k_edge, LAYER_3D_AXES_PREVIEW)
 
         end
 
@@ -1051,25 +1051,25 @@ module Ladb::OpenCutList
 
       # Preview line
 
+      k_edge = Kuix::EdgeMotif.new
+      k_edge.start.copy!(dps)
+      k_edge.end.copy!(dpe)
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_edge.line_width = 1.5 unless @locked_axis.nil?
+      k_edge.color = ColorUtils.color_translucent(color, 60)
+      k_edge.on_top = true
+      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
+
+      k_edge = Kuix::EdgeMotif.new
+      k_edge.start.copy!(dps)
+      k_edge.end.copy!(dpe)
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_edge.line_width = 1.5 unless @locked_axis.nil?
+      k_edge.color = color
+      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
+
       @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
       @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_HANDLE_PREVIEW)
-
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(dps)
-      k_line.end.copy!(dpe)
-      k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_line.line_width = 1.5 unless @locked_axis.nil?
-      k_line.color = ColorUtils.color_translucent(color, 60)
-      k_line.on_top = true
-      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
-
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(dps)
-      k_line.end.copy!(dpe)
-      k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_line.line_width = 1.5 unless @locked_axis.nil?
-      k_line.color = color
-      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
 
       # Preview bounds
 
@@ -1111,7 +1111,7 @@ module Ladb::OpenCutList
       if distance > 0
 
         k_label = _create_floating_label(
-          screen_point: view.screen_coords(dps.offset(dps.vector_to(dpe), distance / 2)),
+          snap_point: dps.offset(dps.vector_to(dpe), distance / 2),
           text: distance,
           text_color: Kuix::COLOR_X,
           border_color: color
@@ -1508,6 +1508,35 @@ module Ladb::OpenCutList
 
           mt = Geom::Transformation.translation(mvu)
 
+          unless x == 0 && y == 0
+
+            if _fetch_option_mirror
+
+              mvux = Geom::Vector3d.new(mv_2d.x * x, 0).transform(ht)
+              mvuy = Geom::Vector3d.new(0, dv_2d.y * y).transform(ht)
+
+              if x == 1 && y == 1
+                n = mvux * mvuy
+                mt *= Geom::Transformation.rotation(mp, mvux * mvuy, Geometrix::ONE_PI) if n.valid?
+                mt *= Geom::Transformation.translation(mvu + mvu)
+              elsif x == 1 || y == 1
+                n = x == 1 ? mvux : mvuy
+                mt = Geom::Transformation.scaling(mp, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
+                mt *= Geom::Transformation.rotation(mp, n, Geometrix::ONE_PI) if n.valid?
+                mt *= Geom::Transformation.translation(mvu)
+              end
+
+            end
+
+            k_segments = Kuix::Segments.new
+            k_segments.add_segments(drawing_def_segments)
+            k_segments.line_width = 1.5
+            k_segments.color = Kuix::COLOR_BLACK
+            k_segments.transformation = mt * drawing_def.transformation
+            @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
+
+          end
+
           k_box = Kuix::BoxMotif.new
           k_box.bounds.copy!(eb)
           k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
@@ -1517,33 +1546,6 @@ module Ladb::OpenCutList
 
           @tool.append_3d(_create_floating_points(points: [ mp ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_MEDIUM_GREY), LAYER_3D_HANDLE_PREVIEW)
           @tool.append_3d(_create_floating_points(points: [ dp ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_HANDLE_PREVIEW)
-
-          next if x == 0 && y == 0
-
-          if _fetch_option_mirror
-
-            mvux = Geom::Vector3d.new(mv_2d.x * x, 0).transform(ht)
-            mvuy = Geom::Vector3d.new(0, dv_2d.y * y).transform(ht)
-
-            if x == 1 && y == 1
-              n = mvux * mvuy
-              mt *= Geom::Transformation.rotation(mp, mvux * mvuy, Geometrix::ONE_PI) if n.valid?
-              mt *= Geom::Transformation.translation(mvu + mvu)
-            elsif x == 1 || y == 1
-              n = x == 1 ? mvux : mvuy
-              mt = Geom::Transformation.scaling(mp, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
-              mt *= Geom::Transformation.rotation(mp, n, Geometrix::ONE_PI) if n.valid?
-              mt *= Geom::Transformation.translation(mvu)
-            end
-
-          end
-
-          k_segments = Kuix::Segments.new
-          k_segments.add_segments(drawing_def_segments)
-          k_segments.line_width = 1.5
-          k_segments.color = Kuix::COLOR_BLACK
-          k_segments.transformation = mt * drawing_def.transformation
-          @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
 
         end
       end
@@ -1573,7 +1575,7 @@ module Ladb::OpenCutList
       if distance_x > 0
 
         k_label = _create_floating_label(
-          screen_point: view.screen_coords(db_2d.min.offset(X_AXIS, distance_x / 2).transform(ht)),
+          snap_point: db_2d.min.offset(X_AXIS, distance_x / 2).transform(ht),
           text: distance_x,
           text_color: Kuix::COLOR_X,
           border_color: color
@@ -1584,7 +1586,7 @@ module Ladb::OpenCutList
       if distance_y > 0
 
         k_label = _create_floating_label(
-          screen_point: view.screen_coords(db_2d.min.offset(Y_AXIS, distance_y / 2).transform(ht)),
+          snap_point: db_2d.min.offset(Y_AXIS, distance_y / 2).transform(ht),
           text: distance_y,
           text_color: Kuix::COLOR_Y,
           border_color: color
@@ -2096,25 +2098,25 @@ module Ladb::OpenCutList
 
       # Preview line
 
+      k_edge = Kuix::EdgeMotif.new
+      k_edge.start.copy!(dps)
+      k_edge.end.copy!(dpe)
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_edge.line_width = 1.5 unless @locked_axis.nil?
+      k_edge.color = ColorUtils.color_translucent(color, 60)
+      k_edge.on_top = true
+      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
+
+      k_edge = Kuix::EdgeMotif.new
+      k_edge.start.copy!(dps)
+      k_edge.end.copy!(dpe)
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_edge.line_width = 1.5 unless @locked_axis.nil?
+      k_edge.color = color
+      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
+
       @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
       @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_HANDLE_PREVIEW)
-
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(dps)
-      k_line.end.copy!(dpe)
-      k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_line.line_width = 1.5 unless @locked_axis.nil?
-      k_line.color = ColorUtils.color_translucent(color, 60)
-      k_line.on_top = true
-      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
-
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(dps)
-      k_line.end.copy!(dpe)
-      k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_line.line_width = 1.5 unless @locked_axis.nil?
-      k_line.color = color
-      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
 
       # Preview bounds
 
@@ -2139,7 +2141,7 @@ module Ladb::OpenCutList
       if distance > 0
 
         k_label = _create_floating_label(
-          screen_point: view.screen_coords(dps.offset(dps.vector_to(dpe), distance / 2)),
+          snap_point: dps.offset(dps.vector_to(dpe), distance / 2),
           text: distance,
           text_color: Kuix::COLOR_X,
           border_color: color
@@ -2552,45 +2554,45 @@ module Ladb::OpenCutList
 
       # Preview line
 
+      k_edge = Kuix::EdgeMotif.new
+      k_edge.start.copy!(@picked_handle_start_point)
+      k_edge.end.copy!(lps)
+      k_edge.line_width = 1.5
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+      k_edge.color = Kuix::COLOR_DARK_GREY
+      k_edge.on_top = true
+      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
+
+      k_edge = Kuix::EdgeMotif.new
+      k_edge.start.copy!(@mouse_ip.position)
+      k_edge.end.copy!(lpe)
+      k_edge.line_width = 1.5
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+      k_edge.color = Kuix::COLOR_DARK_GREY
+      k_edge.on_top = true
+      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
+
       @tool.append_3d(_create_floating_points(points: [ @picked_handle_start_point ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
       @tool.append_3d(_create_floating_points(points: [ @picked_handle_start_point ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
 
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(@picked_handle_start_point)
-      k_line.end.copy!(lps)
-      k_line.line_width = 1.5
-      k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-      k_line.color = Kuix::COLOR_DARK_GREY
-      k_line.on_top = true
-      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
-
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(@mouse_ip.position)
-      k_line.end.copy!(lpe)
-      k_line.line_width = 1.5
-      k_line.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-      k_line.color = Kuix::COLOR_DARK_GREY
-      k_line.on_top = true
-      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
-
       @tool.append_3d(_create_floating_points(points: [ center ], style: Kuix::POINT_STYLE_PLUS), LAYER_3D_HANDLE_PREVIEW)
 
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(lps)
-      k_line.end.copy!(lpe)
-      k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_line.line_width = 1.5 unless @locked_axis.nil?
-      k_line.color = ColorUtils.color_translucent(color, 60)
-      k_line.on_top = true
-      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
+      k_edge = Kuix::EdgeMotif.new
+      k_edge.start.copy!(lps)
+      k_edge.end.copy!(lpe)
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_edge.line_width = 1.5 unless @locked_axis.nil?
+      k_edge.color = ColorUtils.color_translucent(color, 60)
+      k_edge.on_top = true
+      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(lps)
-      k_line.end.copy!(lpe)
-      k_line.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_line.line_width = 1.5 unless @locked_axis.nil?
-      k_line.color = color
-      @tool.append_3d(k_line, LAYER_3D_HANDLE_PREVIEW)
+      k_edge = Kuix::EdgeMotif.new
+      k_edge.start.copy!(lps)
+      k_edge.end.copy!(lpe)
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+      k_edge.line_width = 1.5 unless @locked_axis.nil?
+      k_edge.color = color
+      @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
       @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_HANDLE_PREVIEW)
 
@@ -2603,7 +2605,7 @@ module Ladb::OpenCutList
       if distance > 0
 
         k_label = _create_floating_label(
-          screen_point: view.screen_coords(lps.offset(lv, distance / 2)),
+          snap_point: lps.offset(lv, distance / 2),
           text: distance,
           text_color: Kuix::COLOR_X,
           border_color: _get_vector_color(lv, Kuix::COLOR_DARK_GREY)

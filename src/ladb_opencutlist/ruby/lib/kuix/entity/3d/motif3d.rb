@@ -64,7 +64,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class LineMotif < Motif3d
+  class EdgeMotif < Motif3d
 
     attr_reader :start, :end
     attr_accessor :start_arrow, :end_arrow,

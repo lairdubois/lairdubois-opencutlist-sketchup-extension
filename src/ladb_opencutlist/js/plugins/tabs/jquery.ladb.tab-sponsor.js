@@ -69,7 +69,7 @@
                 if (response.data) {
 
                     const balance = response.data.collective.stats.balance.value;
-                    const objectiveProgress100 = Math.round(balance / objectiveGoal * 100);
+                    const objectiveProgress100 = Math.floor(balance / objectiveGoal * 100);
                     const objectiveReached = objectiveProgress100 >= 100;
 
                     $progressObjective.show();

@@ -816,11 +816,11 @@ module Ladb::OpenCutList
         @tool.append_3d(k_point)
 
         # Draw line from first picked point to snap point
-        k_line = Kuix::LineMotif.new
-        k_line.start.copy!(@picked_shape_start_point)
-        k_line.end.copy!(@mouse_snap_point)
-        k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        @tool.append_3d(k_line)
+        k_edge = Kuix::EdgeMotif.new
+        k_edge.start.copy!(@picked_shape_start_point)
+        k_edge.end.copy!(@mouse_snap_point)
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        @tool.append_3d(k_edge)
 
       end
 
@@ -875,7 +875,7 @@ module Ladb::OpenCutList
       if bounds.depth > 0
 
         k_label = _create_floating_label(
-          screen_point: view.screen_coords(p1.project_to_plane([ bounds.min, Z_AXIS ]).offset(Z_AXIS, bounds.depth / 2).transform(t)),
+          snap_point: p1.project_to_plane([ bounds.min, Z_AXIS ]).offset(Z_AXIS, bounds.depth / 2).transform(t),
           text: bounds.depth,
           text_color: Kuix::COLOR_Z,
           border_color: _get_normal_color
@@ -1735,12 +1735,12 @@ module Ladb::OpenCutList
 
         if bounds.width == bounds.height && bounds.width != 0
 
-          k_line = Kuix::LineMotif.new
-          k_line.start.copy!(_fetch_option_rectangle_centered ? @picked_shape_start_point.offset(@mouse_snap_point.vector_to(@picked_shape_start_point)) : @picked_shape_start_point)
-          k_line.end.copy!(@mouse_snap_point)
-          k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          k_line.color = _get_normal_color
-          @tool.append_3d(k_line)
+          k_edge = Kuix::EdgeMotif.new
+          k_edge.start.copy!(_fetch_option_rectangle_centered ? @picked_shape_start_point.offset(@mouse_snap_point.vector_to(@picked_shape_start_point)) : @picked_shape_start_point)
+          k_edge.end.copy!(@mouse_snap_point)
+          k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_edge.color = _get_normal_color
+          @tool.append_3d(k_edge)
 
         end
 
@@ -1754,37 +1754,41 @@ module Ladb::OpenCutList
 
           if bounds.width != bounds.height
 
-            k_line = Kuix::LineMotif.new
-            k_line.start.copy!(@picked_shape_start_point)
-            k_line.end.copy!(@mouse_snap_point)
-            k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            @tool.append_3d(k_line)
+            k_edge = Kuix::EdgeMotif.new
+            k_edge.start.copy!(@picked_shape_start_point)
+            k_edge.end.copy!(@mouse_snap_point)
+            k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            @tool.append_3d(k_edge)
 
           end
 
         end
 
-        if bounds.width != 0
+        if view.pixels_to_model(30, bounds.min) < bounds.min.distance(bounds.max)
 
-          k_label = _create_floating_label(
-            screen_point: view.screen_coords(bounds.min.offset(X_AXIS, bounds.width / 2).transform(t)),
-            text: bounds.width,
-            text_color: Kuix::COLOR_X,
-            border_color: _get_normal_color
-          )
-          @tool.append_2d(k_label)
+          if bounds.width != 0
 
-        end
+            k_label = _create_floating_label(
+              snap_point: bounds.min.offset(X_AXIS, bounds.width / 2).transform(t),
+              text: bounds.width,
+              text_color: Kuix::COLOR_X,
+              border_color: _get_normal_color
+            )
+            @tool.append_2d(k_label)
 
-        if bounds.height != 0
+          end
 
-          k_label = _create_floating_label(
-            screen_point: view.screen_coords(bounds.min.offset(Y_AXIS, bounds.height / 2).transform(t)),
-            text: bounds.height,
-            text_color: Kuix::COLOR_Y,
-            border_color: _get_normal_color
-          )
-          @tool.append_2d(k_label)
+          if bounds.height != 0
+
+            k_label = _create_floating_label(
+              snap_point: bounds.min.offset(Y_AXIS, bounds.height / 2).transform(t),
+              text: bounds.height,
+              text_color: Kuix::COLOR_Y,
+              border_color: _get_normal_color
+            )
+            @tool.append_2d(k_label)
+
+          end
 
         end
 
@@ -2092,12 +2096,12 @@ module Ladb::OpenCutList
       )
       @tool.append_3d(k_points)
 
-      k_line = Kuix::LineMotif.new
-      k_line.start.copy!(measure_start)
-      k_line.end.copy!(@mouse_snap_point)
-      k_line.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-      k_line.color = _get_direction_color
-      @tool.append_3d(k_line)
+      k_edge = Kuix::EdgeMotif.new
+      k_edge.start.copy!(measure_start)
+      k_edge.end.copy!(@mouse_snap_point)
+      k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+      k_edge.color = _get_direction_color
+      @tool.append_3d(k_edge)
 
       t = _get_transformation(@picked_shape_start_point)
 
@@ -2134,7 +2138,7 @@ module Ladb::OpenCutList
       if measure > 0
 
         k_label = _create_floating_label(
-          screen_point: view.screen_coords(measure_start.offset(measure_vector, measure / 2)),
+          snap_point: measure_start.offset(measure_vector, measure / 2),
           text: measure,
           text_color: Kuix::COLOR_X,
           border_color: _get_direction_color
@@ -2950,12 +2954,16 @@ module Ladb::OpenCutList
           k_segments.on_top = true
           @tool.append_3d(k_segments)
 
-          k_label = _create_floating_label(
-            screen_point: view.screen_coords(measure_start.offset(measure_vector, measure / 2)),
-            text: measure,
-            border_color: _get_normal_color
-          )
-          @tool.append_2d(k_label)
+          if view.pixels_to_model(60, measure_start) < measure
+
+            k_label = _create_floating_label(
+              snap_point: measure_start.offset(measure_vector, measure / 2),
+              text: measure,
+              border_color: _get_normal_color
+            )
+            @tool.append_2d(k_label)
+
+          end
 
         end
 

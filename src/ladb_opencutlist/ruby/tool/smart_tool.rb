@@ -1739,7 +1739,7 @@ module Ladb::OpenCutList
       fill_color: nil,
       stroke_color: Kuix::COLOR_BLACK,
       stroke_width: 1.5,
-      size: 2.5 # In unit
+      size: 2.5 # In tool unit
     )
 
       unit = @tool.get_unit
@@ -1758,7 +1758,7 @@ module Ladb::OpenCutList
     end
 
     def _create_floating_label(
-      screen_point:,
+      snap_point:,
       text:,
       text_color: Kuix::COLOR_BLACK,
       border_color: Kuix::COLOR_BLACK
@@ -1768,7 +1768,7 @@ module Ladb::OpenCutList
 
       k_label = Kuix::Label.new
       k_label.text = text.to_s
-      k_label.layout_data = Kuix::StaticLayoutData.new(screen_point.x, screen_point.y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+      k_label.layout_data = Kuix::StaticLayoutDataWithSnap.new(snap_point, -1, -1, Kuix::Anchor.new(Kuix::Anchor::CENTER))
       k_label.set_style_attribute(:color, text_color)
       k_label.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
       k_label.set_style_attribute(:border_color, border_color)
