@@ -2372,8 +2372,8 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE
-        onToolLButtonUp(flags, x, y, view)  # 1. Complete STATE_SHAPE_POINTS
-        return super                        # 2. Process auto pull if possible
+        onToolLButtonUp(tool, flags, x, y, view)  # 1. Complete STATE_SHAPE_POINTS
+        return super                              # 2. Process auto pull if possible
 
       end
 

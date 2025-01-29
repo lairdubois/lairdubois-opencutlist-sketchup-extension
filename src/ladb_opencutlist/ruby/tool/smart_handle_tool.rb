@@ -1293,8 +1293,8 @@ module Ladb::OpenCutList
       dpe = lpe
       case type
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
-        mpe = lpe.offset(evs)
-        dps = lps.offset(evs)
+        mpe = lpe.offset(vs)
+        dps = lps.offset(vs)
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED
         mpe = lpe
         dps = lps
@@ -2035,10 +2035,9 @@ module Ladb::OpenCutList
           v = ps.transform(eti).vector_to(pe.transform(eti))
           if v.valid?
 
-            bounds = Geom::BoundingBox.new
-            bounds.add([ -1, -1, -1], [ 1, 1, 1 ])
+            bounds = _get_drawing_def_edit_bounds(_get_drawing_def)
 
-            line = [ ORIGIN, v ]
+            line = [ bounds.center, v ]
 
             plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
             ibtm = Geom.intersect_line_plane(line, plane_btm)
@@ -2225,20 +2224,20 @@ module Ladb::OpenCutList
       plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
       ibtm = Geom.intersect_line_plane(eline, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
-        vs = ibtm.vector_to(ecenter)
-        vs.reverse! if vs.valid? && vs.samedirection?(ev)
+        evs = ibtm.vector_to(ecenter)
+        evs.reverse! if evs.valid? && evs.samedirection?(ev)
       else
         plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
         ilft = Geom.intersect_line_plane(eline, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
-          vs = ilft.vector_to(ecenter)
-          vs.reverse! if vs.valid? && vs.samedirection?(ev)
+          evs = ilft.vector_to(ecenter)
+          evs.reverse! if evs.valid? && evs.samedirection?(ev)
         else
           plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
           ifrt = Geom.intersect_line_plane(eline, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
-            vs = ifrt.vector_to(ecenter)
-            vs.reverse! if vs.valid? && vs.samedirection?(ev)
+            evs = ifrt.vector_to(ecenter)
+            evs.reverse! if evs.valid? && evs.samedirection?(ev)
           end
         end
       end
@@ -2247,7 +2246,7 @@ module Ladb::OpenCutList
 
       center = ecenter.transform(et)
       line = [ center, v ]
-      vs = vs.transform(et)
+      vs = evs.transform(et)
       ve = vs.reverse
 
       lps = center
