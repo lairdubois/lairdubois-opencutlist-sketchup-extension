@@ -267,6 +267,9 @@ namespace Packy {
             if (j.contains("log_path")) {
                 parameters_.log_path = j["log_path"].get<std::string>();
             }
+            if (j.contains("instance_path")) {
+                instance_path_ = j["instance_path"].get<std::string>();
+            }
             if (j.contains("certificate_path")) {
                 certificate_path_ = j["certificate_path"].get<std::string>();
             }
@@ -354,6 +357,9 @@ namespace Packy {
         /** Messages */
         bool messages_to_solution_ = false;
         std::stringstream messages_stream_;
+
+        /** Instance (native PackingSolver instance write) */
+        std::string instance_path_;
 
         /** Certificate (native PackingSolver solution write) */
         std::string certificate_path_;
@@ -549,6 +555,12 @@ namespace Packy {
         json optimize() override {
 
             const rectangle::Instance instance = instance_builder_.build();
+
+            // TODO : Not yet implemented in PackingSolver
+            // if (!instance_path_.empty()) {
+            //     instance.write(instance_path_);  // Export instance to file with PackingSolver 'write' method
+            // }
+
             const rectangle::Output output = rectangle::optimize(instance, parameters_);
 
             json j;
@@ -813,6 +825,11 @@ namespace Packy {
         json optimize() override {
 
             const rectangleguillotine::Instance instance = instance_builder_.build();
+
+            if (!instance_path_.empty()) {
+                instance.write(instance_path_);  // Export instance to file with PackingSolver 'write' method
+            }
+
             const rectangleguillotine::Output output = rectangleguillotine::optimize(instance, parameters_);
 
             json j;
@@ -1067,6 +1084,11 @@ namespace Packy {
         json optimize() override {
 
             const onedimensional::Instance instance = instance_builder_.build();
+
+            if (!instance_path_.empty()) {
+                instance.write(instance_path_);  // Export instance to file with PackingSolver 'write' method
+            }
+
             const onedimensional::Output output = onedimensional::optimize(instance, parameters_);
 
             json j;
@@ -1296,6 +1318,11 @@ namespace Packy {
         json optimize() override {
 
             const irregular::Instance instance = instance_builder_.build();
+
+            if (!instance_path_.empty()) {
+                instance.write(instance_path_);  // Export instance to file with PackingSolver 'write' method
+            }
+
             const irregular::Output output = irregular::optimize(instance, parameters_);
 
             json j;
