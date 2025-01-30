@@ -605,7 +605,7 @@ module Ladb::OpenCutList
 
       if _picked_shape_end_point?
 
-        # Add Pushpull solid
+        # Add Pull solid
 
         picked_points = _get_picked_points
         p2 = picked_points[1].transform(ti)
@@ -621,6 +621,8 @@ module Ladb::OpenCutList
 
       bounds
     end
+
+    # -----
 
     protected
 
@@ -2135,7 +2137,7 @@ module Ladb::OpenCutList
 
       Sketchup.set_status_text("#{measure}", SB_VCB_VALUE)
 
-      if measure > 0
+      if measure > 0 && view.pixels_to_model(30, measure_start) < measure
 
         k_label = _create_floating_label(
           snap_point: measure_start.offset(measure_vector, measure / 2),

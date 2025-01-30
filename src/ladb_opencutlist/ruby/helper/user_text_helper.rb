@@ -4,16 +4,19 @@ module Ladb::OpenCutList
 
     # Read length from 'text'
     # Examples :
-    #  50    → 50mm
-    #  +10   → 'base_length' + 10mm
-    #  -15   → 'base_length' - 15mm
-    #  *3    → 'base_length' * 3
-    #  /2    → 'base_length' / 2
+    #  50     → 50mm
+    #  +10    → 10mm
+    #  -5     → -5mm
+    #  @      → 'base_length'
+    #  @+10   → 'base_length' + 10mm
+    #  @-15   → 'base_length' - 15mm
+    #  @*3    → 'base_length' * 3
+    #  @/2    → 'base_length' / 2
     def _read_user_text_length(tool, text, base_length = 0)
       length = base_length
 
       if text.is_a?(String)
-        if (match = /^([x*\/])([-]{0,1})(\d+(?:[.,]\d+)*$)/.match(text))
+        if (match = /^@([x*\/])([-]{0,1})(\d+(?:[.,]\d+)*$)/.match(text))
           operator, sign, value = match[1, 3]
           factor = value.sub(',', '.').to_f
           factor *= -1 if sign == '-'
@@ -29,7 +32,7 @@ module Ladb::OpenCutList
             tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
             return nil
           end
-        elsif (match = /^([+-])(.+)$/.match(text))
+        elsif (match = /^@([+-])(.+)$/.match(text))
           operator, value = match[1, 2]
           begin
             length = value.to_l
@@ -46,6 +49,7 @@ module Ladb::OpenCutList
             return nil
           end
         else
+          text = text.delete('@+')   # Remove possible extra @ or + characters
           begin
             if text.empty? && !base_length.nil?
               length = base_length

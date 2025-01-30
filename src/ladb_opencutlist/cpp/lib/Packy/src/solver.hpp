@@ -858,12 +858,12 @@ namespace Packy {
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
-                Area bin_space = bin_type.rect.w * bin_type.rect.h; // Workaround to PackingSolver bin_type.space() function that subtract trims
+                Area bin_space = bin_type.rect.area(); // Workaround to PackingSolver bin_type.space() function that subtract trims
                 Area item_space = 0;
                 for (const auto& node : bin.nodes) {
                     if (node.item_type_id >= 0 && node.f >= 0) {
                         const ItemType& item_type = instance.item_type(node.item_type_id);
-                        item_space += item_type.space();
+                        item_space += item_type.rect.area();
                     }
                 }
 
