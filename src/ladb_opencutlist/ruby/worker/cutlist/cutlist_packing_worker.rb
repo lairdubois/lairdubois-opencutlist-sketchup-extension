@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require 'json'
   require 'cgi'
+  require 'securerandom'
   require_relative '../../helper/part_drawing_helper'
   require_relative '../../helper/pixel_converter_helper'
   require_relative '../../helper/material_attributes_caching_helper'
@@ -540,6 +541,8 @@ module Ladb::OpenCutList
 
     def _render_bin_def_svg(bin_def, running)
 
+      uuid = SecureRandom.uuid
+
       px_bin_dimension_font_size = running ? 0 : 16
       px_item_dimension_font_size = 12
       px_leftover_dimension_font_size = 12
@@ -577,12 +580,12 @@ module Ladb::OpenCutList
       svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}' style='max-height: #{vb_height}px' class='problem-type-#{@problem_type}'>"
         unless running
           svg += "<defs>"
-            svg += "<pattern id='pattern_bin_bg' width='10' height='10' patternUnits='userSpaceOnUse'>"
+            svg += "<pattern id='pattern_bin_bg_#{uuid}' width='10' height='10' patternUnits='userSpaceOnUse'>"
               svg += "<rect x='0' y='0' width='10' height='10' fill='white' />"
               svg += "<path d='M0,10L10,0' style='fill:none;stroke:#ddd;stroke-width:0.5px;'/>"
             svg += "</pattern>"
             if is_cut_lg
-              svg += "<pattern id='pattern_cut_bg' width='5' height='5' patternUnits='userSpaceOnUse'>"
+              svg += "<pattern id='pattern_cut_bg_#{uuid}' width='5' height='5' patternUnits='userSpaceOnUse'>"
                 svg += "<rect x='0' y='0' width='5' height='5' fill='white'/>"
                 svg += "<path d='M0,5L5,0' style='fill:none;stroke:#000;stroke-width:0.5px;'/>"
               svg += "</pattern>"
@@ -593,7 +596,7 @@ module Ladb::OpenCutList
         end
         svg += "<g class='bin'>"
           svg += "<rect class='bin-outer' x='-1' y='-1' width='#{px_bin_length + 2}' height='#{px_bin_width + 2}' />"
-          svg += "<rect class='bin-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{running ? '#fff' : 'url(#pattern_bin_bg)'}'/>"
+          svg += "<rect class='bin-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{running ? '#fff' : "url(#pattern_bin_bg_#{uuid})"}'/>"
           if is_1d
             svg += "<line class='bin-trimming' x1='#{px_trimming}' y1='0' x2='#{px_trimming}' y2='#{px_bin_width}' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
             svg += "<line class='bin-trimming' x1='#{px_bin_length - px_trimming}' y1='0' x2='#{px_bin_length - px_trimming}' y2='#{px_bin_width}' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
@@ -722,7 +725,7 @@ module Ladb::OpenCutList
 
             svg += "<g class='cut#{clazz}' data-toggle='tooltip' data-html='true' title='#{_render_cut_def_tooltip(cut_def)}'>"
               svg += "<rect class='cut-outer' x='#{px_cut_rect_x - px_cut_outline_width}' y='#{px_cut_rect_y - px_cut_outline_width}' width='#{px_cut_rect_width + px_cut_outline_width * 2}' height='#{px_cut_rect_height + px_cut_outline_width * 2}' />"
-              svg += "<rect class='cut-inner' x='#{px_cut_rect_x}' y='#{px_cut_rect_y}' width='#{px_cut_rect_width}' height='#{px_cut_rect_height}'#{" fill='url(#pattern_cut_bg)'" if is_cut_lg}/>"
+              svg += "<rect class='cut-inner' x='#{px_cut_rect_x}' y='#{px_cut_rect_y}' width='#{px_cut_rect_width}' height='#{px_cut_rect_height}'#{" fill='url(#pattern_cut_bg_#{uuid})'" if is_cut_lg}/>"
             svg += "</g>"
 
           end
