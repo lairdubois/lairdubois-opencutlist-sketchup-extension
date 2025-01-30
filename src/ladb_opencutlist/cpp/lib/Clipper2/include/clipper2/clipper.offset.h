@@ -1,10 +1,10 @@
 /*******************************************************************************
 * Author    :  Angus Johnson                                                   *
-* Date      :  24 March 2024                                                   *
-* Website   :  http://www.angusj.com                                           *
-* Copyright :  Angus Johnson 2010-2024                                         *
+* Date      :  22 January 2025                                                 *
+* Website   :  https://www.angusj.com                                          *
+* Copyright :  Angus Johnson 2010-2025                                         *
 * Purpose   :  Path Offset (Inflate/Shrink)                                    *
-* License   :  http://www.boost.org/LICENSE_1_0.txt                            *
+* License   :  https://www.boost.org/LICENSE_1_0.txt                           *
 *******************************************************************************/
 
 #ifndef CLIPPER_OFFSET_H_
@@ -12,6 +12,7 @@
 
 #include "clipper.core.h"
 #include "clipper.engine.h"
+#include <optional>
 
 namespace Clipper2Lib {
 
@@ -19,7 +20,7 @@ enum class JoinType { Square, Bevel, Round, Miter };
 //Square : Joins are 'squared' at exactly the offset distance (more complex code)
 //Bevel  : Similar to Square, but the offset distance varies with angle (simple code & faster)
 
-enum class EndType { Polygon, Joined, Butt, Square, Round };
+enum class EndType {Polygon, Joined, Butt, Square, Round};
 //Butt   : offsets both sides of a path, with square blunt ends
 //Square : offsets both sides of a path, with square extended ends
 //Round  : offsets both sides of a path, with round extended ends
@@ -96,7 +97,7 @@ public:
 	void AddPaths(const Paths64& paths, JoinType jt_, EndType et_);
 	void Clear() { groups_.clear(); norms.clear(); };
 	
-	void Execute(double delta, Paths64& paths);
+	void Execute(double delta, Paths64& sols_64);
 	void Execute(double delta, PolyTree64& polytree);
 	void Execute(DeltaCallback64 delta_cb, Paths64& paths);
 
