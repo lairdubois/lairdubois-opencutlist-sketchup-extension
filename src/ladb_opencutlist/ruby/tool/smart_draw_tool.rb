@@ -601,7 +601,7 @@ module Ladb::OpenCutList
       shape_points = _fetch_option_shape_offset > 0 ? _get_local_shapes_points_with_offset.flatten(1) : _get_local_shape_points
 
       bounds = Geom::BoundingBox.new
-      bounds.add(shape_points.map { |point| point.transform(t) })
+      bounds.add(shape_points.map { |point| point.transform(t) }) if shape_points.any?
 
       if _picked_shape_end_point?
 
