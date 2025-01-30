@@ -861,7 +861,7 @@ namespace Packy {
                 Area bin_space = bin_type.rect.w * bin_type.rect.h; // Workaround to PackingSolver bin_type.space() function that subtract trims
                 Area item_space = 0;
                 for (const auto& node : bin.nodes) {
-                    if (node.item_type_id >= 0) {
+                    if (node.item_type_id >= 0 && node.f >= 0) {
                         const ItemType& item_type = instance.item_type(node.item_type_id);
                         item_space += item_type.space();
                     }
