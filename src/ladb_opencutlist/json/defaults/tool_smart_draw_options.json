@@ -12,6 +12,7 @@
     "shape_offset": "0",
     "segment_count": 24,
     "construction": false,
+    "smoothing": true,
     "measure_from_diameter": false,
     "pull_centered": false
   },

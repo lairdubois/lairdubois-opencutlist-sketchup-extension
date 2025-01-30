@@ -32,6 +32,7 @@
             const $inputSectionOffset = $('#ladb_input_shape_offset', that.$element);
             const $inputShapeOffset = $('#ladb_input_segment_count', that.$element);
             const $selectConstrution = $('#ladb_select_construction', that.$element);
+            const $selectSmoothing = $('#ladb_select_smoothing', that.$element);
             const $selectMeasureFromDiameter = $('#ladb_select_measure_from_diameter', that.$element);
             const $selectPullCentered = $('#ladb_select_pull_centered', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
@@ -40,6 +41,7 @@
                 options.shape_offset = $inputSectionOffset.val();
                 options.segment_count = parseInt($inputShapeOffset.val());
                 options.construction = $selectConstrution.val() === '1';
+                options.smoothing = $selectSmoothing.val() === '1';
                 options.measure_from_diameter = $selectMeasureFromDiameter.val() === '1';
                 options.pull_centered = $selectPullCentered.val() === '1';
             };
@@ -47,6 +49,7 @@
                 $inputSectionOffset.val(options.shape_offset);
                 $inputShapeOffset.val(options.segment_count);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
+                $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                 $selectMeasureFromDiameter.selectpicker('val', options.measure_from_diameter ? '1' : '0');
                 $selectPullCentered.selectpicker('val', options.pull_centered ? '1' : '0');
             };
@@ -63,6 +66,7 @@
                 resetValue: '24'
             });
             $selectConstrution.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
             $selectMeasureFromDiameter.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPullCentered.selectpicker(SELECT_PICKER_OPTIONS);
 

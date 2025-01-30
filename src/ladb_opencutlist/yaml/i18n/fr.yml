@@ -1857,6 +1857,8 @@ tool:
     action_option_options_construction_status: Dessiner en traits de construction
     action_option_options_rectangle_centered: Rectangle centré
     action_option_options_rectangle_centered_status: Centrer le rectangle sur le premier point
+    action_option_options_smoothing: Lissage
+    action_option_options_smoothing_status: Lisser les courbes
     action_option_options_measure_from_diameter: Mesure
     action_option_options_measure_from_diameter_status: Mesurer le cercle par son diamètre
     action_option_options_measure_from_radius_status: Mesurer le cercle par son rayon

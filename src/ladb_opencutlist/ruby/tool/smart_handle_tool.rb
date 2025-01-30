@@ -69,7 +69,7 @@ module Ladb::OpenCutList
       {
         :action => ACTION_DISTRIBUTE,
         :options => {
-          ACTION_OPTION_AXES => [ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ]
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ]
         }
       },
     ].freeze
@@ -111,7 +111,7 @@ module Ladb::OpenCutList
     def get_action_cursor(action)
 
       case action
-      when ACTION_COPY_LINE, ACTION_COPY_GRID, ACTION_DISTRIBUTE
+      when ACTION_COPY_LINE, ACTION_COPY_GRID, ACTION_MOVE_LINE, ACTION_DISTRIBUTE
           return @cursor_select
       end
 
@@ -263,7 +263,6 @@ module Ladb::OpenCutList
       @definition = nil
       @instances = []
       @drawing_def = nil
-      @drawing_def_size = nil
 
     end
 

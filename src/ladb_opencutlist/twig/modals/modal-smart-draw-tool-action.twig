@@ -52,6 +52,18 @@
                     </div>
                 </div>
             {% endblock %}
+            {% block optionOptionsSmoothing %}
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_smoothing_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-4">{{ 'tool.smart_draw.action_option_options_smoothing'|i18next }}</label>
+                    <div class="col-xs-7">
+                        <select class="form-control" id="ladb_select_smoothing">
+                            <option value="0" data-content={{ 'default.no'|i18next }}></option>
+                            <option value="1" data-content="{{ 'tool.smart_draw.action_option_options_smoothing_status'|i18next }}"></option>
+                        </select>
+                    </div>
+                </div>
+            {% endblock %}
             {% block optionOptionsMeasureFromDiameter %}
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tool.smart_draw.action_option_options_measure_from_diameter_status'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
