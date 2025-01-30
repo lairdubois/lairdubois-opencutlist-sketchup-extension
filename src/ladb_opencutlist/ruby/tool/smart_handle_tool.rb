@@ -19,6 +19,7 @@ module Ladb::OpenCutList
     ACTION_COPY_GRID = 2
     ACTION_MOVE_LINE = 3
     ACTION_DISTRIBUTE = 4
+    ACTION_RESIZE = 5
 
     ACTION_OPTION_COPY_MEASURE_TYPE = 'copy_measure_type'
     ACTION_OPTION_MOVE_MEASURE_TYPE = 'move_measure_type'
@@ -72,6 +73,9 @@ module Ladb::OpenCutList
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ]
         }
       },
+      # {
+      #   :action => ACTION_RESIZE,
+      # }
     ].freeze
 
     # -----
@@ -216,6 +220,8 @@ module Ladb::OpenCutList
         set_action_handler(SmartHandleMoveLineActionHandler.new(self))
       when ACTION_DISTRIBUTE
         set_action_handler(SmartHandleDistributeActionHandler.new(self))
+      when ACTION_RESIZE
+        set_action_handler(SmartHandleResizeActionHandler.new(self))
       end
 
       super
@@ -250,7 +256,7 @@ module Ladb::OpenCutList
     LAYER_3D_HANDLE_PREVIEW = 1
     LAYER_3D_AXES_PREVIEW = 2
 
-    def initialize(action, tool, action_handler = nil)
+    def initialize(action, tool, previous_action_handler = nil)
       super
 
       @mouse_ip = SmartInputPoint.new(tool)
@@ -377,6 +383,7 @@ module Ladb::OpenCutList
         @tool.remove_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
 
         _snap_handle_start(flags, x, y, view)
+        _preview_handle_start(view)
 
       when STATE_HANDLE
 
@@ -391,7 +398,7 @@ module Ladb::OpenCutList
 
       end
 
-        view.tooltip = @mouse_ip.tooltip
+      view.tooltip = @mouse_ip.tooltip
       view.invalidate
 
     end
@@ -654,6 +661,9 @@ module Ladb::OpenCutList
 
     end
 
+    def _preview_handle_start(view)
+    end
+
     def _preview_handle(view)
       _preview_edit_axes(false)
     end
@@ -819,8 +829,8 @@ module Ladb::OpenCutList
 
   class SmartHandleSelectActionHandler < SmartHandleActionHandler
 
-    def initialize(tool, action_handler = nil)
-      super(SmartHandleTool::ACTION_SELECT, tool, action_handler)
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartHandleTool::ACTION_SELECT, tool, previous_action_handler)
     end
 
     # -----
@@ -2384,14 +2394,13 @@ module Ladb::OpenCutList
 
       @locked_axis = nil
 
-      unless (instance = _get_instance).nil?
+      unless _get_instance.nil?
         if state == STATE_HANDLE
           @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
           _hide_instance
         else
           _unhide_instance
         end
-
       end
 
     end
@@ -2796,6 +2805,85 @@ module Ladb::OpenCutList
         mps: mps,
         mpe: mpe
       }
+    end
+
+  end
+
+  class SmartHandleResizeActionHandler < SmartHandleActionHandler
+
+    def initialize(tool, previous_action_handler = nil)
+      super(SmartHandleTool::ACTION_RESIZE, tool, previous_action_handler)
+    end
+
+    # -----
+
+    def onPartSelected
+
+      instance = _get_instance
+
+      @instances << instance
+      @definition = instance.definition
+      @drawing_def = nil
+
+      @src_transformation = Geom::Transformation.new(instance.transformation)
+
+      set_state(STATE_HANDLE_START)
+      _refresh
+
+    end
+
+    # -----
+
+    protected
+
+    def _snap_handle_start(flags, x, y, view)
+
+      @mouse_ip.clear
+
+      drawing_def = _get_drawing_def
+      bounds = drawing_def.bounds
+
+      pk = view.pick_helper(x, y, 50)
+      (0..7).each do |i|
+        p = bounds.corner(i).transform(drawing_def.transformation)
+        if pk.test_point(p)
+
+          @mouse_snap_point = p
+          return
+
+        end
+      end
+
+    end
+
+    def _preview_edit_axes(with_box)
+      # Does nothing
+    end
+
+    def _preview_handle_start(view)
+      super
+
+      drawing_def = _get_drawing_def
+      bounds = drawing_def.bounds
+
+      k_box = Kuix::BoxMotif.new
+      k_box.bounds.copy!(bounds)
+      k_box.line_width = 1.5
+      k_box.color = Kuix::COLOR_YELLOW
+      k_box.transformation = drawing_def.transformation
+      @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
+
+      unless @mouse_snap_point.nil?
+        k_points = _create_floating_points(
+          points: @mouse_snap_point
+        )
+        @tool.append_3d(k_points, LAYER_3D_HANDLE_PREVIEW)
+      end
+
+    end
+
+    def _preview_handle(view)
+      super
     end
 
   end

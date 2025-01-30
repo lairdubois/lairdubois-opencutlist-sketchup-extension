@@ -1899,6 +1899,7 @@ tool:
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_1_status: Cliquez pour déterminer le premier point de mesure
     action_4_state_2_status: Cliquez pour déterminer le second point de mesure ou entrez une distance
+    action_5: Redimensionner
     action_option_group_copy_measure_type: Mesure
     action_option_group_move_measure_type: Mesure
     action_option_group_axes: Axes
