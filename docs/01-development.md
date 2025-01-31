@@ -12,12 +12,12 @@ Read this short note about [Installing Node](https://docs.npmjs.com/getting-star
 
 ``` bash
     $ node -v
-    v22.11.0
+    v23.7.0
     $ npm -v
-    10.9.0
+    10.9.2
     $ npm install npm@latest -g
     $ npm -v
-    10.9.1
+    11.1.0
 ```
 
 On Windows you *may* also have to install `gulp-cli` to be able to run **gulp** from the command line.
@@ -94,8 +94,7 @@ The default behavior of the **gulp** task (without argument) is to *compile* and
 
 ## 5. Compiling C++ DLLs/Libs
 
-Some features of OpenCutList depend on code implemented in C++. Shared DLLs/Libs need
-to be compiled for that purpose.
+Some features of OpenCutList depend on code implemented in C++. Shared DLLs/Libs need to be compiled for that purpose. All dependencies will be downloaded directly from GitHub.
 
 ### Mac
 
@@ -105,21 +104,29 @@ To be done.
 
 There is more than one enviroment you can use to compile the C++ code. This is just a working setup.
 
-- install Visual Studio Community 2022, add the **Desktop Development with C++**
-  (may be added at a later time from Tools -> Get Tools and Features ...
-  in Visual Studio 2022).
+- install Visual Studio Community 2022 17.12, add the **Desktop Development with C++** (may be added at a later time from Tools -> Get Tools and Features ... in Visual Studio 2022).
+
+  ``` bash
+  C:\Program Files\Microsoft Visual Studio\2022\Community>cl.exe
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.42.34436 for x64
+  ```
+
 - enable `LongPathsEnabled` in the registry by changing this key:
-    
-    `Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled => 1`
+
+  `Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled => 1`
 
     Reboot the computer after this change!
-  
+
 - start the **x64 Native Tools Command Prompt** and type
 
 ``` bash
-    cd lairdubois-opencutlist-sketchup-extension\build
-    gulp c_libs
-``` 
+    $ cd lairdubois-opencutlist-sketchup-extension\build
+    $ gulp c_libs
+```
+
+### Cleaning Working Directory
+
+To remove all sources and intermediate compilation steps for a fresh start, you may delete the directory `cmake-build`, total size around 1.75 GB after compilation.
 
 ## 6. Adding a New Language
 
@@ -132,15 +139,21 @@ After compiling the project (see 4.), your new language will appear in the **Pre
 
 Note: this does **NOT** change the SketchUp language. It may even support a language not supported by SketchUp.
 
+**Note: Pull requests for new languages will not be accepted.** Changes to any of the supported languages must be made via [Transifex](https://www.transifex.com/opencutlist/opencutlist/).
+
 ## 7. Use OpenCutList from the Source Folder
 
 ### Prerequisite
 
 > To avoid conflicts, you must first uninstall any compiled OpenCutList (*.rbz) installed in you SketchUp environment.
 
-In order to test **OpenCutList**, you do not need to recompile the *.rbz archive every time you make changes. You can run **OpenCutList** directly from the sources.
-First, install [AS On-Demand Ruby / Extension Loader](https://alexschreyer.net/projects/plugin-loader-for-sketchup/). This extension is not mandatory, but it will make it easier to load or reload ruby scripts. The extension is also available here [AS On-Demand Ruby / Extension Loader](https://extensions.sketchup.com/extension/cebc698a-855a-4151-a6fd-c334cc2f1a5f/on-demand-ruby-extension-loader).
+In order to test **OpenCutList**, you do not need to recompile the *.rbz archive every time you make changes. You can run **OpenCutList** directly from the sources. To facilitate the process of loading/reloading ruby scripts, you can install one of the following extensions:
 
+- [AS On-Demand Ruby / Extension Loader](https://extensions.sketchup.com/extension/cebc698a-855a-4151-a6fd-c334cc2f1a5f/on-demand-ruby-extension-loader) by Alex Schreyer.
+- [Extension Sources](https://extensions.sketchup.com/extension/a9f18009-29cc-4c43-a0a7-e018e7a6563b/extension-sources) by ThomThom.
+
+
+For the first option, install [AS On-Demand Ruby / Extension Loader](https://extensions.sketchup.com/extension/cebc698a-855a-4151-a6fd-c334cc2f1a5f/on-demand-ruby-extension-loader) from the Extension Warehouse.
 ### Launching
 
 After installing the AS On-Demand Ruby Extension, go to the **Extensions** menu, select **Ruby / Extension Loader** and **Load single Ruby file / extension (RB)**.
