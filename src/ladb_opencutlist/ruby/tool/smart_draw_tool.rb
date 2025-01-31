@@ -2290,8 +2290,21 @@ module Ladb::OpenCutList
     end
 
     def _get_auto_orient_transformation(definition, transformation = IDENTITY)
-      # TODO only if elevation > diameter
-      Geom::Transformation.axes(ORIGIN, Z_AXIS, Y_AXIS.reverse, X_AXIS) # Set length (X axis) along elevation
+
+      points = _get_picked_points
+      p1 = points[0]
+      p2 = points[1]
+      p3 = points[2]
+
+      diameter = p1.distance(p2) * 2
+      elevation = p2.distance(p3)
+
+      # Set length (X axis) along elevation only if elevation > diameter
+      if elevation > diameter
+        return Geom::Transformation.axes(ORIGIN, Z_AXIS, Y_AXIS.reverse, X_AXIS)
+      end
+
+      IDENTITY
     end
 
   end
