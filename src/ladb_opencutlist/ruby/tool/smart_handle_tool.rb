@@ -209,6 +209,9 @@ module Ladb::OpenCutList
 
     def onActionChanged(action)
 
+      remove_all_2d
+      remove_all_3d
+
       case action
       when ACTION_SELECT
         set_action_handler(SmartHandleSelectActionHandler.new(self))
@@ -491,7 +494,7 @@ module Ladb::OpenCutList
       @drawing_def = nil
 
       et = _get_edit_transformation
-      eb = _get_drawing_def_edit_bounds(_get_drawing_def)
+      eb = _get_drawing_def_edit_bounds(_get_drawing_def, et)
 
       @picked_handle_start_point = eb.center.transform(et)
 
@@ -515,7 +518,7 @@ module Ladb::OpenCutList
       if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
         et = _get_edit_transformation
-        eb = _get_drawing_def_edit_bounds(drawing_def)
+        eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
         min = eb.min.transform(et)
         max = eb.max.transform(et)
@@ -606,7 +609,7 @@ module Ladb::OpenCutList
         unit = @tool.get_unit
 
         et = _get_edit_transformation
-        eb = _get_drawing_def_edit_bounds(drawing_def)
+        eb = _get_drawing_def_edit_bounds(drawing_def, et)
         center = eb.center
 
         px_offset = Sketchup.active_model.active_view.pixels_to_model(50, center.transform(et))
@@ -772,7 +775,7 @@ module Ladb::OpenCutList
 
       @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
         ignore_surfaces: true,
-        ignore_faces: true,
+        ignore_faces: false,
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: false
@@ -789,15 +792,14 @@ module Ladb::OpenCutList
       segments
     end
 
-    def _get_drawing_def_edit_bounds(drawing_def)
+    def _get_drawing_def_edit_bounds(drawing_def, et)
       eb = Geom::BoundingBox.new
-      if drawing_def.is_a?(DrawingDef) &&
-        (drawing_def_segments = _get_drawing_def_segments(drawing_def)).is_a?(Array)
+      if drawing_def.is_a?(DrawingDef)
 
-        et = _get_edit_transformation
+        points = drawing_def.face_manipulators.map { |manipulator| manipulator.outer_loop_points }.flatten(1)
         eti = et.inverse
 
-        eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
+        eb.add(points.map { |point| point.transform(eti * drawing_def.transformation) })
 
       end
       eb
@@ -999,23 +1001,23 @@ module Ladb::OpenCutList
           v = ps.transform(eti).vector_to(pe.transform(eti))
           if v.valid?
 
-            bounds = _get_drawing_def_edit_bounds(_get_drawing_def)
+            eb = _get_drawing_def_edit_bounds(_get_drawing_def, et)
 
-            line = [ bounds.center, v ]
+            line = [ eb.center, v ]
 
-            plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
+            plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
             ibtm = Geom.intersect_line_plane(line, plane_btm)
-            if !ibtm.nil? && bounds.contains?(ibtm)
+            if !ibtm.nil? && eb.contains?(ibtm)
               move_axis = _get_active_z_axis
             else
-              plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
+              plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
               ilft = Geom.intersect_line_plane(line, plane_lft)
-              if !ilft.nil? && bounds.contains?(ilft)
+              if !ilft.nil? && eb.contains?(ilft)
                 move_axis = _get_active_x_axis
               else
-                plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
+                plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
                 ifrt = Geom.intersect_line_plane(line, plane_frt)
-                if !ifrt.nil? && bounds.contains?(ifrt)
+                if !ifrt.nil? && eb.contains?(ifrt)
                   move_axis = _get_active_y_axis
                 end
               end
@@ -1037,7 +1039,8 @@ module Ladb::OpenCutList
       super
       return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
 
-      drawing_def, drawing_def_segments, et, eb, ve, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :ve, :mps, :mpe, :dps, :dpe)
+      drawing_def, et, eb, ve, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :et, :eb, :ve, :mps, :mpe, :dps, :dpe)
+      drawing_def_segments = _get_drawing_def_segments(drawing_def)
 
       return unless (mv = mps.vector_to(mpe)).valid?
       color = _get_vector_color(mv)
@@ -1252,17 +1255,15 @@ module Ladb::OpenCutList
     def _get_move_def(ps, pe, type = 0)
       return unless (v = ps.vector_to(pe)).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-      return unless (drawing_def_segments = _get_drawing_def_segments(drawing_def)).is_a?(Array)
 
       et = _get_edit_transformation
       eti = et.inverse
 
+      return unless (eb = _get_drawing_def_edit_bounds(drawing_def, et)).valid?
+
       # Compute in 'Edit' space
 
       ev = v.transform(eti)
-
-      eb = Geom::BoundingBox.new
-      eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
 
       ecenter = eb.center
       eline = [ ecenter, ev ]
@@ -1318,7 +1319,6 @@ module Ladb::OpenCutList
 
       {
         drawing_def: drawing_def,
-        drawing_def_segments: drawing_def_segments,
         et: et,
         eb: eb,   # Expressed in 'Edit' space
         vs: vs,
@@ -1467,7 +1467,8 @@ module Ladb::OpenCutList
       super
       return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
 
-      drawing_def, drawing_def_segments, et, eb, ve, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :ve, :mps, :mpe, :dps, :dpe)
+      drawing_def, et, eb, ve, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :et, :eb, :ve, :mps, :mpe, :dps, :dpe)
+      drawing_def_segments = _get_drawing_def_segments(drawing_def)
 
       ht = _get_handle_transformation
       hti = ht.inverse
@@ -1786,15 +1787,13 @@ module Ladb::OpenCutList
     def _get_move_def(ps, pe, type = 0)
       return unless ps.vector_to(pe).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-      return unless (drawing_def_segments = _get_drawing_def_segments(drawing_def)).is_a?(Array)
 
       ht = _get_handle_transformation
       hti = ht.inverse
 
-      # Compute in 'Edit' space
+      return unless (eb = _get_drawing_def_edit_bounds(drawing_def, ht)).valid?
 
-      eb = Geom::BoundingBox.new
-      eb.add(drawing_def_segments.map { |point| point.transform(hti * drawing_def.transformation) })
+      # Compute in 'Edit' space
 
       ec = eb.center
       plane = [ ec, Z_AXIS ]
@@ -1869,7 +1868,6 @@ module Ladb::OpenCutList
 
       {
         drawing_def: drawing_def,
-        drawing_def_segments: drawing_def_segments,
         et: ht,
         eb: eb,
         lps: lps,
@@ -2046,23 +2044,23 @@ module Ladb::OpenCutList
           v = ps.transform(eti).vector_to(pe.transform(eti))
           if v.valid?
 
-            bounds = _get_drawing_def_edit_bounds(_get_drawing_def)
+            eb = _get_drawing_def_edit_bounds(_get_drawing_def, et)
 
-            line = [ bounds.center, v ]
+            line = [ eb.center, v ]
 
-            plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
+            plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
             ibtm = Geom.intersect_line_plane(line, plane_btm)
-            if !ibtm.nil? && bounds.contains?(ibtm)
+            if !ibtm.nil? && eb.contains?(ibtm)
               move_axis = _get_active_z_axis
             else
-              plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
+              plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
               ilft = Geom.intersect_line_plane(line, plane_lft)
-              if !ilft.nil? && bounds.contains?(ilft)
+              if !ilft.nil? && eb.contains?(ilft)
                 move_axis = _get_active_x_axis
               else
-                plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
+                plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
                 ifrt = Geom.intersect_line_plane(line, plane_frt)
-                if !ifrt.nil? && bounds.contains?(ifrt)
+                if !ifrt.nil? && eb.contains?(ifrt)
                   move_axis = _get_active_y_axis
                 end
               end
@@ -2221,13 +2219,11 @@ module Ladb::OpenCutList
 
       et = _get_edit_transformation
       eti = et.inverse
+      eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
       # Compute in 'Edit' space
 
       ev = v.transform(eti)
-
-      eb = Geom::BoundingBox.new
-      eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
 
       ecenter = eb.center
       eline = [ ecenter, ev ]
@@ -2525,7 +2521,9 @@ module Ladb::OpenCutList
       super
       return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
-      drawing_def, drawing_def_segments, et, eb, center, lps, lpe, mps, mpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :center, :lps, :lpe, :mps, :mpe)
+      drawing_def, et, eb, center, lps, lpe, mps, mpe = move_def.values_at(:drawing_def, :et, :eb, :center, :lps, :lpe, :mps, :mpe)
+      drawing_def_segments = _get_drawing_def_segments(drawing_def)
+
       lv = lps.vector_to(lpe)
       mv = mps.vector_to(mpe)
       color = _get_vector_color(lv, Kuix::COLOR_DARK_GREY)
@@ -2742,17 +2740,15 @@ module Ladb::OpenCutList
     def _get_move_def(ps, pe)
       return unless (v = ps.vector_to(pe)).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-      return unless (drawing_def_segments = _get_drawing_def_segments(drawing_def)).is_a?(Array)
 
       et = _get_transformation
       eti = et.inverse
 
+      return unless (eb = _get_drawing_def_edit_bounds(drawing_def, _get_edit_transformation)).valid?
+
       # Compute in 'Edit' space
 
       ev = v.transform(eti)
-
-      eb = Geom::BoundingBox.new
-      eb.add(drawing_def_segments.map { |point| point.transform(eti * drawing_def.transformation) })
 
       ecenter = eb.center
       eline = [ ecenter, v.transform(eti) ]
@@ -2793,7 +2789,6 @@ module Ladb::OpenCutList
 
       {
         drawing_def: drawing_def,
-        drawing_def_segments: drawing_def_segments,
         et: et,
         eb: eb,   # Expressed in 'Edit' space
         center: center,

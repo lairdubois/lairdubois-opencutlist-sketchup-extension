@@ -1055,8 +1055,17 @@ module Ladb::OpenCutList
 
     def _create_entity
 
+      override_previous = @definition.is_a?(Sketchup::ComponentDefinition)
+
       model = Sketchup.active_model
-      model.start_operation('Create Part', true)
+      model.start_operation('Create Part', true, false, override_previous)
+
+      # Remove previously created entity if exists
+      if override_previous
+        model.active_entities.erase_entities(@definition.instances)
+        model.definitions.remove(@definition)
+        @definition = nil
+      end
 
       t = _get_transformation(@picked_shape_start_point)
       ti = t.inverse
@@ -1146,25 +1155,29 @@ module Ladb::OpenCutList
 
         instance = model.active_entities.add_instance(definition, t)
 
-        # Notify part created and propose renaming
-        @tool.notify_success(
-          PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => definition.name }),
-          [
-            {
-              :label => PLUGIN.get_i18n_string('default.rename'),
-              :block => lambda {
-                if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ definition.name ], PLUGIN.get_i18n_string('default.rename')))
-                  name = data.first
-                  if name.empty?
-                    UI.beep
-                  else
-                    definition.name = name
+        unless override_previous
+
+          # Notify part created and propose renaming
+          @tool.notify_success(
+            PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => definition.name }),
+            [
+              {
+                :label => PLUGIN.get_i18n_string('default.rename'),
+                :block => lambda {
+                  if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ definition.name ], PLUGIN.get_i18n_string('default.rename')))
+                    name = data.first
+                    if name.empty?
+                      UI.beep
+                    else
+                      definition.name = name
+                    end
                   end
-                end
-              },
-            }
-          ]
-        )
+                },
+              }
+            ]
+          )
+
+        end
 
       end
 
@@ -1173,7 +1186,7 @@ module Ladb::OpenCutList
       # Keep definition
       @definition = instance.definition
 
-      # Reset DrawingDef
+      # Reset drawing def cache
       @drawing_def = nil
 
     end
@@ -1197,21 +1210,11 @@ module Ladb::OpenCutList
 
       @drawing_def = CommonDrawingDecompositionWorker.new(instance_path,
         ignore_surfaces: true,
-        ignore_faces: true,
-        ignore_edges: false,
-        ignore_soft_edges: false,
-        ignore_clines: false
+        ignore_faces: false,
+        ignore_edges: true,
+        ignore_soft_edges: true,
+        ignore_clines: true
       ).run
-    end
-
-    def _get_drawing_def_segments(drawing_def)
-      segments = []
-      if drawing_def.is_a?(DrawingDef)
-        segments += drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-        segments += drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-        segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
-      end
-      segments
     end
 
     def _get_auto_orient_transformation(definition, transformation = IDENTITY)
@@ -2390,7 +2393,8 @@ module Ladb::OpenCutList
 
       when STATE_SHAPE
         onToolLButtonUp(tool, flags, x, y, view)  # 1. Complete STATE_SHAPE_POINTS
-        return super                              # 2. Process auto pull if possible
+        # TODO : find a way to implement triple click
+        return true   # super                              # 2. Process auto pull if possible
 
       end
 
