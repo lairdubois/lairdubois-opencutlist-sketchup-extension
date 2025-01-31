@@ -1164,12 +1164,12 @@ module Ladb::OpenCutList
               {
                 :label => PLUGIN.get_i18n_string('default.rename'),
                 :block => lambda {
-                  if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ definition.name ], PLUGIN.get_i18n_string('default.rename')))
+                  if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ @definition.name ], PLUGIN.get_i18n_string('default.rename')))
                     name = data.first
                     if name.empty?
                       UI.beep
                     else
-                      definition.name = name
+                      @definition.name = name
                     end
                   end
                 },
@@ -1225,7 +1225,7 @@ module Ladb::OpenCutList
         longest_edge = _find_longest_outer_edge(largest_face, transformation)
         unless longest_edge.nil?
 
-          face_manipulator = FaceManipulator.new(largest_face)  # Should not be nested in subgroups : no inner transformation
+          face_manipulator = FaceManipulator.new(largest_face)  # Should not be nested in subgroups : so no inner transformation
           edge_manipulator = EdgeManipulator.new(longest_edge)
 
           z_axis = face_manipulator.normal
