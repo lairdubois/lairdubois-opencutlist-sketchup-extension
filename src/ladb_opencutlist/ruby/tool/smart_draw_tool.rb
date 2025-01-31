@@ -1164,12 +1164,14 @@ module Ladb::OpenCutList
               {
                 :label => PLUGIN.get_i18n_string('default.rename'),
                 :block => lambda {
-                  if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ @definition.name ], PLUGIN.get_i18n_string('default.rename')))
-                    name = data.first
-                    if name.empty?
-                      UI.beep
-                    else
-                      @definition.name = name
+                  unless @definition.nil? || @definition.deleted?
+                    if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ @definition.name ], PLUGIN.get_i18n_string('default.rename')))
+                      name = data.first
+                      if name.empty?
+                        UI.beep
+                      else
+                        @definition.name = name
+                      end
                     end
                   end
                 },
@@ -1219,7 +1221,20 @@ module Ladb::OpenCutList
 
     def _get_auto_orient_transformation(definition, transformation = IDENTITY)
 
-      largest_face, inner_path = _find_largest_face(definition, transformation)
+      # Sum areas of all faces that are parallels
+      a_defs = {}
+      definition.entities.each do |entity|
+        next unless entity.is_a?(Sketchup::Face)
+        normal = entity.normal
+        if (a_def = a_defs[normal.to_a]).nil?
+          if (a_def = a_defs[normal.reverse.to_a]).nil?
+            a_def = { :area => 0, :face => entity }
+            a_defs[normal.to_a] = a_def
+          end
+        end
+        a_def[:area] += entity.area(transformation)
+      end
+      largest_face = a_defs.sort_by { |n, a_def| -a_def[:area] }.first.last[:face]
       unless largest_face.nil?
 
         longest_edge = _find_longest_outer_edge(largest_face, transformation)
@@ -1228,7 +1243,7 @@ module Ladb::OpenCutList
           face_manipulator = FaceManipulator.new(largest_face)  # Should not be nested in subgroups : so no inner transformation
           edge_manipulator = EdgeManipulator.new(longest_edge)
 
-          z_axis = face_manipulator.normal
+          z_axis = face_manipulator.normal.reverse  # Reverse the normal by presuming it points into the solid
           x_axis = edge_manipulator.direction
           y_axis = z_axis * x_axis
 
