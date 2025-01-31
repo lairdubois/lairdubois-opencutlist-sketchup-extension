@@ -1857,6 +1857,8 @@ tool:
     action_option_options_construction_status: Als Konstruktionslinien zeichnen
     action_option_options_rectangle_centered: Rechteck zentriert
     action_option_options_rectangle_centered_status: Rechteck auf den ersten Punkt zentrieren
+    action_option_options_smoothing: Glätten
+    action_option_options_smoothing_status: Kurven glätten
     action_option_options_measure_from_diameter: Messung nach dem Durchmesser
     action_option_options_measure_from_diameter_status: Den Kreis nach seinem Durchmesser messen
     action_option_options_measure_from_radius_status: Messung nach dem Radius
@@ -1897,6 +1899,7 @@ tool:
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_1_status: Klicken Sie, um den ersten Messpunkt zu setzen
     action_4_state_2_status: Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein
+    action_5: Größe ändern
     action_option_group_copy_measure_type: Maß
     action_option_group_move_measure_type: Maß
     action_option_group_axes: Achsen

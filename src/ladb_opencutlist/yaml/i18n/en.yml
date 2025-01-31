@@ -1857,6 +1857,8 @@ tool:
     action_option_options_construction_status: Draw as construction lines
     action_option_options_rectangle_centered: Rectangle Centered
     action_option_options_rectangle_centered_status: Center rectangle on the first point
+    action_option_options_smoothing: Smoothing
+    action_option_options_smoothing_status: Smooth curves
     action_option_options_measure_from_diameter: Measure
     action_option_options_measure_from_diameter_status: Measure circle by its diameter
     action_option_options_measure_from_radius_status: Measure circle by its radius
@@ -1897,6 +1899,7 @@ tool:
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_1_status: Click to set the first measurement point
     action_4_state_2_status: Click to set the second measurement point or enter a distance
+    action_5: Resize
     action_option_group_copy_measure_type: Measure
     action_option_group_move_measure_type: Measure
     action_option_group_axes: Axes
