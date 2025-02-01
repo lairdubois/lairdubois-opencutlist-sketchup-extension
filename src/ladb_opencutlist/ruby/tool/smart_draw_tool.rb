@@ -385,11 +385,11 @@ module Ladb::OpenCutList
 
       end
 
-      # k_points = Kuix::Points.new
-      # k_points.add_point(@mouse_snap_point)
-      # k_points.size = 30
-      # k_points.style = Kuix::POINT_STYLE_TRIANGLE
-      # k_points.stroke_color = Kuix::COLOR_YELLOW
+      # k_points = _create_floating_points(
+      #   points: @mouse_snap_point,
+      #   style: Kuix::POINT_STYLE_TRIANGLE,
+      #   stroke_color: Kuix::COLOR_YELLOW
+      # )
       # @tool.append_3d(k_points)
 
       # k_axes_helper = Kuix::AxesHelper.new
@@ -1244,6 +1244,7 @@ module Ladb::OpenCutList
         definition.entities.each do |entity|
           next unless entity.is_a?(Sketchup::Edge)
           _, direction = entity.line
+          next unless direction.perpendicular?(face.normal)
           if (l_def = l_defs[direction.to_a]).nil?
             if (l_def = l_defs[direction.reverse.to_a]).nil?
               l_def = { :length => 0, :edge => entity }
@@ -2583,6 +2584,8 @@ module Ladb::OpenCutList
 
         # Test previously picked points
         @picked_points.each do |point|
+
+          # Test point themselves
           if ph.test_point(point)
 
             k_points = _create_floating_points(
@@ -2594,7 +2597,7 @@ module Ladb::OpenCutList
             @tool.append_3d(k_points)
 
             if @locked_axis
-              @mouse_snap_point = point.project_to_line([ _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last , @locked_axis ])
+              @mouse_snap_point = point.project_to_line([ _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last, @locked_axis ])
             else
               @mouse_snap_point = point
             end
@@ -2602,6 +2605,7 @@ module Ladb::OpenCutList
 
             return
           end
+
         end
 
       end
@@ -2894,6 +2898,51 @@ module Ladb::OpenCutList
       end
 
       super
+
+      if @picked_points.length >= 2
+
+        po = _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last
+        if (v = po.vector_to(@mouse_snap_point)).valid?
+
+          line = [ po, v ]
+
+          ph = view.pick_helper(x, y, 50)
+
+          # Test previously picked points
+          @picked_points.each do |point|
+
+            pp = point.project_to_line(line)
+
+            # Test point themselves
+            if ph.test_point(pp)
+
+              k_points = _create_floating_points(
+                points: point,
+                style: Kuix::POINT_STYLE_CIRCLE,
+                fill_color: Kuix::COLOR_BLACK,
+                stroke_color: Kuix::COLOR_WHITE
+              )
+              @tool.append_3d(k_points)
+
+              k_edge = Kuix::EdgeMotif.new
+              k_edge.start.copy!(point)
+              k_edge.end.copy!(pp)
+              k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+              k_edge.color = Kuix::COLOR_MAGENTA
+              @tool.append_3d(k_edge)
+
+              @mouse_snap_point = pp
+              @mouse_ip.clear
+
+              return
+            end
+
+          end
+
+        end
+
+      end
+
     end
 
     # -----

@@ -462,7 +462,8 @@ module Ladb::OpenCutList
         return _read_handle(tool, text, view)
 
       when STATE_HANDLE_COPIES
-        return _read_handle_copies(tool, text, view)
+        return true if _read_handle_copies(tool, text, view)
+        return true if _read_handle(tool, text, view)
 
       end
 
@@ -488,6 +489,8 @@ module Ladb::OpenCutList
 
       @instances << instance
       @definition = instance.definition
+
+      @src_transformation = Geom::Transformation.new(instance.transformation)
 
       @global_context_transformation = nil
       @global_instance_transformation = nil
@@ -676,12 +679,6 @@ module Ladb::OpenCutList
     end
 
     def _read_handle_copies(tool, text, view)
-
-      if _fetch_option_mirror
-        tool.notify_errors([ [ "tool.smart_handle.error.disabled_by_mirror" ] ])
-        return true
-      end
-
       false
     end
 
@@ -863,6 +860,9 @@ module Ladb::OpenCutList
       super(SmartHandleTool::ACTION_COPY_LINE, tool, previous_action_handler)
 
       @locked_axis = nil
+
+      @operator = '*'
+      @number = 1
 
     end
 
@@ -1160,6 +1160,11 @@ module Ladb::OpenCutList
 
       if v && (match = v.match(/^([x*\/])(\d+)$/))
 
+        if _fetch_option_mirror
+          tool.notify_errors([ [ "tool.smart_handle.error.disabled_by_mirror" ] ])
+          return true
+        end
+
         operator, value = match ? match[1, 2] : [ nil, nil ]
 
         number = value.to_i
@@ -1186,7 +1191,7 @@ module Ladb::OpenCutList
     # -----
 
     def _handle_entity
-      _copy_line_entity
+      _copy_line_entity(@operator, @number)
     end
 
     def _copy_line_entity(operator = '*', number = 1)
@@ -1236,7 +1241,7 @@ module Ladb::OpenCutList
             mt *= Geom::Transformation.rotation(mpe, mvu, Geometrix::ONE_PI)
             mt *= Geom::Transformation.translation(mvu)
           end
-          mt *= src_instance.transformation
+          mt *= @src_transformation
 
           dst_instance = entities.add_instance(@definition, mt)
 
@@ -1245,6 +1250,9 @@ module Ladb::OpenCutList
           _copy_instance_metas(src_instance, dst_instance)
 
         end
+
+        @operator = operator
+        @number = number
 
       model.commit_operation
 
@@ -1340,6 +1348,11 @@ module Ladb::OpenCutList
       @normal = nil
 
       @locked_normal = nil
+
+      @operator_x = '*'
+      @number_x = 1
+      @operator_y = '*'
+      @number_y = 1
 
     end
 
@@ -1646,6 +1659,11 @@ module Ladb::OpenCutList
 
       if v1 && (match_1 = v1.match(/^([x*\/])(\d+)$/)) || v2 && (match_2 = v2.match(/^([x*\/])(\d+)$/))
 
+        if _fetch_option_mirror
+          tool.notify_errors([ [ "tool.smart_handle.error.disabled_by_mirror" ] ])
+          return true
+        end
+
         operator_1, value_1 = match_1 ? match_1[1, 2] : [ nil, nil ]
         operator_2, value_2 = match_2 ? match_2[1, 2] : [ nil, nil ]
 
@@ -1683,7 +1701,7 @@ module Ladb::OpenCutList
     # -----
 
     def _handle_entity
-      _copy_grid_entity
+      _copy_grid_entity(@operator_x, @number_x, @operator_y, @number_y)
     end
 
     def _copy_grid_entity(operator_x = '*', number_x = 1, operator_y = '*', number_y = 1)
@@ -1752,7 +1770,7 @@ module Ladb::OpenCutList
               end
 
             end
-            mt *= src_instance.transformation
+            mt *= @src_transformation
 
             dst_instance = entities.add_instance(@definition, mt)
             @instances << dst_instance
@@ -1761,6 +1779,11 @@ module Ladb::OpenCutList
 
           end
         end
+
+        @operator_x = operator_x
+        @number_x = number_x
+        @operator_y = operator_y
+        @number_y = number_y
 
       model.commit_operation
 
@@ -2202,7 +2225,7 @@ module Ladb::OpenCutList
         src_instance = _get_instance
 
         mt = Geom::Transformation.translation(mv)
-        mt *= src_instance.transformation
+        mt *= @src_transformation
 
         src_instance.transformation = mt
 
@@ -2295,6 +2318,8 @@ module Ladb::OpenCutList
       super(SmartHandleTool::ACTION_DISTRIBUTE, tool, previous_action_handler)
 
       @locked_axis = nil
+
+      @number = 1
 
     end
 
@@ -2644,6 +2669,11 @@ module Ladb::OpenCutList
 
       if text && (match = text.match(/^([x*\/])(\d+)$/))
 
+        if _fetch_option_mirror
+          tool.notify_errors([ [ "tool.smart_handle.error.disabled_by_mirror" ] ])
+          return true
+        end
+
         operator, value = match ? match[1, 2] : [ nil, nil ]
 
         number = value.to_i
@@ -2673,7 +2703,7 @@ module Ladb::OpenCutList
     # -----
 
     def _handle_entity
-      _distribute_entity
+      _distribute_entity(@number)
     end
 
     def _distribute_entity(number = 1)
@@ -2726,6 +2756,8 @@ module Ladb::OpenCutList
           end
 
         end
+
+        @number = number
 
       model.commit_operation
 
