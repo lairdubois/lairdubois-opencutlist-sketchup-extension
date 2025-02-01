@@ -1221,7 +1221,7 @@ module Ladb::OpenCutList
 
     def _get_auto_orient_transformation(definition, transformation = IDENTITY)
 
-      # Sum areas of all faces that are parallels
+      # Sum areas of all faces that are "parallel"
       a_defs = {}
       definition.entities.each do |entity|
         next unless entity.is_a?(Sketchup::Face)
@@ -1234,14 +1234,31 @@ module Ladb::OpenCutList
         end
         a_def[:area] += entity.area(transformation)
       end
-      largest_face = a_defs.sort_by { |n, a_def| -a_def[:area] }.first.last[:face]
-      unless largest_face.nil?
+      max_a_def = a_defs.values.max_by { |a_def| a_def[:area] }
+      unless max_a_def.nil?
 
-        longest_edge = _find_longest_outer_edge(largest_face, transformation)
-        unless longest_edge.nil?
+        face = max_a_def[:face]
 
-          face_manipulator = FaceManipulator.new(largest_face)  # Should not be nested in subgroups : so no inner transformation
-          edge_manipulator = EdgeManipulator.new(longest_edge)
+        # Sum lengths of all edges that are "parallel"
+        l_defs = {}
+        definition.entities.each do |entity|
+          next unless entity.is_a?(Sketchup::Edge)
+          _, direction = entity.line
+          if (l_def = l_defs[direction.to_a]).nil?
+            if (l_def = l_defs[direction.reverse.to_a]).nil?
+              l_def = { :length => 0, :edge => entity }
+              l_defs[direction.to_a] = l_def
+            end
+          end
+          l_def[:length] += entity.length(transformation)
+        end
+        max_l_def = l_defs.values.max_by { |l_def| l_def[:length] }
+        unless max_l_def.nil?
+
+          edge = max_l_def[:edge]
+
+          face_manipulator = FaceManipulator.new(face)  # Should not be nested in subgroups : so no inner transformation
+          edge_manipulator = EdgeManipulator.new(edge)
 
           z_axis = face_manipulator.normal.reverse  # Reverse the normal by presuming it points into the solid
           x_axis = edge_manipulator.direction
