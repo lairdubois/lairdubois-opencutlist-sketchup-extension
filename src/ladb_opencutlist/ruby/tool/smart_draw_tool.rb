@@ -906,7 +906,7 @@ module Ladb::OpenCutList
           _refresh
         rescue ArgumentError
           UI.beep
-          tool.notify_errors([ [ 'tool.smart_draw.error.invalid_offset', { :value => value } ] ])
+          tool.notify_errors([ [ 'tool.default.error.invalid_offset', { :value => value } ] ])
         end
 
         return true
@@ -918,7 +918,7 @@ module Ladb::OpenCutList
     def _read_shape(tool, text, view)
       if @picked_shape_start_point == @mouse_snap_point
         UI.beep
-        tool.notify_errors([ "tool.smart_draw.error.no_direction" ])
+        tool.notify_errors([ "tool.default.error.no_direction" ])
         return true
       end
       false
@@ -1055,13 +1055,11 @@ module Ladb::OpenCutList
 
     def _create_entity
 
-      override_previous = @definition.is_a?(Sketchup::ComponentDefinition)
-
       model = Sketchup.active_model
-      model.start_operation('Create Part', true, false, override_previous)
+      model.start_operation('Create Part', true, false, !active?)
 
       # Remove previously created entity if exists
-      if override_previous
+      if @definition.is_a?(Sketchup::ComponentDefinition)
         model.active_entities.erase_entities(@definition.instances)
         model.definitions.remove(@definition)
         @definition = nil
@@ -1155,7 +1153,7 @@ module Ladb::OpenCutList
 
         instance = model.active_entities.add_instance(definition, t)
 
-        unless override_previous
+        if active?
 
           # Notify part created and propose renaming
           @tool.notify_success(
@@ -2241,7 +2239,7 @@ module Ladb::OpenCutList
 
         if segment_count < 3 || segment_count > 999
           UI.beep
-          @tool.notify_errors([ [ 'tool.smart_draw.error.invalid_segment_count', { :value => value } ] ])
+          @tool.notify_errors([ [ 'tool.default.error.invalid_segment_count', { :value => value } ] ])
           return true
         end
 

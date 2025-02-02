@@ -1616,6 +1616,15 @@ module Ladb::OpenCutList
     def stop
     end
 
+    # -----
+
+    def active?
+      return false if (model = Sketchup.active_model).nil?
+      return false if (active_tool = model.tools.active_tool).nil?
+      return false unless active_tool.is_a?(SmartTool)
+      active_tool.fetch_action_handler == self
+    end
+
     # -- STATE --
 
     def set_state(state)

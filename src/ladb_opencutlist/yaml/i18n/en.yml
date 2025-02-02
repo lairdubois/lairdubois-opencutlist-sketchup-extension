@@ -1830,6 +1830,13 @@ tool:
     vcb_radius: Radius
     vcb_diameter: Diameter
     vcb_distance: Distance
+    error:
+      no_direction: Please indicate a direction with your mouse
+      invalid_length: "Length {{ value }} is invalid"
+      invalid_multiplicator: "Factor {{ value }} is invalid"
+      invalid_divider: "Divisor {{ value }} is invalid"
+      invalid_offset: "Offset {{ value }} is invalid"
+      invalid_segment_count: "The number of segments {{ value }} is invalid. It must be between 3 and 999."
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1869,13 +1876,6 @@ tool:
     action_pull_locked_status: Lock on last measurement
     action_toggle_move_copy_status: Toggle between copy/move
     action_change_move_anchor_status: Change the anchor point
-    error:
-      no_direction: Please indicate a direction with your mouse
-      invalid_length: "Length {{ value }} is invalid"
-      invalid_multiplicator: "Factor {{ value }} is invalid"
-      invalid_divider: "Divisor {{ value }} is invalid"
-      invalid_offset: "Offset {{ value }} is invalid"
-      invalid_segment_count: "The number of segments {{ value }} is invalid. It must be between 3 and 999."
     success:
       part_created: "New part created: {{ name }}"
   smart_handle:

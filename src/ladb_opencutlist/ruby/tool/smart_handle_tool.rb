@@ -459,7 +459,11 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_HANDLE
-        return _read_handle(tool, text, view)
+        if _read_handle(tool, text, view)
+          set_state(STATE_HANDLE_COPIES)
+          _restart
+          return true
+        end
 
       when STATE_HANDLE_COPIES
         return true if _read_handle_copies(tool, text, view)
@@ -568,7 +572,7 @@ module Ladb::OpenCutList
         super
       else
         @tool.callback_action_handler.previous_action_handler = self
-        Sketchup.active_model.tools.pop_tool
+        Sketchup.active_model.tools.pop_tool if active?
       end
     end
 
@@ -1146,8 +1150,7 @@ module Ladb::OpenCutList
       @picked_handle_end_point = dps.offset(v, distance)
 
       _handle_entity
-      set_state(STATE_HANDLE_COPIES)
-      _restart
+      Sketchup.set_status_text('', SB_VCB_VALUE)
 
       true
     end
@@ -1207,7 +1210,7 @@ module Ladb::OpenCutList
       mv = mps.vector_to(mpe)
 
       model = Sketchup.active_model
-      model.start_operation('Copy Part', true)
+      model.start_operation('Copy Part', true, false, !active?)
 
         if operator == '/'
           ux = mv.x / number
@@ -1642,8 +1645,7 @@ module Ladb::OpenCutList
         @picked_handle_end_point = dps.offset(Geom::Vector3d.new(dv.x < 0 ? -distance_x : distance_x, dv.y < 0 ? -distance_y : distance_y).transform(t))
 
         _handle_entity
-        set_state(STATE_HANDLE_COPIES)
-        _restart
+        Sketchup.set_status_text('', SB_VCB_VALUE)
 
         return true
       end
@@ -1717,7 +1719,7 @@ module Ladb::OpenCutList
       mv_2d = mps_2d.vector_to(mpe_2d)
 
       model = Sketchup.active_model
-      model.start_operation('Copy Part', true)
+      model.start_operation('Copy Part', true, false, !active?)
 
         if operator_x == '/'
           ux = mv_2d.x / number_x
@@ -2192,9 +2194,9 @@ module Ladb::OpenCutList
       return true if distance.nil?
 
       @picked_handle_end_point = dps.offset(dv, distance)
+
       _handle_entity
-      set_state(STATE_HANDLE_COPIES)
-      _restart
+      Sketchup.set_status_text('', SB_VCB_VALUE)
 
       true
     end
@@ -2220,7 +2222,7 @@ module Ladb::OpenCutList
       _unhide_instance
 
       model = Sketchup.active_model
-      model.start_operation('Move Part', true)
+      model.start_operation('Move Part', true, false, !active?)
 
         src_instance = _get_instance
 
@@ -2659,8 +2661,7 @@ module Ladb::OpenCutList
       @picked_handle_end_point = ps.offset(v, distance)
 
       _handle_entity
-      set_state(STATE_HANDLE_COPIES)
-      _restart
+      Sketchup.set_status_text('', SB_VCB_VALUE)
 
       true
     end
@@ -2680,12 +2681,12 @@ module Ladb::OpenCutList
 
         if operator == '/' && number < 2
           UI.beep
-          tool.notify_errors([ [ "tool.smart_draw.error.invalid_divider", { :value => value } ] ])
+          tool.notify_errors([ [ "tool.default.error.invalid_divider", { :value => value } ] ])
           return true
         end
         if number == 0
           UI.beep
-          tool.notify_errors([ [ "tool.smart_draw.error.invalid_multiplicator", { :value => value } ] ])
+          tool.notify_errors([ [ "tool.default.error.invalid_multiplicator", { :value => value } ] ])
           return true
         end
 
@@ -2722,7 +2723,7 @@ module Ladb::OpenCutList
       _unhide_instance
 
       model = Sketchup.active_model
-      model.start_operation('Copy Part', true)
+      model.start_operation('Copy Part', true, false, !active?)
 
         src_instance = @active_part_entity_path[-1]
         old_instances = @instances[1..-1]

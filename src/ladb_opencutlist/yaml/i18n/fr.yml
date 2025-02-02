@@ -1830,6 +1830,13 @@ tool:
     vcb_radius: Rayon
     vcb_diameter: Diamètre
     vcb_distance: Distance
+    error:
+      no_direction: Veuillez indiquer une direction avec la souris
+      invalid_length: "La longueur {{ value }} est invalide"
+      invalid_multiplicator: "Le multiplicateur {{ value }} est invalide"
+      invalid_divider: "Le diviseur {{ value }} est invalide"
+      invalid_offset: "Le décalage {{ value }} est invalide"
+      invalid_segment_count: "Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999."
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1869,13 +1876,6 @@ tool:
     action_pull_locked_status: Verrouiller sur la dernière mesure
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
-    error:
-      no_direction: Veuillez indiquer une direction avec la souris
-      invalid_length: "La longueur {{ value }} est invalide"
-      invalid_multiplicator: "Le multiplicateur {{ value }} est invalide"
-      invalid_divider: "Le diviseur {{ value }} est invalide"
-      invalid_offset: "Le décalage {{ value }} est invalide"
-      invalid_segment_count: "Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999."
     success:
       part_created: "Nouvelle pièce créée : {{ name }}"
   smart_handle:

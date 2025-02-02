@@ -29,7 +29,7 @@ module Ladb::OpenCutList
             end
           else
             UI.beep
-            tool.notify_errors([ [ "tool.smart_draw.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
+            tool.notify_errors([ [ "tool.default.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
             return nil
           end
         elsif (match = /^@([+-])(.+)$/.match(text))
@@ -45,7 +45,7 @@ module Ladb::OpenCutList
             end
           rescue ArgumentError
             UI.beep
-            tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => value } ] ])
+            tool.notify_errors([ [ 'tool.default.error.invalid_length', { :value => value } ] ])
             return nil
           end
         else
@@ -59,7 +59,7 @@ module Ladb::OpenCutList
             end
           rescue ArgumentError
             UI.beep
-            tool.notify_errors([ [ 'tool.smart_draw.error.invalid_length', { :value => text } ] ])
+            tool.notify_errors([ [ 'tool.default.error.invalid_length', { :value => text } ] ])
             return nil
           end
         end

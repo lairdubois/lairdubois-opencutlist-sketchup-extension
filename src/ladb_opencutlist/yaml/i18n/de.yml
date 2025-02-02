@@ -1830,6 +1830,13 @@ tool:
     vcb_radius: Radius
     vcb_diameter: Durchmesser
     vcb_distance: Distanz
+    error:
+      no_direction: Bitte geben Sie eine Richtung mit der Maus an
+      invalid_length: "Die Länge {{ value }} ist ungültig"
+      invalid_multiplicator: "Der Faktor {{ value }} ist ungültig"
+      invalid_divider: "Der Teiler {{ value }} ist ungültig"
+      invalid_offset: "Die Verschiebung {{ value }} ist ungültig"
+      invalid_segment_count: "Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein."
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -1869,13 +1876,6 @@ tool:
     action_pull_locked_status:  Auf die letzte Messung fixieren
     action_toggle_move_copy_status: Abwechselnd kopieren/verschieben
     action_change_move_anchor_status: Ankerpunkt ändern
-    error:
-      no_direction: Bitte geben Sie eine Richtung mit der Maus an
-      invalid_length: "Die Länge {{ value }} ist ungültig"
-      invalid_multiplicator: "Der Faktor {{ value }} ist ungültig"
-      invalid_divider: "Der Teiler {{ value }} ist ungültig"
-      invalid_offset: "Die Verschiebung {{ value }} ist ungültig"
-      invalid_segment_count: "Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein."
     success:
       part_created: "Neu erstelltes Teil: {{ name }}"
   smart_handle:
