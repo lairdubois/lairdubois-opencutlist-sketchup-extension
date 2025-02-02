@@ -1828,52 +1828,52 @@ tool:
     vcb_radius: 1400 - Radius
     vcb_diameter: 1401 - Diameter
     vcb_distance: 1402 - Distance
+    error:
+      no_direction: 1403 - Please indicate a direction with your mouse
+      invalid_length: 1404 - Length {{ value }} is invalid
+      invalid_multiplicator: 1405 - Factor {{ value }} is invalid
+      invalid_divider: 1406 - Divisor {{ value }} is invalid
+      invalid_offset: 1407 - Offset {{ value }} is invalid
+      invalid_segment_count: 1408 - The number of segments {{ value }} is invalid. It must be between 3 and 999.
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1405 - Draw
-    action_0: 1406 - Draw Rectangle
-    action_0_status: 1407 - Draw a volume on a rectangular shape
-    action_0_state_1_status: 1408 - Click to define opposite angle or enter length, width
-    action_1: 1409 - Draw Circle
-    action_1_status: 1410 - Draw a volume on a circular shape
-    action_1_state_1_radius_status: 1411 - Click to set radius or enter distance
-    action_1_state_1_diameter_status: 1412 - Click to set diameter or enter distance
-    action_2: 1413 - Draw Polygon
-    action_2_status: 1414 - Draw a volume on a polygonal shape
-    action_2_state_1_status: 1415 - Click to define a new point or enter distance
-    action_x_state_2_status: 1416 - Click to set elevation or enter distance
-    action_option_group_offset: 1417 - Offset
-    action_option_group_segments: 1418 - Segments
-    action_option_group_options: 1419 - Options
-    action_option_offset_shape_offset: 1420 - Offset
-    action_option_offset_shape_offset_status: 1421 - Apply an offset to the shape line
-    action_option_segments_segment_count: 1422 - Number of Segments
-    action_option_segments_segment_count_status: 1423 - Define the number of segments of a circle
-    action_option_options_construction: 1424 - Construction Lines
-    action_option_options_construction_status: 1425 - Draw as construction lines
-    action_option_options_rectangle_centered: 1426 - Rectangle Centered
-    action_option_options_rectangle_centered_status: 1427 - Center rectangle on the first point
-    action_option_options_smoothing: 1428 - Smoothing
-    action_option_options_smoothing_status: 1429 - Smooth curves
-    action_option_options_measure_from_diameter: 1430 - Measure
-    action_option_options_measure_from_diameter_status: 1431 - Measure circle by its diameter
-    action_option_options_measure_from_radius_status: 1432 - Measure circle by its radius
-    action_option_options_measure_reversed: 1433 - Inverted Measure
-    action_option_options_measure_reversed_status: 1434 - Reverse the measurement
-    action_option_options_pull_centered: 1435 - Elevation Centered
-    action_option_options_pull_centered_status: 1436 - Center elevation on the first point
-    action_pull_locked_status: 1437 - Lock on last measurement
-    action_toggle_move_copy_status: 1438 - Toggle between copy/move
-    action_change_move_anchor_status: 1439 - Change the anchor point
-    error:
-      no_direction: 1440 - Please indicate a direction with your mouse
-      invalid_length: 1441 - Length {{ value }} is invalid
-      invalid_multiplicator: 1442 - Factor {{ value }} is invalid
-      invalid_divider: 1443 - Divisor {{ value }} is invalid
-      invalid_offset: 1444 - Offset {{ value }} is invalid
-      invalid_segment_count: 1445 - The number of segments {{ value }} is invalid. It must be between 3 and 999.
+    title: 1411 - Draw
+    action_0: 1412 - Draw Rectangle
+    action_0_status: 1413 - Draw a volume on a rectangular shape
+    action_0_state_1_status: 1414 - Click to define opposite angle or enter length, width
+    action_1: 1415 - Draw Circle
+    action_1_status: 1416 - Draw a volume on a circular shape
+    action_1_state_1_radius_status: 1417 - Click to set radius or enter distance
+    action_1_state_1_diameter_status: 1418 - Click to set diameter or enter distance
+    action_2: 1419 - Draw Polygon
+    action_2_status: 1420 - Draw a volume on a polygonal shape
+    action_2_state_1_status: 1421 - Click to define a new point or enter distance
+    action_x_state_2_status: 1422 - Click to set elevation or enter distance
+    action_option_group_offset: 1423 - Offset
+    action_option_group_segments: 1424 - Segments
+    action_option_group_options: 1425 - Options
+    action_option_offset_shape_offset: 1426 - Offset
+    action_option_offset_shape_offset_status: 1427 - Apply an offset to the shape line
+    action_option_segments_segment_count: 1428 - Number of Segments
+    action_option_segments_segment_count_status: 1429 - Define the number of segments of a circle
+    action_option_options_construction: 1430 - Construction Lines
+    action_option_options_construction_status: 1431 - Draw as construction lines
+    action_option_options_rectangle_centered: 1432 - Rectangle Centered
+    action_option_options_rectangle_centered_status: 1433 - Center rectangle on the first point
+    action_option_options_smoothing: 1434 - Smoothing
+    action_option_options_smoothing_status: 1435 - Smooth curves
+    action_option_options_measure_from_diameter: 1436 - Measure
+    action_option_options_measure_from_diameter_status: 1437 - Measure circle by its diameter
+    action_option_options_measure_from_radius_status: 1438 - Measure circle by its radius
+    action_option_options_measure_reversed: 1439 - Inverted Measure
+    action_option_options_measure_reversed_status: 1440 - Reverse the measurement
+    action_option_options_pull_centered: 1441 - Elevation Centered
+    action_option_options_pull_centered_status: 1442 - Center elevation on the first point
+    action_pull_locked_status: 1443 - Lock on last measurement
+    action_toggle_move_copy_status: 1444 - Toggle between copy/move
+    action_change_move_anchor_status: 1445 - Change the anchor point
     success:
       part_created: '1446 - New part created: {{ name }}'
   smart_handle:
