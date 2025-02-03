@@ -1828,52 +1828,52 @@ tool:
     vcb_radius: 1400 - Radius
     vcb_diameter: 1401 - Durchmesser
     vcb_distance: 1402 - Distanz
+    error:
+      no_direction: 1403 - Bitte geben Sie eine Richtung mit der Maus an
+      invalid_length: 1404 - Die Länge {{ value }} ist ungültig
+      invalid_multiplicator: 1405 - Der Faktor {{ value }} ist ungültig
+      invalid_divider: 1406 - Der Teiler {{ value }} ist ungültig
+      invalid_offset: 1407 - Die Verschiebung {{ value }} ist ungültig
+      invalid_segment_count: 1408 - Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein.
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1405 - Zeichnen
-    action_0: 1406 - Rechteck zeichnen
-    action_0_status: 1407 - Volumen auf der Basis einer Rechteckform zeichnen
-    action_0_state_1_status: 1408 - Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein
-    action_1: 1409 - Kreis zeichnen
-    action_1_status: 1410 - Volumen auf der Basis einer Kreisform zeichnen
-    action_1_state_1_radius_status: 1411 - Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
-    action_1_state_1_diameter_status: 1412 - Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein
-    action_2: 1413 - Polygon zeichnen
-    action_2_status: 1414 - Volumen auf der Basis einer polygonalen Form zeichnen
-    action_2_state_1_status: 1415 - Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
-    action_x_state_2_status: 1416 - Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
-    action_option_group_offset: 1417 - Verschiebung
-    action_option_group_segments: 1418 - Segmente
-    action_option_group_options: 1419 - Optionen
-    action_option_offset_shape_offset: 1420 - Versatz
-    action_option_offset_shape_offset_status: 1421 - Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden
-    action_option_segments_segment_count: 1422 - Anzahl Segmente
-    action_option_segments_segment_count_status: 1423 - Ermöglicht das Festlegen der Anzahl der Kreissegmente
-    action_option_options_construction: 1424 - Konstruktionslinien
-    action_option_options_construction_status: 1425 - Als Konstruktionslinien zeichnen
-    action_option_options_rectangle_centered: 1426 - Rechteck zentriert
-    action_option_options_rectangle_centered_status: 1427 - Rechteck auf den ersten Punkt zentrieren
-    action_option_options_smoothing: 1428 - Glätten
-    action_option_options_smoothing_status: 1429 - Kurven glätten
-    action_option_options_measure_from_diameter: 1430 - Messung nach dem Durchmesser
-    action_option_options_measure_from_diameter_status: 1431 - Den Kreis nach seinem Durchmesser messen
-    action_option_options_measure_from_radius_status: 1432 - Messung nach dem Radius
-    action_option_options_measure_reversed: 1433 - Invertierte Messung
-    action_option_options_measure_reversed_status: 1434 - Messung invertieren
-    action_option_options_pull_centered: 1435 - Erhebung zentriert
-    action_option_options_pull_centered_status: 1436 - Erhebung auf den ersten Punkt zentrieren
-    action_pull_locked_status: 1437 - Auf die letzte Messung fixieren
-    action_toggle_move_copy_status: 1438 - Abwechselnd kopieren/verschieben
-    action_change_move_anchor_status: 1439 - Ankerpunkt ändern
-    error:
-      no_direction: 1440 - Bitte geben Sie eine Richtung mit der Maus an
-      invalid_length: 1441 - Die Länge {{ value }} ist ungültig
-      invalid_multiplicator: 1442 - Der Faktor {{ value }} ist ungültig
-      invalid_divider: 1443 - Der Teiler {{ value }} ist ungültig
-      invalid_offset: 1444 - Die Verschiebung {{ value }} ist ungültig
-      invalid_segment_count: 1445 - Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein.
+    title: 1411 - Zeichnen
+    action_0: 1412 - Rechteck zeichnen
+    action_0_status: 1413 - Volumen auf der Basis einer Rechteckform zeichnen
+    action_0_state_1_status: 1414 - Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein
+    action_1: 1415 - Kreis zeichnen
+    action_1_status: 1416 - Volumen auf der Basis einer Kreisform zeichnen
+    action_1_state_1_radius_status: 1417 - Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
+    action_1_state_1_diameter_status: 1418 - Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein
+    action_2: 1419 - Polygon zeichnen
+    action_2_status: 1420 - Volumen auf der Basis einer polygonalen Form zeichnen
+    action_2_state_1_status: 1421 - Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
+    action_x_state_2_status: 1422 - Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
+    action_option_group_offset: 1423 - Verschiebung
+    action_option_group_segments: 1424 - Segmente
+    action_option_group_options: 1425 - Optionen
+    action_option_offset_shape_offset: 1426 - Versatz
+    action_option_offset_shape_offset_status: 1427 - Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden
+    action_option_segments_segment_count: 1428 - Anzahl Segmente
+    action_option_segments_segment_count_status: 1429 - Ermöglicht das Festlegen der Anzahl der Kreissegmente
+    action_option_options_construction: 1430 - Konstruktionslinien
+    action_option_options_construction_status: 1431 - Als Konstruktionslinien zeichnen
+    action_option_options_rectangle_centered: 1432 - Rechteck zentriert
+    action_option_options_rectangle_centered_status: 1433 - Rechteck auf den ersten Punkt zentrieren
+    action_option_options_smoothing: 1434 - Glätten
+    action_option_options_smoothing_status: 1435 - Kurven glätten
+    action_option_options_measure_from_diameter: 1436 - Messung nach dem Durchmesser
+    action_option_options_measure_from_diameter_status: 1437 - Den Kreis nach seinem Durchmesser messen
+    action_option_options_measure_from_radius_status: 1438 - Messung nach dem Radius
+    action_option_options_measure_reversed: 1439 - Invertierte Messung
+    action_option_options_measure_reversed_status: 1440 - Messung invertieren
+    action_option_options_pull_centered: 1441 - Erhebung zentriert
+    action_option_options_pull_centered_status: 1442 - Erhebung auf den ersten Punkt zentrieren
+    action_pull_locked_status: 1443 - Auf die letzte Messung fixieren
+    action_toggle_move_copy_status: 1444 - Abwechselnd kopieren/verschieben
+    action_change_move_anchor_status: 1445 - Ankerpunkt ändern
     success:
       part_created: '1446 - Neu erstelltes Teil: {{ name }}'
   smart_handle:
