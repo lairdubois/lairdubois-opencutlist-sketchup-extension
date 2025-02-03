@@ -505,9 +505,6 @@ module Ladb::OpenCutList
 
       @picked_handle_start_point = eb.center.transform(et)
 
-      set_state(STATE_HANDLE)
-      _refresh
-
     end
 
     # -----
@@ -610,7 +607,7 @@ module Ladb::OpenCutList
       end
     end
 
-    def _preview_edit_axes(with_box = true, with_x = true, with_y = true, with_z = true)
+    def _preview_edit_axes(with_box = true, with_x = true, with_y = true, with_z = true, translucent = false)
       if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
         unit = @tool.get_unit
@@ -637,9 +634,9 @@ module Ladb::OpenCutList
 
         end
 
-        fn.call(X_AXIS, eb.width * 0.5 + px_offset, _locked_x?, Kuix::COLOR_X) if with_x
-        fn.call(Y_AXIS, eb.height * 0.5 + px_offset, _locked_y?, Kuix::COLOR_Y) if with_y
-        fn.call(Z_AXIS, eb.depth * 0.5 + px_offset, _locked_z?, Kuix::COLOR_Z) if with_z
+        fn.call(X_AXIS, eb.width * 0.5 + px_offset, _locked_x?, translucent ? ColorUtils.color_translucent(Kuix::COLOR_X, 64) : Kuix::COLOR_X) if with_x
+        fn.call(Y_AXIS, eb.height * 0.5 + px_offset, _locked_y?, translucent ? ColorUtils.color_translucent(Kuix::COLOR_Y, 64) : Kuix::COLOR_Y) if with_y
+        fn.call(Z_AXIS, eb.depth * 0.5 + px_offset, _locked_z?, translucent ? ColorUtils.color_translucent(Kuix::COLOR_Z, 64) : Kuix::COLOR_Z) if with_z
 
         if with_box
 
@@ -830,6 +827,60 @@ module Ladb::OpenCutList
 
   end
 
+  class SmartHandleOneStepActionHandler < SmartHandleActionHandler
+
+    def onPartSelected
+      super
+
+      set_state(STATE_HANDLE)
+      _refresh
+
+    end
+
+  end
+
+  class SmartHandleTwoStepActionHandler < SmartHandleActionHandler
+
+    # -- STATE --
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_HANDLE_START
+        return @tool.cursor_pin_1
+      when STATE_HANDLE
+        return @tool.cursor_pin_2
+      end
+
+      super
+    end
+
+    # -----
+
+    def onToolCancel(tool, reason, view)
+
+      case @state
+
+      when STATE_HANDLE
+        set_state(STATE_HANDLE_START)
+        _refresh
+        return true
+
+      end
+
+      super
+    end
+
+    def onPartSelected
+      super
+
+      set_state(STATE_HANDLE_START)
+      _refresh
+
+    end
+
+  end
+
   class SmartHandleSelectActionHandler < SmartHandleActionHandler
 
     def initialize(tool, previous_action_handler = nil)
@@ -858,7 +909,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartHandleCopyLineActionHandler < SmartHandleActionHandler
+  class SmartHandleCopyLineActionHandler < SmartHandleOneStepActionHandler
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartHandleTool::ACTION_COPY_LINE, tool, previous_action_handler)
@@ -1040,14 +1091,15 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
-      super
-      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
+      return super if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
 
       drawing_def, et, eb, ve, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :et, :eb, :ve, :mps, :mpe, :dps, :dpe)
       drawing_def_segments = _get_drawing_def_segments(drawing_def)
 
-      return unless (mv = mps.vector_to(mpe)).valid?
+      return super unless (mv = mps.vector_to(mpe)).valid?
       color = _get_vector_color(mv)
+
+      _preview_edit_axes(false, !mv.parallel?(_get_active_x_axis), !mv.parallel?(_get_active_y_axis), !mv.parallel?(_get_active_z_axis))
 
       mt = Geom::Transformation.translation(mv)
       if _fetch_option_mirror
@@ -1343,7 +1395,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartHandleCopyGridActionHandler < SmartHandleActionHandler
+  class SmartHandleCopyGridActionHandler < SmartHandleOneStepActionHandler
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartHandleTool::ACTION_COPY_GRID, tool, previous_action_handler)
@@ -1908,7 +1960,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartHandleMoveLineActionHandler < SmartHandleActionHandler
+  class SmartHandleMoveLineActionHandler < SmartHandleOneStepActionHandler
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartHandleTool::ACTION_MOVE_LINE, tool, previous_action_handler)
@@ -2104,13 +2156,14 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
-      super
-      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_move_measure_type)).nil?
+      return super if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_move_measure_type)).nil?
 
       drawing_def, drawing_def_segments, et, eb, mps, mpe, dps, dpe = move_def.values_at(:drawing_def, :drawing_def_segments, :et, :eb, :mps, :mpe, :dps, :dpe)
 
-      return unless (mv = mps.vector_to(mpe)).valid?
+      return super unless (mv = mps.vector_to(mpe)).valid?
       color = _get_vector_color(mv)
+
+      _preview_edit_axes(false, !mv.parallel?(_get_active_x_axis), !mv.parallel?(_get_active_y_axis), !mv.parallel?(_get_active_z_axis), true)
 
       mt = Geom::Transformation.translation(mv)
       if _fetch_option_mirror
@@ -2314,7 +2367,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SmartHandleDistributeActionHandler < SmartHandleActionHandler
+  class SmartHandleDistributeActionHandler < SmartHandleTwoStepActionHandler
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartHandleTool::ACTION_DISTRIBUTE, tool, previous_action_handler)
@@ -2339,10 +2392,6 @@ module Ladb::OpenCutList
       case state
       when STATE_SELECT
         return @tool.cursor_select_distribute
-      when STATE_HANDLE_START
-        return @tool.cursor_pin_1
-      when STATE_HANDLE
-        return @tool.cursor_pin_2
       end
 
       super
@@ -2361,20 +2410,6 @@ module Ladb::OpenCutList
     end
 
     # -----
-
-    def onToolCancel(tool, reason, view)
-
-      case @state
-
-      when STATE_HANDLE
-        set_state(STATE_HANDLE_START)
-        _refresh
-        return true
-
-      end
-
-      super
-    end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
       return if @state != STATE_HANDLE
@@ -2425,21 +2460,6 @@ module Ladb::OpenCutList
           _unhide_instance
         end
       end
-
-    end
-
-    def onPartSelected
-
-      instance = _get_instance
-
-      @instances << instance
-      @definition = instance.definition
-      @drawing_def = nil
-
-      @src_transformation = Geom::Transformation.new(instance.transformation)
-
-      set_state(STATE_HANDLE_START)
-      _refresh
 
     end
 
@@ -2545,15 +2565,16 @@ module Ladb::OpenCutList
     end
 
     def _preview_handle(view)
-      super
-      return if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
+      return super if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point)).nil?
 
       drawing_def, et, eb, center, lps, lpe, mps, mpe = move_def.values_at(:drawing_def, :et, :eb, :center, :lps, :lpe, :mps, :mpe)
       drawing_def_segments = _get_drawing_def_segments(drawing_def)
 
+      return super unless (mv = mps.vector_to(mpe)).valid?
       lv = lps.vector_to(lpe)
-      mv = mps.vector_to(mpe)
       color = _get_vector_color(lv, Kuix::COLOR_DARK_GREY)
+
+      _preview_edit_axes(false, !mv.parallel?(_get_active_x_axis), !mv.parallel?(_get_active_y_axis), !mv.parallel?(_get_active_z_axis), true)
 
       # Preview
 
@@ -2766,18 +2787,14 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_transformation
-      _get_edit_transformation
-    end
-
     def _get_move_def(ps, pe)
       return unless (v = ps.vector_to(pe)).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
-      et = _get_transformation
+      et = _get_edit_transformation
       eti = et.inverse
 
-      return unless (eb = _get_drawing_def_edit_bounds(drawing_def, _get_edit_transformation)).valid?
+      return unless (eb = _get_drawing_def_edit_bounds(drawing_def, et)).valid?
 
       # Compute in 'Edit' space
 

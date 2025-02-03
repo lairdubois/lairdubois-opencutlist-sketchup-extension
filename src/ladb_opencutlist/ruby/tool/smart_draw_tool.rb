@@ -1224,11 +1224,10 @@ module Ladb::OpenCutList
       definition.entities.each do |entity|
         next unless entity.is_a?(Sketchup::Face)
         normal = entity.normal
-        if (a_def = a_defs[normal.to_a]).nil?
-          if (a_def = a_defs[normal.reverse.to_a]).nil?
-            a_def = { :area => 0, :face => entity }
-            a_defs[normal.to_a] = a_def
-          end
+        key = a_defs.keys.find { |k| k.parallel?(normal) }
+        if (a_def = a_defs[key]).nil?
+          a_def = { :area => 0, :face => entity }
+          a_defs[normal] = a_def
         end
         a_def[:area] += entity.area(transformation)
       end
@@ -1236,18 +1235,18 @@ module Ladb::OpenCutList
       unless max_a_def.nil?
 
         face = max_a_def[:face]
+        normal = face.normal
 
         # Sum lengths of all edges that are "parallel"
         l_defs = {}
         definition.entities.each do |entity|
           next unless entity.is_a?(Sketchup::Edge)
           _, direction = entity.line
-          next unless direction.perpendicular?(face.normal)
-          if (l_def = l_defs[direction.to_a]).nil?
-            if (l_def = l_defs[direction.reverse.to_a]).nil?
-              l_def = { :length => 0, :edge => entity }
-              l_defs[direction.to_a] = l_def
-            end
+          next unless direction.perpendicular?(normal)
+          key = l_defs.keys.find { |k| k.parallel?(direction) }
+          if (l_def = l_defs[key]).nil?
+            l_def = { :length => 0, :edge => entity }
+            l_defs[direction] = l_def
           end
           l_def[:length] += entity.length(transformation)
         end
@@ -1255,12 +1254,10 @@ module Ladb::OpenCutList
         unless max_l_def.nil?
 
           edge = max_l_def[:edge]
+          _, direction = edge.line
 
-          face_manipulator = FaceManipulator.new(face)  # Should not be nested in subgroups : so no inner transformation
-          edge_manipulator = EdgeManipulator.new(edge)
-
-          z_axis = face_manipulator.normal.reverse  # Reverse the normal by presuming it points into the solid
-          x_axis = edge_manipulator.direction
+          z_axis = normal.reverse  # Reverse the normal by presuming it points into the solid
+          x_axis = direction
           y_axis = z_axis * x_axis
 
           return Geom::Transformation.axes(ORIGIN, x_axis, y_axis, z_axis)
