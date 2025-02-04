@@ -866,6 +866,19 @@ module Ladb::OpenCutList
       end
     end
 
+    def notify_warnings(warnings) # warnings = [ [ I18N_PATH_KEY, { :VAR1 => value1, :VAR2 => value2, ... } ], ... ]
+      warnings.each do |warning|
+        if warning.is_a?(Array)
+          path_key = warning[0]
+          vars = warning[1]
+        else
+          path_key = warning
+          vars = nil
+        end
+        notify(PLUGIN.get_i18n_string(path_key, vars), MESSAGE_TYPE_WARNING)
+      end
+    end
+
     # -- Actions --
 
     def get_action_defs  # Array<{ :action => THE_ACTION, :options => { OPTION_GROUP_1 => [ OPTION_1, OPTION_2 ] } }>

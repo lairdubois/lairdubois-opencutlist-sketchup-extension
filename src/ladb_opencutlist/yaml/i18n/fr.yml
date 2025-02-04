@@ -1916,6 +1916,7 @@ tool:
     action_option_options_mirror_status: Copier en symétrie
     error:
       disabled_by_mirror: L'option '$t(tool.smart_handle.action_option_options_mirror_status)' ne permet pas cette opération
+      min_distance: La distance {{ value1 }} est inférieure à la distance minimale de {{ value2 }}
   smart_paint:
     title: Colorier
     default_material: Sans matière

@@ -1193,13 +1193,19 @@ module Ladb::OpenCutList
     def _read_handle(tool, text, view)
       return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
 
-      dps, dpe = move_def.values_at(:dps, :dpe)
+      dps, dpe, dmin = move_def.values_at(:dps, :dpe, :dmin)
       v = dps.vector_to(dpe)
 
       distance = _read_user_text_length(tool, text, v.length)
-      return true if distance.nil?
+      return false if distance.nil?
 
-      @picked_handle_end_point = dps.offset(v, distance)
+      # Error if min distance
+      if distance < dmin
+        tool.notify_errors([ [ "tool.smart_handle.error.min_distance", { :value1 => distance.to_l, :value2 => dmin.to_l } ] ])
+        return false
+      end
+
+      @picked_handle_end_point = dps.offset(v, [ distance.abs, dmin ].max)
 
       _handle_entity
       Sketchup.set_status_text('', SB_VCB_VALUE)
@@ -1316,7 +1322,6 @@ module Ladb::OpenCutList
     # -----
 
     def _get_move_def(ps, pe, type = 0)
-      return unless (v = ps.vector_to(pe)).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       et = _get_edit_transformation
@@ -1326,10 +1331,19 @@ module Ladb::OpenCutList
 
       # Compute in 'Edit' space
 
-      ev = v.transform(eti)
-
       ecenter = eb.center
-      eline = [ ecenter, ev ]
+
+      elps = ecenter
+      elpe = pe.transform(eti)
+
+      ev = elps.vector_to(elpe)
+
+      unless ev.valid?
+        elpe = elps.offset(X_AXIS)
+        ev = Geom::Vector3d.new(X_AXIS)
+      end
+
+      eline = [ elps, ev ]
 
       plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
       ibtm = Geom.intersect_line_plane(eline, plane_btm)
@@ -1352,15 +1366,31 @@ module Ladb::OpenCutList
         end
       end
 
+      eve = evs.reverse
+
+      case type
+      when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
+        dlmin = eve.length * 3
+        dmin = eve.length * 4
+      when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED
+        dlmin = eve.length * 2
+        dmin = eve.length * 2
+      when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE
+        dlmin = eve.length
+        dmin = 0
+      else
+        return
+      end
+      ev.length = dlmin if elps.distance(elpe) < dlmin
+      elpe = elps.offset(ev)
+
       # Restore to 'Global' space
 
-      center = ecenter.transform(et)
-      line = [ center, v ]
       vs = evs.transform(et)
-      ve = vs.reverse
+      ve = eve.transform(et)
 
-      lps = center
-      lpe = pe.project_to_line(line)
+      lps = elps.transform(et)
+      lpe = elpe.transform(et)
 
       mps = lps
       dpe = lpe
@@ -1389,7 +1419,8 @@ module Ladb::OpenCutList
         mps: mps,
         mpe: mpe,
         dps: dps,
-        dpe: dpe
+        dpe: dpe,
+        dmin: dmin
       }
     end
 
@@ -1590,17 +1621,12 @@ module Ladb::OpenCutList
 
             if _fetch_option_mirror
 
-              mvux = Geom::Vector3d.new(mv_2d.x * x, 0).transform(ht)
-              mvuy = Geom::Vector3d.new(0, dv_2d.y * y).transform(ht)
-
               if x == 1 && y == 1
-                n = mvux * mvuy
-                mt *= Geom::Transformation.rotation(mp, mvux * mvuy, Geometrix::ONE_PI) if n.valid?
+                mt *= Geom::Transformation.rotation(mp, Z_AXIS, Geometrix::ONE_PI)
                 mt *= Geom::Transformation.translation(mvu + mvu)
               elsif x == 1 || y == 1
-                n = x == 1 ? mvux : mvuy
                 mt = Geom::Transformation.scaling(mp, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
-                mt *= Geom::Transformation.rotation(mp, n, Geometrix::ONE_PI) if n.valid?
+                mt *= Geom::Transformation.rotation(mp, x == 1 ? X_AXIS : Y_AXIS, Geometrix::ONE_PI)
                 mt *= Geom::Transformation.translation(mvu)
               end
 
@@ -1678,23 +1704,38 @@ module Ladb::OpenCutList
     def _read_handle(tool, text, view)
       return false if (move_def = _get_move_def(@picked_handle_start_point, @mouse_snap_point, _fetch_option_copy_measure_type)).nil?
 
-      t = _get_handle_transformation
-      ti = t.inverse
+      ht = _get_handle_transformation
+      hti = ht.inverse
 
-      dps, dpe = move_def.values_at(:dps, :dpe)
-      dv = dps.transform(ti).vector_to(dpe.transform(ti))
+      dps, dpe, dminx, dminy = move_def.values_at(:dps, :dpe, :dminx, :dminy)
+      dv = dps.transform(hti).vector_to(dpe.transform(hti))
 
       d1, d2 = _split_user_text(text)
 
       if d1 || d2
 
         distance_x = _read_user_text_length(tool, d1, dv.x.abs)
-        return true if distance_x.nil?
+        return false if distance_x.nil?
+
+        # Error if min distance
+        if distance_x < dminx
+          tool.notify_errors([ [ "tool.smart_handle.error.min_distance", { :value1 => distance_x.to_l, :value2 => dminx.to_l } ] ])
+          return false
+        end
 
         distance_y = _read_user_text_length(tool, d2, dv.y.abs)
-        return true if distance_y.nil?
+        return false if distance_y.nil?
 
-        @picked_handle_end_point = dps.offset(Geom::Vector3d.new(dv.x < 0 ? -distance_x : distance_x, dv.y < 0 ? -distance_y : distance_y).transform(t))
+        # Error if min distance
+        if distance_y < dminy
+          tool.notify_errors([ [ "tool.smart_handle.error.min_distance", { :value1 => distance_y.to_l, :value2 => dminy.to_l } ] ])
+          return false
+        end
+
+        @picked_handle_end_point = dps.offset(Geom::Vector3d.new(
+          [ distance_x.abs, dminx ].max * (dv.x < 0 ? -1 : 1),
+          [ distance_y.abs, dminy ].max * (dv.y < 0 ? -1 : 1)
+        ).transform(ht))
 
         _handle_entity
         Sketchup.set_status_text('', SB_VCB_VALUE)
@@ -1862,7 +1903,6 @@ module Ladb::OpenCutList
     end
 
     def _get_move_def(ps, pe, type = 0)
-      return unless ps.vector_to(pe).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       ht = _get_handle_transformation
@@ -1870,37 +1910,49 @@ module Ladb::OpenCutList
 
       return unless (eb = _get_drawing_def_edit_bounds(drawing_def, ht)).valid?
 
-      # Compute in 'Edit' space
+      # Compute in 'Edit/Handle' space
 
-      ec = eb.center
-      plane = [ ec, Z_AXIS ]
-      line_x = [ ec, X_AXIS ]
-      line_y = [ ec, Y_AXIS ]
+      ecenter = eb.center
+      plane = [ ecenter, Z_AXIS ]
+      line_x = [ ecenter, X_AXIS ]
+      line_y = [ ecenter, Y_AXIS ]
 
-      elps = ec
+      elps = ecenter
       elpe = pe.transform(hti).project_to_plane(plane)
+      elpex = elpe.project_to_line(line_x)
+      elpey = elpe.project_to_line(line_y)
 
-      evx = ec.vector_to(elpe.project_to_line(line_x))
-      evy = ec.vector_to(elpe.project_to_line(line_y))
+      evx = elps.vector_to(elpex)
+      evy = elps.vector_to(elpey)
+
+      # Avoid zero length vector for evx or evy
+      unless evx.valid?
+        elpex = elps.offset(X_AXIS)
+        evx = Geom::Vector3d.new(X_AXIS)
+      end
+      unless evy.valid?
+        elpey = elps.offset(Y_AXIS)
+        evy = Geom::Vector3d.new(Y_AXIS)
+      end
 
       fn_compute = lambda { |line, v|
 
         plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
         ibtm = Geom.intersect_line_plane(line, plane_btm)
         if !ibtm.nil? && eb.contains?(ibtm)
-          evs = ibtm.vector_to(ec)
+          evs = ibtm.vector_to(ecenter)
           evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
         else
           plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
           ilft = Geom.intersect_line_plane(line, plane_lft)
           if !ilft.nil? && eb.contains?(ilft)
-            evs = ilft.vector_to(ec)
+            evs = ilft.vector_to(ecenter)
             evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
           else
             plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
             ifrt = Geom.intersect_line_plane(line, plane_frt)
             if !ifrt.nil? && eb.contains?(ifrt)
-              evs = ifrt.vector_to(ec)
+              evs = ifrt.vector_to(ecenter)
               evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
             end
           end
@@ -1916,6 +1968,29 @@ module Ladb::OpenCutList
 
       evs = evsx + evsy
       eve = evex + evey
+
+      case type
+      when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
+        dlminx = evex.length * 3
+        dlminy = evey.length * 3
+        dminx = evex.length * 4
+        dminy = evey.length * 4
+      when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED
+        dlminx = evex.length * 2
+        dlminy = evey.length * 2
+        dminx = evex.length * 2
+        dminy = evey.length * 2
+      when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE
+        dlminx = evex.length
+        dlminy = evey.length
+        dminx = 0
+        dminy = 0
+      else
+        return
+      end
+      evx.length = dlminx if elps.distance(elpex) < dlminx
+      evy.length = dlminy if elps.distance(elpey) < dlminy
+      elpe = elps.offset(evx + evy)
 
       # Restore to 'Global' space
 
@@ -1954,7 +2029,9 @@ module Ladb::OpenCutList
         mps: mps,
         mpe: mpe,
         dps: dps,
-        dpe: dpe
+        dpe: dpe,
+        dminx: dminx,
+        dminy: dminy
       }
     end
 
