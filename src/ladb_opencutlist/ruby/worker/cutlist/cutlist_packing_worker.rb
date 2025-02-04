@@ -544,7 +544,8 @@ module Ladb::OpenCutList
       uuid = SecureRandom.uuid
 
       px_bin_dimension_font_size = running ? 0 : 16
-      px_item_dimension_font_size = 12
+      px_item_dimension_font_size_max = 12
+      px_item_dimension_font_size_min = 8
       px_leftover_dimension_font_size = 12
       px_item_number_font_size_max = 24
       px_item_number_font_size_min = 8
@@ -632,8 +633,7 @@ module Ladb::OpenCutList
             Geom::Point3d.new(0, px_item_width),
           ]
           pts.each { |pt| pt.transform!(t) }
-          bounds = Geom::BoundingBox.new
-          bounds.add(pts)
+          bounds = Geom::BoundingBox.new.add(pts)
 
           px_item_rect_width = bounds.width.to_f
           px_item_rect_height = bounds.height.to_f
@@ -650,20 +650,66 @@ module Ladb::OpenCutList
             end
 
             unless running
+
+              number_font_size = [ [ px_item_number_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_item_number_font_size_min ].max
+
+              svg += "<text class='item-number' x='0' y='0' font-size='#{number_font_size}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
+
               unless is_irregular
+
                 dim_x = item_def.angle == 0 ? part_def.cutting_length : part_def.cutting_width
                 dim_y = item_def.angle == 0 ? part_def.cutting_width : part_def.cutting_length
                 is_cutting_dim_x = dim_x != (item_def.angle == 0 ? part_def.size.length : part_def.size.width)
                 is_cutting_dim_y = dim_y != (item_def.angle == 0 ? part_def.size.width : part_def.size.length)
-                if is_2d
-                  svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_x}' x='#{px_item_rect_width - px_item_dimension_offset}' y='#{-(px_item_rect_height - px_item_dimension_offset)}' font-size='#{px_item_dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{dim_x.to_s.gsub(/~ /, '')}</text>"
-                  svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_y}' x='#{px_item_dimension_offset}' y='#{-px_item_dimension_offset}' font-size='#{px_item_dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_item_dimension_offset} -#{px_item_dimension_offset})'>#{dim_y.to_s.gsub(/~ /, '')}</text>"
-                elsif is_1d
-                  svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_x}' x='#{px_item_rect_width / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_item_dimension_font_size}' text-anchor='middle' dominant-baseline='hanging'>#{dim_x.to_s.gsub(/~ /, '')}</text>"
-                end
-              end
 
-              svg += "<text class='item-number' x='0' y='0' font-size='#{[ [ px_item_number_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_item_number_font_size_min ].max}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
+                dim_x_text = dim_x.to_s.gsub(/~ /, '')
+                dim_y_text = dim_y.to_s.gsub(/~ /, '')
+
+                if is_2d
+
+                    px_number_w = number_font_size * item_text.length * 0.6
+                    px_number_h = number_font_size
+                    px_number_bounds = Geom::BoundingBox.new.add(
+                      [
+                        Geom::Point3d.new(-px_number_w / 2, -px_number_h / 2),
+                        Geom::Point3d.new(px_number_w / 2, px_number_h / 2)
+                      ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_item_rect_width / 2, px_item_rect_height / 2)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, (item_def.angle % 180).degrees)) }
+                    )
+                    # svg += "<rect x='#{px_number_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_number_bounds.min.y).to_f}' width='#{px_number_bounds.width.to_f}' height='#{px_number_bounds.height.to_f}' fill='none' stroke='red'></rect>"
+
+                  dim_x_font_size = [ [ px_item_dimension_font_size_max, px_item_rect_height - px_item_dimension_offset * 2, (px_item_rect_width - px_item_dimension_offset * 2) / (dim_x_text.length * 0.6) ].min, px_item_dimension_font_size_min ].max
+                  dim_y_font_size = [ [ px_item_dimension_font_size_max, px_item_rect_width - px_item_dimension_offset * 2, (px_item_rect_height - px_item_dimension_offset * 2) / (dim_y_text.length * 0.6) ].min, px_item_dimension_font_size_min ].max
+
+                    px_dim_x_w = dim_x_font_size * dim_x_text.length * 0.6
+                    px_dim_x_h = dim_x_font_size
+                    px_dim_x_bounds = Geom::BoundingBox.new.add(
+                      [
+                        Geom::Point3d.new,
+                        Geom::Point3d.new(px_dim_x_w, px_dim_x_h)
+                      ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_item_rect_width - px_item_dimension_offset - px_dim_x_w, px_item_dimension_offset))) }
+                    )
+                    # svg += "<rect x='#{px_dim_x_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_dim_x_bounds.min.y).to_f}' width='#{px_dim_x_bounds.width.to_f}' height='#{px_dim_x_bounds.height.to_f}' fill='none' stroke='cyan'></rect>"
+
+                    px_dim_y_w = dim_y_font_size * dim_y_text.length * 0.6
+                    px_dim_y_h = dim_y_font_size
+                    px_dim_y_bounds = Geom::BoundingBox.new.add(
+                      [
+                        Geom::Point3d.new,
+                        Geom::Point3d.new(px_dim_y_w, px_dim_y_h)
+                      ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_item_dimension_offset, px_item_rect_height - px_item_dimension_offset)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, -90.degrees)) }
+                    )
+                    # svg += "<rect x='#{px_dim_y_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_dim_y_bounds.min.y).to_f}' width='#{px_dim_y_bounds.width.to_f}' height='#{px_dim_y_bounds.height.to_f}' fill='none' stroke='yellow'></rect>"
+
+                  hide_dim_x = px_number_bounds.intersect(px_dim_x_bounds).valid? || px_dim_x_bounds.width > px_item_rect_width || px_dim_x_bounds.height > px_item_rect_height
+                  hide_dim_y = px_number_bounds.intersect(px_dim_y_bounds).valid? || px_dim_y_bounds.width > px_item_rect_width || px_dim_y_bounds.height > px_item_rect_height
+
+                  svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_x}' x='#{px_item_rect_width - px_item_dimension_offset}' y='#{-(px_item_rect_height - px_item_dimension_offset)}' font-size='#{dim_x_font_size}' text-anchor='end' dominant-baseline='hanging'>#{dim_x_text}</text>" unless hide_dim_x
+                  svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_y}' x='#{px_item_dimension_offset}' y='#{-px_item_dimension_offset}' font-size='#{dim_y_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_item_dimension_offset} -#{px_item_dimension_offset})'>#{dim_y_text}</text>" unless hide_dim_y
+                elsif is_1d
+                  svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_x}' x='#{px_item_rect_width / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_item_dimension_font_size_max}' text-anchor='middle' dominant-baseline='hanging'>#{dim_x_text}</text>"
+                end
+
+              end
             end
 
           svg += "</g>"
@@ -672,24 +718,24 @@ module Ladb::OpenCutList
         unless running
           bin_def.leftover_defs.each do |leftover_def|
 
-            px_leftover_length = _to_px(leftover_def.length)
-            px_leftover_width = is_1d ? px_bin_width : _to_px(leftover_def.width)
-            px_leftover_x = _compute_x_with_origin_corner(_to_px(leftover_def.x), px_leftover_length, px_bin_length)
-            px_leftover_y = px_bin_width - _compute_y_with_origin_corner(_to_px(leftover_def.y), px_leftover_width, px_bin_width)
+            px_leftover_rect_width = _to_px(leftover_def.length)
+            px_leftover_rect_height = is_1d ? px_bin_width : _to_px(leftover_def.width)
+            px_leftover_rect_x = _compute_x_with_origin_corner(_to_px(leftover_def.x), px_leftover_rect_width, px_bin_length)
+            px_leftover_rect_y = px_bin_width - _compute_y_with_origin_corner(_to_px(leftover_def.y), px_leftover_rect_height, px_bin_width)
 
-            length_text = leftover_def.length.to_s.gsub(/~ /, '')
-            width_text = leftover_def.width.to_s.gsub(/~ /, '')
+            dim_x_text = leftover_def.length.to_s.gsub(/~ /, '')
+            dim_y_text = leftover_def.width.to_s.gsub(/~ /, '')
 
-            px_length_text_length = length_text.length * px_leftover_dimension_font_size * 0.7
-            px_width_text_length = length_text.length * px_leftover_dimension_font_size * 0.7
+            px_dim_x_text_length = dim_x_text.length * px_leftover_dimension_font_size * 0.8
+            px_dim_y_text_length = dim_y_text.length * px_leftover_dimension_font_size * 0.8
 
-            svg += "<g class='leftover' transform='translate(#{px_leftover_x} #{px_leftover_y})'>"
-              svg += "<rect x='0' y='#{-px_leftover_width}' width='#{px_leftover_length}' height='#{px_leftover_width}'/>"
+            svg += "<g class='leftover' transform='translate(#{px_leftover_rect_x} #{px_leftover_rect_y})'>"
+              svg += "<rect x='0' y='#{-px_leftover_rect_height}' width='#{px_leftover_rect_width}' height='#{px_leftover_rect_height}'/>"
               if is_2d
-                svg += "<text class='leftover-dimension' x='#{px_leftover_length - px_leftover_dimension_offset}' y='#{-(px_leftover_width - px_leftover_dimension_offset)}' font-size='#{px_leftover_dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{length_text}</text>" if px_leftover_length > px_length_text_length && px_leftover_width > px_leftover_dimension_font_size
-                svg += "<text class='leftover-dimension' x='#{px_leftover_dimension_offset}' y='#{-px_leftover_dimension_offset}' font-size='#{px_leftover_dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_leftover_dimension_offset} -#{px_leftover_dimension_offset})'>#{width_text}</text>" if px_leftover_length > px_leftover_dimension_font_size && px_leftover_width > px_width_text_length
+                svg += "<text class='leftover-dimension' x='#{px_leftover_rect_width - px_leftover_dimension_offset}' y='#{-(px_leftover_rect_height - px_leftover_dimension_offset)}' font-size='#{px_leftover_dimension_font_size}' text-anchor='end' dominant-baseline='hanging'>#{dim_x_text}</text>" if px_leftover_rect_width > px_dim_x_text_length && px_leftover_rect_height > px_leftover_dimension_font_size
+                svg += "<text class='leftover-dimension' x='#{px_leftover_dimension_offset}' y='#{-px_leftover_dimension_offset}' font-size='#{px_leftover_dimension_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_leftover_dimension_offset} -#{px_leftover_dimension_offset})'>#{dim_y_text}</text>" if px_leftover_rect_width > px_leftover_dimension_font_size && px_leftover_rect_height > px_dim_y_text_length
               elsif is_1d
-                svg += "<text class='leftover-dimension' x='#{px_leftover_length / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_leftover_dimension_font_size}' text-anchor='middle' dominant-baseline='hanging'>#{leftover_def.length.to_s.gsub(/~ /, '')}</text>"
+                svg += "<text class='leftover-dimension' x='#{px_leftover_rect_width / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_leftover_dimension_font_size}' text-anchor='middle' dominant-baseline='hanging'>#{leftover_def.length.to_s.gsub(/~ /, '')}</text>"
               end
             svg += '</g>'
 
