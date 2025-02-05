@@ -316,7 +316,7 @@ LadbAbstractTab.prototype.print = function (title, margin, size) {
 
 };
 
-// Action /////
+// Command /////
 
 LadbAbstractTab.prototype.registerCommand = function (command, block) {
     if (typeof block === 'function') {
@@ -358,4 +358,19 @@ LadbAbstractTab.prototype.setObsolete = function (obsolete) {
 
 LadbAbstractTab.prototype.isObsolete = function () {
     return this._obsolete;
+}
+
+// Data /////
+
+LadbAbstractTab.prototype.toBool = function (value) {
+    if (value === 1) return true;
+    return value === '1';
+}
+
+LadbAbstractTab.prototype.toInt = function (value) {
+    let i = parseInt(value);
+    if (isNaN(i)) {
+        return 0;
+    }
+    return i;
 }

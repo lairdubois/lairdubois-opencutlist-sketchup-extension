@@ -1033,7 +1033,8 @@ tab:
         *Cette option doit être activée pour que les formes puissent être exportées.*
       option_colored_part: Colorier les pièces
       option_colored_part_0: Non
-      option_colored_part_1: Oui
+      option_colored_part_1: Oui - Ecran
+      option_colored_part_2: Oui - Ecran et Impression
       option_colored_part_help: |
         ...
       option_time_limit: Time limit

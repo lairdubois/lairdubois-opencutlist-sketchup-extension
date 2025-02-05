@@ -30,6 +30,10 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_TOP_RIGHT = 2
     ORIGIN_CORNER_BOTTOM_RIGHT = 3
 
+    COLORED_PART_NONE = 0
+    COLORED_PART_SCREEN = 1
+    COLORED_PART_SCREEN_AND_PRINT = 2
+
     AVAILABLE_ROTATIONS = {
       "0" => [
         { start: 0, end: 0 },
@@ -67,7 +71,7 @@ module Ladb::OpenCutList
                    items_formula: '',
                    hide_part_list: false,
                    part_drawing_type: PART_DRAWING_TYPE_NONE,
-                   colored_part: true,
+                   colored_part: COLORED_PART_SCREEN,
                    origin_corner: ORIGIN_CORNER_TOP_LEFT,
 
                    rectangleguillotine_cut_type: 'exact',
@@ -266,7 +270,7 @@ module Ladb::OpenCutList
             count,
             part,
             projection_def,
-            @colored_part ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil
+            @colored_part > COLORED_PART_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil
           )
 
         }
@@ -576,7 +580,7 @@ module Ladb::OpenCutList
       vb_width = px_bin_length + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_x) * 2
       vb_height = px_bin_width + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size) * 2
 
-      svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}' style='max-height: #{vb_height}px' class='problem-type-#{@problem_type}'>"
+      svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}' style='max-height: #{vb_height}px' class='problem-type-#{@problem_type}#{' no-print-color' if @colored_part < COLORED_PART_SCREEN_AND_PRINT}'>"
         unless running
           svg += "<defs>"
             svg += "<pattern id='pattern_bin_bg_#{uuid}' width='10' height='10' patternUnits='userSpaceOnUse'>"
@@ -609,7 +613,7 @@ module Ladb::OpenCutList
           projection_def = item_type_def.projection_def
           part = item_type_def.part
           part_def = part.def
-          colored_part = @colored_part && !running
+          colored_part = @colored_part > COLORED_PART_NONE && !running
 
           item_text = _evaluate_item_text(part, item_def.instance_info)
           item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" if item_text.is_a?(Hash)
@@ -695,8 +699,8 @@ module Ladb::OpenCutList
                     )
                     # svg += "<rect x='#{px_dim_y_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_dim_y_bounds.min.y).to_f}' width='#{px_dim_y_bounds.width.to_f}' height='#{px_dim_y_bounds.height.to_f}' fill='none' stroke='yellow'></rect>"
 
-                  hide_dim_x = px_number_bounds.intersect(px_dim_x_bounds).valid? || px_dim_x_bounds.width > px_item_rect_width || px_dim_x_bounds.height > px_item_rect_height
-                  hide_dim_y = px_number_bounds.intersect(px_dim_y_bounds).valid? || px_dim_y_bounds.width > px_item_rect_width || px_dim_y_bounds.height > px_item_rect_height
+                  hide_dim_x = px_number_bounds.intersect(px_dim_x_bounds).valid? || px_dim_x_bounds.width > px_item_rect_width - px_node_dimension_offset || px_dim_x_bounds.height > px_item_rect_height - px_node_dimension_offset
+                  hide_dim_y = px_number_bounds.intersect(px_dim_y_bounds).valid? || px_dim_y_bounds.width > px_item_rect_width - px_node_dimension_offset || px_dim_y_bounds.height > px_item_rect_height - px_node_dimension_offset
 
                   svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_x}' x='#{px_item_rect_width - px_node_dimension_offset}' y='#{-(px_item_rect_height - px_node_dimension_offset)}' font-size='#{dim_x_font_size}' text-anchor='end' dominant-baseline='hanging'>#{dim_x_text}</text>" unless hide_dim_x
                   svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_y}' x='#{px_node_dimension_offset}' y='#{-px_node_dimension_offset}' font-size='#{dim_y_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_node_dimension_offset} -#{px_node_dimension_offset})'>#{dim_y_text}</text>" unless hide_dim_y
@@ -746,8 +750,8 @@ module Ladb::OpenCutList
                   )
                   # svg += "<rect x='#{px_dim_y_bounds.min.x.to_f}' y='#{(-px_leftover_rect_height + px_dim_y_bounds.min.y).to_f}' width='#{px_dim_y_bounds.width.to_f}' height='#{px_dim_y_bounds.height.to_f}' fill='none' stroke='yellow'></rect>"
 
-                hide_dim_x = px_dim_x_bounds.width > px_leftover_rect_width || px_dim_x_bounds.height > px_leftover_rect_height
-                hide_dim_y = px_dim_y_bounds.width > px_leftover_rect_width || px_dim_y_bounds.height > px_leftover_rect_height
+                hide_dim_x = px_dim_x_bounds.width > px_leftover_rect_width - px_node_dimension_offset || px_dim_x_bounds.height > px_leftover_rect_height - px_node_dimension_offset
+                hide_dim_y = px_dim_x_bounds.intersect(px_dim_y_bounds).valid? || px_dim_y_bounds.width > px_leftover_rect_width - px_node_dimension_offset || px_dim_y_bounds.height > px_leftover_rect_height - px_node_dimension_offset
 
                 svg += "<text class='leftover-dimension' x='#{px_leftover_rect_width - px_node_dimension_offset}' y='#{-(px_leftover_rect_height - px_node_dimension_offset)}' font-size='#{dim_x_font_size}' text-anchor='end' dominant-baseline='hanging'>#{dim_x_text}</text>" unless hide_dim_x
                 svg += "<text class='leftover-dimension' x='#{px_node_dimension_offset}' y='#{-px_node_dimension_offset}' font-size='#{dim_y_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_node_dimension_offset} -#{px_node_dimension_offset})'>#{dim_y_text}</text>" unless hide_dim_y

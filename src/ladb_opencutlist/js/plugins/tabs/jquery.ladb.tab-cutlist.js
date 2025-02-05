@@ -785,9 +785,9 @@
                 }
             };
             const fnFetchOptions = function (options) {
-                options.source = parseInt($radiosSource.filter(':checked').val());
-                options.col_sep = parseInt($selectColSep.val());
-                options.encoding = parseInt($selectEncoding.val());
+                options.source = that.toInt($radiosSource.filter(':checked').val());
+                options.col_sep = that.toInt($selectColSep.val());
+                options.encoding = that.toInt($selectEncoding.val());
 
                 if (options.source_col_defs == null) {
                     options.source_col_defs = [];
@@ -1503,8 +1503,8 @@
                 options.pins_hidden = $selectPinsHidden.val() === '1';
                 options.pins_colored = $selectPinsColored.val() === '1';
                 options.pins_formula = $textareaPinsFormula.val();
-                options.pins_length = parseInt($selectPinsLength.val());
-                options.pins_direction = parseInt($selectPinsDirection.val());
+                options.pins_length = that.toInt($selectPinsLength.val());
+                options.pins_direction = that.toInt($selectPinsDirection.val());
                 options.camera_view = JSON.parse($inputCameraView.val());
                 options.camera_zoom = JSON.parse($inputCameraZoom.val());
                 options.camera_target = JSON.parse($inputCameraTarget.val());
@@ -2011,7 +2011,7 @@
                 const fnFetchOptions = function (options) {
                     options.part_drawing_type = $selectPartDrawingType.val();
                     options.file_format = $selectFileFormat.val();
-                    options.unit = parseInt($selectUnit.val());
+                    options.unit = that.toInt($selectUnit.val());
                     options.use_count = $selectUseCount.val() === '1';
                     options.anchor = $selectAnchor.val() === '1';
                     options.smoothing = $selectSmoothing.val() === '1';
@@ -2160,7 +2160,7 @@
 
                 const fnFetchOptions = function (options) {
                     options.file_format = $selectFileFormat.val();
-                    options.unit = parseInt($selectUnit.val());
+                    options.unit = that.toInt($selectUnit.val());
                     options.use_count = $selectUseCount.val() === '1';
                     options.anchor = $selectAnchor.val() === '1';
                     options.switch_yz = $selectSwitchYZ.val() === '1';
@@ -2354,8 +2354,8 @@
                 options.margin_left = $inputMarginLeft.val();
                 options.spacing_h = $inputSpacingH.val();
                 options.spacing_v = $inputSpacingV.val();
-                options.col_count = Math.max(1, parseInt($inputColCount.val() === '' ? 1 : $inputColCount.val()));
-                options.row_count = Math.max(1, parseInt($inputRowCount.val() === '' ? 1 : $inputRowCount.val()));
+                options.col_count = Math.max(1, that.toInt($inputColCount.val() === '' ? 1 : $inputColCount.val()));
+                options.row_count = Math.max(1, that.toInt($inputRowCount.val() === '' ? 1 : $inputRowCount.val()));
                 options.cutting_marks = $selectCuttingMarks.val() === '1';
                 options.layout = $editorLabelLayout.ladbEditorLabelLayout('getElementDefs');
                 options.offset = fnValidOffset($editorLabelOffset.ladbEditorLabelOffset('getOffset'), options.col_count, options.row_count);
@@ -3157,7 +3157,7 @@
                     $rectFaceZmax.addClass('ladb-active');
                     if (editedPart.face_texture_angles.zmax != null && fnIsMaterialTexturedAndGrained($selectFaceZmax.val())) {
                         $rectFaceZmaxGrain.show();
-                        $patternFaceZmaxGrain.attr('patternTransform', 'rotate(' + parseInt($inputFaceZmaxTextureAngle.val()) * -1 + ' 0 0)');
+                        $patternFaceZmaxGrain.attr('patternTransform', 'rotate(' + that.toInt($inputFaceZmaxTextureAngle.val()) * -1 + ' 0 0)');
                         $formGroupFaceZmaxTextureAngle.show();
                     } else {
                         $rectFaceZmaxGrain.hide();
@@ -3550,10 +3550,10 @@
                     if (!part.virtual) {
 
                         if ($selectCumulable.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].cumulable = parseInt($selectCumulable.val());
+                            editedParts[i].cumulable = that.toInt($selectCumulable.val());
                         }
                         if (!$inputInstanceCountByPart.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : parseInt($inputInstanceCountByPart.val()));
+                            editedParts[i].instance_count_by_part = Math.max(1, $inputInstanceCountByPart.val() === '' ? 1 : that.toInt($inputInstanceCountByPart.val()));
                         }
                         if (!$inputMass.ladbTextinputNumberWithUnit('isMultiple')) {
                             editedParts[i].mass = $inputMass.ladbTextinputNumberWithUnit('val');
@@ -3562,7 +3562,7 @@
                             editedParts[i].price = $inputPrice.val().trim();
                         }
                         if (!$inputThicknessLayerCount.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : parseInt($inputThicknessLayerCount.val()));
+                            editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : that.toInt($inputThicknessLayerCount.val()));
                         }
                         if (!$inputDescription.ladbTextinputArea('isMultiple')) {
                             editedParts[i].description = $inputDescription.val().trim();
@@ -3607,10 +3607,10 @@
                         }
 
                         if (!$inputFaceZminTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].face_texture_angles.zmin = $inputFaceZminTextureAngle.val() === '' ? null : parseInt($inputFaceZminTextureAngle.val());
+                            editedParts[i].face_texture_angles.zmin = $inputFaceZminTextureAngle.val() === '' ? null : that.toInt($inputFaceZminTextureAngle.val());
                         }
                         if (!$inputFaceZmaxTextureAngle.ladbTextinputNumberWithUnit('isMultiple')) {
-                            editedParts[i].face_texture_angles.zmax = $inputFaceZmaxTextureAngle.val() === '' ? null : parseInt($inputFaceZmaxTextureAngle.val());
+                            editedParts[i].face_texture_angles.zmax = $inputFaceZmaxTextureAngle.val() === '' ? null : that.toInt($inputFaceZmaxTextureAngle.val());
                         }
 
                     }
@@ -3876,9 +3876,9 @@
                     options.use_names = $selectUseNames.val() === '1';
                     options.full_width_diagram = $selectFullWidthDiagram.val() === '1';
                     options.hide_cross = $selectHideCross.val() === '1';
-                    options.origin_corner = parseInt($selectOriginCorner.val());
+                    options.origin_corner = that.toInt($selectOriginCorner.val());
                     options.wrap_length = $inputWrapLength.val();
-                    options.part_drawing_type = parseInt($selectPartDrawingType.val());
+                    options.part_drawing_type = that.toInt($selectPartDrawingType.val());
                 }
                 const fnFillInputs = function (options) {
                     $inputSawKerf.val(options.saw_kerf);
@@ -4066,8 +4066,8 @@
 
                                                 const fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
-                                                    options.dxf_structure = parseInt($selectDxfStructure.val());
-                                                    options.unit = parseInt($selectUnit.val());
+                                                    options.dxf_structure = that.toInt($selectDxfStructure.val());
+                                                    options.unit = that.toInt($selectUnit.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
                                                     options.merge_holes = $selectMergeHoles.val() === '1';
                                                     options.include_paths = $selectIncludePaths.val() === '1';
@@ -4425,8 +4425,8 @@
                     options.scrap_sheet_sizes = $inputScrapSheetSizes.ladbTextinputTokenfield('getValidTokensList');
                     options.saw_kerf = $inputSawKerf.val();
                     options.trimming = $inputTrimming.val();
-                    options.optimization = parseInt($selectOptimization.val());
-                    options.stacking = parseInt($selectStacking.val());
+                    options.optimization = that.toInt($selectOptimization.val());
+                    options.stacking = that.toInt($selectStacking.val());
                     options.keep_length = $inputKeepLength.val();
                     options.keep_width = $inputKeepWidth.val();
                     options.sheet_folding = $selectSheetFolding.val() === '1';
@@ -4434,10 +4434,10 @@
                     options.use_names = $selectUseNames.val() === '1';
                     options.full_width_diagram = $selectFullWidthDiagram.val() === '1';
                     options.hide_cross = $selectHideCross.val() === '1';
-                    options.origin_corner = parseInt($selectOriginCorner.val());
+                    options.origin_corner = that.toInt($selectOriginCorner.val());
                     options.highlight_primary_cuts = $selectHighlightPrimaryCuts.val() === '1';
                     options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
-                    options.part_drawing_type = parseInt($selectPartDrawingType.val());
+                    options.part_drawing_type = that.toInt($selectPartDrawingType.val());
                 }
                 const fnFillInputs = function (options) {
                     $inputSawKerf.val(options.saw_kerf);
@@ -4635,8 +4635,8 @@
 
                                                 const fnFetchOptions = function (options) {
                                                     options.file_format = $selectFileFormat.val();
-                                                    options.dxf_structure = parseInt($selectDxfStructure.val());
-                                                    options.unit = parseInt($selectUnit.val());
+                                                    options.dxf_structure = that.toInt($selectDxfStructure.val());
+                                                    options.unit = that.toInt($selectUnit.val());
                                                     options.smoothing = $selectSmoothing.val() === '1';
                                                     options.merge_holes = $selectMergeHoles.val() === '1';
                                                     options.include_paths = $selectIncludePaths.val() === '1';
@@ -5011,20 +5011,20 @@
                     options.optimization_mode = $selectOptimizationMode.val();
                     options.objective = $selectObjective.val();
                     options.rectangleguillotine_cut_type = $selectRectangleguillotineCutType.val();
-                    options.rectangleguillotine_number_of_stages = parseInt($selectRectangleguillotineNumberOfStages.val());
+                    options.rectangleguillotine_number_of_stages = that.toInt($selectRectangleguillotineNumberOfStages.val());
                     options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
                     options.irregular_allowed_rotations = $selectIrregularAllowedRotations.val();
                     options.irregular_allow_mirroring = $selectIrregularAllowMirroring.val() === '1';
                     options.spacing = $inputSpacing.val();
                     options.trimming = $inputTrimming.val();
                     options.items_formula = $textareaItemsFormula.val();
-                    options.origin_corner = parseInt($selectOriginCorner.val());
+                    options.origin_corner = that.toInt($selectOriginCorner.val());
                     options.hide_part_list = $selectHidePartList.val() === '1';
-                    options.part_drawing_type = parseInt($selectPartDrawingType.val());
-                    options.colored_part = $selectColoredPart.val() === '1';
-                    options.time_limit = parseInt($inputTimeLimit.val());
-                    options.not_anytime_tree_search_queue_size = parseInt($inputNotAnytimeTreeSearchQueueSize.val());
-                    options.verbosity_level = parseInt($selectVerbisotyLevel.val());
+                    options.part_drawing_type = that.toInt($selectPartDrawingType.val());
+                    options.colored_part = that.toInt($selectColoredPart.val());
+                    options.time_limit = that.toInt($inputTimeLimit.val());
+                    options.not_anytime_tree_search_queue_size = that.toInt($inputNotAnytimeTreeSearchQueueSize.val());
+                    options.verbosity_level = that.toInt($selectVerbisotyLevel.val());
                 }
                 const fnFillInputs = function (options) {
                     $radiosProblemType.filter('[value=' + fnValidProblemType(options.problem_type) + ']').click();
@@ -5041,7 +5041,7 @@
                     $selectOriginCorner.selectpicker('val', options.origin_corner);
                     $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
-                    $selectColoredPart.selectpicker('val', options.colored_part ? '1' : '0');
+                    $selectColoredPart.selectpicker('val', options.colored_part);
                     $inputTimeLimit.val(options.time_limit);
                     $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
                     $selectVerbisotyLevel.selectpicker('val', options.verbosity_level);
