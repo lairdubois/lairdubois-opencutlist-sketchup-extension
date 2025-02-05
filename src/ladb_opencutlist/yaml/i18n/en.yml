@@ -1916,6 +1916,7 @@ tool:
     action_option_options_mirror_status: Symmetrical copying
     error:
       disabled_by_mirror: Option '$t(tool.smart_handle.action_option_options_mirror_status)' does not allow this operation
+      min_distance: The distance {{ value1 }} is smaller than the minimal distance {{ value2 }}
   smart_paint:
     title: Paint
     default_material: Without material
