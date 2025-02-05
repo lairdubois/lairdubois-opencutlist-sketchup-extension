@@ -562,9 +562,9 @@ module Ladb::OpenCutList
     end
 
     def onToolUserText(tool, text, view)
-      return true if super
-
       return true if _read_offset(tool, text, view)
+
+      return true if super
 
       case @state
 
