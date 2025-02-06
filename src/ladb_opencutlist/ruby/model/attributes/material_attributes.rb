@@ -495,9 +495,11 @@
     def write_to_attributes
       if @material
 
-        MaterialAttributes.delete_cached_uuid(@material) unless @uuid.nil?
+        unless @uuid.nil?
+          @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
+          MaterialAttributes.delete_cached_uuid(@material)
+        end
 
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type', @type)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'description', @description)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'url', @url)

@@ -61,9 +61,6 @@ module Ladb::OpenCutList
         new_name = Sketchup.version_number >= 1800000000 ? materials.unique_name(@new_name) : @new_name
         material.name = new_name
 
-        # Reset UUID attribute
-        MaterialAttributes.new(material, true).write_to_attributes
-
       rescue => e
         return { :errors => [ [ 'tab.materials.error.failed_duplicating_material', { :error => e.message } ] ] }
       ensure
