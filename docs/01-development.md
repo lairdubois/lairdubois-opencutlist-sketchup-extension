@@ -1,8 +1,8 @@
 # Development Environment Setup Instructions
 
-To rebuild the plugin, you will first need to install a few tools. The plugin itself is written in **JavaScript**, **ruby** and **C++**, but the distribution archive `dist/ladb_opencutlist.rbz` is built by a **gulp** task.
+To rebuild the plugin, you will first need to install a few tools. The plugin itself is written in **JavaScript**, **Ruby** and **C++**, but the distribution archive `dist/ladb_opencutlist.rbz` is built by a **gulp** task.
 
-The following describes the tools and steps required to successfully create this plugin.
+The following describes the tools and steps required to successfully build this plugin.
 
 ## 1. Getting **Node.js** and **npm**
 
@@ -104,6 +104,8 @@ To be done.
 
 There is more than one enviroment you can use to compile the C++ code. This is just a working setup.
 
+- install a recent version of [CMake](https://cmake.org/download/).
+
 - install Visual Studio Community 2022 17.12, add the **Desktop Development with C++** (may be added at a later time from Tools -> Get Tools and Features ... in Visual Studio 2022).
 
   ``` bash
@@ -114,6 +116,8 @@ There is more than one enviroment you can use to compile the C++ code. This is j
 - enable `LongPathsEnabled` in the registry by changing this key:
 
   `Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled => 1`
+
+    This step is mandatory, compilation will fail because dependencies produce very long paths to files.
 
     Reboot the computer after this change!
 
@@ -130,7 +134,7 @@ To remove all sources and intermediate compilation steps for a fresh start, you 
 
 ## 6. Adding a New Language
 
-Note: If you just want to add a new language to **OpenCutList** and you would like to volunteer for the translation, then becoming a translator via [Transifex](https://www.transifex.com/opencutlist/opencutlist/) is a much better way. Your translation may help other users and you will get assistance from the **OpenCutList** team.
+Note: If you want to add a new language to **OpenCutList** and you want to volunteer for the translation, then becoming a translator via [Transifex](https://www.transifex.com/opencutlist/opencutlist/) is the official way. Your translation can help other users and you will get support from the **OpenCutList** team.
 
 Adding a new translation file is simple. Just add a new `.yml` file into the `src/yaml/i18n` directory by duplicating `fr.yml` (or any other file) and changing all the values into the desired language.
 The first entry in the file should have the key `_label` corresponding to a label for the new language.
@@ -174,12 +178,12 @@ That's it. You can now play with **OpenCutList**.
 
 #### Ruby Code Changes
 
-**SketchUp loads ruby files once and does not access them thereafter**. To reflect the changes to the ruby code without reloading SketchUp, you must reload the files that were changed (not `ladb_opencutlist.rb` if it was not modified).
+**SketchUp loads ruby files once and does not access them thereafter**. To reflect the changes in the Ruby code without reloading SketchUp, you need to reload the files that were changed (not `ladb_opencutlist.rb` if it has not been modified).
 
-Caution! if static or method definitions were changed, you must restart SketchUp and process from scratch.
+Caution! if static or method definitions have been changed, you must restart SketchUp and start from scratch.
 
 #### Yaml or Twig Changes
 
-To reflect I18N (yaml) or UI (twig) changes, run the `gulp compile` (see 4.) command, as well as close and reopen the **OpenCutList** dialog in SketchUp.
+To reflect I18N (yaml) or UI (twig) changes, run the `gulp compile` (see 4.) command, and close and reopen the **OpenCutList** dialog in SketchUp.
 
 Enjoy :)
