@@ -510,13 +510,26 @@ module Ladb::OpenCutList
       k_layer.append(entity)
     end
 
-    def remove_2d(layer = 0)
-      k_layer = @layers_2d[layer]
-      k_layer.remove_all unless k_layer.nil?
+    def remove_2d(layers = 0)
+      layers = [ layers ] if layers.is_a?(Integer)
+      return unless layers.is_a?(Array)
+      layers.each do |layer|
+        k_layer = @layers_2d[layer]
+        k_layer.remove_all unless k_layer.nil?
+      end
     end
 
     def remove_all_2d
       @layers_2d.each { |layer, k_layer| k_layer.remove_all }
+    end
+
+    def set_2d_visibility(visible, layers = 0)
+      layers = [ layers ] if layers.is_a?(Integer)
+      return unless layers.is_a?(Array)
+      layers.each do |layer|
+        k_layer = @layers_2d[layer]
+        k_layer.visible = visible unless k_layer.nil?
+      end
     end
 
     def append_3d(entity, layer = 0)
@@ -540,6 +553,15 @@ module Ladb::OpenCutList
 
     def remove_all_3d
       @layers_3d.each { |layer, k_layer| k_layer.remove_all }
+    end
+
+    def set_3d_visibility(visible, layers = 0)
+      layers = [ layers ] if layers.is_a?(Integer)
+      return unless layers.is_a?(Array)
+      layers.each do |layer|
+        k_layer = @layers_3d[layer]
+        k_layer.visible = visible unless k_layer.nil?
+      end
     end
 
     # -- Show --

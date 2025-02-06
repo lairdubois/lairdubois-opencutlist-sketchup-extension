@@ -2520,9 +2520,10 @@ module Ladb::OpenCutList
 
       unless _get_instance.nil?
         if state == STATE_HANDLE
-          @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
+          @tool.set_3d_visibility(false, LAYER_3D_PART_PREVIEW) # Hide part preview
           _hide_instance
         else
+          @tool.set_3d_visibility(true, LAYER_3D_PART_PREVIEW) # Unhide part preview
           _unhide_instance
         end
       end
@@ -2622,7 +2623,7 @@ module Ladb::OpenCutList
 
         end
 
-        @mouse_snap_point = @mouse_ip.position.project_to_line([[@picked_handle_start_point, move_axis ]])
+        @mouse_snap_point = @mouse_ip.position.project_to_line([[ @picked_handle_start_point, move_axis ]])
 
       end
 
@@ -2867,7 +2868,7 @@ module Ladb::OpenCutList
       ev = v.transform(eti)
 
       ecenter = eb.center
-      eline = [ ecenter, v.transform(eti) ]
+      eline = [ ecenter, ev ]
 
       plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
       ibtm = Geom.intersect_line_plane(eline, plane_btm)
@@ -2908,7 +2909,6 @@ module Ladb::OpenCutList
         et: et,
         eb: eb,   # Expressed in 'Edit' space
         center: center,
-        v: v,
         vs: vs,
         ve: ve,
         lps: lps,
