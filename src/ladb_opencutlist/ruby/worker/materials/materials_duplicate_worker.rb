@@ -38,7 +38,7 @@ module Ladb::OpenCutList
       filename = "#{uuid}.skm"
       path = File.join(material_copy_dir, filename)
 
-      # Rename source material to random unique name (workaround to be sure that load SKM material name doesn't exists)
+      # Rename source material to random unique name (workaround to be sure that load SKM material name doesn't exist)
       src_material.name = uuid
 
       # Save source material to temp SKM file
@@ -54,10 +54,15 @@ module Ladb::OpenCutList
 
       # Load temp SKM file
       begin
+
         material = materials.load(path)
 
+        # Change name
         new_name = Sketchup.version_number >= 1800000000 ? materials.unique_name(@new_name) : @new_name
         material.name = new_name
+
+        # Reset UUID attribute
+        MaterialAttributes.new(material, true).write_to_attributes
 
       rescue => e
         return { :errors => [ [ 'tab.materials.error.failed_duplicating_material', { :error => e.message } ] ] }
@@ -69,9 +74,7 @@ module Ladb::OpenCutList
       # Commit model modification operation
       model.commit_operation
 
-      {
-          :id => material.entityID,
-      }
+      { :id => material.entityID }
     end
 
     # -----

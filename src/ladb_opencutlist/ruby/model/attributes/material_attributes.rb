@@ -455,10 +455,8 @@
         # Try to retrieve uuid from cached UUIDs
         @uuid = MaterialAttributes.fetch_cached_uuid(@material)
 
-        if @uuid.nil?
-          # Try to retrieve uuid from material's attributes
-          @uuid = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil)
-        end
+        # Try to retrieve uuid from material's attributes
+        @uuid = @material.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil) if @uuid.nil?
 
         unless @uuid.nil?
           if force_unique_uuid && @@used_uuids.include?(@uuid)
@@ -497,11 +495,9 @@
     def write_to_attributes
       if @material
 
-        unless @uuid.nil?
-          @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
-          MaterialAttributes.delete_cached_uuid(@material)
-        end
+        MaterialAttributes.delete_cached_uuid(@material) unless @uuid.nil?
 
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'type', @type)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'description', @description)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'url', @url)
