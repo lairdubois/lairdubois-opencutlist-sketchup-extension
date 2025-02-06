@@ -1264,7 +1264,7 @@ module Ladb::OpenCutList
       mv = mps.vector_to(mpe)
 
       model = Sketchup.active_model
-      model.start_operation('Copy Part', true, false, !active?)
+      model.start_operation('OCL Copy Part', true, false, !active?)
 
         if operator == '/'
           ux = mv.x / number
@@ -1801,7 +1801,7 @@ module Ladb::OpenCutList
       mv_2d = mps_2d.vector_to(mpe_2d)
 
       model = Sketchup.active_model
-      model.start_operation('Copy Part', true, false, !active?)
+      model.start_operation('OCL Copy Part', true, false, !active?)
 
         if operator_x == '/'
           ux = mv_2d.x / number_x
@@ -2341,7 +2341,7 @@ module Ladb::OpenCutList
       _unhide_instance
 
       model = Sketchup.active_model
-      model.start_operation('Move Part', true, false, !active?)
+      model.start_operation('OCL Move Part', true, false, !active?)
 
         src_instance = _get_instance
 
@@ -2810,7 +2810,7 @@ module Ladb::OpenCutList
       _unhide_instance
 
       model = Sketchup.active_model
-      model.start_operation('Copy Part', true, false, !active?)
+      model.start_operation('OCL Distribute Part', true, false, !active?)
 
         src_instance = @active_part_entity_path[-1]
         old_instances = @instances[1..-1]

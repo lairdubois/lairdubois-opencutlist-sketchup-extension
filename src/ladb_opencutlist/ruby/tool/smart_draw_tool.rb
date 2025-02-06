@@ -1056,7 +1056,7 @@ module Ladb::OpenCutList
     def _create_entity
 
       model = Sketchup.active_model
-      model.start_operation('Create Part', true, false, !active?)
+      model.start_operation('OCL Create Part', true, false, !active?)
 
       # Remove previously created entity if exists
       if @definition.is_a?(Sketchup::ComponentDefinition)
