@@ -1219,26 +1219,22 @@ module Ladb::OpenCutList
 
       v, _ = _split_user_text(text)
 
-      if v && (match = v.match(/^([x*\/])(\d+)$/))
+      match = v.nil? ? nil : v.match(/^([x*\/])(\d+)$/)
 
-        if _fetch_option_mirror
-          tool.notify_errors([ [ "tool.smart_handle.error.disabled_by_mirror" ] ])
-          return true
-        end
+      if match
 
-        operator, value = match ? match[1, 2] : [ nil, nil ]
+        operator, value = match[1, 2]
 
         number = value.to_i
 
-        if !value.nil? && number == 0
+        if number == 0
           UI.beep
           tool.notify_errors([ [ "tool.default.error.invalid_#{operator == '/' ? 'divider' : 'multiplicator'}", { :value => value } ] ])
           return true
         end
 
-        operator = operator.nil? ? '*' : operator
-
-        number = number == 0 ? 1 : number
+        # Warn if mirror
+        tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror && number > 1
 
         _copy_line_entity(operator, number)
         Sketchup.set_status_text('', SB_VCB_VALUE)
@@ -1752,37 +1748,30 @@ module Ladb::OpenCutList
 
       v1, v2 = _split_user_text(text)
 
-      if v1 && (match_1 = v1.match(/^([x*\/])(\d+)$/)) || v2 && (match_2 = v2.match(/^([x*\/])(\d+)$/))
+      match_1 = v1.nil? ? nil : v1.match(/^([x*\/])(\d+)$/)
+      match_2 = v2.nil? ? nil : v2.match(/^([x*\/])(\d+)$/)
 
-        if _fetch_option_mirror
-          tool.notify_errors([ [ "tool.smart_handle.error.disabled_by_mirror" ] ])
-          return true
-        end
+      if match_1 || match_2
 
-        operator_1, value_1 = match_1 ? match_1[1, 2] : [ nil, nil ]
-        operator_2, value_2 = match_2 ? match_2[1, 2] : [ nil, nil ]
+        operator_1, value_1 = match_1 ? match_1[1, 2] : [ '*', 1 ]
+        operator_2, value_2 = match_2 ? match_2[1, 2] : [ '*', 1 ]
 
         number_1 = value_1.to_i
         number_2 = value_2.to_i
 
-        if !value_1.nil? && number_1 == 0
+        if number_1 == 0
           UI.beep
           tool.notify_errors([ [ "tool.default.error.invalid_#{operator_1 == '/' ? 'divider' : 'multiplicator'}", { :value => value_1 } ] ])
           return true
         end
-        if !value_2.nil? && number_2 == 0
+        if number_2 == 0
           UI.beep
           tool.notify_errors([ [ "tool.default.error.invalid_#{operator_2 == '/' ? 'divider' : 'multiplicator'}", { :value => value_2 } ] ])
           return true
         end
 
-        has_separator = text.include?(Sketchup::RegionalSettings.list_separator)
-
-        operator_1 = operator_1.nil? ? '*' : operator_1
-        operator_2 = operator_2.nil? ? (has_separator ? '*' : operator_1) : operator_2
-
-        number_1 = number_1 == 0 ? 1 : number_1
-        number_2 = number_2 == 0 ? (has_separator ? 1 : number_1) : number_2
+        # Warn if mirror
+        tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror && (number_1 > 1 || number_2 > 1)
 
         _copy_grid_entity(operator_1, number_1, operator_2, number_2)
         Sketchup.set_status_text('', SB_VCB_VALUE)

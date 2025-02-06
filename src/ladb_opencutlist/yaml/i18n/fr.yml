@@ -1915,8 +1915,9 @@ tool:
     action_option_axes_context_status: Manipuler le long des axes du groupe ou composant contenant la pièce
     action_option_axes_entity_status: Manipuler le long des axes de la pièce
     action_option_options_mirror_status: Copier en symétrie
+    warning:
+      copies_disable_mirror: La copie multiple désactive l'option '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      disabled_by_mirror: L'option '$t(tool.smart_handle.action_option_options_mirror_status)' ne permet pas cette opération
       min_distance: La distance {{ value1 }} est inférieure à la distance minimale de {{ value2 }}
   smart_paint:
     title: Colorier
