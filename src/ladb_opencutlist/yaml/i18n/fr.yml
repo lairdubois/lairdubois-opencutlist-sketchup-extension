@@ -575,7 +575,7 @@ tab:
       volume: Volume
       number: N°
       name: Désignation
-      count: Qte.
+      count: Qté.
       cutting: Débit
       bbox: Capable
       final: Finie
@@ -688,7 +688,7 @@ tab:
       total_unused: Non utilisé
       total_mass: Σ Masses
       total_cost: Σ Coûts
-      total_count: Qte
+      total_count: Qté
       total_instance_count: Σ Unités
       total_volume: Σ Volumes
       total_area: Σ Surfaces
@@ -828,7 +828,7 @@ tab:
       list:
         unplaced_parts: Pièces non placées
         summary: Récapitulatif
-        count: Qte.
+        count: Qté.
         bar: Barre
         sheet: Panneau
         length: Longueur
@@ -986,27 +986,27 @@ tab:
         Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      option_optimization_mode: Optimization Mode
+      option_optimization_mode: Mode d'optimisation
       option_optimization_mode_help: |
-        ...
+        Définit le mode d'optimisation, avec ou sans limite de temps.
       option_objective: Objectif
       option_objective_help: |
-        ...
-      option_rectangleguillotine_cut_type: Cut Type
+        Définit l'objectif du calepinage
+      option_rectangleguillotine_cut_type: Type de coupe
       option_rectangleguillotine_cut_type_help: |
-        ...
-      option_rectangleguillotine_number_of_stages: Number of stages
+        Définit le type de coupe.
+      option_rectangleguillotine_number_of_stages: Nombre de niveaux
       option_rectangleguillotine_number_of_stages_help: |
-        ...
-      option_rectangleguillotine_first_stage_orientation: Première coupe
+        Définit le nombre de niveaux de coupe.
+      option_rectangleguillotine_first_stage_orientation: Direction première coupe
       option_rectangleguillotine_first_stage_orientation_help: |
-        ...
+        Définit la direction de la première coupe.
       option_irregular_allowed_rotations: Rotations
       option_irregular_allowed_rotations_help: |
-        ...
-      option_irregular_allow_mirroring: Mirroring
+        Définit les angles de rotation de la pièce pour le placement.
+      option_irregular_allow_mirroring: En mirroir
       option_irregular_allow_mirroring_help: |
-        ...
+        Définit si le mirroir de la pièce est autorisée pour le placement.
       option_spacing: Espacement
       option_spacing_help: Espacement minimal entre chaque pièce.
       option_trimming: Marge
@@ -1033,19 +1033,19 @@ tab:
         *Cette option doit être activée pour que les formes puissent être exportées.*
       option_colored_part: Colorier les pièces
       option_colored_part_0: Non
-      option_colored_part_1: Oui - Ecran
-      option_colored_part_2: Oui - Ecran et Impression
+      option_colored_part_1: Oui - Écran
+      option_colored_part_2: Oui - Écran et Impression
       option_colored_part_help: |
-        ...
-      option_time_limit: Time limit
+        Définit quand la couleur est utilisée pour représenter les pièces
+      option_time_limit: Limite de temps
       option_time_limit_help: |
-        ...
-      option_not_anytime_tree_search_queue_size: Queue size
+        Fixe le temps impartit au calcul
+      option_not_anytime_tree_search_queue_size: Taille de la file d'attente
       option_not_anytime_tree_search_queue_size_help: |
-        ...
-      option_verbosity_level: Verbosity level
+        Définit la taille de l'arbre de recherche
+      option_verbosity_level: Degré de détail
       option_verbosity_level_help: |
-        ...
+        Définit le degré de détail des informations du calcul
       tooltip:
         scroll_to_block_1d: Défiler vers la première barre ou bande
         scroll_to_block_2d: Défiler vers le premier panneau ou feuille
@@ -1056,7 +1056,7 @@ tab:
         total_cut_count: Nombre de coupes
         total_cut_length: Longueur de coupe
         efficiency: Efficacité
-        count: Qte.
+        count: Qté.
         length: Longueur
         width: Largeur
         total_length: Σ Longueurs
