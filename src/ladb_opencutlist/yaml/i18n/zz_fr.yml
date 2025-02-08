@@ -573,7 +573,7 @@ tab:
       volume: 447 - Volume
       number: 448 - N°
       name: 449 - Désignation
-      count: 450 - Qte.
+      count: 450 - Qté.
       cutting: 451 - Débit
       bbox: 452 - Capable
       final: 453 - Finie
@@ -686,7 +686,7 @@ tab:
       total_unused: 551 - Non utilisé
       total_mass: 552 - Σ Masses
       total_cost: 553 - Σ Coûts
-      total_count: 554 - Qte
+      total_count: 554 - Qté
       total_instance_count: 555 - Σ Unités
       total_volume: 556 - Σ Volumes
       total_area: 557 - Σ Surfaces
@@ -826,7 +826,7 @@ tab:
       list:
         unplaced_parts: 665 - Pièces non placées
         summary: 666 - Récapitulatif
-        count: 667 - Qte.
+        count: 667 - Qté.
         bar: 668 - Barre
         sheet: 669 - Panneau
         length: 670 - Longueur
@@ -984,27 +984,27 @@ tab:
         Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
-      option_optimization_mode: 792 - Optimization Mode
+      option_optimization_mode: 792 - Mode d'optimisation
       option_optimization_mode_help: |
-        793 - ...
+        793 - Définit le mode d'optimisation, avec ou sans limite de temps.
       option_objective: 794 - Objectif
       option_objective_help: |
-        795 - ...
-      option_rectangleguillotine_cut_type: 796 - Cut Type
+        795 - Définit l'objectif du calepinage
+      option_rectangleguillotine_cut_type: 796 - Type de coupe
       option_rectangleguillotine_cut_type_help: |
-        797 - ...
-      option_rectangleguillotine_number_of_stages: 798 - Number of stages
+        797 - Définit le type de coupe.
+      option_rectangleguillotine_number_of_stages: 798 - Nombre de niveaux
       option_rectangleguillotine_number_of_stages_help: |
-        799 - ...
-      option_rectangleguillotine_first_stage_orientation: 800 - Première coupe
+        799 - Définit le nombre de niveaux de coupe.
+      option_rectangleguillotine_first_stage_orientation: 800 - Direction première coupe
       option_rectangleguillotine_first_stage_orientation_help: |
-        801 - ...
+        801 - Définit la direction de la première coupe.
       option_irregular_allowed_rotations: 802 - Rotations
       option_irregular_allowed_rotations_help: |
-        803 - ...
-      option_irregular_allow_mirroring: 804 - Mirroring
+        803 - Définit les angles de rotation de la pièce pour le placement.
+      option_irregular_allow_mirroring: 804 - En mirroir
       option_irregular_allow_mirroring_help: |
-        805 - ...
+        805 - Définit si le mirroir de la pièce est autorisée pour le placement.
       option_spacing: 806 - Espacement
       option_spacing_help: 807 - Espacement minimal entre chaque pièce.
       option_trimming: 808 - Marge
@@ -1031,19 +1031,19 @@ tab:
         *Cette option doit être activée pour que les formes puissent être exportées.*
       option_colored_part: 826 - Colorier les pièces
       option_colored_part_0: 827 - Non
-      option_colored_part_1: 828 - Oui - Ecran
-      option_colored_part_2: 829 - Oui - Ecran et Impression
+      option_colored_part_1: 828 - Oui - Écran
+      option_colored_part_2: 829 - Oui - Écran et Impression
       option_colored_part_help: |
-        830 - ...
-      option_time_limit: 831 - Time limit
+        830 - Définit quand la couleur est utilisée pour représenter les pièces
+      option_time_limit: 831 - Limite de temps
       option_time_limit_help: |
-        832 - ...
-      option_not_anytime_tree_search_queue_size: 833 - Queue size
+        832 - Fixe le temps impartit au calcul
+      option_not_anytime_tree_search_queue_size: 833 - Taille de la file d'attente
       option_not_anytime_tree_search_queue_size_help: |
-        834 - ...
-      option_verbosity_level: 835 - Verbosity level
+        834 - Définit la taille de l'arbre de recherche
+      option_verbosity_level: 835 - Degré de détail
       option_verbosity_level_help: |
-        836 - ...
+        836 - Définit le degré de détail des informations du calcul
       tooltip:
         scroll_to_block_1d: 837 - Défiler vers la première barre ou bande
         scroll_to_block_2d: 838 - Défiler vers le premier panneau ou feuille
@@ -1054,7 +1054,7 @@ tab:
         total_cut_count: 842 - Nombre de coupes
         total_cut_length: 843 - Longueur de coupe
         efficiency: 844 - Efficacité
-        count: 845 - Qte.
+        count: 845 - Qté.
         length: 846 - Longueur
         width: 847 - Largeur
         total_length: 848 - Σ Longueurs
