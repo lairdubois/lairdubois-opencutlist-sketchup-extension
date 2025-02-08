@@ -30,9 +30,9 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_TOP_RIGHT = 2
     ORIGIN_CORNER_BOTTOM_RIGHT = 3
 
-    COLORED_PART_NONE = 0
-    COLORED_PART_SCREEN = 1
-    COLORED_PART_SCREEN_AND_PRINT = 2
+    COLORIZATION_NONE = 0
+    COLORIZATION_SCREEN = 1
+    COLORIZATION_SCREEN_AND_PRINT = 2
 
     AVAILABLE_ROTATIONS = {
       "0" => [
@@ -71,7 +71,7 @@ module Ladb::OpenCutList
                    items_formula: '',
                    hide_part_list: false,
                    part_drawing_type: PART_DRAWING_TYPE_NONE,
-                   colored_part: COLORED_PART_SCREEN,
+                   colorization: COLORIZATION_SCREEN,
                    origin_corner: ORIGIN_CORNER_TOP_LEFT,
 
                    rectangleguillotine_cut_type: 'exact',
@@ -104,7 +104,7 @@ module Ladb::OpenCutList
       @items_formula = items_formula.empty? ? '@number' : items_formula
       @hide_part_list = hide_part_list
       @part_drawing_type = part_drawing_type.to_i
-      @colored_part = colored_part
+      @colorization = colorization
       @origin_corner = origin_corner.to_i
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
@@ -270,7 +270,7 @@ module Ladb::OpenCutList
             count,
             part,
             projection_def,
-            @colored_part > COLORED_PART_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil
+            @colorization > COLORIZATION_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil
           )
 
         }
@@ -403,7 +403,7 @@ module Ladb::OpenCutList
             trimming: @trimming,
             hide_part_list: @hide_part_list,
             part_drawing_type: @part_drawing_type,
-            colored_part: @colored_part,
+            colorization: @colorization,
             origin_corner: @origin_corner
           ),
           summary_def: PackingSummaryDef.new(
@@ -580,7 +580,7 @@ module Ladb::OpenCutList
       vb_width = px_bin_length + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_x) * 2
       vb_height = px_bin_width + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size) * 2
 
-      svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}' style='max-height: #{vb_height}px' class='problem-type-#{@problem_type}#{' no-print-color' if @colored_part < COLORED_PART_SCREEN_AND_PRINT}'>"
+      svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}' style='max-height: #{vb_height}px' class='problem-type-#{@problem_type}#{' no-print-color' if @colorization < COLORIZATION_SCREEN_AND_PRINT}'>"
         unless running
           svg += "<defs>"
             svg += "<pattern id='pattern_bin_bg_#{uuid}' width='10' height='10' patternUnits='userSpaceOnUse'>"
@@ -613,7 +613,7 @@ module Ladb::OpenCutList
           projection_def = item_type_def.projection_def
           part = item_type_def.part
           part_def = part.def
-          colored_part = @colored_part > COLORED_PART_NONE && !running
+          colorization = @colorization > COLORIZATION_NONE && !running
 
           item_text = _evaluate_item_text(part, item_def.instance_info)
           item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" if item_text.is_a?(Hash)
@@ -643,11 +643,11 @@ module Ladb::OpenCutList
           px_item_rect_y = px_bin_width - _compute_y_with_origin_corner(px_item_y + bounds.min.y.to_f, px_item_rect_height, px_bin_width)
 
           svg += "<g class='item' transform='translate(#{px_item_rect_x} #{px_item_rect_y})' data-toggle='tooltip' data-html='true' title='#{_render_item_def_tooltip(item_def)}' data-part-id='#{part.id}'>"
-            svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" style='fill:#{projection_def.nil? && colored_part ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'};stroke:#555'" if running || (projection_def.nil? && colored_part)}/>" unless is_irregular
+            svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" style='fill:#{projection_def.nil? && colorization ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'};stroke:#555'" if running || (projection_def.nil? && colorization)}/>" unless is_irregular
 
             unless projection_def.nil?
               svg += "<g class='item-projection' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2})#{" rotate(#{-item_def.angle})" if item_def.angle != 0}#{' scale(-1 1)' if item_def.mirror} translate(#{-px_part_length / 2} #{px_part_width / 2})'>"
-                svg += "<path stroke='#{colored_part && !is_irregular ? ColorUtils.color_to_hex(ColorUtils.color_darken(item_type_def.color, 0.4)) : '#000'}' fill='#{colored_part ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
+                svg += "<path stroke='#{colorization && !is_irregular ? ColorUtils.color_to_hex(ColorUtils.color_darken(item_type_def.color, 0.4)) : '#000'}' fill='#{colorization ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
               svg += '</g>'
             end
 

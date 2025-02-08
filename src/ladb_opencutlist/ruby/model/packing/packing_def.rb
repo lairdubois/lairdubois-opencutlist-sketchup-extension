@@ -56,9 +56,9 @@ module Ladb::OpenCutList
 
   class PackingOptionsDef
 
-    attr_reader :problem_type, :spacing, :trimming, :hide_part_list, :part_drawing_type, :colored_part, :origin_corner
+    attr_reader :problem_type, :spacing, :trimming, :hide_part_list, :part_drawing_type, :colorization, :origin_corner
 
-    def initialize(problem_type:, spacing:, trimming:, hide_part_list:, part_drawing_type:, colored_part:, origin_corner:)
+    def initialize(problem_type:, spacing:, trimming:, hide_part_list:, part_drawing_type:, colorization:, origin_corner:)
 
       @problem_type = problem_type
 
@@ -67,7 +67,7 @@ module Ladb::OpenCutList
 
       @hide_part_list = hide_part_list
       @part_drawing_type = part_drawing_type
-      @colored_part = colored_part
+      @colorization = colorization
       @origin_corner = origin_corner
 
     end

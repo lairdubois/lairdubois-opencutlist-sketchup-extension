@@ -1031,11 +1031,11 @@ tab:
         Permet d'afficher ou masquer la forme réelle des pièces ainsi que leurs usinages sur le diagramme.
 
         *Cette option doit être activée pour que les formes puissent être exportées.*
-      option_colored_part: Colorier les pièces
-      option_colored_part_0: Non
-      option_colored_part_1: Oui - Ecran
-      option_colored_part_2: Oui - Ecran et Impression
-      option_colored_part_help: |
+      option_colorization: Colorier les pièces
+      option_colorization_0: Non
+      option_colorization_1: Oui - Ecran
+      option_colorization_2: Oui - Ecran et Impression
+      option_colorization_help: |
         ...
       option_time_limit: Time limit
       option_time_limit_help: |

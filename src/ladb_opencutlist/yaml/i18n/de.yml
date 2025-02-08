@@ -1031,11 +1031,11 @@ tab:
         Ermöglicht es, die tatsächliche Form der Teile sowie ihre Bearbeitungen im Diagramm ein- oder auszublenden.
 
         *Diese Option muss aktiviert sein, damit die Formen exportiert werden können.*
-      option_colored_part: Teile einfärben
-      option_colored_part_0: Nein
-      option_colored_part_1: Ja - Bildschirm
-      option_colored_part_2: Ja - Bildschirm und Druck
-      option_colored_part_help: |
+      option_colorization: Teile einfärben
+      option_colorization_0: Nein
+      option_colorization_1: Ja - Bildschirm
+      option_colorization_2: Ja - Bildschirm und Druck
+      option_colorization_help: |
         ...
       option_time_limit: Zeitbegrenzung
       option_time_limit_help: |

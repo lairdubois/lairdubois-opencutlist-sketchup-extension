@@ -1031,11 +1031,11 @@ tab:
         Shows or hides the actual shape of parts and their machining on the diagram.
 
         *This option must be enabled for shapes to be exported.*
-      option_colored_part: Paint parts
-      option_colored_part_0: No
-      option_colored_part_1: Yes - Screen
-      option_colored_part_2: Yes - Screen and Print
-      option_colored_part_help: |
+      option_colorization: Paint parts
+      option_colorization_0: No
+      option_colorization_1: Yes - Screen
+      option_colorization_2: Yes - Screen and Print
+      option_colorization_help: |
         ...
       option_time_limit: Time limit
       option_time_limit_help: |
