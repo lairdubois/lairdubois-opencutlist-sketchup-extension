@@ -25,11 +25,11 @@ using namespace nlohmann;
 
 namespace Packy {
 
-    struct ItemTypeAttributes {
+    struct ItemTypeMeta {
         ItemPos copies;
     };
 
-    struct BinTypeAttributes {
+    struct BinTypeMeta {
         BinPos copies;
     };
 
@@ -56,12 +56,12 @@ namespace Packy {
         virtual bool messages_to_solution() = 0;
         virtual std::string messages() = 0;
 
-        ItemTypeAttributes& item_type_attributes(ItemTypeId item_type_id) {
-            return item_type_attributes_[item_type_id];
+        ItemTypeMeta& item_type_meta(ItemTypeId item_type_id) {
+            return item_type_metas_[item_type_id];
         }
 
-        BinTypeAttributes& bin_type_attributes(BinTypeId bin_type_id) {
-            return bin_type_attributes_[bin_type_id];
+        BinTypeMeta& bin_type_meta(BinTypeId bin_type_id) {
+            return bin_type_metas_[bin_type_id];
         }
 
         /*
@@ -123,12 +123,12 @@ namespace Packy {
 
                 ItemTypeId item_type_id = read_item_type(j_item_value);
 
-                // Extract useful attributes to keep them for post-processing
+                // Extract useful meta to keep them for post-processing
 
-                ItemTypeAttributes item_type_attributes{
-                    /* .copies =*/ j_item_value.value("copies", static_cast<ItemPos>(1))
+                ItemTypeMeta item_type_attributes = {
+                    .copies = j_item_value.value("copies", static_cast<ItemPos>(1))
                 };
-                item_type_attributes_.emplace(item_type_id, item_type_attributes);
+                item_type_metas_.emplace(item_type_id, item_type_attributes);
 
             }
 
@@ -147,12 +147,12 @@ namespace Packy {
 
                 BinTypeId bin_type_id = read_bin_type(j_item_value);
 
-                // Extract useful attributes to keep them for post-processing
+                // Extract useful meta to keep them for post-processing
 
-                BinTypeAttributes bin_type_attributes{
+                BinTypeMeta bin_type_meta = {
                     .copies = j_item_value.value("copies", static_cast<BinPos>(1))
                 };
-                bin_type_attributes_.emplace(bin_type_id, bin_type_attributes);
+                bin_type_metas_.emplace(bin_type_id, bin_type_meta);
 
             }
 
@@ -232,8 +232,8 @@ namespace Packy {
         double length_truncate_factor_ = 1.0;
 
         /** Type Metas */
-        std::unordered_map<ItemTypeId, ItemTypeAttributes> item_type_attributes_;
-        std::unordered_map<BinTypeId, BinTypeAttributes> bin_type_attributes_;
+        std::unordered_map<ItemTypeId, ItemTypeMeta> item_type_metas_;
+        std::unordered_map<BinTypeId, BinTypeMeta> bin_type_metas_;
 
     };
 
@@ -436,9 +436,9 @@ namespace Packy {
             basic_json<>& j_item_types_stats = j["item_types_stats"] = json::array();
             for (ItemTypeId item_type_id = 0; item_type_id < instance.number_of_item_types(); ++item_type_id) {
 
-                const auto& item_type_attributes = this->item_type_attributes(item_type_id);
+                const auto& item_type_meta = this->item_type_meta(item_type_id);
                 const auto used_copies = solution.item_copies(item_type_id);
-                const auto unused_copies = item_type_attributes.copies < 0 ? -1 : item_type_attributes.copies - used_copies;
+                const auto unused_copies = item_type_meta.copies < 0 ? -1 : item_type_meta.copies - used_copies;
 
                 basic_json<> j_item_type_stats = json{
                     {"item_type_id", item_type_id}
@@ -454,9 +454,9 @@ namespace Packy {
             basic_json<>& j_bin_types_stats = j["bin_types_stats"] = json::array();
             for (BinTypeId bin_type_id = 0; bin_type_id < instance.number_of_bin_types(); ++bin_type_id) {
 
-                const auto& bin_type_attributes = this->bin_type_attributes(bin_type_id);
+                const auto& bin_type_meta = this->bin_type_meta(bin_type_id);
                 const auto used_copies = solution.bin_copies(bin_type_id);
-                const auto unused_copies = bin_type_attributes.copies < 0 ? -1 : bin_type_attributes.copies - used_copies;
+                const auto unused_copies = bin_type_meta.copies < 0 ? -1 : bin_type_meta.copies - used_copies;
 
                 basic_json<> j_bin_type_stats = json{
                     {"bin_type_id", bin_type_id},
