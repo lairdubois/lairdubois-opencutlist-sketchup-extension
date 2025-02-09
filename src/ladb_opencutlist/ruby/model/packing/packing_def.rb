@@ -87,12 +87,14 @@ module Ladb::OpenCutList
     attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :bin_type_defs
     attr_accessor :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_count, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count
 
-    def initialize(time:, total_bin_count:, total_item_count:, total_efficiency:)
+    def initialize(time:, total_bin_count:, total_item_count:, total_efficiency:, bin_type_defs:)
 
       @time = time
       @total_bin_count = total_bin_count
       @total_item_count = total_item_count
       @total_efficiency = total_efficiency
+
+      @bin_type_defs = bin_type_defs
 
       # Computed
 
@@ -106,7 +108,7 @@ module Ladb::OpenCutList
       @total_used_cost = 0
       @total_used_item_count = 0
 
-      @bin_type_defs = []
+      # @bin_type_defs = []
 
     end
 
@@ -151,10 +153,10 @@ module Ladb::OpenCutList
 
   class PackingBinDef
 
-    attr_reader :bin_type_def, :count, :efficiency, :item_defs, :leftover_defs, :cut_defs, :part_info_defs
-    attr_accessor :svg, :total_cut_length
+    attr_reader :bin_type_def, :count, :efficiency, :item_defs, :leftover_defs, :cut_defs, :part_info_defs, :total_cut_length
+    attr_accessor :svg
 
-    def initialize(bin_type_def:, count:, efficiency:, item_defs:, leftover_defs:, cut_defs:, part_info_defs:)
+    def initialize(bin_type_def:, count:, efficiency:, item_defs:, leftover_defs:, cut_defs:, part_info_defs:, total_cut_length:)
 
       @bin_type_def = bin_type_def
 
@@ -166,11 +168,11 @@ module Ladb::OpenCutList
       @cut_defs = cut_defs
       @part_info_defs = part_info_defs
 
+      @total_cut_length = total_cut_length
+
       # Computed
 
       @svg = ''
-
-      @total_cut_length = 0
 
     end
 

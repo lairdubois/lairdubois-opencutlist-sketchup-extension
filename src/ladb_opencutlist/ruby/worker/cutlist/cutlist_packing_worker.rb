@@ -327,12 +327,6 @@ module Ladb::OpenCutList
           puts input.to_json
           puts '-- input --'
         end
-        if @verbosity_level > 1
-          puts ' '
-          puts '-- instance --'
-          puts input[:instance].to_json
-          puts '-- instance --'
-        end
 
         output = Packy.optimize_start(input)
 
@@ -410,7 +404,16 @@ module Ladb::OpenCutList
             time: raw_solution['time'],
             total_bin_count: raw_solution['number_of_bins'],
             total_item_count: raw_solution['number_of_items'],
-            total_efficiency: raw_solution['full_efficiency']
+            total_efficiency: raw_solution['full_efficiency'],
+            bin_type_defs: raw_solution['bin_types_stats'].is_a?(Array) ? raw_solution['bin_types_stats'].map { |raw_bin_type_stats|
+              bin_type_def = @bin_type_defs[raw_bin_type_stats['bin_type_id']]
+              used_copies = raw_bin_type_stats.fetch('used_copies', 0)
+              unused_copies = raw_bin_type_stats.fetch('unused_copies', 0)
+              defs = []
+              defs << PackingSummaryBinTypeDef.new(bin_type_def: bin_type_def, count: used_copies, used: true, total_item_count: raw_bin_type_stats.fetch('item_copies', 0)) if used_copies > 0
+              defs << PackingSummaryBinTypeDef.new(bin_type_def: bin_type_def, count: unused_copies, used: false) if unused_copies > 0 || unused_copies == -1
+              defs
+            }.flatten(1).sort_by!{ |bin_type_def| [ bin_type_def.used ? 1 : 0, -bin_type_def.bin_type_def.type, bin_type_def.bin_type_def.length ]} : []
           ),
           bin_defs: raw_solution['bins'].map { |raw_bin|
             bin_type_def = @bin_type_defs[raw_bin['bin_type_id']]
@@ -453,7 +456,8 @@ module Ladb::OpenCutList
                   part: item_type_def.part,
                   count: v.length
                 )
-              }.sort_by { |part_info_def| part_info_def._sorter } : []
+              }.sort_by { |part_info_def| part_info_def._sorter } : [],
+              total_cut_length: _from_packy_length(raw_bin.fetch('cut_length', 0)),
             )
           }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.count ] }
         )
@@ -474,7 +478,6 @@ module Ladb::OpenCutList
         bin_type_uses[bin_def.bin_type_def][1] += bin_def.count * bin_def.item_defs.length  # total_item_count
 
         bin_def.svg = _render_bin_def_svg(bin_def, running)
-        bin_def.total_cut_length = bin_def.cut_defs.map(&:length).inject(0, :+)  # .map(&:length).inject(0, :+) == .sum { |bin_def| bin_def.length } compatible with ruby < 2.4
 
         packing_def.solution_def.summary_def.total_leftover_count += bin_def.leftover_defs.length
         packing_def.solution_def.summary_def.total_cut_count += bin_def.cut_defs.length
@@ -491,27 +494,15 @@ module Ladb::OpenCutList
       end
       packing_def.solution_def.unplaced_part_info_defs.sort_by! { |part_info_def| part_info_def._sorter }
 
-      # Process bins usage
-      bin_type_uses.each do |bin_type_def, counters|
-
-        used_count, total_item_count = counters
-        unused_count = bin_type_def.count < 0 ? 0 : bin_type_def.count - used_count
-
-        if unused_count > 0 || used_count == 0
-          packing_def.solution_def.summary_def.bin_type_defs << PackingSummaryBinTypeDef.new(bin_type_def: bin_type_def, count: unused_count, used: false)
-        end
-
-        if used_count > 0
-          packing_def.solution_def.summary_def.bin_type_defs << PackingSummaryBinTypeDef.new(bin_type_def: bin_type_def, count: used_count, used: true, total_item_count: total_item_count)
-          packing_def.solution_def.summary_def.total_used_count += used_count
-          packing_def.solution_def.summary_def.total_used_area += packing_def.solution_def.summary_def.bin_type_defs.last.total_area
-          packing_def.solution_def.summary_def.total_used_length += packing_def.solution_def.summary_def.bin_type_defs.last.total_length
-          packing_def.solution_def.summary_def.total_used_cost += packing_def.solution_def.summary_def.bin_type_defs.last.total_cost
-          packing_def.solution_def.summary_def.total_used_item_count += total_item_count
-        end
-
+      # Sum bins stats
+      packing_def.solution_def.summary_def.bin_type_defs.each do |bin_type_def|
+        next unless bin_type_def.used
+        packing_def.solution_def.summary_def.total_used_count += bin_type_def.count
+        packing_def.solution_def.summary_def.total_used_area += bin_type_def.total_area
+        packing_def.solution_def.summary_def.total_used_length += bin_type_def.total_length
+        packing_def.solution_def.summary_def.total_used_cost += bin_type_def.total_cost
+        packing_def.solution_def.summary_def.total_used_item_count += bin_type_def.total_item_count
       end
-      packing_def.solution_def.summary_def.bin_type_defs.sort_by!{ |bin_type_def| [ bin_type_def.used ? 1 : 0, -bin_type_def.bin_type_def.type, bin_type_def.bin_type_def.length ]}
 
       packing_def.create_packing
     end
@@ -572,7 +563,7 @@ module Ladb::OpenCutList
       is_1d = @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
       is_2d = !is_1d
       is_irregular = @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-      is_cut_lg = px_spacing >= 3 && !running
+      is_cut_bg = px_spacing >= 3 && !running
 
       vb_offset_x = (px_max_bin_length - px_bin_length) / 2
       vb_x = (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_x) * -1
@@ -587,7 +578,7 @@ module Ladb::OpenCutList
               svg += "<rect x='0' y='0' width='10' height='10' fill='white' />"
               svg += "<path d='M0,10L10,0' style='fill:none;stroke:#ddd;stroke-width:0.5px;'/>"
             svg += "</pattern>"
-            if is_cut_lg
+            if is_cut_bg
               svg += "<pattern id='pattern_cut_bg_#{uuid}' width='5' height='5' patternUnits='userSpaceOnUse'>"
                 svg += "<rect x='0' y='0' width='5' height='5' fill='white'/>"
                 svg += "<path d='M0,5L5,0' style='fill:none;stroke:#000;stroke-width:0.5px;'/>"
@@ -726,7 +717,7 @@ module Ladb::OpenCutList
             dim_y_text = leftover_def.width.to_s.gsub(/~ /, '')
 
             svg += "<g class='leftover' transform='translate(#{px_leftover_rect_x} #{px_leftover_rect_y})'>"
-              svg += "<rect x='0' y='#{-px_leftover_rect_height}' width='#{px_leftover_rect_width}' height='#{px_leftover_rect_height}'/>"
+              svg += "<rect x='0' y='#{-px_leftover_rect_height}' width='#{px_leftover_rect_width}' height='#{px_leftover_rect_height}' />"
               if is_2d
 
                 dim_x_font_size = [ [ px_node_dimension_font_size_max, px_leftover_rect_height - px_node_dimension_offset * 2, (px_leftover_rect_width - px_node_dimension_offset * 2) / (dim_x_text.length * 0.6) ].min, px_node_dimension_font_size_min ].max
@@ -788,11 +779,11 @@ module Ladb::OpenCutList
             else
               clazz = ''
             end
-            clazz += ' cut-lg' if is_cut_lg
+            clazz += ' cut-lg' if is_cut_bg
 
             svg += "<g class='cut#{clazz}' data-toggle='tooltip' data-html='true' title='#{_render_cut_def_tooltip(cut_def)}'>"
               svg += "<rect class='cut-outer' x='#{px_cut_rect_x - px_cut_outline_width}' y='#{px_cut_rect_y - px_cut_outline_width}' width='#{px_cut_rect_width + px_cut_outline_width * 2}' height='#{px_cut_rect_height + px_cut_outline_width * 2}' />"
-              svg += "<rect class='cut-inner' x='#{px_cut_rect_x}' y='#{px_cut_rect_y}' width='#{px_cut_rect_width}' height='#{px_cut_rect_height}'#{" fill='url(#pattern_cut_bg_#{uuid})'" if is_cut_lg}/>"
+              svg += "<rect class='cut-inner' x='#{px_cut_rect_x}' y='#{px_cut_rect_y}' width='#{px_cut_rect_width}' height='#{px_cut_rect_height}'#{" fill='url(#pattern_cut_bg_#{uuid})'" if is_cut_bg}/>"
             svg += "</g>"
 
           end
