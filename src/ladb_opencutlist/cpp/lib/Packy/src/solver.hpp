@@ -57,11 +57,11 @@ namespace Packy {
         virtual std::string messages() = 0;
 
         ItemTypeAttributes& item_type_attributes(ItemTypeId item_type_id) {
-            return item_type_attributes_.at(item_type_id);
+            return item_type_attributes_[item_type_id];
         }
 
         BinTypeAttributes& bin_type_attributes(BinTypeId bin_type_id) {
-            return bin_type_attributes_.at(bin_type_id);
+            return bin_type_attributes_[bin_type_id];
         }
 
         /*
@@ -126,7 +126,7 @@ namespace Packy {
                 // Extract useful attributes to keep them for post-processing
 
                 ItemTypeAttributes item_type_attributes{
-                    .copies = j_item_value.value("copies", static_cast<ItemPos>(1))
+                    /* .copies =*/ j_item_value.value("copies", static_cast<ItemPos>(1))
                 };
                 item_type_attributes_.emplace(item_type_id, item_type_attributes);
 
