@@ -26,16 +26,20 @@ using namespace nlohmann;
 namespace Packy {
 
     struct ItemTypeMeta {
-        ItemPos copies;
+        ItemPos copies = 0;
     };
+    using ItemTypeMetas = std::unordered_map<ItemTypeId, ItemTypeMeta>;
 
     struct BinTypeMeta {
-        BinPos copies;
+        BinPos copies = 0;
     };
+    using BinTypeMetas = std::unordered_map<BinTypeId, BinTypeMeta>;
 
     struct BinTypeStats {
         std::unordered_map<BinTypeId, ItemPos> item_copies_by_bin_type;
     };
+
+    using Solutions = std::vector<json>;
 
     class Solver {
 
@@ -125,10 +129,9 @@ namespace Packy {
 
                 // Extract useful meta to keep them for post-processing
 
-                ItemTypeMeta item_type_attributes = {
-                    .copies = j_item_value.value("copies", static_cast<ItemPos>(1))
-                };
-                item_type_metas_.emplace(item_type_id, item_type_attributes);
+                ItemTypeMeta item_type_meta;
+                item_type_meta.copies = j_item_value.value("copies", static_cast<ItemPos>(1));
+                item_type_metas_.emplace(item_type_id, item_type_meta);
 
             }
 
@@ -149,9 +152,8 @@ namespace Packy {
 
                 // Extract useful meta to keep them for post-processing
 
-                BinTypeMeta bin_type_meta = {
-                    .copies = j_item_value.value("copies", static_cast<BinPos>(1))
-                };
+                BinTypeMeta bin_type_meta;
+                bin_type_meta.copies = j_item_value.value("copies", static_cast<BinPos>(1));
                 bin_type_metas_.emplace(bin_type_id, bin_type_meta);
 
             }
@@ -232,8 +234,8 @@ namespace Packy {
         double length_truncate_factor_ = 1.0;
 
         /** Type Metas */
-        std::unordered_map<ItemTypeId, ItemTypeMeta> item_type_metas_;
-        std::unordered_map<BinTypeId, BinTypeMeta> bin_type_metas_;
+        ItemTypeMetas item_type_metas_;
+        BinTypeMetas bin_type_metas_;
 
     };
 
@@ -393,7 +395,7 @@ namespace Packy {
         OptimizeParameters parameters_;
 
         /** Solutions. */
-        std::vector<json> solutions_;
+        Solutions solutions_;
 
         /** TODO : find a better solution to prevent solution concurrency ? */
         std::mutex solutions_mutex_;
