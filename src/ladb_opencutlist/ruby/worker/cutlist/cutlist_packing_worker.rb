@@ -364,7 +364,7 @@ module Ladb::OpenCutList
       return PackingDef.new(cancelled: true).create_packing if output['cancelled']
       return PackingDef.new(running: true).create_packing if running && output['solution'].nil?
 
-      if @verbosity_level > 0
+      if @verbosity_level > 1
         puts ' '
         puts '-- output --'
         puts output.to_json
