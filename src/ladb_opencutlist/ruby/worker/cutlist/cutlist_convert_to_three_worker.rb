@@ -36,7 +36,8 @@ module Ladb::OpenCutList
 
       materials = model.materials
 
-      active_entity = model.active_path.nil? ? nil : model.active_path.last
+      active_path = model.active_path.nil? ? [] : model.active_path
+      active_entity = active_path.last
 
       three_model_def = ThreeModelDef.new
 
@@ -45,6 +46,9 @@ module Ladb::OpenCutList
       @parts.each do |part|
 
         if @all_instances
+
+          # Setup model matrix to be able to "align on active view axes"
+          three_model_def.matrix = _to_three_matrix(model.edit_transform.inverse)
 
           part.def.instance_infos.each do |serialized_path, instance_info|
 

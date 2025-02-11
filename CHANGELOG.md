@@ -27,6 +27,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
     * Improved smart tools picker
     * Improved surface detection
     * Improved Material import from SKM (allows new or replace)
+    * Improved Layout feature to be able to align on active view axes
     * Replaced Highlight Part Tool with Smart Axes Tool
     * Fixed face untyped material removing when editing sheet good part properties
 
