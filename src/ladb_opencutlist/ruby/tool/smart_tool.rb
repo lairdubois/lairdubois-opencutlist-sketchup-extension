@@ -64,15 +64,21 @@ module Ladb::OpenCutList
       return @unit unless @unit.nil?
       return 3 if view && Sketchup.active_model.nil?
       view = Sketchup.active_model.active_view if view.nil?
-      if view.vpheight > 2000
+      if view.respond_to?(:device_height)
+        device_height = view.device_height  # SU 2025+
+      else
+        device_height = view.vpheight
+      end
+      if device_height > 2000
         @unit = 8
-      elsif view.vpheight > 1000
+      elsif device_height > 1000
         @unit = 6
-      elsif view.vpheight > 500
+      elsif device_height > 500
         @unit = 4
       else
         @unit = 3
       end
+      @unit /= UI.scale_factor(view) if view.respond_to?(:device_height)  # SU 2025 workaround
       @unit
     end
 
