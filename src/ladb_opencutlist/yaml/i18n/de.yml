@@ -1310,11 +1310,11 @@ tab:
       option_switch_yz_1: Y vertikal
       option_switch_yz_help: |
         Ermöglicht das Vertauschen der Y- und Z-Achse, um die vertikale Achse des Teils zu definieren.
-      option_smoothing: Glättung
+      option_smoothing: Glätten
       option_smoothing_0: $t(default.no)
       option_smoothing_1: Glätten von Kreisen und Bögen (Experimentell)
       option_smoothing_help: |
-        Auswahl des Glättungsmodus.
+        Aktiviert die Erkennung von Kreisen und Bögen.
 
         *Diese Option erkennt keine anderen Kurventypen.*
       option_merge_holes: Zusammenführungsmodus

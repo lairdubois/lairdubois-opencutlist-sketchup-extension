@@ -237,10 +237,10 @@ core:
       view_bottom: Bottom
       view_front: Front
       view_back: Rear
-      view_left: Left Side
-      view_right: Right Side
+      view_left: Left
+      view_right: Right
       zoom: "{{ zoom }} Scale"
-      explode_factor: Amplitude of explosion
+      explode_factor: Amplitude of exploded-view
       toggle_box_helper: Show/Hide Bounding Box
       toggle_box_dimensions_helper: Show/Hide Dimensions
       toggle_axes_helper: Show/Hide Axes
@@ -259,7 +259,7 @@ tab:
     is_selection: Selection only
     select_part: Select part
     select_part_plural: Select parts
-    material_undefined: Without Material
+    material_undefined: Without material
     not_available_std_width: Width undefined
     not_available_std_thickness: Thickness undefined
     not_available_std_section: Cross section undefined
@@ -898,7 +898,7 @@ tab:
         option_sheet_good: Sheet Goods
         option_sheet_good_help: |
           Enables sheet good export and color selection.
-        option_sheet_veneer: Veneer
+        option_sheet_veneer: Veneer Sheet
         option_sheet_veneer_help: |
           Enables veneer sheet export and color selection.
         option_bar_dimensional: Dimensional
@@ -970,8 +970,8 @@ tab:
         Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
-      option_std_bin_2d_sheet_good: Standard sheet
-      option_std_bin_2d_veneer: Standard veneer sheet
+      option_std_bin_2d_sheet_good: Standard Panel
+      option_std_bin_2d_veneer: Standard Veneer Sheet
       option_std_bin_2d_help: |
         Select the standard panel or veneer sheet, which will be duplicated to calculate the best possible placement.
         This list is defined by the **$t(tab.materials.edit_material.std_sizes)** field of the material.
@@ -989,7 +989,7 @@ tab:
       option_optimization_mode: Optimization Mode
       option_optimization_mode_help: |
         ...
-      option_objective: Objectif
+      option_objective: Objective
       option_objective_help: |
         ...
       option_rectangleguillotine_cut_type: Cut Type
@@ -1067,7 +1067,7 @@ tab:
         bin_1d_dimensional: Dimensional
         bin_1d_dimensional_type_0: Standard Dimensional
         bin_1d_dimensional_type_1: Board Off-cut
-        bin_1d_edge: Bande
+        bin_1d_edge: Edge Banding
         bin_1d_edge_type_0: Standard Edge Banding
         bin_1d_edge_type_1: Edge Banding Off-cut
         bin_2d_sheet_good: Panel
@@ -1314,7 +1314,7 @@ tab:
       option_smoothing_0: $t(default.no)
       option_smoothing_1: Smooth circles and arcs (Experimental)
       option_smoothing_help: |
-        Enables detection of circles and arcs.
+        Enables the detection of circles and arcs.
 
         *This option does not detect other types of curves.*
       option_merge_holes: Merging Mode

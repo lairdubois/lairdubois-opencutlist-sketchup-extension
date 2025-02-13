@@ -1029,11 +1029,11 @@ tab:
         825 - Ermöglicht es, die tatsächliche Form der Teile sowie ihre Bearbeitungen im Diagramm ein- oder auszublenden.
 
         *Diese Option muss aktiviert sein, damit die Formen exportiert werden können.*
-      option_colored_part: 826 - Teile einfärben
-      option_colored_part_0: 827 - Nein
-      option_colored_part_1: 828 - Ja - Bildschirm
-      option_colored_part_2: 829 - Ja - Bildschirm und Druck
-      option_colored_part_help: |
+      option_colorization: 826 - Teile einfärben
+      option_colorization_0: 827 - Nein
+      option_colorization_1: 828 - Ja - Bildschirm
+      option_colorization_2: 829 - Ja - Bildschirm und Druck
+      option_colorization_help: |
         830 - ...
       option_time_limit: 831 - Zeitbegrenzung
       option_time_limit_help: |
@@ -1308,11 +1308,11 @@ tab:
       option_switch_yz_1: 1049 - Y vertikal
       option_switch_yz_help: |
         1050 - Ermöglicht das Vertauschen der Y- und Z-Achse, um die vertikale Achse des Teils zu definieren.
-      option_smoothing: 1051 - Glättung
+      option_smoothing: 1051 - Glätten
       option_smoothing_0: $t(default.no)
       option_smoothing_1: 1053 - Glätten von Kreisen und Bögen (Experimentell)
       option_smoothing_help: |
-        1054 - Auswahl des Glättungsmodus.
+        1054 - Aktiviert die Erkennung von Kreisen und Bögen.
 
         *Diese Option erkennt keine anderen Kurventypen.*
       option_merge_holes: 1055 - Zusammenführungsmodus
