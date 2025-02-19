@@ -45,17 +45,20 @@ module Ladb::OpenCutList
     end
 
     def middle_point
+      return nil if infinite?
       if @middle_point.nil?
-        v = end_point - start_point
-        @middle_point = start_point.offset(v, v.length / 2.0)
+        @middle_point = Geom::linear_combination(0.5, start_point, 0.5, end_point)# start_point.offset(v, v.length / 2.0)
       end
       @middle_point
     end
 
     def third_points
+      return nil if infinite?
       if @third_points.nil?
-        v = end_point - start_point
-        @third_points = [ start_point.offset(v, v.length / 3.0), start_point.offset(v, v.length / 3.0 * 2) ]
+        @third_points = [
+          Geom::linear_combination(1 / 3.0, start_point, 2 / 3.0, end_point),
+          Geom::linear_combination(2 / 3.0, start_point, 1 / 3.0, end_point),
+        ]
       end
       @third_points
     end
