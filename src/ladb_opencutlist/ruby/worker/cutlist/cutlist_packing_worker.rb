@@ -597,19 +597,21 @@ module Ladb::OpenCutList
         svg += "<g class='bin'>"
           svg += "<rect class='bin-outer' x='-1' y='-1' width='#{px_bin_length + 2}' height='#{px_bin_width + 2}' />"
           svg += "<rect class='bin-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{light ? '#fff' : "url(#pattern_bin_bg_#{uuid})"}'/>"
-          if is_1d
-            svg += "<line class='bin-trimming' x1='#{px_trimming}' y1='0' x2='#{px_trimming}' y2='#{px_bin_width}'/>" if @trimming > 0
-            svg += "<line class='bin-trimming' x1='#{px_bin_length - px_trimming}' y1='0' x2='#{px_bin_length - px_trimming}' y2='#{px_bin_width}'/>" if @trimming > 0
-          elsif is_2d
-            svg += "<rect class='bin-trimming' x='#{px_trimming}' y='#{px_trimming}' width='#{px_bin_length - px_trimming * 2}' height='#{px_bin_width - px_trimming * 2}' fill='none' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
+          unless light
+            if is_1d
+              svg += "<line class='bin-trimming' x1='#{px_trimming}' y1='0' x2='#{px_trimming}' y2='#{px_bin_width}'/>" if @trimming > 0
+              svg += "<line class='bin-trimming' x1='#{px_bin_length - px_trimming}' y1='0' x2='#{px_bin_length - px_trimming}' y2='#{px_bin_width}'/>" if @trimming > 0
+            elsif is_2d
+              svg += "<rect class='bin-trimming' x='#{px_trimming}' y='#{px_trimming}' width='#{px_bin_length - px_trimming * 2}' height='#{px_bin_width - px_trimming * 2}' fill='none' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
+            end
           end
-          if bin_def.x_max > 0 && bin_def.x_max < bin_def.bin_type_def.length - @trimming
+          if bin_def.x_max > 0 && bin_def.x_max < bin_def.bin_type_def.length - @trimming - 20.mm   # Arbitrary remove 20mm to avoid displaying line near border
             svg += "<g class='bin-max'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_max_tooltip(bin_def.x_max, 'vertical-cut-right')}'" unless light}>"
               svg += "<rect class='bin-max-outer' x='#{_to_px(bin_def.x_max) - px_cut_outline_width}' y='0' width='#{px_cut_outline_width * 2}' height='#{px_bin_width}'/>" unless light
               svg += "<line class='bin-max-inner' x1='#{_to_px(bin_def.x_max)}' y1='0' x2='#{_to_px(bin_def.x_max)}' y2='#{px_bin_width}'/>"
             svg += "</g>"
           end
-          if bin_def.y_max > 0 && bin_def.y_max < bin_def.bin_type_def.width - @trimming
+          if bin_def.y_max > 0 && bin_def.y_max < bin_def.bin_type_def.width - @trimming - 20.mm   # Arbitrary remove 20mm to avoid displaying line near border
             svg += "<g class='bin-max'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_max_tooltip(bin_def.y_max, 'horizontal-cut-top')}'" unless light}>"
               svg += "<rect class='bin-max-outer' x='0' y='#{px_bin_width - _to_px(bin_def.y_max) - px_cut_outline_width}' width='#{px_bin_length}' height='#{px_cut_outline_width * 2}'/>" unless light
               svg += "<line class='bin-max-inner' x1='0' y1='#{px_bin_width - _to_px(bin_def.y_max)}' x2='#{px_bin_length}' y2='#{px_bin_width - _to_px(bin_def.y_max)}'/>"
@@ -653,7 +655,7 @@ module Ladb::OpenCutList
           svg += "<g class='item' transform='translate(#{px_item_rect_x} #{px_item_rect_y})'#{" data-toggle='tooltip' data-html='true' title='#{_render_item_def_tooltip(item_def)}' data-part-id='#{part.id}'" unless light}>"
             svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" style='fill:#{projection_def.nil? && colorized ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'};stroke:#555'" if light || (projection_def.nil? && colorized)}/>" unless is_irregular
 
-            unless projection_def.nil?
+            unless projection_def.nil? || light && !is_irregular
               svg += "<g class='item-projection' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2})#{" rotate(#{-item_def.angle})" if item_def.angle != 0}#{' scale(-1 1)' if item_def.mirror} translate(#{-px_part_length / 2} #{px_part_width / 2})'>"
                 svg += "<path stroke='#{colorized && !is_irregular ? ColorUtils.color_to_hex(ColorUtils.color_darken(item_type_def.color, 0.4)) : '#000'}' fill='#{colorized ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
               svg += '</g>'
