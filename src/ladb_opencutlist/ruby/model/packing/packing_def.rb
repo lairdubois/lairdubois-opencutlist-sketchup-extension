@@ -153,10 +153,10 @@ module Ladb::OpenCutList
 
   class PackingBinDef
 
-    attr_reader :bin_type_def, :count, :efficiency, :item_defs, :leftover_defs, :cut_defs, :part_info_defs, :total_cut_length
-    attr_accessor :svg
+    attr_reader :bin_type_def, :count, :efficiency, :item_defs, :leftover_defs, :cut_defs, :part_info_defs, :total_cut_length, :x_max, :y_max
+    attr_accessor :svg, :light_svg
 
-    def initialize(bin_type_def:, count:, efficiency:, item_defs:, leftover_defs:, cut_defs:, part_info_defs:, total_cut_length:)
+    def initialize(bin_type_def:, count:, efficiency:, item_defs:, leftover_defs:, cut_defs:, part_info_defs:, total_cut_length:, x_max:, y_max:)
 
       @bin_type_def = bin_type_def
 
@@ -170,9 +170,13 @@ module Ladb::OpenCutList
 
       @total_cut_length = total_cut_length
 
+      @x_max = x_max
+      @y_max = y_max
+
       # Computed
 
       @svg = ''
+      @light_svg = ''
 
     end
 

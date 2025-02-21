@@ -458,6 +458,8 @@ module Ladb::OpenCutList
                 )
               }.sort_by { |part_info_def| part_info_def._sorter } : [],
               total_cut_length: _from_packy_length(raw_bin.fetch('cut_length', 0)),
+              x_max: _from_packy_length(raw_bin.fetch('x_max', 0)),
+              y_max: _from_packy_length(raw_bin.fetch('y_max', 0))
             )
           }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.count ] }
         )
@@ -478,6 +480,7 @@ module Ladb::OpenCutList
         bin_type_uses[bin_def.bin_type_def][1] += bin_def.count * bin_def.item_defs.length  # total_item_count
 
         bin_def.svg = _render_bin_def_svg(bin_def, running)
+        bin_def.light_svg = _render_bin_def_svg(bin_def, true)
 
         packing_def.solution_def.summary_def.total_leftover_count += bin_def.leftover_defs.length
         packing_def.solution_def.summary_def.total_cut_count += bin_def.cut_defs.length
@@ -534,17 +537,20 @@ module Ladb::OpenCutList
       [ cost, std_price ]
     end
 
-    def _render_bin_def_svg(bin_def, running)
+    def _render_bin_def_svg(bin_def, light)
 
       uuid = SecureRandom.uuid
 
-      px_bin_dimension_font_size = running ? 0 : 16
+      colorized = @colorization > COLORIZATION_NONE && !light
+      colorized_print = @colorization == COLORIZATION_SCREEN_AND_PRINT && !light
+
+      px_bin_dimension_font_size = light ? 0 : 16
       px_node_dimension_font_size_max = 12
       px_node_dimension_font_size_min = 8
       px_node_number_font_size_max = 24
       px_node_number_font_size_min = 8
 
-      px_bin_dimension_offset = running ? 0 : 10
+      px_bin_dimension_offset = light ? 0 : 10
       px_node_dimension_offset = 3
       px_leftover_bullet_offset = 10
 
@@ -563,7 +569,7 @@ module Ladb::OpenCutList
       is_1d = @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
       is_2d = !is_1d
       is_irregular = @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-      is_cut_bg = px_spacing >= 3 && !running
+      is_cut_bg = px_spacing >= 3 && !light
 
       vb_offset_x = (px_max_bin_length - px_bin_length) / 2
       vb_x = (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_x) * -1
@@ -571,8 +577,8 @@ module Ladb::OpenCutList
       vb_width = px_bin_length + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_x) * 2
       vb_height = px_bin_width + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size) * 2
 
-      svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}' style='max-height: #{vb_height}px' class='problem-type-#{@problem_type}#{' no-print-color' if @colorization < COLORIZATION_SCREEN_AND_PRINT}'>"
-        unless running
+      svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}' style='max-height: #{vb_height}px' class='problem-type-#{@problem_type}#{' no-print-color' unless colorized_print}'>"
+        unless light
           svg += "<defs>"
             svg += "<pattern id='pattern_bin_bg_#{uuid}' width='10' height='10' patternUnits='userSpaceOnUse'>"
               svg += "<rect x='0' y='0' width='10' height='10' fill='white' />"
@@ -590,12 +596,24 @@ module Ladb::OpenCutList
         end
         svg += "<g class='bin'>"
           svg += "<rect class='bin-outer' x='-1' y='-1' width='#{px_bin_length + 2}' height='#{px_bin_width + 2}' />"
-          svg += "<rect class='bin-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{running ? '#fff' : "url(#pattern_bin_bg_#{uuid})"}'/>"
+          svg += "<rect class='bin-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{light ? '#fff' : "url(#pattern_bin_bg_#{uuid})"}'/>"
           if is_1d
-            svg += "<line class='bin-trimming' x1='#{px_trimming}' y1='0' x2='#{px_trimming}' y2='#{px_bin_width}' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
-            svg += "<line class='bin-trimming' x1='#{px_bin_length - px_trimming}' y1='0' x2='#{px_bin_length - px_trimming}' y2='#{px_bin_width}' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
+            svg += "<line class='bin-trimming' x1='#{px_trimming}' y1='0' x2='#{px_trimming}' y2='#{px_bin_width}'/>" if @trimming > 0
+            svg += "<line class='bin-trimming' x1='#{px_bin_length - px_trimming}' y1='0' x2='#{px_bin_length - px_trimming}' y2='#{px_bin_width}'/>" if @trimming > 0
           elsif is_2d
             svg += "<rect class='bin-trimming' x='#{px_trimming}' y='#{px_trimming}' width='#{px_bin_length - px_trimming * 2}' height='#{px_bin_width - px_trimming * 2}' fill='none' stroke='#ddd' stroke-dasharray='4'/>" if @trimming > 0
+          end
+          if bin_def.x_max > 0 && bin_def.x_max < bin_def.bin_type_def.length - @trimming
+            svg += "<g class='bin-max'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_max_tooltip(bin_def.x_max, 'vertical-cut-right')}'" unless light}>"
+              svg += "<rect class='bin-max-outer' x='#{_to_px(bin_def.x_max) - px_cut_outline_width}' y='0' width='#{px_cut_outline_width * 2}' height='#{px_bin_width}'/>" unless light
+              svg += "<line class='bin-max-inner' x1='#{_to_px(bin_def.x_max)}' y1='0' x2='#{_to_px(bin_def.x_max)}' y2='#{px_bin_width}'/>"
+            svg += "</g>"
+          end
+          if bin_def.y_max > 0 && bin_def.y_max < bin_def.bin_type_def.width - @trimming
+            svg += "<g class='bin-max'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_max_tooltip(bin_def.y_max, 'horizontal-cut-top')}'" unless light}>"
+              svg += "<rect class='bin-max-outer' x='0' y='#{px_bin_width - _to_px(bin_def.y_max) - px_cut_outline_width}' width='#{px_bin_length}' height='#{px_cut_outline_width * 2}'/>" unless light
+              svg += "<line class='bin-max-inner' x1='0' y1='#{px_bin_width - _to_px(bin_def.y_max)}' x2='#{px_bin_length}' y2='#{px_bin_width - _to_px(bin_def.y_max)}'/>"
+            svg += "</g>"
           end
         svg += '</g>'
         bin_def.item_defs.each do |item_def|
@@ -604,7 +622,6 @@ module Ladb::OpenCutList
           projection_def = item_type_def.projection_def
           part = item_type_def.part
           part_def = part.def
-          colorization = @colorization > COLORIZATION_NONE && !running
 
           item_text = _evaluate_item_text(part, item_def.instance_info)
           item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" if item_text.is_a?(Hash)
@@ -633,16 +650,16 @@ module Ladb::OpenCutList
           px_item_rect_x = _compute_x_with_origin_corner(px_item_x + bounds.min.x.to_f, px_item_rect_width, px_bin_length)
           px_item_rect_y = px_bin_width - _compute_y_with_origin_corner(px_item_y + bounds.min.y.to_f, px_item_rect_height, px_bin_width)
 
-          svg += "<g class='item' transform='translate(#{px_item_rect_x} #{px_item_rect_y})' data-toggle='tooltip' data-html='true' title='#{_render_item_def_tooltip(item_def)}' data-part-id='#{part.id}'>"
-            svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" style='fill:#{projection_def.nil? && colorization ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'};stroke:#555'" if running || (projection_def.nil? && colorization)}/>" unless is_irregular
+          svg += "<g class='item' transform='translate(#{px_item_rect_x} #{px_item_rect_y})'#{" data-toggle='tooltip' data-html='true' title='#{_render_item_def_tooltip(item_def)}' data-part-id='#{part.id}'" unless light}>"
+            svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" style='fill:#{projection_def.nil? && colorized ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'};stroke:#555'" if light || (projection_def.nil? && colorized)}/>" unless is_irregular
 
             unless projection_def.nil?
               svg += "<g class='item-projection' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2})#{" rotate(#{-item_def.angle})" if item_def.angle != 0}#{' scale(-1 1)' if item_def.mirror} translate(#{-px_part_length / 2} #{px_part_width / 2})'>"
-                svg += "<path stroke='#{colorization && !is_irregular ? ColorUtils.color_to_hex(ColorUtils.color_darken(item_type_def.color, 0.4)) : '#000'}' fill='#{colorization ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
+                svg += "<path stroke='#{colorized && !is_irregular ? ColorUtils.color_to_hex(ColorUtils.color_darken(item_type_def.color, 0.4)) : '#000'}' fill='#{colorized ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
               svg += '</g>'
             end
 
-            unless running
+            unless light
 
               number_font_size = [ [ px_node_number_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_number_font_size_min ].max
 
@@ -705,7 +722,7 @@ module Ladb::OpenCutList
           svg += "</g>"
 
         end
-        unless running
+        unless light
           bin_def.leftover_defs.each do |leftover_def|
 
             px_leftover_rect_width = _to_px(leftover_def.length)
@@ -796,17 +813,19 @@ module Ladb::OpenCutList
     def _render_item_def_tooltip(item_def)
       part = item_def.item_type_def.part
       tt = "<div class=\"tt-header\"><span class=\"tt-number\">#{part.number}</span><span class=\"tt-name\">#{CGI::escape_html(part.name)}</span></div>"
-      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-size-length-width\"></i> #{CGI::escape_html(part.cutting_length)}&nbsp;x&nbsp;#{CGI::escape_html(part.cutting_width)}</div>"
-      tt
+      tt + "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-size-length-width\"></i> #{CGI::escape_html(part.cutting_length)}&nbsp;x&nbsp;#{CGI::escape_html(part.cutting_width)}</div>"
+    end
+
+    def _render_bin_max_tooltip(max, icon)
+      "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-#{icon}\"></i> #{CGI::escape_html(max.to_s)}</div>"
     end
 
     def _render_cut_def_tooltip(cut_def)
       tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string("tab.cutlist.cuttingdiagram.list.cut#{(cut_def.depth == 0 ? '_trimming' : (cut_def.depth == 1 ? '_bounding' : (cut_def.depth == 2 ? '_internal_through' : '')))}")}</span></div>"
-      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-saw\"></i> #{CGI::escape_html(@spacing.to_l.to_s)}</div>"
-      tt += "<div>depth = #{cut_def.depth}</div>"
-      tt += "<div>x = #{cut_def.x}</div>" if cut_def.vertical?
-      tt += "<div>y = #{cut_def.y}</div>" if cut_def.horizontal?
-      tt
+      tt + "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-saw\"></i> #{CGI::escape_html(@spacing.to_l.to_s)}</div>"
+      tt + "<div>depth = #{cut_def.depth}</div>"
+      tt + "<div>x = #{cut_def.x}</div>" if cut_def.vertical?
+      tt + "<div>y = #{cut_def.y}</div>" if cut_def.horizontal?
     end
 
     def _compute_text_size(text:, font: 'helvetica', size:, align: TextAlignLeft)

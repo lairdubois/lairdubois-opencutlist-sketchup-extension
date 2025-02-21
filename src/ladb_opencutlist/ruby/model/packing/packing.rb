@@ -146,7 +146,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type_id, :type, :length, :width, :count, :efficiency, :items, :leftovers, :cuts, :part_infos, :total_cut_length, :svg
+    attr_reader :type_id, :type, :length, :width, :count, :efficiency, :items, :leftovers, :cuts, :part_infos, :total_cut_length, :x_max, :y_max, :svg, :light_svg
 
     def initialize(_def)
       @_def = _def
@@ -166,7 +166,11 @@ module Ladb::OpenCutList
 
       @total_cut_length = _def.total_cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_cut_length) : nil
 
+      @x_max = _def.x_max> 0 ? DimensionUtils.format_to_readable_length(_def.x_max) : nil
+      @y_max = _def.y_max > 0 ? DimensionUtils.format_to_readable_length(_def.y_max) : nil
+
       @svg = _def.svg
+      @light_svg = _def.light_svg
 
     end
 

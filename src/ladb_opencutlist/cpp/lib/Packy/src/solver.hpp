@@ -1455,6 +1455,12 @@ namespace Packy {
                         {"efficiency",  item_space / bin_type.space()}
                 });
 
+                // Add x_max and y_max attributes to the last bin
+                if (bin_pos == solution.number_of_different_bins() - 1) {
+                    j_bin["x_max"] = solution.x_max();
+                    j_bin["y_max"] = solution.y_max();
+                }
+
                 basic_json<>& j_items = j_bin["items"] = json::array();
                 for (const auto& item: bin.items) {
 

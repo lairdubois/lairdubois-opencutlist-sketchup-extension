@@ -2,6 +2,54 @@
 // Cutlist Packing
 //
 
+.ladb-cutlist-packing-preview {
+  display: flex;
+  max-height: 100px;
+  gap: 10px;
+  position: relative;
+
+  a {
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+
+    &:hover svg {
+      border-color: @ladb-brand-primary;
+    }
+
+    svg {
+      shape-rendering: geometricPrecision;
+      text-rendering: optimizeLegibility;
+      border-style: solid;
+      border-width: 2px;
+      border-color: #fff;
+      pointer-events: none;
+
+      .bin {
+
+        .bin-max {
+          stroke: #f00;
+        }
+
+      }
+
+    }
+
+    .ladb-counter {
+      position: absolute;
+      top: -5px;
+      background: #555;
+      text-align: center;
+      color: white;
+      border-radius: 2px;
+      font-size: 80%;
+      padding: 0 5px;
+    }
+
+  }
+
+}
+
 .ladb-cutlist-packing-group {
   page-break-inside: avoid;
 
@@ -24,6 +72,31 @@
 
       .bin-dimension {
         fill: #888;
+      }
+
+      .bin-trimming {
+        stroke: #ddd;
+        stroke-dasharray: 4px;
+      }
+
+      .bin-max {
+
+        &:hover {
+          .bin-max-outer {
+            fill: #f00;
+            fill-opacity: 1.0;
+          }
+        }
+
+        .bin-max-outer {
+          fill: #ffffff;
+          fill-opacity: 0.01;
+        }
+
+        .bin-max-inner {
+          stroke: #f00;
+          stroke-dasharray: 8px 4px;
+        }
       }
 
     }
@@ -207,6 +280,18 @@
 }
 
 @media print {
+
+  .ladb-cutlist-packing-preview svg {
+
+    &.problem-type-irregular .item {
+
+      .item-projection-shape, .item-projection-machining {
+        stroke: #000 !important;
+      }
+
+    }
+
+  }
 
   .ladb-cutlist-packing-group svg {
 
