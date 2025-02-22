@@ -8,7 +8,7 @@
   gap: 10px;
   position: relative;
 
-  a {
+  a.ladb-btn-scrollto  {
     display: flex;
     flex-grow: 1;
     justify-content: center;
@@ -25,12 +25,8 @@
       border-color: #fff;
       pointer-events: none;
 
-      .bin {
-
-        .bin-max {
-          stroke: #f00;
-        }
-
+      .bin .bin-max {
+        stroke: #f00;
       }
 
     }
@@ -38,12 +34,12 @@
     .ladb-counter {
       position: absolute;
       top: -5px;
-      background: #555;
       text-align: center;
+      padding: 0 5px;
       color: white;
       border-radius: 2px;
       font-size: 80%;
-      padding: 0 5px;
+      background-color: #555;
     }
 
   }
@@ -290,6 +286,10 @@
         stroke: #000 !important;
       }
 
+    }
+
+    a.ladb-btn-scrollto .ladb-counter {
+      background-color: #000 !important;
     }
 
   }
