@@ -110,6 +110,10 @@ module Ladb::OpenCutList
         group_packing_cancel_command
       end
 
+      PLUGIN.register_command("cutlist_packing_write") do |settings|
+        packing_write_command(settings)
+      end
+
     end
 
     def setup_event_callbacks
@@ -350,6 +354,8 @@ module Ladb::OpenCutList
       # Run !
       packing = @packing_worker.run(:start)
 
+      @packing = packing unless packing.running
+
       packing.to_hash
     end
 
@@ -358,6 +364,8 @@ module Ladb::OpenCutList
 
       # Run !
       packing = @packing_worker.run(:advance)
+
+      @packing = packing unless packing.running
 
       packing.to_hash
     end
@@ -368,7 +376,19 @@ module Ladb::OpenCutList
       # Run !
       packing = @packing_worker.run(:cancel)
 
+      @packing = packing unless packing.running
+
       packing.to_hash
+    end
+
+    def packing_write_command(settings)
+      require_relative '../worker/cutlist/cutlist_packing_write_worker'
+
+      # Setup worker
+      worker = CutlistPackingWriteWorker.new(@cutlist, @packing, **settings)
+
+      # Run !
+      worker.run
     end
 
   end

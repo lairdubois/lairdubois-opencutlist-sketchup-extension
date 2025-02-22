@@ -1079,6 +1079,65 @@ tab:
         unused: Inutilisée
         parts: "{{ count }} pièce"
         parts_plural: "{{ count }} pièces"
+      write:
+        title: Exportation du calepinage
+        info_0: |
+          Ce module vous permet d'exporter la **géométrie** du *calepinage* sous forme d'une liste de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: Structure DXF
+        option_dxf_structure_1: Calques
+        option_dxf_structure_2: Calques + Blocs
+        option_dxf_structure_help: |
+          Permet de choisir la structure du fichier DXF.
+
+          - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
+          - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_bin_sheet_good: Panneau
+        option_bin_sheet_good_help: |
+          Permet d'activer l'exportation du panneau ainsi que de choisir ses couleurs.
+        option_bin_veneer: Feuille
+        option_bin_veneer_help: |
+          Permet d'activer l'exportation de la feuille ainsi que de choisir ses couleurs.
+        option_bin_dimensional: Barre
+        option_bin_dimensional_help: |
+          Permet d'activer l'exportation de la barre ainsi que de choisir ses couleurs.
+        option_bin_edge: Bande
+        option_bin_edge_help: |
+          Permet d'activer l'exportation de la bande ainsi que de choisir ses couleurs.
+        option_parts: Pièces
+        option_parts_help: |
+          Permet d'activer l'exportation des pièces ainsi que de choisir leurs couleurs.
+        option_parts_holes: Percements
+        option_parts_holes_help: |
+          Permet de choisir la couleur des percements des pièces.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Identifications
+        option_texts_help: |
+          Permet d'activer l'exportation des textes d'identification des pièces ainsi que de choisir leurs couleurs.
+        option_leftovers: Chutes
+        option_leftovers_help: |
+          Permet d'activer l'exportation des chutes ainsi que de choisir leurs couleurs.
+        option_cuts: Coupes
+        option_cuts_help: |
+          Permet d'activer l'exportation des coupes ainsi que de choisir leur couleur.
+        warning:
+          is_bin_selection: Les **panneaux masqués** ne seront pas exportés.
       error:
         no_part: Aucune pièce.
         no_bin_1d: Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.

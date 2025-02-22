@@ -15,13 +15,7 @@ module Ladb::OpenCutList
   require_relative '../../model/packing/packing_def'
   require_relative '../../model/export/wrappers'
 
-
-  class CutlistPackingWorker
-
-    include PartDrawingHelper
-    include PixelConverterHelper
-    include MaterialAttributesCachingHelper
-    include EstimationHelper
+  class CutlistPackingService
 
     Packy = Fiddle::Packy
 
@@ -29,6 +23,163 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_BOTTOM_LEFT = 1
     ORIGIN_CORNER_TOP_RIGHT = 2
     ORIGIN_CORNER_BOTTOM_RIGHT = 3
+
+    protected
+
+    # -----
+
+    def _compute_x_with_origin_corner(problem_type, origin_corner, x, x_size, x_translation)
+      return x if problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+      case origin_corner
+      when ORIGIN_CORNER_TOP_RIGHT, ORIGIN_CORNER_BOTTOM_RIGHT
+        x_translation - x - x_size
+      else
+        x
+      end
+    end
+
+    def _compute_y_with_origin_corner(problem_type, origin_corner, y, y_size, y_translation)
+      return y if problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+      case origin_corner
+      when ORIGIN_CORNER_TOP_LEFT, ORIGIN_CORNER_TOP_RIGHT
+        y_translation - y - y_size
+      else
+        y
+      end
+    end
+
+    # -----
+
+    def _evaluate_item_text(formula, part, instance_info)
+
+      data = PackingData.new(
+
+        number: StringWrapper.new(part.number),
+        path: instance_info.nil? ? nil : PathWrapper.new(instance_info.named_path.split('.')),
+        instance_name: instance_info.nil? ? nil : StringWrapper.new(instance_info.entity.name),
+        name: StringWrapper.new(part.name),
+        cutting_length: LengthWrapper.new(part.def.cutting_length),
+        cutting_width: LengthWrapper.new(part.def.cutting_width),
+        cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
+        edge_cutting_length: LengthWrapper.new(part.def.edge_cutting_length),
+        edge_cutting_width: LengthWrapper.new(part.def.edge_cutting_width),
+        bbox_length: LengthWrapper.new(part.def.size.length),
+        bbox_width: LengthWrapper.new(part.def.size.width),
+        bbox_thickness: LengthWrapper.new(part.def.size.thickness),
+        final_area: AreaWrapper.new(part.def.final_area),
+        material: MaterialWrapper.new(part.group.def.material, part.group.def),
+        description: StringWrapper.new(part.description),
+        url: StringWrapper.new(part.url),
+        tags: ArrayWrapper.new(part.tags),
+        edge_ymin: EdgeWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
+        edge_ymax: EdgeWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
+        edge_xmin: EdgeWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
+        edge_xmax: EdgeWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
+        face_zmin: VeneerWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
+        face_zmax: VeneerWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
+        layer: instance_info.nil? ? nil : StringWrapper.new(instance_info.layer.name),
+
+        component_definition: ComponentDefinitionWrapper.new(part.def.definition),
+        component_instance: instance_info.nil? ? nil : ComponentInstanceWrapper.new(instance_info.entity),
+
+        )
+
+      begin
+        text = eval(formula, data.get_binding)
+        text = text.export if text.is_a?(Wrapper)
+        text = text.to_s if !text.is_a?(String) && text.respond_to?(:to_s)
+      rescue Exception => e
+        text = { :error => e.message.split(/cutlist_packing_worker[.]rb:\d+:/).last } # Remove path in exception message
+      end
+
+      text
+    end
+
+    # -----
+
+    class PackingData
+
+      def initialize(
+
+        number:,
+        path:,
+        instance_name:,
+        name:,
+        cutting_length:,
+        cutting_width:,
+        cutting_thickness:,
+        edge_cutting_length:,
+        edge_cutting_width:,
+        bbox_length:,
+        bbox_width:,
+        bbox_thickness:,
+        final_area:,
+        material:,
+        description:,
+        url:,
+        tags:,
+        edge_ymin:,
+        edge_ymax:,
+        edge_xmin:,
+        edge_xmax:,
+        face_zmin:,
+        face_zmax:,
+        layer:,
+
+        component_definition:,
+        component_instance:
+
+
+      )
+
+        @number =  number
+        @path = path
+        @instance_name = instance_name
+        @name = name
+        @cutting_length = cutting_length
+        @cutting_width = cutting_width
+        @cutting_thickness = cutting_thickness
+        @edge_cutting_length = edge_cutting_length
+        @edge_cutting_width = edge_cutting_width
+        @bbox_length = bbox_length
+        @bbox_width = bbox_width
+        @bbox_thickness = bbox_thickness
+        @final_area = final_area
+        @material = material
+        @material_type = material.type
+        @material_name = material.name
+        @material_description = material.description
+        @material_url = material.url
+        @description = description
+        @url = url
+        @tags = tags
+        @edge_ymin = edge_ymin
+        @edge_ymax = edge_ymax
+        @edge_xmin = edge_xmin
+        @edge_xmax = edge_xmax
+        @face_zmin = face_zmin
+        @face_zmax = face_zmax
+        @layer = layer
+
+        @component_definition = component_definition
+        @component_instance = component_instance
+
+      end
+
+      def get_binding
+        binding
+      end
+
+    end
+
+  end
+
+  class CutlistPackingWorker < CutlistPackingService
+
+    include PartDrawingHelper
+    include PixelConverterHelper
+    include MaterialAttributesCachingHelper
+    include EstimationHelper
 
     COLORIZATION_NONE = 0
     COLORIZATION_SCREEN = 1
@@ -134,7 +285,7 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         return _create_packing(errors: [ 'default.error' ]) unless model
 
-        group = @cutlist.get_group(@group_id)
+        group = @group = @cutlist.get_group(@group_id)
         return _create_packing(errors: [ 'default.error' ]) unless group
 
         parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
@@ -389,12 +540,14 @@ module Ladb::OpenCutList
       end
 
       packing_def = PackingDef.new(
+        group: @group,
         running: running,
         solution_def: PackingSolutionDef.new(
           options_def: PackingOptionsDef.new(
             problem_type: @problem_type,
             spacing: @spacing,
             trimming: @trimming,
+            items_formula: @items_formula,
             hide_part_list: @hide_part_list,
             part_drawing_type: @part_drawing_type,
             colorization: @colorization,
@@ -511,7 +664,7 @@ module Ladb::OpenCutList
     end
 
     def _to_packy_length(l)
-      l.to_f #.round(8)
+      l.to_f
     end
 
     def _from_packy_length(l)
@@ -606,14 +759,14 @@ module Ladb::OpenCutList
             end
           end
           if bin_def.x_max > 0 && bin_def.x_max < bin_def.bin_type_def.length - @trimming - 20.mm   # Arbitrary remove 20mm to avoid displaying line near border
-            px_bin_max_x = _compute_x_with_origin_corner(_to_px(bin_def.x_max), 0, px_bin_length)
+            px_bin_max_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, _to_px(bin_def.x_max), 0, px_bin_length)
             svg += "<g class='bin-max'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_max_tooltip(bin_def.x_max, "vertical-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_TOP_LEFT ? 'right' : 'left'}")}'" unless light}>"
               svg += "<rect class='bin-max-outer' x='#{px_bin_max_x - px_cut_outline_width}' y='0' width='#{px_cut_outline_width * 2}' height='#{px_bin_width}'/>" unless light
               svg += "<line class='bin-max-inner' x1='#{px_bin_max_x}' y1='0' x2='#{px_bin_max_x}' y2='#{px_bin_width}'#{" style='stroke:red'" if light}>/>"
             svg += "</g>"
           end
           if bin_def.y_max > 0 && bin_def.y_max < bin_def.bin_type_def.width - @trimming - 20.mm   # Arbitrary remove 20mm to avoid displaying line near border
-            px_bin_max_y = px_bin_width - _compute_y_with_origin_corner(_to_px(bin_def.y_max), 0, px_bin_width)
+            px_bin_max_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, _to_px(bin_def.y_max), 0, px_bin_width)
             svg += "<g class='bin-max'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_max_tooltip(bin_def.y_max, "horizontal-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_BOTTOM_RIGHT ? 'top' : 'bottom'}")}'" unless light}>"
               svg += "<rect class='bin-max-outer' x='0' y='#{px_bin_max_y - px_cut_outline_width}' width='#{px_bin_length}' height='#{px_cut_outline_width * 2}'/>" unless light
               svg += "<line class='bin-max-inner' x1='0' y1='#{px_bin_max_y}' x2='#{px_bin_length}' y2='#{px_bin_max_y}'#{" style='stroke:red'" if light}/>"
@@ -648,8 +801,8 @@ module Ladb::OpenCutList
 
           px_item_rect_width = bounds.width.to_f
           px_item_rect_height = bounds.height.to_f
-          px_item_rect_x = _compute_x_with_origin_corner(px_item_x + bounds.min.x.to_f, px_item_rect_width, px_bin_length)
-          px_item_rect_y = px_bin_width - _compute_y_with_origin_corner(px_item_y + bounds.min.y.to_f, px_item_rect_height, px_bin_width)
+          px_item_rect_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, px_item_x + bounds.min.x.to_f, px_item_rect_width, px_bin_length)
+          px_item_rect_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, px_item_y + bounds.min.y.to_f, px_item_rect_height, px_bin_width)
 
           svg += "<g class='item' transform='translate(#{px_item_rect_x} #{px_item_rect_y})'#{" data-toggle='tooltip' data-html='true' title='#{_render_item_def_tooltip(item_def)}' data-part-id='#{part.id}'" unless light}>"
             svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" style='fill:#{projection_def.nil? && colorized ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'};stroke:#555'" if light || (projection_def.nil? && colorized)}/>" unless is_irregular
@@ -662,7 +815,7 @@ module Ladb::OpenCutList
 
             unless light
 
-              item_text = _evaluate_item_text(part, item_def.instance_info)
+              item_text = _evaluate_item_text(@items_formula, part, item_def.instance_info)
               item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" if item_text.is_a?(Hash)
 
               number_font_size = [ [ px_node_number_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_number_font_size_min ].max
@@ -681,35 +834,35 @@ module Ladb::OpenCutList
 
                 if is_2d
 
-                    px_number_w, px_number_h = _compute_text_size(text: item_text, size: number_font_size)
-                    px_number_bounds = Geom::BoundingBox.new.add(
-                      [
-                        Geom::Point3d.new(-px_number_w / 2, -px_number_h / 2),
-                        Geom::Point3d.new(px_number_w / 2, px_number_h / 2)
-                      ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_item_rect_width / 2, px_item_rect_height / 2)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, (item_def.angle % 180).degrees)) }
-                    )
-                    # svg += "<rect x='#{px_number_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_number_bounds.min.y).to_f}' width='#{px_number_bounds.width.to_f}' height='#{px_number_bounds.height.to_f}' fill='none' stroke='red'></rect>"
+                  px_number_w, px_number_h = _compute_text_size(text: item_text, size: number_font_size)
+                  px_number_bounds = Geom::BoundingBox.new.add(
+                    [
+                      Geom::Point3d.new(-px_number_w / 2, -px_number_h / 2),
+                      Geom::Point3d.new(px_number_w / 2, px_number_h / 2)
+                    ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_item_rect_width / 2, px_item_rect_height / 2)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, (item_def.angle % 180).degrees)) }
+                  )
+                  # svg += "<rect x='#{px_number_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_number_bounds.min.y).to_f}' width='#{px_number_bounds.width.to_f}' height='#{px_number_bounds.height.to_f}' fill='none' stroke='red'></rect>"
 
                   dim_x_font_size = [ [ px_node_dimension_font_size_max, px_item_rect_height - px_node_dimension_offset * 2, (px_item_rect_width - px_node_dimension_offset * 2) / (dim_x_text.length * 0.6) ].min, px_node_dimension_font_size_min ].max
                   dim_y_font_size = [ [ px_node_dimension_font_size_max, px_item_rect_width - px_node_dimension_offset * 2, (px_item_rect_height - px_node_dimension_offset * 2) / (dim_y_text.length * 0.6) ].min, px_node_dimension_font_size_min ].max
 
-                    px_dim_x_w, px_dim_x_h = _compute_text_size(text: dim_x_text, size: dim_x_font_size)
-                    px_dim_x_bounds = Geom::BoundingBox.new.add(
-                      [
-                        Geom::Point3d.new,
-                        Geom::Point3d.new(px_dim_x_w, px_dim_x_h)
-                      ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_item_rect_width - px_node_dimension_offset - px_dim_x_w, px_node_dimension_offset))) }
-                    )
-                    # svg += "<rect x='#{px_dim_x_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_dim_x_bounds.min.y).to_f}' width='#{px_dim_x_bounds.width.to_f}' height='#{px_dim_x_bounds.height.to_f}' fill='none' stroke='cyan'></rect>"
+                  px_dim_x_w, px_dim_x_h = _compute_text_size(text: dim_x_text, size: dim_x_font_size)
+                  px_dim_x_bounds = Geom::BoundingBox.new.add(
+                    [
+                      Geom::Point3d.new,
+                      Geom::Point3d.new(px_dim_x_w, px_dim_x_h)
+                    ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_item_rect_width - px_node_dimension_offset - px_dim_x_w, px_node_dimension_offset))) }
+                  )
+                  # svg += "<rect x='#{px_dim_x_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_dim_x_bounds.min.y).to_f}' width='#{px_dim_x_bounds.width.to_f}' height='#{px_dim_x_bounds.height.to_f}' fill='none' stroke='cyan'></rect>"
 
-                    px_dim_y_w, px_dim_y_h = _compute_text_size(text: dim_y_text, size: dim_y_font_size)
-                    px_dim_y_bounds = Geom::BoundingBox.new.add(
-                      [
-                        Geom::Point3d.new,
-                        Geom::Point3d.new(px_dim_y_w, px_dim_y_h)
-                      ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_node_dimension_offset, px_item_rect_height - px_node_dimension_offset)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, -90.degrees)) }
-                    )
-                    # svg += "<rect x='#{px_dim_y_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_dim_y_bounds.min.y).to_f}' width='#{px_dim_y_bounds.width.to_f}' height='#{px_dim_y_bounds.height.to_f}' fill='none' stroke='yellow'></rect>"
+                  px_dim_y_w, px_dim_y_h = _compute_text_size(text: dim_y_text, size: dim_y_font_size)
+                  px_dim_y_bounds = Geom::BoundingBox.new.add(
+                    [
+                      Geom::Point3d.new,
+                      Geom::Point3d.new(px_dim_y_w, px_dim_y_h)
+                    ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_node_dimension_offset, px_item_rect_height - px_node_dimension_offset)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, -90.degrees)) }
+                  )
+                  # svg += "<rect x='#{px_dim_y_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_dim_y_bounds.min.y).to_f}' width='#{px_dim_y_bounds.width.to_f}' height='#{px_dim_y_bounds.height.to_f}' fill='none' stroke='yellow'></rect>"
 
                   hide_dim_x = px_number_bounds.intersect(px_dim_x_bounds).valid? || px_dim_x_bounds.width > px_item_rect_width - px_node_dimension_offset || px_dim_x_bounds.height > px_item_rect_height - px_node_dimension_offset
                   hide_dim_y = px_number_bounds.intersect(px_dim_y_bounds).valid? || px_dim_y_bounds.width > px_item_rect_width - px_node_dimension_offset || px_dim_y_bounds.height > px_item_rect_height - px_node_dimension_offset
@@ -731,8 +884,8 @@ module Ladb::OpenCutList
 
             px_leftover_rect_width = _to_px(leftover_def.length)
             px_leftover_rect_height = is_1d ? px_bin_width : _to_px(leftover_def.width)
-            px_leftover_rect_x = _compute_x_with_origin_corner(_to_px(leftover_def.x), px_leftover_rect_width, px_bin_length)
-            px_leftover_rect_y = px_bin_width - _compute_y_with_origin_corner(_to_px(leftover_def.y), px_leftover_rect_height, px_bin_width)
+            px_leftover_rect_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, _to_px(leftover_def.x), px_leftover_rect_width, px_bin_length)
+            px_leftover_rect_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, _to_px(leftover_def.y), px_leftover_rect_height, px_bin_width)
 
             dim_x_text = leftover_def.length.to_s.gsub(/~ /, '')
             dim_y_text = leftover_def.width.to_s.gsub(/~ /, '')
@@ -787,8 +940,8 @@ module Ladb::OpenCutList
               px_cut_rect_width = px_cut_width
               px_cut_rect_height = px_cut_length
             end
-            px_cut_rect_x = _compute_x_with_origin_corner(px_cut_x, px_cut_rect_width, px_bin_length)
-            px_cut_rect_y = _compute_y_with_origin_corner(px_cut_y - px_cut_rect_height, px_cut_rect_height, px_bin_width)
+            px_cut_rect_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, px_cut_x, px_cut_rect_width, px_bin_length)
+            px_cut_rect_y = _compute_y_with_origin_corner(@problem_type, @origin_corner, px_cut_y - px_cut_rect_height, px_cut_rect_height, px_bin_width)
 
             case cut_def.depth
             when 0
@@ -850,154 +1003,10 @@ module Ladb::OpenCutList
       [ width, size ]
     end
 
-    def _compute_x_with_origin_corner(x, x_size, x_translation)
-      return x if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-      case @origin_corner
-      when ORIGIN_CORNER_TOP_RIGHT, ORIGIN_CORNER_BOTTOM_RIGHT
-        x_translation - x - x_size
-      else
-        x
-      end
-    end
-
-    def _compute_y_with_origin_corner(y, y_size, y_translation)
-      return y if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-      case @origin_corner
-      when ORIGIN_CORNER_TOP_LEFT, ORIGIN_CORNER_TOP_RIGHT
-        y_translation - y - y_size
-      else
-        y
-      end
-    end
-
-    # -----
-
-    def _evaluate_item_text(part, instance_info)
-
-      data = PackingData.new(
-
-        number: StringWrapper.new(part.number),
-        path: instance_info.nil? ? nil : PathWrapper.new(instance_info.named_path.split('.')),
-        instance_name: instance_info.nil? ? nil : StringWrapper.new(instance_info.entity.name),
-        name: StringWrapper.new(part.name),
-        cutting_length: LengthWrapper.new(part.def.cutting_length),
-        cutting_width: LengthWrapper.new(part.def.cutting_width),
-        cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
-        edge_cutting_length: LengthWrapper.new(part.def.edge_cutting_length),
-        edge_cutting_width: LengthWrapper.new(part.def.edge_cutting_width),
-        bbox_length: LengthWrapper.new(part.def.size.length),
-        bbox_width: LengthWrapper.new(part.def.size.width),
-        bbox_thickness: LengthWrapper.new(part.def.size.thickness),
-        final_area: AreaWrapper.new(part.def.final_area),
-        material: MaterialWrapper.new(part.group.def.material, part.group.def),
-        description: StringWrapper.new(part.description),
-        url: StringWrapper.new(part.url),
-        tags: ArrayWrapper.new(part.tags),
-        edge_ymin: EdgeWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
-        edge_ymax: EdgeWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
-        edge_xmin: EdgeWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
-        edge_xmax: EdgeWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
-        face_zmin: VeneerWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
-        face_zmax: VeneerWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
-        layer: instance_info.nil? ? nil : StringWrapper.new(instance_info.layer.name),
-
-        component_definition: ComponentDefinitionWrapper.new(part.def.definition),
-        component_instance: instance_info.nil? ? nil : ComponentInstanceWrapper.new(instance_info.entity),
-
-      )
-
-      begin
-        text = eval(@items_formula, data.get_binding)
-        text = text.export if text.is_a?(Wrapper)
-        text = text.to_s if !text.is_a?(String) && text.respond_to?(:to_s)
-      rescue Exception => e
-        text = { :error => e.message.split(/cutlist_packing_worker[.]rb:\d+:/).last } # Remove path in exception message
-      end
-
-      text
-    end
-
     # -----
 
     BinTypeDef = Struct.new(:id, :length, :width, :count, :cost, :std_price, :type)
     ItemTypeDef = Struct.new(:length, :width, :count, :part, :projection_def, :color)
-
-    # -----
-
-    class PackingData
-
-      def initialize(
-
-        number:,
-        path:,
-        instance_name:,
-        name:,
-        cutting_length:,
-        cutting_width:,
-        cutting_thickness:,
-        edge_cutting_length:,
-        edge_cutting_width:,
-        bbox_length:,
-        bbox_width:,
-        bbox_thickness:,
-        final_area:,
-        material:,
-        description:,
-        url:,
-        tags:,
-        edge_ymin:,
-        edge_ymax:,
-        edge_xmin:,
-        edge_xmax:,
-        face_zmin:,
-        face_zmax:,
-        layer:,
-
-        component_definition:,
-        component_instance:
-
-
-        )
-
-        @number =  number
-        @path = path
-        @instance_name = instance_name
-        @name = name
-        @cutting_length = cutting_length
-        @cutting_width = cutting_width
-        @cutting_thickness = cutting_thickness
-        @edge_cutting_length = edge_cutting_length
-        @edge_cutting_width = edge_cutting_width
-        @bbox_length = bbox_length
-        @bbox_width = bbox_width
-        @bbox_thickness = bbox_thickness
-        @final_area = final_area
-        @material = material
-        @material_type = material.type
-        @material_name = material.name
-        @material_description = material.description
-        @material_url = material.url
-        @description = description
-        @url = url
-        @tags = tags
-        @edge_ymin = edge_ymin
-        @edge_ymax = edge_ymax
-        @edge_xmin = edge_xmin
-        @edge_xmax = edge_xmax
-        @face_zmin = face_zmin
-        @face_zmax = face_zmax
-        @layer = layer
-
-        @component_definition = component_definition
-        @component_instance = component_instance
-
-      end
-
-      def get_binding
-        binding
-      end
-
-    end
 
   end
 

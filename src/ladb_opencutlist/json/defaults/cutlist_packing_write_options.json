@@ -1,0 +1,27 @@
+{
+  "0": {
+    "file_format": "svg",
+    "dxf_structure": 1, /* DXF_STRUCTURE_LAYER */
+    "unit": { "metric": 2 /* Length::Millimeter */, "imperial": 0 /* Length::Inches */ },
+    "smoothing": false,
+    "merge_holes": false,
+    "include_paths": false,
+    "bin_hidden": false,
+    "bin_stroke_color": "#0068FF",
+    "bin_fill_color": null,
+    "parts_hidden": false,
+    "parts_stroke_color": null,
+    "parts_fill_color": "#000000",
+    "parts_holes_stroke_color": "#000000",
+    "parts_holes_fill_color": "#FFFFFF",
+    "parts_paths_stroke_color": "#0068FF",
+    "parts_paths_fill_color": null,
+    "texts_hidden": false,
+    "texts_color": "#00ffff",
+    "leftovers_hidden": true,
+    "leftovers_stroke_color": "#aaaaaa",
+    "leftovers_fill_color": null,
+    "cuts_hidden": true,
+    "cuts_color": "#ff00ff"
+  }
+}

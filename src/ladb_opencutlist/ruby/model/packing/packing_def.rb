@@ -4,9 +4,10 @@ module Ladb::OpenCutList
 
   class PackingDef
 
-    attr_reader :errors, :running, :cancelled, :solution_def
+    attr_reader :group, :errors, :running, :cancelled, :solution_def
 
-    def initialize(errors: [], running: false, cancelled: false, solution_def: nil)
+    def initialize(group: nil, errors: [], running: false, cancelled: false, solution_def: nil)
+      @group = group
 
       @errors = errors
 
@@ -56,15 +57,16 @@ module Ladb::OpenCutList
 
   class PackingOptionsDef
 
-    attr_reader :problem_type, :spacing, :trimming, :hide_part_list, :part_drawing_type, :colorization, :origin_corner
+    attr_reader :problem_type, :spacing, :trimming, :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner
 
-    def initialize(problem_type:, spacing:, trimming:, hide_part_list:, part_drawing_type:, colorization:, origin_corner:)
+    def initialize(problem_type:, spacing:, trimming:, items_formula:, hide_part_list:, part_drawing_type:, colorization:, origin_corner:)
 
       @problem_type = problem_type
 
       @spacing = spacing
       @trimming = trimming
 
+      @items_formula = items_formula
       @hide_part_list = hide_part_list
       @part_drawing_type = part_drawing_type
       @colorization = colorization
