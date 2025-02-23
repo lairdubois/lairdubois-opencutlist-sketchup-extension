@@ -1192,7 +1192,7 @@ module Ladb::OpenCutList
 
     # -- INSERT GEOMETRY
 
-    def _dxf_write_insert(file, name, x = 0.0, y = 0.0, z = 0.0, layer = '0')
+    def _dxf_write_insert(file, name, x = 0.0, y = 0.0, z = 0.0, scale_x = 1.0, scale_y = 1.0, scale_z = 1.0, angle = 0.0, layer = '0')
 
       # Docs : https://help.autodesk.com/view/OARXMAC/2024/FRA/?guid=GUID-28FA4CFB-9D5E-4880-9F11-36C97578252F
 
@@ -1205,6 +1205,10 @@ module Ladb::OpenCutList
       _dxf_write(file, 10, x)
       _dxf_write(file, 20, y)
       _dxf_write(file, 30, z)
+      _dxf_write(file, 41, scale_x)
+      _dxf_write(file, 42, scale_y)
+      _dxf_write(file, 43, scale_z)
+      _dxf_write(file, 50, angle)
 
     end
 

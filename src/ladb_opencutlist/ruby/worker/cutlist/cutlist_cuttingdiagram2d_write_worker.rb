@@ -451,7 +451,7 @@ module Ladb::OpenCutList
               x = position.x.to_f
               y = position.y.to_f
 
-              _dxf_write_insert(file, fn_part_block_name.call(part), x, y, 0, LAYER_PART)
+              _dxf_write_insert(file, fn_part_block_name.call(part), x, y, 0, 1.0, 1.0, 1.0, 0, LAYER_PART)
 
             else
 
