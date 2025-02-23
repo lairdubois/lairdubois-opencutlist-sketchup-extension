@@ -50,9 +50,9 @@ default:
   by: by
   date_format: "m/d/Y g:ia"
   date_format_short: m/d/Y
-  unit_0: Inch
   decimal: Decimal
   fractional: Fractional
+  unit_0: Inch
   unit_1: Foot
   unit_2: Millimeter
   unit_3: Centimeter
@@ -750,7 +750,7 @@ tab:
       option_full_width_diagram_help: "If this option is selected, the cutting diagrams are displayed using the available width. Otherwise, their width is defined by a scaling factor depending on all diagrams."
       option_wrap_length: Wrap Board Length
       option_wrap_length_help: Maximal length after which a board or edge banding will be wrapped over multiple lines.
-      option_hide_cross: Leftovers
+      option_hide_cross: Off-cuts
       option_hide_cross_0: Dimensions and Cross
       option_hide_cross_1: Dimensions Only
       option_hide_cross_help: Shows or hides the cross indicating parts defined as off-cuts on the diagram.
@@ -790,7 +790,7 @@ tab:
       option_keep: Off-cuts minimal size
       option_keep_help: Leftovers that are larger than the minimum length and width are marked **to be kept**.
       option_std_bar_dimensional: Standard Dimensional
-      option_std_bar_edge: Standard Edge Bandings
+      option_std_bar_edge: Standard Edge Banding
       option_std_bar_help: |
         Select the standard board or edge banding, which will be duplicated to contain all the parts.
         This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
@@ -798,7 +798,7 @@ tab:
       option_std_bar_add: Add a size
       option_std_bar_none: None
       option_scrap_bar_dimensional_lengths: Board Off-cuts
-      option_scrap_bar_edge_lengths: Edge Bandings Off-cuts
+      option_scrap_bar_edge_lengths: Edge Banding Off-cuts
       option_scrap_bar_lengths_placeholder: length x quantity ; ...
       option_scrap_bar_lengths_help: |
         List all your off-cut boards or edge bandings to be considered first in the cutting diagram.
@@ -806,7 +806,7 @@ tab:
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
       option_std_sheet_good: Standard Panel
-      option_std_sheet_veneer: Standard Veneer
+      option_std_sheet_veneer: Standard Veneer Sheet
       option_std_sheet_help: |
         Select the standard panel or veneer sheet, which will be duplicated to calculate the best possible placement.
         This list is defined by the **$t(tab.materials.edit_material.std_sizes)** field of the material.
@@ -814,7 +814,7 @@ tab:
       option_std_sheet_add: Add a size
       option_std_sheet_none: None
       option_scrap_sheet_good_sizes: Panel Off-cuts
-      option_scrap_sheet_veneer_sizes: Veneer Off-cuts
+      option_scrap_sheet_veneer_sizes: Veneer Sheet Off-cuts
       option_scrap_sheet_sizes_placeholder: length x width x quantity ; ...
       option_scrap_sheet_sizes_help: |
         List all your off-cut sheet goods or veneers to be considered first in the cutting diagram.
@@ -861,8 +861,8 @@ tab:
         bar_edge_type_1: Edge Banding Off-cut
         sheet_good_type_0: Standard Panel
         sheet_good_type_1: Panel Off-cut
-        sheet_veneer_type_0: Standard Veneer
-        sheet_veneer_type_1: Veneer Off-cut
+        sheet_veneer_type_0: Standard Veneer Sheet
+        sheet_veneer_type_1: Veneer Sheet Off-cut
         unused: Unused
         parts: "{{ count }} part"
         parts_plural: "{{ count }} parts"
@@ -1009,7 +1009,7 @@ tab:
         ...
       option_spacing: Spacing
       option_spacing_help: Minimal spacing between parts.
-      option_trimming: Margin
+      option_trimming: Trimming
       option_trimming_1d_help: The amount of material at each end of the board or edge banding to be treated as waste.
       option_trimming_2d_help: The amount of material around the raw panel or veneer sheet to be treated as waste.
       option_items_formula: Formula
@@ -1023,7 +1023,7 @@ tab:
       option_hide_part_list_1: Hidden
       option_hide_part_list_1d_help: Display or hide the list of parts for each board or edge banding.
       option_hide_part_list_2d_help: Display or hide the list of parts for each panel or veneer sheet.
-      option_part_drawing_type: Shape of parts
+      option_part_drawing_type: Shape of Parts
       option_part_drawing_type_0: Hidden
       option_part_drawing_type_1: Displaying front face
       option_part_drawing_type_2: Displaying rear face
@@ -1053,14 +1053,14 @@ tab:
         summary: Summary
         trimming: Trimming
         stats: Statistics
-        total_cut_count: Number of cuts
-        total_cut_length: Length of cuts
+        total_cut_count: Number of Cuts
+        total_cut_length: Length of Cuts
         efficiency: Efficiency
         count: Qty
         length: Length
         width: Width
         total_length: Σ Length
-        total_area: Σ Areas
+        total_area: Σ Area
         total_cost: Σ Cost
         total_part_count: "# Parts"
         total_used: Total used
@@ -1072,13 +1072,72 @@ tab:
         bin_1d_edge_type_1: Edge Banding Off-cut
         bin_2d_sheet_good: Panel
         bin_2d_sheet_good_type_0: Standard Panel
-        bin_2d_sheet_good_type_1: Panel Offcut
+        bin_2d_sheet_good_type_1: Panel Off-cut
         bin_2d_veneer: Veneer Sheet
         bin_2d_veneer_type_0: Standard Veneer Sheet
         bin_2d_veneer_type_1: Veneer Sheet Off-cut
         unused: Unused
         parts: "{{ count }} part"
         parts_plural: "{{ count }} parts"
+      write:
+        title: Cutting Diagram Export
+        info_0: |
+          This module lets you export the **geometry** of the *cutting diagram* as a list of files in [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) format.
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: DXF Structure
+        option_dxf_structure_1: Layers
+        option_dxf_structure_2: Layers + Blocks
+        option_dxf_structure_help: |
+          Selects the DXF file structure.
+
+          - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
+          - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_bin_sheet_good: Panel
+        option_bin_sheet_good_help: |
+          Enables sheet good export and color selection.
+        option_bin_veneer: Veneer Sheet
+        option_bin_veneer_help: |
+          Enables veneer sheet export and color selection.
+        option_bin_dimensional: Dimensional
+        option_bin_dimensional_help: |
+          Enables dimensional export and color selection.
+        option_bin_edge: Edge Banding
+        option_bin_edge_help: |
+          Enables edge banding export and color selection.
+        option_parts: Parts
+        option_parts_help: |
+          Enables part export and color selection.
+        option_parts_holes: Drillings
+        option_parts_holes_help: |
+          Selects the color of drillings.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Identifiers
+        option_texts_help: |
+          Enables export of part identification texts and color selection.
+        option_leftovers: Off-cuts
+        option_leftovers_help: |
+          Enables export of off-cuts and color selection.
+        option_cuts: Cuts
+        option_cuts_help: |
+          Enables export of cuts and color selection.
+        warning:
+          is_bin_selection: The **hidden panels** will not be exported.
       error:
         no_part: No part.
         no_bin_1d: No standard board or edge banding was selected and no off-cuts were available.
@@ -1526,7 +1585,7 @@ tab:
       message: |
         Choose the name of the new material copied from **{{ material_name }}**.
     error:
-      no_model: No model is open. You'll have to give me more information ;)
+      no_model: No model is open. You will have to give me more information ;)
       no_materials: Your model does not contain any material.
       material_not_found: No material found.
       failed_import_skm_file: "An error occurred while importing from the .skm file. **{{ error }}**"
@@ -1563,7 +1622,7 @@ tab:
       explode: Explode
       explode_message: "Do you confirm the explosion of instance **{{ name }}**?"
     error:
-      no_model: No model is open. You'll have to give me more information ;)
+      no_model: No model is open. You will have to give me more information ;)
       no_entities: Your model is empty!
       node_not_found: Node not found
       entity_not_found: Instance not found

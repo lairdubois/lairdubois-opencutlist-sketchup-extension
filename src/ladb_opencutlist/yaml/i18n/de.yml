@@ -654,7 +654,7 @@ tab:
       edge_xmin: Kantenband Breite 1
       edge_xmax: Kantenband Breite 2
       face_zmin: Rückseite
-      face_zmax: Vorderansicht
+      face_zmax: Vorderseite
       layer: Tag
       layers: Tags
       batch: Los
@@ -728,9 +728,9 @@ tab:
       option_hide_part_list_1d_edge_0: Anzeigen für jedes Kantenband
       option_hide_part_list_2d_good_0: Anzeigen für jede Platte
       option_hide_part_list_2d_veneer_0: Anzeigen für jedes Furnierblatt
-      option_hide_part_list_1: Ausblenden
+      option_hide_part_list_1: Maskiert
       option_hide_part_list_1d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Stange oder jedes Kantenband.
-      option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte.
+      option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte oder jedes Furnierblatt.
       option_use_names: Identifizierung der Teile
       option_use_names_0: Nummer verwenden
       option_use_names_1: Bezeichnung verwenden
@@ -776,7 +776,7 @@ tab:
       option_spacing_help: Mindestabstand zwischen den einzelnen Teilen.
       option_trimming: Randabfallbreite
       option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
-      option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte.
+      option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte oder des Furnierblattes.
       option_optimization: Optimierungsstufe
       option_optimization_help: "Die Optimierungsstufe definiert die Anzahl der berechneten Möglichkeiten und damit auch die Berechnungszeit."
       option_optimization_0: Mittel
@@ -817,10 +817,10 @@ tab:
       option_scrap_sheet_veneer_sizes: Furnierreste
       option_scrap_sheet_sizes_placeholder: Länge x Breite x Anzahl ; ...
       option_scrap_sheet_sizes_help: |
-        Führen Sie hier die Liste der Platten- oder Furnierreste auf, die Sie verwenden möchten.
-        Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
-        Die Mengenangabe ist optional.
-        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+         Geben Sie hier die Liste der Platten- oder Furnierreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
+         Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
+         Die Mengenangabe ist optional.
+         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       tooltip:
         scroll_to_block_1d: Zur ersten Stange oder Kantenband blättern
         scroll_to_block_2d: Zur ersten Platte blättern
@@ -837,7 +837,7 @@ tab:
         total_area: Σ Flächen
         total_part_count: "# Teile"
         total_used: Insgesamt verwendet
-        trimming: Seitenrandbreite
+        trimming: Rand
         stats: Statistiken
         total_cut_count: Anzahl Schnitte
         total_cut_length: Schnittlänge
@@ -1008,7 +1008,7 @@ tab:
       option_irregular_allow_mirroring_help: |
         Bestimmt ob eine Spiegelung des Teils erlaubt ist.
       option_spacing: Abstand
-      option_spacing_help: Minimaler Abstand zwischen den Teilen.
+      option_spacing_help: Mindestabstand zwischen den einzelnen Teilen.
       option_trimming: Randabfallbreite
       option_trimming_1d_help: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
       option_trimming_2d_help: Breite des Säuberungsschnittes auf allen vier Seiten der Platte oder des Furnierblattes.
@@ -1023,7 +1023,7 @@ tab:
       option_hide_part_list_1: Maskiert
       option_hide_part_list_1d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Stange oder jedes Kantenband.
       option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte oder jedes Furnierblatt.
-      option_part_drawing_type: Form der Teile
+      option_part_drawing_type: Formen der Teile
       option_part_drawing_type_0: Maskiert
       option_part_drawing_type_1: Draufsicht
       option_part_drawing_type_2: Untersicht
@@ -1074,11 +1074,70 @@ tab:
         bin_2d_sheet_good_type_0: Standard-Platte
         bin_2d_sheet_good_type_1: Plattenrest
         bin_2d_veneer: Furnierblatt
-        bin_2d_veneer_type_0: Standar-Furnierblatt
+        bin_2d_veneer_type_0: Standard-Furnierblatt
         bin_2d_veneer_type_1: Furnierrest
         unused: Nicht verwendet
         parts: "{{ count }} Teil"
         parts_plural: "{{ count }} Teile"
+      write:
+        title: Schnittplan exportieren
+        info_0: |
+          Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG](https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://de.wikipedia.org/wiki/DXF) exportieren.
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: DXF Struktur
+        option_dxf_structure_1: Layers
+        option_dxf_structure_2: Layers + Blöcke
+        option_dxf_structure_help: |
+          Auswahl der DXF-Dateistruktur.
+
+          - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layers. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
+          - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_bin_sheet_good: Platte
+        option_bin_sheet_good_help: |
+          Ermöglicht den Export von Platten zu aktivieren und deren Farbe anzugeben.
+        option_bin_veneer: Furnierblatt
+        option_bin_veneer_help: |
+          Ermöglicht den Export von Furnierblätter zu aktivieren und deren Farbe anzugeben.
+        option_bin_dimensional: Stange
+        option_bin_dimensional_help: |
+          Ermöglicht den Export von Stangen zu aktivieren und deren Farbe anzugeben.
+        option_bin_edge: Kantenband
+        option_bin_edge_help: |
+          Ermöglicht den Export von Kanten zu aktivieren und deren Farbe anzugeben.
+        option_parts: Teile
+        option_parts_help: |
+          Ermöglicht den Export von Teilen zu aktivieren und deren Farbe anzugeben.
+        option_parts_holes: Bohrungen
+        option_parts_holes_help: |
+          Auswahl der Farbe von Bohrungen.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Bezeichner
+        option_texts_help: |
+          Ermöglicht den Export von Texten zur Identifizierung von Teilen zu aktivieren sowie deren Farben anzugeben.
+        option_leftovers: Verschnitte
+        option_leftovers_help: |
+          Ermöglicht den Export von Verschnitten zu aktivieren und deren Farbe anzugeben.
+        option_cuts: Schnitte
+        option_cuts_help: |
+          Ermöglicht den Export von Schnitten zu aktivieren und deren Farbe anzugeben.
+        warning:
+          is_bin_selection: "**Ausgeblendete Platten** werden nicht exportiert."
       error:
         no_part: Kein Teil.
         no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zu Verfügung.
@@ -1854,7 +1913,7 @@ tool:
     action_2_status: Volumen auf der Basis einer polygonalen Form zeichnen
     action_2_state_1_status: Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
     action_x_state_2_status: Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
-    action_option_group_offset: Verschiebung
+    action_option_group_offset: Versatz
     action_option_group_segments: Segmente
     action_option_group_options: Optionen
     action_option_offset_shape_offset: Versatz
@@ -1867,7 +1926,7 @@ tool:
     action_option_options_rectangle_centered_status: Rechteck auf den ersten Punkt zentrieren
     action_option_options_smoothing: Glätten
     action_option_options_smoothing_status: Kurven glätten
-    action_option_options_measure_from_diameter: Messung nach dem Durchmesser
+    action_option_options_measure_from_diameter: Maß
     action_option_options_measure_from_diameter_status: Den Kreis nach seinem Durchmesser messen
     action_option_options_measure_from_radius_status: Messung nach dem Radius
     action_option_options_measure_reversed: Invertierte Messung
@@ -1941,8 +2000,8 @@ tool:
     action_4: Säubern
     action_4_status: "Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu entfernen"
     action_option_group_instances: Anzahl der Instanzen
-    action_option_group_edges: Anzahl der Kantenbänder
-    action_option_group_faces: Anzahl der Flächen
+    action_option_group_edges: Anzahl Kantenbänder
+    action_option_group_faces: Anzahl Flächen
     action_option_instances_0_status: Nur die Instanz des ausgewählten Teils einfärben
     action_option_instances_1_status: Alle Instanzen des ausgewählten Teils einfärben
     action_option_edges_0_status: Nur die ausgewählte Kante einfärben
@@ -1959,7 +2018,7 @@ tool:
     faces: "{{ count }} Fläche"
     faces_plural: "{{ count }} Flächen"
     face_zmin: Rückseite
-    face_zmax: Vorderansicht
+    face_zmax: Vorderseite
     warning:
       no_material: Kein Material
       no_material_type: "Kein Material des Typs '{{ type }}'"
