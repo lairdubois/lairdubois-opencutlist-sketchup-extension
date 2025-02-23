@@ -1254,7 +1254,7 @@ namespace Packy {
                         // Leftover
                         if (&item == &bin.items.back()) {
                             j_leftovers.emplace_back(json{
-                                    {"x",     fake_trimming_ + item.start + item_type.length},
+                                    {"x",     to_length_dbl(fake_trimming_ + item.start + item_type.length)},
                                     {"width", to_length_dbl(bin_type.length - (item.start + item_type.length))},
                             });
                         }

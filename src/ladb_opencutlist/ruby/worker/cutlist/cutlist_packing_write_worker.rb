@@ -157,6 +157,7 @@ module Ladb::OpenCutList
 
       packing_def = @packing.def
       options_def = packing_def.solution_def.options_def
+      is_1d = options_def.problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
 
       unit_sign, unit_factor = _svg_get_unit_sign_and_factor(@unit)
       unit_transformation = Geom::Transformation.scaling(unit_factor, unit_factor, 1.0)
@@ -204,7 +205,7 @@ module Ladb::OpenCutList
           id = _svg_sanitize_identifier("#{LAYER_PART}_#{part.number.to_s.rjust(3, '_')}")
 
           item_length = item_type_def.length
-          item_width = item_type_def.width
+          item_width = is_1d ? bin_width : item_type_def.width
           item_x = item_def.x
           item_y = item_def.y
 
@@ -293,7 +294,7 @@ module Ladb::OpenCutList
           bin_def.leftover_defs.each do |leftover_def|
 
             leftover_rect_width = leftover_def.length
-            leftover_rect_height = leftover_def.width
+            leftover_rect_height = is_1d ? bin_width : leftover_def.width
             leftover_rect_x = _compute_x_with_origin_corner(options_def.problem_type, options_def.origin_corner, leftover_def.x, leftover_rect_width, bin_length)
             leftover_rect_y = _compute_y_with_origin_corner(options_def.problem_type, options_def.origin_corner, leftover_def.y, leftover_rect_height, bin_width)
 
