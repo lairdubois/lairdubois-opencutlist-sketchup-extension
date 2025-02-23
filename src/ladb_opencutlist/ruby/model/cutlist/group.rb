@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
   require_relative '../../utils/dimension_utils'
@@ -7,7 +8,7 @@ module Ladb::OpenCutList
   require_relative '../../utils/price_utils'
   require_relative '../../utils/color_utils'
 
-  class Group
+  class Group < DataContainer
 
     include DefHelper
     include HashableHelper

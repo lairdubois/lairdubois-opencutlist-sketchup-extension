@@ -1,8 +1,9 @@
 module Ladb::OpenCutList
 
   require 'digest'
+  require_relative '../data_container'
 
-  class PartDef
+  class PartDef < DataContainer
 
     EDGES_Y = [ :ymin, :ymax ]
     EDGES_X = [ :xmin, :xmax ]

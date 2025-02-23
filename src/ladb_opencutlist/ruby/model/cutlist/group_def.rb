@@ -1,8 +1,9 @@
 module Ladb::OpenCutList
 
   require 'digest'
+  require_relative '../data_container'
 
-  class GroupDef
+  class GroupDef < DataContainer
 
     attr_accessor :material, :material_attributes, :part_count, :std_available, :std_dimension_stipped_name, :std_dimension, :std_dimension_real, :std_dimension_rounded, :std_width, :std_thickness, :max_number, :total_cutting_length, :total_cutting_area, :total_cutting_volume, :total_final_area, :invalid_final_area_part_count, :show_cutting_dimensions, :show_edges, :edge_decremented, :show_faces, :face_decremented
     attr_reader :id, :part_defs

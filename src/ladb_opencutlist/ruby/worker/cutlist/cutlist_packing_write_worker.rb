@@ -370,7 +370,283 @@ module Ladb::OpenCutList
     end
 
     def _write_to_dxf_file(file, bin_def)
-      # TODO
+
+      packing_def = @packing.def
+      options_def = packing_def.solution_def.options_def
+      is_1d = options_def.problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
+
+      unit_factor = _dxf_get_unit_factor(@unit)
+      unit_transformation = Geom::Transformation.scaling(ORIGIN, unit_factor, unit_factor, 1.0)
+
+      bin_type_def = bin_def.bin_type_def
+
+      bin_length = bin_type_def.length
+      bin_width = bin_type_def.width
+
+      bin_size = Geom::Point3d.new(
+        bin_type_def.length,
+        bin_type_def.width
+      ).transform(unit_transformation)
+
+      min = Geom::Point3d.new
+      max = Geom::Point3d.new(bin_size.x, bin_size.y)
+
+      layer_defs = []
+      layer_defs << DxfLayerDef.new(LAYER_BIN, @bin_stroke_color) unless @bin_hidden
+      layer_defs << DxfLayerDef.new(LAYER_PART, @parts_stroke_color) unless @parts_hidden || @dxf_structure == DXF_STRUCTURE_LAYER
+      layer_defs << DxfLayerDef.new(LAYER_LEFTOVER, @leftovers_stroke_color) unless @leftovers_hidden
+      layer_defs << DxfLayerDef.new(LAYER_CUT, @cuts_color) unless @cuts_hidden
+      layer_defs << DxfLayerDef.new(LAYER_TEXT, @texts_color) unless @parts_hidden || @texts_hidden
+
+      unless @parts_hidden
+        depth_layer_defs = []
+        bin_def.item_defs.uniq { |item_def| item_def.item_type_def.part.id }.each do |item_def|
+          projection_def = item_def.item_type_def.projection_def
+          if projection_def.is_a?(DrawingProjectionDef)
+            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, @parts_holes_stroke_color, @parts_paths_stroke_color, unit_transformation, LAYER_PART))
+          end
+        end
+        layer_defs.concat(depth_layer_defs.uniq { |layer_def| layer_def.name })
+      end
+
+      fn_part_block_name = lambda do |part|
+        _dxf_sanitize_identifier("#{LAYER_PART}_#{part.number.to_s.rjust(3, '_')}")
+      end
+
+      _dxf_write_start(file)
+      _dxf_write_section_header(file, @unit, min, max)
+      _dxf_write_section_classes(file)
+      _dxf_write_section_tables(file, min, max, layer_defs) do |owner_id|
+
+        if @dxf_structure == DXF_STRUCTURE_LAYER_AND_BLOCK
+
+          unless @parts_hidden
+            bin_def.item_defs.uniq { |item_def| item_def.item_type_def.part.id }.each do |item_def|
+              projection_def = item_def.item_type_def.projection_def
+              if projection_def.is_a?(DrawingProjectionDef)
+                _dxf_write_projection_def_block_record(file, projection_def, fn_part_block_name.call(item_def.item_type_def.part), owner_id)
+              else
+                _dxf_write_section_tables_block_record(file, fn_part_block_name.call(item_def.item_type_def.part), owner_id)
+              end
+            end
+          end
+
+        end
+
+      end
+      _dxf_write_section_blocks(file) do
+
+        if @dxf_structure == DXF_STRUCTURE_LAYER_AND_BLOCK
+
+          unless @parts_hidden
+            bin_def.item_defs.uniq { |item_def| item_def.item_type_def.part.id }.each do |item_def|
+
+              item_type_def = item_def.item_type_def
+              projection_def = item_type_def.projection_def
+              part = item_type_def.part
+              part_def = part.def
+              text = _evaluate_item_text(options_def.items_formula, part, item_def.instance_info)
+
+              item_length = item_type_def.length
+              item_width = is_1d ? bin_width : item_type_def.width
+
+              part_length = part_def.size.length
+              part_width = part_def.size.width
+
+              t = Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees)
+              t *= Geom::Transformation.scaling(-1.0, 1.0, 1.0) if item_def.mirror
+              pts = [
+                Geom::Point3d.new(0, 0),
+                Geom::Point3d.new(item_length, 0),
+                Geom::Point3d.new(item_length, item_width),
+                Geom::Point3d.new(0, item_width),
+              ]
+              pts.each { |pt| pt.transform!(t) }
+              bounds = Geom::BoundingBox.new.add(pts)
+
+              item_rect_width = bounds.width.to_f
+              item_rect_height = bounds.height.to_f
+
+              size = Geom::Point3d.new(
+                item_rect_width,
+                item_rect_height
+              ).transform(unit_transformation)
+
+              if projection_def.is_a?(DrawingProjectionDef)
+
+                transformation = unit_transformation
+                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(item_rect_width / 2, item_rect_height / 2))
+                transformation *= Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees) if item_def.angle != 0
+                transformation *= Geom::Transformation.scaling(-1.0, 1.0, 1.0) if item_def.mirror
+                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(-part_length / 2, -part_width / 2))
+
+                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, unit_transformation, LAYER_PART) do
+                  _dxf_write_label(file, 0, 0, size.x, size.y, text, (item_def.angle % 180) != 0, LAYER_TEXT) unless @texts_hidden
+                end
+
+              else
+
+                _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
+                  _dxf_write_rect(file, 0, 0, size.x, size.y, LAYER_PART)
+                  _dxf_write_label(file, 0, 0, size.x, size.y, text, (item_def.angle % 180) != 0, LAYER_TEXT) unless @texts_hidden
+                end
+
+              end
+
+            end
+          end
+
+        end
+
+      end
+      _dxf_write_section_entities(file) do
+
+        unless @bin_hidden
+          _dxf_write_rect(file, 0, 0, bin_size.x, bin_size.y, LAYER_BIN)
+        end
+
+        unless @parts_hidden
+          bin_def.item_defs.each do |item_def|
+
+            item_type_def = item_def.item_type_def
+            projection_def = item_type_def.projection_def
+            part = item_type_def.part
+            part_def = part.def
+
+            item_length = item_type_def.length
+            item_width = is_1d ? bin_width : item_type_def.width
+
+            if @dxf_structure == DXF_STRUCTURE_LAYER_AND_BLOCK
+
+              position = Geom::Point3d.new(
+                item_def.x,
+                item_def.y
+              ).transform(unit_transformation)
+
+              _dxf_write_insert(file, fn_part_block_name.call(part), position.x, position.y, 0, LAYER_PART)
+
+            else
+
+              text = _evaluate_item_text(options_def.items_formula, part, item_def.instance_info)
+
+              item_x = item_def.x
+              item_y = item_def.y
+
+              part_length = part_def.size.length
+              part_width = part_def.size.width
+
+              t = Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees)
+              t *= Geom::Transformation.scaling(-1.0, 1.0, 1.0) if item_def.mirror
+              pts = [
+                Geom::Point3d.new(0, 0),
+                Geom::Point3d.new(item_length, 0),
+                Geom::Point3d.new(item_length, item_width),
+                Geom::Point3d.new(0, item_width),
+              ]
+              pts.each { |pt| pt.transform!(t) }
+              bounds = Geom::BoundingBox.new.add(pts)
+
+              item_rect_width = bounds.width.to_f
+              item_rect_height = bounds.height.to_f
+              item_rect_x = _compute_x_with_origin_corner(options_def.problem_type, options_def.origin_corner, item_x + bounds.min.x.to_f, item_rect_width, bin_length)
+              item_rect_y = _compute_y_with_origin_corner(options_def.problem_type, options_def.origin_corner, item_y + bounds.min.y.to_f, item_rect_height, bin_width)
+
+              position = Geom::Point3d.new(
+                item_rect_x,
+                item_rect_y
+              ).transform(unit_transformation)
+              size = Geom::Point3d.new(
+                item_rect_width,
+                item_rect_height
+              ).transform(unit_transformation)
+
+              if projection_def.is_a?(DrawingProjectionDef)
+
+                transformation = unit_transformation
+                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(item_rect_x, item_rect_y))
+                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(item_rect_width / 2, item_rect_height / 2))
+                transformation *= Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees) if item_def.angle != 0
+                transformation *= Geom::Transformation.scaling(-1.0, 1.0, 1.0) if item_def.mirror
+                transformation *= Geom::Transformation.translation(Geom::Vector3d.new(-part_length / 2, -part_width / 2))
+
+                _dxf_write_projection_def_geometry(file, projection_def, @smoothing, transformation, unit_transformation, LAYER_PART)
+
+              else
+
+                _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_PART)
+
+              end
+
+              _dxf_write_label(file, position.x, position.y, size.x, size.y, text, (item_def.angle % 180) != 0, LAYER_TEXT) unless @texts_hidden
+
+            end
+
+          end
+        end
+
+        unless @leftovers_hidden
+          bin_def.leftover_defs.each do |leftover_def|
+
+            leftover_rect_width = leftover_def.length
+            leftover_rect_height = is_1d ? bin_width : leftover_def.width
+            leftover_rect_x = _compute_x_with_origin_corner(options_def.problem_type, options_def.origin_corner, leftover_def.x, leftover_rect_width, bin_length)
+            leftover_rect_y = _compute_y_with_origin_corner(options_def.problem_type, options_def.origin_corner, leftover_def.y, leftover_rect_height, bin_width)
+
+            position = Geom::Point3d.new(
+              leftover_rect_x,
+              leftover_rect_y
+            ).transform(unit_transformation)
+            size = Geom::Point3d.new(
+              leftover_rect_width,
+              leftover_rect_height
+            ).transform(unit_transformation)
+
+            _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_LEFTOVER)
+
+          end
+        end
+
+        unless @cuts_hidden
+          bin_def.cut_defs.each do |cut_def|
+
+            if cut_def.horizontal?
+              cut_rect_width = cut_def.length
+              cut_rect_height = options_def.spacing
+            else
+              cut_rect_width = options_def.spacing
+              cut_rect_height = cut_def.length
+            end
+            cut_rect_x = _compute_x_with_origin_corner(options_def.problem_type, options_def.origin_corner, cut_def.x, cut_rect_width, bin_length)
+            cut_rect_y = _compute_y_with_origin_corner(options_def.problem_type, options_def.origin_corner, cut_def.y, cut_rect_height, bin_width)
+
+            case options_def.origin_corner
+            when ORIGIN_CORNER_TOP_LEFT
+              cut_rect_y += cut_rect_height if cut_def.horizontal?
+            when ORIGIN_CORNER_TOP_RIGHT
+              cut_rect_x += cut_rect_width if cut_def.vertical?
+              cut_rect_y += cut_rect_height if cut_def.horizontal?
+            when ORIGIN_CORNER_BOTTOM_RIGHT
+              cut_rect_x += cut_rect_width if cut_def.vertical?
+            end
+
+            position1 = Geom::Point3d.new(
+              cut_rect_x,
+              cut_rect_y
+            ).transform(unit_transformation)
+            position2 = Geom::Point3d.new(
+              cut_rect_x + (cut_def.horizontal? ? cut_def.length : 0),
+              cut_rect_y + (cut_def.vertical? ? cut_def.length : 0)
+            ).transform(unit_transformation)
+
+            _dxf_write_line(file, position1.x, position1.y, position2.x, position2.y, LAYER_CUT)
+
+          end
+        end
+
+      end
+      _dxf_write_section_objects(file)
+      _dxf_write_end(file)
+
     end
 
   end

@@ -1,12 +1,13 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
   require_relative '../../utils/dimension_utils'
   require_relative '../../utils/price_utils'
   require_relative '../../utils/unit_utils'
 
-  class Packing
+  class Packing < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -29,7 +30,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingSolution
+  class PackingSolution < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -52,7 +53,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingOptions
+  class PackingOptions < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -79,7 +80,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingSummary
+  class PackingSummary < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -112,7 +113,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingSummaryBinType
+  class PackingSummaryBinType < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -142,7 +143,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingBin
+  class PackingBin < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -180,7 +181,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class Packingtem
+  class Packingtem < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -201,7 +202,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingLeftover
+  class PackingLeftover < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -222,7 +223,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingCut
+  class PackingCut < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -244,7 +245,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingPartInfo
+  class PackingPartInfo < DataContainer
 
     include DefHelper
     include HashableHelper

@@ -1,8 +1,9 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative '../../helper/hashable_helper'
 
-  class Cutlist
+  class Cutlist < DataContainer
 
     include HashableHelper
 

@@ -1,8 +1,9 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative 'packing'
 
-  class PackingDef
+  class PackingDef < DataContainer
 
     attr_reader :group, :errors, :running, :cancelled, :solution_def
 
@@ -28,7 +29,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingSolutionDef
+  class PackingSolutionDef < DataContainer
 
     attr_reader :options_def, :summary_def, :bin_defs, :unplaced_part_info_defs
 
@@ -55,7 +56,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingOptionsDef
+  class PackingOptionsDef < DataContainer
 
     attr_reader :problem_type, :spacing, :trimming, :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner
 
@@ -84,7 +85,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingSummaryDef
+  class PackingSummaryDef < DataContainer
 
     attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :bin_type_defs
     attr_accessor :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_count, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count
@@ -110,8 +111,6 @@ module Ladb::OpenCutList
       @total_used_cost = 0
       @total_used_item_count = 0
 
-      # @bin_type_defs = []
-
     end
 
     # ---
@@ -124,7 +123,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingSummaryBinTypeDef
+  class PackingSummaryBinTypeDef < DataContainer
 
     attr_reader :bin_type_def, :count, :used, :std_price, :total_area, :total_length, :total_cost, :total_item_count
 
@@ -153,7 +152,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingBinDef
+  class PackingBinDef < DataContainer
 
     attr_reader :bin_type_def, :count, :efficiency, :item_defs, :leftover_defs, :cut_defs, :part_info_defs, :total_cut_length, :x_max, :y_max
     attr_accessor :svg, :light_svg
@@ -192,7 +191,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingItemDef
+  class PackingItemDef < DataContainer
 
     attr_reader :item_type_def, :instance_info, :x, :y, :angle, :mirror
 
@@ -218,7 +217,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingLeftoverDef
+  class PackingLeftoverDef < DataContainer
 
     attr_reader :x, :y, :length, :width
 
@@ -241,7 +240,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingCutDef
+  class PackingCutDef < DataContainer
 
     attr_reader :depth, :x, :y, :length, :orientation
 
@@ -273,7 +272,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingPartInfoDef
+  class PackingPartInfoDef < DataContainer
 
     attr_reader :_sorter, :part, :count
 
