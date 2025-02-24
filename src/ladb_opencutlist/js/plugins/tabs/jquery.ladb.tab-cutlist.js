@@ -5270,7 +5270,7 @@
 
                             // Count hidden groups
                             const hiddenBinIndices = [];
-                            $('.ladb-cutlist-cuttingdiagram-group', $slide).each(function () {
+                            $('.ladb-cutlist-packing-group', $slide).each(function () {
                                 if ($(this).hasClass('no-print')) {
                                     hiddenBinIndices.push($(this).data('bin-index'));
                                 }
@@ -5284,7 +5284,7 @@
 
                                 const $modal = that.appendModalInside('ladb_cutlist_modal_packing_export', 'tabs/cutlist/_modal-packing-write.twig', {
                                     group: group,
-                                    isSheetSelection: isBinSelection,
+                                    isBinSelection: isBinSelection,
                                 });
 
                                 // Fetch UI elements

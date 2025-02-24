@@ -85,7 +85,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_area, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :bin_types
+    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_area, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count, :bin_types
 
     def initialize(_def)
       @_def = _def
@@ -104,6 +104,7 @@ module Ladb::OpenCutList
       @total_used_length = _def.total_used_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_used_length) : nil
       @total_used_cost = _def.total_used_cost > 0 ? PriceUtils.format_to_readable_price(_def.total_used_cost) : nil
       @total_used_item_count = _def.total_used_item_count
+      @total_unused_item_count = _def.total_unused_item_count
 
       @bin_types = _def.bin_type_defs.map { |bin_type_def| bin_type_def.create_summary_bin_type }
 

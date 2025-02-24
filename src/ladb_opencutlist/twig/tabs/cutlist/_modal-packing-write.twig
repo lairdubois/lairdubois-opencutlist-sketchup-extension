@@ -2,7 +2,6 @@
 
 {% set id = 'ladb_cutlist_modal_packing_export' %}
 {% set title = ('tab.cutlist.packing.write.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~' / '~group.std_dimension~'</small>' %}
-{% set binStrippedname = group.material_type == 6 ? 'veneer' : 'sheet_good' %}  {# 6 = TYPE_VENEER #}
 
 {% block headerToolsInner %}
     {% include 'components/_widget-preset.twig' %}
@@ -91,11 +90,11 @@
                 <label class="col-xs-4 text-center ladb-form-fill-color"><i class="ladb-opencutlist-icon-fill"></i> {{ 'default.fill_color'|i18next }}</label>
             </div>
             <div class="form-group">
-                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.packing.write.option_bin_'~binStrippedname~'_help')|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.packing.write.option_bin_'~group.material_type_strippedname~'_help')|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                 <div class="col-xs-3">
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" id="ladb_input_bin_hidden">{{ ('tab.cutlist.packing.write.option_bin_'~binStrippedname)|i18next }}
+                            <input type="checkbox" id="ladb_input_bin_hidden">{{ ('tab.cutlist.packing.write.option_bin_'~group.material_type_strippedname)|i18next }}
                         </label>
                     </div>
                 </div>

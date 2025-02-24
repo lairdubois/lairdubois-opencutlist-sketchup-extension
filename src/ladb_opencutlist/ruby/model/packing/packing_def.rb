@@ -32,17 +32,16 @@ module Ladb::OpenCutList
   class PackingSolutionDef < DataContainer
 
     attr_reader :options_def, :summary_def, :bin_defs, :unplaced_part_info_defs
+    attr_accessor :total_unplaced_part_count
 
-    def initialize(options_def:, summary_def:, bin_defs:)
+    def initialize(options_def:, summary_def:, unplaced_part_info_defs:, bin_defs:)
 
       @options_def = options_def
       @summary_def = summary_def
 
+      @unplaced_part_info_defs = unplaced_part_info_defs
+
       @bin_defs = bin_defs
-
-      # Computed
-
-      @unplaced_part_info_defs = []
 
     end
 
@@ -88,7 +87,7 @@ module Ladb::OpenCutList
   class PackingSummaryDef < DataContainer
 
     attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :bin_type_defs
-    attr_accessor :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_count, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count
+    attr_accessor :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_count, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count
 
     def initialize(time:, total_bin_count:, total_item_count:, total_efficiency:, bin_type_defs:)
 
@@ -110,6 +109,7 @@ module Ladb::OpenCutList
       @total_used_length = 0
       @total_used_cost = 0
       @total_used_item_count = 0
+      @total_unused_item_count = 0
 
     end
 

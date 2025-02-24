@@ -6,10 +6,19 @@ module Ladb::OpenCutList::Fiddle
   module Packy
     extend ClipperWrapper
 
-    PROBLEM_TYPE_RECTANGLE = 'rectangle'
-    PROBLEM_TYPE_RECTANGLEGUILLOTINE = 'rectangleguillotine'
-    PROBLEM_TYPE_IRREGULAR = 'irregular'
-    PROBLEM_TYPE_ONEDIMENSIONAL = 'onedimensional'
+    PROBLEM_TYPE_RECTANGLE = 'rectangle'.freeze
+    PROBLEM_TYPE_RECTANGLEGUILLOTINE = 'rectangleguillotine'.freeze
+    PROBLEM_TYPE_IRREGULAR = 'irregular'.freeze
+    PROBLEM_TYPE_ONEDIMENSIONAL = 'onedimensional'.freeze
+
+    OPTIMIZATION_MODE_ANYTIME = 'anytime'.freeze
+    OPTIMIZATION_MODE_NOT_ANYTIME = 'not-anytime'.freeze
+    OPTIMIZATION_MODE_NOT_ANYTIME_SEQUENTIAL = 'not-anytime-sequential'.freeze
+
+    OBJECTIVE_BIN_PACKING = 'bin-packing'.freeze
+    OBJECTIVE_BIN_PACKING_WITH_LEFTOVERS = 'bin-packing-with-leftovers'.freeze
+    OBJECTIVE_VARIABLE_SIZED_BIN_PACKING = 'variable-sized-bin-packing'.freeze
+    OBJECTIVE_KNAPSACK = 'knapsack'.freeze
 
     @cached_outputs = {}
     @running_input_md5 = nil

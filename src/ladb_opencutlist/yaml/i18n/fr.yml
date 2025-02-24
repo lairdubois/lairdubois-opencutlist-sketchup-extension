@@ -1050,6 +1050,8 @@ tab:
         scroll_to_block_1d: Défiler vers la première barre ou bande
         scroll_to_block_2d: Défiler vers le premier panneau ou feuille
       list:
+        unplaced_parts: Pièce non placée
+        unplaced_parts_plural: Pièces non placées
         summary: Récapitulatif
         trimming: Marge
         stats: Statistiques
@@ -1137,7 +1139,7 @@ tab:
         option_cuts_help: |
           Permet d'activer l'exportation des coupes ainsi que de choisir leur couleur.
         warning:
-          is_bin_selection: Les **panneaux masqués** ne seront pas exportés.
+          is_bin_selection: Les **blocs masqués** ne seront pas exportés.
       error:
         no_part: Aucune pièce.
         no_bin_1d: Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.

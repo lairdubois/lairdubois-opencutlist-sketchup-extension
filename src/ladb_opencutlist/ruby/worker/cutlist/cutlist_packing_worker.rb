@@ -211,8 +211,8 @@ module Ladb::OpenCutList
                    scrap_bin_2d_sizes: '',
 
                    problem_type: Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE,
-                   optimization_mode: 'not-anytime',
-                   objective: 'bin-packing',
+                   optimization_mode: Packy::OPTIMIZATION_MODE_NOT_ANYTIME,
+                   objective: Packy::OBJECTIVE_BIN_PACKING_WITH_LEFTOVERS,
                    spacing: '20mm',
                    trimming: '10mm',
                    time_limit: 20,
@@ -225,7 +225,7 @@ module Ladb::OpenCutList
                    colorization: COLORIZATION_SCREEN,
                    origin_corner: ORIGIN_CORNER_TOP_LEFT,
 
-                   rectangleguillotine_cut_type: 'exact',
+                   rectangleguillotine_cut_type: 'non-exact',
                    rectangleguillotine_number_of_stages: 3,
                    rectangleguillotine_first_stage_orientation: 'horizontal',
 
@@ -256,7 +256,7 @@ module Ladb::OpenCutList
       @hide_part_list = hide_part_list
       @part_drawing_type = part_drawing_type.to_i
       @colorization = colorization
-      @origin_corner = origin_corner.to_i
+      @origin_corner = problem_type == Packy::PROBLEM_TYPE_IRREGULAR ? ORIGIN_CORNER_BOTTOM_LEFT : origin_corner.to_i   # Force origin corner to BOTTOM LEFT if IRREGULAR
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_number_of_stages = [ [ 2, rectangleguillotine_number_of_stages.to_i ].max, 3 ].min
@@ -568,6 +568,12 @@ module Ladb::OpenCutList
               defs
             }.flatten(1).sort_by!{ |bin_type_def| [ bin_type_def.used ? 1 : 0, -bin_type_def.bin_type_def.type, bin_type_def.bin_type_def.length ]} : []
           ),
+          unplaced_part_info_defs: raw_solution['item_types_stats'].is_a?(Array) ? raw_solution['item_types_stats'].map { |raw_item_type_stats|
+            item_type_def = @item_type_defs[raw_item_type_stats['item_type_id']]
+            unused_copies = raw_item_type_stats.fetch('unused_copies', 0)
+            next if unused_copies == 0
+            PackingPartInfoDef.new(part: item_type_def.part, count: unused_copies)
+          }.compact.sort_by! { |part_info_def| part_info_def._sorter } : [],
           bin_defs: raw_solution['bins'].map { |raw_bin|
             bin_type_def = @bin_type_defs[raw_bin['bin_type_id']]
             PackingBinDef.new(
@@ -620,17 +626,7 @@ module Ladb::OpenCutList
 
       # Computed values
 
-      item_type_uses = @item_type_defs.map { |item_type_def| [ item_type_def, 0 ] }.to_h
-      bin_type_uses = @bin_type_defs.map { |bin_type_def| [ bin_type_def, [ 0, 0 ] ] }.to_h
-
       packing_def.solution_def.bin_defs.each do |bin_def|
-
-        bin_def.item_defs.each do |item_def|
-          item_type_uses[item_def.item_type_def] += bin_def.count # placed_count
-        end
-
-        bin_type_uses[bin_def.bin_type_def][0] += bin_def.count                             # used_count
-        bin_type_uses[bin_def.bin_type_def][1] += bin_def.count * bin_def.item_defs.length  # total_item_count
 
         bin_def.svg = _render_bin_def_svg(bin_def, false) unless running
         bin_def.light_svg = _render_bin_def_svg(bin_def, true)
@@ -641,15 +637,6 @@ module Ladb::OpenCutList
 
       end
 
-      # Process items usage
-      item_type_uses.each do |item_type_def, placed_count|
-
-        unplaced_count = item_type_def.count - placed_count
-        packing_def.solution_def.unplaced_part_info_defs << PackingPartInfoDef.new(part: item_type_def.part, count: unplaced_count) if unplaced_count > 0
-
-      end
-      packing_def.solution_def.unplaced_part_info_defs.sort_by! { |part_info_def| part_info_def._sorter }
-
       # Sum bins stats
       packing_def.solution_def.summary_def.bin_type_defs.each do |bin_type_def|
         next unless bin_type_def.used
@@ -658,6 +645,11 @@ module Ladb::OpenCutList
         packing_def.solution_def.summary_def.total_used_length += bin_type_def.total_length
         packing_def.solution_def.summary_def.total_used_cost += bin_type_def.total_cost
         packing_def.solution_def.summary_def.total_used_item_count += bin_type_def.total_item_count
+      end
+
+      # Sum item stats
+      packing_def.solution_def.unplaced_part_info_defs.each do |part_info_def|
+        packing_def.solution_def.summary_def.total_unused_item_count += part_info_def.count
       end
 
       packing_def.create_packing
