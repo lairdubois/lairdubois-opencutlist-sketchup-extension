@@ -675,8 +675,8 @@ namespace Packy {
 
                 // Add x_max and y_max attributes to the last bin
                 if (bin_pos == solution.number_of_different_bins() - 1) {
-                    j_bin["x_max"] = to_length_dbl(solution.x_max());
-                    j_bin["y_max"] = to_length_dbl(solution.y_max());
+                    j_bin["x_max"] = to_length_dbl(fake_trimming_ + solution.x_max() - fake_spacing_);
+                    j_bin["y_max"] = to_length_dbl(fake_trimming_ + solution.y_max() - fake_spacing_);
                 }
 
                 basic_json<>& j_items = j_bin["items"] = json::array();
