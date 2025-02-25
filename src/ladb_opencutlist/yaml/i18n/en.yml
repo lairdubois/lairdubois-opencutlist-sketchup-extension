@@ -1050,6 +1050,8 @@ tab:
         scroll_to_block_1d: Scroll to first board or edge banding
         scroll_to_block_2d: Scroll to first panel or veneer sheet
       list:
+        unplaced_parts: Unplaced Part
+        unplaced_parts_plural: Unplaced Parts
         summary: Summary
         trimming: Trimming
         stats: Statistics
@@ -1137,7 +1139,7 @@ tab:
         option_cuts_help: |
           Enables export of cuts and color selection.
         warning:
-          is_bin_selection: The **hidden panels** will not be exported.
+          is_bin_selection: The **hidden elements** will not be exported.
       error:
         no_part: No part.
         no_bin_1d: No standard board or edge banding was selected and no off-cuts were available.
