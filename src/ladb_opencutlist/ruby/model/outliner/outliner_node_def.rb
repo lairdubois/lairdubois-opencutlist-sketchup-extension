@@ -2,10 +2,11 @@ module Ladb::OpenCutList
 
   require 'digest'
 
+  require_relative '../data_container'
   require_relative 'outliner_node'
   require_relative '../../utils/path_utils'
 
-  class AbstractOutlinerNodeDef
+  class AbstractOutlinerNodeDef < DataContainer
 
     TYPE_MODEL     = 0
     TYPE_GROUP     = 1

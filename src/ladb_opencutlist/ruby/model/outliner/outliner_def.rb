@@ -1,8 +1,9 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative 'outliner'
 
-  class OutlinerDef
+  class OutlinerDef < DataContainer
 
     attr_accessor :root_node_def, :active_node_def
     attr_reader :errors, :warnings, :tips, :filename, :model_name, :available_material_defs, :available_layer_defs, :selected_node_defs

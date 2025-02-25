@@ -1,8 +1,9 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative 'report_entry'
 
-  class AbstractReportItemDef
+  class AbstractReportItemDef < DataContainer
 
     attr_accessor :total_mass, :total_used_mass, :total_cost, :total_used_cost
 

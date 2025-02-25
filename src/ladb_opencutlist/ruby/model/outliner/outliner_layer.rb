@@ -1,10 +1,11 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
   require_relative '../../utils/color_utils'
 
-  class OutlinerLayer
+  class OutlinerLayer < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -25,7 +26,7 @@ module Ladb::OpenCutList
 
   end
 
-  class OutlinerLayerFolder
+  class OutlinerLayerFolder < DataContainer
 
     include DefHelper
     include HashableHelper

@@ -1,10 +1,11 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative '../../helper/def_helper'
   require_relative '../../helper/hashable_helper'
   require_relative '../attributes/definition_attributes'
 
-  class AbstractOutlinerNode
+  class AbstractOutlinerNode < DataContainer
 
     include DefHelper
     include HashableHelper

@@ -7,7 +7,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/svg_writer_helper'
   require_relative '../../utils/color_utils'
 
-  class CutlistPackingWriteWorker < CutlistPackingService
+  class CutlistPackingWriteWorker < AbstractCutlistPackingWorker
 
     include SanitizerHelper
     include DxfWriterHelper
@@ -212,16 +212,7 @@ module Ladb::OpenCutList
           part_length = part_def.size.length
           part_width = part_def.size.width
 
-          t = Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees)
-          t *= Geom::Transformation.scaling(-1.0, 1.0, 1.0) if item_def.mirror
-          pts = [
-            Geom::Point3d.new(0, 0),
-            Geom::Point3d.new(item_length, 0),
-            Geom::Point3d.new(item_length, item_width),
-            Geom::Point3d.new(0, item_width),
-          ]
-          pts.each { |pt| pt.transform!(t) }
-          bounds = Geom::BoundingBox.new.add(pts)
+          bounds = _compute_item_bounds(item_length, item_width, item_def)
 
           item_rect_width = bounds.width.to_f
           item_rect_height = bounds.height.to_f
@@ -508,16 +499,7 @@ module Ladb::OpenCutList
             part_length = part_def.size.length
             part_width = part_def.size.width
 
-            t = Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees)
-            t *= Geom::Transformation.scaling(-1.0, 1.0, 1.0) if item_def.mirror
-            pts = [
-              Geom::Point3d.new(0, 0),
-              Geom::Point3d.new(item_length, 0),
-              Geom::Point3d.new(item_length, item_width),
-              Geom::Point3d.new(0, item_width),
-            ]
-            pts.each { |pt| pt.transform!(t) }
-            bounds = Geom::BoundingBox.new.add(pts)
+            bounds = _compute_item_bounds(item_length, item_width, item_def)
 
             item_rect_width = bounds.width.to_f
             item_rect_height = bounds.height.to_f

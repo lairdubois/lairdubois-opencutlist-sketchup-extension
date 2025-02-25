@@ -1,8 +1,9 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative 'outliner_layer'
 
-  class OutlinerLayerDef
+  class OutlinerLayerDef < DataContainer
 
     attr_reader :layer, :folder_defs, :used_by_node_defs
 
@@ -55,7 +56,7 @@ module Ladb::OpenCutList
 
   end
 
-  class OutlinerLayerFolderDef
+  class OutlinerLayerFolderDef < DataContainer
 
     attr_reader :layer_folder
 

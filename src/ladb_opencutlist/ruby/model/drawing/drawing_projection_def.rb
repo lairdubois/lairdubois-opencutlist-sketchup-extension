@@ -1,8 +1,9 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative '../../lib/geometrix/finder/curve_finder'
 
-  class DrawingProjectionDef
+  class DrawingProjectionDef < DataContainer
 
     attr_reader :drawing_def, :transformation, :bounds, :max_depth, :layer_defs
     attr_accessor :shell_def
@@ -75,7 +76,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class DrawingProjectionLayerDef
+  class DrawingProjectionLayerDef < DataContainer
 
     TYPE_DEFAULT = 0
     TYPE_UPPER = 1
@@ -119,7 +120,7 @@ module Ladb::OpenCutList
 
   end
 
-  class DrawingProjectionShellDef
+  class DrawingProjectionShellDef < DataContainer
 
     attr_reader :shape_defs
 
@@ -139,7 +140,7 @@ module Ladb::OpenCutList
 
   end
 
-  class DrawingProjectionShapeDef
+  class DrawingProjectionShapeDef < DataContainer
 
     attr_accessor :outer_poly_def
     attr_reader :holes_poly_defs
@@ -157,7 +158,7 @@ module Ladb::OpenCutList
 
   end
 
-  class DrawingProjectionPolyDef
+  class DrawingProjectionPolyDef < DataContainer
 
     attr_reader :points
 

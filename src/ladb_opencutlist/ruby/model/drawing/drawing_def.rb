@@ -1,6 +1,8 @@
 module Ladb::OpenCutList
 
-  class DrawingDef
+  require_relative '../data_container'
+
+  class DrawingDef < DataContainer
 
     INPUT_VIEW_CUSTOM = nil
     INPUT_VIEW_TOP = 'top'.freeze

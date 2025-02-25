@@ -1,6 +1,8 @@
 module Ladb::OpenCutList
 
-  class FaceInfo
+  require_relative '../data_container'
+
+  class FaceInfo < DataContainer
 
     attr_accessor :face, :transformation, :data
 

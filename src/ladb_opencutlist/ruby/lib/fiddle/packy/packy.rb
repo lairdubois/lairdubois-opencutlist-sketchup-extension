@@ -20,6 +20,10 @@ module Ladb::OpenCutList::Fiddle
     OBJECTIVE_VARIABLE_SIZED_BIN_PACKING = 'variable-sized-bin-packing'.freeze
     OBJECTIVE_KNAPSACK = 'knapsack'.freeze
 
+    RECTANGLEGUILLOTINE_CUT_TYPE_NON_EXACT = 'non-exact'.freeze
+    RECTANGLEGUILLOTINE_CUT_TYPE_EXACT = 'exact'.freeze
+    RECTANGLEGUILLOTINE_CUT_HOMOGENOUS = 'homogenous'.freeze
+
     @cached_outputs = {}
     @running_input_md5 = nil
 

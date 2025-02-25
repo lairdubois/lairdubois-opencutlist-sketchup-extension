@@ -1,9 +1,10 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative 'report'
   require_relative 'report_group_def'
 
-  class ReportDef
+  class ReportDef < DataContainer
 
     attr_accessor :solid_wood_coefficient, :total_mass, :total_used_mass, :total_cost, :total_used_cost
     attr_reader :errors, :warnings, :tips, :group_defs

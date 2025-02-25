@@ -15,7 +15,7 @@ module Ladb::OpenCutList
   require_relative '../../model/packing/packing_def'
   require_relative '../../model/export/wrappers'
 
-  class CutlistPackingService
+  class AbstractCutlistPackingWorker
 
     Packy = Fiddle::Packy
 
@@ -25,6 +25,21 @@ module Ladb::OpenCutList
     ORIGIN_CORNER_BOTTOM_RIGHT = 3
 
     protected
+
+    # -----
+
+    def _compute_item_bounds(item_length, item_width, item_def)
+      t = Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees)
+      t *= Geom::Transformation.scaling(-1.0, 1.0, 1.0) if item_def.mirror
+      Geom::BoundingBox.new.add(
+        [
+          Geom::Point3d.new(0, 0),
+          Geom::Point3d.new(item_length, 0),
+          Geom::Point3d.new(item_length, item_width),
+          Geom::Point3d.new(0, item_width),
+        ].each { |pt| pt.transform!(t) }
+      )
+    end
 
     # -----
 
@@ -174,7 +189,9 @@ module Ladb::OpenCutList
 
   end
 
-  class CutlistPackingWorker < CutlistPackingService
+  # -----
+
+  class CutlistPackingWorker < AbstractCutlistPackingWorker
 
     include PartDrawingHelper
     include PixelConverterHelper
@@ -224,8 +241,9 @@ module Ladb::OpenCutList
                    part_drawing_type: PART_DRAWING_TYPE_NONE,
                    colorization: COLORIZATION_SCREEN,
                    origin_corner: ORIGIN_CORNER_TOP_LEFT,
+                   hide_edges_preview: true,
 
-                   rectangleguillotine_cut_type: 'non-exact',
+                   rectangleguillotine_cut_type: Packy::RECTANGLEGUILLOTINE_CUT_TYPE_NON_EXACT,
                    rectangleguillotine_number_of_stages: 3,
                    rectangleguillotine_first_stage_orientation: 'horizontal',
 
@@ -257,6 +275,7 @@ module Ladb::OpenCutList
       @part_drawing_type = part_drawing_type.to_i
       @colorization = colorization
       @origin_corner = problem_type == Packy::PROBLEM_TYPE_IRREGULAR ? ORIGIN_CORNER_BOTTOM_LEFT : origin_corner.to_i   # Force origin corner to BOTTOM LEFT if IRREGULAR
+      @hide_edges_preview = problem_type == Packy::PROBLEM_TYPE_IRREGULAR ? true : hide_edges_preview                   # Force hide edges preview to false if IRREGULAR
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_number_of_stages = [ [ 2, rectangleguillotine_number_of_stages.to_i ].max, 3 ].min
@@ -780,16 +799,7 @@ module Ladb::OpenCutList
           px_part_length = _to_px(part_def.size.length)
           px_part_width = _to_px(part_def.size.width)
 
-          t = Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees)
-          t *= Geom::Transformation.scaling(-1.0, 1.0, 1.0) if item_def.mirror
-          pts = [
-            Geom::Point3d.new(0, 0),
-            Geom::Point3d.new(px_item_length, 0),
-            Geom::Point3d.new(px_item_length, px_item_width),
-            Geom::Point3d.new(0, px_item_width),
-          ]
-          pts.each { |pt| pt.transform!(t) }
-          bounds = Geom::BoundingBox.new.add(pts)
+          bounds = _compute_item_bounds(px_item_length, px_item_width, item_def)
 
           px_item_rect_width = bounds.width.to_f
           px_item_rect_height = bounds.height.to_f
@@ -963,6 +973,20 @@ module Ladb::OpenCutList
       part = item_def.item_type_def.part
       tt = "<div class=\"tt-header\"><span class=\"tt-number\">#{part.number}</span><span class=\"tt-name\">#{CGI::escape_html(part.name)}</span></div>"
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-size-length-width\"></i> #{CGI::escape_html(part.cutting_length)}&nbsp;x&nbsp;#{CGI::escape_html(part.cutting_width)}</div>"
+      if part.edge_count > 0
+        tt += "<div class=\"tt-section\">"
+          tt += "<div><i class=\"ladb-opencutlist-icon-edge-0010\"></i>&nbsp;#{CGI::escape_html(part.edge_material_names[:ymin])}&nbsp;<small>#{CGI::escape_html(part.edge_std_dimensions[:ymin])}</small></div>" if part.edge_material_names[:ymin]
+          tt += "<div><i class=\"ladb-opencutlist-icon-edge-1000\"></i>&nbsp;#{CGI::escape_html(part.edge_material_names[:ymax])}&nbsp;<small>#{CGI::escape_html(part.edge_std_dimensions[:ymax])}</small></div>" if part.edge_material_names[:ymax]
+          tt += "<div><i class=\"ladb-opencutlist-icon-edge-0001\"></i>&nbsp;#{CGI::escape_html(part.edge_material_names[:xmin])}&nbsp;<small>#{CGI::escape_html(part.edge_std_dimensions[:xmin])}</small></div>" if part.edge_material_names[:xmin]
+          tt += "<div><i class=\"ladb-opencutlist-icon-edge-0100\"></i>&nbsp;#{CGI::escape_html(part.edge_material_names[:xmax])}&nbsp;<small>#{CGI::escape_html(part.edge_std_dimensions[:xmax])}</small></div>" if part.edge_material_names[:xmax]
+        tt += "</div>"
+      end
+      if part.face_count > 0
+        tt += "<div class=\"tt-section\">"
+          tt += "<div><i class=\"ladb-opencutlist-icon-face-01\"></i>&nbsp;#{CGI::escape_html(part.face_material_names[:zmin])}&nbsp;<small>#{CGI::escape_html(part.face_std_dimensions[:zmin])}</small></div>" if part.face_material_names[:zmin]
+          tt += "<div><i class=\"ladb-opencutlist-icon-face-10\"></i>&nbsp;#{CGI::escape_html(part.face_material_names[:zmax])}&nbsp;<small>#{CGI::escape_html(part.face_std_dimensions[:zmax])}</small></div>" if part.face_material_names[:zmax]
+        tt += "</div>"
+      end
       tt
     end
 
@@ -972,10 +996,10 @@ module Ladb::OpenCutList
 
     def _render_cut_def_tooltip(cut_def)
       tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string("tab.cutlist.cuttingdiagram.list.cut#{(cut_def.depth == 0 ? '_trimming' : (cut_def.depth == 1 ? '_bounding' : (cut_def.depth == 2 ? '_internal_through' : '')))}")}</span></div>"
+      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-vertical-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_TOP_LEFT ? 'right' : 'left'}\"></i> #{CGI::escape_html(cut_def.x.to_s)}</div>" if cut_def.vertical?
+      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-horizontal-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_BOTTOM_RIGHT ? 'top' : 'bottom'}\"></i> #{CGI::escape_html(cut_def.y.to_s)}</div>" if cut_def.horizontal?
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-saw\"></i> #{CGI::escape_html(@spacing.to_l.to_s)}</div>"
       tt += "<div>depth = #{cut_def.depth}</div>"
-      tt += "<div>x = #{cut_def.x}</div>" if cut_def.vertical?
-      tt += "<div>y = #{cut_def.y}</div>" if cut_def.horizontal?
       tt
     end
 

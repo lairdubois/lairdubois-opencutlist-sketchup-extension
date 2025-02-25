@@ -1,10 +1,11 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative '../../helper/hashable_helper'
   require_relative '../../utils/mass_utils'
   require_relative '../../utils/price_utils'
 
-  class AbstractReportItem
+  class AbstractReportItem < DataContainer
 
     include HashableHelper
 

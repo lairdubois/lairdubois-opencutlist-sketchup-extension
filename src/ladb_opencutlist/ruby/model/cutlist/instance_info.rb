@@ -1,9 +1,10 @@
 module Ladb::OpenCutList
 
+  require_relative '../data_container'
   require_relative '../../model/geom/scale3d'
   require_relative '../../utils/path_utils'
 
-  class InstanceInfo
+  class InstanceInfo < DataContainer
 
     attr_accessor :size, :definition_bounds
     attr_reader :path
