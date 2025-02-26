@@ -120,22 +120,29 @@
                         <small>
                             <div class="row">
                                 <div class="col-xs-6">
-                                    <span style="margin-left: 10px;">{{ 'tab.cutlist.packing.list.stats'|i18next }}</span>
+                                    <span style="margin-left: 10px;">{{ 'tab.cutlist.packing.list.settings'|i18next }}</span>
                                     <ul>
-                                        <li><strong>time : </strong>{{ solution.summary.time|number_format(3, capabilities.decimal_separator, ' ') }}s</li>
-                                        <li><strong>total_bin_count : </strong>{{ solution.summary.total_bin_count }}</li>
-                                        <li><strong>total_item_count : </strong>{{ solution.summary.total_item_count }}</li>
-                                        {% if solution.summary.total_leftover_count > 0 %}<li><strong>total_leftover_count : </strong>{{ solution.summary.total_leftover_count }}</li>{% endif %}
-                                        {% if solution.summary.total_cut_count > 0 %}<li><strong>total_cut_count : </strong>{{ solution.summary.total_cut_count }}</li>{% endif %}
+                                        <li><strong>{{ 'tab.cutlist.packing.option_problem_type'|i18next }} : </strong>{{ ('tab.cutlist.packing.option_problem_type_'~solution.options.problem_type)|i18next }}</li>
+                                        <li><strong>{{ 'tab.cutlist.packing.option_spacing'|i18next }} : </strong>{{ solution.options.spacing }}</li>
+                                        <li><strong>{{ 'tab.cutlist.packing.option_trimming'|i18next }} : </strong>{{ solution.options.trimming }}</li>
+                                        {% if solution.options.problem_type == 'rectangleguillotine' %}
+                                            <li><strong>{{ 'tab.cutlist.packing.option_rectangleguillotine_cut_type'|i18next }} : </strong>{{ solution.options.rectangleguillotine_cut_type }}</li>
+                                            <li><strong>{{ 'tab.cutlist.packing.option_rectangleguillotine_first_stage_orientation'|i18next }} : </strong>{{ solution.options.rectangleguillotine_first_stage_orientation }}</li>
+                                            <li><strong>{{ 'tab.cutlist.packing.option_rectangleguillotine_number_of_stages'|i18next }} : </strong>{{ solution.options.rectangleguillotine_number_of_stages }}</li>
+                                        {% endif %}
+                                        {% if solution.options.problem_type == 'irregular' %}
+                                            <li><strong>{{ 'tab.cutlist.packing.option_irregular_allowed_rotations'|i18next }} : </strong>{{ ('tab.cutlist.packing.option_irregular_allowed_rotations_'~solution.options.irregular_allowed_rotations)|i18next }}</li>
+                                            <li><strong>{{ 'tab.cutlist.packing.option_irregular_allow_mirroring'|i18next }} : </strong>{{ ('tab.cutlist.packing.option_irregular_allow_mirroring_'~(solution.options.irregular_allow_mirroring ? '1' : '0'))|i18next }}</li>
+                                        {% endif %}
                                     </ul>
                                 </div>
                                 <div class="col-xs-6">
-                                    <span style="margin-left: 10px;">&nbsp;</span>
+                                    <span style="margin-left: 10px;">{{ 'tab.cutlist.packing.list.stats'|i18next }}</span>
                                     <ul>
-                                        <li><strong>trimming : </strong>{{ solution.options.trimming }}</li>
-                                        <li><strong>spacing : </strong>{{ solution.options.spacing }}</li>
-                                        <li><strong>total_efficiency : </strong>{{ (solution.summary.total_efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
-                                        {% if solution.summary.total_cut_length %}<li><strong>total_cut_length : </strong>{{ solution.summary.total_cut_length }}</li>{% endif %}
+                                        <li><strong>{{ 'tab.cutlist.packing.list.time'|i18next }} : </strong>{{ solution.summary.time|number_format(3, capabilities.decimal_separator, ' ') }}s</li>
+                                        <li><strong>{{ 'tab.cutlist.packing.list.total_efficiency'|i18next }} : </strong>{{ (solution.summary.total_efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
+                                        {% if solution.summary.total_cut_count > 0 %}<li><strong>{{ 'tab.cutlist.packing.list.total_cut_count'|i18next }} : </strong>{{ solution.summary.total_cut_count }}</li>{% endif %}
+                                        {% if solution.summary.total_cut_length %}<li><strong>{{ 'tab.cutlist.packing.list.total_cut_length'|i18next }} : </strong>{{ solution.summary.total_cut_length }}</li>{% endif %}
                                     </ul>
                                 </div>
                             </div>

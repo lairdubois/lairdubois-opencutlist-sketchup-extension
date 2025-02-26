@@ -1001,12 +1001,17 @@ tab:
       option_rectangleguillotine_first_stage_orientation: Direction première coupe
       option_rectangleguillotine_first_stage_orientation_help: |
         Définit la direction de la première coupe.
-      option_irregular_allowed_rotations: Rotations
+      option_irregular_allowed_rotations: Rotations autorisées
       option_irregular_allowed_rotations_help: |
         Définit les angles de rotation de la pièce pour le placement.
-      option_irregular_allow_mirroring: En mirroir
+      option_irregular_allowed_rotations_0: Aucune
+      option_irregular_allowed_rotations_90: Pas de 90°
+      option_irregular_allowed_rotations_180: Pas de 180°
+      option_irregular_allow_mirroring: Mirroir autorisé
       option_irregular_allow_mirroring_help: |
         Définit si le mirroir de la pièce est autorisée pour le placement.
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Espacement
       option_spacing_help: Espacement minimal entre chaque pièce.
       option_trimming: Marge
@@ -1032,9 +1037,9 @@ tab:
 
         *Cette option doit être activée pour que les formes puissent être exportées.*
       option_colorization: Colorier les pièces
-      option_colorization_0: Non
-      option_colorization_1: Oui - Écran
-      option_colorization_2: Oui - Écran et Impression
+      option_colorization_0: $t(default.no)
+      option_colorization_1: $t(default.yes) - Écran
+      option_colorization_2: $t(default.yes) - Écran et Impression
       option_colorization_help: |
         Définit quand la couleur est utilisée pour représenter les pièces
       option_time_limit: Limite de temps
@@ -1054,7 +1059,10 @@ tab:
         unplaced_parts_plural: Pièces non placées
         summary: Récapitulatif
         trimming: Marge
+        settings: Paramètres
         stats: Statistiques
+        time: Temps
+        total_efficiency: Efficacité globale
         total_cut_count: Nombre de coupes
         total_cut_length: Longueur de coupe
         efficiency: Efficacité

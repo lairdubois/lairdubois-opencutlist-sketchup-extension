@@ -5,9 +5,15 @@ module Ladb::OpenCutList
 
   class PackingDef < DataContainer
 
-    attr_reader :group, :errors, :running, :cancelled, :solution_def
+    attr_reader :group,
+                :errors,
+                :running, :cancelled,
+                :solution_def
 
-    def initialize(group: nil, errors: [], running: false, cancelled: false, solution_def: nil)
+    def initialize(group: nil,
+                   errors: [],
+                   running: false, cancelled: false,
+                   solution_def: nil)
       @group = group
 
       @errors = errors
@@ -31,10 +37,13 @@ module Ladb::OpenCutList
 
   class PackingSolutionDef < DataContainer
 
-    attr_reader :options_def, :summary_def, :bin_defs, :unplaced_part_info_defs
-    attr_accessor :total_unplaced_part_count
+    attr_reader :options_def, :summary_def,
+                :unplaced_part_info_defs,
+                :bin_defs
 
-    def initialize(options_def:, summary_def:, unplaced_part_info_defs:, bin_defs:)
+    def initialize(options_def:, summary_def:,
+                   unplaced_part_info_defs:,
+                   bin_defs:)
 
       @options_def = options_def
       @summary_def = summary_def
@@ -57,9 +66,17 @@ module Ladb::OpenCutList
 
   class PackingOptionsDef < DataContainer
 
-    attr_reader :problem_type, :spacing, :trimming, :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner
+    attr_reader :problem_type,
+                :spacing, :trimming,
+                :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner,
+                :rectangleguillotine_cut_type, :rectangleguillotine_first_stage_orientation, :rectangleguillotine_number_of_stages,
+                :irregular_allowed_rotations, :irregular_allow_mirroring
 
-    def initialize(problem_type:, spacing:, trimming:, items_formula:, hide_part_list:, part_drawing_type:, colorization:, origin_corner:)
+    def initialize(problem_type:,
+                   spacing:, trimming:,
+                   items_formula:, hide_part_list:, part_drawing_type:, colorization:, origin_corner:,
+                   rectangleguillotine_cut_type:, rectangleguillotine_first_stage_orientation:, rectangleguillotine_number_of_stages:,
+                   irregular_allowed_rotations:, irregular_allow_mirroring:)
 
       @problem_type = problem_type
 
@@ -71,6 +88,13 @@ module Ladb::OpenCutList
       @part_drawing_type = part_drawing_type
       @colorization = colorization
       @origin_corner = origin_corner
+
+      @rectangleguillotine_cut_type = rectangleguillotine_cut_type
+      @rectangleguillotine_first_stage_orientation = rectangleguillotine_first_stage_orientation
+      @rectangleguillotine_number_of_stages = rectangleguillotine_number_of_stages
+
+      @irregular_allowed_rotations = irregular_allowed_rotations
+      @irregular_allow_mirroring = irregular_allow_mirroring
 
     end
 
@@ -86,10 +110,13 @@ module Ladb::OpenCutList
 
   class PackingSummaryDef < DataContainer
 
-    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :bin_type_defs
-    attr_accessor :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_count, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count
+    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency,
+                :bin_type_defs
+    attr_accessor :total_leftover_count, :total_cut_count, :total_cut_length,
+                  :total_used_count, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count
 
-    def initialize(time:, total_bin_count:, total_item_count:, total_efficiency:, bin_type_defs:)
+    def initialize(time:, total_bin_count:, total_item_count:, total_efficiency:,
+                   bin_type_defs:)
 
       @time = time
       @total_bin_count = total_bin_count
@@ -125,9 +152,12 @@ module Ladb::OpenCutList
 
   class PackingSummaryBinTypeDef < DataContainer
 
-    attr_reader :bin_type_def, :count, :used, :std_price, :total_area, :total_length, :total_cost, :total_item_count
+    attr_reader :bin_type_def, :count, :used,
+                :std_price, :total_area,
+                :total_length, :total_cost, :total_item_count
 
-    def initialize(bin_type_def:, count:, used:, total_item_count: 0)
+    def initialize(bin_type_def:, count:, used:,
+                   total_item_count: 0)
 
       @bin_type_def = bin_type_def
       @count = count
@@ -154,10 +184,18 @@ module Ladb::OpenCutList
 
   class PackingBinDef < DataContainer
 
-    attr_reader :bin_type_def, :count, :efficiency, :item_defs, :leftover_defs, :cut_defs, :part_info_defs, :total_cut_length, :x_max, :y_max
+    attr_reader :bin_type_def,
+                :count, :efficiency,
+                :item_defs, :leftover_defs, :cut_defs, :part_info_defs,
+                :total_cut_length,
+                :x_max, :y_max
     attr_accessor :svg, :light_svg
 
-    def initialize(bin_type_def:, count:, efficiency:, item_defs:, leftover_defs:, cut_defs:, part_info_defs:, total_cut_length:, x_max:, y_max:)
+    def initialize(bin_type_def:,
+                   count:, efficiency:,
+                   item_defs:, leftover_defs:, cut_defs:, part_info_defs:,
+                   total_cut_length:,
+                   x_max:, y_max:)
 
       @bin_type_def = bin_type_def
 
@@ -193,9 +231,11 @@ module Ladb::OpenCutList
 
   class PackingItemDef < DataContainer
 
-    attr_reader :item_type_def, :instance_info, :x, :y, :angle, :mirror
+    attr_reader :item_type_def, :instance_info,
+                :x, :y, :angle, :mirror
 
-    def initialize(item_type_def:, instance_info:, x:, y:, angle:, mirror:)
+    def initialize(item_type_def:, instance_info:,
+                   x:, y:, angle:, mirror:)
 
       @item_type_def = item_type_def
       @instance_info = instance_info
@@ -274,7 +314,8 @@ module Ladb::OpenCutList
 
   class PackingPartInfoDef < DataContainer
 
-    attr_reader :_sorter, :part, :count
+    attr_reader :_sorter,
+                :part, :count
 
     def initialize(part:, count:)
 

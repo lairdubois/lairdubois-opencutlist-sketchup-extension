@@ -35,7 +35,9 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :options, :summary, :bins, :unplaced_parts
+    attr_reader :options, :summary,
+                :bins,
+                :unplaced_parts
 
     def initialize(_def)
       @_def = _def
@@ -58,7 +60,11 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :problem_type, :spacing, :trimming, :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner
+    attr_reader :problem_type,
+                :spacing, :trimming,
+                :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner,
+                :rectangleguillotine_cut_type, :rectangleguillotine_first_stage_orientation, :rectangleguillotine_number_of_stages,
+                :irregular_allowed_rotations, :irregular_allow_mirroring
 
     def initialize(_def)
       @_def = _def
@@ -74,6 +80,13 @@ module Ladb::OpenCutList
       @colorization = _def.colorization
       @origin_corner = _def.origin_corner
 
+      @rectangleguillotine_cut_type = _def.rectangleguillotine_cut_type
+      @rectangleguillotine_first_stage_orientation = _def.rectangleguillotine_first_stage_orientation
+      @rectangleguillotine_number_of_stages = _def.rectangleguillotine_number_of_stages
+
+      @irregular_allowed_rotations = _def.irregular_allowed_rotations
+      @irregular_allow_mirroring = _def.irregular_allow_mirroring
+
     end
 
   end
@@ -85,7 +98,10 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency, :total_leftover_count, :total_cut_count, :total_cut_length, :total_used_area, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count, :bin_types
+    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency,
+                :total_leftover_count, :total_cut_count, :total_cut_length,
+                :total_used_area, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count,
+                :bin_types
 
     def initialize(_def)
       @_def = _def
@@ -119,7 +135,9 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type_id, :type, :count, :length, :width, :used, :std_price, :total_area, :total_length, :total_item_count
+    attr_reader :type_id, :type, :count, :length, :width, :used,
+                :std_price,
+                :total_area, :total_length, :total_item_count
 
     def initialize(_def)
       @_def = _def
@@ -149,7 +167,12 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :type_id, :type, :length, :width, :count, :efficiency, :items, :leftovers, :cuts, :part_infos, :total_cut_length, :x_max, :y_max, :svg, :light_svg
+    attr_reader :type_id, :type, :length, :width,
+                :count, :efficiency,
+                :items, :leftovers, :cuts, :part_infos,
+                :total_cut_length,
+                :x_max, :y_max,
+                :svg, :light_svg
 
     def initialize(_def)
       @_def = _def

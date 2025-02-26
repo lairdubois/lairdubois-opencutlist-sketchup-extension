@@ -131,9 +131,9 @@
                     <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_irregular_allowed_rotations'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_irregular_allowed_rotations">
-                            <option value="0">Aucune</option>
-                            <option value="180">Pas de 180°</option>
-                            <option value="90"{% if group.material_grained or group.material_is_1d %} disabled{% endif %}>Pas de 90°</option>
+                            <option value="0">{{ 'tab.cutlist.packing.option_irregular_allowed_rotations_0'|i18next }}</option>
+                            <option value="180">{{ 'tab.cutlist.packing.option_irregular_allowed_rotations_180'|i18next }}</option>
+                            <option value="90"{% if group.material_grained or group.material_is_1d %} disabled{% endif %}>{{ 'tab.cutlist.packing.option_irregular_allowed_rotations_90'|i18next }}</option>
                         </select>
                     </div>
                 </div>
@@ -142,8 +142,8 @@
                     <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_irregular_allow_mirroring'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_irregular_allow_mirroring">
-                            <option value="0">Non</option>
-                            <option value="1">Oui</option>
+                            <option value="0">{{ 'tab.cutlist.packing.option_irregular_allow_mirroring_0'|i18next }}</option>
+                            <option value="0">{{ 'tab.cutlist.packing.option_irregular_allow_mirroring_1'|i18next }}</option>
                         </select>
                     </div>
                 </div>

@@ -28,7 +28,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _compute_item_bounds(item_length, item_width, item_def)
+    def _compute_item_bounds_in_bin_space(item_length, item_width, item_def)
       t = Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees)
       t *= Geom::Transformation.scaling(-1.0, 1.0, 1.0) if item_def.mirror
       Geom::BoundingBox.new.add(
@@ -281,7 +281,7 @@ module Ladb::OpenCutList
       @rectangleguillotine_number_of_stages = [ [ 2, rectangleguillotine_number_of_stages.to_i ].max, 3 ].min
       @rectangleguillotine_first_stage_orientation = rectangleguillotine_first_stage_orientation
 
-      @irregular_allowed_rotations = AVAILABLE_ROTATIONS.fetch(irregular_allowed_rotations.to_s, [])
+      @irregular_allowed_rotations = irregular_allowed_rotations.to_s
       @irregular_allow_mirroring = irregular_allow_mirroring
 
       # Internals
@@ -416,7 +416,7 @@ module Ladb::OpenCutList
                   vertices: poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } }
                 }},
               }},
-              allowed_rotations: @irregular_allowed_rotations,
+              allowed_rotations: AVAILABLE_ROTATIONS.fetch(@irregular_allowed_rotations, []),
               allow_mirroring: @irregular_allow_mirroring
             }
 
@@ -460,7 +460,7 @@ module Ladb::OpenCutList
             fake_trimming: _to_packy_length(@trimming),
             fake_spacing: _to_packy_length(@spacing)
           }
-          elsif @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
+        elsif @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
           instance_parameters = {
             cut_type: @rectangleguillotine_cut_type,
             cut_thickness: _to_packy_length(@spacing),
@@ -570,7 +570,12 @@ module Ladb::OpenCutList
             hide_part_list: @hide_part_list,
             part_drawing_type: @part_drawing_type,
             colorization: @colorization,
-            origin_corner: @origin_corner
+            origin_corner: @origin_corner,
+            rectangleguillotine_cut_type: @rectangleguillotine_cut_type,
+            rectangleguillotine_first_stage_orientation: @rectangleguillotine_first_stage_orientation,
+            rectangleguillotine_number_of_stages: @rectangleguillotine_number_of_stages,
+            irregular_allowed_rotations: @irregular_allowed_rotations,
+            irregular_allow_mirroring: @irregular_allow_mirroring
           ),
           summary_def: PackingSummaryDef.new(
             time: raw_solution['time'],
@@ -799,7 +804,7 @@ module Ladb::OpenCutList
           px_part_length = _to_px(part_def.size.length)
           px_part_width = _to_px(part_def.size.width)
 
-          bounds = _compute_item_bounds(px_item_length, px_item_width, item_def)
+          bounds = _compute_item_bounds_in_bin_space(px_item_length, px_item_width, item_def)
 
           px_item_rect_width = bounds.width.to_f
           px_item_rect_height = bounds.height.to_f

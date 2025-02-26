@@ -212,7 +212,7 @@ module Ladb::OpenCutList
           part_length = part_def.size.length
           part_width = part_def.size.width
 
-          bounds = _compute_item_bounds(item_length, item_width, item_def)
+          bounds = _compute_item_bounds_in_bin_space(item_length, item_width, item_def)
 
           item_rect_width = bounds.width.to_f
           item_rect_height = bounds.height.to_f
@@ -499,7 +499,7 @@ module Ladb::OpenCutList
             part_length = part_def.size.length
             part_width = part_def.size.width
 
-            bounds = _compute_item_bounds(item_length, item_width, item_def)
+            bounds = _compute_item_bounds_in_bin_space(item_length, item_width, item_def)
 
             item_rect_width = bounds.width.to_f
             item_rect_height = bounds.height.to_f
