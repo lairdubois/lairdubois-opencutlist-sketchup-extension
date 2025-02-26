@@ -1050,6 +1050,8 @@ tab:
         scroll_to_block_1d: Zur ersten Stange oder Kantenband blättern
         scroll_to_block_2d: Zur ersten Platte oder Furnierblatt blättern
       list:
+        unplaced_parts: Nicht platziertes Teil
+        unplaced_parts_plural: Nicht platzierte Teile
         summary: Zusammenfassung
         trimming: Rand
         stats: Statistiken
@@ -1137,7 +1139,7 @@ tab:
         option_cuts_help: |
           Ermöglicht den Export von Schnitten zu aktivieren und deren Farbe anzugeben.
         warning:
-          is_bin_selection: "**Ausgeblendete Platten** werden nicht exportiert."
+          is_bin_selection: "**Ausgeblendete Elemente** werden nicht exportiert."
       error:
         no_part: Kein Teil.
         no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zu Verfügung.
