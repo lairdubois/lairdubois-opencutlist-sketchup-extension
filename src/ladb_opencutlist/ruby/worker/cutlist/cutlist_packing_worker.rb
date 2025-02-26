@@ -246,6 +246,8 @@ module Ladb::OpenCutList
                    rectangleguillotine_cut_type: Packy::RECTANGLEGUILLOTINE_CUT_TYPE_NON_EXACT,
                    rectangleguillotine_number_of_stages: 3,
                    rectangleguillotine_first_stage_orientation: 'horizontal',
+                   rectangleguillotine_keep_length: '100mm',
+                   rectangleguillotine_keep_width: '100mm',
 
                    irregular_allowed_rotations: '0',
                    irregular_allow_mirroring: false
@@ -280,6 +282,8 @@ module Ladb::OpenCutList
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_number_of_stages = [ [ 2, rectangleguillotine_number_of_stages.to_i ].max, 3 ].min
       @rectangleguillotine_first_stage_orientation = rectangleguillotine_first_stage_orientation
+      @rectangleguillotine_keep_length = DimensionUtils.str_to_ifloat(rectangleguillotine_keep_length).to_l.to_f
+      @rectangleguillotine_keep_width = DimensionUtils.str_to_ifloat(rectangleguillotine_keep_width).to_l.to_f
 
       @irregular_allowed_rotations = irregular_allowed_rotations.to_s
       @irregular_allow_mirroring = irregular_allow_mirroring
@@ -466,6 +470,8 @@ module Ladb::OpenCutList
             cut_thickness: _to_packy_length(@spacing),
             number_of_stages: @rectangleguillotine_number_of_stages,
             first_stage_orientation: @rectangleguillotine_first_stage_orientation,
+            keep_width: _to_packy_length(@rectangleguillotine_keep_length),
+            keep_height: _to_packy_length(@rectangleguillotine_keep_width)
           }
         elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
           instance_parameters = {
@@ -620,7 +626,8 @@ module Ladb::OpenCutList
                   x: _from_packy_length(raw_leftover.fetch('x', 0)),
                   y: _from_packy_length(raw_leftover.fetch('y', 0)),
                   length: _from_packy_length(raw_leftover.fetch('width', 0)),
-                  width: _from_packy_length(raw_leftover.fetch('height', 0))
+                  width: _from_packy_length(raw_leftover.fetch('height', 0)),
+                  keep: raw_leftover.fetch('keep', false),
                 )
               } : [],
               cut_defs: raw_bin['cuts'].is_a?(Array) ? raw_bin['cuts'].map { |raw_cut|
@@ -897,8 +904,8 @@ module Ladb::OpenCutList
             dim_x_text = leftover_def.length.to_s.gsub(/~ /, '')
             dim_y_text = leftover_def.width.to_s.gsub(/~ /, '')
 
-            svg += "<g class='leftover' transform='translate(#{px_leftover_rect_x} #{px_leftover_rect_y})'>"
-              svg += "<rect x='0' y='#{-px_leftover_rect_height}' width='#{px_leftover_rect_width}' height='#{px_leftover_rect_height}' />"
+            svg += "<g class='leftover' transform='translate(#{px_leftover_rect_x} #{px_leftover_rect_y})'#{" data-toggle='tooltip' data-html='true' title='#{_render_leftover_def_tooltip(leftover_def)}'" if leftover_def.keep}>"
+              svg += "<rect class='leftover-inner' x='0' y='#{-px_leftover_rect_height}' width='#{px_leftover_rect_width}' height='#{px_leftover_rect_height}'/>" if leftover_def.keep
               if is_2d
 
                 dim_x_font_size = [ [ px_node_dimension_font_size_max, px_leftover_rect_height - px_node_dimension_offset * 2, (px_leftover_rect_width - px_node_dimension_offset * 2) / (dim_x_text.length * 0.6) ].min, px_node_dimension_font_size_min ].max
@@ -995,8 +1002,10 @@ module Ladb::OpenCutList
       tt
     end
 
-    def _render_bin_max_tooltip(max, icon)
-      "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-#{icon}\"></i> #{CGI::escape_html(max.to_s)}</div>"
+    def _render_leftover_def_tooltip(leftover_def)
+      tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string('tab.cutlist.packing.list.leftover_to_keep')}</span></div>"
+      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-size-length-width\"></i> #{CGI::escape_html(leftover_def.length.to_s)}&nbsp;x&nbsp;#{CGI::escape_html(leftover_def.width.to_s)}</div>"
+      tt
     end
 
     def _render_cut_def_tooltip(cut_def)
@@ -1006,6 +1015,10 @@ module Ladb::OpenCutList
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-saw\"></i> #{CGI::escape_html(@spacing.to_l.to_s)}</div>"
       tt += "<div>depth = #{cut_def.depth}</div>"
       tt
+    end
+
+    def _render_bin_max_tooltip(max, icon)
+      "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-#{icon}\"></i> #{CGI::escape_html(max.to_s)}</div>"
     end
 
     def _compute_text_size(text:, font: 'helvetica', size:, align: TextAlignLeft)

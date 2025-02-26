@@ -259,14 +259,17 @@ module Ladb::OpenCutList
 
   class PackingLeftoverDef < DataContainer
 
-    attr_reader :x, :y, :length, :width
+    attr_reader :x, :y, :length, :width,
+                :keep
 
-    def initialize(x:, y:, length:, width:)
+    def initialize(x:, y:, length:, width:, keep:)
 
       @x = x
       @y = y
       @length = length
       @width = width
+
+      @keep = keep
 
     end
 

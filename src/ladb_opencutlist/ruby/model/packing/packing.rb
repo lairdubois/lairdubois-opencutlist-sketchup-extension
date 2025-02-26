@@ -231,7 +231,8 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :x, :y, :length, :width
+    attr_reader :x, :y, :length, :width,
+                :keep
 
     def initialize(_def)
       @_def = _def
@@ -240,6 +241,8 @@ module Ladb::OpenCutList
       @y = _def.y.to_s
       @length = _def.length
       @width = _def.width
+
+      @keep = _def.keep
 
     end
 

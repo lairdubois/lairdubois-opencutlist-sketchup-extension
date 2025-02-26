@@ -769,6 +769,13 @@ namespace Packy {
                 instance_builder_.set_cut_thickness(read_length(j, "cut_thickness"));
             }
 
+            if (j.contains("keep_width")) {
+                keep_width_ = read_length(j, "keep_width");
+            }
+            if (j.contains("keep_height")) {
+                keep_height_ = read_length(j, "keep_height");
+            }
+
         }
 
         ItemTypeId read_item_type(
@@ -990,11 +997,15 @@ namespace Packy {
 
                         if (node.r > node.l && node.t > node.b) {
 
+                            const Length width = node.r - node.l;
+                            const Length height = node.t - node.b;
+
                             j_leftovers.push_back(json{
                                     {"x",      to_length_dbl(node.l)},
                                     {"y",      to_length_dbl(node.b)},
-                                    {"width",  to_length_dbl(node.r - node.l)},
-                                    {"height", to_length_dbl(node.t - node.b)}
+                                    {"width",  to_length_dbl(width)},
+                                    {"height", to_length_dbl(height)},
+                                    {"keep",   width >= keep_width_ && height >= keep_height_},
                             });
 
                         }
@@ -1082,6 +1093,11 @@ namespace Packy {
 
         }
 
+    private:
+
+        Length keep_width_ = 0;
+        Length keep_height_ = 0;
+
     };
 
     class OnedimensionalSolver : public TypedSolver<onedimensional::InstanceBuilder, onedimensional::Instance, onedimensional::OptimizeParameters, onedimensional::Output, onedimensional::Solution> {
@@ -1112,10 +1128,10 @@ namespace Packy {
             TypedSolver::read_instance_parameters(j);
 
             if (j.contains("fake_trimming")) {
-                fake_trimming_ = read_length(j, "fake_trimming");
+                fake_trimming_ = read_length(j, "fake_trimming", 0);
             }
             if (j.contains("fake_spacing")) {
-                fake_spacing_ = read_length(j, "fake_spacing");
+                fake_spacing_ = read_length(j, "fake_spacing", 0);
             }
 
         }

@@ -1001,6 +1001,8 @@ tab:
       option_rectangleguillotine_first_stage_orientation: Direction première coupe
       option_rectangleguillotine_first_stage_orientation_help: |
         Définit la direction de la première coupe.
+      option_rectangleguillotine_keep: Taille minimale des chutes
+      option_rectangleguillotine_keep_help: Les chutes ayant les deux dimensions supérieures à la taille minimale seront marquées **à conserver**.
       option_irregular_allowed_rotations: Rotations autorisées
       option_irregular_allowed_rotations_help: |
         Définit les angles de rotation de la pièce pour le placement.
@@ -1089,6 +1091,8 @@ tab:
         unused: Inutilisée
         parts: "{{ count }} pièce"
         parts_plural: "{{ count }} pièces"
+        leftover_to_keep: Chute à conserver
+        leftover_to_keep_plural: Chutes à conserver
       write:
         title: Exportation du calepinage
         info_0: |
