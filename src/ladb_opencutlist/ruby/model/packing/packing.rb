@@ -63,7 +63,7 @@ module Ladb::OpenCutList
     attr_reader :problem_type,
                 :spacing, :trimming,
                 :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner,
-                :rectangleguillotine_cut_type, :rectangleguillotine_first_stage_orientation, :rectangleguillotine_number_of_stages,
+                :rectangleguillotine_cut_type, :rectangleguillotine_first_stage_orientation, :rectangleguillotine_number_of_stages, :rectangleguillotine_keep_length, :rectangleguillotine_keep_width,
                 :irregular_allowed_rotations, :irregular_allow_mirroring
 
     def initialize(_def)
@@ -71,8 +71,8 @@ module Ladb::OpenCutList
 
       @problem_type = _def.problem_type
 
-      @spacing = _def.spacing.to_l.to_s
-      @trimming = _def.trimming.to_l.to_s
+      @spacing = DimensionUtils.str_add_units(_def.spacing.to_l.to_s)
+      @trimming = DimensionUtils.str_add_units(_def.trimming.to_l.to_s)
 
       @items_formula = _def.items_formula
       @hide_part_list = _def.hide_part_list
@@ -83,6 +83,8 @@ module Ladb::OpenCutList
       @rectangleguillotine_cut_type = _def.rectangleguillotine_cut_type
       @rectangleguillotine_first_stage_orientation = _def.rectangleguillotine_first_stage_orientation
       @rectangleguillotine_number_of_stages = _def.rectangleguillotine_number_of_stages
+      @rectangleguillotine_keep_length = _def.rectangleguillotine_keep_length.to_l.to_s
+      @rectangleguillotine_keep_width = _def.rectangleguillotine_keep_width.to_l.to_s
 
       @irregular_allowed_rotations = _def.irregular_allowed_rotations
       @irregular_allow_mirroring = _def.irregular_allow_mirroring
@@ -98,8 +100,9 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency,
-                :total_leftover_count, :total_cut_count, :total_cut_length,
+    attr_reader :time, :bin_count, :item_count, :efficiency,
+                :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
+                :cut_length,
                 :total_used_area, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count,
                 :bin_types
 
@@ -107,13 +110,15 @@ module Ladb::OpenCutList
       @_def = _def
 
       @time = _def.time
-      @total_bin_count = _def.total_bin_count
-      @total_item_count = _def.total_item_count
-      @total_efficiency = _def.total_efficiency
+      @bin_count = _def.bin_count
+      @item_count = _def.item_count
+      @efficiency = _def.efficiency
 
-      @total_leftover_count = _def.total_leftover_count
-      @total_cut_count = _def.total_cut_count
-      @total_cut_length = _def.total_cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_cut_length) : nil
+      @number_of_leftovers = _def.number_of_leftovers
+      @number_of_leftovers_to_keep = _def.number_of_leftovers_to_keep
+      @number_of_cuts = _def.number_of_cuts
+
+      @cut_length = _def.cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.cut_length) : nil
 
       @total_used_count = _def.total_used_count
       @total_used_area = _def.total_used_area > 0 ? DimensionUtils.format_to_readable_area(_def.total_used_area) : nil
@@ -170,7 +175,8 @@ module Ladb::OpenCutList
     attr_reader :type_id, :type, :length, :width,
                 :count, :efficiency,
                 :items, :leftovers, :cuts, :part_infos,
-                :total_cut_length,
+                :number_of_items, :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
+                :cut_length,
                 :x_max, :y_max,
                 :svg, :light_svg
 
@@ -190,7 +196,12 @@ module Ladb::OpenCutList
       @cuts = _def.cut_defs.map { |cut_def| cut_def.create_cut }
       @part_infos = _def.part_info_defs.map { |part_info_def| part_info_def.create_part_info }
 
-      @total_cut_length = _def.total_cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_cut_length) : nil
+      @number_of_items = _def.number_of_items
+      @number_of_leftovers = _def.number_of_leftovers
+      @number_of_leftovers_to_keep = _def.number_of_leftovers_to_keep
+      @number_of_cuts = _def.number_of_cuts
+
+      @cut_length = _def.cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.cut_length) : nil
 
       @x_max = _def.x_max> 0 ? DimensionUtils.format_to_readable_length(_def.x_max) : nil
       @y_max = _def.y_max > 0 ? DimensionUtils.format_to_readable_length(_def.y_max) : nil
@@ -232,7 +243,7 @@ module Ladb::OpenCutList
     include HashableHelper
 
     attr_reader :x, :y, :length, :width,
-                :keep
+                :kept
 
     def initialize(_def)
       @_def = _def
@@ -242,7 +253,7 @@ module Ladb::OpenCutList
       @length = _def.length
       @width = _def.width
 
-      @keep = _def.keep
+      @kept = _def.kept
 
     end
 

@@ -963,6 +963,7 @@ namespace Packy {
                 });
 
                 Length cut_length = 0;
+                int number_of_leftovers_to_keep = 0;
 
                 // Items, Leftovers & Cuts.
                 basic_json<>& j_items = j_bin["items"] = json::array();
@@ -999,14 +1000,19 @@ namespace Packy {
 
                             const Length width = node.r - node.l;
                             const Length height = node.t - node.b;
+                            bool kept = width >= keep_width_ && height >= keep_height_;
 
                             j_leftovers.push_back(json{
                                     {"x",      to_length_dbl(node.l)},
                                     {"y",      to_length_dbl(node.b)},
                                     {"width",  to_length_dbl(width)},
                                     {"height", to_length_dbl(height)},
-                                    {"keep",   width >= keep_width_ && height >= keep_height_},
+                                    {"kept",   kept},
                             });
+
+                            if (kept) {
+                                number_of_leftovers_to_keep++;
+                            }
 
                         }
 
@@ -1086,6 +1092,7 @@ namespace Packy {
 
                 j_bin["number_of_items"] = j_items.size();
                 j_bin["number_of_leftovers"] = j_leftovers.size();
+                j_bin["number_of_leftovers_to_keep"] = number_of_leftovers_to_keep;
                 j_bin["number_of_cuts"] = j_cuts.size();
                 j_bin["cut_length"] = to_length_dbl(cut_length);
 
