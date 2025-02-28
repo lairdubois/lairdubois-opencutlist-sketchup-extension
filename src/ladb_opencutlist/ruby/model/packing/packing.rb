@@ -100,18 +100,18 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :time, :bin_count, :item_count, :efficiency,
+    attr_reader :time, :number_of_bins, :number_of_items, :efficiency,
                 :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
                 :cut_length,
                 :total_used_area, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count,
-                :bin_types
+                :bin_type_stats
 
     def initialize(_def)
       @_def = _def
 
       @time = _def.time
-      @bin_count = _def.bin_count
-      @item_count = _def.item_count
+      @number_of_bins = _def.number_of_bins
+      @number_of_items = _def.number_of_items
       @efficiency = _def.efficiency
 
       @number_of_leftovers = _def.number_of_leftovers
@@ -127,7 +127,7 @@ module Ladb::OpenCutList
       @total_used_item_count = _def.total_used_item_count
       @total_unused_item_count = _def.total_unused_item_count
 
-      @bin_types = _def.bin_type_defs.map { |bin_type_def| bin_type_def.create_summary_bin_type }
+      @bin_type_stats = _def.bin_type_stats_defs.map { |bin_type_stats_def| bin_type_stats_def.create_summary_bin_type_stats }
 
     end
 
@@ -135,14 +135,15 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingSummaryBinType < DataContainer
+  class PackingSummaryBinTypeStats < DataContainer
 
     include DefHelper
     include HashableHelper
 
     attr_reader :type_id, :type, :count, :length, :width, :used,
+                :number_of_items,
                 :std_price,
-                :total_area, :total_length, :total_item_count
+                :total_area, :total_length
 
     def initialize(_def)
       @_def = _def
@@ -154,12 +155,13 @@ module Ladb::OpenCutList
       @width = _def.bin_type_def.width.to_l.to_s
       @used = _def.used
 
+      @number_of_items = _def.number_of_items
+
       @std_price = _def.std_price.nil? || _def.std_price[:val] == 0 ? nil : UnitUtils.format_readable(_def.std_price[:val], _def.std_price[:unit], 2, 2)
 
       @total_area = _def.total_area > 0 ? DimensionUtils.format_to_readable_area(_def.total_area) : nil
       @total_length = _def.total_length > 0 ? DimensionUtils.format_to_readable_length(_def.total_length) : nil
       @total_cost = _def.total_cost > 0 ? PriceUtils.format_to_readable_price(_def.total_cost) : nil
-      @total_item_count = _def.total_item_count
 
     end
 

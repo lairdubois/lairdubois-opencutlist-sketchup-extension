@@ -587,16 +587,16 @@ module Ladb::OpenCutList
           ),
           summary_def: PackingSummaryDef.new(
             time: raw_solution['time'],
-            bin_count: raw_solution['number_of_bins'],
-            item_count: raw_solution['number_of_items'],
+            number_of_bins: raw_solution['number_of_bins'],
+            number_of_items: raw_solution['number_of_items'],
             efficiency: raw_solution['full_efficiency'],
-            bin_type_defs: raw_solution['bin_types_stats'].is_a?(Array) ? raw_solution['bin_types_stats'].map { |raw_bin_type_stats|
+            bin_type_stats_defs: raw_solution['bin_types_stats'].is_a?(Array) ? raw_solution['bin_types_stats'].map { |raw_bin_type_stats|
               bin_type_def = @bin_type_defs[raw_bin_type_stats['bin_type_id']]
               used_copies = raw_bin_type_stats.fetch('used_copies', 0)
               unused_copies = raw_bin_type_stats.fetch('unused_copies', 0)
               defs = []
-              defs << PackingSummaryBinTypeDef.new(bin_type_def: bin_type_def, count: used_copies, used: true, total_item_count: raw_bin_type_stats.fetch('item_copies', 0)) if used_copies > 0
-              defs << PackingSummaryBinTypeDef.new(bin_type_def: bin_type_def, count: unused_copies, used: false) if unused_copies > 0 || unused_copies == -1
+              defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: used_copies, used: true, number_of_items: raw_bin_type_stats.fetch('item_copies', 0)) if used_copies > 0
+              defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: unused_copies, used: false) if unused_copies > 0 || unused_copies == -1
               defs
             }.flatten(1).sort_by!{ |bin_type_def| [ bin_type_def.used ? 1 : 0, -bin_type_def.bin_type_def.type, bin_type_def.bin_type_def.length ]} : []
           ),
@@ -676,13 +676,13 @@ module Ladb::OpenCutList
       end
 
       # Sum bins stats
-      packing_def.solution_def.summary_def.bin_type_defs.each do |bin_type_def|
-        next unless bin_type_def.used
-        packing_def.solution_def.summary_def.total_used_count += bin_type_def.count
-        packing_def.solution_def.summary_def.total_used_area += bin_type_def.total_area
-        packing_def.solution_def.summary_def.total_used_length += bin_type_def.total_length
-        packing_def.solution_def.summary_def.total_used_cost += bin_type_def.total_cost
-        packing_def.solution_def.summary_def.total_used_item_count += bin_type_def.total_item_count
+      packing_def.solution_def.summary_def.bin_type_stats_defs.each do |bin_type_stats_def|
+        next unless bin_type_stats_def.used
+        packing_def.solution_def.summary_def.total_used_count += bin_type_stats_def.count
+        packing_def.solution_def.summary_def.total_used_area += bin_type_stats_def.total_area
+        packing_def.solution_def.summary_def.total_used_length += bin_type_stats_def.total_length
+        packing_def.solution_def.summary_def.total_used_cost += bin_type_stats_def.total_cost
+        packing_def.solution_def.summary_def.total_used_item_count += bin_type_stats_def.number_of_items
       end
 
       # Sum item stats

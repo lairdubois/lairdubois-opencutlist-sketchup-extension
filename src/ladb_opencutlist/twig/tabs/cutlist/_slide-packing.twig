@@ -175,44 +175,44 @@
                     <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.total_cost'|i18next }}</td>
                     <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.total_part_count'|i18next }}</td>
                 </tr>
-                {% set isFirstUsed = solution.summary.bin_types|length > 0 and solution.summary.bin_types[0].used %}
-                {% for bin_type in solution.summary.bin_types %}
-                    <tr class="ladb-cutlist-row{% if bin_type.used and not isFirstUsed %} ladb-cutlist-row-separator{% set isFirstUsed = true %}{% endif %}"{% if not bin_type.used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.packing.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
+                {% set isFirstUsed = solution.summary.bin_type_stats|length > 0 and solution.summary.bin_type_stats[0].used %}
+                {% for bin_type_stats in solution.summary.bin_type_stats %}
+                    <tr class="ladb-cutlist-row{% if bin_type_stats.used and not isFirstUsed %} ladb-cutlist-row-separator{% set isFirstUsed = true %}{% endif %}"{% if not bin_type_stats.used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.packing.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
                         <td>
-                            <i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>{% if not generateOptions.hide_material_colors %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}{% endif %} {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2~'_type_'~bin_type.type)|i18next }}
-                            {% if bin_type.used %}
+                            <i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>{% if not generateOptions.hide_material_colors %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}{% endif %} {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2~'_type_'~bin_type_stats.type)|i18next }}
+                            {% if bin_type_stats.used %}
                                 <div class="ladb-minitools ladb-minitools-right no-print">
-                                    <a href="#ladb_packing_group_{{ bin_type.type_id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.packing.tooltip.scroll_to_block_2d'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
+                                    <a href="#ladb_packing_group_{{ bin_type_stats.type_id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.packing.tooltip.scroll_to_block_2d'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
                                 </div>
                             {% endif %}
                         </td>
                         <td class="text-center">
-                            {{ bin_type.count ? bin_type.count : '-' }}
+                            {{ bin_type_stats.count ? bin_type_stats.count : '-' }}
                         </td>
                         <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                            {{ bin_type.length }}
+                            {{ bin_type_stats.length }}
                         </td>
                         {% if group.material_is_1d %}
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                                {{ bin_type.total_length ? bin_type.total_length : '-' }}
+                                {{ bin_type_stats.total_length ? bin_type_stats.total_length : '-' }}
                             </td>
                         {% else %}
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                                {{ bin_type.width }}
+                                {{ bin_type_stats.width }}
                             </td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                                {{ bin_type.total_area ? bin_type.total_area : '-' }}
+                                {{ bin_type_stats.total_area ? bin_type_stats.total_area : '-' }}
                             </td>
                         {% endif %}
-                        <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bin_type.std_price %} data-toggle="tooltip" data-html="true" title="{{ bin_type.std_price }}"{% endif %}>
-                            {{ bin_type.total_cost ? bin_type.total_cost : '-' }}
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bin_type_stats.std_price %} data-toggle="tooltip" data-html="true" title="{{ bin_type_stats.std_price }}"{% endif %}>
+                            {{ bin_type_stats.total_cost ? bin_type_stats.total_cost : '-' }}
                         </td>
                         <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                            {{ bin_type.total_item_count ? bin_type.total_item_count : '-' }}
+                            {{ bin_type_stats.number_of_items ? bin_type_stats.number_of_items : '-' }}
                         </td>
                     </tr>
                 {% endfor %}
-                {% if solution.summary.bin_types|length > 1 %}
+                {% if solution.summary.bin_type_stats|length > 1 %}
                     <tr class="ladb-cutlist-row ladb-cutlist-row-total">
                         <td class="text-right">{{ 'tab.cutlist.packing.list.total_used'|i18next }}</td>
                         <td class="text-center">{{ solution.summary.total_used_count }}</td>
@@ -259,7 +259,7 @@
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
                             </div>
                         {% endif %}
-                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ binIndex }}{% if bin.count > 1 %} ... {{ binIndex + bin.count - 1 }}{% endif%} / {{ solution.summary.bin_count }}</strong></div>
+                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ binIndex }}{% if bin.count > 1 %} ... {{ binIndex + bin.count - 1 }}{% endif%} / {{ solution.summary.number_of_bins }}</strong></div>
                         {% set binIndex = binIndex + bin.count %}
                         {% if bin.count > 1 %}
                             <div class="ladb-heading-count pull-right">x&nbsp;{{ bin.count }}</div>

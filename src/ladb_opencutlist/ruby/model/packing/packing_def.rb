@@ -112,21 +112,21 @@ module Ladb::OpenCutList
 
   class PackingSummaryDef < DataContainer
 
-    attr_reader :time, :bin_count, :item_count, :efficiency,
-                :bin_type_defs
+    attr_reader :time, :number_of_bins, :number_of_items, :efficiency,
+                :bin_type_stats_defs
     attr_accessor :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
                   :cut_length,
                   :total_used_count, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count
 
-    def initialize(time:, bin_count:, item_count:, efficiency:,
-                   bin_type_defs:)
+    def initialize(time:, number_of_bins:, number_of_items:, efficiency:,
+                   bin_type_stats_defs:)
 
       @time = time
-      @bin_count = bin_count
-      @item_count = item_count
+      @number_of_bins = number_of_bins
+      @number_of_items = number_of_items
       @efficiency = efficiency
 
-      @bin_type_defs = bin_type_defs
+      @bin_type_stats_defs = bin_type_stats_defs
 
       # Computed
 
@@ -155,32 +155,34 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingSummaryBinTypeDef < DataContainer
+  class PackingSummaryBinTypeStatsDef < DataContainer
 
     attr_reader :bin_type_def, :count, :used,
-                :std_price, :total_area,
-                :total_length, :total_cost, :total_item_count
+                :number_of_items,
+                :std_price,
+                :total_area, :total_length, :total_cost
 
     def initialize(bin_type_def:, count:, used:,
-                   total_item_count: 0)
+                   number_of_items: 0)
 
       @bin_type_def = bin_type_def
       @count = count
       @used = used
+
+      @number_of_items = number_of_items
 
       @std_price = bin_type_def.std_price
 
       @total_area = bin_type_def.length * bin_type_def.width * count
       @total_length = bin_type_def.length * count
       @total_cost = @used ? bin_type_def.cost * count : 0
-      @total_item_count = total_item_count
 
     end
 
     # ---
 
-    def create_summary_bin_type
-      PackingSummaryBinType.new(self)
+    def create_summary_bin_type_stats
+      PackingSummaryBinTypeStats.new(self)
     end
 
   end
