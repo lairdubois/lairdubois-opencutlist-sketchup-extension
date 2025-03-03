@@ -1001,12 +1001,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation: First cut
       option_rectangleguillotine_first_stage_orientation_help: |
         ...
+      option_rectangleguillotine_keep: Minimal size of off-cuts
+      option_rectangleguillotine_keep_help: Leftovers that are larger than the minimum length and width are marked **to be kept**.
       option_irregular_allowed_rotations: Rotations
       option_irregular_allowed_rotations_help: |
         ...
-      option_irregular_allow_mirroring: Mirroring
+      option_irregular_allowed_rotations_0: None
+      option_irregular_allowed_rotations_90: Steps of 90°
+      option_irregular_allowed_rotations_180: Steps of 180°
+      option_irregular_allow_mirroring: Mirroring allowed
       option_irregular_allow_mirroring_help: |
         ...
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Spacing
       option_spacing_help: Minimal spacing between parts.
       option_trimming: Trimming
@@ -1032,9 +1039,9 @@ tab:
 
         *This option must be enabled for shapes to be exported.*
       option_colorization: Paint parts
-      option_colorization_0: No
-      option_colorization_1: Yes - Screen
-      option_colorization_2: Yes - Screen and Print
+      option_colorization_0: $t(default.no)
+      option_colorization_1: $t(default.yes) - Screen
+      option_colorization_2: $t(default.yes) - Screen and Print
       option_colorization_help: |
         ...
       option_time_limit: Time limit
@@ -1054,7 +1061,10 @@ tab:
         unplaced_parts_plural: Unplaced Parts
         summary: Summary
         trimming: Trimming
+        settings: Settings
         stats: Statistics
+        time: Time
+        total_efficiency: Total Efficiency
         total_cut_count: Number of Cuts
         total_cut_length: Length of Cuts
         efficiency: Efficiency
@@ -1081,6 +1091,8 @@ tab:
         unused: Unused
         parts: "{{ count }} part"
         parts_plural: "{{ count }} parts"
+        leftover_to_keep: Off-cut to keep
+        leftover_to_keep_plural: Off-cuts to keep
       write:
         title: Cutting Diagram Export
         info_0: |

@@ -787,8 +787,8 @@ tab:
       option_stacking_1: Der Länge nach
       option_stacking_2: Der Breite nach
       option_stacking_3: Alle Möglichkeiten
-      option_keep: Mindestgröße der Reste
-      option_keep_help: "Reste, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet."
+      option_keep: Mindestgröße der Verschnitte
+      option_keep_help: "Verschnitte, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet."
       option_std_bar_dimensional: Standard-Stange
       option_std_bar_edge: Standard-Kantenband
       option_std_bar_help: |
@@ -1001,12 +1001,19 @@ tab:
       option_rectangleguillotine_first_stage_orientation: Erster Schnitt
       option_rectangleguillotine_first_stage_orientation_help: |
         Bestimmt die Richtung des ersten Schnittes.
+      option_rectangleguillotine_keep: Mindestgröße der Verschnitte
+      option_rectangleguillotine_keep_help: "Verschnitte, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet."
       option_irregular_allowed_rotations: Drehungen
       option_irregular_allowed_rotations_help: |
         Bestimmt die erlaubten Drehungen eines Teils.
-      option_irregular_allow_mirroring: Spiegelung
+      option_irregular_allowed_rotations_0: Keine
+      option_irregular_allowed_rotations_90: "90° Schritt"
+      option_irregular_allowed_rotations_180: "180° Schritt"
+      option_irregular_allow_mirroring: Spiegeln erlaubt
       option_irregular_allow_mirroring_help: |
-        Bestimmt ob eine Spiegelung des Teils erlaubt ist.
+        Bestimmt of eine Spiegelung des Teils zur Platzierung erlaubt ist.
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Abstand
       option_spacing_help: Mindestabstand zwischen den einzelnen Teilen.
       option_trimming: Randabfallbreite
@@ -1032,9 +1039,9 @@ tab:
 
         *Diese Option muss aktiviert sein, damit die Formen exportiert werden können.*
       option_colorization: Teile einfärben
-      option_colorization_0: Nein
-      option_colorization_1: Ja - Bildschirm
-      option_colorization_2: Ja - Bildschirm und Druck
+      option_colorization_0: $t(default.no)
+      option_colorization_1: $t(default.yes) - Bildschirm
+      option_colorization_2: $t(default.yes) - Bildschirm und Druck
       option_colorization_help: |
         ...
       option_time_limit: Zeitbegrenzung
@@ -1054,7 +1061,10 @@ tab:
         unplaced_parts_plural: Nicht platzierte Teile
         summary: Zusammenfassung
         trimming: Rand
+        settings: Einstellungen
         stats: Statistiken
+        time: Zeitaufwand
+        total_efficiency: Gesamteffizienz
         total_cut_count: Anzahl Schnitte
         total_cut_length: Schnittlänge
         efficiency: Effizienz
@@ -1081,6 +1091,8 @@ tab:
         unused: Nicht verwendet
         parts: "{{ count }} Teil"
         parts_plural: "{{ count }} Teile"
+        leftover_to_keep: Verschnitt zur Aufbewahrung
+        leftover_to_keep_plural: Verschnitte zur Aufbewahrung
       write:
         title: Schnittplan exportieren
         info_0: |
