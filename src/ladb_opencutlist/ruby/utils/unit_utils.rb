@@ -92,7 +92,7 @@ module Ladb::OpenCutList
     end
 
     def self.format_readable(f_value, s_unit, precision = 0, precision_small = 3, show_rounded_sign = false)
-      "#{format_readable_value(f_value, f_value.abs < 1 ? precision_small : precision, show_rounded_sign)} #{format_readable_unit(s_unit)}"
+      "#{format_readable_value(f_value, f_value.abs < 1 ? precision_small : precision, show_rounded_sign)}#{' ' if DimensionUtils.model_unit_is_metric}#{format_readable_unit(s_unit)}"
     end
 
   end
