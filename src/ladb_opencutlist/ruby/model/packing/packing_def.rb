@@ -69,13 +69,13 @@ module Ladb::OpenCutList
     attr_reader :problem_type,
                 :spacing, :trimming,
                 :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner,
-                :rectangleguillotine_cut_type, :rectangleguillotine_first_stage_orientation, :rectangleguillotine_number_of_stages,
+                :rectangleguillotine_cut_type, :rectangleguillotine_first_stage_orientation, :rectangleguillotine_number_of_stages, :rectangleguillotine_keep_length, :rectangleguillotine_keep_width,
                 :irregular_allowed_rotations, :irregular_allow_mirroring
 
     def initialize(problem_type:,
                    spacing:, trimming:,
                    items_formula:, hide_part_list:, part_drawing_type:, colorization:, origin_corner:,
-                   rectangleguillotine_cut_type:, rectangleguillotine_first_stage_orientation:, rectangleguillotine_number_of_stages:,
+                   rectangleguillotine_cut_type:, rectangleguillotine_first_stage_orientation:, rectangleguillotine_number_of_stages:, rectangleguillotine_keep_length:, rectangleguillotine_keep_width:,
                    irregular_allowed_rotations:, irregular_allow_mirroring:)
 
       @problem_type = problem_type
@@ -92,6 +92,8 @@ module Ladb::OpenCutList
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_first_stage_orientation = rectangleguillotine_first_stage_orientation
       @rectangleguillotine_number_of_stages = rectangleguillotine_number_of_stages
+      @rectangleguillotine_keep_length = rectangleguillotine_keep_length
+      @rectangleguillotine_keep_width = rectangleguillotine_keep_width
 
       @irregular_allowed_rotations = irregular_allowed_rotations
       @irregular_allow_mirroring = irregular_allow_mirroring
@@ -110,26 +112,29 @@ module Ladb::OpenCutList
 
   class PackingSummaryDef < DataContainer
 
-    attr_reader :time, :total_bin_count, :total_item_count, :total_efficiency,
-                :bin_type_defs
-    attr_accessor :total_leftover_count, :total_cut_count, :total_cut_length,
+    attr_reader :time, :number_of_bins, :number_of_items, :efficiency,
+                :bin_type_stats_defs
+    attr_accessor :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
+                  :cut_length,
                   :total_used_count, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count
 
-    def initialize(time:, total_bin_count:, total_item_count:, total_efficiency:,
-                   bin_type_defs:)
+    def initialize(time:, number_of_bins:, number_of_items:, efficiency:,
+                   bin_type_stats_defs:)
 
       @time = time
-      @total_bin_count = total_bin_count
-      @total_item_count = total_item_count
-      @total_efficiency = total_efficiency
+      @number_of_bins = number_of_bins
+      @number_of_items = number_of_items
+      @efficiency = efficiency
 
-      @bin_type_defs = bin_type_defs
+      @bin_type_stats_defs = bin_type_stats_defs
 
       # Computed
 
-      @total_leftover_count = 0
-      @total_cut_count = 0
-      @total_cut_length = 0
+      @number_of_leftovers = 0
+      @number_of_leftovers_to_keep = 0
+      @number_of_cuts = 0
+
+      @cut_length = 0
 
       @total_used_count = 0
       @total_used_area = 0
@@ -150,32 +155,34 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PackingSummaryBinTypeDef < DataContainer
+  class PackingSummaryBinTypeStatsDef < DataContainer
 
     attr_reader :bin_type_def, :count, :used,
-                :std_price, :total_area,
-                :total_length, :total_cost, :total_item_count
+                :number_of_items,
+                :std_price,
+                :total_area, :total_length, :total_cost
 
     def initialize(bin_type_def:, count:, used:,
-                   total_item_count: 0)
+                   number_of_items: 0)
 
       @bin_type_def = bin_type_def
       @count = count
       @used = used
+
+      @number_of_items = number_of_items
 
       @std_price = bin_type_def.std_price
 
       @total_area = bin_type_def.length * bin_type_def.width * count
       @total_length = bin_type_def.length * count
       @total_cost = @used ? bin_type_def.cost * count : 0
-      @total_item_count = total_item_count
 
     end
 
     # ---
 
-    def create_summary_bin_type
-      PackingSummaryBinType.new(self)
+    def create_summary_bin_type_stats
+      PackingSummaryBinTypeStats.new(self)
     end
 
   end
@@ -187,14 +194,16 @@ module Ladb::OpenCutList
     attr_reader :bin_type_def,
                 :count, :efficiency,
                 :item_defs, :leftover_defs, :cut_defs, :part_info_defs,
-                :total_cut_length,
+                :number_of_items, :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
+                :cut_length,
                 :x_max, :y_max
     attr_accessor :svg, :light_svg
 
     def initialize(bin_type_def:,
                    count:, efficiency:,
                    item_defs:, leftover_defs:, cut_defs:, part_info_defs:,
-                   total_cut_length:,
+                   number_of_items:, number_of_leftovers:, number_of_leftovers_to_keep:, number_of_cuts:,
+                   cut_length:,
                    x_max:, y_max:)
 
       @bin_type_def = bin_type_def
@@ -207,7 +216,12 @@ module Ladb::OpenCutList
       @cut_defs = cut_defs
       @part_info_defs = part_info_defs
 
-      @total_cut_length = total_cut_length
+      @number_of_items = number_of_items
+      @number_of_leftovers = number_of_leftovers
+      @number_of_leftovers_to_keep = number_of_leftovers_to_keep
+      @number_of_cuts = number_of_cuts
+
+      @cut_length = cut_length
 
       @x_max = x_max
       @y_max = y_max
@@ -260,16 +274,16 @@ module Ladb::OpenCutList
   class PackingLeftoverDef < DataContainer
 
     attr_reader :x, :y, :length, :width,
-                :keep
+                :kept
 
-    def initialize(x:, y:, length:, width:, keep:)
+    def initialize(x:, y:, length:, width:, kept:)
 
       @x = x
       @y = y
       @length = length
       @width = width
 
-      @keep = keep
+      @kept = kept
 
     end
 

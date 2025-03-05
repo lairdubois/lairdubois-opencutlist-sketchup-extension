@@ -580,21 +580,23 @@ module Ladb::OpenCutList
             rectangleguillotine_cut_type: @rectangleguillotine_cut_type,
             rectangleguillotine_first_stage_orientation: @rectangleguillotine_first_stage_orientation,
             rectangleguillotine_number_of_stages: @rectangleguillotine_number_of_stages,
+            rectangleguillotine_keep_length: @rectangleguillotine_keep_length,
+            rectangleguillotine_keep_width: @rectangleguillotine_keep_width,
             irregular_allowed_rotations: @irregular_allowed_rotations,
             irregular_allow_mirroring: @irregular_allow_mirroring
           ),
           summary_def: PackingSummaryDef.new(
             time: raw_solution['time'],
-            total_bin_count: raw_solution['number_of_bins'],
-            total_item_count: raw_solution['number_of_items'],
-            total_efficiency: raw_solution['full_efficiency'],
-            bin_type_defs: raw_solution['bin_types_stats'].is_a?(Array) ? raw_solution['bin_types_stats'].map { |raw_bin_type_stats|
+            number_of_bins: raw_solution['number_of_bins'],
+            number_of_items: raw_solution['number_of_items'],
+            efficiency: raw_solution['full_efficiency'],
+            bin_type_stats_defs: raw_solution['bin_types_stats'].is_a?(Array) ? raw_solution['bin_types_stats'].map { |raw_bin_type_stats|
               bin_type_def = @bin_type_defs[raw_bin_type_stats['bin_type_id']]
               used_copies = raw_bin_type_stats.fetch('used_copies', 0)
               unused_copies = raw_bin_type_stats.fetch('unused_copies', 0)
               defs = []
-              defs << PackingSummaryBinTypeDef.new(bin_type_def: bin_type_def, count: used_copies, used: true, total_item_count: raw_bin_type_stats.fetch('item_copies', 0)) if used_copies > 0
-              defs << PackingSummaryBinTypeDef.new(bin_type_def: bin_type_def, count: unused_copies, used: false) if unused_copies > 0 || unused_copies == -1
+              defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: used_copies, used: true, number_of_items: raw_bin_type_stats.fetch('item_copies', 0)) if used_copies > 0
+              defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: unused_copies, used: false) if unused_copies > 0 || unused_copies == -1
               defs
             }.flatten(1).sort_by!{ |bin_type_def| [ bin_type_def.used ? 1 : 0, -bin_type_def.bin_type_def.type, bin_type_def.bin_type_def.length ]} : []
           ),
@@ -627,7 +629,7 @@ module Ladb::OpenCutList
                   y: _from_packy_length(raw_leftover.fetch('y', 0)),
                   length: _from_packy_length(raw_leftover.fetch('width', 0)),
                   width: _from_packy_length(raw_leftover.fetch('height', 0)),
-                  keep: raw_leftover.fetch('keep', false),
+                  kept: raw_leftover.fetch('kept', false),
                 )
               } : [],
               cut_defs: raw_bin['cuts'].is_a?(Array) ? raw_bin['cuts'].map { |raw_cut|
@@ -647,7 +649,11 @@ module Ladb::OpenCutList
                   count: v.length
                 )
               }.sort_by { |part_info_def| part_info_def._sorter } : [],
-              total_cut_length: _from_packy_length(raw_bin.fetch('cut_length', 0)),
+              number_of_items: raw_bin.fetch('number_of_items', 0),
+              number_of_leftovers: raw_bin.fetch('number_of_leftovers', 0),
+              number_of_leftovers_to_keep: raw_bin.fetch('number_of_leftovers_to_keep', 0),
+              number_of_cuts: raw_bin.fetch('number_of_cuts', 0),
+              cut_length: _from_packy_length(raw_bin.fetch('cut_length', 0)),
               x_max: _from_packy_length(raw_bin.fetch('x_max', 0)),
               y_max: _from_packy_length(raw_bin.fetch('y_max', 0))
             )
@@ -662,20 +668,21 @@ module Ladb::OpenCutList
         bin_def.svg = _render_bin_def_svg(bin_def, false) unless running
         bin_def.light_svg = _render_bin_def_svg(bin_def, true)
 
-        packing_def.solution_def.summary_def.total_leftover_count += bin_def.leftover_defs.length
-        packing_def.solution_def.summary_def.total_cut_count += bin_def.cut_defs.length
-        packing_def.solution_def.summary_def.total_cut_length += bin_def.total_cut_length
+        packing_def.solution_def.summary_def.number_of_leftovers += bin_def.number_of_leftovers
+        packing_def.solution_def.summary_def.number_of_leftovers_to_keep += bin_def.number_of_leftovers_to_keep
+        packing_def.solution_def.summary_def.number_of_cuts += bin_def.number_of_cuts
+        packing_def.solution_def.summary_def.cut_length += bin_def.cut_length
 
       end
 
       # Sum bins stats
-      packing_def.solution_def.summary_def.bin_type_defs.each do |bin_type_def|
-        next unless bin_type_def.used
-        packing_def.solution_def.summary_def.total_used_count += bin_type_def.count
-        packing_def.solution_def.summary_def.total_used_area += bin_type_def.total_area
-        packing_def.solution_def.summary_def.total_used_length += bin_type_def.total_length
-        packing_def.solution_def.summary_def.total_used_cost += bin_type_def.total_cost
-        packing_def.solution_def.summary_def.total_used_item_count += bin_type_def.total_item_count
+      packing_def.solution_def.summary_def.bin_type_stats_defs.each do |bin_type_stats_def|
+        next unless bin_type_stats_def.used
+        packing_def.solution_def.summary_def.total_used_count += bin_type_stats_def.count
+        packing_def.solution_def.summary_def.total_used_area += bin_type_stats_def.total_area
+        packing_def.solution_def.summary_def.total_used_length += bin_type_stats_def.total_length
+        packing_def.solution_def.summary_def.total_used_cost += bin_type_stats_def.total_cost
+        packing_def.solution_def.summary_def.total_used_item_count += bin_type_stats_def.number_of_items
       end
 
       # Sum item stats
@@ -904,8 +911,8 @@ module Ladb::OpenCutList
             dim_x_text = leftover_def.length.to_s.gsub(/~ /, '')
             dim_y_text = leftover_def.width.to_s.gsub(/~ /, '')
 
-            svg += "<g class='leftover' transform='translate(#{px_leftover_rect_x} #{px_leftover_rect_y})'#{" data-toggle='tooltip' data-html='true' title='#{_render_leftover_def_tooltip(leftover_def)}'" if leftover_def.keep}>"
-              svg += "<rect class='leftover-inner' x='0' y='#{-px_leftover_rect_height}' width='#{px_leftover_rect_width}' height='#{px_leftover_rect_height}'/>" if leftover_def.keep
+            svg += "<g class='leftover' transform='translate(#{px_leftover_rect_x} #{px_leftover_rect_y})'#{" data-toggle='tooltip' data-html='true' title='#{_render_leftover_def_tooltip(leftover_def)}'" if leftover_def.kept}>"
+              svg += "<rect class='leftover-inner' x='0' y='#{-px_leftover_rect_height}' width='#{px_leftover_rect_width}' height='#{px_leftover_rect_height}'/>" if leftover_def.kept
               if is_2d
 
                 dim_x_font_size = [ [ px_node_dimension_font_size_max, px_leftover_rect_height - px_node_dimension_offset * 2, (px_leftover_rect_width - px_node_dimension_offset * 2) / (dim_x_text.length * 0.6) ].min, px_node_dimension_font_size_min ].max
@@ -1003,7 +1010,7 @@ module Ladb::OpenCutList
     end
 
     def _render_leftover_def_tooltip(leftover_def)
-      tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string('tab.cutlist.packing.list.leftover_to_keep')}</span></div>"
+      tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string('tab.cutlist.packing.list.leftovers_to_keep')}</span></div>"
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-size-length-width\"></i> #{CGI::escape_html(leftover_def.length.to_s)}&nbsp;x&nbsp;#{CGI::escape_html(leftover_def.width.to_s)}</div>"
       tt
     end

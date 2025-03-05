@@ -1057,8 +1057,6 @@ tab:
         scroll_to_block_1d: Défiler vers la première barre ou bande
         scroll_to_block_2d: Défiler vers le premier panneau ou feuille
       list:
-        unplaced_parts: Pièce non placée
-        unplaced_parts_plural: Pièces non placées
         summary: Récapitulatif
         trimming: Marge
         settings: Paramètres
@@ -1089,10 +1087,14 @@ tab:
         bin_2d_veneer_type_0: Feuille standard
         bin_2d_veneer_type_1: Reste de feuille
         unused: Inutilisée
-        parts: "{{ count }} pièce"
-        parts_plural: "{{ count }} pièces"
-        leftover_to_keep: Chute à conserver
-        leftover_to_keep_plural: Chutes à conserver
+        unplaced_parts: Pièce non placée
+        unplaced_parts_plural: Pièces non placées
+        parts: Pièce
+        parts_plural: Pièces
+        leftovers: Chute
+        leftovers_plural: Chutes
+        leftovers_to_keep: Chute à conserver
+        leftovers_to_keep_plural: Chutes à conserver
       write:
         title: Exportation du calepinage
         info_0: |

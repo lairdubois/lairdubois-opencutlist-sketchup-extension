@@ -246,6 +246,7 @@
       end
       unless unit_present
         # puts("default unit = #{unit_sign} in #{s}")
+        s += ' ' if model_unit_is_metric
         s += unit_sign
       end
       s

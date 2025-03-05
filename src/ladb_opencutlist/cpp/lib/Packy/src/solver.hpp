@@ -320,6 +320,12 @@ namespace Packy {
                 certificate_path_ = j["certificate_path"].get<std::string>();
             }
 
+            if (j.contains("linear_programming_solver")) {
+                columngenerationsolver::SolverName linear_programming_solver_name;
+                std::stringstream ss(j.value("linear_programming_solver", "clp"));
+                ss >> linear_programming_solver_name;
+                parameters_.linear_programming_solver_name = linear_programming_solver_name;
+            }
             if (j.contains("optimization_mode")) {
                 OptimizationMode optimization_mode;
                 std::stringstream ss(j.value("optimization_mode", "not-anytime"));
@@ -963,6 +969,7 @@ namespace Packy {
                 });
 
                 Length cut_length = 0;
+                int number_of_leftovers_to_keep = 0;
 
                 // Items, Leftovers & Cuts.
                 basic_json<>& j_items = j_bin["items"] = json::array();
@@ -999,14 +1006,19 @@ namespace Packy {
 
                             const Length width = node.r - node.l;
                             const Length height = node.t - node.b;
+                            bool kept = width >= keep_width_ && height >= keep_height_;
 
                             j_leftovers.push_back(json{
                                     {"x",      to_length_dbl(node.l)},
                                     {"y",      to_length_dbl(node.b)},
                                     {"width",  to_length_dbl(width)},
                                     {"height", to_length_dbl(height)},
-                                    {"keep",   width >= keep_width_ && height >= keep_height_},
+                                    {"kept",   kept},
                             });
+
+                            if (kept) {
+                                number_of_leftovers_to_keep++;
+                            }
 
                         }
 
@@ -1019,7 +1031,7 @@ namespace Packy {
                         if (bin_type.left_trim + bin_type.right_trim + bin_type.bottom_trim + bin_type.top_trim > 0 && !node.children.empty()) {
 
                             // Bottom
-                            Length b_length = node.r + (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.right_trim : 0);
+                            Length b_length = node.r - (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.left_trim : 0);
                             cut_length += b_length;
 
                             j_cuts.emplace_back(json{
@@ -1031,7 +1043,7 @@ namespace Packy {
                             });
 
                             // Left
-                            Length l_length = node.t + (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.top_trim : 0);
+                            Length l_length = node.t - (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.bottom_trim : 0);
                             cut_length += l_length;
 
                             j_cuts.emplace_back(json{
@@ -1051,7 +1063,7 @@ namespace Packy {
                         // Right
                         if (node.r != parent_node.r) {
 
-                            Length r_length = node.t + (node.d == 1 ? bin_type.top_trim : 0) - node.b;
+                            Length r_length = node.t/* + (node.d == 1 ? bin_type.top_trim : 0)*/ - node.b;
                             cut_length += r_length;
 
                             j_cuts.emplace_back(json{
@@ -1067,7 +1079,7 @@ namespace Packy {
                         // Top
                         if (node.t != parent_node.t) {
 
-                            Length t_length = node.r + (node.d == 1 ? bin_type.right_trim : 0) - node.l;
+                            Length t_length = node.r/* + (node.d == 1 ? bin_type.right_trim : 0)*/ - node.l;
                             cut_length += t_length;
 
                             j_cuts.emplace_back(json{
@@ -1086,6 +1098,7 @@ namespace Packy {
 
                 j_bin["number_of_items"] = j_items.size();
                 j_bin["number_of_leftovers"] = j_leftovers.size();
+                j_bin["number_of_leftovers_to_keep"] = number_of_leftovers_to_keep;
                 j_bin["number_of_cuts"] = j_cuts.size();
                 j_bin["cut_length"] = to_length_dbl(cut_length);
 

@@ -51,7 +51,7 @@
                                 <button class="no-print btn btn-default btn-sm ladb-btn-hiddable" id="ladb_btn_select_unplaced_parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_parts_in_cutlist'|i18next({ 'count':unplaced_parts|length }) }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i> {{ 'tab.cutlist.select_part'|i18next({ 'count':unplaced_parts|length }) }}</button>
                             </div>
                         {% endif %}
-                        <div class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ solution.summary.total_unused_item_count }} {{ 'tab.cutlist.packing.list.unplaced_parts'|i18next({ 'count': solution.summary.total_unused_item_count }) }}</div>
+                        <div class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ solution.summary.total_unused_item_count }} {{ 'tab.cutlist.packing.list.unplaced_parts'|i18next({ 'count': solution.summary.total_unused_item_count })|lower }}</div>
                     </td>
                 </tr>
                 <tr class="table-column-heading">
@@ -140,9 +140,10 @@
                                     <span style="margin-left: 10px;">{{ 'tab.cutlist.packing.list.stats'|i18next }}</span>
                                     <ul>
                                         <li><strong>{{ 'tab.cutlist.packing.list.time'|i18next }} : </strong>{{ solution.summary.time|number_format(3, capabilities.decimal_separator, ' ') }}s</li>
-                                        <li><strong>{{ 'tab.cutlist.packing.list.total_efficiency'|i18next }} : </strong>{{ (solution.summary.total_efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
-                                        {% if solution.summary.total_cut_count > 0 %}<li><strong>{{ 'tab.cutlist.packing.list.total_cut_count'|i18next }} : </strong>{{ solution.summary.total_cut_count }}</li>{% endif %}
-                                        {% if solution.summary.total_cut_length %}<li><strong>{{ 'tab.cutlist.packing.list.total_cut_length'|i18next }} : </strong>{{ solution.summary.total_cut_length }}</li>{% endif %}
+                                        <li><strong>{{ 'tab.cutlist.packing.list.total_efficiency'|i18next }} : </strong>{{ (solution.summary.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
+                                        {% if solution.summary.number_of_cuts > 0 %}<li><strong>{{ 'tab.cutlist.packing.list.total_cut_count'|i18next }} : </strong>{{ solution.summary.number_of_cuts }}</li>{% endif %}
+                                        {% if solution.summary.cut_length %}<li><strong>{{ 'tab.cutlist.packing.list.total_cut_length'|i18next }} : </strong>{{ solution.summary.cut_length }}</li>{% endif %}
+                                        {% if solution.summary.number_of_leftovers_to_keep > 0 %}<li><strong>{{ 'tab.cutlist.packing.list.leftovers_to_keep_plural'|i18next }} : </strong>{{ solution.summary.number_of_leftovers_to_keep }} <em class="text-muted">({{ 'tab.cutlist.list.length_short'|i18next }} x {{ 'tab.cutlist.list.width_short'|i18next }} > {{ solution.options.rectangleguillotine_keep_length }} x {{ solution.options.rectangleguillotine_keep_width }})</em></li>{% endif %}
                                     </ul>
                                 </div>
                             </div>
@@ -174,44 +175,44 @@
                     <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.total_cost'|i18next }}</td>
                     <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.total_part_count'|i18next }}</td>
                 </tr>
-                {% set isFirstUsed = solution.summary.bin_types|length > 0 and solution.summary.bin_types[0].used %}
-                {% for bin_type in solution.summary.bin_types %}
-                    <tr class="ladb-cutlist-row{% if bin_type.used and not isFirstUsed %} ladb-cutlist-row-separator{% set isFirstUsed = true %}{% endif %}"{% if not bin_type.used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.packing.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
+                {% set isFirstUsed = solution.summary.bin_type_stats|length > 0 and solution.summary.bin_type_stats[0].used %}
+                {% for bin_type_stats in solution.summary.bin_type_stats %}
+                    <tr class="ladb-cutlist-row{% if bin_type_stats.used and not isFirstUsed %} ladb-cutlist-row-separator{% set isFirstUsed = true %}{% endif %}"{% if not bin_type_stats.used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.packing.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
                         <td>
-                            <i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>{% if not generateOptions.hide_material_colors %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}{% endif %} {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2~'_type_'~bin_type.type)|i18next }}
-                            {% if bin_type.used %}
+                            <i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>{% if not generateOptions.hide_material_colors %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}{% endif %} {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2~'_type_'~bin_type_stats.type)|i18next }}
+                            {% if bin_type_stats.used %}
                                 <div class="ladb-minitools ladb-minitools-right no-print">
-                                    <a href="#ladb_packing_group_{{ bin_type.type_id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.packing.tooltip.scroll_to_block_2d'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
+                                    <a href="#ladb_packing_group_{{ bin_type_stats.type_id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.packing.tooltip.scroll_to_block_2d'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
                                 </div>
                             {% endif %}
                         </td>
                         <td class="text-center">
-                            {{ bin_type.count ? bin_type.count : '-' }}
+                            {{ bin_type_stats.count ? bin_type_stats.count : '-' }}
                         </td>
                         <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                            {{ bin_type.length }}
+                            {{ bin_type_stats.length }}
                         </td>
                         {% if group.material_is_1d %}
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                                {{ bin_type.total_length ? bin_type.total_length : '-' }}
+                                {{ bin_type_stats.total_length ? bin_type_stats.total_length : '-' }}
                             </td>
                         {% else %}
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                                {{ bin_type.width }}
+                                {{ bin_type_stats.width }}
                             </td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                                {{ bin_type.total_area ? bin_type.total_area : '-' }}
+                                {{ bin_type_stats.total_area ? bin_type_stats.total_area : '-' }}
                             </td>
                         {% endif %}
-                        <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bin_type.std_price %} data-toggle="tooltip" data-html="true" title="{{ bin_type.std_price }}"{% endif %}>
-                            {{ bin_type.total_cost ? bin_type.total_cost : '-' }}
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if bin_type_stats.std_price %} data-toggle="tooltip" data-html="true" title="{{ bin_type_stats.std_price }}"{% endif %}>
+                            {{ bin_type_stats.total_cost ? bin_type_stats.total_cost : '-' }}
                         </td>
                         <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                            {{ bin_type.total_item_count ? bin_type.total_item_count : '-' }}
+                            {{ bin_type_stats.number_of_items ? bin_type_stats.number_of_items : '-' }}
                         </td>
                     </tr>
                 {% endfor %}
-                {% if solution.summary.bin_types|length > 1 %}
+                {% if solution.summary.bin_type_stats|length > 1 %}
                     <tr class="ladb-cutlist-row ladb-cutlist-row-total">
                         <td class="text-right">{{ 'tab.cutlist.packing.list.total_used'|i18next }}</td>
                         <td class="text-center">{{ solution.summary.total_used_count }}</td>
@@ -258,7 +259,7 @@
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-next-group" {% if loop.last %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-right"></i></button>
                             </div>
                         {% endif %}
-                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ binIndex }}{% if bin.count > 1 %} ... {{ binIndex + bin.count - 1 }}{% endif%} / {{ solution.summary.total_bin_count }}</strong></div>
+                        <div class="ladb-heading pull-right" style="margin-right: 10px;"><strong>{{ binIndex }}{% if bin.count > 1 %} ... {{ binIndex + bin.count - 1 }}{% endif%} / {{ solution.summary.number_of_bins }}</strong></div>
                         {% set binIndex = binIndex + bin.count %}
                         {% if bin.count > 1 %}
                             <div class="ladb-heading-count pull-right">x&nbsp;{{ bin.count }}</div>
@@ -359,9 +360,10 @@
                 <tr>
                     <td colspan="{{ colspan }}">
                         <span class="ladb-horizontal-left-separator pull-right"><strong>{{ 'tab.cutlist.packing.list.efficiency'|i18next }} : </strong>{{ (bin.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</span>
-                        {% if bin.total_cut_length %}<span class="pull-right"><strong>{{ 'tab.cutlist.packing.list.total_cut_length'|i18next }} : </strong>{{ bin.total_cut_length }}</span>{% endif %}
+                        {% if bin.cut_length %}<span class="pull-right"><strong>{{ 'tab.cutlist.packing.list.total_cut_length'|i18next }} : </strong>{{ bin.cut_length }}</span>{% endif %}
                         {% if group.material_is_2d %}<span class="pull-left"><i class="ladb-opencutlist-icon-grained-{{ group.material_grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(group.material_grained ? '1' : '0'))|i18next }}</span>{% endif %}
-                        <span{% if group.material_is_2d %} class="ladb-horizontal-left-separator pull-left"{% endif %}>{{ ('tab.cutlist.packing.list.parts')|i18next({ 'count':bin.items|length }) }}</span>
+                        <span{% if group.material_is_2d %} class="ladb-horizontal-left-separator pull-left"{% endif %}>{{ bin.number_of_items }}&nbsp;{{ ('tab.cutlist.packing.list.parts')|i18next({ 'count':bin.number_of_items })|lower }}</span>
+                        {% if bin.number_of_leftovers_to_keep > 0 %}<span class="ladb-horizontal-left-separator pull-left">{{ bin.number_of_leftovers_to_keep }}&nbsp;{{ ('tab.cutlist.packing.list.leftovers_to_keep')|i18next({ 'count':bin.number_of_leftovers_to_keep })|lower }}</span>{% endif %}
                     </td>
                 </tr>
                 </tbody>
