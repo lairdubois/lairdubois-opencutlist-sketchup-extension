@@ -1091,8 +1091,10 @@ tab:
         unused: Unused
         parts: "{{ count }} part"
         parts_plural: "{{ count }} parts"
-        leftover_to_keep: Off-cut to keep
-        leftover_to_keep_plural: Off-cuts to keep
+        leftovers: Off-cut
+        leftovers_plural: Off-cuts
+        leftovers_to_keep: Off-cut to keep
+        leftovers_to_keep_plural: Off-cuts to keep
       write:
         title: Cutting Diagram Export
         info_0: |
