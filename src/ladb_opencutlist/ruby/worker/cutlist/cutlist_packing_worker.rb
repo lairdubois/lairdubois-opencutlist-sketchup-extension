@@ -735,7 +735,6 @@ module Ladb::OpenCutList
 
       px_bin_dimension_offset = light ? 0 : 10
       px_node_dimension_offset = 3
-      px_leftover_bullet_offset = 10
 
       px_bin_outline_width = 1
       px_item_outline_width = 2
@@ -1016,11 +1015,11 @@ module Ladb::OpenCutList
     end
 
     def _render_cut_def_tooltip(cut_def)
-      tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string("tab.cutlist.cuttingdiagram.list.cut#{(cut_def.depth == 0 ? '_trimming' : (cut_def.depth == 1 ? '_bounding' : (cut_def.depth == 2 ? '_internal_through' : '')))}")}</span></div>"
+      tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string("tab.cutlist.packing.list.cut#{(cut_def.depth == 0 ? '_trimming' : (cut_def.depth == 1 ? '_primary' : ''))}")}</span></div>"
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-vertical-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_TOP_LEFT ? 'right' : 'left'}\"></i> #{CGI::escape_html(cut_def.x.to_s)}</div>" if cut_def.vertical?
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-horizontal-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_BOTTOM_RIGHT ? 'top' : 'bottom'}\"></i> #{CGI::escape_html(cut_def.y.to_s)}</div>" if cut_def.horizontal?
-      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-saw\"></i> #{CGI::escape_html(@spacing.to_l.to_s)}</div>"
-      tt += "<div>depth = #{cut_def.depth}</div>"
+      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-#{cut_def.vertical? ? 'height' : 'width'}\"></i> #{CGI::escape_html(cut_def.length.to_s)}</div>"
+      tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-saw\"></i> #{CGI::escape_html(DimensionUtils.str_add_units(@spacing.to_l.to_s))}</div>"
       tt
     end
 

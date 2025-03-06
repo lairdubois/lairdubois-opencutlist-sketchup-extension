@@ -1031,28 +1031,60 @@ namespace Packy {
                         if (bin_type.left_trim + bin_type.right_trim + bin_type.bottom_trim + bin_type.top_trim > 0 && !node.children.empty()) {
 
                             // Bottom
-                            Length b_length = node.r - (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.left_trim : 0);
-                            cut_length += b_length;
+                            if (bin_type.bottom_trim_type == TrimType::Hard) {
+                                Length b_length = node.r - node.l + (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim + (bin_type.right_trim_type == TrimType::Hard ? bin_type.right_trim : 0) : 0);
+                                cut_length += b_length;
 
-                            j_cuts.emplace_back(json{
-                                    {"depth",       node.d},
-                                    {"x",           to_length_dbl(node.l - (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
-                                    {"y",           to_length_dbl(node.b - instance.parameters().cut_thickness)},
-                                    {"length",      to_length_dbl(b_length)},
-                                    {"orientation", "horizontal"}
-                            });
+                                j_cuts.emplace_back(json{
+                                        {"depth",       node.d},
+                                        {"x",           to_length_dbl(node.l - (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
+                                        {"y",           to_length_dbl(node.b - instance.parameters().cut_thickness)},
+                                        {"length",      to_length_dbl(b_length)},
+                                        {"orientation", "horizontal"}
+                                });
+                            }
+
+                            // Top
+                            if (bin_type.top_trim_type == TrimType::Hard) {
+                                Length t_length = node.r - node.l + (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim + (bin_type.right_trim_type == TrimType::Hard ? bin_type.right_trim : 0) : 0);
+                                cut_length += t_length;
+
+                                j_cuts.emplace_back(json{
+                                        {"depth",       node.d},
+                                        {"x",           to_length_dbl(node.l - (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
+                                        {"y",           to_length_dbl(node.t)},
+                                        {"length",      to_length_dbl(t_length)},
+                                        {"orientation", "horizontal"}
+                                });
+                            }
 
                             // Left
-                            Length l_length = node.t - (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.bottom_trim : 0);
-                            cut_length += l_length;
+                            if (bin_type.left_trim_type == TrimType::Hard) {
+                                Length l_length = node.t - node.b + (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim + (bin_type.top_trim_type == TrimType::Hard ? bin_type.top_trim : 0) : 0);
+                                cut_length += l_length;
 
-                            j_cuts.emplace_back(json{
-                                    {"depth",       node.d},
-                                    {"x",           to_length_dbl(node.l - instance.parameters().cut_thickness)},
-                                    {"y",           to_length_dbl(node.b - (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
-                                    {"length",      to_length_dbl(l_length)},
-                                    {"orientation", "vertical"},
-                            });
+                                j_cuts.emplace_back(json{
+                                        {"depth",       node.d},
+                                        {"x",           to_length_dbl(node.l - instance.parameters().cut_thickness)},
+                                        {"y",           to_length_dbl(node.b - (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
+                                        {"length",      to_length_dbl(l_length)},
+                                        {"orientation", "vertical"},
+                                });
+                            }
+
+                            // Right
+                            if (bin_type.right_trim_type == TrimType::Hard) {
+                                Length r_length = node.t - node.b + (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim + (bin_type.top_trim_type == TrimType::Hard ? bin_type.top_trim : 0) : 0);
+                                cut_length += r_length;
+
+                                j_cuts.emplace_back(json{
+                                        {"depth",       node.d},
+                                        {"x",           to_length_dbl(node.r)},
+                                        {"y",           to_length_dbl(node.b - (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
+                                        {"length",      to_length_dbl(r_length)},
+                                        {"orientation", "vertical"},
+                                });
+                            }
 
                         }
 
@@ -1063,7 +1095,7 @@ namespace Packy {
                         // Right
                         if (node.r != parent_node.r) {
 
-                            Length r_length = node.t/* + (node.d == 1 ? bin_type.top_trim : 0)*/ - node.b;
+                            Length r_length = node.t - node.b;
                             cut_length += r_length;
 
                             j_cuts.emplace_back(json{
@@ -1079,7 +1111,7 @@ namespace Packy {
                         // Top
                         if (node.t != parent_node.t) {
 
-                            Length t_length = node.r/* + (node.d == 1 ? bin_type.right_trim : 0)*/ - node.l;
+                            Length t_length = node.r - node.l;
                             cut_length += t_length;
 
                             j_cuts.emplace_back(json{

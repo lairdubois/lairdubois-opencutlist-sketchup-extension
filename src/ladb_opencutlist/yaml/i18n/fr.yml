@@ -1095,6 +1095,10 @@ tab:
         leftovers_plural: Chutes
         leftovers_to_keep: Chute à conserver
         leftovers_to_keep_plural: Chutes à conserver
+        cut: Coupe
+        cut_plural: Coupes
+        cut_trimming: Coupe de propreté
+        cut_primary: Coupe primaire
       write:
         title: Exportation du calepinage
         info_0: |
