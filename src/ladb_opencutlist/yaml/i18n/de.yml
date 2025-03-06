@@ -1091,8 +1091,10 @@ tab:
         unused: Nicht verwendet
         parts: "{{ count }} Teil"
         parts_plural: "{{ count }} Teile"
-        leftover_to_keep: Verschnitt zur Aufbewahrung
-        leftover_to_keep_plural: Verschnitte zur Aufbewahrung
+        leftovers: Verschnitt
+        leftovers_plural: Verschnitte
+        leftovers_to_keep: Verschnitt zur Aufbewahrung
+        leftovers_to_keep_plural: Verschnitte zur Aufbewahrung
       write:
         title: Schnittplan exportieren
         info_0: |
