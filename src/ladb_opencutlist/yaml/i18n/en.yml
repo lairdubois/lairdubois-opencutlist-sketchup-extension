@@ -1044,6 +1044,10 @@ tab:
       option_colorization_2: $t(default.yes) - Screen and Print
       option_colorization_help: |
         ...
+      option_hide_edges_preview: Display of Edge Bandings
+      option_hide_edges_preview_0: Displayed in the cutting diagram
+      option_hide_edges_preview_1: Hidden in the cutting diagram
+      option_hide_edges_preview_help: Shows or hides the visual display of the edge bandings for each part in the cutting diagram.
       option_time_limit: Time limit
       option_time_limit_help: |
         ...
