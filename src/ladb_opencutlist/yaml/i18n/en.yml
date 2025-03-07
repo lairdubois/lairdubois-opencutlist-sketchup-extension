@@ -1095,6 +1095,10 @@ tab:
         leftovers_plural: Off-cuts
         leftovers_to_keep: Off-cut to keep
         leftovers_to_keep_plural: Off-cuts to keep
+        cut: Cut
+        cut_plural: Cuts
+        cut_trimming: Trimming cut
+        cut_primary: Primary cut
       write:
         title: Cutting Diagram Export
         info_0: |
