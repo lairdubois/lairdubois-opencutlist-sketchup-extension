@@ -276,8 +276,8 @@ module Ladb::OpenCutList
       @hide_part_list = hide_part_list
       @part_drawing_type = part_drawing_type.to_i
       @colorization = colorization
-      @origin_corner = problem_type == Packy::PROBLEM_TYPE_IRREGULAR ? ORIGIN_CORNER_BOTTOM_LEFT : origin_corner.to_i   # Force origin corner to BOTTOM LEFT if IRREGULAR
-      @hide_edges_preview = problem_type == Packy::PROBLEM_TYPE_IRREGULAR ? true : hide_edges_preview                   # Force hide edges preview to false if IRREGULAR
+      @origin_corner = problem_type == Packy::PROBLEM_TYPE_IRREGULAR ? ORIGIN_CORNER_BOTTOM_LEFT : origin_corner.to_i                                         # Force origin corner to BOTTOM LEFT if IRREGULAR
+      @hide_edges_preview = problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL || problem_type == Packy::PROBLEM_TYPE_IRREGULAR ? true : hide_edges_preview   # Force hide edges preview to true if ONEDIMENSIONAL or IRREGULAR
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_number_of_stages = [ [ 2, rectangleguillotine_number_of_stages.to_i ].max, 3 ].min
@@ -734,10 +734,10 @@ module Ladb::OpenCutList
       px_node_number_font_size_min = 8
 
       px_bin_dimension_offset = light ? 0 : 10
-      px_node_dimension_offset = 3
+      px_node_dimension_offset = 4
+      px_node_edge_offset = 1
 
       px_bin_outline_width = 1
-      px_item_outline_width = 2
       px_cut_outline_width = 2
       px_edge_width = 2
 
@@ -834,6 +834,15 @@ module Ladb::OpenCutList
             end
 
             unless light
+
+              if !@hide_edges_preview && part_def.edge_count > 0
+
+                svg += "<rect x='#{px_node_edge_offset}' y='#{-px_edge_width - px_node_edge_offset}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:ymin])}'/>" unless part_def.edge_material_names[:ymin].nil?
+                svg += "<rect x='#{px_node_edge_offset}' y='#{-px_item_width + px_node_edge_offset}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:ymax])}'/>" unless part_def.edge_material_names[:ymax].nil?
+                svg += "<rect x='#{px_node_edge_offset}' y='#{-px_item_width + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:xmin])}'/>" unless part_def.edge_material_names[:xmin].nil?
+                svg += "<rect x='#{px_item_length - px_edge_width - px_node_edge_offset}' y='#{-px_item_width}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:xmax])}'/>" unless part_def.edge_material_names[:xmax].nil?
+
+              end
 
               item_text = _evaluate_item_text(@items_formula, part, item_def.instance_info)
               item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" if item_text.is_a?(Hash)

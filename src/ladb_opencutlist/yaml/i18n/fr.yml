@@ -1044,6 +1044,10 @@ tab:
       option_colorization_2: $t(default.yes) - Écran et Impression
       option_colorization_help: |
         Définit quand la couleur est utilisée pour représenter les pièces
+      option_hide_edges_preview: Indicateurs de chants à plaquer
+      option_hide_edges_preview_0: Affichés sur le diagramme
+      option_hide_edges_preview_1: Masqués sur le diagramme
+      option_hide_edges_preview_help: Permet d'afficher ou masquer l'indication visuel des chants à plaquer pour chaque pièce du diagramme.
       option_time_limit: Limite de temps
       option_time_limit_help: |
         Fixe le temps impartit au calcul

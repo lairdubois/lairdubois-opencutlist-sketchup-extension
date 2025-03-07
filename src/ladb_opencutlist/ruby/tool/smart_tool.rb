@@ -111,9 +111,9 @@ module Ladb::OpenCutList
       else
         device_height = view.vpheight
       end
-      if device_height > 1300
+      if device_height > 2000
         @unit = 8
-      elsif device_height > 900
+      elsif device_height > 1000
         @unit = 6
       elsif device_height > 500
         @unit = 4
