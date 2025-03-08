@@ -1044,6 +1044,10 @@ tab:
       option_colorization_2: $t(default.yes) - Bildschirm und Druck
       option_colorization_help: |
         ...
+      option_hide_edges_preview: Anzeige der Kantenbänder
+      option_hide_edges_preview_0: Im Schnittplan angezeigt
+      option_hide_edges_preview_1: Im Schnittplan ausgeblendet
+      option_hide_edges_preview_help: Ermöglicht das Ein- oder Ausblenden der visuellen Anzeige der Kantenbänder für jedes Teil im Schnittplan.
       option_time_limit: Zeitbegrenzung
       option_time_limit_help: |
         ...
