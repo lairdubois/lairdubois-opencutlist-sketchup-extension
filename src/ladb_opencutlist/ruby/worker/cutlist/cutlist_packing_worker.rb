@@ -976,9 +976,7 @@ module Ladb::OpenCutList
             when 0
               clazz = ' cut-trimming'
             when 1
-              clazz = ' cut-bounding'
-            when 2
-              clazz = ' cut-internal-through'
+              clazz = ' cut-primary'
             else
               clazz = ''
             end

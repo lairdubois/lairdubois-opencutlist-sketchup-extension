@@ -1030,7 +1030,7 @@ namespace Packy {
 
                         if (bin_type.left_trim + bin_type.right_trim + bin_type.bottom_trim + bin_type.top_trim > 0 && !node.children.empty()) {
 
-                            // Bottom
+                            // Bottom trim
                             if (bin_type.bottom_trim_type == TrimType::Hard) {
                                 Length b_length = node.r - node.l + (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim + (bin_type.right_trim_type == TrimType::Hard ? bin_type.right_trim : 0) : 0);
                                 cut_length += b_length;
@@ -1044,7 +1044,7 @@ namespace Packy {
                                 });
                             }
 
-                            // Top
+                            // Top trim
                             if (bin_type.top_trim_type == TrimType::Hard) {
                                 Length t_length = node.r - node.l + (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim + (bin_type.right_trim_type == TrimType::Hard ? bin_type.right_trim : 0) : 0);
                                 cut_length += t_length;
@@ -1058,7 +1058,7 @@ namespace Packy {
                                 });
                             }
 
-                            // Left
+                            // Left trim
                             if (bin_type.left_trim_type == TrimType::Hard) {
                                 Length l_length = node.t - node.b + (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim + (bin_type.top_trim_type == TrimType::Hard ? bin_type.top_trim : 0) : 0);
                                 cut_length += l_length;
@@ -1072,7 +1072,7 @@ namespace Packy {
                                 });
                             }
 
-                            // Right
+                            // Right trim
                             if (bin_type.right_trim_type == TrimType::Hard) {
                                 Length r_length = node.t - node.b + (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim + (bin_type.top_trim_type == TrimType::Hard ? bin_type.top_trim : 0) : 0);
                                 cut_length += r_length;
@@ -1090,10 +1090,10 @@ namespace Packy {
 
                     } else if (node.d >= 0 && node.f >= 0) {
 
-                        const SolutionNode& parent_node = bin.nodes[node.f];
+                        const SolutionNode& father_node = bin.nodes[node.f];
 
                         // Right
-                        if (node.r != parent_node.r) {
+                        if (node.r != father_node.r) {
 
                             Length r_length = node.t - node.b;
                             cut_length += r_length;
@@ -1109,7 +1109,7 @@ namespace Packy {
                         }
 
                         // Top
-                        if (node.t != parent_node.t) {
+                        if (node.t != father_node.t) {
 
                             Length t_length = node.r - node.l;
                             cut_length += t_length;

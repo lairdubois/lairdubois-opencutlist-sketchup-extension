@@ -119,12 +119,6 @@
           filter: none;
         }
 
-        .item-projection-machining {
-          fill: lighten(@ladb-brand-primary, 25%);
-          stroke: lighten(@ladb-brand-primary, 10%);
-          filter: none;
-        }
-
       }
 
       .item-outer {
@@ -135,16 +129,8 @@
         fill: #eee;
       }
 
-      .item-projection-outer {
-        fill: #fff;
-      }
-
       .item-projection-shape {
         //fill: #eee;
-      }
-
-      .item-projection-machining {
-        fill: lighten(#eee, 3%);
       }
 
       .item-edge {
@@ -211,6 +197,8 @@
       &:hover {
         .cut-outer, .cut-inner {
           fill: @ladb-brand-primary;
+        }
+        .cut-outer {
           fill-opacity: 1.0;
         }
       }
@@ -228,13 +216,10 @@
           .cut-outer, .cut-inner {
             fill: #555555;
           }
-          .cut-outer {
-            fill-opacity: 1.0;
-          }
         }
       }
 
-      &.cut-bounding {
+      &.cut-primary {
         &.cut-highlighted {
           .cut-outer, .cut-inner {
             fill: #F5486E;
@@ -246,28 +231,6 @@
         &:hover {
           .cut-outer, .cut-inner {
             fill: #F5486E;
-          }
-          .cut-outer {
-            fill-opacity: 1.0;
-          }
-        }
-      }
-
-      &.cut-internal-through {
-        &.cut-highlighted {
-          .cut-outer, .cut-inner {
-            fill: #2DB84D;
-          }
-          .cut-outer {
-            fill-opacity: 0.5;
-          }
-        }
-        &:hover {
-          .cut-outer, .cut-inner {
-            fill: #2DB84D;
-          }
-          .cut-outer {
-            fill-opacity: 1.0;
           }
         }
       }
@@ -277,9 +240,6 @@
         fill-opacity: 0.01;
       }
       .cut-inner {
-      }
-      &:not(.cut-lg) .cut-inner {
-        fill: #555;
       }
 
     }
