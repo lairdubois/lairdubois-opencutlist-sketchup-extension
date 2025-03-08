@@ -46,7 +46,7 @@
         $input
             .ladbTextinputNumberWithUnit({
                 defaultUnit: this.defaultUnit,
-                units: this.enabledUnitsRow0,
+                units: this.enabledUnitsRow0
             })
             .ladbTextinputNumberWithUnit('val', stdAttribute.val)
         ;
