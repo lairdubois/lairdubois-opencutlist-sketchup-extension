@@ -1,18 +1,8 @@
 <div class="ladb-editor-sizes-row row">
-    {% if rowIndex == 0 %}
-        <label class="control-label col-xs-4">Panneaux standards</label>
-    {% else %}
-        <div class="col-xs-4"></div>
-    {% endif %}
     <div class="col-xs-1">
         <div class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></div>
     </div>
-    <div class="col-xs-7">
-        <input type="text" class="form-control">
+    <div class="col-xs-11">
+        <input type="text" class="form-control" placeholder="longueur x largeur x quantité">
     </div>
-    {% if rowIndex > 0 %}
-        <div class="ladb-minitools">
-            <a href="#" class="ladb-editor-sizes-row-remove"><i class="ladb-opencutlist-icon-clear"></i></a>
-        </div>
-    {% endif %}
 </div>

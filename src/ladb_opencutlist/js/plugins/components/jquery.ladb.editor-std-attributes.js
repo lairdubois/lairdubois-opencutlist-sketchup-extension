@@ -339,7 +339,7 @@
             if (stdAttribute !== undefined && (stdAttribute.dim == null || stdAttribute.val != null && stdAttribute.val.length > 0 && stdAttribute.dim.length > 0)) {
                 stdAttributes.push(stdAttribute);
             }
-        })
+        });
 
         return stdAttributes;
     };
@@ -372,9 +372,8 @@
         const elements = this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.editorStdAttributes');
-            const options = $.extend({}, LadbEditorStdAttributes.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbEditorStdAttributes.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.editorStdAttributes', (data = new LadbEditorStdAttributes(this, options)));
             }
             if (typeof option === 'string') {

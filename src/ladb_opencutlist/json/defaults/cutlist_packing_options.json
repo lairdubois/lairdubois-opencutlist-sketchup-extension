@@ -5,6 +5,7 @@
     "scrap_bin_2d_sizes": 2 /* PRESETS_STORAGE_MODEL_ONLY */
   },
   "_preprocessors": {
+    "std_bin_sizes": 4, /* PRESETS_PREPROCESSOR_DXDXQ */
     "scrap_bin_1d_sizes": 2, /* PRESETS_PREPROCESSOR_DXQ */
     "scrap_bin_2d_sizes": 4, /* PRESETS_PREPROCESSOR_DXDXQ */
     "spacing": 1, /* PRESETS_PREPROCESSOR_D */

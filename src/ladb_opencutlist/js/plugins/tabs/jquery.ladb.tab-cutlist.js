@@ -5003,15 +5003,26 @@
                 const $btnGenerate = $('#ladb_btn_generate', $modal);
 
                 const fnFetchOptions = function (options) {
-                    options.std_bin_sizes = Array.isArray($inputStdBinSizes.val()) ? $inputStdBinSizes.val().join(';') : $inputStdBinSizes.val();
+                    // options.std_bin_sizes = Array.isArray($inputStdBinSizes.val()) ? $inputStdBinSizes.val().join(';') : $inputStdBinSizes.val();
+                    // if (group.material_is_1d) {
+                    //     options.scrap_bin_1d_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
+                    //     options.scrap_bin_2d_sizes = '';
+                    // }
+                    // if (group.material_is_2d) {
+                    //     options.scrap_bin_1d_sizes = '';
+                    //     options.scrap_bin_2d_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
+                    // }
+
+                    options.std_bin_sizes = $editorStdBinSizes.ladbEditorSizes('getSizes');
                     if (group.material_is_1d) {
-                        options.scrap_bin_1d_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
+                        options.scrap_bin_1d_sizes = $editorScrapBinSizes.ladbEditorSizes('getSizes');
                         options.scrap_bin_2d_sizes = '';
                     }
                     if (group.material_is_2d) {
                         options.scrap_bin_1d_sizes = '';
-                        options.scrap_bin_2d_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
+                        options.scrap_bin_2d_sizes = $editorScrapBinSizes.ladbEditorSizes('getSizes');
                     }
+
                     options.problem_type = $radiosProblemType.filter(':checked').val();
                     options.optimization_mode = $selectOptimizationMode.val();
                     options.objective = $selectObjective.val();

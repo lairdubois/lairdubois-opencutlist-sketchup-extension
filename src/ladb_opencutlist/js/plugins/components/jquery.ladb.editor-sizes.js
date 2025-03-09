@@ -9,6 +9,7 @@
         this.$element = $(element);
 
         this.$rows = $('.ladb-editor-sizes-rows', this.$element);
+        this.$minitools = $('.ladb-editor-sizes-rows-minitools', this.$element);
 
         this.sizes = [];
 
@@ -20,33 +21,63 @@
     };
 
     LadbEditorSizes.prototype.appendRow = function (size) {
+        const that = this;
 
-        const $row = $(Twig.twig({ref: 'components/_editor-sizes-row.twig'}).render({
-            rowIndex: this.$rows.children().length,
-            size: size,
-        }));
+        if (this.$rows.children('.ladb-editor-sizes-row').length === 0) {
+            this.$rows.empty();
+        }
+
+        // Row /////
+
+        const $row = $(Twig.twig({ref: 'components/_editor-sizes-row.twig'}).render({}));
         $row.data('size', size);
         this.$rows.append($row);
 
         // Fetch UI elements
         const $input = $('input', $row);
 
-        // Bind button
-        $('.ladb-editor-sizes-row-remove', $row).on('click', function () {
-            $row.remove();
-        });
-
-        let value = '';
-        if (size.d1) value += size.d1;
-        if (size.d2) value += ' x ' + size.d2;
-        if (size.q) value += ' x' + size.q;
-
         // Bind
         $input
-            .ladbTextinputDimension()
-            .ladbTextinputDimension('val', value)
+            .ladbTextinputText()
+            .ladbTextinputText('val', size.val)
+        ;
+        $input
+            .on('change', function () {
+                size.val = $(this).ladbTextinputText('val');
+            })
         ;
 
+        // Minitool /////
+
+        const $minitool = $(
+            '<div class="ladb-minitools">' +
+                '<a href="#" tabindex="-1" class="ladb-editor-sizes-row-remove"><i class="ladb-opencutlist-icon-clear"></i></a>' +
+            '</div>'
+        );
+        this.$minitools.append($minitool);
+
+        // Bind button
+        $('.ladb-editor-sizes-row-remove', $minitool).on('click', function () {
+            const index = $(this).index();
+            that.removeRow(index);
+            $(this).blur();
+        });
+
+        return $row;
+    };
+
+    LadbEditorSizes.prototype.removeRow = function (index) {
+        const $row = this.$rows.children('.ladb-editor-sizes-row')[index];
+        if ($row) {
+            $row.remove();
+        }
+        const $minitool = this.$minitools.children()[index];
+        if ($minitool) {
+            $minitool.remove();
+        }
+        if (this.$rows.children('.ladb-editor-sizes-row').length === 0) {
+            this.$rows.append('<div class="ladb-editor-sizes-row-empty row"><div class="col-xs-1"></div><div class="col-xs-11"><div class="form-control">Aucun</div></div></div>');
+        }
     };
 
     LadbEditorSizes.prototype.renderRows = function () {
@@ -64,12 +95,8 @@
         this.sizes = [];
         const arraySizes = stringSizes.split(';');
         for (let i = 0; i < arraySizes.length; i++) {
-            const values = arraySizes[i].split('x')
-            const size = {
-                d1: values[0],
-                d2: values[1],
-                q: values[2]
-            }
+            const val = arraySizes[i];
+            const size = { val: val };
             this.sizes.push(size);
         }
         this.renderRows();
@@ -77,12 +104,16 @@
     };
 
     LadbEditorSizes.prototype.getSizes = function () {
-        const arraySizes = [];
-        for (let i = 0; i < this.sizes.length; i++) {
-            const size = this.sizes[i];
-            arraySizes.push(size.d1 + 'x' + size.d2 + 'x' + size.q);
-        }
-        return arraySizes.join(';');
+
+        const sizes = [];
+        this.$rows.children('.ladb-editor-sizes-row').each(function () {
+            const size = $(this).data('size');
+            if (size !== undefined && (size.val != null && size.val.length > 0)) {
+                sizes.push(size.val);
+            }
+        });
+
+        return sizes.join(';');
     };
 
     LadbEditorSizes.prototype.init = function () {
@@ -90,8 +121,8 @@
 
         // Bind button
         $('button', this.$element).on('click', function () {
-            that.appendRow({});
-            this.blur();
+            const $row = that.appendRow({});
+            $('input', $row).focus();
         });
 
         // Bind sortable
@@ -106,11 +137,10 @@
         let value;
         const elements = this.each(function () {
             const $this = $(this);
-            let data = $this.data('ladb.editorStdAttributes');
-            const options = $.extend({}, LadbEditorSizes.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
+            let data = $this.data('ladb.editorSizes');
             if (!data) {
-                $this.data('ladb.editorStdAttributes', (data = new LadbEditorSizes(this, options)));
+                const options = $.extend({}, LadbEditorSizes.DEFAULTS, $this.data(), typeof option === 'object' && option);
+                $this.data('ladb.editorSizes', (data = new LadbEditorSizes(this, options)));
             }
             if (typeof option === 'string') {
                 value = data[option].apply(data, Array.isArray(params) ? params : [ params ])

@@ -517,6 +517,9 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-size-length:before {
   content: "\e90d";
 }
+.ladb-opencutlist-icon-size-width:before {
+  content: "\e9b4";
+}
 .ladb-opencutlist-icon-close:before {
   content: "\e96f";
 }
