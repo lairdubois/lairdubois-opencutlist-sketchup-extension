@@ -141,9 +141,8 @@
         return this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.dialog-modal');
-            const options = $.extend({}, LadbDialogModal.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbDialogModal.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.dialog', (data = new LadbDialogModal(this, options)));
             }
             if (typeof option === 'string') {

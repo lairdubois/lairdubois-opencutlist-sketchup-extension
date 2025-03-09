@@ -169,9 +169,8 @@
         const elements = this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.widgetPreset');
-            const options = $.extend({}, LadbWidgetPreset.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbWidgetPreset.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 if (undefined === options.dialog) {
                     throw 'dialog option is mandatory.';
                 }

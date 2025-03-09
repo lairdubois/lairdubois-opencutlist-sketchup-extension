@@ -654,9 +654,8 @@
         const elements = this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.editorLabelLayout');
-            const options = $.extend({}, LadbEditorLabelLayout.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbEditorLabelLayout.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.editorLabelLayout', (data = new LadbEditorLabelLayout(this, options, options.dialog)));
             }
             if (typeof option === 'string') {

@@ -20,6 +20,16 @@
         availableSizes: {}
     };
 
+    LadbEditorSizes.prototype.updateToolsVisibility = function () {
+        if (this.$rows.children('.ladb-editor-sizes-row').length < 2) {
+            $('.ladb-handle', this.$rows).hide();
+            $('.ladb-minitools', this.$minitools).hide();
+        } else {
+            $('.ladb-handle', this.$rows).show();
+            $('.ladb-minitools', this.$minitools).show();
+        }
+    };
+
     LadbEditorSizes.prototype.appendRow = function (size) {
         const that = this;
 
@@ -38,12 +48,12 @@
 
         // Bind
         $input
-            .ladbTextinputText()
-            .ladbTextinputText('val', size.val)
+            .ladbTextinputSize()
+            .ladbTextinputSize('val', size.val)
         ;
         $input
             .on('change', function () {
-                size.val = $(this).ladbTextinputText('val');
+                size.val = $(this).ladbTextinputSize('val');
             })
         ;
 
@@ -58,10 +68,12 @@
 
         // Bind button
         $('.ladb-editor-sizes-row-remove', $minitool).on('click', function () {
-            const index = $(this).index();
+            const index = $minitool.index();
             that.removeRow(index);
             $(this).blur();
         });
+
+        this.updateToolsVisibility();
 
         return $row;
     };
@@ -75,9 +87,7 @@
         if ($minitool) {
             $minitool.remove();
         }
-        if (this.$rows.children('.ladb-editor-sizes-row').length === 0) {
-            this.$rows.append('<div class="ladb-editor-sizes-row-empty row"><div class="col-xs-1"></div><div class="col-xs-11"><div class="form-control">Aucun</div></div></div>');
-        }
+        this.updateToolsVisibility();
     };
 
     LadbEditorSizes.prototype.renderRows = function () {

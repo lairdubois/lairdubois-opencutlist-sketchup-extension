@@ -25,9 +25,8 @@
         const elements = this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.textinputUrl');
-            const options = $.extend({}, LadbTextinputUrl.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbTextinputUrl.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.textinputUrl', (data = new LadbTextinputUrl(this, options)));
             }
             if (typeof option === 'string') {

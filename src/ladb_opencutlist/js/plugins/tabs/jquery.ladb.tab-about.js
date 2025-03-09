@@ -35,9 +35,8 @@
         return this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.tab.plugin');
-            const options = $.extend({}, LadbTabAbout.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbTabAbout.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 if (undefined === options.dialog) {
                     throw 'dialog option is mandatory.';
                 }

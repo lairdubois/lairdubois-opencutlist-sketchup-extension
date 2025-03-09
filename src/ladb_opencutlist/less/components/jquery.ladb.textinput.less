@@ -4,7 +4,8 @@
 
 div.ladb-textinput {
   width: 100%;
-  display: table;
+  display: flex;
+  align-items: center;
   border: 1px solid #ccc;
   background-color: #fff;
   position: relative;
@@ -15,7 +16,8 @@ div.ladb-textinput {
   }
 
   > .ladb-textinput-input {
-    display: table-cell;
+    display: flex;
+    align-items: center;
     width: 100%;
 
     > input.form-control {
@@ -46,9 +48,7 @@ div.ladb-textinput {
   }
 
   > .ladb-textinput-tools {
-    display: table-cell;
     white-space: nowrap;
-    vertical-align: middle;
 
     .ladb-textinput-tool {
       display: inline-block;

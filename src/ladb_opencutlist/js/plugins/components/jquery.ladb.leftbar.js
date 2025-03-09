@@ -223,9 +223,8 @@
         return this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.leftbar');
-            const options = $.extend({}, LadbLeftbar.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbLeftbar.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.leftbar', (data = new LadbLeftbar(this, options, options.dialog)));
             }
             if (typeof option === 'string') {

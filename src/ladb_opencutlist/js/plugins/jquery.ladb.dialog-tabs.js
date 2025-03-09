@@ -805,9 +805,8 @@
         return this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.dialog');
-            const options = $.extend({}, LadbDialogTabs.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbDialogTabs.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.dialog', (data = new LadbDialogTabs(this, options)));
             }
             if (typeof option === 'string') {

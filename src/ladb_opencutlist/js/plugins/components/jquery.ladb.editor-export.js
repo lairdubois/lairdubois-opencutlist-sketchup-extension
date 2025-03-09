@@ -393,9 +393,8 @@
         const elements = this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.editorExport');
-            const options = $.extend({}, LadbEditorExport.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbEditorExport.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.editorExport', (data = new LadbEditorExport(this, options, options.dialog)));
             }
             if (typeof option === 'string') {

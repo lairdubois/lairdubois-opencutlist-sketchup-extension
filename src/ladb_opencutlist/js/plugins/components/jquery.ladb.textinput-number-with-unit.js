@@ -138,9 +138,8 @@
         const elements = this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.textinputNumberWithUnit');
-            const options = $.extend({}, LadbTextinputNumberWithUnit.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbTextinputNumberWithUnit.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.textinputNumberWithUnit', (data = new LadbTextinputNumberWithUnit(this, options)));
             }
             if (typeof option === 'string') {

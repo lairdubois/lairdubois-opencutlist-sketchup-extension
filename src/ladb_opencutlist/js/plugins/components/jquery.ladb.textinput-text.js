@@ -91,9 +91,8 @@
         const elements = this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.textinputText');
-            const options = $.extend({}, LadbTextinputText.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbTextinputText.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.textinputText', (data = new LadbTextinputText(this, options)));
             }
             if (typeof option === 'string') {

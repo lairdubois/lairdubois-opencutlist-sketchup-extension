@@ -359,9 +359,8 @@
         const elements = this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.textinputColor');
-            const options = $.extend({}, LadbTextinputColor.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbTextinputColor.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.textinputColor', (data = new LadbTextinputColor(this, options)));
             }
             if (typeof option === 'string') {

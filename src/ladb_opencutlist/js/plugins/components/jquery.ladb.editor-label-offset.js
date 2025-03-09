@@ -149,9 +149,8 @@
         const elements = this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.editorLabelOffset');
-            const options = $.extend({}, LadbEditorLabelOffset.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbEditorLabelOffset.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.editorLabelOffset', (data = new LadbEditorLabelOffset(this, options)));
             }
             if (typeof option === 'string') {

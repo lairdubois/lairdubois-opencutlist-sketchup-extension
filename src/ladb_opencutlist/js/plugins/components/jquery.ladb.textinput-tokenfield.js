@@ -130,9 +130,8 @@
         const elements = this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.textinputTokenfield');
-            const options = $.extend({}, LadbTextinputTokenfield.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbTextinputTokenfield.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.textinputTokenfield', (data = new LadbTextinputTokenfield(this, options)));
             }
             if (typeof option === 'string') {

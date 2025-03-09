@@ -598,7 +598,7 @@ module Ladb::OpenCutList
               defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: used_copies, used: true, number_of_items: raw_bin_type_stats.fetch('item_copies', 0)) if used_copies > 0
               defs << PackingSummaryBinTypeStatsDef.new(bin_type_def: bin_type_def, count: unused_copies, used: false) if unused_copies > 0 || unused_copies == -1
               defs
-            }.flatten(1).sort_by!{ |bin_type_def| [ bin_type_def.used ? 1 : 0, -bin_type_def.bin_type_def.type, bin_type_def.bin_type_def.length ]} : []
+            }.flatten(1).sort_by!{ |bin_type_stats| [ bin_type_stats.used ? 1 : 0, -bin_type_stats.bin_type_def.type, bin_type_stats.bin_type_def.length ]} : []
           ),
           unplaced_part_info_defs: raw_solution['item_types_stats'].is_a?(Array) ? raw_solution['item_types_stats'].map { |raw_item_type_stats|
             item_type_def = @item_type_defs[raw_item_type_stats['item_type_id']]

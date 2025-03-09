@@ -26,9 +26,8 @@
         const elements = this.each(function () {
             const $this = $(this);
             let data = $this.data('ladb.textinputDimension');
-            const options = $.extend({}, LadbTextinputDimension.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
             if (!data) {
+                const options = $.extend({}, LadbTextinputDimension.DEFAULTS, $this.data(), typeof option === 'object' && option);
                 $this.data('ladb.textinputDimension', (data = new LadbTextinputDimension(this, options)));
             }
             if (typeof option === 'string') {
