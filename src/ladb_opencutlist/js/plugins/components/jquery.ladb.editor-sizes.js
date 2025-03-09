@@ -22,29 +22,29 @@
     LadbEditorSizes.prototype.appendRow = function (size) {
 
         const $row = $(Twig.twig({ref: 'components/_editor-sizes-row.twig'}).render({
+            rowIndex: this.$rows.children().length,
             size: size,
         }));
         $row.data('size', size);
         this.$rows.append($row);
 
         // Fetch UI elements
-        const $select = $('select', $row);
-        const $inputD1 = $('input.d1', $row);
-        const $inputD2 = $('input.d2', $row);
-        const $inputQ = $('input.q', $row);
+        const $input = $('input', $row);
+
+        // Bind button
+        $('.ladb-editor-sizes-row-remove', $row).on('click', function () {
+            $row.remove();
+        });
+
+        let value = '';
+        if (size.d1) value += size.d1;
+        if (size.d2) value += ' x ' + size.d2;
+        if (size.q) value += ' x' + size.q;
 
         // Bind
-        $inputD1
+        $input
             .ladbTextinputDimension()
-            .ladbTextinputDimension('val', size.d1)
-        ;
-        $inputD2
-            .ladbTextinputDimension()
-            .ladbTextinputDimension('val', size.d2)
-        ;
-        $inputQ
-            .ladbTextinputNumberWithUnit()
-            .ladbTextinputNumberWithUnit('val', size.q)
+            .ladbTextinputDimension('val', value)
         ;
 
     };
@@ -90,9 +90,12 @@
 
         // Bind button
         $('button', this.$element).on('click', function () {
-            console.log('ADD SIZE', that.options.format, that.options.availableSizes);
+            that.appendRow({});
             this.blur();
         });
+
+        // Bind sortable
+        this.$rows.sortable(SORTABLE_OPTIONS);
 
     };
 

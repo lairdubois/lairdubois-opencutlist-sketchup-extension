@@ -1,12 +1,18 @@
 <div class="ladb-editor-sizes-row row">
-    <label class="control-label col-xs-4">Blop</label>
-    <div class="col-xs-3">
-        <input type="text" class="form-control text-right d1">
+    {% if rowIndex == 0 %}
+        <label class="control-label col-xs-4">Panneaux standards</label>
+    {% else %}
+        <div class="col-xs-4"></div>
+    {% endif %}
+    <div class="col-xs-1">
+        <div class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></div>
     </div>
-    <div class="col-xs-3">
-        <input type="text" class="form-control text-right d2">
+    <div class="col-xs-7">
+        <input type="text" class="form-control">
     </div>
-    <div class="col-xs-2">
-        <input type="text" class="form-control text-right q">
-    </div>
+    {% if rowIndex > 0 %}
+        <div class="ladb-minitools">
+            <a href="#" class="ladb-editor-sizes-row-remove"><i class="ladb-opencutlist-icon-clear"></i></a>
+        </div>
+    {% endif %}
 </div>
