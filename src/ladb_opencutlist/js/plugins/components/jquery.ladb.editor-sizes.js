@@ -61,7 +61,7 @@
 
         const $minitool = $(
             '<div class="ladb-minitools">' +
-                '<a href="#" tabindex="-1" class="ladb-editor-sizes-row-remove"><i class="ladb-opencutlist-icon-clear"></i></a>' +
+                '<button tabindex="-1" class="ladb-editor-sizes-row-remove btn btn-default btn-xs"><i class="ladb-opencutlist-icon-minus"></i></button>' +
             '</div>'
         );
         this.$minitools.append($minitool);
