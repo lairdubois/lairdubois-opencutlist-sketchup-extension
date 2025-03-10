@@ -9,8 +9,7 @@
     };
     LadbTextinputSize.prototype = new LadbTextinputAbstract;
 
-    LadbTextinputSize.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {
-    });
+    LadbTextinputSize.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {});
 
     LadbTextinputSize.prototype.updateInputValue = function () {
 
@@ -25,6 +24,16 @@
 
         LadbTextinputAbstract.prototype.val.call(this, values.join('x'));
         this.$element.trigger('change');
+    };
+
+    LadbTextinputSize.prototype.reset = function () {
+        LadbTextinputAbstract.prototype.reset.call(this);
+
+        const values = this.$element.val().split('x');
+        this.$input1.val(values[0]);
+        this.$input2.val(values[1]);
+        this.$input3.val(values[2]);
+
     };
 
     LadbTextinputSize.prototype.val = function (value) {
