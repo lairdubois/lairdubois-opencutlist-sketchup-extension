@@ -13,6 +13,7 @@ module Ladb::OpenCutList::Fiddle
 
     OPTIMIZATION_MODE_ANYTIME = 'anytime'.freeze
     OPTIMIZATION_MODE_NOT_ANYTIME = 'not-anytime'.freeze
+    OPTIMIZATION_MODE_NOT_ANYTIME_DETERMINISTIC = 'not-anytime-deterministic'.freeze
     OPTIMIZATION_MODE_NOT_ANYTIME_SEQUENTIAL = 'not-anytime-sequential'.freeze
 
     OBJECTIVE_BIN_PACKING = 'bin-packing'.freeze
