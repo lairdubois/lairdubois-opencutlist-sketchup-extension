@@ -5140,14 +5140,20 @@
                 }
 
                 $inputStdBinSizes.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputScrapBinSizes.ladbTextinputTokenfield({format: group.material_is_1d ? 'dxq' : 'dxdxq'});
+                $inputScrapBinSizes.ladbTextinputTokenfield({ format: group.material_is_1d ? 'dxq' : 'dxdxq' });
                 $inputScrapBinSizes.ladbTextinputTokenfield('setTokens', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes);
                 $editorStdBinSizes
-                    .ladbEditorSizes({ format: group.material_is_1d ? 'dxq' : 'dxdxq', availableSizes: group.material_is_1d ? response.std_lengths : response.std_sizes })
+                    .ladbEditorSizes({
+                        format: group.material_is_1d ? 'dxq' : 'dxdxq',
+                        qPlaceholder: '∞',
+                        availableSizes: group.material_is_1d ? response.std_lengths : response.std_sizes
+                    })
                     .ladbEditorSizes('setSizes', packingOptions.std_bin_sizes)
                 ;
                 $editorScrapBinSizes
-                    .ladbEditorSizes({ format: group.material_is_1d ? 'dxq' : 'dxdxq' })
+                    .ladbEditorSizes({
+                        format: group.material_is_1d ? 'dxq' : 'dxdxq'
+                    })
                     .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes)
                 ;
                 $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS);

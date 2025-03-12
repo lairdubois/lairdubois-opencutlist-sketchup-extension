@@ -1,6 +1,11 @@
 +function ($) {
     'use strict';
 
+    const FORMAT_D = "d";
+    const FORMAT_D_Q = "dxq";
+    const FORMAT_D_D = "dxd";
+    const FORMAT_D_D_Q = "dxdxq";
+
     // CLASS DEFINITION
     // ======================
 
@@ -9,24 +14,27 @@
         this.$element = $(element);
 
         this.$rows = $('.ladb-editor-sizes-rows', this.$element);
-        this.$minitools = $('.ladb-editor-sizes-rows-minitools', this.$element);
+        this.$removeRows = $('.ladb-editor-sizes-remove-rows', this.$element);
 
         this.sizes = [];
 
     };
 
     LadbEditorSizes.DEFAULTS = {
-        format: 'dxdxq',
+        format: FORMAT_D_D_Q,
+        d1Placeholder: 'Longueur',
+        d2Placeholder: 'Largeur',
+        qPlaceholder: '1',
         availableSizes: {}
     };
 
     LadbEditorSizes.prototype.updateToolsVisibility = function () {
         if (this.$rows.children('.ladb-editor-sizes-row').length < 2) {
             $('.ladb-handle', this.$rows).hide();
-            $('.ladb-minitools', this.$minitools).hide();
+            $('.ladb-editor-sizes-remove-row', this.$removeRows).hide();
         } else {
             $('.ladb-handle', this.$rows).show();
-            $('.ladb-minitools', this.$minitools).show();
+            $('.ladb-editor-sizes-remove-row', this.$removeRows).show();
         }
     };
 
@@ -46,9 +54,21 @@
         // Fetch UI elements
         const $input = $('input', $row);
 
+        let options = {
+            d1Placeholder: this.options.d1Placeholder,
+            d2Placeholder: this.options.d2Placeholder,
+            qPlaceholder: this.options.qPlaceholder,
+            d2Disabled: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q,
+            qDisabled: this.options.format === FORMAT_D || this.options.format === FORMAT_D_D,
+            d2Hidden: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q,
+            qHidden: this.options.format === FORMAT_D || this.options.format === FORMAT_D_D,
+            separator1Label: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
+            separator2Label: this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? 'Qte' : '',
+        }
+
         // Bind
         $input
-            .ladbTextinputSize()
+            .ladbTextinputSize(options)
             .ladbTextinputSize('val', size.val)
         ;
         $input
@@ -57,18 +77,18 @@
             })
         ;
 
-        // Minitool /////
+        // Remove row /////
 
-        const $minitool = $(
-            '<div class="ladb-minitools">' +
-                '<button tabindex="-1" class="ladb-editor-sizes-row-remove btn btn-default btn-xs"><i class="ladb-opencutlist-icon-minus"></i></button>' +
+        const $removeRow = $(
+            '<div class="ladb-editor-sizes-remove-row">' +
+                '<button tabindex="-1" class="btn btn-default btn-xs"><i class="ladb-opencutlist-icon-minus"></i></button>' +
             '</div>'
         );
-        this.$minitools.append($minitool);
+        this.$removeRows.append($removeRow);
 
         // Bind button
-        $('.ladb-editor-sizes-row-remove', $minitool).on('click', function () {
-            const index = $minitool.index();
+        $('button', $removeRow).on('click', function () {
+            const index = $removeRow.index();
             that.removeRow(index);
             $(this).blur();
         });
@@ -83,9 +103,9 @@
         if ($row) {
             $row.remove();
         }
-        const $minitool = this.$minitools.children()[index];
-        if ($minitool) {
-            $minitool.remove();
+        const $removeRow = this.$removeRows.children('.ladb-editor-sizes-remove-row')[index];
+        if ($removeRow) {
+            $removeRow.remove();
         }
         this.updateToolsVisibility();
     };
@@ -132,7 +152,7 @@
         // Bind button
         $('button', this.$element).on('click', function () {
             const $row = that.appendRow({});
-            $('input', $row).focus();
+            $('input[type="text"]', $row).first().focus();
         });
 
         // Bind sortable

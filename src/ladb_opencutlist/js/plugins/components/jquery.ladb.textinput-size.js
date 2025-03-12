@@ -10,7 +10,18 @@
     LadbTextinputSize.prototype = new LadbTextinputAbstract;
 
     LadbTextinputSize.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {
-        format: 'dxdxq'
+        resetValue: 'xx',
+        d1Placeholder: '',
+        d2Placeholder: '',
+        qPlaceholder: '',
+        d1Disabled: false,
+        d2Disabled: false,
+        qDisabled: false,
+        d1Hidden: false,
+        d2Hidden: false,
+        qHidden: false,
+        separator1Label: 'x',
+        separator2Label: 'x',
     });
 
     LadbTextinputSize.prototype.updateInputValue = function () {
@@ -61,25 +72,25 @@
 
         this.$element.attr('type', 'hidden');
 
-        this.$input1 = $('<input type="text" class="form-control text-right" style="width: 50%;" placeholder="Longueur">')
+        this.$input1 = $('<input type="text" class="form-control text-right" style="width: 50%;' + (this.options.d1Hidden ? ' opacity: 0;' : '') + '" placeholder="' + this.options.d1Placeholder + '"' + (this.options.d1Disabled ? ' disabled' : '') + '>')
             .on('change', function () {
                 that.updateInputValue();
             })
         ;
         this.$inputWrapper.append(this.$input1);
 
-        this.$inputWrapper.append('<div style="padding: 0 10px; color: #ccc;">x</div>');
+        this.$inputWrapper.append('<div style="padding: 0 10px; color: #ccc;">' + this.options.separator1Label + '</div>');
 
-        this.$input2 = $('<input type="text" class="form-control text-right" style="width: 50%;" placeholder="Largeur">')
+        this.$input2 = $('<input type="text" class="form-control text-right" style="width: 50%;' + (this.options.d2Hidden ? ' opacity: 0;' : '') + '" placeholder="' + this.options.d2Placeholder + '"' + (this.options.d2Disabled ? ' disabled' : '') + '>')
             .on('change', function () {
                 that.updateInputValue();
             })
         ;
         this.$inputWrapper.append(this.$input2);
 
-        this.$inputWrapper.append('<div style="padding: 0 5px 0 20px; color: #ccc;">Qte.</div>');
+        this.$inputWrapper.append('<div style="padding: 0 5px 0 20px; color: #ccc;">' + this.options.separator2Label + '</div>');
 
-        this.$input3 = $('<input type="text" class="form-control text-right" style="width: 25%;" placeholder="1">')
+        this.$input3 = $('<input type="text" class="form-control text-right" style="width: 25%;' + (this.options.qHidden ? ' opacity: 0;' : '') + '" placeholder="' + this.options.qPlaceholder + '"' + (this.options.qDisabled ? ' disabled' : '') + '>')
             .on('change', function () {
                 that.updateInputValue();
             })
