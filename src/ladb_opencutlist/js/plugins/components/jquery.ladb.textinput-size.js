@@ -9,7 +9,9 @@
     };
     LadbTextinputSize.prototype = new LadbTextinputAbstract;
 
-    LadbTextinputSize.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {});
+    LadbTextinputSize.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {
+        format: 'dxdxq'
+    });
 
     LadbTextinputSize.prototype.updateInputValue = function () {
 
