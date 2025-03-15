@@ -21,7 +21,7 @@
         d2Placeholder: 'Largeur',
         qPlaceholder: '1',
         qHidden: false,
-        availableSizes: {}
+        availableSizes: null
     };
 
     LadbEditorSizes.prototype.updateToolsVisibility = function () {
@@ -50,21 +50,20 @@
         // Fetch UI elements
         const $input = $('input', $row);
 
-        let options = {
-            d1Placeholder: this.options.d1Placeholder,
-            d2Placeholder: this.options.d2Placeholder,
-            qPlaceholder: this.options.qPlaceholder,
-            d2Disabled: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q,
-            qDisabled: this.options.format === FORMAT_D || this.options.format === FORMAT_D_D,
-            d2Hidden: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q,
-            qHidden: this.options.qHidden && (this.options.format === FORMAT_D || this.options.format === FORMAT_D_D),
-            separator1Label: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
-            separator2Label: !this.options.qHidden || this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? 'Qte' : '',
-        }
-
         // Bind
         $input
-            .ladbTextinputSize(options)
+            .ladbTextinputSize({
+                d1Placeholder: this.options.d1Placeholder,
+                d2Placeholder: this.options.d2Placeholder,
+                qPlaceholder: this.options.qPlaceholder,
+                d2Disabled: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q,
+                qDisabled: this.options.format === FORMAT_D || this.options.format === FORMAT_D_D,
+                d2Hidden: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q,
+                qHidden: this.options.qHidden && (this.options.format === FORMAT_D || this.options.format === FORMAT_D_D),
+                separator1Label: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
+                separator2Label: !this.options.qHidden || this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? 'Qte' : '',
+                feeder: that.options.availableSizes ? function () { return that.options.availableSizes.split(';'); } : null
+            })
             .ladbTextinputSize('val', size.val)
         ;
         $input

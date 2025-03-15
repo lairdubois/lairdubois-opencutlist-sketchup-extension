@@ -15,6 +15,19 @@ div.ladb-textinput {
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, 0.6);
   }
 
+  &.ladb-textinput-combobox {
+
+    &:hover {
+      border-color: #adadad;
+      background-color: #e6e6e6;
+    }
+
+    input, div {
+      pointer-events: none;
+    }
+
+  }
+
   > .ladb-textinput-input {
     display: flex;
     align-items: center;
@@ -76,6 +89,29 @@ div.ladb-textinput {
 
     &.ladb-textinput-tools-right .ladb-textinput-tool {
         margin-right: 6px;
+    }
+
+  }
+
+}
+
+.ladb-textinput-select {
+
+  .dropdown-menu {
+    min-width: 100%;
+  }
+
+  button.btn-dropdown-toggle {
+    border: none;
+    padding: 0;
+
+    > div.ladb-textinput {
+      pointer-events: none;
+    }
+
+    &:hover > div.ladb-textinput {
+      border-color: #adadad;
+      background-color: #e6e6e6;
     }
 
   }

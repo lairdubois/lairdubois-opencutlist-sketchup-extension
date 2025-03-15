@@ -22,6 +22,7 @@
         qHidden: false,
         separator1Label: 'x',
         separator2Label: 'x',
+        feeder: null
     }, LadbTextinputAbstract.DEFAULTS);
 
     LadbTextinputSize.prototype.updateElementInputValue = function () {
@@ -48,6 +49,8 @@
 
     };
 
+    /////
+
     LadbTextinputSize.prototype.focus = function () {
         this.$input1.focus();
     };
@@ -70,6 +73,19 @@
 
         const r = LadbTextinputAbstract.prototype.val.call(this, value);
         return r;
+    };
+
+    LadbTextinputSize.prototype.appendRightTools = function ($toolsContainer) {
+        if (this.options.feeder) {
+
+            const $caret =
+                $('<div class="ladb-textinput-tool ladb-textinput-tool-btn" tabindex="-1"><span class="bs-caret"><span class="caret"></span></span></div>')
+            ;
+            $toolsContainer.append($caret);
+
+        } else {
+            LadbTextinputAbstract.prototype.appendRightTools.call(this, $toolsContainer);
+        }
     };
 
     LadbTextinputSize.prototype.init = function() {
@@ -103,6 +119,42 @@
             })
         ;
         this.$inputWrapper.append(this.$input3);
+
+        // Set up the feeder
+
+        if ((typeof this.options.feeder) === 'function') {
+
+            this.$wrapper
+                .wrap('<button data-toggle="dropdown" class="btn-dropdown-toggle" />')
+            ;
+            let $dropdownToggle = this.$wrapper.parent();
+
+            $dropdownToggle
+                .wrap('<div class="dropdown ladb-textinput-select" />')
+            ;
+            let $dropdown = $dropdownToggle.parent();
+
+            let $dropdownMenu = $('<ul class="dropdown-menu" />');
+            $dropdown.append($dropdownMenu);
+
+            $dropdown.on('show.bs.dropdown', function (e) {
+                $dropdownMenu.empty();
+                let sizes = that.options.feeder();
+                for  (let i = 0; i < sizes.length; i++) {
+                    $dropdownMenu.append(
+                        $('<li />')
+                            .append('<a href="#">' + sizes[i] + '</a>')
+                            .on('click', function () {
+                                that
+                                    .val(sizes[i])
+                                    .trigger('change')
+                                ;
+                            })
+                    );
+                }
+            });
+
+        }
 
     };
 
