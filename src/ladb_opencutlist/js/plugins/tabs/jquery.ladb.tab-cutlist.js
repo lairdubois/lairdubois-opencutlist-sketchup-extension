@@ -5013,12 +5013,15 @@
                     //     options.scrap_bin_2d_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
                     // }
 
-                    options.std_bin_sizes = $editorStdBinSizes.ladbEditorSizes('getSizes');
                     if (group.material_is_1d) {
+                        options.std_bin_1d_sizes = $editorStdBinSizes.ladbEditorSizes('getSizes');
+                        options.std_bin_2d_sizes = '';
                         options.scrap_bin_1d_sizes = $editorScrapBinSizes.ladbEditorSizes('getSizes');
                         options.scrap_bin_2d_sizes = '';
                     }
                     if (group.material_is_2d) {
+                        options.std_bin_1d_sizes = ''
+                        options.std_bin_2d_sizes = $editorStdBinSizes.ladbEditorSizes('getSizes');
                         options.scrap_bin_1d_sizes = '';
                         options.scrap_bin_2d_sizes = $editorScrapBinSizes.ladbEditorSizes('getSizes');
                     }
@@ -5139,9 +5142,9 @@
                     }
                 }
 
-                $inputStdBinSizes.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputScrapBinSizes.ladbTextinputTokenfield({ format: group.material_is_1d ? 'dxq' : 'dxdxq' });
-                $inputScrapBinSizes.ladbTextinputTokenfield('setTokens', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes);
+                // $inputStdBinSizes.selectpicker(SELECT_PICKER_OPTIONS);
+                // $inputScrapBinSizes.ladbTextinputTokenfield({ format: group.material_is_1d ? 'dxq' : 'dxdxq' });
+                // $inputScrapBinSizes.ladbTextinputTokenfield('setTokens', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes);
                 $editorStdBinSizes
                     .ladbEditorSizes({
                         format: group.material_is_1d ? FORMAT_D : FORMAT_D_D,
@@ -5149,7 +5152,7 @@
                         qHidden: false,
                         availableSizes: group.material_is_1d ? response.std_lengths : response.std_sizes
                     })
-                    .ladbEditorSizes('setSizes', packingOptions.std_bin_sizes)
+                    .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes)
                 ;
                 $editorScrapBinSizes
                     .ladbEditorSizes({

@@ -223,7 +223,8 @@ module Ladb::OpenCutList
                    group_id:,
                    part_ids: nil,
 
-                   std_bin_sizes: '',
+                   std_bin_1d_sizes: '',
+                   std_bin_2d_sizes: '',
                    scrap_bin_1d_sizes: '',
                    scrap_bin_2d_sizes: '',
 
@@ -259,7 +260,8 @@ module Ladb::OpenCutList
       @group_id = group_id
       @part_ids = part_ids
 
-      @std_bin_sizes = DimensionUtils.dxd_to_ifloats(std_bin_sizes)
+      @std_bin_1d_sizes = DimensionUtils.d_to_ifloats(std_bin_1d_sizes)
+      @std_bin_2d_sizes = DimensionUtils.dxd_to_ifloats(std_bin_2d_sizes)
       @scrap_bin_1d_sizes = DimensionUtils.dxq_to_ifloats(scrap_bin_1d_sizes)
       @scrap_bin_2d_sizes = DimensionUtils.dxdxq_to_ifloats(scrap_bin_2d_sizes)
 
@@ -361,11 +363,17 @@ module Ladb::OpenCutList
         end
 
         # Create bins from std bins
-        @std_bin_sizes.split(DimensionUtils::LIST_SEPARATOR).each do |std_bin_size|
+        std_bin_sizes = group.material_is_1d ? @std_bin_1d_sizes : @std_bin_2d_sizes
+        std_bin_sizes.split(DimensionUtils::LIST_SEPARATOR).each do |std_bin_size|
 
-          dd = std_bin_size.split(DimensionUtils::DXD_SEPARATOR)
-          length = dd[0].strip.to_l.to_f
-          width = dd[1].strip.to_l.to_f
+          if group.material_is_1d
+            length = std_bin_size.strip.to_l.to_f
+            width = group.def.std_width.to_f
+          else
+            dd = std_bin_size.split(DimensionUtils::DXD_SEPARATOR)
+            length = dd[0].strip.to_l.to_f
+            width = dd[1].strip.to_l.to_f
+          end
 
           next if length == 0 || width == 0
 

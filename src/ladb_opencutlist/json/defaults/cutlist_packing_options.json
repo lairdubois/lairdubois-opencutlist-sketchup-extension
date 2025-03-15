@@ -1,18 +1,21 @@
 {
   "_storages": {
-    "std_bin_sizes": 2, /* PRESETS_STORAGE_MODEL_ONLY */
+    "std_bin_1d_sizes": 2, /* PRESETS_STORAGE_MODEL_ONLY */
+    "std_bin_2d_sizes": 2, /* PRESETS_STORAGE_MODEL_ONLY */
     "scrap_bin_1d_sizes": 2, /* PRESETS_STORAGE_MODEL_ONLY */
     "scrap_bin_2d_sizes": 2 /* PRESETS_STORAGE_MODEL_ONLY */
   },
   "_preprocessors": {
-    "std_bin_sizes": 4, /* PRESETS_PREPROCESSOR_DXDXQ */
+    "std_bin_1d_sizes": 1, /* PRESETS_PREPROCESSOR_D */
+    "std_bin_2d_sizes": 4, /* PRESETS_PREPROCESSOR_DXDXQ */
     "scrap_bin_1d_sizes": 2, /* PRESETS_PREPROCESSOR_DXQ */
     "scrap_bin_2d_sizes": 4, /* PRESETS_PREPROCESSOR_DXDXQ */
     "spacing": 1, /* PRESETS_PREPROCESSOR_D */
     "trimming": 1 /* PRESETS_PREPROCESSOR_D */
   },
   "0": {
-    "std_bin_sizes": "",
+    "std_bin_1d_sizes": "",
+    "std_bin_2d_sizes": "",
     "scrap_bin_1d_sizes": "",
     "scrap_bin_2d_sizes": "",
     "problem_type": "rectangleguillotine",
