@@ -15,7 +15,7 @@
     "scrap_bin_1d_sizes": "",
     "scrap_bin_2d_sizes": "",
     "problem_type": "rectangleguillotine",
-    "optimization_mode": "not-anytime",
+    "optimization_mode": "not-anytime-deterministic",
     "objective": "bin-packing-with-leftovers",
     "rectangleguillotine_cut_type": "non-exact",
     "rectangleguillotine_number_of_stages": 3,
