@@ -5144,15 +5144,16 @@
                 $inputScrapBinSizes.ladbTextinputTokenfield('setTokens', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes);
                 $editorStdBinSizes
                     .ladbEditorSizes({
-                        format: group.material_is_1d ? 'dxq' : 'dxdxq',
+                        format: group.material_is_1d ? FORMAT_D : FORMAT_D_D,
                         qPlaceholder: '∞',
+                        qHidden: false,
                         availableSizes: group.material_is_1d ? response.std_lengths : response.std_sizes
                     })
                     .ladbEditorSizes('setSizes', packingOptions.std_bin_sizes)
                 ;
                 $editorScrapBinSizes
                     .ladbEditorSizes({
-                        format: group.material_is_1d ? 'dxq' : 'dxdxq'
+                        format: group.material_is_1d ? FORMAT_D_Q : FORMAT_D_D_Q
                     })
                     .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes)
                 ;

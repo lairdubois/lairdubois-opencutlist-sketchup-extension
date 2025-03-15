@@ -9,8 +9,8 @@
     };
     LadbTextinputText.prototype = new LadbTextinputAbstract;
 
-    LadbTextinputText.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {
-    });
+    LadbTextinputText.DEFAULTS = $.extend( {
+    }, LadbTextinputAbstract.DEFAULTS);
 
     LadbTextinputText.prototype.createLeftToolsContainer = function ($toolContainer) {
         // Do not create left tools container

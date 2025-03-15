@@ -1,11 +1,6 @@
 +function ($) {
     'use strict';
 
-    const FORMAT_D = "d";
-    const FORMAT_D_Q = "dxq";
-    const FORMAT_D_D = "dxd";
-    const FORMAT_D_D_Q = "dxdxq";
-
     // CLASS DEFINITION
     // ======================
 
@@ -25,6 +20,7 @@
         d1Placeholder: 'Longueur',
         d2Placeholder: 'Largeur',
         qPlaceholder: '1',
+        qHidden: false,
         availableSizes: {}
     };
 
@@ -38,7 +34,7 @@
         }
     };
 
-    LadbEditorSizes.prototype.appendRow = function (size) {
+    LadbEditorSizes.prototype.appendRow = function (size, autoFocus = false) {
         const that = this;
 
         if (this.$rows.children('.ladb-editor-sizes-row').length === 0) {
@@ -61,9 +57,9 @@
             d2Disabled: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q,
             qDisabled: this.options.format === FORMAT_D || this.options.format === FORMAT_D_D,
             d2Hidden: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q,
-            qHidden: this.options.format === FORMAT_D || this.options.format === FORMAT_D_D,
+            qHidden: this.options.qHidden && (this.options.format === FORMAT_D || this.options.format === FORMAT_D_D),
             separator1Label: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
-            separator2Label: this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? 'Qte' : '',
+            separator2Label: !this.options.qHidden || this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? 'Qte' : '',
         }
 
         // Bind
@@ -76,6 +72,9 @@
                 size.val = $(this).ladbTextinputSize('val');
             })
         ;
+        if (autoFocus) {
+            $input.ladbTextinputSize('focus');
+        }
 
         // Remove row /////
 
@@ -151,8 +150,7 @@
 
         // Bind button
         $('button', this.$element).on('click', function () {
-            const $row = that.appendRow({});
-            $('input[type="text"]', $row).first().focus();
+            that.appendRow({}, true);
         });
 
         // Bind sortable

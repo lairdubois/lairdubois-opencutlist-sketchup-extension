@@ -9,8 +9,8 @@
     };
     LadbTextinputArea.prototype = new LadbTextinputAbstract;
 
-    LadbTextinputArea.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {
-    });
+    LadbTextinputArea.DEFAULTS = $.extend({
+    }, LadbTextinputAbstract.DEFAULTS);
 
     LadbTextinputArea.prototype.getParentOverflows = function(el) {
 

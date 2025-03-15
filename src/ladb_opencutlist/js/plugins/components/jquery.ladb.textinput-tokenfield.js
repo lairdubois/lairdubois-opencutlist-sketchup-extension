@@ -19,10 +19,10 @@
         this.$element = $(element);
     };
 
-    LadbTextinputTokenfield.DEFAULTS = $.extend(TOKENFIELD_OPTIONS, {
+    LadbTextinputTokenfield.DEFAULTS = $.extend({
         format: FORMAT_DEFAULT,     // Define waiting format value
         unique: false               // Define if value must be unique
-    });
+    }, TOKENFIELD_OPTIONS);
 
     LadbTextinputTokenfield.prototype.getTokenRegExp = function() {
         let pattern;

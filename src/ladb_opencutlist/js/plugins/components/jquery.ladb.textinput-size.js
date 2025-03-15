@@ -9,7 +9,7 @@
     };
     LadbTextinputSize.prototype = new LadbTextinputAbstract;
 
-    LadbTextinputSize.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {
+    LadbTextinputSize.DEFAULTS = $.extend({
         resetValue: 'xx',
         d1Placeholder: '',
         d2Placeholder: '',
@@ -22,13 +22,13 @@
         qHidden: false,
         separator1Label: 'x',
         separator2Label: 'x',
-    });
+    }, LadbTextinputAbstract.DEFAULTS);
 
-    LadbTextinputSize.prototype.updateInputValue = function () {
+    LadbTextinputSize.prototype.updateElementInputValue = function () {
 
-        let value1 = this.$input1.val();
-        let value2 = this.$input2.val();
-        let value3 = this.$input3.val();
+        let value1 = this.options.d1Disabled ? '' : this.$input1.val();
+        let value2 = this.options.d2Disabled ? '' : this.$input2.val();
+        let value3 = this.options.qDisabled ? '' : this.$input3.val();
 
         let values = [];
         if (value1) values.push(value1);
@@ -39,13 +39,23 @@
         this.$element.trigger('change');
     };
 
+    LadbTextinputSize.prototype.setInputValues = function (value) {
+
+        const values = value.split('x');
+        if (!this.options.d1Disabled) this.$input1.val(values.shift());
+        if (!this.options.d2Disabled) this.$input2.val(values.shift());
+        if (!this.options.qDisabled) this.$input3.val(values.shift());
+
+    };
+
+    LadbTextinputSize.prototype.focus = function () {
+        this.$input1.focus();
+    };
+
     LadbTextinputSize.prototype.reset = function () {
         LadbTextinputAbstract.prototype.reset.call(this);
 
-        const values = this.$element.val().split('x');
-        this.$input1.val(values[0]);
-        this.$input2.val(values[1]);
-        this.$input3.val(values[2]);
+        this.setInputValues(this.$element.val());
 
     };
 
@@ -56,10 +66,7 @@
             return val;
         }
 
-        const values = value.split('x');
-        this.$input1.val(values[0]);
-        this.$input2.val(values[1]);
-        this.$input3.val(values[2]);
+        this.setInputValues(value);
 
         const r = LadbTextinputAbstract.prototype.val.call(this, value);
         return r;
@@ -74,7 +81,7 @@
 
         this.$input1 = $('<input type="text" class="form-control text-right" style="width: 50%;' + (this.options.d1Hidden ? ' opacity: 0;' : '') + '" placeholder="' + this.options.d1Placeholder + '"' + (this.options.d1Disabled ? ' disabled' : '') + '>')
             .on('change', function () {
-                that.updateInputValue();
+                that.updateElementInputValue();
             })
         ;
         this.$inputWrapper.append(this.$input1);
@@ -83,7 +90,7 @@
 
         this.$input2 = $('<input type="text" class="form-control text-right" style="width: 50%;' + (this.options.d2Hidden ? ' opacity: 0;' : '') + '" placeholder="' + this.options.d2Placeholder + '"' + (this.options.d2Disabled ? ' disabled' : '') + '>')
             .on('change', function () {
-                that.updateInputValue();
+                that.updateElementInputValue();
             })
         ;
         this.$inputWrapper.append(this.$input2);
@@ -92,7 +99,7 @@
 
         this.$input3 = $('<input type="text" class="form-control text-right" style="width: 25%;' + (this.options.qHidden ? ' opacity: 0;' : '') + '" placeholder="' + this.options.qPlaceholder + '"' + (this.options.qDisabled ? ' disabled' : '') + '>')
             .on('change', function () {
-                that.updateInputValue();
+                that.updateElementInputValue();
             })
         ;
         this.$inputWrapper.append(this.$input3);

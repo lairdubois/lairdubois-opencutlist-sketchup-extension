@@ -34,6 +34,13 @@ const TEXTINPUT_COLOR_OPTIONS = {
     resetValue: null
 };
 
+// Data /////
+
+const FORMAT_D = "d";
+const FORMAT_D_Q = "dxq";
+const FORMAT_D_D = "dxd";
+const FORMAT_D_D_Q = "dxdxq";
+
 // GraphQL /////
 
 const GRAPHQL_ENDPOINT = 'https://api.opencollective.com/graphql/v2/';

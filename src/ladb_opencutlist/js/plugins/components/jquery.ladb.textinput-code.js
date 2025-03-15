@@ -9,10 +9,10 @@
     };
     LadbTextinputCode.prototype = new LadbTextinputAbstract;
 
-    LadbTextinputCode.DEFAULTS = $.extend(LadbTextinputAbstract.DEFAULTS, {
+    LadbTextinputCode.DEFAULTS = $.extend({
         variableDefs: [],
         snippetDefs: []
-    });
+    }, LadbTextinputAbstract.DEFAULTS);
 
     LadbTextinputCode.prototype.focus = function () {
         this.cm.focus();
