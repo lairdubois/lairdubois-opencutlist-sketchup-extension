@@ -13,6 +13,8 @@
 
         this.sizes = [];
 
+        this.availableSizes = null;
+
     };
 
     LadbEditorSizes.DEFAULTS = {
@@ -20,8 +22,7 @@
         d1Placeholder: 'Longueur',
         d2Placeholder: 'Largeur',
         qPlaceholder: '1',
-        qHidden: false,
-        availableSizes: null
+        qHidden: false
     };
 
     LadbEditorSizes.prototype.updateToolsVisibility = function () {
@@ -62,13 +63,21 @@
                 qHidden: this.options.qHidden && (this.options.format === FORMAT_D || this.options.format === FORMAT_D_D),
                 separator1Label: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
                 separator2Label: !this.options.qHidden || this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? 'Qte' : '',
-                feeder: that.options.availableSizes ? function () { return that.options.availableSizes.split(';'); } : null
+                feeder: that.availableSizes ? function () { return that.getAvailableSizes(); } : null
             })
             .ladbTextinputSize('val', size.val)
         ;
         $input
             .on('change', function () {
                 size.val = $(this).ladbTextinputSize('val');
+
+                // Convert size to inch float representation
+                rubyCallCommand('core_length_to_float', { dim: size.val }, function (response) {
+
+                    size.dim = response.dim;
+
+                });
+
             })
         ;
         if (autoFocus) {
@@ -118,30 +127,82 @@
 
     };
 
-    LadbEditorSizes.prototype.setSizes = function (stringSizes) {
+    LadbEditorSizes.prototype.getAvailableSizes = function () {
 
-        this.sizes = [];
+        const sizes = [];
+
+        this.availableSizes.forEach(function (size) {
+            sizes.push(size.val);
+        });
+
+        return sizes
+    };
+
+    LadbEditorSizes.prototype.setAvailableSizes = function (stringSizes) {
+        var that = this;
+
+        this.availableSizes = [];
+
+        const sizes = {};
         const arraySizes = stringSizes.split(';');
         for (let i = 0; i < arraySizes.length; i++) {
             const val = arraySizes[i];
-            const size = { val: val };
-            this.sizes.push(size);
+            sizes[val] = val;
         }
-        this.renderRows();
+
+        // Convert size to inch float representation
+        rubyCallCommand('core_length_to_float', sizes, function (response) {
+
+            for (let key in response) {
+                that.availableSizes.push({
+                    val: key,
+                    dim: response[key]
+                });
+            }
+            that.renderRows();
+
+        });
+
+    };
+
+    LadbEditorSizes.prototype.setSizes = function (stringSizes) {
+        var that = this;
+
+        this.sizes = [];
+
+        const sizes = {};
+        const arraySizes = stringSizes.split(';');
+        for (let i = 0; i < arraySizes.length; i++) {
+            const val = arraySizes[i];
+            sizes[val] = val;
+        }
+
+        // Convert size to inch float representation
+        rubyCallCommand('core_length_to_float', sizes, function (response) {
+
+            for (let key in response) {
+                that.sizes.push({
+                    val: key,
+                    dim: response[key]
+                });
+            }
+            that.renderRows();
+
+        });
 
     };
 
     LadbEditorSizes.prototype.getSizes = function () {
 
-        const sizes = [];
+        const arraySizes = [];
         this.$rows.children('.ladb-editor-sizes-row').each(function () {
             const size = $(this).data('size');
             if (size !== undefined && (size.val != null && size.val.length > 0)) {
-                sizes.push(size.val);
+                arraySizes.push(size.val);
             }
         });
 
-        return sizes.join(';');
+        return arraySizes.join(';');
     };
 
     LadbEditorSizes.prototype.init = function () {

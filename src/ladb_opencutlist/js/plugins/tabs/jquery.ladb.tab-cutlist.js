@@ -5149,9 +5149,9 @@
                     .ladbEditorSizes({
                         format: group.material_is_1d ? FORMAT_D : FORMAT_D_D,
                         qPlaceholder: '∞',
-                        qHidden: false,
-                        availableSizes: group.material_is_1d ? response.std_lengths : response.std_sizes
+                        qHidden: false
                     })
+                    .ladbEditorSizes('setAvailableSizes', group.material_is_1d ? response.std_lengths : response.std_sizes)
                     .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes)
                 ;
                 $editorScrapBinSizes

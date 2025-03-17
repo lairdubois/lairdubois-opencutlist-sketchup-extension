@@ -1649,6 +1649,7 @@ module Ladb::OpenCutList
     def length_to_float_command(params)    # Expected params = { key_1: 'STRING_LENGTH', key_2: 'STRING_LENGTH', ... }
       float_lengths = {}
       params.each do |key, string_length|
+        next unless string_length.is_a?(String)
         if string_length.index('x')
           # Convert string "size" to inch float array
           float_lengths[key] = string_length.split('x').map { |v| DimensionUtils.d_to_ifloats(v).to_l.to_f }
