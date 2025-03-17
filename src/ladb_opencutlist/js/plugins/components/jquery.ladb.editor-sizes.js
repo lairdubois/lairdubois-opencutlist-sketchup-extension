@@ -8,6 +8,7 @@
         this.options = options;
         this.$element = $(element);
 
+        this.$empty = $('.ladb-editor-sizes-empty', this.$element);
         this.$rows = $('.ladb-editor-sizes-rows', this.$element);
         this.$removeRows = $('.ladb-editor-sizes-remove-rows', this.$element);
 
@@ -26,16 +27,20 @@
     };
 
     LadbEditorSizes.prototype.updateToolsVisibility = function () {
-        if (this.$rows.children('.ladb-editor-sizes-row').length < 2) {
+        let rowCount = this.$rows.children('.ladb-editor-sizes-row').length;
+        if (rowCount === 0) {
+            this.$empty.show();
+        } else {
+            this.$empty.hide();
+        }
+        if (rowCount < 2) {
             $('.ladb-handle', this.$rows).hide();
-            $('.ladb-editor-sizes-remove-row', this.$removeRows).hide();
         } else {
             $('.ladb-handle', this.$rows).show();
-            $('.ladb-editor-sizes-remove-row', this.$removeRows).show();
         }
     };
 
-    LadbEditorSizes.prototype.appendRow = function (size, autoFocus = false) {
+    LadbEditorSizes.prototype.appendRow = function (size, options = { autoFocus: false, autoFill: false }) {
         const that = this;
 
         if (this.$rows.children('.ladb-editor-sizes-row').length === 0) {
@@ -80,8 +85,12 @@
 
             })
         ;
-        if (autoFocus) {
+        if (options.autoFocus) {
             $input.ladbTextinputSize('focus');
+        }
+        if (options.autoFill) {
+            $input.ladbTextinputSize('val', that.getAvailableVals()[0]);
+            $input.trigger('change');
         }
 
         // Remove row /////
@@ -124,6 +133,7 @@
             const size = this.sizes[i];
             this.appendRow(size);
         }
+        this.updateToolsVisibility();
 
     };
 
@@ -160,6 +170,18 @@
         return dims;
     };
 
+    LadbEditorSizes.prototype.isAvailableDim = function (dim) {
+        if (this.availableSizes === null) {
+            return true;
+        }
+        for (let i = 0; i < this.availableSizes.length; i++) {
+            if  (this.availableSizes[i].dim === dim) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     LadbEditorSizes.prototype.getAvailableVals = function () {
 
         const vals = [];
@@ -174,13 +196,13 @@
         return vals;
     };
 
-    LadbEditorSizes.prototype.setAvailableSizes = function (stringSizes) {
+    LadbEditorSizes.prototype.setAvailableSizesAndSizes = function (stringAvailableSizes, stringSizes) {
         var that = this;
 
         this.availableSizes = [];
 
         const sizes = {};
-        const arraySizes = stringSizes.split(';');
+        const arraySizes = stringAvailableSizes.split(';');
         for (let i = 0; i < arraySizes.length; i++) {
             const val = arraySizes[i];
             sizes[val] = val;
@@ -196,6 +218,8 @@
                 });
             }
 
+            that.setSizes(stringSizes);
+
         });
 
     };
@@ -209,17 +233,30 @@
         const arraySizes = stringSizes.split(';');
         for (let i = 0; i < arraySizes.length; i++) {
             const val = arraySizes[i];
-            sizes[val] = val;
+            if (val !== '') {
+                sizes[val] = val;
+            }
+        }
+
+        if (Object.keys(sizes).length === 0 && that.availableSizes !== null) {
+            sizes[that.availableSizes[0].val] = that.availableSizes[0].val;
         }
 
         // Convert size to inch float representation
         rubyCallCommand('core_length_to_float', sizes, function (response) {
 
             for (let key in response) {
-                that.sizes.push({
-                    val: key,
-                    dim: Array.isArray(response[key]) ? response[key].join('x') : response[key]
-                });
+
+                const val = key;
+                const dim = Array.isArray(response[key]) ? response[key].join('x') : response[key];
+
+                if (that.availableSizes === null || that.isAvailableDim(dim)) {    // May exclude unavailable sizes
+                    that.sizes.push({
+                        val: val,
+                        dim: dim
+                    });
+                }
+
             }
             that.renderRows();
 
@@ -236,7 +273,8 @@
 
         // Bind button
         $('button', this.$element).on('click', function () {
-            that.appendRow({}, true);
+            $(this).blur();
+            that.appendRow({}, { autoFocus: that.availableSizes === null, autoFill: that.availableSizes !== null });
         });
 
         // Bind sortable

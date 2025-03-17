@@ -5130,17 +5130,18 @@
                     fnFetchOptions: fnFetchOptions,
                     fnFillInputs: fnFillInputs
                 });
-                if (packingOptions.std_bin_sizes) {
-                    const defaultValue = $inputStdBinSizes.val();
-                    $inputStdBinSizes.val(Array.isArray(packingOptions.std_bin_sizes) ? packingOptions.std_bin_sizes : packingOptions.std_bin_sizes.split(';'));
-                    if ($inputStdBinSizes.val() == null) {
-                        if (response.std_lengths.length > 0 || response.std_sizes.length > 0) {
-                            $inputStdBinSizes.val(defaultValue);
-                        } else {
-                            $inputStdBinSizes.val('0x0');  // Special case if the std_bin_sizes is not present anymore in the list and no std lengths or sizes defined. Select "none" by default.
-                        }
-                    }
-                }
+                // const std_bin_sizes = group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes
+                // if (std_bin_sizes) {
+                //     const defaultValue = $inputStdBinSizes.val();
+                //     $inputStdBinSizes.val(Array.isArray(std_bin_sizes) ? std_bin_sizes : std_bin_sizes.split(';'));
+                //     if ($inputStdBinSizes.val() == null) {
+                //         if (response.std_lengths.length > 0 || response.std_sizes.length > 0) {
+                //             $inputStdBinSizes.val(defaultValue);
+                //         } else {
+                //             $inputStdBinSizes.val('');  // Special case if the std_bin_sizes is not present anymore in the list and no std lengths or sizes defined. Select "none" by default.
+                //         }
+                //     }
+                // }
 
                 // $inputStdBinSizes.selectpicker(SELECT_PICKER_OPTIONS);
                 // $inputScrapBinSizes.ladbTextinputTokenfield({ format: group.material_is_1d ? 'dxq' : 'dxdxq' });
@@ -5151,8 +5152,7 @@
                         qPlaceholder: '∞',
                         qHidden: false
                     })
-                    .ladbEditorSizes('setAvailableSizes', group.material_is_1d ? response.std_lengths : response.std_sizes)
-                    .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes)
+                    .ladbEditorSizes('setAvailableSizesAndSizes', [ group.material_is_1d ? response.std_lengths : response.std_sizes, group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes ])
                 ;
                 $editorScrapBinSizes
                     .ladbEditorSizes({
