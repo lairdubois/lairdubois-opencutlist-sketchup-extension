@@ -63,7 +63,7 @@
                 qHidden: this.options.qHidden && (this.options.format === FORMAT_D || this.options.format === FORMAT_D_D),
                 separator1Label: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
                 separator2Label: !this.options.qHidden || this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? 'Qte' : '',
-                feeder: that.availableSizes ? function () { return that.getAvailableSizes(); } : null
+                feeder: that.availableSizes ? function () { return that.getAvailableVals(); } : null
             })
             .ladbTextinputSize('val', size.val)
         ;
@@ -74,7 +74,7 @@
                 // Convert size to inch float representation
                 rubyCallCommand('core_length_to_float', { dim: size.val }, function (response) {
 
-                    size.dim = response.dim;
+                    size.dim = Array.isArray(response.dim) ? response.dim.join('x') : response.dim;
 
                 });
 
@@ -127,15 +127,51 @@
 
     };
 
-    LadbEditorSizes.prototype.getAvailableSizes = function () {
+    LadbEditorSizes.prototype.getCurrentSizes = function () {
 
         const sizes = [];
-
-        this.availableSizes.forEach(function (size) {
-            sizes.push(size.val);
+        this.$rows.children('.ladb-editor-sizes-row').each(function () {
+            const size = $(this).data('size');
+            if (size !== undefined && (size.val != null && size.val.length > 0)) {
+                sizes.push(size);
+            }
         });
 
-        return sizes
+        return sizes;
+    };
+
+    LadbEditorSizes.prototype.getCurrentDims = function () {
+
+        const dims = [];
+        this.getCurrentSizes().forEach(function (size) {
+            dims.push(size.dim);
+        });
+
+        return dims;
+    };
+
+    LadbEditorSizes.prototype.getCurrentVals = function () {
+
+        const dims = [];
+        this.getCurrentSizes().forEach(function (size) {
+            dims.push(size.val);
+        });
+
+        return dims;
+    };
+
+    LadbEditorSizes.prototype.getAvailableVals = function () {
+
+        const vals = [];
+        const dims = this.getCurrentDims();
+
+        this.availableSizes.forEach(function (size) {
+            if (!dims.includes(size.dim)) {
+                vals.push(size.val);
+            }
+        });
+
+        return vals;
     };
 
     LadbEditorSizes.prototype.setAvailableSizes = function (stringSizes) {
@@ -156,10 +192,9 @@
             for (let key in response) {
                 that.availableSizes.push({
                     val: key,
-                    dim: response[key]
+                    dim: Array.isArray(response[key]) ? response[key].join('x') : response[key]
                 });
             }
-            that.renderRows();
 
         });
 
@@ -183,7 +218,7 @@
             for (let key in response) {
                 that.sizes.push({
                     val: key,
-                    dim: response[key]
+                    dim: Array.isArray(response[key]) ? response[key].join('x') : response[key]
                 });
             }
             that.renderRows();
@@ -193,16 +228,7 @@
     };
 
     LadbEditorSizes.prototype.getSizes = function () {
-
-        const arraySizes = [];
-        this.$rows.children('.ladb-editor-sizes-row').each(function () {
-            const size = $(this).data('size');
-            if (size !== undefined && (size.val != null && size.val.length > 0)) {
-                arraySizes.push(size.val);
-            }
-        });
-
-        return arraySizes.join(';');
+        return this.getCurrentVals().join(';');
     };
 
     LadbEditorSizes.prototype.init = function () {
