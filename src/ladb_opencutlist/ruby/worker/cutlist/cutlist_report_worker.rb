@@ -26,7 +26,7 @@ module Ladb::OpenCutList
       @cutlist = cutlist
 
       @hidden_group_ids = hidden_group_ids
-      @solid_wood_coefficient = [ 1.0, DimensionUtils.str_to_ifloat(solid_wood_coefficient).to_l.to_f ].max
+      @solid_wood_coefficient = [ 1.0, solid_wood_coefficient.to_f ].max
 
       @cutlist_groups = @cutlist.groups.select { |group| group.material_type != MaterialAttributes::TYPE_UNKNOWN && !@hidden_group_ids.include?(group.id) }
       @remaining_step = @cutlist_groups.count
