@@ -679,7 +679,7 @@ tab:
         Cette fonctionnalité vous permet de générer une estimation des **masses** et **coûts** des **matières premières brutes** nécessaires à la réalisation des pièces de la *fiche de débit*.
       options_general: Générales
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: Le coefficient multiplicateur pour les matières de type "**$t(tab.materials.type_1)**" se configure désormais sur chaque matière.
+      option_solid_wood_coefficient_bc: Le coefficient multiplicateur pour les matières de type "**$t(tab.materials.type_1)**" se configure désormais sur chaque matière dans les options d'estimation.
       raw_materials: Matières premières brutes
       coefficient: Coefficient
       total: Total
