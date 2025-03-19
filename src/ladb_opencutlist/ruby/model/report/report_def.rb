@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
   class ReportDef < DataContainer
 
-    attr_accessor :solid_wood_coefficient, :total_mass, :total_used_mass, :total_cost, :total_used_cost
+    attr_accessor :total_mass, :total_used_mass, :total_cost, :total_used_cost
     attr_reader :errors, :warnings, :tips, :group_defs
 
     def initialize
@@ -14,8 +14,6 @@ module Ladb::OpenCutList
       @errors = []
       @warnings = []
       @tips = []
-
-      @solid_wood_coefficient = 1.0
 
       @total_mass = 0
       @total_used_mass = 0
@@ -43,11 +41,11 @@ module Ladb::OpenCutList
     # ---
 
     def total_unused_mass
-      [@total_mass - @total_used_mass, 0].max
+      [ @total_mass - @total_used_mass, 0 ].max
     end
 
     def total_unused_cost
-      [@total_cost - @total_used_cost, 0].max
+      [ @total_cost - @total_used_cost, 0 ].max
     end
 
   end

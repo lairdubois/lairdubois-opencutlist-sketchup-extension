@@ -198,6 +198,7 @@
                     grained: $inputs.selectGrained.val() === '1',
                     edge_decremented: $inputs.selectEdgeDecremented.val() === '1',
                     raw_estimated: $inputs.selectRawEstimated.val() === '1',
+                    estimation_coefficient: Math.max(1.0, $inputs.inputEstimationCoefficient.val() === '' ? 1.0 : parseFloat($inputs.inputEstimationCoefficient.val().replace(',', '.'))),
                     std_volumic_masses: $inputs.editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes'),
                     std_prices: $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes')
                 }
@@ -306,6 +307,7 @@
                 attributes.grained = $inputs.selectGrained.val() === '1';
                 attributes.edge_decremented = $inputs.selectEdgeDecremented.val() === '1';
                 attributes.raw_estimated = $inputs.selectRawEstimated.val() === '1';
+                attributes.estimation_coefficient = Math.max(1.0, $inputs.inputEstimationCoefficient.val() === '' ? 1.0 : parseFloat($inputs.inputEstimationCoefficient.val().replace(',', '.')));
                 attributes.std_volumic_masses = $inputs.editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
                 attributes.std_prices = $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
             };
@@ -892,7 +894,6 @@
 
         // Fetch UI elements
         const $tabs = $('section a[data-toggle="tab"]', $modal);
-        const $navTabEstimateOptions = $('#nav_tab_edit_material_general_estimate_options', $modal);
         const $widgetPreset = $('.ladb-widget-preset', $modal);
         const $btnTabAttributes = $('#ladb_materials_btn_tab_general_attributes', $modal);
         const $inputName = $('#ladb_materials_input_name', $modal);
@@ -914,6 +915,7 @@
         const $selectGrained = $('#ladb_materials_select_grained', $modal);
         const $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
         const $selectRawEstimated = $('#ladb_materials_select_raw_estimated', $modal);
+        const $inputEstimationCoefficient = $('#ladb_materials_input_estimation_coefficient', $modal);
         const $editorStdVolumicMasses = $('#ladb_materials_editor_std_volumic_masses', $modal);
         const $editorStdPrices = $('#ladb_materials_editor_std_prices', $modal);
 
@@ -938,6 +940,7 @@
             options.grained = $selectGrained.val() === '1';
             options.edge_decremented = $selectEdgeDecremented.val() === '1';
             options.raw_estimated = $selectRawEstimated.val() === '1';
+            options.estimation_coefficient = Math.max(1.0, $inputEstimationCoefficient.val() === '' ? 1.0 : parseFloat($inputEstimationCoefficient.val().replace(',', '.')));
             options.std_volumic_masses = $editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
             options.std_prices = $editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
         };
@@ -958,6 +961,7 @@
             $selectGrained.selectpicker('val', options.grained ? '1' : '0');
             $selectEdgeDecremented.selectpicker('val', options.edge_decremented ? '1' : '0');
             $selectRawEstimated.selectpicker('val', options.raw_estimated ? '1' : '0');
+            $inputEstimationCoefficient.val(options.estimation_coefficient);
             fnSetStdAttributesTypeAndStds();
             $editorStdVolumicMasses.ladbEditorStdAttributes('setStdAttributes', [ options.std_volumic_masses ]);
             $editorStdPrices.ladbEditorStdAttributes('setStdAttributes', [ options.std_prices ]);
@@ -983,10 +987,6 @@
                     break;
                 case 1:   // TYPE_SOLID_WOOD
                     $inputThickness.closest('section').show();
-                    $navTabEstimateOptions.hide();
-                    if (that.lastMaterialPropertiesTab === 'estimate_options') {
-                        $tabs.first().click();
-                    }
                     $inputThickness.closest('.form-group').hide();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').show();
@@ -999,12 +999,12 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').hide();
+                    $inputEstimationCoefficient.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 2:   // TYPE_SHEET_GOOD
                     $inputThickness.closest('section').show();
-                    $navTabEstimateOptions.show();
                     $inputThickness.closest('.form-group').hide();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').show();
@@ -1017,12 +1017,12 @@
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').show();
+                    $inputEstimationCoefficient.closest('.form-group').hide();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 3:   // TYPE_DIMENSIONAL
                     $inputThickness.closest('section').show();
-                    $navTabEstimateOptions.show();
                     $inputThickness.closest('.form-group').hide();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').hide();
@@ -1035,12 +1035,12 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').show();
+                    $inputEstimationCoefficient.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
                 case 4:   // TYPE_EDGE
                     $inputThickness.closest('section').show();
-                    $navTabEstimateOptions.show();
                     $inputThickness.closest('.form-group').show();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').hide();
@@ -1053,6 +1053,7 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').show();
                     $selectRawEstimated.closest('.form-group').show();
+                    $inputEstimationCoefficient.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
@@ -1061,7 +1062,6 @@
                     break;
                 case 6:   // TYPE_VENEER
                     $inputThickness.closest('section').show();
-                    $navTabEstimateOptions.show();
                     $inputThickness.closest('.form-group').show();
                     $inputLengthIncrease.closest('.form-group').show();
                     $inputWidthIncrease.closest('.form-group').show();
@@ -1074,6 +1074,7 @@
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').show();
+                    $inputEstimationCoefficient.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
@@ -1114,6 +1115,9 @@
             section: material.attributes.type,
             fnFetchOptions: fnFetchOptions,
             fnFillInputs: fnFillInputs
+        });
+        $inputEstimationCoefficient.ladbTextinputNumberWithUnit({
+            resetValue: '1'
         });
         $editorStdVolumicMasses.ladbEditorStdAttributes({
             strippedName: 'volumic_masses',
@@ -1314,6 +1318,7 @@
             selectGrained: $selectGrained,
             selectEdgeDecremented: $selectEdgeDecremented,
             selectRawEstimated: $selectRawEstimated,
+            inputEstimationCoefficient: $inputEstimationCoefficient,
             editorStdVolumicMasses: $editorStdVolumicMasses,
             editorStdPrices: $editorStdPrices,
         }

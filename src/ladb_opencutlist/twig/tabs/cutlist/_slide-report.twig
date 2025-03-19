@@ -132,9 +132,6 @@
                         </div>
                         <div class="ladb-heading">
                             {{ ('tab.materials.type_'~group.material_type)|i18next }}
-                            {% if group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
-                                <span class="ladb-horizontal-left-separator" style="font-size: 80%; color: #555;" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.report.option_solid_wood_coefficient_help'|i18next }}">{{ 'tab.cutlist.report.coefficient'|i18next }} = {{ report.solid_wood_coefficient }}</span>
-                            {% endif %}
                         </div>
                     </td>
                 </tr>
@@ -197,7 +194,10 @@
                                         <a href="#" class="ladb-tool-danger" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.report.error.entry_error'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension, 'count':entry.errors|length }) }}"><i class="ladb-opencutlist-icon-warning"></i></a>
                                     {% endif %}
                                     {% if not entry.raw_estimated %}
-                                        <a href="#" class="ladb-tool-info ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-properties-tab="estimate_options" data-toggle="tooltip" data-html="true" title="{{ 'tab.materials.tooltip.raw_estimated_0'|i18next }}"><i class="ladb-opencutlist-icon-raw-estimated-0"></i></a>
+                                        <a href="#" class="ladb-tool-info ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-properties-tab="estimate_options" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.raw_estimated_0'|i18next }}"><i class="ladb-opencutlist-icon-raw-estimated-0"></i></a>
+                                    {% endif %}
+                                    {% if entry.estimation_coefficient and group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
+                                        <a href="#" class="ladb-tool-info ladb-tool-text ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-properties-tab="estimate_options" data-toggle="tooltip" title="{{ 'tab.cutlist.report.coefficient'|i18next }}">x{{ entry.estimation_coefficient }}</a>
                                     {% endif %}
                                     <span class="ladb-separator"></span>
                                     {% if foldableRow %}

@@ -1100,14 +1100,11 @@
             // Fetch UI elements
             const $tabs = $('a[data-toggle="tab"]', $modal);
             const $widgetPreset = $('.ladb-widget-preset', $modal);
-            const $inputSolidWoodCoefficient = $('#ladb_input_solid_wood_coefficient', $modal);
             const $btnGenerate = $('#ladb_cutlist_report_btn_generate', $modal);
 
             const fnFetchOptions = function (options) {
-                options.solid_wood_coefficient = Math.max(1.0, $inputSolidWoodCoefficient.val() === '' ? 1.0 : parseFloat($inputSolidWoodCoefficient.val().replace(',', '.')));
             }
             const fnFillInputs = function (options) {
-                $inputSolidWoodCoefficient.val(options.solid_wood_coefficient);
             }
 
             $widgetPreset.ladbWidgetPreset({
@@ -1115,9 +1112,6 @@
                 dictionary: 'cutlist_report_options',
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
-            });
-            $inputSolidWoodCoefficient.ladbTextinputNumberWithUnit({
-                resetValue: '1'
             });
 
             fnFillInputs(reportOptions);

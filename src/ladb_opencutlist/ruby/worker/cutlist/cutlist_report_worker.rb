@@ -18,22 +18,19 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
-                   hidden_group_ids: [],
-                   solid_wood_coefficient: 1.0
+                   hidden_group_ids: []
 
     )
 
       @cutlist = cutlist
 
       @hidden_group_ids = hidden_group_ids
-      @solid_wood_coefficient = [ 1.0, solid_wood_coefficient.to_f ].max
 
       @cutlist_groups = @cutlist.groups.select { |group| group.material_type != MaterialAttributes::TYPE_UNKNOWN && !@hidden_group_ids.include?(group.id) }
       @remaining_step = @cutlist_groups.count
       @starting = true
 
       @report_def = ReportDef.new
-      @report_def.solid_wood_coefficient = @solid_wood_coefficient
 
     end
 
@@ -54,7 +51,7 @@ module Ladb::OpenCutList
 
         when MaterialAttributes::TYPE_SOLID_WOOD
 
-          report_entry_def = _compute_3d(cutlist_group, report_group_def, SolidWoodReportEntryDef.to_s, @solid_wood_coefficient)
+          report_entry_def = _compute_3d(cutlist_group, report_group_def, SolidWoodReportEntryDef.to_s)
 
         when MaterialAttributes::TYPE_SHEET_GOOD
 
@@ -339,7 +336,7 @@ module Ladb::OpenCutList
       report_entry_def
     end
 
-    def _compute_3d(cutlist_group, report_group_def, entry_def_class_name, coefficient = 1.0)
+    def _compute_3d(cutlist_group, report_group_def, entry_def_class_name)
 
       material_attributes = _get_material_attributes(cutlist_group.material_name)
 
@@ -353,13 +350,14 @@ module Ladb::OpenCutList
 
       report_entry_def = Object.const_get(entry_def_class_name).new(cutlist_group)
       report_entry_def.raw_estimated = material_attributes.raw_estimated
+      report_entry_def.estimation_coefficient = material_attributes.estimation_coefficient
       report_entry_def.std_volumic_mass = std_volumic_mass if report_entry_def.respond_to?(:std_volumic_mass)
       report_entry_def.std_price = std_price if report_entry_def.respond_to?(:std_price=)
-      report_entry_def.total_volume = cutlist_group.def.total_cutting_volume * coefficient if report_entry_def.respond_to?(:total_volume=)
-      report_entry_def.total_area = cutlist_group.def.total_cutting_area * coefficient if report_entry_def.respond_to?(:total_area=)
-      report_entry_def.total_length = cutlist_group.def.total_cutting_length * coefficient if report_entry_def.respond_to?(:total_length=)
-      report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * coefficient * mass_per_inch3
-      report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * coefficient * price_per_inch3
+      report_entry_def.total_volume = cutlist_group.def.total_cutting_volume * material_attributes.estimation_coefficient if report_entry_def.respond_to?(:total_volume=)
+      report_entry_def.total_area = cutlist_group.def.total_cutting_area * material_attributes.estimation_coefficient if report_entry_def.respond_to?(:total_area=)
+      report_entry_def.total_length = cutlist_group.def.total_cutting_length * material_attributes.estimation_coefficient if report_entry_def.respond_to?(:total_length=)
+      report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * material_attributes.estimation_coefficient * mass_per_inch3
+      report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * material_attributes.estimation_coefficient * price_per_inch3
 
       # Compute parts volume, area, length, mass and cost
       cutlist_group.def.part_defs.each do |id, part_def|

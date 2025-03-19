@@ -30,6 +30,7 @@ module Ladb::OpenCutList
       @grained = attributes.fetch('grained')
       @edge_decremented = attributes.fetch('edge_decremented')
       @raw_estimated = attributes.fetch('raw_estimated')
+      @estimation_coefficient = attributes.fetch('estimation_coefficient')
       @std_volumic_masses = attributes.fetch('std_volumic_masses')
       @std_prices = attributes.fetch('std_prices')
 
@@ -66,6 +67,7 @@ module Ladb::OpenCutList
       material_attributes.grained = @grained
       material_attributes.edge_decremented = @edge_decremented
       material_attributes.raw_estimated = @raw_estimated
+      material_attributes.estimation_coefficient = @estimation_coefficient
       material_attributes.std_volumic_masses = @std_volumic_masses
       material_attributes.std_prices = @std_prices
       material_attributes.write_to_attributes
