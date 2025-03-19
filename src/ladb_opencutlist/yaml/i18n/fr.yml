@@ -679,8 +679,7 @@ tab:
         Cette fonctionnalité vous permet de générer une estimation des **masses** et **coûts** des **matières premières brutes** nécessaires à la réalisation des pièces de la *fiche de débit*.
       options_general: Générales
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: Coefficient pour *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: Permet d'indiquer le coefficient multiplicateur appliqué sur le volume brut mesuré pour les matières de type "**$t(tab.materials.type_1)**".
+      option_solid_wood_coefficient_bc: Le coefficient multiplicateur pour les matières de type "**$t(tab.materials.type_1)**" se configure désormais sur chaque matière.
       raw_materials: Matières premières brutes
       coefficient: Coefficient
       total: Total
@@ -1572,6 +1571,8 @@ tab:
         Le volume total sera la somme des volumes des panneaux, feuilles, barres ou bandes des pièces après calepinage.
       raw_estimated_0: Volume débité utile
       raw_estimated_1: Volume de matière première nécessaire
+      estimation_coefficient: Coefficient multiplicateur
+      estimation_coefficient_help: Permet d'indiquer le coefficient multiplicateur appliqué sur le volume brut mesuré.
       std_attributes_dim_placeholder: Choisissez une taille
       std_volumic_masses: Masse volumique
       std_volumic_masses_help: Permet de définir la masse volumique toutes tailles ainsi que pour chaque taille standard de la matière.

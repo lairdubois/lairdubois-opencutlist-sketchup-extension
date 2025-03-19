@@ -21,7 +21,7 @@ module Ladb::OpenCutList
 
   class AbstractReportEntryDef < AbstractReportItemDef
 
-    attr_accessor :cutlist_group, :raw_estimated, :errors
+    attr_accessor :cutlist_group, :raw_estimated, :estimation_coefficient, :errors
 
     def initialize(cutlist_group)
       super()
@@ -31,6 +31,7 @@ module Ladb::OpenCutList
       @errors = []
 
       @raw_estimated = true
+      @estimation_coefficient = 1.0
 
     end
 

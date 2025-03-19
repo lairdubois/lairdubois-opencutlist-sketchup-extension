@@ -23,6 +23,7 @@
     "grained": false,
     "edge_decremented": false,
     "raw_estimated": true,
+    "estimation_coefficient": 1.0,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -39,6 +40,7 @@
     "grained": true,
     "edge_decremented": false,
     "raw_estimated": true,
+    "estimation_coefficient": 1.0,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -55,6 +57,7 @@
     "grained": true,
     "edge_decremented": false,
     "raw_estimated": true,
+    "estimation_coefficient": 1.0,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -71,6 +74,7 @@
     "grained": false,
     "edge_decremented": false,
     "raw_estimated": true,
+    "estimation_coefficient": 1.0,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -87,6 +91,7 @@
     "grained": false,
     "edge_decremented": true,
     "raw_estimated": true,
+    "estimation_coefficient": 1.0,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -103,6 +108,7 @@
     "grained": false,
     "edge_decremented": false,
     "raw_estimated": true,
+    "estimation_coefficient": 1.0,
     "std_volumic_masses": [],
     "std_prices": []
   },
@@ -119,6 +125,7 @@
     "grained": true,
     "edge_decremented": false,
     "raw_estimated": true,
+    "estimation_coefficient": 1.0,
     "std_volumic_masses": [],
     "std_prices": []
   }
