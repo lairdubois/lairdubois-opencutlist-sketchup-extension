@@ -19,7 +19,7 @@
 
     DEFAULTS_DICTIONARY = 'materials_material_attributes'.freeze
 
-    attr_accessor :uuid, :type, :description, :url, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented, :raw_estimated, :estimation_coefficient, :std_volumic_masses, :std_prices
+    attr_accessor :uuid, :type, :description, :url, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented, :raw_estimated, :multiplier_coefficient, :std_volumic_masses, :std_prices
     attr_reader :material
 
     @@cached_uuids = {}
@@ -483,7 +483,7 @@
         @grained = PLUGIN.get_attribute(@material, 'grained', defaults['grained'])
         @edge_decremented = PLUGIN.get_attribute(@material, 'edge_decremented', defaults['edge_decremented'])
         @raw_estimated = PLUGIN.get_attribute(@material, 'raw_estimated', defaults['raw_estimated'])
-        @estimation_coefficient = PLUGIN.get_attribute(@material, 'estimation_coefficient', defaults['estimation_coefficient'])
+        @multiplier_coefficient = PLUGIN.get_attribute(@material, 'multiplier_coefficient', defaults['multiplier_coefficient'])
         volumic_mass = PLUGIN.get_attribute(@material, 'volumic_mass', nil)  # Deprecated since 6.0
         @std_volumic_masses = PLUGIN.get_attribute(@material, 'std_volumic_masses', volumic_mass.nil? ? defaults['std_volumic_masses'] : [ { 'val' => volumic_mass, 'dim' => nil } ])
         @std_prices = PLUGIN.get_attribute(@material, 'std_prices', defaults['std_prices'])
@@ -516,7 +516,7 @@
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'grained', @grained)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'edge_decremented', @edge_decremented)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'raw_estimated', @raw_estimated)
-        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'estimation_coefficient', [ 1.0, @estimation_coefficient.to_f ].max)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'multiplier_coefficient', [ 1.0, @multiplier_coefficient.to_f ].max)
         @material.delete_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'volumic_mass')  # Delete unused 'volumic_mass' attribute since 6.0
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_volumic_masses', @std_volumic_masses.to_json)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_prices', @std_prices.to_json)

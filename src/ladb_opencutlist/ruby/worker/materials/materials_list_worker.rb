@@ -90,7 +90,7 @@ module Ladb::OpenCutList
                       :grained => material_attributes.grained,
                       :edge_decremented => material_attributes.edge_decremented,
                       :raw_estimated => material_attributes.raw_estimated,
-                      :estimation_coefficient => material_attributes.estimation_coefficient,
+                      :multiplier_coefficient => material_attributes.multiplier_coefficient,
                       :std_volumic_masses => material_attributes.std_volumic_masses,
                       :std_prices => material_attributes.std_prices,
                   }

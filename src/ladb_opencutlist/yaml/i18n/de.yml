@@ -679,10 +679,8 @@ tab:
         Erstellung eine Kalkulation der **Massen** und der **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden.
       options_general: Allgemein
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: Faktor für *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: "Beziffert den Faktor, der auf das Bruttovolumen für Materialien vom Typ \"**$t(tab.materials.type_1)**\" angewendet wird, um den Verschnitt zu berücksichtigen."
+      option_solid_wood_coefficient_bc: Der Multiplikator für Materialien des Typs ""**$t(tab.materials.type_1)**"" wird nun für jedes Material in den Schätzoptionen konfiguriert.
       raw_materials: Rohmaterial
-      coefficient: Koeffizient
       total: Total
       total_used: Verwendet
       total_unused: Nicht verwendet
@@ -695,6 +693,7 @@ tab:
       total_length: Σ Längen
       tooltip:
         incompatible_unit: Einheit nicht kompatibel mit den Kalkulationsoptionen des Materials
+        multiplier_coefficient: Multiplikator-Koeffizient
       error:
         no_typed_material_parts: "Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um die Kalkulation zu generieren."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
@@ -1572,6 +1571,8 @@ tab:
         Das Gesamtvolumen ist die Summe der Volumen der Platten, Furnierblätter, Stangen oder Bänder der Teile nach dem Zuschnitt.
       raw_estimated_0: Nutzvolumen der Teile
       raw_estimated_1: Volumen des benötigten Rohmaterials
+      multiplier_coefficient: Multiplikator-Koeffizient
+      multiplier_coefficient_help: Ermöglicht die Angabe des Multiplikators, der auf das gemessene Bruttovolumen angewendet wird.
       std_attributes_dim_placeholder: Wählen Sie eine Größe
       std_volumic_masses: Rohdichte
       std_volumic_masses_help: Ermöglicht das Festlegen der Rohdichte für alle Größen sowie für jede Standardgröße des Materials.

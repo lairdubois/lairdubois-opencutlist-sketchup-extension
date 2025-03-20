@@ -198,7 +198,7 @@
                     grained: $inputs.selectGrained.val() === '1',
                     edge_decremented: $inputs.selectEdgeDecremented.val() === '1',
                     raw_estimated: $inputs.selectRawEstimated.val() === '1',
-                    estimation_coefficient: Math.max(1.0, $inputs.inputEstimationCoefficient.val() === '' ? 1.0 : parseFloat($inputs.inputEstimationCoefficient.val().replace(',', '.'))),
+                    multiplier_coefficient: Math.max(1.0, $inputs.inputMultiplierCoefficient.val() === '' ? 1.0 : parseFloat($inputs.inputMultiplierCoefficient.val().replace(',', '.'))),
                     std_volumic_masses: $inputs.editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes'),
                     std_prices: $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes')
                 }
@@ -307,7 +307,7 @@
                 attributes.grained = $inputs.selectGrained.val() === '1';
                 attributes.edge_decremented = $inputs.selectEdgeDecremented.val() === '1';
                 attributes.raw_estimated = $inputs.selectRawEstimated.val() === '1';
-                attributes.estimation_coefficient = Math.max(1.0, $inputs.inputEstimationCoefficient.val() === '' ? 1.0 : parseFloat($inputs.inputEstimationCoefficient.val().replace(',', '.')));
+                attributes.multiplier_coefficient = Math.max(1.0, $inputs.inputMultiplierCoefficient.val() === '' ? 1.0 : parseFloat($inputs.inputMultiplierCoefficient.val().replace(',', '.')));
                 attributes.std_volumic_masses = $inputs.editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
                 attributes.std_prices = $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
             };
@@ -915,7 +915,7 @@
         const $selectGrained = $('#ladb_materials_select_grained', $modal);
         const $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
         const $selectRawEstimated = $('#ladb_materials_select_raw_estimated', $modal);
-        const $inputEstimationCoefficient = $('#ladb_materials_input_estimation_coefficient', $modal);
+        const $inputMultiplierCoefficient = $('#ladb_materials_input_multiplier_coefficient', $modal);
         const $editorStdVolumicMasses = $('#ladb_materials_editor_std_volumic_masses', $modal);
         const $editorStdPrices = $('#ladb_materials_editor_std_prices', $modal);
 
@@ -940,7 +940,7 @@
             options.grained = $selectGrained.val() === '1';
             options.edge_decremented = $selectEdgeDecremented.val() === '1';
             options.raw_estimated = $selectRawEstimated.val() === '1';
-            options.estimation_coefficient = Math.max(1.0, $inputEstimationCoefficient.val() === '' ? 1.0 : parseFloat($inputEstimationCoefficient.val().replace(',', '.')));
+            options.multiplier_coefficient = Math.max(1.0, $inputMultiplierCoefficient.val() === '' ? 1.0 : parseFloat($inputMultiplierCoefficient.val().replace(',', '.')));
             options.std_volumic_masses = $editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
             options.std_prices = $editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
         };
@@ -961,7 +961,7 @@
             $selectGrained.selectpicker('val', options.grained ? '1' : '0');
             $selectEdgeDecremented.selectpicker('val', options.edge_decremented ? '1' : '0');
             $selectRawEstimated.selectpicker('val', options.raw_estimated ? '1' : '0');
-            $inputEstimationCoefficient.val(options.estimation_coefficient);
+            $inputMultiplierCoefficient.val(options.multiplier_coefficient);
             fnSetStdAttributesTypeAndStds();
             $editorStdVolumicMasses.ladbEditorStdAttributes('setStdAttributes', [ options.std_volumic_masses ]);
             $editorStdPrices.ladbEditorStdAttributes('setStdAttributes', [ options.std_prices ]);
@@ -999,7 +999,7 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').hide();
-                    $inputEstimationCoefficient.closest('.form-group').show();
+                    $inputMultiplierCoefficient.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
@@ -1017,7 +1017,7 @@
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').show();
-                    $inputEstimationCoefficient.closest('.form-group').hide();
+                    $inputMultiplierCoefficient.closest('.form-group').hide();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
@@ -1035,7 +1035,7 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').show();
-                    $inputEstimationCoefficient.closest('.form-group').show();
+                    $inputMultiplierCoefficient.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
@@ -1053,7 +1053,7 @@
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').show();
                     $selectRawEstimated.closest('.form-group').show();
-                    $inputEstimationCoefficient.closest('.form-group').show();
+                    $inputMultiplierCoefficient.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
@@ -1074,7 +1074,7 @@
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').show();
-                    $inputEstimationCoefficient.closest('.form-group').show();
+                    $inputMultiplierCoefficient.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
                     break;
@@ -1116,7 +1116,7 @@
             fnFetchOptions: fnFetchOptions,
             fnFillInputs: fnFillInputs
         });
-        $inputEstimationCoefficient.ladbTextinputNumberWithUnit({
+        $inputMultiplierCoefficient.ladbTextinputNumberWithUnit({
             resetValue: '1'
         });
         $editorStdVolumicMasses.ladbEditorStdAttributes({
@@ -1318,7 +1318,7 @@
             selectGrained: $selectGrained,
             selectEdgeDecremented: $selectEdgeDecremented,
             selectRawEstimated: $selectRawEstimated,
-            inputEstimationCoefficient: $inputEstimationCoefficient,
+            inputMultiplierCoefficient: $inputMultiplierCoefficient,
             editorStdVolumicMasses: $editorStdVolumicMasses,
             editorStdPrices: $editorStdPrices,
         }

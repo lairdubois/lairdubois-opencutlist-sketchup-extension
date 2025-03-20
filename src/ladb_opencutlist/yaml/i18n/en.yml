@@ -679,10 +679,8 @@ tab:
         Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts on the *Parts List*.
       options_general: General
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: Waste ratio for *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: Factor to multiply the rough volume of material of type "**$t(tab.materials.type_1)**" to account for defects and waste.
+      option_solid_wood_coefficient_bc: The multiplying coefficient for materials of type “**$t(tab.materials.type_1)**” is now configured for each material in the estimation options.
       raw_materials: Raw materials
-      coefficient: Coefficient
       total: Total
       total_used: Used
       total_unused: Unused
@@ -695,6 +693,7 @@ tab:
       total_length: Σ Length
       tooltip:
         incompatible_unit: Incompatible unit with material estimation options
+        multiplier_coefficient: Multiplying coefficient
       error:
         no_typed_material_parts: "No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** or **$t(tab.materials.type_5)**) has been provided to generate the estimate."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
@@ -1572,6 +1571,8 @@ tab:
         The total volume will be the sum of the volumes of the panels, sheets, boards or edge bandings of the parts after cutting.
       raw_estimated_0: Effective volume
       raw_estimated_1: Volume of raw material required
+      multiplier_coefficient: Multiplying coefficient
+      multiplier_coefficient_help: Used to indicate the multiplying factor applied to the gross volume measured.
       std_attributes_dim_placeholder: Select a size
       std_volumic_masses: Density
       std_volumic_masses_help: Allows to set the density for all sizes as well as for each standard material size.

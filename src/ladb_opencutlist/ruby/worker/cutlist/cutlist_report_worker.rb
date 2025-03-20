@@ -350,14 +350,14 @@ module Ladb::OpenCutList
 
       report_entry_def = Object.const_get(entry_def_class_name).new(cutlist_group)
       report_entry_def.raw_estimated = material_attributes.raw_estimated
-      report_entry_def.estimation_coefficient = material_attributes.estimation_coefficient
+      report_entry_def.multiplier_coefficient = material_attributes.multiplier_coefficient
       report_entry_def.std_volumic_mass = std_volumic_mass if report_entry_def.respond_to?(:std_volumic_mass)
       report_entry_def.std_price = std_price if report_entry_def.respond_to?(:std_price=)
-      report_entry_def.total_volume = cutlist_group.def.total_cutting_volume * material_attributes.estimation_coefficient if report_entry_def.respond_to?(:total_volume=)
-      report_entry_def.total_area = cutlist_group.def.total_cutting_area * material_attributes.estimation_coefficient if report_entry_def.respond_to?(:total_area=)
-      report_entry_def.total_length = cutlist_group.def.total_cutting_length * material_attributes.estimation_coefficient if report_entry_def.respond_to?(:total_length=)
-      report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * material_attributes.estimation_coefficient * mass_per_inch3
-      report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * material_attributes.estimation_coefficient * price_per_inch3
+      report_entry_def.total_volume = cutlist_group.def.total_cutting_volume * material_attributes.multiplier_coefficient if report_entry_def.respond_to?(:total_volume=)
+      report_entry_def.total_area = cutlist_group.def.total_cutting_area * material_attributes.multiplier_coefficient if report_entry_def.respond_to?(:total_area=)
+      report_entry_def.total_length = cutlist_group.def.total_cutting_length * material_attributes.multiplier_coefficient if report_entry_def.respond_to?(:total_length=)
+      report_entry_def.total_mass = cutlist_group.def.total_cutting_volume * material_attributes.multiplier_coefficient * mass_per_inch3
+      report_entry_def.total_cost = cutlist_group.def.total_cutting_volume * material_attributes.multiplier_coefficient * price_per_inch3
 
       # Compute parts volume, area, length, mass and cost
       cutlist_group.def.part_defs.each do |id, part_def|
