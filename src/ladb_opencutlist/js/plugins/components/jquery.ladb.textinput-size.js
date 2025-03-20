@@ -22,7 +22,9 @@
         qHidden: false,
         separator1Label: 'x',
         separator2Label: 'x',
-        feeder: null
+        feeder: null,
+        dropdownActionLabel: 'ADD',
+        dropdownActionCallback: null
     }, LadbTextinputAbstract.DEFAULTS);
 
     LadbTextinputSize.prototype.updateElementInputValue = function () {
@@ -149,6 +151,18 @@
                                     .val(sizes[i])
                                     .trigger('change')
                                 ;
+                            })
+                    );
+                }
+                if ((typeof that.options.dropdownActionCallback) === 'function') {
+                    if (sizes.length > 0) {
+                        $dropdownMenu.append('<li role="separator" class="divider"></li>');
+                    }
+                    $dropdownMenu.append(
+                        $('<li />')
+                            .append('<a href="#">' + that.options.dropdownActionLabel + '</a>')
+                            .on('click', function () {
+                                that.options.dropdownActionCallback();
                             })
                     );
                 }

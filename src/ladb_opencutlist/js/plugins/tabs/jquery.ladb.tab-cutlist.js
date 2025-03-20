@@ -4963,8 +4963,6 @@
                 // Fetch UI elements
                 const $tabs = $('a[data-toggle="tab"]', $modal);
                 const $widgetPreset = $('.ladb-widget-preset', $modal);
-                const $inputStdBinSizes = $('#ladb_select_std_bin_sizes', $modal);
-                const $inputScrapBinSizes = $('#ladb_input_scrap_bin_sizes', $modal);
                 const $editorStdBinSizes = $('#ladb_editor_std_bin_sizes', $modal);
                 const $editorScrapBinSizes = $('#ladb_editor_scrap_bin_sizes', $modal);
                 const $btnsProblemType = $('label.btn-radio', $modal);
@@ -4997,16 +4995,6 @@
                 const $btnGenerate = $('#ladb_btn_generate', $modal);
 
                 const fnFetchOptions = function (options) {
-                    // options.std_bin_sizes = Array.isArray($inputStdBinSizes.val()) ? $inputStdBinSizes.val().join(';') : $inputStdBinSizes.val();
-                    // if (group.material_is_1d) {
-                    //     options.scrap_bin_1d_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
-                    //     options.scrap_bin_2d_sizes = '';
-                    // }
-                    // if (group.material_is_2d) {
-                    //     options.scrap_bin_1d_sizes = '';
-                    //     options.scrap_bin_2d_sizes = $inputScrapBinSizes.ladbTextinputTokenfield('getValidTokensList');
-                    // }
-
                     if (group.material_is_1d) {
                         options.std_bin_1d_sizes = $editorStdBinSizes.ladbEditorSizes('getSizes');
                         options.std_bin_2d_sizes = '';
@@ -5124,33 +5112,24 @@
                     fnFetchOptions: fnFetchOptions,
                     fnFillInputs: fnFillInputs
                 });
-                // const std_bin_sizes = group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes
-                // if (std_bin_sizes) {
-                //     const defaultValue = $inputStdBinSizes.val();
-                //     $inputStdBinSizes.val(Array.isArray(std_bin_sizes) ? std_bin_sizes : std_bin_sizes.split(';'));
-                //     if ($inputStdBinSizes.val() == null) {
-                //         if (response.std_lengths.length > 0 || response.std_sizes.length > 0) {
-                //             $inputStdBinSizes.val(defaultValue);
-                //         } else {
-                //             $inputStdBinSizes.val('');  // Special case if the std_bin_sizes is not present anymore in the list and no std lengths or sizes defined. Select "none" by default.
-                //         }
-                //     }
-                // }
 
-                // $inputStdBinSizes.selectpicker(SELECT_PICKER_OPTIONS);
-                // $inputScrapBinSizes.ladbTextinputTokenfield({ format: group.material_is_1d ? 'dxq' : 'dxdxq' });
-                // $inputScrapBinSizes.ladbTextinputTokenfield('setTokens', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes);
                 $editorStdBinSizes
                     .ladbEditorSizes({
                         format: group.material_is_1d ? FORMAT_D : FORMAT_D_D,
                         qPlaceholder: '∞',
-                        qHidden: false
+                        qHidden: false,
+                        emptyVal: '0',
+                        dropdownActionLabel: '<i class="ladb-opencutlist-icon-plus"></i> Ajouter',
+                        dropdownActionCallback: function () { fnEditMaterial(function ($editMaterialModal) {
+                            $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
+                        })}
                     })
                     .ladbEditorSizes('setAvailableSizesAndSizes', [ group.material_is_1d ? response.std_lengths : response.std_sizes, group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes ])
                 ;
                 $editorScrapBinSizes
                     .ladbEditorSizes({
-                        format: group.material_is_1d ? FORMAT_D_Q : FORMAT_D_D_Q
+                        format: group.material_is_1d ? FORMAT_D_Q : FORMAT_D_D_Q,
+                        emptyVal: '0'
                     })
                     .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes)
                 ;
@@ -5231,16 +5210,6 @@
                 // Bind tabs
                 $tabs.on('shown.bs.tab', function (e) {
                     that.lastPackingOptionsTab = $(e.target).attr('href').substring('#tab_packing_options_'.length);
-                });
-
-                // Bind select
-                $inputStdBinSizes.on('changed.bs.select', function (event, clickedIndex, isSelected, previousValue) {
-                    const value = $inputStdBinSizes.val();
-                    if (value === 'add') {
-                        fnEditMaterial(function ($editMaterialModal) {
-                            $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
-                        });
-                    }
                 });
 
                 // Bind buttons
@@ -5693,11 +5662,6 @@
                     // Hide modal
                     $modal.modal('hide');
 
-                });
-
-                // Bind modal
-                $modal.on('hide.bs.modal', function () {
-                    $inputScrapBinSizes.ladbTextinputTokenfield('destroy');
                 });
 
                 // Show modal

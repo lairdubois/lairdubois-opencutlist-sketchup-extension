@@ -23,7 +23,10 @@
         d1Placeholder: 'Longueur',
         d2Placeholder: 'Largeur',
         qPlaceholder: '1',
-        qHidden: false
+        qHidden: false,
+        emptyVal: '',
+        dropdownActionCallback: null,
+        dropdownActionLabel: null
     };
 
     LadbEditorSizes.prototype.updateToolsVisibility = function () {
@@ -68,7 +71,9 @@
                 qHidden: this.options.qHidden && (this.options.format === FORMAT_D || this.options.format === FORMAT_D_D),
                 separator1Label: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
                 separator2Label: !this.options.qHidden || this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? 'Qte' : '',
-                feeder: that.availableSizes ? function () { return that.getAvailableVals(); } : null
+                feeder: that.availableSizes ? function () { return that.getAvailableVals(); } : null,
+                dropdownActionLabel: that.options.dropdownActionLabel,
+                dropdownActionCallback: that.options.dropdownActionCallback
             })
             .ladbTextinputSize('val', size.val)
         ;
@@ -167,7 +172,7 @@
             vals.push(size.val);
         });
         if (vals.length === 0) {
-            vals.push('0');
+            vals.push(this.options.emptyVal);
         }
 
         return vals;
