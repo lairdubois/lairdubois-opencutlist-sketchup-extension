@@ -162,12 +162,15 @@
 
     LadbEditorSizes.prototype.getCurrentVals = function () {
 
-        const dims = [];
+        const vals = [];
         this.getCurrentSizes().forEach(function (size) {
-            dims.push(size.val);
+            vals.push(size.val);
         });
+        if (vals.length === 0) {
+            vals.push('0');
+        }
 
-        return dims;
+        return vals;
     };
 
     LadbEditorSizes.prototype.isAvailableDim = function (dim) {
@@ -229,23 +232,28 @@
 
         this.sizes = [];
 
-        const sizes = {};
-        const arraySizes = stringSizes.split(';');
-        for (let i = 0; i < arraySizes.length; i++) {
-            const val = arraySizes[i];
+        const toConvertSizes = {};
+        const vals = stringSizes.split(';');
+        for (let i = 0; i < vals.length; i++) {
+            const val = vals[i];
             if (val !== '') {
-                sizes[val] = val;
+                toConvertSizes[val] = val;
             }
         }
 
-        if (Object.keys(sizes).length === 0 && that.availableSizes !== null) {
-            sizes[that.availableSizes[0].val] = that.availableSizes[0].val;
+        if (Object.keys(toConvertSizes).length === 0 && that.availableSizes !== null) {
+            toConvertSizes[that.availableSizes[0].val] = that.availableSizes[0].val;
         }
 
         // Convert size to inch float representation
-        rubyCallCommand('core_length_to_float', sizes, function (response) {
+        rubyCallCommand('core_length_to_float', toConvertSizes, function (response) {
 
             for (let key in response) {
+
+                // Exclude '0' or '0x0' values
+                if ((/^\s*0\s*x*\s*0*\s*$/.exec(key)) !== null) {
+                    continue;
+                }
 
                 const val = key;
                 const dim = Array.isArray(response[key]) ? response[key].join('x') : response[key];

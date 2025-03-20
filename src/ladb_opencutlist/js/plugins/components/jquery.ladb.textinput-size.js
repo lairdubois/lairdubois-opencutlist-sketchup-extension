@@ -79,7 +79,7 @@
         if (this.options.feeder) {
 
             const $caret =
-                $('<div class="ladb-textinput-tool ladb-textinput-tool-btn" tabindex="-1"><span class="bs-caret"><span class="caret"></span></span></div>')
+                $('<div class="ladb-textinput-tool ladb-textinput-tool-black ladb-textinput-tool-btn" tabindex="-1"><span class="bs-caret"><span class="caret"></span></span></div>')
             ;
             $toolsContainer.append($caret);
 
