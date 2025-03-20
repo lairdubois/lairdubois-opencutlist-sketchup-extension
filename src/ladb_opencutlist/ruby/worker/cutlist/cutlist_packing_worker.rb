@@ -397,7 +397,7 @@ module Ladb::OpenCutList
 
         # Iterate on bin types to avoid nul cost
         min_cost_bin_type = bin_types.select { |bin_type| bin_type[:cost] > 0 }.min { |bin_type_a,bin_type_b| bin_type_a[:cost] <=> bin_type_b[:cost] }
-        default_cost = min_cost_bin_type[:cost] == 0 ? -1 : min_cost_bin_type[:cost] / 10
+        default_cost = min_cost_bin_type.nil? || min_cost_bin_type[:cost] == 0 ? -1 : min_cost_bin_type[:cost] / 10
         bin_types.each do |bin_type|
           bin_type[:cost] = default_cost if bin_type[:cost] == 0
         end
