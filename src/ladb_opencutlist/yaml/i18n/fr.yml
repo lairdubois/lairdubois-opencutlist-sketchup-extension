@@ -681,7 +681,6 @@ tab:
       options_solid_wood: $t(tab.materials.type_1)
       option_solid_wood_coefficient_bc: Le coefficient multiplicateur pour les matières de type "**$t(tab.materials.type_1)**" se configure désormais sur chaque matière dans les options d'estimation.
       raw_materials: Matières premières brutes
-      coefficient: Coefficient
       total: Total
       total_used: Utilisé
       total_unused: Non utilisé
@@ -694,6 +693,7 @@ tab:
       total_length: Σ Longueurs
       tooltip:
         incompatible_unit: Unité incompatible avec les options d'estimation de la matière
+        multiplier_coefficient: Coefficient multiplicateur
       error:
         no_typed_material_parts: "Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer l'estimation."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
@@ -1571,8 +1571,8 @@ tab:
         Le volume total sera la somme des volumes des panneaux, feuilles, barres ou bandes des pièces après calepinage.
       raw_estimated_0: Volume débité utile
       raw_estimated_1: Volume de matière première nécessaire
-      estimation_coefficient: Coefficient multiplicateur
-      estimation_coefficient_help: Permet d'indiquer le coefficient multiplicateur appliqué sur le volume brut mesuré.
+      multiplier_coefficient: Coefficient multiplicateur
+      multiplier_coefficient_help: Permet d'indiquer le coefficient multiplicateur appliqué sur le volume brut mesuré.
       std_attributes_dim_placeholder: Choisissez une taille
       std_volumic_masses: Masse volumique
       std_volumic_masses_help: Permet de définir la masse volumique toutes tailles ainsi que pour chaque taille standard de la matière.

@@ -33,7 +33,7 @@ module Ladb::OpenCutList
 
   class AbstractReportEntry < AbstractReportItem
 
-    attr_reader :errors, :raw_estimated, :estimation_coefficient, :id, :material_id, :material_name, :material_display_name, :material_type, :material_color, :material_description, :material_url, :std_available, :std_dimension_stipped_name, :std_dimension, :std_thickness
+    attr_reader :errors, :raw_estimated, :multiplier_coefficient, :id, :material_id, :material_name, :material_display_name, :material_type, :material_color, :material_description, :material_url, :std_available, :std_dimension_stipped_name, :std_dimension, :std_thickness
 
     def initialize(_def)
       super(_def)
@@ -41,7 +41,7 @@ module Ladb::OpenCutList
       @errors = _def.errors
 
       @raw_estimated = _def.raw_estimated
-      @estimation_coefficient = UnitUtils.format_readable_value(_def.estimation_coefficient, 2)
+      @multiplier_coefficient = UnitUtils.format_readable_value(_def.multiplier_coefficient, 2)
 
       @id = _def.cutlist_group.id
       @material_id = _def.cutlist_group.material_id

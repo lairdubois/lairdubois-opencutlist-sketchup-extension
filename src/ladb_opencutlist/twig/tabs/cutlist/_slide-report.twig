@@ -196,8 +196,8 @@
                                     {% if not entry.raw_estimated %}
                                         <a href="#" class="ladb-tool-info ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-properties-tab="estimate_options" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.raw_estimated_0'|i18next }}"><i class="ladb-opencutlist-icon-raw-estimated-0"></i></a>
                                     {% endif %}
-                                    {% if entry.estimation_coefficient and group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
-                                        <a href="#" class="ladb-tool-info ladb-tool-text ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-properties-tab="estimate_options" data-toggle="tooltip" title="{{ 'tab.cutlist.report.coefficient'|i18next }}">x{{ entry.estimation_coefficient }}</a>
+                                    {% if entry.multiplier_coefficient and group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
+                                        <a href="#" class="ladb-tool-info ladb-tool-text ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-properties-tab="estimate_options" data-toggle="tooltip" title="{{ 'tab.cutlist.report.coefficient'|i18next }}">x{{ entry.multiplier_coefficient }}</a>
                                     {% endif %}
                                     <span class="ladb-separator"></span>
                                     {% if foldableRow %}
