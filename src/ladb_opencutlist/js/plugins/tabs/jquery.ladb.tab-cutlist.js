@@ -5119,7 +5119,7 @@
                         qPlaceholder: '∞',
                         qHidden: false,
                         emptyVal: '0',
-                        dropdownActionLabel: '<i class="ladb-opencutlist-icon-plus"></i> Ajouter',
+                        dropdownActionLabel: '<i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.packing.option_std_bin_' + (group.material_is_1d ? '1' : '2') + 'd_add'),
                         dropdownActionCallback: function () { fnEditMaterial(function ($editMaterialModal) {
                             $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
                         })}
