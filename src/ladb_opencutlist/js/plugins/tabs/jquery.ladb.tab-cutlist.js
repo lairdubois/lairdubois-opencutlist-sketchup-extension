@@ -5112,7 +5112,6 @@
                     fnFetchOptions: fnFetchOptions,
                     fnFillInputs: fnFillInputs
                 });
-
                 $editorStdBinSizes
                     .ladbEditorSizes({
                         format: group.material_is_1d ? FORMAT_D : FORMAT_D_D,

@@ -912,6 +912,11 @@
         const $inputStdThicknesses = $('#ladb_materials_input_std_thicknesses', $modal);
         const $inputStdSections = $('#ladb_materials_input_std_sections', $modal);
         const $inputStdSizes = $('#ladb_materials_input_std_sizes', $modal);
+        const $editorStdLengths = $('#ladb_materials_editor_std_lengths', $modal);
+        const $editorStdWidths = $('#ladb_materials_editor_std_widths', $modal);
+        const $editorStdThicknesses = $('#ladb_materials_editor_std_thicknesses', $modal);
+        const $editorStdSections = $('#ladb_materials_editor_std_sections', $modal);
+        const $editorStdSizes = $('#ladb_materials_editor_std_sizes', $modal);
         const $selectGrained = $('#ladb_materials_select_grained', $modal);
         const $selectEdgeDecremented = $('#ladb_materials_select_edge_decremented', $modal);
         const $selectRawEstimated = $('#ladb_materials_select_raw_estimated', $modal);
@@ -958,6 +963,11 @@
             fnSetTokens($inputStdThicknesses, options.std_thicknesses);
             fnSetTokens($inputStdSections, options.std_sections);
             fnSetTokens($inputStdSizes, options.std_sizes);
+            $editorStdLengths.ladbEditorSizes('setSizes', options.std_lengths);
+            $editorStdWidths.ladbEditorSizes('setSizes', options.std_widths);
+            $editorStdThicknesses.ladbEditorSizes('setSizes', options.std_thicknesses);
+            $editorStdSections.ladbEditorSizes('setSizes', options.std_sections);
+            $editorStdSizes.ladbEditorSizes('setSizes', options.std_sizes);
             $selectGrained.selectpicker('val', options.grained ? '1' : '0');
             $selectEdgeDecremented.selectpicker('val', options.edge_decremented ? '1' : '0');
             $selectRawEstimated.selectpicker('val', options.raw_estimated ? '1' : '0');
@@ -996,6 +1006,13 @@
                     $inputStdThicknesses.closest('.form-group').show();
                     $inputStdSections.closest('.form-group').hide();
                     $inputStdSizes.closest('.form-group').hide();
+
+                    $editorStdLengths.closest('.form-group').hide();
+                    $editorStdWidths.closest('.form-group').hide();
+                    $editorStdThicknesses.closest('.form-group').show();
+                    $editorStdSections.closest('.form-group').hide();
+                    $editorStdSizes.closest('.form-group').hide();
+
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').hide();
@@ -1014,6 +1031,13 @@
                     $inputStdThicknesses.closest('.form-group').show();
                     $inputStdSections.closest('.form-group').hide();
                     $inputStdSizes.closest('.form-group').show();
+
+                    $editorStdLengths.closest('.form-group').hide();
+                    $editorStdWidths.closest('.form-group').hide();
+                    $editorStdThicknesses.closest('.form-group').show();
+                    $editorStdSections.closest('.form-group').hide();
+                    $editorStdSizes.closest('.form-group').show();
+
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').show();
@@ -1032,6 +1056,13 @@
                     $inputStdThicknesses.closest('.form-group').hide();
                     $inputStdSections.closest('.form-group').show();
                     $inputStdSizes.closest('.form-group').hide();
+
+                    $editorStdLengths.closest('.form-group').show();
+                    $editorStdWidths.closest('.form-group').hide();
+                    $editorStdThicknesses.closest('.form-group').hide();
+                    $editorStdSections.closest('.form-group').show();
+                    $editorStdSizes.closest('.form-group').hide();
+
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').show();
@@ -1050,6 +1081,13 @@
                     $inputStdThicknesses.closest('.form-group').hide();
                     $inputStdSections.closest('.form-group').hide();
                     $inputStdSizes.closest('.form-group').hide();
+
+                    $editorStdLengths.closest('.form-group').show();
+                    $editorStdWidths.closest('.form-group').show();
+                    $editorStdThicknesses.closest('.form-group').hide();
+                    $editorStdSections.closest('.form-group').hide();
+                    $editorStdSizes.closest('.form-group').hide();
+
                     $selectGrained.closest('.form-group').hide();
                     $selectEdgeDecremented.closest('.form-group').show();
                     $selectRawEstimated.closest('.form-group').show();
@@ -1071,6 +1109,13 @@
                     $inputStdThicknesses.closest('.form-group').hide();
                     $inputStdSections.closest('.form-group').hide();
                     $inputStdSizes.closest('.form-group').show();
+
+                    $editorStdLengths.closest('.form-group').hide();
+                    $editorStdWidths.closest('.form-group').hide();
+                    $editorStdThicknesses.closest('.form-group').hide();
+                    $editorStdSections.closest('.form-group').hide();
+                    $editorStdSizes.closest('.form-group').show();
+
                     $selectGrained.closest('.form-group').show();
                     $selectEdgeDecremented.closest('.form-group').hide();
                     $selectRawEstimated.closest('.form-group').show();
@@ -1115,6 +1160,31 @@
             section: material.attributes.type,
             fnFetchOptions: fnFetchOptions,
             fnFillInputs: fnFillInputs
+        });
+        $editorStdLengths.ladbEditorSizes({
+            format: FORMAT_D,
+            d1Placeholder: 'Longueur',
+            qHidden: true
+        });
+        $editorStdWidths.ladbEditorSizes({
+            format: FORMAT_D,
+            d1Placeholder: 'Largeur',
+            qHidden: true
+        });
+        $editorStdThicknesses.ladbEditorSizes({
+            format: FORMAT_D,
+            d1Placeholder: 'Epaisseur',
+            qHidden: true
+        });
+        $editorStdSections.ladbEditorSizes({
+            format: FORMAT_D_D,
+            d1Placeholder: 'Largeur',
+            d2Placeholder: 'Hauteur',
+            qHidden: true
+        });
+        $editorStdSizes.ladbEditorSizes({
+            format: FORMAT_D_D,
+            qHidden: true
         });
         $inputMultiplierCoefficient.ladbTextinputNumberWithUnit({
             resetValue: '1'

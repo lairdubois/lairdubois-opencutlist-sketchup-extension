@@ -134,6 +134,7 @@
     LadbEditorSizes.prototype.renderRows = function () {
 
         this.$rows.empty();
+        this.$removeRows.empty();
         for (let i = 0; i < this.sizes.length; i++) {
             const size = this.sizes[i];
             this.appendRow(size);
