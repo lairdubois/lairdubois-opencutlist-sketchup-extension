@@ -5100,7 +5100,7 @@
                     // Edit material and focus std_sizes input field
                     that.dialog.executeCommandOnTab('materials', 'edit_material', {
                         materialId: group.material_id,
-                        propertiesTab: 'cut_options',
+                        propertiesTab: 'format',
                         callback: callback
                     });
 
@@ -5120,7 +5120,7 @@
                         emptyVal: '0',
                         dropdownActionLabel: '<i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.packing.option_std_bin_' + (group.material_is_1d ? '1' : '2') + 'd_add'),
                         dropdownActionCallback: function () { fnEditMaterial(function ($editMaterialModal) {
-                            $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
+                            $('#ladb_materials_editor_std_sizes', $editMaterialModal).siblings('.token-input').focus();
                         })}
                     })
                     .ladbEditorSizes('setAvailableSizesAndSizes', [ group.material_is_1d ? response.std_lengths : response.std_sizes, group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes ])
