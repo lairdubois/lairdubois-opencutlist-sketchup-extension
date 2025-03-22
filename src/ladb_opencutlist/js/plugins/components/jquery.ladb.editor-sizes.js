@@ -53,6 +53,11 @@
     LadbEditorSizes.prototype.appendRow = function (size, options = { autoFocus: false, autoFill: false }) {
         const that = this;
 
+        // Default empty size
+        if (typeof size !== 'object') {
+            size = {};
+        }
+
         if (this.$rows.children('.ladb-editor-sizes-row').length === 0) {
             this.$rows.empty();
         }

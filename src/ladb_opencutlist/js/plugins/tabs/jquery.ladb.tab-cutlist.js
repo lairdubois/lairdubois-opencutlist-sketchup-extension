@@ -5122,7 +5122,9 @@
                         emptyVal: '0',
                         dropdownActionLabel: '<i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.packing.option_std_bin_' + (group.material_is_1d ? '1' : '2') + 'd_add'),
                         dropdownActionCallback: function () { fnEditMaterial(function ($editMaterialModal) {
-                            $('#ladb_materials_editor_std_sizes', $editMaterialModal).siblings('.token-input').focus();
+                            setTimeout(function () {
+                                $('#ladb_materials_editor_std_' + (group.material_is_1d ? 'lengths' : 'sizes'), $editMaterialModal).ladbEditorSizes('appendRow', [ {}, { autoFocus: true }]);
+                            }, 200);
                         })}
                     })
                     .ladbEditorSizes('setAvailableSizesAndSizes', [ group.material_is_1d ? response.std_lengths : response.std_sizes, group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes ])
