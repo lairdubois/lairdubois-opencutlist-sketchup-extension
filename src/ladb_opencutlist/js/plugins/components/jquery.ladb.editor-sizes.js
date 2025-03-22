@@ -36,10 +36,11 @@
         } else {
             this.$empty.hide();
         }
+        const $handle = $('.ladb-handle', this.$rows);
         if (rowCount < 2) {
-            $('.ladb-handle', this.$rows).hide();
+            $handle.hide();
         } else {
-            $('.ladb-handle', this.$rows).show();
+            $handle.show();
         }
     };
 
@@ -52,7 +53,12 @@
 
         // Row /////
 
-        const $row = $(Twig.twig({ref: 'components/_editor-sizes-row.twig'}).render({}));
+        const $row = $(
+            '<div class="ladb-editor-sizes-row">' +
+                '<input type="hidden">' +
+                '<div class="ladb-textinput-tool ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></div>' +
+            '</div>')
+        ;
         $row.data('size', size);
         this.$rows.append($row);
 
@@ -71,6 +77,7 @@
                 qHidden: this.options.qHidden && (this.options.format === FORMAT_D || this.options.format === FORMAT_D_D),
                 separator1Label: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
                 separator2Label: !this.options.qHidden || this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? 'Qte' : '',
+                // leftTools: [ '<div class="ladb-textinput-tool ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></div>' ],
                 feeder: that.availableSizes ? function () { return that.getAvailableVals(); } : null,
                 dropdownActionLabel: that.options.dropdownActionLabel,
                 dropdownActionCallback: that.options.dropdownActionCallback

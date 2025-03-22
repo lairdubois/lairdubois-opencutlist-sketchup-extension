@@ -23,7 +23,7 @@
         separator1Label: 'x',
         separator2Label: 'x',
         feeder: null,
-        dropdownActionLabel: 'ADD',
+        dropdownActionLabel: 'Action',
         dropdownActionCallback: null
     }, LadbTextinputAbstract.DEFAULTS);
 
@@ -67,14 +67,12 @@
     LadbTextinputSize.prototype.val = function (value) {
 
         if (value === undefined) {
-            let val = LadbTextinputAbstract.prototype.val.call(this);
-            return val;
+            return LadbTextinputAbstract.prototype.val.call(this);
         }
 
         this.setInputValues(value);
 
-        const r = LadbTextinputAbstract.prototype.val.call(this, value);
-        return r;
+        return LadbTextinputAbstract.prototype.val.call(this, value);
     };
 
     LadbTextinputSize.prototype.appendRightTools = function ($toolsContainer) {
