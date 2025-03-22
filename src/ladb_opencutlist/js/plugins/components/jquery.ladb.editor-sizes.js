@@ -20,10 +20,11 @@
 
     LadbEditorSizes.DEFAULTS = {
         format: FORMAT_D_D_Q,
-        d1Placeholder: 'Longueur',
-        d2Placeholder: 'Largeur',
+        d1Placeholder: i18next.t('default.length'),
+        d2Placeholder: i18next.t('default.width'),
         qPlaceholder: '1',
         qHidden: false,
+        emptyDisplayed: true,
         emptyVal: '',
         dropdownActionCallback: null,
         dropdownActionLabel: null
@@ -32,7 +33,12 @@
     LadbEditorSizes.prototype.updateToolsVisibility = function () {
         let rowCount = this.$rows.children('.ladb-editor-sizes-row').length;
         if (rowCount === 0) {
-            this.$empty.show();
+            if (this.options.emptyDisplayed) {
+                this.$empty.show();
+            } else {
+                this.appendRow({});
+                this.$empty.hide();
+            }
         } else {
             this.$empty.hide();
         }
@@ -75,9 +81,8 @@
                 qDisabled: this.options.format === FORMAT_D || this.options.format === FORMAT_D_D,
                 d2Hidden: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q,
                 qHidden: this.options.qHidden && (this.options.format === FORMAT_D || this.options.format === FORMAT_D_D),
-                separator1Label: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
-                separator2Label: !this.options.qHidden || this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? 'Qte' : '',
-                // leftTools: [ '<div class="ladb-textinput-tool ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></div>' ],
+                dSeparatorLabel: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
+                qSeparatorLabel: !this.options.qHidden || this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? i18next.t('core.component.textinput_size.quantity') : '',
                 feeder: that.availableSizes ? function () { return that.getAvailableVals(); } : null,
                 dropdownActionLabel: that.options.dropdownActionLabel,
                 dropdownActionCallback: that.options.dropdownActionCallback

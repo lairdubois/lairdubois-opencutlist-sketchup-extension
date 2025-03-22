@@ -1178,28 +1178,35 @@
         });
         $editorStdLengths.ladbEditorSizes({
             format: FORMAT_D,
-            d1Placeholder: 'Longueur',
-            qHidden: true
+            d1Placeholder: i18next.t('default.length'),
+            qHidden: true,
+            emptyDisplayed: false
         });
         $editorStdWidths.ladbEditorSizes({
             format: FORMAT_D,
-            d1Placeholder: 'Largeur',
-            qHidden: true
+            d1Placeholder: i18next.t('default.width'),
+            qHidden: true,
+            emptyDisplayed: false
         });
         $editorStdThicknesses.ladbEditorSizes({
             format: FORMAT_D,
-            d1Placeholder: 'Epaisseur',
-            qHidden: true
+            d1Placeholder: i18next.t('default.thickness'),
+            qHidden: true,
+            emptyDisplayed: false
         });
         $editorStdSections.ladbEditorSizes({
             format: FORMAT_D_D,
-            d1Placeholder: 'Largeur',
-            d2Placeholder: 'Hauteur',
-            qHidden: true
+            d1Placeholder: i18next.t('default.width'),
+            d2Placeholder: i18next.t('default.height'),
+            qHidden: true,
+            emptyDisplayed: false
         });
         $editorStdSizes.ladbEditorSizes({
             format: FORMAT_D_D,
-            qHidden: true
+            d1Placeholder: i18next.t('default.length'),
+            d2Placeholder: i18next.t('default.width'),
+            qHidden: true,
+            emptyDisplayed: false
         });
         $inputMultiplierCoefficient.ladbTextinputNumberWithUnit({
             resetValue: '1'

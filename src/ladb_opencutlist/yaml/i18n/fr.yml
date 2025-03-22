@@ -80,6 +80,10 @@ default:
   file_plural: Fichiers
   stroke_color: Couleur de trait
   fill_color: Couleur de remplissage
+  length: Longueur
+  width: Largeur
+  thickness: Epaisseur
+  height: Hauteur
 core:
   menu:
     submenu: OpenCutList
@@ -230,6 +234,8 @@ core:
     textinput_code:
       snippets: Exemples de formules
       help: Tappez **@** pour ouvrir la liste des variables de donnée.
+    textinput_size:
+      quantity: Qte
     three_viewer:
       view: "Vue {{ view }}"
       view_isometric: Isométrique
