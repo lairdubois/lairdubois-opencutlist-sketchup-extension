@@ -975,6 +975,7 @@ tab:
         Format attendu : **L**x**Q**. Où **L** est la *longueur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
+      option_scrap_bin_1d_none: Aucun
       option_std_bin_2d_sheet_good: Panneau standard
       option_std_bin_2d_veneer: Feuille standard
       option_std_bin_2d_help: |
@@ -991,6 +992,7 @@ tab:
         Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
         La quantité est facultative.
         *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
+      option_scrap_bin_2d_none: Aucun
       option_optimization_mode: Mode d'optimisation
       option_optimization_mode_help: |
         Définit le mode d'optimisation, avec ou sans limite de temps.

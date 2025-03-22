@@ -52,7 +52,7 @@
                 </div>
                 <div class="form-group">
 {#                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.packing.option_scrap_bin_'~binSuffix1~'_sizes_help')|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>#}
-                    {% include 'components/_editor-sizes.twig' with { 'id':'ladb_editor_scrap_bin_sizes', 'fieldName':('tab.cutlist.packing.option_scrap_bin_'~binSuffix1~'_'~binSuffix2~'_sizes')|i18next, 'emptyLabel': ('tab.cutlist.packing.option_std_bin_'~binSuffix1~'_none')|i18next } %}
+                    {% include 'components/_editor-sizes.twig' with { 'id':'ladb_editor_scrap_bin_sizes', 'fieldName':('tab.cutlist.packing.option_scrap_bin_'~binSuffix1~'_'~binSuffix2~'_sizes')|i18next, 'emptyLabel': ('tab.cutlist.packing.option_scrap_bin_'~binSuffix1~'_none')|i18next } %}
                 </div>
                 {% if group.material_is_2d %}
                     <p class="help-block text-center">
