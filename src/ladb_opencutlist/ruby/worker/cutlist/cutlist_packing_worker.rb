@@ -862,7 +862,7 @@ module Ladb::OpenCutList
               item_text = _evaluate_item_text(@items_formula, part, item_def.instance_info)
               item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" if item_text.is_a?(Hash)
 
-              number_font_size = [ [ px_node_number_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_number_font_size_min ].max
+              number_font_size = [ [ px_node_number_font_size_max, px_item_rect_height / 2, px_item_rect_width / (item_text.length * 0.6) ].min, px_node_number_font_size_min ].max
 
               svg += "<text class='item-number' x='0' y='0' font-size='#{number_font_size}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
 
