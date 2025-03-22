@@ -21,7 +21,7 @@
         d2Hidden: false,
         qHidden: false,
         dSeparatorLabel: 'x',
-        qSeparatorLabel: i18next.t('core.component.textinput_size.quantity'),
+        qSeparatorLabel: 'x',
         feeder: null,
         dropdownActionLabel: '',
         dropdownActionCallback: null
@@ -93,32 +93,40 @@
 
         const that = this;
 
+        this.$wrapper.addClass('ladb-textinput-size');
+
         this.$element.attr('type', 'hidden');
 
-        this.$input1 = $('<input type="text" class="form-control text-right" style="width: 50%;' + (this.options.d1Hidden ? ' opacity: 0;' : '') + '" placeholder="' + this.options.d1Placeholder + '"' + (this.options.d1Disabled ? ' disabled' : '') + '>')
+        this.$input1 = $('<input type="text" class="form-control ladb-textinput-size-d1" style="' + (this.options.d1Hidden ? ' display: none;' : '') + '" placeholder="' + this.options.d1Placeholder + '"' + (this.options.d1Disabled ? ' disabled' : '') + '>')
             .on('change', function () {
                 that.updateElementInputValue();
             })
         ;
         this.$inputWrapper.append(this.$input1);
 
-        this.$inputWrapper.append('<div style="padding: 0 10px; color: #ccc;">' + this.options.dSeparatorLabel + '</div>');
+        this.$inputWrapper.append('<div class=" ladb-textinput-size-d-separator">' + this.options.dSeparatorLabel + '</div>');
 
-        this.$input2 = $('<input type="text" class="form-control text-right" style="width: 50%;' + (this.options.d2Hidden ? ' opacity: 0;' : '') + '" placeholder="' + this.options.d2Placeholder + '"' + (this.options.d2Disabled ? ' disabled' : '') + '>')
+        this.$input2 = $('<input type="text" class="form-control ladb-textinput-size-d2" style="' + (this.options.d2Hidden ? ' display: none;' : '') + '" placeholder="' + this.options.d2Placeholder + '"' + (this.options.d2Disabled ? ' disabled' : '') + '>')
             .on('change', function () {
                 that.updateElementInputValue();
             })
         ;
         this.$inputWrapper.append(this.$input2);
 
-        this.$inputWrapper.append('<div style="padding: 0 5px 0 20px; color: #ccc;">' + this.options.qSeparatorLabel + '</div>');
+        this.$inputWrapper.append('<div class="ladb-textinput-size-q-separator">' + this.options.qSeparatorLabel + '</div>');
 
-        this.$input3 = $('<input type="text" class="form-control text-right" style="width: 25%;' + (this.options.qHidden ? ' opacity: 0;' : '') + '" placeholder="' + this.options.qPlaceholder + '"' + (this.options.qDisabled ? ' disabled' : '') + '>')
+        this.$input3 = $('<input type="text" class="form-control ladb-textinput-size-q" style="' + (this.options.qHidden ? ' display: none;' : '') + '" placeholder="' + this.options.qPlaceholder + '"' + (this.options.qDisabled ? ' disabled' : '') + '>')
             .on('change', function () {
                 that.updateElementInputValue();
             })
         ;
         this.$inputWrapper.append(this.$input3);
+
+        this.$inputWrapper.on('click', function (e) {
+            if (e.target.tagName !== 'INPUT') {
+                that.$input1.focus();
+            }
+        })
 
         // Set up the feeder
 

@@ -22,10 +22,10 @@ module Ladb::OpenCutList
       @length_increase = attributes.fetch('length_increase')
       @width_increase = attributes.fetch('width_increase')
       @thickness_increase = attributes.fetch('thickness_increase')
+      @std_sections = attributes.fetch('std_sections')
       @std_lengths = attributes.fetch('std_lengths')
       @std_widths = attributes.fetch('std_widths')
       @std_thicknesses = attributes.fetch('std_thicknesses')
-      @std_sections = attributes.fetch('std_sections')
       @std_sizes = attributes.fetch('std_sizes')
       @grained = attributes.fetch('grained')
       @edge_decremented = attributes.fetch('edge_decremented')
@@ -59,10 +59,10 @@ module Ladb::OpenCutList
       material_attributes.length_increase = @length_increase
       material_attributes.width_increase = @width_increase
       material_attributes.thickness_increase = @thickness_increase
+      material_attributes.std_sections = @std_sections
       material_attributes.std_lengths = @std_lengths
       material_attributes.std_widths = @std_widths
       material_attributes.std_thicknesses = @std_thicknesses
-      material_attributes.std_sections = @std_sections
       material_attributes.std_sizes = @std_sizes
       material_attributes.grained = @grained
       material_attributes.edge_decremented = @edge_decremented

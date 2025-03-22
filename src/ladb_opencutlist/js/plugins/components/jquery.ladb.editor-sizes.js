@@ -20,8 +20,8 @@
 
     LadbEditorSizes.DEFAULTS = {
         format: FORMAT_D_D_Q,
-        d1Placeholder: i18next.t('default.length'),
-        d2Placeholder: i18next.t('default.width'),
+        d1Placeholder: '',
+        d2Placeholder: '',
         qPlaceholder: '1',
         qHidden: false,
         emptyDisplayed: true,
@@ -259,17 +259,16 @@
             }
         }
 
-        if (Object.keys(toConvertSizes).length === 0 && that.availableSizes !== null) {
-            toConvertSizes[that.availableSizes[0].val] = that.availableSizes[0].val;
-        }
-
         // Convert size to inch float representation
         rubyCallCommand('core_length_to_float', toConvertSizes, function (response) {
+
+            let forcedToBeEmpty = false;
 
             for (let key in response) {
 
                 // Exclude '0' or '0x0' values
                 if ((/^\s*0\s*x*\s*0*\s*$/.exec(key)) !== null) {
+                    forcedToBeEmpty = true;
                     continue;
                 }
 
@@ -284,6 +283,12 @@
                 }
 
             }
+
+            // Auto select first available size if needed
+            if (!forcedToBeEmpty && that.sizes.length === 0 && that.availableSizes !== null) {
+                that.sizes.push(that.availableSizes[0]);
+            }
+
             that.renderRows();
 
         });
@@ -318,6 +323,10 @@
             let data = $this.data('ladb.editorSizes');
             if (!data) {
                 const options = $.extend({}, LadbEditorSizes.DEFAULTS, $this.data(), typeof option === 'object' && option);
+
+                console.log('default', LadbEditorSizes.DEFAULTS)
+                console.log(options)
+
                 $this.data('ladb.editorSizes', (data = new LadbEditorSizes(this, options)));
             }
             if (typeof option === 'string') {

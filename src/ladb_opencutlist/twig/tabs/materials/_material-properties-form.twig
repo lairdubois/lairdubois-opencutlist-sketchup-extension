@@ -69,6 +69,9 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    {% include 'components/_editor-sizes.twig' with { 'id':'ladb_materials_editor_std_sections', 'fieldName':('tab.materials.edit_material.std_sections'|i18next), 'emptyLabel':'vide' } %}
+                </div>
+                <div class="form-group">
                     {% include 'components/_editor-sizes.twig' with { 'id':'ladb_materials_editor_std_lengths', 'fieldName':('tab.materials.edit_material.std_lengths'|i18next), 'emptyLabel':'vide' } %}
                 </div>
                 <div class="form-group">
@@ -76,9 +79,6 @@
                 </div>
                 <div class="form-group">
                     {% include 'components/_editor-sizes.twig' with { 'id':'ladb_materials_editor_std_thicknesses', 'fieldName':('tab.materials.edit_material.std_thicknesses'|i18next), 'emptyLabel':'vide' } %}
-                </div>
-                <div class="form-group">
-                    {% include 'components/_editor-sizes.twig' with { 'id':'ladb_materials_editor_std_sections', 'fieldName':('tab.materials.edit_material.std_sections'|i18next), 'emptyLabel':'vide' } %}
                 </div>
                 <div class="form-group">
                     {% include 'components/_editor-sizes.twig' with { 'id':'ladb_materials_editor_std_sizes', 'fieldName':('tab.materials.edit_material.std_sizes'|i18next), 'emptyLabel':'vide' } %}

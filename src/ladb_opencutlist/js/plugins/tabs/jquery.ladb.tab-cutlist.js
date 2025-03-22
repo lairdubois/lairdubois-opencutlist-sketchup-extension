@@ -5115,6 +5115,8 @@
                 $editorStdBinSizes
                     .ladbEditorSizes({
                         format: group.material_is_1d ? FORMAT_D : FORMAT_D_D,
+                        d1Placeholder: i18next.t('default.length'),
+                        d2Placeholder: i18next.t('default.width'),
                         qPlaceholder: '∞',
                         qHidden: false,
                         emptyVal: '0',
@@ -5128,6 +5130,8 @@
                 $editorScrapBinSizes
                     .ladbEditorSizes({
                         format: group.material_is_1d ? FORMAT_D_Q : FORMAT_D_D_Q,
+                        d1Placeholder: i18next.t('default.length'),
+                        d2Placeholder: i18next.t('default.width'),
                         emptyVal: '0'
                     })
                     .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes)
