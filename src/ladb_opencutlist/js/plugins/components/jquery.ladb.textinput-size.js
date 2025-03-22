@@ -20,8 +20,8 @@
         d1Hidden: false,
         d2Hidden: false,
         qHidden: false,
-        dSeparatorLabel: 'x',
-        qSeparatorLabel: 'x',
+        dSeparatorLabel: '',
+        qSeparatorLabel: '',
         feeder: null,
         dropdownActionLabel: '',
         dropdownActionCallback: null

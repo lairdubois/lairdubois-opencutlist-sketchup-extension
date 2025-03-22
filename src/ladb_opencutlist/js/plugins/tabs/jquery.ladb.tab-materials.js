@@ -953,11 +953,6 @@
             $inputLengthIncrease.val(options.length_increase);
             $inputWidthIncrease.val(options.width_increase);
             $inputThicknessIncrease.val(options.thickness_increase);
-            // fnSetTokens($inputStdLengths, options.std_lengths);
-            // fnSetTokens($inputStdWidths, options.std_widths);
-            // fnSetTokens($inputStdThicknesses, options.std_thicknesses);
-            // fnSetTokens($inputStdSections, options.std_sections);
-            // fnSetTokens($inputStdSizes, options.std_sizes);
             $editorStdLengths.ladbEditorSizes('setSizes', options.std_lengths);
             $editorStdWidths.ladbEditorSizes('setSizes', options.std_widths);
             $editorStdThicknesses.ladbEditorSizes('setSizes', options.std_thicknesses);
@@ -1121,6 +1116,14 @@
             fnFetchOptions: fnFetchOptions,
             fnFillInputs: fnFillInputs
         });
+
+        // Init textinputs
+        $inputThickness.ladbTextinputDimension();
+        $inputLengthIncrease.ladbTextinputDimension();
+        $inputWidthIncrease.ladbTextinputDimension();
+        $inputThicknessIncrease.ladbTextinputDimension();
+
+        // Init editors
         $editorStdSections.ladbEditorSizes({
             format: FORMAT_D_D,
             d1Placeholder: i18next.t('default.width'),
@@ -1251,7 +1254,7 @@
             inputChangeCallback: inputChangeCallback
         });
 
-        // Bind tab
+        // Bind tabs
         $tabs.on('shown.bs.tab', function (e) {
             that.lastMaterialPropertiesTab = $(e.target).attr('href').substring('#tab_edit_material_general_'.length);
         })
@@ -1292,12 +1295,6 @@
         // Bind modal event
         $modal
             .on('shown.bs.modal', function () {
-
-                // Init textinputs
-                $inputThickness.ladbTextinputDimension();
-                $inputLengthIncrease.ladbTextinputDimension();
-                $inputWidthIncrease.ladbTextinputDimension();
-                $inputThicknessIncrease.ladbTextinputDimension();
 
                 if (setAttributeToDefaults) {
                     $widgetPreset.ladbWidgetPreset('restoreFromPreset', [ null, true ]);
