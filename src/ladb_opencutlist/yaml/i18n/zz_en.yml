@@ -960,7 +960,7 @@ tab:
       option_std_bin_1d_dimensional: 778 - Standard Dimensional
       option_std_bin_1d_edge: 779 - Standard Edge Banding
       option_std_bin_1d_help: |
-        780 - Select the standard board or edge banding, which will be duplicated to contain all the parts.
+        780 - Select the sizes of the standard board or edge banding, which will be duplicated to contain all the parts.
         This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
         Edit the material '{{ material_name }}' to update this list.
       option_std_bin_1d_add: 781 - Add a size
@@ -969,26 +969,24 @@ tab:
       option_scrap_bin_1d_edge_sizes: 784 - Edge Banding Off-cuts
       option_scrap_bin_1d_sizes_placeholder: 785 - length x quantity ; ...
       option_scrap_bin_1d_sizes_help: |
-        786 - List all your off-cut boards or edge bandings to be considered first in the cutting diagram.
-        Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
-        Quantity is optional.
+        786 - List all your off-cut boards or edge bandings to be considered for the cutting diagram.
+
         *Sizes without units are considered to be in model units.*
       option_scrap_bin_1d_none: 787 - None
       option_std_bin_2d_sheet_good: 788 - Standard Panel
       option_std_bin_2d_veneer: 789 - Standard Veneer Sheet
       option_std_bin_2d_help: |
-        790 - Select the standard panel or veneer sheet, which will be duplicated to calculate the best possible placement.
-        This list is defined by the **$t(tab.materials.edit_material.std_sizes)** field of the material.
-        Edit the material '{{ material_name }}' to complete this list.
+        790 - Select the sizes of standard panel or veneer sheet, which will be duplicated to calculate the best possible placement.
+        This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
+        Edit the material '{{ material_name }}' to update this list.
       option_std_bin_2d_add: 791 - Add a size
       option_std_bin_2d_none: 792 - None
       option_scrap_bin_2d_sheet_good_sizes: 793 - Panel Off-cuts
       option_scrap_bin_2d_veneer_sizes: 794 - Veneer Off-cuts
       option_scrap_bin_2d_sizes_placeholder: 795 - length x width x quantity ; ...
       option_scrap_bin_2d_sizes_help: |
-        796 - List all your off-cut sheet goods or veneers to be considered first for the cutting diagram.
-        Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the panel and **Q** the quantity.
-        Quantity is optional.
+        796 - List all your off-cut sheet goods or veneers to be considered for the cutting diagram.
+
         *Sizes without units are considered to be in model units.*
       option_scrap_bin_2d_none: 797 - None
       option_optimization_mode: 798 - Optimization Mode
@@ -1020,13 +1018,15 @@ tab:
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: 819 - Spacing
-      option_spacing_help: 820 - Minimal spacing between parts.
+      option_spacing_help: |
+        820 - Minimum spacing between each part.
+        This value may correspond to the width of the blade or cutting tool.
       option_trimming: 821 - Trimming
-      option_trimming_1d_help: 822 - The amount of material at each end of the board or edge banding to be treated as waste.
-      option_trimming_2d_help: 823 - The amount of material around the raw panel or veneer sheet to be treated as waste.
+      option_trimming_1d_help: 822 - Cleaning margin at each end of the board or edge banding to be treated as waste.
+      option_trimming_2d_help: 823 - Cleaning margin around the raw panel or veneer sheet to be treated as waste.
       option_items_formula: 824 - Formula
       option_items_formula_help: |
-        825 - ...
+        825 - Enables you to write *Ruby* code to customize the part identification text in the diagram.
       option_hide_part_list: 826 - Parts List
       option_hide_part_list_1d_dimensional_0: 827 - Displayed for each board
       option_hide_part_list_1d_edge_0: 828 - Displayed for each edge banding
@@ -1048,7 +1048,7 @@ tab:
       option_colorization_1: $t(default.yes) - Screen
       option_colorization_2: $t(default.yes) - Screen and Print
       option_colorization_help: |
-        843 - ...
+        843 - Defines whether a random color is used to distinguish parts in the diagram.
       option_hide_edges_preview: 844 - Display of Edge Bandings
       option_hide_edges_preview_0: 845 - Displayed in the cutting diagram
       option_hide_edges_preview_1: 846 - Hidden in the cutting diagram
@@ -1527,6 +1527,7 @@ tab:
       thickness: 1218 - Thickness
       thickness_help: |
         1219 - Finished thickness of the material.
+
         *Sizes without units are considered to be in model units.*
       length_increase: 1220 - Length Oversize
       length_increase_help: 1221 - Oversize applied to the length to define the **raw length**.
@@ -1537,22 +1538,27 @@ tab:
       std_lengths: 1226 - Standard Lengths
       std_lengths_help: |
         1227 - Standard lengths of boards or edge bandings.
+
         *Sizes without units are considered to be in model units.*
       std_widths: 1228 - Standard Widths
       std_widths_help: |
         1229 - Standard widths of edge bandings.
+
         *Sizes without units are considered to be in model units.*
       std_thicknesses: 1230 - Standard Thicknesses
       std_thicknesses_help: |
         1231 - Available **actual** rough thicknesses.
+
         *Sizes without units are considered to be in model units.*
       std_sections: 1232 - Standard Cross Sections
       std_sections_help: |
-        1233 - Expected format: **W**x**T**, where **W** and **T** represent the actual *width* and *thickness* of the dimensional piece.
+        1233 - Standard cross sections available for this material.
+
         *Sizes without units are considered to be in model units.*
       std_sizes: 1234 - Standard Panel Sizes
       std_sizes_help: |
-        1235 - Expected format: **L**x**W**, where **L** and **W** represent the actual *length* and *width* of the panel.
+        1235 - Standard sizes available for this material.
+
         *Sizes without units are considered to be in model units.*
       grained: 1236 - Grain Orientation
       grained_help: 1237 - Selects the grain orientation in relation to the length of the panel.
