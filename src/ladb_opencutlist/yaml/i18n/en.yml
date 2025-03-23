@@ -80,6 +80,10 @@ default:
   file_plural: Files
   stroke_color: Line color
   fill_color: Fill Color
+  length: Length
+  width: Width
+  thickness: Thickness
+  height: Height
 core:
   menu:
     submenu: OpenCutList
@@ -230,6 +234,8 @@ core:
     textinput_code:
       snippets: Formula examples
       help: Type **@** to get a list of variables.
+    textinput_size:
+      quantity: Qty
     three_viewer:
       view: "{{ view }} View"
       view_isometric: Isometric
@@ -969,6 +975,7 @@ tab:
         Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
+      option_scrap_bin_1d_none: None
       option_std_bin_2d_sheet_good: Standard Panel
       option_std_bin_2d_veneer: Standard Veneer Sheet
       option_std_bin_2d_help: |
@@ -985,6 +992,7 @@ tab:
         Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the panel and **Q** the quantity.
         Quantity is optional.
         *Sizes without units are considered to be in model units.*
+      option_scrap_bin_2d_none: None
       option_optimization_mode: Optimization Mode
       option_optimization_mode_help: |
         ...
@@ -1514,6 +1522,7 @@ tab:
       type: Type
       description: Description
       url: URL
+      formats: Formats
       cut_options: Cutting Parameters
       estimate_options: Estimation Options
       attributes: Attributes
@@ -1528,27 +1537,22 @@ tab:
       thickness_increase: Thickness Oversize
       thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**.
       std_lengths: Standard Lengths
-      std_lengths_placeholder: length ; ...
       std_lengths_help: |
         Standard lengths of boards or edge bandings.
         *Sizes without units are considered to be in model units.*
       std_widths: Standard Widths
-      std_widths_placeholder: width ; ...
       std_widths_help: |
         Standard widths of edge bandings.
         *Sizes without units are considered to be in model units.*
       std_thicknesses: Standard Thicknesses
-      std_thicknesses_placeholder: thickness ; ...
       std_thicknesses_help: |
         Available **actual** rough thicknesses.
         *Sizes without units are considered to be in model units.*
       std_sections: Standard Cross Sections
-      std_sections_placeholder: width x thickness ; ...
       std_sections_help: |
         Expected format: **W**x**T**, where **W** and **T** represent the actual *width* and *thickness* of the dimensional piece.
         *Sizes without units are considered to be in model units.*
       std_sizes: Standard Panel Sizes
-      std_sizes_placeholder: length x width ; ...
       std_sizes_help: |
         Expected format: **L**x**W**, where **L** and **W** represent the actual *length* and *width* of the panel.
         *Sizes without units are considered to be in model units.*
