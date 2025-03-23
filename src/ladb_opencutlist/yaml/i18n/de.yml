@@ -80,6 +80,10 @@ default:
   file_plural: Dateien
   stroke_color: Strichfarbe
   fill_color: Füllfarbe
+  length: Länge
+  width: Breite
+  thickness: Dicke
+  height: Höhe
 core:
   menu:
     submenu: OpenCutList
@@ -230,6 +234,8 @@ core:
     textinput_code:
       snippets: Beispielformeln
       help: "Drücken Sie **@**, um die Liste der Datenvariablen zu öffnen."
+    textinput_size:
+      quantity: Anz.
     three_viewer:
       view: "Ansicht {{ view }}"
       view_isometric: Isometrisch
@@ -969,6 +975,7 @@ tab:
         Erwartetes Format : **L**x**M**, wo **L** die *Länge* des Rests ist und **M** die Menge.
         Die Mengenangabe ist optional.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      option_scrap_bin_1d_none: Keine
       option_std_bin_2d_sheet_good: Standard-Platte
       option_std_bin_2d_veneer: Standard-Furnierblatt
       option_std_bin_2d_help: |
@@ -985,6 +992,7 @@ tab:
         Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
         Die Mengenangabe ist optional.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      option_scrap_bin_2d_none: Keine
       option_optimization_mode: Optimierungsmodus
       option_optimization_mode_help: |
         ...
@@ -1514,6 +1522,7 @@ tab:
       type: Typ
       description: Beschreibung
       url: URL
+      formats: Formate
       cut_options: Schnittparameter
       estimate_options: Kalkulationsoptionen
       attributes: Attribute
@@ -1528,27 +1537,22 @@ tab:
       thickness_increase: Dickenzumaß
       thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert.
       std_lengths: Standard-Längen
-      std_lengths_placeholder: Länge ; ...
       std_lengths_help: |
         Standard-Stangen oder -Kantenbandlängen.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_widths: Standard-Breiten
-      std_widths_placeholder: Breite ; ...
       std_widths_help: |
         Standardbreiten der Kantenbänder.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_thicknesses: Standard-Dicken
-      std_thicknesses_placeholder: Dicke ; ...
       std_thicknesses_help: |
         **Rohmaße** der verfügbaren Dicken.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_sections: Standard-Querschnitte
-      std_sections_placeholder: Breite x Dicke ; ...
       std_sections_help: |
         Erwartetes Format: **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_sizes: Standard-Plattenmaße
-      std_sizes_placeholder: Länge x Breite ; ...
       std_sizes_help: |
         Erwartetes Format: **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
