@@ -962,36 +962,34 @@ tab:
       option_std_bin_1d_dimensional: Barre standard
       option_std_bin_1d_edge: Bande standard
       option_std_bin_1d_help: |
-        Sélectionnez ici la taille de la barre ou bande standard qui sera dupliquée pour contenir au mieux toutes les pièces.
+        Sélectionnez ici les tailles de la barre ou bande standard qui seront dupliquées pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
-        Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
+        Éditez les propriétés de la matière '{{ material_name }}' pour mettre à jour cette liste.
       option_std_bin_1d_add: Ajouter une taille
       option_std_bin_1d_none: Aucune
       option_scrap_bin_1d_dimensional_sizes: Restes de barre
       option_scrap_bin_1d_edge_sizes: Restes de bande
       option_scrap_bin_1d_sizes_placeholder: longueur x quantité ; ...
       option_scrap_bin_1d_sizes_help: |
-        Indiquez ici la liste de vos restes de barre ou bande à considérer en priorité pour le calepinage.
-        Format attendu : **L**x**Q**. Où **L** est la *longueur* du reste et **Q** la quantité.
-        La quantité est facultative.
-        *Si aucune unité n'est spécifiée, l'unité du modèle sera prise en compte.*
+        Indiquez ici la liste de vos restes de barre ou bande à considérer pour le calepinage.
+
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       option_scrap_bin_1d_none: Aucun
       option_std_bin_2d_sheet_good: Panneau standard
       option_std_bin_2d_veneer: Feuille standard
       option_std_bin_2d_help: |
-        Sélectionnez ici le panneau ou feuille standard qui sera dupliqué pour contenir au mieux toutes les pièces.
+        Sélectionnez ici les tailles de panneau ou feuille standard qui seront dupliquées pour contenir au mieux toutes les pièces.
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
-        Éditez la matière '{{ material_name }}' pour mettre à jour cette liste.
+        Éditez les propriétés de la matière '{{ material_name }}' pour mettre à jour cette liste.
       option_std_bin_2d_add: Ajouter une taille
       option_std_bin_2d_none: Aucun
       option_scrap_bin_2d_sheet_good_sizes: Restes de panneau
       option_scrap_bin_2d_veneer_sizes: Restes de feuille
       option_scrap_bin_2d_sizes_placeholder: longueur x largeur x quantité ; ...
       option_scrap_bin_2d_sizes_help: |
-        Indiquez ici la liste de vos restes de panneau ou feuille à considérer en priorité pour le calepinage.
-        Format attendu : **L**x**l**x**Q**. Où **L** et **l** sont respectivement la *longueur* et la *largeur* du reste et **Q** la quantité.
-        La quantité est facultative.
-        *Si aucune unité n'est spécifiée pour chaque dimension, l'unité du modèle sera prise en compte.*
+        Indiquez ici la liste de vos restes de panneau ou feuille à considérer pour le calepinage.
+
+        *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       option_scrap_bin_2d_none: Aucun
       option_optimization_mode: Mode d'optimisation
       option_optimization_mode_help: |
@@ -1022,13 +1020,15 @@ tab:
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Espacement
-      option_spacing_help: Espacement minimal entre chaque pièce.
+      option_spacing_help: |
+        Espacement minimal entre chaque pièce.
+        Cette valeur peut correspondre à la largeur de la lame ou de l'outil de découpe.
       option_trimming: Marge
-      option_trimming_1d_help: Marge à chaque extrémité de la barre ou bande à considérer comme chute.
-      option_trimming_2d_help: Marge autour du panneau à considérer comme chute.
+      option_trimming_1d_help: Marge de propreté à chaque extrémité de la barre ou bande à considérer comme chute.
+      option_trimming_2d_help: Marge de propreté tout autour du panneau ou feuille à considérer comme chute.
       option_items_formula: Formule
       option_items_formula_help: |
-        ...
+        Permet d'écrire du code *Ruby* pour personnaliser le texte d'identification des pièces sur le diagramme.
       option_hide_part_list: Liste des pièces
       option_hide_part_list_1d_dimensional_0: Affichée pour chaque barre
       option_hide_part_list_1d_edge_0: Affichée pour chaque bande
@@ -1050,7 +1050,7 @@ tab:
       option_colorization_1: $t(default.yes) - Écran
       option_colorization_2: $t(default.yes) - Écran et Impression
       option_colorization_help: |
-        Définit quand la couleur est utilisée pour représenter les pièces
+        Permet de définir si une couleur aléatoire est utilisée pour distinguer les pièces sur le diagramme.
       option_hide_edges_preview: Indicateurs de chants à plaquer
       option_hide_edges_preview_0: Affichés sur le diagramme
       option_hide_edges_preview_1: Masqués sur le diagramme
