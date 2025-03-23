@@ -1527,6 +1527,7 @@ tab:
       thickness: 1218 - Dicke
       thickness_help: |
         1219 - Fertigmaß der Dicke des Materials.
+
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       length_increase: 1220 - Längenzumaß
       length_increase_help: 1221 - Übermaß welches das **Längenrohmaß** vergrössert.
@@ -1537,22 +1538,27 @@ tab:
       std_lengths: 1226 - Standard-Längen
       std_lengths_help: |
         1227 - Standard-Stangen oder -Kantenbandlängen.
+
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_widths: 1228 - Standard-Breiten
       std_widths_help: |
         1229 - Standardbreiten der Kantenbänder.
+
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_thicknesses: 1230 - Standard-Dicken
       std_thicknesses_help: |
         1231 - **Rohmaße** der verfügbaren Dicken.
+
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_sections: 1232 - Standard-Querschnitte
       std_sections_help: |
-        1233 - Erwartetes Format: **B**x**D**, wobei **B** und **D** die *Breite* und die *Dicke* des Querschnittes bezeichnen.
+        1233 - Verfügbare Querschnitte für dieses Material.
+
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_sizes: 1234 - Standard-Plattenmaße
       std_sizes_help: |
-        1235 - Erwartetes Format: **L**x**B**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen.
+        1235 - Verfügbare Maße für dieses Material.
+
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       grained: 1236 - Faserrichtung
       grained_help: 1237 - Gibt die Ausrichtung der Faser in Bezug auf die Länge der Platte an.

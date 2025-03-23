@@ -1527,6 +1527,7 @@ tab:
       thickness: 1218 - Thickness
       thickness_help: |
         1219 - Finished thickness of the material.
+
         *Sizes without units are considered to be in model units.*
       length_increase: 1220 - Length Oversize
       length_increase_help: 1221 - Oversize applied to the length to define the **raw length**.
@@ -1537,22 +1538,27 @@ tab:
       std_lengths: 1226 - Standard Lengths
       std_lengths_help: |
         1227 - Standard lengths of boards or edge bandings.
+
         *Sizes without units are considered to be in model units.*
       std_widths: 1228 - Standard Widths
       std_widths_help: |
         1229 - Standard widths of edge bandings.
+
         *Sizes without units are considered to be in model units.*
       std_thicknesses: 1230 - Standard Thicknesses
       std_thicknesses_help: |
         1231 - Available **actual** rough thicknesses.
+
         *Sizes without units are considered to be in model units.*
       std_sections: 1232 - Standard Cross Sections
       std_sections_help: |
-        1233 - Expected format: **W**x**T**, where **W** and **T** represent the actual *width* and *thickness* of the dimensional piece.
+        1233 - Standard cross sections available for this material.
+
         *Sizes without units are considered to be in model units.*
       std_sizes: 1234 - Standard Panel Sizes
       std_sizes_help: |
-        1235 - Expected format: **L**x**W**, where **L** and **W** represent the actual *length* and *width* of the panel.
+        1235 - Standard sizes available for this material.
+
         *Sizes without units are considered to be in model units.*
       grained: 1236 - Grain Orientation
       grained_help: 1237 - Selects the grain orientation in relation to the length of the panel.
