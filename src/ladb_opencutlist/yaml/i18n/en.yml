@@ -962,7 +962,7 @@ tab:
       option_std_bin_1d_dimensional: Standard Dimensional
       option_std_bin_1d_edge: Standard Edge Banding
       option_std_bin_1d_help: |
-        Select the standard board or edge banding, which will be duplicated to contain all the parts.
+        Select the sizes of the standard board or edge banding, which will be duplicated to contain all the parts.
         This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
         Edit the material '{{ material_name }}' to update this list.
       option_std_bin_1d_add: Add a size
@@ -971,26 +971,24 @@ tab:
       option_scrap_bin_1d_edge_sizes: Edge Banding Off-cuts
       option_scrap_bin_1d_sizes_placeholder: length x quantity ; ...
       option_scrap_bin_1d_sizes_help: |
-        List all your off-cut boards or edge bandings to be considered first in the cutting diagram.
-        Expected format: **L**x**Q**, where **L** is the *length* of the offcut and **Q** the quantity.
-        Quantity is optional.
+        List all your off-cut boards or edge bandings to be considered for the cutting diagram.
+
         *Sizes without units are considered to be in model units.*
       option_scrap_bin_1d_none: None
       option_std_bin_2d_sheet_good: Standard Panel
       option_std_bin_2d_veneer: Standard Veneer Sheet
       option_std_bin_2d_help: |
-        Select the standard panel or veneer sheet, which will be duplicated to calculate the best possible placement.
-        This list is defined by the **$t(tab.materials.edit_material.std_sizes)** field of the material.
-        Edit the material '{{ material_name }}' to complete this list.
+        Select the sizes of standard panel or veneer sheet, which will be duplicated to calculate the best possible placement.
+        This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
+        Edit the material '{{ material_name }}' to update this list.
       option_std_bin_2d_add: Add a size
       option_std_bin_2d_none: None
       option_scrap_bin_2d_sheet_good_sizes: Panel Off-cuts
       option_scrap_bin_2d_veneer_sizes: Veneer Off-cuts
       option_scrap_bin_2d_sizes_placeholder: length x width x quantity ; ...
       option_scrap_bin_2d_sizes_help: |
-        List all your off-cut sheet goods or veneers to be considered first for the cutting diagram.
-        Expected format: **L**x**W**x**Q**, where **L** and **W** represent the *length* and the *width* of the panel and **Q** the quantity.
-        Quantity is optional.
+        List all your off-cut sheet goods or veneers to be considered for the cutting diagram.
+
         *Sizes without units are considered to be in model units.*
       option_scrap_bin_2d_none: None
       option_optimization_mode: Optimization Mode
@@ -1022,13 +1020,15 @@ tab:
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Spacing
-      option_spacing_help: Minimal spacing between parts.
+      option_spacing_help: |
+        Minimum spacing between each part.
+        This value may correspond to the width of the blade or cutting tool.
       option_trimming: Trimming
-      option_trimming_1d_help: The amount of material at each end of the board or edge banding to be treated as waste.
-      option_trimming_2d_help: The amount of material around the raw panel or veneer sheet to be treated as waste.
+      option_trimming_1d_help: Cleaning margin at each end of the board or edge banding to be treated as waste.
+      option_trimming_2d_help: Cleaning margin around the raw panel or veneer sheet to be treated as waste.
       option_items_formula: Formula
       option_items_formula_help: |
-        ...
+        Enables you to write *Ruby* code to customize the part identification text in the diagram.
       option_hide_part_list: Parts List
       option_hide_part_list_1d_dimensional_0: Displayed for each board
       option_hide_part_list_1d_edge_0: Displayed for each edge banding
@@ -1050,7 +1050,7 @@ tab:
       option_colorization_1: $t(default.yes) - Screen
       option_colorization_2: $t(default.yes) - Screen and Print
       option_colorization_help: |
-        ...
+        Defines whether a random color is used to distinguish parts in the diagram.
       option_hide_edges_preview: Display of Edge Bandings
       option_hide_edges_preview_0: Displayed in the cutting diagram
       option_hide_edges_preview_1: Hidden in the cutting diagram

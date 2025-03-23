@@ -960,26 +960,25 @@ tab:
       option_std_bin_1d_dimensional: 778 - Standard-Stange
       option_std_bin_1d_edge: 779 - Standard-Kantenband
       option_std_bin_1d_help: |
-        780 - Wählen Sie hier die Standardstangenware oder das Standardkantenband, welche dupliziert werden um alle Teile zu enthalten.
+        780 - Wählen Sie hier die Größen der Standardstangenware oder des Standardkantenbandes, welche dupliziert werden um alle Teile zu enthalten.
         Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
-        Editieren Sie das Material '{{ material_name }}' um diese Liste zu aktualisieren.
+        Editieren Sie die Eigenschaften des Materials '{{ material_name }}' um diese Liste zu ergänzen.
       option_std_bin_1d_add: 781 - Länge hinzufügen
       option_std_bin_1d_none: 782 - Keine
       option_scrap_bin_1d_dimensional_sizes: 783 - Stangenreste
       option_scrap_bin_1d_edge_sizes: 784 - Kantenbandreste
       option_scrap_bin_1d_sizes_placeholder: 785 - Länge x Anzahl ; ...
       option_scrap_bin_1d_sizes_help: |
-        786 - Geben Sie hier die Stangenreste oder Kantenbandreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
-        Erwartetes Format : **L**x**M**, wo **L** die *Länge* des Rests ist und **M** die Menge.
-        Die Mengenangabe ist optional.
+        786 - Geben Sie hier die Stangenreste oder Kantenbandreste an, welche für den Schnittplan berücksichtigt werden sollen.
+
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       option_scrap_bin_1d_none: 787 - Keine
       option_std_bin_2d_sheet_good: 788 - Standard-Platte
       option_std_bin_2d_veneer: 789 - Standard-Furnierblatt
       option_std_bin_2d_help: |
-        790 - Wählen Sie die Standard-Platte oder das Standard-Furnierblatt, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
+        790 - Wählen Sie die Größen der Standard-Platte oder des Standard-Furnierblatts, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
-        Bearbeiten Sie das Material '{{ material_name }}' um diese Liste zu ergänzen.
+        Bearbeiten Sie die Eigenschaften des Materials '{{ material_name }}' um diese Liste zu ergänzen.
       option_std_bin_2d_add: 791 - Größe hinzufügen
       option_std_bin_2d_none: 792 - Keine
       option_scrap_bin_2d_sheet_good_sizes: 793 - Plattenreste
@@ -987,8 +986,7 @@ tab:
       option_scrap_bin_2d_sizes_placeholder: 795 - Länge x Breite x Anzahl ; ...
       option_scrap_bin_2d_sizes_help: |
         796 - Geben Sie hier die Liste der Platten- oder Furnierreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
-        Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
-        Die Mengenangabe ist optional.
+
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       option_scrap_bin_2d_none: 797 - Keine
       option_optimization_mode: 798 - Optimierungsmodus
@@ -1020,13 +1018,15 @@ tab:
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: 819 - Abstand
-      option_spacing_help: 820 - Mindestabstand zwischen den einzelnen Teilen.
+      option_spacing_help: |
+        820 - Mindestabstand zwischen den einzelnen Teilen.
+        Dieser Wert entspricht der Breite des Sägeblattes oder des Schneidewerkzeugs.
       option_trimming: 821 - Randabfallbreite
       option_trimming_1d_help: 822 - Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
       option_trimming_2d_help: 823 - Breite des Säuberungsschnittes auf allen vier Seiten der Platte oder des Furnierblattes.
       option_items_formula: 824 - Formel
       option_items_formula_help: |
-        825 - ...
+        825 - Hier können Sie *Ruby*-Code schreiben, um den Text zur Identifizierung der Teile im Schnittplan anzupassen.
       option_hide_part_list: 826 - Liste der Teile
       option_hide_part_list_1d_dimensional_0: 827 - Anzeigen für jede Stange
       option_hide_part_list_1d_edge_0: 828 - Anzeigen für jedes Kantenband
@@ -1048,7 +1048,7 @@ tab:
       option_colorization_1: $t(default.yes) - Bildschirm
       option_colorization_2: $t(default.yes) - Bildschirm und Druck
       option_colorization_help: |
-        843 - ...
+        843 - Legt fest, ob eine zufällige Farbe verwendet wird, um die Teile im Schnittplan zu unterscheiden.
       option_hide_edges_preview: 844 - Anzeige der Kantenbänder
       option_hide_edges_preview_0: 845 - Im Schnittplan angezeigt
       option_hide_edges_preview_1: 846 - Im Schnittplan ausgeblendet
