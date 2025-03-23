@@ -12,9 +12,9 @@
         this.$rows = $('.ladb-editor-sizes-rows', this.$element);
         this.$removeRows = $('.ladb-editor-sizes-remove-rows', this.$element);
 
-        this.sizes = [];
+        this.availableSizeDefs = null;
 
-        this.availableSizes = null;
+        this.val = '';
 
     };
 
@@ -28,6 +28,10 @@
         emptyVal: '',
         dropdownActionCallback: null,
         dropdownActionLabel: null
+    };
+
+    LadbEditorSizes.prototype.updateVal = function () {
+        this.val = this.getCurrentVals().join(';');
     };
 
     LadbEditorSizes.prototype.updateToolsVisibility = function () {
@@ -50,12 +54,12 @@
         }
     };
 
-    LadbEditorSizes.prototype.appendRow = function (size, options = { autoFocus: false, autoFill: false }) {
+    LadbEditorSizes.prototype.appendRow = function (sizeDef, options = { autoFocus: false, autoFill: false }) {
         const that = this;
 
-        // Default empty size
-        if (typeof size !== 'object') {
-            size = {};
+        // Default empty size def
+        if (typeof sizeDef !== 'object') {
+            sizeDef = {};
         }
 
         if (this.$rows.children('.ladb-editor-sizes-row').length === 0) {
@@ -70,7 +74,7 @@
                 '<div class="ladb-textinput-tool ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></div>' +
             '</div>')
         ;
-        $row.data('size', size);
+        $row.data('size-def', sizeDef);
         this.$rows.append($row);
 
         // Fetch UI elements
@@ -88,22 +92,24 @@
                 qHidden: this.options.qHidden && (this.options.format === FORMAT_D || this.options.format === FORMAT_D_D),
                 dSeparatorLabel: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
                 qSeparatorLabel: !this.options.qHidden || this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? i18next.t('core.component.textinput_size.quantity') : '',
-                feeder: that.availableSizes ? function () { return that.getAvailableVals(); } : null,
+                feeder: that.availableSizeDefs ? function () { return that.getAvailableVals(); } : null,
                 dropdownActionLabel: that.options.dropdownActionLabel,
                 dropdownActionCallback: that.options.dropdownActionCallback
             })
-            .ladbTextinputSize('val', size.val)
+            .ladbTextinputSize('val', sizeDef.val)
         ;
         $input
             .on('change', function () {
-                size.val = $(this).ladbTextinputSize('val');
+                sizeDef.val = $(this).ladbTextinputSize('val');
 
                 // Convert size to inch float representation
-                rubyCallCommand('core_length_to_float', { dim: size.val }, function (response) {
+                rubyCallCommand('core_length_to_float', { dim: sizeDef.val }, function (response) {
 
-                    size.dim = Array.isArray(response.dim) ? response.dim.join('x') : response.dim;
+                    sizeDef.dim = Array.isArray(response.dim) ? response.dim.join('x') : response.dim;
 
                 });
+
+                that.updateVal();
 
             })
         ;
@@ -146,27 +152,16 @@
             $removeRow.remove();
         }
         this.updateToolsVisibility();
+        this.updateVal();
     };
 
-    LadbEditorSizes.prototype.renderRows = function () {
-
-        this.$rows.empty();
-        this.$removeRows.empty();
-        for (let i = 0; i < this.sizes.length; i++) {
-            const size = this.sizes[i];
-            this.appendRow(size);
-        }
-        this.updateToolsVisibility();
-
-    };
-
-    LadbEditorSizes.prototype.getCurrentSizes = function () {
+    LadbEditorSizes.prototype.getCurrentSizeDefs = function () {
 
         const sizes = [];
         this.$rows.children('.ladb-editor-sizes-row').each(function () {
-            const size = $(this).data('size');
-            if (size !== undefined && (size.val != null && size.val.length > 0)) {
-                sizes.push(size);
+            const sizeDef = $(this).data('size-def');
+            if (sizeDef !== undefined && (sizeDef.val != null && sizeDef.val.length > 0)) {
+                sizes.push(sizeDef);
             }
         });
 
@@ -176,8 +171,8 @@
     LadbEditorSizes.prototype.getCurrentDims = function () {
 
         const dims = [];
-        this.getCurrentSizes().forEach(function (size) {
-            dims.push(size.dim);
+        this.getCurrentSizeDefs().forEach(function (sizeDef) {
+            dims.push(sizeDef.dim);
         });
 
         return dims;
@@ -186,8 +181,8 @@
     LadbEditorSizes.prototype.getCurrentVals = function () {
 
         const vals = [];
-        this.getCurrentSizes().forEach(function (size) {
-            vals.push(size.val);
+        this.getCurrentSizeDefs().forEach(function (sizeDef) {
+            vals.push(sizeDef.val);
         });
         if (vals.length === 0) {
             vals.push(this.options.emptyVal);
@@ -197,11 +192,11 @@
     };
 
     LadbEditorSizes.prototype.isAvailableDim = function (dim) {
-        if (this.availableSizes === null) {
+        if (this.availableSizeDefs === null) {
             return true;
         }
-        for (let i = 0; i < this.availableSizes.length; i++) {
-            if  (this.availableSizes[i].dim === dim) {
+        for (let i = 0; i < this.availableSizeDefs.length; i++) {
+            if  (this.availableSizeDefs[i].dim === dim) {
                 return true;
             }
         }
@@ -213,50 +208,53 @@
         const vals = [];
         const dims = this.getCurrentDims();
 
-        this.availableSizes.forEach(function (size) {
-            if (!dims.includes(size.dim)) {
-                vals.push(size.val);
+        this.availableSizeDefs.forEach(function (sizeDef) {
+            if (!dims.includes(sizeDef.dim)) {
+                vals.push(sizeDef.val);
             }
         });
 
         return vals;
     };
 
-    LadbEditorSizes.prototype.setAvailableSizesAndSizes = function (stringAvailableSizes, stringSizes) {
+    LadbEditorSizes.prototype.setAvailableSizesAndSizes = function (availableSizes, sizes) {
         var that = this;
 
-        this.availableSizes = [];
+        this.availableSizeDefs = [];
 
-        const sizes = {};
-        const arraySizes = stringAvailableSizes.split(';');
+        const toConvertSizes = {};
+        const arraySizes = availableSizes.split(';');
         for (let i = 0; i < arraySizes.length; i++) {
             const val = arraySizes[i];
-            sizes[val] = val;
+            toConvertSizes[val] = val;
         }
 
         // Convert size to inch float representation
-        rubyCallCommand('core_length_to_float', sizes, function (response) {
+        rubyCallCommand('core_length_to_float', toConvertSizes, function (response) {
 
             for (let key in response) {
-                that.availableSizes.push({
+                that.availableSizeDefs.push({
                     val: key,
                     dim: Array.isArray(response[key]) ? response[key].join('x') : response[key]
                 });
             }
 
-            that.setSizes(stringSizes);
+            that.setSizes(sizes);
 
         });
 
     };
 
-    LadbEditorSizes.prototype.setSizes = function (stringSizes) {
+    LadbEditorSizes.prototype.setSizes = function (sizes) {
         var that = this;
 
-        this.sizes = [];
+        // Keep given value for instant valid getter
+        this.val = sizes;
+
+        let sizeDefs = [];
 
         const toConvertSizes = {};
-        const vals = stringSizes.split(';');
+        const vals = sizes.split(';');
         for (let i = 0; i < vals.length; i++) {
             const val = vals[i];
             if (val !== '') {
@@ -280,8 +278,8 @@
                 const val = key;
                 const dim = Array.isArray(response[key]) ? response[key].join('x') : response[key];
 
-                if (that.availableSizes === null || that.isAvailableDim(dim)) {    // May exclude unavailable sizes
-                    that.sizes.push({
+                if (that.availableSizeDefs === null || that.isAvailableDim(dim)) {    // May exclude unavailable sizes
+                    sizeDefs.push({
                         val: val,
                         dim: dim
                     });
@@ -290,18 +288,26 @@
             }
 
             // Auto select first available size if needed
-            if (!forcedToBeEmpty && that.sizes.length === 0 && that.availableSizes !== null) {
-                that.sizes.push(that.availableSizes[0]);
+            if (!forcedToBeEmpty && sizeDefs.length === 0 && that.availableSizeDefs !== null) {
+                sizeDefs.push(that.availableSizeDefs[0]);
             }
 
-            that.renderRows();
+            // Render rows
+            that.$rows.empty();
+            that.$removeRows.empty();
+            for (let i = 0; i < sizeDefs.length; i++) {
+                const size = sizeDefs[i];
+                that.appendRow(size);
+            }
+            that.updateToolsVisibility();
+            that.updateVal();
 
         });
 
     };
 
     LadbEditorSizes.prototype.getSizes = function () {
-        return this.getCurrentVals().join(';');
+        return this.val;
     };
 
     LadbEditorSizes.prototype.init = function () {
@@ -310,11 +316,15 @@
         // Bind button
         $('button', this.$element).on('click', function () {
             $(this).blur();
-            that.appendRow({}, { autoFocus: that.availableSizes === null, autoFill: that.availableSizes !== null });
+            that.appendRow({}, { autoFocus: that.availableSizeDefs === null, autoFill: that.availableSizeDefs !== null });
         });
 
         // Bind sortable
-        this.$rows.sortable(SORTABLE_OPTIONS);
+        this.$rows.sortable($.extend({
+            change: function (event, ui) {
+                that.updateVal();
+            }
+        }, SORTABLE_OPTIONS));
 
     };
 
@@ -328,10 +338,6 @@
             let data = $this.data('ladb.editorSizes');
             if (!data) {
                 const options = $.extend({}, LadbEditorSizes.DEFAULTS, $this.data(), typeof option === 'object' && option);
-
-                console.log('default', LadbEditorSizes.DEFAULTS)
-                console.log(options)
-
                 $this.data('ladb.editorSizes', (data = new LadbEditorSizes(this, options)));
             }
             if (typeof option === 'string') {

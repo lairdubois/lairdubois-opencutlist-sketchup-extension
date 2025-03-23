@@ -1522,7 +1522,7 @@ tab:
       type: Type
       description: Description
       url: URL
-      format: Format
+      formats: Formats
       cut_options: Options de débit
       estimate_options: Options d'estimation
       attributes: Attributs

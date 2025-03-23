@@ -5100,7 +5100,7 @@
                     // Edit material and focus std_sizes input field
                     that.dialog.executeCommandOnTab('materials', 'edit_material', {
                         materialId: group.material_id,
-                        propertiesTab: 'format',
+                        propertiesTab: 'formats',
                         callback: callback
                     });
 

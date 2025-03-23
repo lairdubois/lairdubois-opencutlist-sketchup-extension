@@ -247,7 +247,7 @@
                 propertiesTab = this.lastMaterialPropertiesTab;
             }
             if (propertiesTab === null || propertiesTab.length === 0) {
-                propertiesTab = 'format';
+                propertiesTab = 'formats';
             }
             this.lastMaterialPropertiesTab = propertiesTab;
 
@@ -945,18 +945,14 @@
             options.std_prices = $editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
         };
         const fnFillInputs = function (options) {
-            const fnSetTokens = function ($input, tokens) {
-                // Workaround for empty string tokens
-                $input.tokenfield('setTokens', tokens === '' ? ' ' : tokens);
-            };
             $inputThickness.val(options.thickness);
             $inputLengthIncrease.val(options.length_increase);
             $inputWidthIncrease.val(options.width_increase);
             $inputThicknessIncrease.val(options.thickness_increase);
+            $editorStdSections.ladbEditorSizes('setSizes', options.std_sections);
             $editorStdLengths.ladbEditorSizes('setSizes', options.std_lengths);
             $editorStdWidths.ladbEditorSizes('setSizes', options.std_widths);
             $editorStdThicknesses.ladbEditorSizes('setSizes', options.std_thicknesses);
-            $editorStdSections.ladbEditorSizes('setSizes', options.std_sections);
             $editorStdSizes.ladbEditorSizes('setSizes', options.std_sizes);
             $selectGrained.selectpicker('val', options.grained ? '1' : '0');
             $selectEdgeDecremented.selectpicker('val', options.edge_decremented ? '1' : '0');
@@ -971,10 +967,10 @@
             fnFetchType(options);
             fnFetchStds(options);
             const stds = {
+                stdSections: options.std_sections ? options.std_sections.split(';') : [],
                 stdLengths: options.std_lengths ? options.std_lengths.split(';') : [],
                 stdWidths: options.std_widths ? options.std_widths.split(';') : [],
                 stdThicknesses: options.std_thicknesses ? options.std_thicknesses.split(';') : [],
-                stdSections: options.std_sections ? options.std_sections.split(';') : [],
                 stdSizes: options.std_sizes ? options.std_sizes.split(';') : [],
             };
             $editorStdVolumicMasses.ladbEditorStdAttributes('setTypeAndStds', [ options.type, stds ]);

@@ -43,13 +43,13 @@
 <section style="position: relative; margin-top: 30px;">
     {% include 'components/_widget-preset.twig' with { 'top':8, 'right':10 } %}
     <ul class="nav nav-tabs" role="tablist" style="padding-left: 30px;">
-        <li role="presentation"{% if tab == 'format' %} class="active"{% endif %}><a href="#tab_edit_material_general_format" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.format'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'formats' %} class="active"{% endif %}><a href="#tab_edit_material_general_formats" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.formats'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'attributes' %} class="active"{% endif %}><a id="ladb_materials_btn_tab_general_attributes" href="#tab_edit_material_general_attributes" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.attributes'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'cut_options' %} class="active"{% endif %}><a href="#tab_edit_material_general_cut_options" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.cut_options'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'estimate_options' %} class="active"{% endif %} id="nav_tab_edit_material_general_estimate_options"><a href="#tab_edit_material_general_estimate_options" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.estimate_options'|i18next }}</a></li>
     </ul>
     <div class="tab-content">
-        <div role="tabpanel" class="tab-pane{% if tab == 'format' %} active{% endif %}" id="tab_edit_material_general_format">
+        <div role="tabpanel" class="tab-pane{% if tab == 'formats' %} active{% endif %}" id="tab_edit_material_general_formats">
             <div class="form form-horizontal" style="margin-top: 25px;">
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.grained_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
