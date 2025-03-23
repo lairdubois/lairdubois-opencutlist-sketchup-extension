@@ -1357,6 +1357,9 @@ namespace Packy {
             if (j.contains("column_generation_subproblem_queue_size")) {
                 parameters_.column_generation_subproblem_queue_size = j["column_generation_subproblem_queue_size"].get<NodeId>();
             }
+            if (j.contains("not_anytime_maximum_approximation_ratio")) {
+                parameters_.not_anytime_maximum_approximation_ratio = j["not_anytime_maximum_approximation_ratio"].get<double>();
+            }
 
         }
 
