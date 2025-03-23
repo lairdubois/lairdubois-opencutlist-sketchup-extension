@@ -92,7 +92,7 @@
                 qHidden: this.options.qHidden && (this.options.format === FORMAT_D || this.options.format === FORMAT_D_D),
                 dSeparatorLabel: this.options.format === FORMAT_D || this.options.format === FORMAT_D_Q ? '' : 'x',
                 qSeparatorLabel: !this.options.qHidden || this.options.format === FORMAT_D_Q || this.options.format === FORMAT_D_D_Q ? i18next.t('core.component.textinput_size.quantity') : '',
-                feeder: that.availableSizeDefs ? function () { return that.getAvailableVals(); } : null,
+                feederCallback: that.availableSizeDefs ? function () { return that.getAvailableVals(); } : null,
                 dropdownActionLabel: that.options.dropdownActionLabel,
                 dropdownActionCallback: that.options.dropdownActionCallback
             })
@@ -321,7 +321,7 @@
 
         // Bind sortable
         this.$rows.sortable($.extend({
-            change: function (event, ui) {
+            update: function (event, ui) {
                 that.updateVal();
             }
         }, SORTABLE_OPTIONS));

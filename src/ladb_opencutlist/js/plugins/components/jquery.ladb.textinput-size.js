@@ -22,7 +22,7 @@
         qHidden: false,
         dSeparatorLabel: '',
         qSeparatorLabel: '',
-        feeder: null,
+        feederCallback: null,
         dropdownActionLabel: '',
         dropdownActionCallback: null
     }, LadbTextinputAbstract.DEFAULTS);
@@ -76,7 +76,7 @@
     };
 
     LadbTextinputSize.prototype.appendRightTools = function ($toolsContainer) {
-        if (this.options.feeder) {
+        if (this.options.feederCallback) {
 
             const $caret =
                 $('<div class="ladb-textinput-tool ladb-textinput-tool-black ladb-textinput-tool-btn" tabindex="-1"><span class="bs-caret"><span class="caret"></span></span></div>')
@@ -128,9 +128,9 @@
             }
         })
 
-        // Set up the feeder
+        // Set up the feeder (function that returns an array of sizes D1xD2xQ)
 
-        if ((typeof this.options.feeder) === 'function') {
+        if ((typeof this.options.feederCallback) === 'function') {
 
             this.$wrapper
                 .wrap('<button data-toggle="dropdown" class="btn-dropdown-toggle" />')
@@ -147,7 +147,7 @@
 
             $dropdown.on('show.bs.dropdown', function (e) {
                 $dropdownMenu.empty();
-                let sizes = that.options.feeder();
+                let sizes = that.options.feederCallback();
                 for  (let i = 0; i < sizes.length; i++) {
                     $dropdownMenu.append(
                         $('<li />')
