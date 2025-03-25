@@ -789,7 +789,7 @@ module Ladb::OpenCutList
           show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name ], @active_material && @active_material.name == part.material_name ? MESSAGE_TYPE_SUCCESS : MESSAGE_TYPE_DEFAULT)
 
           active_instance = @active_part_entity_path.last
-          instances = fetch_action_option_boolean(ACTION_PAINT_PARTS, ACTION_OPTION_INSTANCES, ACTION_OPTION_INSTANCES_ALL) ? active_instance.definition.instances : [active_instance ]
+          instances = fetch_action_option_boolean(ACTION_PAINT_PARTS, ACTION_OPTION_INSTANCES, ACTION_OPTION_INSTANCES_ALL) ? active_instance.definition.instances : [ active_instance ]
           instance_paths = []
           _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
 

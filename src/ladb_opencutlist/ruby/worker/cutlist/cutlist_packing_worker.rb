@@ -852,10 +852,12 @@ module Ladb::OpenCutList
 
               if !@hide_edges_preview && part_def.edge_count > 0
 
-                svg += "<rect x='#{px_node_edge_offset}' y='#{-px_edge_width - px_node_edge_offset}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:ymin])}'/>" unless part_def.edge_material_names[:ymin].nil?
-                svg += "<rect x='#{px_node_edge_offset}' y='#{-px_item_width + px_node_edge_offset}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:ymax])}'/>" unless part_def.edge_material_names[:ymax].nil?
-                svg += "<rect x='#{px_node_edge_offset}' y='#{-px_item_width + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:xmin])}'/>" unless part_def.edge_material_names[:xmin].nil?
-                svg += "<rect x='#{px_item_length - px_edge_width - px_node_edge_offset}' y='#{-px_item_width}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:xmax])}'/>" unless part_def.edge_material_names[:xmax].nil?
+                svg += "<g class='item-projection' transform='#{" rotate(#{-item_def.angle})" if item_def.angle != 0}'>"
+                  svg += "<rect x='#{px_node_edge_offset}' y='#{-px_edge_width - px_node_edge_offset}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:ymin])}'/>" unless part_def.edge_material_names[:ymin].nil?
+                  svg += "<rect x='#{px_node_edge_offset}' y='#{-px_item_width + px_node_edge_offset}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:ymax])}'/>" unless part_def.edge_material_names[:ymax].nil?
+                  svg += "<rect x='#{px_node_edge_offset}' y='#{-px_item_width + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:xmin])}'/>" unless part_def.edge_material_names[:xmin].nil?
+                  svg += "<rect x='#{px_item_length - px_edge_width - px_node_edge_offset}' y='#{-px_item_width + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:xmax])}'/>" unless part_def.edge_material_names[:xmax].nil?
+                svg += '</g>'
 
               end
 
