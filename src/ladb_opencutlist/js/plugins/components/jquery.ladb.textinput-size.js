@@ -97,29 +97,62 @@
 
         this.$element.attr('type', 'hidden');
 
-        this.$input1 = $('<input type="text" class="form-control ladb-textinput-size-d1" style="' + (this.options.d1Hidden ? ' display: none;' : '') + '" placeholder="' + this.options.d1Placeholder + '"' + (this.options.d1Disabled ? ' disabled' : '') + '>')
-            .on('change', function () {
-                that.updateElementInputValue();
-            })
-        ;
-        this.$inputWrapper.append(this.$input1);
-
-        this.$inputWrapper.append('<div class=" ladb-textinput-size-d-separator">' + this.options.dSeparatorLabel + '</div>');
-
-        this.$input2 = $('<input type="text" class="form-control ladb-textinput-size-d2" style="' + (this.options.d2Hidden ? ' display: none;' : '') + '" placeholder="' + this.options.d2Placeholder + '"' + (this.options.d2Disabled ? ' disabled' : '') + '>')
-            .on('change', function () {
-                that.updateElementInputValue();
-            })
-        ;
-        this.$inputWrapper.append(this.$input2);
-
-        this.$inputWrapper.append('<div class="ladb-textinput-size-q-separator">' + this.options.qSeparatorLabel + '</div>');
-
         this.$input3 = $('<input type="text" class="form-control ladb-textinput-size-q" style="' + (this.options.qHidden ? ' display: none;' : '') + '" placeholder="' + this.options.qPlaceholder + '"' + (this.options.qDisabled ? ' disabled' : '') + '>')
             .on('change', function () {
                 that.updateElementInputValue();
             })
+            .on('keydown', function (e) {
+                if (e.key.match(/[xX;,]/)) {
+                    e.preventDefault();
+                    return false;
+                }
+            })
         ;
+        this.$input2 = $('<input type="text" class="form-control ladb-textinput-size-d2" style="' + (this.options.d2Hidden ? ' display: none;' : '') + '" placeholder="' + this.options.d2Placeholder + '"' + (this.options.d2Disabled ? ' disabled' : '') + '>')
+            .on('change', function () {
+                that.updateElementInputValue();
+            })
+            .on('keydown', function (e) {
+                if (e.key.match(/[xX;,]/)) {
+                    e.preventDefault();
+                    if (!that.options.qDisabled && !that.options.qHidden) {
+                        that.$input3
+                            .focus()
+                            .select()
+                        ;
+                        return false;
+                    }
+                }
+            })
+        ;
+        this.$input1 = $('<input type="text" class="form-control ladb-textinput-size-d1" style="' + (this.options.d1Hidden ? ' display: none;' : '') + '" placeholder="' + this.options.d1Placeholder + '"' + (this.options.d1Disabled ? ' disabled' : '') + '>')
+            .on('change', function () {
+                that.updateElementInputValue();
+            })
+            .on('keydown', function (e) {
+                if (e.key.match(/[xX;,]/)) {
+                    e.preventDefault();
+                    if (!that.options.d2Disabled && !that.options.d2Hidden) {
+                        that.$input2
+                            .focus()
+                            .select()
+                        ;
+                        return false;
+                    } else if (!that.options.qDisabled && !that.options.qHidden) {
+                        that.$input3
+                            .focus()
+                            .select()
+                        ;
+                        return false;
+                    }
+                }
+            })
+        ;
+
+        this.$inputWrapper.append(this.$input1);
+        this.$inputWrapper.append('<div class=" ladb-textinput-size-d-separator">' + this.options.dSeparatorLabel + '</div>');
+        this.$inputWrapper.append(this.$input2);
+        this.$inputWrapper.append('<div class="ladb-textinput-size-q-separator">' + this.options.qSeparatorLabel + '</div>');
         this.$inputWrapper.append(this.$input3);
 
         this.$inputWrapper.on('click', function (e) {
