@@ -177,7 +177,7 @@
                 </tr>
                 {% set isFirstUsed = solution.summary.bin_type_stats|length > 0 and solution.summary.bin_type_stats[0].used %}
                 {% for bin_type_stats in solution.summary.bin_type_stats %}
-                    <tr class="ladb-cutlist-row{% if bin_type_stats.used and not isFirstUsed %} ladb-cutlist-row-separator{% set isFirstUsed = true %}{% endif %}"{% if not bin_type_stats.used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.packing.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
+                    <tr class="ladb-cutlist-row ladb-minitools-holder{% if bin_type_stats.used and not isFirstUsed %} ladb-cutlist-row-separator{% set isFirstUsed = true %}{% endif %}"{% if not bin_type_stats.used %} data-toggle="tooltip" data-placement="left" title="{{ 'tab.cutlist.packing.list.unused'|i18next }}" style="text-decoration: line-through;color: #888;"{% endif %}>
                         <td>
                             <i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>{% if not generateOptions.hide_material_colors %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}{% endif %} {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - {{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2~'_type_'~bin_type_stats.type)|i18next }}
                             {% if bin_type_stats.used %}
