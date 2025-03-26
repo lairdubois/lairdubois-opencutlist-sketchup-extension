@@ -183,6 +183,9 @@
                             {% if bin_type_stats.used %}
                                 <div class="ladb-minitools ladb-minitools-right no-print">
                                     <a href="#ladb_packing_group_{{ bin_type_stats.type_id }}" class="ladb-btn-scrollto ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.packing.tooltip.scroll_to_block_2d'|i18next }}"><i class="ladb-opencutlist-icon-arrow-circle-down"></i></a>
+                                    {% if group.material_id %}
+                                        <a href="#" class="ladb-btn-edit-material" data-material-id="{{ group.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':group.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
+                                    {% endif %}
                                 </div>
                             {% endif %}
                         </td>

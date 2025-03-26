@@ -3886,17 +3886,16 @@
                     $inputWrapLength.val(options.wrap_length);
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                 }
-                const fnEditMaterial = function (callback) {
+                const fnEditMaterial = function (options) {
 
                     // Hide modal
                     $modal.modal('hide');
 
                     // Edit material and focus std_sizes input field
-                    that.dialog.executeCommandOnTab('materials', 'edit_material', {
+                    that.dialog.executeCommandOnTab('materials', 'edit_material', $.extend({
                         materialId: group.material_id,
-                        propertiesTab: 'cut_options',
-                        callback: callback
-                    });
+                        propertiesTab: 'cut_options'
+                    }, options));
 
                 };
 
@@ -3942,8 +3941,10 @@
                 $inputStdBar.on('changed.bs.select', function () {
                     const value = $inputStdBar.val();
                     if (value === 'add') {
-                        fnEditMaterial(function ($editMaterialModal) {
-                            $('#ladb_materials_input_std_lengths', $editMaterialModal).siblings('.token-input').focus();
+                        fnEditMaterial({
+                            callback: function ($editMaterialModal) {
+                                $('#ladb_materials_input_std_lengths', $editMaterialModal).siblings('.token-input').focus();
+                            }
                         });
                     }
                 });
@@ -4450,17 +4451,16 @@
                     $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                 }
-                const fnEditMaterial = function (callback) {
+                const fnEditMaterial = function (options) {
 
                     // Hide modal
                     $modal.modal('hide');
 
                     // Edit material and focus std_sizes input field
-                    that.dialog.executeCommandOnTab('materials', 'edit_material', {
+                    that.dialog.executeCommandOnTab('materials', 'edit_material', $.extend({
                         materialId: group.material_id,
-                        propertiesTab: 'cut_options',
-                        callback: callback
-                    });
+                        propertiesTab: 'cut_options'
+                    }, options));
 
                 };
 
@@ -4511,8 +4511,10 @@
                 $inputStdSheet.on('changed.bs.select', function () {
                     const value = $inputStdSheet.val();
                     if (value === 'add') {
-                        fnEditMaterial(function ($editMaterialModal) {
-                            $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
+                        fnEditMaterial({
+                            callback: function ($editMaterialModal) {
+                                $('#ladb_materials_input_std_sizes', $editMaterialModal).siblings('.token-input').focus();
+                            }
                         });
                     }
                 });
@@ -5092,17 +5094,16 @@
                     }
                     return irregularAllowedRotations;
                 }
-                const fnEditMaterial = function (callback) {
+                const fnEditMaterial = function (options) {
 
                     // Hide modal
                     $modal.modal('hide');
 
-                    // Edit material and focus std_sizes input field
-                    that.dialog.executeCommandOnTab('materials', 'edit_material', {
+                    // Edit material
+                    that.dialog.executeCommandOnTab('materials', 'edit_material', $.extend({
                         materialId: group.material_id,
-                        propertiesTab: 'formats',
-                        callback: callback
-                    });
+                        propertiesTab: 'formats'
+                    }, options));
 
                 };
 
@@ -5121,11 +5122,15 @@
                         qHidden: false,
                         emptyVal: '0',
                         dropdownActionLabel: '<i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.packing.option_std_bin_' + (group.material_is_1d ? '1' : '2') + 'd_add'),
-                        dropdownActionCallback: function () { fnEditMaterial(function ($editMaterialModal) {
-                            setTimeout(function () {
-                                $('#ladb_materials_editor_std_' + (group.material_is_1d ? 'lengths' : 'sizes'), $editMaterialModal).ladbEditorSizes('appendRow', [ {}, { autoFocus: true }]);
-                            }, 200);
-                        })}
+                        dropdownActionCallback: function () {
+                            fnEditMaterial({
+                                callback: function ($editMaterialModal) {
+                                    setTimeout(function () {
+                                        $('#ladb_materials_editor_std_' + (group.material_is_1d ? 'lengths' : 'sizes'), $editMaterialModal).ladbEditorSizes('appendRow', [{}, {autoFocus: true}]);
+                                    }, 200);
+                                }
+                            })
+                        }
                     })
                     .ladbEditorSizes('setAvailableSizesAndSizes', [ group.material_is_1d ? response.std_lengths : response.std_sizes, group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes ])
                 ;
@@ -5560,6 +5565,11 @@
                                 that.showGroup($target, false);
                             }
                             that.scrollSlideToTarget($slide, $target, true, true);
+                            $(this).blur();
+                            return false;
+                        });
+                        $('a.ladb-btn-edit-material', $slide).on('click', function () {
+                            fnEditMaterial({ propertiesTab: 'attributes' });
                             $(this).blur();
                             return false;
                         });
