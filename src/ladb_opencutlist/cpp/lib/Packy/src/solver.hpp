@@ -1351,6 +1351,13 @@ namespace Packy {
         ) override {
             TypedSolver::read_parameters(j);
 
+            if (j.contains("initial_maximum_approximation_ratio")) {
+                parameters_.initial_maximum_approximation_ratio = j["initial_maximum_approximation_ratio"].get<double>();
+            }
+            if (j.contains("maximum_approximation_ratio_factor")) {
+                parameters_.maximum_approximation_ratio_factor = j["maximum_approximation_ratio_factor"].get<double>();
+            }
+
             if (j.contains("sequential_value_correction_subproblem_queue_size")) {
                 parameters_.sequential_value_correction_subproblem_queue_size = j["sequential_value_correction_subproblem_queue_size"].get<NodeId>();
             }
@@ -1359,6 +1366,10 @@ namespace Packy {
             }
             if (j.contains("not_anytime_maximum_approximation_ratio")) {
                 parameters_.not_anytime_maximum_approximation_ratio = j["not_anytime_maximum_approximation_ratio"].get<double>();
+            }
+
+            if (j.contains("json_search_tree_path")) {
+                parameters_.json_search_tree_path = j["json_search_tree_path"].get<std::string>();
             }
 
         }
