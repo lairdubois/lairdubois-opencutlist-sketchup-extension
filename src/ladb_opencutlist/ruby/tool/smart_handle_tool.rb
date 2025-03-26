@@ -507,6 +507,19 @@ module Ladb::OpenCutList
 
     end
 
+    def onToolActionOptionStored(tool, action, option_group, option)
+
+      if @state == STATE_HANDLE && option_group == SmartHandleTool::ACTION_OPTION_AXES
+
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(_get_drawing_def, et)
+
+        @picked_handle_start_point = eb.center.transform(et)
+
+      end
+
+    end
+
     # -----
 
     def draw(view)
@@ -1082,7 +1095,7 @@ module Ladb::OpenCutList
 
         end
 
-        @mouse_snap_point = @mouse_ip.position.project_to_line([[@picked_handle_start_point, move_axis ]])
+        @mouse_snap_point = @mouse_ip.position.project_to_line([[ @picked_handle_start_point, move_axis ]])
 
       end
 

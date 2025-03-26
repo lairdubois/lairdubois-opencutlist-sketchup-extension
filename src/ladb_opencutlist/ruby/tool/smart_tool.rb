@@ -277,7 +277,7 @@ module Ladb::OpenCutList
                         button.selected = true
                         store_action_option_value(action, option_group, option)
                         refresh
-                        # set_root_action(fetch_action)
+                        # set_root_action(fetch_action) # TODO find a beter solution to update current Axes Tool
                       else
                         button.selected = !button.selected?
                         store_action_option_value(action, option_group, option, button.selected?)
@@ -961,11 +961,16 @@ module Ladb::OpenCutList
       dictionary, section = get_action_options_dictionary_and_section(action)
       preset = PLUGIN.get_global_preset(dictionary, nil, section)
       if get_action_option_group_unique?(action, option_group)
-        preset.store(option_group.to_s, option)
+        changed = preset[option_group.to_s] != option
+        preset.store(option_group.to_s, option) if changed
       else
-        preset.store(option.to_s, value)
+        changed = preset[option.to_s] != value
+        preset.store(option.to_s, value) if changed
       end
-      PLUGIN.set_global_preset(dictionary, preset, nil, section, fire_event)
+      if changed
+        PLUGIN.set_global_preset(dictionary, preset, nil, section, fire_event)
+        onActionOptionStored(action, option_group, option)
+      end
     end
 
     def fetch_action_option_value(action, option_group, option = nil)
@@ -1429,6 +1434,10 @@ module Ladb::OpenCutList
 
     def onActionChanged(action)
       @picker.do_pick unless @picker.nil?
+    end
+
+    def onActionOptionStored(action, option_group, option)
+      @action_handler.onToolActionOptionStored(self, action, option_group, option) if !@action_handler.nil? && @action_handler.respond_to?(:onToolActionOptionStored)
     end
 
     def onPickerChanged(picker, view)
