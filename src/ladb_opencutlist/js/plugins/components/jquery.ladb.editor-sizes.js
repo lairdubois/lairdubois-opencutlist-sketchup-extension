@@ -313,6 +313,12 @@
     LadbEditorSizes.prototype.init = function () {
         const that = this;
 
+        // Bind empty
+        this.$empty.on('click', function (e) {
+            $(this).blur();
+            that.appendRow({}, { autoFocus: that.availableSizeDefs === null, autoFill: that.availableSizeDefs !== null });
+        });
+
         // Bind button
         $('button', this.$element).on('click', function () {
             $(this).blur();

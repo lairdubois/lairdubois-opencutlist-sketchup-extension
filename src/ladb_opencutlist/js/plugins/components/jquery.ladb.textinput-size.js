@@ -113,7 +113,7 @@
                 that.updateElementInputValue();
             })
             .on('keydown', function (e) {
-                if (e.key.match(/[xX;,]/)) {
+                if (e.key.match(/[xX;]/)) {
                     e.preventDefault();
                     if (!that.options.qDisabled && !that.options.qHidden) {
                         that.$input3
@@ -130,7 +130,7 @@
                 that.updateElementInputValue();
             })
             .on('keydown', function (e) {
-                if (e.key.match(/[xX;,]/)) {
+                if (e.key.match(/[xX;]/)) {
                     e.preventDefault();
                     if (!that.options.d2Disabled && !that.options.d2Hidden) {
                         that.$input2
