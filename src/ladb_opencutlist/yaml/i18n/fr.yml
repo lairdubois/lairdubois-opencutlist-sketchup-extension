@@ -581,7 +581,7 @@ tab:
       volume: Volume
       number: N°
       name: Désignation
-      count: Qté.
+      count: Qté
       cutting: Débit
       bbox: Capable
       final: Finie
@@ -833,7 +833,7 @@ tab:
       list:
         unplaced_parts: Pièces non placées
         summary: Récapitulatif
-        count: Qté.
+        count: Qté
         bar: Barre
         sheet: Panneau
         length: Longueur
@@ -1077,7 +1077,7 @@ tab:
         total_cut_count: Nombre de coupes
         total_cut_length: Longueur de coupe
         efficiency: Efficacité
-        count: Qté.
+        count: Qté
         length: Longueur
         width: Largeur
         total_length: Σ Longueurs
@@ -1529,7 +1529,7 @@ tab:
       thickness: Épaisseur
       thickness_help: |
         Épaisseur finie de la matière.
-        
+
         *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       length_increase: Surcote de longueur
       length_increase_help: Surcote appliquée sur la longueur capable pour définir la **longueur de débit**.
@@ -1540,27 +1540,27 @@ tab:
       std_lengths: Longueurs standards
       std_lengths_help: |
         Longueurs standards disponibles pour cette matière.
-        
+
         *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       std_widths: Largeurs standards
       std_widths_help: |
         Largeurs standards disponibles pour cette matière.
-        
+
         *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       std_thicknesses: Épaisseurs standards
       std_thicknesses_help: |
         Épaisseurs **brutes** standards disponibles pour cette matière.
-        
+
         *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       std_sections: Sections standards
       std_sections_help: |
         Sections standards disponibles pour cette matière.
-        
+
         *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       std_sizes: Tailles standards
       std_sizes_help: |
         Tailles standards disponibles pour cette matière.
-        
+
         *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       grained: Fil
       grained_help: Permet d'indiquer l'orientation du fil de surface par rapport à la longueur du panneau.

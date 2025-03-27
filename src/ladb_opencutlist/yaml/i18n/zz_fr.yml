@@ -579,7 +579,7 @@ tab:
       volume: 452 - Volume
       number: 453 - N°
       name: 454 - Désignation
-      count: 455 - Qté.
+      count: 455 - Qté
       cutting: 456 - Débit
       bbox: 457 - Capable
       final: 458 - Finie
@@ -831,7 +831,7 @@ tab:
       list:
         unplaced_parts: 669 - Pièces non placées
         summary: 670 - Récapitulatif
-        count: 671 - Qté.
+        count: 671 - Qté
         bar: 672 - Barre
         sheet: 673 - Panneau
         length: 674 - Longueur
@@ -1075,7 +1075,7 @@ tab:
         total_cut_count: 862 - Nombre de coupes
         total_cut_length: 863 - Longueur de coupe
         efficiency: 864 - Efficacité
-        count: 865 - Qté.
+        count: 865 - Qté
         length: 866 - Longueur
         width: 867 - Largeur
         total_length: 868 - Σ Longueurs
