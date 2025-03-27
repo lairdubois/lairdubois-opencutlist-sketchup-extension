@@ -706,7 +706,7 @@ namespace Packy {
                     }
 
                     // Increment item copies stats
-                    bin_type_stats.item_copies_by_bin_type[bin.bin_type_id]++;
+                    bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies;
 
                 }
 
@@ -997,7 +997,7 @@ namespace Packy {
                         }
 
                         // Increment item copies stats
-                        bin_type_stats.item_copies_by_bin_type[bin.bin_type_id]++;
+                        bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies;
 
                     } else if (node.d > 0 && node.children.empty()) {
 
@@ -1301,7 +1301,7 @@ namespace Packy {
                     });
 
                     // Increment item copies stats
-                    bin_type_stats.item_copies_by_bin_type[bin.bin_type_id]++;
+                    bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies;
 
                     // Cut
                     if (item.start + item_type.length < bin_type.length) {
@@ -1553,7 +1553,7 @@ namespace Packy {
                     });
 
                     // Increment item copies stats
-                    bin_type_stats.item_copies_by_bin_type[bin.bin_type_id]++;
+                    bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies;
 
                 }
 
