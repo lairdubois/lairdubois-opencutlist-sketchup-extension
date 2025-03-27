@@ -509,7 +509,7 @@ module Ladb::OpenCutList
 
     def onToolActionOptionStored(tool, action, option_group, option)
 
-      if @state == STATE_HANDLE && option_group == SmartHandleTool::ACTION_OPTION_AXES
+      if !@active_part.nil? && option_group == SmartHandleTool::ACTION_OPTION_AXES
 
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(_get_drawing_def, et)
@@ -672,8 +672,6 @@ module Ladb::OpenCutList
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
     end
-
-    # -----
 
     def _snap_handle(flags, x, y, view)
 
@@ -1000,6 +998,15 @@ module Ladb::OpenCutList
       super
 
       @locked_axis = nil
+
+    end
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+      super
+
+      if !@active_part.nil? && option_group == SmartHandleTool::ACTION_OPTION_AXES
+        @locked_axis = nil
+      end
 
     end
 
@@ -1517,6 +1524,15 @@ module Ladb::OpenCutList
       super
 
       @locked_normal = nil
+
+    end
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+      super
+
+      if !@active_part.nil? && option_group == SmartHandleTool::ACTION_OPTION_AXES
+        @locked_normal = nil
+      end
 
     end
 
@@ -2134,6 +2150,15 @@ module Ladb::OpenCutList
 
     end
 
+    def onToolActionOptionStored(tool, action, option_group, option)
+      super
+
+      if !@active_part.nil? && option_group == SmartHandleTool::ACTION_OPTION_AXES
+        @locked_axis = nil
+      end
+
+    end
+
     # -----
 
     protected
@@ -2469,8 +2494,10 @@ module Ladb::OpenCutList
     def get_state_cursor(state)
 
       case state
+
       when STATE_SELECT
         return @tool.cursor_select_distribute
+
       end
 
       super
@@ -2543,6 +2570,15 @@ module Ladb::OpenCutList
 
     end
 
+    def onToolActionOptionStored(tool, action, option_group, option)
+      # Do not call super to keep hadle start point
+
+      if !@active_part.nil? && option_group == SmartHandleTool::ACTION_OPTION_AXES
+        @locked_axis = nil
+      end
+
+    end
+
     # -----
 
     protected
@@ -2586,7 +2622,7 @@ module Ladb::OpenCutList
 
         end
 
-        picked_point, _ = Geom::closest_points([@picked_handle_start_point, move_axis ], view.pickray(x, y))
+        picked_point, _ = Geom::closest_points([ @picked_handle_start_point, move_axis ], view.pickray(x, y))
         @mouse_snap_point = picked_point
 
       else
