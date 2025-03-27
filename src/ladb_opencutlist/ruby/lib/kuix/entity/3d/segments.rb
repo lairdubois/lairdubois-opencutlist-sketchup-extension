@@ -27,8 +27,9 @@ module Ladb::OpenCutList::Kuix
     # -- LAYOUT --
 
     def do_layout(transformation)
-      @_points = @segments.map { |point| point.transform(transformation * @transformation) }
       super
+      @_points = @segments.map { |point| point.transform(transformation * @transformation) }
+      @extents.add(@_points) unless @on_top || @_points.empty?
     end
 
     # -- RENDER --

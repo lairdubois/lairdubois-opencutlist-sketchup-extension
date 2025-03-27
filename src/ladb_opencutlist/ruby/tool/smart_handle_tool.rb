@@ -383,7 +383,7 @@ module Ladb::OpenCutList
         @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
-        @tool.remove_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
+        @tool.remove_3d([ LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
 
         _snap_handle_start(flags, x, y, view)
         _preview_handle_start(view)
@@ -394,7 +394,7 @@ module Ladb::OpenCutList
         @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
-        @tool.remove_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
+        @tool.remove_3d([ LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
 
         _snap_handle(flags, x, y, view)
         _preview_handle(view)
@@ -408,7 +408,7 @@ module Ladb::OpenCutList
 
     def onToolMouseLeave(tool, view)
       @tool.remove_all_2d
-      @tool.remove_3d([LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
+      @tool.remove_3d([ LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
       @mouse_ip.clear
       view.tooltip = ''
       super
@@ -529,34 +529,6 @@ module Ladb::OpenCutList
 
     def enableVCB?
       true
-    end
-
-    def getExtents
-      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-
-        et = _get_edit_transformation
-        eb = _get_drawing_def_edit_bounds(drawing_def, et)
-
-        min = eb.min.transform(et)
-        max = eb.max.transform(et)
-
-        bounds = Geom::BoundingBox.new
-        bounds.add(min)
-        bounds.add(max)
-
-        ps = @picked_handle_start_point
-        pe = @picked_handle_end_point.nil? ? @mouse_snap_point : @picked_handle_end_point
-
-        unless ps.nil? || pe.nil?
-
-          v = ps.vector_to(pe)
-          bounds.add(min.offset(v))
-          bounds.add(max.offset(v))
-
-        end
-
-        bounds
-      end
     end
 
     # -----
@@ -1647,11 +1619,11 @@ module Ladb::OpenCutList
             if _fetch_option_mirror
 
               if x == 1 && y == 1
-                mt *= Geom::Transformation.rotation(mp, Z_AXIS, Geometrix::ONE_PI)
+                mt *= Geom::Transformation.rotation(mp, Z_AXIS.transform(ht), Geometrix::ONE_PI)
                 mt *= Geom::Transformation.translation(mvu + mvu)
               elsif x == 1 || y == 1
                 mt = Geom::Transformation.scaling(mp, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
-                mt *= Geom::Transformation.rotation(mp, x == 1 ? X_AXIS : Y_AXIS, Geometrix::ONE_PI)
+                mt *= Geom::Transformation.rotation(mp, x == 1 ? X_AXIS.transform(ht) : Y_AXIS.transform(ht), Geometrix::ONE_PI)
                 mt *= Geom::Transformation.translation(mvu)
               end
 

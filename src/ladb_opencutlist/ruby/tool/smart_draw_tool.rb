@@ -595,36 +595,6 @@ module Ladb::OpenCutList
       true
     end
 
-    def getExtents
-      return Sketchup.active_model.bounds unless _picked_shape_start_point?
-
-      t = _get_transformation(@picked_shape_start_point)
-      ti = t.inverse
-
-      shape_points = _fetch_option_shape_offset > 0 ? _get_local_shapes_points_with_offset.flatten(1) : _get_local_shape_points
-
-      bounds = Geom::BoundingBox.new
-      bounds.add(shape_points.map { |point| point.transform(t) }) if shape_points.any?
-
-      if _picked_shape_end_point?
-
-        # Add Pull solid
-
-        picked_points = _get_picked_points
-        p2 = picked_points[1].transform(ti)
-        p3 = picked_points[2].transform(ti)
-
-        tt = Geom::Transformation.translation(p2.vector_to(p3))
-
-        top_shape_points = shape_points.map { |point| point.transform(tt) }
-
-        bounds.add(top_shape_points.map { |point| point.transform(t) })
-
-      end
-
-      bounds
-    end
-
     # -----
 
     protected

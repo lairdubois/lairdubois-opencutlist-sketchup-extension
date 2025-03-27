@@ -43,6 +43,7 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint_content(graphics)
+      super
       @_paths.each do |points|
         if @on_top
           points2d = points.map { |point| graphics.view.screen_coords(point) }
@@ -59,7 +60,7 @@ module Ladb::OpenCutList::Kuix
           )
         end
       end
-      super
+      @extents.add(@_paths.flatten(1)) unless @on_top || @_paths.empty?
     end
 
   end

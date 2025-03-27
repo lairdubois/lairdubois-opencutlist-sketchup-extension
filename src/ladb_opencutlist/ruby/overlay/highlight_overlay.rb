@@ -121,14 +121,6 @@ module Ladb::OpenCutList
 
     end
 
-    def getExtents
-      return nil if @drawing_def.nil? || !@drawing_def.faces_bounds.valid?
-      bounds = Geom::BoundingBox.new
-      bounds.add(@drawing_def.faces_bounds.min.transform(@drawing_def.transformation))
-      bounds.add(@drawing_def.faces_bounds.max.transform(@drawing_def.transformation))
-      bounds
-    end
-
     def get_unit(view = nil)
       return @unit unless @unit.nil?
       return 3 if view && Sketchup.active_model.nil?

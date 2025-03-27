@@ -2,15 +2,20 @@ module Ladb::OpenCutList::Kuix
 
   class Entity3d < Entity
 
-    attr_reader :bounds
+    attr_reader :bounds, :extents
     attr_accessor :transformation
 
     def initialize(id = nil)
       super(id)
 
+      # Bounds relative to parent
       @bounds = Bounds3d.new
 
+      # Transformation relative to parent
       @transformation = IDENTITY
+
+      # Bounding box in 3D world
+      @extents = Geom::BoundingBox.new
 
     end
 
@@ -25,8 +30,15 @@ module Ladb::OpenCutList::Kuix
     # -- LAYOUT --
 
     def do_layout(transformation)
-      @child.do_layout(transformation * @transformation) if @child
-      @next.do_layout(transformation) if @next
+      @extents.clear
+      if @child
+        @child.do_layout(transformation * @transformation)
+        @extents.add(@child.extents)
+      end
+      if @next
+        @next.do_layout(transformation) if @next
+        @extents.add(@next.extents)
+      end
       self.invalidated = false
     end
 

@@ -1181,11 +1181,6 @@ module Ladb::OpenCutList
       false
     end
 
-    def getExtents
-      return @action_handler.getExtents if !@action_handler.nil? && @action_handler.respond_to?(:getExtents)
-      super
-    end
-
     # -----
 
     def refresh

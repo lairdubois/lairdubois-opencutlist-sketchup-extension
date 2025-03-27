@@ -140,19 +140,28 @@ module Ladb::OpenCutList::Kuix
 
     # -- Manipulations --
 
+    def add!(point)
+      set!(
+        [ x_min, point.x ].min,
+        [ y_min, point.y ].min,
+        [ z_min, point.z ].min
+      )
+    end
+
     def union!(bounds)
       if is_empty?
         copy!(bounds)
       else
         set!(
           [ x_min, bounds.x_min ].min,
-          [ y_min, bounds.x_min ].min,
+          [ y_min, bounds.y_min ].min,
           [ z_min, bounds.z_min ].min,
           [ x_max, bounds.x_max ].max - x_min,
           [ z_max , bounds.z_max ].max - z_min,
           [ y_max , bounds.y_max ].max - y_min
         )
       end
+      self
     end
 
     # --
