@@ -545,6 +545,11 @@ tab:
       minimize_on_highlight: Minimize after *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used."
       general: General
+      sorting: Sorting
+      group_order_strategy: Group Sorting
+      group_order_strategy_help: |
+        Reorganize the tiles to define the sort order within each group.
+        Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
       part_order_strategy: Part Sorting
       part_order_strategy_help: |
         Reorganize the tiles to define the sort order within each group of parts.
@@ -552,6 +557,10 @@ tab:
       dimension_column_order_strategy: Dimension Order
       dimension_column_order_strategy_help: |
         Rearrange the following properties to define the display order of dimension columns.
+      property_material_type: Material type
+      property_material_name: Material name
+      property_std_width: Standard width
+      property_std_thickness: Standard thickness
       property_thickness: Thickness
       property_length: Length
       property_width: Width
@@ -646,8 +655,8 @@ tab:
       count: Quantity
       part_count: Number of Parts
       material: Material
-      material_type: Type of Material
-      material_name: Name of Material
+      material_type: Material type
+      material_name: Material name
       material_description: Material description
       material_url: URL of the material
       material_std_dimension: Standard dimensions

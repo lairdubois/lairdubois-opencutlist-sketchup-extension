@@ -545,13 +545,22 @@ tab:
       minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Ist diese Option aktiv, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
       general: Allgemein
-      part_order_strategy: Teile-Sortierung
+      sorting: Sortierung
+      group_order_strategy: Gruppensortierung
+      group_order_strategy_help: |
+        Die Sortierreihenfolge der Gruppen wird durch die Anordnung der folgenden Kacheln definiert.
+        Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
+      part_order_strategy: Teilesortierung
       part_order_strategy_help: |
         Die Sortierreihenfolge der Teile wird durch die Anordnung der folgenden Kacheln definiert.
         Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
       dimension_column_order_strategy: Reihenfolge der Spalten
       dimension_column_order_strategy_help: |
         Die Reihenfolge der Dimensionsspalten wird durch die Anordnung der Kacheln definiert.
+      property_material_type: Materialtyp
+      property_material_name: Materialname
+      property_std_width: Standardbreite
+      property_std_thickness: Standarddicke
       property_thickness: Dicke
       property_length: Länge
       property_width: Breite
