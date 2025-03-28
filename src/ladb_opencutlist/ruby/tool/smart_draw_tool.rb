@@ -229,7 +229,7 @@ module Ladb::OpenCutList
 
     attr_reader :picked_shape_start_point, :picked_shape_end_point, :picked_pull_end_point, :picked_move_end_point, :normal, :direction
 
-    def initialize(action, tool, action_handler = nil)
+    def initialize(action, tool, previous_action_handler = nil)
       super
 
       @mouse_ip = SmartInputPoint.new(tool)

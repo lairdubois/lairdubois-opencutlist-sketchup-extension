@@ -47,7 +47,7 @@ module Ladb::OpenCutList
       @edge_material_names = _def.edge_material_names
       @edge_material_colors = _def.edge_material_colors.map { |k, v| [ k, ColorUtils.color_to_hex(ColorUtils.color_visible_over_white(v)) ] }.to_h
       @edge_std_dimensions = _def.edge_std_dimensions
-      @edge_decrements = { :length => _def.edge_length_decrement > 0 ? _def.edge_length_decrement.to_s : nil, :width => _def.edge_width_decrement > 0 ? _def.edge_width_decrement.to_s : nil }
+      @edge_decrements = { :length => _def.edge_length_decrement > 0 ? DimensionUtils.str_add_units(_def.edge_length_decrement.to_s) : nil, :width => _def.edge_width_decrement > 0 ? DimensionUtils.str_add_units(_def.edge_width_decrement.to_s) : nil }
       @face_count = _def.face_count
       @face_pattern = _def.face_pattern
       @face_material_names = _def.face_material_names
