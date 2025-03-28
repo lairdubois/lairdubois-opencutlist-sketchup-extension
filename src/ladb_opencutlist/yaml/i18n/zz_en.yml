@@ -233,7 +233,7 @@ core:
       snippets: 187 - Formula examples
       help: 188 - Type **@** to get a list of variables.
     textinput_size:
-      quantity: 189 - Qty
+      quantity: 189 - Qty.
     three_viewer:
       view: 190 - {{ view }} View
       view_isometric: 191 - Isometric
@@ -1077,7 +1077,7 @@ tab:
         total_cut_count: 864 - Number of Cuts
         total_cut_length: 865 - Length of Cuts
         efficiency: 866 - Efficiency
-        count: 867 - Qty
+        count: 867 - Qty.
         length: 868 - Length
         width: 869 - Width
         total_length: 870 - Σ Length
@@ -1528,7 +1528,7 @@ tab:
       thickness_help: |
         1219 - Finished thickness of the material.
 
-        *Sizes without units are considered to be in model units.*
+        *If no unit is specified, the model unit will be applied.*
       length_increase: 1220 - Length Oversize
       length_increase_help: 1221 - Oversize applied to the length to define the **raw length**.
       width_increase: 1222 - Width Oversize
@@ -1537,29 +1537,29 @@ tab:
       thickness_increase_help: 1225 - Oversize applied to the thickness to define the **raw thickness**.
       std_lengths: 1226 - Standard Lengths
       std_lengths_help: |
-        1227 - Standard lengths of boards or edge bandings.
+        1227 - Standard lengths available for this material.
 
-        *Sizes without units are considered to be in model units.*
+        *If no unit is specified, the model unit will be applied.*
       std_widths: 1228 - Standard Widths
       std_widths_help: |
-        1229 - Standard widths of edge bandings.
+        1229 - Standard widths available for this material.
 
-        *Sizes without units are considered to be in model units.*
+        *If no unit is specified, the model unit will be applied.*
       std_thicknesses: 1230 - Standard Thicknesses
       std_thicknesses_help: |
-        1231 - Available **actual** rough thicknesses.
+        1231 - Standard thicknesses available for this material.
 
-        *Sizes without units are considered to be in model units.*
+        *If no unit is specified, the model unit will be applied.*
       std_sections: 1232 - Standard Cross Sections
       std_sections_help: |
         1233 - Standard cross sections available for this material.
 
-        *Sizes without units are considered to be in model units.*
-      std_sizes: 1234 - Standard Panel Sizes
+        *If no unit is specified, the model unit will be applied.*
+      std_sizes: 1234 - Standard Sizes
       std_sizes_help: |
         1235 - Standard sizes available for this material.
 
-        *Sizes without units are considered to be in model units.*
+        *If no unit is specified, the model unit will be applied.*
       grained: 1236 - Grain Orientation
       grained_help: 1237 - Selects the grain orientation in relation to the length of the panel.
       grained_0: 1238 - No grain
@@ -1579,8 +1579,8 @@ tab:
         The total volume will be the sum of the volumes of the panels, sheets, boards or edge bandings of the parts after cutting.
       raw_estimated_0: 1246 - Effective volume
       raw_estimated_1: 1247 - Volume of raw material required
-      multiplier_coefficient: 1248 - Multiplying coefficient
-      multiplier_coefficient_help: 1249 - Used to indicate the multiplying factor applied to the gross volume measured.
+      multiplier_coefficient: 1248 - Coefficient
+      multiplier_coefficient_help: 1249 - Used to indicate the multiplying coefficient applied to the gross volume.
       std_attributes_dim_placeholder: 1250 - Select a size
       std_volumic_masses: 1251 - Density
       std_volumic_masses_help: 1252 - Allows to set the density for all sizes as well as for each standard material size.

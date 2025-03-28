@@ -683,7 +683,7 @@ tab:
         547 - Erstellung eine Kalkulation der **Massen** und der **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden.
       options_general: 548 - Allgemein
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: 550 - Der Multiplikator für Materialien des Typs ""**$t(tab.materials.type_1)**"" wird nun für jedes Material in den Schätzoptionen konfiguriert.
+      option_solid_wood_coefficient_bc: 550 - Der Faktor für Materialien des Typs ""**$t(tab.materials.type_1)**"" wird nun für jedes Material in den Schätzoptionen konfiguriert.
       raw_materials: 551 - Rohmaterial
       total: 552 - Total
       total_used: 553 - Verwendet
@@ -697,7 +697,7 @@ tab:
       total_length: 561 - Σ Längen
       tooltip:
         incompatible_unit: 562 - Einheit nicht kompatibel mit den Kalkulationsoptionen des Materials
-        multiplier_coefficient: 563 - Multiplikator-Koeffizient
+        multiplier_coefficient: 563 - Faktor
       error:
         no_typed_material_parts: 564 - Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um die Kalkulation zu generieren.
         entry_error: '565 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**.'
@@ -732,8 +732,8 @@ tab:
       option_hide_part_list_2d_good_0: 588 - Anzeigen für jede Platte
       option_hide_part_list_2d_veneer_0: 589 - Anzeigen für jedes Furnierblatt
       option_hide_part_list_1: 590 - Maskiert
-      option_hide_part_list_1d_help: 591 - Anzeigen oder Ausblenden der Liste der Teile für jede Stange oder jedes Kantenband.
-      option_hide_part_list_2d_help: 592 - Anzeigen oder Ausblenden der Liste der Teile für jede Platte oder jedes Furnierblatt.
+      option_hide_part_list_1d_help: 591 - Anzeigen oder Maskieren der Liste der Teile für jede Stange oder jedes Kantenband.
+      option_hide_part_list_2d_help: 592 - Anzeigen oder Maskieren der Liste der Teile für jede Platte oder jedes Furnierblatt.
       option_use_names: 593 - Identifizierung der Teile
       option_use_names_0: 594 - Nummer verwenden
       option_use_names_1: 595 - Bezeichnung verwenden
@@ -1535,29 +1535,29 @@ tab:
       width_increase_help: 1223 - Übermaß welches das **Breitenrohmaß** vergrössert.
       thickness_increase: 1224 - Dickenzumaß
       thickness_increase_help: 1225 - Übermaß welches das **Dickerohmaß** vergrössert.
-      std_lengths: 1226 - Standard-Längen
+      std_lengths: 1226 - Standardlängen
       std_lengths_help: |
-        1227 - Standard-Stangen oder -Kantenbandlängen.
+        1227 - Standardlängen für dieses Material.
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
-      std_widths: 1228 - Standard-Breiten
+      std_widths: 1228 - Standardbreiten
       std_widths_help: |
-        1229 - Standardbreiten der Kantenbänder.
+        1229 - Standardbreiten für dieses Material.
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
-      std_thicknesses: 1230 - Standard-Dicken
+      std_thicknesses: 1230 - Standarddicken
       std_thicknesses_help: |
-        1231 - **Rohmaße** der verfügbaren Dicken.
+        1231 - Standarddicken für dieses Material.
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
-      std_sections: 1232 - Standard-Querschnitte
+      std_sections: 1232 - Standardquerschnitte
       std_sections_help: |
-        1233 - Verfügbare Querschnitte für dieses Material.
+        1233 - Standardquerschnitte für dieses Material.
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
-      std_sizes: 1234 - Standard-Plattenmaße
+      std_sizes: 1234 - Standardmaße
       std_sizes_help: |
-        1235 - Verfügbare Maße für dieses Material.
+        1235 - Standardmaße für dieses Material.
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       grained: 1236 - Faserrichtung
@@ -1579,8 +1579,8 @@ tab:
         Das Gesamtvolumen ist die Summe der Volumen der Platten, Furnierblätter, Stangen oder Bänder der Teile nach dem Zuschnitt.
       raw_estimated_0: 1246 - Nutzvolumen der Teile
       raw_estimated_1: 1247 - Volumen des benötigten Rohmaterials
-      multiplier_coefficient: 1248 - Multiplikator-Koeffizient
-      multiplier_coefficient_help: 1249 - Ermöglicht die Angabe des Multiplikators, der auf das gemessene Bruttovolumen angewendet wird.
+      multiplier_coefficient: 1248 - Faktor
+      multiplier_coefficient_help: 1249 - Ermöglicht die Angabe des Faktors, der auf das gemessene Bruttovolumen angewendet wird.
       std_attributes_dim_placeholder: 1250 - Wählen Sie eine Größe
       std_volumic_masses: 1251 - Rohdichte
       std_volumic_masses_help: 1252 - Ermöglicht das Festlegen der Rohdichte für alle Größen sowie für jede Standardgröße des Materials.
@@ -1924,7 +1924,7 @@ tool:
     vcb_diameter: 1473 - Durchmesser
     vcb_distance: 1474 - Distanz
     error:
-      no_direction: 1475 - Bitte geben Sie eine Richtung mit der Maus an
+      no_direction: 1475 - Bitte mit der Maus eine Richtung angeben
       invalid_length: 1476 - Die Länge {{ value }} ist ungültig
       invalid_multiplicator: 1477 - Der Faktor {{ value }} ist ungültig
       invalid_divider: 1478 - Der Teiler {{ value }} ist ungültig
@@ -2032,7 +2032,7 @@ tool:
     action_3_status: 1573 - Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
     action_4: 1574 - Säubern
     action_4_status: 1575 - Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu entfernen
-    action_option_group_instances: 1576 - Anzahl der Instanzen
+    action_option_group_instances: 1576 - Anzahl Instanzen
     action_option_group_edges: 1577 - Anzahl Kantenbänder
     action_option_group_faces: 1578 - Anzahl Flächen
     action_option_instances_0_status: 1579 - Nur die Instanz des ausgewählten Teils einfärben
