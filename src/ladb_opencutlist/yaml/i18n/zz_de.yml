@@ -1107,8 +1107,8 @@ tab:
         bin_2d_veneer_type_0: 892 - Standard-Furnierblatt
         bin_2d_veneer_type_1: 893 - Furnierrest
         unused: 894 - Nicht verwendet
-        parts: 895 - {{ count }} Teil
-        parts_plural: 896 - {{ count }} Teile
+        parts: 895 - Teil
+        parts_plural: 896 - Teile
         leftovers: 897 - Verschnitt
         leftovers_plural: 898 - Verschnitte
         leftovers_to_keep: 899 - Verschnitt zur Aufbewahrung

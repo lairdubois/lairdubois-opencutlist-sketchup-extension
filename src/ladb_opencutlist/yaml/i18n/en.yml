@@ -1109,8 +1109,8 @@ tab:
         bin_2d_veneer_type_0: Standard Veneer Sheet
         bin_2d_veneer_type_1: Veneer Sheet Off-cut
         unused: Unused
-        parts: "{{ count }} part"
-        parts_plural: "{{ count }} parts"
+        parts: Part
+        parts_plural: Parts
         leftovers: Off-cut
         leftovers_plural: Off-cuts
         leftovers_to_keep: Off-cut to keep

@@ -1107,8 +1107,8 @@ tab:
         bin_2d_veneer_type_0: 892 - Standard Veneer Sheet
         bin_2d_veneer_type_1: 893 - Veneer Sheet Off-cut
         unused: 894 - Unused
-        parts: 895 - {{ count }} part
-        parts_plural: 896 - {{ count }} parts
+        parts: 895 - Part
+        parts_plural: 896 - Parts
         leftovers: 897 - Off-cut
         leftovers_plural: 898 - Off-cuts
         leftovers_to_keep: 899 - Off-cut to keep

@@ -1109,8 +1109,8 @@ tab:
         bin_2d_veneer_type_0: Standard-Furnierblatt
         bin_2d_veneer_type_1: Furnierrest
         unused: Nicht verwendet
-        parts: "{{ count }} Teil"
-        parts_plural: "{{ count }} Teile"
+        parts: Teil
+        parts_plural: Teile
         leftovers: Verschnitt
         leftovers_plural: Verschnitte
         leftovers_to_keep: Verschnitt zur Aufbewahrung
