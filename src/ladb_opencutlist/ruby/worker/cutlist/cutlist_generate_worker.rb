@@ -38,6 +38,7 @@ module Ladb::OpenCutList
                    part_number_with_letters: true,
                    part_number_sequence_by_group: true,
                    part_folding: false,
+                   group_order_strategy: 'material_type>material_name>-std_width>-std_thickness',
                    part_order_strategy: '-thickness>-length>-width>-count>name>-edge_pattern>tags>thickness_layer_count',
                    hide_descriptions: false,
                    hide_tags: false,
@@ -71,6 +72,7 @@ module Ladb::OpenCutList
       @part_number_with_letters = part_number_with_letters
       @part_number_sequence_by_group = part_number_sequence_by_group
       @part_folding = part_folding
+      @group_order_strategy = group_order_strategy
       @part_order_strategy = part_order_strategy
       @hide_descriptions = hide_descriptions
       @hide_tags = hide_tags
@@ -293,12 +295,11 @@ module Ladb::OpenCutList
           end
 
           # Increment material usage
-          edge_materials.each { |edge_material|
-            material_usage = _get_material_usage(edge_material.name)
-            if material_usage
+          edge_materials.each do |edge_material|
+            if (material_usage = _get_material_usage(edge_material.name))
               material_usage.use_count += 1
             end
-          }
+          end
 
           # Grab material attributes
           edge_ymin_material_attributes = _get_material_attributes(edge_ymin_material)
@@ -350,12 +351,11 @@ module Ladb::OpenCutList
           end
 
           # Increment material usage
-          veneer_materials.each { |veneer_material|
-            material_usage = _get_material_usage(veneer_material.name)
-            if material_usage
+          veneer_materials.each do |veneer_material|
+            if (material_usage = _get_material_usage(veneer_material.name))
               material_usage.use_count += 1
             end
-          }
+          end
 
           # Grab material attributes
           veneer_zmin_material_attributes = _get_material_attributes(veneer_zmin_material)
@@ -777,7 +777,7 @@ module Ladb::OpenCutList
 
       # Sort and browse groups
 
-      @group_defs_cache.sort_by { |k, v| [ MaterialAttributes.type_order(v.material_attributes.type), v.material_name.empty? ? '~' : v.material_name.downcase, -v.std_width, -v.std_thickness ] }.each do |key, group_def|
+      @group_defs_cache.values.sort { |group_def_a, group_def_b| GroupDef::group_order(group_def_a, group_def_b, @group_order_strategy) }.each do |group_def|
 
         # Exclude empty groupDef
         next if group_def.part_count == 0

@@ -2354,7 +2354,7 @@
                 options.layout = $editorLabelLayout.ladbEditorLabelLayout('getElementDefs');
                 options.offset = fnValidOffset($editorLabelOffset.ladbEditorLabelOffset('getOffset'), options.col_count, options.row_count);
 
-                const properties = [];
+                let properties = [];
                 $sortablePartOrderStrategy.children('li').each(function () {
                     properties.push($(this).data('property'));
                 });
@@ -2384,7 +2384,7 @@
 
                 // Part order sortables
 
-                const properties = options.part_order_strategy.split('>');
+                let properties = options.part_order_strategy.split('>');
                 $sortablePartOrderStrategy.empty();
                 for (let i = 0; i < properties.length; i++) {
                     const property = properties[i];
@@ -5817,6 +5817,7 @@
         const $inputHideFaces = $('#ladb_input_hide_faces', $modal);
         const $inputHideMaterialColors = $('#ladb_input_hide_material_colors', $modal);
         const $inputMinimizeOnHighlight = $('#ladb_input_minimize_on_highlight', $modal);
+        const $sortableGroupOrderStrategy = $('#ladb_sortable_group_order_strategy', $modal);
         const $sortablePartOrderStrategy = $('#ladb_sortable_part_order_strategy', $modal);
         const $inputTags = $('#ladb_input_tags', $modal);
         const $sortableDimensionColumnOrderStrategy = $('#ladb_sortable_dimension_column_order_strategy', $modal);
@@ -5845,6 +5846,12 @@
             options.tags = $inputTags.tokenfield('getTokensList').split(';');
 
             let properties = [];
+            $sortableGroupOrderStrategy.children('li').each(function () {
+                properties.push($(this).data('property'));
+            });
+            options.group_order_strategy = properties.join('>');
+
+            properties = [];
             $sortablePartOrderStrategy.children('li').each(function () {
                 properties.push($(this).data('property'));
             });
@@ -5883,6 +5890,34 @@
             // Sortables
 
             let properties, property, i;
+
+            // Group order sortables
+
+            properties = options.group_order_strategy.split('>');
+            $sortableGroupOrderStrategy.empty();
+            for (i = 0; i < properties.length; i++) {
+                property = properties[i];
+                $sortableGroupOrderStrategy.append(Twig.twig({ref: "tabs/cutlist/_option-part-order-strategy-property.twig"}).render({
+                    order: property.startsWith('-') ? '-' : '',
+                    property: property.startsWith('-') ? property.substring(1) : property
+                }));
+            }
+            $sortableGroupOrderStrategy.find('a').on('click', function () {
+                const $item = $(this).parent().parent();
+                const $icon = $('i', $(this));
+                let property = $item.data('property');
+                if (property.startsWith('-')) {
+                    property = property.substring(1);
+                    $icon.addClass('ladb-opencutlist-icon-sort-asc');
+                    $icon.removeClass('ladb-opencutlist-icon-sort-desc');
+                } else {
+                    property = '-' + property;
+                    $icon.removeClass('ladb-opencutlist-icon-sort-asc');
+                    $icon.addClass('ladb-opencutlist-icon-sort-desc');
+                }
+                $item.data('property', property);
+            });
+            $sortableGroupOrderStrategy.sortable(SORTABLE_OPTIONS);
 
             // Part order sortables
 

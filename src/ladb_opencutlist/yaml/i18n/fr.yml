@@ -545,6 +545,11 @@ tab:
       minimize_on_highlight: Réduire après *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Si cette option est activée, la fenêtre OpenCutList sera réduite lorsque la fonction *'$t(tab.cutlist.highlight_part)'* est utilisée."
       general: Générales
+      sorting: Tri
+      group_order_strategy: Tri des groupes
+      group_order_strategy_help: |
+        Réorganiser les propriétés suivantes pour définir la stratégie de tri des groupes.
+        Chaque propriété peut être triée de façon <i class="ladb-opencutlist-icon-sort-asc"></i> *croissante* ou <i class="ladb-opencutlist-icon-sort-desc"></i> *décroissante*.
       part_order_strategy: Tri des pièces
       part_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir la stratégie de tri des pièces dans chaque groupe.
@@ -552,6 +557,10 @@ tab:
       dimension_column_order_strategy: Ordre des colonnes
       dimension_column_order_strategy_help: |
         Réorganiser les propriétés suivantes pour définir l'ordre d'affichage des colonnes de dimension.
+      property_material_type: Type de la matière
+      property_material_name: Nom de la matière
+      property_std_width: Largeur standard
+      property_std_thickness: Épaisseur standard
       property_thickness: Épaisseur
       property_length: Longueur
       property_width: Largeur

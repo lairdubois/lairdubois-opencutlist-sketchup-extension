@@ -12,7 +12,7 @@
     {{ parent() }}
     <ul class="nav nav-tabs nav-justified" role="tablist">
         <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_options_general" role="tab" data-toggle="tab">{{ 'tab.cutlist.option.general'|i18next }}</a></li>
-        <li role="presentation"{% if tab == 'part_order_strategy' %} class="active"{% endif %}><a href="#tab_options_part_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.cutlist.option.part_order_strategy'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'sorting' %} class="active"{% endif %}><a href="#tab_options_sorting" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-asc"></i> {{ 'tab.cutlist.option.sorting'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'dimension_column_order_strategy' %} class="active"{% endif %}><a href="#tab_options_dimension_column_order_strategy" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-sort-col"></i> {{ 'tab.cutlist.option.dimension_column_order_strategy'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'tags' %} class="active"{% endif %}><a href="#tab_options_tags" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-tag"></i> {{ 'tab.cutlist.option.tags'|i18next }}</a></li>
     </ul>
@@ -162,13 +162,25 @@
                     </div>
                 </div>
             </div>
-            <div role="tabpanel" class="tab-pane{% if tab == 'part_order_strategy' %} active{% endif %}" id="tab_options_part_order_strategy">
-                <p class="help-block text-center"><small>{{ 'tab.cutlist.option.part_order_strategy_help'|i18next }}</small></p>
-                <div class="row">
-                    <div  class="col-xs-offset-2 col-xs-8">
-                        <ul id="ladb_sortable_part_order_strategy" class="ladb-sortable-list"></ul>
+            <div role="tabpanel" class="tab-pane{% if tab == 'sorting' %} active{% endif %}" id="tab_options_sorting">
+                <section>
+                    <div style="font-weight: bold; text-align: center; margin: 5px 0;">{{ 'tab.cutlist.option.group_order_strategy'|i18next }}</div>
+                    <p class="help-block text-center"><small>{{ 'tab.cutlist.option.group_order_strategy_help'|i18next }}</small></p>
+                    <div class="row">
+                        <div  class="col-xs-offset-2 col-xs-8">
+                            <ul id="ladb_sortable_group_order_strategy" class="ladb-sortable-list"></ul>
+                        </div>
                     </div>
-                </div>
+                </section>
+                <section>
+                    <div style="font-weight: bold; text-align: center; margin: 5px 0;">{{ 'tab.cutlist.option.part_order_strategy'|i18next }}</div>
+                    <p class="help-block text-center"><small>{{ 'tab.cutlist.option.part_order_strategy_help'|i18next }}</small></p>
+                    <div class="row">
+                        <div  class="col-xs-offset-2 col-xs-8">
+                            <ul id="ladb_sortable_part_order_strategy" class="ladb-sortable-list"></ul>
+                        </div>
+                    </div>
+                </section>
             </div>
             <div role="tabpanel" class="tab-pane{% if tab == 'dimension_column_order_strategy' %} active{% endif %}" id="tab_options_dimension_column_order_strategy">
                 <p class="help-block text-center"><small>{{ 'tab.cutlist.option.dimension_column_order_strategy_help'|i18next }}</small></p>

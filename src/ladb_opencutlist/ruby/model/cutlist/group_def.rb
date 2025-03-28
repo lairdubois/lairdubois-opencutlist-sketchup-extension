@@ -40,6 +40,46 @@ module Ladb::OpenCutList
       Digest::MD5.hexdigest("#{material.nil? ? 0 : material_attributes.uuid}#{material_attributes.type > MaterialAttributes::TYPE_UNKNOWN ? '|' + DimensionUtils.to_ocl_precision_f(std_info[:width].to_l).to_s + 'x' + DimensionUtils.to_ocl_precision_f(std_info[:thickness].to_l).to_s : ''}")
     end
 
+    def self.group_order(group_def_a, group_def_b, strategy)
+      a_values = []
+      b_values = []
+      if strategy
+        properties = strategy.split('>')
+        properties.each { |property|
+          next if property.length < 1
+          asc = true
+          if property.start_with?('-')
+            asc = false
+            property.slice!(0)
+          end
+          case property
+          when 'material_type'
+            a_value = [ MaterialAttributes.type_order(group_def_a.material_attributes.type) ]
+            b_value = [ MaterialAttributes.type_order(group_def_b.material_attributes.type) ]
+          when 'material_name'
+            a_value = [ group_def_a.material_name.empty? ? '~' : group_def_a.material_name.downcase ]
+            b_value = [ group_def_b.material_name.empty? ? '~' : group_def_b.material_name.downcase ]
+          when 'std_width'
+            a_value = [ group_def_a.std_width ]
+            b_value = [ group_def_b.std_width ]
+          when 'std_thickness'
+            a_value = [ group_def_a.std_thickness ]
+            b_value = [ group_def_b.std_thickness ]
+          else
+            next
+          end
+          if asc
+            a_values.concat(a_value)
+            b_values.concat(b_value)
+          else
+            a_values.concat(b_value)
+            b_values.concat(a_value)
+          end
+        }
+      end
+      a_values <=> b_values
+    end
+
     # -----
 
     def store_part_def(part_def)
