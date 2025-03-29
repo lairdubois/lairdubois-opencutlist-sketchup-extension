@@ -1977,6 +1977,8 @@ tool:
     action_option_options_measure_reversed_status: Inverser la mesure
     action_option_options_pull_centered: Élévation centrée
     action_option_options_pull_centered_status: Centrer l'élévation sur le premier point
+    action_option_options_ask_name: Demander le nom de la pièce
+    action_option_options_ask_name_status: Demander le nom de la pièce après sa création
     action_pull_locked_status: Verrouiller sur la dernière mesure
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage

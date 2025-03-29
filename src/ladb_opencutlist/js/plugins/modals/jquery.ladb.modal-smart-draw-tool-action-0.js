@@ -33,6 +33,7 @@
             const $selectConstrution = $('#ladb_select_construction', that.$element);
             const $selectRectangleCentered = $('#ladb_select_rectangle_centered', that.$element);
             const $selectPullCentered = $('#ladb_select_pull_centered', that.$element);
+            const $selectAskName = $('#ladb_select_ask_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
@@ -40,12 +41,14 @@
                 options.construction = $selectConstrution.val() === '1';
                 options.rectangle_centered = $selectRectangleCentered.val() === '1';
                 options.pull_centered = $selectPullCentered.val() === '1';
+                options.ask_name = $selectAskName.val() === '1';
             };
             const fnFillInputs = function (options) {
                 $inputShapeOffset.val(options.shape_offset);
                 $selectConstrution.selectpicker('val', options.construction ? '1' : '0');
                 $selectRectangleCentered.selectpicker('val', options.rectangle_centered ? '1' : '0');
                 $selectPullCentered.selectpicker('val', options.pull_centered ? '1' : '0');
+                $selectAskName.selectpicker('val', options.ask_name ? '1' : '0');
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -59,6 +62,7 @@
             $selectConstrution.selectpicker(SELECT_PICKER_OPTIONS);
             $selectRectangleCentered.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPullCentered.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectAskName.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(options);
 

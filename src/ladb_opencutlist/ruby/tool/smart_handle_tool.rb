@@ -916,6 +916,19 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT, STATE_HANDLE_START, STATE_HANDLE
+        return super +
+             ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_handle.action_option_options_mirror_status') + '.'
+
+      end
+
+      super
+    end
+
     def get_state_vcb_label(state)
 
       case state
@@ -1437,6 +1450,20 @@ module Ladb::OpenCutList
       case state
       when STATE_SELECT, STATE_HANDLE
         return @tool.cursor_select_copy_grid
+      end
+
+      super
+    end
+
+
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT, STATE_HANDLE_START, STATE_HANDLE
+        return super +
+           ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_handle.action_option_options_mirror_status') + '.'
+
       end
 
       super

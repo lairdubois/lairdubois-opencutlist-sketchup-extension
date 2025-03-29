@@ -33,13 +33,14 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER = 'measure_from_diameter'
     ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
     ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
+    ACTION_OPTION_OPTIONS_ASK_NAME = 'ask_name'
 
     ACTIONS = [
       {
         :action => ACTION_DRAW_RECTANGLE,
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_PULL_CENTRED ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
       {
@@ -47,14 +48,14 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
           ACTION_OPTION_SEGMENTS => [ ACTION_OPTION_SEGMENTS_SEGMENT_COUNT ],
-          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_PULL_CENTRED ]
+          ACTION_OPTION_OPTIONS => [ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_SMOOTHING, ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       },
       {
         :action => ACTION_DRAW_POLYGON,
         :options => {
           ACTION_OPTION_OFFSET => [ ACTION_OPTION_OFFSET_SHAPE_OFFSET ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_PULL_CENTRED ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CONSTRUCTION, ACTION_OPTION_OPTIONS_MEASURE_REVERSED, ACTION_OPTION_OPTIONS_PULL_CENTRED, ACTION_OPTION_OPTIONS_ASK_NAME ]
         }
       }
     ].freeze
@@ -156,6 +157,8 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0,0.667L1,0.667L1,1L0,1 M0.25,0.667L0.25,0.833 M0.5,0.667L0.5,0.833 M0.75,0.667L0.75,0.833  M0.861,0.292L0.708,0.139L0.5,0.083L0.292,0.139L0.14,0.292 M0.14,0.083L0.14,0.292L0.333,0.292'))
         when ACTION_OPTION_OPTIONS_PULL_CENTRED
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
+        when ACTION_OPTION_OPTIONS_ASK_NAME
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0.25L1,0.25L1,0.75L0,0.75L0,0.25 M0.438,0.313L0.438,0.688 M0.125,0.625L0.125,0.375L0.313,0.625L0.313,0.375'))
         end
       end
 
@@ -273,6 +276,10 @@ module Ladb::OpenCutList
     def get_state_status(state)
 
       case state
+
+      when STATE_SHAPE_START
+        return super +
+          ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.'
 
       when STATE_SHAPE
         return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_#{state}_status") + '.'
@@ -932,6 +939,10 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED)
     end
 
+    def _fetch_option_ask_name
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_ASK_NAME)
+    end
+
     # -----
 
     def _get_axes
@@ -1125,27 +1136,35 @@ module Ladb::OpenCutList
 
         if active?
 
-          # Notify part created and propose renaming
-          @tool.notify_success(
-            PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => definition.name }),
-            [
-              {
-                :label => PLUGIN.get_i18n_string('default.rename'),
-                :block => lambda {
-                  unless @definition.nil? || @definition.deleted?
-                    if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ @definition.name ], PLUGIN.get_i18n_string('default.rename')))
-                      name = data.first
-                      if name.empty?
-                        UI.beep
-                      else
-                        @definition.name = name
-                      end
-                    end
-                  end
-                },
-              }
-            ]
-          )
+          fn_ask_name = lambda {
+            unless instance.nil? || instance.definition.nil? || instance.definition.deleted?
+              if (data = UI.inputbox([ PLUGIN.get_i18n_string('tab.cutlist.edit_part.name') ], [ instance.definition.name ], PLUGIN.get_i18n_string('default.rename')))
+                name = data.first
+                if name.empty?
+                  UI.beep
+                else
+                  instance.definition.name = name
+                end
+              end
+            end
+          }
+
+          if _fetch_option_ask_name
+            fn_ask_name.call
+          else
+
+            # Notify part created and propose renaming
+            @tool.notify_success(
+              PLUGIN.get_i18n_string("tool.smart_draw.success.part_created", { :name => definition.name }),
+              [
+                {
+                  :label => PLUGIN.get_i18n_string('default.rename'),
+                  :block => fn_ask_name,
+                }
+              ]
+            )
+
+          end
 
         end
 
@@ -1349,7 +1368,7 @@ module Ladb::OpenCutList
 
       case state
 
-      when STATE_SHAPE
+      when STATE_SHAPE_START, STATE_SHAPE
         return super +
           ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_rectangle_centered_status') + '.'
 
@@ -1977,7 +1996,7 @@ module Ladb::OpenCutList
 
       case state
 
-      when STATE_SHAPE
+      when STATE_SHAPE_START, STATE_SHAPE
         return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_1_#{_fetch_option_measure_from_diameter ? 'diameter' : 'radius'}_status") + '.' +
           ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_draw.action_option_options_measure_from_#{_fetch_option_measure_from_diameter ? 'radius' : 'diameter'}_status") + '.'
 
@@ -2323,7 +2342,7 @@ module Ladb::OpenCutList
 
       case state
 
-      when STATE_SHAPE
+      when STATE_SHAPE_START, STATE_SHAPE
         return super +
           ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_draw.action_option_options_measure_reversed_status") + '.'
 

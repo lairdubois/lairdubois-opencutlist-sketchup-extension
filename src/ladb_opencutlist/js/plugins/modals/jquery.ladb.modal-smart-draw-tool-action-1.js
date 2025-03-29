@@ -35,6 +35,7 @@
             const $selectSmoothing = $('#ladb_select_smoothing', that.$element);
             const $selectMeasureFromDiameter = $('#ladb_select_measure_from_diameter', that.$element);
             const $selectPullCentered = $('#ladb_select_pull_centered', that.$element);
+            const $selectAskName = $('#ladb_select_ask_name', that.$element);
             const $btnValidate = $('#ladb_btn_validate', that.$element);
 
             const fnFetchOptions = function (options) {
@@ -44,6 +45,7 @@
                 options.smoothing = $selectSmoothing.val() === '1';
                 options.measure_from_diameter = $selectMeasureFromDiameter.val() === '1';
                 options.pull_centered = $selectPullCentered.val() === '1';
+                options.ask_name = $selectAskName.val() === '1';
             };
             const fnFillInputs = function (options) {
                 $inputSectionOffset.val(options.shape_offset);
@@ -52,6 +54,7 @@
                 $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                 $selectMeasureFromDiameter.selectpicker('val', options.measure_from_diameter ? '1' : '0');
                 $selectPullCentered.selectpicker('val', options.pull_centered ? '1' : '0');
+                $selectAskName.selectpicker('val', options.ask_name ? '1' : '0');
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -69,6 +72,7 @@
             $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
             $selectMeasureFromDiameter.selectpicker(SELECT_PICKER_OPTIONS);
             $selectPullCentered.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectAskName.selectpicker(SELECT_PICKER_OPTIONS);
 
             fnFillInputs(options);
 
