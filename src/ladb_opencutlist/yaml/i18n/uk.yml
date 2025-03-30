@@ -41,6 +41,7 @@ default:
   rename: Перейменувати
   yes: Так
   no: Ні
+  automatic: Автоматичний
   empty_filename: Безіменний.skp
   help: Допомога
   error: Виправити!
@@ -83,6 +84,10 @@ default:
   file_plural: Файли
   stroke_color: Колір лінії
   fill_color: Колір заливки
+  length: Довжина
+  width: Ширина
+  thickness: Товщина
+  height: Висота
 core:
   menu:
     submenu: OpenCutList
@@ -233,6 +238,8 @@ core:
     textinput_code:
       snippets: Приклади формул
       help: "Натисніть **@**, щоб відкрити введення змінних даних."
+    textinput_size:
+      quantity: Кількість
     three_viewer:
       view: "Вид {{ view }}"
       view_isometric: Ізометрія
@@ -544,6 +551,11 @@ tab:
       minimize_on_highlight: Стовпці після *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Якщо цей параметр увімкнено, вікно OpenCutList буде згорнуто під час використання функції *'$t(tab.cutlist.highlight_part)'*."
       general: Загальні
+      sorting: Сортування
+      group_order_strategy: Групове сортування
+      group_order_strategy_help: |
+        Реорганізуйте наступні властивості для визначення стратегії сортування груп.
+        Кожну властивість можна відсортувати за <i class="ladb-opencutlist-icon-sort-asc"></i> *за зростанням* або <i class="ladb-opencutlist-icon-sort-desc"></i> *за спаданням*.
       part_order_strategy: Сортування деталей
       part_order_strategy_help: |
         Переставте наступні властивості, щоб визначити стратегію сортування для деталей у кожній групі.
@@ -551,6 +563,10 @@ tab:
       dimension_column_order_strategy: Співвідношення розміру
       dimension_column_order_strategy_help: |
         Переставте наступні властивості, щоб установити порядок відображення стовпців розмірів.
+      property_material_type: Тип матеріалу
+      property_material_name: Назва матеріалу
+      property_std_width: Стандартна ширина
+      property_std_thickness: Стандартна товщина
       property_thickness: Товщина
       property_length: Довжина
       property_width: Ширина
@@ -580,7 +596,7 @@ tab:
       volume: Об’єм
       number: N°
       name: Позначення
-      count: К-ть
+      count: Кількість
       cutting: Деталі
       bbox: Габаритний
       final: Фактичний
@@ -693,7 +709,7 @@ tab:
       total_unused: Невикористаний
       total_mass: Σ Маса
       total_cost: Σ Ціна
-      total_count: К-ть
+      total_count: Кількість
       total_instance_count: Σ Одиниць
       total_volume: Σ Об’ємів
       total_area: Σ Площь
@@ -833,7 +849,7 @@ tab:
       list:
         unplaced_parts: Нерозміщені деталі
         summary: Звіт
-        count: К-ть
+        count: Кількість
         bar: Погонаж
         sheet: Листовий
         length: Довжина
@@ -1294,12 +1310,14 @@ tab:
       type: Тип
       description: Опис
       url: URL
+      formats: Формати
       cut_options: Параметри розкрою
       estimate_options: Опції оцінки
       attributes: Атрибути
       thickness: Товщина
       thickness_help: |
-        Готова товщина матеріалу.
+        Кінцева товщина матеріалу.
+
         *Якщо одиниці не вказано, буде враховано одиницю моделі.*
       length_increase: Припуск по довжині
       length_increase_help: Припуск додається до фактичної довжини для розрахунку **пильної довжини**.
@@ -1308,30 +1326,30 @@ tab:
       thickness_increase: Припуск по товщині
       thickness_increase_help: Припуск до фактичної товщини для розрахунку **пильної товщини**.
       std_lengths: Стандартні довжини
-      std_lengths_placeholder: довжина ; ...
       std_lengths_help: |
-        Стандартні довжини дошок або крайок.
+        Стандартна довжина, доступна для цього матеріалу.
+
         *Якщо одиниці не вказано, буде враховано одиницю моделі.*
       std_widths: Стандартні ширини
-      std_widths_placeholder: ширина ; ...
       std_widths_help: |
-        Стандартна ширина крайки.
-        *Якщо одиниця не вказана, буде враховано одиницю моделі.*
+        Стандартна ширина, доступна для цього матеріалу.
+
+        *Якщо одиниці не вказано, буде враховано одиницю моделі.*
       std_thicknesses: Стандартні товщини
-      std_thicknesses_placeholder: товщина ; ...
       std_thicknesses_help: |
-        Стандартна **сира** товщина.
-        *Якщо одиниця не вказана, буде враховано одиницю моделі.*
+        Стандартна товщина, доступна для цього матеріалу.
+
+        *Якщо одиниці не вказано, буде враховано одиницю моделі.*
       std_sections: Стандартні січення
-      std_sections_placeholder: ширина х висота; ...
       std_sections_help: |
-        Очікуваний формат: **Ш**x**В**. Де **Ш** і **В** — *ширина* і *висота* січення відповідно.
-        *Якщо для кожного виміру не вказано жодної одиниці, враховується одиниця моделі.*
+        Стандартні перерізи, доступні для цього матеріалу.
+
+        *Якщо одиниці не вказано, буде враховано одиницю моделі.*
       std_sizes: Стандартні розміри
-      std_sizes_placeholder: довжина х ширина; ...
       std_sizes_help: |
-        Очікуваний формат: **Д**x**Ш**. Де **Д** і **Ш** — *довжина* і *ширина* панелі відповідно.
-        *Якщо для кожного розміру не вказано одиницю, буде враховано одиницю моделі.*
+        Стандартні розміри, доступні для цього матеріалу.
+
+        *Якщо одиниці не вказано, буде враховано одиницю моделі.*
       grained: Напрямок текстури
       grained_help: Визначає орієнтацію зображення фактури матеріалу волокон відносно довжини панелі.
       grained_0: Без фактури
@@ -1351,6 +1369,8 @@ tab:
         **Сума обсягів деталей з панелей, листів, погонажу або кромок після розкрою.
       raw_estimated_0: Корисний обсяг матеріалу
       raw_estimated_1: Об'єм використаного матеріалу
+      multiplier_coefficient: Коефіцієнт надбавки
+      multiplier_coefficient_help: "Використовується для позначення коефіцієнта множення, застосованого до грубого об'єму."
       std_attributes_dim_placeholder: Виберіть розмір
       std_volumic_masses: Густина
       std_volumic_masses_help: "Дозволяє визначити масу об'єму для всіх розмірів, а також для кожного типорозміру матеріалу."
@@ -1693,6 +1713,13 @@ tool:
     vcb_radius: Радіус
     vcb_diameter: Діаметр
     vcb_distance: Відстань
+    error:
+      no_direction: "Будь ласка, вкажіть напрямок мишкою"
+      invalid_length: "Довжина {{value}} недійсна"
+      invalid_multiplicator: "Коефіцієнт {{value}} недійсний"
+      invalid_divider: "Дільник {{value}} недійсний"
+      invalid_offset: "Зміщення {{value}} недійсне"
+      invalid_segment_count: "Кількість сегментів {{value}} недійсна. Вона повинна бути від 3 до 999."
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
