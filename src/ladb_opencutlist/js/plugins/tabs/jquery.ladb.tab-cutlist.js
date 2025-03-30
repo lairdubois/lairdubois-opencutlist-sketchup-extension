@@ -5630,17 +5630,10 @@
                                             that.dialog.advanceProgress(1);
 
                                             if (response.solution) {
-                                                let total_used_count = response.solution.summary.total_used_count;
-                                                let bins = response.solution.bins;
-                                                let html = '<div>' + bins[0].light_svg + '<div style="margin-top: 5px;">1 / ' + total_used_count + '</div></div>';
-                                                if (total_used_count > 1) {
-                                                    if (total_used_count > 2) {
-                                                        html += '<div>...</div>';
-                                                    }
-                                                    html += '<div>' + bins[bins.length - 1].light_svg + '<div style="margin-top: 5px;">' + total_used_count + ' / ' + total_used_count + '</div></div>';
-                                                }
                                                 that.dialog.changeCancelBtnLabelProgress(i18next.t('default.stop'))
-                                                that.dialog.previewProgress(html);
+                                                that.dialog.previewProgress(Twig.twig({ref: "tabs/cutlist/_progress-preview-packing.twig"}).render({
+                                                    solution: response.solution
+                                                }));
                                             }
 
                                         } else if (response.cancelled) {

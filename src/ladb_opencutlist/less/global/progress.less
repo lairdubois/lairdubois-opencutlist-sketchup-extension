@@ -56,26 +56,30 @@
 
   .ladb-progress-preview {
     margin-top: 20px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-
-    div {
-      color: #fff;
-      font-size: 14px;
-    }
 
     > div {
-      font-size: 20px;
       display: flex;
-      flex-direction: column;
+      gap: 10px;
       align-items: center;
-      max-height: 280px;
-    }
+      justify-content: space-around;
 
-    svg {
-      width: 100%;
+      div {
+        color: #fff;
+        font-size: 14px;
+      }
+
+      > div {
+        font-size: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-height: 250px;
+      }
+
+      svg {
+        width: 100%;
+      }
+
     }
 
   }
