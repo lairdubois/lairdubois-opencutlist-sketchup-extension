@@ -41,6 +41,7 @@ default:
   rename: Rinominare
   yes: Si
   no: No
+  automatic: Automatico
   empty_filename: Senza titolo.skp
   help: Aiuto
   error: OOps!
@@ -83,6 +84,10 @@ default:
   file_plural: Files
   stroke_color: Colore del bordo
   fill_color: Colore di riempimento
+  length: Lunghezza
+  width: Larghezza
+  thickness: Spessore
+  height: Altezza
 core:
   menu:
     submenu: OpenCutList
@@ -233,6 +238,8 @@ core:
     textinput_code:
       snippets: Esempi di formule
       help: Digitare **@** per ottenere la lista delle variabili.
+    textinput_size:
+      quantity: Qtà
     three_viewer:
       view: "Visualizzazione {{ view }}"
       view_isometric: Isometrica
@@ -544,6 +551,11 @@ tab:
       minimize_on_highlight: Minimizza dopo *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Selezionando questa opzione, la finestra di OpenCutList verrà minimizzata dopo aver opzionato *'$t(tab.cutlist.highlight_part)'* ."
       general: Generale
+      sorting: Ordinamento
+      group_order_strategy: Ordinamento dei gruppi
+      group_order_strategy_help: |
+        Riordinate le seguenti proprietà per definire la strategia di ordinamento del gruppo.
+        Ogni proprietà può essere ordinata<i class="ladb-opencutlist-icon-sort-asc"></i> *in aumento* o <i class="ladb-opencutlist-icon-sort-desc"></i>*in diminuzione*.
       part_order_strategy: Ordinamento parti
       part_order_strategy_help: |
         Modifica le seguenti proprietà per cambiare i criteri di ordinamenti all'interno dei singoli gruppi.
@@ -551,6 +563,10 @@ tab:
       dimension_column_order_strategy: Ordinamento delle dimensioni
       dimension_column_order_strategy_help: |
         Modifica le proprietà seguenti per cambiare i criteri di ordinamento delle colonne.
+      property_material_type: Tipo di materiale
+      property_material_name: Nome del materiale
+      property_std_width: Larghezza standard
+      property_std_thickness: Spessore standard
       property_thickness: Spessore
       property_length: Lunghezza
       property_width: Larghezza
@@ -1294,12 +1310,14 @@ tab:
       type: Tipo
       description: Descrizione
       url: URL
+      formats: Formati
       cut_options: Impostazioni del taglio
       estimate_options: Opzioni di stima
       attributes: Attributi
       thickness: Spessore
       thickness_help: |
         Spessore finito del materiale.
+
         *Dimensioni senza unità si intendono in unità di misura del modello.*
       length_increase: Sovramateriale sulla lunghezza
       length_increase_help: Incremento della lunghezza per calcolare la **lunghezza grezza**.
@@ -1308,29 +1326,29 @@ tab:
       thickness_increase: Sovramateriale sullo spessore
       thickness_increase_help: Incremento dello spessore per calcolare **spessore grezzo**.
       std_lengths: Lunghezze predefinite
-      std_lengths_placeholder: lunghezza ; ...
       std_lengths_help: |
-        Lunghezze standard delle barre o bordature.
+        Lunghezze standard disponibili per questo materiale.
+
         *Dimensioni senza unità si intendono in unità del modello.*
       std_widths: Larghezze predefinite
-      std_widths_placeholder: larghezza ; ...
       std_widths_help: |
-        Altezza predefinita delle bordature.
+        Larghezze standard disponibili per questo materiale.
+
         *Dimensioni senza unità si intendono in unità del modello.*
       std_thicknesses: Spessori disponibili
-      std_thicknesses_placeholder: spessore ; ...
       std_thicknesses_help: |
-        Spessori **grezzi** disponibili.
+        Spessori **grezzi** standard** disponibili per questo materiale.
+
         *Dimensioni senza unità si intendono in unità del modello.*
       std_sections: Sezioni disponibili
-      std_sections_placeholder: Altezza x spessore ; ...
       std_sections_help: |
-        Formato: **W**x**T**, in cui **W** and **T** rappresentano la *larghezza* e lo *spessore* della barra (dimensioni effettive e non nominali).
+        Sezioni standard disponibili per questo materiale.
+        .
         *Dimensioni senza unità si intendono in unità del modello.*
       std_sizes: Dimensioni standard
-      std_sizes_placeholder: lunghezza x larghezza ; ...
       std_sizes_help: |
-        Formato: **L**x**W**, in cui **L** and **W** rappresentano la *lunghezza* e la *larghezza* del pannello.
+        Misure standard disponibili per questo materiale.
+
         *Dimensioni senza unità si intendono in unità del modello.*
       grained: Direzione venatura
       grained_help: Configura la direzione della venatura rispetto alla lunghezza del pannello.
@@ -1351,6 +1369,8 @@ tab:
         Il volume totale sarà la somma dei volumi dei pannelli, laminati, barre o strisce delle parti dopo il posizionamento.
       raw_estimated_0: Volume debitato utile
       raw_estimated_1: Volume di materia prima necessario
+      multiplier_coefficient: Coefficiente moltiplicatore
+      multiplier_coefficient_help: Indica il coefficiente di moltiplicazione applicato al volume grezzo misurato.
       std_attributes_dim_placeholder: Scegli una taglia
       std_volumic_masses: Massa volumica
       std_volumic_masses_help: Si usa per definire la densità per tutte le dimensioni e per ogni dimensione standard del materiale.
@@ -1693,6 +1713,13 @@ tool:
     vcb_radius: Raggio
     vcb_diameter: Diametro
     vcb_distance: Distanza
+    error:
+      no_direction: Indicate una direzione con il mouse
+      invalid_length: "La lunghezza {{ value }} non è valida"
+      invalid_multiplicator: "Il moltiplicatore {{ value }} non è valido"
+      invalid_divider: "Il divisore {{ value }} non è valido"
+      invalid_offset: "L'offset {{ value }} non è valido"
+      invalid_segment_count: "Il numero di segmenti {{ value }} non è valido. Deve essere compreso tra 3 e 999."
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
