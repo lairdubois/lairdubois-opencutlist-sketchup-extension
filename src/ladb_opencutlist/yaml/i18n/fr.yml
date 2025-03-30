@@ -40,6 +40,7 @@ default:
   rename: Renommer
   yes: Oui
   no: Non
+  automatic: Automatique
   empty_filename: Sans titre.skp
   help: Aide
   error: Zut !
