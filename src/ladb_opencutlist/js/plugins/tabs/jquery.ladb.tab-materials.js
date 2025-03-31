@@ -143,7 +143,7 @@
 
         const material = {
             name: name ? name : '',
-            color: color ? color : '#ffffff',
+            color: color ? color : '',
             attributes: {
                 type: type ? type : 0,
                 description: '',
@@ -1092,7 +1092,7 @@
             }
         };
         const fnCheckInputColorValue = function(verbose) {
-            if ($inputColor.val().match(/^#[0-9a-f]{6}$/i)) {
+            if ($inputColor.val().match(/^(#[0-9a-f]{6}|)$/i)) {
                 $inputColor.data('ladb-invalid', false);
                 if (verbose) {
                     $inputColorWarning.hide();
@@ -1283,7 +1283,7 @@
         $inputName.ladbTextinputText();
         $inputColor.on('keyup change', function () { fnCheckInputColorValue(true); });
         $inputColor.ladbTextinputColor({
-            resetValue: '#ffffff'
+            resetValue: ''
         });
         $inputDescription.ladbTextinputArea();
         $inputUrl.ladbTextinputUrl();

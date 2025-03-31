@@ -80,7 +80,16 @@ module Ladb::OpenCutList
 
       end
 
-      if @color.to_i != material.color.to_i
+      if @color.nil?
+        case material.materialType
+        when Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+          material.color = nil
+        when Sketchup::Material::MATERIAL_SOLID
+          @color = Sketchup::Color.new('#ffffff')
+        end
+      end
+
+      if !@color.nil? && @color.to_i != material.color.to_i
 
         material.color = @color
 

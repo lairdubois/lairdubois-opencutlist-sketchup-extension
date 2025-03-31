@@ -48,7 +48,7 @@ module Ladb::OpenCutList
 
       materials = model.materials
       material = materials.add(@name)
-      material.color = @color
+      material.color = @color.nil? ? '#ffffff' : @color
 
       # Set attributes
       material_attributes = MaterialAttributes.new(material)
