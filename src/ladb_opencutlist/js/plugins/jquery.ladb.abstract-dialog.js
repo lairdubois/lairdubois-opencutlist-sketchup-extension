@@ -346,13 +346,17 @@ LadbAbstractDialog.prototype.setupPopovers = function ($element) {
 // Utils /////
 
 LadbAbstractDialog.prototype.amountToLocaleString = function (amount, currency) {
-    return amount.toLocaleString(this.capabilities.language, {
-        style: 'currency',
-        currency: currency,
-        currencyDisplay: 'symbol',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-    });
+    try {
+        return amount.toLocaleString(this.capabilities.language, {
+            style: 'currency',
+            currency: currency,
+            currencyDisplay: 'symbol',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+    } catch (error) {
+        return amount + ' ' + currency;
+    }
 }
 
 LadbAbstractDialog.prototype.appendOclMetasToUrlQueryParams = function (url, params) {
