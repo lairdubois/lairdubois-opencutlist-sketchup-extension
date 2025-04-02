@@ -700,10 +700,8 @@ tab:
         Genera una stima del **peso** e del **costo** dei **materiali grezzi** necessari per la realizzazione delle parti inserite nella *distinta*.
       options_general: Generale
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: Coefficiente per *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: Maggiorazione applicata al volume lordo dei materiali di tipo "**$t(tab.materials.type_1)**" per compensare gli scarti di lavorazione.
+      option_solid_wood_coefficient_bc: Il moltiplicatore per i materiali di tipo “**$t(tab.materials.type_1)**” può ora essere configurato per ogni materiale nelle opzioni di stima.
       raw_materials: Materiali grezzi
-      coefficient: Coefficiente
       total: Totale
       total_used: Usato
       total_unused: Non utilizzato
@@ -716,6 +714,7 @@ tab:
       total_length: Σ Lunghezze
       tooltip:
         incompatible_unit: Unità incompatibile con le opzioni di stima del materiale
+        multiplier_coefficient: Coefficiente moltiplicatore
       error:
         no_typed_material_parts: "Nessuna parte con un materiale di tipo (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) è disponibile per generare il preventivo."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errore**."
@@ -1285,8 +1284,8 @@ tab:
       edit: "Modifica le proprietà di '{{ name }}'"
       set_current: "Colorare le parti con '{{ name }}'."
       open_url: Apri l'URL del materiale
-    menu:
       import_from_skm: Importa materiale (.skm)
+    menu:
       purge_unused: Elimina materiali inutilizzati
       reset_prices: Azzeramento dei prezzi di tutti i materiali
       reset_prices_confirm: |
