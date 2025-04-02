@@ -1505,8 +1505,8 @@ tab:
       edit: 1200 - Éditer les propriétés de '{{ name }}'
       set_current: 1201 - Colorier des pièces avec '{{ name }}'
       open_url: 1202 - Ouvrir l'URL de la matière
-    menu:
       import_from_skm: 1203 - Importer une matière (.skm)
+    menu:
       purge_unused: 1204 - Purger les matières inutilisées
       reset_prices: 1205 - Réinitialiser les prix de toutes les matières
       reset_prices_confirm: |

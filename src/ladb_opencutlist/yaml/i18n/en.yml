@@ -1507,8 +1507,8 @@ tab:
       edit: "Edit the properties of '{{ name }}'"
       set_current: "Color parts with '{{ name }}'."
       open_url: Open material URL
-    menu:
       import_from_skm: Import material (.skm)
+    menu:
       purge_unused: Purge unused materials
       reset_prices: Reset the prices of all materials
       reset_prices_confirm: |

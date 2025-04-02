@@ -1507,8 +1507,8 @@ tab:
       edit: "Eigenschaften von '{{ name }}' bearbeiten"
       set_current: "Einfärben von Teilen mit '{{ name }}'"
       open_url: URL des Materials öffnen
-    menu:
       import_from_skm: Material importieren (.skm)
+    menu:
       purge_unused: Unbenutzte Materialien löschen
       reset_prices: Preise für alle Materialien zurücksetzen
       reset_prices_confirm: |
