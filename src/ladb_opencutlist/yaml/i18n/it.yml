@@ -700,7 +700,7 @@ tab:
         Genera una stima del **peso** e del **costo** dei **materiali grezzi** necessari per la realizzazione delle parti inserite nella *distinta*.
       options_general: Generale
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: Il moltiplicatore per i materiali di tipo “**$t(tab.materials.type_1)**” può ora essere configurato per ogni materiale nelle opzioni di stima.
+      option_solid_wood_coefficient_bc: Il moltiplicatore per i materiali di tipo "**$t(tab.materials.type_1)**" può ora essere configurato per ogni materiale nelle opzioni di stima.
       raw_materials: Materiali grezzi
       total: Totale
       total_used: Usato
@@ -1336,7 +1336,7 @@ tab:
         *Dimensioni senza unità si intendono in unità del modello.*
       std_thicknesses: Spessori disponibili
       std_thicknesses_help: |
-        Spessori **grezzi** standard** disponibili per questo materiale.
+        Spessori **grezzi** standard disponibili per questo materiale.
 
         *Dimensioni senza unità si intendono in unità del modello.*
       std_sections: Sezioni disponibili

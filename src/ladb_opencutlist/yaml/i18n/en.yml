@@ -695,7 +695,7 @@ tab:
         Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts on the *Parts List*.
       options_general: General
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: The multiplying coefficient for materials of type “**$t(tab.materials.type_1)**” is now configured for each material in the estimation options.
+      option_solid_wood_coefficient_bc: The multiplying coefficient for materials of type "**$t(tab.materials.type_1)**" is now configured for each material in the estimation options.
       raw_materials: Raw materials
       total: Total
       total_used: Used
@@ -709,7 +709,7 @@ tab:
       total_length: Σ Length
       tooltip:
         incompatible_unit: Incompatible unit with material estimation options
-        multiplier_coefficient: Multiplying coefficient
+        multiplier_coefficient: Coefficient
       error:
         no_typed_material_parts: "No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** or **$t(tab.materials.type_5)**) has been provided to generate the estimate."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
