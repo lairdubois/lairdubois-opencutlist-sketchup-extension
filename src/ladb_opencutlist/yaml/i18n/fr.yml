@@ -1481,7 +1481,6 @@ tab:
   materials:
     label: Matières
     title: Matières
-    new: Nouvelle matière
     type_0: Non défini
     type_1: Bois massif
     type_2: Panneau

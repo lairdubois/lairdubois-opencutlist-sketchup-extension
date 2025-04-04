@@ -1481,7 +1481,6 @@ tab:
   materials:
     label: Materialien
     title: Materialien
-    new: Neues Material
     type_0: Unbestimmt
     type_1: Massivholz
     type_2: Platte

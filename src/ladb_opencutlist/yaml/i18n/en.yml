@@ -1481,7 +1481,6 @@ tab:
   materials:
     label: Materials
     title: Materials
-    new: New Material
     type_0: Undefined
     type_1: Solid Wood
     type_2: Sheet Goods
