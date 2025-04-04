@@ -41,6 +41,7 @@ default:
   rename: Переименовать
   yes: Да
   no: Нет
+  automatic: Автоматический
   empty_filename: Безымянный.skp
   help: Помощь
   error: Исправить!
@@ -83,6 +84,10 @@ default:
   file_plural: Файлы
   stroke_color: Цвет линии
   fill_color: Цвет заливки
+  length: Длина
+  width: Ширина
+  thickness: Толщина
+  height: Высота
 core:
   menu:
     submenu: OpenCutList
@@ -233,6 +238,8 @@ core:
     textinput_code:
       snippets: Примеры формул
       help: "Нажмите **@**, чтобы открыть ввод переменных данных."
+    textinput_size:
+      quantity: Кол-во
     three_viewer:
       view: "Вид {{ view }}"
       view_isometric: Изометрия
@@ -544,6 +551,11 @@ tab:
       minimize_on_highlight: Столбцы после *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Если эта опция активна, окно OpenCutList будет свернуто, когда функция *'$t(tab.cutlist.highlight_part)'* применена."
       general: Общие
+      sorting: Сортировка
+      group_order_strategy: Сортировка групп
+      group_order_strategy_help: |
+        Задайте следующие свойства, чтобы упорядочить сортировку группы.
+        Каждое свойство может быть отсортировано в порядке <i class="ladb-opencutlist-icon-sort-asc"></i>*по возрастанию* или <i class="ladb-opencutlist-icon-sort-desc"></i>*по убыванию*.
       part_order_strategy: Сортировка деталей
       part_order_strategy_help: |
         Определение порядка сортировки в каждой группе на основе перечисленных параметров.
@@ -551,6 +563,10 @@ tab:
       dimension_column_order_strategy: Соотношения размера
       dimension_column_order_strategy_help: |
         Упорядочение по размерам для определения приоритетов сортировки столбцов.
+      property_material_type: Тип материала
+      property_material_name: Имя материала
+      property_std_width: Стандартная ширина
+      property_std_thickness: Стандартная толщина
       property_thickness: Толщина
       property_length: Длина
       property_width: Ширина
@@ -580,7 +596,7 @@ tab:
       volume: Объем
       number: N°
       name: Определение
-      count: К-во
+      count: Кол-во
       cutting: Пильный
       bbox: Габаритный
       final: Фактически
@@ -684,22 +700,21 @@ tab:
         Эта функция позволяет вам рассчитать смету с учетом **массы** и **стоимости** **материала**, деталей на *карте раскроя*.
       options_general: Общие
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: Коэффициент *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: "Используется для расчета массы деталей, в качестве коэффициента плотности для материалов типа \"**$t(tab.materials.type_1)**\"."
+      option_solid_wood_coefficient_bc: Коэффициент умножения для материалов типа "**$t(tab.materials.type_1)**" теперь может быть настроен в параметрах оценки для каждого материала.
       raw_materials: Исходный материал
-      coefficient: Коэффициент
       total: Всего
       total_used: Используемый
       total_unused: Неиспользуемый
       total_mass: Σ Вес
       total_cost: Σ Цена
-      total_count: К-во
+      total_count: Кол-во
       total_instance_count: Σ Единиц
       total_volume: Σ Объемов
       total_area: Σ Площадей
       total_length: Σ Длин
       tooltip:
         incompatible_unit: Единица несовместима с вариантами расчета материала
+        multiplier_coefficient: Коэффициент умножения
       error:
         no_typed_material_parts: "Для составления сметы детали должны иметь определенный тип материала (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** или **$t(tab.materials.type_5)**)."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} ошибка**."
@@ -833,7 +848,7 @@ tab:
       list:
         unplaced_parts: Неразмещенные детали
         summary: Спецификация
-        count: К-во
+        count: Кол-во
         bar: Погонаж
         sheet: Панель
         length: Длина
@@ -1269,8 +1284,8 @@ tab:
       edit: "Редактирование свойств '{{ name }}'"
       set_current: "Раскрасить детали с помощью '{{ name }}'"
       open_url: Открыть URL-адрес материала
-    menu:
       import_from_skm: Импортировать материал (.skm)
+    menu:
       purge_unused: Очистить неиспользуемые материалы
       reset_prices: Сброс параметра цены у всех материалов
       reset_prices_confirm: |
@@ -1294,12 +1309,14 @@ tab:
       type: Тип
       description: Описание
       url: URL
+      formats: Форматы
       cut_options: Параметры раскроя
       estimate_options: Параметры расчета
       attributes: Атрибуты
       thickness: Толщина
       thickness_help: |
         Готовая толщина материала.
+
         *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       length_increase: Припуск к длине
       length_increase_help: Припуск под подгонку прибавляется к фактической длине для расчета **пильной длины**.
@@ -1308,30 +1325,30 @@ tab:
       thickness_increase: Припуск к толщине
       thickness_increase_help: Припуск под подгонку к толщине прибавляется к фактической толщине для расчета **пильной толщины**.
       std_lengths: Стандартная длина
-      std_lengths_placeholder: Длина ; ...
       std_lengths_help: |
-        Стандартные длины досок или кромочных лент.
+        Для этого материала доступны стандартные длины.
+
         *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       std_widths: Стандартная ширина
-      std_widths_placeholder: ширина ; ...
       std_widths_help: |
-        Стандартная ширина кромок.
-        *Размеры без единиц считаются в единицах измерения проекта модели.*
+        Для этого материала доступна стандартная ширина.
+
+        *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       std_thicknesses: Стандартные толщины
-      std_thicknesses_placeholder: толщина ; ...
       std_thicknesses_help: |
-        Доступная **пильная** толщина.
-        *Размеры без единиц считаются в единицах измерения проекта модели.*
+        Стандартная **пильная** толщина для этого материала.
+
+        *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       std_sections: Стандартные сечения
-      std_sections_placeholder: ширина x толщина ; ...
       std_sections_help: |
-        Формат ввода: **Ш**x**T**, где **Ш** и **T** обозначают *ширину* и *толщину* размеров сечения (фактические не номинальные размеры).
-        *Размеры без единиц считаются в единицах измерения проекта модели.*
+        Для этого материала доступны стандартные разрезы.
+
+        *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       std_sizes: Стандартные размеры панели
-      std_sizes_placeholder: длина x ширина ; ...
       std_sizes_help: |
-        Формат ввода: **Д**x**Ш**, где **Д** и **Ш** обазначают *длину* и *ширину* панели.
-        *Размеры без единиц считаются в единицах измерения проекта модели.*
+        Стандартные размеры, доступные для этого материала.
+
+        *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       grained: Направление волокон
       grained_help: Конфигурирует направление изображения фактуры материала (волокон).
       grained_0: Без фактуры
@@ -1351,6 +1368,8 @@ tab:
         Сумма объемов деталей из панелей, листов, погонажа или кромок после раскроя.
       raw_estimated_0: Полезный объем материала
       raw_estimated_1: Объем использованного материала
+      multiplier_coefficient: Коэффициент умножения
+      multiplier_coefficient_help: "Позволяет указать коэффициент умножения, применяемый к измеренному объему брутто."
       std_attributes_dim_placeholder: Введите размер
       std_volumic_masses: Плотность
       std_volumic_masses_help: "Позволяет определить плотность для всех размеров, а также для каждого стандартного размера материала."
@@ -1693,6 +1712,13 @@ tool:
     vcb_radius: Радиус
     vcb_diameter: Диаметр
     vcb_distance: Дистанция
+    error:
+      no_direction: "Пожалуйста, укажите направление с помощью мыши"
+      invalid_length: "Длина {{ value }} недопустима"
+      invalid_multiplicator: "Множитель {{ value }} недопустим"
+      invalid_divider: "Дробление {{ value }} недопустимо"
+      invalid_offset: "Смещение {{ value }} недопустимо"
+      invalid_segment_count: "Количество сегментов {{ value }} недопустимо. Оно должно быть в диапазоне от 3 до 999."
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)

@@ -700,10 +700,8 @@ tab:
         Створіть оцінку **ваги** та **вартості** **сировини**, необхідної для виготовлення деталей зі *списку деталей*.
       options_general: Загальні
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: Коефіцієнт для *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: Використовується для розрахунку маси деталей як коефіцієнт щільності для матеріалів типу "**$t(tab.materials.type_1)**".
+      option_solid_wood_coefficient_bc: ""
       raw_materials: Сировина
-      coefficient: Коефіцієнт
       total: Всього
       total_used: Використаний
       total_unused: Невикористаний
@@ -716,6 +714,7 @@ tab:
       total_length: Σ Довжин
       tooltip:
         incompatible_unit: Одиниця несумісна з параметрами оцінки матеріалу
+        multiplier_coefficient: Коефіцієнт надбавки
       error:
         no_typed_material_parts: "Для складання кошторису деталі повинні мати певний тип матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**)."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилка**."
@@ -1285,8 +1284,8 @@ tab:
       edit: "Редагувати властивості '{{ name }}'"
       set_current: "Розфарбуйте деталі за допомогою '{{ name }}'."
       open_url: Відкрити URL матеріалу
-    menu:
       import_from_skm: Імпорт матеріалу (.skm)
+    menu:
       purge_unused: Очистити невикористані матеріали
       reset_prices: Обнулити ціни на всі матеріали
       reset_prices_confirm: |
@@ -1337,7 +1336,7 @@ tab:
         *Якщо одиниці не вказано, буде враховано одиницю моделі.*
       std_thicknesses: Стандартні товщини
       std_thicknesses_help: |
-        Стандартна товщина, доступна для цього матеріалу.
+        Стандартна **сира** товщина, доступна для цього матеріалу.
 
         *Якщо одиниці не вказано, буде враховано одиницю моделі.*
       std_sections: Стандартні січення
@@ -1715,11 +1714,11 @@ tool:
     vcb_distance: Відстань
     error:
       no_direction: "Будь ласка, вкажіть напрямок мишкою"
-      invalid_length: "Довжина {{value}} недійсна"
-      invalid_multiplicator: "Коефіцієнт {{value}} недійсний"
-      invalid_divider: "Дільник {{value}} недійсний"
-      invalid_offset: "Зміщення {{value}} недійсне"
-      invalid_segment_count: "Кількість сегментів {{value}} недійсна. Вона повинна бути від 3 до 999."
+      invalid_length: "Довжина {{ value }} недійсна"
+      invalid_multiplicator: "Коефіцієнт {{ value }} недійсний"
+      invalid_divider: "Дільник {{ value }} недійсний"
+      invalid_offset: "Зміщення {{ value }} недійсне"
+      invalid_segment_count: "Кількість сегментів {{ value }} недійсна. Вона повинна бути від 3 до 999."
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)

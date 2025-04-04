@@ -693,7 +693,7 @@ tab:
         555 - Erstellung eine Kalkulation der **Massen** und der **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden.
       options_general: 556 - Allgemein
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: 558 - Der Faktor für Materialien des Typs ""**$t(tab.materials.type_1)**"" wird nun für jedes Material in den Schätzoptionen konfiguriert.
+      option_solid_wood_coefficient_bc: 558 - Der Faktor für Materialien des Typs "**$t(tab.materials.type_1)**" wird nun für jedes Material in den Schätzoptionen konfiguriert.
       raw_materials: 559 - Rohmaterial
       total: 560 - Total
       total_used: 561 - Verwendet
