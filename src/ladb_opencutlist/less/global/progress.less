@@ -28,7 +28,7 @@
     width: 50%;
     background-color: #555;
     padding: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid #555;
   }
 
   .ladb-progress-label {
@@ -57,29 +57,30 @@
   .ladb-progress-preview {
     margin-top: 20px;
 
-    > div {
+    .ladb-progress-preview-thumbnails {
       display: flex;
       gap: 10px;
       align-items: center;
       justify-content: space-around;
 
-      div {
+      .ladb-progress-preview-thumbnail-counter {
         color: #fff;
-        font-size: 14px;
-      }
-
-      > div {
-        font-size: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        max-height: 250px;
+        margin-top: 5px;
+        text-align: center;
       }
 
       svg {
         width: 100%;
       }
 
+    }
+
+    .ladb-progress-preview-stats {
+      display: flex;
+      margin: 20px -20px -20px -20px;
+      background-color: #fff;
+      padding: 5px 20px;
+      justify-content: space-between;
     }
 
   }

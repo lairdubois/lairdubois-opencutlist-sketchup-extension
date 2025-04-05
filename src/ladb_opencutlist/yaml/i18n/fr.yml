@@ -1084,6 +1084,7 @@ tab:
         stats: Statistiques
         time: Temps
         total_efficiency: Efficacité globale
+        total_filling: Remplissage
         total_cut_count: Nombre de coupes
         total_cut_length: Longueur de coupe
         efficiency: Efficacité

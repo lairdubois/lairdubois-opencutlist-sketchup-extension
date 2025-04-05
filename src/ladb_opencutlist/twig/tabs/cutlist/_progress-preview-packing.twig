@@ -1,19 +1,19 @@
-<div style="margin-bottom: 20px;">
-    <div>{{ (solution.summary.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</div>
-    {% if solution.summary.total_used_cost %}<div>{{ solution.summary.total_used_cost }}</div>{% endif %}
-</div>
-<div>
-    <div>
+<div class="ladb-progress-preview-thumbnails">
+    <div class="ladb-progress-preview-thumbnail">
         {{ solution.bins[0].light_svg }}
-        <div style="margin-top: 5px;">1 / {{ solution.summary.total_used_count }}</div>
+        <div class="ladb-progress-preview-thumbnail-counter">1 / {{ solution.summary.total_used_count }}</div>
     </div>
     {% if solution.summary.total_used_count > 1 %}
         {% if solution.summary.total_used_count > 2 %}
-            <div>...</div>
+            <div class="ladb-progress-preview-thumbnail-counter">...</div>
         {% endif %}
-        <div>
+        <div class="ladb-progress-preview-thumbnail">
             {{ solution.bins[solution.bins.length - 1].light_svg }}
-            <div style="margin-top: 5px;">{{ solution.summary.total_used_count }} / {{ solution.summary.total_used_count }}</div>
+            <div class="ladb-progress-preview-thumbnail-counter">{{ solution.summary.total_used_count }} / {{ solution.summary.total_used_count }}</div>
         </div>
     {% endif %}
+</div>
+<div class="ladb-progress-preview-stats">
+    <div>{{ 'tab.cutlist.packing.list.total_filling'|i18next }}&nbsp;:&nbsp;{{ (solution.summary.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</div>
+    {% if solution.summary.total_used_cost %}<div>{{ 'tab.cutlist.packing.list.total_cost'|i18next }}&nbsp;:&nbsp;{{ solution.summary.total_used_cost }}</div>{% endif %}
 </div>

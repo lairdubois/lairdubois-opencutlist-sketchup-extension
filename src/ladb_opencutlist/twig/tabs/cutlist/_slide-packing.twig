@@ -140,7 +140,7 @@
                                     <span style="margin-left: 10px;">{{ 'tab.cutlist.packing.list.stats'|i18next }}</span>
                                     <ul>
                                         <li><strong>{{ 'tab.cutlist.packing.list.time'|i18next }} : </strong>{{ solution.summary.time|number_format(3, capabilities.decimal_separator, ' ') }}s</li>
-                                        <li><strong>{{ 'tab.cutlist.packing.list.total_efficiency'|i18next }} : </strong>{{ (solution.summary.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
+                                        <li><strong>{{ 'tab.cutlist.packing.list.total_filling'|i18next }} : </strong>{{ (solution.summary.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</li>
                                         {% if solution.summary.number_of_cuts > 0 %}<li><strong>{{ 'tab.cutlist.packing.list.total_cut_count'|i18next }} : </strong>{{ solution.summary.number_of_cuts }}</li>{% endif %}
                                         {% if solution.summary.cut_length %}<li><strong>{{ 'tab.cutlist.packing.list.total_cut_length'|i18next }} : </strong>{{ solution.summary.cut_length }}</li>{% endif %}
                                         {% if solution.summary.number_of_leftovers_to_keep > 0 %}<li><strong>{{ 'tab.cutlist.packing.list.leftovers_to_keep_plural'|i18next }} : </strong>{{ solution.summary.number_of_leftovers_to_keep }} <em class="text-muted">({{ 'tab.cutlist.list.length_short'|i18next }} x {{ 'tab.cutlist.list.width_short'|i18next }} > {{ solution.options.rectangleguillotine_keep_length }} x {{ solution.options.rectangleguillotine_keep_width }})</em></li>{% endif %}
