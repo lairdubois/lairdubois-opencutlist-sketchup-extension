@@ -63,7 +63,7 @@ DLL_EXPORTS char* c_optimize_start(
 
     optimize_str_output_ = json{{"running", true}}.dump();
 
-    return (char*) optimize_str_output_.c_str();
+    return const_cast<char*>(optimize_str_output_.c_str());
 }
 
 DLL_EXPORTS char* c_optimize_advance() {
@@ -87,7 +87,7 @@ DLL_EXPORTS char* c_optimize_advance() {
         optimize_str_output_ = j_output.dump();
     }
 
-    return (char*) optimize_str_output_.c_str();
+    return const_cast<char*>(optimize_str_output_.c_str());
 }
 
 DLL_EXPORTS void c_optimize_cancel() {
@@ -95,7 +95,7 @@ DLL_EXPORTS void c_optimize_cancel() {
 }
 
 DLL_EXPORTS char* c_version() {
-    return (char*) PACKY_VERSION;
+    return const_cast<char*>(PACKY_VERSION);
 }
 
 #ifdef __cplusplus
