@@ -1258,7 +1258,6 @@ tab:
   materials:
     label: Materiali
     title: Materiali
-    new: Nuovo Materiale
     type_0: Imprecisato
     type_1: Tavole
     type_2: Pannello
