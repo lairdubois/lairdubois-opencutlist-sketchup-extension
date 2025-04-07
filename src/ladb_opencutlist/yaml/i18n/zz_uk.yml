@@ -693,7 +693,7 @@ tab:
         555 - Створіть оцінку **ваги** та **вартості** **сировини**, необхідної для виготовлення деталей зі *списку деталей*.
       options_general: 556 - Загальні
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: '558 - '
+      option_solid_wood_coefficient_bc: 558 - Коефіцієнт надбавки для "**$t(tab.materials.type_1)**" тепер налаштований на кожному матеріалі в параметрах оцінки.
       raw_materials: 559 - Сировина
       total: 560 - Всього
       total_used: 561 - Використаний

@@ -1086,6 +1086,7 @@ tab:
         stats: Statistiken
         time: Zeitaufwand
         total_efficiency: Gesamteffizienz
+        total_filling: Füllgrad
         total_cut_count: Anzahl Schnitte
         total_cut_length: Schnittlänge
         efficiency: Effizienz
@@ -1558,7 +1559,7 @@ tab:
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_thicknesses: Standarddicken
       std_thicknesses_help: |
-        Standarddicken für dieses Material.
+        Standarddicken (**roh**) für dieses Material.
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_sections: Standardquerschnitte

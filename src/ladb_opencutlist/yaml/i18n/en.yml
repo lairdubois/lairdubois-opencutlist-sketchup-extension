@@ -1010,10 +1010,10 @@ tab:
       option_rectangleguillotine_cut_type: Cut Type
       option_rectangleguillotine_cut_type_help: |
         ...
-      option_rectangleguillotine_number_of_stages: Number of stages
+      option_rectangleguillotine_number_of_stages: Number of Stages
       option_rectangleguillotine_number_of_stages_help: |
         ...
-      option_rectangleguillotine_first_stage_orientation: First cut
+      option_rectangleguillotine_first_stage_orientation: First Cut Direction
       option_rectangleguillotine_first_stage_orientation_help: |
         ...
       option_rectangleguillotine_keep: Minimal size of off-cuts
@@ -1086,6 +1086,7 @@ tab:
         stats: Statistics
         time: Time
         total_efficiency: Total Efficiency
+        total_filling: Fill Rate
         total_cut_count: Number of Cuts
         total_cut_length: Length of Cuts
         efficiency: Efficiency
@@ -1114,8 +1115,8 @@ tab:
         parts_plural: Parts
         leftovers: Off-cut
         leftovers_plural: Off-cuts
-        leftovers_to_keep: Off-cut to keep
-        leftovers_to_keep_plural: Off-cuts to keep
+        leftovers_to_keep: Off-cut to Keep
+        leftovers_to_keep_plural: Off-cuts to Keep
         cut: Cut
         cut_plural: Cuts
         cut_trimming: Trimming cut
@@ -1558,7 +1559,7 @@ tab:
         *If no unit is specified, the model unit will be applied.*
       std_thicknesses: Standard Thicknesses
       std_thicknesses_help: |
-        Standard thicknesses available for this material.
+        Standard thicknesses (**rough**) available for this material.
 
         *If no unit is specified, the model unit will be applied.*
       std_sections: Standard Cross Sections
