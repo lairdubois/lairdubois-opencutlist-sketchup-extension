@@ -14,6 +14,6 @@
     {% endif %}
 </div>
 <div class="ladb-progress-preview-stats">
-    <div>{{ 'tab.cutlist.packing.list.total_filling'|i18next }}&nbsp;:&nbsp;{{ (solution.summary.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</div>
+    <div>{{ 'tab.cutlist.packing.list.total_fill_rate'|i18next }}&nbsp;:&nbsp;{{ (solution.summary.efficiency * 100)|number_format(2, capabilities.decimal_separator, ' ') }}%</div>
     {% if solution.summary.total_used_cost %}<div>{{ 'tab.cutlist.packing.list.total_cost'|i18next }}&nbsp;:&nbsp;{{ solution.summary.total_used_cost }}</div>{% endif %}
 </div>
