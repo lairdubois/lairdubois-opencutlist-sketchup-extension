@@ -1086,7 +1086,7 @@ tab:
         stats: Statistics
         time: Time
         total_efficiency: Total Efficiency
-        total_filling: Fill Rate
+        total_fill_rate: Fill Rate
         total_cut_count: Number of Cuts
         total_cut_length: Length of Cuts
         efficiency: Efficiency

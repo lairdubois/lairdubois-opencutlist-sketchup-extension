@@ -1084,7 +1084,7 @@ tab:
         stats: 869 - Statistiken
         time: 870 - Zeitaufwand
         total_efficiency: 871 - Gesamteffizienz
-        total_filling: 872 - Füllgrad
+        total_fill_rate: 872 - Füllgrad
         total_cut_count: 873 - Anzahl Schnitte
         total_cut_length: 874 - Schnittlänge
         efficiency: 875 - Effizienz

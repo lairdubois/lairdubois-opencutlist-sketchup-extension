@@ -1086,7 +1086,7 @@ tab:
         stats: Statistiken
         time: Zeitaufwand
         total_efficiency: Gesamteffizienz
-        total_filling: Füllgrad
+        total_fill_rate: Füllgrad
         total_cut_count: Anzahl Schnitte
         total_cut_length: Schnittlänge
         efficiency: Effizienz

@@ -1082,7 +1082,7 @@ tab:
         stats: 867 - Statistiques
         time: 868 - Temps
         total_efficiency: 869 - Efficacité globale
-        total_filling: 870 - Remplissage
+        total_fill_rate: 870 - Remplissage
         total_cut_count: 871 - Nombre de coupes
         total_cut_length: 872 - Longueur de coupe
         efficiency: 873 - Efficacité

@@ -1084,7 +1084,7 @@ tab:
         stats: 869 - Statistics
         time: 870 - Time
         total_efficiency: 871 - Total Efficiency
-        total_filling: 872 - Fill Rate
+        total_fill_rate: 872 - Fill Rate
         total_cut_count: 873 - Number of Cuts
         total_cut_length: 874 - Length of Cuts
         efficiency: 875 - Efficiency
