@@ -12,6 +12,7 @@ module Ladb::OpenCutList
   require_relative '../../lib/fiddle/packy/packy'
   require_relative '../../lib/fiddle/clippy/clippy'
   require_relative '../../lib/geometrix/geometrix'
+  require_relative '../../lib/polylabel/polylabel'
   require_relative '../../model/packing/packing_def'
   require_relative '../../model/export/wrappers'
 
@@ -866,7 +867,25 @@ module Ladb::OpenCutList
 
               number_font_size = [ [ px_node_number_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_number_font_size_min ].max
 
-              svg += "<text class='item-number' x='0' y='0' font-size='#{number_font_size}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
+              px_item_text_x = 0
+              px_item_text_y = 0
+
+              unless projection_def.nil? && projection_def.shell_def.nil? || light
+
+                shell_def = projection_def.shell_def
+                shape_def = shell_def.shape_defs.first
+                outer_poly_def = shape_def.outer_poly_def
+
+                vers = outer_poly_def.points.map { |point| [ point.x, point.y ] }
+
+                x, y = Polylabel.find_label(vers)
+
+                px_item_text_x = _to_px(x) - px_item_length / 2
+                px_item_text_y = (px_item_width - _to_px(y)) - px_item_width / 2
+
+              end
+
+              svg += "<text class='item-number' x='#{px_item_text_x}' y='#{px_item_text_y}' font-size='#{number_font_size}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
 
               unless is_irregular
 
