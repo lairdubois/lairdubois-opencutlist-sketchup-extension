@@ -1015,6 +1015,9 @@ module Ladb::OpenCutList
         register_command('core_compute_size_aspect_ratio') do |params|
           compute_size_aspect_ratio_command(params)
         end
+        register_command('core_copy_to_clipboard') do |params|
+          copy_to_clipboard_command(params)
+        end
 
         @controllers.each { |controller|
           controller.setup_commands
@@ -1689,6 +1692,18 @@ module Ladb::OpenCutList
       {
           :width => w.to_s,
           :height => h.to_s
+      }
+    end
+
+    def copy_to_clipboard_command(params)
+      return { :success => false } if Sketchup.version_number < 2310000000
+
+      data = params.fetch('data', '')
+
+      success = UI.set_clipboard_data(data)
+
+      {
+        :success => success
       }
     end
 

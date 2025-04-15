@@ -4,6 +4,10 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
+* 6.3.2 (2025-XX)
+
+  * Fixed copy to clipboard for SketchUp 2025
+
 * 6.3.1 (2025-02-26)
 
   * Fixed for SketchUp 2025
