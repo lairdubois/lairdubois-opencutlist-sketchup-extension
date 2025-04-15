@@ -16,6 +16,7 @@ endif()
 
 # Library headers
 set(LIBRARY_HEADERS
+        include/shape/pole_of_inaccessibility.hpp
         include/packy.hpp
         src/solver.hpp
         src/solver_builder.hpp
@@ -25,11 +26,13 @@ source_group("Headers" FILES ${LIBRARY_HEADERS})
 # Library sources
 if(WIN32)
   set(LIBRARY_SOURCES
+          src/pole_of_inaccessibility.cpp
           src/packy.cpp
           src/dllmain.cpp
   )
 else()
   set(LIBRARY_SOURCES
+          src/pole_of_inaccessibility.cpp
           src/packy.cpp
   )
 endif()
@@ -69,6 +72,7 @@ target_link_libraries(PackyMain PUBLIC PackingSolver::rectangle)
 target_link_libraries(PackyMain PUBLIC PackingSolver::rectangleguillotine)
 target_link_libraries(PackyMain PUBLIC PackingSolver::irregular)
 target_link_libraries(PackyMain PUBLIC Boost::program_options)
+target_link_libraries(PackyMain PUBLIC Shape::shape)
 target_compile_features(PackyMain PRIVATE cxx_std_17)
 
 install(TARGETS PackyMain RUNTIME DESTINATION lib)
