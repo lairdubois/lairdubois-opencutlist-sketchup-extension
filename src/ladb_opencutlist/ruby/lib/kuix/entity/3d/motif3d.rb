@@ -25,6 +25,7 @@ module Ladb::OpenCutList::Kuix
     # -- LAYOUT --
 
     def do_layout(transformation)
+      super
       @_paths.clear
       @patterns.each do |pattern|
         points = []
@@ -36,8 +37,8 @@ module Ladb::OpenCutList::Kuix
           points << point
         end
         @_paths << points
+        @extents.add(points) unless points.empty?
       end
-      super
     end
 
     # -- RENDER --

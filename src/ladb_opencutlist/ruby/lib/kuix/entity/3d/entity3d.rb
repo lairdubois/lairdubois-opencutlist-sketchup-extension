@@ -36,7 +36,7 @@ module Ladb::OpenCutList::Kuix
         @extents.add(@child.extents)
       end
       if @next
-        @next.do_layout(transformation) if @next
+        @next.do_layout(transformation)
         @extents.add(@next.extents)
       end
       self.invalidated = false
