@@ -1,18 +1,74 @@
 module Ladb::OpenCutList
 
-  require 'set'
+  require 'matrix'
 
   module Polylabel
 
-    # Utility functions
+    class Poly
+
+      attr_accessor :verqty, :vers
+
+      def initialize
+        @verqty = 0
+        @vers = []
+      end
+
+    end
+
+    def self.distance(pt1, pt2)
+      Math.sqrt((pt1[0] - pt2[0])**2 + (pt1[1] - pt2[1])**2)
+    end
+
+    def self.dot(a, b)
+      a[0]*b[0] + a[1]*b[1]
+    end
+
+    def self.subtract(a, b)
+      [a[0] - b[0], a[1] - b[1]]
+    end
+
+    def self.add(a, b)
+      [a[0] + b[0], a[1] + b[1]]
+    end
+
+    def self.scale(a, t)
+      [a[0] * t, a[1] * t]
+    end
+
+    def self.closest_pt_on_segment(a, b, o)
+      ab = subtract(b, a)
+      ao = subtract(o, a)
+      ab2 = dot(ab, ab)
+      return [a, distance(o, a)] if ab2 == 0.0
+      t = dot(ao, ab) / ab2
+      t = [[t, 0.0].max, 1.0].min
+      projection = scale(ab, t)
+      result = add(a, projection)
+      [result, distance(o, result)]
+    end
+
+    def self.find_closest_pt_on_boundary(vers, exterior)
+      min_dist = Float::INFINITY
+      closest = nil
+      vers.each_cons(2) do |a, b|
+        pt, dist = closest_pt_on_segment(a, b, exterior)
+        if dist < min_dist
+          min_dist = dist
+          closest = pt
+        end
+      end
+      closest
+    end
 
     def self.orientation(p, q, r)
       val = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1])
-      val == 0 ? 0 : (val > 0 ? 1 : 2)
+      return 0 if val == 0
+      val > 0 ? 1 : 2
     end
 
     def self.on_segment(p, q, r)
-      q[0] <= [p[0], r[0]].max && q[0] >= [p[0], r[0]].min && q[1] <= [p[1], r[1]].max && q[1] >= [p[1], r[1]].min
+      q[0].between?([p[0], r[0]].min, [p[0], r[0]].max) &&
+        q[1].between?([p[1], r[1]].min, [p[1], r[1]].max)
     end
 
     def self.line_inter(p1, q1, p2, q2)
@@ -25,11 +81,11 @@ module Ladb::OpenCutList
       c2 = a2 * p2[0] + b2 * p2[1]
 
       det = a1 * b2 - a2 * b1
+      return nil if det == 0
 
-      return false if det == 0
-
-      inter = [(b2 * c1 - b1 * c2) / det, (a1 * c2 - a2 * c1) / det]
-      inter
+      x = (b2 * c1 - b1 * c2) / det
+      y = (a1 * c2 - a2 * c1) / det
+      [x, y]
     end
 
     def self.segments_intersect(p1, q1, p2, q2)
@@ -42,185 +98,117 @@ module Ladb::OpenCutList
         return line_inter(p1, q1, p2, q2)
       end
 
-      if o1 == 0 && on_segment(p1, p2, q1)
-        return p2
+      [ [o1, p2], [o2, q2], [o3, p1], [o4, q1] ].each do |o, pt|
+        return pt if o == 0 && on_segment(p1, pt, q1)
       end
 
-      if o2 == 0 && on_segment(p1, q2, q1)
-        return q2
-      end
-
-      if o3 == 0 && on_segment(p2, p1, q2)
-        return p1
-      end
-
-      if o4 == 0 && on_segment(p2, q1, q2)
-        return q1
-      end
-
-      false
+      nil
     end
 
     def self.signed_distance(label, far, inter)
-      vector_label_far = [far[0] - label[0], far[1] - label[1]]
-      vector_label_inter = [inter[0] - label[0], inter[1] - label[1]]
-      length_label_far = Math.sqrt(vector_label_far[0]**2 + vector_label_far[1]**2)
-      normalized_vector_label_far = vector_label_far.map { |x| x / length_label_far }
-      vector_label_inter[0] * normalized_vector_label_far[0] + vector_label_inter[1] * normalized_vector_label_far[1]
+      v1 = subtract(far, label)
+      v2 = subtract(inter, label)
+      len = Math.sqrt(v1[0]**2 + v1[1]**2)
+      v1n = [v1[0]/len, v1[1]/len]
+      dot(v1n, v2)
     end
 
-    def self.sort_and_reorder(array1, array2)
-      (1...array1.length).each do |i|
-        key_dist = array1[i]
-        key_inter = array2[i]
-        j = i - 1
-        while j >= 0 && array1[j] > key_dist
-          array1[j + 1] = array1[j]
-          array2[j + 1] = array2[j]
-          j -= 1
-        end
-        array1[j + 1] = key_dist
-        array2[j + 1] = key_inter
-      end
-    end
-
-    def self.distance(pt1, pt2)
-      dx = pt2[0] - pt1[0]
-      dy = pt2[1] - pt1[1]
-      Math.sqrt(dx**2 + dy**2)
-    end
-
-    def self.dot(a, b)
-      a[0] * b[0] + a[1] * b[1]
-    end
-
-    def self.subtract(a, b)
-      [a[0] - b[0], a[1] - b[1]]
-    end
-
-    def self.copy(a)
-      a.dup
-    end
-
-    def self.scale(a, t)
-      [a[0] * t, a[1] * t]
-    end
-
-    def self.add(a, b)
-      [a[0] + b[0], a[1] + b[1]]
-    end
-
-    def self.closest_pt_on_segment(a, b, o)
-      ab = subtract(b, a)
-      ao = subtract(o, a)
-
-      ab2 = dot(ab, ab)
-      if ab2 == 0.0
-        return [a, distance(o, a)]
-      end
-
-      t = dot(ao, ab) / ab2
-      t = 0.0 if t < 0.0
-      t = 1.0 if t > 1.0
-
-      projection = scale(ab, t)
-      result = add(a, projection)
-      [result, distance(o, result)]
-    end
-
-    def self.find_closest_pt_on_boundary(vers, exterior)
-      min_dist = Float::INFINITY
-      closest = nil
-
-      vers.each_cons(2) do |v1, v2|
-        test, dist = closest_pt_on_segment(v1, v2, exterior)
-        if dist < min_dist
-          min_dist = dist
-          closest = test
-        end
-      end
-
-      closest
+    def self.sort_and_reorder(interdists, inters)
+      inters.zip(interdists).sort_by(&:last).map(&:first)
     end
 
     def self.polygon_centroid(vers)
       a = 0.0
-      sum_cx = 0.0
-      sum_cy = 0.0
-
-      vers.each_cons(2) do |v1, v2|
-        cross_product = v1[0] * v2[1] - v2[0] * v1[1]
-        a += cross_product
-        sum_cx += (v1[0] + v2[0]) * cross_product
-        sum_cy += (v1[1] + v2[1]) * cross_product
+      cx = 0.0
+      cy = 0.0
+      vers.each_cons(2) do |p1, p2|
+        cross = p1[0]*p2[1] - p2[0]*p1[1]
+        a += cross
+        cx += (p1[0] + p2[0]) * cross
+        cy += (p1[1] + p2[1]) * cross
       end
-
       a /= 2.0
-      [sum_cx / (6.0 * a), sum_cy / (6.0 * a)]
+      [cx / (6.0 * a), cy / (6.0 * a), a]
     end
 
-    # Main program
-
-    def self.find_label(vers)
+    def self.find_label(polys)
       shift = [Float::INFINITY, Float::INFINITY]
       magnify = -Float::INFINITY
 
-      # Copy first vertex at the end if not already looped
-      vers << vers[0] unless vers[0] == vers[-1]
-
-      # Shifting and scaling down everything to the unit square for convenience
-      vers.each do |v|
-        shift = [v[0], v[1]].zip(shift).map { |a, b| [a, b].min }
-      end
-
-      vers.map! { |v| v.zip(shift).map { |a, b| a - b } }
-
-      vers.each do |v|
-        magnify = [v[0], v[1], magnify].max
-      end
-
-      vers.map! { |v| v.map { |x| x / magnify } }
-
-      # Computing exact centroid using Green's theorem
-      centroid = polygon_centroid(vers)
-
-      # Looking for closest point on the boundary
-      closest = find_closest_pt_on_boundary(vers, centroid)
-      dist = distance(centroid, closest)
-
-      # Drawing the line (centroid, closest) and looking for intersections
-      far1 = centroid.zip(closest).map { |c, cl| c + (cl - c) / dist * 10 }
-      far2 = centroid.zip(closest).map { |c, cl| c - (cl - c) / dist * 10 }
-
-      inters = []
-      vers.each_cons(2) do |v1, v2|
-        inter = segments_intersect(v1, v2, far1, far2)
-        next unless inter
-
-        inters << inter unless inters.any? { |i| distance(i, inter) < 1e-6 }
-      end
-
-      interdists = inters.map { |inter| signed_distance(centroid, far1, inter) }
-      sort_and_reorder(interdists, inters)
-
-      # Picking the largest inner segment and setting label position as its center
-      max_length = -Float::INFINITY
-      id = -1
-      lengths = []
-      (0...inters.length - 1).step(2) do |i|
-        lengths[i] = distance(inters[i], inters[i + 1])
-        if lengths[i] > max_length
-          max_length = lengths[i]
-          id = i
+      polys.each do |poly|
+        poly.vers.each do |v|
+          shift[0] = [shift[0], v[0]].min
+          shift[1] = [shift[1], v[1]].min
         end
       end
 
-      label = scale(add(inters[id], inters[id + 1]), 0.5)
+      polys.each do |poly|
+        poly.vers.map! { |v| [v[0] - shift[0], v[1] - shift[1]] }
+      end
 
-      # Exiting cleanly
-      label = label.zip(shift).map { |l, s| l * magnify + s }
-      vers.map! { |v| v.zip(shift).map { |vi, s| vi * magnify + s } }
+      polys.each do |poly|
+        poly.vers.each do |v|
+          magnify = [magnify, v.max].max
+        end
+      end
 
+      polys.each do |poly|
+        poly.vers.map! { |v| [v[0] / magnify, v[1] / magnify] }
+      end
+
+      centroid = [0.0, 0.0]
+      total_area = 0.0
+      polys.each_with_index do |poly, i|
+        cx, cy, area = polygon_centroid(poly.vers)
+        area *= -1 if i > 0
+        centroid[0] += area * cx
+        centroid[1] += area * cy
+        total_area += area
+      end
+      centroid = [centroid[0] / total_area, centroid[1] / total_area]
+
+      closest = nil
+      min_dist = Float::INFINITY
+      polys.each do |poly|
+        pt = find_closest_pt_on_boundary(poly.vers, centroid)
+        d = distance(centroid, pt)
+        if d < min_dist
+          closest = pt
+          min_dist = d
+        end
+      end
+
+      far1 = [
+        centroid[0] + (closest[0] - centroid[0]) / min_dist * 10,
+        centroid[1] + (closest[1] - centroid[1]) / min_dist * 10
+      ]
+      far2 = [
+        centroid[0] - (closest[0] - centroid[0]) / min_dist * 10,
+        centroid[1] - (closest[1] - centroid[1]) / min_dist * 10
+      ]
+
+      inters = []
+      polys.each do |poly|
+        poly.vers.each_cons(2) do |a, b|
+          inter = segments_intersect(a, b, far1, far2)
+          inters << inter if inter && !inters.any? { |i| distance(i, inter) < 1e-6 }
+        end
+      end
+
+      interdists = inters.map { |i| signed_distance(centroid, far1, i) }
+      sorted_inters = inters.zip(interdists).sort_by(&:last).map(&:first)
+
+      max_length = -Float::INFINITY
+      label = nil
+      (0...sorted_inters.size-1).step(2) do |i|
+        l = distance(sorted_inters[i], sorted_inters[i+1])
+        if l > max_length
+          max_length = l
+          label = scale(add(sorted_inters[i], sorted_inters[i+1]), 0.5)
+        end
+      end
+
+      label = [label[0] * magnify + shift[0], label[1] * magnify + shift[1]]
       label
     end
 

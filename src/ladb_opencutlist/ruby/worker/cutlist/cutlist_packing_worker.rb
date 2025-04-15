@@ -879,8 +879,27 @@ module Ladb::OpenCutList
                 shell_def = projection_def.shell_def
                 shape_def = shell_def.shape_defs.first
                 outer_poly_def = shape_def.outer_poly_def
+                holes_poly_defs = shape_def.holes_poly_defs
 
-                label_x, label_y = Polylabel.find_label(outer_poly_def.points.map { |point| [ point.x, point.y ] })
+                polys = []
+
+                outer_poly = Polylabel::Poly.new
+                outer_poly.verqty = outer_poly_def.points.size
+                outer_poly.vers = outer_poly_def.points.map { |point| [ point.x, point.y ] }
+                outer_poly.vers << outer_poly.vers[0] # Close polygon
+                polys << outer_poly
+
+                holes_poly_defs.each do |poly_def|
+
+                  hole_poly = Polylabel::Poly.new
+                  hole_poly.verqty = poly_def.points.size
+                  hole_poly.vers = poly_def.points.map { |point| [ point.x, point.y ] }
+                  hole_poly.vers << hole_poly.vers[0] # Close polygon
+                  polys << hole_poly
+
+                end
+
+                label_x, label_y = Polylabel.find_label(polys)
 
                 p = Geom::Point3d.new(_to_px(label_x) - px_item_length / 2, _to_px(label_y) - px_item_width / 2).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
                 p.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
