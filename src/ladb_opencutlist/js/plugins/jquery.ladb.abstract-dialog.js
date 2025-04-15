@@ -401,23 +401,43 @@ LadbAbstractDialog.prototype.bindHelpButtonsInParent = function ($parent) {
 }
 
 LadbAbstractDialog.prototype.copyToClipboard = function (text, notifySuccess) {
-    // Create new element
-    const el = document.createElement('textarea');
-    // Set value (string to be copied)
-    el.value = text;
-    // Set non-editable to avoid focus and move outside of view
-    el.setAttribute('readonly', '');
-    el.style = { position: 'absolute', left: '-9999px' };
-    document.body.appendChild(el);
-    // Select text inside element
-    el.select();
-    // Copy text to clipboard
-    document.execCommand('copy');
-    // Remove temporary element
-    document.body.removeChild(el);
-    // Notify success
-    if (notifySuccess !== false) {
-        this.notifySuccess(i18next.t('core.success.copied_to_clipboard'));
+    if (this.capabilities.sketchup_version_number <= 2310000000) {
+
+        // Create new element
+        var el = document.createElement('textarea');
+        // Set value (string to be copied)
+        el.value = text;
+        // Set non-editable to avoid focus and move outside of view
+        el.setAttribute('readonly', '');
+        el.style = {position: 'absolute', left: '-9999px'};
+        document.body.appendChild(el);
+        // Select text inside element
+        el.select();
+        // Copy text to clipboard
+        document.execCommand('copy');
+        // Remove temporary element
+        document.body.removeChild(el);
+        // Notify success
+        if (notifySuccess !== false) {
+            this.notifySuccess(i18next.t('core.success.copied_to_clipboard'));
+        }
+
+    } else {
+
+        var that = this;
+
+        rubyCallCommand('core_copy_to_clipboard', {
+            data: text
+        }, function (response) {
+
+            if (response.success) {
+                if (notifySuccess !== false) {
+                    that.notifySuccess(i18next.t('core.success.copied_to_clipboard'));
+                }
+            }
+
+        });
+
     }
 }
 

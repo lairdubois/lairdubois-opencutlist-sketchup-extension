@@ -6,32 +6,40 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 7.0.0 (WIP)
 
-    * New Cutting Diagram engine (with nesting capabilities)
-    * Added Outliner tab
-    * Added Smart Draw tool
-    * Added Definition and Instance wrappers in formulas (allows to read DC and custom attributes)
-    * Added Material wrapper in formulas
-    * Added Move Axes action on Smart Axes Tool
-    * Added Export Paths action on Smart Export Tool
-    * Added Switch YZ axes option to Smart Export Tool on Export 3D part action
-    * Added Material type separators in materials tabs when sorted by type
-    * Added Export 2D projections left, right, front, back
-    * Added QRCodes in labels editor
-    * Added Duplicate element in labels editor
-    * Added Duplicate column in export editor
-    * Added Labels button to Parts List
-    * Added _use_count_ parameter to 2D and 3D drawing writers
-    * Added handle to manually reorder material prices list
-    * Added an option to customize group sorting
-    * Changed solid wood coefficient from estimate params to material attributes
-    * Improved export drawing to Layout : adding capability to add in a new page of an existing file
-    * Improved labels formulas
-    * Improved smart tools picker
-    * Improved surface detection
-    * Improved Material import from SKM (allows new or replace)
-    * Improved Layout feature to be able to align on active view axes
-    * Replaced Highlight Part Tool with Smart Axes Tool
-    * Fixed face untyped material removing when editing sheet good part properties
+  * New Cutting Diagram engine (with nesting capabilities)
+  * Added Outliner tab
+  * Added Smart Draw tool
+  * Added Definition and Instance wrappers in formulas (allows to read DC and custom attributes)
+  * Added Material wrapper in formulas
+  * Added Move Axes action on Smart Axes Tool
+  * Added Export Paths action on Smart Export Tool
+  * Added Switch YZ axes option to Smart Export Tool on Export 3D part action
+  * Added Material type separators in materials tabs when sorted by type
+  * Added Export 2D projections left, right, front, back
+  * Added QRCodes in labels editor
+  * Added Duplicate element in labels editor
+  * Added Duplicate column in export editor
+  * Added Labels button to Parts List
+  * Added _use_count_ parameter to 2D and 3D drawing writers
+  * Added handle to manually reorder material prices list
+  * Added an option to customize group sorting
+  * Changed solid wood coefficient from estimate params to material attributes
+  * Improved export drawing to Layout : adding capability to add in a new page of an existing file
+  * Improved labels formulas
+  * Improved smart tools picker
+  * Improved surface detection
+  * Improved Material import from SKM (allows new or replace)
+  * Improved Layout feature to be able to align on active view axes
+  * Replaced Highlight Part Tool with Smart Axes Tool
+  * Fixed face untyped material removing when editing sheet good part properties
+
+* 6.3.2 (2025-04-15)
+
+  * Fixed copy to clipboard for SketchUp 2025
+
+* 6.3.1 (2025-02-26)
+
+  * Fixed for SketchUp 2025
 
 * 6.3.0 (2024-10-22)
 
