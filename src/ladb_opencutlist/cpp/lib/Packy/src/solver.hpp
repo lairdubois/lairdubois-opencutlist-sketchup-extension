@@ -664,18 +664,18 @@ namespace Packy {
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
                 Area bin_space = bin_type.rect.x * bin_type.rect.y;
-                Area item_space = 0;
+                Area items_space = 0;
                 for (const auto& item : bin.items) {
                     const ItemType& item_type = instance.item_type(item.item_type_id);
-                    item_space += item_type.space();
+                    items_space += item_type.space();
                 }
 
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
                         {"space",       to_area_dbl(bin_space)},
-                        {"waste",       to_area_dbl(bin_space - item_space)},
-                        {"efficiency",  static_cast<double>(item_space) / bin_space}
+                        {"waste",       to_area_dbl(bin_space - items_space)},
+                        {"efficiency",  static_cast<double>(items_space) / bin_space}
                 });
 
                 // Add x_max and y_max attributes to the last bin
@@ -951,11 +951,11 @@ namespace Packy {
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
                 Area bin_space = bin_type.rect.area(); // Workaround to PackingSolver bin_type.space() function that subtract trims
-                Area item_space = 0;
+                Area items_space = 0;
                 for (const auto& node : bin.nodes) {
                     if (node.item_type_id >= 0 && node.f >= 0) {
                         const ItemType& item_type = instance.item_type(node.item_type_id);
-                        item_space += item_type.rect.area();
+                        items_space += item_type.rect.area();
                     }
                 }
 
@@ -963,8 +963,8 @@ namespace Packy {
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
                         {"space",       to_area_dbl(bin_space)},
-                        {"waste",       to_area_dbl(bin_space - item_space)},
-                        {"efficiency",  static_cast<double>(item_space) / bin_space}
+                        {"waste",       to_area_dbl(bin_space - items_space)},
+                        {"efficiency",  static_cast<double>(items_space) / bin_space}
                 });
 
                 Length cut_length = 0;
@@ -1266,18 +1266,18 @@ namespace Packy {
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
                 Length bin_space = bin_type.length;
-                Length item_space = 0;
+                Length items_space = 0;
                 for (const auto& item : bin.items) {
                     const ItemType& item_type = instance.item_type(item.item_type_id);
-                    item_space += item_type.space();
+                    items_space += item_type.space();
                 }
 
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
                         {"space",       to_length_dbl(bin_space)},
-                        {"waste",       to_length_dbl(bin_space - item_space)},
-                        {"efficiency",  static_cast<double>(item_space) / bin_space}
+                        {"waste",       to_length_dbl(bin_space - items_space)},
+                        {"efficiency",  static_cast<double>(items_space) / bin_space}
                 });
 
                 // Items, Leftovers & Cuts.
@@ -1521,18 +1521,18 @@ namespace Packy {
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
-                AreaDbl item_space = 0;
+                AreaDbl items_space = 0;
                 for (const auto& item : bin.items) {
                     const ItemType& item_type = instance.item_type(item.item_type_id);
-                    item_space += item_type.space();
+                    items_space += item_type.space();
                 }
 
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
                         {"space",       to_area_dbl(bin_type.space())},
-                        {"waste",       to_area_dbl(bin_type.space() - item_space)},
-                        {"efficiency",  item_space / bin_type.space()}
+                        {"waste",       to_area_dbl(bin_type.space() - items_space)},
+                        {"efficiency",  items_space / bin_type.space()}
                 });
 
                 // Add x_max and y_max attributes to the last bin
