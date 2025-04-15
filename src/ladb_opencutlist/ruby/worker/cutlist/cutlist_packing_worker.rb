@@ -837,6 +837,8 @@ module Ladb::OpenCutList
 
           px_item_rect_width = bounds.width.to_f
           px_item_rect_height = bounds.height.to_f
+          px_item_rect_half_width = px_item_rect_width / 2
+          px_item_rect_half_height = px_item_rect_height / 2
           px_item_rect_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, px_item_x + bounds.min.x.to_f, px_item_rect_width, px_bin_length)
           px_item_rect_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, px_item_y + bounds.min.y.to_f, px_item_rect_height, px_bin_width)
 
@@ -844,7 +846,7 @@ module Ladb::OpenCutList
             svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" style='fill:#{projection_def.nil? && colorized ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'};stroke:#555'" if light || (projection_def.nil? && colorized)}/>" unless is_irregular
 
             unless projection_def.nil? || light && !is_irregular
-              svg += "<g class='item-projection' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2})#{" rotate(#{-item_def.angle})" if item_def.angle != 0}#{' scale(-1 1)' if item_def.mirror} translate(#{-px_part_length / 2} #{px_part_width / 2})'>"
+              svg += "<g class='item-projection' transform='translate(#{px_item_rect_half_width} #{-px_item_rect_half_height})#{" rotate(#{-item_def.angle})" if item_def.angle != 0}#{' scale(-1 1)' if item_def.mirror} translate(#{-px_part_length / 2} #{px_part_width / 2})'>"
                 svg += "<path stroke='#{colorized && !is_irregular ? ColorUtils.color_to_hex(ColorUtils.color_darken(item_type_def.color, 0.4)) : '#000'}' fill='#{colorized ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'}' stroke-width='0.5' class='item-projection-shape' d='#{projection_def.layer_defs.map { |layer_def| "#{layer_def.poly_defs.map { |poly_def| "M #{(layer_def.type_holes? ? poly_def.points.reverse : poly_def.points).map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')}' />"
               svg += '</g>'
             end
@@ -853,7 +855,7 @@ module Ladb::OpenCutList
 
               if !@hide_edges_preview && part_def.edge_count > 0
 
-                svg += "<g class='item-projection' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2})#{" rotate(#{-item_def.angle})" if item_def.angle != 0}'>"
+                svg += "<g class='item-projection' transform='translate(#{px_item_rect_half_width} #{-px_item_rect_half_height})#{" rotate(#{-item_def.angle})" if item_def.angle != 0}'>"
                   svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{px_item_width / 2 - px_node_edge_offset - px_edge_width}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:ymin])}'/>" unless part_def.edge_material_names[:ymin].nil?
                   svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:ymax])}'/>" unless part_def.edge_material_names[:ymax].nil?
                   svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:xmin])}'/>" unless part_def.edge_material_names[:xmin].nil?
@@ -865,27 +867,26 @@ module Ladb::OpenCutList
               item_text = _evaluate_item_text(@items_formula, part, item_def.instance_info)
               item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" if item_text.is_a?(Hash)
 
-              number_font_size = [ [ px_node_number_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_number_font_size_min ].max
+              label_font_size = [ [ px_node_number_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_number_font_size_min ].max
 
-              px_item_text_x = 0
-              px_item_text_y = 0
+              px_item_label_x = 0
+              px_item_label_y = 0
 
-              unless projection_def.nil? && projection_def.shell_def.nil? || light
+              unless !is_irregular || projection_def.nil? || light
+
+                # Find best label coords
 
                 shell_def = projection_def.shell_def
                 shape_def = shell_def.shape_defs.first
                 outer_poly_def = shape_def.outer_poly_def
 
-                vers = outer_poly_def.points.map { |point| [ point.x, point.y ] }
+                label_x, label_y = Polylabel.find_label(outer_poly_def.points.map { |point| [ point.x, point.y ] })
 
-                x, y = Polylabel.find_label(vers)
-
-                px_item_text_x = _to_px(x) - px_item_length / 2
-                px_item_text_y = (px_item_width - _to_px(y)) - px_item_width / 2
+                px_item_label_x, px_item_label_y = Geom::Point3d.new(_to_px(label_x) - px_item_length / 2, _to_px(label_y) - px_item_width / 2).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees)).to_a
 
               end
 
-              svg += "<text class='item-number' x='#{px_item_text_x}' y='#{px_item_text_y}' font-size='#{number_font_size}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_rect_width / 2} #{-px_item_rect_height / 2}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
+              svg += "<text class='item-number' x='0' y='0' font-size='#{label_font_size}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_label_x + px_item_rect_half_width} #{-px_item_label_y - px_item_rect_half_height}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
 
               unless is_irregular
 
@@ -899,12 +900,12 @@ module Ladb::OpenCutList
 
                 if is_2d
 
-                  px_number_w, px_number_h = _compute_text_size(text: item_text, size: number_font_size)
+                  px_number_w, px_number_h = _compute_text_size(text: item_text, size: label_font_size)
                   px_number_bounds = Geom::BoundingBox.new.add(
                     [
                       Geom::Point3d.new(-px_number_w / 2, -px_number_h / 2),
                       Geom::Point3d.new(px_number_w / 2, px_number_h / 2)
-                    ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_item_rect_width / 2, px_item_rect_height / 2)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, (item_def.angle % 180).degrees)) }
+                    ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_item_rect_half_width, px_item_rect_half_height)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, (item_def.angle % 180).degrees)) }
                   )
                   # svg += "<rect x='#{px_number_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_number_bounds.min.y).to_f}' width='#{px_number_bounds.width.to_f}' height='#{px_number_bounds.height.to_f}' fill='none' stroke='red'></rect>"
 
@@ -935,7 +936,7 @@ module Ladb::OpenCutList
                   svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_x}' x='#{px_item_rect_width - px_node_dimension_offset}' y='#{-(px_item_rect_height - px_node_dimension_offset)}' font-size='#{dim_x_font_size}' text-anchor='end' dominant-baseline='hanging'>#{dim_x_text}</text>" unless hide_dim_x
                   svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_y}' x='#{px_node_dimension_offset}' y='#{-px_node_dimension_offset}' font-size='#{dim_y_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_node_dimension_offset} -#{px_node_dimension_offset})'>#{dim_y_text}</text>" unless hide_dim_y
                 elsif is_1d
-                  svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_x}' x='#{px_item_rect_width / 2}' y='#{px_bin_dimension_offset}' font-size='#{px_node_dimension_font_size_max}' text-anchor='middle' dominant-baseline='hanging'>#{dim_x_text}</text>"
+                  svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_x}' x='#{px_item_rect_half_width}' y='#{px_bin_dimension_offset}' font-size='#{px_node_dimension_font_size_max}' text-anchor='middle' dominant-baseline='hanging'>#{dim_x_text}</text>"
                 end
 
               end
