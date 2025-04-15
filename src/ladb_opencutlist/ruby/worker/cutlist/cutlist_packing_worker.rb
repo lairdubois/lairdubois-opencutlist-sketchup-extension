@@ -882,11 +882,14 @@ module Ladb::OpenCutList
 
                 label_x, label_y = Polylabel.find_label(outer_poly_def.points.map { |point| [ point.x, point.y ] })
 
-                px_item_label_x, px_item_label_y = Geom::Point3d.new(_to_px(label_x) - px_item_length / 2, _to_px(label_y) - px_item_width / 2).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees)).to_a
+                p = Geom::Point3d.new(_to_px(label_x) - px_item_length / 2, _to_px(label_y) - px_item_width / 2).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
+                p.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
+
+                px_item_label_x, px_item_label_y = p.to_a
 
               end
 
-              svg += "<text class='item-number' x='0' y='0' font-size='#{label_font_size}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_label_x + px_item_rect_half_width} #{-px_item_label_y - px_item_rect_half_height}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
+              svg += "<text class='item-number' x='0' y='0' font-size='#{label_font_size}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_label_x + px_item_rect_half_width} #{-(px_item_label_y + px_item_rect_half_height)}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
 
               unless is_irregular
 
