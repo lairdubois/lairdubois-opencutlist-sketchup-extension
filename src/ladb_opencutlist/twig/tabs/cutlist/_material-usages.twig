@@ -11,4 +11,4 @@
     <option value="{{ materialUsage.name|escape('html') }}" data-content="{% include 'tabs/materials/_material-type-icon.twig' with { 'type':materialUsage.type, 'compact':true } %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':materialUsage.color } %} {{ materialUsage.display_name|escape('html') }}"></option>
 {% endfor %}
 <option data-divider="true"></option>
-<option value="new" data-content="<i class='ladb-opencutlist-icon-plus'></i> {{ 'tab.materials.new'|i18next }}..."></option>
+<option value="new" data-content="<i class='ladb-opencutlist-icon-plus'></i> {{ 'default.create'|i18next }}..."></option>
