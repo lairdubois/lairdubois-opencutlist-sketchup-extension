@@ -5,8 +5,9 @@
 namespace shape
 {
 
-Point find_approx_pole_of_inaccessibility(
-    const Shape& shape,
-    const std::vector<Shape>& holes = {});
+Point approximate_pole_of_inaccessibility(
+        const Shape& shape,
+        const std::vector<Shape>& holes = {},
+        ElementPos number_of_line_segments = 12);
 
 }

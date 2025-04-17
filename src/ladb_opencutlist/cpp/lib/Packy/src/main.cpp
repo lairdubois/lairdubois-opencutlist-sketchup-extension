@@ -4,12 +4,26 @@
 
 #include <boost/program_options.hpp>
 
+#include "shape/pole_of_inaccessibility.hpp"
+
 using namespace Packy;
 using namespace nlohmann;
 
 namespace po = boost::program_options;
 
 int main(int argc, char* argv[]) {
+
+    // POI debug
+
+    shape::Shape shape = shape::build_shape({{0, 0}, {1, 0}, {1, 1}, {0, 1}});
+    std::vector<shape::Shape> holes = {
+        shape::build_shape({{0.25, 0.25}, {0.75, 0.25}, {0.75, 0.75}, {0.25, 0.75}})
+    };
+    shape::Point poi = shape::approximate_pole_of_inaccessibility(shape, holes);
+
+    std::cout << "POI = " << poi.x << " " << poi.y << std::endl;
+
+    // POI debug
 
     po::options_description desc("Allowed options");
     desc.add_options()
