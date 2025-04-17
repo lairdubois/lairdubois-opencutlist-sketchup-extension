@@ -175,15 +175,15 @@ LengthDbl closest_pt_on_segment(
 }
 
 void find_closest_pt_on_boundary(
-        const Poly& vers,
+        const Poly& poly,
         const Point& exterior,
         Point& closest)
 {
     LengthDbl min_dist = std::numeric_limits<LengthDbl>::max();
     Point test{};
 
-    for (size_t i = 0; i < vers.size() - 1; i++) {
-        LengthDbl dist = closest_pt_on_segment(vers[i], vers[i + 1], exterior, test);
+    for (size_t i = 0; i < poly.size() - 1; i++) {
+        LengthDbl dist = closest_pt_on_segment(poly[i], poly[i + 1], exterior, test);
         if (dist < min_dist) {
             min_dist = dist;
             closest = test;
@@ -192,7 +192,7 @@ void find_closest_pt_on_boundary(
 }
 
 void polygon_centroid(
-        const Poly& vers,
+        const Poly& poly,
         Point& centroid,
         AreaDbl& area)
 {
@@ -200,12 +200,12 @@ void polygon_centroid(
     LengthDbl sum_Cx = 0.0;
     LengthDbl sum_Cy = 0.0;
 
-    for (size_t i = 0; i < vers.size() - 1; i++) {
+    for (size_t i = 0; i < poly.size() - 1; i++) {
         size_t next = i + 1;
-        LengthDbl cross_product = vers[i].x * vers[next].y - vers[next].x * vers[i].y;
+        LengthDbl cross_product = poly[i].x * poly[next].y - poly[next].x * poly[i].y;
         area += cross_product;
-        sum_Cx += (vers[i].x + vers[next].x) * cross_product;
-        sum_Cy += (vers[i].y + vers[next].y) * cross_product;
+        sum_Cx += (poly[i].x + poly[next].x) * cross_product;
+        sum_Cy += (poly[i].y + poly[next].y) * cross_product;
     }
 
     area /= 2.0;
@@ -279,10 +279,9 @@ Point shape::approximate_pole_of_inaccessibility(
     std::vector<LengthDbl> interdists;
 
     for (const auto& poly : shifted_polys) {
-        const auto& vers = poly;
-        for (size_t j = 0; j < vers.size() - 1; j++) {
+        for (size_t j = 0; j < poly.size() - 1; j++) {
             Point inter{};
-            if (segments_intersect(vers[j], vers[j + 1], far1, far2, inter)) {
+            if (segments_intersect(poly[j], poly[j + 1], far1, far2, inter)) {
                 bool unique = true;
                 for (const auto& existing_inter : inters) {
                     if (distance(inter, existing_inter) < 1e-6) {
