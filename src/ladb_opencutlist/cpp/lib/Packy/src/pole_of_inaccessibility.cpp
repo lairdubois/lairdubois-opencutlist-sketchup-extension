@@ -5,37 +5,57 @@ using namespace shape;
 using Poly = std::vector<Point>;
 using Polys = std::vector<Poly>;
 
+/**
+ *
+ * @param shape
+ * @param number_of_line_segments
+ * @param outer
+ * @return
+ */
 Poly shape_to_poly(
         const Shape& shape,
-        ElementPos number_of_line_segments,
+        const ElementPos number_of_line_segments,
         bool outer)
 {
     Poly poly;
     for (const auto& element : shape.elements) {
         switch (element.type) {
-        case ShapeElementType::LineSegment: {
+            case ShapeElementType::LineSegment:
             poly.emplace_back(element.start);
             break;
-        } case ShapeElementType::CircularArc: {
+        case ShapeElementType::CircularArc:
             for (const auto& e : approximate_circular_arc_by_line_segments(element, number_of_line_segments, outer)) {
                 poly.emplace_back(element.start);
             }
             break;
         }
-        }
     }
+    // Close Poly by copying the first vertex at the end
     if (!shape.elements.empty())
         poly.emplace_back(shape.elements.back().end);
     return poly;
 }
 
-Point offset(
-        Point& p,
-        LengthDbl scalar)
+/**
+ *
+ * @param point
+ * @param scalar
+ * @return
+ */
+Point scale(
+        const Point& point,
+        const LengthDbl scalar)
 {
-    return Point{p.x * scalar, p.y * scalar};
+    return Point{point.x * scalar, point.y * scalar};
 }
 
+/**
+ *
+ * @param p
+ * @param q
+ * @param r
+ * @return
+ */
 int orientation(
         const Point& p,
         const Point& q,
@@ -45,6 +65,13 @@ int orientation(
     return (val == 0) ? 0 : ((val > 0) ? 1 : 2);
 }
 
+/**
+ *
+ * @param p
+ * @param q
+ * @param r
+ * @return
+ */
 bool on_segment(
         const Point& p,
         const Point& q,
@@ -53,6 +80,15 @@ bool on_segment(
     return (q.x <= std::fmax(p.x, r.x) && q.x >= std::fmin(p.x, r.x) && q.y <= std::fmax(p.y, r.y) && q.y >= std::fmin(p.y, r.y));
 }
 
+/**
+ *
+ * @param p1
+ * @param q1
+ * @param p2
+ * @param q2
+ * @param inter
+ * @return
+ */
 bool line_inter(
         const Point& p1,
         const Point& q1,
@@ -72,13 +108,21 @@ bool line_inter(
 
     if (det == 0)
         return false;
-    else {
-        inter.x = (b2 * c1 - b1 * c2) / det;
-        inter.y = (a1 * c2 - a2 * c1) / det;
-        return true;
-    }
+
+    inter.x = (b2 * c1 - b1 * c2) / det;
+    inter.y = (a1 * c2 - a2 * c1) / det;
+    return true;
 }
 
+/**
+ *
+ * @param p1
+ * @param q1
+ * @param p2
+ * @param q2
+ * @param inter
+ * @return
+ */
 bool segments_intersect(
         const Point& p1,
         const Point& q1,
@@ -117,6 +161,13 @@ bool segments_intersect(
     return false;
 }
 
+/**
+ *
+ * @param poi
+ * @param far
+ * @param inter
+ * @return
+ */
 LengthDbl signed_distance(
         const Point& poi,
         const Point& far,
@@ -125,10 +176,15 @@ LengthDbl signed_distance(
     Point vector_poi_far = far - poi;
     Point vector_poi_inter = inter - poi;
     LengthDbl length_poi_far = distance(vector_poi_far, Point());
-    Point normalized_vector_poi_far = offset(vector_poi_far, (1.0 / length_poi_far));
+    Point normalized_vector_poi_far = scale(vector_poi_far, (1.0 / length_poi_far));
     return dot_product(vector_poi_inter, normalized_vector_poi_far);
 }
 
+/**
+ *
+ * @param interdists
+ * @param inters
+ */
 void sort_and_reorder(
         std::vector<LengthDbl>& interdists,
         std::vector<Point>& inters)
@@ -147,6 +203,14 @@ void sort_and_reorder(
     }
 }
 
+/**
+ *
+ * @param A
+ * @param B
+ * @param O
+ * @param result
+ * @return
+ */
 LengthDbl closest_pt_on_segment(
         const Point& A,
         const Point& B,
@@ -168,12 +232,18 @@ LengthDbl closest_pt_on_segment(
     else if (t > 1.0)
         t = 1.0;
 
-    Point projection = offset(AB, t);
+    Point projection = scale(AB, t);
     result = A + projection;
 
     return distance(O, result);
 }
 
+/**
+ *
+ * @param poly
+ * @param exterior
+ * @param closest
+ */
 void find_closest_pt_on_boundary(
         const Poly& poly,
         const Point& exterior,
@@ -191,6 +261,12 @@ void find_closest_pt_on_boundary(
     }
 }
 
+/**
+ *
+ * @param poly
+ * @param centroid
+ * @param area
+ */
 void polygon_centroid(
         const Poly& poly,
         Point& centroid,
@@ -201,11 +277,11 @@ void polygon_centroid(
     LengthDbl sum_Cy = 0.0;
 
     for (size_t i = 0; i < poly.size() - 1; i++) {
-        size_t next = i + 1;
-        LengthDbl cross_product = poly[i].x * poly[next].y - poly[next].x * poly[i].y;
+        size_t next_i = i + 1;
+        LengthDbl cross_product = shape::cross_product(poly[i], poly[next_i]);
         area += cross_product;
-        sum_Cx += (poly[i].x + poly[next].x) * cross_product;
-        sum_Cy += (poly[i].y + poly[next].y) * cross_product;
+        sum_Cx += (poly[i].x + poly[next_i].x) * cross_product;
+        sum_Cy += (poly[i].y + poly[next_i].y) * cross_product;
     }
 
     area /= 2.0;
@@ -216,8 +292,10 @@ void polygon_centroid(
 Point shape::approximate_pole_of_inaccessibility(
         const Shape& shape,
         const std::vector<Shape>& holes,
-        ElementPos number_of_line_segments)
+        const ElementPos number_of_line_segments)
 {
+
+    // Convert shape and holes to one unique Polys where the first Poly child is the outer polygon.
     Polys polys;
     polys.emplace_back(shape_to_poly(shape, number_of_line_segments, true));
     for (const auto& hole : holes) {
@@ -240,7 +318,7 @@ Point shape::approximate_pole_of_inaccessibility(
     for (auto& poly : shifted_polys) {
         for (auto& vertex : poly) {
             vertex = vertex - shift;
-            vertex = offset(vertex, (1.0 / magnify));
+            vertex = scale(vertex, (1.0 / magnify));
         }
     }
 
@@ -253,10 +331,10 @@ Point shape::approximate_pole_of_inaccessibility(
         polygon_centroid(poly, tmppos, area);
         if (&poly != &shifted_polys[0])
             area *= -1;
-        centroid = centroid + offset(tmppos, area);
+        centroid = centroid + scale(tmppos, area);
         total_area += area;
     }
-    centroid = offset(centroid, (1.0 / total_area));
+    centroid = scale(centroid, (1.0 / total_area));
 
     LengthDbl min_dist = std::numeric_limits<LengthDbl>::max();
     Point closest{};
@@ -272,8 +350,8 @@ Point shape::approximate_pole_of_inaccessibility(
 
     Point p = closest - centroid;
 
-    Point far1 = centroid + offset(p, (10.0 / min_dist));
-    Point far2 = centroid - offset(p, (10.0 / min_dist));
+    Point far1 = centroid + scale(p, (10.0 / min_dist));
+    Point far2 = centroid - scale(p, (10.0 / min_dist));
 
     std::vector<Point> inters;
     std::vector<LengthDbl> interdists;
@@ -312,8 +390,8 @@ Point shape::approximate_pole_of_inaccessibility(
 
     Point poi = inters[id] + inters[id + 1];
 
-    poi = offset(poi, 0.5);
-    poi = offset(poi, magnify) + shift;
+    poi = scale(poi, 0.5);
+    poi = scale(poi, magnify) + shift;
 
     return poi;
 }

@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     // POI debug
 
     shape::Shape shape = shape::build_shape({{0, 0}, {1, 0}, {1, 1}, {0, 1}});
-    std::vector<shape::Shape> holes = {
+    std::vector holes = {
         shape::build_shape({{0.25, 0.25}, {0.75, 0.25}, {0.75, 0.75}, {0.25, 0.75}})
     };
     shape::Point poi = shape::approximate_pole_of_inaccessibility(shape, holes);
