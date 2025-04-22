@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     std::vector holes = {
         shape::build_shape({{0.25, 0.25}, {0.75, 0.25}, {0.75, 0.75}, {0.25, 0.75}})
     };
-    shape::Point labeling_position = shape::find_labeling_position(shape, holes);
+    shape::Point labeling_position = shape::find_label_position(shape, holes);
 
     std::cout << "labeling_position = " << labeling_position.x << " " << labeling_position.y << std::endl;
 

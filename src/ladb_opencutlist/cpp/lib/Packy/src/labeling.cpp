@@ -19,19 +19,19 @@ Poly shape_to_poly(
         const bool outer)
 {
     Poly poly;
-    for (const auto& element : shape.elements) {
+    for (const auto& element: shape.elements) {
         switch (element.type) {
             case ShapeElementType::LineSegment:
-            poly.emplace_back(element.start);
-            break;
-        case ShapeElementType::CircularArc:
-            for (const auto& e : approximate_circular_arc_by_line_segments(element, number_of_line_segments, outer)) {
                 poly.emplace_back(element.start);
-            }
-            break;
+                break;
+            case ShapeElementType::CircularArc:
+                for (const auto& e: approximate_circular_arc_by_line_segments(element, number_of_line_segments, outer)) {
+                    poly.emplace_back(element.start);
+                }
+                break;
         }
     }
-    // Close Poly by copying the last vertex at the end
+    // Close the "Poly" by adding the last vertex at the end
     if (!shape.elements.empty())
         poly.emplace_back(shape.elements.back().end);
     return poly;
@@ -62,7 +62,7 @@ int orientation(
         const Point& q,
         const Point& r)
 {
-    LengthDbl val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+    const LengthDbl val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
     return (val == 0) ? 0 : ((val > 0) ? 1 : 2);
 }
 
@@ -164,21 +164,21 @@ bool segments_intersect(
 
 /**
  *
- * @param poi
+ * @param label_position
  * @param far
  * @param inter
  * @return
  */
 LengthDbl signed_distance(
-        const Point& poi,
+        const Point& label_position,
         const Point& far,
         const Point& inter)
 {
-    Point vector_poi_far = far - poi;
-    Point vector_poi_inter = inter - poi;
-    LengthDbl length_poi_far = distance(vector_poi_far, Point());
-    Point normalized_vector_poi_far = scale(vector_poi_far, (1.0 / length_poi_far));
-    return dot_product(vector_poi_inter, normalized_vector_poi_far);
+    Point vector_label_position_far = far - label_position;
+    Point vector_label_position_inter = inter - label_position;
+    LengthDbl length_label_position_far = distance(vector_label_position_far, Point());
+    Point normalized_vector_label_position_far = scale(vector_label_position_far, (1.0 / length_label_position_far));
+    return dot_product(vector_label_position_inter, normalized_vector_label_position_far);
 }
 
 /**
@@ -212,7 +212,7 @@ void sort_and_reorder(
  * @param result
  * @return
  */
-LengthDbl closest_pt_on_segment(
+LengthDbl closest_point_on_segment(
         const Point& A,
         const Point& B,
         const Point& O,
@@ -254,7 +254,7 @@ void find_closest_point_on_boundary(
     Point test{};
 
     for (size_t i = 0; i < poly.size() - 1; i++) {
-        LengthDbl dist = closest_pt_on_segment(poly[i], poly[i + 1], exterior, test);
+        LengthDbl dist = closest_point_on_segment(poly[i], poly[i + 1], exterior, test);
         if (dist < min_dist) {
             min_dist = dist;
             closest = test;
@@ -290,7 +290,7 @@ void polygon_centroid(
     centroid.y = sum_Cy / (6.0 * area);
 }
 
-Point shape::find_labeling_position(
+Point shape::find_label_position(
         const Shape& shape,
         const std::vector<Shape>& holes,
         const ElementPos number_of_line_segments)
@@ -390,10 +390,10 @@ Point shape::find_labeling_position(
         }
     }
 
-    Point labeling_position = inters[id] + inters[id + 1];
+    Point label_position = inters[id] + inters[id + 1];
 
-    labeling_position = scale(labeling_position, 0.5);
-    labeling_position = scale(labeling_position, magnify) + shift;
+    label_position = scale(label_position, 0.5);
+    label_position = scale(label_position, magnify) + shift;
 
-    return labeling_position;
+    return label_position;
 }
