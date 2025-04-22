@@ -12,7 +12,6 @@ module Ladb::OpenCutList
   require_relative '../../lib/fiddle/packy/packy'
   require_relative '../../lib/fiddle/clippy/clippy'
   require_relative '../../lib/geometrix/geometrix'
-  require_relative '../../lib/polylabel/polylabel'
   require_relative '../../model/packing/packing_def'
   require_relative '../../model/export/wrappers'
 
@@ -474,6 +473,13 @@ module Ladb::OpenCutList
 
         return _create_packing(errors: [ 'tab.cutlist.packing.error.no_part' ]) if item_types.empty?
 
+        parameters = {
+          length_truncate_factor: DimensionUtils.model_unit_is_metric ? 254.0 : 100.0,
+          optimization_mode: @optimization_mode,
+          time_limit: @time_limit,
+          not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
+          verbosity_level: @verbosity_level
+        }
         instance_parameters = {}
         if @problem_type == Packy::PROBLEM_TYPE_RECTANGLE || @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
           instance_parameters = {
@@ -490,6 +496,11 @@ module Ladb::OpenCutList
             keep_height: _to_packy_length(@rectangleguillotine_keep_width)
           }
         elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+          parameters.merge(
+            {
+              label_positions: true
+            }
+          )
           instance_parameters = {
             item_bin_minimum_spacing: _to_packy_length(@trimming),
             item_item_minimum_spacing: _to_packy_length(@spacing)
@@ -498,13 +509,7 @@ module Ladb::OpenCutList
 
         input = {
           problem_type: @problem_type,
-          parameters: {
-            length_truncate_factor: DimensionUtils.model_unit_is_metric ? 254.0 : 100.0,
-            optimization_mode: @optimization_mode,
-            time_limit: @time_limit,
-            not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
-            verbosity_level: @verbosity_level
-          },
+          parameters: parameters,
           instance: {
             objective: @objective,
             parameters: instance_parameters,
@@ -569,7 +574,7 @@ module Ladb::OpenCutList
 
       return PackingDef.new(errors: [ 'tab.cutlist.packing.error.no_solution' ]).create_packing if raw_solution.nil? || raw_solution['bins'].nil? || raw_solution['bins'].empty?
 
-      # Create PackingDef from solution
+      # Create PackingDef from the solution
 
       instance_info_by_item_type_def = {}
       @item_type_defs.each do |item_type_def|
@@ -579,6 +584,16 @@ module Ladb::OpenCutList
         end
         instance_info_by_item_type_def[item_type_def] = instance_infos
       end
+
+      label_position_by_item_type_def = raw_solution['item_types_stats'].is_a?(Array) ? raw_solution['item_types_stats'].map { |raw_item_type_stats|
+        item_type_def = @item_type_defs[raw_item_type_stats['item_type_id']]
+        label_position = raw_item_type_stats['label_position']
+        next if label_position.nil?
+        x = _from_packy_length(label_position.fetch('x', -1))
+        y = _from_packy_length(label_position.fetch('y', -1))
+        next if x < 0 || y < 0
+        [ item_type_def, { x: x, y: y } ]
+      }.compact.to_h : {}
 
       packing_def = PackingDef.new(
         group: @group,
@@ -630,13 +645,16 @@ module Ladb::OpenCutList
               efficiency: raw_bin['efficiency'],
               item_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
                 item_type_def = @item_type_defs[raw_item['item_type_id']]
+                label_position = label_position_by_item_type_def[item_type_def]
                 PackingItemDef.new(
                   item_type_def: item_type_def,
                   instance_info: instance_info_by_item_type_def[item_type_def].is_a?(Array) ? instance_info_by_item_type_def[item_type_def].shift : nil,
                   x: _from_packy_length(raw_item.fetch('x', 0)),
                   y: _from_packy_length(raw_item.fetch('y', 0)),
                   angle: raw_item.fetch('angle', 0),
-                  mirror: raw_item.fetch('mirror', false)
+                  mirror: raw_item.fetch('mirror', false),
+                  label_x: label_position ? label_position[:x] : 0,
+                  label_y: label_position ? label_position[:y] : 0,
                 )
               } : [],
               leftover_defs: raw_bin['leftovers'].is_a?(Array) ? raw_bin['leftovers'].map { |raw_leftover|
@@ -874,34 +892,7 @@ module Ladb::OpenCutList
 
               unless !is_irregular || projection_def.nil? || light
 
-                # Find best label coords
-
-                shell_def = projection_def.shell_def
-                shape_def = shell_def.shape_defs.first
-                outer_poly_def = shape_def.outer_poly_def
-                holes_poly_defs = shape_def.holes_poly_defs
-
-                polys = []
-
-                outer_poly = Polylabel::Poly.new
-                outer_poly.verqty = outer_poly_def.points.size
-                outer_poly.vers = outer_poly_def.points.map { |point| [ point.x, point.y ] }
-                outer_poly.vers << outer_poly.vers[0] # Close polygon
-                polys << outer_poly
-
-                holes_poly_defs.each do |poly_def|
-
-                  hole_poly = Polylabel::Poly.new
-                  hole_poly.verqty = poly_def.points.size
-                  hole_poly.vers = poly_def.points.map { |point| [ point.x, point.y ] }
-                  hole_poly.vers << hole_poly.vers[0] # Close polygon
-                  polys << hole_poly
-
-                end
-
-                label_x, label_y = Polylabel.find_label(polys)
-
-                p = Geom::Point3d.new(_to_px(label_x) - px_item_length / 2, _to_px(label_y) - px_item_width / 2).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
+                p = Geom::Point3d.new(_to_px(item_def.label_x) - px_item_length / 2, _to_px(item_def.label_y) - px_item_width / 2).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
                 p.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
 
                 px_item_label_x, px_item_label_y = p.to_a

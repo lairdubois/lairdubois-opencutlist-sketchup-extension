@@ -1391,8 +1391,10 @@ namespace Packy {
                 parameters_.json_search_tree_path = j["json_search_tree_path"].get<std::string>();
             }
 
-            if (j.contains("compute_label_positions")) {
-                compute_label_positions_ = j["compute_label_positions"].get<bool>();
+            // Packy specific
+
+            if (j.contains("label_positions")) {
+                label_positions_ = j["label_positions"].get<bool>();
             }
 
         }
@@ -1594,16 +1596,42 @@ namespace Packy {
             const ItemTypeId item_type_id
         ) override {
 
-            if (compute_label_positions_) {
+            if (label_positions_) {
 
                 auto item_type = solution.instance().item_type(item_type_id);
 
-                // Extract the first item shape
-                irregular::ItemShape item_shape = item_type.shapes.front();
+                irregular::ItemShape biggest_item_shape;
+
+                if (item_type.shapes.size() > 1) {
+
+                    // The item contains multiple item shapes.
+                    // Try to find the biggest.
+                    shape::AreaDbl max_area = 0;
+                    for (const auto& item_shape : item_type.shapes) {
+
+                        shape::AreaDbl area = item_shape.shape.compute_area();
+                        for (const auto& hole : item_shape.holes) {
+                            area -= hole.compute_area();
+                        }
+
+                        if (area > max_area) {
+                            max_area = area;
+                            biggest_item_shape = item_shape;
+                        }
+
+                    }
+
+                } else {
+
+                    // Use the first item shape
+                    biggest_item_shape = item_type.shapes.front();
+
+                }
 
                 // Find label position
-                shape::Point label_position = shape::find_label_position(item_shape.shape, item_shape.holes);
+                shape::Point label_position = shape::find_label_position(biggest_item_shape.shape, biggest_item_shape.holes);
 
+                // Write label position (relative to the shape coordinate system)
                 j_item_type_stats["label_position"] = json{
                     {"x", to_length_dbl(label_position.x)},
                     {"y", to_length_dbl(label_position.y)}
@@ -1615,7 +1643,7 @@ namespace Packy {
 
     private:
 
-        bool compute_label_positions_ = false;
+        bool label_positions_ = false;
 
         static irregular::Shape read_shape(
                 basic_json<>& j
