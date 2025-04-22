@@ -1,4 +1,4 @@
-#include "shape/pole_of_inaccessibility.hpp"
+#include "shape/labeling.hpp"
 
 using namespace shape;
 
@@ -6,16 +6,17 @@ using Poly = std::vector<Point>;
 using Polys = std::vector<Poly>;
 
 /**
+ * Convert a Shape to a list of vertex.
  *
- * @param shape
- * @param number_of_line_segments
- * @param outer
- * @return
+ * @param shape The outline shape
+ * @param number_of_line_segments The number of line segments used to approximate circular arcs.
+ * @param outer Define if the shape represents an outline or hole.
+ * @return A Poly
  */
 Poly shape_to_poly(
         const Shape& shape,
         const ElementPos number_of_line_segments,
-        bool outer)
+        const bool outer)
 {
     Poly poly;
     for (const auto& element : shape.elements) {
@@ -30,7 +31,7 @@ Poly shape_to_poly(
             break;
         }
     }
-    // Close Poly by copying the first vertex at the end
+    // Close Poly by copying the last vertex at the end
     if (!shape.elements.empty())
         poly.emplace_back(shape.elements.back().end);
     return poly;
@@ -244,7 +245,7 @@ LengthDbl closest_pt_on_segment(
  * @param exterior
  * @param closest
  */
-void find_closest_pt_on_boundary(
+void find_closest_point_on_boundary(
         const Poly& poly,
         const Point& exterior,
         Point& closest)
@@ -289,7 +290,7 @@ void polygon_centroid(
     centroid.y = sum_Cy / (6.0 * area);
 }
 
-Point shape::approximate_pole_of_inaccessibility(
+Point shape::find_labeling_position(
         const Shape& shape,
         const std::vector<Shape>& holes,
         const ElementPos number_of_line_segments)
@@ -301,6 +302,8 @@ Point shape::approximate_pole_of_inaccessibility(
     for (const auto& hole : holes) {
         polys.emplace_back(shape_to_poly(hole, number_of_line_segments, false));
     }
+
+    /////
 
     Point shift{std::numeric_limits<LengthDbl>::max(), std::numeric_limits<LengthDbl>::max()};
     LengthDbl magnify = -std::numeric_limits<LengthDbl>::max();
@@ -340,7 +343,7 @@ Point shape::approximate_pole_of_inaccessibility(
     Point closest{};
 
     for (const auto& poly : shifted_polys) {
-        find_closest_pt_on_boundary(poly, centroid, tmppos);
+        find_closest_point_on_boundary(poly, centroid, tmppos);
         LengthDbl dist = distance(centroid, tmppos);
         if (dist < min_dist) {
             min_dist = dist;
@@ -348,10 +351,10 @@ Point shape::approximate_pole_of_inaccessibility(
         }
     }
 
-    Point p = closest - centroid;
+    Point v = closest - centroid;
 
-    Point far1 = centroid + scale(p, (10.0 / min_dist));
-    Point far2 = centroid - scale(p, (10.0 / min_dist));
+    Point far1 = centroid + scale(v, (10.0 / min_dist));
+    Point far2 = centroid - scale(v, (10.0 / min_dist));
 
     std::vector<Point> inters;
     std::vector<LengthDbl> interdists;
@@ -378,20 +381,19 @@ Point shape::approximate_pole_of_inaccessibility(
     sort_and_reorder(interdists, inters);
 
     LengthDbl max_length = -std::numeric_limits<LengthDbl>::max();
-    int id = -1;
+    size_t id = -1;
 
     for (size_t i = 0; i < inters.size() - 1; i += 2) {
-        LengthDbl length = distance(inters[i], inters[i + 1]);
-        if (length > max_length) {
+        if (LengthDbl length = distance(inters[i], inters[i + 1]); length > max_length) {
             max_length = length;
             id = i;
         }
     }
 
-    Point poi = inters[id] + inters[id + 1];
+    Point labeling_position = inters[id] + inters[id + 1];
 
-    poi = scale(poi, 0.5);
-    poi = scale(poi, magnify) + shift;
+    labeling_position = scale(labeling_position, 0.5);
+    labeling_position = scale(labeling_position, magnify) + shift;
 
-    return poi;
+    return labeling_position;
 }

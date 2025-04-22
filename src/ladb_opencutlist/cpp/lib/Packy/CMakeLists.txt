@@ -16,7 +16,7 @@ endif()
 
 # Library headers
 set(LIBRARY_HEADERS
-        include/shape/pole_of_inaccessibility.hpp
+        include/shape/labeling.hpp
         include/packy.hpp
         src/solver.hpp
         src/solver_builder.hpp
@@ -26,13 +26,13 @@ source_group("Headers" FILES ${LIBRARY_HEADERS})
 # Library sources
 if(WIN32)
   set(LIBRARY_SOURCES
-          src/pole_of_inaccessibility.cpp
+          src/labeling.cpp
           src/packy.cpp
           src/dllmain.cpp
   )
 else()
   set(LIBRARY_SOURCES
-          src/pole_of_inaccessibility.cpp
+          src/labeling.cpp
           src/packy.cpp
   )
 endif()
