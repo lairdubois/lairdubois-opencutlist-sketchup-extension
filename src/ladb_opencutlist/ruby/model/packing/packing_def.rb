@@ -261,6 +261,7 @@ module Ladb::OpenCutList
       @angle = angle
       @mirror = mirror
 
+      # Label coordinates relative to the item position.
       @label_x = label_x
       @label_y = label_y
 

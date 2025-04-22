@@ -496,7 +496,7 @@ module Ladb::OpenCutList
             keep_height: _to_packy_length(@rectangleguillotine_keep_width)
           }
         elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-          parameters.merge(
+          parameters.merge!(
             {
               label_positions: true
             }
