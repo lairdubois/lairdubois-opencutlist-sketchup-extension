@@ -18,7 +18,10 @@
 #include "packingsolver/irregular/instance.hpp"
 #include "packingsolver/irregular/optimize.hpp"
 
+#include "shape/labeling.hpp"
+
 #include <mutex>
+#include <packingsolver/boxstacks/instance.hpp>
 
 using namespace packingsolver;
 using namespace nlohmann;
@@ -455,6 +458,8 @@ namespace Packy {
                 if (used_copies > 0) j_item_type_stats["used_copies"] = used_copies;
                 if (unused_copies > 0 || used_copies == 0) j_item_type_stats["unused_copies"] = unused_copies;
 
+                populate_item_type_stats(j_item_type_stats, solution, item_type_id);
+
                 j_item_types_stats.emplace_back(j_item_type_stats);
 
             }
@@ -474,12 +479,14 @@ namespace Packy {
                 if (used_copies > 0) j_bin_type_stats["used_copies"] = used_copies;
                 if (unused_copies > 0 || used_copies == 0) j_bin_type_stats["unused_copies"] = unused_copies;
 
+                populate_bin_type_stats(j_bin_type_stats, solution, bin_type_id);
+
                 j_bin_types_stats.emplace_back(j_bin_type_stats);
 
             }
 
             if (messages_to_solution_) {
-                j["messages"] = messages(); // Export PackingSolver output messages to Packy solution
+                j["messages"] = messages(); // Export PackingSolver output messages to the Packy solution
             }
 
             if (!certificate_path_.empty()) {
@@ -493,6 +500,18 @@ namespace Packy {
             const Solution& solution,
             BinTypeStats& bin_type_stats
         ) = 0;
+
+        virtual void populate_item_type_stats(
+            basic_json<>& j_item_type_stats,
+            const Solution& solution,
+            const ItemTypeId item_type_id
+        ) {};
+
+        virtual void populate_bin_type_stats(
+            basic_json<>& j_bin_type_stats,
+            const Solution& solution,
+            const BinTypeId bin_type_id
+        ) {};
 
     };
 
@@ -1372,6 +1391,10 @@ namespace Packy {
                 parameters_.json_search_tree_path = j["json_search_tree_path"].get<std::string>();
             }
 
+            if (j.contains("compute_label_positions")) {
+                compute_label_positions_ = j["compute_label_positions"].get<bool>();
+            }
+
         }
 
         void read_instance_parameters(
@@ -1565,7 +1588,34 @@ namespace Packy {
 
         }
 
+        void populate_item_type_stats(
+            basic_json<>& j_item_type_stats,
+            const irregular::Solution& solution,
+            const ItemTypeId item_type_id
+        ) override {
+
+            if (compute_label_positions_) {
+
+                auto item_type = solution.instance().item_type(item_type_id);
+
+                // Extract the first item shape
+                irregular::ItemShape item_shape = item_type.shapes.front();
+
+                // Find label position
+                shape::Point label_position = shape::find_label_position(item_shape.shape, item_shape.holes);
+
+                j_item_type_stats["label_position"] = json{
+                    {"x", to_length_dbl(label_position.x)},
+                    {"y", to_length_dbl(label_position.y)}
+                };
+
+            }
+
+        };
+
     private:
+
+        bool compute_label_positions_ = false;
 
         static irregular::Shape read_shape(
                 basic_json<>& j
