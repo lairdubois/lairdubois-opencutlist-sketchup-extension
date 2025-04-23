@@ -851,8 +851,8 @@ module Ladb::OpenCutList
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.dialog')) {
         toggle_tabs_dialog
       }
-      cmd.small_icon = '../img/icon-72x72.png'
-      cmd.large_icon = '../img/icon-114x114.png'
+      cmd.small_icon = '../img/icon-dialog-72x72.png'
+      cmd.large_icon = '../img/icon-dialog-114x114.png'
       cmd.tooltip = get_i18n_string('core.toolbar.command.dialog')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.dialog')
       cmd.menu_text = get_i18n_string('core.toolbar.command.dialog')
