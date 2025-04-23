@@ -591,7 +591,6 @@ module Ladb::OpenCutList
         next if label_position.nil?
         x = _from_packy_length(label_position.fetch('x', -1))
         y = _from_packy_length(label_position.fetch('y', -1))
-        next if x < 0 || y < 0
         [ item_type_def, { x: x, y: y } ]
       }.compact.to_h : {}
 
@@ -821,14 +820,14 @@ module Ladb::OpenCutList
               svg += "<rect class='bin-trimming' x='#{px_trimming}' y='#{px_trimming}' width='#{px_bin_length - px_trimming * 2}' height='#{px_bin_width - px_trimming * 2}'/>" if @trimming > 0
             end
           end
-          if bin_def.x_max > 0 && bin_def.x_max < bin_def.bin_type_def.length - @trimming - 20.mm   # Arbitrary remove 20mm to avoid displaying line near border
+          if bin_def.x_max > 0 && bin_def.x_max < bin_def.bin_type_def.length - @trimming - 20.mm   # Arbitrary remove 20 mm to avoid displaying line near the border
             px_bin_max_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, _to_px(bin_def.x_max), 0, px_bin_length)
             svg += "<g class='bin-max'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_max_tooltip(bin_def.x_max, "vertical-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_TOP_LEFT ? 'right' : 'left'}")}'" unless light}>"
               svg += "<rect class='bin-max-outer' x='#{px_bin_max_x - px_cut_outline_width}' y='0' width='#{px_cut_outline_width * 2}' height='#{px_bin_width}'/>" unless light
               svg += "<line class='bin-max-inner' x1='#{px_bin_max_x}' y1='0' x2='#{px_bin_max_x}' y2='#{px_bin_width}'#{" style='stroke:red'" if light}>/>"
             svg += "</g>"
           end
-          if bin_def.y_max > 0 && bin_def.y_max < bin_def.bin_type_def.width - @trimming - 20.mm   # Arbitrary remove 20mm to avoid displaying line near border
+          if bin_def.y_max > 0 && bin_def.y_max < bin_def.bin_type_def.width - @trimming - 20.mm   # Arbitrary remove 20 mm to avoid displaying line near the border
             px_bin_max_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, _to_px(bin_def.y_max), 0, px_bin_width)
             svg += "<g class='bin-max'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_max_tooltip(bin_def.y_max, "horizontal-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_BOTTOM_RIGHT ? 'top' : 'bottom'}")}'" unless light}>"
               svg += "<rect class='bin-max-outer' x='0' y='#{px_bin_max_y - px_cut_outline_width}' width='#{px_bin_length}' height='#{px_cut_outline_width * 2}'/>" unless light
@@ -887,20 +886,20 @@ module Ladb::OpenCutList
 
               label_font_size = [ [ px_node_label_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_label_font_size_min ].max
 
-              px_item_label_x = 0
-              px_item_label_y = 0
+              px_item_label_x = px_item_rect_half_width
+              px_item_label_y = px_item_rect_half_height
 
               unless !is_irregular || projection_def.nil? || light
 
-                p = Geom::Point3d.new(_to_px(item_def.label_x) - px_item_length / 2, _to_px(item_def.label_y) - px_item_width / 2).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
+                p = Geom::Point3d.new(_to_px(item_def.label_x), _to_px(item_def.label_y)).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
                 p.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
 
-                px_item_label_x = p.x
-                px_item_label_y = p.y
+                px_item_label_x += p.x
+                px_item_label_y += p.y
 
               end
 
-              svg += "<text class='item-label' x='0' y='0' font-size='#{label_font_size}' text-anchor='middle' dominant-baseline='middle' transform='translate(#{px_item_label_x + px_item_rect_half_width} #{-(px_item_label_y + px_item_rect_half_height)}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
+              svg += "<text class='item-label' x='#{px_item_label_x}' y='#{-px_item_label_y}' font-size='#{label_font_size}' text-anchor='middle' dominant-baseline='middle'#{"transform='rotate(#{-(item_def.angle % 180)} #{px_item_label_x} #{-px_item_label_y})'" unless item_def.angle % 180 == 0}>#{item_text}</text>"
 
               unless is_irregular
 

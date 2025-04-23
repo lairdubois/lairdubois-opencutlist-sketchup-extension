@@ -1628,13 +1628,16 @@ namespace Packy {
 
                 }
 
+                // Compute shape size
+                auto length_width = biggest_item_shape.shape.compute_width_and_length();
+
                 // Find label position
                 shape::Point label_position = shape::find_label_position(biggest_item_shape.shape, biggest_item_shape.holes);
 
-                // Write label position (relative to the shape coordinate system)
+                // Write label position (relative to the shape center)
                 j_item_type_stats["label_position"] = json{
-                    {"x", to_length_dbl(label_position.x)},
-                    {"y", to_length_dbl(label_position.y)}
+                    {"x", to_length_dbl(label_position.x - length_width.first / 2.0)},
+                    {"y", to_length_dbl(label_position.y - length_width.second / 2.0)},
                 };
 
             }

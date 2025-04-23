@@ -228,6 +228,20 @@ module Ladb::OpenCutList
             item_rect_height
           ).transform(unit_transformation)
 
+          unless @texts_hidden
+            position_ = Geom::Point3d.new(
+              item_def.label_x,
+              item_def.label_y
+            ).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
+            position_.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
+            position_.transform!(unit_transformation)
+            position_.y *= -1
+            size_ = Geom::Point3d.new(
+              part_length,
+              part_width
+            ).transform(unit_transformation)
+          end
+
           if projection_def.is_a?(DrawingProjectionDef)
 
             transformation = unit_transformation
@@ -255,7 +269,7 @@ module Ladb::OpenCutList
                                         paths_stroke_color: @parts_paths_stroke_color,
                                         paths_fill_color: @parts_paths_fill_color,
                                         prefix: LAYER_PART)
-              _svg_write_label(file, position.x, position.y, size.x, size.y, text, (item_def.angle % 180) != 0, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
+              _svg_write_label(file, position.x, position.y, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, item_def.angle, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
 
             _svg_write_group_end(file)
 
@@ -272,7 +286,7 @@ module Ladb::OpenCutList
               'serif:id': id,
               'inkscape:label': id
             })
-            _svg_write_label(file, position.x, position.y, size.x, size.y, text, (item_def.angle % 180) != 0, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
+            _svg_write_label(file, position.x, position.y, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, item_def.angle, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
 
           end
 
@@ -453,20 +467,33 @@ module Ladb::OpenCutList
                 item_width
               ).transform(unit_transformation)
 
+              unless @texts_hidden
+                position_ = Geom::Point3d.new(
+                  item_def.label_x,
+                  item_def.label_y
+                ).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
+                position_.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
+                position_.transform!(unit_transformation)
+                size_ = Geom::Point3d.new(
+                  part_length,
+                  part_width
+                ).transform(unit_transformation)
+              end
+
               if projection_def.is_a?(DrawingProjectionDef)
 
                 transformation = unit_transformation
                 transformation *= Geom::Transformation.translation(Geom::Vector3d.new(-part_length / 2, -part_width / 2))
 
                 _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, unit_transformation, LAYER_PART) do
-                  _dxf_write_label(file, position.x, position.y, size.x, size.y, text, false, LAYER_TEXT) unless @texts_hidden
+                  _dxf_write_label(file, position.x, position.y, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, 0, LAYER_TEXT) unless @texts_hidden
                 end
 
               else
 
                 _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
                   _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_PART)
-                  _dxf_write_label(file, position.x, position.y, size.x, size.y, text, false, LAYER_TEXT) unless @texts_hidden
+                  _dxf_write_label(file, position.x, position.y, size.x, size.y, text, size_.y, position_.x, position_.y, 0, LAYER_TEXT) unless @texts_hidden
                 end
 
               end
@@ -528,6 +555,19 @@ module Ladb::OpenCutList
                 item_rect_height
               ).transform(unit_transformation)
 
+              unless @texts_hidden
+                position_ = Geom::Point3d.new(
+                  item_def.label_x,
+                  item_def.label_y
+                ).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
+                position_.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
+                position_.transform!(unit_transformation)
+                size_ = Geom::Point3d.new(
+                  part_length,
+                  part_width
+                ).transform(unit_transformation)
+              end
+
               if projection_def.is_a?(DrawingProjectionDef)
 
                 transformation = unit_transformation
@@ -545,7 +585,7 @@ module Ladb::OpenCutList
 
               end
 
-              _dxf_write_label(file, position.x, position.y, size.x, size.y, text, (item_def.angle % 180) != 0, LAYER_TEXT) unless @texts_hidden
+              _dxf_write_label(file, position.x, position.y, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, item_def.angle, LAYER_TEXT) unless @texts_hidden
 
             end
 

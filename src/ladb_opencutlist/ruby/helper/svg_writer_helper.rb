@@ -102,13 +102,13 @@ module Ladb::OpenCutList
       end
     end
 
-    def _svg_write_label(file, x, y, width, height, text, is_vertical = false, hex_color = nil)
+    def _svg_write_label(file, rx, ry, rw, rh, text, tw, th, tx = 0, ty = 0, angle = 0, hex_color = nil)
       text = text.to_s
       return unless text.length > 0
 
-      theight = [ 60.0, (is_vertical ? width : height) / 2, (is_vertical ? height : width) / text.length ].min
-      tx = x + width / 2.0
-      ty = y + height / 2.0
+      theight = [ 60.0, th / 2, tw / text.length ].min
+      tx = rx + rw / 2.0 + tx
+      ty = ry + rh / 2.0 + ty
       attributes = {
         x: _svg_value(tx),
         y: _svg_value(ty),
@@ -118,7 +118,7 @@ module Ladb::OpenCutList
         'text-anchor': 'middle',
         'dominant-baseline': 'middle'
       }
-      attributes.merge!({ transform: "rotate(-90 #{_svg_value(tx)} #{_svg_value(ty)})"}) if is_vertical
+      attributes.merge!({ transform: "rotate(-#{angle % 180} #{_svg_value(tx)} #{_svg_value(ty)})"}) unless angle % 180 == 0
 
       _svg_write_tag(file, 'text', attributes, text)
 

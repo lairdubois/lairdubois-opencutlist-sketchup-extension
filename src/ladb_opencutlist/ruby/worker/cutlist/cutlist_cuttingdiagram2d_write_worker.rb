@@ -243,7 +243,7 @@ module Ladb::OpenCutList
                                       paths_stroke_color: @parts_paths_stroke_color,
                                       paths_fill_color: @parts_paths_fill_color,
                                       prefix: LAYER_PART)
-            _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name : part.number, part.rotated, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
+            _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name : part.number, size.x, size.y, 0, 0, part.rotated ? 90 : 0, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
 
             _svg_write_group_end(file)
 
@@ -260,7 +260,7 @@ module Ladb::OpenCutList
               'serif:id': id,
               'inkscape:label': id
             })
-            _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name : part.number, part.rotated, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
+            _svg_write_label(file, position.x, position.y, size.x, size.y, @use_names ? part.name : part.number, size.x, size.y, 0, 0, part.rotated ? 90 : 0, _svg_stroke_color_hex(@texts_color)) unless @texts_hidden
 
           end
 
@@ -414,14 +414,14 @@ module Ladb::OpenCutList
                 end
 
                 _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, unit_transformation, LAYER_PART) do
-                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, part.rotated, LAYER_TEXT) unless @texts_hidden
+                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, width, height, 0, 0, part.rotated ? 90 : 0, LAYER_TEXT) unless @texts_hidden
                 end
 
               else
 
                 _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
                   _dxf_write_rect(file, 0, 0, width, height, LAYER_PART)
-                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, part.rotated, LAYER_TEXT) unless @texts_hidden
+                  _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, width, height, 0, 0, part.rotated ? 90 : 0, LAYER_TEXT) unless @texts_hidden
                 end
 
               end
@@ -494,7 +494,7 @@ module Ladb::OpenCutList
 
               end
 
-              _dxf_write_label(file, x, y, width, height, @use_names ? part.name : part.number, part.rotated, LAYER_TEXT) unless @texts_hidden
+              _dxf_write_label(file, x, y, width, height, @use_names ? part.name : part.number, width, height, 0, 0, part.rotated ? 90 : 0, LAYER_TEXT) unless @texts_hidden
 
             end
 

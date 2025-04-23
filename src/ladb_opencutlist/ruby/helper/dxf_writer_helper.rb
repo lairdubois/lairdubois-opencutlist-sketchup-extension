@@ -1177,16 +1177,16 @@ module Ladb::OpenCutList
 
     end
 
-    def _dxf_write_label(file, x, y, width, height, text, is_vertical = false, layer = '0')
+    def _dxf_write_label(file, rx, ry, rw, rh, text, tw, th, tx = 0, ty = 0, angle = 0, layer = nil)
       text = text.to_s
       return unless text.length > 0
 
-      tx = x + width / 2
-      ty = y + height / 2
-      theight = [ 60.0, (is_vertical ? width : height) / 2, (is_vertical ? height : width) / text.length ].min
-      tar = is_vertical ? 90 : 0
+      tx = rx + rw / 2.0 + tx
+      ty = ry + rh / 2.0 + ty
+      theight = [ 60.0, th / 2, tw / text.length ].min
+      angle = angle % 180
 
-      _dxf_write_text(file, tx , ty, theight, text, tar, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, layer)
+      _dxf_write_text(file, tx , ty, theight, text, angle, DXF_TEXT_HALIGN_CENTER, DXF_TEXT_VALIGN_MIDDLE, layer)
 
     end
 
