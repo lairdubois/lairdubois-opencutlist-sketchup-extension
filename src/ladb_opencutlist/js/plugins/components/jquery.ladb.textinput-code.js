@@ -33,7 +33,7 @@
     };
 
     LadbTextinputCode.prototype.createLeftToolsContainer = function ($toolContainer) {
-        // Do not create left tools container
+        // Do not create the left tools container
     };
 
     LadbTextinputCode.prototype.appendRightTools = function ($toolsContainer) {
