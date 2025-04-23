@@ -21,7 +21,6 @@
 #include "shape/labeling.hpp"
 
 #include <mutex>
-#include <packingsolver/boxstacks/instance.hpp>
 
 using namespace packingsolver;
 using namespace nlohmann;
@@ -1546,6 +1545,7 @@ namespace Packy {
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
 
+                AreaDbl bin_space = bin_type.space();
                 AreaDbl items_space = 0;
                 for (const auto& item : bin.items) {
                     const ItemType& item_type = instance.item_type(item.item_type_id);
@@ -1555,9 +1555,9 @@ namespace Packy {
                 basic_json<>& j_bin = j_bins.emplace_back(json{
                         {"bin_type_id", bin.bin_type_id},
                         {"copies",      bin.copies},
-                        {"space",       to_area_dbl(bin_type.space())},
-                        {"waste",       to_area_dbl(bin_type.space() - items_space)},
-                        {"efficiency",  items_space / bin_type.space()}
+                        {"space",       to_area_dbl(bin_space)},
+                        {"waste",       to_area_dbl(bin_space - items_space)},
+                        {"efficiency",  items_space / bin_space}
                 });
 
                 // Add x_max and y_max attributes to the last bin

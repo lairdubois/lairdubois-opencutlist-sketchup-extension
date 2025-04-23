@@ -116,7 +116,7 @@ module Ladb::OpenCutList
         'font-family': 'monospace',
         'font-size': _svg_value(theight),
         'text-anchor': 'middle',
-        'alignment-baseline': 'middle'
+        'dominant-baseline': 'middle'
       }
       attributes.merge!({ transform: "rotate(-90 #{_svg_value(tx)} #{_svg_value(ty)})"}) if is_vertical
 

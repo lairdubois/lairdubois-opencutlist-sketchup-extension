@@ -764,8 +764,8 @@ module Ladb::OpenCutList
       px_bin_dimension_font_size = light ? 0 : 16
       px_node_dimension_font_size_max = 12
       px_node_dimension_font_size_min = 8
-      px_node_number_font_size_max = 24
-      px_node_number_font_size_min = 8
+      px_node_label_font_size_max = 24
+      px_node_label_font_size_min = 8
 
       px_bin_dimension_offset = light ? 0 : 10
       px_node_dimension_offset = 4
@@ -885,7 +885,7 @@ module Ladb::OpenCutList
               item_text = _evaluate_item_text(@items_formula, part, item_def.instance_info)
               item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" if item_text.is_a?(Hash)
 
-              label_font_size = [ [ px_node_number_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_number_font_size_min ].max
+              label_font_size = [ [ px_node_label_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_label_font_size_min ].max
 
               px_item_label_x = 0
               px_item_label_y = 0
@@ -895,11 +895,12 @@ module Ladb::OpenCutList
                 p = Geom::Point3d.new(_to_px(item_def.label_x) - px_item_length / 2, _to_px(item_def.label_y) - px_item_width / 2).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
                 p.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
 
-                px_item_label_x, px_item_label_y = p.to_a
+                px_item_label_x = p.x
+                px_item_label_y = p.y
 
               end
 
-              svg += "<text class='item-number' x='0' y='0' font-size='#{label_font_size}' text-anchor='middle' dominant-baseline='central' transform='translate(#{px_item_label_x + px_item_rect_half_width} #{-(px_item_label_y + px_item_rect_half_height)}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
+              svg += "<text class='item-label' x='0' y='0' font-size='#{label_font_size}' text-anchor='middle' dominant-baseline='middle' transform='translate(#{px_item_label_x + px_item_rect_half_width} #{-(px_item_label_y + px_item_rect_half_height)}) rotate(#{-(item_def.angle % 180)})'>#{item_text}</text>"
 
               unless is_irregular
 
@@ -913,14 +914,14 @@ module Ladb::OpenCutList
 
                 if is_2d
 
-                  px_number_w, px_number_h = _compute_text_size(text: item_text, size: label_font_size)
-                  px_number_bounds = Geom::BoundingBox.new.add(
+                  px_label_w, px_label_h = _compute_text_size(text: item_text, size: label_font_size)
+                  px_label_bounds = Geom::BoundingBox.new.add(
                     [
-                      Geom::Point3d.new(-px_number_w / 2, -px_number_h / 2),
-                      Geom::Point3d.new(px_number_w / 2, px_number_h / 2)
+                      Geom::Point3d.new(-px_label_w / 2, -px_label_h / 2),
+                      Geom::Point3d.new(px_label_w / 2, px_label_h / 2)
                     ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_item_rect_half_width, px_item_rect_half_height)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, (item_def.angle % 180).degrees)) }
                   )
-                  # svg += "<rect x='#{px_number_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_number_bounds.min.y).to_f}' width='#{px_number_bounds.width.to_f}' height='#{px_number_bounds.height.to_f}' fill='none' stroke='red'></rect>"
+                  # svg += "<rect x='#{px_label_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_label_bounds.min.y).to_f}' width='#{px_label_bounds.width.to_f}' height='#{px_label_bounds.height.to_f}' fill='none' stroke='red'></rect>"
 
                   dim_x_font_size = [ [ px_node_dimension_font_size_max, px_item_rect_height - px_node_dimension_offset * 2, (px_item_rect_width - px_node_dimension_offset * 2) / (dim_x_text.length * 0.6) ].min, px_node_dimension_font_size_min ].max
                   dim_y_font_size = [ [ px_node_dimension_font_size_max, px_item_rect_width - px_node_dimension_offset * 2, (px_item_rect_height - px_node_dimension_offset * 2) / (dim_y_text.length * 0.6) ].min, px_node_dimension_font_size_min ].max
@@ -943,8 +944,8 @@ module Ladb::OpenCutList
                   )
                   # svg += "<rect x='#{px_dim_y_bounds.min.x.to_f}' y='#{(-px_item_rect_height + px_dim_y_bounds.min.y).to_f}' width='#{px_dim_y_bounds.width.to_f}' height='#{px_dim_y_bounds.height.to_f}' fill='none' stroke='yellow'></rect>"
 
-                  hide_dim_x = px_number_bounds.intersect(px_dim_x_bounds).valid? || px_dim_x_bounds.width > px_item_rect_width - px_node_dimension_offset || px_dim_x_bounds.height > px_item_rect_height - px_node_dimension_offset
-                  hide_dim_y = px_number_bounds.intersect(px_dim_y_bounds).valid? || px_dim_y_bounds.width > px_item_rect_width - px_node_dimension_offset || px_dim_y_bounds.height > px_item_rect_height - px_node_dimension_offset
+                  hide_dim_x = px_label_bounds.intersect(px_dim_x_bounds).valid? || px_dim_x_bounds.width > px_item_rect_width - px_node_dimension_offset || px_dim_x_bounds.height > px_item_rect_height - px_node_dimension_offset
+                  hide_dim_y = px_label_bounds.intersect(px_dim_y_bounds).valid? || px_dim_y_bounds.width > px_item_rect_width - px_node_dimension_offset || px_dim_y_bounds.height > px_item_rect_height - px_node_dimension_offset
 
                   svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_x}' x='#{px_item_rect_width - px_node_dimension_offset}' y='#{-(px_item_rect_height - px_node_dimension_offset)}' font-size='#{dim_x_font_size}' text-anchor='end' dominant-baseline='hanging'>#{dim_x_text}</text>" unless hide_dim_x
                   svg += "<text class='item-dimension#{' item-dimension-cutting' if is_cutting_dim_y}' x='#{px_node_dimension_offset}' y='#{-px_node_dimension_offset}' font-size='#{dim_y_font_size}' text-anchor='start' dominant-baseline='hanging' transform='rotate(-90 #{px_node_dimension_offset} -#{px_node_dimension_offset})'>#{dim_y_text}</text>" unless hide_dim_y
