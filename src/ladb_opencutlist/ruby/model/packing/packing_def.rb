@@ -247,11 +247,11 @@ module Ladb::OpenCutList
 
     attr_reader :item_type_def, :instance_info,
                 :x, :y, :angle, :mirror,
-                :label_x, :label_y
+                :label_offset
 
     def initialize(item_type_def:, instance_info:,
                    x:, y:, angle:, mirror:,
-                   label_x:, label_y:)
+                   label_offset:)
 
       @item_type_def = item_type_def
       @instance_info = instance_info
@@ -261,9 +261,8 @@ module Ladb::OpenCutList
       @angle = angle
       @mirror = mirror
 
-      # Label coordinates relative to the biggest shape center
-      @label_x = label_x
-      @label_y = label_y
+      # Label offset (relative to the bounding box center, without transformations)
+      @label_offset = label_offset
 
     end
 

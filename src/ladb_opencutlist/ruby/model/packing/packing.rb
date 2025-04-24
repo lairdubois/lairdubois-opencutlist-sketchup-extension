@@ -224,7 +224,7 @@ module Ladb::OpenCutList
     include HashableHelper
 
     attr_reader :x, :y, :angle, :mirror,
-                :label_x, :label_y
+                :label_offset
 
     def initialize(_def)
       @_def = _def
@@ -234,8 +234,7 @@ module Ladb::OpenCutList
       @angle = _def.angle
       @mirror = _def.mirror
 
-      @label_x = _def.label_x
-      @label_y = _def.label_y
+      @label_offset = _def.label_offset
 
     end
 

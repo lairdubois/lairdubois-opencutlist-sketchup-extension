@@ -229,10 +229,7 @@ module Ladb::OpenCutList
           ).transform(unit_transformation)
 
           unless @texts_hidden
-            position_ = Geom::Point3d.new(
-              item_def.label_x,
-              item_def.label_y
-            ).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
+            position_ = Geom::Point3d.new.offset!(item_def.label_offset).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
             position_.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
             position_.transform!(unit_transformation)
             position_.y *= -1
@@ -468,10 +465,7 @@ module Ladb::OpenCutList
               ).transform(unit_transformation)
 
               unless @texts_hidden
-                position_ = Geom::Point3d.new(
-                  item_def.label_x,
-                  item_def.label_y
-                ).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
+                position_ = Geom::Point3d.new.offset!(item_def.label_offset).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
                 position_.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
                 position_.transform!(unit_transformation)
                 size_ = Geom::Point3d.new(
@@ -556,10 +550,7 @@ module Ladb::OpenCutList
               ).transform(unit_transformation)
 
               unless @texts_hidden
-                position_ = Geom::Point3d.new(
-                  item_def.label_x,
-                  item_def.label_y
-                ).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
+                position_ = Geom::Point3d.new.offset!(item_def.label_offset).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
                 position_.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
                 position_.transform!(unit_transformation)
                 size_ = Geom::Point3d.new(

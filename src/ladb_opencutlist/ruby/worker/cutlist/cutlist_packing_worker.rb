@@ -498,7 +498,7 @@ module Ladb::OpenCutList
         elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
           parameters.merge!(
             {
-              label_positions: true
+              label_offsets: true
             }
           )
           instance_parameters = {
@@ -585,13 +585,13 @@ module Ladb::OpenCutList
         instance_info_by_item_type_def[item_type_def] = instance_infos
       end
 
-      label_position_by_item_type_def = raw_solution['item_types_stats'].is_a?(Array) ? raw_solution['item_types_stats'].map { |raw_item_type_stats|
+      label_offsets_by_item_type_def = raw_solution['item_types_stats'].is_a?(Array) ? raw_solution['item_types_stats'].map { |raw_item_type_stats|
         item_type_def = @item_type_defs[raw_item_type_stats['item_type_id']]
-        label_position = raw_item_type_stats['label_position']
-        next if label_position.nil?
-        x = _from_packy_length(label_position.fetch('x', -1))
-        y = _from_packy_length(label_position.fetch('y', -1))
-        [ item_type_def, { x: x, y: y } ]
+        label_offset = raw_item_type_stats['label_offset']
+        next if label_offset.nil?
+        x = _from_packy_length(label_offset.fetch('x', -1))
+        y = _from_packy_length(label_offset.fetch('y', -1))
+        [ item_type_def, Geom::Vector3d.new(x, y) ]
       }.compact.to_h : {}
 
       packing_def = PackingDef.new(
@@ -644,7 +644,7 @@ module Ladb::OpenCutList
               efficiency: raw_bin['efficiency'],
               item_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
                 item_type_def = @item_type_defs[raw_item['item_type_id']]
-                label_position = label_position_by_item_type_def[item_type_def]
+                label_offset = label_offsets_by_item_type_def[item_type_def]
                 PackingItemDef.new(
                   item_type_def: item_type_def,
                   instance_info: instance_info_by_item_type_def[item_type_def].is_a?(Array) ? instance_info_by_item_type_def[item_type_def].shift : nil,
@@ -652,8 +652,7 @@ module Ladb::OpenCutList
                   y: _from_packy_length(raw_item.fetch('y', 0)),
                   angle: raw_item.fetch('angle', 0),
                   mirror: raw_item.fetch('mirror', false),
-                  label_x: label_position ? label_position[:x] : 0,
-                  label_y: label_position ? label_position[:y] : 0,
+                  label_offset: label_offset ? label_offset : Geom::Vector3d.new(0, 0)
                 )
               } : [],
               leftover_defs: raw_bin['leftovers'].is_a?(Array) ? raw_bin['leftovers'].map { |raw_leftover|
@@ -891,7 +890,7 @@ module Ladb::OpenCutList
 
               unless !is_irregular || projection_def.nil? || light
 
-                p = Geom::Point3d.new(_to_px(item_def.label_x), _to_px(item_def.label_y)).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
+                p = Geom::Point3d.new(_to_px(item_def.label_offset.x), _to_px(item_def.label_offset.y)).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
                 p.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
 
                 px_item_label_x += p.x

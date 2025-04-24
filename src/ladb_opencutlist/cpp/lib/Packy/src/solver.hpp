@@ -1392,8 +1392,8 @@ namespace Packy {
 
             // Packy specific
 
-            if (j.contains("label_positions")) {
-                label_positions_ = j["label_positions"].get<bool>();
+            if (j.contains("label_offsets")) {
+                label_offsets_ = j["label_offsets"].get<bool>();
             }
 
         }
@@ -1596,18 +1596,31 @@ namespace Packy {
             const ItemTypeId item_type_id
         ) override {
 
-            if (label_positions_) {
+            if (label_offsets_) {
 
                 auto item_type = solution.instance().item_type(item_type_id);
 
                 irregular::ItemShape biggest_item_shape;
+                std::pair<shape::Point, shape::Point> min_max;
 
                 if (item_type.shapes.size() > 1) {
+
+                    min_max = {
+                        {std::numeric_limits<irregular::LengthDbl>::infinity(), std::numeric_limits<irregular::LengthDbl>::infinity()},
+                        {-std::numeric_limits<irregular::LengthDbl>::infinity(), -std::numeric_limits<irregular::LengthDbl>::infinity()}
+                    };
 
                     // The item contains multiple item shapes.
                     // Try to find the biggest.
                     shape::AreaDbl max_area = 0;
                     for (const auto& item_shape : item_type.shapes) {
+
+                        // Compute min max
+                        auto shape_min_max = item_shape.shape.compute_min_max();
+                        if (shape_min_max.first.x < min_max.first.x) min_max.first.x = shape_min_max.first.x;
+                        if (shape_min_max.first.y < min_max.first.y) min_max.first.y = shape_min_max.first.y;
+                        if (shape_min_max.second.x > min_max.second.x) min_max.second.x = shape_min_max.second.x;
+                        if (shape_min_max.second.y > min_max.second.y) min_max.second.y = shape_min_max.second.y;
 
                         shape::AreaDbl area = item_shape.shape.compute_area();
                         for (const auto& hole : item_shape.holes) {
@@ -1626,18 +1639,22 @@ namespace Packy {
                     // Use the first item shape
                     biggest_item_shape = item_type.shapes.front();
 
+                    // Compute min max
+                    min_max = biggest_item_shape.shape.compute_min_max();
+
                 }
 
-                // Compute shape size
-                auto length_width = biggest_item_shape.shape.compute_width_and_length();
+                // Compute item shapes size
+                auto item_length = min_max.second.x - min_max.first.x;
+                auto item_width = min_max.second.y - min_max.first.y;
 
                 // Find label position
                 shape::Point label_position = shape::find_label_position(biggest_item_shape.shape, biggest_item_shape.holes);
 
-                // Write label position (relative to the shape center)
-                j_item_type_stats["label_position"] = json{
-                    {"x", to_length_dbl(label_position.x - length_width.first / 2.0)},
-                    {"y", to_length_dbl(label_position.y - length_width.second / 2.0)},
+                // Write the label offset (relative to the item shapes center)
+                j_item_type_stats["label_offset"] = json{
+                    {"x", to_length_dbl(label_position.x - (min_max.first.x + item_length / 2.0))},
+                    {"y", to_length_dbl(label_position.y - (min_max.first.x + item_width / 2.0))},
                 };
 
             }
@@ -1646,7 +1663,7 @@ namespace Packy {
 
     private:
 
-        bool label_positions_ = false;
+        bool label_offsets_ = false;
 
         static irregular::Shape read_shape(
                 basic_json<>& j
