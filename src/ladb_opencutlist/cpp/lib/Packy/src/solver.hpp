@@ -373,7 +373,7 @@ namespace Packy {
             ) {
                 std::lock_guard<std::mutex> lock(solutions_mutex_);
                 json j_solution;
-                write_best_solution(j_solution, dynamic_cast<const Output&>(output));
+                write_best_solution(j_solution, dynamic_cast<const Output&>(output), false);
                 solutions_.push_back(j_solution);
             };
 
@@ -424,7 +424,7 @@ namespace Packy {
         virtual void write_best_solution(
                 json& j,
                 const Output& output,
-                bool final = false
+                const bool final
         ) {
 
             const auto& solution = output.solution_pool.best();
@@ -505,14 +505,14 @@ namespace Packy {
             basic_json<>& j_item_type_stats,
             const Solution& solution,
             const ItemTypeId item_type_id,
-            bool final = false
+            const bool final
         ) {};
 
         virtual void populate_bin_type_stats(
             basic_json<>& j_bin_type_stats,
             const Solution& solution,
             const BinTypeId bin_type_id,
-            bool final = false
+            const bool final
         ) {};
 
     };
@@ -1597,7 +1597,7 @@ namespace Packy {
             basic_json<>& j_item_type_stats,
             const irregular::Solution& solution,
             const ItemTypeId item_type_id,
-            bool final
+            const bool final
         ) override {
 
             if (final && label_offsets_) {
