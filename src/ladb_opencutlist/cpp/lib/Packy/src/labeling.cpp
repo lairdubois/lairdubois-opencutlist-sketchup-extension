@@ -38,72 +38,61 @@ Poly shape_to_poly(
 }
 
 /**
+ * Scale the given point position by a specified factor.
  *
- * @param point
- * @param scalar
- * @return
+ * @param point The point to scale.
+ * @param factor The scaling factor to be applied to the point.
+ * @return The scaled point.
  */
 Point scale(
         const Point& point,
-        const LengthDbl scalar)
+        const LengthDbl factor)
 {
-    return Point{point.x * scalar, point.y * scalar};
+    return Point{point.x * factor, point.y * factor};
 }
 
 /**
+ * Determines if a point lies on a line segment.
  *
- * @param p
- * @param q
- * @param r
- * @return
- */
-int orientation(
-        const Point& p,
-        const Point& q,
-        const Point& r)
-{
-    const LengthDbl val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
-    return (val == 0) ? 0 : ((val > 0) ? 1 : 2);
-}
-
-/**
- *
- * @param p
- * @param q
- * @param r
- * @return
+ * @param segment The line segment defined by a pair of points (start, end)
+ * @param point The point to test
+ * @return true if the point lies on the line segment, false otherwise
  */
 bool on_segment(
-        const Point& p,
-        const Point& q,
-        const Point& r)
+        const std::pair<Point, Point>& segment,
+        const Point& point)
 {
-    return (q.x <= std::fmax(p.x, r.x) && q.x >= std::fmin(p.x, r.x) && q.y <= std::fmax(p.y, r.y) && q.y >= std::fmin(p.y, r.y));
+    return segment.second.x <= std::fmax(segment.first.x, point.x)
+           && segment.second.x >= std::fmin(segment.first.x, point.x)
+           && segment.second.y <= std::fmax(segment.first.y, point.y)
+           && segment.second.y >= std::fmin(segment.second.y, point.y);
 }
 
 /**
+ * Computes the intersection point of two lines using Cramer's rule.
+ * Each line is defined by a pair of points.
  *
- * @param p1
- * @param q1
- * @param p2
- * @param q2
- * @param inter
- * @return
+ * @param line1 First line segment defined by a pair of points (start, end)
+ * @param line2 Second line segment defined by a pair of points (start, end)
+ * @param inter Reference to a Point that will store the intersection coordinates if it exists
+ * @return true if the lines intersect at a unique point, false if they are parallel or coincident
+ *
+ * The function uses the general form of a line equation: ax + by = c
+ * For each line, it calculates coefficients a, b, c and then uses
+ * Cramer's rule to solve the system of equations.
  */
 bool line_inter(
-        const Point& p1,
-        const Point& q1,
-        const Point& p2,
-        const Point& q2,
-        Point& inter)
+    const std::pair<Point, Point>& line1,
+    const std::pair<Point, Point>& line2,
+    Point& inter)
 {
-    LengthDbl a1 = q1.y - p1.y;
-    LengthDbl b1 = p1.x - q1.x;
-    LengthDbl c1 = a1 * p1.x + b1 * p1.y;
+    LengthDbl a1 = line1.second.y - line1.first.y;
+    LengthDbl b1 = line1.first.x - line1.second.x;
+    LengthDbl c1 = a1 * line1.first.x + b1 * line1.first.y;
 
-    LengthDbl a2 = q2.y - p2.y;
-    LengthDbl b2 = p2.x - q2.x;
-    LengthDbl c2 = a2 * p2.x + b2 * p2.y;
+    LengthDbl a2 = line2.second.y - line2.first.y;
+    LengthDbl b2 = line2.first.x - line2.second.x;
+    LengthDbl c2 = a2 * line2.first.x + b2 * line2.first.y;
 
     LengthDbl det = a1 * b2 - a2 * b1;
 
@@ -116,46 +105,49 @@ bool line_inter(
 }
 
 /**
+ * Determines if two-line segments intersect and finds their intersection point if they do.
  *
- * @param p1
- * @param q1
- * @param p2
- * @param q2
- * @param inter
- * @return
+ * @param segment1 First line segment defined by a pair of points (start, end)
+ * @param segment2 Second line segment defined by a pair of points (start, end)
+ * @param inter Reference to a Point that will store the intersection coordinates if found
+ * @return True if the segments intersect (including if they intersect at an endpoint),
+ *         false otherwise
+ *
+ * The function first computes the orientation of points using counter_clockwise checks.
+ * It handles both general intersection cases and special cases where:
+ * - Segments intersect at a non-endpoint
+ * - One segment's endpoint lies on the other segment
  */
 bool segments_intersect(
-        const Point& p1,
-        const Point& q1,
-        const Point& p2,
-        const Point& q2,
+        const std::pair<Point, Point>& segment1,
+        const std::pair<Point, Point>& segment2,
         Point& inter)
 {
-    int o1 = orientation(p1, q1, p2);
-    int o2 = orientation(p1, q1, q2);
-    int o3 = orientation(p2, q2, p1);
-    int o4 = orientation(p2, q2, q1);
+    int o1 = shape::counter_clockwise(segment1.first, segment1.second, segment2.first);
+    int o2 = shape::counter_clockwise(segment1.first, segment1.second, segment2.second);
+    int o3 = shape::counter_clockwise(segment2.first, segment2.second, segment1.first);
+    int o4 = shape::counter_clockwise(segment2.first, segment2.second, segment1.second);
 
     if (o1 != o2 && o3 != o4)
-        return line_inter(p1, q1, p2, q2, inter);
+        return line_inter({segment1.first, segment1.second}, {segment2.first, segment2.second}, inter);
 
-    if (o1 == 0 && on_segment(p1, p2, q1)) {
-        inter = p2;
+    if (o1 == 0 && on_segment({segment1.first, segment1.second}, segment2.first)) {
+        inter = segment2.first;
         return true;
     }
 
-    if (o2 == 0 && on_segment(p1, q2, q1)) {
-        inter = q2;
+    if (o2 == 0 && on_segment({segment1.first, segment1.second}, segment2.second)) {
+        inter = segment2.second;
         return true;
     }
 
-    if (o3 == 0 && on_segment(p2, p1, q2)) {
-        inter = p1;
+    if (o3 == 0 && on_segment({segment2.first, segment2.second}, segment1.first)) {
+        inter = segment1.first;
         return true;
     }
 
-    if (o4 == 0 && on_segment(p2, q1, q2)) {
-        inter = q1;
+    if (o4 == 0 && on_segment({segment2.first, segment2.second}, segment1.second)) {
+        inter = segment1.second;
         return true;
     }
 
@@ -163,11 +155,20 @@ bool segments_intersect(
 }
 
 /**
+ * This function is used to determine the relative position of an intersection point with respect to a given direction.
  *
- * @param label_position
- * @param far
- * @param inter
- * @return
+ * @param label_position The reference point from which distances are measured
+ * @param far A point defining the direction vector (with label_position)
+ * @param inter The intersection point to measure the signed distance to
+ * @return The signed distance value:
+ *         - Positive if inter is in the same direction as the far point
+ *         - Negative if inter is in the opposite direction
+ *         - Near zero if inter is perpendicular to the direction
+ *
+ * The function works by:
+ * 1. Creating vectors from label_position to both far and inter points
+ * 2. Normalizing the vector to far point
+ * 3. Computing dot product to determine relative position
  */
 LengthDbl signed_distance(
         const Point& label_position,
@@ -182,9 +183,16 @@ LengthDbl signed_distance(
 }
 
 /**
+ * Sorts two parallel vectors using the insertion sort algorithm.
+ * The first vector (interdists) is used as the sorting key,
+ * and the second vector (inters) is reordered accordingly
+ * to maintain the correspondence between elements.
  *
- * @param interdists
- * @param inters
+ * @param interdists Vector of distances to be sorted in ascending order
+ * @param inters Vector of points to be reordered based on interdists sorting
+ *
+ * Note: Both vectors must have the same size. The function modifies
+ * both vectors in-place.
  */
 void sort_and_reorder(
         std::vector<LengthDbl>& interdists,
@@ -205,45 +213,50 @@ void sort_and_reorder(
 }
 
 /**
+ * Finds the nearest point on a line segment to a given point.
  *
- * @param A
- * @param B
- * @param O
- * @param result
- * @return
+ * @param segment The line segment defined by a pair of points (start, end)
+ * @param point The reference point to find the nearest point from
+ * @param result The resulting nearest point (modified by reference)
+ * @return The distance between the given point and the nearest point found on the segment.
  */
 LengthDbl closest_point_on_segment(
-        const Point& A,
-        const Point& B,
-        const Point& O,
+        const std::pair<Point, Point>& segment,
+        const Point& point,
         Point& result)
 {
-    Point AB = B - A;
-    Point AO = O - A;
+    const Point vab = segment.second - segment.first;
+    const Point vpa = point - segment.first;
 
-    LengthDbl ab2 = dot_product(AB, AB);
+    LengthDbl ab2 = dot_product(vab, vab);
     if (ab2 == 0.0) {
-        result = A;
-        return distance(O, A);
+        result = segment.first;
+        return distance(point, segment.first);
     }
 
-    LengthDbl t = dot_product(AO, AB) / ab2;
+    LengthDbl t = dot_product(vpa, vab) / ab2;
     if (t < 0.0)
         t = 0.0;
     else if (t > 1.0)
         t = 1.0;
 
-    Point projection = scale(AB, t);
-    result = A + projection;
+    Point projection = scale(vab, t);
+    result = segment.first + projection;
 
-    return distance(O, result);
+    return distance(point, result);
 }
 
 /**
+ * Finds the closest point on the boundary of a polygon to a given exterior point.
  *
- * @param poly
- * @param exterior
- * @param closest
+ * @param poly The polygon represented as a vector of points
+ * @param exterior The reference point outside the polygon to find the closest point from
+ * @param closest The resulting closest point on the polygon boundary (modified by reference)
+ *
+ * The function iterates through all segments of the polygon and:
+ * 1. Calculates the closest point on each segment to the exterior point
+ * 2. Keeps track of the minimum distance found
+ * 3. Updates the result when a closer point is found
  */
 void find_closest_point_on_boundary(
         const Poly& poly,
@@ -254,7 +267,7 @@ void find_closest_point_on_boundary(
     Point test{};
 
     for (size_t i = 0; i < poly.size() - 1; i++) {
-        LengthDbl dist = closest_point_on_segment(poly[i], poly[i + 1], exterior, test);
+        LengthDbl dist = closest_point_on_segment({poly[i], poly[i + 1]}, exterior, test);
         if (dist < min_dist) {
             min_dist = dist;
             closest = test;
@@ -263,10 +276,21 @@ void find_closest_point_on_boundary(
 }
 
 /**
+ * Calculates the centroid (geometric center) and area of a polygon.
  *
- * @param poly
- * @param centroid
- * @param area
+ * @param poly The polygon represented as a vector of points
+ * @param centroid Output parameter that will store the calculated centroid coordinates
+ * @param area Output parameter that will store the calculated area of the polygon
+ *
+ * The function uses the geometric decomposition method to calculate both the centroid
+ * and area of the polygon:
+ * 1. Iterates through consecutive pairs of vertices
+ * 2. Computes cross products to find signed areas of triangles
+ * 3. Accumulates weighted sums for x and y coordinates
+ * 4. Finally computes the centroid using the accumulated values divided by the total area
+ *
+ * Note: The polygon should be closed (last point equals first point) and vertices
+ * should be ordered counter-clockwise for positive areas.
  */
 void polygon_centroid(
         const Poly& poly,
@@ -362,7 +386,7 @@ Point shape::find_label_position(
     for (const auto& poly : shifted_polys) {
         for (size_t j = 0; j < poly.size() - 1; j++) {
             Point inter{};
-            if (segments_intersect(poly[j], poly[j + 1], far1, far2, inter)) {
+            if (segments_intersect({poly[j], poly[j + 1]}, {far1, far2}, inter)) {
                 bool unique = true;
                 for (const auto& existing_inter : inters) {
                     if (distance(inter, existing_inter) < 1e-6) {
