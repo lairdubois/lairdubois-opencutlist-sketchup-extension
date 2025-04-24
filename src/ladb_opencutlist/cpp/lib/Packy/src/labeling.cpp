@@ -34,7 +34,7 @@ Poly shape_to_poly(
     // Close the "Poly" by adding the last vertex at the end
     if (!shape.elements.empty())
         poly.emplace_back(shape.elements.back().end);
-    return poly;
+    return std::move(poly);
 }
 
 /**
