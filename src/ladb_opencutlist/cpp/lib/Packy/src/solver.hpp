@@ -423,7 +423,8 @@ namespace Packy {
          */
         virtual void write_best_solution(
                 json& j,
-                const Output& output
+                const Output& output,
+                bool final = false
         ) {
 
             const auto& solution = output.solution_pool.best();
@@ -457,7 +458,7 @@ namespace Packy {
                 if (used_copies > 0) j_item_type_stats["used_copies"] = used_copies;
                 if (unused_copies > 0 || used_copies == 0) j_item_type_stats["unused_copies"] = unused_copies;
 
-                populate_item_type_stats(j_item_type_stats, solution, item_type_id);
+                populate_item_type_stats(j_item_type_stats, solution, item_type_id, final);
 
                 j_item_types_stats.emplace_back(j_item_type_stats);
 
@@ -478,7 +479,7 @@ namespace Packy {
                 if (used_copies > 0) j_bin_type_stats["used_copies"] = used_copies;
                 if (unused_copies > 0 || used_copies == 0) j_bin_type_stats["unused_copies"] = unused_copies;
 
-                populate_bin_type_stats(j_bin_type_stats, solution, bin_type_id);
+                populate_bin_type_stats(j_bin_type_stats, solution, bin_type_id, final);
 
                 j_bin_types_stats.emplace_back(j_bin_type_stats);
 
@@ -503,13 +504,15 @@ namespace Packy {
         virtual void populate_item_type_stats(
             basic_json<>& j_item_type_stats,
             const Solution& solution,
-            const ItemTypeId item_type_id
+            const ItemTypeId item_type_id,
+            bool final = false
         ) {};
 
         virtual void populate_bin_type_stats(
             basic_json<>& j_bin_type_stats,
             const Solution& solution,
-            const BinTypeId bin_type_id
+            const BinTypeId bin_type_id,
+            bool final = false
         ) {};
 
     };
@@ -658,7 +661,7 @@ namespace Packy {
             const rectangle::Output output = rectangle::optimize(instance, parameters_);
 
             json j;
-            write_best_solution(j, output);
+            write_best_solution(j, output, true);
 
             return std::move(j);
         }
@@ -944,7 +947,7 @@ namespace Packy {
             const rectangleguillotine::Output output = rectangleguillotine::optimize(instance, parameters_);
 
             json j;
-            write_best_solution(j, output);
+            write_best_solution(j, output, true);
 
             return std::move(j);
         }
@@ -1260,7 +1263,7 @@ namespace Packy {
             const onedimensional::Output output = onedimensional::optimize(instance, parameters_);
 
             json j;
-            write_best_solution(j, output);
+            write_best_solution(j, output, true);
 
             return std::move(j);
         }
@@ -1390,7 +1393,7 @@ namespace Packy {
                 parameters_.json_search_tree_path = j["json_search_tree_path"].get<std::string>();
             }
 
-            // Packy specific
+            // Packy specific parameters
 
             if (j.contains("label_offsets")) {
                 label_offsets_ = j["label_offsets"].get<bool>();
@@ -1522,7 +1525,7 @@ namespace Packy {
             const irregular::Output output = irregular::optimize(instance, parameters_);
 
             json j;
-            write_best_solution(j, output);
+            write_best_solution(j, output, true);
 
             return std::move(j);
         }
@@ -1593,25 +1596,26 @@ namespace Packy {
         void populate_item_type_stats(
             basic_json<>& j_item_type_stats,
             const irregular::Solution& solution,
-            const ItemTypeId item_type_id
+            const ItemTypeId item_type_id,
+            bool final
         ) override {
 
-            if (label_offsets_) {
+            if (final && label_offsets_) {
 
                 auto item_type = solution.instance().item_type(item_type_id);
 
-                irregular::ItemShape biggest_item_shape;
+                irregular::ItemShape largest_item_shape;
                 std::pair<shape::Point, shape::Point> min_max;
 
                 if (item_type.shapes.size() > 1) {
+
+                    // The item contains multiple item shapes.
+                    // Try to find the largest and compute min max of all.
 
                     min_max = {
                         {std::numeric_limits<irregular::LengthDbl>::infinity(), std::numeric_limits<irregular::LengthDbl>::infinity()},
                         {-std::numeric_limits<irregular::LengthDbl>::infinity(), -std::numeric_limits<irregular::LengthDbl>::infinity()}
                     };
-
-                    // The item contains multiple item shapes.
-                    // Try to find the biggest.
                     shape::AreaDbl max_area = 0;
                     for (const auto& item_shape : item_type.shapes) {
 
@@ -1629,7 +1633,7 @@ namespace Packy {
 
                         if (area > max_area) {
                             max_area = area;
-                            biggest_item_shape = item_shape;
+                            largest_item_shape = item_shape;
                         }
 
                     }
@@ -1637,10 +1641,10 @@ namespace Packy {
                 } else {
 
                     // Use the first item shape
-                    biggest_item_shape = item_type.shapes.front();
+                    largest_item_shape = item_type.shapes.front();
 
                     // Compute min max
-                    min_max = biggest_item_shape.shape.compute_min_max();
+                    min_max = largest_item_shape.shape.compute_min_max();
 
                 }
 
@@ -1649,12 +1653,12 @@ namespace Packy {
                 auto item_width = min_max.second.y - min_max.first.y;
 
                 // Find label position
-                shape::Point label_position = shape::find_label_position(biggest_item_shape.shape, biggest_item_shape.holes);
+                shape::Point label_position = shape::find_label_position(largest_item_shape.shape, largest_item_shape.holes);
 
                 // Write the label offset (relative to the item shapes center)
                 j_item_type_stats["label_offset"] = json{
                     {"x", to_length_dbl(label_position.x - (min_max.first.x + item_length / 2.0))},
-                    {"y", to_length_dbl(label_position.y - (min_max.first.x + item_width / 2.0))},
+                    {"y", to_length_dbl(label_position.y - (min_max.first.y + item_width / 2.0))},
                 };
 
             }
