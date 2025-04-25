@@ -1,7 +1,7 @@
 // CONSTANTS
 // ======================
 
-const EXTENSION_BUILD = '202504240544';   // /!\ Auto-generated line, do not edit //
+const EXTENSION_BUILD = '202504251638';   // /!\ Auto-generated line, do not edit //
 
 // UI /////
 
