@@ -2,7 +2,6 @@
 #include "solver_builder.hpp"
 
 #include <string>
-#include <stdexcept>
 #include <thread>
 #include <future>
 
@@ -14,18 +13,34 @@ using namespace Packy;
 extern "C" {
 #endif
 
-static std::shared_future<json> optimize_future_;
 static std::string optimize_str_output_;
-static bool optimize_cancelled_ = false;
-static SolverPtr solver_ptr_ = nullptr;
-static size_t last_send_solution_pos_ = 0;
+
+struct Run {
+    int id = 0;
+    std::shared_future<json> optimize_future;
+    bool optimize_cancelled = false;
+    SolverPtr solver_ptr = nullptr;
+    size_t last_send_solution_pos = 0;
+};
+
+static int last_run_id = 0;
+static std::unordered_map<int, Run> runs_;
 
 DLL_EXPORTS char* c_optimize_start(
-        char* s_input
+        const char* s_input
 ) {
 
-    optimize_future_ = std::async(std::launch::async, [s_input]() {
-        json j_ouput;
+    // Increment run id
+    int run_id = last_run_id++;
+
+    // Create a new run structure in the run map
+    Run& run = runs_[run_id];
+
+    // Define run future
+    run.optimize_future = std::async(std::launch::async, [s_input, &run]() {
+        json j_ouput = json{
+            {"run_id", run.id}
+        };
 
         try {
 
@@ -34,17 +49,17 @@ DLL_EXPORTS char* c_optimize_start(
 
             // Create the solver
             SolverBuilder solver_builder;
-            solver_ptr_ = solver_builder.build(is);
-            Solver& solver = *solver_ptr_;
+            run.solver_ptr = solver_builder.build(is);
+            Solver& solver = *run.solver_ptr;
 
             // Link the cancelled boolean
-            solver.parameters().timer.add_end_boolean(&optimize_cancelled_);
+            solver.parameters().timer.add_end_boolean(&run.optimize_cancelled);
 
             // Reset cancelled status
-            optimize_cancelled_ = false;
+            run.optimize_cancelled = false;
 
-            // Reset last_known_solution_pos_
-            last_send_solution_pos_ = 0;
+            // Reset last_known_solution_pos
+            run.last_send_solution_pos = 0;
 
             // Run!
             j_ouput["solution"] = solver.optimize();
@@ -55,43 +70,127 @@ DLL_EXPORTS char* c_optimize_start(
             j_ouput["error"] = "Unknown Error";
         }
 
-        // Reset optimizer ptr
-        solver_ptr_ = nullptr;
+        // Reset solver ptr
+        run.solver_ptr = nullptr;
 
         return std::move(j_ouput);
     }).share();
 
-    optimize_str_output_ = json{{"running", true}}.dump();
+    optimize_str_output_ = json{
+        {"running", true},
+        {"run_id", run_id},
+    }.dump();
 
     return const_cast<char*>(optimize_str_output_.c_str());
 }
 
-DLL_EXPORTS char* c_optimize_advance() {
+DLL_EXPORTS char* c_optimize_advance(
+        int run_id
+) {
 
-    std::future_status status = optimize_future_.wait_for(std::chrono::milliseconds(0));
-    if (status == std::future_status::ready) {
-        if (optimize_cancelled_ && last_send_solution_pos_ == 0) {
-            optimize_str_output_ = json{{"cancelled", true}}.dump();
-        } else {
-            optimize_str_output_ = optimize_future_.get().dump();
-        }
+    if (runs_.find(run_id) == runs_.end()) {
+
+        // Run doesn't exist
+        optimize_str_output_ = json{
+            {"error", "Unknown run_id=" + std::to_string(run_id)}
+        }.dump();
+
     } else {
-        json j_output = json{{"running", true}};
-        if (solver_ptr_ != nullptr) {
-            size_t solutions_size = (*solver_ptr_).solutions_size();
-            if (solutions_size > last_send_solution_pos_) {
-                j_output["solution"] = (*solver_ptr_).solutions_back();
-                last_send_solution_pos_ = solutions_size;
+
+        Run& run = runs_.at(run_id);
+
+        std::future_status status = run.optimize_future.wait_for(std::chrono::milliseconds(0));
+        if (status == std::future_status::ready) {
+            if (run.optimize_cancelled && run.last_send_solution_pos == 0) {
+
+                // Run is cancelled, notify it in the returned output
+                optimize_str_output_ = json{
+                    {"cancelled", true},
+                    {"run_id", run_id}
+                }.dump();
+
+            } else {
+
+                // Get output from the final computation
+                optimize_str_output_ = run.optimize_future.get().dump();
+
+                // Delete run
+                runs_.erase(run_id);
+
             }
+        } else {
+
+            // Run is running
+            json j_output = json{
+                {"running", true},
+                {"run_id", run_id}
+            };
+            if (run.solver_ptr != nullptr) {
+                size_t solutions_size = (*run.solver_ptr).solutions_size();
+                if (solutions_size > run.last_send_solution_pos) {
+                    j_output["solution"] = (*run.solver_ptr).solutions_back();
+                    run.last_send_solution_pos = solutions_size;
+                }
+            }
+            optimize_str_output_ = j_output.dump();
+
         }
-        optimize_str_output_ = j_output.dump();
+
     }
 
     return const_cast<char*>(optimize_str_output_.c_str());
 }
 
-DLL_EXPORTS void c_optimize_cancel() {
-    optimize_cancelled_ = true;
+DLL_EXPORTS char* c_optimize_cancel(
+        int run_id
+) {
+
+    if (runs_.find(run_id) == runs_.end()) {
+
+        // Run doesn't exist
+        optimize_str_output_ = json{
+            {"error", "Unknown run_id=" + std::to_string(run_id)}
+        }.dump();
+
+    } else {
+
+        Run& run = runs_.at(run_id);
+
+        // Ask run to cancel
+        run.optimize_cancelled = true;
+
+        // Run is cancelled, notify it in the returned output
+        optimize_str_output_ = json{
+            {"cancelled", true},
+            {"run_id", run_id}
+        }.dump();
+
+    }
+
+    return const_cast<char*>(optimize_str_output_.c_str());
+}
+
+DLL_EXPORTS char* c_optimize_cancel_all() {
+    std::vector<int> run_ids_to_erase;
+    for (auto& [run_id, run] : runs_) {
+
+        // Ask run to cancel
+        run.optimize_cancelled = true;
+
+        std::future_status status = run.optimize_future.wait_for(std::chrono::milliseconds(0));
+        if (status == std::future_status::ready) {
+            run_ids_to_erase.emplace_back(run_id);
+        }
+
+    }
+    for (auto run_id : run_ids_to_erase) {
+        runs_.erase(run_id);
+    }
+    optimize_str_output_ = json{
+        {"number_of_erased_runs", run_ids_to_erase.size()},
+    }.dump();
+
+    return const_cast<char*>(optimize_str_output_.c_str());
 }
 
 DLL_EXPORTS char* c_version() {

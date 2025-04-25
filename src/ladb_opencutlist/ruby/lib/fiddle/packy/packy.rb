@@ -36,8 +36,9 @@ module Ladb::OpenCutList::Fiddle
       [
 
         'char* c_optimize_start(char*)',
-        'char* c_optimize_advance()',
-        'void c_optimize_cancel()',
+        'char* c_optimize_advance(int)',
+        'char* c_optimize_cancel(int)',
+        'char* c_optimize_cancel_all()',
 
         'char* c_version()',
 
@@ -69,18 +70,24 @@ module Ladb::OpenCutList::Fiddle
       JSON.parse(c_optimize_start(input_json).to_s)
     end
 
-    def self.optimize_advance
+    def self.optimize_advance(run_id = 0)
       _load_lib
-      output = JSON.parse(c_optimize_advance.to_s)
-      if !@running_input_md5.nil? && !output['running'] && !output['cancelled']
+      output = JSON.parse(c_optimize_advance(run_id).to_s)
+      if !@running_input_md5.nil? && !output['running'] && !output['cancelled'] && !output['error']
         @cached_outputs[@running_input_md5] = output
         @running_input_md5 = nil
       end
       output
     end
 
-    def self.optimize_cancel
-      c_optimize_cancel if loaded?
+    def self.optimize_cancel(run_id = 0)
+      return {} unless loaded?
+      JSON.parse(c_optimize_cancel(run_id).to_s)
+    end
+
+    def self.optimize_cancel_all
+      return {} unless loaded?
+      JSON.parse(c_optimize_cancel_all.to_s)
     end
 
   end

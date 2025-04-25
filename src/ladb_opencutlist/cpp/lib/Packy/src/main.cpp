@@ -4,8 +4,6 @@
 
 #include <boost/program_options.hpp>
 
-#include "shape/labeling.hpp"
-
 using namespace Packy;
 using namespace nlohmann;
 

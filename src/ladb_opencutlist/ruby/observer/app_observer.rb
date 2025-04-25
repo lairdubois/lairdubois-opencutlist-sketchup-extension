@@ -15,6 +15,7 @@ module Ladb::OpenCutList
     ON_NEW_MODEL = 'on_new_model'.freeze
     ON_OPEN_MODEL = 'on_open_model'.freeze
     ON_ACTIVATE_MODEL = 'on_activate_model'.freeze
+    ON_QUIT = 'on_quit'.freeze
 
     def initialize
       unless Sketchup.active_model.nil?
@@ -84,6 +85,13 @@ module Ladb::OpenCutList
 
       # Trigger event to JS
       PLUGIN.trigger_event(ON_ACTIVATE_MODEL, { :name => model.name })
+
+    end
+
+    def onQuit()
+
+      # Trigger event to JS
+      PLUGIN.trigger_event(ON_QUIT)
 
     end
 

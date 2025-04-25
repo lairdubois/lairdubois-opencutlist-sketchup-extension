@@ -1,6 +1,3 @@
-#include <cstddef>
-#include <cstdint>
-
 constexpr auto PACKY_VERSION = "1.0.0";
 
 #ifdef __cplusplus
@@ -14,10 +11,15 @@ extern "C" {
 #endif
 
 DLL_EXPORTS char* c_optimize_start(
-        char* s_input
+        const char* s_input
 );
-DLL_EXPORTS char* c_optimize_advance();
-DLL_EXPORTS void c_optimize_cancel();
+DLL_EXPORTS char* c_optimize_advance(
+        int run_id
+);
+DLL_EXPORTS char* c_optimize_cancel(
+        int run_id
+);
+DLL_EXPORTS char* c_optimize_cancel_all();
 
 DLL_EXPORTS char* c_version();
 

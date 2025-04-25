@@ -7,6 +7,9 @@ module Ladb::OpenCutList
   require_relative '../observer/selection_observer'
   require_relative '../observer/materials_observer'
   require_relative '../observer/model_observer'
+  require_relative '../lib/fiddle/packy/packy'
+
+  Packy = Fiddle::Packy
 
   class CutlistController < Controller
 
@@ -119,21 +122,30 @@ module Ladb::OpenCutList
     def setup_event_callbacks
 
       PLUGIN.add_event_callback([
-                                             AppObserver::ON_NEW_MODEL,
-                                             AppObserver::ON_OPEN_MODEL,
-                                             AppObserver::ON_ACTIVATE_MODEL,
-                                             SelectionObserver::ON_SELECTION_BULK_CHANGE,
-                                             SelectionObserver::ON_SELECTION_CLEARED,
-                                             MaterialsObserver::ON_MATERIAL_CHANGE,
-                                             MaterialsObserver::ON_MATERIAL_REMOVE,
-                                             ModelObserver::ON_DRAWING_CHANGE,
-                                         ]) do |params|
+                                   AppObserver::ON_NEW_MODEL,
+                                   AppObserver::ON_OPEN_MODEL,
+                                   AppObserver::ON_ACTIVATE_MODEL,
+                                   SelectionObserver::ON_SELECTION_BULK_CHANGE,
+                                   SelectionObserver::ON_SELECTION_CLEARED,
+                                   MaterialsObserver::ON_MATERIAL_CHANGE,
+                                   MaterialsObserver::ON_MATERIAL_REMOVE,
+                                   ModelObserver::ON_DRAWING_CHANGE,
+                               ]) do |params|
 
         # Invalidate Cutlist if it exists
         @cutlist.invalidate if @cutlist
 
       end
 
+      PLUGIN.add_event_callback([
+                                  AppObserver::ON_QUIT,
+                                  'on_tags_dialog_close'
+                                ]) do |params|
+
+        # Cancel all Packy runs
+        Packy.optimize_cancel_all
+
+      end
     end
 
     private

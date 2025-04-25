@@ -292,7 +292,7 @@ module Ladb::OpenCutList
 
       # Internals
 
-      @_running = false
+      @_run_id = nil
       @bin_type_defs = []
       @item_type_defs = []
 
@@ -304,7 +304,7 @@ module Ladb::OpenCutList
       case action
       when :start
 
-        return _create_packing(errors: [ 'default.error' ]) if @_running
+        return _create_packing(errors: [ 'default.error' ]) unless @_run_id.nil?
         return _create_packing(errors: [ 'default.error' ]) unless @cutlist
 
         model = Sketchup.active_model
@@ -525,27 +525,28 @@ module Ladb::OpenCutList
           puts '-- input --'
         end
 
+        Packy.optimize_cancel_all
         output = Packy.optimize_start(input)
 
-        @_running = true
+        @_run_id = output.fetch('run_id', nil)
 
         return _create_packing(output: output)
 
       when :advance
 
-        return _create_packing(errors: [ 'default.error' ]) unless @_running
+        return _create_packing(errors: [ 'default.error' ]) if @_run_id.nil?
 
-        output = Packy.optimize_advance
+        output = Packy.optimize_advance(@_run_id)
 
         return _create_packing(output: output)
 
       when :cancel
 
-        return _create_packing(errors: [ 'default.error' ]) unless @_running
+        return _create_packing(errors: [ 'default.error' ]) if @_run_id.nil?
 
-        Packy.optimize_cancel
+        output = Packy.optimize_cancel(@_run_id)
 
-        return _create_packing(output: { 'cancelled' => true })
+        return _create_packing(output: output)
       end
 
       _create_packing(errors: [ 'default.error' ])
