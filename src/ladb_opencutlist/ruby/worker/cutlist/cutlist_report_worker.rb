@@ -27,7 +27,7 @@ module Ladb::OpenCutList
       @hidden_group_ids = hidden_group_ids
 
       @cutlist_groups = @cutlist.groups.select { |group| group.material_type != MaterialAttributes::TYPE_UNKNOWN && !@hidden_group_ids.include?(group.id) }
-      @remaining_step = @cutlist_groups.count
+      @remaining_step = @cutlist_groups.length
       @starting = true
 
       @report_def = ReportDef.new

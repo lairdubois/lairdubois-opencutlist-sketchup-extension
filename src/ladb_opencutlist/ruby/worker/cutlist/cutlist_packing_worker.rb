@@ -97,7 +97,7 @@ module Ladb::OpenCutList
         component_definition: ComponentDefinitionWrapper.new(part.def.definition),
         component_instance: instance_info.nil? ? nil : ComponentInstanceWrapper.new(instance_info.entity),
 
-        )
+      )
 
       begin
         text = eval(formula, data.get_binding)
@@ -266,15 +266,7 @@ module Ladb::OpenCutList
       @scrap_bin_2d_sizes = DimensionUtils.dxdxq_to_ifloats(scrap_bin_2d_sizes)
 
       @problem_type = problem_type
-      @optimization_mode = if optimization_mode == Packy::OPTIMIZATION_MODE_AUTO
-                             if problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-                               Packy::OPTIMIZATION_MODE_ANYTIME     # Set the optimization mode to ANYTIME if IRREGULAR
-                             else
-                               Packy::OPTIMIZATION_MODE_NOT_ANYTIME_DETERMINISTIC # Set the optimization mode to NOT_ANYTIME_DETERMINISTIC if not IRREGULAR
-                             end
-                           else
-                             optimization_mode
-                           end
+      @optimization_mode = optimization_mode
       @objective = objective
       @spacing = DimensionUtils.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.str_to_ifloat(trimming).to_l.to_f
@@ -491,7 +483,15 @@ module Ladb::OpenCutList
 
         parameters = {
           length_truncate_factor: DimensionUtils.model_unit_is_metric ? 254.0 : 100.0,
-          optimization_mode: @optimization_mode,
+          optimization_mode: if @optimization_mode == Packy::OPTIMIZATION_MODE_AUTO
+                               if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+                                 Packy::OPTIMIZATION_MODE_ANYTIME                     # Set the optimization mode to ANYTIME if IRREGULAR
+                               else
+                                 Packy::OPTIMIZATION_MODE_NOT_ANYTIME_DETERMINISTIC   # Set the optimization mode to NOT_ANYTIME_DETERMINISTIC if not IRREGULAR
+                               end
+                             else
+                               @optimization_mode
+                             end,
           time_limit: @time_limit,
           not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
           verbosity_level: @verbosity_level
