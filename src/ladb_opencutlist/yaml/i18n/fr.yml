@@ -1068,12 +1068,6 @@ tab:
       option_time_limit: Limite de temps
       option_time_limit_help: |
         Fixe le temps impartit au calcul
-      option_not_anytime_tree_search_queue_size: Taille de la file d'attente
-      option_not_anytime_tree_search_queue_size_help: |
-        Définit la taille de l'arbre de recherche
-      option_verbosity_level: Degré de détail
-      option_verbosity_level_help: |
-        Définit le degré de détail des informations du calcul
       tooltip:
         scroll_to_block_1d: Défiler vers la première barre ou bande
         scroll_to_block_2d: Défiler vers le premier panneau ou feuille

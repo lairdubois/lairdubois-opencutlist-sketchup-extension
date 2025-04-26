@@ -4979,6 +4979,8 @@
                 const $inputRectangleguillotineKeepWidth = $('#ladb_input_rectangleguillotine_keep_width', $modal);
                 const $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
                 const $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
+                const $formGroupDev = $('.ladb-cutlist-packing-form-group-dev', $modal)
+                const $btnExpert = $('.ladb-cutlist-packing-btn-expert', $modal)
                 const $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
                 const $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
                 const $inputSpacing = $('#ladb_input_spacing', $modal);
@@ -4991,7 +4993,7 @@
                 const $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
                 const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 const $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
-                const $selectVerbisotyLevel = $('#ladb_select_verbosity_level', $modal);
+                const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
                 const $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 const $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
                 const $btnGenerate = $('#ladb_btn_generate', $modal);
@@ -5030,7 +5032,7 @@
                     options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
                     options.time_limit = that.toInt($inputTimeLimit.val());
                     options.not_anytime_tree_search_queue_size = that.toInt($inputNotAnytimeTreeSearchQueueSize.val());
-                    options.verbosity_level = that.toInt($selectVerbisotyLevel.val());
+                    options.verbosity_level = that.toInt($selectVerbosityLevel.val());
                 }
                 const fnFillInputs = function (options) {
                     $radiosProblemType.filter('[value=' + fnValidProblemType(options.problem_type) + ']').click();
@@ -5053,7 +5055,7 @@
                     $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
                     $inputTimeLimit.val(options.time_limit);
                     $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
-                    $selectVerbisotyLevel.selectpicker('val', options.verbosity_level);
+                    $selectVerbosityLevel.selectpicker('val', options.verbosity_level);
                     fnUpdateFieldsVisibility();
                 }
                 const fnConvertToVariableDefs = function (vars) {
@@ -5073,9 +5075,11 @@
                 const fnUpdateFieldsVisibility = function () {
                     const isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
                     const isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
+                    const isDev = that.dialog.capabilities.is_dev;
                     if (isIrregular) $formGroupNotIrregular.hide(); else $formGroupNotIrregular.show();
                     if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
                     if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
+                    if (isDev) $formGroupDev.show(); else $formGroupDev.hide();
                     $('option[value=0]', $selectPartDrawingType).prop('disabled', isIrregular);
                     if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);
                     $selectPartDrawingType.selectpicker('refresh');
@@ -5204,7 +5208,7 @@
                 $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputTimeLimit.ladbTextinputText();
                 $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
-                $selectVerbisotyLevel.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectVerbosityLevel.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(packingOptions);
 
@@ -5222,6 +5226,22 @@
                     that.lastPackingOptionsTab = $(e.target).attr('href').substring('#tab_packing_options_'.length);
                 });
 
+                // Bind collapses
+                $('#ladb-cutlist-packing-collapse-expert')
+                    .on('shown.bs.collapse', function () {
+                        $('i', $btnExpert)
+                            .removeClass('ladb-opencutlist-icon-plus')
+                            .addClass('ladb-opencutlist-icon-minus')
+                        ;
+                    })
+                    .on('hidden.bs.collapse', function () {
+                        $('i', $btnExpert)
+                            .addClass('ladb-opencutlist-icon-plus')
+                            .removeClass('ladb-opencutlist-icon-minus')
+                        ;
+                    })
+                ;
+
                 // Bind buttons
                 $btnEditMaterial.on('click', function () {
                     fnEditMaterial();
@@ -5236,6 +5256,10 @@
                         }
                     });
                 });
+                $btnExpert.on('click', function () {
+                    $('#ladb-cutlist-packing-collapse-expert').collapse('toggle');
+                    $(this).blur();
+                })
                 $btnGenerate.on('click', function () {
 
                     // Fetch options

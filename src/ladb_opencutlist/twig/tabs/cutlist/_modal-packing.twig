@@ -35,7 +35,6 @@
         <li role="presentation"{% if tab == 'material' %} class="active"{% endif %}><a href="#tab_packing_options_material" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-material-type-2"></i> {{ 'tab.cutlist.packing.options_material'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'config' %} class="active"{% endif %}><a href="#tab_packing_options_config" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.packing.options_config'|i18next }}</a></li>
         <li role="presentation"{% if tab == 'display' %} class="active"{% endif %}><a href="#tab_packing_options_display" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-cutlist"></i> {{ 'tab.cutlist.packing.options_display'|i18next }}</a></li>
-        <li role="presentation"{% if tab == 'tuning' %} class="active"{% endif %}><a href="#tab_packing_options_tuning" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-bug"></i></a></li>
     </ul>
 {% endblock %}
 
@@ -147,6 +146,70 @@
                         </select>
                     </div>
                 </div>
+                <div style="position: absolute; left: 50%; bottom: -14px;">
+                    <button class="btn btn-default btn-sm ladb-cutlist-packing-btn-expert" style="border:none; color:#aaa;" type="button"><i class="ladb-opencutlist-icon-plus"></i></button>
+                </div>
+                <div class="collapse" id="ladb-cutlist-packing-collapse-expert">
+                    <div class="form-group">
+                        <hr>
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_objective_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_objective'|i18next }}</label>
+                        <div class="col-xs-6">
+                            <select class="form-control" id="ladb_select_objective">
+                                <option value="auto">Auto</option>
+                                <option value="bin-packing">BinPacking</option>
+                                <option value="bin-packing-with-leftovers">BinPackingWithLeftovers</option>
+                                <option value="variable-sized-bin-packing">VariableSizedBinPacking</option>
+                                <option value="knapsack">Knapsack</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_optimization_mode_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_optimization_mode'|i18next }}</label>
+                        <div class="col-xs-6">
+                            <select class="form-control" id="ladb_select_optimization_mode">
+                                <option value="auto">Auto</option>
+                                <option value="anytime">Anytime</option>
+                                <option value="not-anytime">NotAnytime</option>
+                                <option value="not-anytime-deterministic">NotAnytimeDeterministic</option>
+                                <option value="not-anytime-sequential">AnytimeSequential</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_time_limit_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_time_limit'|i18next }}</label>
+                        <div class="col-xs-6">
+                            <input type="text" class="form-control" id="ladb_input_time_limit">
+                        </div>
+                    </div>
+                    <div class="form-group ladb-cutlist-packing-form-group-dev">
+                        <div style="position:relative;">
+                            <hr><i class="ladb-opencutlist-icon-bug" style="position: absolute; top: -6px; left: 50%; background: #fff; padding: 0 10px;"></i>
+                        </div>
+                        <label class="control-label col-xs-5">not_anytime_tree_search_queue_size</label>
+                        <div class="col-xs-6">
+                            <input type="text" class="form-control" id="ladb_input_not_anytime_tree_search_queue_size">
+                        </div>
+                    </div>
+                    <div class="form-group ladb-cutlist-packing-form-group-dev">
+                        <label class="control-label col-xs-5">verbosity_level</label>
+                        <div class="col-xs-6">
+                            <select class="form-control" id="ladb_select_verbosity_level">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group ladb-cutlist-packing-form-group-dev">
+                        <div class="col-xs-6 col-xs-offset-5">
+                            <button class="btn btn-default btn-debug btn-xs" id="ladb_btn_unload_lib"><i class="ladb-opencutlist-icon-refresh"></i> Unload Packy</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div role="tabpanel" class="tab-pane{% if tab == 'display' %} active{% endif %}" id="tab_packing_options_display">
@@ -222,69 +285,11 @@
                 </div>
             </div>
         </div>
-        <div role="tabpanel" class="tab-pane{% if tab == 'tuning' %} active{% endif %}" id="tab_packing_options_tuning">
-            <div class="form form-horizontal" style="margin-top: 15px;">
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_objective_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_objective'|i18next }}</label>
-                    <div class="col-xs-6">
-                        <select class="form-control" id="ladb_select_objective">
-                            <option value="auto">Auto</option>
-                            <option value="default">Default</option>
-                            <option value="bin-packing">BinPacking</option>
-                            <option value="bin-packing-with-leftovers">BinPackingWithLeftovers</option>
-                            <option value="variable-sized-bin-packing">VariableSizedBinPacking</option>
-                            <option value="knapsack">Knapsack</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_optimization_mode_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_optimization_mode'|i18next }}</label>
-                    <div class="col-xs-6">
-                        <select class="form-control" id="ladb_select_optimization_mode">
-                            <option value="auto">Auto</option>
-                            <option value="anytime">Anytime</option>
-                            <option value="not-anytime">NotAnytime</option>
-                            <option value="not-anytime-deterministic">NotAnytimeDeterministic</option>
-                            <option value="not-anytime-sequential">AnytimeSequential</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_time_limit_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_time_limit'|i18next }}</label>
-                    <div class="col-xs-6">
-                        <input type="text" class="form-control" id="ladb_input_time_limit">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_not_anytime_tree_search_queue_size_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_not_anytime_tree_search_queue_size'|i18next }}</label>
-                    <div class="col-xs-6">
-                        <input type="text" class="form-control" id="ladb_input_not_anytime_tree_search_queue_size">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_verbosity_level_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_verbosity_level'|i18next }}</label>
-                    <div class="col-xs-6">
-                        <select class="form-control" id="ladb_select_verbosity_level">
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 {% endblock %}
 
 {% block footerLeftInner %}
     <button class="btn btn-default" id="ladb_btn_edit_material" style="max-width: 260px;"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material_name':group.material_display_name }) }}...</button>
-    <button class="btn btn-default btn-debug" id="ladb_btn_unload_lib"><i class="ladb-opencutlist-icon-refresh"></i> Unload Packy</button>
 {% endblock %}
 
 {% block footerRightInner %}
