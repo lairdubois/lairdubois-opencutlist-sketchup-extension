@@ -11,11 +11,13 @@ module Ladb::OpenCutList::Fiddle
     PROBLEM_TYPE_IRREGULAR = 'irregular'.freeze
     PROBLEM_TYPE_ONEDIMENSIONAL = 'onedimensional'.freeze
 
+    OPTIMIZATION_MODE_AUTO = 'auto'.freeze
     OPTIMIZATION_MODE_ANYTIME = 'anytime'.freeze
     OPTIMIZATION_MODE_NOT_ANYTIME = 'not-anytime'.freeze
     OPTIMIZATION_MODE_NOT_ANYTIME_DETERMINISTIC = 'not-anytime-deterministic'.freeze
     OPTIMIZATION_MODE_NOT_ANYTIME_SEQUENTIAL = 'not-anytime-sequential'.freeze
 
+    OBJECTIVE_AUTO = 'auto'.freeze
     OBJECTIVE_BIN_PACKING = 'bin-packing'.freeze
     OBJECTIVE_BIN_PACKING_WITH_LEFTOVERS = 'bin-packing-with-leftovers'.freeze
     OBJECTIVE_VARIABLE_SIZED_BIN_PACKING = 'variable-sized-bin-packing'.freeze

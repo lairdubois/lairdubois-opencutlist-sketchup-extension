@@ -229,8 +229,8 @@ module Ladb::OpenCutList
                    scrap_bin_2d_sizes: '',
 
                    problem_type: Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE,
-                   optimization_mode: Packy::OPTIMIZATION_MODE_NOT_ANYTIME,
-                   objective: Packy::OBJECTIVE_BIN_PACKING_WITH_LEFTOVERS,
+                   optimization_mode: Packy::OPTIMIZATION_MODE_AUTO,
+                   objective: Packy::OBJECTIVE_AUTO,
                    spacing: '20mm',
                    trimming: '10mm',
                    time_limit: 20,
@@ -266,8 +266,24 @@ module Ladb::OpenCutList
       @scrap_bin_2d_sizes = DimensionUtils.dxdxq_to_ifloats(scrap_bin_2d_sizes)
 
       @problem_type = problem_type
-      @optimization_mode = optimization_mode
-      @objective = objective
+      @optimization_mode = if optimization_mode == Packy::OPTIMIZATION_MODE_AUTO
+                             if problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+                               Packy::OPTIMIZATION_MODE_ANYTIME     # Set the optimization mode to ANYTIME if IRREGULAR
+                             else
+                               Packy::OPTIMIZATION_MODE_NOT_ANYTIME # Set the optimization mode to NOT_ANYTIME if not IRREGULAR
+                             end
+                           else
+                             optimization_mode
+                           end
+      @objective = if objective == Packy::OBJECTIVE_AUTO
+                     if @std_bin_1d_sizes.length + @scrap_bin_1d_sizes.length > 1 || @std_bin_2d_sizes.length + @scrap_bin_2d_sizes.length > 1
+                       Packy::OBJECTIVE_VARIABLE_SIZED_BIN_PACKING  # Set the objective to VARIABLE_SIZED_BIN_PACKING if more than 1 std bin or scrap bin
+                     else
+                       Packy::OBJECTIVE_BIN_PACKING_WITH_LEFTOVERS  # Set the objective to BIN_PACKING_WITH_LEFTOVERS if only 1 std bin or scrap bin
+                     end
+                   else
+                     objective
+                   end
       @spacing = DimensionUtils.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.str_to_ifloat(trimming).to_l.to_f
       @time_limit = [ 1 , time_limit.to_i ].max
@@ -278,8 +294,16 @@ module Ladb::OpenCutList
       @hide_part_list = hide_part_list
       @part_drawing_type = part_drawing_type.to_i
       @colorization = colorization
-      @origin_corner = problem_type == Packy::PROBLEM_TYPE_IRREGULAR ? ORIGIN_CORNER_BOTTOM_LEFT : origin_corner.to_i                                         # Force origin corner to BOTTOM LEFT if IRREGULAR
-      @hide_edges_preview = problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL || problem_type == Packy::PROBLEM_TYPE_IRREGULAR ? true : hide_edges_preview   # Force hide edges preview to true if ONEDIMENSIONAL or IRREGULAR
+      @origin_corner = if problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+                         ORIGIN_CORNER_BOTTOM_LEFT # Force the origin corner to BOTTOM LEFT if IRREGULAR
+                       else
+                         origin_corner.to_i
+                       end
+      @hide_edges_preview = if problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL || problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+                              true  # Force hide edges preview to true if ONEDIMENSIONAL or IRREGULAR
+                            else
+                              hide_edges_preview
+                            end
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_number_of_stages = [ [ 2, rectangleguillotine_number_of_stages.to_i ].max, 3 ].min
