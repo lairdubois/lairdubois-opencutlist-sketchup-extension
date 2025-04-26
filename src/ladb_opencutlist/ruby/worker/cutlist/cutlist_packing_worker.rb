@@ -270,20 +270,12 @@ module Ladb::OpenCutList
                              if problem_type == Packy::PROBLEM_TYPE_IRREGULAR
                                Packy::OPTIMIZATION_MODE_ANYTIME     # Set the optimization mode to ANYTIME if IRREGULAR
                              else
-                               Packy::OPTIMIZATION_MODE_NOT_ANYTIME # Set the optimization mode to NOT_ANYTIME if not IRREGULAR
+                               Packy::OPTIMIZATION_MODE_NOT_ANYTIME_DETERMINISTIC # Set the optimization mode to NOT_ANYTIME_DETERMINISTIC if not IRREGULAR
                              end
                            else
                              optimization_mode
                            end
-      @objective = if objective == Packy::OBJECTIVE_AUTO
-                     if @std_bin_1d_sizes.length + @scrap_bin_1d_sizes.length > 1 || @std_bin_2d_sizes.length + @scrap_bin_2d_sizes.length > 1
-                       Packy::OBJECTIVE_VARIABLE_SIZED_BIN_PACKING  # Set the objective to VARIABLE_SIZED_BIN_PACKING if more than 1 std bin or scrap bin
-                     else
-                       Packy::OBJECTIVE_BIN_PACKING_WITH_LEFTOVERS  # Set the objective to BIN_PACKING_WITH_LEFTOVERS if only 1 std bin or scrap bin
-                     end
-                   else
-                     objective
-                   end
+      @objective = objective
       @spacing = DimensionUtils.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.str_to_ifloat(trimming).to_l.to_f
       @time_limit = [ 1 , time_limit.to_i ].max
@@ -535,7 +527,15 @@ module Ladb::OpenCutList
           problem_type: @problem_type,
           parameters: parameters,
           instance: {
-            objective: @objective,
+            objective: if @objective == Packy::OBJECTIVE_AUTO
+                         if bin_types.length > 1
+                           Packy::OBJECTIVE_VARIABLE_SIZED_BIN_PACKING  # Set the objective to VARIABLE_SIZED_BIN_PACKING if more than 1 bin type
+                         else
+                           Packy::OBJECTIVE_BIN_PACKING_WITH_LEFTOVERS  # Set the objective to BIN_PACKING_WITH_LEFTOVERS if only 1 bin type
+                         end
+                       else
+                         @objective
+                       end,
             parameters: instance_parameters,
             bin_types: bin_types,
             item_types: item_types,
