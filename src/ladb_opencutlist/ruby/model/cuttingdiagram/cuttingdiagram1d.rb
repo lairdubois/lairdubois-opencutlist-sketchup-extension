@@ -10,7 +10,7 @@ module Ladb::OpenCutList
     include HashableHelper
     include PixelConverterHelper
 
-    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :bars, :projections
+    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :bins, :projections
 
     def initialize(_def)
       @_def = _def
@@ -22,7 +22,7 @@ module Ladb::OpenCutList
       @unplaced_parts = _def.unplaced_part_defs.values.map { |bar_def| bar_def.create_listed_part }.sort_by { |part| [ part.def._sorter ] }
       @options = _def.options_def.create_options
       @summary = _def.summary_def.create_summary
-      @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }.sort_by { |bar| [ -bar.type, -bar.efficiency, -bar.count ] }
+      @bins = _def.bar_defs.values.map { |bar_def| bar_def.create_bar }.sort_by { |bar| [-bar.type, -bar.efficiency, -bar.count ] }
 
       @projections = _def.projection_defs.map { |part_id, projection_def| [ part_id, projection_def.layer_defs.map { |layer_def| { :depth => layer_def.depth, :path => "#{layer_def.poly_defs.map { |poly_def| "M #{poly_def.points.map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y.round(2))}" }.join(' L ')} Z" }.join(' ')}" } } ] }.to_h
 
@@ -65,7 +65,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :total_cut_count, :total_cut_length, :overall_efficiency, :bars
+    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :total_cut_count, :total_cut_length, :overall_efficiency, :bins
 
     def initialize(_def)
       @_def = _def
@@ -79,7 +79,7 @@ module Ladb::OpenCutList
 
       @overall_efficiency = _def.overall_efficiency
 
-      @bars = _def.bar_defs.values.map { |bar_def| bar_def.create_summary_bar }.sort_by { |bar| [ -bar.type ] }
+      @bins = _def.bar_defs.values.map { |bar_def| bar_def.create_summary_bar }.sort_by { |bar| [-bar.type ] }
 
     end
 

@@ -1414,6 +1414,8 @@
                 hidden_group_ids: that.generateOptions.hidden_group_ids
             }, estimateOptions), function (response) {
 
+                const steps = response.runs
+
                 that.dialog.startProgress(response.runs,
                     function () {
                         rubyCallCommand('cutlist_estimate_cancel');
@@ -1425,7 +1427,9 @@
 
                 let fnCreateSlide = function (response) {
 
-                    let $slide = that.pushNewSlide('ladb_cutlist_slide_estimate', 'tabs/cutlist/_slide-estimate.twig', $.extend({
+                    console.log(response);
+
+                    let $slide = that.pushNewSlide('ladb_cutlist_slide_estimate', 'tabs/cutlist/_slide-estimate.twig', {
                         capabilities: that.dialog.capabilities,
                         generateOptions: that.generateOptions,
                         dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
@@ -1437,21 +1441,139 @@
                         pageDescription: that.pageDescription,
                         isEntitySelection: that.isEntitySelection,
                         lengthUnit: that.lengthUnit,
-                        generatedAt: new Date().getTime() / 1000
-                    }, response), function () {
+                        generatedAt: new Date().getTime() / 1000,
+                        report: response
+                    }, function () {
                         that.dialog.setupTooltips();
                     });
 
                     // Fetch UI elements
                     const $btnEstimate = $('#ladb_btn_estimate', $slide);
+                    const $btnPrint = $('#ladb_btn_print', $slide);
                     const $btnClose = $('#ladb_btn_close', $slide);
 
                     // Bind buttons
                     $btnEstimate.on('click', function () {
                         that.estimateCutlist();
                     });
+                    $btnPrint.on('click', function () {
+                        this.blur();
+                        that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.report.title'));
+                    });
                     $btnClose.on('click', function () {
                         that.popSlide();
+                    });
+                    $('.ladb-btn-setup-model-units', $slide).on('click', function() {
+                        $(this).blur();
+                        that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
+                    });
+                    $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
+                        const $group = $(this).parents('.ladb-cutlist-group');
+                        if ($group.hasClass('no-print')) {
+                            that.showGroup($group, true);
+                        } else {
+                            that.hideGroup($group, true);
+                        }
+                        $(this).blur();
+                    });
+                    $('a.ladb-btn-folding-toggle-row', $slide).on('click', function () {
+                        $(this).blur();
+                        const $row = $(this).parents('.ladb-cutlist-row-folder');
+                        that.toggleFoldingRow($row, 'entry-id');
+                        return false;
+                    });
+                    $('.ladb-cutlist-row', $slide).on('click', function () {
+                        $(this).blur();
+                        $('.ladb-click-tool', $(this)).first().click();
+                        return false;
+                    });
+                    $('a.ladb-item-hide-all-other-groups', $slide).on('click', function () {
+                        $(this).blur();
+                        const $group = $(this).parents('.ladb-cutlist-group');
+                        const groupId = $group.data('group-id');
+                        that.hideAllGroups(groupId, $slide, true);
+                        that.scrollSlideToTarget($slide, $group, true, false);
+                    });
+                    $('a.ladb-item-show-all-groups', $slide).on('click', function () {
+                        $(this).blur();
+                        that.showAllGroups($slide, true);
+                    });
+                    $('#ladb_item_expand_all', $slide).on('click', function () {
+                        $(this).blur();
+                        that.expandAllFoldingRows($slide, 'entry-id');
+                    });
+                    $('#ladb_item_collapse_all', $slide).on('click', function () {
+                        $(this).blur();
+                        that.collapseAllFoldingRows($slide, 'entry-id');
+                    });
+                    $('a.ladb-btn-edit-material', $slide).on('click', function () {
+                        $(this).blur();
+
+                        // Flag to ignore next material change event
+                        that.ignoreNextMaterialEvents = true;
+
+                        const materialId = $(this).data('material-id');
+                        const propertiesTab = $(this).data('properties-tab');
+                        that.dialog.executeCommandOnTab('materials', 'edit_material', {
+                            materialId: materialId,
+                            propertiesTab: propertiesTab,
+                            updatedCallback: function () {
+
+                                // Flag to stop ignoring next material change event
+                                that.ignoreNextMaterialEvents = false;
+
+                                // Refresh the list
+                                that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist', {
+                                    callback: function () {
+                                        that.generateEstimateCutlist(estimateOptions);
+                                    }
+                                });
+
+                            }
+                        });
+                        return false;
+                    });
+                    $('a.ladb-btn-cuttingdiagram-1d', $slide).on('click', function () {
+                        $(this).blur();
+                        const groupId = $(this).data('group-id');
+                        that.cuttingdiagram1dGroup(groupId, true, function () {
+                            that.generateReportCutlist(reportOptions);
+                        });
+                        return false;
+                    });
+                    $('a.ladb-btn-cuttingdiagram-2d', $slide).on('click', function () {
+                        $(this).blur();
+                        const groupId = $(this).data('group-id');
+                        that.cuttingdiagram2dGroup(groupId, true, function () {
+                            that.generateReportCutlist(reportOptions);
+                        });
+                        return false;
+                    });
+                    $('a.ladb-btn-open-part-url, a.ladb-btn-open-material-url', $slide).on('click', function () {
+                        $(this).blur();
+                        rubyCallCommand('core_open_url', { url: $(this).attr('href') });
+                        return false;
+                    });
+                    $('a.ladb-btn-highlight-part', $slide).on('click', function () {
+                        $(this).blur();
+                        const partId = $(this).data('part-id');
+                        that.highlightPart(partId);
+                        return false;
+                    });
+                    $('a.ladb-btn-edit-part', $slide).on('click', function () {
+                        $(this).blur();
+                        const partId = $(this).data('part-id');
+                        that.editPart(partId, undefined, undefined, function () {
+
+                            // Refresh the list
+                            that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist', {
+                                callback: function () {
+                                    that.generateEstimateCutlist(estimateOptions);
+                                }
+                            });
+
+                        });
+                        return false;
                     });
 
                     // Finish progress feedback
@@ -1480,7 +1602,10 @@
                                 if (response.solution) {
                                     let preview = response.solution === 'none' ? '' : Twig.twig({ref: "tabs/cutlist/_progress-preview-packing.twig"}).render({
                                         solution: response.solution
-                                    })
+                                    });
+                                    if (preview && response.run_index == steps - 1) {
+                                        that.dialog.changeNextBtnLabelProgress(i18next.t('default.stop'));
+                                    }
                                     that.dialog.previewProgress(preview);
                                 }
 

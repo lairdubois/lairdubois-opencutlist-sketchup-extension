@@ -265,6 +265,8 @@ module Ladb::OpenCutList
       @scrap_bin_1d_sizes = DimensionUtils.dxq_to_ifloats(scrap_bin_1d_sizes)
       @scrap_bin_2d_sizes = DimensionUtils.dxdxq_to_ifloats(scrap_bin_2d_sizes)
 
+      puts "@std_bin_1d_sizes = #{@std_bin_1d_sizes}"
+
       @problem_type = problem_type
       @optimization_mode = optimization_mode
       @objective = objective

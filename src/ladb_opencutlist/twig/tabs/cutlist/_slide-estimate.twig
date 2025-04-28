@@ -3,6 +3,46 @@
 {% set id = 'ladb_cutlist_slide_estimate' %}
 {% set out = true %}
 
+{% macro summary_widget(report, key) %}
+    <div class="ladb-cutlist-report-summary-widget">
+        <table style="width: 100%;">
+            <tbody>
+            <tr>
+                <td style="font-size: 80%;">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                <td class="text-right">{{ report['total_used_'~key]|default('-') }}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 80%;">{{ 'tab.cutlist.report.total_unused'|i18next }}{% if report['total_unused_'~key~'_ratio'] %} <small>({{ (report['total_unused_'~key~'_ratio'] * 100)|number_format }}%)</small>{% endif %}</td>
+                <td class="text-right">{{ report['total_unused_'~key]|default('-') }}</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td>{{ 'tab.cutlist.report.total'|i18next }}</td>
+                <td class="text-right">{{ report['total_'~key]|default('-') }}</td>
+            </tr>
+            </tfoot>
+        </table>
+        {% if report['total_'~key] is not null %}
+            <div class="no-print progress" style="height: 10px; margin-top: 20px;">
+                {% for group in report.groups if group[key~'_ratio'] %}
+                    <div class="progress-bar progress-bar-material-type-{{ group.material_type }}" style="width: {{ group[key~'_ratio'] * 100 }}%;" data-toggle="tooltip" data-html="true" title="<div class='tt-header'><strong>{{ ('tab.materials.type_'~group.material_type)|i18next }}</strong> ({{ (group[key~'_ratio'] * 100)|number_format }}%)</div><div class='tt-section'>{% if group['total_used_'~key] %}<div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.report.total_used'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_used_'~key] }}</div></div>{% endif %}{% if group['total_unused_'~key] %}<div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.report.total_unused'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_unused_'~key] }}</div></div>{% endif %}</div><div class='tt-section'><div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.report.total'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_'~key] }}</div></div></div>"></div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro entry_std_cell(std, value) %}
+    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if std %} data-toggle="tooltip" data-html="true" title="{{ std }}{% if std and not value %}<br>{{ 'tab.cutlist.report.tooltip.incompatible_unit'|i18next }}{% endif %}"{% endif %}>{% if std and not value %}<div class="ladb-minitools ladb-minitools-left"><a href="#" class="ladb-tool-warning"><i class="ladb-opencutlist-icon-warning"></i></a></div>{% endif %}{{ value|default('-') }}</td>
+{% endmacro %}
+
+{% macro entry_item_std_cell(std, value) %}
+    <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if std %} data-toggle="tooltip" title="{{ std }}"{% endif %}>{{ value|default('-') }}</td>
+{% endmacro %}
+
+{% import _self as fn %}
+
 {% block headerInner %}
     {{ parent() }}
     {% include 'tabs/cutlist/_header-extra.twig' %}
@@ -28,4 +68,265 @@
     </div>
     &nbsp;
     <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
+{% endblock %}
+
+{% block containerInner %}
+    {{ parent() }}
+    <div class="ladb-page">
+
+        {% include 'core/_alert-errors.twig' with { 'errors':report.errors } %}
+        {% include 'core/_alert-warnings.twig' with { 'warnings':report.warnings } %}
+        {% include 'core/_alert-tips.twig' with { 'tips':report.tips } %}
+
+        {% if report.groups|length > 0 %}
+            <table data-group-id="summary" class="table table-bordered ladb-cutlist-group ladb-cutlist-group-dark">
+                <thead>
+                <tr class="table-heading">
+                    <td colspan="2">
+                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
+                        <div class="btn-group pull-right">
+                            <button class="no-print btn btn-default ladb-btn-group-menu btn-sm ladb-btn-hiddable" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
+                                <li><a href="#" class="ladb-item-show-all-groups"><i class="ladb-opencutlist-icon-eye-open"></i> {{ 'tab.cutlist.menu.show_all_groups'|i18next }}</a></li>
+                            </ul>
+                        </div>
+                        <div class="ladb-heading">{{ 'tab.cutlist.list.summary'|i18next }}</div>
+                    </td>
+                </tr>
+                <tr class="table-column-heading">
+                    <td width="50%">{{ 'tab.cutlist.report.total_mass'|i18next }}</td>
+                    <td width="50%">{{ 'tab.cutlist.report.total_cost'|i18next }}</td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        {{ fn.summary_widget(report, 'mass') }}
+                    </td>
+                    <td>
+                        {{ fn.summary_widget(report, 'cost') }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        {% endif %}
+
+        {% for group in report.groups %}
+
+            {% set foldableGroup = group.material_type == 2 or group.material_type == 3 or group.material_type == 4 or group.material_type == 5 or group.material_type == 6 %}    {# 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 5 = TYPE_HARDWARE, 6 = TYPE_VENEER #}
+            {% set editableGroup = group.material_type == 1 or group.material_type == 2 or group.material_type == 3 or group.material_type == 4 or group.material_type == 6 %}    {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
+
+            <table data-group-id="{{ group.material_type }}" class="table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
+                <thead>
+                <tr class="table-heading">
+                    <td colspan="24">
+                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if groupSummaryHidden %}open{% else %}close{% endif %}"></i></button>
+                        {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':true, 'classes':'pull-left' } %}
+                        <div class="btn-group pull-right">
+                            <button class="no-print btn btn-default ladb-btn-group-menu btn-sm ladb-btn-hiddable" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
+                                <li><a href="#" class="ladb-item-show-all-groups"><i class="ladb-opencutlist-icon-eye-open"></i> {{ 'tab.cutlist.menu.show_all_groups'|i18next }}</a></li>
+                            </ul>
+                        </div>
+                        <div class="ladb-heading">
+                            {{ ('tab.materials.type_'~group.material_type)|i18next }}
+                        </div>
+                    </td>
+                </tr>
+                <tr class="table-column-heading">
+                    <td rowspan="2">{{ 'tab.cutlist.list.material_thickness'|i18next }}</td>
+                    {% if group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
+                        <td colspan="2">{{ 'tab.cutlist.report.total_volume'|i18next }}</td>
+                    {% elseif group.material_type == 2 %} {# 2 = TYPE_SHEET_GOOD #}
+                        <td width="10%" rowspan="2">{{ 'tab.cutlist.report.total_count'|i18next }}</td>
+                        <td colspan="2">{{ 'tab.cutlist.report.total_area'|i18next }}</td>
+                    {% elseif group.material_type == 3 %} {# 3 = TYPE_DIMENSIONAL #}
+                        <td width="10%" rowspan="2">{{ 'tab.cutlist.report.total_count'|i18next }}</td>
+                        <td colspan="2">{{ 'tab.cutlist.report.total_length'|i18next }}</td>
+                    {% elseif group.material_type == 4 %} {# 4 = TYPE_EDGE #}
+                        <td width="10%" rowspan="2">{{ 'tab.cutlist.report.total_count'|i18next }}</td>
+                        <td colspan="2">{{ 'tab.cutlist.report.total_length'|i18next }}</td>
+                    {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
+                        <td width="10%" rowspan="2">{{ 'tab.cutlist.report.total_count'|i18next }}</td>
+                        <td colspan="2">{{ 'tab.cutlist.report.total_instance_count'|i18next }}</td>
+                    {% elseif group.material_type == 6 %} {# 2 = TYPE_VENEER #}
+                        <td width="10%" rowspan="2">{{ 'tab.cutlist.report.total_count'|i18next }}</td>
+                        <td colspan="2">{{ 'tab.cutlist.report.total_area'|i18next }}</td>
+                    {% endif %}
+                    <td colspan="2">{{ 'tab.cutlist.report.total_mass'|i18next }}</td>
+                    <td colspan="2">{{ 'tab.cutlist.report.total_cost'|i18next }}</td>
+                </tr>
+                <tr class="table-column-heading">
+                    {% if group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
+                        <td width="8%">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                        <td width="8%">{{ 'tab.cutlist.report.total'|i18next }}</td>
+                    {% elseif group.material_type == 2 %} {# 2 = TYPE_SHEET_GOOD #}
+                        <td width="8%">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                        <td width="8%">{{ 'tab.cutlist.report.total'|i18next }}</td>
+                    {% elseif group.material_type == 3 %} {# 3 = TYPE_DIMENSIONAL #}
+                        <td width="8%">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                        <td width="8%">{{ 'tab.cutlist.report.total'|i18next }}</td>
+                    {% elseif group.material_type == 4 %} {# 4 = TYPE_EDGE #}
+                        <td width="8%">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                        <td width="8%">{{ 'tab.cutlist.report.total'|i18next }}</td>
+                    {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
+                        <td width="8%">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                        <td width="8%">{{ 'tab.cutlist.report.total'|i18next }}</td>
+                    {% elseif group.material_type == 6 %} {# 2 = TYPE_VENEER #}
+                        <td width="8%">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                        <td width="8%">{{ 'tab.cutlist.report.total'|i18next }}</td>
+                    {% endif %}
+                    <td width="8%">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                    <td width="8%">{{ 'tab.cutlist.report.total'|i18next }}</td>
+                    <td width="8%">{{ 'tab.cutlist.report.total_used'|i18next }}</td>
+                    <td width="8%">{{ 'tab.cutlist.report.total'|i18next }}</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for entry in group.entries %}
+                    {% set foldableRow = foldableGroup and entry.raw_estimated %}
+                    <tr id="ladb_entry_{{ entry.id }}" class="ladb-cutlist-row ladb-minitools-holder{% if foldableRow %} ladb-cutlist-row-folder{% endif %}" data-entry-id="{{ entry.id }}">
+                        <td>
+                            <div class="ladb-minitools ladb-minitools-right no-print">
+                                {% if entry.errors|length > 0 %}
+                                    <a href="#" class="ladb-tool-danger" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.report.error.entry_error'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension, 'count':entry.errors|length }) }}"><i class="ladb-opencutlist-icon-warning"></i></a>
+                                {% endif %}
+                                {% if not entry.raw_estimated %}
+                                    <a href="#" class="ladb-tool-info ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-properties-tab="estimate_options" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.raw_estimated_0'|i18next }}"><i class="ladb-opencutlist-icon-raw-estimated-0"></i></a>
+                                {% endif %}
+                                {% if entry.multiplier_coefficient and group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
+                                    <a href="#" class="ladb-tool-info ladb-tool-text ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-properties-tab="estimate_options" data-toggle="tooltip" title="{{ 'tab.cutlist.report.tooltip.multiplier_coefficient'|i18next }}">x{{ entry.multiplier_coefficient }}</a>
+                                {% endif %}
+                                <span class="ladb-separator"></span>
+                                {% if foldableRow %}
+                                    <a href="#" class="ladb-btn-folding-toggle-row ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.folding_part'|i18next }}"><i class="ladb-opencutlist-icon-arrow-{% if entry.errors|length > 0 %}up{% else %}down{% endif %}"></i></a>
+                                {% endif %}
+                                {% if entry.material_url is not empty %}
+                                    <a href="{{ entry.material_url }}" class="ladb-btn-open-material-url" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.open_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>
+                                {% endif %}
+                                {% if foldableRow and (group.material_type == 2 or group.material_type == 6) %} {# 2 = TYPE_SOLID_WOOD, 6 = TYPE_VENEER #}
+                                    <a href="#" class="ladb-btn-cuttingdiagram-2d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}..."><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i></a>
+                                {% endif %}
+                                {% if foldableRow and (group.material_type == 3 or group.material_type == 4) %} {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
+                                    <a href="#" class="ladb-btn-cuttingdiagram-1d" data-group-id="{{ entry.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.setup_group_cuttingdiagram'|i18next({ 'material_name':entry.material_display_name, 'std_dimension':entry.std_dimension }) }}..."><i class="ladb-opencutlist-icon-cuttingdiagram1d"></i></a>
+                                {% endif %}
+                                {% if editableGroup %}
+                                    <a href="#" class="ladb-btn-edit-material" data-material-id="{{ entry.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':entry.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
+                                {% endif %}
+                            </div>
+                            {% include 'tabs/cutlist/_group-label.twig' with { 'group':entry } %}
+                            {% if not generateOptions.hide_descriptions and entry.material_description is not empty %}
+                                <div class="ladb-material-description">{{ entry.material_description|nl2br }}</div>
+                            {% endif %}
+                        </td>
+                        {% if group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
+                            <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_used_volume }}</td>
+                            <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_volume }}</td>
+                        {% elseif group.material_type == 2 or group.material_type == 6 %} {# 2 = TYPE_SHEET_GOOD, 6 = TYPE_VENEER #}
+                            <td class="text-center">{{ entry.total_count|default('-') }}</td>
+                            <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_used_area|default('-') }}</td>
+                            <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_area|default('-') }}</td>
+                        {% elseif group.material_type == 3 or group.material_type == 4 %} {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
+                            <td class="text-center">{{ entry.total_count|default('-') }}</td>
+                            <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_used_length|default('-') }}</td>
+                            <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ entry.total_length|default('-') }}</td>
+                        {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
+                            <td class="text-center">{{ entry.total_count }}</td>
+                            <td class="text-center">{{ entry.total_used_instance_count }}</td>
+                            <td class="text-center">{{ entry.total_instance_count }}</td>
+                        {% endif %}
+                        {{ fn.entry_std_cell(entry.std_volumic_mass, entry.total_used_mass) }}
+                        {{ fn.entry_std_cell(entry.std_volumic_mass, entry.total_mass) }}
+                        {{ fn.entry_std_cell(entry.std_price, entry.total_used_cost) }}
+                        {{ fn.entry_std_cell(entry.std_price, entry.total_cost) }}
+                    </tr>
+                    {% for error in entry.errors %}
+                        <tr class="ladb-cutlist-row ladb-cutlist-row-child ladb-cutlist-row-error" data-folder-id="{{ entry.id }}">
+                            <td colspan="8" style="padding-left: 40px;">{% if error is iterable %}{{ error[0]|i18next(error[1]) }}{% else %}{{ error|i18next }}{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                    {% if group.material_type == 2 or group.material_type == 6 %} {# 2 = TYPE_SHEET_GOOD, 6 = TYPE_VENEER #}
+                        {% set binStrippedname = group.material_type == 6 ? 'veneer' : 'good' %}  {# 6 = TYPE_VENEERE #}
+                        {% for bin in entry.bins %}
+                            <tr class="ladb-cutlist-row ladb-cutlist-row-child{% if entry.errors|length == 0 %} hide{% endif %}" data-folder-id="{{ entry.id }}">
+                                <td style="padding-left: 40px;">{{ bin.length}} x {{ bin.width }} - <em>{{ ('tab.cutlist.cuttingdiagram.list.sheet_'~binStrippedname~'_type_'~bin.type)|i18next }}</em></td>
+                                <td class="text-center">{{ bin.count }}</td>
+                                <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bin.total_used_area }}</td>
+                                <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bin.total_area }}</td>
+                                {{ fn.entry_item_std_cell(bin.std_volumic_mass, bin.total_used_mass) }}
+                                {{ fn.entry_item_std_cell(bin.std_volumic_mass, bin.total_mass) }}
+                                {{ fn.entry_item_std_cell(bin.std_price, bin.total_used_cost) }}
+                                {{ fn.entry_item_std_cell(bin.std_price, bin.total_cost) }}
+                            </tr>
+                        {% endfor %}
+                    {% elseif group.material_type == 3 or group.material_type == 4 %} {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
+                        {% set binStrippedname = group.material_type == 4 ? 'edge' : 'dimensional' %}  {# 4 = TYPE_EDGE #}
+                        {% for bin in entry.bins %}
+                            <tr class="ladb-cutlist-row ladb-cutlist-row-child{% if entry.errors|length == 0 %} hide{% endif %}" data-folder-id="{{ entry.id }}">
+                                <td style="padding-left: 40px;">{{ bin.length}} - <em>{{ ('tab.cutlist.cuttingdiagram.list.bar_'~binStrippedname~'_type_'~bin.type)|i18next }}</em></td>
+                                <td class="text-center">{{ bin.count }}</td>
+                                <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bin.total_used_length }}</td>
+                                <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bin.total_length }}</td>
+                                {{ fn.entry_item_std_cell(bin.std_volumic_mass, bin.total_used_mass) }}
+                                {{ fn.entry_item_std_cell(bin.std_volumic_mass, bin.total_mass) }}
+                                {{ fn.entry_item_std_cell(bin.std_price, bin.total_used_cost) }}
+                                {{ fn.entry_item_std_cell(bin.std_price, bin.total_cost) }}
+                            </tr>
+                        {% endfor %}
+                    {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
+                        {% for part in entry.parts %}
+                            <tr class="ladb-cutlist-row ladb-cutlist-row-child{% if entry.errors|length == 0 %} hide{% endif %}" data-folder-id="{{ entry.id }}">
+                                <td style="padding-left: 40px;">
+                                    {{ part.name }}
+                                    <div class="ladb-minitools ladb-minitools-right no-print">
+                                        {% if part.unused_instance_count > 0 %}<a href="#" class="ladb-tool-warning" data-tab="warnings" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.unused_instance_count'|i18next({ 'count':part.unused_instance_count }) }}"><i class="ladb-opencutlist-icon-missing-instance-count"></i></a>{% endif %}
+                                        {% if part.instance_count_by_part > 1 %}<a href="#" class="ladb-tool-info" data-tab="infos" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.instance_count_by_part'|i18next({ 'count':part.instance_count_by_part }) }}"><i class="ladb-opencutlist-icon-instance-count-by-part"></i></a>{% endif %}
+                                        {% if part.flipped %}<a href="#" class="ladb-tool-info" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.flipped'|i18next }}"><i class="ladb-opencutlist-icon-flipped"></i></a>{% endif %}
+                                        <span class="ladb-separator"></span>
+                                        {% if part.url is not empty %}<a href="{{  part.url }}" class="ladb-btn-open-part-url" data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.open_part_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>{% endif %}
+                                        <a href="#" class="ladb-btn-highlight-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
+                                        <a href="#" class="ladb-btn-edit-part" data-part-id="{{ part.id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_part_properties'|i18next }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
+                                    </div>
+                                </td>
+                                <td class="text-center">{{ part.count }}</td>
+                                <td class="text-center">{{ part.total_used_instance_count }}</td>
+                                <td class="text-center"data-toggle="tooltip" data-html="true" title="{{ 'tab.cutlist.tooltip.instance_count_by_part'|i18next({ 'count':part.instance_count_by_part }) }}">{{ part.total_instance_count }}</td>
+                                <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if part.mass %} data-toggle="tooltip" title="{{ part.mass }}"{% endif %}>{{ part.total_used_mass|default('-') }}</td>
+                                <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if part.mass %} data-toggle="tooltip" title="{{ part.mass }}"{% endif %}>{{ part.total_mass|default('-') }}</td>
+                                <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if part.price %} data-toggle="tooltip" title="{{ part.price }}"{% endif %}>{{ part.total_used_cost|default('-') }}</td>
+                                <td class="ladb-cutlist-value ladb-cutlist-value-right"{% if part.price %} data-toggle="tooltip" title="{{ part.price }}"{% endif %}>{{ part.total_cost|default('-') }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                <tr class="ladb-cutlist-row ladb-cutlist-row-total">
+                    <td class="text-right">{{ 'tab.cutlist.report.total'|i18next }}</td>
+                    {% if group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_used_volume }}</td>
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_volume }}</td>
+                    {% elseif group.material_type == 2 or group.material_type == 6 %} {# 2 = TYPE_SHEET_GOOD, 6 = TYPE_VENEER #}
+                        <td class="text-center">{{ group.total_count|default('-') }}</td>
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_used_area }}</td>
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_area }}</td>
+                    {% elseif group.material_type == 3 or group.material_type == 4 %} {# 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
+                        <td class="text-center">{{ group.total_count|default('-') }}</td>
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_used_length }}</td>
+                        <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_length }}</td>
+                    {% elseif group.material_type == 5 %} {# 5 = TYPE_HARDWARE #}
+                        <td class="text-center">{{ group.total_count }}</td>
+                        <td class="text-center">{{ group.total_used_instance_count }}</td>
+                        <td class="text-center">{{ group.total_instance_count }}</td>
+                    {% endif %}
+                    <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_used_mass|default('-') }}</td>
+                    <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_mass|default('-') }}</td>
+                    <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_used_cost|default('-') }}</td>
+                    <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ group.total_cost|default('-') }}</td>
+                </tr>
+                </tbody>
+            </table>
+        {% endfor %}
+
+    </div>
 {% endblock %}

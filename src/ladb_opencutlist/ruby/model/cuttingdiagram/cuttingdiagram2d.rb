@@ -10,7 +10,7 @@ module Ladb::OpenCutList
     include HashableHelper
     include PixelConverterHelper
 
-    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :sheets, :to_keep_leftovers, :projections
+    attr_reader :errors, :warnings, :tips, :unplaced_parts, :options, :summary, :bins, :to_keep_leftovers, :projections
 
     def initialize(_def)
       @_def = _def
@@ -71,7 +71,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :total_cut_count, :total_cut_length, :overall_efficiency, :sheets
+    attr_reader :total_used_count, :total_used_length, :total_used_part_count, :total_cut_count, :total_cut_length, :overall_efficiency, :bins
 
     def initialize(_def)
       @_def = _def
