@@ -93,7 +93,27 @@ module Ladb::OpenCutList
           solution: solution,
         } unless run.nil?
 
-        return @estimate_def.create_estimate.to_hash
+        # COMPLETED
+
+        # Errors
+        if @estimate_def.group_defs.values.select { |group_def| !group_def.entry_defs.empty? }.length == 0
+          @estimate_def.errors << 'tab.cutlist.estimate.error.no_typed_material_parts'
+        end
+
+        # Warnings
+        if @hidden_group_ids.length > 0 && @hidden_group_ids.find_index('summary').nil? || @hidden_group_ids.length > 1 && !@hidden_group_ids.find_index('summary').nil?
+          @estimate_def.warnings << 'tab.cutlist.estimate.warning.is_group_selection'
+        end
+
+        # Tips
+        if @estimate_def.total_mass == 0 && @estimate_def.total_cost == 0
+          @estimate_def.tips << 'tab.cutlist.estimate.tip.not_enough_data'
+        end
+
+        # Create the estimate
+        estimate = @estimate_def.create_estimate
+
+        return estimate.to_hash
 
       when :next
 
@@ -102,8 +122,7 @@ module Ladb::OpenCutList
           run.cancel
         end
 
-        return {
-        }
+        return {}
 
       when :cancel
         @cancelled = true
@@ -113,8 +132,7 @@ module Ladb::OpenCutList
           run.cancel
         end
 
-        return {
-        }
+        return {}
 
       end
       {}
@@ -407,10 +425,11 @@ module Ladb::OpenCutList
       std_lengths = DimensionUtils.d_to_ifloats(@material_attributes.std_lengths).split(DimensionUtils::LIST_SEPARATOR)
       std_bin_1d_sizes = DimensionUtils.d_to_ifloats(settings[:std_bin_1d_sizes]).split(DimensionUtils::LIST_SEPARATOR)
 
+      if settings[:std_bin_1d_sizes] != '0'
+        settings[:std_bin_1d_sizes] = (std_lengths & std_bin_1d_sizes).join(DimensionUtils::LIST_SEPARATOR)
+      end
       if settings[:std_bin_1d_sizes] == ''
         settings[:std_bin_1d_sizes] = std_lengths[0].to_s unless std_lengths.empty?
-      elsif settings[:std_bin_1d_sizes] != '0'
-        settings[:std_bin_1d_sizes] = (std_lengths & std_bin_1d_sizes).join(DimensionUtils::LIST_SEPARATOR)
       end
 
       if settings[:problem_type] == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE ||
@@ -432,10 +451,11 @@ module Ladb::OpenCutList
       std_sizes = DimensionUtils.dxd_to_ifloats(@material_attributes.std_sizes).split(DimensionUtils::LIST_SEPARATOR)
       std_bin_2d_sizes = DimensionUtils.dxd_to_ifloats(settings[:std_bin_2d_sizes]).split(DimensionUtils::LIST_SEPARATOR)
 
+      if settings[:std_bin_2d_sizes] != '0x0'
+        settings[:std_bin_2d_sizes] = (std_sizes & std_bin_2d_sizes).join(DimensionUtils::LIST_SEPARATOR)
+      end
       if settings[:std_bin_2d_sizes] == ''
         settings[:std_bin_2d_sizes] = std_sizes[0].to_s unless std_sizes.empty?
-      elsif settings[:std_bin_2d_sizes] != '0x0'
-        settings[:std_bin_2d_sizes] = (std_sizes & std_bin_2d_sizes).join(DimensionUtils::LIST_SEPARATOR)
       end
 
     end
