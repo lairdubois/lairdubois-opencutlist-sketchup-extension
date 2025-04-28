@@ -38,6 +38,7 @@ default:
   draw: Draw
   estimate: Estimate
   rename: Rename
+  next: Next
   yes: Yes
   no: No
   automatic: Automatic
@@ -721,6 +722,36 @@ tab:
           For this estimate to be calculated correctly:
           - the used materials must have at least a density and a price.
           - the used accessories must have at least a weight and a price.
+    estimate:
+      title: Estimate
+      info_0: |
+        Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts on the *Parts List*.
+      options_general: General
+      raw_materials: Matières premières brutes
+      total: Total
+      total_used: Used
+      total_unused: Not used
+      total_mass: Σ Weight
+      total_cost: Σ Cost
+      total_count: Qty.
+      total_instance_count: Σ Unit
+      total_volume: Σ Volume
+      total_area: Σ Area
+      total_length: Σ Length
+      tooltip:
+        incompatible_unit: Unit incompatible with material estimation options
+        multiplier_coefficient: Coefficient multiplicateur
+      error:
+        no_typed_material_parts: "Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer l'estimation."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
+      warning:
+        is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas comptabilisées.
+      tip:
+        not_enough_data: |
+          For this estimate to be calculated correctly:
+          - the used materials must have at least a density and a price.
+          - the used accessories must have at least a weight and a price.
     cuttingdiagram:
       title: Cutting Diagram
       start_msg: Optimization running
@@ -1003,30 +1034,30 @@ tab:
       option_scrap_bin_2d_none: None
       option_optimization_mode: Optimization Mode
       option_optimization_mode_help: |
-        ...
+        Sets the optimization mode, with or without time limit.
       option_objective: Objective
       option_objective_help: |
-        ...
+        Sets the packing objectif
       option_rectangleguillotine_cut_type: Cut Type
       option_rectangleguillotine_cut_type_help: |
-        ...
+        Sets the cut type.
       option_rectangleguillotine_number_of_stages: Number of Stages
       option_rectangleguillotine_number_of_stages_help: |
-        ...
+        Sets the number of cutting stages
       option_rectangleguillotine_first_stage_orientation: First Cut Direction
       option_rectangleguillotine_first_stage_orientation_help: |
-        ...
+        Sets the direction of the first cut.
       option_rectangleguillotine_keep: Minimal size of off-cuts
       option_rectangleguillotine_keep_help: Leftovers that are larger than the minimum length and width are marked **to be kept**.
-      option_irregular_allowed_rotations: Rotations
+      option_irregular_allowed_rotations: Allowed Rotations
       option_irregular_allowed_rotations_help: |
-        ...
+        Sets the allowed rotations for part placing.
       option_irregular_allowed_rotations_0: None
       option_irregular_allowed_rotations_90: Steps of 90°
       option_irregular_allowed_rotations_180: Steps of 180°
       option_irregular_allow_mirroring: Mirroring allowed
       option_irregular_allow_mirroring_help: |
-        ...
+        Defines if mirroring the part is allowed for placement.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Spacing
@@ -1067,13 +1098,7 @@ tab:
       option_hide_edges_preview_help: Shows or hides the visual display of the edge bandings for each part in the cutting diagram.
       option_time_limit: Time limit
       option_time_limit_help: |
-        ...
-      option_not_anytime_tree_search_queue_size: Queue size
-      option_not_anytime_tree_search_queue_size_help: |
-        ...
-      option_verbosity_level: Verbosity level
-      option_verbosity_level_help: |
-        ...
+        Fix time limit to computation
       tooltip:
         scroll_to_block_1d: Scroll to first board or edge banding
         scroll_to_block_2d: Scroll to first panel or veneer sheet
@@ -1505,7 +1530,7 @@ tab:
       texture_load: Load a new texture
       texture_clear: Remove texture
       edit: "Edit the properties of '{{ name }}'"
-      set_current: "Color parts with '{{ name }}'."
+      set_current: "Color parts with '{{ name }}'"
       open_url: Open material URL
       import_from_skm: Import material (.skm)
     menu:
@@ -1559,7 +1584,7 @@ tab:
         *If no unit is specified, the model unit will be applied.*
       std_thicknesses: Standard Thicknesses
       std_thicknesses_help: |
-        Standard thicknesses (**rough**) available for this material.
+        Standard **rough** thicknesses available for this material.
 
         *If no unit is specified, the model unit will be applied.*
       std_sections: Standard Cross Sections
@@ -2085,7 +2110,7 @@ tool:
     action_3: Adapt Axes
     action_3_status: Target a face of a part and click on an edge to adapt its axes
     action_4: Move Origin
-    action_4_status: Target a face of a part and click on a point to place its origin there.
+    action_4_status: Target a face of a part and click on a point to place its origin there
     action_option_group_direction: Direction
     action_option_direction_0: L
     action_option_direction_1: W
