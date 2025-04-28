@@ -36,6 +36,22 @@ module Ladb::OpenCutList
         report_advance_command
       end
 
+      PLUGIN.register_command("cutlist_estimate_start") do |settings|
+        estimate_start_command(settings)
+      end
+
+      PLUGIN.register_command("cutlist_estimate_advance") do |settings|
+        estimate_advance_command
+      end
+
+      PLUGIN.register_command("cutlist_estimate_next") do |settings|
+        estimate_next_command
+      end
+
+      PLUGIN.register_command("cutlist_estimate_cancel") do |settings|
+        estimate_cancel_command
+      end
+
       PLUGIN.register_command("cutlist_numbers_save") do |settings|
         numbers_command(settings, false)
       end
@@ -192,6 +208,45 @@ module Ladb::OpenCutList
 
       # Run !
       @report_worker.run
+    end
+
+    def estimate_start_command(settings)
+      require_relative '../worker/cutlist/cutlist_estimate_worker'
+
+      # Setup worker
+      @estimate_worker = CutlistEstimateWorker.new(@cutlist, **settings)
+
+      # Run !
+      out = @estimate_worker.run
+      puts "START : #{out}"
+      out
+    end
+
+    def estimate_advance_command
+      return { :errors => [ 'default.error' ] } unless @estimate_worker
+
+      # Run !
+      out = @estimate_worker.run(:advance)
+      puts "ADVANCE : #{out}"
+      out
+    end
+
+    def estimate_next_command
+      return { :errors => [ 'default.error' ] } unless @estimate_worker
+
+      # Run !
+      out = @estimate_worker.run(:next)
+      puts "NEXT : #{out}"
+      out
+    end
+
+    def estimate_cancel_command
+      return { :errors => [ 'default.error' ] } unless @estimate_worker
+
+      # Run !
+      out = @estimate_worker.run(:cancel)
+      puts "CANCEL : #{out}"
+      out
     end
 
     def numbers_command(settings, reset)

@@ -42,6 +42,7 @@
         this.lastExportOptionsTab = null;
         this.lastExportOptionsEditingItem = null;
         this.lastReportOptionsTab = null;
+        this.lastEstimateOptionsTab = null;
         this.lastCuttingdiagram1dOptionsTab = null;
         this.lastCuttingdiagram2dOptionsTab = null;
         this.lastPackingOptionsTab = null;
@@ -55,6 +56,7 @@
         this.$btnExport = $('#ladb_btn_export', this.$header);
         this.$btnLayout = $('#ladb_btn_layout', this.$header);
         this.$btnReport = $('#ladb_btn_report', this.$header);
+        this.$btnEstimate = $('#ladb_btn_estimate', this.$header);
         this.$btnOptions = $('#ladb_btn_options', this.$header);
         this.$itemHighlightAllParts = $('#ladb_item_highlight_all_parts', this.$header);
         this.$itemLabelsAllParts = $('#ladb_item_labels_all_parts', this.$header);
@@ -179,6 +181,7 @@
                 that.$btnExport.prop('disabled', groups.length === 0);
                 that.$btnLayout.prop('disabled', groups.length === 0);
                 that.$btnReport.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
+                that.$btnEstimate.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
                 that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemLabelsAllParts.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemExport2dAllParts.parents('li').toggleClass('disabled', groups.length === 0);
@@ -1087,7 +1090,7 @@
         const isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
             || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
 
-        // Retrieve label options
+        // Retrieve report options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_report_options' }, function (response) {
 
             const reportOptions = response.preset;
@@ -1315,7 +1318,7 @@
                     } else {
 
                         window.requestAnimationFrame(function () {
-                            that.dialog.advanceProgress(1);
+                            that.dialog.incProgress(1);
                         });
 
                         fnAdvance();
@@ -1335,6 +1338,174 @@
         });
 
     };
+
+    LadbTabCutlist.prototype.estimateCutlist = function (forceDefaultTab) {
+        const that = this;
+
+        const isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
+            || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
+
+        // Retrieve report options
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_estimate_options' }, function (response) {
+
+            const estimateOptions = response.preset;
+
+            const $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-estimate.twig', {
+                isGroupSelection: isGroupSelection,
+                tab: forceDefaultTab || that.lastEstimateOptionsTab == null ? 'general' : that.lastEstimateOptionsTab,
+            });
+
+            // Fetch UI elements
+            const $tabs = $('a[data-toggle="tab"]', $modal);
+            const $widgetPreset = $('.ladb-widget-preset', $modal);
+            const $btnGenerate = $('#ladb_cutlist_estimate_btn_generate', $modal);
+
+            const fnFetchOptions = function (options) {
+            }
+            const fnFillInputs = function (options) {
+            }
+
+            $widgetPreset.ladbWidgetPreset({
+                dialog: that.dialog,
+                dictionary: 'cutlist_estimate_options',
+                fnFetchOptions: fnFetchOptions,
+                fnFillInputs: fnFillInputs
+            });
+
+            fnFillInputs(estimateOptions);
+
+            // Bind tabs
+            $tabs.on('shown.bs.tab', function (e) {
+                that.lastEstimateOptionsTab = $(e.target).attr('href').substring('#tab_estimate_options_'.length);
+            });
+
+            // Bind buttons
+            $btnGenerate.on('click', function () {
+
+                // Fetch options
+                fnFetchOptions(estimateOptions);
+
+                // Store options
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_estimate_options', values: estimateOptions });
+
+                // Generate report
+                that.generateEstimateCutlist(estimateOptions);
+
+                // Hide modal
+                $modal.modal('hide');
+
+            });
+
+            // Show modal
+            $modal.modal('show');
+
+            // Setup popovers
+            that.dialog.setupPopovers();
+
+        });
+
+    };
+
+    LadbTabCutlist.prototype.generateEstimateCutlist = function (estimateOptions, callback) {
+        const that = this;
+
+        window.requestAnimationFrame(function () {
+            rubyCallCommand('cutlist_estimate_start', $.extend({
+                hidden_group_ids: that.generateOptions.hidden_group_ids
+            }, estimateOptions), function (response) {
+
+                that.dialog.startProgress(response.runs, function () {
+                    rubyCallCommand('cutlist_estimate_cancel');
+                });
+
+                let fnCreateSlide = function (response) {
+
+                    let $slide = that.pushNewSlide('ladb_cutlist_slide_estimate', 'tabs/cutlist/_slide-estimate.twig', $.extend({
+                        capabilities: that.dialog.capabilities,
+                        generateOptions: that.generateOptions,
+                        dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
+                        filename: that.filename,
+                        modelName: that.modelName,
+                        modelDescription: that.modelDescription,
+                        modelActivePath: that.modelActivePath,
+                        pageName: that.pageName,
+                        pageDescription: that.pageDescription,
+                        isEntitySelection: that.isEntitySelection,
+                        lengthUnit: that.lengthUnit,
+                        generatedAt: new Date().getTime() / 1000
+                    }, response), function () {
+                        that.dialog.setupTooltips();
+                    });
+
+                    // Fetch UI elements
+                    const $btnClose = $('#ladb_btn_close', $slide);
+
+                    // Bind buttons
+                    $btnClose.on('click', function () {
+                        that.popSlide();
+                    });
+
+                    // Finish progress feedback
+                    that.dialog.finishProgress();
+
+                }
+
+                if (response.running) {
+                    let waitingForResponse = false;
+                    const interval = setInterval(function () {
+
+                        if (waitingForResponse) {
+                            return;
+                        }
+
+                        rubyCallCommand('cutlist_estimate_advance', null, function (response) {
+
+                            waitingForResponse = false;
+
+                            if (response.running) {
+
+                                // Set progress feedback
+                                that.dialog.setProgress(response.run_index + response.run_progress);
+
+                                if (response.solution) {
+                                    that.dialog.changeCancelBtnLabelProgress(i18next.t('default.stop'))
+                                    that.dialog.previewProgress(Twig.twig({ref: "tabs/cutlist/_progress-preview-packing.twig"}).render({
+                                        solution: response.solution
+                                    }));
+                                }
+
+                            } else if (response.cancelled) {
+
+                                clearInterval(interval);
+
+                                // Finish progress feedback
+                                that.dialog.finishProgress();
+
+                            } else {
+
+                                clearInterval(interval);
+
+                                fnCreateSlide(response);
+
+                            }
+
+                        });
+                        waitingForResponse = true;
+
+                    }, 250);
+                } else if (response.cancelled) {
+
+                    // Finish progress feedback
+                    that.dialog.finishProgress();
+
+                } else {
+                    fnCreateSlide(response);
+                }
+
+            });
+        });
+
+    }
 
     // Highlight /////
 
@@ -4328,7 +4499,7 @@
                                     } else {
 
                                         window.requestAnimationFrame(function () {
-                                            that.dialog.advanceProgress(1);
+                                            that.dialog.incProgress(1);
                                         });
 
                                         fnAdvance();
@@ -4899,7 +5070,7 @@
                                     } else {
 
                                         window.requestAnimationFrame(function () {
-                                            that.dialog.advanceProgress(1);
+                                            that.dialog.incProgress(1);
                                         });
 
                                         fnAdvance();
@@ -5637,21 +5808,21 @@
                         }, packingOptions), function (response) {
 
                             if (response.running) {
-                                let waiting_for_response = false;
+                                let waitingForResponse = false;
                                 const interval = setInterval(function () {
 
-                                    if (waiting_for_response) {
+                                    if (waitingForResponse) {
                                         return;
                                     }
 
                                     rubyCallCommand('cutlist_group_packing_advance', null, function (response) {
 
-                                        waiting_for_response = false;
+                                        waitingForResponse = false;
 
                                         if (response.running) {
 
                                             // Advance progress feedback
-                                            that.dialog.advanceProgress(1);
+                                            that.dialog.incProgress(1);
 
                                             if (response.solution) {
                                                 that.dialog.changeCancelBtnLabelProgress(i18next.t('default.stop'))
@@ -5676,7 +5847,7 @@
                                         }
 
                                     });
-                                    waiting_for_response = true;
+                                    waitingForResponse = true;
 
                                 }, 250);
                             } else if (response.cancelled) {
@@ -6124,6 +6295,10 @@
         });
         this.$btnReport.on('click', function () {
             that.reportCutlist();
+            this.blur();
+        });
+        this.$btnEstimate.on('click', function () {
+            that.estimateCutlist();
             this.blur();
         });
         this.$btnOptions.on('click', function () {

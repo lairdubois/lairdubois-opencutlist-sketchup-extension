@@ -1,0 +1,36 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_cutlist_modal_estimate' %}
+{% set title = ('tab.cutlist.estimate.title'|i18next)~'<small class="ladb-horizontal-left-separator">'~('tab.cutlist.estimate.raw_materials'|i18next)~'</small>' %}
+
+{% block headerToolsInner %}
+    {% include 'components/_widget-preset.twig' %}
+    <button class="btn btn-default btn-xs" data-help-page="cutlist.estimate"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_estimate_options_general" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-settings"></i> {{ 'tab.cutlist.estimate.options_general'|i18next }}</a></li>
+    </ul>
+{% endblock %}
+
+{% block bodyInner %}
+    {% if isGroupSelection %}
+        <div class="alert alert-info text-center">{{ 'tab.cutlist.estimate.warning.is_group_selection'|i18next }}</div>
+    {% endif %}
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_estimate_options_general">
+            <div class="row">
+                <div class="col-xs-push-1 col-xs-10">
+                    {{ 'tab.cutlist.estimate.info_0'|i18next }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary btn-validate-modal" id="ladb_cutlist_estimate_btn_generate">{{ 'default.generate'|i18next }}</button>
+{% endblock %}

@@ -120,9 +120,17 @@ LadbAbstractDialog.prototype.cancelProgress = function () {
     return false;
 }
 
-LadbAbstractDialog.prototype.advanceProgress = function (step) {
+LadbAbstractDialog.prototype.incProgress = function (step) {
     if (this.$progress) {
         this.progressStep = Math.min(this.progressMaxSteps, this.progressStep + step);
+        this.$progressBar.css('width', ((this.progressStep / this.progressMaxSteps) * 100) + '%');
+        $('.progress', this.$progress).show();
+    }
+};
+
+LadbAbstractDialog.prototype.setProgress = function (step) {
+    if (this.$progress) {
+        this.progressStep = Math.min(this.progressMaxSteps, step);
         this.$progressBar.css('width', ((this.progressStep / this.progressMaxSteps) * 100) + '%');
         $('.progress', this.$progress).show();
     }

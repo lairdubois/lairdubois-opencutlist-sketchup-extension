@@ -1,0 +1,31 @@
+{% extends 'tabs/base-slide.twig' %}
+
+{% set id = 'ladb_cutlist_slide_estimate' %}
+{% set out = true %}
+
+{% block headerInner %}
+    {{ parent() }}
+    {% include 'tabs/cutlist/_header-extra.twig' %}
+{% endblock %}
+
+{% block headerHeadingInner %}
+    {{ 'tab.cutlist.report.title'|i18next}}<small class="ladb-horizontal-left-separator">{{ 'tab.cutlist.report.raw_materials'|i18next }}</small>
+{% endblock %}
+
+{% block headerToolsInner %}
+    <button id="ladb_btn_report" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.estimate'|i18next }}...</button>
+    <button id="ladb_btn_print" class="btn btn-default"><i class="ladb-opencutlist-icon-print"></i> {{ 'default.print'|i18next }}</button>
+    &nbsp;
+    <button class="btn btn-default" data-help-page="cutlist.report"><i class="ladb-opencutlist-icon-help"></i></button>
+    <div class="btn-group">
+        <button id="ladb_btn_menu" class="no-print btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a class="ladb-item-show-all-groups" href="#"><i class="ladb-opencutlist-icon-eye-open"></i> {{ 'tab.cutlist.menu.show_all_groups'|i18next }}</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a id="ladb_item_expand_all" href="#"><i class="ladb-opencutlist-icon-arrow-down"></i> {{ 'tab.cutlist.menu.expand_all'|i18next }}</a></li>
+            <li><a id="ladb_item_collapse_all" href="#"><i class="ladb-opencutlist-icon-arrow-up"></i> {{ 'tab.cutlist.menu.collapse_all'|i18next }}</a></li>
+        </ul>
+    </div>
+    &nbsp;
+    <button id="ladb_btn_close" class="btn btn-default"><i class="ladb-opencutlist-icon-close"></i> {{ 'default.close'|i18next }}</button>
+{% endblock %}
