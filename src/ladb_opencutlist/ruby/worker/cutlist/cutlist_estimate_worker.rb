@@ -172,7 +172,7 @@ module Ladb::OpenCutList
       @entry_def_class = entry_def_class
       @item_def_class = item_def_class
 
-      @name = "#{cutlist_group.material_name} / #{cutlist_group.std_dimension}"
+      @name = "#{cutlist_group.material_name}#{" / #{cutlist_group.std_dimension}" unless cutlist_group.std_dimension.empty?}"
       @progress = 0.0
       @started = false
       @finished = false
@@ -300,6 +300,7 @@ module Ladb::OpenCutList
     protected
 
     def _select_default_std_size(settings)
+      settings[:verbosity_level] = 0
     end
 
     def _create_entry_def
@@ -307,74 +308,79 @@ module Ladb::OpenCutList
       estimate_entry_def = @entry_def_class.new(@cutlist_group)
       estimate_entry_def.errors += @packing.errors
       estimate_entry_def.raw_estimated = @material_attributes.raw_estimated
-      estimate_entry_def.total_count = @packing.solution.summary.def.total_used_count
-      estimate_entry_def.total_length = @packing.solution.summary.def.total_used_length if estimate_entry_def.respond_to?(:total_length=)
-      estimate_entry_def.total_area = @packing.solution.summary.def.total_used_area if estimate_entry_def.respond_to?(:total_area=)
 
-      @packing.solution.bins.each do |packing_bin|
+      unless @packing.solution.nil?
 
-        bin_type_def = packing_bin.def.bin_type_def
+        estimate_entry_def.total_count = @packing.solution.summary.def.total_used_count
+        estimate_entry_def.total_length = @packing.solution.summary.def.total_used_length if estimate_entry_def.respond_to?(:total_length=)
+        estimate_entry_def.total_area = @packing.solution.summary.def.total_used_area if estimate_entry_def.respond_to?(:total_area=)
 
-        # Only standard bin uses dim volumic mass and prices
-        if packing_bin.type == 0
-          dim = @material_attributes.compute_std_dim(bin_type_def.length, bin_type_def.width, @cutlist_group.def.std_thickness)
-        else
-          dim = nil
+        @packing.solution.bins.each do |packing_bin|
+
+          bin_type_def = packing_bin.def.bin_type_def
+
+          # Only standard bin uses dim volumic mass and prices
+          if packing_bin.type == 0
+            dim = @material_attributes.compute_std_dim(bin_type_def.length, bin_type_def.width, @cutlist_group.def.std_thickness)
+          else
+            dim = nil
+          end
+
+          std_volumic_mass = _get_std_volumic_mass(dim, @material_attributes)
+          mass_per_inch3 = std_volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(std_volumic_mass[:unit], std_volumic_mass[:val], @cutlist_group.def.std_thickness, bin_type_def.width, bin_type_def.length)
+
+          std_price = _get_std_price(dim, @material_attributes)
+          price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], @cutlist_group.def.std_thickness, bin_type_def.width, bin_type_def.length)
+
+          estimate_entry_bin_def = estimate_entry_def.bin_defs[bin_type_def.id]
+          if estimate_entry_bin_def.nil?
+
+            estimate_entry_bin_def = @item_def_class.new(bin_type_def)
+            estimate_entry_bin_def.std_volumic_mass = std_volumic_mass
+            estimate_entry_bin_def.std_price = std_price
+
+            estimate_entry_def.bin_defs[bin_type_def.id] = estimate_entry_bin_def
+
+          end
+
+          total_length = bin_type_def.length * packing_bin.def.count
+          total_area = bin_type_def.length * bin_type_def.width * packing_bin.def.count
+
+          estimate_entry_bin_def.count += packing_bin.def.count
+          estimate_entry_bin_def.total_length += total_length if estimate_entry_bin_def.respond_to?(:total_length=)
+          estimate_entry_bin_def.total_area += total_area if estimate_entry_bin_def.respond_to?(:total_area=)
+
+          total_mass = total_area * @cutlist_group.def.std_thickness * mass_per_inch3
+          total_cost = total_area * @cutlist_group.def.std_thickness * price_per_inch3
+
+          total_used_length = 0
+          total_used_area = 0
+          total_used_mass = 0
+          total_used_cost = 0
+          packing_bin.items.each do |packing_item|
+            item_type_def = packing_item.def.item_type_def
+            part_def = item_type_def.part.def
+            total_used_length += part_def.size.length * packing_bin.def.count
+            total_used_area += part_def.size.area * packing_bin.def.count
+            total_used_mass += part_def.size.volume * mass_per_inch3 * packing_bin.def.count
+            total_used_cost += part_def.size.volume * price_per_inch3 * packing_bin.def.count
+          end
+
+          estimate_entry_bin_def.total_used_length += total_used_length if estimate_entry_bin_def.respond_to?(:total_used_length=)
+          estimate_entry_bin_def.total_used_area += total_used_area if estimate_entry_bin_def.respond_to?(:total_used_area=)
+          estimate_entry_bin_def.total_mass += total_mass
+          estimate_entry_bin_def.total_used_mass += total_used_mass
+          estimate_entry_bin_def.total_cost += total_cost
+          estimate_entry_bin_def.total_used_cost += total_used_cost
+
+          estimate_entry_def.total_used_length += total_used_length if estimate_entry_def.respond_to?(:total_used_length=)
+          estimate_entry_def.total_used_area += total_used_area if estimate_entry_def.respond_to?(:total_used_area=)
+          estimate_entry_def.total_mass += total_mass
+          estimate_entry_def.total_used_mass += total_used_mass
+          estimate_entry_def.total_cost += total_cost
+          estimate_entry_def.total_used_cost += total_used_cost
+
         end
-
-        std_volumic_mass = _get_std_volumic_mass(dim, @material_attributes)
-        mass_per_inch3 = std_volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(std_volumic_mass[:unit], std_volumic_mass[:val], @cutlist_group.def.std_thickness, bin_type_def.width, bin_type_def.length)
-
-        std_price = _get_std_price(dim, @material_attributes)
-        price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], @cutlist_group.def.std_thickness, bin_type_def.width, bin_type_def.length)
-
-        estimate_entry_bin_def = estimate_entry_def.bin_defs[bin_type_def.id]
-        if estimate_entry_bin_def.nil?
-
-          estimate_entry_bin_def = @item_def_class.new(bin_type_def)
-          estimate_entry_bin_def.std_volumic_mass = std_volumic_mass
-          estimate_entry_bin_def.std_price = std_price
-
-          estimate_entry_def.bin_defs[bin_type_def.id] = estimate_entry_bin_def
-
-        end
-
-        total_length = bin_type_def.length * packing_bin.def.count
-        total_area = bin_type_def.length * bin_type_def.width * packing_bin.def.count
-
-        estimate_entry_bin_def.count += packing_bin.def.count
-        estimate_entry_bin_def.total_length += total_length if estimate_entry_bin_def.respond_to?(:total_length=)
-        estimate_entry_bin_def.total_area += total_area if estimate_entry_bin_def.respond_to?(:total_area=)
-
-        total_mass = total_area * @cutlist_group.def.std_thickness * mass_per_inch3
-        total_cost = total_area * @cutlist_group.def.std_thickness * price_per_inch3
-
-        total_used_length = 0
-        total_used_area = 0
-        total_used_mass = 0
-        total_used_cost = 0
-        packing_bin.items.each do |packing_item|
-          item_type_def = packing_item.def.item_type_def
-          part_def = item_type_def.part.def
-          total_used_length += part_def.size.length * packing_bin.def.count
-          total_used_area += part_def.size.area * packing_bin.def.count
-          total_used_mass += part_def.size.volume * mass_per_inch3 * packing_bin.def.count
-          total_used_cost += part_def.size.volume * price_per_inch3 * packing_bin.def.count
-        end
-
-        estimate_entry_bin_def.total_used_length += total_used_length if estimate_entry_bin_def.respond_to?(:total_used_length=)
-        estimate_entry_bin_def.total_used_area += total_used_area if estimate_entry_bin_def.respond_to?(:total_used_area=)
-        estimate_entry_bin_def.total_mass += total_mass
-        estimate_entry_bin_def.total_used_mass += total_used_mass
-        estimate_entry_bin_def.total_cost += total_cost
-        estimate_entry_bin_def.total_used_cost += total_used_cost
-
-        estimate_entry_def.total_used_length += total_used_length if estimate_entry_def.respond_to?(:total_used_length=)
-        estimate_entry_def.total_used_area += total_used_area if estimate_entry_def.respond_to?(:total_used_area=)
-        estimate_entry_def.total_mass += total_mass
-        estimate_entry_def.total_used_mass += total_used_mass
-        estimate_entry_def.total_cost += total_cost
-        estimate_entry_def.total_used_cost += total_used_cost
 
       end
 
@@ -396,9 +402,14 @@ module Ladb::OpenCutList
     protected
 
     def _select_default_std_size(settings)
+      super
       std_lengths = @material_attributes.std_lengths.split(DimensionUtils::LIST_SEPARATOR)
-      if settings[:std_bin_1d_sizes] == '' || settings[:std_bin_1d_sizes] != '0' && !std_lengths.include?(settings[:std_bin_1d_sizes])
+      if settings[:std_bin_1d_sizes] == '' || settings[:std_bin_1d_sizes] != '0' && (std_lengths & settings[:std_bin_1d_sizes].split(DimensionUtils::LIST_SEPARATOR)).empty?
         settings[:std_bin_1d_sizes] = std_lengths[0].to_s unless std_lengths.empty?
+      end
+      if settings[:problem_type] == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE ||
+         settings[:problem_type] == Packy::PROBLEM_TYPE_RECTANGLE
+        settings[:problem_type] = Packy::PROBLEM_TYPE_ONEDIMENSIONAL
       end
     end
 
@@ -409,8 +420,9 @@ module Ladb::OpenCutList
     protected
 
     def _select_default_std_size(settings)
+      super
       std_sizes = @material_attributes.std_sizes.split(DimensionUtils::LIST_SEPARATOR)
-      if settings[:std_bin_2d_sizes] == '' || settings[:std_bin_2d_sizes] != '0x0' && !std_sizes.include?(settings[:std_bin_2d_sizes])
+      if settings[:std_bin_2d_sizes] == '' || settings[:std_bin_2d_sizes] != '0x0' && (std_sizes & settings[:std_bin_2d_sizes].split(DimensionUtils::LIST_SEPARATOR)).empty?
         settings[:std_bin_2d_sizes] = std_sizes[0].to_s unless std_sizes.empty?
       end
     end
