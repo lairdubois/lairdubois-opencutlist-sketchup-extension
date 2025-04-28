@@ -1414,9 +1414,14 @@
                 hidden_group_ids: that.generateOptions.hidden_group_ids
             }, estimateOptions), function (response) {
 
-                that.dialog.startProgress(response.runs, function () {
-                    rubyCallCommand('cutlist_estimate_cancel');
-                });
+                that.dialog.startProgress(response.runs,
+                    function () {
+                        rubyCallCommand('cutlist_estimate_cancel');
+                    },
+                    function () {
+                        rubyCallCommand('cutlist_estimate_next');
+                    }
+                );
 
                 let fnCreateSlide = function (response) {
 
@@ -1438,9 +1443,13 @@
                     });
 
                     // Fetch UI elements
+                    const $btnEstimate = $('#ladb_btn_estimate', $slide);
                     const $btnClose = $('#ladb_btn_close', $slide);
 
                     // Bind buttons
+                    $btnEstimate.on('click', function () {
+                        that.estimateCutlist();
+                    });
                     $btnClose.on('click', function () {
                         that.popSlide();
                     });
@@ -1465,13 +1474,14 @@
                             if (response.running) {
 
                                 // Set progress feedback
+                                that.dialog.changeLabelProgress(response.run_name);
                                 that.dialog.setProgress(response.run_index + response.run_progress);
 
                                 if (response.solution) {
-                                    that.dialog.changeCancelBtnLabelProgress(i18next.t('default.stop'))
-                                    that.dialog.previewProgress(Twig.twig({ref: "tabs/cutlist/_progress-preview-packing.twig"}).render({
+                                    let preview = response.solution === 'none' ? '' : Twig.twig({ref: "tabs/cutlist/_progress-preview-packing.twig"}).render({
                                         solution: response.solution
-                                    }));
+                                    })
+                                    that.dialog.previewProgress(preview);
                                 }
 
                             } else if (response.cancelled) {
@@ -1492,7 +1502,7 @@
                         });
                         waitingForResponse = true;
 
-                    }, 250);
+                    }, 100);
                 } else if (response.cancelled) {
 
                     // Finish progress feedback

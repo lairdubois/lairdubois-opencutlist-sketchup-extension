@@ -38,6 +38,7 @@ default:
   draw: Dessiner
   estimate: Estimer
   rename: Renommer
+  next: Suivant
   yes: Oui
   no: Non
   automatic: Automatique

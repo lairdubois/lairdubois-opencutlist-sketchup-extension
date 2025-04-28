@@ -217,36 +217,28 @@ module Ladb::OpenCutList
       @estimate_worker = CutlistEstimateWorker.new(@cutlist, **settings)
 
       # Run !
-      out = @estimate_worker.run
-      puts "START : #{out}"
-      out
+      @estimate_worker.run
     end
 
     def estimate_advance_command
       return { :errors => [ 'default.error' ] } unless @estimate_worker
 
       # Run !
-      out = @estimate_worker.run(:advance)
-      puts "ADVANCE : #{out}"
-      out
+      @estimate_worker.run(:advance)
     end
 
     def estimate_next_command
       return { :errors => [ 'default.error' ] } unless @estimate_worker
 
       # Run !
-      out = @estimate_worker.run(:next)
-      puts "NEXT : #{out}"
-      out
+      @estimate_worker.run(:next)
     end
 
     def estimate_cancel_command
       return { :errors => [ 'default.error' ] } unless @estimate_worker
 
       # Run !
-      out = @estimate_worker.run(:cancel)
-      puts "CANCEL : #{out}"
-      out
+      @estimate_worker.run(:cancel)
     end
 
     def numbers_command(settings, reset)
