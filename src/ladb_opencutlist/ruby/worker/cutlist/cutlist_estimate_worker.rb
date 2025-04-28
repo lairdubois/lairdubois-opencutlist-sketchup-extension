@@ -51,7 +51,7 @@ module Ladb::OpenCutList
         end
 
         return {
-          runs: @runs.length,
+          steps: @runs.length,
           running: true
         }
 
@@ -257,9 +257,9 @@ module Ladb::OpenCutList
       settings = HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_packing_options', @cutlist_group.id))
       settings[:group_id] = @cutlist_group.id
 
-      _select_default_std_size(settings)
+      _ensure_default_settings(settings)
 
-      @time_limit = settings[:time_limit]
+      @time_limit = settings[:time_limit].to_f
       @start_time = Time.new
 
       @packing_worker = CutlistPackingWorker.new(@worker.cutlist, **settings)
@@ -299,7 +299,7 @@ module Ladb::OpenCutList
 
     protected
 
-    def _select_default_std_size(settings)
+    def _ensure_default_settings(settings)
       settings[:verbosity_level] = 0
     end
 
@@ -401,16 +401,23 @@ module Ladb::OpenCutList
 
     protected
 
-    def _select_default_std_size(settings)
+    def _ensure_default_settings(settings)
       super
-      std_lengths = @material_attributes.std_lengths.split(DimensionUtils::LIST_SEPARATOR)
-      if settings[:std_bin_1d_sizes] == '' || settings[:std_bin_1d_sizes] != '0' && (std_lengths & settings[:std_bin_1d_sizes].split(DimensionUtils::LIST_SEPARATOR)).empty?
+
+      std_lengths = DimensionUtils.d_to_ifloats(@material_attributes.std_lengths).split(DimensionUtils::LIST_SEPARATOR)
+      std_bin_1d_sizes = DimensionUtils.d_to_ifloats(settings[:std_bin_1d_sizes]).split(DimensionUtils::LIST_SEPARATOR)
+
+      if settings[:std_bin_1d_sizes] == ''
         settings[:std_bin_1d_sizes] = std_lengths[0].to_s unless std_lengths.empty?
+      elsif settings[:std_bin_1d_sizes] != '0'
+        settings[:std_bin_1d_sizes] = (std_lengths & std_bin_1d_sizes).join(DimensionUtils::LIST_SEPARATOR)
       end
+
       if settings[:problem_type] == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE ||
          settings[:problem_type] == Packy::PROBLEM_TYPE_RECTANGLE
         settings[:problem_type] = Packy::PROBLEM_TYPE_ONEDIMENSIONAL
       end
+
     end
 
   end
@@ -419,12 +426,18 @@ module Ladb::OpenCutList
 
     protected
 
-    def _select_default_std_size(settings)
+    def _ensure_default_settings(settings)
       super
-      std_sizes = @material_attributes.std_sizes.split(DimensionUtils::LIST_SEPARATOR)
-      if settings[:std_bin_2d_sizes] == '' || settings[:std_bin_2d_sizes] != '0x0' && (std_sizes & settings[:std_bin_2d_sizes].split(DimensionUtils::LIST_SEPARATOR)).empty?
+
+      std_sizes = DimensionUtils.dxd_to_ifloats(@material_attributes.std_sizes).split(DimensionUtils::LIST_SEPARATOR)
+      std_bin_2d_sizes = DimensionUtils.dxd_to_ifloats(settings[:std_bin_2d_sizes]).split(DimensionUtils::LIST_SEPARATOR)
+
+      if settings[:std_bin_2d_sizes] == ''
         settings[:std_bin_2d_sizes] = std_sizes[0].to_s unless std_sizes.empty?
+      elsif settings[:std_bin_2d_sizes] != '0x0'
+        settings[:std_bin_2d_sizes] = (std_sizes & std_bin_2d_sizes).join(DimensionUtils::LIST_SEPARATOR)
       end
+
     end
 
   end

@@ -1414,9 +1414,9 @@
                 hidden_group_ids: that.generateOptions.hidden_group_ids
             }, estimateOptions), function (response) {
 
-                const steps = response.runs
+                const steps = response.steps
 
-                that.dialog.startProgress(response.runs,
+                that.dialog.startProgress(response.steps,
                     function () {
                         rubyCallCommand('cutlist_estimate_cancel');
                     },
@@ -1619,7 +1619,7 @@
                         });
                         waitingForResponse = true;
 
-                    }, 100);
+                    }, 50);
                 } else if (response.cancelled) {
 
                     // Finish progress feedback

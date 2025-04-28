@@ -245,10 +245,10 @@
                         </tr>
                     {% endfor %}
                     {% if group.material_type == 2 or group.material_type == 6 %} {# 2 = TYPE_SHEET_GOOD, 6 = TYPE_VENEER #}
-                        {% set binStrippedname = group.material_type == 6 ? 'veneer' : 'good' %}  {# 6 = TYPE_VENEERE #}
+                        {% set binStrippedname = group.material_type == 6 ? 'veneer' : 'sheet_good' %}  {# 6 = TYPE_VENEER #}
                         {% for bin in entry.bins %}
                             <tr class="ladb-cutlist-row ladb-cutlist-row-child{% if entry.errors|length == 0 %} hide{% endif %}" data-folder-id="{{ entry.id }}">
-                                <td style="padding-left: 40px;">{{ bin.length}} x {{ bin.width }} - <em>{{ ('tab.cutlist.cuttingdiagram.list.sheet_'~binStrippedname~'_type_'~bin.type)|i18next }}</em></td>
+                                <td style="padding-left: 40px;">{{ bin.length}} x {{ bin.width }} - <em>{{ ('tab.cutlist.packing.list.bin_2d_'~binStrippedname~'_type_'~bin.type)|i18next }}</em></td>
                                 <td class="text-center">{{ bin.count }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bin.total_used_area }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bin.total_area }}</td>
@@ -262,7 +262,7 @@
                         {% set binStrippedname = group.material_type == 4 ? 'edge' : 'dimensional' %}  {# 4 = TYPE_EDGE #}
                         {% for bin in entry.bins %}
                             <tr class="ladb-cutlist-row ladb-cutlist-row-child{% if entry.errors|length == 0 %} hide{% endif %}" data-folder-id="{{ entry.id }}">
-                                <td style="padding-left: 40px;">{{ bin.length}} - <em>{{ ('tab.cutlist.cuttingdiagram.list.bar_'~binStrippedname~'_type_'~bin.type)|i18next }}</em></td>
+                                <td style="padding-left: 40px;">{{ bin.length}} - <em>{{ ('tab.cutlist.packing.list.bin_1d_'~binStrippedname~'_type_'~bin.type)|i18next }}</em></td>
                                 <td class="text-center">{{ bin.count }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bin.total_used_length }}</td>
                                 <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ bin.total_length }}</td>
