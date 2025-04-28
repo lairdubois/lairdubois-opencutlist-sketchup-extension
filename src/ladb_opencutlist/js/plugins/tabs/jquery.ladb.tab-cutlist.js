@@ -1415,6 +1415,7 @@
             }, estimateOptions), function (response) {
 
                 const steps = response.steps
+                let previewTimeoutId = 0;
 
                 that.dialog.startProgress(response.steps,
                     function () {
@@ -1575,7 +1576,7 @@
 
                 if (response.running) {
                     let waitingForResponse = false;
-                    const interval = setInterval(function () {
+                    const intervalId = setInterval(function () {
 
                         if (waitingForResponse) {
                             return;
@@ -1592,25 +1593,33 @@
                                 that.dialog.setProgress(response.run_index + response.run_progress);
 
                                 if (response.solution) {
-                                    let preview = response.solution === 'none' ? '' : Twig.twig({ref: "tabs/cutlist/_progress-preview-packing.twig"}).render({
-                                        solution: response.solution
-                                    });
-                                    if (preview && response.run_index == steps - 1) {
-                                        that.dialog.changeNextBtnLabelProgress(i18next.t('default.stop'));
+                                    clearTimeout(previewTimeoutId);
+                                    if (response.solution === 'none') {
+                                        that.dialog.previewProgress('');
+                                    } else {
+                                        previewTimeoutId = setTimeout(function () {
+                                            that.dialog.previewProgress(Twig.twig({ref: "tabs/cutlist/_progress-preview-packing.twig"}).render({
+                                                solution: response.solution
+                                            }));
+                                            if (response.run_index === steps - 1) {
+                                                that.dialog.changeNextBtnLabelProgress(i18next.t('default.stop'));
+                                            }
+                                        }, 1000);
                                     }
-                                    that.dialog.previewProgress(preview);
                                 }
 
                             } else if (response.cancelled) {
 
-                                clearInterval(interval);
+                                clearInterval(intervalId);
+                                clearTimeout(previewTimeoutId);
 
                                 // Finish progress feedback
                                 that.dialog.finishProgress();
 
                             } else {
 
-                                clearInterval(interval);
+                                clearInterval(intervalId);
+                                clearTimeout(previewTimeoutId);
 
                                 fnCreateSlide(response);
 
