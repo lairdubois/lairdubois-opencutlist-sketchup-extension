@@ -1045,7 +1045,7 @@ tab:
       option_rectangleguillotine_cut_type_exact: Exacte
       option_rectangleguillotine_cut_type_homogenous: Homogène
       option_rectangleguillotine_number_of_stages: Nombre de niveaux
-      option_rectangleguillotine_number_of_stages_help: | # TODO
+      option_rectangleguillotine_number_of_stages_help: |
         Définit le nombre maximal de niveaux de coupe.
       option_rectangleguillotine_first_stage_orientation: Direction première coupe
       option_rectangleguillotine_first_stage_orientation_help: |

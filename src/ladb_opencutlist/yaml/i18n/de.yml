@@ -1041,12 +1041,18 @@ tab:
       option_rectangleguillotine_cut_type: Schnitttyp
       option_rectangleguillotine_cut_type_help: |
         Legt den Schnitttyp fest.
+      option_rectangleguillotine_cut_type_non_exact: Non exakt
+      option_rectangleguillotine_cut_type_exact: Exakt
+      option_rectangleguillotine_cut_type_homogenous: Homogen
       option_rectangleguillotine_number_of_stages: Anzahl der Stufen
       option_rectangleguillotine_number_of_stages_help: |
-        Legt die Anzahl der Schnittstufen fest.
+        Legt die maximale Anzahl der Schnittstufen fest.
       option_rectangleguillotine_first_stage_orientation: Erster Schnitt
       option_rectangleguillotine_first_stage_orientation_help: |
         Bestimmt die Richtung des ersten Schnittes.
+      option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
+      option_rectangleguillotine_first_stage_orientation_vertical: Vertikal
+      option_rectangleguillotine_first_stage_orientation_any: Beliebig
       option_rectangleguillotine_keep: Mindestgröße der Verschnitte
       option_rectangleguillotine_keep_help: "Verschnitte, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet."
       option_irregular_allowed_rotations: Drehungen
@@ -1585,7 +1591,7 @@ tab:
       std_thicknesses: Standarddicken
       std_thicknesses_help: |
         **Standardrohdicken** für dieses Material.
-        
+
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_sections: Standardquerschnitte
       std_sections_help: |

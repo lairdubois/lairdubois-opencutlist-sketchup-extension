@@ -1041,12 +1041,18 @@ tab:
       option_rectangleguillotine_cut_type: Cut Type
       option_rectangleguillotine_cut_type_help: |
         Sets the cut type.
+      option_rectangleguillotine_cut_type_non_exact: Non exact
+      option_rectangleguillotine_cut_type_exact: Exact
+      option_rectangleguillotine_cut_type_homogenous: Homogeneous
       option_rectangleguillotine_number_of_stages: Number of Stages
       option_rectangleguillotine_number_of_stages_help: |
-        Sets the number of cutting stages
+        Sets the maximum number of cutting stages
       option_rectangleguillotine_first_stage_orientation: First Cut Direction
       option_rectangleguillotine_first_stage_orientation_help: |
         Sets the direction of the first cut.
+      option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
+      option_rectangleguillotine_first_stage_orientation_vertical: Vertical
+      option_rectangleguillotine_first_stage_orientation_any: Any
       option_rectangleguillotine_keep: Minimal size of off-cuts
       option_rectangleguillotine_keep_help: Leftovers that are larger than the minimum length and width are marked **to be kept**.
       option_irregular_allowed_rotations: Allowed Rotations
