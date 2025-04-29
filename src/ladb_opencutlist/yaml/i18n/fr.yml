@@ -1037,7 +1037,7 @@ tab:
         Définit le mode d'optimisation, avec ou sans limite de temps.
       option_objective: Objectif
       option_objective_help: |
-        Définit l'objectif du calepinage
+        Définit l'objectif du calepinage.
       option_rectangleguillotine_cut_type: Type de coupe
       option_rectangleguillotine_cut_type_help: |
         Définit le type de coupe.

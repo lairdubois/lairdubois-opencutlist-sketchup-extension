@@ -38,6 +38,7 @@ default:
   draw: Zeichnen
   estimate: Schätzen
   rename: Umbenennen
+  next: Weiter
   yes: Ja
   no: Nein
   automatic: Automatisch
@@ -721,6 +722,36 @@ tab:
           Damit sich diese Kalkulation richtig berechnen lässt, müssen:
           - die verwendeten Materialien mindestens eine Rohdichte und einen Preis haben.
           - die verwendeten Zubehöre mindestens ein Gewicht und einen Preis haben.
+    estimate:
+      title: Kalkulation
+      info_0: |
+        Erstellung eine Kalkulation der **Massen** und der **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden.
+      options_general: Générales
+      raw_materials: Rohmaterial
+      total: Total
+      total_used: Verwendet
+      total_unused: Nicht verwendet
+      total_mass: Σ Massen
+      total_cost: Σ Kosten
+      total_count: Anz.
+      total_instance_count: Σ Einheiten
+      total_volume: Σ Volumen
+      total_area: Σ Flächen
+      total_length: Σ Längen
+      tooltip:
+        incompatible_unit: Einheit nicht kompatibel mit den Kalkulationsoptionen des Materials
+        multiplier_coefficient: Faktor
+      error:
+        no_typed_material_parts: "Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um die Kalkulation zu generieren."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
+      warning:
+        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht berücksichtigt."
+      tip:
+        not_enough_data: |
+          Damit sich diese Kalkulation richtig berechnen lässt, müssen:
+          - die verwendeten Materialien mindestens eine Rohdichte und einen Preis haben.
+          - die verwendeten Zubehöre mindestens ein Gewicht und einen Preis haben.
     cuttingdiagram:
       title: Schnittplan
       start_msg: Optimierung läuft
@@ -1003,16 +1034,16 @@ tab:
       option_scrap_bin_2d_none: Keine
       option_optimization_mode: Optimierungsmodus
       option_optimization_mode_help: |
-        ...
+        Legt den Optimierungsmodus fest, mit oder ohne Zeitlimit.
       option_objective: Ziel
       option_objective_help: |
-        ...
+        Definiert das Ziel der Schnittplanoptimierung.
       option_rectangleguillotine_cut_type: Schnitttyp
       option_rectangleguillotine_cut_type_help: |
-        ...
+        Legt den Schnitttyp fest.
       option_rectangleguillotine_number_of_stages: Anzahl der Stufen
       option_rectangleguillotine_number_of_stages_help: |
-        ...
+        Legt die Anzahl der Schnittstufen fest.
       option_rectangleguillotine_first_stage_orientation: Erster Schnitt
       option_rectangleguillotine_first_stage_orientation_help: |
         Bestimmt die Richtung des ersten Schnittes.
@@ -1067,13 +1098,7 @@ tab:
       option_hide_edges_preview_help: Ermöglicht das Ein- oder Ausblenden der visuellen Anzeige der Kantenbänder für jedes Teil im Schnittplan.
       option_time_limit: Zeitbegrenzung
       option_time_limit_help: |
-        ...
-      option_not_anytime_tree_search_queue_size: Länge der Warteschlange
-      option_not_anytime_tree_search_queue_size_help: |
-        ...
-      option_verbosity_level: Ausführlichkeit
-      option_verbosity_level_help: |
-        ...
+        Legt die Zeit für die Berechnung fest
       tooltip:
         scroll_to_block_1d: Zur ersten Stange oder Kantenband blättern
         scroll_to_block_2d: Zur ersten Platte oder Furnierblatt blättern
@@ -1559,8 +1584,8 @@ tab:
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_thicknesses: Standarddicken
       std_thicknesses_help: |
-        Standarddicken (**roh**) für dieses Material.
-
+        **Standardrohdicken** für dieses Material.
+        
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       std_sections: Standardquerschnitte
       std_sections_help: |
@@ -1994,7 +2019,7 @@ tool:
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Distanz ein
     action_2: In Raster kopieren
-    action_2_status: Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren.
+    action_2_status: Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status:  Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie zwei Distanzen ein
     action_3: Verschieben
@@ -2002,7 +2027,7 @@ tool:
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
     action_3_state_2_status: Klicken Sie, um das Teil zu platzieren, oder geben Sie eine Distanz ein
     action_4: Verteilen
-    action_4_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen.
+    action_4_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_1_status: Klicken Sie, um den ersten Messpunkt zu setzen
     action_4_state_2_status: Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein
@@ -2083,9 +2108,9 @@ tool:
     action_2: Vorderseite ↔ Rückseite vertauschen
     action_2_status: "Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen"
     action_3: Achsen ausrichten
-    action_3_status: "Zielen Sie auf die Fläche eines Teils und klicken Sie auf eine Kante, um die Achsen des Teils anzupassen."
+    action_3_status: "Zielen Sie auf die Fläche eines Teils und klicken Sie auf eine Kante, um die Achsen des Teils anzupassen"
     action_4: Ursprung verschieben
-    action_4_status: "Zielen Sie auf die Fläche eines Teils und klicken Sie auf einen Punkt, um den Ursprung dort zu platzieren."
+    action_4_status: "Zielen Sie auf die Fläche eines Teils und klicken Sie auf einen Punkt, um den Ursprung dort zu platzieren"
     action_option_group_direction: Ausrichtung
     action_option_direction_0: L
     action_option_direction_1: B
