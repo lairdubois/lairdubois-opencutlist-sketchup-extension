@@ -325,7 +325,7 @@ module Ladb::OpenCutList
 
       estimate_entry_def = @entry_def_class.new(@cutlist_group)
       estimate_entry_def.errors += @packing.errors
-      estimate_entry_def.errors << "#{@packing.solution.unplaced_part_infos.length} #{PLUGIN.get_i18n_string('tab.cutlist.packing.list.unplaced_parts', { :count => @packing.solution.unplaced_part_infos.length })}" if @packing.solution.unplaced_part_infos.any?
+      estimate_entry_def.errors << "#{@packing.solution.unplaced_part_infos.length} #{PLUGIN.get_i18n_string('tab.cutlist.packing.list.unplaced_parts', { :count => @packing.solution.unplaced_part_infos.length })}" if !@packing.solution.nil? && @packing.solution.unplaced_part_infos.any?
       estimate_entry_def.raw_estimated = @material_attributes.raw_estimated
 
       unless @packing.solution.nil?
