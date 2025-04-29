@@ -1041,12 +1041,18 @@ tab:
       option_rectangleguillotine_cut_type: Type de coupe
       option_rectangleguillotine_cut_type_help: |
         Définit le type de coupe.
+      option_rectangleguillotine_cut_type_non_exact: Non exacte
+      option_rectangleguillotine_cut_type_exact: Exacte
+      option_rectangleguillotine_cut_type_homogenous: Homogène
       option_rectangleguillotine_number_of_stages: Nombre de niveaux
-      option_rectangleguillotine_number_of_stages_help: |
-        Définit le nombre de niveaux de coupe.
+      option_rectangleguillotine_number_of_stages_help: | # TODO
+        Définit le nombre maximal de niveaux de coupe.
       option_rectangleguillotine_first_stage_orientation: Direction première coupe
       option_rectangleguillotine_first_stage_orientation_help: |
         Définit la direction de la première coupe.
+      option_rectangleguillotine_first_stage_orientation_horizontal: Horizontale
+      option_rectangleguillotine_first_stage_orientation_vertical: Verticale
+      option_rectangleguillotine_first_stage_orientation_any: Quelconque
       option_rectangleguillotine_keep: Taille minimale des chutes
       option_rectangleguillotine_keep_help: Les chutes ayant les deux dimensions supérieures à la taille minimale seront marquées **à conserver**.
       option_irregular_allowed_rotations: Rotations autorisées

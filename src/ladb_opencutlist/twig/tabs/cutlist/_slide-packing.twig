@@ -126,8 +126,8 @@
                                         <li><strong>{{ 'tab.cutlist.packing.option_spacing'|i18next }} : </strong>{{ solution.options.spacing }}</li>
                                         <li><strong>{{ 'tab.cutlist.packing.option_trimming'|i18next }} : </strong>{{ solution.options.trimming }}</li>
                                         {% if solution.options.problem_type == 'rectangleguillotine' %}
-                                            <li><strong>{{ 'tab.cutlist.packing.option_rectangleguillotine_cut_type'|i18next }} : </strong>{{ solution.options.rectangleguillotine_cut_type }}</li>
-                                            <li><strong>{{ 'tab.cutlist.packing.option_rectangleguillotine_first_stage_orientation'|i18next }} : </strong>{{ solution.options.rectangleguillotine_first_stage_orientation }}</li>
+                                            <li><strong>{{ 'tab.cutlist.packing.option_rectangleguillotine_cut_type'|i18next }} : </strong>{{ ('tab.cutlist.packing.option_rectangleguillotine_cut_type_'~solution.options.rectangleguillotine_cut_type)|i18next }}</li>
+                                            <li><strong>{{ 'tab.cutlist.packing.option_rectangleguillotine_first_stage_orientation'|i18next }} : </strong>{{ ('tab.cutlist.packing.option_rectangleguillotine_first_stage_orientation_'~solution.options.rectangleguillotine_first_stage_orientation)|i18next }}</li>
                                             <li><strong>{{ 'tab.cutlist.packing.option_rectangleguillotine_number_of_stages'|i18next }} : </strong>{{ solution.options.rectangleguillotine_number_of_stages }}</li>
                                         {% endif %}
                                         {% if solution.options.problem_type == 'irregular' %}
