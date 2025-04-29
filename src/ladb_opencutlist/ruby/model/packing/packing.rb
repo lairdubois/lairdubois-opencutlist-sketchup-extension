@@ -37,7 +37,7 @@ module Ladb::OpenCutList
 
     attr_reader :options, :summary,
                 :bins,
-                :unplaced_parts
+                :unplaced_part_infos
 
     def initialize(_def)
       @_def = _def

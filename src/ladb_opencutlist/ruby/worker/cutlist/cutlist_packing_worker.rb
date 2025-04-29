@@ -816,7 +816,7 @@ module Ladb::OpenCutList
       vb_width = px_bin_length + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_x) * 2
       vb_height = px_bin_width + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size) * 2
 
-      svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}'#{" style='max-height: #{vb_height}px'" unless light} class='packing problem-type-#{@problem_type}#{' no-print-color' unless colorized_print}'>"
+      svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}' style='max-height: #{vb_height}px' class='packing problem-type-#{@problem_type}#{' no-print-color' unless colorized_print}'>"
         unless light
           svg += "<defs>"
             svg += "<pattern id='pattern_bin_bg_#{uuid}' width='10' height='10' patternUnits='userSpaceOnUse'>"

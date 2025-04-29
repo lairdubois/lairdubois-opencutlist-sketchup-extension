@@ -325,6 +325,7 @@ module Ladb::OpenCutList
 
       estimate_entry_def = @entry_def_class.new(@cutlist_group)
       estimate_entry_def.errors += @packing.errors
+      estimate_entry_def.errors << "#{@packing.solution.unplaced_part_infos.length} #{PLUGIN.get_i18n_string('tab.cutlist.packing.list.unplaced_parts', { :count => @packing.solution.unplaced_part_infos.length })}" if @packing.solution.unplaced_part_infos.any?
       estimate_entry_def.raw_estimated = @material_attributes.raw_estimated
 
       unless @packing.solution.nil?
@@ -428,7 +429,7 @@ module Ladb::OpenCutList
       if settings[:std_bin_1d_sizes] != '0'
         settings[:std_bin_1d_sizes] = (std_lengths & std_bin_1d_sizes).join(DimensionUtils::LIST_SEPARATOR)
       end
-      if settings[:std_bin_1d_sizes] == ''
+      if settings[:std_bin_1d_sizes] == '' && (settings[:scrap_bin_1d_sizes] == '0' || settings[:scrap_bin_1d_sizes] == '')
         settings[:std_bin_1d_sizes] = std_lengths[0].to_s unless std_lengths.empty?
       end
 
@@ -454,7 +455,7 @@ module Ladb::OpenCutList
       if settings[:std_bin_2d_sizes] != '0x0'
         settings[:std_bin_2d_sizes] = (std_sizes & std_bin_2d_sizes).join(DimensionUtils::LIST_SEPARATOR)
       end
-      if settings[:std_bin_2d_sizes] == ''
+      if settings[:std_bin_2d_sizes] == '' && (settings[:scrap_bin_2d_sizes] == '0x0' || settings[:scrap_bin_2d_sizes] == '')
         settings[:std_bin_2d_sizes] = std_sizes[0].to_s unless std_sizes.empty?
       end
 
