@@ -1039,122 +1039,128 @@ tab:
       option_rectangleguillotine_cut_type: 832 - Cut Type
       option_rectangleguillotine_cut_type_help: |
         833 - Sets the cut type.
-      option_rectangleguillotine_number_of_stages: 834 - Number of Stages
+      option_rectangleguillotine_cut_type_non_exact: 834 - Non exact
+      option_rectangleguillotine_cut_type_exact: 835 - Exact
+      option_rectangleguillotine_cut_type_homogenous: 836 - Homogeneous
+      option_rectangleguillotine_number_of_stages: 837 - Number of Stages
       option_rectangleguillotine_number_of_stages_help: |
-        835 - Sets the number of cutting stages
-      option_rectangleguillotine_first_stage_orientation: 836 - First Cut Direction
+        838 - Sets the maximum number of cutting stages
+      option_rectangleguillotine_first_stage_orientation: 839 - First Cut Direction
       option_rectangleguillotine_first_stage_orientation_help: |
-        837 - Sets the direction of the first cut.
-      option_rectangleguillotine_keep: 838 - Minimal size of off-cuts
-      option_rectangleguillotine_keep_help: 839 - Leftovers that are larger than the minimum length and width are marked **to be kept**.
-      option_irregular_allowed_rotations: 840 - Allowed Rotations
+        840 - Sets the direction of the first cut.
+      option_rectangleguillotine_first_stage_orientation_horizontal: 841 - Horizontal
+      option_rectangleguillotine_first_stage_orientation_vertical: 842 - Vertical
+      option_rectangleguillotine_first_stage_orientation_any: 843 - Any
+      option_rectangleguillotine_keep: 844 - Minimal size of off-cuts
+      option_rectangleguillotine_keep_help: 845 - Leftovers that are larger than the minimum length and width are marked **to be kept**.
+      option_irregular_allowed_rotations: 846 - Allowed Rotations
       option_irregular_allowed_rotations_help: |
-        841 - Sets the allowed rotations for part placing.
-      option_irregular_allowed_rotations_0: 842 - None
-      option_irregular_allowed_rotations_90: 843 - Steps of 90°
-      option_irregular_allowed_rotations_180: 844 - Steps of 180°
-      option_irregular_allow_mirroring: 845 - Mirroring allowed
+        847 - Sets the allowed rotations for part placing.
+      option_irregular_allowed_rotations_0: 848 - None
+      option_irregular_allowed_rotations_90: 849 - Steps of 90°
+      option_irregular_allowed_rotations_180: 850 - Steps of 180°
+      option_irregular_allow_mirroring: 851 - Mirroring allowed
       option_irregular_allow_mirroring_help: |
-        846 - Defines if mirroring the part is allowed for placement.
+        852 - Defines if mirroring the part is allowed for placement.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
-      option_spacing: 849 - Spacing
+      option_spacing: 855 - Spacing
       option_spacing_help: |
-        850 - Minimum spacing between each part.
+        856 - Minimum spacing between each part.
         This value may correspond to the width of the blade or cutting tool.
-      option_trimming: 851 - Trimming
-      option_trimming_1d_help: 852 - Cleaning margin at each end of the board or edge banding to be treated as waste.
-      option_trimming_2d_help: 853 - Cleaning margin around the raw panel or veneer sheet to be treated as waste.
-      option_items_formula: 854 - Formula
+      option_trimming: 857 - Trimming
+      option_trimming_1d_help: 858 - Cleaning margin at each end of the board or edge banding to be treated as waste.
+      option_trimming_2d_help: 859 - Cleaning margin around the raw panel or veneer sheet to be treated as waste.
+      option_items_formula: 860 - Formula
       option_items_formula_help: |
-        855 - Enables you to write *Ruby* code to customize the part identification text in the diagram.
-      option_hide_part_list: 856 - Parts List
-      option_hide_part_list_1d_dimensional_0: 857 - Displayed for each board
-      option_hide_part_list_1d_edge_0: 858 - Displayed for each edge banding
-      option_hide_part_list_2d_sheet_good_0: 859 - Displayed for each panel
-      option_hide_part_list_2d_veneer_0: 860 - Displayed for each veneer sheet
-      option_hide_part_list_1: 861 - Hidden
-      option_hide_part_list_1d_help: 862 - Display or hide the list of parts for each board or edge banding.
-      option_hide_part_list_2d_help: 863 - Display or hide the list of parts for each panel or veneer sheet.
-      option_part_drawing_type: 864 - Shape of Parts
-      option_part_drawing_type_0: 865 - Hidden
-      option_part_drawing_type_1: 866 - Displaying front face
-      option_part_drawing_type_2: 867 - Displaying rear face
+        861 - Enables you to write *Ruby* code to customize the part identification text in the diagram.
+      option_hide_part_list: 862 - Parts List
+      option_hide_part_list_1d_dimensional_0: 863 - Displayed for each board
+      option_hide_part_list_1d_edge_0: 864 - Displayed for each edge banding
+      option_hide_part_list_2d_sheet_good_0: 865 - Displayed for each panel
+      option_hide_part_list_2d_veneer_0: 866 - Displayed for each veneer sheet
+      option_hide_part_list_1: 867 - Hidden
+      option_hide_part_list_1d_help: 868 - Display or hide the list of parts for each board or edge banding.
+      option_hide_part_list_2d_help: 869 - Display or hide the list of parts for each panel or veneer sheet.
+      option_part_drawing_type: 870 - Shape of Parts
+      option_part_drawing_type_0: 871 - Hidden
+      option_part_drawing_type_1: 872 - Displaying front face
+      option_part_drawing_type_2: 873 - Displaying rear face
       option_part_drawing_type_help: |
-        868 - Shows or hides the actual shape of parts and their machining on the diagram.
+        874 - Shows or hides the actual shape of parts and their machining on the diagram.
 
         *This option must be enabled for shapes to be exported.*
-      option_colorization: 869 - Paint parts
+      option_colorization: 875 - Paint parts
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Screen
       option_colorization_2: $t(default.yes) - Screen and Print
       option_colorization_help: |
-        873 - Defines whether a random color is used to distinguish parts in the diagram.
-      option_hide_edges_preview: 874 - Display of Edge Bandings
-      option_hide_edges_preview_0: 875 - Displayed in the cutting diagram
-      option_hide_edges_preview_1: 876 - Hidden in the cutting diagram
-      option_hide_edges_preview_help: 877 - Shows or hides the visual display of the edge bandings for each part in the cutting diagram.
-      option_time_limit: 878 - Time limit
+        879 - Defines whether a random color is used to distinguish parts in the diagram.
+      option_hide_edges_preview: 880 - Display of Edge Bandings
+      option_hide_edges_preview_0: 881 - Displayed in the cutting diagram
+      option_hide_edges_preview_1: 882 - Hidden in the cutting diagram
+      option_hide_edges_preview_help: 883 - Shows or hides the visual display of the edge bandings for each part in the cutting diagram.
+      option_time_limit: 884 - Time limit
       option_time_limit_help: |
-        879 - Fix time limit to computation
+        885 - Fix time limit to computation
       tooltip:
-        scroll_to_block_1d: 880 - Scroll to first board or edge banding
-        scroll_to_block_2d: 881 - Scroll to first panel or veneer sheet
+        scroll_to_block_1d: 886 - Scroll to first board or edge banding
+        scroll_to_block_2d: 887 - Scroll to first panel or veneer sheet
       list:
-        unplaced_parts: 882 - Unplaced Part
-        unplaced_parts_plural: 883 - Unplaced Parts
-        summary: 884 - Summary
-        trimming: 885 - Trimming
-        settings: 886 - Settings
-        stats: 887 - Statistics
-        time: 888 - Time
-        total_efficiency: 889 - Total Efficiency
-        total_fill_rate: 890 - Fill Rate
-        total_cut_count: 891 - Number of Cuts
-        total_cut_length: 892 - Length of Cuts
-        efficiency: 893 - Efficiency
-        count: 894 - Qty.
-        length: 895 - Length
-        width: 896 - Width
-        total_length: 897 - Σ Length
-        total_area: 898 - Σ Area
-        total_cost: 899 - Σ Cost
-        total_part_count: '900 - # Parts'
-        total_used: 901 - Total used
-        bin_1d_dimensional: 902 - Dimensional
-        bin_1d_dimensional_type_0: 903 - Standard Dimensional
-        bin_1d_dimensional_type_1: 904 - Board Off-cut
-        bin_1d_edge: 905 - Edge Banding
-        bin_1d_edge_type_0: 906 - Standard Edge Banding
-        bin_1d_edge_type_1: 907 - Edge Banding Off-cut
-        bin_2d_sheet_good: 908 - Panel
-        bin_2d_sheet_good_type_0: 909 - Standard Panel
-        bin_2d_sheet_good_type_1: 910 - Panel Off-cut
-        bin_2d_veneer: 911 - Veneer Sheet
-        bin_2d_veneer_type_0: 912 - Standard Veneer Sheet
-        bin_2d_veneer_type_1: 913 - Veneer Sheet Off-cut
-        unused: 914 - Unused
-        parts: 915 - Part
-        parts_plural: 916 - Parts
-        leftovers: 917 - Off-cut
-        leftovers_plural: 918 - Off-cuts
-        leftovers_to_keep: 919 - Off-cut to Keep
-        leftovers_to_keep_plural: 920 - Off-cuts to Keep
-        cut: 921 - Cut
-        cut_plural: 922 - Cuts
-        cut_trimming: 923 - Trimming cut
-        cut_primary: 924 - Primary cut
+        unplaced_parts: 888 - Unplaced Part
+        unplaced_parts_plural: 889 - Unplaced Parts
+        summary: 890 - Summary
+        trimming: 891 - Trimming
+        settings: 892 - Settings
+        stats: 893 - Statistics
+        time: 894 - Time
+        total_efficiency: 895 - Total Efficiency
+        total_fill_rate: 896 - Fill Rate
+        total_cut_count: 897 - Number of Cuts
+        total_cut_length: 898 - Length of Cuts
+        efficiency: 899 - Efficiency
+        count: 900 - Qty.
+        length: 901 - Length
+        width: 902 - Width
+        total_length: 903 - Σ Length
+        total_area: 904 - Σ Area
+        total_cost: 905 - Σ Cost
+        total_part_count: '906 - # Parts'
+        total_used: 907 - Total used
+        bin_1d_dimensional: 908 - Dimensional
+        bin_1d_dimensional_type_0: 909 - Standard Dimensional
+        bin_1d_dimensional_type_1: 910 - Board Off-cut
+        bin_1d_edge: 911 - Edge Banding
+        bin_1d_edge_type_0: 912 - Standard Edge Banding
+        bin_1d_edge_type_1: 913 - Edge Banding Off-cut
+        bin_2d_sheet_good: 914 - Panel
+        bin_2d_sheet_good_type_0: 915 - Standard Panel
+        bin_2d_sheet_good_type_1: 916 - Panel Off-cut
+        bin_2d_veneer: 917 - Veneer Sheet
+        bin_2d_veneer_type_0: 918 - Standard Veneer Sheet
+        bin_2d_veneer_type_1: 919 - Veneer Sheet Off-cut
+        unused: 920 - Unused
+        parts: 921 - Part
+        parts_plural: 922 - Parts
+        leftovers: 923 - Off-cut
+        leftovers_plural: 924 - Off-cuts
+        leftovers_to_keep: 925 - Off-cut to Keep
+        leftovers_to_keep_plural: 926 - Off-cuts to Keep
+        cut: 927 - Cut
+        cut_plural: 928 - Cuts
+        cut_trimming: 929 - Trimming cut
+        cut_primary: 930 - Primary cut
       write:
-        title: 925 - Cutting Diagram Export
+        title: 931 - Cutting Diagram Export
         info_0: |
-          926 - This module lets you export the **geometry** of the *cutting diagram* as a list of files in [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) format.
+          932 - This module lets you export the **geometry** of the *cutting diagram* as a list of files in [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) format.
         option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: 929 - DXF Structure
-        option_dxf_structure_1: 930 - Layers
-        option_dxf_structure_2: 931 - Layers + Blocks
+        option_dxf_structure: 935 - DXF Structure
+        option_dxf_structure_1: 936 - Layers
+        option_dxf_structure_2: 937 - Layers + Blocks
         option_dxf_structure_help: |
-          932 - Selects the DXF file structure.
+          938 - Selects the DXF file structure.
 
           - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
           - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
@@ -1172,753 +1178,753 @@ tab:
         option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
         option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
         option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
-        option_bin_sheet_good: 947 - Panel
+        option_bin_sheet_good: 953 - Panel
         option_bin_sheet_good_help: |
-          948 - Enables sheet good export and color selection.
-        option_bin_veneer: 949 - Veneer Sheet
+          954 - Enables sheet good export and color selection.
+        option_bin_veneer: 955 - Veneer Sheet
         option_bin_veneer_help: |
-          950 - Enables veneer sheet export and color selection.
-        option_bin_dimensional: 951 - Dimensional
+          956 - Enables veneer sheet export and color selection.
+        option_bin_dimensional: 957 - Dimensional
         option_bin_dimensional_help: |
-          952 - Enables dimensional export and color selection.
-        option_bin_edge: 953 - Edge Banding
+          958 - Enables dimensional export and color selection.
+        option_bin_edge: 959 - Edge Banding
         option_bin_edge_help: |
-          954 - Enables edge banding export and color selection.
-        option_parts: 955 - Parts
+          960 - Enables edge banding export and color selection.
+        option_parts: 961 - Parts
         option_parts_help: |
-          956 - Enables part export and color selection.
-        option_parts_holes: 957 - Drillings
+          962 - Enables part export and color selection.
+        option_parts_holes: 963 - Drillings
         option_parts_holes_help: |
-          958 - Selects the color of drillings.
+          964 - Selects the color of drillings.
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: 961 - Identifiers
+        option_texts: 967 - Identifiers
         option_texts_help: |
-          962 - Enables export of part identification texts and color selection.
-        option_leftovers: 963 - Off-cuts
+          968 - Enables export of part identification texts and color selection.
+        option_leftovers: 969 - Off-cuts
         option_leftovers_help: |
-          964 - Enables export of off-cuts and color selection.
-        option_cuts: 965 - Cuts
+          970 - Enables export of off-cuts and color selection.
+        option_cuts: 971 - Cuts
         option_cuts_help: |
-          966 - Enables export of cuts and color selection.
+          972 - Enables export of cuts and color selection.
         warning:
-          is_bin_selection: 967 - The **hidden elements** will not be exported.
+          is_bin_selection: 973 - The **hidden elements** will not be exported.
       error:
-        no_part: 968 - No part.
-        no_bin_1d: 969 - No standard board or edge banding was selected and no off-cuts were available.
-        no_bin_2d: 970 - No standard panel or veneer sheet was selected and no off-cuts were available.
-        no_solution: 971 - No solution was found.
+        no_part: 974 - No part.
+        no_bin_1d: 975 - No standard board or edge banding was selected and no off-cuts were available.
+        no_bin_2d: 976 - No standard panel or veneer sheet was selected and no off-cuts were available.
+        no_solution: 977 - No solution was found.
       warning:
-        is_part_selection: 972 - This cutting diagram is limited to **selected parts**.
+        is_part_selection: 978 - This cutting diagram is limited to **selected parts**.
     labels:
-      title: 973 - Labels
-      options_layout: 974 - Layout
-      options_settings: 975 - Configuration
-      options_part_order_strategy: 976 - Sorting
-      options_offset: 977 - Offset
-      size: 978 - Real size of label
-      add_element: 979 - Add element
+      title: 979 - Labels
+      options_layout: 980 - Layout
+      options_settings: 981 - Configuration
+      options_part_order_strategy: 982 - Sorting
+      options_offset: 983 - Offset
+      size: 984 - Real size of label
+      add_element: 985 - Add element
       duplicate_element: $t(default.duplicate)
       remove_element: $t(default.remove)
       remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
-        983 - Reorganize the tiles to define the sort order of labels.
+        989 - Reorganize the tiles to define the sort order of labels.
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *increasing* or <i class="ladb-opencutlist-icon-sort-desc"></i> *decreasing* order.
       offset_help: |
-        984 - The *offset* defines the position of the **first label** to be printed on the **first page**.
+        990 - The *offset* defines the position of the **first label** to be printed on the **first page**.
         Select the box that corresponds to your choice.
-      option_page: 985 - Paper Size
-      option_page_format: 986 - Format
-      option_page_format_portrait: 987 - Portrait
-      option_page_format_landscape: 988 - Landscape
-      option_page_format_custom: 989 - Custom
-      option_page_width: 990 - Width
-      option_page_height: 991 - Height
-      option_margin: 992 - Margins
-      option_margin_top: 993 - Top
-      option_margin_right: 994 - Right
-      option_margin_bottom: 995 - Bottom
-      option_margin_left: 996 - Left
-      option_spacing: 997 - Gap Size
-      option_spacing_h: 998 - Horizontal
-      option_spacing_v: 999 - Vertical
-      option_grid: 1000 - Labels per Page
-      option_col_count: 1001 - Columns
-      option_row_count: 1002 - Rows
-      option_cutting_marks: 1003 - Cutting Marks
-      option_cutting_marks_0: 1004 - None
-      option_cutting_marks_1: 1005 - Printed
-      option_formula: 1006 - Fieldname
-      option_size: 1007 - Size
-      option_custom_formula: 1008 - Formula
-      option_anchor: 1009 - Anchor
-      option_anchor_start: 1010 - Start - Bottom
-      option_anchor_middle: 1011 - Middle - Bottom
-      option_anchor_end: 1012 - End - Bottom
-      option_anchor_start_top: 1013 - Start - Top
-      option_anchor_middle_top: 1014 - Middle - Top
-      option_anchor_end_top: 1015 - End - Top
-      option_color: 1016 - Color
+      option_page: 991 - Paper Size
+      option_page_format: 992 - Format
+      option_page_format_portrait: 993 - Portrait
+      option_page_format_landscape: 994 - Landscape
+      option_page_format_custom: 995 - Custom
+      option_page_width: 996 - Width
+      option_page_height: 997 - Height
+      option_margin: 998 - Margins
+      option_margin_top: 999 - Top
+      option_margin_right: 1000 - Right
+      option_margin_bottom: 1001 - Bottom
+      option_margin_left: 1002 - Left
+      option_spacing: 1003 - Gap Size
+      option_spacing_h: 1004 - Horizontal
+      option_spacing_v: 1005 - Vertical
+      option_grid: 1006 - Labels per Page
+      option_col_count: 1007 - Columns
+      option_row_count: 1008 - Rows
+      option_cutting_marks: 1009 - Cutting Marks
+      option_cutting_marks_0: 1010 - None
+      option_cutting_marks_1: 1011 - Printed
+      option_formula: 1012 - Fieldname
+      option_size: 1013 - Size
+      option_custom_formula: 1014 - Formula
+      option_anchor: 1015 - Anchor
+      option_anchor_start: 1016 - Start - Bottom
+      option_anchor_middle: 1017 - Middle - Bottom
+      option_anchor_end: 1018 - End - Bottom
+      option_anchor_start_top: 1019 - Start - Top
+      option_anchor_middle_top: 1020 - Middle - Top
+      option_anchor_end_top: 1021 - End - Top
+      option_color: 1022 - Color
       formula:
-        custom: 1017 - Formula
-        custom_qr_code: 1018 - QR Code
-        part_number: 1019 - Number
-        part_name: 1020 - Designation
-        part_description: 1021 - Description
-        part_entity_named_path: 1022 - Instance path
-        part_entity_name: 1023 - Instance name
-        part_bin: 1024 - Bin
-        part_cutting_size: 1025 - Rough dimensions
-        part_cutting_length: 1026 - Length - raw
-        part_cutting_width: 1027 - Width - raw
-        part_cutting_thickness: 1028 - Thickness - raw
-        part_edge_cutting_size: 1029 - Edge dimensions
-        part_edge_cutting_length: 1030 - Length edges - raw
-        part_edge_cutting_width: 1031 - Width edges - raw
-        part_size: 1032 - Dimension
-        part_length: 1033 - Length
-        part_width: 1034 - Width
-        part_thickness: 1035 - Thickness
-        part_tags: 1036 - Badges
-        part_batch: 1037 - Batch
-        part_edge_ymin: 1038 - Edge length 1
-        part_edge_ymax: 1039 - Edge length 2
-        part_edge_xmin: 1040 - Edge width 1
-        part_edge_xmax: 1041 - Edge width 2
-        part_face_zmin: 1042 - Veneer backside
-        part_face_zmax: 1043 - Veneer front
-        thumbnail_proportional_drawing: 1044 - Thumbnail
-        thumbnail_proportional: 1045 - Proportional thumbnail
-        thumbnail_square: 1046 - Square thumbnail
-        group_material: 1047 - Material / Dimension
-        group_material_name: 1048 - Material name
-        group_std_dimension: 1049 - Standard dimensions
-        filename: 1050 - Filename
-        model_name: 1051 - Model name
-        page_name: 1052 - Scene name
-        length_unit: 1053 - Unit
-        generated_at: 1054 - Date and time
+        custom: 1023 - Formula
+        custom_qr_code: 1024 - QR Code
+        part_number: 1025 - Number
+        part_name: 1026 - Designation
+        part_description: 1027 - Description
+        part_entity_named_path: 1028 - Instance path
+        part_entity_name: 1029 - Instance name
+        part_bin: 1030 - Bin
+        part_cutting_size: 1031 - Rough dimensions
+        part_cutting_length: 1032 - Length - raw
+        part_cutting_width: 1033 - Width - raw
+        part_cutting_thickness: 1034 - Thickness - raw
+        part_edge_cutting_size: 1035 - Edge dimensions
+        part_edge_cutting_length: 1036 - Length edges - raw
+        part_edge_cutting_width: 1037 - Width edges - raw
+        part_size: 1038 - Dimension
+        part_length: 1039 - Length
+        part_width: 1040 - Width
+        part_thickness: 1041 - Thickness
+        part_tags: 1042 - Badges
+        part_batch: 1043 - Batch
+        part_edge_ymin: 1044 - Edge length 1
+        part_edge_ymax: 1045 - Edge length 2
+        part_edge_xmin: 1046 - Edge width 1
+        part_edge_xmax: 1047 - Edge width 2
+        part_face_zmin: 1048 - Veneer backside
+        part_face_zmax: 1049 - Veneer front
+        thumbnail_proportional_drawing: 1050 - Thumbnail
+        thumbnail_proportional: 1051 - Proportional thumbnail
+        thumbnail_square: 1052 - Square thumbnail
+        group_material: 1053 - Material / Dimension
+        group_material_name: 1054 - Material name
+        group_std_dimension: 1055 - Standard dimensions
+        filename: 1056 - Filename
+        model_name: 1057 - Model name
+        page_name: 1058 - Scene name
+        length_unit: 1059 - Unit
+        generated_at: 1060 - Date and time
       error:
-        invalid_size: 1055 - The configuration parameters entered do not allow a valid label size to be set.
+        invalid_size: 1061 - The configuration parameters entered do not allow a valid label size to be set.
       warning:
-        is_group_selection: 1056 - Parts contained in **hidden groups** of the Parts List will not have labels.
-        is_part_selection: 1057 - These labels are limited to **selected parts**.
-        formula_not_available: 1058 - Not available in this context
+        is_group_selection: 1062 - Parts contained in **hidden groups** of the Parts List will not have labels.
+        is_part_selection: 1063 - These labels are limited to **selected parts**.
+        formula_not_available: 1064 - Not available in this context
     layout:
-      title: 1059 - Drawing
-      to_layout: 1060 - Export to Layout
-      options_layout: 1061 - Layout
-      options_settings: 1062 - Configuration
-      option_parts: 1063 - Parts
-      option_parts_colored: 1064 - Color
-      option_parts_colored_0: 1065 - Without color
-      option_parts_colored_1: 1066 - Color of the material
-      option_parts_colored_help: 1067 - Selects the appearance of the parts.
-      option_parts_opacity: 1068 - Opacity
-      option_parts_opacity_0: 1069 - Transparent
-      option_parts_opacity_1: 1070 - Opaque
-      option_parts_opacity_help: 1071 - Selects the opacity of the parts.
-      option_pins: 1072 - Labels
-      option_pins_hidden: 1073 - Display
-      option_pins_hidden_0: 1074 - With labels
-      option_pins_hidden_1: 1075 - No labels
-      option_pins_hidden_help: 1076 - Shows or hides the part labels with number or designation.
-      option_pins_colored: 1077 - Color
-      option_pins_colored_0: 1078 - Without color
-      option_pins_colored_1: 1079 - Color of the part
-      option_pins_colored_help: 1080 - Selects the color of the labels.
-      option_pins_formula: 1081 - Formula
-      option_pins_formula_help: 1082 - Lets you write *Ruby* code to customize the label text.
-      option_pins_length: 1083 - Length
-      option_pins_length_0: 1084 - Without leader line
-      option_pins_length_1: 1085 - Short
-      option_pins_length_2: 1086 - Medium
-      option_pins_length_3: 1087 - Long
-      option_pins_length_help: 1088 - Selects the length of the leader line.
-      option_pins_direction: 1089 - Direction
-      option_pins_direction_0: 1090 - Along the Red axis
-      option_pins_direction_1: 1091 - Along the Green axis
-      option_pins_direction_2: 1092 - Along the Blue axis
-      option_pins_direction_3: 1093 - Pointing towards the center of the parent group
-      option_pins_direction_4: 1094 - Pointing towards the center of the selection
-      option_pins_direction_help: 1095 - Selects the direction of the leader lines to labels for better readability.
-      option_page: 1096 - Paper Size
-      option_page_format: 1097 - Format
-      option_page_format_portrait: 1098 - Portrait
-      option_page_format_landscape: 1099 - Landscape
-      option_page_format_custom: 1100 - Custom
-      option_page_width: 1101 - Width
-      option_page_height: 1102 - Height
-      option_page_header: 1103 - Header
-      option_page_header_0: 1104 - No header
-      option_page_header_1: 1105 - With header
+      title: 1065 - Drawing
+      to_layout: 1066 - Export to Layout
+      options_layout: 1067 - Layout
+      options_settings: 1068 - Configuration
+      option_parts: 1069 - Parts
+      option_parts_colored: 1070 - Color
+      option_parts_colored_0: 1071 - Without color
+      option_parts_colored_1: 1072 - Color of the material
+      option_parts_colored_help: 1073 - Selects the appearance of the parts.
+      option_parts_opacity: 1074 - Opacity
+      option_parts_opacity_0: 1075 - Transparent
+      option_parts_opacity_1: 1076 - Opaque
+      option_parts_opacity_help: 1077 - Selects the opacity of the parts.
+      option_pins: 1078 - Labels
+      option_pins_hidden: 1079 - Display
+      option_pins_hidden_0: 1080 - With labels
+      option_pins_hidden_1: 1081 - No labels
+      option_pins_hidden_help: 1082 - Shows or hides the part labels with number or designation.
+      option_pins_colored: 1083 - Color
+      option_pins_colored_0: 1084 - Without color
+      option_pins_colored_1: 1085 - Color of the part
+      option_pins_colored_help: 1086 - Selects the color of the labels.
+      option_pins_formula: 1087 - Formula
+      option_pins_formula_help: 1088 - Lets you write *Ruby* code to customize the label text.
+      option_pins_length: 1089 - Length
+      option_pins_length_0: 1090 - Without leader line
+      option_pins_length_1: 1091 - Short
+      option_pins_length_2: 1092 - Medium
+      option_pins_length_3: 1093 - Long
+      option_pins_length_help: 1094 - Selects the length of the leader line.
+      option_pins_direction: 1095 - Direction
+      option_pins_direction_0: 1096 - Along the Red axis
+      option_pins_direction_1: 1097 - Along the Green axis
+      option_pins_direction_2: 1098 - Along the Blue axis
+      option_pins_direction_3: 1099 - Pointing towards the center of the parent group
+      option_pins_direction_4: 1100 - Pointing towards the center of the selection
+      option_pins_direction_help: 1101 - Selects the direction of the leader lines to labels for better readability.
+      option_page: 1102 - Paper Size
+      option_page_format: 1103 - Format
+      option_page_format_portrait: 1104 - Portrait
+      option_page_format_landscape: 1105 - Landscape
+      option_page_format_custom: 1106 - Custom
+      option_page_width: 1107 - Width
+      option_page_height: 1108 - Height
+      option_page_header: 1109 - Header
+      option_page_header_0: 1110 - No header
+      option_page_header_1: 1111 - With header
       option_page_header_help: |
-        1106 - Selects whether the page to be printed contains a header with the name of the document, its description and the date.
+        1112 - Selects whether the page to be printed contains a header with the name of the document, its description and the date.
         Without a header, the overview drawing takes up the entire page.
-      option_camera: 1107 - Camera
-      option_camera_view: 1108 - View
-      option_camera_view_custom: 1109 - Custom
-      option_camera_zoom: 1110 - Scale
-      option_camera_zoom_auto: 1111 - Automatic
-      option_camera_zoom_custom: 1112 - Custom
-      option_camera_target: 1113 - Position
-      option_camera_target_auto: 1114 - Automatic
-      option_camera_target_custom: 1115 - Custom
-      option_explode: 1116 - Exploded View
+      option_camera: 1113 - Camera
+      option_camera_view: 1114 - View
+      option_camera_view_custom: 1115 - Custom
+      option_camera_zoom: 1116 - Scale
+      option_camera_zoom_auto: 1117 - Automatic
+      option_camera_zoom_custom: 1118 - Custom
+      option_camera_target: 1119 - Position
+      option_camera_target_auto: 1120 - Automatic
+      option_camera_target_custom: 1121 - Custom
+      option_explode: 1122 - Exploded View
       error:
-        no_part: 1117 - There is no part to draw.
-        failed_to_save_as_skp: 1118 - Failed to write SKP file to send to Layout.
+        no_part: 1123 - There is no part to draw.
+        failed_to_save_as_skp: 1124 - Failed to write SKP file to send to Layout.
         failed_to_layout: |
-          1119 - Error while writing Layout file: *{{ error }}*
+          1125 - Error while writing Layout file: *{{ error }}*
 
           **Make sure the file is not open in Layout.**
       warning:
-        is_group_selection: 1120 - Parts contained in **hidden groups** of the Parts List will not be drawn.
-        is_part_selection: 1121 - This overview drawing is limited to **selected parts**.
+        is_group_selection: 1126 - Parts contained in **hidden groups** of the Parts List will not be drawn.
+        is_part_selection: 1127 - This overview drawing is limited to **selected parts**.
       message:
         adding_new_page: |
-          1122 - Would you like to add a new page?
+          1128 - Would you like to add a new page?
         incompatible_page_format: |
-          1123 - The destination file is not configured with the same paper format.
+          1129 - The destination file is not configured with the same paper format.
 
           Read: {{ old_page_format }}
           Exported: {{ new_page_format }}
 
           All pages will be deleted.
         changing_units: |
-          1124 - The destination file does not have the same unit by default.
+          1130 - The destination file does not have the same unit by default.
 
           Read: {{ old_units }}
           Exported: {{ new_units }}
 
           Would you like to use the new units?
         changing_precision: |
-          1125 - The destination file does not have the same precision by default.
+          1131 - The destination file does not have the same precision by default.
 
           Read: {{ old_precision }}
           Exported: {{ new_precision }}
 
           Would you like to use the new precision?
     write:
-      title: 1126 - Parts Export
+      title: 1132 - Parts Export
       info_2d: |
-        1127 - This module allows you to export the 2D **projection** of parts as files in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) format.
+        1133 - This module allows you to export the 2D **projection** of parts as files in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) format.
       info_3d: |
-        1128 - This module lets you export the **3D geometry** of parts as files in [STL](https://wikipedia.org/wiki/STL_(file_format)) or [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) format.
-      option_file_format: 1129 - Format
+        1134 - This module lets you export the **3D geometry** of parts as files in [STL](https://wikipedia.org/wiki/STL_(file_format)) or [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) format.
+      option_file_format: 1135 - Format
       option_file_format_help: |
-        1130 - Selects the format of the exported file.
-      option_unit: 1131 - Unit
+        1136 - Selects the format of the exported file.
+      option_unit: 1137 - Unit
       option_unit_help: |
-        1132 - Selects the unit used in the exported file.
-      option_use_count: 1133 - Quantity
-      option_use_count_0: 1134 - One file per part
-      option_use_count_1: 1135 - One file per part instance
+        1138 - Selects the unit used in the exported file.
+      option_use_count: 1139 - Quantity
+      option_use_count_0: 1140 - One file per part
+      option_use_count_1: 1141 - One file per part instance
       option_use_count_help: |
-        1136 - Selects whether the number of instances of a part is considered.
-      option_part_drawing_type: 1137 - Projection
+        1142 - Selects whether the number of instances of a part is considered.
+      option_part_drawing_type: 1143 - Projection
       option_part_drawing_type_help: |
-        1138 - Selects the view to be exported.
-      option_faces: 1139 - Faces
-      option_faces_0: 1140 - Use target face only
-      option_faces_1: 1141 - Use all faces of the part
+        1144 - Selects the view to be exported.
+      option_faces: 1145 - Faces
+      option_faces_0: 1146 - Use target face only
+      option_faces_1: 1147 - Use all faces of the part
       option_faces_help: |
-        1142 - Allows you to choose whether the search for the shape of the part is to be carried out on all its faces or only on the target face.
-      option_anchor: 1143 - Anchor Point
-      option_anchor_0: 1144 - Default
-      option_anchor_1: 1145 - Project the part's origin
+        1148 - Allows you to choose whether the search for the shape of the part is to be carried out on all its faces or only on the target face.
+      option_anchor: 1149 - Anchor Point
+      option_anchor_0: 1150 - Default
+      option_anchor_1: 1151 - Project the part's origin
       option_anchor_help: |
-        1146 - Enables the projection of the part's axis origin as anchor point.
-      option_switch_yz: 1147 - Vertical axis
-      option_switch_yz_0: 1148 - Z vertical
-      option_switch_yz_1: 1149 - Y vertical
+        1152 - Enables the projection of the part's axis origin as anchor point.
+      option_switch_yz: 1153 - Vertical axis
+      option_switch_yz_0: 1154 - Z vertical
+      option_switch_yz_1: 1155 - Y vertical
       option_switch_yz_help: |
-        1150 - Swaps the Y and Z axes to define the vertical axis of the part.
-      option_smoothing: 1151 - Smoothing
+        1156 - Swaps the Y and Z axes to define the vertical axis of the part.
+      option_smoothing: 1157 - Smoothing
       option_smoothing_0: $t(default.no)
-      option_smoothing_1: 1153 - Smooth circles and arcs (Experimental)
+      option_smoothing_1: 1159 - Smooth circles and arcs (Experimental)
       option_smoothing_help: |
-        1154 - Enables the detection of circles and arcs.
+        1160 - Enables the detection of circles and arcs.
 
         *This option does not detect other types of curves.*
-      option_merge_holes: 1155 - Merging Mode
-      option_merge_holes_0: 1156 - Default
-      option_merge_holes_1: 1157 - Outline + Drillings + Merge
+      option_merge_holes: 1161 - Merging Mode
+      option_merge_holes_0: 1162 - Default
+      option_merge_holes_1: 1163 - Outline + Drillings + Merge
       option_merge_holes_help: |
-        1158 - **Default**
+        1164 - **Default**
         The shape of the part is exported with one layer per depth.
 
         **Contour + Holes + Merge**
         Activates the separation of the outer contour of parts from their holes, as well as the merging of depths for each cavity.
-      option_include_paths: 1159 - Paths
+      option_include_paths: 1165 - Paths
       option_include_paths_0: $t(default.no)
-      option_include_paths_1: 1161 - Use edges not associated with a face
+      option_include_paths_1: 1167 - Use edges not associated with a face
       option_include_paths_help: |
-        1162 - Enables the use of edges not associated with a face and contained in the part, to export them as a path.
-      option_parts: 1163 - Parts
+        1168 - Enables the use of edges not associated with a face and contained in the part, to export them as a path.
+      option_parts: 1169 - Parts
       option_parts_help: |
-        1164 - Selects the color of parts.
-      option_parts_holes: 1165 - Drillings
+        1170 - Selects the color of parts.
+      option_parts_holes: 1171 - Drillings
       option_parts_holes_help: |
-        1166 - Selects the color of drillings.
-      option_parts_paths: 1167 - Paths
+        1172 - Selects the color of drillings.
+      option_parts_paths: 1173 - Paths
       option_parts_paths_help: |
-        1168 - Allows you to choose plot colors.
+        1174 - Allows you to choose plot colors.
 
         *The fill color will only be used for closed paths.*
       error:
-        no_part: 1169 - No part to export.
+        no_part: 1175 - No part to export.
       warning:
-        is_group_selection: 1170 - Parts contained in **hidden groups** of the Parts List will not be exported.
-        is_part_selection: 1171 - The export is limited to **selected parts**.
+        is_group_selection: 1176 - Parts contained in **hidden groups** of the Parts List will not be exported.
+        is_part_selection: 1177 - The export is limited to **selected parts**.
     snippet:
-      hello: 1172 - Hello
-      number: 1173 - Number
-      name: 1174 - Designation
-      number_and_name: 1175 - Number and Designation
-      number_without_hardware: 1176 - Number (without accessories)
-      size: 1177 - Dimension
-      area: 1178 - Area
-      volume: 1179 - Volume
+      hello: 1178 - Hello
+      number: 1179 - Number
+      name: 1180 - Designation
+      number_and_name: 1181 - Number and Designation
+      number_without_hardware: 1182 - Number (without accessories)
+      size: 1183 - Dimension
+      area: 1184 - Area
+      volume: 1185 - Volume
     error:
-      no_model: 1180 - No model is open. You will need to give me more information ;)
-      no_entities: 1181 - Your model is empty. You will need to give me more information ;)
-      no_component_in_selection: 1182 - No instance of a visible component was detected in your selection.
-      no_component_in_model: 1183 - No instance of a visible component was detected in your scene.
-      unknow_part: 1184 - The selected part does not exist in the Parts List.
-      obsolete_cutlist: 1185 - Impossible, the parts list is obsolete. Please, regenerate it.
+      no_model: 1186 - No model is open. You will need to give me more information ;)
+      no_entities: 1187 - Your model is empty. You will need to give me more information ;)
+      no_component_in_selection: 1188 - No instance of a visible component was detected in your selection.
+      no_component_in_model: 1189 - No instance of a visible component was detected in your scene.
+      unknow_part: 1190 - The selected part does not exist in the Parts List.
+      obsolete_cutlist: 1191 - Impossible, the parts list is obsolete. Please, regenerate it.
     warning:
-      is_entity_selection: 1186 - Only the selected elements in your model have been taken into account.
-      no_typed_materials_in_model: 1187 - Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 1188 - Your selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
-      export_empty: 1189 - Your export does not contain any part.
+      is_entity_selection: 1192 - Only the selected elements in your model have been taken into account.
+      no_typed_materials_in_model: 1193 - Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 1194 - Your selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
+      export_empty: 1195 - Your export does not contain any part.
     success:
-      part_selected: 1190 - {{ count }} part selected in the Parts List.
-      part_selected_plural: 1191 - {{ count }} parts selected in the Parts List.
+      part_selected: 1196 - {{ count }} part selected in the Parts List.
+      part_selected_plural: 1197 - {{ count }} parts selected in the Parts List.
     tip:
       no_component: |
-        1192 - The parts to be included in the *parts list* must be instances of a **component**.
+        1198 - The parts to be included in the *parts list* must be instances of a **component**.
         If you use only groups, convert them into components.
         The use of components makes it possible to replicate identical parts without duplicating them.
-      no_typed_materials: 1193 - Apply a material to the parts to be included in the parts list and define the properties of this material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
-    obsolete_base: 1194 - To stay in sync, you need to refresh the parts list.
+      no_typed_materials: 1199 - Apply a material to the parts to be included in the parts list and define the properties of this material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
+    obsolete_base: 1200 - To stay in sync, you need to refresh the parts list.
   materials:
-    label: 1195 - Materials
-    title: 1196 - Materials
-    type_0: 1197 - Undefined
-    type_1: 1198 - Solid Wood
-    type_2: 1199 - Sheet Goods
-    type_3: 1200 - Dimensional
-    type_4: 1201 - Edge Banding
-    type_5: 1202 - Hardware
-    type_6: 1203 - Veneer
+    label: 1201 - Materials
+    title: 1202 - Materials
+    type_0: 1203 - Undefined
+    type_1: 1204 - Solid Wood
+    type_2: 1205 - Sheet Goods
+    type_3: 1206 - Dimensional
+    type_4: 1207 - Edge Banding
+    type_5: 1208 - Hardware
+    type_6: 1209 - Veneer
     tooltip:
-      type_0: 1204 - Material type '$t(tab.materials.type_0)'
-      type_1: 1205 - Material type '$t(tab.materials.type_1)'
-      type_2: 1206 - Material type '$t(tab.materials.type_2)'
-      type_3: 1207 - Material type '$t(tab.materials.type_3)'
-      type_4: 1208 - Material type '$t(tab.materials.type_4)'
-      type_5: 1209 - Material type '$t(tab.materials.type_5)'
-      type_6: 1210 - Material type '$t(tab.materials.type_6)'
+      type_0: 1210 - Material type '$t(tab.materials.type_0)'
+      type_1: 1211 - Material type '$t(tab.materials.type_1)'
+      type_2: 1212 - Material type '$t(tab.materials.type_2)'
+      type_3: 1213 - Material type '$t(tab.materials.type_3)'
+      type_4: 1214 - Material type '$t(tab.materials.type_4)'
+      type_5: 1215 - Material type '$t(tab.materials.type_5)'
+      type_6: 1216 - Material type '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: 1213 - Grain orientation
-      raw_estimated_0: 1214 - Estimated by the effective volume
-      colorized: 1215 - This tone will be applied to the texture when it is rendered in the model
-      texture_load: 1216 - Load a new texture
-      texture_clear: 1217 - Remove texture
-      edit: 1218 - Edit the properties of '{{ name }}'
-      set_current: 1219 - Color parts with '{{ name }}'
-      open_url: 1220 - Open material URL
-      import_from_skm: 1221 - Import material (.skm)
+      grain_direction: 1219 - Grain orientation
+      raw_estimated_0: 1220 - Estimated by the effective volume
+      colorized: 1221 - This tone will be applied to the texture when it is rendered in the model
+      texture_load: 1222 - Load a new texture
+      texture_clear: 1223 - Remove texture
+      edit: 1224 - Edit the properties of '{{ name }}'
+      set_current: 1225 - Color parts with '{{ name }}'
+      open_url: 1226 - Open material URL
+      import_from_skm: 1227 - Import material (.skm)
     menu:
-      purge_unused: 1222 - Purge unused materials
-      reset_prices: 1223 - Reset the prices of all materials
+      purge_unused: 1228 - Purge unused materials
+      reset_prices: 1229 - Reset the prices of all materials
       reset_prices_confirm: |
-        1224 - You are about to reset the prices of all materials in your model.
+        1230 - You are about to reset the prices of all materials in your model.
         This action is final. **All prices will be reset to zero.**
         Confirm to continue.
-      reset_prices_success: 1225 - The prices of all materials have been reset.
+      reset_prices_success: 1231 - The prices of all materials have been reset.
     new_material:
-      title: 1226 - Create New Material
-      name: 1227 - Name
-      name_warning: 1228 - Invalid name
-      color: 1229 - Color
-      color_warning: 1230 - Invalid color
-      type: 1231 - Type
-    edit_material:
-      title: 1232 - Properties of Material '{{ name }}'
-      general: 1233 - General
-      texture: 1234 - Texture
-      no_texture: 1235 - Without texture
-      name: 1236 - Name
+      title: 1232 - Create New Material
+      name: 1233 - Name
+      name_warning: 1234 - Invalid name
+      color: 1235 - Color
+      color_warning: 1236 - Invalid color
       type: 1237 - Type
-      description: 1238 - Description
-      url: 1239 - URL
-      formats: 1240 - Formats
-      cut_options: 1241 - Cutting Parameters
-      estimate_options: 1242 - Estimation Options
-      attributes: 1243 - Attributes
-      thickness: 1244 - Thickness
+    edit_material:
+      title: 1238 - Properties of Material '{{ name }}'
+      general: 1239 - General
+      texture: 1240 - Texture
+      no_texture: 1241 - Without texture
+      name: 1242 - Name
+      type: 1243 - Type
+      description: 1244 - Description
+      url: 1245 - URL
+      formats: 1246 - Formats
+      cut_options: 1247 - Cutting Parameters
+      estimate_options: 1248 - Estimation Options
+      attributes: 1249 - Attributes
+      thickness: 1250 - Thickness
       thickness_help: |
-        1245 - Finished thickness of the material.
+        1251 - Finished thickness of the material.
 
         *If no unit is specified, the model unit will be applied.*
-      length_increase: 1246 - Length Oversize
-      length_increase_help: 1247 - Oversize applied to the length to define the **raw length**.
-      width_increase: 1248 - Width Oversize
-      width_increase_help: 1249 - Oversize applied to the width to define the **raw width**.
-      thickness_increase: 1250 - Thickness Oversize
-      thickness_increase_help: 1251 - Oversize applied to the thickness to define the **raw thickness**.
-      std_lengths: 1252 - Standard Lengths
+      length_increase: 1252 - Length Oversize
+      length_increase_help: 1253 - Oversize applied to the length to define the **raw length**.
+      width_increase: 1254 - Width Oversize
+      width_increase_help: 1255 - Oversize applied to the width to define the **raw width**.
+      thickness_increase: 1256 - Thickness Oversize
+      thickness_increase_help: 1257 - Oversize applied to the thickness to define the **raw thickness**.
+      std_lengths: 1258 - Standard Lengths
       std_lengths_help: |
-        1253 - Standard lengths available for this material.
+        1259 - Standard lengths available for this material.
 
         *If no unit is specified, the model unit will be applied.*
-      std_widths: 1254 - Standard Widths
+      std_widths: 1260 - Standard Widths
       std_widths_help: |
-        1255 - Standard widths available for this material.
+        1261 - Standard widths available for this material.
 
         *If no unit is specified, the model unit will be applied.*
-      std_thicknesses: 1256 - Standard Thicknesses
+      std_thicknesses: 1262 - Standard Thicknesses
       std_thicknesses_help: |
-        1257 - Standard **rough** thicknesses available for this material.
+        1263 - Standard **rough** thicknesses available for this material.
 
         *If no unit is specified, the model unit will be applied.*
-      std_sections: 1258 - Standard Cross Sections
+      std_sections: 1264 - Standard Cross Sections
       std_sections_help: |
-        1259 - Standard cross sections available for this material.
+        1265 - Standard cross sections available for this material.
 
         *If no unit is specified, the model unit will be applied.*
-      std_sizes: 1260 - Standard Sizes
+      std_sizes: 1266 - Standard Sizes
       std_sizes_help: |
-        1261 - Standard sizes available for this material.
+        1267 - Standard sizes available for this material.
 
         *If no unit is specified, the model unit will be applied.*
-      grained: 1262 - Grain Orientation
-      grained_help: 1263 - Selects the grain orientation in relation to the length of the panel.
-      grained_0: 1264 - No grain
-      grained_1: 1265 - Grain follows length
-      edge_decremented: 1266 - Reduce Dimensions
-      edge_decremented_help: 1267 - Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
-      edge_decremented_0: 1268 - No Reduction
-      edge_decremented_1: 1269 - Reduce by Edge Banding Thickness
-      raw_estimated: 1270 - Used Volume
+      grained: 1268 - Grain Orientation
+      grained_help: 1269 - Selects the grain orientation in relation to the length of the panel.
+      grained_0: 1270 - No grain
+      grained_1: 1271 - Grain follows length
+      edge_decremented: 1272 - Reduce Dimensions
+      edge_decremented_help: 1273 - Allows you to indicate whether the dimensions of parts should be reduced by the thickness of the edge banding.
+      edge_decremented_0: 1274 - No Reduction
+      edge_decremented_1: 1275 - Reduce by Edge Banding Thickness
+      raw_estimated: 1276 - Used Volume
       raw_estimated_help: |
-        1271 - Defines the volume used to estimate the weight and total cost of parts made from this material.
+        1277 - Defines the volume used to estimate the weight and total cost of parts made from this material.
 
         **Effective volume**
         The total volume will be the sum of the effective volumes of the parts, which is the bounding box including oversizes.
 
         **Volume of raw material required**
         The total volume will be the sum of the volumes of the panels, sheets, boards or edge bandings of the parts after cutting.
-      raw_estimated_0: 1272 - Effective volume
-      raw_estimated_1: 1273 - Volume of raw material required
-      multiplier_coefficient: 1274 - Coefficient
-      multiplier_coefficient_help: 1275 - Used to indicate the multiplying coefficient applied to the gross volume.
-      std_attributes_dim_placeholder: 1276 - Select a size
-      std_volumic_masses: 1277 - Density
-      std_volumic_masses_help: 1278 - Allows to set the density for all sizes as well as for each standard material size.
-      std_volumic_masses_add: 1279 - Add density
-      std_prices: 1280 - Price
-      std_prices_help: 1281 - Allows you to define the price for all sizes as well as for each standard size of the material.
-      std_prices_add: 1282 - Add a price
-      texture_width: 1283 - Width
-      texture_height: 1284 - Height
-      export_to_skm: 1285 - Export (.skm)
+      raw_estimated_0: 1278 - Effective volume
+      raw_estimated_1: 1279 - Volume of raw material required
+      multiplier_coefficient: 1280 - Coefficient
+      multiplier_coefficient_help: 1281 - Used to indicate the multiplying coefficient applied to the gross volume.
+      std_attributes_dim_placeholder: 1282 - Select a size
+      std_volumic_masses: 1283 - Density
+      std_volumic_masses_help: 1284 - Allows to set the density for all sizes as well as for each standard material size.
+      std_volumic_masses_add: 1285 - Add density
+      std_prices: 1286 - Price
+      std_prices_help: 1287 - Allows you to define the price for all sizes as well as for each standard size of the material.
+      std_prices_add: 1288 - Add a price
+      texture_width: 1289 - Width
+      texture_height: 1290 - Height
+      export_to_skm: 1291 - Export (.skm)
     texture_load:
-      title: 1286 - Load image
+      title: 1292 - Load image
     import_from_skm:
-      title: 1287 - Import .skm file
+      title: 1293 - Import .skm file
       ask_replace: |
-        1288 - A material "{{ name }}" already exists.
+        1294 - A material "{{ name }}" already exists.
         Would you like to replace it with the one you are importing?
     export_to_skm:
-      title: 1289 - Export to .skm file
+      title: 1295 - Export to .skm file
     option:
-      minimize_on_smart_paint: 1290 - Reduce after * 'Color parts with...'*
-      minimize_on_smart_paint_help: 1291 - If this option is enabled, the OpenCutList window will be minimized when using the *'Color parts with...'* function.
-      general: 1292 - General
-      material_order_strategy: 1293 - Material Sorting
+      minimize_on_smart_paint: 1296 - Reduce after * 'Color parts with...'*
+      minimize_on_smart_paint_help: 1297 - If this option is enabled, the OpenCutList window will be minimized when using the *'Color parts with...'* function.
+      general: 1298 - General
+      material_order_strategy: 1299 - Material Sorting
       material_order_strategy_help: |
-        1294 - Rearrange the following properties to define the sorting strategy for the materials in the list.
+        1300 - Rearrange the following properties to define the sorting strategy for the materials in the list.
         Properties can be sorted in <i class="ladb-opencutlist-icon-sort-asc"></i> *ascending* or <i class="ladb-opencutlist-icon-sort-desc"></i> *descending* order.
-      property_type: 1295 - Type
-      property_name: 1296 - Name
+      property_type: 1301 - Type
+      property_name: 1302 - Name
     delete:
       message: |
-        1297 - You are about to delete the material **{{ material_name }}** from your model.
+        1303 - You are about to delete the material **{{ material_name }}** from your model.
         Confirm to continue.
     duplicate:
       message: |
-        1298 - Choose the name of the new material copied from **{{ material_name }}**.
+        1304 - Choose the name of the new material copied from **{{ material_name }}**.
     error:
-      no_model: 1299 - No model is open. You will have to give me more information ;)
-      no_materials: 1300 - Your model does not contain any material.
-      material_not_found: 1301 - No material found.
-      failed_import_skm_file: 1302 - An error occurred while importing from the .skm file. **{{ error }}**
-      failed_export_skm_file: 1303 - An error occurred while exporting to .skm file. **{{ error }}**
-      failed_deleting_material: 1304 - An error occurred while deleting the material. **{{ error }}**
-      failed_duplicating_material: 1305 - An error occured while duplicating the material. **{{ error }}**
-      invalid_image_file: 1306 - Invalid image
-    obsolete_base: 1307 - To stay in sync, you need to refresh the material list.
+      no_model: 1305 - No model is open. You will have to give me more information ;)
+      no_materials: 1306 - Your model does not contain any material.
+      material_not_found: 1307 - No material found.
+      failed_import_skm_file: 1308 - An error occurred while importing from the .skm file. **{{ error }}**
+      failed_export_skm_file: 1309 - An error occurred while exporting to .skm file. **{{ error }}**
+      failed_deleting_material: 1310 - An error occurred while deleting the material. **{{ error }}**
+      failed_duplicating_material: 1311 - An error occured while duplicating the material. **{{ error }}**
+      invalid_image_file: 1312 - Invalid image
+    obsolete_base: 1313 - To stay in sync, you need to refresh the material list.
   outliner:
-    label: 1308 - Outliner
-    title: 1309 - Outliner
-    list: 1310 - Tree Structure of Entities
-    nodes: 1311 - Instances
-    toggle_hidden: 1312 - Hidden instances
-    type_0: 1313 - Model
-    type_1: 1314 - Group
-    type_2: 1315 - Component
-    type_3: 1316 - Part
+    label: 1314 - Outliner
+    title: 1315 - Outliner
+    list: 1316 - Tree Structure of Entities
+    nodes: 1317 - Instances
+    toggle_hidden: 1318 - Hidden instances
+    type_0: 1319 - Model
+    type_1: 1320 - Group
+    type_2: 1321 - Component
+    type_3: 1322 - Part
     tooltip:
-      open_node_url: 1317 - Open part URL
+      open_node_url: 1323 - Open part URL
     edit_node:
-      title_model: 1318 - Properties of the model
-      title_instance: 1319 - Properties of instance **{{ name }}**
-      general: 1320 - General
-      preview: 1321 - Overview
-      name: 1322 - Name
-      instance_name: 1323 - Instance
-      material: 1324 - Material
-      definition_name: 1325 - Definition
-      description: 1326 - Description
-      url: 1327 - URL
-      tags: 1328 - Badges
-      layer_name: 1329 - Tag
-      explode: 1330 - Explode
-      explode_message: 1331 - Do you confirm the explosion of instance **{{ name }}**?
+      title_model: 1324 - Properties of the model
+      title_instance: 1325 - Properties of instance **{{ name }}**
+      general: 1326 - General
+      preview: 1327 - Overview
+      name: 1328 - Name
+      instance_name: 1329 - Instance
+      material: 1330 - Material
+      definition_name: 1331 - Definition
+      description: 1332 - Description
+      url: 1333 - URL
+      tags: 1334 - Badges
+      layer_name: 1335 - Tag
+      explode: 1336 - Explode
+      explode_message: 1337 - Do you confirm the explosion of instance **{{ name }}**?
     error:
-      no_model: 1332 - No model is open. You will have to give me more information ;)
-      no_entities: 1333 - Your model is empty!
-      node_not_found: 1334 - Node not found
-      entity_not_found: 1335 - Instance not found
-      obsolete_outliner: 1336 - Impossible, the generated structure is obsolete. Please, regenerate it.
+      no_model: 1338 - No model is open. You will have to give me more information ;)
+      no_entities: 1339 - Your model is empty!
+      node_not_found: 1340 - Node not found
+      entity_not_found: 1341 - Instance not found
+      obsolete_outliner: 1342 - Impossible, the generated structure is obsolete. Please, regenerate it.
     tip:
       no_node: |
-        1337 - Your model does not contain any instance to be displayed here.
+        1343 - Your model does not contain any instance to be displayed here.
         An instance is a **group** or a **component** in the scene.
-    obsolete_base: 1338 - To stay in sync, you need to refresh the structure.
+    obsolete_base: 1344 - To stay in sync, you need to refresh the structure.
   importer:
-    label: 1339 - Import
-    title: 1340 - Import Parts
+    label: 1345 - Import
+    title: 1346 - Import Parts
     help: |
-      1341 - This page allows you to import parts (defined by a rectangular bounding box) into your model from a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
+      1347 - This page allows you to import parts (defined by a rectangular bounding box) into your model from a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
       You may then use the features of *OpenCutList* for parts that have been generated by a software other than *SketchUp*.
       Click the **Open CSV file** button to start.
-    open_csv: 1342 - Open CSV file
-    import_to_model: 1343 - Import into model
+    open_csv: 1348 - Open CSV file
+    import_to_model: 1349 - Import into model
     load:
-      title: 1344 - CSV File Upload
+      title: 1350 - CSV File Upload
       info_0: |
-        1345 - Select the options required to read the file:
+        1351 - Select the options required to read the file:
         **{{ filename }}**.
       info_1: |
-        1346 - *The unit configured in the model is: **{{ unit }}**.
+        1352 - *The unit configured in the model is: **{{ unit }}**.
         This unit will be used for dimensions without a specified unit*.
-      options: 1347 - Loading Options
-      option_col_sep: 1348 - Separator
-      option_col_sep_tab: 1349 - Tabulator
-      option_col_sep_comma: 1350 - Comma
-      option_col_sep_semicolon: 1351 - Semicolon
-      option_first_line_headers: 1352 - Header Line
-      option_first_line_headers_0: 1353 - Data
-      option_first_line_headers_1: 1354 - Column Titles
+      options: 1353 - Loading Options
+      option_col_sep: 1354 - Separator
+      option_col_sep_tab: 1355 - Tabulator
+      option_col_sep_comma: 1356 - Comma
+      option_col_sep_semicolon: 1357 - Semicolon
+      option_first_line_headers: 1358 - Header Line
+      option_first_line_headers_0: 1359 - Data
+      option_first_line_headers_1: 1360 - Column Titles
     import:
-      title: 1355 - Import Parts into the Model
+      title: 1361 - Import Parts into the Model
       info_0: |
-        1356 - You are about to import **{{ count }} part** into the model.
+        1362 - You are about to import **{{ count }} part** into the model.
         This part will be placed in a group at the origin of the main scene.
       info_0_plural: |
-        1357 - You are about to import **{{ count }} parts** into the model.
+        1363 - You are about to import **{{ count }} parts** into the model.
         These parts will be stacked in a group starting at the origin of the main scene.
-      info_1: 1358 - Click **Import** to confirm the action.
+      info_1: 1364 - Click **Import** to confirm the action.
       options: |
-        1359 - The model already contains *parts*, *definitions* or *materials*.
+        1365 - The model already contains *parts*, *definitions* or *materials*.
         Select the desired import options.
-      option_remove_all_?: '1360 - Select next step:'
-      option_remove_all_false: 1361 - Add parts to the existing
-      option_remove_all_true: 1362 - Remove existing!
-      option_keep_definitions_settings: 1363 - Keep definition settings
-      option_keep_materials_settings: 1364 - Keep material settings
+      option_remove_all_?: '1366 - Select next step:'
+      option_remove_all_false: 1367 - Add parts to the existing
+      option_remove_all_true: 1368 - Remove existing!
+      option_keep_definitions_settings: 1369 - Keep definition settings
+      option_keep_materials_settings: 1370 - Keep material settings
     column:
-      unused: 1365 - Unused
-      mandatory: 1366 - Required fields
-      optional: 1367 - Optional fields
-      name: 1368 - Designation
-      count: 1369 - Quantity
-      bbox_length: 1370 - Length
-      bbox_width: 1371 - Width
-      bbox_thickness: 1372 - Thickness
-      material: 1373 - Material
-      tags: 1374 - Badges
+      unused: 1371 - Unused
+      mandatory: 1372 - Required fields
+      optional: 1373 - Optional fields
+      name: 1374 - Designation
+      count: 1375 - Quantity
+      bbox_length: 1376 - Length
+      bbox_width: 1377 - Width
+      bbox_thickness: 1378 - Thickness
+      material: 1379 - Material
+      tags: 1380 - Badges
     tooltip:
-      errors: 1375 - This part will not be imported because it produced the following errors
-      warnings: 1376 - This part will be imported but it produced the following warnings
+      errors: 1381 - This part will not be imported because it produced the following errors
+      warnings: 1382 - This part will be imported but it produced the following warnings
     error:
-      no_model: 1377 - No model is open. It is impossible to import parts into the void ;)
-      file_not_found: '1378 - File not found : **{{ filename }}**'
-      bad_extension: 1379 - The file *{{ filename }}* does not have the extension **.CSV** or **.TSV**.
+      no_model: 1383 - No model is open. It is impossible to import parts into the void ;)
+      file_not_found: '1384 - File not found : **{{ filename }}**'
+      bad_extension: 1385 - The file *{{ filename }}* does not have the extension **.CSV** or **.TSV**.
       failed_to_load_csv_file: |
-        1380 - Unable to load the CSV file: **{{ error }}**
+        1386 - Unable to load the CSV file: **{{ error }}**
         *Verify that you have selected the appropriate field separator.*
-      empty_file: 1381 - The file appears empty or cannot be read correctly.
-      no_importable_part: 1382 - No part can be imported. Assign the required fields to the corresponding columns.
-      invalid_name: 1383 - Invalid designation
-      invalid_length: 1384 - Invalid length
-      invalid_width: 1385 - Invalid width
-      invalid_thickness: 1386 - Invalid thickness
-      failed_to_import: 1387 - The import failed.
+      empty_file: 1387 - The file appears empty or cannot be read correctly.
+      no_importable_part: 1388 - No part can be imported. Assign the required fields to the corresponding columns.
+      invalid_name: 1389 - Invalid designation
+      invalid_length: 1390 - Invalid length
+      invalid_width: 1391 - Invalid width
+      invalid_thickness: 1392 - Invalid thickness
+      failed_to_import: 1393 - The import failed.
     warning:
-      invalid_count: 1388 - Invalid count
-      invalid_material: 1389 - Invalid material
+      invalid_count: 1394 - Invalid count
+      invalid_material: 1395 - Invalid material
     success:
-      imported_title: 1390 - Import done
-      imported_body: 1391 - {{ count }} part successfully imported!
-      imported_body_plural: 1392 - {{ count }} parts successfully imported!
-    obsolete_base: 1393 - To stay in sync, you need to reload the CSV file.
+      imported_title: 1396 - Import done
+      imported_body: 1397 - {{ count }} part successfully imported!
+      imported_body_plural: 1398 - {{ count }} parts successfully imported!
+    obsolete_base: 1399 - To stay in sync, you need to reload the CSV file.
   tutorials:
-    label: 1394 - Tutorials
-    title: 1395 - Tutorials
+    label: 1400 - Tutorials
+    title: 1401 - Tutorials
     help: |
-      1396 - Find here a non-exhaustive list of videos made by the community around the use of *OpenCutList*.
-    submit: 1397 - Submit a video
+      1402 - Find here a non-exhaustive list of videos made by the community around the use of *OpenCutList*.
+    submit: 1403 - Submit a video
     submit_info: |
-      1398 - You have made a video presenting the use of **OpenCutList** and you would like to see it appear here?
+      1404 - You have made a video presenting the use of **OpenCutList** and you would like to see it appear here?
       Let us know by writing to us at **opencutlist@lairdubois.fr**!
 
       *The video must be public and hosted on YouTube*.
     error:
-      fail_to_load_list: 1399 - Unable to load the video list.
+      fail_to_load_list: 1405 - Unable to load the video list.
   news:
-    label: 1400 - News
-    title: 1401 - News
+    label: 1406 - News
+    title: 1407 - News
     help: |
-      1402 - The latest news from *OpenCutList*.
-    comment: 1403 - Comment
+      1408 - The latest news from *OpenCutList*.
+    comment: 1409 - Comment
     error:
-      fail_to_load_list: 1404 - Unable to load the news list.
+      fail_to_load_list: 1410 - Unable to load the news list.
   forum:
-    label: 1405 - Forum
-    title: 1406 - Forum
+    label: 1411 - Forum
+    title: 1412 - Forum
     help: |
-      1407 - This message board allows you to exchange with the user community and the *OpenCutList* team.
-    create_conversation: 1408 - Start a conversation
-    reply: 1409 - Reply
-    tags: 1410 - Tags
+      1413 - This message board allows you to exchange with the user community and the *OpenCutList* team.
+    create_conversation: 1414 - Start a conversation
+    reply: 1415 - Reply
+    tags: 1416 - Tags
     redirection: |
-      1411 - You will be redirected to the **Open Collective** platform hosting this discussion forum.
+      1417 - You will be redirected to the **Open Collective** platform hosting this discussion forum.
       To *start conversations* or *reply* you will need to create an account and log in.
       *It's free, no obligation and a simple email address is all it takes.*
 
       Apply to continue.
     error:
-      fail_to_load_list: 1412 - Unable to load the topic list.
+      fail_to_load_list: 1418 - Unable to load the topic list.
   sponsor:
-    label: 1413 - Sponsor
-    title: 1414 - Support
+    label: 1419 - Sponsor
+    title: 1420 - Support
     description: |
-      1415 - **OpenCutList** is *Open Source* software supported by its users via the <a href="https://opencollective.com/" target="_blank">Open Collective</a> plateform.
+      1421 - **OpenCutList** is *Open Source* software supported by its users via the <a href="https://opencollective.com/" target="_blank">Open Collective</a> plateform.
       Support this project by making a financial contribution!
-    contribute: 1416 - Contribute
-    backers: 1417 - {{ count }} financial contributor
-    backers_plural: 1418 - {{ count }} financial contributors
-    ad: 1419 - Do you like OpenCutList?
-    objective: 1420 - Objective
-    objective_slogan: 1421 - OpenCutList is all of us
+    contribute: 1422 - Contribute
+    backers: 1423 - {{ count }} financial contributor
+    backers_plural: 1424 - {{ count }} financial contributors
+    ad: 1425 - Do you like OpenCutList?
+    objective: 1426 - Objective
+    objective_slogan: 1427 - OpenCutList is all of us
     objective_title:
-      default: 1422 - Objectives
-      cuttingdiagram_export: 1423 - Funding of cutting diagram exports
+      default: 1428 - Objectives
+      cuttingdiagram_export: 1429 - Funding of cutting diagram exports
     objective_details:
       default: |
-        1424 - The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update!
+        1430 - The ongoing improvement of *OpenCutList* is important to us and the project continues to need your help for its next update!
       cuttingdiagram_export: |
-        1425 - It is important to us that *OpenCutList* can be adapted to the very different expectations of the users for the *cutting diagram* function.
+        1431 - It is important to us that *OpenCutList* can be adapted to the very different expectations of the users for the *cutting diagram* function.
         To further expand the possibilities, we would like to enable the export of layout diagrams in **SVG** and **DXF** format.
         By providing us with the means to work on these exports, you are giving us the opportunity to help you get the most out of *OpenCutList*.
     objective_crowdfunding: |
-      1426 - The development of new features will be done through **Fundraising** and will start when the **Financial Goal** is reached.
+      1432 - The development of new features will be done through **Fundraising** and will start when the **Financial Goal** is reached.
     objective_thanks: |
-      1427 - Thank you for your contribution!
-    objective_funded_progress: 1428 - funded at {{ progress }}%
+      1433 - Thank you for your contribution!
+    objective_funded_progress: 1434 - funded at {{ progress }}%
   settings:
-    label: 1429 - Preferences
-    title: 1430 - Preferences
-    global_settings: 1431 - Global Preferences
-    language: 1432 - Language
-    language_auto: 1433 - Automatic
-    zoom: 1434 - Font size
-    zoom_normal: 1435 - Normal
-    zoom_small: 1436 - Small
-    zoom_tiny: 1437 - Tiny
-    print_margin: 1438 - Print Margins
-    print_margin_normal: 1439 - Normal
-    print_margin_small: 1440 - Small
-    table_row_size: 1441 - Height of Table Rows
-    table_row_size_normal: 1442 - Normal
-    table_row_size_compact: 1443 - Compact
-    size_and_position: 1444 - Size and Position of the Window
-    model_settings: 1445 - Model Preferences
-    length_unit: 1446 - Unit of Length
-    length_format: 1447 - Format
+    label: 1435 - Preferences
+    title: 1436 - Preferences
+    global_settings: 1437 - Global Preferences
+    language: 1438 - Language
+    language_auto: 1439 - Automatic
+    zoom: 1440 - Font size
+    zoom_normal: 1441 - Normal
+    zoom_small: 1442 - Small
+    zoom_tiny: 1443 - Tiny
+    print_margin: 1444 - Print Margins
+    print_margin_normal: 1445 - Normal
+    print_margin_small: 1446 - Small
+    table_row_size: 1447 - Height of Table Rows
+    table_row_size_normal: 1448 - Normal
+    table_row_size_compact: 1449 - Compact
+    size_and_position: 1450 - Size and Position of the Window
+    model_settings: 1451 - Model Preferences
+    length_unit: 1452 - Unit of Length
+    length_format: 1453 - Format
     length_format_0: $t(default.decimal)
-    length_format_1: 1449 - Architectural
-    length_format_2: 1450 - Engineering
+    length_format_1: 1455 - Architectural
+    length_format_2: 1456 - Engineering
     length_format_3: $t(default.fractional)
-    length_precision: 1452 - Precision
-    suppress_units_display: 1453 - Display length unit for each value
-    mass_unit: 1454 - Unit of Weight
-    mass_precision: 1455 - Precision
-    currency_symbol: 1456 - Currency Symbol
-    currency_precision: 1457 - Precision
+    length_precision: 1458 - Precision
+    suppress_units_display: 1459 - Display length unit for each value
+    mass_unit: 1460 - Unit of Weight
+    mass_precision: 1461 - Precision
+    currency_symbol: 1462 - Currency Symbol
+    currency_precision: 1463 - Precision
     presets:
-      export_global_presets: 1458 - Export presets
+      export_global_presets: 1464 - Export presets
       export_global_presets_help: |
-        1459 - This feature allows you to export your presets to a **.json** file.
+        1465 - This feature allows you to export your presets to a **.json** file.
         Select the presets you wish to export.
-      export_global_presets_success: 1460 - Presets have been successfully exported.
-      import_global_presets: 1461 - Import presets
+      export_global_presets_success: 1466 - Presets have been successfully exported.
+      import_global_presets: 1467 - Import presets
       import_global_presets_help: |
-        1462 - Select the presets from the **.json** file that you wish to import.
+        1468 - Select the presets from the **.json** file that you wish to import.
         Note that if a preset with an identical name already exists, it will be replaced by the imported version.
       import_global_presets_success: |
-        1463 - *OpenCutList* presets have been successfully imported.
+        1469 - *OpenCutList* presets have been successfully imported.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
-      dump_global_presets: 1464 - Dump presets
-      dump_model_presets: 1465 - Dump model settings
-      reset_global_presets: 1466 - Reset the presets
+      dump_global_presets: 1470 - Dump presets
+      dump_model_presets: 1471 - Dump model settings
+      reset_global_presets: 1472 - Reset the presets
       reset_global_presets_confirm: |
-        1467 - You are about to reset all of your saved *OpenCutList* presets.
+        1473 - You are about to reset all of your saved *OpenCutList* presets.
         This action is final. **All presets will be lost.**
         Confirm to continue.
       reset_global_presets_success: |
-        1468 - *OpenCutList* presets have been reset.
+        1474 - *OpenCutList* presets have been reset.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
-      reset_model_presets: 1469 - Reset model settings
+      reset_model_presets: 1475 - Reset model settings
       reset_model_presets_confirm: |
-        1470 - You are about to reset all *OpenCutList* settings for the current model.
+        1476 - You are about to reset all *OpenCutList* settings for the current model.
         This action is final. **All settings will be restored to their default values.**
         Confirm to continue.
       reset_model_presets_success: |
-        1471 - The *OpenCutList* settings for the current model have been reset.
+        1477 - The *OpenCutList* settings for the current model have been reset.
         In order to reflect the changes, you must **close** and **reopen** the OpenCutList window.
       error:
-        no_preset_to_export: 1472 - No preset to export.
-        no_preset_to_import: 1473 - No presets to import.
-        failed_to_import: '1474 - Impossible to import the presets: **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1475 - This file was modified. It cannot be imported.
-        failed_to_import_bad_file_format: 1476 - Invalid file format.
+        no_preset_to_export: 1478 - No preset to export.
+        no_preset_to_import: 1479 - No presets to import.
+        failed_to_import: '1480 - Impossible to import the presets: **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1481 - This file was modified. It cannot be imported.
+        failed_to_import_bad_file_format: 1482 - Invalid file format.
   about:
-    label: 1477 - About
-    title: 1478 - About
-    version: 1479 - Version
-    credits: 1480 - Technical Credits
+    label: 1483 - About
+    title: 1484 - About
+    version: 1485 - Version
+    credits: 1486 - Technical Credits
     credits_authors: |
-      1481 - *OpenCutList* is developped by [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
-    credits_translations: 1482 - Translations
+      1487 - *OpenCutList* is developped by [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *List all [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: 1488 - Translations
     credits_translators: |
-      1483 - - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *German*)
+      1489 - - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *German*)
       - Gildas Boureau (*French* documentation)
       - Vladimir Badulya (*Russian*)
       - Pierluigi Colombo, Massimo Risca (*Italian*)
@@ -1933,212 +1939,212 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*simplified Chinese*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Dutch*)
     credits_description: |
-      1484 - The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
+      1490 - The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
       This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1485 - Runtime
-    credits_development: 1486 - Development environment
+    credits_runtime: 1491 - Runtime
+    credits_development: 1492 - Development environment
     credits_vendors: |
-      1487 - The adventure would not be possible without the work of the authors of the following *Open Source* components:
+      1493 - The adventure would not be possible without the work of the authors of the following *Open Source* components:
     credits_thanks: |
-      1488 - A special thank goes to:
+      1494 - A special thank goes to:
       - [JetBrains](https://www.jetbrains.com) for their support to this project by their [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) for their support of Open Source projects.
       - [GitBook](https://www.gitbook.com) for their support of Open Source projects.
 tool:
   default:
-    transparency: 1489 - Transparency
-    zoom_extents: 1490 - Zoom Extents
-    toggle_depth: 1491 - Background Parts
-    more: 1492 - More
-    end_point: 1493 - Endpoint
-    middle_point: 1494 - Midpoint
-    third_point: 1495 - One-third Point
-    vcb_length: 1496 - Length
-    vcb_size: 1497 - Dimensions
-    vcb_radius: 1498 - Radius
-    vcb_diameter: 1499 - Diameter
-    vcb_distance: 1500 - Distance
+    transparency: 1495 - Transparency
+    zoom_extents: 1496 - Zoom Extents
+    toggle_depth: 1497 - Background Parts
+    more: 1498 - More
+    end_point: 1499 - Endpoint
+    middle_point: 1500 - Midpoint
+    third_point: 1501 - One-third Point
+    vcb_length: 1502 - Length
+    vcb_size: 1503 - Dimensions
+    vcb_radius: 1504 - Radius
+    vcb_diameter: 1505 - Diameter
+    vcb_distance: 1506 - Distance
     error:
-      no_direction: 1501 - Please indicate a direction with your mouse
-      invalid_length: 1502 - Length {{ value }} is invalid
-      invalid_multiplicator: 1503 - Factor {{ value }} is invalid
-      invalid_divider: 1504 - Divisor {{ value }} is invalid
-      invalid_offset: 1505 - Offset {{ value }} is invalid
-      invalid_segment_count: 1506 - The number of segments {{ value }} is invalid. It must be between 3 and 999.
+      no_direction: 1507 - Please indicate a direction with your mouse
+      invalid_length: 1508 - Length {{ value }} is invalid
+      invalid_multiplicator: 1509 - Factor {{ value }} is invalid
+      invalid_divider: 1510 - Divisor {{ value }} is invalid
+      invalid_offset: 1511 - Offset {{ value }} is invalid
+      invalid_segment_count: 1512 - The number of segments {{ value }} is invalid. It must be between 3 and 999.
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1509 - Draw
-    action_0: 1510 - Draw Rectangle
-    action_0_status: 1511 - Draw a volume on a rectangular shape
-    action_0_state_1_status: 1512 - Click to define opposite angle or enter length, width
-    action_1: 1513 - Draw Circle
-    action_1_status: 1514 - Draw a volume on a circular shape
-    action_1_state_1_radius_status: 1515 - Click to set radius or enter distance
-    action_1_state_1_diameter_status: 1516 - Click to set diameter or enter distance
-    action_2: 1517 - Draw Polygon
-    action_2_status: 1518 - Draw a volume on a polygonal shape
-    action_2_state_1_status: 1519 - Click to define a new point or enter distance
-    action_x_state_2_status: 1520 - Click to set elevation or enter distance
-    action_option_group_offset: 1521 - Offset
-    action_option_group_segments: 1522 - Segments
-    action_option_group_options: 1523 - Options
-    action_option_offset_shape_offset: 1524 - Offset
-    action_option_offset_shape_offset_status: 1525 - Apply an offset to the shape line
-    action_option_segments_segment_count: 1526 - Number of Segments
-    action_option_segments_segment_count_status: 1527 - Define the number of segments of a circle
-    action_option_options_construction: 1528 - Construction Lines
-    action_option_options_construction_status: 1529 - Draw as construction lines
-    action_option_options_rectangle_centered: 1530 - Rectangle Centered
-    action_option_options_rectangle_centered_status: 1531 - Center rectangle on the first point
-    action_option_options_smoothing: 1532 - Smoothing
-    action_option_options_smoothing_status: 1533 - Smooth curves
-    action_option_options_measure_from_diameter: 1534 - Measure
-    action_option_options_measure_from_diameter_status: 1535 - Measure circle by its diameter
-    action_option_options_measure_from_radius_status: 1536 - Measure circle by its radius
-    action_option_options_measure_reversed: 1537 - Inverted Measure
-    action_option_options_measure_reversed_status: 1538 - Reverse the measurement
-    action_option_options_pull_centered: 1539 - Elevation Centered
-    action_option_options_pull_centered_status: 1540 - Center elevation on the first point
-    action_option_options_ask_name: 1541 - Parts naming
-    action_option_options_ask_name_status: 1542 - Enter part names manually
-    action_pull_locked_status: 1543 - Lock on last measurement
-    action_toggle_move_copy_status: 1544 - Toggle between copy/move
-    action_change_move_anchor_status: 1545 - Change the anchor point
+    title: 1515 - Draw
+    action_0: 1516 - Draw Rectangle
+    action_0_status: 1517 - Draw a volume on a rectangular shape
+    action_0_state_1_status: 1518 - Click to define opposite angle or enter length, width
+    action_1: 1519 - Draw Circle
+    action_1_status: 1520 - Draw a volume on a circular shape
+    action_1_state_1_radius_status: 1521 - Click to set radius or enter distance
+    action_1_state_1_diameter_status: 1522 - Click to set diameter or enter distance
+    action_2: 1523 - Draw Polygon
+    action_2_status: 1524 - Draw a volume on a polygonal shape
+    action_2_state_1_status: 1525 - Click to define a new point or enter distance
+    action_x_state_2_status: 1526 - Click to set elevation or enter distance
+    action_option_group_offset: 1527 - Offset
+    action_option_group_segments: 1528 - Segments
+    action_option_group_options: 1529 - Options
+    action_option_offset_shape_offset: 1530 - Offset
+    action_option_offset_shape_offset_status: 1531 - Apply an offset to the shape line
+    action_option_segments_segment_count: 1532 - Number of Segments
+    action_option_segments_segment_count_status: 1533 - Define the number of segments of a circle
+    action_option_options_construction: 1534 - Construction Lines
+    action_option_options_construction_status: 1535 - Draw as construction lines
+    action_option_options_rectangle_centered: 1536 - Rectangle Centered
+    action_option_options_rectangle_centered_status: 1537 - Center rectangle on the first point
+    action_option_options_smoothing: 1538 - Smoothing
+    action_option_options_smoothing_status: 1539 - Smooth curves
+    action_option_options_measure_from_diameter: 1540 - Measure
+    action_option_options_measure_from_diameter_status: 1541 - Measure circle by its diameter
+    action_option_options_measure_from_radius_status: 1542 - Measure circle by its radius
+    action_option_options_measure_reversed: 1543 - Inverted Measure
+    action_option_options_measure_reversed_status: 1544 - Reverse the measurement
+    action_option_options_pull_centered: 1545 - Elevation Centered
+    action_option_options_pull_centered_status: 1546 - Center elevation on the first point
+    action_option_options_ask_name: 1547 - Parts naming
+    action_option_options_ask_name_status: 1548 - Enter part names manually
+    action_pull_locked_status: 1549 - Lock on last measurement
+    action_toggle_move_copy_status: 1550 - Toggle between copy/move
+    action_change_move_anchor_status: 1551 - Change the anchor point
     success:
-      part_created: '1546 - New part created: {{ name }}'
+      part_created: '1552 - New part created: {{ name }}'
   smart_handle:
-    title: 1547 - Handle
-    action_0: 1548 - Select
-    action_0_status: 1549 - Click on a part to select it
-    action_1: 1550 - Copy in line
-    action_1_status: 1551 - Click on a part to copy it along an axis
+    title: 1553 - Handle
+    action_0: 1554 - Select
+    action_0_status: 1555 - Click on a part to select it
+    action_1: 1556 - Copy in line
+    action_1_status: 1557 - Click on a part to copy it along an axis
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: 1553 - Click to place the copy of the part or enter a distance
-    action_2: 1554 - Copy in grid
-    action_2_status: 1555 - Click on a part to copy it along a grid
+    action_1_state_2_status: 1559 - Click to place the copy of the part or enter a distance
+    action_2: 1560 - Copy in grid
+    action_2_status: 1561 - Click on a part to copy it along a grid
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: 1557 - Click to place copies of the part, or enter two distances
-    action_3: 1558 - Move
-    action_3_status: 1559 - Click on a part to move it along a grid
+    action_2_state_2_status: 1563 - Click to place copies of the part, or enter two distances
+    action_3: 1564 - Move
+    action_3_status: 1565 - Click on a part to move it along a grid
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: 1561 - Click to place the part, or enter a distance
-    action_4: 1562 - Distribute
-    action_4_status: 1563 - Click on a part to distribute it along an axis
+    action_3_state_2_status: 1567 - Click to place the part, or enter a distance
+    action_4: 1568 - Distribute
+    action_4_status: 1569 - Click on a part to distribute it along an axis
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: 1565 - Click to set the first measurement point
-    action_4_state_2_status: 1566 - Click to set the second measurement point or enter a distance
-    action_5: 1567 - Resize
-    action_option_group_copy_measure_type: 1568 - Measure
-    action_option_group_move_measure_type: 1569 - Measure
-    action_option_group_axes: 1570 - Axes
-    action_option_group_options: 1571 - Options
-    action_option_copy_measure_type_outside_status: 1572 - External measurement
-    action_option_copy_measure_type_centered_status: 1573 - Central measurement
-    action_option_copy_measure_type_inside_status: 1574 - Measurement taken between parts
-    action_option_move_measure_type_outside_status: 1575 - External measurement
-    action_option_move_measure_type_centered_status: 1576 - Central measurement
-    action_option_move_measure_type_inside_status: 1577 - Internal measurement
-    action_option_axes_active_status: 1578 - Manipulate along active axes
-    action_option_axes_context_status: 1579 - Manipulate along the axes of the group or component containing the part
-    action_option_axes_entity_status: 1580 - Manipulate along part axes
-    action_option_options_mirror_status: 1581 - Symmetrical copying
+    action_4_state_1_status: 1571 - Click to set the first measurement point
+    action_4_state_2_status: 1572 - Click to set the second measurement point or enter a distance
+    action_5: 1573 - Resize
+    action_option_group_copy_measure_type: 1574 - Measure
+    action_option_group_move_measure_type: 1575 - Measure
+    action_option_group_axes: 1576 - Axes
+    action_option_group_options: 1577 - Options
+    action_option_copy_measure_type_outside_status: 1578 - External measurement
+    action_option_copy_measure_type_centered_status: 1579 - Central measurement
+    action_option_copy_measure_type_inside_status: 1580 - Measurement taken between parts
+    action_option_move_measure_type_outside_status: 1581 - External measurement
+    action_option_move_measure_type_centered_status: 1582 - Central measurement
+    action_option_move_measure_type_inside_status: 1583 - Internal measurement
+    action_option_axes_active_status: 1584 - Manipulate along active axes
+    action_option_axes_context_status: 1585 - Manipulate along the axes of the group or component containing the part
+    action_option_axes_entity_status: 1586 - Manipulate along part axes
+    action_option_options_mirror_status: 1587 - Symmetrical copying
     warning:
-      copies_disable_mirror: 1582 - Multiple copies disable the '$t(tool.smart_handle.action_option_options_mirror_status)' option
+      copies_disable_mirror: 1588 - Multiple copies disable the '$t(tool.smart_handle.action_option_options_mirror_status)' option
     error:
-      min_distance: 1583 - The distance {{ value1 }} is smaller than the minimal distance {{ value2 }}
+      min_distance: 1589 - The distance {{ value1 }} is smaller than the minimal distance {{ value2 }}
   smart_paint:
-    title: 1584 - Paint
-    default_material: 1585 - Without material
-    filters: 1586 - Filters
-    filter_0: 1587 - Without type
+    title: 1590 - Paint
+    default_material: 1591 - Without material
+    filters: 1592 - Filters
+    filter_0: 1593 - Without type
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1594 - Paint parts
-    action_0_status: 1595 - Click on a part to apply material to its instance
-    action_1: 1596 - Paint edges
-    action_1_status: 1597 - Click on the edge of a panel to apply material '$t(tab.materials.type_4)'
-    action_2: 1598 - Paint faces
-    action_2_status: 1599 - Click on the face of a panel to apply material '$t(tab.materials.type_6)'
-    action_3: 1600 - Sample
-    action_3_status: 1601 - Click on a face to sample its material
-    action_4: 1602 - Clean
-    action_4_status: 1603 - Click on a part to remove all materials from its definition and from all its instances
-    action_option_group_instances: 1604 - Number of instances
-    action_option_group_edges: 1605 - Number of edge bandings
-    action_option_group_faces: 1606 - Number of faces
-    action_option_instances_0_status: 1607 - Color only the instance of the target part
-    action_option_instances_1_status: 1608 - Color all instances of the target part
-    action_option_edges_0_status: 1609 - Color only the target edge
-    action_option_edges_1_status: 1610 - Color the target edge and the opposite edge of the part
-    action_option_edges_2_status: 1611 - Color the 4 edges of the target part
-    action_option_faces_0_status: 1612 - Color only the target face
-    action_option_faces_1_status: 1613 - Color the 2 faces of the target part
-    edges: 1614 - {{ count }} edge
-    edges_plural: 1615 - {{ count }} edges
-    edge_ymin: 1616 - Length 1
-    edge_ymax: 1617 - Length 2
-    edge_xmin: 1618 - Width 1
-    edge_xmax: 1619 - Width 2
-    faces: 1620 - {{ count }} face
-    faces_plural: 1621 - {{ count }} faces
-    face_zmin: 1622 - Backside
-    face_zmax: 1623 - Frontside
+    action_0: 1600 - Paint parts
+    action_0_status: 1601 - Click on a part to apply material to its instance
+    action_1: 1602 - Paint edges
+    action_1_status: 1603 - Click on the edge of a panel to apply material '$t(tab.materials.type_4)'
+    action_2: 1604 - Paint faces
+    action_2_status: 1605 - Click on the face of a panel to apply material '$t(tab.materials.type_6)'
+    action_3: 1606 - Sample
+    action_3_status: 1607 - Click on a face to sample its material
+    action_4: 1608 - Clean
+    action_4_status: 1609 - Click on a part to remove all materials from its definition and from all its instances
+    action_option_group_instances: 1610 - Number of instances
+    action_option_group_edges: 1611 - Number of edge bandings
+    action_option_group_faces: 1612 - Number of faces
+    action_option_instances_0_status: 1613 - Color only the instance of the target part
+    action_option_instances_1_status: 1614 - Color all instances of the target part
+    action_option_edges_0_status: 1615 - Color only the target edge
+    action_option_edges_1_status: 1616 - Color the target edge and the opposite edge of the part
+    action_option_edges_2_status: 1617 - Color the 4 edges of the target part
+    action_option_faces_0_status: 1618 - Color only the target face
+    action_option_faces_1_status: 1619 - Color the 2 faces of the target part
+    edges: 1620 - {{ count }} edge
+    edges_plural: 1621 - {{ count }} edges
+    edge_ymin: 1622 - Length 1
+    edge_ymax: 1623 - Length 2
+    edge_xmin: 1624 - Width 1
+    edge_xmax: 1625 - Width 2
+    faces: 1626 - {{ count }} face
+    faces_plural: 1627 - {{ count }} faces
+    face_zmin: 1628 - Backside
+    face_zmax: 1629 - Frontside
     warning:
-      no_material: 1624 - No material
-      no_material_type: 1625 - No material of type '{{ type }}'
+      no_material: 1630 - No material
+      no_material_type: 1631 - No material of type '{{ type }}'
     error:
-      not_part: 1626 - The target object is not a part (component)
-      not_edge: 1627 - The target face is not a panel edge
-      not_face: 1628 - The target face is not a panel face
-      wrong_material_type: 1629 - The target part must be of type '{{ type }}'
+      not_part: 1632 - The target object is not a part (component)
+      not_edge: 1633 - The target face is not a panel edge
+      not_face: 1634 - The target face is not a panel face
+      wrong_material_type: 1635 - The target part must be of type '{{ type }}'
   smart_axes:
-    title: 1630 - Orient
-    action_0: 1631 - Flip
-    action_0_status: 1632 - Click on a part to flip its instance along one of its dimensions
-    action_1: 1633 - Swap Length ↔ Width
-    action_1_status: 1634 - Click on a part to swap its Length with its Width
-    action_2: 1635 - Swap Front ↔ Backside
-    action_2_status: 1636 - Click on a part to swap its Front with its Backside
-    action_3: 1637 - Adapt Axes
-    action_3_status: 1638 - Target a face of a part and click on an edge to adapt its axes
-    action_4: 1639 - Move Origin
-    action_4_status: 1640 - Target a face of a part and click on a point to place its origin there
-    action_option_group_direction: 1641 - Direction
-    action_option_direction_0: 1642 - L
-    action_option_direction_1: 1643 - W
-    action_option_direction_2: 1644 - T
-    action_option_direction_0_status: 1645 - Turn the part over lengthwise
-    action_option_direction_1_status: 1646 - Turn the part over widthwise
-    action_option_direction_2_status: 1647 - Turn the part over in its thickness
+    title: 1636 - Orient
+    action_0: 1637 - Flip
+    action_0_status: 1638 - Click on a part to flip its instance along one of its dimensions
+    action_1: 1639 - Swap Length ↔ Width
+    action_1_status: 1640 - Click on a part to swap its Length with its Width
+    action_2: 1641 - Swap Front ↔ Backside
+    action_2_status: 1642 - Click on a part to swap its Front with its Backside
+    action_3: 1643 - Adapt Axes
+    action_3_status: 1644 - Target a face of a part and click on an edge to adapt its axes
+    action_4: 1645 - Move Origin
+    action_4_status: 1646 - Target a face of a part and click on a point to place its origin there
+    action_option_group_direction: 1647 - Direction
+    action_option_direction_0: 1648 - L
+    action_option_direction_1: 1649 - W
+    action_option_direction_2: 1650 - T
+    action_option_direction_0_status: 1651 - Turn the part over lengthwise
+    action_option_direction_1_status: 1652 - Turn the part over widthwise
+    action_option_direction_2_status: 1653 - Turn the part over in its thickness
     warning:
-      more_entities: 1648 - {{ count_used }} instances sharing the same definition will be modified
+      more_entities: 1654 - {{ count_used }} instances sharing the same definition will be modified
     error:
-      not_part: 1649 - The target object is not a part (component)
-      not_orientable: 1650 - The type of this part does not allow orienting it
+      not_part: 1655 - The target object is not a part (component)
+      not_orientable: 1656 - The type of this part does not allow orienting it
   smart_export:
-    title: 1651 - Export
-    action_0: 1652 - Export 3D part
-    action_0_status: 1653 - Click on a part
-    action_1: 1654 - Export 2D part
-    action_1_status: 1655 - Click on the face of a part
-    action_2: 1656 - Export face
-    action_2_status: 1657 - Click on a face
-    action_3: 1658 - Export path
-    action_3_status: 1659 - Click on an edge
-    action_option_group_file_format: 1660 - Format
-    action_option_group_unit: 1661 - Unit
-    action_option_group_faces: 1662 - Faces
-    action_option_group_options: 1663 - Options
-    action_option_file_format_dxf_status: 1664 - Export to DXF file
-    action_option_file_format_stl_status: 1665 - Export to STL file
-    action_option_file_format_obj_status: 1666 - Export to OBJ file
-    action_option_file_format_svg_status: 1667 - Export to SVG file
+    title: 1657 - Export
+    action_0: 1658 - Export 3D part
+    action_0_status: 1659 - Click on a part
+    action_1: 1660 - Export 2D part
+    action_1_status: 1661 - Click on the face of a part
+    action_2: 1662 - Export face
+    action_2_status: 1663 - Click on a face
+    action_3: 1664 - Export path
+    action_3_status: 1665 - Click on an edge
+    action_option_group_file_format: 1666 - Format
+    action_option_group_unit: 1667 - Unit
+    action_option_group_faces: 1668 - Faces
+    action_option_group_options: 1669 - Options
+    action_option_file_format_dxf_status: 1670 - Export to DXF file
+    action_option_file_format_stl_status: 1671 - Export to STL file
+    action_option_file_format_obj_status: 1672 - Export to OBJ file
+    action_option_file_format_svg_status: 1673 - Export to SVG file
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2148,9 +2154,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1677 - Isolate through-holes and merge depths for each cavity
-    action_option_options_include_paths_status: 1678 - Export non-face edges contained in the part as a path
+    action_option_options_merge_holes_status: 1683 - Isolate through-holes and merge depths for each cavity
+    action_option_options_include_paths_status: 1684 - Export non-face edges contained in the part as a path
     error:
-      not_part: 1679 - This face does not belong to a part (component)
-      not_flat_face: 1680 - This surface is not flat
-      incompatible_active_path: 1681 - The active path does not allow exporting this part
+      not_part: 1685 - This face does not belong to a part (component)
+      not_flat_face: 1686 - This surface is not flat
+      incompatible_active_path: 1687 - The active path does not allow exporting this part
