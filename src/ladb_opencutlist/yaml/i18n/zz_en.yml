@@ -1002,8 +1002,10 @@ tab:
       option_std_bin_1d_edge: 809 - Standard Edge Banding
       option_std_bin_1d_help: |
         810 - Select the sizes of the standard board or edge banding, which will be duplicated to contain all the parts.
+
         This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
-        Edit the material '{{ material_name }}' to update this list.
+
+        *Edit the material '{{ material_name }}' to update this list.*
       option_std_bin_1d_add: 811 - Add a size
       option_std_bin_1d_none: 812 - None
       option_scrap_bin_1d_dimensional_sizes: 813 - Board Off-cuts
@@ -1018,8 +1020,10 @@ tab:
       option_std_bin_2d_veneer: 819 - Standard Veneer Sheet
       option_std_bin_2d_help: |
         820 - Select the sizes of standard panel or veneer sheet, which will be duplicated to calculate the best possible placement.
+
         This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
-        Edit the material '{{ material_name }}' to update this list.
+
+        *Edit the material '{{ material_name }}' to update this list.*
       option_std_bin_2d_add: 821 - Add a size
       option_std_bin_2d_none: 822 - None
       option_scrap_bin_2d_sheet_good_sizes: 823 - Panel Off-cuts
@@ -1035,7 +1039,7 @@ tab:
         829 - Sets the optimization mode, with or without time limit.
       option_objective: 830 - Objective
       option_objective_help: |
-        831 - Sets the packing objectif
+        831 - Sets the packing objectif.
       option_rectangleguillotine_cut_type: 832 - Cut Type
       option_rectangleguillotine_cut_type_help: |
         833 - Sets the cut type.
@@ -1044,7 +1048,7 @@ tab:
       option_rectangleguillotine_cut_type_homogenous: 836 - Homogeneous
       option_rectangleguillotine_number_of_stages: 837 - Number of Stages
       option_rectangleguillotine_number_of_stages_help: |
-        838 - Sets the maximum number of cutting stages
+        838 - Sets the maximum number of cutting stages.
       option_rectangleguillotine_first_stage_orientation: 839 - First Cut Direction
       option_rectangleguillotine_first_stage_orientation_help: |
         840 - Sets the direction of the first cut.

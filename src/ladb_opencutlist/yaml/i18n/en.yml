@@ -1004,8 +1004,10 @@ tab:
       option_std_bin_1d_edge: Standard Edge Banding
       option_std_bin_1d_help: |
         Select the sizes of the standard board or edge banding, which will be duplicated to contain all the parts.
+
         This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
-        Edit the material '{{ material_name }}' to update this list.
+
+        *Edit the material '{{ material_name }}' to update this list.*
       option_std_bin_1d_add: Add a size
       option_std_bin_1d_none: None
       option_scrap_bin_1d_dimensional_sizes: Board Off-cuts
@@ -1020,8 +1022,10 @@ tab:
       option_std_bin_2d_veneer: Standard Veneer Sheet
       option_std_bin_2d_help: |
         Select the sizes of standard panel or veneer sheet, which will be duplicated to calculate the best possible placement.
+
         This list is defined in the field **$t(tab.materials.edit_material.std_sizes)** of the material.
-        Edit the material '{{ material_name }}' to update this list.
+
+        *Edit the material '{{ material_name }}' to update this list.*
       option_std_bin_2d_add: Add a size
       option_std_bin_2d_none: None
       option_scrap_bin_2d_sheet_good_sizes: Panel Off-cuts
@@ -1037,7 +1041,7 @@ tab:
         Sets the optimization mode, with or without time limit.
       option_objective: Objective
       option_objective_help: |
-        Sets the packing objectif
+        Sets the packing objectif.
       option_rectangleguillotine_cut_type: Cut Type
       option_rectangleguillotine_cut_type_help: |
         Sets the cut type.
@@ -1046,7 +1050,7 @@ tab:
       option_rectangleguillotine_cut_type_homogenous: Homogeneous
       option_rectangleguillotine_number_of_stages: Number of Stages
       option_rectangleguillotine_number_of_stages_help: |
-        Sets the maximum number of cutting stages
+        Sets the maximum number of cutting stages.
       option_rectangleguillotine_first_stage_orientation: First Cut Direction
       option_rectangleguillotine_first_stage_orientation_help: |
         Sets the direction of the first cut.
