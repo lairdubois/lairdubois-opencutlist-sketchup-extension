@@ -1555,7 +1555,7 @@
                     $('a.ladb-btn-edit-part', $slide).on('click', function () {
                         $(this).blur();
                         const partId = $(this).data('part-id');
-                        that.editPart(partId, undefined, undefined, function () {
+                        that.editPart(partId, undefined, 'extra', function () {
 
                             // Refresh the list
                             that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist', {
