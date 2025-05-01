@@ -1001,9 +1001,11 @@ tab:
       option_std_bin_1d_dimensional: 808 - Standard-Stange
       option_std_bin_1d_edge: 809 - Standard-Kantenband
       option_std_bin_1d_help: |
-        810 - Wählen Sie hier die Größen der Standardstangenware oder des Standardkantenbandes, welche dupliziert werden um alle Teile zu enthalten.
+        810 - Wählen Sie hier die Größen der Standardstangenware oder des Standardkantenbandes, die dupliziert werden, um alle Teile bestmöglich zu enthalten.
+
         Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
-        Editieren Sie die Eigenschaften des Materials '{{ material_name }}' um diese Liste zu ergänzen.
+
+        *Editieren Sie die Eigenschaften des Materials '{{ material_name }}' um diese Liste zu ergänzen.*
       option_std_bin_1d_add: 811 - Länge hinzufügen
       option_std_bin_1d_none: 812 - Keine
       option_scrap_bin_1d_dimensional_sizes: 813 - Stangenreste
@@ -1018,8 +1020,10 @@ tab:
       option_std_bin_2d_veneer: 819 - Standard-Furnierblatt
       option_std_bin_2d_help: |
         820 - Wählen Sie die Größen der Standard-Platte oder des Standard-Furnierblatts, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
+
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
-        Bearbeiten Sie die Eigenschaften des Materials '{{ material_name }}' um diese Liste zu ergänzen.
+
+        *Bearbeiten Sie die Eigenschaften des Materials '{{ material_name }}' um diese Liste zu ergänzen.*
       option_std_bin_2d_add: 821 - Größe hinzufügen
       option_std_bin_2d_none: 822 - Keine
       option_scrap_bin_2d_sheet_good_sizes: 823 - Plattenreste
