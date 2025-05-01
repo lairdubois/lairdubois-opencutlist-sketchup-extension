@@ -1002,10 +1002,12 @@ tab:
       options_tuning: Tuning
       option_std_bin_1d_dimensional: Barre standard
       option_std_bin_1d_edge: Bande standard
-      option_std_bin_1d_help: |
+      option_std_bin_1d_help: | #TODO
         Sélectionnez ici les tailles de la barre ou bande standard qui seront dupliquées pour contenir au mieux toutes les pièces.
+        
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_lengths)** de la matière.
-        Éditez les propriétés de la matière '{{ material_name }}' pour mettre à jour cette liste.
+        
+        *Éditez les propriétés de la matière '{{ material_name }}' pour mettre à jour cette liste.*
       option_std_bin_1d_add: Ajouter une taille
       option_std_bin_1d_none: Aucune
       option_scrap_bin_1d_dimensional_sizes: Restes de barre
@@ -1018,10 +1020,12 @@ tab:
       option_scrap_bin_1d_none: Aucun
       option_std_bin_2d_sheet_good: Panneau standard
       option_std_bin_2d_veneer: Feuille standard
-      option_std_bin_2d_help: |
+      option_std_bin_2d_help: | #TODO
         Sélectionnez ici les tailles de panneau ou feuille standard qui seront dupliquées pour contenir au mieux toutes les pièces.
+        
         Cette liste est définie par le champ **$t(tab.materials.edit_material.std_sizes)** de la matière.
-        Éditez les propriétés de la matière '{{ material_name }}' pour mettre à jour cette liste.
+        
+        *Éditez les propriétés de la matière '{{ material_name }}' pour mettre à jour cette liste.*
       option_std_bin_2d_add: Ajouter une taille
       option_std_bin_2d_none: Aucun
       option_scrap_bin_2d_sheet_good_sizes: Restes de panneau
