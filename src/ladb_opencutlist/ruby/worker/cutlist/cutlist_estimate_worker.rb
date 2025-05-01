@@ -426,10 +426,10 @@ module Ladb::OpenCutList
       std_lengths = DimensionUtils.d_to_ifloats(@material_attributes.std_lengths).split(DimensionUtils::LIST_SEPARATOR)
       std_bin_1d_sizes = DimensionUtils.d_to_ifloats(settings[:std_bin_1d_sizes]).split(DimensionUtils::LIST_SEPARATOR)
 
-      if settings[:std_bin_1d_sizes] != '0'
+      if settings[:std_bin_1d_sizes].to_s.strip != '0'
         settings[:std_bin_1d_sizes] = (std_lengths & std_bin_1d_sizes).join(DimensionUtils::LIST_SEPARATOR)
       end
-      if settings[:std_bin_1d_sizes] == '' && (settings[:scrap_bin_1d_sizes] == '0' || settings[:scrap_bin_1d_sizes] == '')
+      if settings[:std_bin_1d_sizes].to_s.strip.empty?
         settings[:std_bin_1d_sizes] = std_lengths[0].to_s unless std_lengths.empty?
       end
 
@@ -452,10 +452,10 @@ module Ladb::OpenCutList
       std_sizes = DimensionUtils.dxd_to_ifloats(@material_attributes.std_sizes).split(DimensionUtils::LIST_SEPARATOR)
       std_bin_2d_sizes = DimensionUtils.dxd_to_ifloats(settings[:std_bin_2d_sizes]).split(DimensionUtils::LIST_SEPARATOR)
 
-      if settings[:std_bin_2d_sizes] != '0x0'
+      if settings[:std_bin_2d_sizes].to_s.strip.match(/^0+\s*x\s*0+$/).nil?
         settings[:std_bin_2d_sizes] = (std_sizes & std_bin_2d_sizes).join(DimensionUtils::LIST_SEPARATOR)
       end
-      if settings[:std_bin_2d_sizes] == '' && (settings[:scrap_bin_2d_sizes] == '0x0' || settings[:scrap_bin_2d_sizes] == '')
+      if settings[:std_bin_2d_sizes].to_s.strip.empty?
         settings[:std_bin_2d_sizes] = std_sizes[0].to_s unless std_sizes.empty?
       end
 
