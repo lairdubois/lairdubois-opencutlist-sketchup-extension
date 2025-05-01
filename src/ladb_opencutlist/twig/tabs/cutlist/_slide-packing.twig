@@ -155,7 +155,7 @@
                         <td colspan="7">
                             <div class="ladb-cutlist-packing-preview">
                                 {% for bin in solution.bins %}
-                                    <a href="[data-bin-index={{ loop.index }}]" class="ladb-btn-scrollto">
+                                    <a href="[data-bin-index={{ loop.index }}]" class="ladb-btn-scrollto" data-toggle="tooltip" data-html="true" title="{{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2~'_type_'~bin.type)|i18next }}<br>{{ bin.length|escape('html') }}{% if not group.material_is_1d %} x {{ bin.width|escape('html') }}{% endif %}">
                                         {{ bin.light_svg|raw }}
                                         {% if bin.count > 1 %}<div class="ladb-counter">x&nbsp;{{ bin.count }}</div>{% endif %}
                                     </a>
@@ -269,7 +269,7 @@
                         {% if bin.count > 1 %}
                             <div class="ladb-heading-count pull-right">x&nbsp;{{ bin.count }}</div>
                         {% endif %}
-                        <div class="ladb-heading"><i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>{% if not generateOptions.hide_material_colors %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}{% endif %} {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size-length"></i> <em>{{ bin.length }}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2~'_type_'~bin.type)|i18next }}</span></div>
+                        <div class="ladb-heading"><i class="ladb-opencutlist-icon-material-type-{{ group.material_type }}"></i>{% if not generateOptions.hide_material_colors %} {% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':group.material_color } %}{% endif %} {{ group.material_name|escape('html') }} / <strong>{{ group.std_dimension }}</strong> - <i class="ladb-opencutlist-icon-size-length{% if not group.material_is_1d %}-width{% endif %}"></i> <em>{{ bin.length }}{% if not group.material_is_1d %} x {{ bin.width }}{% endif %}</em> - <span style="padding: 2px 5px; border: 1px solid #000; font-size: 80%;">{{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2~'_type_'~bin.type)|i18next }}</span></div>
                     </td>
                 </tr>
                 </thead>

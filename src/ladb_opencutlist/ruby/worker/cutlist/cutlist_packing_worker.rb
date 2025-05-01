@@ -721,11 +721,12 @@ module Ladb::OpenCutList
       # Computed values
 
       longest_bin_def = packing_def.solution_def.bin_defs.max { |bin_def_a, bin_def_b| bin_def_a.bin_type_def.length <=> bin_def_b.bin_type_def.length }
+      widest_bin_def = packing_def.solution_def.bin_defs.max { |bin_def_a, bin_def_b| bin_def_a.bin_type_def.width <=> bin_def_b.bin_type_def.width }
 
       packing_def.solution_def.bin_defs.each do |bin_def|
 
-        bin_def.svg = _render_bin_def_svg(bin_def, false, longest_bin_def) unless running
-        bin_def.light_svg = _render_bin_def_svg(bin_def, true, longest_bin_def)
+        bin_def.svg = _render_bin_def_svg(bin_def, false) unless running
+        bin_def.light_svg = _render_bin_def_svg(bin_def, true, longest_bin_def, widest_bin_def)
 
         packing_def.solution_def.summary_def.number_of_leftovers += bin_def.number_of_leftovers
         packing_def.solution_def.summary_def.number_of_leftovers_to_keep += bin_def.number_of_leftovers_to_keep
@@ -779,7 +780,7 @@ module Ladb::OpenCutList
       [ cost, std_price ]
     end
 
-    def _render_bin_def_svg(bin_def, light = false, longest_bin_def = nil)
+    def _render_bin_def_svg(bin_def, light = false, longest_bin_def = nil, widest_bin_def = nil)
 
       uuid = SecureRandom.uuid
 
@@ -803,6 +804,7 @@ module Ladb::OpenCutList
       px_bin_length = _to_px(bin_def.bin_type_def.length)
       px_bin_length_virtual = [ px_bin_length, longest_bin_def.nil? ? 0 : _to_px(longest_bin_def.bin_type_def.length) ].max
       px_bin_width = _to_px(bin_def.bin_type_def.width)
+      px_bin_width_virtual = [ px_bin_width, widest_bin_def.nil? ? 0 : _to_px(widest_bin_def.bin_type_def.width) ].max
       px_trimming = _to_px(@trimming)
       px_spacing = _to_px(@spacing)
 
@@ -812,10 +814,11 @@ module Ladb::OpenCutList
       is_cut_bg = px_spacing >= 3 && !light
 
       vb_offset_x = (px_bin_length_virtual - px_bin_length) / 2
+      vb_offset_y = (px_bin_width_virtual - px_bin_width) / 2
       vb_x = (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_x) * -1
-      vb_y = (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size) * -1
+      vb_y = (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_y) * -1
       vb_width = px_bin_length + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_x) * 2
-      vb_height = px_bin_width + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size) * 2
+      vb_height = px_bin_width + (px_bin_outline_width + px_bin_dimension_offset + px_bin_dimension_font_size + vb_offset_y) * 2
 
       svg = "<svg viewbox='#{vb_x} #{vb_y} #{vb_width} #{vb_height}' style='max-height: #{vb_height}px' class='packing problem-type-#{@problem_type}#{' no-print-color' unless colorized_print}'>"
         unless light
