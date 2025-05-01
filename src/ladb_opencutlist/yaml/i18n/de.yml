@@ -1000,8 +1000,8 @@ tab:
       options_config: Konfiguration
       options_display: Anzeige
       options_tuning: Tuning
-      option_std_bin_1d_dimensional: Standard-Stange
-      option_std_bin_1d_edge: Standard-Kantenband
+      option_std_bin_1d_dimensional: Standard-Stangen
+      option_std_bin_1d_edge: Standard-Kantenbänder
       option_std_bin_1d_help: |
         Wählen Sie hier die Größen der Standardstangenware oder des Standardkantenbandes, die dupliziert werden, um alle Teile bestmöglich zu enthalten.
 
@@ -1018,8 +1018,8 @@ tab:
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       option_scrap_bin_1d_none: Keine
-      option_std_bin_2d_sheet_good: Standard-Platte
-      option_std_bin_2d_veneer: Standard-Furnierblatt
+      option_std_bin_2d_sheet_good: Standard-Platten
+      option_std_bin_2d_veneer: Standard-Furnierblätter
       option_std_bin_2d_help: |
         Wählen Sie die Größen der Standard-Platte oder des Standard-Furnierblatts, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
 

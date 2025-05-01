@@ -998,8 +998,8 @@ tab:
       options_config: 805 - Configuration
       options_display: 806 - Display
       options_tuning: 807 - Tuning
-      option_std_bin_1d_dimensional: 808 - Standard Dimensional
-      option_std_bin_1d_edge: 809 - Standard Edge Banding
+      option_std_bin_1d_dimensional: 808 - Standard Dimensionals
+      option_std_bin_1d_edge: 809 - Standard Edge Bandings
       option_std_bin_1d_help: |
         810 - Select the sizes of the standard board or edge banding, which will be duplicated to contain all the parts.
 
@@ -1016,8 +1016,8 @@ tab:
 
         *Sizes without units are considered to be in model units.*
       option_scrap_bin_1d_none: 817 - None
-      option_std_bin_2d_sheet_good: 818 - Standard Panel
-      option_std_bin_2d_veneer: 819 - Standard Veneer Sheet
+      option_std_bin_2d_sheet_good: 818 - Standard Panels
+      option_std_bin_2d_veneer: 819 - Standard Veneer Sheets
       option_std_bin_2d_help: |
         820 - Select the sizes of standard panel or veneer sheet, which will be duplicated to calculate the best possible placement.
 
