@@ -150,18 +150,20 @@
                         </small>
                     </td>
                 </tr>
-                <tr>
-                    <td colspan="7">
-                        <div class="ladb-cutlist-packing-preview">
-                            {% for bin in solution.bins %}
-                                <a href="[data-bin-index={{ loop.index }}]" class="ladb-btn-scrollto">
-                                    {{ bin.light_svg|raw }}
-                                    {% if bin.count > 1 %}<div class="ladb-counter">x&nbsp;{{ bin.count }}</div>{% endif %}
-                                </a>
-                            {% endfor %}
-                        </div>
-                    </td>
-                </tr>
+                {% if solution.bins|length > 1 %}
+                    <tr>
+                        <td colspan="7">
+                            <div class="ladb-cutlist-packing-preview">
+                                {% for bin in solution.bins %}
+                                    <a href="[data-bin-index={{ loop.index }}]" class="ladb-btn-scrollto">
+                                        {{ bin.light_svg|raw }}
+                                        {% if bin.count > 1 %}<div class="ladb-counter">x&nbsp;{{ bin.count }}</div>{% endif %}
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
                 <tr>
                     <td class="text-center" style="vertical-align: middle !important;">{{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2)|i18next }}</td>
                     <td class="text-center" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.packing.list.count'|i18next }}</td>

@@ -39,7 +39,7 @@
       color: white;
       border-radius: 2px;
       font-size: 80%;
-      background-color: #555;
+      background: #555;
     }
 
   }
@@ -250,18 +250,23 @@
 
 @media print {
 
-  .ladb-cutlist-packing-preview svg {
+  .ladb-cutlist-packing-preview {
 
-    &.problem-type-irregular .item {
+    svg {
 
-      .item-projection-shape, .item-projection-machining {
-        stroke: #000 !important;
+      &.problem-type-irregular .item {
+
+        .item-projection-shape, .item-projection-machining {
+          stroke: #000 !important;
+        }
+
       }
 
     }
 
     a.ladb-btn-scrollto .ladb-counter {
-      background-color: #000 !important;
+      color: white !important;
+      background: #000 !important;
     }
 
   }

@@ -11,6 +11,7 @@
         this.$empty = $('.ladb-editor-sizes-empty', this.$element);
         this.$rows = $('.ladb-editor-sizes-rows', this.$element);
         this.$removeRows = $('.ladb-editor-sizes-remove-rows', this.$element);
+        this.$btnAppend = $('.ladb-editor-sizes-btn-append', this.$element);
 
         this.availableSizeDefs = null;
 
@@ -320,7 +321,7 @@
         });
 
         // Bind button
-        $('button', this.$element).on('click', function () {
+        this.$btnAppend.on('click', function () {
             $(this).blur();
             that.appendRow({}, { autoFocus: that.availableSizeDefs === null, autoFill: that.availableSizeDefs !== null });
         });
