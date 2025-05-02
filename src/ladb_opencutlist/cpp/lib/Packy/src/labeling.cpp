@@ -68,7 +68,7 @@ bool on_segment(
            || point.y < std::fmin(segment.first.y, segment.second.y))
             return false;
 
-    return std::abs(cross_product(segment.second - segment.first, segment.second - point)) < 1e-7;
+    return equal(cross_product(segment.second - segment.first, segment.second - point), 0.0);
 }
 
 /**
