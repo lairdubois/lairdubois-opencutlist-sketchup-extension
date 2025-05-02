@@ -5,7 +5,7 @@ module Ladb::OpenCutList
     EXTENSION_BUILD = '202505020519'.freeze
 
     DEFAULT_LANGUAGE = 'en'
-    ENABLED_LANGUAGES = %w[ar cs de en es fr he it nl pt ru uk zh vi]
+    ENABLED_LANGUAGES = %w[ar cs de en es fr he hu it nl pl pt ru uk zh vi]
 
     FILE_FORMAT_SKP = 'skp'.freeze
     FILE_FORMAT_STL = 'stl'.freeze
