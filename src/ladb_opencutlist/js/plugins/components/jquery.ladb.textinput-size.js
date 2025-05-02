@@ -106,6 +106,11 @@
                     e.preventDefault();
                     return false;
                 }
+                if (e.key.match(/[+-]/)) {
+                    that.$element.trigger($.Event('plusminusdown', { key: e.key }));
+                    e.preventDefault();
+                    return false;
+                }
             })
         ;
         this.$input2 = $('<input type="text" class="form-control ladb-textinput-size-d2" style="' + (this.options.d2Hidden ? ' display: none;' : '') + '" placeholder="' + this.options.d2Placeholder + '"' + (this.options.d2Disabled ? ' disabled' : '') + '>')
@@ -122,6 +127,11 @@
                         ;
                         return false;
                     }
+                }
+                if (e.key.match(/[+-]/)) {
+                    that.$element.trigger($.Event('plusminusdown', { key: e.key }));
+                    e.preventDefault();
+                    return false;
                 }
             })
         ;
@@ -145,6 +155,11 @@
                         ;
                         return false;
                     }
+                }
+                if (e.key.match(/[+-]/)) {
+                    that.$element.trigger($.Event('plusminusdown', { key: e.key }));
+                    e.preventDefault();
+                    return false;
                 }
             })
         ;

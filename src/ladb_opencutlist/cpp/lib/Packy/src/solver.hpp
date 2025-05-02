@@ -758,6 +758,10 @@ namespace Packy {
 
             using namespace rectangleguillotine;
 
+            if (j.contains("use_column_generation_2")) {
+                parameters_.use_column_generation_2 = j["use_column_generation_2"].get<bool>();
+            }
+
             if (j.contains("number_of_stages")) {
                 instance_builder_.set_number_of_stages(j["number_of_stages"].get<Counter>());
             }
@@ -1160,8 +1164,8 @@ namespace Packy {
 
     private:
 
-        Length keep_width_ = 0;
-        Length keep_height_ = 0;
+        Length keep_width_ = std::numeric_limits<Length>::max();
+        Length keep_height_ = std::numeric_limits<Length>::max();
 
     };
 

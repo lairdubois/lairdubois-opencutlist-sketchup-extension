@@ -83,8 +83,8 @@ module Ladb::OpenCutList
       @rectangleguillotine_cut_type = _def.rectangleguillotine_cut_type
       @rectangleguillotine_first_stage_orientation = _def.rectangleguillotine_first_stage_orientation
       @rectangleguillotine_number_of_stages = _def.rectangleguillotine_number_of_stages
-      @rectangleguillotine_keep_length = _def.rectangleguillotine_keep_length.to_l.to_s
-      @rectangleguillotine_keep_width = _def.rectangleguillotine_keep_width.to_l.to_s
+      @rectangleguillotine_keep_length = _def.rectangleguillotine_keep_length.nil? ? nil : _def.rectangleguillotine_keep_length.to_l.to_s
+      @rectangleguillotine_keep_width = _def.rectangleguillotine_keep_width.nil? ? nil : _def.rectangleguillotine_keep_width.to_l.to_s
 
       @irregular_allowed_rotations = _def.irregular_allowed_rotations
       @irregular_allow_mirroring = _def.irregular_allow_mirroring

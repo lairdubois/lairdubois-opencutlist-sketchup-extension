@@ -247,6 +247,7 @@ module Ladb::OpenCutList
                    rectangleguillotine_cut_type: Packy::RECTANGLEGUILLOTINE_CUT_TYPE_NON_EXACT,
                    rectangleguillotine_number_of_stages: 3,
                    rectangleguillotine_first_stage_orientation: 'horizontal',
+                   rectangleguillotine_keep_size: '',
                    rectangleguillotine_keep_length: '100mm',
                    rectangleguillotine_keep_width: '100mm',
 
@@ -292,8 +293,7 @@ module Ladb::OpenCutList
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_number_of_stages = [ [ 2, rectangleguillotine_number_of_stages.to_i ].max, 3 ].min
       @rectangleguillotine_first_stage_orientation = rectangleguillotine_first_stage_orientation
-      @rectangleguillotine_keep_length = DimensionUtils.str_to_ifloat(rectangleguillotine_keep_length).to_l.to_f
-      @rectangleguillotine_keep_width = DimensionUtils.str_to_ifloat(rectangleguillotine_keep_width).to_l.to_f
+      @rectangleguillotine_keep_length, @rectangleguillotine_keep_width = DimensionUtils.dxd_to_ifloats(rectangleguillotine_keep_size).split(DimensionUtils::DXD_SEPARATOR).compact.map { |s| s.strip.to_l.to_f }
 
       @irregular_allowed_rotations = irregular_allowed_rotations.to_s
       @irregular_allow_mirroring = irregular_allow_mirroring
@@ -507,10 +507,10 @@ module Ladb::OpenCutList
             cut_type: @rectangleguillotine_cut_type,
             cut_thickness: _to_packy_length(@spacing),
             number_of_stages: @rectangleguillotine_number_of_stages,
-            first_stage_orientation: @rectangleguillotine_first_stage_orientation,
-            keep_width: _to_packy_length(@rectangleguillotine_keep_length),
-            keep_height: _to_packy_length(@rectangleguillotine_keep_width)
+            first_stage_orientation: @rectangleguillotine_first_stage_orientation
           }
+          instance_parameters.merge!({ keep_width: _to_packy_length(@rectangleguillotine_keep_length) }) unless @rectangleguillotine_keep_length.nil?
+          instance_parameters.merge!({ keep_height: _to_packy_length(@rectangleguillotine_keep_width) }) unless @rectangleguillotine_keep_width.nil?
         elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
           parameters.merge!(
             {

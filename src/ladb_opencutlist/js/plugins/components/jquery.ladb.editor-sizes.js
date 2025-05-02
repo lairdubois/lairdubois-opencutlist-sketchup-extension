@@ -113,6 +113,18 @@
                 that.updateVal();
 
             })
+            .on('plusminusdown', function (e) {
+                if (e.key === '+') {
+                    that.appendRow({}, { autoFocus: that.availableSizeDefs === null, autoFill: that.availableSizeDefs !== null });
+                    e.preventDefault();
+                    return false;
+                } else if (e.key === '-') {
+                    that.removeRow($row.index());
+                    $('input[type="hidden"]', that.$rows.children().last()).ladbTextinputSize('focus');
+                    e.preventDefault();
+                    return false;
+                }
+            })
         ;
         if (options.autoFocus) {
             $input.ladbTextinputSize('focus');

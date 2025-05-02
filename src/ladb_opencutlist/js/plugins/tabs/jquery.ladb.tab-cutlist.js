@@ -2553,12 +2553,12 @@
     // Labels /////
 
     LadbTabCutlist.prototype.labelsAllParts = function () {
-        let partIdsWithContext = this.grabVisiblePartIdsWithContext(null, REAL_MATERIALS_FILTER);
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(null);
         this.labelsParts(partIdsWithContext.partIds, partIdsWithContext.context);
     }
 
     LadbTabCutlist.prototype.labelsGroupParts = function (groupId, binDefs, forceDefaultTab) {
-        let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId, REAL_MATERIALS_FILTER);
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId);
         this.labelsParts(partIdsWithContext.partIds, partIdsWithContext.context, binDefs, forceDefaultTab);
     }
 
@@ -5276,8 +5276,7 @@
                 const $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
                 const $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
                 const $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
-                const $inputRectangleguillotineKeepLength = $('#ladb_input_rectangleguillotine_keep_length', $modal);
-                const $inputRectangleguillotineKeepWidth = $('#ladb_input_rectangleguillotine_keep_width', $modal);
+                const $inputRectangleguillotineKeepSize = $('#ladb_input_rectangleguillotine_keep_size', $modal);
                 const $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
                 const $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
                 const $formGroupDev = $('.ladb-cutlist-packing-form-group-dev', $modal)
@@ -5319,8 +5318,7 @@
                     options.rectangleguillotine_cut_type = $selectRectangleguillotineCutType.val();
                     options.rectangleguillotine_number_of_stages = that.toInt($selectRectangleguillotineNumberOfStages.val());
                     options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
-                    options.rectangleguillotine_keep_length = $inputRectangleguillotineKeepLength.val();
-                    options.rectangleguillotine_keep_width = $inputRectangleguillotineKeepWidth.val();
+                    options.rectangleguillotine_keep_size = $inputRectangleguillotineKeepSize.val();
                     options.irregular_allowed_rotations = $selectIrregularAllowedRotations.val();
                     options.irregular_allow_mirroring = $selectIrregularAllowMirroring.val() === '1';
                     options.spacing = $inputSpacing.val();
@@ -5342,8 +5340,7 @@
                     $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
                     $selectRectangleguillotineNumberOfStages.selectpicker('val', options.rectangleguillotine_number_of_stages);
                     $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
-                    $inputRectangleguillotineKeepLength.val(options.rectangleguillotine_keep_length);
-                    $inputRectangleguillotineKeepWidth.val(options.rectangleguillotine_keep_width);
+                    $inputRectangleguillotineKeepSize.ladbTextinputSize('val', options.rectangleguillotine_keep_size);
                     $selectIrregularAllowedRotations.selectpicker('val', fnValidIrregularAllowedRotations(options.irregular_allowed_rotations));
                     $selectIrregularAllowMirroring.selectpicker('val', options.irregular_allow_mirroring ? '1' : '0');
                     $inputSpacing.val(options.spacing);
@@ -5453,8 +5450,14 @@
                 $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineNumberOfStages.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputRectangleguillotineKeepLength.ladbTextinputDimension();
-                $inputRectangleguillotineKeepWidth.ladbTextinputDimension();
+                $inputRectangleguillotineKeepSize.ladbTextinputSize({
+                    resetValue: '',
+                    d1Placeholder: i18next.t('default.length'),
+                    d2Placeholder: i18next.t('default.width'),
+                    qDisabled: true,
+                    qHidden: true,
+                    dSeparatorLabel: 'x'
+                });
                 $selectIrregularAllowedRotations.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputSpacing.ladbTextinputDimension();
@@ -5876,6 +5879,7 @@
                                     that.hideGroup($group, true);
                                 }
                                 $(this).blur();
+                                return false;
                             });
                             $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
                                 const $group = $(this).parents('.ladb-cutlist-group');
@@ -5894,10 +5898,10 @@
                                 return false;
                             });
                             $('a.ladb-btn-highlight-part', $slide).on('click', function () {
-                                $(this).blur();
                                 const $part = $(this).parents('.ladb-cutlist-row');
                                 const partId = $part.data('part-id');
                                 that.highlightPart(partId);
+                                $(this).blur();
                                 return false;
                             });
                             $('a.ladb-btn-scrollto', $slide).on('click', function () {
@@ -5910,7 +5914,9 @@
                                 return false;
                             });
                             $('a.ladb-btn-edit-material', $slide).on('click', function () {
-                                fnEditMaterial({propertiesTab: 'attributes'});
+                                fnEditMaterial({
+                                    propertiesTab: 'attributes',
+                                });
                                 $(this).blur();
                                 return false;
                             });
