@@ -358,14 +358,14 @@ module Ladb::OpenCutList
             bin_type[:type] = 'rectangle'
           end
           bin_types << bin_type
-          @bin_type_defs << BinTypeDef.new(
-            Digest::MD5.hexdigest("#{length}_#{width}_1"),
-            length,
-            width,
-            count,
-            cost,
-            std_price,
-            1 # 1 = Bin "user defined"
+          @bin_type_defs << PackingBinTypeDef.new(
+            id: Digest::MD5.hexdigest("#{length}_#{width}_1"),
+            length: length,
+            width: width,
+            count: count,
+            cost: cost,
+            std_price: std_price,
+            type: BIN_TYPE_SCRAP
           )
 
         end
@@ -399,14 +399,14 @@ module Ladb::OpenCutList
             bin_type[:type] = 'rectangle'
           end
           bin_types << bin_type
-          @bin_type_defs << BinTypeDef.new(
-            Digest::MD5.hexdigest("#{length}_#{width}_0"),
-            length,
-            width,
-            -1,
-            cost,
-            std_price,
-            0 # 0 = Bin "Standard"
+          @bin_type_defs << PackingBinTypeDef.new(
+            id: Digest::MD5.hexdigest("#{length}_#{width}_0"),
+            length: length,
+            width: width,
+            count: -1,
+            cost: cost,
+            std_price: std_price,
+            type: BIN_TYPE_STD
           )
 
         end
@@ -461,13 +461,13 @@ module Ladb::OpenCutList
 
           end
 
-          @item_type_defs << ItemTypeDef.new(
-            length,
-            width,
-            count,
-            part,
-            projection_def,
-            @colorization > COLORIZATION_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil
+          @item_type_defs << PackingItemTypeDef.new(
+            length: length,
+            width: width,
+            count: count,
+            part: part,
+            projection_def: projection_def,
+            color: @colorization > COLORIZATION_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil
           )
 
         }
@@ -759,25 +759,6 @@ module Ladb::OpenCutList
 
     def _from_packy_length(l)
       l.to_l
-    end
-
-    def _compute_bin_type_cost(group, inch_length = 0, inch_width = 0, inch_thickness = 0)
-      std_price = nil
-      cost = -1
-      if (material_attributes = _get_material_attributes(group.material_name)).has_std_prices?
-
-        inch_thickness = group.def.std_thickness if inch_thickness == 0
-        inch_width = group.def.std_width if inch_width == 0
-
-        dim = material_attributes.compute_std_dim(inch_length, inch_width, inch_thickness)
-        unless dim.nil?
-          std_price = _get_std_price(dim, material_attributes)
-          price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], inch_thickness, inch_width, inch_length)
-          cost = (inch_length * inch_width * inch_thickness * price_per_inch3).round(2)
-        end
-
-      end
-      [ cost, std_price ]
     end
 
     def _render_bin_def_svg(bin_def, light = false, longest_bin_def = nil, widest_bin_def = nil)
@@ -1128,10 +1109,24 @@ module Ladb::OpenCutList
       [ width, size ]
     end
 
-    # -----
+    def _compute_bin_type_cost(group, inch_length = 0, inch_width = 0, inch_thickness = 0)
+      std_price = nil
+      cost = -1
+      if (material_attributes = _get_material_attributes(group.material_name)).has_std_prices?
 
-    BinTypeDef = Struct.new(:id, :length, :width, :count, :cost, :std_price, :type)
-    ItemTypeDef = Struct.new(:length, :width, :count, :part, :projection_def, :color)
+        inch_thickness = group.def.std_thickness if inch_thickness == 0
+        inch_width = group.def.std_width if inch_width == 0
+
+        dim = material_attributes.compute_std_dim(inch_length, inch_width, inch_thickness)
+        unless dim.nil?
+          std_price = _get_std_price(dim, material_attributes)
+          price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], inch_thickness, inch_width, inch_length)
+          cost = (inch_length * inch_width * inch_thickness * price_per_inch3).round(2)
+        end
+
+      end
+      [ cost, std_price ]
+    end
 
   end
 

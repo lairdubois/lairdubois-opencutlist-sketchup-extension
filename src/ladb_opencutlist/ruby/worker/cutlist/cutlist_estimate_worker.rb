@@ -339,7 +339,7 @@ module Ladb::OpenCutList
           bin_type_def = packing_bin.def.bin_type_def
 
           # Only standard bin uses dim volumic mass and prices
-          if packing_bin.type == 0
+          if packing_bin.type == BIN_TYPE_STD
             dim = @material_attributes.compute_std_dim(bin_type_def.length, bin_type_def.width, @cutlist_group.def.std_thickness)
           else
             dim = nil

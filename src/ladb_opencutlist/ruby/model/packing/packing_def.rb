@@ -189,6 +189,38 @@ module Ladb::OpenCutList
 
   # -----
 
+  BIN_TYPE_STD    = 0
+  BIN_TYPE_SCRAP  = 1
+
+  class PackingBinTypeDef < DataContainer
+
+    attr_reader :id,
+                :length, :width,
+                :cost,
+                :std_price,
+                :type
+
+    def initialize(id:,
+                   length:, width:,
+                   count:,
+                   cost:,
+                   std_price:,
+                   type: BIN_TYPE_STD)
+
+      @id = id
+      @length = length
+      @width = width
+      @count = count
+      @cost = cost
+      @std_price = std_price
+      @type = type
+
+    end
+
+  end
+
+  # -----
+
   class PackingBinDef < DataContainer
 
     attr_reader :bin_type_def,
@@ -237,6 +269,33 @@ module Ladb::OpenCutList
 
     def create_bin
       PackingBin.new(self)
+    end
+
+  end
+
+  # -----
+
+  class PackingItemTypeDef < DataContainer
+
+    attr_reader :length, :width,
+                :count,
+                :part,
+                :projection_def,
+                :color
+
+    def initialize(length:, width:,
+                   count:,
+                   part:,
+                   projection_def:,
+                   color:)
+
+      @length = length
+      @width = width
+      @count = count
+      @part = part
+      @projection_def = projection_def
+      @color = color
+
     end
 
   end
