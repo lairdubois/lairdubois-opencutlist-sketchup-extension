@@ -62,10 +62,13 @@ bool on_segment(
         const std::pair<Point, Point>& segment,
         const Point& point)
 {
-    return segment.second.x <= std::fmax(segment.first.x, point.x)
-           && segment.second.x >= std::fmin(segment.first.x, point.x)
-           && segment.second.y <= std::fmax(segment.first.y, point.y)
-           && segment.second.y >= std::fmin(segment.second.y, point.y);
+    if (point.x > std::fmax(segment.first.x, segment.second.x)
+           || point.x < std::fmin(segment.first.x, segment.second.x)
+           || point.y > std::fmax(segment.first.y, segment.second.y)
+           || point.y < std::fmin(segment.first.y, segment.second.y))
+            return false;
+
+    return equal(cross_product(segment.second - segment.first, segment.second - point), 0.0);
 }
 
 /**
