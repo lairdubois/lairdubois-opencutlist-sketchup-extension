@@ -3,13 +3,17 @@
         <div class="ladb-handle"><i class="ladb-opencutlist-icon-reorder"></i></div>
     </div>
     <div class="col-xs-6">
-        <select class="ladb-editor-std-attributes-select-dim form-control" title="{{ 'tab.materials.edit_material.std_attributes_dim_placeholder'|i18next }}"">
+        <select class="ladb-editor-std-attributes-select-dim form-control" title="{{ 'tab.materials.edit_material.std_attributes_dim_placeholder'|i18next }}">
             {% for stdAK, stdAV in stdsA %}
-                {% if stdsB|length > 1 and not loop.first %}<option data-divider="true">{% endif %}
-                {% for stdBK, stdBV in stdsB %}
-                    {% set dim = stdAV~';'~stdBV %}
-                    <option data-content="<span class='std-a'>{{ stdAK|escape('html') }}</span>{% if stdBK|length > 0 %}<span class='std-b ladb-horizontal-left-separator'>{{ stdBK|escape('html') }}</span>{% endif %}"{% if stdPrice.dim == dim %} selected{% endif %}>{{ dim }}</option>
-                {% endfor %}
+                {% if not loop.first and stdsB|length > 0 %}<option data-divider="true"></option>{% endif %}
+                {% set dim = stdAV~';' %}
+                <option data-content="<span class='std-a'>{{ stdAK|escape('html') }}</span>"{% if stdPrice.dim == dim %} selected{% endif %}>{{ dim }}</option>
+                {% if stdsB|length > 0 %}
+                    {% for stdBK, stdBV in stdsB %}
+                        {% set dim = stdAV~';'~stdBV %}
+                        <option data-content="<span class='std-a'>{{ stdAK|escape('html') }}</span>{% if stdBK|length > 0 %}<span class='std-b ladb-horizontal-left-separator'>{{ stdBK|escape('html') }}</span>{% endif %}"{% if stdPrice.dim == dim %} selected{% endif %}>{{ dim }}</option>
+                    {% endfor %}
+                {% endif %}
             {% endfor %}
         </select>
     </div>

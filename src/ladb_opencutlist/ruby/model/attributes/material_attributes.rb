@@ -408,7 +408,7 @@
 
       # Returns an array like [ { :unit => STRING_UNIT, :val => FLOAT }, { :unit => STRING_UNIT, :val => FLOAT , :dim => [ LENGTH or SIZE, ... ]}, ... ]
 
-      # Setup return array with default value first
+      # Setup return array with the default value first
       std_uvd = [ { unit: nil, :val => 0.0 } ]
 
       if std_vd.is_a?(Array)
@@ -425,15 +425,31 @@
             a = std_attribute['dim'].split(';')
             case @type
             when TYPE_SOLID_WOOD
-              dim = [ a[0].to_f.to_l ] if a.length>= 1                                                    # Thickness
+              if a.length>= 1
+                dim = [ a[0].to_f.to_l ]                                                  # Thickness
+              end
             when TYPE_SHEET_GOOD
-              dim = [ a[0].to_f.to_l, Size2d.new(a[1].split('x').map { |l| l.to_f }) ] if a.length >= 2   # Thickness, Size
+              if a.length >= 2
+                dim = [ a[0].to_f.to_l, Size2d.new(a[1].split('x').map { |l| l.to_f }) ]  # Thickness, Size
+              elsif a.length >= 1
+                dim = [ a[0].to_f.to_l ]                                                  # Thickness
+              end
             when TYPE_DIMENSIONAL
-              dim = [ Section.new(a[0].split('x').map { |l| l.to_f }), a[1].to_f.to_l ] if a.length >= 2  # Section, Length
+              if a.length >= 2
+                dim = [ Section.new(a[0].split('x').map { |l| l.to_f }), a[1].to_f.to_l ] # Section, Length
+              elsif a.length >= 1
+                dim = [ Section.new(a[0].split('x').map { |l| l.to_f }) ]                 # Section
+              end
             when TYPE_EDGE
-              dim = [ a[0].to_f.to_l, a[1].to_f.to_l ] if a.length >= 2                                   # Width, Length
+              if a.length >= 2
+                dim = [ a[0].to_f.to_l, a[1].to_f.to_l ]                                  # Width, Length
+              elsif a.length >= 1
+                dim = [ a[0].to_f.to_l ]                                                  # Width
+              end
             when TYPE_VENEER
-              dim = [ Size2d.new(a[0].split('x').map { |l| l.to_f }) ] if a.length >= 1                   # Size
+              if a.length>= 1
+                dim = [ Size2d.new(a[0].split('x').map { |l| l.to_f }) ]                  # Size
+              end
             end
             if dim.length > 0
               unit, val = UnitUtils.split_unit_and_value(std_attribute['val'])

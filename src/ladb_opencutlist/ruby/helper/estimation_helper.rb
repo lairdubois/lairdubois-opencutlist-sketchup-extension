@@ -21,11 +21,23 @@ module Ladb::OpenCutList
 
       h_std_prices = material_attributes.h_std_prices
       unless dim.nil?
+
+        # Try full dim
         h_std_prices.each do |std_price|
           return std_price if std_price[:dim] == dim
         end
+
+        # Try with only the first value of dim is possible
+        if dim.is_a?(Array) && dim.length > 1
+          dim = [ dim.first ]
+          h_std_prices.each do |std_price|
+            return std_price if std_price[:dim] == dim
+          end
+        end
+
       end
 
+      # Use default price
       h_std_prices.first
     end
 

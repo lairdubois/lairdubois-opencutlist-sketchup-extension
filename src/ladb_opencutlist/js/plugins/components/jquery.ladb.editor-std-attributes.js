@@ -285,7 +285,7 @@
                         responseB[k] = v
                     }
                 });
-                that.stdsB = Object.keys(responseB).length === 0 ? { '':'' } : responseB;
+                that.stdsB = Object.keys(responseB).length === 0 ? {} : responseB;
 
                 // Render rows
                 that.renderRows();

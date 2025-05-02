@@ -24,12 +24,13 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added handle to manually reorder material prices list
   * Added an option to customize group sorting
   * Changed solid wood coefficient from estimate params to material attributes
-  * Improved export drawing to Layout : adding capability to add in a new page of an existing file
+  * Improved export drawing to Layout : adding ability to add in a new page of an existing file
   * Improved labels formulas
   * Improved smart tools picker
   * Improved surface detection
   * Improved Material import from SKM (allows new or replace)
   * Improved Layout feature to be able to align on active view axes
+  * Improved Material price attributes to add the ability to set price for thickness or section
   * Replaced Highlight Part Tool with Smart Axes Tool
   * Fixed face untyped material removing when editing sheet good part properties
 
