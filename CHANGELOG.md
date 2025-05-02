@@ -24,7 +24,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added handle to manually reorder material prices list
   * Added an option to customize group sorting
   * Changed solid wood coefficient from estimate params to material attributes
-  * Improved export drawing to Layout : adding ability to add in a new page of an existing file
+  * Improved export drawing to Layout : adding the ability to add in a new page of an existing file
   * Improved labels formulas
   * Improved smart tools picker
   * Improved surface detection
@@ -46,9 +46,9 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Added **Vietnamese** language
   * Improved part shape 2D projection when using cuts opening components
-  * Fixed SVG/DXF cutting diagram export when part number are numeric
+  * Fixed SVG/DXF cutting diagram export when part numbers are numeric
   * Fixed cutting diagram bug
-  * Fixed SketchUp defaults read when exception occurs
+  * Fixed SketchUp defaults read when an exception occurs
 
 * 6.2.0 (2024-03-22)
 
