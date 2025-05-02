@@ -569,8 +569,8 @@ tab:
         Rendezze át, rejtse el, adjon hozzá, távolítson el vagy válasszon oszlopot a listából a **cím** és a **képlet** testreszabásához, amely minden exportált sorhoz értékeket generál.
       add_column: Oszlop hozzáadása
       add_native_columns: Natív oszlop hozzáadása
-      remove_column: $t(default.remove)
-      remove_all_columns: $t(default.remove_all)
+      remove_column: Eltávolítás
+      remove_all_columns: Összes eltávolítása
       columns: Oszlopok
       column_title: Cím
       column_title_help: |
@@ -916,8 +916,8 @@ tab:
       options_offset: Eltolás
       size: Címke valós mérete
       add_element: Elem hozzáadása
-      remove_element: $t(default.remove)
-      remove_all_elements: $t(default.remove_all)
+      remove_element: Eltávolítás
+      remove_all_elements: Összes eltávolítása
       part_order_strategy_help: |
         Rendezze át a csempéket a címkék sorrendjének meghatározásához.
         A tulajdonságok <i class="ladb-opencutlist-icon-sort-asc"></i> *növekvő* vagy <i class="ladb-opencutlist-icon-sort-desc"></i> *csökkenő* sorrendbe rendezhetők.
@@ -1096,7 +1096,7 @@ tab:
       option_anchor_help: |
         Engedélyezi az alkatrész tengelyének origóját mint referenciapontot.
       option_smoothing: Simítás
-      option_smoothing_0: $t(default.no)
+      option_smoothing_0: Nincs
       option_smoothing_1: Körök és ívek simítása (Kísérleti)
       option_smoothing_help: |
         Válassza ki, hogy a körök és ívek felismerésre kerüljenek-e.
@@ -1112,7 +1112,7 @@ tab:
         **Körvonal + Furatok + Egyesítés**
         Aktiválja az alkatrészek külső körvonalának elválasztását a furataitól, valamint az egyes üregek mélységeinek egyesítését.
       option_include_paths: Útvonalak
-      option_include_paths_0: $t(default.no)
+      option_include_paths_0: Nincs
       option_include_paths_1: Felülethez nem kapcsolódó élek használata
       option_include_paths_help: |
         Lehetővé teszi az alkatrészben található, felülethez nem kapcsolódó élek használatát útvonalként való exportáláshoz.
@@ -1522,10 +1522,10 @@ tab:
     model_settings: Modell beállítások
     length_unit: Hosszmértékegység
     length_format: Formátum
-    length_format_0: $t(default.decimal)
+    length_format_0: Tizedes
     length_format_1: Építészeti
     length_format_2: Mérnöki
-    length_format_3: $t(default.fractional)
+    length_format_3: Törtszámos
     length_precision: Pontosság
     suppress_units_display: Hosszmértékegység megjelenítése minden értéknél
     mass_unit: Tömeg mértékegység

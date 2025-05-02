@@ -266,17 +266,17 @@ tab:
         205 - Add cross section *{{ std_dimension }}*
         to material '{{ material_name }}'
       rounded_std_width: |
-        The width *{{ std_dimension }}* is rounded by the precision of the model units.
+        206 - The width *{{ std_dimension }}* is rounded by the precision of the model units.
         Actual width: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
-        The thickness *{{ std_dimension }}* is rounded by the precision of the model units.
+        207 - The thickness *{{ std_dimension }}* is rounded by the precision of the model units.
         Actual thickness: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
-        The cross section *{{ std_dimension }}* is rounded by the precision of the model units.
+        208 - The cross section *{{ std_dimension }}* is rounded by the precision of the model units.
         Actual cross section: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
@@ -375,7 +375,7 @@ tab:
       title_multiple: 296 - Properties of the Parts Group
       multiple_alert: 297 - Shared properties of {{ part_count }} parts group.
       general: 298 - General
-      extra_help: List of properties specific to the type of material "**$t(tab.materials.type_{{ material_type }})**".
+      extra_help: 299 - List of properties specific to the type of material "**$t(tab.materials.type_{{ material_type }})**".
       edges: 300 - Edges
       faces: 301 - Faces
       name: 302 - Name
@@ -506,8 +506,8 @@ tab:
       hide_faces_help: 384 - If this option is selected, the **face columns** of parts of type *Sheet Goods* will not be displayed.
       hide_material_colors: 385 - Hide material colors
       hide_material_colors_help: 386 - If this option is selected, the material colors will not be displayed.
-      minimize_on_highlight: Minimize after *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used.
+      minimize_on_highlight: 387 - Minimize after *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: 388 - If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.cutlist.highlight_part)'* is used.
       general: 389 - General
       part_order_strategy: 390 - Part Sorting
       part_order_strategy_help: |
@@ -644,8 +644,8 @@ tab:
         509 - Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts on the *Parts List*.
       options_general: 510 - General
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: Waste ratio for *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: Factor to multiply the rough volume of material of type "**$t(tab.materials.type_1)**" to account for defects and waste.
+      option_solid_wood_coefficient: 512 - Waste ratio for *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: 513 - Factor to multiply the rough volume of material of type "**$t(tab.materials.type_1)**" to account for defects and waste.
       raw_materials: 514 - Raw materials
       coefficient: 515 - Coefficient
       total: 516 - Total
@@ -661,7 +661,7 @@ tab:
       tooltip:
         incompatible_unit: 526 - Incompatible unit with material estimation options
       error:
-        no_typed_material_parts: No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** or **$t(tab.materials.type_5)**) has been provided to generate the estimate.
+        no_typed_material_parts: 527 - No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** or **$t(tab.materials.type_5)**) has been provided to generate the estimate.
         entry_error: '528 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**.'
         entry_error_plural: '529 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**.'
       warning:
@@ -755,7 +755,7 @@ tab:
       option_std_bar_dimensional: 609 - Standard Dimensional
       option_std_bar_edge: 610 - Standard Edge Band
       option_std_bar_help: |
-        Select the standard board or edge banding, which will be duplicated to contain all the parts.
+        611 - Select the standard board or edge banding, which will be duplicated to contain all the parts.
         This list is defined in the field **$t(tab.materials.edit_material.std_lengths)** of the material.
         Edit the material '{{ material_name }}' to update this list.
       option_std_bar_add: 612 - Add a length
@@ -771,7 +771,7 @@ tab:
       option_std_sheet_good: 618 - Standard Panel
       option_std_sheet_veneer: 619 - Standard Veneer
       option_std_sheet_help: |
-        Select the standard panel or veneer sheet which will be duplicated to calculate the best possible placement.
+        620 - Select the standard panel or veneer sheet which will be duplicated to calculate the best possible placement.
         This list is defined by the **$t(tab.materials.edit_material.std_sizes)** field of the material.
         Edit the material '{{ material_name }}' to complete this list.
       option_std_sheet_add: 621 - Add a length
@@ -1146,8 +1146,8 @@ tab:
       obsolete_cutlist: 926 - Impossible, the parts list is obsolete. Please, regenerate it.
     warning:
       is_entity_selection: 927 - Only the selected parts in your model have been taken into account.
-      no_typed_materials_in_model: Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: The selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
+      no_typed_materials_in_model: 928 - Your model does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 929 - The selection does not use any defined material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**).
       export_empty: 930 - Your export selection does not contain any part.
     success:
       part_selected: 931 - {{ count }} part selected in the Parts List.
@@ -1157,7 +1157,7 @@ tab:
         933 - The parts to be included in the *parts list* must be instances of a **component**.
         If you use only groups, convert them into components.
         The use of components makes it possible to replicate identical parts without duplicating them.
-      no_typed_materials: Apply a material to the parts to be included in the parts list and define the properties of this material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
+      no_typed_materials: 934 - Apply a material to the parts to be included in the parts list and define the properties of this material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** or **$t(tab.materials.type_5)**) on the tab <i class="ladb-opencutlist-icon-materials"></i> **Materials**.
     obsolete_base: 935 - To stay in sync, you need to refresh the parts list.
   materials:
     label: 936 - Materials
@@ -1171,13 +1171,13 @@ tab:
     type_5: 944 - Hardware
     type_6: 945 - Veneer
     tooltip:
-      type_0: Material type '$t(tab.materials.type_0)'
-      type_1: Material type '$t(tab.materials.type_1)'
-      type_2: Material type '$t(tab.materials.type_2)'
-      type_3: Material type '$t(tab.materials.type_3)'
-      type_4: Material type '$t(tab.materials.type_4)'
-      type_5: Material type '$t(tab.materials.type_5)'
-      type_6: Material type '$t(tab.materials.type_6)'
+      type_0: 946 - Material type '$t(tab.materials.type_0)'
+      type_1: 947 - Material type '$t(tab.materials.type_1)'
+      type_2: 948 - Material type '$t(tab.materials.type_2)'
+      type_3: 949 - Material type '$t(tab.materials.type_3)'
+      type_4: 950 - Material type '$t(tab.materials.type_4)'
+      type_5: 951 - Material type '$t(tab.materials.type_5)'
+      type_6: 952 - Material type '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: 955 - Grain orientation
@@ -1623,9 +1623,9 @@ tool:
     action_0: 1247 - Paint parts
     action_0_status: 1248 - Click on a part to paint its instance
     action_1: 1249 - Paint edges
-    action_1_status: Click on a panel edge to apply material '$t(tab.materials.type_4)'
+    action_1_status: 1250 - Click on a panel edge to apply material '$t(tab.materials.type_4)'
     action_2: 1251 - Paint faces
-    action_2_status: Click on a panel face to apply material '$t(tab.materials.type_6)'
+    action_2_status: 1252 - Click on a panel face to apply material '$t(tab.materials.type_6)'
     action_3: 1253 - Sample
     action_3_status: 1254 - Click on a face to sample its material
     action_4: 1255 - Clean

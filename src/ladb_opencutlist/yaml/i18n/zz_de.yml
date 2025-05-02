@@ -266,17 +266,17 @@ tab:
         205 - Querschnitt *{{ std_dimension }}*
         dem Material '{{ material_name }}' hinzufügen
       rounded_std_width: |
-        Die Breite *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
+        206 - Die Breite *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
         Tatsächliche Breite: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_thickness: |
-        Die Dicke *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
+        207 - Die Dicke *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
         Tatsächliche Dicke: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
       rounded_std_section: |
-        Der Querschnitt *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
+        208 - Der Querschnitt *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
         Tatsächlicher Querschnitt: *{{ std_dimension_real }}*
         ---
         $t(tab.cutlist.tooltip.rounded_std_footer)
@@ -375,7 +375,7 @@ tab:
       title_multiple: 296 - Eigenschaften der Gruppe von Teilen
       multiple_alert: 297 - Gemeinsame Eigenschaften von {{ part_count }} Teilen.
       general: 298 - Allgemein
-      extra_help: Liste der materialtypspezifischen Eigenschaften "**$t(tab.materials.type_{{ material_type }})**".
+      extra_help: 299 - Liste der materialtypspezifischen Eigenschaften "**$t(tab.materials.type_{{ material_type }})**".
       edges: 300 - Kantenbänder
       faces: 301 - Flächen
       name: 302 - Name
@@ -506,8 +506,8 @@ tab:
       hide_faces_help: 384 - Ist diese Option aktiv, werden die **Spalten der Flächen** von Teilen des Typs *Platte* nicht angezeigt.
       hide_material_colors: 385 - Farben der Materialien verbergen
       hide_material_colors_help: 386 - Ist diese Option aktiv, werden die Farben der Materialien angezeigt.
-      minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: Ist diese Option aktiv, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird.
+      minimize_on_highlight: 387 - Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: 388 - Ist diese Option aktiv, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird.
       general: 389 - Allgemein
       part_order_strategy: 390 - Teile-Sortierung
       part_order_strategy_help: |
@@ -644,8 +644,8 @@ tab:
         509 - Erstellung eine Kalkulation der **Massen** und der **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden.
       options_general: 510 - Allgemein
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: Faktor für *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: Beziffert den Faktor, der auf das Bruttovolumen für Materialien vom Typ "**$t(tab.materials.type_1)**" angewendet wird, um den Verschnitt zu berücksichtigen.
+      option_solid_wood_coefficient: 512 - Faktor für *$t(tab.materials.type_1)*
+      option_solid_wood_coefficient_help: 513 - Beziffert den Faktor, der auf das Bruttovolumen für Materialien vom Typ "**$t(tab.materials.type_1)**" angewendet wird, um den Verschnitt zu berücksichtigen.
       raw_materials: 514 - Rohmaterial
       coefficient: 515 - Koeffizient
       total: 516 - Total
@@ -661,7 +661,7 @@ tab:
       tooltip:
         incompatible_unit: 526 - Einheit nicht kompatibel mit den Schätzoptionen des Materials
       error:
-        no_typed_material_parts: Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um die Kalkulation zu generieren.
+        no_typed_material_parts: 527 - Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um die Kalkulation zu generieren.
         entry_error: '528 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**.'
         entry_error_plural: '529 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**.'
       warning:
@@ -755,7 +755,7 @@ tab:
       option_std_bar_dimensional: 609 - Standard-Stange
       option_std_bar_edge: 610 - Standard-Kantenband
       option_std_bar_help: |
-        Wählen Sie hier die Standardstangenware oder das Standardkantenband, welche dupliziert werden um alle Teile zu enthalten.
+        611 - Wählen Sie hier die Standardstangenware oder das Standardkantenband, welche dupliziert werden um alle Teile zu enthalten.
         Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
         Editieren Sie das Material '{{ material_name }}' um diese Liste zu aktualisieren.
       option_std_bar_add: 612 - Länge hinzufügen
@@ -771,7 +771,7 @@ tab:
       option_std_sheet_good: 618 - Standard-Platte
       option_std_sheet_veneer: 619 - Standard-Furnierblatt
       option_std_sheet_help: |
-        Wählen Sie die Standard-Platte oder das Standard-Furnierblatt, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
+        620 - Wählen Sie die Standard-Platte oder das Standard-Furnierblatt, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
         Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
         Bearbeiten Sie das Material '{{ material_name }}' um diese Liste zu ergänzen.
       option_std_sheet_add: 621 - Länge hinzufügen
@@ -1146,8 +1146,8 @@ tab:
       obsolete_cutlist: 926 - Unmöglich, die Holzliste ist nicht mehr aktuell. Bitte, aktualisieren Sie sie.
     warning:
       is_entity_selection: 927 - Nur die in Ihrem Modell ausgewählten Teile wurden berücksichtigt.
-      no_typed_materials_in_model: Ihr Modell verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: Ihre Auswahl verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**).
+      no_typed_materials_in_model: 928 - Ihr Modell verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 929 - Ihre Auswahl verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**).
       export_empty: 930 - Ihre Exportauswahl enthält keine Teile.
     success:
       part_selected: 931 - {{ count }} ausgewähltes Teil aus der Holzliste.
@@ -1157,7 +1157,7 @@ tab:
         933 - Zur Berücksichtigung in der *Holzliste* müssen die Teile Instanzen einer **Komponente** sein.
         Falls Sie ausschliesslich Gruppen verwenden, müssen Sie diese in Komponenten konvertieren.
         Durch die Verwendung von Komponenten können Teile repliziert werden ohne sie zu kopieren.
-      no_typed_materials: Tragen Sie ein Material auf die Teile auf, die Sie in Ihrer Holzliste sehen möchten und definieren Sie den Typ dieses Materials (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**) im Tab <i class="ladb-opencutlist-icon-materials"></i> **Materialien**.
+      no_typed_materials: 934 - Tragen Sie ein Material auf die Teile auf, die Sie in Ihrer Holzliste sehen möchten und definieren Sie den Typ dieses Materials (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**) im Tab <i class="ladb-opencutlist-icon-materials"></i> **Materialien**.
     obsolete_base: 935 - Um synchron zu bleiben, müssen Sie die Holzliste neu generieren.
   materials:
     label: 936 - Materialien
@@ -1171,13 +1171,13 @@ tab:
     type_5: 944 - Zubehör
     type_6: 945 - Furnier
     tooltip:
-      type_0: Materialtyp '$t(tab.materials.type_0)'
-      type_1: Materialtyp '$t(tab.materials.type_1)'
-      type_2: Materialtyp '$t(tab.materials.type_2)'
-      type_3: Materialtyp '$t(tab.materials.type_3)'
-      type_4: Materialtyp '$t(tab.materials.type_4)'
-      type_5: Materialtyp '$t(tab.materials.type_5)'
-      type_6: Materialtyp '$t(tab.materials.type_6)'
+      type_0: 946 - Materialtyp '$t(tab.materials.type_0)'
+      type_1: 947 - Materialtyp '$t(tab.materials.type_1)'
+      type_2: 948 - Materialtyp '$t(tab.materials.type_2)'
+      type_3: 949 - Materialtyp '$t(tab.materials.type_3)'
+      type_4: 950 - Materialtyp '$t(tab.materials.type_4)'
+      type_5: 951 - Materialtyp '$t(tab.materials.type_5)'
+      type_6: 952 - Materialtyp '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: 955 - Faserrichtung
@@ -1625,9 +1625,9 @@ tool:
     action_0: 1247 - Teile bemalen
     action_0_status: 1248 - Klicken Sie auf ein Teil, um die Instanz einzufärben
     action_1: 1249 - Kanten bemalen
-    action_1_status: Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden
+    action_1_status: 1250 - Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden
     action_2: 1251 - Flächen bemalen
-    action_2_status: Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden
+    action_2_status: 1252 - Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden
     action_3: 1253 - Entnehmen
     action_3_status: 1254 - Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
     action_4: 1255 - Säubern
