@@ -998,8 +998,8 @@ tab:
       options_config: 805 - Configuration
       options_display: 806 - Affichage
       options_tuning: 807 - Tuning
-      option_std_bin_1d_dimensional: 808 - Barre standard
-      option_std_bin_1d_edge: 809 - Bande standard
+      option_std_bin_1d_dimensional: 808 - Barres standards
+      option_std_bin_1d_edge: 809 - Bandes standards
       option_std_bin_1d_help: |
         810 - Sélectionnez ici les tailles de la barre ou bande standard qui seront dupliquées pour contenir au mieux toutes les pièces.
 
@@ -1016,8 +1016,8 @@ tab:
 
         *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       option_scrap_bin_1d_none: 817 - Aucun
-      option_std_bin_2d_sheet_good: 818 - Panneau standard
-      option_std_bin_2d_veneer: 819 - Feuille standard
+      option_std_bin_2d_sheet_good: 818 - Panneaux standards
+      option_std_bin_2d_veneer: 819 - Feuilles standard
       option_std_bin_2d_help: |
         820 - Sélectionnez ici les tailles de panneau ou feuille standard qui seront dupliquées pour contenir au mieux toutes les pièces.
 
