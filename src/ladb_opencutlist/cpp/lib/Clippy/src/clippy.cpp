@@ -1,7 +1,5 @@
 #include "clippy.hpp"
 
-#include <sstream>
-
 using namespace Clipper2Lib;
 
 #ifdef __cplusplus
@@ -117,7 +115,7 @@ DLL_EXPORTS void c_dispose_polytree_solution(
 
 
 DLL_EXPORTS char* c_version() {
-    return (char*) CLIPPY_VERSION;
+    return const_cast<char*>(CLIPPY_VERSION);
 }
 
 #ifdef __cplusplus
