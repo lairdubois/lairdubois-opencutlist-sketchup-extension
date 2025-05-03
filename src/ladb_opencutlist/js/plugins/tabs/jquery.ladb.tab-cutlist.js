@@ -947,7 +947,7 @@
                     source: exportOptions.source,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
                     target: 'table',
-                    hidden_group_ids: that.generateOptions.hidden_group_ids
+                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids
                 }, function (response) {
 
                     if (response.errors) {
@@ -1411,7 +1411,7 @@
 
         window.requestAnimationFrame(function () {
             rubyCallCommand('cutlist_estimate_start', $.extend({
-                hidden_group_ids: that.generateOptions.hidden_group_ids
+                cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids
             }, estimateOptions), function (response) {
 
                 const steps = response.steps
@@ -1427,11 +1427,10 @@
 
                 let fnCreateSlide = function (response) {
 
-                    console.log(response);
-
                     let $slide = that.pushNewSlide('ladb_cutlist_slide_estimate', 'tabs/cutlist/_slide-estimate.twig', {
                         capabilities: that.dialog.capabilities,
                         generateOptions: that.generateOptions,
+                        estimateOptions: estimateOptions,
                         dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
                         filename: that.filename,
                         modelName: that.modelName,
@@ -1470,9 +1469,9 @@
                     $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                         const $group = $(this).parents('.ladb-cutlist-group');
                         if ($group.hasClass('no-print')) {
-                            that.showGroup($group, true);
+                            that.showGroup($group, false, false, estimateOptions, 'cutlist_estimate_options');
                         } else {
-                            that.hideGroup($group, true);
+                            that.hideGroup($group, false, false, estimateOptions, 'cutlist_estimate_options');
                         }
                         $(this).blur();
                     });
@@ -1491,12 +1490,12 @@
                         $(this).blur();
                         const $group = $(this).parents('.ladb-cutlist-group');
                         const groupId = $group.data('group-id');
-                        that.hideAllGroups(groupId, $slide, true);
+                        that.hideAllGroups(groupId, $slide, false, estimateOptions, 'cutlist_estimate_options');
                         that.scrollSlideToTarget($slide, $group, true, false);
                     });
                     $('a.ladb-item-show-all-groups', $slide).on('click', function () {
                         $(this).blur();
-                        that.showAllGroups($slide, true);
+                        that.showAllGroups($slide, false, estimateOptions, 'cutlist_estimate_options');
                     });
                     $('#ladb_item_expand_all', $slide).on('click', function () {
                         $(this).blur();
@@ -4049,12 +4048,15 @@
         return null;
     };
 
-    LadbTabCutlist.prototype.saveUIOptionsHiddenGroupIds = function () {
+    LadbTabCutlist.prototype.saveUIOptionsHiddenGroupIds = function (presetValues, presetDictionary, presetSection) {
         // TODO find a best way to save hidden IDs without saving all options
-        rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_options', values: this.generateOptions });
+        if (presetValues === undefined) presetValues = this.generateOptions
+        if (presetDictionary === undefined) presetDictionary = 'cutlist_options'
+        if (presetSection === undefined) presetSection = null
+        rubyCallCommand('core_set_model_preset', { dictionary: presetDictionary, values: presetValues, section: presetSection });
     };
 
-    LadbTabCutlist.prototype.showGroup = function ($group, doNotSaveState, doNotFlushSettings) {
+    LadbTabCutlist.prototype.showGroup = function ($group, doNotSaveState, doNotFlushSettings, presetValues, presetDictionary, presetSection) {
         const groupId = $group.data('group-id');
         const $btn = $('.ladb-btn-toggle-no-print', $group);
         const $i = $('i', $btn);
@@ -4066,18 +4068,19 @@
         $summaryRow.removeClass('ladb-mute');
 
         if (doNotSaveState === undefined || !doNotSaveState) {
-            const idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
+            if (presetValues === undefined) presetValues = this.generateOptions;
+            const idx = presetValues.hidden_group_ids.indexOf(groupId);
             if (idx !== -1) {
-                this.generateOptions.hidden_group_ids.splice(idx, 1);
+                presetValues.hidden_group_ids.splice(idx, 1);
                 if (doNotFlushSettings === undefined || !doNotFlushSettings) {
-                    this.saveUIOptionsHiddenGroupIds();
+                    this.saveUIOptionsHiddenGroupIds(presetValues, presetDictionary, presetSection);
                 }
             }
         }
 
     };
 
-    LadbTabCutlist.prototype.hideGroup = function ($group, doNotSaveState, doNotFlushSettings) {
+    LadbTabCutlist.prototype.hideGroup = function ($group, doNotSaveState, doNotFlushSettings, presetValues, presetDictionary, presetSection) {
         const groupId = $group.data('group-id');
         const $btn = $('.ladb-btn-toggle-no-print', $group);
         const $i = $('i', $btn);
@@ -4089,36 +4092,39 @@
         $summaryRow.addClass('ladb-mute');
 
         if (doNotSaveState === undefined || !doNotSaveState) {
-            const idx = this.generateOptions.hidden_group_ids.indexOf(groupId);
+            if (presetValues === undefined) presetValues = this.generateOptions;
+            const idx = presetValues.hidden_group_ids.indexOf(groupId);
             if (idx === -1) {
-                this.generateOptions.hidden_group_ids.push(groupId);
+                presetValues.hidden_group_ids.push(groupId);
                 if (doNotFlushSettings === undefined || !doNotFlushSettings) {
-                    this.saveUIOptionsHiddenGroupIds();
+                    this.saveUIOptionsHiddenGroupIds(presetValues, presetDictionary, presetSection);
                 }
             }
         }
 
     };
 
-    LadbTabCutlist.prototype.showAllGroups = function ($slide, doNotSaveState) {
+    LadbTabCutlist.prototype.showAllGroups = function ($slide, doNotFlushSettings, presetValues, presetDictionary, presetSection) {
         const that = this;
         $('.ladb-cutlist-group', $slide === undefined ? this.$page : $slide).each(function () {
-            that.showGroup($(this), doNotSaveState === undefined  ? false : doNotSaveState,true);
+            that.showGroup($(this), false,true, presetValues, presetDictionary, presetSection);
         }).promise().done( function (){
-            that.saveUIOptionsHiddenGroupIds();
+            if (!doNotFlushSettings) {
+                that.saveUIOptionsHiddenGroupIds(presetValues, presetDictionary, presetSection);
+            }
         });
     };
 
-    LadbTabCutlist.prototype.hideAllGroups = function (exceptedGroupId, $slide, doNotSaveState) {
+    LadbTabCutlist.prototype.hideAllGroups = function (exceptedGroupId, $slide, doNotFlushSettings, presetValues, presetDictionary, presetSection) {
         const that = this;
         $('.ladb-cutlist-group', $slide === undefined ? this.$page : $slide).each(function () {
             const groupId = $(this).data('group-id');
             if (exceptedGroupId && groupId !== exceptedGroupId) {
-                that.hideGroup($(this), doNotSaveState === undefined  ? false : doNotSaveState,true);
+                that.hideGroup($(this), false,true, presetValues, presetDictionary, presetSection);
             }
         }).promise().done( function (){
-            if (!doNotSaveState) {
-                that.saveUIOptionsHiddenGroupIds();
+            if (!doNotFlushSettings) {
+                that.saveUIOptionsHiddenGroupIds(presetValues, presetDictionary, presetSection);
             }
         });
     };
@@ -5249,8 +5255,10 @@
         const group = this.findGroupById(groupId);
         const isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
 
+        const section = groupId;
+
         // Retrieve cutting diagram options
-        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_packing_options', section: groupId }, function (response) {
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_packing_options', section: section }, function (response) {
 
             const packingOptions = response.preset;
 
@@ -5570,7 +5578,7 @@
                     fnFetchOptions(packingOptions);
 
                     // Store options
-                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_packing_options', values: packingOptions, section: groupId });
+                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_packing_options', values: packingOptions, section: section });
 
                     if (typeof generateCallback === 'function') {
 
@@ -5588,6 +5596,7 @@
                             let $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
                                 capabilities: that.dialog.capabilities,
                                 generateOptions: that.generateOptions,
+                                packingOptions: packingOptions,
                                 dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
                                 filename: that.filename,
                                 modelName: that.modelName,
@@ -5873,10 +5882,11 @@
                             });
                             $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
                                 const $group = $(this).parents('.ladb-cutlist-group');
+                                const groupId = $group.data('group-id');
                                 if ($group.hasClass('no-print')) {
-                                    that.showGroup($group, true);
+                                    that.showGroup($group, groupId !== 'packing_summary', false, packingOptions, 'cutlist_packing_options', section);
                                 } else {
-                                    that.hideGroup($group, true);
+                                    that.hideGroup($group, groupId !== 'packing_summary', false, packingOptions, 'cutlist_packing_options', section);
                                 }
                                 $(this).blur();
                                 return false;

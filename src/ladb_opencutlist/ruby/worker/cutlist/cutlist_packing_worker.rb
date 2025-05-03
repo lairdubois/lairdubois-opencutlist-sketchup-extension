@@ -248,11 +248,11 @@ module Ladb::OpenCutList
                    rectangleguillotine_number_of_stages: 3,
                    rectangleguillotine_first_stage_orientation: 'horizontal',
                    rectangleguillotine_keep_size: '',
-                   rectangleguillotine_keep_length: '100mm',
-                   rectangleguillotine_keep_width: '100mm',
 
                    irregular_allowed_rotations: '0',
-                   irregular_allow_mirroring: false
+                   irregular_allow_mirroring: false,
+
+                   hidden_group_ids: []
 
     )
 

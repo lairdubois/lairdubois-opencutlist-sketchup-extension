@@ -216,7 +216,7 @@ LadbAbstractTab.prototype.scrollSlideToTarget = function($slide, $target, animat
         }
         if ($slide) {
             const scrollTop = $slide.scrollTop() + $target.position().top - $('.ladb-header', $slide).outerHeight(true) - 20;
-            const highlightFn = function () {
+            const fnHighlight = function () {
                 if (onAfterHighlight) {
                     const $highlightable = $('.ladb-highlightable', $target);
                     const $effectTarget = $highlightable.length > 0 ? $highlightable.first() : $target;
@@ -224,10 +224,10 @@ LadbAbstractTab.prototype.scrollSlideToTarget = function($slide, $target, animat
                 }
             }
             if (animated) {
-                $slide.animate({ scrollTop: scrollTop }, 200).promise().then(highlightFn);
+                $slide.animate({ scrollTop: scrollTop }, 200).promise().then(fnHighlight);
             } else {
                 $slide.scrollTop(scrollTop);
-                highlightFn();
+                fnHighlight();
             }
         }
     }

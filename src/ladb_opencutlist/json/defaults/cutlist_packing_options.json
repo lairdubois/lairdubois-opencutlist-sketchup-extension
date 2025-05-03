@@ -3,7 +3,8 @@
     "std_bin_1d_sizes": 2, /* PRESETS_STORAGE_MODEL_ONLY */
     "std_bin_2d_sizes": 2, /* PRESETS_STORAGE_MODEL_ONLY */
     "scrap_bin_1d_sizes": 2, /* PRESETS_STORAGE_MODEL_ONLY */
-    "scrap_bin_2d_sizes": 2 /* PRESETS_STORAGE_MODEL_ONLY */
+    "scrap_bin_2d_sizes": 2, /* PRESETS_STORAGE_MODEL_ONLY */
+    "hidden_group_ids": 2 /* PRESETS_STORAGE_MODEL_ONLY */
   },
   "_preprocessors": {
     "std_bin_1d_sizes": 1, /* PRESETS_PREPROCESSOR_D */
@@ -38,6 +39,7 @@
     "hide_edges_preview": true,
     "time_limit": 20,
     "not_anytime_tree_search_queue_size": 16,
-    "verbosity_level": 0
+    "verbosity_level": 0,
+    "hidden_group_ids": []
   }
 }

@@ -24,15 +24,15 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
+                   cutlist_hidden_group_ids: [],
+
                    source: EXPORT_OPTION_SOURCE_CUTLIST,
                    col_sep: EXPORT_OPTION_COL_SEP_SEMICOLON,
                    encoding: EXPORT_OPTION_ENCODING_UTF8,
 
                    col_defs: {},
                    target: EXPORT_OPTION_TARGET_CSV,
-                   no_header: false,
-
-                   hidden_group_ids: []
+                   no_header: false
 
     )
 
@@ -45,7 +45,7 @@ module Ladb::OpenCutList
       @target = target
       @no_header = no_header
 
-      @hidden_group_ids = hidden_group_ids
+      @cutlist_hidden_group_ids = cutlist_hidden_group_ids
 
     end
 
@@ -166,7 +166,7 @@ module Ladb::OpenCutList
         rows << _evaluate_header unless @no_header
 
         @cutlist.groups.each do |group|
-          next if @hidden_group_ids.include?(group.id)
+          next if @cutlist_hidden_group_ids.include?(group.id)
 
           data = SummaryExportRowData.new(
 
@@ -189,7 +189,7 @@ module Ladb::OpenCutList
 
         # Content rows
         @cutlist.groups.each do |group|
-          next if @hidden_group_ids.include?(group.id)
+          next if @cutlist_hidden_group_ids.include?(group.id)
           group.parts.each do |part|
 
             parts = part.is_a?(FolderPart) ? part.children : [ part ]
@@ -258,7 +258,7 @@ module Ladb::OpenCutList
 
         # Content rows
         @cutlist.groups.each do |group|
-          next if @hidden_group_ids.include?(group.id)
+          next if @cutlist_hidden_group_ids.include?(group.id)
           next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
           next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
           group.parts.each do |part|

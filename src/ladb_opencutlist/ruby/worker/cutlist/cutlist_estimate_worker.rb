@@ -18,13 +18,15 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
+                   cutlist_hidden_group_ids: [],
+
                    hidden_group_ids: []
 
     )
 
       @cutlist = cutlist
 
-      @hidden_group_ids = hidden_group_ids
+      @cutlist_hidden_group_ids = cutlist_hidden_group_ids
 
       @estimate_def = EstimateDef.new
 
@@ -46,7 +48,7 @@ module Ladb::OpenCutList
       when :start
 
         # Create runs
-        @cutlist.groups.select { |group| group.material_type != MaterialAttributes::TYPE_UNKNOWN && !@hidden_group_ids.include?(group.id) }.each do |cutlist_group|
+        @cutlist.groups.select { |group| group.material_type != MaterialAttributes::TYPE_UNKNOWN && !@cutlist_hidden_group_ids.include?(group.id) }.each do |cutlist_group|
           @runs << _create_run(cutlist_group)
         end
 
@@ -101,7 +103,7 @@ module Ladb::OpenCutList
         end
 
         # Warnings
-        if @hidden_group_ids.length > 0 && @hidden_group_ids.find_index('summary').nil? || @hidden_group_ids.length > 1 && !@hidden_group_ids.find_index('summary').nil?
+        if @cutlist_hidden_group_ids.length > 0 && @cutlist_hidden_group_ids.find_index('summary').nil? || @cutlist_hidden_group_ids.length > 1 && !@cutlist_hidden_group_ids.find_index('summary').nil?
           @estimate_def.warnings << 'tab.cutlist.estimate.warning.is_group_selection'
         end
 

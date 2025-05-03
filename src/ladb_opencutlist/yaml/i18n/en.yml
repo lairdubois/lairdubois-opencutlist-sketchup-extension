@@ -727,7 +727,7 @@ tab:
       info_0: |
         Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts on the *Parts List*.
       options_general: General
-      raw_materials: Matières premières brutes
+      raw_materials: Raw materials
       total: Total
       total_used: Used
       total_unused: Not used
@@ -740,13 +740,13 @@ tab:
       total_length: Σ Length
       tooltip:
         incompatible_unit: Unit incompatible with material estimation options
-        multiplier_coefficient: Coefficient multiplicateur
+        multiplier_coefficient: Coefficient
       error:
-        no_typed_material_parts: "Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer l'estimation."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
+        no_typed_material_parts: "No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** or **$t(tab.materials.type_5)**) has been provided to generate the estimate."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
-        is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas comptabilisées.
+        is_group_selection: Parts contained in **hidden groups** of the Parts List will not be accounted for.
       tip:
         not_enough_data: |
           For this estimate to be calculated correctly:

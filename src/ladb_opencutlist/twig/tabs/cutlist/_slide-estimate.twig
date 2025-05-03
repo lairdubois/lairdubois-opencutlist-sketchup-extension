@@ -79,7 +79,7 @@
         {% include 'core/_alert-tips.twig' with { 'tips':report.tips } %}
 
         {% if report.groups|length > 0 %}
-            <table data-group-id="summary" class="table table-bordered ladb-cutlist-group ladb-cutlist-group-dark">
+            <table data-group-id="estimate_summary" class="{% if 'estimate_summary' in estimateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-cutlist-group-dark">
                 <thead>
                 <tr class="table-heading">
                     <td colspan="2">
@@ -117,7 +117,7 @@
             {% set foldableGroup = group.material_type == 2 or group.material_type == 3 or group.material_type == 4 or group.material_type == 5 or group.material_type == 6 %}    {# 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 5 = TYPE_HARDWARE, 6 = TYPE_VENEER #}
             {% set editableGroup = group.material_type == 1 or group.material_type == 2 or group.material_type == 3 or group.material_type == 4 or group.material_type == 6 %}    {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
 
-            <table data-group-id="{{ group.material_type }}" class="table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
+            <table data-group-id="{{ group.material_type }}" class="{% if group.material_type in estimateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
                 <thead>
                 <tr class="table-heading">
                     <td colspan="24">
