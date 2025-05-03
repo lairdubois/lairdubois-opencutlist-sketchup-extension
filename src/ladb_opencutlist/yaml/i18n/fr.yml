@@ -1156,6 +1156,7 @@ tab:
         cut_plural: Coupes
         cut_trimming: Coupe de propreté
         cut_primary: Coupe primaire
+        cut_depth: Niveau {{ depth }}
       write:
         title: Exportation du calepinage
         info_0: |

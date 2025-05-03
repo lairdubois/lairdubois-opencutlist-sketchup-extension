@@ -985,23 +985,23 @@ module Ladb::OpenCutList
                 dim_x_font_size = [ [ px_node_dimension_font_size_max, px_leftover_rect_height - px_node_dimension_offset * 2, (px_leftover_rect_width - px_node_dimension_offset * 2) / (dim_x_text.length * 0.6) ].min, px_node_dimension_font_size_min ].max
                 dim_y_font_size = [ [ px_node_dimension_font_size_max, px_leftover_rect_width - px_node_dimension_offset * 2, (px_leftover_rect_height - px_node_dimension_offset * 2) / (dim_y_text.length * 0.6) ].min, px_node_dimension_font_size_min ].max
 
-                  px_dim_x_w, px_dim_x_h = _compute_text_size(text: dim_x_text, size: dim_x_font_size)
-                  px_dim_x_bounds = Geom::BoundingBox.new.add(
-                    [
-                      Geom::Point3d.new,
-                      Geom::Point3d.new(px_dim_x_w, px_dim_x_h)
-                    ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_leftover_rect_width - px_node_dimension_offset - px_dim_x_w, px_node_dimension_offset))) }
-                  )
-                  # svg += "<rect x='#{px_dim_x_bounds.min.x.to_f}' y='#{(-px_leftover_rect_height + px_dim_x_bounds.min.y).to_f}' width='#{px_dim_x_bounds.width.to_f}' height='#{px_dim_x_bounds.height.to_f}' fill='none' stroke='cyan'></rect>"
+                px_dim_x_w, px_dim_x_h = _compute_text_size(text: dim_x_text, size: dim_x_font_size)
+                px_dim_x_bounds = Geom::BoundingBox.new.add(
+                  [
+                    Geom::Point3d.new,
+                    Geom::Point3d.new(px_dim_x_w, px_dim_x_h)
+                  ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_leftover_rect_width - px_node_dimension_offset - px_dim_x_w, px_node_dimension_offset))) }
+                )
+                # svg += "<rect x='#{px_dim_x_bounds.min.x.to_f}' y='#{(-px_leftover_rect_height + px_dim_x_bounds.min.y).to_f}' width='#{px_dim_x_bounds.width.to_f}' height='#{px_dim_x_bounds.height.to_f}' fill='none' stroke='cyan'></rect>"
 
-                  px_dim_y_w, px_dim_y_h = _compute_text_size(text: dim_y_text, size: dim_y_font_size)
-                  px_dim_y_bounds = Geom::BoundingBox.new.add(
-                    [
-                      Geom::Point3d.new,
-                      Geom::Point3d.new(px_dim_y_w, px_dim_y_h)
-                    ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_node_dimension_offset, px_leftover_rect_height - px_node_dimension_offset)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, -90.degrees)) }
-                  )
-                  # svg += "<rect x='#{px_dim_y_bounds.min.x.to_f}' y='#{(-px_leftover_rect_height + px_dim_y_bounds.min.y).to_f}' width='#{px_dim_y_bounds.width.to_f}' height='#{px_dim_y_bounds.height.to_f}' fill='none' stroke='yellow'></rect>"
+                px_dim_y_w, px_dim_y_h = _compute_text_size(text: dim_y_text, size: dim_y_font_size)
+                px_dim_y_bounds = Geom::BoundingBox.new.add(
+                  [
+                    Geom::Point3d.new,
+                    Geom::Point3d.new(px_dim_y_w, px_dim_y_h)
+                  ].map! { |point| point.transform!(Geom::Transformation.translation(Geom::Vector3d.new(px_node_dimension_offset, px_leftover_rect_height - px_node_dimension_offset)) * Geom::Transformation.rotation(ORIGIN, Z_AXIS, -90.degrees)) }
+                )
+                # svg += "<rect x='#{px_dim_y_bounds.min.x.to_f}' y='#{(-px_leftover_rect_height + px_dim_y_bounds.min.y).to_f}' width='#{px_dim_y_bounds.width.to_f}' height='#{px_dim_y_bounds.height.to_f}' fill='none' stroke='yellow'></rect>"
 
                 hide_dim_x = px_dim_x_bounds.width > px_leftover_rect_width - px_node_dimension_offset || px_dim_x_bounds.height > px_leftover_rect_height - px_node_dimension_offset
                 hide_dim_y = px_dim_x_bounds.intersect(px_dim_y_bounds).valid? || px_dim_y_bounds.width > px_leftover_rect_width - px_node_dimension_offset || px_dim_y_bounds.height > px_leftover_rect_height - px_node_dimension_offset
@@ -1081,7 +1081,7 @@ module Ladb::OpenCutList
     end
 
     def _render_cut_def_tooltip(cut_def)
-      tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string("tab.cutlist.packing.list.cut#{(cut_def.depth == 0 ? '_trimming' : (cut_def.depth == 1 ? '_primary' : ''))}")}</span></div>"
+      tt = "<div class=\"tt-header\"><span class=\"tt-name\">#{PLUGIN.get_i18n_string("tab.cutlist.packing.list.cut#{(cut_def.depth == 0 ? '_trimming' : (cut_def.depth == 1 ? '_primary' : ''))}")}#{" (#{PLUGIN.get_i18n_string('tab.cutlist.packing.list.cut_depth', { :depth => cut_def.depth })})" if cut_def.depth > 1}</span></div>"
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-vertical-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_TOP_LEFT ? 'right' : 'left'}\"></i> #{CGI::escape_html(DimensionUtils.str_add_units(cut_def.x.to_s))}</div>" if cut_def.vertical?
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-horizontal-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_BOTTOM_RIGHT ? 'top' : 'bottom'}\"></i> #{CGI::escape_html(DimensionUtils.str_add_units(cut_def.y.to_s))}</div>" if cut_def.horizontal?
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-#{cut_def.vertical? ? 'height' : 'width'}\"></i> #{CGI::escape_html(DimensionUtils.str_add_units(cut_def.length.to_s))}</div>"
