@@ -1156,6 +1156,7 @@ tab:
         cut_plural: Cuts
         cut_trimming: Trimming cut
         cut_primary: Primary cut
+        cut_depth: Level {{ depth }}
       write:
         title: Cutting Diagram Export
         info_0: |

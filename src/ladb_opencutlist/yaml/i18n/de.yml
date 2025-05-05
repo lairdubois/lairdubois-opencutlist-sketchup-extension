@@ -1156,6 +1156,7 @@ tab:
         cut_plural: Schnitte
         cut_trimming: Säuberungsschnitt
         cut_primary: Primärschnitt
+        cut_depth: Schnittstufe {{ depth }} 
       write:
         title: Schnittplan exportieren
         info_0: |
