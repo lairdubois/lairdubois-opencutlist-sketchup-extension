@@ -1156,7 +1156,7 @@ tab:
         cut_plural: Schnitte
         cut_trimming: Säuberungsschnitt
         cut_primary: Primärschnitt
-        cut_depth: Schnittstufe {{ depth }} 
+        cut_depth: Schnittstufe {{ depth }}
       write:
         title: Schnittplan exportieren
         info_0: |
@@ -1538,7 +1538,8 @@ tab:
       grain_direction: Faserrichtung
       raw_estimated_0: Geschätzt nach effektivem Volumen
       colorized: Dieser Farbton wird beim Rendern des Modells auf die Materialtextur angewendet
-      texture_load: Neue Textur laden
+      texture_load: Neues Bild laden
+      texture_export: Bild exportieren
       texture_clear: Textur löschen
       edit: "Eigenschaften von '{{ name }}' bearbeiten"
       set_current: "Einfärben von Teilen mit '{{ name }}'"
@@ -1641,6 +1642,8 @@ tab:
       export_to_skm: Exportieren (.skm)
     texture_load:
       title: Bild laden
+    texture_export:
+      title: Bild exportieren
     import_from_skm:
       title: Aus .skm Datei importieren
       ask_replace: |
@@ -1669,6 +1672,7 @@ tab:
       no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
       no_materials: Ihr Modell enthält kein Material.
       material_not_found: Kein Material gefunden.
+      no_texture: Das Material hat keine Textur.
       failed_import_skm_file: "Beim Importieren der .skm-Datei ist ein Fehler aufgetreten. **{{ error }}**"
       failed_export_skm_file: "Beim Exportieren der .skm Datei ist ein Fehler aufgetreten. **{{ error }}**"
       failed_deleting_material: "Beim Löschen des Materials ist ein Fehler aufgetreten. **{{ error }}**"

@@ -1538,7 +1538,8 @@ tab:
       grain_direction: Grain orientation
       raw_estimated_0: Estimated by the effective volume
       colorized: This tone will be applied to the texture when it is rendered in the model
-      texture_load: Load a new texture
+      texture_load: Load a new image
+      texture_export: Export the image
       texture_clear: Remove texture
       edit: "Edit the properties of '{{ name }}'"
       set_current: "Color parts with '{{ name }}'"
@@ -1641,6 +1642,8 @@ tab:
       export_to_skm: Export (.skm)
     texture_load:
       title: Load image
+    texture_export:
+      title: Export image
     import_from_skm:
       title: Import .skm file
       ask_replace: |
@@ -1669,6 +1672,7 @@ tab:
       no_model: No model is open. You will have to give me more information ;)
       no_materials: Your model does not contain any material.
       material_not_found: No material found.
+      no_texture: The material has no texture.
       failed_import_skm_file: "An error occurred while importing from the .skm file. **{{ error }}**"
       failed_export_skm_file: "An error occurred while exporting to .skm file. **{{ error }}**"
       failed_deleting_material: "An error occurred while deleting the material. **{{ error }}**"

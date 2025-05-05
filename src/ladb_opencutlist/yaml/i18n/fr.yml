@@ -1538,7 +1538,7 @@ tab:
       grain_direction: Direction du fil
       raw_estimated_0: Estimé par le volume débité utile
       colorized: Cette teinte sera appliquée à la texture lors du rendu dans le modèle
-      texture_load: Charger une nouvelle image # TODO
+      texture_load: Charger une nouvelle image
       texture_export: Exporter l'image
       texture_clear: Effacer la texture
       edit: "Éditer les propriétés de '{{ name }}'"
