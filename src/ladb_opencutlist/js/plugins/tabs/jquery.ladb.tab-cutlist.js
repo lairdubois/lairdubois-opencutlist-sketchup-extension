@@ -604,7 +604,7 @@
                     $(this).blur();
                     const $group = $(this).parents('.ladb-cutlist-group');
                     const groupId = $group.data('group-id');
-                    that.packingGroup(groupId, true);
+                    that.packingGroup(groupId);
                 });
                 $('button.ladb-btn-group-labels', that.$page).on('click', function () {
                     $(this).blur();
