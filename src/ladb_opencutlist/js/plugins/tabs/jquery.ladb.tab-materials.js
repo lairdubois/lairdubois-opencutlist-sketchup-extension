@@ -275,6 +275,7 @@
             const $spanTextureWidth = $('#ladb_materials_span_texture_width', $modal);
             const $spanTextureHeight = $('#ladb_materials_span_texture_height', $modal);
             const $btnTextureLoad = $('#ladb_materials_btn_texture_load', $modal);
+            const $btnTextureExport = $('#ladb_materials_btn_texture_export', $modal);
             const $btnTextureClear = $('#ladb_materials_btn_texture_clear', $modal);
             const $btnTextureRotateLeft = $('#ladb_materials_btn_texture_rotate_left', $modal);
             const $btnTextureRotateRight = $('#ladb_materials_btn_texture_rotate_right', $modal);
@@ -455,6 +456,19 @@
                         // Refresh UI
                         fnUpdateTextureTab();
 
+                    }
+
+                });
+                this.blur();
+            });
+            $btnTextureExport.on('click', function () {
+                rubyCallCommand('materials_export_texture_command', { name: material.name }, function (response) {
+
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    }
+                    if (response.export_path) {
+                        that.dialog.notifySuccess(i18next.t('core.success.exported_to', { path: response.export_path }));
                     }
 
                 });

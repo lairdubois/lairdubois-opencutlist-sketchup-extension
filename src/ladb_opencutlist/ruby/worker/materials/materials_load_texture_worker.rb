@@ -15,7 +15,7 @@ module Ladb::OpenCutList
           :texture_file => '',
       }
 
-      # Ask for open file path
+      # Ask for the load file path
       path = UI.openpanel(PLUGIN.get_i18n_string('tab.materials.texture_load.title'), '', "Image Files|*.jpg;*.jpeg;*.png;||")
       if path
 

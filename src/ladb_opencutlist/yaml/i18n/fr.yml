@@ -1538,7 +1538,8 @@ tab:
       grain_direction: Direction du fil
       raw_estimated_0: Estimé par le volume débité utile
       colorized: Cette teinte sera appliquée à la texture lors du rendu dans le modèle
-      texture_load: Charger une nouvelle texture
+      texture_load: Charger une nouvelle image # TODO
+      texture_export: Exporter l'image
       texture_clear: Effacer la texture
       edit: "Éditer les propriétés de '{{ name }}'"
       set_current: Colorier des pièces avec '{{ name }}'
@@ -1641,6 +1642,8 @@ tab:
       export_to_skm: Exporter (.skm)
     texture_load:
       title: Charger une image
+    texture_export:
+      title: Exporter l'image
     import_from_skm:
       title: Importer un fichier .skm
       ask_replace: |
@@ -1669,6 +1672,7 @@ tab:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_materials: Votre modèle ne contient aucune matière.
       material_not_found: Matière introuvable.
+      no_texture: La matière n'a pas de texture.
       failed_import_skm_file: "Une erreur s'est produite lors de l'importation du fichier .skm. **{{ error }}**"
       failed_export_skm_file: "Une erreur s'est produite lors de l'exportation du fichier .skm. **{{ error }}**"
       failed_deleting_material: "Une erreur s'est produite lors de la suppression de la matière. **{{ error }}**"

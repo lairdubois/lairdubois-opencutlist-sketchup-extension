@@ -21,6 +21,8 @@
 #include "shape/labeling.hpp"
 
 #include <mutex>
+#include <shape/offset.hpp>
+#include <shape/simplification.hpp>
 
 using namespace packingsolver;
 using namespace nlohmann;
@@ -1503,7 +1505,7 @@ namespace Packy {
 
             using namespace irregular;
 
-            auto [shape, holes, type] = read_defect(j);
+            auto [shape, holes, shape_inflated, holes_deflated, type] = read_defect(j);
 
             instance_builder_.add_defect(
                     bin_type_id,
