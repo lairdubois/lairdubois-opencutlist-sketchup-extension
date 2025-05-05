@@ -42,6 +42,9 @@ module Ladb::OpenCutList
       PLUGIN.register_command("materials_load_texture_command") do ||
         load_texture_command
       end
+      PLUGIN.register_command("materials_export_texture_command") do |settings|
+        export_texture_command(settings)
+      end
       PLUGIN.register_command("materials_add_std_dimension_command") do |settings|
         add_std_dimension_command(settings)
       end
@@ -174,6 +177,16 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = MaterialsLoadTextureWorker.new
+
+      # Run !
+      worker.run
+    end
+
+    def export_texture_command(settings)
+      require_relative '../worker/materials/materials_export_texture_worker'
+
+      # Setup worker
+      worker = MaterialsExportTextureWorker.new(**settings)
 
       # Run !
       worker.run
