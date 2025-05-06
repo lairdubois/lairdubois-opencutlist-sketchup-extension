@@ -46,7 +46,7 @@ module Ladb::OpenCutList
       @multiplier_coefficient = attributes.fetch('multiplier_coefficient')
       @std_volumic_masses = attributes.fetch('std_volumic_masses')
       @std_prices = attributes.fetch('std_prices')
-
+      @std_cut_prices = attributes.fetch('std_cut_prices')
     end
 
     # -----
@@ -167,6 +167,7 @@ module Ladb::OpenCutList
       material_attributes.multiplier_coefficient = @multiplier_coefficient
       material_attributes.std_volumic_masses = @std_volumic_masses
       material_attributes.std_prices = @std_prices
+      material_attributes.std_cut_prices = @std_cut_prices
       material_attributes.write_to_attributes
 
       # Trigger change event on materials observer if needed

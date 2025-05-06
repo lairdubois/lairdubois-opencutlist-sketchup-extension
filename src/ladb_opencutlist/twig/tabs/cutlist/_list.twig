@@ -233,7 +233,7 @@
                     {% if group.material_type == 2 or group.material_type == 6 or group.material_type == 3 or group.material_type == 4 %}    {# 2 = TYPE_SHEET_GOOD, 6 = TYPE_VENEER, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE #}
                         <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-packing"><i class="ladb-opencutlist-icon-packing-irregular"></i> {{ 'tab.cutlist.menu.group_cuttingdiagram'|i18next }}...</button>
                     {% endif %}
-                    {% if capabilities.is_dev %}
+                    {% if capabilities.is_dev and not capabilities.is_rbz %}
                         {% if group.material_type == 2 or group.material_type == 6 %}     {# 2 = TYPE_SHEET_GOOD, 6 = TYPE_VENEER  #}
                             <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-cuttingdiagram2d"><i class="ladb-opencutlist-icon-cuttingdiagram2d"></i></button>
                         {% endif %}

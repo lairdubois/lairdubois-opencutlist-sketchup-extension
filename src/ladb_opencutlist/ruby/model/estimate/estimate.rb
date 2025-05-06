@@ -30,7 +30,7 @@ module Ladb::OpenCutList
 
       @groups = _def.group_defs.values.select { |group_def| !group_def.entry_defs.empty? }.map { |group_def|
         group = group_def.create_group
-        group.mass_ratio = _def.total_mass == 0 ? nil : group_def.total_mass / _def.total_mass
+        group.mass_ratio = _def.total_mass == 0 ? nil : group_def.total_mass / _def.total_mass if group_def.is_a?(AbstractEstimateWeightedGroupDef)
         group.cost_ratio = _def.total_cost == 0 ? nil : group_def.total_cost / _def.total_cost
         group
       }

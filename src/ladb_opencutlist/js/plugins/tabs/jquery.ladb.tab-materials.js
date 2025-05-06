@@ -23,7 +23,6 @@
         this.$btnNew = $('#ladb_btn_new', this.$header);
         this.$btnImport = $('#ladb_btn_import', this.$header);
         this.$btnOptions = $('#ladb_btn_options', this.$header);
-        this.$itemImportFromSkm = $('#ladb_item_import_from_skm', this.$header);
         this.$itemPurgeUnused = $('#ladb_item_purge_unused', this.$header);
         this.$itemResetPrices = $('#ladb_item_reset_prices', this.$header);
 
@@ -177,7 +176,7 @@
         // Bind buttons
         $btnCreate.on('click', function () {
 
-            // Flag to ignore next material change event
+            // Flag to ignore the next material change event
             that.ignoreNextMaterialEvents = true;
 
             rubyCallCommand('materials_create', {
@@ -201,7 +200,8 @@
                     raw_estimated: $inputs.selectRawEstimated.val() === '1',
                     multiplier_coefficient: Math.max(1.0, $inputs.inputMultiplierCoefficient.val() === '' ? 1.0 : parseFloat($inputs.inputMultiplierCoefficient.val().replace(',', '.'))),
                     std_volumic_masses: $inputs.editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes'),
-                    std_prices: $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes')
+                    std_prices: $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes'),
+                    std_cut_prices: $inputs.editorStdCutPrices.ladbEditorStdAttributes('getStdAttributes')
                 }
             }, function (response) {
 
@@ -312,6 +312,7 @@
                 attributes.multiplier_coefficient = Math.max(1.0, $inputs.inputMultiplierCoefficient.val() === '' ? 1.0 : parseFloat($inputs.inputMultiplierCoefficient.val().replace(',', '.')));
                 attributes.std_volumic_masses = $inputs.editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
                 attributes.std_prices = $inputs.editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
+                attributes.std_cut_prices = $inputs.editorStdCutPrices.ladbEditorStdAttributes('getStdAttributes');
             };
             const fnResetTextureRotation = function () {
                 const rotation = parseInt($inputTextureRotation.val());
@@ -593,7 +594,7 @@
 
         this.dialog.prompt(i18next.t('default.duplicate'), i18next.t('tab.materials.duplicate.message', { material_name: material.display_name }), material.display_name, function (value) {
 
-            // Flag to ignore next material change event
+            // Flag to ignore the next material change event
             that.ignoreNextMaterialEvents = true;
 
             rubyCallCommand('materials_duplicate', {
@@ -601,7 +602,7 @@
                 new_name: value
             }, function (response) {
 
-                // Flag to stop ignoring next material change event
+                // Flag to stop ignoring the next material change event
                 that.ignoreNextMaterialEvents = false;
 
                 if (response.errors && response.errors.length > 0) {
@@ -629,14 +630,14 @@
 
         this.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.materials.delete.message', { material_name: material.display_name }), function () {
 
-            // Flag to ignore next material change event
+            // Flag to ignore the next material change event
             that.ignoreNextMaterialEvents = true;
 
             rubyCallCommand('materials_delete', {
                 name: material.name,
             }, function (response) {
 
-                // Flag to stop ignoring next material change event
+                // Flag to stop ignoring the next material change event
                 that.ignoreNextMaterialEvents = false;
 
                 if (response.errors && response.errors.length > 0) {
@@ -660,12 +661,12 @@
     LadbTabMaterials.prototype.importFromSkm = function () {
         const that = this;
 
-        // Flag to ignore next material change event
+        // Flag to ignore the next material change event
         that.ignoreNextMaterialEvents = true;
 
         rubyCallCommand('materials_import_from_skm', null, function (response) {
 
-            // Flag to stop ignoring next material change event
+            // Flag to stop ignoring the next material change event
             that.ignoreNextMaterialEvents = false;
 
             if (response.errors && response.errors.length > 0) {
@@ -711,12 +712,12 @@
     LadbTabMaterials.prototype.purgeUnused = function () {
         const that = this;
 
-        // Flag to ignore next material change event
+        // Flag to ignore the next material change event
         that.ignoreNextMaterialEvents = true;
 
         rubyCallCommand('materials_purge_unused', null, function (response) {
 
-            // Flag to stop ignoring next material change event
+            // Flag to stop ignoring the next material change event
             that.ignoreNextMaterialEvents = false;
 
             if (response.errors && response.errors.length > 0) {
@@ -933,6 +934,7 @@
         const $inputMultiplierCoefficient = $('#ladb_materials_input_multiplier_coefficient', $modal);
         const $editorStdVolumicMasses = $('#ladb_materials_editor_std_volumic_masses', $modal);
         const $editorStdPrices = $('#ladb_materials_editor_std_prices', $modal);
+        const $editorStdCutPrices = $('#ladb_materials_editor_std_cut_prices', $modal);
 
         // Define useful functions
         const fnFetchType = function (options) {
@@ -958,6 +960,7 @@
             options.multiplier_coefficient = Math.max(1.0, $inputMultiplierCoefficient.val() === '' ? 1.0 : parseFloat($inputMultiplierCoefficient.val().replace(',', '.')));
             options.std_volumic_masses = $editorStdVolumicMasses.ladbEditorStdAttributes('getStdAttributes');
             options.std_prices = $editorStdPrices.ladbEditorStdAttributes('getStdAttributes');
+            options.std_cut_prices = $editorStdCutPrices.ladbEditorStdAttributes('getStdAttributes');
         };
         const fnFillInputs = function (options) {
             $inputThickness.val(options.thickness);
@@ -976,6 +979,7 @@
             fnSetStdAttributesTypeAndStds();
             $editorStdVolumicMasses.ladbEditorStdAttributes('setStdAttributes', [ options.std_volumic_masses ]);
             $editorStdPrices.ladbEditorStdAttributes('setStdAttributes', [ options.std_prices ]);
+            $editorStdCutPrices.ladbEditorStdAttributes('setStdAttributes', [ options.std_cut_prices ]);
         };
         const fnSetStdAttributesTypeAndStds = function () {
             const options = {};
@@ -990,6 +994,7 @@
             };
             $editorStdVolumicMasses.ladbEditorStdAttributes('setTypeAndStds', [ options.type, stds ]);
             $editorStdPrices.ladbEditorStdAttributes('setTypeAndStds', [ options.type, stds ]);
+            $editorStdCutPrices.ladbEditorStdAttributes('setTypeAndStds', [ options.type, stds ]);
         };
         const fnComputeFieldsVisibility = function (type) {
             switch (type) {
@@ -1013,6 +1018,7 @@
                     $inputMultiplierCoefficient.closest('.form-group').show();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
+                    $editorStdCutPrices.closest('.form-group').hide();
                     break;
                 case 2:   // TYPE_SHEET_GOOD
                     $inputThickness.closest('section').show();
@@ -1031,6 +1037,7 @@
                     $inputMultiplierCoefficient.closest('.form-group').hide();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
+                    $editorStdCutPrices.closest('.form-group').show();
                     break;
                 case 3:   // TYPE_DIMENSIONAL
                     $inputThickness.closest('section').show();
@@ -1049,6 +1056,7 @@
                     $inputMultiplierCoefficient.closest('.form-group').hide();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
+                    $editorStdCutPrices.closest('.form-group').show();
                     break;
                 case 4:   // TYPE_EDGE
                     $inputThickness.closest('section').show();
@@ -1067,6 +1075,7 @@
                     $inputMultiplierCoefficient.closest('.form-group').hide();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
+                    $editorStdCutPrices.closest('.form-group').show();
                     break;
                 case 5:   // TYPE_HARDWARE
                     $inputThickness.closest('section').hide();
@@ -1088,6 +1097,7 @@
                     $inputMultiplierCoefficient.closest('.form-group').hide();
                     $editorStdVolumicMasses.closest('.form-group').show();
                     $editorStdPrices.closest('.form-group').show();
+                    $editorStdCutPrices.closest('.form-group').show();
                     break;
                 default:
                     $inputThickness.closest('section').hide();
@@ -1264,6 +1274,39 @@
             },
             inputChangeCallback: inputChangeCallback
         });
+        $editorStdCutPrices.ladbEditorStdAttributes({
+            strippedName: 'cut_prices',
+            units: [
+                {
+                    $_m: that.currencySymbol + ' / m',
+                },
+                {
+                    $_ft: that.currencySymbol + ' / ft',
+                }
+            ],
+            lengthUnitStrippedname: that.lengthUnitStrippedname,
+            defaultUnitByTypeCallback: function (type) {
+                switch (type) {
+                    case 1: /* TYPE_SOLID_WOOD */
+                    case 2: /* TYPE_SHEET_GOOD */
+                    case 6: /* TYPE_VENEER */
+                    case 3: /* TYPE_DIMENSIONAL */
+                    case 4: /* TYPE_EDGE */
+                        return '$_' + that.lengthUnitStrippedname;
+                }
+            },
+            enabledUnitsByTypeCallback: function (type, rowPos) {
+                switch (type) {
+                    case 1: /* TYPE_SOLID_WOOD */
+                    case 2: /* TYPE_SHEET_GOOD */
+                    case 3: /* TYPE_DIMENSIONAL */
+                    case 4: /* TYPE_EDGE */
+                    case 6: /* TYPE_VENEER */
+                        return [ '$_m' ];
+                }
+            },
+            inputChangeCallback: inputChangeCallback
+        });
 
         // Bind tabs
         $tabs.on('shown.bs.tab', function (e) {
@@ -1349,6 +1392,7 @@
             inputMultiplierCoefficient: $inputMultiplierCoefficient,
             editorStdVolumicMasses: $editorStdVolumicMasses,
             editorStdPrices: $editorStdPrices,
+            editorStdCutPrices: $editorStdCutPrices,
         }
     };
 

@@ -5,12 +5,11 @@ module Ladb::OpenCutList
 
   class AbstractEstimateItemDef < DataContainer
 
-    attr_accessor :total_mass, :total_used_mass, :total_cost, :total_used_cost
+    attr_accessor :parent_def, :total_cost, :total_used_cost
 
-    def initialize
+    def initialize(parent_def)
 
-      @total_mass = 0
-      @total_used_mass = 0
+      @parent_def = parent_def
 
       @total_cost = 0
       @total_used_cost = 0
@@ -19,12 +18,27 @@ module Ladb::OpenCutList
 
   end
 
-  class AbstractEstimateEntryDef < AbstractEstimateItemDef
+  class AbstractEstimateWeightedItemDef < AbstractEstimateItemDef
 
-    attr_accessor :cutlist_group, :raw_estimated, :multiplier_coefficient, :errors
+    attr_accessor :total_mass, :total_used_mass
 
-    def initialize(cutlist_group)
-      super()
+    def initialize(parent_def)
+      super
+
+      @total_mass = 0
+      @total_used_mass = 0
+
+    end
+
+  end
+
+  class AbstractEstimateWeightedEntryDef < AbstractEstimateWeightedItemDef
+
+    attr_reader :cutlist_group
+    attr_accessor :raw_estimated, :multiplier_coefficient, :errors
+
+    def initialize(parent_def, cutlist_group)
+      super(parent_def)
 
       @cutlist_group = cutlist_group
 
@@ -45,11 +59,11 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SolidWoodEstimateEntryDef < AbstractEstimateEntryDef
+  class SolidWoodEstimateEntryDef < AbstractEstimateWeightedEntryDef
 
     attr_accessor :std_volumic_mass, :std_price, :total_volume, :total_used_volume
 
-    def initialize(cutlist_group)
+    def initialize(parent_def, cutlist_group)
       super
 
       @std_volumic_mass = nil
@@ -70,12 +84,12 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SheetGoodEstimateEntryDef < AbstractEstimateEntryDef
+  class SheetGoodEstimateEntryDef < AbstractEstimateWeightedEntryDef
 
     attr_accessor :std_volumic_mass, :std_price, :total_count, :total_area, :total_used_area
     attr_reader :bin_defs
 
-    def initialize(cutlist_group)
+    def initialize(parent_def, cutlist_group)
       super
 
       @std_volumic_mass = nil
@@ -97,13 +111,13 @@ module Ladb::OpenCutList
 
   end
 
-  class SheetGoodEstimateEntryBinDef < AbstractEstimateItemDef
+  class SheetGoodEstimateEntryBinDef < AbstractEstimateWeightedItemDef
 
     attr_accessor :std_volumic_mass, :std_price, :count, :total_area, :total_used_area
     attr_reader :type, :length, :width
 
-    def initialize(bin_type_def)
-      super()
+    def initialize(parent_def, bin_type_def)
+      super(parent_def)
 
       @std_volumic_mass = nil
       @std_price = nil
@@ -128,12 +142,12 @@ module Ladb::OpenCutList
 
   # -----
 
-  class DimensionalEstimateEntryDef < AbstractEstimateEntryDef
+  class DimensionalEstimateEntryDef < AbstractEstimateWeightedEntryDef
 
     attr_accessor :std_volumic_mass, :std_price, :total_count, :total_length, :total_used_length
     attr_reader :bin_defs
 
-    def initialize(cutlist_group)
+    def initialize(parent_def, cutlist_group)
       super
 
       @std_volumic_mass = nil
@@ -155,13 +169,13 @@ module Ladb::OpenCutList
 
   end
 
-  class DimensionalEstimateEntryBarDef < AbstractEstimateItemDef
+  class DimensionalEstimateEntryBarDef < AbstractEstimateWeightedItemDef
 
     attr_accessor :std_volumic_mass, :std_price, :count, :total_length, :total_used_length
     attr_reader :type, :length
 
-    def initialize(bin_type_def)
-      super()
+    def initialize(parent_def, bin_type_def)
+      super(parent_def)
 
       @std_volumic_mass = nil
       @std_price = nil
@@ -185,12 +199,12 @@ module Ladb::OpenCutList
 
   # -----
 
-  class EdgeEstimateEntryDef < AbstractEstimateEntryDef
+  class EdgeEstimateEntryDef < AbstractEstimateWeightedEntryDef
 
     attr_accessor :std_volumic_mass, :std_price, :total_count, :total_length, :total_used_length
     attr_reader :bin_defs
 
-    def initialize(cutlist_group)
+    def initialize(parent_def, cutlist_group)
       super
 
       @std_volumic_mass = nil
@@ -212,13 +226,13 @@ module Ladb::OpenCutList
 
   end
 
-  class EdgeEstimateEntryBarDef < AbstractEstimateItemDef
+  class EdgeEstimateEntryBarDef < AbstractEstimateWeightedItemDef
 
     attr_accessor :std_volumic_mass, :std_price, :count, :total_length, :total_used_length
     attr_reader :type, :length
 
-    def initialize(bin_type_def)
-      super()
+    def initialize(parent_def, bin_type_def)
+      super(parent_def)
 
       @std_volumic_mass = nil
       @std_price = nil
@@ -242,12 +256,12 @@ module Ladb::OpenCutList
 
   # -----
 
-  class HardwareEstimateEntryDef < AbstractEstimateEntryDef
+  class HardwareEstimateEntryDef < AbstractEstimateWeightedEntryDef
 
     attr_accessor :total_count, :total_instance_count, :total_used_instance_count
     attr_reader :part_defs
 
-    def initialize(cutlist_group)
+    def initialize(parent_def, cutlist_group)
       super
 
       @total_count = 0
@@ -267,13 +281,13 @@ module Ladb::OpenCutList
 
   end
 
-  class HardwareEstimateEntryPartDef < AbstractEstimateItemDef
+  class HardwareEstimateEntryPartDef < AbstractEstimateWeightedItemDef
 
     attr_accessor :mass, :price, :total_instance_count, :total_used_instance_count
     attr_reader :cutlist_part
 
-    def initialize(cutlist_part)
-      super()
+    def initialize(parent_def, cutlist_part)
+      super(parent_def)
 
       @cutlist_part = cutlist_part
 
@@ -295,12 +309,12 @@ module Ladb::OpenCutList
 
   # -----
 
-  class VeneerEstimateEntryDef < AbstractEstimateEntryDef
+  class VeneerEstimateEntryDef < AbstractEstimateWeightedEntryDef
 
     attr_accessor :std_volumic_mass, :std_price, :total_count, :total_area, :total_used_area
     attr_reader :bin_defs
 
-    def initialize(cutlist_group)
+    def initialize(parent_def, cutlist_group)
       super
 
       @std_volumic_mass = nil
@@ -322,13 +336,13 @@ module Ladb::OpenCutList
 
   end
 
-  class VeneerEstimateEntryBinDef < AbstractEstimateItemDef
+  class VeneerEstimateEntryBinDef < AbstractEstimateWeightedItemDef
 
-    attr_accessor :std_volumic_mass, :std_price, :std_volumic_mass, :std_price, :count, :total_area, :total_used_area
+    attr_accessor :std_volumic_mass, :std_price, :count, :total_area, :total_used_area
     attr_reader :type, :length, :width
 
-    def initialize(bin_type_def)
-      super()
+    def initialize(parent_def, bin_type_def)
+      super(parent_def)
 
       @std_volumic_mass = nil
       @std_price = nil
@@ -347,6 +361,62 @@ module Ladb::OpenCutList
 
     def create_bin
       VeneerEstimateEntryBin.new(self)
+    end
+
+  end
+
+  # -----
+
+  class CutEstimateEntryDef < AbstractEstimateItemDef
+
+    attr_reader :cutlist_group, :bin_defs
+    attr_accessor :std_price, :total_count, :total_length
+
+    def initialize(parent_def, cutlist_group)
+      super(parent_def)
+
+      @cutlist_group = cutlist_group
+
+      @std_price = nil
+
+      @total_count = 0
+      @total_length = 0
+
+      @bin_defs = {}
+
+    end
+
+    # ---
+
+    def create_entry
+      CutEstimateEntry.new(self)
+    end
+
+  end
+
+  class CutEstimateEntryBinDef < AbstractEstimateItemDef
+
+    attr_accessor :std_price, :count, :total_length
+    attr_reader :type, :length, :width
+
+    def initialize(parent_def, bin_type_def)
+      super(parent_def)
+
+      @std_price = nil
+
+      @type = bin_type_def.type
+      @length = bin_type_def.length
+      @width = bin_type_def.width
+
+      @count = 0
+      @total_length = 0
+
+    end
+
+    # ---
+
+    def create_bin
+      CutEstimateEntryBin.new(self)
     end
 
   end

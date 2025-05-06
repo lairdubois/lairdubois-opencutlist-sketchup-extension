@@ -20,7 +20,7 @@ module Ladb::OpenCutList
 
                    cutlist_hidden_group_ids: [],
 
-                   hidden_group_ids: []
+                   hidden_group_ids: []   # Unused locally, but necessary for UI
 
     )
 
@@ -36,7 +36,6 @@ module Ladb::OpenCutList
       @run_index = 0
 
       @cancelled = false
-
 
     end
 
@@ -170,7 +169,7 @@ module Ladb::OpenCutList
         return Estimate2dRun.new(self, cutlist_group, material_attributes, VeneerEstimateEntryDef, VeneerEstimateEntryBinDef)
 
       when MaterialAttributes::TYPE_HARDWARE
-        return EstimateHadwaredRun.new(self, cutlist_group, material_attributes, HardwareEstimateEntryDef, HardwareEstimateEntryPartDef)
+        return EstimateHardwareRun.new(self, cutlist_group, material_attributes, HardwareEstimateEntryDef, HardwareEstimateEntryPartDef)
 
       end
 
@@ -234,20 +233,24 @@ module Ladb::OpenCutList
       @progress = 1.0
       @finished = true
 
-      unless (estimate_entry_def = _create_entry_def).nil?
+      _create_entry_defs.each do |estimate_entry_def|
 
-        unless estimate_entry_def.errors.empty?
-          @worker.estimate_def.errors << [ 'tab.cutlist.report.error.entry_error', { :material_name => @cutlist_group.material_display_name, :std_dimension => @cutlist_group.std_dimension, :count => estimate_entry_def.errors.length } ]
+        if estimate_entry_def.respond_to?(:errors) && estimate_entry_def.errors.any?
+          @worker.estimate_def.errors << [ 'tab.cutlist.estimate.error.entry_error', { :material_name => @cutlist_group.material_display_name, :std_dimension => @cutlist_group.std_dimension, :count => estimate_entry_def.errors.length } ]
         end
 
-        estimate_group_def = @worker.estimate_def.group_defs[@cutlist_group.material_type]
-        estimate_group_def.total_mass += estimate_entry_def.total_mass
-        estimate_group_def.total_used_mass += estimate_entry_def.total_used_mass
-        estimate_group_def.total_cost += estimate_entry_def.total_cost
-        estimate_group_def.total_used_cost += estimate_entry_def.total_used_cost
+        estimate_group_def = estimate_entry_def.parent_def
+        if estimate_group_def.is_a?(AbstractEstimateWeightedGroupDef)
+          estimate_group_def.total_mass += estimate_entry_def.total_mass if estimate_entry_def.respond_to?(:total_mass)
+          estimate_group_def.total_used_mass += estimate_entry_def.total_used_mass if estimate_entry_def.respond_to?(:total_used_mass)
+        end
+        if estimate_group_def.is_a?(AbstractEstimateGroupDef)
+          estimate_group_def.total_cost += estimate_entry_def.total_cost
+          estimate_group_def.total_used_cost += estimate_entry_def.total_used_cost
+        end
 
-        @worker.estimate_def.total_mass += estimate_entry_def.total_mass
-        @worker.estimate_def.total_used_mass += estimate_entry_def.total_used_mass
+        @worker.estimate_def.total_mass += estimate_entry_def.total_mass if estimate_entry_def.respond_to?(:total_mass)
+        @worker.estimate_def.total_used_mass += estimate_entry_def.total_used_mass if estimate_entry_def.respond_to?(:total_used_mass)
         @worker.estimate_def.total_cost += estimate_entry_def.total_cost
         @worker.estimate_def.total_used_cost += estimate_entry_def.total_used_cost
 
@@ -255,8 +258,12 @@ module Ladb::OpenCutList
 
     end
 
-    def _create_entry_def
-      nil
+    def _get_group_def
+      @worker.estimate_def.group_defs[@cutlist_group.material_type]
+    end
+
+    def _create_entry_defs
+      []
     end
 
   end
@@ -323,9 +330,14 @@ module Ladb::OpenCutList
       settings[:verbosity_level] = 0
     end
 
-    def _create_entry_def
+    def _create_entry_defs
 
-      estimate_entry_def = @entry_def_class.new(@cutlist_group)
+      cut_group_def = @worker.estimate_def.group_defs[-1]
+      cut_entry_def = nil
+
+      estimate_group_def = _get_group_def
+
+      estimate_entry_def = @entry_def_class.new(estimate_group_def, @cutlist_group)
       estimate_entry_def.errors += @packing.errors
       estimate_entry_def.errors << "#{@packing.solution.unplaced_part_infos.length} #{PLUGIN.get_i18n_string('tab.cutlist.packing.list.unplaced_parts', { :count => @packing.solution.unplaced_part_infos.length })}" if !@packing.solution.nil? && @packing.solution.unplaced_part_infos.any?
       estimate_entry_def.raw_estimated = @material_attributes.raw_estimated
@@ -340,12 +352,7 @@ module Ladb::OpenCutList
 
           bin_type_def = packing_bin.def.bin_type_def
 
-          # Only standard bin uses dim volumic mass and prices
-          if packing_bin.type == BIN_TYPE_STD
-            dim = @material_attributes.compute_std_dim(bin_type_def.length, bin_type_def.width, @cutlist_group.def.std_thickness)
-          else
-            dim = nil
-          end
+          dim = @material_attributes.compute_std_dim(bin_type_def.length, bin_type_def.width, @cutlist_group.def.std_thickness)
 
           std_volumic_mass = _get_std_volumic_mass(dim, @material_attributes)
           mass_per_inch3 = std_volumic_mass[:val] == 0 ? 0 : _uv_to_inch3(std_volumic_mass[:unit], std_volumic_mass[:val], @cutlist_group.def.std_thickness, bin_type_def.width, bin_type_def.length)
@@ -356,7 +363,7 @@ module Ladb::OpenCutList
           estimate_entry_bin_def = estimate_entry_def.bin_defs[bin_type_def.id]
           if estimate_entry_bin_def.nil?
 
-            estimate_entry_bin_def = @item_def_class.new(bin_type_def)
+            estimate_entry_bin_def = @item_def_class.new(estimate_entry_def, bin_type_def)
             estimate_entry_bin_def.std_volumic_mass = std_volumic_mass
             estimate_entry_bin_def.std_price = std_price
 
@@ -401,11 +408,53 @@ module Ladb::OpenCutList
           estimate_entry_def.total_cost += total_cost
           estimate_entry_def.total_used_cost += total_used_cost
 
+          # Cuts
+
+          if packing_bin.def.cut_length > 0
+
+            std_cut_price = _get_std_cut_price(dim, @material_attributes)
+            price_per_inch = std_cut_price[:val] == 0 ? 0 : _uv_to_inch(std_cut_price[:unit], std_cut_price[:val])
+
+            if cut_entry_def.nil?
+
+              cut_entry_def = CutEstimateEntryDef.new(cut_group_def, @cutlist_group)
+              cut_group_def.entry_defs << cut_entry_def
+
+            end
+
+            cut_entry_bin_def = cut_entry_def.bin_defs[bin_type_def.id]
+            if cut_entry_bin_def.nil?
+
+              cut_entry_bin_def = CutEstimateEntryBinDef.new(cut_entry_def, bin_type_def)
+              cut_entry_bin_def.std_price = std_price
+
+              cut_entry_def.bin_defs[bin_type_def.id] = cut_entry_bin_def
+
+            end
+
+            total_count = packing_bin.def.number_of_cuts * packing_bin.def.count
+            total_length = packing_bin.def.cut_length * packing_bin.def.count
+            total_cost = packing_bin.def.cut_length * price_per_inch * packing_bin.def.count
+
+            cut_entry_bin_def.count += total_count
+            cut_entry_bin_def.total_length += total_length
+            cut_entry_bin_def.total_cost += total_cost
+            cut_entry_bin_def.total_used_cost += total_cost
+
+            cut_entry_def.total_count += total_count
+            cut_entry_def.total_length += total_length
+            cut_entry_def.total_cost += total_cost
+            cut_entry_def.total_used_cost += total_cost
+
+            cut_group_def.total_count += total_count
+            cut_group_def.total_length += total_length
+
+          end
+
         end
 
       end
 
-      estimate_group_def = @worker.estimate_def.group_defs[@cutlist_group.material_type]
       estimate_group_def.entry_defs << estimate_entry_def
       estimate_group_def.total_count += estimate_entry_def.total_count
       estimate_group_def.total_length += estimate_entry_def.total_length if estimate_group_def.respond_to?(:total_length=)
@@ -413,7 +462,7 @@ module Ladb::OpenCutList
       estimate_group_def.total_area += estimate_entry_def.total_area if estimate_group_def.respond_to?(:total_area=)
       estimate_group_def.total_used_area += estimate_entry_def.total_used_area if estimate_group_def.respond_to?(:total_used_area=)
 
-      estimate_entry_def
+      [ estimate_entry_def, cut_entry_def ].compact
     end
 
   end
@@ -474,7 +523,7 @@ module Ladb::OpenCutList
 
     protected
 
-    def _create_entry_def
+    def _create_entry_defs
 
       dim = @material_attributes.compute_std_dim(0, @cutlist_group.def.std_width, @cutlist_group.def.std_thickness)
 
@@ -484,7 +533,9 @@ module Ladb::OpenCutList
       std_price = _get_std_price(dim, @material_attributes)
       price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], @cutlist_group.def.std_thickness, @cutlist_group.def.std_width)
 
-      estimate_entry_def = @entry_def_class.new(@cutlist_group)
+      estimate_group_def = _get_group_def
+
+      estimate_entry_def = @entry_def_class.new(estimate_group_def, @cutlist_group)
       estimate_entry_def.raw_estimated = @material_attributes.raw_estimated
       estimate_entry_def.multiplier_coefficient = @material_attributes.multiplier_coefficient
       estimate_entry_def.std_volumic_mass = std_volumic_mass if estimate_entry_def.respond_to?(:std_volumic_mass)
@@ -504,7 +555,6 @@ module Ladb::OpenCutList
         estimate_entry_def.total_used_cost += part_def.size.volume * part_def.count * price_per_inch3
       end
 
-      estimate_group_def = @worker.estimate_def.group_defs[@cutlist_group.material_type]
       estimate_group_def.entry_defs << estimate_entry_def
       estimate_group_def.total_volume += estimate_entry_def.total_volume if estimate_group_def.respond_to?(:total_volume=)
       estimate_group_def.total_used_volume += estimate_entry_def.total_used_volume if estimate_group_def.respond_to?(:total_used_volume=)
@@ -513,12 +563,12 @@ module Ladb::OpenCutList
       estimate_group_def.total_length += estimate_entry_def.total_length if estimate_group_def.respond_to?(:total_length=)
       estimate_group_def.total_used_length += estimate_entry_def.total_used_length if estimate_group_def.respond_to?(:total_used_length=)
 
-      estimate_entry_def
+      [ estimate_entry_def ]
     end
 
   end
 
-  class EstimateHadwaredRun < AbstractEstimateRun
+  class EstimateHardwareRun < AbstractEstimateRun
 
     def start
       super
@@ -527,14 +577,16 @@ module Ladb::OpenCutList
 
     protected
 
-    def _create_entry_def
+    def _create_entry_defs
 
-      estimate_entry_def = @entry_def_class.new(@cutlist_group)
+      estimate_group_def = _get_group_def
+
+      estimate_entry_def = @entry_def_class.new(estimate_group_def, @cutlist_group)
       estimate_entry_def.total_count = @cutlist_group.def.part_count
 
       fn_compute_hardware_part = lambda do |cutlist_part, estimate_entry_def|
 
-        estimate_entry_part_def = @item_def_class.new(cutlist_part)
+        estimate_entry_part_def = @item_def_class.new(estimate_entry_def, cutlist_part)
         estimate_entry_def.part_defs << estimate_entry_part_def
 
         definition_attributes = @worker._get_definition_attributes(cutlist_part.def.definition_id)
@@ -595,13 +647,12 @@ module Ladb::OpenCutList
 
       end
 
-      estimate_group_def = @worker.estimate_def.group_defs[@cutlist_group.material_type]
       estimate_group_def.entry_defs << estimate_entry_def
       estimate_group_def.total_count += estimate_entry_def.total_count
       estimate_group_def.total_instance_count += estimate_entry_def.total_instance_count
       estimate_group_def.total_used_instance_count += estimate_entry_def.total_used_instance_count
 
-      estimate_entry_def
+      [ estimate_entry_def ]
     end
 
   end

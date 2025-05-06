@@ -152,7 +152,7 @@ module Ladb::OpenCutList
               end
 
             rescue REXML::ParseException => e
-              # Error while parsing XML. Continue with default behavior
+              # Error while parsing XML. Continue with the default behavior
               puts e.message
             end
 

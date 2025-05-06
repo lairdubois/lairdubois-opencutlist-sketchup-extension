@@ -28,6 +28,7 @@ module Ladb::OpenCutList
           MaterialAttributes::TYPE_EDGE => EdgeEstimateGroupDef.new,
           MaterialAttributes::TYPE_VENEER => VeneerEstimateGroupDef.new,
           MaterialAttributes::TYPE_HARDWARE => HardwareEstimateGroupDef.new,
+          -1 => CutEstimateGroupDef.new,
       }
 
     end

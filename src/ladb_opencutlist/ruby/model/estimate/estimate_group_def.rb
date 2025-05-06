@@ -4,13 +4,10 @@ module Ladb::OpenCutList
 
   class AbstractEstimateGroupDef
 
-    attr_accessor :total_mass, :total_used_mass, :total_cost, :total_used_cost
+    attr_accessor :total_cost, :total_used_cost
     attr_reader :entry_defs
 
     def initialize
-
-      @total_mass = 0
-      @total_used_mass = 0
 
       @total_cost = 0
       @total_used_cost = 0
@@ -26,19 +23,41 @@ module Ladb::OpenCutList
 
     # ---
 
-    def total_unused_mass
-      [@total_mass - @total_used_mass, 0].max
+    def total_unused_cost
+      [ @total_cost - @total_used_cost, 0 ].max
     end
 
-    def total_unused_cost
-      [@total_cost - @total_used_cost, 0].max
+  end
+
+  class AbstractEstimateWeightedGroupDef < AbstractEstimateGroupDef
+
+    attr_accessor :total_mass, :total_used_mass
+    attr_reader :entry_defs
+
+    def initialize
+      super
+
+      @total_mass = 0
+      @total_used_mass = 0
+
+    end
+
+    # ---
+
+    def create_group
+    end
+
+    # ---
+
+    def total_unused_mass
+      [ @total_mass - @total_used_mass, 0 ].max
     end
 
   end
 
   # -----
 
-  class SolidWoodEstimateGroupDef < AbstractEstimateGroupDef
+  class SolidWoodEstimateGroupDef < AbstractEstimateWeightedGroupDef
 
     attr_accessor :total_volume, :total_used_volume
 
@@ -60,7 +79,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SheetGoodEstimateGroupDef < AbstractEstimateGroupDef
+  class SheetGoodEstimateGroupDef < AbstractEstimateWeightedGroupDef
 
     attr_accessor :total_count, :total_area, :total_used_area
 
@@ -83,7 +102,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class DimensionalEstimateGroupDef < AbstractEstimateGroupDef
+  class DimensionalEstimateGroupDef < AbstractEstimateWeightedGroupDef
 
     attr_accessor :total_count, :total_length, :total_used_length
 
@@ -106,7 +125,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class EdgeEstimateGroupDef < AbstractEstimateGroupDef
+  class EdgeEstimateGroupDef < AbstractEstimateWeightedGroupDef
 
     attr_accessor :total_count, :total_length, :total_used_length
 
@@ -129,7 +148,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class HardwareEstimateGroupDef < AbstractEstimateGroupDef
+  class HardwareEstimateGroupDef < AbstractEstimateWeightedGroupDef
 
     attr_accessor :total_count, :total_instance_count, :total_used_instance_count
 
@@ -153,7 +172,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class VeneerEstimateGroupDef < AbstractEstimateGroupDef
+  class VeneerEstimateGroupDef < AbstractEstimateWeightedGroupDef
 
     attr_accessor :total_count, :total_area, :total_used_area
 
@@ -174,4 +193,25 @@ module Ladb::OpenCutList
 
   end
 
+  # -----
+
+  class CutEstimateGroupDef < AbstractEstimateGroupDef
+
+    attr_accessor :total_count, :total_length
+
+    def initialize
+      super
+
+      @total_count = 0
+      @total_length = 0
+
+    end
+
+    # ---
+
+    def create_group
+      CutEstimateGroup.new(self)
+    end
+
+  end
 end

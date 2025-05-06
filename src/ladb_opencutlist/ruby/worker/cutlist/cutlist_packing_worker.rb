@@ -252,7 +252,7 @@ module Ladb::OpenCutList
                    irregular_allowed_rotations: '0',
                    irregular_allow_mirroring: false,
 
-                   hidden_group_ids: []
+                   hidden_group_ids: []   # Unused locally, but necessary for UI
 
     )
 
@@ -728,10 +728,10 @@ module Ladb::OpenCutList
         bin_def.svg = _render_bin_def_svg(bin_def, false) unless running
         bin_def.light_svg = _render_bin_def_svg(bin_def, true, longest_bin_def, widest_bin_def)
 
-        packing_def.solution_def.summary_def.number_of_leftovers += bin_def.number_of_leftovers
-        packing_def.solution_def.summary_def.number_of_leftovers_to_keep += bin_def.number_of_leftovers_to_keep
-        packing_def.solution_def.summary_def.number_of_cuts += bin_def.number_of_cuts
-        packing_def.solution_def.summary_def.cut_length += bin_def.cut_length
+        packing_def.solution_def.summary_def.number_of_leftovers += bin_def.number_of_leftovers * bin_def.count
+        packing_def.solution_def.summary_def.number_of_leftovers_to_keep += bin_def.number_of_leftovers_to_keep * bin_def.count
+        packing_def.solution_def.summary_def.number_of_cuts += bin_def.number_of_cuts * bin_def.count
+        packing_def.solution_def.summary_def.cut_length += bin_def.cut_length * bin_def.count
 
       end
 

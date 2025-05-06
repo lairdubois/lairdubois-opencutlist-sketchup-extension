@@ -19,7 +19,7 @@
 
     DEFAULTS_DICTIONARY = 'materials_material_attributes'.freeze
 
-    attr_accessor :uuid, :type, :description, :url, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented, :raw_estimated, :multiplier_coefficient, :std_volumic_masses, :std_prices
+    attr_accessor :uuid, :type, :description, :url, :thickness, :length_increase, :width_increase, :thickness_increase, :std_lengths, :std_widths, :std_thicknesses, :std_sections, :std_sizes, :grained, :edge_decremented, :raw_estimated, :multiplier_coefficient, :std_volumic_masses, :std_prices, :std_cut_prices
     attr_reader :material
 
     @@cached_uuids = {}
@@ -383,6 +383,24 @@
       false
     end
 
+    def std_cut_prices
+      case @type
+        when TYPE_SHEET_GOOD, TYPE_DIMENSIONAL, TYPE_EDGE, TYPE_VENEER
+          @std_cut_prices
+        else
+          PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['std_cut_prices']
+      end
+    end
+
+    def h_std_cut_prices
+      _std_vd_to_uvd(@std_cut_prices)
+    end
+
+    def has_std_cut_prices?
+      return true unless h_std_cut_prices.find { |std_cut_price| std_cut_price[:val] > 0 }.nil?
+      false
+    end
+
     # std_dim is used as key in 'h_std_volumic_masses' and 'h_std_prices'
     def compute_std_dim(inch_length, inch_width, inch_thickness)
       case @type
@@ -503,6 +521,7 @@
         volumic_mass = PLUGIN.get_attribute(@material, 'volumic_mass', nil)  # Deprecated since 6.0
         @std_volumic_masses = PLUGIN.get_attribute(@material, 'std_volumic_masses', volumic_mass.nil? ? defaults['std_volumic_masses'] : [ { 'val' => volumic_mass, 'dim' => nil } ])
         @std_prices = PLUGIN.get_attribute(@material, 'std_prices', defaults['std_prices'])
+        @std_cut_prices = PLUGIN.get_attribute(@material, 'std_cut_prices', defaults['std_cut_prices'])
       else
         @description = ''
         @type = TYPE_UNKNOWN
@@ -536,6 +555,7 @@
         @material.delete_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'volumic_mass')  # Delete unused 'volumic_mass' attribute since 6.0
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_volumic_masses', @std_volumic_masses.to_json)
         @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_prices', @std_prices.to_json)
+        @material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'std_cut_prices', @std_cut_prices.to_json)
       end
     end
 

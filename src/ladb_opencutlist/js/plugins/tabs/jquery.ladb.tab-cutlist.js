@@ -1441,7 +1441,7 @@
                         isEntitySelection: that.isEntitySelection,
                         lengthUnit: that.lengthUnit,
                         generatedAt: new Date().getTime() / 1000,
-                        report: response
+                        estimate: response
                     }, function () {
                         that.dialog.setupTooltips();
                     });
@@ -5287,7 +5287,7 @@
                 const $inputRectangleguillotineKeepSize = $('#ladb_input_rectangleguillotine_keep_size', $modal);
                 const $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
                 const $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
-                const $formGroupDev = $('.ladb-cutlist-packing-form-group-dev', $modal)
+                const $formGroupDebug = $('.ladb-cutlist-packing-form-group-debug', $modal)
                 const $btnExpert = $('.ladb-cutlist-packing-btn-expert', $modal)
                 const $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
                 const $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
@@ -5381,11 +5381,11 @@
                 const fnUpdateFieldsVisibility = function () {
                     const isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
                     const isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
-                    const isDev = that.dialog.capabilities.is_dev;
+                    const isDebug = that.dialog.capabilities.is_dev && !that.dialog.capabilities.is_rbz;
                     if (isIrregular) $formGroupNotIrregular.hide(); else $formGroupNotIrregular.show();
                     if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
                     if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
-                    if (isDev) $formGroupDev.show(); else $formGroupDev.hide();
+                    if (isDebug) $formGroupDebug.show(); else $formGroupDebug.hide();
                     $('option[value=0]', $selectPartDrawingType).prop('disabled', isIrregular);
                     if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);
                     $selectPartDrawingType.selectpicker('refresh');

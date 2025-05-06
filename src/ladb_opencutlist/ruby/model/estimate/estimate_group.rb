@@ -9,23 +9,18 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_accessor :mass_ratio, :cost_ratio
-    attr_reader :material_type, :total_mass, :total_cost, :entries
+    attr_accessor :cost_ratio
+    attr_reader :type, :total_cost, :entries
 
-    def initialize(_def, material_type)
+    def initialize(_def, type)
       @_def = _def
 
-      @material_type = material_type
-
-      @total_mass = _def.total_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_mass)
-      @total_used_mass = _def.total_used_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_used_mass)
-      @total_unused_mass = _def.total_unused_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_unused_mass)
+      @type = type
 
       @total_cost = _def.total_cost == 0 ? nil : PriceUtils.format_to_readable_price(_def.total_cost)
       @total_used_cost = _def.total_used_cost == 0 ? nil : PriceUtils.format_to_readable_price(_def.total_used_cost)
       @total_unused_cost = _def.total_unused_cost == 0 ? nil : PriceUtils.format_to_readable_price(_def.total_unused_cost)
 
-      @mass_ratio = 0
       @cost_ratio = 0
 
       @entries = _def.entry_defs.map { |entry_def| entry_def.create_entry }
@@ -34,9 +29,29 @@ module Ladb::OpenCutList
 
   end
 
+  class AbstractEstimateWeightedGroup < AbstractEstimateGroup
+
+    include HashableHelper
+
+    attr_accessor :mass_ratio
+    attr_reader :total_mass
+
+    def initialize(_def, type)
+      super
+
+      @total_mass = _def.total_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_mass)
+      @total_used_mass = _def.total_used_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_used_mass)
+      @total_unused_mass = _def.total_unused_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_unused_mass)
+
+      @mass_ratio = 0
+
+    end
+
+  end
+
   # -----
 
-  class SolidWoodEstimateGroup < AbstractEstimateGroup
+  class SolidWoodEstimateGroup < AbstractEstimateWeightedGroup
 
     attr_reader :total_volume, :total_used_volume
 
@@ -52,7 +67,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SheetGoodEstimateGroup < AbstractEstimateGroup
+  class SheetGoodEstimateGroup < AbstractEstimateWeightedGroup
 
     attr_reader :total_count, :total_area, :total_used_area
 
@@ -69,7 +84,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class DimensionalEstimateGroup < AbstractEstimateGroup
+  class DimensionalEstimateGroup < AbstractEstimateWeightedGroup
 
     attr_reader :total_count, :total_length, :total_used_length
 
@@ -86,7 +101,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class EdgeEstimateGroup < AbstractEstimateGroup
+  class EdgeEstimateGroup < AbstractEstimateWeightedGroup
 
     attr_reader :total_count, :total_length, :total_used_length
 
@@ -103,7 +118,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class HardwareEstimateGroup < AbstractEstimateGroup
+  class HardwareEstimateGroup < AbstractEstimateWeightedGroup
 
     attr_reader :total_count, :total_instance_count, :total_used_instance_count
 
@@ -121,7 +136,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class VeneerEstimateGroup < AbstractEstimateGroup
+  class VeneerEstimateGroup < AbstractEstimateWeightedGroup
 
     attr_reader :total_count, :total_area, :total_used_area
 
@@ -131,6 +146,22 @@ module Ladb::OpenCutList
       @total_count = _def.total_count == 0 ? nil : _def.total_count
       @total_area = _def.total_area == 0 ? nil : DimensionUtils.format_to_readable_area(_def.total_area)
       @total_used_area = _def.total_used_area == 0 ? nil : DimensionUtils.format_to_readable_area(_def.total_used_area)
+
+    end
+
+  end
+
+  # -----
+
+  class CutEstimateGroup < AbstractEstimateGroup
+
+    attr_reader :total_length
+
+    def initialize(_def)
+      super(_def, -1)
+
+      @total_count = _def.total_count == 0 ? nil : _def.total_count
+      @total_length = _def.total_length == 0 ? nil : DimensionUtils.format_to_readable_length(_def.total_length)
 
     end
 

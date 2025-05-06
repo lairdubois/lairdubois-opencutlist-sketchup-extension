@@ -95,6 +95,10 @@
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.std_prices_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     {% include 'components/_editor-std-attributes.twig' with { 'id':'ladb_materials_editor_std_prices', 'strippedName':'prices' } %}
                 </div>
+                <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.std_cut_prices_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    {% include 'components/_editor-std-attributes.twig' with { 'id':'ladb_materials_editor_std_cut_prices', 'strippedName':'cut_prices' } %}
+                </div>
             </div>
         </div>
         <div role="tabpanel" class="tab-pane{% if tab == 'cut_options' %} active{% endif %}" id="tab_edit_material_general_cut_options">

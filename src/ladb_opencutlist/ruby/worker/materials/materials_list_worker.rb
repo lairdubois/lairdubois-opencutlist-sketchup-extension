@@ -93,6 +93,7 @@ module Ladb::OpenCutList
                       :multiplier_coefficient => material_attributes.multiplier_coefficient,
                       :std_volumic_masses => material_attributes.std_volumic_masses,
                       :std_prices => material_attributes.std_prices,
+                      :std_cut_prices => material_attributes.std_cut_prices,
                   }
               }
           )

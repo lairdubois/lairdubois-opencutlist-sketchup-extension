@@ -9,15 +9,33 @@ module Ladb::OpenCutList
 
     include HashableHelper
 
-    attr_reader :total_mass, :total_cost
+    attr_reader :total_cost, :total_used_cost
 
     def initialize(_def)
       @_def = _def
 
-      @total_mass = _def.total_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_mass)
-      @total_used_mass = _def.total_used_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_used_mass)
       @total_cost = _def.total_cost == 0 ? nil : PriceUtils.format_to_readable_price(_def.total_cost)
       @total_used_cost = _def.total_used_cost == 0 ? nil : PriceUtils.format_to_readable_price(_def.total_used_cost)
+
+    end
+
+    def format_std_price(std_price, no_zero = true)
+      (std_price.nil? || std_price[:val] == 0) && no_zero ? nil : UnitUtils.format_readable(std_price[:val], std_price[:unit], 2, 2)
+    end
+
+  end
+
+  class AbstractEstimateWeightedItem < AbstractEstimateItem
+
+    include HashableHelper
+
+    attr_reader :total_mass, :total_used_mass
+
+    def initialize(_def)
+      super
+
+      @total_mass = _def.total_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_mass)
+      @total_used_mass = _def.total_used_mass == 0 ? nil : MassUtils.format_to_readable_mass(_def.total_used_mass)
 
     end
 
@@ -25,13 +43,9 @@ module Ladb::OpenCutList
       std_volumic_mass[:val].nil? || std_volumic_mass[:val] == 0 ? nil : UnitUtils.format_readable(std_volumic_mass[:val], std_volumic_mass[:unit])
     end
 
-    def format_std_price(std_price)
-      std_price.nil? || std_price[:val] == 0 ? nil : UnitUtils.format_readable(std_price[:val], std_price[:unit], 2, 2)
-    end
-
   end
 
-  class AbstractEstimateEntry < AbstractEstimateItem
+  class AbstractEstimateWeightedEntry < AbstractEstimateWeightedItem
 
     attr_reader :errors, :raw_estimated, :multiplier_coefficient, :id, :material_id, :material_name, :material_display_name, :material_type, :material_color, :material_description, :material_url, :std_available, :std_dimension_stipped_name, :std_dimension, :std_thickness
 
@@ -62,7 +76,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SolidWoodEstimateEntry < AbstractEstimateEntry
+  class SolidWoodEstimateEntry < AbstractEstimateWeightedEntry
 
     attr_reader :std_volumic_mass, :std_price, :total_volume, :total_used_volume
 
@@ -81,7 +95,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SheetGoodEstimateEntry < AbstractEstimateEntry
+  class SheetGoodEstimateEntry < AbstractEstimateWeightedEntry
 
     attr_reader :std_volumic_mass, :std_price, :total_count, :total_area, :total_used_area, :bins
 
@@ -101,7 +115,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SheetGoodEstimateEntryBin < AbstractEstimateItem
+  class SheetGoodEstimateEntryBin < AbstractEstimateWeightedItem
 
     attr_reader :std_volumic_mass, :std_price, :type, :length, :width, :count, :total_area, :total_used_area
 
@@ -125,7 +139,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class DimensionalEstimateEntry < AbstractEstimateEntry
+  class DimensionalEstimateEntry < AbstractEstimateWeightedEntry
 
     attr_reader :std_volumic_mass, :std_price, :total_count, :total_length, :total_used_length, :bins
 
@@ -145,7 +159,7 @@ module Ladb::OpenCutList
 
   end
 
-  class DimensionalEstimateEntryBin < AbstractEstimateItem
+  class DimensionalEstimateEntryBin < AbstractEstimateWeightedItem
 
     attr_reader :std_volumic_mass, :std_price, :type, :length, :count, :total_length, :total_used_length
 
@@ -168,7 +182,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class EdgeEstimateEntry < AbstractEstimateEntry
+  class EdgeEstimateEntry < AbstractEstimateWeightedEntry
 
     attr_reader :std_volumic_mass, :std_price, :total_count, :total_length, :total_used_length, :bins
 
@@ -188,7 +202,7 @@ module Ladb::OpenCutList
 
   end
 
-  class EdgeEstimateEntryBin < AbstractEstimateItem
+  class EdgeEstimateEntryBin < AbstractEstimateWeightedItem
 
     attr_reader :std_volumic_mass, :std_price, :type, :length, :count, :total_length, :total_used_length
 
@@ -211,7 +225,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class HardwareEstimateEntry < AbstractEstimateEntry
+  class HardwareEstimateEntry < AbstractEstimateWeightedEntry
 
     attr_reader :total_count
 
@@ -229,7 +243,7 @@ module Ladb::OpenCutList
 
   end
 
-  class HardwareEstimateEntryPart < AbstractEstimateItem
+  class HardwareEstimateEntryPart < AbstractEstimateWeightedItem
 
     attr_reader :id, :name, :flipped, :count, :mass, :price, :total_instance_count, :total_used_instance_count
 
@@ -256,7 +270,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class VeneerEstimateEntry < AbstractEstimateEntry
+  class VeneerEstimateEntry < AbstractEstimateWeightedEntry
 
     attr_reader :std_volumic_mass, :std_price, :total_count, :total_area, :total_used_area, :bins
 
@@ -276,7 +290,7 @@ module Ladb::OpenCutList
 
   end
 
-  class VeneerEstimateEntryBin < AbstractEstimateItem
+  class VeneerEstimateEntryBin < AbstractEstimateWeightedItem
 
     attr_reader :std_volumic_mass, :std_price, :type, :length, :width, :count, :total_area, :total_used_area
 
@@ -293,6 +307,62 @@ module Ladb::OpenCutList
       @count = _def.count
       @total_area = DimensionUtils.format_to_readable_area(_def.total_area)
       @total_used_area = DimensionUtils.format_to_readable_area(_def.total_used_area)
+
+    end
+
+  end
+
+  # -----
+
+  class CutEstimateEntry < AbstractEstimateItem
+
+    attr_reader :total_count, :total_length, :std_price
+
+    def initialize(_def)
+      super
+
+      @id = _def.cutlist_group.id
+
+      @material_id = _def.cutlist_group.material_id
+      @material_name = _def.cutlist_group.material_name
+      @material_display_name = _def.cutlist_group.material_display_name
+      @material_type = _def.cutlist_group.material_type
+      @material_color = _def.cutlist_group.material_color
+      @material_description = _def.cutlist_group.material_description
+      @material_url = _def.cutlist_group.material_url
+      @material_stripped_name = MaterialAttributes.type_strippedname(_def.cutlist_group.material_type)
+      @material_is_1d = MaterialAttributes.is_1d?(_def.cutlist_group.material_type)
+      @std_available = _def.cutlist_group.std_available
+      @std_dimension_stipped_name = _def.cutlist_group.std_dimension_stipped_name
+      @std_dimension = _def.cutlist_group.std_dimension
+      @std_thickness = _def.cutlist_group.std_thickness
+
+      @bins = _def.bin_defs.values.map { |bin_def| bin_def.create_bin }
+
+      @total_count = _def.total_count == 0 ? nil : _def.total_count
+      @total_length = _def.total_length == 0 ? nil : DimensionUtils.format_to_readable_length(_def.total_length)
+
+      @std_price = _def.std_price.nil? ? @bins.map { |bin| bin.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ') : format_std_price(_def.std_price)
+
+    end
+
+  end
+
+  class CutEstimateEntryBin < AbstractEstimateItem
+
+    attr_reader :std_price, :type, :length, :width, :count, :total_length
+
+    def initialize(_def)
+      super(_def)
+
+      @std_price = format_std_price(_def.std_price)
+
+      @type = _def.type
+      @length = _def.length.to_l.to_s
+      @width = _def.width.to_l.to_s
+
+      @count = _def.count
+      @total_length = DimensionUtils.format_to_readable_length(_def.total_length)
 
     end
 

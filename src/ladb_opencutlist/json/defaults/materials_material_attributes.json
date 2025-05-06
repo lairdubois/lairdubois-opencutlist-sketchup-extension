@@ -25,7 +25,8 @@
     "raw_estimated": true,
     "multiplier_coefficient": 1.0,
     "std_volumic_masses": [],
-    "std_prices": []
+    "std_prices": [],
+    "std_cut_prices": []
   },
   "1": {  /* TYPE_SOLID_WOOD */
     "thickness": "0",
@@ -42,7 +43,8 @@
     "raw_estimated": true,
     "multiplier_coefficient": 1.0,
     "std_volumic_masses": [],
-    "std_prices": []
+    "std_prices": [],
+    "std_cut_prices": []
   },
   "2": {  /* TYPE_SHEET_GOOD */
     "thickness": "0",
@@ -59,7 +61,8 @@
     "raw_estimated": true,
     "multiplier_coefficient": 1.0,
     "std_volumic_masses": [],
-    "std_prices": []
+    "std_prices": [],
+    "std_cut_prices": []
   },
   "3": {  /* TYPE_DIMENSIONAL */
     "thickness": "0",
@@ -76,7 +79,8 @@
     "raw_estimated": true,
     "multiplier_coefficient": 1.0,
     "std_volumic_masses": [],
-    "std_prices": []
+    "std_prices": [],
+    "std_cut_prices": []
   },
   "4": {  /* TYPE_EDGE */
     "thickness": { "metric": "2mm", "imperial": "0.018\"" },
@@ -93,7 +97,8 @@
     "raw_estimated": true,
     "multiplier_coefficient": 1.0,
     "std_volumic_masses": [],
-    "std_prices": []
+    "std_prices": [],
+    "std_cut_prices": []
   },
   "5": {  /* TYPE_HARDWARE */
     "thickness": "",
@@ -110,7 +115,8 @@
     "raw_estimated": true,
     "multiplier_coefficient": 1.0,
     "std_volumic_masses": [],
-    "std_prices": []
+    "std_prices": [],
+    "std_cut_prices": []
   },
   "6": {  /* TYPE_VENEER */
     "thickness": { "metric": "1mm", "imperial": "0.018\"" },
@@ -127,6 +133,7 @@
     "raw_estimated": true,
     "multiplier_coefficient": 1.0,
     "std_volumic_masses": [],
-    "std_prices": []
+    "std_prices": [],
+    "std_cut_prices": []
   }
 }
