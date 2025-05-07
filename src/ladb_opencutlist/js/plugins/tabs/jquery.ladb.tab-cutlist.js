@@ -976,7 +976,7 @@
                                 source: exportOptions.source,
                                 col_defs: exportOptions.source_col_defs[exportOptions.source],
                                 target: 'pasteable',
-                                hidden_group_ids: that.generateOptions.hidden_group_ids,
+                                cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
                                 no_header: noHeader
                             }, function (response) {
                                 if (response.errors) {
