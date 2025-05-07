@@ -418,7 +418,6 @@ module Ladb::OpenCutList
             if cut_entry_def.nil?
 
               cut_entry_def = CutEstimateEntryDef.new(cut_group_def, @cutlist_group)
-              cut_group_def.entry_defs << cut_entry_def
 
             end
 
@@ -446,9 +445,6 @@ module Ladb::OpenCutList
             cut_entry_def.total_cost += total_cost
             cut_entry_def.total_used_cost += total_cost
 
-            cut_group_def.total_count += total_count
-            cut_group_def.total_length += total_length
-
           end
 
         end
@@ -461,6 +457,18 @@ module Ladb::OpenCutList
       estimate_group_def.total_used_length += estimate_entry_def.total_used_length if estimate_group_def.respond_to?(:total_used_length=)
       estimate_group_def.total_area += estimate_entry_def.total_area if estimate_group_def.respond_to?(:total_area=)
       estimate_group_def.total_used_area += estimate_entry_def.total_used_area if estimate_group_def.respond_to?(:total_used_area=)
+
+      # Add cut entry only if it has cost
+      if !cut_entry_def.nil? && cut_entry_def.total_cost > 0
+
+        cut_group_def.entry_defs << cut_entry_def
+
+        cut_group_def.total_count += cut_entry_def.total_count
+        cut_group_def.total_length += cut_entry_def.total_length
+
+      else
+        cut_entry_def = nil
+      end
 
       [ estimate_entry_def, cut_entry_def ].compact
     end
