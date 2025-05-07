@@ -661,7 +661,7 @@ namespace Packy {
             const rectangle::Instance instance = instance_builder_.build();
 
             if (!instance_path_.empty()) {
-                instance.write(instance_path_);  // Export instance to file with PackingSolver 'write' method
+                instance.write(instance_path_);  // Export instance to a file with PackingSolver 'write' method
             }
 
             const rectangle::Output output = rectangle::optimize(instance, parameters_);
@@ -951,7 +951,7 @@ namespace Packy {
             const rectangleguillotine::Instance instance = instance_builder_.build();
 
             if (!instance_path_.empty()) {
-                instance.write(instance_path_);  // Export instance to file with PackingSolver 'write' method
+                instance.write(instance_path_);  // Export instance to a file with PackingSolver 'write' method
             }
 
             const rectangleguillotine::Output output = rectangleguillotine::optimize(instance, parameters_);
@@ -1267,7 +1267,7 @@ namespace Packy {
             const onedimensional::Instance instance = instance_builder_.build();
 
             if (!instance_path_.empty()) {
-                instance.write(instance_path_);  // Export instance to file with PackingSolver 'write' method
+                instance.write(instance_path_);  // Export instance to a file with PackingSolver 'write' method
             }
 
             const onedimensional::Output output = onedimensional::optimize(instance, parameters_);
