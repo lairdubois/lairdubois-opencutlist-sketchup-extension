@@ -1066,8 +1066,10 @@ tab:
       option_rectangleguillotine_keep: Taille minimale des chutes
       option_rectangleguillotine_keep_help: Les chutes ayant les deux dimensions supérieures à la taille minimale seront marquées **à conserver**.
       option_irregular_allowed_rotations: Rotations autorisées
-      option_irregular_allowed_rotations_help: |
-        Définit les angles de rotation de la pièce pour le placement.
+      option_irregular_allowed_rotations_help: |  # TODO
+        Définit le pas des angles de rotation possibles de la pièce pour son placement.
+        
+        *Les matières avec un fil ne permettent que les pas de 0 et 180°*.
       option_irregular_allowed_rotations_0: Aucune
       option_irregular_allowed_rotations_90: Pas de 90°
       option_irregular_allowed_rotations_180: Pas de 180°
