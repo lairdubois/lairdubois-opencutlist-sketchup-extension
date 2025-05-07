@@ -746,7 +746,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_-1: $t(default.cut.plural)
+      type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unit incompatible with material estimation options
         multiplier_coefficient: Coefficient
