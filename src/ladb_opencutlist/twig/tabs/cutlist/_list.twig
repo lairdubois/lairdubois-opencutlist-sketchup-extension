@@ -224,7 +224,7 @@
         {% set colspan = colspan - 2 %}
     {% endif %}
 
-    <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if groupHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-material-type-{{ group.material_type }}">
+    <table id="ladb_group_{{ group.id }}" data-group-id="{{ group.id }}" class="{% if groupHidden %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-group-type-{{ group.material_type }}">
         <thead>
         <tr class="table-heading">
             <td colspan="{{ colspan }}" class="text-middle">

@@ -344,7 +344,7 @@ module Ladb::OpenCutList
 
           next if length == 0 || width == 0 || count == 0
 
-          cost, std_price = _compute_bin_type_cost(group, length, width)
+          cost, std_price, std_cut_price = _compute_bin_type_cost(group, length, width)
 
           bin_type = {
             copies: count,
@@ -365,6 +365,7 @@ module Ladb::OpenCutList
             count: count,
             cost: cost,
             std_price: std_price,
+            std_cut_price: std_cut_price,
             type: BIN_TYPE_SCRAP
           )
 
@@ -385,7 +386,7 @@ module Ladb::OpenCutList
 
           next if length == 0 || width == 0
 
-          cost, std_price = _compute_bin_type_cost(group, length, width)
+          cost, std_price, std_cut_price = _compute_bin_type_cost(group, length, width)
 
           bin_type = {
             copies: -1,
@@ -406,6 +407,7 @@ module Ladb::OpenCutList
             count: -1,
             cost: cost,
             std_price: std_price,
+            std_cut_price: std_cut_price,
             type: BIN_TYPE_STD
           )
 
@@ -725,6 +727,7 @@ module Ladb::OpenCutList
 
       packing_def.solution_def.bin_defs.each do |bin_def|
 
+        bin_def.cut_cost = bin_def.cut_length * (bin_def.bin_type_def.std_cut_price[:val] == 0 ? 0 : _uv_to_inch(bin_def.bin_type_def.std_cut_price[:unit], bin_def.bin_type_def.std_cut_price[:val])) unless bin_def.bin_type_def.std_cut_price.nil?
         bin_def.svg = _render_bin_def_svg(bin_def, false) unless running
         bin_def.light_svg = _render_bin_def_svg(bin_def, true, longest_bin_def, widest_bin_def)
 
@@ -732,6 +735,7 @@ module Ladb::OpenCutList
         packing_def.solution_def.summary_def.number_of_leftovers_to_keep += bin_def.number_of_leftovers_to_keep * bin_def.count
         packing_def.solution_def.summary_def.number_of_cuts += bin_def.number_of_cuts * bin_def.count
         packing_def.solution_def.summary_def.cut_length += bin_def.cut_length * bin_def.count
+        packing_def.solution_def.summary_def.cut_cost += bin_def.cut_cost * bin_def.count
 
       end
 
@@ -1111,21 +1115,31 @@ module Ladb::OpenCutList
 
     def _compute_bin_type_cost(group, inch_length = 0, inch_width = 0, inch_thickness = 0)
       std_price = nil
+      std_cut_price = nil
       cost = -1
-      if (material_attributes = _get_material_attributes(group.material_name)).has_std_prices?
+      material_attributes = _get_material_attributes(group.material_name)
+      if material_attributes.has_std_prices? || material_attributes.has_std_cut_prices?
 
         inch_thickness = group.def.std_thickness if inch_thickness == 0
         inch_width = group.def.std_width if inch_width == 0
 
         dim = material_attributes.compute_std_dim(inch_length, inch_width, inch_thickness)
         unless dim.nil?
-          std_price = _get_std_price(dim, material_attributes)
-          price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], inch_thickness, inch_width, inch_length)
-          cost = (inch_length * inch_width * inch_thickness * price_per_inch3).round(2)
+
+          if material_attributes.has_std_prices?
+            std_price = _get_std_price(dim, material_attributes)
+            price_per_inch3 = std_price[:val] == 0 ? 0 : _uv_to_inch3(std_price[:unit], std_price[:val], inch_thickness, inch_width, inch_length)
+            cost = (inch_length * inch_width * inch_thickness * price_per_inch3).round(2)
+          end
+
+          if material_attributes.has_std_cut_prices?
+            std_cut_price = _get_std_cut_price(dim, material_attributes)
+          end
+
         end
 
       end
-      [ cost, std_price ]
+      [ cost, std_price, std_cut_price ]
     end
 
   end

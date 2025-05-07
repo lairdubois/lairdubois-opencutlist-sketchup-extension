@@ -36,6 +36,8 @@ namespace Packy {
 
     struct BinTypeMeta {
         BinPos copies = 0;
+        double width_dbl = 0;
+        double height_dbl = 0;
     };
     using BinTypeMetas = std::unordered_map<BinTypeId, BinTypeMeta>;
 
@@ -158,6 +160,8 @@ namespace Packy {
 
                 BinTypeMeta bin_type_meta;
                 bin_type_meta.copies = j_item_value.value("copies", static_cast<BinPos>(1));
+                bin_type_meta.width_dbl = j_item_value.value("width", static_cast<double>(0));
+                bin_type_meta.height_dbl = j_item_value.value("height", static_cast<double>(0));
                 bin_type_metas_.emplace(bin_type_id, bin_type_meta);
 
             }
@@ -169,9 +173,9 @@ namespace Packy {
         ) = 0;
 
         Length read_length(
-                basic_json<>& j,
+                const basic_json<>& j,
                 const std::string& key,
-                Length default_length = 0
+                const Length default_length = 0
         ) const {
             return to_length(j.value(key, static_cast<double>(default_length)));
         }
@@ -1291,6 +1295,7 @@ namespace Packy {
 
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
+                const BinTypeMeta& bin_type_meta = Solver::bin_type_meta(bin.bin_type_id);
 
                 Length bin_space = bin_type.length;
                 Length items_space = 0;
@@ -1313,8 +1318,9 @@ namespace Packy {
                 basic_json<>& j_cuts = j_bin["cuts"] = json::array();
                 if (fake_trimming_ > 0) {
                     j_cuts.emplace_back(json{
-                            {"depth", 0},
-                            {"x",     to_length_dbl(fake_trimming_ - fake_spacing_)}
+                            {"depth",  0},
+                            {"x",      to_length_dbl(fake_trimming_ - fake_spacing_)},
+                            {"length", bin_type_meta.height_dbl}
                     });
                 }
                 for (const auto& item: bin.items) {
@@ -1334,8 +1340,10 @@ namespace Packy {
                     if (item.start + item_type.length < bin_type.length) {
 
                         j_cuts.emplace_back(json{
-                                {"depth", 1},
-                                {"x",     to_length_dbl(fake_trimming_ + item.start + item_type.length - fake_spacing_)}
+                                {"depth",  1},
+                                {"x",      to_length_dbl(fake_trimming_ + item.start + item_type.length - fake_spacing_)},
+                                {"length", bin_type_meta.height_dbl}
+
                         });
 
                         // Leftover
@@ -1353,6 +1361,7 @@ namespace Packy {
                 j_bin["number_of_items"] = j_items.size();
                 j_bin["number_of_leftovers"] = j_leftovers.size();
                 j_bin["number_of_cuts"] = j_cuts.size();
+                j_bin["cut_length"] = j_cuts.size() * bin_type_meta.height_dbl;
 
             }
 
@@ -1525,7 +1534,7 @@ namespace Packy {
             const irregular::Instance instance = instance_builder_.build();
 
             if (!instance_path_.empty()) {
-                instance.write(instance_path_);  // Export instance to file with PackingSolver 'write' method
+                instance.write(instance_path_);  // Export instance to a file with PackingSolver 'write' method
             }
 
             const irregular::Output output = irregular::optimize(instance, parameters_);

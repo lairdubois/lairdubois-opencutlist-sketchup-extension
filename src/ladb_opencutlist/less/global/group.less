@@ -1,0 +1,78 @@
+//
+// Group
+//
+
+.ladb-group-type-icon {
+  font-size: 20px;
+  display: inline-block;
+  width: 28px;
+  height: 26px;
+  line-height: 26px;
+  text-align: center;
+
+  &.ladb-group-type-icon-compact {
+    font-size: 1em;
+    width: auto;
+    height: auto;
+    line-height: 1em;
+  }
+
+  &.ladb-group-type-icon-filled {
+    color: #fff;
+    border-radius: 4px;
+
+    &.ladb-group-type-1 {
+      background-color: @ladb-group-type-1;
+    }
+
+    &.ladb-group-type-2 {
+      background-color: @ladb-group-type-2;
+    }
+
+    &.ladb-group-type-3 {
+      background-color: @ladb-group-type-3;
+    }
+
+    &.ladb-group-type-4 {
+      background-color: @ladb-group-type-4;
+    }
+
+    &.ladb-group-type-5 {
+      background-color: @ladb-group-type-5;
+    }
+
+    &.ladb-group-type-6 {
+      background-color: @ladb-group-type-6;
+    }
+
+    &.ladb-group-type--1 {
+      background-color: @ladb-group-type--1;
+    }
+
+  }
+
+}
+
+// Print
+
+@media print {
+
+  .ladb-group-type-icon {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;;
+    color: #000 !important;
+    border-radius: 0;
+    width: auto;
+    height: auto;
+    line-height: inherit;
+
+    &.ladb-group-type-icon-filled {
+      background: none !important;
+      font-size: 16px;
+      line-height: inherit;
+    }
+
+  }
+
+}
+

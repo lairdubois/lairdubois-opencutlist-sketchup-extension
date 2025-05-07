@@ -217,7 +217,7 @@
                         </td>
                     </tr>
                 {% endfor %}
-                {% if solution.summary.bin_type_stats|length > 1 %}
+                {% if solution.summary.bin_type_stats|length > 1 or solution.summary.cut_cost %}
                     <tr class="ladb-cutlist-row ladb-cutlist-row-total">
                         <td class="text-right">{{ 'tab.cutlist.packing.list.total_used'|i18next }}</td>
                         <td class="text-center">{{ solution.summary.total_used_count }}</td>
@@ -228,7 +228,10 @@
                             <td></td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">{{ solution.summary.total_used_area }}</td>
                         {% endif %}
-                        <td class="text-right">{{ solution.summary.total_used_cost ? solution.summary.total_used_cost : '-' }}</td>
+                        <td class="text-right">
+                            {{ solution.summary.total_used_cost ? solution.summary.total_used_cost : '-' }}
+                            {% if solution.summary.cut_cost %}<div data-toggle="tooltip" title="{{ 'tab.cutlist.packing.list.total_cut_length'|i18next }} : {{ solution.summary.cut_length }}"><small>+ {{ solution.summary.cut_cost }}</small></div>{% endif %}
+                        </td>
                         <td class="text-right">{{ solution.summary.total_used_item_count }}</td>
                     </tr>
                 {% endif %}

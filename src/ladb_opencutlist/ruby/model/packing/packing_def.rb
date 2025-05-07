@@ -115,7 +115,7 @@ module Ladb::OpenCutList
     attr_reader :time, :number_of_bins, :number_of_items, :efficiency,
                 :bin_type_stats_defs
     attr_accessor :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
-                  :cut_length,
+                  :cut_length, :cut_cost,
                   :total_used_count, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count
 
     def initialize(time:, number_of_bins:, number_of_items:, efficiency:,
@@ -135,6 +135,7 @@ module Ladb::OpenCutList
       @number_of_cuts = 0
 
       @cut_length = 0
+      @cut_cost = 0
 
       @total_used_count = 0
       @total_used_area = 0
@@ -198,6 +199,7 @@ module Ladb::OpenCutList
                 :length, :width,
                 :cost,
                 :std_price,
+                :std_cut_price,
                 :type
 
     def initialize(id:,
@@ -205,6 +207,7 @@ module Ladb::OpenCutList
                    count:,
                    cost:,
                    std_price:,
+                   std_cut_price:,
                    type: BIN_TYPE_STD)
 
       @id = id
@@ -213,6 +216,7 @@ module Ladb::OpenCutList
       @count = count
       @cost = cost
       @std_price = std_price
+      @std_cut_price = std_cut_price
       @type = type
 
     end
@@ -229,7 +233,8 @@ module Ladb::OpenCutList
                 :number_of_items, :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
                 :cut_length,
                 :x_max, :y_max
-    attr_accessor :svg, :light_svg
+    attr_accessor :cut_cost,
+                  :svg, :light_svg
 
     def initialize(bin_type_def:,
                    count:, efficiency:,
@@ -259,6 +264,8 @@ module Ladb::OpenCutList
       @y_max = y_max
 
       # Computed
+
+      @cut_cost = 0
 
       @svg = ''
       @light_svg = ''

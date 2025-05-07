@@ -1508,7 +1508,7 @@
                     $('a.ladb-btn-edit-material', $slide).on('click', function () {
                         $(this).blur();
 
-                        // Flag to ignore next material change event
+                        // Flag to ignore the next material change event
                         that.ignoreNextMaterialEvents = true;
 
                         const materialId = $(this).data('material-id');
@@ -1518,7 +1518,7 @@
                             propertiesTab: propertiesTab,
                             updatedCallback: function () {
 
-                                // Flag to stop ignoring next material change event
+                                // Flag to stop ignoring the next material change event
                                 that.ignoreNextMaterialEvents = false;
 
                                 // Refresh the list
@@ -1565,6 +1565,12 @@
 
                         });
                         return false;
+                    });
+                    $('.progress-bar', $slide).on('click', function () {
+                        $(this).blur();
+                        const groupId = $(this).data('group-id');
+                        const $group = $('.ladb-cutlist-group[data-group-id="' + groupId + '"]', $slide);
+                        that.scrollSlideToTarget($slide, $group, true, true);
                     });
 
                     // Finish progress feedback

@@ -26,7 +26,7 @@
         {% if estimate['total_'~key] is not null %}
             <div class="no-print progress" style="height: 10px; margin-top: 20px;">
                 {% for group in estimate.groups if group[key~'_ratio'] %}
-                    <div class="progress-bar progress-bar-material-type-{{ group.type }}" style="width: {{ group[key~'_ratio'] * 100 }}%;" data-toggle="tooltip" data-html="true" title="<div class='tt-header'><strong>{{ ('tab.cutlist.estimate.type_'~group.type)|i18next }}</strong> ({{ (group[key~'_ratio'] * 100)|number_format }}%)</div><div class='tt-section'>{% if group['total_used_'~key] %}<div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total_used'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_used_'~key] }}</div></div>{% endif %}{% if group['total_unused_'~key] %}<div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total_unused'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_unused_'~key] }}</div></div>{% endif %}</div><div class='tt-section'><div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_'~key] }}</div></div></div>"></div>
+                    <div class="progress-bar progress-bar-group-type-{{ group.type }}" style="width: {{ group[key~'_ratio'] * 100 }}%;" data-group-id="{{ group.type }}" data-toggle="tooltip" data-html="true" title="<div class='tt-header'><strong>{{ ('tab.cutlist.estimate.type_'~group.type)|i18next }}</strong> ({{ (group[key~'_ratio'] * 100)|number_format }}%)</div><div class='tt-section'>{% if group['total_used_'~key] %}<div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total_used'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_used_'~key] }}</div></div>{% endif %}{% if group['total_unused_'~key] %}<div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total_unused'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_unused_'~key] }}</div></div>{% endif %}</div><div class='tt-section'><div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_'~key] }}</div></div></div>"></div>
                 {% endfor %}
             </div>
         {% endif %}
@@ -37,7 +37,7 @@
     {% if group.type >= 0 %}
         {% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.type, 'filled':true, 'classes':'pull-left' } %}
     {% else %}
-        <div class='ladb-material-type-icon ladb-material-type-icon-filled ladb-material-type--1 pull-left'><i class='ladb-opencutlist-icon-saw'></i></div>
+        {% include 'core/_group_icon.twig' with { 'icon':'saw', 'type':-1, 'filled':true, 'classes':'pull-left' } %}
     {% endif %}
 {% endmacro%}
 
@@ -125,7 +125,7 @@
             {% set foldableGroup = group.type == 2 or group.type == 3 or group.type == 4 or group.type == 5 or group.type == 6 or group.type == -1 %}    {# 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 5 = TYPE_HARDWARE, 6 = TYPE_VENEER, -1 = TYPE_CUT #}
             {% set editableGroup = group.type == 1 or group.type == 2 or group.type == 3 or group.type == 4 or group.type == 6 or group.type == -1 %}    {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL, 4 = TYPE_EDGE, 6 = TYPE_VENEER, -1 = TYPE_CUT #}
 
-            <table data-group-id="{{ group.type }}" class="{% if group.type in estimateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-material-type-{{ group.type }}">
+            <table data-group-id="{{ group.type }}" class="{% if group.type in estimateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered ladb-cutlist-group ladb-group-type-{{ group.type }}">
                 <thead>
                 <tr class="table-heading">
                     <td colspan="24">

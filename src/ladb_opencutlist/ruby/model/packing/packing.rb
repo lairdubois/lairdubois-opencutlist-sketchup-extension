@@ -102,7 +102,7 @@ module Ladb::OpenCutList
 
     attr_reader :time, :number_of_bins, :number_of_items, :efficiency,
                 :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
-                :cut_length,
+                :cut_length, :cut_cost,
                 :total_used_area, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count,
                 :bin_type_stats
 
@@ -119,6 +119,7 @@ module Ladb::OpenCutList
       @number_of_cuts = _def.number_of_cuts
 
       @cut_length = _def.cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.cut_length) : nil
+      @cut_cost = _def.cut_cost > 0 ? PriceUtils.format_to_readable_price(_def.cut_cost) : nil
 
       @total_used_count = _def.total_used_count
       @total_used_area = _def.total_used_area > 0 ? DimensionUtils.format_to_readable_area(_def.total_used_area) : nil
@@ -178,7 +179,7 @@ module Ladb::OpenCutList
                 :count, :efficiency,
                 :items, :leftovers, :cuts, :part_infos,
                 :number_of_items, :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
-                :cut_length,
+                :cut_length, :cut_cost,
                 :x_max, :y_max,
                 :svg, :light_svg
 
@@ -204,6 +205,7 @@ module Ladb::OpenCutList
       @number_of_cuts = _def.number_of_cuts
 
       @cut_length = _def.cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.cut_length) : nil
+      @cut_cost = _def.cut_cost > 0 ? PriceUtils.format_to_readable_price(_def.cut_cost) : nil
 
       @x_max = _def.x_max> 0 ? DimensionUtils.format_to_readable_length(_def.x_max) : nil
       @y_max = _def.y_max > 0 ? DimensionUtils.format_to_readable_length(_def.y_max) : nil
