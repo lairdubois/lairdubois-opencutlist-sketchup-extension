@@ -1642,7 +1642,10 @@ tab:
       std_prices: Prix
       std_prices_help: Permet de définir le prix toutes tailles ainsi que pour chaque taille standard de la matière.
       std_cut_prices: Prix de coupe
-      std_cut_prices_help: Permet de définir le prix de coupe de la matière.
+      std_cut_prices_help: |
+        Permet de définir le prix de coupe de la matière.
+        
+        *Seules les coupes rectilignes sont considérées par cette valeur.*
       texture_width: Largeur
       texture_height: Hauteur
       export_to_skm: Exporter (.skm)
