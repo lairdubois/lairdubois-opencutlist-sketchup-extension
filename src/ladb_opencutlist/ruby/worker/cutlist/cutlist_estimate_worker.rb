@@ -426,7 +426,7 @@ module Ladb::OpenCutList
             if cut_entry_bin_def.nil?
 
               cut_entry_bin_def = CutEstimateEntryBinDef.new(cut_entry_def, bin_type_def)
-              cut_entry_bin_def.std_price = std_price
+              cut_entry_bin_def.std_price = std_cut_price
 
               cut_entry_def.bin_defs[bin_type_def.id] = cut_entry_bin_def
 

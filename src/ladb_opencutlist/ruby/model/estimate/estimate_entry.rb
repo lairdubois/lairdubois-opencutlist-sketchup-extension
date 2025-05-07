@@ -65,6 +65,8 @@ module Ladb::OpenCutList
       @material_color = _def.cutlist_group.material_color
       @material_description = _def.cutlist_group.material_description
       @material_url = _def.cutlist_group.material_url
+      @material_stripped_name = MaterialAttributes.type_strippedname(_def.cutlist_group.material_type)
+      @material_is_1d = MaterialAttributes.is_1d?(_def.cutlist_group.material_type)
       @std_available = _def.cutlist_group.std_available
       @std_dimension_stipped_name = _def.cutlist_group.std_dimension_stipped_name
       @std_dimension = _def.cutlist_group.std_dimension
@@ -108,8 +110,8 @@ module Ladb::OpenCutList
 
       @bins = _def.bin_defs.values.map { |bin_def| bin_def.create_bin }
 
-      @std_volumic_mass = _def.std_volumic_mass.nil? ? @bins.map { |bin| bin.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ') : format_std_volumic_mass(_def.std_volumic_mass)
-      @std_price = _def.std_price.nil? ? @bins.map { |bin| bin.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ') : format_std_price(_def.std_price)
+      @std_volumic_mass = _def.std_volumic_mass.nil? ? @bins.map { |bin| bin.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join('<br>') : format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = _def.std_price.nil? ? @bins.map { |bin| bin.std_price }.select { |std_price| !std_price.nil? }.uniq.join('<br>') : format_std_price(_def.std_price)
 
     end
 
@@ -152,8 +154,8 @@ module Ladb::OpenCutList
 
       @bins = _def.bin_defs.values.map { |bin_def| bin_def.create_bin }
 
-      @std_volumic_mass = _def.std_volumic_mass.nil? ? @bins.map { |bin| bin.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ') : format_std_volumic_mass(_def.std_volumic_mass)
-      @std_price = _def.std_price.nil? ? @bins.map { |bin| bin.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ') : format_std_price(_def.std_price)
+      @std_volumic_mass = _def.std_volumic_mass.nil? ? @bins.map { |bin| bin.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join('<br>') : format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = _def.std_price.nil? ? @bins.map { |bin| bin.std_price }.select { |std_price| !std_price.nil? }.uniq.join('<br>') : format_std_price(_def.std_price)
 
     end
 
@@ -195,8 +197,8 @@ module Ladb::OpenCutList
 
       @bins = _def.bin_defs.values.map { |bin_def| bin_def.create_bin }
 
-      @std_volumic_mass = _def.std_volumic_mass.nil? ? @bins.map { |bin| bin.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ') : format_std_volumic_mass(_def.std_volumic_mass)
-      @std_price = _def.std_price.nil? ? @bins.map { |bin| bin.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ') : format_std_price(_def.std_price)
+      @std_volumic_mass = _def.std_volumic_mass.nil? ? @bins.map { |bin| bin.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join('<br>') : format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = _def.std_price.nil? ? @bins.map { |bin| bin.std_price }.select { |std_price| !std_price.nil? }.uniq.join('<br>') : format_std_price(_def.std_price)
 
     end
 
@@ -283,8 +285,8 @@ module Ladb::OpenCutList
 
       @bins = _def.bin_defs.values.map { |bin_def| bin_def.create_bin }
 
-      @std_volumic_mass = _def.std_volumic_mass.nil? ? @bins.map { |bin| bin.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join(', ') : format_std_volumic_mass(_def.std_volumic_mass)
-      @std_price = _def.std_price.nil? ? @bins.map { |bin| bin.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ') : format_std_price(_def.std_price)
+      @std_volumic_mass = _def.std_volumic_mass.nil? ? @bins.map { |bin| bin.std_volumic_mass }.select { |volumic_mass| !volumic_mass.nil? }.uniq.join('<br>') : format_std_volumic_mass(_def.std_volumic_mass)
+      @std_price = _def.std_price.nil? ? @bins.map { |bin| bin.std_price }.select { |std_price| !std_price.nil? }.uniq.join('<br>') : format_std_price(_def.std_price)
 
     end
 
@@ -342,7 +344,7 @@ module Ladb::OpenCutList
       @total_count = _def.total_count == 0 ? nil : _def.total_count
       @total_length = _def.total_length == 0 ? nil : DimensionUtils.format_to_readable_length(_def.total_length)
 
-      @std_price = _def.std_price.nil? ? @bins.map { |bin| bin.std_price }.select { |std_price| !std_price.nil? }.uniq.join(', ') : format_std_price(_def.std_price)
+      @std_price = _def.std_price.nil? ? @bins.map { |bin| bin.std_price }.select { |std_price| !std_price.nil? }.uniq.join('<br>') : format_std_price(_def.std_price)
 
     end
 

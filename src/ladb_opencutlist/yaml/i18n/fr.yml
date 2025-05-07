@@ -727,7 +727,6 @@ tab:
       info_0: |
         Cette fonctionnalité vous permet de générer une estimation des **masses** et **coûts** des **matières premières brutes** nécessaires à la réalisation des pièces de la *fiche de débit*.
       options_general: Générales
-      raw_materials: Matières premières brutes
       total: Total
       total_used: Utilisé
       total_unused: Non utilisé
@@ -1640,13 +1639,10 @@ tab:
       std_attributes_dim_placeholder: Choisissez une taille
       std_volumic_masses: Masse volumique
       std_volumic_masses_help: Permet de définir la masse volumique toutes tailles ainsi que pour chaque taille standard de la matière.
-      std_volumic_masses_add: Ajouter une masse volumique
       std_prices: Prix
       std_prices_help: Permet de définir le prix toutes tailles ainsi que pour chaque taille standard de la matière.
-      std_prices_add: Ajouter un prix
       std_cut_prices: Prix de coupe
       std_cut_prices_help: Permet de définir le prix de coupe de la matière.
-      std_cut_prices_add: Ajouter un prix
       texture_width: Largeur
       texture_height: Hauteur
       export_to_skm: Exporter (.skm)

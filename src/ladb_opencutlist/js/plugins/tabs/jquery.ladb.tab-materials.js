@@ -1302,7 +1302,7 @@
                     case 3: /* TYPE_DIMENSIONAL */
                     case 4: /* TYPE_EDGE */
                     case 6: /* TYPE_VENEER */
-                        return [ '$_m' ];
+                        return [ '$_m', '$_ft' ];
                 }
             },
             inputChangeCallback: inputChangeCallback
