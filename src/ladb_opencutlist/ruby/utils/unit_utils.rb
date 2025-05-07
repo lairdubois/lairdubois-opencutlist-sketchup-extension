@@ -77,6 +77,8 @@ module Ladb::OpenCutList
           PLUGIN.get_i18n_string('default.instance_single')
         when 'p'
           PLUGIN.get_i18n_string('default.part_single')
+        when 'c'
+          PLUGIN.get_i18n_string('default.cut_single')
 
         else
           unit_strippedname

@@ -727,7 +727,7 @@ module Ladb::OpenCutList
 
       packing_def.solution_def.bin_defs.each do |bin_def|
 
-        bin_def.cut_cost = bin_def.cut_length * (bin_def.bin_type_def.std_cut_price[:val] == 0 ? 0 : _uv_to_inch(bin_def.bin_type_def.std_cut_price[:unit], bin_def.bin_type_def.std_cut_price[:val])) unless bin_def.bin_type_def.std_cut_price.nil?
+        bin_def.cut_cost = bin_def.cut_length * (bin_def.bin_type_def.std_cut_price[:val] == 0 ? 0 : _uv_to_inch(bin_def.bin_type_def.std_cut_price[:unit], bin_def.bin_type_def.std_cut_price[:val], bin_def.number_of_cuts ? bin_def.cut_length / bin_def.number_of_cuts : 0)) unless bin_def.bin_type_def.std_cut_price.nil?
         bin_def.svg = _render_bin_def_svg(bin_def, false) unless running
         bin_def.light_svg = _render_bin_def_svg(bin_def, true, longest_bin_def, widest_bin_def)
 

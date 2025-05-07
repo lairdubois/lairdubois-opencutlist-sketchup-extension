@@ -116,7 +116,7 @@ module Ladb::OpenCutList
       f_value
     end
 
-    def _uv_to_inch(s_unit, f_value)
+    def _uv_to_inch(s_unit, f_value, inch_length = 0)
 
       return 0 if s_unit.nil?   # Invalid input
 
@@ -129,6 +129,9 @@ module Ladb::OpenCutList
         return DimensionUtils.m_to_inch(f_value)
       when DimensionUtils::UNIT_STRIPPEDNAME_FEET
         return DimensionUtils.ft_to_inch(f_value)
+
+      when 'i', 'p', 'c'
+        return inch_length == 0 ? 0 : f_value / inch_length
 
       end
 

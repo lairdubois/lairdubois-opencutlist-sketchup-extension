@@ -67,6 +67,8 @@ default:
   instance_plural: unités
   part_single: pièce
   part_plural: pièces
+  cut_single: coupe
+  cut_plural: coupes
   thickness_layer_single: couche
   thickness_layer_plural: couches
   setup_model_units: Configurer les unités du modèle
@@ -737,13 +739,13 @@ tab:
       total_volume: Σ Volumes
       total_area: Σ Surfaces
       total_length: Σ Longueurs
-      type_-1: $t(tab.cutlist.packing.list.cut)
       type_1: $t(tab.materials.type_1)
       type_2: $t(tab.materials.type_2)
       type_3: $t(tab.materials.type_3)
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unité incompatible avec les options d'estimation de la matière
         multiplier_coefficient: Coefficient multiplicateur

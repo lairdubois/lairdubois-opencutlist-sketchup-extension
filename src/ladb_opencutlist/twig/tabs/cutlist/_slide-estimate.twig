@@ -26,7 +26,7 @@
         {% if estimate['total_'~key] is not null %}
             <div class="no-print progress" style="height: 10px; margin-top: 20px;">
                 {% for group in estimate.groups if group[key~'_ratio'] %}
-                    <div class="progress-bar progress-bar-group-type-{{ group.type }}" style="width: {{ group[key~'_ratio'] * 100 }}%;" data-group-id="{{ group.type }}" data-toggle="tooltip" data-html="true" title="<div class='tt-header'><strong>{{ ('tab.cutlist.estimate.type_'~group.type)|i18next }}</strong> ({{ (group[key~'_ratio'] * 100)|number_format }}%)</div><div class='tt-section'>{% if group['total_used_'~key] %}<div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total_used'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_used_'~key] }}</div></div>{% endif %}{% if group['total_unused_'~key] %}<div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total_unused'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_unused_'~key] }}</div></div>{% endif %}</div><div class='tt-section'><div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_'~key] }}</div></div></div>"></div>
+                    <div class="progress-bar progress-bar-group-type-{{ group.type }}" style="width: {{ group[key~'_ratio'] * 100 }}%;" data-group-id="{{ group.type }}" data-toggle="tooltip" data-html="true" title="<div class='tt-header'><strong>{{ ('tab.cutlist.estimate.type_'~group.type)|i18next|capitalize }}</strong> ({{ (group[key~'_ratio'] * 100)|number_format }}%)</div><div class='tt-section'>{% if group['total_used_'~key] %}<div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total_used'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_used_'~key] }}</div></div>{% endif %}{% if group['total_unused_'~key] %}<div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total_unused'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_unused_'~key] }}</div></div>{% endif %}</div><div class='tt-section'><div class='tt-section-flex'><div class='tt-section-flex-grow-1'>{{ 'tab.cutlist.estimate.total'|i18next }}</div><div class='tt-section-flex-grow-0'>{{ group['total_'~key] }}</div></div></div>"></div>
                 {% endfor %}
             </div>
         {% endif %}
@@ -139,7 +139,7 @@
                             </ul>
                         </div>
                         <div class="ladb-heading">
-                            {{ ('tab.cutlist.estimate.type_'~group.type)|i18next }}
+                            {{ ('tab.cutlist.estimate.type_'~group.type)|i18next|capitalize }}
                         </div>
                     </td>
                 </tr>
