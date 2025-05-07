@@ -1505,13 +1505,13 @@ namespace Packy {
 
             using namespace irregular;
 
-            auto [shape, holes, shape_inflated, holes_deflated, type] = read_defect(j);
+            auto [shape_orig, shape_scaled, holes_orig, holes_scaled, shape_inflated, holes_deflated, type] = read_defect(j);
 
             instance_builder_.add_defect(
                     bin_type_id,
                     type,
-                    shape,
-                    holes
+                    shape_orig,
+                    holes_orig
             );
 
         }
@@ -1626,14 +1626,14 @@ namespace Packy {
                     for (const auto& item_shape : item_type.shapes) {
 
                         // Compute min max
-                        auto shape_min_max = item_shape.shape.compute_min_max();
+                        auto shape_min_max = item_shape.shape_orig.compute_min_max();
                         if (shape_min_max.first.x < min_max.first.x) min_max.first.x = shape_min_max.first.x;
                         if (shape_min_max.first.y < min_max.first.y) min_max.first.y = shape_min_max.first.y;
                         if (shape_min_max.second.x > min_max.second.x) min_max.second.x = shape_min_max.second.x;
                         if (shape_min_max.second.y > min_max.second.y) min_max.second.y = shape_min_max.second.y;
 
-                        shape::AreaDbl area = item_shape.shape.compute_area();
-                        for (const auto& hole : item_shape.holes) {
+                        shape::AreaDbl area = item_shape.shape_orig.compute_area();
+                        for (const auto& hole : item_shape.holes_orig) {
                             area -= hole.compute_area();
                         }
 
@@ -1650,7 +1650,7 @@ namespace Packy {
                     largest_item_shape = item_type.shapes.front();
 
                     // Compute min max
-                    min_max = largest_item_shape.shape.compute_min_max();
+                    min_max = largest_item_shape.shape_orig.compute_min_max();
 
                 }
 
@@ -1659,7 +1659,7 @@ namespace Packy {
                 auto item_width = min_max.second.y - min_max.first.y;
 
                 // Find label position
-                shape::Point label_position = shape::find_label_position(largest_item_shape.shape, largest_item_shape.holes);
+                shape::Point label_position = shape::find_label_position(largest_item_shape.shape_orig, largest_item_shape.holes_orig);
 
                 // Write the label offset (relative to the item shapes center)
                 j_item_type_stats["label_offset"] = json{
@@ -1765,12 +1765,12 @@ namespace Packy {
             using namespace irregular;
 
             ItemShape item_shape;
-            item_shape.shape = read_shape(j);
+            item_shape.shape_orig = read_shape(j);
 
             if (j.contains("holes")) {
                 for (auto& j_item: j["holes"].items()) {
                     Shape hole = read_shape(j_item.value());
-                    item_shape.holes.push_back(hole);
+                    item_shape.holes_orig.push_back(hole);
                 }
             }
 
@@ -1784,12 +1784,12 @@ namespace Packy {
             using namespace irregular;
 
             Defect defect;
-            defect.shape = read_shape(j);
+            defect.shape_orig = read_shape(j);
 
             if (j.contains("holes")) {
                 for (auto& j_item: j["holes"].items()) {
                     Shape hole = read_shape(j_item.value());
-                    defect.holes.push_back(hole);
+                    defect.holes_orig.push_back(hole);
                 }
             }
 
