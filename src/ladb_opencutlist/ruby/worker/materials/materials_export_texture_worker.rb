@@ -31,7 +31,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.materials.error.no_texture' ] } if material.texture.nil?
 
       # Ask for the writing file path
-      path = UI.savepanel(PLUGIN.get_i18n_string('tab.materials.texture_write.title'), '', _sanitize_filename(@name) + '.jpg')
+      path = UI.savepanel(PLUGIN.get_i18n_string('tab.materials.texture_export.title'), '', _sanitize_filename(@name) + '.jpg')
       if path
 
         extname = File.extname(path).downcase
