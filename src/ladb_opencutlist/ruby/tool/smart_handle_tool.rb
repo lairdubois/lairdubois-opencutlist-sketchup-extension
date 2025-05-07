@@ -2,7 +2,6 @@ module Ladb::OpenCutList
 
   require_relative 'smart_tool'
   require_relative '../lib/geometrix/finder/circle_finder'
-  require_relative '../lib/fiddle/clippy/clippy'
   require_relative '../manipulator/vertex_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/face_manipulator'
@@ -282,7 +281,7 @@ module Ladb::OpenCutList
 
       return if (model = Sketchup.active_model).nil?
 
-      # Try to select part from current selection
+      # Try to select part from the current selection
       selection = model.selection
       entity = selection.first
       if entity.is_a?(Sketchup::ComponentInstance)
