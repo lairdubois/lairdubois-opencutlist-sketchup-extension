@@ -67,6 +67,8 @@ default:
   instance_plural: items
   part_single: part
   part_plural: parts
+  cut_single: cut
+  cut_plural: cuts
   thickness_layer_single: layer
   thickness_layer_plural: layers
   setup_model_units: Setup the model units
@@ -738,6 +740,13 @@ tab:
       total_volume: Σ Volume
       total_area: Σ Area
       total_length: Σ Length
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unit incompatible with material estimation options
         multiplier_coefficient: Coefficient
@@ -1062,6 +1071,8 @@ tab:
       option_irregular_allowed_rotations: Allowed Rotations
       option_irregular_allowed_rotations_help: |
         Sets the allowed rotations for part placing.
+
+        *Materials with grain can only be rotated by 0 and 180°.*
       option_irregular_allowed_rotations_0: None
       option_irregular_allowed_rotations_90: Steps of 90°
       option_irregular_allowed_rotations_180: Steps of 180°
@@ -1636,7 +1647,11 @@ tab:
       std_volumic_masses_add: Add density
       std_prices: Price
       std_prices_help: Allows you to define the price for all sizes as well as for each standard size of the material.
-      std_prices_add: Add a price
+      std_cut_prices: Standard cut price
+      std_cut_prices_help: |
+        Allows you to define the cutting price of the material.
+
+        *This value only affects straight cuts.*
       texture_width: Width
       texture_height: Height
       export_to_skm: Export (.skm)
@@ -1805,7 +1820,7 @@ tab:
       You have made a video presenting the use of **OpenCutList** and you would like to see it appear here?
       Let us know by writing to us at **opencutlist@lairdubois.fr**!
 
-      *The video must be public and hosted on YouTube*.
+      *The video must be public and hosted on YouTube.*
     error:
       fail_to_load_list: Unable to load the video list.
   news:

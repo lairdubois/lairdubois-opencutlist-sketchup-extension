@@ -230,7 +230,7 @@
                         {% endif %}
                         <td class="text-right">
                             {{ solution.summary.total_used_cost ? solution.summary.total_used_cost : '-' }}
-                            {% if solution.summary.cut_cost %}<div data-toggle="tooltip" title="{{ 'tab.cutlist.packing.list.total_cut_length'|i18next }} : {{ solution.summary.cut_length }}"><small>+ {{ solution.summary.cut_cost }}</small></div>{% endif %}
+                            {% if solution.summary.cut_cost %}<div data-toggle="tooltip" title="{{ solution.summary.number_of_cuts }} {{ 'default.cut'|i18next({ 'count':solution.summary.number_of_cuts }) }}"><small>+ {{ solution.summary.cut_cost }}</small></div>{% endif %}
                         </td>
                         <td class="text-right">{{ solution.summary.total_used_item_count }}</td>
                     </tr>

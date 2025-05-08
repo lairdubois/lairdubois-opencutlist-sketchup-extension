@@ -1282,12 +1282,14 @@
                 },
                 {
                     $_ft: that.currencySymbol + ' / ft',
+                },
+                {
+                    $_c: that.currencySymbol + ' / ' + i18next.t('default.cut_single'),
                 }
             ],
             lengthUnitStrippedname: that.lengthUnitStrippedname,
             defaultUnitByTypeCallback: function (type) {
                 switch (type) {
-                    case 1: /* TYPE_SOLID_WOOD */
                     case 2: /* TYPE_SHEET_GOOD */
                     case 6: /* TYPE_VENEER */
                     case 3: /* TYPE_DIMENSIONAL */
@@ -1297,12 +1299,11 @@
             },
             enabledUnitsByTypeCallback: function (type, rowPos) {
                 switch (type) {
-                    case 1: /* TYPE_SOLID_WOOD */
                     case 2: /* TYPE_SHEET_GOOD */
                     case 3: /* TYPE_DIMENSIONAL */
                     case 4: /* TYPE_EDGE */
                     case 6: /* TYPE_VENEER */
-                        return [ '$_m', '$_ft' ];
+                        return [ '$_m', '$_ft', '$_c' ];
                 }
             },
             inputChangeCallback: inputChangeCallback

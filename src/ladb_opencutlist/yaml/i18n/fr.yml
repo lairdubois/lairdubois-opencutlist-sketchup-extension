@@ -67,6 +67,8 @@ default:
   instance_plural: unités
   part_single: pièce
   part_plural: pièces
+  cut_single: coupe
+  cut_plural: coupes
   thickness_layer_single: couche
   thickness_layer_plural: couches
   setup_model_units: Configurer les unités du modèle
@@ -737,13 +739,13 @@ tab:
       total_volume: Σ Volumes
       total_area: Σ Surfaces
       total_length: Σ Longueurs
-      type_-1: $t(tab.cutlist.packing.list.cut)
       type_1: $t(tab.materials.type_1)
       type_2: $t(tab.materials.type_2)
       type_3: $t(tab.materials.type_3)
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
+      type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unité incompatible avec les options d'estimation de la matière
         multiplier_coefficient: Coefficient multiplicateur
@@ -1066,10 +1068,10 @@ tab:
       option_rectangleguillotine_keep: Taille minimale des chutes
       option_rectangleguillotine_keep_help: Les chutes ayant les deux dimensions supérieures à la taille minimale seront marquées **à conserver**.
       option_irregular_allowed_rotations: Rotations autorisées
-      option_irregular_allowed_rotations_help: |  # TODO
+      option_irregular_allowed_rotations_help: |
         Définit le pas des angles de rotation possibles de la pièce pour son placement.
-        
-        *Les matières avec un fil ne permettent que les pas de 0 et 180°*.
+
+        *Les matières avec un fil ne permettent que les pas de 0 et 180°.*
       option_irregular_allowed_rotations_0: Aucune
       option_irregular_allowed_rotations_90: Pas de 90°
       option_irregular_allowed_rotations_180: Pas de 180°
@@ -1646,7 +1648,7 @@ tab:
       std_cut_prices: Prix de coupe
       std_cut_prices_help: |
         Permet de définir le prix de coupe de la matière.
-        
+
         *Seules les coupes rectilignes sont considérées par cette valeur.*
       texture_width: Largeur
       texture_height: Hauteur
@@ -1816,7 +1818,7 @@ tab:
       Vous avez réalisé une vidéo de présentation de l'utilisation d'**OpenCutList** et vous souhaitez la voir apparaitre ici ?
       Faites nous le savoir en nous écrivant à **opencutlist@lairdubois.fr** !
 
-      *La vidéo doit être publique et hébergée sur YouTube*.
+      *La vidéo doit être publique et hébergée sur YouTube.*
     error:
       fail_to_load_list: Impossible de charger la liste des vidéos.
   news:

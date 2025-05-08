@@ -413,7 +413,7 @@ module Ladb::OpenCutList
           if packing_bin.def.cut_length > 0
 
             std_cut_price = _get_std_cut_price(dim, @material_attributes)
-            price_per_inch = std_cut_price[:val] == 0 ? 0 : _uv_to_inch(std_cut_price[:unit], std_cut_price[:val])
+            price_per_inch = std_cut_price[:val] == 0 ? 0 : _uv_to_inch(std_cut_price[:unit], std_cut_price[:val], packing_bin.def.number_of_cuts ? packing_bin.def.cut_length / packing_bin.def.number_of_cuts : 0)
 
             if cut_entry_def.nil?
 
