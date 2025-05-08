@@ -67,6 +67,8 @@ default:
   instance_plural: Stücke
   part_single: Teil
   part_plural: Teile
+  cut_single: Schnitt
+  cut_plural: Schnitte
   thickness_layer_single: Lage
   thickness_layer_plural: Lagen
   setup_model_units: Modelleinheiten konfigurieren
@@ -727,7 +729,6 @@ tab:
       info_0: |
         Erstellung eine Kalkulation der **Massen** und der **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden.
       options_general: Générales
-      raw_materials: Rohmaterial
       total: Total
       total_used: Verwendet
       total_unused: Nicht verwendet
@@ -738,6 +739,13 @@ tab:
       total_volume: Σ Volumen
       total_area: Σ Flächen
       total_length: Σ Längen
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Einheit nicht kompatibel mit den Kalkulationsoptionen des Materials
         multiplier_coefficient: Faktor
@@ -1062,6 +1070,8 @@ tab:
       option_irregular_allowed_rotations: Drehungen
       option_irregular_allowed_rotations_help: |
         Bestimmt die erlaubten Drehungen eines Teils.
+
+        *Materiale mit Faserrichtung erlauben nur 0 und 180° Drehungen.*
       option_irregular_allowed_rotations_0: Keine
       option_irregular_allowed_rotations_90: "90° Schritt"
       option_irregular_allowed_rotations_180: "180° Schritt"
@@ -1633,10 +1643,13 @@ tab:
       std_attributes_dim_placeholder: Wählen Sie eine Größe
       std_volumic_masses: Rohdichte
       std_volumic_masses_help: Ermöglicht das Festlegen der Rohdichte für alle Größen sowie für jede Standardgröße des Materials.
-      std_volumic_masses_add: Rohdichte hinzufügen
       std_prices: Preis
       std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede einzelne Standardgröße des Materials.
-      std_prices_add: Preis hinzufügen
+      std_cut_prices: Schnittpreis
+      std_cut_prices_help: |
+        Ermöglicht es Ihnen, den Preis für das Schneiden des Materials festzulegen.
+
+        *Nur geradlinige Schnitte werden von diesem Wert berücksichtigt.*
       texture_width: Breite
       texture_height: Höhe
       export_to_skm: Exportieren (.skm)
@@ -1805,7 +1818,7 @@ tab:
       Sie haben ein Video erstellt, in dem Sie die Verwendung von **OpenCutList** vorstellen und möchten, dass es hier erscheint?
       Lassen Sie es uns wissen, indem Sie uns an **opencutlist@lairdubois.fr** schreiben!
 
-      *Das Video muss öffentlich sein und auf YouTube gehostet werden*.
+      *Das Video muss öffentlich sein und auf YouTube gehostet werden.*
     error:
       fail_to_load_list: Videoliste kann nicht geladen werden.
   news:
