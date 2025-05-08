@@ -82,8 +82,7 @@ module Ladb::OpenCutList
       )
 
       # Create cursors
-      @cursor_swap_length_width_clockwise = create_cursor('swap-length-width-clockwise', 0, 0)
-      @cursor_swap_length_width_anticlockwise = create_cursor('swap-length-width-anticlockwise', 0, 0)
+      @cursor_swap_length_width = create_cursor('swap-length-width', 0, 0)
       @cursor_swap_front_back = create_cursor('swap-front-back', 0, 0)
       @cursor_adapt_axes = create_cursor('adapt-axes', 0, 0)
       @cursor_flip = create_cursor('flip', 0, 0)
@@ -134,7 +133,7 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_SWAP_LENGTH_WIDTH
-        return @cursor_swap_length_width_clockwise
+        return @cursor_swap_length_width
       when ACTION_SWAP_FRONT_BACK
         return @cursor_swap_front_back
       when ACTION_FLIP

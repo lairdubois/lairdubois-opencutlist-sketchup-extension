@@ -12,7 +12,7 @@ module Ladb::OpenCutList
   require_relative '../utils/axis_utils'
   require_relative '../utils/transformation_utils'
 
-  class SmartAxesTool2 < SmartTool
+  class SmartAxesToolNew < SmartTool
 
     include LayerVisibilityHelper
     include FaceTrianglesHelper
@@ -67,7 +67,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    attr_reader :cursor_flip, :cursor_swap_length_width_clockwise, :cursor_swap_length_width_anticlockwise, :cursor_swap_front_back, :cursor_adapt_axes
+    attr_reader :cursor_flip, :cursor_swap_length_width, :cursor_swap_front_back, :cursor_adapt_axes
 
     def initialize(
 
@@ -87,8 +87,7 @@ module Ladb::OpenCutList
 
       # Create cursors
       @cursor_flip = create_cursor('flip', 0, 0)
-      @cursor_swap_length_width_clockwise = create_cursor('swap-length-width-clockwise', 0, 0)
-      @cursor_swap_length_width_anticlockwise = create_cursor('swap-length-width-anticlockwise', 0, 0)
+      @cursor_swap_length_width = create_cursor('swap-length-width', 0, 0)
       @cursor_swap_front_back = create_cursor('swap-front-back', 0, 0)
       @cursor_adapt_axes = create_cursor('adapt-axes', 0, 0)
 
@@ -102,68 +101,6 @@ module Ladb::OpenCutList
 
     def get_action_defs
       ACTIONS
-    end
-
-    def get_action_status(action)
-
-      case action
-      when ACTION_FLIP
-        return super +
-               ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
-               ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_1') + '.' +
-               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
-      when ACTION_SWAP_LENGTH_WIDTH
-        return super +
-               ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
-               ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_2') + '.' +
-               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
-      when ACTION_SWAP_FRONT_BACK
-        return super +
-               ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
-               ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.' +
-               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
-      when ACTION_ADAPT_AXES
-        return super +
-               ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_4') + '.'
-      when ACTION_MOVE_AXES
-        return super +
-               ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0') +
-               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
-      end
-
-      super
-    end
-
-    def get_action_cursor(action)
-
-      case action
-      when ACTION_SWAP_LENGTH_WIDTH
-        return @cursor_swap_length_width_clockwise
-      when ACTION_SWAP_FRONT_BACK
-        return @cursor_swap_front_back
-      when ACTION_FLIP
-        return @cursor_flip
-      when ACTION_ADAPT_AXES
-        return @cursor_adapt_axes
-      when ACTION_MOVE_AXES
-        return @cursor_adapt_axes
-      end
-
-      super
-    end
-
-    def get_action_picker(action)
-
-      case action
-      when ACTION_SWAP_LENGTH_WIDTH, ACTION_SWAP_FRONT_BACK, ACTION_FLIP
-        return SmartPicker.new(tool: self)
-      when ACTION_ADAPT_AXES
-        return SmartPicker.new(tool: self, pick_edges: true, pick_clines: true, pick_axes: true)
-      when ACTION_MOVE_AXES
-        return SmartPicker.new(tool: self, pick_point: true)
-      end
-
-      super
     end
 
     def get_action_option_group_unique?(action, option_group)
@@ -223,6 +160,17 @@ module Ladb::OpenCutList
 
       end
 
+      refresh
+
+    end
+
+    def onViewChanged(view)
+      super
+      refresh
+    end
+
+    def onTransactionUndo(model)
+      refresh
     end
 
   end
@@ -233,19 +181,14 @@ module Ladb::OpenCutList
 
     include SmartActionHandlerPartHelper
 
-    STATE_DEFAULT = 0
-
-    LAYER_3D_ACTION_PREVIEW = 2
+    LAYER_3D_AXES_PREVIEW = 2
+    LAYER_3D_ACTION_PREVIEW = 3
 
     def initialize(action, tool, previous_action_handler = nil)
       super
 
-    end
+      @drawing_def = nil
 
-    # -- STATE --
-
-    def get_startup_state
-      STATE_DEFAULT
     end
 
     # -----
@@ -255,13 +198,7 @@ module Ladb::OpenCutList
 
       return true if x < 0 || y < 0
 
-      case @state
-
-      when STATE_DEFAULT
-
-        _pick_part(@picker, view)
-
-      end
+      _pick_part(@picker, view)
 
       view.invalidate
 
@@ -279,17 +216,27 @@ module Ladb::OpenCutList
     end
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
-      puts "#{self.class.name} onActivePartChanged"
+      @global_instance_transformation = nil
+      @drawing_def = nil
       super
     end
 
     def onToolActionOptionStored(tool, action, option_group, option)
-      puts "#{self.class.name} onToolActionOptionStored"
+      _preview_action
     end
 
     # -----
 
     protected
+
+    def _reset
+      @global_instance_transformation = nil
+      @drawing_def = nil
+      super
+      set_state(0)
+    end
+
+    # -----
 
     def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
       super
@@ -298,11 +245,69 @@ module Ladb::OpenCutList
         # Show part infos
         @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
 
+        _preview_action
+
       else
 
         @tool.remove_tooltip
+        @tool.remove_3d(LAYER_3D_AXES_PREVIEW)
+        @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
 
       end
+    end
+
+    def _preview_action
+
+      @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
+
+    end
+
+    # -----
+
+    def _get_global_instance_transformation(default = IDENTITY)
+      return @global_instance_transformation unless @global_instance_transformation.nil?
+      @global_instance_transformation = default
+      if @active_part_entity_path.is_a?(Array) &&
+         @active_part_entity_path.length > 0 &&
+         (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-1])
+        @global_instance_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-1], IDENTITY)
+      end
+      @global_instance_transformation
+    end
+
+    def _get_edit_transformation
+      t = _get_global_instance_transformation(nil)
+      return t unless t.nil?
+      super
+    end
+
+    def _get_drawing_def
+      return nil if @active_part_entity_path.nil?
+      return @drawing_def unless @drawing_def.nil?
+
+      model = Sketchup.active_model
+      return nil if model.nil?
+
+      @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
+        ignore_surfaces: true,
+        ignore_faces: false,
+        ignore_edges: true,
+        ignore_soft_edges: true,
+        ignore_clines: true
+      ).run
+    end
+
+    def _get_drawing_def_edit_bounds(drawing_def, et)
+      eb = Geom::BoundingBox.new
+      if drawing_def.is_a?(DrawingDef)
+
+        points = drawing_def.face_manipulators.map { |manipulator| manipulator.outer_loop_points }.flatten(1)
+        eti = et.inverse
+
+        eb.add(points.map { |point| point.transform(eti * drawing_def.transformation) })
+
+      end
+      eb
     end
 
   end
@@ -323,6 +328,13 @@ module Ladb::OpenCutList
       SmartPicker.new(tool: @tool)
     end
 
+    def get_state_status(state)
+      super +
+             ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
+             ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_1') + '.' +
+             ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
+    end
+
     # ------
 
     def start
@@ -330,6 +342,70 @@ module Ladb::OpenCutList
 
       puts "#{self.class.name} start"
 
+    end
+
+    # -----
+
+    protected
+
+    def _preview_action
+      super
+      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+        unit = @tool.get_unit
+
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(drawing_def, et)
+        center = eb.center
+
+        px_offset = Sketchup.active_model.active_view.pixels_to_model(50, center.transform(et))
+
+        fn = lambda do |axis, dim, color|
+
+          k_edge = Kuix::EdgeMotif.new
+          k_edge.start.copy!(center.offset(axis.reverse, dim))
+          k_edge.end.copy!(center.offset(axis, dim))
+          k_edge.start_arrow = true
+          k_edge.end_arrow = true
+          k_edge.arrow_size = unit * 1.5
+          k_edge.line_width = 1.5
+          k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
+          k_edge.color = color
+          k_edge.transformation = et
+          @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
+
+        end
+
+        if _fetch_option_direction_length
+          fn.call(X_AXIS, eb.width * 0.5 + px_offset, Kuix::COLOR_X)
+        elsif _fetch_option_direction_width
+          fn.call(Y_AXIS, eb.height * 0.5 + px_offset, Kuix::COLOR_Y)
+        elsif _fetch_option_direction_thickness
+          fn.call(Z_AXIS, eb.depth * 0.5 + px_offset, Kuix::COLOR_Z)
+        end
+
+        k_box = Kuix::BoxMotif.new
+        k_box.bounds.copy!(eb)
+        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_box.color = Kuix::COLOR_BLACK
+        k_box.transformation = et
+        @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+
+      end
+    end
+
+    # -----
+
+    def _fetch_option_direction_length
+      @tool.fetch_action_option_boolean(@action, SmartAxesToolNew::ACTION_OPTION_DIRECTION, SmartAxesToolNew::ACTION_OPTION_DIRECTION_LENGTH)
+    end
+
+    def _fetch_option_direction_width
+      @tool.fetch_action_option_boolean(@action, SmartAxesToolNew::ACTION_OPTION_DIRECTION, SmartAxesToolNew::ACTION_OPTION_DIRECTION_WIDTH)
+    end
+
+    def _fetch_option_direction_thickness
+      @tool.fetch_action_option_boolean(@action, SmartAxesToolNew::ACTION_OPTION_DIRECTION, SmartAxesToolNew::ACTION_OPTION_DIRECTION_THICKNESS)
     end
 
   end
@@ -343,11 +419,18 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_state_cursor(state)
-      @tool.cursor_swap_length_width_clockwise
+      @tool.cursor_swap_length_width
     end
 
     def get_state_picker(state)
       SmartPicker.new(tool: @tool)
+    end
+
+    def get_state_status(state)
+      super +
+        ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_2') + '.' +
+        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
     end
 
     # ------
@@ -377,6 +460,13 @@ module Ladb::OpenCutList
       SmartPicker.new(tool: @tool)
     end
 
+    def get_state_status(state)
+      super +
+        ' | ↑↓ + ' + PLUGIN.get_i18n_string('tool.default.transparency') + ' = ' + PLUGIN.get_i18n_string('tool.default.toggle_depth') + '.' +
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.' +
+        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
+    end
+
     # ------
 
     def start
@@ -404,6 +494,11 @@ module Ladb::OpenCutList
       SmartPicker.new(tool: @tool, pick_edges: true, pick_clines: true, pick_axes: true)
     end
 
+    def get_state_status(state)
+      super +
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_4') + '.'
+    end
+
     # ------
 
     def start
@@ -429,6 +524,12 @@ module Ladb::OpenCutList
 
     def get_state_picker(state)
       SmartPicker.new(tool: @tool, pick_point: true)
+    end
+
+    def get_state_status(state)
+      super +
+        ' | ' + PLUGIN.get_i18n_string("default.tab_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_0') +
+        ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_axes.action_3') + '.'
     end
 
     # ------

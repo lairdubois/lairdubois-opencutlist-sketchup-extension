@@ -24,7 +24,7 @@ module Ladb::OpenCutList
   require_relative 'tool/smart_handle_tool'
   require_relative 'tool/smart_paint_tool'
   require_relative 'tool/smart_axes_tool'
-  require_relative 'tool/smart_axes_tool_2'
+  require_relative 'tool/smart_axes_tool_new'
   require_relative 'tool/smart_export_tool'
 
   class Plugin
@@ -934,10 +934,10 @@ module Ladb::OpenCutList
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes') + '_2') {
         if Sketchup.active_model
-          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesTool2)
+          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesToolNew)
             Sketchup.active_model.select_tool(nil)
           else
-            Sketchup.active_model.select_tool(SmartAxesTool2.new)
+            Sketchup.active_model.select_tool(SmartAxesToolNew.new)
           end
           Sketchup.focus if Sketchup.respond_to?(:focus)
         end
