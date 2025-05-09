@@ -9,14 +9,14 @@ using Polys = std::vector<Poly>;
  * Convert a Shape to a list of vertex.
  *
  * @param shape The outline shape
- * @param number_of_line_segments The number of line segments used to approximate circular arcs.
  * @param outer Define if the shape represents an outline or hole.
+ * @param segment_length The length of each line segment used to approximate circular arcs.
  * @return A Poly
  */
 Poly shape_to_poly(
         const Shape& shape,
-        const ElementPos number_of_line_segments,
-        const bool outer)
+        const bool outer,
+        const LengthDbl segment_length = 1)
 {
     Poly poly;
     for (const auto& element: shape.elements) {
@@ -25,7 +25,7 @@ Poly shape_to_poly(
                 poly.emplace_back(element.start);
                 break;
             case ShapeElementType::CircularArc:
-                for (const auto& e: approximate_circular_arc_by_line_segments(element, number_of_line_segments, outer)) {
+                for (const auto& e: approximate_circular_arc_by_line_segments(element, segment_length, outer)) {
                     poly.emplace_back(element.start);
                 }
                 break;
@@ -319,19 +319,17 @@ void polygon_centroid(
 
 Point shape::find_label_position(
         const Shape& shape,
-        const std::vector<Shape>& holes,
-        const ElementPos number_of_line_segments)
+        const std::vector<Shape>& holes)
 {
 
     // Convert shape and holes to one unique Polys where the first Poly child is the outer polygon.
     Polys polys;
-    polys.emplace_back(shape_to_poly(shape, number_of_line_segments, true));
+    polys.emplace_back(shape_to_poly(shape, true));
     for (const auto& hole : holes) {
-        polys.emplace_back(shape_to_poly(hole, number_of_line_segments, false));
+        polys.emplace_back(shape_to_poly(hole, false));
     }
 
-    /////
-
+    // Scale all Polys (full geometry) to the unit square starting at (0,0), for convenience
     Point shift{std::numeric_limits<LengthDbl>::max(), std::numeric_limits<LengthDbl>::max()};
     LengthDbl magnify = -std::numeric_limits<LengthDbl>::max();
 
@@ -352,6 +350,7 @@ Point shape::find_label_position(
         }
     }
 
+    // Compute true centroid (accounting for the holes)
     Point centroid{0, 0};
     AreaDbl total_area = 0.0;
     Point tmppos{};
@@ -366,6 +365,7 @@ Point shape::find_label_position(
     }
     centroid = scale(centroid, (1.0 / total_area));
 
+    // Compute distance (min_dist) and vector (v) from centroid to nearest point of the countour
     LengthDbl min_dist = std::numeric_limits<LengthDbl>::max();
     Point closest{};
 
@@ -380,12 +380,16 @@ Point shape::find_label_position(
 
     Point v = closest - centroid;
 
+    // Define points far upward (far1) and backward (far2) from centroid, along v
+    // Thanks to scale(...), we are sure that these points are passed the geometry
     Point far1 = centroid + scale(v, (10.0 / min_dist));
     Point far2 = centroid - scale(v, (10.0 / min_dist));
 
     std::vector<Point> inters;
     std::vector<LengthDbl> interdists;
 
+    // Compute the number of intersection points between the line parallel to v and the geometry
+    // and sort them according to their position along the line
     for (const auto& poly : shifted_polys) {
         for (size_t j = 0; j < poly.size() - 1; j++) {
             Point inter{};
@@ -407,6 +411,12 @@ Point shape::find_label_position(
 
     sort_and_reorder(interdists, inters);
 
+    // Search for the longer intersection segment
+    // Each segment is based on one intersection point and the next (in inters)
+    // Note that we start with the first segment (which is inside the geometry)
+    // and then we skip every other segment (i += 2), because, as we go through
+    // the intersection segments, they are inside and outside the geometry,
+    // successively.
     LengthDbl max_length = -std::numeric_limits<LengthDbl>::max();
     size_t id = -1;
 
@@ -417,9 +427,11 @@ Point shape::find_label_position(
         }
     }
 
+    // Place label at the center of the longest intersection segment
     Point label_position = inters[id] + inters[id + 1];
-
     label_position = scale(label_position, 0.5);
+
+    // Transform back to the original geometry
     label_position = scale(label_position, magnify) + shift;
 
     return label_position;

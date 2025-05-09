@@ -13,12 +13,11 @@ namespace shape
  *
  * @param shape The outline shape
  * @param holes List of hole shapes
- * @param number_of_line_segments The number of line segments used to approximate circular arcs.
+ * @param segment_length The length of each line segment used to approximate circular arcs.
  * @return A point representing the computed labeling position.
  */
 Point find_label_position(
         const Shape& shape,
-        const std::vector<Shape>& holes = {},
-        ElementPos number_of_line_segments = 12);
+        const std::vector<Shape>& holes = {});
 
 }
