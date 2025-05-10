@@ -1578,9 +1578,11 @@ namespace Packy {
                         {"efficiency",  items_space / bin_space}
                 });
 
-                // Add x_max and y_max attributes to the last bin
+                // Add x_min, x_max and y_min, y_max attributes to the last bin
                 if (bin_pos == solution.number_of_different_bins() - 1) {
+                    j_bin["x_min"] = to_length_dbl(solution.x_min());
                     j_bin["x_max"] = to_length_dbl(solution.x_max());
+                    j_bin["y_min"] = to_length_dbl(solution.y_min());
                     j_bin["y_max"] = to_length_dbl(solution.y_max());
                 }
 

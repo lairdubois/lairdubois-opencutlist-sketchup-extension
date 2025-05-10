@@ -232,7 +232,7 @@ module Ladb::OpenCutList
                 :item_defs, :leftover_defs, :cut_defs, :part_info_defs,
                 :number_of_items, :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
                 :cut_length,
-                :x_max, :y_max
+                :x_min, :x_max, :y_min, :y_max
     attr_accessor :cut_cost,
                   :svg, :light_svg
 
@@ -241,7 +241,7 @@ module Ladb::OpenCutList
                    item_defs:, leftover_defs:, cut_defs:, part_info_defs:,
                    number_of_items:, number_of_leftovers:, number_of_leftovers_to_keep:, number_of_cuts:,
                    cut_length:,
-                   x_max:, y_max:)
+                   x_min:, x_max:, y_min:, y_max:)
 
       @bin_type_def = bin_type_def
 
@@ -260,7 +260,9 @@ module Ladb::OpenCutList
 
       @cut_length = cut_length
 
+      @x_min = x_min
       @x_max = x_max
+      @y_min = y_min
       @y_max = y_max
 
       # Computed

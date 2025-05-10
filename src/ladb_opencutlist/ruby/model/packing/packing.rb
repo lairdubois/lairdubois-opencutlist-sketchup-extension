@@ -180,7 +180,7 @@ module Ladb::OpenCutList
                 :items, :leftovers, :cuts, :part_infos,
                 :number_of_items, :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
                 :cut_length, :cut_cost,
-                :x_max, :y_max,
+                :x_min, :x_max, :y_min, :y_max,
                 :svg, :light_svg
 
     def initialize(_def)
@@ -207,7 +207,9 @@ module Ladb::OpenCutList
       @cut_length = _def.cut_length > 0 ? DimensionUtils.format_to_readable_length(_def.cut_length) : nil
       @cut_cost = _def.cut_cost > 0 ? PriceUtils.format_to_readable_price(_def.cut_cost) : nil
 
+      @x_min = _def.x_min> 0 ? DimensionUtils.format_to_readable_length(_def.x_min) : nil
       @x_max = _def.x_max> 0 ? DimensionUtils.format_to_readable_length(_def.x_max) : nil
+      @y_min = _def.y_min > 0 ? DimensionUtils.format_to_readable_length(_def.y_min) : nil
       @y_max = _def.y_max > 0 ? DimensionUtils.format_to_readable_length(_def.y_max) : nil
 
       @svg = _def.svg
