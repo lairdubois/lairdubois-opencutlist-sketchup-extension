@@ -1647,7 +1647,7 @@ tab:
       std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede einzelne Standardgröße des Materials.
       std_cut_prices: Schnittpreis
       std_cut_prices_help: |
-        Ermöglicht es Ihnen, den Preis für das Schneiden des Materials festzulegen.
+        Dient zur Festlegung des Preises für das Schneiden des Materials.
 
         *Nur geradlinige Schnitte werden von diesem Wert berücksichtigt.*
       texture_width: Breite
