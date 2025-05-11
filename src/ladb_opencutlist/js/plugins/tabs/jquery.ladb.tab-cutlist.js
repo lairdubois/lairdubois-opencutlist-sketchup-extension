@@ -5308,6 +5308,7 @@
                 const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 const $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
                 const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
+                const $selectInputToJsonBinDir = $('#ladb_select_input_to_json_bin_dir', $modal);
                 const $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 const $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
                 const $btnGenerate = $('#ladb_btn_generate', $modal);
@@ -5346,6 +5347,7 @@
                     options.time_limit = that.toInt($inputTimeLimit.val());
                     options.not_anytime_tree_search_queue_size = that.toInt($inputNotAnytimeTreeSearchQueueSize.val());
                     options.verbosity_level = that.toInt($selectVerbosityLevel.val());
+                    options.input_to_json_bin_dir = $selectInputToJsonBinDir.val();
                 }
                 const fnFillInputs = function (options) {
                     $radiosProblemType.filter('[value=' + fnValidProblemType(options.problem_type) + ']').click();
@@ -5368,6 +5370,7 @@
                     $inputTimeLimit.val(options.time_limit);
                     $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
                     $selectVerbosityLevel.selectpicker('val', options.verbosity_level);
+                    $selectInputToJsonBinDir.selectpicker('val', options.input_to_json_bin_dir);
                     fnUpdateFieldsVisibility();
                 }
                 const fnConvertToVariableDefs = function (vars) {
@@ -5527,6 +5530,7 @@
                 $inputTimeLimit.ladbTextinputText();
                 $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
                 $selectVerbosityLevel.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectInputToJsonBinDir.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(packingOptions);
 

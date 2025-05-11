@@ -236,6 +236,7 @@ module Ladb::OpenCutList
                    time_limit: 20,
                    not_anytime_tree_search_queue_size: 16,
                    verbosity_level: 0,
+                   input_to_json_bin_dir: '',
 
                    items_formula: '',
                    hide_part_list: false,
@@ -274,6 +275,7 @@ module Ladb::OpenCutList
       @time_limit = [ 1 , time_limit.to_i ].max
       @not_anytime_tree_search_queue_size = [ 1 , not_anytime_tree_search_queue_size.to_i ].max
       @verbosity_level = verbosity_level.to_i
+      @input_to_json_bin_dir = input_to_json_bin_dir
 
       @items_formula = items_formula.empty? ? '@number' : items_formula
       @hide_part_list = hide_part_list
@@ -549,6 +551,11 @@ module Ladb::OpenCutList
           puts '-- input --'
           puts input.to_json
           puts '-- input --'
+        end
+
+        unless @input_to_json_bin_dir.empty?
+          # Write input to a JSON file in the bin directory for debug purpose
+          File.write(File.join(PLUGIN_DIR, 'bin', @input_to_json_bin_dir, 'lib', 'input.json'), JSON.pretty_generate(input))
         end
 
         Packy.optimize_cancel_all

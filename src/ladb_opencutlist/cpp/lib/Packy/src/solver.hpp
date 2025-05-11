@@ -21,8 +21,6 @@
 #include "shape/labeling.hpp"
 
 #include <mutex>
-#include <shape/offset.hpp>
-#include <shape/simplification.hpp>
 
 using namespace packingsolver;
 using namespace nlohmann;
