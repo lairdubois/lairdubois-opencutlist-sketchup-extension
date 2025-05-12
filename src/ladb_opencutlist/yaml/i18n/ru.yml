@@ -39,6 +39,7 @@ default:
   draw: Чертеж
   estimate: Сметчик
   rename: Переименовать
+  next: Следующий
   yes: Да
   no: Нет
   automatic: Автоматический
@@ -69,6 +70,8 @@ default:
   instance_plural: единицы
   part_single: деталь
   part_plural: детали
+  cut_single: разрез
+  cut_plural: разрезы
   thickness_layer_single: слой
   thickness_layer_plural: слои
   setup_model_units: Установка единиц измерения
@@ -1278,7 +1281,8 @@ tab:
       grain_direction: Направление волокон
       raw_estimated_0: Расчет полезного объема
       colorized: "Этот рисунок фактуры будет применен к текстуре этого материала, когда он будет отображен в модели"
-      texture_load: Загрузить новую текстуру
+      texture_load: Загрузить новое изображение
+      texture_export: Экспорт изображения
       texture_clear: Очистить текстуру
       edit: "Редактирование свойств '{{ name }}'"
       set_current: "Раскрасить детали с помощью '{{ name }}'"
@@ -1372,15 +1376,20 @@ tab:
       std_attributes_dim_placeholder: Введите размер
       std_volumic_masses: Плотность
       std_volumic_masses_help: "Позволяет определить плотность для всех размеров, а также для каждого стандартного размера материала."
-      std_volumic_masses_add: Добавить плотность
       std_prices: Цена
       std_prices_help: "Позволяет задать стоимость материала в зависимости от расчета цены за единицу: объема, площади, штуки."
-      std_prices_add: Добавьте цену
+      std_cut_prices: Стоимость резки
+      std_cut_prices_help: |
+        Используется для определения стоимости резки материала.
+
+        *В этом значении учитываются только прямые резы.*
       texture_width: Ширина
       texture_height: Высота
       export_to_skm: Экспорт (.skm)
     texture_load:
       title: Загрузить изображение
+    texture_export:
+      title: Экспорт изображения
     import_from_skm:
       title: Импорт .skm фала
       ask_replace: |
@@ -1409,6 +1418,7 @@ tab:
       no_model: Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
       no_materials: Модель не содержит материалов.
       material_not_found: Материал не найден.
+      no_texture: Материал не имеет текстуры.
       failed_import_skm_file: "Ошибка произошла при импорте из .skm файла. **{{ error }}**"
       failed_export_skm_file: "Ошибка произошла при экспорте в .skm файл. **{{ error }}**"
       failed_deleting_material: "При скрытии этого материала произошла ошибка. **{{ error }}**"
@@ -1721,6 +1731,86 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_draw:
+    title: Чертеж
+    action_0: Нарисовать прямоугольник
+    action_0_status: Построение объема на прямоугольной основе
+    action_0_state_1_status: "Кликните, чтобы задать противоположный угол, или введите длину, ширину"
+    action_1: Нарисовать круг
+    action_1_status: Построение объема на круглой основе
+    action_1_state_1_radius_status: "Кликните, чтобы задать радиус или введите нужный размер"
+    action_1_state_1_diameter_status: "Кликните, чтобы задать диаметр или введите нужный размер"
+    action_2: Нарисовать многоугольник
+    action_2_status: Построение объема на основе многоугольника
+    action_2_state_1_status: "Кликните, чтобы задать новую точку или введите нужный размер"
+    action_x_state_2_status: "Кликните, чтобы задать высоту или введите нужный размер"
+    action_option_group_offset: Смещение
+    action_option_group_segments: Сегменты
+    action_option_group_options: Опции
+    action_option_offset_shape_offset: Смещение
+    action_option_offset_shape_offset_status: Применяет смещение к линии нарисованной фигуры
+    action_option_segments_segment_count: Количество сегментов
+    action_option_segments_segment_count_status: Используется для определения количества сегментов в окружности
+    action_option_options_construction: Конструкционные элементы
+    action_option_options_construction_status: Построение на основе конструкционных элементов
+    action_option_options_rectangle_centered: Прямоугольник с центром
+    action_option_options_rectangle_centered_status: Первым кликом задайте центр прямоугольника
+    action_option_options_smoothing: Сглаживание
+    action_option_options_smoothing_status: Плавные кривые
+    action_option_options_measure_from_diameter: Измерение
+    action_option_options_measure_from_diameter_status: Измерить окружность по ее диаметру
+    action_option_options_measure_from_radius_status: Измерить окружность по ее радиусу
+    action_option_options_measure_reversed: Реверсивное измерение
+    action_option_options_measure_reversed_status: Измерение в обратном направлении
+    action_option_options_pull_centered: Центрированное возвышение
+    action_option_options_pull_centered_status: Первым кликом задайте центр возвышения
+    action_option_options_ask_name: Задать имена деталям
+    action_option_options_ask_name_status: Ввод названий деталей вручную
+    action_pull_locked_status: Фиксация результатов последнего измерения
+    action_toggle_move_copy_status: Переключение копировать/переместить
+    action_change_move_anchor_status: Изменить точку привязки
+    success:
+      part_created: "Создание нового произведения: : {{ name }}"
+  smart_handle:
+    title: Рукоять
+    action_0: Выбор
+    action_0_status: "Кликните на деталь, чтобы выбрать ее"
+    action_1: Копирование по линии
+    action_1_status: "Кликните на деталь, чтобы скопировать ее вдоль оси"
+    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_state_2_status: "Кликните, чтобы переместить копию детали, или введите необходимое расстояние"
+    action_2: Копирование по сетке
+    action_2_status: "Кликните на деталь, чтобы скопировать ее по сетке"
+    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_state_2_status: "Кликните, чтобы разнести копии детали или введите два нужных размера"
+    action_3: Переместить
+    action_3_status: "Кликните на деталь, чтобы переместить ее вдоль оси"
+    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_state_2_status: "Кликните, чтобы переместить деталь или введите нужное расстояние"
+    action_4: Распределить
+    action_4_status: "Кликните на деталь, чтобы распределить ее вдоль оси"
+    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_1_status: "Кликните, чтобы задать первую точку измерения"
+    action_4_state_2_status: "Кликните, чтобы задать вторую точку измерения или введите нужное расстояние"
+    action_5: Изменить размер
+    action_option_group_copy_measure_type: Измерение
+    action_option_group_move_measure_type: Измерение
+    action_option_group_axes: Оси
+    action_option_group_options: Опции
+    action_option_copy_measure_type_outside_status: Внешнее измерение
+    action_option_copy_measure_type_centered_status: Измерение между центрами
+    action_option_copy_measure_type_inside_status: Измерение между деталями
+    action_option_move_measure_type_outside_status: Внешнее измерение
+    action_option_move_measure_type_centered_status: Измерение по центру
+    action_option_move_measure_type_inside_status: Внутренние измерения
+    action_option_axes_active_status: Перемещение по активным осям
+    action_option_axes_context_status: "Перемещение по осям группы или компонента, содержащего деталь"
+    action_option_axes_entity_status: Перемещение по осям детали
+    action_option_options_mirror_status: Симметричное копирование
+    warning:
+      copies_disable_mirror: Многократное копирование не работает $t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      min_distance: "Расстояние {{ value1 }} меньше минимального {{ value2 }}"
   smart_paint:
     title: Раскраска
     default_material: Материал не задан
