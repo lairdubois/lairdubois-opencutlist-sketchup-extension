@@ -1037,7 +1037,7 @@
                     encoding: exportOptions.encoding,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
                     target: 'csv',
-                    hidden_group_ids: that.generateOptions.hidden_group_ids,
+                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
                 }, function (response) {
 
                     if (response.errors) {

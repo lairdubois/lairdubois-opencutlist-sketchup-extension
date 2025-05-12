@@ -13,7 +13,7 @@ using namespace Packy;
 extern "C" {
 #endif
 
-static std::string optimize_str_output_;
+static std::string str_output_;
 
 struct Run {
     int id = 0;
@@ -76,12 +76,12 @@ DLL_EXPORTS char* c_optimize_start(
         return std::move(j_ouput);
     }).share();
 
-    optimize_str_output_ = json{
+    str_output_ = json{
         {"running", true},
         {"run_id", run_id},
     }.dump();
 
-    return const_cast<char*>(optimize_str_output_.c_str());
+    return const_cast<char*>(str_output_.c_str());
 }
 
 DLL_EXPORTS char* c_optimize_advance(
@@ -91,7 +91,7 @@ DLL_EXPORTS char* c_optimize_advance(
     if (runs_.find(run_id) == runs_.end()) {
 
         // Run doesn't exist
-        optimize_str_output_ = json{
+        str_output_ = json{
             {"error", "Unknown run_id=" + std::to_string(run_id)}
         }.dump();
 
@@ -104,7 +104,7 @@ DLL_EXPORTS char* c_optimize_advance(
             if (run.optimize_cancelled && run.last_send_solution_pos == 0) {
 
                 // Run is cancelled, notify it in the returned output
-                optimize_str_output_ = json{
+                str_output_ = json{
                     {"cancelled", true},
                     {"run_id", run_id}
                 }.dump();
@@ -112,7 +112,7 @@ DLL_EXPORTS char* c_optimize_advance(
             } else {
 
                 // Get output from the final computation
-                optimize_str_output_ = run.optimize_future.get().dump();
+                str_output_ = run.optimize_future.get().dump();
 
                 // Delete run
                 runs_.erase(run_id);
@@ -132,13 +132,13 @@ DLL_EXPORTS char* c_optimize_advance(
                     run.last_send_solution_pos = solutions_size;
                 }
             }
-            optimize_str_output_ = j_output.dump();
+            str_output_ = j_output.dump();
 
         }
 
     }
 
-    return const_cast<char*>(optimize_str_output_.c_str());
+    return const_cast<char*>(str_output_.c_str());
 }
 
 DLL_EXPORTS char* c_optimize_cancel(
@@ -148,7 +148,7 @@ DLL_EXPORTS char* c_optimize_cancel(
     if (runs_.find(run_id) == runs_.end()) {
 
         // Run doesn't exist
-        optimize_str_output_ = json{
+        str_output_ = json{
             {"error", "Unknown run_id=" + std::to_string(run_id)}
         }.dump();
 
@@ -160,14 +160,14 @@ DLL_EXPORTS char* c_optimize_cancel(
         run.optimize_cancelled = true;
 
         // Run is cancelled, notify it in the returned output
-        optimize_str_output_ = json{
+        str_output_ = json{
             {"cancelled", true},
             {"run_id", run_id}
         }.dump();
 
     }
 
-    return const_cast<char*>(optimize_str_output_.c_str());
+    return const_cast<char*>(str_output_.c_str());
 }
 
 DLL_EXPORTS char* c_optimize_cancel_all() {
@@ -186,11 +186,11 @@ DLL_EXPORTS char* c_optimize_cancel_all() {
     for (auto run_id : run_ids_to_erase) {
         runs_.erase(run_id);
     }
-    optimize_str_output_ = json{
+    str_output_ = json{
         {"number_of_erased_runs", run_ids_to_erase.size()},
     }.dump();
 
-    return const_cast<char*>(optimize_str_output_.c_str());
+    return const_cast<char*>(str_output_.c_str());
 }
 
 DLL_EXPORTS char* c_version() {

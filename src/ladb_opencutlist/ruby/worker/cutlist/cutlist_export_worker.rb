@@ -21,6 +21,7 @@ module Ladb::OpenCutList
     EXPORT_OPTION_TARGET_TABLE = 'table'.freeze
     EXPORT_OPTION_TARGET_PASTABLE = 'pasteable'.freeze
     EXPORT_OPTION_TARGET_CSV = 'csv'.freeze
+    EXPORT_OPTION_TARGET_XLSX = 'xlsx'.freeze
 
     def initialize(cutlist,
 
@@ -137,6 +138,54 @@ module Ladb::OpenCutList
               response[:export_path] = path.tr("\\", '/')  # Standardize path by replacing \ by /
 
             end
+
+          rescue => e
+            puts e.message
+            puts e.backtrace
+            response[:errors] << [ 'core.error.failed_export_to', { path => path, :error => e.message } ]
+          end
+
+        end
+
+      when 'xlsx'
+
+        # Ask for export file path
+        path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.xlsx')
+        if path
+
+          # Force "xlsx" file extension
+          path = path + '.xlsx' unless path.end_with?('.xlsx')
+
+          begin
+
+            require_relative '../../lib/fiddle/xly/xly'
+
+            rows = _compute_rows
+
+            input = {
+              filename: path,
+              worksheets: [
+                name: 'OpenCutList',
+                cells: rows.each_with_index.map { |row, row_index|
+                  row.each_with_index.map { |cell, cell_index|
+                    unless cell.is_a?(String) && cell.empty?
+                      {
+                        row: row_index,
+                        col: cell_index,
+                        value: cell
+                      }
+                    end
+                  }
+                }.flatten(1).compact
+              ]
+            }
+
+            puts input.to_json
+
+            # Fiddle::Xly.write_to_xlsx(input)
+
+            # Populate response
+            response[:export_path] = path.tr("\\", '/')  # Standardize path by replacing \ by /
 
           rescue => e
             puts e.message
