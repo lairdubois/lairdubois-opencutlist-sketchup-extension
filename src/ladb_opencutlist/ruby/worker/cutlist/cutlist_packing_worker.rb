@@ -593,7 +593,7 @@ module Ladb::OpenCutList
 
       return PackingDef.new(errors: errors).create_packing if errors.is_a?(Array)
       return PackingDef.new(cancelled: true).create_packing if output['cancelled']
-      return PackingDef.new(running: true).create_packing if running && output['solution'].nil?
+      return PackingDef.new(running: true).create_packing if running && (output['solution'].nil? || output['solution']['bins'].nil? || output['solution']['bins'].empty?) # Running but no solution yet
 
       if @verbosity_level > 1
         puts ' '

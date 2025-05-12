@@ -5981,7 +5981,7 @@
 
                                 if (response.running) {
                                     let waitingForResponse = false;
-                                    const interval = setInterval(function () {
+                                    const intervalId = setInterval(function () {
 
                                         if (waitingForResponse) {
                                             return;
@@ -6005,14 +6005,14 @@
 
                                             } else if (response.cancelled) {
 
-                                                clearInterval(interval);
+                                                clearInterval(intervalId);
 
                                                 // Finish progress feedback
                                                 that.dialog.finishProgress();
 
                                             } else {
 
-                                                clearInterval(interval);
+                                                clearInterval(intervalId);
 
                                                 fnCreateSlide(response);
 
