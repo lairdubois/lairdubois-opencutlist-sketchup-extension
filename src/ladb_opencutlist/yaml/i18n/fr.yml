@@ -50,7 +50,9 @@ default:
   good: Bon
   bad: Mauvais
   by: par
+  # date format in use for language
   date_format: "d/m/Y G:i"
+  # short date format in use for language
   date_format_short: d/m/Y
   decimal: Décimal
   fractional: Fractionnel

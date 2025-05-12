@@ -1,0 +1,2150 @@
+_label: 1 - Polski
+_reload_msg: 2 - Aby odzwierciedlić wszystkie zmiany, musisz **zamknąć** i **ponownie otworzyć** okno OpenCutList.
+_description: 3 - Generator listy cięć i diagramów cięcia dla stolarzy. Open Source, finansowany społecznościowo i łatwy w użyciu ;)
+default:
+  minimize: 4 - Minimalizuj
+  maximize: 5 - Maksymalizuj
+  cancel: 6 - Anuluj
+  stop: 7 - Stop
+  validate: 8 - Zastosuj
+  confirm: 9 - Potwierdź
+  ok: 10 - Ok
+  open: 11 - Otwórz
+  see: 12 - Zobacz
+  close: 13 - Zamknij
+  clear: 14 - Wyczyść
+  refresh: 15 - Odśwież
+  generate: 16 - Generuj
+  print: 17 - Wydrukuj
+  export: 18 - Eksportuj
+  import: 19 - Importuj
+  load: 20 - Załaduj
+  preview: 21 - Przegląd
+  options: 22 - Opcje
+  caution: 23 - Uwaga
+  remove: 24 - Usuń
+  remove_all: 25 - Usuń wszystko
+  delete: 26 - Usuń
+  create: 27 - Utwórz
+  duplicate: 28 - Duplikuj
+  ignore: 29 - Ignoruj
+  download: 30 - Pobierz
+  upgrade: 31 - Aktualizuj
+  copy: 32 - Kopiuj
+  select_all: 33 - Zaznacz wszystko
+  unselect_all: 34 - Odznacz wszystko
+  draw: 35 - Rysuj
+  estimate: 36 - Oszacuj
+  rename: 37 - Zmień
+  next: 38 - Następny
+  'yes': 39 - Tak
+  'no': 40 - Nie
+  automatic: 41 - Automatyczny
+  empty_filename: 42 - Bez tytułu.skp
+  help: 43 - Pomoc
+  error: 44 - Ceruj!
+  warning: 45 - Uwaga
+  tip: 46 - Wskazówka
+  good: 47 - Dobry
+  bad: 48 - Zły
+  by: 49 - przez
+  date_format: 50 - d.m.Y G:i
+  date_format_short: 51 - d.m.Y
+  decimal: 52 - Dziesiętny
+  fractional: 53 - Ułamkowy
+  unit_0: 54 - Cal
+  unit_1: 55 - Stopa
+  unit_2: 56 - Milimetr
+  unit_3: 57 - Centymetr
+  unit_4: 58 - Metr
+  unit_5: 59 - Jard
+  unit_mass_0: 60 - Kilogram
+  unit_mass_1: 61 - Funt
+  unit_angle_0: 62 - Stopni
+  instance_single: 63 - Pozycja
+  instance_plural: 64 - Pozycje
+  part_single: 65 - część
+  part_plural: 66 - części
+  cut_single: '67 - '
+  cut_plural: '68 - '
+  thickness_layer_single: 69 - warstwa
+  thickness_layer_plural: 70 - warstwy
+  setup_model_units: 71 - Ustaw jednostki modelu
+  load_more: 72 - Załaduj więcej
+  reset_to_app_defaults: 73 - Przywróć oryginalne wartości
+  constrain_key: 74 - Zmiana
+  copy_key_win: 75 - Ctrl
+  copy_key_mac: 76 - Opcje
+  alt_key_win: 77 - Alt
+  alt_key_mac: 78 - Cmd
+  tab_key: 79 - Tab
+  file: 80 - Plik
+  file_plural: 81 - Pliki
+  stroke_color: 82 - Kolor linii
+  fill_color: 83 - Kolor wypełnienia
+  length: 84 - Długość
+  width: 85 - Szerokość
+  thickness: 86 - Grubość
+  height: 87 - Wysokość
+core:
+  menu:
+    submenu: 88 - OpenCutList
+    item:
+      generate_cutlist: 89 - Generowanie listy części
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: 95 - Modyfikacja instancji
+      edit_parent_part_instance: 96 - Modyfikacja grupy/komponentu zawierającego instancję
+      hide_part_instance: 97 - Ukryj instancję
+      unhide_part_instance: 98 - Ujawnij instancję
+      edit_part_instance_properties: 99 - Edytuj właściwości instancji
+      smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_export: $t(core.toolbar.command.smart_export)
+      reset_dialog_position: 105 - Zresetuj położenie okna
+  toolbar:
+    name: 106 - OpenCutList
+    tools: 107 - Narzędzia
+    command:
+      dialog: 108 - OpenCutList
+      smart_draw: 109 - Lista części
+      smart_handle: 110 - Importuj części
+      smart_paint: 111 - Malowanie części
+      smart_axes: 112 - Orientuj części
+      smart_export: 113 - Eksportuj części
+  messagebox:
+    dir_override: |
+      114 - « {{ target }} » już istnieje. Czy chcesz go zamienić?
+
+      Folder o tej samej nazwie znajduje się już w folderze {{ parent }}. Jeśli go zastąpisz, oryginalna zawartość zostanie utracona.
+  savepanel:
+    export_to_file: 115 - Eksportuj do pliku {{ file_format }}
+  dialog:
+    title: 116 - OpenCutList by L'Air du Bois
+  leftbar:
+    more: 117 - Więcej
+    more_docs: 118 - Dok
+    more_reviews: 119 - Recenzje
+    more_plans: 120 - Plany
+    more_extensions: 121 - Rozszerzenia
+    more_update: 122 - Aktualizacja
+  bottombar:
+    report_a_bug: 123 - Zgłoś błąd
+  warning:
+    dev: |
+      124 - To jest wersja **rozwojowa** *OpenCutList*.
+      Ta wersja jest dostępna tylko do testowania.
+      Nie zaleca się używania jej w produkcji.
+
+      Aby zgłosić błąd: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+  error:
+    extern: '125 - Błąd zewnętrzny : **{{ error }}**'
+    feature_unavailable: 126 - Ta funkcja wymaga programu SketchUp {{ version }} lub nowszego
+    failed_export_to: |
+      127 - Wystąpił błąd podczas eksportowania do *{{ path }}*.
+      **{{ error }}**
+  success:
+    exported_to: 128 - Pomyślnie wyeksportowano do {{ path }}
+    copied_to_clipboard: 129 - Skopiowane do schowka
+  event:
+    model_change: 130 - Aktywny model został zmieniony.
+    options_change: 131 - Opcje w modelu zostały zmienione.
+    material_change: 132 - Co najmniej jeden materiał został zmieniony.
+    selection_change: 133 - Wybór/zaznaczenie w aktywnym modelu zostało zmienione.
+    layers_change: 134 - Tagi w aktywnym modelu uległy zmianie.
+    drawing_change: 135 - Rysunek aktywnego modelu został zmodyfikowany.
+  upgrade:
+    unavailable: 136 - Nie można znaleźć najnowszej wersji *OpenCutList*.
+    available: |
+      137 - Dostępna jest nowa wersja *OpenCutList*.
+      Zaktualizuj, aby uzyskać najnowsze funkcje!
+    up_to_date: |
+      138 - Używasz najnowszą wersję *OpenCutList*.
+
+      *Rozważ wsparcie tego projektu, aby pomóc nam dodać jeszcze więcej funkcji!*
+    downloading: 139 - Pobieranie w toku
+    changelog: 140 - Co nowego?
+    ignore_update: 141 - Pomiń tą aktualizację
+    download_rescue: 142 - Problem z pobraniem?
+    manual_download: 143 - Pobieranie ręczne
+    zzz: 144 - Obecnie odpoczywam po aktualizacji. Aby mnie obudzić, musisz ponownie uruchomić SketchUp.
+    success: |
+      145 - Aktualizacja OpenCutList zakończona !
+
+      Uruchom ponownie SketchUp aby aktywowań zmiany.
+    error:
+      download: 146 - Błąd podczas pobierania archiwum.
+      unzip: 147 - Błąd podczas dekompresji archiwum.
+  preset:
+    label: 148 - Ustawienia
+    manage: 149 - Zarządzaj ustawieniami wstępnymi
+    save_to: 150 - Zapisz jako
+    restore_from: 151 - Przywróć
+    app_defaults: 152 - Ustawienia fabryczne
+    user_defaults: 153 - Moje ustawienia domyślne
+    new: 154 - Nowe ustawienia
+    new_prompt: |
+      155 - *Tworzenie własnych ustawień pozwala zachować aktualne ustawienia globalnie, abyś mógł użyć ich we wszystkich swoich modelach.*
+
+      Wprowadź nazwę dla ustawień:
+    delete_confirm_title: 156 - Usunięcie
+    delete_confirm: 157 - Czy na pewno chcesz usunąć ustawienia **"{{ name }}"**?
+    override_confirm_title: 158 - Aktualizacja
+    override_confirm: 159 - Czy na pewno chcesz zapisać aktualne parametry z formularza w ustawieniach **"{{ name }}"**?
+    new_success: 160 - Ustawienia **"{{ name }}"** zostały utworzone
+    override_success: 161 - Zaktualizowano ustawienia **"{{ name }}"**
+    restore_success: 162 - Do formularza wczytano parametry zapisane w ustawieniach **"{{ name }}"**
+    delete_success: 163 - Ustawienia **"{{ name }}"** zostały usunięte
+    tooltip:
+      save_to: 164 - Zaktualizuj ustawienia '{{ name }}'
+      delete: 165 - Usuń ustawienia '{{ name }}'
+    dictionary:
+      component_textinput_color: 166 - Paleta kolorów
+      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
+      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
+      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
+      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Modelu
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
+  progress:
+    please_wait: 187 - Obliczanie świata pokoju
+  component:
+    textinput:
+      reset: 188 - Zresetuj tę wartość
+    textinput_color:
+      store: 189 - Zapisz kolor
+      remove: 190 - Usuń kolor
+    textinput_code:
+      snippets: 191 - Przykłady formuł
+      help: 192 - Wpisz **@**, aby uzyskać listę zmiennych.
+    textinput_size:
+      quantity: 193 - Ilość
+    three_viewer:
+      view: 194 - Widok {{ view }}
+      view_isometric: 195 - Izometryczny
+      view_top: 196 - Góra
+      view_bottom: 197 - Dół
+      view_front: 198 - Przed
+      view_back: 199 - Tył
+      view_left: 200 - Lewy
+      view_right: 201 - Prawy
+      zoom: 202 - Powiększenie {{ zoom }}
+      explode_factor: 203 - Zakres z eksplodowanego
+      toggle_box_helper: 204 - Pokaż/ukryj ramkę ograniczającą
+      toggle_box_dimensions_helper: 205 - Pokaż/ukryj wymiary
+      toggle_axes_helper: 206 - Pokaż/ukryj osie części
+  docs:
+    error:
+      failed_to_load: |
+        207 - Dokumentacja nie może zostać otwarta.
+        Sprawdź, czy jesteś podłączony do Internetu.
+tab:
+  cutlist:
+    label: 208 - Wstępny
+    title: 209 - Lista części
+    help: |
+      210 - Wybierz części z listy w bieżącej scenie i wciśnij klawisz **Generuj**.
+      Jeśli wybór jest pusty, wszystkie widoczne komponenty sceny zostaną użyte do obliczenia listy części.
+    is_selection: 211 - Tylko selekcja
+    select_part: 212 - Wybierz część
+    select_part_plural: 213 - Wybór części
+    material_undefined: 214 - Brak zdefiniowanego materiału
+    not_available_std_width: 215 - Niezdefiniowana szerokość
+    not_available_std_thickness: 216 - Niezdefiniowana grubość
+    not_available_std_section: 217 - Przekrój niezdefiniowany
+    highlight_part: 218 - Zaznacz część w modelu
+    highlight_parts: 219 - Zaznacz części w modelu
+    edit_part_properties: 220 - Edytuj właściwości części
+    edit_part_axes_properties: 221 - Edytuj właściwości (osie) części
+    edit_part_size_increase_properties: 222 - Edytuj właściwości (nadwymiary) części
+    edit_part_edges_properties: 223 - Edytuj właściwości (obrzeża) części
+    edit_part_faces_properties: 224 - Edytuj właściwości (powierzchnie) części
+    part_drawing_type_1: 225 - 2D Widok z przodu
+    part_drawing_type_2: 226 - 2D Widok odwrócony
+    part_drawing_type_3: 227 - Widok 2D po lewej
+    part_drawing_type_4: 228 - Widok 2D po prawej
+    part_drawing_type_5: 229 - Widok 2D z przodu
+    part_drawing_type_6: 230 - Widok 2D z tyłu
+    part_drawing_type_7: 231 - 3D
+    tooltip:
+      show_hide_block: 232 - Pokaż / ukryj grupę
+      scroll_to_block: 233 - Przewiń do grupy
+      not_available_std_width: 234 - Szerokość *{{ std_dimension_real }}* nie jest zdefiniowana w standardowych szerokościach materiału '{{ material_name }}'
+      not_available_std_thickness: 235 - Grubość *{{ std_dimension_real }}* nie jest zdefiniowana w standardowych grubościach materiału '{{ material_name }}'
+      not_available_std_section: 236 - Przekrój *{{ std_dimension_real }}* nie jest zdefiniowany w standardowych przekrojach materiału '{{ material_name }}'
+      add_std_width_to_material: |
+        237 - Dodaj szerokość *{{ std_dimension }}*
+        do materiału '{{ material_name }}'
+      add_std_thickness_to_material: |
+        238 - Dodaj grubość *{{ std_dimension }}*
+        do materiału '{{ material_name }}'
+      add_std_section_to_material: |
+        239 - Dodaj przekrój *{{ std_dimension }}*
+        do materiału '{{ material_name }}'
+      rounded_std_width: |
+        240 - Szerokość *{{ std_dimension }}* jest zaokrąglona przez precyzję jednostek modelu.
+        Rzeczywista szerokość : *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_thickness: |
+        241 - Grubość *{{ std_dimension }}* jest zaokrąglana przez precyzję jednostek modelu.
+        Rzeczywista grubość : *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_section: |
+        242 - Przekrój *{{ std_dimension }}* jest zaokrąglony przez dokładność jednostek modelu.
+        Rzeczywisty przekrój : *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_footer: 243 - Dostosuj dokładność w *Informacje o modelu* lub sprawdź wymiary części w tej grupie.
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: 247 - Edytuj właściwości grupy części
+      edit_material: $t(tab.cutlist.menu.edit_material)
+      folding_part: 249 - Rozwiń / Zwiń
+      material_origin_1: 250 - Materiał tego elementu jest zdefiniowany w jej instancjach
+      material_origin_2: 251 - Materiał uwzględniony dla tego elementu jest obecnie dziedziczony z jednego z jego elementów nadrzędnych.
+      material_origin_3: 252 - Materiał uwzględniony dla tego elementu jest obecnie pobierany z jego elementów podrzędnych
+      orientation_locked_on_axis: 253 - Orientacja tego elementu jest zablokowana na jego osiach.
+      number_saved: 254 - Numer tej części został zapisany
+      number_hidden: 255 - Numer '{{ number }}' zapisany w tej części nie może być użyty, ponieważ jest już przypisany
+      number_generated: 256 - Numer tej części został wygenerowany automatycznie
+      resized: 257 - Rozmiar tej części został zmieniony zgodnie z definicją komponentu
+      flipped: 258 - Ta część jest lustrzana w porównaniu z definicją komponentu
+      symmetrical: 259 - Wykrywanie lustrzanej części jest nieaktywne dla tej części
+      ignore_grain_direction: 260 - Kierunek wzoru jest ignorowany na tej części
+      auto_oriented: 261 - Ta część została automatycznie obrócona
+      oko_label_filter: 262 - Uwzględnij / Wyłącz ten identyfikator
+      add_label_filter: 263 - Filtrowanie według '{{ label }}'
+      remove_label_filter: 264 - Usuń filtrowanie '{{ label }}'
+      add_edge_material_name_filter: 265 - Filtruj według '{{ material_name }}'
+      remove_edge_material_name_filter: 266 - Usuń filtrowanie wg '{{ material_name }}'
+      add_veneer_material_name_filter: 267 - Filtruj według '{{ material_name }}'
+      remove_veneer_material_name_filter: 268 - Usuń filtrowanie wg '{{ material_name }}'
+      not_aligned_on_axes: 269 - Uwaga, ta część może nie być prawidłowo zorientowana względem swoich osi
+      instance_count_by_part: 270 - W pakietach znajduje się **{{ count }}** pozycji tej części.
+      unused_instance_count: 271 - Uwaga, **{{ count }}** pozycja z ostatniego pakietu nie będzie użyta.
+      unused_instance_count_plural: 272 - Uwaga, **{{ count }}** pozycji z ostatniego pakietu nie będzie użyte.
+      used_instance_count: 273 - Użyto **{{ count }}** pozycję z {{ total }}
+      used_instance_count_plural: 274 - Użyto **{{ count }}** pozycji z {{ total }}
+      thickness_layer_count: 275 - Część końcowa jest wykonana z **{{ count }}** warstw o grubości
+      thickness_layered: 276 - Podana tutaj ilość oznacza liczbę elementów, które należy wyciąć, aby uzyskać wszystkie warstwy.
+      thickness_layered_equation: 277 - **{{ count }}** *część* x **{{ layerCount }}** *warstwy* = **{{ cuttingPartCount }}**
+      thickness_layered_equation_plural: 278 - **{{ count }}** *części* x **{{ layerCount }}** *warstwy* = **{{ cuttingPartCount }}**
+      multiple_content_layers: 279 - Uwaga, ta część składa się z części podrzędnych obecnych na {{ count }} różnych warstwach lub znacznikach:<br> {{ layers }}
+      children_warnings: 280 - Uwaga, w zgrupowanych częściach występuje ostrzeżenie {{ count }}
+      children_warnings_plural: 281 - Uwaga, znajdują się {{ count }} ostrzeżenia w zgrupowanych częściach
+      children_size_increase: 282 - Wymiar ten jest powiększony o naddatek dla {{ count }} zgrupowanych części
+      invalid_final_area: 283 - Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ część {{ count }} (z {{ total }}) ma nieprawidłowy obszar
+      invalid_final_area_plural: 284 - Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ {{ count }} części (z {{ total }}) mają nieprawidłowy obszar
+      is_dynamic_attributes_name: 285 - Oznaczenie tej części pochodzi z atrybutu 'Name' elementu dynamicznego
+      size_increased: 286 - Wymiar zwiększony o {{ value }}
+      has_edges: 287 - Ten kawałek zawiera {{ count }} fornirowaną krawędź
+      has_edges_plural: 288 - Ten kawałek zawiera {{ count }} formirowane krawędzie
+      has_faces: 289 - Ta część zawiera {{ count }} powierzchnię fornirowaną
+      has_faces_plural: 290 - Ta część zawiera {{ count }} powierzchni fornirowanych
+      edge_decremented: 291 - Zmniejszona o grubość obrzeża ({{ decrement }})
+      edge_ymin: 292 - Długość krawędzi 1
+      edge_ymax: 293 - Długość krawędzi 2
+      edge_xmin: 294 - Szerokość krawędzi 1
+      edge_xmax: 295 - Szerokość krawędzi 2
+      face_zmin: 296 - Tył
+      face_zmax: 297 - Przód
+      dblclick_to_copy_all_edges: 298 - Kliknij tutaj dwukrotnie, aby powielić tę wartość na innych krawędziach
+      dblclick_to_copy_all_faces: 299 - Kliknij dwukrotnie tutaj, aby powielić tę wartość na drugą powierzchnię
+      dblclick_to_sort_axes: 300 - Kliknij dwukrotnie tutaj, aby automatycznie zmienić kolejność osi zgodnie z wymiarami części
+      part_axes: 301 - Osie wewnętrzne części
+      select_unselect_all_parts: 302 - Zaznacz / odznacz wszystkie części w grupie
+      select_parts_in_cutlist: 303 - Wybierz element w arkuszu rozkroju.
+      select_parts_in_cutlist_plural: 304 - Wybierz {{ count }} elementy w arkuszu rozkroju.
+      setup_group_cuttingdiagram: 305 - Skonfiguruj schemat cięcia '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
+      setup_group_packing: 306 - Skonfiguruj schemat cięcia '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'
+      open_part_url: 307 - Otwórz adres URL części
+    menu:
+      show_all_groups: 308 - Pokaż wszystkie grupy
+      hide_all_other_groups: 309 - Ukryj wszystkie inne grupy
+      numbers_save: 310 - Zachowaj numery części
+      numbers_reset: 311 - Zresetuj numery części
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: 313 - Drukowanie etykiet
+      write_2d: 314 - Projekcja 2D
+      write_3d: 315 - Geometria 3D
+      write_2d_parts: 316 - Eksportuj 2D projekcję części.
+      write_3d_parts: 317 - Eksportuj geometrię 3D części
+      group_write_2d_parts: 318 - Eksportuj rzut 2D części grupy
+      group_write_3d_parts: 319 - Eksportuj geometrię 3D części grupy
+      group_layout_parts: 320 - Narysuj przegląd części w grupie
+      group_numbers_save: 321 - Zachowaj numery części grupy
+      group_numbers_reset: 322 - Zresetuj numery części grupy
+      group_cuttingdiagram: 323 - Schemat cięcia
+      group_packing: 324 - Schemat cięcia
+      group_labels: 325 - Drukuj etykiety części w grupie
+      edit_material: 326 - Edytuj materiał '{{ material_name }}'
+      expand_all: 327 - Rozwiń wszystkie linie
+      collapse_all: 328 - Zwiń wszystkie linie
+      reset_prices: 329 - Wyzeruj ceny wszystkich części
+      reset_prices_confirm: |
+        330 - Zamierzasz zresetować ceny wszystkich części swojego modelu.
+        Ta czynność jest ostateczna. **Wszystkie ceny zostaną wyzerowane.**
+        Potwierdź, aby kontynuować.
+      reset_prices_success: 331 - Ceny wszystkich części zostały zresetowane.
+    edit_part:
+      title: 332 - Właściwości części '{{ name }}'
+      title_multiple: 333 - Właściwości grupy części
+      multiple_alert: 334 - Wspólne właściwości grupy {{ part_count }} części.
+      general: 335 - Główne
+      extra_help: 336 - Lista właściwości charakterystycznych dla danego typu materiału "**$t(tab.materials.type_{{ material_type }})**".
+      edges: 337 - Obrzeża
+      faces: 338 - Powierzchnie
+      name: 339 - Nazwa
+      material: 340 - Materiał
+      cumulable: 341 - Podsumowanie
+      cumulable_help: |
+        342 - Jeśli ta opcja jest wybrana **długość** lub **szerokość** będą uwględnione **jednostki długości** lub **jednostki szerokości** pomnożone przez liczbę podczas sortowania listy części.
+      cumulable_0: 343 - Nie da się podsumować
+      cumulable_1: 344 - Zsumowane po długości
+      cumulable_2: 345 - Zsumowane po szerokości
+      instance_count_by_part: 346 - Opakowanie
+      instance_count_by_part_help: |
+        347 - Pozwala traktować część jako *pakiet* składający się z jednej lub więcej *pozycji*.
+        Ilość skojarzona z częścią na liście części będzie reprezentować liczbę całych pakietów potrzebnych do otrzymania liczby pozycji aktualnie znajdujących się w modelu.
+
+        *Przykład: Aby potraktować parę prowadnic do szuflad jako 1 część:
+        Pakiet = 2 jednostki / część*
+      instance_count_by_part_1: 348 - 1 jednostka na część
+      instance_count_by_part_2: 349 - 2 jednostki na część
+      mass: 350 - Masa
+      mass_help: 351 - Masa części zostanie wykorzystana podczas generowania **Szacowanie**.
+      price: 352 - Cena
+      price_help: 353 - Cena części zostanie wykorzystana podczas generowania **Szacowanie**.
+      thickness_layer_count: 354 - Liczba warstw
+      thickness_layer_count_help: |
+        355 - Zdefiniuj tutaj liczbę warstw, które podzielą rysowaną część na grubości.
+
+        *Przykład:* Jeśli masz część zaprojektowaną o grubości *38mm* i chcesz ją wykonać poprzez sklejenie dwóch paneli o grubości *19mm*, wpisz **2** w tym polu.
+        *Wtedy OpenCutList policzy 2 części o grubości 19mm zamiast 1 części o grubości 38mm.*
+      description: 356 - Opis
+      description_help: |
+        357 - Opcja *Opis* umożliwia podanie spersonalizowanych informacji na temat każdej definicji części.
+      url: 358 - URL
+      url_help: |
+        359 - *URL* umożliwia dodanie spersonalizowanego linku do zewnętrznej strony dla każdego opisu elementu.
+      tags: 360 - Plakietki
+      tags_help: |
+        361 - *Plakietki* to niestandardowe słowa kluczowe, które można dodać do każdej definicji części.
+        Możesz dodać dowolną liczbę plakietek.
+        Widoczne części listy części można następnie filtrować według tych plakietek.
+      tags_multiple_info: 362 - Wyświetlane są tylko popularne plakietki
+      orientation: 363 - Orientacja
+      orientation_locked_on_axis: 364 - Zablokuj orientację na osiach części
+      orientation_locked_on_axis_help: |
+        365 - Jeśli ta opcja jest wybrana, opcja *Automatyczna orientacja części* nie będzie miała wpływu na tę część.
+
+        Stąd w lokalnym układzie współrzędnych:
+        - *długość* znajduje się na osi <span style='color:red'>czerwonej</span>
+        - *szerokość* znajduje się na osi <span style='color:green'>zielonej</span>
+        - *grubość* znajduje się na osi <span style='color:blue'>niebieskiej</span>
+      symmetrical: 366 - Wyłącz wykrywanie lustrzanych części dla tej części
+      symmetrical_help: |
+        367 - Jeśli to pole jest zaznaczone, wykrywanie *lustrzanych części* nie będzie miało żadnego wpływu na część.
+      ignore_grain_direction: 368 - Ignoruj kierunek wzoru na tej części
+      ignore_grain_direction_help: |
+        369 - Jeśli ta opcja jest zaznaczona, kierunek wzoru materiału będzie ignorowany dla tej części.
+      size_increase: 370 - Ponadwymiarowe
+      size_increase_help: |
+        371 - Ponadwymiarowe pozwalają na zwiększenie wymiarów pojedynczej części.
+        (* Przykład: naddatek na listwę przypodłogową lub listwę rysunkową, którą należy wyregulować podczas montażu. *)
+      length_increase: 372 - Długość ponadwymiarowa
+      length_increase_help: 373 - Nadmiar jest stosowany do końcowej długości w celu określenia **długości wstępnej**.
+      width_increase: 374 - Szerokość ponadwymiarowa
+      width_increase_help: 375 - Nadmiar jest stosowany do ostatecznej szerokości, aby zdefiniować **szerokość wstępną**.
+      thickness_increase: 376 - Grubość ponadwymiarowa
+      thickness_increase_help: 377 - Nadmiar nakłada się na ostateczną grubość, aby określić **grubość wstępną**.
+      axes: 378 - Osie
+      axes_help: 379 - Zmień kolejność wymiarów, aby dopasować je do żądanych kolorów osi w swojej części.
+      axes_tip: |
+        380 - Zwróć uwagę, że jeśli opcja *Automatyczna orientacja części* nie jest aktywna lub część jest *zablokowana na swoich osiach*, to: :
+         - **długość** jest odczytywana na osi <strong style='color:red'>czerwonej</strong>
+         - **szerokość** jest odczytywana na osi <strong style='color:green'>zielonej</strong>
+         - **grubość** jest odczytywana na osi <strong style='color:blue'>niebieskiej</strong>
+      axes_origin_position_none: 381 - Nie zmieniaj pozycji początku
+      axes_origin_position_min: 382 - Umieść początek na narożniku
+      axes_origin_position_center: 383 - Umieść początek w środku
+      axes_origin_position_front_min: 384 - Umieść początek w narożniku frontu
+      axes_origin_position_front_center: 385 - Umieść początek na środku frontu
+      over_length: 386 - Na całej długości
+      over_width: 387 - Na całej szerokości
+      edge_disabled_help: 388 - To obrzeże krawędzi nie jest konfigurowalne, ponieważ na tej krawędzi elementu w modelu nie wykryto powierzchni nośnej materiału.
+      face_disabled_help: 389 - Tej powierzchni nie można konfigurować, ponieważ na tej krawędzi elementu w modelu nie wykryto powierzchni przenoszącej materiał.
+      multiple_values: 390 - Wiele wartości
+      loading_preview: 391 - Ładowanie podglądu
+    option:
+      auto_orient: 392 - Automatyczna orientacja części
+      auto_orient_help: |
+        393 - Jeśli ta opcja jest wybrana, 3 wymiary części są sortowane tak, aby największy reprezentował *długość*, a najmniejszy *grubość*.
+
+        W przeciwnym razie,
+        - *długość* jest odczytywana na osi <span style='color:red'>czerwonej</span>
+        - *szerokość* jest odczytywana na osi <span style='color:green'>zielonej</span>
+        - *grubość* jest odczytywana na osi <span style='color:blue'>niebieskiej</span>
+      flipped_detection: 394 - Wykrywanie części lustrzanych
+      flipped_detection_help: |
+        395 - Jeśli ta opcja jest wybrana, lustrzane części zostaną wykryte i wyświetlone jako odrębne części.
+      smart_material: 396 - *Inteligentne* przypisanie materiałów
+      smart_material_help: 397 - Jeśli ta opcja jest włączona, elementy, które nie mają zdefiniowanego materiału, mogą otrzymać materiał główny swoich elementów podrzędnych lub dziedziczyć go od elementów nadrzędnych.
+      dynamic_attributes_name: 398 - Użyj atrybutu *Name* komponentów dynamicznych
+      dynamic_attributes_name_help: |
+        399 - Jeśli ta opcja jest wybrana, oznaczenie części zostanie wyodrębnione z atrybutu *Name*, jeśli została zdefiniowana.
+
+        <i class='ladb-opencutlist-icon-warning'></i> Wystąpienia części o tej samej definicji zostaną oddzielone, jeśli atrybut *Name* nie ma tej samej wartości.
+      part_number_with_letters: 400 - Użyj liter do numerowania części
+      part_number_with_letters_help: 401 - Jeśli ta opcja jest zaznaczona, części są numerowane za pomocą liter (A, B, C, ... Z, AA, AB, ...).
+      part_number_sequence_by_group: 402 - Ponownie zainicjuj numerowanie części dla każdej grupy
+      part_number_sequence_by_group_help: 403 - Jeśli ta opcja jest wybrana, numeracja części jest ponownie inicjowana do 1 (lub A) dla każdej grupy (lista elementów o tym samym typie materiału i grubości).
+      part_folding: 404 - Grupuj identyczne części
+      part_folding_help: |
+        405 - Jeśli ta opcja jest włączona, części wykonane z **drewna litego, arkuszy lub wymiarowych**, mające **ten sam przybliżony rozmiar**, z **tymi samymi plakietkami** i **taką samą wykończoną powierzchnią** *( jeśli wyświetlanie tej powierzchni nie jest ukryte)* będą grupowane w jednej linii w *arkuszu rozkroju*.
+
+        Elementy pozostaną traktowane jako różne przy generowaniu etykiet i układzie elementów.
+      hide_entity_names: 406 - Ukryj nazwy instancji
+      hide_entity_names_help: 407 - Jeśli ta opcja jest zaznaczona, **nazwy instancji** części nie będą wyświetlane.
+      hide_descriptions: 408 - Ukryj opisy
+      hide_descriptions_help: 409 - Jeśli ta opcja zostanie wybrana, **opis** umieszczony na częściach nie będzie wyświetlany.
+      hide_tags: 410 - Ukryj plakietki
+      hide_tags_help: 411 - Jeśli ta opcja jest zaznaczona, **plakietki** nie będą wyświetlane.
+      hide_cutting_dimensions: 412 - Ukryj przybliżone wymiary
+      hide_cutting_dimensions_help: 413 - Jeśli ta opcja jest wybrana, **przybliżone** wymiary części zostaną ukryte.
+      hide_bbox_dimensions: 414 - Ukryj gotowe wymiary
+      hide_bbox_dimensions_help: 415 - Jeśli ta opcja jest wybrana, wymiary **gotowych** części zostaną ukryte.
+      hide_final_areas: 416 - Ukryj rzeczywisty obszar części typu *Płyty*
+      hide_final_areas_help: 417 - Jeśli ta opcja jest zaznaczona, **rzeczywiste obszary** części typu *Płyty* zostaną ukryte.
+      hide_edges: 418 - Ukryj kolumny obrzeży
+      hide_edges_help: 419 - Jeśli ta opcja jest zaznaczona, **kolumny obrzeża** części typu *Płyty* będą ukryte.
+      hide_faces: 420 - Ukryj kolumny powierzchni
+      hide_faces_help: 421 - Jeśli ta opcja jest zaznaczona, **kolumny powierzchni** części typu *płyty* zostaną ukryte.
+      hide_material_colors: 422 - Ukryj kolory materiałów
+      hide_material_colors_help: 423 - Jeśli ta opcja jest włączona, kolory materiałów nie będą wyświetlane.
+      minimize_on_highlight: 424 - Minimalizuj po *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: 425 - Jeśli ta opcja jest zaznaczona, okno OpenCutList zostanie zminimalizowane, gdy zostanie użyta funkcja *'$t(tab.cutlist.highlight_part)'*.
+      general: 426 - Główne
+      sorting: 427 - Sortowanie
+      group_order_strategy: 428 - Sortowanie grup
+      group_order_strategy_help: |
+        429 - Przeorganizuj następujące właściwości, aby określić kolejność sortowania etykiet.
+        Właściwości można sortować w porządku <i class="ladb-opencutlist-icon-sort-asc"></i> *rosnącym* lub <i class="ladb-opencutlist-icon-sort-desc"></i> *malejącym*.
+      part_order_strategy: 430 - Sortowanie części
+      part_order_strategy_help: |
+        431 - Przeorganizuj następujące właściwości, aby zdefiniować porządek sortowania w każdej grupie.
+        Właściwości można sortować w porządku <i class="ladb-opencutlist-icon-sort-asc"></i> *rosnącym* lub <i class="ladb-opencutlist-icon-sort-desc"></i> *malejącym*.
+      dimension_column_order_strategy: 432 - Kolejność kolumn
+      dimension_column_order_strategy_help: |
+        433 - Przeorganizuj następujące właściwości wymiarów, aby zdefiniować kolejność wyświetlania kolumn.
+      property_material_type: 434 - Typ materiału
+      property_material_name: 435 - Nazwa materiału
+      property_std_width: 436 - Standardowe szerokości
+      property_std_thickness: 437 - Standardowe grubości
+      property_thickness: 438 - Grubość
+      property_length: 439 - Długość
+      property_width: 440 - Szerokość
+      property_name: 441 - Oznaczenie
+      property_count: 442 - Ilość
+      property_edge_pattern: 443 - Liczba obrzeży
+      property_tags: 444 - Plakietki
+      property_thickness_layer_count: 445 - Liczba warstw
+      tags: 446 - Plakietki
+      tags_help: 447 - Niestandardowa lista odznak proponowanych w oknie właściwości części.
+      tags_placeholder: 448 - Dodaj plakietkę
+    list:
+      filters: 449 - Filtry
+      filters_warning_0: 450 - Ten filtr ukrywa wszystkie części!
+      filters_warning: 451 - Ten filtr pokazuje tylko **{{ count }}** części z łącznej liczby {{ total }}.
+      filters_warning_plural: 452 - Ten filtr wyświetla tylko **{{ count }}** części z łącznej liczby {{ total }}.
+      edge_material_names_filter: 453 - Filtruj według materiału do oklejania krawędzi
+      veneer_material_names_filter: 454 - Filtruj według materiału okleiny (forniru)
+      tags_filter: 455 - Filtruj według plakietek
+      dimensions_help: 456 - Zrozumienie wymiarów
+      summary: 457 - Podsumowanie
+      material_type: 458 - Rodzaj
+      material_thickness: 459 - Materiał / Wymiar
+      part_count: 460 - Ilość
+      area: 461 - Powierzchnia
+      area_short: 462 - Pow.
+      volume: 463 - Obiętość
+      number: 464 - Ob.
+      name: 465 - Oznaczenie
+      count: 466 - Ilość
+      cutting: 467 - Wstępny
+      bbox: 468 - Końcowa
+      final: 469 - Rzeczywisty
+      total_cutting: 470 - Σ - wymiary przybliżone
+      total_final: 471 - Σ Rzeczywisty
+      length: 472 - Długość
+      length_short: 473 - dł.
+      width: 474 - Szerokość
+      width_short: 475 - szer.
+      thickness: 476 - Grubość
+      thickness_short: 477 - gr.
+      edges: 478 - Obrzeża
+      faces: 479 - Powierzchnie
+    export:
+      title: 480 - Eksport
+      info_0: |
+        481 - Funkcja ta umożliwia eksport danych z *Listy części* do schowka lub do pliku [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)).
+      customize_help: |
+        482 - Zmień kolejność, Ukryj, Dodaj, Usuń lub Wybierz kolumnę na liście, aby spersonalizować jej **tytuł** oraz **formułę** generującą wyświetlaną wartość dla każdego eksportowanego wiersza.
+      add_column: 483 - Dodaj kolumnę
+      add_native_columns: 484 - Dodaj kolumnę natywną
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
+      columns: 488 - Kolumny
+      column_title: 489 - Tytuł
+      column_title_help: |
+        490 - Pole **Tytuł** umożliwia dostosowanie tytułu kolumny.
+      column_formula: 491 - Wzór
+      column_formula_help: |
+        492 - Pole **Formula** umożliwia napisanie kodu *Ruby* w celu dostosowania wartości kolumny.
+      options: 493 - Opcje eksportu
+      options_customize: 494 - Dostosowywanie
+      option_source: 495 - Źródło
+      option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: 497 - Lista części
+      option_source_instances_list: 498 - Lista instancji
+      option_col_sep: 499 - Separator
+      option_col_sep_tab: 500 - Tabulator
+      option_col_sep_comma: 501 - Przecinek
+      option_col_sep_semicolon: 502 - Średnik
+      option_encoding: 503 - Kodowanie
+      copy_all: 504 - Wszystko
+      copy_values: 505 - Tylko wartości
+      number: 506 - Ob.
+      path: 507 - Ścieżka
+      instance_name: 508 - Instancja
+      name: 509 - Oznaczenie
+      total_cutting_length: 510 - Długość całkowita - wstępnie
+      total_cutting_area: 511 - Powierzchnia całkowita - wstępnie
+      total_cutting_volume: 512 - Obiętość całkowita - wstępnie
+      total_final_area: 513 - Powierzchnia całkowita - finalna
+      cutting_length: 514 - Długość - wstępna
+      cutting_width: 515 - Szerokość - wstępna
+      cutting_thickness: 516 - Grubość - wstępna
+      edge_cutting_length: 517 - Długość linii cięcia
+      edge_cutting_width: 518 - Grubość linii cięcia
+      bbox_length: 519 - Długość
+      bbox_width: 520 - Szerokość
+      bbox_thickness: 521 - Grubość
+      final_area: 522 - Powierzchnia - finalna
+      count: 523 - Ilość
+      part_count: 524 - Ilość części
+      material: 525 - Materiał
+      material_type: 526 - Typ materiału
+      material_name: 527 - Nazwa materiału
+      material_description: 528 - Opis materiału
+      material_url: 529 - URL materiału
+      material_std_dimension: 530 - Rozmiary standardowe
+      entity_names: 531 - Nazwy instancji
+      description: 532 - Opis
+      url: 533 - URL
+      tags: 534 - Plakietki
+      edge_ymin: 535 - Długość krawędzi 1
+      edge_ymax: 536 - Długość krawędzi 2
+      edge_xmin: 537 - Szerokość krawędzi 1
+      edge_xmax: 538 - Szerokość krawędzi 2
+      face_zmin: 539 - Tył
+      face_zmax: 540 - Przód
+      layer: 541 - Etykieta
+      layers: 542 - Etykiety
+      batch: 543 - Partia
+      bin: 544 - Kosz
+      component_definition: 545 - Definicja komponentu
+      component_instance: 546 - Instancja komponentu
+      component_instances: 547 - Instancje komponentów
+      filename: 548 - Nazwa pliku
+      model_name: 549 - Nazwa modelu
+      model_description: 550 - Opis modelu
+      page_name: 551 - Nazwa sceny
+      page_description: 552 - Opis sceny
+      placeholder:
+        no_column_title: 553 - Wprowadź tytuł
+        no_column_formula_native: 554 - Wartość natywna kolumny '{{ col_name }}'
+        no_column_formula: 555 - Wprowadź formułę
+      warning:
+        is_group_selection: 556 - Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
+    report:
+      title: 557 - Szacowanie
+      info_0: |
+        558 - Wygeneruj oszacowanie **wagi** i **kosztu** **surowców** potrzebnych do wyprodukowania elementów z *listy elementów*.
+      options_general: 559 - Główne
+      options_solid_wood: $t(tab.materials.type_1)
+      option_solid_wood_coefficient_bc: 561 - Współczynnik mnożnika dla materiałów typu "**$t(tab.materials.type_1)**" jest teraz konfigurowany dla każdego materiału w opcjach szacowania.
+      raw_materials: 562 - Surowce
+      total: 563 - Suma
+      total_used: 564 - Używane
+      total_unused: 565 - Nieużywane
+      total_mass: 566 - Σ Wagi
+      total_cost: 567 - Σ Kosztów
+      total_count: 568 - Ilość
+      total_instance_count: 569 - Σ Jednostki
+      total_volume: 570 - Σ Objętości
+      total_area: 571 - Σ Powierzchni
+      total_length: 572 - Σ Długości
+      tooltip:
+        incompatible_unit: 573 - Jednostka niezgodna z opcjami szacowania materiału.
+        multiplier_coefficient: 574 - Współczynnik mnożnika
+      error:
+        no_typed_material_parts: 575 - Brak elementów o zdefiniowanym typie materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) została użyta do wygenerowania szacunku.
+        entry_error: '576 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**.'
+        entry_error_plural: '577 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**.'
+      warning:
+        is_group_selection: 578 - Części w **ukrytych grupach** twojej listy części nie będą uwzględniane.
+      tip:
+        not_enough_data: |
+          579 - Aby to oszacowanie zostało poprawnie obliczone:
+          - użyte materiały muszą mieć co najmniej gęstość i cenę.
+          - użyte akcesoria muszą mieć co najmniej gęstość i cenę.
+    estimate:
+      title: 580 - Szacowanie
+      info_0: |
+        581 - Wygeneruj oszacowanie **wagi** i **kosztu** **surowców** potrzebnych do wyprodukowania elementów z *listy elementów*.
+      options_general: 582 - Główne
+      total: 583 - Suma
+      total_used: 584 - Używane
+      total_unused: 585 - Nieużywane
+      total_mass: 586 - Σ Wagi
+      total_cost: 587 - Σ Kosztów
+      total_count: 588 - Ilość
+      total_instance_count: 589 - Σ Jednostki
+      total_volume: 590 - Σ Objętości
+      total_area: 591 - Σ Powierzchni
+      total_length: 592 - Σ Długości
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_-1: $t(default.cut_plural)
+      tooltip:
+        incompatible_unit: 600 - Jednostka niezgodna z opcjami szacowania materiału.
+        multiplier_coefficient: 601 - Współczynnik mnożnika
+      error:
+        no_typed_material_parts: 602 - Brak elementów o zdefiniowanym typie materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) została użyta do wygenerowania szacunku.
+        entry_error: '603 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**.'
+        entry_error_plural: '604 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**.'
+      warning:
+        is_group_selection: 605 - Części w **ukrytych grupach** twojej listy części nie będą uwzględniane.
+      tip:
+        not_enough_data: |
+          606 - Aby to oszacowanie zostało poprawnie obliczone:
+          - użyte materiały muszą mieć co najmniej gęstość i cenę.
+          - użyte akcesoria muszą mieć co najmniej gęstość i cenę.
+    cuttingdiagram:
+      title: 607 - Schemat cięcia
+      start_msg: 608 - Optymalizacja w toku
+      end_msg: 609 - Optymalizacja zakończona
+      options_material: 610 - Materiał
+      options_config: 611 - Konfiguracja
+      options_display: 612 - Wyświetlanie
+      option_bar_folding_dimensional: 613 - Grupuj podobne płyty
+      option_bar_folding_edge: 614 - Grupuj podobne obrzeża
+      option_bar_folding_0: 615 - Nie
+      option_bar_folding_1: 616 - Tak
+      option_bar_folding_help: 617 - Grupuj płyty lub obrzeża zawierające takie same części i cięcia.
+      option_sheet_folding_good: 618 - Grupuj podobne arkusze
+      option_sheet_folding_veneer: 619 - Grupuj podobne arkusze forniru
+      option_sheet_folding_0: 620 - Nie
+      option_sheet_folding_1: 621 - Tak
+      option_sheet_folding_help: 622 - Grupuj panele lub arkusze mające te same części i cięcia.
+      option_hide_part_list: 623 - Lista części
+      option_hide_part_list_1d_dimensional_0: 624 - Wyświetlana dla każdej płyty
+      option_hide_part_list_1d_edge_0: 625 - Wyświetlane dla każdego obrzeża
+      option_hide_part_list_2d_good_0: 626 - Grupuj podobne arkusze forniru
+      option_hide_part_list_2d_veneer_0: 627 - Wyświetlane dla każdego arkusza forniru
+      option_hide_part_list_1: 628 - Zamaskowana
+      option_hide_part_list_1d_help: 629 - Wyświetl lub maskuj listę części dla każdej płyty lub obrzeża.
+      option_hide_part_list_2d_help: 630 - Wyświetl lub zamaskuj listę części dla każdego panelu.
+      option_use_names: 631 - Identyfikacja części
+      option_use_names_0: 632 - Użyj numeru
+      option_use_names_1: 633 - Użyj oznaczenie
+      option_use_names_help: 634 - Umożliwia wybór pomiędzy **numerem** i **oznaczeniem** w celu identyfikacji części na schemacie cięcia.
+      option_origin_corner: 635 - Pozycja początku
+      option_origin_corner_1d_0: 636 - Z lewej
+      option_origin_corner_1d_1: 637 - Z prawej
+      option_origin_corner_2d_0: 638 - Górny lewy narożnik
+      option_origin_corner_2d_1: 639 - Dolny lewy narożnik
+      option_origin_corner_2d_2: 640 - Górny prawy róg
+      option_origin_corner_2d_3: 641 - Dolny prawy róg
+      option_origin_corner_1d_help: 642 - Określa początek współrzędnych do wyświetlania części płyt lub obrzeży.
+      option_origin_corner_2d_help: 643 - Określa początek współrzędnych do wyświetlania części na arkuszach.
+      option_full_width_diagram: 644 - Wyświetlanie na całej szerokości
+      option_full_width_diagram_0: 645 - Nie
+      option_full_width_diagram_1: 646 - Tak
+      option_full_width_diagram_help: 647 - Jeśli ta opcja jest włączona, schematy cięć są wyświetlane na całej szerokości. W przeciwnym razie ich szerokość jest zdefiniowana przez stały współczynnik skalowania.
+      option_wrap_length: 648 - Długość deski w jednej lini
+      option_wrap_length_help: 649 - Maksymalna długość po której deska lub obrzeże będzie dzielone na wiele lini.
+      option_hide_cross: 650 - Ścinki
+      option_hide_cross_0: 651 - Wymiary i Przekreślenie
+      option_hide_cross_1: 652 - Tylko wymiary
+      option_hide_cross_help: 653 - Wyświetl lub ukryj przekreślenie na częściach traktowanych jako odpad.
+      option_highlight_primary_cuts: 654 - Cięcia główne
+      option_highlight_primary_cuts_0: 655 - Tylko przegląd
+      option_highlight_primary_cuts_1: 656 - Zawsze widoczne
+      option_highlight_primary_cuts_help: 657 - Pozwala wyświetlić cięcia główne.
+      option_hide_edges_preview: 658 - Wyświetlanie obrzeży
+      option_hide_edges_preview_0: 659 - Wyświetlane na schemacie cięcia
+      option_hide_edges_preview_1: 660 - Ukryte na schemacie cięcia
+      option_hide_edges_preview_help: 661 - Umożliwia pokazanie lub ukrycie wizualnego wyświetlania obrzeży dla każdej części na schemacie cięcia.
+      option_part_drawing_type: 662 - Kształty elementów
+      option_part_drawing_type_0: 663 - Ukryte
+      option_part_drawing_type_1: 664 - Widok 2D z przodu
+      option_part_drawing_type_2: 665 - Widok 2D z tyłu
+      option_part_drawing_type_help: |
+        666 - Umożliwia wyświetlanie lub ukrywanie rzeczywistego kształtu elementów oraz ich obróbki na schemacie.
+
+        *Ta opcja musi być włączona, aby można było eksportować kształty.*
+      option_saw_kerf: 667 - Grubość linii cięcia
+      option_saw_kerf_help: 668 - Szerokość materiału usuwanego w wyniku cięcia, rzaz piły.
+      option_spacing: 669 - Odstęp
+      option_spacing_help: 670 - Minimalny odstęp między każdym elementem.
+      option_trimming: 671 - Rozmiar przycinania
+      option_trimming_help_1d: 672 - Ilość materiału na każdym końcu deski lub obrzeża traktowany jako odpad.
+      option_trimming_help_2d: 673 - Ilość materiału dookoła surowej płyty potraktowany jako odpad.
+      option_optimization: 674 - Poziom optymalizacji
+      option_optimization_help: 675 - Poziom optymalizacji określa ilość obliczanych możliwości, a tym samym również czas obliczeń.
+      option_optimization_0: 676 - Średni
+      option_optimization_1: 677 - Zaawansowany
+      option_stacking: 678 - Ułóż identyczne części
+      option_stacking_help: 679 - Kierunek układania w stos części o wspólnej długości lub szerokości.
+      option_stacking_0: 680 - Brak preferencji
+      option_stacking_1: 681 - Na całej długości
+      option_stacking_2: 682 - Na całej szerokości
+      option_stacking_3: 683 - Wszystkie możliwości
+      option_keep: 684 - Minimalny rozmiar odpadów
+      option_keep_help: 685 - Odpady, których oba wymiary są większe od minimalnego rozmiaru, będą oznaczone jako **do zachowania**.
+      option_std_bar_dimensional: 686 - Płyta o standardowych wymiarach
+      option_std_bar_edge: 687 - Standardowy rozmiar obrzeża
+      option_std_bar_help: |
+        688 - Wybierz standardową płytę lub obrzeże, która będzie duplikowana aby najlepiej pomieścić wszystkie części.
+        Ta lista jest zdefiniowana w polu **$t(tab.materials.edit_material.std_lengths)** materiału.
+        Aby uaktualnić tą listę edytuj materiał '{{ material_name }}'.
+      option_std_bar_add: 689 - Dodaj rozmiar arkusza
+      option_std_bar_none: 690 - Brak
+      option_scrap_bar_dimensional_lengths: 691 - Odpady do wykorzystania
+      option_scrap_bar_edge_lengths: 692 - Odpady obrzeży
+      option_scrap_bar_lengths_placeholder: 693 - długość x ilość ; ...
+      option_scrap_bar_lengths_help: |
+        694 - Podaj wszystkie odpady płyt lub obrzeży które chcesz uwzględnić jako pierwsze w rozkroju.
+        Oczekiwany format: **długość**x**ilość**, gdzie **długość** reprezentuje *długość* odpadu, a **ilość** ilość.
+        Ilość jest opcjonalna.
+        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
+      option_std_sheet_good: 695 - Arkusz o standardowych wymiarach
+      option_std_sheet_veneer: 696 - Arkusz forniru standardowy
+      option_std_sheet_help: |
+        697 - Wybierz standardowy panel lub arkusz forniru, który zostanie zduplikowany, aby obliczyć najlepsze możliwe położenie.
+        Ta lista jest zdefiniowana w polu **$t(tab.materials.edit_material.std_sizes)** materiału.
+        Edytuj materiał '{{ material_name }}', aby uzupełnić tę listę.
+      option_std_sheet_add: 698 - Dodaj rozmiar arkusza
+      option_std_sheet_none: 699 - Brak
+      option_scrap_sheet_good_sizes: 700 - Arkusze odpadu
+      option_scrap_sheet_veneer_sizes: 701 - Odcinki forniru
+      option_scrap_sheet_sizes_placeholder: 702 - długość x szerokość x ilość ; ...
+      option_scrap_sheet_sizes_help: |
+        703 - Wymień wszystkie przycięte arkusze lub forniry, które mają być traktowane priorytetowo na schemacie cięcia.
+        Oczekiwany format: **L**x**W**x**Q**, gdzie **L** i **W** oznacza *długość* i *szerokość* panelu, a **Q** ilość.
+         Ilość jest opcjonalna.
+        *Rozmiary bez jednostek są podane w jednostkach modelowych.*
+      tooltip:
+        scroll_to_block_1d: 704 - Przewiń do pierwszej deski lub obrzeża
+        scroll_to_block_2d: 705 - Przewiń do pierwszego arkusza
+        copy_leftovers_to_clipboard: 706 - Skopiuj odpady do schowka
+      list:
+        unplaced_parts: 707 - Elementy nie rozmieszczone na rozkroju
+        summary: 708 - Podsumowanie
+        count: 709 - Ilość
+        bar: 710 - Wymiarowy
+        sheet: 711 - Arkusz
+        length: 712 - Długość
+        width: 713 - Szerokość
+        total_length: 714 - Σ Długości
+        total_area: 715 - Σ Powierzchni
+        total_part_count: 716 - Σ Części
+        total_used: 717 - Razem wykorzystane
+        trimming: 718 - Rozmiar przycinania
+        stats: 719 - Statystyki
+        total_cut_count: 720 - Liczba cięć
+        total_cut_length: 721 - Długość cięć
+        overall_efficiency: 722 - Ogólna efektywność
+        efficiency: 723 - Efektywność
+        leftover: 724 - Pozostałość
+        leftover_to_keep: 725 - Odpad do zachowania
+        leftover_to_keep_plural: 726 - Odpady do zachowania
+        leftover_to_throw_away: 727 - Odpad do wyrzucenia
+        cut: 728 - Cięcie
+        cut_plural: 729 - Cięcia
+        cut_trimming: 730 - Cięcie przycinające
+        cut_bounding: 731 - Cięcie główne (poziom 1)
+        cut_bounding_plural: 732 - Cięcia podstawowe (poziom 1)
+        cut_internal_through: 733 - Cięcie główne (poziom 2)
+        cut_internal_through_plural: 734 - Cięcia podstawowe (poziom 2)
+        cut_none: 735 - Brak
+        bar_dimensional_type_0: 736 - Płyta o standardowych wymiarach
+        bar_dimensional_type_1: 737 - Odpad
+        bar_edge_type_0: 738 - Standardowy rozmiar obrzeża
+        bar_edge_type_1: 739 - Odpady obrzeży
+        sheet_good_type_0: 740 - Arkusz o standardowych wymiarach
+        sheet_good_type_1: 741 - Arkusz odpadu
+        sheet_veneer_type_0: 742 - Arkusz forniru standardowy
+        sheet_veneer_type_1: 743 - Ścinki forniru
+        unused: 744 - Nieużywane
+        parts: 745 - {{ count }} część
+        parts_plural: 746 - {{ count }} części
+        settings: 747 - Ustawienia
+      write:
+        title: 748 - Eksport rozkładu elementów
+        info_0: |
+          749 - Ten moduł umożliwia eksportowanie **geometrii** *rozkładu elementów* w postaci listy plików w formacie [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) lub [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: 752 - Struktura DXF
+        option_dxf_structure_1: 753 - Warstwy
+        option_dxf_structure_2: 754 - Warstwy + Bloki
+        option_dxf_structure_help: |
+          755 - Umożliwia wybór struktury pliku DXF.
+
+          - Struktura **Warstwy** rysuje wszystkie linie płasko, rozróżniając różne typy linii jedynie przez warstwy. *Ta struktura zapewnia lepszą kompatybilność z zewnętrznym oprogramowaniem.*
+          - Struktura **Warstwy + Bloki** tworzy blok dla każdego elementu i wstawia te bloki tyle razy, ile elementy są powtarzane. *Ta struktura oferuje większą elastyczność w modyfikacji pliku.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_sheet_good: 770 - Arkusz
+        option_sheet_good_help: |
+          771 - Umożliwia włączenie eksportu płyty oraz wybór jej kolorów.
+        option_sheet_veneer: 772 - Arkusz
+        option_sheet_veneer_help: |
+          773 - Umożliwia włączenie eksportu formatki oraz wybór jej kolorów.
+        option_bar_dimensional: 774 - Wymiarowy
+        option_bar_dimensional_help: |
+          775 - Umożliwia włączenie eksportu kreski/linii oraz wybór jej koloru.
+        option_bar_band: 776 - Pasek
+        option_bar_band_help: |
+          777 - Umożliwia włączenie eksportu paska oraz wybór jego koloru.
+        option_parts: 778 - Części
+        option_parts_help: |
+          779 - Umożliwia włączenie eksportu elementów oraz wybór ich kolorów.
+        option_parts_holes: 780 - Wiercenia
+        option_parts_holes_help: |
+          781 - Wybierz kolor wierceń.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: 784 - Oznaczenia
+        option_texts_help: |
+          785 - Umożliwia aktywację eksportu tekstów identyfikacyjnych części oraz wybór ich kolorów.
+        option_leftovers: 786 - Ścinki
+        option_leftovers_help: |
+          787 - Umożliwia aktywację eksportu ścinków oraz wybór ich kolorów.
+        option_cuts: 788 - Cięcia
+        option_cuts_help: |
+          789 - Umożliwia aktywację eksportu cięć oraz wybór ich koloru.
+        warning:
+          is_sheet_selection: 790 - **Ukryte panele** nie zostaną wyeksportowane.
+      error:
+        no_bar_dimensional: 791 - Standardowa płyta nie została poprawnie skonfigurowana i odpad nie został zdefiniowany.
+        no_bar_edge: 792 - Standardowe obrzeże nie zostało poprawnie skonfigurowane i odpad nie został zdefiniowany.
+        parameters: 793 - Parametry są niepoprawne. Rozmiar przycinania jest większy niż 25% najdłuższej płyty lub obrzeża.
+        no_parts: 794 - Brak części.
+        no_sheet: 795 - Standardowe rozmiary arkuszy są źle skonfigurowane i nie są dostępne żadne ścinki.
+        no_placement_possible_1d: 796 - Nie można umieścić na rozkroju (standardowy arkusz za mały, margines za duży, narzędzie zbyt grube, ...).
+        no_placement_possible_2d: 797 - Nie można umieścić na rozkroju (standardowy arkusz za mały, margines za duży, narzędzie zbyt grube, ...).
+        bad_error: 798 - Błąd krytyczny, proszę o kontakt z programistami, masz ciekawy przypadek.
+        unplaced_parts: 799 - **1 część** nie może zostać umieszczona na rozkroju, ponieważ jest zbyt duża.
+        unplaced_parts_plural: 800 - Istnieją **{{ count }} części**, których nie można umieścić na rozkroju, ponieważ są zbyt duże, aby się zmieścić.
+      warning:
+        is_part_selection: 801 - Ten schemat cięcia jest ograniczony do **wybranych części**.
+        cutting_dimensions: 802 - Ten rozkrój używa **wstępnych** wymiarów części.
+        cutting_dimensions_increase_1d: 803 - Wymiary powiększone o naddatek długości (**{{ length_increase }}**) skonfigurowany dla materiału '{{ material_name }}'.
+        cutting_dimensions_increase_2d: 804 - Wymiary powiększone o naddatki skonfigurowane dla materiału '{{ material_name }}' w długości (**{{ length_increase }}**) oraz szerokości (**{{ width_increase }}**).
+        cutting_dimensions_edge_decrement: 805 - Wymiary pomniejszone o grubość obrzeża. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    packing:
+      title: 806 - Schemat cięcia
+      option_problem_type: 807 - Rodzaj
+      option_problem_type_rectangle: '808 - '
+      option_problem_type_rectangleguillotine: '809 - '
+      option_problem_type_onedimensional: 810 - Wymiarowy
+      option_problem_type_irregular: '811 - '
+      options_material: 812 - Materiał
+      options_config: 813 - Konfiguracja
+      options_display: 814 - Wyświetlanie
+      options_tuning: '815 - '
+      option_std_bin_1d_dimensional: '816 - '
+      option_std_bin_1d_edge: '817 - '
+      option_std_bin_1d_help: '818 - '
+      option_std_bin_1d_add: 819 - Dodaj rozmiar arkusza
+      option_std_bin_1d_none: 820 - Brak
+      option_scrap_bin_1d_dimensional_sizes: 821 - Odpady do wykorzystania
+      option_scrap_bin_1d_edge_sizes: 822 - Odpady obrzeży
+      option_scrap_bin_1d_sizes_placeholder: 823 - długość x ilość ; ...
+      option_scrap_bin_1d_sizes_help: '824 - '
+      option_scrap_bin_1d_none: 825 - Brak
+      option_std_bin_2d_sheet_good: '826 - '
+      option_std_bin_2d_veneer: '827 - '
+      option_std_bin_2d_help: '828 - '
+      option_std_bin_2d_add: 829 - Dodaj rozmiar arkusza
+      option_std_bin_2d_none: 830 - Brak
+      option_scrap_bin_2d_sheet_good_sizes: 831 - Arkusze odpadu
+      option_scrap_bin_2d_veneer_sizes: 832 - Odcinki forniru
+      option_scrap_bin_2d_sizes_placeholder: 833 - długość x szerokość x ilość ; ...
+      option_scrap_bin_2d_sizes_help: '834 - '
+      option_scrap_bin_2d_none: 835 - Brak
+      option_optimization_mode: '836 - '
+      option_optimization_mode_help: '837 - '
+      option_objective: 838 - Cel
+      option_objective_help: '839 - '
+      option_rectangleguillotine_cut_type: '840 - '
+      option_rectangleguillotine_cut_type_help: '841 - '
+      option_rectangleguillotine_cut_type_non_exact: '842 - '
+      option_rectangleguillotine_cut_type_exact: '843 - '
+      option_rectangleguillotine_cut_type_homogenous: '844 - '
+      option_rectangleguillotine_number_of_stages: '845 - '
+      option_rectangleguillotine_number_of_stages_help: '846 - '
+      option_rectangleguillotine_first_stage_orientation: '847 - '
+      option_rectangleguillotine_first_stage_orientation_help: '848 - '
+      option_rectangleguillotine_first_stage_orientation_horizontal: '849 - '
+      option_rectangleguillotine_first_stage_orientation_vertical: '850 - '
+      option_rectangleguillotine_first_stage_orientation_any: '851 - '
+      option_rectangleguillotine_keep: 852 - Minimalny rozmiar odpadów
+      option_rectangleguillotine_keep_help: 853 - Odpady, których oba wymiary są większe od minimalnego rozmiaru, będą oznaczone jako **do zachowania**.
+      option_irregular_allowed_rotations: '854 - '
+      option_irregular_allowed_rotations_help: '855 - '
+      option_irregular_allowed_rotations_0: 856 - Brak
+      option_irregular_allowed_rotations_90: '857 - '
+      option_irregular_allowed_rotations_180: '858 - '
+      option_irregular_allow_mirroring: '859 - '
+      option_irregular_allow_mirroring_help: '860 - '
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: $t(default.yes)
+      option_spacing: 863 - Odstęp
+      option_spacing_help: '864 - '
+      option_trimming: 865 - Rozmiar przycinania
+      option_trimming_1d_help: '866 - '
+      option_trimming_2d_help: '867 - '
+      option_items_formula: 868 - Wzór
+      option_items_formula_help: '869 - '
+      option_hide_part_list: 870 - Lista części
+      option_hide_part_list_1d_dimensional_0: 871 - Wyświetlana dla każdej płyty
+      option_hide_part_list_1d_edge_0: 872 - Wyświetlane dla każdego obrzeża
+      option_hide_part_list_2d_sheet_good_0: 873 - Grupuj podobne arkusze forniru
+      option_hide_part_list_2d_veneer_0: 874 - Wyświetlane dla każdego arkusza forniru
+      option_hide_part_list_1: 875 - Zamaskowana
+      option_hide_part_list_1d_help: 876 - Wyświetl lub maskuj listę części dla każdej płyty lub obrzeża.
+      option_hide_part_list_2d_help: 877 - Wyświetl lub zamaskuj listę części dla każdego panelu.
+      option_part_drawing_type: 878 - Kształty elementów
+      option_part_drawing_type_0: 879 - Ukryte
+      option_part_drawing_type_1: 880 - Widok 2D z przodu
+      option_part_drawing_type_2: 881 - Widok 2D z tyłu
+      option_part_drawing_type_help: |
+        882 - Umożliwia wyświetlanie lub ukrywanie rzeczywistego kształtu elementów oraz ich obróbki na schemacie.
+
+        *Ta opcja musi być włączona, aby można było eksportować kształty.*
+      option_colorization: '883 - '
+      option_colorization_0: $t(default.no)
+      option_colorization_1: '885 - '
+      option_colorization_2: '886 - '
+      option_colorization_help: '887 - '
+      option_hide_edges_preview: 888 - Wyświetlanie obrzeży
+      option_hide_edges_preview_0: 889 - Wyświetlane na schemacie cięcia
+      option_hide_edges_preview_1: 890 - Ukryte na schemacie cięcia
+      option_hide_edges_preview_help: 891 - Umożliwia pokazanie lub ukrycie wizualnego wyświetlania obrzeży dla każdej części na schemacie cięcia.
+      option_time_limit: '892 - '
+      option_time_limit_help: '893 - '
+      tooltip:
+        scroll_to_block_1d: 894 - Przewiń do pierwszej deski lub obrzeża
+        scroll_to_block_2d: '895 - '
+      list:
+        summary: 896 - Podsumowanie
+        trimming: 897 - Rozmiar przycinania
+        settings: 898 - Ustawienia
+        stats: 899 - Statystyki
+        time: '900 - '
+        total_efficiency: 901 - Ogólna efektywność
+        total_fill_rate: '902 - '
+        total_cut_count: 903 - Liczba cięć
+        total_cut_length: 904 - Długość cięć
+        efficiency: 905 - Efektywność
+        count: 906 - Ilość
+        length: 907 - Długość
+        width: 908 - Szerokość
+        total_length: 909 - Σ Długości
+        total_area: 910 - Σ Powierzchni
+        total_cost: 911 - Σ Kosztów
+        total_part_count: 912 - Σ Części
+        total_used: 913 - Razem wykorzystane
+        bin_1d_dimensional: 914 - Wymiarowy
+        bin_1d_dimensional_type_0: 915 - Płyta o standardowych wymiarach
+        bin_1d_dimensional_type_1: 916 - Odpad
+        bin_1d_edge: 917 - Pasek
+        bin_1d_edge_type_0: 918 - Standardowy rozmiar obrzeża
+        bin_1d_edge_type_1: 919 - Odpady obrzeży
+        bin_2d_sheet_good: 920 - Arkusz
+        bin_2d_sheet_good_type_0: 921 - Arkusz o standardowych wymiarach
+        bin_2d_sheet_good_type_1: 922 - Arkusz odpadu
+        bin_2d_veneer: 923 - Arkusz
+        bin_2d_veneer_type_0: 924 - Arkusz forniru standardowy
+        bin_2d_veneer_type_1: 925 - Ścinki forniru
+        unused: 926 - Nieużywane
+        unplaced_parts: '927 - '
+        unplaced_parts_plural: 928 - Elementy nie rozmieszczone na rozkroju
+        parts: 929 - Część
+        parts_plural: 930 - Części
+        leftovers: 931 - Pozostałość
+        leftovers_plural: 932 - Ścinki
+        leftovers_to_keep: 933 - Odpad do zachowania
+        leftovers_to_keep_plural: 934 - Odpady do zachowania
+        cut: 935 - Cięcie
+        cut_plural: 936 - Cięcia
+        cut_trimming: 937 - Cięcie przycinające
+        cut_primary: '938 - '
+        cut_depth: '939 - '
+      write:
+        title: 940 - Eksport rozkładu elementów
+        info_0: |
+          941 - Ten moduł umożliwia eksportowanie **geometrii** *rozkładu elementów* w postaci listy plików w formacie [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) lub [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: 944 - Struktura DXF
+        option_dxf_structure_1: 945 - Warstwy
+        option_dxf_structure_2: 946 - Warstwy + Bloki
+        option_dxf_structure_help: |
+          947 - Umożliwia wybór struktury pliku DXF.
+
+          - Struktura **Warstwy** rysuje wszystkie linie płasko, rozróżniając różne typy linii jedynie przez warstwy. *Ta struktura zapewnia lepszą kompatybilność z zewnętrznym oprogramowaniem.*
+          - Struktura **Warstwy + Bloki** tworzy blok dla każdego elementu i wstawia te bloki tyle razy, ile elementy są powtarzane. *Ta struktura oferuje większą elastyczność w modyfikacji pliku.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_bin_sheet_good: 962 - Arkusz
+        option_bin_sheet_good_help: |
+          963 - Umożliwia włączenie eksportu płyty oraz wybór jej kolorów.
+        option_bin_veneer: 964 - Arkusz
+        option_bin_veneer_help: |
+          965 - Umożliwia włączenie eksportu formatki oraz wybór jej kolorów.
+        option_bin_dimensional: 966 - Wymiarowy
+        option_bin_dimensional_help: |
+          967 - Umożliwia włączenie eksportu kreski/linii oraz wybór jej koloru.
+        option_bin_edge: 968 - Pasek
+        option_bin_edge_help: |
+          969 - Umożliwia włączenie eksportu paska oraz wybór jego koloru.
+        option_parts: 970 - Części
+        option_parts_help: |
+          971 - Umożliwia włączenie eksportu elementów oraz wybór ich kolorów.
+        option_parts_holes: 972 - Wiercenia
+        option_parts_holes_help: |
+          973 - Wybierz kolor wierceń.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: 976 - Oznaczenia
+        option_texts_help: |
+          977 - Umożliwia aktywację eksportu tekstów identyfikacyjnych części oraz wybór ich kolorów.
+        option_leftovers: 978 - Ścinki
+        option_leftovers_help: |
+          979 - Umożliwia aktywację eksportu ścinków oraz wybór ich kolorów.
+        option_cuts: 980 - Cięcia
+        option_cuts_help: |
+          981 - Umożliwia aktywację eksportu cięć oraz wybór ich koloru.
+        warning:
+          is_bin_selection: '982 - '
+      error:
+        no_part: 983 - Brak części.
+        no_bin_1d: '984 - '
+        no_bin_2d: '985 - '
+        no_solution: '986 - '
+      warning:
+        is_part_selection: 987 - Ten schemat cięcia jest ograniczony do **wybranych części**.
+    labels:
+      title: 988 - Etykiety
+      options_layout: 989 - Układ
+      options_settings: 990 - Konfiguracja
+      options_part_order_strategy: 991 - Sortowanie
+      options_offset: 992 - Przesunięcie
+      size: 993 - Rzeczywisty rozmiar etykiety
+      add_element: 994 - Dodaj element
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
+      part_order_strategy_help: |
+        998 - Przeorganizuj następujące właściwości, aby określić kolejność sortowania etykiet.
+        Właściwości można sortować w porządku <i class="ladb-opencutlist-icon-sort-asc"></i> *rosnącym* lub <i class="ladb-opencutlist-icon-sort-desc"></i> *malejącym*.
+      offset_help: |
+        999 - *Przesunięcie* pozwala zdefiniować pozycję **pierwszej etykiety** na **pierwszej stronie**.
+        Wybierz opcję zgodną ze swoim wyboremm.
+      option_page: 1000 - Papier
+      option_page_format: 1001 - Format
+      option_page_format_portrait: 1002 - Orientacja pionowa
+      option_page_format_landscape: 1003 - Orientacja pozioma
+      option_page_format_custom: 1004 - Własny
+      option_page_width: 1005 - Szerokość
+      option_page_height: 1006 - Wysokość
+      option_margin: 1007 - Marginesy
+      option_margin_top: 1008 - Górny
+      option_margin_right: 1009 - Prawy
+      option_margin_bottom: 1010 - Dolny
+      option_margin_left: 1011 - Lewy
+      option_spacing: 1012 - Odstęp
+      option_spacing_h: 1013 - Poziomy
+      option_spacing_v: 1014 - Pionowy
+      option_grid: 1015 - Ilość etytkiet na stronę
+      option_col_count: 1016 - Kolumny
+      option_row_count: 1017 - Rzędy
+      option_cutting_marks: 1018 - Linie cięcia
+      option_cutting_marks_0: 1019 - Brak
+      option_cutting_marks_1: 1020 - Drukowane
+      option_formula: 1021 - Nazwa pola
+      option_size: 1022 - Wymiar
+      option_custom_formula: 1023 - Wzór
+      option_anchor: 1024 - Punkt zaczepienia
+      option_anchor_start: 1025 - Początek - Dół
+      option_anchor_middle: 1026 - Środek - Dół
+      option_anchor_end: 1027 - Koniec - Dół
+      option_anchor_start_top: 1028 - Początek - Góra
+      option_anchor_middle_top: 1029 - Środek - Góra
+      option_anchor_end_top: 1030 - Koniec - Góra
+      option_color: 1031 - Kolor
+      formula:
+        custom: 1032 - Wzór
+        custom_qr_code: 1033 - Kod QR
+        part_number: 1034 - Numer
+        part_name: 1035 - Oznaczenie
+        part_description: 1036 - Opis
+        part_entity_named_path: 1037 - Scieżka instancji
+        part_entity_name: 1038 - Nazwa instancji
+        part_bin: 1039 - Kosz
+        part_cutting_size: 1040 - Wymiary wstępne
+        part_cutting_length: 1041 - Długość - wstępna
+        part_cutting_width: 1042 - Szerokość - wstępna
+        part_cutting_thickness: 1043 - Grubość - wstępna
+        part_edge_cutting_size: 1044 - Wymiar linii cięcia
+        part_edge_cutting_length: 1045 - Długość linii cięcia
+        part_edge_cutting_width: 1046 - Grubość linii cięcia
+        part_size: 1047 - Wymiar
+        part_length: 1048 - Długość
+        part_width: 1049 - Szerokość
+        part_thickness: 1050 - Grubość
+        part_tags: 1051 - Plakietki
+        part_batch: 1052 - Partia
+        part_edge_ymin: 1053 - Długość krawędzi 1
+        part_edge_ymax: 1054 - Długość krawędzi 2
+        part_edge_xmin: 1055 - Szerokość krawędzi 1
+        part_edge_xmax: 1056 - Szerokość krawędzi 2
+        part_face_zmin: 1057 - Tylna strona forniru
+        part_face_zmax: 1058 - Przednia strona forniru
+        thumbnail_proportional_drawing: 1059 - Miniatura
+        thumbnail_proportional: 1060 - Miniaturka prostokątna
+        thumbnail_square: 1061 - Miniaturka kwadratowa
+        group_material: 1062 - Materiał / Grubość
+        group_material_name: 1063 - Nazwa materiału
+        group_std_dimension: 1064 - Rozmiary standardowe
+        filename: 1065 - Nazwa pliku
+        model_name: 1066 - Nazwa modelu
+        page_name: 1067 - Nazwa sceny
+        length_unit: 1068 - Jednostka
+        generated_at: 1069 - Data i czas
+      error:
+        invalid_size: 1070 - Wprowadzone parametry konfiguracji nie pozwalają na ustawienie prawidłowego rozmiaru etykiety.
+      warning:
+        is_group_selection: 1071 - Części w **ukrytych grupach** twojej listy części nie będą uwzględniane.
+        is_part_selection: 1072 - Te etykiety są ograniczone tylko do **wybranych części**.
+        formula_not_available: 1073 - Formuła nie jest dostępna w tym kontekście
+    layout:
+      title: 1074 - Rysunek
+      to_layout: 1075 - Eksportuj do Layout
+      options_layout: 1076 - Układ
+      options_settings: 1077 - Konfiguracja
+      option_parts: 1078 - Części
+      option_parts_colored: 1079 - Kolor
+      option_parts_colored_0: 1080 - Bez koloru
+      option_parts_colored_1: 1081 - Kolor materiału
+      option_parts_colored_help: 1082 - Wybierz wygląd części.
+      option_parts_opacity: 1083 - Nieprzezroczysty
+      option_parts_opacity_0: 1084 - Przezroczysty
+      option_parts_opacity_1: 1085 - Nieprzejrzysty
+      option_parts_opacity_help: 1086 - Wybierz nieprzezroczystość części.
+      option_pins: 1087 - Etykiety
+      option_pins_hidden: 1088 - Wyświetlanie
+      option_pins_hidden_0: 1089 - Z etykietami
+      option_pins_hidden_1: 1090 - Bez etykiet
+      option_pins_hidden_help: 1091 - Pokaż lub ukryj etykiety części z numerem lub oznaczeniem.
+      option_pins_colored: 1092 - Kolor
+      option_pins_colored_0: 1093 - Bez koloru
+      option_pins_colored_1: 1094 - Kolor części
+      option_pins_colored_help: 1095 - Wybierz kolor etykiet.
+      option_pins_formula: 1096 - Wzór
+      option_pins_formula_help: 1097 - Umożliwia napisanie kodu *Ruby* w celu dostosowania tekstu etykiety.
+      option_pins_length: 1098 - Długość
+      option_pins_length_0: 1099 - Bez linii prowadzącej
+      option_pins_length_1: 1100 - Mały
+      option_pins_length_2: 1101 - Średni
+      option_pins_length_3: 1102 - Długi
+      option_pins_length_help: 1103 - Wybierz długość linii odniesienia.
+      option_pins_direction: 1104 - Kierunek
+      option_pins_direction_0: 1105 - Wzdłuż czerwonej osi
+      option_pins_direction_1: 1106 - Wzdłuż zielonej osi
+      option_pins_direction_2: 1107 - Wzdłuż niebieskiej osi
+      option_pins_direction_3: 1108 - Wskaż środkek selekcji
+      option_pins_direction_4: 1109 - Wskaż środkek selekcji
+      option_pins_direction_help: 1110 - Wybierz kierunek linii wiodących do etykiet, aby uzyskać lepszą czytelność.
+      option_page: 1111 - Papier
+      option_page_format: 1112 - Format
+      option_page_format_portrait: 1113 - Orientacja pionowa
+      option_page_format_landscape: 1114 - Orientacja pozioma
+      option_page_format_custom: 1115 - Własny
+      option_page_width: 1116 - Szerokość
+      option_page_height: 1117 - Wysokość
+      option_page_header: 1118 - Nagłówek
+      option_page_header_0: 1119 - Żaden
+      option_page_header_1: 1120 - Z nagłówkiem
+      option_page_header_help: |
+        1121 - Wybierz, czy strona do wydrukowania zawiera nagłówek z nazwą dokumentu, jego opisem i datą.
+        Bez nagłówka rysunek poglądowy zajmuje całą stronę.
+      option_camera: 1122 - Kamera
+      option_camera_view: 1123 - Widok
+      option_camera_view_custom: 1124 - Własna
+      option_camera_zoom: 1125 - Skala
+      option_camera_zoom_auto: 1126 - Automatyczny
+      option_camera_zoom_custom: 1127 - Własna
+      option_camera_target: 1128 - Pozycja
+      option_camera_target_auto: 1129 - Automatyczny
+      option_camera_target_custom: 1130 - Własna
+      option_explode: 1131 - Widok rozstrzelony
+      error:
+        no_part: 1132 - Nie ma żadnych części do narysowania.
+        failed_to_save_as_skp: 1133 - Nie udało się zapisać pliku SKP do wysłania do Layout.
+        failed_to_layout: |
+          1134 - Błąd podczas zapisywania pliku Layout: *{{ error }}*
+
+          **Upewnij się, że plik nie jest otwarty w Layout.**
+      warning:
+        is_group_selection: 1135 - Części wewnątrz **ukrytych grup** Twojej listy części nie zostaną narysowane.
+        is_part_selection: 1136 - Ten rysunek poglądowy ogranicza się do **wybranych części**.
+      message:
+        adding_new_page: |
+          1137 - Czy chcesz dodać nową stronę?
+        incompatible_page_format: |
+          1138 - W pliku docelowym nie skonfigurowano tego samego rozmiaru papieru.
+
+          Przeczytaj: {{ old_page_format }}
+          Wyeksportowano: {{ new_page_format }}
+
+          Wszystkie strony zostaną usunięte.
+        changing_units: |
+          1139 - Plik docelowy nie ma domyślnie tej samej jednostki.
+
+          Przeczytaj: {{ old_units }}
+          Wyeksportowano: {{ new_units }}
+
+          Chcesz skorzystać z nowego urządzenia?
+        changing_precision: |
+          1140 - Plik docelowy nie ma domyślnie tej samej precyzji.
+
+          Przeczytaj: {{ old_precision }}
+          Wyeksportowano: {{ new_precision }}
+
+          Chcesz skorzystać z nowej precyzji?
+    write:
+      title: 1141 - Eksportowanie części
+      info_2d: |
+        1142 - Moduł ten umożliwia eksportowanie **projekcji** 2D części jako plików w formacie [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) lub [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+      info_3d: |
+        1143 - Moduł ten pozwala eksportować **geometrię 3D** części jako pliki w formacie [STL](https://wikipedia.org/wiki/STL_(file_format)) lub [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
+      option_file_format: 1144 - Format
+      option_file_format_help: |
+        1145 - Wybierz format pliku do wyeksportowania.
+      option_unit: 1146 - Jednostka
+      option_unit_help: |
+        1147 - Wybiera jednostkę używaną w eksportowanym pliku.
+      option_use_count: 1148 - Ilości
+      option_use_count_0: 1149 - Jeden plik na pokój
+      option_use_count_1: 1150 - Jeden plik na instancję części
+      option_use_count_help: |
+        1151 - Określa, czy liczba wystąpień części jest brana pod uwagę.
+      option_part_drawing_type: 1152 - Projekcja
+      option_part_drawing_type_help: |
+        1153 - Wybiera eksportowany widok.
+      option_faces: 1154 - Powierzchnie
+      option_faces_0: 1155 - Używaj tylko strony docelowej
+      option_faces_1: 1156 - Użyj wszystkich powierzchni części
+      option_faces_help: |
+        1157 - Umożliwia wybranie, czy wyszukiwanie kształtu części ma być przeprowadzane na wszystkich jej powierzchniach, czy tylko na powierzchni docelowej.
+      option_anchor: 1158 - Punkt kotwiczenia
+      option_anchor_0: 1159 - Domyślnie
+      option_anchor_1: 1160 - Wyświetl pochodzenie części
+      option_anchor_help: |
+        1161 - Włącz projekcję początku osi części jako punktu kontrolnego.
+      option_switch_yz: 1162 - Oś pionowa
+      option_switch_yz_0: 1163 - Z pionowy
+      option_switch_yz_1: 1164 - Y pionowy
+      option_switch_yz_help: |
+        1165 - Zamień osie Y i Z, aby zdefiniować oś pionową części.
+      option_smoothing: 1166 - Wygładzanie
+      option_smoothing_0: $t(default.no)
+      option_smoothing_1: 1168 - Wygładzanie okręgów i łuków (eksperymentalne)
+      option_smoothing_help: |
+        1169 - Wybierz, czy mają być wykrywane okręgi i łuki.
+
+        *Ta opcja nie wykrywa innych typów krzywych.*
+      option_merge_holes: 1170 - Tryb łączenia
+      option_merge_holes_0: 1171 - Domyślnie
+      option_merge_holes_1: 1172 - Zarys + Wiercenie + Połączenia
+      option_merge_holes_help: |
+        1173 - **Domyślnie**
+        Kształt części jest eksportowany z jedną warstwą na głębokość.
+
+        **Zarys + Wiercenie + Połączenia**
+        Aktywuje oddzielenie zewnętrznego konturu części od ich otworów, a także połączenie głębokości dla każdego wgłębienia.
+      option_include_paths: 1174 - Plan
+      option_include_paths_0: $t(default.no)
+      option_include_paths_1: 1176 - Użyj krawędzi niezwiązanych z powierzchnią
+      option_include_paths_help: |
+        1177 - Umożliwia aktywację użycia krawędzi niezwiązanych z powierzchnią i zawartych w części w celu wyeksportowania ich jako wykresu.
+      option_parts: 1178 - Części
+      option_parts_help: |
+        1179 - Wybierz kolor części.
+      option_parts_holes: 1180 - Wiercenia
+      option_parts_holes_help: |
+        1181 - Wybierz kolor wierceń.
+      option_parts_paths: 1182 - Plan
+      option_parts_paths_help: |
+        1183 - Umożliwia wybór kolorystyki scieżek.
+
+        *Kolor wypełnienia będzie używany tylko w przypadku ścieżek zamkniętych.*
+      error:
+        no_part: 1184 - Brak części do eksportu.
+      warning:
+        is_group_selection: 1185 - Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
+        is_part_selection: 1186 - Eksport jest ograniczony do **wybranych części**
+    snippet:
+      hello: 1187 - Cześć
+      number: 1188 - Numer
+      name: 1189 - Oznaczenie
+      number_and_name: 1190 - Numer i oznaczenie
+      number_without_hardware: 1191 - Liczba (bez akcesoriów)
+      size: 1192 - Wymiar
+      area: 1193 - Obszar
+      volume: 1194 - Objętość
+    error:
+      no_model: 1195 - Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
+      no_entities: 1196 - Twój model jest pusty. Będziesz musiał podać mi więcej informacji;)
+      no_component_in_selection: 1197 - W zaznaczeniu nie znaleziono instancji widocznego komponentu.
+      no_component_in_model: 1198 - W twojej scenie nie znaleziono instancji widocznego komponentu.
+      unknow_part: 1199 - Wybrana część nie istnieje na liście części.
+      obsolete_cutlist: 1200 - Niemożliwe, lista części jest nieaktualna. Zaktualizuj ją.
+    warning:
+      is_entity_selection: 1201 - Uwzględniono tylko wybrane części w Twoim modelu.
+      no_typed_materials_in_model: 1202 - Twój model nie używa żadnego materiału o zdefiniowanym typie (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 1203 - Wybrane elementy nie używają żadnego zdefiniowanego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**).
+      export_empty: 1204 - Twója selekcja do eksportu nie zawiera żadnych części.
+    success:
+      part_selected: 1205 - {{ count }} kwota wybrana na karcie debetowej.
+      part_selected_plural: 1206 - {{ count }} monet wybranych na karcie debetowej.
+    tip:
+      no_component: |
+        1207 - Części które mają być na *liście części* muszą być instancjami **komponentu**.
+        Jeżeli używasz tylko grup, przekształć je w komponenty.
+        Dzięki używaniu komponentów, części mogą być powielane bez duplikowania.
+      no_typed_materials: 1208 - Zastosuj materiał na elementach, które chcesz uwzględnić w swoim arkuszu rozkroju. Ustaw typ tego materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** lub **$t(tab.materials.type_5)**) w zakładce <i class="ladb-opencutlist-icon-materials"></i> **Materiały**.
+    obsolete_base: 1209 - Aby zachować synchronizację, należy wygenerować listę części.
+  materials:
+    label: 1210 - Materiały
+    title: 1211 - Materiały
+    type_0: 1212 - Niezdefiniowany
+    type_1: 1213 - Lite drewno
+    type_2: 1214 - Arkusz
+    type_3: 1215 - Wymiarowy
+    type_4: 1216 - Oklejanie krawędzi
+    type_5: 1217 - Dopasowywanie
+    type_6: 1218 - Fornir
+    tooltip:
+      type_0: 1219 - Typ materiału '$t(tab.materials.type_0)'
+      type_1: 1220 - Typ materiału '$t(tab.materials.type_1)'
+      type_2: 1221 - Typ materiału '$t(tab.materials.type_2)'
+      type_3: 1222 - Typ materiału '$t(tab.materials.type_3)'
+      type_4: 1223 - Typ materiału '$t(tab.materials.type_4)'
+      type_5: 1224 - Typ materiału '$t(tab.materials.type_5)'
+      type_6: 1225 - Typ materiału '$t(tab.materials.type_6)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: 1228 - Kierunek wzoru
+      raw_estimated_0: 1229 - Szacowane na podstawie dostarczonej objętości
+      colorized: 1230 - Ten odcień zostanie zastosowany do tekstury tego materiału podczas renderowania w modelu
+      texture_load: 1231 - Załaduj nowy obraz
+      texture_export: 1232 - Eksportuj texture
+      texture_clear: 1233 - Usuń teksturę
+      edit: 1234 - Edytuj właściwości '{{ name }}'
+      set_current: 1235 - Kolorowanie elementów za pomocą '{{ name }}'
+      open_url: 1236 - Otwórz URL materiału
+      import_from_skm: 1237 - Importuj materiał (.skm)
+    menu:
+      purge_unused: 1238 - Usuń nieużywane materiały
+      reset_prices: 1239 - Zresetuj ceny wszystkich materiałów
+      reset_prices_confirm: |
+        1240 - Właśnie resetujesz ceny wszystkich materiałów w swoim modelu.
+        Ta czynność jest ostateczna. **Wszystkie ceny zostaną wyzerowane.**
+        Potwierdź, aby kontynuować.
+      reset_prices_success: 1241 - Ceny wszystkich materiałów zostały zresetowane.
+    new_material:
+      title: 1242 - Utwórz materiał
+      name: 1243 - Nazwa
+      name_warning: 1244 - Błędna nazwa
+      color: 1245 - Kolor
+      color_warning: 1246 - Niewłaściwy kolor
+      type: 1247 - Rodzaj
+    edit_material:
+      title: 1248 - Właściwości materiału '{{ name }}'
+      general: 1249 - Główne
+      texture: 1250 - Tekstura
+      no_texture: 1251 - Brak tekstury
+      name: 1252 - Nazwa
+      type: 1253 - Rodzaj
+      description: 1254 - Opis
+      url: 1255 - URL
+      formats: 1256 - Formaty
+      cut_options: 1257 - Parametry cięcia
+      estimate_options: 1258 - Opcje szacowania
+      attributes: 1259 - Atrybuty
+      thickness: 1260 - Grubość
+      thickness_help: |
+        1261 - Gotowa grubość materiału.
+
+        *Rozmiary bez jednostek są podane w jednostkach modelowych.*
+      length_increase: 1262 - Długość ponadwymiarowa
+      length_increase_help: 1263 - Nadmiar dodany do długości aby określić **wstępną długość**.
+      width_increase: 1264 - Szerokość ponadwymiarowa
+      width_increase_help: 1265 - Nadmiar dodany do szerokości aby określić **wstępną szerokość**.
+      thickness_increase: 1266 - Grubość ponadwymiarowa
+      thickness_increase_help: 1267 - Nadmiar dodany do grubości aby określić **wstępną grubość**.
+      std_lengths: 1268 - Standardowe długości
+      std_lengths_help: |
+        1269 - Standardowe długości desek lub obrzeży.
+
+        *Rozmiary bez podanych jednostek są traktowane jak w jednostkach modelu.*
+      std_widths: 1270 - Standardowe szerokości
+      std_widths_help: |
+        1271 - Standardowe szerokości obrzeży.
+
+        *Uznaje się, że szerokości bez jednostek są podane w jednostkach modelu.*
+      std_thicknesses: 1272 - Standardowe grubości
+      std_thicknesses_help: |
+        1273 - Dostępne **aktualne** przybliżone grubości.
+
+        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
+      std_sections: 1274 - Standardowe Przekroje
+      std_sections_help: |
+        1275 - Sekcje standardowe dostępne dla tego przedmiotu.
+
+        *Jeśli nie określono żadnej jednostki, zostanie zastosowana jednostka modelowa.*
+      std_sizes: 1276 - Standardowe rozmiary arkuszy
+      std_sizes_help: |
+        1277 - Oczekiwany format: **długość x szerokość**, gdzie **długość** i **szerokość** reprezentują **rzeczywistą** *długość* i *szerokość* arkusza.
+
+        *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
+      grained: 1278 - Kierunek wzoru/tekstury
+      grained_help: 1279 - Konfiguruje kierunek wzoru lub tekstury na materiale.
+      grained_0: 1280 - Bez wzoru/tekstury
+      grained_1: 1281 - Wzór/tekstura wzdłuż Długości
+      edge_decremented: 1282 - Zmniejszanie
+      edge_decremented_help: 1283 - Wybierz czy wymiary części mają być zmniejszone o grubość obrzeża.
+      edge_decremented_0: 1284 - Brak zmniejszania
+      edge_decremented_1: 1285 - Zmniejsz o grubość obrzeża
+      raw_estimated: 1286 - Wykorzystana objętość
+      raw_estimated_help: |
+        1287 - Umożliwia zdefiniowanie objętości używanej do oszacowania masy i całkowitego kosztu elementów z tego materiału.
+
+        **Użyteczny objętościowy rozkrój**
+        Całkowita objętość będzie sumą objętości rozkrojów elementów.
+
+        **Objętość surowego materiału potrzebna**
+        Całkowita objętość będzie sumą objętości paneli, arkuszy, prętów lub pasów elementów po rozplanowaniu.
+      raw_estimated_0: 1288 - Przydatna wielkość przepływu
+      raw_estimated_1: 1289 - Objętość surowca
+      multiplier_coefficient: 1290 - Współczynnik mnożnika
+      multiplier_coefficient_help: 1291 - Umożliwia wskazanie współczynnika mnożnika zastosowanego do zmierzonej objętości brutto.
+      std_attributes_dim_placeholder: 1292 - Wybierz rozmiar
+      std_volumic_masses: 1293 - Gęstość
+      std_volumic_masses_help: 1294 - Umożliwia zdefiniowanie gęstości objętościowej dla wszystkich rozmiarów oraz dla każdego standardowego rozmiaru materiału.
+      std_prices: 1295 - Cena
+      std_prices_help: 1296 - Pozwala określić cenę dla wszystkich rozmiarów, a także dla każdego standardowego rozmiaru materiału.
+      std_cut_prices: 1297 - Cena cięcia
+      std_cut_prices_help: |
+        1298 - Umożliwia definiowanie ceny cięcia materiału.
+
+        *Wartość ma zastosowanie dla cięć prostych.*
+      texture_width: 1299 - Szerokość
+      texture_height: 1300 - Wysokość
+      export_to_skm: 1301 - Eksport (.skm)
+    texture_load:
+      title: 1302 - Wczytaj obraz
+    texture_export:
+      title: 1303 - Eksportuj teksturę
+    import_from_skm:
+      title: 1304 - Zaimportuj plik .skm
+      ask_replace: |
+        1305 - Projekt "{{ name }}" już istnieje.
+        Czy chcesz go zastąpić tym, który importujesz?
+    export_to_skm:
+      title: 1306 - Eksportuj plik .skm
+    option:
+      minimize_on_smart_paint: 1307 - Zwiń po *'Kolorowaniu elementów za pomocą...'*
+      minimize_on_smart_paint_help: 1308 - Jeśli ta opcja jest włączona, okno OpenCutList zostanie zminimalizowane w przypadku użycia funkcji *'Koloruj części za pomocą...'*.
+      general: 1309 - Główne
+      material_order_strategy: 1310 - Sortowanie materiałów
+      material_order_strategy_help: |
+        1311 - Aby zdefiniować sortowanie materiałow na liście zmień kolejność następujących właściwości
+        Każda właściwość może być sortowana <i class="ladb-opencutlist-icon-sort-asc"></i> *rosnąco* lub <i class="ladb-opencutlist-icon-sort-desc"></i> *malejąco*.
+      property_type: 1312 - Rodzaj
+      property_name: 1313 - Nazwa
+    delete:
+      message: |
+        1314 - Czy usunąć materiał **{{ material_name }}** z modelu?
+        Potwierdź aby kontynuować.
+    duplicate:
+      message: |
+        1315 - Wybierz nazwę nowego materiału do skopiowania z **{{ material_name }}**.
+    error:
+      no_model: 1316 - Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
+      no_materials: 1317 - Twój model nie zawiera żadnych materiałów.
+      material_not_found: 1318 - Nie znaleziono materiałów.
+      no_texture: 1319 - Ten materiał nie posiada tekstury.
+      failed_import_skm_file: 1320 - Błąd podczas importu z pliku skm **{{ error }}**
+      failed_export_skm_file: 1321 - Błąd podczas eksportu do pliku skm **{{ error }}**
+      failed_deleting_material: 1322 - Błąd podczas usuwania materiału **{{ error }}**
+      failed_duplicating_material: 1323 - Podczas powielania materiału wystąpił błąd. **{{ error }}**
+      invalid_image_file: 1324 - Nieprawidłowy obraz
+    obsolete_base: 1325 - Aby zachować synchronizację, musisz zaktualizować listę materiałów.
+  outliner:
+    label: 1326 - Struktura
+    title: 1327 - Struktura
+    list: 1328 - Struktura drewna
+    nodes: 1329 - Instancje
+    toggle_hidden: 1330 - Ukryte instancje
+    type_0: 1331 -  Model
+    type_1: 1332 - Grupa
+    type_2: 1333 - Komponent
+    type_3: 1334 - Część
+    tooltip:
+      open_node_url: 1335 - Otwórz adres URL części
+    edit_node:
+      title_model: 1336 - Właściwości modelu
+      title_instance: 1337 - Właściwości instancji **{{ name }}**
+      general: 1338 - Główne
+      preview: 1339 - Przegląd
+      name: 1340 - Nazwa
+      instance_name: 1341 - Instancja
+      material: 1342 - Materiał
+      definition_name: 1343 - Definicja
+      description: 1344 - Opis
+      url: 1345 - URL
+      tags: 1346 - Plakietki
+      layer_name: 1347 - Etykieta
+      explode: 1348 - Pękać
+      explode_message: 1349 - Czy potwierdzasz podział instancji **{{ name }}**?
+    error:
+      no_model: 1350 - Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
+      no_entities: 1351 - Twój model jest pusty!
+      node_not_found: 1352 - Nie znaleziono węzła
+      entity_not_found: 1353 - Nie znaleziono instancji
+      obsolete_outliner: 1354 - Niemożliwe, wygenerowana struktura jest przestarzała. Zaktualizuj ją.
+    tip:
+      no_node: |
+        1355 - Twój model obecnie nie ma żadnych instancji do wyświetlenia tutaj.
+        Instancja to **grupa** lub **komponent** umieszczona w scenie.
+    obsolete_base: 1356 - Aby zachować synchronizację, należy ponownie wygenerować strukturę.
+  importer:
+    label: 1357 - Importuj
+    title: 1358 - Importuj części
+    help: |
+      1359 - Ta strona pozwala zaimportować do modelu części (w kształcie równoległościanów) z pliku [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)).
+      Dzięki temu można użyć *OpenCutList* do części które zostały utworzone w programach innych niż *SketchUp*.
+      Naciśnij przycisk **Otwórz plik CSV** aby rozpocząć.
+    open_csv: 1360 - Otwórz plik CSV
+    import_to_model: 1361 - Importuj do modelu
+    load:
+      title: 1362 - Ładowanie pliku CSV
+      info_0: |
+        1363 - Wybierz opcje niezbędne do poprawnego odczytu pliku:
+        **{{ filename }}**.
+      info_1: |
+        1364 - *Jednostki w modelu to: **{{ unit }}**.
+        Te jednostki będą używane dla wymiarów bez określonych jednostek*.
+      options: 1365 - Opcje ładowania
+      option_col_sep: 1366 - Separator
+      option_col_sep_tab: 1367 - Tabulator
+      option_col_sep_comma: 1368 - Przecinek
+      option_col_sep_semicolon: 1369 - Średnik
+      option_first_line_headers: 1370 - Linia nagłówka
+      option_first_line_headers_0: 1371 - Data
+      option_first_line_headers_1: 1372 - Nagłówki kolumn
+    import:
+      title: 1373 - Importowanie części do modelu
+      info_0: |
+        1374 - Importujesz **{{ count }} część** do modelu.
+        Ta część zostanie umieszczona w scenie głównej, w zerowych współrzędnych.
+      info_0_plural: |
+        1375 - Importujesz **{{ count }} części** do modelu.
+        Te części zostaną umieszczone w scenie głównej, w zerowych współrzędnych.
+      info_1: 1376 - Naciśnij **Import** aby potwierdzić operację.
+      options: |
+        1377 - Model zawiera już *części*, *definicje* lub *materiały*.
+        Wybierz odpowiednie opcje importu.
+      option_remove_all_?: 1378 - Co dalej?
+      option_remove_all_false: 1379 - Dodaj części do już istniejących
+      option_remove_all_true: 1380 - Usuń wszystko!
+      option_keep_definitions_settings: 1381 - Zachowaj ustawienia definicji
+      option_keep_materials_settings: 1382 - Zachowaj ustawienia materiałów
+    column:
+      unused: 1383 - Nieużywane
+      mandatory: 1384 - Pola obowiązkowe
+      optional: 1385 - Pola opcjonalne
+      name: 1386 - Oznaczenie
+      count: 1387 - Ilość
+      bbox_length: 1388 - Długość
+      bbox_width: 1389 - Szerokość
+      bbox_thickness: 1390 - Grubość
+      material: 1391 - Materiał
+      tags: 1392 - Plakietki
+    tooltip:
+      errors: 1393 - Ta część nie zostanie zaimportowana ponieważ zawiera następujące błędy
+      warnings: 1394 - Ta część zostanie zaimportowana ale generuje następujące ostrzeżenia
+    error:
+      no_model: 1395 - Brak otwartego modelu. Nie da się zaimportować części do próżni ;)
+      file_not_found: '1396 - Nie znaleziono pliku: **{{ filename }}**'
+      bad_extension: 1397 - Plik *{{ filename }}* nie ma rozszerzenia **.CSV** lub **.TSV**.
+      failed_to_load_csv_file: |
+        1398 - Nie można załadować pliku CSV: **{{ error }}**
+        *Sprawdź, czy wybrałeś prawidłowy znak oddzielający pola.*
+      empty_file: 1399 - Plik jest pusty lub nie można go poprawnie odczytać.
+      no_importable_part: 1400 - Nie można zaimportować żadnych części. Przypisz wymagane pola do odpowiednich kolumn.
+      invalid_name: 1401 - Błędny opis
+      invalid_length: 1402 - Błędna długość
+      invalid_width: 1403 - Błędna szerokość
+      invalid_thickness: 1404 - Błędna grubość
+      failed_to_import: 1405 - Import nieudany.
+    warning:
+      invalid_count: 1406 - Nieprawidłowa ilość
+      invalid_material: 1407 - Niewłaściwy materiał
+    success:
+      imported_title: 1408 - Import zakończony
+      imported_body: 1409 - {{ count }} część została pomyślnie zaimportowana!
+      imported_body_plural: 1410 - {{ count }} pomyślnie zaimportowane części!
+    obsolete_base: 1411 - Aby zachować synchronizację, musisz ponownie załadować plik CSV.
+  tutorials:
+    label: 1412 - Instrukcje
+    title: 1413 - Instrukcje
+    help: |
+      1414 - Tutaj znajdziesz długą listę filmów stworzonych przez społeczność na temat korzystania z *OpenCutList*.
+    submit: 1415 - Prześlij film
+    submit_info: '1416 - '
+    error:
+      fail_to_load_list: 1417 - Nie można załadować listy filmów.
+  news:
+    label: 1418 - Wiadomości
+    title: 1419 - Wiadomości
+    help: |
+      1420 - Najnowsze wiadomości od *OpenCutList*.
+    comment: 1421 - Komentarz
+    error:
+      fail_to_load_list: 1422 - Nie można załadować listy wiadomości.
+  forum:
+    label: 1423 - Forum
+    title: 1424 - Forum
+    help: |
+      1425 - To forum dyskusyjne pozwala wymieniać wiadomości ze społecznością użytkowników i zespołem *OpenCutList*.
+    create_conversation: 1426 - Nowy temat
+    reply: 1427 - Odpowiedz
+    tags: 1428 - Oznaczenia
+    redirection: |
+      1429 - Zostaniesz przekierowany do platformy **Open Collective** na której znajduje się to forum dyskusyjne.
+      Aby *rozpocząć konwersacje* lub *odpowiedzieć* musisz utworzyć konto i zalogować się.
+      *To nic nie kosztuje, bez zobowiązań, wystarczy zwykły adres email.*
+
+      Zatwierdź, aby kontynuować.
+    error:
+      fail_to_load_list: 1430 - Nie można załadować listy tematów.
+  sponsor:
+    label: 1431 - Sponsor
+    title: 1432 - Sponsor
+    description: |
+      1433 - **OpenCutList** to oprogramowanie *Open Source* które jest finansowane przez użytkowników za pośrednictwem platformy <a href="https://opencollective.com/" target="_blank">Open Collective</a> .
+      Wesprzyj ten projekt finansowo!
+    contribute: 1434 - Wspomóż nas
+    backers: 1435 - {{ count }} darczyńca
+    backers_plural: 1436 - {{ count }} darczyńcy
+    ad: 1437 - Czy lubisz OpenCutList?
+    objective: 1438 - Cel
+    objective_slogan: 1439 - OpenCutList to my wszyscy
+    objective_title:
+      default: 1440 - Cele
+      cuttingdiagram_export: 1441 - Finansowanie wywozu schematów cięcia
+    objective_details:
+      default: |
+        1442 - Ciągłe ulepszanie *OpenCutList* jest dla nas ważne, a projekt nadal potrzebuje Twojej pomocy przy następnej aktualizacji!
+      cuttingdiagram_export: |
+        1443 - Ważne jest dla nas, aby *OpenCutList* mógł być dostosowany do bardzo różnych oczekiwań użytkowników w stosunku do funkcji *schematu cięcia*.
+        Aby jeszcze bardziej rozszerzyć możliwości, chcielibyśmy umożliwić eksport diagramów układu w formacie **SVG** i **DXF**.
+        Udostępniając nam środki do pracy nad tym eksportem, dajesz nam szansę, aby pomóc Ci w pełni wykorzystać możliwości *OpenCutList*.
+    objective_crowdfunding: |
+      1444 - Nowe funkcje zostaną opracowane przez **Pozyskiwanie funduszy** i rozpoczną się po osiągnięciu **Celu Finansowego**.
+    objective_thanks: |
+      1445 - Dziękujemy za Twój wkład!
+    objective_funded_progress: 1446 - sfinansowany w {{ progress }}%
+  settings:
+    label: 1447 - Preferencje
+    title: 1448 - Preferencje
+    global_settings: 1449 - Preferencje globalne
+    language: 1450 - Język
+    language_auto: 1451 - Automatyczny
+    zoom: 1452 - Rozmiar czcionki
+    zoom_normal: 1453 - Normalny
+    zoom_small: 1454 - Mały
+    zoom_tiny: 1455 - Bardzo mały
+    print_margin: 1456 - Marginesy druku
+    print_margin_normal: 1457 - Normalne
+    print_margin_small: 1458 - Małe
+    table_row_size: 1459 - Rozmiar linii tabeli
+    table_row_size_normal: 1460 - Normalny
+    table_row_size_compact: 1461 - Kompaktowy
+    size_and_position: 1462 - Rozmiar i Położenie Okna
+    model_settings: 1463 - Preferencje modelu
+    length_unit: 1464 - Jednostka długości
+    length_format: 1465 - Format
+    length_format_0: $t(default.decimal)
+    length_format_1: 1467 - Architektoniczny
+    length_format_2: 1468 - Inżynieryjny
+    length_format_3: $t(default.fractional)
+    length_precision: 1470 - Precyzja
+    suppress_units_display: 1471 - Wyświetl jednostkę długości dla każdej wartości
+    mass_unit: 1472 - Jednostka masy
+    mass_precision: 1473 - Precyzja
+    currency_symbol: 1474 - Symbol waluty
+    currency_precision: 1475 - Precyzja
+    presets:
+      export_global_presets: 1476 - Eksportuj ustawienia wstępne
+      export_global_presets_help: |
+        1477 - Ta funkcja umożliwia wyeksportowanie ustawień wstępnych do pliku **.json**.
+        Wybierz ustawienia wstępne, które chcesz do niego wyeksportować.
+      export_global_presets_success: 1478 - Ustawienia wstępne zostały pomyślnie wyeksportowane.
+      import_global_presets: 1479 - Importuj ustawienia wstępne
+      import_global_presets_help: |
+        1480 - Wybierz ustawienia wstępne w pliku **.json**, które chcesz zaimportować.
+        Pamiętaj, że istniejące ustawienie wstępne o identycznej nazwie zostanie zastąpione zaimportowaną wersją.
+      import_global_presets_success: |
+        1481 - Ustawienia wstępne *OpenCutList* zostały pomyślnie zaimportowane.
+        Aby uwzględnić zmiany, należy **zamknąć** i **ponownie otworzyć** okno OpenCutList.
+      dump_global_presets: 1482 - Zrzuć ustawienia wstępne
+      dump_model_presets: 1483 - Zrzuć ustawienia wstępne modelu
+      reset_global_presets: 1484 - Ponownie zainicjuj ustawienia wstępne
+      reset_global_presets_confirm: |
+        1485 - Masz zamiar zresetować wszystkie zapisane ustawienia *OpenCutList*.
+        To działanie jest ostateczne. **Wszystkie ustawienia zostaną utracone.**
+        Potwierdź, aby kontynuować.
+      reset_global_presets_success: |
+        1486 - Ustawienia wstępne *OpenCutList* zostały zresetowane.
+        Aby odzwierciedlić zmiany, musisz **zamknąć** i **ponownie otworzyć** okno OpenCutList.
+      reset_model_presets: 1487 - Ponownie zainicjuj ustawienia modelu
+      reset_model_presets_confirm: |
+        1488 - Masz zamiar zresetować wszystkie ustawienia wstępne *OpenCutList* dla bieżącego modelu.
+        To działanie jest ostateczne. **Wszystkie ustawienia zostaną przywrócone do wartości domyślnych.**
+        Potwierdź, aby kontynuować.
+      reset_model_presets_success: |
+        1489 - Ustawienia wstępne *OpenCutList* dla bieżącego modelu zostały zresetowane.
+        Aby odzwierciedlić zmiany, musisz **zamknąć** i **ponownie otworzyć** okno OpenCutList.
+      error:
+        no_preset_to_export: 1490 - Brak gotowych ustawień do wyeksportowania.
+        no_preset_to_import: 1491 - Brak gotowych ustawień do zaimportowania.
+        failed_to_import: '1492 - Nie można zaimportować gotowych ustawień: **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1493 - Ten plik został zmodyfikowany. Nie można go importować.
+        failed_to_import_bad_file_format: 1494 - Nieprawidłowy format pliku.
+  about:
+    label: 1495 - O programie
+    title: 1496 - O programie
+    version: 1497 - Wersja
+    credits: 1498 - Zasługi techniczne
+    credits_authors: |
+      1499 - *OpenCutList* jest rozwijany przez [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Wszyscy współautorzy](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: 1500 - Tłumaczenia
+    credits_translators: |
+      1501 - - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, [Hubert Przybyłek †](https://www.drvo.pl/) (*Polski*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Angielski*, *Niemiecki*)
+      - Gildas Boureau (dokumentacja *francuska*)
+      - Vladimir Badulya (*Rosyjski*)
+      - Pierluigi Colombo, Massimo Risca (*Włoski*)
+      - Nayton Sanches Barbosa, poprawione i sprawdzone przez [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portugalski*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Hiszpański*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Czeski*)
+      - Sergey Isupov (*Hebrajski*), interfejs RTL jeszcze nie obsługiwany
+      - Soul Issam (*Arabski*), interfejs RTL jeszcze nie obsługiwany
+      - Nguyen Ngoc Tan (*Wietnamski*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*Ukraina*)
+      - [刘涛](https://www.liutao91.cn) (*chiński uproszczony*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holenderski*)
+    credits_description: |
+      1502 - Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).
+      To rozszerzenie jest *Open Source* i jest dostępne na licencji [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) w swoim repozytorium [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
+    credits_runtime: 1503 - Czas działania
+    credits_development: 1504 - Rozwój
+    credits_vendors: |
+      1505 - Przygoda nie byłaby możliwa bez pracy autorów następujących komponentów *Open Source*:
+    credits_thanks: |
+      1506 - Specjalne podziękowania dla:
+      - [JetBrains](https://www.jetbrains.com) za ich wsparcie dla tego projektu porzez ich [Darmową Licencję Open Source](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex](https://www.transifex.com) za ich wsparcie projektów Open Source.
+      - [GitBook](https://www.gitbook.com) za ich wsparcie projektów Open Source.
+tool:
+  default:
+    transparency: 1507 - Przezroczystość
+    zoom_extents: 1508 - Zakres powiększenia
+    toggle_depth: 1509 - Części tła
+    more: 1510 - Więcej
+    end_point: 1511 - Koniec
+    middle_point: 1512 - Środkowy punkt
+    third_point: 1513 - Punkt trzeci
+    vcb_length: 1514 - Długość
+    vcb_size: 1515 - Cytaty
+    vcb_radius: 1516 - Promień
+    vcb_diameter: 1517 - Średnica
+    vcb_distance: 1518 - Dystans
+    error:
+      no_direction: 1519 - Proszę wskazać kierunek myszką
+      invalid_length: 1520 - Długość {{ value }} jest nieprawidłowa
+      invalid_multiplicator: 1521 - Mnożnik {{ value }} jest nieprawidłowa
+      invalid_divider: 1522 - Iloraz {{ value }} jest nieprawidłowa
+      invalid_offset: 1523 - Przesunięcie {{ value }} jest nieprawidłowa
+      invalid_segment_count: 1524 - Liczba segmentów {{ value }} jest nieprawidłowa. Musi wynosić od 3 do 999.
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
+  smart_draw:
+    title: 1527 - Rysuj
+    action_0: 1528 - Rysowanie prostokąta.
+    action_0_status: 1529 - Utwórz bryłę na bazie prostokątnego kształtu.
+    action_0_state_1_status: 1530 - Kliknij, aby zdefiniować przeciwległy kąt lub wprowadź długość i szerokość
+    action_1: 1531 - Rysowanie okręgu
+    action_1_status: 1532 - Utwórz bryłę na bazie koła.
+    action_1_state_1_radius_status: 1533 - Kliknij, aby ustawić promień lub wprowadź odległość
+    action_1_state_1_diameter_status: 1534 - Kliknij, aby ustawić średnicę lub wprowadź odległość
+    action_2: 1535 - Rysowanie wielokąta
+    action_2_status: 1536 - Narysuj bryłę na bazie wielokąta
+    action_2_state_1_status: 1537 - Kliknij, aby zdefiniować nowy punkt, lub wprowadź odległość
+    action_x_state_2_status: 1538 - Kliknij, aby ustawić wysokość lub wprowadź odległość
+    action_option_group_offset: 1539 - Przesunięcie
+    action_option_group_segments: 1540 - Segmenty
+    action_option_group_options: 1541 - Opcje
+    action_option_offset_shape_offset: 1542 - Przesunięcie
+    action_option_offset_shape_offset_status: 1543 - Stosuje przesunięcie do linii narysowanego kształtu
+    action_option_segments_segment_count: 1544 - Liczba segmentów
+    action_option_segments_segment_count_status: 1545 - Określ liczbę segmentów składających się na okrąg
+    action_option_options_construction: 1546 - Linie konstrukcyjne
+    action_option_options_construction_status: 1547 - Narysuj jako linie konstrukcyjne
+    action_option_options_rectangle_centered: '1548 - '
+    action_option_options_rectangle_centered_status: 1549 - Wyśrodkuj prostokąt względem pierwszego punktu
+    action_option_options_smoothing: 1550 - Wygładzanie
+    action_option_options_smoothing_status: 1551 - Wygładź krzywe
+    action_option_options_measure_from_diameter: 1552 - Pomiary
+    action_option_options_measure_from_diameter_status: 1553 - Zmierz okrąg według jego średnicy
+    action_option_options_measure_from_radius_status: 1554 - Zmierz okrąg według jego promienia
+    action_option_options_measure_reversed: 1555 - Odwrócony pomiar
+    action_option_options_measure_reversed_status: 1556 - Odwróć kierunek pomiaru
+    action_option_options_pull_centered: 1557 - Wysokość wyśrodkowana
+    action_option_options_pull_centered_status: 1558 - Wyśrodkuj wysokość względem pierwszego punktu
+    action_option_options_ask_name: 1559 - Nadawanie nazw częściom
+    action_option_options_ask_name_status: 1560 - Ręczne wprowadzanie nazw części
+    action_pull_locked_status: 1561 - Zablokuj na ostatnim pomiarze
+    action_toggle_move_copy_status: 1562 - Przełącz między kopiowaniem a przesuwaniem
+    action_change_move_anchor_status: 1563 - Zmień punkt kotwiczenia
+    success:
+      part_created: '1564 - Utworzono nową część: {{ name }}'
+  smart_handle:
+    title: 1565 - Uchwyt
+    action_0: 1566 - Zaznacz
+    action_0_status: 1567 - Kliknij część, aby ją zaznaczyć
+    action_1: 1568 - Kopiuj w linii
+    action_1_status: 1569 - Kliknij część, aby skopiować ją wzdłuż osi
+    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_state_2_status: 1571 - Kliknij, aby umieścić kopię części lub wprowadź odległość
+    action_2: 1572 - Kopiuj w siatce
+    action_2_status: 1573 - Kliknij część, aby skopiować ją wzdłuż siatki
+    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_state_2_status: 1575 - Kliknij, aby umieścić kopie części lub wprowadź dwie odległości
+    action_3: 1576 - Przesuń
+    action_3_status: 1577 - Kliknij część, aby przesunąć ją wzdłuż siatki
+    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_state_2_status: 1579 - Kliknij, aby umieścić część lub wprowadź odległość
+    action_4: 1580 - Rozmieść
+    action_4_status: 1581 - Kliknij część, aby rozmieścić ją wzdłuż osi
+    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_1_status: 1583 - Kliknij, aby ustawić pierwszy punkt pomiarowy
+    action_4_state_2_status: 1584 - Kliknij, aby ustawić drugi punkt pomiarowy lub wprowadź odległość
+    action_5: 1585 - Zmień rozmiar
+    action_option_group_copy_measure_type: 1586 - Pomiary
+    action_option_group_move_measure_type: 1587 - Pomiary
+    action_option_group_axes: 1588 - Osie
+    action_option_group_options: 1589 - Opcje
+    action_option_copy_measure_type_outside_status: 1590 - Pomiar zewnętrzny
+    action_option_copy_measure_type_centered_status: '1591 - '
+    action_option_copy_measure_type_inside_status: 1592 - Pomiar pomiędzy częściami
+    action_option_move_measure_type_outside_status: 1593 - Pomiar zewnętrzny
+    action_option_move_measure_type_centered_status: '1594 - '
+    action_option_move_measure_type_inside_status: 1595 - Pomiar wewnątrz
+    action_option_axes_active_status: '1596 - '
+    action_option_axes_context_status: '1597 - '
+    action_option_axes_entity_status: '1598 - '
+    action_option_options_mirror_status: '1599 - '
+    warning:
+      copies_disable_mirror: '1600 - '
+    error:
+      min_distance: '1601 - '
+  smart_paint:
+    title: 1602 - Farba
+    default_material: 1603 - Brak zdefiniowanego materiału
+    filters: 1604 - Filtry
+    filter_0: 1605 - Bez typu
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
+    action_0: 1612 - Pokoloruj część
+    action_0_status: 1613 - Kliknij część, aby pomalować jej instancję
+    action_1: 1614 - Pokoloruj krawędź
+    action_1_status: 1615 - Kliknij krawędź panelu, aby zastosować '$t(tab.materials.type_4)'
+    action_2: 1616 - Pokoloruj powierzchnię
+    action_2_status: 1617 - Kliknij powierzchnię panelu, aby zastosować '$t(tab.materials.type_6)'
+    action_3: 1618 - Próbka
+    action_3_status: 1619 - Kliknij w powierzchnię, aby pobrać próbkę jej materiału
+    action_4: 1620 - Wyczyść
+    action_4_status: 1621 - Kliknij część, aby usunąć wszystkie materiały z jej definicji i wszystkich wystąpień
+    action_option_group_instances: 1622 - Liczba instancji
+    action_option_group_edges: 1623 - Liczba obrzeży
+    action_option_group_faces: 1624 - Liczba warstw
+    action_option_instances_0_status: 1625 - Pokoloruj tylko wybrane części
+    action_option_instances_1_status: 1626 - Pokoloruj wszystkie wybrane części
+    action_option_edges_0_status: 1627 - Pokoloruj tylko wybrane
+    action_option_edges_1_status: 1628 - Pokoloruj tylko wybrane oraz przeciwne
+    action_option_edges_2_status: 1629 - Pokoloruj tylko 4 wybrane
+    action_option_faces_0_status: 1630 - Pokoloruj tylko docelową warstwę
+    action_option_faces_1_status: 1631 - Pokoloruj 2 strony docelowego elementu
+    edges: 1632 - {{ count }} krawędź
+    edges_plural: 1633 - {{ count }} krawędzi
+    edge_ymin: 1634 - Długość 1
+    edge_ymax: 1635 - Długość 2
+    edge_xmin: 1636 - Szerokość 1
+    edge_xmax: 1637 - Szerokość 2
+    faces: 1638 - {{ count }} powierzchnia
+    faces_plural: 1639 - {{ count }} powierzchnie
+    face_zmin: 1640 - Tył
+    face_zmax: 1641 - Przód
+    warning:
+      no_material: 1642 - Brak materiałów
+      no_material_type: 1643 - Brak materiału typu '{{ type }}'
+    error:
+      not_part: 1644 - Obiekt docelowy nie jest częścią (komponentem)
+      not_edge: 1645 - Powierzchnia docelowa nie jest krawędzią panelu
+      not_face: 1646 - Powierzchnia docelowa nie jest powierzchnią panelu
+      wrong_material_type: 1647 - Część docelowa musi być typu '{{ type }}'
+  smart_axes:
+    title: 1648 - Orientacja
+    action_0: 1649 - Zamień
+    action_0_status: 1650 - Kliknij część, aby odwrócić jej wystąpienie wzdłuż jednego z wymiarów
+    action_1: 1651 - Zamień długość ↔ szerokość
+    action_1_status: 1652 - Kliknij część, aby zamienić jej długość z szerokością
+    action_2: 1653 - Zamień przód ↔ tył
+    action_2_status: 1654 - Kliknij część, aby zamienić jej przód z tyłem
+    action_3: 1655 - Dopasuj osie
+    action_3_status: 1656 - Kliknij powierzchnię lub krawędź części, aby dostosować orientację osi
+    action_4: 1657 - Przesuń początek
+    action_4_status: 1658 - Kliknij powierzchnię lub krawędź części, aby umieścić tam jej początek
+    action_option_group_direction: 1659 - Kierunek
+    action_option_direction_0: 1660 - D
+    action_option_direction_1: 1661 - Sz
+    action_option_direction_2: 1662 - W
+    action_option_direction_0_status: 1663 - Obróć element wzdłuż
+    action_option_direction_1_status: 1664 - Obróć element na jego szerokość
+    action_option_direction_2_status: 1665 - Obróć element na grubość
+    warning:
+      more_entities: 1666 - {{ count_used }} instancji współdzielących tę samą definicję zostanie zmodyfikowanych
+    error:
+      not_part: 1667 - Obiekt docelowy nie jest częścią (komponentem)
+      not_orientable: 1668 - Typ tej części nie pozwala na jej orientację
+  smart_export:
+    title: 1669 - Eksportuj
+    action_0: 1670 - Eksportuj część 3D
+    action_0_status: 1671 - Kliknij część
+    action_1: 1672 - Eksportuj część 2D
+    action_1_status: 1673 - Odwróć płaszczyzny
+    action_2: 1674 - Eksportuj warstwę
+    action_2_status: 1675 - Zaznacz warstwę
+    action_3: 1676 - Eksportuj rysunek
+    action_3_status: 1677 - Kliknij krawędź
+    action_option_group_file_format: 1678 - Format
+    action_option_group_unit: 1679 - Jednostka
+    action_option_group_faces: 1680 - Powierzchnie
+    action_option_group_options: 1681 - Opcje
+    action_option_file_format_dxf_status: 1682 - Eksport do pliku DXF
+    action_option_file_format_stl_status: 1683 - Eksport do pliku STL
+    action_option_file_format_obj_status: 1684 - Eksport do pliku OBJ
+    action_option_file_format_svg_status: 1685 - Eksport do pliku SVG
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
+    action_option_options_merge_holes_status: 1695 - Izoluj otwory przelotowe i łącz głębokości dla każdego otworu
+    action_option_options_include_paths_status: 1696 - Eksportuj jako wykres krawędzie niezwiązane z powierzchnią zawartą w części
+    error:
+      not_part: 1697 - Ta ściana nie jest częścią części (komponentu)
+      not_flat_face: 1698 - Ta powierzchnia nie jest płaska
+      incompatible_active_path: 1699 - Aktywna ścieżka nie pozwala na eksport tej części
