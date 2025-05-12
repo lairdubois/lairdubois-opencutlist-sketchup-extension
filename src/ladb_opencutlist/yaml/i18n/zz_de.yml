@@ -1121,39 +1121,39 @@ tab:
         scroll_to_block_1d: 894 - Zur ersten Stange oder Kantenband blättern
         scroll_to_block_2d: 895 - Zur ersten Platte oder Furnierblatt blättern
       list:
-        unplaced_parts: 896 - Nicht platziertes Teil
-        unplaced_parts_plural: 897 - Nicht platzierte Teile
-        summary: 898 - Zusammenfassung
-        trimming: 899 - Rand
-        settings: 900 - Einstellungen
-        stats: 901 - Statistiken
-        time: 902 - Zeitaufwand
-        total_efficiency: 903 - Gesamteffizienz
-        total_fill_rate: 904 - Füllgrad
-        total_cut_count: 905 - Anzahl Schnitte
-        total_cut_length: 906 - Schnittlänge
-        efficiency: 907 - Effizienz
-        count: 908 - Anz.
-        length: 909 - Länge
-        width: 910 - Breite
-        total_length: 911 - Σ Längen
-        total_area: 912 - Σ Flächen
-        total_cost: 913 - Σ Kosten
-        total_part_count: '914 - # Teile'
-        total_used: 915 - Insgesamt verwendet
-        bin_1d_dimensional: 916 - Stange
-        bin_1d_dimensional_type_0: 917 - Standard-Stange
-        bin_1d_dimensional_type_1: 918 - Stangenrest
-        bin_1d_edge: 919 - Kantenband
-        bin_1d_edge_type_0: 920 - Standard-Kantenband
-        bin_1d_edge_type_1: 921 - Kantenbandrest
-        bin_2d_sheet_good: 922 - Platte
-        bin_2d_sheet_good_type_0: 923 - Standard-Platte
-        bin_2d_sheet_good_type_1: 924 - Plattenrest
-        bin_2d_veneer: 925 - Furnierblatt
-        bin_2d_veneer_type_0: 926 - Standard-Furnierblatt
-        bin_2d_veneer_type_1: 927 - Furnierrest
-        unused: 928 - Nicht verwendet
+        summary: 896 - Zusammenfassung
+        trimming: 897 - Rand
+        settings: 898 - Einstellungen
+        stats: 899 - Statistiken
+        time: 900 - Zeitaufwand
+        total_efficiency: 901 - Gesamteffizienz
+        total_fill_rate: 902 - Füllgrad
+        total_cut_count: 903 - Anzahl Schnitte
+        total_cut_length: 904 - Schnittlänge
+        efficiency: 905 - Effizienz
+        count: 906 - Anz.
+        length: 907 - Länge
+        width: 908 - Breite
+        total_length: 909 - Σ Längen
+        total_area: 910 - Σ Flächen
+        total_cost: 911 - Σ Kosten
+        total_part_count: '912 - # Teile'
+        total_used: 913 - Insgesamt verwendet
+        bin_1d_dimensional: 914 - Stange
+        bin_1d_dimensional_type_0: 915 - Standard-Stange
+        bin_1d_dimensional_type_1: 916 - Stangenrest
+        bin_1d_edge: 917 - Kantenband
+        bin_1d_edge_type_0: 918 - Standard-Kantenband
+        bin_1d_edge_type_1: 919 - Kantenbandrest
+        bin_2d_sheet_good: 920 - Platte
+        bin_2d_sheet_good_type_0: 921 - Standard-Platte
+        bin_2d_sheet_good_type_1: 922 - Plattenrest
+        bin_2d_veneer: 923 - Furnierblatt
+        bin_2d_veneer_type_0: 924 - Standard-Furnierblatt
+        bin_2d_veneer_type_1: 925 - Furnierrest
+        unused: 926 - Nicht verwendet
+        unplaced_parts: 927 - Nicht platziertes Teil
+        unplaced_parts_plural: 928 - Nicht platzierte Teile
         parts: 929 - Teil
         parts_plural: 930 - Teile
         leftovers: 931 - Verschnitt

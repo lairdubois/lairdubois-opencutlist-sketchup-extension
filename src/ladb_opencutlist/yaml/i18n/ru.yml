@@ -7,7 +7,6 @@ default:
   minimize: Свернуть
   maximize: Развернуть
   cancel: Отмена
-  # stop computation and return best result so far
   stop: Стоп
   validate: Принять
   confirm: Подтвердить
@@ -382,9 +381,7 @@ tab:
       select_unselect_all_parts: Выделение/отмена выделения всех деталей в группе
       select_parts_in_cutlist: Выделите деталь на карте раскроя
       select_parts_in_cutlist_plural: "Выделено {{ count }} детали на карте раскроя"
-      # used in estimate to setup the cutting diagram
       setup_group_cuttingdiagram: "Настройка раскроя '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
-      # used in estimate to setup the new packing
       setup_group_packing: "Настройка раскроя '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Открыть URL-адрес детали
     menu:
@@ -729,6 +726,42 @@ tab:
           Для правильного расчета сметы:
           - Используемые материалы должны иметь в настройках хотя бы одно заданное пользователем значение плотности и цены.
           - Используемые комплектующие, как минимум должны иметь в настройках заданное пользователем значение массы и цены.
+    estimate:
+      title: Смета
+      info_0: |
+        Эта функция позволяет вам рассчитать смету с учетом **массы** и **стоимости** **материала**, деталей на *карте раскроя*.
+      options_general: Общие
+      total: Всего
+      total_used: Используемый
+      total_unused: Неиспользуемый
+      total_mass: Σ Вес
+      total_cost: Σ Цена
+      total_count: Кол-во
+      total_instance_count: Σ Единиц
+      total_volume: Σ Объемов
+      total_area: Σ Площадей
+      total_length: Σ Длин
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_-1: $t(default.cut_plural)
+      tooltip:
+        incompatible_unit: Единица несовместима с вариантами расчета материала
+        multiplier_coefficient: Коэффициент умножения
+      error:
+        no_typed_material_parts: "Для составления сметы детали должны иметь определенный тип материала (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** или **$t(tab.materials.type_5)**)."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} ошибка**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} ошибки**."
+      warning:
+        is_group_selection: "Учитываются только детали, содержащиеся в **видимых группах**."
+      tip:
+        not_enough_data: |
+          Для правильного расчета сметы:
+          - Используемые материалы должны иметь в настройках хотя бы одно заданное пользователем значение плотности и цены.
+          - Используемые комплектующие, как минимум должны иметь в настройках заданное пользователем значение массы и цены.
     cuttingdiagram:
       title: Карта раскроя
       start_msg: Оптимизация в процессе
@@ -966,6 +999,212 @@ tab:
         cutting_dimensions_increase_1d: "Эти пильные размеры сконфигурированы для материала '{{ material_name }}': Припуск к длине (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "Эти пильные размеры сконфигурированы для материала '{{ material_name }}': Припуск к длине (**{{ length_increase }}**) и Припуск к ширине (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Размеры уменьшены на толщину кромки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    packing:
+      title: Карта раскроя
+      option_problem_type: Тип
+      option_problem_type_rectangle: ""
+      option_problem_type_rectangleguillotine: ""
+      option_problem_type_onedimensional: Погонаж
+      option_problem_type_irregular: ""
+      options_material: Материал
+      options_config: Конфигурация
+      options_display: Просмотр
+      options_tuning: ""
+      option_std_bin_1d_dimensional: ""
+      option_std_bin_1d_edge: ""
+      option_std_bin_1d_help: |
+      option_std_bin_1d_add: Добавить размер панели
+      option_std_bin_1d_none: Нет
+      option_scrap_bin_1d_dimensional_sizes: Деловые остатки
+      option_scrap_bin_1d_edge_sizes: Деловые остатки
+      option_scrap_bin_1d_sizes_placeholder: длина x количество ; ...
+      option_scrap_bin_1d_sizes_help: |
+      option_scrap_bin_1d_none: Нет
+      option_std_bin_2d_sheet_good: ""
+      option_std_bin_2d_veneer: ""
+      option_std_bin_2d_help: |
+      option_std_bin_2d_add: Добавить размер панели
+      option_std_bin_2d_none: Нет
+      option_scrap_bin_2d_sheet_good_sizes: Деловые остатки
+      option_scrap_bin_2d_veneer_sizes: Остатки листа
+      option_scrap_bin_2d_sizes_placeholder: длина x ширина x количество ; ...
+      option_scrap_bin_2d_sizes_help: |
+      option_scrap_bin_2d_none: Нет
+      option_optimization_mode: ""
+      option_optimization_mode_help: |
+      option_objective: Цель
+      option_objective_help: |
+      option_rectangleguillotine_cut_type: ""
+      option_rectangleguillotine_cut_type_help: |
+      option_rectangleguillotine_cut_type_non_exact: ""
+      option_rectangleguillotine_cut_type_exact: ""
+      option_rectangleguillotine_cut_type_homogenous: ""
+      option_rectangleguillotine_number_of_stages: ""
+      option_rectangleguillotine_number_of_stages_help: |
+      option_rectangleguillotine_first_stage_orientation: ""
+      option_rectangleguillotine_first_stage_orientation_help: |
+      option_rectangleguillotine_first_stage_orientation_horizontal: ""
+      option_rectangleguillotine_first_stage_orientation_vertical: ""
+      option_rectangleguillotine_first_stage_orientation_any: ""
+      option_rectangleguillotine_keep: Размер отходов
+      option_rectangleguillotine_keep_help: "Обрезки с габаритами, превышающими их заданнные минимальные размеры, не будут считаться отходами от распила и получат маркировку **Сохранить**."
+      option_irregular_allowed_rotations: ""
+      option_irregular_allowed_rotations_help: |
+      option_irregular_allowed_rotations_0: Нет
+      option_irregular_allowed_rotations_90: ""
+      option_irregular_allowed_rotations_180: ""
+      option_irregular_allow_mirroring: ""
+      option_irregular_allow_mirroring_help: |
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: $t(default.yes)
+      option_spacing: Расстояние между ними
+      option_spacing_help: |
+      option_trimming: Обрезка
+      option_trimming_1d_help: ""
+      option_trimming_2d_help: ""
+      option_items_formula: Формула
+      option_items_formula_help: |
+      option_hide_part_list: Список деталей
+      option_hide_part_list_1d_dimensional_0: Отображать для каждой доски
+      option_hide_part_list_1d_edge_0: Отображать для каждой кромки
+      option_hide_part_list_2d_sheet_good_0: Отобразить для каждой панели
+      option_hide_part_list_2d_veneer_0: Отображать для каждого листа
+      option_hide_part_list_1: Скрыть
+      option_hide_part_list_1d_help: "Показывает или скрывает список деталей, присутствующих в отдельной кромочной ленте или в группе."
+      option_hide_part_list_2d_help: "Показывает или скрывает список деталей, присутствующих на каждой панели или листе."
+      option_part_drawing_type: Формы деталей
+      option_part_drawing_type_0: Скрыть
+      option_part_drawing_type_1: Рисунки - вид спереди
+      option_part_drawing_type_2: Рисунки - вид сзади
+      option_part_drawing_type_help: |
+        Позволяет отображать или скрывать на схеме реальную форму деталей, а также процесс их обработки.
+
+        *Для экспорта фигур эта опция должна быть включена.*
+      option_colorization: ""
+      option_colorization_0: $t(default.no)
+      option_colorization_1: ""
+      option_colorization_2: ""
+      option_colorization_help: |
+      option_hide_edges_preview: Индикаторы облицовки
+      option_hide_edges_preview_0: Отображать на диаграмме
+      option_hide_edges_preview_1: Скрывать на диаграмме
+      option_hide_edges_preview_help: "Позволяет отображать или скрывать визуальную индикацию краев поверхности, на которую необходимо нанести декоративное покрытие, для каждой детали на эскизе карты раскроя.."
+      option_time_limit: ""
+      option_time_limit_help: |
+      tooltip:
+        scroll_to_block_1d: Прокрутка до первой доски или кромочной полосы
+        scroll_to_block_2d: ""
+      list:
+        summary: Спецификация
+        trimming: Обрезка
+        settings: Настройки
+        stats: Статистика
+        time: ""
+        total_efficiency: Общая эффективность
+        total_fill_rate: ""
+        total_cut_count: Σ Число резов
+        total_cut_length: Σ Длина пропилов
+        efficiency: Эффективность
+        count: Кол-во
+        length: Длина
+        width: Ширина
+        total_length: Σ Длин
+        total_area: Σ Площадей
+        total_cost: Σ Цена
+        total_part_count: Σ Деталей
+        total_used: Всего использовано
+        bin_1d_dimensional: Погонаж
+        bin_1d_dimensional_type_0: Стандартный погонаж
+        bin_1d_dimensional_type_1: Обрезок погонажа
+        bin_1d_edge: Кромка
+        bin_1d_edge_type_0: Стандартный размер
+        bin_1d_edge_type_1: Остаток кромки
+        bin_2d_sheet_good: Панель
+        bin_2d_sheet_good_type_0: Стандартная панель
+        bin_2d_sheet_good_type_1: Обрезок панели
+        bin_2d_veneer: Лист
+        bin_2d_veneer_type_0: Стандартный лист
+        bin_2d_veneer_type_1: Остаток листа
+        unused: Неиспользованный
+        unplaced_parts: ""
+        unplaced_parts_plural: Неразмещенные детали
+        parts: Деталь
+        parts_plural: Детали
+        leftovers: Остаток
+        leftovers_plural: Обрезки
+        leftovers_to_keep: Деловой остаток
+        leftovers_to_keep_plural: Деловые остатки
+        cut: Пропил
+        cut_plural: Распилы
+        cut_trimming: Чистый рез
+        cut_primary: ""
+        cut_depth: ""
+      write:
+        title: Экспорт карты раскроя
+        info_0: |
+          Этот модуль позволяет экспортировать **чертежи** *карты раскроя* в виде списка файлов в [SVG](https://ru.wikipedia.org/wiki/SVG) или [DXF](https://ru.wikipedia.org/wiki/DXF).
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: Структура DXF
+        option_dxf_structure_1: Слои
+        option_dxf_structure_2: Слои + Блоки
+        option_dxf_structure_help: |
+          Позволяет выбрать структуру файла DXF.
+
+          - Структура **Слои** рисует все линии плоскими, распознавая различные типы линий только с помощью слоев. *Такая структура обеспечивает лучшую совместимость со сторонним программным обеспечением.*
+          - Структура **Слои + Блоки** создает по одному блоку для каждой детали и вставляет эти блоки столько раз, сколько частей повторяются. *Такая структура обеспечивает большую гибкость при редактировании файла.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_bin_sheet_good: Панель
+        option_bin_sheet_good_help: |
+          Позволяет активировать экспорт панели и выбрать ее цвета.
+        option_bin_veneer: Лист
+        option_bin_veneer_help: |
+          Позволяет активировать экспорт листа и выбрать его цвета.
+        option_bin_dimensional: Погонаж
+        option_bin_dimensional_help: |
+          Позволяет активировать экспорт погонажа и выбрать его цвета.
+        option_bin_edge: Кромка
+        option_bin_edge_help: |
+          Позволяет активировать экспорт кромки и выбрать ее цвета.
+        option_parts: Детали
+        option_parts_help: |
+          Позволяет активировать экспорт деталей и выбирать их цвета.
+        option_parts_holes: Отверстия
+        option_parts_holes_help: |
+          Позволяет задать цвет отверстий в деталях.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Идентификации
+        option_texts_help: |
+          Позволяет активировать экспорт текстов идентификации деталей, а также выбрать их цвета.
+        option_leftovers: Обрезки
+        option_leftovers_help: |
+          Позволяет активировать экспорт деловых обрезков и выбирать их цвета.
+        option_cuts: Распилы
+        option_cuts_help: |
+          Позволяет активировать экспорт разрезов, а также выбрать их цвет.
+        warning:
+          is_bin_selection: ""
+      error:
+        no_part: Нет детали.
+        no_bin_1d: ""
+        no_bin_2d: ""
+        no_solution: ""
+      warning:
+        is_part_selection: Данный отчет ограничен **выделенными деталями**.
     labels:
       title: Этикетки
       options_layout: Состав
@@ -1548,10 +1787,6 @@ tab:
       Представляем подборку видео, просмотр которых поможет эффективнее использовать возможности *OpenCutList*.
     submit: Отправить видео
     submit_info: |
-      Вы создали видео, которое поможет эффективно использовать **OpenCutList**, и хотите, чтобы оно появилось здесь.
-      Дайте нам знать, написав нам по адресу **opencutlist@lairdubois.fr**!
-
-      *Видео должно быть публичным и размещено на YouTube*.
     error:
       fail_to_load_list: Список видеозаписей не может быть загружен.
   news:
