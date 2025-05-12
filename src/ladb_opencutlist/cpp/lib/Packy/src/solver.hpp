@@ -334,7 +334,7 @@ namespace Packy {
             }
             if (j.contains("optimization_mode")) {
                 OptimizationMode optimization_mode;
-                std::stringstream ss(j.value("optimization_mode", "not-anytime"));
+                std::stringstream ss(j.value("optimization_mode", "not-anytime-deterministic"));
                 ss >> optimization_mode;
                 parameters_.optimization_mode = optimization_mode;
             }
