@@ -160,36 +160,39 @@ module Ladb::OpenCutList
 
           begin
 
-            require_relative '../../lib/fiddle/xly/xly'
+            require_relative '../../lib/write_xlsx/write_xlsx'
 
-            input = {
-              filename: path,
-              worksheets: [
-                name: 'OpenCutList',
-                cells: _compute_rows.each_with_index.map { |row, row_index|
-                  row.each_with_index.map { |cell, cell_index|
-                    unless cell.is_a?(String) && cell.empty?
-                      {
-                        row: row_index,
-                        col: cell_index,
-                        value: cell
-                      }
-                    end
-                  }
-                }.flatten(1).compact
-              ]
+            # Create a new Excel workbook
+            workbook = WriteXLSX.new(path)
+
+            # Add a worksheet
+            worksheet = workbook.add_worksheet
+
+            # Define formats
+            formats = {
+              'left' => workbook.add_format(:align => 'left'),
+              'center' => workbook.add_format(:align => 'center'),
+              'right' => workbook.add_format(:align => 'right'),
             }
 
-            output = Fiddle::Xly.write_to_xlsx(input)
+            # Iterate on rows to add cells
+            _compute_rows.each_with_index { |row, row_index|
+              row.each_with_index { |col, col_index|
+                unless col.is_a?(String) && col.empty?
+                  col_def = @col_defs[col_index]
+                  format = formats[col_def['align']] if col_def && col_def['align']
+                  worksheet.write(row_index, col_index, col, format)
+                end
+              }
+            }
+
+            # Write xlsx file to disk.
+            workbook.close
 
             # Populate response
-            if output['error']
-              response[:errors] << [ 'core.error.failed_export_to', { path => path, :error => output['error'] } ]
-            else
-              response[:export_path] = path.tr("\\", '/')  # Standardize path by replacing \ by /
-            end
+            response[:export_path] = path.tr("\\", '/')  # Standardize path by replacing \ by /
 
-          rescue => e
+           rescue => e
             puts e.message
             puts e.backtrace
             response[:errors] << [ 'core.error.failed_export_to', { path => path, :error => e.message } ]

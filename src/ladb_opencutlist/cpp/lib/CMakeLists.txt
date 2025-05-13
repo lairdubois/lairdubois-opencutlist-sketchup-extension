@@ -22,8 +22,3 @@ add_subdirectory(Imagy)
 #                             Packy
 
 add_subdirectory(Packy)
-
-# -------------------------------------------------------------------
-#                             Xly
-
-add_subdirectory(Xly)
