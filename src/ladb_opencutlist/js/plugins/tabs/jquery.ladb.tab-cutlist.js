@@ -736,13 +736,19 @@
             const $tabs = $('a[data-toggle="tab"]', $modal);
             const $widgetPreset = $('.ladb-widget-preset', $modal);
             const $radiosSource = $('input[name=ladb_radios_source]', $modal);
-            const $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
-            const $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
+            const $selectFormat = $('#ladb_cutlist_export_select_format', $modal);
+            const $selectCsvColSep = $('#ladb_cutlist_export_select_csv_col_sep', $modal);
+            const $selectCsvEncoding = $('#ladb_cutlist_export_select_csv_encoding', $modal);
             const $editorSummary = $('#ladb_cutlist_export_editor_summary', $modal);
             const $editorCutlist = $('#ladb_cutlist_export_editor_cutlist', $modal);
             const $editorInstancesList = $('#ladb_cutlist_export_editor_instances_list', $modal);
+            const $formGroupCsv = $('.form-group-csv', $modal);
             const $btnPreview = $('#ladb_cutlist_export_btn_preview', $modal);
             const $btnExport = $('#ladb_cutlist_export_btn_export', $modal);
+            const $btnExportCsv = $('#ladb_cutlist_export_btn_export_csv', $modal);
+            const $btnExportXlsx = $('#ladb_cutlist_export_btn_export_xlsx', $modal);
+            const $btnExportCopyAll = $('#ladb_cutlist_export_btn_export_copy_all', $modal);
+            const $btnExportCopyValues = $('#ladb_cutlist_export_btn_export_copy_values', $modal);
 
             // Define useful functions
 
@@ -787,10 +793,33 @@
                     that.lastExportOptionsEditingItem = null;
                 }
             };
+            const fnUpdateFieldsVisibility = function () {
+                const format = $selectFormat.val();
+                const isCsv = format === 'csv';
+                if (isCsv) $formGroupCsv.show(); else $formGroupCsv.hide();
+                $('#ladb_cutlist_export_btn_export_format', $btnExport).html(format.toUpperCase());
+            };
+            const fnCopyToClipboard = function(noHeader) {
+                rubyCallCommand('cutlist_export', {
+                    source: exportOptions.source,
+                    col_defs: exportOptions.source_col_defs[exportOptions.source],
+                    format: 'pasteable',
+                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
+                    no_header: noHeader
+                }, function (response) {
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    }
+                    if (response.pasteable) {
+                        that.dialog.copyToClipboard(response.pasteable);
+                    }
+                });
+            }
             const fnFetchOptions = function (options) {
                 options.source = that.toInt($radiosSource.filter(':checked').val());
-                options.col_sep = that.toInt($selectColSep.val());
-                options.encoding = that.toInt($selectEncoding.val());
+                options.format = $selectFormat.val();
+                options.csv_col_sep = that.toInt($selectCsvColSep.val());
+                options.csv_encoding = that.toInt($selectCsvEncoding.val());
 
                 if (options.source_col_defs == null) {
                     options.source_col_defs = [];
@@ -802,12 +831,14 @@
             }
             const fnFillInputs = function (options) {
                 $radiosSource.filter('[value=' + options.source + ']').click();
-                $selectColSep.selectpicker('val', options.col_sep);
-                $selectEncoding.selectpicker('val', options.encoding);
+                $selectFormat.selectpicker('val', options.format);
+                $selectCsvColSep.selectpicker('val', options.csv_col_sep);
+                $selectCsvEncoding.selectpicker('val', options.csv_encoding);
                 $editorSummary.ladbEditorExport('setColDefs', [ options.source_col_defs[0] ])
                 $editorCutlist.ladbEditorExport('setColDefs', [ options.source_col_defs[1] ])
                 $editorInstancesList.ladbEditorExport('setColDefs', [ options.source_col_defs[2] ])
                 fnComputeSorterVisibility(options.source);
+                fnUpdateFieldsVisibility();
             }
 
             $widgetPreset.ladbWidgetPreset({
@@ -816,8 +847,14 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectFormat
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function () {
+                    fnUpdateFieldsVisibility();
+                })
+            ;
+            $selectCsvColSep.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectCsvEncoding.selectpicker(SELECT_PICKER_OPTIONS);
             $editorSummary.ladbEditorExport({
                 dialog: that.dialog,
                 vars: [
@@ -946,7 +983,7 @@
                 rubyCallCommand('cutlist_export', {
                     source: exportOptions.source,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
-                    target: 'table',
+                    format: 'table',
                     cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids
                 }, function (response) {
 
@@ -970,23 +1007,6 @@
                         }, exportOptions), function () {
 
                         });
-
-                        const fnCopyToClipboard = function(noHeader) {
-                            rubyCallCommand('cutlist_export', {
-                                source: exportOptions.source,
-                                col_defs: exportOptions.source_col_defs[exportOptions.source],
-                                target: 'pasteable',
-                                cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
-                                no_header: noHeader
-                            }, function (response) {
-                                if (response.errors) {
-                                    that.dialog.notifyErrors(response.errors);
-                                }
-                                if (response.pasteable) {
-                                    that.dialog.copyToClipboard(response.pasteable);
-                                }
-                            });
-                        }
 
                         // Fetch UI elements
                         const $btnExport = $('#ladb_btn_export', $slide);
@@ -1033,10 +1053,10 @@
 
                 rubyCallCommand('cutlist_export', {
                     source: exportOptions.source,
+                    format: exportOptions.format,
                     col_sep: exportOptions.col_sep,
                     encoding: exportOptions.encoding,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
-                    target: 'csv',
                     cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
                 }, function (response) {
 
@@ -1060,6 +1080,28 @@
                 // Hide modal
                 $modal.modal('hide');
 
+            });
+            $btnExportCsv.on('click', function () {
+                $selectFormat.selectpicker('val', 'csv');
+                $btnExport.click();
+            });
+            $btnExportXlsx.on('click', function () {
+                $selectFormat.selectpicker('val', 'xlsx');
+                $btnExport.click();
+            });
+            $btnExportCopyAll.on('click', function () {
+
+                // Store options
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
+
+                fnCopyToClipboard(false);
+            });
+            $btnExportCopyValues.on('click', function () {
+
+                // Store options
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
+
+                fnCopyToClipboard(true);
             });
 
             // Show modal

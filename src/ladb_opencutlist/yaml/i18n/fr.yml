@@ -612,8 +612,8 @@ tab:
       faces: Faces
     export:
       title: Exportation
-      info_0: |
-        Cette fonctionnalité vous permet d'exporter les données de la *fiche de débit* vers le presse-papier ou dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+      info_0: | # TODO
+        Cette fonctionnalité vous permet d'exporter les données de la *fiche de débit* vers le presse-papier ou dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values) ou [XLSX](https://fr.wikipedia.org/wiki/XLSX).
       customize_help: |
         Réordonnez, Masquez, Ajoutez, Retirez ou Sélectionnez une colonne dans la liste pour personnaliser son **titre** et la **formule** générant la valeur affichée pour chaque ligne exportée.
       add_column: Ajouter une colonne
@@ -634,11 +634,12 @@ tab:
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Liste des pièces
       option_source_instances_list: Liste des instances
-      option_col_sep: Séparateur
-      option_col_sep_tab: Tabulation
-      option_col_sep_comma: Virgule
-      option_col_sep_semicolon: Point virgule
-      option_encoding: Encodage
+      option_format: Format
+      option_csv_col_sep: Séparateur  # TODO
+      option_csv_col_sep_tab: Tabulation  # TODO
+      option_csv_col_sep_comma: Virgule  # TODO
+      option_csv_col_sep_semicolon: Point virgule  # TODO
+      option_csv_encoding: Encodage  # TODO
       copy_all: Tout
       copy_values: Valeurs seulement
       number: N°
