@@ -613,7 +613,7 @@ tab:
     export:
       title: Export
       info_0: |
-        This feature allows you to export data from the *Parts List* to the clipboard or to a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
+        This feature allows you to export data from the *Parts List* to the clipboard or to a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) or [XLSX](https://en.wikipedia.org/wiki/XLSX) file.
       customize_help: |
         Reorder, Hide, Add, Remove or Select a column from the list to customize its **title** and the **formula** that will generate the values for each exported row.
       add_column: Add a column
@@ -634,11 +634,12 @@ tab:
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Parts List
       option_source_instances_list: List of Instances
-      option_col_sep: Separator
-      option_col_sep_tab: Tabulator
-      option_col_sep_comma: Comma
-      option_col_sep_semicolon: Semicolon
-      option_encoding: Encoding
+      option_format: Format
+      option_csv_col_sep: Separator
+      option_csv_col_sep_tab: Tabulator
+      option_csv_col_sep_comma: Comma
+      option_csv_col_sep_semicolon: Semicolon
+      option_csv_encoding: Encoding
       copy_all: Everything
       copy_values: Only values
       number: No.

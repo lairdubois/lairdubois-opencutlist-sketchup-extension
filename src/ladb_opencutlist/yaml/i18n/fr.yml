@@ -635,11 +635,11 @@ tab:
       option_source_cutlist: Liste des pièces
       option_source_instances_list: Liste des instances
       option_format: Format
-      option_csv_col_sep: Séparateur  # TODO
-      option_csv_col_sep_tab: Tabulation  # TODO
-      option_csv_col_sep_comma: Virgule  # TODO
-      option_csv_col_sep_semicolon: Point virgule  # TODO
-      option_csv_encoding: Encodage  # TODO
+      option_csv_col_sep: Séparateur
+      option_csv_col_sep_tab: Tabulation
+      option_csv_col_sep_comma: Virgule
+      option_csv_col_sep_semicolon: Point virgule
+      option_csv_encoding: Encodage
       copy_all: Tout
       copy_values: Valeurs seulement
       number: N°
