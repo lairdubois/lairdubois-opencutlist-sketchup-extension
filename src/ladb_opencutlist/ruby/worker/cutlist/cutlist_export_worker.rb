@@ -177,11 +177,11 @@ module Ladb::OpenCutList
 
             # Iterate on rows to add cells
             _compute_rows.each_with_index { |row, row_index|
-              row.each_with_index { |col, col_index|
-                unless col.is_a?(String) && col.empty?
+              row.each_with_index { |cell, col_index|
+                unless cell.is_a?(String) && cell.empty?
                   col_def = @col_defs[col_index]
                   format = formats[col_def['align']] if col_def && col_def['align']
-                  worksheet.write(row_index, col_index, col, format)
+                  worksheet.write(row_index, col_index, cell, format)
                 end
               }
             }
