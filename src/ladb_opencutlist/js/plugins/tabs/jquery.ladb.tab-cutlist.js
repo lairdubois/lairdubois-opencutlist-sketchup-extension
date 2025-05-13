@@ -1091,12 +1091,24 @@
             });
             $btnExportCopyAll.on('click', function () {
 
+                // Fetch options
+                fnFetchOptions(exportOptions);
+
+                // Fetch last editing item
+                fnFetchLastExportOptionsEditingItem(exportOptions.source);
+
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
 
                 fnCopyToClipboard(false);
             });
             $btnExportCopyValues.on('click', function () {
+
+                // Fetch options
+                fnFetchOptions(exportOptions);
+
+                // Fetch last editing item
+                fnFetchLastExportOptionsEditingItem(exportOptions.source);
 
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
