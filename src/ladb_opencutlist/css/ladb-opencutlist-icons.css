@@ -544,7 +544,7 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-tip:before {
   content: "\e976";
 }
-.ladb-opencutlist-icon-report:before {
+.ladb-opencutlist-icon-estimate:before {
   content: "\e977";
 }
 .ladb-opencutlist-icon-material-type-1:before {
