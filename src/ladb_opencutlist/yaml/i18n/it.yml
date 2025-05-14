@@ -639,7 +639,7 @@ tab:
       option_csv_col_sep_comma: Virgola
       option_csv_col_sep_semicolon: Punto e virgola
       option_csv_encoding: Encoding
-      copy_all: Tutti
+      copy_all: ""
       copy_values: Solo valori
       number: N.
       path: Percorso
@@ -694,38 +694,6 @@ tab:
         no_column_formula: Digitare una formula
       warning:
         is_group_selection: Le parti contenute nei **gruppi nascosti** del elenco parti non saranno esportate.
-    report:
-      title: Preventivo
-      info_0: |
-        Genera una stima del **peso** e del **costo** dei **materiali grezzi** necessari per la realizzazione delle parti inserite nella *distinta*.
-      options_general: Generale
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: Il moltiplicatore per i materiali di tipo "**$t(tab.materials.type_1)**" può ora essere configurato per ogni materiale nelle opzioni di stima.
-      raw_materials: Materiali grezzi
-      total: Totale
-      total_used: Usato
-      total_unused: Non utilizzato
-      total_mass: Σ Masse
-      total_cost: Σ Costi
-      total_count: Qtà
-      total_instance_count: Σ Unità
-      total_volume: Σ Volumi
-      total_area: Σ Aree
-      total_length: Σ Lunghezze
-      tooltip:
-        incompatible_unit: Unità incompatibile con le opzioni di stima del materiale
-        multiplier_coefficient: Coefficiente moltiplicatore
-      error:
-        no_typed_material_parts: "Nessuna parte con un materiale di tipo (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) è disponibile per generare il preventivo."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errore**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errori**."
-      warning:
-        is_group_selection: Le parti contenute nei **gruppi nascosti** del elenco parti non saranno contate.
-      tip:
-        not_enough_data: |
-          Per calcolare correttamente il preventivo:
-          - i materiali utilizzati devono aver impostato la densita e il prezzo.
-          - gli accessori devono avere definito la massa e prezzo.
     estimate:
       title: Preventivo
       info_0: |

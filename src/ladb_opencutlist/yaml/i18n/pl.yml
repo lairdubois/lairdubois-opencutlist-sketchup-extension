@@ -639,7 +639,7 @@ tab:
       option_csv_col_sep_comma: Przecinek
       option_csv_col_sep_semicolon: Średnik
       option_csv_encoding: Kodowanie
-      copy_all: Wszystko
+      copy_all: ""
       copy_values: Tylko wartości
       number: Ob.
       path: Ścieżka
@@ -694,38 +694,6 @@ tab:
         no_column_formula: Wprowadź formułę
       warning:
         is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
-    report:
-      title: Szacowanie
-      info_0: |
-        Wygeneruj oszacowanie **wagi** i **kosztu** **surowców** potrzebnych do wyprodukowania elementów z *listy elementów*.
-      options_general: Główne
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: Współczynnik mnożnika dla materiałów typu "**$t(tab.materials.type_1)**" jest teraz konfigurowany dla każdego materiału w opcjach szacowania.
-      raw_materials: Surowce
-      total: Suma
-      total_used: Używane
-      total_unused: Nieużywane
-      total_mass: Σ Wagi
-      total_cost: Σ Kosztów
-      total_count: Ilość
-      total_instance_count: Σ Jednostki
-      total_volume: Σ Objętości
-      total_area: Σ Powierzchni
-      total_length: Σ Długości
-      tooltip:
-        incompatible_unit: Jednostka niezgodna z opcjami szacowania materiału.
-        multiplier_coefficient: Współczynnik mnożnika
-      error:
-        no_typed_material_parts: "Brak elementów o zdefiniowanym typie materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) została użyta do wygenerowania szacunku."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**."
-      warning:
-        is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą uwzględniane.
-      tip:
-        not_enough_data: |
-          Aby to oszacowanie zostało poprawnie obliczone:
-          - użyte materiały muszą mieć co najmniej gęstość i cenę.
-          - użyte akcesoria muszą mieć co najmniej gęstość i cenę.
     estimate:
       title: Szacowanie
       info_0: |

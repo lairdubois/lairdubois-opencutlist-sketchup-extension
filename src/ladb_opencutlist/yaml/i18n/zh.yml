@@ -637,7 +637,7 @@ tab:
       option_csv_col_sep_comma: 逗号
       option_csv_col_sep_semicolon: 分号
       option_csv_encoding: 编码
-      copy_all: 全部
+      copy_all: ""
       copy_values: 仅值
       number: 编号
       path: 路径
@@ -692,38 +692,6 @@ tab:
         no_column_formula: 输入一个公式
       warning:
         is_group_selection: 部件列表中的 **隐藏组件** 内的部件将不会被导出.
-    report:
-      title: 估算
-      info_0: |
-        生成生产 **部件清单** 上的部件所需的 **原材料** 的 **重量** 和 *成本* 估算.
-      options_general: 常规
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: ""
-      raw_materials: 原材料
-      total: 总和
-      total_used: 已使用
-      total_unused: 未使用
-      total_mass: Σ 重量
-      total_cost: Σ 成本
-      total_count: ""
-      total_instance_count: Σ 单位
-      total_volume: Σ 体积
-      total_area: Σ 面积
-      total_length: Σ 长度
-      tooltip:
-        incompatible_unit: 与材料估算选项不兼容的单位
-        multiplier_coefficient: ""
-      error:
-        no_typed_material_parts: "未提供具有定义的材质类型 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** 或 **$t(tab.materials.type_5)**) 以生成估算."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**."
-      warning:
-        is_group_selection: 部件清单 **隐藏组** 内的部件将不会被计入.
-      tip:
-        not_enough_data: |
-          为了正确计算这个估算值:
-          - 使用的材质必须至少有密度和价格.
-          - 使用的配件必须至少有密度和价格.
     estimate:
       title: 估算
       info_0: |

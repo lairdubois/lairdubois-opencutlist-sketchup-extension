@@ -637,7 +637,7 @@ tab:
       option_csv_col_sep_comma: Čárka
       option_csv_col_sep_semicolon: Středník
       option_csv_encoding: Kódování
-      copy_all: Vše
+      copy_all: ""
       copy_values: Pouze hodnoty
       number: Číslo
       path: Cesta
@@ -692,38 +692,6 @@ tab:
         no_column_formula: Zadejte vzorec
       warning:
         is_group_selection: "Díly, které jsou ve **skrytých skupinách** kusovníku, se neexportují."
-    report:
-      title: Kalkulace
-      info_0: |
-        Vygenerujte odhad **hmotnosti** a **ceny** **surovin** potřebných k výrobě dílů ze *seznamu dílů*.
-      options_general: Všeobecné
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: ""
-      raw_materials: Sortiment
-      total: Celkový
-      total_used: Použitý
-      total_unused: Nepoužitý
-      total_mass: Σ Hmotnost
-      total_cost: Σ Náklady
-      total_count: ""
-      total_instance_count: Jednotky
-      total_volume: Σ Objem
-      total_area: Σ Oblasti
-      total_length: Σ Délka
-      tooltip:
-        incompatible_unit: Nekompatibilní jednotky s možnostmi odhadu materiálu
-        multiplier_coefficient: ""
-      error:
-        no_typed_material_parts: "Žádná součást s definovaným typem materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** nebo **$t(tab.materials.type_5)**) pro vygenerování odhadu bylo poskytnuto."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyby**."
-      warning:
-        is_group_selection: "Díly, které jsou ve **skrytých skupinách** kusovníku, se nezapočítávají."
-      tip:
-        not_enough_data: |
-          Aby byl tento odhad správně vypočítán:
-          - použité materiály musí mít minimálně hustotu a cenu.
-          - použité příslušenství musí mít alespoň hustotu a cenu.
     estimate:
       title: Kalkulace
       info_0: |

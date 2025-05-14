@@ -637,7 +637,7 @@ tab:
       option_csv_col_sep_comma: Dấu phẩy
       option_csv_col_sep_semicolon: Dấu chấm phẩy
       option_csv_encoding: Mã hóa
-      copy_all: Mọi thứ
+      copy_all: ""
       copy_values: Chỉ các giá trị
       number: No.
       path: Đường dẫn
@@ -692,38 +692,6 @@ tab:
         no_column_formula: Nhập công thức
       warning:
         is_group_selection: Các bộ phận bên trong **nhóm ẩn** của danh sách các bộ phận sẽ không được xuất.
-    report:
-      title: Ước tính
-      info_0: |
-        Tạo ước tính về **trọng lượng** và **chi phí** của **nguyên liệu thô** cần thiết để sản xuất các bộ phận trong *danh sách các bộ phận*.
-      options_general: Chung
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: ""
-      raw_materials: Vật liệu thô
-      total: Tổng
-      total_used: Đã sử dụng
-      total_unused: Chưa sử dụng
-      total_mass: Σ Khối lượng
-      total_cost: Σ Chi phí
-      total_count: ""
-      total_instance_count: Σ Đơn vị
-      total_volume: Σ Thể tích
-      total_area: Σ Diện tích
-      total_length: Σ Chiều dài
-      tooltip:
-        incompatible_unit: Đơn vị không tương thích với các tùy chọn ước tính vật liệu
-        multiplier_coefficient: ""
-      error:
-        no_typed_material_parts: "Không có bộ phận nào có loại vật liệu xác định (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_5)** hoặc **$t(tab.materials.type_6)**) đã được cung cấp để tạo ước tính."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
-      warning:
-        is_group_selection: Các bộ phận bên trong **nhóm ẩn** của danh sách bộ phận sẽ không được tính.
-      tip:
-        not_enough_data: |
-          Để ước tính này được tính toán chính xác:
-          - các vật liệu được sử dụng ít nhất phải có tỉ trọng và giá cả.
-          - các phụ kiện được sử dụng ít nhất phải có tỉ trọng và giá cả.
     estimate:
       title: Ước tính
       info_0: |

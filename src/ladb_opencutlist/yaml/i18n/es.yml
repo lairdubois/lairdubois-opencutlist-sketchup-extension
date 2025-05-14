@@ -637,7 +637,7 @@ tab:
       option_csv_col_sep_comma: Coma
       option_csv_col_sep_semicolon: Punto y coma
       option_csv_encoding: Codificación
-      copy_all: Todo
+      copy_all: ""
       copy_values: Sólo valores
       number: No.
       path: Camino
@@ -692,38 +692,6 @@ tab:
         no_column_formula: Introduzca una fórmula
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se exportarán.
-    report:
-      title: Estimación
-      info_0: |
-        Esta función le permite generar una estimaciónde las **masas** y los **costes** de las **materias primas** necesarias para fabricar las piezas del *listado de partes*.
-      options_general: General
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: ""
-      raw_materials: Materias primas
-      total: Total
-      total_used: Usado
-      total_unused: No usado
-      total_mass: Σ Masas
-      total_cost: Σ Costos
-      total_count: Cant.
-      total_instance_count: Σ Unidades
-      total_volume: Σ Volúmenes
-      total_area: Σ Areas
-      total_length: Σ Longitudes
-      tooltip:
-        incompatible_unit: Unidad incompatible con las opciones de estimación de la materia
-        multiplier_coefficient: ""
-      error:
-        no_typed_material_parts: "No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) para generar la estimación."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errores**."
-      warning:
-        is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se contabilizarán.
-      tip:
-        not_enough_data: |
-          Para que esta estimación se calcule correctamente:
-          - Los materiales utilizados deben tener al menos una densidad y un precio configurados.
-          - Los accesorios utilizados deben tener al menos una masa y un precio.
     estimate:
       title: Estimación
       info_0: |
