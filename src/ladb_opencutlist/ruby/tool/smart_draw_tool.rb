@@ -1377,6 +1377,18 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_state_vcb_label(state)
+
+      case state
+
+      when STATE_SHAPE
+        return PLUGIN.get_i18n_string('tool.default.vcb_size')
+
+      end
+
+      super
+    end
+
     # -----
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
@@ -1882,20 +1894,6 @@ module Ladb::OpenCutList
 
     def _fetch_option_rectangle_centered
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED)
-    end
-
-    # -----
-
-    def get_state_vcb_label(state)
-
-      case state
-
-      when STATE_SHAPE
-        return PLUGIN.get_i18n_string('tool.default.vcb_size')
-
-      end
-
-      super
     end
 
     # -----

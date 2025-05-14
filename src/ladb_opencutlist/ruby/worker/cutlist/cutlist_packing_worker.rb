@@ -236,6 +236,7 @@ module Ladb::OpenCutList
                    time_limit: 20,
                    not_anytime_tree_search_queue_size: 16,
                    verbosity_level: 0,
+                   input_to_json_bin_dir: '',
 
                    items_formula: '',
                    hide_part_list: false,
@@ -274,6 +275,7 @@ module Ladb::OpenCutList
       @time_limit = [ 1 , time_limit.to_i ].max
       @not_anytime_tree_search_queue_size = [ 1 , not_anytime_tree_search_queue_size.to_i ].max
       @verbosity_level = verbosity_level.to_i
+      @input_to_json_bin_dir = input_to_json_bin_dir
 
       @items_formula = items_formula.empty? ? '@number' : items_formula
       @hide_part_list = hide_part_list
@@ -551,6 +553,11 @@ module Ladb::OpenCutList
           puts '-- input --'
         end
 
+        unless @input_to_json_bin_dir.empty?
+          # Write input to a JSON file in the bin directory for debug purpose
+          File.write(File.join(PLUGIN_DIR, 'bin', @input_to_json_bin_dir, 'lib', 'input.json'), JSON.pretty_generate(input))
+        end
+
         Packy.optimize_cancel_all
         output = Packy.optimize_start(input)
 
@@ -586,7 +593,7 @@ module Ladb::OpenCutList
 
       return PackingDef.new(errors: errors).create_packing if errors.is_a?(Array)
       return PackingDef.new(cancelled: true).create_packing if output['cancelled']
-      return PackingDef.new(running: true).create_packing if running && output['solution'].nil?
+      return PackingDef.new(running: true).create_packing if running && (output['solution'].nil? || output['solution']['bins'].nil? || output['solution']['bins'].empty?) # Running but no solution yet
 
       if @verbosity_level > 1
         puts ' '
@@ -713,7 +720,9 @@ module Ladb::OpenCutList
               number_of_leftovers_to_keep: raw_bin.fetch('number_of_leftovers_to_keep', 0),
               number_of_cuts: raw_bin.fetch('number_of_cuts', 0),
               cut_length: _from_packy_length(raw_bin.fetch('cut_length', 0)),
+              x_min: _from_packy_length(raw_bin.fetch('x_min', 0)),
               x_max: _from_packy_length(raw_bin.fetch('x_max', 0)),
+              y_min: _from_packy_length(raw_bin.fetch('y_min', 0)),
               y_max: _from_packy_length(raw_bin.fetch('y_max', 0))
             )
           }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.count ] }
@@ -833,18 +842,32 @@ module Ladb::OpenCutList
               svg += "<rect class='bin-trimming' x='#{px_trimming}' y='#{px_trimming}' width='#{px_bin_length - px_trimming * 2}' height='#{px_bin_width - px_trimming * 2}'/>" if @trimming > 0
             end
           end
+          if bin_def.x_min > @trimming + 20.mm && bin_def.x_min < bin_def.bin_type_def.length   # Arbitrary remove 20 mm to avoid displaying line near the border
+            px_bin_min_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, _to_px(bin_def.x_min), 0, px_bin_length)
+            svg += "<g class='bin-minmax'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_min_max_tooltip(bin_def.x_min, "vertical-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_TOP_LEFT ? 'right' : 'left'}")}'" unless light}>"
+              svg += "<rect class='bin-minmax-outer' x='#{px_bin_min_x - px_cut_outline_width}' y='0' width='#{px_cut_outline_width * 2}' height='#{px_bin_width}'/>" unless light
+              svg += "<line class='bin-minmax-inner' x1='#{px_bin_min_x}' y1='0' x2='#{px_bin_min_x}' y2='#{px_bin_width}'#{" style='stroke:red'" if light}>/>"
+            svg += "</g>"
+          end
           if bin_def.x_max > 0 && bin_def.x_max < bin_def.bin_type_def.length - @trimming - 20.mm   # Arbitrary remove 20 mm to avoid displaying line near the border
             px_bin_max_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, _to_px(bin_def.x_max), 0, px_bin_length)
-            svg += "<g class='bin-max'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_max_tooltip(bin_def.x_max, "vertical-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_TOP_LEFT ? 'right' : 'left'}")}'" unless light}>"
-              svg += "<rect class='bin-max-outer' x='#{px_bin_max_x - px_cut_outline_width}' y='0' width='#{px_cut_outline_width * 2}' height='#{px_bin_width}'/>" unless light
-              svg += "<line class='bin-max-inner' x1='#{px_bin_max_x}' y1='0' x2='#{px_bin_max_x}' y2='#{px_bin_width}'#{" style='stroke:red'" if light}>/>"
+            svg += "<g class='bin-minmax'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_min_max_tooltip(bin_def.x_max, "vertical-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_TOP_LEFT ? 'right' : 'left'}")}'" unless light}>"
+              svg += "<rect class='bin-minmax-outer' x='#{px_bin_max_x - px_cut_outline_width}' y='0' width='#{px_cut_outline_width * 2}' height='#{px_bin_width}'/>" unless light
+              svg += "<line class='bin-minmax-inner' x1='#{px_bin_max_x}' y1='0' x2='#{px_bin_max_x}' y2='#{px_bin_width}'#{" style='stroke:red'" if light}>/>"
+            svg += "</g>"
+          end
+          if bin_def.y_min > @trimming + 20.mm && bin_def.y_min < bin_def.bin_type_def.width   # Arbitrary remove 20 mm to avoid displaying line near the border
+            px_bin_min_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, _to_px(bin_def.y_min), 0, px_bin_width)
+            svg += "<g class='bin-minmax'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_min_max_tooltip(bin_def.y_min, "horizontal-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_BOTTOM_RIGHT ? 'top' : 'bottom'}")}'" unless light}>"
+              svg += "<rect class='bin-minmax-outer' x='0' y='#{px_bin_min_y - px_cut_outline_width}' width='#{px_bin_length}' height='#{px_cut_outline_width * 2}'/>" unless light
+              svg += "<line class='bin-minmax-inner' x1='0' y1='#{px_bin_min_y}' x2='#{px_bin_length}' y2='#{px_bin_min_y}'#{" style='stroke:red'" if light}/>"
             svg += "</g>"
           end
           if bin_def.y_max > 0 && bin_def.y_max < bin_def.bin_type_def.width - @trimming - 20.mm   # Arbitrary remove 20 mm to avoid displaying line near the border
             px_bin_max_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, _to_px(bin_def.y_max), 0, px_bin_width)
-            svg += "<g class='bin-max'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_max_tooltip(bin_def.y_max, "horizontal-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_BOTTOM_RIGHT ? 'top' : 'bottom'}")}'" unless light}>"
-              svg += "<rect class='bin-max-outer' x='0' y='#{px_bin_max_y - px_cut_outline_width}' width='#{px_bin_length}' height='#{px_cut_outline_width * 2}'/>" unless light
-              svg += "<line class='bin-max-inner' x1='0' y1='#{px_bin_max_y}' x2='#{px_bin_length}' y2='#{px_bin_max_y}'#{" style='stroke:red'" if light}/>"
+            svg += "<g class='bin-minmax'#{" data-toggle='tooltip' data-html='true' title='#{_render_bin_min_max_tooltip(bin_def.y_max, "horizontal-cut-#{@origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_BOTTOM_RIGHT ? 'top' : 'bottom'}")}'" unless light}>"
+              svg += "<rect class='bin-minmax-outer' x='0' y='#{px_bin_max_y - px_cut_outline_width}' width='#{px_bin_length}' height='#{px_cut_outline_width * 2}'/>" unless light
+              svg += "<line class='bin-minmax-inner' x1='0' y1='#{px_bin_max_y}' x2='#{px_bin_length}' y2='#{px_bin_max_y}'#{" style='stroke:red'" if light}/>"
             svg += "</g>"
           end
         svg += '</g>'
@@ -1093,8 +1116,8 @@ module Ladb::OpenCutList
       tt
     end
 
-    def _render_bin_max_tooltip(max, icon)
-      "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-#{icon}\"></i> #{CGI::escape_html(max.to_s)}</div>"
+    def _render_bin_min_max_tooltip(value, icon)
+      "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-#{icon}\"></i> #{CGI::escape_html(value.to_s)}</div>"
     end
 
     def _compute_text_size(text:, font: 'helvetica', size:, align: TextAlignLeft)

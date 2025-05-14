@@ -41,7 +41,6 @@
         this.lastEditPartTab = null;
         this.lastExportOptionsTab = null;
         this.lastExportOptionsEditingItem = null;
-        this.lastReportOptionsTab = null;
         this.lastEstimateOptionsTab = null;
         this.lastCuttingdiagram1dOptionsTab = null;
         this.lastCuttingdiagram2dOptionsTab = null;
@@ -55,7 +54,6 @@
         this.$btnPrint = $('#ladb_btn_print', this.$header);
         this.$btnExport = $('#ladb_btn_export', this.$header);
         this.$btnLayout = $('#ladb_btn_layout', this.$header);
-        this.$btnReport = $('#ladb_btn_report', this.$header);
         this.$btnEstimate = $('#ladb_btn_estimate', this.$header);
         this.$btnOptions = $('#ladb_btn_options', this.$header);
         this.$itemHighlightAllParts = $('#ladb_item_highlight_all_parts', this.$header);
@@ -180,7 +178,6 @@
                 that.$btnPrint.prop('disabled', groups.length === 0);
                 that.$btnExport.prop('disabled', groups.length === 0);
                 that.$btnLayout.prop('disabled', groups.length === 0);
-                that.$btnReport.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
                 that.$btnEstimate.prop('disabled', solidWoodMaterialCount + sheetGoodMaterialCount + dimensionalMaterialCount + edgeMaterialCount + hardwareMaterialCount === 0);
                 that.$itemHighlightAllParts.parents('li').toggleClass('disabled', groups.length === 0);
                 that.$itemLabelsAllParts.parents('li').toggleClass('disabled', groups.length === 0);
@@ -736,13 +733,19 @@
             const $tabs = $('a[data-toggle="tab"]', $modal);
             const $widgetPreset = $('.ladb-widget-preset', $modal);
             const $radiosSource = $('input[name=ladb_radios_source]', $modal);
-            const $selectColSep = $('#ladb_cutlist_export_select_col_sep', $modal);
-            const $selectEncoding = $('#ladb_cutlist_export_select_encoding', $modal);
+            const $selectFormat = $('#ladb_cutlist_export_select_format', $modal);
+            const $selectCsvColSep = $('#ladb_cutlist_export_select_csv_col_sep', $modal);
+            const $selectCsvEncoding = $('#ladb_cutlist_export_select_csv_encoding', $modal);
             const $editorSummary = $('#ladb_cutlist_export_editor_summary', $modal);
             const $editorCutlist = $('#ladb_cutlist_export_editor_cutlist', $modal);
             const $editorInstancesList = $('#ladb_cutlist_export_editor_instances_list', $modal);
+            const $formGroupCsv = $('.form-group-csv', $modal);
             const $btnPreview = $('#ladb_cutlist_export_btn_preview', $modal);
             const $btnExport = $('#ladb_cutlist_export_btn_export', $modal);
+            const $btnExportCsv = $('#ladb_cutlist_export_btn_export_csv', $modal);
+            const $btnExportXlsx = $('#ladb_cutlist_export_btn_export_xlsx', $modal);
+            const $btnExportCopyAll = $('#ladb_cutlist_export_btn_export_copy_all', $modal);
+            const $btnExportCopyValues = $('#ladb_cutlist_export_btn_export_copy_values', $modal);
 
             // Define useful functions
 
@@ -787,10 +790,33 @@
                     that.lastExportOptionsEditingItem = null;
                 }
             };
+            const fnUpdateFieldsVisibility = function () {
+                const format = $selectFormat.val();
+                const isCsv = format === 'csv';
+                if (isCsv) $formGroupCsv.show(); else $formGroupCsv.hide();
+                $('#ladb_cutlist_export_btn_export_format', $btnExport).html(format.toUpperCase());
+            };
+            const fnCopyToClipboard = function(noHeader) {
+                rubyCallCommand('cutlist_export', {
+                    source: exportOptions.source,
+                    col_defs: exportOptions.source_col_defs[exportOptions.source],
+                    format: 'pasteable',
+                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
+                    no_header: noHeader
+                }, function (response) {
+                    if (response.errors) {
+                        that.dialog.notifyErrors(response.errors);
+                    }
+                    if (response.pasteable) {
+                        that.dialog.copyToClipboard(response.pasteable);
+                    }
+                });
+            }
             const fnFetchOptions = function (options) {
                 options.source = that.toInt($radiosSource.filter(':checked').val());
-                options.col_sep = that.toInt($selectColSep.val());
-                options.encoding = that.toInt($selectEncoding.val());
+                options.format = $selectFormat.val();
+                options.csv_col_sep = that.toInt($selectCsvColSep.val());
+                options.csv_encoding = that.toInt($selectCsvEncoding.val());
 
                 if (options.source_col_defs == null) {
                     options.source_col_defs = [];
@@ -802,12 +828,14 @@
             }
             const fnFillInputs = function (options) {
                 $radiosSource.filter('[value=' + options.source + ']').click();
-                $selectColSep.selectpicker('val', options.col_sep);
-                $selectEncoding.selectpicker('val', options.encoding);
+                $selectFormat.selectpicker('val', options.format);
+                $selectCsvColSep.selectpicker('val', options.csv_col_sep);
+                $selectCsvEncoding.selectpicker('val', options.csv_encoding);
                 $editorSummary.ladbEditorExport('setColDefs', [ options.source_col_defs[0] ])
                 $editorCutlist.ladbEditorExport('setColDefs', [ options.source_col_defs[1] ])
                 $editorInstancesList.ladbEditorExport('setColDefs', [ options.source_col_defs[2] ])
                 fnComputeSorterVisibility(options.source);
+                fnUpdateFieldsVisibility();
             }
 
             $widgetPreset.ladbWidgetPreset({
@@ -816,8 +844,14 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $selectColSep.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectEncoding.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectFormat
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', function () {
+                    fnUpdateFieldsVisibility();
+                })
+            ;
+            $selectCsvColSep.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectCsvEncoding.selectpicker(SELECT_PICKER_OPTIONS);
             $editorSummary.ladbEditorExport({
                 dialog: that.dialog,
                 vars: [
@@ -946,7 +980,7 @@
                 rubyCallCommand('cutlist_export', {
                     source: exportOptions.source,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
-                    target: 'table',
+                    format: 'table',
                     cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids
                 }, function (response) {
 
@@ -956,7 +990,6 @@
                     if (response.rows) {
 
                         const $slide = that.pushNewSlide('ladb_cutlist_slide_export', 'tabs/cutlist/_slide-export.twig', $.extend({
-                            errors: response.errors,
                             filename: that.filename,
                             modelName: that.modelName,
                             modelDescription: that.modelDescription,
@@ -970,23 +1003,6 @@
                         }, exportOptions), function () {
 
                         });
-
-                        const fnCopyToClipboard = function(noHeader) {
-                            rubyCallCommand('cutlist_export', {
-                                source: exportOptions.source,
-                                col_defs: exportOptions.source_col_defs[exportOptions.source],
-                                target: 'pasteable',
-                                cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
-                                no_header: noHeader
-                            }, function (response) {
-                                if (response.errors) {
-                                    that.dialog.notifyErrors(response.errors);
-                                }
-                                if (response.pasteable) {
-                                    that.dialog.copyToClipboard(response.pasteable);
-                                }
-                            });
-                        }
 
                         // Fetch UI elements
                         const $btnExport = $('#ladb_btn_export', $slide);
@@ -1033,11 +1049,11 @@
 
                 rubyCallCommand('cutlist_export', {
                     source: exportOptions.source,
+                    format: exportOptions.format,
                     col_sep: exportOptions.col_sep,
                     encoding: exportOptions.encoding,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
-                    target: 'csv',
-                    hidden_group_ids: that.generateOptions.hidden_group_ids,
+                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
                 }, function (response) {
 
                     if (response.errors) {
@@ -1060,6 +1076,40 @@
                 // Hide modal
                 $modal.modal('hide');
 
+            });
+            $btnExportCsv.on('click', function () {
+                $selectFormat.selectpicker('val', 'csv');
+                $btnExport.click();
+            });
+            $btnExportXlsx.on('click', function () {
+                $selectFormat.selectpicker('val', 'xlsx');
+                $btnExport.click();
+            });
+            $btnExportCopyAll.on('click', function () {
+
+                // Fetch options
+                fnFetchOptions(exportOptions);
+
+                // Fetch last editing item
+                fnFetchLastExportOptionsEditingItem(exportOptions.source);
+
+                // Store options
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
+
+                fnCopyToClipboard(false);
+            });
+            $btnExportCopyValues.on('click', function () {
+
+                // Fetch options
+                fnFetchOptions(exportOptions);
+
+                // Fetch last editing item
+                fnFetchLastExportOptionsEditingItem(exportOptions.source);
+
+                // Store options
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
+
+                fnCopyToClipboard(true);
             });
 
             // Show modal
@@ -1084,273 +1134,18 @@
 
     };
 
-    LadbTabCutlist.prototype.reportCutlist = function (forceDefaultTab) {
-        const that = this;
-
-        const isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
-            || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
-
-        // Retrieve report options
-        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_report_options' }, function (response) {
-
-            const reportOptions = response.preset;
-
-            const $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-report.twig', {
-                isGroupSelection: isGroupSelection,
-                tab: forceDefaultTab || that.lastReportOptionsTab == null ? 'general' : that.lastReportOptionsTab,
-            });
-
-            // Fetch UI elements
-            const $tabs = $('a[data-toggle="tab"]', $modal);
-            const $widgetPreset = $('.ladb-widget-preset', $modal);
-            const $btnGenerate = $('#ladb_cutlist_report_btn_generate', $modal);
-
-            const fnFetchOptions = function (options) {
-            }
-            const fnFillInputs = function (options) {
-            }
-
-            $widgetPreset.ladbWidgetPreset({
-                dialog: that.dialog,
-                dictionary: 'cutlist_report_options',
-                fnFetchOptions: fnFetchOptions,
-                fnFillInputs: fnFillInputs
-            });
-
-            fnFillInputs(reportOptions);
-
-            // Bind tabs
-            $tabs.on('shown.bs.tab', function (e) {
-                that.lastReportOptionsTab = $(e.target).attr('href').substring('#tab_report_options_'.length);
-            });
-
-            // Bind buttons
-            $btnGenerate.on('click', function () {
-
-                // Fetch options
-                fnFetchOptions(reportOptions);
-
-                // Store options
-                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_report_options', values: reportOptions });
-
-                // Generate report
-                that.generateReportCutlist(reportOptions);
-
-                // Hide modal
-                $modal.modal('hide');
-
-            });
-
-            // Show modal
-            $modal.modal('show');
-
-            // Setup popovers
-            that.dialog.setupPopovers();
-
-        });
-
-    };
-
-    LadbTabCutlist.prototype.generateReportCutlist = function (reportOptions, callback) {
-        const that = this;
-
-        const fnAdvance = function () {
-            window.requestAnimationFrame(function () {
-                rubyCallCommand('cutlist_report_advance', null, function (response) {
-
-                    if (response.remaining_step === 0 || response.remaining_step === undefined) {
-
-                        const $slide = that.pushNewSlide('ladb_cutlist_slide_report', 'tabs/cutlist/_slide-report.twig', $.extend({
-                            generateOptions: that.generateOptions,
-                            errors: response.errors,
-                            filename: that.filename,
-                            modelName: that.modelName,
-                            modelDescription: that.modelDescription,
-                            modelActivePath: that.modelActivePath,
-                            pageName: that.pageName,
-                            pageDescription: that.pageDescription,
-                            isEntitySelection: that.isEntitySelection,
-                            lengthUnit: that.lengthUnit,
-                            generatedAt: new Date().getTime() / 1000,
-                            report: response
-                        }, reportOptions), function () {
-
-                            that.dialog.setupTooltips();
-
-                            // Callback
-                            if (typeof callback === 'function') {
-                                callback();
-                            }
-
-                        });
-
-                        // Fetch UI elements
-                        const $btnReport = $('#ladb_btn_report', $slide);
-                        const $btnPrint = $('#ladb_btn_print', $slide);
-                        const $btnClose = $('#ladb_btn_close', $slide);
-
-                        // Bind buttons
-                        $btnReport.on('click', function () {
-                            that.reportCutlist();
-                        });
-                        $btnPrint.on('click', function () {
-                            this.blur();
-                            that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.report.title'));
-                        });
-                        $btnClose.on('click', function () {
-                            that.popSlide();
-                        });
-                        $('.ladb-btn-setup-model-units', $slide).on('click', function() {
-                            $(this).blur();
-                            that.dialog.executeCommandOnTab('settings', 'highlight_panel', { panel:'model' });
-                        });
-                        $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                            const $group = $(this).parents('.ladb-cutlist-group');
-                            if ($group.hasClass('no-print')) {
-                                that.showGroup($group, true);
-                            } else {
-                                that.hideGroup($group, true);
-                            }
-                            $(this).blur();
-                        });
-                        $('a.ladb-btn-folding-toggle-row', $slide).on('click', function () {
-                            $(this).blur();
-                            const $row = $(this).parents('.ladb-cutlist-row-folder');
-                            that.toggleFoldingRow($row, 'entry-id');
-                            return false;
-                        });
-                        $('.ladb-cutlist-row', $slide).on('click', function () {
-                            $(this).blur();
-                            $('.ladb-click-tool', $(this)).first().click();
-                            return false;
-                        });
-                        $('a.ladb-item-hide-all-other-groups', $slide).on('click', function () {
-                            $(this).blur();
-                            const $group = $(this).parents('.ladb-cutlist-group');
-                            const groupId = $group.data('group-id');
-                            that.hideAllGroups(groupId, $slide, true);
-                            that.scrollSlideToTarget($slide, $group, true, false);
-                        });
-                        $('a.ladb-item-show-all-groups', $slide).on('click', function () {
-                            $(this).blur();
-                            that.showAllGroups($slide, true);
-                        });
-                        $('#ladb_item_expand_all', $slide).on('click', function () {
-                            $(this).blur();
-                            that.expandAllFoldingRows($slide, 'entry-id');
-                        });
-                        $('#ladb_item_collapse_all', $slide).on('click', function () {
-                            $(this).blur();
-                            that.collapseAllFoldingRows($slide, 'entry-id');
-                        });
-                        $('a.ladb-btn-edit-material', $slide).on('click', function () {
-                            $(this).blur();
-
-                            // Flag to ignore next material change event
-                            that.ignoreNextMaterialEvents = true;
-
-                            const materialId = $(this).data('material-id');
-                            const propertiesTab = $(this).data('properties-tab');
-                            that.dialog.executeCommandOnTab('materials', 'edit_material', {
-                                materialId: materialId,
-                                propertiesTab: propertiesTab,
-                                updatedCallback: function () {
-
-                                    // Flag to stop ignoring next material change event
-                                    that.ignoreNextMaterialEvents = false;
-
-                                    // Refresh the list
-                                    that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist', {
-                                        callback: function () {
-                                            that.generateReportCutlist(reportOptions);
-                                        }
-                                    });
-
-                                }
-                            });
-                            return false;
-                        });
-                        $('a.ladb-btn-cuttingdiagram-1d', $slide).on('click', function () {
-                            $(this).blur();
-                            const groupId = $(this).data('group-id');
-                            that.cuttingdiagram1dGroup(groupId, true, function () {
-                                that.generateReportCutlist(reportOptions);
-                            });
-                            return false;
-                        });
-                        $('a.ladb-btn-cuttingdiagram-2d', $slide).on('click', function () {
-                            $(this).blur();
-                            const groupId = $(this).data('group-id');
-                            that.cuttingdiagram2dGroup(groupId, true, function () {
-                                that.generateReportCutlist(reportOptions);
-                            });
-                            return false;
-                        });
-                        $('a.ladb-btn-open-part-url, a.ladb-btn-open-material-url', $slide).on('click', function () {
-                            $(this).blur();
-                            rubyCallCommand('core_open_url', { url: $(this).attr('href') });
-                            return false;
-                        });
-                        $('a.ladb-btn-highlight-part', $slide).on('click', function () {
-                            $(this).blur();
-                            const partId = $(this).data('part-id');
-                            that.highlightPart(partId);
-                            return false;
-                        });
-                        $('a.ladb-btn-edit-part', $slide).on('click', function () {
-                            $(this).blur();
-                            const partId = $(this).data('part-id');
-                            that.editPart(partId, undefined, undefined, function () {
-
-                                // Refresh the list
-                                that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist', {
-                                    callback: function () {
-                                        that.generateReportCutlist(reportOptions);
-                                    }
-                                });
-
-                            });
-                            return false;
-                        });
-
-                        that.dialog.finishProgress();
-
-                    } else {
-
-                        window.requestAnimationFrame(function () {
-                            that.dialog.incProgress(1);
-                        });
-
-                        fnAdvance();
-                    }
-
-                });
-            });
-        }
-
-        window.requestAnimationFrame(function () {
-            rubyCallCommand('cutlist_report_start', $.extend({ hidden_group_ids: that.generateOptions.hidden_group_ids }, reportOptions), function (response) {
-                window.requestAnimationFrame(function () {
-                    that.dialog.startProgress(response.remaining_step);
-                    fnAdvance();
-                });
-            });
-        });
-
-    };
-
     LadbTabCutlist.prototype.estimateCutlist = function (forceDefaultTab) {
         const that = this;
 
         const isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
             || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
 
-        // Retrieve report options
+        // Retrieve estimate options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_estimate_options' }, function (response) {
 
             const estimateOptions = response.preset;
 
-            const $modal = that.appendModalInside('ladb_cutlist_modal_report', 'tabs/cutlist/_modal-estimate.twig', {
+            const $modal = that.appendModalInside('ladb_cutlist_modal_estimate', 'tabs/cutlist/_modal-estimate.twig', {
                 isGroupSelection: isGroupSelection,
                 tab: forceDefaultTab || that.lastEstimateOptionsTab == null ? 'general' : that.lastEstimateOptionsTab,
             });
@@ -1388,7 +1183,7 @@
                 // Store options
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_estimate_options', values: estimateOptions });
 
-                // Generate report
+                // Generate estimate
                 that.generateEstimateCutlist(estimateOptions);
 
                 // Hide modal
@@ -1457,7 +1252,7 @@
                     });
                     $btnPrint.on('click', function () {
                         this.blur();
-                        that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.report.title'));
+                        that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.estimate.title'));
                     });
                     $btnClose.on('click', function () {
                         that.popSlide();
@@ -5308,6 +5103,7 @@
                 const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 const $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
                 const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
+                const $selectInputToJsonBinDir = $('#ladb_select_input_to_json_bin_dir', $modal);
                 const $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 const $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
                 const $btnGenerate = $('#ladb_btn_generate', $modal);
@@ -5346,6 +5142,7 @@
                     options.time_limit = that.toInt($inputTimeLimit.val());
                     options.not_anytime_tree_search_queue_size = that.toInt($inputNotAnytimeTreeSearchQueueSize.val());
                     options.verbosity_level = that.toInt($selectVerbosityLevel.val());
+                    options.input_to_json_bin_dir = $selectInputToJsonBinDir.val();
                 }
                 const fnFillInputs = function (options) {
                     $radiosProblemType.filter('[value=' + fnValidProblemType(options.problem_type) + ']').click();
@@ -5368,6 +5165,7 @@
                     $inputTimeLimit.val(options.time_limit);
                     $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
                     $selectVerbosityLevel.selectpicker('val', options.verbosity_level);
+                    $selectInputToJsonBinDir.selectpicker('val', options.input_to_json_bin_dir);
                     fnUpdateFieldsVisibility();
                 }
                 const fnConvertToVariableDefs = function (vars) {
@@ -5527,6 +5325,7 @@
                 $inputTimeLimit.ladbTextinputText();
                 $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
                 $selectVerbosityLevel.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectInputToJsonBinDir.selectpicker(SELECT_PICKER_OPTIONS);
 
                 fnFillInputs(packingOptions);
 
@@ -5977,7 +5776,7 @@
 
                                 if (response.running) {
                                     let waitingForResponse = false;
-                                    const interval = setInterval(function () {
+                                    const intervalId = setInterval(function () {
 
                                         if (waitingForResponse) {
                                             return;
@@ -6001,14 +5800,14 @@
 
                                             } else if (response.cancelled) {
 
-                                                clearInterval(interval);
+                                                clearInterval(intervalId);
 
                                                 // Finish progress feedback
                                                 that.dialog.finishProgress();
 
                                             } else {
 
-                                                clearInterval(interval);
+                                                clearInterval(intervalId);
 
                                                 fnCreateSlide(response);
 
@@ -6461,10 +6260,6 @@
         });
         this.$btnLayout.on('click', function () {
             that.layoutAllParts();
-            this.blur();
-        });
-        this.$btnReport.on('click', function () {
-            that.reportCutlist();
             this.blur();
         });
         this.$btnEstimate.on('click', function () {

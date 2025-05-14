@@ -53,7 +53,7 @@
     "thickness_increase": "0",
     "std_lengths": "",
     "std_widths": "",
-    "std_thicknesses": { "metric": "5mm;8mm;10mm;12mm;15mm;16mm;18mm;19mm;21mm;22mm;27mm", "imperial": "1/4\";1/2\";5/8\";3/4\";1\";1 1/8\"" },
+    "std_thicknesses": { "metric": "8mm;10mm;15mm;18mm;19mm;22mm", "imperial": "1/4\";1/2\";5/8\";3/4\";1\";1 1/8\"" },
     "std_sections": "",
     "std_sizes": { "metric": "2800mm x 2070mm;2500mm x 1250mm;2440mm x 1220mm;", "imperial": "96\" x 48\"; 47.75\" x 23.75\"" },
     "grained": true,

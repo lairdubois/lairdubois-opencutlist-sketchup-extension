@@ -50,7 +50,9 @@ default:
   good: Bon
   bad: Mauvais
   by: par
+  # date format in use for language
   date_format: "d/m/Y G:i"
+  # short date format in use for language
   date_format_short: d/m/Y
   decimal: Décimal
   fractional: Fractionnel
@@ -610,8 +612,8 @@ tab:
       faces: Faces
     export:
       title: Exportation
-      info_0: |
-        Cette fonctionnalité vous permet d'exporter les données de la *fiche de débit* vers le presse-papier ou dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+      info_0: | # TODO
+        Cette fonctionnalité vous permet d'exporter les données de la *fiche de débit* vers le presse-papier ou dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values) ou [XLSX](https://fr.wikipedia.org/wiki/XLSX).
       customize_help: |
         Réordonnez, Masquez, Ajoutez, Retirez ou Sélectionnez une colonne dans la liste pour personnaliser son **titre** et la **formule** générant la valeur affichée pour chaque ligne exportée.
       add_column: Ajouter une colonne
@@ -632,12 +634,13 @@ tab:
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Liste des pièces
       option_source_instances_list: Liste des instances
-      option_col_sep: Séparateur
-      option_col_sep_tab: Tabulation
-      option_col_sep_comma: Virgule
-      option_col_sep_semicolon: Point virgule
-      option_encoding: Encodage
-      copy_all: Tout
+      option_format: Format
+      option_csv_col_sep: Séparateur
+      option_csv_col_sep_tab: Tabulation
+      option_csv_col_sep_comma: Virgule
+      option_csv_col_sep_semicolon: Point virgule
+      option_csv_encoding: Encodage
+      copy_all: Titres + Valeurs  # TODO
       copy_values: Valeurs seulement
       number: N°
       path: Chemin
@@ -692,38 +695,6 @@ tab:
         no_column_formula: Saisissez une formule
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
-    report:
-      title: Estimation
-      info_0: |
-        Cette fonctionnalité vous permet de générer une estimation des **masses** et **coûts** des **matières premières brutes** nécessaires à la réalisation des pièces de la *fiche de débit*.
-      options_general: Générales
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: Le coefficient multiplicateur pour les matières de type "**$t(tab.materials.type_1)**" se configure désormais sur chaque matière dans les options d'estimation.
-      raw_materials: Matières premières brutes
-      total: Total
-      total_used: Utilisé
-      total_unused: Non utilisé
-      total_mass: Σ Masses
-      total_cost: Σ Coûts
-      total_count: Qté
-      total_instance_count: Σ Unités
-      total_volume: Σ Volumes
-      total_area: Σ Surfaces
-      total_length: Σ Longueurs
-      tooltip:
-        incompatible_unit: Unité incompatible avec les options d'estimation de la matière
-        multiplier_coefficient: Coefficient multiplicateur
-      error:
-        no_typed_material_parts: "Aucune pièce ayant une matière avec type défini (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) n'est fournie pour générer l'estimation."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreur**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
-      warning:
-        is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas comptabilisées.
-      tip:
-        not_enough_data: |
-          Pour que cette estimation puisse se calculer correctement :
-          - Les matières utilisées doivent avoir au moins une masse volumique et un prix configurés.
-          - Les accessoires utilisés doivent avoir au moins une masse et un prix.
     estimate:
       title: Estimation
       info_0: |
@@ -1027,7 +998,7 @@ tab:
         *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       option_scrap_bin_1d_none: Aucun
       option_std_bin_2d_sheet_good: Panneaux standards
-      option_std_bin_2d_veneer: Feuilles standard
+      option_std_bin_2d_veneer: Feuilles standards
       option_std_bin_2d_help: |
         Sélectionnez ici les tailles de panneau ou feuille standard qui seront dupliquées pour contenir au mieux toutes les pièces.
 

@@ -21,8 +21,6 @@
 #include "shape/labeling.hpp"
 
 #include <mutex>
-#include <shape/offset.hpp>
-#include <shape/simplification.hpp>
 
 using namespace packingsolver;
 using namespace nlohmann;
@@ -336,7 +334,7 @@ namespace Packy {
             }
             if (j.contains("optimization_mode")) {
                 OptimizationMode optimization_mode;
-                std::stringstream ss(j.value("optimization_mode", "not-anytime"));
+                std::stringstream ss(j.value("optimization_mode", "not-anytime-deterministic"));
                 ss >> optimization_mode;
                 parameters_.optimization_mode = optimization_mode;
             }
@@ -1578,9 +1576,11 @@ namespace Packy {
                         {"efficiency",  items_space / bin_space}
                 });
 
-                // Add x_max and y_max attributes to the last bin
+                // Add x_min, x_max and y_min, y_max attributes to the last bin
                 if (bin_pos == solution.number_of_different_bins() - 1) {
+                    j_bin["x_min"] = to_length_dbl(solution.x_min());
                     j_bin["x_max"] = to_length_dbl(solution.x_max());
+                    j_bin["y_min"] = to_length_dbl(solution.y_min());
                     j_bin["y_max"] = to_length_dbl(solution.y_max());
                 }
 

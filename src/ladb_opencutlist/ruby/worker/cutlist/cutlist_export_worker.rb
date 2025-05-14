@@ -10,42 +10,45 @@ module Ladb::OpenCutList
     EXPORT_OPTION_SOURCE_CUTLIST = 1
     EXPORT_OPTION_SOURCE_INSTANCES_LIST = 2
 
-    EXPORT_OPTION_COL_SEP_TAB = 0
-    EXPORT_OPTION_COL_SEP_COMMA = 1
-    EXPORT_OPTION_COL_SEP_SEMICOLON = 2
+    EXPORT_OPTION_CSV_COL_SEP_TAB = 0
+    EXPORT_OPTION_CSV_COL_SEP_COMMA = 1
+    EXPORT_OPTION_CSV_COL_SEP_SEMICOLON = 2
 
-    EXPORT_OPTION_ENCODING_UTF8 = 0
-    EXPORT_OPTION_ENCODING_UTF16LE = 1
-    EXPORT_OPTION_ENCODING_UTF16BE = 2
+    EXPORT_OPTION_CSV_ENCODING_UTF8 = 0
+    EXPORT_OPTION_CSV_ENCODING_UTF16LE = 1
+    EXPORT_OPTION_CSV_ENCODING_UTF16BE = 2
 
-    EXPORT_OPTION_TARGET_TABLE = 'table'.freeze
-    EXPORT_OPTION_TARGET_PASTABLE = 'pasteable'.freeze
-    EXPORT_OPTION_TARGET_CSV = 'csv'.freeze
+    EXPORT_OPTION_FORMAT_TABLE = 'table'.freeze
+    EXPORT_OPTION_FORMAT_PASTABLE = 'pasteable'.freeze
+    EXPORT_OPTION_FORMAT_CSV = 'csv'.freeze
+    EXPORT_OPTION_FORMAT_XLSX = 'xlsx'.freeze
 
     def initialize(cutlist,
 
                    cutlist_hidden_group_ids: [],
 
                    source: EXPORT_OPTION_SOURCE_CUTLIST,
-                   col_sep: EXPORT_OPTION_COL_SEP_SEMICOLON,
-                   encoding: EXPORT_OPTION_ENCODING_UTF8,
+                   format: EXPORT_OPTION_FORMAT_CSV,
+
+                   csv_col_sep: EXPORT_OPTION_CSV_COL_SEP_SEMICOLON,
+                   csv_encoding: EXPORT_OPTION_CSV_ENCODING_UTF8,
 
                    col_defs: {},
-                   target: EXPORT_OPTION_TARGET_CSV,
                    no_header: false
 
     )
 
       @cutlist = cutlist
+      @cutlist_hidden_group_ids = cutlist_hidden_group_ids
 
       @source = source
-      @col_sep = col_sep
-      @encoding = encoding
-      @col_defs = col_defs
-      @target = target
-      @no_header = no_header
+      @format = format
 
-      @cutlist_hidden_group_ids = cutlist_hidden_group_ids
+      @csv_col_sep = csv_col_sep
+      @csv_encoding = csv_encoding
+
+      @col_defs = col_defs
+      @no_header = no_header
 
     end
 
@@ -67,7 +70,7 @@ module Ladb::OpenCutList
           :export_path => ''
       }
 
-      case @target
+      case @format
       when 'table'
 
         response[:rows] = _compute_rows
@@ -96,21 +99,21 @@ module Ladb::OpenCutList
           begin
 
             # Convert col_sep
-            case @col_sep
-            when EXPORT_OPTION_COL_SEP_COMMA
+            case @csv_col_sep
+            when EXPORT_OPTION_CSV_COL_SEP_COMMA
               col_sep = ','
-            when EXPORT_OPTION_COL_SEP_SEMICOLON
+            when EXPORT_OPTION_CSV_COL_SEP_SEMICOLON
               col_sep = ';'
             else
               col_sep = "\t"
             end
 
             # Convert encoding
-            case @encoding
-            when EXPORT_OPTION_ENCODING_UTF16LE
+            case @csv_encoding
+            when EXPORT_OPTION_CSV_ENCODING_UTF16LE
               bom = "\xFF\xFE".force_encoding('utf-16le')
               encoding = 'UTF-16LE'
-            when EXPORT_OPTION_ENCODING_UTF16BE
+            when EXPORT_OPTION_CSV_ENCODING_UTF16BE
               bom = "\xFE\xFF".force_encoding('utf-16be')
               encoding = 'UTF-16BE'
             else
@@ -146,8 +149,59 @@ module Ladb::OpenCutList
 
         end
 
+      when 'xlsx'
+
+        # Ask for export file path
+        path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.xlsx')
+        if path
+
+          # Force "xlsx" file extension
+          path = path + '.xlsx' unless path.end_with?('.xlsx')
+
+          begin
+
+            require_relative '../../lib/write_xlsx/write_xlsx'
+
+            # Create a new Excel workbook
+            workbook = WriteXLSX.new(path)
+
+            # Add a worksheet
+            worksheet = workbook.add_worksheet
+
+            # Define formats
+            formats = {
+              'left' => workbook.add_format(:align => 'left'),
+              'center' => workbook.add_format(:align => 'center'),
+              'right' => workbook.add_format(:align => 'right'),
+            }
+
+            # Iterate on rows to add cells
+            _compute_rows.each_with_index { |row, row_index|
+              row.each_with_index { |cell, col_index|
+                unless cell.is_a?(String) && cell.empty?
+                  col_def = @col_defs[col_index]
+                  format = formats[col_def['align']] if col_def && col_def['align']
+                  worksheet.write(row_index, col_index, cell, format)
+                end
+              }
+            }
+
+            # Write xlsx file to disk.
+            workbook.close
+
+            # Populate response
+            response[:export_path] = path.tr("\\", '/')  # Standardize path by replacing \ by /
+
+           rescue => e
+            puts e.message
+            puts e.backtrace
+            response[:errors] << [ 'core.error.failed_export_to', { path => path, :error => e.message } ]
+          end
+
+        end
+
       else
-        response[:errors] << [ 'Unknow target' ]
+        response[:errors] << [ 'Unknow format' ]
       end
       response
     end

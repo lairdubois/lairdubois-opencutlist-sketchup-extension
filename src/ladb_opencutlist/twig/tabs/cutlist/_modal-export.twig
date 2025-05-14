@@ -52,19 +52,28 @@
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_export_options_general">
             <div class="form form-horizontal">
                 <div class="form-group">
-                    <label class="control-label col-xs-4">{{ 'tab.cutlist.export.option_col_sep'|i18next }}</label>
+                    <label class="control-label col-xs-4">{{ 'tab.cutlist.export.option_format'|i18next }}</label>
                     <div class="col-xs-6">
-                        <select class="form-control" id="ladb_cutlist_export_select_col_sep">
-                            <option value="0" data-content="{{ 'tab.cutlist.export.option_col_sep_tab'|i18next }}">0</option>
-                            <option value="1" data-content="{{ 'tab.cutlist.export.option_col_sep_comma'|i18next }}">1</option>
-                            <option value="2" data-content="{{ 'tab.cutlist.export.option_col_sep_semicolon'|i18next }}">2</option>
+                        <select class="form-control" id="ladb_cutlist_export_select_format">
+                            <option value="csv" data-content="CSV"></option>
+                            <option value="xlsx" data-content="XLSX"></option>
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="control-label col-xs-4">{{ 'tab.cutlist.export.option_encoding'|i18next }}</label>
+                <div class="form-group form-group-csv">
+                    <label class="control-label col-xs-4">{{ 'tab.cutlist.export.option_csv_col_sep'|i18next }}</label>
                     <div class="col-xs-6">
-                        <select class="form-control" id="ladb_cutlist_export_select_encoding">
+                        <select class="form-control" id="ladb_cutlist_export_select_csv_col_sep">
+                            <option value="0" data-content="{{ 'tab.cutlist.export.option_csv_col_sep_tab'|i18next }}">0</option>
+                            <option value="1" data-content="{{ 'tab.cutlist.export.option_csv_col_sep_comma'|i18next }}">1</option>
+                            <option value="2" data-content="{{ 'tab.cutlist.export.option_csv_col_sep_semicolon'|i18next }}">2</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group form-group-csv">
+                    <label class="control-label col-xs-4">{{ 'tab.cutlist.export.option_csv_encoding'|i18next }}</label>
+                    <div class="col-xs-6">
+                        <select class="form-control" id="ladb_cutlist_export_select_csv_encoding">
                             <option value="0" data-content="UTF-8">0</option>
                             <option value="1" data-content="UTF-16LE">1</option>
                             <option value="2" data-content="UTF-16BE">2</option>
@@ -79,5 +88,17 @@
 {% block footerRightInner %}
     <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
     <button class="btn btn-default" id="ladb_cutlist_export_btn_preview">{{ 'default.preview'|i18next }}</button>
-    <button class="btn btn-primary" id="ladb_cutlist_export_btn_export">{{ 'default.export'|i18next }}&nbsp;<i class="ladb-opencutlist-icon-arrow-right"></i>&nbsp;CSV</button>
+    <div class="btn-group dropup">
+        <button type="button" class="btn btn-primary" id="ladb_cutlist_export_btn_export">{{ 'default.export'|i18next }}&nbsp;<i class="ladb-opencutlist-icon-arrow-right"></i>&nbsp;<span id="ladb_cutlist_export_btn_export_format"></span></button>
+        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a id="ladb_cutlist_export_btn_export_csv" href="#">{{ 'default.export'|i18next }}&nbsp;<i class="ladb-opencutlist-icon-arrow-right"></i>&nbsp;CSV</a></li>
+            <li><a id="ladb_cutlist_export_btn_export_xlsx" href="#">{{ 'default.export'|i18next }}&nbsp;<i class="ladb-opencutlist-icon-arrow-right"></i>&nbsp;XLSX</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a id="ladb_cutlist_export_btn_export_copy_all" href="#">{{ 'default.copy'|i18next }}&nbsp;<i class="ladb-opencutlist-icon-arrow-right"></i>&nbsp;{{ 'tab.cutlist.export.copy_all'|i18next }}</a></li>
+            <li><a id="ladb_cutlist_export_btn_export_copy_values" href="#">{{ 'default.copy'|i18next }}&nbsp;<i class="ladb-opencutlist-icon-arrow-right"></i>&nbsp;{{ 'tab.cutlist.export.copy_values'|i18next }}</a></li>
+        </ul>
+    </div>
 {% endblock %}

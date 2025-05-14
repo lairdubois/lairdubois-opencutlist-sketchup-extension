@@ -7,7 +7,6 @@ default:
   minimize: Згорнути
   maximize: Розгорнути
   cancel: Відмінити
-  # stop computation and return best result so far
   stop: Зупинити
   validate: Прийняти
   confirm: Підтвердити
@@ -39,6 +38,7 @@ default:
   draw: Креслення
   estimate: Кошторис
   rename: Перейменувати
+  next: Наступний
   yes: Так
   no: Ні
   automatic: Автоматичний
@@ -69,6 +69,8 @@ default:
   instance_plural: одиниці
   part_single: деталь
   part_plural: деталі
+  cut_single: різ
+  cut_plural: різи
   thickness_layer_single: шар
   thickness_layer_plural: шари
   setup_model_units: Налаштування одиниць виміру моделі
@@ -379,9 +381,7 @@ tab:
       select_unselect_all_parts: Виділити/Зняти виділення з усіх деталей у групі
       select_parts_in_cutlist: Виберіть деталь у списку деталей
       select_parts_in_cutlist_plural: "Виберіть {{ count }} деталей у списку деталей"
-      # used in estimate to setup the cutting diagram
       setup_group_cuttingdiagram: "Налаштування розкрою '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
-      # used in estimate to setup the new packing
       setup_group_packing: "Налаштування розкрою '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Відкрити URL деталі
     menu:
@@ -446,7 +446,7 @@ tab:
         Встановіть тут кількість шарів, які розділяють намальовану деталь по її товщині.
 
         *Приклад:* Якщо для намальованої деталі товщиною *38мм* ви бажаєте склеїти дві панелі *19мм*, вкажіть у цьому полі **2**.
-        *Тоді OpenCutList зарахує 2 деталі товщиною 19 мм замість 1 деталі 38 мм.*
+        *Тоді OpenCutList зарахує 2 деталі товщиною 19мм замість 1 деталі 38мм.*
       description: Опис
       description_help: |
         *Опис* використовується для надання персоналізованої інформації щодо визначення кожної деталі.
@@ -726,6 +726,42 @@ tab:
           Щоб цей звіт можна було правильно розрахувати:
           - Використовувані матеріали повинні мати хоча б налаштовану щільність і ціну.
           - Використовувана фурнітура повинна мати хоча б одну масу і одну ціну.
+    estimate:
+      title: Кошторис
+      info_0: |
+        Створіть оцінку **ваги** та **вартості** **сировини**, необхідної для виготовлення деталей зі *списку деталей*.
+      options_general: Загальні
+      total: Всього
+      total_used: Використаний
+      total_unused: Невикористаний
+      total_mass: Σ Маса
+      total_cost: Σ Ціна
+      total_count: Кількість
+      total_instance_count: Σ Одиниць
+      total_volume: Σ Об’ємів
+      total_area: Σ Площь
+      total_length: Σ Довжин
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_-1: $t(default.cut_plural)
+      tooltip:
+        incompatible_unit: Одиниця несумісна з параметрами оцінки матеріалу
+        multiplier_coefficient: Коефіцієнт надбавки
+      error:
+        no_typed_material_parts: "Для складання кошторису деталі повинні мати певний тип матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**)."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилка**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилок**."
+      warning:
+        is_group_selection: "Деталі, які містяться в **прихованих групах**, не будуть зараховані."
+      tip:
+        not_enough_data: |
+          Щоб цей звіт можна було правильно розрахувати:
+          - Використовувані матеріали повинні мати хоча б налаштовану щільність і ціну.
+          - Використовувана фурнітура повинна мати хоча б одну масу і одну ціну.
     cuttingdiagram:
       title: Карта розкрою
       start_msg: Триває оптимізація
@@ -963,6 +999,212 @@ tab:
         cutting_dimensions_increase_1d: "Ці пиляльні розміри налаштовані для матеріалу '{{ material_name }}'. Припуск до довжини (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "Ці пиляльні розміри налаштовані для матеріалу '{{ material_name }}'. Припуск до довжини (**{{ length_increase }}**) та Припуск до ширини (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Розміри зменшено на товщину крайки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    packing:
+      title: Карта розкрою
+      option_problem_type: Тип
+      option_problem_type_rectangle: ""
+      option_problem_type_rectangleguillotine: ""
+      option_problem_type_onedimensional: Погонаж
+      option_problem_type_irregular: ""
+      options_material: Матеріал
+      options_config: Конфігурація
+      options_display: Перегляд
+      options_tuning: ""
+      option_std_bin_1d_dimensional: ""
+      option_std_bin_1d_edge: ""
+      option_std_bin_1d_help: |
+      option_std_bin_1d_add: Додати розмір
+      option_std_bin_1d_none: Ні
+      option_scrap_bin_1d_dimensional_sizes: Залишок
+      option_scrap_bin_1d_edge_sizes: Залишок крайки
+      option_scrap_bin_1d_sizes_placeholder: довжина х кількість ; ...
+      option_scrap_bin_1d_sizes_help: |
+      option_scrap_bin_1d_none: Ні
+      option_std_bin_2d_sheet_good: ""
+      option_std_bin_2d_veneer: ""
+      option_std_bin_2d_help: |
+      option_std_bin_2d_add: Додати розмір
+      option_std_bin_2d_none: Ні
+      option_scrap_bin_2d_sheet_good_sizes: Залишки
+      option_scrap_bin_2d_veneer_sizes: Залишки листа
+      option_scrap_bin_2d_sizes_placeholder: довжина х ширина х кількість ; ...
+      option_scrap_bin_2d_sizes_help: |
+      option_scrap_bin_2d_none: Ні
+      option_optimization_mode: ""
+      option_optimization_mode_help: |
+      option_objective: Мета
+      option_objective_help: |
+      option_rectangleguillotine_cut_type: ""
+      option_rectangleguillotine_cut_type_help: |
+      option_rectangleguillotine_cut_type_non_exact: ""
+      option_rectangleguillotine_cut_type_exact: ""
+      option_rectangleguillotine_cut_type_homogenous: ""
+      option_rectangleguillotine_number_of_stages: ""
+      option_rectangleguillotine_number_of_stages_help: |
+      option_rectangleguillotine_first_stage_orientation: ""
+      option_rectangleguillotine_first_stage_orientation_help: |
+      option_rectangleguillotine_first_stage_orientation_horizontal: ""
+      option_rectangleguillotine_first_stage_orientation_vertical: ""
+      option_rectangleguillotine_first_stage_orientation_any: ""
+      option_rectangleguillotine_keep: Розмір мінімальних залишків
+      option_rectangleguillotine_keep_help: "Залишки, які мають обидва розміри більші за мінімальний розмір, будуть позначені **зберегти**."
+      option_irregular_allowed_rotations: ""
+      option_irregular_allowed_rotations_help: |
+      option_irregular_allowed_rotations_0: Ні
+      option_irregular_allowed_rotations_90: ""
+      option_irregular_allowed_rotations_180: ""
+      option_irregular_allow_mirroring: ""
+      option_irregular_allow_mirroring_help: |
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: $t(default.yes)
+      option_spacing: Інтервал
+      option_spacing_help: |
+      option_trimming: Обрізка листа
+      option_trimming_1d_help: ""
+      option_trimming_2d_help: ""
+      option_items_formula: Формула
+      option_items_formula_help: |
+      option_hide_part_list: Список деталей
+      option_hide_part_list_1d_dimensional_0: Відображати для кожної дошки
+      option_hide_part_list_1d_edge_0: Відображати для кожної крайки
+      option_hide_part_list_2d_sheet_good_0: Відображати для кожної панелі
+      option_hide_part_list_2d_veneer_0: Відображати для кожного листа
+      option_hide_part_list_1: Приховати
+      option_hide_part_list_1d_help: Показує або приховує список деталей для кожної дошки або крайки.
+      option_hide_part_list_2d_help: Показує або приховує список деталей на кожній панелі або листі.
+      option_part_drawing_type: Форми деталей
+      option_part_drawing_type_0: Приховані
+      option_part_drawing_type_1: Креслення - Вигляд з лиця
+      option_part_drawing_type_2: Креслення - Вигляд ззаді
+      option_part_drawing_type_help: |
+        Дозволяє відображати або приховувати фактичну форму деталей та їх обробку на діаграмі.
+
+        *Цю опцію потрібно активувати, щоб форми могли бути експортовані.*
+      option_colorization: ""
+      option_colorization_0: $t(default.no)
+      option_colorization_1: ""
+      option_colorization_2: ""
+      option_colorization_help: |
+      option_hide_edges_preview: Індикатори крайок
+      option_hide_edges_preview_0: Відобразити на діаграмі
+      option_hide_edges_preview_1: Приховати на діаграмі
+      option_hide_edges_preview_help: "Дозволяє відображати або приховувати візуальну індикацію крайок, які потрібно облицювати для кожної деталі діаграми."
+      option_time_limit: ""
+      option_time_limit_help: |
+      tooltip:
+        scroll_to_block_1d: Прокрутка до першої дошки або крайки
+        scroll_to_block_2d: ""
+      list:
+        summary: Звіт
+        trimming: Обрізка листа
+        settings: Параметри
+        stats: Статистика
+        time: ""
+        total_efficiency: Загальна ефективність
+        total_fill_rate: ""
+        total_cut_count: Кількість різів
+        total_cut_length: Довжина різів
+        efficiency: Ефективність
+        count: Кількість
+        length: Довжина
+        width: Ширина
+        total_length: Σ Довжин
+        total_area: Σ Площь
+        total_cost: Σ Ціна
+        total_part_count: Σ Деталей
+        total_used: Всього використано
+        bin_1d_dimensional: Погонаж
+        bin_1d_dimensional_type_0: Стандартний розмір дошки
+        bin_1d_dimensional_type_1: Обрізок
+        bin_1d_edge: Крайка
+        bin_1d_edge_type_0: Стандартний розмір крайки
+        bin_1d_edge_type_1: Обрізок крайки
+        bin_2d_sheet_good: Листовий
+        bin_2d_sheet_good_type_0: Стандартний розмір листа
+        bin_2d_sheet_good_type_1: Залишок
+        bin_2d_veneer: Шпон
+        bin_2d_veneer_type_0: Стандартний лист
+        bin_2d_veneer_type_1: Залишок листа
+        unused: Невикористаний
+        unplaced_parts: ""
+        unplaced_parts_plural: Нерозміщені деталі
+        parts: Деталь
+        parts_plural: Деталі
+        leftovers: Залишок
+        leftovers_plural: Залишки
+        leftovers_to_keep: Зберегти перепад
+        leftovers_to_keep_plural: Зберегти залишки
+        cut: Розріз
+        cut_plural: Розрізи
+        cut_trimming: Чистий різ
+        cut_primary: ""
+        cut_depth: ""
+      write:
+        title: Експорт розкладки
+        info_0: |
+          Цей модуль дозволяє експортувати **геометрію** *розкладку* у вигляді списку файлів у форматі [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) або [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: Структура DXF
+        option_dxf_structure_1: Шари
+        option_dxf_structure_2: Шари + Блоки
+        option_dxf_structure_help: |
+          Дозволяє вибрати структуру файлу DXF.
+
+          - Структура **Шари** малює всі лінії на площині, розрізняючи різні типи ліній лише за допомогою шарів. *Ця структура забезпечує кращу сумісність з програмним забезпеченням сторонніх виробників.*
+          - Структура **Шари + Блоки** створює блок для кожної деталі і вставляє ці блоки стільки разів, скільки деталей повторюються. *Ця структура надає більшу гнучкість для зміни файлу.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_bin_sheet_good: Листовий
+        option_bin_sheet_good_help: |
+          Дозволяє експорт панелі та вибір кольору.
+        option_bin_veneer: Шпон
+        option_bin_veneer_help: |
+          Дозволяє активувати експорт листа та вибрати його кольори.
+        option_bin_dimensional: Погонаж
+        option_bin_dimensional_help: |
+          Дозволяє активувати експорт дошки та вибрати її кольори.
+        option_bin_edge: Крайка
+        option_bin_edge_help: |
+          Дозволяє активувати експорт крайки та вибрати її кольори.
+        option_parts: Деталі
+        option_parts_help: |
+          Дозволяє активувати експорт деталей та вибрати їх кольори.
+        option_parts_holes: Свердління
+        option_parts_holes_help: |
+          Дозволяє вибрати колір отворів деталей.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Ідентифікації
+        option_texts_help: |
+          Дозволяє активувати експорт текстів ідентифікації деталей та вибрати їх кольори.
+        option_leftovers: Залишки
+        option_leftovers_help: |
+          Дозволяє активувати експорт залишків та вибрати їхні кольори.
+        option_cuts: Розрізи
+        option_cuts_help: |
+          Дозволяє активувати експорт розрізів та вибрати їх колір.
+        warning:
+          is_bin_selection: ""
+      error:
+        no_part: Нема деталі.
+        no_bin_1d: ""
+        no_bin_2d: ""
+        no_solution: ""
+      warning:
+        is_part_selection: Цей звіт обмежено **вибраними деталями**.
     labels:
       title: Етикетки
       options_layout: Склад
@@ -1278,10 +1520,11 @@ tab:
       grain_direction: Напрямок фактури
       raw_estimated_0: Розрахунок корисного обсягу
       colorized: Цей відтінок буде застосовано до текстури цього матеріалу під час візуалізації в моделі
-      texture_load: Завантажити нову текстуру
+      texture_load: Завантажити нове зображення
+      texture_export: Експортувати зображення
       texture_clear: Видалити текстуру
       edit: "Редагувати властивості '{{ name }}'"
-      set_current: "Розфарбуйте деталі за допомогою '{{ name }}'."
+      set_current: "Розфарбуйте деталі за допомогою '{{ name }}'"
       open_url: Відкрити URL матеріалу
       import_from_skm: Імпорт матеріалу (.skm)
     menu:
@@ -1372,15 +1615,20 @@ tab:
       std_attributes_dim_placeholder: Виберіть розмір
       std_volumic_masses: Густина
       std_volumic_masses_help: "Дозволяє визначити масу об'єму для всіх розмірів, а також для кожного типорозміру матеріалу."
-      std_volumic_masses_add: Додати густину
       std_prices: Ціна
       std_prices_help: "Дозволяє визначити ціну як для всіх розмірів, так і для кожного типорозміру матеріалу."
-      std_prices_add: Додати ціну
+      std_cut_prices: Стандартна ціна різу
+      std_cut_prices_help: |
+        Дозволяє встановити ціну різу матеріалу.
+
+        *За цим значенням розглядаються тільки прямі різи.*
       texture_width: Ширина
       texture_height: Висота
       export_to_skm: Експорт (.skm)
     texture_load:
       title: Завантажити зображення
+    texture_export:
+      title: Експортувати зображення
     import_from_skm:
       title: Імпорт файлу .skm
       ask_replace: |
@@ -1409,6 +1657,7 @@ tab:
       no_model: Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
       no_materials: Ваша модель не містить жодного матеріалу.
       material_not_found: Матеріал не знайдено.
+      no_texture: Матеріал не має фактури.
       failed_import_skm_file: "Під час імпорту файлу .skm сталася помилка. **{{ error }}**"
       failed_export_skm_file: "Під час експорту файлу .skm сталася помилка. **{{ error }}**"
       failed_deleting_material: "Під час видалення матеріалу сталася помилка. **{{ error }}**"
@@ -1538,10 +1787,6 @@ tab:
       Тут можна знайти неповний список відео, створених спільнотою про використання *OpenCutList*.
     submit: Запропонувати відео
     submit_info: |
-      Ви зробили відеопрезентацію використання **OpenCutList** і хочете, щоб вона з’явилася тут?
-      Повідомте нас, написавши нам на адресу **opencutlist@lairdubois.fr**!
-
-      *Відео має бути загальнодоступним і розміщеним на YouTube*.
     error:
       fail_to_load_list: Не вдається завантажити список відео.
   news:
@@ -1721,6 +1966,86 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_draw:
+    title: Креслення
+    action_0: Створити прямокутник
+    action_0_status: Малювання об'єму на основі прямокутної форми
+    action_0_state_1_status: "Натисніть, щоб встановити протилежний кут або ввести довжину, ширину"
+    action_1: Створити коло
+    action_1_status: Малювання об'єму на основі круглої форми
+    action_1_state_1_radius_status: "Натисніть, щоб встановити радіус або ввести відстань"
+    action_1_state_1_diameter_status: "Натисніть, щоб встановити діаметр або ввести відстань"
+    action_2: Створити багатокутник
+    action_2_status: Малювання об'єму на основі багатокутної форми
+    action_2_state_1_status: "Натисніть, щоб встановити нову точку або ввести відстань"
+    action_x_state_2_status: "Натисніть, щоб встановити висоту або ввести відстань"
+    action_option_group_offset: Зміщення
+    action_option_group_segments: Сегменти
+    action_option_group_options: Опції
+    action_option_offset_shape_offset: Зміщення
+    action_option_offset_shape_offset_status: Дозволяє застосувати зсув до контуру намальованої фігури
+    action_option_segments_segment_count: Кількість сегментів
+    action_option_segments_segment_count_status: Дозволяє задати кількість сегментів в колі
+    action_option_options_construction: Конструктивні особливості
+    action_option_options_construction_status: Намалювати у вигляді будівельних ліній
+    action_option_options_rectangle_centered: Прямокутник від центру
+    action_option_options_rectangle_centered_status: "Використовуйте перший клік, щоб встановити центр прямокутника"
+    action_option_options_smoothing: Згладжування
+    action_option_options_smoothing_status: Згладжені криві
+    action_option_options_measure_from_diameter: Вимірювання
+    action_option_options_measure_from_diameter_status: Виміряйте коло по його діаметру
+    action_option_options_measure_from_radius_status: Виміряйте коло по його радіусу
+    action_option_options_measure_reversed: Реверсивне вимірювання
+    action_option_options_measure_reversed_status: Зворотне вимірювання
+    action_option_options_pull_centered: Центроване видавлювання
+    action_option_options_pull_centered_status: Центроване видавлювання на першій точці
+    action_option_options_ask_name: Найменування деталей
+    action_option_options_ask_name_status: Введення назв деталей вручну
+    action_pull_locked_status: Фіксація під час останнього вимірювання
+    action_toggle_move_copy_status: Чергування копіювання/переміщення
+    action_change_move_anchor_status: Зміна опорної точки
+    success:
+      part_created: "Створено нову деталь: {{ name }}"
+  smart_handle:
+    title: Змінити
+    action_0: Обрати
+    action_0_status: "Натисніть на деталь, щоб вибрати її"
+    action_1: Копіювати по лінії
+    action_1_status: "Натисніть на деталі, щоб скопіювати її вздовж осі"
+    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_state_2_status: "Натисніть, щоб розмістити копію деталі, або введіть відстань"
+    action_2: Копіювати по сітці
+    action_2_status: "Натисніть на деталі, щоб скопіювати її по сітці"
+    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_state_2_status: "Натисніть, щоб розмістити копії деталі, або введіть дві відстані"
+    action_3: Перемістити
+    action_3_status: "Оберіть деталь, щоб перемістити її вздовж осі"
+    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_state_2_status: "Натисніть, щоб розмістити деталь або ввести відстань"
+    action_4: Розподілити
+    action_4_status: "Натисніть на деталь, щоб розподілити її по осі"
+    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_1_status: "Натисніть, щоб визначити першу точку вимірювання"
+    action_4_state_2_status: "Натисніть, щоб визначити другу точку вимірювання або ввести відстань"
+    action_5: Змінити розмір
+    action_option_group_copy_measure_type: Вимірювання
+    action_option_group_move_measure_type: Вимірювання
+    action_option_group_axes: Осі
+    action_option_group_options: Опції
+    action_option_copy_measure_type_outside_status: Зовнішнє вимірювання
+    action_option_copy_measure_type_centered_status: Вимірювання від центру до центру
+    action_option_copy_measure_type_inside_status: Вимірювання між деталями
+    action_option_move_measure_type_outside_status: Зовнішнє вимірювання
+    action_option_move_measure_type_centered_status: Вимірювання між центрами
+    action_option_move_measure_type_inside_status: Внутрішнє вимірювання
+    action_option_axes_active_status: Переміщення вздовж активних осей
+    action_option_axes_context_status: "Переміщення вздовж осей групи або компонента, що містить деталь"
+    action_option_axes_entity_status: Переміщення по осях деталі
+    action_option_options_mirror_status: Дзеркальне копіювання
+    warning:
+      copies_disable_mirror: Мультикопіювання вимикає опцію '$t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      min_distance: "Відстань {{ value1 }} менша за мінімальну відстань {{ value2 }}"
   smart_paint:
     title: Покриття
     default_material: Матеріал не заданий

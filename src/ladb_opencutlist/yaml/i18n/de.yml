@@ -50,7 +50,9 @@ default:
   good: Gut
   bad: Schlecht
   by: von
+  # date format in use for language
   date_format: "Y-m-d G:i"
+  # short date format in use for language
   date_format_short: Y-m-d
   decimal: Dezimal
   fractional: Fraktional
@@ -99,7 +101,7 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Instanz bearbeiten
-      edit_parent_part_instance: Ändern der Gruppe/Komponente, die die Instanz enthält
+      edit_parent_part_instance: "Ändern der Gruppe/Komponente, die die Instanz enthält"
       hide_part_instance: Instanz ausblenden
       unhide_part_instance: Instanz einblenden
       edit_part_instance_properties: Instanzeigenschaften bearbeiten
@@ -326,7 +328,7 @@ tab:
       folding_part: Aufklappen / Zuklappen
       material_origin_1: Das für dieses Teil verwendete Material ist auf einer Instanz definiert
       material_origin_2: Das für dieses Teil verwendete Material wird von einem übergeordneten Teil geerbt
-      material_origin_3:  Das für dieses Teil verwendete Material wird aus einem enthaltenen Teil gewonnen
+      material_origin_3: Das für dieses Teil verwendete Material wird aus einem enthaltenen Teil gewonnen
       orientation_locked_on_axis: Die Orientierung dieses Teils ist an sein Koordinatensystem gebunden
       number_saved: Die Nummer dieses Teils wurde gespeichert
       number_hidden: "Die auf diesem Teil gespeicherte Nummer '{{ number }}' kann nicht verwendet werden, da sie bereits vergeben ist"
@@ -471,7 +473,7 @@ tab:
         Wird dieses Kästchen aktiviert, hat die Erkennung von *Spiegelteilen* keine Auswirkung auf dieses Teil.
       ignore_grain_direction: Faserrichtung für dieses Teil nicht beachten
       ignore_grain_direction_help: |
-         Wenn dieses Kästchen aktiviert ist, wird die Faserrichtung für dieses Teil ignoriert.
+        Wenn dieses Kästchen aktiviert ist, wird die Faserrichtung für dieses Teil ignoriert.
       size_increase: Übermaße
       size_increase_help: |
         Übermaße vergrössern die Dimensionen eines einzelnen Teils.
@@ -611,7 +613,7 @@ tab:
     export:
       title: Export
       info_0: |
-        Mit dieser Funktion können Sie Daten der *Holzliste* in die Zwischenablage oder in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) Format exportieren.
+        Mit dieser Funktion können Sie Daten der *Holzliste* in die Zwischenablage oder in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) oder [XLSX](https://de.wikipedia.org/wiki/Office_Open_XML) Format exportieren.
       customize_help: |
         Umordnen, Ausblenden, Hinzufügen, Entfernen oder Auswählen einer Spalte in der Liste, um ihren **Titel** und die **Formel** anzupassen, die den angezeigten Wert für jede exportierte Zeile erzeugt.
       add_column: Spalte hinzufügen
@@ -632,11 +634,12 @@ tab:
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Liste der Teile
       option_source_instances_list: Liste der Instanzen
-      option_col_sep: Trennzeichen
-      option_col_sep_tab: Tabulator
-      option_col_sep_comma: Komma
-      option_col_sep_semicolon: Semikolon
-      option_encoding: Kodierung
+      option_format: Format
+      option_csv_col_sep: Trennzeichen
+      option_csv_col_sep_tab: Tabulator
+      option_csv_col_sep_comma: Komma
+      option_csv_col_sep_semicolon: Semikolon
+      option_csv_encoding: Kodierung
       copy_all: Alles
       copy_values: Nur Inhalt
       number: Nr.
@@ -871,10 +874,10 @@ tab:
       option_scrap_sheet_veneer_sizes: Furnierreste
       option_scrap_sheet_sizes_placeholder: Länge x Breite x Anzahl ; ...
       option_scrap_sheet_sizes_help: |
-         Geben Sie hier die Liste der Platten- oder Furnierreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
-         Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
-         Die Mengenangabe ist optional.
-         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+        Geben Sie hier die Liste der Platten- oder Furnierreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
+        Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
+        Die Mengenangabe ist optional.
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       tooltip:
         scroll_to_block_1d: Zur ersten Stange oder Kantenband blättern
         scroll_to_block_2d: Zur ersten Platte blättern
@@ -1073,8 +1076,8 @@ tab:
 
         *Materiale mit Faserrichtung erlauben nur 0 und 180° Drehungen.*
       option_irregular_allowed_rotations_0: Keine
-      option_irregular_allowed_rotations_90: "90° Schritt"
-      option_irregular_allowed_rotations_180: "180° Schritt"
+      option_irregular_allowed_rotations_90: 90° Schritt
+      option_irregular_allowed_rotations_180: 180° Schritt
       option_irregular_allow_mirroring: Spiegeln erlaubt
       option_irregular_allow_mirroring_help: |
         Bestimmt of eine Spiegelung des Teils zur Platzierung erlaubt ist.
@@ -1123,8 +1126,6 @@ tab:
         scroll_to_block_1d: Zur ersten Stange oder Kantenband blättern
         scroll_to_block_2d: Zur ersten Platte oder Furnierblatt blättern
       list:
-        unplaced_parts: Nicht platziertes Teil
-        unplaced_parts_plural: Nicht platzierte Teile
         summary: Zusammenfassung
         trimming: Rand
         settings: Einstellungen
@@ -1156,6 +1157,8 @@ tab:
         bin_2d_veneer_type_0: Standard-Furnierblatt
         bin_2d_veneer_type_1: Furnierrest
         unused: Nicht verwendet
+        unplaced_parts: Nicht platziertes Teil
+        unplaced_parts_plural: Nicht platzierte Teile
         parts: Teil
         parts_plural: Teile
         leftovers: Verschnitt
@@ -1166,7 +1169,7 @@ tab:
         cut_plural: Schnitte
         cut_trimming: Säuberungsschnitt
         cut_primary: Primärschnitt
-        cut_depth: Schnittstufe {{ depth }}
+        cut_depth: "Schnittstufe {{ depth }}"
       write:
         title: Schnittplan exportieren
         info_0: |
@@ -1324,7 +1327,7 @@ tab:
       error:
         invalid_size: Mit den eingegebenen Konfigurationsparametern kann keine gültige Etikettengröße festgelegt werden.
       warning:
-        is_group_selection: Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, erhalten kein Etikett.
+        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, erhalten kein Etikett."
         is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
         formula_not_available: In diesem Kontext nicht zu Verfügung
     layout:
@@ -1396,7 +1399,7 @@ tab:
 
           **Prüfen Sie, dass die Datei nicht in Layout geöffnet ist.**
       warning:
-        is_group_selection: Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht gezeichnet.
+        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht gezeichnet."
         is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
       message:
         adding_new_page: |
@@ -1639,7 +1642,7 @@ tab:
       raw_estimated_0: Nutzvolumen der Teile
       raw_estimated_1: Volumen des benötigten Rohmaterials
       multiplier_coefficient: Faktor
-      multiplier_coefficient_help: Ermöglicht die Angabe des Faktors, der auf das gemessene Bruttovolumen angewendet wird.
+      multiplier_coefficient_help: "Ermöglicht die Angabe des Faktors, der auf das gemessene Bruttovolumen angewendet wird."
       std_attributes_dim_placeholder: Wählen Sie eine Größe
       std_volumic_masses: Rohdichte
       std_volumic_masses_help: Ermöglicht das Festlegen der Rohdichte für alle Größen sowie für jede Standardgröße des Materials.
@@ -1647,7 +1650,7 @@ tab:
       std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede einzelne Standardgröße des Materials.
       std_cut_prices: Schnittpreis
       std_cut_prices_help: |
-        Ermöglicht es Ihnen, den Preis für das Schneiden des Materials festzulegen.
+        Dient zur Festlegung des Preises für das Schneiden des Materials.
 
         *Nur geradlinige Schnitte werden von diesem Wert berücksichtigt.*
       texture_width: Breite
@@ -2002,20 +2005,20 @@ tool:
     title: Zeichnen
     action_0: Rechteck zeichnen
     action_0_status: Volumen auf der Basis einer Rechteckform zeichnen
-    action_0_state_1_status: Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein
+    action_0_state_1_status: "Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein"
     action_1: Kreis zeichnen
     action_1_status: Volumen auf der Basis einer Kreisform zeichnen
-    action_1_state_1_radius_status: Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
-    action_1_state_1_diameter_status: Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein
+    action_1_state_1_radius_status: "Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein"
+    action_1_state_1_diameter_status: "Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein"
     action_2: Polygon zeichnen
     action_2_status: Volumen auf der Basis einer polygonalen Form zeichnen
-    action_2_state_1_status: Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
-    action_x_state_2_status: Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
+    action_2_state_1_status: "Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein"
+    action_x_state_2_status: "Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein"
     action_option_group_offset: Versatz
     action_option_group_segments: Segmente
     action_option_group_options: Optionen
     action_option_offset_shape_offset: Versatz
-    action_option_offset_shape_offset_status: Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden
+    action_option_offset_shape_offset_status: "Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden"
     action_option_segments_segment_count: Anzahl Segmente
     action_option_segments_segment_count_status: Ermöglicht das Festlegen der Anzahl der Kreissegmente
     action_option_options_construction: Konstruktionslinien
@@ -2033,7 +2036,7 @@ tool:
     action_option_options_pull_centered_status: Erhebung auf den ersten Punkt zentrieren
     action_option_options_ask_name: Benennung der Teile
     action_option_options_ask_name_status: Manuelle Eingabe der Benennung von Teilen
-    action_pull_locked_status:  Auf die letzte Messung fixieren
+    action_pull_locked_status: Auf die letzte Messung fixieren
     action_toggle_move_copy_status: Abwechselnd kopieren/verschieben
     action_change_move_anchor_status: Ankerpunkt ändern
     success:
@@ -2041,24 +2044,24 @@ tool:
   smart_handle:
     title: Handhaben
     action_0: Auswählen
-    action_0_status: Klicken Sie auf ein Teil, um es auszuwählen
+    action_0_status: "Klicken Sie auf ein Teil, um es auszuwählen"
     action_1: In Linie kopieren
-    action_1_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren
+    action_1_status: "Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren"
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Distanz ein
+    action_1_state_2_status: "Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Distanz ein"
     action_2: In Raster kopieren
-    action_2_status: Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren
+    action_2_status: "Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren"
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status:  Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie zwei Distanzen ein
+    action_2_state_2_status: "Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie zwei Distanzen ein"
     action_3: Verschieben
-    action_3_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu verschieben
+    action_3_status: "Klicken Sie auf ein Teil, um es entlang einer Achse zu verschieben"
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: Klicken Sie, um das Teil zu platzieren, oder geben Sie eine Distanz ein
+    action_3_state_2_status: "Klicken Sie, um das Teil zu platzieren, oder geben Sie eine Distanz ein"
     action_4: Verteilen
-    action_4_status: Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen
+    action_4_status: "Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen"
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: Klicken Sie, um den ersten Messpunkt zu setzen
-    action_4_state_2_status: Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein
+    action_4_state_1_status: "Klicken Sie, um den ersten Messpunkt zu setzen"
+    action_4_state_2_status: "Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein"
     action_5: Größe ändern
     action_option_group_copy_measure_type: Maß
     action_option_group_move_measure_type: Maß
@@ -2071,13 +2074,13 @@ tool:
     action_option_move_measure_type_centered_status: Messung in der Mitte
     action_option_move_measure_type_inside_status: Messung im Inneren
     action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
-    action_option_axes_context_status: Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält
+    action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
     action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
     action_option_options_mirror_status: Symmetrisch kopieren
     warning:
       copies_disable_mirror: Mehrfaches Kopieren deaktiviert die Option '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      min_distance: Der Abstand {{ value1 }} ist kleiner als der Minimalabstand {{ value2 }}
+      min_distance: "Der Abstand {{ value1 }} ist kleiner als der Minimalabstand {{ value2 }}"
   smart_paint:
     title: Malen
     default_material: Ohne Material

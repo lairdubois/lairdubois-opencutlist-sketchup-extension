@@ -28,14 +28,6 @@ module Ladb::OpenCutList
         export_command(settings)
       end
 
-      PLUGIN.register_command("cutlist_report_start") do |settings|
-        report_start_command(settings)
-      end
-
-      PLUGIN.register_command("cutlist_report_advance") do |settings|
-        report_advance_command
-      end
-
       PLUGIN.register_command("cutlist_estimate_start") do |settings|
         estimate_start_command(settings)
       end
@@ -129,6 +121,10 @@ module Ladb::OpenCutList
         group_packing_cancel_command
       end
 
+      PLUGIN.register_command("cutlist_packing_improve") do |settings|
+        packing_improve_command(settings)
+      end
+
       PLUGIN.register_command("cutlist_packing_write") do |settings|
         packing_write_command(settings)
       end
@@ -191,23 +187,6 @@ module Ladb::OpenCutList
 
       # Run !
       worker.run
-    end
-
-    def report_start_command(settings)
-      require_relative '../worker/cutlist/cutlist_report_worker'
-
-      # Setup worker
-      @report_worker = CutlistReportWorker.new(@cutlist, **settings)
-
-      # Run !
-      @report_worker.run
-    end
-
-    def report_advance_command
-      return { :errors => [ 'default.error' ] } unless @report_worker
-
-      # Run !
-      @report_worker.run
     end
 
     def estimate_start_command(settings)
@@ -438,6 +417,16 @@ module Ladb::OpenCutList
       @packing = packing unless packing.running
 
       packing.to_hash
+    end
+
+    def packing_improve_command(settings)
+      require_relative '../worker/cutlist/cutlist_packing_improve_worker'
+
+      # Setup worker
+      worker = CutlistPackingImproveWorker.new(@cutlist, @packing, **settings)
+
+      # Run !
+      worker.run
     end
 
     def packing_write_command(settings)

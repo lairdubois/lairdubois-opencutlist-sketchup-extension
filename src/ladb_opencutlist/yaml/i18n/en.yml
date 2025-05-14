@@ -50,7 +50,9 @@ default:
   good: Good
   bad: Bad
   by: by
+  # date format in use for language
   date_format: "m/d/Y g:ia"
+  # short date format in use for language
   date_format_short: m/d/Y
   decimal: Decimal
   fractional: Fractional
@@ -611,7 +613,7 @@ tab:
     export:
       title: Export
       info_0: |
-        This feature allows you to export data from the *Parts List* to the clipboard or to a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) file.
+        This feature allows you to export data from the *Parts List* to the clipboard or to a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) or [XLSX](https://en.wikipedia.org/wiki/Office_Open_XML) file.
       customize_help: |
         Reorder, Hide, Add, Remove or Select a column from the list to customize its **title** and the **formula** that will generate the values for each exported row.
       add_column: Add a column
@@ -632,11 +634,12 @@ tab:
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Parts List
       option_source_instances_list: List of Instances
-      option_col_sep: Separator
-      option_col_sep_tab: Tabulator
-      option_col_sep_comma: Comma
-      option_col_sep_semicolon: Semicolon
-      option_encoding: Encoding
+      option_format: Format
+      option_csv_col_sep: Separator
+      option_csv_col_sep_tab: Tabulator
+      option_csv_col_sep_comma: Comma
+      option_csv_col_sep_semicolon: Semicolon
+      option_csv_encoding: Encoding
       copy_all: Everything
       copy_values: Only values
       number: No.
@@ -729,7 +732,6 @@ tab:
       info_0: |
         Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts on the *Parts List*.
       options_general: General
-      raw_materials: Raw materials
       total: Total
       total_used: Used
       total_unused: Not used
@@ -1124,8 +1126,6 @@ tab:
         scroll_to_block_1d: Scroll to first board or edge banding
         scroll_to_block_2d: Scroll to first panel or veneer sheet
       list:
-        unplaced_parts: Unplaced Part
-        unplaced_parts_plural: Unplaced Parts
         summary: Summary
         trimming: Trimming
         settings: Settings
@@ -1157,6 +1157,8 @@ tab:
         bin_2d_veneer_type_0: Standard Veneer Sheet
         bin_2d_veneer_type_1: Veneer Sheet Off-cut
         unused: Unused
+        unplaced_parts: Unplaced Part
+        unplaced_parts_plural: Unplaced Parts
         parts: Part
         parts_plural: Parts
         leftovers: Off-cut
@@ -1167,7 +1169,7 @@ tab:
         cut_plural: Cuts
         cut_trimming: Trimming cut
         cut_primary: Primary cut
-        cut_depth: Level {{ depth }}
+        cut_depth: "Level {{ depth }}"
       write:
         title: Cutting Diagram Export
         info_0: |
@@ -1644,7 +1646,6 @@ tab:
       std_attributes_dim_placeholder: Select a size
       std_volumic_masses: Density
       std_volumic_masses_help: Allows to set the density for all sizes as well as for each standard material size.
-      std_volumic_masses_add: Add density
       std_prices: Price
       std_prices_help: Allows you to define the price for all sizes as well as for each standard size of the material.
       std_cut_prices: Standard cut price
@@ -2004,7 +2005,7 @@ tool:
     title: Draw
     action_0: Draw Rectangle
     action_0_status: Draw a volume on a rectangular shape
-    action_0_state_1_status: Click to define opposite angle or enter length, width
+    action_0_state_1_status: "Click to define opposite angle or enter length, width"
     action_1: Draw Circle
     action_1_status: Draw a volume on a circular shape
     action_1_state_1_radius_status: Click to set radius or enter distance
@@ -2051,11 +2052,11 @@ tool:
     action_2: Copy in grid
     action_2_status: Click on a part to copy it along a grid
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: Click to place copies of the part, or enter two distances
+    action_2_state_2_status: "Click to place copies of the part, or enter two distances"
     action_3: Move
     action_3_status: Click on a part to move it along a grid
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: Click to place the part, or enter a distance
+    action_3_state_2_status: "Click to place the part, or enter a distance"
     action_4: Distribute
     action_4_status: Click on a part to distribute it along an axis
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2079,7 +2080,7 @@ tool:
     warning:
       copies_disable_mirror: Multiple copies disable the '$t(tool.smart_handle.action_option_options_mirror_status)' option
     error:
-      min_distance: The distance {{ value1 }} is smaller than the minimal distance {{ value2 }}
+      min_distance: "The distance {{ value1 }} is smaller than the minimal distance {{ value2 }}"
   smart_paint:
     title: Paint
     default_material: Without material
