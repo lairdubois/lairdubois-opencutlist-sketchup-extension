@@ -44,7 +44,7 @@ module Ladb::OpenCutList
     COLOR_ARROW = Kuix::COLOR_WHITE
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239).freeze
 
-    attr_accessor :last_mouse_x, :last_mouse_y
+    attr_accessor :tool_id, :last_mouse_x, :last_mouse_y
 
     def initialize(
 
@@ -64,7 +64,7 @@ module Ladb::OpenCutList
       # Extract auto_orient option
       @auto_orient = PLUGIN.get_model_preset('cutlist_options')['auto_orient']
 
-      # Define if OpenCutList dialog must be maximized when tool ends
+      # Define if the OpenCutList dialog must be maximized when the tool ends
       @tab_name_to_show_on_quit = tab_name_to_show_on_quit
 
       # Highlighted parts
@@ -82,6 +82,9 @@ module Ladb::OpenCutList
 
       # Create cursors
       @cursor_select_error = create_cursor('select-error', 0, 0)
+
+      # Tool ID (available only if the tool is active)
+      @tool_id = nil
 
       # Picker
       @picker = nil
@@ -1170,6 +1173,10 @@ module Ladb::OpenCutList
 
     # -- Tool stuff --
 
+    def active?
+      !@tool_id.nil?
+    end
+
     def draw(view)
       super
       @picker.draw(view) unless @picker.nil?
@@ -1191,6 +1198,9 @@ module Ladb::OpenCutList
 
     def onActivate(view)
       super
+
+      # Store tool ID
+      @tool_id = view.model.tools.active_tool_id
 
       # Create pick helpers
       @pick_helper = view.pick_helper
@@ -1235,7 +1245,10 @@ module Ladb::OpenCutList
     def onDeactivate(view)
       super
 
-      # Stop current action handler
+      # Clear tool ID
+      @tool_id = nil
+
+      # Stop the current action handler
       @action_handler.stop if @action_handler.is_a?(SmartActionHandler)
 
       # Stop observing view events
@@ -1659,9 +1672,7 @@ module Ladb::OpenCutList
 
     def active?
       return false if (model = Sketchup.active_model).nil?
-      return false if (active_tool = model.tools.active_tool).nil?
-      return false unless active_tool.is_a?(SmartTool)
-      active_tool.fetch_action_handler == self
+      model.tools.active_tool_id == @tool.tool_id
     end
 
     # -- STATE --
