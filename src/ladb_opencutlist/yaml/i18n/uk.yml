@@ -613,7 +613,6 @@ tab:
     export:
       title: Експорт
       info_0: |
-        Ця функція дозволяє експортувати дані з *Розкрою* в буфер обміну або у файл у форматі [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
         Змініть порядок, приховайте, додайте, видаліть або виберіть стовпчик у списку, щоб налаштувати його **назву** та **формулу**, яка генерує відображене значення для кожного експортованого рядка.
       add_column: Додати стовпчик
@@ -634,11 +633,12 @@ tab:
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Список деталей
       option_source_instances_list: Список екземплярів
-      option_col_sep: Роздільник
-      option_col_sep_tab: Табулятор
-      option_col_sep_comma: Кома
-      option_col_sep_semicolon: Крапка з комою
-      option_encoding: Кодування
+      option_format: Формат
+      option_csv_col_sep: Роздільник
+      option_csv_col_sep_tab: Табулятор
+      option_csv_col_sep_comma: Кома
+      option_csv_col_sep_semicolon: Крапка з комою
+      option_csv_encoding: Кодування
       copy_all: Все
       copy_values: Тільки значення
       number: N°

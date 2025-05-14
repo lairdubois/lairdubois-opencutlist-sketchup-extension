@@ -613,7 +613,6 @@ tab:
     export:
       title: Eksport
       info_0: |
-        Funkcja ta umożliwia eksport danych z *Listy części* do schowka lub do pliku [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)).
       customize_help: |
         Zmień kolejność, Ukryj, Dodaj, Usuń lub Wybierz kolumnę na liście, aby spersonalizować jej **tytuł** oraz **formułę** generującą wyświetlaną wartość dla każdego eksportowanego wiersza.
       add_column: Dodaj kolumnę
@@ -634,11 +633,12 @@ tab:
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Lista części
       option_source_instances_list: Lista instancji
-      option_col_sep: Separator
-      option_col_sep_tab: Tabulator
-      option_col_sep_comma: Przecinek
-      option_col_sep_semicolon: Średnik
-      option_encoding: Kodowanie
+      option_format: Format
+      option_csv_col_sep: Separator
+      option_csv_col_sep_tab: Tabulator
+      option_csv_col_sep_comma: Przecinek
+      option_csv_col_sep_semicolon: Średnik
+      option_csv_encoding: Kodowanie
       copy_all: Wszystko
       copy_values: Tylko wartości
       number: Ob.

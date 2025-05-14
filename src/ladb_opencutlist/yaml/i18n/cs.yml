@@ -7,7 +7,6 @@ default:
   minimize: Mini
   maximize: Maxi
   cancel: Zrušit
-  # stop computation and return best result so far
   stop: Stop
   validate: Použít
   confirm: Potvrdit
@@ -38,8 +37,11 @@ default:
   unselect_all: Odznačit všechno
   draw: Kreslení
   estimate: Kalkulace
+  rename: ""
+  next: ""
   yes: Ano
   no: Ne
+  automatic: Automatický
   empty_filename: Nepojmenovany.skp
   help: Pomoc
   error: Spravit!
@@ -52,6 +54,8 @@ default:
   date_format: "m.d.Y g:ia"
   # short date format in use for language
   date_format_short: m.d.Y
+  decimal: Desetinný
+  fractional: Frakční
   unit_0: Palec
   unit_1: Stopa
   unit_2: Milimetr
@@ -65,6 +69,8 @@ default:
   instance_plural: položky
   part_single: pokoj
   part_plural: pokoje
+  cut_single: ""
+  cut_plural: ""
   thickness_layer_single: hladina
   thickness_layer_plural: hladiny
   setup_model_units: Nakonfigurujte modelové jednotky
@@ -80,6 +86,10 @@ default:
   file_plural: Soubory
   stroke_color: Barva čáry
   fill_color: Barva výplně
+  length: Délka
+  width: Šířka
+  thickness: Tloušťka
+  height: Výška papíru
 core:
   menu:
     submenu: OpenCutList
@@ -96,15 +106,18 @@ core:
       unhide_part_instance: Skrýt instance
       edit_part_instance_properties: Upravit vlastnosti instance
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: Resetujte polohu okna
   toolbar:
     name: OpenCutList
+    tools: ""
     command:
       dialog: OpenCutList
       smart_draw: Kreslit díly
+      smart_handle: ""
       smart_paint: Materiály dílů
       smart_axes: Orientace dílů
       smart_export: Export dílů
@@ -227,6 +240,8 @@ core:
     textinput_code:
       snippets: Příklady vzorců
       help: "Chcete-li získat seznam proměnných, zadejte **@**."
+    textinput_size:
+      quantity: ""
     three_viewer:
       view: "{{ view }} Zobrazit"
       view_isometric: Izometrie
@@ -366,9 +381,7 @@ tab:
       select_unselect_all_parts: Výberte/zruště výběr dílců ve skupině
       select_parts_in_cutlist: Vyberte díl v seznamu dílů
       select_parts_in_cutlist_plural: "Vyberte díly {{ count }} v seznamu dílů"
-      # used in estimate to setup the cutting diagram
       setup_group_cuttingdiagram: "Nakonfigurujte nářezový plán '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
-      # used in estimate to setup the new packing
       setup_group_packing: "Nakonfigurujte nářezový plán '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Otevřít URL adresu dílu
     menu:
@@ -538,6 +551,9 @@ tab:
       minimize_on_highlight: Minimalizovat po *'$t(tab.cutlist.highlight_part)...'*
       minimize_on_highlight_help: "Pokud je vybrána tato možnost, okno OpenCutList bude minimalizováno při použití funkce *'$t(tab.cutlist.highlight_part)'*."
       general: Všeobecné
+      sorting: Třídění
+      group_order_strategy: ""
+      group_order_strategy_help: |
       part_order_strategy: Třídění dílců
       part_order_strategy_help: |
         Reorganizujte následující vlastnosti a definujte pořadí řazení v každé skupině.
@@ -545,6 +561,10 @@ tab:
       dimension_column_order_strategy: Pořadí rozměrů
       dimension_column_order_strategy_help: |
         Uspořádáním následujících rozměrů nastavíte pořadí zobrazených sloupců.
+      property_material_type: ""
+      property_material_name: Název materiálu
+      property_std_width: ""
+      property_std_thickness: ""
       property_thickness: Tloušťka
       property_length: Délka
       property_width: Šířka
@@ -574,7 +594,7 @@ tab:
       volume: Objem
       number: Číslo
       name: Označení
-      count: Množství
+      count: ""
       cutting: Hrubé rozměry
       bbox: Čisté rozměry
       final: Aktuální
@@ -591,7 +611,6 @@ tab:
     export:
       title: Exportovat
       info_0: |
-        Tato funkce umožňuje exportovat data z *Seznamu dílů* do schránky nebo do souboru [CSV](https://en.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
         Změnit pořadí, skrýt, přidat, odebrat nebo vybrat sloupec ze seznamu a přizpůsobit jeho **název** a **vzorec**, který bude generovat hodnoty pro každý exportovaný řádek.
       add_column: Přidejte sloupec
@@ -612,11 +631,12 @@ tab:
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Kusovník
       option_source_instances_list: Seznam instancí
-      option_col_sep: Oddělovač
-      option_col_sep_tab: Tabulátor
-      option_col_sep_comma: Čárka
-      option_col_sep_semicolon: Středník
-      option_encoding: Kódování
+      option_format: Formát
+      option_csv_col_sep: Oddělovač
+      option_csv_col_sep_tab: Tabulátor
+      option_csv_col_sep_comma: Čárka
+      option_csv_col_sep_semicolon: Středník
+      option_csv_encoding: Kódování
       copy_all: Vše
       copy_values: Pouze hodnoty
       number: Číslo
@@ -660,6 +680,7 @@ tab:
       bin: Zásobník
       component_definition: Definice součásti
       component_instance: Instance komponenty
+      component_instances: ""
       filename: Název souboru
       model_name: Jméno modelu
       model_description: Popis modelu
@@ -677,22 +698,57 @@ tab:
         Vygenerujte odhad **hmotnosti** a **ceny** **surovin** potřebných k výrobě dílů ze *seznamu dílů*.
       options_general: Všeobecné
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: Koeficient pro *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: Vyčísluje faktor použitý na hrubý objem materiálů typu "**$t(tab.materials.type_1)**" pro zohlednění odpadu.
+      option_solid_wood_coefficient_bc: ""
       raw_materials: Sortiment
-      coefficient: Koeficient
       total: Celkový
       total_used: Použitý
       total_unused: Nepoužitý
       total_mass: Σ Hmotnost
       total_cost: Σ Náklady
-      total_count: Množství
+      total_count: ""
       total_instance_count: Jednotky
       total_volume: Σ Objem
       total_area: Σ Oblasti
       total_length: Σ Délka
       tooltip:
         incompatible_unit: Nekompatibilní jednotky s možnostmi odhadu materiálu
+        multiplier_coefficient: ""
+      error:
+        no_typed_material_parts: "Žádná součást s definovaným typem materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** nebo **$t(tab.materials.type_5)**) pro vygenerování odhadu bylo poskytnuto."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyby**."
+      warning:
+        is_group_selection: "Díly, které jsou ve **skrytých skupinách** kusovníku, se nezapočítávají."
+      tip:
+        not_enough_data: |
+          Aby byl tento odhad správně vypočítán:
+          - použité materiály musí mít minimálně hustotu a cenu.
+          - použité příslušenství musí mít alespoň hustotu a cenu.
+    estimate:
+      title: Kalkulace
+      info_0: |
+        Vygenerujte odhad **hmotnosti** a **ceny** **surovin** potřebných k výrobě dílů ze *seznamu dílů*.
+      options_general: Všeobecné
+      total: Celkový
+      total_used: Použitý
+      total_unused: Nepoužitý
+      total_mass: Σ Hmotnost
+      total_cost: Σ Náklady
+      total_count: ""
+      total_instance_count: Jednotky
+      total_volume: Σ Objem
+      total_area: Σ Souhrn
+      total_length: Σ Délka
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_-1: ""
+      tooltip:
+        incompatible_unit: Nekompatibilní jednotky s možnostmi odhadu materiálu
+        multiplier_coefficient: ""
       error:
         no_typed_material_parts: "Žádná součást s definovaným typem materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** nebo **$t(tab.materials.type_5)**) pro vygenerování odhadu bylo poskytnuto."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**."
@@ -826,7 +882,7 @@ tab:
       list:
         unplaced_parts: Neumístěné dílce
         summary: Shrnutí
-        count: Množství
+        count: ""
         bar: Délkový
         sheet: Tabule
         length: Délka
@@ -941,6 +997,212 @@ tab:
         cutting_dimensions_increase_1d: "Tyto hrubé rozměry byly nakonfigurovány na materiálu '{{ material_name }}': hrubé délky (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "Tyto hrubé rozměry byly nakonfigurovány na materiálu '{{ material_name }}': hrubé délky (**{{ length_increase }}**) a hrubé šířky (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Rozměry zmenšené o tloušťku hrany. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    packing:
+      title: Nářezový plán
+      option_problem_type: Typ
+      option_problem_type_rectangle: ""
+      option_problem_type_rectangleguillotine: ""
+      option_problem_type_onedimensional: Délkový
+      option_problem_type_irregular: ""
+      options_material: Materiál
+      options_config: Konfigurace
+      options_display: Zobrazit
+      options_tuning: ""
+      option_std_bin_1d_dimensional: ""
+      option_std_bin_1d_edge: ""
+      option_std_bin_1d_help: |
+      option_std_bin_1d_add: Přidat velikost tabule
+      option_std_bin_1d_none: Ne skládat
+      option_scrap_bin_1d_dimensional_sizes: Zbytky
+      option_scrap_bin_1d_edge_sizes: Odříznuté okrajové pásy
+      option_scrap_bin_1d_sizes_placeholder: délka x množství ; ...
+      option_scrap_bin_1d_sizes_help: |
+      option_scrap_bin_1d_none: Žádný
+      option_std_bin_2d_sheet_good: ""
+      option_std_bin_2d_veneer: ""
+      option_std_bin_2d_help: |
+      option_std_bin_2d_add: Přidat velikost tabule
+      option_std_bin_2d_none: Žádný
+      option_scrap_bin_2d_sheet_good_sizes: Ořez tabule
+      option_scrap_bin_2d_veneer_sizes: Dýhované odřezky
+      option_scrap_bin_2d_sizes_placeholder: délka x šířka x množství ; ...
+      option_scrap_bin_2d_sizes_help: |
+      option_scrap_bin_2d_none: Žádný
+      option_optimization_mode: ""
+      option_optimization_mode_help: |
+      option_objective: Objektivní
+      option_objective_help: |
+      option_rectangleguillotine_cut_type: ""
+      option_rectangleguillotine_cut_type_help: |
+      option_rectangleguillotine_cut_type_non_exact: ""
+      option_rectangleguillotine_cut_type_exact: ""
+      option_rectangleguillotine_cut_type_homogenous: ""
+      option_rectangleguillotine_number_of_stages: ""
+      option_rectangleguillotine_number_of_stages_help: |
+      option_rectangleguillotine_first_stage_orientation: ""
+      option_rectangleguillotine_first_stage_orientation_help: |
+      option_rectangleguillotine_first_stage_orientation_horizontal: ""
+      option_rectangleguillotine_first_stage_orientation_vertical: ""
+      option_rectangleguillotine_first_stage_orientation_any: ""
+      option_rectangleguillotine_keep: Zbytky min. velikosti
+      option_rectangleguillotine_keep_help: "Zbytky, které jsou větší než minimální délka a šířka, jsou označeny **uchovat**."
+      option_irregular_allowed_rotations: ""
+      option_irregular_allowed_rotations_help: |
+      option_irregular_allowed_rotations_0: Ne skládat
+      option_irregular_allowed_rotations_90: ""
+      option_irregular_allowed_rotations_180: ""
+      option_irregular_allow_mirroring: ""
+      option_irregular_allow_mirroring_help: |
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: ""
+      option_spacing: Vzdálenost
+      option_spacing_help: |
+      option_trimming: Okraj
+      option_trimming_1d_help: ""
+      option_trimming_2d_help: ""
+      option_items_formula: Vzorec
+      option_items_formula_help: |
+      option_hide_part_list: Kusovník
+      option_hide_part_list_1d_dimensional_0: Zobrazit všechny desky
+      option_hide_part_list_1d_edge_0: Zobrazit všechno hranování
+      option_hide_part_list_2d_sheet_good_0: Zobrazit pro všechny panely
+      option_hide_part_list_2d_veneer_0: Zobrazeno pro každý list dýhy
+      option_hide_part_list_1: Skrytý
+      option_hide_part_list_1d_help: Zobrazit nebo skrýt seznam dílů pro každou desku nebo olepování hran.
+      option_hide_part_list_2d_help: Zobrazte nebo zamaskujte seznam dílů pro každý panel.
+      option_part_drawing_type: Tvar dílů
+      option_part_drawing_type_0: Skrytý
+      option_part_drawing_type_1: Zobrazení přední plochy
+      option_part_drawing_type_2: Zobrazení zadní plochy
+      option_part_drawing_type_help: |
+        Zobrazí nebo skryje skutečný tvar dílů a jejich opracování na diagramu.
+
+        *Pro export tvarů musí být tato možnost povolena.*
+      option_colorization: ""
+      option_colorization_0: $t(default.no)
+      option_colorization_1: ""
+      option_colorization_2: ""
+      option_colorization_help: |
+      option_hide_edges_preview: Zobrazení okrajových pásů
+      option_hide_edges_preview_0: Zobrazeno ve schématu řezání
+      option_hide_edges_preview_1: Skryto ve schématu řezání
+      option_hide_edges_preview_help: Umožňuje zobrazit nebo skrýt vizuální zobrazení pásů hran pro každý díl ve schématu řezání.
+      option_time_limit: ""
+      option_time_limit_help: |
+      tooltip:
+        scroll_to_block_1d: Přejděte na první dílec nebo hranu
+        scroll_to_block_2d: ""
+      list:
+        summary: Shrnutí
+        trimming: Okraj
+        settings: Nastavení
+        stats: Statistiky
+        time: ""
+        total_efficiency: Celková účinnost
+        total_fill_rate: ""
+        total_cut_count: Počet řezů
+        total_cut_length: Délka řezů
+        efficiency: Účinnost
+        count: ""
+        length: Délka
+        width: Šířka
+        total_length: Σ Délka
+        total_area: Σ Souhrn
+        total_cost: Σ Náklady
+        total_part_count: Σ Dílů
+        total_used: Celkem použito
+        bin_1d_dimensional: Délkový
+        bin_1d_dimensional_type_0: Standardní rozměry
+        bin_1d_dimensional_type_1: Odřezky
+        bin_1d_edge: Hrana
+        bin_1d_edge_type_0: Standardní hrana
+        bin_1d_edge_type_1: Odříznutý okrajový pás
+        bin_2d_sheet_good: Tabule
+        bin_2d_sheet_good_type_0: Standardní velikost tabule
+        bin_2d_sheet_good_type_1: Zbytky
+        bin_2d_veneer: Dýha
+        bin_2d_veneer_type_0: Standardní dýha
+        bin_2d_veneer_type_1: Dýhovaný odřezek
+        unused: Nepoužitý
+        unplaced_parts: ""
+        unplaced_parts_plural: Neumístěné dílce
+        parts: Díl
+        parts_plural: Díly
+        leftovers: Zbytek
+        leftovers_plural: Odřezky
+        leftovers_to_keep: Zbytek
+        leftovers_to_keep_plural: Zbytek
+        cut: Řez
+        cut_plural: Řezy
+        cut_trimming: Ořezávací střih
+        cut_primary: ""
+        cut_depth: ""
+      write:
+        title: Export diagramu řezání
+        info_0: |
+          Tento modul umožňuje exportovat **geometrii** *diagramu řezání* jako soubor v [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) nebo [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: DXF Struktura
+        option_dxf_structure_1: Vrstvy
+        option_dxf_structure_2: Vrstvy + bloky
+        option_dxf_structure_help: |
+          Vyberte strukturu souboru DXF.
+
+          - Struktura **Vrstvy** vykresluje všechny čáry naplocho, přičemž rozlišuje mezi různými typy čar pouze pomocí vrstev. *Tato struktura nabízí větší kompatibilitu se softwarem třetích stran.*
+          - Struktura **Vrstvy + Bloky** vytváří jeden blok na díl a vkládá tyto bloky tolikrát, kolikrát se díly opakují. *Tato struktura nabízí větší flexibilitu pro úpravy souboru.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_bin_sheet_good: Tabule
+        option_bin_sheet_good_help: |
+          Umožňuje export tabule podle výběru barev.
+        option_bin_veneer: Dýha
+        option_bin_veneer_help: |
+          Umožňuje export dýh podle výběru barvy.
+        option_bin_dimensional: Délkový
+        option_bin_dimensional_help: |
+          Umožňuje export rozměrů podle výběru barev.
+        option_bin_edge: Hrana
+        option_bin_edge_help: |
+          Umožňuje export okrajů podle výběru barev.
+        option_parts: Díly
+        option_parts_help: |
+          Umožňuje export dílu podle výběru barvy.
+        option_parts_holes: Otvory
+        option_parts_holes_help: |
+          Vyberte barvu vrtání.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Identifikátory
+        option_texts_help: |
+          Umožňuje export identifikačních textů dílů a výběr barev.
+        option_leftovers: Odřezky
+        option_leftovers_help: |
+          Umožňuje export zbytků a výběr barev.
+        option_cuts: Řezy
+        option_cuts_help: |
+          Vyberte, zda kreslit řezy, a vyberte jejich barvu.
+        warning:
+          is_bin_selection: ""
+      error:
+        no_part: Žádný dílec.
+        no_bin_1d: ""
+        no_bin_2d: ""
+        no_solution: ""
+      warning:
+        is_part_selection: Tento nářezový plán je omezen na **vybrané části**.
     labels:
       title: Štítky
       options_layout: Rozložení
@@ -1106,6 +1368,11 @@ tab:
       warning:
         is_group_selection: Součásti uvnitř **maskovaných skupin** vašeho kusovníku nebudou vykresleny.
         is_part_selection: Tento přehledový výkres je omezen na **vybrané díly**.
+      message:
+        adding_new_page: |
+        incompatible_page_format: |
+        changing_units: |
+        changing_precision: |
     write:
       title: Export dílů
       info_2d: |
@@ -1212,7 +1479,6 @@ tab:
   materials:
     label: Materiály
     title: Materiály
-    new: Nový materiál
     type_0: Nedefinovaný
     type_1: Masiv
     type_2: Tabule
@@ -1233,13 +1499,14 @@ tab:
       grain_direction: Směr let
       raw_estimated_0: Odhad podle efektivního objemu
       colorized: "Tento barevný odstín bude aplikován na texturu tohoto materiálu, když je vykreslen v modelu"
-      texture_load: Načtěte novou texturu
+      texture_load: ""
+      texture_export: ""
       texture_clear: Odstraňte texturu
       edit: "Upravit vlastnosti pro '{{ name }}'"
       set_current: "Vybarvěte části s '{{ name }}'."
       open_url: Otevřít adresu URL materiálu
-    menu:
       import_from_skm: Import materiálu (.skm)
+    menu:
       purge_unused: Smazat nepoužité materiály
       reset_prices: Resetování cen všech materiálů
       reset_prices_confirm: |
@@ -1263,13 +1530,12 @@ tab:
       type: Typ
       description: Popis
       url: URL
+      formats: ""
       cut_options: Parametry řezání
       estimate_options: Možnosti odhadu
       attributes: Atributy
       thickness: Tloušťka
       thickness_help: |
-        Hotová tloušťka materiálu.
-        *Velikosti bez jednotek jsou považovány za modelové jednotky.*
       length_increase: Nadmíra pro délku
       length_increase_help: Nadmíra použitá na délku k nastavení **hrubé délky**.
       width_increase: Nadmíra pro šířku
@@ -1277,30 +1543,15 @@ tab:
       thickness_increase: Nadmíra pro tloušťku
       thickness_increase_help: Nadmíra použitá na tloušťku k nastavení **hrubé tloušťky**.
       std_lengths: Standardní délky
-      std_lengths_placeholder: délka ; ...
       std_lengths_help: |
-        Standardní délky desek nebo okrajových pásů.
-        *Velikosti bez jednotek považují velikost z modelových jednotek.*
       std_widths: Standardní šířky
-      std_widths_placeholder: šířka ; ...
       std_widths_help: |
-        Standardní šířky hranování.
-        *Šířka bez jednotek použije šířku z modelových jednotek.*
       std_thicknesses: Standardní tloušťky
-      std_thicknesses_placeholder: tloušťka ; ...
       std_thicknesses_help: |
-        K dispozici **aktuální** hrubá tloušťka.
-        *Velikosti bez jednotek považují velikost z modelových jednotek*
       std_sections: Standardní průřezy
-      std_sections_placeholder: šířka x tloušťka ; ...
       std_sections_help: |
-        Očekávaný formát: **Š** x **T**, kde **Š** a **T** představuje skutečnou *šířku* a *tloušťku* rozměrového kusu.
-        *Velikosti bez jednotek použijí jednoty z modelových jednotek.*
       std_sizes: Standardní velikosti panelů
-      std_sizes_placeholder: délka x šířka ; ...
       std_sizes_help: |
-        Očekávaný formát: **D** x **Š**, kde **D** a **Š** představují skutečnou *délku* a *šířku* panelu.
-        *Velikosti bez jednotek použijí jednoty z modelových jednotek.*
       grained: Směr let
       grained_help: Konfiguruje směr let materiálu.
       grained_0: Bez let
@@ -1320,18 +1571,22 @@ tab:
         Celkový objem bude součtem objemů dílů, plechů, desek nebo hran po řezání.
       raw_estimated_0: Efektivní objem
       raw_estimated_1: Potřebný objem materiálů
+      multiplier_coefficient: ""
+      multiplier_coefficient_help: ""
       std_attributes_dim_placeholder: Vyberte velikost
       std_volumic_masses: Hustota
       std_volumic_masses_help: Umožňuje nastavit hustotu pro všechny velikosti i pro každou standardní velikost materiálu.
-      std_volumic_masses_add: Přidejte hustotu
       std_prices: Cena
       std_prices_help: Umožňuje definovat cenu pro všechny velikosti i pro každou standardní velikost materiálu.
-      std_prices_add: Přidat cenu
+      std_cut_prices: ""
+      std_cut_prices_help: |
       texture_width: Šířka papíru
       texture_height: Výška papíru
       export_to_skm: Export (.skm)
     texture_load:
       title: Načíst obrázek
+    texture_export:
+      title: ""
     import_from_skm:
       title: Importujte soubor .skm
       ask_replace: |
@@ -1360,6 +1615,7 @@ tab:
       no_model: Model není otevřen. Potřebujeme více informací ;)
       no_materials: Váš model neobsahuje žádný materiál.
       material_not_found: Nebyl nalezen žádný materiál.
+      no_texture: ""
       failed_import_skm_file: "Při importu souboru .skm došlo k chybě. **{{ error }}**"
       failed_export_skm_file: "Při exportu souboru .skm došlo k chybě. **{{ error }}**"
       failed_deleting_material: "Při úpravě tohoto materiálu došlo k chybě. **{{ error }}**"
@@ -1489,10 +1745,6 @@ tab:
       Zde najdete neúplný seznam videí vytvořených komunitou, která používá plugin *OpenCutList*.
     submit: Odeslat video
     submit_info: |
-      Natočili jste video představující použití **OpenCutList** a chtěli byste, aby se zde zobrazilo?
-      Dejte nám vědět a napište nám na **opencutlist@lairdubois.fr**!
-
-      *Video musí být veřejné a hostované na YouTube*.
     error:
       fail_to_load_list: Nelze načíst seznam videí.
   news:
@@ -1534,8 +1786,6 @@ tab:
     objective_title:
       default: Objekty
       cuttingdiagram_export: Financování vývozu řezných diagramů
-      outliner: Financování funkce Struktura
-      packing: Financování Nesting v řezných diagramech
     objective_details:
       default: |
         Neustálé zlepšování *OpenCutList* je pro nás důležité, a proto projekt stále potřebuje vaši pomoc pro další aktualizaci!
@@ -1543,14 +1793,6 @@ tab:
         Je pro nás důležité, aby *OpenCutList* bylo možné přizpůsobit velmi rozdílným očekáváním uživatelů od funkce *řezový diagram*.
         Pro další rozšíření možností bychom rádi umožnili export rozvrhových diagramů ve formátu **SVG** a **DXF**.
         Tím, že nám poskytnete prostředky pro práci na těchto exportech, nám dáte příležitost pomoci vám co nejlépe využít *OpenCutList*.
-      outliner: |
-        Model může být poměrně složitý a navigace v jeho struktuře pomocí nativního panelu Struktura aplikace SketchUp není vždy příliš praktická.
-        V aplikaci SketchUp můžete použít materiál a značky na instance, popis, adresu URL a odznaky na definice, ale nezobrazují se ve struktuře.
-        Video vám ukáže, jak bychom to chtěli zlepšit v nabídce Struktura, která je přístupná přímo z OpenCutList.
-      packing: |
-        Je pro nás důležité, aby se *OpenCutList* dokázal přizpůsobit široké škále uživatelských požadavků na svou funkci *řezací diagram*.
-        Pro další rozšíření možností bychom chtěli implementovat **vnořovací algoritmus** pro optimalizaci řezání dílů libovolného tvaru.
-        Tím, že nám poskytnete prostředky k práci na této funkcionalitě, nám dáváte příležitost pomoci vám co nejlépe využít *OpenCutList*.
     objective_crowdfunding: |
       Vývoj nových funkcí bude probíhat prostřednictvím **Investičního financování** a může být zahájen po dosažení **Finančního cíle**.
     objective_thanks: |
@@ -1576,10 +1818,10 @@ tab:
     model_settings: Předvolby modelu
     length_unit: Jednotka délky
     length_format: Formát
-    length_format_0: Desetinný
+    length_format_0: $t(default.decimal)
     length_format_1: Architektonický
     length_format_2: Inženýrství
-    length_format_3: Frakční
+    length_format_3: $t(default.fractional)
     length_precision: Přesnost
     suppress_units_display: Zobrazit jednotku délky pro každou hodnotu
     mass_unit: Jednotka hmotnosti
@@ -1636,7 +1878,7 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglicky*, *německy*)
       - Gildas Boureau (*francouzská* dokumentace)
       - Vladimir Badulya (*ruský*)
-      - Pierluigi Colombo (*italský*)
+      - Pierluigi Colombo, Massimo Risca (*italský*)
       - Nayton Sanches Barbosa, opraveno a revidováno [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugalský*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*španělsky*)
       - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*polsky*)
@@ -1664,9 +1906,104 @@ tool:
     zoom_extents: Rozsahy zvětšení
     toggle_depth: Zadní část
     more: Více
+    end_point: ""
+    middle_point: ""
+    third_point: ""
+    vcb_length: Délka
+    vcb_size: ""
+    vcb_radius: ""
+    vcb_diameter: ""
+    vcb_distance: ""
+    error:
+      no_direction: ""
+      invalid_length: ""
+      invalid_multiplicator: ""
+      invalid_divider: ""
+      invalid_offset: ""
+      invalid_segment_count: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_draw:
+    title: Kreslení
+    action_0: ""
+    action_0_status: ""
+    action_0_state_1_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_1_radius_status: ""
+    action_1_state_1_diameter_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_1_status: ""
+    action_x_state_2_status: ""
+    action_option_group_offset: Offset
+    action_option_group_segments: ""
+    action_option_group_options: Nastavení
+    action_option_offset_shape_offset: Offset
+    action_option_offset_shape_offset_status: ""
+    action_option_segments_segment_count: ""
+    action_option_segments_segment_count_status: ""
+    action_option_options_construction: ""
+    action_option_options_construction_status: ""
+    action_option_options_rectangle_centered: ""
+    action_option_options_rectangle_centered_status: ""
+    action_option_options_smoothing: Vyhlazení
+    action_option_options_smoothing_status: ""
+    action_option_options_measure_from_diameter: ""
+    action_option_options_measure_from_diameter_status: ""
+    action_option_options_measure_from_radius_status: ""
+    action_option_options_measure_reversed: ""
+    action_option_options_measure_reversed_status: ""
+    action_option_options_pull_centered: ""
+    action_option_options_pull_centered_status: ""
+    action_option_options_ask_name: ""
+    action_option_options_ask_name_status: ""
+    action_pull_locked_status: ""
+    action_toggle_move_copy_status: ""
+    action_change_move_anchor_status: ""
+    success:
+      part_created: ""
+  smart_handle:
+    title: ""
+    action_0: ""
+    action_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: ""
+    action_1_state_2_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: ""
+    action_2_state_2_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: ""
+    action_3_state_2_status: ""
+    action_4: ""
+    action_4_status: ""
+    action_4_state_0_status: ""
+    action_4_state_1_status: ""
+    action_4_state_2_status: ""
+    action_5: ""
+    action_option_group_copy_measure_type: ""
+    action_option_group_move_measure_type: ""
+    action_option_group_axes: Osy
+    action_option_group_options: Nastavení
+    action_option_copy_measure_type_outside_status: ""
+    action_option_copy_measure_type_centered_status: ""
+    action_option_copy_measure_type_inside_status: ""
+    action_option_move_measure_type_outside_status: ""
+    action_option_move_measure_type_centered_status: ""
+    action_option_move_measure_type_inside_status: ""
+    action_option_axes_active_status: ""
+    action_option_axes_context_status: ""
+    action_option_axes_entity_status: ""
+    action_option_options_mirror_status: ""
+    warning:
+      copies_disable_mirror: ""
+    error:
+      min_distance: ""
   smart_paint:
     title: Přiřazení materiálů
     default_material: Není definován žádný materiál
