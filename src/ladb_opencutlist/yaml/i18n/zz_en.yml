@@ -609,7 +609,7 @@ tab:
     export:
       title: 480 - Export
       info_0: |
-        481 - This feature allows you to export data from the *Parts List* to the clipboard or to a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) or [XLSX](https://en.wikipedia.org/wiki/XLSX) file.
+        481 - This feature allows you to export data from the *Parts List* to the clipboard or to a [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) or [XLSX](https://en.wikipedia.org/wiki/Office_Open_XML) file.
       customize_help: |
         482 - Reorder, Hide, Add, Remove or Select a column from the list to customize its **title** and the **formula** that will generate the values for each exported row.
       add_column: 483 - Add a column

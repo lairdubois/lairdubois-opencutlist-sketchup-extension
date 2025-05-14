@@ -1026,7 +1026,7 @@ tab:
         *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       option_scrap_bin_1d_none: 826 - Aucun
       option_std_bin_2d_sheet_good: 827 - Panneaux standards
-      option_std_bin_2d_veneer: 828 - Feuilles standard
+      option_std_bin_2d_veneer: 828 - Feuilles standards
       option_std_bin_2d_help: |
         829 - Sélectionnez ici les tailles de panneau ou feuille standard qui seront dupliquées pour contenir au mieux toutes les pièces.
 

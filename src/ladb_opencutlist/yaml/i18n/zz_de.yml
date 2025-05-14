@@ -609,7 +609,7 @@ tab:
     export:
       title: 480 - Export
       info_0: |
-        481 - Mit dieser Funktion können Sie Daten der *Holzliste* in die Zwischenablage oder in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) oder [XLSX](https://de.wikipedia.org/wiki/XLSX) Format exportieren.
+        481 - Mit dieser Funktion können Sie Daten der *Holzliste* in die Zwischenablage oder in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) oder [XLSX](https://de.wikipedia.org/wiki/Office_Open_XML) Format exportieren.
       customize_help: |
         482 - Umordnen, Ausblenden, Hinzufügen, Entfernen oder Auswählen einer Spalte in der Liste, um ihren **Titel** und die **Formel** anzupassen, die den angezeigten Wert für jede exportierte Zeile erzeugt.
       add_column: 483 - Spalte hinzufügen
@@ -635,7 +635,7 @@ tab:
       option_csv_col_sep_tab: 501 - Tabulator
       option_csv_col_sep_comma: 502 - Komma
       option_csv_col_sep_semicolon: 503 - Semikolon
-      option_encoding: 504 - Kodierung
+      option_csv_encoding: 504 - Kodierung
       copy_all: 505 - Alles
       copy_values: 506 - Nur Inhalt
       number: 507 - Nr.

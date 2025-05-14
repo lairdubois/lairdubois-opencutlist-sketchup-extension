@@ -613,7 +613,7 @@ tab:
     export:
       title: Экспорт
       info_0: |
-        Эта функция позволяет экспортировать данные из *списка деталей* в буфер обмена или в файл в формате [CSV](https://ru.wikipedia.org/wiki/CSV).
+        Эта функция позволяет экспортировать данные из *карты раскроя* в буфер обмена или в файл в формате [CSV](https://ru.wikipedia.org/wiki/CSV) или [XLSX](https://ru.wikipedia.org/wiki/Office_Open_XML).
       customize_help: |
         В этой вкладке можно изменять порядок столбцов, скрывать их, а также добавлять и удалять. Выберите столбец в списке, чтобы настроить его **название** и **формулу**, определяющую значение каждой экспортируемой строки.
       add_column: Добавить столбец
@@ -634,11 +634,12 @@ tab:
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Список деталей
       option_source_instances_list: Список экземпляров
-      option_col_sep: Разделитель
-      option_col_sep_tab: Табулятор
-      option_col_sep_comma: Запятая
-      option_col_sep_semicolon: Точка с запятой
-      option_encoding: Кодировка
+      option_format: Формат
+      option_csv_col_sep: Разделитель
+      option_csv_col_sep_tab: Табулятор
+      option_csv_col_sep_comma: Запятая
+      option_csv_col_sep_semicolon: Точка с запятой
+      option_csv_encoding: Кодировка
       copy_all: Всё
       copy_values: Только значения
       number: N°
@@ -1002,68 +1003,96 @@ tab:
     packing:
       title: Карта раскроя
       option_problem_type: Тип
-      option_problem_type_rectangle: ""
-      option_problem_type_rectangleguillotine: ""
+      option_problem_type_rectangle: Прямоугольник
+      option_problem_type_rectangleguillotine: Гильотина
       option_problem_type_onedimensional: Погонаж
-      option_problem_type_irregular: ""
+      option_problem_type_irregular: Встроенный
       options_material: Материал
       options_config: Конфигурация
       options_display: Просмотр
-      options_tuning: ""
-      option_std_bin_1d_dimensional: ""
-      option_std_bin_1d_edge: ""
+      options_tuning: Тюнинг
+      option_std_bin_1d_dimensional: Стандартный погонаж
+      option_std_bin_1d_edge: Стандартные размеры
       option_std_bin_1d_help: |
+        Выберите здесь стандартные размеры , которые будут дублироваться для наилучшего размещения всех деталей.
+
+        Этот список определяется полем **$t(tab.materials.edit_material.std_lengths)** материала.
+
+        *Отредактируйте свойства материала '{{ material_name }}', чтобы обновить этот список.*
       option_std_bin_1d_add: Добавить размер панели
       option_std_bin_1d_none: Нет
       option_scrap_bin_1d_dimensional_sizes: Деловые остатки
       option_scrap_bin_1d_edge_sizes: Деловые остатки
       option_scrap_bin_1d_sizes_placeholder: длина x количество ; ...
       option_scrap_bin_1d_sizes_help: |
+        Укажите здесь список деловых остатков, которые будут учитываться при создании карты раскроя.
+
+        *Если единица измерения не указана, будет применена единица измерения модели проекта.*
       option_scrap_bin_1d_none: Нет
-      option_std_bin_2d_sheet_good: ""
-      option_std_bin_2d_veneer: ""
+      option_std_bin_2d_sheet_good: Стандартные панели
+      option_std_bin_2d_veneer: Стандартные листы
       option_std_bin_2d_help: |
+        Выберите стандартные размеры панелей или листов, которые будут дублироваться для наилучшего размещения всех деталей.
+
+        Этот список определяется полем **$t(tab.materials.edit_material.std_sizes)** материала.
+
+        *Отредактируйте свойства материала '{{ material_name }}', чтобы обновить этот список.*
       option_std_bin_2d_add: Добавить размер панели
       option_std_bin_2d_none: Нет
       option_scrap_bin_2d_sheet_good_sizes: Деловые остатки
       option_scrap_bin_2d_veneer_sizes: Остатки листа
       option_scrap_bin_2d_sizes_placeholder: длина x ширина x количество ; ...
       option_scrap_bin_2d_sizes_help: |
+        Укажите здесь список деловых остатков панелей или листов, которые будут использоваться для карты раскроя.
+
+        *Если единица измерения не указана, будет применена единица измерения модели.*
       option_scrap_bin_2d_none: Нет
-      option_optimization_mode: ""
+      option_optimization_mode: Режим оптимизации
       option_optimization_mode_help: |
+        Определяет режим оптимизации, с ограничением по времени или без.
       option_objective: Цель
       option_objective_help: |
-      option_rectangleguillotine_cut_type: ""
+        Определяет назначение раскроя.
+      option_rectangleguillotine_cut_type: Тип разреза
       option_rectangleguillotine_cut_type_help: |
-      option_rectangleguillotine_cut_type_non_exact: ""
-      option_rectangleguillotine_cut_type_exact: ""
-      option_rectangleguillotine_cut_type_homogenous: ""
-      option_rectangleguillotine_number_of_stages: ""
+        Определяет тип разреза.
+      option_rectangleguillotine_cut_type_non_exact: Не точно
+      option_rectangleguillotine_cut_type_exact: Точно
+      option_rectangleguillotine_cut_type_homogenous: Однородный
+      option_rectangleguillotine_number_of_stages: Варианты разреза
       option_rectangleguillotine_number_of_stages_help: |
-      option_rectangleguillotine_first_stage_orientation: ""
+        Определяет максимальное количество вариантов резки.
+      option_rectangleguillotine_first_stage_orientation: Направление первого реза
       option_rectangleguillotine_first_stage_orientation_help: |
-      option_rectangleguillotine_first_stage_orientation_horizontal: ""
-      option_rectangleguillotine_first_stage_orientation_vertical: ""
-      option_rectangleguillotine_first_stage_orientation_any: ""
+        Определяет направление первого разреза.
+      option_rectangleguillotine_first_stage_orientation_horizontal: Горизонталь
+      option_rectangleguillotine_first_stage_orientation_vertical: Вертикаль
+      option_rectangleguillotine_first_stage_orientation_any: Любой
       option_rectangleguillotine_keep: Размер отходов
       option_rectangleguillotine_keep_help: "Обрезки с габаритами, превышающими их заданнные минимальные размеры, не будут считаться отходами от распила и получат маркировку **Сохранить**."
-      option_irregular_allowed_rotations: ""
+      option_irregular_allowed_rotations: Разрешенные вращения
       option_irregular_allowed_rotations_help: |
+        Определяет возможный шаг углов поворота детали для ее размещения.
+
+        *Для материалов с резьбой допускают только шаги 0 и 180°.*
       option_irregular_allowed_rotations_0: Нет
-      option_irregular_allowed_rotations_90: ""
-      option_irregular_allowed_rotations_180: ""
-      option_irregular_allow_mirroring: ""
+      option_irregular_allowed_rotations_90: Шаг 90°
+      option_irregular_allowed_rotations_180: Шаг 180°
+      option_irregular_allow_mirroring: Разрешить отражение
       option_irregular_allow_mirroring_help: |
+        Определяет, разрешено ли зеркальное отражение детали.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Расстояние между ними
       option_spacing_help: |
+        Минимальное расстояние между каждой деталью.
+        Это значение может соответствовать ширине пильного полотна или режущего инструмента.
       option_trimming: Обрезка
-      option_trimming_1d_help: ""
-      option_trimming_2d_help: ""
+      option_trimming_1d_help: "Предел подреза на каждом конце погонажа, которые будут рассматриваться как отходы."
+      option_trimming_2d_help: "Предел обреза по всему периметру панели или листа, который будет рассматриваться как отходы."
       option_items_formula: Формула
       option_items_formula_help: |
+        Позволяет написать код на языке *Ruby* для настройки текста идентификации деталей на диаграмме.
       option_hide_part_list: Список деталей
       option_hide_part_list_1d_dimensional_0: Отображать для каждой доски
       option_hide_part_list_1d_edge_0: Отображать для каждой кромки
@@ -1080,28 +1109,30 @@ tab:
         Позволяет отображать или скрывать на схеме реальную форму деталей, а также процесс их обработки.
 
         *Для экспорта фигур эта опция должна быть включена.*
-      option_colorization: ""
+      option_colorization: Раскраска деталей
       option_colorization_0: $t(default.no)
-      option_colorization_1: ""
-      option_colorization_2: ""
+      option_colorization_1: $t(default.yes) - Просмотр
+      option_colorization_2: $t(default.yes) - Просмотр и печать
       option_colorization_help: |
+        Определяет, используется ли случайный цвет для раскраски частей на диаграмме.
       option_hide_edges_preview: Индикаторы облицовки
       option_hide_edges_preview_0: Отображать на диаграмме
       option_hide_edges_preview_1: Скрывать на диаграмме
       option_hide_edges_preview_help: "Позволяет отображать или скрывать визуальную индикацию краев поверхности, на которую необходимо нанести декоративное покрытие, для каждой детали на эскизе карты раскроя.."
-      option_time_limit: ""
+      option_time_limit: Ограничение по времени
       option_time_limit_help: |
+        Устанавливает время, отведенное для расчета
       tooltip:
         scroll_to_block_1d: Прокрутка до первой доски или кромочной полосы
-        scroll_to_block_2d: ""
+        scroll_to_block_2d: Прокрутка до первой панели или листа
       list:
         summary: Спецификация
         trimming: Обрезка
         settings: Настройки
         stats: Статистика
-        time: ""
+        time: Лимит времени
         total_efficiency: Общая эффективность
-        total_fill_rate: ""
+        total_fill_rate: Скорость подачи
         total_cut_count: Σ Число резов
         total_cut_length: Σ Длина пропилов
         efficiency: Эффективность
@@ -1126,7 +1157,7 @@ tab:
         bin_2d_veneer_type_0: Стандартный лист
         bin_2d_veneer_type_1: Остаток листа
         unused: Неиспользованный
-        unplaced_parts: ""
+        unplaced_parts: Неразмещенная деталь
         unplaced_parts_plural: Неразмещенные детали
         parts: Деталь
         parts_plural: Детали
@@ -1137,8 +1168,8 @@ tab:
         cut: Пропил
         cut_plural: Распилы
         cut_trimming: Чистый рез
-        cut_primary: ""
-        cut_depth: ""
+        cut_primary: Первичный разрез
+        cut_depth: "Варианты {{ depth }}"
       write:
         title: Экспорт карты раскроя
         info_0: |
@@ -1197,12 +1228,12 @@ tab:
         option_cuts_help: |
           Позволяет активировать экспорт разрезов, а также выбрать их цвет.
         warning:
-          is_bin_selection: ""
+          is_bin_selection: "**Скрытые блоки** не будут экспортированы."
       error:
         no_part: Нет детали.
-        no_bin_1d: ""
-        no_bin_2d: ""
-        no_solution: ""
+        no_bin_1d: "Не выбран ни один стандартный погонаж, и не определен остаток."
+        no_bin_2d: "Не выбраны ни одна из панелей, либо листов и не определен размер остатка."
+        no_solution: Решение не найдено.
       warning:
         is_part_selection: Данный отчет ограничен **выделенными деталями**.
     labels:
@@ -1787,6 +1818,10 @@ tab:
       Представляем подборку видео, просмотр которых поможет эффективнее использовать возможности *OpenCutList*.
     submit: Отправить видео
     submit_info: |
+      Вы создали видео, которое поможет эффективно использовать **OpenCutList**, и хотите, чтобы оно появилось здесь.
+      Дайте нам знать, написав нам по адресу **opencutlist@lairdubois.fr**!
+
+      *Видео должно быть публичным и размещено на YouTube.*
     error:
       fail_to_load_list: Список видеозаписей не может быть загружен.
   news:
@@ -1808,7 +1843,7 @@ tab:
     redirection: |
       Вы будете перенаправлены на платформу **Open Collective**, на которой расположен этот дискуссионный форум.
       Для *создания темы* или *ответа* вам необходимо создать аккаунт и войти в систему.
-      *Это бесплатно, без обязательств и достаточно простого адреса электронной почты*.
+      *Это бесплатно, без обязательств и достаточно простого адреса электронной почты.*
 
       Подайте заявку, чтобы продолжить.
     error:
@@ -2104,7 +2139,7 @@ tool:
     action_2: Переключить Лицевая ↔ Обратная
     action_2_status: "Кликните на деталь, чтобы перевернуть отображение лицевой стороны на тыльную сторону"
     action_3: Адаптировать оси
-    action_3_status: "Выберите грань детали и кликните по ней, чтобы изменить ее оси."
+    action_3_status: "Выберите грань детали и кликните по ней, чтобы изменить ее оси"
     action_4: Изменить начало координат
     action_4_status: Для перемещения начала координат выберите точку на детали и кликните по ней
     action_option_group_direction: Направление
