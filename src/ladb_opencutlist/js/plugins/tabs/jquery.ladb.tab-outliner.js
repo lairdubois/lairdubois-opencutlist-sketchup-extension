@@ -169,7 +169,9 @@
                             }
                         })
                         .on('mouseleave', function () {
-                            rubyCallCommand('outliner_highlight', {id: node.id, highlighted: false});
+                            if (that.editedNode !== node) {
+                                rubyCallCommand('outliner_highlight', {id: node.id, highlighted: false});
+                            }
                         });
                 }
                 $row.on('click', function (e) {
@@ -426,6 +428,21 @@
                     });
 
                 });
+
+                // Bind model
+                $modal
+                    .on('shown.bs.modal', function () {
+                        if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
+                            rubyCallCommand('outliner_highlight', {id: node.id, highlighted: true});
+                        }
+                    })
+                    .on('hidden.bs.modal', function () {
+                        that.editedNode = null;
+                        if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
+                            rubyCallCommand('outliner_highlight', {id: node.id, highlighted: false});
+                        }
+                    })
+                ;
 
                 // Show modal
                 $modal.modal('show');
