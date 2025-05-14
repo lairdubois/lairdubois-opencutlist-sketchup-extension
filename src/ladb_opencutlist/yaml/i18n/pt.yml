@@ -7,7 +7,6 @@ default:
   minimize: Minimizar
   maximize: Maximizar
   cancel: Cancelar
-  # stop computation and return best result so far
   stop: Parar
   validate: Aplicar
   confirm: Confirmar
@@ -39,8 +38,10 @@ default:
   draw: Desenhar
   estimate: Estimar
   rename: Renomear
+  next: ""
   yes: Sim
   no: Não
+  automatic: Automático
   empty_filename: Sem nome.skp
   help: Ajuda
   error: Droga!
@@ -68,6 +69,8 @@ default:
   instance_plural: unidades
   part_single: peça
   part_plural: peças
+  cut_single: ""
+  cut_plural: ""
   thickness_layer_single: camada
   thickness_layer_plural: camadas
   setup_model_units: Configure as unidades do modelo
@@ -83,6 +86,10 @@ default:
   file_plural: Arquivos
   stroke_color: Cor da linha
   fill_color: Cor de preenchimento
+  length: Comprimento
+  width: Largura
+  thickness: Espessura
+  height: Altura
 core:
   menu:
     submenu: OpenCutList
@@ -233,6 +240,8 @@ core:
     textinput_code:
       snippets: Exemplos de fórmulas
       help: Digite **@** para obter uma lista de variáveis.
+    textinput_size:
+      quantity: ""
     three_viewer:
       view: "{{ view }} Ver"
       view_isometric: Isométrica
@@ -372,9 +381,7 @@ tab:
       select_unselect_all_parts: Selecione / Desmarque todas as peças do grupo
       select_parts_in_cutlist: Selecione a peça no plano de corte
       select_parts_in_cutlist_plural: "Selecione as peças {{ count }} no plano de corte"
-      # used in estimate to setup the cutting diagram
       setup_group_cuttingdiagram: "Defina o plano de corte para '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension }}'"
-      # used in estimate to setup the new packing
       setup_group_packing: "Defina o plano de corte para '{{ material_name }} & nbsp; / & nbsp; {{ std_dimension }}'"
       open_part_url: Abrir URL da peça
     menu:
@@ -544,6 +551,9 @@ tab:
       minimize_on_highlight: Mimimize após *'$t(tab.cutlist.highlight_part) ...'*
       minimize_on_highlight_help: "Se esta opção for selecionada, a janela OpenCutList será minimizada quando a função *'$t(tab.cutlist.highlight_part)'* for aplicada."
       general: Geral
+      sorting: Classificação
+      group_order_strategy: ""
+      group_order_strategy_help: |
       part_order_strategy: Classificação de peças
       part_order_strategy_help: |
         Reorganizar as seguintes propriedades para definir a ordem de classificação dentro de cada grupo.
@@ -551,6 +561,10 @@ tab:
       dimension_column_order_strategy: Ordenação de Dimensões
       dimension_column_order_strategy_help: |
         Reorganize as seguintes propriedades para definir a ordem de exibição das colunas de dimensão.
+      property_material_type: ""
+      property_material_name: Nome do Material
+      property_std_width: ""
+      property_std_thickness: ""
       property_thickness: Espessura
       property_length: Comprimento
       property_width: Largura
@@ -580,7 +594,7 @@ tab:
       volume: Volume
       number: Nº
       name: Designação
-      count: Qtd.
+      count: ""
       cutting: Peças
       bbox: Acabado
       final: Real
@@ -597,7 +611,6 @@ tab:
     export:
       title: Exportar
       info_0: |
-        Este recurso permite exportar sua *folha de dados* para a área de transferência ou para um arquivo em formato [CSV](https://pt.wikipedia.org/wiki/Comma-separated_values).
       customize_help: |
         Reordenar, Esconder, Adicionar, Remover ou Seleccionar uma coluna da lista para personalizar o seu **título** e a **fórmula** gerando o valor apresentado para cada linha exportada.
       add_column: Acrescentar uma coluna
@@ -618,11 +631,12 @@ tab:
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Lista de peças
       option_source_instances_list: Lista de instâncias
-      option_col_sep: Separador
-      option_col_sep_tab: Tabulador
-      option_col_sep_comma: Vírgula
-      option_col_sep_semicolon: Ponto e vírgula
-      option_encoding: Codificação
+      option_format: Formato
+      option_csv_col_sep: Separador
+      option_csv_col_sep_tab: Tabulador
+      option_csv_col_sep_comma: Vírgula
+      option_csv_col_sep_semicolon: Ponto e vírgula
+      option_csv_encoding: Codificação
       copy_all: Tudo
       copy_values: Valores somente
       number: Nº
@@ -684,22 +698,57 @@ tab:
         Gerar um orçamento do **peso** e do **custo** da **matéria prima** necessária para a produção das peças da *lista de peças*.
       options_general: Geral
       options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: Coeficiente de perda para madeira bruta *$t(tab.materials.type_1)*
-      option_solid_wood_coefficient_help: Permite indicar o coeficiente de multiplicação aplicado ao volume bruto medido para materiais do tipo "**$t(tab.materials.type_1)**" para contabilizar defeitos e desperdícios.
+      option_solid_wood_coefficient_bc: ""
       raw_materials: Matéria prima
-      coefficient: Fator
       total: Total
       total_used: Usado
       total_unused: Não utilizado
       total_mass: Σ Massas
       total_cost: Σ Custos
-      total_count: Qtd.
+      total_count: ""
       total_instance_count: Σ Das unidades
       total_volume: Σ Volumes
       total_area: Σ Áreas
       total_length: Σ Comprimentos
       tooltip:
         incompatible_unit: Unidade incompatível com as opções de orçamento de material
+        multiplier_coefficient: ""
+      error:
+        no_typed_material_parts: "Nenhuma peça com o tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar a estimativa."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
+      warning:
+        is_group_selection: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão contadas.
+      tip:
+        not_enough_data: |
+          Para que esta estimativa seja calculada corretamente:
+          - Os materiais utilizados devem ter pelo menos um peso e preço configurados.
+          - Os acessórios utilizados devem ter pelo menos um peso e um preço.
+    estimate:
+      title: Orçamento
+      info_0: |
+        Gerar um orçamento do **peso** e do **custo** da **matéria prima** necessária para a produção das peças da *lista de peças*.
+      options_general: Geral
+      total: Total
+      total_used: Usado
+      total_unused: Não utilizado
+      total_mass: Σ Massas
+      total_cost: Σ Custos
+      total_count: ""
+      total_instance_count: Σ Das unidades
+      total_volume: Σ Volumes
+      total_area: Σ Áreas
+      total_length: Σ Comprimentos
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_-1: ""
+      tooltip:
+        incompatible_unit: Unidade incompatível com as opções de orçamento de material
+        multiplier_coefficient: ""
       error:
         no_typed_material_parts: "Nenhuma peça com o tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar a estimativa."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
@@ -833,7 +882,7 @@ tab:
       list:
         unplaced_parts: Peças não colocadas
         summary: Resumo
-        count: Qtd.
+        count: ""
         bar: Barra
         sheet: Chapa
         length: Comprimento
@@ -948,6 +997,212 @@ tab:
         cutting_dimensions_increase_1d: "Dimensões aumentadas pelo acréscimo de comprimento (**{{ length_increase }}**) definido no material '{{ material_name }}'."
         cutting_dimensions_increase_2d: "Dimensões aumentadas pelas sobras configuradas no material '{{ material_name }}' em comprimento (**{{ length_increase }}**) e largura (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Dimensões reduzidas pela espessura da fita de borda. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    packing:
+      title: Plano de Corte
+      option_problem_type: Tipo
+      option_problem_type_rectangle: ""
+      option_problem_type_rectangleguillotine: ""
+      option_problem_type_onedimensional: Barra
+      option_problem_type_irregular: ""
+      options_material: Material
+      options_config: Configuração
+      options_display: Exibição
+      options_tuning: ""
+      option_std_bin_1d_dimensional: ""
+      option_std_bin_1d_edge: ""
+      option_std_bin_1d_help: |
+      option_std_bin_1d_add: Adicionar um tamanho de painel
+      option_std_bin_1d_none: Nenhum
+      option_scrap_bin_1d_dimensional_sizes: Sobras de barra
+      option_scrap_bin_1d_edge_sizes: Sobras de fita de borda
+      option_scrap_bin_1d_sizes_placeholder: comprimento x quantidade ; ...
+      option_scrap_bin_1d_sizes_help: |
+      option_scrap_bin_1d_none: Nenhum
+      option_std_bin_2d_sheet_good: ""
+      option_std_bin_2d_veneer: ""
+      option_std_bin_2d_help: |
+      option_std_bin_2d_add: Adicionar um tamanho de painel
+      option_std_bin_2d_none: Nenhum
+      option_scrap_bin_2d_sheet_good_sizes: Sobras de chapa
+      option_scrap_bin_2d_veneer_sizes: Sobras de laminado
+      option_scrap_bin_2d_sizes_placeholder: comprimento x largura x quantidade ; ...
+      option_scrap_bin_2d_sizes_help: |
+      option_scrap_bin_2d_none: Nenhum
+      option_optimization_mode: ""
+      option_optimization_mode_help: |
+      option_objective: Objetivo
+      option_objective_help: |
+      option_rectangleguillotine_cut_type: ""
+      option_rectangleguillotine_cut_type_help: |
+      option_rectangleguillotine_cut_type_non_exact: ""
+      option_rectangleguillotine_cut_type_exact: ""
+      option_rectangleguillotine_cut_type_homogenous: ""
+      option_rectangleguillotine_number_of_stages: ""
+      option_rectangleguillotine_number_of_stages_help: |
+      option_rectangleguillotine_first_stage_orientation: ""
+      option_rectangleguillotine_first_stage_orientation_help: |
+      option_rectangleguillotine_first_stage_orientation_horizontal: ""
+      option_rectangleguillotine_first_stage_orientation_vertical: ""
+      option_rectangleguillotine_first_stage_orientation_any: ""
+      option_rectangleguillotine_keep: Tamanho mínimo das sobras
+      option_rectangleguillotine_keep_help: Sobras com duas dimensões maiores que o tamanho mínimo serão marcados como **para guardar**.
+      option_irregular_allowed_rotations: ""
+      option_irregular_allowed_rotations_help: |
+      option_irregular_allowed_rotations_0: Nenhum
+      option_irregular_allowed_rotations_90: ""
+      option_irregular_allowed_rotations_180: ""
+      option_irregular_allow_mirroring: ""
+      option_irregular_allow_mirroring_help: |
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: ""
+      option_spacing: Espaçamento
+      option_spacing_help: |
+      option_trimming: Apara
+      option_trimming_1d_help: ""
+      option_trimming_2d_help: ""
+      option_items_formula: Fórmula
+      option_items_formula_help: |
+      option_hide_part_list: Lista de peças
+      option_hide_part_list_1d_dimensional_0: Exibido para cada barra
+      option_hide_part_list_1d_edge_0: Exibido para cada fita de borda
+      option_hide_part_list_2d_sheet_good_0: Exibido para cada chapa
+      option_hide_part_list_2d_veneer_0: Exibido para cada chapa laminada
+      option_hide_part_list_1: Mascarado
+      option_hide_part_list_1d_help: Apresenta ou esconde a lista de peças para cada barra ou fita de borda.
+      option_hide_part_list_2d_help: Exibir ou ocultar a lista de peças para cada painel.
+      option_part_drawing_type: Formas das peças
+      option_part_drawing_type_0: Ocultado
+      option_part_drawing_type_1: Vista Frontal Desenhada
+      option_part_drawing_type_2: Vista Traseira Desenhada
+      option_part_drawing_type_help: |
+        ocultar a forma real das peças bem como sua usinagem no plano de corte.
+
+        *Esta opção deve estar ativada para que as formas possam ser exportadas.*
+      option_colorization: ""
+      option_colorization_0: $t(default.no)
+      option_colorization_1: ""
+      option_colorization_2: ""
+      option_colorization_help: |
+      option_hide_edges_preview: Visualização de fitas borda à serem coladas
+      option_hide_edges_preview_0: Exibido no plano de corte
+      option_hide_edges_preview_1: Oculto no plano de corte
+      option_hide_edges_preview_help: Permite exibir ou ocultar a visualização das fitas de borda de cada peça no plano de corte.
+      option_time_limit: ""
+      option_time_limit_help: |
+      tooltip:
+        scroll_to_block_1d: Ir até a primeira barra ou fita de borda
+        scroll_to_block_2d: ""
+      list:
+        summary: Resumo
+        trimming: Apara
+        settings: Configurações
+        stats: Estatísticas
+        time: ""
+        total_efficiency: Eficiência global
+        total_fill_rate: ""
+        total_cut_count: Numero de cortes
+        total_cut_length: Comprimento dos cortes
+        efficiency: Eficiência
+        count: ""
+        length: Comprimento
+        width: Largura
+        total_length: Σ Comprimentos
+        total_area: Σ Áreas
+        total_cost: Σ Custos
+        total_part_count: Σ Peças
+        total_used: Total utilizado
+        bin_1d_dimensional: Barra
+        bin_1d_dimensional_type_0: Barra padrão
+        bin_1d_dimensional_type_1: Sobra de barra
+        bin_1d_edge: Fita de Borda
+        bin_1d_edge_type_0: Fita de borda padrão
+        bin_1d_edge_type_1: Sobra de fita de borda
+        bin_2d_sheet_good: Chapa
+        bin_2d_sheet_good_type_0: Chapa de tamanho padrão
+        bin_2d_sheet_good_type_1: Sobra de chapa
+        bin_2d_veneer: Folha
+        bin_2d_veneer_type_0: Laminado padrão
+        bin_2d_veneer_type_1: Sobra de laminado
+        unused: Não utilizado
+        unplaced_parts: ""
+        unplaced_parts_plural: Peças não colocadas
+        parts: Peça
+        parts_plural: Peças
+        leftovers: Sobras
+        leftovers_plural: Sobras
+        leftovers_to_keep: Sobra a ser conservada
+        leftovers_to_keep_plural: Sobras a serem conservadas
+        cut: Corte
+        cut_plural: Cortes
+        cut_trimming: Corte de apara
+        cut_primary: ""
+        cut_depth: ""
+      write:
+        title: Exportação do layout
+        info_0: |
+          Este módulo permite exportar a **geometria** do *layout* como uma lista de arquivos em [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: Estrutura DXF
+        option_dxf_structure_1: Camadas
+        option_dxf_structure_2: Camadas + Blocos
+        option_dxf_structure_help: |
+          Permite escolher a estrutura do arquivo DXF.
+
+          - a estrutura **Layers** desenha todas as linhas planas, distinguindo os diferentes tipos de linhas apenas por camadas. *Essa estrutura oferece melhor compatibilidade com softwares de terceiros.*
+          - A estrutura **Camadas + Blocos** cria um bloco por peça e insere esses blocos quantas vezes as peças forem repetidas. *Essa estrutura oferece mais flexibilidade para edição do arquivo.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_bin_sheet_good: Chapa
+        option_bin_sheet_good_help: |
+          Permite habilitar a exportação da chapa e escolher suas cores.
+        option_bin_veneer: Folha
+        option_bin_veneer_help: |
+          Permite habilitar a exportação da planilha e escolher suas cores.
+        option_bin_dimensional: Barra
+        option_bin_dimensional_help: |
+          Permite ativar a exportação da barra e também escolher suas cores.
+        option_bin_edge: Fita de Borda
+        option_bin_edge_help: |
+          Permite ativar a exportação da fita de borda e também escolher suas cores.
+        option_parts: Peças
+        option_parts_help: |
+          Permite ativar a exportação de peças e escolher suas cores.
+        option_parts_holes: Perfurações
+        option_parts_holes_help: |
+          Permite escolher a cor dos furos da peça.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Identificações
+        option_texts_help: |
+          Permite ativar a exportação dos textos de identificação das peças e também escolher suas cores.
+        option_leftovers: Sobras
+        option_leftovers_help: |
+          Permite ativar a exportação das sobras e também escolher suas cores.
+        option_cuts: Cortes
+        option_cuts_help: |
+          Permite ativar a exportação dos cortes e escolher sua cor.
+        warning:
+          is_bin_selection: ""
+      error:
+        no_part: Nenhuma peça.
+        no_bin_1d: ""
+        no_bin_2d: ""
+        no_solution: ""
+      warning:
+        is_part_selection: Este plano de corte é limitado a **peças selecionadas**.
     labels:
       title: Etiquetas
       options_layout: Composição
@@ -1243,7 +1498,6 @@ tab:
   materials:
     label: Materiais
     title: Materiais
-    new: Novo material
     type_0: Indefinido
     type_1: Madeira maciça
     type_2: Chapa
@@ -1264,13 +1518,14 @@ tab:
       grain_direction: Direção dos veios
       raw_estimated_0: Estimado pelo volume útil cortado.
       colorized: Este tom será aplicado à textura deste material quando for renderizado no modelo
-      texture_load: Carrega uma nova textura
+      texture_load: ""
+      texture_export: ""
       texture_clear: Remover textura
       edit: "Edite as propriedades de '{{ name }}'"
       set_current: "Colorir peças com '{{ name }}'."
       open_url: Abrir a URL do material
-    menu:
       import_from_skm: Importar material (.skm)
+    menu:
       purge_unused: Eliminar materiais não utilizados
       reset_prices: Redefinir os preços de todos os materiais
       reset_prices_confirm: |
@@ -1294,13 +1549,12 @@ tab:
       type: Tipo
       description: Descrição
       url: URL
+      formats: ""
       cut_options: Parâmetros de corte
       estimate_options: Opções de estimativa
       attributes: Atributos
       thickness: Espessura
       thickness_help: |
-        Espessura final do material.
-        *Se nenhuma unidade for especificada, a unidade do modelo será levada em conta.*
       length_increase: Superdimensionamento do comprimento
       length_increase_help: Superdimensionamento aplicado ao comprimento para definir o **comprimento aproximado**.
       width_increase: Superdimensionamento da largura
@@ -1308,30 +1562,15 @@ tab:
       thickness_increase: Superdimensionamento da espessura
       thickness_increase_help: Superdimensionamento aplicado à espessura para definir a **espessura aproximada**.
       std_lengths: Comprimento Padrão
-      std_lengths_placeholder: comprimento ; ...
       std_lengths_help: |
-        Comprimentos padrão de barra ou fitas de borda.
-        *Se nenhuma unidade for especificada, a unidade do modelo será utilizada.*
       std_widths: Larguras Padrão
-      std_widths_placeholder: largura ; ...
       std_widths_help: |
-        Larguras padrão das fitas de borda.
-        *As larguras sem unidades são consideradas nas unidades do modelo.*
       std_thicknesses: Espessuras Padrão
-      std_thicknesses_placeholder: espessura ; ...
       std_thicknesses_help: |
-        Espessuras **aproximadas** disponíveis.
-        *Os tamanhos sem unidades são considerados nas unidades do modelo.*
       std_sections: Seções Cruzadas Padrão
-      std_sections_placeholder: largura x espessura ; ...
       std_sections_help: |
-        Formato esperado : **L**x**H**. Onde **L** e **H** são respectivamente a *largura* e *altura* da seção..
-        *Se nenhuma unidade for especificada para cada dimensão, a unidade do modelo será levada em conta.*
       std_sizes: Tamanhos de painel padrão
-      std_sizes_placeholder: comprimento x largura ; ...
       std_sizes_help: |
-        Formato esperado: **C**x**L**, onde **C** e **L** representam o *comprimento* e a *largura* reais da chapa.
-        *Se nenhuma unidade for especificada para cada dimensão, a unidade do modelo será levada em consideração.*
       grained: Direção dos veios
       grained_help: Configura a direção dos veios na chapa.
       grained_0: Sem veios
@@ -1351,18 +1590,22 @@ tab:
         O volume total será a soma dos volumes dos chapas, folhas, barras ou fitas de borda após o layout.
       raw_estimated_0: Volume útil cortado
       raw_estimated_1: Volume de matéria-prima necessário
+      multiplier_coefficient: ""
+      multiplier_coefficient_help: ""
       std_attributes_dim_placeholder: Escolha um tamanho
       std_volumic_masses: Densidade
       std_volumic_masses_help: "Permite definir a densidade para todas as dimensões, bem como para cada dimensão padrão do material."
-      std_volumic_masses_add: Adicionar uma densidade volumétrica
       std_prices: Preço
       std_prices_help: Permite definir o preço para todos os tamanhos e também para cada tamanho padrão do material.
-      std_prices_add: Adicionar preço
+      std_cut_prices: ""
+      std_cut_prices_help: |
       texture_width: Largura
       texture_height: Altura
       export_to_skm: Exportar (.skm)
     texture_load:
       title: Carregar imagem
+    texture_export:
+      title: ""
     import_from_skm:
       title: Importar arquivo .skm
       ask_replace: |
@@ -1391,6 +1634,7 @@ tab:
       no_model: Nenhum modelo está aberto. Você precisará me fornecer mais informações;)
       no_materials: O modelo não contém nenhum material.
       material_not_found: Nenhum material encontrado.
+      no_texture: ""
       failed_import_skm_file: "Ocorreu um erro ao importar do arquivo .skm. **{{ error }}**"
       failed_export_skm_file: "Ocorreu um erro ao exportar para o arquivo .skm. **{{ error }}**"
       failed_deleting_material: "Ocorreu um erro ao suprimir este material. **{{ error }}**"
@@ -1520,10 +1764,6 @@ tab:
       Encontre aqui uma lista não exaustiva de vídeos feitos pela comunidade em torno da utilização de *OpenCutList*.
     submit: Enviar um vídeo
     submit_info: |
-      Você fez um vídeo apresentando o uso de **OpenCutList** e gostaria de vê-lo aparecer aqui?
-      Nos informe escrevendo para **opencutlist@lairdubois.fr**!
-
-      *O vídeo deve ser público e hospedado no YouTube*.
     error:
       fail_to_load_list: Incapaz de carregar a lista de vídeos.
   news:
@@ -1693,9 +1933,96 @@ tool:
     vcb_radius: Raio
     vcb_diameter: Diâmetro
     vcb_distance: Distância
+    error:
+      no_direction: ""
+      invalid_length: ""
+      invalid_multiplicator: ""
+      invalid_divider: ""
+      invalid_offset: ""
+      invalid_segment_count: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_draw:
+    title: Desenhar
+    action_0: ""
+    action_0_status: ""
+    action_0_state_1_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_1_radius_status: ""
+    action_1_state_1_diameter_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_1_status: ""
+    action_x_state_2_status: ""
+    action_option_group_offset: Diferença
+    action_option_group_segments: ""
+    action_option_group_options: Opções
+    action_option_offset_shape_offset: Diferença
+    action_option_offset_shape_offset_status: ""
+    action_option_segments_segment_count: ""
+    action_option_segments_segment_count_status: ""
+    action_option_options_construction: ""
+    action_option_options_construction_status: ""
+    action_option_options_rectangle_centered: ""
+    action_option_options_rectangle_centered_status: ""
+    action_option_options_smoothing: Suavização
+    action_option_options_smoothing_status: ""
+    action_option_options_measure_from_diameter: ""
+    action_option_options_measure_from_diameter_status: ""
+    action_option_options_measure_from_radius_status: ""
+    action_option_options_measure_reversed: ""
+    action_option_options_measure_reversed_status: ""
+    action_option_options_pull_centered: ""
+    action_option_options_pull_centered_status: ""
+    action_option_options_ask_name: ""
+    action_option_options_ask_name_status: ""
+    action_pull_locked_status: ""
+    action_toggle_move_copy_status: ""
+    action_change_move_anchor_status: ""
+    success:
+      part_created: ""
+  smart_handle:
+    title: ""
+    action_0: ""
+    action_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_state_2_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_state_2_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_state_2_status: ""
+    action_4: ""
+    action_4_status: ""
+    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_1_status: ""
+    action_4_state_2_status: ""
+    action_5: ""
+    action_option_group_copy_measure_type: ""
+    action_option_group_move_measure_type: ""
+    action_option_group_axes: Eixos
+    action_option_group_options: Opções
+    action_option_copy_measure_type_outside_status: ""
+    action_option_copy_measure_type_centered_status: ""
+    action_option_copy_measure_type_inside_status: ""
+    action_option_move_measure_type_outside_status: ""
+    action_option_move_measure_type_centered_status: ""
+    action_option_move_measure_type_inside_status: ""
+    action_option_axes_active_status: ""
+    action_option_axes_context_status: ""
+    action_option_axes_entity_status: ""
+    action_option_options_mirror_status: ""
+    warning:
+      copies_disable_mirror: ""
+    error:
+      min_distance: ""
   smart_paint:
     title: Pintar
     default_material: Nenhum material definido

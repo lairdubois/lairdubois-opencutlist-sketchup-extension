@@ -731,7 +731,7 @@ tab:
       title: Kalkulation
       info_0: |
         Erstellung eine Kalkulation der **Massen** und der **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden.
-      options_general: Générales
+      options_general: Allgemein
       total: Total
       total_used: Verwendet
       total_unused: Nicht verwendet

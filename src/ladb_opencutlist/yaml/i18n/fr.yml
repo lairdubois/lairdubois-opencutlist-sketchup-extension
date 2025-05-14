@@ -612,7 +612,7 @@ tab:
       faces: Faces
     export:
       title: Exportation
-      info_0: | # TODO
+      info_0: |
         Cette fonctionnalité vous permet d'exporter les données de la *fiche de débit* vers le presse-papier ou dans un fichier au format [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values) ou [XLSX](https://fr.wikipedia.org/wiki/XLSX).
       customize_help: |
         Réordonnez, Masquez, Ajoutez, Retirez ou Sélectionnez une colonne dans la liste pour personnaliser son **titre** et la **formule** générant la valeur affichée pour chaque ligne exportée.
@@ -640,7 +640,7 @@ tab:
       option_csv_col_sep_comma: Virgule
       option_csv_col_sep_semicolon: Point virgule
       option_csv_encoding: Encodage
-      copy_all: Titres + Valeurs  # TODO
+      copy_all: Titres + Valeurs
       copy_values: Valeurs seulement
       number: N°
       path: Chemin
