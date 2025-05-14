@@ -637,7 +637,7 @@ tab:
       option_csv_col_sep_comma: Vírgula
       option_csv_col_sep_semicolon: Ponto e vírgula
       option_csv_encoding: Codificação
-      copy_all: Tudo
+      copy_all: ""
       copy_values: Valores somente
       number: Nº
       path: Caminho
@@ -692,38 +692,6 @@ tab:
         no_column_formula: Introduza uma fórmula
       warning:
         is_group_selection: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão exportadas.
-    report:
-      title: Orçamento
-      info_0: |
-        Gerar um orçamento do **peso** e do **custo** da **matéria prima** necessária para a produção das peças da *lista de peças*.
-      options_general: Geral
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: ""
-      raw_materials: Matéria prima
-      total: Total
-      total_used: Usado
-      total_unused: Não utilizado
-      total_mass: Σ Massas
-      total_cost: Σ Custos
-      total_count: ""
-      total_instance_count: Σ Das unidades
-      total_volume: Σ Volumes
-      total_area: Σ Áreas
-      total_length: Σ Comprimentos
-      tooltip:
-        incompatible_unit: Unidade incompatível com as opções de orçamento de material
-        multiplier_coefficient: ""
-      error:
-        no_typed_material_parts: "Nenhuma peça com o tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) foi fornecida para gerar a estimativa."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erro**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erros**."
-      warning:
-        is_group_selection: As partes contidas nos **grupos ocultos** do sua Planilha de Produção não serão contadas.
-      tip:
-        not_enough_data: |
-          Para que esta estimativa seja calculada corretamente:
-          - Os materiais utilizados devem ter pelo menos um peso e preço configurados.
-          - Os acessórios utilizados devem ter pelo menos um peso e um preço.
     estimate:
       title: Orçamento
       info_0: |

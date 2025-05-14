@@ -637,7 +637,7 @@ tab:
       option_csv_col_sep_comma: פסיק
       option_csv_col_sep_semicolon: נקודה פסיק
       option_csv_encoding: קדוד
-      copy_all: הכל
+      copy_all: ""
       copy_values: רק ערכים
       number: מס'
       path: מסלול
@@ -692,38 +692,6 @@ tab:
         no_column_formula: הזן נוסחה
       warning:
         is_group_selection: חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא ייוצאו.
-    report:
-      title: הערכה
-      info_0: |
-        תכונה זו מאפשרת לך להפיק אומדן של **המסה** ו**העלות** של **חומרי הגלם** הדרושים לייצור החלקים של *תוכנית חיתוך*.
-      options_general: כללי
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: ""
-      raw_materials: חומר גלם
-      total: סך הכל
-      total_used: בשימוש
-      total_unused: לא בשימוש
-      total_mass: סה"כ משקל
-      total_cost: סה"כ מחיר
-      total_count: ""
-      total_instance_count: סכום יחידות
-      total_volume: סה"כ נפח
-      total_area: שטח כללי
-      total_length: סה"כ אורכים
-      tooltip:
-        incompatible_unit: יחידה לא תואמת לאפשרויות הערכת חומר
-        multiplier_coefficient: ""
-      error:
-        no_typed_material_parts: "אין חלק בעל חומר עם סוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** או **$t(tab.materials.type_5)**) מסופקים כדי ליצור את ההערכה."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאה**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאות**."
-      warning:
-        is_group_selection: חלקים בתוך **קבוצות נסתרות** של תוכנית חיתוך לא יובאו בחשבון.
-      tip:
-        not_enough_data: |
-          כדי שאומדן זה יחושב נכון:
-          - החומרים המשמשים חייבים להיות בעלי צפיפות ומחיר מוגדרים אחד לפחות.
-          - האביזרים המשמשים חייבים להיות בעלי מסה ומחיר לפחות.
     estimate:
       title: הערכה
       info_0: |

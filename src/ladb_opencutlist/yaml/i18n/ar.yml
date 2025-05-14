@@ -639,7 +639,7 @@ tab:
       option_csv_col_sep_comma: فاصلة
       option_csv_col_sep_semicolon: فاصة منقوطة
       option_csv_encoding: ترميز
-      copy_all: كل شيء
+      copy_all: ""
       copy_values: القيم فحسب
       number: الرقم
       path: المسار
@@ -694,38 +694,6 @@ tab:
         no_column_formula: أدخل صيغة
       warning:
         is_group_selection: لن تصدر القطع المتضمَّنة في **المجموعات المخفية** مع قائمة القطع.
-    report:
-      title: تثمين
-      info_0: |
-        تتيح لك هذه الوظيفة إنشاء تثمين **للكتل** و **التكاليف** و **الخامات** اللازمة لإنتاج القطع* المتضمَّنة في قائمة القطع*.
-      options_general: عام
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: "تم ضبط معامل الضرب للخامات من النوع \"**$t(tab.materials.type_1)**\" لكل خامة ضمن خيارات التثمين.\n "
-      raw_materials: المواد الأولية
-      total: الإجمالي
-      total_used: مستعمل
-      total_unused: غير مستعمل
-      total_mass: مجموع الكتل
-      total_cost: مجموع التكاليف
-      total_count: العدد
-      total_instance_count: مجموع الوحدات
-      total_volume: مجموع الأحجام
-      total_area: مجموع المساحات
-      total_length: مجموع الأطوال
-      tooltip:
-        incompatible_unit: الوحدة غير متوافقة مع خيارات تثمين الخامة
-        multiplier_coefficient: معامل الضرب
-      error:
-        no_typed_material_parts: "لا تتوفر أي قطعة ذات خامة محددة (**$t(tab.materials.type_1)** أو **$t(tab.materials.type_2)** أو **$t(tab.materials.type_3)** أو **$t(tab.materials.type_4)** أو **$t(tab.materials.type_5)** أو **$t(tab.materials.type_6)**) لإنشاء التثمين"
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
-      warning:
-        is_group_selection: القطع المتضمَّنة في **المجموعات الظاهرة** فقط من ستؤخذ بعين الاعتبار.
-      tip:
-        not_enough_data: |
-          لتثمين محسوب جيدا:
-          -يجب على الأقل أن تتوفر كثافة و سعر الخامات المستعملة.
-          -يجب على الأقل أن تتوفر كثافة و سعر الملحقات المستعملة.
     estimate:
       title: تثمين
       info_0: |

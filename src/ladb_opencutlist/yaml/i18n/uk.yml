@@ -639,7 +639,7 @@ tab:
       option_csv_col_sep_comma: Кома
       option_csv_col_sep_semicolon: Крапка з комою
       option_csv_encoding: Кодування
-      copy_all: Все
+      copy_all: ""
       copy_values: Тільки значення
       number: N°
       path: Шлях
@@ -694,38 +694,6 @@ tab:
         no_column_formula: Введіть формулу
       warning:
         is_group_selection: "Деталі, що містяться в **прихованих групах** вашої карти розкрою, не будуть експортовані."
-    report:
-      title: Кошторис
-      info_0: |
-        Створіть оцінку **ваги** та **вартості** **сировини**, необхідної для виготовлення деталей зі *списку деталей*.
-      options_general: Загальні
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: Коефіцієнт надбавки для "**$t(tab.materials.type_1)**" тепер налаштований на кожному матеріалі в параметрах оцінки.
-      raw_materials: Сировина
-      total: Всього
-      total_used: Використаний
-      total_unused: Невикористаний
-      total_mass: Σ Маса
-      total_cost: Σ Ціна
-      total_count: Кількість
-      total_instance_count: Σ Одиниць
-      total_volume: Σ Об’ємів
-      total_area: Σ Площь
-      total_length: Σ Довжин
-      tooltip:
-        incompatible_unit: Одиниця несумісна з параметрами оцінки матеріалу
-        multiplier_coefficient: Коефіцієнт надбавки
-      error:
-        no_typed_material_parts: "Для складання кошторису деталі повинні мати певний тип матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**)."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилка**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилок**."
-      warning:
-        is_group_selection: "Деталі, які містяться в **прихованих групах**, не будуть зараховані."
-      tip:
-        not_enough_data: |
-          Щоб цей звіт можна було правильно розрахувати:
-          - Використовувані матеріали повинні мати хоча б налаштовану щільність і ціну.
-          - Використовувана фурнітура повинна мати хоча б одну масу і одну ціну.
     estimate:
       title: Кошторис
       info_0: |

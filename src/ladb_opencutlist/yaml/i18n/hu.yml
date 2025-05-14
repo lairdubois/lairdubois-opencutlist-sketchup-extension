@@ -635,7 +635,7 @@ tab:
       option_csv_col_sep_comma: Vessző
       option_csv_col_sep_semicolon: Pontosvessző
       option_csv_encoding: Kódolás
-      copy_all: Minden
+      copy_all: ""
       copy_values: Csak értékek
       number: Sorszám
       path: Útvonal
@@ -690,38 +690,6 @@ tab:
         no_column_formula: Adjon meg egy képletet
       warning:
         is_group_selection: Az Alkatrészlista **rejtett csoportjaiban** lévő alkatrészek nem kerülnek exportálásra.
-    report:
-      title: Becslés
-      info_0: |
-        Az *Alkatrészlista* előállításához szükséges **nyersanyagok** **súlyának** és **költségének** becslése.
-      options_general: Általános
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: ""
-      raw_materials: Nyersanyagok
-      total: Összesen
-      total_used: Felhasznált
-      total_unused: Fel nem használt
-      total_mass: Σ Súly
-      total_cost: Σ Költség
-      total_count: ""
-      total_instance_count: Σ Egység
-      total_volume: Σ Térfogat
-      total_area: Σ Terület
-      total_length: Σ Hossz
-      tooltip:
-        incompatible_unit: Nem kompatibilis mértékegység az anyagbecslési beállításokkal
-        multiplier_coefficient: ""
-      error:
-        no_typed_material_parts: "Nincs megadva alkatrész definiált anyagtípussal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** vagy **$t(tab.materials.type_5)**) a becslés elkészítéséhez."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} hiba**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} hiba**."
-      warning:
-        is_group_selection: Az Alkatrészlista **rejtett csoportjaiban** lévő alkatrészek nem kerülnek beszámításra.
-      tip:
-        not_enough_data: |
-          A becslés helyes kiszámításához:
-          - a felhasznált anyagoknak rendelkezniük kell legalább sűrűséggel és árral.
-          - a felhasznált kiegészítőknek rendelkezniük kell legalább súllyal és árral.
     estimate:
       title: Becslés
       info_0: |

@@ -637,7 +637,7 @@ tab:
       option_csv_col_sep_comma: Komma
       option_csv_col_sep_semicolon: Punt komma
       option_csv_encoding: Encodering
-      copy_all: Alle
+      copy_all: ""
       copy_values: Alleen waarden
       number: N°
       path: Pad
@@ -692,38 +692,6 @@ tab:
         no_column_formula: Voer een formule in
       warning:
         is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
-    report:
-      title: Schatting
-      info_0: |
-        Deze functionaliteit laat u toe om een schatting te genereren van de **massa's** en **kosten** van het **basis materiaal**, nodig voor de productie van de onderdelen in de *stuklijst*.
-      options_general: Algemeen
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: ""
-      raw_materials: Basis materialen
-      total: Totaal
-      total_used: Gebruikt
-      total_unused: Niet gebruikt
-      total_mass: Σ Massa
-      total_cost: Σ Kosten
-      total_count: ""
-      total_instance_count: Σ Eenheden
-      total_volume: Σ Volumes
-      total_area: Σ Oppervlaktes
-      total_length: Σ Lengtes
-      tooltip:
-        incompatible_unit: Eenheid incompatibel met materiaalschattingsopties
-        multiplier_coefficient: ""
-      error:
-        no_typed_material_parts: "Geen onderdeel met een gedefinieerde materiaalsoort (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** of **$t(tab.materials.type_5)**) is verstrekt om het rapport te genereren."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fout**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} fouten**."
-      warning:
-        is_group_selection: Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet meegeteld.
-      tip:
-        not_enough_data: |
-          Om het schatting correct te berekenen,:
-          - de gebruikte materialen hebben ten minste één dichtheid en één prijs.
-          - de gebruikte accessoires hebben ten minste één dichtheid en één prijs.
     estimate:
       title: Schatting
       info_0: |
