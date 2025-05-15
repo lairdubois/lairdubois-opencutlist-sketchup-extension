@@ -8,15 +8,15 @@
         LadbAbstractTab.call(this, element, options, dialog);
 
         this.editedNode = null;
+        this.lastOptionsTab = null;
         this.lastEditNodeTab = null;
 
         this.$header = $('.ladb-header', this.$element);
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
         this.$btnGenerate = $('#ladb_btn_generate', this.$header);
+        this.$btnOptions = $('#ladb_btn_options', this.$header);
 
         this.$page = $('.ladb-page', this.$element);
-
-        this.showHiddenInstances = true;
 
     };
     LadbTabOutliner.prototype = Object.create(LadbAbstractTab.prototype);
@@ -85,15 +85,21 @@
                 that.renderNodes();
 
                 const $toggleHiddenBtn = $('#ladb_btn_toggle_hidden')
-                if (that.showHiddenInstances) {
+                if (that.generateOptions.show_hidden_instances) {
                     $('i', $toggleHiddenBtn).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
                 }
 
                 // Bind buttons
                 $toggleHiddenBtn.on('click', function () {
                     $(this).blur();
-                    that.showHiddenInstances = !that.showHiddenInstances;
-                    if (that.showHiddenInstances) {
+
+                    // Toggle hidden instances
+                    that.generateOptions.show_hidden_instances = !that.generateOptions.show_hidden_instances;
+
+                    // Store options
+                    rubyCallCommand('core_set_model_preset', { dictionary: 'outliner_options', values: that.generateOptions });
+
+                    if (that.generateOptions.show_hidden_instances) {
                         $('i', $(this)).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
                     } else {
                         $('i', $(this)).removeClass('ladb-opencutlist-icon-check-box-with-check-sign');
@@ -151,7 +157,7 @@
 
             const fnRenderNode = function (node, activeOnly) {
 
-                if (!node.computed_visible && !that.showHiddenInstances) {
+                if (!node.computed_visible && !that.generateOptions.show_hidden_instances) {
                     return;
                 }
 
@@ -457,6 +463,94 @@
 
     };
 
+    // Options /////
+
+    LadbTabOutliner.prototype.loadOptions = function (callback) {
+        const that = this;
+
+        rubyCallCommand('core_get_model_preset', { dictionary: 'outliner_options' }, function (response) {
+
+            that.generateOptions = response.preset;
+
+            // Callback
+            if (typeof callback == 'function') {
+                callback();
+            }
+
+        });
+
+    };
+
+    LadbTabOutliner.prototype.editOptions = function (tab) {
+        const that = this;
+
+        if (tab === undefined) {
+            tab = this.lastOptionsTab;
+        }
+        if (tab === null || tab.length === 0) {
+            tab = 'general';
+        }
+        this.lastOptionsTab = tab;
+
+        const $modal = that.appendModalInside('ladb_outliner_modal_options', 'tabs/outliner/_modal-options.twig', {
+            tab: tab
+        });
+
+        // Fetch UI elements
+        const $tabs = $('a[data-toggle="tab"]', $modal);
+        const $widgetPreset = $('.ladb-widget-preset', $modal);
+        const $inputShowIddenInstances = $('#ladb_input_show_hidden_instances', $modal);
+        const $btnUpdate = $('#ladb_outliner_options_update', $modal);
+
+        // Define useful functions
+        const fnFetchOptions = function (options) {
+            options.show_hidden_instances = $inputShowIddenInstances.is(':checked');
+        };
+        const fnFillInputs = function (options) {
+            $inputShowIddenInstances.prop('checked', options.show_hidden_instances);
+        };
+
+        $widgetPreset.ladbWidgetPreset({
+            dialog: that.dialog,
+            dictionary: 'outliner_options',
+            fnFetchOptions: fnFetchOptions,
+            fnFillInputs: fnFillInputs
+
+        });
+
+        // Bind tabs
+        $tabs.on('shown.bs.tab', function (e) {
+            that.lastOptionsTab = $(e.target).attr('href').substring('#tab_options_'.length);
+        });
+
+        // Bind buttons
+        $btnUpdate.on('click', function () {
+
+            // Fetch options
+            fnFetchOptions(that.generateOptions);
+
+            // Store options
+            rubyCallCommand('core_set_model_preset', { dictionary: 'outliner_options', values: that.generateOptions });
+
+            // Hide modal
+            $modal.modal('hide');
+
+            // Regenerate the outliner
+            that.generateOutliner();
+
+        });
+
+        // Populate inputs
+        fnFillInputs(that.generateOptions);
+
+        // Show modal
+        $modal.modal('show');
+
+        // Setup popovers
+        this.dialog.setupPopovers();
+
+    };
+
     // Internals /////
 
     LadbTabOutliner.prototype.findNodeById = function (id, parent) {
@@ -532,6 +626,10 @@
             that.generateOutliner();
             this.blur();
         });
+        this.$btnOptions.on('click', function () {
+            that.editOptions();
+            this.blur();
+        });
 
         // Events
 
@@ -546,9 +644,26 @@
 
         addEventCallback([ 'on_new_model', 'on_open_model', 'on_activate_model' ], function (params) {
             that.showObsolete('core.event.model_change', true);
+
+            // Hide edit option model (if it exists)
+            $('#ladb_outliner_modal_options').modal('hide');
+
+            // Reload options (from new active model)
+            that.loadOptions();
+
         });
         addEventCallback([ 'on_boo' ], function (params) {
             that.refreshOutliner();
+        });
+
+    };
+
+    LadbTabOutliner.prototype.processInitializedCallback = function (initializedCallback) {
+        const that = this;
+
+        // Load Options
+        that.loadOptions(function () {
+            LadbAbstractTab.prototype.processInitializedCallback.call(that, initializedCallback);
         });
 
     };

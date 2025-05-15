@@ -713,6 +713,8 @@
 
     };
 
+    // Export /////
+
     LadbTabCutlist.prototype.exportCutlist = function (forceDefaultTab) {
         const that = this;
 
@@ -1133,6 +1135,8 @@
         });
 
     };
+
+    // Estimate /////
 
     LadbTabCutlist.prototype.estimateCutlist = function (forceDefaultTab) {
         const that = this;
