@@ -193,17 +193,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onToolMouseMove(tool, flags, x, y, view)
-      super
-
-      return true if x < 0 || y < 0
-
-      _pick_part(@picker, view)
-
-      view.invalidate
-
-    end
-
     def onToolLButtonUp(tool, flags, x, y, view)
       puts "#{self.class.name} onToolLButtonUp"
 
@@ -223,6 +212,11 @@ module Ladb::OpenCutList
 
     def onToolActionOptionStored(tool, action, option_group, option)
       _preview_action
+    end
+
+    def onPickerChanged(picker, view)
+      _pick_part(picker, view)
+      super
     end
 
     # -----
@@ -325,7 +319,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_picker(state)
-      SmartPicker.new(tool: @tool)
+      SmartPicker.new(tool: @tool, observer: self)
     end
 
     def get_state_status(state)
@@ -423,7 +417,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_picker(state)
-      SmartPicker.new(tool: @tool)
+      SmartPicker.new(tool: @tool, observer: self)
     end
 
     def get_state_status(state)
@@ -457,7 +451,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_picker(state)
-      SmartPicker.new(tool: @tool)
+      SmartPicker.new(tool: @tool, observer: self)
     end
 
     def get_state_status(state)
@@ -491,7 +485,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_picker(state)
-      SmartPicker.new(tool: @tool, pick_edges: true, pick_clines: true, pick_axes: true)
+      SmartPicker.new(tool: @tool, observer: self, pick_edges: true, pick_clines: true, pick_axes: true)
     end
 
     def get_state_status(state)
@@ -523,7 +517,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_picker(state)
-      SmartPicker.new(tool: @tool, pick_point: true)
+      SmartPicker.new(tool: @tool, observer: self, pick_point: true)
     end
 
     def get_state_status(state)
