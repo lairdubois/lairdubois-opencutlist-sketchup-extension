@@ -601,12 +601,10 @@
             const tab = parameters.tab;
             window.requestAnimationFrame(function () {
                 that.generateOutliner([ nodeId ], function () {
-
                     const node = that.findNodeById(nodeId);
                     if (node) {
                         that.editNode(node, tab);
                     }
-
                 });
             });
         });
@@ -633,7 +631,9 @@
         this.$element
             .on('shown.ladb.tab', function () {
                 rubyCallCommand('outliner_start_observing');
-                that.generateOutliner();
+                if (this.rootNode != null) {
+                    that.generateOutliner();
+                }
             })
             .on('hidden.ladb.tab', function () {
                 rubyCallCommand('outliner_stop_observing');
@@ -668,7 +668,7 @@
     LadbTabOutliner.prototype.defaultInitializedCallback = function () {
         LadbAbstractTab.prototype.defaultInitializedCallback.call(this);
 
-        // this.generateOutliner();
+        this.generateOutliner();
 
     };
 
