@@ -318,7 +318,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SELECT
-        return SmartPicker.new(tool: @tool, pick_point: false)
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
       end
 
       super
@@ -371,10 +371,6 @@ module Ladb::OpenCutList
       return true if x < 0 || y < 0
 
       case @state
-
-      when STATE_SELECT
-
-        _pick_part(@picker, view)
 
       when STATE_HANDLE_START
 
@@ -471,6 +467,18 @@ module Ladb::OpenCutList
       end
 
       false
+    end
+
+    def onPickerChanged(picker, view)
+
+      case @state
+
+      when STATE_SELECT
+        _pick_part(picker, view)
+
+      end
+
+      super
     end
 
     def onStateChanged(state)
@@ -793,9 +801,11 @@ module Ladb::OpenCutList
       dst_instance.layer = src_instance.layer
       dst_instance.casts_shadows = src_instance.casts_shadows?
       dst_instance.receives_shadows = src_instance.receives_shadows?
-      src_instance.attribute_dictionaries.each do |attribute_dictionary|
-        attribute_dictionary.each do |key, value|
-          dst_instance.set_attribute(attribute_dictionary.name, key, value)
+      unless src_instance.attribute_dictionaries.nil?
+        src_instance.attribute_dictionaries.each do |attribute_dictionary|
+          attribute_dictionary.each do |key, value|
+            dst_instance.set_attribute(attribute_dictionary.name, key, value)
+          end
         end
       end
     end

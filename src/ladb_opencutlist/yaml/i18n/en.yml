@@ -640,7 +640,7 @@ tab:
       option_csv_col_sep_comma: Comma
       option_csv_col_sep_semicolon: Semicolon
       option_csv_encoding: Encoding
-      copy_all: Everything
+      copy_all: Headings + Values
       copy_values: Only values
       number: No.
       path: Path
@@ -695,38 +695,6 @@ tab:
         no_column_formula: Enter a formula
       warning:
         is_group_selection: Parts contained in **hidden groups** of the Parts List will not be exported.
-    report:
-      title: Estimate
-      info_0: |
-        Generate an estimate of the **weight** and **cost** of the **raw materials** needed to produce the parts on the *Parts List*.
-      options_general: General
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: The multiplying coefficient for materials of type "**$t(tab.materials.type_1)**" is now configured for each material in the estimation options.
-      raw_materials: Raw materials
-      total: Total
-      total_used: Used
-      total_unused: Unused
-      total_mass: Σ Weight
-      total_cost: Σ Cost
-      total_count: Qty.
-      total_instance_count: Σ Units
-      total_volume: Σ Volume
-      total_area: Σ Area
-      total_length: Σ Length
-      tooltip:
-        incompatible_unit: Incompatible unit with material estimation options
-        multiplier_coefficient: Coefficient
-      error:
-        no_typed_material_parts: "No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** or **$t(tab.materials.type_5)**) has been provided to generate the estimate."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
-      warning:
-        is_group_selection: Parts contained in **hidden groups** of the Parts List will not be accounted for.
-      tip:
-        not_enough_data: |
-          For this estimate to be calculated correctly:
-          - the used materials must have at least a density and a price.
-          - the used accessories must have at least a weight and a price.
     estimate:
       title: Estimate
       info_0: |

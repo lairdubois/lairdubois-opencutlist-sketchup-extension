@@ -71,11 +71,11 @@ module Ladb::OpenCutList
       }
 
       case @format
-      when 'table'
+      when EXPORT_OPTION_FORMAT_TABLE
 
         response[:rows] = _compute_rows
 
-      when 'pasteable'
+      when EXPORT_OPTION_FORMAT_PASTABLE
 
         options = { :col_sep => "\t" }
         pasteable = CSV.generate(**options) do |csv|
@@ -87,7 +87,7 @@ module Ladb::OpenCutList
         end
         response[:pasteable] = pasteable
 
-      when 'csv'
+      when EXPORT_OPTION_FORMAT_CSV
 
         # Ask for export file path
         path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
@@ -149,7 +149,9 @@ module Ladb::OpenCutList
 
         end
 
-      when 'xlsx'
+      when EXPORT_OPTION_FORMAT_XLSX
+
+        return { :errors => [ [ 'core.error.feature_unavailable', { :version => 2019 } ] ] } if Sketchup.version_number < 1900000000
 
         # Ask for export file path
         path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.xlsx')

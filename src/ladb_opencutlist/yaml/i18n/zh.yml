@@ -7,6 +7,7 @@ default:
   minimize: 最小化
   maximize: 最大化
   cancel: 取消
+  stop: ""
   validate: 应用
   confirm: 确认
   ok: 确定
@@ -24,6 +25,8 @@ default:
   options: 选项
   caution: 警告
   remove: 删除
+  remove_all: 全部移除
+  delete: 删除
   create: 创建
   duplicate: 复制
   ignore: 忽略
@@ -34,6 +37,11 @@ default:
   unselect_all: 取消全选
   draw: 绘制
   estimate: 估算
+  rename: ""
+  next: ""
+  yes: 是
+  no: 否
+  automatic: 自动
   empty_filename: 无标题.skp
   help: 帮助
   error: 糟糕!
@@ -42,8 +50,12 @@ default:
   good: 好
   bad: 不好
   by: 通过
+  # date format in use for language
   date_format: "m/d/Y g:ia"
+  # short date format in use for language
   date_format_short: m/d/Y
+  decimal: 十进制
+  fractional: 分数
   unit_0: 英寸
   unit_1: 英尺
   unit_2: 毫米
@@ -57,6 +69,8 @@ default:
   instance_plural: 个项目
   part_single: 部件
   part_plural: 部件
+  cut_single: ""
+  cut_plural: ""
   thickness_layer_single: 图层
   thickness_layer_plural: 图层
   setup_model_units: 设置模型单位
@@ -72,6 +86,10 @@ default:
   file_plural: 文件
   stroke_color: 线条颜色
   fill_color: 填充颜色
+  length: 引线
+  width: 宽度
+  thickness: ""
+  height: 高度
 core:
   menu:
     submenu: OpenCutList
@@ -82,14 +100,24 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: ""
+      edit_parent_part_instance: ""
+      hide_part_instance: ""
+      unhide_part_instance: ""
+      edit_part_instance_properties: ""
+      smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
       reset_dialog_position: 重置窗口位置
   toolbar:
     name: OpenCutList
+    tools: ""
     command:
       dialog: OpenCutList
+      smart_draw: ""
+      smart_handle: ""
       smart_paint: 部件材质
       smart_axes: 部件方向
       smart_export: 导出部件
@@ -119,6 +147,7 @@ core:
 
       报告错误: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
+    extern: ""
     feature_unavailable: "此功能需要 SketchUp {{ version }} 或更高版本"
     failed_export_to: |
       在导出至 *{{ path }}*时发生错误。
@@ -132,6 +161,7 @@ core:
     material_change: 至少有一种材质已更改.
     selection_change: 在活动模型中的选择已经更改
     layers_change: 活动模型中的标签已更改。
+    drawing_change: ""
   upgrade:
     unavailable: 找不到 *OpenCutList* 的最新版本.
     available: |
@@ -180,9 +210,9 @@ core:
     dictionary:
       component_textinput_color: 调色板
       cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
+      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
       cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -195,6 +225,7 @@ core:
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / 模型
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -209,12 +240,14 @@ core:
     textinput_code:
       snippets: 公式示例
       help: 输入 **@** 以获取变量列表.
+    textinput_size:
+      quantity: ""
     three_viewer:
       view: "{{ view }} 视图"
       view_isometric: 等轴
       view_top: 顶
       view_bottom: 底
-      view_front: 正面
+      view_front: ""
       view_back: 后
       view_left: 左边
       view_right: 右边
@@ -251,7 +284,11 @@ tab:
     edit_part_faces_properties: 编辑部件的属性 (面)
     part_drawing_type_1: 2D 正视图
     part_drawing_type_2: 2D 反视图
-    part_drawing_type_3: 3D
+    part_drawing_type_3: ""
+    part_drawing_type_4: ""
+    part_drawing_type_5: ""
+    part_drawing_type_6: ""
+    part_drawing_type_7: 3D
     tooltip:
       show_hide_block: 显示 / 隐藏组
       scroll_to_block: 滚动至组
@@ -345,6 +382,7 @@ tab:
       select_parts_in_cutlist: 所选部件在部件列表中不存在.
       select_parts_in_cutlist_plural: "在零件列表中选择 {{ count }} 零件"
       setup_group_cuttingdiagram: "配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图"
+      setup_group_packing: "配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图"
       open_part_url: 打开部件 URL
     menu:
       show_all_groups: 显示所有组
@@ -352,6 +390,7 @@ tab:
       numbers_save: 保存部件编号
       numbers_reset: 重新初始化部件编号
       highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: ""
       write_2d: 2D 投影
       write_3d: 3D 几何图形
       write_2d_parts: 导出零件的 2D 投影
@@ -362,6 +401,7 @@ tab:
       group_numbers_save: 保存该组的部件编号
       group_numbers_reset: 重新初始化该组的部件编号
       group_cuttingdiagram: 切割图
+      group_packing: 切割图
       group_labels: 打印组内部件的标签
       edit_material: "编辑材质 '{{ material_name }}'"
       expand_all: 展开所有行
@@ -511,6 +551,9 @@ tab:
       minimize_on_highlight: 在 *'$t(tab.cutlist.highlight_part)...'* 之后最小化
       minimize_on_highlight_help: "如果选择此选项, 当使用 *'$t(tab.cutlist.highlight_part)'* 功能时, OpenCutList窗口将被最小化."
       general: 常规
+      sorting: 排序
+      group_order_strategy: ""
+      group_order_strategy_help: |
       part_order_strategy: 部件排序
       part_order_strategy_help: |
         重新排列或调整下列的项目以定义每组部件内的项目排序顺序.
@@ -518,6 +561,10 @@ tab:
       dimension_column_order_strategy: 尺寸排序
       dimension_column_order_strategy_help: |
         重新安排以下尺寸属性, 以定义列的显示顺序.
+      property_material_type: ""
+      property_material_name: ""
+      property_std_width: ""
+      property_std_thickness: ""
       property_thickness: 厚度
       property_length: 引线
       property_width: 宽度
@@ -547,7 +594,7 @@ tab:
       volume: 体积
       number: 编号
       name: 名称
-      count: 数量
+      count: ""
       cutting: 部件
       bbox: 完成
       final: 实际
@@ -564,13 +611,13 @@ tab:
     export:
       title: 导出
       info_0: |
-        使用此功能, *部件列表* 可以导出到 [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) 文件中.
       customize_help: |
         重新排序, 隐藏, 添加, 删除或从列表中选择一列以自定义其 **标题** 和为每个导出的行生成值的 **公式** .
       add_column: 添加一列
       add_native_columns: 添加自带属性列
-      remove_column: 删除
-      remove_all_columns: 全部移除
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
       columns: 列
       column_title: 标题
       column_title_help: |
@@ -582,14 +629,15 @@ tab:
       options_customize: 自定义
       option_source: 来源
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: 部件清单
       option_source_instances_list: 实例列表
-      option_col_sep: 分隔符
-      option_col_sep_tab: 制表符
-      option_col_sep_comma: 逗号
-      option_col_sep_semicolon: 分号
-      option_encoding: 编码
-      copy_all: 全部
+      option_format: 格式
+      option_csv_col_sep: 分隔符
+      option_csv_col_sep_tab: 制表符
+      option_csv_col_sep_comma: 逗号
+      option_csv_col_sep_semicolon: 分号
+      option_csv_encoding: 编码
+      copy_all: ""
       copy_values: 仅值
       number: 编号
       path: 路径
@@ -610,8 +658,9 @@ tab:
       final_area: 面积 - 最终
       count: 数量
       part_count: 部件数量
-      material_type: 类型
-      material_name: 材质
+      material: 材质
+      material_type: ""
+      material_name: ""
       material_description: 材料说明
       material_url: 材料 URL
       material_std_dimension: 标准尺寸
@@ -629,6 +678,9 @@ tab:
       layers: 标签
       batch: 批次
       bin: 存储箱
+      component_definition: ""
+      component_instance: ""
+      component_instances: ""
       filename: 文件名
       model_name: 模型名称
       model_description: 模型描述
@@ -640,28 +692,31 @@ tab:
         no_column_formula: 输入一个公式
       warning:
         is_group_selection: 部件列表中的 **隐藏组件** 内的部件将不会被导出.
-    report:
+    estimate:
       title: 估算
       info_0: |
         生成生产 **部件清单** 上的部件所需的 **原材料** 的 **重量** 和 *成本* 估算.
       options_general: 常规
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient: "*$t(tab.materials.type_1)* 的废料比率"
-      option_solid_wood_coefficient_help: "用于乘以 \"**$t(tab.materials.type_1)**\" 类型材料的粗略体积的系数, 以考虑缺陷和浪费."
-      raw_materials: 原材料
-      coefficient: 系数
       total: 总和
       total_used: 已使用
       total_unused: 未使用
       total_mass: Σ 重量
       total_cost: Σ 成本
-      total_count: 数量
+      total_count: ""
       total_instance_count: Σ 单位
       total_volume: Σ 体积
       total_area: Σ 面积
       total_length: Σ 长度
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_-1: ""
       tooltip:
         incompatible_unit: 与材料估算选项不兼容的单位
+        multiplier_coefficient: ""
       error:
         no_typed_material_parts: "未提供具有定义的材质类型 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** 或 **$t(tab.materials.type_5)**) 以生成估算."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**."
@@ -739,6 +794,8 @@ tab:
         *必须启用此选项才能导出形状*
       option_saw_kerf: 锯片厚度
       option_saw_kerf_help: 锯片切割所去除的材料宽度.
+      option_spacing: ""
+      option_spacing_help: ""
       option_trimming: 修边
       option_trimming_help_1d: 板材或边条两端要被视为废料的材料量.
       option_trimming_help_2d: "这指的是在制造过程中需要去除的板材或边条两端的额外材料, 以便获得所需的尺寸."
@@ -793,7 +850,7 @@ tab:
       list:
         unplaced_parts: 未放置的部件
         summary: 摘要
-        count: 数量
+        count: ""
         bar: 尺寸
         sheet: 面板
         length: 引线
@@ -832,7 +889,7 @@ tab:
         parts: "{{ count }} 部件"
         parts_plural: "{{ count }} 个部件"
         settings: 设置
-      export:
+      write:
         title: 导出布局
         info_0: |
           此模块允许您将 *layout* 的 **geometry** 导出为 [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) 或 [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) 格式的文件列表。
@@ -908,6 +965,212 @@ tab:
         cutting_dimensions_increase_1d: "这些原始尺寸已在材质 '{{ material_name }}' 上进行了配置 : 长度超差 (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "这些原始尺寸已在材质 '{{ material_name }}' 上进行了配置 : 长度超差 (**{{ length_increase }}**) 和宽度超差 (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: 尺寸已减去边缘封边的厚度. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    packing:
+      title: 切割图
+      option_problem_type: 类型
+      option_problem_type_rectangle: ""
+      option_problem_type_rectangleguillotine: ""
+      option_problem_type_onedimensional: 尺寸
+      option_problem_type_irregular: ""
+      options_material: 材质
+      options_config: 配置
+      options_display: 显示
+      options_tuning: ""
+      option_std_bin_1d_dimensional: ""
+      option_std_bin_1d_edge: ""
+      option_std_bin_1d_help: |
+      option_std_bin_1d_add: 添加一个长度
+      option_std_bin_1d_none: 无
+      option_scrap_bin_1d_dimensional_sizes: 余料板材
+      option_scrap_bin_1d_edge_sizes: 余料边缘封边
+      option_scrap_bin_1d_sizes_placeholder: 长度 x 数量 ; ...
+      option_scrap_bin_1d_sizes_help: |
+      option_scrap_bin_1d_none: 无
+      option_std_bin_2d_sheet_good: ""
+      option_std_bin_2d_veneer: ""
+      option_std_bin_2d_help: |
+      option_std_bin_2d_add: 添加一个长度
+      option_std_bin_2d_none: 无
+      option_scrap_bin_2d_sheet_good_sizes: 面板余料
+      option_scrap_bin_2d_veneer_sizes: 薄饰板余料
+      option_scrap_bin_2d_sizes_placeholder: 长度 x 宽度 x 数量 ; ...
+      option_scrap_bin_2d_sizes_help: |
+      option_scrap_bin_2d_none: 无
+      option_optimization_mode: ""
+      option_optimization_mode_help: |
+      option_objective: 目标
+      option_objective_help: |
+      option_rectangleguillotine_cut_type: ""
+      option_rectangleguillotine_cut_type_help: |
+      option_rectangleguillotine_cut_type_non_exact: ""
+      option_rectangleguillotine_cut_type_exact: ""
+      option_rectangleguillotine_cut_type_homogenous: ""
+      option_rectangleguillotine_number_of_stages: ""
+      option_rectangleguillotine_number_of_stages_help: |
+      option_rectangleguillotine_first_stage_orientation: ""
+      option_rectangleguillotine_first_stage_orientation_help: |
+      option_rectangleguillotine_first_stage_orientation_horizontal: ""
+      option_rectangleguillotine_first_stage_orientation_vertical: ""
+      option_rectangleguillotine_first_stage_orientation_any: ""
+      option_rectangleguillotine_keep: 废料最小尺寸
+      option_rectangleguillotine_keep_help: 两个尺寸大于最小尺寸的边角料将被标记为**保留**。
+      option_irregular_allowed_rotations: ""
+      option_irregular_allowed_rotations_help: |
+      option_irregular_allowed_rotations_0: 无
+      option_irregular_allowed_rotations_90: ""
+      option_irregular_allowed_rotations_180: ""
+      option_irregular_allow_mirroring: ""
+      option_irregular_allow_mirroring_help: |
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: ""
+      option_spacing: ""
+      option_spacing_help: |
+      option_trimming: 修边
+      option_trimming_1d_help: ""
+      option_trimming_2d_help: ""
+      option_items_formula: 公式
+      option_items_formula_help: |
+      option_hide_part_list: 部件清单
+      option_hide_part_list_1d_dimensional_0: 显示在每块板上
+      option_hide_part_list_1d_edge_0: 显示在每个边条上
+      option_hide_part_list_2d_sheet_good_0: 显示在每块面板上
+      option_hide_part_list_2d_veneer_0: 显示在每块贴面板上
+      option_hide_part_list_1: 隐藏
+      option_hide_part_list_1d_help: 显示或隐藏每块板或边条上的部件清单.
+      option_hide_part_list_2d_help: 显示或隐藏每块面板或贴面板上的部件清单.
+      option_part_drawing_type: 部件的形状
+      option_part_drawing_type_0: 隐藏
+      option_part_drawing_type_1: 正视图绘制
+      option_part_drawing_type_2: 反视图绘制
+      option_part_drawing_type_help: |
+        允许您在图表上显示或隐藏零件的实际形状及其加工情况。
+
+        *必须启用此选项才能导出形状*
+      option_colorization: ""
+      option_colorization_0: $t(default.no)
+      option_colorization_1: ""
+      option_colorization_2: ""
+      option_colorization_help: |
+      option_hide_edges_preview: 边条的显示
+      option_hide_edges_preview_0: 在切割图中显示
+      option_hide_edges_preview_1: 在切割图中隐藏
+      option_hide_edges_preview_help: 允许您在切割图中显示或隐藏部件的边条的可视显示.
+      option_time_limit: ""
+      option_time_limit_help: |
+      tooltip:
+        scroll_to_block_1d: 滚动到第一块板材或边缘封边
+        scroll_to_block_2d: ""
+      list:
+        summary: 摘要
+        trimming: 修边
+        settings: 设置
+        stats: 统计数据
+        time: ""
+        total_efficiency: 整体效率
+        total_fill_rate: ""
+        total_cut_count: 切割数量
+        total_cut_length: 切割长度
+        efficiency: 效率
+        count: ""
+        length: 引线
+        width: 宽度
+        total_length: Σ 长度
+        total_area: Σ 面积
+        total_cost: Σ 成本
+        total_part_count: "# 部件"
+        total_used: 使用总量
+        bin_1d_dimensional: 尺寸
+        bin_1d_dimensional_type_0: 标准尺寸
+        bin_1d_dimensional_type_1: 余料板材
+        bin_1d_edge: 封边
+        bin_1d_edge_type_0: 标准封边
+        bin_1d_edge_type_1: 余料边缘封边
+        bin_2d_sheet_good: 面板
+        bin_2d_sheet_good_type_0: 标准面板
+        bin_2d_sheet_good_type_1: 面板余料
+        bin_2d_veneer: 薄板
+        bin_2d_veneer_type_0: 标准薄饰板
+        bin_2d_veneer_type_1: 薄饰板余料
+        unused: 未使用
+        unplaced_parts: ""
+        unplaced_parts_plural: 未放置的部件
+        parts: 部件
+        parts_plural: 部件
+        leftovers: 剩余物
+        leftovers_plural: 边角料
+        leftovers_to_keep: 需要保留的废料
+        leftovers_to_keep_plural: 需要保留的废料
+        cut: 切割
+        cut_plural: 切割
+        cut_trimming: 修边切割
+        cut_primary: ""
+        cut_depth: ""
+      write:
+        title: 导出布局
+        info_0: |
+          此模块允许您将 *layout* 的 **geometry** 导出为 [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) 或 [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) 格式的文件列表。
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: 结构DXF
+        option_dxf_structure_1: 图层
+        option_dxf_structure_2: 图层 + 组件
+        option_dxf_structure_help: |
+          此模块允许您选择 DXF 文件结构。
+
+          - **图层**结构将所有线条绘制成平面，仅使用图层区分不同的线条类型。*这种结构与第三方软件的兼容性更好。*
+          - ** 图层 + 块**结构为每个零件创建一个块，并根据零件的重复次数插入这些块。*这种结构为编辑文件提供了更大的灵活性。
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_bin_sheet_good: 面板
+        option_bin_sheet_good_help: |
+          允许您启用面板的导出以及选择其颜色。
+        option_bin_veneer: 薄板
+        option_bin_veneer_help: |
+          允许您启用薄板的导出以及选择其颜色。
+        option_bin_dimensional: 尺寸
+        option_bin_dimensional_help: |
+          允许您激活条形图的导出以及选择其颜色。
+        option_bin_edge: 封边
+        option_bin_edge_help: |
+          允许您启用封边条的导出以及选择其颜色。
+        option_parts: 部件
+        option_parts_help: |
+          允许您启用零件的导出以及选择其颜色。
+        option_parts_holes: 钻孔
+        option_parts_holes_help: |
+          允许您选择零件中孔的颜色。
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: 标识符
+        option_texts_help: |
+          允许您启用零件识别文本的导出以及选择其颜色。
+        option_leftovers: 边角料
+        option_leftovers_help: |
+          允许您启用边角料的导出以及选择它们的颜色。
+        option_cuts: 切割
+        option_cuts_help: |
+          允许您激活部分的导出以及选择其颜色。
+        warning:
+          is_bin_selection: ""
+      error:
+        no_part: 没有部件.
+        no_bin_1d: ""
+        no_bin_2d: ""
+        no_solution: ""
+      warning:
+        is_part_selection: 此切割图仅限于 **所选的部件**.
     labels:
       title: 标签
       options_layout: 布局
@@ -916,8 +1179,9 @@ tab:
       options_offset: 偏移
       size: 标签实际尺寸
       add_element: 添加一个元素
-      remove_element: 删除
-      remove_all_elements: 全部移除
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
         重新排列项目以定义标签的排序顺序.
         可以点击 <i class="ladb-opencutlist-icon-sort-asc"></i> *升序* 或 <i class="ladb-opencutlist-icon-sort-desc"></i> *降序* 来调整排序顺序.
@@ -958,6 +1222,7 @@ tab:
       option_color: 颜色
       formula:
         custom: 公式
+        custom_qr_code: ""
         part_number: 编号
         part_name: 名称
         part_description: 描述
@@ -997,6 +1262,7 @@ tab:
       error:
         invalid_size: 输入的配置参数不允许设置有效的标签尺寸.
       warning:
+        is_group_selection: ""
         is_part_selection: 这些标签仅限于 **所选的部件**.
         formula_not_available: 在此上下文中不可用公式
     layout:
@@ -1070,6 +1336,11 @@ tab:
       warning:
         is_group_selection: 部件列表中的 **隐藏组件** 内的部件将不会被绘制.
         is_part_selection: 此概览图仅限于 **选定的部件**.
+      message:
+        adding_new_page: |
+        incompatible_page_format: |
+        changing_units: |
+        changing_precision: |
     write:
       title: 部件导出
       info_2d: |
@@ -1082,6 +1353,10 @@ tab:
       option_unit: 单位
       option_unit_help: |
         选择导出文件中使用的单位
+      option_use_count: ""
+      option_use_count_0: ""
+      option_use_count_1: ""
+      option_use_count_help: |
       option_part_drawing_type: 投影
       option_part_drawing_type_help: |
         选择要导出的视图
@@ -1095,8 +1370,12 @@ tab:
       option_anchor_1: 投影零件的原点
       option_anchor_help: |
         允许将零件轴的原点投影为锚点
+      option_switch_yz: ""
+      option_switch_yz_0: ""
+      option_switch_yz_1: ""
+      option_switch_yz_help: |
       option_smoothing: 平滑处理
-      option_smoothing_0: 无
+      option_smoothing_0: $t(default.no)
       option_smoothing_1: 平滑圆和圆弧（实验性的）
       option_smoothing_help: |
         支持检测圆和圆弧。
@@ -1112,7 +1391,7 @@ tab:
         **轮廓 + 钻孔 + 合并***
         能够将零件的外轮廓与其孔分离，并融合每个孔的深度。
       option_include_paths: 路径
-      option_include_paths_0: 无
+      option_include_paths_0: $t(default.no)
       option_include_paths_1: 使用非多面边
       option_include_paths_help: |
         允许使用零件中包含的非多面边将其导出为路径.
@@ -1124,7 +1403,6 @@ tab:
         选择钻孔的颜色.
       option_parts_paths: 路径
       option_parts_paths_help: |
-        选择路径的颜色.
       error:
         no_part: 没有需要导出的部件
       warning:
@@ -1164,7 +1442,6 @@ tab:
   materials:
     label: 材质
     title: 材质
-    new: 新建材质
     type_0: 未定义
     type_1: 实木
     type_2: 面板
@@ -1185,15 +1462,14 @@ tab:
       grain_direction: 纹理方向
       raw_estimated_0: 有效体积估算
       colorized: 此色调将在模型中渲染纹理时应用
-      texture_load: 加载新纹理
+      texture_load: ""
+      texture_export: ""
       texture_clear: 删除纹理
       edit: "编辑 '{{ name }}' 的属性"
-      set_current: |
-        将材质 '{{ name }}' 指定给部件
-        *双击可最小化当前窗口*
+      set_current: ""
       open_url: 打开材料 URL
-    menu:
       import_from_skm: 导入材质 (.skm)
+    menu:
       purge_unused: 清除未使用的材质
       reset_prices: 重置所有材质的价格
       reset_prices_confirm: |
@@ -1217,13 +1493,12 @@ tab:
       type: 类型
       description: 描述
       url: URL
+      formats: ""
       cut_options: 切割参数
       estimate_options: 估算方案
       attributes: 属性
       thickness: 厚度
       thickness_help: |
-        材料的成品厚度.
-        *不带单位的尺寸将被视为模型单位.*
       length_increase: 长度尺寸超差
       length_increase_help: 应用于长度以定义 **原始长度** 的尺寸超差.
       width_increase: 宽度尺寸超差
@@ -1231,30 +1506,15 @@ tab:
       thickness_increase: 厚度尺寸超差
       thickness_increase_help: 应用于厚度以定义 **原始厚度** 的尺寸超差.
       std_lengths: 标准长度
-      std_lengths_placeholder: 长度 ; ...
       std_lengths_help: |
-        板材或边缘封边的标准长度.
-        *没有单位的尺寸被视为采用模型单位.*
       std_widths: 标准宽度
-      std_widths_placeholder: 宽度 ; ...
       std_widths_help: |
-        边缘封边的标准宽度.
-        *没有单位的宽度被视为采用模型单位.*
       std_thicknesses: 标准厚度
-      std_thicknesses_placeholder: 厚度 ; ...
       std_thicknesses_help: |
-        可用的 **实际** 粗略厚度.
-        *没有单位的尺寸被视为采用模型单位.*
       std_sections: 标准横截面
-      std_sections_placeholder: 宽度 x 厚度 ; ...
       std_sections_help: |
-        预期格式: **W**x**T**, 其中 **W** 和 **T** 代表维度物件的 **实际** *宽度* 和 *厚度* .
-        *没有单位的尺寸被视为采用模型单位.*
       std_sizes: 标准面板尺寸
-      std_sizes_placeholder: 长度 x 宽度 ; ...
       std_sizes_help: |
-        预期格式: **L**x**W**, 其中 **L** 和 **W** 代表面板的 **实际** *长度* 和 *宽度* .
-        *没有单位的尺寸被视为采用模型单位.*
       grained: 纹理方向
       grained_help: 设置材质的纹理方向.
       grained_0: 无纹理
@@ -1274,30 +1534,38 @@ tab:
         总体积是部件切割后的面板、薄板、木板或封边的体积总和。
       raw_estimated_0: 有效体积
       raw_estimated_1: 所需原材料的体积
+      multiplier_coefficient: ""
+      multiplier_coefficient_help: ""
       std_attributes_dim_placeholder: 选择一个尺寸
       std_volumic_masses: 密度
       std_volumic_masses_help: 定义材质的密度
-      std_volumic_masses_add: 添加一个密度
       std_prices: 价格
       std_prices_help: 允许您定义所有尺寸以及每个标准尺寸的材质价格.
-      std_prices_add: 添加价格
+      std_cut_prices: ""
+      std_cut_prices_help: |
       texture_width: 宽度
       texture_height: 高度
       export_to_skm: 导出 (.skm)
     texture_load:
       title: 加载图片
+    texture_export:
+      title: ""
     import_from_skm:
       title: 导入 .skm 文件
+      ask_replace: |
     export_to_skm:
       title: 导出到 .skm 文件
     option:
+      minimize_on_smart_paint: ""
+      minimize_on_smart_paint_help: ""
+      general: 常规
       material_order_strategy: 材质排序
       material_order_strategy_help: |
         在下方重新排列属以定义材料列表的排序策略
         可以点击 <i class="ladb-opencutlist-icon-sort-asc"></i> *升序* 或 <i class="ladb-opencutlist-icon-sort-desc"></i> *降序* 来调整属性的排序顺序.
       property_type: 类型
       property_name: 名称
-    remove:
+    delete:
       message: |
         您即将从您的模型中删除材质 **{{ material_name }}** .
         确认以继续.
@@ -1308,9 +1576,10 @@ tab:
       no_model: 没有打开的模型. 您需要提供更多信息 ;)
       no_materials: 您的模型不包含任何材质.
       material_not_found: 未找到任何材质.
+      no_texture: ""
       failed_import_skm_file: "从 .skm 文件导入时发生错误. **{{ error }}**"
       failed_export_skm_file: "导出到 .skm 文件时发生错误. **{{ error }}**"
-      failed_removing_material: "删除此材质时发生错误. **{{ error }}**"
+      failed_deleting_material: "删除此材质时发生错误. **{{ error }}**"
       failed_duplicating_material: "复制此材质时发生错误. **{{ error }}**"
       invalid_image_file: 图片无效
     obsolete_base: "为了保持同步, 您需要更新材质列表."
@@ -1319,13 +1588,13 @@ tab:
     title: 结构
     list: 实体的树状结构
     nodes: 实例
-    part_count: Nb 部件
+    toggle_hidden: ""
     type_0: 模型
     type_1: 组
     type_2: 组件
     type_3: 部件
     tooltip:
-      open_node_url: 打开实例 URL
+      open_node_url: 打开部件 URL
     edit_node:
       title_model: "模型属性"
       title_instance: " **{{ name }}**实例属性"
@@ -1333,9 +1602,11 @@ tab:
       preview: 预览
       name: 名称
       instance_name: 实例
+      material: 材质
       definition_name: 范围
       description: 描述
       url: URL
+      tags: 标签
       layer_name: 标签
       explode: 爆炸图
       explode_message: "你是否认可 **{{ name }}** 实例爆炸结果?"
@@ -1435,10 +1706,6 @@ tab:
       在此查找社区围绕使用 *OpenCutList* 制作的视频的非详尽列表.
     submit: 提交视频
     submit_info: |
-      您制作了一个介绍 **OpenCutList** 使用的视频, 并且您希望看到它出现在此处吗?
-      请通过邮件 **opencutlist@lairdubois.fr** 让我们知道!
-
-      *视频必须公开并托管在 YouTube 上*.
     error:
       fail_to_load_list: 无法加载视频列表.
   news:
@@ -1487,8 +1754,6 @@ tab:
         对于 *OpenCutList* 的用户来说, 能够适应不同的期望, 尤其是对于 *切割图* 功能, 这一点对我们非常重要.
         为了进一步拓展功能, 我们希望能够支持以 **SVG** 和 **DXF** 格式导出布局图.
         通过向我们提供处理这些导出的方法, 通过向我们提供处理这些导出的方法, 您将让我们有机会帮助您充分利用 *OpenCutList*.
-      layout: |
-        本模块的目的是使您能够轻松地将项目预览打印为 **分解视图** 并根据部件清单中生成的信息进行识别.
     objective_crowdfunding: |
       新功能的开发将通过 **筹款** 完成，并将在达到 **筹款目标** 时开始.
     objective_thanks: |
@@ -1514,10 +1779,10 @@ tab:
     model_settings: 模型偏好
     length_unit: 长度单位
     length_format: 格式
-    length_format_0: 十进制
+    length_format_0: $t(default.decimal)
     length_format_1: 建筑
     length_format_2: 工程
-    length_format_3: 分数
+    length_format_3: $t(default.fractional)
     length_precision: 精确度
     suppress_units_display: 显示每个数值的长度单位
     mass_unit: 重量单位
@@ -1574,7 +1839,7 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*英语*、*德语*)
       - Gildas Boureau（*法语*文档)
       - Vladimir Badulya (*俄语*)
-      - Pierluigi Colombo (*意大利语*)
+      - Pierluigi Colombo, Massimo Risca (*意大利语*)
       - Nayton Sanches Barbosa，由 [Carlos Maciel ELT](https://www.inglesonline.pro.br) 更正和修订 (*葡萄牙语*）
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*西班牙语*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*捷克语*)
@@ -1602,9 +1867,104 @@ tool:
     zoom_extents: 缩放到全部显示
     toggle_depth: 背景部件
     more: 更多
+    end_point: ""
+    middle_point: ""
+    third_point: ""
+    vcb_length: 引线
+    vcb_size: ""
+    vcb_radius: ""
+    vcb_diameter: ""
+    vcb_distance: ""
+    error:
+      no_direction: ""
+      invalid_length: ""
+      invalid_multiplicator: ""
+      invalid_divider: ""
+      invalid_offset: ""
+      invalid_segment_count: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_draw:
+    title: 绘制
+    action_0: ""
+    action_0_status: ""
+    action_0_state_1_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_1_radius_status: ""
+    action_1_state_1_diameter_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_1_status: ""
+    action_x_state_2_status: ""
+    action_option_group_offset: 偏移
+    action_option_group_segments: ""
+    action_option_group_options: 选项
+    action_option_offset_shape_offset: 偏移
+    action_option_offset_shape_offset_status: ""
+    action_option_segments_segment_count: ""
+    action_option_segments_segment_count_status: ""
+    action_option_options_construction: ""
+    action_option_options_construction_status: ""
+    action_option_options_rectangle_centered: ""
+    action_option_options_rectangle_centered_status: ""
+    action_option_options_smoothing: 平滑处理
+    action_option_options_smoothing_status: ""
+    action_option_options_measure_from_diameter: ""
+    action_option_options_measure_from_diameter_status: ""
+    action_option_options_measure_from_radius_status: ""
+    action_option_options_measure_reversed: ""
+    action_option_options_measure_reversed_status: ""
+    action_option_options_pull_centered: ""
+    action_option_options_pull_centered_status: ""
+    action_option_options_ask_name: ""
+    action_option_options_ask_name_status: ""
+    action_pull_locked_status: ""
+    action_toggle_move_copy_status: ""
+    action_change_move_anchor_status: ""
+    success:
+      part_created: ""
+  smart_handle:
+    title: ""
+    action_0: ""
+    action_0_status: ""
+    action_1: ""
+    action_1_status: ""
+    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_state_2_status: ""
+    action_2: ""
+    action_2_status: ""
+    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_state_2_status: ""
+    action_3: ""
+    action_3_status: ""
+    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_state_2_status: ""
+    action_4: ""
+    action_4_status: ""
+    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_1_status: ""
+    action_4_state_2_status: ""
+    action_5: ""
+    action_option_group_copy_measure_type: ""
+    action_option_group_move_measure_type: ""
+    action_option_group_axes: 坐标轴
+    action_option_group_options: 选项
+    action_option_copy_measure_type_outside_status: ""
+    action_option_copy_measure_type_centered_status: ""
+    action_option_copy_measure_type_inside_status: ""
+    action_option_move_measure_type_outside_status: ""
+    action_option_move_measure_type_centered_status: ""
+    action_option_move_measure_type_inside_status: ""
+    action_option_axes_active_status: ""
+    action_option_axes_context_status: ""
+    action_option_axes_entity_status: ""
+    action_option_options_mirror_status: ""
+    warning:
+      copies_disable_mirror: ""
+    error:
+      min_distance: ""
   smart_paint:
     title: 绘制
     default_material: 无材质
@@ -1663,9 +2023,9 @@ tool:
     action_2: 交换正面 ↔ 背面
     action_2_status: 点击部件以交换其正面与背面
     action_3: 调整坐标轴
-    action_3_status: 点击部件的面或边缘以调整其坐标轴
+    action_3_status: ""
     action_4: 移动原点
-    action_4_status: 单击零件的定点以放置其原点
+    action_4_status: ""
     action_option_group_direction: 方向
     action_option_direction_0: L
     action_option_direction_1: W

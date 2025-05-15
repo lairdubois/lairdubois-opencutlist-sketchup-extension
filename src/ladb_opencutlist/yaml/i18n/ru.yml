@@ -640,7 +640,7 @@ tab:
       option_csv_col_sep_comma: Запятая
       option_csv_col_sep_semicolon: Точка с запятой
       option_csv_encoding: Кодировка
-      copy_all: Всё
+      copy_all: ""
       copy_values: Только значения
       number: N°
       path: Путь
@@ -695,38 +695,6 @@ tab:
         no_column_formula: Введите формулу
       warning:
         is_group_selection: "Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут экспортированы."
-    report:
-      title: Смета
-      info_0: |
-        Эта функция позволяет вам рассчитать смету с учетом **массы** и **стоимости** **материала**, деталей на *карте раскроя*.
-      options_general: Общие
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: Коэффициент умножения для материалов типа "**$t(tab.materials.type_1)**" теперь может быть настроен в параметрах оценки для каждого материала.
-      raw_materials: Исходный материал
-      total: Всего
-      total_used: Используемый
-      total_unused: Неиспользуемый
-      total_mass: Σ Вес
-      total_cost: Σ Цена
-      total_count: Кол-во
-      total_instance_count: Σ Единиц
-      total_volume: Σ Объемов
-      total_area: Σ Площадей
-      total_length: Σ Длин
-      tooltip:
-        incompatible_unit: Единица несовместима с вариантами расчета материала
-        multiplier_coefficient: Коэффициент умножения
-      error:
-        no_typed_material_parts: "Для составления сметы детали должны иметь определенный тип материала (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** или **$t(tab.materials.type_5)**)."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} ошибка**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} ошибки**."
-      warning:
-        is_group_selection: "Учитываются только детали, содержащиеся в **видимых группах**."
-      tip:
-        not_enough_data: |
-          Для правильного расчета сметы:
-          - Используемые материалы должны иметь в настройках хотя бы одно заданное пользователем значение плотности и цены.
-          - Используемые комплектующие, как минимум должны иметь в настройках заданное пользователем значение массы и цены.
     estimate:
       title: Смета
       info_0: |

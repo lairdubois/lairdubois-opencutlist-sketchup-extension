@@ -640,7 +640,7 @@ tab:
       option_csv_col_sep_comma: Komma
       option_csv_col_sep_semicolon: Semikolon
       option_csv_encoding: Kodierung
-      copy_all: Alles
+      copy_all: Überschriften + Werte
       copy_values: Nur Inhalt
       number: Nr.
       path: Pfad
@@ -695,43 +695,11 @@ tab:
         no_column_formula: Formel eingeben
       warning:
         is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht exportiert."
-    report:
-      title: Kalkulation
-      info_0: |
-        Erstellung eine Kalkulation der **Massen** und der **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden.
-      options_general: Allgemein
-      options_solid_wood: $t(tab.materials.type_1)
-      option_solid_wood_coefficient_bc: Der Faktor für Materialien des Typs "**$t(tab.materials.type_1)**" wird nun für jedes Material in den Schätzoptionen konfiguriert.
-      raw_materials: Rohmaterial
-      total: Total
-      total_used: Verwendet
-      total_unused: Nicht verwendet
-      total_mass: Σ Massen
-      total_cost: Σ Kosten
-      total_count: Anz.
-      total_instance_count: Σ Einheiten
-      total_volume: Σ Volumen
-      total_area: Σ Flächen
-      total_length: Σ Längen
-      tooltip:
-        incompatible_unit: Einheit nicht kompatibel mit den Kalkulationsoptionen des Materials
-        multiplier_coefficient: Faktor
-      error:
-        no_typed_material_parts: "Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um die Kalkulation zu generieren."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
-      warning:
-        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht berücksichtigt."
-      tip:
-        not_enough_data: |
-          Damit sich diese Kalkulation richtig berechnen lässt, müssen:
-          - die verwendeten Materialien mindestens eine Rohdichte und einen Preis haben.
-          - die verwendeten Zubehöre mindestens ein Gewicht und einen Preis haben.
     estimate:
       title: Kalkulation
       info_0: |
         Erstellung eine Kalkulation der **Massen** und der **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden.
-      options_general: Générales
+      options_general: Allgemein
       total: Total
       total_used: Verwendet
       total_unused: Nicht verwendet
