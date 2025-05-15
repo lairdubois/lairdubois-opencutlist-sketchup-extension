@@ -33,7 +33,9 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Explode', true, false, false)
 
 
-      entity.explode
+      unless entity.explode
+        return { :errors => [ 'default.error' ] }
+      end
 
 
       # Commit model modification operation

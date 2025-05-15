@@ -54,16 +54,6 @@
                 that.availableMaterials = available_materials;
                 that.availableLayers = available_layers;
 
-                if (false && root_node) {
-                    const fn_set_parent = function (node, parent) {
-                        node.parent = parent;
-                        for (const child of node.children) {
-                            fn_set_parent(child, node);
-                        }
-                    };
-                    fn_set_parent(root_node, null);
-                }
-
                 // Update filename
                 that.$fileTabs.empty();
                 that.$fileTabs.append(Twig.twig({ ref: "tabs/outliner/_file-tab.twig" }).render({
@@ -171,17 +161,16 @@
                     $row
                         .on('mouseenter', function () {
                             if (!node.child_active && !node.active) {
-                                rubyCallCommand('outliner_highlight', {id: node.id, highlighted: true});
+                                rubyCallCommand('outliner_highlight', { id: node.id, highlighted: true });
                             }
                         })
                         .on('mouseleave', function () {
                             if (that.editedNode !== node) {
-                                rubyCallCommand('outliner_highlight', {id: node.id, highlighted: false});
+                                rubyCallCommand('outliner_highlight', { id: node.id, highlighted: false });
                             }
                         });
                 }
                 $row.on('click', function (e) {
-                    $(this).blur();
                     $('.ladb-click-tool', $(this)).click();
                     return false;
                 });
@@ -231,7 +220,7 @@
                 });
                 $('a.ladb-btn-node-open-url', $row).on('click', function () {
                     $(this).blur();
-                    rubyCallCommand('core_open_url', {url: $(this).attr('href')});
+                    rubyCallCommand('core_open_url', { url: $(this).attr('href') });
                     return false;
                 });
                 $('a.ladb-btn-node-edit', $row).on('click', function () {
@@ -423,9 +412,6 @@
                             that.dialog.notifyErrors(response.errors);
                         } else {
 
-                            // Reset edited material
-                            that.editedNode = null;
-
                             // Hide modal
                             $modal.modal('hide');
 
@@ -443,7 +429,10 @@
                         }
                     })
                     .on('hidden.bs.modal', function () {
+
+                        // Reset edited node
                         that.editedNode = null;
+
                         if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
                             rubyCallCommand('outliner_highlight', {id: node.id, highlighted: false});
                         }
@@ -608,8 +597,10 @@
             const tab = parameters.tab;
             window.requestAnimationFrame(function () {
                 that.generateOutliner(function () {
-                    const node = that.findNodeById(nodeId)
-                    that.editNode(node, tab);
+                    const node = that.findNodeById(nodeId);
+                    if (node) {
+                        that.editNode(node, tab);
+                    }
                 });
             });
         });

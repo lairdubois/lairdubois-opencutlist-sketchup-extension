@@ -199,7 +199,7 @@ module Ladb::OpenCutList
 
         path += [ entity ]
 
-        # Treat cuts_opening and always_face_camera behavior component instances as simple component
+        # Treat cuts_opening and always_face_camera behavior component instances as a simple component
         unless entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?
 
           face_bounds_cache[entity.definition] = _compute_faces_bounds(entity.definition) unless face_bounds_cache.has_key?(entity.definition)
