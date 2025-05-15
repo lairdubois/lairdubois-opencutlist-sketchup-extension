@@ -319,7 +319,7 @@ module Ladb::OpenCutList
 
       case state
       when STATE_SELECT
-        return SmartPicker.new(tool: @tool, pick_point: false)
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
       end
 
       super
@@ -372,10 +372,6 @@ module Ladb::OpenCutList
       return true if x < 0 || y < 0
 
       case @state
-
-      when STATE_SELECT
-
-        _pick_part(@picker, view)
 
       when STATE_HANDLE_START
 
@@ -472,6 +468,18 @@ module Ladb::OpenCutList
       end
 
       false
+    end
+
+    def onPickerChanged(picker, view)
+
+      case @state
+
+      when STATE_SELECT
+        _pick_part(picker, view)
+
+      end
+
+      super
     end
 
     def onStateChanged(state)
