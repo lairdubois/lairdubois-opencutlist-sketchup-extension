@@ -164,6 +164,19 @@ module Ladb::OpenCutList
 
     end
 
+    def expand_to(id:)
+
+      node_def = @outliner_def.get_node_def_by_id(id)
+      if node_def
+
+        node_def.expand
+
+        return true
+      end
+
+      false
+    end
+
     def toggle_expanded(id:)
 
       node_def = @outliner_def.get_node_def_by_id(id)

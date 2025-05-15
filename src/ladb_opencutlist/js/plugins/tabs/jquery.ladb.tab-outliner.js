@@ -25,8 +25,12 @@
 
     // List /////
 
-    LadbTabOutliner.prototype.generateOutliner = function (callback) {
+    LadbTabOutliner.prototype.generateOutliner = function (expandedNodeIds, callback) {
         const that = this;
+
+        if (!Array.isArray(expandedNodeIds)) {
+            expandedNodeIds = [];
+        }
 
         this.rootNode = null;
         this.$page.empty();
@@ -38,7 +42,7 @@
             // Start progress feedback
             that.dialog.startProgress(1);
 
-            rubyCallCommand('outliner_generate', {}, function (response) {
+            rubyCallCommand('outliner_generate', { expanded_node_ids: expandedNodeIds }, function (response) {
 
                 const errors = response.errors;
                 const warnings = response.warnings;
@@ -596,11 +600,13 @@
             const nodeId = parameters.node_id;
             const tab = parameters.tab;
             window.requestAnimationFrame(function () {
-                that.generateOutliner(function () {
+                that.generateOutliner([ nodeId ], function () {
+
                     const node = that.findNodeById(nodeId);
                     if (node) {
                         that.editNode(node, tab);
                     }
+
                 });
             });
         });

@@ -16,6 +16,16 @@ module Ladb::OpenCutList
     include BoundingBoxHelper
     include LayerVisibilityHelper
 
+    def initialize(
+
+                   expanded_node_ids: []
+
+    )
+
+      @expanded_node_ids = expanded_node_ids
+
+    end
+
     # -----
 
     def run
@@ -44,6 +54,10 @@ module Ladb::OpenCutList
 
       w.run(:compute_active_path)
       w.run(:compute_selection)
+
+      @expanded_node_ids.each do |node_id|
+        w.run(:expand_to, { id: node_id })
+      end
 
       # Tips
       if outliner_def.root_node_def.children.length == 0

@@ -78,8 +78,15 @@ module Ladb::OpenCutList
       visible? && (@parent.nil? ? true : @parent.computed_visible?)
     end
 
+    # -----
+
     def expandable?
       @children.any?
+    end
+
+    def expand(propagation = PROPAGATION_SELF | PROPAGATION_PARENT)
+      @expanded = true if expandable? && (propagation & PROPAGATION_SELF == PROPAGATION_SELF)
+      @parent.expand(PROPAGATION_SELF | PROPAGATION_PARENT) if (propagation & PROPAGATION_PARENT == PROPAGATION_PARENT) && @parent && !@parent.expanded
     end
 
     # -----
