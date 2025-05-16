@@ -157,6 +157,7 @@
 
                 const $row = $(Twig.twig({ref: "tabs/outliner/_list-row-node.twig"}).render({
                     capabilities: that.dialog.capabilities,
+                    generateOptions: that.generateOptions,
                     node: node
                 }));
                 that.$tbody.append($row);
@@ -493,14 +494,20 @@
         const $tabs = $('a[data-toggle="tab"]', $modal);
         const $widgetPreset = $('.ladb-widget-preset', $modal);
         const $inputShowIddenInstances = $('#ladb_input_show_hidden_instances', $modal);
+        const $inputHideDescriptions = $('#ladb_input_hide_descriptions', $modal);
+        const $inputHideTags = $('#ladb_input_hide_tags', $modal);
         const $btnUpdate = $('#ladb_outliner_options_update', $modal);
 
         // Define useful functions
         const fnFetchOptions = function (options) {
             options.show_hidden_instances = $inputShowIddenInstances.is(':checked');
+            options.hide_descriptions = $inputHideDescriptions.is(':checked');
+            options.hide_tags = $inputHideTags.is(':checked');
         };
         const fnFillInputs = function (options) {
             $inputShowIddenInstances.prop('checked', options.show_hidden_instances);
+            $inputHideDescriptions.prop('checked', options.hide_descriptions);
+            $inputHideTags.prop('checked', options.hide_tags);
         };
 
         $widgetPreset.ladbWidgetPreset({
