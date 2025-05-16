@@ -1700,6 +1700,10 @@ tab:
       general: General
       show_hidden_instances: Show hidden instances
       show_hidden_instances_help: If this option is selected, instances hidden in the model will be displayed in the structure tree.
+      hide_descriptions: Hide description
+      hide_descriptions_help: If this option is selected, the **descriptions** placed on parts will be hidden.
+      hide_tags: Hide badges
+      hide_tags_help: If this option is selected, the **badges** placed on parts will be hidden.
     error:
       no_model: No model is open. You will have to give me more information ;)
       no_entities: Your model is empty!

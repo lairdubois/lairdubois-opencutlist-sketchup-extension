@@ -1700,6 +1700,10 @@ tab:
       general: Allgemein
       show_hidden_instances: Ausgeblendete Instanzen anzeigen
       show_hidden_instances_help: Wenn diese Option aktiviert ist, werden die in der Modellansicht ausgeblendeten Instanzen im Strukturbaum angezeigt.
+      hide_descriptions: Beschreibungen ausblenden
+      hide_descriptions_help: "Wenn diese Option aktiviert ist, werden die **Beschreibungen**, die auf den Teilen platziert sind, nicht angezeigt."
+      hide_tags: Badges ausblenden
+      hide_tags_help: "Wenn diese Option aktiviert ist, werden **Badges**, die auf Teilen platziert wurden, nicht angezeigt."
     error:
       no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
       no_entities: Ihr Modell ist leer!
