@@ -210,17 +210,17 @@ core:
       delete: "Supprimer le préréglage '{{ name }}'"
     dictionary:
       component_textinput_color: Palette de couleurs
-      cutlist_cuttingdiagram1d_options: $t(default.deprecated)  # TODO
-      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)  # TODO
-      cutlist_cuttingdiagram2d_options: $t(default.deprecated)  # TODO
-      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)  # TODO
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
       cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
       cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(default.deprecated)  # TODO
+      cutlist_report_options: $t(default.deprecated)
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D

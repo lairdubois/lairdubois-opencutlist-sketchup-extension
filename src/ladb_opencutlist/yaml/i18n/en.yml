@@ -90,6 +90,7 @@ default:
   width: Width
   thickness: Thickness
   height: Height
+  deprecated: Deprecated
 core:
   menu:
     submenu: OpenCutList
@@ -209,23 +210,28 @@ core:
       delete: "Delete preset '{{ name }}'"
     dictionary:
       component_textinput_color: Color Palette
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Model
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -527,7 +533,7 @@ tab:
       part_number_sequence_by_group_help: "If this option is selected, the enumeration of parts is reset to 1 (or A) for each group (list of parts with same material type and thickness)."
       part_folding: Group similar parts
       part_folding_help: |
-        If this option is enabled, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same rough size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
+        If this option is selected, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same rough size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
 
         The parts will still be considered different for labeling and cutting diagram purposes.
       hide_entity_names: Hide instance names
@@ -1637,7 +1643,7 @@ tab:
       title: Export to .skm file
     option:
       minimize_on_smart_paint: Reduce after * 'Color parts with...'*
-      minimize_on_smart_paint_help: "If this option is enabled, the OpenCutList window will be minimized when using the *'Color parts with...'* function."
+      minimize_on_smart_paint_help: "If this option is selected, the OpenCutList window will be minimized when using the *'Color parts with...'* function."
       general: General
       material_order_strategy: Material Sorting
       material_order_strategy_help: |
@@ -1690,6 +1696,10 @@ tab:
       layer_name: Tag
       explode: Explode
       explode_message: "Do you confirm the explosion of instance **{{ name }}**?"
+    option:
+      general: General
+      show_hidden_instances: Show hidden instances
+      show_hidden_instances_help: If this option is selected, instances hidden in the model will be displayed in the structure tree.
     error:
       no_model: No model is open. You will have to give me more information ;)
       no_entities: Your model is empty!
