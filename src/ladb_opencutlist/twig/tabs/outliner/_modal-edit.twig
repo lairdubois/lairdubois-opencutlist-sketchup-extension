@@ -36,7 +36,7 @@
                 <div class="form-group">
                     <label class="control-label col-xs-3">{% if node.type == 0 %}{# 0 = TYPE_MODEL #}{{ 'tab.outliner.edit_node.name'|i18next }}{% else %}{{ 'tab.outliner.edit_node.instance_name'|i18next }}{% endif %}</label>
                     <div class="col-xs-7">
-                        <input type="text" class="form-control" id="ladb_outliner_node_input_name" value="{{ node.name|escape }}" autofocus>
+                        <input type="text" class="form-control" id="ladb_outliner_node_input_name" value="{{ node.name|escape }}">
                     </div>
                 </div>
                 {% if node.material is defined %}

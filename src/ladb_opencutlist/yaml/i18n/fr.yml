@@ -1700,6 +1700,10 @@ tab:
       general: Générales
       show_hidden_instances: Afficher les instances masquées
       show_hidden_instances_help: Si cette option est activée, les instances masquées dans la modèle seront affichées dans l'arbre de structure.
+      hide_descriptions: Masquer les descriptions
+      hide_descriptions_help: "Si cette option est activée, les **descriptions** placées sur les pièces ne sont pas affichées."
+      hide_tags: Masquer les badges
+      hide_tags_help: "Si cette option est activée, les **badges** placés sur les pièces ne sont pas affichés."
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide !
