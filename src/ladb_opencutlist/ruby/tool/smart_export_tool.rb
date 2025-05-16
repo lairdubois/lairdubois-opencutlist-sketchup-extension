@@ -514,7 +514,7 @@ module Ladb::OpenCutList
 
                     o_rpaths = Fiddle::Clippy.inflate_paths(
                       paths: border_defs.map { |border_def| Fiddle::Clippy.points_to_rpath(border_def.points) },
-                      delta: 20.mm,
+                      delta: 10.mm,
                       join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
                       end_type: Fiddle::Clippy::END_TYPE_BUTT
                     )
@@ -547,14 +547,22 @@ module Ladb::OpenCutList
 
 
                     # border_defs.each do |border_def|
+                    #
+                    #   k_segments = Kuix::Segments.new
+                    #   k_segments.add_segments(border_def.segment_defs.select { |segment_def| segment_def.border? }.map! { |segment_def| [ segment_def.start_vertex_def.position, segment_def.end_vertex_def.position ]}.flatten(1))
+                    #   k_segments.color = Kuix::COLOR_YELLOW
+                    #   k_segments.line_width = 3
+                    #   k_segments.on_top = true
+                    #   k_group.append(k_segments)
 
-                      # k_segments = Kuix::Segments.new
-                      # k_segments.add_segments(border_def.segment_defs.select { |segment_def| segment_def.border? }.map! { |segment_def| [ segment_def.start_vertex_def.position, segment_def.end_vertex_def.position ]}.flatten(1))
-                      # k_segments.color = Kuix::COLOR_YELLOW
-                      # k_segments.line_width = 3
-                      # k_segments.on_top = true
-                      # k_group.append(k_segments)
-                      #
+                      # k_points = Kuix::Points.new
+                      # k_points.add_points(border_def.points)
+                      # k_points.size = 2 * @unit
+                      # k_points.style = Kuix::POINT_STYLE_SQUARE
+                      # k_points.fill_color = Kuix::COLOR_MEDIUM_GREY
+                      # k_points.stroke_color = nil
+                      # k_group.append(k_points)
+
                       # border_def.segment_defs.select { |segment_def| segment_def.start_gate? || segment_def.end_gate? }.each { |segment_def|
                       #
                       #   k_edge = Kuix::EdgeMotif.new
