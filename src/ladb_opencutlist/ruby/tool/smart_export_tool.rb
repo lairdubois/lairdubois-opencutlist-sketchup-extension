@@ -485,6 +485,99 @@ module Ladb::OpenCutList
               k_axes_helper.box_z.visible = false
               k_group.append(k_axes_helper)
 
+
+
+              # -----
+
+              unless (outer_layer_def = projection_def.layer_defs.find { |layer_def| layer_def.type == DrawingProjectionLayerDef::TYPE_OUTER }).nil?
+
+                require_relative '../lib/geometrix/geometrix'
+
+                projection_def.layer_defs.each do |layer_def|
+                  next unless layer_def.type == DrawingProjectionLayerDef::TYPE_DEFAULT
+
+                  layer_def.poly_defs.each do |poly_def|
+
+                    border_defs = Geometrix::BorderFinder.find_borders(
+                      outer_layer_def.poly_defs.map { |poly_def| poly_def.points },
+                      [ poly_def.points ]
+                    )
+
+                    next if border_defs.empty?
+
+                    require_relative '../lib/fiddle/clippy/clippy'
+
+                    c_rpaths, op = Fiddle::Clippy.execute_difference(
+                      closed_subjects: outer_layer_def.poly_defs.map { |poly_def| Fiddle::Clippy.points_to_rpath(poly_def.points) },
+                      clips: [ Fiddle::Clippy.points_to_rpath(poly_def.points) ]
+                    )
+
+                    o_rpaths = Fiddle::Clippy.inflate_paths(
+                      paths: border_defs.map { |border_def| Fiddle::Clippy.points_to_rpath(border_def.points) },
+                      delta: 20.mm,
+                      join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+                      end_type: Fiddle::Clippy::END_TYPE_BUTT
+                    )
+
+                    o_rpaths, op = Fiddle::Clippy.execute_union(
+                      closed_subjects: o_rpaths + [ Fiddle::Clippy.points_to_rpath(poly_def.points) ]
+                    )
+
+                    o_rpaths, op = Fiddle::Clippy.execute_difference(
+                      closed_subjects: o_rpaths,
+                      clips: c_rpaths
+                    )
+
+                    o_paths = o_rpaths.map { |o_path| Fiddle::Clippy.rpath_to_points(o_path, poly_def.points.first.z) }
+
+                    o_paths.each do |o_path|
+
+                      segments = o_path.each_cons(2).to_a
+                      segments << [ segments.last.last, segments.first.first ]
+                      segments.flatten!(1)
+
+                      k_segments = Kuix::Segments.new
+                      k_segments.add_segments(segments)
+                      k_segments.color = Kuix::COLOR_CYAN
+                      k_segments.line_width = 3
+                      k_segments.on_top = true
+                      k_group.append(k_segments)
+
+                    end
+
+
+                    # border_defs.each do |border_def|
+
+                      # k_segments = Kuix::Segments.new
+                      # k_segments.add_segments(border_def.segment_defs.select { |segment_def| segment_def.border? }.map! { |segment_def| [ segment_def.start_vertex_def.position, segment_def.end_vertex_def.position ]}.flatten(1))
+                      # k_segments.color = Kuix::COLOR_YELLOW
+                      # k_segments.line_width = 3
+                      # k_segments.on_top = true
+                      # k_group.append(k_segments)
+                      #
+                      # border_def.segment_defs.select { |segment_def| segment_def.start_gate? || segment_def.end_gate? }.each { |segment_def|
+                      #
+                      #   k_edge = Kuix::EdgeMotif.new
+                      #   k_edge.start.copy!(segment_def.start_vertex_def.position)
+                      #   k_edge.end.copy!(segment_def.end_vertex_def.position)
+                      #   k_edge.color = segment_def.start_gate? ? Kuix::COLOR_RED : Kuix::COLOR_GREEN
+                      #   k_edge.line_width = 2
+                      #   k_edge.on_top = true
+                      #   k_group.append(k_edge)
+                      #
+                      # }
+
+                    # end
+
+                  end
+
+                end
+
+              end
+
+              # -----
+
+
             end
 
           end
