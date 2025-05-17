@@ -26,8 +26,8 @@ module Ladb::OpenCutList
       @drawing_def = drawing_def
 
       @origin_position = origin_position
-      @merge_holes = merge_holes || compute_shell   # Holes are moved to "hole" layer and all down layers holes are merged to their upper layer
-      @compute_shell = compute_shell                # In addition to layers, shell def (outer + holes shapes) is computed. This option force 'merge_holes' to true
+      @merge_holes = merge_holes || compute_shell   # Holes are moved to the "hole" layer, and all down layers holes are merged to their upper layer
+      @compute_shell = compute_shell                # In addition to layers, shell def (outer + holes shapes) is computed. This option forces 'merge_holes' to true
 
     end
 

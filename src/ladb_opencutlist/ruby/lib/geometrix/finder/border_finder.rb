@@ -10,7 +10,7 @@ module Ladb::OpenCutList::Geometrix
         !Geom::point_in_polygon_2D(point, outer_polygon, false)
       }
 
-      fn_extract_border = lambda { |segment_defs, outer_polygon|
+      fn_extract_border = lambda { |segment_defs|
         return [] if segment_defs.length < 3
 
         start_gate_index = segment_defs.index { |segment_def| segment_def.start_gate? }
@@ -59,7 +59,7 @@ module Ladb::OpenCutList::Geometrix
           }.compact.flatten(1)
 
           until segment_defs.empty?
-            segment_defs = fn_extract_border.call(segment_defs, outer_polygon)
+            segment_defs = fn_extract_border.call(segment_defs)
           end
 
         end

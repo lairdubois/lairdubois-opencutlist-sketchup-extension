@@ -73,7 +73,13 @@ module Ladb::OpenCutList::Fiddle
 
     # -----
 
-    def self.execute(clip_type:, fill_type: FILL_TYPE_NON_ZERO, closed_subjects:, open_subjects: [], clips: [])
+    def self.execute(
+      clip_type:,
+      fill_type: FILL_TYPE_NON_ZERO,
+      closed_subjects:,
+      open_subjects: [],
+      clips: []
+    )
       _load_lib
 
       solution_ptr = c_boolean_op(
