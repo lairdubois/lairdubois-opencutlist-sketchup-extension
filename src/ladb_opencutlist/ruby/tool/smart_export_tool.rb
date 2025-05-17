@@ -35,6 +35,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_SWITCH_YZ = 'switch_yz'
     ACTION_OPTION_OPTIONS_SMOOTHING = 'smoothing'
     ACTION_OPTION_OPTIONS_MERGE_HOLES = 'merge_holes'
+    ACTION_OPTION_OPTIONS_MERGE_HOLES_OFFSET = 'merge_holes_offset'
     ACTION_OPTION_OPTIONS_INCLUDE_PATHS = 'include_paths'
 
     ACTIONS = [
@@ -489,7 +490,10 @@ module Ladb::OpenCutList
 
               # -----
 
-              unless (outer_layer_def = projection_def.layer_defs.find { |layer_def| layer_def.type == DrawingProjectionLayerDef::TYPE_OUTER }).nil?
+
+
+              unless (merge_holes_offset = fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OFFSET)) == 0 ||
+                     (outer_layer_def = projection_def.layer_defs.find { |layer_def| layer_def.type == DrawingProjectionLayerDef::TYPE_OUTER }).nil?
 
                 require_relative '../lib/geometrix/geometrix'
 
@@ -514,7 +518,7 @@ module Ladb::OpenCutList
 
                     o_rpaths = Fiddle::Clippy.inflate_paths(
                       paths: border_defs.map { |border_def| Fiddle::Clippy.points_to_rpath(border_def.points) },
-                      delta: 10.mm,
+                      delta: merge_holes_offset,
                       join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
                       end_type: Fiddle::Clippy::END_TYPE_BUTT
                     )
@@ -538,8 +542,8 @@ module Ladb::OpenCutList
 
                       k_segments = Kuix::Segments.new
                       k_segments.add_segments(segments)
-                      k_segments.color = Kuix::COLOR_CYAN
-                      k_segments.line_width = 3
+                      k_segments.color = Sketchup::Color.new('#ff7f00')
+                      k_segments.line_width = 2
                       k_segments.on_top = true
                       k_group.append(k_segments)
 

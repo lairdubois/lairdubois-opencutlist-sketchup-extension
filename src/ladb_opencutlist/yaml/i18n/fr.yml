@@ -1450,6 +1450,7 @@ tab:
 
         **Contour + Percements + Fusion**
         Active la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
+      option_merge_holes_offset: Décalage
       option_include_paths: Tracés
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Utiliser les arêtes non associées à une face
