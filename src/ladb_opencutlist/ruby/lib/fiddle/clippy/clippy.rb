@@ -31,6 +31,11 @@ module Ladb::OpenCutList::Fiddle
     END_TYPE_SQUARE = 3
     END_TYPE_ROUND = 4
 
+    # https://www.angusj.com/clipper2/Docs/Units/Clipper/Types/PointInPolygonResult.htm
+    POINT_IN_POLYGON_RESULT_IS_ON = 0
+    POINT_IN_POLYGON_RESULT_IS_INSIDE = 1
+    POINT_IN_POLYGON_RESULT_IS_OUTSIDE = 2
+
     CPathsDSolution = struct [ 'double* closed_paths', 'double* open_paths', 'int error' ]
     CPolyTreeDSolution = struct [ 'double* polytree', 'double* open_paths', 'int error' ]
 
@@ -48,6 +53,8 @@ module Ladb::OpenCutList::Fiddle
 
         'int c_is_cpath_positive(double*)',
         'double c_get_cpath_area(double*)',
+
+        'int c_point_in_polygon(double, double, double*)',
 
         'void c_dispose_paths_solution(CPathsDSolution*)',
         'void c_dispose_polytree_solution(CPolyTreeDSolution*)',
@@ -192,6 +199,11 @@ module Ladb::OpenCutList::Fiddle
     def self.get_rpath_area(rpath)
       _load_lib
       return c_get_cpath_area(_rpath_to_cpath(rpath))
+    end
+
+    def self.point_in_polygon(x, y, rpath)
+      _load_lib
+      return c_point_in_polygon(x, y, _rpath_to_cpath(rpath))
     end
 
     # -- Path manipulations --

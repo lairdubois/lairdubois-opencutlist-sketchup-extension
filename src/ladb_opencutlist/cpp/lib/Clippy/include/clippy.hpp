@@ -81,6 +81,12 @@ DLL_EXPORTS double c_get_cpath_area(
         CPathD cpath
 );
 
+DLL_EXPORTS int c_point_in_polygon(
+        double x,
+        double y,
+        CPathD cpath
+);
+
 DLL_EXPORTS void c_dispose_paths_solution(
         CPathsDSolution* p
 );
