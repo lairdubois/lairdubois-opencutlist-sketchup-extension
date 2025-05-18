@@ -497,89 +497,82 @@ module Ladb::OpenCutList
 
                 require_relative '../lib/geometrix/geometrix'
 
+                outer_polygons = outer_layer_def.poly_defs.map { |poly_def| poly_def.points }
+                outer_rpaths = outer_layer_def.poly_defs.map { |poly_def| Fiddle::Clippy.points_to_rpath(poly_def.points) }
+
                 projection_def.layer_defs.each do |layer_def|
                   next unless layer_def.type == DrawingProjectionLayerDef::TYPE_DEFAULT
 
-                  layer_def.poly_defs.each do |poly_def|
+                  polygons = layer_def.poly_defs.map { |poly_def| poly_def.points }
+                  rpaths = layer_def.poly_defs.map { |poly_def| Fiddle::Clippy.points_to_rpath(poly_def.points) }
 
-                    border_defs = Geometrix::BorderFinder.find_borders(
-                      outer_layer_def.poly_defs.map { |poly_def| poly_def.points },
-                      [ poly_def.points ]
-                    )
+                  border_defs = Geometrix::BorderFinder.find_borders(
+                    outer_polygons,
+                    polygons
+                  )
 
-                    next if border_defs.empty?
+                  next if border_defs.empty?
 
-                    require_relative '../lib/fiddle/clippy/clippy'
+                  require_relative '../lib/fiddle/clippy/clippy'
 
-                    c_rpaths, op = Fiddle::Clippy.execute_difference(
-                      closed_subjects: outer_layer_def.poly_defs.map { |poly_def| Fiddle::Clippy.points_to_rpath(poly_def.points) },
-                      clips: [ Fiddle::Clippy.points_to_rpath(poly_def.points) ]
-                    )
+                  o_rpaths = Fiddle::Clippy.inflate_paths(
+                    paths: border_defs.map { |border_def| Fiddle::Clippy.points_to_rpath(border_def.points) },
+                    delta: merge_holes_offset,
+                    join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+                    end_type: Fiddle::Clippy::END_TYPE_BUTT
+                  )
 
-                    o_rpaths = Fiddle::Clippy.inflate_paths(
-                      paths: border_defs.map { |border_def| Fiddle::Clippy.points_to_rpath(border_def.points) },
-                      delta: merge_holes_offset,
-                      join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
-                      end_type: Fiddle::Clippy::END_TYPE_BUTT
-                    )
+                  o_rpaths, op = Fiddle::Clippy.execute_difference(
+                    closed_subjects: o_rpaths,
+                    clips: outer_rpaths
+                  )
 
-                    o_rpaths, op = Fiddle::Clippy.execute_union(
-                      closed_subjects: o_rpaths + [ Fiddle::Clippy.points_to_rpath(poly_def.points) ]
-                    )
+                  o_paths = o_rpaths.map { |o_path| Fiddle::Clippy.rpath_to_points(o_path, -layer_def.depth) }
 
-                    o_rpaths, op = Fiddle::Clippy.execute_difference(
-                      closed_subjects: o_rpaths,
-                      clips: c_rpaths
-                    )
+                  o_paths.each do |o_path|
 
-                    o_paths = o_rpaths.map { |o_path| Fiddle::Clippy.rpath_to_points(o_path, poly_def.points.first.z) }
+                    segments = o_path.each_cons(2).to_a
+                    segments << [ segments.last.last, segments.first.first ]
+                    segments.flatten!(1)
 
-                    o_paths.each do |o_path|
+                    k_segments = Kuix::Segments.new
+                    k_segments.add_segments(segments)
+                    k_segments.color = COLOR_PART_DEPTH# Sketchup::Color.new('#ff7f00')
+                    k_segments.line_width = 2
+                    k_segments.on_top = true
+                    k_group.append(k_segments)
 
-                      segments = o_path.each_cons(2).to_a
-                      segments << [ segments.last.last, segments.first.first ]
-                      segments.flatten!(1)
-
-                      k_segments = Kuix::Segments.new
-                      k_segments.add_segments(segments)
-                      k_segments.color = Sketchup::Color.new('#ff7f00')
-                      k_segments.line_width = 2
-                      k_segments.on_top = true
-                      k_group.append(k_segments)
-
-                    end
+                  end
 
 
-                    # border_defs.each do |border_def|
+                  border_defs.each do |border_def|
+
+                    # k_segments = Kuix::Segments.new
+                    # k_segments.add_segments(border_def.segment_defs.select { |segment_def| segment_def.border? }.map! { |segment_def| [ segment_def.start_vertex_def.position, segment_def.end_vertex_def.position ]}.flatten(1))
+                    # k_segments.color = Kuix::COLOR_YELLOW
+                    # k_segments.line_width = 3
+                    # k_segments.on_top = true
+                    # k_group.append(k_segments)
+
+                    k_points = Kuix::Points.new
+                    k_points.add_points(border_def.points)
+                    k_points.size = 2 * @unit
+                    k_points.style = Kuix::POINT_STYLE_SQUARE
+                    k_points.fill_color = Kuix::COLOR_YELLOW
+                    k_points.stroke_color = nil
+                    k_group.append(k_points)
+
+                    # border_def.segment_defs.select { |segment_def| segment_def.start_gate? || segment_def.end_gate? }.each { |segment_def|
                     #
-                    #   k_segments = Kuix::Segments.new
-                    #   k_segments.add_segments(border_def.segment_defs.select { |segment_def| segment_def.border? }.map! { |segment_def| [ segment_def.start_vertex_def.position, segment_def.end_vertex_def.position ]}.flatten(1))
-                    #   k_segments.color = Kuix::COLOR_YELLOW
-                    #   k_segments.line_width = 3
-                    #   k_segments.on_top = true
-                    #   k_group.append(k_segments)
-
-                      # k_points = Kuix::Points.new
-                      # k_points.add_points(border_def.points)
-                      # k_points.size = 2 * @unit
-                      # k_points.style = Kuix::POINT_STYLE_SQUARE
-                      # k_points.fill_color = Kuix::COLOR_MEDIUM_GREY
-                      # k_points.stroke_color = nil
-                      # k_group.append(k_points)
-
-                      # border_def.segment_defs.select { |segment_def| segment_def.start_gate? || segment_def.end_gate? }.each { |segment_def|
-                      #
-                      #   k_edge = Kuix::EdgeMotif.new
-                      #   k_edge.start.copy!(segment_def.start_vertex_def.position)
-                      #   k_edge.end.copy!(segment_def.end_vertex_def.position)
-                      #   k_edge.color = segment_def.start_gate? ? Kuix::COLOR_RED : Kuix::COLOR_GREEN
-                      #   k_edge.line_width = 2
-                      #   k_edge.on_top = true
-                      #   k_group.append(k_edge)
-                      #
-                      # }
-
-                    # end
+                    #   k_edge = Kuix::EdgeMotif.new
+                    #   k_edge.start.copy!(segment_def.start_vertex_def.position)
+                    #   k_edge.end.copy!(segment_def.end_vertex_def.position)
+                    #   k_edge.color = segment_def.start_gate? ? Kuix::COLOR_RED : Kuix::COLOR_GREEN
+                    #   k_edge.line_width = 2
+                    #   k_edge.on_top = true
+                    #   k_group.append(k_edge)
+                    #
+                    # }
 
                   end
 
