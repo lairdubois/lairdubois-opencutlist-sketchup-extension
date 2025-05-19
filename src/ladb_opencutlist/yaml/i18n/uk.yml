@@ -90,6 +90,7 @@ default:
   width: Ширина
   thickness: Товщина
   height: Висота
+  deprecated: ""
 core:
   menu:
     submenu: OpenCutList
@@ -209,23 +210,28 @@ core:
       delete: "Видалити пресет '{{ name }}'"
     dictionary:
       component_textinput_color: Палітра кольорів
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Модель
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -613,6 +619,7 @@ tab:
     export:
       title: Експорт
       info_0: |
+        Ця функція дозволяє експортувати дані з *Кошторису* в буфер обміну або в файл у форматі [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values) або [XLSX](https://fr.wikipedia.org/wiki/XLSX).
       customize_help: |
         Змініть порядок, приховайте, додайте, видаліть або виберіть стовпчик у списку, щоб налаштувати його **назву** та **формулу**, яка генерує відображене значення для кожного експортованого рядка.
       add_column: Додати стовпчик
@@ -639,7 +646,7 @@ tab:
       option_csv_col_sep_comma: Кома
       option_csv_col_sep_semicolon: Крапка з комою
       option_csv_encoding: Кодування
-      copy_all: ""
+      copy_all: Заголовки + Значення
       copy_values: Тільки значення
       number: N°
       path: Шлях
@@ -970,68 +977,96 @@ tab:
     packing:
       title: Карта розкрою
       option_problem_type: Тип
-      option_problem_type_rectangle: ""
-      option_problem_type_rectangleguillotine: ""
+      option_problem_type_rectangle: Прямокутник
+      option_problem_type_rectangleguillotine: Гільйотина
       option_problem_type_onedimensional: Погонаж
-      option_problem_type_irregular: ""
+      option_problem_type_irregular: Вкладені
       options_material: Матеріал
       options_config: Конфігурація
       options_display: Перегляд
-      options_tuning: ""
-      option_std_bin_1d_dimensional: ""
-      option_std_bin_1d_edge: ""
+      options_tuning: Налаштування
+      option_std_bin_1d_dimensional: Стандартні розміри
+      option_std_bin_1d_edge: Стандартні розміри крайки
       option_std_bin_1d_help: |
+        Виберіть тут розміри стандартної деталі або крайки, які будуть дублюватися для найкращого підгону всіх деталей.
+
+        Цей список визначається полем **$t(tab.materials.edit_material.std_lengths)** матеріалу.
+
+        *Відредагуйте властивості матеріалу '{{ material_name }}', щоб оновити цей список.*
       option_std_bin_1d_add: Додати розмір
       option_std_bin_1d_none: Ні
       option_scrap_bin_1d_dimensional_sizes: Залишок
       option_scrap_bin_1d_edge_sizes: Залишок крайки
       option_scrap_bin_1d_sizes_placeholder: довжина х кількість ; ...
       option_scrap_bin_1d_sizes_help: |
+        Вкажіть тут список ваших залишків , які будуть враховані для розкрою.
+
+        *Якщо одиниця не вказана, буде застосована одиниця моделі.*
       option_scrap_bin_1d_none: Ні
-      option_std_bin_2d_sheet_good: ""
-      option_std_bin_2d_veneer: ""
+      option_std_bin_2d_sheet_good: Стандартні розміри панелей
+      option_std_bin_2d_veneer: Стандартні розміри листів
       option_std_bin_2d_help: |
+        Виберіть тут стандартні розміри панелі або листа, які будуть дублюватися для найкращого підгону всіх деталей.
+
+        Цей список визначається полем **$t(tab.materials.edit_material.std_sizes)** матеріалу.
+
+        *Відредагуйте властивості матеріалу '{{ material_name }}', щоб оновити цей список.*
       option_std_bin_2d_add: Додати розмір
       option_std_bin_2d_none: Ні
       option_scrap_bin_2d_sheet_good_sizes: Залишки
       option_scrap_bin_2d_veneer_sizes: Залишки листа
       option_scrap_bin_2d_sizes_placeholder: довжина х ширина х кількість ; ...
       option_scrap_bin_2d_sizes_help: |
+        Вкажіть тут список залишків ваших панелей або листів, які слід врахувати для розкрою.
+
+        *Якщо одиниця не вказана, буде застосовано модельний блок.*
       option_scrap_bin_2d_none: Ні
-      option_optimization_mode: ""
+      option_optimization_mode: Режим оптимізації
       option_optimization_mode_help: |
+        Визначає режим оптимізації, з обмеженням часу або без нього.
       option_objective: Мета
       option_objective_help: |
-      option_rectangleguillotine_cut_type: ""
+        Визначає призначення розкрою.
+      option_rectangleguillotine_cut_type: Тип різання
       option_rectangleguillotine_cut_type_help: |
-      option_rectangleguillotine_cut_type_non_exact: ""
-      option_rectangleguillotine_cut_type_exact: ""
-      option_rectangleguillotine_cut_type_homogenous: ""
-      option_rectangleguillotine_number_of_stages: ""
+        Встановлює тип різу.
+      option_rectangleguillotine_cut_type_non_exact: Не точний
+      option_rectangleguillotine_cut_type_exact: Точний
+      option_rectangleguillotine_cut_type_homogenous: Однорідний
+      option_rectangleguillotine_number_of_stages: Варіанти різу
       option_rectangleguillotine_number_of_stages_help: |
-      option_rectangleguillotine_first_stage_orientation: ""
+        Встановлює максимальну кількість рівнів різання.
+      option_rectangleguillotine_first_stage_orientation: Напрямок першого різу
       option_rectangleguillotine_first_stage_orientation_help: |
-      option_rectangleguillotine_first_stage_orientation_horizontal: ""
-      option_rectangleguillotine_first_stage_orientation_vertical: ""
-      option_rectangleguillotine_first_stage_orientation_any: ""
+        Задає напрямок першого різу.
+      option_rectangleguillotine_first_stage_orientation_horizontal: По горизонталі
+      option_rectangleguillotine_first_stage_orientation_vertical: По вертикалі
+      option_rectangleguillotine_first_stage_orientation_any: Будь-який
       option_rectangleguillotine_keep: Розмір мінімальних залишків
       option_rectangleguillotine_keep_help: "Залишки, які мають обидва розміри більші за мінімальний розмір, будуть позначені **зберегти**."
-      option_irregular_allowed_rotations: ""
+      option_irregular_allowed_rotations: Дозволене обертання
       option_irregular_allowed_rotations_help: |
+        Встановлює крок можливих кутів повороту деталі для її розміщення.
+
+        *Текстурні матеріали допускають лише крок 0 і 180°.*
       option_irregular_allowed_rotations_0: Ні
-      option_irregular_allowed_rotations_90: ""
-      option_irregular_allowed_rotations_180: ""
-      option_irregular_allow_mirroring: ""
+      option_irregular_allowed_rotations_90: Крок 90°
+      option_irregular_allowed_rotations_180: Крок 180°
+      option_irregular_allow_mirroring: Дозволити відзеркалювання
       option_irregular_allow_mirroring_help: |
+        Визначає, чи дозволено відзеркалювання деталі деталі.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Інтервал
       option_spacing_help: |
+        Мінімальна відстань між кожною частиною.
+        Це значення може бути шириною леза або ріжучого інструменту.
       option_trimming: Обрізка листа
-      option_trimming_1d_help: ""
-      option_trimming_2d_help: ""
+      option_trimming_1d_help: Обрізка на кожному кінці дошки або крайки повинні враховуватись як відходи.
+      option_trimming_2d_help: Обріз по всьому периметру панелі або листа повинен розглядатися як відходи.
       option_items_formula: Формула
       option_items_formula_help: |
+        Дозволяє писати *Ruby* код для налаштування ідентифікаційного тексту деталі на картах розкрою.
       option_hide_part_list: Список деталей
       option_hide_part_list_1d_dimensional_0: Відображати для кожної дошки
       option_hide_part_list_1d_edge_0: Відображати для кожної крайки
@@ -1048,28 +1083,30 @@ tab:
         Дозволяє відображати або приховувати фактичну форму деталей та їх обробку на діаграмі.
 
         *Цю опцію потрібно активувати, щоб форми могли бути експортовані.*
-      option_colorization: ""
+      option_colorization: Розмальовка деталей
       option_colorization_0: $t(default.no)
-      option_colorization_1: ""
-      option_colorization_2: ""
+      option_colorization_1: $t(default.yes) - Перегляд
+      option_colorization_2: $t(default.yes) - Перегляд та Друк
       option_colorization_help: |
+        Визначає, чи використовується випадковий колір для розрізнення деталей на карті розпилу.
       option_hide_edges_preview: Індикатори крайок
       option_hide_edges_preview_0: Відобразити на діаграмі
       option_hide_edges_preview_1: Приховати на діаграмі
       option_hide_edges_preview_help: "Дозволяє відображати або приховувати візуальну індикацію крайок, які потрібно облицювати для кожної деталі діаграми."
-      option_time_limit: ""
+      option_time_limit: Ліміт часу
       option_time_limit_help: |
+        Встановлює час, дозволений для розрахунку
       tooltip:
         scroll_to_block_1d: Прокрутка до першої дошки або крайки
-        scroll_to_block_2d: ""
+        scroll_to_block_2d: Прокрутка до першої панелі або листа
       list:
         summary: Звіт
         trimming: Обрізка листа
         settings: Параметри
         stats: Статистика
-        time: ""
+        time: Час
         total_efficiency: Загальна ефективність
-        total_fill_rate: ""
+        total_fill_rate: Рівень заповнюваності
         total_cut_count: Кількість різів
         total_cut_length: Довжина різів
         efficiency: Ефективність
@@ -1094,7 +1131,7 @@ tab:
         bin_2d_veneer_type_0: Стандартний лист
         bin_2d_veneer_type_1: Залишок листа
         unused: Невикористаний
-        unplaced_parts: ""
+        unplaced_parts: Нерозміщена деталь
         unplaced_parts_plural: Нерозміщені деталі
         parts: Деталь
         parts_plural: Деталі
@@ -1105,8 +1142,8 @@ tab:
         cut: Розріз
         cut_plural: Розрізи
         cut_trimming: Чистий різ
-        cut_primary: ""
-        cut_depth: ""
+        cut_primary: Первинний крій
+        cut_depth: "Рівень {{ depth }}"
       write:
         title: Експорт розкладки
         info_0: |
@@ -1165,12 +1202,12 @@ tab:
         option_cuts_help: |
           Дозволяє активувати експорт розрізів та вибрати їх колір.
         warning:
-          is_bin_selection: ""
+          is_bin_selection: "**Приховані блоки** експортуватися не будуть."
       error:
         no_part: Нема деталі.
-        no_bin_1d: ""
-        no_bin_2d: ""
-        no_solution: ""
+        no_bin_1d: "Не вибираються стандартні розміри погонажа та крайок, а залишки не визначені."
+        no_bin_2d: "Не вибираються стандартні панелі або листи, а залишки не визначені."
+        no_solution: Рішення не знайдено.
       warning:
         is_part_selection: Цей звіт обмежено **вибраними деталями**.
     labels:
@@ -1659,6 +1696,14 @@ tab:
       layer_name: Тег
       explode: Рознести
       explode_message: "Підтверджуєте розрив екземпляра **{{ name }}**?"
+    option:
+      general: Загальні
+      show_hidden_instances: ""
+      show_hidden_instances_help: ""
+      hide_descriptions: Сховати описи
+      hide_descriptions_help: "Якщо цю опцію активовано, **описи**, розміщені на деталях, не відображаються."
+      hide_tags: Приховати мітки
+      hide_tags_help: "Якщо цю опцію активовано, **мітки**, розміщені на деталях, не відображаються."
     error:
       no_model: Жодна модель не відкрита. Вам доведеться дати мені трохи більше інформації ;)
       no_entities: Ваша модель порожня!
@@ -1755,6 +1800,10 @@ tab:
       Тут можна знайти неповний список відео, створених спільнотою про використання *OpenCutList*.
     submit: Запропонувати відео
     submit_info: |
+      Ви зробили відео, в якому показано, як користуватися **OpenCutList**, і хотіли б, щоб воно з'явилося тут?
+      Повідомте нам, написавши нам на **opencutlist@lairdubois.fr**!
+
+      *Відео має бути загальнодоступним і розміщеним на YouTube.*
     error:
       fail_to_load_list: Не вдається завантажити список відео.
   news:
