@@ -198,6 +198,7 @@ module Ladb::OpenCutList
                 }
                 fn_mid_point_on_borders = lambda { |x1, y1, x2, y2|
                   return true
+                  return true if merged_lower_paths.index { |lower_path| Clippy.mid_point_in_polygon(x1, y1, x2, y2, lower_path) == Clippy::POINT_IN_POLYGON_RESULT_IS_ON }
                   return true if outer_paths.index { |outer_path| Clippy.mid_point_in_polygon(x1, y1, x2, y2, outer_path) == Clippy::POINT_IN_POLYGON_RESULT_IS_ON }
                   false
                 }
@@ -327,7 +328,7 @@ module Ladb::OpenCutList
         unless pld.border_paths.empty?
 
           polygons = pld.border_paths.map { |path|
-            DrawingProjectionPolygonDef.new(Clippy.rpath_to_points(path, z_max - pld.depth), true)
+            DrawingProjectionPolygonDef.new(Clippy.rpath_to_points(path, z_max - pld.depth), Clippy.is_rpath_positive?(path))
           }.compact
           projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_BORDERS, '', polygons) unless polygons.empty?
 

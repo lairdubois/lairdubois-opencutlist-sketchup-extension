@@ -75,7 +75,7 @@ module Ladb::OpenCutList
     COLOR_PART_UPPER = Kuix::COLOR_BLUE
     COLOR_PART_HOLES = Sketchup::Color.new('#D783FF').freeze
     COLOR_PART_DEPTH = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.5).freeze
-    COLOR_PART_BORDERS = COLOR_PART_DEPTH
+    COLOR_PART_BORDERS = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.3).freeze
     COLOR_PART_PATH = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
@@ -412,15 +412,21 @@ module Ladb::OpenCutList
 
                 layer_def.poly_defs.each do |poly_def|
 
-                  line_stipple = poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw? ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
-                  line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if layer_def.type_borders?
+                  line_stipple = if poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw?
+                                   Kuix::LINE_STIPPLE_SHORT_DASHES
+                                 else
+                                   # layer_def.type_borders? ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID
+                                   Kuix::LINE_STIPPLE_SOLID
+                                 end
 
                   if fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                     poly_def.curve_def.portions.each do |portion|
                       fn_append_polyline.call(portion.points, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
+                      fn_append_polyline.call(portion.points, Sketchup::Color.new(COLOR_PART_DEPTH), portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, Kuix::LINE_STIPPLE_LONG_DASHES, false) if layer_def.type_borders? && poly_def.ccw?
                     end
                   else
                     fn_append_polyline.call(poly_def.points, color, 2, line_stipple, true)
+                    fn_append_polyline.call(poly_def.points, Sketchup::Color.new(COLOR_PART_DEPTH), 2, Kuix::LINE_STIPPLE_LONG_DASHES, true) if layer_def.type_borders? && poly_def.ccw?
                   end
 
                   if poly_def.is_a?(DrawingProjectionPolylineDef)
