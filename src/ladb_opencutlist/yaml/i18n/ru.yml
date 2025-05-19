@@ -90,6 +90,7 @@ default:
   width: Ширина
   thickness: Толщина
   height: Высота
+  deprecated: ""
 core:
   menu:
     submenu: OpenCutList
@@ -161,7 +162,7 @@ core:
     material_change: "По крайней мере, один материал был изменен."
     selection_change: Выделение в активной модели было изменено.
     layers_change: Теги в активной модели изменились.
-    drawing_change: Структура активной модели была изменена
+    drawing_change: Структура активной модели была изменена.
   upgrade:
     unavailable: Невозможно найти последнюю версию *OpenCutList*.
     available: |
@@ -209,23 +210,28 @@ core:
       delete: "Удалить пресет '{{ name }}'"
     dictionary:
       component_textinput_color: Цветовая палитра
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Шаблон
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -640,7 +646,7 @@ tab:
       option_csv_col_sep_comma: Запятая
       option_csv_col_sep_semicolon: Точка с запятой
       option_csv_encoding: Кодировка
-      copy_all: ""
+      copy_all: Название + Значение
       copy_values: Только значения
       number: N°
       path: Путь
@@ -1690,6 +1696,14 @@ tab:
       layer_name: Маяк
       explode: Разброс
       explode_message: "Вы подтверждаете разделение экземпляров **{{ name }}** ?"
+    option:
+      general: Общие
+      show_hidden_instances: ""
+      show_hidden_instances_help: ""
+      hide_descriptions: Скрыть описание
+      hide_descriptions_help: "Если этот параметр включен, **описания**, деталей в списке элементов, будут скрыты."
+      hide_tags: Скрыть маркеры
+      hide_tags_help: "Если эта опция активирована, **маркеры**, размещенные на деталях, не отображаются."
     error:
       no_model: Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
       no_entities: Ваша модель пуста!

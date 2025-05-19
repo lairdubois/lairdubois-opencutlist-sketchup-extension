@@ -529,7 +529,7 @@ tab:
       part_number_sequence_by_group_help: 409 - If this option is selected, the enumeration of parts is reset to 1 (or A) for each group (list of parts with same material type and thickness).
       part_folding: 410 - Group similar parts
       part_folding_help: |
-        411 - If this option is selected, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same rough size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
+        411 - If this option is enabled, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same rough size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
 
         The parts will still be considered different for labeling and cutting diagram purposes.
       hide_entity_names: 412 - Hide instance names
@@ -1696,10 +1696,10 @@ tab:
       general: 1334 - General
       show_hidden_instances: 1335 - Show hidden instances
       show_hidden_instances_help: 1336 - If this option is selected, instances hidden in the model will be displayed in the structure tree.
-      hide_descriptions: 1337 - Hide description
-      hide_descriptions_help: 1338 - If this option is selected, the **descriptions** placed on parts will be hidden.
+      hide_descriptions: 1337 - Hide descriptions
+      hide_descriptions_help: 1338 - If this option is selected, the **descriptions** placed on the parts will not be displayed.
       hide_tags: 1339 - Hide badges
-      hide_tags_help: 1340 - If this option is selected, the **badges** placed on parts will be hidden.
+      hide_tags_help: 1340 - If this option is selected, **badges** of parts will not be displayed.
     error:
       no_model: 1341 - No model is open. You will have to give me more information ;)
       no_entities: 1342 - Your model is empty!

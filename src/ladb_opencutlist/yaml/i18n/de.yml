@@ -519,7 +519,7 @@ tab:
         - die *Dicke* auf der <span style='color:blue'>blauen</span> Achse ist
       flipped_detection: Erkennung von gespiegelten Teilen
       flipped_detection_help: |
-        Wenn diese Option ausgewählt ist, werden gespiegelte Teile erkannt und als separate Teile angezeigt.
+        Wenn diese Option aktiviert ist, werden gespiegelte Teile erkannt und als separate Teile angezeigt.
       smart_material: "*Intelligente* Materialzuweisung"
       smart_material_help: "Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen, falls dem Teil selber kein Material zugewiesen wurde."
       dynamic_attributes_name: Attribut *Name* der dynamischen Komponenten verwenden
@@ -539,7 +539,7 @@ tab:
       hide_entity_names: Instanzbezeichnungen ausblenden
       hide_entity_names_help: "Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht angezeigt."
       hide_descriptions: Beschreibungen ausblenden
-      hide_descriptions_help: "Wenn diese Option ausgewählt ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt."
+      hide_descriptions_help: "Wenn diese Option aktiviert ist, werden die **Beschreibungen**, die auf den Teilen platziert sind, nicht angezeigt."
       hide_tags: Badges ausblenden
       hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
       hide_cutting_dimensions: Rohmaße ausblenden
@@ -555,7 +555,7 @@ tab:
       hide_material_colors: Farben von Materialien ausblenden
       hide_material_colors_help: "Ist diese Option aktiv, werden die Farben der Materialien nicht angezeigt."
       minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: "Ist diese Option aktiv, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
+      minimize_on_highlight_help: "Wenn diese Option aktiviert ist, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
       general: Allgemein
       sorting: Sortierung
       group_order_strategy: Gruppensortierung
@@ -1699,11 +1699,11 @@ tab:
     option:
       general: Allgemein
       show_hidden_instances: Ausgeblendete Instanzen anzeigen
-      show_hidden_instances_help: Wenn diese Option aktiviert ist, werden die in der Modellansicht ausgeblendeten Instanzen im Strukturbaum angezeigt.
+      show_hidden_instances_help: "Wenn diese Option aktiviert ist, werden die in der Modellansicht ausgeblendeten Instanzen im Strukturbaum angezeigt."
       hide_descriptions: Beschreibungen ausblenden
-      hide_descriptions_help: "Wenn diese Option aktiviert ist, werden die **Beschreibungen**, die auf den Teilen platziert sind, nicht angezeigt."
+      hide_descriptions_help: "Wenn diese Option aktiviert ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt."
       hide_tags: Badges ausblenden
-      hide_tags_help: "Wenn diese Option aktiviert ist, werden **Badges**, die auf Teilen platziert wurden, nicht angezeigt."
+      hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
     error:
       no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
       no_entities: Ihr Modell ist leer!
