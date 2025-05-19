@@ -379,15 +379,16 @@ module Ladb::OpenCutList
               k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
               @overlay_layer.append(k_group)
 
-              fn_append_segments = lambda do |segments, color, line_width, line_stipple|
+              fn_append_polyline = lambda do |points, color, line_width, line_stipple, closed|
 
-                k_segments = Kuix::Segments.new
-                k_segments.add_segments(segments)
-                k_segments.color = color
-                k_segments.line_width = highlighted ? line_width + 1 : line_width
-                k_segments.line_stipple = line_stipple
-                k_segments.on_top = true
-                k_group.append(k_segments)
+                k_polyline = Kuix::Polyline.new
+                k_polyline.add_points(points)
+                k_polyline.color = color
+                k_polyline.line_width = highlighted ? line_width + 1 : line_width
+                k_polyline.line_stipple = line_stipple
+                k_polyline.on_top = true
+                k_polyline.closed = closed
+                k_group.append(k_polyline)
 
               end
 
@@ -411,10 +412,10 @@ module Ladb::OpenCutList
 
                   if fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                     poly_def.curve_def.portions.each do |portion|
-                      fn_append_segments.call(portion.segments, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
+                      fn_append_polyline.call(portion.points, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
                     end
                   else
-                    fn_append_segments.call(poly_def.segments, color, 2, line_stipple)
+                    fn_append_polyline.call(poly_def.points, color, 2, line_stipple, true)
                   end
 
                   if poly_def.is_a?(DrawingProjectionPolylineDef)
@@ -459,13 +460,13 @@ module Ladb::OpenCutList
               if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
 
                 # Highlight input edge
-                k_segments = Kuix::Segments.new
-                k_segments.transformation = projection_def.transformation.inverse
-                k_segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
-                k_segments.color = COLOR_ACTION
-                k_segments.line_width = 3
-                k_segments.on_top = true
-                k_group.append(k_segments)
+                k_polyline = Kuix::Segments.new
+                k_polyline.transformation = projection_def.transformation.inverse
+                k_polyline.add_segments(@active_drawing_def.input_line_manipulator.segment)
+                k_polyline.color = COLOR_ACTION
+                k_polyline.line_width = 3
+                k_polyline.on_top = true
+                k_group.append(k_polyline)
 
               elsif @active_drawing_def.input_line_manipulator.is_a?(LineManipulator)
 
@@ -527,20 +528,22 @@ module Ladb::OpenCutList
                     clips: outer_rpaths
                   )
 
+                  o_rpaths, op = Fiddle::Clippy.execute_union(
+                    closed_subjects: o_rpaths + rpaths,
+                  )
+
                   o_paths = o_rpaths.map { |o_path| Fiddle::Clippy.rpath_to_points(o_path, -layer_def.depth) }
 
                   o_paths.each do |o_path|
 
-                    segments = o_path.each_cons(2).to_a
-                    segments << [ segments.last.last, segments.first.first ]
-                    segments.flatten!(1)
-
-                    k_segments = Kuix::Segments.new
-                    k_segments.add_segments(segments)
-                    k_segments.color = COLOR_PART_DEPTH# Sketchup::Color.new('#ff7f00')
-                    k_segments.line_width = 2
-                    k_segments.on_top = true
-                    k_group.append(k_segments)
+                    k_polyline = Kuix::Polyline.new
+                    k_polyline.add_points(o_path)
+                    k_polyline.color = COLOR_PART_DEPTH
+                    k_polyline.line_width = 2
+                    k_polyline.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+                    k_polyline.on_top = true
+                    k_polyline.closed = true
+                    k_group.append(k_polyline)
 
                   end
 
@@ -549,8 +552,8 @@ module Ladb::OpenCutList
 
                     # k_segments = Kuix::Segments.new
                     # k_segments.add_segments(border_def.segment_defs.select { |segment_def| segment_def.border? }.map! { |segment_def| [ segment_def.start_vertex_def.position, segment_def.end_vertex_def.position ]}.flatten(1))
-                    # k_segments.color = Kuix::COLOR_YELLOW
-                    # k_segments.line_width = 3
+                    # k_segments.color = Sketchup::Color.new('#ff7f00')
+                    # k_segments.line_width = 2
                     # k_segments.on_top = true
                     # k_group.append(k_segments)
 
@@ -558,7 +561,7 @@ module Ladb::OpenCutList
                     k_points.add_points(border_def.points)
                     k_points.size = 2 * @unit
                     k_points.style = Kuix::POINT_STYLE_SQUARE
-                    k_points.fill_color = Kuix::COLOR_YELLOW
+                    k_points.fill_color = Sketchup::Color.new('#ff7f00')
                     k_points.stroke_color = nil
                     k_group.append(k_points)
 
@@ -623,15 +626,16 @@ module Ladb::OpenCutList
             k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
             @overlay_layer.append(k_group)
 
-            fn_append_segments = lambda do |segments, line_width, line_stipple|
+            fn_append_polyline = lambda do |points, line_width, line_stipple, closed|
 
-              k_segments = Kuix::Segments.new
-              k_segments.add_segments(segments)
-              k_segments.color = COLOR_PART_UPPER
-              k_segments.line_width = highlighted ? line_width + 1 : line_width
-              k_segments.line_stipple = line_stipple
-              k_segments.on_top = true
-              k_group.append(k_segments)
+              k_polyline = Kuix::Polyline.new
+              k_polyline.add_points(points)
+              k_polyline.color = COLOR_PART_UPPER
+              k_polyline.line_width = highlighted ? line_width + 1 : line_width
+              k_polyline.line_stipple = line_stipple
+              k_polyline.on_top = true
+              k_polyline.closed = closed
+              k_group.append(k_polyline)
 
             end
 
@@ -642,10 +646,10 @@ module Ladb::OpenCutList
 
                 if fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                   poly_def.curve_def.portions.each do |portion|
-                    fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
+                    fn_append_polyline.call(portion.points, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
                   end
                 else
-                  fn_append_segments.call(poly_def.segments, 2, line_stipple)
+                  fn_append_polyline.call(poly_def.points, 2, line_stipple, true)
                 end
 
               end
@@ -746,15 +750,16 @@ module Ladb::OpenCutList
             k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
             @overlay_layer.append(k_group)
 
-            fn_append_segments = lambda do |segments, line_width, line_stipple|
+            fn_append_polyline = lambda do |points, line_width, line_stipple, closed|
 
-              k_segments = Kuix::Segments.new
-              k_segments.add_segments(segments)
-              k_segments.color = COLOR_PART_PATH
-              k_segments.line_width = highlighted ? line_width + 1 : line_width
-              k_segments.line_stipple = line_stipple
-              k_segments.on_top = true
-              k_group.append(k_segments)
+              k_polyline = Kuix::Polyline.new
+              k_polyline.add_segments(points)
+              k_polyline.color = COLOR_PART_PATH
+              k_polyline.line_width = highlighted ? line_width + 1 : line_width
+              k_polyline.line_stipple = line_stipple
+              k_polyline.on_top = true
+              k_polyline.closed = closed
+              k_group.append(k_polyline)
 
             end
 
@@ -768,10 +773,10 @@ module Ladb::OpenCutList
 
                 if fetch_action_option_boolean(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && !poly_def.curve_def.nil?
                   poly_def.curve_def.portions.each do |portion|
-                    fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
+                    fn_append_polyline.call(portion.points, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
                   end
                 else
-                  fn_append_segments.call(poly_def.segments, 2, line_stipple)
+                  fn_append_polyline.call(poly_def.points, 2, line_stipple, true)
                 end
 
                 if poly_def.is_a?(DrawingProjectionPolylineDef)

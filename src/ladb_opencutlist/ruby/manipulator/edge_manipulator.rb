@@ -47,7 +47,7 @@ module Ladb::OpenCutList
     def middle_point
       return nil if infinite?
       if @middle_point.nil?
-        @middle_point = Geom::linear_combination(0.5, start_point, 0.5, end_point)# start_point.offset(v, v.length / 2.0)
+        @middle_point = Geom::linear_combination(0.5, start_point, 0.5, end_point)
       end
       @middle_point
     end
