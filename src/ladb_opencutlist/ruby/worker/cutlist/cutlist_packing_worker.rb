@@ -430,7 +430,7 @@ module Ladb::OpenCutList
         fn_add_items = lambda { |part|
 
           count = part.count
-          projection_def = _compute_part_projection_def(@part_drawing_type, part, merge_holes: true, compute_shell: true)
+          projection_def = _compute_part_projection_def(@part_drawing_type, part, compute_shell: true)
 
           if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
 

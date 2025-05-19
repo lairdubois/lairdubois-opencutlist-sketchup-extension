@@ -75,6 +75,7 @@ module Ladb::OpenCutList
     COLOR_PART_UPPER = Kuix::COLOR_BLUE
     COLOR_PART_HOLES = Sketchup::Color.new('#D783FF').freeze
     COLOR_PART_DEPTH = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.5).freeze
+    COLOR_PART_BORDERS = COLOR_PART_DEPTH
     COLOR_PART_PATH = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
@@ -371,7 +372,8 @@ module Ladb::OpenCutList
 
             projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def,
               origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
-              merge_holes: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
+              merge_holes: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES),
+              merge_holes_offset: fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OFFSET)
             ).run
             if projection_def.is_a?(DrawingProjectionDef)
 
@@ -402,6 +404,8 @@ module Ladb::OpenCutList
                   color = COLOR_PART_HOLES
                 elsif layer_def.type_path?
                   color = COLOR_PART_PATH
+                elsif layer_def.type_borders?
+                  color = COLOR_PART_BORDERS
                 else
                   color = COLOR_PART_DEPTH
                 end
@@ -409,6 +413,7 @@ module Ladb::OpenCutList
                 layer_def.poly_defs.each do |poly_def|
 
                   line_stipple = poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw? ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
+                  line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if layer_def.type_borders?
 
                   if fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                     poly_def.curve_def.portions.each do |portion|
@@ -493,96 +498,96 @@ module Ladb::OpenCutList
 
 
 
-              unless (merge_holes_offset = fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OFFSET)) == 0 ||
-                     (outer_layer_def = projection_def.layer_defs.find { |layer_def| layer_def.type == DrawingProjectionLayerDef::TYPE_OUTER }).nil?
-
-                require_relative '../lib/geometrix/geometrix'
-
-                outer_polygons = outer_layer_def.poly_defs.map { |poly_def| poly_def.points }
-                outer_rpaths = outer_layer_def.poly_defs.map { |poly_def| Fiddle::Clippy.points_to_rpath(poly_def.points) }
-
-                projection_def.layer_defs.each do |layer_def|
-                  next unless layer_def.type == DrawingProjectionLayerDef::TYPE_DEFAULT
-
-                  polygons = layer_def.poly_defs.map { |poly_def| poly_def.points }
-                  rpaths = layer_def.poly_defs.map { |poly_def| Fiddle::Clippy.points_to_rpath(poly_def.points) }
-
-                  border_defs = Geometrix::BorderFinder.find_borders(
-                    outer_polygons,
-                    polygons
-                  )
-
-                  next if border_defs.empty?
-
-                  require_relative '../lib/fiddle/clippy/clippy'
-
-                  o_rpaths = Fiddle::Clippy.inflate_paths(
-                    paths: border_defs.map { |border_def| Fiddle::Clippy.points_to_rpath(border_def.points) },
-                    delta: merge_holes_offset,
-                    join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
-                    end_type: Fiddle::Clippy::END_TYPE_BUTT
-                  )
-
-                  o_rpaths, op = Fiddle::Clippy.execute_difference(
-                    closed_subjects: o_rpaths,
-                    clips: outer_rpaths
-                  )
-
-                  o_rpaths, op = Fiddle::Clippy.execute_union(
-                    closed_subjects: o_rpaths + rpaths,
-                  )
-
-                  o_paths = o_rpaths.map { |o_path| Fiddle::Clippy.rpath_to_points(o_path, -layer_def.depth) }
-
-                  o_paths.each do |o_path|
-
-                    k_polyline = Kuix::Polyline.new
-                    k_polyline.add_points(o_path)
-                    k_polyline.color = COLOR_PART_DEPTH
-                    k_polyline.line_width = 2
-                    k_polyline.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-                    k_polyline.on_top = true
-                    k_polyline.closed = true
-                    k_group.append(k_polyline)
-
-                  end
-
-
-                  border_defs.each do |border_def|
-
-                    # k_segments = Kuix::Segments.new
-                    # k_segments.add_segments(border_def.segment_defs.select { |segment_def| segment_def.border? }.map! { |segment_def| [ segment_def.start_vertex_def.position, segment_def.end_vertex_def.position ]}.flatten(1))
-                    # k_segments.color = Sketchup::Color.new('#ff7f00')
-                    # k_segments.line_width = 2
-                    # k_segments.on_top = true
-                    # k_group.append(k_segments)
-
-                    k_points = Kuix::Points.new
-                    k_points.add_points(border_def.points)
-                    k_points.size = 2 * @unit
-                    k_points.style = Kuix::POINT_STYLE_SQUARE
-                    k_points.fill_color = Sketchup::Color.new('#ff7f00')
-                    k_points.stroke_color = nil
-                    k_group.append(k_points)
-
-                    # border_def.segment_defs.select { |segment_def| segment_def.start_gate? || segment_def.end_gate? }.each { |segment_def|
-                    #
-                    #   k_edge = Kuix::EdgeMotif.new
-                    #   k_edge.start.copy!(segment_def.start_vertex_def.position)
-                    #   k_edge.end.copy!(segment_def.end_vertex_def.position)
-                    #   k_edge.color = segment_def.start_gate? ? Kuix::COLOR_RED : Kuix::COLOR_GREEN
-                    #   k_edge.line_width = 2
-                    #   k_edge.on_top = true
-                    #   k_group.append(k_edge)
-                    #
-                    # }
-
-                  end
-
-                end
-
-              end
-
+              # unless (merge_holes_offset = fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OFFSET)) == 0 ||
+              #        (outer_layer_def = projection_def.layer_defs.find { |layer_def| layer_def.type == DrawingProjectionLayerDef::TYPE_OUTER }).nil?
+              #
+              #   require_relative '../lib/geometrix/geometrix'
+              #
+              #   outer_polygons = outer_layer_def.poly_defs.map { |poly_def| poly_def.points }
+              #   outer_rpaths = outer_layer_def.poly_defs.map { |poly_def| Fiddle::Clippy.points_to_rpath(poly_def.points) }
+              #
+              #   projection_def.layer_defs.each do |layer_def|
+              #     next unless layer_def.type == DrawingProjectionLayerDef::TYPE_DEFAULT
+              #
+              #     polygons = layer_def.poly_defs.map { |poly_def| poly_def.points }
+              #     rpaths = layer_def.poly_defs.map { |poly_def| Fiddle::Clippy.points_to_rpath(poly_def.points) }
+              #
+              #     border_defs = Geometrix::BorderFinder.find_borders(
+              #       outer_polygons,
+              #       polygons
+              #     )
+              #
+              #     next if border_defs.empty?
+              #
+              #     require_relative '../lib/fiddle/clippy/clippy'
+              #
+              #     o_rpaths = Fiddle::Clippy.inflate_paths(
+              #       paths: border_defs.map { |border_def| Fiddle::Clippy.points_to_rpath(border_def.points) },
+              #       delta: merge_holes_offset,
+              #       join_type: Fiddle::Clippy::JOIN_TYPE_MITER,
+              #       end_type: Fiddle::Clippy::END_TYPE_BUTT
+              #     )
+              #
+              #     o_rpaths, op = Fiddle::Clippy.execute_difference(
+              #       closed_subjects: o_rpaths,
+              #       clips: outer_rpaths
+              #     )
+              #
+              #     o_rpaths, op = Fiddle::Clippy.execute_union(
+              #       closed_subjects: o_rpaths + rpaths,
+              #     )
+              #
+              #     o_paths = o_rpaths.map { |o_path| Fiddle::Clippy.rpath_to_points(o_path, -layer_def.depth) }
+              #
+              #     o_paths.each do |o_path|
+              #
+              #       k_polyline = Kuix::Polyline.new
+              #       k_polyline.add_points(o_path)
+              #       k_polyline.color = COLOR_PART_DEPTH
+              #       k_polyline.line_width = 2
+              #       k_polyline.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+              #       k_polyline.on_top = true
+              #       k_polyline.closed = true
+              #       k_group.append(k_polyline)
+              #
+              #     end
+              #
+              #
+              #     border_defs.each do |border_def|
+              #
+              #       # k_segments = Kuix::Segments.new
+              #       # k_segments.add_segments(border_def.segment_defs.select { |segment_def| segment_def.border? }.map! { |segment_def| [ segment_def.start_vertex_def.position, segment_def.end_vertex_def.position ]}.flatten(1))
+              #       # k_segments.color = Sketchup::Color.new('#ff7f00')
+              #       # k_segments.line_width = 2
+              #       # k_segments.on_top = true
+              #       # k_group.append(k_segments)
+              #
+              #       k_points = Kuix::Points.new
+              #       k_points.add_points(border_def.points)
+              #       k_points.size = 2 * @unit
+              #       k_points.style = Kuix::POINT_STYLE_SQUARE
+              #       k_points.fill_color = Sketchup::Color.new('#ff7f00')
+              #       k_points.stroke_color = nil
+              #       k_group.append(k_points)
+              #
+              #       # border_def.segment_defs.select { |segment_def| segment_def.start_gate? || segment_def.end_gate? }.each { |segment_def|
+              #       #
+              #       #   k_edge = Kuix::EdgeMotif.new
+              #       #   k_edge.start.copy!(segment_def.start_vertex_def.position)
+              #       #   k_edge.end.copy!(segment_def.end_vertex_def.position)
+              #       #   k_edge.color = segment_def.start_gate? ? Kuix::COLOR_RED : Kuix::COLOR_GREEN
+              #       #   k_edge.line_width = 2
+              #       #   k_edge.on_top = true
+              #       #   k_group.append(k_edge)
+              #       #
+              #       # }
+              #
+              #     end
+              #
+              #   end
+              #
+              # end
+              #
               # -----
 
 
@@ -993,9 +998,9 @@ module Ladb::OpenCutList
           file_name += " - #{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{@active_drawing_def.input_view}").upcase}" unless @active_drawing_def.nil? || @active_drawing_def.input_view.nil?
           file_format = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT)
           unit = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT)
-          anchor = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
-          smoothing = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          merge_holes = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
+          anchor = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
+          smoothing = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+          merge_holes = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
           parts_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_stroke_color')
           parts_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_fill_color')
           parts_holes_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_fill_color')

@@ -104,6 +104,15 @@ DLL_EXPORTS int c_point_in_polygon(
 ) {
     return static_cast<int>(PointInPolygon(PointD(x, y), ConvertCPath(cpath)));
 }
+DLL_EXPORTS int c_mid_point_in_polygon(
+        double x1,
+        double y1,
+        double x2,
+        double y2,
+        CPathD cpath
+) {
+    return static_cast<int>(PointInPolygon(MidPoint(PointD(x1, y1), PointD(x2, y2)), ConvertCPath(cpath)));
+}
 
 
 DLL_EXPORTS void c_dispose_paths_solution(

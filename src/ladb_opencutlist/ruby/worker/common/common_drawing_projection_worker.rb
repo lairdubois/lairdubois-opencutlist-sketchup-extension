@@ -19,6 +19,7 @@ module Ladb::OpenCutList
 
                    origin_position: ORIGIN_POSITION_DEFAULT,
                    merge_holes: false,
+                   merge_holes_offset: 0,
                    compute_shell: false
 
     )
@@ -27,6 +28,7 @@ module Ladb::OpenCutList
 
       @origin_position = origin_position
       @merge_holes = merge_holes                    # Holes are moved to the "hole" layer, and all down layers holes are merged to their upper layer
+      @merge_holes_offset = merge_holes_offset
       @compute_shell = compute_shell                # In addition to layers, shell def (outer + holes shapes) is computed.
 
     end
@@ -69,7 +71,7 @@ module Ladb::OpenCutList
 
       z_max = faces_bounds.empty? ? bounds.max.z : faces_bounds.max.z
 
-      upper_layer_def = PathsLayerDef.new(root_depth, [], [], DrawingProjectionLayerDef::TYPE_UPPER)
+      upper_layer_def = PathsLayerDef.new(root_depth, [], [], [], DrawingProjectionLayerDef::TYPE_UPPER)
 
       plds = {}   # plds = Path Layer DefS
       plds[root_depth] = upper_layer_def
@@ -91,7 +93,7 @@ module Ladb::OpenCutList
 
         pld = plds[f_depth.round(3)]
         if pld.nil?
-          pld = PathsLayerDef.new(f_depth, f_paths, [], DrawingProjectionLayerDef::TYPE_DEFAULT)
+          pld = PathsLayerDef.new(f_depth, f_paths, [], [], DrawingProjectionLayerDef::TYPE_DEFAULT)
           plds[f_depth.round(3)] = pld
         else
           pld.closed_paths.concat(f_paths) # Just concat, union will be call later in one unique call
@@ -107,7 +109,7 @@ module Ladb::OpenCutList
 
         pld = plds[e_depth.round(3)]
         if pld.nil?
-          pld = PathsLayerDef.new(e_depth, [], [ e_path ], DrawingProjectionLayerDef::TYPE_DEFAULT)
+          pld = PathsLayerDef.new(e_depth, [], [ e_path ], [], DrawingProjectionLayerDef::TYPE_DEFAULT)
           plds[e_depth.round(3)] = pld
         else
           pld.open_paths.push(e_path)
@@ -121,7 +123,7 @@ module Ladb::OpenCutList
 
         pld = plds[c_depth.round(3)]
         if pld.nil?
-          pld = PathsLayerDef.new(c_depth, [], [ c_path ], DrawingProjectionLayerDef::TYPE_DEFAULT)
+          pld = PathsLayerDef.new(c_depth, [], [ c_path ], [], DrawingProjectionLayerDef::TYPE_DEFAULT)
           plds[c_depth.round(3)] = pld
         else
           pld.open_paths.push(c_path)
@@ -169,7 +171,7 @@ module Ladb::OpenCutList
         through_paths = Clippy.reverse_rpaths(Clippy.delete_rpaths_in(merged_paths, outer_paths))
 
         # Append "holes" layer def
-        splds << PathsLayerDef.new(max_depth, through_paths, [], DrawingProjectionLayerDef::TYPE_HOLES)
+        splds << PathsLayerDef.new(max_depth, through_paths, [], [], DrawingProjectionLayerDef::TYPE_HOLES)
 
         # Difference with outer and upper to extract holes to propagate
         mask_paths, op = Clippy.execute_difference(closed_subjects: outer_paths, clips: upper_paths)
@@ -180,14 +182,102 @@ module Ladb::OpenCutList
         pldsr = splds.reverse[0...-1] # Exclude top layer
         mask_polyshapes.each do |mask_polyshape|
           lower_paths = []
+          merged_lower_paths = []
           pldsr.each do |layer_def|
             next if layer_def.closed_paths.empty?
             next if (intersection = Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_polyshape.paths)).first.empty?
-            if lower_paths.any?
-              layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: lower_paths, clips: layer_def.closed_paths)
-              lower_paths, op = Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_polyshape.paths)
+            if @merge_holes_offset > 0
+
+              layer_def.closed_paths.each do |path|
+
+                border_defs = []
+
+                fn_compute_point_in_defs = lambda { |x, y|
+                  merged_lower_paths.map { |lower_path| PathVertexInDef.new(Clippy.point_in_polygon(x, y, lower_path), lower_path) } +
+                    outer_paths.map { |outer_path| PathVertexInDef.new(Clippy.point_in_polygon(x, y, outer_path), outer_path) }
+                }
+                fn_mid_point_on_borders = lambda { |x1, y1, x2, y2|
+                  return true
+                  return true if outer_paths.index { |outer_path| Clippy.mid_point_in_polygon(x1, y1, x2, y2, outer_path) == Clippy::POINT_IN_POLYGON_RESULT_IS_ON }
+                  false
+                }
+
+                fn_extract_border = lambda { |segment_defs|
+                  return [] if segment_defs.length < 3
+
+                  start_gate_index = segment_defs.index { |segment_def| segment_def.is_start_gate }
+                  if start_gate_index.nil?
+
+                    border_defs << PathBorderDef.new(segment_defs, true)
+
+                    return []
+                  else
+                    segment_defs.rotate!(start_gate_index)
+                    end_gate_index = segment_defs.index { |segment_def| segment_def.is_end_gate }
+                    if end_gate_index.nil?
+                      return [] # Invalid border, no end gate
+                    else
+
+                      border_defs << PathBorderDef.new(segment_defs[0..end_gate_index], false) if end_gate_index > 1
+
+                      return segment_defs[(end_gate_index + 1)..-1]
+                    end
+                  end
+
+                }
+
+                vertex_defs = path.each_slice(2).to_a.map { |x, y| PathVertexDef.new(x, y, fn_compute_point_in_defs.call(x, y)) }
+                segment_defs = (vertex_defs + [ vertex_defs.first ]).each_cons(2).to_a.map { |start_vertex_def, end_vertex_def|
+                  if start_vertex_def.is_on? && end_vertex_def.is_on?
+
+                    if fn_mid_point_on_borders.call(start_vertex_def.x, start_vertex_def.y, end_vertex_def.x, end_vertex_def.y)
+                      PathSegmentDef.new(start_vertex_def, end_vertex_def, false, false, true)
+                    else
+                      [
+                        PathSegmentDef.new(start_vertex_def, end_vertex_def, false, true, false),
+                        PathSegmentDef.new(start_vertex_def, end_vertex_def, true, false, false)
+                      ]
+                    end
+
+                  elsif start_vertex_def.is_on? || end_vertex_def.is_on?
+                    PathSegmentDef.new(start_vertex_def, end_vertex_def, end_vertex_def.is_on?, start_vertex_def.is_on?, false)
+                  end
+                }.compact.flatten(1)
+
+                until segment_defs.empty?
+                  segment_defs = fn_extract_border.call(segment_defs)
+                end
+
+                border_defs.each { |border_def|
+
+                  border_inflate_paths = Clippy.inflate_paths(
+                    paths: [ border_def.path ],
+                    delta: @merge_holes_offset,
+                    join_type: Clippy::JOIN_TYPE_MITER,
+                    end_type: border_def.is_loop ? Clippy::END_TYPE_JOINED : Clippy::END_TYPE_BUTT
+                  )
+                  border_inflate_paths_inner, op = Clippy.execute_intersection(closed_subjects: border_inflate_paths, clips: merged_lower_paths)
+                  border_inflate_paths_outer, op = Clippy.execute_difference(closed_subjects: border_inflate_paths, clips: outer_paths)
+                  border_paths, op = Clippy.execute_union(closed_subjects: border_inflate_paths_inner, clips: border_inflate_paths_outer)
+
+                  layer_def.border_paths, op = Clippy.execute_union(closed_subjects: layer_def.border_paths, clips: border_paths)
+
+                }
+
+              end
+
+              layer_def.border_paths, op = Clippy.execute_union(closed_subjects: layer_def.border_paths, clips: layer_def.closed_paths)
+
+              merged_lower_paths, op = Clippy.execute_union(closed_subjects: merged_lower_paths, clips: layer_def.closed_paths)
+              merged_lower_paths, op = Clippy.execute_intersection(closed_subjects: merged_lower_paths, clips: mask_polyshape.paths)
+
             else
-              lower_paths = intersection.first
+              if lower_paths.any?
+                layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: lower_paths, clips: layer_def.closed_paths)
+                lower_paths, op = Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_polyshape.paths)
+              else
+                lower_paths = intersection.first
+              end
             end
           end
         end
@@ -231,6 +321,15 @@ module Ladb::OpenCutList
             DrawingProjectionPolygonDef.new(Clippy.rpath_to_points(path, z_max - pld.depth), Clippy.is_rpath_positive?(path))
           }.compact
           projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, pld.type, '', polygons) unless polygons.empty?
+
+        end
+
+        unless pld.border_paths.empty?
+
+          polygons = pld.border_paths.map { |path|
+            DrawingProjectionPolygonDef.new(Clippy.rpath_to_points(path, z_max - pld.depth), true)
+          }.compact
+          projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_BORDERS, '', polygons) unless polygons.empty?
 
         end
 
@@ -287,7 +386,22 @@ module Ladb::OpenCutList
 
     # -----
 
-    PathsLayerDef = Struct.new(:depth, :closed_paths, :open_paths, :type)
+    PathsLayerDef = Struct.new(:depth, :closed_paths, :open_paths, :border_paths, :type)
+    PathBorderDef = Struct.new(:segment_defs, :is_loop) do
+      def path
+        segment_defs.map { |segment_def|
+          next unless segment_def.is_start_gate || segment_def.is_border
+          [ segment_def.end_vertex_def.x, segment_def.end_vertex_def.y ]
+        }.compact.flatten(1)
+      end
+    end
+    PathSegmentDef = Struct.new(:start_vertex_def, :end_vertex_def, :is_start_gate, :is_end_gate, :is_border)
+    PathVertexDef = Struct.new(:x, :y, :in_defs) do
+      def is_on?
+        in_defs.select { |in_def| in_def.in == Clippy::POINT_IN_POLYGON_RESULT_IS_ON }.any?
+      end
+    end
+    PathVertexInDef = Struct.new(:in, :path)
 
   end
 
