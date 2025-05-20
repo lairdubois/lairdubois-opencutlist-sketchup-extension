@@ -87,7 +87,6 @@ require_relative 'write_xlsx/workbook'
 #
 module Ladb::OpenCutList
 class WriteXLSX < Writexlsx::Workbook
-  $KCODE = 'u' if RUBY_VERSION < '1.9'
 end
 
 class WriteXLSXInsufficientArgumentError < StandardError
