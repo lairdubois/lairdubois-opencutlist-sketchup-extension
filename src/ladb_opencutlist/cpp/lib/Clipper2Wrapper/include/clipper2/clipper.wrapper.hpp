@@ -428,13 +428,19 @@ namespace Clipper2Lib {
             PointD point,
             PathD path,
             bool closed = false,
-            double epsilon = 1e-8
+            double epsilon = 1e-6
     ) {
         size_t path_size = path.size();
         if (path_size < 2) return false;
         size_t max_index = closed ? path_size - 1 : path_size - 2;
         for (size_t i = 0; i <= max_index; ++i) {
-            if (PerpendicDistFromLineSqrd(point, path[i], path[(i + 1) % path_size]) < epsilon) return true;
+            PointD p1 = path[i];
+            PointD p2 = path[(i + 1) % path_size];
+            if (PerpendicDistFromLineSqrd(point, p1, p2) <= epsilon) {
+                if (std::abs(Distance(point, p1) + Distance(point, p2) - Distance(p1, p2)) < epsilon) {
+                    return true;
+                }
+            }
         }
         return false;
     }

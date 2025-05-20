@@ -368,7 +368,7 @@ module Ladb::OpenCutList
           ).run
           if @active_drawing_def.is_a?(DrawingDef)
 
-            inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
+            inch_offset = Sketchup.active_model.active_view.pixels_to_model(30, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
             projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def,
               origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,

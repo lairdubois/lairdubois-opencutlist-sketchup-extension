@@ -196,7 +196,7 @@ module Ladb::OpenCutList
 
                 fn_compute_point_in_defs = lambda { |x, y|
                   merged_lower_paths.map { |lower_path| PathVertexInDef.new(Clippy.is_point_on_polygon(x, y, lower_path), lower_path) } +
-                    outer_paths.map { |outer_path| PathVertexInDef.new(Clippy.is_point_on_polygon(x, y, outer_path), outer_path) }
+                  outer_paths.map { |outer_path| PathVertexInDef.new(Clippy.is_point_on_polygon(x, y, outer_path), outer_path) }
                 }
                 fn_mid_point_on_borders = lambda { |x1, y1, x2, y2|
                   return true if merged_lower_paths.index { |lower_path| Clippy.is_mid_point_on_polygon(x1, y1, x2, y2, lower_path) }
@@ -280,14 +280,15 @@ module Ladb::OpenCutList
               merged_lower_paths, op = Clippy.execute_intersection(closed_subjects: merged_lower_paths, clips: mask_polyshape.paths)
 
               layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: layer_def.closed_paths, clips: layer_border_inflate_paths)
+              # layer_def.closed_paths = layer_border_inflate_paths
 
             else
-              if lower_paths.any?
-                layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: lower_paths, clips: layer_def.closed_paths)
-                lower_paths, op = Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_polyshape.paths)
-              else
-                lower_paths = intersection.first
-              end
+              # if lower_paths.any?
+              #   layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: lower_paths, clips: layer_def.closed_paths)
+              #   lower_paths, op = Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_polyshape.paths)
+              # else
+              #   lower_paths = intersection.first
+              # end
             end
           end
         end

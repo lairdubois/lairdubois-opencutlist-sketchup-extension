@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
     FillRule fill_rule = FillRule::EvenOdd;
 
     PathsD subject = {
-        {{0.5,0.125784},{100.1804,100.12874457},{100,0}}
+        { {5.0, 5.0}, {10.0, 5.0}, {10.0, 10.0}, {0.0, 10.0}, {0.0, 0.0}, {5.0, 0.0} }
     };
     PathsD solution = InflatePaths(subject, 5, JoinType::Miter, EndType::Butt);
 
@@ -52,15 +52,11 @@ int main(int argc, char* argv[]) {
     SvgSaveToFile(svg, output_path, 1024, 1024, 200);
 
     PathD path = subject.front();
-    PointD mid_moint = MidPoint(path[0], path[1]);
-    PointD mid_moint2 = MidPoint(path[0], path[2]);
-    PointInPolygonResult result = PointInPolygon(mid_moint, subject.front());
-    std::cout << (result == PointInPolygonResult::IsInside ? "Inside" : result == PointInPolygonResult::IsOn ? "On" : "Outside") << std::endl;
-    std::cout << "PointOnPath(mid_moint, path) ? " << PointOnPath(mid_moint, path) << std::endl;
-    std::cout << "PointOnPath(mid_moint2, path) ? " << PointOnPath(mid_moint2, path) << std::endl;
+    PointD mid_moint = MidPoint(PointD(5.0, 10.0), PointD(5.0, 5.0));
+    std::cout << "PointOnPath(mid_moint, path) ? " << PointOnPath(mid_moint, path, true) << std::endl;
+    std::cout << "PointOnPath([0,0], path) ? " << PointOnPath(PointD(0, 0), path, true) << std::endl;
 
     std:: cout << PerpendicDistFromLineSqrd(mid_moint, path[0], path[1]) << std::endl;
-    std:: cout << PerpendicDistFromLineSqrd(mid_moint2, path[0], path[1]) << std::endl;
 
 
 
