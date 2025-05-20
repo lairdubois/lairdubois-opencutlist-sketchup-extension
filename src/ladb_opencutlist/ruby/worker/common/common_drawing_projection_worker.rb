@@ -283,12 +283,12 @@ module Ladb::OpenCutList
               # layer_def.closed_paths = layer_border_inflate_paths
 
             else
-              # if lower_paths.any?
-              #   layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: lower_paths, clips: layer_def.closed_paths)
-              #   lower_paths, op = Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_polyshape.paths)
-              # else
-              #   lower_paths = intersection.first
-              # end
+              if lower_paths.any?
+                layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: lower_paths, clips: layer_def.closed_paths)
+                lower_paths, op = Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_polyshape.paths)
+              else
+                lower_paths = intersection.first
+              end
             end
           end
         end
