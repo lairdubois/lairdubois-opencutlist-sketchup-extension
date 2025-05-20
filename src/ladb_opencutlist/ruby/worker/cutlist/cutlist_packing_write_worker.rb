@@ -98,6 +98,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.obsolete_cutlist' ] } if @cutlist.obsolete?
       return { :errors => [ 'default.error' ] } unless @packing && @packing.def.group
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
+      return { :errors => [ [ 'tab.cutlist.packing.write.error.offset_gt_spacing', { offset: @merge_holes_offset.to_s, spacing: @packing.solution.options.spacing } ] ] } if @merge_holes_offset > @packing.def.solution_def.options_def.spacing
 
       # Ask for output dir
       dir = UI.select_directory(title: PLUGIN.get_i18n_string('tab.cutlist.packing.write.title'), directory: '')
