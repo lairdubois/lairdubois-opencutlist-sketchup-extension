@@ -1168,6 +1168,8 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_merge_holes_offset: $t(tab.cutlist.write.option_merge_holes_offset)
+        option_merge_holes_offset_help: $t(tab.cutlist.write.option_merge_holes_offset_help)
         option_include_paths: $t(tab.cutlist.write.option_include_paths)
         option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
         option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
@@ -1203,6 +1205,9 @@ tab:
           Permet d'activer l'exportation des coupes ainsi que de choisir leur couleur.
         warning:
           is_bin_selection: Les **blocs masqués** ne seront pas exportés.
+        error:
+          offset_gt_spacing: |
+            Le décalage ({{ offset }}) doit être inférieur ou égal à l'espacement ({{ spacing }}) configuré dans ce calepinage.
       error:
         no_part: Aucune pièce.
         no_bin_1d: Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.
@@ -1450,6 +1455,9 @@ tab:
 
         **Contour + Percements + Fusion**
         Active la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
+      option_merge_holes_offset: Chevauchement # TODO trouver un meilleur mot ?
+      option_merge_holes_offset_help: |
+        Permet de définir la distance de chevauchement appliqué aux surfaces d'usinage se trouvant en bordure du contour et des cavités.
       option_include_paths: Tracés
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Utiliser les arêtes non associées à une face

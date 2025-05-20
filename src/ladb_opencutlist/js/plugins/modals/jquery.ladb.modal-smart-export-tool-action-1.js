@@ -34,7 +34,9 @@
             const $selectFaces = $('#ladb_select_faces', that.$element);
             const $selectAnchor = $('#ladb_select_anchor', that.$element);
             const $selectSmoothing = $('#ladb_select_smoothing', that.$element);
+            const $formGroupMergeHolesOffset = $('#ladb_form_group_merge_holes_offset', that.$element);
             const $selectMergeHoles = $('#ladb_select_merge_holes', that.$element);
+            const $inputMergeHolesOffset = $('#ladb_input_merge_holes_offset', that.$element);
             const $selectIncludePaths = $('#ladb_select_include_paths', that.$element);
             const $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', that.$element);
             const $inputPartsFillColor = $('#ladb_input_parts_fill_color', that.$element);
@@ -53,6 +55,7 @@
                 options.anchor = $selectAnchor.val() === '1';
                 options.smoothing = $selectSmoothing.val() === '1';
                 options.merge_holes = $selectMergeHoles.val() === '1';
+                options.merge_holes_offset = $inputMergeHolesOffset.val();
                 options.include_paths = $selectIncludePaths.val() === '1';
                 options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
                 options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
@@ -68,6 +71,7 @@
                 $selectAnchor.selectpicker('val', options.anchor ? '1' : '0');
                 $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                 $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
+                $inputMergeHolesOffset.val(options.merge_holes_offset);
                 $selectIncludePaths.selectpicker('val', options.include_paths ? '1' : '0');
                 $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
                 $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
@@ -81,6 +85,7 @@
                 const isDxf = $selectFileFormat.val() === 'dxf';
                 const isMergeHoles = $selectMergeHoles.val() === '1';
                 const isIncludePaths = $selectIncludePaths.val() === '1';
+                if (isMergeHoles) $formGroupMergeHolesOffset.show(); else $formGroupMergeHolesOffset.hide();
                 if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
                 if (!isIncludePaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
                 $inputPartsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
@@ -110,6 +115,7 @@
                 .selectpicker(SELECT_PICKER_OPTIONS)
                 .on('changed.bs.select', fnUpdateFieldsVisibility)
             ;
+            $inputMergeHolesOffset.ladbTextinputDimension();
             $selectIncludePaths
                 .selectpicker(SELECT_PICKER_OPTIONS)
                 .on('changed.bs.select', fnUpdateFieldsVisibility)

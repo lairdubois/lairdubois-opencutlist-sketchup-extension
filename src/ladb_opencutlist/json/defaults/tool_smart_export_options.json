@@ -1,4 +1,7 @@
 {
+  "_preprocessors": {
+    "merge_holes_offset": 1 /* PRESETS_PREPROCESSOR_D */
+  },
   "action_0": {  /* ACTION_EXPORT_PART_3D */
     "file_format": "stl",
     "unit": { "metric": 2 /* Length::Millimeter */, "imperial": 0 /* Length::Inches */ },
@@ -12,6 +15,7 @@
     "anchor": false,
     "smoothing": false,
     "merge_holes": false,
+    "merge_holes_offset": "0",
     "include_paths": false,
     "parts_stroke_color": null,
     "parts_fill_color": "#000000",

@@ -4,6 +4,11 @@
 add_subdirectory(Clipper2)
 
 # -------------------------------------------------------------------
+#                         Clipper2Utils
+
+add_subdirectory(Clipper2Utils)
+
+# -------------------------------------------------------------------
 #                         Clipper2Wrapper
 
 add_subdirectory(Clipper2Wrapper)

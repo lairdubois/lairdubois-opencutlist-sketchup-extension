@@ -46,3 +46,15 @@ target_link_libraries(Clippy PRIVATE Clipper2Wrapper)
 target_compile_features(Clippy PRIVATE cxx_std_17)
 
 install(TARGETS Clippy RUNTIME DESTINATION lib)
+
+# -------------------------------------------------------------------
+#                           Debug executable
+
+add_executable(ClippyMain ${LIBRARY_HEADERS} ${LIBRARY_SOURCES} src/main.cpp)
+target_include_directories(ClippyMain PUBLIC include)
+target_link_libraries(ClippyMain PRIVATE Clipper2Wrapper)
+target_link_libraries(ClippyMain PRIVATE Clipper2Utils)
+target_link_libraries(ClippyMain PUBLIC Boost::program_options)
+target_compile_features(ClippyMain PRIVATE cxx_std_17)
+
+install(TARGETS ClippyMain RUNTIME DESTINATION lib)

@@ -5,6 +5,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/sanitizer_helper'
   require_relative '../../helper/dxf_writer_helper'
   require_relative '../../helper/svg_writer_helper'
+  require_relative '../../helper/part_drawing_helper'
   require_relative '../../utils/color_utils'
 
   class CutlistPackingWriteWorker < AbstractCutlistPackingWorker
@@ -12,6 +13,7 @@ module Ladb::OpenCutList
     include SanitizerHelper
     include DxfWriterHelper
     include SvgWriterHelper
+    include PartDrawingHelper
 
     LAYER_BIN = 'OCL_BIN'.freeze
     LAYER_PART = 'OCL_PART'.freeze
@@ -28,6 +30,7 @@ module Ladb::OpenCutList
                    unit: Length::Millimeter,
                    smoothing: false,
                    merge_holes: false,
+                   merge_holes_offset: 0,
                    include_paths: false,
                    bin_hidden: false,
                    bin_stroke_color: '#0068FF',
@@ -61,6 +64,7 @@ module Ladb::OpenCutList
       @unit = unit
       @smoothing = smoothing
       @merge_holes = merge_holes
+      @merge_holes_offset = merge_holes_offset.to_l
       @include_paths = include_paths
       @bin_hidden = bin_hidden
       @bin_stroke_color = ColorUtils.color_create(bin_stroke_color)
@@ -94,6 +98,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.obsolete_cutlist' ] } if @cutlist.obsolete?
       return { :errors => [ 'default.error' ] } unless @packing && @packing.def.group
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
+      return { :errors => [ [ 'tab.cutlist.packing.write.error.offset_gt_spacing', { offset: @merge_holes_offset.to_s, spacing: @packing.solution.options.spacing } ] ] } if @merge_holes_offset > @packing.def.solution_def.options_def.spacing
 
       # Ask for output dir
       dir = UI.select_directory(title: PLUGIN.get_i18n_string('tab.cutlist.packing.write.title'), directory: '')
@@ -197,10 +202,10 @@ module Ladb::OpenCutList
         bin_def.item_defs.each do |item_def|
 
           item_type_def = item_def.item_type_def
-          projection_def = item_type_def.projection_def
           part = item_type_def.part
           part_def = part.def
           text = _evaluate_item_text(options_def.items_formula, part, item_def.instance_info)
+          projection_def = _get_part_projection_def(part)
 
           id = _svg_sanitize_identifier("#{LAYER_PART}_#{part.number.to_s.rjust(3, '_')}")
 
@@ -403,7 +408,7 @@ module Ladb::OpenCutList
       unless @parts_hidden
         depth_layer_defs = []
         bin_def.item_defs.uniq { |item_def| item_def.item_type_def.part.id }.each do |item_def|
-          projection_def = item_def.item_type_def.projection_def
+          projection_def = _get_part_projection_def(item_def.item_type_def.part)
           if projection_def.is_a?(DrawingProjectionDef)
             depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, @parts_holes_stroke_color, @parts_paths_stroke_color, unit_transformation, LAYER_PART))
           end
@@ -424,7 +429,7 @@ module Ladb::OpenCutList
 
           unless @parts_hidden
             bin_def.item_defs.uniq { |item_def| item_def.item_type_def.part.id }.each do |item_def|
-              projection_def = item_def.item_type_def.projection_def
+              projection_def = _get_part_projection_def(item_def.item_type_def.part)
               if projection_def.is_a?(DrawingProjectionDef)
                 _dxf_write_projection_def_block_record(file, projection_def, fn_part_block_name.call(item_def.item_type_def.part), owner_id)
               else
@@ -444,10 +449,10 @@ module Ladb::OpenCutList
             bin_def.item_defs.uniq { |item_def| item_def.item_type_def.part.id }.each do |item_def|
 
               item_type_def = item_def.item_type_def
-              projection_def = item_type_def.projection_def
               part = item_type_def.part
               part_def = part.def
               text = _evaluate_item_text(options_def.items_formula, part, item_def.instance_info)
+              projection_def = _get_part_projection_def(part)
 
               item_length = item_type_def.length
               item_width = is_1d ? bin_width : item_type_def.width
@@ -508,9 +513,9 @@ module Ladb::OpenCutList
           bin_def.item_defs.each do |item_def|
 
             item_type_def = item_def.item_type_def
-            projection_def = item_type_def.projection_def
             part = item_type_def.part
             part_def = part.def
+            projection_def = _get_part_projection_def(part)
 
             item_length = item_type_def.length
             item_width = is_1d ? bin_width : item_type_def.width
@@ -646,6 +651,16 @@ module Ladb::OpenCutList
       _dxf_write_section_objects(file)
       _dxf_write_end(file)
 
+    end
+
+    def _get_part_projection_def(part)
+      _compute_part_projection_def(@part_drawing_type, part,
+                                   projection_defs_cache: @_projection_defs,
+                                   ignore_edges: !@include_paths,
+                                   merge_holes: @merge_holes,
+                                   merge_holes_offset: @merge_holes_offset,
+                                   use_cache: true
+      )
     end
 
   end

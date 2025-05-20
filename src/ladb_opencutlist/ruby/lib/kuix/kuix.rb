@@ -100,6 +100,7 @@ module Ladb::OpenCutList
     require_relative 'entity/3d/motif3d'
     require_relative 'entity/3d/mesh'
     require_relative 'entity/3d/segments'
+    require_relative 'entity/3d/polyline'
     require_relative 'entity/3d/points'
     require_relative 'entity/3d/line'
 

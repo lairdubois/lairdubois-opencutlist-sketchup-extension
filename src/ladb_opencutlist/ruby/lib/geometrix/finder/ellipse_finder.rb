@@ -112,9 +112,11 @@ module Ladb::OpenCutList::Geometrix
         normal = v1.cross(v2)
 
         xaxis = X_AXIS.transform(Geom::Transformation.rotation(ORIGIN, Z_AXIS, angle))
+        return nil unless xaxis.valid?
         xaxis.length = rmax
 
         yaxis = normal.cross(xaxis)
+        return nil unless yaxis.valid?
         yaxis.length = rmin
 
       rescue Exception => e

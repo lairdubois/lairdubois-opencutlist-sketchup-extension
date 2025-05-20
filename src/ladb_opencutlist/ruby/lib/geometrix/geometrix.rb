@@ -12,6 +12,7 @@ module Ladb::OpenCutList
     TWO_PI = 2 * Math::PI
     FOUR_PI = 4 * Math::PI
 
+    require_relative 'finder/border_finder'
     require_relative 'finder/circle_finder'
     require_relative 'finder/ellipse_finder'
     require_relative 'finder/curve_finder'
