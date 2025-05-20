@@ -75,7 +75,7 @@ module Ladb::OpenCutList
     COLOR_PART_UPPER = Kuix::COLOR_BLUE
     COLOR_PART_HOLES = Sketchup::Color.new('#D783FF').freeze
     COLOR_PART_DEPTH = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.5).freeze
-    COLOR_PART_BORDERS = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.3).freeze
+    COLOR_PART_BORDERS = Sketchup::Color.new('#ff7f00').freeze #COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.3).freeze
     COLOR_PART_PATH = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
@@ -422,14 +422,12 @@ module Ladb::OpenCutList
                   if fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                     poly_def.curve_def.portions.each do |portion|
                       fn_append_polyline.call(portion.points, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
-                      fn_append_polyline.call(portion.points, Sketchup::Color.new(COLOR_PART_DEPTH), portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, Kuix::LINE_STIPPLE_LONG_DASHES, false) if layer_def.type_borders? && poly_def.ccw?
                     end
                   else
                     fn_append_polyline.call(poly_def.points, color, 2, line_stipple, true)
-                    fn_append_polyline.call(poly_def.points, Sketchup::Color.new(COLOR_PART_DEPTH), 2, Kuix::LINE_STIPPLE_LONG_DASHES, true) if layer_def.type_borders? && poly_def.ccw?
                   end
 
-                  if poly_def.is_a?(DrawingProjectionPolylineDef)
+                  if poly_def.is_a?(DrawingProjectionPolylineDef) && !layer_def.type_borders?
 
                     # It's a polyline, create 'start' and 'end' points entities
 
@@ -1007,6 +1005,7 @@ module Ladb::OpenCutList
           anchor = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
           smoothing = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
           merge_holes = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
+          merge_holes_offset = fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OFFSET)
           parts_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_stroke_color')
           parts_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_fill_color')
           parts_holes_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_fill_color')
@@ -1021,6 +1020,7 @@ module Ladb::OpenCutList
             anchor: anchor,
             smoothing: smoothing,
             merge_holes: merge_holes,
+            merge_holes_offset: merge_holes_offset,
             parts_stroke_color: parts_stroke_color,
             parts_fill_color: parts_fill_color,
             parts_holes_fill_color: parts_holes_fill_color,

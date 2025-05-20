@@ -81,12 +81,12 @@ DLL_EXPORTS double c_get_cpath_area(
         CPathD cpath
 );
 
-DLL_EXPORTS int c_point_in_polygon(
+DLL_EXPORTS int c_is_point_on_polygon(
         double x,
         double y,
         CPathD cpath
 );
-DLL_EXPORTS int c_mid_point_in_polygon(
+DLL_EXPORTS int c_is_mid_point_on_polygon(
         double x1,
         double y1,
         double x2,

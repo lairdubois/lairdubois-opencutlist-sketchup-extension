@@ -54,8 +54,8 @@ module Ladb::OpenCutList::Fiddle
         'int c_is_cpath_positive(double*)',
         'double c_get_cpath_area(double*)',
 
-        'int c_point_in_polygon(double, double, double*)',
-        'int c_mid_point_in_polygon(double, double, double, double, double*)',
+        'int c_is_point_on_polygon(double, double, double*)',
+        'int c_is_mid_point_on_polygon(double, double, double, double, double*)',
 
         'void c_dispose_paths_solution(CPathsDSolution*)',
         'void c_dispose_polytree_solution(CPolyTreeDSolution*)',
@@ -208,14 +208,14 @@ module Ladb::OpenCutList::Fiddle
       return c_get_cpath_area(_rpath_to_cpath(rpath))
     end
 
-    def self.point_in_polygon(x, y, rpath)
+    def self.is_point_on_polygon(x, y, rpath)
       _load_lib
-      return c_point_in_polygon(x, y, _rpath_to_cpath(rpath))
+      return c_is_point_on_polygon(x, y, _rpath_to_cpath(rpath)) == 1
     end
 
-    def self.mid_point_in_polygon(x1, y1, x2, y2, rpath)
+    def self.is_mid_point_on_polygon(x1, y1, x2, y2, rpath)
       _load_lib
-      return c_mid_point_in_polygon(x1, y1, x2, y2, _rpath_to_cpath(rpath))
+      return c_is_mid_point_on_polygon(x1, y1, x2, y2, _rpath_to_cpath(rpath)) == 1
     end
 
     # -- Path manipulations --

@@ -424,6 +424,22 @@ namespace Clipper2Lib {
         return result;
     }
 
+    static bool PointOnPath(
+            PointD point,
+            PathD path,
+            bool closed = false,
+            double epsilon = 1e-8
+    ) {
+        size_t path_size = path.size();
+        if (path_size < 2) return false;
+        size_t max_index = closed ? path_size - 1 : path_size - 2;
+        for (size_t i = 0; i <= max_index; ++i) {
+            if (PerpendicDistFromLineSqrd(point, path[i], path[(i + 1) % path_size]) < epsilon) return true;
+        }
+        return false;
+    }
+
+
 }
 
 #endif // CLIPPER_WRAPPER_H
