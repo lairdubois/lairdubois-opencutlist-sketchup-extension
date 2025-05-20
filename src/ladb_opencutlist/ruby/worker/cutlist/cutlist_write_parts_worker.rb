@@ -23,6 +23,7 @@ module Ladb::OpenCutList
                    switch_yz: false,
                    smoothing: false,
                    merge_holes: false,
+                   merge_holes_offset: 0,
                    include_paths: false,
 
                    parts_stroke_color: nil,
@@ -46,6 +47,7 @@ module Ladb::OpenCutList
       @switch_yz = switch_yz
       @smoothing = smoothing
       @merge_holes = merge_holes
+      @merge_holes_offset = merge_holes_offset.to_l
       @include_paths = include_paths
 
       @parts_stroke_color = parts_stroke_color
@@ -142,6 +144,7 @@ module Ladb::OpenCutList
                 anchor: @anchor,
                 smoothing: @smoothing,
                 merge_holes: @merge_holes,
+                merge_holes_offset: @merge_holes_offset,
                 parts_stroke_color: @parts_stroke_color,
                 parts_fill_color: @parts_fill_color,
                 parts_holes_stroke_color: @parts_holes_stroke_color,

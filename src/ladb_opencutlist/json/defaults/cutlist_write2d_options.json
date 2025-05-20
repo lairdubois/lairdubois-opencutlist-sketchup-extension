@@ -7,6 +7,7 @@
     "anchor": false,
     "smoothing": false,
     "merge_holes": false,
+    "merge_holes_offset": 0,
     "include_paths": false,
     "parts_stroke_color": null,
     "parts_fill_color": "#000000",

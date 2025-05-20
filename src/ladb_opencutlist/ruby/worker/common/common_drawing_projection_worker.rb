@@ -28,7 +28,7 @@ module Ladb::OpenCutList
 
       @origin_position = origin_position
       @merge_holes = merge_holes                    # Holes are moved to the "hole" layer, and all down layers holes are merged to their upper layer
-      @merge_holes_offset = merge_holes_offset
+      @merge_holes_offset = merge_holes_offset.to_l
       @compute_shell = compute_shell                # In addition to layers, shell def (outer + holes shapes) is computed.
 
     end
