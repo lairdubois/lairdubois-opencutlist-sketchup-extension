@@ -6,32 +6,39 @@
 # $ gem install rubocop-sketchup
 # check the versions that were installed
 # $ gem list --local | grep rubocop
+# currently using versions:
 # rubocop (1.75.6)
 # rubocop-ast (1.44.1)
 # rubocop-sketchup (1.5.0)
+# 
+# update all installed gems (may not be necessary)
+# $ gem update `gem outdated | cut -d ' ' -f 1`
 #
 require: rubocop-sketchup
 
 AllCops:
-  SketchUp:
-    SourcePath: src
-    TargetSketchUpVersion: 2018
   Exclude:
-    - build/*
-    - test/*
+    - 'build/**/*'
+    - 'dist/**/*'
+    - 'docs/**/*'
+    - 'test/**/*'
+    - 'tools/**/*'
+  SketchUp:
+    TargetSketchUpVersion: 2024
+    SourcePath: src
   DisabledByDefault: true
+
+SketchupRequirements:
+  Enabled: true
 
 SketchupDeprecations:
   Enabled: true
 
 SketchupPerformance:
-  Enabled: false
-
-SketchupRequirements:
   Enabled: true
 
 SketchupSuggestions:
-  Enabled: false
+  Enabled: true
 
 SketchupBugs:
   Enabled: true
