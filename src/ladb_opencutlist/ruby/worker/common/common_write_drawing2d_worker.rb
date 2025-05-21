@@ -51,7 +51,7 @@ module Ladb::OpenCutList
       @anchor = anchor
       @smoothing = smoothing
       @merge_holes = merge_holes
-      @merge_holes_overflow = merge_holes_overflow.to_l
+      @merge_holes_overflow = (@merge_holes ? merge_holes_overflow : 0).to_l
 
       @parts_stroke_color = ColorUtils.color_create(parts_stroke_color)
       @parts_fill_color = ColorUtils.color_create(parts_fill_color)

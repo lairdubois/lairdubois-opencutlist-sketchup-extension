@@ -1207,7 +1207,7 @@ tab:
           is_bin_selection: Les **blocs masqués** ne seront pas exportés.
         error:
           overflow_gt_spacing: |  # TODO
-            Le débord ({{ overflow }}) doit être inférieur ou égal à la moitié l'espacement ({{ spacing }}) configuré dans ce calepinage.
+            Le débord d'usinage ({{ overflow }}) doit être inférieur ou égal à la moitié l'espacement ({{ spacing }}) configuré dans ce calepinage.
       error:
         no_part: Aucune pièce.
         no_bin_1d: Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.
@@ -1455,9 +1455,9 @@ tab:
 
         **Contour + Percements + Fusion**
         Active la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
-      option_merge_holes_overflow: Débord # TODO
+      option_merge_holes_overflow: Débord d'usinage # TODO
       option_merge_holes_overflow_help: | # TODO
-        Permet de définir la distance de débord appliquée aux surfaces d'usinage se trouvant en bordure du contour et des cavités.
+        Permet de définir la distance de débord d'usinage appliquée aux surfaces d'usinage se trouvant en bordure du contour et des cavités.
       option_include_paths: Tracés
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Utiliser les arêtes non associées à une face

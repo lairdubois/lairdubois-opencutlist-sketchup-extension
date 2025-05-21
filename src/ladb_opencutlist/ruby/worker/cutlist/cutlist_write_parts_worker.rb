@@ -47,7 +47,7 @@ module Ladb::OpenCutList
       @switch_yz = switch_yz
       @smoothing = smoothing
       @merge_holes = merge_holes
-      @merge_holes_overflow = merge_holes_overflow.to_l
+      @merge_holes_overflow = (@merge_holes ? merge_holes_overflow : 0).to_l
       @include_paths = include_paths
 
       @parts_stroke_color = parts_stroke_color
