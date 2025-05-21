@@ -47,8 +47,6 @@ module Ladb::OpenCutList
       @group_id = group_id
       @part_ids = part_ids
 
-      puts "group_id = #{group_id}"
-
       @source = source
       @format = format
 

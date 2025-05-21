@@ -17,7 +17,6 @@ module Ladb::OpenCutList
     attr_reader :cutlist, :estimate_def
 
     def initialize(cutlist,
-
                    cutlist_hidden_group_ids: [],
 
                    hidden_group_ids: []   # Unused locally, but necessary for UI
@@ -25,7 +24,6 @@ module Ladb::OpenCutList
     )
 
       @cutlist = cutlist
-
       @cutlist_hidden_group_ids = cutlist_hidden_group_ids
 
       @estimate_def = EstimateDef.new
