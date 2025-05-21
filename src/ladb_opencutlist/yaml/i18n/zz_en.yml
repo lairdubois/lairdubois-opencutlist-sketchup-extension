@@ -1383,14 +1383,14 @@ tab:
       option_file_format: 1109 - Format
       option_file_format_help: |
         1110 - Selects the format of the exported file.
-      option_dxf_structure: 1111 - Structure DXF
-      option_dxf_structure_1: 1112 - Calques
-      option_dxf_structure_2: 1113 - Calques + Blocs
+      option_dxf_structure: 1111 - DXF Structure
+      option_dxf_structure_1: 1112 - Layers
+      option_dxf_structure_2: 1113 - Layers + Blocks
       option_dxf_structure_help: |
-        1114 - Permet de choisir la structure du fichier DXF.
+        1114 - Selects the DXF file structure.
 
-        - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
-        - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
+        - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
+        - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
       option_unit: 1115 - Unit
       option_unit_help: |
         1116 - Selects the unit used in the exported file.
@@ -1436,7 +1436,7 @@ tab:
         The shape of the part is exported with the projection of each face onto a layer corresponding to its depth.
 
         **Contour + Drillings + Overflow**
-        Activates the separation of the outer contour of parts from their holes, as well as the calculation of the machining overlflow applied to surfaces bordering the contour and cavities.
+        Activates the separation of the outer contour of parts from their holes, as well as the calculation of the machining overflow applied to surfaces bordering the contour and cavities.
       option_merge_holes_overflow: 1143 - Overflow
       option_merge_holes_overflow_help: |
         1144 - Sets the overflow distance to be applied to surfaces bordering contours and holes.
