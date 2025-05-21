@@ -196,7 +196,7 @@ module Ladb::OpenCutList
             }
 
             # Iterate on rows to add cells
-            _compute_rows(groups, part).each_with_index { |row, row_index|
+            _compute_rows(groups, parts).each_with_index { |row, row_index|
               row.each_with_index { |cell, col_index|
                 unless cell.is_a?(String) && cell.empty?
                   col_def = @col_defs[col_index]
