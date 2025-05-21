@@ -1164,8 +1164,8 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_merge_holes_offset: $t(tab.cutlist.write.option_merge_holes_offset)
-        option_merge_holes_offset_help: $t(tab.cutlist.write.option_merge_holes_offset_help)
+        option_merge_holes_overflow: $t(tab.cutlist.write.option_merge_holes_overflow)
+        option_merge_holes_overflow_help: $t(tab.cutlist.write.option_merge_holes_overflow_help)
         option_include_paths: $t(tab.cutlist.write.option_include_paths)
         option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
         option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
@@ -1202,8 +1202,8 @@ tab:
         warning:
           is_bin_selection: 968 - Les **blocs masqués** ne seront pas exportés.
         error:
-          offset_gt_spacing: |
-            969 - Le décalage ({{ offset }}) doit être inférieur ou égal à l'espacement ({{ spacing }}) configuré dans ce calepinage.
+          overflow_gt_spacing: |
+            969 - Le décalage ({{ overflow }}) doit être inférieur ou égal à l'espacement ({{ spacing }}) configuré dans ce calepinage.
       error:
         no_part: 970 - Aucune pièce.
         no_bin_1d: 971 - Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.
@@ -1451,8 +1451,8 @@ tab:
 
         **Contour + Percements + Fusion**
         Active la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
-      option_merge_holes_offset: 1161 - Chevauchement
-      option_merge_holes_offset_help: |
+      option_merge_holes_overflow: 1161 - Chevauchement
+      option_merge_holes_overflow_help: |
         1162 - Permet de définir la distance de chevauchement appliquée aux surfaces d'usinage se trouvant en bordure du contour et des cavités.
       option_include_paths: 1163 - Tracés
       option_include_paths_0: $t(default.no)

@@ -30,7 +30,7 @@ module Ladb::OpenCutList
                    unit: Length::Millimeter,
                    smoothing: false,
                    merge_holes: false,
-                   merge_holes_offset: 0,
+                   merge_holes_overflow: 0,
                    include_paths: false,
                    bin_hidden: false,
                    bin_stroke_color: '#0068FF',
@@ -64,7 +64,7 @@ module Ladb::OpenCutList
       @unit = unit
       @smoothing = smoothing
       @merge_holes = merge_holes
-      @merge_holes_offset = merge_holes_offset.to_l
+      @merge_holes_overflow = merge_holes_overflow.to_l
       @include_paths = include_paths
       @bin_hidden = bin_hidden
       @bin_stroke_color = ColorUtils.color_create(bin_stroke_color)
@@ -98,7 +98,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.obsolete_cutlist' ] } if @cutlist.obsolete?
       return { :errors => [ 'default.error' ] } unless @packing && @packing.def.group
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
-      return { :errors => [ [ 'tab.cutlist.packing.write.error.offset_gt_spacing', { offset: @merge_holes_offset.to_s, spacing: @packing.solution.options.spacing } ] ] } if @merge_holes_offset > @packing.def.solution_def.options_def.spacing
+      return { :errors => [ [ 'tab.cutlist.packing.write.error.offset_gt_spacing', { overflow: DimensionUtils.str_add_units(@merge_holes_overflow.to_s), spacing: @packing.solution.options.spacing } ] ] } if (@merge_holes_overflow * 2) > @packing.def.solution_def.options_def.spacing
 
       # Ask for output dir
       dir = UI.select_directory(title: PLUGIN.get_i18n_string('tab.cutlist.packing.write.title'), directory: '')
@@ -658,7 +658,7 @@ module Ladb::OpenCutList
                                    projection_defs_cache: @_projection_defs,
                                    ignore_edges: !@include_paths,
                                    merge_holes: @merge_holes,
-                                   merge_holes_offset: @merge_holes_offset,
+                                   merge_holes_overflow: @merge_holes_overflow,
                                    use_cache: true
       )
     end

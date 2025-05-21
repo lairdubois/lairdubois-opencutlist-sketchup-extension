@@ -4,6 +4,6 @@
   },
   "0": {
     "minimize_on_smart_paint": true,
-    "material_order_strategy": "name>type"
+    "material_order_strategy": "type>name"
   }
 }

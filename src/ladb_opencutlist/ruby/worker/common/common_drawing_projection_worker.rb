@@ -19,7 +19,7 @@ module Ladb::OpenCutList
 
                    origin_position: ORIGIN_POSITION_DEFAULT,
                    merge_holes: false,
-                   merge_holes_offset: 0,
+                   merge_holes_overflow: 0,
                    compute_shell: false
 
     )
@@ -28,7 +28,7 @@ module Ladb::OpenCutList
 
       @origin_position = origin_position
       @merge_holes = merge_holes                    # Holes are moved to the "hole" layer, and all down layers holes are merged to their upper layer
-      @merge_holes_offset = merge_holes_offset.to_l
+      @merge_holes_overflow = merge_holes_overflow.to_l
       @compute_shell = compute_shell                # In addition to layers, shell def (outer + holes shapes) is computed.
 
     end
@@ -186,7 +186,7 @@ module Ladb::OpenCutList
           pldsr.each do |layer_def|
             next if layer_def.closed_paths.empty?
             next if (intersection = Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_polyshape.paths)).first.empty?
-            if @merge_holes_offset > 0
+            if @merge_holes_overflow > 0
 
               layer_border_inflate_paths = []
 
@@ -262,7 +262,7 @@ module Ladb::OpenCutList
 
                   border_inflate_paths = Clippy.inflate_paths(
                     paths: [ border_path ],
-                    delta: @merge_holes_offset,
+                    delta: @merge_holes_overflow,
                     join_type: Clippy::JOIN_TYPE_MITER,
                     end_type: border_def.is_loop ? Clippy::END_TYPE_JOINED : Clippy::END_TYPE_BUTT
                   )

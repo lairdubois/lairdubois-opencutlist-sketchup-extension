@@ -23,7 +23,7 @@ module Ladb::OpenCutList
                    switch_yz: false,
                    smoothing: false,
                    merge_holes: false,
-                   merge_holes_offset: 0,
+                   merge_holes_overflow: 0,
                    include_paths: false,
 
                    parts_stroke_color: nil,
@@ -47,7 +47,7 @@ module Ladb::OpenCutList
       @switch_yz = switch_yz
       @smoothing = smoothing
       @merge_holes = merge_holes
-      @merge_holes_offset = merge_holes_offset.to_l
+      @merge_holes_overflow = merge_holes_overflow.to_l
       @include_paths = include_paths
 
       @parts_stroke_color = parts_stroke_color
@@ -137,20 +137,20 @@ module Ladb::OpenCutList
               return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
 
               response = CommonWriteDrawing2dWorker.new(drawing_def,
-                folder_path: folder_path,
-                file_name: file_name,
-                file_format: @file_format,
-                unit: @unit,
-                anchor: @anchor,
-                smoothing: @smoothing,
-                merge_holes: @merge_holes,
-                merge_holes_offset: @merge_holes_offset,
-                parts_stroke_color: @parts_stroke_color,
-                parts_fill_color: @parts_fill_color,
-                parts_holes_stroke_color: @parts_holes_stroke_color,
-                parts_holes_fill_color: @parts_holes_fill_color,
-                parts_paths_stroke_color: @parts_paths_stroke_color,
-                parts_paths_fill_color: @parts_paths_fill_color
+                                                        folder_path: folder_path,
+                                                        file_name: file_name,
+                                                        file_format: @file_format,
+                                                        unit: @unit,
+                                                        anchor: @anchor,
+                                                        smoothing: @smoothing,
+                                                        merge_holes: @merge_holes,
+                                                        merge_holes_overflow: @merge_holes_overflow,
+                                                        parts_stroke_color: @parts_stroke_color,
+                                                        parts_fill_color: @parts_fill_color,
+                                                        parts_holes_stroke_color: @parts_holes_stroke_color,
+                                                        parts_holes_fill_color: @parts_holes_fill_color,
+                                                        parts_paths_stroke_color: @parts_paths_stroke_color,
+                                                        parts_paths_fill_color: @parts_paths_fill_color
               ).run
               return response if !response[:errors].nil? || response[:cancelled]
             when PART_DRAWING_TYPE_3D

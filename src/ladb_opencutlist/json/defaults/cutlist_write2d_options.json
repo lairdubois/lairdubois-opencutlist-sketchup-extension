@@ -1,4 +1,7 @@
 {
+  "_preprocessors": {
+    "merge_holes_overflow": 1 /* PRESETS_PREPROCESSOR_D */
+  },
   "0": {
     "part_drawing_type": 1, /* PART_DRAWING_TYPE_2D_TOP */
     "file_format": "svg",
@@ -7,7 +10,7 @@
     "anchor": false,
     "smoothing": false,
     "merge_holes": false,
-    "merge_holes_offset": 0,
+    "merge_holes_overflow": "0",
     "include_paths": false,
     "parts_stroke_color": null,
     "parts_fill_color": "#000000",

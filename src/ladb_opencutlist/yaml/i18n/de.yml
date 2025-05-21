@@ -1168,8 +1168,8 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_merge_holes_offset: $t(tab.cutlist.write.option_merge_holes_offset)
-        option_merge_holes_offset_help: $t(tab.cutlist.write.option_merge_holes_offset_help)
+        option_merge_holes_overflow: $t(tab.cutlist.write.option_merge_holes_overflow)
+        option_merge_holes_overflow_help: $t(tab.cutlist.write.option_merge_holes_overflow_help)
         option_include_paths: $t(tab.cutlist.write.option_include_paths)
         option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
         option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
@@ -1206,8 +1206,8 @@ tab:
         warning:
           is_bin_selection: "**Ausgeblendete Elemente** werden nicht exportiert."
         error:
-          offset_gt_spacing: |
-            Der Versatz ({{ offset }}) muss kleiner oder gleich dem Abstand ({{ spacing }}) sein, der in diesem Schnittplan konfiguriert ist.
+          overflow_gt_spacing: |
+            Der Versatz ({{ overflow }}) muss kleiner oder gleich dem Abstand ({{ spacing }}) sein, der in diesem Schnittplan konfiguriert ist.
       error:
         no_part: Kein Teil.
         no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zu Verfügung.
@@ -1455,8 +1455,8 @@ tab:
 
         **Kontur + Bohrungen + Zusammenführen**
         Aktiviert die Trennung der Außenkontur von Teilen und ihren Bohrungen sowie die Zusammenführung der Tiefen für jede Kavität.
-      option_merge_holes_offset: Überlappungsabstand
-      option_merge_holes_offset_help: |
+      option_merge_holes_overflow: Überlappungsabstand
+      option_merge_holes_overflow_help: |
         Hiermit können Sie den Überlappungsabstand festlegen, der auf Bearbeitungsflächen angewendet wird, die sich am Rand der Kontur und der Vertiefungen befinden.
       option_include_paths: Pfade
       option_include_paths_0: $t(default.no)

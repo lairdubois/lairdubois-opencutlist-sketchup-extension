@@ -25,7 +25,7 @@
     "objective": "auto",
     "rectangleguillotine_cut_type": "non-exact",
     "rectangleguillotine_number_of_stages": 3,
-    "rectangleguillotine_first_stage_orientation": "horizontal",
+    "rectangleguillotine_first_stage_orientation": "any",
     "rectangleguillotine_keep_size": "",
     "irregular_allowed_rotations": "0",
     "irregular_allow_mirroring": false,

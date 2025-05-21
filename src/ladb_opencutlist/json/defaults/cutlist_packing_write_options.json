@@ -1,11 +1,14 @@
 {
+  "_preprocessors": {
+    "merge_holes_overflow": 1 /* PRESETS_PREPROCESSOR_D */
+  },
   "0": {
     "file_format": "svg",
     "dxf_structure": 1, /* DXF_STRUCTURE_LAYER */
     "unit": { "metric": 2 /* Length::Millimeter */, "imperial": 0 /* Length::Inches */ },
     "smoothing": false,
     "merge_holes": false,
-    "merge_holes_offset": 0,
+    "merge_holes_overflow": "0",
     "include_paths": false,
     "bin_hidden": false,
     "bin_stroke_color": "#0068FF",

@@ -1168,8 +1168,8 @@ tab:
         option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
         option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
         option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_merge_holes_offset: $t(tab.cutlist.write.option_merge_holes_offset)
-        option_merge_holes_offset_help: $t(tab.cutlist.write.option_merge_holes_offset_help)
+        option_merge_holes_overflow: $t(tab.cutlist.write.option_merge_holes_overflow)
+        option_merge_holes_overflow_help: $t(tab.cutlist.write.option_merge_holes_overflow_help)
         option_include_paths: $t(tab.cutlist.write.option_include_paths)
         option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
         option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
@@ -1206,8 +1206,8 @@ tab:
         warning:
           is_bin_selection: The **hidden elements** will not be exported.
         error:
-          offset_gt_spacing: |
-            The offset ({{ offset }}) must be less than or equal to the spacing ({{ spacing }}) configured in this cutting diagram.
+          overflow_gt_spacing: |
+            The offset ({{ overflow }}) must be less than or equal to the spacing ({{ spacing }}) configured in this cutting diagram.
       error:
         no_part: No part.
         no_bin_1d: No standard board or edge banding was selected and no off-cuts were available.
@@ -1455,8 +1455,8 @@ tab:
 
         **Contour + Holes + Merge**
         Activates the separation of the outer contour of parts from their holes, as well as the merging of depths for each cavity.
-      option_merge_holes_offset: Overlap
-      option_merge_holes_offset_help: |
+      option_merge_holes_overflow: Overlap
+      option_merge_holes_overflow_help: |
         Sets the overlap distance to be applied to surfaces bordering contours and cavities.
       option_include_paths: Paths
       option_include_paths_0: $t(default.no)
