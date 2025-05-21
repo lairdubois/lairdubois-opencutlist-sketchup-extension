@@ -249,13 +249,15 @@
                     {% endif %}
                     <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        {% if group.material_type != 4 and group.material_type != 6 %}    {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
+                        {% if not group.material_is_virtual %}
                             <li><a href="#" class="ladb-item-highlight-group-parts"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.menu.highlight_parts'|i18next }}</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="#" class="ladb-item-export-2d-group-parts"><i class="ladb-opencutlist-icon-2d"></i> {{ 'tab.cutlist.menu.group_write_2d_parts'|i18next }}...</a></li>
                             <li><a href="#" class="ladb-item-export-3d-group-parts"><i class="ladb-opencutlist-icon-3d"></i> {{ 'tab.cutlist.menu.group_write_3d_parts'|i18next }}...</a></li>
                             <li role="separator" class="divider"></li>
                         {% endif %}
+                        <li><a href="#" class="ladb-item-export-group-parts"><i class="ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }}...</a></li>
+                        <li role="separator" class="divider"></li>
                         <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
                         <li><a href="#" class="ladb-item-show-all-groups"><i class="ladb-opencutlist-icon-eye-open"></i> {{ 'tab.cutlist.menu.show_all_groups'|i18next }}</a></li>
                         {% if group.material_type > 0 and group.material_type != 4 and group.material_type != 5 and group.material_type != 6 %}    {# 4 = TYPE_EDGE, 5 = TYPE_HARDWARE, 5 = TYPE_VENEER #}

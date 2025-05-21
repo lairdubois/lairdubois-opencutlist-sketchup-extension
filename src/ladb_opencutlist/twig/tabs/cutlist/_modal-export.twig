@@ -2,6 +2,9 @@
 
 {% set id = 'ladb_cutlist_modal_export' %}
 {% set title = 'tab.cutlist.export.title'|i18next %}
+{% if group and group.material_type != 0 %} {# 0 = TYPE_UNKNOWN #}
+    {% set title = title~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~(group.std_dimension ? ' / '~group.std_dimension : '')~'</small>' %}
+{% endif %}
 {% set noDefaultClose = true %}
 
 {% block headerToolsInner %}
@@ -37,6 +40,9 @@
     <div class="tab-content">
         {% if isGroupSelection %}
             <div class="alert alert-info text-center">{{ 'tab.cutlist.export.warning.is_group_selection'|i18next }}</div>
+        {% endif %}
+        {% if isPartSelection %}
+            <div class="alert alert-info text-center">{{ 'tab.cutlist.export.warning.is_part_selection'|i18next }}</div>
         {% endif %}
         <div class="row">
             <div class="col-xs-push-1 col-xs-10">

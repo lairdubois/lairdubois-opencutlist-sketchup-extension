@@ -701,6 +701,7 @@ tab:
         no_column_formula: Saisissez une formule
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
+        is_part_selection: L'exportation se limite aux **pièces sélectionnées**.
     estimate:
       title: Estimation
       info_0: |

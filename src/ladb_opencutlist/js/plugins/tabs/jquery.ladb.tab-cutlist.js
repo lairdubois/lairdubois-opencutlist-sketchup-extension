@@ -550,6 +550,12 @@
                     that.writeGroupParts(groupId, false);
                     $(this).blur();
                 });
+                $('a.ladb-item-export-group-parts', that.$page).on('click', function () {
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
+                    that.exportGroupParts(groupId, false);
+                    $(this).blur();
+                });
                 $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function () {
                     $(this).blur();
                     const $group = $(this).parents('.ladb-cutlist-group');
@@ -715,19 +721,30 @@
 
     // Export /////
 
-    LadbTabCutlist.prototype.exportCutlist = function (forceDefaultTab) {
+    LadbTabCutlist.prototype.exportAllParts = function () {
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(null);
+        this.exportParts(partIdsWithContext.partIds, partIdsWithContext.context);
+    }
+
+    LadbTabCutlist.prototype.exportGroupParts = function (groupId, forceDefaultTab) {
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId);
+        this.exportParts(partIdsWithContext.partIds, partIdsWithContext.context, forceDefaultTab);
+    }
+
+    LadbTabCutlist.prototype.exportParts = function (partIds, context, forceDefaultTab) {
         const that = this;
 
-        const isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
-            || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
+        const section = context && context.targetGroup ? context.targetGroup.id : null;
 
         // Retrieve export option options
-        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_export_options' }, function (response) {
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_export_options', section: section }, function (response) {
 
             const exportOptions = response.preset;
 
             const $modal = that.appendModalInside('ladb_cutlist_modal_export', 'tabs/cutlist/_modal-export.twig', {
-                isGroupSelection: isGroupSelection,
+                group: context ? context.targetGroup : null,
+                isGroupSelection: context ? context.isGroupSelection : false,
+                isPartSelection: context ? context.isPartSelection : false,
                 tab: forceDefaultTab || that.lastExportOptionsTab == null ? 'customize' : that.lastExportOptionsTab
             });
 
@@ -800,10 +817,12 @@
             };
             const fnCopyToClipboard = function(noHeader) {
                 rubyCallCommand('cutlist_export', {
+                    group_id: context.targetGroup ? context.targetGroup.id : null,
+                    part_ids: partIds,
+                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
                     source: exportOptions.source,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
                     format: 'pasteable',
-                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
                     no_header: noHeader
                 }, function (response) {
                     if (response.errors) {
@@ -977,13 +996,15 @@
                 fnFetchLastExportOptionsEditingItem(exportOptions.source);
 
                 // Store options
-                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', section: section, values: exportOptions });
 
                 rubyCallCommand('cutlist_export', {
+                    group_id: context.targetGroup ? context.targetGroup.id : null,
+                    part_ids: partIds,
+                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
                     source: exportOptions.source,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
-                    format: 'table',
-                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids
+                    format: 'table'
                 }, function (response) {
 
                     if (response.errors) {
@@ -1014,7 +1035,7 @@
 
                         // Bind buttons
                         $btnExport.on('click', function () {
-                            that.exportCutlist();
+                            that.exportParts(partIds, context, forceDefaultTab);
                         });
                         $itemCopyAll.on('click', function () {
                             fnCopyToClipboard(false);
@@ -1047,15 +1068,17 @@
                 fnFetchLastExportOptionsEditingItem(exportOptions.source);
 
                 // Store options
-                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', values: exportOptions });
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', section: section, values: exportOptions });
 
                 rubyCallCommand('cutlist_export', {
+                    group_id: context.targetGroup ? context.targetGroup.id : null,
+                    part_ids: partIds,
+                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
                     source: exportOptions.source,
                     format: exportOptions.format,
                     col_sep: exportOptions.col_sep,
                     encoding: exportOptions.encoding,
-                    col_defs: exportOptions.source_col_defs[exportOptions.source],
-                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
+                    col_defs: exportOptions.source_col_defs[exportOptions.source]
                 }, function (response) {
 
                     if (response.errors) {
@@ -1134,7 +1157,7 @@
 
         });
 
-    };
+    }
 
     // Estimate /////
 
@@ -5073,7 +5096,7 @@
 
             const packingOptions = response.preset;
 
-            rubyCallCommand('materials_get_attributes_command', {name: group.material_name}, function (response) {
+            rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
 
                 const $modal = that.appendModalInside('ladb_cutlist_modal_packing', 'tabs/cutlist/_modal-packing.twig', {
                     material_attributes: response,
@@ -6271,7 +6294,7 @@
             that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.title'));
         });
         this.$btnExport.on('click', function () {
-            that.exportCutlist();
+            that.exportAllParts();
             this.blur();
         });
         this.$btnLayout.on('click', function () {

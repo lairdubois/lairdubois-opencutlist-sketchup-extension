@@ -27,6 +27,9 @@ module Ladb::OpenCutList
 
                    cutlist_hidden_group_ids: [],
 
+                   group_id: nil,
+                   part_ids: nil,
+
                    source: EXPORT_OPTION_SOURCE_CUTLIST,
                    format: EXPORT_OPTION_FORMAT_CSV,
 
@@ -40,6 +43,11 @@ module Ladb::OpenCutList
 
       @cutlist = cutlist
       @cutlist_hidden_group_ids = cutlist_hidden_group_ids
+
+      @group_id = group_id
+      @part_ids = part_ids
+
+      puts "group_id = #{group_id}"
 
       @source = source
       @format = format
@@ -61,9 +69,21 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
-      # Retrieve parts
-      parts = @cutlist.get_real_parts(@part_ids)
-      return { :errors => [ 'tab.cutlist.error.no_part' ] } if parts.empty?
+      if @group_id.nil?
+
+        groups = @cutlist.groups
+        parts = @cutlist.get_real_parts
+
+      else
+
+        group = @cutlist.get_group(@group_id)
+        return { :errors => [ 'default.error' ] } if group.nil?
+
+        groups = [ group ]
+        parts = groups.map { |group| group.get_parts(@part_ids) }.flatten(1)
+        return { :errors => [ 'tab.cutlist.error.no_part' ] } if parts.empty?
+
+      end
 
       response = {
           :errors => [],
@@ -73,14 +93,14 @@ module Ladb::OpenCutList
       case @format
       when EXPORT_OPTION_FORMAT_TABLE
 
-        response[:rows] = _compute_rows
+        response[:rows] = _compute_rows(groups, parts)
 
       when EXPORT_OPTION_FORMAT_PASTABLE
 
         options = { :col_sep => "\t" }
         pasteable = CSV.generate(**options) do |csv|
 
-          _compute_rows.each { |row|
+          _compute_rows(groups, parts).each { |row|
             csv << row
           }
 
@@ -89,7 +109,7 @@ module Ladb::OpenCutList
 
       when EXPORT_OPTION_FORMAT_CSV
 
-        # Ask for export file path
+        # Ask for the export file path
         path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
         if path
 
@@ -121,12 +141,12 @@ module Ladb::OpenCutList
               encoding = 'UTF-8'
             end
 
-            # Write CSV file
+            # Write the CSV file
             File.open(path, "wb+:#{encoding}") do |f|
               options = { :col_sep => col_sep }
               content = CSV.generate(**options) do |csv|
 
-                _compute_rows.each { |row|
+                _compute_rows(groups, parts).each { |row|
                   csv << row
                 }
 
@@ -178,7 +198,7 @@ module Ladb::OpenCutList
             }
 
             # Iterate on rows to add cells
-            _compute_rows.each_with_index { |row, row_index|
+            _compute_rows(groups, part).each_with_index { |row, row_index|
               row.each_with_index { |cell, col_index|
                 unless cell.is_a?(String) && cell.empty?
                   col_def = @col_defs[col_index]
@@ -210,7 +230,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _compute_rows
+    def _compute_rows(groups, parts)
 
       # Generate rows
       rows = []
@@ -221,7 +241,7 @@ module Ladb::OpenCutList
         # Header row
         rows << _evaluate_header unless @no_header
 
-        @cutlist.groups.each do |group|
+        groups.each do |group|
           next if @cutlist_hidden_group_ids.include?(group.id)
 
           data = SummaryExportRowData.new(
@@ -244,18 +264,96 @@ module Ladb::OpenCutList
         rows << _evaluate_header unless @no_header
 
         # Content rows
-        @cutlist.groups.each do |group|
+        parts.each do |part|
+
+          parts = part.is_a?(FolderPart) ? part.children : [ part ]
+          parts.each do |part|
+
+            group = part.group
+            next if @cutlist_hidden_group_ids.include?(group.id)
+
+            data = CutlistExportRowData.new(
+
+              number: StringWrapper.new(part.number),
+              name: StringWrapper.new(part.name),
+              count: IntegerWrapper.new(part.count),
+              cutting_length: LengthWrapper.new(part.def.cutting_length),
+              cutting_width: LengthWrapper.new(part.def.cutting_width),
+              cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
+              edge_cutting_length: LengthWrapper.new(part.def.edge_cutting_length),
+              edge_cutting_width: LengthWrapper.new(part.def.edge_cutting_width),
+              bbox_length: LengthWrapper.new(part.def.size.length),
+              bbox_width: LengthWrapper.new(part.def.size.width),
+              bbox_thickness: LengthWrapper.new(part.def.size.thickness),
+              final_area: AreaWrapper.new(part.def.final_area),
+              material: MaterialWrapper.new(group.def.material, group.def),
+              entity_names: ArrayWrapper.new(part.entity_names.map(&:first)),
+              description: StringWrapper.new(part.description),
+              url: StringWrapper.new(part.url),
+              tags: ArrayWrapper.new(part.tags),
+              edge_ymin: EdgeWrapper.new(
+                part.def.edge_materials[:ymin],
+                part.def.edge_group_defs[:ymin]
+              ),
+              edge_ymax: EdgeWrapper.new(
+                part.def.edge_materials[:ymax],
+                part.def.edge_group_defs[:ymax]
+              ),
+              edge_xmin: EdgeWrapper.new(
+                part.def.edge_materials[:xmin],
+                part.def.edge_group_defs[:xmin]
+              ),
+              edge_xmax: EdgeWrapper.new(
+                part.def.edge_materials[:xmax],
+                part.def.edge_group_defs[:xmax]
+              ),
+              face_zmin: VeneerWrapper.new(
+                part.def.veneer_materials[:zmin],
+                part.def.veneer_group_defs[:zmin]
+              ),
+              face_zmax: VeneerWrapper.new(
+                part.def.veneer_materials[:zmax],
+                part.def.veneer_group_defs[:zmax]
+              ),
+              layers: ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
+
+              component_definition: ComponentDefinitionWrapper.new(part.def.definition),
+              component_instances: part.def.instance_infos.values.map { |instance_info| ComponentInstanceWrapper.new(instance_info.entity) }
+
+            )
+
+            rows << _evaluate_row(data)
+
+          end
+
+        end
+
+      when EXPORT_OPTION_SOURCE_INSTANCES_LIST
+
+        # Header row
+        rows << _evaluate_header unless @no_header
+
+        # Content rows
+        parts.each do |part|
+
+          group = part.group
+
           next if @cutlist_hidden_group_ids.include?(group.id)
-          group.parts.each do |part|
+          next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
+          next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
 
-            parts = part.is_a?(FolderPart) ? part.children : [ part ]
-            parts.each do |part|
+          parts = part.is_a?(FolderPart) ? part.children : [ part ]
+          parts.each do |part|
 
-              data = CutlistExportRowData.new(
+            # Ungroup parts
+            part.def.instance_infos.each { |serialized_path, instance_info|
+
+              data = InstancesListExportRowData.new(
 
                 number: StringWrapper.new(part.number),
+                path: PathWrapper.new(PathUtils.get_named_path(instance_info.path, false, 1)),
+                instance_name: StringWrapper.new(instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name),
                 name: StringWrapper.new(part.name),
-                count: IntegerWrapper.new(part.count),
                 cutting_length: LengthWrapper.new(part.def.cutting_length),
                 cutting_width: LengthWrapper.new(part.def.cutting_width),
                 cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
@@ -266,7 +364,6 @@ module Ladb::OpenCutList
                 bbox_thickness: LengthWrapper.new(part.def.size.thickness),
                 final_area: AreaWrapper.new(part.def.final_area),
                 material: MaterialWrapper.new(group.def.material, group.def),
-                entity_names: ArrayWrapper.new(part.entity_names.map(&:first)),
                 description: StringWrapper.new(part.description),
                 url: StringWrapper.new(part.url),
                 tags: ArrayWrapper.new(part.tags),
@@ -294,93 +391,18 @@ module Ladb::OpenCutList
                   part.def.veneer_materials[:zmax],
                   part.def.veneer_group_defs[:zmax]
                 ),
-                layers: ArrayWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
+                layer: StringWrapper.new(instance_info.layer.name),
 
-                component_definition: ComponentDefinitionWrapper.new(part.def.definition),
-                component_instances: part.def.instance_infos.values.map { |instance_info| ComponentInstanceWrapper.new(instance_info.entity) }
+                component_definition: ComponentDefinitionWrapper.new(instance_info.definition),
+                component_instance: ComponentInstanceWrapper.new(instance_info.entity),
 
               )
 
               rows << _evaluate_row(data)
-
-            end
-          end
-        end
-
-      when EXPORT_OPTION_SOURCE_INSTANCES_LIST
-
-        # Header row
-        rows << _evaluate_header unless @no_header
-
-        # Content rows
-        @cutlist.groups.each do |group|
-          next if @cutlist_hidden_group_ids.include?(group.id)
-          next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
-          next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
-          group.parts.each do |part|
-
-            parts = part.is_a?(FolderPart) ? part.children : [ part ]
-            parts.each do |part|
-
-              # Ungroup parts
-              part.def.instance_infos.each { |serialized_path, instance_info|
-
-                data = InstancesListExportRowData.new(
-
-                  number: StringWrapper.new(part.number),
-                  path: PathWrapper.new(PathUtils.get_named_path(instance_info.path, false, 1)),
-                  instance_name: StringWrapper.new(instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name),
-                  name: StringWrapper.new(part.name),
-                  cutting_length: LengthWrapper.new(part.def.cutting_length),
-                  cutting_width: LengthWrapper.new(part.def.cutting_width),
-                  cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
-                  edge_cutting_length: LengthWrapper.new(part.def.edge_cutting_length),
-                  edge_cutting_width: LengthWrapper.new(part.def.edge_cutting_width),
-                  bbox_length: LengthWrapper.new(part.def.size.length),
-                  bbox_width: LengthWrapper.new(part.def.size.width),
-                  bbox_thickness: LengthWrapper.new(part.def.size.thickness),
-                  final_area: AreaWrapper.new(part.def.final_area),
-                  material: MaterialWrapper.new(group.def.material, group.def),
-                  description: StringWrapper.new(part.description),
-                  url: StringWrapper.new(part.url),
-                  tags: ArrayWrapper.new(part.tags),
-                  edge_ymin: EdgeWrapper.new(
-                    part.def.edge_materials[:ymin],
-                    part.def.edge_group_defs[:ymin]
-                  ),
-                  edge_ymax: EdgeWrapper.new(
-                    part.def.edge_materials[:ymax],
-                    part.def.edge_group_defs[:ymax]
-                  ),
-                  edge_xmin: EdgeWrapper.new(
-                    part.def.edge_materials[:xmin],
-                    part.def.edge_group_defs[:xmin]
-                  ),
-                  edge_xmax: EdgeWrapper.new(
-                    part.def.edge_materials[:xmax],
-                    part.def.edge_group_defs[:xmax]
-                  ),
-                  face_zmin: VeneerWrapper.new(
-                    part.def.veneer_materials[:zmin],
-                    part.def.veneer_group_defs[:zmin]
-                  ),
-                  face_zmax: VeneerWrapper.new(
-                    part.def.veneer_materials[:zmax],
-                    part.def.veneer_group_defs[:zmax]
-                  ),
-                  layer: StringWrapper.new(instance_info.layer.name),
-
-                  component_definition: ComponentDefinitionWrapper.new(instance_info.definition),
-                  component_instance: ComponentInstanceWrapper.new(instance_info.entity),
-
-                )
-
-                rows << _evaluate_row(data)
-              }
-
-            end
+            }
 
           end
+
         end
 
       end
