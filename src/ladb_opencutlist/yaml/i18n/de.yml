@@ -1030,7 +1030,7 @@ tab:
       option_rectangleguillotine_cut_type: Schnitttyp
       option_rectangleguillotine_cut_type_help: |
         Legt den Schnitttyp fest.
-      option_rectangleguillotine_cut_type_non_exact: Non exakt
+      option_rectangleguillotine_cut_type_non_exact: Nicht exakt
       option_rectangleguillotine_cut_type_exact: Exakt
       option_rectangleguillotine_cut_type_homogenous: Homogen
       option_rectangleguillotine_number_of_stages: Anzahl der Stufen
@@ -1413,7 +1413,7 @@ tab:
         Auswahl ob die Suche nach der Form des Teils auf allen Flächen oder nur auf der Zielfläche durchgeführt werden soll.
       option_anchor: Ankerpunkt
       option_anchor_0: Automatisch
-      option_anchor_1: Projektion des Achsenursprungs
+      option_anchor_1: Ursprung des Teils projizieren
       option_anchor_help: |
         **Automatisch**
         Die linke untere Ecke der umschließenden Box der exportierten Geometrie wird als Ankerpunkt verwendet.
@@ -1434,12 +1434,12 @@ tab:
         *Diese Option erkennt keine anderen Kurventypen.*
       option_merge_holes: Zusammenführungsmodus
       option_merge_holes_0: Einfach
-      option_merge_holes_1: Kontur + Bohrungen + Überhang
+      option_merge_holes_1: Kontur + Bohrungen + Überstand
       option_merge_holes_help: |
         **Einfach**
         Die Bauteilform wird mit einer Ebene pro Tiefe exportiert.
 
-        **Kontur + Bohrungen + Überhang**
+        **Kontur + Bohrungen + Überstand**
         Aktiviert die Trennung der Außenkontur der Teile von ihren Durchbrüchen sowie die Berechnung des Bearbeitungsüberstands, der auf die Flächen angewendet wird, die sich am Rand der Kontur und der Vertiefungen befinden.
       option_merge_holes_overflow: Bearbeitungsüberstand
       option_merge_holes_overflow_help: |
