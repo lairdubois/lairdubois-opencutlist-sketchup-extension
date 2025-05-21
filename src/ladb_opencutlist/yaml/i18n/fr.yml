@@ -1148,32 +1148,6 @@ tab:
         title: Exportation du calepinage
         info_0: |
           Ce module vous permet d'exporter la **géométrie** du *calepinage* sous forme d'une liste de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: Structure DXF
-        option_dxf_structure_1: Calques
-        option_dxf_structure_2: Calques + Blocs
-        option_dxf_structure_help: |
-          Permet de choisir la structure du fichier DXF.
-
-          - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
-          - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_merge_holes_overflow: $t(tab.cutlist.write.option_merge_holes_overflow)
-        option_merge_holes_overflow_help: $t(tab.cutlist.write.option_merge_holes_overflow_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Panneau
         option_bin_sheet_good_help: |
           Permet d'activer l'exportation du panneau ainsi que de choisir ses couleurs.
@@ -1413,6 +1387,14 @@ tab:
       option_file_format: Format
       option_file_format_help: |
         Permet de choisir le format de fichier à exporter.
+      option_dxf_structure: Structure DXF
+      option_dxf_structure_1: Calques
+      option_dxf_structure_2: Calques + Blocs
+      option_dxf_structure_help: |
+        Permet de choisir la structure du fichier DXF.
+
+        - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
+        - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
       option_unit: Unité
       option_unit_help: |
         Permet de choisir l'unité utilisée dans le fichier exporté.
@@ -1430,9 +1412,13 @@ tab:
       option_faces_help: |
         Permet de choisir si la recherche de la forme de la pièce se fait sur toutes ses faces ou seulement sur la face ciblée.
       option_anchor: Point d'ancrage
-      option_anchor_0: Par défaut
+      option_anchor_0: Automatique
       option_anchor_1: Projeter l'origine de la pièce
-      option_anchor_help: |
+      option_anchor_help: | # TODO
+        **Automatique**
+        Le coin inférieur gauche de la boîte englobante de la géométrie exportée est utilisé comme point d'ancrage.
+        
+        **Projeter l'origine de la pièce**
         Permet d'activer la projection de l'origine des axes de la pièce comme point d'ancrage.
       option_switch_yz: Axe vertical
       option_switch_yz_0: Z vertical
@@ -1447,17 +1433,17 @@ tab:
 
         *Cette option ne permet pas de détecter les autres types de courbes.*
       option_merge_holes: Décomposition
-      option_merge_holes_0: Par défaut
-      option_merge_holes_1: Contour + Percements + Fusion
-      option_merge_holes_help: |
-        **Par defaut**
-        La forme de la pièce est exportée avec une couche par profondeur.
+      option_merge_holes_0: Basique # TODO
+      option_merge_holes_1: Contour + Percements + Débord # TODO
+      option_merge_holes_help: | # TODO
+        **Basique**
+        La forme de la pièce est exportée avec la projection de chaque face sur une couche correspondant à sa profondeur.
 
-        **Contour + Percements + Fusion**
-        Active la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
+        **Contour + Percements + Débord**
+        Active la séparation du contour extérieur des pièces de leurs percements ainsi que le calcul du débord d'usinage appliqué aux surfaces se trouvant en bordure du contour et des cavités.
       option_merge_holes_overflow: Débord d'usinage # TODO
       option_merge_holes_overflow_help: | # TODO
-        Permet de définir la distance de débord d'usinage appliquée aux surfaces d'usinage se trouvant en bordure du contour et des cavités.
+        Permet de définir la distance de débord d'usinage appliqué aux surfaces se trouvant en bordure du contour et des cavités.
       option_include_paths: Tracés
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Utiliser les arêtes non associées à une face
