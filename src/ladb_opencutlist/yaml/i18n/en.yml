@@ -1148,32 +1148,6 @@ tab:
         title: Cutting Diagram Export
         info_0: |
           This module lets you export the **geometry** of the *cutting diagram* as a list of files in [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) format.
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: DXF Structure
-        option_dxf_structure_1: Layers
-        option_dxf_structure_2: Layers + Blocks
-        option_dxf_structure_help: |
-          Selects the DXF file structure.
-
-          - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
-          - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_merge_holes_overflow: $t(tab.cutlist.write.option_merge_holes_overflow)
-        option_merge_holes_overflow_help: $t(tab.cutlist.write.option_merge_holes_overflow_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Panel
         option_bin_sheet_good_help: |
           Enables sheet good export and color selection.
@@ -1207,7 +1181,7 @@ tab:
           is_bin_selection: The **hidden elements** will not be exported.
         error:
           overflow_gt_spacing: |
-            The offset ({{ overflow }}) must be less than or equal to the spacing ({{ spacing }}) configured in this cutting diagram.
+            The overflow ({{ overflow }}) must be smaller than or equal to the spacing ({{ spacing }}) configured in this cutting diagram.
       error:
         no_part: No part.
         no_bin_1d: No standard board or edge banding was selected and no off-cuts were available.
@@ -1413,6 +1387,14 @@ tab:
       option_file_format: Format
       option_file_format_help: |
         Selects the format of the exported file.
+      option_dxf_structure: Structure DXF
+      option_dxf_structure_1: Calques
+      option_dxf_structure_2: Calques + Blocs
+      option_dxf_structure_help: |
+        Permet de choisir la structure du fichier DXF.
+
+        - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
+        - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
       option_unit: Unit
       option_unit_help: |
         Selects the unit used in the exported file.
@@ -1430,10 +1412,14 @@ tab:
       option_faces_help: |
         Allows you to choose whether the search for the shape of the part is to be carried out on all its faces or only on the target face.
       option_anchor: Anchor Point
-      option_anchor_0: Default
+      option_anchor_0: Automatic
       option_anchor_1: Project the part's origin
       option_anchor_help: |
-        Enables the projection of the part's axis origin as anchor point.
+        **Automatic**
+        The lower left corner of the exported geometry's bounding box is used as anchor point.
+
+        **Project the part's origin**
+        Enables the projection of the part axis origin as anchor point.
       option_switch_yz: Vertical axis
       option_switch_yz_0: Z vertical
       option_switch_yz_1: Y vertical
@@ -1447,17 +1433,17 @@ tab:
 
         *This option does not detect other types of curves.*
       option_merge_holes: Merging Mode
-      option_merge_holes_0: Default
-      option_merge_holes_1: Outline + Drillings + Merge
+      option_merge_holes_0: Basic
+      option_merge_holes_1: Outline + Drillings + Overflow
       option_merge_holes_help: |
-        **Default**
-        The shape of the part is exported with one layer per depth.
+        **Basic**
+        The shape of the part is exported with the projection of each face onto a layer corresponding to its depth.
 
-        **Contour + Holes + Merge**
-        Activates the separation of the outer contour of parts from their holes, as well as the merging of depths for each cavity.
-      option_merge_holes_overflow: Overlap
+        **Contour + Drillings + Overflow**
+        Activates the separation of the outer contour of parts from their holes, as well as the calculation of the machining overlflow applied to surfaces bordering the contour and cavities.
+      option_merge_holes_overflow: Overflow
       option_merge_holes_overflow_help: |
-        Sets the overlap distance to be applied to surfaces bordering contours and cavities.
+        Sets the overflow distance to be applied to surfaces bordering contours and holes.
       option_include_paths: Paths
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Use edges not associated with a face
