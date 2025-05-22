@@ -31,6 +31,11 @@ module Ladb::OpenCutList::Fiddle
     END_TYPE_SQUARE = 3
     END_TYPE_ROUND = 4
 
+    # https://www.angusj.com/clipper2/Docs/Units/Clipper/Types/PointInPolygonResult.htm
+    POINT_IN_POLYGON_RESULT_IS_ON = 0
+    POINT_IN_POLYGON_RESULT_IS_INSIDE = 1
+    POINT_IN_POLYGON_RESULT_IS_OUTSIDE = 2
+
     CPathsDSolution = struct [ 'double* closed_paths', 'double* open_paths', 'int error' ]
     CPolyTreeDSolution = struct [ 'double* polytree', 'double* open_paths', 'int error' ]
 
@@ -49,6 +54,9 @@ module Ladb::OpenCutList::Fiddle
         'int c_is_cpath_positive(double*)',
         'double c_get_cpath_area(double*)',
 
+        'int c_is_point_on_polygon(double, double, double*)',
+        'int c_is_mid_point_on_polygon(double, double, double, double, double*)',
+
         'void c_dispose_paths_solution(CPathsDSolution*)',
         'void c_dispose_polytree_solution(CPolyTreeDSolution*)',
 
@@ -66,7 +74,13 @@ module Ladb::OpenCutList::Fiddle
 
     # -----
 
-    def self.execute(clip_type:, fill_type: FILL_TYPE_NON_ZERO, closed_subjects:, open_subjects: [], clips: [])
+    def self.execute(
+      clip_type:,
+      fill_type: FILL_TYPE_NON_ZERO,
+      closed_subjects:,
+      open_subjects: [],
+      clips: []
+    )
       _load_lib
 
       solution_ptr = c_boolean_op(
@@ -192,6 +206,16 @@ module Ladb::OpenCutList::Fiddle
     def self.get_rpath_area(rpath)
       _load_lib
       return c_get_cpath_area(_rpath_to_cpath(rpath))
+    end
+
+    def self.is_point_on_polygon(x, y, rpath)
+      _load_lib
+      return c_is_point_on_polygon(x, y, _rpath_to_cpath(rpath)) == 1
+    end
+
+    def self.is_mid_point_on_polygon(x1, y1, x2, y2, rpath)
+      _load_lib
+      return c_is_mid_point_on_polygon(x1, y1, x2, y2, _rpath_to_cpath(rpath)) == 1
     end
 
     # -- Path manipulations --

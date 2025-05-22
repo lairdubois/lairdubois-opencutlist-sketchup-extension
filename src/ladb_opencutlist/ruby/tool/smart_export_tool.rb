@@ -35,6 +35,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_SWITCH_YZ = 'switch_yz'
     ACTION_OPTION_OPTIONS_SMOOTHING = 'smoothing'
     ACTION_OPTION_OPTIONS_MERGE_HOLES = 'merge_holes'
+    ACTION_OPTION_OPTIONS_MERGE_HOLES_OVERFLOW = 'merge_holes_overflow'
     ACTION_OPTION_OPTIONS_INCLUDE_PATHS = 'include_paths'
 
     ACTIONS = [
@@ -74,6 +75,7 @@ module Ladb::OpenCutList
     COLOR_PART_UPPER = Kuix::COLOR_BLUE
     COLOR_PART_HOLES = Sketchup::Color.new('#D783FF').freeze
     COLOR_PART_DEPTH = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.5).freeze
+    COLOR_PART_BORDERS = Sketchup::Color.new('#ff7f00').freeze #COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.3).freeze
     COLOR_PART_PATH = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
@@ -366,11 +368,12 @@ module Ladb::OpenCutList
           ).run
           if @active_drawing_def.is_a?(DrawingDef)
 
-            inch_offset = Sketchup.active_model.active_view.pixels_to_model(15, Geom::Point3d.new.transform(@active_drawing_def.transformation))
+            inch_offset = Sketchup.active_model.active_view.pixels_to_model(30, Geom::Point3d.new.transform(@active_drawing_def.transformation))
 
             projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def,
-              origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
-              merge_holes: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
+                                                               origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
+                                                               merge_holes: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES),
+                                                               merge_holes_overflow: fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OVERFLOW)
             ).run
             if projection_def.is_a?(DrawingProjectionDef)
 
@@ -378,15 +381,16 @@ module Ladb::OpenCutList
               k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
               @overlay_layer.append(k_group)
 
-              fn_append_segments = lambda do |segments, color, line_width, line_stipple|
+              fn_append_polyline = lambda do |points, color, line_width, line_stipple, closed|
 
-                k_segments = Kuix::Segments.new
-                k_segments.add_segments(segments)
-                k_segments.color = color
-                k_segments.line_width = highlighted ? line_width + 1 : line_width
-                k_segments.line_stipple = line_stipple
-                k_segments.on_top = true
-                k_group.append(k_segments)
+                k_polyline = Kuix::Polyline.new
+                k_polyline.add_points(points)
+                k_polyline.color = color
+                k_polyline.line_width = highlighted ? line_width + 1 : line_width
+                k_polyline.line_stipple = line_stipple
+                k_polyline.on_top = true
+                k_polyline.closed = closed
+                k_group.append(k_polyline)
 
               end
 
@@ -400,23 +404,30 @@ module Ladb::OpenCutList
                   color = COLOR_PART_HOLES
                 elsif layer_def.type_path?
                   color = COLOR_PART_PATH
+                elsif layer_def.type_borders?
+                  color = COLOR_PART_BORDERS
                 else
                   color = COLOR_PART_DEPTH
                 end
 
                 layer_def.poly_defs.each do |poly_def|
 
-                  line_stipple = poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw? ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
+                  line_stipple = if poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw?
+                                   Kuix::LINE_STIPPLE_SHORT_DASHES
+                                 else
+                                   # layer_def.type_borders? ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID
+                                   Kuix::LINE_STIPPLE_SOLID
+                                 end
 
                   if fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                     poly_def.curve_def.portions.each do |portion|
-                      fn_append_segments.call(portion.segments, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
+                      fn_append_polyline.call(portion.points, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
                     end
                   else
-                    fn_append_segments.call(poly_def.segments, color, 2, line_stipple)
+                    fn_append_polyline.call(poly_def.points, color, 2, line_stipple, true)
                   end
 
-                  if poly_def.is_a?(DrawingProjectionPolylineDef)
+                  if poly_def.is_a?(DrawingProjectionPolylineDef) && !layer_def.type_borders?
 
                     # It's a polyline, create 'start' and 'end' points entities
 
@@ -458,13 +469,13 @@ module Ladb::OpenCutList
               if @active_drawing_def.input_line_manipulator.is_a?(EdgeManipulator)
 
                 # Highlight input edge
-                k_segments = Kuix::Segments.new
-                k_segments.transformation = projection_def.transformation.inverse
-                k_segments.add_segments(@active_drawing_def.input_line_manipulator.segment)
-                k_segments.color = COLOR_ACTION
-                k_segments.line_width = 3
-                k_segments.on_top = true
-                k_group.append(k_segments)
+                k_polyline = Kuix::Segments.new
+                k_polyline.transformation = projection_def.transformation.inverse
+                k_polyline.add_segments(@active_drawing_def.input_line_manipulator.segment)
+                k_polyline.color = COLOR_ACTION
+                k_polyline.line_width = 3
+                k_polyline.on_top = true
+                k_group.append(k_polyline)
 
               elsif @active_drawing_def.input_line_manipulator.is_a?(LineManipulator)
 
@@ -525,15 +536,16 @@ module Ladb::OpenCutList
             k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
             @overlay_layer.append(k_group)
 
-            fn_append_segments = lambda do |segments, line_width, line_stipple|
+            fn_append_polyline = lambda do |points, line_width, line_stipple, closed|
 
-              k_segments = Kuix::Segments.new
-              k_segments.add_segments(segments)
-              k_segments.color = COLOR_PART_UPPER
-              k_segments.line_width = highlighted ? line_width + 1 : line_width
-              k_segments.line_stipple = line_stipple
-              k_segments.on_top = true
-              k_group.append(k_segments)
+              k_polyline = Kuix::Polyline.new
+              k_polyline.add_points(points)
+              k_polyline.color = COLOR_PART_UPPER
+              k_polyline.line_width = highlighted ? line_width + 1 : line_width
+              k_polyline.line_stipple = line_stipple
+              k_polyline.on_top = true
+              k_polyline.closed = closed
+              k_group.append(k_polyline)
 
             end
 
@@ -544,10 +556,10 @@ module Ladb::OpenCutList
 
                 if fetch_action_option_boolean(ACTION_EXPORT_FACE, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
                   poly_def.curve_def.portions.each do |portion|
-                    fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
+                    fn_append_polyline.call(portion.points, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
                   end
                 else
-                  fn_append_segments.call(poly_def.segments, 2, line_stipple)
+                  fn_append_polyline.call(poly_def.points, 2, line_stipple, true)
                 end
 
               end
@@ -648,15 +660,16 @@ module Ladb::OpenCutList
             k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
             @overlay_layer.append(k_group)
 
-            fn_append_segments = lambda do |segments, line_width, line_stipple|
+            fn_append_polyline = lambda do |points, line_width, line_stipple, closed|
 
-              k_segments = Kuix::Segments.new
-              k_segments.add_segments(segments)
-              k_segments.color = COLOR_PART_PATH
-              k_segments.line_width = highlighted ? line_width + 1 : line_width
-              k_segments.line_stipple = line_stipple
-              k_segments.on_top = true
-              k_group.append(k_segments)
+              k_polyline = Kuix::Polyline.new
+              k_polyline.add_segments(points)
+              k_polyline.color = COLOR_PART_PATH
+              k_polyline.line_width = highlighted ? line_width + 1 : line_width
+              k_polyline.line_stipple = line_stipple
+              k_polyline.on_top = true
+              k_polyline.closed = closed
+              k_group.append(k_polyline)
 
             end
 
@@ -670,10 +683,10 @@ module Ladb::OpenCutList
 
                 if fetch_action_option_boolean(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && !poly_def.curve_def.nil?
                   poly_def.curve_def.portions.each do |portion|
-                    fn_append_segments.call(portion.segments, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple)
+                    fn_append_polyline.call(portion.points, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
                   end
                 else
-                  fn_append_segments.call(poly_def.segments, 2, line_stipple)
+                  fn_append_polyline.call(poly_def.points, 2, line_stipple, true)
                 end
 
                 if poly_def.is_a?(DrawingProjectionPolylineDef)
@@ -890,9 +903,10 @@ module Ladb::OpenCutList
           file_name += " - #{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{@active_drawing_def.input_view}").upcase}" unless @active_drawing_def.nil? || @active_drawing_def.input_view.nil?
           file_format = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT)
           unit = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT)
-          anchor = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
-          smoothing = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
-          merge_holes = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
+          anchor = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
+          smoothing = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
+          merge_holes = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
+          merge_holes_overflow = fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OVERFLOW)
           parts_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_stroke_color')
           parts_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_fill_color')
           parts_holes_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_fill_color')
@@ -901,18 +915,19 @@ module Ladb::OpenCutList
           parts_paths_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_fill_color')
 
           worker = CommonWriteDrawing2dWorker.new(@active_drawing_def,
-            file_name: file_name,
-            file_format: file_format,
-            unit: unit,
-            anchor: anchor,
-            smoothing: smoothing,
-            merge_holes: merge_holes,
-            parts_stroke_color: parts_stroke_color,
-            parts_fill_color: parts_fill_color,
-            parts_holes_fill_color: parts_holes_fill_color,
-            parts_holes_stroke_color: parts_holes_stroke_color,
-            parts_paths_stroke_color: parts_paths_stroke_color,
-            parts_paths_fill_color: parts_paths_fill_color
+                                                  file_name: file_name,
+                                                  file_format: file_format,
+                                                  unit: unit,
+                                                  anchor: anchor,
+                                                  smoothing: smoothing,
+                                                  merge_holes: merge_holes,
+                                                  merge_holes_overflow: merge_holes_overflow,
+                                                  parts_stroke_color: parts_stroke_color,
+                                                  parts_fill_color: parts_fill_color,
+                                                  parts_holes_fill_color: parts_holes_fill_color,
+                                                  parts_holes_stroke_color: parts_holes_stroke_color,
+                                                  parts_paths_stroke_color: parts_paths_stroke_color,
+                                                  parts_paths_fill_color: parts_paths_fill_color
           )
           response = worker.run
 

@@ -421,7 +421,7 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-packing-irregular:before {
   content: "\e9ad";
 }
-.ladb-opencutlist-icon-packing-irregular-selection:before {
+.ladb-opencutlist-icon-packing-selection:before {
   content: "\e9ae";
 }
 .ladb-opencutlist-icon-asterisk:before {

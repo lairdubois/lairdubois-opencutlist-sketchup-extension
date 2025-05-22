@@ -90,6 +90,7 @@ default:
   width: Width
   thickness: Thickness
   height: Height
+  deprecated: Deprecated
 core:
   menu:
     submenu: OpenCutList
@@ -209,23 +210,28 @@ core:
       delete: "Delete preset '{{ name }}'"
     dictionary:
       component_textinput_color: Color Palette
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Model
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -1142,30 +1148,6 @@ tab:
         title: Cutting Diagram Export
         info_0: |
           This module lets you export the **geometry** of the *cutting diagram* as a list of files in [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) or [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) format.
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: DXF Structure
-        option_dxf_structure_1: Layers
-        option_dxf_structure_2: Layers + Blocks
-        option_dxf_structure_help: |
-          Selects the DXF file structure.
-
-          - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
-          - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Panel
         option_bin_sheet_good_help: |
           Enables sheet good export and color selection.
@@ -1197,6 +1179,9 @@ tab:
           Enables export of cuts and color selection.
         warning:
           is_bin_selection: The **hidden elements** will not be exported.
+        error:
+          overflow_gt_spacing: |
+            The overflow ({{ overflow }}) must be smaller than or equal to the spacing ({{ spacing }}) configured in this cutting diagram.
       error:
         no_part: No part.
         no_bin_1d: No standard board or edge banding was selected and no off-cuts were available.
@@ -1402,6 +1387,14 @@ tab:
       option_file_format: Format
       option_file_format_help: |
         Selects the format of the exported file.
+      option_dxf_structure: DXF Structure
+      option_dxf_structure_1: Layers
+      option_dxf_structure_2: Layers + Blocks
+      option_dxf_structure_help: |
+        Selects the DXF file structure.
+
+        - The **Layers** structure draws all lines flat, distinguishing between different line types using layers only. *This structure offers greater compatibility with third-party software.*
+        - The **Layers + Blocks** structure creates one block per part and inserts these blocks as many times as the parts are repeated. *This structure offers more flexibility for editing the file.*
       option_unit: Unit
       option_unit_help: |
         Selects the unit used in the exported file.
@@ -1419,10 +1412,14 @@ tab:
       option_faces_help: |
         Allows you to choose whether the search for the shape of the part is to be carried out on all its faces or only on the target face.
       option_anchor: Anchor Point
-      option_anchor_0: Default
+      option_anchor_0: Automatic
       option_anchor_1: Project the part's origin
       option_anchor_help: |
-        Enables the projection of the part's axis origin as anchor point.
+        **Automatic**
+        The lower left corner of the exported geometry's bounding box is used as anchor point.
+
+        **Project the part's origin**
+        Enables the projection of the part axis origin as anchor point.
       option_switch_yz: Vertical axis
       option_switch_yz_0: Z vertical
       option_switch_yz_1: Y vertical
@@ -1436,14 +1433,17 @@ tab:
 
         *This option does not detect other types of curves.*
       option_merge_holes: Merging Mode
-      option_merge_holes_0: Default
-      option_merge_holes_1: Outline + Drillings + Merge
+      option_merge_holes_0: Basic
+      option_merge_holes_1: Outline + Drillings + Overflow
       option_merge_holes_help: |
-        **Default**
-        The shape of the part is exported with one layer per depth.
+        **Basic**
+        The shape of the part is exported with the projection of each face onto a layer corresponding to its depth.
 
-        **Contour + Holes + Merge**
-        Activates the separation of the outer contour of parts from their holes, as well as the merging of depths for each cavity.
+        **Contour + Drillings + Overflow**
+        Activates the separation of the outer contour of parts from their holes, as well as the calculation of the machining overflow applied to surfaces bordering the contour and cavities.
+      option_merge_holes_overflow: Overflow
+      option_merge_holes_overflow_help: |
+        Sets the overflow distance to be applied to surfaces bordering contours and holes.
       option_include_paths: Paths
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Use edges not associated with a face
@@ -1637,7 +1637,7 @@ tab:
       title: Export to .skm file
     option:
       minimize_on_smart_paint: Reduce after * 'Color parts with...'*
-      minimize_on_smart_paint_help: "If this option is enabled, the OpenCutList window will be minimized when using the *'Color parts with...'* function."
+      minimize_on_smart_paint_help: "If this option is selected, the OpenCutList window will be minimized when using the *'Color parts with...'* function."
       general: General
       material_order_strategy: Material Sorting
       material_order_strategy_help: |
@@ -1690,6 +1690,14 @@ tab:
       layer_name: Tag
       explode: Explode
       explode_message: "Do you confirm the explosion of instance **{{ name }}**?"
+    option:
+      general: General
+      show_hidden_instances: Show hidden instances
+      show_hidden_instances_help: "If this option is selected, instances hidden in the model will be displayed in the structure tree."
+      hide_descriptions: Hide descriptions
+      hide_descriptions_help: "If this option is selected, the **descriptions** placed on the parts will not be displayed."
+      hide_tags: Hide badges
+      hide_tags_help: "If this option is selected, **badges** of parts will not be displayed."
     error:
       no_model: No model is open. You will have to give me more information ;)
       no_entities: Your model is empty!

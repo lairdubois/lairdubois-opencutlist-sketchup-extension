@@ -220,8 +220,7 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
-                   group_id:,
-                   part_ids: nil,
+                   part_ids: ,
 
                    std_bin_1d_sizes: '',
                    std_bin_2d_sizes: '',
@@ -259,7 +258,6 @@ module Ladb::OpenCutList
 
       @cutlist = cutlist
 
-      @group_id = group_id
       @part_ids = part_ids
 
       @std_bin_1d_sizes = DimensionUtils.d_to_ifloats(std_bin_1d_sizes)
@@ -320,11 +318,13 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         return _create_packing(errors: [ 'default.error' ]) unless model
 
-        group = @group = @cutlist.get_group(@group_id)
-        return _create_packing(errors: [ 'default.error' ]) unless group
-
-        parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
+        parts = @cutlist.get_real_parts(@part_ids)
         return _create_packing(errors: [ 'tab.cutlist.packing.error.no_part' ]) if parts.empty?
+
+        parts_by_group = parts.group_by { |part| part.group }
+        return _create_packing(errors: [ 'default.error' ]) unless parts_by_group.keys.one?
+
+        group = @group = parts_by_group.keys.first
 
         bin_types = []
 
@@ -761,6 +761,22 @@ module Ladb::OpenCutList
       # Sum item stats
       packing_def.solution_def.unplaced_part_info_defs.each do |part_info_def|
         packing_def.solution_def.summary_def.total_unused_item_count += part_info_def.count
+      end
+
+      # Warnings
+      if @part_ids
+        packing_def.warnings << 'tab.cutlist.packing.warning.is_part_selection'
+      end
+      if @problem_type != Packy::PROBLEM_TYPE_IRREGULAR
+        if @group.def.material_attributes.l_length_increase > 0 || @group.def.material_attributes.l_width_increase > 0 || @group.edge_decremented
+          packing_def.warnings << 'tab.cutlist.packing.warning.cutting_dimensions'
+        end
+        if @group.def.material_attributes.l_length_increase > 0 || @group.def.material_attributes.l_width_increase > 0
+          packing_def.warnings << [ "tab.cutlist.packing.warning.cutting_dimensions_increase_#{@group.material_is_1d ? '1d' : '2d'}", { :material_name => @group.material_name, :length_increase => @group.def.material_attributes.length_increase, :width_increase => @group.def.material_attributes.width_increase } ]
+        end
+        if @group.edge_decremented
+          packing_def.warnings << 'tab.cutlist.packing.warning.cutting_dimensions_edge_decrement'
+        end
       end
 
       packing_def.create_packing

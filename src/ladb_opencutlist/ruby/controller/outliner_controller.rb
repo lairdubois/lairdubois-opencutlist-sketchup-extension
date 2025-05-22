@@ -48,8 +48,8 @@ module Ladb::OpenCutList
       PLUGIN.register_command("outliner_stop_observing") do
         stop_observing_model(Sketchup.active_model)
       end
-      PLUGIN.register_command("outliner_generate") do
-        generate_command
+      PLUGIN.register_command("outliner_generate") do |settings|
+        generate_command(settings)
       end
       PLUGIN.register_command("outliner_refresh") do
         refresh_command
@@ -519,11 +519,11 @@ module Ladb::OpenCutList
 
     # -- Commands --
 
-    def generate_command
+    def generate_command(settings)
       require_relative '../worker/outliner/outliner_generate_worker'
 
       # Setup worker
-      worker = OutlinerGenerateWorker.new
+      worker = OutlinerGenerateWorker.new(**settings)
 
       # Run !
       @outliner_def = worker.run

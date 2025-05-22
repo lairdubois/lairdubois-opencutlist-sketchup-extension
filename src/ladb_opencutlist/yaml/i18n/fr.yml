@@ -90,6 +90,7 @@ default:
   width: Largeur
   thickness: Epaisseur
   height: Hauteur
+  deprecated: Obsolète
 core:
   menu:
     submenu: OpenCutList
@@ -209,23 +210,28 @@ core:
       delete: "Supprimer le préréglage '{{ name }}'"
     dictionary:
       component_textinput_color: Palette de couleurs
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modèle
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -695,6 +701,7 @@ tab:
         no_column_formula: Saisissez une formule
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas exportées.
+        is_part_selection: L'exportation se limite aux **pièces sélectionnées**.
     estimate:
       title: Estimation
       info_0: |
@@ -726,6 +733,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas comptabilisées.
+        is_part_selection: L'estimation se limite aux **pièces sélectionnées**.
       tip:
         not_enough_data: |
           Pour que cette estimation puisse se calculer correctement :
@@ -1142,30 +1150,6 @@ tab:
         title: Exportation du calepinage
         info_0: |
           Ce module vous permet d'exporter la **géométrie** du *calepinage* sous forme d'une liste de fichiers au format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ou [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: Structure DXF
-        option_dxf_structure_1: Calques
-        option_dxf_structure_2: Calques + Blocs
-        option_dxf_structure_help: |
-          Permet de choisir la structure du fichier DXF.
-
-          - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
-          - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Panneau
         option_bin_sheet_good_help: |
           Permet d'activer l'exportation du panneau ainsi que de choisir ses couleurs.
@@ -1197,6 +1181,9 @@ tab:
           Permet d'activer l'exportation des coupes ainsi que de choisir leur couleur.
         warning:
           is_bin_selection: Les **blocs masqués** ne seront pas exportés.
+        error:
+          overflow_gt_spacing: | # TODO
+            Le débord d'usinage ({{ overflow }}) doit être inférieur ou égal à la moitié l'espacement ({{ spacing }}) configuré dans ce calepinage.
       error:
         no_part: Aucune pièce.
         no_bin_1d: Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.
@@ -1204,6 +1191,10 @@ tab:
         no_solution: Aucune solution n'a été trouvée.
       warning:
         is_part_selection: Ce calepinage se limite aux **pièces sélectionnées**.
+        cutting_dimensions: Ce calepinage présente les pièces dans leurs dimensions de **débit**.
+        cutting_dimensions_increase_1d: "Dimensions majorées par la surcote de longueur (**{{ length_increase }}**) configurée sur la matière '{{ material_name }}'."
+        cutting_dimensions_increase_2d: "Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Dimensions réduites de l'épaisseur des chants. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiquettes
       options_layout: Composition
@@ -1402,6 +1393,14 @@ tab:
       option_file_format: Format
       option_file_format_help: |
         Permet de choisir le format de fichier à exporter.
+      option_dxf_structure: Structure DXF
+      option_dxf_structure_1: Calques
+      option_dxf_structure_2: Calques + Blocs
+      option_dxf_structure_help: |
+        Permet de choisir la structure du fichier DXF.
+
+        - la structure **Calques** dessine tous les tracés à plat en distinguant les différents types de trait uniquement par des calques. *Cette structure offre une meilleure compatibilité avec les logiciels tiers.*
+        - La structure **Calques + Blocs** crée un bloc par pièce et insère ces blocs autant de fois que les pièces sont répétées. *Cette structure offre plus de flexibilité pour modifier le fichier.*
       option_unit: Unité
       option_unit_help: |
         Permet de choisir l'unité utilisée dans le fichier exporté.
@@ -1419,9 +1418,13 @@ tab:
       option_faces_help: |
         Permet de choisir si la recherche de la forme de la pièce se fait sur toutes ses faces ou seulement sur la face ciblée.
       option_anchor: Point d'ancrage
-      option_anchor_0: Par défaut
+      option_anchor_0: Automatique # TODO
       option_anchor_1: Projeter l'origine de la pièce
-      option_anchor_help: |
+      option_anchor_help: | # TODO
+        **Automatique**
+        Le coin inférieur gauche de la boîte englobante de la géométrie exportée est utilisé comme point d'ancrage.
+
+        **Projeter l'origine de la pièce**
         Permet d'activer la projection de l'origine des axes de la pièce comme point d'ancrage.
       option_switch_yz: Axe vertical
       option_switch_yz_0: Z vertical
@@ -1436,14 +1439,17 @@ tab:
 
         *Cette option ne permet pas de détecter les autres types de courbes.*
       option_merge_holes: Décomposition
-      option_merge_holes_0: Par défaut
-      option_merge_holes_1: Contour + Percements + Fusion
-      option_merge_holes_help: |
-        **Par defaut**
-        La forme de la pièce est exportée avec une couche par profondeur.
+      option_merge_holes_0: Basique # TODO
+      option_merge_holes_1: Contour + Percements + Débord # TODO
+      option_merge_holes_help: | # TODO
+        **Basique**
+        La forme de la pièce est exportée avec la projection de chaque face sur une couche correspondant à sa profondeur.
 
-        **Contour + Percements + Fusion**
-        Active la séparation du contour extérieur des pièces de leurs percements ainsi que la fusion des profondeurs pour chaque cavité.
+        **Contour + Percements + Débord**
+        Active la séparation du contour extérieur des pièces de leurs percements ainsi que le calcul du débord d'usinage appliqué aux surfaces se trouvant en bordure du contour et des cavités.
+      option_merge_holes_overflow: Débord d'usinage # TODO
+      option_merge_holes_overflow_help: | # TODO
+        Permet de définir la distance de débord d'usinage appliquée aux surfaces se trouvant en bordure du contour et des cavités.
       option_include_paths: Tracés
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Utiliser les arêtes non associées à une face
@@ -1690,6 +1696,14 @@ tab:
       layer_name: Balise
       explode: Eclater
       explode_message: "Confirmez-vous l'éclatement de l'instance **{{ name }}** ?"
+    option:
+      general: Générales
+      show_hidden_instances: Afficher les instances masquées
+      show_hidden_instances_help: Si cette option est activée, les instances masquées dans la modèle seront affichées dans l'arbre de structure.
+      hide_descriptions: Masquer les descriptions
+      hide_descriptions_help: "Si cette option est activée, les **descriptions** placées sur les pièces ne sont pas affichées."
+      hide_tags: Masquer les badges
+      hide_tags_help: "Si cette option est activée, les **badges** placés sur les pièces ne sont pas affichés."
     error:
       no_model: Aucun modèle n'est ouvert. Il va falloir m'en donner un peu plus ;)
       no_entities: Votre modèle est vide !

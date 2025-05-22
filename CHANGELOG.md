@@ -23,6 +23,8 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added _use_count_ parameter to 2D and 3D drawing writers
   * Added handle to manually reorder material prices list
   * Added an option to customize group sorting
+  * Added Export parts list to XLSX
+  * Added Export drawing with overflows
   * Changed solid wood coefficient from estimate params to material attributes
   * Improved export drawing to Layout : adding the ability to add in a new page of an existing file
   * Improved labels formulas

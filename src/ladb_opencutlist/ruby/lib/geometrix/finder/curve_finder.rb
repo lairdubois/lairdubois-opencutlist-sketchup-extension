@@ -211,8 +211,12 @@ module Ladb::OpenCutList::Geometrix
       @curve_def.point_at_index(end_index)
     end
 
+    def points
+      @curve_def.points_between_indices(@start_index, end_index)
+    end
+
     def segments
-      @curve_def.points_between_indices(@start_index, end_index).each_cons(2).to_a.flatten
+      points.each_cons(2).to_a.flatten
     end
 
   end

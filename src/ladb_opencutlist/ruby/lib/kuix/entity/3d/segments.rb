@@ -41,7 +41,7 @@ module Ladb::OpenCutList::Kuix
           graphics.set_drawing_color(@color)
           graphics.set_line_width(@line_width)
           graphics.set_line_stipple(@line_stipple)
-          graphics.view.draw2d(GL_LINE_STRIP, points2d)
+          graphics.view.draw2d(GL_LINES, points2d)
         else
           graphics.draw_lines(
             points: @_points,

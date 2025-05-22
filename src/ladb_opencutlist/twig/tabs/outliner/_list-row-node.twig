@@ -31,10 +31,10 @@
             {% endif %}
             <div>
                 <span class="ladb-outliner-node-type">{% include 'tabs/outliner/_node-icon.twig' %}</span>{% if node.material %}<span class="ladb-outliner-node-material" data-toggle="tooltip" title="{{ node.material.display_name }}">{% include 'tabs/materials/_material-color-drop.twig' with { 'material_color':node.material.color } %}</span>{% endif %}{% if node.name is not empty %}<span class="ladb-outliner-node-name">{{ node.name|escape('html') }}</span>{% endif %}{% if node.type != 1 or node.name is empty %}<span class="ladb-outliner-node-definition-name">{{ node.default_name|escape('html') }}</span>{% endif %}
-                {% if node.description is defined and node.description is not empty %}
+                {% if not generateOptions.hide_descriptions and node.description is defined and node.description is not empty %}
                     <div class="ladb-outliner-node-description">{{ node.description|nl2br }}</div>
                 {% endif %}
-                {% if node.tags is defined and node.tags is not empty %}
+                {% if not generateOptions.hide_tags and node.tags is defined and node.tags is not empty %}
                     <ul class="ladb-outliner-node-tags">
                         {% for tag in node.tags %}
                             <li><a href="#" class="ladb-btn-label-filter">{{ tag }}</a></li>

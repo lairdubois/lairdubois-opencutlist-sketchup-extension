@@ -18,7 +18,7 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
-                   cutlist_hidden_group_ids: [],
+                   part_ids: nil,
 
                    hidden_group_ids: []   # Unused locally, but necessary for UI
 
@@ -26,7 +26,7 @@ module Ladb::OpenCutList
 
       @cutlist = cutlist
 
-      @cutlist_hidden_group_ids = cutlist_hidden_group_ids
+      @part_ids = part_ids
 
       @estimate_def = EstimateDef.new
 
@@ -46,9 +46,21 @@ module Ladb::OpenCutList
 
       when :start
 
+        return { :errors => [ 'default.error' ] } unless @cutlist
+        return { :errors => [ 'tab.cutlist.error.obsolete_cutlist' ] } if @cutlist.obsolete?
+
+        model = Sketchup.active_model
+        return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
+
+        parts = @cutlist.get_real_parts(@part_ids)
+        return { :errors => [ 'tab.cutlist.error.no_part' ] } if parts.empty?
+
+        @parts_by_group = parts.group_by { |part| part.group }
+
         # Create runs
-        @cutlist.groups.select { |group| group.material_type != MaterialAttributes::TYPE_UNKNOWN && !@cutlist_hidden_group_ids.include?(group.id) }.each do |cutlist_group|
-          @runs << _create_run(cutlist_group)
+        @parts_by_group.each do |group, parts|
+          next if group.material_type == MaterialAttributes::TYPE_UNKNOWN
+          @runs << _create_run(group, parts.map { |part| part.id })
         end
 
         return {
@@ -102,8 +114,8 @@ module Ladb::OpenCutList
         end
 
         # Warnings
-        if @cutlist_hidden_group_ids.length > 0 && @cutlist_hidden_group_ids.find_index('summary').nil? || @cutlist_hidden_group_ids.length > 1 && !@cutlist_hidden_group_ids.find_index('summary').nil?
-          @estimate_def.warnings << 'tab.cutlist.estimate.warning.is_group_selection'
+        if @parts_by_group.keys.one? && @parts_by_group.keys.first.parts.length != @parts_by_group.values.first.length
+          @estimate_def.warnings << 'tab.cutlist.estimate.warning.is_part_selection'
         end
 
         # Tips
@@ -143,33 +155,33 @@ module Ladb::OpenCutList
 
     private
 
-    def _create_run(cutlist_group)
+    def _create_run(cutlist_group, part_ids = nil)
 
       material_attributes = _get_material_attributes(cutlist_group.material_name)
 
       case material_attributes.type
 
       when MaterialAttributes::TYPE_SOLID_WOOD
-        return Estimate3dRun.new(self, cutlist_group, material_attributes, SolidWoodEstimateEntryDef)
+        return Estimate3dRun.new(self, cutlist_group, part_ids, material_attributes, SolidWoodEstimateEntryDef)
 
       when MaterialAttributes::TYPE_SHEET_GOOD
-        return Estimate3dRun.new(self, cutlist_group, material_attributes, SheetGoodEstimateEntryDef, SheetGoodEstimateEntryBinDef) unless material_attributes.raw_estimated
-        return Estimate2dRun.new(self, cutlist_group, material_attributes, SheetGoodEstimateEntryDef, SheetGoodEstimateEntryBinDef)
+        return Estimate3dRun.new(self, cutlist_group, part_ids, material_attributes, SheetGoodEstimateEntryDef, SheetGoodEstimateEntryBinDef) unless material_attributes.raw_estimated
+        return Estimate2dRun.new(self, cutlist_group, part_ids, material_attributes, SheetGoodEstimateEntryDef, SheetGoodEstimateEntryBinDef)
 
       when MaterialAttributes::TYPE_DIMENSIONAL
-        return Estimate3dRun.new(self, cutlist_group, material_attributes, DimensionalEstimateEntryDef, DimensionalEstimateEntryBarDef) unless material_attributes.raw_estimated
-        return Estimate1dRun.new(self, cutlist_group, material_attributes, DimensionalEstimateEntryDef, DimensionalEstimateEntryBarDef)
+        return Estimate3dRun.new(self, cutlist_group, part_ids, material_attributes, DimensionalEstimateEntryDef, DimensionalEstimateEntryBarDef) unless material_attributes.raw_estimated
+        return Estimate1dRun.new(self, cutlist_group, part_ids, material_attributes, DimensionalEstimateEntryDef, DimensionalEstimateEntryBarDef)
 
       when MaterialAttributes::TYPE_EDGE
-        return Estimate3dRun.new(self, cutlist_group, material_attributes, EdgeEstimateEntryDef, EdgeEstimateEntryBarDef) unless material_attributes.raw_estimated
-        return Estimate1dRun.new(self, cutlist_group, material_attributes, EdgeEstimateEntryDef, EdgeEstimateEntryBarDef)
+        return Estimate3dRun.new(self, cutlist_group, part_ids, material_attributes, EdgeEstimateEntryDef, EdgeEstimateEntryBarDef) unless material_attributes.raw_estimated
+        return Estimate1dRun.new(self, cutlist_group, part_ids, material_attributes, EdgeEstimateEntryDef, EdgeEstimateEntryBarDef)
 
       when MaterialAttributes::TYPE_VENEER
-        return Estimate3dRun.new(self, cutlist_group, material_attributes, VeneerEstimateEntryDef, VeneerEstimateEntryBinDef) unless material_attributes.raw_estimated
-        return Estimate2dRun.new(self, cutlist_group, material_attributes, VeneerEstimateEntryDef, VeneerEstimateEntryBinDef)
+        return Estimate3dRun.new(self, cutlist_group, part_ids, material_attributes, VeneerEstimateEntryDef, VeneerEstimateEntryBinDef) unless material_attributes.raw_estimated
+        return Estimate2dRun.new(self, cutlist_group, part_ids, material_attributes, VeneerEstimateEntryDef, VeneerEstimateEntryBinDef)
 
       when MaterialAttributes::TYPE_HARDWARE
-        return EstimateHardwareRun.new(self, cutlist_group, material_attributes, HardwareEstimateEntryDef, HardwareEstimateEntryPartDef)
+        return EstimateHardwareRun.new(self, cutlist_group, part_ids, material_attributes, HardwareEstimateEntryDef, HardwareEstimateEntryPartDef)
 
       end
 
@@ -183,10 +195,11 @@ module Ladb::OpenCutList
 
     include EstimationHelper
 
-    def initialize(worker, cutlist_group, material_attributes, entry_def_class, item_def_class = nil)
+    def initialize(worker, cutlist_group, part_ids, material_attributes, entry_def_class, item_def_class = nil)
 
       @worker = worker
       @cutlist_group = cutlist_group
+      @part_ids = part_ids
       @material_attributes = material_attributes
       @entry_def_class = entry_def_class
       @item_def_class = item_def_class
@@ -270,7 +283,7 @@ module Ladb::OpenCutList
 
   class AbstractEstimatePackingRun < AbstractEstimateRun
 
-    def initialize(worker, cutlist_group, material_attributes, entry_def_class, item_def_class = nil)
+    def initialize(worker, cutlist_group, part_ids, material_attributes, entry_def_class, item_def_class = nil)
       super
 
       @packing_worker = nil
@@ -282,7 +295,7 @@ module Ladb::OpenCutList
       super
 
       settings = HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_packing_options', @cutlist_group.id))
-      settings[:group_id] = @cutlist_group.id
+      settings[:part_ids] = @part_ids
 
       _ensure_default_settings(settings)
 

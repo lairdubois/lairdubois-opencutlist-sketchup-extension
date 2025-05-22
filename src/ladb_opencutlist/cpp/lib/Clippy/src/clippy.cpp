@@ -97,6 +97,29 @@ DLL_EXPORTS double c_get_cpath_area(
 }
 
 
+DLL_EXPORTS int c_is_point_on_polygon(
+        double x,
+        double y,
+        CPathD cpath
+) {
+    if (PointOnPath(PointD(x, y), ConvertCPath(cpath), true)) {
+        return 1;
+    }
+    return 0;
+}
+DLL_EXPORTS int c_is_mid_point_on_polygon(
+        double x1,
+        double y1,
+        double x2,
+        double y2,
+        CPathD cpath
+) {
+    if (PointOnPath(MidPoint(PointD(x1, y1), PointD(x2, y2)), ConvertCPath(cpath), true)) {
+        return 1;
+    }
+    return 0;
+}
+
 DLL_EXPORTS void c_dispose_paths_solution(
     CPathsDSolution* p
 ) {

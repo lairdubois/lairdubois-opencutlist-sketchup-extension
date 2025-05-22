@@ -249,19 +249,19 @@
                     {% endif %}
                     <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
                     <ul class="dropdown-menu">
-                        {% if group.material_type != 4 and group.material_type != 6 %}    {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
+                        {% if not group.material_is_virtual %}
                             <li><a href="#" class="ladb-item-highlight-group-parts"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.menu.highlight_parts'|i18next }}</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="#" class="ladb-item-export-2d-group-parts"><i class="ladb-opencutlist-icon-2d"></i> {{ 'tab.cutlist.menu.group_write_2d_parts'|i18next }}...</a></li>
                             <li><a href="#" class="ladb-item-export-3d-group-parts"><i class="ladb-opencutlist-icon-3d"></i> {{ 'tab.cutlist.menu.group_write_3d_parts'|i18next }}...</a></li>
                             <li role="separator" class="divider"></li>
                         {% endif %}
+                        <li><a href="#" class="ladb-item-export-group-parts"><i class="ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }}...</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#" class="ladb-item-estimate-group-parts"><i class="ladb-opencutlist-icon-estimate"></i> {{ 'default.estimate'|i18next }}...</a></li>
+                        <li role="separator" class="divider"></li>
                         <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
                         <li><a href="#" class="ladb-item-show-all-groups"><i class="ladb-opencutlist-icon-eye-open"></i> {{ 'tab.cutlist.menu.show_all_groups'|i18next }}</a></li>
-                        {% if group.material_type > 0 and group.material_type != 4 and group.material_type != 5 and group.material_type != 6 %}    {# 4 = TYPE_EDGE, 5 = TYPE_HARDWARE, 5 = TYPE_VENEER #}
-                            <li role="separator" class="divider"></li>
-                            <li><a href="#" class="ladb-item-dimensions-help"><i class="ladb-opencutlist-icon-dimensions-help"></i> {{ 'tab.cutlist.list.dimensions_help'|i18next }}</a></li>
-                        {% endif %}
                         {% if group.material_type != 4 and group.material_type != 6 %}    {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
                             <li role="separator" class="divider"></li>
                             <li><a class="ladb-item-numbers-save" href="#"><i class="ladb-opencutlist-icon-save"></i> {{ 'tab.cutlist.menu.group_numbers_save'|i18next }}</a></li>
@@ -270,6 +270,10 @@
                         {% if group.material_display_name is not empty %}
                             <li role="separator" class="divider"></li>
                             <li><a href="#" class="ladb-item-edit-material"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material_name':group.material_display_name }) }}...</a></li>
+                        {% endif %}
+                        {% if group.material_type > 0 and group.material_type != 4 and group.material_type != 5 and group.material_type != 6 %}    {# 4 = TYPE_EDGE, 5 = TYPE_HARDWARE, 5 = TYPE_VENEER #}
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#" class="ladb-item-dimensions-help"><i class="ladb-opencutlist-icon-dimensions-help"></i> {{ 'tab.cutlist.list.dimensions_help'|i18next }}</a></li>
                         {% endif %}
                     </ul>
                 </div>

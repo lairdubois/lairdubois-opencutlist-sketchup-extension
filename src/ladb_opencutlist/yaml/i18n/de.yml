@@ -90,6 +90,7 @@ default:
   width: Breite
   thickness: Dicke
   height: Höhe
+  deprecated: Veraltet
 core:
   menu:
     submenu: OpenCutList
@@ -209,23 +210,28 @@ core:
       delete: "Voreinstellung '{{ name }}' löschen"
     dictionary:
       component_textinput_color: Farbpalette
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modell
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -513,7 +519,7 @@ tab:
         - die *Dicke* auf der <span style='color:blue'>blauen</span> Achse ist
       flipped_detection: Erkennung von gespiegelten Teilen
       flipped_detection_help: |
-        Wenn diese Option ausgewählt ist, werden gespiegelte Teile erkannt und als separate Teile angezeigt.
+        Wenn diese Option aktiviert ist, werden gespiegelte Teile erkannt und als separate Teile angezeigt.
       smart_material: "*Intelligente* Materialzuweisung"
       smart_material_help: "Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen, falls dem Teil selber kein Material zugewiesen wurde."
       dynamic_attributes_name: Attribut *Name* der dynamischen Komponenten verwenden
@@ -533,7 +539,7 @@ tab:
       hide_entity_names: Instanzbezeichnungen ausblenden
       hide_entity_names_help: "Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht angezeigt."
       hide_descriptions: Beschreibungen ausblenden
-      hide_descriptions_help: "Wenn diese Option ausgewählt ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt."
+      hide_descriptions_help: "Wenn diese Option aktiviert ist, werden die **Beschreibungen**, die auf den Teilen platziert sind, nicht angezeigt."
       hide_tags: Badges ausblenden
       hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
       hide_cutting_dimensions: Rohmaße ausblenden
@@ -549,7 +555,7 @@ tab:
       hide_material_colors: Farben von Materialien ausblenden
       hide_material_colors_help: "Ist diese Option aktiv, werden die Farben der Materialien nicht angezeigt."
       minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
-      minimize_on_highlight_help: "Ist diese Option aktiv, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
+      minimize_on_highlight_help: "Wenn diese Option aktiviert ist, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
       general: Allgemein
       sorting: Sortierung
       group_order_strategy: Gruppensortierung
@@ -1024,7 +1030,7 @@ tab:
       option_rectangleguillotine_cut_type: Schnitttyp
       option_rectangleguillotine_cut_type_help: |
         Legt den Schnitttyp fest.
-      option_rectangleguillotine_cut_type_non_exact: Non exakt
+      option_rectangleguillotine_cut_type_non_exact: Nicht exakt
       option_rectangleguillotine_cut_type_exact: Exakt
       option_rectangleguillotine_cut_type_homogenous: Homogen
       option_rectangleguillotine_number_of_stages: Anzahl der Stufen
@@ -1142,30 +1148,6 @@ tab:
         title: Schnittplan exportieren
         info_0: |
           Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG](https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://de.wikipedia.org/wiki/DXF) exportieren.
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: DXF Struktur
-        option_dxf_structure_1: Layers
-        option_dxf_structure_2: Layers + Blöcke
-        option_dxf_structure_help: |
-          Auswahl der DXF-Dateistruktur.
-
-          - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layers. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
-          - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Platte
         option_bin_sheet_good_help: |
           Ermöglicht den Export von Platten zu aktivieren und deren Farbe anzugeben.
@@ -1197,6 +1179,9 @@ tab:
           Ermöglicht den Export von Schnitten zu aktivieren und deren Farbe anzugeben.
         warning:
           is_bin_selection: "**Ausgeblendete Elemente** werden nicht exportiert."
+        error:
+          overflow_gt_spacing: |
+            Der Bearbeitungsüberstand ({{ overflow }}) muss kleiner oder gleich dem Abstand ({{ spacing }}) sein, der in diesem Schnittplan konfiguriert ist.
       error:
         no_part: Kein Teil.
         no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zu Verfügung.
@@ -1402,6 +1387,14 @@ tab:
       option_file_format: Format
       option_file_format_help: |
         Auswahl des Dateiformats für die exportierte Datei.
+      option_dxf_structure: DXF Struktur
+      option_dxf_structure_1: Layers
+      option_dxf_structure_2: Layers + Blöcke
+      option_dxf_structure_help: |
+        Auswahl der DXF-Dateistruktur.
+
+        - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layers. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
+        - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
       option_unit: Einheit
       option_unit_help: |
         Auswahl der in der exportierten Datei verwendeten Einheit.
@@ -1419,10 +1412,14 @@ tab:
       option_faces_help: |
         Auswahl ob die Suche nach der Form des Teils auf allen Flächen oder nur auf der Zielfläche durchgeführt werden soll.
       option_anchor: Ankerpunkt
-      option_anchor_0: Standard
+      option_anchor_0: Automatisch
       option_anchor_1: Ursprung des Teils projizieren
       option_anchor_help: |
-        Aktivierung der Projektion des Achsenursprungs des Teils als Ankerpunkt.
+        **Automatisch**
+        Die linke untere Ecke der umschließenden Box der exportierten Geometrie wird als Ankerpunkt verwendet.
+
+        **Projektion des Achsenursprungs**
+        Hiermit wird die Projektion des Achsenursprungs des Teils als Ankerpunkt aktiviert.
       option_switch_yz: Vertikale Achse
       option_switch_yz_0: Z vertikal
       option_switch_yz_1: Y vertikal
@@ -1436,14 +1433,17 @@ tab:
 
         *Diese Option erkennt keine anderen Kurventypen.*
       option_merge_holes: Zusammenführungsmodus
-      option_merge_holes_0: Standard
-      option_merge_holes_1: Umrisse + Bohrungen + Vereinigung
+      option_merge_holes_0: Einfach
+      option_merge_holes_1: Kontur + Bohrungen + Überstand
       option_merge_holes_help: |
-        **Standard**
+        **Einfach**
         Die Bauteilform wird mit einer Ebene pro Tiefe exportiert.
 
-        **Kontur + Bohrungen + Zusammenführen**
-        Aktiviert die Trennung der Außenkontur von Teilen und ihren Bohrungen sowie die Zusammenführung der Tiefen für jede Kavität.
+        **Kontur + Bohrungen + Überstand**
+        Aktiviert die Trennung der Außenkontur der Teile von ihren Durchbrüchen sowie die Berechnung des Bearbeitungsüberstands, der auf die Flächen angewendet wird, die sich am Rand der Kontur und der Vertiefungen befinden.
+      option_merge_holes_overflow: Bearbeitungsüberstand
+      option_merge_holes_overflow_help: |
+        Legt den Abstand des Bearbeitungsüberstands, der auf Flächen angewendet wird, die sich am Rand der Kontur und der Vertiefungen befinden fest.
       option_include_paths: Pfade
       option_include_paths_0: $t(default.no)
       option_include_paths_1: "Kanten verwenden, die nicht mit einer Fläche verbunden sind"
@@ -1690,6 +1690,14 @@ tab:
       layer_name: Tag
       explode: Explodieren
       explode_message: "Bestätigen Sie die Explosion der Instanz **{{ name }}**?"
+    option:
+      general: Allgemein
+      show_hidden_instances: Ausgeblendete Instanzen anzeigen
+      show_hidden_instances_help: "Wenn diese Option aktiviert ist, werden die in der Modellansicht ausgeblendeten Instanzen im Strukturbaum angezeigt."
+      hide_descriptions: Beschreibungen ausblenden
+      hide_descriptions_help: "Wenn diese Option aktiviert ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt."
+      hide_tags: Badges ausblenden
+      hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
     error:
       no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
       no_entities: Ihr Modell ist leer!

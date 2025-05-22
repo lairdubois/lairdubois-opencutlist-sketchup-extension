@@ -2,6 +2,9 @@
 
 {% set id = 'ladb_cutlist_modal_estimate' %}
 {% set title = 'tab.cutlist.estimate.title'|i18next %}
+{% if group and group.material_type != 0 %} {# 0 = TYPE_UNKNOWN #}
+    {% set title = title~'<small class="ladb-horizontal-left-separator">'~group.material_name|escape('html')~(group.std_dimension ? ' / '~group.std_dimension : '')~'</small>' %}
+{% endif %}
 
 {% block headerToolsInner %}
     {% include 'components/_widget-preset.twig' %}
@@ -18,6 +21,9 @@
 {% block bodyInner %}
     {% if isGroupSelection %}
         <div class="alert alert-info text-center">{{ 'tab.cutlist.estimate.warning.is_group_selection'|i18next }}</div>
+    {% endif %}
+    {% if isPartSelection %}
+        <div class="alert alert-info text-center">{{ 'tab.cutlist.estimate.warning.is_part_selection'|i18next }}</div>
     {% endif %}
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_estimate_options_general">

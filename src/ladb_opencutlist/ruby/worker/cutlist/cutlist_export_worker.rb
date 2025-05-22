@@ -25,7 +25,7 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
-                   cutlist_hidden_group_ids: [],
+                   part_ids: nil,
 
                    source: EXPORT_OPTION_SOURCE_CUTLIST,
                    format: EXPORT_OPTION_FORMAT_CSV,
@@ -39,7 +39,8 @@ module Ladb::OpenCutList
     )
 
       @cutlist = cutlist
-      @cutlist_hidden_group_ids = cutlist_hidden_group_ids
+
+      @part_ids = part_ids
 
       @source = source
       @format = format
@@ -61,10 +62,11 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
-      # Retrieve parts
       parts = @cutlist.get_real_parts(@part_ids)
       return { :errors => [ 'tab.cutlist.error.no_part' ] } if parts.empty?
 
+      parts_by_group = parts.group_by { |part| part.group }
+      
       response = {
           :errors => [],
           :export_path => ''
@@ -73,14 +75,14 @@ module Ladb::OpenCutList
       case @format
       when EXPORT_OPTION_FORMAT_TABLE
 
-        response[:rows] = _compute_rows
+        response[:rows] = _compute_rows(parts_by_group)
 
       when EXPORT_OPTION_FORMAT_PASTABLE
 
         options = { :col_sep => "\t" }
         pasteable = CSV.generate(**options) do |csv|
 
-          _compute_rows.each { |row|
+          _compute_rows(parts_by_group).each { |row|
             csv << row
           }
 
@@ -89,7 +91,7 @@ module Ladb::OpenCutList
 
       when EXPORT_OPTION_FORMAT_CSV
 
-        # Ask for export file path
+        # Ask for the export file path
         path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
         if path
 
@@ -121,12 +123,12 @@ module Ladb::OpenCutList
               encoding = 'UTF-8'
             end
 
-            # Write CSV file
+            # Write the CSV file
             File.open(path, "wb+:#{encoding}") do |f|
               options = { :col_sep => col_sep }
               content = CSV.generate(**options) do |csv|
 
-                _compute_rows.each { |row|
+                _compute_rows(parts_by_group).each { |row|
                   csv << row
                 }
 
@@ -153,7 +155,7 @@ module Ladb::OpenCutList
 
         return { :errors => [ [ 'core.error.feature_unavailable', { :version => 2019 } ] ] } if Sketchup.version_number < 1900000000
 
-        # Ask for export file path
+        # Ask for the export file path
         path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.xlsx')
         if path
 
@@ -178,7 +180,7 @@ module Ladb::OpenCutList
             }
 
             # Iterate on rows to add cells
-            _compute_rows.each_with_index { |row, row_index|
+            _compute_rows(parts_by_group).each_with_index { |row, row_index|
               row.each_with_index { |cell, col_index|
                 unless cell.is_a?(String) && cell.empty?
                   col_def = @col_defs[col_index]
@@ -210,7 +212,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _compute_rows
+    def _compute_rows(parts_by_group)
 
       # Generate rows
       rows = []
@@ -221,8 +223,7 @@ module Ladb::OpenCutList
         # Header row
         rows << _evaluate_header unless @no_header
 
-        @cutlist.groups.each do |group|
-          next if @cutlist_hidden_group_ids.include?(group.id)
+        parts_by_group.each do |group, parts|
 
           data = SummaryExportRowData.new(
 
@@ -244,9 +245,8 @@ module Ladb::OpenCutList
         rows << _evaluate_header unless @no_header
 
         # Content rows
-        @cutlist.groups.each do |group|
-          next if @cutlist_hidden_group_ids.include?(group.id)
-          group.parts.each do |part|
+        parts_by_group.each do |group, parts|
+          parts.each do |part|
 
             parts = part.is_a?(FolderPart) ? part.children : [ part ]
             parts.each do |part|
@@ -304,6 +304,7 @@ module Ladb::OpenCutList
               rows << _evaluate_row(data)
 
             end
+
           end
         end
 
@@ -313,11 +314,11 @@ module Ladb::OpenCutList
         rows << _evaluate_header unless @no_header
 
         # Content rows
-        @cutlist.groups.each do |group|
-          next if @cutlist_hidden_group_ids.include?(group.id)
-          next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
-          next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
-          group.parts.each do |part|
+        parts_by_group.each do |group, parts|
+          parts.each do |part|
+
+            next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
+            next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
 
             parts = part.is_a?(FolderPart) ? part.children : [ part ]
             parts.each do |part|

@@ -557,9 +557,6 @@
 
                         }
 
-                        // Reset edited material
-                        that.editedMaterial = null;
-
                         // Hide modal
                         $modal.modal('hide');
 
@@ -568,6 +565,16 @@
                 });
 
             });
+
+            // Bind model
+            $modal
+                .on('hidden.bs.modal', function () {
+
+                    // Reset edited material
+                    that.editedMaterial = null;
+
+                })
+            ;
 
             // Show modal
             $modal.modal('show');

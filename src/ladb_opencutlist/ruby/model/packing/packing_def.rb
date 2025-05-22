@@ -6,17 +6,19 @@ module Ladb::OpenCutList
   class PackingDef < DataContainer
 
     attr_reader :group,
-                :errors,
+                :errors, :warnings,
                 :running, :cancelled,
                 :solution_def
 
     def initialize(group: nil,
                    errors: [],
+                   warnings: [],
                    running: false, cancelled: false,
                    solution_def: nil)
       @group = group
 
       @errors = errors
+      @warnings = warnings
 
       @running = running
       @cancelled = cancelled
