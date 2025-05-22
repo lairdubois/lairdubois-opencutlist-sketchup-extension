@@ -292,7 +292,7 @@ module Ladb::OpenCutList
 
       unless @ignore_faces
         drawing_def.face_manipulators.each do |face_manipulator|
-          drawing_def.faces_bounds.add(face_manipulator.outer_loop_points)
+          drawing_def.faces_bounds.add(face_manipulator.outer_loop_manipulator.points)
         end
         drawing_def.bounds.add(drawing_def.faces_bounds.min, drawing_def.faces_bounds.max) if drawing_def.faces_bounds.valid?
       end

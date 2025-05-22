@@ -25,10 +25,10 @@ module Ladb::OpenCutList
 
     def reset_cache
       super
-      @outer_loop_points = nil
       @z_max = nil
       @normal = nil
       @triangles = nil
+      @outer_loop_manipulator = nil
       @loop_manipulators = nil
     end
 
@@ -45,13 +45,8 @@ module Ladb::OpenCutList
 
     # -----
 
-    def outer_loop_points
-      @outer_loop_points = LoopManipulator.new(@face.outer_loop, @transformation).points if @outer_loop_points.nil?
-      @outer_loop_points
-    end
-
     def z_max
-      @z_max = outer_loop_points.max { |p1, p2| p1.z <=> p2.z }.z if @z_max.nil?
+      @z_max = outer_loop_manipulator.points.max { |p1, p2| p1.z <=> p2.z }.z if @z_max.nil?
       @z_max
     end
 
@@ -74,6 +69,11 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def outer_loop_manipulator
+      @outer_loop_manipulator = LoopManipulator.new(@face.outer_loop, @transformation) if @outer_loop_manipulator.nil?
+      @outer_loop_manipulator
+    end
 
     def loop_manipulators
       @loop_manipulators = @face.loops.map { |loop| LoopManipulator.new(loop, @transformation) } if @loop_manipulators.nil?

@@ -18,6 +18,7 @@ module Ladb::OpenCutList
       super
       @points = nil
       @segments = nil
+      @vertex_manipulators = nil
     end
 
     # -----
@@ -40,6 +41,19 @@ module Ladb::OpenCutList
     def segments
       @segments = points.each_cons(2).to_a.flatten(1) if @segments.nil?
       @segments
+    end
+
+    # -----
+
+    def vertex_manipulators
+      @vertex_manipulators = @loop.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation) } if @vertex_manipulators.nil?
+      @vertex_manipulators
+    end
+
+    # -----
+
+    def nearest_vertex_manipulator_to(point)
+      vertex_manipulators.min { |vm1, vm2| vm1.point.distance(point) <=> vm2.point.distance(point) }
     end
 
     # -----

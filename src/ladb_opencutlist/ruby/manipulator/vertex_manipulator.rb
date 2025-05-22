@@ -17,7 +17,6 @@ module Ladb::OpenCutList
     def reset_cache
       super
       @points = nil
-      @z_max = nil
       @segment = nil
     end
 
@@ -31,10 +30,15 @@ module Ladb::OpenCutList
     # -----
 
     def point
-      if @point.nil?
-        @point = @vertex.position.transform(@transformation)
-      end
+      @point = @vertex.position.transform(@transformation) if @point.nil?
       @point
+    end
+
+    # -----
+
+    def edge_manipulators
+      @edge_manipulators = @vertex.edges.map { |edge| EdgeManipulator.new(edge, @transformation) } if @edge_manipulators.nil?
+      @edge_manipulators
     end
 
     # -----

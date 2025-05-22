@@ -784,7 +784,7 @@ module Ladb::OpenCutList
       eb = Geom::BoundingBox.new
       if drawing_def.is_a?(DrawingDef)
 
-        points = drawing_def.face_manipulators.map { |manipulator| manipulator.outer_loop_points }.flatten(1)
+        points = drawing_def.face_manipulators.map { |manipulator| manipulator.outer_loop_manipulator.points }.flatten(1)
         eti = et.inverse
 
         eb.add(points.map { |point| point.transform(eti * drawing_def.transformation) })

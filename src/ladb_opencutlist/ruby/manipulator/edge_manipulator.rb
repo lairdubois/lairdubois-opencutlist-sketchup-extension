@@ -21,6 +21,7 @@ module Ladb::OpenCutList
       @third_points = nil
       @points = nil
       @z_max = nil
+      @vertex_manipulators = nil
     end
 
     # -----
@@ -86,6 +87,19 @@ module Ladb::OpenCutList
 
     def reversed_in?(face)
       @edge.reversed_in?(face)
+    end
+
+    # -----
+
+    def vertex_manipulators
+      @vertex_manipulators = @edge.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation) } if @vertex_manipulators.nil?
+      @vertex_manipulators
+    end
+
+    # -----
+
+    def nearest_vertex_manipulator_to(point)
+      vertex_manipulators.min { |vm1, vm2| vm1.point.distance(point) <=> vm2.point.distance(point) }
     end
 
     # -----

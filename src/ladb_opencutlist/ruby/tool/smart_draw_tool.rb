@@ -316,7 +316,7 @@ module Ladb::OpenCutList
       # If resume from SmartHandleTool
       if @previous_action_handler.is_a?(SmartHandleActionHandler)
 
-        # Remove floating tool
+        # Remove floating tools
         _remove_floating_tools
 
         # Copy last mouse position
@@ -729,6 +729,28 @@ module Ladb::OpenCutList
           # k_mesh.add_triangles(face_manipulator.triangles)
           # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
           # @tool.append_3d(k_mesh)
+
+          if @mouse_ip.degrees_of_freedom == 2
+
+            nearest_vertex_manipulator = face_manipulator.outer_loop_manipulator.nearest_vertex_manipulator_to(@mouse_ip.position)
+            nearest_edge_manipulators = nearest_vertex_manipulator.edge_manipulators.select { |edge_manipulator| edge_manipulator.edge.faces.include?(@mouse_ip.face) }
+
+            k_segments = Kuix::Segments.new
+            k_segments.add_segments(nearest_edge_manipulators.map { |edge_manipulator| edge_manipulator.segment }.flatten(1))
+            k_segments.line_width = 3
+            k_segments.on_top = true
+            k_segments.color = Kuix::COLOR_RED
+            @tool.append_3d(k_segments)
+
+            k_points = _create_floating_points(
+              points: nearest_vertex_manipulator.point,
+              style: Kuix::POINT_STYLE_CIRCLE,
+              stroke_color: Kuix::COLOR_BLACK,
+              fill_color: Kuix::COLOR_WHITE
+            )
+            @tool.append_3d(k_points)
+
+          end
 
         elsif @locked_normal.nil?
 
