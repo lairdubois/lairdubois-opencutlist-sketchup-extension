@@ -701,6 +701,7 @@ tab:
         no_column_formula: Formel eingeben
       warning:
         is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht exportiert."
+        is_part_selection: Der Export beschränkt sich auf die **ausgewählten Teile**.
     estimate:
       title: Kalkulation
       info_0: |
@@ -732,6 +733,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
       warning:
         is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht berücksichtigt."
+        is_part_selection: Die Kalkulation beschränkt sich auf die **ausgewählten Teil**.
       tip:
         not_enough_data: |
           Damit sich diese Kalkulation richtig berechnen lässt, müssen:
@@ -1189,6 +1191,10 @@ tab:
         no_solution: Keine Lösung gefunden.
       warning:
         is_part_selection: Dieser Schnittplan beschränkt sich auf die **ausgewählten Teile**.
+        cutting_dimensions: Dieser Schnittplan verwendet die **Rohmaße** der Teile.
+        cutting_dimensions_increase_1d: "Übermaß wurde auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß von (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Übermaße wurden auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß (**{{ length_increase }}**) und Breitenzumaß (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Maße reduziert um die Materialstärke der Kantenbänder. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiketten
       options_layout: Gestaltung
