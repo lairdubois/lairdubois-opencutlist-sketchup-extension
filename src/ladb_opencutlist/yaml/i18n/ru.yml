@@ -90,7 +90,7 @@ default:
   width: Ширина
   thickness: Толщина
   height: Высота
-  deprecated: ""
+  deprecated: Устаревшие
 core:
   menu:
     submenu: OpenCutList
@@ -701,6 +701,7 @@ tab:
         no_column_formula: Введите формулу
       warning:
         is_group_selection: "Детали, содержащиеся в **скрытых группах** вашей карты раскроя, не будут экспортированы."
+        is_part_selection: Экспорт ограничен **выделенными деталями**.
     estimate:
       title: Смета
       info_0: |
@@ -732,6 +733,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} ошибки**."
       warning:
         is_group_selection: "Учитываются только детали, содержащиеся в **видимых группах**."
+        is_part_selection: ""
       tip:
         not_enough_data: |
           Для правильного расчета сметы:
@@ -1148,30 +1150,6 @@ tab:
         title: Экспорт карты раскроя
         info_0: |
           Этот модуль позволяет экспортировать **чертежи** *карты раскроя* в виде списка файлов в [SVG](https://ru.wikipedia.org/wiki/SVG) или [DXF](https://ru.wikipedia.org/wiki/DXF).
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: Структура DXF
-        option_dxf_structure_1: Слои
-        option_dxf_structure_2: Слои + Блоки
-        option_dxf_structure_help: |
-          Позволяет выбрать структуру файла DXF.
-
-          - Структура **Слои** рисует все линии плоскими, распознавая различные типы линий только с помощью слоев. *Такая структура обеспечивает лучшую совместимость со сторонним программным обеспечением.*
-          - Структура **Слои + Блоки** создает по одному блоку для каждой детали и вставляет эти блоки столько раз, сколько частей повторяются. *Такая структура обеспечивает большую гибкость при редактировании файла.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Панель
         option_bin_sheet_good_help: |
           Позволяет активировать экспорт панели и выбрать ее цвета.
@@ -1203,6 +1181,8 @@ tab:
           Позволяет активировать экспорт разрезов, а также выбрать их цвет.
         warning:
           is_bin_selection: "**Скрытые блоки** не будут экспортированы."
+        error:
+          overflow_gt_spacing: |
       error:
         no_part: Нет детали.
         no_bin_1d: "Не выбран ни один стандартный погонаж, и не определен остаток."
@@ -1210,6 +1190,10 @@ tab:
         no_solution: Решение не найдено.
       warning:
         is_part_selection: Данный отчет ограничен **выделенными деталями**.
+        cutting_dimensions: Эта карта раскроя отображает детали с их **пильными** размерами.
+        cutting_dimensions_increase_1d: "Эти пильные размеры сконфигурированы для материала '{{ material_name }}': Припуск к длине (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Эти пильные размеры сконфигурированы для материала '{{ material_name }}': Припуск к длине (**{{ length_increase }}**) и Припуск к ширине (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Размеры уменьшены на толщину кромки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Этикетки
       options_layout: Состав
@@ -1408,6 +1392,14 @@ tab:
       option_file_format: Формат
       option_file_format_help: |
         Позволяет выбрать формат файла для экспорта.
+      option_dxf_structure: Структура DXF
+      option_dxf_structure_1: Слои
+      option_dxf_structure_2: Слои + Блоки
+      option_dxf_structure_help: |
+        Позволяет выбрать структуру файла DXF.
+
+        - Структура **Слои** рисует все линии плоскими, распознавая различные типы линий только с помощью слоев. *Такая структура обеспечивает лучшую совместимость со сторонним программным обеспечением.*
+        - Структура **Слои + Блоки** создает по одному блоку для каждой детали и вставляет эти блоки столько раз, сколько частей повторяются. *Такая структура обеспечивает большую гибкость при редактировании файла.*
       option_unit: Единицы
       option_unit_help: |
         Позволяет выбрать единицы измерения, используемые в экспортируемом файле.
@@ -1425,10 +1417,9 @@ tab:
       option_faces_help: |
         Позволяет задать, выполнять ли поиск формы детали на всех ее гранях или только на лицевой грани.
       option_anchor: Точка привязки
-      option_anchor_0: По умолчанию
+      option_anchor_0: Автоматический
       option_anchor_1: Проецирование происхождения детали
       option_anchor_help: |
-        Позволяет включить проекцию начала координат детали в качестве точки привязки.
       option_switch_yz: Вертикальная ось
       option_switch_yz_0: Вертикаль Z
       option_switch_yz_1: Y вертикаль
@@ -1442,14 +1433,11 @@ tab:
 
         *Эта опция не позволяет определить другие типы кривых.*
       option_merge_holes: Разбивка
-      option_merge_holes_0: По умолчанию
-      option_merge_holes_1: Контур + Отверстия + Слияние
+      option_merge_holes_0: ""
+      option_merge_holes_1: ""
       option_merge_holes_help: |
-        **По умолчанию**
-        Форма детали экспортируется с одним слоем на глубину.
-
-        **Контур + Отверстия + Слияние**
-        Активирует разделение внешнего контура деталей от их отверстий, а также слияние расстояний для каждой полости.
+      option_merge_holes_overflow: ""
+      option_merge_holes_overflow_help: |
       option_include_paths: Трассы
       option_include_paths_0: $t(default.no)
       option_include_paths_1: "Использовать ребра, не связанные с гранью"
@@ -1698,8 +1686,8 @@ tab:
       explode_message: "Вы подтверждаете разделение экземпляров **{{ name }}** ?"
     option:
       general: Общие
-      show_hidden_instances: ""
-      show_hidden_instances_help: ""
+      show_hidden_instances: Показать скрытые экземпляры
+      show_hidden_instances_help: "Если эта опция включена, то скрытые в модели экземпляры будут отображаться в дереве структуры."
       hide_descriptions: Скрыть описание
       hide_descriptions_help: "Если этот параметр включен, **описания**, деталей в списке элементов, будут скрыты."
       hide_tags: Скрыть маркеры
