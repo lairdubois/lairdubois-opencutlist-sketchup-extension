@@ -90,7 +90,7 @@ default:
   width: Ширина
   thickness: Товщина
   height: Висота
-  deprecated: ""
+  deprecated: Застарілий
 core:
   menu:
     submenu: OpenCutList
@@ -701,6 +701,7 @@ tab:
         no_column_formula: Введіть формулу
       warning:
         is_group_selection: "Деталі, що містяться в **прихованих групах** вашої карти розкрою, не будуть експортовані."
+        is_part_selection: Експорт обмежений до **вибраних деталей**.
     estimate:
       title: Кошторис
       info_0: |
@@ -732,6 +733,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилок**."
       warning:
         is_group_selection: "Деталі, які містяться в **прихованих групах**, не будуть зараховані."
+        is_part_selection: ""
       tip:
         not_enough_data: |
           Щоб цей звіт можна було правильно розрахувати:
@@ -1148,30 +1150,6 @@ tab:
         title: Експорт розкладки
         info_0: |
           Цей модуль дозволяє експортувати **геометрію** *розкладку* у вигляді списку файлів у форматі [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) або [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: Структура DXF
-        option_dxf_structure_1: Шари
-        option_dxf_structure_2: Шари + Блоки
-        option_dxf_structure_help: |
-          Дозволяє вибрати структуру файлу DXF.
-
-          - Структура **Шари** малює всі лінії на площині, розрізняючи різні типи ліній лише за допомогою шарів. *Ця структура забезпечує кращу сумісність з програмним забезпеченням сторонніх виробників.*
-          - Структура **Шари + Блоки** створює блок для кожної деталі і вставляє ці блоки стільки разів, скільки деталей повторюються. *Ця структура надає більшу гнучкість для зміни файлу.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Листовий
         option_bin_sheet_good_help: |
           Дозволяє експорт панелі та вибір кольору.
@@ -1203,6 +1181,9 @@ tab:
           Дозволяє активувати експорт розрізів та вибрати їх колір.
         warning:
           is_bin_selection: "**Приховані блоки** експортуватися не будуть."
+        error:
+          overflow_gt_spacing: |
+            Розмір ({{ overflow }}) має бути меншим або дорівнювати половині інтервалу ({{ spacing }}), налаштованого в цьому розкрої.
       error:
         no_part: Нема деталі.
         no_bin_1d: "Не вибираються стандартні розміри погонажа та крайок, а залишки не визначені."
@@ -1210,6 +1191,10 @@ tab:
         no_solution: Рішення не знайдено.
       warning:
         is_part_selection: Цей звіт обмежено **вибраними деталями**.
+        cutting_dimensions: Ця карта розкрою відображає деталі з їх **пильними** розмірами.
+        cutting_dimensions_increase_1d: "Ці пиляльні розміри налаштовані для матеріалу '{{ material_name }}'. Припуск до довжини (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Ці пиляльні розміри налаштовані для матеріалу '{{ material_name }}'. Припуск до довжини (**{{ length_increase }}**) та Припуск до ширини (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Розміри зменшено на товщину крайки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Етикетки
       options_layout: Склад
@@ -1408,6 +1393,14 @@ tab:
       option_file_format: Формат
       option_file_format_help: |
         Дозволяє вибрати формат файлу для експорту.
+      option_dxf_structure: Структура DXF
+      option_dxf_structure_1: Шари
+      option_dxf_structure_2: Шари + Блоки
+      option_dxf_structure_help: |
+        Дозволяє вибрати структуру файлу DXF.
+
+        - Структура **Шари** малює всі лінії на площині, розрізняючи різні типи ліній лише за допомогою шарів. *Ця структура забезпечує кращу сумісність з програмним забезпеченням сторонніх виробників.*
+        - Структура **Шари + Блоки** створює блок для кожної деталі і вставляє ці блоки стільки разів, скільки деталей повторюються. *Ця структура надає більшу гнучкість для зміни файлу.*
       option_unit: Одиниці
       option_unit_help: |
         Дозволяє вибрати одиницю, яка використовується у експортованому файлі.
@@ -1425,10 +1418,13 @@ tab:
       option_faces_help: |
         Дозволяє вибрати, чи проводити пошук форми деталі на всіх її гранях, чи тільки на цільовій грані.
       option_anchor: Точка прив’язки
-      option_anchor_0: За замовчуванням
+      option_anchor_0: Автоматичний
       option_anchor_1: Проектувати походження деталі
       option_anchor_help: |
-        Дозволяє активувати проекцію початку координат деталі як точку прив’язки.
+        **Автоматично**
+        Нижній лівий кут обмежувальної рамки експортованої геометрії використовується як опорна точка.
+        **Початок деталі**
+        Дозволяє проектувати початок координат осей деталі як опорну точку..
       option_switch_yz: Вертикальна вісь
       option_switch_yz_0: Z вертикальна
       option_switch_yz_1: Y вертикальний
@@ -1442,14 +1438,17 @@ tab:
 
         *Ця опція не дозволяє виявляти інші типи кривих.*
       option_merge_holes: Режим злиття
-      option_merge_holes_0: За замовчуванням
-      option_merge_holes_1: Контур + Свердління + Злиття
+      option_merge_holes_0: Основний
+      option_merge_holes_1: Контур + Свердління + Виступ
       option_merge_holes_help: |
-        **За замовчуванням**
-        Форма деталі експортується з одним шаром на глибину.
+        **Основний**
+        Форма деталі експортується з проекцією кожної грані на шар, що відповідає її глибині.
 
-        **Контур + Отвори + Злиття**
-        Активує розділення зовнішнього контуру деталей від їх отворів, а також злиття глибин для кожної виїмки.
+        **Контур + Свердління + Виступ**
+        Дає можливість відокремлення зовнішнього контуру заготовок від їх отворів, а також розрахунок обробного вильоту, що наноситься на поверхні на краю контуру і отвору.
+      option_merge_holes_overflow: Обробка виступу
+      option_merge_holes_overflow_help: |
+        Дозволяє задати відстань виступу обробки, що наноситься на поверхні по краю контуру і отвору.
       option_include_paths: Траєкторії
       option_include_paths_0: $t(default.no)
       option_include_paths_1: "Використовуйте ребра, не пов’язані з гранями"
@@ -1698,8 +1697,8 @@ tab:
       explode_message: "Підтверджуєте розрив екземпляра **{{ name }}**?"
     option:
       general: Загальні
-      show_hidden_instances: ""
-      show_hidden_instances_help: ""
+      show_hidden_instances: Показати приховані екземпляри
+      show_hidden_instances_help: "Якщо ця опція включена, то в дереві структури будуть відображатися екземпляри, приховані в моделі."
       hide_descriptions: Сховати описи
       hide_descriptions_help: "Якщо цю опцію активовано, **описи**, розміщені на деталях, не відображаються."
       hide_tags: Приховати мітки

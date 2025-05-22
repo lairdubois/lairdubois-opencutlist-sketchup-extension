@@ -701,6 +701,7 @@ tab:
         no_column_formula: Enter a formula
       warning:
         is_group_selection: Parts contained in **hidden groups** of the Parts List will not be exported.
+        is_part_selection: The export is limited to **selected parts**.
     estimate:
       title: Estimate
       info_0: |
@@ -732,6 +733,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
         is_group_selection: Parts contained in **hidden groups** of the Parts List will not be accounted for.
+        is_part_selection: The estimation is limited to **selected parts**.
       tip:
         not_enough_data: |
           For this estimate to be calculated correctly:
@@ -1189,6 +1191,10 @@ tab:
         no_solution: No solution was found.
       warning:
         is_part_selection: This cutting diagram is limited to **selected parts**.
+        cutting_dimensions: This cutting diagramm uses the **raw** dimensions of the parts.
+        cutting_dimensions_increase_1d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "These raw dimensions have been configured on the material '{{ material_name }}': length oversize (**{{ length_increase }}**) and width oversize (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Dimensions reduced by the thickness of the edge banding. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Labels
       options_layout: Layout
