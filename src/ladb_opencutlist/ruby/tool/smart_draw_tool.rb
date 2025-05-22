@@ -240,6 +240,9 @@ module Ladb::OpenCutList
       @mouse_down_point = nil
       @mouse_snap_point = nil
 
+      @nearest_shape_start_vertex = nil
+      @nearest_shape_start_edge_manipulators = nil
+
       @picked_shape_start_point = nil
       @picked_shape_end_point = nil
       @picked_pull_end_point = nil
@@ -575,6 +578,9 @@ module Ladb::OpenCutList
 
       case @state
 
+      when STATE_SHAPE_START
+        return _read_shape_start(tool, text, view)
+
       when STATE_SHAPE
         return _read_shape(tool, text, view)
 
@@ -643,6 +649,9 @@ module Ladb::OpenCutList
 
     def _snap_shape_start(flags, x, y, view)
 
+      @nearest_vertex_manipulator = nil
+      @nearest_edge_manipulators = nil
+
       if @locked_normal
 
         @normal = @locked_normal
@@ -698,6 +707,9 @@ module Ladb::OpenCutList
           @direction = edge_manipulator.direction
           @locked_direction = @direction
 
+          @nearest_vertex_manipulator = edge_manipulator.nearest_vertex_manipulator_to(@mouse_ip.position)
+          @nearest_edge_manipulators = @nearest_vertex_manipulator.edge_manipulators.select { |edge_manipulator| edge_manipulator.edge == @mouse_ip.edge }
+
         elsif @mouse_ip.cline
 
           cline_manipulator = ClineManipulator.new(@mouse_ip.cline, @mouse_ip.transformation)
@@ -732,23 +744,8 @@ module Ladb::OpenCutList
 
           if @mouse_ip.degrees_of_freedom == 2
 
-            nearest_vertex_manipulator = face_manipulator.outer_loop_manipulator.nearest_vertex_manipulator_to(@mouse_ip.position)
-            nearest_edge_manipulators = nearest_vertex_manipulator.edge_manipulators.select { |edge_manipulator| edge_manipulator.edge.faces.include?(@mouse_ip.face) }
-
-            k_segments = Kuix::Segments.new
-            k_segments.add_segments(nearest_edge_manipulators.map { |edge_manipulator| edge_manipulator.segment }.flatten(1))
-            k_segments.line_width = 3
-            k_segments.on_top = true
-            k_segments.color = Kuix::COLOR_RED
-            @tool.append_3d(k_segments)
-
-            k_points = _create_floating_points(
-              points: nearest_vertex_manipulator.point,
-              style: Kuix::POINT_STYLE_CIRCLE,
-              stroke_color: Kuix::COLOR_BLACK,
-              fill_color: Kuix::COLOR_WHITE
-            )
-            @tool.append_3d(k_points)
+            @nearest_vertex_manipulator = face_manipulator.outer_loop_manipulator.nearest_vertex_manipulator_to(@mouse_ip.position)
+            @nearest_edge_manipulators = @nearest_vertex_manipulator.edge_manipulators.select { |edge_manipulator| edge_manipulator.edge.faces.include?(@mouse_ip.face) }
 
           end
 
@@ -803,6 +800,72 @@ module Ladb::OpenCutList
     # -----
 
     def _preview_shape_start(view)
+
+      unless @nearest_vertex_manipulator.nil? || @nearest_edge_manipulators.nil?
+
+        p0 = @nearest_vertex_manipulator.point
+        pm = @mouse_snap_point
+        pp = @nearest_edge_manipulators.map { |edge_manipulator| @mouse_snap_point.project_to_line(edge_manipulator.line) }
+        if pp.one?
+          dd = [ pp.first.distance(p0) ]
+        else
+          dd = pp.map { |point| point.distance(pm) }
+        end
+
+        colors = [ Kuix::COLOR_X, Kuix::COLOR_Y ]
+        pp.each_with_index do |p, index|
+
+          k_edge = Kuix::EdgeMotif.new
+          k_edge.start.copy!(p0)
+          k_edge.end.copy!(p)
+          k_edge.line_width = 1
+          k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+          k_edge.color = Kuix::COLOR_BLACK
+          @tool.append_3d(k_edge)
+
+          k_edge = Kuix::EdgeMotif.new
+          k_edge.start.copy!(p)
+          k_edge.end.copy!(pm)
+          k_edge.line_width = 1
+          k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+          k_edge.color = colors[index]
+          @tool.append_3d(k_edge)
+
+          k_points = _create_floating_points(
+            points: p,
+            style: Kuix::POINT_STYLE_CIRCLE,
+            stroke_color: colors[index],
+            fill_color: nil,
+            size: 1.5
+          )
+          @tool.append_3d(k_points)
+
+          if view.pixels_to_model(60, p0) < dd[index]
+
+            k_label = _create_floating_label(
+              snap_point: Geom.linear_combination(0.5, p, 0.5, pp.one? ? p0 : pm),
+              text: dd[index],
+              text_color: colors[index],
+              border_color: colors[index]
+            )
+            @tool.append_2d(k_label)
+
+          end
+
+        end
+
+        k_points = _create_floating_points(
+          points: p0,
+          style: Kuix::POINT_STYLE_CIRCLE,
+          stroke_color: Kuix::COLOR_BLACK,
+          fill_color: Kuix::COLOR_WHITE
+        )
+        @tool.append_3d(k_points)
+
+        Sketchup.set_status_text(dd.join("#{Sketchup::RegionalSettings.list_separator} "), SB_VCB_VALUE)
+
+      end
+
     end
 
     def _preview_shape(view)
@@ -914,6 +977,49 @@ module Ladb::OpenCutList
       false
     end
 
+    def _read_shape_start(tool, text, view)
+
+      if @nearest_edge_manipulators.one?
+
+        p0 = @nearest_vertex_manipulator.point
+        p1 = @mouse_snap_point.project_to_line(@nearest_edge_manipulators[0].line)
+        n1 = p0.vector_to(p1)
+
+        d1 = _read_user_text_length(tool, d1, n1.length)
+
+        @picked_shape_start_point = p0.offset(n1, d1)
+
+        set_state(STATE_SHAPE)
+        _refresh
+
+      else
+
+        d1, d2 = _split_user_text(text)
+
+        if d1 || d2
+
+          p0 = @nearest_vertex_manipulator.point
+          p1, p2 = @nearest_edge_manipulators.map { |edge_manipulator| @mouse_snap_point.project_to_line(edge_manipulator.line) }
+          pm = @mouse_snap_point
+          n1 = p1.vector_to(pm)
+          n2 = p2.vector_to(pm)
+
+          d1 = _read_user_text_length(tool, d1, n1.length)
+          d2 = _read_user_text_length(tool, d2, n2.length)
+
+          @picked_shape_start_point = Geom.intersect_line_line([ p0.offset(n1, d1), @nearest_edge_manipulators[0].direction], [ p0.offset(n2, d2), @nearest_edge_manipulators[1].direction])
+
+          set_state(STATE_SHAPE)
+          _refresh
+
+          return true
+        end
+
+      end
+
+      false
+    end
+
     def _read_shape(tool, text, view)
       if @picked_shape_start_point == @mouse_snap_point
         UI.beep
@@ -1005,6 +1111,8 @@ module Ladb::OpenCutList
       @mouse_ip.clear
       @mouse_down_point = nil
       @mouse_snap_point = nil
+      @nearest_vertex_manipulator = nil
+      @nearest_edge_manipulators = nil
       @picked_shape_start_point = nil
       @picked_shape_end_point = nil
       @picked_pull_end_point = nil
@@ -1708,6 +1816,7 @@ module Ladb::OpenCutList
     # -----
 
     def _preview_shape_start(view)
+      super
 
       width = view.pixels_to_model(40, @mouse_snap_point)
       height = width / 2
@@ -2093,6 +2202,7 @@ module Ladb::OpenCutList
     # -----
 
     def _preview_shape_start(view)
+      super
 
       diameter = view.pixels_to_model(40, @mouse_snap_point)
 
@@ -2952,6 +3062,7 @@ module Ladb::OpenCutList
     # -----
 
     def _preview_shape_start(view)
+      super
 
       width = view.pixels_to_model(40, @mouse_snap_point)
       height = width / 2
