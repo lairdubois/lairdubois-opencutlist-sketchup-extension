@@ -1295,7 +1295,7 @@ module Ladb::OpenCutList
         old_instances = @instances[1..-1]
 
         if @active_part_entity_path.one?
-          entities = model.entities
+          entities = model.active_entities
         else
           entities = @active_part_entity_path[-2].definition.entities
         end
@@ -1856,7 +1856,7 @@ module Ladb::OpenCutList
         old_instances = @instances[1..-1]
 
         if @active_part_entity_path.one?
-          entities = model.entities
+          entities = model.active_entities
         else
           entities = @active_part_entity_path[-2].definition.entities
         end
@@ -2875,7 +2875,7 @@ module Ladb::OpenCutList
         old_instances = @instances[1..-1]
 
         if @active_part_entity_path.one?
-          entities = model.entities
+          entities = model.active_entities
         else
           entities = @active_part_entity_path[-2].definition.entities
         end
