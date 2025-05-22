@@ -2396,6 +2396,814 @@
 
     };
 
+    // Packing /////
+
+    LadbTabCutlist.prototype.packingGroup = function (groupId, forceDefaultTab, generateCallback) {
+        const that = this;
+
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId);
+        const partIds = partIdsWithContext.partIds;
+        const context = partIdsWithContext.context;
+
+        const group = context.targetGroup
+
+        const section = groupId;
+
+        // Retrieve packing options
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_packing_options', section: section }, function (response) {
+
+            const packingOptions = response.preset;
+
+            rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
+
+                const $modal = that.appendModalInside('ladb_cutlist_modal_packing', 'tabs/cutlist/_modal-packing.twig', {
+                    material_attributes: response,
+                    group: group,
+                    isPartSelection: context ? context.isPartSelection : false,
+                    tab: forceDefaultTab || that.lastPackingOptionsTab == null ? 'material' : that.lastPackingOptionsTab
+                });
+
+                // Fetch UI elements
+                const $tabs = $('a[data-toggle="tab"]', $modal);
+                const $widgetPreset = $('.ladb-widget-preset', $modal);
+                const $editorStdBinSizes = $('#ladb_editor_std_bin_sizes', $modal);
+                const $editorScrapBinSizes = $('#ladb_editor_scrap_bin_sizes', $modal);
+                const $btnsProblemType = $('label.btn-radio', $modal);
+                const $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
+                const $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
+                const $selectObjective = $('#ladb_select_objective', $modal);
+                const $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
+                const $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
+                const $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
+                const $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
+                const $inputRectangleguillotineKeepSize = $('#ladb_input_rectangleguillotine_keep_size', $modal);
+                const $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
+                const $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
+                const $formGroupDebug = $('.ladb-cutlist-packing-form-group-debug', $modal)
+                const $btnExpert = $('.ladb-cutlist-packing-btn-expert', $modal)
+                const $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
+                const $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
+                const $inputSpacing = $('#ladb_input_spacing', $modal);
+                const $inputTrimming = $('#ladb_input_trimming', $modal);
+                const $textareaItemsFormula = $('#ladb_textarea_items_formula', $modal);
+                const $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
+                const $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
+                const $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
+                const $selectColorization = $('#ladb_select_colorization', $modal);
+                const $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
+                const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
+                const $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
+                const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
+                const $selectInputToJsonBinDir = $('#ladb_select_input_to_json_bin_dir', $modal);
+                const $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
+                const $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
+                const $btnGenerate = $('#ladb_btn_generate', $modal);
+
+                const fnFetchOptions = function (options) {
+                    if (group.material_is_1d) {
+                        options.std_bin_1d_sizes = $editorStdBinSizes.ladbEditorSizes('getSizes');
+                        options.std_bin_2d_sizes = '';
+                        options.scrap_bin_1d_sizes = $editorScrapBinSizes.ladbEditorSizes('getSizes');
+                        options.scrap_bin_2d_sizes = '';
+                    }
+                    if (group.material_is_2d) {
+                        options.std_bin_1d_sizes = ''
+                        options.std_bin_2d_sizes = $editorStdBinSizes.ladbEditorSizes('getSizes');
+                        options.scrap_bin_1d_sizes = '';
+                        options.scrap_bin_2d_sizes = $editorScrapBinSizes.ladbEditorSizes('getSizes');
+                    }
+
+                    options.problem_type = $radiosProblemType.filter(':checked').val();
+                    options.optimization_mode = $selectOptimizationMode.val();
+                    options.objective = $selectObjective.val();
+                    options.rectangleguillotine_cut_type = $selectRectangleguillotineCutType.val();
+                    options.rectangleguillotine_number_of_stages = that.toInt($selectRectangleguillotineNumberOfStages.val());
+                    options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
+                    options.rectangleguillotine_keep_size = $inputRectangleguillotineKeepSize.val();
+                    options.irregular_allowed_rotations = $selectIrregularAllowedRotations.val();
+                    options.irregular_allow_mirroring = $selectIrregularAllowMirroring.val() === '1';
+                    options.spacing = $inputSpacing.val();
+                    options.trimming = $inputTrimming.val();
+                    options.items_formula = $textareaItemsFormula.val();
+                    options.origin_corner = that.toInt($selectOriginCorner.val());
+                    options.hide_part_list = $selectHidePartList.val() === '1';
+                    options.part_drawing_type = that.toInt($selectPartDrawingType.val());
+                    options.colorization = that.toInt($selectColorization.val());
+                    options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
+                    options.time_limit = that.toInt($inputTimeLimit.val());
+                    options.not_anytime_tree_search_queue_size = that.toInt($inputNotAnytimeTreeSearchQueueSize.val());
+                    options.verbosity_level = that.toInt($selectVerbosityLevel.val());
+                    options.input_to_json_bin_dir = $selectInputToJsonBinDir.val();
+                }
+                const fnFillInputs = function (options) {
+                    $radiosProblemType.filter('[value=' + fnValidProblemType(options.problem_type) + ']').click();
+                    $selectOptimizationMode.selectpicker('val', options.optimization_mode);
+                    $selectObjective.selectpicker('val', options.objective);
+                    $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
+                    $selectRectangleguillotineNumberOfStages.selectpicker('val', options.rectangleguillotine_number_of_stages);
+                    $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
+                    $inputRectangleguillotineKeepSize.ladbTextinputSize('val', options.rectangleguillotine_keep_size);
+                    $selectIrregularAllowedRotations.selectpicker('val', fnValidIrregularAllowedRotations(options.irregular_allowed_rotations));
+                    $selectIrregularAllowMirroring.selectpicker('val', options.irregular_allow_mirroring ? '1' : '0');
+                    $inputSpacing.val(options.spacing);
+                    $inputTrimming.val(options.trimming);
+                    $textareaItemsFormula.ladbTextinputCode('val', [ typeof options.items_formula == 'string' ? options.items_formula : '' ]);
+                    $selectOriginCorner.selectpicker('val', options.origin_corner);
+                    $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
+                    $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
+                    $selectColorization.selectpicker('val', options.colorization);
+                    $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
+                    $inputTimeLimit.val(options.time_limit);
+                    $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
+                    $selectVerbosityLevel.selectpicker('val', options.verbosity_level);
+                    $selectInputToJsonBinDir.selectpicker('val', options.input_to_json_bin_dir);
+                    fnUpdateFieldsVisibility();
+                }
+                const fnConvertToVariableDefs = function (vars) {
+
+                    // Generate variableDefs for formula editor
+                    const variableDefs = [];
+                    for (let i = 0; i < vars.length; i++) {
+                        variableDefs.push({
+                            text: vars[i].name,
+                            displayText: i18next.t('tab.cutlist.export.' + vars[i].name),
+                            type: vars[i].type
+                        });
+                    }
+
+                    return variableDefs;
+                }
+                const fnUpdateFieldsVisibility = function () {
+                    const isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
+                    const isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
+                    const isDebug = that.dialog.capabilities.is_dev && !that.dialog.capabilities.is_rbz;
+                    if (isIrregular) $formGroupNotIrregular.hide(); else $formGroupNotIrregular.show();
+                    if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
+                    if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
+                    if (isDebug) $formGroupDebug.show(); else $formGroupDebug.hide();
+                    $('option[value=0]', $selectPartDrawingType).prop('disabled', isIrregular);
+                    if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);
+                    $selectPartDrawingType.selectpicker('refresh');
+                };
+                const fnValidProblemType = function (problemType) {
+                    if (group.material_is_1d
+                        && (problemType === 'rectangleguillotine' || problemType === 'rectangle')) {
+                        return 'onedimensional';
+                    }
+                    return problemType;
+                }
+                const fnValidIrregularAllowedRotations = function (irregularAllowedRotations) {
+                    if ((group.material_grained || group.material_is_1d)
+                        && (irregularAllowedRotations === '90' || irregularAllowedRotations === '45')) {
+                        return '180';
+                    }
+                    return irregularAllowedRotations;
+                }
+                const fnEditMaterial = function (options) {
+
+                    // Hide modal
+                    $modal.modal('hide');
+
+                    // Edit material
+                    that.dialog.executeCommandOnTab('materials', 'edit_material', $.extend({
+                        materialId: group.material_id,
+                        propertiesTab: 'formats'
+                    }, options));
+
+                };
+
+                $widgetPreset.ladbWidgetPreset({
+                    dialog: that.dialog,
+                    dictionary: 'cutlist_packing_options',
+                    fnFetchOptions: fnFetchOptions,
+                    fnFillInputs: fnFillInputs
+                });
+                $editorStdBinSizes
+                    .ladbEditorSizes({
+                        format: group.material_is_1d ? FORMAT_D : FORMAT_D_D,
+                        d1Placeholder: i18next.t('default.length'),
+                        d2Placeholder: i18next.t('default.width'),
+                        qPlaceholder: '∞',
+                        qHidden: false,
+                        emptyVal: '0',
+                        dropdownActionLabel: '<i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.packing.option_std_bin_' + (group.material_is_1d ? '1' : '2') + 'd_add'),
+                        dropdownActionCallback: function () {
+                            fnEditMaterial({
+                                callback: function ($editMaterialModal) {
+                                    setTimeout(function () {
+                                        $('#ladb_materials_editor_std_' + (group.material_is_1d ? 'lengths' : 'sizes'), $editMaterialModal).ladbEditorSizes('appendRow', [{}, {autoFocus: true}]);
+                                    }, 200);
+                                }
+                            })
+                        }
+                    })
+                    .ladbEditorSizes('setAvailableSizesAndSizes', [ group.material_is_1d ? response.std_lengths : response.std_sizes, group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes ])
+                ;
+                $editorScrapBinSizes
+                    .ladbEditorSizes({
+                        format: group.material_is_1d ? FORMAT_D_Q : FORMAT_D_D_Q,
+                        d1Placeholder: i18next.t('default.length'),
+                        d2Placeholder: i18next.t('default.width'),
+                        emptyVal: '0'
+                    })
+                    .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes)
+                ;
+                $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectRectangleguillotineNumberOfStages.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputRectangleguillotineKeepSize.ladbTextinputSize({
+                    resetValue: '',
+                    d1Placeholder: i18next.t('default.length'),
+                    d2Placeholder: i18next.t('default.width'),
+                    qDisabled: true,
+                    qHidden: true,
+                    dSeparatorLabel: 'x'
+                });
+                $selectIrregularAllowedRotations.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputSpacing.ladbTextinputDimension();
+                $inputTrimming.ladbTextinputDimension();
+                $textareaItemsFormula.ladbTextinputCode({
+                    variableDefs: fnConvertToVariableDefs([
+                        { name: 'number', type: 'string' },
+                        { name: 'path', type: 'array' },
+                        { name: 'instance_name', type: 'string' },
+                        { name: 'name', type: 'string' },
+                        { name: 'cutting_length', type: 'length' },
+                        { name: 'cutting_width', type: 'length' },
+                        { name: 'cutting_thickness', type: 'length' },
+                        { name: 'edge_cutting_length', type: 'length' },
+                        { name: 'edge_cutting_width', type: 'length' },
+                        { name: 'bbox_length', type: 'length' },
+                        { name: 'bbox_width', type: 'length' },
+                        { name: 'bbox_thickness', type: 'length' },
+                        { name: 'final_area', type: 'area' },
+                        { name: 'material', type: 'material' },
+                        { name: 'material_type', type: 'material-type' },
+                        { name: 'material_name', type: 'string' },
+                        { name: 'material_description', type: 'string' },
+                        { name: 'material_url', type: 'string' },
+                        { name: 'description', type: 'string' },
+                        { name: 'url', type: 'string' },
+                        { name: 'tags', type: 'array' },
+                        { name: 'edge_ymin', type: 'edge' },
+                        { name: 'edge_ymax', type: 'edge' },
+                        { name: 'edge_xmin', type: 'edge' },
+                        { name: 'edge_xmax', type: 'edge' },
+                        { name: 'face_zmax', type: 'veneer' },
+                        { name: 'face_zmin', type: 'veneer' },
+                        { name: 'layer', type: 'string' },
+                        { name: 'component_definition', type: 'component_definition' },
+                        { name: 'component_instance', type: 'component_instance' },
+                    ]),
+                    snippetDefs: [
+                        { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
+                        { name: i18next.t('tab.cutlist.snippet.name'), value: '@name' },
+                        { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
+                        { name: '-' },
+                        { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
+                        { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
+                        { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
+                    ]
+                });
+                $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectColorization.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputTimeLimit.ladbTextinputText();
+                $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
+                $selectVerbosityLevel.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectInputToJsonBinDir.selectpicker(SELECT_PICKER_OPTIONS);
+
+                fnFillInputs(packingOptions);
+
+                // Bind radios
+                $btnsProblemType.on('click', function (e) {
+                    if ($(this).hasClass('disabled')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+                $radiosProblemType.on('change', fnUpdateFieldsVisibility);
+
+                // Bind tabs
+                $tabs.on('shown.bs.tab', function (e) {
+                    that.lastPackingOptionsTab = $(e.target).attr('href').substring('#tab_packing_options_'.length);
+                });
+
+                // Bind collapses
+                $('#ladb-cutlist-packing-collapse-expert')
+                    .on('shown.bs.collapse', function () {
+                        $('i', $btnExpert)
+                            .removeClass('ladb-opencutlist-icon-plus')
+                            .addClass('ladb-opencutlist-icon-minus')
+                        ;
+                    })
+                    .on('hidden.bs.collapse', function () {
+                        $('i', $btnExpert)
+                            .addClass('ladb-opencutlist-icon-plus')
+                            .removeClass('ladb-opencutlist-icon-minus')
+                        ;
+                    })
+                ;
+
+                // Bind buttons
+                $btnEditMaterial.on('click', function () {
+                    fnEditMaterial();
+                });
+                $btnUnloadLib.on('click', function () {
+                    rubyCallCommand('core_unload_c_lib', {lib: 'packy'}, function (response) {
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        }
+                        if (response.success) {
+                            that.dialog.notifySuccess('Packy unloaded');
+                        }
+                    });
+                });
+                $btnExpert.on('click', function () {
+                    $('#ladb-cutlist-packing-collapse-expert').collapse('toggle');
+                    $(this).blur();
+                })
+                $btnGenerate.on('click', function () {
+
+                    // Fetch options
+                    fnFetchOptions(packingOptions);
+
+                    // Store options
+                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_packing_options', values: packingOptions, section: section });
+
+                    if (typeof generateCallback === 'function') {
+
+                        // Hide modal
+                        $modal.modal('hide');
+
+                        generateCallback();
+
+                    } else {
+
+                        let fnCreateSlide = function (response) {
+
+                            const solution = response.solution;
+
+                            let $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
+                                capabilities: that.dialog.capabilities,
+                                generateOptions: that.generateOptions,
+                                packingOptions: packingOptions,
+                                dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
+                                filename: that.filename,
+                                modelName: that.modelName,
+                                modelDescription: that.modelDescription,
+                                modelActivePath: that.modelActivePath,
+                                pageName: that.pageName,
+                                pageDescription: that.pageDescription,
+                                isEntitySelection: that.isEntitySelection,
+                                lengthUnit: that.lengthUnit,
+                                generatedAt: new Date().getTime() / 1000,
+                                group: group
+                            }, response), function () {
+                                that.dialog.setupTooltips();
+                            });
+
+                            // Fetch UI elements
+                            const $btnPacking = $('#ladb_btn_packing', $slide);
+                            const $btnPrint = $('#ladb_btn_print', $slide);
+                            const $btnExport = $('#ladb_btn_export', $slide);
+                            const $btnLabels = $('#ladb_btn_labels', $slide);
+                            const $btnClose = $('#ladb_btn_close', $slide);
+
+                            // Bind buttons
+                            $btnPacking.on('click', function () {
+                                that.packingGroup(groupId);
+                            });
+                            $btnPrint.on('click', function () {
+                                $(this).blur();
+                                that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.packing.title'));
+                            });
+                            $btnExport.on('click', function () {
+                                $(this).blur();
+
+                                // Count hidden groups
+                                const hiddenBinIndices = [];
+                                $('.ladb-cutlist-packing-group', $slide).each(function () {
+                                    if ($(this).hasClass('no-print')) {
+                                        hiddenBinIndices.push($(this).data('bin-index'));
+                                    }
+                                });
+                                const isBinSelection = hiddenBinIndices.length > 0
+
+                                // Retrieve packing options
+                                rubyCallCommand('core_get_model_preset', {
+                                    dictionary: 'cutlist_packing_write_options',
+                                    section: groupId
+                                }, function (response) {
+
+                                    const writeOptions = response.preset;
+
+                                    const $modal = that.appendModalInside('ladb_cutlist_modal_packing_export', 'tabs/cutlist/_modal-packing-write.twig', {
+                                        group: group,
+                                        isBinSelection: isBinSelection,
+                                    });
+
+                                    // Fetch UI elements
+                                    const $widgetPreset = $('.ladb-widget-preset', $modal);
+                                    const $selectFileFormat = $('#ladb_select_file_format', $modal);
+                                    const $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
+                                    const $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
+                                    const $selectUnit = $('#ladb_select_unit', $modal);
+                                    const $selectSmoothing = $('#ladb_select_smoothing', $modal);
+                                    const $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
+                                    const $formGroupMergeHolesOverflow = $('#ladb_form_group_merge_holes_overflow', $modal);
+                                    const $inputMergeHolesOverflow = $('#ladb_input_merge_holes_overflow', $modal);
+                                    const $selectIncludePaths = $('#ladb_select_include_paths', $modal);
+                                    const $inputBinHidden = $('#ladb_input_bin_hidden', $modal);
+                                    const $inputBinStrokeColor = $('#ladb_input_bin_stroke_color', $modal);
+                                    const $inputBinFillColor = $('#ladb_input_bin_fill_color', $modal);
+                                    const $inputPartsHidden = $('#ladb_input_parts_hidden', $modal);
+                                    const $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
+                                    const $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
+                                    const $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
+                                    const $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
+                                    const $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
+                                    const $formGroupPartsPaths = $('#ladb_form_group_parts_paths', $modal);
+                                    const $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', $modal);
+                                    const $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', $modal);
+                                    const $formGroupTexts = $('#ladb_form_group_texts', $modal);
+                                    const $inputTextsHidden = $('#ladb_input_texts_hidden', $modal);
+                                    const $inputTextsColor = $('#ladb_input_texts_color', $modal);
+                                    const $inputLeftoversHidden = $('#ladb_input_leftovers_hidden', $modal);
+                                    const $inputLeftoversStrokeColor = $('#ladb_input_leftovers_stroke_color', $modal);
+                                    const $inputLeftoversFillColor = $('#ladb_input_leftovers_fill_color', $modal);
+                                    const $inputCutsHidden = $('#ladb_input_cuts_hidden', $modal);
+                                    const $inputCutsColor = $('#ladb_input_cuts_color', $modal);
+                                    const $btnExport = $('#ladb_btn_export', $modal);
+
+                                    const fnFetchOptions = function (options) {
+                                        options.file_format = $selectFileFormat.val();
+                                        options.dxf_structure = that.toInt($selectDxfStructure.val());
+                                        options.unit = that.toInt($selectUnit.val());
+                                        options.smoothing = $selectSmoothing.val() === '1';
+                                        options.merge_holes = $selectMergeHoles.val() === '1';
+                                        options.merge_holes_overflow = $inputMergeHolesOverflow.val();
+                                        options.include_paths = $selectIncludePaths.val() === '1';
+                                        options.bin_hidden = !$inputBinHidden.is(':checked');
+                                        options.bin_stroke_color = $inputBinStrokeColor.ladbTextinputColor('val');
+                                        options.bin_fill_color = $inputBinFillColor.ladbTextinputColor('val');
+                                        options.parts_hidden = !$inputPartsHidden.is(':checked');
+                                        options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
+                                        options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
+                                        options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
+                                        options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
+                                        options.parts_paths_stroke_color = $inputPartsPathsStrokeColor.ladbTextinputColor('val');
+                                        options.parts_paths_fill_color = $inputPartsPathsFillColor.ladbTextinputColor('val');
+                                        options.texts_hidden = !$inputTextsHidden.is(':checked');
+                                        options.texts_color = $inputTextsColor.ladbTextinputColor('val');
+                                        options.leftovers_hidden = !$inputLeftoversHidden.is(':checked');
+                                        options.leftovers_stroke_color = $inputLeftoversStrokeColor.ladbTextinputColor('val');
+                                        options.leftovers_fill_color = $inputLeftoversFillColor.ladbTextinputColor('val');
+                                        options.cuts_hidden = !$inputCutsHidden.is(':checked');
+                                        options.cuts_color = $inputCutsColor.ladbTextinputColor('val');
+                                    };
+                                    const fnFillInputs = function (options) {
+                                        $selectFileFormat.selectpicker('val', options.file_format);
+                                        $selectDxfStructure.selectpicker('val', options.dxf_structure);
+                                        $selectUnit.selectpicker('val', options.unit);
+                                        $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
+                                        $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
+                                        $inputMergeHolesOverflow.val(options.merge_holes_overflow);
+                                        $selectIncludePaths.selectpicker('val', options.include_paths ? '1' : '0');
+                                        $inputBinHidden.prop('checked', !options.bin_hidden);
+                                        $inputBinStrokeColor.ladbTextinputColor('val', options.bin_stroke_color);
+                                        $inputBinFillColor.ladbTextinputColor('val', options.bin_fill_color);
+                                        $inputPartsHidden.prop('checked', !options.parts_hidden);
+                                        $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
+                                        $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
+                                        $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
+                                        $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
+                                        $inputPartsPathsStrokeColor.ladbTextinputColor('val', options.parts_paths_stroke_color);
+                                        $inputPartsPathsFillColor.ladbTextinputColor('val', options.parts_paths_fill_color);
+                                        $inputTextsHidden.prop('checked', !options.texts_hidden);
+                                        $inputTextsColor.ladbTextinputColor('val', options.texts_color);
+                                        $inputLeftoversHidden.prop('checked', !options.leftovers_hidden);
+                                        $inputLeftoversStrokeColor.ladbTextinputColor('val', options.leftovers_stroke_color);
+                                        $inputLeftoversFillColor.ladbTextinputColor('val', options.leftovers_fill_color);
+                                        $inputCutsHidden.prop('checked', !options.cuts_hidden);
+                                        $inputCutsColor.ladbTextinputColor('val', options.cuts_color);
+                                        fnUpdateFieldsVisibility();
+                                    };
+                                    const fnUpdateFieldsVisibility = function () {
+                                        const isDxf = $selectFileFormat.val() === 'dxf';
+                                        const isMergeHoles = $selectMergeHoles.val() === '1';
+                                        const isIncludePaths = $selectIncludePaths.val() === '1';
+                                        const isSheetHidden = !$inputBinHidden.is(':checked');
+                                        const isPartsHidden = !$inputPartsHidden.is(':checked');
+                                        const isTextsHidden = !$inputTextsHidden.is(':checked');
+                                        const isLeftoversHidden = !$inputLeftoversHidden.is(':checked');
+                                        const isCutsHidden = !$inputCutsHidden.is(':checked');
+                                        if (isDxf) $formGroupDxfStructure.show(); else $formGroupDxfStructure.hide();
+                                        if (isMergeHoles) $formGroupMergeHolesOverflow.show(); else $formGroupMergeHolesOverflow.hide();
+                                        $inputBinStrokeColor.ladbTextinputColor(isSheetHidden ? 'disable' : 'enable');
+                                        $inputBinFillColor.ladbTextinputColor(isSheetHidden || isDxf ? 'disable' : 'enable');
+                                        $inputPartsStrokeColor.ladbTextinputColor(isPartsHidden ? 'disable' : 'enable');
+                                        $inputPartsFillColor.ladbTextinputColor(isPartsHidden || isDxf ? 'disable' : 'enable');
+                                        if (isPartsHidden || !isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
+                                        $inputPartsHolesStrokeColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
+                                        $inputPartsHolesFillColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
+                                        if (isPartsHidden || !isIncludePaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
+                                        $inputPartsPathsStrokeColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
+                                        $inputPartsPathsFillColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
+                                        if (isPartsHidden) $formGroupTexts.hide(); else $formGroupTexts.show();
+                                        $inputTextsColor.ladbTextinputColor(isTextsHidden ? 'disable' : 'enable');
+                                        $inputLeftoversStrokeColor.ladbTextinputColor(isLeftoversHidden ? 'disable' : 'enable');
+                                        $inputLeftoversFillColor.ladbTextinputColor(isLeftoversHidden || isDxf ? 'disable' : 'enable');
+                                        $inputCutsColor.ladbTextinputColor(isCutsHidden ? 'disable' : 'enable');
+                                        $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
+                                    };
+
+                                    $widgetPreset.ladbWidgetPreset({
+                                        dialog: that.dialog,
+                                        dictionary: 'cutlist_packing_write_options',
+                                        fnFetchOptions: fnFetchOptions,
+                                        fnFillInputs: fnFillInputs
+                                    });
+                                    $selectFileFormat
+                                        .selectpicker(SELECT_PICKER_OPTIONS)
+                                        .on('changed.bs.select', function () {
+                                            const fileCount = solution.bins.length - hiddenBinIndices.length;
+                                            $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', {count: fileCount}).toLowerCase() + ' )</small>');
+                                            fnUpdateFieldsVisibility();
+                                        })
+                                    ;
+                                    $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
+                                    $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
+                                    $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
+                                    $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
+                                    $inputMergeHolesOverflow.ladbTextinputDimension();
+                                    $selectIncludePaths.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
+                                    $inputBinStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                    $inputBinFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                    $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                    $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                    $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                    $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                    $inputPartsPathsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                    $inputPartsPathsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                    $inputTextsColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                    $inputLeftoversStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                    $inputLeftoversFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+                                    $inputCutsColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+
+                                    fnFillInputs(writeOptions);
+
+                                    // Bind inputs
+                                    $inputBinHidden.on('change', fnUpdateFieldsVisibility);
+                                    $inputPartsHidden.on('change', fnUpdateFieldsVisibility);
+                                    $inputTextsHidden.on('change', fnUpdateFieldsVisibility);
+                                    $inputLeftoversHidden.on('change', fnUpdateFieldsVisibility);
+                                    $inputCutsHidden.on('change', fnUpdateFieldsVisibility);
+
+                                    // Bind buttons
+                                    $btnExport.on('click', function () {
+
+                                        // Fetch options
+                                        fnFetchOptions(writeOptions);
+
+                                        // Store options
+                                        rubyCallCommand('core_set_model_preset', {
+                                            dictionary: 'cutlist_packing_write_options',
+                                            values: writeOptions,
+                                            section: groupId
+                                        });
+
+                                        rubyCallCommand('cutlist_packing_write', $.extend({
+                                            hidden_bin_indices: hiddenBinIndices,
+                                            part_drawing_type: packingOptions.part_drawing_type
+                                        }, writeOptions), function (response) {
+
+                                            if (response.errors) {
+                                                that.dialog.notifyErrors(response.errors);
+                                            }
+                                            if (response.export_path) {
+                                                that.dialog.notifySuccess(i18next.t('core.success.exported_to', {path: response.export_path}), [
+                                                    Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
+
+                                                        rubyCallCommand('core_open_external_file', {
+                                                            path: response.export_path
+                                                        });
+
+                                                    })
+                                                ]);
+                                            }
+
+                                        });
+
+                                        // Hide modal
+                                        $modal.modal('hide');
+
+                                    });
+
+                                    // Show modal
+                                    $modal.modal('show');
+
+                                    // Setup popovers
+                                    that.dialog.setupPopovers();
+
+                                });
+
+                            });
+                            $btnLabels.on('click', function () {
+
+                                // Compute label bins (a list of sheet or bar index attached to part id)
+                                let binDefs = {};
+                                let binIndex = 0;
+                                $.each(response.solution.bins, function () {
+                                    for (let i = 0; i < this.count; i++) {
+                                        binIndex++;
+                                        $.each(this.parts, function (v) {
+                                            for (let j = 0; j < this.count; j++) {
+                                                if (!binDefs[this.part.id]) {
+                                                    binDefs[this.part.id] = [];
+                                                }
+                                                binDefs[this.part.id].push(binIndex);
+                                            }
+                                        });
+                                    }
+                                });
+
+                                that.labelsGroupParts(groupId, binDefs);
+                            });
+                            $btnClose.on('click', function () {
+                                that.popSlide();
+                            });
+                            $('.ladb-btn-setup-model-units', $slide).on('click', function () {
+                                $(this).blur();
+                                that.dialog.executeCommandOnTab('settings', 'highlight_panel', {panel: 'model'});
+                            });
+                            $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
+                                const $group = $(this).parents('.ladb-cutlist-group');
+                                const groupId = $group.data('group-id');
+                                if ($group.hasClass('no-print')) {
+                                    that.showGroup($group, groupId !== 'packing_summary', false, packingOptions, 'cutlist_packing_options', section);
+                                } else {
+                                    that.hideGroup($group, groupId !== 'packing_summary', false, packingOptions, 'cutlist_packing_options', section);
+                                }
+                                $(this).blur();
+                                return false;
+                            });
+                            $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
+                                const $group = $(this).parents('.ladb-cutlist-group');
+                                const groupId = $group.data('bin-index');
+                                const $target = $('.ladb-cutlist-packing-group[data-bin-index=' + (parseInt(groupId) - 1) + ']');
+                                that.scrollSlideToTarget($slide, $target, true, true);
+                                $(this).blur();
+                                return false;
+                            });
+                            $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
+                                const $group = $(this).parents('.ladb-cutlist-group');
+                                const groupId = $group.data('bin-index');
+                                const $target = $('.ladb-cutlist-packing-group[data-bin-index=' + (parseInt(groupId) + 1) + ']');
+                                that.scrollSlideToTarget($slide, $target, true, true);
+                                $(this).blur();
+                                return false;
+                            });
+                            $('a.ladb-btn-highlight-part', $slide).on('click', function () {
+                                const $part = $(this).parents('.ladb-cutlist-row');
+                                const partId = $part.data('part-id');
+                                that.highlightPart(partId);
+                                $(this).blur();
+                                return false;
+                            });
+                            $('a.ladb-btn-scrollto', $slide).on('click', function () {
+                                const $target = $($(this).attr('href'));
+                                if ($target.data('group-id')) {
+                                    that.showGroup($target, false);
+                                }
+                                that.scrollSlideToTarget($slide, $target, true, true);
+                                $(this).blur();
+                                return false;
+                            });
+                            $('a.ladb-btn-edit-material', $slide).on('click', function () {
+                                fnEditMaterial({
+                                    propertiesTab: 'attributes',
+                                });
+                                $(this).blur();
+                                return false;
+                            });
+                            $('.ladb-cutlist-row', $slide).on('click', function () {
+                                $('.ladb-click-tool', $(this)).click();
+                                $(this).blur();
+                                return false;
+                            });
+                            $('#ladb_btn_select_unplaced_parts', $slide).on('click', function () {
+                                that.cleanupSelection();
+                                $.each(response.solution.unplaced_part_infos, function (index, part_info) {
+                                    that.selectPart(part_info.part.id, true);
+                                });
+                                that.dialog.notifySuccess(i18next.t('tab.cutlist.success.part_selected', {count: response.solution.unplaced_part_infos.length}), [
+                                    Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
+                                        $btnClose.click();
+                                    })
+                                ]);
+                            });
+
+                            // SVG
+                            $('SVG .item', $slide).on('click', function () {
+                                const partId = $(this).data('part-id');
+                                that.highlightPart(partId);
+                                $(this).blur();
+                                return false;
+                            });
+
+                            // Finish progress feedback
+                            that.dialog.finishProgress();
+
+                        };
+
+                        window.requestAnimationFrame(function () {
+                            that.dialog.startProgress(parseInt(packingOptions.time_limit) * 4, function () {
+                                rubyCallCommand('cutlist_group_packing_cancel');
+                            });
+                            rubyCallCommand('cutlist_group_packing_start', $.extend({
+                                part_ids: partIds
+                            }, packingOptions), function (response) {
+
+                                if (response.running) {
+                                    let waitingForResponse = false;
+                                    const intervalId = setInterval(function () {
+
+                                        if (waitingForResponse) {
+                                            return;
+                                        }
+
+                                        rubyCallCommand('cutlist_group_packing_advance', null, function (response) {
+
+                                            waitingForResponse = false;
+
+                                            if (response.running) {
+
+                                                // Advance progress feedback
+                                                that.dialog.incProgress(1);
+
+                                                if (response.solution) {
+                                                    that.dialog.changeCancelBtnLabelProgress(i18next.t('default.stop'))
+                                                    that.dialog.previewProgress(Twig.twig({ref: "tabs/cutlist/_progress-preview-packing.twig"}).render({
+                                                        solution: response.solution
+                                                    }));
+                                                }
+
+                                            } else if (response.cancelled) {
+
+                                                clearInterval(intervalId);
+
+                                                // Finish progress feedback
+                                                that.dialog.finishProgress();
+
+                                            } else {
+
+                                                clearInterval(intervalId);
+
+                                                fnCreateSlide(response);
+
+                                            }
+
+                                        });
+                                        waitingForResponse = true;
+
+                                    }, 250);
+                                } else if (response.cancelled) {
+
+                                    // Finish progress feedback
+                                    that.dialog.finishProgress();
+
+                                } else {
+                                    fnCreateSlide(response);
+                                }
+
+                            });
+                        });
+
+                        // Hide modal
+                        $modal.modal('hide');
+
+                    }
+
+                });
+
+                // Show modal
+                $modal.modal('show');
+
+                // Setup popovers
+                that.dialog.setupPopovers();
+
+            });
+
+        });
+
+    };
+
     // Labels /////
 
     LadbTabCutlist.prototype.labelsAllParts = function () {
@@ -5082,810 +5890,6 @@
                 // Bind modal
                 $modal.on('hide.bs.modal', function () {
                     $inputScrapSheetSizes.ladbTextinputTokenfield('destroy');
-                });
-
-                // Show modal
-                $modal.modal('show');
-
-                // Setup popovers
-                that.dialog.setupPopovers();
-
-            });
-
-        });
-
-    };
-
-    LadbTabCutlist.prototype.packingGroup = function (groupId, forceDefaultTab, generateCallback) {
-        const that = this;
-
-        const group = this.findGroupById(groupId);
-        const isPartSelection = this.selectionGroupId === groupId && this.selectionPartIds.length > 0;
-
-        const section = groupId;
-
-        // Retrieve cutting diagram options
-        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_packing_options', section: section }, function (response) {
-
-            const packingOptions = response.preset;
-
-            rubyCallCommand('materials_get_attributes_command', { name: group.material_name }, function (response) {
-
-                const $modal = that.appendModalInside('ladb_cutlist_modal_packing', 'tabs/cutlist/_modal-packing.twig', {
-                    material_attributes: response,
-                    group: group,
-                    isPartSelection: isPartSelection,
-                    tab: forceDefaultTab || that.lastPackingOptionsTab == null ? 'material' : that.lastPackingOptionsTab
-                });
-
-                // Fetch UI elements
-                const $tabs = $('a[data-toggle="tab"]', $modal);
-                const $widgetPreset = $('.ladb-widget-preset', $modal);
-                const $editorStdBinSizes = $('#ladb_editor_std_bin_sizes', $modal);
-                const $editorScrapBinSizes = $('#ladb_editor_scrap_bin_sizes', $modal);
-                const $btnsProblemType = $('label.btn-radio', $modal);
-                const $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
-                const $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
-                const $selectObjective = $('#ladb_select_objective', $modal);
-                const $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
-                const $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
-                const $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
-                const $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
-                const $inputRectangleguillotineKeepSize = $('#ladb_input_rectangleguillotine_keep_size', $modal);
-                const $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
-                const $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
-                const $formGroupDebug = $('.ladb-cutlist-packing-form-group-debug', $modal)
-                const $btnExpert = $('.ladb-cutlist-packing-btn-expert', $modal)
-                const $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
-                const $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
-                const $inputSpacing = $('#ladb_input_spacing', $modal);
-                const $inputTrimming = $('#ladb_input_trimming', $modal);
-                const $textareaItemsFormula = $('#ladb_textarea_items_formula', $modal);
-                const $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
-                const $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
-                const $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
-                const $selectColorization = $('#ladb_select_colorization', $modal);
-                const $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
-                const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
-                const $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
-                const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
-                const $selectInputToJsonBinDir = $('#ladb_select_input_to_json_bin_dir', $modal);
-                const $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
-                const $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
-                const $btnGenerate = $('#ladb_btn_generate', $modal);
-
-                const fnFetchOptions = function (options) {
-                    if (group.material_is_1d) {
-                        options.std_bin_1d_sizes = $editorStdBinSizes.ladbEditorSizes('getSizes');
-                        options.std_bin_2d_sizes = '';
-                        options.scrap_bin_1d_sizes = $editorScrapBinSizes.ladbEditorSizes('getSizes');
-                        options.scrap_bin_2d_sizes = '';
-                    }
-                    if (group.material_is_2d) {
-                        options.std_bin_1d_sizes = ''
-                        options.std_bin_2d_sizes = $editorStdBinSizes.ladbEditorSizes('getSizes');
-                        options.scrap_bin_1d_sizes = '';
-                        options.scrap_bin_2d_sizes = $editorScrapBinSizes.ladbEditorSizes('getSizes');
-                    }
-
-                    options.problem_type = $radiosProblemType.filter(':checked').val();
-                    options.optimization_mode = $selectOptimizationMode.val();
-                    options.objective = $selectObjective.val();
-                    options.rectangleguillotine_cut_type = $selectRectangleguillotineCutType.val();
-                    options.rectangleguillotine_number_of_stages = that.toInt($selectRectangleguillotineNumberOfStages.val());
-                    options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
-                    options.rectangleguillotine_keep_size = $inputRectangleguillotineKeepSize.val();
-                    options.irregular_allowed_rotations = $selectIrregularAllowedRotations.val();
-                    options.irregular_allow_mirroring = $selectIrregularAllowMirroring.val() === '1';
-                    options.spacing = $inputSpacing.val();
-                    options.trimming = $inputTrimming.val();
-                    options.items_formula = $textareaItemsFormula.val();
-                    options.origin_corner = that.toInt($selectOriginCorner.val());
-                    options.hide_part_list = $selectHidePartList.val() === '1';
-                    options.part_drawing_type = that.toInt($selectPartDrawingType.val());
-                    options.colorization = that.toInt($selectColorization.val());
-                    options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
-                    options.time_limit = that.toInt($inputTimeLimit.val());
-                    options.not_anytime_tree_search_queue_size = that.toInt($inputNotAnytimeTreeSearchQueueSize.val());
-                    options.verbosity_level = that.toInt($selectVerbosityLevel.val());
-                    options.input_to_json_bin_dir = $selectInputToJsonBinDir.val();
-                }
-                const fnFillInputs = function (options) {
-                    $radiosProblemType.filter('[value=' + fnValidProblemType(options.problem_type) + ']').click();
-                    $selectOptimizationMode.selectpicker('val', options.optimization_mode);
-                    $selectObjective.selectpicker('val', options.objective);
-                    $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
-                    $selectRectangleguillotineNumberOfStages.selectpicker('val', options.rectangleguillotine_number_of_stages);
-                    $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
-                    $inputRectangleguillotineKeepSize.ladbTextinputSize('val', options.rectangleguillotine_keep_size);
-                    $selectIrregularAllowedRotations.selectpicker('val', fnValidIrregularAllowedRotations(options.irregular_allowed_rotations));
-                    $selectIrregularAllowMirroring.selectpicker('val', options.irregular_allow_mirroring ? '1' : '0');
-                    $inputSpacing.val(options.spacing);
-                    $inputTrimming.val(options.trimming);
-                    $textareaItemsFormula.ladbTextinputCode('val', [ typeof options.items_formula == 'string' ? options.items_formula : '' ]);
-                    $selectOriginCorner.selectpicker('val', options.origin_corner);
-                    $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
-                    $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
-                    $selectColorization.selectpicker('val', options.colorization);
-                    $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
-                    $inputTimeLimit.val(options.time_limit);
-                    $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
-                    $selectVerbosityLevel.selectpicker('val', options.verbosity_level);
-                    $selectInputToJsonBinDir.selectpicker('val', options.input_to_json_bin_dir);
-                    fnUpdateFieldsVisibility();
-                }
-                const fnConvertToVariableDefs = function (vars) {
-
-                    // Generate variableDefs for formula editor
-                    const variableDefs = [];
-                    for (let i = 0; i < vars.length; i++) {
-                        variableDefs.push({
-                            text: vars[i].name,
-                            displayText: i18next.t('tab.cutlist.export.' + vars[i].name),
-                            type: vars[i].type
-                        });
-                    }
-
-                    return variableDefs;
-                }
-                const fnUpdateFieldsVisibility = function () {
-                    const isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
-                    const isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
-                    const isDebug = that.dialog.capabilities.is_dev && !that.dialog.capabilities.is_rbz;
-                    if (isIrregular) $formGroupNotIrregular.hide(); else $formGroupNotIrregular.show();
-                    if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
-                    if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
-                    if (isDebug) $formGroupDebug.show(); else $formGroupDebug.hide();
-                    $('option[value=0]', $selectPartDrawingType).prop('disabled', isIrregular);
-                    if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);
-                    $selectPartDrawingType.selectpicker('refresh');
-                };
-                const fnValidProblemType = function (problemType) {
-                    if (group.material_is_1d
-                        && (problemType === 'rectangleguillotine' || problemType === 'rectangle')) {
-                        return 'onedimensional';
-                    }
-                    return problemType;
-                }
-                const fnValidIrregularAllowedRotations = function (irregularAllowedRotations) {
-                    if ((group.material_grained || group.material_is_1d)
-                        && (irregularAllowedRotations === '90' || irregularAllowedRotations === '45')) {
-                        return '180';
-                    }
-                    return irregularAllowedRotations;
-                }
-                const fnEditMaterial = function (options) {
-
-                    // Hide modal
-                    $modal.modal('hide');
-
-                    // Edit material
-                    that.dialog.executeCommandOnTab('materials', 'edit_material', $.extend({
-                        materialId: group.material_id,
-                        propertiesTab: 'formats'
-                    }, options));
-
-                };
-
-                $widgetPreset.ladbWidgetPreset({
-                    dialog: that.dialog,
-                    dictionary: 'cutlist_packing_options',
-                    fnFetchOptions: fnFetchOptions,
-                    fnFillInputs: fnFillInputs
-                });
-                $editorStdBinSizes
-                    .ladbEditorSizes({
-                        format: group.material_is_1d ? FORMAT_D : FORMAT_D_D,
-                        d1Placeholder: i18next.t('default.length'),
-                        d2Placeholder: i18next.t('default.width'),
-                        qPlaceholder: '∞',
-                        qHidden: false,
-                        emptyVal: '0',
-                        dropdownActionLabel: '<i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.packing.option_std_bin_' + (group.material_is_1d ? '1' : '2') + 'd_add'),
-                        dropdownActionCallback: function () {
-                            fnEditMaterial({
-                                callback: function ($editMaterialModal) {
-                                    setTimeout(function () {
-                                        $('#ladb_materials_editor_std_' + (group.material_is_1d ? 'lengths' : 'sizes'), $editMaterialModal).ladbEditorSizes('appendRow', [{}, {autoFocus: true}]);
-                                    }, 200);
-                                }
-                            })
-                        }
-                    })
-                    .ladbEditorSizes('setAvailableSizesAndSizes', [ group.material_is_1d ? response.std_lengths : response.std_sizes, group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes ])
-                ;
-                $editorScrapBinSizes
-                    .ladbEditorSizes({
-                        format: group.material_is_1d ? FORMAT_D_Q : FORMAT_D_D_Q,
-                        d1Placeholder: i18next.t('default.length'),
-                        d2Placeholder: i18next.t('default.width'),
-                        emptyVal: '0'
-                    })
-                    .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes)
-                ;
-                $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectRectangleguillotineNumberOfStages.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputRectangleguillotineKeepSize.ladbTextinputSize({
-                    resetValue: '',
-                    d1Placeholder: i18next.t('default.length'),
-                    d2Placeholder: i18next.t('default.width'),
-                    qDisabled: true,
-                    qHidden: true,
-                    dSeparatorLabel: 'x'
-                });
-                $selectIrregularAllowedRotations.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputSpacing.ladbTextinputDimension();
-                $inputTrimming.ladbTextinputDimension();
-                $textareaItemsFormula.ladbTextinputCode({
-                    variableDefs: fnConvertToVariableDefs([
-                        { name: 'number', type: 'string' },
-                        { name: 'path', type: 'array' },
-                        { name: 'instance_name', type: 'string' },
-                        { name: 'name', type: 'string' },
-                        { name: 'cutting_length', type: 'length' },
-                        { name: 'cutting_width', type: 'length' },
-                        { name: 'cutting_thickness', type: 'length' },
-                        { name: 'edge_cutting_length', type: 'length' },
-                        { name: 'edge_cutting_width', type: 'length' },
-                        { name: 'bbox_length', type: 'length' },
-                        { name: 'bbox_width', type: 'length' },
-                        { name: 'bbox_thickness', type: 'length' },
-                        { name: 'final_area', type: 'area' },
-                        { name: 'material', type: 'material' },
-                        { name: 'material_type', type: 'material-type' },
-                        { name: 'material_name', type: 'string' },
-                        { name: 'material_description', type: 'string' },
-                        { name: 'material_url', type: 'string' },
-                        { name: 'description', type: 'string' },
-                        { name: 'url', type: 'string' },
-                        { name: 'tags', type: 'array' },
-                        { name: 'edge_ymin', type: 'edge' },
-                        { name: 'edge_ymax', type: 'edge' },
-                        { name: 'edge_xmin', type: 'edge' },
-                        { name: 'edge_xmax', type: 'edge' },
-                        { name: 'face_zmax', type: 'veneer' },
-                        { name: 'face_zmin', type: 'veneer' },
-                        { name: 'layer', type: 'string' },
-                        { name: 'component_definition', type: 'component_definition' },
-                        { name: 'component_instance', type: 'component_instance' },
-                    ]),
-                    snippetDefs: [
-                        { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
-                        { name: i18next.t('tab.cutlist.snippet.name'), value: '@name' },
-                        { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
-                        { name: '-' },
-                        { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
-                        { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
-                        { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
-                    ]
-                });
-                $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectColorization.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputTimeLimit.ladbTextinputText();
-                $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
-                $selectVerbosityLevel.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectInputToJsonBinDir.selectpicker(SELECT_PICKER_OPTIONS);
-
-                fnFillInputs(packingOptions);
-
-                // Bind radios
-                $btnsProblemType.on('click', function (e) {
-                    if ($(this).hasClass('disabled')) {
-                        e.preventDefault();
-                        return false;
-                    }
-                });
-                $radiosProblemType.on('change', fnUpdateFieldsVisibility);
-
-                // Bind tabs
-                $tabs.on('shown.bs.tab', function (e) {
-                    that.lastPackingOptionsTab = $(e.target).attr('href').substring('#tab_packing_options_'.length);
-                });
-
-                // Bind collapses
-                $('#ladb-cutlist-packing-collapse-expert')
-                    .on('shown.bs.collapse', function () {
-                        $('i', $btnExpert)
-                            .removeClass('ladb-opencutlist-icon-plus')
-                            .addClass('ladb-opencutlist-icon-minus')
-                        ;
-                    })
-                    .on('hidden.bs.collapse', function () {
-                        $('i', $btnExpert)
-                            .addClass('ladb-opencutlist-icon-plus')
-                            .removeClass('ladb-opencutlist-icon-minus')
-                        ;
-                    })
-                ;
-
-                // Bind buttons
-                $btnEditMaterial.on('click', function () {
-                    fnEditMaterial();
-                });
-                $btnUnloadLib.on('click', function () {
-                    rubyCallCommand('core_unload_c_lib', {lib: 'packy'}, function (response) {
-                        if (response.errors) {
-                            that.dialog.notifyErrors(response.errors);
-                        }
-                        if (response.success) {
-                            that.dialog.notifySuccess('Packy unloaded');
-                        }
-                    });
-                });
-                $btnExpert.on('click', function () {
-                    $('#ladb-cutlist-packing-collapse-expert').collapse('toggle');
-                    $(this).blur();
-                })
-                $btnGenerate.on('click', function () {
-
-                    // Fetch options
-                    fnFetchOptions(packingOptions);
-
-                    // Store options
-                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_packing_options', values: packingOptions, section: section });
-
-                    if (typeof generateCallback === 'function') {
-
-                        // Hide modal
-                        $modal.modal('hide');
-
-                        generateCallback();
-
-                    } else {
-
-                        let fnCreateSlide = function (response) {
-
-                            const solution = response.solution;
-
-                            let $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
-                                capabilities: that.dialog.capabilities,
-                                generateOptions: that.generateOptions,
-                                packingOptions: packingOptions,
-                                dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
-                                filename: that.filename,
-                                modelName: that.modelName,
-                                modelDescription: that.modelDescription,
-                                modelActivePath: that.modelActivePath,
-                                pageName: that.pageName,
-                                pageDescription: that.pageDescription,
-                                isEntitySelection: that.isEntitySelection,
-                                lengthUnit: that.lengthUnit,
-                                generatedAt: new Date().getTime() / 1000,
-                                group: group
-                            }, response), function () {
-                                that.dialog.setupTooltips();
-                            });
-
-                            // Fetch UI elements
-                            const $btnPacking = $('#ladb_btn_packing', $slide);
-                            const $btnPrint = $('#ladb_btn_print', $slide);
-                            const $btnExport = $('#ladb_btn_export', $slide);
-                            const $btnLabels = $('#ladb_btn_labels', $slide);
-                            const $btnClose = $('#ladb_btn_close', $slide);
-
-                            // Bind buttons
-                            $btnPacking.on('click', function () {
-                                that.packingGroup(groupId);
-                            });
-                            $btnPrint.on('click', function () {
-                                $(this).blur();
-                                that.print(that.cutlistTitle + ' - ' + i18next.t('tab.cutlist.packing.title'));
-                            });
-                            $btnExport.on('click', function () {
-                                $(this).blur();
-
-                                // Count hidden groups
-                                const hiddenBinIndices = [];
-                                $('.ladb-cutlist-packing-group', $slide).each(function () {
-                                    if ($(this).hasClass('no-print')) {
-                                        hiddenBinIndices.push($(this).data('bin-index'));
-                                    }
-                                });
-                                const isBinSelection = hiddenBinIndices.length > 0
-
-                                // Retrieve packing options
-                                rubyCallCommand('core_get_model_preset', {
-                                    dictionary: 'cutlist_packing_write_options',
-                                    section: groupId
-                                }, function (response) {
-
-                                    const writeOptions = response.preset;
-
-                                    const $modal = that.appendModalInside('ladb_cutlist_modal_packing_export', 'tabs/cutlist/_modal-packing-write.twig', {
-                                        group: group,
-                                        isBinSelection: isBinSelection,
-                                    });
-
-                                    // Fetch UI elements
-                                    const $widgetPreset = $('.ladb-widget-preset', $modal);
-                                    const $selectFileFormat = $('#ladb_select_file_format', $modal);
-                                    const $formGroupDxfStructure = $('#ladb_form_group_dxf_structure', $modal);
-                                    const $selectDxfStructure = $('#ladb_select_dxf_structure', $modal);
-                                    const $selectUnit = $('#ladb_select_unit', $modal);
-                                    const $selectSmoothing = $('#ladb_select_smoothing', $modal);
-                                    const $selectMergeHoles = $('#ladb_select_merge_holes', $modal);
-                                    const $formGroupMergeHolesOverflow = $('#ladb_form_group_merge_holes_overflow', $modal);
-                                    const $inputMergeHolesOverflow = $('#ladb_input_merge_holes_overflow', $modal);
-                                    const $selectIncludePaths = $('#ladb_select_include_paths', $modal);
-                                    const $inputBinHidden = $('#ladb_input_bin_hidden', $modal);
-                                    const $inputBinStrokeColor = $('#ladb_input_bin_stroke_color', $modal);
-                                    const $inputBinFillColor = $('#ladb_input_bin_fill_color', $modal);
-                                    const $inputPartsHidden = $('#ladb_input_parts_hidden', $modal);
-                                    const $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', $modal);
-                                    const $inputPartsFillColor = $('#ladb_input_parts_fill_color', $modal);
-                                    const $formGroupPartsHoles = $('#ladb_form_group_parts_holes', $modal);
-                                    const $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', $modal);
-                                    const $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', $modal);
-                                    const $formGroupPartsPaths = $('#ladb_form_group_parts_paths', $modal);
-                                    const $inputPartsPathsStrokeColor = $('#ladb_input_parts_paths_stroke_color', $modal);
-                                    const $inputPartsPathsFillColor = $('#ladb_input_parts_paths_fill_color', $modal);
-                                    const $formGroupTexts = $('#ladb_form_group_texts', $modal);
-                                    const $inputTextsHidden = $('#ladb_input_texts_hidden', $modal);
-                                    const $inputTextsColor = $('#ladb_input_texts_color', $modal);
-                                    const $inputLeftoversHidden = $('#ladb_input_leftovers_hidden', $modal);
-                                    const $inputLeftoversStrokeColor = $('#ladb_input_leftovers_stroke_color', $modal);
-                                    const $inputLeftoversFillColor = $('#ladb_input_leftovers_fill_color', $modal);
-                                    const $inputCutsHidden = $('#ladb_input_cuts_hidden', $modal);
-                                    const $inputCutsColor = $('#ladb_input_cuts_color', $modal);
-                                    const $btnExport = $('#ladb_btn_export', $modal);
-
-                                    const fnFetchOptions = function (options) {
-                                        options.file_format = $selectFileFormat.val();
-                                        options.dxf_structure = that.toInt($selectDxfStructure.val());
-                                        options.unit = that.toInt($selectUnit.val());
-                                        options.smoothing = $selectSmoothing.val() === '1';
-                                        options.merge_holes = $selectMergeHoles.val() === '1';
-                                        options.merge_holes_overflow = $inputMergeHolesOverflow.val();
-                                        options.include_paths = $selectIncludePaths.val() === '1';
-                                        options.bin_hidden = !$inputBinHidden.is(':checked');
-                                        options.bin_stroke_color = $inputBinStrokeColor.ladbTextinputColor('val');
-                                        options.bin_fill_color = $inputBinFillColor.ladbTextinputColor('val');
-                                        options.parts_hidden = !$inputPartsHidden.is(':checked');
-                                        options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
-                                        options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
-                                        options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
-                                        options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
-                                        options.parts_paths_stroke_color = $inputPartsPathsStrokeColor.ladbTextinputColor('val');
-                                        options.parts_paths_fill_color = $inputPartsPathsFillColor.ladbTextinputColor('val');
-                                        options.texts_hidden = !$inputTextsHidden.is(':checked');
-                                        options.texts_color = $inputTextsColor.ladbTextinputColor('val');
-                                        options.leftovers_hidden = !$inputLeftoversHidden.is(':checked');
-                                        options.leftovers_stroke_color = $inputLeftoversStrokeColor.ladbTextinputColor('val');
-                                        options.leftovers_fill_color = $inputLeftoversFillColor.ladbTextinputColor('val');
-                                        options.cuts_hidden = !$inputCutsHidden.is(':checked');
-                                        options.cuts_color = $inputCutsColor.ladbTextinputColor('val');
-                                    };
-                                    const fnFillInputs = function (options) {
-                                        $selectFileFormat.selectpicker('val', options.file_format);
-                                        $selectDxfStructure.selectpicker('val', options.dxf_structure);
-                                        $selectUnit.selectpicker('val', options.unit);
-                                        $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
-                                        $selectMergeHoles.selectpicker('val', options.merge_holes ? '1' : '0');
-                                        $inputMergeHolesOverflow.val(options.merge_holes_overflow);
-                                        $selectIncludePaths.selectpicker('val', options.include_paths ? '1' : '0');
-                                        $inputBinHidden.prop('checked', !options.bin_hidden);
-                                        $inputBinStrokeColor.ladbTextinputColor('val', options.bin_stroke_color);
-                                        $inputBinFillColor.ladbTextinputColor('val', options.bin_fill_color);
-                                        $inputPartsHidden.prop('checked', !options.parts_hidden);
-                                        $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
-                                        $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
-                                        $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
-                                        $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
-                                        $inputPartsPathsStrokeColor.ladbTextinputColor('val', options.parts_paths_stroke_color);
-                                        $inputPartsPathsFillColor.ladbTextinputColor('val', options.parts_paths_fill_color);
-                                        $inputTextsHidden.prop('checked', !options.texts_hidden);
-                                        $inputTextsColor.ladbTextinputColor('val', options.texts_color);
-                                        $inputLeftoversHidden.prop('checked', !options.leftovers_hidden);
-                                        $inputLeftoversStrokeColor.ladbTextinputColor('val', options.leftovers_stroke_color);
-                                        $inputLeftoversFillColor.ladbTextinputColor('val', options.leftovers_fill_color);
-                                        $inputCutsHidden.prop('checked', !options.cuts_hidden);
-                                        $inputCutsColor.ladbTextinputColor('val', options.cuts_color);
-                                        fnUpdateFieldsVisibility();
-                                    };
-                                    const fnUpdateFieldsVisibility = function () {
-                                        const isDxf = $selectFileFormat.val() === 'dxf';
-                                        const isMergeHoles = $selectMergeHoles.val() === '1';
-                                        const isIncludePaths = $selectIncludePaths.val() === '1';
-                                        const isSheetHidden = !$inputBinHidden.is(':checked');
-                                        const isPartsHidden = !$inputPartsHidden.is(':checked');
-                                        const isTextsHidden = !$inputTextsHidden.is(':checked');
-                                        const isLeftoversHidden = !$inputLeftoversHidden.is(':checked');
-                                        const isCutsHidden = !$inputCutsHidden.is(':checked');
-                                        if (isDxf) $formGroupDxfStructure.show(); else $formGroupDxfStructure.hide();
-                                        if (isMergeHoles) $formGroupMergeHolesOverflow.show(); else $formGroupMergeHolesOverflow.hide();
-                                        $inputBinStrokeColor.ladbTextinputColor(isSheetHidden ? 'disable' : 'enable');
-                                        $inputBinFillColor.ladbTextinputColor(isSheetHidden || isDxf ? 'disable' : 'enable');
-                                        $inputPartsStrokeColor.ladbTextinputColor(isPartsHidden ? 'disable' : 'enable');
-                                        $inputPartsFillColor.ladbTextinputColor(isPartsHidden || isDxf ? 'disable' : 'enable');
-                                        if (isPartsHidden || !isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
-                                        $inputPartsHolesStrokeColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
-                                        $inputPartsHolesFillColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
-                                        if (isPartsHidden || !isIncludePaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
-                                        $inputPartsPathsStrokeColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
-                                        $inputPartsPathsFillColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
-                                        if (isPartsHidden) $formGroupTexts.hide(); else $formGroupTexts.show();
-                                        $inputTextsColor.ladbTextinputColor(isTextsHidden ? 'disable' : 'enable');
-                                        $inputLeftoversStrokeColor.ladbTextinputColor(isLeftoversHidden ? 'disable' : 'enable');
-                                        $inputLeftoversFillColor.ladbTextinputColor(isLeftoversHidden || isDxf ? 'disable' : 'enable');
-                                        $inputCutsColor.ladbTextinputColor(isCutsHidden ? 'disable' : 'enable');
-                                        $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
-                                    };
-
-                                    $widgetPreset.ladbWidgetPreset({
-                                        dialog: that.dialog,
-                                        dictionary: 'cutlist_packing_write_options',
-                                        fnFetchOptions: fnFetchOptions,
-                                        fnFillInputs: fnFillInputs
-                                    });
-                                    $selectFileFormat
-                                        .selectpicker(SELECT_PICKER_OPTIONS)
-                                        .on('changed.bs.select', function () {
-                                            const fileCount = solution.bins.length - hiddenBinIndices.length;
-                                            $('#ladb_btn_export_file_format', $btnExport).html($(this).val().toUpperCase() + ' <small>( ' + fileCount + ' ' + i18next.t('default.file', {count: fileCount}).toLowerCase() + ' )</small>');
-                                            fnUpdateFieldsVisibility();
-                                        })
-                                    ;
-                                    $selectDxfStructure.selectpicker(SELECT_PICKER_OPTIONS);
-                                    $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
-                                    $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
-                                    $selectMergeHoles.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
-                                    $inputMergeHolesOverflow.ladbTextinputDimension();
-                                    $selectIncludePaths.selectpicker(SELECT_PICKER_OPTIONS).on('change', fnUpdateFieldsVisibility);
-                                    $inputBinStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-                                    $inputBinFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-                                    $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-                                    $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-                                    $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-                                    $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-                                    $inputPartsPathsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-                                    $inputPartsPathsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-                                    $inputTextsColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-                                    $inputLeftoversStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-                                    $inputLeftoversFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-                                    $inputCutsColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
-
-                                    fnFillInputs(writeOptions);
-
-                                    // Bind inputs
-                                    $inputBinHidden.on('change', fnUpdateFieldsVisibility);
-                                    $inputPartsHidden.on('change', fnUpdateFieldsVisibility);
-                                    $inputTextsHidden.on('change', fnUpdateFieldsVisibility);
-                                    $inputLeftoversHidden.on('change', fnUpdateFieldsVisibility);
-                                    $inputCutsHidden.on('change', fnUpdateFieldsVisibility);
-
-                                    // Bind buttons
-                                    $btnExport.on('click', function () {
-
-                                        // Fetch options
-                                        fnFetchOptions(writeOptions);
-
-                                        // Store options
-                                        rubyCallCommand('core_set_model_preset', {
-                                            dictionary: 'cutlist_packing_write_options',
-                                            values: writeOptions,
-                                            section: groupId
-                                        });
-
-                                        rubyCallCommand('cutlist_packing_write', $.extend({
-                                            hidden_bin_indices: hiddenBinIndices,
-                                            part_drawing_type: packingOptions.part_drawing_type
-                                        }, writeOptions), function (response) {
-
-                                            if (response.errors) {
-                                                that.dialog.notifyErrors(response.errors);
-                                            }
-                                            if (response.export_path) {
-                                                that.dialog.notifySuccess(i18next.t('core.success.exported_to', {path: response.export_path}), [
-                                                    Noty.button(i18next.t('default.open'), 'btn btn-default', function () {
-
-                                                        rubyCallCommand('core_open_external_file', {
-                                                            path: response.export_path
-                                                        });
-
-                                                    })
-                                                ]);
-                                            }
-
-                                        });
-
-                                        // Hide modal
-                                        $modal.modal('hide');
-
-                                    });
-
-                                    // Show modal
-                                    $modal.modal('show');
-
-                                    // Setup popovers
-                                    that.dialog.setupPopovers();
-
-                                });
-
-                            });
-                            $btnLabels.on('click', function () {
-
-                                // Compute label bins (a list of sheet or bar index attached to part id)
-                                let binDefs = {};
-                                let binIndex = 0;
-                                $.each(response.solution.bins, function () {
-                                    for (let i = 0; i < this.count; i++) {
-                                        binIndex++;
-                                        $.each(this.parts, function (v) {
-                                            for (let j = 0; j < this.count; j++) {
-                                                if (!binDefs[this.part.id]) {
-                                                    binDefs[this.part.id] = [];
-                                                }
-                                                binDefs[this.part.id].push(binIndex);
-                                            }
-                                        });
-                                    }
-                                });
-
-                                that.labelsGroupParts(groupId, binDefs);
-                            });
-                            $btnClose.on('click', function () {
-                                that.popSlide();
-                            });
-                            $('.ladb-btn-setup-model-units', $slide).on('click', function () {
-                                $(this).blur();
-                                that.dialog.executeCommandOnTab('settings', 'highlight_panel', {panel: 'model'});
-                            });
-                            $('.ladb-btn-toggle-no-print', $slide).on('click', function () {
-                                const $group = $(this).parents('.ladb-cutlist-group');
-                                const groupId = $group.data('group-id');
-                                if ($group.hasClass('no-print')) {
-                                    that.showGroup($group, groupId !== 'packing_summary', false, packingOptions, 'cutlist_packing_options', section);
-                                } else {
-                                    that.hideGroup($group, groupId !== 'packing_summary', false, packingOptions, 'cutlist_packing_options', section);
-                                }
-                                $(this).blur();
-                                return false;
-                            });
-                            $('.ladb-btn-scrollto-prev-group', $slide).on('click', function () {
-                                const $group = $(this).parents('.ladb-cutlist-group');
-                                const groupId = $group.data('bin-index');
-                                const $target = $('.ladb-cutlist-packing-group[data-bin-index=' + (parseInt(groupId) - 1) + ']');
-                                that.scrollSlideToTarget($slide, $target, true, true);
-                                $(this).blur();
-                                return false;
-                            });
-                            $('.ladb-btn-scrollto-next-group', $slide).on('click', function () {
-                                const $group = $(this).parents('.ladb-cutlist-group');
-                                const groupId = $group.data('bin-index');
-                                const $target = $('.ladb-cutlist-packing-group[data-bin-index=' + (parseInt(groupId) + 1) + ']');
-                                that.scrollSlideToTarget($slide, $target, true, true);
-                                $(this).blur();
-                                return false;
-                            });
-                            $('a.ladb-btn-highlight-part', $slide).on('click', function () {
-                                const $part = $(this).parents('.ladb-cutlist-row');
-                                const partId = $part.data('part-id');
-                                that.highlightPart(partId);
-                                $(this).blur();
-                                return false;
-                            });
-                            $('a.ladb-btn-scrollto', $slide).on('click', function () {
-                                const $target = $($(this).attr('href'));
-                                if ($target.data('group-id')) {
-                                    that.showGroup($target, false);
-                                }
-                                that.scrollSlideToTarget($slide, $target, true, true);
-                                $(this).blur();
-                                return false;
-                            });
-                            $('a.ladb-btn-edit-material', $slide).on('click', function () {
-                                fnEditMaterial({
-                                    propertiesTab: 'attributes',
-                                });
-                                $(this).blur();
-                                return false;
-                            });
-                            $('.ladb-cutlist-row', $slide).on('click', function () {
-                                $('.ladb-click-tool', $(this)).click();
-                                $(this).blur();
-                                return false;
-                            });
-                            $('#ladb_btn_select_unplaced_parts', $slide).on('click', function () {
-                                that.cleanupSelection();
-                                $.each(response.solution.unplaced_part_infos, function (index, part_info) {
-                                    that.selectPart(part_info.part.id, true);
-                                });
-                                that.dialog.notifySuccess(i18next.t('tab.cutlist.success.part_selected', {count: response.solution.unplaced_part_infos.length}), [
-                                    Noty.button(i18next.t('default.see'), 'btn btn-default', function () {
-                                        $btnClose.click();
-                                    })
-                                ]);
-                            });
-
-                            // SVG
-                            $('SVG .item', $slide).on('click', function () {
-                                const partId = $(this).data('part-id');
-                                that.highlightPart(partId);
-                                $(this).blur();
-                                return false;
-                            });
-
-                            // Finish progress feedback
-                            that.dialog.finishProgress();
-
-                        };
-
-                        window.requestAnimationFrame(function () {
-                            that.dialog.startProgress(parseInt(packingOptions.time_limit) * 4, function () {
-                                rubyCallCommand('cutlist_group_packing_cancel');
-                            });
-                            rubyCallCommand('cutlist_group_packing_start', $.extend({
-                                group_id: groupId,
-                                part_ids: isPartSelection ? that.selectionPartIds : null
-                            }, packingOptions), function (response) {
-
-                                if (response.running) {
-                                    let waitingForResponse = false;
-                                    const intervalId = setInterval(function () {
-
-                                        if (waitingForResponse) {
-                                            return;
-                                        }
-
-                                        rubyCallCommand('cutlist_group_packing_advance', null, function (response) {
-
-                                            waitingForResponse = false;
-
-                                            if (response.running) {
-
-                                                // Advance progress feedback
-                                                that.dialog.incProgress(1);
-
-                                                if (response.solution) {
-                                                    that.dialog.changeCancelBtnLabelProgress(i18next.t('default.stop'))
-                                                    that.dialog.previewProgress(Twig.twig({ref: "tabs/cutlist/_progress-preview-packing.twig"}).render({
-                                                        solution: response.solution
-                                                    }));
-                                                }
-
-                                            } else if (response.cancelled) {
-
-                                                clearInterval(intervalId);
-
-                                                // Finish progress feedback
-                                                that.dialog.finishProgress();
-
-                                            } else {
-
-                                                clearInterval(intervalId);
-
-                                                fnCreateSlide(response);
-
-                                            }
-
-                                        });
-                                        waitingForResponse = true;
-
-                                    }, 250);
-                                } else if (response.cancelled) {
-
-                                    // Finish progress feedback
-                                    that.dialog.finishProgress();
-
-                                } else {
-                                    fnCreateSlide(response);
-                                }
-
-                            });
-                        });
-
-                        // Hide modal
-                        $modal.modal('hide');
-
-                    }
-
                 });
 
                 // Show modal

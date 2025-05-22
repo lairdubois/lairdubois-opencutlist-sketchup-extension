@@ -220,8 +220,7 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
-                   group_id:,
-                   part_ids: nil,
+                   part_ids: ,
 
                    std_bin_1d_sizes: '',
                    std_bin_2d_sizes: '',
@@ -259,7 +258,6 @@ module Ladb::OpenCutList
 
       @cutlist = cutlist
 
-      @group_id = group_id
       @part_ids = part_ids
 
       @std_bin_1d_sizes = DimensionUtils.d_to_ifloats(std_bin_1d_sizes)
@@ -320,11 +318,13 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         return _create_packing(errors: [ 'default.error' ]) unless model
 
-        group = @group = @cutlist.get_group(@group_id)
-        return _create_packing(errors: [ 'default.error' ]) unless group
-
-        parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
+        parts = @cutlist.get_real_parts(@part_ids)
         return _create_packing(errors: [ 'tab.cutlist.packing.error.no_part' ]) if parts.empty?
+
+        parts_by_group = parts.group_by { |part| part.group }
+        return _create_packing(errors: [ 'default.error' ]) unless parts_by_group.keys.one?
+
+        group = @group = parts_by_group.keys.first
 
         bin_types = []
 

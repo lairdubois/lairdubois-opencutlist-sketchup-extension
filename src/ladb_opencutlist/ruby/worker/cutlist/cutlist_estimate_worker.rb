@@ -295,7 +295,6 @@ module Ladb::OpenCutList
       super
 
       settings = HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_packing_options', @cutlist_group.id))
-      settings[:group_id] = @cutlist_group.id
       settings[:part_ids] = @part_ids
 
       _ensure_default_settings(settings)
