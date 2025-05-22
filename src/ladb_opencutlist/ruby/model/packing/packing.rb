@@ -12,12 +12,15 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :errors, :running, :cancelled, :solution
+    attr_reader :errors, :warnings,
+                :running, :cancelled,
+                :solution
 
     def initialize(_def)
       @_def = _def
 
       @errors = _def.errors
+      @warnings = _def.warnings
 
       @running = _def.running
       @cancelled = _def.cancelled

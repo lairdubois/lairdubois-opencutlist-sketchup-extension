@@ -258,12 +258,10 @@
                         {% endif %}
                         <li><a href="#" class="ladb-item-export-group-parts"><i class="ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }}...</a></li>
                         <li role="separator" class="divider"></li>
+                        <li><a href="#" class="ladb-item-estimate-group-parts"><i class="ladb-opencutlist-icon-estimate"></i> {{ 'default.estimate'|i18next }}...</a></li>
+                        <li role="separator" class="divider"></li>
                         <li><a href="#" class="ladb-item-hide-all-other-groups"><i class="ladb-opencutlist-icon-eye-close"></i> {{ 'tab.cutlist.menu.hide_all_other_groups'|i18next }}</a></li>
                         <li><a href="#" class="ladb-item-show-all-groups"><i class="ladb-opencutlist-icon-eye-open"></i> {{ 'tab.cutlist.menu.show_all_groups'|i18next }}</a></li>
-                        {% if group.material_type > 0 and group.material_type != 4 and group.material_type != 5 and group.material_type != 6 %}    {# 4 = TYPE_EDGE, 5 = TYPE_HARDWARE, 5 = TYPE_VENEER #}
-                            <li role="separator" class="divider"></li>
-                            <li><a href="#" class="ladb-item-dimensions-help"><i class="ladb-opencutlist-icon-dimensions-help"></i> {{ 'tab.cutlist.list.dimensions_help'|i18next }}</a></li>
-                        {% endif %}
                         {% if group.material_type != 4 and group.material_type != 6 %}    {# 4 = TYPE_EDGE, 6 = TYPE_VENEER #}
                             <li role="separator" class="divider"></li>
                             <li><a class="ladb-item-numbers-save" href="#"><i class="ladb-opencutlist-icon-save"></i> {{ 'tab.cutlist.menu.group_numbers_save'|i18next }}</a></li>
@@ -272,6 +270,10 @@
                         {% if group.material_display_name is not empty %}
                             <li role="separator" class="divider"></li>
                             <li><a href="#" class="ladb-item-edit-material"><i class="ladb-opencutlist-icon-materials"></i> {{ 'tab.cutlist.menu.edit_material'|i18next({ 'material_name':group.material_display_name }) }}...</a></li>
+                        {% endif %}
+                        {% if group.material_type > 0 and group.material_type != 4 and group.material_type != 5 and group.material_type != 6 %}    {# 4 = TYPE_EDGE, 5 = TYPE_HARDWARE, 5 = TYPE_VENEER #}
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#" class="ladb-item-dimensions-help"><i class="ladb-opencutlist-icon-dimensions-help"></i> {{ 'tab.cutlist.list.dimensions_help'|i18next }}</a></li>
                         {% endif %}
                     </ul>
                 </div>

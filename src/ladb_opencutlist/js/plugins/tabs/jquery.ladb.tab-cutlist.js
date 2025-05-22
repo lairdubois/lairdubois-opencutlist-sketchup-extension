@@ -556,6 +556,12 @@
                     that.exportGroupParts(groupId, false);
                     $(this).blur();
                 });
+                $('a.ladb-item-estimate-group-parts', that.$page).on('click', function () {
+                    const $group = $(this).parents('.ladb-cutlist-group');
+                    const groupId = $group.data('group-id');
+                    that.estimateGroupParts(groupId, false);
+                    $(this).blur();
+                });
                 $('a.ladb-item-hide-all-other-groups', that.$page).on('click', function () {
                     $(this).blur();
                     const $group = $(this).parents('.ladb-cutlist-group');
@@ -817,9 +823,7 @@
             };
             const fnCopyToClipboard = function(noHeader) {
                 rubyCallCommand('cutlist_export', {
-                    group_id: context.targetGroup ? context.targetGroup.id : null,
                     part_ids: partIds,
-                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
                     source: exportOptions.source,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
                     format: 'pasteable',
@@ -999,9 +1003,7 @@
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', section: section, values: exportOptions });
 
                 rubyCallCommand('cutlist_export', {
-                    group_id: context.targetGroup ? context.targetGroup.id : null,
                     part_ids: partIds,
-                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
                     source: exportOptions.source,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
                     format: 'table'
@@ -1071,9 +1073,7 @@
                 rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_export_options', section: section, values: exportOptions });
 
                 rubyCallCommand('cutlist_export', {
-                    group_id: context.targetGroup ? context.targetGroup.id : null,
                     part_ids: partIds,
-                    cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids,
                     source: exportOptions.source,
                     format: exportOptions.format,
                     col_sep: exportOptions.col_sep,
@@ -1161,19 +1161,30 @@
 
     // Estimate /////
 
-    LadbTabCutlist.prototype.estimateCutlist = function (forceDefaultTab) {
+    LadbTabCutlist.prototype.estimateAllParts = function () {
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(null);
+        this.estimateParts(partIdsWithContext.partIds, partIdsWithContext.context);
+    }
+
+    LadbTabCutlist.prototype.estimateGroupParts = function (groupId, forceDefaultTab) {
+        let partIdsWithContext = this.grabVisiblePartIdsWithContext(groupId);
+        this.estimateParts(partIdsWithContext.partIds, partIdsWithContext.context, forceDefaultTab);
+    }
+
+    LadbTabCutlist.prototype.estimateParts = function (partIds, context, forceDefaultTab) {
         const that = this;
 
-        const isGroupSelection = this.generateOptions.hidden_group_ids.length > 0 && this.generateOptions.hidden_group_ids.indexOf('summary') === -1
-            || this.generateOptions.hidden_group_ids.length > 1 && this.generateOptions.hidden_group_ids.indexOf('summary') >= 0;
+        const section = context && context.targetGroup ? context.targetGroup.id : null;
 
         // Retrieve estimate options
-        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_estimate_options' }, function (response) {
+        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_estimate_options', section: section }, function (response) {
 
             const estimateOptions = response.preset;
 
             const $modal = that.appendModalInside('ladb_cutlist_modal_estimate', 'tabs/cutlist/_modal-estimate.twig', {
-                isGroupSelection: isGroupSelection,
+                group: context ? context.targetGroup : null,
+                isGroupSelection: context ? context.isGroupSelection : false,
+                isPartSelection: context ? context.isPartSelection : false,
                 tab: forceDefaultTab || that.lastEstimateOptionsTab == null ? 'general' : that.lastEstimateOptionsTab,
             });
 
@@ -1208,10 +1219,10 @@
                 fnFetchOptions(estimateOptions);
 
                 // Store options
-                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_estimate_options', values: estimateOptions });
+                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_estimate_options', section: section, values: estimateOptions });
 
                 // Generate estimate
-                that.generateEstimateCutlist(estimateOptions);
+                that.generateEstimate(partIds, context, estimateOptions);
 
                 // Hide modal
                 $modal.modal('hide');
@@ -1228,12 +1239,12 @@
 
     };
 
-    LadbTabCutlist.prototype.generateEstimateCutlist = function (estimateOptions, callback) {
+    LadbTabCutlist.prototype.generateEstimate = function (partIds, context, estimateOptions, callback) {
         const that = this;
 
         window.requestAnimationFrame(function () {
             rubyCallCommand('cutlist_estimate_start', $.extend({
-                cutlist_hidden_group_ids: that.generateOptions.hidden_group_ids
+                part_ids: partIds
             }, estimateOptions), function (response) {
 
                 const steps = response.steps
@@ -1263,6 +1274,8 @@
                         isEntitySelection: that.isEntitySelection,
                         lengthUnit: that.lengthUnit,
                         generatedAt: new Date().getTime() / 1000,
+                        isGroupSelection: context ? context.isGroupSelection : false,
+                        isPartSelection: context ? context.isPartSelection : false,
                         estimate: response
                     }, function () {
                         that.dialog.setupTooltips();
@@ -1275,7 +1288,7 @@
 
                     // Bind buttons
                     $btnEstimate.on('click', function () {
-                        that.estimateCutlist();
+                        that.estimateParts(partIds, context, false);
                     });
                     $btnPrint.on('click', function () {
                         this.blur();
@@ -1346,7 +1359,7 @@
                                 // Refresh the list
                                 that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist', {
                                     callback: function () {
-                                        that.generateEstimateCutlist(estimateOptions);
+                                        that.generateEstimate(partIds, context, estimateOptions);
                                     }
                                 });
 
@@ -1358,7 +1371,7 @@
                         $(this).blur();
                         const groupId = $(this).data('group-id');
                         that.packingGroup(groupId, true, function () {
-                            that.generateEstimateCutlist(estimateOptions);
+                            that.generateEstimate(partIds, context, estimateOptions);
                         });
                         return false;
                     });
@@ -1381,7 +1394,7 @@
                             // Refresh the list
                             that.dialog.executeCommandOnTab('cutlist', 'generate_cutlist', {
                                 callback: function () {
-                                    that.generateEstimateCutlist(estimateOptions);
+                                    that.generateEstimate(partIds, context, estimateOptions);
                                 }
                             });
 
@@ -6302,7 +6315,7 @@
             this.blur();
         });
         this.$btnEstimate.on('click', function () {
-            that.estimateCutlist();
+            that.estimateAllParts();
             this.blur();
         });
         this.$btnOptions.on('click', function () {

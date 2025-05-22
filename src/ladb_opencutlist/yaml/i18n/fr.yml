@@ -733,6 +733,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} erreurs**."
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit ne seront pas comptabilisées.
+        is_part_selection: L'estimation se limite aux **pièces sélectionnées**.
       tip:
         not_enough_data: |
           Pour que cette estimation puisse se calculer correctement :
@@ -1190,6 +1191,10 @@ tab:
         no_solution: Aucune solution n'a été trouvée.
       warning:
         is_part_selection: Ce calepinage se limite aux **pièces sélectionnées**.
+        cutting_dimensions: Ce calepinage présente les pièces dans leurs dimensions de **débit**.
+        cutting_dimensions_increase_1d: "Dimensions majorées par la surcote de longueur (**{{ length_increase }}**) configurée sur la matière '{{ material_name }}'."
+        cutting_dimensions_increase_2d: "Dimensions majorées par les surcotes configurées sur la matière '{{ material_name }}' en longueur (**{{ length_increase }}**) et en largeur (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Dimensions réduites de l'épaisseur des chants. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiquettes
       options_layout: Composition
