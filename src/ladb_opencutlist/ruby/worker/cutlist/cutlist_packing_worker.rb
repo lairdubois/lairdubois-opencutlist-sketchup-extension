@@ -779,6 +779,11 @@ module Ladb::OpenCutList
         end
       end
 
+      # Errors
+      if packing_def.solution_def.summary_def.total_unused_item_count
+        packing_def.errors << [ 'tab.cutlist.packing.error.unplaced_parts', { :count => packing_def.solution_def.summary_def.total_unused_item_count }]
+      end
+
       packing_def.create_packing
     end
 
