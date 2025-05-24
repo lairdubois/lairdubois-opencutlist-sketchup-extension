@@ -52,8 +52,16 @@ module Ladb::OpenCutList
 
     # -----
 
-    def nearest_vertex_manipulator_to(point)
-      vertex_manipulators.min { |vm1, vm2| vm1.point.distance(point) <=> vm2.point.distance(point) }
+    def nearest_vertex_manipulator_to(point, allows_collinear = false)
+      manipulators = vertex_manipulators
+      if !allows_collinear && manipulators.length >= 3
+        manipulators = manipulators.select.with_index { |vm, index|
+          vm_prev = manipulators[(index - 1) % manipulators.length]
+          vm_next = manipulators[(index + 1) % manipulators.length]
+          !vm.point.vector_to(vm_prev.point).parallel?(vm.point.vector_to(vm_next.point))
+        }
+      end
+        manipulators.min { |vm1, vm2| vm1.point.distance(point) <=> vm2.point.distance(point) }
     end
 
     # -----

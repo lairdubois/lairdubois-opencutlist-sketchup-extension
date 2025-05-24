@@ -241,8 +241,8 @@ module Ladb::OpenCutList
       @mouse_down_point = nil
       @mouse_snap_point = nil
 
-      @nearest_shape_start_vertex = nil
-      @nearest_shape_start_edge_manipulators = nil
+      @nearest_vertex_manipulator = nil
+      @nearest_edge_manipulators = nil
 
       @picked_shape_start_point = nil
       @picked_shape_end_point = nil
@@ -765,7 +765,7 @@ module Ladb::OpenCutList
 
           if @mouse_ip.degrees_of_freedom == 2 && _fetch_option_measure_from_vertex
 
-            @nearest_vertex_manipulator = face_manipulator.outer_loop_manipulator.nearest_vertex_manipulator_to(@mouse_ip.position)
+            @nearest_vertex_manipulator = face_manipulator.outer_loop_manipulator.nearest_vertex_manipulator_to(@mouse_ip.position, false)
             @nearest_edge_manipulators = @nearest_vertex_manipulator.edge_manipulators.select { |edge_manipulator| edge_manipulator.edge.faces.include?(@mouse_ip.face) }
 
           end
@@ -1029,6 +1029,7 @@ module Ladb::OpenCutList
         set_state(STATE_SHAPE)
         _refresh
 
+        return true
       else
 
         d1, d2 = _split_user_text(text)
@@ -3270,6 +3271,13 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _read_shape_start(tool, text, view)
+      if super && !@picked_shape_start_point.nil?
+        _add_picked_point(@picked_shape_start_point, view)
+        _refresh
+      end
+    end
 
     def _read_shape(tool, text, view)
       return true if super
