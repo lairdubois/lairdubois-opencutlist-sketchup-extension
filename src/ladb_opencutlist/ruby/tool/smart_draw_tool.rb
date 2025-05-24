@@ -807,7 +807,7 @@ module Ladb::OpenCutList
 
       end
 
-      # Lock on last pull measure
+      # Lock on the last pull measure
       if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY) && @@last_pull_measure > 0
         measure = @@last_pull_measure
         measure /= 2 if _fetch_option_pull_centered
@@ -2154,6 +2154,8 @@ module Ladb::OpenCutList
 
   class SmartDrawCircleActionHandler < SmartDrawActionHandler
 
+    @@last_radius_measure = 0
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartDrawTool::ACTION_DRAW_CIRCLE, tool, previous_action_handler)
     end
@@ -2186,6 +2188,23 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      case @state
+
+      when STATE_SHAPE
+
+        if key == CONSTRAIN_MODIFIER_KEY
+          UI.beep if @@last_radius_measure == 0
+          _refresh
+          return true
+        end
+
+      end
+
+      super
+    end
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
@@ -2234,6 +2253,12 @@ module Ladb::OpenCutList
       end
 
       @direction = @picked_shape_start_point.vector_to(@mouse_snap_point.project_to_plane([ @picked_shape_start_point, @normal ])).normalize!
+
+      # Lock on the last radius measure
+      if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY) && @@last_radius_measure > 0
+        measure = @@last_radius_measure
+        @mouse_snap_point = @picked_shape_start_point.offset(@picked_shape_start_point.vector_to(@mouse_snap_point), measure) if measure > 0
+      end
 
       super
     end
@@ -2466,6 +2491,7 @@ module Ladb::OpenCutList
     # -----
 
     def _create_faces(definition, p1, p2)
+      @@last_radius_measure = p1.distance(p2)
       if _fetch_option_smoothed
         edge = definition.entities.add_circle(p1, Z_AXIS, p1.distance(p2) + _fetch_option_shape_offset, _fetch_option_segment_count).first
       else
