@@ -764,7 +764,7 @@ module Ladb::OpenCutList
       end
 
       # Warnings
-      if @part_ids
+      if @group.parts.length != @part_ids.length
         packing_def.warnings << 'tab.cutlist.packing.warning.is_part_selection'
       end
       if @problem_type != Packy::PROBLEM_TYPE_IRREGULAR
@@ -777,6 +777,11 @@ module Ladb::OpenCutList
         if @group.edge_decremented
           packing_def.warnings << 'tab.cutlist.packing.warning.cutting_dimensions_edge_decrement'
         end
+      end
+
+      # Errors
+      if packing_def.solution_def.summary_def.total_unused_item_count > 0
+        packing_def.errors << [ 'tab.cutlist.packing.error.unplaced_parts', { :count => packing_def.solution_def.summary_def.total_unused_item_count }]
       end
 
       packing_def.create_packing

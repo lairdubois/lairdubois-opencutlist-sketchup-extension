@@ -36,10 +36,10 @@ int main(int argc, char* argv[]) {
 
     try {
 
-        SolverBuilder optimizer_builder;
-        Solver& optimizer = (*optimizer_builder.build(input_path));
+        SolverBuilder solver_builder;
+        Solver& solver = (*solver_builder.build(input_path));
 
-        json j_output = optimizer.optimize();
+        json j_output = solver.optimize();
 
         std::string output_path = (vm.count("output"))? vm["output"].as<std::string>() : "";
         if (output_path.empty() || output_path == "stdout") {
