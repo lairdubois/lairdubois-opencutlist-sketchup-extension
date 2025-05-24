@@ -2011,6 +2011,7 @@ tool:
     action_option_options_rectangle_centered_status: Centrer le rectangle sur le premier point
     action_option_options_smoothing: Lissage
     action_option_options_smoothing_status: Lisser les courbes
+    action_option_options_measure_from_vertex_status: Mesurer relativement au sommet proche
     action_option_options_measure_from_diameter: Mesure
     action_option_options_measure_from_diameter_status: Mesurer le cercle par son diamètre
     action_option_options_measure_from_radius_status: Mesurer le cercle par son rayon
@@ -2020,7 +2021,7 @@ tool:
     action_option_options_pull_centered_status: Centrer l'élévation sur le premier point
     action_option_options_ask_name: Nommage des pièces
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
-    action_pull_locked_status: Verrouiller sur la dernière mesure
+    action_measure_locked_status: Verrouiller sur la dernière mesure  # TODO
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
     success:
