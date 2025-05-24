@@ -30,6 +30,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_OPTIONS_CONSTRUCTION = 'construction'
     ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED = 'rectangle_centered'
     ACTION_OPTION_OPTIONS_SMOOTHING = 'smoothing'
+    ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX = 'measure_from_vertex'
     ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER = 'measure_from_diameter'
     ACTION_OPTION_OPTIONS_MEASURE_REVERSED = 'measure_reversed'
     ACTION_OPTION_OPTIONS_PULL_CENTRED = 'pull_centered'
@@ -556,6 +557,14 @@ module Ladb::OpenCutList
 
       case @state
 
+      when STATE_SHAPE_START
+        if key == ALT_MODIFIER_KEY
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
+          @previous_action_handler = nil
+          _refresh
+          return true
+        end
+
       when STATE_PULL
         if key == CONSTRAIN_MODIFIER_KEY
           _refresh
@@ -594,7 +603,13 @@ module Ladb::OpenCutList
 
     def onStateChanged(state)
       super
+
+      # Remove floatin tools
       _remove_floating_tools
+
+      # Disable measure from vertex option
+      @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, false, true)
+
     end
 
     # -----
@@ -707,8 +722,12 @@ module Ladb::OpenCutList
           @direction = edge_manipulator.direction
           @locked_direction = @direction
 
-          @nearest_vertex_manipulator = edge_manipulator.nearest_vertex_manipulator_to(@mouse_ip.position)
-          @nearest_edge_manipulators = @nearest_vertex_manipulator.edge_manipulators.select { |edge_manipulator| edge_manipulator.edge == @mouse_ip.edge }
+          if _fetch_option_measure_from_vertex
+
+            @nearest_vertex_manipulator = edge_manipulator.nearest_vertex_manipulator_to(@mouse_ip.position)
+            @nearest_edge_manipulators = @nearest_vertex_manipulator.edge_manipulators.select { |edge_manipulator| edge_manipulator.edge == @mouse_ip.edge }
+
+          end
 
         elsif @mouse_ip.cline
 
@@ -742,7 +761,7 @@ module Ladb::OpenCutList
           # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
           # @tool.append_3d(k_mesh)
 
-          if @mouse_ip.degrees_of_freedom == 2
+          if @mouse_ip.degrees_of_freedom == 2 && _fetch_option_measure_from_vertex
 
             @nearest_vertex_manipulator = face_manipulator.outer_loop_manipulator.nearest_vertex_manipulator_to(@mouse_ip.position)
             @nearest_edge_manipulators = @nearest_vertex_manipulator.edge_manipulators.select { |edge_manipulator| edge_manipulator.edge.faces.include?(@mouse_ip.face) }
@@ -815,21 +834,36 @@ module Ladb::OpenCutList
         colors = [ Kuix::COLOR_X, Kuix::COLOR_Y ]
         pp.each_with_index do |p, index|
 
-          k_edge = Kuix::EdgeMotif.new
-          k_edge.start.copy!(p0)
-          k_edge.end.copy!(p)
-          k_edge.line_width = 1
-          k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-          k_edge.color = Kuix::COLOR_BLACK
-          @tool.append_3d(k_edge)
+          if pp.one?
 
-          k_edge = Kuix::EdgeMotif.new
-          k_edge.start.copy!(p)
-          k_edge.end.copy!(pm)
-          k_edge.line_width = 1
-          k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-          k_edge.color = colors[index]
-          @tool.append_3d(k_edge)
+            k_edge = Kuix::EdgeMotif.new
+            k_edge.start.copy!(p)
+            k_edge.end.copy!(p0)
+            k_edge.line_width = 1
+            k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
+            k_edge.color = colors[index]
+            k_edge.on_top = true
+            @tool.append_3d(k_edge)
+
+          else
+
+            k_edge = Kuix::EdgeMotif.new
+            k_edge.start.copy!(p0)
+            k_edge.end.copy!(p)
+            k_edge.line_width = 1
+            k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+            k_edge.color = Kuix::COLOR_BLACK
+            @tool.append_3d(k_edge)
+
+            k_edge = Kuix::EdgeMotif.new
+            k_edge.start.copy!(p)
+            k_edge.end.copy!(pm)
+            k_edge.line_width = 1
+            k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+            k_edge.color = colors[index]
+            @tool.append_3d(k_edge)
+
+          end
 
           k_points = _create_floating_points(
             points: p,
@@ -985,7 +1019,8 @@ module Ladb::OpenCutList
         p1 = @mouse_snap_point.project_to_line(@nearest_edge_manipulators[0].line)
         n1 = p0.vector_to(p1)
 
-        d1 = _read_user_text_length(tool, d1, n1.length)
+        d1 = _read_user_text_length(tool, text, n1.length)
+        return true if d1.nil?
 
         @picked_shape_start_point = p0.offset(n1, d1)
 
@@ -1061,6 +1096,10 @@ module Ladb::OpenCutList
 
     def _fetch_option_construction
       @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION)
+    end
+
+    def _fetch_option_measure_from_vertex
+      @tool.fetch_action_option_boolean(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX)
     end
 
     def _fetch_option_pull_centered

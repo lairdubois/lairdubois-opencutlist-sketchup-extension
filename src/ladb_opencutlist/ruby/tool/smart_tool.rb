@@ -1772,6 +1772,7 @@ module Ladb::OpenCutList
     end
 
     def _reset
+      @previous_action_handler = nil
       @tool.remove_all_2d
       @tool.remove_all_3d
       Sketchup.active_model.active_view.lock_inference unless Sketchup.active_model.nil?
