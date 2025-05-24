@@ -932,22 +932,22 @@ module Ladb::OpenCutList
       cmd.menu_text = get_i18n_string('core.toolbar.command.smart_axes')
       toolbar = toolbar.add_item(cmd)
 
-      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes') + '_2') {
-        if Sketchup.active_model
-          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesToolNew)
-            Sketchup.active_model.select_tool(nil)
-          else
-            Sketchup.active_model.select_tool(SmartAxesToolNew.new)
-          end
-          Sketchup.focus if Sketchup.respond_to?(:focus)
-        end
-      }
-      cmd.small_icon = '../img/icon-smart-axes-72x72.png'
-      cmd.large_icon = '../img/icon-smart-axes-114x114.png'
-      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
-      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_axes')
-      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_axes')
-      toolbar = toolbar.add_item(cmd)
+      # cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes') + '_2') {
+      #   if Sketchup.active_model
+      #     if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesToolNew)
+      #       Sketchup.active_model.select_tool(nil)
+      #     else
+      #       Sketchup.active_model.select_tool(SmartAxesToolNew.new)
+      #     end
+      #     Sketchup.focus if Sketchup.respond_to?(:focus)
+      #   end
+      # }
+      # cmd.small_icon = '../img/icon-smart-axes-72x72.png'
+      # cmd.large_icon = '../img/icon-smart-axes-114x114.png'
+      # cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
+      # cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_axes')
+      # cmd.menu_text = get_i18n_string('core.toolbar.command.smart_axes')
+      # toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_export')) {
         if Sketchup.active_model
