@@ -453,8 +453,8 @@ module Ladb::OpenCutList
 
           else
 
-            length = part.def.cutting_size.length
-            width = part.def.cutting_size.width
+            length = part.def.cutting_length
+            width = part.def.cutting_width
 
             item_types << {
               copies: count,
