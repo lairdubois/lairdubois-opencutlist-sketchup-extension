@@ -1182,7 +1182,7 @@ tab:
         warning:
           is_bin_selection: Les **blocs masqués** ne seront pas exportés.
         error:
-          overflow_gt_spacing: | # TODO
+          overflow_gt_spacing: |
             Le débord d'usinage ({{ overflow }}) doit être inférieur ou égal à la moitié l'espacement ({{ spacing }}) configuré dans ce calepinage.
       error:
         no_part: Aucune pièce.
@@ -1420,9 +1420,9 @@ tab:
       option_faces_help: |
         Permet de choisir si la recherche de la forme de la pièce se fait sur toutes ses faces ou seulement sur la face ciblée.
       option_anchor: Point d'ancrage
-      option_anchor_0: Automatique # TODO
+      option_anchor_0: Automatique
       option_anchor_1: Projeter l'origine de la pièce
-      option_anchor_help: | # TODO
+      option_anchor_help: |
         **Automatique**
         Le coin inférieur gauche de la boîte englobante de la géométrie exportée est utilisé comme point d'ancrage.
 
@@ -1441,16 +1441,16 @@ tab:
 
         *Cette option ne permet pas de détecter les autres types de courbes.*
       option_merge_holes: Décomposition
-      option_merge_holes_0: Basique # TODO
-      option_merge_holes_1: Contour + Percements + Débord # TODO
-      option_merge_holes_help: | # TODO
+      option_merge_holes_0: Basique
+      option_merge_holes_1: Contour + Percements + Débord
+      option_merge_holes_help: |
         **Basique**
         La forme de la pièce est exportée avec la projection de chaque face sur une couche correspondant à sa profondeur.
 
         **Contour + Percements + Débord**
         Active la séparation du contour extérieur des pièces de leurs percements ainsi que le calcul du débord d'usinage appliqué aux surfaces se trouvant en bordure du contour et des cavités.
-      option_merge_holes_overflow: Débord d'usinage # TODO
-      option_merge_holes_overflow_help: | # TODO
+      option_merge_holes_overflow: Débord d'usinage
+      option_merge_holes_overflow_help: |
         Permet de définir la distance de débord d'usinage appliquée aux surfaces se trouvant en bordure du contour et des cavités.
       option_include_paths: Tracés
       option_include_paths_0: $t(default.no)
@@ -2021,7 +2021,7 @@ tool:
     action_option_options_pull_centered_status: Centrer l'élévation sur le premier point
     action_option_options_ask_name: Nommage des pièces
     action_option_options_ask_name_status: Saisir manuellement le nom des pièces
-    action_measure_locked_status: Verrouiller sur la dernière mesure  # TODO
+    action_measure_locked_status: Verrouiller sur la dernière mesure
     action_toggle_move_copy_status: Alterner entre copier/déplacer
     action_change_move_anchor_status: Changer le point d'ancrage
     success:

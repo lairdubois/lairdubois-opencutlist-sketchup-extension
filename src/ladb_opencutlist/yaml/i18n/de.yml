@@ -1189,6 +1189,8 @@ tab:
         no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zu Verfügung.
         no_bin_2d: Keine Standard-Platte oder -Furnierblatt wurde ausgewählt und es stehen keine Reste zu Verfügung.
         no_solution: Keine Lösung gefunden.
+        unplaced_parts: "**1 zu großes Teil** konnte nicht platziert werden."
+        unplaced_parts_plural: "**{{ count }} zu große Teile** konnten nicht platziert werden."
       warning:
         is_part_selection: Dieser Schnittplan beschränkt sich auf die **ausgewählten Teile**.
         cutting_dimensions: Dieser Schnittplan verwendet die **Rohmaße** der Teile.
@@ -2008,6 +2010,7 @@ tool:
     action_option_options_rectangle_centered: Rechteck zentriert
     action_option_options_rectangle_centered_status: Rechteck auf den ersten Punkt zentrieren
     action_option_options_smoothing: Glätten
+    action_option_options_measure_from_vertex_status: Relativ zum nahen Scheitelpunkt messen
     action_option_options_smoothing_status: Kurven glätten
     action_option_options_measure_from_diameter: Maß
     action_option_options_measure_from_diameter_status: Den Kreis nach seinem Durchmesser messen
@@ -2018,7 +2021,7 @@ tool:
     action_option_options_pull_centered_status: Erhebung auf den ersten Punkt zentrieren
     action_option_options_ask_name: Benennung der Teile
     action_option_options_ask_name_status: Manuelle Eingabe der Benennung von Teilen
-    action_pull_locked_status: Auf die letzte Messung fixieren
+    action_measure_locked_status: Auf die letzte Messung fixieren
     action_toggle_move_copy_status: Abwechselnd kopieren/verschieben
     action_change_move_anchor_status: Ankerpunkt ändern
     success:
