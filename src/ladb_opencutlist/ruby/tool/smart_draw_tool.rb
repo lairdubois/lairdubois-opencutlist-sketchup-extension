@@ -869,7 +869,7 @@ module Ladb::OpenCutList
 
           k_points = _create_floating_points(
             points: p,
-            style: Kuix::POINT_STYLE_CIRCLE,
+            style: Kuix::POINT_STYLE_SQUARE,
             stroke_color: colors[index],
             fill_color: nil,
             size: 1.5
