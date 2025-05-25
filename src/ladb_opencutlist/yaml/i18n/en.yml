@@ -1189,6 +1189,8 @@ tab:
         no_bin_1d: No standard board or edge banding was selected and no off-cuts were available.
         no_bin_2d: No standard panel or veneer sheet was selected and no off-cuts were available.
         no_solution: No solution was found.
+        unplaced_parts: "**1 part** could not be placed."
+        unplaced_parts_plural: "**{{ count }} parts** could not be placed."
       warning:
         is_part_selection: This cutting diagram is limited to **selected parts**.
         cutting_dimensions: This cutting diagramm uses the **raw** dimensions of the parts.
@@ -2009,6 +2011,7 @@ tool:
     action_option_options_rectangle_centered_status: Center rectangle on the first point
     action_option_options_smoothing: Smoothing
     action_option_options_smoothing_status: Smooth curves
+    action_option_options_measure_from_vertex_status: Measure relative to the nearest vertex
     action_option_options_measure_from_diameter: Measure
     action_option_options_measure_from_diameter_status: Measure circle by its diameter
     action_option_options_measure_from_radius_status: Measure circle by its radius
@@ -2018,7 +2021,7 @@ tool:
     action_option_options_pull_centered_status: Center elevation on the first point
     action_option_options_ask_name: Parts naming
     action_option_options_ask_name_status: Enter part names manually
-    action_pull_locked_status: Lock on last measurement
+    action_measure_locked_status: Lock on last measurement
     action_toggle_move_copy_status: Toggle between copy/move
     action_change_move_anchor_status: Change the anchor point
     success:
