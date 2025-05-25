@@ -1121,7 +1121,7 @@ tab:
         total_part_count: Σ Деталей
         total_used: Всього використано
         bin_1d_dimensional: Погонаж
-        bin_1d_dimensional_type_0: Стандартний розмір дошки
+        bin_1d_dimensional_type_0: Стандартний розмір погонажа
         bin_1d_dimensional_type_1: Обрізок
         bin_1d_edge: Крайка
         bin_1d_edge_type_0: Стандартний розмір крайки
@@ -1139,7 +1139,7 @@ tab:
         parts_plural: Деталі
         leftovers: Залишок
         leftovers_plural: Залишки
-        leftovers_to_keep: Зберегти перепад
+        leftovers_to_keep: Діловий залишок
         leftovers_to_keep_plural: Зберегти залишки
         cut: Розріз
         cut_plural: Розрізи
@@ -1189,6 +1189,8 @@ tab:
         no_bin_1d: "Не вибираються стандартні розміри погонажа та крайок, а залишки не визначені."
         no_bin_2d: "Не вибираються стандартні панелі або листи, а залишки не визначені."
         no_solution: Рішення не знайдено.
+        unplaced_parts: "**1 деталь** не могла бути розміщена."
+        unplaced_parts_plural: "**{{ count }} деталей** не можуть бути розміщені."
       warning:
         is_part_selection: Цей звіт обмежено **вибраними деталями**.
         cutting_dimensions: Ця карта розкрою відображає деталі з їх **пильними** розмірами.
@@ -1412,13 +1414,13 @@ tab:
       option_part_drawing_type: Проекція
       option_part_drawing_type_help: |
         Дозволяє вибрати експортований вид.
-      option_faces: Поверхні
-      option_faces_0: Використовуйте лише цільову грань
-      option_faces_1: Використовуйте всі грані деталі
+      option_faces: Грані
+      option_faces_0: Використовувати лише цільову грань
+      option_faces_1: Використовувати всі грані деталі
       option_faces_help: |
         Дозволяє вибрати, чи проводити пошук форми деталі на всіх її гранях, чи тільки на цільовій грані.
       option_anchor: Точка прив’язки
-      option_anchor_0: Автоматичний
+      option_anchor_0: Автоматична
       option_anchor_1: Проектувати походження деталі
       option_anchor_help: |
         **Автоматично**
@@ -1984,15 +1986,15 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: Креслення
-    action_0: Створити прямокутник
+    title: Малювати
+    action_0: Прямокутник
     action_0_status: Малювання об'єму на основі прямокутної форми
     action_0_state_1_status: "Натисніть, щоб встановити протилежний кут або ввести довжину, ширину"
-    action_1: Створити коло
+    action_1: Коло
     action_1_status: Малювання об'єму на основі круглої форми
     action_1_state_1_radius_status: "Натисніть, щоб встановити радіус або ввести відстань"
     action_1_state_1_diameter_status: "Натисніть, щоб встановити діаметр або ввести відстань"
-    action_2: Створити багатокутник
+    action_2: Багатокутник
     action_2_status: Малювання об'єму на основі багатокутної форми
     action_2_state_1_status: "Натисніть, щоб встановити нову точку або ввести відстань"
     action_x_state_2_status: "Натисніть, щоб встановити висоту або ввести відстань"
@@ -2009,22 +2011,23 @@ tool:
     action_option_options_rectangle_centered_status: "Використовуйте перший клік, щоб встановити центр прямокутника"
     action_option_options_smoothing: Згладжування
     action_option_options_smoothing_status: Згладжені криві
+    action_option_options_measure_from_vertex_status: Вимірювання відносно найближчої вершини
     action_option_options_measure_from_diameter: Вимірювання
-    action_option_options_measure_from_diameter_status: Виміряйте коло по його діаметру
-    action_option_options_measure_from_radius_status: Виміряйте коло по його радіусу
+    action_option_options_measure_from_diameter_status: Вимірювання кола по його діаметру
+    action_option_options_measure_from_radius_status: Вимірювання кола по його радіусу
     action_option_options_measure_reversed: Реверсивне вимірювання
     action_option_options_measure_reversed_status: Зворотне вимірювання
     action_option_options_pull_centered: Центроване видавлювання
     action_option_options_pull_centered_status: Центроване видавлювання на першій точці
     action_option_options_ask_name: Найменування деталей
     action_option_options_ask_name_status: Введення назв деталей вручну
-    action_pull_locked_status: Фіксація під час останнього вимірювання
+    action_measure_locked_status: Фіксація під час останнього вимірювання
     action_toggle_move_copy_status: Чергування копіювання/переміщення
     action_change_move_anchor_status: Зміна опорної точки
     success:
       part_created: "Створено нову деталь: {{ name }}"
   smart_handle:
-    title: Змінити
+    title: Редагувати
     action_0: Обрати
     action_0_status: "Натисніть на деталь, щоб вибрати її"
     action_1: Копіювати по лінії
@@ -2064,7 +2067,7 @@ tool:
     error:
       min_distance: "Відстань {{ value1 }} менша за мінімальну відстань {{ value2 }}"
   smart_paint:
-    title: Покриття
+    title: Нанесення матеріалів
     default_material: Матеріал не заданий
     filters: Фільтри
     filter_0: Не визначений
@@ -2080,7 +2083,7 @@ tool:
     action_1_status: "Натисніть на торець деталі, щоб застосувати до неї матеріал '$t(tab.materials.type_4)'"
     action_2: Покриття граней
     action_2_status: "Натисніть на награні деталі, щоб застосувати до неї матеріал '$t(tab.materials.type_6)'"
-    action_3: Очистити деталь
+    action_3: Взяти зразок
     action_3_status: "Натисніть на грані, щоб взяти зразок матеріалу"
     action_4: Очистити
     action_4_status: "Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів"

@@ -1189,6 +1189,8 @@ tab:
         no_bin_1d: "Не выбран ни один стандартный погонаж, и не определен остаток."
         no_bin_2d: "Не выбраны ни одна из панелей, либо листов и не определен размер остатка."
         no_solution: Решение не найдено.
+        unplaced_parts: "**1 деталь** не может быть размещена."
+        unplaced_parts_plural: "**{{ count }} детали** не могут быть размещены."
       warning:
         is_part_selection: Данный отчет ограничен **выделенными деталями**.
         cutting_dimensions: Эта карта раскроя отображает детали с их **пильными** размерами.
@@ -2000,15 +2002,16 @@ tool:
     action_option_group_segments: Сегменты
     action_option_group_options: Опции
     action_option_offset_shape_offset: Смещение
-    action_option_offset_shape_offset_status: Применяет смещение к линии нарисованной фигуры
+    action_option_offset_shape_offset_status: "Задает смещение линии контура  проектируемой фигуры "
     action_option_segments_segment_count: Количество сегментов
-    action_option_segments_segment_count_status: Используется для определения количества сегментов в окружности
+    action_option_segments_segment_count_status: Задает количества сегментов в проектируемой окружности
     action_option_options_construction: Конструкционные элементы
     action_option_options_construction_status: Построение на основе конструкционных элементов
     action_option_options_rectangle_centered: Прямоугольник с центром
     action_option_options_rectangle_centered_status: Первым кликом задайте центр прямоугольника
     action_option_options_smoothing: Сглаживание
     action_option_options_smoothing_status: Плавные кривые
+    action_option_options_measure_from_vertex_status: Измерение по отношению к ближайшей вершине
     action_option_options_measure_from_diameter: Измерение
     action_option_options_measure_from_diameter_status: Измерить окружность по ее диаметру
     action_option_options_measure_from_radius_status: Измерить окружность по ее радиусу
@@ -2018,7 +2021,7 @@ tool:
     action_option_options_pull_centered_status: Первым кликом задайте центр возвышения
     action_option_options_ask_name: Задать имена деталям
     action_option_options_ask_name_status: Ввод названий деталей вручную
-    action_pull_locked_status: Фиксация результатов последнего измерения
+    action_measure_locked_status: Фиксация результатов последнего измерения
     action_toggle_move_copy_status: Переключение копировать/переместить
     action_change_move_anchor_status: Изменить точку привязки
     success:
@@ -2045,8 +2048,8 @@ tool:
     action_4_state_1_status: "Кликните, чтобы задать первую точку измерения"
     action_4_state_2_status: "Кликните, чтобы задать вторую точку измерения или введите нужное расстояние"
     action_5: Изменить размер
-    action_option_group_copy_measure_type: Измерение
-    action_option_group_move_measure_type: Измерение
+    action_option_group_copy_measure_type: Отсчет
+    action_option_group_move_measure_type: Отсчет
     action_option_group_axes: Оси
     action_option_group_options: Опции
     action_option_copy_measure_type_outside_status: Внешнее измерение
@@ -2083,12 +2086,12 @@ tool:
     action_3: Образец
     action_3_status: "Кликните на сторону, чтобы взять образец материала"
     action_4: Очистить
-    action_4_status: "Кликните на деталь, чтобы удалить все материалы из ее параметров, в том числе и у всех ее экземпляров"
+    action_4_status: "Кликните на деталь, чтобы удалить все параметры материала, в том числе и у всех ее экземпляров"
     action_option_group_instances: Количество экземпляров
     action_option_group_edges: Количество кромок
     action_option_group_faces: Количество сторон
-    action_option_instances_0_status: Раскрасить только экземпляр целевой детали
-    action_option_instances_1_status: Окрасить все экземпляры целевой детали
+    action_option_instances_0_status: Раскрасить только целевую деталь
+    action_option_instances_1_status: Раскрасить все экземпляры сходные с целевой деталью
     action_option_edges_0_status: Окрасить только целевую композицию
     action_option_edges_1_status: Окрасить лицевую и тыльную сторону в детали
     action_option_edges_2_status: Раскрасить все 4 стороны в выделенной детали
@@ -2124,7 +2127,7 @@ tool:
     action_3_status: "Выберите грань детали и кликните по ней, чтобы изменить ее оси"
     action_4: Изменить начало координат
     action_4_status: Для перемещения начала координат выберите точку на детали и кликните по ней
-    action_option_group_direction: Направление
+    action_option_group_direction: Измерение
     action_option_direction_0: Дл
     action_option_direction_1: Шр
     action_option_direction_2: Тл
