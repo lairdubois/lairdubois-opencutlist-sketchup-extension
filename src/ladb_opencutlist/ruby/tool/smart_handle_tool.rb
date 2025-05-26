@@ -612,6 +612,8 @@ module Ladb::OpenCutList
 
         fn = lambda do |axis, dim, locked, color|
 
+          dim = dim * 0.5 + px_offset
+
           k_edge = Kuix::EdgeMotif.new
           k_edge.start.copy!(center.offset(axis.reverse, dim))
           k_edge.end.copy!(center.offset(axis, dim))
@@ -626,9 +628,9 @@ module Ladb::OpenCutList
 
         end
 
-        fn.call(X_AXIS, eb.width * 0.5 + px_offset, _locked_x?, translucent ? ColorUtils.color_translucent(Kuix::COLOR_X, 64) : Kuix::COLOR_X) if with_x
-        fn.call(Y_AXIS, eb.height * 0.5 + px_offset, _locked_y?, translucent ? ColorUtils.color_translucent(Kuix::COLOR_Y, 64) : Kuix::COLOR_Y) if with_y
-        fn.call(Z_AXIS, eb.depth * 0.5 + px_offset, _locked_z?, translucent ? ColorUtils.color_translucent(Kuix::COLOR_Z, 64) : Kuix::COLOR_Z) if with_z
+        fn.call(X_AXIS, eb.width, _locked_x?, translucent ? ColorUtils.color_translucent(Kuix::COLOR_X, 64) : Kuix::COLOR_X) if with_x
+        fn.call(Y_AXIS, eb.height, _locked_y?, translucent ? ColorUtils.color_translucent(Kuix::COLOR_Y, 64) : Kuix::COLOR_Y) if with_y
+        fn.call(Z_AXIS, eb.depth, _locked_z?, translucent ? ColorUtils.color_translucent(Kuix::COLOR_Z, 64) : Kuix::COLOR_Z) if with_z
 
         if with_box
 
