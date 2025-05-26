@@ -1182,8 +1182,8 @@ tab:
         warning:
           is_bin_selection: Les **blocs masqués** ne seront pas exportés.
         error:
-          overflow_gt_spacing: |  # TODO
-            Le débord d'usinage ({{ overflow }}) doit être inférieur ou égal l'espacement ({{ spacing }}) configuré dans ce calepinage.
+          overflow_gt_spacing: |
+            Le débord d'usinage ({{ overflow }}) doit être inférieur ou égal à l'espacement ({{ spacing }}) configuré dans ce calepinage.
       error:
         no_part: Aucune pièce.
         no_bin_1d: Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.

@@ -1179,7 +1179,7 @@ tab:
           is_bin_selection: 948 - Les **blocs masqués** ne seront pas exportés.
         error:
           overflow_gt_spacing: |
-            949 - Le débord d'usinage ({{ overflow }}) doit être inférieur ou égal à la moitié l'espacement ({{ spacing }}) configuré dans ce calepinage.
+            949 - Le débord d'usinage ({{ overflow }}) doit être inférieur ou égal à l'espacement ({{ spacing }}) configuré dans ce calepinage.
       error:
         no_part: 950 - Aucune pièce.
         no_bin_1d: 951 - Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.
