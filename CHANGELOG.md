@@ -9,6 +9,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * New Cutting Diagram engine (with nesting capabilities)
   * Added Outliner tab
   * Added Smart Draw tool
+  * Added Cut price to material attributes
   * Added Definition and Instance wrappers in formulas (allows to read DC and custom attributes)
   * Added Material wrapper in formulas
   * Added Move Axes action on Smart Axes Tool
