@@ -713,10 +713,10 @@ tab:
       total_mass: Σ Маса
       total_cost: Σ Ціна
       total_count: Кількість
-      total_instance_count: Σ Одиниць
+      total_instance_count: Σ Одиниця
       total_volume: Σ Об’ємів
-      total_area: Σ Площь
-      total_length: Σ Довжин
+      total_area: Σ Площа
+      total_length: Σ Довжина
       type_1: $t(tab.materials.type_1)
       type_2: $t(tab.materials.type_2)
       type_3: $t(tab.materials.type_3)
@@ -807,7 +807,7 @@ tab:
       option_saw_kerf_help: "Ширина матеріалу, втрачена пропилом."
       option_spacing: Інтервал
       option_spacing_help: Мінімальна відстань між кожною деталлю.
-      option_trimming: Обрізка листа
+      option_trimming: Обпил листа
       option_trimming_help_1d: "Розмір обрізки на кінці дошки або крайки, для видалення дефектного краю."
       option_trimming_help_2d: Розмір обрізки листа по периметру для видалення дефектів зовнішнього вигляду листа та його прямокутного вирівнювання.
       option_optimization: Рівень оптимізації
@@ -979,10 +979,10 @@ tab:
     packing:
       title: Карта розкрою
       option_problem_type: Тип
-      option_problem_type_rectangle: Прямокутник
-      option_problem_type_rectangleguillotine: Гільйотина
-      option_problem_type_onedimensional: Погонаж
-      option_problem_type_irregular: Вкладені
+      option_problem_type_rectangle: Листовий
+      option_problem_type_rectangleguillotine: Гільйотинний
+      option_problem_type_onedimensional: Погонажний
+      option_problem_type_irregular: Нестінг
       options_material: Матеріал
       options_config: Конфігурація
       options_display: Перегляд
@@ -1005,8 +1005,8 @@ tab:
 
         *Якщо одиниця не вказана, буде застосована одиниця моделі.*
       option_scrap_bin_1d_none: Ні
-      option_std_bin_2d_sheet_good: Стандартні розміри панелей
-      option_std_bin_2d_veneer: Стандартні розміри листів
+      option_std_bin_2d_sheet_good: Стандартні розміри листів
+      option_std_bin_2d_veneer: Стандартні розміри шпону
       option_std_bin_2d_help: |
         Виберіть тут стандартні розміри панелі або листа, які будуть дублюватися для найкращого підгону всіх деталей.
 
@@ -1029,15 +1029,15 @@ tab:
       option_objective: Мета
       option_objective_help: |
         Визначає призначення розкрою.
-      option_rectangleguillotine_cut_type: Тип різання
+      option_rectangleguillotine_cut_type: Тип крою
       option_rectangleguillotine_cut_type_help: |
-        Встановлює тип різу.
+        Встановлює тип крою.
       option_rectangleguillotine_cut_type_non_exact: Не точний
       option_rectangleguillotine_cut_type_exact: Точний
       option_rectangleguillotine_cut_type_homogenous: Однорідний
       option_rectangleguillotine_number_of_stages: Варіанти різу
       option_rectangleguillotine_number_of_stages_help: |
-        Встановлює максимальну кількість рівнів різання.
+        Встановлює максимальну кількість рівнів крою.
       option_rectangleguillotine_first_stage_orientation: Напрямок першого різу
       option_rectangleguillotine_first_stage_orientation_help: |
         Задає напрямок першого різу.
@@ -1059,7 +1059,7 @@ tab:
         Визначає, чи дозволено відзеркалювання деталі деталі.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
-      option_spacing: Інтервал
+      option_spacing: Ширина різу
       option_spacing_help: |
         Мінімальна відстань між кожною частиною.
         Це значення може бути шириною леза або ріжучого інструменту.
@@ -1079,13 +1079,13 @@ tab:
       option_hide_part_list_2d_help: Показує або приховує список деталей на кожній панелі або листі.
       option_part_drawing_type: Форми деталей
       option_part_drawing_type_0: Приховані
-      option_part_drawing_type_1: Креслення - Вигляд з лиця
-      option_part_drawing_type_2: Креслення - Вигляд ззаді
+      option_part_drawing_type_1: Креслення - Вид з лиця
+      option_part_drawing_type_2: Креслення - Вид з тилу
       option_part_drawing_type_help: |
         Дозволяє відображати або приховувати фактичну форму деталей та їх обробку на діаграмі.
 
         *Цю опцію потрібно активувати, щоб форми могли бути експортовані.*
-      option_colorization: Розмальовка деталей
+      option_colorization: Колорування деталей
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Перегляд
       option_colorization_2: $t(default.yes) - Перегляд та Друк
@@ -1141,8 +1141,8 @@ tab:
         leftovers_plural: Залишки
         leftovers_to_keep: Діловий залишок
         leftovers_to_keep_plural: Зберегти залишки
-        cut: Розріз
-        cut_plural: Розрізи
+        cut: Різ
+        cut_plural: Різи
         cut_trimming: Чистий різ
         cut_primary: Первинний крій
         cut_depth: "Рівень {{ depth }}"
@@ -1176,7 +1176,7 @@ tab:
         option_leftovers: Залишки
         option_leftovers_help: |
           Дозволяє активувати експорт залишків та вибрати їхні кольори.
-        option_cuts: Розрізи
+        option_cuts: Різи
         option_cuts_help: |
           Дозволяє активувати експорт розрізів та вибрати їх колір.
         warning:
@@ -1199,7 +1199,7 @@ tab:
         cutting_dimensions_edge_decrement: Розміри зменшено на товщину крайки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Етикетки
-      options_layout: Склад
+      options_layout: Схема
       options_settings: Конфігурація
       options_part_order_strategy: Сортування
       options_offset: Зміщення
@@ -1294,7 +1294,7 @@ tab:
     layout:
       title: Креслення
       to_layout: Експорт до Layout
-      options_layout: Склад
+      options_layout: Схема
       options_settings: Конфігурація
       option_parts: Деталі
       option_parts_colored: Колір
@@ -1511,7 +1511,7 @@ tab:
     type_1: Масив дерева
     type_2: Листовий
     type_3: Погонаж
-    type_4: Кромкооблицювальний
+    type_4: Крайооблицювальний
     type_5: Фурнітура
     type_6: Лист шпону
     tooltip:
@@ -1696,7 +1696,7 @@ tab:
       url: URL
       tags: Мітки
       layer_name: Тег
-      explode: Рознести
+      explode: Розбити
       explode_message: "Підтверджуєте розрив екземпляра **{{ name }}**?"
     option:
       general: Загальні
@@ -1986,7 +1986,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: Малювати
+    title: Створити
     action_0: Прямокутник
     action_0_status: Малювання об'єму на основі прямокутної форми
     action_0_state_1_status: "Натисніть, щоб встановити протилежний кут або ввести довжину, ширину"
@@ -2088,23 +2088,23 @@ tool:
     action_4: Очистити
     action_4_status: "Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів"
     action_option_group_instances: Кількість екземплярів
-    action_option_group_edges: Кількість крайки
-    action_option_group_faces: Кількість граней
+    action_option_group_edges: Торці
+    action_option_group_faces: Площини
     action_option_instances_0_status: Покриття лише екземпляра цільової деталі
     action_option_instances_1_status: Покриття всіх екземплярів цільової деталі
-    action_option_edges_0_status: Покриття лише цільової крайки
-    action_option_edges_1_status: Покриття цільової крайки та протилежної крайки у деталі
-    action_option_edges_2_status: "Покриття всіх 4 країв деталі, яку ви вибрали"
-    action_option_faces_0_status: Покриття лише цільової грані
-    action_option_faces_1_status: Покриття 2 граней цільової деталі
+    action_option_edges_0_status: Покриття лише цільового торця
+    action_option_edges_1_status: Покриття цільового торця та протилежного у деталі
+    action_option_edges_2_status: "Покриття всіх 4 торців деталі, яку ви вибрали"
+    action_option_faces_0_status: Покриття лише цільової площини
+    action_option_faces_1_status: Покриття 2 площин цільової деталі
     edges: "{{ count }} торець"
     edges_plural: "{{ count }} торців"
     edge_ymin: Довжина 1
     edge_ymax: Довжина 2
     edge_xmin: Ширина 1
     edge_xmax: Ширина 2
-    faces: "{{ count }} грань"
-    faces_plural: "{{ count }} граней"
+    faces: "{{ count }} площина"
+    faces_plural: "{{ count }} площин"
     face_zmin: Тил
     face_zmax: Лице
     warning:

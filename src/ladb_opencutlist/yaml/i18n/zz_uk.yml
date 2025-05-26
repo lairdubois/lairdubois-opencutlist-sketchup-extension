@@ -709,10 +709,10 @@ tab:
       total_mass: 571 - Σ Маса
       total_cost: 572 - Σ Ціна
       total_count: 573 - Кількість
-      total_instance_count: 574 - Σ Одиниць
+      total_instance_count: 574 - Σ Одиниця
       total_volume: 575 - Σ Об’ємів
-      total_area: 576 - Σ Площь
-      total_length: 577 - Σ Довжин
+      total_area: 576 - Σ Площа
+      total_length: 577 - Σ Довжина
       type_1: $t(tab.materials.type_1)
       type_2: $t(tab.materials.type_2)
       type_3: $t(tab.materials.type_3)
@@ -803,7 +803,7 @@ tab:
       option_saw_kerf_help: 654 - Ширина матеріалу, втрачена пропилом.
       option_spacing: 655 - Інтервал
       option_spacing_help: 656 - Мінімальна відстань між кожною деталлю.
-      option_trimming: 657 - Обрізка листа
+      option_trimming: 657 - Обпил листа
       option_trimming_help_1d: 658 - Розмір обрізки на кінці дошки або крайки, для видалення дефектного краю.
       option_trimming_help_2d: 659 - Розмір обрізки листа по периметру для видалення дефектів зовнішнього вигляду листа та його прямокутного вирівнювання.
       option_optimization: 660 - Рівень оптимізації
@@ -975,10 +975,10 @@ tab:
     packing:
       title: 792 - Карта розкрою
       option_problem_type: 793 - Тип
-      option_problem_type_rectangle: 794 - Прямокутник
-      option_problem_type_rectangleguillotine: 795 - Гільйотина
-      option_problem_type_onedimensional: 796 - Погонаж
-      option_problem_type_irregular: 797 - Вкладені
+      option_problem_type_rectangle: 794 - Листовий
+      option_problem_type_rectangleguillotine: 795 - Гільйотинний
+      option_problem_type_onedimensional: 796 - Погонажний
+      option_problem_type_irregular: 797 - Нестінг
       options_material: 798 - Матеріал
       options_config: 799 - Конфігурація
       options_display: 800 - Перегляд
@@ -1001,8 +1001,8 @@ tab:
 
         *Якщо одиниця не вказана, буде застосована одиниця моделі.*
       option_scrap_bin_1d_none: 811 - Ні
-      option_std_bin_2d_sheet_good: 812 - Стандартні розміри панелей
-      option_std_bin_2d_veneer: 813 - Стандартні розміри листів
+      option_std_bin_2d_sheet_good: 812 - Стандартні розміри листів
+      option_std_bin_2d_veneer: 813 - Стандартні розміри шпону
       option_std_bin_2d_help: |
         814 - Виберіть тут стандартні розміри панелі або листа, які будуть дублюватися для найкращого підгону всіх деталей.
 
@@ -1025,15 +1025,15 @@ tab:
       option_objective: 824 - Мета
       option_objective_help: |
         825 - Визначає призначення розкрою.
-      option_rectangleguillotine_cut_type: 826 - Тип різання
+      option_rectangleguillotine_cut_type: 826 - Тип крою
       option_rectangleguillotine_cut_type_help: |
-        827 - Встановлює тип різу.
+        827 - Встановлює тип крою.
       option_rectangleguillotine_cut_type_non_exact: 828 - Не точний
       option_rectangleguillotine_cut_type_exact: 829 - Точний
       option_rectangleguillotine_cut_type_homogenous: 830 - Однорідний
       option_rectangleguillotine_number_of_stages: 831 - Варіанти різу
       option_rectangleguillotine_number_of_stages_help: |
-        832 - Встановлює максимальну кількість рівнів різання.
+        832 - Встановлює максимальну кількість рівнів крою.
       option_rectangleguillotine_first_stage_orientation: 833 - Напрямок першого різу
       option_rectangleguillotine_first_stage_orientation_help: |
         834 - Задає напрямок першого різу.
@@ -1055,7 +1055,7 @@ tab:
         846 - Визначає, чи дозволено відзеркалювання деталі деталі.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
-      option_spacing: 849 - Інтервал
+      option_spacing: 849 - Ширина різу
       option_spacing_help: |
         850 - Мінімальна відстань між кожною частиною.
         Це значення може бути шириною леза або ріжучого інструменту.
@@ -1075,13 +1075,13 @@ tab:
       option_hide_part_list_2d_help: 863 - Показує або приховує список деталей на кожній панелі або листі.
       option_part_drawing_type: 864 - Форми деталей
       option_part_drawing_type_0: 865 - Приховані
-      option_part_drawing_type_1: 866 - Креслення - Вигляд з лиця
-      option_part_drawing_type_2: 867 - Креслення - Вигляд ззаді
+      option_part_drawing_type_1: 866 - Креслення - Вид з лиця
+      option_part_drawing_type_2: 867 - Креслення - Вид з тилу
       option_part_drawing_type_help: |
         868 - Дозволяє відображати або приховувати фактичну форму деталей та їх обробку на діаграмі.
 
         *Цю опцію потрібно активувати, щоб форми могли бути експортовані.*
-      option_colorization: 869 - Розмальовка деталей
+      option_colorization: 869 - Колорування деталей
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Перегляд
       option_colorization_2: $t(default.yes) - Перегляд та Друк
@@ -1137,8 +1137,8 @@ tab:
         leftovers_plural: 918 - Залишки
         leftovers_to_keep: 919 - Діловий залишок
         leftovers_to_keep_plural: 920 - Зберегти залишки
-        cut: 921 - Розріз
-        cut_plural: 922 - Розрізи
+        cut: 921 - Різ
+        cut_plural: 922 - Різи
         cut_trimming: 923 - Чистий різ
         cut_primary: 924 - Первинний крій
         cut_depth: 925 - Рівень {{ depth }}
@@ -1172,7 +1172,7 @@ tab:
         option_leftovers: 944 - Залишки
         option_leftovers_help: |
           945 - Дозволяє активувати експорт залишків та вибрати їхні кольори.
-        option_cuts: 946 - Розрізи
+        option_cuts: 946 - Різи
         option_cuts_help: |
           947 - Дозволяє активувати експорт розрізів та вибрати їх колір.
         warning:
@@ -1195,7 +1195,7 @@ tab:
         cutting_dimensions_edge_decrement: 960 - Розміри зменшено на товщину крайки. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: 961 - Етикетки
-      options_layout: 962 - Склад
+      options_layout: 962 - Схема
       options_settings: 963 - Конфігурація
       options_part_order_strategy: 964 - Сортування
       options_offset: 965 - Зміщення
@@ -1290,7 +1290,7 @@ tab:
     layout:
       title: 1047 - Креслення
       to_layout: 1048 - Експорт до Layout
-      options_layout: 1049 - Склад
+      options_layout: 1049 - Схема
       options_settings: 1050 - Конфігурація
       option_parts: 1051 - Деталі
       option_parts_colored: 1052 - Колір
@@ -1507,7 +1507,7 @@ tab:
     type_1: 1192 - Масив дерева
     type_2: 1193 - Листовий
     type_3: 1194 - Погонаж
-    type_4: 1195 - Кромкооблицювальний
+    type_4: 1195 - Крайооблицювальний
     type_5: 1196 - Фурнітура
     type_6: 1197 - Лист шпону
     tooltip:
@@ -1692,7 +1692,7 @@ tab:
       url: 1324 - URL
       tags: 1325 - Мітки
       layer_name: 1326 - Тег
-      explode: 1327 - Рознести
+      explode: 1327 - Розбити
       explode_message: 1328 - Підтверджуєте розрив екземпляра **{{ name }}**?
     option:
       general: 1329 - Загальні
@@ -1982,7 +1982,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1513 - Малювати
+    title: 1513 - Створити
     action_0: 1514 - Прямокутник
     action_0_status: 1515 - Малювання об'єму на основі прямокутної форми
     action_0_state_1_status: 1516 - Натисніть, щоб встановити протилежний кут або ввести довжину, ширину
@@ -2084,23 +2084,23 @@ tool:
     action_4: 1607 - Очистити
     action_4_status: 1608 - Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів
     action_option_group_instances: 1609 - Кількість екземплярів
-    action_option_group_edges: 1610 - Кількість крайки
-    action_option_group_faces: 1611 - Кількість граней
+    action_option_group_edges: 1610 - Торці
+    action_option_group_faces: 1611 - Площини
     action_option_instances_0_status: 1612 - Покриття лише екземпляра цільової деталі
     action_option_instances_1_status: 1613 - Покриття всіх екземплярів цільової деталі
-    action_option_edges_0_status: 1614 - Покриття лише цільової крайки
-    action_option_edges_1_status: 1615 - Покриття цільової крайки та протилежної крайки у деталі
-    action_option_edges_2_status: 1616 - Покриття всіх 4 країв деталі, яку ви вибрали
-    action_option_faces_0_status: 1617 - Покриття лише цільової грані
-    action_option_faces_1_status: 1618 - Покриття 2 граней цільової деталі
+    action_option_edges_0_status: 1614 - Покриття лише цільового торця
+    action_option_edges_1_status: 1615 - Покриття цільового торця та протилежного у деталі
+    action_option_edges_2_status: 1616 - Покриття всіх 4 торців деталі, яку ви вибрали
+    action_option_faces_0_status: 1617 - Покриття лише цільової площини
+    action_option_faces_1_status: 1618 - Покриття 2 площин цільової деталі
     edges: 1619 - {{ count }} торець
     edges_plural: 1620 - {{ count }} торців
     edge_ymin: 1621 - Довжина 1
     edge_ymax: 1622 - Довжина 2
     edge_xmin: 1623 - Ширина 1
     edge_xmax: 1624 - Ширина 2
-    faces: 1625 - {{ count }} грань
-    faces_plural: 1626 - {{ count }} граней
+    faces: 1625 - {{ count }} площина
+    faces_plural: 1626 - {{ count }} площин
     face_zmin: 1627 - Тил
     face_zmax: 1628 - Лице
     warning:

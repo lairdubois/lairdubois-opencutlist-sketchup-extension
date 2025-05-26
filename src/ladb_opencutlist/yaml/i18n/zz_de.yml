@@ -1185,8 +1185,8 @@ tab:
         no_bin_1d: 951 - Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zu Verfügung.
         no_bin_2d: 952 - Keine Standard-Platte oder -Furnierblatt wurde ausgewählt und es stehen keine Reste zu Verfügung.
         no_solution: 953 - Keine Lösung gefunden.
-        unplaced_parts: 954 - **1 zu großes Teil** konnte nicht platziert werden.
-        unplaced_parts_plural: 955 - **{{ count }} zu große Teile** konnten nicht platziert werden.
+        unplaced_parts: 954 - **1 Teil** konnte nicht platziert werden.
+        unplaced_parts_plural: 955 - "**{{ count }} Teile** konnten nicht platziert werden.
       warning:
         is_part_selection: 956 - Dieser Schnittplan beschränkt sich auf die **ausgewählten Teile**.
         cutting_dimensions: 957 - Dieser Schnittplan verwendet die **Rohmaße** der Teile.
@@ -2006,8 +2006,8 @@ tool:
     action_option_options_rectangle_centered: 1534 - Rechteck zentriert
     action_option_options_rectangle_centered_status: 1535 - Rechteck auf den ersten Punkt zentrieren
     action_option_options_smoothing: 1536 - Glätten
-    action_option_options_measure_from_vertex_status: 1537 - Relativ zum nahen Scheitelpunkt messen
-    action_option_options_smoothing_status: 1538 - Kurven glätten
+    action_option_options_smoothing_status: 1537 - Kurven glätten
+    action_option_options_measure_from_vertex_status: 1538 - Relativ zum nahen Scheitelpunkt messen
     action_option_options_measure_from_diameter: 1539 - Maß
     action_option_options_measure_from_diameter_status: 1540 - Den Kreis nach seinem Durchmesser messen
     action_option_options_measure_from_radius_status: 1541 - Messung nach dem Radius
