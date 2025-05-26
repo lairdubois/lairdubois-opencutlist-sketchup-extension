@@ -510,8 +510,9 @@
                 this.blur();
             });
             $btnDuplicate.on('click', function () {
+                const editedMaterial = that.editedMaterial;
                 $modal.modal('hide');   // Hide modal
-                that.duplicateMaterial(that.editedMaterial);
+                that.duplicateMaterial(editedMaterial);
                 this.blur();
             });
             $btnExportToSkm.on('click', function () {
