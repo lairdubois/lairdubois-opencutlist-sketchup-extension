@@ -427,7 +427,7 @@ module Ladb::OpenCutList
         item_types = []
 
         # Add items from parts
-        fn_add_items = lambda { |part|
+        parts.map { |part| part.instance_of?(FolderPart) ? part.children : part }.flatten(1).each do |part|
 
           count = part.count
           projection_def = _compute_part_projection_def(@part_drawing_type, part, compute_shell: true)
@@ -437,16 +437,20 @@ module Ladb::OpenCutList
             length = part.def.size.length
             width = part.def.size.width
 
+            shapes = projection_def.shell_def.shape_defs.map { |shape_def| {
+              type: 'polygon',
+              vertices: shape_def.outer_poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } },
+              holes: shape_def.holes_poly_defs.map { |poly_def| {
+                type: 'polygon',
+                vertices: poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } }
+              }},
+            }}
+
+            return _create_packing(errors: [ [ [ 'tab.cutlist.packing.error.invalid_part_shapes' ], { :name => part.name } ] ]) if shapes.empty?
+
             item_types << {
               copies: part.count,
-              shapes: projection_def.shell_def.shape_defs.map { |shape_def| {
-                type: 'polygon',
-                vertices: shape_def.outer_poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } },
-                holes: shape_def.holes_poly_defs.map { |poly_def| {
-                  type: 'polygon',
-                  vertices: poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } }
-                }},
-              }},
+              shapes: shapes,
               allowed_rotations: AVAILABLE_ROTATIONS.fetch(@irregular_allowed_rotations, []),
               allow_mirroring: @irregular_allow_mirroring
             }
@@ -474,14 +478,7 @@ module Ladb::OpenCutList
             color: @colorization > COLORIZATION_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil
           )
 
-        }
-        parts.each { |part|
-          if part.instance_of?(FolderPart)
-            part.children.each { |child_part| fn_add_items.call(child_part) }
-          else
-            fn_add_items.call(part)
-          end
-        }
+        end
 
         return _create_packing(errors: [ 'tab.cutlist.packing.error.no_part' ]) if item_types.empty?
 
