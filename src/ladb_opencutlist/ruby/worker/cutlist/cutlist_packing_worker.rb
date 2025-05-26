@@ -1146,7 +1146,7 @@ module Ladb::OpenCutList
         # Estimate letter width
         width = text.length * size.to_i * 0.6
       else
-        text_bounds = Sketchup.active_model.active_view.text_bounds(Geom::Point3d.new, text, {
+        text_bounds = Sketchup.active_model.active_view.text_bounds(ORIGIN, text, {
           :font => font,
           :size => size,
           :align => align,

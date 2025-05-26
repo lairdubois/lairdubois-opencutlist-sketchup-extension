@@ -354,11 +354,13 @@ module Ladb::OpenCutList
 
         px_offset = Sketchup.active_model.active_view.pixels_to_model(50, center.transform(et))
 
-        fn = lambda do |axis, dim, color|
+        fn = lambda do |axis, dim_x, color|
+
+          d_x = dim_x * 0.5 + px_offset
 
           k_edge = Kuix::EdgeMotif.new
-          k_edge.start.copy!(center.offset(axis.reverse, dim))
-          k_edge.end.copy!(center.offset(axis, dim))
+          k_edge.start.copy!(center.offset(axis.reverse, dx))
+          k_edge.end.copy!(center.offset(axis, d_x))
           k_edge.start_arrow = true
           k_edge.end_arrow = true
           k_edge.arrow_size = unit * 1.5
@@ -371,11 +373,11 @@ module Ladb::OpenCutList
         end
 
         if _fetch_option_direction_length
-          fn.call(X_AXIS, eb.width * 0.5 + px_offset, Kuix::COLOR_X)
+          fn.call(X_AXIS, eb.width, Kuix::COLOR_X)
         elsif _fetch_option_direction_width
-          fn.call(Y_AXIS, eb.height * 0.5 + px_offset, Kuix::COLOR_Y)
+          fn.call(Y_AXIS, eb.height, Kuix::COLOR_Y)
         elsif _fetch_option_direction_thickness
-          fn.call(Z_AXIS, eb.depth * 0.5 + px_offset, Kuix::COLOR_Z)
+          fn.call(Z_AXIS, eb.depth, Kuix::COLOR_Z)
         end
 
         k_box = Kuix::BoxMotif.new

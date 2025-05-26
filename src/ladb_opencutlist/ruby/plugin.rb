@@ -212,11 +212,10 @@ module Ladb::OpenCutList
             i18n_string = i18n_string.gsub(Regexp.new("{{\s*#{k}\s*}}")){ v.to_s }
           end
         end
-        i18n_string
-      else
-        path_key
+        return i18n_string
       end
 
+      path_key
     end
 
     def open_docs_page(page)
