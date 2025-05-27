@@ -4,7 +4,7 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
-* 6.4.0 (2025-04-04)
+* 6.4.0 (2025-05-27)
 
   * Added **Polish** language
   * Added **Hungarian** language
