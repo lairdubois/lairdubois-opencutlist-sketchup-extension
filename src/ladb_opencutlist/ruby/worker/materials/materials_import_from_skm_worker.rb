@@ -1,7 +1,6 @@
 module Ladb::OpenCutList
 
   require 'securerandom'
-  require_relative '../../lib/rubyzip/zip'
 
   class MaterialsImportFromSkmWorker
 
@@ -51,6 +50,8 @@ module Ladb::OpenCutList
         PLUGIN.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
 
         if Sketchup.version_number > 1800000000 # RubyZip is not compatible with SU 18-
+
+          require_relative '../../lib/rubyzip/zip'
 
           # Try to extract material data
           Zip::File.open(path, create: false) do |zipfile|
