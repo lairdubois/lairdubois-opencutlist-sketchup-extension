@@ -207,7 +207,7 @@ module Ladb::OpenCutList
       super
 
       # Clear current selection
-      Sketchup.active_model.selection.clear if Sketchup.active_model
+      Sketchup.active_model.selection.clear if Sketchup.active_model && @highlighted_parts.nil?
 
       # Observe model events
       view.model.add_observer(self)
