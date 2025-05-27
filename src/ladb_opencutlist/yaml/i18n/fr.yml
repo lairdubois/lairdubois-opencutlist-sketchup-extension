@@ -1842,7 +1842,7 @@ tab:
     contribute: Contribuer
     backers: "{{ count }} contributeur financier"
     backers_plural: "{{ count }} contributeurs financiers"
-    ad: "OpenCutList n'est pas Gratuit" # TODO
+    ad: "OpenCutList n'est pas gratuit"
     objective: Objectif
     objective_slogan: "OpenCutList, c'est nous tous"
     objective_title:
