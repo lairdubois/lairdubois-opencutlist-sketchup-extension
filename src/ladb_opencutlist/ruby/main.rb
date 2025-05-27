@@ -4,10 +4,11 @@ module Ladb
     require 'sketchup.rb'
     require_relative 'plugin'
 
+    PLUGIN ||= Plugin.new
+
     unless file_loaded?(__FILE__)
 
-      # Setup OpenCutList plugin
-      PLUGIN = Plugin.new
+      # Setup OpenCutList UI integration
       PLUGIN.setup
 
       file_loaded(__FILE__)

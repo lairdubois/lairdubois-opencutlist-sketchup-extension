@@ -762,6 +762,18 @@ module Ladb::OpenCutList
 
     def setup
 
+      fn_get_selected_component_entity = lambda do
+        entity = (Sketchup.active_model.nil? || Sketchup.active_model.selection.length > 1) ? nil : Sketchup.active_model.selection.first
+        return entity if entity.is_a?(Sketchup::ComponentInstance)
+        nil
+      end
+
+      fn_edit_part_properties = lambda do |entity, tab = 'general'|
+        unless entity.nil?
+          execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: null, part_serialized_path: '#{PathUtils.serialize_path(Sketchup.active_model.active_path.nil? ? [ entity ] : Sketchup.active_model.active_path + [ entity ])}', tab: '#{tab}' }")
+        end
+      end
+
       # Setup Menu
       menu = UI.menu
       submenu = menu.add_submenu(get_i18n_string('core.menu.submenu'))
@@ -783,39 +795,29 @@ module Ladb::OpenCutList
       }
       submenu.add_separator
       edit_part_item = submenu.add_item(get_i18n_string('core.menu.item.edit_part_properties')) {
-        _edit_part_properties(_get_selected_component_entity)
+        fn_edit_part_properties.call(fn_get_selected_component_entity.call)
       }
       menu.set_validation_proc(edit_part_item) {
-        entity = _get_selected_component_entity
-        if entity.nil?
-          MF_GRAYED
-        else
-          MF_ENABLED
-        end
+        fn_get_selected_component_entity.call.nil? ? MF_GRAYED : MF_ENABLED
       }
       edit_part_axes_item = submenu.add_item(get_i18n_string('core.menu.item.edit_part_axes_properties')) {
-        _edit_part_properties(_get_selected_component_entity, 'axes')
+        fn_edit_part_properties.call(fn_get_selected_component_entity.call, 'axes')
       }
       menu.set_validation_proc(edit_part_axes_item) {
-        entity = _get_selected_component_entity
-        if entity.nil?
-          MF_GRAYED
-        else
-          MF_ENABLED
-        end
+        fn_get_selected_component_entity.call.nil? ? MF_GRAYED : MF_ENABLED
       }
       submenu.add_separator
-      [ 'draw', 'handle', 'paint', 'axes', 'export' ].each do |striupped_name|
+      %w[draw handle paint axes export].each do |stripped_name|
 
-        clazz = Object.const_get("Ladb::OpenCutList::Smart#{striupped_name.capitalize}Tool")
+        clazz = Object.const_get("Ladb::OpenCutList::Smart#{stripped_name.capitalize}Tool")
 
-        smart_tool_submenu = submenu.add_submenu(get_i18n_string("core.menu.item.smart_#{striupped_name}"))
-        smart_tool_submenu.add_item(get_i18n_string("core.menu.item.smart_#{striupped_name}")) {
+        smart_tool_submenu = submenu.add_submenu(get_i18n_string("core.menu.item.smart_#{stripped_name}"))
+        smart_tool_submenu.add_item(get_i18n_string("core.menu.item.smart_#{stripped_name}")) {
           Sketchup.active_model.select_tool(clazz.new) if Sketchup.active_model
         }
         smart_tool_submenu.add_separator
         clazz::ACTIONS.each do |action_def|
-          smart_tool_submenu.add_item(get_i18n_string("tool.smart_#{striupped_name}.action_#{action_def[:action]}")) {
+          smart_tool_submenu.add_item(get_i18n_string("tool.smart_#{stripped_name}.action_#{action_def[:action]}")) {
             Sketchup.active_model.select_tool(clazz.new(current_action: action_def[:action])) if Sketchup.active_model
           }
         end
@@ -828,18 +830,17 @@ module Ladb::OpenCutList
 
       # Setup Context Menu
       UI.add_context_menu_handler do |context_menu|
-        entity = _get_selected_component_entity
-        unless entity.nil?
+        unless (entity = fn_get_selected_component_entity.call).nil?
 
           context_menu.add_separator
           submenu = context_menu.add_submenu(get_i18n_string('core.menu.submenu'))
 
           # Edit part item
           submenu.add_item(get_i18n_string('core.menu.item.edit_part_properties')) {
-            _edit_part_properties(entity)
+            fn_edit_part_properties.call(entity)
           }
           submenu.add_item(get_i18n_string('core.menu.item.edit_part_axes_properties')) {
-            _edit_part_properties(entity, 'axes')
+            fn_edit_part_properties.call(entity, 'axes')
           }
 
         end
@@ -941,8 +942,8 @@ module Ladb::OpenCutList
       #     Sketchup.focus if Sketchup.respond_to?(:focus)
       #   end
       # }
-      # cmd.small_icon = '../img/icon-smart-axes-72x72.png'
-      # cmd.large_icon = '../img/icon-smart-axes-114x114.png'
+      # cmd.small_icon = '../img/icon-dialog-72x72.png'
+      # cmd.large_icon = '../img/icon-dialog-114x114.png'
       # cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
       # cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_axes')
       # cmd.menu_text = get_i18n_string('core.toolbar.command.smart_axes')
@@ -1369,20 +1370,6 @@ module Ladb::OpenCutList
       puts '-' * heading.length
       block.call
       puts '-' * heading.length
-    end
-
-    def _get_selected_component_entity
-      entity = (Sketchup.active_model.nil? || Sketchup.active_model.selection.length > 1) ? nil : Sketchup.active_model.selection.first
-      if !entity.nil? && entity.is_a?(Sketchup::ComponentInstance)
-        return entity
-      end
-      nil
-    end
-
-    def _edit_part_properties(entity, tab = 'general')
-      unless entity.nil?
-        execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: null, part_serialized_path: '#{PathUtils.serialize_path(Sketchup.active_model.active_path.nil? ? [ entity ] : Sketchup.active_model.active_path + [ entity ])}', tab: '#{tab}' }")
-      end
     end
 
     # -- Commands ---
