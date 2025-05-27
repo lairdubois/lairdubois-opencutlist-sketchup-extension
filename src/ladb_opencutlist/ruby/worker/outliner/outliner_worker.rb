@@ -285,7 +285,8 @@ module Ladb::OpenCutList
             node_def.type,
             (node_def.entity.name.nil? || node_def.entity.name.empty?) ? 1 : 0,
             node_def.entity.name,
-            node_def.default_name
+            node_def.default_name,
+            node_def.entity.entityID
           ]
         else
           []
