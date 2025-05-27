@@ -27,6 +27,9 @@ AllCops:
     TargetSketchUpVersion: 2024
     SourcePath: src
   DisabledByDefault: true
+  ExtraDetails: true
+  DisplayStyleGuide: true
+  TargetRubyVersion: 2.2
 
 SketchupRequirements:
   Enabled: true
@@ -41,4 +44,10 @@ SketchupSuggestions:
   Enabled: true
 
 SketchupBugs:
+  Enabled: true
+
+SketchupSuggestions/Compatibility:
+  Enabled: false
+
+Security/Eval:
   Enabled: true
