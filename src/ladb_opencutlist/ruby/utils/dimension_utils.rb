@@ -230,12 +230,11 @@
       s = s.gsub(/,/, decimal_separator) # convert separator to native
       s = s.gsub(/\./, decimal_separator) # convert separator to native
 
-      unit_present = false
-      if (match = s.match(/^*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
+      unit = nil
+      if (match = s.match(/^\s*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
         unit, = match.captures
         # puts("parsed unit = #{unit} in #{s}")
-        s = s.gsub(/\s*#{unit}\s*/, "#{' ' unless unit == "'" || unit =='"'}#{unit}") # Format space around unit
-        unit_present = true
+        s = s.gsub(/\s*#{unit}\s*/, unit) # Remove space around unit
       end
       begin # Try to convert to length
         x = s.to_l
@@ -244,7 +243,9 @@
         # puts("OCL [dimension input error]: #{e}")
         s = '0'
       end
-      unless unit_present
+      if unit
+        s = s.gsub(/\s*#{unit}\s*/, "#{' ' unless unit == "'" || unit =='"'}#{unit}") # Format space around unit
+      else
         # puts("default unit = #{unit_sign} in #{s}")
         s += ' ' if model_unit_is_metric
         s += unit_sign
