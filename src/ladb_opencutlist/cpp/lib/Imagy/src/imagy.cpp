@@ -1,4 +1,5 @@
 #include <imagy.hpp>
+#include <imagy.image.hpp>
 
 using namespace Imagy;
 

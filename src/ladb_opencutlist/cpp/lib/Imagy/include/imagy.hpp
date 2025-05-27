@@ -1,8 +1,8 @@
+#pragma once
+
 #include <cstddef>
 #include <cstdint>
 #include <cstdbool>
-
-#include "imagy.image.hpp"
 
 constexpr auto IMAGY_VERSION = "1.0.0";
 

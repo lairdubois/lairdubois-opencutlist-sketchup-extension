@@ -27,3 +27,8 @@ add_subdirectory(Imagy)
 #                             Packy
 
 add_subdirectory(Packy)
+
+# -------------------------------------------------------------------
+#                             Zipy
+
+add_subdirectory(Zipy)
