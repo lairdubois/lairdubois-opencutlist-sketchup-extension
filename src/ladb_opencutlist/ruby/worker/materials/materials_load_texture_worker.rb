@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require 'cgi'
+  require_relative '../../lib/fiddle/imagy/imagy'
 
   class MaterialsLoadTextureWorker
 
@@ -35,19 +36,22 @@ module Ladb::OpenCutList
         FileUtils.cp(path, texture_file)
 
         # Load image
-        image_rep = Sketchup::ImageRep.new
-        begin
-          image_rep.load_file(texture_file)
-        rescue ArgumentError => e
+        if Fiddle::Imagy.load(texture_file)
+
+          texture_image_width = Fiddle::Imagy.get_width
+          texture_image_height = Fiddle::Imagy.get_height
+
+          # Fetch image size in pixels
+          response[:texture_ratio] = texture_image_width.to_f / texture_image_height
+          response[:texture_image_width] = texture_image_width
+          response[:texture_image_height] = texture_image_height
+
+          response[:texture_file] = texture_file
+
+        else
           return { :errors => [ 'tab.materials.error.invalid_image_file' ] }
         end
 
-        # Fetch image size in pixels
-        response[:texture_ratio] = image_rep.width.to_f / image_rep.height
-        response[:texture_image_width] = image_rep.width
-        response[:texture_image_height] = image_rep.height
-
-        response[:texture_file] = texture_file
       end
 
       response
