@@ -505,8 +505,9 @@
                 this.blur();
             });
             $btnDelete.on('click', function () {
+                const editedMaterial = that.editedMaterial;
                 $modal.modal('hide');   // Hide modal
-                that.deleteMaterial(that.editedMaterial);
+                that.deleteMaterial(editedMaterial);
                 this.blur();
             });
             $btnDuplicate.on('click', function () {
