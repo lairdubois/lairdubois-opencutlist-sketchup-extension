@@ -97,6 +97,17 @@ module Ladb::OpenCutList::Kuix
       )
     end
 
+    def inflate!(dx, dy)
+      @origin.x -= dx
+      @size.width += dx * 2
+      @origin.y -= dy
+      @size.height += dy * 2
+    end
+
+    def inflate_all!(d)
+      inflate!(d, d)
+    end
+
     # -- Tests --
 
     def is_empty?

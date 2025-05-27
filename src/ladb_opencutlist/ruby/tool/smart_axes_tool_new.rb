@@ -346,38 +346,31 @@ module Ladb::OpenCutList
       super
       if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
-        unit = @tool.get_unit
-
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
         center = eb.center
 
         px_offset = Sketchup.active_model.active_view.pixels_to_model(50, center.transform(et))
 
-        fn = lambda do |axis, dim_x, color|
+        fn = lambda do |axis, color|
 
-          d_x = dim_x * 0.5 + px_offset
-
-          k_edge = Kuix::EdgeMotif.new
-          k_edge.start.copy!(center.offset(axis.reverse, dx))
-          k_edge.end.copy!(center.offset(axis, d_x))
-          k_edge.start_arrow = true
-          k_edge.end_arrow = true
-          k_edge.arrow_size = unit * 1.5
-          k_edge.line_width = 1.5
-          k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
-          k_edge.color = color
-          k_edge.transformation = et
-          @tool.append_3d(k_edge, LAYER_3D_ACTION_PREVIEW)
+          k_rectangle = Kuix::RectangleMotif.new
+          k_rectangle.bounds.copy!(eb)
+          k_rectangle.bounds.inflate!(px_offset, px_offset, 0)
+          k_rectangle.line_width = 2
+          k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SOLID
+          k_rectangle.color = color
+          k_rectangle.transformation = et
+          @tool.append_3d(k_rectangle, LAYER_3D_ACTION_PREVIEW)
 
         end
 
         if _fetch_option_direction_length
-          fn.call(X_AXIS, eb.width, Kuix::COLOR_X)
+          fn.call(X_AXIS, Kuix::COLOR_X)
         elsif _fetch_option_direction_width
-          fn.call(Y_AXIS, eb.height, Kuix::COLOR_Y)
+          fn.call(Y_AXIS, Kuix::COLOR_Y)
         elsif _fetch_option_direction_thickness
-          fn.call(Z_AXIS, eb.depth, Kuix::COLOR_Z)
+          fn.call(Z_AXIS, Kuix::COLOR_Z)
         end
 
         k_box = Kuix::BoxMotif.new

@@ -336,7 +336,7 @@ module Ladb::OpenCutList
               # Box helper
               k_box = Kuix::BoxMotif.new
               k_box.bounds.copy!(@active_drawing_def.bounds)
-              k_box.bounds.apply_offset(inch_offset, inch_offset, inch_offset)
+              k_box.bounds.inflate_all!(inch_offset)
               k_box.color = Kuix::COLOR_BLACK
               k_box.line_width = 1
               k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -460,7 +460,7 @@ module Ladb::OpenCutList
               k_box = Kuix::RectangleMotif.new
               k_box.bounds.origin.copy!(projection_def.bounds.min)
               k_box.bounds.size.copy!(projection_def.bounds)
-              k_box.bounds.apply_offset(inch_offset, inch_offset, 0)
+              k_box.bounds.inflate!(inch_offset, inch_offset, 0)
               k_box.color = Kuix::COLOR_BLACK
               k_box.line_width = 1
               k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -587,7 +587,7 @@ module Ladb::OpenCutList
             k_rectangle = Kuix::RectangleMotif.new
             k_rectangle.bounds.origin.copy!(projection_def.bounds.min)
             k_rectangle.bounds.size.copy!(projection_def.bounds)
-            k_rectangle.bounds.apply_offset(inch_offset, inch_offset, 0)
+            k_rectangle.bounds.inflate!(inch_offset, inch_offset, 0)
             k_rectangle.color = Kuix::COLOR_BLACK
             k_rectangle.line_width = 1
             k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -722,7 +722,7 @@ module Ladb::OpenCutList
             k_rectangle = Kuix::RectangleMotif.new
             k_rectangle.bounds.origin.copy!(projection_def.bounds.min)
             k_rectangle.bounds.size.copy!(projection_def.bounds)
-            k_rectangle.bounds.apply_offset(inch_offset, inch_offset, 0)
+            k_rectangle.bounds.inflate!(inch_offset, inch_offset, 0)
             k_rectangle.color = Kuix::COLOR_BLACK
             k_rectangle.line_width = 1
             k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES

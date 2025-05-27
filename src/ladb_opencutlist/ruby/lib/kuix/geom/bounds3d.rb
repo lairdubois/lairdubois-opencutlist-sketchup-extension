@@ -119,13 +119,17 @@ module Ladb::OpenCutList::Kuix
       )
     end
 
-    def apply_offset(offset_x, offset_y, offset_z)
-      @origin.x -= offset_x
-      @size.width += offset_x * 2
-      @origin.y -= offset_y
-      @size.height += offset_y * 2
-      @origin.z -= offset_z
-      @size.depth += offset_z * 2
+    def inflate!(dx, dy, dz)
+      @origin.x -= dx
+      @size.width += dx * 2
+      @origin.y -= dy
+      @size.height += dy * 2
+      @origin.z -= dz
+      @size.depth += dz * 2
+    end
+
+    def inflate_all!(d)
+      inflate!(d, d, d)
     end
 
     # -- Tests --
