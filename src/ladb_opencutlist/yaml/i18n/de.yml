@@ -1188,6 +1188,7 @@ tab:
         no_part: Kein Teil.
         no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zu Verfügung.
         no_bin_2d: Keine Standard-Platte oder -Furnierblatt wurde ausgewählt und es stehen keine Reste zu Verfügung.
+        invalid_part_shapes: Die Form des Teils '{{ name }}' ist ungültig.
         no_solution: Keine Lösung gefunden.
         unplaced_parts: "**1 Teil** konnte nicht platziert werden."
         unplaced_parts_plural: "\"**{{ count }} Teile** konnten nicht platziert werden."

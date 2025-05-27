@@ -69,8 +69,8 @@ default:
   instance_plural: Pozycje
   part_single: część
   part_plural: części
-  cut_single: ""
-  cut_plural: ""
+  cut_single: Cięcie
+  cut_plural: Cięcia
   thickness_layer_single: warstwa
   thickness_layer_plural: warstwy
   setup_model_units: Ustaw jednostki modelu
@@ -90,6 +90,7 @@ default:
   width: Szerokość
   thickness: Grubość
   height: Wysokość
+  deprecated: Nieaktualny
 core:
   menu:
     submenu: OpenCutList
@@ -153,7 +154,7 @@ core:
       Wystąpił błąd podczas eksportowania do *{{ path }}*.
       **{{ error }}**
   success:
-    exported_to: "Pomyślnie wyeksportowano do {{ path }}"
+    exported_to: "Pomyślnie wyeksportowano do {{ path }}."
     copied_to_clipboard: Skopiowane do schowka
   event:
     model_change: Aktywny model został zmieniony.
@@ -209,23 +210,28 @@ core:
       delete: "Usuń ustawienia '{{ name }}'"
     dictionary:
       component_textinput_color: Paleta kolorów
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modelu
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -327,9 +333,9 @@ tab:
       edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Rozwiń / Zwiń
       material_origin_1: Materiał tego elementu jest zdefiniowany w jej instancjach
-      material_origin_2: Materiał uwzględniony dla tego elementu jest obecnie dziedziczony z jednego z jego elementów nadrzędnych.
+      material_origin_2: Materiał uwzględniony dla tego elementu jest obecnie dziedziczony z jednego z jego elementów nadrzędnych
       material_origin_3: Materiał uwzględniony dla tego elementu jest obecnie pobierany z jego elementów podrzędnych
-      orientation_locked_on_axis: Orientacja tego elementu jest zablokowana na jego osiach.
+      orientation_locked_on_axis: Orientacja tego elementu jest zablokowana na jego osiach
       number_saved: Numer tej części został zapisany
       number_hidden: "Numer '{{ number }}' zapisany w tej części nie może być użyty, ponieważ jest już przypisany"
       number_generated: Numer tej części został wygenerowany automatycznie
@@ -379,8 +385,8 @@ tab:
       dblclick_to_sort_axes: "Kliknij dwukrotnie tutaj, aby automatycznie zmienić kolejność osi zgodnie z wymiarami części"
       part_axes: Osie wewnętrzne części
       select_unselect_all_parts: Zaznacz / odznacz wszystkie części w grupie
-      select_parts_in_cutlist: Wybierz element w arkuszu rozkroju.
-      select_parts_in_cutlist_plural: "Wybierz {{ count }} elementy w arkuszu rozkroju."
+      select_parts_in_cutlist: Wybierz element w arkuszu rozkroju
+      select_parts_in_cutlist_plural: "Wybierz {{ count }} elementy w arkuszu rozkroju"
       setup_group_cuttingdiagram: "Skonfiguruj schemat cięcia '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       setup_group_packing: "Skonfiguruj schemat cięcia '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}'"
       open_part_url: Otwórz adres URL części
@@ -393,7 +399,7 @@ tab:
       labels_parts: Drukowanie etykiet
       write_2d: Projekcja 2D
       write_3d: Geometria 3D
-      write_2d_parts: Eksportuj 2D projekcję części.
+      write_2d_parts: Eksportuj 2D projekcję części
       write_3d_parts: Eksportuj geometrię 3D części
       group_write_2d_parts: Eksportuj rzut 2D części grupy
       group_write_3d_parts: Eksportuj geometrię 3D części grupy
@@ -613,6 +619,7 @@ tab:
     export:
       title: Eksport
       info_0: |
+        Ta funkcja umożliwia eksport danych z *wykazu elementów* do schowka lub do pliku w formacie [CSV](https://pl.wikipedia.org/wiki/CSV_(format_pliku)) lub [XLSX](https://pl.wikipedia.org/wiki/Office_Open_XML).
       customize_help: |
         Zmień kolejność, Ukryj, Dodaj, Usuń lub Wybierz kolumnę na liście, aby spersonalizować jej **tytuł** oraz **formułę** generującą wyświetlaną wartość dla każdego eksportowanego wiersza.
       add_column: Dodaj kolumnę
@@ -639,7 +646,7 @@ tab:
       option_csv_col_sep_comma: Przecinek
       option_csv_col_sep_semicolon: Średnik
       option_csv_encoding: Kodowanie
-      copy_all: ""
+      copy_all: Nagłówki + Wartości
       copy_values: Tylko wartości
       number: Ob.
       path: Ścieżka
@@ -694,6 +701,7 @@ tab:
         no_column_formula: Wprowadź formułę
       warning:
         is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
+        is_part_selection: Eksport jest ograniczony do **wybranych części**.
     estimate:
       title: Szacowanie
       info_0: |
@@ -717,7 +725,7 @@ tab:
       type_6: $t(tab.materials.type_6)
       type_-1: $t(default.cut_plural)
       tooltip:
-        incompatible_unit: Jednostka niezgodna z opcjami szacowania materiału.
+        incompatible_unit: Jednostka niezgodna z opcjami szacowania materiału
         multiplier_coefficient: Współczynnik mnożnika
       error:
         no_typed_material_parts: "Brak elementów o zdefiniowanym typie materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) została użyta do wygenerowania szacunku."
@@ -725,6 +733,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**."
       warning:
         is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą uwzględniane.
+        is_part_selection: Szacowanie ogranicza się do **wybranych elementów**.
       tip:
         not_enough_data: |
           Aby to oszacowanie zostało poprawnie obliczone:
@@ -970,68 +979,96 @@ tab:
     packing:
       title: Schemat cięcia
       option_problem_type: Rodzaj
-      option_problem_type_rectangle: ""
-      option_problem_type_rectangleguillotine: ""
+      option_problem_type_rectangle: Prostokąt
+      option_problem_type_rectangleguillotine: Gilotyna
       option_problem_type_onedimensional: Wymiarowy
-      option_problem_type_irregular: ""
+      option_problem_type_irregular: Rozkrój
       options_material: Materiał
       options_config: Konfiguracja
       options_display: Wyświetlanie
-      options_tuning: ""
-      option_std_bin_1d_dimensional: ""
-      option_std_bin_1d_edge: ""
+      options_tuning: Dostrajanie
+      option_std_bin_1d_dimensional: Wymiary standardowe
+      option_std_bin_1d_edge: Okleiny standardowe
       option_std_bin_1d_help: |
+        Wybierz tutaj rozmiary standardowej płyty lub okleiny, które będą powielane w celu jak najlepszego pomieszczenia wszystkich elementów.
+
+        Ta lista jest definiowana przez pole **$t(tab.materials.edit_material.std_lengths)** materiału.
+
+        *Edytuj właściwości materiału '{{ material_name }}', aby zaktualizować tę listę.*
       option_std_bin_1d_add: Dodaj rozmiar arkusza
       option_std_bin_1d_none: Brak
       option_scrap_bin_1d_dimensional_sizes: Odpady do wykorzystania
       option_scrap_bin_1d_edge_sizes: Odpady obrzeży
       option_scrap_bin_1d_sizes_placeholder: długość x ilość ; ...
       option_scrap_bin_1d_sizes_help: |
+        Podaj listę swoich resztek płyt lub oklein do uwzględnienia w rozkroju.
+
+        *Jeśli nie określono jednostki, zostanie zastosowana jednostka modelu.*
       option_scrap_bin_1d_none: Brak
-      option_std_bin_2d_sheet_good: ""
-      option_std_bin_2d_veneer: ""
+      option_std_bin_2d_sheet_good: Panele standardowe
+      option_std_bin_2d_veneer: Arkusze forniru standardowe
       option_std_bin_2d_help: |
+        Wybierz rozmiary standardowego panelu lub arkusza forniru, które będą powielane w celu obliczenia najlepszego możliwego rozmieszczenia.
+
+        Ta lista jest definiowana przez pole **$t(tab.materials.edit_material.std_sizes)** materiału.
+
+        *Edytuj właściwości materiału '{{ material_name }}', aby zaktualizować tę listę.*
       option_std_bin_2d_add: Dodaj rozmiar arkusza
       option_std_bin_2d_none: Brak
       option_scrap_bin_2d_sheet_good_sizes: Arkusze odpadu
       option_scrap_bin_2d_veneer_sizes: Odcinki forniru
       option_scrap_bin_2d_sizes_placeholder: długość x szerokość x ilość ; ...
       option_scrap_bin_2d_sizes_help: |
+        Podaj listę swoich resztek paneli lub arkuszy do uwzględnienia w rozkroju.
+
+        *Jeśli nie określono jednostki, zostanie zastosowana jednostka modelu.*
       option_scrap_bin_2d_none: Brak
-      option_optimization_mode: ""
+      option_optimization_mode: Tryb optymalizacji
       option_optimization_mode_help: |
+        Określa tryb optymalizacji, z ograniczeniem czasu lub bez.
       option_objective: Cel
       option_objective_help: |
-      option_rectangleguillotine_cut_type: ""
+        Określa cel rozkroju.
+      option_rectangleguillotine_cut_type: Typ cięcia
       option_rectangleguillotine_cut_type_help: |
-      option_rectangleguillotine_cut_type_non_exact: ""
-      option_rectangleguillotine_cut_type_exact: ""
-      option_rectangleguillotine_cut_type_homogenous: ""
-      option_rectangleguillotine_number_of_stages: ""
+        Określa typ cięcia.
+      option_rectangleguillotine_cut_type_non_exact: Niedokładny
+      option_rectangleguillotine_cut_type_exact: Dokładny
+      option_rectangleguillotine_cut_type_homogenous: Jednorodny
+      option_rectangleguillotine_number_of_stages: Liczba poziomów
       option_rectangleguillotine_number_of_stages_help: |
-      option_rectangleguillotine_first_stage_orientation: ""
+        Określa maksymalną liczbę poziomów cięcia.
+      option_rectangleguillotine_first_stage_orientation: Kierunek pierwszego cięcia
       option_rectangleguillotine_first_stage_orientation_help: |
-      option_rectangleguillotine_first_stage_orientation_horizontal: ""
-      option_rectangleguillotine_first_stage_orientation_vertical: ""
-      option_rectangleguillotine_first_stage_orientation_any: ""
+        Określa kierunek pierwszego cięcia.
+      option_rectangleguillotine_first_stage_orientation_horizontal: Poziomo
+      option_rectangleguillotine_first_stage_orientation_vertical: Pionowo
+      option_rectangleguillotine_first_stage_orientation_any: Dowolny
       option_rectangleguillotine_keep: Minimalny rozmiar odpadów
       option_rectangleguillotine_keep_help: "Odpady, których oba wymiary są większe od minimalnego rozmiaru, będą oznaczone jako **do zachowania**."
-      option_irregular_allowed_rotations: ""
+      option_irregular_allowed_rotations: Dozwolone obroty
       option_irregular_allowed_rotations_help: |
+        Określa dozwolone kąty obrotu elementu podczas jego umieszczania.
+
+        *Materiały z usłojeniem mogą być obracane tylko o 0 i 180°.*
       option_irregular_allowed_rotations_0: Brak
-      option_irregular_allowed_rotations_90: ""
-      option_irregular_allowed_rotations_180: ""
-      option_irregular_allow_mirroring: ""
+      option_irregular_allowed_rotations_90: Obrót co 90°
+      option_irregular_allowed_rotations_180: Obrót co 180°
+      option_irregular_allow_mirroring: Odbicie lustrzane dozwolone
       option_irregular_allow_mirroring_help: |
+        Określa, czy odbicie lustrzane elementu jest dozwolone podczas umieszczania.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Odstęp
       option_spacing_help: |
+        Minimalna odległość między każdym elementem.
+        Ta wartość może odpowiadać szerokości ostrza lub narzędzia tnącego.
       option_trimming: Rozmiar przycinania
-      option_trimming_1d_help: ""
-      option_trimming_2d_help: ""
+      option_trimming_1d_help: Margines czyszczący na każdym końcu płyty lub okleiny do potraktowania jako odpad.
+      option_trimming_2d_help: Margines czyszczący wokół surowego panelu lub arkusza forniru do potraktowania jako odpad.
       option_items_formula: Wzór
       option_items_formula_help: |
+        Umożliwia pisanie kodu *Ruby* w celu dostosowania tekstu identyfikacyjnego elementów na diagramie.
       option_hide_part_list: Lista części
       option_hide_part_list_1d_dimensional_0: Wyświetlana dla każdej płyty
       option_hide_part_list_1d_edge_0: Wyświetlane dla każdego obrzeża
@@ -1048,28 +1085,30 @@ tab:
         Umożliwia wyświetlanie lub ukrywanie rzeczywistego kształtu elementów oraz ich obróbki na schemacie.
 
         *Ta opcja musi być włączona, aby można było eksportować kształty.*
-      option_colorization: ""
+      option_colorization: Koloruj elementy
       option_colorization_0: $t(default.no)
-      option_colorization_1: ""
-      option_colorization_2: ""
+      option_colorization_1: $t(default.yes) - Ekran
+      option_colorization_2: $t(default.yes) - Ekran i Druk
       option_colorization_help: |
+        Określa, czy losowy kolor jest używany do rozróżniania elementów na diagramie.
       option_hide_edges_preview: Wyświetlanie obrzeży
       option_hide_edges_preview_0: Wyświetlane na schemacie cięcia
       option_hide_edges_preview_1: Ukryte na schemacie cięcia
       option_hide_edges_preview_help: Umożliwia pokazanie lub ukrycie wizualnego wyświetlania obrzeży dla każdej części na schemacie cięcia.
-      option_time_limit: ""
+      option_time_limit: Limit czasu
       option_time_limit_help: |
+        Ustala czas przeznaczony na obliczenia
       tooltip:
         scroll_to_block_1d: Przewiń do pierwszej deski lub obrzeża
-        scroll_to_block_2d: ""
+        scroll_to_block_2d: Przewiń do pierwszego panelu lub arkusza forniru
       list:
         summary: Podsumowanie
         trimming: Rozmiar przycinania
         settings: Ustawienia
         stats: Statystyki
-        time: ""
+        time: Czas
         total_efficiency: Ogólna efektywność
-        total_fill_rate: ""
+        total_fill_rate: Współczynnik wypełnienia
         total_cut_count: Liczba cięć
         total_cut_length: Długość cięć
         efficiency: Efektywność
@@ -1094,7 +1133,7 @@ tab:
         bin_2d_veneer_type_0: Arkusz forniru standardowy
         bin_2d_veneer_type_1: Ścinki forniru
         unused: Nieużywane
-        unplaced_parts: ""
+        unplaced_parts: Element nieumieszczony
         unplaced_parts_plural: Elementy nie rozmieszczone na rozkroju
         parts: Część
         parts_plural: Części
@@ -1105,36 +1144,12 @@ tab:
         cut: Cięcie
         cut_plural: Cięcia
         cut_trimming: Cięcie przycinające
-        cut_primary: ""
-        cut_depth: ""
+        cut_primary: Cięcie pierwszorzędne
+        cut_depth: "Poziom {{ depth }}"
       write:
         title: Eksport rozkładu elementów
         info_0: |
           Ten moduł umożliwia eksportowanie **geometrii** *rozkładu elementów* w postaci listy plików w formacie [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) lub [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: Struktura DXF
-        option_dxf_structure_1: Warstwy
-        option_dxf_structure_2: Warstwy + Bloki
-        option_dxf_structure_help: |
-          Umożliwia wybór struktury pliku DXF.
-
-          - Struktura **Warstwy** rysuje wszystkie linie płasko, rozróżniając różne typy linii jedynie przez warstwy. *Ta struktura zapewnia lepszą kompatybilność z zewnętrznym oprogramowaniem.*
-          - Struktura **Warstwy + Bloki** tworzy blok dla każdego elementu i wstawia te bloki tyle razy, ile elementy są powtarzane. *Ta struktura oferuje większą elastyczność w modyfikacji pliku.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Arkusz
         option_bin_sheet_good_help: |
           Umożliwia włączenie eksportu płyty oraz wybór jej kolorów.
@@ -1165,14 +1180,23 @@ tab:
         option_cuts_help: |
           Umożliwia aktywację eksportu cięć oraz wybór ich koloru.
         warning:
-          is_bin_selection: ""
+          is_bin_selection: "**Ukryte bloki** nie będą eksportowane."
+        error:
+          overflow_gt_spacing: |
+            Naddatek obróbczy ({{ overflow }}) musi być mniejszy lub równy odstępowi ({{ spacing }}) skonfigurowanemu w tym rozkroju.
       error:
         no_part: Brak części.
-        no_bin_1d: ""
-        no_bin_2d: ""
-        no_solution: ""
+        no_bin_1d: Nie wybrano żadnej standardowej płyty lub okleiny i nie zdefiniowano żadnych resztek.
+        no_bin_2d: Nie wybrano żadnego standardowego panelu lub arkusza forniru i nie zdefiniowano żadnych resztek.
+        no_solution: Nie znaleziono żadnego rozwiązania.
+        unplaced_parts: "**1 element** nie mógł być umieszczony."
+        unplaced_parts_plural: "**{{ count }}** elementów nie mogło zostać umieszczonych."
       warning:
         is_part_selection: Ten schemat cięcia jest ograniczony do **wybranych części**.
+        cutting_dimensions: Ten rozkrój używa **wstępnych** wymiarów części.
+        cutting_dimensions_increase_1d: "Wymiary powiększone o naddatek długości (**{{ length_increase }}**) skonfigurowany dla materiału '{{ material_name }}'."
+        cutting_dimensions_increase_2d: "Wymiary powiększone o naddatki skonfigurowane dla materiału '{{ material_name }}' w długości (**{{ length_increase }}**) oraz szerokości (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Wymiary pomniejszone o grubość obrzeża. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etykiety
       options_layout: Układ
@@ -1371,6 +1395,14 @@ tab:
       option_file_format: Format
       option_file_format_help: |
         Wybierz format pliku do wyeksportowania.
+      option_dxf_structure: Struktura DXF
+      option_dxf_structure_1: Warstwy
+      option_dxf_structure_2: Warstwy + Bloki
+      option_dxf_structure_help: |
+        Umożliwia wybór struktury pliku DXF.
+
+        - Struktura **Warstwy** rysuje wszystkie linie płasko, rozróżniając różne typy linii jedynie przez warstwy. *Ta struktura zapewnia lepszą kompatybilność z zewnętrznym oprogramowaniem.*
+        - Struktura **Warstwy + Bloki** tworzy blok dla każdego elementu i wstawia te bloki tyle razy, ile elementy są powtarzane. *Ta struktura oferuje większą elastyczność w modyfikacji pliku.*
       option_unit: Jednostka
       option_unit_help: |
         Wybiera jednostkę używaną w eksportowanym pliku.
@@ -1388,10 +1420,14 @@ tab:
       option_faces_help: |
         Umożliwia wybranie, czy wyszukiwanie kształtu części ma być przeprowadzane na wszystkich jej powierzchniach, czy tylko na powierzchni docelowej.
       option_anchor: Punkt kotwiczenia
-      option_anchor_0: Domyślnie
+      option_anchor_0: Automatyczny
       option_anchor_1: Wyświetl pochodzenie części
       option_anchor_help: |
-        Włącz projekcję początku osi części jako punktu kontrolnego.
+        **Automatyczne**
+        Lewy dolny róg ramki otaczającej eksportowaną geometrię jest używany jako punkt zakotwiczenia.
+
+        **Rzutuj początek elementu**
+        Umożliwia rzutowanie początku osi elementu jako punkt zakotwiczenia.
       option_switch_yz: Oś pionowa
       option_switch_yz_0: Z pionowy
       option_switch_yz_1: Y pionowy
@@ -1405,14 +1441,17 @@ tab:
 
         *Ta opcja nie wykrywa innych typów krzywych.*
       option_merge_holes: Tryb łączenia
-      option_merge_holes_0: Domyślnie
-      option_merge_holes_1: Zarys + Wiercenie + Połączenia
+      option_merge_holes_0: Podstawowy
+      option_merge_holes_1: Kontur + Wiercenia + Naddatek
       option_merge_holes_help: |
-        **Domyślnie**
-        Kształt części jest eksportowany z jedną warstwą na głębokość.
+        **Podstawowy**
+        Kształt elementu jest eksportowany z rzutem każdej powierzchni na warstwę odpowiadającą jej głębokości.
 
-        **Zarys + Wiercenie + Połączenia**
-        Aktywuje oddzielenie zewnętrznego konturu części od ich otworów, a także połączenie głębokości dla każdego wgłębienia.
+        **Kontur + Wiercenia + Naddatek**
+        Aktywuje rozdzielenie zewnętrznego konturu elementów od ich otworów, a także obliczanie naddatku obróbczego stosowanego do powierzchni graniczących z konturem i wnękami.
+      option_merge_holes_overflow: Naddatek
+      option_merge_holes_overflow_help: |
+        Umożliwia zdefiniowanie odległości naddatku obróbczego stosowanego do powierzchni graniczących z konturem i wnękami.
       option_include_paths: Plan
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Użyj krawędzi niezwiązanych z powierzchnią
@@ -1433,7 +1472,7 @@ tab:
         no_part: Brak części do eksportu.
       warning:
         is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą wyeksportowane.
-        is_part_selection: Eksport jest ograniczony do **wybranych części**
+        is_part_selection: Eksport jest ograniczony do **wybranych części**.
     snippet:
       hello: Cześć
       number: Numer
@@ -1659,6 +1698,14 @@ tab:
       layer_name: Etykieta
       explode: Pękać
       explode_message: "Czy potwierdzasz podział instancji **{{ name }}**?"
+    option:
+      general: Główne
+      show_hidden_instances: Pokaż ukryte instancje
+      show_hidden_instances_help: "Jeśli ta opcja jest aktywna, instancje ukryte w modelu będą wyświetlane w drzewie struktury."
+      hide_descriptions: Ukryj opisy
+      hide_descriptions_help: "Jeśli ta opcja zostanie wybrana, **opis** umieszczony na częściach nie będzie wyświetlany."
+      hide_tags: Ukryj plakietki
+      hide_tags_help: "Jeśli ta opcja jest zaznaczona, **plakietki** nie będą wyświetlane."
     error:
       no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
       no_entities: Twój model jest pusty!
@@ -1755,6 +1802,10 @@ tab:
       Tutaj znajdziesz długą listę filmów stworzonych przez społeczność na temat korzystania z *OpenCutList*.
     submit: Prześlij film
     submit_info: |
+      Zrobiłeś film prezentujący użycie **OpenCutList** i chciałbyś, żeby pojawił się tutaj?
+      Daj nam znać pisząc do nas na **opencutlist@lairdubois.fr** !
+
+      *Film musi być publiczny i umieszczony na YouTube.*
     error:
       fail_to_load_list: Nie można załadować listy filmów.
   news:
@@ -1936,11 +1987,11 @@ tool:
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
     title: Rysuj
-    action_0: Rysowanie prostokąta.
-    action_0_status: Utwórz bryłę na bazie prostokątnego kształtu.
+    action_0: Rysowanie prostokąta
+    action_0_status: Utwórz bryłę na bazie prostokątnego kształtu
     action_0_state_1_status: "Kliknij, aby zdefiniować przeciwległy kąt lub wprowadź długość i szerokość"
     action_1: Rysowanie okręgu
-    action_1_status: Utwórz bryłę na bazie koła.
+    action_1_status: Utwórz bryłę na bazie koła
     action_1_state_1_radius_status: "Kliknij, aby ustawić promień lub wprowadź odległość"
     action_1_state_1_diameter_status: "Kliknij, aby ustawić średnicę lub wprowadź odległość"
     action_2: Rysowanie wielokąta
@@ -1956,10 +2007,11 @@ tool:
     action_option_segments_segment_count_status: Określ liczbę segmentów składających się na okrąg
     action_option_options_construction: Linie konstrukcyjne
     action_option_options_construction_status: Narysuj jako linie konstrukcyjne
-    action_option_options_rectangle_centered: ""
+    action_option_options_rectangle_centered: Prostokąt wyśrodkowany
     action_option_options_rectangle_centered_status: Wyśrodkuj prostokąt względem pierwszego punktu
     action_option_options_smoothing: Wygładzanie
     action_option_options_smoothing_status: Wygładź krzywe
+    action_option_options_measure_from_vertex_status: Mierz względem najbliższego wierzchołka
     action_option_options_measure_from_diameter: Pomiary
     action_option_options_measure_from_diameter_status: Zmierz okrąg według jego średnicy
     action_option_options_measure_from_radius_status: Zmierz okrąg według jego promienia
@@ -1969,7 +2021,7 @@ tool:
     action_option_options_pull_centered_status: Wyśrodkuj wysokość względem pierwszego punktu
     action_option_options_ask_name: Nadawanie nazw częściom
     action_option_options_ask_name_status: Ręczne wprowadzanie nazw części
-    action_pull_locked_status: Zablokuj na ostatnim pomiarze
+    action_measure_locked_status: Zablokuj na ostatnim pomiarze
     action_toggle_move_copy_status: Przełącz między kopiowaniem a przesuwaniem
     action_change_move_anchor_status: Zmień punkt kotwiczenia
     success:
@@ -2001,19 +2053,19 @@ tool:
     action_option_group_axes: Osie
     action_option_group_options: Opcje
     action_option_copy_measure_type_outside_status: Pomiar zewnętrzny
-    action_option_copy_measure_type_centered_status: ""
+    action_option_copy_measure_type_centered_status: Mierz od środka do środka
     action_option_copy_measure_type_inside_status: Pomiar pomiędzy częściami
     action_option_move_measure_type_outside_status: Pomiar zewnętrzny
-    action_option_move_measure_type_centered_status: ""
+    action_option_move_measure_type_centered_status: Mierz w środku
     action_option_move_measure_type_inside_status: Pomiar wewnątrz
-    action_option_axes_active_status: ""
-    action_option_axes_context_status: ""
-    action_option_axes_entity_status: ""
-    action_option_options_mirror_status: ""
+    action_option_axes_active_status: Manipulować wzdłuż aktywnych osi
+    action_option_axes_context_status: Manipulować wzdłuż osi grupy lub komponentu zawierającego element
+    action_option_axes_entity_status: Manipulować wzdłuż osi elementu
+    action_option_options_mirror_status: Kopiowanie symetryczne
     warning:
-      copies_disable_mirror: ""
+      copies_disable_mirror: Kopiowanie wielokrotne wyłącza opcję '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      min_distance: ""
+      min_distance: "Odległość {{ value1 }} jest mniejsza niż minimalna odległość {{ value2 }}"
   smart_paint:
     title: Farba
     default_material: Brak zdefiniowanego materiału
