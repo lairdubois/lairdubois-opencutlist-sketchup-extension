@@ -30,14 +30,14 @@ module Ladb::OpenCutList
     # -----
 
     def point
-      @point = @vertex.position.transform(@transformation) if @point.nil?
+      @point ||= @vertex.position.transform(@transformation)
       @point
     end
 
     # -----
 
     def edge_manipulators
-      @edge_manipulators = @vertex.edges.map { |edge| EdgeManipulator.new(edge, @transformation) } if @edge_manipulators.nil?
+      @edge_manipulators ||= @vertex.edges.map { |edge| EdgeManipulator.new(edge, @transformation) }
       @edge_manipulators
     end
 

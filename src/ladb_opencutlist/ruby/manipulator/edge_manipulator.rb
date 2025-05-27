@@ -47,20 +47,16 @@ module Ladb::OpenCutList
 
     def middle_point
       return nil if infinite?
-      if @middle_point.nil?
-        @middle_point = Geom::linear_combination(0.5, start_point, 0.5, end_point)
-      end
+      @middle_point ||= Geom::linear_combination(0.5, start_point, 0.5, end_point)
       @middle_point
     end
 
     def third_points
       return nil if infinite?
-      if @third_points.nil?
-        @third_points = [
-          Geom::linear_combination(1 / 3.0, start_point, 2 / 3.0, end_point),
-          Geom::linear_combination(2 / 3.0, start_point, 1 / 3.0, end_point),
-        ]
-      end
+      @third_points ||= [
+        Geom::linear_combination(1 / 3.0, start_point, 2 / 3.0, end_point),
+        Geom::linear_combination(2 / 3.0, start_point, 1 / 3.0, end_point),
+      ]
       @third_points
     end
 
@@ -75,7 +71,7 @@ module Ladb::OpenCutList
     alias_method :segment, :points
 
     def z_max
-      @z_max = points.max { |p1, p2| p1.z <=> p2.z }.z if @z_max.nil?
+      @z_max ||= points.max { |p1, p2| p1.z <=> p2.z }.z
       @z_max
     end
 
@@ -92,7 +88,7 @@ module Ladb::OpenCutList
     # -----
 
     def vertex_manipulators
-      @vertex_manipulators = @edge.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation) } if @vertex_manipulators.nil?
+      @vertex_manipulators ||= @edge.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation) }
       @vertex_manipulators
     end
 

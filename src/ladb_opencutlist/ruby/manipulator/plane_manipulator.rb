@@ -37,17 +37,17 @@ module Ladb::OpenCutList
     # -----
 
     def plane
-      @plane = [ position, normal ] if @plane.nil?
+      @plane ||= [ position, normal ]
       @plane
     end
 
     def position
-      @position = @plane_point.transform(@transformation) if @position.nil?
+      @position ||= @plane_point.transform(@transformation)
       @position
     end
 
     def normal
-      @normal = @plane_vector.transform(@transformation).normalize if @normal.nil?
+      @normal ||= @plane_vector.transform(@transformation).normalize
       @normal
     end
 

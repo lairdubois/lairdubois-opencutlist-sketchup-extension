@@ -39,14 +39,14 @@ module Ladb::OpenCutList
     end
 
     def segments
-      @segments = points.each_cons(2).to_a.flatten(1) if @segments.nil?
+      @segments ||= points.each_cons(2).to_a.flatten(1)
       @segments
     end
 
     # -----
 
     def vertex_manipulators
-      @vertex_manipulators = @loop.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation) } if @vertex_manipulators.nil?
+      @vertex_manipulators ||= @loop.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation) }
       @vertex_manipulators
     end
 

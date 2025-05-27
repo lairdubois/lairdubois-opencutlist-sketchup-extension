@@ -32,17 +32,17 @@ module Ladb::OpenCutList
     end
 
     def line
-      @line = [ position, direction ] if @line.nil?
+      @line ||= [ position, direction ]
       @line
     end
 
     def position
-      @position = @line_point.transform(@transformation) if @position.nil?
+      @position ||= @line_point.transform(@transformation)
       @position
     end
 
     def direction
-      @direction = @line_vector.transform(@transformation).normalize if @direction.nil?
+      @direction ||= @line_vector.transform(@transformation).normalize
       @direction
     end
 

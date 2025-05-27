@@ -46,17 +46,17 @@ module Ladb::OpenCutList
     # -----
 
     def z_max
-      @z_max = outer_loop_manipulator.points.max { |p1, p2| p1.z <=> p2.z }.z if @z_max.nil?
+      @z_max ||= outer_loop_manipulator.points.max { |p1, p2| p1.z <=> p2.z }.z
       @z_max
     end
 
     def mesh
-      @mesh = @face.mesh(4).transform!(@transformation) if @mesh.nil? # PolygonMeshPoints | PolygonMeshNormals
+      @mesh ||= @face.mesh(4).transform!(@transformation) # PolygonMeshPoints | PolygonMeshNormals
       @mesh
     end
 
     def triangles
-      @triangles = _compute_face_triangles(@face, @transformation) if @triangles.nil?
+      @triangles ||= _compute_face_triangles(@face, @transformation)
       @triangles
     end
 
@@ -71,12 +71,12 @@ module Ladb::OpenCutList
     # -----
 
     def outer_loop_manipulator
-      @outer_loop_manipulator = LoopManipulator.new(@face.outer_loop, @transformation) if @outer_loop_manipulator.nil?
+      @outer_loop_manipulator ||= LoopManipulator.new(@face.outer_loop, @transformation)
       @outer_loop_manipulator
     end
 
     def loop_manipulators
-      @loop_manipulators = @face.loops.map { |loop| LoopManipulator.new(loop, @transformation) } if @loop_manipulators.nil?
+      @loop_manipulators ||= @face.loops.map { |loop| LoopManipulator.new(loop, @transformation) }
       @loop_manipulators
     end
 
