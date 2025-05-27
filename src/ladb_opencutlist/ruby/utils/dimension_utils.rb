@@ -234,7 +234,7 @@
       if (match = s.match(/^\s*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
         unit, = match.captures
         # puts("parsed unit = #{unit} in #{s}")
-        s = s.gsub(/\s*#{unit}\s*/, unit) # Remove space around unit
+        s = s.gsub(/\s*#{unit}\s*/, unit) # Remove space around unit (to be compatible SU 2017+)
       end
       begin # Try to convert to length
         x = s.to_l
@@ -266,6 +266,7 @@
       s = s.gsub(/\./, decimal_separator) # convert separator to native
 
       # Make sure the entry starts with the proper magic
+      s = s.gsub(/\s*(m|cm|mm|\'|\"|yd)\s*/, '\1') # Remove space around unit (to be compatible SU 2017+)
       s = s.gsub(/\s*\/\s*/, '/') # remove blanks around /
       begin
         f = (s.to_l).to_f
