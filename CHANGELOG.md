@@ -38,6 +38,11 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Fixed face untyped material removing when editing sheet good part properties
   * Fixed truncated text in OpenCutList tools on Windows if system fonts are scaled
 
+* 6.4.0 (2025-05-27)
+
+  * Added **Polish** language
+  * Added **Hungarian** language
+
 * 6.3.2 (2025-04-23)
 
   * Fixed copy to clipboard for SketchUp 2025
