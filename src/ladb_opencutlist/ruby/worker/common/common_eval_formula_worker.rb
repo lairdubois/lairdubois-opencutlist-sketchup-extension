@@ -21,7 +21,11 @@ module Ladb::OpenCutList
       'module_eval',
       'exec',
       'system',
-      'binding'
+      'syscall',
+      'exit',
+      'exit!',
+      'binding',
+      'fail'
     ]
 
     def initialize(
@@ -50,20 +54,20 @@ module Ladb::OpenCutList
 
           puts "#{pos} #{type} #{text} #{state}"
 
-          if type == :on_backtick
+          case type
+
+          when :on_backtick
             throw "Forbidden backtick"
-          end
 
-          if type == :on_const
+          when :on_const
             throw "Forbidden Const : #{text}" if CONST_BLACK_LIST.include?(text)
-          end
 
-          if type == :on_ident
-            throw "Forbidden Function : #{text}" if IDENT_BLACK_LIST.include?(text)
-          end
+          when :on_ident
+            throw "Forbidden Identifier : #{text}" if IDENT_BLACK_LIST.include?(text)
 
-          if type == :on_ivar
+          when :on_ivar
             throw "Undefined Variable : #{text}" unless @data.get_binding.receiver.instance_variables.include?(text.to_sym)
+
           end
 
         end
