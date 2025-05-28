@@ -6,15 +6,13 @@ module Ladb::OpenCutList
 
   class CommonEvalFormulaWorker
 
-    BLACK_LIST = {
+    WHITE_LIST_CONST = {
       :var_ref => [
-        'Kernel',
-        'File',
-        'Sketchup',
-        'Layout',
-        'UI',
-        'Ladb'
-      ],
+        'Math',
+      ]
+    }
+
+    BLACK_LIST_IDENT = {
       :fcall => [
         'eval',
         'exec',
@@ -99,11 +97,11 @@ module Ladb::OpenCutList
 
           when :@const
             # var_ref
-            raise "Forbidden Const : #{text}" if BLACK_LIST[prev_symbol] && BLACK_LIST[prev_symbol].include?(text)
+            raise "Forbidden Const : #{text}" unless WHITE_LIST_CONST[prev_symbol].nil? || !WHITE_LIST_CONST[prev_symbol].nil? && WHITE_LIST_CONST[prev_symbol].include?(text)
 
           when :@ident
             # fcall | call | vcall
-            raise "Forbidden Call : #{text}" if BLACK_LIST[prev_symbol] && BLACK_LIST[prev_symbol].include?(text)
+            raise "Forbidden Call : #{text}" if BLACK_LIST_IDENT[prev_symbol] && BLACK_LIST_IDENT[prev_symbol].include?(text)
 
           when :@ivar
             # var_ref
