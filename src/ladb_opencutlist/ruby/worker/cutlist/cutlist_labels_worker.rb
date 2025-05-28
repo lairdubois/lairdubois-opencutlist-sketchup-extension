@@ -1,8 +1,9 @@
 module Ladb::OpenCutList
 
   require_relative '../../model/labels/label_entry'
-  require_relative '../../model/export/wrappers'
+  require_relative '../../model/export/export_data'
   require_relative '../../helper/part_drawing_helper'
+  require_relative '../../worker/common/common_eval_formula_worker'
 
   class CutlistLabelsWorker
 
@@ -115,14 +116,7 @@ module Ladb::OpenCutList
     end
 
     def _evaluate_text(formula, data)
-      begin
-        text = eval(formula, data.get_binding)
-        text = text.export if text.is_a?(Wrapper)
-        text = text.to_s if !text.is_a?(String) && text.respond_to?(:to_s)
-      rescue Exception => e
-        text = { :error => e.message.split(/cutlist_labels_worker[.]rb:\d+:/).last } # Remove path in exception message
-      end
-      text
+      CommonEvalFormulaWorker.new(formula: formula, data: data).run
     end
 
     def _create_entry(part, thickness_layer, position_in_batch, bin, entity_named_path = '', entity_name = '', layer_name = '', definition = nil, entity = nil)
@@ -141,42 +135,42 @@ module Ladb::OpenCutList
 
           data = LabelData.new(
 
-            number: StringWrapper.new(part.number),
-            path: PathWrapper.new(entity_named_path.split('.')),
-            instance_name: StringWrapper.new(entity_name),
-            name: StringWrapper.new(part.name),
-            cutting_length: LengthWrapper.new(part.def.cutting_length),
-            cutting_width: LengthWrapper.new(part.def.cutting_width),
-            cutting_thickness: LengthWrapper.new(part.def.cutting_size.thickness),
-            edge_cutting_length: LengthWrapper.new(part.def.edge_cutting_length),
-            edge_cutting_width: LengthWrapper.new(part.def.edge_cutting_width),
-            bbox_length: LengthWrapper.new(part.def.size.length),
-            bbox_width: LengthWrapper.new(part.def.size.width),
-            bbox_thickness: LengthWrapper.new(part.def.size.thickness),
-            final_area: AreaWrapper.new(part.def.final_area),
-            material: MaterialWrapper.new(part.group.def.material, part.group.def),
-            description: StringWrapper.new(part.description),
-            url: StringWrapper.new(part.url),
-            tags: ArrayWrapper.new(part.tags),
-            edge_ymin: EdgeWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
-            edge_ymax: EdgeWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
-            edge_xmin: EdgeWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
-            edge_xmax: EdgeWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
-            face_zmin: VeneerWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
-            face_zmax: VeneerWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
-            layer: StringWrapper.new(layer_name),
+            number: StringExportWrapper.new(part.number),
+            path: PathExportWrapper.new(entity_named_path.split('.')),
+            instance_name: StringExportWrapper.new(entity_name),
+            name: StringExportWrapper.new(part.name),
+            cutting_length: LengthExportWrapper.new(part.def.cutting_length),
+            cutting_width: LengthExportWrapper.new(part.def.cutting_width),
+            cutting_thickness: LengthExportWrapper.new(part.def.cutting_size.thickness),
+            edge_cutting_length: LengthExportWrapper.new(part.def.edge_cutting_length),
+            edge_cutting_width: LengthExportWrapper.new(part.def.edge_cutting_width),
+            bbox_length: LengthExportWrapper.new(part.def.size.length),
+            bbox_width: LengthExportWrapper.new(part.def.size.width),
+            bbox_thickness: LengthExportWrapper.new(part.def.size.thickness),
+            final_area: AreaExportWrapper.new(part.def.final_area),
+            material: MaterialExportWrapper.new(part.group.def.material, part.group.def),
+            description: StringExportWrapper.new(part.description),
+            url: StringExportWrapper.new(part.url),
+            tags: ArrayExportWrapper.new(part.tags),
+            edge_ymin: EdgeExportWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
+            edge_ymax: EdgeExportWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
+            edge_xmin: EdgeExportWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
+            edge_xmax: EdgeExportWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
+            face_zmin: VeneerExportWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
+            face_zmax: VeneerExportWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
+            layer: StringExportWrapper.new(layer_name),
 
-            component_definition: ComponentDefinitionWrapper.new(definition),
-            component_instance: ComponentInstanceWrapper.new(entity),
+            component_definition: ComponentDefinitionExportWrapper.new(definition),
+            component_instance: ComponentInstanceExportWrapper.new(entity),
 
-            batch: BatchWrapper.new(position_in_batch, part.count),
-            bin: IntegerWrapper.new(bin),
+            batch: BatchExportWrapper.new(position_in_batch, part.count),
+            bin: IntegerExportWrapper.new(bin),
 
-            filename: StringWrapper.new(@cutlist.filename),
-            model_name: StringWrapper.new(@cutlist.model_name),
-            model_description: StringWrapper.new(@cutlist.model_description),
-            page_name: StringWrapper.new(@cutlist.page_name),
-            page_description: StringWrapper.new(@cutlist.page_description)
+            filename: StringExportWrapper.new(@cutlist.filename),
+            model_name: StringExportWrapper.new(@cutlist.model_name),
+            model_description: StringExportWrapper.new(@cutlist.model_description),
+            page_name: StringExportWrapper.new(@cutlist.page_name),
+            page_description: StringExportWrapper.new(@cutlist.page_description)
 
           )
           entry.custom_values << _evaluate_text(element_def['custom_formula'], data)
@@ -211,7 +205,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class LabelData
+  class LabelData < ExportData
 
     def initialize(
 
@@ -295,10 +289,6 @@ module Ladb::OpenCutList
       @page_name = page_name
       @page_description = page_description
 
-    end
-
-    def get_binding
-      binding
     end
 
   end
