@@ -6,27 +6,51 @@ module Ladb::OpenCutList
 
   class CommonEvalFormulaWorker
 
-    CONST_BLACK_LIST = [
-      'Kernel',
-      'File',
-      'Sketchup',
-      'Layout',
-      'UI'
-    ]
-
-    IDENT_BLACK_LIST = [
-      'eval',
-      'instance_eval',
-      'class_eval',
-      'module_eval',
-      'exec',
-      'system',
-      'syscall',
-      'exit',
-      'exit!',
-      'binding',
-      'fail'
-    ]
+    BLACK_LIST = {
+      :var_ref => [
+        'Kernel',
+        'File',
+        'Sketchup',
+        'Layout',
+        'UI',
+        'Ladb'
+      ],
+      :fcall => [
+        'eval',
+        'exec',
+        'system',
+        'syscall',
+        'exit',
+        'exit!',
+        'binding',
+        'send',
+        'fail'
+      ],
+      :call => [
+        'eval',
+        'instance_eval',
+        'class_eval',
+        'module_eval',
+        'exec',
+        'system',
+        'syscall',
+        'exit',
+        'exit!',
+        'binding',
+        'fail'
+      ],
+      :vcall => [
+        'eval',
+        'exec',
+        'system',
+        'syscall',
+        'exit',
+        'exit!',
+        'binding',
+        'send',
+        'fail'
+      ],
+    }
 
     def initialize(
 
@@ -45,34 +69,15 @@ module Ladb::OpenCutList
     def run
       return { :error => 'default.error' } unless @data.is_a?(ExportData)
 
-      puts "Run ---"
-
       begin
-        tokens = Ripper.lex(@formula)
-        tokens.each do |token|
-          pos, type, text, state = token
 
-          puts "#{pos} #{type} #{text} #{state}"
+        sexp = Ripper.sexp(@formula)
+        puts sexp.inspect
+        _check(sexp)
 
-          case type
-
-          when :on_backtick
-            throw "Forbidden backtick"
-
-          when :on_const
-            throw "Forbidden Const : #{text}" if CONST_BLACK_LIST.include?(text)
-
-          when :on_ident
-            throw "Forbidden Identifier : #{text}" if IDENT_BLACK_LIST.include?(text)
-
-          when :on_ivar
-            throw "Undefined Variable : #{text}" unless @data.get_binding.receiver.instance_variables.include?(text.to_sym)
-
-          end
-
-        end
         value = eval(@formula, @data.get_binding)
         value = value.export if value.is_a?(ExportWrapper)
+
       rescue Exception => e
         value = { :error => e.message.split(/common_eval_formula_worker[.]rb:\d+:/).last } # Remove the path in the exception message
       end
@@ -81,6 +86,38 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def _check(sexp, prev_symbol = nil)
+      if sexp.is_a?(Array)
+        if sexp[0].is_a?(Symbol)
+          symbol, text = sexp
+          case symbol
+
+          when :xstring_literal
+            # xstring_literal
+            raise "Forbidden Backtick"
+
+          when :@const
+            # var_ref
+            raise "Forbidden Const : #{text}" if BLACK_LIST[prev_symbol] && BLACK_LIST[prev_symbol].include?(text)
+
+          when :@ident
+            # fcall | call | vcall
+            raise "Forbidden Call : #{text}" if BLACK_LIST[prev_symbol] && BLACK_LIST[prev_symbol].include?(text)
+
+          when :@ivar
+            # var_ref
+            raise "Undefined variable : #{text}" unless prev_symbol == :var_ref && @data.get_binding.receiver.instance_variables.include?(text)
+
+          end
+          prev_symbol = symbol
+          sexp = sexp[1..-1]
+        end
+        sexp.each do |exp|
+          _check(exp, prev_symbol)
+        end
+      end
+    end
 
   end
 
