@@ -1838,7 +1838,7 @@ tab:
     contribute: 1421 - Contribute
     backers: 1422 - {{ count }} financial contributor
     backers_plural: 1423 - {{ count }} financial contributors
-    ad: 1424 - Do you like OpenCutList?
+    ad: 1424 - OpenCutList is not free
     objective: 1425 - Objective
     objective_slogan: 1426 - OpenCutList is all of us
     objective_title:

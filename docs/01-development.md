@@ -12,12 +12,12 @@ Read this short note about [Installing Node](https://docs.npmjs.com/getting-star
 
 ``` bash
     $ node -v
-    v23.7.0
+    v24.1.0
     $ npm -v
-    10.9.2
+    11.3.0
     $ npm install npm@latest -g
     $ npm -v
-    11.1.0
+    11.4.1
 ```
 
 On Windows you *may* also have to install `gulp-cli` to be able to run **gulp** from the command line.
@@ -104,13 +104,14 @@ To be done.
 
 There is more than one enviroment you can use to compile the C++ code. This is just a working setup.
 
-- install a recent version of [CMake](https://cmake.org/download/).
+- install a recent version of [CMake](https://cmake.org/download/), currently version 4.0.2
 
-- install Visual Studio Community 2022 17.12, add the **Desktop Development with C++** (may be added at a later time from Tools -> Get Tools and Features ... in Visual Studio 2022).
+- install Visual Studio Community 2022 17.14.2, add the **Desktop Development with C++** (may be added at a later time from Tools -> Get Tools and Features ... in Visual Studio 2022).
 
+  cmake should then be able to find the compiler `cl.exe`, likely in a place like this:
   ``` bash
-  C:\Program Files\Microsoft Visual Studio\2022\Community>cl.exe
-  Microsoft (R) C/C++ Optimizing Compiler Version 19.42.34436 for x64
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64>cl.exe
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35207.1 for x64
   ```
 
 - enable `LongPathsEnabled` in the registry by changing this key:

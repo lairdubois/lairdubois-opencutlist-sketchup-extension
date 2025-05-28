@@ -1188,7 +1188,7 @@ tab:
         no_part: No part.
         no_bin_1d: No standard board or edge banding was selected and no off-cuts were available.
         no_bin_2d: No standard panel or veneer sheet was selected and no off-cuts were available.
-        invalid_part_shapes: The shape of part '{{ name }}' is invalid.
+        invalid_part_shapes: "The shape of part '{{ name }}' is invalid."
         no_solution: No solution was found.
         unplaced_parts: "**1 part** could not be placed."
         unplaced_parts_plural: "**{{ count }} parts** could not be placed."
@@ -1842,7 +1842,7 @@ tab:
     contribute: Contribute
     backers: "{{ count }} financial contributor"
     backers_plural: "{{ count }} financial contributors"
-    ad: "Do you like OpenCutList?"
+    ad: "OpenCutList is not free"
     objective: Objective
     objective_slogan: "OpenCutList is all of us"
     objective_title:

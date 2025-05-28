@@ -1183,11 +1183,12 @@ tab:
           is_bin_selection: "**Скрытые блоки** не будут экспортированы."
         error:
           overflow_gt_spacing: |
-            Перерасход материала ({{ overflow }}) должен быть меньше или равен половине расстояния ({{ spacing }}), заданного в данном раскрое.
+            Перерасход материала ({{ overflow }}) должен быть меньше половины или равно пространству ({{ spacing }}), заданному в этом макете.
       error:
         no_part: Нет детали.
         no_bin_1d: "Не выбран ни один стандартный погонаж, и не определен остаток."
         no_bin_2d: "Не выбраны ни одна из панелей, либо листов и не определен размер остатка."
+        invalid_part_shapes: "Форма детали '{{ name }}' недопустима."
         no_solution: Решение не найдено.
         unplaced_parts: "**1 деталь** не может быть размещена."
         unplaced_parts_plural: "**{{ count }} детали** не могут быть размещены."
@@ -1841,7 +1842,7 @@ tab:
     contribute: Поддержи проект
     backers: "{{ count }} финансовый спонсор"
     backers_plural: "{{ count }} финансовые спонсоры"
-    ad: "Вам нравится OpenCutList ?"
+    ad: "OpenCutList не является бесплатным"
     objective: Цель
     objective_slogan: "OpenCutList - это все мы"
     objective_title:
@@ -2002,7 +2003,7 @@ tool:
     action_option_group_segments: Сегменты
     action_option_group_options: Опции
     action_option_offset_shape_offset: Смещение
-    action_option_offset_shape_offset_status: "Задает смещение линии контура  проектируемой фигуры "
+    action_option_offset_shape_offset_status: Задает смещение линии контура проектируемой фигуры
     action_option_segments_segment_count: Количество сегментов
     action_option_segments_segment_count_status: Задает количества сегментов в проектируемой окружности
     action_option_options_construction: Конструкционные элементы
@@ -2037,13 +2038,13 @@ tool:
     action_2: Копирование по сетке
     action_2_status: "Кликните на деталь, чтобы скопировать ее по сетке"
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: "Кликните, чтобы разнести копии детали или введите два нужных размера"
+    action_2_state_2_status: "Кликните, чтобы разнести копии детали или введите два нужных размера сетки"
     action_3: Переместить
     action_3_status: "Кликните на деталь, чтобы переместить ее вдоль оси"
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: "Кликните, чтобы переместить деталь или введите нужное расстояние"
+    action_3_state_2_status: "Кликните по нужной детали, сделайте выбор направления и задайте нужное расстояние"
     action_4: Распределить
-    action_4_status: "Кликните на деталь, чтобы распределить ее вдоль оси"
+    action_4_status: "Для распределения копиий детали 1-ым кликом выделите нужную деталь, 2-ым кликом выберите направление и переместите. После 3 клика можно задать количество копий"
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_1_status: "Кликните, чтобы задать первую точку измерения"
     action_4_state_2_status: "Кликните, чтобы задать вторую точку измерения или введите нужное расстояние"
