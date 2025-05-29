@@ -3,7 +3,7 @@ module Ladb::OpenCutList
   require_relative '../../utils/unit_utils'
   require_relative '../../model/attributes/material_attributes'
 
-  class ExportWrapper
+  class FormulaWrapper
 
     def export
       ''
@@ -19,7 +19,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class ValueExportWrapper < ExportWrapper
+  class ValueFormulaWrapper < FormulaWrapper
 
     def initialize(value, value_class = Object)
       @value = value
@@ -47,7 +47,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class NumericExportWrapper < ValueExportWrapper
+  class NumericFormulaWrapper < ValueFormulaWrapper
 
     def initialize(value)
       super(value, Numeric)
@@ -157,7 +157,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class IntegerExportWrapper < NumericExportWrapper
+  class IntegerFormulaWrapper < NumericFormulaWrapper
 
     def initialize(value)
       super(value.to_i)
@@ -167,7 +167,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class FloatExportWrapper < NumericExportWrapper
+  class FloatFormulaWrapper < NumericFormulaWrapper
 
     def initialize(value)
       super(value.to_f)
@@ -177,7 +177,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class StringExportWrapper < ValueExportWrapper
+  class StringFormulaWrapper < ValueFormulaWrapper
 
     def initialize(value)
       super(value.to_s, String)
@@ -195,7 +195,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class ArrayExportWrapper < ValueExportWrapper
+  class ArrayFormulaWrapper < ValueFormulaWrapper
 
     def initialize(value)
       super(value, Array)
@@ -217,7 +217,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class ColorExportWrapper < ValueExportWrapper
+  class ColorFormulaWrapper < ValueFormulaWrapper
 
     def initialize(value)
       super(value, Sketchup::Color)
@@ -231,7 +231,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class EntityExportWrapper < ValueExportWrapper
+  class EntityFormulaWrapper < ValueFormulaWrapper
 
     def initialize(value, value_class = Sketchup::Entity)
       super
@@ -245,7 +245,7 @@ module Ladb::OpenCutList
 
   end
 
-  class DrawingElementExportWrapper < EntityExportWrapper
+  class DrawingElementFormulaWrapper < EntityFormulaWrapper
 
     def initialize(value, value_class = Sketchup::DrawingElement)
       super
@@ -283,7 +283,7 @@ module Ladb::OpenCutList
 
   end
 
-  class ComponentDefinitionExportWrapper < DrawingElementExportWrapper
+  class ComponentDefinitionFormulaWrapper < DrawingElementFormulaWrapper
 
     def initialize(value)
       super(value, Sketchup::ComponentDefinition)
@@ -348,7 +348,7 @@ module Ladb::OpenCutList
 
   end
 
-  class ComponentInstanceExportWrapper < DrawingElementExportWrapper
+  class ComponentInstanceFormulaWrapper < DrawingElementFormulaWrapper
 
     def initialize(value)
       super(value, Sketchup::ComponentInstance)
@@ -431,7 +431,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class LengthExportWrapper < FloatExportWrapper
+  class LengthFormulaWrapper < FloatFormulaWrapper
 
     def initialize(value, output_to_model_unit = true)
       if value.is_a?(Length)
@@ -442,10 +442,10 @@ module Ladb::OpenCutList
     end
 
     def *(value)
-      if value.is_a?(LengthExportWrapper)
-        AreaExportWrapper.new(self.to_f * value.to_f)
-      elsif value.is_a?(AreaExportWrapper)
-        VolumeExportWrapper.new(self.to_f * value.to_f)
+      if value.is_a?(LengthFormulaWrapper)
+        AreaFormulaWrapper.new(self.to_f * value.to_f)
+      elsif value.is_a?(AreaFormulaWrapper)
+        VolumeFormulaWrapper.new(self.to_f * value.to_f)
       else
         super
       end
@@ -465,11 +465,11 @@ module Ladb::OpenCutList
 
   # -----
 
-  class AreaExportWrapper < FloatExportWrapper
+  class AreaFormulaWrapper < FloatFormulaWrapper
 
     def *(value)
-      if value.is_a?(LengthExportWrapper)
-        VolumeExportWrapper.new(self.to_f * value.to_f)
+      if value.is_a?(LengthFormulaWrapper)
+        VolumeFormulaWrapper.new(self.to_f * value.to_f)
       else
         super
       end
@@ -520,7 +520,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class VolumeExportWrapper < FloatExportWrapper
+  class VolumeFormulaWrapper < FloatFormulaWrapper
 
     def to_mm3
       @value.to_mm.to_mm.to_mm.round(6)         # Returns the float representation of the value converted from inches to milimeters³
@@ -571,7 +571,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class PathExportWrapper < ArrayExportWrapper
+  class PathFormulaWrapper < ArrayFormulaWrapper
 
     def to_s
       return '' unless @value.is_a?(Array)
@@ -582,13 +582,13 @@ module Ladb::OpenCutList
 
   # -----
 
-  class BatchExportWrapper < ExportWrapper
+  class BatchFormulaWrapper < FormulaWrapper
 
     attr_reader :position, :count
 
     def initialize(position, count)
-      @position = IntegerExportWrapper.new(position)
-      @count = IntegerExportWrapper.new(count)
+      @position = IntegerFormulaWrapper.new(position)
+      @count = IntegerFormulaWrapper.new(count)
     end
 
     def +(value)
@@ -609,7 +609,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class MaterialTypeExportWrapper < ValueExportWrapper
+  class MaterialTypeFormulaWrapper < ValueFormulaWrapper
 
     def initialize(value)
       super(value, Integer)
@@ -653,7 +653,7 @@ module Ladb::OpenCutList
 
   end
 
-  class MaterialExportWrapper < ExportWrapper
+  class MaterialFormulaWrapper < FormulaWrapper
 
     attr_reader :name, :color, :type, :description, :url
     attr_reader :std_dimension, :std_thickness, :std_width
@@ -663,16 +663,16 @@ module Ladb::OpenCutList
       @material = material
       @group_def = group_def
 
-      @name = StringExportWrapper.new(material.nil? ? nil : material.display_name)
-      @color = ColorExportWrapper.new(material.nil? ? nil : material.color)
+      @name = StringFormulaWrapper.new(material.nil? ? nil : material.display_name)
+      @color = ColorFormulaWrapper.new(material.nil? ? nil : material.color)
 
-      @type = MaterialTypeExportWrapper.new(group_def.nil? ? MaterialAttributes::TYPE_UNKNOWN : group_def.material_attributes.type)
-      @description = StringExportWrapper.new(group_def.nil? ? nil : group_def.material_attributes.description)
-      @url = StringExportWrapper.new(group_def.nil? ? nil : group_def.material_attributes.url)
+      @type = MaterialTypeFormulaWrapper.new(group_def.nil? ? MaterialAttributes::TYPE_UNKNOWN : group_def.material_attributes.type)
+      @description = StringFormulaWrapper.new(group_def.nil? ? nil : group_def.material_attributes.description)
+      @url = StringFormulaWrapper.new(group_def.nil? ? nil : group_def.material_attributes.url)
 
-      @std_dimension = StringExportWrapper.new(group_def ? group_def.std_dimension : nil)
-      @std_thickness = LengthExportWrapper.new(group_def ? group_def.std_thickness : nil)
-      @std_width = LengthExportWrapper.new(group_def ? group_def.std_width : nil)
+      @std_dimension = StringFormulaWrapper.new(group_def ? group_def.std_dimension : nil)
+      @std_thickness = LengthFormulaWrapper.new(group_def ? group_def.std_thickness : nil)
+      @std_width = LengthFormulaWrapper.new(group_def ? group_def.std_width : nil)
 
     end
 
@@ -696,7 +696,7 @@ module Ladb::OpenCutList
 
   end
 
-  class EdgeExportWrapper < MaterialExportWrapper
+  class EdgeFormulaWrapper < MaterialFormulaWrapper
 
     # BC for old edge wrapper
     alias_method :material_name, :name
@@ -709,7 +709,7 @@ module Ladb::OpenCutList
 
   end
 
-  class VeneerExportWrapper < MaterialExportWrapper
+  class VeneerFormulaWrapper < MaterialFormulaWrapper
 
     # BC for old veneer wrapper
     alias_method :material_name, :name

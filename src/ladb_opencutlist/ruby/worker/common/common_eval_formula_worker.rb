@@ -1,14 +1,15 @@
 module Ladb::OpenCutList
 
   require 'Ripper'
-  require_relative '../../model/export/export_data'
-  require_relative '../../model/export/export_wrapper'
+  require_relative '../../model/formula/formula_data'
+  require_relative '../../model/formula/formula_wrapper'
 
   class CommonEvalFormulaWorker
 
     WHITE_LIST_CONST = {
       :var_ref => [
         'Math',
+        'Geom',
       ]
     }
 
@@ -22,7 +23,7 @@ module Ladb::OpenCutList
         'exit!',
         'binding',
         'send',
-        'fail'
+        'fail',
       ],
       :call => [
         'eval',
@@ -35,7 +36,8 @@ module Ladb::OpenCutList
         'exit',
         'exit!',
         'binding',
-        'fail'
+        'fail',
+        'send',
       ],
       :vcall => [
         'eval',
@@ -46,7 +48,7 @@ module Ladb::OpenCutList
         'exit!',
         'binding',
         'send',
-        'fail'
+        'fail',
       ],
     }
 
@@ -65,7 +67,7 @@ module Ladb::OpenCutList
     # -----
 
     def run
-      return { :error => 'default.error' } unless @data.is_a?(ExportData)
+      return { :error => 'default.error' } unless @data.is_a?(FormulaData)
 
       begin
 
@@ -77,7 +79,7 @@ module Ladb::OpenCutList
         _check(sexp)
 
         value = eval(@formula, @data.get_binding)
-        value = value.export if value.is_a?(ExportWrapper)
+        value = value.export if value.is_a?(FormulaWrapper)
 
       rescue Exception => e
         value = { :error => e.message.split(/common_eval_formula_worker[.]rb:\d+:/).last } # Remove the path in the exception message
@@ -99,15 +101,15 @@ module Ladb::OpenCutList
             raise "Forbidden Backtick"
 
           when :@const
-            # var_ref
+            # var_ref -> @const
             raise "Forbidden Const : #{text}" unless WHITE_LIST_CONST[prev_symbol].nil? || !WHITE_LIST_CONST[prev_symbol].nil? && WHITE_LIST_CONST[prev_symbol].include?(text)
 
           when :@ident
-            # fcall | call | vcall
+            # fcall | call | vcall -> @ident
             raise "Forbidden Call : #{text}" if BLACK_LIST_IDENT[prev_symbol] && BLACK_LIST_IDENT[prev_symbol].include?(text)
 
           when :@ivar
-            # var_ref
+            # var_ref -> @ivar
             raise "Undefined variable : #{text}" unless prev_symbol == :var_ref && @data.get_binding.receiver.instance_variables.include?(text.to_sym)
 
           end

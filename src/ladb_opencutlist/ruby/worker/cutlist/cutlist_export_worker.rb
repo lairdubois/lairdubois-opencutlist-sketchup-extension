@@ -2,10 +2,13 @@ module Ladb::OpenCutList
 
   require 'csv'
   require_relative '../../model/attributes/material_attributes'
-  require_relative '../../model/export/export_data'
+  require_relative '../../model/formula/formula_data'
   require_relative '../../worker/common/common_eval_formula_worker'
+  require_relative '../../helper/sanitizer_helper'
 
   class CutlistExportWorker
+
+    include SanitizerHelper
 
     EXPORT_OPTION_SOURCE_SUMMARY = 0
     EXPORT_OPTION_SOURCE_CUTLIST = 1
@@ -93,7 +96,7 @@ module Ladb::OpenCutList
       when EXPORT_OPTION_FORMAT_CSV
 
         # Ask for the export file path
-        path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.csv')
+        path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, _default_base_filename(parts_by_group) + '.csv')
         if path
 
           # Force "csv" file extension
@@ -157,7 +160,7 @@ module Ladb::OpenCutList
         return { :errors => [ [ 'core.error.feature_unavailable', { :version => 2019 } ] ] } if Sketchup.version_number < 1900000000
 
         # Ask for the export file path
-        path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, File.basename(@cutlist.filename, '.skp') + '.xlsx')
+        path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, _default_base_filename(parts_by_group) + '.xlsx')
         if path
 
           # Force "xlsx" file extension
@@ -213,6 +216,18 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _default_base_filename(parts_by_group)
+      filename = File.basename(@cutlist.filename, '.skp')
+      if parts_by_group.keys.one?
+        group = parts_by_group.keys.first
+        group_name = group.material_display_name
+        group_name = PLUGIN.get_i18n_string('tab.cutlist.material_undefined') if group_name.nil? || group_name.empty?
+        group_name += " - #{group.std_dimension}" unless group.std_dimension.empty?
+        filename += " - #{group_name}"
+      end
+      _sanitize_filename(filename)
+    end
+
     def _compute_rows(parts_by_group)
 
       # Generate rows
@@ -226,14 +241,14 @@ module Ladb::OpenCutList
 
         parts_by_group.each do |group, parts|
 
-          data = SummaryExportRowData.new(
+          data = ExportSummaryRowFormulaData.new(
 
-            material: MaterialExportWrapper.new(group.def.material, group.def),
-            part_count: IntegerExportWrapper.new(group.part_count),
-            total_cutting_length: LengthExportWrapper.new(group.def.total_cutting_length, false),
-            total_cutting_area: AreaExportWrapper.new(group.def.total_cutting_area),
-            total_cutting_volume: VolumeExportWrapper.new(group.def.total_cutting_volume),
-            total_final_area: AreaExportWrapper.new((group.total_final_area.nil? || group.invalid_final_area_part_count > 0) ? 0 : group.def.total_final_area)
+            material: MaterialFormulaWrapper.new(group.def.material, group.def),
+            part_count: IntegerFormulaWrapper.new(group.part_count),
+            total_cutting_length: LengthFormulaWrapper.new(group.def.total_cutting_length, false),
+            total_cutting_area: AreaFormulaWrapper.new(group.def.total_cutting_area),
+            total_cutting_volume: VolumeFormulaWrapper.new(group.def.total_cutting_volume),
+            total_final_area: AreaFormulaWrapper.new((group.total_final_area.nil? || group.invalid_final_area_part_count > 0) ? 0 : group.def.total_final_area)
 
           )
 
@@ -252,53 +267,53 @@ module Ladb::OpenCutList
             parts = part.is_a?(FolderPart) ? part.children : [ part ]
             parts.each do |part|
 
-              data = CutlistExportRowData.new(
+              data = ExportCutlistRowFormulaData.new(
 
-                number: StringExportWrapper.new(part.number),
-                name: StringExportWrapper.new(part.name),
-                count: IntegerExportWrapper.new(part.count),
-                cutting_length: LengthExportWrapper.new(part.def.cutting_length),
-                cutting_width: LengthExportWrapper.new(part.def.cutting_width),
-                cutting_thickness: LengthExportWrapper.new(part.def.cutting_size.thickness),
-                edge_cutting_length: LengthExportWrapper.new(part.def.edge_cutting_length),
-                edge_cutting_width: LengthExportWrapper.new(part.def.edge_cutting_width),
-                bbox_length: LengthExportWrapper.new(part.def.size.length),
-                bbox_width: LengthExportWrapper.new(part.def.size.width),
-                bbox_thickness: LengthExportWrapper.new(part.def.size.thickness),
-                final_area: AreaExportWrapper.new(part.def.final_area),
-                material: MaterialExportWrapper.new(group.def.material, group.def),
-                entity_names: ArrayExportWrapper.new(part.entity_names.map(&:first)),
-                description: StringExportWrapper.new(part.description),
-                url: StringExportWrapper.new(part.url),
-                tags: ArrayExportWrapper.new(part.tags),
-                edge_ymin: EdgeExportWrapper.new(
+                number: StringFormulaWrapper.new(part.number),
+                name: StringFormulaWrapper.new(part.name),
+                count: IntegerFormulaWrapper.new(part.count),
+                cutting_length: LengthFormulaWrapper.new(part.def.cutting_length),
+                cutting_width: LengthFormulaWrapper.new(part.def.cutting_width),
+                cutting_thickness: LengthFormulaWrapper.new(part.def.cutting_size.thickness),
+                edge_cutting_length: LengthFormulaWrapper.new(part.def.edge_cutting_length),
+                edge_cutting_width: LengthFormulaWrapper.new(part.def.edge_cutting_width),
+                bbox_length: LengthFormulaWrapper.new(part.def.size.length),
+                bbox_width: LengthFormulaWrapper.new(part.def.size.width),
+                bbox_thickness: LengthFormulaWrapper.new(part.def.size.thickness),
+                final_area: AreaFormulaWrapper.new(part.def.final_area),
+                material: MaterialFormulaWrapper.new(group.def.material, group.def),
+                entity_names: ArrayFormulaWrapper.new(part.entity_names.map(&:first)),
+                description: StringFormulaWrapper.new(part.description),
+                url: StringFormulaWrapper.new(part.url),
+                tags: ArrayFormulaWrapper.new(part.tags),
+                edge_ymin: EdgeFormulaWrapper.new(
                   part.def.edge_materials[:ymin],
                   part.def.edge_group_defs[:ymin]
                 ),
-                edge_ymax: EdgeExportWrapper.new(
+                edge_ymax: EdgeFormulaWrapper.new(
                   part.def.edge_materials[:ymax],
                   part.def.edge_group_defs[:ymax]
                 ),
-                edge_xmin: EdgeExportWrapper.new(
+                edge_xmin: EdgeFormulaWrapper.new(
                   part.def.edge_materials[:xmin],
                   part.def.edge_group_defs[:xmin]
                 ),
-                edge_xmax: EdgeExportWrapper.new(
+                edge_xmax: EdgeFormulaWrapper.new(
                   part.def.edge_materials[:xmax],
                   part.def.edge_group_defs[:xmax]
                 ),
-                face_zmin: VeneerExportWrapper.new(
+                face_zmin: VeneerFormulaWrapper.new(
                   part.def.veneer_materials[:zmin],
                   part.def.veneer_group_defs[:zmin]
                 ),
-                face_zmax: VeneerExportWrapper.new(
+                face_zmax: VeneerFormulaWrapper.new(
                   part.def.veneer_materials[:zmax],
                   part.def.veneer_group_defs[:zmax]
                 ),
-                layers: ArrayExportWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
+                layers: ArrayFormulaWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
 
-                component_definition: ComponentDefinitionExportWrapper.new(part.def.definition),
-                component_instances: part.def.instance_infos.values.map { |instance_info| ComponentInstanceExportWrapper.new(instance_info.entity) }
+                component_definition: ComponentDefinitionFormulaWrapper.new(part.def.definition),
+                component_instances: part.def.instance_infos.values.map { |instance_info| ComponentInstanceFormulaWrapper.new(instance_info.entity) }
 
               )
 
@@ -327,53 +342,53 @@ module Ladb::OpenCutList
               # Ungroup parts
               part.def.instance_infos.each { |serialized_path, instance_info|
 
-                data = InstancesListExportRowData.new(
+                data = ExportInstancesListRowFormulaData.new(
 
-                  number: StringExportWrapper.new(part.number),
-                  path: PathExportWrapper.new(PathUtils.get_named_path(instance_info.path, false, 1)),
-                  instance_name: StringExportWrapper.new(instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name),
-                  name: StringExportWrapper.new(part.name),
-                  cutting_length: LengthExportWrapper.new(part.def.cutting_length),
-                  cutting_width: LengthExportWrapper.new(part.def.cutting_width),
-                  cutting_thickness: LengthExportWrapper.new(part.def.cutting_size.thickness),
-                  edge_cutting_length: LengthExportWrapper.new(part.def.edge_cutting_length),
-                  edge_cutting_width: LengthExportWrapper.new(part.def.edge_cutting_width),
-                  bbox_length: LengthExportWrapper.new(part.def.size.length),
-                  bbox_width: LengthExportWrapper.new(part.def.size.width),
-                  bbox_thickness: LengthExportWrapper.new(part.def.size.thickness),
-                  final_area: AreaExportWrapper.new(part.def.final_area),
-                  material: MaterialExportWrapper.new(group.def.material, group.def),
-                  description: StringExportWrapper.new(part.description),
-                  url: StringExportWrapper.new(part.url),
-                  tags: ArrayExportWrapper.new(part.tags),
-                  edge_ymin: EdgeExportWrapper.new(
+                  number: StringFormulaWrapper.new(part.number),
+                  path: PathFormulaWrapper.new(PathUtils.get_named_path(instance_info.path, false, 1)),
+                  instance_name: StringFormulaWrapper.new(instance_info.entity.name.empty? ? "##{instance_info.entity.entityID}" : instance_info.entity.name),
+                  name: StringFormulaWrapper.new(part.name),
+                  cutting_length: LengthFormulaWrapper.new(part.def.cutting_length),
+                  cutting_width: LengthFormulaWrapper.new(part.def.cutting_width),
+                  cutting_thickness: LengthFormulaWrapper.new(part.def.cutting_size.thickness),
+                  edge_cutting_length: LengthFormulaWrapper.new(part.def.edge_cutting_length),
+                  edge_cutting_width: LengthFormulaWrapper.new(part.def.edge_cutting_width),
+                  bbox_length: LengthFormulaWrapper.new(part.def.size.length),
+                  bbox_width: LengthFormulaWrapper.new(part.def.size.width),
+                  bbox_thickness: LengthFormulaWrapper.new(part.def.size.thickness),
+                  final_area: AreaFormulaWrapper.new(part.def.final_area),
+                  material: MaterialFormulaWrapper.new(group.def.material, group.def),
+                  description: StringFormulaWrapper.new(part.description),
+                  url: StringFormulaWrapper.new(part.url),
+                  tags: ArrayFormulaWrapper.new(part.tags),
+                  edge_ymin: EdgeFormulaWrapper.new(
                     part.def.edge_materials[:ymin],
                     part.def.edge_group_defs[:ymin]
                   ),
-                  edge_ymax: EdgeExportWrapper.new(
+                  edge_ymax: EdgeFormulaWrapper.new(
                     part.def.edge_materials[:ymax],
                     part.def.edge_group_defs[:ymax]
                   ),
-                  edge_xmin: EdgeExportWrapper.new(
+                  edge_xmin: EdgeFormulaWrapper.new(
                     part.def.edge_materials[:xmin],
                     part.def.edge_group_defs[:xmin]
                   ),
-                  edge_xmax: EdgeExportWrapper.new(
+                  edge_xmax: EdgeFormulaWrapper.new(
                     part.def.edge_materials[:xmax],
                     part.def.edge_group_defs[:xmax]
                   ),
-                  face_zmin: VeneerExportWrapper.new(
+                  face_zmin: VeneerFormulaWrapper.new(
                     part.def.veneer_materials[:zmin],
                     part.def.veneer_group_defs[:zmin]
                   ),
-                  face_zmax: VeneerExportWrapper.new(
+                  face_zmax: VeneerFormulaWrapper.new(
                     part.def.veneer_materials[:zmax],
                     part.def.veneer_group_defs[:zmax]
                   ),
-                  layer: StringExportWrapper.new(instance_info.layer.name),
+                  layer: StringFormulaWrapper.new(instance_info.layer.name),
 
-                  component_definition: ComponentDefinitionExportWrapper.new(instance_info.definition),
-                  component_instance: ComponentInstanceExportWrapper.new(instance_info.entity),
+                  component_definition: ComponentDefinitionFormulaWrapper.new(instance_info.definition),
+                  component_instance: ComponentInstanceFormulaWrapper.new(instance_info.entity),
 
                 )
 
@@ -423,7 +438,7 @@ module Ladb::OpenCutList
 
   end
 
-  class SummaryExportRowData < ExportData
+  class ExportSummaryRowFormulaData < FormulaData
 
     def initialize(
 
@@ -450,7 +465,7 @@ module Ladb::OpenCutList
 
   end
 
-  class CutlistExportRowData < ExportData
+  class ExportCutlistRowFormulaData < FormulaData
 
     def initialize(
 
@@ -517,7 +532,7 @@ module Ladb::OpenCutList
 
   end
 
-  class InstancesListExportRowData < ExportData
+  class ExportInstancesListRowFormulaData < FormulaData
 
     def initialize(
 

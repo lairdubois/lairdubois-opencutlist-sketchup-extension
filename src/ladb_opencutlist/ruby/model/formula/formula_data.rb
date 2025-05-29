@@ -2,7 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../data_container'
 
-  class ExportData < DataContainer
+  class FormulaData < DataContainer
 
     def get_binding
       binding

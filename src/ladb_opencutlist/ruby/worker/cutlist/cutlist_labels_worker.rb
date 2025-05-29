@@ -1,7 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../model/labels/label_entry'
-  require_relative '../../model/export/export_data'
+  require_relative '../../model/formula/formula_data'
   require_relative '../../helper/part_drawing_helper'
   require_relative '../../worker/common/common_eval_formula_worker'
 
@@ -135,42 +135,42 @@ module Ladb::OpenCutList
 
           data = LabelData.new(
 
-            number: StringExportWrapper.new(part.number),
-            path: PathExportWrapper.new(entity_named_path.split('.')),
-            instance_name: StringExportWrapper.new(entity_name),
-            name: StringExportWrapper.new(part.name),
-            cutting_length: LengthExportWrapper.new(part.def.cutting_length),
-            cutting_width: LengthExportWrapper.new(part.def.cutting_width),
-            cutting_thickness: LengthExportWrapper.new(part.def.cutting_size.thickness),
-            edge_cutting_length: LengthExportWrapper.new(part.def.edge_cutting_length),
-            edge_cutting_width: LengthExportWrapper.new(part.def.edge_cutting_width),
-            bbox_length: LengthExportWrapper.new(part.def.size.length),
-            bbox_width: LengthExportWrapper.new(part.def.size.width),
-            bbox_thickness: LengthExportWrapper.new(part.def.size.thickness),
-            final_area: AreaExportWrapper.new(part.def.final_area),
-            material: MaterialExportWrapper.new(part.group.def.material, part.group.def),
-            description: StringExportWrapper.new(part.description),
-            url: StringExportWrapper.new(part.url),
-            tags: ArrayExportWrapper.new(part.tags),
-            edge_ymin: EdgeExportWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
-            edge_ymax: EdgeExportWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
-            edge_xmin: EdgeExportWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
-            edge_xmax: EdgeExportWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
-            face_zmin: VeneerExportWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
-            face_zmax: VeneerExportWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
-            layer: StringExportWrapper.new(layer_name),
+            number: StringFormulaWrapper.new(part.number),
+            path: PathFormulaWrapper.new(entity_named_path.split('.')),
+            instance_name: StringFormulaWrapper.new(entity_name),
+            name: StringFormulaWrapper.new(part.name),
+            cutting_length: LengthFormulaWrapper.new(part.def.cutting_length),
+            cutting_width: LengthFormulaWrapper.new(part.def.cutting_width),
+            cutting_thickness: LengthFormulaWrapper.new(part.def.cutting_size.thickness),
+            edge_cutting_length: LengthFormulaWrapper.new(part.def.edge_cutting_length),
+            edge_cutting_width: LengthFormulaWrapper.new(part.def.edge_cutting_width),
+            bbox_length: LengthFormulaWrapper.new(part.def.size.length),
+            bbox_width: LengthFormulaWrapper.new(part.def.size.width),
+            bbox_thickness: LengthFormulaWrapper.new(part.def.size.thickness),
+            final_area: AreaFormulaWrapper.new(part.def.final_area),
+            material: MaterialFormulaWrapper.new(part.group.def.material, part.group.def),
+            description: StringFormulaWrapper.new(part.description),
+            url: StringFormulaWrapper.new(part.url),
+            tags: ArrayFormulaWrapper.new(part.tags),
+            edge_ymin: EdgeFormulaWrapper.new(part.def.edge_materials[:ymin], part.def.edge_group_defs[:ymin]),
+            edge_ymax: EdgeFormulaWrapper.new(part.def.edge_materials[:ymax], part.def.edge_group_defs[:ymax]),
+            edge_xmin: EdgeFormulaWrapper.new(part.def.edge_materials[:xmin], part.def.edge_group_defs[:xmin]),
+            edge_xmax: EdgeFormulaWrapper.new(part.def.edge_materials[:xmax], part.def.edge_group_defs[:xmax]),
+            face_zmin: VeneerFormulaWrapper.new(part.def.veneer_materials[:zmin], part.def.veneer_group_defs[:zmin]),
+            face_zmax: VeneerFormulaWrapper.new(part.def.veneer_materials[:zmax], part.def.veneer_group_defs[:zmax]),
+            layer: StringFormulaWrapper.new(layer_name),
 
-            component_definition: ComponentDefinitionExportWrapper.new(definition),
-            component_instance: ComponentInstanceExportWrapper.new(entity),
+            component_definition: ComponentDefinitionFormulaWrapper.new(definition),
+            component_instance: ComponentInstanceFormulaWrapper.new(entity),
 
-            batch: BatchExportWrapper.new(position_in_batch, part.count),
-            bin: IntegerExportWrapper.new(bin),
+            batch: BatchFormulaWrapper.new(position_in_batch, part.count),
+            bin: IntegerFormulaWrapper.new(bin),
 
-            filename: StringExportWrapper.new(@cutlist.filename),
-            model_name: StringExportWrapper.new(@cutlist.model_name),
-            model_description: StringExportWrapper.new(@cutlist.model_description),
-            page_name: StringExportWrapper.new(@cutlist.page_name),
-            page_description: StringExportWrapper.new(@cutlist.page_description)
+            filename: StringFormulaWrapper.new(@cutlist.filename),
+            model_name: StringFormulaWrapper.new(@cutlist.model_name),
+            model_description: StringFormulaWrapper.new(@cutlist.model_description),
+            page_name: StringFormulaWrapper.new(@cutlist.page_name),
+            page_description: StringFormulaWrapper.new(@cutlist.page_description)
 
           )
           entry.custom_values << _evaluate_text(element_def['custom_formula'], data)
@@ -205,7 +205,7 @@ module Ladb::OpenCutList
 
   # -----
 
-  class LabelData < ExportData
+  class LabelData < FormulaData
 
     def initialize(
 
