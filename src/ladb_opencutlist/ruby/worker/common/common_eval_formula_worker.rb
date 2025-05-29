@@ -70,7 +70,10 @@ module Ladb::OpenCutList
       begin
 
         sexp = Ripper.sexp(@formula)
-        puts sexp.inspect
+        return { :error => 'Invalid formula' } unless sexp.is_a?(Array)
+
+        # puts "sexp = #{sexp.inspect}"
+
         _check(sexp)
 
         value = eval(@formula, @data.get_binding)
@@ -105,7 +108,7 @@ module Ladb::OpenCutList
 
           when :@ivar
             # var_ref
-            raise "Undefined variable : #{text}" unless prev_symbol == :var_ref && @data.get_binding.receiver.instance_variables.include?(text)
+            raise "Undefined variable : #{text}" unless prev_symbol == :var_ref && @data.get_binding.receiver.instance_variables.include?(text.to_sym)
 
           end
           prev_symbol = symbol
