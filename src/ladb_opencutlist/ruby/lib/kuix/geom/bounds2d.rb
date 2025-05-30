@@ -22,6 +22,7 @@ module Ladb::OpenCutList::Kuix
     def set!(x = 0, y = 0, width = 0, height = 0)
       @origin.set!(x, y)
       @size.set!(width, height)
+      self
     end
 
     def set_all!(value = 0)
@@ -31,6 +32,7 @@ module Ladb::OpenCutList::Kuix
     def copy!(bounds)
       @origin.copy!(bounds.origin)
       @size.copy!(bounds.size)
+      self
     end
 
     # -- Properties --
@@ -90,22 +92,25 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
+    def min
+      Point2d.new(
+        x_min,
+        y_min
+      )
+    end
+
+    def max
+      Point2d.new(
+        x_max,
+        y_max
+      )
+    end
+
     def center
       Point2d.new(
         x_min + (x_max - x_min) / 2,
         y_min + (y_max - y_min) / 2
       )
-    end
-
-    def inflate!(dx, dy)
-      @origin.x -= dx
-      @size.width += dx * 2
-      @origin.y -= dy
-      @size.height += dy * 2
-    end
-
-    def inflate_all!(d)
-      inflate!(d, d)
     end
 
     # -- Tests --
@@ -120,6 +125,13 @@ module Ladb::OpenCutList::Kuix
 
     # -- Manipulations --
 
+    def add!(point)
+      set!(
+        [ x_min, point.x ].min,
+        [ y_min, point.y ].min
+      )
+    end
+
     def union!(bounds)
       if is_empty?
         copy!(bounds)
@@ -133,9 +145,21 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
+    def inflate!(dx, dy)
+      @origin.x -= dx
+      @size.width += dx * 2
+      @origin.y -= dy
+      @size.height += dy * 2
+      self
+    end
+
+    def inflate_all!(d)
+      inflate!(d, d)
+    end
+
     # -- Exports --
 
-    def get_points
+    def get_quad
       [
         Geom::Point3d.new(x_min , y_min  , 0),
         Geom::Point3d.new(x_max , y_min  , 0),

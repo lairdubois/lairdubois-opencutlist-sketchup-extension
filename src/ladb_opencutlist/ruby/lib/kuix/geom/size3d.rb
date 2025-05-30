@@ -20,7 +20,11 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy!(size)
-      set!(size.width, size.height, size.depth)
+      set!(
+        size.respond_to?(:width) ? size.width : 0,
+        size.respond_to?(:height) ? size.height : 0,
+        size.respond_to?(:depth) ? size.depth : 0
+      )
     end
 
     # -- Tests --

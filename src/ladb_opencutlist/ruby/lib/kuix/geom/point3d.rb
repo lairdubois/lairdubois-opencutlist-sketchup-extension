@@ -20,7 +20,11 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy!(point)
-      set!(point.x, point.y, point.z)
+      set!(
+        point.respond_to?(:x) ? point.x : 0,
+        point.respond_to?(:y) ? point.y : 0,
+        point.respond_to?(:z) ? point.z : 0
+      )
     end
 
     # -- Operations --

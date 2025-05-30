@@ -19,7 +19,20 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy!(point)
-      set!(point.x, point.y)
+      set!(
+        point.respond_to?(:x) ? point.x : 0,
+        point.respond_to?(:y) ? point.y : 0
+      )
+    end
+
+    # -- Operations --
+
+    def +(point)
+      set!(x + point.x, y + point.y)
+    end
+
+    def -(point)
+      set!(x - point.x, y - point.y)
     end
 
     # -- Manipulations --
@@ -34,6 +47,10 @@ module Ladb::OpenCutList::Kuix
 
     def to_s
       "#{self.class.name} (x=#{@x}, y=#{@y})"
+    end
+
+    def to_p
+      Geom::Point3d.new(@x, @y, 0)
     end
 
   end

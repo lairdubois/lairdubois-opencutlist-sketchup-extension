@@ -76,7 +76,7 @@ module Ladb::OpenCutList::Kuix
         @origin.y + y,
         width,
         height
-      ).get_points)
+      ).get_quad)
     end
 
   end

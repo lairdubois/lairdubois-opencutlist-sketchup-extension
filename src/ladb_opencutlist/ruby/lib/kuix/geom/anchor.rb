@@ -20,6 +20,7 @@ module Ladb::OpenCutList::Kuix
 
     def set!(position = TOP_LEFT)
       @position = position
+      self
     end
 
     def copy!(anchor)

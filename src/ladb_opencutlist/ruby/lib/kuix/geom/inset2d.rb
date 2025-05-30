@@ -13,6 +13,7 @@ module Ladb::OpenCutList::Kuix
       @right = right
       @bottom = bottom
       @left = left
+      self
     end
 
     def set_all!(value = 0)
@@ -20,7 +21,12 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy!(inset)
-      set!(inset.top, inset.right, inset.bottom, inset.left)
+      set!(
+        inset.respond_to?(:top) ? inset.top : 0,
+        inset.respond_to?(:right) ? inset.right : 0,
+        inset.respond_to?(:bottom) ? inset.bottom : 0,
+        inset.respond_to?(:left) ? inset.left : 0
+      )
     end
 
     # --

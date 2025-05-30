@@ -352,25 +352,30 @@ module Ladb::OpenCutList
 
         px_offset = Sketchup.active_model.active_view.pixels_to_model(50, center.transform(et))
 
-        fn = lambda do |axis, color|
+        fn = lambda do |color, section|
 
-          k_rectangle = Kuix::RectangleMotif.new
-          k_rectangle.bounds.copy!(eb)
-          k_rectangle.bounds.inflate!(px_offset, px_offset, 0)
-          k_rectangle.line_width = 2
-          k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SOLID
-          k_rectangle.color = color
-          k_rectangle.transformation = et
-          @tool.append_3d(k_rectangle, LAYER_3D_ACTION_PREVIEW)
+          k_box = Kuix::BoxMotif.new
+          k_box.bounds.copy!(section)
+          k_box.line_width = 2
+          k_box.line_stipple = Kuix::LINE_STIPPLE_SOLID
+          k_box.color = color
+          k_box.transformation = et
+          @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_quands(section.get_quads)
+          k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
+          k_mesh.transformation = et
+          @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
 
         end
 
         if _fetch_option_direction_length
-          fn.call(X_AXIS, Kuix::COLOR_X)
+          fn.call(Kuix::COLOR_X, Kuix::Bounds3d.new.copy!(eb).x_section.inflate!(0, px_offset, px_offset))
         elsif _fetch_option_direction_width
-          fn.call(Y_AXIS, Kuix::COLOR_Y)
+          fn.call(Kuix::COLOR_Y, Kuix::Bounds3d.new.copy!(eb).y_section.inflate!(px_offset, 0, px_offset))
         elsif _fetch_option_direction_thickness
-          fn.call(Z_AXIS, Kuix::COLOR_Z)
+          fn.call(Kuix::COLOR_Z, Kuix::Bounds3d.new.copy!(eb).z_section.inflate!(px_offset, px_offset, 0))
         end
 
         k_box = Kuix::BoxMotif.new

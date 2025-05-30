@@ -2,6 +2,13 @@ module Ladb::OpenCutList::Kuix
 
   class Bounds3d
 
+    TOP = 0
+    BOTTOM = 1
+    LEFT = 2
+    RIGHT = 3
+    FRONT = 4
+    BACK = 5
+
     TOP_LEFT = 0
     TOP_CENTER = 1
     TOP_RIGHT = 2
@@ -22,6 +29,7 @@ module Ladb::OpenCutList::Kuix
     def set!(x = 0, y = 0, z = 0, width = 0, height = 0, depth = 0)
       @origin.set!(x, y, z)
       @size.set!(width, height, depth)
+      self
     end
 
     def set_all!(value = 0)
@@ -36,6 +44,7 @@ module Ladb::OpenCutList::Kuix
         @origin.copy!(bounds.origin)
         @size.copy!(bounds.size)
       end
+      self
     end
 
     # -- Properties --
@@ -111,6 +120,22 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
+    def min
+      Point3d.new(
+        x_min,
+        y_min,
+        z_min
+      )
+    end
+
+    def max
+      Point3d.new(
+        x_max,
+        y_max,
+        z_max
+      )
+    end
+
     def center
       Point3d.new(
         x_min + (x_max - x_min) / 2,
@@ -119,17 +144,16 @@ module Ladb::OpenCutList::Kuix
       )
     end
 
-    def inflate!(dx, dy, dz)
-      @origin.x -= dx
-      @size.width += dx * 2
-      @origin.y -= dy
-      @size.height += dy * 2
-      @origin.z -= dz
-      @size.depth += dz * 2
+    def x_section
+      Bounds3d.new(center.x, y_min, z_min, 0, height, depth)
     end
 
-    def inflate_all!(d)
-      inflate!(d, d, d)
+    def y_section
+      Bounds3d.new(x_min, center.y, z_min, width, 0, depth)
+    end
+
+    def z_section
+      Bounds3d.new(x_min, y_min, center.z, width, height, 0)
     end
 
     # -- Tests --
@@ -166,6 +190,82 @@ module Ladb::OpenCutList::Kuix
         )
       end
       self
+    end
+
+    def inflate!(dx, dy, dz)
+      @origin.x -= dx
+      @size.width += dx * 2
+      @origin.y -= dy
+      @size.height += dy * 2
+      @origin.z -= dz
+      @size.depth += dz * 2
+      self
+    end
+
+    def inflate_all!(d)
+      inflate!(d, d, d)
+    end
+
+    # -- Exports --
+
+    def get_quad(index)
+      case index
+      when BOTTOM
+        [
+          Geom::Point3d.new(x_min , y_min  , z_min),
+          Geom::Point3d.new(x_max , y_min  , z_min),
+          Geom::Point3d.new(x_max , y_max  , z_min),
+          Geom::Point3d.new(x_min , y_max  , z_min)
+        ]
+      when TOP
+        [
+          Geom::Point3d.new(x_min , y_min  , z_max),
+          Geom::Point3d.new(x_max , y_min  , z_max),
+          Geom::Point3d.new(x_max , y_max  , z_max),
+          Geom::Point3d.new(x_min , y_max  , z_max)
+        ]
+      when LEFT
+        [
+          Geom::Point3d.new(x_min , y_min  , z_min),
+          Geom::Point3d.new(x_min , y_max  , z_min),
+          Geom::Point3d.new(x_min , y_max  , z_max),
+          Geom::Point3d.new(x_min , y_min  , z_max)
+        ]
+      when RIGHT
+        [
+          Geom::Point3d.new(x_max , y_min  , z_min),
+          Geom::Point3d.new(x_max , y_max  , z_min),
+          Geom::Point3d.new(x_max , y_max  , z_max),
+          Geom::Point3d.new(x_max , y_min  , z_max)
+        ]
+      when FRONT
+        [
+          Geom::Point3d.new(x_min , y_min  , z_min),
+          Geom::Point3d.new(x_max , y_min  , z_min),
+          Geom::Point3d.new(x_max , y_min  , z_max),
+          Geom::Point3d.new(x_min , y_min  , z_max)
+        ]
+      when BACK
+        [
+          Geom::Point3d.new(x_min , y_max  , z_min),
+          Geom::Point3d.new(x_max , y_max  , z_min),
+          Geom::Point3d.new(x_max , y_max  , z_max),
+          Geom::Point3d.new(x_min , y_max  , z_max)
+        ]
+      else
+        throw "Invalid size index (index=#{index})"
+      end
+    end
+
+    def get_quads
+      quads = []
+      quads.concat(get_quad(LEFT)) if height > 0 && depth > 0
+      quads.concat(get_quad(RIGHT)) if width > 0 && height > 0 && depth > 0
+      quads.concat(get_quad(FRONT)) if width > 0 && depth > 0
+      quads.concat(get_quad(BACK)) if width > 0 && height > 0 && depth > 0
+      quads.concat(get_quad(BOTTOM)) if width > 0 && height > 0
+      quads.concat(get_quad(TOP)) if width > 0 && height > 0 && depth > 0
+      quads
     end
 
     # --

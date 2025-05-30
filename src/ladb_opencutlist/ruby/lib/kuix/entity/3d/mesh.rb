@@ -9,8 +9,10 @@ module Ladb::OpenCutList::Kuix
 
       @background_color = nil
       @triangles = [] # Array<Geom::Point3d>
+      @quads = [] # Array<Geom::Point3d>
 
-      @_points = []
+      @_triangle_points = []
+      @_quad_points = []
 
     end
 
@@ -19,21 +21,32 @@ module Ladb::OpenCutList::Kuix
       @triangles.concat(triangles)
     end
 
+    def add_quands(quads) # Array<Geom::Point3d>
+      raise 'Points count must be a multiple of 4' if quads.length % 4 != 0
+      @quads.concat(quads)
+    end
+
     # -- LAYOUT --
 
     def do_layout(transformation)
       super
-      @_points = @triangles.map { |point| point.transform(transformation * @transformation) }
-      @extents.add(@_points) unless @_points.empty?
+      @_triangle_points = @triangles.map { |point| point.transform(transformation * @transformation) }
+      @extents.add(@_triangle_points) unless @_triangle_points.empty?
+      @_quad_points = @quads.map { |point| point.transform(transformation * @transformation) }
+      @extents.add(@_quad_points) unless @_quad_points.empty?
     end
 
     # -- RENDER --
 
     def paint_content(graphics)
       graphics.draw_triangles(
-        points: @_points,
+        points: @_triangle_points,
         fill_color: @background_color
-      )
+      ) unless @_triangle_points.empty?
+      graphics.draw_quads(
+        points: @_quad_points,
+        fill_color: @background_color
+      ) unless @_quad_points.empty?
       super
     end
 
