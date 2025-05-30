@@ -90,6 +90,7 @@ default:
   width: Larghezza
   thickness: Spessore
   height: Altezza
+  deprecated: Obsoleto
 core:
   menu:
     submenu: OpenCutList
@@ -209,23 +210,28 @@ core:
       delete: "Elimina la configurazione '{{ name }}'"
     dictionary:
       component_textinput_color: Tavolozza colori
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modello
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -694,6 +700,7 @@ tab:
         no_column_formula: Digitare una formula
       warning:
         is_group_selection: Le parti contenute nei **gruppi nascosti** del elenco parti non saranno esportate.
+        is_part_selection: Esportazione limitatata agli **elementi selezionati**.
     estimate:
       title: Preventivo
       info_0: |
@@ -725,6 +732,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errori**."
       warning:
         is_group_selection: Le parti contenute nei **gruppi nascosti** del elenco parti non saranno contate.
+        is_part_selection: La stima si limita ai **pezzi selezionati**.
       tip:
         not_enough_data: |
           Per calcolare correttamente il preventivo:
@@ -970,14 +978,14 @@ tab:
     packing:
       title: Schema di taglio
       option_problem_type: Tipo
-      option_problem_type_rectangle: ""
+      option_problem_type_rectangle: Rettangolo
       option_problem_type_rectangleguillotine: ""
       option_problem_type_onedimensional: Barre
       option_problem_type_irregular: ""
       options_material: Materiale
       options_config: Configurazione
       options_display: Visualizzazione
-      options_tuning: ""
+      options_tuning: Tuning
       option_std_bin_1d_dimensional: ""
       option_std_bin_1d_edge: ""
       option_std_bin_1d_help: |
@@ -1011,9 +1019,9 @@ tab:
       option_rectangleguillotine_number_of_stages_help: |
       option_rectangleguillotine_first_stage_orientation: ""
       option_rectangleguillotine_first_stage_orientation_help: |
-      option_rectangleguillotine_first_stage_orientation_horizontal: ""
-      option_rectangleguillotine_first_stage_orientation_vertical: ""
-      option_rectangleguillotine_first_stage_orientation_any: ""
+      option_rectangleguillotine_first_stage_orientation_horizontal: Orizzontale
+      option_rectangleguillotine_first_stage_orientation_vertical: Verticale
+      option_rectangleguillotine_first_stage_orientation_any: Qualunque
       option_rectangleguillotine_keep: Minima dimensione scarto
       option_rectangleguillotine_keep_help: Ritagli che sono piu grandi della lunghezza e larghezza minima vengono contrassegnati **da tenere**.
       option_irregular_allowed_rotations: ""
@@ -1111,30 +1119,6 @@ tab:
         title: Esporta diagramma di taglio
         info_0: |
           Questo modulo permette di esportare la **geometria** del *diagramma di taglio* in un file in formato [SVG](https://it.wikipedia.org/wiki/Scalable_Vector_Graphics) oppure [DXF](https://it.wikipedia.org/wiki/AutoCAD_DXF).
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: Struttura DXF
-        option_dxf_structure_1: Livelli
-        option_dxf_structure_2: Livelli + Blocchi
-        option_dxf_structure_help: |
-          Permette di scegliere la struttura del file DXF.
-
-          - La struttura **Layer** disegna tutti i tracciati in piano distinguendo i diversi tipi di tratto solo tramite i calques. *Questa struttura offre una migliore compatibilità con i software di terze parti.*
-          - La struttura **Layer + Blocks** crea un blocco per ogni pezzo e inserisce questi blocchi tante volte quanti sono i pezzi ripetuti. *Questa struttura offre maggiore flessibilità per modificare il file.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Pannello
         option_bin_sheet_good_help: |
           Abilita l'esportazione dei fogli del pannello e la selezione del colore.
@@ -1166,13 +1150,22 @@ tab:
           Seleziona se i tagli devono essere disegnati e con che colore.
         warning:
           is_bin_selection: ""
+        error:
+          overflow_gt_spacing: |
       error:
         no_part: Nessuna parte.
         no_bin_1d: ""
         no_bin_2d: ""
+        invalid_part_shapes: ""
         no_solution: ""
+        unplaced_parts: ""
+        unplaced_parts_plural: ""
       warning:
         is_part_selection: Lo schema di taglio mostra solo le **parti selezionate**.
+        cutting_dimensions: Questo schema di taglio mostra le parti con le loro dimensioni **grezze**.
+        cutting_dimensions_increase_1d: "Queste dimensioni grezze sono state configurate sul materiale '{{ material_name }}': maggiorazione lunghezza (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Queste dimensioni grezze sono state configurate sul materiale '{{ material_name }}': maggiorazione lunghezza (**{{ length_increase }}**) e maggiorazione larghezza (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Le dimensioni sono state ridotte dello spessore della bordatura. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etichette
       options_layout: Schema
@@ -1371,6 +1364,14 @@ tab:
       option_file_format: Formato
       option_file_format_help: |
         Seleziona il formato del file da esportare.
+      option_dxf_structure: Struttura DXF
+      option_dxf_structure_1: Livelli
+      option_dxf_structure_2: Livelli + Blocchi
+      option_dxf_structure_help: |
+        Permette di scegliere la struttura del file DXF.
+
+        - La struttura **Layer** disegna tutti i tracciati in piano distinguendo i diversi tipi di tratto solo tramite i calques. *Questa struttura offre una migliore compatibilità con i software di terze parti.*
+        - La struttura **Layer + Blocks** crea un blocco per ogni pezzo e inserisce questi blocchi tante volte quanti sono i pezzi ripetuti. *Questa struttura offre maggiore flessibilità per modificare il file.*
       option_unit: Unità
       option_unit_help: |
         Seleziona l'unità di misura utilizzata nel file esportato.
@@ -1388,10 +1389,9 @@ tab:
       option_faces_help: |
         Consente di scegliere se la ricerca della forma degli elementi usa tutte le facce o solo la faccia di destinazione.
       option_anchor: Punto di aggancio
-      option_anchor_0: Predefinito
+      option_anchor_0: Automatico
       option_anchor_1: Proietta l'origine dell'elemento
       option_anchor_help: |
-        L'origine degli assi dell'elemento viene utilizzata come punto di aggancio della proiezione.
       option_switch_yz: Asse verticale
       option_switch_yz_0: Z verticale
       option_switch_yz_1: Y verticale
@@ -1405,14 +1405,11 @@ tab:
 
         *Questa opzione non rileva altri tipi di curve.*
       option_merge_holes: Modo Unione
-      option_merge_holes_0: Predefinito
-      option_merge_holes_1: Profilo + forature + Unione
+      option_merge_holes_0: ""
+      option_merge_holes_1: ""
       option_merge_holes_help: |
-        **Predefinito**
-        La forma dell'elemento viene esportatat su un layer per ogni profondità
-
-        **Profilo + Forature + Unione**
-        Attiva la separazione del profilo esterno degli elementi dalla foratura e unisce le profondità di ogni recesso.
+      option_merge_holes_overflow: ""
+      option_merge_holes_overflow_help: |
       option_include_paths: Percorsi
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Utilizzare bordi non associati a una faccia
@@ -1492,7 +1489,7 @@ tab:
       texture_export: Esportare l'immagine
       texture_clear: Rimuovi texture
       edit: "Modifica le proprietà di '{{ name }}'"
-      set_current: "Colorare le parti con '{{ name }}'."
+      set_current: "Colorare le parti con '{{ name }}'"
       open_url: Apri l'URL del materiale
       import_from_skm: Importa materiale (.skm)
     menu:
@@ -1585,7 +1582,7 @@ tab:
       std_volumic_masses_help: Si usa per definire la densità per tutte le dimensioni e per ogni dimensione standard del materiale.
       std_prices: Prezzo
       std_prices_help: Permette di definire il prezzo per tutte le taglie così come per ogni misura standard del materiale.
-      std_cut_prices: ""
+      std_cut_prices: Prezzo di taglio
       std_cut_prices_help: |
       texture_width: Larghezza
       texture_height: Altezza
@@ -1656,6 +1653,14 @@ tab:
       layer_name: Tag
       explode: Esplodi
       explode_message: "Confermi l'esplosione dell'occorrenza **{{ name }}** ?"
+    option:
+      general: Generale
+      show_hidden_instances: ""
+      show_hidden_instances_help: ""
+      hide_descriptions: Nascondere le descrizioni
+      hide_descriptions_help: "Selezionando questa opzione, le **descrizioni** poste sulle parte non vengono visualizzate."
+      hide_tags: Nascondi i cartellini
+      hide_tags_help: "Selezionando questa opzione i **cartellini** non verranno mostrati."
     error:
       no_model: Nessun modello aperto. Sono necessarie più informazioni per procedere ;)
       no_entities: Il modello è vuoto!
@@ -1683,7 +1688,7 @@ tab:
         **{{ filename }}**.
       info_1: |
         *L' unità di misura configurata nel modello è: **{{ unit }}**.
-        Questa verrà utilizzata per le dimensioni senza unità di misura.*
+        Questa verrà utilizzata per le dimensioni senza unità di misura*.
       options: Opzioni di caricamento
       option_col_sep: Separatore
       option_col_sep_tab: Tabulatore
@@ -1787,7 +1792,7 @@ tab:
     contribute: Contribuisci
     backers: "{{ count }} sostenitore finanziario"
     backers_plural: "{{ count }} sostenitori finanziari"
-    ad: "Gradisci OpenCutList?"
+    ad: "OpenCutList non è gratuito"
     objective: Obiettivo
     objective_slogan: "OpenCutList è tutti noi"
     objective_title:
@@ -1957,6 +1962,7 @@ tool:
     action_option_options_rectangle_centered_status: Centrare il rettangolo sul primo punto
     action_option_options_smoothing: Levigatezza
     action_option_options_smoothing_status: Liscare le curve
+    action_option_options_measure_from_vertex_status: ""
     action_option_options_measure_from_diameter: Misura
     action_option_options_measure_from_diameter_status: Misurare il cerchio in base al suo diametro
     action_option_options_measure_from_radius_status: Misurare il cerchio in base al suo raggio
@@ -1966,7 +1972,7 @@ tool:
     action_option_options_pull_centered_status: ""
     action_option_options_ask_name: ""
     action_option_options_ask_name_status: ""
-    action_pull_locked_status: ""
+    action_measure_locked_status: ""
     action_toggle_move_copy_status: ""
     action_change_move_anchor_status: ""
     success:
@@ -2071,7 +2077,7 @@ tool:
     action_3: Adatta gli assi
     action_3_status: Seleziona una faccia o un bordo di un elemento per adattare gli assi
     action_4: Sposta l'origine
-    action_4_status: Selezionare una faccia di una parte e fare clic su un punto per posizionarvi l'origine.
+    action_4_status: Selezionare una faccia di una parte e fare clic su un punto per posizionarvi l'origine
     action_option_group_direction: Direzione
     action_option_direction_0: L
     action_option_direction_1: La
