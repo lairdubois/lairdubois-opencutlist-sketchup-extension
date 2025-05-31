@@ -16,6 +16,16 @@ ENV['foo'] = "\0"
     )
 
     assert_invalid_formula(<<-TXT
+$stdout.puts("hello, from $stdout")
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
+STDOUT.puts("hello, from STDOUT")
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
 Process.spawn({'Foo' => '0'}, 'ruby -e "p ENV[\"Foo\"]"')
     TXT
     )
@@ -24,6 +34,16 @@ Process.spawn({'Foo' => '0'}, 'ruby -e "p ENV[\"Foo\"]"')
 eval = eval("rm -fr /")
     TXT
     )
+
+    assert_invalid_formula(<<-TXT
+eval("`dir`")
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
+eval("File.open('test.txt')"))
+    TXT
+  )
 
     assert_invalid_formula(<<-TXT
 Object.send(:to_s)
@@ -57,6 +77,16 @@ File.read("test.text")
 
     assert_invalid_formula(<<-TXT
 File.write("c:\test.txt")
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
+Dir.children("not_empty_directory")
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
+FileUtils.rm Dir.glob('*.so')
     TXT
     )
 
@@ -118,4 +148,3 @@ Kernel.send(:exit)
   end
 
 end
-
