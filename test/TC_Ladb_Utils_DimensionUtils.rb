@@ -33,9 +33,9 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     assert_equal_fn(fn, '-1m', '0')
     assert_equal_fn(fn, '-1.0m', '0')
 
-    assert_equal_fn(fn, '1m', '1m')
-    assert_equal_fn(fn, '1cm', '1cm')
-    assert_equal_fn(fn, '1mm', '1mm')
+    assert_equal_fn(fn, '1m', '1 m')
+    assert_equal_fn(fn, '1cm', '1 cm')
+    assert_equal_fn(fn, '1mm', '1 mm')
     assert_equal_fn(fn, '1"', '1"')
     assert_equal_fn(fn, '1\'', '1\'')
     assert_equal_fn(fn, '1.0"', '1' + @separator + '0"')
@@ -46,8 +46,8 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     @units_options_provider['LengthUnit'] = Length::Meter
     @units_options_provider['LengthPrecision'] = 1
     Ladb::OpenCutList::DimensionUtils.fetch_options
-    assert_equal_fn(fn, '1/2 m', '1/2m')
-    assert_equal_fn(fn, '1/2', '1/2m')
+    assert_equal_fn(fn, '1/2 m', '1/2 m')
+    assert_equal_fn(fn, '1/2', '1/2 m')
     assert_equal_fn(fn, '', '0')  # It depends of model precision
     assert_equal_fn(fn, 'm', '0')
 
