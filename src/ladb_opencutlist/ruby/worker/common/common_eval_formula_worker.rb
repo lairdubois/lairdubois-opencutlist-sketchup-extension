@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require 'Ripper'
   require_relative '../../model/formula/formula_data'
   require_relative '../../model/formula/formula_wrapper'
   require_relative '../../parser/formula_parser'
@@ -28,7 +27,7 @@ module Ladb::OpenCutList
 
         FormulaParser.new(@formula, @data).parse
 
-      rescue InvalidFormulaError => e
+      rescue ForbiddenFormulaError => e
         return { :error => e.message.split(/common_eval_formula_worker[.]rb:\d+:/).last } # Remove the path in the exception message
       end
 
