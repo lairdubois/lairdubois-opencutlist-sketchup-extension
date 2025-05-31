@@ -23,7 +23,8 @@ module Ladb::OpenCutList
 
     BLACK_LIST_RECEIVER = %w[
       File IO Dir GC Kernel
-      Process RubyVM Signal Thread FileUtils FileTest
+      Process RubyVM Signal Thread FileUtils FileTest Dir
+      $stdin $stdout $stderr STDIN STDOUT STDERR
     ]
 
     BLACK_LIST_CONST = %w[
@@ -77,6 +78,12 @@ module Ladb::OpenCutList
       # puts "on_const_path_ref : #{left} #{const}"
       raise ForbiddenFormulaError.new("Forbidden receiver : #{left}") if BLACK_LIST_RECEIVER.include?(left)
       [ left, const ]
+    end
+
+    def on_xstring_add(xstring, part)
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#xstring_add
+      # puts "on_xstring_add : #{part}"
+      part
     end
 
     def on_fcall(message)
