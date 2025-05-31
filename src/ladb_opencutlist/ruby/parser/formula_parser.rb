@@ -26,10 +26,6 @@ class FormulaParser < Ripper
     ENV
   ]
 
-  WHITE_LIST_CONST = %w[
-    Math
-  ]
-
   def initialize(formula, data)
     super(formula)
 
@@ -60,7 +56,7 @@ class FormulaParser < Ripper
   end
 
   def on_const(value)
-    raise InvalidFormulaError.new("Forbidden const : #{value}") unless WHITE_LIST_CONST.include?(value)
+    raise InvalidFormulaError.new("Forbidden const : #{value}") if BLACK_LIST_CONST.include?(value)
     return value
   end
 

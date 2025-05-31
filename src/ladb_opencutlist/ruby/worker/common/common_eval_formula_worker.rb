@@ -3,6 +3,7 @@ module Ladb::OpenCutList
   require 'Ripper'
   require_relative '../../model/formula/formula_data'
   require_relative '../../model/formula/formula_wrapper'
+  require_relative '../../parser/formula_parser'
 
   class CommonEvalFormulaWorker
 
@@ -71,12 +72,13 @@ module Ladb::OpenCutList
 
       begin
 
-        sexp = Ripper.sexp(@formula)
-        return { :error => 'Invalid formula' } unless sexp.is_a?(Array)
+        FormulaParser.new(@formula, @data).parse
 
-        # puts "sexp = #{sexp.inspect}"
+      rescue InvalidFormulaError => e
+        return { :error => e.message.split(/common_eval_formula_worker[.]rb:\d+:/).last } # Remove the path in the exception message
+      end
 
-        _check(sexp)
+      begin
 
         value = eval(@formula, @data.get_binding)
         value = value.export if value.is_a?(FormulaWrapper)
