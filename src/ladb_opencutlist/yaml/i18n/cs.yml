@@ -37,7 +37,7 @@ default:
   unselect_all: Odznačit všechno
   draw: Kreslení
   estimate: Kalkulace
-  rename: ""
+  rename: Přejmenovat
   next: Další
   yes: Ano
   no: Ne
@@ -69,8 +69,8 @@ default:
   instance_plural: položky
   part_single: pokoj
   part_plural: pokoje
-  cut_single: ""
-  cut_plural: ""
+  cut_single: řez
+  cut_plural: řezy
   thickness_layer_single: hladina
   thickness_layer_plural: hladiny
   setup_model_units: Nakonfigurujte modelové jednotky
@@ -90,7 +90,7 @@ default:
   width: Šířka
   thickness: Tloušťka
   height: Výška papíru
-  deprecated: ""
+  deprecated: Zastaralé
 core:
   menu:
     submenu: OpenCutList
@@ -247,7 +247,7 @@ core:
       snippets: Příklady vzorců
       help: "Chcete-li získat seznam proměnných, zadejte **@**."
     textinput_size:
-      quantity: ""
+      quantity: Množství
     three_viewer:
       view: "{{ view }} Zobrazit"
       view_isometric: Izometrie
@@ -569,8 +569,8 @@ tab:
         Uspořádáním následujících rozměrů nastavíte pořadí zobrazených sloupců.
       property_material_type: ""
       property_material_name: Název materiálu
-      property_std_width: ""
-      property_std_thickness: ""
+      property_std_width: Standardní šířka
+      property_std_thickness: Standardní tloušťka
       property_thickness: Tloušťka
       property_length: Délka
       property_width: Šířka
@@ -600,7 +600,7 @@ tab:
       volume: Objem
       number: Číslo
       name: Označení
-      count: ""
+      count: Množství
       cutting: Hrubé rozměry
       bbox: Čisté rozměry
       final: Aktuální
@@ -709,7 +709,7 @@ tab:
       total_unused: Nepoužitý
       total_mass: Σ Hmotnost
       total_cost: Σ Náklady
-      total_count: ""
+      total_count: Množství
       total_instance_count: Jednotky
       total_volume: Σ Objem
       total_area: Σ Souhrn
@@ -725,7 +725,7 @@ tab:
         incompatible_unit: Nekompatibilní jednotky s možnostmi odhadu materiálu
         multiplier_coefficient: ""
       error:
-        no_typed_material_parts: "Žádná součást s definovaným typem materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** nebo **$t(tab.materials.type_5)**) pro vygenerování odhadu bylo poskytnuto."
+        no_typed_material_parts: "Žádné díly s definovaným typem materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** nebo **$t(tab.materials.type_5)**) pro vygenerování odhadu bylo poskytnuto."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyby**."
       warning:
@@ -858,7 +858,7 @@ tab:
       list:
         unplaced_parts: Neumístěné dílce
         summary: Shrnutí
-        count: ""
+        count: Množství
         bar: Délkový
         sheet: Tabule
         length: Délka
@@ -1079,7 +1079,7 @@ tab:
         total_cut_count: Počet řezů
         total_cut_length: Délka řezů
         efficiency: Účinnost
-        count: ""
+        count: Množství
         length: Délka
         width: Šířka
         total_length: Σ Délka
@@ -1110,7 +1110,7 @@ tab:
         leftovers_to_keep_plural: Zbytek
         cut: Řez
         cut_plural: Řezy
-        cut_trimming: Ořezávací střih
+        cut_trimming: Ořezávací zbytek
         cut_primary: ""
         cut_depth: ""
       write:

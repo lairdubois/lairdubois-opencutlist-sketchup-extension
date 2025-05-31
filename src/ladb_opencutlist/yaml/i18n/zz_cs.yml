@@ -35,7 +35,7 @@ default:
   unselect_all: 34 - Odznačit všechno
   draw: 35 - Kreslení
   estimate: 36 - Kalkulace
-  rename: '37 - '
+  rename: 37 - Přejmenovat
   next: 38 - Další
   'yes': 39 - Ano
   'no': 40 - Ne
@@ -65,8 +65,8 @@ default:
   instance_plural: 64 - položky
   part_single: 65 - pokoj
   part_plural: 66 - pokoje
-  cut_single: '67 - '
-  cut_plural: '68 - '
+  cut_single: 67 - řez
+  cut_plural: 68 - řezy
   thickness_layer_single: 69 - hladina
   thickness_layer_plural: 70 - hladiny
   setup_model_units: 71 - Nakonfigurujte modelové jednotky
@@ -86,7 +86,7 @@ default:
   width: 85 - Šířka
   thickness: 86 - Tloušťka
   height: 87 - Výška papíru
-  deprecated: '88 - '
+  deprecated: 88 - Zastaralé
 core:
   menu:
     submenu: 89 - OpenCutList
@@ -243,7 +243,7 @@ core:
       snippets: 197 - Příklady vzorců
       help: 198 - Chcete-li získat seznam proměnných, zadejte **@**.
     textinput_size:
-      quantity: '199 - '
+      quantity: 199 - Množství
     three_viewer:
       view: 200 - {{ view }} Zobrazit
       view_isometric: 201 - Izometrie
@@ -565,8 +565,8 @@ tab:
         439 - Uspořádáním následujících rozměrů nastavíte pořadí zobrazených sloupců.
       property_material_type: '440 - '
       property_material_name: 441 - Název materiálu
-      property_std_width: '442 - '
-      property_std_thickness: '443 - '
+      property_std_width: 442 - Standardní šířka
+      property_std_thickness: 443 - Standardní tloušťka
       property_thickness: 444 - Tloušťka
       property_length: 445 - Délka
       property_width: 446 - Šířka
@@ -596,7 +596,7 @@ tab:
       volume: 469 - Objem
       number: 470 - Číslo
       name: 471 - Označení
-      count: '472 - '
+      count: 472 - Množství
       cutting: 473 - Hrubé rozměry
       bbox: 474 - Čisté rozměry
       final: 475 - Aktuální
@@ -705,7 +705,7 @@ tab:
       total_unused: 570 - Nepoužitý
       total_mass: 571 - Σ Hmotnost
       total_cost: 572 - Σ Náklady
-      total_count: '573 - '
+      total_count: 573 - Množství
       total_instance_count: 574 - Jednotky
       total_volume: 575 - Σ Objem
       total_area: 576 - Σ Souhrn
@@ -721,7 +721,7 @@ tab:
         incompatible_unit: 585 - Nekompatibilní jednotky s možnostmi odhadu materiálu
         multiplier_coefficient: '586 - '
       error:
-        no_typed_material_parts: 587 - Žádná součást s definovaným typem materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** nebo **$t(tab.materials.type_5)**) pro vygenerování odhadu bylo poskytnuto.
+        no_typed_material_parts: 587 - Žádné díly s definovaným typem materiálu (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** nebo **$t(tab.materials.type_5)**) pro vygenerování odhadu bylo poskytnuto.
         entry_error: '588 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyba**.'
         entry_error_plural: '589 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} chyby**.'
       warning:
@@ -854,7 +854,7 @@ tab:
       list:
         unplaced_parts: 693 - Neumístěné dílce
         summary: 694 - Shrnutí
-        count: '695 - '
+        count: 695 - Množství
         bar: 696 - Délkový
         sheet: 697 - Tabule
         length: 698 - Délka
@@ -1075,7 +1075,7 @@ tab:
         total_cut_count: 889 - Počet řezů
         total_cut_length: 890 - Délka řezů
         efficiency: 891 - Účinnost
-        count: '892 - '
+        count: 892 - Množství
         length: 893 - Délka
         width: 894 - Šířka
         total_length: 895 - Σ Délka
@@ -1106,7 +1106,7 @@ tab:
         leftovers_to_keep_plural: 920 - Zbytek
         cut: 921 - Řez
         cut_plural: 922 - Řezy
-        cut_trimming: 923 - Ořezávací střih
+        cut_trimming: 923 - Ořezávací zbytek
         cut_primary: '924 - '
         cut_depth: '925 - '
       write:
