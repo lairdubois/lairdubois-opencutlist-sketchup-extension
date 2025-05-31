@@ -26,6 +26,16 @@ eval = eval("rm -fr /")
     )
 
     assert_invalid_formula(<<-TXT
+Object.send(:to_s)
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
+Object.send :to_s
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
 exec("dir")
     TXT
     )
@@ -67,6 +77,33 @@ throw "foo", "bar"
 
     assert_invalid_formula(<<-TXT
 f=IO.popen('uname'); f.readlines; f.close
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
+`ls`
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
+%x[ls]
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
+<<-`CMD`
+  ls
+CMD
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
+module A; class B; end; end
+    TXT
+    )
+
+    assert_invalid_formula(<<-TXT
+Kernel.send(:exit)
     TXT
     )
 
