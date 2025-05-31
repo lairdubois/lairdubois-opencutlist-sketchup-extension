@@ -2,7 +2,7 @@ require 'testup/testcase'
 
 require_relative '../src/ladb_opencutlist/ruby/parser/formula_parser'
 
-class TC_Ladb_Formula < TestUp::TestCase
+class TC_Ladb_Parser_FormulaParser < TestUp::TestCase
 
   def setup
 
@@ -70,23 +70,13 @@ f=IO.popen('uname'); f.readlines; f.close
     TXT
     )
 
-#     assert_invalid_formula(<<-TXT
-# mat = @Matière
-#
-# descr = "CICA: what else"
-# if !mat.empty? && (m = /^CICA:(.*)/.match(mat.description))
-#   m[1]
-# end
-#     TXT
-#     )
-
   end
 
   private
 
   def assert_invalid_formula(formula)
-    assert_raises(InvalidFormulaError) do
-      FormulaParser.parse(formula)
+    assert_raises(Ladb::OpenCutList::ForbiddenFormulaError) do
+      Ladb::OpenCutList::FormulaParser.new(formula, nil).parse
     end
   end
 
