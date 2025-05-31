@@ -1648,7 +1648,7 @@ module Ladb::OpenCutList
 
   class SmartActionHandler
 
-    attr_reader :tool
+    attr_reader :tool, :picker
     attr_accessor :previous_action_handler
 
     def initialize(action, tool, previous_action_handler = nil)
@@ -1664,6 +1664,7 @@ module Ladb::OpenCutList
 
     def start
       set_state(get_startup_state)
+      onToolMouseMove(@tool, 0, @tool.last_mouse_x, @tool.last_mouse_y, Sketchup.active_model.active_view)
     end
 
     def stop
@@ -1985,12 +1986,17 @@ module Ladb::OpenCutList
       nil
     end
 
+    def _get_active_part_entity
+      return @active_part_entity_path.last if @active_part_entity_path.is_a?(Array)
+      nil
+    end
+
     def _select_active_part_entity
       model = Sketchup.active_model
-      if model && @active_part_entity_path.is_a?(Array) && !@active_part_entity_path.empty?
+      if model && !(entity = _get_active_part_entity).nil?
         selection = model.selection
         selection.clear
-        selection.add(@active_part_entity_path.last)
+        selection.add(entity)
       end
     end
 

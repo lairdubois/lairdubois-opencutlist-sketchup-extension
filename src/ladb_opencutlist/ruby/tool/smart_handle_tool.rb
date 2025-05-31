@@ -738,8 +738,7 @@ module Ladb::OpenCutList
     end
 
     def _get_instance
-      return @active_part_entity_path.last if @active_part_entity_path.is_a?(Array)
-      nil
+      _get_active_part_entity
     end
 
     def _hide_instance

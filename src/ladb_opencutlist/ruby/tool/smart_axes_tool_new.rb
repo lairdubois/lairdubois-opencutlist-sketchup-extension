@@ -187,6 +187,7 @@ module Ladb::OpenCutList
     def initialize(action, tool, previous_action_handler = nil)
       super
 
+      @global_instance_transformation = nil
       @drawing_def = nil
 
     end
@@ -194,14 +195,20 @@ module Ladb::OpenCutList
     # -----
 
     def onToolLButtonUp(tool, flags, x, y, view)
-      puts "#{self.class.name} onToolLButtonUp"
 
       if @active_part_entity_path.nil?
         UI.beep
         return true
       end
 
+      _do_action
+      _restart
+
       false
+    end
+
+    def onToolLButtonDoubleClick(tool, flags, x, y, view)
+      onToolLButtonUp(tool, flags, x, y, view)
     end
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
@@ -254,6 +261,9 @@ module Ladb::OpenCutList
 
       @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
 
+    end
+
+    def _do_action
     end
 
     # -----
@@ -348,9 +358,8 @@ module Ladb::OpenCutList
 
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
-        center = eb.center
 
-        px_offset = Sketchup.active_model.active_view.pixels_to_model(50, center.transform(et))
+        px_offset = Sketchup.active_model.active_view.pixels_to_model(50, eb.center.transform(et))
 
         fn = lambda do |color, section|
 
@@ -370,6 +379,13 @@ module Ladb::OpenCutList
 
         end
 
+        k_box = Kuix::BoxMotif.new
+        k_box.bounds.copy!(eb)
+        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_box.color = Kuix::COLOR_BLACK
+        k_box.transformation = et
+        @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+
         if _fetch_option_direction_length
           fn.call(Kuix::COLOR_X, Kuix::Bounds3d.new.copy!(eb).x_section.inflate!(0, px_offset, px_offset))
         elsif _fetch_option_direction_width
@@ -378,12 +394,42 @@ module Ladb::OpenCutList
           fn.call(Kuix::COLOR_Z, Kuix::Bounds3d.new.copy!(eb).z_section.inflate!(px_offset, px_offset, 0))
         end
 
-        k_box = Kuix::BoxMotif.new
-        k_box.bounds.copy!(eb)
-        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        k_box.color = Kuix::COLOR_BLACK
-        k_box.transformation = et
-        @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+      end
+    end
+
+    def _do_action
+      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(drawing_def, et)
+
+        size = @active_part.def.size
+
+        scaling = {
+          X_AXIS => 1,
+          Y_AXIS => 1,
+          Z_AXIS => 1,
+        }
+        if _fetch_option_direction_length
+          scaling[size.oriented_axis(X_AXIS)] = -1
+        elsif _fetch_option_direction_width
+          scaling[size.oriented_axis(Y_AXIS)] = -1
+        elsif _fetch_option_direction_thickness
+          scaling[size.oriented_axis(Z_AXIS)] = -1
+        end
+
+        t = Geom::Transformation.scaling(eb.center, scaling[X_AXIS], scaling[Y_AXIS], scaling[Z_AXIS])
+
+        model = Sketchup.active_model
+        model.start_operation('OCL Part Flip', true, false, false)
+
+          _get_active_part_entity.transformation *= t
+
+        # Commit model modification operation
+        model.commit_operation
+
+        # Fire event
+        ModelObserver.instance.onDrawingChange
 
       end
     end
