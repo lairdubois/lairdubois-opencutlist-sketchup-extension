@@ -10,7 +10,7 @@ module Ladb::OpenCutList
       alias
     ]
 
-    BLACK_LIST_IDENT = %w[
+    BLACK_LIST_METHOD = %w[
       exec fork spawn system syscall
       abort exit exit! at_exit
       binding send
@@ -21,15 +21,31 @@ module Ladb::OpenCutList
       sleep
     ]
 
-    BLACK_LIST_RECEIVER = %w[
-      File IO Dir GC Kernel
-      Process RubyVM Signal Thread FileUtils FileTest Dir
-      $stdin $stdout $stderr STDIN STDOUT STDERR
-    ]
+    # BLACK_LIST_RECEIVER = %w[
+    #   File IO Dir GC Kernel
+    #   Process RubyVM Signal Thread FileUtils FileTest Dir
+    #   $stdin $stdout $stderr STDIN STDOUT STDERR
+    # ]
 
     BLACK_LIST_CONST = %w[
       ENV
     ]
+
+    WHITE_LIST_CONST = %w[
+      Math
+    ]
+
+    TYPE_IDENT = 0
+    TYPE_CONST = 1
+
+    Thing = Struct.new(:value, :type) do
+      def is_ident?
+        type == TYPE_IDENT
+      end
+      def is_const?
+        type == TYPE_CONST
+      end
+    end
 
     def initialize(formula, data)
       super(formula)
@@ -50,14 +66,19 @@ module Ladb::OpenCutList
     def on_ident(value)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#ident
       # puts "on_ident : #{value}"
-      value
+      Thing.new(value, TYPE_IDENT)
     end
 
     def on_const(value)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#const
       # puts "on_const : #{value}"
-      raise ForbiddenFormulaError.new("Forbidden const : #{value}") if BLACK_LIST_CONST.include?(value)
-      value
+      Thing.new(value, TYPE_CONST)
+    end
+
+    def on_gvar(value)
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#gvar
+      # puts "on_gvar : #{value}"
+      raise ForbiddenFormulaError.new("Forbidden global variable : #{value}")
     end
 
     def on_ivar(value)
@@ -70,56 +91,51 @@ module Ladb::OpenCutList
     def on_var_ref(contents)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#var_ref
       # puts "on_var_ref : #{contents}"
+      _assert_authorized_const(contents)
       contents
     end
 
     def on_const_path_ref(left, const)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#const_path_ref
       # puts "on_const_path_ref : #{left} #{const}"
-      raise ForbiddenFormulaError.new("Forbidden receiver : #{left}") if BLACK_LIST_RECEIVER.include?(left)
+      _assert_authorized_const(left)
       [ left, const ]
-    end
-
-    def on_xstring_add(xstring, part)
-      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#xstring_add
-      # puts "on_xstring_add : #{part}"
-      part
     end
 
     def on_fcall(message)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#fcall
       # puts "on_fcall : #{message}"
-      raise ForbiddenFormulaError.new("Forbidden fcall : #{message}") if BLACK_LIST_IDENT.include?(message)
+      _assert_authorized_method(message)
       message
     end
 
     def on_vcall(ident)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#fcall
       # puts "on_vcall : #{ident}"
-      raise ForbiddenFormulaError.new("Forbidden vcall : #{ident}") if BLACK_LIST_IDENT.include?(ident)
+      _assert_authorized_method(ident)
       ident
     end
 
     def on_call(receiver, operator, message)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#call
       # puts "on_call : #{receiver} #{operator} #{message}"
-      raise ForbiddenFormulaError.new("Forbidden receiver : #{receiver}") if BLACK_LIST_RECEIVER.include?(receiver)
-      raise ForbiddenFormulaError.new("Forbidden call : #{message}") if BLACK_LIST_IDENT.include?(message)
+      _assert_authorized_const(receiver)
+      _assert_authorized_method(message)
       [ receiver, operator, message ]
     end
 
     def on_command_call(receiver, operator, method, args)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#command
       # puts "on_command_call : #{receiver} #{operator} #{method} #{args}"
-      raise ForbiddenFormulaError.new("Forbidden receiver : #{receiver}") if BLACK_LIST_RECEIVER.include?(receiver)
-      raise ForbiddenFormulaError.new("Forbidden method : #{method}") if BLACK_LIST_IDENT.include?(method)
+      _assert_authorized_const(receiver)
+      _assert_authorized_method(method)
       [ receiver, operator, method, args ]
     end
 
     def on_command(message, args)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#command
       # puts "on_command : #{message} #{args}"
-      raise ForbiddenFormulaError.new("Forbidden command : #{message}") if BLACK_LIST_IDENT.include?(message)
+      _assert_authorized_method(message)
       [ message, args ]
     end
 
@@ -153,6 +169,12 @@ module Ladb::OpenCutList
       raise ForbiddenFormulaError.new("Forbidden module construct : #{const}")
     end
 
+    def on_xstring_add(xstring, part)
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#xstring_add
+      # puts "on_xstring_add : #{part}"
+      part
+    end
+
     def on_xstring_literal(xstring)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#xstring_literal
       # puts "on_xstring_literal : #{xstring}"
@@ -163,6 +185,16 @@ module Ladb::OpenCutList
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#backtick
       # puts "on_backtick : #{value}"
       raise ForbiddenFormulaError.new("Forbidden backticks : #{value}")
+    end
+
+    private
+
+    def _assert_authorized_const(thing)
+      raise ForbiddenFormulaError.new("Forbidden const : #{thing.value}") if thing.is_a?(Thing) && thing.is_const? && !WHITE_LIST_CONST.include?(thing.value)
+    end
+
+    def _assert_authorized_method(thing)
+      raise ForbiddenFormulaError.new("Forbidden method : #{thing.value}") if thing.is_a?(Thing) && thing.is_ident? && BLACK_LIST_METHOD.include?(thing.value)
     end
 
   end
