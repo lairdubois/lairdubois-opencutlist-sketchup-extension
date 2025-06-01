@@ -21,16 +21,6 @@ module Ladb::OpenCutList
       sleep
     ]
 
-    # BLACK_LIST_RECEIVER = %w[
-    #   File IO Dir GC Kernel
-    #   Process RubyVM Signal Thread FileUtils FileTest Dir
-    #   $stdin $stdout $stderr STDIN STDOUT STDERR
-    # ]
-
-    BLACK_LIST_CONST = %w[
-      ENV
-    ]
-
     WHITE_LIST_CONST = %w[
       Math
     ]
