@@ -10,6 +10,8 @@ class TC_Ladb_Parser_FormulaParser < TestUp::TestCase
 
   def test_formula_parser
 
+    # INVALID
+
     assert_invalid_formula(<<-TXT
 ENV['foo'] = "\0"
     TXT
@@ -137,6 +139,14 @@ Kernel.send(:exit)
     TXT
     )
 
+    # VALID
+
+    assert_valid_formula(<<-TXT
+1 + 2
+    TXT
+    )
+
+
   end
 
   private
@@ -144,6 +154,14 @@ Kernel.send(:exit)
   def assert_invalid_formula(formula)
     assert_raises(Ladb::OpenCutList::ForbiddenFormulaError) do
       Ladb::OpenCutList::FormulaParser.new(formula, nil).parse
+    end
+  end
+
+  def assert_valid_formula(formula)
+    begin
+      assert Ladb::OpenCutList::FormulaParser.new(formula, nil).parse
+    rescue Ladb::OpenCutList::ForbiddenFormulaError => e
+      assert(false, "Invalid formula : #{e.message}")
     end
   end
 

@@ -7,7 +7,7 @@ module Ladb::OpenCutList
   class FormulaParser < Ripper
 
     BLACK_LIST_KW = %w[
-      alias
+      alias self
     ]
 
     BLACK_LIST_METHOD = %w[
@@ -54,6 +54,8 @@ module Ladb::OpenCutList
       super(formula)
 
       @data = data
+
+      # puts Ripper.sexp(formula)
 
     end
 
@@ -188,6 +190,12 @@ module Ladb::OpenCutList
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#backtick
       # puts "on_backtick : #{value}"
       raise ForbiddenFormulaError.new("Forbidden backticks : #{value}")
+    end
+
+    def on_program(stmts_add)
+      # https://github.com/kddnewton/ripper-docs/blob/main/events.md#program
+      # puts "on_program : #{stmts_add}"
+      true
     end
 
     private

@@ -49,6 +49,7 @@ module Ladb::OpenCutList
       return e.class unless e.respond_to?(:message)
       message = e.message.split(/common_eval_formula_worker[.]rb:\d+:/).last  # Remove the path in the exception message
       message = message.gsub(/ for #{@data.class.name}:#{@data.class.name}/, '') unless message.nil?
+      message = message.gsub(/#{@data.class.name}/, 'Data') unless message.nil?
       message.nil? ? '' : message
     end
 
