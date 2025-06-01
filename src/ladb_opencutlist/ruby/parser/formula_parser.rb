@@ -45,6 +45,9 @@ module Ladb::OpenCutList
       def is_const?
         type == TYPE_CONST
       end
+      def to_s
+        value
+      end
     end
 
     def initialize(formula, data)
