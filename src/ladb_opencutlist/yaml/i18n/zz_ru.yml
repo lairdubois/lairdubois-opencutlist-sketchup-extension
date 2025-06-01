@@ -1587,7 +1587,7 @@ tab:
         *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       std_sections: 1254 - Стандартные сечения
       std_sections_help: |
-        1255 - Для этого материала доступны стандартные разрезы.
+        1255 - Для этого материала доступны стандартные сечения.
 
         *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       std_sizes: 1256 - Стандартные размеры панели
@@ -2003,8 +2003,8 @@ tool:
     action_option_segments_segment_count: 1531 - Количество сегментов
     action_option_segments_segment_count_status: 1532 - Задает количества сегментов в проектируемой окружности
     action_option_options_construction: 1533 - Конструкционные элементы
-    action_option_options_construction_status: 1534 - Построение на основе конструкционных элементов
-    action_option_options_rectangle_centered: 1535 - Прямоугольник с центром
+    action_option_options_construction_status: 1534 - Моделирование каркасной основы
+    action_option_options_rectangle_centered: 1535 - Прямоугольник из центра
     action_option_options_rectangle_centered_status: 1536 - Первым кликом задайте центр прямоугольника
     action_option_options_smoothing: 1537 - Сглаживание
     action_option_options_smoothing_status: 1538 - Плавные кривые
@@ -2014,8 +2014,8 @@ tool:
     action_option_options_measure_from_radius_status: 1542 - Измерить окружность по ее радиусу
     action_option_options_measure_reversed: 1543 - Реверсивное измерение
     action_option_options_measure_reversed_status: 1544 - Измерение в обратном направлении
-    action_option_options_pull_centered: 1545 - Центрированное возвышение
-    action_option_options_pull_centered_status: 1546 - Первым кликом задайте центр возвышения
+    action_option_options_pull_centered: 1545 - Центр для вытягивания
+    action_option_options_pull_centered_status: 1546 - Первым кликом задайте центр вытягивания
     action_option_options_ask_name: 1547 - Задать имена деталям
     action_option_options_ask_name_status: 1548 - Ввод названий деталей вручную
     action_measure_locked_status: 1549 - Фиксация результатов последнего измерения
@@ -2108,7 +2108,7 @@ tool:
       no_material: 1630 - Ваша модель не содержит материалов!
       no_material_type: 1631 - Нет материала типа '{{ type }}'
     error:
-      not_part: 1632 - Целевой объект не является частью (компонентом)
+      not_part: 1632 - Целевой объект не является деталью (компонентом)
       not_edge: 1633 - Целевая поверхность не является торцом панели
       not_face: 1634 - Целевая поверхность не является лицевой
       wrong_material_type: 1635 - Целевая деталь должна быть типа '{{ type }}'
