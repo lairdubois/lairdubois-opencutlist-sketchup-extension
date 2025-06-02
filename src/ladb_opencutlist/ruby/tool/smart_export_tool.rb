@@ -663,7 +663,7 @@ module Ladb::OpenCutList
             fn_append_polyline = lambda do |points, line_width, line_stipple, closed|
 
               k_polyline = Kuix::Polyline.new
-              k_polyline.add_segments(points)
+              k_polyline.add_points(points)
               k_polyline.color = COLOR_PART_PATH
               k_polyline.line_width = highlighted ? line_width + 1 : line_width
               k_polyline.line_stipple = line_stipple
