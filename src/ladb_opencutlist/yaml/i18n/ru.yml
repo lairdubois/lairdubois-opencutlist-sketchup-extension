@@ -1591,7 +1591,7 @@ tab:
         *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       std_sections: Стандартные сечения
       std_sections_help: |
-        Для этого материала доступны стандартные разрезы.
+        Для этого материала доступны стандартные сечения.
 
         *Если единицы измерения не указаны, будет использована единица измерения модели проекта.*
       std_sizes: Стандартные размеры панели
@@ -2007,8 +2007,8 @@ tool:
     action_option_segments_segment_count: Количество сегментов
     action_option_segments_segment_count_status: Задает количества сегментов в проектируемой окружности
     action_option_options_construction: Конструкционные элементы
-    action_option_options_construction_status: Построение на основе конструкционных элементов
-    action_option_options_rectangle_centered: Прямоугольник с центром
+    action_option_options_construction_status: Моделирование каркасной основы
+    action_option_options_rectangle_centered: Прямоугольник из центра
     action_option_options_rectangle_centered_status: Первым кликом задайте центр прямоугольника
     action_option_options_smoothing: Сглаживание
     action_option_options_smoothing_status: Плавные кривые
@@ -2018,8 +2018,8 @@ tool:
     action_option_options_measure_from_radius_status: Измерить окружность по ее радиусу
     action_option_options_measure_reversed: Реверсивное измерение
     action_option_options_measure_reversed_status: Измерение в обратном направлении
-    action_option_options_pull_centered: Центрированное возвышение
-    action_option_options_pull_centered_status: Первым кликом задайте центр возвышения
+    action_option_options_pull_centered: Центр для вытягивания
+    action_option_options_pull_centered_status: Первым кликом задайте центр вытягивания
     action_option_options_ask_name: Задать имена деталям
     action_option_options_ask_name_status: Ввод названий деталей вручную
     action_measure_locked_status: Фиксация результатов последнего измерения
@@ -2112,7 +2112,7 @@ tool:
       no_material: Ваша модель не содержит материалов!
       no_material_type: "Нет материала типа '{{ type }}'"
     error:
-      not_part: Целевой объект не является частью (компонентом)
+      not_part: Целевой объект не является деталью (компонентом)
       not_edge: Целевая поверхность не является торцом панели
       not_face: Целевая поверхность не является лицевой
       wrong_material_type: "Целевая деталь должна быть типа '{{ type }}'"
