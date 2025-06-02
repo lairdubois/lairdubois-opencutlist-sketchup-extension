@@ -1891,6 +1891,10 @@ module Ladb::OpenCutList
 
     protected
 
+    def _preview_all_instances?
+      false
+    end
+
     def _reset
       super
       @active_part_entity_path = nil
@@ -1917,13 +1921,29 @@ module Ladb::OpenCutList
       @tool.remove_3d(layer)
       if part
 
+        instance_paths = []
+        if _preview_all_instances?
+
+          model = Sketchup.active_model
+
+          # All instances
+          unless part_entity_path.nil?
+            active_instance = part_entity_path.last
+            instances = active_instance.definition.instances
+            _instances_to_paths(instances, instance_paths, model.active_entities, model.active_path ? model.active_path : [])
+          end
+
+        else
+
+          # Only the current instance
+          instance_paths << part_entity_path
+
+        end
+
         # Mesh
-        instance_paths = [ part_entity_path ]
         instance_paths.each do |path|
 
           triangles = _compute_children_faces_triangles(path.last.definition.entities)
-          bounds = Geom::BoundingBox.new
-          bounds.add(triangles)
           t = PathUtils::get_transformation(path)
 
           k_mesh = Kuix::Mesh.new
@@ -2031,6 +2051,23 @@ module Ladb::OpenCutList
       }
 
       part
+    end
+
+    def _instances_to_paths(instances, instance_paths, entities, path = [])
+      entities.each do |entity|
+        next if entity.is_a?(Sketchup::Edge) || entity.is_a?(Sketchup::Face)   # Minor Speed improvement
+        if entity.visible? && _layer_visible?(entity.layer, path.empty?)
+          if entity.is_a?(Sketchup::ComponentInstance)
+            if instances.include?(entity)
+              instance_paths << path + [ entity ]
+            else
+              _instances_to_paths(instances, instance_paths, entity.definition.entities, path + [ entity ])
+            end
+          elsif entity.is_a?(Sketchup::Group)
+            _instances_to_paths(instances, instance_paths, entity.entities, path + [ entity ])
+          end
+        end
+      end
     end
 
   end

@@ -343,9 +343,6 @@ module Ladb::OpenCutList
 
     def start
       super
-
-      puts "#{self.class.name} start"
-
     end
 
     # -----
@@ -361,7 +358,37 @@ module Ladb::OpenCutList
 
         px_offset = Sketchup.active_model.active_view.pixels_to_model(50, eb.center.transform(et))
 
-        fn = lambda do |color, section|
+        # Axes helper
+        k_axes_helper = Kuix::AxesHelper.new
+        k_axes_helper.transformation = et
+        @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
+
+        # Back arrow
+        k_arrow = Kuix::ArrowMotif.new
+        k_arrow.bounds.copy!(eb)
+        k_arrow.color = Kuix::COLOR_WHITE
+        k_arrow.line_width = 2
+        k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_arrow.transformation = et
+        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
+
+        # Front arrow
+        k_arrow = Kuix::ArrowMotif.new
+        k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
+        k_arrow.bounds.copy!(eb)
+        k_arrow.color = Kuix::COLOR_WHITE
+        k_arrow.line_width = 2
+        k_arrow.transformation = et
+        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
+
+        k_box = Kuix::BoxMotif.new
+        k_box.bounds.copy!(eb)
+        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_box.color = Kuix::COLOR_BLACK
+        k_box.transformation = et
+        @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+
+        fn_preview_plane = lambda do |color, section|
 
           k_box = Kuix::BoxMotif.new
           k_box.bounds.copy!(section)
@@ -379,19 +406,12 @@ module Ladb::OpenCutList
 
         end
 
-        k_box = Kuix::BoxMotif.new
-        k_box.bounds.copy!(eb)
-        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        k_box.color = Kuix::COLOR_BLACK
-        k_box.transformation = et
-        @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
-
         if _fetch_option_direction_length
-          fn.call(Kuix::COLOR_X, Kuix::Bounds3d.new.copy!(eb).x_section.inflate!(0, px_offset, px_offset))
+          fn_preview_plane.call(Kuix::COLOR_X, Kuix::Bounds3d.new.copy!(eb).x_section.inflate!(0, px_offset, px_offset))
         elsif _fetch_option_direction_width
-          fn.call(Kuix::COLOR_Y, Kuix::Bounds3d.new.copy!(eb).y_section.inflate!(px_offset, 0, px_offset))
+          fn_preview_plane.call(Kuix::COLOR_Y, Kuix::Bounds3d.new.copy!(eb).y_section.inflate!(px_offset, 0, px_offset))
         elsif _fetch_option_direction_thickness
-          fn.call(Kuix::COLOR_Z, Kuix::Bounds3d.new.copy!(eb).z_section.inflate!(px_offset, px_offset, 0))
+          fn_preview_plane.call(Kuix::COLOR_Z, Kuix::Bounds3d.new.copy!(eb).z_section.inflate!(px_offset, px_offset, 0))
         end
 
       end
@@ -477,8 +497,95 @@ module Ladb::OpenCutList
 
     def start
       super
+    end
 
-      puts "#{self.class.name} start"
+    # -----
+
+    protected
+
+    def _preview_all_instances?
+      true
+    end
+
+    def _preview_action
+      super
+      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(drawing_def, et)
+
+        # Axes helper
+        k_axes_helper = Kuix::AxesHelper.new
+        k_axes_helper.transformation = et
+        @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
+
+        # Back arrow
+        k_arrow = Kuix::ArrowMotif.new
+        k_arrow.bounds.copy!(eb)
+        k_arrow.color = Kuix::COLOR_WHITE
+        k_arrow.line_width = 2
+        k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_arrow.transformation = et
+        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
+
+        # Front arrow
+        k_arrow = Kuix::ArrowMotif.new
+        k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
+        k_arrow.bounds.copy!(eb)
+        k_arrow.color = Kuix::COLOR_WHITE
+        k_arrow.line_width = 2
+        k_arrow.transformation = et
+        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
+
+        k_box = Kuix::BoxMotif.new
+        k_box.bounds.copy!(eb)
+        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_box.color = Kuix::COLOR_BLACK
+        k_box.transformation = et
+        @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+
+      end
+    end
+
+    def _do_action
+
+      definition = @active_part.def.definition
+
+      size = @active_part.def.size
+      x_axis, y_axis, z_axis = size.axes
+
+      ti = Geom::Transformation.axes(
+        ORIGIN,
+        AxisUtils.flipped?(y_axis, x_axis, z_axis) ? y_axis.reverse : y_axis,
+        x_axis,
+        z_axis
+      )
+
+      t = ti.inverse
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Change Axes', true, false, false)
+
+        # Transform definition's entities
+        entities = definition.entities
+        entities.transform_entities(t, entities.to_a)
+
+        # Inverse transform definition's instances
+        definition.instances.each do |instance|
+          instance.transformation *= ti
+        end
+
+        if PLUGIN.get_model_preset('cutlist_options')['auto_orient']
+          definition_attributes = DefinitionAttributes.new(definition)
+          definition_attributes.orientation_locked_on_axis = true
+          definition_attributes.write_to_attributes
+        end
+
+      # Commit model modification operation
+      model.commit_operation
+
+      # Fire event
+      ModelObserver.instance.onDrawingChange
 
     end
 
@@ -511,8 +618,96 @@ module Ladb::OpenCutList
 
     def start
       super
+    end
 
-      puts "#{self.class.name} start"
+
+    # -----
+
+    protected
+
+    def _preview_all_instances?
+      true
+    end
+
+    def _preview_action
+      super
+      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(drawing_def, et)
+
+        # Axes helper
+        k_axes_helper = Kuix::AxesHelper.new
+        k_axes_helper.transformation = et
+        @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
+
+        # Back arrow
+        k_arrow = Kuix::ArrowMotif.new
+        k_arrow.bounds.copy!(eb)
+        k_arrow.color = Kuix::COLOR_WHITE
+        k_arrow.line_width = 2
+        k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_arrow.transformation = et
+        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
+
+        # Front arrow
+        k_arrow = Kuix::ArrowMotif.new
+        k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
+        k_arrow.bounds.copy!(eb)
+        k_arrow.color = Kuix::COLOR_WHITE
+        k_arrow.line_width = 2
+        k_arrow.transformation = et
+        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
+
+        k_box = Kuix::BoxMotif.new
+        k_box.bounds.copy!(eb)
+        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_box.color = Kuix::COLOR_BLACK
+        k_box.transformation = et
+        @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
+
+      end
+    end
+
+    def _do_action
+
+      definition = @active_part.def.definition
+
+      size = @active_part.def.size
+      x_axis, y_axis, z_axis = size.axes
+
+      ti = Geom::Transformation.axes(
+        ORIGIN,
+        x_axis,
+        AxisUtils.flipped?(x_axis, y_axis, z_axis.reverse) ? y_axis.reverse : y_axis,
+        z_axis.reverse
+      )
+
+      t = ti.inverse
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Change Axes', true, false, false)
+
+        # Transform definition's entities
+        entities = definition.entities
+        entities.transform_entities(t, entities.to_a)
+
+        # Inverse transform definition's instances
+        definition.instances.each do |instance|
+          instance.transformation *= ti
+        end
+
+        if PLUGIN.get_model_preset('cutlist_options')['auto_orient']
+          definition_attributes = DefinitionAttributes.new(definition)
+          definition_attributes.orientation_locked_on_axis = true
+          definition_attributes.write_to_attributes
+        end
+
+      # Commit model modification operation
+      model.commit_operation
+
+      # Fire event
+      ModelObserver.instance.onDrawingChange
 
     end
 
