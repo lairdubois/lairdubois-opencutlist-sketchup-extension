@@ -19,6 +19,7 @@ module Ladb::OpenCutList
       open sysopen load autoload require_relative require
       caller caller_locations
       sleep
+      puts pp
     ]
 
     WHITE_LIST_CONST = %w[
