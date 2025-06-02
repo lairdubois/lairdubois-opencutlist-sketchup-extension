@@ -614,7 +614,8 @@ tab:
       faces: 485 - Impiallacciatura
     export:
       title: 486 - Esportazione
-      info_0: '487 - '
+      info_0: |
+        487 - Questa funzione consente di copiare negli appunti i dati contenuti nella *Distinta* o di esportarli in un file [CSV](https://it.wikipedia.org/wiki/Comma-separated_values) oppure [XLSX](https://it.wikipedia.org/wiki/Office_Open_XML).
       customize_help: |
         488 - Riordina, Nascondi, Aggiungi, Rimuovi o Seleziona una colonna per personalizzare il **titolo** e la **formula** che verranno utilizzati per generare titolo e valore di ogni colonna esportata.
       add_column: 489 - Aggiungi colonna
@@ -787,7 +788,7 @@ tab:
       option_highlight_primary_cuts_1: 642 - Sempre visibile
       option_highlight_primary_cuts_help: 643 - Consente di evidenziare i tagli principali.
       option_hide_edges_preview: 644 - Indicatori di bordo per la placcatura
-      option_hide_edges_preview_0: 645 - Visualizzato sul schema di taglio
+      option_hide_edges_preview_0: 645 - Visualizzato sullo schema di taglio
       option_hide_edges_preview_1: 646 - Mascherato sul schema di taglio
       option_hide_edges_preview_help: 647 - Consente di mostrare o nascondere l'indicazione visiva dei bordi da placcare per ogni parte del schema di taglio.
       option_part_drawing_type: 648 - Forma degli elementi
@@ -983,7 +984,7 @@ tab:
       options_display: 800 - Visualizzazione
       options_tuning: 801 - Tuning
       option_std_bin_1d_dimensional: '802 - '
-      option_std_bin_1d_edge: '803 - '
+      option_std_bin_1d_edge: 803 - Misura standard bordatura
       option_std_bin_1d_help: '804 - '
       option_std_bin_1d_add: 805 - Aggiungi una lunghezza
       option_std_bin_1d_none: 806 - Nessuna
@@ -992,9 +993,13 @@ tab:
       option_scrap_bin_1d_sizes_placeholder: 809 - lunghezza x quantità ; ...
       option_scrap_bin_1d_sizes_help: '810 - '
       option_scrap_bin_1d_none: 811 - Nessuna
-      option_std_bin_2d_sheet_good: '812 - '
-      option_std_bin_2d_veneer: '813 - '
-      option_std_bin_2d_help: '814 - '
+      option_std_bin_2d_sheet_good: 812 - Dimensioni standard dei pannelli
+      option_std_bin_2d_veneer: 813 - Dimensioni standard piallacci
+      option_std_bin_2d_help: |
+        814 - Seleziona le dimensioni dei pannelli o dei piallacci che verranno utilizzati per contenere tutte le parti nel miglior modo possibile.
+        Questa lista è definita nel campo **$t(tab.materials.edit_material.std_sizes)** del materiale.
+
+        Modifica il materiale '{{ material_name }}' per aggiornare questa lista.
       option_std_bin_2d_add: 815 - Aggiungi una lunghezza
       option_std_bin_2d_none: 816 - Nessuna
       option_scrap_bin_2d_sheet_good_sizes: 817 - Ritagli di pannelli
@@ -1002,40 +1007,51 @@ tab:
       option_scrap_bin_2d_sizes_placeholder: 819 - lunghezza x larghezza x quantità ; ...
       option_scrap_bin_2d_sizes_help: '820 - '
       option_scrap_bin_2d_none: 821 - Nessuna
-      option_optimization_mode: '822 - '
-      option_optimization_mode_help: '823 - '
+      option_optimization_mode: 822 - Modalità di ottimizzazione
+      option_optimization_mode_help: |
+        823 - Ottimizzazione CON o SENZA limite di tempo
       option_objective: 824 - Obiettivo
       option_objective_help: '825 - '
-      option_rectangleguillotine_cut_type: '826 - '
-      option_rectangleguillotine_cut_type_help: '827 - '
-      option_rectangleguillotine_cut_type_non_exact: '828 - '
-      option_rectangleguillotine_cut_type_exact: '829 - '
-      option_rectangleguillotine_cut_type_homogenous: '830 - '
-      option_rectangleguillotine_number_of_stages: '831 - '
-      option_rectangleguillotine_number_of_stages_help: '832 - '
-      option_rectangleguillotine_first_stage_orientation: '833 - '
-      option_rectangleguillotine_first_stage_orientation_help: '834 - '
+      option_rectangleguillotine_cut_type: 826 - Tipo di sezionatura
+      option_rectangleguillotine_cut_type_help: |
+        827 - Definisce il tipo di sezionatura
+      option_rectangleguillotine_cut_type_non_exact: 828 - Approssimato
+      option_rectangleguillotine_cut_type_exact: 829 - Esatto
+      option_rectangleguillotine_cut_type_homogenous: 830 - Omogeneo
+      option_rectangleguillotine_number_of_stages: 831 - Numero di passaggi
+      option_rectangleguillotine_number_of_stages_help: |
+        832 - Definisce il massimo numero di passate
+      option_rectangleguillotine_first_stage_orientation: 833 - Direzione del primo taglio
+      option_rectangleguillotine_first_stage_orientation_help: |
+        834 - Definisce la direzione del primo taglio
       option_rectangleguillotine_first_stage_orientation_horizontal: 835 - Orizzontale
       option_rectangleguillotine_first_stage_orientation_vertical: 836 - Verticale
       option_rectangleguillotine_first_stage_orientation_any: 837 - Qualunque
       option_rectangleguillotine_keep: 838 - Minima dimensione scarto
       option_rectangleguillotine_keep_help: 839 - Ritagli che sono piu grandi della lunghezza e larghezza minima vengono contrassegnati **da tenere**.
-      option_irregular_allowed_rotations: '840 - '
-      option_irregular_allowed_rotations_help: '841 - '
+      option_irregular_allowed_rotations: 840 - Rotazioni consentite
+      option_irregular_allowed_rotations_help: |
+        841 - Consente la rotazione degli elementi durante il posizionamento
+
+        *Elementi con venatura possono essere ruotati solo di 0 o 180°.*
       option_irregular_allowed_rotations_0: 842 - Nessuna
-      option_irregular_allowed_rotations_90: '843 - '
-      option_irregular_allowed_rotations_180: '844 - '
-      option_irregular_allow_mirroring: '845 - '
-      option_irregular_allow_mirroring_help: '846 - '
+      option_irregular_allowed_rotations_90: 843 - Passi di 90°
+      option_irregular_allowed_rotations_180: 844 - Passi di 180°
+      option_irregular_allow_mirroring: 845 - Specchiatura consentita
+      option_irregular_allow_mirroring_help: |
+        846 - Definisce se la specchiatura nel posizionamento degli elementi sia consentita
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: 849 - Spaziatura
-      option_spacing_help: '850 - '
+      option_spacing_help: |
+        850 - Minima distanza tra gli elementi
+        Questo valore corrisponde allo spessore della lama o del dispositivo di taglio
       option_trimming: 851 - Scarto perimetro
       option_trimming_1d_help: '852 - '
       option_trimming_2d_help: '853 - '
       option_items_formula: 854 - Formula
-      option_items_formula_help: '855 - '
+      option_items_formula_help: |
+        855 - Permette di scrivere istruzioni in linguaggio *Ruby* per personalizzare il testo identificativo degli elementi nel diagramma di taglio
       option_hide_part_list: 856 - Distinta
       option_hide_part_list_1d_dimensional_0: 857 - Visualizza per ogni tavola
       option_hide_part_list_1d_edge_0: 858 - Visualizza per ogni bordo
@@ -1054,26 +1070,28 @@ tab:
         *Questa opzione deve essere abilitata per poermettere l'esportazione delle forme.*
       option_colorization: '869 - '
       option_colorization_0: $t(default.no)
-      option_colorization_1: '871 - '
-      option_colorization_2: '872 - '
-      option_colorization_help: '873 - '
+      option_colorization_1: $t(default.yes) - Schermo
+      option_colorization_2: $t(default.yes) - Schermo e stampa
+      option_colorization_help: |
+        873 - Consente di utilizzare un colore scelto a caso per distinguere gli elementi nel diagramma di taglio
       option_hide_edges_preview: 874 - Indicatori di bordo per la placcatura
       option_hide_edges_preview_0: 875 - Visualizzato sul schema di taglio
       option_hide_edges_preview_1: 876 - Mascherato sul schema di taglio
       option_hide_edges_preview_help: 877 - Consente di mostrare o nascondere l'indicazione visiva dei bordi da placcare per ogni parte del schema di taglio.
-      option_time_limit: '878 - '
-      option_time_limit_help: '879 - '
+      option_time_limit: 878 - Limite di tempo
+      option_time_limit_help: |
+        879 - Definisce il limite di tempo per l'ottimizzazione
       tooltip:
         scroll_to_block_1d: 880 - Scorri alla prima tavola o bordo
-        scroll_to_block_2d: '881 - '
+        scroll_to_block_2d: 881 - Vai al primo pannello o piallaccio
       list:
         summary: 882 - Sommario
         trimming: 883 - Scarto perimetro
         settings: 884 - Impostazioni
         stats: 885 - Statistiche
-        time: '886 - '
+        time: 886 - Tempo
         total_efficiency: 887 - Efficienza globale
-        total_fill_rate: '888 - '
+        total_fill_rate: 888 - Densità di riempimento
         total_cut_count: 889 - Numero dei tagli
         total_cut_length: 890 - Lunghezza dei tagli
         efficiency: 891 - Efficienza
@@ -1098,7 +1116,7 @@ tab:
         bin_2d_veneer_type_0: 910 - Impiallacciatura standard
         bin_2d_veneer_type_1: 911 - Avanzo di impiallacciatura
         unused: 912 - Inutilizzato
-        unplaced_parts: '913 - '
+        unplaced_parts: 913 - Elementi non posizionati
         unplaced_parts_plural: 914 - Parti non inserite
         parts: 915 - Elemento
         parts_plural: 916 - Parti
@@ -1109,8 +1127,8 @@ tab:
         cut: 921 - Taglio
         cut_plural: 922 - Tagli
         cut_trimming: 923 - Sezionatura
-        cut_primary: '924 - '
-        cut_depth: '925 - '
+        cut_primary: 924 - Sezionatura principale
+        cut_depth: 925 - Livello {{ depth }}
       write:
         title: 926 - Esporta diagramma di taglio
         info_0: |
@@ -1145,17 +1163,17 @@ tab:
         option_cuts_help: |
           947 - Seleziona se i tagli devono essere disegnati e con che colore.
         warning:
-          is_bin_selection: '948 - '
+          is_bin_selection: 948 - Gli **elementi nascosti** non verranno esportati.
         error:
           overflow_gt_spacing: '949 - '
       error:
         no_part: 950 - Nessuna parte.
-        no_bin_1d: '951 - '
-        no_bin_2d: '952 - '
-        invalid_part_shapes: '953 - '
-        no_solution: '954 - '
-        unplaced_parts: '955 - '
-        unplaced_parts_plural: '956 - '
+        no_bin_1d: 951 - Nessuna dimensione delle tavole o dei bordi disponibili è stata selezionata e non ci sono ritagli a disposizione.
+        no_bin_2d: 952 - Nessuna dimensione dei pannelli o dei piallacci disponibili è stata selezionata e non ci sono ritagli a disposizione.
+        invalid_part_shapes: 953 - La forma dell'elemento '{{ name }}' non è valida.
+        no_solution: 954 - Nessuna soluzione trovata.
+        unplaced_parts: 955 - **1 elemento** non può essere posizionato.
+        unplaced_parts_plural: 956 - **{{ count }} elementi** non possono essere posizionati.
       warning:
         is_part_selection: 957 - Lo schema di taglio mostra solo le **parti selezionate**.
         cutting_dimensions: 958 - Questo schema di taglio mostra le parti con le loro dimensioni **grezze**.
@@ -1401,8 +1419,8 @@ tab:
 
         *Questa opzione non rileva altri tipi di curve.*
       option_merge_holes: 1148 - Modo Unione
-      option_merge_holes_0: '1149 - '
-      option_merge_holes_1: '1150 - '
+      option_merge_holes_0: 1149 - Base
+      option_merge_holes_1: 1150 - Sagoma + Foratura + Scarto
       option_merge_holes_help: '1151 - '
       option_merge_holes_overflow: '1152 - '
       option_merge_holes_overflow_help: '1153 - '
@@ -1651,8 +1669,8 @@ tab:
       explode_message: 1329 - Confermi l'esplosione dell'occorrenza **{{ name }}** ?
     option:
       general: 1330 - Generale
-      show_hidden_instances: '1331 - '
-      show_hidden_instances_help: '1332 - '
+      show_hidden_instances: 1331 - Visualizza le occorrenze nascoste
+      show_hidden_instances_help: 1332 - Selezionando questa opzione, si visualizzano, nell'albero della struttura, le occorrenze nascoste.
       hide_descriptions: 1333 - Nascondere le descrizioni
       hide_descriptions_help: 1334 - Selezionando questa opzione, le **descrizioni** poste sulle parte non vengono visualizzate.
       hide_tags: 1335 - Nascondi i cartellini
@@ -1952,13 +1970,13 @@ tool:
     action_option_offset_shape_offset_status: 1530 - Applica un offset alla linea della forma disegnata
     action_option_segments_segment_count: 1531 - Numero di segmenti
     action_option_segments_segment_count_status: 1532 - Utilizzato per definire il numero di segmenti del cerchio
-    action_option_options_construction: '1533 - '
-    action_option_options_construction_status: '1534 - '
+    action_option_options_construction: 1533 - Linee di costruzione
+    action_option_options_construction_status: 1534 - Disegna come linee di costruzione
     action_option_options_rectangle_centered: 1535 - Rettangolo centrato
     action_option_options_rectangle_centered_status: 1536 - Centrare il rettangolo sul primo punto
     action_option_options_smoothing: 1537 - Levigatezza
     action_option_options_smoothing_status: 1538 - Liscare le curve
-    action_option_options_measure_from_vertex_status: '1539 - '
+    action_option_options_measure_from_vertex_status: 1539 - Misura relativa al vertice più vicino
     action_option_options_measure_from_diameter: 1540 - Misura
     action_option_options_measure_from_diameter_status: 1541 - Misurare il cerchio in base al suo diametro
     action_option_options_measure_from_radius_status: 1542 - Misurare il cerchio in base al suo raggio
@@ -1967,52 +1985,52 @@ tool:
     action_option_options_pull_centered: '1545 - '
     action_option_options_pull_centered_status: '1546 - '
     action_option_options_ask_name: '1547 - '
-    action_option_options_ask_name_status: '1548 - '
-    action_measure_locked_status: '1549 - '
-    action_toggle_move_copy_status: '1550 - '
-    action_change_move_anchor_status: '1551 - '
+    action_option_options_ask_name_status: 1548 - Definisci manualmente i nomi degli elementi
+    action_measure_locked_status: 1549 - Blocca sull'ultima misura
+    action_toggle_move_copy_status: 1550 - Commuta tra copia e sposta
+    action_change_move_anchor_status: 1551 - Cambia il punto di inserimento
     success:
-      part_created: '1552 - '
+      part_created: 1552 - Nuova parte creata: {{ name }}
   smart_handle:
     title: '1553 - '
-    action_0: '1554 - '
-    action_0_status: '1555 - '
-    action_1: '1556 - '
-    action_1_status: '1557 - '
+    action_0: 1554 - Seleziona
+    action_0_status: 1555 - Clicca su un elemento per selezionarlo
+    action_1: 1556 - Copia sulla linea
+    action_1_status: 1557 - Seleziona l'elemento da copiare lungo un asse
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: '1559 - '
-    action_2: '1560 - '
-    action_2_status: '1561 - '
+    action_1_state_2_status: 1559 - Seleziona un punto dove copiare l'elemento o digita una distanza
+    action_2: 1560 - Copia in tabella
+    action_2_status: 1561 - Seleziona un elemento da copiare in griglia
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: '1563 - '
-    action_3: '1564 - '
-    action_3_status: '1565 - '
+    action_2_state_2_status: 1563 - Seleziona un punto per copiare un elemento o digita due distanze
+    action_3: 1564 - Sposta
+    action_3_status: 1565 - Seleziona l'elemento da copiare in griglia
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: '1567 - '
-    action_4: '1568 - '
-    action_4_status: '1569 - '
+    action_3_state_2_status: 1567 - Seleziona un punto dove posizionare l'elemento o digita una distanza
+    action_4: 1568 - Distribuisci
+    action_4_status: 1569 - Seleziona l'elemento da distribuire lungo un asse
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: '1571 - '
-    action_4_state_2_status: '1572 - '
+    action_4_state_1_status: 1571 - Seleziona il primo punto della misura
+    action_4_state_2_status: 1572 - Seleziona il secondo punto della misura o digita una distanza
     action_5: '1573 - '
     action_option_group_copy_measure_type: 1574 - Misura
     action_option_group_move_measure_type: 1575 - Misura
     action_option_group_axes: 1576 - Assi
     action_option_group_options: 1577 - Opzioni
-    action_option_copy_measure_type_outside_status: '1578 - '
+    action_option_copy_measure_type_outside_status: 1578 - Misura esterna
     action_option_copy_measure_type_centered_status: '1579 - '
     action_option_copy_measure_type_inside_status: '1580 - '
-    action_option_move_measure_type_outside_status: '1581 - '
-    action_option_move_measure_type_centered_status: '1582 - '
-    action_option_move_measure_type_inside_status: '1583 - '
-    action_option_axes_active_status: '1584 - '
+    action_option_move_measure_type_outside_status: 1581 - Misura esterna
+    action_option_move_measure_type_centered_status: 1582 - Misura al centro
+    action_option_move_measure_type_inside_status: 1583 - Misura interna
+    action_option_axes_active_status: 1584 - Sposta lungo l'asse attivo
     action_option_axes_context_status: '1585 - '
-    action_option_axes_entity_status: '1586 - '
-    action_option_options_mirror_status: '1587 - '
+    action_option_axes_entity_status: 1586 - Modifica su un asse dell'elemento
+    action_option_options_mirror_status: 1587 - Copia simmetrica
     warning:
-      copies_disable_mirror: '1588 - '
+      copies_disable_mirror: 1588 - La copia multipla disabilita l'opzione '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      min_distance: '1589 - '
+      min_distance: '1589 - La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }} '
   smart_paint:
     title: 1590 - Assegna il materiale
     default_material: 1591 - Nessun materiale definito
