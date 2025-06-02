@@ -1972,7 +1972,7 @@ tool:
     middle_point: Средняя точка
     third_point: Сторонняя точка
     vcb_length: Длина
-    vcb_size: Цитаты
+    vcb_size: Размеры
     vcb_radius: Радиус
     vcb_diameter: Диаметр
     vcb_distance: Дистанция
@@ -2095,9 +2095,9 @@ tool:
     action_option_instances_1_status: Раскрасить все экземпляры сходные с целевой деталью
     action_option_edges_0_status: Окрасить только целевую композицию
     action_option_edges_1_status: Окрасить лицевую и тыльную сторону в детали
-    action_option_edges_2_status: Раскрасить все 4 стороны в выделенной детали
-    action_option_faces_0_status: Раскрасить только лицевую часть
-    action_option_faces_1_status: Раскрасить 2 стороны выделенной детали
+    action_option_edges_2_status: Окрасить все 4 стороны в выделенной детали
+    action_option_faces_0_status: Окрасить только лицевую часть
+    action_option_faces_1_status: Окрасить 2 стороны выделенной детали
     edges: "{{ count }} торец"
     edges_plural: "{{ count }} торцов"
     edge_ymin: Длина 1

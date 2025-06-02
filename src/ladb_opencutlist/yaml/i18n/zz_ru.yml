@@ -1968,7 +1968,7 @@ tool:
     middle_point: 1499 - Средняя точка
     third_point: 1500 - Сторонняя точка
     vcb_length: 1501 - Длина
-    vcb_size: 1502 - Цитаты
+    vcb_size: 1502 - Размеры
     vcb_radius: 1503 - Радиус
     vcb_diameter: 1504 - Диаметр
     vcb_distance: 1505 - Дистанция
@@ -2091,9 +2091,9 @@ tool:
     action_option_instances_1_status: 1614 - Раскрасить все экземпляры сходные с целевой деталью
     action_option_edges_0_status: 1615 - Окрасить только целевую композицию
     action_option_edges_1_status: 1616 - Окрасить лицевую и тыльную сторону в детали
-    action_option_edges_2_status: 1617 - Раскрасить все 4 стороны в выделенной детали
-    action_option_faces_0_status: 1618 - Раскрасить только лицевую часть
-    action_option_faces_1_status: 1619 - Раскрасить 2 стороны выделенной детали
+    action_option_edges_2_status: 1617 - Окрасить все 4 стороны в выделенной детали
+    action_option_faces_0_status: 1618 - Окрасить только лицевую часть
+    action_option_faces_1_status: 1619 - Окрасить 2 стороны выделенной детали
     edges: 1620 - {{ count }} торец
     edges_plural: 1621 - {{ count }} торцов
     edge_ymin: 1622 - Длина 1
