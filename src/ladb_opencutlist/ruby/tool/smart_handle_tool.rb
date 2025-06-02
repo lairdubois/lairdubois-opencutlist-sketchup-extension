@@ -488,13 +488,6 @@ module Ladb::OpenCutList
 
     end
 
-    def onActivePartChanged(part_entity_path, part, highlighted = false)
-      @global_context_transformation = nil
-      @global_instance_transformation = nil
-      @drawing_def = nil
-      super
-    end
-
     def onPartSelected
       return if (instance = _get_instance).nil?
 
@@ -549,9 +542,6 @@ module Ladb::OpenCutList
       @picked_handle_end_point = nil
       @definition = nil
       @instances.clear
-      @global_context_transformation = nil
-      @global_instance_transformation = nil
-      @drawing_def = nil
       super
       set_state(STATE_SELECT)
     end
@@ -700,28 +690,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_global_context_transformation(default = IDENTITY)
-      return @global_context_transformation unless @global_context_transformation.nil?
-      @global_context_transformation = default
-      if @active_part_entity_path.is_a?(Array) &&
-        @active_part_entity_path.length > 1 &&
-        (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-2])
-        @global_context_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-2], IDENTITY)
-      end
-      @global_context_transformation
-    end
-
-    def _get_global_instance_transformation(default = IDENTITY)
-      return @global_instance_transformation unless @global_instance_transformation.nil?
-      @global_instance_transformation = default
-      if @active_part_entity_path.is_a?(Array) &&
-        @active_part_entity_path.length > 0 &&
-        (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-1])
-        @global_instance_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-1], IDENTITY)
-      end
-      @global_instance_transformation
-    end
-
     def _get_edit_transformation
       case _fetch_option_axes
 
@@ -737,38 +705,14 @@ module Ladb::OpenCutList
       super
     end
 
-    def _get_instance
-      _get_active_part_entity
-    end
-
-    def _hide_instance
-      return if (instance = _get_instance).nil?
-      _get_global_instance_transformation
-      _get_drawing_def
-      @unhide_local_instance_transformation = Geom::Transformation.new(instance.transformation)
-      instance.move!(Geom::Transformation.scaling(0, 0, 0))
-    end
-
-    def _unhide_instance
-      return if @unhide_local_instance_transformation.nil? || (instance = _get_instance).nil?
-      instance.move!(@unhide_local_instance_transformation)
-      @unhide_local_instance_transformation = nil
-    end
-
-    def _get_drawing_def
-      return nil if @active_part_entity_path.nil?
-      return @drawing_def unless @drawing_def.nil?
-
-      model = Sketchup.active_model
-      return nil if model.nil?
-
-      @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
+    def _get_drawing_def_parameters
+      {
         ignore_surfaces: true,
         ignore_faces: false,
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: false
-      ).run
+      }
     end
 
     def _get_drawing_def_segments(drawing_def)
@@ -785,7 +729,7 @@ module Ladb::OpenCutList
       eb = Geom::BoundingBox.new
       if drawing_def.is_a?(DrawingDef)
 
-        points = drawing_def.face_manipulators.map { |manipulator| manipulator.outer_loop_manipulator.points }.flatten(1)
+        points = drawing_def.face_manipulators.flat_map { |manipulator| manipulator.outer_loop_manipulator.points }
         eti = et.inverse
 
         eb.add(points.map { |point| point.transform(eti * drawing_def.transformation) })

@@ -268,44 +268,17 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_global_instance_transformation(default = IDENTITY)
-      return @global_instance_transformation unless @global_instance_transformation.nil?
-      @global_instance_transformation = default
-      if @active_part_entity_path.is_a?(Array) &&
-         @active_part_entity_path.length > 0 &&
-         (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-1])
-        @global_instance_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-1], IDENTITY)
-      end
-      @global_instance_transformation
-    end
-
     def _get_edit_transformation
       t = _get_global_instance_transformation(nil)
       return t unless t.nil?
       super
     end
 
-    def _get_drawing_def
-      return nil if @active_part_entity_path.nil?
-      return @drawing_def unless @drawing_def.nil?
-
-      model = Sketchup.active_model
-      return nil if model.nil?
-
-      @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
-        ignore_surfaces: true,
-        ignore_faces: false,
-        ignore_edges: true,
-        ignore_soft_edges: true,
-        ignore_clines: true
-      ).run
-    end
-
     def _get_drawing_def_edit_bounds(drawing_def, et)
       eb = Geom::BoundingBox.new
       if drawing_def.is_a?(DrawingDef)
 
-        points = drawing_def.face_manipulators.map { |manipulator| manipulator.outer_loop_manipulator.points }.flatten(1)
+        points = drawing_def.face_manipulators.flat_map { |manipulator| manipulator.outer_loop_manipulator.points }
         eti = et.inverse
 
         eb.add(points.map { |point| point.transform(eti * drawing_def.transformation) })

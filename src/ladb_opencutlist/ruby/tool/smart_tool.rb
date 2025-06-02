@@ -1886,20 +1886,26 @@ module Ladb::OpenCutList
     # -----
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
+      @global_context_transformation = nil
+      @global_instance_transformation = nil
+      @drawing_def = nil
       _preview_part(part_entity_path, part, LAYER_3D_PART_PREVIEW, highlighted)
     end
 
     protected
 
-    def _preview_all_instances?
-      false
-    end
+    # --
 
     def _reset
       super
       @active_part_entity_path = nil
       @active_part = nil
+      @global_context_transformation = nil
+      @global_instance_transformation = nil
+      @drawing_def = nil
     end
+
+    # --
 
     def _pick_part(picker, view)
       if picker.picked_face_path
@@ -1915,6 +1921,12 @@ module Ladb::OpenCutList
         end
       end
       _reset_active_part
+    end
+
+    # --
+
+    def _preview_all_instances?
+      false
     end
 
     def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted = false)
@@ -1956,6 +1968,8 @@ module Ladb::OpenCutList
 
       end
     end
+
+    # --
 
     def _refresh_active_part(highlighted = false)
       _set_active_part(@active_part_entity_path, _generate_part_from_path(@active_part_entity_path), highlighted)
@@ -2020,7 +2034,83 @@ module Ladb::OpenCutList
       end
     end
 
-    # -----
+    # --
+
+    def _get_global_context_transformation(default = IDENTITY)
+      return @global_context_transformation unless @global_context_transformation.nil?
+      @global_context_transformation = default
+      if @active_part_entity_path.is_a?(Array) &&
+         @active_part_entity_path.length > 1 &&
+         (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-2])
+        @global_context_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-2], IDENTITY)
+      end
+      @global_context_transformation
+    end
+
+    def _get_global_instance_transformation(default = IDENTITY)
+      return @global_instance_transformation unless @global_instance_transformation.nil?
+      @global_instance_transformation = default
+      if @active_part_entity_path.is_a?(Array) &&
+         @active_part_entity_path.length > 0 &&
+         (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-1])
+        @global_instance_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-1], IDENTITY)
+      end
+      @global_instance_transformation
+    end
+
+    # -- INSTANCE --
+
+    def _get_instance
+      return @active_part_entity_path.last if @active_part_entity_path.is_a?(Array)
+      nil
+    end
+
+    def _hide_instance
+      return if (instance = _get_instance).nil?
+      _get_global_instance_transformation
+      _get_drawing_def
+      @unhide_local_instance_transformation = Geom::Transformation.new(instance.transformation)
+      instance.move!(Geom::Transformation.scaling(0, 0, 0))
+    end
+
+    def _unhide_instance
+      return if @unhide_local_instance_transformation.nil? || (instance = _get_instance).nil?
+      instance.move!(@unhide_local_instance_transformation)
+      @unhide_local_instance_transformation = nil
+    end
+
+    def _select_instance
+      model = Sketchup.active_model
+      if model && !(instance = _get_instance).nil?
+        selection = model.selection
+        selection.clear
+        selection.add(instance)
+      end
+    end
+
+    # --
+
+    def _get_drawing_def_parameters
+      {
+        ignore_surfaces: true,
+        ignore_faces: false,
+        ignore_edges: true,
+        ignore_soft_edges: true,
+        ignore_clines: true
+      }
+    end
+
+    def _get_drawing_def
+      return nil if @active_part_entity_path.nil?
+      return @drawing_def unless @drawing_def.nil?
+
+      model = Sketchup.active_model
+      return nil if model.nil?
+
+      @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, **_get_drawing_def_parameters).run
+    end
+
+    # -- UTILS --
 
     def _get_part_entity_path_from_path(path)
       part_path = path

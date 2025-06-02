@@ -559,7 +559,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START
-        if key == ALT_MODIFIER_KEY
+        if key == COPY_MODIFIER_KEY && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
           @previous_action_handler = nil
           _remove_floating_tools
@@ -1567,7 +1567,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SHAPE_START, STATE_SHAPE
+      when STATE_SHAPE
         if key == COPY_MODIFIER_KEY && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !_fetch_option_rectangle_centered, true)
           _refresh
@@ -2218,7 +2218,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SHAPE_START, STATE_SHAPE
+      when STATE_SHAPE
         if key == COPY_MODIFIER_KEY && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, !_fetch_option_measure_from_diameter, true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
@@ -2701,7 +2701,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SHAPE_START, STATE_SHAPE
+      when STATE_SHAPE
         if key == COPY_MODIFIER_KEY && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed, true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
