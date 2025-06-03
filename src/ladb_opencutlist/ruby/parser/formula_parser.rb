@@ -10,16 +10,18 @@ module Ladb::OpenCutList
       alias self
     ]
 
-    BLACK_LIST_METHOD = %w[
+    BLACK_LIST_COMMAND = %w[
       exec fork spawn system syscall
       abort exit exit! at_exit
       binding send
       catch fail throw
       eval instance_eval class_eval module_eval
-      open sysopen load autoload require_relative require
+      open sysopen load autoload
+      require require_relative
       caller caller_locations
       sleep
       puts pp
+      gem
     ]
 
     WHITE_LIST_CONST = %w[
@@ -101,14 +103,14 @@ module Ladb::OpenCutList
     def on_fcall(message)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#fcall
       # puts "on_fcall : #{message}"
-      _assert_authorized_method(message)
+      _assert_authorized_command(message)
       message
     end
 
     def on_vcall(ident)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#fcall
       # puts "on_vcall : #{ident}"
-      _assert_authorized_method(ident)
+      _assert_authorized_command(ident)
       ident
     end
 
@@ -116,7 +118,7 @@ module Ladb::OpenCutList
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#call
       # puts "on_call : #{receiver} #{operator} #{message}"
       _assert_authorized_const(receiver)
-      _assert_authorized_method(message)
+      _assert_authorized_command(message)
       [ receiver, operator, message ]
     end
 
@@ -124,14 +126,14 @@ module Ladb::OpenCutList
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#command
       # puts "on_command_call : #{receiver} #{operator} #{method} #{args}"
       _assert_authorized_const(receiver)
-      _assert_authorized_method(method)
+      _assert_authorized_command(method)
       [ receiver, operator, method, args ]
     end
 
     def on_command(message, args)
       # https://github.com/kddnewton/ripper-docs/blob/main/events.md#command
       # puts "on_command : #{message} #{args}"
-      _assert_authorized_method(message)
+      _assert_authorized_command(message)
       [ message, args ]
     end
 
@@ -195,8 +197,8 @@ module Ladb::OpenCutList
       raise ForbiddenFormulaError.new("Forbidden const : #{thing.value}") if thing.is_a?(Thing) && thing.is_const? && !WHITE_LIST_CONST.include?(thing.value)
     end
 
-    def _assert_authorized_method(thing)
-      raise ForbiddenFormulaError.new("Forbidden method : #{thing.value}") if thing.is_a?(Thing) && thing.is_ident? && BLACK_LIST_METHOD.include?(thing.value)
+    def _assert_authorized_command(thing)
+      raise ForbiddenFormulaError.new("Forbidden command : #{thing.value}") if thing.is_a?(Thing) && thing.is_ident? && BLACK_LIST_COMMAND.include?(thing.value)
     end
 
   end
