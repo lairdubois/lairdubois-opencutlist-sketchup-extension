@@ -1095,6 +1095,7 @@ module Ladb::OpenCutList
 
     def getMenu(menu, flags, x, y, view)
       onMouseMove(flags, x, y, view)  # Simulate mouse move
+      return @action_handler.populate_menu(menu) if !@action_handler.nil? && @action_handler.respond_to?(:populate_menu)
       populate_menu(menu)
     end
 
@@ -1892,6 +1893,82 @@ module Ladb::OpenCutList
       _preview_part(part_entity_path, part, LAYER_3D_PART_PREVIEW, highlighted)
     end
 
+    # -- Menu --
+
+    def populate_menu(menu)
+      if @active_part
+        active_part_id = @active_part.id
+        active_part_material_type = @active_part.group.material_type
+        item = menu.add_item(_get_active_part_name) {}
+        menu.set_validation_proc(item) { MF_GRAYED }
+        menu.add_separator
+        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_properties')) {
+          _select_active_part_entity
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'general', dontGenerate: false }")
+        }
+        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
+          _select_active_part_entity
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
+        }
+        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
+          _select_active_part_entity
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'size_increase', dontGenerate: false }")
+        }
+        menu.set_validation_proc(item) {
+          if active_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
+             active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD ||
+             active_part_material_type == MaterialAttributes::TYPE_DIMENSIONAL
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_edges_properties')) {
+          _select_active_part_entity
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'edges', dontGenerate: false }")
+        }
+        menu.set_validation_proc(item) {
+          if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_faces_properties')) {
+          _select_active_part_entity
+          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'faces', dontGenerate: false }")
+        }
+        menu.set_validation_proc(item) {
+          if active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+        menu.add_separator
+        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance_properties')) {
+          require_relative '../model/outliner/outliner_node_def'
+          _select_active_part_entity
+          PLUGIN.execute_tabs_dialog_command_on_tab('outliner', 'edit_node', "{ node_id: '#{OutlinerNodePartDef.generate_node_id(@active_part_entity_path)}', tab: 'general' }")
+        }
+        unless Sketchup.version_number < 2000000000
+          menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance')) {
+            Sketchup.active_model.active_path = @active_part_entity_path
+          }
+          menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_parent_part_instance')) {
+            Sketchup.active_model.active_path = @active_part_entity_path[0...-1]
+          }
+        end
+        menu.add_item(PLUGIN.get_i18n_string("core.menu.item.#{@active_part_entity_path.last.visible? ? "hide" : "unhide"}_part_instance")) {
+          @active_part_entity_path.last.visible = !@active_part_entity_path.last.visible?
+        }
+      else
+        menu.add_item(PLUGIN.get_i18n_string('default.close')) {
+          quit
+        }
+      end
+    end
+
     protected
 
     # --
@@ -1929,6 +2006,18 @@ module Ladb::OpenCutList
       false
     end
 
+    def _preview_axes?
+      false
+    end
+
+    def _preview_arrows?
+      false
+    end
+
+    def _preview_box?
+      false
+    end
+
     def _preview_part(part_entity_path, part, layer = LAYER_3D_PART_PREVIEW, highlighted = false)
       @tool.remove_3d(layer)
       if part
@@ -1949,6 +2038,55 @@ module Ladb::OpenCutList
 
           # Only the current instance
           instance_paths << part_entity_path
+
+        end
+
+        if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
+
+          et = _get_edit_transformation
+          eb = _get_drawing_def_edit_bounds(drawing_def, et)
+
+          if _preview_axes?
+
+            # Axes helper
+            k_axes_helper = Kuix::AxesHelper.new
+            k_axes_helper.transformation = et
+            @tool.append_3d(k_axes_helper, layer)
+
+          end
+
+          if _preview_arrows?
+
+            # Back arrow
+            k_arrow = Kuix::ArrowMotif.new
+            k_arrow.bounds.copy!(eb)
+            k_arrow.color = Kuix::COLOR_WHITE
+            k_arrow.line_width = 2
+            k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            k_arrow.transformation = et
+            @tool.append_3d(k_arrow, layer)
+
+            # Front arrow
+            k_arrow = Kuix::ArrowMotif.new
+            k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
+            k_arrow.bounds.copy!(eb)
+            k_arrow.color = Kuix::COLOR_WHITE
+            k_arrow.line_width = 2
+            k_arrow.transformation = et
+            @tool.append_3d(k_arrow, layer)
+
+          end
+
+          if _preview_box?
+
+            k_box = Kuix::BoxMotif.new
+            k_box.bounds.copy!(eb)
+            k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+            k_box.color = Kuix::COLOR_BLACK
+            k_box.transformation = et
+            @tool.append_3d(k_box, layer)
+
+          end
 
         end
 

@@ -879,6 +879,9 @@ module Ladb::OpenCutList
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_draw')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_draw')
       cmd.menu_text = get_i18n_string('core.toolbar.command.smart_draw')
+      cmd.set_validation_proc {
+        Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartDrawTool) ? MF_CHECKED : MF_UNCHECKED
+      }
       toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_handle')) {
@@ -896,6 +899,9 @@ module Ladb::OpenCutList
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_handle')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_handle')
       cmd.menu_text = get_i18n_string('core.toolbar.command.smart_handle')
+      cmd.set_validation_proc {
+        Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartHandleTool) ? MF_CHECKED : MF_UNCHECKED
+      }
       toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_paint')) {
@@ -913,6 +919,9 @@ module Ladb::OpenCutList
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_paint')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_paint')
       cmd.menu_text = get_i18n_string('core.toolbar.command.smart_paint')
+      cmd.set_validation_proc {
+        Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartPaintTool) ? MF_CHECKED : MF_UNCHECKED
+      }
       toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes')) {
@@ -930,6 +939,9 @@ module Ladb::OpenCutList
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_axes')
       cmd.menu_text = get_i18n_string('core.toolbar.command.smart_axes')
+      cmd.set_validation_proc {
+        Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesTool) ? MF_CHECKED : MF_UNCHECKED
+      }
       toolbar = toolbar.add_item(cmd)
 
       # cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes') + '_2') {
@@ -947,6 +959,9 @@ module Ladb::OpenCutList
       # cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
       # cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_axes')
       # cmd.menu_text = get_i18n_string('core.toolbar.command.smart_axes')
+      # cmd.set_validation_proc {
+      #   Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesToolNew) ? MF_CHECKED : MF_UNCHECKED
+      # }
       # toolbar = toolbar.add_item(cmd)
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_export')) {
@@ -964,6 +979,9 @@ module Ladb::OpenCutList
       cmd.tooltip = get_i18n_string('core.toolbar.command.smart_export')
       cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_export')
       cmd.menu_text = get_i18n_string('core.toolbar.command.smart_export')
+      cmd.set_validation_proc {
+        Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartExportTool) ? MF_CHECKED : MF_UNCHECKED
+      }
       toolbar = toolbar.add_item(cmd)
 
       toolbar.restore

@@ -239,7 +239,35 @@ module Ladb::OpenCutList
 
     # -- Privatisation
 
+    def add_observer(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def remove_observer(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def attribute_dictionaries
+      _raise_no_method_error(__method__)
+    end
+
+    def attribute_dictionary(*args)
+      _raise_no_method_error(__method__)
+    end
+
     def set_attribute(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def delete_attribute(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def model
+      _raise_no_method_error(__method__)
+    end
+
+    def parent
       _raise_no_method_error(__method__)
     end
 
@@ -303,6 +331,14 @@ module Ladb::OpenCutList
       _raise_no_method_error(__method__)
     end
 
+    def entities
+      _raise_no_method_error(__method__)
+    end
+
+    def instances
+      _raise_no_method_error(__method__)
+    end
+
     def add_classification(*args)
       _raise_no_method_error(__method__)
     end
@@ -312,14 +348,6 @@ module Ladb::OpenCutList
     end
 
     def set_classification_value(*args)
-      _raise_no_method_error(__method__)
-    end
-
-    def add_observer(*args)
-      _raise_no_method_error(__method__)
-    end
-
-    def remove_observer(*args)
       _raise_no_method_error(__method__)
     end
 
@@ -400,19 +428,23 @@ module Ladb::OpenCutList
       _raise_no_method_error(__method__)
     end
 
+    def intersect(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def outer_shell(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def show_differences(*args)
+      _raise_no_method_error(__method__)
+    end
+
     def move!(*args)
       _raise_no_method_error(__method__)
     end
 
     def transform!(*args)
-      _raise_no_method_error(__method__)
-    end
-
-    def add_observer(*args)
-      _raise_no_method_error(__method__)
-    end
-
-    def remove_observer(*args)
       _raise_no_method_error(__method__)
     end
 

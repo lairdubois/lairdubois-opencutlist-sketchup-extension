@@ -40,7 +40,7 @@ module Ladb::OpenCutList
         return { :error => _sanitize_error_message(e) }
       end
 
-      value
+      value.to_s
     end
 
     private

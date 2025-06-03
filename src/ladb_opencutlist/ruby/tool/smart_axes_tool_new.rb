@@ -322,6 +322,18 @@ module Ladb::OpenCutList
 
     protected
 
+    def _preview_axes?
+      true
+    end
+
+    def _preview_arrows?
+      true
+    end
+
+    def _preview_box?
+      true
+    end
+
     def _preview_action
       super
       if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
@@ -330,36 +342,6 @@ module Ladb::OpenCutList
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
         px_offset = Sketchup.active_model.active_view.pixels_to_model(50, eb.center.transform(et))
-
-        # Axes helper
-        k_axes_helper = Kuix::AxesHelper.new
-        k_axes_helper.transformation = et
-        @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
-
-        # Back arrow
-        k_arrow = Kuix::ArrowMotif.new
-        k_arrow.bounds.copy!(eb)
-        k_arrow.color = Kuix::COLOR_WHITE
-        k_arrow.line_width = 2
-        k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        k_arrow.transformation = et
-        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
-
-        # Front arrow
-        k_arrow = Kuix::ArrowMotif.new
-        k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
-        k_arrow.bounds.copy!(eb)
-        k_arrow.color = Kuix::COLOR_WHITE
-        k_arrow.line_width = 2
-        k_arrow.transformation = et
-        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
-
-        k_box = Kuix::BoxMotif.new
-        k_box.bounds.copy!(eb)
-        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        k_box.color = Kuix::COLOR_BLACK
-        k_box.transformation = et
-        @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
 
         fn_preview_plane = lambda do |color, section|
 
@@ -480,44 +462,20 @@ module Ladb::OpenCutList
       true
     end
 
+    def _preview_axes?
+      true
+    end
+
+    def _preview_arrows?
+      true
+    end
+
+    def _preview_box?
+      true
+    end
+
     def _preview_action
       super
-      if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-
-        et = _get_edit_transformation
-        eb = _get_drawing_def_edit_bounds(drawing_def, et)
-
-        # Axes helper
-        k_axes_helper = Kuix::AxesHelper.new
-        k_axes_helper.transformation = et
-        @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
-
-        # Back arrow
-        k_arrow = Kuix::ArrowMotif.new
-        k_arrow.bounds.copy!(eb)
-        k_arrow.color = Kuix::COLOR_WHITE
-        k_arrow.line_width = 2
-        k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        k_arrow.transformation = et
-        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
-
-        # Front arrow
-        k_arrow = Kuix::ArrowMotif.new
-        k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
-        k_arrow.bounds.copy!(eb)
-        k_arrow.color = Kuix::COLOR_WHITE
-        k_arrow.line_width = 2
-        k_arrow.transformation = et
-        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
-
-        k_box = Kuix::BoxMotif.new
-        k_box.bounds.copy!(eb)
-        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        k_box.color = Kuix::COLOR_BLACK
-        k_box.transformation = et
-        @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
-
-      end
     end
 
     def _do_action
@@ -602,35 +560,24 @@ module Ladb::OpenCutList
       true
     end
 
+    def _preview_axes?
+      true
+    end
+
+    def _preview_arrows?
+      true
+    end
+
+    def _preview_box?
+      true
+    end
+
     def _preview_action
       super
       if (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
-
-        # Axes helper
-        k_axes_helper = Kuix::AxesHelper.new
-        k_axes_helper.transformation = et
-        @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
-
-        # Back arrow
-        k_arrow = Kuix::ArrowMotif.new
-        k_arrow.bounds.copy!(eb)
-        k_arrow.color = Kuix::COLOR_WHITE
-        k_arrow.line_width = 2
-        k_arrow.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        k_arrow.transformation = et
-        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
-
-        # Front arrow
-        k_arrow = Kuix::ArrowMotif.new
-        k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
-        k_arrow.bounds.copy!(eb)
-        k_arrow.color = Kuix::COLOR_WHITE
-        k_arrow.line_width = 2
-        k_arrow.transformation = et
-        @tool.append_3d(k_arrow, LAYER_3D_ACTION_PREVIEW)
 
         k_box = Kuix::BoxMotif.new
         k_box.bounds.copy!(eb)
@@ -744,10 +691,48 @@ module Ladb::OpenCutList
 
     def start
       super
+    end
 
-      puts "#{self.class.name} start"
+    # -----
+
+    def onPickerChanged(picker, view)
+      super
+      @tool.remove_3d(LAYER_3D_ACTION_PREVIEW)
+      _preview_action
+    end
+
+    # -----
+
+    protected
+
+    def _preview_all_instances?
+      true
+    end
+
+    def _preview_axes?
+      true
+    end
+
+    def _preview_arrows?
+      true
+    end
+
+    def _preview_action
+      super
+      unless @picker.picked_point.nil? || @active_part.nil?
+
+        k_axes_helper = Kuix::AxesHelper.new
+        k_axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(@picker.picked_point.to_a))
+        @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
+
+      end
 
     end
+
+    def _do_action
+
+    end
+
 
   end
 
