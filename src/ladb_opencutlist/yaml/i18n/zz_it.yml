@@ -33,7 +33,7 @@ default:
   copy: 32 - Copiare
   select_all: 33 - Seleziona tutto
   unselect_all: 34 - Deseleziona tutto
-  draw: 35 - Disegna
+  draw: 35 - Schema assemblaggio
   estimate: 36 - Preventivo
   rename: 37 - Rinominare
   next: 38 - Prossimo
@@ -642,7 +642,7 @@ tab:
       option_csv_col_sep_comma: 508 - Virgola
       option_csv_col_sep_semicolon: 509 - Punto e virgola
       option_csv_encoding: 510 - Encoding
-      copy_all: '511 - '
+      copy_all: 511 - Nomi + valori
       copy_values: 512 - Solo valori
       number: 513 - N.
       path: 514 - Percorso
@@ -975,55 +975,68 @@ tab:
     packing:
       title: 792 - Schema di taglio
       option_problem_type: 793 - Tipo
-      option_problem_type_rectangle: 794 - Rettangolo
-      option_problem_type_rectangleguillotine: '795 - '
-      option_problem_type_onedimensional: 796 - Barre
-      option_problem_type_irregular: '797 - '
+      option_problem_type_rectangle: 794 - Rettangoli nidificati
+      option_problem_type_rectangleguillotine: 795 - Rettangoli affiancati
+      option_problem_type_onedimensional: 796 - Fasce
+      option_problem_type_irregular: 797 - Forme nidificate
       options_material: 798 - Materiale
       options_config: 799 - Configurazione
       options_display: 800 - Visualizzazione
       options_tuning: 801 - Tuning
-      option_std_bin_1d_dimensional: '802 - '
+      option_std_bin_1d_dimensional: 802 - Fasce standard
       option_std_bin_1d_edge: 803 - Misura standard bordatura
-      option_std_bin_1d_help: '804 - '
+      option_std_bin_1d_help: |
+        804 - Seleziona le dimensioni standard dei pannelli o degli avanzi di pannello che verranno utilizzati per contenere tutti i pezzi nel miglior modo possibile.
+
+        Questa lista è definita nel campo **$t(tab.materials.edit_material.std_sizes)** del materiale.
+
+        *Modifica il materiale '{{ material_name }}' per aggiornare questa lista.*
       option_std_bin_1d_add: 805 - Aggiungi una lunghezza
       option_std_bin_1d_none: 806 - Nessuna
       option_scrap_bin_1d_dimensional_sizes: 807 - Avanzi di tavole
       option_scrap_bin_1d_edge_sizes: 808 - Avanzi di bordatura
       option_scrap_bin_1d_sizes_placeholder: 809 - lunghezza x quantità ; ...
-      option_scrap_bin_1d_sizes_help: '810 - '
+      option_scrap_bin_1d_sizes_help: |
+        810 - Indica qui l'elenco dei pannelli o degli avanzi di pannello da utilizzare per l'impaginazione dei pezzi.
+
+        *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       option_scrap_bin_1d_none: 811 - Nessuna
       option_std_bin_2d_sheet_good: 812 - Dimensioni standard dei pannelli
       option_std_bin_2d_veneer: 813 - Dimensioni standard piallacci
       option_std_bin_2d_help: |
         814 - Seleziona le dimensioni dei pannelli o dei piallacci che verranno utilizzati per contenere tutte le parti nel miglior modo possibile.
+
         Questa lista è definita nel campo **$t(tab.materials.edit_material.std_sizes)** del materiale.
 
-        Modifica il materiale '{{ material_name }}' per aggiornare questa lista.
+        *Modifica il materiale '{{ material_name }}' per aggiornare questa lista.*
       option_std_bin_2d_add: 815 - Aggiungi una lunghezza
       option_std_bin_2d_none: 816 - Nessuna
       option_scrap_bin_2d_sheet_good_sizes: 817 - Ritagli di pannelli
       option_scrap_bin_2d_veneer_sizes: 818 - Avanzi di impiallacciatura
       option_scrap_bin_2d_sizes_placeholder: 819 - lunghezza x larghezza x quantità ; ...
-      option_scrap_bin_2d_sizes_help: '820 - '
+      option_scrap_bin_2d_sizes_help: |
+        820 - Indica qui l'elenco degli avanzi di pannello o i fogli da utilizzare per l'impaginazione dei pezzi.
+
+        *Se non verrà specificata nessuna unità, verrà utilizzata l'unità del modello.*
       option_scrap_bin_2d_none: 821 - Nessuna
       option_optimization_mode: 822 - Modalità di ottimizzazione
       option_optimization_mode_help: |
-        823 - Ottimizzazione CON o SENZA limite di tempo
+        823 - Ottimizzazione CON o SENZA limite di tempo.
       option_objective: 824 - Obiettivo
-      option_objective_help: '825 - '
+      option_objective_help: |
+        825 - Definisce il tipo di sezionatura.
       option_rectangleguillotine_cut_type: 826 - Tipo di sezionatura
       option_rectangleguillotine_cut_type_help: |
-        827 - Definisce il tipo di sezionatura
+        827 - Definisce il tipo di sezionatura.
       option_rectangleguillotine_cut_type_non_exact: 828 - Approssimato
       option_rectangleguillotine_cut_type_exact: 829 - Esatto
       option_rectangleguillotine_cut_type_homogenous: 830 - Omogeneo
       option_rectangleguillotine_number_of_stages: 831 - Numero di passaggi
       option_rectangleguillotine_number_of_stages_help: |
-        832 - Definisce il massimo numero di passate
+        832 - Definisce il massimo numero di passate.
       option_rectangleguillotine_first_stage_orientation: 833 - Direzione del primo taglio
       option_rectangleguillotine_first_stage_orientation_help: |
-        834 - Definisce la direzione del primo taglio
+        834 - Definisce la direzione del primo taglio.
       option_rectangleguillotine_first_stage_orientation_horizontal: 835 - Orizzontale
       option_rectangleguillotine_first_stage_orientation_vertical: 836 - Verticale
       option_rectangleguillotine_first_stage_orientation_any: 837 - Qualunque
@@ -1039,19 +1052,19 @@ tab:
       option_irregular_allowed_rotations_180: 844 - Passi di 180°
       option_irregular_allow_mirroring: 845 - Specchiatura consentita
       option_irregular_allow_mirroring_help: |
-        846 - Definisce se la specchiatura nel posizionamento degli elementi sia consentita
+        846 - Definisce se la specchiatura nel posizionamento degli elementi sia consentita.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: 849 - Spaziatura
       option_spacing_help: |
         850 - Minima distanza tra gli elementi
-        Questo valore corrisponde allo spessore della lama o del dispositivo di taglio
+        Questo valore corrisponde allo spessore della lama o del dispositivo di taglio.
       option_trimming: 851 - Scarto perimetro
-      option_trimming_1d_help: '852 - '
-      option_trimming_2d_help: '853 - '
+      option_trimming_1d_help: 852 - Margine perimetrale del pannello da considerarsi come scarto.
+      option_trimming_2d_help: 853 - Margine perimetrale del pannello o del foglio da considerarsi come scarto.
       option_items_formula: 854 - Formula
       option_items_formula_help: |
-        855 - Permette di scrivere istruzioni in linguaggio *Ruby* per personalizzare il testo identificativo degli elementi nel diagramma di taglio
+        855 - Permette di scrivere istruzioni in linguaggio *Ruby* per personalizzare il testo identificativo degli elementi nel diagramma di taglio.
       option_hide_part_list: 856 - Distinta
       option_hide_part_list_1d_dimensional_0: 857 - Visualizza per ogni tavola
       option_hide_part_list_1d_edge_0: 858 - Visualizza per ogni bordo
@@ -1068,12 +1081,12 @@ tab:
         868 - Mostra o nasconde la l'effettiva forma degli elementi e la loro lavorazione sul diagramma.
 
         *Questa opzione deve essere abilitata per poermettere l'esportazione delle forme.*
-      option_colorization: '869 - '
+      option_colorization: 869 - Colorare i pezzi
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Schermo
       option_colorization_2: $t(default.yes) - Schermo e stampa
       option_colorization_help: |
-        873 - Consente di utilizzare un colore scelto a caso per distinguere gli elementi nel diagramma di taglio
+        873 - Consente di utilizzare un colore scelto a caso per distinguere gli elementi nel diagramma di taglio.
       option_hide_edges_preview: 874 - Indicatori di bordo per la placcatura
       option_hide_edges_preview_0: 875 - Visualizzato sul schema di taglio
       option_hide_edges_preview_1: 876 - Mascherato sul schema di taglio
@@ -1165,7 +1178,8 @@ tab:
         warning:
           is_bin_selection: 948 - Gli **elementi nascosti** non verranno esportati.
         error:
-          overflow_gt_spacing: '949 - '
+          overflow_gt_spacing: |
+            949 - L'abbondanza di lavorazione ({{ overflow }}) deve essere inferiore o uguale alla spaziatura ({{ spacing }}) configurata nelle proprietà della sezionatura.
       error:
         no_part: 950 - Nessuna parte.
         no_bin_1d: 951 - Nessuna dimensione delle tavole o dei bordi disponibili è stata selezionata e non ci sono ritagli a disposizione.
@@ -1284,7 +1298,7 @@ tab:
       option_parts_colored_0: 1054 - Bianco e nero
       option_parts_colored_1: 1055 - Colore del materiale
       option_parts_colored_help: 1056 - Seleziona l'aspetto degli elementi.
-      option_parts_opacity: 1057 - Opaco
+      option_parts_opacity: 1057 - Opacità
       option_parts_opacity_0: 1058 - Trasparente
       option_parts_opacity_1: 1059 - Opaco
       option_parts_opacity_help: 1060 - Seleziona l'opacita degli elementi.
@@ -1304,7 +1318,7 @@ tab:
       option_pins_length_1: 1074 - Corto
       option_pins_length_2: 1075 - Medio
       option_pins_length_3: 1076 - Lungo
-      option_pins_length_help: 1077 - Stabilisce la lunghezza delle etichette rimanenti.
+      option_pins_length_help: 1077 - Permette di stabilire la lunghezza dei connettori all'etichetta.
       option_pins_direction: 1078 - Direzione
       option_pins_direction_0: 1079 - Lungo l'asse Rosso
       option_pins_direction_1: 1080 - Lungo l'asse Verde
@@ -1405,15 +1419,20 @@ tab:
       option_anchor: 1136 - Punto di aggancio
       option_anchor_0: 1137 - Automatico
       option_anchor_1: 1138 - Proietta l'origine dell'elemento
-      option_anchor_help: '1139 - '
+      option_anchor_help: |
+        1139 - **Automatico**
+        L'angolo inferiore sinistro del perimetro che ingloba la geometria esportata è utilizzato come punto di aggancio.
+
+        **Proiettare l'origine del pezzo**
+        Peremette di utilizzare la proiezione dell'origine degli assi del pezzo come punto di aggancio.
       option_switch_yz: 1140 - Asse verticale
       option_switch_yz_0: 1141 - Z verticale
       option_switch_yz_1: 1142 - Y verticale
       option_switch_yz_help: |
         1143 - Permette di scambiare gli assi Y e Z per definire l'asse verticale della parte.
-      option_smoothing: 1144 - Levigatezza
+      option_smoothing: 1144 - Morbidezza
       option_smoothing_0: $t(default.no)
-      option_smoothing_1: 1146 - Levigatezza di archi e cerchi (Valutazione)
+      option_smoothing_1: 1146 - Morbidezza di archi e cerchi (Valutazione)
       option_smoothing_help: |
         1147 - Abilita l'individuazione degli archi e dei cerchi
 
@@ -1421,9 +1440,15 @@ tab:
       option_merge_holes: 1148 - Modo Unione
       option_merge_holes_0: 1149 - Base
       option_merge_holes_1: 1150 - Sagoma + Foratura + Scarto
-      option_merge_holes_help: '1151 - '
-      option_merge_holes_overflow: '1152 - '
-      option_merge_holes_overflow_help: '1153 - '
+      option_merge_holes_help: |
+        1151 - **Predefinito**
+        La forma del pezzo viene esportata con la proiezione di ciascuna faccia su un livello corrispondente al proprio spessore
+
+        **Contorno + Forature + Abbondanza**
+        Attiva la separazione del profilo esterno di pezzi dalla foratura e unisce le profondità di ogni recesso.
+      option_merge_holes_overflow: 1152 - Abbondanza di lavorazione
+      option_merge_holes_overflow_help: |
+        1153 - Consente di definire la distanza tra l'abbondanza di lavorazione e le superfici situate sul bordo del contorno e dei fori.
       option_include_paths: 1154 - Percorsi
       option_include_paths_0: $t(default.no)
       option_include_paths_1: 1156 - Utilizzare bordi non associati a una faccia
@@ -1524,7 +1549,7 @@ tab:
     edit_material:
       title: 1228 - Proprietà del Materiale '{{ name }}'
       general: 1229 - Generale
-      texture: 1230 - Struttura
+      texture: 1230 - Texture
       no_texture: 1231 - Nessuna texture
       name: 1232 - Descrizione
       type: 1233 - Tipo
@@ -1592,12 +1617,15 @@ tab:
       multiplier_coefficient: 1270 - Coefficiente moltiplicatore
       multiplier_coefficient_help: 1271 - Indica il coefficiente di moltiplicazione applicato al volume grezzo misurato.
       std_attributes_dim_placeholder: 1272 - Scegli una taglia
-      std_volumic_masses: 1273 - Massa volumica
-      std_volumic_masses_help: 1274 - Si usa per definire la densità per tutte le dimensioni e per ogni dimensione standard del materiale.
+      std_volumic_masses: 1273 - Densità
+      std_volumic_masses_help: 1274 - Permette di definire la densità per tutte le dimensioni e per ogni dimensione definita del materiale.
       std_prices: 1275 - Prezzo
       std_prices_help: 1276 - Permette di definire il prezzo per tutte le taglie così come per ogni misura standard del materiale.
-      std_cut_prices: 1277 - Prezzo di taglio
-      std_cut_prices_help: '1278 - '
+      std_cut_prices: 1277 - Prezzo del taglio
+      std_cut_prices_help: |
+        1278 - Permette di impostare il prezzo del taglio del materiale.
+
+        *In questo valore vengono considerati solo i tagli dritti, non sagomati.*
       texture_width: 1279 - Larghezza
       texture_height: 1280 - Altezza
       export_to_skm: 1281 - Esporta (.skm)
@@ -1770,7 +1798,11 @@ tab:
     help: |
       1401 - Qui trovi una lista non esaustiva di video realizzati dalla comunità sull'utilizzo di *OpenCutList*.
     submit: 1402 - Condividi un video
-    submit_info: '1403 - '
+    submit_info: |
+      1403 - Hai realizzato una presentazione video su come utilizzare **OpenCutList** e vorresti vederla pubblicata qui?
+      Faccelo sapere inviandoci un'e-mail a **opencutlist@lairdubois.fr**!*
+
+      Il video deve essere pubblico e ospitato su YouTube.*
     error:
       fail_to_load_list: 1404 - Impossibile caricare la lista dei video.
   news:
@@ -1849,7 +1881,7 @@ tab:
     length_format_2: 1455 - Ingegneristico
     length_format_3: $t(default.fractional)
     length_precision: 1457 - Precisione
-    suppress_units_display: 1458 - Visualizza l'unità di lunghezza per ogni valore
+    suppress_units_display: 1458 - Visualizza l'unità di lunghezza per tutti i valori
     mass_unit: 1459 - Unità di massa
     mass_precision: 1460 - Precisione
     currency_symbol: 1461 - Simbolo di valuta
@@ -1974,17 +2006,17 @@ tool:
     action_option_options_construction_status: 1534 - Disegna come linee di costruzione
     action_option_options_rectangle_centered: 1535 - Rettangolo centrato
     action_option_options_rectangle_centered_status: 1536 - Centrare il rettangolo sul primo punto
-    action_option_options_smoothing: 1537 - Levigatezza
+    action_option_options_smoothing: 1537 - Morbidezza
     action_option_options_smoothing_status: 1538 - Liscare le curve
     action_option_options_measure_from_vertex_status: 1539 - Misura relativa al vertice più vicino
     action_option_options_measure_from_diameter: 1540 - Misura
     action_option_options_measure_from_diameter_status: 1541 - Misurare il cerchio in base al suo diametro
     action_option_options_measure_from_radius_status: 1542 - Misurare il cerchio in base al suo raggio
-    action_option_options_measure_reversed: '1543 - '
-    action_option_options_measure_reversed_status: '1544 - '
-    action_option_options_pull_centered: '1545 - '
-    action_option_options_pull_centered_status: '1546 - '
-    action_option_options_ask_name: '1547 - '
+    action_option_options_measure_reversed: 1543 - Misurazione inversa
+    action_option_options_measure_reversed_status: 1544 - Invertire la misura
+    action_option_options_pull_centered: 1545 - Elevazione centrata
+    action_option_options_pull_centered_status: 1546 - Centra l'elevazione sul primo punto
+    action_option_options_ask_name: 1547 - Nomenclatura delle parti
     action_option_options_ask_name_status: 1548 - Definisci manualmente i nomi degli elementi
     action_measure_locked_status: 1549 - Blocca sull'ultima misura
     action_toggle_move_copy_status: 1550 - Commuta tra copia e sposta
@@ -1992,7 +2024,7 @@ tool:
     success:
       part_created: 1552 - Nuova parte creata: {{ name }}
   smart_handle:
-    title: '1553 - '
+    title: 1553 - Manipolare
     action_0: 1554 - Seleziona
     action_0_status: 1555 - Clicca su un elemento per selezionarlo
     action_1: 1556 - Copia sulla linea
@@ -2012,19 +2044,19 @@ tool:
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_1_status: 1571 - Seleziona il primo punto della misura
     action_4_state_2_status: 1572 - Seleziona il secondo punto della misura o digita una distanza
-    action_5: '1573 - '
+    action_5: 1573 - Ridimensionare
     action_option_group_copy_measure_type: 1574 - Misura
     action_option_group_move_measure_type: 1575 - Misura
     action_option_group_axes: 1576 - Assi
     action_option_group_options: 1577 - Opzioni
     action_option_copy_measure_type_outside_status: 1578 - Misura esterna
-    action_option_copy_measure_type_centered_status: '1579 - '
-    action_option_copy_measure_type_inside_status: '1580 - '
+    action_option_copy_measure_type_centered_status: 1579 - Misura da centro a centro
+    action_option_copy_measure_type_inside_status: 1580 - Misura tra i pezzi
     action_option_move_measure_type_outside_status: 1581 - Misura esterna
     action_option_move_measure_type_centered_status: 1582 - Misura al centro
     action_option_move_measure_type_inside_status: 1583 - Misura interna
     action_option_axes_active_status: 1584 - Sposta lungo l'asse attivo
-    action_option_axes_context_status: '1585 - '
+    action_option_axes_context_status: 1585 - Modificare lungo gli assi del gruppo o del componente contenente il pezzo
     action_option_axes_entity_status: 1586 - Modifica su un asse dell'elemento
     action_option_options_mirror_status: 1587 - Copia simmetrica
     warning:
