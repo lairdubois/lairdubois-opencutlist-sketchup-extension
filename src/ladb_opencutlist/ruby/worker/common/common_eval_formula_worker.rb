@@ -33,7 +33,7 @@ module Ladb::OpenCutList
 
       begin
 
-        value = eval(@formula, @data.get_binding)
+        value = eval(@formula, @data.get_binding)  # Discussed here : https://forums.sketchup.com/t/how-to-secure-ruby-code-passed-to-eval/
         value = value.export if value.is_a?(FormulaWrapper)
 
       rescue Exception => e
