@@ -1683,13 +1683,13 @@ tab:
     type_2: Komponente
     type_3: Teil
     tooltip:
-      hide_node: Ausblende
+      hide_node: Maskieren
       unhide_node: Zeigen
       locked_node: Gesperrt
       is_active_node: Aktive Instanz im Modell
       set_active_node: Im Modell bearbeiten
       edit_node_properties: Eigenschaften bearbeiten
-      select_node: Selektieren
+      select_node: Auswählen
       unselect_node: Deselektieren
       open_node_url: URL des Teils öffnen
     edit_node:
@@ -1716,7 +1716,7 @@ tab:
       hide_tags: Badges ausblenden
       hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
       minimize_on_set_active: Verkleinern nach '$t(tab.outliner.tooltip.set_active_node)'
-      minimize_on_set_active_help: "Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster minimiert, wenn die Funktion *'$t(tab.outliner.tooltip.set_active_node)'* verwendet wird."
+      minimize_on_set_active_help: "\"Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster minimiert, wenn die Funktion *'$t(tab.outliner.tooltip.set_active_node)'* verwendet wird.\""
     error:
       no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
       no_entities: Ihr Modell ist leer!

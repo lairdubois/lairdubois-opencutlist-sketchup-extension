@@ -1712,7 +1712,7 @@ tab:
       hide_tags: 1343 - Hide badges
       hide_tags_help: 1344 - If this option is selected, **badges** of parts will not be displayed.
       minimize_on_set_active: 1345 - Minimize after '$t(tab.outliner.tooltip.set_active_node)'
-      minimize_on_set_active_help: 1346 - If this option is selected, the OpenCutList window will be minimized when the function *'$t(tab.outliner.tooltip.set_active_node)'* is used.
+      minimize_on_set_active_help: '1346 - "If this option is selected, the OpenCutList window will be minimized when the function *''$t(tab.outliner.tooltip.set_active_node)''* is used." '
     error:
       no_model: 1347 - No model is open. You will have to give me more information ;)
       no_entities: 1348 - Your model is empty!
