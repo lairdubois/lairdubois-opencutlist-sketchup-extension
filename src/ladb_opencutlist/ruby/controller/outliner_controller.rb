@@ -6,13 +6,13 @@ module Ladb::OpenCutList
 
   class OutlinerController < Controller
 
-    attr_reader :outliner
-
-    def initialize()
+    def initialize
       super('materials')
 
       @observed_model_ids = Set.new
       @observed_entities_ids = Set.new
+
+      @observing = false
 
       @overlay = nil
 
@@ -22,10 +22,11 @@ module Ladb::OpenCutList
 
       PLUGIN.add_event_callback([
                                   AppObserver::ON_NEW_MODEL,
-                                  AppObserver::ON_OPEN_MODEL
+                                  AppObserver::ON_OPEN_MODEL,
+                                  AppObserver::ON_ACTIVATE_MODEL
                                 ]) do |params|
 
-        start_observing_model(Sketchup.active_model) unless @worker.nil?
+        start_observing_model(Sketchup.active_model) if @observing
 
       end
 
@@ -33,7 +34,7 @@ module Ladb::OpenCutList
                                   'on_tabs_dialog_close'
                                 ]) do |params|
 
-        stop_observing_model(Sketchup.active_model)
+        stop_observing_command if @observing
 
       end
 
@@ -43,10 +44,10 @@ module Ladb::OpenCutList
 
       # Setup opencutlist dialog actions
       PLUGIN.register_command("outliner_start_observing") do
-        start_observing_model(Sketchup.active_model)
+        start_observing_command
       end
       PLUGIN.register_command("outliner_stop_observing") do
-        stop_observing_model(Sketchup.active_model)
+        stop_observing_command
       end
       PLUGIN.register_command("outliner_generate") do |settings|
         generate_command(settings)
@@ -86,7 +87,7 @@ module Ladb::OpenCutList
     # Model Observer
 
     def onActivePathChanged(model)
-      puts "onActivePathChanged: #{model}"
+      # puts "onActivePathChanged: #{model}"
 
       return unless @worker
 
@@ -151,7 +152,7 @@ module Ladb::OpenCutList
     # Materials Observer
 
     def onMaterialAdd(materials, material)
-      puts "onMaterialAdd: #{material}"
+      # puts "onMaterialAdd: #{material}"
 
       return unless @worker
 
@@ -162,7 +163,7 @@ module Ladb::OpenCutList
     end
 
     def onMaterialChange(materials, material)
-      puts "onMaterialChange: #{material}"
+      # puts "onMaterialChange: #{material}"
 
       return unless @worker
 
@@ -180,7 +181,7 @@ module Ladb::OpenCutList
     end
 
     def onMaterialRemove(materials, material)
-      puts "onMaterialRemove: #{material}"
+      # puts "onMaterialRemove: #{material}"
 
       return unless @worker
 
@@ -193,7 +194,7 @@ module Ladb::OpenCutList
     # Layers Observer
 
     def onLayerAdded(layers, layer)
-      puts "onLayerAdded #{layer.name}"
+      # puts "onLayerAdded #{layer.name}"
 
       return unless @worker
 
@@ -204,7 +205,7 @@ module Ladb::OpenCutList
     end
 
     def onLayerChanged(layers, layer)
-      puts "onLayerChanged: #{layer.name}"
+      # puts "onLayerChanged: #{layer.name}"
 
       return unless @worker
 
@@ -230,7 +231,7 @@ module Ladb::OpenCutList
     end
 
     def onLayerRemoved(layers, layer)
-      puts "onLayerRemoved"
+      # puts "onLayerRemoved"
 
       return unless @worker
 
@@ -241,7 +242,7 @@ module Ladb::OpenCutList
     end
 
     def onLayerFolderAdded(layers, layer_folder)
-      puts "onLayerFolderAdded: #{layer_folder.name}"
+      # puts "onLayerFolderAdded: #{layer_folder.name}"
 
       return unless @worker
 
@@ -252,7 +253,7 @@ module Ladb::OpenCutList
     end
 
     def onLayerFolderChanged(layers, layer_folder)
-      puts "onLayerFolderChanged: #{layer_folder.name}"
+      # puts "onLayerFolderChanged: #{layer_folder.name}"
 
       return unless @worker
 
@@ -263,7 +264,7 @@ module Ladb::OpenCutList
     end
 
     def onLayerFolderRemoved(layers, layer_folder)
-      puts "onLayerFolderRemoved"
+      # puts "onLayerFolderRemoved"
 
       return unless @worker
 
@@ -274,7 +275,7 @@ module Ladb::OpenCutList
     end
 
     def onRemoveAllLayers(layers)
-      puts "onRemoveAllLayers: #{layers}"
+      # puts "onRemoveAllLayers: #{layers}"
 
       return unless @worker
 
@@ -287,7 +288,7 @@ module Ladb::OpenCutList
     # Definitions obeserver
 
     def onComponentAdded(definitions, definition)
-      puts "onComponentAdded: #{definition} (#{definition.object_id})"
+      # puts "onComponentAdded: #{definition} (#{definition.object_id})"
 
       # Refresh internally created groups definition
       if definition.group? && definition.count_used_instances > 0
@@ -327,7 +328,7 @@ module Ladb::OpenCutList
     # Entities Observer
 
     def onElementAdded(entities, entity)
-      puts "onElementAdded: #{entity} (#{entity.object_id}) in (#{entity.definition.object_id if entity.respond_to?(:definition)})"
+      # puts "onElementAdded: #{entity} (#{entity.object_id}) in (#{entity.definition.object_id if entity.respond_to?(:definition)})"
 
       return unless @worker
 
@@ -367,7 +368,7 @@ module Ladb::OpenCutList
     end
 
     def onElementModified(entities, entity)
-      puts "onElementModified: #{entity} (#{entity.object_id})"
+      # puts "onElementModified: #{entity} (#{entity.object_id})"
 
       return unless @worker
 
@@ -425,7 +426,7 @@ module Ladb::OpenCutList
     end
 
     def onElementRemoved(entities, entity_id)
-      puts "onElementRemoved: #{entity_id}"
+      # puts "onElementRemoved: #{entity_id}"
 
       return unless @worker
 
@@ -449,7 +450,7 @@ module Ladb::OpenCutList
         UI.stop_timer(@event_stack_timer) unless @event_stack_timer.nil?
         @event_stack_timer = nil
 
-        puts "-- BOO --"
+        # puts "-- BOO --"
         PLUGIN.trigger_event('on_boo', nil)
 
       } if @event_stack_timer.nil?
@@ -467,7 +468,7 @@ module Ladb::OpenCutList
       model.definitions.add_observer(self)
       @observed_model_ids.add(model.object_id)
 
-      puts "start_observing_model (#{model.object_id})"
+      # puts "start_observing_model (#{model.object_id})"
 
       start_observing_entities(model)
     end
@@ -482,7 +483,7 @@ module Ladb::OpenCutList
       model.definitions.remove_observer(self)
       @observed_model_ids.delete(model.object_id)
 
-      puts 'stop_observing_model'
+      # puts 'stop_observing_model'
 
       stop_observing_entities(model)
     end
@@ -518,6 +519,16 @@ module Ladb::OpenCutList
     end
 
     # -- Commands --
+
+    def start_observing_command
+      start_observing_model(Sketchup.active_model)
+      @observing = true
+    end
+
+    def stop_observing_command
+      stop_observing_model(Sketchup.active_model)
+      @observing = false
+    end
 
     def generate_command(settings)
       require_relative '../worker/outliner/outliner_generate_worker'
