@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../lib/fiddle/clippy/clippy'
+  require_relative '../../lib/kuix/kuix'
   require_relative '../../model/drawing/drawing_def'
   require_relative '../../model/drawing/drawing_projection_def'
 
@@ -396,10 +397,14 @@ module Ladb::OpenCutList
         origin = Geom::Point3d.new(0, 0, faces_bounds.max.z)
       end
 
+      # Convert 3D bounds to Kuix 2D bounds to inflate it if an overflow is defined
+      bounds_2d = Kuix::Bounds2d.new.copy!(bounds)
+      bounds_2d.inflate_all!(@merge_holes_overflow) if @merge_holes_overflow > 0
+
       projection_def.bounds.clear
       projection_def.bounds.add(
-        Geom::Point3d.new(bounds.min.x, bounds.min.y, origin.z),
-        Geom::Point3d.new(bounds.max.x, bounds.max.y, origin.z),
+        Geom::Point3d.new(bounds_2d.min.x, bounds_2d.min.y, origin.z),
+        Geom::Point3d.new(bounds_2d.max.x, bounds_2d.max.y, origin.z),
         origin
       )
 

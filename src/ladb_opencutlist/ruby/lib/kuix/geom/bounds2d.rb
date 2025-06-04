@@ -30,8 +30,8 @@ module Ladb::OpenCutList::Kuix
     end
 
     def copy!(bounds)
-      @origin.copy!(bounds.origin)
-      @size.copy!(bounds.size)
+      @origin.copy!(bounds.min) if bounds.respond_to?(:min)
+      @size.copy!(bounds)
       self
     end
 
