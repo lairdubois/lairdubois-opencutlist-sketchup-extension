@@ -44,7 +44,7 @@ module Ladb::OpenCutList
     COLOR_ARROW = Kuix::COLOR_WHITE
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239).freeze
 
-    attr_accessor :tool_id, :last_mouse_x, :last_mouse_y
+    attr_accessor :last_mouse_x, :last_mouse_y
 
     def initialize(
 
@@ -1175,8 +1175,16 @@ module Ladb::OpenCutList
 
     # -- Tool stuff --
 
-    def active?
-      !@tool_id.nil?
+    def self.tool_id
+      @tool_id
+    end
+
+    def self.tool_id=(tool_id)
+      @tool_id = tool_id
+    end
+
+    def self.active?
+      !self.tool_id.nil?
     end
 
     def draw(view)
@@ -1202,7 +1210,7 @@ module Ladb::OpenCutList
       super
 
       # Store tool ID
-      @tool_id = view.model.tools.active_tool_id
+      self.class.tool_id = view.model.tools.active_tool_id
 
       # Create pick helpers
       @pick_helper = view.pick_helper
@@ -1248,7 +1256,7 @@ module Ladb::OpenCutList
       super
 
       # Clear tool ID
-      @tool_id = nil
+      self.class.tool_id = nil
 
       # Stop the current action handler
       @action_handler.stop if @action_handler.is_a?(SmartActionHandler)
@@ -1674,8 +1682,7 @@ module Ladb::OpenCutList
     # -----
 
     def active?
-      return false if (model = Sketchup.active_model).nil?
-      model.tools.active_tool_id == @tool.tool_id
+      @tool.class.active?
     end
 
     # -- STATE --

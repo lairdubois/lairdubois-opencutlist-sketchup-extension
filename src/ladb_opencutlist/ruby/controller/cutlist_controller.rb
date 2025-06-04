@@ -151,7 +151,7 @@ module Ladb::OpenCutList
 
       PLUGIN.add_event_callback([
                                   AppObserver::ON_QUIT,
-                                  'on_tags_dialog_close'
+                                  'on_tabs_dialog_close'
                                 ]) do |params|
 
         # Cancel all Packy runs

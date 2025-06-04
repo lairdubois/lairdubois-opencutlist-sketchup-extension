@@ -81,6 +81,8 @@ module Ladb::OpenCutList
     DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs'
     DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev'
 
+    TOOLS = %w[draw handle paint axes export]
+
     # -----
 
     def initialize
@@ -807,7 +809,7 @@ module Ladb::OpenCutList
         fn_get_selected_component_entity.call.nil? ? MF_GRAYED : MF_ENABLED
       }
       submenu.add_separator
-      %w[draw handle paint axes export].each do |stripped_name|
+      TOOLS.each do |stripped_name|
 
         clazz = Object.const_get("Ladb::OpenCutList::Smart#{stripped_name.capitalize}Tool")
 
@@ -864,85 +866,29 @@ module Ladb::OpenCutList
       # Setup Tools Toolbar
       toolbar = UI::Toolbar.new(get_i18n_string('core.toolbar.name') + " - " + get_i18n_string('core.toolbar.tools'))
 
-      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_draw')) {
-        if Sketchup.active_model
-          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartDrawTool)
-            Sketchup.active_model.select_tool(nil)
-          else
-            Sketchup.active_model.select_tool(SmartDrawTool.new)
-          end
-          Sketchup.focus if Sketchup.respond_to?(:focus)
-        end
-      }
-      cmd.small_icon = '../img/icon-smart-draw-72x72.png'
-      cmd.large_icon = '../img/icon-smart-draw-114x114.png'
-      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_draw')
-      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_draw')
-      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_draw')
-      cmd.set_validation_proc {
-        Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartDrawTool) ? MF_CHECKED : MF_UNCHECKED
-      }
-      toolbar = toolbar.add_item(cmd)
+      TOOLS.each do |stripped_name|
 
-      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_handle')) {
-        if Sketchup.active_model
-          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartHandleTool)
-            Sketchup.active_model.select_tool(nil)
-          else
-            Sketchup.active_model.select_tool(SmartHandleTool.new)
-          end
-          Sketchup.focus if Sketchup.respond_to?(:focus)
-        end
-      }
-      cmd.small_icon = '../img/icon-smart-handle-72x72.png'
-      cmd.large_icon = '../img/icon-smart-handle-114x114.png'
-      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_handle')
-      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_handle')
-      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_handle')
-      cmd.set_validation_proc {
-        Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartHandleTool) ? MF_CHECKED : MF_UNCHECKED
-      }
-      toolbar = toolbar.add_item(cmd)
+        clazz = Object.const_get("Ladb::OpenCutList::Smart#{stripped_name.capitalize}Tool")
 
-      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_paint')) {
-        if Sketchup.active_model
-          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartPaintTool)
-            Sketchup.active_model.select_tool(nil)
-          else
-            Sketchup.active_model.select_tool(SmartPaintTool.new)
+        cmd = UI::Command.new(get_i18n_string("core.toolbar.command.smart_#{stripped_name}")) {
+          if Sketchup.active_model
+            if clazz.active?
+              Sketchup.active_model.select_tool(nil)
+            else
+              Sketchup.active_model.select_tool(clazz.new)
+            end
+            Sketchup.focus if Sketchup.respond_to?(:focus)
           end
-          Sketchup.focus if Sketchup.respond_to?(:focus)
-        end
-      }
-      cmd.small_icon = '../img/icon-smart-paint-72x72.png'
-      cmd.large_icon = '../img/icon-smart-paint-114x114.png'
-      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_paint')
-      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_paint')
-      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_paint')
-      cmd.set_validation_proc {
-        Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartPaintTool) ? MF_CHECKED : MF_UNCHECKED
-      }
-      toolbar = toolbar.add_item(cmd)
+        }
+        cmd.small_icon = "../img/icon-smart-#{stripped_name}-72x72.png"
+        cmd.large_icon = "../img/icon-smart-#{stripped_name}-114x114.png"
+        cmd.tooltip = get_i18n_string("core.toolbar.command.smart_#{stripped_name}")
+        cmd.status_bar_text = get_i18n_string("core.toolbar.command.smart_#{stripped_name}")
+        cmd.menu_text = get_i18n_string("core.toolbar.command.smart_#{stripped_name}")
+        cmd.set_validation_proc { clazz.active? ? MF_CHECKED : MF_UNCHECKED }
+        toolbar = toolbar.add_item(cmd)
 
-      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes')) {
-        if Sketchup.active_model
-          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesTool)
-            Sketchup.active_model.select_tool(nil)
-          else
-            Sketchup.active_model.select_tool(SmartAxesTool.new)
-          end
-          Sketchup.focus if Sketchup.respond_to?(:focus)
-        end
-      }
-      cmd.small_icon = '../img/icon-smart-axes-72x72.png'
-      cmd.large_icon = '../img/icon-smart-axes-114x114.png'
-      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_axes')
-      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_axes')
-      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_axes')
-      cmd.set_validation_proc {
-        Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesTool) ? MF_CHECKED : MF_UNCHECKED
-      }
-      toolbar = toolbar.add_item(cmd)
+      end
 
       # cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes') + '_2') {
       #   if Sketchup.active_model
@@ -963,26 +909,6 @@ module Ladb::OpenCutList
       #   Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesToolNew) ? MF_CHECKED : MF_UNCHECKED
       # }
       # toolbar = toolbar.add_item(cmd)
-
-      cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_export')) {
-        if Sketchup.active_model
-          if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartExportTool)
-            Sketchup.active_model.select_tool(nil)
-          else
-            Sketchup.active_model.select_tool(SmartExportTool.new)
-          end
-          Sketchup.focus if Sketchup.respond_to?(:focus)
-        end
-      }
-      cmd.small_icon = '../img/icon-smart-export-72x72.png'
-      cmd.large_icon = '../img/icon-smart-export-114x114.png'
-      cmd.tooltip = get_i18n_string('core.toolbar.command.smart_export')
-      cmd.status_bar_text = get_i18n_string('core.toolbar.command.smart_export')
-      cmd.menu_text = get_i18n_string('core.toolbar.command.smart_export')
-      cmd.set_validation_proc {
-        Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartExportTool) ? MF_CHECKED : MF_UNCHECKED
-      }
-      toolbar = toolbar.add_item(cmd)
 
       toolbar.restore
 
@@ -1131,7 +1057,7 @@ module Ladb::OpenCutList
       @tabs_dialog.set_on_closed {
         @tabs_dialog = nil
         @tabs_dialog_maximized = false
-        trigger_event('on_tags_dialog_close', {})
+        trigger_event('on_tabs_dialog_close', {})
       }
       @tabs_dialog.set_can_close {
         tabs_dialog_store_current_position

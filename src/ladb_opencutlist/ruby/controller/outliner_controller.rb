@@ -30,7 +30,7 @@ module Ladb::OpenCutList
       end
 
       PLUGIN.add_event_callback([
-                                  'on_tags_dialog_close'
+                                  'on_tabs_dialog_close'
                                 ]) do |params|
 
         stop_observing_model(Sketchup.active_model)
