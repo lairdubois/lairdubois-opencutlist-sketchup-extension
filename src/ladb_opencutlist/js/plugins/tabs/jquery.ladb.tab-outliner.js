@@ -176,24 +176,26 @@
                         });
                 }
                 $row.on('click', function (e) {
-                    that.editNode(node, null, function ($modal) {
-                        const $target = $(e.target);
-                        if ($target.hasClass('ladb-outliner-node-name')) {
-                            $('#ladb_outliner_node_input_name', $modal)
-                                .focus()
-                                .select()
-                            ;
-                        } else if ($target.hasClass('ladb-outliner-node-definition-name')) {
-                            $('#ladb_outliner_node_input_definition_name', $modal)
-                                .focus()
-                                .select()
-                            ;
-                        } else if ($target.closest('.ladb-material-color-drop').length > 0) {
-                            $('#ladb_outliner_node_select_material_name', $modal).focus();
-                        } else if ($target.closest('.ladb-outliner-node-layers').length > 0) {
-                            $('#ladb_outliner_node_input_layer_name', $modal).focus();
-                        }
-                    });
+                    if (!node.computed_locked) {
+                        that.editNode(node, null, function ($modal) {
+                            const $target = $(e.target);
+                            if ($target.hasClass('ladb-outliner-node-name')) {
+                                $('#ladb_outliner_node_input_name', $modal)
+                                    .focus()
+                                    .select()
+                                ;
+                            } else if ($target.hasClass('ladb-outliner-node-definition-name')) {
+                                $('#ladb_outliner_node_input_definition_name', $modal)
+                                    .focus()
+                                    .select()
+                                ;
+                            } else if ($target.closest('.ladb-material-color-drop').length > 0) {
+                                $('#ladb_outliner_node_select_material_name', $modal).focus();
+                            } else if ($target.closest('.ladb-outliner-node-layers').length > 0) {
+                                $('#ladb_outliner_node_input_layer_name', $modal).focus();
+                            }
+                        });
+                    }
                     return false;
                 });
                 $('a.ladb-btn-node-toggle-folding', $row).on('click', function () {
@@ -235,6 +237,10 @@
                     rubyCallCommand('outliner_set_active', { id: node.id }, function (response) {
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
+                        } else {
+                            if (that.generateOptions.minimize_on_set_active) {
+                                that.dialog.minimize();
+                            }
                         }
                     });
 
@@ -521,6 +527,7 @@
         const $inputShowIddenInstances = $('#ladb_input_show_hidden_instances', $modal);
         const $inputHideDescriptions = $('#ladb_input_hide_descriptions', $modal);
         const $inputHideTags = $('#ladb_input_hide_tags', $modal);
+        const $inputMinimizeOnSetActive = $('#ladb_input_minimize_on_set_active', $modal);
         const $btnUpdate = $('#ladb_outliner_options_update', $modal);
 
         // Define useful functions
@@ -528,11 +535,13 @@
             options.show_hidden_instances = $inputShowIddenInstances.is(':checked');
             options.hide_descriptions = $inputHideDescriptions.is(':checked');
             options.hide_tags = $inputHideTags.is(':checked');
+            options.minimize_on_set_active = $inputMinimizeOnSetActive.is(':checked');
         };
         const fnFillInputs = function (options) {
             $inputShowIddenInstances.prop('checked', options.show_hidden_instances);
             $inputHideDescriptions.prop('checked', options.hide_descriptions);
             $inputHideTags.prop('checked', options.hide_tags);
+            $inputMinimizeOnSetActive.prop('checked', options.minimize_on_set_active);
         };
 
         $widgetPreset.ladbWidgetPreset({

@@ -2,6 +2,7 @@
   "0": {
     "show_hidden_instances": true,
     "hide_descriptions": false,
-    "hide_tags": false
+    "hide_tags": false,
+    "minimize_on_set_active": true
   }
 }
