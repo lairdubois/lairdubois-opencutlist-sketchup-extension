@@ -1191,7 +1191,7 @@ tab:
         invalid_part_shapes: "Die Form des Teils '{{ name }}' ist ungültig."
         no_solution: Keine Lösung gefunden.
         unplaced_parts: "**1 Teil** konnte nicht platziert werden."
-        unplaced_parts_plural: "\"**{{ count }} Teile** konnten nicht platziert werden."
+        unplaced_parts_plural: "**{{ count }} Teile** konnten nicht platziert werden."
       warning:
         is_part_selection: Dieser Schnittplan beschränkt sich auf die **ausgewählten Teile**.
         cutting_dimensions: Dieser Schnittplan verwendet die **Rohmaße** der Teile.
@@ -1683,6 +1683,14 @@ tab:
     type_2: Komponente
     type_3: Teil
     tooltip:
+      hide_node: Maskieren
+      unhide_node: Zeigen
+      locked_node: Gesperrt
+      is_active_node: Aktive Instanz im Modell
+      set_active_node: Im Modell bearbeiten
+      edit_node_properties: Eigenschaften bearbeiten
+      select_node: Auswählen
+      unselect_node: Deselektieren
       open_node_url: URL des Teils öffnen
     edit_node:
       title_model: "Eigenschaften des Modells"
@@ -1707,6 +1715,8 @@ tab:
       hide_descriptions_help: "Wenn diese Option aktiviert ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt."
       hide_tags: Badges ausblenden
       hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
+      minimize_on_set_active: Verkleinern nach '$t(tab.outliner.tooltip.set_active_node)'
+      minimize_on_set_active_help: "\"Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster minimiert, wenn die Funktion *'$t(tab.outliner.tooltip.set_active_node)'* verwendet wird.\""
     error:
       no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
       no_entities: Ihr Modell ist leer!
