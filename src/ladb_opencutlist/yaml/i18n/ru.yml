@@ -1059,13 +1059,13 @@ tab:
         Определяет, разрешено ли зеркальное отражение детали.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
-      option_spacing: Расстояние между ними
+      option_spacing: Ширина реза
       option_spacing_help: |
         Минимальное расстояние между каждой деталью.
-        Это значение может соответствовать ширине пильного полотна или режущего инструмента.
+        Это значение соответствует ширине пильного полотна режущего инструмента.
       option_trimming: Обрезка
       option_trimming_1d_help: "Предел подреза на каждом конце погонажа, которые будут рассматриваться как отходы."
-      option_trimming_2d_help: "Предел обреза по всему периметру панели или листа, который будет рассматриваться как отходы."
+      option_trimming_2d_help: "Предел обреза по периметру панели или листа, который будет рассматриваться как отходы."
       option_items_formula: Формула
       option_items_formula_help: |
         Позволяет написать код на языке *Ruby* для настройки текста идентификации деталей на диаграмме.
@@ -1106,9 +1106,9 @@ tab:
         trimming: Обрезка
         settings: Настройки
         stats: Статистика
-        time: Лимит времени
+        time: Время расчёта
         total_efficiency: Общая эффективность
-        total_fill_rate: Скорость подачи
+        total_fill_rate: Эффективность раскроя
         total_cut_count: Σ Число резов
         total_cut_length: Σ Длина пропилов
         efficiency: Эффективность
@@ -1683,6 +1683,14 @@ tab:
     type_2: Компонент
     type_3: Деталь
     tooltip:
+      hide_node: ""
+      unhide_node: ""
+      locked_node: ""
+      is_active_node: ""
+      set_active_node: ""
+      edit_node_properties: ""
+      select_node: Выделить
+      unselect_node: ""
       open_node_url: Открыть URL-адрес детали
     edit_node:
       title_model: "Свойства модели"
@@ -1707,6 +1715,8 @@ tab:
       hide_descriptions_help: "Если этот параметр включен, **описания**, деталей в списке элементов, будут скрыты."
       hide_tags: Скрыть маркеры
       hide_tags_help: "Если эта опция активирована, **маркеры**, размещенные на деталях, не отображаются."
+      minimize_on_set_active: ""
+      minimize_on_set_active_help: ""
     error:
       no_model: Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
       no_entities: Ваша модель пуста!
