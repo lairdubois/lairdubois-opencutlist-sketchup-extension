@@ -7,13 +7,15 @@ module Ladb::OpenCutList
   class FormulaParser < Ripper
 
     BLACK_LIST_KW = %w[
-      alias self
+      alias
+      self
     ]
 
     BLACK_LIST_COMMAND = %w[
       exec fork spawn system syscall
       abort exit exit! at_exit
       binding send
+      alias_method
       catch fail throw
       eval instance_eval class_eval module_eval
       open sysopen load autoload

@@ -144,6 +144,11 @@ class TC_Ladb_Parser_FormulaParser < TestUp::TestCase
     TXT
     )
 
+    assert_invalid_formula(<<~TXT
+      alias_method :exit :go_out
+    TXT
+    )
+
     # VALID
 
     assert_valid_formula(<<~TXT
