@@ -170,8 +170,8 @@ module Ladb::OpenCutList
       material_attributes.std_cut_prices = @std_cut_prices
       material_attributes.write_to_attributes
 
-      # Trigger change event on materials observer if needed
-      PLUGIN.app_observer.material_observer.onMaterialChange(materials, material) if trigger_change_event
+      # Trigger change event on the materials observer if needed
+      PLUGIN.app_observer.materials_observer.onMaterialChange(materials, material) if trigger_change_event
 
       # Commit model modification operation
       model.commit_operation
