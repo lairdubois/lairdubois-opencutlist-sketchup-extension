@@ -40,10 +40,7 @@ module Ladb::OpenCutList::Kuix
     # -- Manipulations --
 
     def translate!(dx, dy, dz)
-      @x += dx
-      @y += dy
-      @z += dz
-      self
+      set!(x + dx, y + dy, z + dz)
     end
 
     # --

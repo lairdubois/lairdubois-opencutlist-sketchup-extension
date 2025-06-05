@@ -269,6 +269,10 @@ module Ladb::OpenCutList::Kuix
       "#{self.class.name} (origin=#{@origin}, size=#{@size})"
     end
 
+    def to_b
+      Geom::BoundingBox.new.add([ min, max ])
+    end
+
   end
 
 end
