@@ -166,8 +166,7 @@ module Ladb::OpenCutList
 
     def expand_to(id:)
 
-      node_def = @outliner_def.get_node_def_by_id(id)
-      if node_def
+      unless (node_def = @outliner_def.get_node_def_by_id(id)).nil?
 
         node_def.expand
 
@@ -179,8 +178,7 @@ module Ladb::OpenCutList
 
     def toggle_expanded(id:)
 
-      node_def = @outliner_def.get_node_def_by_id(id)
-      if node_def
+      unless (node_def = @outliner_def.get_node_def_by_id(id)).nil?
 
         return false if !node_def.expandable? || node_def.child_active || node_def.active
 
@@ -268,13 +266,13 @@ module Ladb::OpenCutList
     end
 
     def create_children_node_defs(node_def:, entities:, path: [], face_bounds_cache: {})
-      entities.each { |child_entity|
+      entities.each do |child_entity|
         next unless child_entity.is_a?(Sketchup::Group) || child_entity.is_a?(Sketchup::ComponentInstance)
 
         child_node_def = create_node_def(entity: child_entity, path: path, face_bounds_cache: face_bounds_cache)
         node_def.add_child(child_node_def) if child_node_def
 
-      }
+      end
       sort_children_node_defs(children: node_def.children)
     end
 

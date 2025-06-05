@@ -1,12 +1,9 @@
 module Ladb::OpenCutList
 
-  require 'singleton'
   require_relative '../utils/mass_utils'
   require_relative '../utils/price_utils'
 
   class PluginObserver
-
-    include Singleton
 
     ON_GLOBAL_PRESET_CHANGED = 'on_global_preset_changed'.freeze
     ON_MODEL_PRESET_CHANGED = 'on_model_preset_changed'.freeze

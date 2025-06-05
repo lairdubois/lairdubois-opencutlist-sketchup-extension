@@ -1,10 +1,6 @@
 module Ladb::OpenCutList
 
-  require 'singleton'
-
   class ModelObserver < Sketchup::ModelObserver
-
-    include Singleton
 
     ON_ACTIVE_PATH_CHANGED = 'on_active_path_changed'.freeze
     ON_DRAWING_CHANGE = 'on_drawing_change'.freeze

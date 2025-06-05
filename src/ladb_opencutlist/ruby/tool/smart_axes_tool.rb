@@ -647,7 +647,7 @@ module Ladb::OpenCutList
               model.commit_operation
 
               # Fire event
-              ModelObserver.instance.onDrawingChange
+              PLUGIN.app_observer.model_observer.onDrawingChange
 
               # Refresh active
               _refresh_active_part
@@ -714,7 +714,7 @@ module Ladb::OpenCutList
               model.commit_operation
 
               # Fire event
-              ModelObserver.instance.onDrawingChange
+              PLUGIN.app_observer.model_observer.onDrawingChange
 
               # Refresh active
               _refresh_active_part

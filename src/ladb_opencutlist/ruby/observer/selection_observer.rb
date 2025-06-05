@@ -1,10 +1,6 @@
 module Ladb::OpenCutList
 
-  require 'singleton'
-
   class SelectionObserver < Sketchup::SelectionObserver
-
-    include Singleton
 
     ON_SELECTION_BULK_CHANGE = 'on_selection_bulk_change'.freeze
     ON_SELECTION_CLEARED = 'on_selection_cleared'.freeze

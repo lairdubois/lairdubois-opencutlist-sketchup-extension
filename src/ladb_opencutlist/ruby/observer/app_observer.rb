@@ -1,16 +1,12 @@
 module Ladb::OpenCutList
 
-  require 'singleton'
   require_relative 'model_observer'
   require_relative 'options_provider_observer'
   require_relative 'materials_observer'
   require_relative 'selection_observer'
   require_relative 'pages_observer'
-  require_relative 'layers_observer'
 
   class AppObserver < Sketchup::AppObserver
-
-    include Singleton
 
     ON_NEW_MODEL = 'on_new_model'.freeze
     ON_OPEN_MODEL = 'on_open_model'.freeze
@@ -18,16 +14,36 @@ module Ladb::OpenCutList
     ON_QUIT = 'on_quit'.freeze
 
     def initialize
-      unless Sketchup.active_model.nil?
-        add_model_observers(Sketchup.active_model)
-        onActivateModel(Sketchup.active_model)
+      unless (model = Sketchup.active_model).nil?
+        add_model_observers(model)
+        onActivateModel(model)
       end
+    end
+
+    def model_observer
+      @model_observer ||= ModelObserver.new
+    end
+
+    def options_provider_observer
+      @options_provider_observer ||= OptionsProviderObserver.new
+    end
+
+    def materials_observer
+      @materials_observer ||= MaterialsObserver.new
+    end
+
+    def selection_observer
+      @selection_observer ||= SelectionObserver.new
+    end
+
+    def pages_observer
+      @pages_observer ||= PagesObserver.new
     end
 
     # -----
 
     def onNewModel(model)
-      puts "onNewModel: #{model}"
+      # puts "onNewModel: #{model}"
       add_model_observers(model)
 
       # Clear model presets cache
@@ -88,7 +104,7 @@ module Ladb::OpenCutList
 
     end
 
-    def onQuit()
+    def onQuit
 
       # Trigger event to JS
       PLUGIN.trigger_event(ON_QUIT)
@@ -99,23 +115,21 @@ module Ladb::OpenCutList
 
     def add_model_observers(model)
       if model
-        model.add_observer(ModelObserver.instance)
-        model.options['UnitsOptions'].add_observer(OptionsProviderObserver.instance) if model.options['UnitsOptions']
-        model.materials.add_observer(MaterialsObserver.instance) if model.materials
-        model.selection.add_observer(SelectionObserver.instance) if model.selection
-        model.pages.add_observer(PagesObserver.instance) if model.pages
-        model.layers.add_observer(LayersObserver.instance) if model.layers
+        model.add_observer(model_observer)
+        model.options['UnitsOptions'].add_observer(options_provider_observer) if model.options['UnitsOptions']
+        model.materials.add_observer(materials_observer) if model.materials
+        model.selection.add_observer(selection_observer) if model.selection
+        model.pages.add_observer(pages_observer) if model.pages
       end
     end
 
     def remove_model_observers(model)
       if model
-        model.remove_observer(ModelObserver.instance)
-        model.options['UnitsOptions'].remove_observer(OptionsProviderObserver.instance) if model.options['UnitsOptions']
-        model.materials.remove_observer(MaterialsObserver.instance) if model.materials
-        model.selection.remove_observer(SelectionObserver.instance) if model.selection
-        model.pages.remove_observer(PagesObserver.instance) if model.pages
-        model.layers.remove_observer(LayersObserver.instance) if model.layers
+        model.remove_observer(model_observer)
+        model.options['UnitsOptions'].remove_observer(options_provider_observer) if model.options['UnitsOptions']
+        model.materials.remove_observer(materials_observer) if model.materials
+        model.selection.remove_observer(selection_observer) if model.selection
+        model.pages.remove_observer(pages_observer) if model.pages
       end
     end
 

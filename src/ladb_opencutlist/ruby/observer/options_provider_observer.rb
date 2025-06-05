@@ -1,10 +1,6 @@
 module Ladb::OpenCutList
 
-  require 'singleton'
-
   class OptionsProviderObserver < Sketchup::OptionsProviderObserver
-
-    include Singleton
 
     ON_OPTIONS_PROVIDER_CHANGED = 'on_options_provider_changed'.freeze
 

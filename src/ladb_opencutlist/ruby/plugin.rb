@@ -27,6 +27,8 @@ module Ladb::OpenCutList
   require_relative 'tool/smart_axes_tool_new'
   require_relative 'tool/smart_export_tool'
 
+  attr_reader :app_observer
+
   class Plugin
     
     IS_RBZ = PLUGIN_DIR.start_with?(Sketchup.find_support_file('Plugins', ''))
@@ -511,7 +513,7 @@ module Ladb::OpenCutList
       write_global_presets
 
       # Fire event
-      PluginObserver.instance.onGlobalPresetChanged(dictionary, section) if fire_event
+      plugin_observer.onGlobalPresetChanged(dictionary, section) if fire_event
 
     end
 
@@ -640,7 +642,7 @@ module Ladb::OpenCutList
       write_model_presets
 
       # Fire event
-      PluginObserver.instance.onModelPresetChanged(dictionary, section) if fire_event
+      plugin_observer.onModelPresetChanged(dictionary, section) if fire_event
 
     end
 
@@ -755,6 +757,14 @@ module Ladb::OpenCutList
 
     def remove_observer(observer)
       @observers.delete(observer)
+    end
+
+    def plugin_observer
+      @plugin_observer ||= PluginObserver.new
+    end
+
+    def app_observer
+      @app_observer ||= AppObserver.new
     end
 
     # -----
@@ -914,8 +924,8 @@ module Ladb::OpenCutList
 
         # -- Observers --
 
-        add_observer(PluginObserver.instance)
-        Sketchup.add_observer(AppObserver.instance)
+        add_observer(plugin_observer)
+        Sketchup.add_observer(app_observer)
 
         # -- Controllers --
 

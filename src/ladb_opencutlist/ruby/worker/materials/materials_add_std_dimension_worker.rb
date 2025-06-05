@@ -44,7 +44,7 @@ module Ladb::OpenCutList
         material_attributes.write_to_attributes
 
         # Trigger change event on materials observer
-        MaterialsObserver.instance.onMaterialChange(materials, material)
+        PLUGIN.app_observer.material_observer.onMaterialChange(materials, material)
 
       end
 

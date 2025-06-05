@@ -404,7 +404,7 @@ module Ladb::OpenCutList
         model.commit_operation
 
         # Fire event
-        ModelObserver.instance.onDrawingChange
+        PLUGIN.app_observer.model_observer.onDrawingChange
 
       end
     end
@@ -516,7 +516,7 @@ module Ladb::OpenCutList
       model.commit_operation
 
       # Fire event
-      ModelObserver.instance.onDrawingChange
+      PLUGIN.app_observer.model_observer.onDrawingChange
 
     end
 
@@ -627,7 +627,7 @@ module Ladb::OpenCutList
       model.commit_operation
 
       # Fire event
-      ModelObserver.instance.onDrawingChange
+      PLUGIN.app_observer.model_observer.onDrawingChange
 
     end
 

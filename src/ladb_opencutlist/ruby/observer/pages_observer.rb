@@ -1,10 +1,6 @@
 module Ladb::OpenCutList
 
-  require 'singleton'
-
-  class PagesObserver < Sketchup::ModelObserver
-
-    include Singleton
+  class PagesObserver < Sketchup::PagesObserver
 
     ON_PAGES_CONTENTS_MODIFIED = 'on_pages_contents_modified'.freeze
 

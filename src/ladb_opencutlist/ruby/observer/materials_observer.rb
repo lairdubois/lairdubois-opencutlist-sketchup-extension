@@ -1,10 +1,6 @@
 module Ladb::OpenCutList
 
-  require 'singleton'
-
   class MaterialsObserver < Sketchup::MaterialsObserver
-
-    include Singleton
 
     ON_MATERIAL_ADD = 'on_material_add'.freeze
     ON_MATERIAL_REMOVE = 'on_material_remove'.freeze
