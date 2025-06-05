@@ -81,7 +81,8 @@ module Ladb::OpenCutList
     DOCS_URL = 'https://www.lairdubois.fr/opencutlist/docs'
     DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev'
 
-    TOOLS = %w[draw handle paint axes export]
+    TABS_STRIPPED_NAMES = %w[materials cutlist outliner importer]
+    SMART_TOOLS_STRIPPED_NAMES = %w[draw handle paint axes export]
 
     # -----
 
@@ -309,9 +310,7 @@ module Ladb::OpenCutList
         end
 
         # Cache loaded defaults
-        unless @app_defaults_cache
-          @app_defaults_cache = {}
-        end
+        @app_defaults_cache = {} unless @app_defaults_cache.is_a?(Hash)
         @app_defaults_cache.store(cache_key, defaults)
 
       end
@@ -417,7 +416,7 @@ module Ladb::OpenCutList
 
                   if values[key].is_a?(String)  # Values must be a string else use default
 
-                    # Remove properties that doesn't exist in default
+                    # Remove properties that do not exist in default
                     # Add properties that exist in default, but not in model
                     # Use prior custom values
 
@@ -491,7 +490,7 @@ module Ladb::OpenCutList
       # Read global presets cache if not previously cached
       read_global_presets if @global_presets_cache.nil?
 
-      # Create preset tree if it doesn't exist
+      # Create the preset tree if it doesn't exist
       @global_presets_cache[dictionary] = {} unless @global_presets_cache.has_key?(dictionary)
       @global_presets_cache[dictionary][section] = {} unless @global_presets_cache[dictionary].has_key?(section)
 
@@ -621,7 +620,7 @@ module Ladb::OpenCutList
       # Read model presets cache if not previously cached
       read_model_presets if @model_presets_cache.nil?
 
-      # Create preset tree if it doesn't exist
+      # Create the preset tree if it doesn't exist
       @model_presets_cache[dictionary] = {} unless @model_presets_cache.has_key?(dictionary)
       @model_presets_cache[dictionary][section] = {} unless @model_presets_cache[dictionary].has_key?(section)
 
@@ -718,9 +717,7 @@ module Ladb::OpenCutList
         events = [ event ]
       end
       events.each do |e|
-        unless @event_callbacks.has_key?(e)
-          @event_callbacks[e] = []
-        end
+        @event_callbacks[e] = [] unless @event_callbacks.has_key?(e)
         @event_callbacks[e].push(block)
       end
       block
@@ -779,18 +776,11 @@ module Ladb::OpenCutList
       # Setup Menu
       menu = UI.menu
       submenu = menu.add_submenu(get_i18n_string('core.menu.submenu'))
-      submenu.add_item(get_i18n_string('tab.materials.title')) {
-        show_tabs_dialog('materials')
-      }
-      submenu.add_item(get_i18n_string('tab.cutlist.title')) {
-        show_tabs_dialog('cutlist')
-      }
-      submenu.add_item(get_i18n_string('tab.outliner.title')) {
-        show_tabs_dialog('outliner')
-      }
-      submenu.add_item(get_i18n_string('tab.importer.title')) {
-        show_tabs_dialog('importer')
-      }
+      TABS_STRIPPED_NAMES.each do |stripped_name|
+        submenu.add_item(get_i18n_string("tab.#{stripped_name}.title")) {
+          show_tabs_dialog(stripped_name)
+        }
+      end
       submenu.add_separator
       submenu.add_item(get_i18n_string('core.menu.item.generate_cutlist')) {
         execute_tabs_dialog_command_on_tab('cutlist', 'generate_cutlist')
@@ -809,7 +799,7 @@ module Ladb::OpenCutList
         fn_get_selected_component_entity.call.nil? ? MF_GRAYED : MF_ENABLED
       }
       submenu.add_separator
-      TOOLS.each do |stripped_name|
+      SMART_TOOLS_STRIPPED_NAMES.each do |stripped_name|
 
         clazz = Object.const_get("Ladb::OpenCutList::Smart#{stripped_name.capitalize}Tool")
 
@@ -866,7 +856,7 @@ module Ladb::OpenCutList
       # Setup Tools Toolbar
       toolbar = UI::Toolbar.new(get_i18n_string('core.toolbar.name') + " - " + get_i18n_string('core.toolbar.tools'))
 
-      TOOLS.each do |stripped_name|
+      SMART_TOOLS_STRIPPED_NAMES.each do |stripped_name|
 
         clazz = Object.const_get("Ladb::OpenCutList::Smart#{stripped_name.capitalize}Tool")
 
@@ -917,9 +907,7 @@ module Ladb::OpenCutList
     def start
 
       # Clear Ruby console if dev running
-      if IS_DEV
-        SKETCHUP_CONSOLE.clear
-      end
+      SKETCHUP_CONSOLE.clear if IS_DEV
 
       # To minimize plugin initialization, start setup is called only once
       unless @started
