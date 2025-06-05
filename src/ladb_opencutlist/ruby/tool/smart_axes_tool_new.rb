@@ -195,6 +195,7 @@ module Ladb::OpenCutList
     # -----
 
     def onToolLButtonUp(tool, flags, x, y, view)
+      super
 
       if @active_part_entity_path.nil?
         UI.beep
@@ -474,10 +475,6 @@ module Ladb::OpenCutList
       true
     end
 
-    def _preview_action
-      super
-    end
-
     def _do_action
 
       definition = @active_part.def.definition
@@ -721,15 +718,58 @@ module Ladb::OpenCutList
       super
       unless @picker.picked_point.nil? || @active_part.nil?
 
+        et = _get_edit_transformation
+
+        instance_info = @active_part.def.get_one_instance_info
+
+        input_point = @picker.picked_point.transform(instance_info.transformation.inverse)
+        ti = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
+
         k_axes_helper = Kuix::AxesHelper.new
-        k_axes_helper.transformation = Geom::Transformation.translation(Geom::Vector3d.new(@picker.picked_point.to_a))
+        k_axes_helper.transformation = et * ti
         @tool.append_3d(k_axes_helper, LAYER_3D_ACTION_PREVIEW)
 
       end
-
     end
 
     def _do_action
+
+      if @picker.picked_point.nil?
+        UI.beep
+        return true
+      end
+
+      instance_info = @active_part.def.get_one_instance_info
+
+      input_point = @picker.picked_point.transform(instance_info.transformation.inverse)
+      ti = Geom::Transformation.translation(Geom::Vector3d.new(input_point.to_a))
+      t = ti.inverse
+
+      definition = @active_part.def.definition
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Change Axes', true, false, false)
+
+        # Transform definition's entities
+        entities = definition.entities
+        entities.transform_entities(t, entities.to_a)
+
+        # Inverse transform definition's instances
+        definition.instances.each do |instance|
+          instance.transformation *= ti
+        end
+
+        if PLUGIN.get_model_preset('cutlist_options')['auto_orient']
+          definition_attributes = DefinitionAttributes.new(definition)
+          definition_attributes.orientation_locked_on_axis = true
+          definition_attributes.write_to_attributes
+        end
+
+      # Commit model modification operation
+      model.commit_operation
+
+      # Fire event
+      PLUGIN.app_observer.model_observer.onDrawingChange
 
     end
 

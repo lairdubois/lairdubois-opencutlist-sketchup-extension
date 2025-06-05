@@ -1889,15 +1889,33 @@ module Ladb::OpenCutList
     COLOR_PART = Sketchup::Color.new(254, 222, 11, 200).freeze
     COLOR_PART_HIGHLIGHTED = Sketchup::Color.new(254, 222, 11, 255).freeze
 
+    COLOR_INSTANCE = Sketchup::Color.new(254, 222, 11, 120).freeze
+    COLOR_INSTANCE_HIGHLIGHTED = Sketchup::Color.new(254, 222, 11, 175).freeze
+
     LAYER_3D_PART_PREVIEW = 0
 
     # -----
+
+    def onToolLButtonDown(tool, flags, x, y, view)
+      unless @active_part_entity_path.nil?
+        _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, true)
+      end
+      false
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+      unless @active_part_entity_path.nil?
+        _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, false)
+      end
+      false
+    end
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
       @global_context_transformation = nil
       @global_instance_transformation = nil
       @drawing_def = nil
       _preview_part(part_entity_path, part, LAYER_3D_PART_PREVIEW, highlighted)
+      false
     end
 
     # -- Menu --
@@ -2105,7 +2123,11 @@ module Ladb::OpenCutList
 
           k_mesh = Kuix::Mesh.new
           k_mesh.add_triangles(triangles)
-          k_mesh.background_color = highlighted ? COLOR_PART_HIGHLIGHTED : COLOR_PART
+          k_mesh.background_color = if highlighted
+                                      path == @active_part_entity_path ? COLOR_PART_HIGHLIGHTED : COLOR_INSTANCE_HIGHLIGHTED
+                                    else
+                                      path == @active_part_entity_path ? COLOR_PART : COLOR_INSTANCE
+                                    end
           k_mesh.transformation = t
           @tool.append_3d(k_mesh, layer)
 
