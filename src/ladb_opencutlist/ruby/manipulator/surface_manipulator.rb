@@ -60,7 +60,7 @@ module Ladb::OpenCutList
 
     def outer_loops_points
       if @outer_loops_points.nil?
-        @outer_loops_points = @faces.map { |face| face.outer_loop.vertices.map { |vertex| vertex.position.transform(@transformation) } }.flatten
+        @outer_loops_points = @faces.flat_map { |face| face.outer_loop.vertices.map { |vertex| vertex.position.transform(@transformation) } }
         @outer_loops_points.reverse! if flipped?
       end
       @outer_loops_points

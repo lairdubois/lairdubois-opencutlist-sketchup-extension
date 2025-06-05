@@ -420,7 +420,7 @@ module Ladb::OpenCutList
         item_types = []
 
         # Add items from parts
-        parts.map { |part| part.instance_of?(FolderPart) ? part.children : part }.flatten(1).each do |part|
+        parts.flat_map { |part| part.instance_of?(FolderPart) ? part.children : part }.each do |part|
 
           count = part.count
           projection_def = _compute_part_projection_def(@part_drawing_type, part, compute_shell: true)

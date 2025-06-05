@@ -176,9 +176,7 @@ module Ladb::OpenCutList
     end
 
     def curve_def
-      if @curve_def.nil?
-        @curve_def = Geometrix::CurveFinder.find_curve_def(points, closed?)
-      end
+      @curve_def ||= Geometrix::CurveFinder.find_curve_def(points, closed?)
       @curve_def
     end
 
@@ -199,9 +197,7 @@ module Ladb::OpenCutList
     end
 
     def segments
-      if @segments.nil?
-        @segments = @points.each_cons(2).to_a.flatten
-      end
+      @segments ||= @points.each_cons(2).to_a.flatten
       @segments
     end
 
@@ -223,9 +219,7 @@ module Ladb::OpenCutList
     end
 
     def segments
-      if @segments.nil?
-        @segments = (@points + [ @points.first ]).each_cons(2).to_a.flatten # Append first point at the end to close loop
-      end
+      @segments ||= (@points + [ @points.first ]).each_cons(2).to_a.flatten # Append first point at the end to close loop
       @segments
     end
 

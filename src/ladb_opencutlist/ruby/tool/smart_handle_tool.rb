@@ -718,9 +718,9 @@ module Ladb::OpenCutList
     def _get_drawing_def_segments(drawing_def)
       segments = []
       if drawing_def.is_a?(DrawingDef)
-        segments += drawing_def.cline_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-        segments += drawing_def.edge_manipulators.map { |manipulator| manipulator.segment }.flatten(1)
-        segments += drawing_def.curve_manipulators.map { |manipulator| manipulator.segments }.flatten(1)
+        segments += drawing_def.cline_manipulators.flat_map { |manipulator| manipulator.segment }
+        segments += drawing_def.edge_manipulators.flat_map { |manipulator| manipulator.segment }
+        segments += drawing_def.curve_manipulators.flat_map { |manipulator| manipulator.segments }
       end
       segments
     end

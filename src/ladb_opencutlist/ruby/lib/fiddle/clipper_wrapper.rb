@@ -9,7 +9,7 @@ module Ladb::OpenCutList::Fiddle
 
     # Convert Array<Geom::Point3d> to Array<Integer> (x1, y1, x2, y2, ...)
     def points_to_rpath(points)
-      points.map { |point| [ point.x, point.y ] }.flatten
+      points.flat_map { |point| [ point.x, point.y ] }
     end
 
     # Convert Array<Integer> (x1, y1, x2, y2, ...) to Array<Geom::Point3d>
@@ -63,7 +63,7 @@ module Ladb::OpenCutList::Fiddle
     # Returns Fiddle::Pointer
     def _rpaths_to_cpaths(rpaths)
       len = 2 ; rpaths.each { |rpath| len += 2 + rpath.length }   # .sum {...} incompatible with ruby < 2.4
-      _array_to_ptr_double([ len, rpaths.length ].concat(rpaths.map { |rpath| _array_prepend_n_0_counter(rpath) }.flatten(1)))
+      _array_to_ptr_double([ len, rpaths.length ].concat(rpaths.flat_map { |rpath| _array_prepend_n_0_counter(rpath) }))
     end
 
     # --- C to Ruby

@@ -27,7 +27,7 @@ module Ladb::OpenCutList::Kuix
           delta = 2 * Math::PI / segment_count
           half_size = size / 2.0
           outer_points = Array.new(segment_count + 1) { |i| Geom::Point3d.new(screen_point.x + half_size * Math.cos(i * delta), screen_point.y + half_size * Math.sin(i * delta)) }
-          triangles = outer_points.each_cons(2).to_a.map { |p1, p2| [ p1, p2, screen_point ] }.flatten(1)
+          triangles = outer_points.each_cons(2).to_a.flat_map { |p1, p2| [ p1, p2, screen_point ] }
 
           set_line_stipple(LINE_STIPPLE_SOLID)
           unless fill_color.nil?
