@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../../utils/unit_utils'
+  require_relative '../../utils/path_utils'
   require_relative '../../model/attributes/material_attributes'
 
   class FormulaWrapper
@@ -378,8 +379,42 @@ module Ladb::OpenCutList
 
   class ComponentInstanceFormulaWrapper < DrawingElementFormulaWrapper
 
-    def initialize(value)
+    def initialize(value, path = [])
       super(value, Sketchup::ComponentInstance)
+      @path = path
+    end
+
+    private def _local_position
+      ta = transformation.to_a
+      Geom::Point3d.new(ta[12], ta[13], ta[14])
+    end
+
+    def local_x
+      LengthFormulaWrapper.new(_local_position.x, true, true)
+    end
+
+    def local_y
+      LengthFormulaWrapper.new(_local_position.y, true, true)
+    end
+
+    def local_z
+      LengthFormulaWrapper.new(_local_position.z, true, true)
+    end
+
+    private def _world_position
+      ORIGIN.transform(PathUtils.get_transformation(@path, IDENTITY))
+    end
+
+    def world_x
+      LengthFormulaWrapper.new(_world_position.x, true, true)
+    end
+
+    def world_y
+      LengthFormulaWrapper.new(_world_position.y, true, true)
+    end
+
+    def world_z
+      LengthFormulaWrapper.new(_world_position.z, true, true)
     end
 
     # -- Privatisation
@@ -465,12 +500,11 @@ module Ladb::OpenCutList
 
   class LengthFormulaWrapper < FloatFormulaWrapper
 
-    def initialize(value, output_to_model_unit = true)
-      if value.is_a?(Length)
-        value = value.to_f
-      end
+    def initialize(value, output_to_model_unit = true, output_zero = false)
+      value = value.to_f if value.is_a?(Length)
       super(value)
       @output_to_model_unit = output_to_model_unit
+      @output_zero = output_zero
     end
 
     def *(value)
@@ -484,7 +518,7 @@ module Ladb::OpenCutList
     end
 
     def to_s
-      return '' if @value == 0
+      return '' if @value == 0 && !@output_zero
       return DimensionUtils.format_to_readable_length(@value) unless @output_to_model_unit
       @value.to_l.to_s.gsub(/^~ /, '')  # Remove ~ character if it exists
     end

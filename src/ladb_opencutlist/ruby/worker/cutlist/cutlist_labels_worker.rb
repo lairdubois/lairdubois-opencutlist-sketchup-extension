@@ -88,8 +88,9 @@ module Ladb::OpenCutList
               layer_name = instance_info.layer.name
               definition = instance_info.definition
               entity = instance_info.entity
+              entity_path = instance_info.path
 
-              entries << _create_entry(part, thickness_layer, position_in_batch, bin, entity_named_path, entity_name, layer_name, definition, entity)
+              entries << _create_entry(part, thickness_layer, position_in_batch, bin, entity_named_path, entity_name, layer_name, definition, entity, entity_path)
 
               break if @compute_first_instance_only
             end
@@ -99,6 +100,7 @@ module Ladb::OpenCutList
           break if @compute_first_instance_only
         end
 
+        break if @compute_first_instance_only
       end
 
       { :entries => entries.sort { |entry_a, entry_b| LabelEntry::entry_order(entry_a, entry_b, @part_order_strategy) }.map!(&:to_hash) }
@@ -119,7 +121,7 @@ module Ladb::OpenCutList
       CommonEvalFormulaWorker.new(formula: formula, data: data).run
     end
 
-    def _create_entry(part, thickness_layer, position_in_batch, bin, entity_named_path = '', entity_name = '', layer_name = '', definition = nil, entity = nil)
+    def _create_entry(part, thickness_layer, position_in_batch, bin, entity_named_path = '', entity_name = '', layer_name = '', definition = nil, entity = nil, entity_path = [])
 
       # Create the label entry
       entry = LabelEntry.new(part)
@@ -161,7 +163,7 @@ module Ladb::OpenCutList
             layer: StringFormulaWrapper.new(layer_name),
 
             component_definition: ComponentDefinitionFormulaWrapper.new(definition),
-            component_instance: ComponentInstanceFormulaWrapper.new(entity),
+            component_instance: ComponentInstanceFormulaWrapper.new(entity, entity_path),
 
             batch: BatchFormulaWrapper.new(position_in_batch, part.count),
             bin: IntegerFormulaWrapper.new(bin),
