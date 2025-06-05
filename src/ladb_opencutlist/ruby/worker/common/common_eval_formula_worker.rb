@@ -25,6 +25,7 @@ module Ladb::OpenCutList
 
       begin
 
+        # This parser is designed to generate an error if the input formula contains a forbidden keyword, command, or const usage
         FormulaParser.new(@formula, @data).parse
 
       rescue ForbiddenFormulaError => e
