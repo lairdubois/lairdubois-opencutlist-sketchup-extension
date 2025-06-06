@@ -5,7 +5,7 @@
             <div class="ladb-comment-author"><a href="https://opencollective.com/{{ comment.fromAccount.slug }}" target="_blank">{{ comment.fromAccount.name }}</a></div>
             <div class="ladb-comment-age">{{ comment.createdAt|date(('default.date_format'|i18next)) }}</div>
         </div>
-        <div class="ladb-comment-body">{{ comment.html|sanitize_links }}</div>
+        <div class="ladb-comment-body">{{ comment.html|raw|sanitize_links }}</div>
         <ul class="ladb-comment-reactions">
             {% for reaction, count in comment.reactions %}
                 <li>{{ reaction }} {{ count }}</li>

@@ -579,7 +579,12 @@ LadbAbstractDialog.prototype.init = function () {
         });
     });
     Twig.extendFilter('sanitize_links', function (value, options) {
-        return value.replace(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1>/g, '<a href="$2" target="_blank">');
+        // Remove OpenCollective redirections
+        value = value.replace(/<a href="https:\/\/opencollective.com\/redirect\?url=([^"']+)">/gm, (match, urlEncoded) => {
+            return '<a href="' + decodeURIComponent(urlEncoded) + '">';
+        });
+        // Add _blank target
+        return value.replace(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1>/gm, '<a href="$2" target="_blank">');
     });
     Twig.extendFilter('type_of', function (value) {
         return typeof value;

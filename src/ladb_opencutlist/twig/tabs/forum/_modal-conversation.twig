@@ -22,7 +22,7 @@
 
 {% block bodyInner %}
     <div class="ladb-forum-conversation-body">
-        {{ conversation.body.html|sanitize_links }}
+        {{ conversation.body.html|raw|sanitize_links }}
     </div>
     <div style="margin-left: 19px; border-left: 2px solid #ddd; padding-left: 19px; margin-top: 20px;">
         {% for comment in conversation.comments.nodes %}

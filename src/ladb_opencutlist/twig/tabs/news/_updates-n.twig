@@ -13,7 +13,7 @@
                     </div>
                 </div>
             </div>
-            <div class="ladb-news-update-body">{{ update.html|sanitize_links }}</div>
+            <div class="ladb-news-update-body">{{ update.html|raw|sanitize_links }}</div>
             <ul class="ladb-news-update-reactions">
                 {% for reaction, count in update.reactions %}
                     <li>{{ reaction }} {{ count }}</li>
