@@ -277,7 +277,7 @@ module Ladb::OpenCutList
                        else
                          origin_corner.to_i
                        end
-      @hide_edges_preview = if problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL || problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+      @hide_edges_preview = if problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
                               true  # Force hide edges preview to true if ONEDIMENSIONAL or IRREGULAR
                             else
                               hide_edges_preview
@@ -427,8 +427,8 @@ module Ladb::OpenCutList
 
           if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
 
-            length = part.def.size.length
-            width = part.def.size.width
+            length = part.def.edge_cutting_length
+            width = part.def.edge_cutting_width
 
             shapes = projection_def.shell_def.shape_defs.map { |shape_def| {
               type: 'polygon',
@@ -764,9 +764,9 @@ module Ladb::OpenCutList
         if @group.def.material_attributes.l_length_increase > 0 || @group.def.material_attributes.l_width_increase > 0
           packing_def.warnings << [ "tab.cutlist.packing.warning.cutting_dimensions_increase_#{@group.material_is_1d ? '1d' : '2d'}", { :material_name => @group.material_name, :length_increase => @group.def.material_attributes.length_increase, :width_increase => @group.def.material_attributes.width_increase } ]
         end
-        if @group.edge_decremented
-          packing_def.warnings << 'tab.cutlist.packing.warning.cutting_dimensions_edge_decrement'
-        end
+      end
+      if @group.edge_decremented
+        packing_def.warnings << 'tab.cutlist.packing.warning.cutting_dimensions_edge_decrement'
       end
 
       # Errors
@@ -894,8 +894,8 @@ module Ladb::OpenCutList
           px_item_x = _to_px(item_def.x)
           px_item_y = _to_px(item_def.y)
 
-          px_part_length = _to_px(part_def.size.length)
-          px_part_width = _to_px(part_def.size.width)
+          px_part_length = _to_px(part_def.edge_cutting_length)
+          px_part_width = _to_px(part_def.edge_cutting_width)
 
           bounds = _compute_item_bounds_in_bin_space(px_item_length, px_item_width, item_def)
 

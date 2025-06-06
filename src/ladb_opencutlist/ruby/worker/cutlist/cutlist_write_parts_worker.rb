@@ -145,6 +145,7 @@ module Ladb::OpenCutList
                                                         smoothing: @smoothing,
                                                         merge_holes: @merge_holes,
                                                         merge_holes_overflow: @merge_holes_overflow,
+                                                        mask: _compute_part_mask(@part_drawing_type, part, drawing_def),
                                                         parts_stroke_color: @parts_stroke_color,
                                                         parts_fill_color: @parts_fill_color,
                                                         parts_holes_stroke_color: @parts_holes_stroke_color,

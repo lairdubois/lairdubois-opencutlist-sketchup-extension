@@ -10,7 +10,16 @@ module Ladb::OpenCutList
 
     VENEERS_Z = [ :zmin, :zmax ]
 
-    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :description, :url, :count, :cutting_size, :size, :scale, :flipped, :material_name, :material_origins, :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :tags, :symmetrical, :ignore_grain_direction, :length_increase, :width_increase, :thickness_increase, :edge_count, :edge_pattern, :edge_entity_ids, :edge_length_decrement, :edge_width_decrement, :edge_decremented, :face_count, :face_pattern, :face_entity_ids, :face_texture_angles, :face_thickness_decrement, :face_decremented, :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area, :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
+    attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :description, :url, :count,
+                  :cutting_size, :size, :scale, :flipped,
+                  :material_name, :material_origins,
+                  :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis,
+                  :tags, :symmetrical, :ignore_grain_direction,
+                  :length_increase, :width_increase, :thickness_increase,
+                  :edge_count, :edge_pattern, :edge_entity_ids, :edge_decrements, :edge_length_decrement, :edge_width_decrement, :edge_decremented,
+                  :face_count, :face_pattern, :face_entity_ids, :face_decrements, :face_texture_angles, :face_thickness_decrement, :face_decremented,
+                  :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area,
+                  :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
     attr_reader :id, :virtual, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_errors, :face_material_names, :face_material_colors, :face_std_dimensions, :face_errors, :entity_ids, :entity_serialized_paths, :entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs, :veneer_materials, :veneer_group_defs, :drawing_defs
 
     def initialize(id, virtual = false)
@@ -47,20 +56,22 @@ module Ladb::OpenCutList
       @edge_material_names = {}
       @edge_material_colors = {}
       @edge_std_dimensions = {}
+      @edge_entity_ids = {}
+      @edge_decrements = {}
       @edge_length_decrement = 0
       @edge_width_decrement = 0
       @edge_decremented = false
-      @edge_entity_ids = {}
       @edge_errors = []
       @face_count = 0
       @face_pattern = nil                 # A string from 00 to 11
       @face_material_names = {}
       @face_material_colors = {}
       @face_std_dimensions = {}
+      @face_entity_ids = {}
+      @face_decrements = {}
+      @face_texture_angles = {}
       @face_thickness_decrement = 0
       @face_decremented = false
-      @face_entity_ids = {}
-      @face_texture_angles = {}
       @face_errors = []
       @entity_ids = []                    # All unique entity ids (array count could be smaller than @count)
       @entity_serialized_paths = []       # All Serialized paths to each entity (array count should be egals to @count)
@@ -213,11 +224,11 @@ module Ladb::OpenCutList
     end
 
     def edge_cutting_length
-      [@size.length - @edge_length_decrement, 0].max.to_l
+      [ @size.length - @edge_length_decrement, 0 ].max.to_l
     end
 
     def edge_cutting_width
-      [@size.width - @edge_width_decrement, 0].max.to_l
+      [ @size.width - @edge_width_decrement, 0 ].max.to_l
     end
 
     def cumulative_cutting_length
@@ -302,11 +313,21 @@ module Ladb::OpenCutList
 
     def set_edge_entity_ids(edge_ymin_entity_ids, edge_ymax_entity_ids, edge_xmin_entity_ids, edge_xmax_entity_ids)
 
-      # Store materials internaly
+      # Store entity ids internaly
       @edge_entity_ids.store(:ymin, edge_ymin_entity_ids) unless edge_ymin_entity_ids.nil?
       @edge_entity_ids.store(:ymax, edge_ymax_entity_ids) unless edge_ymax_entity_ids.nil?
       @edge_entity_ids.store(:xmin, edge_xmin_entity_ids) unless edge_xmin_entity_ids.nil?
       @edge_entity_ids.store(:xmax, edge_xmax_entity_ids) unless edge_xmax_entity_ids.nil?
+
+    end
+
+    def set_edge_decrements(edge_ymin_decrement, edge_ymax_decrement, edge_xmin_decrement, edge_xmax_decrement)
+
+      # Store decrements internaly
+      @edge_decrements.store(:ymin, edge_ymin_decrement) unless edge_ymin_decrement.nil?
+      @edge_decrements.store(:ymax, edge_ymax_decrement) unless edge_ymax_decrement.nil?
+      @edge_decrements.store(:xmin, edge_xmin_decrement) unless edge_xmin_decrement.nil?
+      @edge_decrements.store(:xmax, edge_xmax_decrement) unless edge_xmax_decrement.nil?
 
     end
 
@@ -350,15 +371,23 @@ module Ladb::OpenCutList
 
     def set_veneer_entity_ids(veneer_zmin_entity_ids, veneer_zmax_entity_ids)
 
-      # Store materials internaly
+      # Store entity ids internaly
       @face_entity_ids.store(:zmin, veneer_zmin_entity_ids) unless veneer_zmin_entity_ids.nil?
       @face_entity_ids.store(:zmax, veneer_zmax_entity_ids) unless veneer_zmax_entity_ids.nil?
 
     end
 
+    def set_veneer_decrements(veneer_zmin_decrement, veneer_zmax_decrement)
+
+      # Store decrements internaly
+      @face_decrements.store(:zmin, veneer_zmin_decrement) unless veneer_zmin_decrement.nil?
+      @face_decrements.store(:zmax, veneer_zmax_decrement) unless veneer_zmax_decrement.nil?
+
+    end
+
     def set_veneer_texture_angles(veneer_zmin_texture_angles, veneer_zmax_texture_angles)
 
-      # Store materials internaly
+      # Store texture angles internaly
       @face_texture_angles.store(:zmin, veneer_zmin_texture_angles) unless veneer_zmin_texture_angles.nil?
       @face_texture_angles.store(:zmax, veneer_zmax_texture_angles) unless veneer_zmax_texture_angles.nil?
 

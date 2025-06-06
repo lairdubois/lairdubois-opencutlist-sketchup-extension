@@ -31,6 +31,7 @@ module Ladb::OpenCutList
                    smoothing: false,
                    merge_holes: false,
                    merge_holes_overflow: 0,
+                   mask: nil,
 
                    parts_stroke_color: nil,
                    parts_fill_color: nil,
@@ -52,6 +53,7 @@ module Ladb::OpenCutList
       @smoothing = smoothing
       @merge_holes = merge_holes
       @merge_holes_overflow = (@merge_holes ? merge_holes_overflow : 0).to_l
+      @mask = mask
 
       @parts_stroke_color = ColorUtils.color_create(parts_stroke_color)
       @parts_fill_color = ColorUtils.color_create(parts_fill_color)
@@ -85,7 +87,8 @@ module Ladb::OpenCutList
           projection_def = CommonDrawingProjectionWorker.new(@drawing_def,
                                                              origin_position: @anchor ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
                                                              merge_holes: @merge_holes,
-                                                             merge_holes_overflow: @merge_holes_overflow
+                                                             merge_holes_overflow: @merge_holes_overflow,
+                                                             mask: @mask,
           ).run
           if projection_def.is_a?(DrawingProjectionDef)
 

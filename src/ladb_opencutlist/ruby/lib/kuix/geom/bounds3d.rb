@@ -163,13 +163,21 @@ module Ladb::OpenCutList::Kuix
 
     # -- Manipulations --
 
-    def add!(point)
-      set!(
-        [ x_min, point.x ].min,
-        [ y_min, point.y ].min,
-        [ z_min, point.z ].min
-      )
+    def add!(points)
+      points = [ points ] unless points.is_a?(Array)
+      points.each do |point|
+        set!(
+          [ x_min, point.x ].min,
+          [ y_min, point.y ].min,
+          [ z_min, point.z ].min,
+          [ x_max, point.x ].max - x_min,
+          [ z_max , point.z ].max - z_min,
+          [ y_max , point.y ].max - y_min
+        )
+      end
+      self
     end
+
 
     def union!(bounds)
       if is_empty?
@@ -265,12 +273,12 @@ module Ladb::OpenCutList::Kuix
 
     # --
 
-    def to_s
-      "#{self.class.name} (origin=#{@origin}, size=#{@size})"
-    end
-
     def to_b
       Geom::BoundingBox.new.add([ min, max ])
+    end
+
+    def to_s
+      "#{self.class.name} (origin=#{@origin}, size=#{@size})"
     end
 
   end

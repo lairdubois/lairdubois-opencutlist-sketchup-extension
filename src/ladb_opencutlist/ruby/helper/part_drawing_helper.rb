@@ -65,6 +65,42 @@ module Ladb::OpenCutList
       nil
     end
 
+    def _compute_part_mask(part_drawing_type, part, drawing_def)
+      if (part_def = part.def).edge_decremented &&
+         (part_drawing_type == PART_DRAWING_TYPE_2D_TOP || part_drawing_type == PART_DRAWING_TYPE_2D_BOTTOM)
+
+        # Create a mask (rectangle shape) corresponding to edge decrement
+
+        face_bounds = drawing_def.faces_bounds
+        min = face_bounds.min
+        max = face_bounds.max
+
+        unless (xmin_edge_decrement = part_def.edge_decrements[:xmin]).nil?
+          min.offset!(Geom::Vector3d.new(xmin_edge_decrement, 0))
+        end
+        unless (xmax_edge_decrement = part_def.edge_decrements[:xmax]).nil?
+          max.offset!(Geom::Vector3d.new(-xmax_edge_decrement, 0))
+        end
+        unless (ymin_edge_decrement = part_def.edge_decrements[:ymin]).nil?
+          min.offset!(Geom::Vector3d.new(0, ymin_edge_decrement))
+        end
+        unless (ymax_edge_decrement = part_def.edge_decrements[:ymax]).nil?
+          max.offset!(Geom::Vector3d.new(0, -ymax_edge_decrement))
+        end
+
+        mask_bounds = Geom::BoundingBox.new
+        mask_bounds.add(min, max)
+
+        return [
+          mask_bounds.corner(0),
+          mask_bounds.corner(1),
+          mask_bounds.corner(3),
+          mask_bounds.corner(2)
+        ]
+      end
+      nil
+    end
+
     def _compute_part_projection_def(part_drawing_type, part,
                                      projection_defs_cache: {},
                                      ignore_edges: true,
@@ -88,7 +124,8 @@ module Ladb::OpenCutList
                                                          origin_position: origin_position,
                                                          merge_holes: merge_holes,
                                                          merge_holes_overflow: merge_holes_overflow,
-                                                         compute_shell: compute_shell
+                                                         compute_shell: compute_shell,
+                                                         mask: _compute_part_mask(part_drawing_type, part, drawing_def)
       ).run
       if projection_def.is_a?(DrawingProjectionDef)
         projection_defs_cache[part.id] = projection_def if use_cache && projection_defs_cache.is_a?(Hash)

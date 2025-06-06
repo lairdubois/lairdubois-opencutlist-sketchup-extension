@@ -214,8 +214,8 @@ module Ladb::OpenCutList
           item_x = item_def.x
           item_y = item_def.y
 
-          part_length = part_def.size.length
-          part_width = part_def.size.width
+          part_length = part_def.edge_cutting_length
+          part_width = part_def.edge_cutting_length
 
           bounds = _compute_item_bounds_in_bin_space(item_length, item_width, item_def)
 
@@ -457,8 +457,8 @@ module Ladb::OpenCutList
               item_length = item_type_def.length
               item_width = is_1d ? bin_width : item_type_def.width
 
-              part_length = part_def.size.length
-              part_width = part_def.size.width
+              part_length = part_def.edge_cutting_length
+              part_width = part_def.edge_cutting_width
 
               position = Geom::Point3d.new(
                 -item_length / 2,
@@ -522,8 +522,8 @@ module Ladb::OpenCutList
             item_x = item_def.x
             item_y = item_def.y
 
-            part_length = part_def.size.length
-            part_width = part_def.size.width
+            part_length = part_def.edge_cutting_length
+            part_width = part_def.edge_cutting_width
 
             bounds = _compute_item_bounds_in_bin_space(item_length, item_width, item_def)
 

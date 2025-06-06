@@ -5,9 +5,11 @@
 {% set binSuffix1 = group.material_is_1d ? '1d' : '2d' %}
 {% set binSuffix2 = group.material_type_strippedname %}
 
-{% set showCuttingDimensions = group.show_cutting_dimensions and solution.options.problem_type != 'irregular' %}{# PROBLEM_TYPE_IRREGULAR #}
+{% set showCuttingDimensions = group.show_cutting_dimensions %}
 {% set showEdges = group.show_edges and not generateOptions.hide_edges %}
 {% set showFaces = group.show_faces and not generateOptions.hide_faces %}
+{% set hideCuttingDim = solution.options.problem_type == 'irregular' %}
+{% set hideCumulable = true %}
 
 {% block headerInner %}
     {{ parent() }}

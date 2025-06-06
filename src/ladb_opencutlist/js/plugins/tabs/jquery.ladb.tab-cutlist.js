@@ -2542,7 +2542,7 @@
                     if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
                     if (isDebug) $formGroupDebug.show(); else $formGroupDebug.hide();
                     $('option[value=0]', $selectPartDrawingType).prop('disabled', isIrregular);
-                    if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);
+                    if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);   // PART_DRAWING_TYPE_2D_TOP
                     $selectPartDrawingType.selectpicker('refresh');
                 };
                 const fnValidProblemType = function (problemType) {

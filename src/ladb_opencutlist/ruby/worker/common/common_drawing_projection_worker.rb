@@ -21,7 +21,9 @@ module Ladb::OpenCutList
                    origin_position: ORIGIN_POSITION_DEFAULT,
                    merge_holes: false,
                    merge_holes_overflow: 0,
-                   compute_shell: false
+                   compute_shell: false,
+
+                   mask: nil
 
     )
 
@@ -31,6 +33,8 @@ module Ladb::OpenCutList
       @merge_holes = merge_holes                    # Holes are moved to the "hole" layer, and all down layers holes are merged to their upper layer
       @merge_holes_overflow = (@merge_holes ? merge_holes_overflow : 0).to_l
       @compute_shell = compute_shell                # In addition to layers, shell def (outer + holes shapes) is computed.
+
+      @mask = mask
 
     end
 
@@ -139,6 +143,24 @@ module Ladb::OpenCutList
       splds.each do |layer_def|
         next if layer_def.closed_paths.one?
         layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: layer_def.closed_paths)
+      end
+
+      # Intersect with mask if it exists
+      unless @mask.nil?
+
+        mask_paths = [ Clippy.points_to_rpath(@mask) ]
+        splds.each do |layer_def|
+          layer_def.closed_paths, op = Clippy.execute_intersection(closed_subjects: layer_def.closed_paths, clips: mask_paths)
+        end
+
+        mask_bounds = Geom::BoundingBox.new.add(@mask).add(Geom::Point3d.new(@mask.first.x, @mask.first.y, z_max))
+        faces_bounds = faces_bounds.intersect(mask_bounds) unless faces_bounds.empty?
+        edges_bounds = edges_bounds.intersect(mask_bounds) unless edges_bounds.empty?
+
+        bounds = Geom::BoundingBox.new
+        bounds.add(faces_bounds)
+        bounds.add(edges_bounds)
+
       end
 
       # Up to Down difference

@@ -99,7 +99,7 @@ module Ladb::OpenCutList
 
       return { :errors => [ 'default.error' ] } unless drawing_element.is_a?(Sketchup::Drawingelement) || drawing_element.is_a?(Sketchup::Model)
 
-      # Compute transformation to drawing element
+      # Compute transformation to the drawing element
       transformation = origin_transformation = PathUtils::get_transformation(@path, IDENTITY)
 
       # Adapt local axes if model.active_path is container_path
@@ -294,7 +294,7 @@ module Ladb::OpenCutList
         drawing_def.face_manipulators.each do |face_manipulator|
           drawing_def.faces_bounds.add(face_manipulator.outer_loop_manipulator.points)
         end
-        drawing_def.bounds.add(drawing_def.faces_bounds.min, drawing_def.faces_bounds.max) if drawing_def.faces_bounds.valid?
+        drawing_def.bounds.add(drawing_def.faces_bounds) if drawing_def.faces_bounds.valid?
       end
       unless @ignore_edges
         drawing_def.edge_manipulators.each do |edge_manipulator|
@@ -303,13 +303,13 @@ module Ladb::OpenCutList
         drawing_def.curve_manipulators.each do |curve_manipulator|
           drawing_def.edges_bounds.add(curve_manipulator.points)
         end
-        drawing_def.bounds.add(drawing_def.edges_bounds.min, drawing_def.edges_bounds.max) if drawing_def.edges_bounds.valid?
+        drawing_def.bounds.add(drawing_def.edges_bounds) if drawing_def.edges_bounds.valid?
       end
       unless @ignore_clines
         drawing_def.cline_manipulators.each do |cline_manipulator|
           drawing_def.clines_bounds.add(cline_manipulator.points) unless cline_manipulator.infinite?
         end
-        drawing_def.bounds.add(drawing_def.clines_bounds.min, drawing_def.clines_bounds.max) if drawing_def.clines_bounds.valid?
+        drawing_def.bounds.add(drawing_def.clines_bounds) if drawing_def.clines_bounds.valid?
       end
 
       # STEP 4 : Customize origin

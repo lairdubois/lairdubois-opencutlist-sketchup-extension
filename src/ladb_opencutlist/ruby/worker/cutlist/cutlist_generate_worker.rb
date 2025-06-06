@@ -307,14 +307,14 @@ module Ladb::OpenCutList
           edge_xmin_material_attributes = _get_material_attributes(edge_xmin_material)
           edge_xmax_material_attributes = _get_material_attributes(edge_xmax_material)
 
-          # Compute Length and Width decrements
-          length_decrement = 0
-          length_decrement += edge_xmin_material_attributes.l_thickness if edge_xmin_material_attributes.edge_decremented
-          length_decrement += edge_xmax_material_attributes.l_thickness if edge_xmax_material_attributes.edge_decremented
-          width_decrement = 0
-          width_decrement += edge_ymin_material_attributes.l_thickness if edge_ymin_material_attributes.edge_decremented
-          width_decrement += edge_ymax_material_attributes.l_thickness if edge_ymax_material_attributes.edge_decremented
-          edge_decremented = edge_xmin_material_attributes.edge_decremented || edge_xmax_material_attributes.edge_decremented || edge_ymin_material_attributes.edge_decremented || edge_ymax_material_attributes.edge_decremented
+          # Compute decrements
+          ymin_decrement = edge_ymin_material_attributes.edge_decremented ? edge_ymin_material_attributes.l_thickness : 0
+          ymax_decrement = edge_ymax_material_attributes.edge_decremented ? edge_ymax_material_attributes.l_thickness : 0
+          xmin_decrement = edge_xmin_material_attributes.edge_decremented ? edge_xmin_material_attributes.l_thickness : 0
+          xmax_decrement = edge_xmax_material_attributes.edge_decremented ? edge_xmax_material_attributes.l_thickness : 0
+          length_decrement = xmin_decrement + xmax_decrement
+          width_decrement = ymin_decrement + ymax_decrement
+          edge_decremented = length_decrement > 0 || width_decrement > 0
 
           # Populate EdgeDef
           edges_def = {
@@ -326,6 +326,10 @@ module Ladb::OpenCutList
             :ymax_entity_ids => ymax_face_infos.collect { |face_info| face_info.face.entityID },
             :xmin_entity_ids => xmin_face_infos.collect { |face_info| face_info.face.entityID },
             :xmax_entity_ids => xmax_face_infos.collect { |face_info| face_info.face.entityID },
+            :ymin_decrement => ymin_decrement.to_l,
+            :ymax_decrement => ymax_decrement.to_l,
+            :xmin_decrement => xmin_decrement.to_l,
+            :xmax_decrement => xmax_decrement.to_l,
             :length_decrement => length_decrement.to_l,
             :width_decrement => width_decrement.to_l,
             :decremented => edge_decremented,
@@ -362,9 +366,9 @@ module Ladb::OpenCutList
           veneer_zmax_material_attributes = _get_material_attributes(veneer_zmax_material)
 
           # Compute Thickness decrements
-          thickness_decrement = 0
-          thickness_decrement += veneer_zmin_material_attributes.l_thickness
-          thickness_decrement += veneer_zmax_material_attributes.l_thickness
+          zmin_decrement = veneer_zmin_material_attributes.l_thickness
+          zmax_decrement = veneer_zmax_material_attributes.l_thickness
+          thickness_decrement = zmin_decrement + zmax_decrement
           veneer_decremented = thickness_decrement > 0
 
           # Compute texture angles
@@ -379,6 +383,8 @@ module Ladb::OpenCutList
             :zmax_entity_ids => zmax_face_infos.collect { |face_info| face_info.face.entityID },
             :zmin_texture_angle => veneer_zmin_texture_angle,
             :zmax_texture_angle => veneer_zmax_texture_angle,
+            :zmin_decrement => zmin_decrement.to_l,
+            :zmax_decrement => zmax_decrement.to_l,
             :thickness_decrement => thickness_decrement.to_l,
             :decremented => veneer_decremented
           }
@@ -579,6 +585,7 @@ module Ladb::OpenCutList
                 part_def.set_edge_materials(edges_def[:ymin_material], edges_def[:ymax_material], edges_def[:xmin_material], edges_def[:xmax_material])
                 part_def.set_edge_entity_ids(edges_def[:ymin_entity_ids], edges_def[:ymax_entity_ids], edges_def[:xmin_entity_ids], edges_def[:xmax_entity_ids])
                 part_def.set_edge_group_defs(edge_ymin_group_def, edge_ymax_group_def, edge_xmin_group_def, edge_xmax_group_def)
+                part_def.set_edge_decrements(edges_def[:ymin_decrement], edges_def[:ymax_decrement], edges_def[:xmin_decrement], edges_def[:xmax_decrement])
                 part_def.edge_length_decrement = edges_def[:length_decrement]
                 part_def.edge_width_decrement = edges_def[:width_decrement]
                 part_def.edge_decremented = edges_def[:decremented]
