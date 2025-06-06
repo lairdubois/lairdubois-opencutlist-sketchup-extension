@@ -337,26 +337,26 @@ module Ladb::OpenCutList
 
         end
 
-        # unless pld.border_closed_paths.empty?
-        #
-        #   polygons = pld.border_closed_paths.map { |path|
-        #     points = Clippy.rpath_to_points(path, z_max - pld.depth)
-        #     points.reverse! unless Clippy.is_rpath_positive?(path)  # Force CCW
-        #     DrawingProjectionPolygonDef.new(points, true)
-        #   }.compact
-        #   projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_BORDERS, '', polygons) unless polygons.empty?
-        #
-        # end
-        #
-        # unless pld.border_open_paths.empty?
-        #
-        #   polylines = pld.border_open_paths.map { |path|
-        #     points = Clippy.rpath_to_points(path, z_max - pld.depth)
-        #     DrawingProjectionPolylineDef.new(points)
-        #   }.compact
-        #   projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_BORDERS, '', polylines) unless polylines.empty?
-        #
-        # end
+        unless pld.border_closed_paths.empty?
+
+          polygons = pld.border_closed_paths.map { |path|
+            points = Clippy.rpath_to_points(path, z_max - pld.depth)
+            points.reverse! unless Clippy.is_rpath_positive?(path)  # Force CCW
+            DrawingProjectionPolygonDef.new(points, true)
+          }
+          projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_BORDERS, '', polygons) unless polygons.empty?
+
+        end
+
+        unless pld.border_open_paths.empty?
+
+          polylines = pld.border_open_paths.map { |path|
+            points = Clippy.rpath_to_points(path, z_max - pld.depth)
+            DrawingProjectionPolylineDef.new(points)
+          }
+          projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_BORDERS, '', polylines) unless polylines.empty?
+
+        end
 
       end
 

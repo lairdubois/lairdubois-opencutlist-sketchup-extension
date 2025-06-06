@@ -35,16 +35,17 @@ module Ladb::OpenCutList
       local_y_axis = part.def.size.oriented_axis(Y_AXIS)
       local_z_axis = part.def.size.oriented_axis(Z_AXIS)
 
-      if part_drawing_type == PART_DRAWING_TYPE_2D_BOTTOM
+      case part_drawing_type
+      when PART_DRAWING_TYPE_2D_BOTTOM
         local_x_axis = local_x_axis.reverse
         local_z_axis = local_z_axis.reverse
-      elsif part_drawing_type == PART_DRAWING_TYPE_2D_LEFT
+      when PART_DRAWING_TYPE_2D_LEFT
         local_x_axis, local_y_axis, local_z_axis = local_y_axis.reverse, local_z_axis, local_x_axis.reverse
-      elsif part_drawing_type == PART_DRAWING_TYPE_2D_RIGHT
+      when PART_DRAWING_TYPE_2D_RIGHT
         local_x_axis, local_y_axis, local_z_axis = local_y_axis, local_z_axis, local_x_axis
-      elsif part_drawing_type == PART_DRAWING_TYPE_2D_FRONT
+      when PART_DRAWING_TYPE_2D_FRONT
         local_y_axis, local_z_axis = local_z_axis, local_y_axis.reverse
-      elsif part_drawing_type == PART_DRAWING_TYPE_2D_BACK
+      when PART_DRAWING_TYPE_2D_BACK
         local_x_axis, local_y_axis, local_z_axis = local_x_axis.reverse, local_z_axis, local_y_axis
       end
 

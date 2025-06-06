@@ -75,7 +75,7 @@ module Ladb::OpenCutList
     COLOR_PART_UPPER = Kuix::COLOR_BLUE
     COLOR_PART_HOLES = Sketchup::Color.new('#D783FF').freeze
     COLOR_PART_DEPTH = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.5).freeze
-    COLOR_PART_BORDERS = Sketchup::Color.new('#ff7f00').freeze #COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.3).freeze
+    COLOR_PART_BORDERS = Kuix::COLOR_WHITE
     COLOR_PART_PATH = Kuix::COLOR_CYAN
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
@@ -394,6 +394,9 @@ module Ladb::OpenCutList
 
               end
 
+              border_color = @active_part.group.def.material_color
+              border_color = COLOR_PART_BORDERS if border_color.nil?
+
               projection_def.layer_defs.reverse.each do |layer_def| # reverse layer order to present from Bottom to Top
 
                 points_entities = []
@@ -405,7 +408,7 @@ module Ladb::OpenCutList
                 elsif layer_def.type_path?
                   color = COLOR_PART_PATH
                 elsif layer_def.type_borders?
-                  color = COLOR_PART_BORDERS
+                  color = border_color
                 else
                   color = COLOR_PART_DEPTH
                 end
@@ -415,8 +418,7 @@ module Ladb::OpenCutList
                   line_stipple = if poly_def.is_a?(DrawingProjectionPolygonDef) && !poly_def.ccw?
                                    Kuix::LINE_STIPPLE_SHORT_DASHES
                                  else
-                                   # layer_def.type_borders? ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID
-                                   Kuix::LINE_STIPPLE_SOLID
+                                   layer_def.type_borders? ? Kuix::LINE_STIPPLE_LONG_DASHES : Kuix::LINE_STIPPLE_SOLID
                                  end
 
                   if fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
