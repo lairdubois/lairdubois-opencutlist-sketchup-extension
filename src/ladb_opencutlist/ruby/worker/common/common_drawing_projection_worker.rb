@@ -64,8 +64,8 @@ module Ladb::OpenCutList
         edges_bounds.add(curve_manipulator.points)
       end
 
-      bounds.add(faces_bounds.min, faces_bounds.max) unless faces_bounds.empty?
-      bounds.add(edges_bounds.min, edges_bounds.max) unless edges_bounds.empty?
+      bounds.add(faces_bounds) unless faces_bounds.empty?
+      bounds.add(edges_bounds) unless edges_bounds.empty?
 
       root_depth = 0.0
       max_depth = @drawing_def.faces_bounds.depth

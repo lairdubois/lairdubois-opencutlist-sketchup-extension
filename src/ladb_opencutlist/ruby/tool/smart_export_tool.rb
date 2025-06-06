@@ -426,7 +426,7 @@ module Ladb::OpenCutList
                       fn_append_polyline.call(portion.points, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
                     end
                   else
-                    fn_append_polyline.call(poly_def.points, color, 2, line_stipple, true)
+                    fn_append_polyline.call(poly_def.points, color, 2, line_stipple, poly_def.is_a?(DrawingProjectionPolygonDef))
                   end
 
                   if poly_def.is_a?(DrawingProjectionPolylineDef) && !layer_def.type_borders?
