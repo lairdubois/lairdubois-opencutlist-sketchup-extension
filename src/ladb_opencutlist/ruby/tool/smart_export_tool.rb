@@ -373,7 +373,8 @@ module Ladb::OpenCutList
             projection_def = CommonDrawingProjectionWorker.new(@active_drawing_def,
                                                                origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingProjectionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingProjectionWorker::ORIGIN_POSITION_BOUNDS_MIN,
                                                                merge_holes: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES),
-                                                               merge_holes_overflow: fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OVERFLOW)
+                                                               merge_holes_overflow: fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OVERFLOW),
+                                                               include_borders_layers: true
             ).run
             if projection_def.is_a?(DrawingProjectionDef)
 

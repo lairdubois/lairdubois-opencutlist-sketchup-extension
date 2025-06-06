@@ -215,7 +215,7 @@ module Ladb::OpenCutList
           item_y = item_def.y
 
           part_length = part_def.edge_cutting_length
-          part_width = part_def.edge_cutting_length
+          part_width = part_def.edge_cutting_width
 
           bounds = _compute_item_bounds_in_bin_space(item_length, item_width, item_def)
 

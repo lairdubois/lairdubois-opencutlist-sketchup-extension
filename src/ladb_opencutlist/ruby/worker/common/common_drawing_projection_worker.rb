@@ -22,6 +22,7 @@ module Ladb::OpenCutList
                    merge_holes: false,
                    merge_holes_overflow: 0,
                    compute_shell: false,
+                   include_borders_layers: false,
 
                    mask: nil
 
@@ -33,6 +34,7 @@ module Ladb::OpenCutList
       @merge_holes = merge_holes                    # Holes are moved to the "hole" layer, and all down layers holes are merged to their upper layer
       @merge_holes_overflow = (@merge_holes ? merge_holes_overflow : 0).to_l
       @compute_shell = compute_shell                # In addition to layers, shell def (outer + holes shapes) is computed.
+      @include_borders_layers = include_borders_layers
 
       @mask = mask
 
@@ -359,25 +361,29 @@ module Ladb::OpenCutList
 
         end
 
-        unless pld.border_closed_paths.empty?
+        if @include_borders_layers
 
-          polygons = pld.border_closed_paths.map { |path|
-            points = Clippy.rpath_to_points(path, z_max - pld.depth)
-            points.reverse! unless Clippy.is_rpath_positive?(path)  # Force CCW
-            DrawingProjectionPolygonDef.new(points, true)
-          }
-          projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_BORDERS, '', polygons) unless polygons.empty?
+          unless pld.border_closed_paths.empty?
 
-        end
+            polygons = pld.border_closed_paths.map { |path|
+              points = Clippy.rpath_to_points(path, z_max - pld.depth)
+              points.reverse! unless Clippy.is_rpath_positive?(path)  # Force CCW
+              DrawingProjectionPolygonDef.new(points, true)
+            }
+            projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_BORDERS, '', polygons) unless polygons.empty?
 
-        unless pld.border_open_paths.empty?
+          end
 
-          polylines = pld.border_open_paths.map { |path|
-            points = Clippy.rpath_to_points(path, z_max - pld.depth)
-            DrawingProjectionPolylineDef.new(points)
-          }
-          projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_BORDERS, '', polylines) unless polylines.empty?
+          unless pld.border_open_paths.empty?
 
+            polylines = pld.border_open_paths.map { |path|
+              points = Clippy.rpath_to_points(path, z_max - pld.depth)
+              DrawingProjectionPolylineDef.new(points)
+            }
+            projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_BORDERS, '', polylines) unless polylines.empty?
+
+          end
+          
         end
 
       end
