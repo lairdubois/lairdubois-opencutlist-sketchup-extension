@@ -1468,7 +1468,7 @@ tab:
       option_parts_depths_help: |
         Permet de choisir les couleurs des cavités des pièces.
         
-        *Par défaut la couleur est un dégradé proportionel à la profondeur entre la couleur des pièces et celle des percements.*
+        *Par défaut, la couleur utilisée est un dégradé proportionel à la profondeur de la cavité entre la couleur des pièces et celle des percements.*
       option_parts_holes: Percements
       option_parts_holes_help: |
         Permet de choisir les couleurs des percements des pièces.
