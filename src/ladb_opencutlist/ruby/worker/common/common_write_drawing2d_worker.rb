@@ -37,6 +37,8 @@ module Ladb::OpenCutList
                    parts_fill_color: nil,
                    parts_holes_stroke_color: nil,
                    parts_holes_fill_color: nil,
+                   parts_depths_stroke_color: nil,
+                   parts_depths_fill_color: nil,
                    parts_paths_stroke_color: nil,
                    parts_paths_fill_color: nil
 
@@ -59,6 +61,8 @@ module Ladb::OpenCutList
       @parts_fill_color = ColorUtils.color_create(parts_fill_color)
       @parts_holes_stroke_color = ColorUtils.color_create(parts_holes_stroke_color)
       @parts_holes_fill_color = ColorUtils.color_create(parts_holes_fill_color)
+      @parts_depths_stroke_color = ColorUtils.color_create(parts_depths_stroke_color)
+      @parts_depths_fill_color = ColorUtils.color_create(parts_depths_fill_color)
       @parts_paths_stroke_color = ColorUtils.color_create(parts_paths_stroke_color)
       @parts_paths_fill_color = ColorUtils.color_create(parts_paths_fill_color)
 
@@ -125,7 +129,7 @@ module Ladb::OpenCutList
     def _write_to_svg_file(file, projection_def)
 
       if @anchor
-        # Recompute bounding box to be sure to extends to anchor triangle
+        # Recompute bounding box to be sure to extend to anchor triangle
         bounds = Geom::BoundingBox.new
         bounds.add(projection_def.bounds.min)
         bounds.add(projection_def.bounds.max)
@@ -165,6 +169,8 @@ module Ladb::OpenCutList
                                   fill_color: @parts_fill_color,
                                   holes_stroke_color: @parts_holes_stroke_color,
                                   holes_fill_color: @parts_holes_fill_color,
+                                  depths_stroke_color: @parts_depths_stroke_color,
+                                  depths_fill_color: @parts_depths_fill_color,
                                   paths_stroke_color: @parts_paths_stroke_color,
                                   paths_fill_color: @parts_paths_fill_color,
                                   prefix: LAYER_PART)
@@ -208,7 +214,13 @@ module Ladb::OpenCutList
       max = projection_def.bounds.max.transform(unit_transformation)
 
       layer_defs = []
-      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, @parts_holes_stroke_color, @parts_paths_stroke_color, unit_factor, LAYER_PART).uniq { |layer_def| layer_def.name })
+      layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def,
+                                                                 color: @parts_stroke_color,
+                                                                 holes_color: @parts_holes_stroke_color,
+                                                                 depths_color: @parts_depths_stroke_color,
+                                                                 paths_color: @parts_paths_stroke_color,
+                                                                 unit_transformation: unit_factor,
+                                                                 prefix: LAYER_PART).uniq { |layer_def| layer_def.name })
 
       _dxf_write_start(file)
       _dxf_write_section_header(file, @unit, min, max)

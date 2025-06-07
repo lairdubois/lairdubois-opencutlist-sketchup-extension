@@ -1223,7 +1223,13 @@ module Ladb::OpenCutList
       _dxf_sanitize_identifier(a.compact.join('_'))
     end
 
-    def _dxf_get_projection_def_depth_layer_defs(projection_def, color, holes_color, paths_color, unit_transformation, prefix = nil)
+    def _dxf_get_projection_def_depth_layer_defs(projection_def,
+                                                 color: nil,
+                                                 depths_color: nil,
+                                                 holes_color: nil,
+                                                 paths_color: nil,
+                                                 unit_transformation: IDENTITY,
+                                                 prefix: nil)
       return [] unless projection_def.is_a?(DrawingProjectionDef)
 
       dxf_layer_defs = []
@@ -1234,8 +1240,14 @@ module Ladb::OpenCutList
           layer_color = paths_color
         elsif layer_def.type_holes?
           layer_color = holes_color
+        elsif layer_def.type_outer?
+          layer_color = color
         else
-          layer_color = color ? ColorUtils.color_lighten(color, (layer_def.depth / (projection_def.max_depth > 0 ? projection_def.max_depth : 1) * 0.8)) : nil
+          layer_color = if depths_color
+                          depths_color
+                        else
+                          color ? ColorUtils.color_lighten(color, (layer_def.depth / (projection_def.max_depth > 0 ? projection_def.max_depth : 1) * 0.8)) : nil
+                        end
         end
 
         dxf_layer_defs.push(DxfLayerDef.new(layer_name, layer_color))

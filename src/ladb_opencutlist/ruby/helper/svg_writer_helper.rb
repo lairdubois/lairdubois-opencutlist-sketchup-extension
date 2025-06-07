@@ -143,7 +143,9 @@ module Ladb::OpenCutList
                                   stroke_color: nil,
                                   fill_color: nil,
                                   holes_stroke_color: nil,
+                                  depths_stroke_color: nil,
                                   holes_fill_color: nil,
+                                  depths_fill_color: nil,
                                   paths_stroke_color: nil,
                                   paths_fill_color: nil,
                                   prefix: '')
@@ -165,7 +167,7 @@ module Ladb::OpenCutList
             'inkscape:label': id
           }
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if layer_def.depth != 0
-        elsif layer_def.type_holes? # Keep ti before checking outer type
+        elsif layer_def.type_holes? # Keep it before checking outer type
           attributes = {
             stroke: _svg_stroke_color_hex(holes_stroke_color, holes_fill_color),
             fill: _svg_fill_color_hex(holes_fill_color),
@@ -185,8 +187,16 @@ module Ladb::OpenCutList
           attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(projection_def.max_depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
         else
           attributes = {
-            stroke: _svg_stroke_color_hex(stroke_color, fill_color),
-            fill: fill_color ? ColorUtils.color_to_hex(ColorUtils.color_lighten(fill_color, projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3)) : 'none',
+            stroke: if depths_stroke_color
+                      ColorUtils.color_to_hex(depths_stroke_color)
+                    else
+                        _svg_stroke_color_hex(stroke_color, fill_color)
+                    end,
+            fill: if depths_fill_color
+                    ColorUtils.color_to_hex(depths_fill_color)
+                  else
+                    fill_color ? ColorUtils.color_to_hex(ColorUtils.color_lighten(fill_color, projection_def.max_depth > 0 ? (layer_def.depth / projection_def.max_depth) * 0.6 + 0.2 : 0.3)) : 'none'
+                  end,
             id: id,
             'serif:id': id,
             'inkscape:label': id,

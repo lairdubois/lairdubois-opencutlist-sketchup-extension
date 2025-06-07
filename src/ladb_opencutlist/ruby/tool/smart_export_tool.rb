@@ -906,14 +906,16 @@ module Ladb::OpenCutList
           file_name += " - #{PLUGIN.get_i18n_string("core.component.three_viewer.view_#{@active_drawing_def.input_view}").upcase}" unless @active_drawing_def.nil? || @active_drawing_def.input_view.nil?
           file_format = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_FILE_FORMAT)
           unit = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_UNIT)
-          anchor = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) && (@active_drawing_def.bounds.min.x != 0 || @active_drawing_def.bounds.min.y != 0)    # No anchor if = (0, 0, z)
+          anchor = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR)
           smoothing = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING)
           merge_holes = fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES)
           merge_holes_overflow = fetch_action_option_length(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_MERGE_HOLES_OVERFLOW)
           parts_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_stroke_color')
           parts_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_fill_color')
-          parts_holes_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_fill_color')
           parts_holes_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_stroke_color')
+          parts_holes_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_holes_fill_color')
+          parts_depths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_depths_stroke_color')
+          parts_depths_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_depths_fill_color')
           parts_paths_stroke_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_stroke_color')
           parts_paths_fill_color = fetch_action_option_value(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, 'parts_paths_fill_color')
 
@@ -927,8 +929,10 @@ module Ladb::OpenCutList
                                                   merge_holes_overflow: merge_holes_overflow,
                                                   parts_stroke_color: parts_stroke_color,
                                                   parts_fill_color: parts_fill_color,
-                                                  parts_holes_fill_color: parts_holes_fill_color,
                                                   parts_holes_stroke_color: parts_holes_stroke_color,
+                                                  parts_holes_fill_color: parts_holes_fill_color,
+                                                  parts_depths_stroke_color: parts_depths_stroke_color,
+                                                  parts_depths_fill_color: parts_depths_fill_color,
                                                   parts_paths_stroke_color: parts_paths_stroke_color,
                                                   parts_paths_fill_color: parts_paths_fill_color
           )

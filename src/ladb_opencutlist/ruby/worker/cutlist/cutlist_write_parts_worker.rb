@@ -28,6 +28,8 @@ module Ladb::OpenCutList
 
                    parts_stroke_color: nil,
                    parts_fill_color: nil,
+                   parts_depths_stroke_color: nil,
+                   parts_depths_fill_color: nil,
                    parts_holes_stroke_color: nil,
                    parts_holes_fill_color: nil,
                    parts_paths_stroke_color: nil,
@@ -52,6 +54,8 @@ module Ladb::OpenCutList
 
       @parts_stroke_color = parts_stroke_color
       @parts_fill_color = parts_fill_color
+      @parts_depths_stroke_color = parts_depths_stroke_color
+      @parts_depths_fill_color = parts_depths_fill_color
       @parts_holes_stroke_color = parts_holes_stroke_color
       @parts_holes_fill_color = parts_holes_fill_color
       @parts_paths_stroke_color = parts_paths_stroke_color
@@ -148,6 +152,8 @@ module Ladb::OpenCutList
                                                         mask: _compute_part_mask(@part_drawing_type, part, drawing_def),
                                                         parts_stroke_color: @parts_stroke_color,
                                                         parts_fill_color: @parts_fill_color,
+                                                        parts_depths_stroke_color: @parts_depths_stroke_color,
+                                                        parts_depths_fill_color: @parts_depths_fill_color,
                                                         parts_holes_stroke_color: @parts_holes_stroke_color,
                                                         parts_holes_fill_color: @parts_holes_fill_color,
                                                         parts_paths_stroke_color: @parts_paths_stroke_color,

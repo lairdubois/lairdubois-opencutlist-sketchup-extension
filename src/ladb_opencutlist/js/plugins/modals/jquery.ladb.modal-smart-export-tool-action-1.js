@@ -41,6 +41,8 @@
             const $inputPartsStrokeColor = $('#ladb_input_parts_stroke_color', that.$element);
             const $inputPartsFillColor = $('#ladb_input_parts_fill_color', that.$element);
             const $formGroupPartsHoles = $('#ladb_form_group_parts_holes', that.$element);
+            const $inputPartsDepthsStrokeColor = $('#ladb_input_parts_depths_stroke_color', that.$element);
+            const $inputPartsDepthsFillColor = $('#ladb_input_parts_depths_fill_color', that.$element);
             const $inputPartsHolesStrokeColor = $('#ladb_input_parts_holes_stroke_color', that.$element);
             const $inputPartsHolesFillColor = $('#ladb_input_parts_holes_fill_color', that.$element);
             const $formGroupPartsPaths = $('#ladb_form_group_parts_paths', that.$element);
@@ -59,6 +61,8 @@
                 options.include_paths = $selectIncludePaths.val() === '1';
                 options.parts_stroke_color = $inputPartsStrokeColor.ladbTextinputColor('val');
                 options.parts_fill_color = $inputPartsFillColor.ladbTextinputColor('val');
+                options.parts_depths_stroke_color = $inputPartsDepthsStrokeColor.ladbTextinputColor('val');
+                options.parts_depths_fill_color = $inputPartsDepthsFillColor.ladbTextinputColor('val');
                 options.parts_holes_stroke_color = $inputPartsHolesStrokeColor.ladbTextinputColor('val');
                 options.parts_holes_fill_color = $inputPartsHolesFillColor.ladbTextinputColor('val');
                 options.parts_paths_stroke_color = $inputPartsPathsStrokeColor.ladbTextinputColor('val');
@@ -75,6 +79,8 @@
                 $selectIncludePaths.selectpicker('val', options.include_paths ? '1' : '0');
                 $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
                 $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
+                $inputPartsDepthsStrokeColor.ladbTextinputColor('val', options.parts_depths_stroke_color);
+                $inputPartsDepthsFillColor.ladbTextinputColor('val', options.parts_depths_fill_color);
                 $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
                 $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
                 $inputPartsPathsStrokeColor.ladbTextinputColor('val', options.parts_paths_stroke_color);
@@ -122,6 +128,8 @@
             ;
             $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
             $inputPartsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+            $inputPartsDepthsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
+            $inputPartsDepthsFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
             $inputPartsHolesStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
             $inputPartsHolesFillColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);
             $inputPartsPathsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);

@@ -352,7 +352,12 @@ module Ladb::OpenCutList
         sheet.parts.uniq { |part| part.id }.each do |part|
           projection_def = _get_part_projection_def(part)
           if projection_def.is_a?(DrawingProjectionDef)
-            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def, @parts_stroke_color, @parts_holes_stroke_color, @parts_paths_stroke_color, unit_transformation, LAYER_PART))
+            depth_layer_defs.concat(_dxf_get_projection_def_depth_layer_defs(projection_def,
+                                                                             color: @parts_stroke_color,
+                                                                             holes_color: @parts_holes_stroke_color,
+                                                                             paths_color: @parts_paths_stroke_color,
+                                                                             unit_transformation: unit_transformation,
+                                                                             prefix: LAYER_PART))
           end
         end
         layer_defs.concat(depth_layer_defs.uniq { |layer_def| layer_def.name })
