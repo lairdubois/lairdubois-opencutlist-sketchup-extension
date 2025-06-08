@@ -1042,7 +1042,7 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: 837 - Horizontal
       option_rectangleguillotine_first_stage_orientation_vertical: 838 - Vertical
       option_rectangleguillotine_first_stage_orientation_any: 839 - Any
-      option_rectangleguillotine_keep: 840 - Minimal size of off-cuts
+      option_rectangleguillotine_keep: 840 - Minimal Size of Off-cuts
       option_rectangleguillotine_keep_help: 841 - Leftovers that are larger than the minimum length and width are marked **to be kept**.
       option_irregular_allowed_rotations: 842 - Allowed Rotations
       option_irregular_allowed_rotations_help: |
@@ -1083,7 +1083,7 @@ tab:
         870 - Shows or hides the actual shape of parts and their machining on the diagram.
 
         *This option must be enabled for shapes to be exported.*
-      option_colorization: 871 - Paint parts
+      option_colorization: 871 - Paint Parts
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Screen
       option_colorization_2: $t(default.yes) - Screen and Print
@@ -1428,7 +1428,7 @@ tab:
 
         **Project the part's origin**
         Enables the projection of the part axis origin as anchor point.
-      option_switch_yz: 1144 - Vertical axis
+      option_switch_yz: 1144 - Vertical Axis
       option_switch_yz_0: 1145 - Z vertical
       option_switch_yz_1: 1146 - Y vertical
       option_switch_yz_help: |
@@ -1629,7 +1629,7 @@ tab:
       std_volumic_masses_help: 1280 - Allows to set the density for all sizes as well as for each standard material size.
       std_prices: 1281 - Price
       std_prices_help: 1282 - Allows you to define the price for all sizes as well as for each standard size of the material.
-      std_cut_prices: 1283 - Standard cut price
+      std_cut_prices: 1283 - Standard Cut Price
       std_cut_prices_help: |
         1284 - Allows you to define the cutting price of the material.
 
@@ -1954,10 +1954,10 @@ tab:
       - Gildas Boureau (*French* documentation)
       - Vladimir Badulya (*Russian*)
       - Pierluigi Colombo, Massimo Risca (*Italian*)
-      - Nayton Sanches Barbosa, corrected and revised by [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portuguese*)
+      - Nayton Sanches Barbosa, corrected and revised by [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*Portuguese*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spanish*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czech*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polish*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, Hubert Przybylek, Mateusz Szczepaniak (*Polish*)
       - Sergey Isupov (*Hebrew*), RTL interface not yet supported
       - Soul Issam (*Arabic*), RTL interface not yet supported
       - Nguyen Ngoc Tan (*Vietnamese*)
@@ -2045,11 +2045,11 @@ tool:
     title: 1569 - Handle
     action_0: 1570 - Select
     action_0_status: 1571 - Click on a part to select it
-    action_1: 1572 - Copy in line
+    action_1: 1572 - Copy in Line
     action_1_status: 1573 - Click on a part to copy it along an axis
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: 1575 - Click to place the copy of the part or enter a distance
-    action_2: 1576 - Copy in grid
+    action_2: 1576 - Copy in Grid
     action_2_status: 1577 - Click on a part to copy it along a grid
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: 1579 - Click to place copies of the part, or enter two distances
@@ -2092,11 +2092,11 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1616 - Paint parts
+    action_0: 1616 - Paint Parts
     action_0_status: 1617 - Click on a part to apply material to its instance
-    action_1: 1618 - Paint edges
+    action_1: 1618 - Paint Edges
     action_1_status: 1619 - Click on the edge of a panel to apply material '$t(tab.materials.type_4)'
-    action_2: 1620 - Paint faces
+    action_2: 1620 - Paint Faces
     action_2_status: 1621 - Click on the face of a panel to apply material '$t(tab.materials.type_6)'
     action_3: 1622 - Sample
     action_3_status: 1623 - Click on a face to sample its material
@@ -2156,13 +2156,13 @@ tool:
       not_orientable: 1672 - The type of this part does not allow orienting it
   smart_export:
     title: 1673 - Export
-    action_0: 1674 - Export 3D part
+    action_0: 1674 - Export 3D Part
     action_0_status: 1675 - Click on a part
-    action_1: 1676 - Export 2D part
+    action_1: 1676 - Export 2D Part
     action_1_status: 1677 - Click on the face of a part
-    action_2: 1678 - Export face
+    action_2: 1678 - Export Face
     action_2_status: 1679 - Click on a face
-    action_3: 1680 - Export path
+    action_3: 1680 - Export Path
     action_3_status: 1681 - Click on an edge
     action_option_group_file_format: 1682 - Format
     action_option_group_unit: 1683 - Unit
