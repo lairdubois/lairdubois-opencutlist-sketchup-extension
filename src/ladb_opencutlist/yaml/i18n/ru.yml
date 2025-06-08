@@ -117,8 +117,8 @@ core:
     tools: Инструменты
     command:
       dialog: OpenCutList
-      smart_draw: Детали чертежа
-      smart_handle: Обработка деталей
+      smart_draw: Моделирование деталей
+      smart_handle: Действия с деталями
       smart_paint: Раскраска деталей
       smart_axes: Ориентация деталей
       smart_export: Экспорт деталей
@@ -253,8 +253,8 @@ core:
       view_isometric: Изометрия
       view_top: Сверху
       view_bottom: Снизу
-      view_front: До
-      view_back: Сзади
+      view_front: Фронт
+      view_back: Тыл
       view_left: Слева
       view_right: Справа
       zoom: "Масштаб {{ zoom }}"
@@ -409,6 +409,8 @@ tab:
       group_cuttingdiagram: Карта раскроя
       group_packing: Карта раскроя
       group_labels: Печать этикеток для деталей в группе
+      group_export: ""
+      group_estimate: ""
       edit_material: "Редактировать материал '{{ material_name }}'"
       expand_all: Развернуть все строки
       collapse_all: Свернуть все строки
@@ -1165,9 +1167,10 @@ tab:
         option_parts: Детали
         option_parts_help: |
           Позволяет активировать экспорт деталей и выбирать их цвета.
-        option_parts_holes: Отверстия
-        option_parts_holes_help: |
-          Позволяет задать цвет отверстий в деталях.
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Идентификации
@@ -1310,7 +1313,7 @@ tab:
       option_pins_hidden: Просмотр
       option_pins_hidden_0: С булавками
       option_pins_hidden_1: Без булавок
-      option_pins_hidden_help: "Настройка показывает или скрывает на чертеже идентификационные булавки, прикрепленные на детали. На булавке может быть указан номер детали или буквенное обозначение, соответствующие карте раскроя."
+      option_pins_hidden_help: "Настройка позволяет показывать или скрывать на чертеже булавки, которые идентифицируют детали. Булавка может иметь номер или буквенное обозначение, соответствующие карте раскроя, а также цвету материала в модели."
       option_pins_colored: Цвет
       option_pins_colored_0: Без цвета
       option_pins_colored_1: Цвет детали
@@ -1327,8 +1330,8 @@ tab:
       option_pins_direction_0: По красной оси
       option_pins_direction_1: По зеленой оси
       option_pins_direction_2: По синей оси
-      option_pins_direction_3: Указывает на центр исходной группы
-      option_pins_direction_4: Указывает на центр выделения
+      option_pins_direction_3: Указывает на центр основной группы
+      option_pins_direction_4: Указывает на центр детали
       option_pins_direction_help: "Позволяет задать направление булавок, чтобы адаптировать их читаемость на чертеже."
       option_page: Бумага
       option_page_format: Формат
@@ -1347,10 +1350,10 @@ tab:
       option_camera_view: Обзор
       option_camera_view_custom: Индивидуально
       option_camera_zoom: Масштаб
-      option_camera_zoom_auto: Автоматический
+      option_camera_zoom_auto: Автоматически
       option_camera_zoom_custom: Индивидуально
       option_camera_target: Положение
-      option_camera_target_auto: Автоматический
+      option_camera_target_auto: Автоматически
       option_camera_target_custom: Индивидуально
       option_explode: Разброс
       error:
@@ -1461,6 +1464,8 @@ tab:
       option_parts: Детали
       option_parts_help: |
         Позволяет выбрать цвета деталей.
+      option_parts_depths: ""
+      option_parts_depths_help: |
       option_parts_holes: Отверстия
       option_parts_holes_help: |
         Позволяет выбрать цвета отверстий деталей.
@@ -1683,14 +1688,14 @@ tab:
     type_2: Компонент
     type_3: Деталь
     tooltip:
-      hide_node: ""
-      unhide_node: ""
-      locked_node: ""
-      is_active_node: ""
-      set_active_node: ""
-      edit_node_properties: ""
+      hide_node: Скрыть
+      unhide_node: Показать
+      locked_node: Заблокировано
+      is_active_node: Активный экземпляр модели
+      set_active_node: Редактирование в модели
+      edit_node_properties: Редактирование свойств
       select_node: Выделить
-      unselect_node: ""
+      unselect_node: Отменить выбор
       open_node_url: Открыть URL-адрес детали
     edit_node:
       title_model: "Свойства модели"
@@ -1715,8 +1720,8 @@ tab:
       hide_descriptions_help: "Если этот параметр включен, **описания**, деталей в списке элементов, будут скрыты."
       hide_tags: Скрыть маркеры
       hide_tags_help: "Если эта опция активирована, **маркеры**, размещенные на деталях, не отображаются."
-      minimize_on_set_active: ""
-      minimize_on_set_active_help: ""
+      minimize_on_set_active: Уменьшить после '$t(tab.outliner.tooltip.set_active_node)'
+      minimize_on_set_active_help: "Если эта опция включена, окно OpenCutList будет сворачиваться, когда *'$t(tab.outliner.tooltip.set_active_node)'* используется."
     error:
       no_model: Ни одна модель не открыта. Вам необходимо дать мне больше информации ;)
       no_entities: Ваша модель пуста!

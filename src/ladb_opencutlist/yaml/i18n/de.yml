@@ -409,6 +409,8 @@ tab:
       group_cuttingdiagram: Schnittplan
       group_packing: Schnittplan
       group_labels: Etiketten der Gruppenteile drucken
+      group_export: Gruppe exportieren
+      group_estimate: Gruppe schätzen
       edit_material: "Material '{{ material_name }}' bearbeiten"
       expand_all: Alle Zeilen aufklappen
       collapse_all: Alle Zeilen zuklappen
@@ -1165,9 +1167,10 @@ tab:
         option_parts: Teile
         option_parts_help: |
           Ermöglicht den Export von Teilen zu aktivieren und deren Farbe anzugeben.
-        option_parts_holes: Bohrungen
-        option_parts_holes_help: |
-          Auswahl der Farbe von Bohrungen.
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Bezeichner
@@ -1461,6 +1464,11 @@ tab:
       option_parts: Teile
       option_parts_help: |
         Auswahl der Farbe der Teile.
+      option_parts_depths: Vertiefungen
+      option_parts_depths_help: |
+        Ermöglicht es Ihnen, die Farben der Hohlräume in den Teilen auszuwählen.
+
+        *Standardmäßig wird eine zur Tiefe der Vertiefung proportionale Abstufung zwischen der Farbe der Teile und der Farbe der Bohrungen verwendet.*
       option_parts_holes: Bohrungen
       option_parts_holes_help: |
         Auswahl der Farbe von Bohrungen.
@@ -1716,7 +1724,7 @@ tab:
       hide_tags: Badges ausblenden
       hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
       minimize_on_set_active: Verkleinern nach '$t(tab.outliner.tooltip.set_active_node)'
-      minimize_on_set_active_help: "\"Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster minimiert, wenn die Funktion *'$t(tab.outliner.tooltip.set_active_node)'* verwendet wird.\""
+      minimize_on_set_active_help: "Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster minimiert, wenn die Funktion *'$t(tab.outliner.tooltip.set_active_node)'* verwendet wird."
     error:
       no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
       no_entities: Ihr Modell ist leer!

@@ -409,6 +409,8 @@ tab:
       group_cuttingdiagram: Cutting Diagram
       group_packing: Cutting Diagram
       group_labels: Print labels of parts in group
+      group_export: Export group
+      group_estimate: Estimate group
       edit_material: "Edit material '{{ material_name }}'"
       expand_all: Unfold all lines
       collapse_all: Fold all lines
@@ -1044,7 +1046,7 @@ tab:
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
       option_rectangleguillotine_first_stage_orientation_vertical: Vertical
       option_rectangleguillotine_first_stage_orientation_any: Any
-      option_rectangleguillotine_keep: Minimal size of off-cuts
+      option_rectangleguillotine_keep: Minimal Size of Off-cuts
       option_rectangleguillotine_keep_help: Leftovers that are larger than the minimum length and width are marked **to be kept**.
       option_irregular_allowed_rotations: Allowed Rotations
       option_irregular_allowed_rotations_help: |
@@ -1085,7 +1087,7 @@ tab:
         Shows or hides the actual shape of parts and their machining on the diagram.
 
         *This option must be enabled for shapes to be exported.*
-      option_colorization: Paint parts
+      option_colorization: Paint Parts
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Screen
       option_colorization_2: $t(default.yes) - Screen and Print
@@ -1165,9 +1167,10 @@ tab:
         option_parts: Parts
         option_parts_help: |
           Enables part export and color selection.
-        option_parts_holes: Drillings
-        option_parts_holes_help: |
-          Selects the color of drillings.
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Identifiers
@@ -1429,7 +1432,7 @@ tab:
 
         **Project the part's origin**
         Enables the projection of the part axis origin as anchor point.
-      option_switch_yz: Vertical axis
+      option_switch_yz: Vertical Axis
       option_switch_yz_0: Z vertical
       option_switch_yz_1: Y vertical
       option_switch_yz_help: |
@@ -1461,6 +1464,11 @@ tab:
       option_parts: Parts
       option_parts_help: |
         Selects the color of parts.
+      option_parts_depths: Cavities
+      option_parts_depths_help: |
+        Allows you to choose the color of the part cavities.
+
+        *By default, the color used is a gradient proportional to the depth of the cavity between the color of the parts and that of the holes.*
       option_parts_holes: Drillings
       option_parts_holes_help: |
         Selects the color of drillings.
@@ -1625,7 +1633,7 @@ tab:
       std_volumic_masses_help: Allows to set the density for all sizes as well as for each standard material size.
       std_prices: Price
       std_prices_help: Allows you to define the price for all sizes as well as for each standard size of the material.
-      std_cut_prices: Standard cut price
+      std_cut_prices: Standard Cut Price
       std_cut_prices_help: |
         Allows you to define the cutting price of the material.
 
@@ -1950,10 +1958,10 @@ tab:
       - Gildas Boureau (*French* documentation)
       - Vladimir Badulya (*Russian*)
       - Pierluigi Colombo, Massimo Risca (*Italian*)
-      - Nayton Sanches Barbosa, corrected and revised by [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portuguese*)
+      - Nayton Sanches Barbosa, corrected and revised by [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*Portuguese*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spanish*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czech*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Polish*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, Hubert Przybylek, Mateusz Szczepaniak (*Polish*)
       - Sergey Isupov (*Hebrew*), RTL interface not yet supported
       - Soul Issam (*Arabic*), RTL interface not yet supported
       - Nguyen Ngoc Tan (*Vietnamese*)
@@ -2041,11 +2049,11 @@ tool:
     title: Handle
     action_0: Select
     action_0_status: Click on a part to select it
-    action_1: Copy in line
+    action_1: Copy in Line
     action_1_status: Click on a part to copy it along an axis
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: Click to place the copy of the part or enter a distance
-    action_2: Copy in grid
+    action_2: Copy in Grid
     action_2_status: Click on a part to copy it along a grid
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: "Click to place copies of the part, or enter two distances"
@@ -2088,11 +2096,11 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Paint parts
+    action_0: Paint Parts
     action_0_status: Click on a part to apply material to its instance
-    action_1: Paint edges
+    action_1: Paint Edges
     action_1_status: Click on the edge of a panel to apply material '$t(tab.materials.type_4)'
-    action_2: Paint faces
+    action_2: Paint Faces
     action_2_status: Click on the face of a panel to apply material '$t(tab.materials.type_6)'
     action_3: Sample
     action_3_status: Click on a face to sample its material
@@ -2152,13 +2160,13 @@ tool:
       not_orientable: The type of this part does not allow orienting it
   smart_export:
     title: Export
-    action_0: Export 3D part
+    action_0: Export 3D Part
     action_0_status: Click on a part
-    action_1: Export 2D part
+    action_1: Export 2D Part
     action_1_status: Click on the face of a part
-    action_2: Export face
+    action_2: Export Face
     action_2_status: Click on a face
-    action_3: Export path
+    action_3: Export Path
     action_3_status: Click on an edge
     action_option_group_file_format: Format
     action_option_group_unit: Unit
