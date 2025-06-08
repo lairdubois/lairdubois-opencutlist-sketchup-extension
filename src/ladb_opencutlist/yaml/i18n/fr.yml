@@ -1169,8 +1169,8 @@ tab:
           Permet d'activer l'exportation des pièces ainsi que de choisir leurs couleurs.
         option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
         option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
-        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)  # TODO
-        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)  # TODO
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Identifications
@@ -1467,7 +1467,7 @@ tab:
       option_parts_depths: Cavités
       option_parts_depths_help: |
         Permet de choisir les couleurs des cavités des pièces.
-        
+
         *Par défaut, la couleur utilisée est un dégradé proportionel à la profondeur de la cavité entre la couleur des pièces et celle des percements.*
       option_parts_holes: Percements
       option_parts_holes_help: |

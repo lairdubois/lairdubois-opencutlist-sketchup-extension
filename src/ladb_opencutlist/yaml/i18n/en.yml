@@ -409,6 +409,8 @@ tab:
       group_cuttingdiagram: Cutting Diagram
       group_packing: Cutting Diagram
       group_labels: Print labels of parts in group
+      group_export: Export group
+      group_estimate: Estimate group
       edit_material: "Edit material '{{ material_name }}'"
       expand_all: Unfold all lines
       collapse_all: Fold all lines
@@ -1165,9 +1167,10 @@ tab:
         option_parts: Parts
         option_parts_help: |
           Enables part export and color selection.
-        option_parts_holes: Drillings
-        option_parts_holes_help: |
-          Selects the color of drillings.
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Identifiers
@@ -1461,6 +1464,11 @@ tab:
       option_parts: Parts
       option_parts_help: |
         Selects the color of parts.
+      option_parts_depths: Cavities
+      option_parts_depths_help: |
+        Allows you to choose the color of the part cavities.
+
+        *By default, the color used is a gradient proportional to the depth of the cavity between the color of the parts and that of the holes.*
       option_parts_holes: Drillings
       option_parts_holes_help: |
         Selects the color of drillings.
