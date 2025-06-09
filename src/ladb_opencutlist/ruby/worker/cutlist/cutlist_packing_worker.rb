@@ -937,6 +937,9 @@ module Ladb::OpenCutList
 
               label_font_size = [ [ px_node_label_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_label_font_size_min ].max
 
+              px_item_label_x = px_item_rect_half_width
+              px_item_label_y = px_item_rect_half_height
+
               if is_irregular
 
                 p = Geom::Point3d.new(_to_px(item_def.label_offset.x), _to_px(item_def.label_offset.y)).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
@@ -944,11 +947,6 @@ module Ladb::OpenCutList
 
                 px_item_label_x += p.x
                 px_item_label_y += p.y
-
-              else
-
-                px_item_label_x = px_item_rect_half_width
-                px_item_label_y = px_item_rect_half_height
 
               end
 
