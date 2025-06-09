@@ -405,8 +405,8 @@ tab:
       group_cuttingdiagram: 329 - Nářezový plán
       group_packing: 330 - Nářezový plán
       group_labels: 331 - Tisk štítků dílů ve skupině
-      group_export: '332 - '
-      group_estimate: '333 - '
+      group_export: 332 - Export skupiny
+      group_estimate: 333 - Odhaduji skupinu
       edit_material: 334 - Upravit materiál ‘{{ material_name }}'
       expand_all: 335 - Rozbalení všech řádků
       collapse_all: 336 - Sbalení všech řádků
@@ -1049,7 +1049,7 @@ tab:
         843 - Nastavuje povolené rotace pro umístění dílu.
 
         *Materiály s vlákny lze otáčet pouze o 0 a 180°.*
-      option_irregular_allowed_rotations_0: 844 - Ne skládat
+      option_irregular_allowed_rotations_0: 844 - Ne
       option_irregular_allowed_rotations_90: 845 - Kroky po 90°
       option_irregular_allowed_rotations_180: 846 - Kroky po 180°
       option_irregular_allow_mirroring: 847 - Zrcadlení povoleno
@@ -1460,8 +1460,11 @@ tab:
       option_parts: 1162 - Díly
       option_parts_help: |
         1163 - Vyberte barvu dílů.
-      option_parts_depths: '1164 - '
-      option_parts_depths_help: '1165 - '
+      option_parts_depths: 1164 - Výřez
+      option_parts_depths_help: |
+        1165 - Umožňuje zvolit barvu výřezu v dílci
+
+        *Ve výchozím nastavení je použitá barva přechod úměrná hloubce výřezu mezi barvou dílce a barvou otvorů.*
       option_parts_holes: 1166 - Otvory
       option_parts_holes_help: |
         1167 - Vyberte barvu otvorů.
@@ -2061,19 +2064,19 @@ tool:
     action_4_state_2_status: 1588 - Kliknutím nastavte druhý bod měření nebo zadejte vzdálenost
     action_5: 1589 - Změnit velikost
     action_option_group_copy_measure_type: 1590 - Opatření
-    action_option_group_move_measure_type: 1591 - Opatření
+    action_option_group_move_measure_type: 1591 - Měření
     action_option_group_axes: 1592 - Osy
     action_option_group_options: 1593 - Nastavení
-    action_option_copy_measure_type_outside_status: 1594 - Externí měření
-    action_option_copy_measure_type_centered_status: 1595 - Centrální měření
+    action_option_copy_measure_type_outside_status: 1594 - Měření včetně dílců
+    action_option_copy_measure_type_centered_status: 1595 - Měření mezi středy dílců
     action_option_copy_measure_type_inside_status: 1596 - Měření mezi dílci
-    action_option_move_measure_type_outside_status: 1597 - Externí měření
-    action_option_move_measure_type_centered_status: 1598 - Centrální měření
-    action_option_move_measure_type_inside_status: 1599 - Interní měření
+    action_option_move_measure_type_outside_status: 1597 - Posun včetně tloušťky dílce
+    action_option_move_measure_type_centered_status: 1598 - Posun po střed dílce
+    action_option_move_measure_type_inside_status: 1599 - Posun po tloušťku dílce
     action_option_axes_active_status: 1600 - Manipulace podél aktivních os
     action_option_axes_context_status: 1601 - Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: 1602 - Manipulace podél os dílu
-    action_option_options_mirror_status: 1603 - Symetrické kopírování
+    action_option_options_mirror_status: 1603 - Zrcadlení
     warning:
       copies_disable_mirror: 1604 - Více kopií zakáže volbu '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
