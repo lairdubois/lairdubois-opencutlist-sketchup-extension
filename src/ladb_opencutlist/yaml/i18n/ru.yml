@@ -409,8 +409,8 @@ tab:
       group_cuttingdiagram: Карта раскроя
       group_packing: Карта раскроя
       group_labels: Печать этикеток для деталей в группе
-      group_export: ""
-      group_estimate: ""
+      group_export: Экспортировать группу
+      group_estimate: Определение группы
       edit_material: "Редактировать материал '{{ material_name }}'"
       expand_all: Развернуть все строки
       collapse_all: Свернуть все строки
@@ -1464,8 +1464,11 @@ tab:
       option_parts: Детали
       option_parts_help: |
         Позволяет выбрать цвета деталей.
-      option_parts_depths: ""
+      option_parts_depths: Полости
       option_parts_depths_help: |
+        Позволяет выбрать цвет полостей деталей
+
+        *По умолчанию используется градиент между цветом деталей и цветом отверстий, зависящий от глубины полости.*
       option_parts_holes: Отверстия
       option_parts_holes_help: |
         Позволяет выбрать цвета отверстий деталей.
