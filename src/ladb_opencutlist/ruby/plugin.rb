@@ -67,7 +67,12 @@ module Ladb::OpenCutList
     SETTINGS_KEY_MATERIALS_LAST_DIR = 'settings.materials_last_dir'
 
     TABS_DIALOG_MINIMIZED_WIDTH = 90
-    TABS_DIALOG_MINIMIZED_HEIGHT = 28 + 80 + 80 * 3     # = 3 Tab buttons
+    TABS_DIALOG_MINIMIZED_HEIGHT = if Sketchup.platform == :platform_osx
+                                     (Sketchup.version_number < 2600000000 ? 28 : 0)
+                                   elsif Sketchup.platform == :platform_win
+                                     (Sketchup.version_number < 2100000000 ? 28 : 0)
+                                   end +
+                                   80 + 80 * 3     # = 3 Tab buttons
     TABS_DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1150
     TABS_DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 640
     TABS_DIALOG_DEFAULT_LEFT = 60
@@ -1050,7 +1055,8 @@ module Ladb::OpenCutList
               :top => @tabs_dialog_top,
               :min_width => TABS_DIALOG_MINIMIZED_WIDTH,
               :min_height => TABS_DIALOG_MINIMIZED_HEIGHT,
-              :style => UI::HtmlDialog::STYLE_DIALOG
+              :style => UI::HtmlDialog::STYLE_DIALOG,
+              :use_content_size => true,
           })
       @tabs_dialog.set_on_closed {
         @tabs_dialog = nil
@@ -1229,7 +1235,8 @@ module Ladb::OpenCutList
           :height => MODAL_DIALOG_DEFAULT_HEIGHT,
           :min_width => MODAL_DIALOG_DEFAULT_WIDTH,
           :min_height => MODAL_DIALOG_DEFAULT_HEIGHT,
-          :style => UI::HtmlDialog::STYLE_UTILITY
+          :style => UI::HtmlDialog::STYLE_UTILITY,
+          :use_content_size => true,
         }
       )
       @modal_dialog.set_on_closed {
