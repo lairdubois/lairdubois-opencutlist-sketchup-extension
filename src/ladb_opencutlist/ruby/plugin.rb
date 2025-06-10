@@ -72,7 +72,7 @@ module Ladb::OpenCutList
                                    elsif Sketchup.platform == :platform_win
                                      (Sketchup.version_number < 2100000000 ? 28 : 0)
                                    end +
-                                   80 + 80 * 3     # = 3 Tab buttons
+                                   80 + 80 * 3     # = 1 + 3 Tab buttons
     TABS_DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1150
     TABS_DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 640
     TABS_DIALOG_DEFAULT_LEFT = 60
