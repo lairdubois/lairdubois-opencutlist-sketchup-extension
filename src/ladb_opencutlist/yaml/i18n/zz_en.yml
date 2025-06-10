@@ -1052,7 +1052,7 @@ tab:
       option_irregular_allowed_rotations_0: 844 - None
       option_irregular_allowed_rotations_90: 845 - Steps of 90°
       option_irregular_allowed_rotations_180: 846 - Steps of 180°
-      option_irregular_allow_mirroring: 847 - Mirroring allowed
+      option_irregular_allow_mirroring: 847 - Mirroring Allowed
       option_irregular_allow_mirroring_help: |
         848 - Defines if mirroring the part is allowed for placement.
       option_irregular_allow_mirroring_0: $t(default.no)
