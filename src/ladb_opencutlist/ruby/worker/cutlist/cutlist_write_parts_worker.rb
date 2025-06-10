@@ -135,8 +135,7 @@ module Ladb::OpenCutList
 
               drawing_def = _compute_part_drawing_def(@part_drawing_type, part,
                                                       ignore_edges: !@include_paths,
-                                                      origin_position: CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT,
-                                                      use_cache: !@include_paths
+                                                      origin_position: CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT
               )
               return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
 
@@ -163,8 +162,7 @@ module Ladb::OpenCutList
             when PART_DRAWING_TYPE_3D
 
               drawing_def = _compute_part_drawing_def(@part_drawing_type, part,
-                                                      origin_position: @anchor ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
-                                                      use_cache: false
+                                                      origin_position: @anchor ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN
               )
               return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
 

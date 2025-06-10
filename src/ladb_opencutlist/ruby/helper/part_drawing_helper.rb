@@ -24,6 +24,7 @@ module Ladb::OpenCutList
       return nil if part_drawing_type == PART_DRAWING_TYPE_NONE
 
       if use_cache
+        cache_key = "#{part_drawing_type}|#{ignore_edges}|#{origin_position}"
         drawing_def = part.def.drawing_defs[part_drawing_type]
         return drawing_def unless drawing_def.nil?
       end
@@ -58,7 +59,7 @@ module Ladb::OpenCutList
         edge_validator: ignore_edges ? nil : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
       ).run
       if drawing_def.is_a?(DrawingDef)
-        part.def.drawing_defs[part_drawing_type] = drawing_def
+        part.def.drawing_defs[cache_key] = drawing_def if use_cache
         return drawing_def
       end
 
@@ -102,7 +103,6 @@ module Ladb::OpenCutList
     end
 
     def _compute_part_projection_def(part_drawing_type, part,
-                                     projection_defs_cache: {},
                                      ignore_edges: true,
                                      merge_holes: false,
                                      merge_holes_overflow: 0,
@@ -112,8 +112,9 @@ module Ladb::OpenCutList
     )
       return nil unless part.is_a?(Part)
 
-      if use_cache && projection_defs_cache.is_a?(Hash)
-        projection_def = projection_defs_cache[part.id]
+      if use_cache
+        cache_key = "#{part_drawing_type}|#{part.id}|#{ignore_edges}|#{merge_holes}|#{merge_holes_overflow}|#{compute_shell}|#{origin_position}"
+        projection_def = part.def.projection_defs[cache_key]
         return projection_def unless projection_def.nil?
       end
 
@@ -128,7 +129,7 @@ module Ladb::OpenCutList
                                                          mask: _compute_part_mask(part_drawing_type, part, drawing_def)
       ).run
       if projection_def.is_a?(DrawingProjectionDef)
-        projection_defs_cache[part.id] = projection_def if use_cache && projection_defs_cache.is_a?(Hash)
+        part.def.projection_defs[cache_key] = projection_def if use_cache
         return projection_def
       end
 

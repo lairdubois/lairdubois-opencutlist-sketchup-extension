@@ -282,7 +282,7 @@ module Ladb::OpenCutList
           end
 
           # Part is used : compute its projection if enabled
-          _compute_part_projection_def(@part_drawing_type, box.data, projection_defs_cache: cuttingdiagram1d_def.projection_defs) unless @part_drawing_type == PART_DRAWING_TYPE_NONE
+          _compute_part_projection_def(@part_drawing_type, box.data) unless @part_drawing_type == PART_DRAWING_TYPE_NONE
 
         }
 

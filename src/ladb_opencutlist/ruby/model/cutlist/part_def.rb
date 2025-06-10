@@ -20,7 +20,8 @@ module Ladb::OpenCutList
                   :face_count, :face_pattern, :face_entity_ids, :face_decrements, :face_texture_angles, :face_thickness_decrement, :face_decremented,
                   :length_increased, :width_increased, :thickness_increased, :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area,
                   :children_warning_count, :children_length_increased_count, :children_width_increased_count, :children_thickness_increased_count
-    attr_reader :id, :virtual, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_errors, :face_material_names, :face_material_colors, :face_std_dimensions, :face_errors, :entity_ids, :entity_serialized_paths, :entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs, :veneer_materials, :veneer_group_defs, :drawing_defs
+    attr_reader :id, :virtual, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_errors, :face_material_names, :face_material_colors, :face_std_dimensions, :face_errors, :entity_ids, :entity_serialized_paths, :entity_names, :children, :instance_infos, :edge_materials, :edge_group_defs, :veneer_materials, :veneer_group_defs,
+                :drawing_defs, :projection_defs
 
     def initialize(id, virtual = false)
       @id = id
@@ -98,7 +99,8 @@ module Ladb::OpenCutList
       @veneer_materials = {}
       @veneer_group_defs = {}
 
-      @drawing_defs = {}  # Cache for drawing defs, Key = PART_DRAWING_TYPE_XX
+      @drawing_defs = {}  # Cache for drawing defs, @see PartDrawingHelper
+      @projection_defs = {}  # Cache for projection defs, @see PartDrawingHelper
 
     end
 

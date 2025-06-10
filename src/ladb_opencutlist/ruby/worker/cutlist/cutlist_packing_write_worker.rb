@@ -91,8 +91,6 @@ module Ladb::OpenCutList
       @hidden_bin_indices = hidden_bin_indices
       @part_drawing_type = part_drawing_type.to_i
 
-      @_projection_defs = {}
-
     end
 
     # -----
@@ -667,7 +665,6 @@ module Ladb::OpenCutList
 
     def _get_part_projection_def(part)
       _compute_part_projection_def(@part_drawing_type, part,
-                                   projection_defs_cache: @_projection_defs,
                                    ignore_edges: !@include_paths,
                                    merge_holes: @merge_holes,
                                    merge_holes_overflow: @merge_holes_overflow,

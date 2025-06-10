@@ -423,7 +423,8 @@ module Ladb::OpenCutList
         parts.flat_map { |part| part.instance_of?(FolderPart) ? part.children : part }.each do |part|
 
           count = part.count
-          projection_def = _compute_part_projection_def(@part_drawing_type, part, compute_shell: true)
+          projection_def = _compute_part_projection_def(@part_drawing_type, part,
+                                                        compute_shell: true)
 
           if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
 
