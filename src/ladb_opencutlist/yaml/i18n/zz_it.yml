@@ -405,8 +405,8 @@ tab:
       group_cuttingdiagram: 329 - Schema di taglio
       group_packing: 330 - Schema di taglio
       group_labels: 331 - Stampa le etichette delle parti di questa sezione
-      group_export: '332 - '
-      group_estimate: '333 - '
+      group_export: 332 - Esporta il gruppo
+      group_estimate: 333 - Preventivo del gruppo
       edit_material: 334 - Modifica del materiale '{{ material_name }}'
       expand_all: 335 - Espandi tutte le linee
       collapse_all: 336 - Comprimi tutte le linee
@@ -1530,7 +1530,7 @@ tab:
       raw_estimated_0: 1215 - Stimato dal volume effettivo
       colorized: 1216 - Questa tonalità di colore sarà applicata alla struttura del materiale al momento della resa visiva del modello
       texture_load: 1217 - Caricare una nuova immagine
-      texture_export: 1218 - Esportare l'immagine
+      texture_export: 1218 - Esporta l'immagine
       texture_clear: 1219 - Rimuovi texture
       edit: 1220 - Modifica le proprietà di '{{ name }}'
       set_current: 1221 - Colorare le parti con '{{ name }}'
@@ -1687,7 +1687,7 @@ tab:
       hide_node: 1321 - Nascondi
       unhide_node: 1322 - Mostra
       locked_node: 1323 - Bloccato
-      is_active_node: '1324 - '
+      is_active_node: 1324 - Istanza attiva nel modello
       set_active_node: 1325 - Modifica nel modello
       edit_node_properties: 1326 - Modifica le proprietà
       select_node: 1327 - Seleziona
