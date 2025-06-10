@@ -409,8 +409,8 @@ tab:
       group_cuttingdiagram: Plano de Corte
       group_packing: Plano de Corte
       group_labels: Imprimir as etiquetas das peças neste grupo
-      group_export: ""
-      group_estimate: ""
+      group_export: Exportar o grupo
+      group_estimate: Orçar o grupo
       edit_material: "Editar material '{{ material_name }}'"
       expand_all: Expandir todas as linhas
       collapse_all: Recolher todas as linhas
@@ -1114,7 +1114,7 @@ tab:
         total_cut_count: Numero de cortes
         total_cut_length: Comprimento dos cortes
         efficiency: Eficiência
-        count: Quantidade
+        count: Qtd.
         length: Comprimento
         width: Largura
         total_length: Comprimentos
@@ -1464,8 +1464,11 @@ tab:
       option_parts: Peças
       option_parts_help: |
         Permite escolher as cores das peças.
-      option_parts_depths: ""
+      option_parts_depths: Cavidades
       option_parts_depths_help: |
+        Permite escolher as cores das cavidades das peças.
+
+        *Por padrão, a cor utilizada é um degradê proporcional à profundidade da cavidade, entre a cor da peça e a dos furos.*
       option_parts_holes: Perfurações
       option_parts_holes_help: |
         Permite escolher as cores dos furos das peças.
