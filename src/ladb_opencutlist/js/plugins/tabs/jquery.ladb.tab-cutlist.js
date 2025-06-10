@@ -3042,7 +3042,7 @@
                                 $.each(response.solution.bins, function () {
                                     for (let i = 0; i < this.count; i++) {
                                         binIndex++;
-                                        $.each(this.parts, function (v) {
+                                        $.each(this.part_infos, function (v) {
                                             for (let j = 0; j < this.count; j++) {
                                                 if (!binDefs[this.part.id]) {
                                                     binDefs[this.part.id] = [];
@@ -5781,15 +5781,15 @@
 
                                             // Compute label bins (a list of sheet index attached to part id)
                                             let binDefs = {};
-                                            let sheetIndex = 0;
+                                            let binIndex = 0;
                                             $.each(response.sheets, function () {
                                                 for (let i = 0 ; i < this.count; i++) {
-                                                    sheetIndex++;
+                                                    binIndex++;
                                                     $.each(this.parts, function () {
                                                         if (!binDefs[this.id]) {
                                                             binDefs[this.id] = [];
                                                         }
-                                                        binDefs[this.id].push(sheetIndex);
+                                                        binDefs[this.id].push(binIndex);
                                                     });
                                                 }
                                             });
