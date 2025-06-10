@@ -548,9 +548,9 @@ tab:
       hide_cutting_dimensions_help: "Se esta opção for selecionada, as dimensões **aproximadas** das peças serão ocultadas."
       hide_bbox_dimensions: Ocultar dimensões acabadas
       hide_bbox_dimensions_help: "Se esta opção for selecionada, as dimensões **acabadas** das peças serão ocultadas."
-      hide_final_areas: Oculte a área real das peças do tipo *Chapa*
+      hide_final_areas: Ocultar a área real das peças do tipo *Chapa*
       hide_final_areas_help: "Se esta opção for selecionada, as **áreas reais** das peças do tipo *Chapa* serão ocultadas."
-      hide_edges: Esconda a coluna de Fitas de Borda
+      hide_edges: Ocultar a coluna de Fitas de Borda
       hide_edges_help: "Se esta opção for selecionada, as **colunas de Fita de Borda** de peças do tipo *Chapa* serão ocultadas."
       hide_faces: Ocultar as colunas dos laminados
       hide_faces_help: "Se esta opção for selecionada, as **colunas face** das peças do tipo *Chapas* ficarão ocultas."
@@ -1614,7 +1614,7 @@ tab:
       edge_decremented: Reduzir
       edge_decremented_help: Indica se as dimensões das partes devem ser reduzidas pela espessura da fita da borda.
       edge_decremented_0: Sem redução
-      edge_decremented_1: Reduzir de acordo com a espessura da Faixa de Borda
+      edge_decremented_1: Reduzir de acordo com a espessura da Fita de Borda
       raw_estimated: Volume utilizado
       raw_estimated_help: |
         Permite definir o volume usado para orçar a massa e o custo total das peças deste material.
