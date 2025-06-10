@@ -409,8 +409,8 @@ tab:
       group_cuttingdiagram: Карта розкрою
       group_packing: Карта розкрою
       group_labels: Друк етикеток згрупованих деталей
-      group_export: ""
-      group_estimate: ""
+      group_export: Груповий експорт
+      group_estimate: Груповий кошторис
       edit_material: "Редагувати матеріал '{{ material_name }}'"
       expand_all: Розгорнути всі рядки
       collapse_all: Згорнути всі рядки
@@ -1464,8 +1464,11 @@ tab:
       option_parts: Деталі
       option_parts_help: |
         Дозволяє вибрати кольори деталей.
-      option_parts_depths: ""
+      option_parts_depths: Порожнини
       option_parts_depths_help: |
+        Дозволяє вибирати кольори порожнин деталей.
+
+        *За замовчуванням використовується градієнт, пропорційний глибині порожнини між кольором деталей і кольором отворів.*
       option_parts_holes: Свердління
       option_parts_holes_help: |
         Дозволяє вибрати кольори отворів деталей.
