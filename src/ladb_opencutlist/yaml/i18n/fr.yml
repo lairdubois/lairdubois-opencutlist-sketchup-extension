@@ -1194,7 +1194,7 @@ tab:
         invalid_part_shapes: La forme de la pièce '{{ name }}' est invalide.
         no_solution: Aucune solution n'a été trouvée.
         unplaced_parts: "**1 pièce** n'a pas pu être placée."
-        unplaced_parts_plural: "**{{ count }} pièces** n'a pas pu être placées."
+        unplaced_parts_plural: "**{{ count }} pièces** n'ont pas pu être placées."
       warning:
         is_part_selection: Ce calepinage se limite aux **pièces sélectionnées**.
         cutting_dimensions: Ce calepinage présente les pièces dans leurs dimensions de **débit**.
