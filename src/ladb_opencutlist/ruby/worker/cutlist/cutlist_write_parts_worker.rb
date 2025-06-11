@@ -167,11 +167,11 @@ module Ladb::OpenCutList
               return { :errors => [ 'tab.cutlist.error.unknow_part' ] } unless drawing_def.is_a?(DrawingDef)
 
               response = CommonWriteDrawing3dWorker.new(drawing_def,
-                folder_path: folder_path,
-                file_name: file_name,
-                file_format: @file_format,
-                unit: @unit,
-                switch_yz: @switch_yz
+                                                        folder_path: folder_path,
+                                                        file_name: file_name,
+                                                        file_format: @file_format,
+                                                        unit: @unit,
+                                                        switch_yz: @switch_yz
               ).run
               return response if !response[:errors].nil? || response[:cancelled]
             end
