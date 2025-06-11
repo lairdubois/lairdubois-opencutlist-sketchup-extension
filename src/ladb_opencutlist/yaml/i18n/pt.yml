@@ -712,12 +712,12 @@ tab:
       total: Total
       total_used: Usado
       total_unused: Não utilizado
-      total_mass: Massas
-      total_cost: Custos
+      total_mass: Σ Massas
+      total_cost: Σ Custos
       total_count: Qtd.
       total_instance_count: Unidades
       total_volume: Volumes
-      total_area: Áreas
+      total_area: Σ Áreas
       total_length: Comprimentos
       type_1: $t(tab.materials.type_1)
       type_2: $t(tab.materials.type_2)
@@ -1118,8 +1118,8 @@ tab:
         length: Comprimento
         width: Largura
         total_length: Comprimentos
-        total_area: Áreas
-        total_cost: Custos
+        total_area: Σ Áreas
+        total_cost: Σ Custos
         total_part_count: Peças
         total_used: Total utilizado
         bin_1d_dimensional: Barra

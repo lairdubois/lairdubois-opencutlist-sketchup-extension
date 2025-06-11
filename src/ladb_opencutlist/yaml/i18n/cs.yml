@@ -258,7 +258,7 @@ core:
       view_left: Vlevo
       view_right: Vpravo
       zoom: "{{ zoom }} Měřítko"
-      explode_factor: Amplituda výbuchu
+      explode_factor: Rozložení
       toggle_box_helper: Zobrazit/skrýt ohraničující rámeček
       toggle_box_dimensions_helper: Zobrazit/skrýt rozměry
       toggle_axes_helper: Zobrazit/skrýt osy dílů
@@ -2061,23 +2061,23 @@ tool:
     action_3_status: Kliknutím na dílec ho můžete přesunout podél mřížky
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
     action_3_state_2_status: Kliknutím umístěte dílec nebo zadejte vzdálenost
-    action_4: Distribuce
+    action_4: Rozložení
     action_4_status: Kliknutím na dílec ho rozmístíte podél osy
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_1_status: Kliknutím nastavíte první bod měření
     action_4_state_2_status: Kliknutím nastavte druhý bod měření nebo zadejte vzdálenost
     action_5: Změnit velikost
-    action_option_group_copy_measure_type: Opatření
-    action_option_group_move_measure_type: Měření
+    action_option_group_copy_measure_type: Kopie dílce
+    action_option_group_move_measure_type: Posun dílce
     action_option_group_axes: Osy
     action_option_group_options: Nastavení
-    action_option_copy_measure_type_outside_status: Měření včetně dílců
-    action_option_copy_measure_type_centered_status: Měření mezi středy dílců
-    action_option_copy_measure_type_inside_status: Měření mezi dílci
+    action_option_copy_measure_type_outside_status: Kopie včetně tloušťky dílce
+    action_option_copy_measure_type_centered_status: Kopie po střed dílce
+    action_option_copy_measure_type_inside_status: Kopie po tloušťku dílce
     action_option_move_measure_type_outside_status: Posun včetně tloušťky dílce
     action_option_move_measure_type_centered_status: Posun po střed dílce
     action_option_move_measure_type_inside_status: Posun po tloušťku dílce
-    action_option_axes_active_status: Manipulace podél aktivních os
+    action_option_axes_active_status: Manipulace podél os
     action_option_axes_context_status: Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: Manipulace podél os dílu
     action_option_options_mirror_status: Zrcadlení
