@@ -708,12 +708,12 @@ tab:
       total: 570 - Total
       total_used: 571 - Usado
       total_unused: 572 - Não utilizado
-      total_mass: 573 - Massas
-      total_cost: 574 - Custos
+      total_mass: 573 - Σ Massas
+      total_cost: 574 - Σ Custos
       total_count: 575 - Qtd.
       total_instance_count: 576 - Unidades
       total_volume: 577 - Volumes
-      total_area: 578 - Áreas
+      total_area: 578 - Σ Áreas
       total_length: 579 - Comprimentos
       type_1: $t(tab.materials.type_1)
       type_2: $t(tab.materials.type_2)
@@ -1114,8 +1114,8 @@ tab:
         length: 895 - Comprimento
         width: 896 - Largura
         total_length: 897 - Comprimentos
-        total_area: 898 - Áreas
-        total_cost: 899 - Custos
+        total_area: 898 - Σ Áreas
+        total_cost: 899 - Σ Custos
         total_part_count: 900 - Peças
         total_used: 901 - Total utilizado
         bin_1d_dimensional: 902 - Barra

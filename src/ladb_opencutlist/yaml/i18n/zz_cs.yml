@@ -254,7 +254,7 @@ core:
       view_left: 206 - Vlevo
       view_right: 207 - Vpravo
       zoom: 208 - {{ zoom }} Měřítko
-      explode_factor: 209 - Amplituda výbuchu
+      explode_factor: 209 - Rozložení
       toggle_box_helper: 210 - Zobrazit/skrýt ohraničující rámeček
       toggle_box_dimensions_helper: 211 - Zobrazit/skrýt rozměry
       toggle_axes_helper: 212 - Zobrazit/skrýt osy dílů
@@ -2057,23 +2057,23 @@ tool:
     action_3_status: 1581 - Kliknutím na dílec ho můžete přesunout podél mřížky
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
     action_3_state_2_status: 1583 - Kliknutím umístěte dílec nebo zadejte vzdálenost
-    action_4: 1584 - Distribuce
+    action_4: 1584 - Rozložení
     action_4_status: 1585 - Kliknutím na dílec ho rozmístíte podél osy
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_1_status: 1587 - Kliknutím nastavíte první bod měření
     action_4_state_2_status: 1588 - Kliknutím nastavte druhý bod měření nebo zadejte vzdálenost
     action_5: 1589 - Změnit velikost
-    action_option_group_copy_measure_type: 1590 - Opatření
-    action_option_group_move_measure_type: 1591 - Měření
+    action_option_group_copy_measure_type: 1590 - Kopie dílce
+    action_option_group_move_measure_type: 1591 - Posun dílce
     action_option_group_axes: 1592 - Osy
     action_option_group_options: 1593 - Nastavení
-    action_option_copy_measure_type_outside_status: 1594 - Měření včetně dílců
-    action_option_copy_measure_type_centered_status: 1595 - Měření mezi středy dílců
-    action_option_copy_measure_type_inside_status: 1596 - Měření mezi dílci
+    action_option_copy_measure_type_outside_status: 1594 - Kopie včetně tloušťky dílce
+    action_option_copy_measure_type_centered_status: 1595 - Kopie po střed dílce
+    action_option_copy_measure_type_inside_status: 1596 - Kopie po tloušťku dílce
     action_option_move_measure_type_outside_status: 1597 - Posun včetně tloušťky dílce
     action_option_move_measure_type_centered_status: 1598 - Posun po střed dílce
     action_option_move_measure_type_inside_status: 1599 - Posun po tloušťku dílce
-    action_option_axes_active_status: 1600 - Manipulace podél aktivních os
+    action_option_axes_active_status: 1600 - Manipulace podél os
     action_option_axes_context_status: 1601 - Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: 1602 - Manipulace podél os dílu
     action_option_options_mirror_status: 1603 - Zrcadlení
