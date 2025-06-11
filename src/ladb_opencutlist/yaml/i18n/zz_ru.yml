@@ -977,8 +977,8 @@ tab:
     packing:
       title: 794 - Карта раскроя
       option_problem_type: 795 - Тип
-      option_problem_type_rectangle: 796 - Прямоугольник
-      option_problem_type_rectangleguillotine: 797 - Гильотина
+      option_problem_type_rectangle: 796 - Правка
+      option_problem_type_rectangleguillotine: 797 - Раскрой
       option_problem_type_onedimensional: 798 - Погонаж
       option_problem_type_irregular: 799 - Встроенный
       options_material: 800 - Материал
@@ -1039,12 +1039,12 @@ tab:
       option_rectangleguillotine_first_stage_orientation: 835 - Направление первого реза
       option_rectangleguillotine_first_stage_orientation_help: |
         836 - Определяет направление первого разреза.
-      option_rectangleguillotine_first_stage_orientation_horizontal: 837 - Горизонталь
-      option_rectangleguillotine_first_stage_orientation_vertical: 838 - Вертикаль
-      option_rectangleguillotine_first_stage_orientation_any: 839 - Любой
+      option_rectangleguillotine_first_stage_orientation_horizontal: 837 - По горизонтали
+      option_rectangleguillotine_first_stage_orientation_vertical: 838 - По вертикали
+      option_rectangleguillotine_first_stage_orientation_any: 839 - Любое
       option_rectangleguillotine_keep: 840 - Размер отходов
       option_rectangleguillotine_keep_help: 841 - Обрезки с габаритами, превышающими их заданнные минимальные размеры, не будут считаться отходами от распила и получат маркировку **Сохранить**.
-      option_irregular_allowed_rotations: 842 - Разрешенные вращения
+      option_irregular_allowed_rotations: 842 - Выбрать шаг вращения
       option_irregular_allowed_rotations_help: |
         843 - Определяет возможный шаг углов поворота детали для ее размещения.
 
@@ -1141,9 +1141,9 @@ tab:
         leftovers_to_keep_plural: 922 - Деловые остатки
         cut: 923 - Пропил
         cut_plural: 924 - Распилы
-        cut_trimming: 925 - Чистый рез
+        cut_trimming: 925 - Чистовой рез
         cut_primary: 926 - Первичный разрез
-        cut_depth: 927 - Варианты {{ depth }}
+        cut_depth: 927 - Вариант {{ depth }}
       write:
         title: 928 - Экспорт карты раскроя
         info_0: |
@@ -1231,7 +1231,7 @@ tab:
       option_spacing_v: 992 - По вертикали
       option_grid: 993 - Этикеток на странице
       option_col_count: 994 - Столбцы
-      option_row_count: 995 - Строк
+      option_row_count: 995 - Строки
       option_cutting_marks: 996 - Маркеры
       option_cutting_marks_0: 997 - Нет
       option_cutting_marks_1: 998 - Распечатать

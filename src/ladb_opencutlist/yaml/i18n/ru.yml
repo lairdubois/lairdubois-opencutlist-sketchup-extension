@@ -981,8 +981,8 @@ tab:
     packing:
       title: Карта раскроя
       option_problem_type: Тип
-      option_problem_type_rectangle: Прямоугольник
-      option_problem_type_rectangleguillotine: Гильотина
+      option_problem_type_rectangle: Правка
+      option_problem_type_rectangleguillotine: Раскрой
       option_problem_type_onedimensional: Погонаж
       option_problem_type_irregular: Встроенный
       options_material: Материал
@@ -1043,12 +1043,12 @@ tab:
       option_rectangleguillotine_first_stage_orientation: Направление первого реза
       option_rectangleguillotine_first_stage_orientation_help: |
         Определяет направление первого разреза.
-      option_rectangleguillotine_first_stage_orientation_horizontal: Горизонталь
-      option_rectangleguillotine_first_stage_orientation_vertical: Вертикаль
-      option_rectangleguillotine_first_stage_orientation_any: Любой
+      option_rectangleguillotine_first_stage_orientation_horizontal: По горизонтали
+      option_rectangleguillotine_first_stage_orientation_vertical: По вертикали
+      option_rectangleguillotine_first_stage_orientation_any: Любое
       option_rectangleguillotine_keep: Размер отходов
       option_rectangleguillotine_keep_help: "Обрезки с габаритами, превышающими их заданнные минимальные размеры, не будут считаться отходами от распила и получат маркировку **Сохранить**."
-      option_irregular_allowed_rotations: Разрешенные вращения
+      option_irregular_allowed_rotations: Выбрать шаг вращения
       option_irregular_allowed_rotations_help: |
         Определяет возможный шаг углов поворота детали для ее размещения.
 
@@ -1145,9 +1145,9 @@ tab:
         leftovers_to_keep_plural: Деловые остатки
         cut: Пропил
         cut_plural: Распилы
-        cut_trimming: Чистый рез
+        cut_trimming: Чистовой рез
         cut_primary: Первичный разрез
-        cut_depth: "Варианты {{ depth }}"
+        cut_depth: "Вариант {{ depth }}"
       write:
         title: Экспорт карты раскроя
         info_0: |
@@ -1235,7 +1235,7 @@ tab:
       option_spacing_v: По вертикали
       option_grid: Этикеток на странице
       option_col_count: Столбцы
-      option_row_count: Строк
+      option_row_count: Строки
       option_cutting_marks: Маркеры
       option_cutting_marks_0: Нет
       option_cutting_marks_1: Распечатать
