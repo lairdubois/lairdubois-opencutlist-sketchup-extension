@@ -196,8 +196,12 @@
             that.$bottom.hide();
         });
         this.dialog.$element.on('minimized.ladb.dialog', function() {
+            that.$element.addClass('ladb-full-width');
             that.$btnMinimize.hide();
             that.$btnMaximize.show();
+        });
+        this.dialog.$element.on('maximizing.ladb.dialog', function() {
+            that.$element.removeClass('ladb-full-width');
         });
         this.dialog.$element.on('maximized.ladb.dialog', function() {
             that.$btnMinimize.show();

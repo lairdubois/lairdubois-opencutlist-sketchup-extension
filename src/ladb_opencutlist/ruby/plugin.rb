@@ -68,9 +68,9 @@ module Ladb::OpenCutList
 
     TABS_DIALOG_MINIMIZED_WIDTH = 90
     TABS_DIALOG_MINIMIZED_HEIGHT = if Sketchup.platform == :platform_osx
-                                     (Sketchup.version_number < 2600000000 ? 28 : 0)
+                                     (Sketchup.version_number >= 2600000000 ? 0 : 28)
                                    elsif Sketchup.platform == :platform_win
-                                     (Sketchup.version_number < 2100000000 ? 28 : 0)
+                                     (Sketchup.version_number >= 2110000000 ? 0 : 38)
                                    end +
                                    80 + 80 * 3     # = 1 + 3 Tab buttons
     TABS_DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1150
