@@ -200,8 +200,10 @@
             that.$btnMinimize.hide();
             that.$btnMaximize.show();
         });
-        this.dialog.$element.on('maximized.ladb.dialog', function() {
+        this.dialog.$element.on('maximizing.ladb.dialog', function() {
             that.$element.removeClass('ladb-full-width');
+        });
+        this.dialog.$element.on('maximized.ladb.dialog', function() {
             that.$btnMinimize.show();
             that.$btnMaximize.hide();
             that.$bottom.show();
