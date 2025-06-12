@@ -284,7 +284,7 @@ module Ladb::OpenCutList
       when STATE_SHAPE_START
         return super +
           ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_from_vertex_status') + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_from_vertex_status') + '.'
 
       when STATE_SHAPE
         return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_#{state}_status") + '.'
@@ -1540,7 +1540,7 @@ module Ladb::OpenCutList
 
       case state
 
-      when STATE_SHAPE_START, STATE_SHAPE
+      when STATE_SHAPE
         return super +
           ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_rectangle_centered_status') + '.'
 
@@ -2169,10 +2169,6 @@ module Ladb::OpenCutList
 
       case state
 
-      when STATE_SHAPE_START
-        return super +
-               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_draw.action_option_options_measure_from_#{_fetch_option_measure_from_diameter ? 'radius' : 'diameter'}_status") + '.'
-
       when STATE_SHAPE
         return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_1_#{_fetch_option_measure_from_diameter ? 'diameter' : 'radius'}_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_measure_locked_status') + '.' +
@@ -2545,7 +2541,7 @@ module Ladb::OpenCutList
 
       case state
 
-      when STATE_SHAPE_START, STATE_SHAPE
+      when STATE_SHAPE
         return super +
           ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_draw.action_option_options_measure_reversed_status") + '.'
 
