@@ -2458,6 +2458,7 @@
                 const $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                 const $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
                 const $selectColorization = $('#ladb_select_colorization', $modal);
+                const $selectHighlightPrimaryCuts = $('#ladb_select_highlight_primary_cuts', $modal);
                 const $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
                 const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 const $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
@@ -2497,6 +2498,7 @@
                     options.hide_part_list = $selectHidePartList.val() === '1';
                     options.part_drawing_type = that.toInt($selectPartDrawingType.val());
                     options.colorization = that.toInt($selectColorization.val());
+                    options.highlight_primary_cuts = $selectHighlightPrimaryCuts.val() === '1';
                     options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
                     options.time_limit = that.toInt($inputTimeLimit.val());
                     options.not_anytime_tree_search_queue_size = that.toInt($inputNotAnytimeTreeSearchQueueSize.val());
@@ -2520,6 +2522,7 @@
                     $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                     $selectColorization.selectpicker('val', options.colorization);
+                    $selectHighlightPrimaryCuts.selectpicker('val', options.highlight_primary_cuts ? '1' : '0');
                     $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
                     $inputTimeLimit.val(options.time_limit);
                     $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
@@ -2680,6 +2683,7 @@
                 $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectColorization.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputTimeLimit.ladbTextinputText();
                 $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();

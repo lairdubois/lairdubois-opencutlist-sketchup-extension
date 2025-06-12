@@ -11,6 +11,14 @@
 {% set hideCuttingDim = solution.options.problem_type == 'irregular' %}
 {% set hideCumulable = true %}
 
+{% macro cut_position(cut, options) %}
+    {% spaceless %}
+        {% if cut.orientation == 'horizontal' %}{{ cut.y|escape('html') }} <i class='ladb-opencutlist-icon-horizontal-cut-{% if options.origin_corner == 1 or options.origin_corner == 3 %}{# 1 = ORIGIN_CORNER_BOTTOM_LEFT, 3 = ORIGIN_CORNER_BOTTOM_RIGHT #}top{% else %}bottom{% endif %}'></i>{% else %}{{ cut.x|escape('html') }} <i class='ladb-opencutlist-icon-vertical-cut-{% if options.origin_corner == 2 or options.origin_corner == 3 %}{# 2 = ORIGIN_CORNER_TOP_RIGHT, 3 = ORIGIN_CORNER_BOTTOM_RIGHT #}left{% else %}right{% endif %}'></i>{% endif %}
+    {% endspaceless %}
+{% endmacro %}
+
+{% import _self as fn %}
+
 {% block headerInner %}
     {{ parent() }}
     {% include 'tabs/cutlist/_header-extra.twig' %}
@@ -281,7 +289,19 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td colspan="{{ colspan }}">{{ bin.svg|raw }}</td>
+                    <td colspan="{{ colspan }}">
+                        {{ bin.svg|raw }}
+                        {% if solution.options.highlight_primary_cuts %}
+                            <div class="col-xs-4 col-xs-offset-4 ladb-cutlist-packing-cuts-summary">
+                                <div>{{ 'tab.cutlist.packing.list.cut_primary_plural'|i18next }}</div>
+                                {% for cut in bin.cuts if cut.depth == 1 %}
+                                    <div>{{ fn.cut_position(cut, solution.options) }}</div>
+                                {% else %}
+                                    <div><em>{{ 'tab.cutlist.packing.list.cut_none'|i18next }}</em></div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% if not solution.options.hide_part_list %}
                     <tr class="table-column-heading">

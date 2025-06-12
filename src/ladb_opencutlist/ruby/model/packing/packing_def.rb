@@ -70,13 +70,13 @@ module Ladb::OpenCutList
 
     attr_reader :problem_type,
                 :spacing, :trimming,
-                :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner,
+                :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner, :highlight_primary_cuts, :hide_edges_preview,
                 :rectangleguillotine_cut_type, :rectangleguillotine_first_stage_orientation, :rectangleguillotine_number_of_stages, :rectangleguillotine_keep_length, :rectangleguillotine_keep_width,
                 :irregular_allowed_rotations, :irregular_allow_mirroring
 
     def initialize(problem_type:,
                    spacing:, trimming:,
-                   items_formula:, hide_part_list:, part_drawing_type:, colorization:, origin_corner:,
+                   items_formula:, hide_part_list:, part_drawing_type:, colorization:, origin_corner:, highlight_primary_cuts:, hide_edges_preview:,
                    rectangleguillotine_cut_type:, rectangleguillotine_first_stage_orientation:, rectangleguillotine_number_of_stages:, rectangleguillotine_keep_length:, rectangleguillotine_keep_width:,
                    irregular_allowed_rotations:, irregular_allow_mirroring:)
 
@@ -90,6 +90,8 @@ module Ladb::OpenCutList
       @part_drawing_type = part_drawing_type
       @colorization = colorization
       @origin_corner = origin_corner
+      @highlight_primary_cuts = highlight_primary_cuts
+      @hide_edges_preview = hide_edges_preview
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_first_stage_orientation = rectangleguillotine_first_stage_orientation

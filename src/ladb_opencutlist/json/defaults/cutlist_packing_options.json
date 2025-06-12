@@ -36,6 +36,7 @@
     "hide_part_list": false,
     "part_drawing_type": 1, /* PART_DRAWING_TYPE_2D_TOP */
     "colorization": 1, /* COLORIZATION_SCREEN */
+    "highlight_primary_cuts": false,
     "hide_edges_preview": true,
     "time_limit": 20,
     "not_anytime_tree_search_queue_size": 16,

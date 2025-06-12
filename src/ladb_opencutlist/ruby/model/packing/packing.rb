@@ -65,7 +65,7 @@ module Ladb::OpenCutList
 
     attr_reader :problem_type,
                 :spacing, :trimming,
-                :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner,
+                :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner, :highlight_primary_cuts, :hide_edges_preview,
                 :rectangleguillotine_cut_type, :rectangleguillotine_first_stage_orientation, :rectangleguillotine_number_of_stages, :rectangleguillotine_keep_length, :rectangleguillotine_keep_width,
                 :irregular_allowed_rotations, :irregular_allow_mirroring
 
@@ -82,6 +82,8 @@ module Ladb::OpenCutList
       @part_drawing_type = _def.part_drawing_type
       @colorization = _def.colorization
       @origin_corner = _def.origin_corner
+      @highlight_primary_cuts = _def.highlight_primary_cuts
+      @hide_edges_preview = _def.hide_edges_preview
 
       @rectangleguillotine_cut_type = _def.rectangleguillotine_cut_type
       @rectangleguillotine_first_stage_orientation = _def.rectangleguillotine_first_stage_orientation

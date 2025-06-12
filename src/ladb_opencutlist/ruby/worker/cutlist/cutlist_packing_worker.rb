@@ -235,6 +235,7 @@ module Ladb::OpenCutList
                    part_drawing_type: PART_DRAWING_TYPE_NONE,
                    colorization: COLORIZATION_SCREEN,
                    origin_corner: ORIGIN_CORNER_TOP_LEFT,
+                   highlight_primary_cuts: false,
                    hide_edges_preview: true,
 
                    rectangleguillotine_cut_type: Packy::RECTANGLEGUILLOTINE_CUT_TYPE_NON_EXACT,
@@ -277,6 +278,7 @@ module Ladb::OpenCutList
                        else
                          origin_corner.to_i
                        end
+      @highlight_primary_cuts = highlight_primary_cuts && problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
       @hide_edges_preview = if problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
                               true  # Force hide edges preview to true if ONEDIMENSIONAL or IRREGULAR
                             else
@@ -649,6 +651,8 @@ module Ladb::OpenCutList
             part_drawing_type: @part_drawing_type,
             colorization: @colorization,
             origin_corner: @origin_corner,
+            highlight_primary_cuts: @highlight_primary_cuts,
+            hide_edges_preview: @hide_edges_preview,
             rectangleguillotine_cut_type: @rectangleguillotine_cut_type,
             rectangleguillotine_first_stage_orientation: @rectangleguillotine_first_stage_orientation,
             rectangleguillotine_number_of_stages: @rectangleguillotine_number_of_stages,
@@ -714,7 +718,7 @@ module Ladb::OpenCutList
                   length: (raw_cut['length'] ? _from_packy_length(raw_cut['length']) : bin_type_def.width.to_l),
                   orientation: raw_cut.fetch('orientation', 'vertical')
                 )
-              }.sort_by { |cut_def| cut_def.depth } : [],
+              }.sort_by { |cut_def| [ cut_def.depth, cut_def.x, cut_def.y ] } : [],
               part_info_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
                 @item_type_defs[raw_item['item_type_id']]
               }.group_by { |i| i }.map { |item_type_def, v|
@@ -1072,6 +1076,7 @@ module Ladb::OpenCutList
               clazz = ' cut-trimming'
             when 1
               clazz = ' cut-primary'
+              clazz += ' cut-highlighted' if @highlight_primary_cuts
             else
               clazz = ''
             end

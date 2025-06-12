@@ -1093,6 +1093,16 @@ tab:
       option_colorization_2: $t(default.yes) - Écran et Impression
       option_colorization_help: |
         Permet de définir si une couleur aléatoire est utilisée pour distinguer les pièces sur le diagramme.
+      option_origin_corner: Position de l'origine
+      option_origin_corner_0: En haut à gauche
+      option_origin_corner_1: En bas à gauche
+      option_origin_corner_2: En haut à droite
+      option_origin_corner_3: En bas à droite
+      option_origin_corner_help: Permet de choisir le coin d'origine de placement des pièces dans les panneaux, feuille, barre ou bande.
+      option_highlight_primary_cuts: Coupes primaires
+      option_highlight_primary_cuts_0: Survol uniquement
+      option_highlight_primary_cuts_1: Toujours visibles
+      option_highlight_primary_cuts_help: Permet de mettre en surbrillance toujours visible les coupes primaires.
       option_hide_edges_preview: Indicateurs de chants à plaquer
       option_hide_edges_preview_0: Affichés sur le diagramme
       option_hide_edges_preview_1: Masqués sur le diagramme
@@ -1147,6 +1157,8 @@ tab:
         cut_plural: Coupes
         cut_trimming: Coupe de propreté
         cut_primary: Coupe primaire
+        cut_primary_plural: Coupes primaires
+        cut_none: Aucune
         cut_depth: Niveau {{ depth }}
       write:
         title: Exportation du calepinage
