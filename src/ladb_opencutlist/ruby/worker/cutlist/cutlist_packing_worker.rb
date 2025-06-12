@@ -391,8 +391,25 @@ module Ladb::OpenCutList
           }
           if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
             bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy_length(@trimming)
+            # bin_type[:defects] = [
+            #   {
+            #     x: _to_packy_length(@trimming),
+            #     y: _to_packy_length(1247.mm),
+            #     width: _to_packy_length(length - @trimming * 2),
+            #     height: _to_packy_length(@spacing),
+            #   }
+            # ]
           elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
             bin_type[:type] = 'rectangle'
+            # bin_type[:defects] = [
+            #   {
+            #     type: 'rectangle',
+            #     x: _to_packy_length(@trimming),
+            #     y: _to_packy_length(1247.mm),
+            #     width: _to_packy_length(length - @trimming * 2),
+            #     height: _to_packy_length(@spacing),
+            #   }
+            # ]
           end
           bin_types << bin_type
           @bin_type_defs << PackingBinTypeDef.new(

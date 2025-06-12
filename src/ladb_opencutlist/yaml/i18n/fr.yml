@@ -1647,9 +1647,13 @@ tab:
       title: Exporter l'image
     import_from_skm:
       title: Importer un fichier .skm
-      ask_replace: |
+      ask_replace: |  # TODO
         Une matière "{{ name }}" existe déjà.
         Souhaitez-vous la remplacer par celle que vous importez ?
+        
+        Oui = Remplacer la matière existante par la matière importée
+        Non = Garder les deux matières
+        Annuler = Arrêter l'opération
     export_to_skm:
       title: Exporter un fichier .skm
     option:
