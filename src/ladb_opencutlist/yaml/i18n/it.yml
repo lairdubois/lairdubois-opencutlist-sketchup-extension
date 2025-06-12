@@ -39,8 +39,8 @@ default:
   estimate: Preventivo
   rename: Rinominare
   next: Prossimo
-  yes: Si
-  no: No
+  "yes": Si
+  "no": No
   automatic: Automatico
   empty_filename: Senza titolo.skp
   help: Aiuto
@@ -1093,6 +1093,16 @@ tab:
       option_colorization_2: $t(default.yes) - Schermo e stampa
       option_colorization_help: |
         Consente di utilizzare un colore scelto a caso per distinguere gli elementi nel diagramma di taglio.
+      option_origin_corner: Posizione dell'origine
+      option_origin_corner_0: In alto a sinistra
+      option_origin_corner_1: In basso a sinistra
+      option_origin_corner_2: In alto a destra
+      option_origin_corner_3: In basso a destra
+      option_origin_corner_help: ""
+      option_highlight_primary_cuts: Tagli principali
+      option_highlight_primary_cuts_0: Solo al passaggio del mouse
+      option_highlight_primary_cuts_1: Sempre visibile
+      option_highlight_primary_cuts_help: Consente di evidenziare i tagli principali.
       option_hide_edges_preview: Indicatori di bordo per la placcatura
       option_hide_edges_preview_0: Visualizzato sul schema di taglio
       option_hide_edges_preview_1: Mascherato sul schema di taglio
@@ -1147,6 +1157,8 @@ tab:
         cut_plural: Tagli
         cut_trimming: Sezionatura
         cut_primary: Sezionatura principale
+        cut_primary_plural: Tagli principali
+        cut_none: Nessuna
         cut_depth: "Livello {{ depth }}"
       write:
         title: Esporta diagramma di taglio
@@ -1645,8 +1657,6 @@ tab:
     import_from_skm:
       title: Importa file .skm
       ask_replace: |
-        Esiste già un materiale "{{ name }}".
-        Si desidera sostituirlo con quello che si sta importando?
     export_to_skm:
       title: Esporta su file .skm
     option:
@@ -1955,10 +1965,10 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglese*, *tedesco*)
       - Gildas Boureau (documentazione *francese*)
       - Vladimir Badulya (*russo*)
-      - Nayton Sanches Barbosa, corretto e rivisto da [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portoghese*)
+      - Nayton Sanches Barbosa, corretto e rivisto da [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portoghese*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*spagnolo*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*ceco*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*polacco*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*polacco*)
       - Sergey Isupov (*ebraico*), interfaccia RTL non ancora implementata
       - Soul Issam (*arabico*), interfaccia RTL non anchora implementata
       - Nguyen Ngoc Tan (*vietnamita*)

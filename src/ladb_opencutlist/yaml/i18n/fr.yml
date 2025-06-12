@@ -39,8 +39,8 @@ default:
   estimate: Estimer
   rename: Renommer
   next: Suivant
-  "yes": Oui  # TODO : avoid YAML convert yes to true
-  "no": Non # TODO : avoid YAML convert no to false
+  "yes": Oui
+  "no": Non
   automatic: Automatique
   empty_filename: Sans titre.skp
   help: Aide
@@ -1098,7 +1098,7 @@ tab:
       option_origin_corner_1: En bas à gauche
       option_origin_corner_2: En haut à droite
       option_origin_corner_3: En bas à droite
-      option_origin_corner_help: Permet de choisir le coin d'origine de placement des pièces dans les panneaux, feuille, barre ou bande.
+      option_origin_corner_help: Permet de choisir le coin d'origine de placement des pièces dans les panneaux, feuilles, barres ou bandes.
       option_highlight_primary_cuts: Coupes primaires
       option_highlight_primary_cuts_0: Survol uniquement
       option_highlight_primary_cuts_1: Toujours visibles
@@ -1659,10 +1659,10 @@ tab:
       title: Exporter l'image
     import_from_skm:
       title: Importer un fichier .skm
-      ask_replace: |  # TODO
+      ask_replace: |
         Une matière "{{ name }}" existe déjà.
         Souhaitez-vous la remplacer par celle que vous importez ?
-        
+
         $t(default.yes) = Remplacer la matière existante par la matière importée
         $t(default.no) = Garder les deux matières
         $t(default.cancel) = Arrêter l'opération
@@ -1974,10 +1974,10 @@ tab:
       - Gildas Boureau (documentation *française*)
       - Vladimir Badulya (*russe*)
       - Pierluigi Colombo, Massimo Risca (*italien*)
-      - Nayton Sanches Barbosa, corrigé et revu par [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugais*)
+      - Nayton Sanches Barbosa, corrigé et revu par [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portugais*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*espagnol*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*tchèque*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*polonais*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*polonais*)
       - Sergey Isupov (*hébreu*), sans interface de droite à gauche
       - Soul Issam (*arabe*), sans interface de droite à gauche
       - Nguyen Ngoc Tan (*vietnamien*)

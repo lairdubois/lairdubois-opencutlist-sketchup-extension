@@ -39,8 +39,8 @@ default:
   estimate: Oszacuj
   rename: Zmień
   next: Następny
-  yes: Tak
-  no: Nie
+  "yes": Tak
+  "no": Nie
   automatic: Automatyczny
   empty_filename: Bez tytułu.skp
   help: Pomoc
@@ -409,6 +409,8 @@ tab:
       group_cuttingdiagram: Schemat cięcia
       group_packing: Schemat cięcia
       group_labels: Drukuj etykiety części w grupie
+      group_export: ""
+      group_estimate: ""
       edit_material: "Edytuj materiał '{{ material_name }}'"
       expand_all: Rozwiń wszystkie linie
       collapse_all: Zwiń wszystkie linie
@@ -1091,6 +1093,16 @@ tab:
       option_colorization_2: $t(default.yes) - Ekran i Druk
       option_colorization_help: |
         Określa, czy losowy kolor jest używany do rozróżniania elementów na diagramie.
+      option_origin_corner: Pozycja początku
+      option_origin_corner_0: Górny lewy narożnik
+      option_origin_corner_1: Dolny lewy narożnik
+      option_origin_corner_2: Górny prawy róg
+      option_origin_corner_3: Dolny prawy róg
+      option_origin_corner_help: ""
+      option_highlight_primary_cuts: Cięcia główne
+      option_highlight_primary_cuts_0: Tylko przegląd
+      option_highlight_primary_cuts_1: Zawsze widoczne
+      option_highlight_primary_cuts_help: Pozwala wyświetlić cięcia główne.
       option_hide_edges_preview: Wyświetlanie obrzeży
       option_hide_edges_preview_0: Wyświetlane na schemacie cięcia
       option_hide_edges_preview_1: Ukryte na schemacie cięcia
@@ -1145,6 +1157,8 @@ tab:
         cut_plural: Cięcia
         cut_trimming: Cięcie przycinające
         cut_primary: Cięcie pierwszorzędne
+        cut_primary_plural: Cięcia główne
+        cut_none: Brak
         cut_depth: "Poziom {{ depth }}"
       write:
         title: Eksport rozkładu elementów
@@ -1165,9 +1179,10 @@ tab:
         option_parts: Części
         option_parts_help: |
           Umożliwia włączenie eksportu elementów oraz wybór ich kolorów.
-        option_parts_holes: Wiercenia
-        option_parts_holes_help: |
-          Wybierz kolor wierceń.
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Oznaczenia
@@ -1188,9 +1203,10 @@ tab:
         no_part: Brak części.
         no_bin_1d: Nie wybrano żadnej standardowej płyty lub okleiny i nie zdefiniowano żadnych resztek.
         no_bin_2d: Nie wybrano żadnego standardowego panelu lub arkusza forniru i nie zdefiniowano żadnych resztek.
+        invalid_part_shapes: ""
         no_solution: Nie znaleziono żadnego rozwiązania.
         unplaced_parts: "**1 element** nie mógł być umieszczony."
-        unplaced_parts_plural: "**{{ count }}** elementów nie mogło zostać umieszczonych."
+        unplaced_parts_plural: ""
       warning:
         is_part_selection: Ten schemat cięcia jest ograniczony do **wybranych części**.
         cutting_dimensions: Ten rozkrój używa **wstępnych** wymiarów części.
@@ -1460,6 +1476,8 @@ tab:
       option_parts: Części
       option_parts_help: |
         Wybierz kolor części.
+      option_parts_depths: ""
+      option_parts_depths_help: |
       option_parts_holes: Wiercenia
       option_parts_holes_help: |
         Wybierz kolor wierceń.
@@ -1639,8 +1657,6 @@ tab:
     import_from_skm:
       title: Zaimportuj plik .skm
       ask_replace: |
-        Projekt "{{ name }}" już istnieje.
-        Czy chcesz go zastąpić tym, który importujesz?
     export_to_skm:
       title: Eksportuj plik .skm
     option:
@@ -1682,6 +1698,14 @@ tab:
     type_2: Komponent
     type_3: Część
     tooltip:
+      hide_node: ""
+      unhide_node: ""
+      locked_node: ""
+      is_active_node: ""
+      set_active_node: ""
+      edit_node_properties: ""
+      select_node: Zaznacz
+      unselect_node: ""
       open_node_url: Otwórz adres URL części
     edit_node:
       title_model: "Właściwości modelu"
@@ -1706,6 +1730,8 @@ tab:
       hide_descriptions_help: "Jeśli ta opcja zostanie wybrana, **opis** umieszczony na częściach nie będzie wyświetlany."
       hide_tags: Ukryj plakietki
       hide_tags_help: "Jeśli ta opcja jest zaznaczona, **plakietki** nie będą wyświetlane."
+      minimize_on_set_active: Minimalizuj po '$t(tab.outliner.tooltip.set_active_nodet)'
+      minimize_on_set_active_help: "Jeśli ta opcja jest zaznaczona, okno OpenCutList zostanie zminimalizowane, gdy zostanie użyta funkcja *'$t(tab.outliner.tooltip.set_active_node)'*."
     error:
       no_model: Żaden model nie jest otwarty. Będziesz musiał podać mi więcej informacji;)
       no_entities: Twój model jest pusty!
@@ -1841,7 +1867,7 @@ tab:
     contribute: Wspomóż nas
     backers: "{{ count }} darczyńca"
     backers_plural: "{{ count }} darczyńcy"
-    ad: "Czy lubisz OpenCutList?"
+    ad: ""
     objective: Cel
     objective_slogan: "OpenCutList to my wszyscy"
     objective_title:
@@ -1935,12 +1961,12 @@ tab:
       *OpenCutList* jest rozwijany przez [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) and [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Wszyscy współautorzy](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Tłumaczenia
     credits_translators: |
-      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, [Hubert Przybyłek †](https://www.drvo.pl/) (*Polski*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*Polski*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Angielski*, *Niemiecki*)
       - Gildas Boureau (dokumentacja *francuska*)
       - Vladimir Badulya (*Rosyjski*)
       - Pierluigi Colombo, Massimo Risca (*Włoski*)
-      - Nayton Sanches Barbosa, poprawione i sprawdzone przez [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Portugalski*)
+      - Nayton Sanches Barbosa, poprawione i sprawdzone przez [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*Portugalski*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Hiszpański*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czeski*)
       - Sergey Isupov (*Hebrajski*), interfejs RTL jeszcze nie obsługiwany

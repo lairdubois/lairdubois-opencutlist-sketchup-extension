@@ -7,7 +7,7 @@ default:
   minimize: Свернуть
   maximize: Развернуть
   cancel: Отмена
-  stop: Стоп
+  stop: Прервать
   validate: Принять
   confirm: Подтвердить
   ok: Ok
@@ -39,8 +39,8 @@ default:
   estimate: Сметчик
   rename: Переименовать
   next: Следующий
-  yes: Да
-  no: Нет
+  "yes": Да
+  "no": Нет
   automatic: Автоматический
   empty_filename: Безымянный.skp
   help: Помощь
@@ -162,7 +162,7 @@ core:
     material_change: "По крайней мере, один материал был изменен."
     selection_change: Выделение в активной модели было изменено.
     layers_change: Теги в активной модели изменились.
-    drawing_change: Структура активной модели была изменена.
+    drawing_change: Состав активной модели была изменена.
   upgrade:
     unavailable: Невозможно найти последнюю версию *OpenCutList*.
     available: |
@@ -259,7 +259,7 @@ core:
       view_right: Справа
       zoom: "Масштаб {{ zoom }}"
       explode_factor: Амплитуда разброса
-      toggle_box_helper: Показать или скрыть панель инструментов
+      toggle_box_helper: Показать или скрыть каркас детали
       toggle_box_dimensions_helper: Показать или скрыть размеры
       toggle_axes_helper: Показать или скрыть оси
   docs:
@@ -427,7 +427,7 @@ tab:
       general: Общие
       extra_help: "Список свойств, зависящих от типа материала \"**$t(tab.materials.type_{{ material_type }})**\"."
       edges: Схема кромок
-      faces: Лицевые
+      faces: Облицовка
       name: Определение
       material: Материал
       cumulable: Суммировать
@@ -502,8 +502,8 @@ tab:
       axes_origin_position_none: Не изменять начало координат
       axes_origin_position_min: Размещение начала координат по углу
       axes_origin_position_center: Размещение начала координат в центре
-      axes_origin_position_front_min: Поместите начало координат в торец
-      axes_origin_position_front_center: Поместите начало координат в центр
+      axes_origin_position_front_min: Размещение начала координат в торце
+      axes_origin_position_front_center: Размещение начала координат в центре плоскости
       over_length: По длине
       over_width: По ширине
       edge_disabled_help: "Эта кромка не настраивается, так как в модели не было обнаружено ни одной поверхности, которая могла бы нести в себе материал кромочной полосы."
@@ -984,7 +984,7 @@ tab:
       option_problem_type_rectangle: Правка
       option_problem_type_rectangleguillotine: Раскрой
       option_problem_type_onedimensional: Погонаж
-      option_problem_type_irregular: Встроенный
+      option_problem_type_irregular: Стыковка
       options_material: Материал
       options_config: Конфигурация
       options_display: Просмотр
@@ -1093,6 +1093,16 @@ tab:
       option_colorization_2: $t(default.yes) - Просмотр и печать
       option_colorization_help: |
         Определяет, используется ли случайный цвет для раскраски частей на диаграмме.
+      option_origin_corner: Исходный угол
+      option_origin_corner_0: Левый верхний
+      option_origin_corner_1: Левый нижний
+      option_origin_corner_2: Правый верхний
+      option_origin_corner_3: Правый нижний
+      option_origin_corner_help: ""
+      option_highlight_primary_cuts: Очередность раскроя
+      option_highlight_primary_cuts_0: Свободная
+      option_highlight_primary_cuts_1: Выделить
+      option_highlight_primary_cuts_help: Выбор опции "Выделить" позволит наглядно оценить оптимальную очередность раскроя материала.
       option_hide_edges_preview: Индикаторы облицовки
       option_hide_edges_preview_0: Отображать на диаграмме
       option_hide_edges_preview_1: Скрывать на диаграмме
@@ -1147,6 +1157,8 @@ tab:
         cut_plural: Распилы
         cut_trimming: Чистовой рез
         cut_primary: Первичный разрез
+        cut_primary_plural: Очередность раскроя
+        cut_none: Нет
         cut_depth: "Вариант {{ depth }}"
       write:
         title: Экспорт карты раскроя
@@ -1424,7 +1436,7 @@ tab:
       option_faces_help: |
         Позволяет задать, выполнять ли поиск формы детали на всех ее гранях или только на лицевой грани.
       option_anchor: Точка привязки
-      option_anchor_0: Автоматический
+      option_anchor_0: Автоматически
       option_anchor_1: Проецирование происхождения детали
       option_anchor_help: |
         **Автоматически**
@@ -1432,11 +1444,11 @@ tab:
 
         **Задать исходую точку детали**
         Включает проецирование исходной точки оси детали в качестве точки привязки.
-      option_switch_yz: Вертикальная ось
-      option_switch_yz_0: Вертикаль Z
+      option_switch_yz: Ось вертикали
+      option_switch_yz_0: "Z вертикаль "
       option_switch_yz_1: Y вертикаль
       option_switch_yz_help: |
-        Используется, чтобы поменять местами оси Y и Z для определения вертикальной оси детали.
+        Настройка определяет какая ось может быть вертикальной в детали или Y или Z.
       option_smoothing: Сглаживание
       option_smoothing_0: $t(default.no)
       option_smoothing_1: Сглаживание окружностей и дуг (Экспериментальный)
@@ -1648,8 +1660,6 @@ tab:
     import_from_skm:
       title: Импорт .skm фала
       ask_replace: |
-        Материал "{{ name }}" уже существует.
-        Заменить его импортируемым?
     export_to_skm:
       title: Экспорт в .skm файл
     option:
@@ -1958,10 +1968,10 @@ tab:
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Английский*, *Немецкий язык*)
       - Gildas Boureau (*французская* документация)
       - Pierluigi Colombo, Massimo Risca (*Итальянский*)
-      - Nayton Sanches Barbosa, исправлено и отредактировано [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Португальский*)
+      - Nayton Sanches Barbosa, исправлено и отредактировано [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*Португальский*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Испанский*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Чешский*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Польский*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*Польский*)
       - Сергей Исупов (*Иврит*), без интерфейса справа налево
       - Soul Issam (*Арабский*), без интерфейса справа налево
       - Nguyen Ngoc Tan (*Вьетнамский*)
