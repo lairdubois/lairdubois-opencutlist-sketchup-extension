@@ -39,9 +39,9 @@ default:
   estimate: Kalkulace
   rename: Přejmenovat
   next: Další
-  yes: Ano
-  no: Ne
-  automatic: Automatický
+  "yes": Ano
+  "no": Ne
+  automatic: Automaticky
   empty_filename: Nepojmenovany.skp
   help: Pomoc
   error: Spravit!
@@ -449,7 +449,7 @@ tab:
       mass_help: Hmotnost dílu bude použita při generování **Odhadu**.
       price: Cena
       price_help: Cena dílu bude použita při generování **Odhadu**.
-      thickness_layer_count: Počet hladin
+      thickness_layer_count: Počet vrstev
       thickness_layer_count_help: |
         Zde určete počet vrstev, které dělí nakreslenou část na tloušťku.
 
@@ -1087,12 +1087,22 @@ tab:
         Zobrazí nebo skryje skutečný tvar dílů a jejich opracování na diagramu.
 
         *Pro export tvarů musí být tato možnost povolena.*
-      option_colorization: Malování dílů
+      option_colorization: Barvy dílů
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Obrazovka
       option_colorization_2: $t(default.yes) - Obrazovka a tisk
       option_colorization_help: |
         Definuje, zda se k rozlišení dílů v diagramu použije náhodná barva.
+      option_origin_corner: Původní pozice
+      option_origin_corner_0: Levý horní roh
+      option_origin_corner_1: Levý dolní roh
+      option_origin_corner_2: Pravý horní roh
+      option_origin_corner_3: Pravý dolní roh
+      option_origin_corner_help: ""
+      option_highlight_primary_cuts: Primární řezy
+      option_highlight_primary_cuts_0: Pouze nadjezd
+      option_highlight_primary_cuts_1: Vždy viditelné
+      option_highlight_primary_cuts_help: Umožňuje zvýraznit primární řezy.
       option_hide_edges_preview: Zobrazení okrajových pásů
       option_hide_edges_preview_0: Zobrazeno ve schématu řezání
       option_hide_edges_preview_1: Skryto ve schématu řezání
@@ -1147,6 +1157,8 @@ tab:
         cut_plural: Řezy
         cut_trimming: Ořezávací zbytek
         cut_primary: Primární řez
+        cut_primary_plural: Primární řezy
+        cut_none: Ne
         cut_depth: "Úroveň {{ depth }}"
       write:
         title: Export diagramu řezání
@@ -1619,13 +1631,13 @@ tab:
       raw_estimated_help: |
         Definuje objem použitý k odhadu hmotnosti a celkových nákladů dílů vyrobených z tohoto materiálu.
 
-        **Efektivní objem materiálu**
+        **Hrubý objem materiálu**
         Celkový objem bude součtem objemů dílů, což je ohraničující rámeček včetně nadmír.
 
-        **Hrubý objem materiálu**
+        **Čistý objem materiálu**
         Celkový objem bude součtem objemů dílů, plechů, desek nebo hran po řezání.
-      raw_estimated_0: Efektivní objem
-      raw_estimated_1: Potřebný objem materiálů
+      raw_estimated_0: Hrubý objem materiálu
+      raw_estimated_1: Čistý objem materiálu
       multiplier_coefficient: Koeficient
       multiplier_coefficient_help: Používá se k označení multiplikačního koeficientu použitého na hrubý objem.
       std_attributes_dim_placeholder: Vyberte velikost
@@ -1648,8 +1660,6 @@ tab:
     import_from_skm:
       title: Importujte soubor .skm
       ask_replace: |
-        Materiál "{{ name }}" již existuje.
-        Chcete jej nahradit tím, který importujete?
     export_to_skm:
       title: Export do souboru .skm
     option:
@@ -1685,7 +1695,7 @@ tab:
     title: Struktura
     list: Stromová struktura entit
     nodes: Instance
-    toggle_hidden: Maskované případy
+    toggle_hidden: Zobrazit skrýté komponenty
     type_0: Model
     type_1: Skupina
     type_2: Komponent
@@ -1959,9 +1969,10 @@ tab:
       - Gildas Boureau (*francouzská* dokumentace)
       - Vladimir Badulya (*ruský*)
       - Pierluigi Colombo, Massimo Risca (*italský*)
-      - Nayton Sanches Barbosa, opraveno a revidováno [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugalský*)
+      - Nayton Sanches Barbosa, opraveno a revidováno [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portugalský*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*španělsky*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*polsky*)
+
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak(*polsky*)
       - Sergey Isupov (*hebrejsky*), bez RTL rozhraní
       - Soul Issam (*arabština*), bez RTL rozhraní
       - Nguyen Ngoc Tan (*vietnamština*)
@@ -2027,17 +2038,17 @@ tool:
     action_option_options_construction: Konstrukční čáry
     action_option_options_construction_status: Kreslení jako konstrukční čáry
     action_option_options_rectangle_centered: Obdélník vycentrovaný
-    action_option_options_rectangle_centered_status: Vycentrujte obdélník na prvním bodě
+    action_option_options_rectangle_centered_status: Kreslení obdélníku od středu
     action_option_options_smoothing: Vyhlazení
     action_option_options_smoothing_status: Hladké křivky
     action_option_options_measure_from_vertex_status: Měření k nejbližšímu vrcholu
     action_option_options_measure_from_diameter: Opatření
-    action_option_options_measure_from_diameter_status: Změřte kruh podle jeho průměru
+    action_option_options_measure_from_diameter_status: Kreslíme kruh podle průměru
     action_option_options_measure_from_radius_status: Změřte kružnici podle jejího poloměru
     action_option_options_measure_reversed: Invertovaná míra
     action_option_options_measure_reversed_status: Obráťte měření
     action_option_options_pull_centered: Výškové vycentrování
-    action_option_options_pull_centered_status: Vycentrujte výšku na prvním bodě
+    action_option_options_pull_centered_status: Kreslení 3D tělesa od středu
     action_option_options_ask_name: Pojmenování dílců
     action_option_options_ask_name_status: Ruční zadání názvů dílců
     action_measure_locked_status: Zamknout poslední měření
