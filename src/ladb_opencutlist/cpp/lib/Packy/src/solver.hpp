@@ -1885,17 +1885,21 @@ namespace Packy {
             Shape shape;
             if (j["type"] == "circle") {
 
+                LengthDbl x = j.value("x", static_cast<LengthDbl>(0));
+                LengthDbl y = j.value("y", static_cast<LengthDbl>(0));
                 LengthDbl radius = j.value("radius", static_cast<LengthDbl>(-1));
 
                 ShapeElement element;
                 element.type = ShapeElementType::CircularArc;
-                element.center = {0.0, 0.0};
-                element.start = {radius, 0.0};
+                element.center = {x, y};
+                element.start = {x + radius, y};
                 element.end = element.start;
                 shape.elements.push_back(element);
 
             } else if (j["type"] == "rectangle") {
 
+                LengthDbl x = j.value("x", static_cast<LengthDbl>(0));
+                LengthDbl y = j.value("y", static_cast<LengthDbl>(0));
                 LengthDbl width = j.value("width", static_cast<LengthDbl>(-1));
                 LengthDbl height = j.value("height", static_cast<LengthDbl>(-1));
 
@@ -1907,14 +1911,14 @@ namespace Packy {
                 element_2.type = ShapeElementType::LineSegment;
                 element_3.type = ShapeElementType::LineSegment;
                 element_4.type = ShapeElementType::LineSegment;
-                element_1.start = {0.0, 0.0};
-                element_1.end = {width, 0.0};
-                element_2.start = {width, 0.0};
-                element_2.end = {width, height};
-                element_3.start = {width, height};
-                element_3.end = {0.0, height};
-                element_4.start = {0.0, height};
-                element_4.end = {0.0, 0.0};
+                element_1.start = {x, y};
+                element_1.end = {x + width, y};
+                element_2.start = {x + width, y};
+                element_2.end = {x + width, y + height};
+                element_3.start = {x + width, y + height};
+                element_3.end = {x, y + height};
+                element_4.start = {x, y + height};
+                element_4.end = {x, y};
                 shape.elements.push_back(element_1);
                 shape.elements.push_back(element_2);
                 shape.elements.push_back(element_3);
@@ -1994,7 +1998,7 @@ namespace Packy {
                 }
             }
 
-            defect.type = j.value("type", static_cast<DefectTypeId>(0));
+            defect.type = j.value("defect_type", static_cast<DefectTypeId>(-1));
 
             return std::move(defect);
         }
