@@ -128,8 +128,8 @@ module Ladb::OpenCutList
                     material_new.color = material_loaded.color
                     material_new.colorize_type = material_loaded.colorize_type
                     if !material_loaded.texture.nil? && material_loaded.texture.valid?
-                      material_old.texture = material_loaded.texture.image_rep
-                      material_old.texture.size = material_loaded.texture.size
+                      material_new.texture = material_loaded.texture.image_rep
+                      material_new.texture.size = [ material_loaded.texture.width, material_loaded.texture.height ]
                     end
 
                     material = material_new
