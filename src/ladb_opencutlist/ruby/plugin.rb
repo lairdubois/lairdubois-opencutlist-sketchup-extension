@@ -215,7 +215,7 @@ module Ladb::OpenCutList
         puts "I18n value not found (key=#{path_key})."
       end
 
-      if i18n_string && i18n_string.is_a?(String)
+      if i18n_string.is_a?(String)
         i18n_string = i18n_string.gsub(/\$t\(([^$()]+)\)/){ get_i18n_string("#{ $1.strip }", vars) }
         if vars.is_a?(Hash)
           vars.each do |k, v|

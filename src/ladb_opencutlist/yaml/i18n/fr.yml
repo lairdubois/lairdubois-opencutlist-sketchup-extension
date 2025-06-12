@@ -39,8 +39,8 @@ default:
   estimate: Estimer
   rename: Renommer
   next: Suivant
-  yes: Oui
-  no: Non
+  "yes": Oui  # TODO : avoid YAML convert yes to true
+  "no": Non # TODO : avoid YAML convert no to false
   automatic: Automatique
   empty_filename: Sans titre.skp
   help: Aide
@@ -1651,9 +1651,9 @@ tab:
         Une matière "{{ name }}" existe déjà.
         Souhaitez-vous la remplacer par celle que vous importez ?
         
-        Oui = Remplacer la matière existante par la matière importée
-        Non = Garder les deux matières
-        Annuler = Arrêter l'opération
+        $t(default.yes) = Remplacer la matière existante par la matière importée
+        $t(default.no) = Garder les deux matières
+        $t(default.cancel) = Arrêter l'opération
     export_to_skm:
       title: Exporter un fichier .skm
     option:
