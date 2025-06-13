@@ -2,7 +2,9 @@ module Ladb::OpenCutList
 
   module PixelConverterHelper
 
-    @@_pixel_to_inch_factor = 8  # default : 960px = 120" ~ 3m -> factor = 8
+    DEFAULT_PIXEL_TO_INCH_FACTOR = 8  # default : 960px = 120" ~ 3m -> factor = 8
+
+    @@_pixel_to_inch_factor = DEFAULT_PIXEL_TO_INCH_FACTOR
 
     def _set_pixel_to_inch_factor(factor)
       @@_pixel_to_inch_factor = factor
