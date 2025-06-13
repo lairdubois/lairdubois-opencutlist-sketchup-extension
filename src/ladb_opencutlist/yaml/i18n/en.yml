@@ -39,8 +39,8 @@ default:
   estimate: Estimate
   rename: Rename
   next: Next
-  yes: Yes
-  no: No
+  "yes": Yes
+  "no": No
   automatic: Automatic
   empty_filename: Untitled.skp
   help: Help
@@ -1093,6 +1093,16 @@ tab:
       option_colorization_2: $t(default.yes) - Screen and Print
       option_colorization_help: |
         Defines whether a random color is used to distinguish parts in the diagram.
+      option_origin_corner: Position of the Origin
+      option_origin_corner_0: Top left corner
+      option_origin_corner_1: Bottom left corner
+      option_origin_corner_2: Top right corner
+      option_origin_corner_3: Bottom right corner
+      option_origin_corner_help: "Determines the location of the origin of the coordinate system for displaying parts on panels, veneer sheets, dimensional lumber or edge bandings."
+      option_highlight_primary_cuts: Primary Cuts
+      option_highlight_primary_cuts_0: Flyover only
+      option_highlight_primary_cuts_1: Always visible
+      option_highlight_primary_cuts_help: Allows you to always highlight primary cuts.
       option_hide_edges_preview: Display of Edge Bandings
       option_hide_edges_preview_0: Displayed in the cutting diagram
       option_hide_edges_preview_1: Hidden in the cutting diagram
@@ -1147,6 +1157,8 @@ tab:
         cut_plural: Cuts
         cut_trimming: Trimming cut
         cut_primary: Primary cut
+        cut_primary_plural: Primary Cuts
+        cut_none: None
         cut_depth: "Level {{ depth }}"
       write:
         title: Cutting Diagram Export
@@ -1650,6 +1662,10 @@ tab:
       ask_replace: |
         A material "{{ name }}" already exists.
         Would you like to replace it with the one you are importing?
+
+        $t(default.yes) = Replace the existing material with the imported one
+        $t(default.no) = Keep both materials
+        $t(default.cancel) = Cancel the operation
     export_to_skm:
       title: Export to .skm file
     option:
@@ -1961,7 +1977,7 @@ tab:
       - Nayton Sanches Barbosa, corrected and revised by [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*Portuguese*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spanish*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czech*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, Hubert Przybylek, Mateusz Szczepaniak (*Polish*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*Polish*)
       - Sergey Isupov (*Hebrew*), RTL interface not yet supported
       - Soul Issam (*Arabic*), RTL interface not yet supported
       - Nguyen Ngoc Tan (*Vietnamese*)
