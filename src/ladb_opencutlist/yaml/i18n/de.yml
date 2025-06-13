@@ -1290,7 +1290,8 @@ tab:
         part_edge_xmax: Kantenband Breite 2
         part_face_zmin: Furnier Rückseite
         part_face_zmax: Furnier Vorderseite
-        thumbnail_proportional_drawing: Miniaturbild
+        thumbnail_proportional_drawing: Miniaturbild (Frontansicht)
+        thumbnail_proportional_drawing_bottom: Miniaturbild (Untersicht)
         thumbnail_proportional: Proportionales Miniaturbild
         thumbnail_square: Quadratisches Miniaturbild
         group_material: Material / Dimensionen

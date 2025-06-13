@@ -1290,7 +1290,8 @@ tab:
         part_edge_xmax: Edge width 2
         part_face_zmin: Veneer backside
         part_face_zmax: Veneer front
-        thumbnail_proportional_drawing: Thumbnail
+        thumbnail_proportional_drawing: Thumbnail (Front View)
+        thumbnail_proportional_drawing_bottom: Thumbnail (Rear View)
         thumbnail_proportional: Proportional thumbnail
         thumbnail_square: Square thumbnail
         group_material: Material / Dimension

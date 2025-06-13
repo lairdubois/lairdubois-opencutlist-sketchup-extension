@@ -1290,7 +1290,7 @@ tab:
         part_edge_xmax: Chant largeur 2
         part_face_zmin: Placage Contre-face
         part_face_zmax: Placage Face
-        thumbnail_proportional_drawing: Vignette aperçu (Vue Face)  # TODO
+        thumbnail_proportional_drawing: Vignette aperçu (Vue Face)
         thumbnail_proportional_drawing_bottom: Vignette aperçu (Vue Contre-Face)
         thumbnail_proportional: Vignette proportionnelle
         thumbnail_square: Vignette carrée
