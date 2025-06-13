@@ -177,12 +177,12 @@ module Ladb::OpenCutList
           )
           entry.custom_values << _evaluate_text(element_def['custom_formula'], data)
 
-        elsif element_def['formula'] == 'thumbnail.proportional.drawing'
+        elsif element_def['formula'].start_with?('thumbnail.proportional.drawing')
 
           scale = 1 / [ part.def.size.length, part.def.size.width ].max
           transformation = Geom::Transformation.scaling(scale, -scale, 1.0)
 
-          projection_def = _compute_part_projection_def(PART_DRAWING_TYPE_2D_TOP, part)
+          projection_def = _compute_part_projection_def(element_def['formula'].end_with?('.bottom') ? PART_DRAWING_TYPE_2D_BOTTOM : PART_DRAWING_TYPE_2D_TOP, part)
           if projection_def.is_a?(DrawingProjectionDef)
             entry.custom_values << projection_def.layer_defs.map { |layer_def|
               {
