@@ -41,7 +41,7 @@ default:
   next: Следующий
   "yes": Да
   "no": Нет
-  automatic: Автоматический
+  automatic: Автоматически
   empty_filename: Безымянный.skp
   help: Помощь
   error: Исправить!
@@ -1098,7 +1098,7 @@ tab:
       option_origin_corner_1: Левый нижний
       option_origin_corner_2: Правый верхний
       option_origin_corner_3: Правый нижний
-      option_origin_corner_help: ""
+      option_origin_corner_help: "Выбор исходного угла для размещения деталей в панелях, листах, погонаже или кромках."
       option_highlight_primary_cuts: Очередность раскроя
       option_highlight_primary_cuts_0: Свободная
       option_highlight_primary_cuts_1: Выделить
@@ -1290,7 +1290,8 @@ tab:
         part_edge_xmax: Кромка по ширине 2
         part_face_zmin: Тыльный шпон
         part_face_zmax: Лицевой шпон
-        thumbnail_proportional_drawing: Обзор миниатюр
+        thumbnail_proportional_drawing: Просмотр эскизов (вид спереди)
+        thumbnail_proportional_drawing_bottom: Просмотр эскизов (вид сзади)
         thumbnail_proportional: Пропорциональная
         thumbnail_square: Квадратная
         group_material: Материал / Толщина
@@ -1430,9 +1431,9 @@ tab:
       option_part_drawing_type: Проекция
       option_part_drawing_type_help: |
         Позволяет выбрать экспортируемый вид.
-      option_faces: Лицевые
-      option_faces_0: Используйте только выбранную сторону
-      option_faces_1: Используйте все стороны детали
+      option_faces: Облицовка
+      option_faces_0: Использовать только выбранную сторону
+      option_faces_1: Использовать все стороны детали
       option_faces_help: |
         Позволяет задать, выполнять ли поиск формы детали на всех ее гранях или только на лицевой грани.
       option_anchor: Точка привязки
@@ -1660,6 +1661,12 @@ tab:
     import_from_skm:
       title: Импорт .skm фала
       ask_replace: |
+        Материал "{{ name }}" уже существует.
+        Хотите ли вы заменить его импортируемым материалом?
+
+        $t(default.yes) = Заменить существующий материал на импортируемый
+        $t(default.no) = Сохранить оба материала
+        $t(default.cancel) = Остановить операцию
     export_to_skm:
       title: Экспорт в .skm файл
     option:
