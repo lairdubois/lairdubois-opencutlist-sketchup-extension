@@ -1290,7 +1290,8 @@ tab:
         part_edge_xmax: Hrana napříč 2
         part_face_zmin: Zadní strana z dýhy
         part_face_zmax: Přední strana z dýhy
-        thumbnail_proportional_drawing: Náhled
+        thumbnail_proportional_drawing: ""
+        thumbnail_proportional_drawing_bottom: ""
         thumbnail_proportional: Proporcionální miniatura
         thumbnail_square: Čtvercová miniatura
         group_material: Materíál / Tloušťka
@@ -2016,7 +2017,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: Kreslení
+    title: Kreslení dílů
     action_0: Nakreslit OBDÉLNÍK
     action_0_status: Vytvořte 3D těleso z obdélníkového tvaru
     action_0_state_1_status: Kliknutím definujete protilehlý úhel nebo zadáte délku a šířku
@@ -2057,7 +2058,7 @@ tool:
     success:
       part_created: "Nová část vytvořena: {{ name }}"
   smart_handle:
-    title: Ovládací bod
+    title: Práce s díly
     action_0: Vybrat
     action_0_status: Kliknutím na dílec ho vyberete
     action_1: Kopie po čáře
