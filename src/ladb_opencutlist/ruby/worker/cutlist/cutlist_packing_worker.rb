@@ -749,7 +749,7 @@ module Ladb::OpenCutList
       packing_def.solution_def.bin_defs.each do |bin_def|
 
         bin_def.cut_cost = bin_def.cut_length * (bin_def.bin_type_def.std_cut_price[:val] == 0 ? 0 : _uv_to_inch(bin_def.bin_type_def.std_cut_price[:unit], bin_def.bin_type_def.std_cut_price[:val], bin_def.number_of_cuts ? bin_def.cut_length / bin_def.number_of_cuts : 0)) unless bin_def.bin_type_def.std_cut_price.nil?
-        bin_def.svg = _render_bin_def_svg(bin_def, false) unless running
+        bin_def.svg = _render_bin_def_svg(bin_def, false, longest_bin_def, widest_bin_def) unless running
         bin_def.light_svg = _render_bin_def_svg(bin_def, true, longest_bin_def, widest_bin_def)
 
         packing_def.solution_def.summary_def.number_of_leftovers += bin_def.number_of_leftovers * bin_def.count
@@ -812,7 +812,11 @@ module Ladb::OpenCutList
       if light
         _set_pixel_to_inch_factor(200 / widest_bin_def.bin_type_def.width)
       else
-        _set_pixel_to_inch_factor(DEFAULT_PIXEL_TO_INCH_FACTOR)
+        if !longest_bin_def.nil? && !widest_bin_def.nil? && ((max_size = [ longest_bin_def.bin_type_def.length, widest_bin_def.bin_type_def.width ].max) * DEFAULT_PIXEL_TO_INCH_FACTOR) < 960
+          _set_pixel_to_inch_factor(960 / max_size)
+        else
+          _set_pixel_to_inch_factor(DEFAULT_PIXEL_TO_INCH_FACTOR)
+        end
       end
 
       uuid = SecureRandom.uuid
@@ -837,7 +841,7 @@ module Ladb::OpenCutList
       px_bin_length = _to_px(bin_def.bin_type_def.length)
       px_bin_length_virtual = [ px_bin_length, longest_bin_def.nil? ? 0 : _to_px(longest_bin_def.bin_type_def.length) ].max
       px_bin_width = _to_px(bin_def.bin_type_def.width)
-      px_bin_width_virtual = [ px_bin_width, widest_bin_def.nil? ? 0 : _to_px(widest_bin_def.bin_type_def.width) ].max
+      px_bin_width_virtual = [ px_bin_width, !light || widest_bin_def.nil? ? 0 : _to_px(widest_bin_def.bin_type_def.width) ].max
       px_trimming = _to_px(@trimming)
       px_spacing = _to_px(@spacing)
 
