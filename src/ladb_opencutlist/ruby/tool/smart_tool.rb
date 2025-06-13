@@ -6,7 +6,9 @@ module Ladb::OpenCutList
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/sanitizer_helper'
   require_relative '../worker/cutlist/cutlist_generate_worker'
+  require_relative '../utils/dimension_utils'
   require_relative '../utils/hash_utils'
+  require_relative '../utils/view_utils'
   require_relative '../model/geom/size3d'
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/edge_manipulator'
@@ -471,7 +473,7 @@ module Ladb::OpenCutList
 
       # Zoom extends
       append_minitool_btn('M0,0.3L0,0L0.3,0 M0.7,0L1,0L1,0.3 M1,0.7L1,1L0.7,1 M0.3,1L0,1L0,0.7 M0.2,0.3L0.5,0.2L0.8,0.3L0.5,0.4L0.2,0.3 M0.2,0.3L0.2,0.7L0.5,0.8L0.8,0.7L0.8,0.3 M0.5,0.4L0.5,0.8') do |button|
-        view.zoom_extents
+        ViewUtils.zoom_active_entities(view)
       end
 
     end
@@ -1007,7 +1009,7 @@ module Ladb::OpenCutList
     end
 
     def fetch_action_option_length(action, option_group, option)
-      fetch_action_option_value(action, option_group, option).to_s.to_l
+      DimensionUtils.str_to_ifloat(fetch_action_option_value(action, option_group, option).to_s).to_l
     rescue ArgumentError
       0.to_l
     end

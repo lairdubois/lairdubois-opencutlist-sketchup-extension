@@ -1,5 +1,7 @@
 module Ladb::OpenCutList
 
+  require_relative '../../utils/view_utils'
+
   class OutlinerSetActiveWorker
 
     def initialize(outliner_def,
@@ -31,6 +33,9 @@ module Ladb::OpenCutList
 
 
       model.active_path = node_def.path
+
+      # Zoom on active entities
+      ViewUtils.zoom_active_entities(model.active_view)
 
 
       # Commit model modification operation

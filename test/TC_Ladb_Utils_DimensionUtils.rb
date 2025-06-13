@@ -38,6 +38,7 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     assert_equal_fn(fn, '1mm', '1 mm')
     assert_equal_fn(fn, '1"', '1"')
     assert_equal_fn(fn, '1\'', '1\'')
+    assert_equal_fn(fn, '1 1/2"', '1 1/2"')
     assert_equal_fn(fn, '1.0"', '1' + @separator + '0"')
     assert_equal_fn(fn, '1.0\'', '1' + @separator + '0\'')
     assert_equal_fn(fn, '1,0"', '1' + @separator + '0"')
@@ -48,7 +49,7 @@ class TC_Ladb_Utils_DimensionUtils < TestUp::TestCase
     Ladb::OpenCutList::DimensionUtils.fetch_options
     assert_equal_fn(fn, '1/2 m', '1/2 m')
     assert_equal_fn(fn, '1/2', '1/2 m')
-    assert_equal_fn(fn, '', '0')  # It depends of model precision
+    assert_equal_fn(fn, '', '0')  # It depends on model precision
     assert_equal_fn(fn, 'm', '0')
 
     @units_options_provider['LengthUnit'] = Length::Inches
