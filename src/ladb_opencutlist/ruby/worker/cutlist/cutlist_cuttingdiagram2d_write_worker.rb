@@ -106,6 +106,8 @@ module Ladb::OpenCutList
       return { :errors => [ 'default.error' ] } unless @cuttingdiagram2d && @cuttingdiagram2d.def.group
       return { :errors => [ 'default.error' ] } unless SUPPORTED_FILE_FORMATS.include?(@file_format)
 
+      _set_pixel_to_inch_factor(7)
+
       # Ask for output dir
       dir = UI.select_directory(title: PLUGIN.get_i18n_string('tab.cutlist.cuttingdiagram.write.title'), directory: '')
       if dir
