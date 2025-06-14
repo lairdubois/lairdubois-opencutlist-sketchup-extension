@@ -1098,7 +1098,7 @@ tab:
       option_origin_corner_1: Нижній лівий кут
       option_origin_corner_2: Верхній правий кут
       option_origin_corner_3: Нижній правий кут
-      option_origin_corner_help: ""
+      option_origin_corner_help: "Вибір початкового кута системи координат, де деталі розміщуються в панелях, листах, погонажі або крайках."
       option_highlight_primary_cuts: Основні різи
       option_highlight_primary_cuts_0: Тільки огляд
       option_highlight_primary_cuts_1: Завжди видимий
@@ -1290,7 +1290,8 @@ tab:
         part_edge_xmax: Крайка по ширині 2
         part_face_zmin: Тильний шпон
         part_face_zmax: Лицьовий шпон
-        thumbnail_proportional_drawing: Перегляд мініатюр
+        thumbnail_proportional_drawing: Мініатюра (вигляд з лиця)
+        thumbnail_proportional_drawing_bottom: Мініатюра (вигляд з тилу)
         thumbnail_proportional: Мініатюра прямокутна
         thumbnail_square: Мініатюра квадратна
         group_material: Матеріал / Міра
@@ -1660,6 +1661,12 @@ tab:
     import_from_skm:
       title: Імпорт файлу .skm
       ask_replace: |
+        Матеріал "{{ name }}" вже існує.
+        Бажаєте замінити його на той, який ви імпортуєте?
+
+        $t(default.yes) = Замініть існуючий матеріал імпортованим матеріалом
+        $t(default.no) = Зберегти обидва матеріали
+        $t(default.cancel) = Зупинити операцію
     export_to_skm:
       title: Експорт файлу .skm
     option:

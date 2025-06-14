@@ -63,8 +63,8 @@ default:
   unit_angle_0: 62 - Stupně
   instance_single: 63 - položka
   instance_plural: 64 - položky
-  part_single: 65 - pokoj
-  part_plural: 66 - pokoje
+  part_single: 65 - díl
+  part_plural: 66 - díly
   cut_single: 67 - řez
   cut_plural: 68 - řezy
   thickness_layer_single: 69 - hladina
@@ -432,7 +432,7 @@ tab:
       cumulable_0: 351 - Nelze shrnout
       cumulable_1: 352 - Celkem délka
       cumulable_2: 353 - Celkem šířka
-      instance_count_by_part: 354 - Obaly
+      instance_count_by_part: 354 - Balení
       instance_count_by_part_help: |
         355 - Umožňuje zobrazit díl jako *balík* jedné nebo více *jednotek*.
         Množství přiřazené dílu v seznamu dřeva tedy představuje počet celých balení potřebných k tomu, aby obsahovala počet kusů skutečně přítomných v modelu.
@@ -1094,7 +1094,7 @@ tab:
       option_origin_corner_1: 878 - Levý dolní roh
       option_origin_corner_2: 879 - Pravý horní roh
       option_origin_corner_3: 880 - Pravý dolní roh
-      option_origin_corner_help: '881 - '
+      option_origin_corner_help: 881 - Určuje umístění počátku souřadnicového systému pro zobrazení dílů na tabulích, dýhovaných deskách, rozměrovém řezivu nebo olepování hran.
       option_highlight_primary_cuts: 882 - Primární řezy
       option_highlight_primary_cuts_0: 883 - Pouze nadjezd
       option_highlight_primary_cuts_1: 884 - Vždy viditelné
@@ -1286,8 +1286,8 @@ tab:
         part_edge_xmax: 1046 - Hrana napříč 2
         part_face_zmin: 1047 - Zadní strana z dýhy
         part_face_zmax: 1048 - Přední strana z dýhy
-        thumbnail_proportional_drawing: '1049 - '
-        thumbnail_proportional_drawing_bottom: '1050 - '
+        thumbnail_proportional_drawing: 1049 - Náhled (pohled přední)
+        thumbnail_proportional_drawing_bottom: 1050 - Náhled (pohled zadní)
         thumbnail_proportional: 1051 - Proporcionální miniatura
         thumbnail_square: 1052 - Čtvercová miniatura
         group_material: 1053 - Materíál / Tloušťka
@@ -1656,7 +1656,13 @@ tab:
       title: 1302 - Exportovat obrázek
     import_from_skm:
       title: 1303 - Importujte soubor .skm
-      ask_replace: '1304 - '
+      ask_replace: |
+        1304 - Materiál "{{ name }}" již existuje.
+        Chcete jej nahradit materiálem, který importujete?
+
+        $t(default.yes) = Nahradit existující materiál importovaným
+        $t(default.no) = Zachovat oba materiály
+        $t(default.cancel) = Zrušit operaci
     export_to_skm:
       title: 1305 - Export do souboru .skm
     option:
@@ -1968,7 +1974,6 @@ tab:
       - Pierluigi Colombo, Massimo Risca (*italský*)
       - Nayton Sanches Barbosa, opraveno a revidováno [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portugalský*)
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*španělsky*)
-
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak(*polsky*)
       - Sergey Isupov (*hebrejsky*), bez RTL rozhraní
       - Soul Issam (*arabština*), bez RTL rozhraní
