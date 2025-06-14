@@ -383,9 +383,7 @@ module Ladb::OpenCutList
             when PRESETS_PREPROCESSOR_D
               processed_values[key] = DimensionUtils.d_add_units(values[key])
             when PRESETS_PREPROCESSOR_D_NEGATIVE_ALLOWED
-              negative = values[key].is_a?(String) && values[key].start_with?('-')
-              processed_value = DimensionUtils.d_add_units(negative ? values[key][1..-1] : values[key])
-              processed_values[key] = "#{'-' if negative && processed_value != '0'}#{processed_value}"
+              processed_values[key] = DimensionUtils.d_add_units(values[key], true)
             when PRESETS_PREPROCESSOR_DXQ
               processed_values[key] = DimensionUtils.dxq_add_units(values[key])
             when PRESETS_PREPROCESSOR_DXD

@@ -1009,9 +1009,7 @@ module Ladb::OpenCutList
     end
 
     def fetch_action_option_length(action, option_group, option)
-      DimensionUtils.str_to_ifloat(fetch_action_option_value(action, option_group, option).to_s).to_l
-    rescue ArgumentError
-      0.to_l
+      DimensionUtils.str_to_ifloat(fetch_action_option_value(action, option_group, option).to_s, true).to_l
     end
 
     def get_startup_action

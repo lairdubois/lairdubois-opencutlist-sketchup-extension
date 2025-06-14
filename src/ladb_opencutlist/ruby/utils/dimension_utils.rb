@@ -223,7 +223,7 @@
     # 1. add units if none are present, assuming that no units means model units
     # 2. convert garbage into 0
     #
-    def self.str_add_units(s)
+    def self.str_add_units(s, negative_allowed = false)
       return '0' if !s.is_a?(String) || s.is_a?(String) && s.empty?
 
       s = s.strip
@@ -231,14 +231,14 @@
       s = s.gsub(/\./, decimal_separator) # convert separator to native
 
       unit = nil
-      if (match = s.match(/^\s*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
+      if (match = s.match(/^\s*-*\s*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
         unit, = match.captures
         # puts("parsed unit = #{unit} in #{s}")
         s = s.gsub(/\s*#{unit}\s*/, unit) # Remove space around unit (to be compatible SU 2017+)
       end
       begin # Try to convert to length
         x = s.to_l
-        return '0' if x <= 0  # Accept only positive dimensions
+        return '0' if x < 0 && !negative_allowed || x == 0  # Accept only positive dimensions
       rescue => e
         # puts("OCL [dimension input error]: #{e}")
         s = '0'
@@ -257,7 +257,7 @@
     # decimal inch.
     # Returns the float as a string
     #
-    def self.str_to_ifloat(s)
+    def self.str_to_ifloat(s, negative_allowed = false)
       return '0' if !s.is_a?(String) || s.is_a?(String) && s.empty?
 
       s = s.sub(/~/, '') # strip approximate sign away
@@ -270,7 +270,7 @@
       s = s.gsub(/\s*\/\s*/, '/') # remove blanks around /
       begin
         f = (s.to_l).to_f
-        return '0' if f <= 0
+        return '0' if f <= 0 && !negative_allowed
         s = f.to_s
       rescue => e
         # puts("OCL [dimension input error]: #{e}")
@@ -279,48 +279,41 @@
       s.gsub(/\./, decimal_separator) + UNIT_SYMBOL_INCHES
     end
 
-    # Takes a single number in a string and converts it to a string
-    # in Sketchup internal format (inches, decimal) with unit sign
-    #
-    def self.str_to_istr(s)
-      str_to_ifloat(s)
-    end
-
     # Splits a string in the form d;d;...
     # into single d's and applies the function fn to each element
     # returns the concatenated string in the same format
     #
-    def self.d_transform(i, fn)
-      return '' if i.nil?
-      a = i.split(LIST_SEPARATOR)
+    def self.d_transform(s, fn, negative_allowed = false)
+      return '' unless s.is_a?(String)
+      a = s.split(LIST_SEPARATOR)
       r = []
-      a.each do |e|
-        r << send(fn, e)
+      a.each do |d|
+        r << send(fn, d, negative_allowed)
       end
       r.join(LIST_SEPARATOR)
     end
 
-    def self.d_add_units(i)
-      d_transform(i, :str_add_units)
+    def self.d_add_units(s, negative_allowed = false)
+      d_transform(s, :str_add_units, negative_allowed)
     end
 
-    def self.d_to_ifloats(i)
-      d_transform(i, :str_to_ifloat)
+    def self.d_to_ifloats(s, negative_allowed = false)
+      d_transform(s, :str_to_ifloat, negative_allowed)
     end
 
     # Splits a string in the form dxd;dxd;...
     # into single d's and applies the function fn to each element
     # returns the concatenated string in the same format
     #
-    def self.dxd_transform(i, fn)
-      return '' if i.nil?
-      a = i.split(LIST_SEPARATOR)
+    def self.dxd_transform(s, fn, negative_allowed = false)
+      return '' unless s.is_a?(String)
+      a = s.split(LIST_SEPARATOR)
       r = []
-      a.each do |e|
-        ed = e.split(DXD_SEPARATOR)
-        ed[0] = '0' if ed[0].nil? || ed[0].empty?
-        ed[1] = '0' if ed[1].nil? || ed[1].empty?
-        r << (send(fn, ed[0]) + ' ' + DXD_SEPARATOR + ' ' + send(fn, ed[1]))
+      a.each do |dd|
+        a2 = dd.split(DXD_SEPARATOR)
+        a2[0] = '0' if a2[0].nil? || a2[0].empty?
+        a2[1] = '0' if a2[1].nil? || a2[1].empty?
+        r << (send(fn, a2[0], negative_allowed) + ' ' + DXD_SEPARATOR + ' ' + send(fn, a2[1], negative_allowed))
       end
       r.join(LIST_SEPARATOR)
     end
@@ -329,8 +322,8 @@
     # and make sure they all have units and are not empty
     # without units, model units are assumed and added
     #
-    def self.dxd_add_units(i)
-      dxd_transform(i, :str_add_units)
+    def self.dxd_add_units(s, negative_allowed = false)
+      dxd_transform(s, :str_add_units, negative_allowed)
     end
 
     # Take a string containing dimensions in the form dxd;dxd;dxd;...
@@ -338,23 +331,23 @@
     # format)
     # the number is returned as a string NOT a length or float
     #
-    def self.dxd_to_ifloats(i)
-      dxd_transform(i, :str_to_ifloat)
+    def self.dxd_to_ifloats(s, negative_allowed = false)
+      dxd_transform(s, :str_to_ifloat, negative_allowed)
     end
 
     # Splits a string in the form dxq;dxq;...
     # into single d's and applies the function fn to each element. q stay unchanged.
     # returns the concatenated string in the same format
     #
-    def self.dxq_transform(i, fn)
-      return '' if i.nil?
-      a = i.split(LIST_SEPARATOR)
+    def self.dxq_transform(s, fn, negative_allowed = false)
+      return '' unless s.is_a?(String)
+      a = s.split(LIST_SEPARATOR)
       r = []
-      a.each do |e|
-        ed = e.split(DXD_SEPARATOR)
-        ed[0] = '0' if ed[0].nil? || ed[0].empty?
-        ed[1] = '0' if ed[1].nil? || ed[1].empty? || ed[1].strip.to_i < 1
-        r << (send(fn, ed[0]) + (ed[1] == '0' ? '' : ' ' + DXD_SEPARATOR + ed[1].strip))
+      a.each do |dq|
+        a2 = dq.split(DXD_SEPARATOR)
+        a2[0] = '0' if a2[0].nil? || a2[0].empty?
+        a2[1] = '0' if a2[1].nil? || a2[1].empty? || a2[1].strip.to_i < 1
+        r << (send(fn, a2[0], negative_allowed) + (a2[1] == '0' ? '' : ' ' + DXD_SEPARATOR + a2[1].strip))
       end
       r.join(LIST_SEPARATOR)
     end
@@ -363,8 +356,8 @@
     # and make sure they all have units and are not empty
     # without units, model units are assumed and added
     #
-    def self.dxq_add_units(i)
-      dxq_transform(i, :str_add_units)
+    def self.dxq_add_units(s, negative_allowed = false)
+      dxq_transform(s, :str_add_units, negative_allowed)
     end
 
     # Take a string containing dimensions in the form dxq;dxq;dxq;...
@@ -372,24 +365,24 @@
     # format)
     # the number is returned as a string NOT a length or float
     #
-    def self.dxq_to_ifloats(i)
-      dxq_transform(i, :str_to_ifloat)
+    def self.dxq_to_ifloats(s, negative_allowed = false)
+      dxq_transform(s, :str_to_ifloat, negative_allowed)
     end
 
     # Splits a string in the form dxdxq;dxdxq;...
     # into single d's and applies the function f to each element. q stay unchanged.
     # returns the concatenated string in the same format
     #
-    def self.dxdxq_transform(i, f)
-      return '' if i.nil?
-      a = i.split(LIST_SEPARATOR)
+    def self.dxdxq_transform(s, fn, negative_allowed = false)
+      return '' unless s.is_a?(String)
+      a = s.split(LIST_SEPARATOR)
       r = []
-      a.each do |e|
-        ed = e.split(DXD_SEPARATOR)
-        ed[0] = '0' if ed[0].nil? || ed[0].empty?
-        ed[1] = '0' if ed[1].nil? || ed[1].empty?
-        ed[2] = '0' if ed[2].nil? || ed[2].empty? || ed[2].strip.to_i < 1
-        r << (send(f, ed[0]) + ' ' + DXD_SEPARATOR + ' ' + send(f, ed[1]) + (ed[2] == '0' ? '' :  ' ' + DXD_SEPARATOR + ed[2].strip))
+      a.each do |ddq|
+        a2 = ddq.split(DXD_SEPARATOR)
+        a2[0] = '0' if a2[0].nil? || a2[0].empty?
+        a2[1] = '0' if a2[1].nil? || a2[1].empty?
+        a2[2] = '0' if a2[2].nil? || a2[2].empty? || a2[2].strip.to_i < 1
+        r << (send(fn, a2[0], negative_allowed) + ' ' + DXD_SEPARATOR + ' ' + send(fn, a2[1], negative_allowed) + (a2[2] == '0' ? '' :  ' ' + DXD_SEPARATOR + a2[2].strip))
       end
       r.join(LIST_SEPARATOR)
     end
@@ -398,8 +391,8 @@
     # and make sure they all have units and are not empty
     # without units, model units are assumed and added
     #
-    def self.dxdxq_add_units(i)
-      dxdxq_transform(i, :str_add_units)
+    def self.dxdxq_add_units(s, negative_allowed = false)
+      dxdxq_transform(s, :str_add_units, negative_allowed)
     end
 
     # Take a string containing dimensions in the form dxdxq;dxdxq;dxdxq;...
@@ -407,8 +400,8 @@
     # format)
     # the number is returned as a string NOT a length or float
     #
-    def self.dxdxq_to_ifloats(i)
-      dxdxq_transform(i, :str_to_ifloat)
+    def self.dxdxq_to_ifloats(s, negative_allowed = false)
+      dxdxq_transform(s, :str_to_ifloat, negative_allowed)
     end
 
     # -----
