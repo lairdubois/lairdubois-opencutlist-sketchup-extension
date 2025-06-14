@@ -2183,7 +2183,7 @@ tool:
     action_1_status: Кликните на лицевую сторону детали
     action_2: Экспорт облицовки
     action_2_status: "Кликните облицовку "
-    action_3: Экспорт маршрута
+    action_3: Экспорт путей SVG
     action_3_status: Кликните на край
     action_option_group_file_format: Формат
     action_option_group_unit: Единицы

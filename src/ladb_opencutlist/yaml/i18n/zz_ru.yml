@@ -2179,7 +2179,7 @@ tool:
     action_1_status: 1690 - Кликните на лицевую сторону детали
     action_2: 1691 - Экспорт облицовки
     action_2_status: '1692 - Кликните облицовку '
-    action_3: 1693 - Экспорт маршрута
+    action_3: 1693 - Экспорт путей SVG
     action_3_status: 1694 - Кликните на край
     action_option_group_file_format: 1695 - Формат
     action_option_group_unit: 1696 - Единицы
