@@ -270,7 +270,7 @@
       s = s.gsub(/\s*\/\s*/, '/') # remove blanks around /
       begin
         f = (s.to_l).to_f
-        return '0' if f <= 0 && !negative_allowed
+        return '0' if f < 0 && !negative_allowed || f == 0
         s = f.to_s
       rescue => e
         # puts("OCL [dimension input error]: #{e}")
