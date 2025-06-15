@@ -406,7 +406,7 @@ tab:
       group_packing: 330 - Nářezový plán
       group_labels: 331 - Tisk štítků dílů ve skupině
       group_export: 332 - Export skupiny
-      group_estimate: 333 - Odhaduji skupinu
+      group_estimate: 333 - Kalkulace skupiny
       edit_material: 334 - Upravit materiál ‘{{ material_name }}'
       expand_all: 335 - Rozbalení všech řádků
       collapse_all: 336 - Sbalení všech řádků
@@ -1578,7 +1578,7 @@ tab:
       url: 1254 - URL
       formats: 1255 - Formáty
       cut_options: 1256 - Parametry řezání
-      estimate_options: 1257 - Možnosti odhadu
+      estimate_options: 1257 - Možnosti kalkulace
       attributes: 1258 - Atributy
       thickness: 1259 - Tloušťka
       thickness_help: |
@@ -1633,8 +1633,8 @@ tab:
 
         **Čistý objem materiálu**
         Celkový objem bude součtem objemů dílů, plechů, desek nebo hran po řezání.
-      raw_estimated_0: 1287 - Hrubý objem materiálu
-      raw_estimated_1: 1288 - Čistý objem materiálu
+      raw_estimated_0: 1287 - Čistý objem materiálu
+      raw_estimated_1: 1288 - Hrubý objem materiálu
       multiplier_coefficient: 1289 - Koeficient
       multiplier_coefficient_help: 1290 - Používá se k označení multiplikačního koeficientu použitého na hrubý objem.
       std_attributes_dim_placeholder: 1291 - Vyberte velikost
@@ -1698,7 +1698,7 @@ tab:
     title: 1326 - Struktura
     list: 1327 - Stromová struktura entit
     nodes: 1328 - Instance
-    toggle_hidden: 1329 - Zobrazit skrýté komponenty
+    toggle_hidden: 1329 - Zobrazit skryté komponenty
     type_0: 1330 - Model
     type_1: 1331 - Skupina
     type_2: 1332 - Komponent
