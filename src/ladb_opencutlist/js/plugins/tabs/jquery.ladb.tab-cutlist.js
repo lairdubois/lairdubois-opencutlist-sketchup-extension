@@ -2723,6 +2723,13 @@
                     })
                 ;
 
+                // Bind clickable
+                $('.ladb-clickable[data-material-properties-tab]').on('click', function (e) {
+                    fnEditMaterial({
+                        propertiesTab: $(this).data('material-properties-tab')
+                    })
+                })
+
                 // Bind buttons
                 $btnEditMaterial.on('click', function () {
                     fnEditMaterial();

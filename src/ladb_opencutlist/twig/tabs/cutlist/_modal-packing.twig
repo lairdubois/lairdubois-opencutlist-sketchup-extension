@@ -53,12 +53,12 @@
                 </div>
                 {% if group.material_is_2d %}
                     <p class="help-block text-center">
-                        <small><i class="ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(material_attributes.grained ? '1' : '0'))|i18next }}</small>
+                        <small class="ladb-clickable" title="{{ 'tab.materials.edit_material.grained_help'|i18next }}" data-toggle="tooltip" data-html="true" data-material-properties-tab="formats"><i class="ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(material_attributes.grained ? '1' : '0'))|i18next }}</small>
                         {% if material_attributes.length_increase %}
-                            <small class="ladb-cutting-increase-help ladb-horizontal-left-separator" title="{{ 'tab.materials.edit_material.length_increase_help'|i18next }}" data-toggle="tooltip" data-html="true">{{ 'tab.materials.edit_material.length_increase'|i18next }} : <strong>{{ material_attributes.length_increase }}</strong></small>
+                            <small class="ladb-cutting-increase-help ladb-horizontal-left-separator ladb-clickable" title="{{ 'tab.materials.edit_material.length_increase_help'|i18next }}" data-toggle="tooltip" data-html="true" data-material-properties-tab="cut_options">{{ 'tab.materials.edit_material.length_increase'|i18next }} : <strong>{{ material_attributes.length_increase }}</strong></small>
                         {% endif %}
                         {% if material_attributes.width_increase %}
-                            <small class="ladb-cutting-increase-help ladb-horizontal-left-separator" title="{{ 'tab.materials.edit_material.width_increase_help'|i18next }}" data-toggle="tooltip" data-html="true">{{ 'tab.materials.edit_material.width_increase'|i18next }} : <strong>{{ material_attributes.width_increase }}</strong></small>
+                            <small class="ladb-cutting-increase-help ladb-horizontal-left-separator ladb-clickable" title="{{ 'tab.materials.edit_material.width_increase_help'|i18next }}" data-toggle="tooltip" data-html="true" data-material-properties-tab="cut_options">{{ 'tab.materials.edit_material.width_increase'|i18next }} : <strong>{{ material_attributes.width_increase }}</strong></small>
                         {% endif %}
                     </p>
                 {% endif %}
