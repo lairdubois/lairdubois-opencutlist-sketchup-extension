@@ -1172,12 +1172,20 @@ module Ladb::OpenCutList
       if px_dim_w + 2 * px_dimension_offset > px_rect_width
         tx = (px_rect_width - px_dim_w) / 2.0
       else
-        tx = px_rect_width - px_dimension_offset - px_dim_w
+        if @origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_TOP_LEFT
+          tx = px_rect_width - px_dimension_offset - px_dim_w
+        else
+          tx = px_dimension_offset
+        end
       end
       if px_dim_h + 2 * px_dimension_offset > px_rect_height
         ty = (px_rect_height - px_dim_h) / 2.0
       else
-        ty = px_dimension_offset
+        if @origin_corner == ORIGIN_CORNER_BOTTOM_LEFT || @origin_corner == ORIGIN_CORNER_BOTTOM_RIGHT
+          ty = px_rect_height - px_dimension_offset - px_dim_h
+        else
+          ty = px_dimension_offset
+        end
       end
       t = Geom::Transformation.translation(Geom::Vector3d.new(tx, ty))
       Geom::BoundingBox.new.add(
@@ -1193,12 +1201,20 @@ module Ladb::OpenCutList
       if px_dim_h + 2 * px_dimension_offset > px_rect_width
         tx = (px_rect_width - px_dim_h) / 2.0
       else
-        tx = px_dimension_offset
+        if @origin_corner == ORIGIN_CORNER_BOTTOM_RIGHT || @origin_corner == ORIGIN_CORNER_TOP_RIGHT
+          tx = px_rect_width - px_dimension_offset - px_dim_h
+        else
+          tx = px_dimension_offset
+        end
       end
       if px_dim_w + 2 * px_dimension_offset > px_rect_height
         ty = (px_rect_height - px_dim_w) / 2.0
       else
-        ty = px_rect_height - px_dim_w - px_dimension_offset
+        if @origin_corner == ORIGIN_CORNER_TOP_LEFT || @origin_corner == ORIGIN_CORNER_TOP_RIGHT
+          ty = px_rect_height - px_dimension_offset - px_dim_w
+        else
+          ty = px_dimension_offset
+        end
       end
       t = Geom::Transformation.translation(Geom::Vector3d.new(tx, ty))
       Geom::BoundingBox.new.add(
