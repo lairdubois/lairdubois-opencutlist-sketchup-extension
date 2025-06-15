@@ -2555,6 +2555,7 @@
                     $('option[value=0]', $selectPartDrawingType).prop('disabled', isIrregular);
                     if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);   // PART_DRAWING_TYPE_2D_TOP
                     $selectPartDrawingType.selectpicker('refresh');
+                    $('.ladb-cutting-increase-help', $modal).css('text-decoration', isIrregular ? 'line-through' : 'none')
                 };
                 const fnValidProblemType = function (problemType) {
                     if (group.material_is_1d
