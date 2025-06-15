@@ -848,7 +848,7 @@ module Ladb::OpenCutList
       is_1d = @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
       is_2d = !is_1d
       is_irregular = @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-      is_cut_bg = px_spacing >= 3 && !light
+      is_cut_bg = px_spacing >= 5 && !light
 
       vb_offset_x = (px_bin_length_virtual - px_bin_length) / 2
       vb_offset_y = (px_bin_width_virtual - px_bin_width) / 2

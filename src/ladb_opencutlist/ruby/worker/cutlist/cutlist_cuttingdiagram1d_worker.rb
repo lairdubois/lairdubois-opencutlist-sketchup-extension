@@ -66,6 +66,8 @@ module Ladb::OpenCutList
       parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
       return Cuttingdiagram1dDef.new(nil, [ 'default.error' ]).create_cuttingdiagram1d if parts.empty?
 
+      _set_pixel_to_inch_factor(7)
+
       unless @pack_engine
 
         # The dimensions need to be in Sketchup internal units AND float
