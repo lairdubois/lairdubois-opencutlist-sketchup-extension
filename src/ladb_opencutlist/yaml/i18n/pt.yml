@@ -117,11 +117,11 @@ core:
     tools: Ferramentas
     command:
       dialog: OpenCutList
-      smart_draw: Desenhar peças
-      smart_handle: Modificar peças
+      smart_draw: Desenhar Peças
+      smart_handle: Manipular Peças
       smart_paint: Pintar Peças
-      smart_axes: Orientação das peças
-      smart_export: Exportar as peças
+      smart_axes: Orientação das Peças
+      smart_export: Exportar as Peças
   messagebox:
     dir_override: |
       « {{ target }} » já existe. Deseja substituir ?
@@ -285,9 +285,9 @@ tab:
     highlight_parts: Destacar peças no modelo
     edit_part_properties: Editar propriedades da peça
     edit_part_axes_properties: Editar as propriedades (eixos) da peça
-    edit_part_size_increase_properties: Editar as propriedades (tamanho grande) da peça
+    edit_part_size_increase_properties: Editar as propriedades (superdimensionamento) da peça
     edit_part_edges_properties: Editar as propriedades (fitas de borda) da peça
-    edit_part_faces_properties: Editar as propriedades (laminados) da peça
+    edit_part_faces_properties: Editar as propriedades (faces) da peça
     part_drawing_type_1: Vista Frontal 2D
     part_drawing_type_2: Vista Traseira 2D
     part_drawing_type_3: Vista Esquerda 2D
@@ -482,7 +482,7 @@ tab:
       ignore_grain_direction: Ignorar a direção dos veios
       ignore_grain_direction_help: |
         Se esta caixa estiver marcada, a direção dos veios é ignorada.
-      size_increase: Superdimensionar
+      size_increase: Superdimensionamento
       size_increase_help: |
         O superdimensionamento permite aumentar as dimensões de uma única parte.
         (*Exemplo: Superdimensionar uma chapa ou uma moldura que precisa ser ajustada durante a instalação.*)
@@ -802,7 +802,7 @@ tab:
       option_part_drawing_type_1: Vista Frontal Desenhada
       option_part_drawing_type_2: Vista Traseira Desenhada
       option_part_drawing_type_help: |
-        ocultar a forma real das peças bem como sua usinagem no plano de corte.
+        Permite exibir ou ocultar o formato das peças assim como suas usinagens no plano de corte.
 
         *Esta opção deve estar ativada para que as formas possam ser exportadas.*
       option_saw_kerf: Espessura da serra
@@ -983,8 +983,8 @@ tab:
       option_problem_type: Tipo
       option_problem_type_rectangle: Retangular
       option_problem_type_rectangleguillotine: Reto
-      option_problem_type_onedimensional: Linear
-      option_problem_type_irregular: Nesting
+      option_problem_type_onedimensional: Barra
+      option_problem_type_irregular: Aninhado
       options_material: Material
       options_config: Configuração
       options_display: Exibição
@@ -1084,7 +1084,7 @@ tab:
       option_part_drawing_type_1: Vista Frontal Desenhada
       option_part_drawing_type_2: Vista Traseira Desenhada
       option_part_drawing_type_help: |
-        ocultar a forma real das peças bem como sua usinagem no plano de corte.
+        Permite exibir ou ocultar o formato das peças assim como suas usinagens no plano de corte..
 
         *Esta opção deve estar ativada para que as formas possam ser exportadas.*
       option_colorization: Colorir as peças
@@ -1098,9 +1098,9 @@ tab:
       option_origin_corner_1: Canto inferior esquerdo
       option_origin_corner_2: Canto superior direito
       option_origin_corner_3: Canto inferior direito
-      option_origin_corner_help: ""
+      option_origin_corner_help: "Permite escolher o canto de origem para o posicionamento das peças nas chapas, laminados, barras ou fitas de borda."
       option_highlight_primary_cuts: Cortes primários
-      option_highlight_primary_cuts_0: Visão geral apenas
+      option_highlight_primary_cuts_0: Apenas ao passar o mouse
       option_highlight_primary_cuts_1: Sempre visível
       option_highlight_primary_cuts_help: Permite destacar os cortes primários.
       option_hide_edges_preview: Visualização de fitas borda à serem coladas
@@ -1290,7 +1290,8 @@ tab:
         part_edge_xmax: Largura da Borda 2
         part_face_zmin: Verso do Laminado
         part_face_zmax: Frente do Laminado
-        thumbnail_proportional_drawing: Miniatura de visualização
+        thumbnail_proportional_drawing: Visualização em miniatura (Vista Frontal)
+        thumbnail_proportional_drawing_bottom: Visualização em miniatura (Vista Traseira)
         thumbnail_proportional: Miniatura Proporcional
         thumbnail_square: Miniatura Quadrada
         group_material: Espessura do Material
@@ -1660,6 +1661,12 @@ tab:
     import_from_skm:
       title: Importar arquivo .skm
       ask_replace: |
+        Um material "{{ name }}" já existe.
+        Deseja substituí-la pelo que está sendo importado?
+
+        $t(default.yes) = Substituir o material existente pelo material importado
+        $t(default.no) = Manter os dois materiais
+        $t(default.cancel) = Cancelar a operação
     export_to_skm:
       title: Exportar para arquivo .skm
     option:
@@ -1964,6 +1971,20 @@ tab:
       *OpenCutList* é desenvolvido por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) o [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Listar [colaboradores](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traduções
     credits_translators: |
+      - Henny Silva Ferreira, Nayton Sanches Barbosa, revisado e ampliado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Português*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Inglês*, *Alemão*)
+      - Gildas Boureau (documentação *francesa*)
+      - Vladimir Badulya (*Russo*)
+      - Pierluigi Colombo, Massimo Risca (*Italiano*)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Espanhol*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Tcheco*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*Polonês*)
+      - Sergey Isupov (*Hebraico*), sem interface RTL
+      - Soul Issam (*Árabe*), sem interface RTL
+      - Nguyen Ngoc Tan (*Vietnamês*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*Ucraniano*)
+      - [刘涛](https://www.liutao91.cn) (*chinês simplificado*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holandês*)
     credits_description: |
       O desenvolvimento desta extensão faz parte do projeto da plataforma de compartilhamento [L'Air du Bois](https://www.lairdubois.fr).
       E como tal, é também *Open Source* e está disponível sob licença [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) em seu [repositório GitHub].(https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -2042,7 +2063,7 @@ tool:
     success:
       part_created: "Nova peça criada : {{ name }}"
   smart_handle:
-    title: Modificar
+    title: Manipular
     action_0: Selecionar
     action_0_status: Clique em uma peça para selecioná-la
     action_1: Copiar em Linha
@@ -2073,9 +2094,9 @@ tool:
     action_option_move_measure_type_outside_status: Medida externa
     action_option_move_measure_type_centered_status: Medida no centro
     action_option_move_measure_type_inside_status: Medida interna
-    action_option_axes_active_status: Modificar ao longo dos eixos ativos
-    action_option_axes_context_status: Modificar ao longo dos eixos do grupo ou componente que contém a peça
-    action_option_axes_entity_status: Modificar ao longo dos eixos da peça
+    action_option_axes_active_status: Manipular ao longo dos eixos ativos
+    action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente que contém a peça
+    action_option_axes_entity_status: Manipular ao longo dos eixos da peça
     action_option_options_mirror_status: Copiar em simetria
     warning:
       copies_disable_mirror: A cópia múltipla desativa a opção '$t(tool.smart_handle.action_option_options_mirror_status)'
