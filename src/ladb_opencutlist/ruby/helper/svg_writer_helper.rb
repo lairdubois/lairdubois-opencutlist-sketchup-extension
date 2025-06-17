@@ -1,6 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative '../constants'
+  require_relative '../utils/transformation_utils'
 
   module SvgWriterHelper
 
@@ -254,12 +255,14 @@ module Ladb::OpenCutList
                     portion.ellipse_def.yradius
                   ).transform(unit_transformation)
                   middle = portion.mid_point.transform(transformation)
+                  ccw = portion.ccw?
+                  ccw = !ccw if TransformationUtils.flipped?(transformation)
 
                   rx = _svg_value(radius.x)
                   ry = _svg_value(radius.y)
                   xrot = -portion.ellipse_def.angle.radians.round(3)
                   lflag = 0
-                  sflag = portion.ccw? ? 0 : 1
+                  sflag = ccw ? 0 : 1
                   x1 = _svg_value(middle.x)
                   y1 = _svg_value(-middle.y)
                   x2 = _svg_value(end_point.x)

@@ -982,7 +982,7 @@ module Ladb::OpenCutList
               if is_irregular
 
                 p = Geom::Point3d.new(_to_px(item_def.label_offset.x), _to_px(item_def.label_offset.y)).transform!(Geom::Transformation.rotation(ORIGIN, Z_AXIS, item_def.angle.degrees))
-                p.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror
+                p.transform!(Geom::Transformation.scaling(-1, 1, 1)) if item_def.mirror # TODO not working if angle if 90
 
                 px_item_label_x += p.x
                 px_item_label_y += p.y

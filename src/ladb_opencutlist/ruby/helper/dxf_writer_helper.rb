@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative '../constants'
   require_relative '../utils/dimension_utils'
+  require_relative '../utils/transformation_utils'
   require_relative '../model/drawing/drawing_projection_def'
   require_relative '../lib/geometrix/geometrix'
 
@@ -1340,10 +1341,17 @@ module Ladb::OpenCutList
 
                   # Circular arc
 
-                  start_angle = portion.start_angle
-                  end_angle = portion.end_angle
+                  if TransformationUtils.flipped?(transformation)
+                    start_angle = portion.end_angle
+                    end_angle = portion.start_angle
+                    ccw = !portion.ccw?
+                  else
+                    start_angle = portion.start_angle
+                    end_angle = portion.end_angle
+                    ccw = portion.ccw?
+                  end
 
-                  if portion.ccw?
+                  if ccw
                     start_angle -= Geometrix::TWO_PI if start_angle > end_angle
                   else
                     start_angle += Geometrix::TWO_PI if start_angle < end_angle
