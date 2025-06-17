@@ -1547,7 +1547,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Směr let
-      raw_estimated_0: Odhad podle efektivního objemu
+      raw_estimated_0: Odhad podle čistého objemu materiálu
       colorized: "Tento barevný odstín bude aplikován na texturu tohoto materiálu, když je vykreslen v modelu"
       texture_load: Načíst nový obrázek
       texture_export: Exportovat obrázek
