@@ -972,6 +972,7 @@ module Ladb::OpenCutList
                 item_text = "<tspan data-toggle='tooltip' title='#{CGI::escape_html(item_text[:error])}' fill='red'>!!</tspan>" # It's an error
               else
                 item_text = CGI::escape_html(item_text) # Normal text : escape HTML
+                item_text += '*' if item_def.mirror
               end
 
               label_font_size = [ [ px_node_label_font_size_max, px_item_width / 2, px_item_length / (item_text.length * 0.6) ].min, px_node_label_font_size_min ].max

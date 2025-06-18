@@ -155,6 +155,8 @@ module Ladb::OpenCutList
 
       return unless projection_def.is_a?(DrawingProjectionDef)
 
+      flipped = TransformationUtils.flipped?(transformation)
+
       projection_def.layer_defs.sort_by { |v| [v.type_path? ? 1 : 0, v.depth ] }.each do |layer_def|   # Path's layers always on top
 
         id = _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
@@ -255,14 +257,16 @@ module Ladb::OpenCutList
                     portion.ellipse_def.yradius
                   ).transform(unit_transformation)
                   middle = portion.mid_point.transform(transformation)
-                  ccw = portion.ccw?
-                  ccw = !ccw if TransformationUtils.flipped?(transformation)
 
                   rx = _svg_value(radius.x)
                   ry = _svg_value(radius.y)
                   xrot = -portion.ellipse_def.angle.radians.round(3)
                   lflag = 0
-                  sflag = ccw ? 0 : 1
+                  sflag = if flipped ? !portion.ccw? : portion.ccw?
+                            0
+                          else
+                            1
+                          end
                   x1 = _svg_value(middle.x)
                   y1 = _svg_value(-middle.y)
                   x2 = _svg_value(end_point.x)

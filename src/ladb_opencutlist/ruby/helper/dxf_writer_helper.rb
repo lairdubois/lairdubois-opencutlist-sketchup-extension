@@ -1287,6 +1287,8 @@ module Ladb::OpenCutList
     def _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing = false, transformation = IDENTITY, layer = '0')
       return unless layer_def.is_a?(DrawingProjectionLayerDef)
 
+      flipped = TransformationUtils.flipped?(transformation)
+
       layer_def.poly_defs.each do |poly_def|
 
         if smoothing && poly_def.curve_def
@@ -1341,7 +1343,7 @@ module Ladb::OpenCutList
 
                   # Circular arc
 
-                  if TransformationUtils.flipped?(transformation)
+                  if flipped
                     start_angle = portion.end_angle
                     end_angle = portion.start_angle
                     ccw = !portion.ccw?
@@ -1370,13 +1372,9 @@ module Ladb::OpenCutList
 
                   # Elliptical arc -> convert to circular arcs
 
-                  if portion.ccw?
-                    start_angle = portion.start_angle
-                    end_angle = portion.end_angle
-                  else
-                    start_angle = portion.end_angle
-                    end_angle = portion.start_angle
-                  end
+                  start_angle = portion.start_angle
+                  end_angle = portion.end_angle
+                  start_angle, end_angle = end_angle, start_angle unless portion.ccw?
 
                   approximated_ellipse_def = Geometrix::EllipseApproximator.approximate_ellipse_def(portion.ellipse_def, start_angle, end_angle)
                   if approximated_ellipse_def
@@ -1385,17 +1383,13 @@ module Ladb::OpenCutList
                     apx_portions = apx_portions.reverse unless portion.ccw?
                     apx_portions.each do |apx_portion|
 
-                      if portion.ccw?
-                        apx_start_point = apx_portion.start_point.transform(transformation)
-                        apx_end_point = apx_portion.end_point.transform(transformation)
-                      else
-                        apx_start_point = apx_portion.end_point.transform(transformation)
-                        apx_end_point = apx_portion.start_point.transform(transformation)
-                      end
+                      apx_start_point = apx_portion.start_point.transform(transformation)
+                      apx_end_point = apx_portion.end_point.transform(transformation)
+                      apx_start_point, apx_end_point = apx_end_point, apx_start_point unless portion.ccw?
                       apx_circle_center = apx_portion.circle_def.center.transform(transformation)
 
                       bulge = Math.tan((apx_start_point - apx_circle_center).angle_between(apx_end_point - apx_circle_center) / 4.0)
-                      bulge *= -1 unless portion.ccw?
+                      bulge *= -1 unless (flipped ? !portion.ccw? : portion.ccw?)
 
                       vertices << DxfVertexDef.new(x, y, bulge)
 
