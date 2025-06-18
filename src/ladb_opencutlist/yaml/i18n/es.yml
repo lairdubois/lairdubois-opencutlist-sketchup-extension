@@ -39,8 +39,8 @@ default:
   estimate: Estimar
   rename: Renombrar
   next: ""
-  yes: Si
-  no: No
+  "yes": Si
+  "no": No
   automatic: Automático
   empty_filename: Sin título.skp
   help: Ayuda
@@ -90,6 +90,7 @@ default:
   width: Anchura
   thickness: Grosor
   height: Altura
+  deprecated: ""
 core:
   menu:
     submenu: OpenCutList
@@ -209,23 +210,28 @@ core:
       delete: "Eliminar la configuración '{{ name }}'"
     dictionary:
       component_textinput_color: Paleta de colores
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modelo
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -403,6 +409,8 @@ tab:
       group_cuttingdiagram: Diagrama de corte
       group_packing: Diagrama de corte
       group_labels: Imprimir etiquetas para las piezas del grupo
+      group_export: ""
+      group_estimate: ""
       edit_material: "Editar material '{{ material_name }}'"
       expand_all: Dividir todas las líneas
       collapse_all: Doblar todas las líneas
@@ -692,6 +700,7 @@ tab:
         no_column_formula: Introduzca una fórmula
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se exportarán.
+        is_part_selection: La exportación se limita a las **piezas seleccionadas**.
     estimate:
       title: Estimación
       info_0: |
@@ -713,7 +722,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_-1: ""
+      type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unidad incompatible con las opciones de estimación de la materia
         multiplier_coefficient: ""
@@ -723,6 +732,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errores**."
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se contabilizarán.
+        is_part_selection: ""
       tip:
         not_enough_data: |
           Para que esta estimación se calcule correctamente:
@@ -1022,7 +1032,7 @@ tab:
       option_irregular_allow_mirroring: ""
       option_irregular_allow_mirroring_help: |
       option_irregular_allow_mirroring_0: $t(default.no)
-      option_irregular_allow_mirroring_1: ""
+      option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Espaciado
       option_spacing_help: |
       option_trimming: Margen
@@ -1051,6 +1061,16 @@ tab:
       option_colorization_1: ""
       option_colorization_2: ""
       option_colorization_help: |
+      option_origin_corner: Posición del origen
+      option_origin_corner_0: Esquina superior izquierda
+      option_origin_corner_1: Esquina inferior izquierda
+      option_origin_corner_2: Esquina superior derecha
+      option_origin_corner_3: Esquina inferior derecha
+      option_origin_corner_help: ""
+      option_highlight_primary_cuts: Cortes primarios
+      option_highlight_primary_cuts_0: Sólo en vista general
+      option_highlight_primary_cuts_1: Siempre visible
+      option_highlight_primary_cuts_help: Le permite resaltar cortes primarios.
       option_hide_edges_preview: Indicadores de cantos
       option_hide_edges_preview_0: Visualizado en el diagrama
       option_hide_edges_preview_1: Enmascarado en el diagrama
@@ -1104,35 +1124,13 @@ tab:
         cut_plural: Cortes
         cut_trimming: Corte de limpieza
         cut_primary: ""
+        cut_primary_plural: Cortes primarios
+        cut_none: Ninguna
         cut_depth: ""
       write:
         title: Exportación del diseño
         info_0: |
           Este módulo le permite exportar la **geometría** del *diseño* en forma de lista de archivos en formato [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) o [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: Estructura DXF
-        option_dxf_structure_1: Calcos
-        option_dxf_structure_2: Calcos + bloques
-        option_dxf_structure_help: |
-          Permite elegir la estructura del archivo DXF:
-
-          - La estructura **Calcos** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por los calcos. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros.*
-          - La estructura **Calcos + Bloques** crea un bloque por pieza e inserta estos bloques tantas veces como se repiten las piezas. *Esta estructura ofrece mayor flexibilidad para modificar el archivo.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Tablero
         option_bin_sheet_good_help: |
           Permite activar la exportación del panel, así como elegir su color.
@@ -1148,9 +1146,10 @@ tab:
         option_parts: Piezas
         option_parts_help: |
           Permite activar la exportación de piezas, así como elegir su color.
-        option_parts_holes: Perforaciones
-        option_parts_holes_help: |
-          Permite elegir el color de las perforaciones de las piezas.
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Identificaciones
@@ -1164,13 +1163,22 @@ tab:
           Permite activar la exportación de los cortes, así como elegir su color.
         warning:
           is_bin_selection: ""
+        error:
+          overflow_gt_spacing: |
       error:
         no_part: Ninguna parte.
         no_bin_1d: ""
         no_bin_2d: ""
+        invalid_part_shapes: ""
         no_solution: ""
+        unplaced_parts: ""
+        unplaced_parts_plural: ""
       warning:
         is_part_selection: Este diagrama de corte se limita a las **piezas seleccionadas**.
+        cutting_dimensions: Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
+        cutting_dimensions_increase_1d: "Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Estas dimensiones brutas se han configurado en el material '{{ material_name }}': longitud sobremedida (**{{ length_increase }}**) y ancho muy grande (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Dimensiones reducidas por el grosor de las tiras del canto. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Etiquetas
       options_layout: Composición
@@ -1248,7 +1256,8 @@ tab:
         part_edge_xmax: Ancho de borde 2
         part_face_zmin: Chapa de madera dorso
         part_face_zmax: Chapa de madera frente
-        thumbnail_proportional_drawing: Detectada miniatura
+        thumbnail_proportional_drawing: ""
+        thumbnail_proportional_drawing_bottom: ""
         thumbnail_proportional: Miniatura proporcional
         thumbnail_square: Miniatura cuadrada
         group_material: Espesor / Material
@@ -1369,6 +1378,14 @@ tab:
       option_file_format: Formato
       option_file_format_help: |
         Permite elegir el formato de exportación del archivo.
+      option_dxf_structure: Estructura DXF
+      option_dxf_structure_1: Calcos
+      option_dxf_structure_2: Calcos + bloques
+      option_dxf_structure_help: |
+        Permite elegir la estructura del archivo DXF:
+
+        - La estructura **Calcos** dibuja todos los trazos en plano distinguiendo los diferentes tipos de trazo únicamente por los calcos. *Esta estructura ofrece una mejor compatibilidad con los programas de terceros.*
+        - La estructura **Calcos + Bloques** crea un bloque por pieza e inserta estos bloques tantas veces como se repiten las piezas. *Esta estructura ofrece mayor flexibilidad para modificar el archivo.*
       option_unit: Unidad
       option_unit_help: |
         Permite elegir la unidad empleada en el archivo exportado.
@@ -1386,10 +1403,9 @@ tab:
       option_faces_help: |
         Permite elegir si la búsqueda de la forma de la pieza se realiza en todas sus caras o únicamente en la seleccionada.
       option_anchor: Punto de anclaje
-      option_anchor_0: Por defecto
+      option_anchor_0: Automático
       option_anchor_1: Proyectar el origen de la pieza
       option_anchor_help: |
-        Permite activar la proyección del origen de los ejes de la pieza como punto de anclaje.
       option_switch_yz: Eje vertical
       option_switch_yz_0: Z vertical
       option_switch_yz_1: Y vertical
@@ -1403,14 +1419,11 @@ tab:
 
         *Esta opción no permite detectar otros tipos de curva.*
       option_merge_holes: Descomposición
-      option_merge_holes_0: Por defecto
-      option_merge_holes_1: Contorno + Perforaciones + Fusión
+      option_merge_holes_0: ""
+      option_merge_holes_1: ""
       option_merge_holes_help: |
-        **Por defecto**
-        La forma de la pieza exportada con una capa por profundidad.
-
-        **Contorno + Perforaciones + Fusión**
-        Activa la separación del contorno exterior de las piezas de sus perforaciones, así como la fusión de las profundidades de cada oquedad.
+      option_merge_holes_overflow: ""
+      option_merge_holes_overflow_help: |
       option_include_paths: Trazados
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Utilizar aristas no asociadas a una cara
@@ -1419,6 +1432,8 @@ tab:
       option_parts: Piezas
       option_parts_help: |
         Permite elegir el color de las piezas.
+      option_parts_depths: ""
+      option_parts_depths_help: |
       option_parts_holes: Perforaciones
       option_parts_holes_help: |
         Permite elegir el color de las perforaciones de las piezas.
@@ -1577,8 +1592,6 @@ tab:
     import_from_skm:
       title: Importar fichero .skm
       ask_replace: |
-        Ya existe el material "{{ name }}".
-        ¿Desea sustituirlo por el que está importando?
     export_to_skm:
       title: Exportar a fichero .skm
     option:
@@ -1620,6 +1633,14 @@ tab:
     type_2: Componente
     type_3: Pieza
     tooltip:
+      hide_node: ""
+      unhide_node: ""
+      locked_node: ""
+      is_active_node: ""
+      set_active_node: ""
+      edit_node_properties: ""
+      select_node: ""
+      unselect_node: ""
       open_node_url: Abrir la URL de la pieza
     edit_node:
       title_model: "Propiedades del modelo"
@@ -1636,6 +1657,16 @@ tab:
       layer_name: Etiqueta
       explode: Desmontar
       explode_message: "¿Confirma el desmontaje del elemento **{{ name }}**?"
+    option:
+      general: General
+      show_hidden_instances: ""
+      show_hidden_instances_help: ""
+      hide_descriptions: Oculte las descripciones
+      hide_descriptions_help: "Si se selecciona esta opción, no se mostrarán las **descripciones** colocadas en las piezas."
+      hide_tags: Ocultar etiquetas
+      hide_tags_help: "Si se selecciona esta opción, se ocultarán las **etiquetas**."
+      minimize_on_set_active: ""
+      minimize_on_set_active_help: ""
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Su modelo se encuentra vacío
@@ -1767,7 +1798,7 @@ tab:
     contribute: Contribuir
     backers: "{{ count }} Contribuyente financiero"
     backers_plural: "{{ count }} Contribuyentes financieros"
-    ad: "¿Te gusta OpenCutList?"
+    ad: ""
     objective: Objetivo
     objective_slogan: "OpenCutList somos todos"
     objective_title:
@@ -1861,20 +1892,6 @@ tab:
       *OpenCutList* fue desarrollado por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) y [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liste todos los [contribuyentes](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traducciones
     credits_translators: |
-      - [Leonardo Romero Giménez](https://latablamarilla.com/), Raquel Caballero Guillén (*español*)
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglés*, *alemán*)
-      - Gildas Boureau (documentación *francés*)
-      - Vladimir Badulya (*ruso*)
-      - Pierluigi Colombo, Massimo Risca (*italiano*)
-      - Nayton Sanches Barbosa, corregido y revisado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugués*)
-      - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*polaco*)
-      - Sergey Isupov (*hebreo*), sin interfaz de derecha a izquierda - RTL
-      - Soul Issam (*árabe*), sin interfaz de derecha a izquierda - RTL
-      - Nguyen Ngoc Tan (*vietnamita*)
-      - Andrii Toporivskyi, Kostiantyn Shcherbey (*ucraniano*)
-      - [刘涛](https://www.liutao91.cn) (*chino simplificado*)
-      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holandés*)
     credits_description: |
       El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
       Esta extensión también es de *código abierto* y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1937,6 +1954,7 @@ tool:
     action_option_options_rectangle_centered_status: ""
     action_option_options_smoothing: Regularizado
     action_option_options_smoothing_status: ""
+    action_option_options_measure_from_vertex_status: ""
     action_option_options_measure_from_diameter: ""
     action_option_options_measure_from_diameter_status: ""
     action_option_options_measure_from_radius_status: ""
@@ -1946,7 +1964,7 @@ tool:
     action_option_options_pull_centered_status: ""
     action_option_options_ask_name: ""
     action_option_options_ask_name_status: ""
-    action_pull_locked_status: ""
+    action_measure_locked_status: ""
     action_toggle_move_copy_status: ""
     action_change_move_anchor_status: ""
     success:
