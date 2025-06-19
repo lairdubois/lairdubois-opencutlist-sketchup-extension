@@ -97,7 +97,7 @@
 
         this.$element.attr('type', 'hidden');
 
-        this.$input3 = $('<input type="text" class="form-control ladb-textinput-size-q" style="' + (this.options.qHidden ? ' display: none;' : '') + '" placeholder="' + this.options.qPlaceholder + '"' + (this.options.qDisabled ? ' disabled' : '') + '>')
+        this.$input3 = $('<input type="text" class="form-control ladb-textinput-size-q" style="' + (this.options.qHidden ? ' display: none;' : '') + '" placeholder="' + this.options.qPlaceholder + '"' + (this.options.qDisabled ? ' disabled' : '') + ' autocomplete="off">')
             .on('change', function () {
                 that.updateElementInputValue();
             })
@@ -113,7 +113,7 @@
                 }
             })
         ;
-        this.$input2 = $('<input type="text" class="form-control ladb-textinput-size-d2" style="' + (this.options.d2Hidden ? ' display: none;' : '') + '" placeholder="' + this.options.d2Placeholder + '"' + (this.options.d2Disabled ? ' disabled' : '') + '>')
+        this.$input2 = $('<input type="text" class="form-control ladb-textinput-size-d2" style="' + (this.options.d2Hidden ? ' display: none;' : '') + '" placeholder="' + this.options.d2Placeholder + '"' + (this.options.d2Disabled ? ' disabled' : '') + ' autocomplete="off">')
             .on('change', function () {
                 that.updateElementInputValue();
             })
@@ -135,7 +135,7 @@
                 }
             })
         ;
-        this.$input1 = $('<input type="text" class="form-control ladb-textinput-size-d1" style="' + (this.options.d1Hidden ? ' display: none;' : '') + '" placeholder="' + this.options.d1Placeholder + '"' + (this.options.d1Disabled ? ' disabled' : '') + '>')
+        this.$input1 = $('<input type="text" class="form-control ladb-textinput-size-d1" style="' + (this.options.d1Hidden ? ' display: none;' : '') + '" placeholder="' + this.options.d1Placeholder + '"' + (this.options.d1Disabled ? ' disabled' : '') + ' autocomplete="off">')
             .on('change', function () {
                 that.updateElementInputValue();
             })

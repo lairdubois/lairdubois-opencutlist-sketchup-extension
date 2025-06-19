@@ -92,6 +92,8 @@ LadbTextinputAbstract.prototype.appendRightTools = function ($toolsContainer) {
 LadbTextinputAbstract.prototype.init = function () {
     const that = this;
 
+    this.$element.attr('autocomplete', 'off');  // Force autocomplete to be disabled
+
     this.$element
         .wrap('<div class="ladb-textinput-input" />')
     ;
