@@ -81,9 +81,13 @@ module Ladb::OpenCutList
       end
 
       if @color.nil?
+
+        puts material.materialType
+
         case material.materialType
         when Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
           material.color = nil
+          material.color = material.color # SketchUp 2025 workaround (https://forums.sketchup.com/t/how-to-reset-colorized-textured-material-color-on-su-2025/331827/2)
         when Sketchup::Material::MATERIAL_SOLID
           @color = Sketchup::Color.new('#ffffff')
         end

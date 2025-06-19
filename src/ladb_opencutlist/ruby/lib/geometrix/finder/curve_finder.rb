@@ -216,7 +216,7 @@ module Ladb::OpenCutList::Geometrix
     end
 
     def segments
-      points.each_cons(2).to_a.flatten
+      points.each_cons(2).to_a.flatten(1)
     end
 
   end
