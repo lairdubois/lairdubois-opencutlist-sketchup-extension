@@ -81,9 +81,6 @@ module Ladb::OpenCutList
       end
 
       if @color.nil?
-
-        puts material.materialType
-
         case material.materialType
         when Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
           material.color = nil
