@@ -6,7 +6,7 @@ module Ladb::OpenCutList
 
     DEFAULT_LANGUAGE = 'en'
     # ENABLED_LANGUAGES = %w[ar cs de en es fr he hu it nl pl pt ru uk zh]
-    ENABLED_LANGUAGES = %w[cs de en es fr it pl pt ru uk]
+    ENABLED_LANGUAGES = %w[ar cs de en es fr he it pl pt ru uk]
 
     FILE_FORMAT_SKP = 'skp'.freeze
     FILE_FORMAT_STL = 'stl'.freeze

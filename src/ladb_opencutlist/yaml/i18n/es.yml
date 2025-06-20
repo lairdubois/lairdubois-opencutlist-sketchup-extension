@@ -38,7 +38,7 @@ default:
   draw: Dibujar
   estimate: Estimar
   rename: Renombrar
-  next: ""
+  next: Siguiente
   "yes": Si
   "no": No
   automatic: Automático
@@ -69,8 +69,8 @@ default:
   instance_plural: unidades
   part_single: pieza
   part_plural: piezas
-  cut_single: ""
-  cut_plural: ""
+  cut_single: corte
+  cut_plural: cortes
   thickness_layer_single: capa
   thickness_layer_plural: capas
   setup_model_units: Configurar las unidades del modelo
@@ -90,7 +90,7 @@ default:
   width: Anchura
   thickness: Grosor
   height: Altura
-  deprecated: ""
+  deprecated: Obsoleto
 core:
   menu:
     submenu: OpenCutList
@@ -409,8 +409,8 @@ tab:
       group_cuttingdiagram: Diagrama de corte
       group_packing: Diagrama de corte
       group_labels: Imprimir etiquetas para las piezas del grupo
-      group_export: ""
-      group_estimate: ""
+      group_export: Exportar grupo
+      group_estimate: Estimar el grupo
       edit_material: "Editar material '{{ material_name }}'"
       expand_all: Dividir todas las líneas
       collapse_all: Doblar todas las líneas
@@ -560,7 +560,7 @@ tab:
       minimize_on_highlight_help: "Si se selecciona esta opción, la ventana OpenCutList se minimizará *'$t(tab.cutlist.highlight_part)'* cuando se aplique la función."
       general: General
       sorting: Clasificación
-      group_order_strategy: ""
+      group_order_strategy: Clasificación de grupos
       group_order_strategy_help: |
       part_order_strategy: Clasificación de piezas
       part_order_strategy_help: |
@@ -569,10 +569,10 @@ tab:
       dimension_column_order_strategy: Pedido de dimensiones
       dimension_column_order_strategy_help: |
         Reorganice las siguientes propiedades de dimensión para definir el orden de clasificación de las columnas.
-      property_material_type: ""
+      property_material_type: Tipo de material
       property_material_name: Nombre del material
-      property_std_width: ""
-      property_std_thickness: ""
+      property_std_width: Anchura estándar
+      property_std_thickness: Longitud estándar
       property_thickness: Espesor
       property_length: Longitud
       property_width: Anchura
@@ -821,7 +821,7 @@ tab:
       option_stacking_3: Todas las posibilidades
       option_keep: Tamaño mínimo de recorte
       option_keep_help: Los recortes cuyas dos dimensiones sean mayores que el tamaño mínimo se marcarán con **conservar**.
-      option_std_bar_dimensional: Dimensiones estándar
+      option_std_bar_dimensional: Liston estándar
       option_std_bar_edge: Canto estándar
       option_std_bar_help: |
         Seleccione el tablero o la tira de canto estándar, que se duplicará para contener todas las partes.
@@ -887,11 +887,11 @@ tab:
         cut_internal_through: Corte primario (nivel 2)
         cut_internal_through_plural: Cortes primarios (nivel 2)
         cut_none: Ninguna
-        bar_dimensional_type_0: Dimensiones estándar
+        bar_dimensional_type_0: Liston estándar
         bar_dimensional_type_1: Trozo
         bar_edge_type_0: Canto estándar
         bar_edge_type_1: Resto de canto
-        sheet_good_type_0: Panel estándar
+        sheet_good_type_0: Tablero estándar
         sheet_good_type_1: Trozo
         sheet_veneer_type_0: Hoja estándar
         sheet_veneer_type_1: Resto de hojas
@@ -957,15 +957,15 @@ tab:
         option_cuts_help: |
           Permite activar la exportación de los cortes, así como elegir su color.
         warning:
-          is_sheet_selection: Los **paneles ocultos** no se exportarán.
+          is_sheet_selection: Los **tableros ocultos** no se exportarán.
       error:
         no_bar_dimensional: La tabla estándar no se configuró correctamente y no se definieron cortes.
         no_bar_edge: La tira de canto estándar no se configuró correctamente y no se definieron cortes.
         parameters: Los parámetros son incorrectos. El recorte es superior al 25% de la tira de canto más larga.
         no_parts: Ninguna parte.
-        no_sheet: Los tamaños de panel estándar están configurados incorrectamente y no hay cortes disponibles.
+        no_sheet: Los tamaños de tableros estándar están configurados incorrectamente y no hay cortes disponibles.
         no_placement_possible_1d: "Todas sus piezas son demasiado grandes para caber en un panel (liston estándar demasiado pequeño, recorte demasiado grande, corte de sierra demasiado grande, ...)."
-        no_placement_possible_2d: "Todas sus piezas son demasiado grandes para caber en un panel (panel estándar demasiado pequeño, recorte demasiado grande, corte de sierra demasiado grande, ...)."
+        no_placement_possible_2d: "Todas sus piezas son demasiado grandes para caber en un panel (tablero estándar demasiado pequeño, recorte demasiado grande, corte de sierra demasiado grande, ...)."
         bad_error: "Pánico algorítmico, póngase en contacto con los desarrolladores, tiene un caso interesante."
         unplaced_parts: "**1 Una pieza** no se pudo colocar porque es demasiado grande para colocar."
         unplaced_parts_plural: "Existen **{{ count }} piezas** que no se pudieron colocar porque son demasiado grandes para colocar."
@@ -986,7 +986,7 @@ tab:
       options_config: Configuración
       options_display: Visualización
       options_tuning: ""
-      option_std_bin_1d_dimensional: ""
+      option_std_bin_1d_dimensional: Listones estándar
       option_std_bin_1d_edge: ""
       option_std_bin_1d_help: |
       option_std_bin_1d_add: Agregar un tamaño de panel
@@ -996,7 +996,7 @@ tab:
       option_scrap_bin_1d_sizes_placeholder: largo x cantidad ; ...
       option_scrap_bin_1d_sizes_help: |
       option_scrap_bin_1d_none: No
-      option_std_bin_2d_sheet_good: ""
+      option_std_bin_2d_sheet_good: Tableros estándar
       option_std_bin_2d_veneer: ""
       option_std_bin_2d_help: |
       option_std_bin_2d_add: Agregar un tamaño de panel
@@ -1010,25 +1010,28 @@ tab:
       option_optimization_mode_help: |
       option_objective: Objetivo
       option_objective_help: |
-      option_rectangleguillotine_cut_type: ""
+      option_rectangleguillotine_cut_type: Tipo de corte
       option_rectangleguillotine_cut_type_help: |
-      option_rectangleguillotine_cut_type_non_exact: ""
-      option_rectangleguillotine_cut_type_exact: ""
-      option_rectangleguillotine_cut_type_homogenous: ""
-      option_rectangleguillotine_number_of_stages: ""
+        Determina el tipo de corte.
+      option_rectangleguillotine_cut_type_non_exact: No exacto
+      option_rectangleguillotine_cut_type_exact: Exacto
+      option_rectangleguillotine_cut_type_homogenous: Homogéneo
+      option_rectangleguillotine_number_of_stages: Número de niveles
       option_rectangleguillotine_number_of_stages_help: |
-      option_rectangleguillotine_first_stage_orientation: ""
+        Determina el número máximo de niveles de corte.
+      option_rectangleguillotine_first_stage_orientation: Dirección primer corte
       option_rectangleguillotine_first_stage_orientation_help: |
-      option_rectangleguillotine_first_stage_orientation_horizontal: ""
-      option_rectangleguillotine_first_stage_orientation_vertical: ""
-      option_rectangleguillotine_first_stage_orientation_any: ""
+        Determina la dirección del primer corte.
+      option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
+      option_rectangleguillotine_first_stage_orientation_vertical: Vertical
+      option_rectangleguillotine_first_stage_orientation_any: Cualquier
       option_rectangleguillotine_keep: Tamaño mínimo de recorte
       option_rectangleguillotine_keep_help: Los recortes cuyas dos dimensiones sean mayores que el tamaño mínimo se marcarán con **conservar**.
-      option_irregular_allowed_rotations: ""
+      option_irregular_allowed_rotations: Rotaciones autorizadas
       option_irregular_allowed_rotations_help: |
       option_irregular_allowed_rotations_0: Ninguna
-      option_irregular_allowed_rotations_90: ""
-      option_irregular_allowed_rotations_180: ""
+      option_irregular_allowed_rotations_90: Pasos de 90°
+      option_irregular_allowed_rotations_180: Pasos de 180°.
       option_irregular_allow_mirroring: ""
       option_irregular_allow_mirroring_help: |
       option_irregular_allow_mirroring_0: $t(default.no)
@@ -1075,8 +1078,9 @@ tab:
       option_hide_edges_preview_0: Visualizado en el diagrama
       option_hide_edges_preview_1: Enmascarado en el diagrama
       option_hide_edges_preview_help: Permite mostrar u ocultar la indicación visual de los cantos para cada parte del diagrama.
-      option_time_limit: ""
+      option_time_limit: Límite de tiempo
       option_time_limit_help: |
+        Establece el tiempo permitido para el cálculo
       tooltip:
         scroll_to_block_1d: Desplazate al primer tabla o tiro de canto
         scroll_to_block_2d: ""
@@ -1085,7 +1089,7 @@ tab:
         trimming: Margen
         settings: Configuraciones
         stats: Estadísticas
-        time: ""
+        time: Tiempo
         total_efficiency: Eficacia general
         total_fill_rate: ""
         total_cut_count: Número de cortes
@@ -1100,13 +1104,13 @@ tab:
         total_part_count: Σ Partes
         total_used: Total utilizado
         bin_1d_dimensional: Liston
-        bin_1d_dimensional_type_0: Dimensiones estándar
+        bin_1d_dimensional_type_0: Liston estándar
         bin_1d_dimensional_type_1: Trozo
         bin_1d_edge: Placa
         bin_1d_edge_type_0: Canto estándar
         bin_1d_edge_type_1: Resto de canto
         bin_2d_sheet_good: Tablero
-        bin_2d_sheet_good_type_0: Panel estándar
+        bin_2d_sheet_good_type_0: Tablero estándar
         bin_2d_sheet_good_type_1: Trozo
         bin_2d_veneer: Hoja
         bin_2d_veneer_type_0: Hoja estándar
@@ -1555,7 +1559,7 @@ tab:
       std_sizes: Tamaños de panel estándar
       std_sizes_help: |
       grained: Dirección de fibra
-      grained_help: Configura la dirección de la fibra del material.
+      grained_help: Configura la dirección de la fibra del material en relación con la longitud del tablero.
       grained_0: Sin fibra
       grained_1: La fibra sigue la longitud
       edge_decremented: Reducir
@@ -1892,6 +1896,20 @@ tab:
       *OpenCutList* fue desarrollado por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) y [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liste todos los [contribuyentes](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traducciones
     credits_translators: |
+      - [Leonardo Romero Giménez](https://latablamarilla.com/), Raquel Caballero Guillén (*español*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglés*, *alemán*)
+      - Gildas Boureau (documentación *francés*)
+      - Vladimir Badulya (*ruso*)
+      - Pierluigi Colombo, Massimo Risca (*italiano*)
+      - Nayton Sanches Barbosa, corregido y revisado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugués*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*polaco*)
+      - Sergey Isupov (*hebreo*), sin interfaz de derecha a izquierda - RTL
+      - Soul Issam (*árabe*), sin interfaz de derecha a izquierda - RTL
+      - Nguyen Ngoc Tan (*vietnamita*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*ucraniano*)
+      - [刘涛](https://www.liutao91.cn) (*chino simplificado*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holandés*)
     credits_description: |
       El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
       Esta extensión también es de *código abierto* y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

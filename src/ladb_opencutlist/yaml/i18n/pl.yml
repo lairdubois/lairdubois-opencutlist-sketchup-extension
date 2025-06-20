@@ -36,7 +36,7 @@ default:
   select_all: Zaznacz wszystko
   unselect_all: Odznacz wszystko
   draw: Rysuj
-  estimate: Oszacuj
+  estimate: Wyceń
   rename: Zmień
   next: Następny
   "yes": Tak
@@ -236,7 +236,7 @@ core:
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
   progress:
-    please_wait: Obliczanie świata pokoju
+    please_wait: Kalkulacja cięcia
   component:
     textinput:
       reset: Zresetuj tę wartość
@@ -269,7 +269,7 @@ core:
         Sprawdź, czy jesteś podłączony do Internetu.
 tab:
   cutlist:
-    label: Wstępny
+    label: Części
     title: Lista części
     help: |
       Wybierz części z listy w bieżącej scenie i wciśnij klawisz **Generuj**.
@@ -369,7 +369,7 @@ tab:
       invalid_final_area_plural: "Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ {{ count }} części (z {{ total }}) mają nieprawidłowy obszar"
       is_dynamic_attributes_name: Oznaczenie tej części pochodzi z atrybutu 'Name' elementu dynamicznego
       size_increased: "Wymiar zwiększony o {{ value }}"
-      has_edges: "Ten kawałek zawiera {{ count }} fornirowaną krawędź"
+      has_edges: "Ten kawałek zawiera {{ count }} stronnie oklejoną krawędź"
       has_edges_plural: "Ten kawałek zawiera {{ count }} formirowane krawędzie"
       has_faces: "Ta część zawiera {{ count }} powierzchnię fornirowaną"
       has_faces_plural: "Ta część zawiera {{ count }} powierzchni fornirowanych"
@@ -446,9 +446,9 @@ tab:
       instance_count_by_part_1: 1 jednostka na część
       instance_count_by_part_2: 2 jednostki na część
       mass: Masa
-      mass_help: Masa części zostanie wykorzystana podczas generowania **Szacowanie**.
+      mass_help: Waga części zostanie wykorzystana podczas generowania **Oszacowania**.
       price: Cena
-      price_help: Cena części zostanie wykorzystana podczas generowania **Szacowanie**.
+      price_help: Cena części zostanie wykorzystana podczas generowania **Oszacowania**.
       thickness_layer_count: Liczba warstw
       thickness_layer_count_help: |
         Zdefiniuj tutaj liczbę warstw, które podzielą rysowaną część na grubości.
@@ -524,7 +524,7 @@ tab:
         Jeśli ta opcja jest wybrana, lustrzane części zostaną wykryte i wyświetlone jako odrębne części.
       smart_material: "*Inteligentne* przypisanie materiałów"
       smart_material_help: "Jeśli ta opcja jest włączona, elementy, które nie mają zdefiniowanego materiału, mogą otrzymać materiał główny swoich elementów podrzędnych lub dziedziczyć go od elementów nadrzędnych."
-      dynamic_attributes_name: Użyj atrybutu *Name* komponentów dynamicznych
+      dynamic_attributes_name: Użyj atrybutu *Nazwa* komponentów dynamicznych
       dynamic_attributes_name_help: |
         Jeśli ta opcja jest wybrana, oznaczenie części zostanie wyodrębnione z atrybutu *Name*, jeśli została zdefiniowana.
 
@@ -605,7 +605,7 @@ tab:
       number: Ob.
       name: Oznaczenie
       count: Ilość
-      cutting: Wstępny
+      cutting: Wstępna
       bbox: Końcowa
       final: Rzeczywisty
       total_cutting: Σ - wymiary przybliżone
@@ -730,11 +730,11 @@ tab:
         incompatible_unit: Jednostka niezgodna z opcjami szacowania materiału
         multiplier_coefficient: Współczynnik mnożnika
       error:
-        no_typed_material_parts: "Brak elementów o zdefiniowanym typie materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) została użyta do wygenerowania szacunku."
+        no_typed_material_parts: "Brak elementów o zdefiniowanym typie materiału (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ou **$t(tab.materials.type_5)**) została użyta do wygenerowania wyceny."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błąd**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} błędy**."
       warning:
-        is_group_selection: Części w **ukrytych grupach** twojej listy części nie będą uwzględniane.
+        is_group_selection: Części w **ukrytych grupach** w twojej listy części nie będą uwzględniane.
         is_part_selection: Szacowanie ogranicza się do **wybranych elementów**.
       tip:
         not_enough_data: |
@@ -1076,9 +1076,9 @@ tab:
       option_hide_part_list_1d_edge_0: Wyświetlane dla każdego obrzeża
       option_hide_part_list_2d_sheet_good_0: Grupuj podobne arkusze forniru
       option_hide_part_list_2d_veneer_0: Wyświetlane dla każdego arkusza forniru
-      option_hide_part_list_1: Zamaskowana
-      option_hide_part_list_1d_help: Wyświetl lub maskuj listę części dla każdej płyty lub obrzeża.
-      option_hide_part_list_2d_help: Wyświetl lub zamaskuj listę części dla każdego panelu.
+      option_hide_part_list_1: Ukryta
+      option_hide_part_list_1d_help: Wyświetl lub ukryj listę części dla każdej płyty lub obrzeża.
+      option_hide_part_list_2d_help: Wyświetl lub ukryj listę części dla każdego panelu.
       option_part_drawing_type: Kształty elementów
       option_part_drawing_type_0: Ukryte
       option_part_drawing_type_1: Widok 2D z przodu
@@ -1290,7 +1290,8 @@ tab:
         part_edge_xmax: Szerokość krawędzi 2
         part_face_zmin: Tylna strona forniru
         part_face_zmax: Przednia strona forniru
-        thumbnail_proportional_drawing: Miniatura
+        thumbnail_proportional_drawing: ""
+        thumbnail_proportional_drawing_bottom: ""
         thumbnail_proportional: Miniaturka prostokątna
         thumbnail_square: Miniaturka kwadratowa
         group_material: Materiał / Grubość
@@ -1317,7 +1318,7 @@ tab:
       option_parts_colored_0: Bez koloru
       option_parts_colored_1: Kolor materiału
       option_parts_colored_help: Wybierz wygląd części.
-      option_parts_opacity: Nieprzezroczysty
+      option_parts_opacity: Przezroczystość
       option_parts_opacity_0: Przezroczysty
       option_parts_opacity_1: Nieprzejrzysty
       option_parts_opacity_help: Wybierz nieprzezroczystość części.
@@ -1529,7 +1530,7 @@ tab:
     type_1: Lite drewno
     type_2: Arkusz
     type_3: Wymiarowy
-    type_4: Oklejanie krawędzi
+    type_4: Okleina
     type_5: Dopasowywanie
     type_6: Fornir
     tooltip:
@@ -1633,7 +1634,7 @@ tab:
 
         **Objętość surowego materiału potrzebna**
         Całkowita objętość będzie sumą objętości paneli, arkuszy, prętów lub pasów elementów po rozplanowaniu.
-      raw_estimated_0: Przydatna wielkość przepływu
+      raw_estimated_0: Użyteczny objętościowy rozkrój
       raw_estimated_1: Objętość surowca
       multiplier_coefficient: Współczynnik mnożnika
       multiplier_coefficient_help: Umożliwia wskazanie współczynnika mnożnika zastosowanego do zmierzonej objętości brutto.
