@@ -153,6 +153,7 @@ core:
     failed_export_to: |
       Une erreur s'est produite lors de l'exportation vers *{{ path }}*.
       **{{ error }}**
+    unsupported_file_format: "Format de fichier non supporté : **{{ format }}**"
   success:
     exported_to: "Export réussi vers {{ path }}."
     copied_to_clipboard: Copié dans le presse-papier

@@ -46,6 +46,10 @@ module Ladb::OpenCutList
       path = UI.openpanel(PLUGIN.get_i18n_string('tab.materials.import_from_skm.title'), dir, "Material Files|*.skm;||")
       if path
 
+        unless (extname = File.extname(path)) == '.skm'
+          return { :errors => [ [ 'core.error.unsupported_file_format', { :format => extname.delete('.').upcase } ] ] }
+        end
+
         # Save last dir
         PLUGIN.write_default(Plugin::SETTINGS_KEY_MATERIALS_LAST_DIR, File.dirname(path))
 
@@ -53,110 +57,116 @@ module Ladb::OpenCutList
 
           require_relative '../../lib/rubyzip/zip'
 
-          # Try to extract material data
-          Zip::File.open(path, create: false) do |zipfile|
+          begin
 
-            require "rexml/document"
+            # Try to extract material data
+            Zip::File.open(path, create: false) do |zipfile|
 
-            xml = zipfile.read('document.xml')
+              require "rexml/document"
 
-            begin
+              xml = zipfile.read('document.xml')
 
-              # Parse XML
-              doc = REXML::Document.new(xml)
+              begin
 
-              # Extract material element
-              material_elm = doc.elements['/materialDocument/mat:material']
+                # Parse XML
+                doc = REXML::Document.new(xml)
 
-              # Retrieve material name
-              name = material_elm.attribute('name').value
+                # Extract material element
+                material_elm = doc.elements['/materialDocument/mat:material']
 
-              material_old = materials[name]
-              unless material_old.nil?
+                # Retrieve material name
+                name = material_elm.attribute('name').value
 
-                choice = UI.messagebox(PLUGIN.get_i18n_string('tab.materials.import_from_skm.ask_replace', { :name => name }), MB_YESNOCANCEL)
-                if choice == IDYES || choice == IDNO
+                material_old = materials[name]
+                unless material_old.nil?
 
-                  # Rename old material with temp name to free loaded name
-                  material_old.name = materials.unique_name(SecureRandom.uuid)
+                  choice = UI.messagebox(PLUGIN.get_i18n_string('tab.materials.import_from_skm.ask_replace', { :name => name }), MB_YESNOCANCEL)
+                  if choice == IDYES || choice == IDNO
 
-                  begin
+                    # Rename old material with temp name to free loaded name
+                    material_old.name = materials.unique_name(SecureRandom.uuid)
 
-                    # Load material
-                    material_loaded = materials.load(path)
+                    begin
 
-                  rescue RuntimeError => e
+                      # Load material
+                      material_loaded = materials.load(path)
+
+                    rescue RuntimeError => e
+
+                      # Restore old material name
+                      material_old.name = name
+
+                      return { :errors => [ [ 'tab.materials.error.failed_import_skm_file', { :error => e.message } ] ] }
+                    end
+
+                    case choice
+                    when IDYES
+
+                      # Replace the old material attributes and properties by loaded ones
+
+                      # Delete old attributes
+                      attribute_dictionary_names_old = []
+                      material_old.attribute_dictionaries.each { |dictionary| attribute_dictionary_names_old << dictionary.name }
+                      attribute_dictionary_names_old.each { |name| material_old.attribute_dictionaries.delete(name) }
+
+                      # Copy loaded material attributes and properties
+                      material_loaded.attribute_dictionaries.each { |dictionary| dictionary.each { |key, value| material_old.set_attribute(dictionary.name, key, value) } }
+                      material_old.alpha = material_loaded.alpha
+                      material_old.color = material_loaded.color
+                      material_old.colorize_type = material_loaded.colorize_type
+                      if !material_loaded.texture.nil? && material_loaded.texture.valid?
+                        material_old.texture = material_loaded.texture.image_rep
+                        material_old.texture.size = [ material_loaded.texture.width, material_loaded.texture.height ]
+                      end
+
+                      material = material_old
+
+                    when IDNO
+
+                      # Create a new material and copy loaded attributes and properties to bypass default SU behavior when importing again
+
+                      # Create a new material
+                      material_new = materials.add(materials.unique_name(name))
+
+                      # Copy loaded material attributes and properties
+                      material_loaded.attribute_dictionaries.each { |dictionary| dictionary.each { |key, value| material_new.set_attribute(dictionary.name, key, value) } }
+                      material_new.alpha = material_loaded.alpha
+                      material_new.color = material_loaded.color
+                      material_new.colorize_type = material_loaded.colorize_type
+                      if !material_loaded.texture.nil? && material_loaded.texture.valid?
+                        material_new.texture = material_loaded.texture.image_rep
+                        material_new.texture.size = [ material_loaded.texture.width, material_loaded.texture.height ]
+                      end
+
+                      material = material_new
+
+                    end
+
+                    # Delete loaded material
+                    materials.remove(material_loaded)
 
                     # Restore old material name
                     material_old.name = name
 
-                    return { :errors => [ [ 'tab.materials.error.failed_import_skm_file', { :error => e.message } ] ] }
-                  end
+                    return { :material_id => material.entityID }
 
-                  case choice
-                  when IDYES
+                  elsif choice == IDCANCEL
 
-                    # Replace the old material attributes and properties by loaded ones
-
-                    # Delete old attributes
-                    attribute_dictionary_names_old = []
-                    material_old.attribute_dictionaries.each { |dictionary| attribute_dictionary_names_old << dictionary.name }
-                    attribute_dictionary_names_old.each { |name| material_old.attribute_dictionaries.delete(name) }
-
-                    # Copy loaded material attributes and properties
-                    material_loaded.attribute_dictionaries.each { |dictionary| dictionary.each { |key, value| material_old.set_attribute(dictionary.name, key, value) } }
-                    material_old.alpha = material_loaded.alpha
-                    material_old.color = material_loaded.color
-                    material_old.colorize_type = material_loaded.colorize_type
-                    if !material_loaded.texture.nil? && material_loaded.texture.valid?
-                      material_old.texture = material_loaded.texture.image_rep
-                      material_old.texture.size = [ material_loaded.texture.width, material_loaded.texture.height ]
-                    end
-
-                    material = material_old
-
-                  when IDNO
-
-                    # Create a new material and copy loaded attributes and properties to bypass default SU behavior when importing again
-
-                    # Create a new material
-                    material_new = materials.add(materials.unique_name(name))
-
-                    # Copy loaded material attributes and properties
-                    material_loaded.attribute_dictionaries.each { |dictionary| dictionary.each { |key, value| material_new.set_attribute(dictionary.name, key, value) } }
-                    material_new.alpha = material_loaded.alpha
-                    material_new.color = material_loaded.color
-                    material_new.colorize_type = material_loaded.colorize_type
-                    if !material_loaded.texture.nil? && material_loaded.texture.valid?
-                      material_new.texture = material_loaded.texture.image_rep
-                      material_new.texture.size = [ material_loaded.texture.width, material_loaded.texture.height ]
-                    end
-
-                    material = material_new
+                    return { :cancelled => true }
 
                   end
-
-                  # Delete loaded material
-                  materials.remove(material_loaded)
-
-                  # Restore old material name
-                  material_old.name = name
-
-                  return { :material_id => material.entityID }
-
-                elsif choice == IDCANCEL
-
-                  return { :cancelled => true }
 
                 end
 
+              rescue REXML::ParseException => e
+                # Error while parsing XML. Continue with the default behavior
+                puts e.message
               end
 
-            rescue REXML::ParseException => e
-              # Error while parsing XML. Continue with the default behavior
-              puts e.message
             end
 
+          rescue StandardError => e
+            return { :errors => [ [ 'tab.materials.error.failed_import_skm_file', { :error => e.message } ] ] }
           end
 
         end
@@ -167,6 +177,7 @@ module Ladb::OpenCutList
         rescue RuntimeError => e
           return { :errors => [ [ 'tab.materials.error.failed_import_skm_file', { :error => e.message } ] ] }
         end
+
       end
 
       { :cancelled => true }
