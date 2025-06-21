@@ -1591,11 +1591,11 @@ tab:
 
         *Si aucune unité n'est spécifiée, l'unité du modèle sera appliquée.*
       length_increase: Surcote de longueur
-      length_increase_help: Surcote appliquée sur la longueur capable des pièces pour définir leur **longueur de débit**. # TODO
+      length_increase_help: Surcote appliquée sur la longueur capable des pièces pour définir leur **longueur de débit**.
       width_increase: Surcote de largeur
-      width_increase_help: Surcote appliquée sur la largeur capable des pièces pour définir leur **largeur de débit**.  # TODO
+      width_increase_help: Surcote appliquée sur la largeur capable des pièces pour définir leur **largeur de débit**.
       thickness_increase: Surcote d'épaisseur
-      thickness_increase_help: Surcote appliquée sur l'épaisseur capable des pièces pour définir leur **épaisseur de débit**. # TODO
+      thickness_increase_help: Surcote appliquée sur l'épaisseur capable des pièces pour définir leur **épaisseur de débit**.
       std_lengths: Longueurs standards
       std_lengths_help: |
         Longueurs standards disponibles pour cette matière.

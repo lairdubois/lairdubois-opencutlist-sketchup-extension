@@ -153,6 +153,7 @@ core:
     failed_export_to: |
       אירעה שגיאה במהלך הייצוא אל *{{ path }}*.
       **{{ error }}**
+    unsupported_file_format: ""
   success:
     exported_to: "ייצוא מוצלח אל {{ path }}."
     copied_to_clipboard: הועתק ללוח כתיבה
@@ -1542,11 +1543,11 @@ tab:
       thickness: עובי
       thickness_help: |
       length_increase: תוספת לאורך
-      length_increase_help: תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
+      length_increase_help: תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**. # TODO
       width_increase: תוספת לרוחב
-      width_increase_help: תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.
+      width_increase_help: תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.  # TODO
       thickness_increase: תוספת לעובי
-      thickness_increase_help: תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**.
+      thickness_increase_help: תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**. # TODO
       std_lengths: אורכים סטנדרטיים
       std_lengths_help: |
       std_widths: רוחבים סטנדרטיים

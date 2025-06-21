@@ -153,6 +153,7 @@ core:
     failed_export_to: |
       Při exportu došlo k chybě *{{ path }}*.
       **{{ error }}**
+    unsupported_file_format: ""
   success:
     exported_to: "Úspěšný export do {{ path }}."
     copied_to_clipboard: Zkopírováno do schránky
@@ -1590,11 +1591,11 @@ tab:
 
         *Pokud není zadána žádná jednotka, použije se modelová jednotka.*
       length_increase: Nadmíra pro délku
-      length_increase_help: Nadmíra použitá na délku k nastavení **hrubé délky**.
+      length_increase_help: Nadmíra použitá na délku k nastavení **hrubé délky**. # TODO
       width_increase: Nadmíra pro šířku
-      width_increase_help: Nadmíra použitá na šířku k nastavení **hrubé šířky**.
+      width_increase_help: Nadmíra použitá na šířku k nastavení **hrubé šířky**.  # TODO
       thickness_increase: Nadmíra pro tloušťku
-      thickness_increase_help: Nadmíra použitá na tloušťku k nastavení **hrubé tloušťky**.
+      thickness_increase_help: Nadmíra použitá na tloušťku k nastavení **hrubé tloušťky**. # TODO
       std_lengths: Standardní délky
       std_lengths_help: |
         Pro tento materiál jsou k dispozici standardní délky.
