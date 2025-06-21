@@ -27,7 +27,7 @@ module Ladb::OpenCutList::Fiddle
     def unload
       return unless @lib_loaded
       @lib_loaded = false
-      @handler.handlers.each {|h| h.close unless h.close_enabled? } unless @handler.nil?
+      @handler.handlers.each { |h| h.close unless h.close_enabled? } unless @handler.nil?
       GC.start
     end
 
@@ -38,6 +38,7 @@ module Ladb::OpenCutList::Fiddle
     end
 
     def _lib_c_functions
+      # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
       []
     end
 
@@ -61,27 +62,19 @@ module Ladb::OpenCutList::Fiddle
 
         raise "'#{_lib_name}' lib not found : #{lib_path}" unless File.exist?(lib_path)
 
-        begin
+        # Copy lib to temp dir for 2 reasons:
+        # - The system locks the file after uploading. By uploading a copy, the file can still be updated.
+        # - Fiddle lib loader seems to have troubles with non-ASCII encoded path :( -> temp dir is short file name compatible.
 
-          # Load lib (from default extension path)
-          dlload(lib_path)
+        tmp_lib_path = File.join(Ladb::OpenCutList::PLUGIN.temp_dir, "#{Ladb::OpenCutList::EXTENSION_BUILD}_#{lib_file}")
 
-        rescue Fiddle::DLError => e
+        # Copy lib
+        FileUtils.copy_file(lib_path, tmp_lib_path)
 
-          # Fiddle lib loader seems to have troubles with non-ASCII encoded path :(
-          # Workaround : Try to copy and load lib file from temp folder
+        # Load lib
+        dlload(tmp_lib_path)
 
-          tmp_lib_path = File.join(Dir.tmpdir, lib_file)
-
-          # Copy lib
-          FileUtils.copy_file(lib_path, tmp_lib_path)
-
-          # Load lib
-          dlload(tmp_lib_path)
-
-        end
-
-        # Keep simple C syntax (without var names and void in args) to stay compatible with SketchUp 2017
+        # Bind c functions
         _lib_c_functions.each do |function|
           extern function
         end

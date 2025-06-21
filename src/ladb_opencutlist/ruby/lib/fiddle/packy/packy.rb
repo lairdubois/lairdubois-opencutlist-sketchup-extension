@@ -1,10 +1,10 @@
 require 'json'
-require_relative '../clipper_wrapper'
+require_relative '../wrapper'
 
 module Ladb::OpenCutList::Fiddle
 
   module Packy
-    extend ClipperWrapper
+    extend Wrapper
 
     PROBLEM_TYPE_RECTANGLE = 'rectangle'.freeze
     PROBLEM_TYPE_RECTANGLEGUILLOTINE = 'rectangleguillotine'.freeze
@@ -48,8 +48,8 @@ module Ladb::OpenCutList::Fiddle
     end
 
     def self.unload
-      super
       @cached_outputs = {}
+      super
     end
 
     # -- Debug --

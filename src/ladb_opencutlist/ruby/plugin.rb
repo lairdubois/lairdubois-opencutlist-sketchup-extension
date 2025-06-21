@@ -134,7 +134,7 @@ module Ladb::OpenCutList
       return @temp_dir unless @temp_dir.nil?
       dir = File.join(Sketchup.temp_dir, PLUGIN_ID)
       FileUtils.remove_dir(dir, true) if Dir.exist?(dir)  # Temp dir exists we clean it
-      Dir.mkdir(dir)
+      Dir.mkdir(dir) unless Dir.exist?(dir)
       @temp_dir = dir
     end
 
@@ -1548,13 +1548,21 @@ module Ladb::OpenCutList
         # Focus SketchUp
         Sketchup.focus if Sketchup.respond_to?(:focus)
 
+        # Trigger event
+        trigger_event('on_tabs_dialog_minimized', {})
+
       end
     end
 
     def tabs_dialog_maximize_command
       if @tabs_dialog
+
         tabs_dialog_set_size(@tabs_dialog_maximized_width, @tabs_dialog_maximized_height)
         @tabs_dialog_maximized = true
+
+        # Trigger event
+        trigger_event('on_tabs_dialog_maximized', {})
+
       end
     end
 
