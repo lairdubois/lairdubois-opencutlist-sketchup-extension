@@ -153,6 +153,7 @@ core:
     failed_export_to: |
       Se ha producido un error durante la exportación a *{{ path }}*.
       **{{ error }}**
+    unsupported_file_format: ""
   success:
     exported_to: "Exportación lograda {{ path }}."
     copied_to_clipboard: Copiado al portapapeles
@@ -1543,11 +1544,11 @@ tab:
       thickness: Espesor
       thickness_help: |
       length_increase: Longitud sobremedida
-      length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**.
+      length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**. # TODO
       width_increase: Ancho sobremedida
-      width_increase_help: Sobredimensionado aplicado al ancho para definir el **ancho bruto**.
+      width_increase_help: Sobredimensionado aplicado al ancho para definir el **ancho bruto**.  # TODO
       thickness_increase: Espesor sobremedida
-      thickness_increase_help: Sobredimensionado aplicado al espesor para definir el **espesor bruto**.
+      thickness_increase_help: Sobredimensionado aplicado al espesor para definir el **espesor bruto**. # TODO
       std_lengths: Longitudes estándar
       std_lengths_help: |
       std_widths: Anchos estándar

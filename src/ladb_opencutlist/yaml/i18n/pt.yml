@@ -153,6 +153,7 @@ core:
     failed_export_to: |
       Ocorreu um erro ao exportar para *{{ path }}*.
       **{{ error }}**
+    unsupported_file_format: ""
   success:
     exported_to: "Exportação bem-sucedida para {{ path }}."
     copied_to_clipboard: Copiado para a área de transferência
@@ -1590,11 +1591,11 @@ tab:
 
         *Se nenhuma unidade for especificada, será aplicada a unidade do modelo.*
       length_increase: Superdimensionamento do comprimento
-      length_increase_help: Superdimensionamento aplicado ao comprimento para definir o **comprimento aproximado**.
+      length_increase_help: Superdimensionamento aplicado ao comprimento para definir o **comprimento aproximado**. # TODO
       width_increase: Superdimensionamento da largura
-      width_increase_help: Superdimensionamento aplicado à largura para definir a **largura aproximada**.
+      width_increase_help: Superdimensionamento aplicado à largura para definir a **largura aproximada**.  # TODO
       thickness_increase: Superdimensionamento da espessura
-      thickness_increase_help: Superdimensionamento aplicado à espessura para definir a **espessura aproximada**.
+      thickness_increase_help: Superdimensionamento aplicado à espessura para definir a **espessura aproximada**. # TODO
       std_lengths: Comprimento Padrão
       std_lengths_help: |
         Comprimentos padrão disponíveis para este material.

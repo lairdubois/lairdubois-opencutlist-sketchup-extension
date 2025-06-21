@@ -153,6 +153,7 @@ core:
     failed_export_to: |
       Beim Exportieren in die Datei, *{{ path }}*, ist ein Fehler aufgetreten.
       **{{ error }}**
+    unsupported_file_format: "Nicht unterstütztes Dateiformat : **{{ fromat }}**"
   success:
     exported_to: "Erfolgreicher Export nach {{ path }}."
     copied_to_clipboard: In die Zwischenablage kopiert
@@ -1590,11 +1591,11 @@ tab:
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       length_increase: Längenzumaß
-      length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert.
+      length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert. # TODO
       width_increase: Breitenzumaß
-      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert.
+      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert.  # TODO
       thickness_increase: Dickenzumaß
-      thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert.
+      thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert. # TODO
       std_lengths: Standardlängen
       std_lengths_help: |
         Standardlängen für dieses Material.

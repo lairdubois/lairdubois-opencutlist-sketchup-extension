@@ -153,6 +153,7 @@ core:
     failed_export_to: |
       An error occurred while exporting to *{{ path }}*.
       **{{ error }}**
+    unsupported_file_format: "Unsupported file format: **{{ format }}**"
   success:
     exported_to: "Successful export to {{ path }}."
     copied_to_clipboard: Copied to clipboard
@@ -1590,11 +1591,11 @@ tab:
 
         *If no unit is specified, the model unit will be applied.*
       length_increase: Length Oversize
-      length_increase_help: Oversize applied to the length to define the **raw length**.
+      length_increase_help: Oversize applied to the length to define the **raw length**. # TODO
       width_increase: Width Oversize
-      width_increase_help: Oversize applied to the width to define the **raw width**.
+      width_increase_help: Oversize applied to the width to define the **raw width**.  # TODO
       thickness_increase: Thickness Oversize
-      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**.
+      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**. # TODO
       std_lengths: Standard Lengths
       std_lengths_help: |
         Standard lengths available for this material.

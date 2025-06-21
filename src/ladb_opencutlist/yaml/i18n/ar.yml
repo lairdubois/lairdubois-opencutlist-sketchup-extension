@@ -153,6 +153,7 @@ core:
     failed_export_to: |2
        أثناء التصدير إلى *{{ path }}* حدث خطأ
        **{{ error }}**
+    unsupported_file_format: ""
   success:
     exported_to: "نجح التصدير إلى {{ path }}."
     copied_to_clipboard: تم النسخ إلى الحافظة
@@ -1580,11 +1581,11 @@ tab:
 
         * إذا لم يتم تحديد وحدة، فستطبق وحدة النموذج.*
       length_increase: تمديد الطول
-      length_increase_help: طُبق تمديد على الطول لتحديد **الطول الأولي**.
+      length_increase_help: طُبق تمديد على الطول لتحديد **الطول الأولي**. # TODO
       width_increase: تمديد العرض
-      width_increase_help: طُبق تمديد على العرض لتحديد **العرض الأولي**.
+      width_increase_help: طُبق تمديد على العرض لتحديد **العرض الأولي**.  # TODO
       thickness_increase: تمديد السُمك
-      thickness_increase_help: طُبق تمديد على السُّمك لتحديد **السمك الأولي**.
+      thickness_increase_help: طُبق تمديد على السُّمك لتحديد **السمك الأولي**. # TODO
       std_lengths: الأطوال النظامية
       std_lengths_help: |
         الأطوال النظامية المتوفرة لهذه الخامة 
@@ -1961,6 +1962,20 @@ tab:
       *OpenCutList* من تطوير [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) و أيضا [Martin Müller](https://www.lairdubois.fr/@mobilarte). *قائمة بجميع [المساهمين](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: المترجمون
     credits_translators: |
+      - عصام سول (*العربية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*الإنجليزية* و *الألمانية*)
+      - Gildas Boureau (*وثائق فرنسية*)
+      - Vladimir Badulya (*الروسية*)
+      - Pierluigi Colombo, Massimo Risca (*الإيطالية*)
+      - Nayton Sanches Barbosa (*البرتغالية*) و صُحّحت من قبل [Carlos Maciel ELT](https://www.inglesonline.pro.br)
+      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*الإسبانية*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*التشيكية*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*البولندية*)
+      - Sergey Isupov (*اللغة العبرية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
+      - Nguyen Ngoc Tan (*فيتنامي*)
+      - Andriy Toporivskyi، Kostyantyn Shcherbey (*الأوكرانية*)
+      - [刘涛](https://www.liutao91.cn) (*الصينية المبسطة*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*الهولندية*)
     credits_description: |
       [L'Air du Bois](https://www.lairdubois.fr) تطوير هذه الإضافة مرتبط بمشروع منصة المشاركة 
        [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) على [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) هذه الإضافة *مفتوحة المصدر* و متوفرة ضمن

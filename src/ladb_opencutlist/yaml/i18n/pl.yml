@@ -153,6 +153,7 @@ core:
     failed_export_to: |
       Wystąpił błąd podczas eksportowania do *{{ path }}*.
       **{{ error }}**
+    unsupported_file_format: ""
   success:
     exported_to: "Pomyślnie wyeksportowano do {{ path }}."
     copied_to_clipboard: Skopiowane do schowka
@@ -1587,11 +1588,11 @@ tab:
 
         *Rozmiary bez jednostek są podane w jednostkach modelowych.*
       length_increase: Długość ponadwymiarowa
-      length_increase_help: Nadmiar dodany do długości aby określić **wstępną długość**.
+      length_increase_help: Nadmiar dodany do długości aby określić **wstępną długość**. # TODO
       width_increase: Szerokość ponadwymiarowa
-      width_increase_help: Nadmiar dodany do szerokości aby określić **wstępną szerokość**.
+      width_increase_help: Nadmiar dodany do szerokości aby określić **wstępną szerokość**.  # TODO
       thickness_increase: Grubość ponadwymiarowa
-      thickness_increase_help: Nadmiar dodany do grubości aby określić **wstępną grubość**.
+      thickness_increase_help: Nadmiar dodany do grubości aby określić **wstępną grubość**. # TODO
       std_lengths: Standardowe długości
       std_lengths_help: |
         Standardowe długości desek lub obrzeży.

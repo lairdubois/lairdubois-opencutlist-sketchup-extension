@@ -153,6 +153,7 @@ core:
     failed_export_to: |
       Errore durante l'esportazione in *{{ path }}*.
       **{{ error }}**
+    unsupported_file_format: ""
   success:
     exported_to: "Esportazione in {{ path }} completata."
     copied_to_clipboard: Copiato negli appunti
@@ -1290,7 +1291,8 @@ tab:
         part_edge_xmax: Bordo Larghezza 2
         part_face_zmin: Impiallacciatura sul retro
         part_face_zmax: Impiallacciatura sul lato frontale
-        thumbnail_proportional_drawing: Miniatura quadrata
+        thumbnail_proportional_drawing: ""
+        thumbnail_proportional_drawing_bottom: ""
         thumbnail_proportional: Miniatura proporzionale
         thumbnail_square: Miniatura quadrata
         group_material: Materiale / Spessore
@@ -1586,11 +1588,11 @@ tab:
 
         *Dimensioni senza unità si intendono in unità di misura del modello.*
       length_increase: Sovramateriale sulla lunghezza
-      length_increase_help: Incremento della lunghezza per calcolare la **lunghezza grezza**.
+      length_increase_help: Incremento della lunghezza per calcolare la **lunghezza grezza**. # TODO
       width_increase: Incremento larghezza
-      width_increase_help: Incremento della larghezza per calcolare la **larghezza grezza**.
+      width_increase_help: Incremento della larghezza per calcolare la **larghezza grezza**.  # TODO
       thickness_increase: Sovramateriale sullo spessore
-      thickness_increase_help: Incremento dello spessore per calcolare **spessore grezzo**.
+      thickness_increase_help: Incremento dello spessore per calcolare **spessore grezzo**. # TODO
       std_lengths: Lunghezze predefinite
       std_lengths_help: |
         Lunghezze standard disponibili per questo materiale.
