@@ -418,7 +418,11 @@ module Ladb::OpenCutList
                   transformation *= Geom::Transformation.translation(Geom::Vector3d.new(i_x_offset, i_y_offset))
                 end
 
-                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def, @smoothing, transformation, unit_transformation, LAYER_PART) do
+                _dxf_write_projection_def_block(file, fn_part_block_name.call(part), projection_def,
+                                                smoothing: @smoothing,
+                                                transformation: transformation,
+                                                unit_transformation: unit_transformation,
+                                                layer: LAYER_PART) do
                   _dxf_write_label(file, 0, 0, width, height, @use_names ? part.name : part.number, width, height, 0, 0, part.rotated ? 90 : 0, LAYER_TEXT) unless @texts_hidden
                 end
 
@@ -491,7 +495,11 @@ module Ladb::OpenCutList
                   transformation *= Geom::Transformation.translation(Geom::Vector3d.new(i_x + i_x_offset, i_y + i_y_offset))
                 end
 
-                _dxf_write_projection_def_geometry(file, projection_def, @smoothing, transformation, unit_transformation, LAYER_PART)
+                _dxf_write_projection_def_geometry(file, projection_def,
+                                                   smoothing: @smoothing,
+                                                   transformation: transformation,
+                                                   unit_transformation: unit_transformation,
+                                                   layer: LAYER_PART)
 
               else
 

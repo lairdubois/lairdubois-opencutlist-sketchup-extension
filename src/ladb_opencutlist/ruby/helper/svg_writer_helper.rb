@@ -1,7 +1,6 @@
 module Ladb::OpenCutList
 
   require_relative '../constants'
-  require_relative '../utils/transformation_utils'
 
   module SvgWriterHelper
 
@@ -155,7 +154,10 @@ module Ladb::OpenCutList
 
       return unless projection_def.is_a?(DrawingProjectionDef)
 
+      require_relative '../utils/transformation_utils'
+
       flipped = TransformationUtils.flipped?(transformation)
+      rot_x, rot_y, rot_z = TransformationUtils.euler_angles(transformation)
 
       projection_def.layer_defs.sort_by { |v| [v.type_path? ? 1 : 0, v.depth ] }.each do |layer_def|   # Path's layers always on top
 
@@ -260,7 +262,7 @@ module Ladb::OpenCutList
 
                   rx = _svg_value(radius.x)
                   ry = _svg_value(radius.y)
-                  xrot = -portion.ellipse_def.angle.radians.round(3)
+                  xrot = -portion.ellipse_def.angle.radians.round(3) + rot_z.radians.round(3)
                   lflag = 0
                   sflag = if flipped ? !portion.ccw? : portion.ccw?
                             0

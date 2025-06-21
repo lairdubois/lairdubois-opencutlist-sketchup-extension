@@ -229,7 +229,11 @@ module Ladb::OpenCutList
       _dxf_write_section_blocks(file)
       _dxf_write_section_entities(file) do
 
-        _dxf_write_projection_def_geometry(file, projection_def, @smoothing, unit_transformation, unit_transformation, LAYER_PART)
+        _dxf_write_projection_def_geometry(file, projection_def,
+                                           smoothing: @smoothing,
+                                           transformation: unit_transformation,
+                                           unit_transformation: unit_transformation,
+                                           layer: LAYER_PART)
 
       end
       _dxf_write_section_objects(file)

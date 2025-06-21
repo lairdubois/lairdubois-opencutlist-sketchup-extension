@@ -2,8 +2,6 @@ module Ladb::OpenCutList
 
   require_relative '../constants'
   require_relative '../utils/dimension_utils'
-  require_relative '../utils/transformation_utils'
-  require_relative '../model/drawing/drawing_projection_def'
   require_relative '../lib/geometrix/geometrix'
 
   module DxfWriterHelper
@@ -1216,6 +1214,9 @@ module Ladb::OpenCutList
     # -- CUSTOM GEOMETRY
 
     def _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix = nil)
+
+      require_relative '../model/drawing/drawing_projection_def'
+
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
       a = [ prefix, 'DEPTH', ('%0.03f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x ]).rjust(8, '_') ]
       a << 'OUTER' if layer_def.type_outer?
@@ -1231,6 +1232,9 @@ module Ladb::OpenCutList
                                                  paths_color: nil,
                                                  unit_transformation: IDENTITY,
                                                  prefix: nil)
+
+      require_relative '../model/drawing/drawing_projection_def'
+
       return [] unless projection_def.is_a?(DrawingProjectionDef)
 
       dxf_layer_defs = []
@@ -1259,33 +1263,65 @@ module Ladb::OpenCutList
     end
 
     def _dxf_write_projection_def_block_record(file, projection_def, name, owner_id)
+
+      require_relative '../model/drawing/drawing_projection_def'
+
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       _dxf_write_section_tables_block_record(file, name, owner_id)
 
     end
 
-    def _dxf_write_projection_def_block(file, name, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, layer = '0')
+    def _dxf_write_projection_def_block(file, name, projection_def,
+                                        smoothing: false,
+                                        transformation: IDENTITY,
+                                        unit_transformation: IDENTITY,
+                                        layer: '0')
+
+      require_relative '../model/drawing/drawing_projection_def'
+
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       _dxf_write_section_blocks_block(file, name, @_dxf_model_space_id) do
-        _dxf_write_projection_def_geometry(file, projection_def, smoothing, transformation, unit_transformation, layer)
+        _dxf_write_projection_def_geometry(file, projection_def,
+                                           smoothing: smoothing,
+                                           transformation: transformation,
+                                           unit_transformation: unit_transformation,
+                                           layer: layer)
         yield if block_given?
       end
 
     end
 
-    def _dxf_write_projection_def_geometry(file, projection_def, smoothing = false, transformation = IDENTITY, unit_transformation = IDENTITY, layer = '0')
+    def _dxf_write_projection_def_geometry(file, projection_def,
+                                           smoothing: false,
+                                           transformation: IDENTITY,
+                                           unit_transformation: IDENTITY,
+                                           layer: '0')
+
+      require_relative '../model/drawing/drawing_projection_def'
+
       return unless projection_def.is_a?(DrawingProjectionDef)
 
       projection_def.layer_defs.sort_by { |v| [v.type_path? ? 1 : 0, -v.depth ] }.each do |layer_def| # Path's layers always on top
-        _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing, transformation, _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, layer))
+        _dxf_write_projection_layer_def_geometry(file, layer_def,
+                                                 smoothing: smoothing,
+                                                 transformation: transformation,
+                                                 layer: _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, layer))
       end
 
     end
 
-    def _dxf_write_projection_layer_def_geometry(file, layer_def, smoothing = false, transformation = IDENTITY, layer = '0')
+    def _dxf_write_projection_layer_def_geometry(file, layer_def,
+                                                 smoothing: false,
+                                                 transformation: IDENTITY,
+                                                 layer: '0')
+
+      require_relative '../model/drawing/drawing_projection_def'
+
       return unless layer_def.is_a?(DrawingProjectionLayerDef)
+
+      require_relative '../utils/transformation_utils'
 
       flipped = TransformationUtils.flipped?(transformation)
 
