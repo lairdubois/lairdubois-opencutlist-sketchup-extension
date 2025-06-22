@@ -153,7 +153,7 @@ core:
     failed_export_to: |
       Při exportu došlo k chybě *{{ path }}*.
       **{{ error }}**
-    unsupported_file_format: ""
+    unsupported_file_format: "Nepodporovaný formát souboru: **{{ format }}**"
   success:
     exported_to: "Úspěšný export do {{ path }}."
     copied_to_clipboard: Zkopírováno do schránky

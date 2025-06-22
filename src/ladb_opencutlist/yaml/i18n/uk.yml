@@ -153,7 +153,7 @@ core:
     failed_export_to: |
       Під час експортування до *{{ path }}* сталася помилка.
       **{{ error }}**
-    unsupported_file_format: ""
+    unsupported_file_format: "Непідтримуваний формат файлу: **{{ format }}**"
   success:
     exported_to: "Експорт успішно виконано до {{ path }}."
     copied_to_clipboard: Скопійовано в буфер обміну
