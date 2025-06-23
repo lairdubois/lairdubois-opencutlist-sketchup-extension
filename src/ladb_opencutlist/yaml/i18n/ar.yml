@@ -153,7 +153,7 @@ core:
     failed_export_to: |2
        أثناء التصدير إلى *{{ path }}* حدث خطأ
        **{{ error }}**
-    unsupported_file_format: ""
+    unsupported_file_format: "صيغة الملف غير مدعومة : **{{ format }}**"
   success:
     exported_to: "نجح التصدير إلى {{ path }}."
     copied_to_clipboard: تم النسخ إلى الحافظة
@@ -1163,8 +1163,8 @@ tab:
         cut_depth: "المستوى {{ depth }}"
       write:
         title: تصدير مخطط التقطيع
-        info_0: |
-          تسمح لك هذه الوحدة بتصدير **شكل** *رسم التقطيع التخطيطي* في هيئة قائمة من الملفات بتنسيق [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF)
+        info_0: |2
+           [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) تسمح لك هذه الوحدة بتصدير **شكل** *رسم التقطيع التخطيطي* في هيئة قائمة من الملفات بتنسيق
         option_bin_sheet_good: لوح
         option_bin_sheet_good_help: |
           يتيح هذا الخيار تصدير اللوح و اختيار ألوانه
@@ -1199,6 +1199,7 @@ tab:
           is_bin_selection: لن تصدر **العناصر المخفية**.
         error:
           overflow_gt_spacing: |
+            يجب أن يكون التجاوز ({{ overflow }}) أصغر من أو يساوي المباعدة ({{ spacing }}) المحددة في مخطط التقطيع
       error:
         no_part: لا قطعة.
         no_bin_1d: لم تحدد أي قضبان خشبية أو شرائط حاشية قياسية و لا أي بقايا
@@ -1459,10 +1460,16 @@ tab:
         *لا يتيح هذا الخيار اكتشاف أنواع أخرى من المنحنيات*
       option_merge_holes: نمط الدمج
       option_merge_holes_0: أساسي
-      option_merge_holes_1: ""
+      option_merge_holes_1: الخط الخارجي + التثقيب + التجاوز
       option_merge_holes_help: |
-      option_merge_holes_overflow: ""
+        **أساسي**
+        يتم تصدير شكل القطعة مع إسقاط كل وجه على طبقة تتوافق مع عمقه
+
+        الخط الخارجي + الثقوب + التجاوز
+        يُفعّل فصل المحيط الخارجي للقطع عن ثقوبها، بالإضافة إلى حساب مسافة التجاوز المطبَّقة على الأسطح الموجودة على حافة الخط الخارجي و التجاويف
+      option_merge_holes_overflow: التجاوز
       option_merge_holes_overflow_help: |
+        يتيح هذا الخيار تحديد مسافة التجاوز التي تُطبق على الأسطح المحاذية للخطوط الخارجية و التجاويف كالفتحات و الثقوب
       option_include_paths: المسارات
       option_include_paths_0: $t(default.no)
       option_include_paths_1: استخدم الحواشي غير المرتبطة بوجه
@@ -1471,8 +1478,11 @@ tab:
       option_parts: القِطع
       option_parts_help: |
         حدد ألوان القِطع
-      option_parts_depths: ""
+      option_parts_depths: التجاويف
       option_parts_depths_help: |
+        يتيح هذا الخيار اختيار ألوان التجاويف داخل القطع
+
+        * افتراضيا، يُستخدم لون متدرج يتناسب مع عمق التجويف يكون مجاله بين لون القطعة و لون الثقوب*
       option_parts_holes: التثقيب
       option_parts_holes_help: |
         حدد ألوان تثقيب القِطع
@@ -1681,7 +1691,7 @@ tab:
       no_model: لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
       no_materials: إن نموذجك لا يحتوي على أي خامات.
       material_not_found: لم يُعثر على أي خامة.
-      no_texture: ""
+      no_texture: "لا تحتوي الخامة على أي - تكستشر - هيئة سطحية "
       failed_import_skm_file: " أثناء الاستيراد من الملف .skm حدث خطأ. **{{ error }}**."
       failed_export_skm_file: " أثناء التصدير إلى الملف .skm حدث خطأ. **{{ error }}**."
       failed_deleting_material: "حدث خطأ أثناء إزالة هذه الخامة. **{{ error }}**"
@@ -1868,7 +1878,7 @@ tab:
     contribute: ساهم
     backers: "{{ count }} مساهما بالمال"
     backers_plural: "{{ count }} مساهمين / مساهما بالمال"
-    ad: "OpenCutList ليس مجانيا"
+    ad: " ليس مجانيا OpenCutList"
     objective: الهدف
     objective_slogan: " هو نحن كلنا OpenCutList"
     objective_title:
@@ -2066,7 +2076,7 @@ tool:
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: انقر لوضع نسخٍ من القطعة أو أدخل مسافتين
     action_3: نقل
-    action_3_status: ""
+    action_3_status: انقر على قِطعة لنقلها على طول محور معين
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
     action_3_state_2_status: انقر لوضع القِطعة أو أدخل مسافة معينة
     action_4: توزيع
