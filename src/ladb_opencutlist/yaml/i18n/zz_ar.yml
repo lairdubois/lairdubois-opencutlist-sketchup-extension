@@ -144,7 +144,7 @@ core:
     failed_export_to: |
       128 -  أثناء التصدير إلى *{{ path }}* حدث خطأ
        **{{ error }}**
-    unsupported_file_format: '129 - '
+    unsupported_file_format: '129 - صيغة الملف غير مدعومة : **{{ format }}**'
   success:
     exported_to: 130 - نجح التصدير إلى {{ path }}.
     copied_to_clipboard: 131 - تم النسخ إلى الحافظة
@@ -1132,7 +1132,7 @@ tab:
       write:
         title: 941 - تصدير مخطط التقطيع
         info_0: |
-          942 - تسمح لك هذه الوحدة بتصدير **شكل** *رسم التقطيع التخطيطي* في هيئة قائمة من الملفات بتنسيق [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF)
+          942 -  [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) أو [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) تسمح لك هذه الوحدة بتصدير **شكل** *رسم التقطيع التخطيطي* في هيئة قائمة من الملفات بتنسيق
         option_bin_sheet_good: 943 - لوح
         option_bin_sheet_good_help: |
           944 - يتيح هذا الخيار تصدير اللوح و اختيار ألوانه
@@ -1166,7 +1166,8 @@ tab:
         warning:
           is_bin_selection: 965 - لن تصدر **العناصر المخفية**.
         error:
-          overflow_gt_spacing: '966 - '
+          overflow_gt_spacing: |
+            966 - يجب أن يكون التجاوز ({{ overflow }}) أصغر من أو يساوي المباعدة ({{ spacing }}) المحددة في مخطط التقطيع
       error:
         no_part: 967 - لا قطعة.
         no_bin_1d: 968 - لم تحدد أي قضبان خشبية أو شرائط حاشية قياسية و لا أي بقايا
@@ -1422,10 +1423,16 @@ tab:
         *لا يتيح هذا الخيار اكتشاف أنواع أخرى من المنحنيات*
       option_merge_holes: 1166 - نمط الدمج
       option_merge_holes_0: 1167 - أساسي
-      option_merge_holes_1: '1168 - '
-      option_merge_holes_help: '1169 - '
-      option_merge_holes_overflow: '1170 - '
-      option_merge_holes_overflow_help: '1171 - '
+      option_merge_holes_1: 1168 - الخط الخارجي + التثقيب + التجاوز
+      option_merge_holes_help: |
+        1169 - **أساسي**
+        يتم تصدير شكل القطعة مع إسقاط كل وجه على طبقة تتوافق مع عمقه
+
+        الخط الخارجي + الثقوب + التجاوز
+        يُفعّل فصل المحيط الخارجي للقطع عن ثقوبها، بالإضافة إلى حساب مسافة التجاوز المطبَّقة على الأسطح الموجودة على حافة الخط الخارجي و التجاويف
+      option_merge_holes_overflow: 1170 - التجاوز
+      option_merge_holes_overflow_help: |
+        1171 - يتيح هذا الخيار تحديد مسافة التجاوز التي تُطبق على الأسطح المحاذية للخطوط الخارجية و التجاويف كالفتحات و الثقوب
       option_include_paths: 1172 - المسارات
       option_include_paths_0: $t(default.no)
       option_include_paths_1: 1174 - استخدم الحواشي غير المرتبطة بوجه
@@ -1434,8 +1441,11 @@ tab:
       option_parts: 1176 - القِطع
       option_parts_help: |
         1177 - حدد ألوان القِطع
-      option_parts_depths: '1178 - '
-      option_parts_depths_help: '1179 - '
+      option_parts_depths: 1178 - التجاويف
+      option_parts_depths_help: |
+        1179 - يتيح هذا الخيار اختيار ألوان التجاويف داخل القطع
+
+        * افتراضيا، يُستخدم لون متدرج يتناسب مع عمق التجويف يكون مجاله بين لون القطعة و لون الثقوب*
       option_parts_holes: 1180 - التثقيب
       option_parts_holes_help: |
         1181 - حدد ألوان تثقيب القِطع
@@ -1641,7 +1651,7 @@ tab:
       no_model: 1316 - لا يوجد نموذج مفتوح. عليك أن تزودني بمعلومات أكثر ;)
       no_materials: 1317 - إن نموذجك لا يحتوي على أي خامات.
       material_not_found: 1318 - لم يُعثر على أي خامة.
-      no_texture: '1319 - '
+      no_texture: '1319 - لا تحتوي الخامة على أي - تكستشر - هيئة سطحية '
       failed_import_skm_file: 1320 -  أثناء الاستيراد من الملف .skm حدث خطأ. **{{ error }}**.
       failed_export_skm_file: 1321 -  أثناء التصدير إلى الملف .skm حدث خطأ. **{{ error }}**.
       failed_deleting_material: 1322 - حدث خطأ أثناء إزالة هذه الخامة. **{{ error }}**
@@ -1823,7 +1833,7 @@ tab:
     contribute: 1451 - ساهم
     backers: 1452 - {{ count }} مساهما بالمال
     backers_plural: 1453 - {{ count }} مساهمين / مساهما بالمال
-    ad: 1454 - OpenCutList ليس مجانيا
+    ad: 1454 -  ليس مجانيا OpenCutList
     objective: 1455 - الهدف
     objective_slogan: 1456 -  هو نحن كلنا OpenCutList
     objective_title:
@@ -2011,7 +2021,7 @@ tool:
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: 1593 - انقر لوضع نسخٍ من القطعة أو أدخل مسافتين
     action_3: 1594 - نقل
-    action_3_status: '1595 - '
+    action_3_status: 1595 - انقر على قِطعة لنقلها على طول محور معين
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
     action_3_state_2_status: 1597 - انقر لوضع القِطعة أو أدخل مسافة معينة
     action_4: 1598 - توزيع
