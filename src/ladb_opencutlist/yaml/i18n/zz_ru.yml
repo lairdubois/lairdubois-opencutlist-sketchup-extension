@@ -149,7 +149,7 @@ core:
     failed_export_to: |
       128 - Произошла ошибка при экспорте в *{{ path }}*.
       **{{ error }}**
-    unsupported_file_format: '129 - '
+    unsupported_file_format: '129 - Неподдерживаемый формат файла:  **{{ format }}**'
   success:
     exported_to: 130 - Экспортировано в {{ path }} успешно.
     copied_to_clipboard: 131 - Скопировано в буфер обмена
