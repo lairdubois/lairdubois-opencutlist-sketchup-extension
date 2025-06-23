@@ -291,6 +291,13 @@
                 <tr>
                     <td colspan="{{ colspan }}">
                         {{ bin.svg|raw }}
+                        {% if group.material_grained %}
+                            {% set areaWidth = 280 %}
+                            {% set areaHeight = 30 %}
+                            <svg viewBox="0 0 {{ areaWidth }} {{ areaHeight }}" class="ladb-hidden-no-texture" style="height: {{ areaHeight }}px; margin-top: -{{ areaHeight / 2 }}px;">
+                                {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaWidth / 2, 'centerY':areaHeight / 2 } %}
+                            </svg>
+                        {% endif %}
                         {% if solution.options.highlight_primary_cuts %}
                             <div class="col-xs-4 col-xs-offset-4 ladb-cutlist-packing-cuts-summary">
                                 <div>{{ 'tab.cutlist.packing.list.cut_primary_plural'|i18next }}</div>
