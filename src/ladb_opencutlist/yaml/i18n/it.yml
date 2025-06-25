@@ -153,7 +153,7 @@ core:
     failed_export_to: |
       Errore durante l'esportazione in *{{ path }}*.
       **{{ error }}**
-    unsupported_file_format: ""
+    unsupported_file_format: "Formato di file non supportato: **{{ format }}**"
   success:
     exported_to: "Esportazione in {{ path }} completata."
     copied_to_clipboard: Copiato negli appunti
@@ -1099,7 +1099,7 @@ tab:
       option_origin_corner_1: In basso a sinistra
       option_origin_corner_2: In alto a destra
       option_origin_corner_3: In basso a destra
-      option_origin_corner_help: ""
+      option_origin_corner_help: "Permette di scegliere l'angolo originale di posizionamento dei pezzi nei pannelli, fogli, barre o strisce."
       option_highlight_primary_cuts: Tagli principali
       option_highlight_primary_cuts_0: Solo al passaggio del mouse
       option_highlight_primary_cuts_1: Sempre visibile
@@ -1291,8 +1291,8 @@ tab:
         part_edge_xmax: Bordo Larghezza 2
         part_face_zmin: Impiallacciatura sul retro
         part_face_zmax: Impiallacciatura sul lato frontale
-        thumbnail_proportional_drawing: ""
-        thumbnail_proportional_drawing_bottom: ""
+        thumbnail_proportional_drawing: Miniatura (Vista faccia anteriore)
+        thumbnail_proportional_drawing_bottom: Miniatura (Vista faccia posteriore)
         thumbnail_proportional: Miniatura proporzionale
         thumbnail_square: Miniatura quadrata
         group_material: Materiale / Spessore
@@ -1478,8 +1478,11 @@ tab:
       option_parts: Parti
       option_parts_help: |
         Seleziona il colore degli elementi.
-      option_parts_depths: ""
+      option_parts_depths: Cavitá
       option_parts_depths_help: |
+        Permette di scegliere i colori delle cavità delle parti.
+
+        *Per impostazione predefinita, il colore utilizzato è un gradiente proporzionale alla profondità della cavità tra il colore dei pezzi e quello dei fori.*
       option_parts_holes: Forature
       option_parts_holes_help: |
         Seleziona il colore dele forature.
@@ -1659,6 +1662,12 @@ tab:
     import_from_skm:
       title: Importa file .skm
       ask_replace: |
+        Esiste già un materiale "{{ name }}".
+        Si desidera sostituirlo con quello che si sta importando?
+
+        $t(default.yes) = Sostituire il materiale esistente con materiale importato
+        $t(default.no) = Conservare i due materiali
+        $t(default.cancel) = Interrompere l'operazione
     export_to_skm:
       title: Esporta su file .skm
     option:

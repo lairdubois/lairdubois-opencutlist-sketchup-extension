@@ -149,7 +149,7 @@ core:
     failed_export_to: |
       128 - Errore durante l'esportazione in *{{ path }}*.
       **{{ error }}**
-    unsupported_file_format: '129 - '
+    unsupported_file_format: '129 - Formato di file non supportato: **{{ format }}**'
   success:
     exported_to: 130 - Esportazione in {{ path }} completata.
     copied_to_clipboard: 131 - Copiato negli appunti
@@ -1095,7 +1095,7 @@ tab:
       option_origin_corner_1: 879 - In basso a sinistra
       option_origin_corner_2: 880 - In alto a destra
       option_origin_corner_3: 881 - In basso a destra
-      option_origin_corner_help: '882 - '
+      option_origin_corner_help: 882 - Permette di scegliere l'angolo originale di posizionamento dei pezzi nei pannelli, fogli, barre o strisce.
       option_highlight_primary_cuts: 883 - Tagli principali
       option_highlight_primary_cuts_0: 884 - Solo al passaggio del mouse
       option_highlight_primary_cuts_1: 885 - Sempre visibile
@@ -1287,8 +1287,8 @@ tab:
         part_edge_xmax: 1047 - Bordo Larghezza 2
         part_face_zmin: 1048 - Impiallacciatura sul retro
         part_face_zmax: 1049 - Impiallacciatura sul lato frontale
-        thumbnail_proportional_drawing: '1050 - '
-        thumbnail_proportional_drawing_bottom: '1051 - '
+        thumbnail_proportional_drawing: 1050 - Miniatura (Vista faccia anteriore)
+        thumbnail_proportional_drawing_bottom: 1051 - Miniatura (Vista faccia posteriore)
         thumbnail_proportional: 1052 - Miniatura proporzionale
         thumbnail_square: 1053 - Miniatura quadrata
         group_material: 1054 - Materiale / Spessore
@@ -1474,8 +1474,11 @@ tab:
       option_parts: 1176 - Parti
       option_parts_help: |
         1177 - Seleziona il colore degli elementi.
-      option_parts_depths: '1178 - '
-      option_parts_depths_help: '1179 - '
+      option_parts_depths: 1178 - Cavitá
+      option_parts_depths_help: |
+        1179 - Permette di scegliere i colori delle cavità delle parti.
+
+        *Per impostazione predefinita, il colore utilizzato è un gradiente proporzionale alla profondità della cavità tra il colore dei pezzi e quello dei fori.*
       option_parts_holes: 1180 - Forature
       option_parts_holes_help: |
         1181 - Seleziona il colore dele forature.
@@ -1654,7 +1657,13 @@ tab:
       title: 1303 - Esportazione dell'immagine
     import_from_skm:
       title: 1304 - Importa file .skm
-      ask_replace: '1305 - '
+      ask_replace: |
+        1305 - Esiste già un materiale "{{ name }}".
+        Si desidera sostituirlo con quello che si sta importando?
+
+        $t(default.yes) = Sostituire il materiale esistente con materiale importato
+        $t(default.no) = Conservare i due materiali
+        $t(default.cancel) = Interrompere l'operazione
     export_to_skm:
       title: 1306 - Esporta su file .skm
     option:
