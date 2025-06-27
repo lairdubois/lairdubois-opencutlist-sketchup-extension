@@ -153,7 +153,7 @@ core:
     failed_export_to: |
       Wystąpił błąd podczas eksportowania do *{{ path }}*.
       **{{ error }}**
-    unsupported_file_format: ""
+    unsupported_file_format: "Nie wspierany format pliku: **{{ format }}**"
   success:
     exported_to: "Pomyślnie wyeksportowano do {{ path }}."
     copied_to_clipboard: Skopiowane do schowka
@@ -410,8 +410,8 @@ tab:
       group_cuttingdiagram: Schemat cięcia
       group_packing: Schemat cięcia
       group_labels: Drukuj etykiety części w grupie
-      group_export: ""
-      group_estimate: ""
+      group_export: Eksportuj grupę
+      group_estimate: Oszacuj grupę
       edit_material: "Edytuj materiał '{{ material_name }}'"
       expand_all: Rozwiń wszystkie linie
       collapse_all: Zwiń wszystkie linie
@@ -1099,7 +1099,7 @@ tab:
       option_origin_corner_1: Dolny lewy narożnik
       option_origin_corner_2: Górny prawy róg
       option_origin_corner_3: Dolny prawy róg
-      option_origin_corner_help: ""
+      option_origin_corner_help: Określa początek współrzędnych do wyświetlania części płyt lub obrzeży.
       option_highlight_primary_cuts: Cięcia główne
       option_highlight_primary_cuts_0: Tylko przegląd
       option_highlight_primary_cuts_1: Zawsze widoczne
@@ -1136,13 +1136,13 @@ tab:
         bin_1d_dimensional: Wymiarowy
         bin_1d_dimensional_type_0: Płyta o standardowych wymiarach
         bin_1d_dimensional_type_1: Odpad
-        bin_1d_edge: Pasek
+        bin_1d_edge: Obrzeża
         bin_1d_edge_type_0: Standardowy rozmiar obrzeża
         bin_1d_edge_type_1: Odpady obrzeży
         bin_2d_sheet_good: Arkusz
         bin_2d_sheet_good_type_0: Arkusz o standardowych wymiarach
         bin_2d_sheet_good_type_1: Arkusz odpadu
-        bin_2d_veneer: Arkusz
+        bin_2d_veneer: Arkusz forniuru
         bin_2d_veneer_type_0: Arkusz forniru standardowy
         bin_2d_veneer_type_1: Ścinki forniru
         unused: Nieużywane
@@ -1204,10 +1204,10 @@ tab:
         no_part: Brak części.
         no_bin_1d: Nie wybrano żadnej standardowej płyty lub okleiny i nie zdefiniowano żadnych resztek.
         no_bin_2d: Nie wybrano żadnego standardowego panelu lub arkusza forniru i nie zdefiniowano żadnych resztek.
-        invalid_part_shapes: ""
+        invalid_part_shapes: "Kształt części '{{ name }}' jest nieprawidłowy."
         no_solution: Nie znaleziono żadnego rozwiązania.
         unplaced_parts: "**1 element** nie mógł być umieszczony."
-        unplaced_parts_plural: ""
+        unplaced_parts_plural: "Nie można umieścić **{{ count }} części**."
       warning:
         is_part_selection: Ten schemat cięcia jest ograniczony do **wybranych części**.
         cutting_dimensions: Ten rozkrój używa **wstępnych** wymiarów części.
@@ -1291,8 +1291,8 @@ tab:
         part_edge_xmax: Szerokość krawędzi 2
         part_face_zmin: Tylna strona forniru
         part_face_zmax: Przednia strona forniru
-        thumbnail_proportional_drawing: ""
-        thumbnail_proportional_drawing_bottom: ""
+        thumbnail_proportional_drawing: Miniatura (widok z przodu)
+        thumbnail_proportional_drawing_bottom: Miniatura (widok z tyłu)
         thumbnail_proportional: Miniaturka prostokątna
         thumbnail_square: Miniaturka kwadratowa
         group_material: Materiał / Grubość
@@ -1478,8 +1478,11 @@ tab:
       option_parts: Części
       option_parts_help: |
         Wybierz kolor części.
-      option_parts_depths: ""
+      option_parts_depths: Wnęki
       option_parts_depths_help: |
+        Umożliwia wybór koloru wnęk części.
+
+        *Domyślnie używany kolor jest gradientem proporcjonalnym do głębokości wnęki między kolorem części a kolorem otworów.*
       option_parts_holes: Wiercenia
       option_parts_holes_help: |
         Wybierz kolor wierceń.
@@ -1613,9 +1616,9 @@ tab:
         Sekcje standardowe dostępne dla tego przedmiotu.
 
         *Jeśli nie określono żadnej jednostki, zostanie zastosowana jednostka modelowa.*
-      std_sizes: Standardowe rozmiary arkuszy
+      std_sizes: Standardowe rozmiary
       std_sizes_help: |
-        Oczekiwany format: **długość x szerokość**, gdzie **długość** i **szerokość** reprezentują **rzeczywistą** *długość* i *szerokość* arkusza.
+        Standardowe rozmiary dostępne dla tego materiału.
 
         *Wielkości bez jednostek są traktowane jak w jednostkach modelu.*
       grained: Kierunek wzoru/tekstury
@@ -1659,6 +1662,12 @@ tab:
     import_from_skm:
       title: Zaimportuj plik .skm
       ask_replace: |
+        Materiał "{{ name }}" już istnieje.
+        Czy chcesz go zastąpić tym, który importujesz?
+
+        $t(default.yes) = Zastąp istniejący materiał importowanym
+        $t(default.no) = Zachowaj oba materiały
+        $t(default.cancel) = Anuluj operację
     export_to_skm:
       title: Eksportuj plik .skm
     option:
@@ -1700,14 +1709,14 @@ tab:
     type_2: Komponent
     type_3: Część
     tooltip:
-      hide_node: ""
-      unhide_node: ""
-      locked_node: ""
-      is_active_node: ""
-      set_active_node: ""
-      edit_node_properties: ""
+      hide_node: Ukryj
+      unhide_node: Pokaż
+      locked_node: Zablokowany
+      is_active_node: Aktywna instancja w modelu
+      set_active_node: Edytuj na modelu
+      edit_node_properties: Edytuj właściwości
       select_node: Zaznacz
-      unselect_node: ""
+      unselect_node: Odznacz
       open_node_url: Otwórz adres URL części
     edit_node:
       title_model: "Właściwości modelu"
@@ -1869,7 +1878,7 @@ tab:
     contribute: Wspomóż nas
     backers: "{{ count }} darczyńca"
     backers_plural: "{{ count }} darczyńcy"
-    ad: ""
+    ad: "OpenCutList nie powstaje za darmo"
     objective: Cel
     objective_slogan: "OpenCutList to my wszyscy"
     objective_title:
@@ -2086,9 +2095,9 @@ tool:
     action_option_move_measure_type_outside_status: Pomiar zewnętrzny
     action_option_move_measure_type_centered_status: Mierz w środku
     action_option_move_measure_type_inside_status: Pomiar wewnątrz
-    action_option_axes_active_status: Manipulować wzdłuż aktywnych osi
-    action_option_axes_context_status: Manipulować wzdłuż osi grupy lub komponentu zawierającego element
-    action_option_axes_entity_status: Manipulować wzdłuż osi elementu
+    action_option_axes_active_status: Manipuluj wzdłuż aktywnych osi
+    action_option_axes_context_status: Manipuluj wzdłuż osi grupy lub komponentu zawierającego element
+    action_option_axes_entity_status: Manipuluj wzdłuż osi elementu
     action_option_options_mirror_status: Kopiowanie symetryczne
     warning:
       copies_disable_mirror: Kopiowanie wielokrotne wyłącza opcję '$t(tool.smart_handle.action_option_options_mirror_status)'
