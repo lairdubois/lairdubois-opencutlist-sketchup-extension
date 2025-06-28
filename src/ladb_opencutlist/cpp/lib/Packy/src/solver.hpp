@@ -264,17 +264,16 @@ namespace Packy {
                  ++item_type_id) {
 
                 auto& item_type = orig_instance.item_type(item_type_id);
-                auto& item_type_meta = orig_builder_.item_type_meta(item_type_id);
 
                 // Create the validator instance builder
                 InstanceBuilder validator_builder;
                 validator_builder.set_objective(Objective::Knapsack);
                 validator_builder.set_parameters(orig_instance.parameters());
 
-                // Add item
-                validator_builder.add_item_type(item_type, item_type.profit, item_type.copies);
+                // Add item type (with only 1 copy)
+                validator_builder.add_item_type(item_type, item_type.profit, 1);
 
-                // Add bins
+                // Add bin types
                 for (BinTypeId bin_type_id = 0;
                      bin_type_id < orig_instance.number_of_bin_types();
                      ++bin_type_id
