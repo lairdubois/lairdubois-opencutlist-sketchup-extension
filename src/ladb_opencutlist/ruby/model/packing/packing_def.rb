@@ -409,14 +409,18 @@ module Ladb::OpenCutList
   class PackingPartInfoDef < DataContainer
 
     attr_reader :_sorter,
-                :part, :count
+                :part, :count,
+                :usable
 
-    def initialize(part:, count:)
+    def initialize(part:, count:,
+                   usable: true)
 
       @_sorter = part.number.to_i > 0 ? part.number.to_i : part.number.rjust(4)  # Use a special "_sorter" property because number could be a letter. In this case, rjust it.
 
       @part = part
       @count = count
+
+      @usable = usable
 
     end
 

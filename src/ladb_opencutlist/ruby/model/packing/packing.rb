@@ -302,13 +302,16 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :part, :count
+    attr_reader :part, :count,
+                :usable
 
     def initialize(_def)
       @_def = _def
 
       @part = _def.part
       @count = _def.count
+
+      @usable = _def.usable
 
     end
 

@@ -97,7 +97,7 @@
                                 <span class="ladb-separator"></span>
                                 <a href="#" class="ladb-btn-highlight-part ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></a>
                             </div>
-                            {{ part.name|escape }}
+                            {{ part.name|escape }}{% if not part_info.usable %} <div class="label label-danger label-fine pull-right">Pièce trop grande</div>{% endif %}
                         </td>
                         <td class="text-center">
                             {{ part_info.count }}

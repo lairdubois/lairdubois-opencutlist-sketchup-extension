@@ -28,13 +28,15 @@ using namespace nlohmann;
 namespace Packy {
 
     struct ItemTypeMeta {
+        ItemTypeId orig_item_type_id = -1;
+        ItemTypeId usable_item_type_id = -1;
         ItemPos copies = 0;
+        bool usable = true;
     };
     using ItemTypeMetas = std::unordered_map<ItemTypeId, ItemTypeMeta>;
 
     struct BinTypeMeta {
         BinPos copies = 0;
-        BinPos copies_min = 0;
         double width_dbl = 0;
         double height_dbl = 0;
     };
@@ -97,12 +99,24 @@ namespace Packy {
          * Getters:
          */
 
+        bool used() {
+            return used_;
+        }
+
         InstanceBuilder& instance_builder() {
             return instance_builder_;
         };
 
+        ItemTypeMetas& item_type_metas() {
+            return item_type_metas_;
+        }
+
         ItemTypeMeta& item_type_meta(ItemTypeId item_type_id) {
             return item_type_metas_[item_type_id];
+        }
+
+        BinTypeMetas& bin_type_metas() {
+            return bin_type_metas_;
         }
 
         BinTypeMeta& bin_type_meta(BinTypeId bin_type_id) {
@@ -112,6 +126,10 @@ namespace Packy {
         /*
          * Setters:
          */
+
+        void set_used(bool used) {
+            used_ = used;
+        }
 
         void set_item_type_meta(
             const ItemTypeId item_type_id,
@@ -128,6 +146,9 @@ namespace Packy {
         }
 
     protected:
+
+        /** Status. */
+        bool used_ = false;
 
         /** Instance builder. */
         InstanceBuilder instance_builder_;
@@ -180,7 +201,7 @@ namespace Packy {
             }
 
             if (j.contains("instance")) {
-                read_instance(j["instance"], builder_);
+                read_instance(j["instance"], orig_builder_);
             }
 
         }
@@ -199,8 +220,8 @@ namespace Packy {
         double length_truncate_factor_ = 1.0;
 
         /** Builders. */
-        TypedBuilder<InstanceBuilder> builder_;
-        TypedBuilder<InstanceBuilder> sanitized_builder_;
+        TypedBuilder<InstanceBuilder> orig_builder_;
+        TypedBuilder<InstanceBuilder> usable_builder_;
 
         /** Parameters. */
         OptimizeParameters parameters_;
@@ -227,95 +248,120 @@ namespace Packy {
 
         virtual Instance pre_process() {
 
-            Instance instance = builder_.instance_builder().build();
-
-            // std::vector<ItemTypeId> valid_item_type_ids;
-            // std::vector<ItemTypeId> invalid_item_type_ids;
-
-            // Check each item with each bin
-            // for (ItemTypeId item_type_id = 0;
-            //      item_type_id < instance.number_of_item_types();
-            //      ++item_type_id) {
-            //
-            //     auto& item_type = instance.item_type(item_type_id);
-            //     bool valid = true;
-            //
-            //     for (BinTypeId bin_type_id = 0;
-            //         bin_type_id < instance.number_of_bin_types();
-            //         ++bin_type_id) {
-            //
-            //         auto& bin_type = instance.bin_type(bin_type_id);
-            //         if (!pre_process_valid_item_type_for_bin_type(item_type, bin_type)) {
-            //             valid = false;
-            //             break;
-            //         }
-            //
-            //     }
-            //     if (valid) {
-            //         valid_item_type_ids.push_back(item_type_id);
-            //     } else {
-            //         invalid_item_type_ids.push_back(item_type_id);
-            //     }
-            //
-            // }
-
-            // if (!invalid_item_type_ids.empty()) {
-            //
-            //     // Copy objective
-            //     sanitized_builder_.instance_builder().set_objective(instance.objective());
-            //
-            //     // Copy parameters
-            //     sanitized_builder_.instance_builder().set_parameters(instance.parameters());
-            //
-            //     // Copy items
-            //     for (ItemTypeId new_item_type_id = 0;
-            //          new_item_type_id < valid_item_type_ids.size();
-            //          ++new_item_type_id
-            //     ) {
-            //         auto old_item_type_id = valid_item_type_ids[new_item_type_id];
-            //         auto& item_type = instance.item_type(old_item_type_id);
-            //         auto& item_type_meta = builder_.item_type_meta(old_item_type_id);
-            //         sanitized_builder_.instance_builder().add_item_type(item_type, item_type.profit, item_type_meta.copies);
-            //         sanitized_builder_.set_item_type_meta(new_item_type_id, item_type_meta);
-            //     }
-            //
-            //     // Copy bins
-            //     for (BinTypeId bin_type_id = 0;
-            //          bin_type_id < instance.number_of_bin_types();
-            //          ++bin_type_id
-            //     ) {
-            //         const auto& bin_type = instance.bin_type(bin_type_id);
-            //         const auto& bin_type_meta = builder_.bin_type_meta(bin_type_id);
-            //         pre_process_add_bin_type(sanitized_builder_, bin_type, bin_type_meta); // TODO : sanitized_builder_.instance_builder().add_bin_type(bin_type, bin_type.copies, bin_type.copies_min);
-            //         sanitized_builder_.set_bin_type_meta(bin_type_id, bin_type_meta);
-            //     }
-            //
-            //     return std::move(sanitized_builder_.instance_builder().build());
-            // }
+            Instance orig_instance = orig_builder_.instance_builder().build();
 
             if (!instance_path_.empty()) {
-                instance.write(instance_path_);  // Export instance to a file with PackingSolver 'write' method
+                orig_instance.write(instance_path_);  // Export instance to a file with PackingSolver 'write' method
             }
 
-            return std::move(instance);
-        }
+            // Test each item with not anytime sequential knapsack to know if it can fit in bins
 
-        virtual bool pre_process_valid_item_type_for_bin_type(
-            const ItemType& item_type,
-            const BinType& bin_type
-        ) {
+            std::vector<ItemTypeId> usable_item_type_ids;
+            std::vector<ItemTypeId> unusable_item_type_ids;
 
-            if (item_type.space() > bin_type.space()) {
-                return false;
+            for (ItemTypeId item_type_id = 0;
+                 item_type_id < orig_instance.number_of_item_types();
+                 ++item_type_id) {
+
+                auto& item_type = orig_instance.item_type(item_type_id);
+                auto& item_type_meta = orig_builder_.item_type_meta(item_type_id);
+
+                // Create the validator instance builder
+                InstanceBuilder validator_builder;
+                validator_builder.set_objective(Objective::Knapsack);
+                validator_builder.set_parameters(orig_instance.parameters());
+
+                // Add item
+                validator_builder.add_item_type(item_type, item_type.profit, item_type.copies);
+
+                // Add bins
+                for (BinTypeId bin_type_id = 0;
+                     bin_type_id < orig_instance.number_of_bin_types();
+                     ++bin_type_id
+                ) {
+                    const auto& bin_type = orig_instance.bin_type(bin_type_id);
+                    validator_builder.add_bin_type(bin_type, bin_type.copies, bin_type.copies_min);
+                }
+
+                const Instance& validator_instance = validator_builder.build();
+
+                OptimizeParameters validator_parameters;
+                validator_parameters.timer = parameters_.timer;
+                validator_parameters.linear_programming_solver_name = parameters_.linear_programming_solver_name;
+                validator_parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
+                validator_parameters.verbosity_level = 0;
+
+                Output output = pre_process_optimize(validator_instance, validator_parameters);
+
+                if (output.solution_pool.best().number_of_items() == 1) {
+                    usable_item_type_ids.push_back(item_type_id);
+                } else {
+                    unusable_item_type_ids.push_back(item_type_id);
+                }
+
             }
 
-            return true;
+            if (unusable_item_type_ids.empty()) {
+
+                // No invalid item type. Flag all as usable
+                for (auto orig_item_type_id : usable_item_type_ids) {
+                    auto& item_type_meta = orig_builder_.item_type_meta(orig_item_type_id);
+                    item_type_meta.usable_item_type_id = orig_item_type_id;
+                }
+
+            } else {
+
+                // Flag unusable item types
+                for (auto unusable_item_type_id : unusable_item_type_ids) {
+                    auto& item_type_meta = orig_builder_.item_type_meta(unusable_item_type_id);
+                    item_type_meta.usable = false;
+                }
+
+                // Populate 'usable_builder_' from 'orig_builder_' attributes but without unusable item types
+                // to send it to PackingSolver.
+
+                // Copy objective
+                usable_builder_.instance_builder().set_objective(orig_instance.objective());
+
+                // Copy parameters
+                usable_builder_.instance_builder().set_parameters(orig_instance.parameters());
+
+                // Copy item types
+                for (ItemTypeId usable_item_type_id = 0;
+                     usable_item_type_id < usable_item_type_ids.size();
+                     ++usable_item_type_id
+                ) {
+                    auto orig_item_type_id = usable_item_type_ids[usable_item_type_id];
+                    auto& item_type = orig_instance.item_type(orig_item_type_id);
+                    auto& item_type_meta = orig_builder_.item_type_meta(orig_item_type_id);
+                    item_type_meta.usable_item_type_id = usable_item_type_id;
+                    usable_builder_.instance_builder().add_item_type(item_type, item_type.profit, item_type_meta.copies);
+                    usable_builder_.set_item_type_meta(usable_item_type_id, item_type_meta);
+                }
+
+                // Copy bin types
+                for (BinTypeId bin_type_id = 0;
+                     bin_type_id < orig_instance.number_of_bin_types();
+                     ++bin_type_id
+                ) {
+                    const auto& bin_type = orig_instance.bin_type(bin_type_id);
+                    const auto& bin_type_meta = orig_builder_.bin_type_meta(bin_type_id);
+                    usable_builder_.instance_builder().add_bin_type(bin_type, bin_type.copies, bin_type.copies_min);
+                    usable_builder_.set_bin_type_meta(bin_type_id, bin_type_meta);
+                }
+
+                // Flag usable builder as used
+                usable_builder_.set_used(true);
+
+                return std::move(usable_builder_.instance_builder().build());
+            }
+
+            return std::move(orig_instance);
         }
 
-        virtual void pre_process_add_bin_type(
-            TypedBuilder<InstanceBuilder>& builder,
-            const BinType& bin_type,
-            const BinTypeMeta& bin_type_meta
+        virtual Output pre_process_optimize(
+            const Instance& instance,
+            const OptimizeParameters& parameters
         ) = 0;
 
         /*
@@ -398,9 +444,11 @@ namespace Packy {
 
             if (j.contains("linear_programming_solver")) {
                 columngenerationsolver::SolverName linear_programming_solver_name;
-                std::stringstream ss(j.value("linear_programming_solver", "clp"));
+                std::stringstream ss(j.value("linear_programming_solver", "highs"));
                 ss >> linear_programming_solver_name;
                 parameters_.linear_programming_solver_name = linear_programming_solver_name;
+            } else {
+                parameters_.linear_programming_solver_name = columngenerationsolver::SolverName::Highs;
             }
             if (j.contains("optimization_mode")) {
                 OptimizationMode optimization_mode;
@@ -495,6 +543,7 @@ namespace Packy {
                 // Extract useful meta to keep them for post-processing
 
                 ItemTypeMeta item_type_meta;
+                item_type_meta.orig_item_type_id = item_type_id;
                 item_type_meta.copies = j_item_value.value("copies", static_cast<ItemPos>(1));
                 builder.set_item_type_meta(item_type_id, item_type_meta);
 
@@ -521,10 +570,9 @@ namespace Packy {
 
                 BinTypeMeta bin_type_meta;
                 bin_type_meta.copies = j_item_value.value("copies", static_cast<BinPos>(1));
-                bin_type_meta.copies_min = j_item_value.value("copies_min", static_cast<BinPos>(1));
                 bin_type_meta.width_dbl = j_item_value.value("width", static_cast<double>(0));
                 bin_type_meta.height_dbl = j_item_value.value("height", static_cast<double>(0));
-                builder_.set_bin_type_meta(bin_type_id, bin_type_meta);
+                orig_builder_.set_bin_type_meta(bin_type_id, bin_type_meta);
 
             }
 
@@ -547,6 +595,7 @@ namespace Packy {
 
             const auto& solution = output.solution_pool.best();
             const auto& instance = solution.instance();
+            auto& builder = usable_builder_.used() ? usable_builder_ : orig_builder_;
 
             j["time"] = output.time;
 
@@ -560,23 +609,25 @@ namespace Packy {
 
             BinTypeStats bin_type_stats;
 
-            write_best_solution_bins(j, solution, bin_type_stats);
+            write_best_solution_bins(j, solution, bin_type_stats, builder);
 
             basic_json<>& j_item_types_stats = j["item_types_stats"] = json::array();
-            for (ItemTypeId item_type_id = 0; item_type_id < instance.number_of_item_types(); ++item_type_id) {
+            for (auto& [orig_item_type_id, item_type_meta] : orig_builder_.item_type_metas()) {
 
-                const auto& item_type_meta = builder_.item_type_meta(item_type_id);
-                const auto used_copies = solution.item_copies(item_type_id);
+                const auto used_copies = item_type_meta.usable ? solution.item_copies(item_type_meta.usable_item_type_id) : 0;
                 const auto unused_copies = item_type_meta.copies < 0 ? -1 : item_type_meta.copies - used_copies;
 
                 basic_json<> j_item_type_stats = json{
-                    {"item_type_id", item_type_id}
+                    {"item_type_id", item_type_meta.orig_item_type_id}
                 };
 
                 if (used_copies > 0) j_item_type_stats["used_copies"] = used_copies;
                 if (unused_copies > 0 || used_copies == 0) j_item_type_stats["unused_copies"] = unused_copies;
+                if (!item_type_meta.usable) j_item_type_stats["usable"] = item_type_meta.usable;
 
-                populate_item_type_stats(j_item_type_stats, solution, item_type_id, final);
+                if (item_type_meta.usable) {
+                    populate_item_type_stats(j_item_type_stats, solution, item_type_meta.usable_item_type_id, final);
+                }
 
                 j_item_types_stats.emplace_back(j_item_type_stats);
 
@@ -585,7 +636,7 @@ namespace Packy {
             basic_json<>& j_bin_types_stats = j["bin_types_stats"] = json::array();
             for (BinTypeId bin_type_id = 0; bin_type_id < instance.number_of_bin_types(); ++bin_type_id) {
 
-                const auto& bin_type_meta = builder_.bin_type_meta(bin_type_id);
+                const auto& bin_type_meta = builder.bin_type_meta(bin_type_id);
                 const auto used_copies = solution.bin_copies(bin_type_id);
                 const auto unused_copies = bin_type_meta.copies < 0 ? -1 : bin_type_meta.copies - used_copies;
 
@@ -616,7 +667,8 @@ namespace Packy {
         virtual void write_best_solution_bins(
             json& j,
             const Solution& solution,
-            BinTypeStats& bin_type_stats
+            BinTypeStats& bin_type_stats,
+            TypedBuilder<InstanceBuilder>& builder
         ) = 0;
 
         virtual void populate_item_type_stats(
@@ -818,29 +870,11 @@ namespace Packy {
 
     protected:
 
-        bool pre_process_valid_item_type_for_bin_type(
-            const rectangle::ItemType& item_type,
-            const rectangle::BinType& bin_type
+        rectangle::Output pre_process_optimize(
+            const rectangle::Instance& instance,
+            const rectangle::OptimizeParameters& parameters
         ) override {
-
-            if (item_type.oriented && (item_type.rect.x > bin_type.rect.x)
-                || !item_type.oriented && (item_type.rect.x > bin_type.rect.y)) {
-                return false;
-            }
-            if (item_type.oriented && (item_type.rect.y > bin_type.rect.y)
-                || !item_type.oriented && (item_type.rect.y > bin_type.rect.x)) {
-                return false;
-            }
-
-            return TypedSolver::pre_process_valid_item_type_for_bin_type(item_type, bin_type);
-        }
-
-        void pre_process_add_bin_type(
-            TypedBuilder<rectangle::InstanceBuilder>& builder,
-            const rectangle::BinType& bin_type,
-            const BinTypeMeta& bin_type_meta
-        ) override {
-            builder.instance_builder().add_bin_type(bin_type, bin_type_meta.copies);
+            return std::move(rectangle::optimize(instance, parameters));
         }
 
         rectangle::Output process(
@@ -852,18 +886,20 @@ namespace Packy {
         void write_best_solution_bins(
                 json& j,
                 const rectangle::Solution& solution,
-                BinTypeStats& bin_type_stats
+                BinTypeStats& bin_type_stats,
+                TypedBuilder<rectangle::InstanceBuilder>& builder
         ) override {
 
             using namespace rectangle;
 
             const Instance& instance = solution.instance();
 
-            basic_json<>& j_bins = j["bins"];
+            basic_json<>& j_bins = j["bins"] = json::array();
             for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
 
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
+                const BinTypeMeta& bin_type_meta = builder.bin_type_meta(bin.bin_type_id);
 
                 Area bin_space = bin_type.rect.x * bin_type.rect.y;
                 Area items_space = 0;
@@ -890,17 +926,18 @@ namespace Packy {
                 for (const auto& item: bin.items) {
 
                     const ItemType& item_type = solution.instance().item_type(item.item_type_id);
+                    const ItemTypeMeta& item_type_meta = builder.item_type_meta(item.item_type_id);
 
                     if (item.rotate) {
                         j_items.emplace_back(json{
-                                {"item_type_id", item.item_type_id},
+                                {"item_type_id", item_type_meta.orig_item_type_id},
                                 {"x",            to_length_dbl(fake_trimming_ + item.bl_corner.x + item_type.rect.y - fake_spacing_)},
                                 {"y",            to_length_dbl(fake_trimming_ + item.bl_corner.y)},
                                 {"angle",        90.0}
                         });
                     } else {
                         j_items.emplace_back(json{
-                                {"item_type_id", item.item_type_id},
+                                {"item_type_id", item_type_meta.orig_item_type_id},
                                 {"x",            to_length_dbl(fake_trimming_ + item.bl_corner.x)},
                                 {"y",            to_length_dbl(fake_trimming_ + item.bl_corner.y)},
                                 {"angle",        0}
@@ -1123,29 +1160,11 @@ namespace Packy {
 
     protected:
 
-        bool pre_process_valid_item_type_for_bin_type(
-            const rectangleguillotine::ItemType& item_type,
-            const rectangleguillotine::BinType& bin_type
+        rectangleguillotine::Output pre_process_optimize(
+            const rectangleguillotine::Instance& instance,
+            const rectangleguillotine::OptimizeParameters& parameters
         ) override {
-
-            if (item_type.oriented && (item_type.rect.w > bin_type.rect.w)
-                || !item_type.oriented && (item_type.rect.w > bin_type.rect.h)) {
-                return false;
-            }
-            if (item_type.oriented && (item_type.rect.h > bin_type.rect.h)
-                || !item_type.oriented && (item_type.rect.h > bin_type.rect.w)) {
-                return false;
-            }
-
-            return TypedSolver::pre_process_valid_item_type_for_bin_type(item_type, bin_type);
-        }
-
-        void pre_process_add_bin_type(
-            TypedBuilder<rectangleguillotine::InstanceBuilder>& builder,
-            const rectangleguillotine::BinType& bin_type,
-            const BinTypeMeta& bin_type_meta
-        ) override {
-            builder.instance_builder().add_bin_type(bin_type, bin_type_meta.copies, bin_type_meta.copies_min);
+            return std::move(rectangleguillotine::optimize(instance, parameters));
         }
 
         rectangleguillotine::Output process(
@@ -1164,7 +1183,8 @@ namespace Packy {
         void write_best_solution_bins(
                 json &j,
                 const rectangleguillotine::Solution& solution,
-                BinTypeStats& bin_type_stats
+                BinTypeStats& bin_type_stats,
+                TypedBuilder<rectangleguillotine::InstanceBuilder>& builder
         ) override {
 
             using namespace rectangleguillotine;
@@ -1177,6 +1197,7 @@ namespace Packy {
 
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
+                const BinTypeMeta& bin_type_meta = builder.bin_type_meta(bin.bin_type_id);
 
                 Area bin_space = bin_type.rect.area(); // Workaround to PackingSolver bin_type.space() function that subtract trims
                 Area items_space = 0;
@@ -1207,17 +1228,18 @@ namespace Packy {
                     if (node.item_type_id >= 0 && node.f >= 0) {
 
                         const ItemType& item_type = instance.item_type(node.item_type_id);
+                        const ItemTypeMeta& item_type_meta = builder.item_type_meta(node.item_type_id);
 
                         if (item_type.rect.w != node.r - node.l /* rotated */) {
                             j_items.push_back(json{
-                                    {"item_type_id", node.item_type_id},
+                                    {"item_type_id", item_type_meta.orig_item_type_id},
                                     {"x",            to_length_dbl(node.r)},
                                     {"y",            to_length_dbl(node.b)},
                                     {"angle",        90.0},
                             });
                         } else {
                             j_items.push_back(json{
-                                    {"item_type_id", node.item_type_id},
+                                    {"item_type_id", item_type_meta.orig_item_type_id},
                                     {"x",            to_length_dbl(node.l)},
                                     {"y",            to_length_dbl(node.b)},
                                     {"angle",        0.0},
@@ -1459,12 +1481,11 @@ namespace Packy {
 
     protected:
 
-        void pre_process_add_bin_type(
-            TypedBuilder<onedimensional::InstanceBuilder>& builder,
-            const onedimensional::BinType& bin_type,
-            const BinTypeMeta& bin_type_meta
+        onedimensional::Output pre_process_optimize(
+            const onedimensional::Instance& instance,
+            const onedimensional::OptimizeParameters& parameters
         ) override {
-            builder.instance_builder().add_bin_type(bin_type, bin_type_meta.copies);
+            return std::move(onedimensional::optimize(instance, parameters));
         }
 
         onedimensional::Output process(
@@ -1476,7 +1497,8 @@ namespace Packy {
         void write_best_solution_bins(
                 json& j,
                 const onedimensional::Solution& solution,
-                BinTypeStats& bin_type_stats
+                BinTypeStats& bin_type_stats,
+                TypedBuilder<onedimensional::InstanceBuilder>& builder
         ) override {
 
             using namespace onedimensional;
@@ -1488,7 +1510,7 @@ namespace Packy {
 
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
-                const BinTypeMeta& bin_type_meta = builder_.bin_type_meta(bin.bin_type_id);
+                const BinTypeMeta& bin_type_meta = builder.bin_type_meta(bin.bin_type_id);
 
                 Length bin_space = bin_type.length;
                 Length items_space = 0;
@@ -1519,10 +1541,11 @@ namespace Packy {
                 for (const auto& item: bin.items) {
 
                     const ItemType& item_type = instance.item_type(item.item_type_id);
+                    const ItemTypeMeta& item_type_meta = builder.item_type_meta(item.item_type_id);
 
                     // Item
                     j_items.emplace_back(json{
-                            {"item_type_id", item.item_type_id},
+                            {"item_type_id", item_type_meta.orig_item_type_id},
                             {"x",            to_length_dbl(fake_trimming_ + item.start)},
                     });
 
@@ -1715,20 +1738,18 @@ namespace Packy {
             builder.instance_builder().add_defect(
                     bin_type_id,
                     type,
-                    shape_orig,
-                    holes_orig
+                    shape_orig
             );
 
         }
 
     protected:
 
-        void pre_process_add_bin_type(
-            TypedBuilder<irregular::InstanceBuilder>& builder,
-            const irregular::BinType& bin_type,
-            const BinTypeMeta& bin_type_meta
+        irregular::Output pre_process_optimize(
+            const irregular::Instance& instance,
+            const irregular::OptimizeParameters& parameters
         ) override {
-            builder.instance_builder().add_bin_type(bin_type, bin_type_meta.copies, bin_type_meta.copies_min);
+            return std::move(irregular::optimize(instance, parameters));
         }
 
         irregular::Output process(
@@ -1740,7 +1761,8 @@ namespace Packy {
         void write_best_solution_bins(
                 json& j,
                 const irregular::Solution& solution,
-                BinTypeStats& bin_type_stats
+                BinTypeStats& bin_type_stats,
+                TypedBuilder<irregular::InstanceBuilder>& builder
         ) override {
 
             using namespace irregular;
@@ -1752,6 +1774,7 @@ namespace Packy {
 
                 const SolutionBin& bin = solution.bin(bin_pos);
                 const BinType& bin_type = instance.bin_type(bin.bin_type_id);
+                BinTypeMeta& bin_type_meta = builder.bin_type_meta(bin.bin_type_id);
 
                 AreaDbl bin_space = bin_type.space();
                 AreaDbl items_space = 0;
@@ -1779,8 +1802,10 @@ namespace Packy {
                 basic_json<>& j_items = j_bin["items"] = json::array();
                 for (const auto& item: bin.items) {
 
+                    ItemTypeMeta& item_type_meta = builder.item_type_meta(item.item_type_id);
+
                     j_items.emplace_back(json{
-                            {"item_type_id", item.item_type_id},
+                            {"item_type_id", item_type_meta.orig_item_type_id},
                             {"x",            to_length_dbl(item.bl_corner.x)},
                             {"y",            to_length_dbl(item.bl_corner.y)},
                             {"angle",        item.angle},  // Returns angle in degrees

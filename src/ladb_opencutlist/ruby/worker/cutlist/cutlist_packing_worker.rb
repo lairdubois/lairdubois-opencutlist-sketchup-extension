@@ -616,7 +616,7 @@ module Ladb::OpenCutList
 
       raw_solution = output['solution']
 
-      return PackingDef.new(errors: [ 'tab.cutlist.packing.error.no_solution' ]).create_packing if raw_solution.nil? || raw_solution['bins'].nil? || raw_solution['bins'].empty?
+      return PackingDef.new(errors: [ 'tab.cutlist.packing.error.no_solution' ]).create_packing if raw_solution.nil? || raw_solution['bins'].nil? # || raw_solution['bins'].empty?
 
       # Create PackingDef from the solution
 
@@ -680,7 +680,8 @@ module Ladb::OpenCutList
             item_type_def = @item_type_defs[raw_item_type_stats['item_type_id']]
             unused_copies = raw_item_type_stats.fetch('unused_copies', 0)
             next if unused_copies == 0
-            PackingPartInfoDef.new(part: item_type_def.part, count: unused_copies)
+            usable = raw_item_type_stats.fetch('usable', true)
+            PackingPartInfoDef.new(part: item_type_def.part, count: unused_copies, usable: usable)
           }.compact.sort_by! { |part_info_def| part_info_def._sorter } : [],
           bin_defs: raw_solution['bins'].map { |raw_bin|
             bin_type_def = @bin_type_defs[raw_bin['bin_type_id']]
