@@ -310,9 +310,12 @@ namespace Packy {
                 // No unusable item type. Tag all as usable
                 for (auto orig_item_type_id : usable_item_type_ids) {
                     auto& item_type_meta = orig_builder_.item_type_meta(orig_item_type_id);
-                    item_type_meta.usable_item_type_id = orig_item_type_id;
-                    item_type_meta.usable = true;
+                    item_type_meta.usable_item_type_id = orig_item_type_id;     // Allows post_process to directly item_type_id without test
+                    item_type_meta.usable = true;                               // Already done in struct initialization
                 }
+
+                // Tag usable builder as not used
+                usable_builder_.set_used(false);
 
             } else {
 
@@ -322,8 +325,10 @@ namespace Packy {
                     item_type_meta.usable = false;
                 }
 
-                // Populate 'usable_builder_' from 'orig_builder_' attributes but without unusable item types
-                // to send it to PackingSolver.
+                /*
+                 * Populate 'usable_builder_' from 'orig_builder_' attributes to send it to PackingSolver,
+                 * but without unusable item types.
+                 */
 
                 // Copy objective
                 usable_builder_.instance_builder().set_objective(orig_instance.objective());
@@ -361,6 +366,7 @@ namespace Packy {
                 return std::move(usable_builder_.instance_builder().build());
             }
 
+            // Nothing to exclude returns 'orig_instance' directly
             return std::move(orig_instance);
         }
 
