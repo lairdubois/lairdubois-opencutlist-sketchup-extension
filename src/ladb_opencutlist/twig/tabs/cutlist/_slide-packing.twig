@@ -133,7 +133,7 @@
                                 <div class="col-xs-6">
                                     <span style="margin-left: 10px;">{{ 'tab.cutlist.packing.list.settings'|i18next }}</span>
                                     <ul>
-                                        <li><strong>{{ 'tab.cutlist.packing.option_problem_type'|i18next }} : </strong>{{ ('tab.cutlist.packing.option_problem_type_'~solution.options.problem_type)|i18next }}</li>
+                                        <li><strong>{{ 'tab.cutlist.packing.option_problem_type'|i18next }} : </strong>{{ ('tab.cutlist.packing.option_problem_type_'~solution.options.problem_type)|i18next }} <small>({{ solution.options.objective }} / {{ solution.options.optimization_mode }})</small></li>
                                         <li><strong>{{ 'tab.cutlist.packing.option_spacing'|i18next }} : </strong>{{ solution.options.spacing }}</li>
                                         <li><strong>{{ 'tab.cutlist.packing.option_trimming'|i18next }} : </strong>{{ solution.options.trimming }}</li>
                                         {% if solution.options.problem_type == 'rectangleguillotine' %}

@@ -1205,7 +1205,7 @@ tab:
         no_bin_1d: Aucune barre ou bande standard n'est sélectionnée et aucun reste n'est défini.
         no_bin_2d: Aucun panneau ou aucune feuille standard n'est sélectionné et aucun reste n'est défini.
         invalid_part_shapes: La forme de la pièce '{{ name }}' est invalide.
-        no_solution: Aucune solution n'a été trouvée.
+        no_solution: Aucune solution n'a été trouvée pour placer **toutes les pièces** dans la matière disponible. # TODO
         unplaced_parts: "**1 pièce** n'a pas pu être placée."
         unplaced_parts_plural: "**{{ count }} pièces** n'ont pas pu être placées."
         unusable_part: Pièce trop grande

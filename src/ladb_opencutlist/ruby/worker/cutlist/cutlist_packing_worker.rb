@@ -644,6 +644,8 @@ module Ladb::OpenCutList
         solution_def: PackingSolutionDef.new(
           options_def: PackingOptionsDef.new(
             problem_type: @problem_type,
+            objective: @objective,
+            optimization_mode: @optimization_mode,
             spacing: @spacing,
             trimming: @trimming,
             items_formula: @items_formula,
@@ -795,6 +797,9 @@ module Ladb::OpenCutList
       # Errors
       if packing_def.solution_def.summary_def.total_unused_item_count > 0
         packing_def.errors << [ 'tab.cutlist.packing.error.unplaced_parts', { :count => packing_def.solution_def.summary_def.total_unused_item_count }]
+      end
+      if raw_solution['bins'].empty?
+        packing_def.errors << 'tab.cutlist.packing.error.no_solution'
       end
 
       packing_def.create_packing

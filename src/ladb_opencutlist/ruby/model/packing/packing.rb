@@ -63,7 +63,7 @@ module Ladb::OpenCutList
     include DefHelper
     include HashableHelper
 
-    attr_reader :problem_type,
+    attr_reader :problem_type, :objective, :optimization_mode,
                 :spacing, :trimming,
                 :items_formula, :hide_part_list, :part_drawing_type, :colorization, :origin_corner, :highlight_primary_cuts, :hide_edges_preview,
                 :rectangleguillotine_cut_type, :rectangleguillotine_first_stage_orientation, :rectangleguillotine_number_of_stages, :rectangleguillotine_keep_length, :rectangleguillotine_keep_width,
@@ -73,6 +73,8 @@ module Ladb::OpenCutList
       @_def = _def
 
       @problem_type = _def.problem_type
+      @objective = _def.objective
+      @optimization_mode = _def.optimization_mode
 
       @spacing = DimensionUtils.str_add_units(_def.spacing.to_l.to_s)
       @trimming = DimensionUtils.str_add_units(_def.trimming.to_l.to_s)
