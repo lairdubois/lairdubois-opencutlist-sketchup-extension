@@ -42,8 +42,8 @@ set(PACKINGSOLVER_BUILD_TEST OFF)
 # Fetch lairdubois/fontanf-packingsolver.
 FetchContent_Declare(
         packingsolver
-#        GIT_REPOSITORY https://github.com/lairdubois/fontanf-packingsolver.git
-#        GIT_TAG 33a9751b1a1ec91c111521e387fec492f7acfa54
-        SOURCE_DIR "${PROJECT_SOURCE_DIR}/../fontanf-packingsolver/"
+        GIT_REPOSITORY https://github.com/lairdubois/fontanf-packingsolver.git
+        GIT_TAG 33a9751b1a1ec91c111521e387fec492f7acfa54
+#        SOURCE_DIR "${PROJECT_SOURCE_DIR}/../fontanf-packingsolver/"
         EXCLUDE_FROM_ALL)
 FetchContent_MakeAvailable(packingsolver)
