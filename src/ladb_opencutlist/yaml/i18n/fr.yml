@@ -1208,6 +1208,7 @@ tab:
         no_solution: Aucune solution n'a été trouvée.
         unplaced_parts: "**1 pièce** n'a pas pu être placée."
         unplaced_parts_plural: "**{{ count }} pièces** n'ont pas pu être placées."
+        unusable_part: Pièce trop grande
       warning:
         is_part_selection: Ce calepinage se limite aux **pièces sélectionnées**.
         cutting_dimensions: Ce calepinage présente les pièces dans leurs dimensions de **débit**.
