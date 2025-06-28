@@ -40,7 +40,7 @@ module Ladb::OpenCutList
 
     attr_reader :options, :summary,
                 :bins,
-                :unplaced_part_infos
+                :unused_part_infos
 
     def initialize(_def)
       @_def = _def
@@ -50,7 +50,7 @@ module Ladb::OpenCutList
 
       @bins = _def.bin_defs.map { |bin_def| bin_def.create_bin }
 
-      @unplaced_part_infos = _def.unplaced_part_info_defs.map { |part_info_def| part_info_def.create_part_info }
+      @unused_part_infos = _def.unused_part_info_defs.map { |part_info_def| part_info_def.create_part_info }
 
     end
 
@@ -110,7 +110,7 @@ module Ladb::OpenCutList
     attr_reader :time, :number_of_bins, :number_of_items, :efficiency,
                 :number_of_leftovers, :number_of_leftovers_to_keep, :number_of_cuts,
                 :cut_length, :cut_cost,
-                :total_used_area, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count,
+                :total_used_area, :total_used_area, :total_used_length, :total_used_cost, :total_used_item_count, :total_unused_item_count, :total_usable_item_count
                 :bin_type_stats
 
     def initialize(_def)
@@ -134,6 +134,7 @@ module Ladb::OpenCutList
       @total_used_cost = _def.total_used_cost > 0 ? PriceUtils.format_to_readable_price(_def.total_used_cost) : nil
       @total_used_item_count = _def.total_used_item_count
       @total_unused_item_count = _def.total_unused_item_count
+      @total_usable_item_count = _def.total_usable_item_count
 
       @bin_type_stats = _def.bin_type_stats_defs.map { |bin_type_stats_def| bin_type_stats_def.create_summary_bin_type_stats }
 

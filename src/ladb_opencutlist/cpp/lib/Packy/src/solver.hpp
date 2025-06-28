@@ -63,7 +63,7 @@ namespace Packy {
          */
 
         virtual void add_end_boolean(
-                const bool* end
+            const bool* end
         ) = 0;
 
         /*
@@ -78,7 +78,7 @@ namespace Packy {
          */
 
         virtual void read(
-                basic_json<>& j
+            basic_json<>& j
         ) = 0;
 
         /*
@@ -193,7 +193,7 @@ namespace Packy {
          */
 
         void read(
-                basic_json<>& j
+            basic_json<>& j
         ) override {
 
             if (j.contains("parameters")) {
@@ -248,20 +248,25 @@ namespace Packy {
 
         virtual Instance pre_process() {
 
+            // Build origin instance
             Instance orig_instance = orig_builder_.instance_builder().build();
 
+            // Write instant to file for debug purpose with PackingSolver format
             if (!instance_path_.empty()) {
                 orig_instance.write(instance_path_);  // Export instance to a file with PackingSolver 'write' method
             }
 
-            // Test each item with not anytime sequential knapsack to know if it can fit in bins
+            /*
+             * Test each item with not anytime sequential knapsack to know if it can fit in bins
+             */
 
             std::vector<ItemTypeId> usable_item_type_ids;
             std::vector<ItemTypeId> unusable_item_type_ids;
 
             for (ItemTypeId item_type_id = 0;
                  item_type_id < orig_instance.number_of_item_types();
-                 ++item_type_id) {
+                 ++item_type_id
+            ) {
 
                 auto& item_type = orig_instance.item_type(item_type_id);
 
@@ -270,10 +275,10 @@ namespace Packy {
                 validator_builder.set_objective(Objective::Knapsack);
                 validator_builder.set_parameters(orig_instance.parameters());
 
-                // Add item type (with only 1 copy)
+                // Copy item type (with only 1 copy)
                 validator_builder.add_item_type(item_type, item_type.profit, 1);
 
-                // Add bin types
+                // Copy bin types
                 for (BinTypeId bin_type_id = 0;
                      bin_type_id < orig_instance.number_of_bin_types();
                      ++bin_type_id
@@ -292,7 +297,7 @@ namespace Packy {
 
                 Output output = pre_process_optimize(validator_instance, validator_parameters);
 
-                if (output.solution_pool.best().number_of_items() == 1) {
+                if (output.solution_pool.best().full()) {
                     usable_item_type_ids.push_back(item_type_id);
                 } else {
                     unusable_item_type_ids.push_back(item_type_id);
@@ -302,15 +307,16 @@ namespace Packy {
 
             if (unusable_item_type_ids.empty()) {
 
-                // No invalid item type. Flag all as usable
+                // No unusable item type. Tag all as usable
                 for (auto orig_item_type_id : usable_item_type_ids) {
                     auto& item_type_meta = orig_builder_.item_type_meta(orig_item_type_id);
                     item_type_meta.usable_item_type_id = orig_item_type_id;
+                    item_type_meta.usable = true;
                 }
 
             } else {
 
-                // Flag unusable item types
+                // Tag unusable item types
                 for (auto unusable_item_type_id : unusable_item_type_ids) {
                     auto& item_type_meta = orig_builder_.item_type_meta(unusable_item_type_id);
                     item_type_meta.usable = false;
@@ -349,7 +355,7 @@ namespace Packy {
                     usable_builder_.set_bin_type_meta(bin_type_id, bin_type_meta);
                 }
 
-                // Flag usable builder as used
+                // Tag usable builder as used
                 usable_builder_.set_used(true);
 
                 return std::move(usable_builder_.instance_builder().build());
@@ -367,13 +373,17 @@ namespace Packy {
          * Process
          */
 
-        virtual Output process(const Instance& instance) = 0;
+        virtual Output process(
+            const Instance& instance
+        ) = 0;
 
         /*
          * Postprocess
          */
 
-        virtual json post_process(const Output& output) {
+        virtual json post_process(
+            const Output& output
+        ) {
 
             json j;
             write_best_solution(j, output, true);
@@ -394,7 +404,7 @@ namespace Packy {
         }
 
         virtual void read_parameters(
-                basic_json<>& j
+            basic_json<>& j
         ) {
 
             if (j.contains("length_truncate_factor")) {
@@ -502,8 +512,8 @@ namespace Packy {
         };
 
         virtual void read_instance(
-                basic_json<>& j,
-                TypedBuilder<InstanceBuilder>& builder
+            basic_json<>& j,
+            TypedBuilder<InstanceBuilder>& builder
         ) {
 
             if (j.contains("objective")) {
@@ -525,13 +535,13 @@ namespace Packy {
         }
 
         virtual void read_instance_parameters(
-                basic_json<>& j,
-                TypedBuilder<InstanceBuilder>& builder
+            basic_json<>& j,
+            TypedBuilder<InstanceBuilder>& builder
         ) = 0;
 
         virtual void read_item_types(
-                basic_json<>& j,
-                TypedBuilder<InstanceBuilder>& builder
+            basic_json<>& j,
+            TypedBuilder<InstanceBuilder>& builder
         ) {
 
             for (auto& j_item: j.items()) {
@@ -551,13 +561,13 @@ namespace Packy {
         }
 
         virtual ItemTypeId read_item_type(
-                basic_json<>& j,
-                TypedBuilder<InstanceBuilder>& builder
+            basic_json<>& j,
+            TypedBuilder<InstanceBuilder>& builder
         ) = 0;
 
         virtual void read_bin_types(
-                basic_json<>& j,
-                TypedBuilder<InstanceBuilder>& builder
+            basic_json<>& j,
+            TypedBuilder<InstanceBuilder>& builder
         ) {
 
             for (auto& j_item: j.items()) {
@@ -578,8 +588,8 @@ namespace Packy {
         }
 
         virtual BinTypeId read_bin_type(
-                basic_json<>& j,
-                TypedBuilder<InstanceBuilder>& builder
+            basic_json<>& j,
+            TypedBuilder<InstanceBuilder>& builder
         ) = 0;
 
         /*
@@ -587,9 +597,9 @@ namespace Packy {
          */
 
         virtual void write_best_solution(
-                json& j,
-                const Output& output,
-                const bool final
+            json& j,
+            const Output& output,
+            const bool final
         ) {
 
             const auto& solution = output.solution_pool.best();

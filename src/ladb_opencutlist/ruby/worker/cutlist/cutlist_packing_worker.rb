@@ -616,7 +616,7 @@ module Ladb::OpenCutList
 
       raw_solution = output['solution']
 
-      return PackingDef.new(errors: [ 'tab.cutlist.packing.error.no_solution' ]).create_packing if raw_solution.nil? || raw_solution['bins'].nil? # || raw_solution['bins'].empty?
+      return PackingDef.new(errors: [ 'tab.cutlist.packing.error.no_solution' ]).create_packing if raw_solution.nil? || raw_solution['bins'].nil?
 
       # Create PackingDef from the solution
 
@@ -678,7 +678,7 @@ module Ladb::OpenCutList
               defs
             }.flatten(1).sort_by!{ |bin_type_stats| [ bin_type_stats.used ? 1 : 0, -bin_type_stats.bin_type_def.type, bin_type_stats.bin_type_def.length ]} : []
           ),
-          unplaced_part_info_defs: raw_solution['item_types_stats'].is_a?(Array) ? raw_solution['item_types_stats'].map { |raw_item_type_stats|
+          unused_part_info_defs: raw_solution['item_types_stats'].is_a?(Array) ? raw_solution['item_types_stats'].map { |raw_item_type_stats|
             item_type_def = @item_type_defs[raw_item_type_stats['item_type_id']]
             unused_copies = raw_item_type_stats.fetch('unused_copies', 0)
             next if unused_copies == 0
@@ -774,8 +774,9 @@ module Ladb::OpenCutList
       end
 
       # Sum item stats
-      packing_def.solution_def.unplaced_part_info_defs.each do |part_info_def|
+      packing_def.solution_def.unused_part_info_defs.each do |part_info_def|
         packing_def.solution_def.summary_def.total_unused_item_count += part_info_def.count
+        packing_def.solution_def.summary_def.total_usable_item_count += 1 if part_info_def.usable
       end
 
       # Warnings
@@ -798,7 +799,7 @@ module Ladb::OpenCutList
       if packing_def.solution_def.summary_def.total_unused_item_count > 0
         packing_def.errors << [ 'tab.cutlist.packing.error.unplaced_parts', { :count => packing_def.solution_def.summary_def.total_unused_item_count }]
       end
-      if raw_solution['bins'].empty?
+      if packing_def.solution_def.bin_defs.empty? && packing_def.solution_def.summary_def.total_usable_item_count > 0
         packing_def.errors << 'tab.cutlist.packing.error.no_solution'
       end
 

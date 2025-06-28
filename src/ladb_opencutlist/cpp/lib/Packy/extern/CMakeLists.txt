@@ -16,6 +16,8 @@ if(OCL_BUILD_DEBUG_EXECUTABLES)
 
 endif()
 
+# Fetch lairdubois/fontanf-packingsolver.
+
 set(COLUMNGENERATIONSOLVER_BUILD_TEST OFF)
 set(COLUMNGENERATIONSOLVER_BUILD_EXAMPLES OFF)
 set(COLUMNGENERATIONSOLVER_USE_CLP OFF)
@@ -39,7 +41,6 @@ set(TREESEARCHSOLVER_BUILD_EXAMPLES OFF)
 set(PACKINGSOLVER_BUILD_MAIN OFF)
 set(PACKINGSOLVER_BUILD_TEST OFF)
 
-# Fetch lairdubois/fontanf-packingsolver.
 FetchContent_Declare(
         packingsolver
         GIT_REPOSITORY https://github.com/lairdubois/fontanf-packingsolver.git

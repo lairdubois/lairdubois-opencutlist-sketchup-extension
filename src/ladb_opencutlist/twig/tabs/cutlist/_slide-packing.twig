@@ -47,19 +47,19 @@
         {% include 'core/_alert-errors.twig' %}
         {% include 'core/_alert-warnings.twig' %}
 
-        {% if solution.unplaced_part_infos|length > 0 %}
+        {% if solution.unused_part_infos|length > 0 %}
             {% set colspan = 7 %}
             {% if not showCuttingDimensions %}
                 {% set colspan = colspan - 2 %}
             {% endif %}
-            <table id="ladb_packing_unplaced_parts" data-group-id="packing_unplaced_parts" class="{% if 'packing_unplaced_parts' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered table-danger ladb-cutlist-group">
+            <table id="ladb_packing_unused_parts" data-group-id="packing_unused_parts" class="{% if 'packing_unused_parts' in generateOptions.hidden_group_ids %}no-print {% endif %}table table-bordered table-danger ladb-cutlist-group">
                 <thead>
                 <tr class="table-heading">
                     <td colspan="{{ colspan }}">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
                         {% if not generateOptions.part_folding %}
                             <div class="btn-group pull-right">
-                                <button class="no-print btn btn-default btn-sm ladb-btn-hiddable" id="ladb_btn_select_unplaced_parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_parts_in_cutlist'|i18next({ 'count':unplaced_parts|length }) }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i> {{ 'tab.cutlist.select_part'|i18next({ 'count':unplaced_parts|length }) }}</button>
+                                <button class="no-print btn btn-default btn-sm ladb-btn-hiddable" id="ladb_btn_select_unused_parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_parts_in_cutlist'|i18next({ 'count':unused_parts|length }) }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i> {{ 'tab.cutlist.select_part'|i18next({ 'count':unused_parts|length }) }}</button>
                             </div>
                         {% endif %}
                         <div class="ladb-heading text-danger"><i class="ladb-opencutlist-icon-warning"></i> {{ solution.summary.total_unused_item_count }} {{ 'tab.cutlist.packing.list.unplaced_parts'|i18next({ 'count': solution.summary.total_unused_item_count })|lower }}</div>
@@ -86,7 +86,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for part_info in solution.unplaced_part_infos  %}
+                {% for part_info in solution.unused_part_infos  %}
                     {% set part = part_info.part %}
                     <tr class="ladb-cutlist-row ladb-minitools-holder" data-part-id="{{ part.id }}">
                         <td class="text-center">
