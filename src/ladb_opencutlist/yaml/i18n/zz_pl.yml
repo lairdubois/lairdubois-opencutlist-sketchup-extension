@@ -602,8 +602,8 @@ tab:
       number: 473 - Ob.
       name: 474 - Oznaczenie
       count: 475 - Ilość
-      cutting: 476 - Wstępna
-      bbox: 477 - Końcowa
+      cutting: 476 - Wstępne
+      bbox: 477 - Końcowe
       final: 478 - Rzeczywisty
       total_cutting: 479 - Σ - wymiary przybliżone
       total_final: 480 - Σ Rzeczywisty

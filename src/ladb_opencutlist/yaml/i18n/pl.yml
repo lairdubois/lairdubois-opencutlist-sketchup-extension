@@ -606,8 +606,8 @@ tab:
       number: Ob.
       name: Oznaczenie
       count: Ilość
-      cutting: Wstępna
-      bbox: Końcowa
+      cutting: Wstępne
+      bbox: Końcowe
       final: Rzeczywisty
       total_cutting: Σ - wymiary przybliżone
       total_final: Σ Rzeczywisty
