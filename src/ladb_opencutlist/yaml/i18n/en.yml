@@ -1205,9 +1205,10 @@ tab:
         no_bin_1d: No standard board or edge banding was selected and no off-cuts were available.
         no_bin_2d: No standard panel or veneer sheet was selected and no off-cuts were available.
         invalid_part_shapes: "The shape of part '{{ name }}' is invalid."
-        no_solution: No solution was found.
+        no_solution: No solution has been found to place **all parts** in the available material. # TODO
         unplaced_parts: "**1 part** could not be placed."
         unplaced_parts_plural: "**{{ count }} parts** could not be placed."
+        unusable_part: Part too large
       warning:
         is_part_selection: This cutting diagram is limited to **selected parts**.
         cutting_dimensions: This cutting diagramm uses the **raw** dimensions of the parts.
@@ -1591,11 +1592,11 @@ tab:
 
         *If no unit is specified, the model unit will be applied.*
       length_increase: Length Oversize
-      length_increase_help: Oversize applied to the length to define the **raw length**. # TODO
+      length_increase_help: Oversize applied to the length to define the **raw length**.
       width_increase: Width Oversize
-      width_increase_help: Oversize applied to the width to define the **raw width**.  # TODO
+      width_increase_help: Oversize applied to the width to define the **raw width**.
       thickness_increase: Thickness Oversize
-      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**. # TODO
+      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**.
       std_lengths: Standard Lengths
       std_lengths_help: |
         Standard lengths available for this material.

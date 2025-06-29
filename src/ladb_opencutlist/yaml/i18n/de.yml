@@ -1205,9 +1205,10 @@ tab:
         no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zu Verfügung.
         no_bin_2d: Keine Standard-Platte oder -Furnierblatt wurde ausgewählt und es stehen keine Reste zu Verfügung.
         invalid_part_shapes: "Die Form des Teils '{{ name }}' ist ungültig."
-        no_solution: Keine Lösung gefunden.
+        no_solution: "Es wurde keine Lösung gefunden, um **alle Teile** in das verfügbare Material zu setzen." # TODO
         unplaced_parts: "**1 Teil** konnte nicht platziert werden."
         unplaced_parts_plural: "**{{ count }} Teile** konnten nicht platziert werden."
+        unusable_part: Teil ist zu gross
       warning:
         is_part_selection: Dieser Schnittplan beschränkt sich auf die **ausgewählten Teile**.
         cutting_dimensions: Dieser Schnittplan verwendet die **Rohmaße** der Teile.
@@ -1591,11 +1592,11 @@ tab:
 
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       length_increase: Längenzumaß
-      length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert. # TODO
+      length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert.
       width_increase: Breitenzumaß
-      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert.  # TODO
+      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert.
       thickness_increase: Dickenzumaß
-      thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert. # TODO
+      thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert.
       std_lengths: Standardlängen
       std_lengths_help: |
         Standardlängen für dieses Material.
