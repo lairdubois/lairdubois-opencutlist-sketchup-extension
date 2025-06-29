@@ -393,26 +393,24 @@ module Ladb::OpenCutList
           }
           if @problem_type == Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE
             bin_type[:left_trim] = bin_type[:right_trim] = bin_type[:bottom_trim] = bin_type[:top_trim] = _to_packy_length(@trimming)
-            # bin_type[:defects] = [
-            #   {
-            #     x: _to_packy_length(@trimming),
-            #     y: _to_packy_length(1247.mm),
-            #     width: _to_packy_length(length - @trimming * 2),
-            #     height: _to_packy_length(@spacing),
-            #   }
-            # ]
           elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
             bin_type[:type] = 'rectangle'
-            # bin_type[:defects] = [
-            #   {
-            #     type: 'rectangle',
-            #     x: _to_packy_length(@trimming),
-            #     y: _to_packy_length(1247.mm),
-            #     width: _to_packy_length(length - @trimming * 2),
-            #     height: _to_packy_length(@spacing),
-            #   }
-            # ]
           end
+
+          # Test for primary cut 0
+          # if @problem_type != Packy::PROBLEM_TYPE_ONEDIMENSIONAL
+          #   defect = {
+          #       x: _to_packy_length(@trimming),
+          #       y: _to_packy_length(1247.mm),
+          #       width: _to_packy_length(length - @trimming * 2),
+          #       height: _to_packy_length(@spacing),
+          #     }
+          #   if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
+          #     defect[:type] = 'rectangle'
+          #   end
+          #   bin_type[:defects] = [ defect ]
+          # end
+
           bin_types << bin_type
           @bin_type_defs << PackingBinTypeDef.new(
             id: Digest::MD5.hexdigest("#{length}_#{width}_0"),
@@ -832,6 +830,7 @@ module Ladb::OpenCutList
       colorized_print = @colorization == COLORIZATION_SCREEN_AND_PRINT && !light
 
       px_bin_dimension_font_size = light ? 0 : 16
+      px_bin_origin_size = 10
       px_node_dimension_font_size_max = 12
       px_node_dimension_font_size_min = 8
       px_node_label_font_size_max = 24
@@ -882,6 +881,14 @@ module Ladb::OpenCutList
           svg += "<text class='bin-dimension' x='#{-(px_bin_outline_width + px_bin_dimension_offset)}' y='#{px_bin_width / 2}' font-size='#{px_bin_dimension_font_size}' text-anchor='middle' dominant-baseline='alphabetic' transform='rotate(-90 -#{px_bin_outline_width + px_bin_dimension_offset},#{px_bin_width / 2})'>#{bin_def.bin_type_def.width.to_l}</text>"
         end
         svg += "<g class='bin'>"
+          unless light
+            px_bin_origin_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, 0, 0, px_bin_length)
+            px_bin_origin_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, 0, 0, px_bin_width)
+            svg += "<g class='bin-origin'>"
+              svg += "<line x1='#{px_bin_origin_x - px_bin_origin_size / 2}' y1='#{px_bin_origin_y}' x2='#{px_bin_origin_x + px_bin_origin_size / 2}' y2='#{px_bin_origin_y}'/>"
+              svg += "<line x1='#{px_bin_origin_x}' y1='#{px_bin_origin_y - px_bin_origin_size / 2}' x2='#{px_bin_origin_x}' y2='#{px_bin_origin_y + px_bin_origin_size / 2}'/>"
+            svg += "</g>"
+          end
           svg += "<rect class='bin-outer' x='-1' y='-1' width='#{px_bin_length + 2}' height='#{px_bin_width + 2}' />"
           svg += "<rect class='bin-inner' x='0' y='0' width='#{px_bin_length}' height='#{px_bin_width}' fill='#{light ? '#fff' : "url(#pattern_bin_bg_#{uuid})"}'/>"
           unless light
