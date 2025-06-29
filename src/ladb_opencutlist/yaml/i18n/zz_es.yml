@@ -149,7 +149,7 @@ core:
     failed_export_to: |
       128 - Se ha producido un error durante la exportación a *{{ path }}*.
       **{{ error }}**
-    unsupported_file_format: '129 - '
+    unsupported_file_format: '129 - Formato de archivo no compatible : **{{ format }}**'
   success:
     exported_to: 130 - Exportación lograda {{ path }}.
     copied_to_clipboard: 131 - Copiado al portapapeles
@@ -975,14 +975,14 @@ tab:
     packing:
       title: 795 - Diagrama de corte
       option_problem_type: 796 - Tipo
-      option_problem_type_rectangle: '797 - '
-      option_problem_type_rectangleguillotine: '798 - '
+      option_problem_type_rectangle: 797 - Rectángulo
+      option_problem_type_rectangleguillotine: 798 - Guillotina
       option_problem_type_onedimensional: 799 - Liston
       option_problem_type_irregular: '800 - '
       options_material: 801 - Material
       options_config: 802 - Configuración
       options_display: 803 - Visualización
-      options_tuning: '804 - '
+      options_tuning: 804 - Tuning
       option_std_bin_1d_dimensional: 805 - Listones estándar
       option_std_bin_1d_edge: '806 - '
       option_std_bin_1d_help: '807 - '
@@ -1003,8 +1003,8 @@ tab:
       option_scrap_bin_2d_sizes_placeholder: 822 - largo x ancho x cantidad; ...
       option_scrap_bin_2d_sizes_help: '823 - '
       option_scrap_bin_2d_none: 824 - No
-      option_optimization_mode: '825 - '
-      option_optimization_mode_help: '826 - '
+      option_optimization_mode: 825 - Modo de optimización
+      option_optimization_mode_help: 826 - Define el modo de optimización, con o sin límite de tiempo.
       option_objective: 827 - Objetivo
       option_objective_help: '828 - '
       option_rectangleguillotine_cut_type: 829 - Tipo de corte
@@ -1058,9 +1058,10 @@ tab:
         *Esta opción debe activarse para que las formas puedan ser exportadas.*
       option_colorization: '872 - '
       option_colorization_0: $t(default.no)
-      option_colorization_1: '874 - '
-      option_colorization_2: '875 - '
-      option_colorization_help: '876 - '
+      option_colorization_1: $t(default.yes) - Pantalla
+      option_colorization_2: $t(default.yes) - Pantalla e impresión
+      option_colorization_help: |
+        876 - Define si se utiliza un color aleatorio para distinguir las partes en el diagrama.
       option_origin_corner: 877 - Posición del origen
       option_origin_corner_0: 878 - Esquina superior izquierda
       option_origin_corner_1: 879 - Esquina inferior izquierda
@@ -1088,7 +1089,7 @@ tab:
         stats: 898 - Estadísticas
         time: 899 - Tiempo
         total_efficiency: 900 - Eficacia general
-        total_fill_rate: '901 - '
+        total_fill_rate: 901 - Tasa de llenado
         total_cut_count: 902 - Número de cortes
         total_cut_length: 903 - Longitud de cortes
         efficiency: 904 - Eficiencia
@@ -1113,7 +1114,7 @@ tab:
         bin_2d_veneer_type_0: 923 - Hoja estándar
         bin_2d_veneer_type_1: 924 - Resto de hojas
         unused: 925 - No usado
-        unplaced_parts: '926 - '
+        unplaced_parts: 926 - Parte no colocada
         unplaced_parts_plural: 927 - Piezas no colocadas
         parts: 928 - Pieza
         parts_plural: 929 - Piezas
@@ -1124,10 +1125,10 @@ tab:
         cut: 934 - Cortar
         cut_plural: 935 - Cortes
         cut_trimming: 936 - Corte de limpieza
-        cut_primary: '937 - '
+        cut_primary: 937 - Corte primario
         cut_primary_plural: 938 - Cortes primarios
         cut_none: 939 - Ninguna
-        cut_depth: '940 - '
+        cut_depth: 940 - Nivel {{ depth }}
       write:
         title: 941 - Exportación del diseño
         info_0: |
@@ -1170,10 +1171,10 @@ tab:
         no_part: 967 - Ninguna parte.
         no_bin_1d: '968 - '
         no_bin_2d: '969 - '
-        invalid_part_shapes: '970 - '
-        no_solution: '971 - '
-        unplaced_parts: '972 - '
-        unplaced_parts_plural: '973 - '
+        invalid_part_shapes: 970 - La forma de la parte '{{ name }}' no es válida.
+        no_solution: 971 - No se encontró solución.
+        unplaced_parts: 972 - **1 parte** no pudo ser colocada.
+        unplaced_parts_plural: 973 - **{{ count }} partes** no se pudo colocar.
       warning:
         is_part_selection: 974 - Este diagrama de corte se limita a las **piezas seleccionadas**.
         cutting_dimensions: 975 - Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
@@ -1257,8 +1258,8 @@ tab:
         part_edge_xmax: 1047 - Ancho de borde 2
         part_face_zmin: 1048 - Chapa de madera dorso
         part_face_zmax: 1049 - Chapa de madera frente
-        thumbnail_proportional_drawing: '1050 - '
-        thumbnail_proportional_drawing_bottom: '1051 - '
+        thumbnail_proportional_drawing: 1050 - Miniatura (Vista frontal)
+        thumbnail_proportional_drawing_bottom: 1051 - Miniatura (Vista trasera)
         thumbnail_proportional: 1052 - Miniatura proporcional
         thumbnail_square: 1053 - Miniatura cuadrada
         group_material: 1054 - Espesor / Material
@@ -1420,7 +1421,7 @@ tab:
 
         *Esta opción no permite detectar otros tipos de curva.*
       option_merge_holes: 1166 - Descomposición
-      option_merge_holes_0: '1167 - '
+      option_merge_holes_0: 1167 - Básico
       option_merge_holes_1: '1168 - '
       option_merge_holes_help: '1169 - '
       option_merge_holes_overflow: '1170 - '
@@ -1502,8 +1503,8 @@ tab:
       grain_direction: 1228 - Dirección de fibra
       raw_estimated_0: 1229 - Estimado por el volumen debitado útil
       colorized: 1230 - Este tono se aplicará a la textura de este material cuando se renderice en el modelo
-      texture_load: '1231 - '
-      texture_export: '1232 - '
+      texture_load: 1231 - Carga una nueva imagen
+      texture_export: 1232 - Exporte la imagen
       texture_clear: 1233 - Borrar la textura
       edit: 1234 - Edita las propiedades de '{{ name }}'
       set_current: 1235 - Colorear las piezas con '{{ name }}'
@@ -1533,7 +1534,7 @@ tab:
       type: 1253 - Tipo
       description: 1254 - Descripción
       url: 1255 - URL
-      formats: '1256 - '
+      formats: 1256 - Formatos
       cut_options: 1257 - Parámetros de corte
       estimate_options: 1258 - Opciones de estimación
       attributes: 1259 - Atributos
@@ -1581,7 +1582,7 @@ tab:
       std_volumic_masses_help: 1294 - Le permite definir la densidad para todos los tamaños y para cada tamaño estándar de material.
       std_prices: 1295 - Precio
       std_prices_help: 1296 - Le permite definir el precio para todos los tamaños, así como para cada tamaño estándar del material.
-      std_cut_prices: '1297 - '
+      std_cut_prices: 1297 - Precio de recorte
       std_cut_prices_help: '1298 - '
       texture_width: 1299 - Anchura
       texture_height: 1300 - Altura
@@ -1589,7 +1590,7 @@ tab:
     texture_load:
       title: 1302 - Cargar una imagen
     texture_export:
-      title: '1303 - '
+      title: 1303 - Exporte la imagen
     import_from_skm:
       title: 1304 - Importar fichero .skm
       ask_replace: '1305 - '
@@ -1634,14 +1635,14 @@ tab:
     type_2: 1333 - Componente
     type_3: 1334 - Pieza
     tooltip:
-      hide_node: '1335 - '
+      hide_node: 1335 - Oculte
       unhide_node: '1336 - '
-      locked_node: '1337 - '
-      is_active_node: '1338 - '
-      set_active_node: '1339 - '
-      edit_node_properties: '1340 - '
-      select_node: '1341 - '
-      unselect_node: '1342 - '
+      locked_node: 1337 - Cerrado
+      is_active_node: 1338 - Instancia activa en el modelo
+      set_active_node: 1339 - Editar en el modelo
+      edit_node_properties: 1340 - Editar propiedades
+      select_node: 1341 - Seleccione
+      unselect_node: 1342 - Desmarque
       open_node_url: 1343 - Abrir la URL de la pieza
     edit_node:
       title_model: 1344 - Propiedades del modelo
@@ -1660,13 +1661,13 @@ tab:
       explode_message: 1357 - ¿Confirma el desmontaje del elemento **{{ name }}**?
     option:
       general: 1358 - General
-      show_hidden_instances: '1359 - '
+      show_hidden_instances: 1359 - Mostrar instancias ocultas
       show_hidden_instances_help: '1360 - '
       hide_descriptions: 1361 - Oculte las descripciones
       hide_descriptions_help: 1362 - Si se selecciona esta opción, no se mostrarán las **descripciones** colocadas en las piezas.
       hide_tags: 1363 - Ocultar etiquetas
       hide_tags_help: 1364 - Si se selecciona esta opción, se ocultarán las **etiquetas**.
-      minimize_on_set_active: '1365 - '
+      minimize_on_set_active: 1365 - Minimizar después de '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: '1366 - '
     error:
       no_model: 1367 - Ningún modelo está abierto. Necesitarás darme más información ;)
@@ -1799,7 +1800,7 @@ tab:
     contribute: 1451 - Contribuir
     backers: 1452 - {{ count }} Contribuyente financiero
     backers_plural: 1453 - {{ count }} Contribuyentes financieros
-    ad: '1454 - '
+    ad: 1454 - OpenCutList no es gratuito
     objective: 1455 - Objetivo
     objective_slogan: 1456 - OpenCutList somos todos
     objective_title:
@@ -1934,11 +1935,11 @@ tool:
     vcb_diameter: 1534 - Diámetro
     vcb_distance: 1535 - Distancia
     error:
-      no_direction: '1536 - '
-      invalid_length: '1537 - '
-      invalid_multiplicator: '1538 - '
-      invalid_divider: '1539 - '
-      invalid_offset: '1540 - '
+      no_direction: 1536 - Indique una dirección con el ratón
+      invalid_length: 1537 - Longitud {{ value }} no es válida
+      invalid_multiplicator: 1538 - Factor {{ value }} no es válido
+      invalid_divider: 1539 - Divisor {{ value }} no es válido
+      invalid_offset: 1540 - Desplazamiento {{ value }} no es válido
       invalid_segment_count: '1541 - '
   highlight:
     transparency: $t(tool.default.transparency)
@@ -1986,7 +1987,7 @@ tool:
       part_created: '1582 - '
   smart_handle:
     title: '1583 - '
-    action_0: '1584 - '
+    action_0: 1584 - Seleccione
     action_0_status: '1585 - '
     action_1: '1586 - '
     action_1_status: '1587 - '

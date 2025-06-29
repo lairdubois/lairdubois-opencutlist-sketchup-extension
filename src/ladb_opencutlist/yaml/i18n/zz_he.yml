@@ -149,7 +149,7 @@ core:
     failed_export_to: |
       128 - אירעה שגיאה במהלך הייצוא אל *{{ path }}*.
       **{{ error }}**
-    unsupported_file_format: '129 - '
+    unsupported_file_format: '129 - פורמט קובץ לא נתמך: **{{ format }}**'
   success:
     exported_to: 130 - ייצוא מוצלח אל {{ path }}.
     copied_to_clipboard: 131 - הועתק ללוח כתיבה
@@ -1033,32 +1033,41 @@ tab:
         830 - קובע את סוג החיתוך.
       option_rectangleguillotine_cut_type_non_exact: 831 - לא מדויק
       option_rectangleguillotine_cut_type_exact: 832 - מדויק
-      option_rectangleguillotine_cut_type_homogenous: '833 - '
-      option_rectangleguillotine_number_of_stages: '834 - '
-      option_rectangleguillotine_number_of_stages_help: '835 - '
-      option_rectangleguillotine_first_stage_orientation: '836 - '
-      option_rectangleguillotine_first_stage_orientation_help: '837 - '
-      option_rectangleguillotine_first_stage_orientation_horizontal: '838 - '
-      option_rectangleguillotine_first_stage_orientation_vertical: '839 - '
-      option_rectangleguillotine_first_stage_orientation_any: '840 - '
+      option_rectangleguillotine_cut_type_homogenous: 833 - הומוגני
+      option_rectangleguillotine_number_of_stages: 834 - רמות חיתוך
+      option_rectangleguillotine_number_of_stages_help: |
+        835 - קובע את המספר המרבי של רמות חיתוך.
+      option_rectangleguillotine_first_stage_orientation: 836 - כיוון החיתוך הראשון
+      option_rectangleguillotine_first_stage_orientation_help: |
+        837 - קובע את כיוון החיתוך הראשון.
+      option_rectangleguillotine_first_stage_orientation_horizontal: 838 - אופקי
+      option_rectangleguillotine_first_stage_orientation_vertical: 839 - אנכי
+      option_rectangleguillotine_first_stage_orientation_any: 840 - כל
       option_rectangleguillotine_keep: 841 - גודל שאריות מינימלי
       option_rectangleguillotine_keep_help: 842 - שאריות גדולות מגודל המינימלי יסומנו כ-**לשמור**.
-      option_irregular_allowed_rotations: '843 - '
-      option_irregular_allowed_rotations_help: '844 - '
+      option_irregular_allowed_rotations: 843 - סיבובים מותרים
+      option_irregular_allowed_rotations_help: |
+        844 - מגדיר את זווית הסיבוב האפשרית עבור מיקום החלק.
+
+        *חומרים עם הברגה מאפשרים זווית סיבוב של 0 ו-180° בלבד.*
       option_irregular_allowed_rotations_0: 845 - אין
-      option_irregular_allowed_rotations_90: '846 - '
-      option_irregular_allowed_rotations_180: '847 - '
-      option_irregular_allow_mirroring: '848 - '
-      option_irregular_allow_mirroring_help: '849 - '
+      option_irregular_allowed_rotations_90: 846 - צעד של 90°
+      option_irregular_allowed_rotations_180: 847 - צעד של 180°
+      option_irregular_allow_mirroring: 848 - המראה מותרת
+      option_irregular_allow_mirroring_help: |
+        849 - קובע האם מותר להציב את המראת החלק.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: 852 - מרווחים
-      option_spacing_help: '853 - '
+      option_spacing_help: |
+        853 - מרווח מינימלי בין כל חלק.
+        ערך זה יכול להתאים לרוחב הלהב או כלי החיתוך.
       option_trimming: 854 - שוליים
-      option_trimming_1d_help: '855 - '
-      option_trimming_2d_help: '856 - '
+      option_trimming_1d_help: 855 - שוליים נקיים בכל קצה של אורך רץ או לוח ייחשבו כפחת.
+      option_trimming_2d_help: 856 - יש לנקות את השוליים מסביב לפאנל או לגיליון כדי שייחשבו כפחת.
       option_items_formula: 857 - נוסחה
-      option_items_formula_help: '858 - '
+      option_items_formula_help: |
+        858 - מאפשר לכתוב קוד *Ruby* כדי להתאים אישית את טקסט זיהוי החלק בתוכנית חיתוך.
       option_hide_part_list: 859 - רשימת חלקים
       option_hide_part_list_1d_dimensional_0: 860 - הצג לכל קרש
       option_hide_part_list_1d_edge_0: 861 - מוצג לכל קאנט
@@ -1075,17 +1084,18 @@ tab:
         871 - מאפשר להציג או להסתיר את הצורה האמיתית של החלקים כמו גם את העיבוד שלהם בתרשים.
 
         *אפשרות זו חייבת להיות מופעלת כדי לייצא צורות.*
-      option_colorization: '872 - '
+      option_colorization: 872 - צביעת חלקים
       option_colorization_0: $t(default.no)
-      option_colorization_1: '874 - '
-      option_colorization_2: '875 - '
-      option_colorization_help: '876 - '
+      option_colorization_1: $t(default.yes) - הצגה
+      option_colorization_2: $t(default.yes) - הצגה והדפסה
+      option_colorization_help: |
+        876 - מאפשר להגדיר האם צבע אקראי ישמש להבחנה בין חלקים בדיאגרמה.
       option_origin_corner: 877 - עמדת התחלה
       option_origin_corner_0: 878 - שמאלי עליון
       option_origin_corner_1: 879 - שמאל תחתון
       option_origin_corner_2: 880 - ימני עליון
       option_origin_corner_3: 881 - ימני תחתון
-      option_origin_corner_help: '882 - '
+      option_origin_corner_help: 882 - מאפשר לבחור את הפינה המקורית להנחת חלקים בלוחות, יריעות, מוטות או רצועות.
       option_highlight_primary_cuts: 883 - חיתוכים ראשוניים
       option_highlight_primary_cuts_0: 884 - מבט כללי
       option_highlight_primary_cuts_1: 885 - תמיד מוצג

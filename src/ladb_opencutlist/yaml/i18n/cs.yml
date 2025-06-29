@@ -2067,7 +2067,7 @@ tool:
     title: Práce s díly
     action_0: Vybrat
     action_0_status: Kliknutím na dílec ho vyberete
-    action_1: Kopie po čáře
+    action_1: Kopie po ose
     action_1_status: Kliknutím na dílec ho zkopírujete podél osy
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: Kliknutím umístěte kopii dílce nebo zadejte vzdálenost
@@ -2089,12 +2089,12 @@ tool:
     action_option_group_move_measure_type: Posun dílce
     action_option_group_axes: Osy
     action_option_group_options: Nastavení
-    action_option_copy_measure_type_outside_status: Kopie včetně tloušťky dílce
-    action_option_copy_measure_type_centered_status: Kopie po střed dílce
-    action_option_copy_measure_type_inside_status: Kopie po tloušťku dílce
-    action_option_move_measure_type_outside_status: Posun včetně tloušťky dílce
-    action_option_move_measure_type_centered_status: Posun po střed dílce
-    action_option_move_measure_type_inside_status: Posun po tloušťku dílce
+    action_option_copy_measure_type_outside_status: Vzdálenost včetně dílců
+    action_option_copy_measure_type_centered_status: Vzdálenost mezi středy dílců
+    action_option_copy_measure_type_inside_status: Vzdálenost mezi dílci
+    action_option_move_measure_type_outside_status: Vzdálenost včetně dílce
+    action_option_move_measure_type_centered_status: Vzdálenost po střed dílce
+    action_option_move_measure_type_inside_status: Vzdálenost po dílec
     action_option_axes_active_status: Manipulace podél os
     action_option_axes_context_status: Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: Manipulace podél os dílu
@@ -2156,9 +2156,9 @@ tool:
     title: Orientace
     action_0: Překlopit
     action_0_status: Kliknutím na díl otočíte jeho osy podél jednoho z jeho rozměrů
-    action_1: Výměna délka ↔ šířka DÍLCE
+    action_1: Přehodit DÉLKU ↔ ŠÍŘKU dílce
     action_1_status: Kliknutím na dílec zaměníte jeho délku za šířku
-    action_2: Vyměna přední hrana ↔ zadní hrana DÍLCE
+    action_2: Přehodit PŘEDNÍ HRANU ↔ ZADNÍ HRANU dílce
     action_2_status: Kliknutím na dílec zaměníte jeho přední hranu se zadní hranou
     action_3: Přizpůsobte osy
     action_3_status: Zaměřte se na plochu součásti a kliknutím na hranu přizpůsobte její osy

@@ -153,7 +153,7 @@ core:
     failed_export_to: |
       אירעה שגיאה במהלך הייצוא אל *{{ path }}*.
       **{{ error }}**
-    unsupported_file_format: ""
+    unsupported_file_format: "פורמט קובץ לא נתמך: **{{ format }}**"
   success:
     exported_to: "ייצוא מוצלח אל {{ path }}."
     copied_to_clipboard: הועתק ללוח כתיבה
@@ -1037,32 +1037,41 @@ tab:
         קובע את סוג החיתוך.
       option_rectangleguillotine_cut_type_non_exact: לא מדויק
       option_rectangleguillotine_cut_type_exact: מדויק
-      option_rectangleguillotine_cut_type_homogenous: ""
-      option_rectangleguillotine_number_of_stages: ""
+      option_rectangleguillotine_cut_type_homogenous: הומוגני
+      option_rectangleguillotine_number_of_stages: רמות חיתוך
       option_rectangleguillotine_number_of_stages_help: |
-      option_rectangleguillotine_first_stage_orientation: ""
+        קובע את המספר המרבי של רמות חיתוך.
+      option_rectangleguillotine_first_stage_orientation: כיוון החיתוך הראשון
       option_rectangleguillotine_first_stage_orientation_help: |
-      option_rectangleguillotine_first_stage_orientation_horizontal: ""
-      option_rectangleguillotine_first_stage_orientation_vertical: ""
-      option_rectangleguillotine_first_stage_orientation_any: ""
+        קובע את כיוון החיתוך הראשון.
+      option_rectangleguillotine_first_stage_orientation_horizontal: אופקי
+      option_rectangleguillotine_first_stage_orientation_vertical: אנכי
+      option_rectangleguillotine_first_stage_orientation_any: כל
       option_rectangleguillotine_keep: גודל שאריות מינימלי
       option_rectangleguillotine_keep_help: שאריות גדולות מגודל המינימלי יסומנו כ-**לשמור**.
-      option_irregular_allowed_rotations: ""
+      option_irregular_allowed_rotations: סיבובים מותרים
       option_irregular_allowed_rotations_help: |
+        מגדיר את זווית הסיבוב האפשרית עבור מיקום החלק.
+
+        *חומרים עם הברגה מאפשרים זווית סיבוב של 0 ו-180° בלבד.*
       option_irregular_allowed_rotations_0: אין
-      option_irregular_allowed_rotations_90: ""
-      option_irregular_allowed_rotations_180: ""
-      option_irregular_allow_mirroring: ""
+      option_irregular_allowed_rotations_90: צעד של 90°
+      option_irregular_allowed_rotations_180: צעד של 180°
+      option_irregular_allow_mirroring: המראה מותרת
       option_irregular_allow_mirroring_help: |
+        קובע האם מותר להציב את המראת החלק.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: מרווחים
       option_spacing_help: |
+        מרווח מינימלי בין כל חלק.
+        ערך זה יכול להתאים לרוחב הלהב או כלי החיתוך.
       option_trimming: שוליים
-      option_trimming_1d_help: ""
-      option_trimming_2d_help: ""
+      option_trimming_1d_help: שוליים נקיים בכל קצה של אורך רץ או לוח ייחשבו כפחת.
+      option_trimming_2d_help: יש לנקות את השוליים מסביב לפאנל או לגיליון כדי שייחשבו כפחת.
       option_items_formula: נוסחה
       option_items_formula_help: |
+        מאפשר לכתוב קוד *Ruby* כדי להתאים אישית את טקסט זיהוי החלק בתוכנית חיתוך.
       option_hide_part_list: רשימת חלקים
       option_hide_part_list_1d_dimensional_0: הצג לכל קרש
       option_hide_part_list_1d_edge_0: מוצג לכל קאנט
@@ -1079,17 +1088,18 @@ tab:
         מאפשר להציג או להסתיר את הצורה האמיתית של החלקים כמו גם את העיבוד שלהם בתרשים.
 
         *אפשרות זו חייבת להיות מופעלת כדי לייצא צורות.*
-      option_colorization: ""
+      option_colorization: צביעת חלקים
       option_colorization_0: $t(default.no)
-      option_colorization_1: ""
-      option_colorization_2: ""
+      option_colorization_1: $t(default.yes) - הצגה
+      option_colorization_2: $t(default.yes) - הצגה והדפסה
       option_colorization_help: |
+        מאפשר להגדיר האם צבע אקראי ישמש להבחנה בין חלקים בדיאגרמה.
       option_origin_corner: עמדת התחלה
       option_origin_corner_0: שמאלי עליון
       option_origin_corner_1: שמאל תחתון
       option_origin_corner_2: ימני עליון
       option_origin_corner_3: ימני תחתון
-      option_origin_corner_help: ""
+      option_origin_corner_help: "מאפשר לבחור את הפינה המקורית להנחת חלקים בלוחות, יריעות, מוטות או רצועות."
       option_highlight_primary_cuts: חיתוכים ראשוניים
       option_highlight_primary_cuts_0: מבט כללי
       option_highlight_primary_cuts_1: תמיד מוצג

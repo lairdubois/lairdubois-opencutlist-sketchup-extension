@@ -2063,7 +2063,7 @@ tool:
     title: 1583 - Práce s díly
     action_0: 1584 - Vybrat
     action_0_status: 1585 - Kliknutím na dílec ho vyberete
-    action_1: 1586 - Kopie po čáře
+    action_1: 1586 - Kopie po ose
     action_1_status: 1587 - Kliknutím na dílec ho zkopírujete podél osy
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: 1589 - Kliknutím umístěte kopii dílce nebo zadejte vzdálenost
@@ -2085,12 +2085,12 @@ tool:
     action_option_group_move_measure_type: 1605 - Posun dílce
     action_option_group_axes: 1606 - Osy
     action_option_group_options: 1607 - Nastavení
-    action_option_copy_measure_type_outside_status: 1608 - Kopie včetně tloušťky dílce
-    action_option_copy_measure_type_centered_status: 1609 - Kopie po střed dílce
-    action_option_copy_measure_type_inside_status: 1610 - Kopie po tloušťku dílce
-    action_option_move_measure_type_outside_status: 1611 - Posun včetně tloušťky dílce
-    action_option_move_measure_type_centered_status: 1612 - Posun po střed dílce
-    action_option_move_measure_type_inside_status: 1613 - Posun po tloušťku dílce
+    action_option_copy_measure_type_outside_status: 1608 - Vzdálenost včetně dílců
+    action_option_copy_measure_type_centered_status: 1609 - Vzdálenost mezi středy dílců
+    action_option_copy_measure_type_inside_status: 1610 - Vzdálenost mezi dílci
+    action_option_move_measure_type_outside_status: 1611 - Vzdálenost včetně dílce
+    action_option_move_measure_type_centered_status: 1612 - Vzdálenost po střed dílce
+    action_option_move_measure_type_inside_status: 1613 - Vzdálenost po dílec
     action_option_axes_active_status: 1614 - Manipulace podél os
     action_option_axes_context_status: 1615 - Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: 1616 - Manipulace podél os dílu
@@ -2152,9 +2152,9 @@ tool:
     title: 1666 - Orientace
     action_0: 1667 - Překlopit
     action_0_status: 1668 - Kliknutím na díl otočíte jeho osy podél jednoho z jeho rozměrů
-    action_1: 1669 - Výměna délka ↔ šířka DÍLCE
+    action_1: 1669 - Přehodit DÉLKU ↔ ŠÍŘKU dílce
     action_1_status: 1670 - Kliknutím na dílec zaměníte jeho délku za šířku
-    action_2: 1671 - Vyměna přední hrana ↔ zadní hrana DÍLCE
+    action_2: 1671 - Přehodit PŘEDNÍ HRANU ↔ ZADNÍ HRANU dílce
     action_2_status: 1672 - Kliknutím na dílec zaměníte jeho přední hranu se zadní hranou
     action_3: 1673 - Přizpůsobte osy
     action_3_status: 1674 - Zaměřte se na plochu součásti a kliknutím na hranu přizpůsobte její osy
