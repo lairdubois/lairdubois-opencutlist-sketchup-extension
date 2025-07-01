@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 
     std::string input_path = (vm.count("input"))? vm["input"].as<std::string>() : "input.json";
 
-    try {
+    // try {
 
         SolverBuilder solver_builder;
         Solver& solver = (*solver_builder.build(input_path));
@@ -51,9 +51,9 @@ int main(int argc, char* argv[]) {
             ofs.close();
         }
 
-    } catch (const std::exception& e) {
-        std::cerr << "Internal error: " << std::string(e.what()) << std::endl;
-    }
+    // } catch (const std::exception& e) {
+    //     std::cerr << "Internal error: " << std::string(e.what()) << std::endl;
+    // }
 
     return EXIT_SUCCESS;
 }

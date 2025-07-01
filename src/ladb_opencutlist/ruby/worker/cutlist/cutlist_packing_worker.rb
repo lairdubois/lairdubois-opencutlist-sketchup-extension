@@ -881,7 +881,7 @@ module Ladb::OpenCutList
           svg += "<text class='bin-dimension' x='#{-(px_bin_outline_width + px_bin_dimension_offset)}' y='#{px_bin_width / 2}' font-size='#{px_bin_dimension_font_size}' text-anchor='middle' dominant-baseline='alphabetic' transform='rotate(-90 -#{px_bin_outline_width + px_bin_dimension_offset},#{px_bin_width / 2})'>#{bin_def.bin_type_def.width.to_l}</text>"
         end
         svg += "<g class='bin'>"
-          unless light
+          unless light || is_irregular
             px_bin_origin_x = _compute_x_with_origin_corner(@problem_type, @origin_corner, 0, 0, px_bin_length)
             px_bin_origin_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, 0, 0, px_bin_width)
             svg += "<g class='bin-origin'>"

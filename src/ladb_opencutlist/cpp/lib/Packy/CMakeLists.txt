@@ -65,7 +65,7 @@ install(TARGETS Packy RUNTIME DESTINATION lib)
 # -------------------------------------------------------------------
 #                           Debug executable
 
-if(OCL_BUILD_DEBUG_EXECUTABLES)
+if(OCL_BUILD_MAIN)
 
   add_executable(PackyMain ${LIBRARY_HEADERS} ${LIBRARY_SOURCES} src/main.cpp)
   target_include_directories(PackyMain PUBLIC include)

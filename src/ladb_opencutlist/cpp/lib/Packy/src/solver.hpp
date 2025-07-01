@@ -284,7 +284,8 @@ namespace Packy {
                      ++bin_type_id
                 ) {
                     const auto& bin_type = orig_instance.bin_type(bin_type_id);
-                    validator_builder.add_bin_type(bin_type, bin_type.copies, bin_type.copies_min);
+                    const auto& bin_type_meta = orig_builder_.bin_type_meta(bin_type_id);
+                    validator_builder.add_bin_type(bin_type, 1);    // Force to use only one copy of each bin
                 }
 
                 const Instance& validator_instance = validator_builder.build();
@@ -356,7 +357,8 @@ namespace Packy {
                 ) {
                     const auto& bin_type = orig_instance.bin_type(bin_type_id);
                     const auto& bin_type_meta = orig_builder_.bin_type_meta(bin_type_id);
-                    usable_builder_.instance_builder().add_bin_type(bin_type, bin_type.copies, bin_type.copies_min);
+                    BinPos copies = bin_type_meta.copies == -1 && usable_item_type_ids.empty() ? 1 : bin_type_meta.copies;  // Retrieve copies from bin_typ_meta to keep -1 = infinite and force copies to 1 if no item types
+                    usable_builder_.instance_builder().add_bin_type(bin_type, copies, bin_type.copies_min);
                     usable_builder_.set_bin_type_meta(bin_type_id, bin_type_meta);
                 }
 
