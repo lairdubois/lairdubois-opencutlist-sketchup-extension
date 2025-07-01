@@ -251,13 +251,13 @@ namespace Packy {
             // Build origin instance
             Instance orig_instance = orig_builder_.instance_builder().build();
 
-            // Write instant to file for debug purpose with PackingSolver format
+            // Write instance to file for debug purpose with PackingSolver format
             if (!instance_path_.empty()) {
                 orig_instance.write(instance_path_);  // Export instance to a file with PackingSolver 'write' method
             }
 
             /*
-             * Test each item with not anytime sequential knapsack to know if it can fit in bins
+             * Test each item with not anytime sequential knapsack to know if it can fit in at least one bins
              */
 
             std::vector<ItemTypeId> usable_item_type_ids;
@@ -270,7 +270,7 @@ namespace Packy {
 
                 auto& item_type = orig_instance.item_type(item_type_id);
 
-                // Create the validator instance builder
+                // Init a validator instance builder
                 InstanceBuilder validator_builder;
                 validator_builder.set_objective(Objective::Knapsack);
                 validator_builder.set_parameters(orig_instance.parameters());
@@ -284,10 +284,10 @@ namespace Packy {
                      ++bin_type_id
                 ) {
                     const auto& bin_type = orig_instance.bin_type(bin_type_id);
-                    const auto& bin_type_meta = orig_builder_.bin_type_meta(bin_type_id);
                     validator_builder.add_bin_type(bin_type, 1);    // Force to use only one copy of each bin
                 }
 
+                // Build validator instance
                 const Instance& validator_instance = validator_builder.build();
 
                 OptimizeParameters validator_parameters;
@@ -296,6 +296,7 @@ namespace Packy {
                 validator_parameters.optimization_mode = OptimizationMode::NotAnytimeSequential;
                 validator_parameters.verbosity_level = 0;
 
+                // Compute output
                 Output output = pre_process_optimize(validator_instance, validator_parameters);
 
                 if (output.solution_pool.best().full()) {
@@ -308,11 +309,11 @@ namespace Packy {
 
             if (unusable_item_type_ids.empty()) {
 
-                // No unusable item type. Tag all as usable
+                // No unusable item type. Keep usable item_type_id and Tag all as usable
                 for (auto orig_item_type_id : usable_item_type_ids) {
                     auto& item_type_meta = orig_builder_.item_type_meta(orig_item_type_id);
-                    item_type_meta.usable_item_type_id = orig_item_type_id;     // Allows post_process to directly item_type_id without test
-                    item_type_meta.usable = true;                               // Already done in struct initialization
+                    item_type_meta.usable_item_type_id = orig_item_type_id;     // Allows post_process to directly use item_type_id without a test
+                    item_type_meta.usable = true;                               // Not necessary, already set in struct initialization
                 }
 
                 // Tag usable builder as not used

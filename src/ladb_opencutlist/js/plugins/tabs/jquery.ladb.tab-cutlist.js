@@ -2441,9 +2441,9 @@
                 const $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
                 const $selectObjective = $('#ladb_select_objective', $modal);
                 const $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
+                const $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
                 const $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
                 const $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
-                const $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
                 const $inputRectangleguillotineKeepSize = $('#ladb_input_rectangleguillotine_keep_size', $modal);
                 const $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
                 const $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
@@ -2485,9 +2485,9 @@
                     options.problem_type = $radiosProblemType.filter(':checked').val();
                     options.optimization_mode = $selectOptimizationMode.val();
                     options.objective = $selectObjective.val();
+                    options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
                     options.rectangleguillotine_cut_type = $selectRectangleguillotineCutType.val();
                     options.rectangleguillotine_number_of_stages = that.toInt($selectRectangleguillotineNumberOfStages.val());
-                    options.rectangleguillotine_first_stage_orientation = $selectRectangleguillotineFirstStageOrientation.val();
                     options.rectangleguillotine_keep_size = $inputRectangleguillotineKeepSize.val();
                     options.irregular_allowed_rotations = $selectIrregularAllowedRotations.val();
                     options.irregular_allow_mirroring = $selectIrregularAllowMirroring.val() === '1';
@@ -2509,9 +2509,9 @@
                     $radiosProblemType.filter('[value=' + fnValidProblemType(options.problem_type) + ']').click();
                     $selectOptimizationMode.selectpicker('val', options.optimization_mode);
                     $selectObjective.selectpicker('val', options.objective);
+                    $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
                     $selectRectangleguillotineCutType.selectpicker('val', options.rectangleguillotine_cut_type);
                     $selectRectangleguillotineNumberOfStages.selectpicker('val', options.rectangleguillotine_number_of_stages);
-                    $selectRectangleguillotineFirstStageOrientation.selectpicker('val', options.rectangleguillotine_first_stage_orientation);
                     $inputRectangleguillotineKeepSize.ladbTextinputSize('val', options.rectangleguillotine_keep_size);
                     $selectIrregularAllowedRotations.selectpicker('val', fnValidIrregularAllowedRotations(options.irregular_allowed_rotations));
                     $selectIrregularAllowMirroring.selectpicker('val', options.irregular_allow_mirroring ? '1' : '0');
@@ -2555,7 +2555,9 @@
                     $('option[value=0]', $selectPartDrawingType).prop('disabled', isIrregular);
                     if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);   // PART_DRAWING_TYPE_2D_TOP
                     $selectPartDrawingType.selectpicker('refresh');
-                    $('.ladb-cutting-increase-help', $modal).css('text-decoration', isIrregular ? 'line-through' : 'none')
+                    $('.ladb-cutting-increase-help > small', $modal).css('text-decoration', isIrregular ? 'line-through' : 'none')
+                    $('.ladb-cutting-increase-help > i', $modal).css('display', isIrregular ? 'inline' : 'none')
+                    $('.nav li .ladb-cutting-increase-warning', $modal).css('display', isIrregular && (response.length_increase !== "0" || response.width_increase !== "0") ? 'inline' : 'none')
                 };
                 const fnValidProblemType = function (problemType) {
                     if (group.material_is_1d
@@ -2622,9 +2624,9 @@
                 ;
                 $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineNumberOfStages.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
                 $inputRectangleguillotineKeepSize.ladbTextinputSize({
                     resetValue: '',
                     d1Placeholder: i18next.t('default.length'),
