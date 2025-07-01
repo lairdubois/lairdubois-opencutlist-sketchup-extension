@@ -1205,9 +1205,10 @@ tab:
         no_bin_1d: Nenhuma barra ou fita padrão foi selecionada e nenhuma sobra foi definida.
         no_bin_2d: Nenhuma chapa ou laminado padrão foi selecionado e nenhuma sobra foi definida.
         invalid_part_shapes: "A forma da peça '{{ name }}' é inválida."
-        no_solution: Nenhuma solução foi encontrada.
+        no_solution: Nenhuma solução foi encontrada para colocar **todas as peças** no material disponível. # TODO
         unplaced_parts: "**1 peça** não pôde ser posicionada."
         unplaced_parts_plural: "**{{ count }} peças** não puderam ser posicionadas."
+        unusable_part: Peça muito grande
       warning:
         is_part_selection: Este plano de corte é limitado a **peças selecionadas**.
         cutting_dimensions: Este layout mostra as peças em suas dimensões de **comprimento bruto**.
@@ -1582,7 +1583,7 @@ tab:
       description: Descrição
       url: URL
       formats: Formatos
-      cut_options: Parâmetros de corte
+      cut_options: Opções de corte
       estimate_options: Opções de Orçamento
       attributes: Atributos
       thickness: Espessura
@@ -1591,11 +1592,11 @@ tab:
 
         *Se nenhuma unidade for especificada, será aplicada a unidade do modelo.*
       length_increase: Superdimensionamento do comprimento
-      length_increase_help: Superdimensionamento aplicado ao comprimento para definir o **comprimento aproximado**. # TODO
+      length_increase_help: Superdimensionamento aplicado ao comprimento para definir seu **comprimento de peça**.
       width_increase: Superdimensionamento da largura
-      width_increase_help: Superdimensionamento aplicado à largura para definir a **largura aproximada**.  # TODO
+      width_increase_help: Superdimensionamento aplicado à largura para definir sua **largura de peça**.
       thickness_increase: Superdimensionamento da espessura
-      thickness_increase_help: Superdimensionamento aplicado à espessura para definir a **espessura aproximada**. # TODO
+      thickness_increase_help: Superdimensionamento aplicado à espessura para definir sua **espessura de peça**.
       std_lengths: Comprimento Padrão
       std_lengths_help: |
         Comprimentos padrão disponíveis para este material.

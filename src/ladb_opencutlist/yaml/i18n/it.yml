@@ -540,7 +540,7 @@ tab:
 
         Gli elementi vengono comunque considerarti differenti per l'etichettatura e la lista di taglio.
       hide_entity_names: Nascondi i nomi delle occorrenze
-      hide_entity_names_help: "Se questa opzione è attivata, il **nome occorrenza** delle parti non verrà mostrata."
+      hide_entity_names_help: "Selezionando questa opzione, il **nome occorrenza** delle parti non verrà mostrata."
       hide_descriptions: Nascondere le descrizioni
       hide_descriptions_help: "Selezionando questa opzione, le **descrizioni** poste sulle parte non vengono visualizzate."
       hide_tags: Nascondi i cartellini
@@ -783,7 +783,7 @@ tab:
       option_full_width_diagram: Modalità schermo intero
       option_full_width_diagram_0: No
       option_full_width_diagram_1: Si
-      option_full_width_diagram_help: "Se questa opzione viene attivata, i diagrammi di taglio verranno mostrati utilizzando le larghezze disponibili. Altrimenti, la loro larghezza viene definita da un fattore di scala calcolata su tutti i diagrammi."
+      option_full_width_diagram_help: "Selezionando questa opzione, i diagrammi di taglio verranno mostrati utilizzando le larghezze disponibili. Altrimenti, la loro larghezza viene definita da un fattore di scala calcolata su tutti i diagrammi."
       option_wrap_length: Lunghezza massima della tavola
       option_wrap_length_help: Lunghezza massima dopo la quale una tavola o un bordo viene definita su linee multiple.
       option_hide_cross: Rimanente
@@ -971,8 +971,8 @@ tab:
         no_placement_possible_1d: "Le dimensioni delle parti sono troppo grandi per essere contenute in una barra (dimensioni insufficienti della barra, squadratura troppo larga, taglio della lama troppo grande, ...)."
         no_placement_possible_2d: "Le dimensioni delle parti sono troppo grandi per essere contenute in un pannello (dimensioni insufficienti del pannello, squadratura troppo larga, taglio della lama troppo grande, ...)."
         bad_error: "Errore negli algoritmi di calcolo, contatta lo sviluppatore, il tuo può essere un caso interessante."
-        unplaced_parts: "**1 parte** non può essere schematizzata, perchè è troppo grande."
-        unplaced_parts_plural: "Ci sono **{{ count }} parti** che non possono essere schematizzate perchè troppo grandi."
+        unplaced_parts: "**1 parte** è troppo grande per essere inserita."
+        unplaced_parts_plural: "I **{{ count }} parti** sono troppo grandi per essere inseriti."
       warning:
         is_part_selection: Lo schema di taglio mostra solo le **parti selezionate**.
         cutting_dimensions: Questo schema di taglio mostra le parti con le loro dimensioni **grezze**.
@@ -1205,9 +1205,10 @@ tab:
         no_bin_1d: Nessuna dimensione delle tavole o dei bordi disponibili è stata selezionata e non ci sono ritagli a disposizione.
         no_bin_2d: Nessuna dimensione dei pannelli o dei piallacci disponibili è stata selezionata e non ci sono ritagli a disposizione.
         invalid_part_shapes: "La forma dell'elemento '{{ name }}' non è valida."
-        no_solution: Nessuna soluzione trovata.
+        no_solution: Nessuna soluzione è trovata per collocare **tutte le parti** nel materiale disponibile. # TODO
         unplaced_parts: "**1 elemento** non può essere posizionato."
         unplaced_parts_plural: "**{{ count }} elementi** non possono essere posizionati."
+        unusable_part: Parte troppo grande
       warning:
         is_part_selection: Lo schema di taglio mostra solo le **parti selezionate**.
         cutting_dimensions: Questo schema di taglio mostra le parti con le loro dimensioni **grezze**.
@@ -1591,11 +1592,11 @@ tab:
 
         *Dimensioni senza unità si intendono in unità di misura del modello.*
       length_increase: Sovramateriale sulla lunghezza
-      length_increase_help: Incremento della lunghezza per calcolare la **lunghezza grezza**. # TODO
+      length_increase_help: Incremento della lunghezza per calcolare la **lunghezza grezza**.
       width_increase: Incremento larghezza
-      width_increase_help: Incremento della larghezza per calcolare la **larghezza grezza**.  # TODO
+      width_increase_help: Incremento della larghezza per calcolare la **larghezza grezza**.
       thickness_increase: Sovramateriale sullo spessore
-      thickness_increase_help: Incremento dello spessore per calcolare **spessore grezzo**. # TODO
+      thickness_increase_help: Incremento dello spessore per calcolare **spessore grezzo**.
       std_lengths: Lunghezze predefinite
       std_lengths_help: |
         Lunghezze standard disponibili per questo materiale.
@@ -1672,7 +1673,7 @@ tab:
       title: Esporta su file .skm
     option:
       minimize_on_smart_paint: Ridurre dopo *'Colorare le parti con...'*
-      minimize_on_smart_paint_help: "Se questa opzione è attivata, la finestra OpenCutList verrà ridotta a icona quando viene utilizzata la funzione *'Colora parti con...'*."
+      minimize_on_smart_paint_help: "Selezionando questa opzione, la finestra OpenCutList verrà ridotta a icona quando viene utilizzata la funzione *'Colora parti con...'*."
       general: Generale
       material_order_strategy: Ordinamento Materiali
       material_order_strategy_help: |
