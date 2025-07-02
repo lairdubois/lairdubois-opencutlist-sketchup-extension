@@ -63,13 +63,13 @@ module.exports = function (languageLabels, languageDisabledMsgs, languageReloadM
 
             // Append languages disabled msgs (and mardown them)
             for (var key in languageDisabledMsgs) {
-                languageDisabledMsgs[key] = md.renderInline(languageDisabledMsgs[key]);
+                languageDisabledMsgs[key] = md.render(languageDisabledMsgs[key]);
             }
             ymlDocument['language_disabled_msg'] = languageDisabledMsgs;
 
             // Append languages reload msgs (and mardown them)
             for (var key in languageReloadMsgs) {
-                languageReloadMsgs[key] = md.renderInline(languageReloadMsgs[key]);
+                languageReloadMsgs[key] = md.render(languageReloadMsgs[key]);
             }
             ymlDocument['language_reload_msg'] = languageReloadMsgs;
 

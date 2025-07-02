@@ -160,23 +160,20 @@ module Ladb::OpenCutList
       @i18n_strings_cache = nil # Reset i18n strings cache
     end
 
-    def get_enabled_languages
-      return ENABLED_LANGUAGES unless IS_DEV
-      ENABLED_LANGUAGES.flat_map { |language| [ language, "zz_#{language}" ] }
-    end
-
+    # Get all languages as Array from .yml files
     def get_available_languages
       available_languages = []
       Dir[File.join(PLUGIN_DIR, 'js', 'i18n', '*.js')].each { |file|
-        available_languages.push(File.basename(file, File.extname(file)))
+        language = File.basename(file, File.extname(file))
+        next if language.start_with?('zz') && !IS_DEV
+        available_languages.push(language)
       }
-      # available_languages = get_enabled_languages & available_languages
       available_languages.sort
     end
 
+    # Get all languages as Hash where key is language and value is its enabled status
     def get_languages
-      enabled_langages = get_enabled_languages
-      get_available_languages.map { |language| [ language, enabled_langages.include?(language)] }.to_h
+      get_available_languages.map { |language| [ language, ENABLED_LANGUAGES.include?(language) || language.start_with?('zz') && IS_DEV] }.to_h
     end
 
     def webgl_available?

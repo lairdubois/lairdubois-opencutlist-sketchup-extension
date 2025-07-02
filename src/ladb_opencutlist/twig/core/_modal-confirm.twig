@@ -4,7 +4,7 @@
 {% set noHeader = title is null %}
 
 {% block bodyInner %}
-    <p>{{ text }}</p>
+    <p>{{ text|raw }}</p>
 {% endblock %}
 
 {% block footerRightInner %}

@@ -48,7 +48,7 @@
                             <option value="auto" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.settings.language_auto'|i18next }}</span>"></option>
                             <option data-divider="true"></option>
                             {% for language, enabled in capabilities.languages %}
-                                <option value="{{ language }}" data-content="<i class='ladb-opencutlist-icon-circle{% if enabled %}-checked ladb-color-success{% else %} ladb-color-danger{% endif %}'></i> <span class='ladb-language-prefix'>{{ language|upper }}</span>{{ ('language.'~language)|i18next }}"></option>
+                                <option value="{{ language }}" data-content="<i class='ladb-opencutlist-icon-{% if language starts with 'zz' %}bug ladb-color-success{% else %}circle{% if enabled %}-checked ladb-color-success{% else %} ladb-color-danger{% endif %}{% endif %}'></i> <span class='ladb-language-prefix'>{{ language|upper }}</span>{{ ('language.'~language)|i18next }}"></option>
                             {% endfor %}
                         </select>
                     </div>

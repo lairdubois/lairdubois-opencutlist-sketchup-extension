@@ -4,7 +4,7 @@
 {% set noHeader = title is null %}
 
 {% block bodyInner %}
-    <p>{{ text }}</p>
+    <p>{{ text|raw }}</p>
     <input type="text" id="ladb_prompt_input" class="form-control" value="{{ value|escape('html') }}">
 {% endblock %}
 
