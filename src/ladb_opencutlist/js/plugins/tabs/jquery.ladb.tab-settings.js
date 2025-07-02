@@ -295,6 +295,7 @@
                 fnGlobalUpdate();
                 that.showReloadAlert();
             } else {
+                $selectLanguage.selectpicker('val', that.dialog.capabilities.language);
                 that.dialog.alert(i18next.t('language.' + language), i18next.t('language_disabled_msg.' + language));
             }
         });
