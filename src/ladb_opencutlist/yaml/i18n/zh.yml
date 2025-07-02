@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: 简体中文
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  该语言尚未**完全翻译**。
+
+  为帮助完成翻译，请查阅 [OpenCutList 文档](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "要应用所有更改，您必须 **关闭** 并 **重新打开** 板材清单 窗口。"
 _description: "木工的切割清单和切割图生成器。 开源，众筹且易于使用 ;)"
@@ -39,8 +44,8 @@ default:
   estimate: 估算
   rename: ""
   next: ""
-  yes: 是
-  no: 否
+  "yes": 是
+  "no": 否
   automatic: 自动
   empty_filename: 无标题.skp
   help: 帮助
@@ -90,6 +95,7 @@ default:
   width: 宽度
   thickness: ""
   height: 高度
+  deprecated: ""
 core:
   menu:
     submenu: OpenCutList
@@ -152,6 +158,7 @@ core:
     failed_export_to: |
       在导出至 *{{ path }}*时发生错误。
       **{{ error }}**
+    unsupported_file_format: ""
   success:
     exported_to: "成功导出到 {{ path }}."
     copied_to_clipboard: 已复制到剪贴板.
@@ -209,23 +216,28 @@ core:
       delete: "删除预设 '{{ name }}'"
     dictionary:
       component_textinput_color: 调色板
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram1d_options: ""
+      cutlist_cuttingdiagram1d_write_options: ""
+      cutlist_cuttingdiagram2d_options: ""
+      cutlist_cuttingdiagram2d_write_options: ""
+      cutlist_packing_options: ""
+      cutlist_packing_write_options: ""
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: ""
+      cutlist_estimate_options: ""
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: ""
       settings_model: $t(tab.settings.label) / 模型
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -403,6 +415,8 @@ tab:
       group_cuttingdiagram: 切割图
       group_packing: 切割图
       group_labels: 打印组内部件的标签
+      group_export: ""
+      group_estimate: ""
       edit_material: "编辑材质 '{{ material_name }}'"
       expand_all: 展开所有行
       collapse_all: 折叠所有行
@@ -692,6 +706,7 @@ tab:
         no_column_formula: 输入一个公式
       warning:
         is_group_selection: 部件列表中的 **隐藏组件** 内的部件将不会被导出.
+        is_part_selection: 导出仅限于 **选定的部件**
     estimate:
       title: 估算
       info_0: |
@@ -723,6 +738,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**."
       warning:
         is_group_selection: 部件清单 **隐藏组** 内的部件将不会被计入.
+        is_part_selection: ""
       tip:
         not_enough_data: |
           为了正确计算这个估算值:
@@ -1051,6 +1067,16 @@ tab:
       option_colorization_1: ""
       option_colorization_2: ""
       option_colorization_help: |
+      option_origin_corner: 原点的位置
+      option_origin_corner_0: 左上角
+      option_origin_corner_1: 左下角
+      option_origin_corner_2: 右上角
+      option_origin_corner_3: 右下角
+      option_origin_corner_help: ""
+      option_highlight_primary_cuts: 主要切割
+      option_highlight_primary_cuts_0: 仅在悬停时显示
+      option_highlight_primary_cuts_1: 始终可见
+      option_highlight_primary_cuts_help: 允许始终突出显示主要切割.
       option_hide_edges_preview: 边条的显示
       option_hide_edges_preview_0: 在切割图中显示
       option_hide_edges_preview_1: 在切割图中隐藏
@@ -1104,35 +1130,13 @@ tab:
         cut_plural: 切割
         cut_trimming: 修边切割
         cut_primary: ""
+        cut_primary_plural: 主要切割
+        cut_none: 无
         cut_depth: ""
       write:
         title: 导出布局
         info_0: |
           此模块允许您将 *layout* 的 **geometry** 导出为 [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) 或 [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) 格式的文件列表。
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: 结构DXF
-        option_dxf_structure_1: 图层
-        option_dxf_structure_2: 图层 + 组件
-        option_dxf_structure_help: |
-          此模块允许您选择 DXF 文件结构。
-
-          - **图层**结构将所有线条绘制成平面，仅使用图层区分不同的线条类型。*这种结构与第三方软件的兼容性更好。*
-          - ** 图层 + 块**结构为每个零件创建一个块，并根据零件的重复次数插入这些块。*这种结构为编辑文件提供了更大的灵活性。
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: 面板
         option_bin_sheet_good_help: |
           允许您启用面板的导出以及选择其颜色。
@@ -1148,9 +1152,10 @@ tab:
         option_parts: 部件
         option_parts_help: |
           允许您启用零件的导出以及选择其颜色。
-        option_parts_holes: 钻孔
-        option_parts_holes_help: |
-          允许您选择零件中孔的颜色。
+        option_parts_depths: ""
+        option_parts_depths_help: ""
+        option_parts_holes: ""
+        option_parts_holes_help: ""
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: 标识符
@@ -1164,13 +1169,23 @@ tab:
           允许您激活部分的导出以及选择其颜色。
         warning:
           is_bin_selection: ""
+        error:
+          overflow_gt_spacing: |
       error:
         no_part: 没有部件.
         no_bin_1d: ""
         no_bin_2d: ""
+        invalid_part_shapes: ""
         no_solution: ""
+        unplaced_parts: ""
+        unplaced_parts_plural: ""
+        unusable_part: ""
       warning:
         is_part_selection: 此切割图仅限于 **所选的部件**.
+        cutting_dimensions: 切割图使用部件的 **原始** 尺寸.
+        cutting_dimensions_increase_1d: "这些原始尺寸已在材质 '{{ material_name }}' 上进行了配置 : 长度超差 (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "这些原始尺寸已在材质 '{{ material_name }}' 上进行了配置 : 长度超差 (**{{ length_increase }}**) 和宽度超差 (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: 尺寸已减去边缘封边的厚度. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: 标签
       options_layout: 布局
@@ -1248,7 +1263,8 @@ tab:
         part_edge_xmax: 边缘宽度 2
         part_face_zmin: 薄饰板背面
         part_face_zmax: 薄饰板正面
-        thumbnail_proportional_drawing: 缩略图预览
+        thumbnail_proportional_drawing: ""
+        thumbnail_proportional_drawing_bottom: ""
         thumbnail_proportional: 按比例缩略图
         thumbnail_square: 正方形缩略图
         group_material: 材质 / 厚度
@@ -1350,6 +1366,14 @@ tab:
       option_file_format: 格式
       option_file_format_help: |
         选择导出文件的格式
+      option_dxf_structure: 结构DXF
+      option_dxf_structure_1: 图层
+      option_dxf_structure_2: 图层 + 组件
+      option_dxf_structure_help: |
+        此模块允许您选择 DXF 文件结构。
+
+        - **图层**结构将所有线条绘制成平面，仅使用图层区分不同的线条类型。*这种结构与第三方软件的兼容性更好。*
+        - ** 图层 + 块**结构为每个零件创建一个块，并根据零件的重复次数插入这些块。*这种结构为编辑文件提供了更大的灵活性。
       option_unit: 单位
       option_unit_help: |
         选择导出文件中使用的单位
@@ -1366,10 +1390,9 @@ tab:
       option_faces_help: |
         允许您选择是在所有侧面搜索零件的形状，还是仅在目标侧面搜索零件的形状。
       option_anchor: 锚点
-      option_anchor_0: 默认值
+      option_anchor_0: 自动
       option_anchor_1: 投影零件的原点
       option_anchor_help: |
-        允许将零件轴的原点投影为锚点
       option_switch_yz: ""
       option_switch_yz_0: ""
       option_switch_yz_1: ""
@@ -1382,14 +1405,11 @@ tab:
 
         *该选项不检测其他类型的曲线。
       option_merge_holes: 合并模式
-      option_merge_holes_0: 默认值
-      option_merge_holes_1: 轮廓 + 钻孔 + 合并
+      option_merge_holes_0: ""
+      option_merge_holes_1: ""
       option_merge_holes_help: |
-        **Default**
-        零件的形状以每个深度一个图层导出。
-
-        **轮廓 + 钻孔 + 合并***
-        能够将零件的外轮廓与其孔分离，并融合每个孔的深度。
+      option_merge_holes_overflow: ""
+      option_merge_holes_overflow_help: |
       option_include_paths: 路径
       option_include_paths_0: $t(default.no)
       option_include_paths_1: 使用非多面边
@@ -1398,6 +1418,8 @@ tab:
       option_parts: 部件
       option_parts_help: |
         选择零件的颜色.
+      option_parts_depths: ""
+      option_parts_depths_help: |
       option_parts_holes: 钻孔
       option_parts_holes_help: |
         选择钻孔的颜色.
@@ -1594,6 +1616,14 @@ tab:
     type_2: 组件
     type_3: 部件
     tooltip:
+      hide_node: ""
+      unhide_node: ""
+      locked_node: ""
+      is_active_node: ""
+      set_active_node: ""
+      edit_node_properties: ""
+      select_node: ""
+      unselect_node: ""
       open_node_url: 打开部件 URL
     edit_node:
       title_model: "模型属性"
@@ -1610,6 +1640,16 @@ tab:
       layer_name: 标签
       explode: 爆炸图
       explode_message: "你是否认可 **{{ name }}** 实例爆炸结果?"
+    option:
+      general: 常规
+      show_hidden_instances: ""
+      show_hidden_instances_help: ""
+      hide_descriptions: 隐藏描述
+      hide_descriptions_help: "如果选择此选项, 将不会显示部件上的 **描述** ."
+      hide_tags: 隐藏标签
+      hide_tags_help: "如果选择此选项, 将不会显示 **标签** ."
+      minimize_on_set_active: ""
+      minimize_on_set_active_help: ""
     error:
       no_model: 没有打开的模型. 您需要提供更多信息 ;)
       no_entities: 您的模型为空！
@@ -1741,7 +1781,7 @@ tab:
     contribute: 贡献
     backers: "{{ count }} 名资金贡献者"
     backers_plural: "{{ count }} 名资金贡献者"
-    ad: "你喜欢 OpenCutList 吗?"
+    ad: ""
     objective: 目标
     objective_slogan: "OpenCutList 我们所有人的"
     objective_title:
@@ -1843,7 +1883,7 @@ tab:
       - Nayton Sanches Barbosa，由 [Carlos Maciel ELT](https://www.inglesonline.pro.br) 更正和修订 (*葡萄牙语*）
       - [Leonardo Romero Giménez](https://latablamarilla.com/) (*西班牙语*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*捷克语*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*波兰语*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*波兰语*)
       - Sergey Isupov (*希伯来语*)，尚不支持 RTL 接口
       - Soul Issam (*阿拉伯语*)，尚不支持 RTL 接口
       - Nguyen Ngoc Tan (*越南语*)
@@ -1911,6 +1951,7 @@ tool:
     action_option_options_rectangle_centered_status: ""
     action_option_options_smoothing: 平滑处理
     action_option_options_smoothing_status: ""
+    action_option_options_measure_from_vertex_status: ""
     action_option_options_measure_from_diameter: ""
     action_option_options_measure_from_diameter_status: ""
     action_option_options_measure_from_radius_status: ""
@@ -1920,7 +1961,7 @@ tool:
     action_option_options_pull_centered_status: ""
     action_option_options_ask_name: ""
     action_option_options_ask_name_status: ""
-    action_pull_locked_status: ""
+    action_measure_locked_status: ""
     action_toggle_move_copy_status: ""
     action_change_move_anchor_status: ""
     success:
