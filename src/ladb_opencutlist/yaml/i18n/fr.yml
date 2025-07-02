@@ -2,9 +2,9 @@
 _label: Français
 # the disabled message will be displayed when language is not fully translated
 _disabled_msg: |
-  This language has not yet been **fully translated**.
+  Cette langue n'a pas encore été **entièrement traduite**.
   
-  To help complete the translation, please visit the [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
+  Pour aider à finaliser la traduction, veuillez consulter la [Documentation OpenCutList](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "Afin de prendre en compte tous les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList."
 _description: "Générateur de fiche de débit et calepinage de panneaux et barres pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)"
