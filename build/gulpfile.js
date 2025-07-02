@@ -83,6 +83,7 @@ gulp.task('twig_compile', function () {
 gulp.task('i18n_compile', function () {
 
     var languageLabels = {};
+    var languageDisabledMsgs = {};
     var languageReloadMsgs = {};
     var descriptions = {};
     var ymlFiles = glob.sync('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz*)' : '*') + '.yml');
@@ -95,6 +96,9 @@ gulp.task('i18n_compile', function () {
         }
         if ('_description' in ymlDocument) {
             descriptions[language] = ymlDocument['_description'].replace("'", "\\'");
+        }
+        if ('_disabled_msg' in ymlDocument) {
+            languageDisabledMsgs[language] = ymlDocument['_disabled_msg'];
         }
         if ('_reload_msg' in ymlDocument) {
             languageReloadMsgs[language] = ymlDocument['_reload_msg'];
@@ -127,7 +131,7 @@ gulp.task('i18n_compile', function () {
     });
 
     return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz*)' : '*') + '.yml')
-        .pipe(ladb_i18n_compile(languageLabels, languageReloadMsgs))
+        .pipe(ladb_i18n_compile(languageLabels, languageDisabledMsgs, languageReloadMsgs))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/i18n'));
 });
 

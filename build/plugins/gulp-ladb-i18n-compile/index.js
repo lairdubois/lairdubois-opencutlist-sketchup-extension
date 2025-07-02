@@ -16,7 +16,7 @@ md.linkify.set({ fuzzyEmail: false });  // disables converting email to link
 
 var PluginError = require('plugin-error');
 
-module.exports = function (languageLabels, languageReloadMsgs, opt) {
+module.exports = function (languageLabels, languageDisabledMsgs, languageReloadMsgs, opt) {
 
     // Delete keys that starts by "_"
     function deleteHiddenKeys(doc) {
@@ -60,6 +60,12 @@ module.exports = function (languageLabels, languageReloadMsgs, opt) {
 
             // Append languages labels
             ymlDocument['language'] = languageLabels;
+
+            // Append languages disabled msgs (and mardown them)
+            for (var key in languageDisabledMsgs) {
+                languageDisabledMsgs[key] = md.renderInline(languageDisabledMsgs[key]);
+            }
+            ymlDocument['language_disabled_msg'] = languageDisabledMsgs;
 
             // Append languages reload msgs (and mardown them)
             for (var key in languageReloadMsgs) {

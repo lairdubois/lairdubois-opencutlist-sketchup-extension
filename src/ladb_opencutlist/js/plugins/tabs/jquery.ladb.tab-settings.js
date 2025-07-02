@@ -295,7 +295,7 @@
                 fnGlobalUpdate();
                 that.showReloadAlert();
             } else {
-                that.dialog.alert('Le titre', 'Le blabla pour faire comprendre que ça sera dispo s\'il y a des volontaires.');
+                that.dialog.alert(i18next.t('language.' + language), i18next.t('language_disabled_msg.' + language));
             }
         });
         $selectPrintMargin.on('change', function () {
