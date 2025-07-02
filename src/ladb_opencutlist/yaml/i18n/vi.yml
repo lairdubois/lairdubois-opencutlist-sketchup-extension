@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: Tiếng Việt
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Ngôn ngữ này chưa được **dịch hoàn chỉnh**.
+
+  Để giúp hoàn thiện bản dịch, vui lòng tham khảo [Tài liệu OpenCutList](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "Để hiển thị tất cả các thay đổi, bạn phải **đóng** và **mở lại** cửa sổ OpenCutList."
 _description: "Danh sách cắt và Trình tạo sơ đồ cắt cho thợ mộc. Mã nguồn mở, được huy động vốn từ cộng đồng và dễ sử dụng;)"
@@ -39,8 +44,8 @@ default:
   estimate: Ước tính
   rename: ""
   next: ""
-  yes: Đồng ý
-  no: Không
+  "yes": Đồng ý
+  "no": Không
   automatic: Tự động
   empty_filename: Untitled.skp
   help: Trợ giúp
@@ -90,6 +95,7 @@ default:
   width: Chiều rộng
   thickness: ""
   height: Chiều cao
+  deprecated: ""
 core:
   menu:
     submenu: OpenCutList
@@ -152,6 +158,7 @@ core:
     failed_export_to: |
       Đã có lỗi khi xuất sang *{{ path }}*.
       **{{ error }}**
+    unsupported_file_format: ""
   success:
     exported_to: "Xuất thành công sang {{ path }}."
     copied_to_clipboard: Sao chép vào clipboard
@@ -209,23 +216,28 @@ core:
       delete: "Xóa mẫu cài đặt '{{ name }}'"
     dictionary:
       component_textinput_color: Bảng màu
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.write.title) 2D
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Model
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -403,6 +415,8 @@ tab:
       group_cuttingdiagram: Sơ đồ cắt
       group_packing: Sơ đồ cắt
       group_labels: In nhãn của các bộ phận trong nhóm
+      group_export: ""
+      group_estimate: ""
       edit_material: "Sửa tên vật liệu '{{ material_name }}'"
       expand_all: Trãi ra tất cả các dòng
       collapse_all: Gấp lại tất cả các dòng
@@ -692,6 +706,7 @@ tab:
         no_column_formula: Nhập công thức
       warning:
         is_group_selection: Các bộ phận bên trong **nhóm ẩn** của danh sách các bộ phận sẽ không được xuất.
+        is_part_selection: Việc xuất bị giới hạn ở **các bộ phận đã chọn**
     estimate:
       title: Ước tính
       info_0: |
@@ -713,7 +728,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_-1: ""
+      type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Đơn vị không tương thích với các tùy chọn ước tính vật liệu
         multiplier_coefficient: ""
@@ -723,6 +738,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} lỗi**."
       warning:
         is_group_selection: Các bộ phận bên trong **nhóm ẩn** của danh sách bộ phận sẽ không được tính.
+        is_part_selection: ""
       tip:
         not_enough_data: |
           Để ước tính này được tính toán chính xác:
@@ -1022,7 +1038,7 @@ tab:
       option_irregular_allow_mirroring: ""
       option_irregular_allow_mirroring_help: |
       option_irregular_allow_mirroring_0: $t(default.no)
-      option_irregular_allow_mirroring_1: ""
+      option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Khoảng cách
       option_spacing_help: |
       option_trimming: Cắt tỉa
@@ -1051,6 +1067,16 @@ tab:
       option_colorization_1: ""
       option_colorization_2: ""
       option_colorization_help: |
+      option_origin_corner: Vị trí của gốc tọa độ
+      option_origin_corner_0: Góc trên bên trái
+      option_origin_corner_1: Góc dưới bên trái
+      option_origin_corner_2: Góc trên bên phải
+      option_origin_corner_3: Góc dưới bên phải
+      option_origin_corner_help: ""
+      option_highlight_primary_cuts: Vệt cắt chính
+      option_highlight_primary_cuts_0: Chỉ đường kẻ
+      option_highlight_primary_cuts_1: Luôn hiển thị
+      option_highlight_primary_cuts_help: Cho phép đánh dấu các vệt cắt chính.
       option_hide_edges_preview: Hiển thị các dải cạnh
       option_hide_edges_preview_0: Hiển thị trong sơ đồ cắt
       option_hide_edges_preview_1: Ẩn trong sơ đồ cắt
@@ -1104,35 +1130,13 @@ tab:
         cut_plural: Đường cắt
         cut_trimming: Cắt tỉa
         cut_primary: ""
+        cut_primary_plural: Vệt cắt chính
+        cut_none: Không có
         cut_depth: ""
       write:
         title: Xuất sơ đồ cắt
         info_0: |
           Mô-đun này cho phép bạn xuất **các hình học** của *sơ đồ cắt* dưới dạng tệp ở định dạng [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) hoặc định dạng [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF).
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: Cấu trúc DXF
-        option_dxf_structure_1: Layers
-        option_dxf_structure_2: Layers + Block
-        option_dxf_structure_help: |
-          Chọn cấu trúc tệp DXF.
-
-          - Cấu trúc **Layers** vẽ tất cả các đường thẳng, phân biệt giữa các loại đường khác nhau chỉ bằng cách sử dụng các layers. *Cấu trúc này mang lại khả năng tương thích cao hơn với phần mềm của bên thứ ba.*
-          - Cấu trúc **Layers + Block** tạo một khối cho mỗi bộ phận và chèn các khối này nhiều lần khi các bộ phận được lặp lại. *Cấu trúc này mang lại sự linh hoạt hơn cho việc chỉnh sửa tệp.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Tấm
         option_bin_sheet_good_help: |
           Cho phép xuất trang tính và lựa chọn màu sắc.
@@ -1148,9 +1152,10 @@ tab:
         option_parts: Các bộ phận
         option_parts_help: |
           Cho phếp xuất bộ phận và lựa chọn màu sắc.
-        option_parts_holes: Khoang
-        option_parts_holes_help: |
-          Chọn màu của mũi khoan.
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Số nhận dạng
@@ -1164,13 +1169,23 @@ tab:
           Cho phép xuất các vết cắt được vẽ và lựa chọn màu sắc.
         warning:
           is_bin_selection: ""
+        error:
+          overflow_gt_spacing: |
       error:
         no_part: Không có bộ phận nào.
         no_bin_1d: ""
         no_bin_2d: ""
+        invalid_part_shapes: ""
         no_solution: ""
+        unplaced_parts: ""
+        unplaced_parts_plural: ""
+        unusable_part: ""
       warning:
         is_part_selection: Sơ đồ cắt này được giới hạn ở **các bộ phận đã chọn**.
+        cutting_dimensions: Sơ đồ cắt này sử dụng kích thước **thô** của các bộ phận.
+        cutting_dimensions_increase_1d: "Các kích thước thô này đã được định cấu hình trên vật liệu '{{ material_name }}': chiều dài quá khổ (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Các kích thước thô này đã được định cấu hình trên vật liệu '{{ material_name }}': chiều dài quá khổ (**{{ length_increase }}**) và chiều rộng quá khổ (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Kích thước giảm theo độ dày của dải cạnh. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Nhãn
       options_layout: Bố trí
@@ -1248,7 +1263,8 @@ tab:
         part_edge_xmax: Chiều rộng cạnh 2
         part_face_zmin: Mặt sau Veneer
         part_face_zmax: Mặt trước Veneer
-        thumbnail_proportional_drawing: Hình thu nhỏ
+        thumbnail_proportional_drawing: ""
+        thumbnail_proportional_drawing_bottom: ""
         thumbnail_proportional: Hình thu nhỏ theo tỷ lệ
         thumbnail_square: Hình thu nhỏ theo hình vuông
         group_material: Vật liệu / Độ dày
@@ -1350,6 +1366,14 @@ tab:
       option_file_format: Định dạng
       option_file_format_help: |
         Cho phép chọn định dạng khi xuất tập tin.
+      option_dxf_structure: Cấu trúc DXF
+      option_dxf_structure_1: Layers
+      option_dxf_structure_2: Layers + Block
+      option_dxf_structure_help: |
+        Chọn cấu trúc tệp DXF.
+
+        - Cấu trúc **Layers** vẽ tất cả các đường thẳng, phân biệt giữa các loại đường khác nhau chỉ bằng cách sử dụng các layers. *Cấu trúc này mang lại khả năng tương thích cao hơn với phần mềm của bên thứ ba.*
+        - Cấu trúc **Layers + Block** tạo một khối cho mỗi bộ phận và chèn các khối này nhiều lần khi các bộ phận được lặp lại. *Cấu trúc này mang lại sự linh hoạt hơn cho việc chỉnh sửa tệp.*
       option_unit: Đơn vị
       option_unit_help: |
         Cho phép chọn đơn vị khi xuất tập tin.
@@ -1366,10 +1390,9 @@ tab:
       option_faces_help: |
         Cho phép bạn chọn xem việc tìm kiếm hình dạng của bộ phận sẽ được thực hiện trên tất cả các mặt của nó hay chỉ trên mặt mục tiêu.
       option_anchor: Điểm neo
-      option_anchor_0: Mặc định
+      option_anchor_0: Tự động
       option_anchor_1: Trục gốc hình chiếu các bộ phận
       option_anchor_help: |
-        Cho phép lấy gốc trục hình chiếu của bộ phận làm điểm neo.
       option_switch_yz: Trục đứng
       option_switch_yz_0: Trục Z
       option_switch_yz_1: Trục Y
@@ -1383,14 +1406,11 @@ tab:
 
          *Tùy chọn này phát hiện các loại đường cong khác.*
       option_merge_holes: Chế độ hợp nhất
-      option_merge_holes_0: Mặc định
-      option_merge_holes_1: Phác thảo + Khoan + Hợp nhất
+      option_merge_holes_0: ""
+      option_merge_holes_1: ""
       option_merge_holes_help: |
-        **Mặc dịnh**
-        Hình dạng bộ phận được xuất với một lớp cho mỗi độ sâu.
-
-        **Đường viền + Lỗ + Hợp nhất**
-        Kích hoạt việc tách đường viền bên ngoài của các bộ phận khỏi các lỗ của chúng, cũng như hợp nhất các độ sâu cho từng khoang.
+      option_merge_holes_overflow: ""
+      option_merge_holes_overflow_help: |
       option_include_paths: Đường dẫn
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Sử dụng các cạnh không liên quan đến bề mặt
@@ -1399,6 +1419,8 @@ tab:
       option_parts: Các bộ phận
       option_parts_help: |
         Chọn màu sắc của các bộ phận.
+      option_parts_depths: ""
+      option_parts_depths_help: |
       option_parts_holes: Khoang
       option_parts_holes_help: |
         Chọn màu của mũi khoan.
@@ -1598,6 +1620,14 @@ tab:
     type_2: Component
     type_3: Bộ phận
     tooltip:
+      hide_node: ""
+      unhide_node: ""
+      locked_node: ""
+      is_active_node: ""
+      set_active_node: ""
+      edit_node_properties: ""
+      select_node: ""
+      unselect_node: ""
       open_node_url: Mở URL bộ phận
     edit_node:
       title_model: "Thuộc tính của mô hình"
@@ -1614,6 +1644,16 @@ tab:
       layer_name: Thẻ
       explode: Phân tách
       explode_message: "Bạn có xác nhận phân tách phiên bản **{{ name }}**?"
+    option:
+      general: Chung
+      show_hidden_instances: ""
+      show_hidden_instances_help: ""
+      hide_descriptions: Ẩn mô tả
+      hide_descriptions_help: "Nếu tùy chọn này được chọn, **mô tả** được đặt trên các bộ phận sẽ không được hiển thị."
+      hide_tags: Ẩn các nhãn hiệu
+      hide_tags_help: "Nếu tùy chọn này được chọn, **Nhãn hiệu** sẽ không được hiển thị."
+      minimize_on_set_active: ""
+      minimize_on_set_active_help: ""
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_entities: Mô hình của bạn trống!
@@ -1745,7 +1785,7 @@ tab:
     contribute: Đóng góp
     backers: "{{ count }} người đóng góp tài chính"
     backers_plural: "{{ count }} người đóng góp tài chính"
-    ad: "Bạn có thích OpenCutList?"
+    ad: ""
     objective: Đối tượng
     objective_slogan: "OpenCutList là tất cả của chúng ta"
     objective_title:
@@ -1839,20 +1879,6 @@ tab:
       *OpenCutList* được phát triển bởi [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) và [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liệt kê tất cả [người đóng góp](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Bản dịch
     credits_translators: |
-      - Nguyễn Ngọc Tân (*Tiếng Việt*)
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Tiếng Anh*, *Tiếng Đức*)
-      - Gildas Boureau (tài liệu *tiếng Pháp*)
-      - Vladimir Badulya (*Tiếng Nga*)
-      - Pierluigi Colombo, Massimo Risca (*Tiếng Ý*)
-      - Nayton Sanches Barbosa, được hiệu chỉnh và sửa đổi bởi [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*Tiếng Bồ Đào Nha*)
-      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*Tiếng Tây Ban Nha*)
-      - [Radek Rýznar](https://onlinesketchup.cz) (*Tiếng Séc*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*Tiếng Ba Lan*)
-      - Sergey Isupov (*Tiếng Do Thái*), Giao diện RTL chưa được hỗ trợ
-      - Soul Issam (*Tiếng Ả Rập*), Giao diện RTL chưa được hỗ trợ
-      - Andriy Toporivskyi, Kostyantyn Shcherbey (*Tiếng Ukraine*)
-      - [刘涛](https://www.liutao91.cn) (*tiếng Trung giản thể*)
-      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*tiếng Hà Lan*)
     credits_description: |
       Việc phát triển phần mở rộng này được liên kết với dự án chia sẻ [L'Air du Bois](https://www.lairdubois.fr).
       Tiện ích mở rộng này cũng là *Nguồn mở* và có sẵn theo giấy phép [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) giấy phép trên [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
@@ -1915,6 +1941,7 @@ tool:
     action_option_options_rectangle_centered_status: ""
     action_option_options_smoothing: Làm mịn
     action_option_options_smoothing_status: ""
+    action_option_options_measure_from_vertex_status: ""
     action_option_options_measure_from_diameter: ""
     action_option_options_measure_from_diameter_status: ""
     action_option_options_measure_from_radius_status: ""
@@ -1924,7 +1951,7 @@ tool:
     action_option_options_pull_centered_status: ""
     action_option_options_ask_name: ""
     action_option_options_ask_name_status: ""
-    action_pull_locked_status: ""
+    action_measure_locked_status: ""
     action_toggle_move_copy_status: ""
     action_change_move_anchor_status: ""
     success:

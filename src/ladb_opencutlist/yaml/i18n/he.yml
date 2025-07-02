@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: "עברית (experimental, no rtl)"
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  שפה זו טרם תורגמה **במלואה**.
+
+  כדי לסייע בהשלמת התרגום, אנא עיין ב[תיעוד OpenCutList](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "על מנת לקבל את כל השינויים, עליך **לסגור** **ולפתח** מחדש את החלון OpenCutList."
 _description: "תוסף לחישוב תוכניות חיתוך לנגרים ועוד. קוד פתוח, מימון המונים וקל לשימוש ;)"
@@ -1206,6 +1211,7 @@ tab:
         no_solution: ""
         unplaced_parts: ""
         unplaced_parts_plural: ""
+        unusable_part: ""
       warning:
         is_part_selection: תוכנית חיתוך מוגבלת ל-**חלקים הנבחרים**.
         cutting_dimensions: תוכנית חיתוך זו משתמשת במידות **גולמיות** של החלקים.
@@ -1553,11 +1559,11 @@ tab:
       thickness: עובי
       thickness_help: |
       length_increase: תוספת לאורך
-      length_increase_help: תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**. # TODO
+      length_increase_help: תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
       width_increase: תוספת לרוחב
-      width_increase_help: תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.  # TODO
+      width_increase_help: תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.
       thickness_increase: תוספת לעובי
-      thickness_increase_help: תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**. # TODO
+      thickness_increase_help: תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**.
       std_lengths: אורכים סטנדרטיים
       std_lengths_help: |
       std_widths: רוחבים סטנדרטיים
