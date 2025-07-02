@@ -281,7 +281,7 @@
             $selectTableRowSize.selectpicker('val', that.dialog.capabilities.tabs_dialog_table_row_size);
         }
 
-        $selectLanguage.selectpicker($.extend(SELECT_PICKER_OPTIONS, { size: that.dialog.capabilities.available_languages.length + 1 }));
+        $selectLanguage.selectpicker($.extend({}, SELECT_PICKER_OPTIONS, { size: that.dialog.capabilities.languages.length + 1 }));
         $selectPrintMargin.selectpicker(SELECT_PICKER_OPTIONS);
         $selectTableRowSize.selectpicker(SELECT_PICKER_OPTIONS);
 
@@ -289,9 +289,14 @@
 
         // Bind
         $selectLanguage.on('change', function () {
-            that.dialog.capabilities.language = $selectLanguage.val();
-            fnGlobalUpdate();
-            that.showReloadAlert();
+            let language = $selectLanguage.val();
+            if (that.dialog.capabilities.languages[language]) {
+                that.dialog.capabilities.language = $selectLanguage.val();
+                fnGlobalUpdate();
+                that.showReloadAlert();
+            } else {
+                that.dialog.alert('Le titre', 'Le blabla pour faire comprendre que ça sera dispo s\'il y a des volontaires.');
+            }
         });
         $selectPrintMargin.on('change', function () {
             that.dialog.capabilities.tabs_dialog_print_margin = parseInt($selectPrintMargin.val());

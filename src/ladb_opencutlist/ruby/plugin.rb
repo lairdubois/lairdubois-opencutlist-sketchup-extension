@@ -149,8 +149,7 @@ module Ladb::OpenCutList
       if language.nil? || language == 'auto'
         language = Sketchup.get_locale.split('-')[0].downcase  # Retrieve SU language
       end
-      available_languages = self.get_available_languages
-      if available_languages.include?(language)
+      if get_languages[language]
         @language = language   # Uses language only if translation is available
       else
         @language = DEFAULT_LANGUAGE
@@ -171,8 +170,13 @@ module Ladb::OpenCutList
       Dir[File.join(PLUGIN_DIR, 'js', 'i18n', '*.js')].each { |file|
         available_languages.push(File.basename(file, File.extname(file)))
       }
-      available_languages = get_enabled_languages & available_languages
+      # available_languages = get_enabled_languages & available_languages
       available_languages.sort
+    end
+
+    def get_languages
+      enabled_langages = get_enabled_languages
+      get_available_languages.map { |language| [ language, enabled_langages.include?(language)] }.to_h
     end
 
     def webgl_available?
@@ -1499,7 +1503,7 @@ module Ladb::OpenCutList
           :is_64bit => Sketchup.respond_to?(:is_64bit?) && Sketchup.is_64bit?,
           :locale => Sketchup.get_locale,
           :language => PLUGIN.language,
-          :available_languages => PLUGIN.get_available_languages,
+          :languages => PLUGIN.get_languages,
           :decimal_separator => DimensionUtils.decimal_separator,
       }
 

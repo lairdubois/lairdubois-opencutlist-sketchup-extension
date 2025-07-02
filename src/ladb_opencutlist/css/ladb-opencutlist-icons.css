@@ -40,546 +40,552 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
-.ladb-opencutlist-icon-qr-code:before {
-  content: "\e9b1";
+.ladb-opencutlist-icon-circle-checked:before {
+    content: "\e9b5";
 }
-.ladb-opencutlist-icon-align-left:before {
-  content: "\e98f";
-}
-.ladb-opencutlist-icon-align-center:before {
-  content: "\e990";
-}
-.ladb-opencutlist-icon-align-right:before {
-  content: "\e991";
+.ladb-opencutlist-icon-circle:before {
+    content: "\e9b6";
 }
 .ladb-opencutlist-icon-target:before {
-  content: "\e9b0";
+    content: "\e9b0";
 }
 .ladb-opencutlist-icon-raw-estimated-0:before {
-  content: "\e9ab";
+    content: "\e9ab";
 }
 .ladb-opencutlist-icon-raw-estimated-1:before {
-  content: "\e9ac";
+    content: "\e9ac";
 }
 .ladb-opencutlist-icon-3d:before {
-  content: "\e9a9";
+    content: "\e9a9";
 }
 .ladb-opencutlist-icon-2d:before {
-  content: "\e9aa";
+    content: "\e9aa";
 }
 .ladb-opencutlist-icon-fill:before {
-  content: "\e9a7";
+    content: "\e9a7";
 }
 .ladb-opencutlist-icon-stroke:before {
-  content: "\e9a8";
+    content: "\e9a8";
 }
 .ladb-opencutlist-icon-folder:before {
-  content: "\e9a6";
+    content: "\e9a6";
 }
 .ladb-opencutlist-icon-explode:before {
-  content: "\e99d";
+    content: "\e99d";
 }
 .ladb-opencutlist-icon-zoom-auto:before {
-  content: "\e99e";
+    content: "\e99e";
 }
 .ladb-opencutlist-icon-view-back:before {
-  content: "\e99f";
+    content: "\e99f";
 }
 .ladb-opencutlist-icon-view-front:before {
-  content: "\e99c";
+    content: "\e99c";
 }
 .ladb-opencutlist-icon-view-isometric:before {
-  content: "\e999";
+    content: "\e999";
 }
 .ladb-opencutlist-icon-copy:before {
-  content: "\e993";
+    content: "\e993";
 }
 .ladb-opencutlist-icon-eraser:before {
-  content: "\e992";
+    content: "\e992";
 }
 .ladb-opencutlist-icon-variable:before {
-  content: "\e98e";
+    content: "\e98e";
 }
 .ladb-opencutlist-icon-thickness-layers:before {
-  content: "\e98a";
+    content: "\e98a";
 }
 .ladb-opencutlist-icon-bug:before {
-  content: "\e988";
+    content: "\e988";
 }
 .ladb-opencutlist-icon-preset:before {
-  content: "\e983";
+    content: "\e983";
 }
 .ladb-opencutlist-icon-labels:before {
-  content: "\e900";
+    content: "\e900";
 }
 .ladb-opencutlist-icon-labels-selection:before {
-  content: "\e901";
+    content: "\e901";
 }
 .ladb-opencutlist-icon-labels-offset:before {
-  content: "\e989";
+    content: "\e989";
 }
 .ladb-opencutlist-icon-anchor-start:before {
-  content: "\e904";
+    content: "\e904";
 }
 .ladb-opencutlist-icon-anchor-middle:before {
-  content: "\e903";
+    content: "\e903";
 }
 .ladb-opencutlist-icon-anchor-end:before {
-  content: "\e902";
+    content: "\e902";
 }
 .ladb-opencutlist-icon-anchor-start-top:before {
-  content: "\e98b";
+    content: "\e98b";
 }
 .ladb-opencutlist-icon-anchor-middle-top:before {
-  content: "\e98c";
+    content: "\e98c";
 }
 .ladb-opencutlist-icon-anchor-end-top:before {
-  content: "\e98d";
+    content: "\e98d";
 }
 .ladb-opencutlist-icon-reset:before {
-  content: "\e905";
+    content: "\e905";
 }
 .ladb-opencutlist-icon-snippets:before {
-  content: "\e9a0";
+    content: "\e9a0";
 }
 .ladb-opencutlist-icon-formula:before {
-  content: "\e906";
+    content: "\e906";
 }
 .ladb-opencutlist-icon-comment:before {
-  content: "\e907";
+    content: "\e907";
 }
 .ladb-opencutlist-icon-send:before {
-  content: "\e908";
+    content: "\e908";
 }
 .ladb-opencutlist-icon-play:before {
-  content: "\e909";
+    content: "\e909";
 }
 .ladb-opencutlist-icon-clear:before {
-  content: "\e90a";
+    content: "\e90a";
 }
 .ladb-opencutlist-icon-size-increase:before {
-  content: "\e90b";
+    content: "\e90b";
 }
 .ladb-opencutlist-icon-obsolete:before {
-  content: "\e90c";
+    content: "\e90c";
 }
 .ladb-opencutlist-icon-sponsor:before {
-  content: "\e90e";
+    content: "\e90e";
 }
 .ladb-opencutlist-icon-multiple:before {
-  content: "\e90f";
+    content: "\e90f";
 }
 .ladb-opencutlist-icon-check-box:before {
-  content: "\e910";
+    content: "\e910";
 }
 .ladb-opencutlist-icon-check-box-with-check-sign:before {
-  content: "\e911";
+    content: "\e911";
 }
 .ladb-opencutlist-icon-uncheck-mark:before {
-  content: "\e912";
+    content: "\e912";
 }
 .ladb-opencutlist-icon-check-mark:before {
-  content: "\e913";
+    content: "\e913";
 }
 .ladb-opencutlist-icon-reorder:before {
-  content: "\e914";
+    content: "\e914";
 }
 .ladb-opencutlist-icon-edge-decremented:before {
-  content: "\e915";
+    content: "\e915";
 }
 .ladb-opencutlist-icon-filter-on:before {
-  content: "\e916";
+    content: "\e916";
 }
 .ladb-opencutlist-icon-filter-off:before {
-  content: "\e917";
+    content: "\e917";
 }
 .ladb-opencutlist-icon-origin-front-center:before {
-  content: "\e918";
+    content: "\e918";
 }
 .ladb-opencutlist-icon-origin-front-min:before {
-  content: "\e9a1";
+    content: "\e9a1";
 }
 .ladb-opencutlist-icon-origin-center:before {
-  content: "\e919";
+    content: "\e919";
 }
 .ladb-opencutlist-icon-origin-min:before {
-  content: "\e91a";
+    content: "\e91a";
 }
 .ladb-opencutlist-icon-drop:before {
-  content: "\e91b";
+    content: "\e91b";
 }
 .ladb-opencutlist-icon-lock:before {
-  content: "\e91c";
+    content: "\e91c";
 }
 .ladb-opencutlist-icon-unlock:before {
-  content: "\e91d";
+    content: "\e91d";
 }
 .ladb-opencutlist-icon-rotate-right:before {
-  content: "\e91e";
+    content: "\e91e";
 }
 .ladb-opencutlist-icon-rotate-left:before {
-  content: "\e91f";
+    content: "\e91f";
 }
 .ladb-opencutlist-icon-texture:before {
-  content: "\e920";
+    content: "\e920";
 }
 .ladb-opencutlist-icon-review:before {
-  content: "\e921";
+    content: "\e921";
 }
 .ladb-opencutlist-icon-plan:before {
-  content: "\e922";
+    content: "\e922";
 }
 .ladb-opencutlist-icon-extension:before {
-  content: "\e923";
+    content: "\e923";
 }
 .ladb-opencutlist-icon-tutorials:before {
-  content: "\e924";
+    content: "\e924";
 }
 .ladb-opencutlist-icon-news:before {
-  content: "\e925";
+    content: "\e925";
 }
 .ladb-opencutlist-icon-forum:before {
-  content: "\e926";
+    content: "\e926";
 }
 .ladb-opencutlist-icon-submenu:before {
-  content: "\e927";
+    content: "\e927";
 }
 .ladb-opencutlist-icon-more:before {
-  content: "\e928";
+    content: "\e928";
 }
 .ladb-opencutlist-icon-height:before {
-  content: "\e929";
+    content: "\e929";
 }
 .ladb-opencutlist-icon-width:before {
-  content: "\e92a";
+    content: "\e92a";
 }
 .ladb-opencutlist-icon-saw:before {
-  content: "\e92b";
+    content: "\e92b";
 }
 .ladb-opencutlist-icon-vertical-cut-left:before {
-  content: "\e92c";
+    content: "\e92c";
 }
 .ladb-opencutlist-icon-vertical-cut-right:before {
-  content: "\e987";
+    content: "\e987";
 }
 .ladb-opencutlist-icon-horizontal-cut-top:before {
-  content: "\e92d";
+    content: "\e92d";
 }
 .ladb-opencutlist-icon-horizontal-cut-bottom:before {
-  content: "\e92e";
+    content: "\e92e";
 }
 .ladb-opencutlist-icon-grained-0:before {
-  content: "\e92f";
+    content: "\e92f";
 }
 .ladb-opencutlist-icon-grained-1:before {
-  content: "\e930";
+    content: "\e930";
 }
 .ladb-opencutlist-icon-instance-count-by-part:before {
-  content: "\e985";
+    content: "\e985";
 }
 .ladb-opencutlist-icon-missing-instance-count:before {
-  content: "\e986";
+    content: "\e986";
 }
 .ladb-opencutlist-icon-multiple-layers:before {
-  content: "\e931";
+    content: "\e931";
 }
 .ladb-opencutlist-icon-flipped:before {
-  content: "\e932";
+    content: "\e932";
 }
 .ladb-opencutlist-icon-symmetrical:before {
-  content: "\e984";
+    content: "\e984";
 }
 .ladb-opencutlist-icon-resized:before {
-  content: "\e933";
+    content: "\e933";
 }
 .ladb-opencutlist-icon-export:before {
-  content: "\e935";
+    content: "\e935";
 }
 .ladb-opencutlist-icon-import:before {
-  content: "\e934";
+    content: "\e934";
 }
 .ladb-opencutlist-icon-numbers-reset:before {
-  content: "\e936";
+    content: "\e936";
 }
 .ladb-opencutlist-icon-numbers-save:before {
-  content: "\e937";
+    content: "\e937";
 }
 .ladb-opencutlist-icon-axes:before {
-  content: "\e938";
+    content: "\e938";
 }
 .ladb-opencutlist-icon-auto-oriented:before {
-  content: "\e939";
+    content: "\e939";
 }
 .ladb-opencutlist-icon-not-aligned-on-axes:before {
-  content: "\e93a";
+    content: "\e93a";
 }
 .ladb-opencutlist-icon-orientation-locked-on-axis:before {
-  content: "\e93b";
+    content: "\e93b";
 }
 .ladb-opencutlist-icon-trash:before {
-  content: "\e93c";
+    content: "\e93c";
 }
 .ladb-opencutlist-icon-sort-asc:before {
-  content: "\e93d";
+    content: "\e93d";
 }
 .ladb-opencutlist-icon-sort-desc:before {
-  content: "\e93e";
+    content: "\e93e";
 }
 .ladb-opencutlist-icon-sort-col:before {
-  content: "\e93f";
+    content: "\e93f";
 }
 .ladb-opencutlist-icon-material-origin-1:before {
-  content: "\e940";
+    content: "\e940";
 }
 .ladb-opencutlist-icon-material-origin-3:before {
-  content: "\e941";
+    content: "\e941";
 }
 .ladb-opencutlist-icon-material-origin-2:before {
-  content: "\e942";
+    content: "\e942";
 }
 .ladb-opencutlist-icon-layout:before {
-  content: "\e99a";
+    content: "\e99a";
 }
 .ladb-opencutlist-icon-layout-selection:before {
-  content: "\e99b";
+    content: "\e99b";
 }
 .ladb-opencutlist-icon-cursor:before {
-  content: "\e9a5";
+    content: "\e9a5";
 }
 .ladb-opencutlist-icon-edit:before {
-  content: "\e943";
+    content: "\e943";
 }
 .ladb-opencutlist-icon-edit-multiple:before {
-  content: "\e944";
+    content: "\e944";
 }
 .ladb-opencutlist-icon-magnifier:before {
-  content: "\e945";
+    content: "\e945";
 }
 .ladb-opencutlist-icon-magnifier-multiple:before {
-  content: "\e946";
+    content: "\e946";
 }
 .ladb-opencutlist-icon-arrow-circle-down:before {
-  content: "\e947";
+    content: "\e947";
 }
 .ladb-opencutlist-icon-arrow-circle-up:before {
-  content: "\e948";
+    content: "\e948";
 }
 .ladb-opencutlist-icon-settings:before {
-  content: "\e949";
+    content: "\e949";
 }
 .ladb-opencutlist-icon-warning:before {
-  content: "\e94a";
+    content: "\e94a";
 }
 .ladb-opencutlist-icon-info:before {
-  content: "\e94b";
+    content: "\e94b";
 }
 .ladb-opencutlist-icon-help:before {
-  content: "\e94c";
+    content: "\e94c";
 }
 .ladb-opencutlist-icon-print:before {
-  content: "\e94d";
+    content: "\e94d";
 }
 .ladb-opencutlist-icon-cutlist:before {
-  content: "\e94e";
+    content: "\e94e";
 }
 .ladb-opencutlist-icon-outliner:before {
-  content: "\e9a2";
+    content: "\e9a2";
 }
 .ladb-opencutlist-icon-mini-logo-ladb:before {
-  content: "\e951";
+    content: "\e951";
 }
 .ladb-opencutlist-icon-material-type-3:before {
-  content: "\e94f";
+    content: "\e94f";
 }
 .ladb-opencutlist-icon-material-type-5:before {
-  content: "\e950";
+    content: "\e950";
+}
+.ladb-opencutlist-icon-qr-code:before {
+    content: "\e9b1";
+}
+.ladb-opencutlist-icon-align-left:before {
+    content: "\e98f";
+}
+.ladb-opencutlist-icon-align-center:before {
+    content: "\e990";
+}
+.ladb-opencutlist-icon-align-right:before {
+    content: "\e991";
 }
 .ladb-opencutlist-icon-zzz:before {
-  content: "\e952";
+    content: "\e952";
 }
 .ladb-opencutlist-icon-update:before {
-  content: "\e953";
+    content: "\e953";
 }
 .ladb-opencutlist-icon-cuttingdiagram1d:before {
-  content: "\e954";
+    content: "\e954";
 }
 .ladb-opencutlist-icon-cuttingdiagram1d-selection:before {
-  content: "\e955";
+    content: "\e955";
 }
 .ladb-opencutlist-icon-cuttingdiagram2d:before {
-  content: "\e956";
+    content: "\e956";
 }
 .ladb-opencutlist-icon-cuttingdiagram2d-selection:before {
-  content: "\e957";
+    content: "\e957";
 }
 .ladb-opencutlist-icon-packing-rectangle:before {
-  content: "\e9b2";
+    content: "\e9b2";
 }
 .ladb-opencutlist-icon-packing-rectangle-selection:before {
-  content: "\e9b3";
+    content: "\e9b3";
 }
 .ladb-opencutlist-icon-packing-irregular:before {
-  content: "\e9ad";
+    content: "\e9ad";
 }
 .ladb-opencutlist-icon-packing-selection:before {
-  content: "\e9ae";
+    content: "\e9ae";
 }
 .ladb-opencutlist-icon-asterisk:before {
-  content: "\e958";
+    content: "\e958";
 }
 .ladb-opencutlist-icon-face-11:before {
-  content: "\e995";
+    content: "\e995";
 }
 .ladb-opencutlist-icon-face-01:before {
-  content: "\e996";
+    content: "\e996";
 }
 .ladb-opencutlist-icon-face-10:before {
-  content: "\e997";
+    content: "\e997";
 }
 .ladb-opencutlist-icon-face-00:before {
-  content: "\e998";
+    content: "\e998";
 }
 .ladb-opencutlist-icon-edge-1111:before {
-  content: "\e959";
+    content: "\e959";
 }
 .ladb-opencutlist-icon-edge-1010:before {
-  content: "\e95a";
+    content: "\e95a";
 }
 .ladb-opencutlist-icon-edge-0101:before {
-  content: "\e95b";
+    content: "\e95b";
 }
 .ladb-opencutlist-icon-edge-1110:before {
-  content: "\e95c";
+    content: "\e95c";
 }
 .ladb-opencutlist-icon-edge-1101:before {
-  content: "\e95d";
+    content: "\e95d";
 }
 .ladb-opencutlist-icon-edge-1011:before {
-  content: "\e95e";
+    content: "\e95e";
 }
 .ladb-opencutlist-icon-edge-0111:before {
-  content: "\e95f";
+    content: "\e95f";
 }
 .ladb-opencutlist-icon-edge-1001:before {
-  content: "\e960";
+    content: "\e960";
 }
 .ladb-opencutlist-icon-edge-0011:before {
-  content: "\e961";
+    content: "\e961";
 }
 .ladb-opencutlist-icon-edge-0110:before {
-  content: "\e962";
+    content: "\e962";
 }
 .ladb-opencutlist-icon-edge-1100:before {
-  content: "\e963";
+    content: "\e963";
 }
 .ladb-opencutlist-icon-edge-0001:before {
-  content: "\e964";
+    content: "\e964";
 }
 .ladb-opencutlist-icon-edge-0010:before {
-  content: "\e965";
+    content: "\e965";
 }
 .ladb-opencutlist-icon-edge-0100:before {
-  content: "\e966";
+    content: "\e966";
 }
 .ladb-opencutlist-icon-edge-1000:before {
-  content: "\e967";
+    content: "\e967";
 }
 .ladb-opencutlist-icon-edge-0000:before {
-  content: "\e968";
+    content: "\e968";
 }
 .ladb-opencutlist-icon-group:before {
-  content: "\e9a3";
+    content: "\e9a3";
 }
 .ladb-opencutlist-icon-component:before {
-  content: "\e9a4";
+    content: "\e9a4";
 }
 .ladb-opencutlist-icon-dynamic-component:before {
-  content: "\e969";
+    content: "\e969";
 }
 .ladb-opencutlist-icon-dimensions-help:before {
-  content: "\e96a";
+    content: "\e96a";
 }
 .ladb-opencutlist-icon-layer:before {
-  content: "\e96b";
+    content: "\e96b";
 }
 .ladb-opencutlist-icon-tag:before {
-  content: "\e9af";
+    content: "\e9af";
 }
 .ladb-opencutlist-icon-minus:before {
-  content: "\e96c";
+    content: "\e96c";
 }
 .ladb-opencutlist-icon-plus:before {
-  content: "\e96d";
+    content: "\e96d";
 }
 .ladb-opencutlist-icon-size-length-width:before {
-  content: "\e96e";
+    content: "\e96e";
 }
 .ladb-opencutlist-icon-size-length:before {
-  content: "\e90d";
+    content: "\e90d";
 }
 .ladb-opencutlist-icon-size-width:before {
-  content: "\e9b4";
+    content: "\e9b4";
 }
 .ladb-opencutlist-icon-close:before {
-  content: "\e96f";
+    content: "\e96f";
 }
 .ladb-opencutlist-icon-save:before {
-  content: "\e970";
+    content: "\e970";
 }
 .ladb-opencutlist-icon-refresh:before {
-  content: "\e971";
+    content: "\e971";
 }
 .ladb-opencutlist-icon-tick:before {
-  content: "\e972";
+    content: "\e972";
 }
 .ladb-opencutlist-icon-link:before {
-  content: "\e973";
+    content: "\e973";
 }
 .ladb-opencutlist-icon-eye-close:before {
-  content: "\e974";
+    content: "\e974";
 }
 .ladb-opencutlist-icon-eye-open:before {
-  content: "\e975";
+    content: "\e975";
 }
 .ladb-opencutlist-icon-tip:before {
-  content: "\e976";
+    content: "\e976";
 }
 .ladb-opencutlist-icon-estimate:before {
-  content: "\e977";
+    content: "\e977";
 }
 .ladb-opencutlist-icon-material-type-1:before {
-  content: "\e979";
+    content: "\e979";
 }
 .ladb-opencutlist-icon-material-type-4:before {
-  content: "\e978";
+    content: "\e978";
 }
 .ladb-opencutlist-icon-material-type-0:before {
-  content: "\e980";
+    content: "\e980";
 }
 .ladb-opencutlist-icon-material-type-2:before {
-  content: "\e97a";
+    content: "\e97a";
 }
 .ladb-opencutlist-icon-material-type-6:before {
-  content: "\e994";
+    content: "\e994";
 }
 .ladb-opencutlist-icon-arrow-right:before {
-  content: "\e97b";
+    content: "\e97b";
 }
 .ladb-opencutlist-icon-arrow-left:before {
-  content: "\e97c";
+    content: "\e97c";
 }
 .ladb-opencutlist-icon-arrow-down:before {
-  content: "\e97d";
+    content: "\e97d";
 }
 .ladb-opencutlist-icon-arrow-up:before {
-  content: "\e97e";
+    content: "\e97e";
 }
 .ladb-opencutlist-icon-materials:before {
-  content: "\e97f";
+    content: "\e97f";
 }
 .ladb-opencutlist-icon-chevron-right:before {
-  content: "\e981";
+    content: "\e981";
 }
 .ladb-opencutlist-icon-chevron-left:before {
-  content: "\e982";
+    content: "\e982";
 }

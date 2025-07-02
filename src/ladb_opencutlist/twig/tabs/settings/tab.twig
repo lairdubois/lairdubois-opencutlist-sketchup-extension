@@ -35,7 +35,7 @@
                         <div class="media">
                             <div class="media-left"><i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i></div>
                             <div class="media-body">
-                                {% for language in capabilities.available_languages %}
+                                {% for language, enabled in capabilities.languages if enabled %}
                                     <div class="ladb-reaload-msg ladb-reaload-msg-{{ language }}">{{ ('language_reload_msg.'~language)|i18next }}</div>
                                 {% endfor %}
                             </div>
@@ -47,8 +47,8 @@
                         <select id="ladb_select_language" class="form-control">
                             <option value="auto" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.settings.language_auto'|i18next }}</span>"></option>
                             <option data-divider="true"></option>
-                            {% for language in capabilities.available_languages %}
-                                <option value="{{ language }}" data-content="<span class='ladb-language-prefix'>{{ language|upper }}</span>{{ ('language.'~language)|i18next }}"></option>
+                            {% for language, enabled in capabilities.languages %}
+                                <option value="{{ language }}" data-content="<i class='ladb-opencutlist-icon-circle{% if enabled %}-checked ladb-color-success{% else %} ladb-color-danger{% endif %}'></i> <span class='ladb-language-prefix'>{{ language|upper }}</span>{{ ('language.'~language)|i18next }}"></option>
                             {% endfor %}
                         </select>
                     </div>

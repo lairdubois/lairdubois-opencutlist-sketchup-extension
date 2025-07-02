@@ -28,7 +28,7 @@ function LadbAbstractDialog(element, options) {
         user_agent: window.navigator.userAgent,
         locale: options.locale,
         language: options.language,
-        available_languages: options.available_languages,
+        languages: options.languages,
         decimal_separator: options.decimal_separator,
         webgl_available: options.webgl_available,
         manifest: options.manifest,
