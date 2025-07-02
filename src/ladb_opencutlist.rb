@@ -71,7 +71,7 @@ module Ladb
       when 'zz_fr'
         ex.description = '4 - Générateur de fiche de débit et calepinage de panneaux et barres pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)'
       when 'zz_he'
-        ex.description = '3 - תוסף לחישוב תוכניות חיתוך לנגרים ועוד. קוד פתוח, מימון המונים וקל לשימוש ;)'
+        ex.description = '4 - תוסף לחישוב תוכניות חיתוך לנגרים ועוד. קוד פתוח, מימון המונים וקל לשימוש ;)'
       when 'zz_hu'
         ex.description = '4 - Szabáslista és Szabásterv Készítő Faipari Szakembereknek. Nyílt forráskódú, közösségi finanszírozású és könnyen használható ;)'
       when 'zz_it'
@@ -87,9 +87,9 @@ module Ladb
       when 'zz_uk'
         ex.description = '4 - Плагін розрахунку карт розкрою листового та погонного матеріалів для деревообробників і не тільки. Відкритий вихідний код, фінансується користувачами і простий у використанні ;)'
       when 'zz_vi'
-        ex.description = '3 - Danh sách cắt và Trình tạo sơ đồ cắt cho thợ mộc. Mã nguồn mở, được huy động vốn từ cộng đồng và dễ sử dụng;)'
+        ex.description = '4 - Danh sách cắt và Trình tạo sơ đồ cắt cho thợ mộc. Mã nguồn mở, được huy động vốn từ cộng đồng và dễ sử dụng;)'
       when 'zz_zh'
-        ex.description = '3 - 木工的切割清单和切割图生成器。 开源，众筹且易于使用 ;)'
+        ex.description = '4 - 木工的切割清单和切割图生成器。 开源，众筹且易于使用 ;)'
       else
         ex.description = 'Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       ## DESCRIPTION_END ##
