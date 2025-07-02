@@ -1,9 +1,9 @@
 # this label must be in your language
 _label: Français
-# the disabled message will be displayed when language is not fully translated
+# the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
   Cette langue n'a pas encore été **entièrement traduite**.
-  
+
   Pour aider à finaliser la traduction, veuillez consulter la [Documentation OpenCutList](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "Afin de prendre en compte tous les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList."

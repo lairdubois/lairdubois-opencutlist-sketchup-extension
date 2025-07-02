@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: English
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  This language has not yet been **fully translated**.
+
+  To help complete the translation, please visit the [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "To reflect all changes, you must **close** and **reopen** the OpenCutList window."
 _description: "Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)"
@@ -1205,7 +1210,7 @@ tab:
         no_bin_1d: No standard board or edge banding was selected and no off-cuts were available.
         no_bin_2d: No standard panel or veneer sheet was selected and no off-cuts were available.
         invalid_part_shapes: "The shape of part '{{ name }}' is invalid."
-        no_solution: No solution has been found to place **all parts** in the available material. # TODO
+        no_solution: No solution has been found to place **all parts** in the available material.
         unplaced_parts: "**1 part** could not be placed."
         unplaced_parts_plural: "**{{ count }} parts** could not be placed."
         unusable_part: Part too large

@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: Italiano
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Questa lingua non è ancora stata **completamente tradotta**.
+
+  Per completare la traduzione, consultare la [Documentazione di OpenCutList](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "Per rendere effettivi i cambiamenti, **chiudere** e **riaprire** la finestra di OpenCutList."
 _description: "Generatore di Distinte Materiali e Schemi di Taglio per falegnami. Open Source, crowdfunded e facile da usare ;)"
@@ -1205,7 +1210,7 @@ tab:
         no_bin_1d: Nessuna dimensione delle tavole o dei bordi disponibili è stata selezionata e non ci sono ritagli a disposizione.
         no_bin_2d: Nessuna dimensione dei pannelli o dei piallacci disponibili è stata selezionata e non ci sono ritagli a disposizione.
         invalid_part_shapes: "La forma dell'elemento '{{ name }}' non è valida."
-        no_solution: Nessuna soluzione è trovata per collocare **tutte le parti** nel materiale disponibile. # TODO
+        no_solution: Nessuna soluzione è trovata per collocare **tutte le parti** nel materiale disponibile.
         unplaced_parts: "**1 elemento** non può essere posizionato."
         unplaced_parts_plural: "**{{ count }} elementi** non possono essere posizionati."
         unusable_part: Parte troppo grande

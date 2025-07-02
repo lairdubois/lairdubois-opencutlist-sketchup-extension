@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: Polski
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Ten język nie został jeszcze **w pełni przetłumaczony**.
+
+  Aby pomóc w ukończeniu tłumaczenia, zapoznaj się z [Dokumentacją OpenCutList](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "Aby odzwierciedlić wszystkie zmiany, musisz **zamknąć** i **ponownie otworzyć** okno OpenCutList."
 _description: "Generator listy cięć i diagramów cięcia dla stolarzy. Open Source, finansowany społecznościowo i łatwy w użyciu ;)"
@@ -1205,9 +1210,10 @@ tab:
         no_bin_1d: Nie wybrano żadnej standardowej płyty lub okleiny i nie zdefiniowano żadnych resztek.
         no_bin_2d: Nie wybrano żadnego standardowego panelu lub arkusza forniru i nie zdefiniowano żadnych resztek.
         invalid_part_shapes: "Kształt części '{{ name }}' jest nieprawidłowy."
-        no_solution: Nie znaleziono żadnego rozwiązania.
+        no_solution: ""
         unplaced_parts: "**1 element** nie mógł być umieszczony."
         unplaced_parts_plural: "Nie można umieścić **{{ count }} części**."
+        unusable_part: ""
       warning:
         is_part_selection: Ten schemat cięcia jest ograniczony do **wybranych części**.
         cutting_dimensions: Ten rozkrój używa **wstępnych** wymiarów części.
@@ -1591,11 +1597,11 @@ tab:
 
         *Rozmiary bez jednostek są podane w jednostkach modelowych.*
       length_increase: Długość ponadwymiarowa
-      length_increase_help: Nadmiar dodany do długości aby określić **wstępną długość**. # TODO
+      length_increase_help: Nadmiar dodany do długości aby określić **wstępną długość**.
       width_increase: Szerokość ponadwymiarowa
-      width_increase_help: Nadmiar dodany do szerokości aby określić **wstępną szerokość**.  # TODO
+      width_increase_help: Nadmiar dodany do szerokości aby określić **wstępną szerokość**.
       thickness_increase: Grubość ponadwymiarowa
-      thickness_increase_help: Nadmiar dodany do grubości aby określić **wstępną grubość**. # TODO
+      thickness_increase_help: Nadmiar dodany do grubości aby określić **wstępną grubość**.
       std_lengths: Standardowe długości
       std_lengths_help: |
         Standardowe długości desek lub obrzeży.

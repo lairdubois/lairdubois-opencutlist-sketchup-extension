@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: Português
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Esse idioma ainda não foi **totalmente traduzido**.
+
+  Para ajudar a finalizar a tradução, consulte a [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "Para que as mudanças sejam efetivadas, é necessário **fechar** e **reabrir** a janela OpenCutList."
 _description: "Lista de Peças e Gerador de Plano de Corte de chapas e barras para marceneiros, carpinteiros e serralheiros. Código aberto, crowdfunded e fácil de usar ;)"
@@ -1205,7 +1210,7 @@ tab:
         no_bin_1d: Nenhuma barra ou fita padrão foi selecionada e nenhuma sobra foi definida.
         no_bin_2d: Nenhuma chapa ou laminado padrão foi selecionado e nenhuma sobra foi definida.
         invalid_part_shapes: "A forma da peça '{{ name }}' é inválida."
-        no_solution: Nenhuma solução foi encontrada para colocar **todas as peças** no material disponível. # TODO
+        no_solution: Nenhuma solução foi encontrada para colocar **todas as peças** no material disponível.
         unplaced_parts: "**1 peça** não pôde ser posicionada."
         unplaced_parts_plural: "**{{ count }} peças** não puderam ser posicionadas."
         unusable_part: Peça muito grande

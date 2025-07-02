@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: Magyar
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Ezt a nyelvet még nem fordították le **teljesen**.
+
+  A fordítás véglegesítéséhez kérjük, tekintse meg az [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general) dokumentumot.
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "A változtatások érvényesítéséhez **be kell zárnia** és **újra kell nyitnia** az OpenCutList ablakot."
 _description: "Szabáslista és Szabásterv Készítő Faipari Szakembereknek. Nyílt forráskódú, közösségi finanszírozású és könnyen használható ;)"
@@ -39,8 +44,8 @@ default:
   estimate: Kalkuláció
   rename: Átnevezés
   next: ""
-  yes: Igen
-  no: Nem
+  "yes": Igen
+  "no": Nem
   automatic: Automatikus
   empty_filename: Névtelen.skp
   help: Súgó
@@ -90,6 +95,7 @@ default:
   width: Szélesség
   thickness: ""
   height: Magasság
+  deprecated: ""
 core:
   menu:
     submenu: OpenCutList
@@ -152,6 +158,7 @@ core:
     failed_export_to: |
       Hiba történt a *{{ path }}* exportálása során.
       **{{ error }}**
+    unsupported_file_format: ""
   success:
     exported_to: "Sikeres exportálás ide: {{ path }}."
     copied_to_clipboard: Vágólapra másolva
@@ -165,7 +172,8 @@ core:
   upgrade:
     unavailable: Az *OpenCutList* legújabb verziója nem található.
     available: |
-      Az *OpenCutList* új verziója elérhető. Frissítsen az új funkciók eléréséhez!
+      Az *OpenCutList* új verziója elérhető.
+      Frissítsen az új funkciók eléréséhez!
     up_to_date: |
       Ön már az *OpenCutList* legújabb verzióját használja.
 
@@ -208,23 +216,28 @@ core:
       delete: "'{{ name }}' sablon törlése"
     dictionary:
       component_textinput_color: Színpaletta
-      cutlist_cuttingdiagram1d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 1D
-      cutlist_cuttingdiagram1d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 1D
-      cutlist_cuttingdiagram2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.title) 2D
-      cutlist_cuttingdiagram2d_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.cuttingdiagram.export.title) 2D
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
-      cutlist_report_options: $t(tab.cutlist.label) / $t(tab.cutlist.report.title)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
       cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
       cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
       importer_import_options: $t(tab.importer.label) / $t(default.import)
       importer_load_options: $t(tab.importer.label) / $t(default.open)
       materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
       materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
       settings_model: $t(tab.settings.label) / Modell
       tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
       tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
       tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
       tool_smart_export_options: $t(core.toolbar.command.smart_export)
@@ -401,6 +414,8 @@ tab:
       group_cuttingdiagram: Szabásterv
       group_packing: Szabásterv
       group_labels: Csoport alkatrészeinek címkéinek nyomtatása
+      group_export: ""
+      group_estimate: ""
       edit_material: "'{{ material_name }}' anyag szerkesztése"
       expand_all: Összes sor kibontása
       collapse_all: Összes sor összecsukása
@@ -690,6 +705,7 @@ tab:
         no_column_formula: Adjon meg egy képletet
       warning:
         is_group_selection: Az Alkatrészlista **rejtett csoportjaiban** lévő alkatrészek nem kerülnek exportálásra.
+        is_part_selection: Az exportálás csak a **kiválasztott alkatrészekre** korlátozódik.
     estimate:
       title: Becslés
       info_0: |
@@ -711,7 +727,7 @@ tab:
       type_4: $t(tab.materials.type_4)
       type_5: $t(tab.materials.type_5)
       type_6: $t(tab.materials.type_6)
-      type_-1: ""
+      type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Nem kompatibilis mértékegység az anyagbecslési beállításokkal
         multiplier_coefficient: ""
@@ -721,6 +737,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} hiba**."
       warning:
         is_group_selection: Az Alkatrészlista **rejtett csoportjaiban** lévő alkatrészek nem kerülnek beszámításra.
+        is_part_selection: ""
       tip:
         not_enough_data: |
           A becslés helyes kiszámításához:
@@ -1020,7 +1037,7 @@ tab:
       option_irregular_allow_mirroring: ""
       option_irregular_allow_mirroring_help: |
       option_irregular_allow_mirroring_0: $t(default.no)
-      option_irregular_allow_mirroring_1: ""
+      option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Távolságtartás
       option_spacing_help: |
       option_trimming: Tisztítóvágás
@@ -1049,6 +1066,16 @@ tab:
       option_colorization_1: ""
       option_colorization_2: ""
       option_colorization_help: |
+      option_origin_corner: Origó pozíciója
+      option_origin_corner_0: Bal felső sarok
+      option_origin_corner_1: Bal alsó sarok
+      option_origin_corner_2: Jobb felső sarok
+      option_origin_corner_3: Jobb alsó sarok
+      option_origin_corner_help: ""
+      option_highlight_primary_cuts: Elsődleges vágások
+      option_highlight_primary_cuts_0: Csak rámutatáskor
+      option_highlight_primary_cuts_1: Mindig látható
+      option_highlight_primary_cuts_help: Lehetővé teszi az elsődleges vágások állandó kiemelését.
       option_hide_edges_preview: Élzárók megjelenítése
       option_hide_edges_preview_0: Megjelenítve a szabásterven
       option_hide_edges_preview_1: Elrejtve a szabásterven
@@ -1102,35 +1129,13 @@ tab:
         cut_plural: Vágások
         cut_trimming: Tisztítóvágás
         cut_primary: ""
+        cut_primary_plural: Elsődleges vágások
+        cut_none: Nincs
         cut_depth: ""
       write:
         title: Szabásterv exportálása
         info_0: |
           Ez a modul lehetővé teszi a *szabásterv* **geometriájának** exportálását [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) vagy [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) formátumban.
-        option_file_format: $t(tab.cutlist.write.option_file_format)
-        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
-        option_dxf_structure: DXF struktúra
-        option_dxf_structure_1: Rétegek
-        option_dxf_structure_2: Rétegek + Blokkok
-        option_dxf_structure_help: |
-          Válassza ki a DXF fájl struktúráját.
-
-          - A **Rétegek** struktúra minden vonalat síkban rajzol, csak rétegekkel különböztetve meg a különböző vonaltípusokat. *Ez a struktúra nagyobb kompatibilitást biztosít a külső szoftverekkel.*
-          - A **Rétegek + Blokkok** struktúra minden alkatrészhez egy blokkot hoz létre, és ezeket a blokkokat illeszti be annyiszor, ahányszor az alkatrészek ismétlődnek. *Ez a struktúra nagyobb rugalmasságot biztosít a fájl szerkesztéséhez.*
-        option_unit: $t(tab.cutlist.write.option_unit)
-        option_unit_help: $t(tab.cutlist.write.option_unit_help)
-        option_smoothing: $t(tab.cutlist.write.option_smoothing)
-        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
-        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
-        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
-        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
-        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
-        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
-        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
-        option_include_paths: $t(tab.cutlist.write.option_include_paths)
-        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
-        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
-        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
         option_bin_sheet_good: Táblásanyag
         option_bin_sheet_good_help: |
           Engedélyezi a tábla exportálását és a szín kiválasztását.
@@ -1146,9 +1151,10 @@ tab:
         option_parts: Alkatrészek
         option_parts_help: |
           Engedélyezi az alkatrészek exportálását és a szín kiválasztását.
-        option_parts_holes: Furatok
-        option_parts_holes_help: |
-          Válassza ki a furatok színét.
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
         option_texts: Azonosítók
@@ -1162,13 +1168,23 @@ tab:
           Válassza ki, hogy a vágások megjelenjenek-e, és válassza ki a színüket.
         warning:
           is_bin_selection: ""
+        error:
+          overflow_gt_spacing: |
       error:
         no_part: Nincsenek alkatrészek.
         no_bin_1d: ""
         no_bin_2d: ""
+        invalid_part_shapes: ""
         no_solution: ""
+        unplaced_parts: ""
+        unplaced_parts_plural: ""
+        unusable_part: ""
       warning:
         is_part_selection: Ez a szabásterv csak a **kiválasztott alkatrészekre** korlátozódik.
+        cutting_dimensions: Ez a szabásterv az alkatrészek **nyers** méreteit használja.
+        cutting_dimensions_increase_1d: "Ezek a nyers méretek a '{{ material_name }}' anyagnál lettek beállítva: hossz ráhagyás (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Ezek a nyers méretek a '{{ material_name }}' anyagnál lettek beállítva: hossz ráhagyás (**{{ length_increase }}**) és szélesség ráhagyás (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Az élzáró vastagságával csökkentett méretek. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
       title: Címkék
       options_layout: Elrendezés
@@ -1246,7 +1262,8 @@ tab:
         part_edge_xmax: Élszélesség 2
         part_face_zmin: Furnér hátoldal
         part_face_zmax: Furnér előlap
-        thumbnail_proportional_drawing: Miniatűr
+        thumbnail_proportional_drawing: ""
+        thumbnail_proportional_drawing_bottom: ""
         thumbnail_proportional: Arányos miniatűr
         thumbnail_square: Négyzetes miniatűr
         group_material: Anyag / Méretek
@@ -1335,7 +1352,7 @@ tab:
         is_group_selection: Az alkatrészlistában lévő **rejtett csoportok** alkatrészei nem lesznek megrajzolva.
         is_part_selection: Ez az áttekintő rajz csak a **kiválasztott alkatrészekre** korlátozódik.
       message:
-        adding_new_page: |-
+        adding_new_page: |
           Szeretne egy új oldalt hozzáadni?
         incompatible_page_format: |
         changing_units: |
@@ -1349,6 +1366,14 @@ tab:
       option_file_format: Formátum
       option_file_format_help: |
         Válassza ki az exportált fájl formátumát.
+      option_dxf_structure: DXF struktúra
+      option_dxf_structure_1: Rétegek
+      option_dxf_structure_2: Rétegek + Blokkok
+      option_dxf_structure_help: |
+        Válassza ki a DXF fájl struktúráját.
+
+        - A **Rétegek** struktúra minden vonalat síkban rajzol, csak rétegekkel különböztetve meg a különböző vonaltípusokat. *Ez a struktúra nagyobb kompatibilitást biztosít a külső szoftverekkel.*
+        - A **Rétegek + Blokkok** struktúra minden alkatrészhez egy blokkot hoz létre, és ezeket a blokkokat illeszti be annyiszor, ahányszor az alkatrészek ismétlődnek. *Ez a struktúra nagyobb rugalmasságot biztosít a fájl szerkesztéséhez.*
       option_unit: Mértékegység
       option_unit_help: |
         Válassza ki az exportált fájlban használt mértékegységet.
@@ -1366,10 +1391,9 @@ tab:
       option_faces_help: |
         Lehetővé teszi annak kiválasztását, hogy az alkatrész alakjának keresése az összes felületén vagy csak a célfelületen történjen.
       option_anchor: Referenciapontok
-      option_anchor_0: Alapértelmezett
+      option_anchor_0: Automatikus
       option_anchor_1: Az alkatrész origójának vetítése
       option_anchor_help: |
-        Engedélyezi az alkatrész tengelyének origóját mint referenciapontot.
       option_switch_yz: Függőleges tengely
       option_switch_yz_0: Z függőleges
       option_switch_yz_1: Y függőleges
@@ -1382,14 +1406,11 @@ tab:
 
         *Ez az opció nem ismeri fel a többi görbe típust.*
       option_merge_holes: Egyesítési mód
-      option_merge_holes_0: Alapértelmezett
-      option_merge_holes_1: Körvonal + Furatok + Egyesítés
+      option_merge_holes_0: ""
+      option_merge_holes_1: ""
       option_merge_holes_help: |
-        **Alapértelmezett**
-        Az alkatrész alakja mélységenként egy-egy réteggel kerül exportálásra.
-
-        **Körvonal + Furatok + Egyesítés**
-        Aktiválja az alkatrészek külső körvonalának elválasztását a furataitól, valamint az egyes üregek mélységeinek egyesítését.
+      option_merge_holes_overflow: ""
+      option_merge_holes_overflow_help: |
       option_include_paths: Útvonalak
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Felülethez nem kapcsolódó élek használata
@@ -1398,6 +1419,8 @@ tab:
       option_parts: Alkatrészek
       option_parts_help: |
         Válassza ki az alkatrészek színét.
+      option_parts_depths: ""
+      option_parts_depths_help: |
       option_parts_holes: Furatok
       option_parts_holes_help: |
         Válassza ki a furatok színét.
@@ -1501,11 +1524,11 @@ tab:
       thickness: Vastagság
       thickness_help: |
       length_increase: Hossz ráhagyás
-      length_increase_help: A **nyers hossz** meghatározásához alkalmazott ráhagyás.
+      length_increase_help: ""
       width_increase: Szélesség ráhagyás
-      width_increase_help: A **nyers szélesség** meghatározásához alkalmazott ráhagyás.
+      width_increase_help: ""
       thickness_increase: Vastagság ráhagyás
-      thickness_increase_help: A **nyers vastagság** meghatározásához alkalmazott ráhagyás.
+      thickness_increase_help: ""
       std_lengths: Standard hosszak
       std_lengths_help: |
       std_widths: Standard szélességek
@@ -1595,6 +1618,14 @@ tab:
     type_2: Komponens
     type_3: Alkatrész
     tooltip:
+      hide_node: ""
+      unhide_node: ""
+      locked_node: ""
+      is_active_node: ""
+      set_active_node: ""
+      edit_node_properties: ""
+      select_node: ""
+      unselect_node: ""
       open_node_url: Példány URL megnyitása
     edit_node:
       title_model: "A modell tulajdonságai"
@@ -1611,6 +1642,16 @@ tab:
       layer_name: Címke
       explode: Szétrobbantás
       explode_message: "Biztosan szét szeretné robbantani a **{{ name }}** példányt?"
+    option:
+      general: Általános
+      show_hidden_instances: ""
+      show_hidden_instances_help: ""
+      hide_descriptions: Leírások elrejtése
+      hide_descriptions_help: "Ha ez az opció be van kapcsolva, az alkatrészekre helyezett **leírások** nem lesznek megjelenítve."
+      hide_tags: Címkék elrejtése
+      hide_tags_help: "Ha ez az opció be van kapcsolva, az alkatrészek **címkéi** nem lesznek megjelenítve."
+      minimize_on_set_active: ""
+      minimize_on_set_active_help: ""
     error:
       no_model: Nincs nyitott modell. További információra van szükségem ;)
       no_entities: A modell üres!
@@ -1742,7 +1783,7 @@ tab:
     contribute: Támogatás
     backers: "{{ count }} anyagi támogató"
     backers_plural: "{{ count }} anyagi támogató"
-    ad: "Tetszik az OpenCutList?"
+    ad: ""
     objective: Célkitűzés
     objective_slogan: "Az OpenCutList mindannyiunké"
     objective_title:
@@ -1836,21 +1877,6 @@ tab:
       Az *OpenCutList*-et [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) és [Martin Müller](https://www.lairdubois.fr/@mobilarte) fejleszti. *Az összes [közreműködő](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) listája*.
     credits_translations: Fordítások
     credits_translators: |
-      - Nagy Zoltán (*magyar*)
-      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*angol*, *német*)
-      - Gildas Boureau (*francia* dokumentáció)
-      - Vladimir Badulya (*orosz*)
-      - Pierluigi Colombo (*olasz*)
-      - Nayton Sanches Barbosa, ellenőrizte és javította [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugál*)
-      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*spanyol*)
-      - [Radek Rýznar](https://onlinesketchup.cz) (*cseh*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky (*lengyel*)
-      - Sergey Isupov (*héber*), RTL felület még nem támogatott
-      - Soul Issam (*arab*), RTL felület még nem támogatott
-      - Nguyen Ngoc Tan (*vietnámi*)
-      - Andriy Toporivsky, Kostyantyn Shcherbey (*ukrán*)
-      - [刘涛](https://www.liutao91.cn) (*egyszerűsített kínai*)
-      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holland*)
     credits_description: |
       A bővítmény fejlesztése az [L'Air du Bois](https://www.lairdubois.fr) megosztási platform projekthez kapcsolódik.
       Ez a bővítmény szintén *nyílt forráskódú* és elérhető [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licenc alatt a [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension)-on.
@@ -1913,6 +1939,7 @@ tool:
     action_option_options_rectangle_centered_status: ""
     action_option_options_smoothing: Simítás
     action_option_options_smoothing_status: ""
+    action_option_options_measure_from_vertex_status: ""
     action_option_options_measure_from_diameter: ""
     action_option_options_measure_from_diameter_status: ""
     action_option_options_measure_from_radius_status: ""
@@ -1922,7 +1949,7 @@ tool:
     action_option_options_pull_centered_status: ""
     action_option_options_ask_name: ""
     action_option_options_ask_name_status: ""
-    action_pull_locked_status: ""
+    action_measure_locked_status: ""
     action_toggle_move_copy_status: ""
     action_change_move_anchor_status: ""
     success:
@@ -2072,4 +2099,4 @@ tool:
     error:
       not_part: Ez a felület nem tartozik alkatrészhez (komponenshez)
       not_flat_face: Ez a felület nem sík
-      incompatible_active_path: Az aktív útvonal nem teszi lehetővé ennek az alkatrésznek az exportálását.
+      incompatible_active_path: Az aktív útvonal nem teszi lehetővé ennek az alkatrésznek az exportálását

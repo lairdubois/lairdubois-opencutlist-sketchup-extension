@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: Español
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Este idioma aún no ha sido **completamente traducido**.
+
+  Para ayudar a finalizar la traducción, consulte la [Documentación de OpenCutList](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "Para tener en cuenta todos los cambios, debe **cerrar** y **reabrir** la ventana OpenCutList."
 _description: "Generador de lista de corte y diagrama de corte para carpinteros. Software de código abierto, financiado por crowdfunding, es fácil de usar ;)"
@@ -1008,7 +1013,7 @@ tab:
       option_scrap_bin_2d_sizes_help: |
       option_scrap_bin_2d_none: No
       option_optimization_mode: Modo de optimización
-      option_optimization_mode_help: |-
+      option_optimization_mode_help: |
         Define el modo de optimización, con o sin límite de tiempo.
       option_objective: Objetivo
       option_objective_help: |
@@ -1033,7 +1038,7 @@ tab:
       option_irregular_allowed_rotations_help: |
       option_irregular_allowed_rotations_0: Ninguna
       option_irregular_allowed_rotations_90: Pasos de 90°
-      option_irregular_allowed_rotations_180: Pasos de 180°.
+      option_irregular_allowed_rotations_180: Pasos de 180°
       option_irregular_allow_mirroring: ""
       option_irregular_allow_mirroring_help: |
       option_irregular_allow_mirroring_0: $t(default.no)
@@ -1177,9 +1182,10 @@ tab:
         no_bin_1d: ""
         no_bin_2d: ""
         invalid_part_shapes: "La forma de la parte '{{ name }}' no es válida."
-        no_solution: No se encontró solución.
+        no_solution: ""
         unplaced_parts: "**1 parte** no pudo ser colocada."
         unplaced_parts_plural: "**{{ count }} partes** no se pudo colocar."
+        unusable_part: ""
       warning:
         is_part_selection: Este diagrama de corte se limita a las **piezas seleccionadas**.
         cutting_dimensions: Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
@@ -1546,11 +1552,11 @@ tab:
       thickness: Espesor
       thickness_help: |
       length_increase: Longitud sobremedida
-      length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**. # TODO
+      length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**.
       width_increase: Ancho sobremedida
-      width_increase_help: Sobredimensionado aplicado al ancho para definir el **ancho bruto**.  # TODO
+      width_increase_help: Sobredimensionado aplicado al ancho para definir el **ancho bruto**.
       thickness_increase: Espesor sobremedida
-      thickness_increase_help: Sobredimensionado aplicado al espesor para definir el **espesor bruto**. # TODO
+      thickness_increase_help: Sobredimensionado aplicado al espesor para definir el **espesor bruto**.
       std_lengths: Longitudes estándar
       std_lengths_help: |
       std_widths: Anchos estándar

@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: Українська
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Ця мова ще не була **повністю перекладена**.
+
+  Щоб допомогти завершити переклад, будь ласка, зверніться до [Документації OpenCutList](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "Щоб застосувати всі зміни, необхідно **закрити** і **знову відкрити** вікно OpenCutList."
 _description: "Плагін розрахунку карт розкрою листового та погонного матеріалів для деревообробників і не тільки. Відкритий вихідний код, фінансується користувачами і простий у використанні ;)"
@@ -1205,9 +1210,10 @@ tab:
         no_bin_1d: "Не вибираються стандартні розміри погонажа та крайок, а залишки не визначені."
         no_bin_2d: "Не вибираються стандартні панелі або листи, а залишки не визначені."
         invalid_part_shapes: "Форма деталі '{{ name }}' є некоректною."
-        no_solution: Рішення не знайдено.
+        no_solution: ""
         unplaced_parts: "**1 деталь** не могла бути розміщена."
         unplaced_parts_plural: "**{{ count }} деталей** не можуть бути розміщені."
+        unusable_part: ""
       warning:
         is_part_selection: Цей звіт обмежено **вибраними деталями**.
         cutting_dimensions: Ця карта розкрою відображає деталі з їх **пильними** розмірами.
@@ -1591,11 +1597,11 @@ tab:
 
         *Якщо одиниці не вказано, буде враховано одиницю моделі.*
       length_increase: Припуск по довжині
-      length_increase_help: Припуск додається до фактичної довжини для розрахунку **пильної довжини**. # TODO
+      length_increase_help: Припуск додається до фактичної довжини для розрахунку **пильної довжини**.
       width_increase: Припуск по ширині
-      width_increase_help: Припуск до фактичної ширини для розрахунку **пильної ширини**.  # TODO
+      width_increase_help: Припуск до фактичної ширини для розрахунку **пильної ширини**.
       thickness_increase: Припуск по товщині
-      thickness_increase_help: Припуск до фактичної товщини для розрахунку **пильної товщини**. # TODO
+      thickness_increase_help: Припуск до фактичної товщини для розрахунку **пильної товщини**.
       std_lengths: Стандартні довжини
       std_lengths_help: |
         Стандартна довжина, доступна для цього матеріалу.
