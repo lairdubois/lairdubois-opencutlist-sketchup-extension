@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: Čeština
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Tento jazyk ještě nebyl **úplně přeložen**.
+
+  Chcete-li překlad dokončit, nahlédněte prosím do [Dokumentace k OpenCutListu](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "Chcete-li provést změny, musíte toto okno **zavřít** a **znovu otevřít**."
 _description: "Kusovník a nářezový plán pro truhláře. Zdarma, financován z darů a snadno použitelný ;)"
@@ -1205,9 +1210,10 @@ tab:
         no_bin_1d: Nebyla vybrána žádná standardní deska ani olepování hran a nebyly k dispozici žádné zbytky.
         no_bin_2d: Nebyla vybrána žádná standardní tabule ani dýha a nebyly k dispozici žádné odřezky.
         invalid_part_shapes: "Tvar části '{{ name }}' je neplatný."
-        no_solution: Nebylo nalezeno žádné řešení.
+        no_solution: ""
         unplaced_parts: "**1 díl** se nepodařilo umístit."
         unplaced_parts_plural: "Nepodařilo se umístit **{{ count }} dílů**."
+        unusable_part: ""
       warning:
         is_part_selection: Tento nářezový plán je omezen na **vybrané části**.
         cutting_dimensions: Tento nářezový plán používá **hrubé** rozměry dílů.
@@ -1591,11 +1597,11 @@ tab:
 
         *Pokud není zadána žádná jednotka, použije se modelová jednotka.*
       length_increase: Nadmíra pro délku
-      length_increase_help: Nadmíra použitá na délku k nastavení **hrubé délky**. # TODO
+      length_increase_help: Nadmíra použitá na délku k nastavení **hrubé délky**.
       width_increase: Nadmíra pro šířku
-      width_increase_help: Nadmíra použitá na šířku k nastavení **hrubé šířky**.  # TODO
+      width_increase_help: Nadmíra použitá na šířku k nastavení **hrubé šířky**.
       thickness_increase: Nadmíra pro tloušťku
-      thickness_increase_help: Nadmíra použitá na tloušťku k nastavení **hrubé tloušťky**. # TODO
+      thickness_increase_help: Nadmíra použitá na tloušťku k nastavení **hrubé tloušťky**.
       std_lengths: Standardní délky
       std_lengths_help: |
         Pro tento materiál jsou k dispozici standardní délky.

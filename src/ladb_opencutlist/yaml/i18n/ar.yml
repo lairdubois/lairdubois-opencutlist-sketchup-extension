@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: "العربية (experimental, no rtl)"
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  لم تتم ترجمة هذه اللغة بعد **ترجمة كاملة**.
+
+  للمساعدة في إنهاء الترجمة، يرجى الرجوع إلى [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "OpenCutList لأخذ التغييرات بالحسبان، عليك **غلق** و **إعادة فتح** نافذة "
 _description: "مولد لرسومات التقطيع التخطيطية و قوائم القَطع موجه للنجارين. مفتوح المصدر و ممول جماهيريا و سهل الاستخدام ;)"
@@ -1205,9 +1210,10 @@ tab:
         no_bin_1d: لم تحدد أي قضبان خشبية أو شرائط حاشية قياسية و لا أي بقايا
         no_bin_2d: لم تحدد أي ألواح خشبية أو أوراق قشرة خشب قياسية و لا أي بقايا
         invalid_part_shapes: "شكل القطعة '{{ name }}' غير صالح"
-        no_solution: لم يتم العثور على أي حل
+        no_solution: ""
         unplaced_parts: "تعذر وضع **1 قطعة** "
         unplaced_parts_plural: "تعذر وضع **{{ count }} قطع / قطعة**"
+        unusable_part: ""
       warning:
         is_part_selection: رسم التقطيعِ التخطيطيُّ هذا محدود بـ **القطع المحددة**
         cutting_dimensions: يستخدم رسم التقطيعِ التخطيطيُّ هذا البعد الـ **أولي** للقطع.
@@ -1591,11 +1597,11 @@ tab:
 
         * إذا لم يتم تحديد وحدة، فستطبق وحدة النموذج.*
       length_increase: تمديد الطول
-      length_increase_help: طُبق تمديد على الطول لتحديد **الطول الأولي**. # TODO
+      length_increase_help: طُبق تمديد على الطول لتحديد **الطول الأولي**.
       width_increase: تمديد العرض
-      width_increase_help: طُبق تمديد على العرض لتحديد **العرض الأولي**.  # TODO
+      width_increase_help: طُبق تمديد على العرض لتحديد **العرض الأولي**.
       thickness_increase: تمديد السُمك
-      thickness_increase_help: طُبق تمديد على السُّمك لتحديد **السمك الأولي**. # TODO
+      thickness_increase_help: طُبق تمديد على السُّمك لتحديد **السمك الأولي**.
       std_lengths: الأطوال النظامية
       std_lengths_help: |
         الأطوال النظامية المتوفرة لهذه الخامة 

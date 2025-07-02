@@ -1,5 +1,10 @@
 # this label must be in your language
 _label: Deutsch
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Diese Sprache wurde noch nicht **vollständig übersetzt**.
+
+  Um bei der Fertigstellung der Übersetzung zu helfen, konsultieren Sie bitte die [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
 # the reload message will be displayed when a user switches to this language
 _reload_msg: "Um alle Änderungen zu berücksichtigen, müssen Sie dieses Fenster **schließen** und **wieder öffnen**."
 _description: "Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)"
@@ -153,7 +158,7 @@ core:
     failed_export_to: |
       Beim Exportieren in die Datei, *{{ path }}*, ist ein Fehler aufgetreten.
       **{{ error }}**
-    unsupported_file_format: "Nicht unterstütztes Dateiformat : **{{ fromat }}**"
+    unsupported_file_format: "Nicht unterstütztes Dateiformat : **{{ format }}**"
   success:
     exported_to: "Erfolgreicher Export nach {{ path }}."
     copied_to_clipboard: In die Zwischenablage kopiert
@@ -1205,7 +1210,7 @@ tab:
         no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zu Verfügung.
         no_bin_2d: Keine Standard-Platte oder -Furnierblatt wurde ausgewählt und es stehen keine Reste zu Verfügung.
         invalid_part_shapes: "Die Form des Teils '{{ name }}' ist ungültig."
-        no_solution: "Es wurde keine Lösung gefunden, um **alle Teile** in das verfügbare Material zu setzen." # TODO
+        no_solution: "Es wurde keine Lösung gefunden, um **alle Teile** in das verfügbare Material zu setzen."
         unplaced_parts: "**1 Teil** konnte nicht platziert werden."
         unplaced_parts_plural: "**{{ count }} Teile** konnten nicht platziert werden."
         unusable_part: Teil ist zu gross
