@@ -38,6 +38,12 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Fixed face untyped material removing when editing sheet good part properties
   * Fixed truncated text in OpenCutList tools on Windows if system fonts are scaled
 
+  ### BETA
+
+  * 2025-07-07
+    * Updaded AR language
+
+
 * 6.4.0 (2025-05-27)
 
   * Added **Polish** language
