@@ -46,7 +46,7 @@ default:
   automatic: 42 - Automatyczny
   empty_filename: 43 - Bez tytułu.skp
   help: 44 - Pomoc
-  error: 45 - Ceruj!
+  error: 45 - Uwaga!
   warning: 46 - Uwaga
   tip: 47 - Wskazówka
   good: 48 - Dobry

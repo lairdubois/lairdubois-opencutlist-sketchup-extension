@@ -49,7 +49,7 @@ default:
   automatic: Automatyczny
   empty_filename: Bez tytułu.skp
   help: Pomoc
-  error: Ceruj!
+  error: Uwaga!
   warning: Uwaga
   tip: Wskazówka
   good: Dobry
