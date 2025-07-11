@@ -195,6 +195,8 @@ module Ladb::OpenCutList
     COLORIZATION_SCREEN = 1
     COLORIZATION_SCREEN_AND_PRINT = 2
 
+    EDGE_DEFAULT_COLOR = '#668eee'.freeze
+
     AVAILABLE_ROTATIONS = {
       "0" => [
         { start: 0, end: 0 },
@@ -246,6 +248,8 @@ module Ladb::OpenCutList
                    irregular_allowed_rotations: '0',
                    irregular_allow_mirroring: false,
 
+                   hide_material_colors: false,
+
                    hidden_group_ids: []   # Unused locally, but necessary for UI
 
     )
@@ -292,6 +296,8 @@ module Ladb::OpenCutList
 
       @irregular_allowed_rotations = irregular_allowed_rotations.to_s
       @irregular_allow_mirroring = irregular_allow_mirroring
+
+      @hide_material_colors = hide_material_colors
 
       # Internals
 
@@ -973,10 +979,10 @@ module Ladb::OpenCutList
               if !@hide_edges_preview && part_def.edge_count > 0
 
                 svg += "<g class='item-projection' transform='translate(#{px_item_rect_half_width} #{-px_item_rect_half_height})#{" rotate(#{-item_def.angle})" if item_def.angle != 0}'>"
-                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{px_item_width / 2 - px_node_edge_offset - px_edge_width}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:ymin])}'/>" unless part_def.edge_material_names[:ymin].nil?
-                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:ymax])}'/>" unless part_def.edge_material_names[:ymax].nil?
-                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:xmin])}'/>" unless part_def.edge_material_names[:xmin].nil?
-                  svg += "<rect x='#{px_item_length / 2 - px_node_edge_offset - px_edge_width}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{ColorUtils.color_to_hex(part_def.edge_material_colors[:xmax])}'/>" unless part_def.edge_material_names[:xmax].nil?
+                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{px_item_width / 2 - px_node_edge_offset - px_edge_width}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[:ymin])}'/>" unless part_def.edge_material_names[:ymin].nil?
+                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[:ymax])}'/>" unless part_def.edge_material_names[:ymax].nil?
+                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[:xmin])}'/>" unless part_def.edge_material_names[:xmin].nil?
+                  svg += "<rect x='#{px_item_length / 2 - px_node_edge_offset - px_edge_width}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[:xmax])}'/>" unless part_def.edge_material_names[:xmax].nil?
                 svg += '</g>'
 
               end

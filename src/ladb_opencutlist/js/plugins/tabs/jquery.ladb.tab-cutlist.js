@@ -3161,8 +3161,9 @@
                                 rubyCallCommand('cutlist_group_packing_cancel');
                             });
                             rubyCallCommand('cutlist_group_packing_start', $.extend({
-                                part_ids: partIds
-                            }, packingOptions), function (response) {
+                                part_ids: partIds,
+                                hide_material_colors: that.generateOptions.hide_material_colors
+                        }, packingOptions), function (response) {
 
                                 if (response.running) {
                                     let waitingForResponse = false;
