@@ -251,7 +251,7 @@ core:
       remove: Oublier cette couleur
     textinput_code:
       snippets: Exemples de formules
-      help: Tappez **@** pour ouvrir la liste des variables de donnée.
+      help: Tapez **@** pour ouvrir la liste des variables de donnée. # Fixed Typo
     textinput_size:
       quantity: Qté
     three_viewer:
