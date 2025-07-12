@@ -2583,6 +2583,7 @@ module Ladb::OpenCutList
 
   class SmartPicker
 
+    attr_reader :tool
     attr_reader :pick_position
     attr_reader :picked_face, :picked_face_path
     attr_reader :picked_point, :picked_point_path

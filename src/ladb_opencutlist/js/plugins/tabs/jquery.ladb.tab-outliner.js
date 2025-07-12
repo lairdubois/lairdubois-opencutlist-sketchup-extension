@@ -1,6 +1,13 @@
 +function ($) {
     'use strict';
 
+    // CONSTANTS
+    // ======================
+
+    // Various Consts
+
+    const MULTIPLE_VALUE = '-1';
+
     // CLASS DEFINITION
     // ======================
 
@@ -281,6 +288,51 @@
     LadbTabOutliner.prototype.editNode = function (node, tab, callback) {
         const that = this;
 
+        const editedNode = JSON.parse(JSON.stringify(node));  // Create a clone
+        let editedNodes = [];
+        if (node.selected) {
+            editedNodes = this.getSelectedNodes();
+        } else {
+            editedNodes.push(node);
+        }
+
+        let multiple = editedNodes.length > 1;
+        if (multiple) {
+
+            for (let i = 0; i < editedNodes.length; i++) {
+                if (editedNode.layer !== editedNodes[i].layer) {
+                    editedNode.layer = MULTIPLE_VALUE;
+                }
+                if (editedNode.name !== editedNodes[i].name) {
+                    editedNode.name = MULTIPLE_VALUE;
+                }
+                if (JSON.stringify(editedNode.material) !== JSON.stringify(editedNodes[i].material)) {
+                    editedNode.material = MULTIPLE_VALUE;
+                }
+                if (editedNode.type === 2 && editedNodes[i].type === 2 || editedNode.type === 3 && editedNodes[i].type === 3) {   // 2 = TYPE_COMPONENT, 3 = TYPE_PART
+                    if (editedNode.definition_name !== editedNodes[i].definition_name) {
+                        delete editedNode.definition_name;
+                    }
+                    if (editedNode.description !== editedNodes[i].description) {
+                        editedNode.description = MULTIPLE_VALUE;
+                    }
+                    if (editedNode.url !== editedNodes[i].url) {
+                        editedNode.url = MULTIPLE_VALUE;
+                    }
+                    editedNode.tags = editedNode.tags.filter(function (tag) {  // Extract only commun tags
+                        return -1 !== editedNodes[i].tags.indexOf(tag);
+                    });
+                } else {
+                    editedNode.type = -1;
+                    delete editedNode.definition_name;
+                    delete editedNode.description;
+                    delete editedNode.url;
+                    delete editedNode.tags;
+                }
+            }
+
+        }
+
         if (tab === undefined) {
             tab = this.lastEditNodeTab;
         }
@@ -292,22 +344,21 @@
         // Keep the edited node
         this.editedNode = node;
 
-        rubyCallCommand('outliner_edit', { id: that.editedNode.id }, function (response) {
+        rubyCallCommand('outliner_edit', { ids: editedNodes.map(node => node.id) }, function (response) {
 
             if (response.errors) {
                 that.dialog.notifyErrors(response.errors);
             } else {
 
-                // Update node ID in case of group made unique
-                // that.editedNode.id = response.node_id;
-
                 const $modal = that.appendModalInside('ladb_outliner_modal_edit', 'tabs/outliner/_modal-edit.twig', {
                     capabilities: that.dialog.capabilities,
                     mass_unit_strippedname: that.massUnitStrippedname,
                     length_unit_strippedname: that.lengthUnitStrippedname,
-                    node: node,
-                    tab: tab,
-                    materialUsages: that.availableMaterials
+                    node: editedNode,
+                    nodeCount: editedNodes.length,
+                    multiple: multiple,
+                    materialUsages: that.availableMaterials,
+                    tab: tab
                 });
 
                 // Fetch UI elements
@@ -360,8 +411,8 @@
                 });
 
                 // Bind select
-                if (node.material) {
-                    $selectMaterialName.val(node.material.name);
+                if (editedNode.material) {
+                    $selectMaterialName.val(editedNode.material === MULTIPLE_VALUE ? MULTIPLE_VALUE : editedNode.material.name);
                 }
                 $selectMaterialName
                     .selectpicker(SELECT_PICKER_OPTIONS)
@@ -413,28 +464,67 @@
                 });
                 $btnUpdate.on('click', function () {
 
-                    const data = {
-                        id: that.editedNode.id,
-                        name: $inputName.val(),
-                        material_name: $selectMaterialName.val()
-                    }
-                    if ($inputDefinitionName.length > 0) {
-                        data.definition_name = $inputDefinitionName.val();
-                    }
-                    if ($inputLayerName.length > 0) {
-                        data.layer_name = $inputLayerName.val();
-                    }
-                    if ($inputDescription.length > 0) {
-                        data.description = $inputDescription.val();
-                    }
-                    if ($inputUrl.length > 0) {
-                        data.url = $inputUrl.val();
-                    }
-                    if ($inputTags.length > 0) {
-                        data.tags = $inputTags.tokenfield('getTokensList').split(';')
+                    console.log(editedNodes);
+
+                    let nodesData = [];
+                    for (let i = 0; i < editedNodes.length; i++) {
+
+                        let nodeData = {
+                            id: editedNodes[i].id,
+                            name: editedNodes[i].name,
+                        };
+                        nodesData.push(nodeData);
+
+                        if (!$inputName.ladbTextinputText('isMultiple')) {
+                            nodeData.name = $inputName.val();
+                        }
+                        if ($inputLayerName.length > 0) {
+                            if (!$inputLayerName.ladbTextinputText('isMultiple')) {
+                                nodeData.layer_name = $inputLayerName.val();
+                            } else {
+                                nodeData.layer_name = editedNodes[i].layer_name;
+                            }
+                        }
+                        if ($selectMaterialName.length > 0) {
+                            if ($selectMaterialName.val() !== MULTIPLE_VALUE) {
+                                nodeData.material_name = $selectMaterialName.val();
+                            } else {
+                                nodeData.material_name = editedNodes[i].material.name;
+                            }
+                        }
+                        if ($inputDefinitionName.length > 0) {
+                            if(!$inputDefinitionName.ladbTextinputText('isMultiple')) {
+                                nodeData.definition_name = $inputDefinitionName.val();
+                            } else {
+                                nodeData.definition_name = editedNodes[i].definition.name;
+                            }
+                        }
+                        if ($inputDescription.length > 0) {
+                            if (!$inputDescription.ladbTextinputArea('isMultiple')) {
+                                nodeData.description = $inputDescription.val();
+                            } else {
+                                nodeData.description = editedNodes[i].definition.description;
+                            }
+                        }
+                        if ($inputUrl.length > 0) {
+                            if (!$inputUrl.ladbTextinputUrl('isMultiple')) {
+                                nodeData.url = $inputUrl.val();
+                            } else {
+                                nodeData.url = editedNodes[i].url;
+                            }
+                        }
+                        if ($inputTags.length > 0) {
+                            const untouchTags = editedNodes[i].tags.filter(function (tag) {
+                                return !editedNode.tags.includes(tag)
+                            });
+                            nodeData.tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
+                        }
+
                     }
 
-                    rubyCallCommand('outliner_update', data, function (response) {
+                    console.log(nodesData);
+
+                    rubyCallCommand('outliner_update', { nodes_data: nodesData }, function (response) {
 
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
@@ -453,7 +543,7 @@
                 $modal
                     .on('shown.bs.modal', function () {
                         if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
-                            rubyCallCommand('outliner_highlight', {id: node.id, highlighted: true});
+                            rubyCallCommand('outliner_highlight', { id: node.id, highlighted: true });
                         }
                     })
                     .on('hidden.bs.modal', function () {
@@ -462,7 +552,7 @@
                         that.editedNode = null;
 
                         if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
-                            rubyCallCommand('outliner_highlight', {id: node.id, highlighted: false});
+                            rubyCallCommand('outliner_highlight', { id: node.id, highlighted: false });
                         }
                     })
                 ;
@@ -602,6 +692,20 @@
         }
         return null;
     };
+
+    LadbTabOutliner.prototype.getSelectedNodes = function (parent) {
+        if (parent === undefined) {
+            parent = this.rootNode;
+        }
+        var selectedNodes = [];
+        if (parent.selected) {
+            selectedNodes.push(parent);
+        }
+        for (const child of parent.children) {
+            selectedNodes = selectedNodes.concat(this.getSelectedNodes(child));
+        }
+        return selectedNodes;
+    }
 
     LadbTabOutliner.prototype.showObsolete = function (messageI18nKey, forced) {
         if (!this.isObsolete() || forced) {

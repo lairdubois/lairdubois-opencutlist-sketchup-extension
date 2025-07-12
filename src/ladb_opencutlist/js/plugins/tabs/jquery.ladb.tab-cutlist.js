@@ -3876,7 +3876,7 @@
             const isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(part.id) && this.selectionPartIds.length > 1;
             const multiple = isFolder || isSelected;
 
-            const editedPart = JSON.parse(JSON.stringify(isFolder ? part.children[0] : part));
+            const editedPart = JSON.parse(JSON.stringify(isFolder ? part.children[0] : part));  // Create a clone
             const editedParts = [];
             if (multiple) {
                 if (isFolder && !isSelected) {
