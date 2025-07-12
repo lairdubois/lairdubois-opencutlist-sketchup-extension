@@ -2041,7 +2041,7 @@ tool:
     action_2_status: Малювання об'єму на основі багатокутної форми
     action_2_state_1_status: "Натисніть, щоб встановити нову точку або ввести відстань"
     action_x_state_2_status: "Натисніть, щоб встановити висоту або ввести відстань"
-    action_option_group_offset: Зміщення
+    action_option_group_offset: Відступ
     action_option_group_segments: Сегменти
     action_option_group_options: Опції
     action_option_offset_shape_offset: Зміщення
@@ -2162,9 +2162,9 @@ tool:
     title: Орієнтація
     action_0: Скасувати
     action_0_status: "Натисніть на деталь, щоб перевернути її екземпляр уздовж одного з її розмірів"
-    action_1: Поміняти довжину ↔ ширину
+    action_1: Змінити Довжину ↔ Ширину
     action_1_status: "Натисніть на деталь, щоб поміняти її довжину на ширину"
-    action_2: Поміняйте Лице ↔ Тил
+    action_2: Змінити Лице ↔ Тил
     action_2_status: "Клацніть на деталі, щоб поміняти читання її лиця на зворотню сторону"
     action_3: Адаптувати осі
     action_3_status: "Наведіть на грань деталі та натисніть на ребро, щоб адаптувати осі"
@@ -2190,7 +2190,7 @@ tool:
     action_1_status: Натисніть на одну грань деталі
     action_2: Експортувати грань
     action_2_status: Натисніть на одну грань
-    action_3: Експортувати шлях
+    action_3: Експортувати траєкторію
     action_3_status: Натисніть на ребро
     action_option_group_file_format: Формат
     action_option_group_unit: Одиниці
