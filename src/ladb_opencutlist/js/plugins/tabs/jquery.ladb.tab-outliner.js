@@ -85,7 +85,9 @@
 
                 that.renderNodes();
 
-                const $toggleHiddenBtn = $('#ladb_btn_toggle_hidden')
+                const $toggleHiddenBtn = $('#ladb_btn_toggle_hidden');
+                const $invertSelectBtn = $('#ladb_btn_invert_select');
+
                 if (that.generateOptions.show_hidden_instances) {
                     $('i', $toggleHiddenBtn).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
                 }
@@ -107,6 +109,16 @@
                     }
                     that.renderNodes();
                     return false;
+                });
+                $invertSelectBtn.on('click', function () {
+                    $(this).blur();
+
+                    rubyCallCommand('outliner_invert_select', null, function (response) {
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        }
+                    });
+
                 });
 
                 // Restore button state

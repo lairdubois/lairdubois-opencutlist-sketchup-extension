@@ -19,6 +19,8 @@
     LadbTextinputText.prototype.init = function () {
         LadbTextinputAbstract.prototype.init.call(this);
 
+        let that = this;
+
         if (this.options.autocomplete) {
 
             const autocompleteOptions = this.options.autocomplete;
@@ -77,6 +79,9 @@
             }
 
             this.$element.autocomplete(this.options.autocomplete);
+            this.$element.on('autocompletechange', function () {
+                that.$element.trigger('change');
+            })
 
         }
 

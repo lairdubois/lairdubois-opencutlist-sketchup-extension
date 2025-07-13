@@ -32,6 +32,10 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Select', true, false, false)
 
 
+      if Sketchup.version_number >= 2000000000 && node_def.parent && !node_def.parent.active
+        model.active_path = node_def.parent.path
+      end
+
       model.selection.toggle(entity)
 
 

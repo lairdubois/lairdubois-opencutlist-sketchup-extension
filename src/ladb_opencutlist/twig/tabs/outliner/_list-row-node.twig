@@ -17,7 +17,11 @@
                     {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible{% if not node.visible %} ladb-tool-dark{% endif %}" data-toggle="tooltip" title="{{ ('tab.outliner.tooltip.'~(node.visible ? 'hide' : 'unhide')~'_node')|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}"></i></a>{% endif %}
                     {% if capabilities.sketchup_version_number >= 2000000000 %}<a href="#" class="ladb-btn-node-set-active{% if node.active %} ladb-tool-info{% endif %}" data-toggle="tooltip" title="{{ ('tab.outliner.tooltip.'~(node.active ? 'is' : 'set')~'_active_node')|i18next }}"><i class="ladb-opencutlist-icon-target"></i></a>{% endif %}
                     <a href="#" class="ladb-btn-node-edit ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.outliner.tooltip.edit_node_properties'|i18next }}"><i class="ladb-opencutlist-icon-edit{% if node.selected %}-multiple{% endif %}"></i></a>
-                    {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-select no-print{% if node.selected %} ladb-active{% endif %}" data-toggle="tooltip" title="{{ ('tab.outliner.tooltip.'~(node.selected ? 'unselect' : 'select')~'_node')|i18next }}"><i class="ladb-opencutlist-icon-check-box{% if node.selected %}-with-check-sign{% endif %}"></i></a>{% endif %}
+                    {% if node.type == 0 %}{# 0 = TYPE_MODEL #}
+                        <span style="display: inline-block; width: 20px;">&nbsp;</span>
+                    {% else %}
+                        <a href="#" class="ladb-btn-node-toggle-select no-print{% if node.selected %} ladb-active{% endif %}" data-toggle="tooltip" title="{{ ('tab.outliner.tooltip.'~(node.selected ? 'unselect' : 'select')~'_node')|i18next }}"><i class="ladb-opencutlist-icon-check-box{% if node.selected %}-with-check-sign{% endif %}"></i></a>
+                    {% endif %}
                 {% endif %}
             </div>
             {% if node.layer %}
