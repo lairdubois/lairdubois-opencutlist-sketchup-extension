@@ -1,6 +1,6 @@
 module Ladb::OpenCutList
 
-  class OutlinerInvertSelectWorker
+  class OutlinerToggleSelectAllWorker
 
     def initialize(outliner_def)
 
@@ -20,7 +20,11 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Select All', true, false, false)
 
 
-      model.selection.invert
+      if model.selection.empty?
+        model.selection.add(model.active_entities.to_a)
+      else
+        model.selection.clear
+      end
 
 
       # Commit model modification operation

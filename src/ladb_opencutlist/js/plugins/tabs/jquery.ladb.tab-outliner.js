@@ -86,7 +86,7 @@
                 that.renderNodes();
 
                 const $toggleHiddenBtn = $('#ladb_btn_toggle_hidden');
-                const $invertSelectBtn = $('#ladb_btn_invert_select');
+                const $toggleSelectAllBtn = $('#ladb_btn_toggle_select_all');
 
                 if (that.generateOptions.show_hidden_instances) {
                     $('i', $toggleHiddenBtn).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
@@ -110,10 +110,10 @@
                     that.renderNodes();
                     return false;
                 });
-                $invertSelectBtn.on('click', function () {
+                $toggleSelectAllBtn.on('click', function () {
                     $(this).blur();
 
-                    rubyCallCommand('outliner_invert_select', null, function (response) {
+                    rubyCallCommand('outliner_toggle_select_all', null, function (response) {
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
                         }
@@ -312,7 +312,7 @@
         if (multiple) {
 
             for (let i = 0; i < editedNodes.length; i++) {
-                if (editedNode.layer !== editedNodes[i].layer) {
+                if (JSON.stringify(editedNode.layer) !== JSON.stringify(editedNodes[i].layer)) {
                     editedNode.layer = MULTIPLE_VALUE;
                 }
                 if (editedNode.name !== editedNodes[i].name) {

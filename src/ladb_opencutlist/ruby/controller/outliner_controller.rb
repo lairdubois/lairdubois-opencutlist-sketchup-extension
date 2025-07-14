@@ -67,8 +67,8 @@ module Ladb::OpenCutList
       PLUGIN.register_command("outliner_toggle_select") do |node_data|
         toggle_select_command(node_data)
       end
-      PLUGIN.register_command("outliner_invert_select") do |node_data|
-        invert_select_command(node_data)
+      PLUGIN.register_command("outliner_toggle_select_all") do |node_data|
+        toggle_select_all_command(node_data)
       end
       PLUGIN.register_command("outliner_edit") do |node_data|
         edit_command(node_data)
@@ -590,11 +590,11 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def invert_select_command(node_data)
-      require_relative '../worker/outliner/outliner_invert_select_worker'
+    def toggle_select_all_command(node_data)
+      require_relative '../worker/outliner/outliner_toggle_select_all_worker'
 
       # Setup worker
-      worker = OutlinerInvertSelectWorker.new(@outliner_def)
+      worker = OutlinerToggleSelectAllWorker.new(@outliner_def)
 
       # Run !
       worker.run
