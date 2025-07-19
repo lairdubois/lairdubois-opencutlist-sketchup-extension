@@ -485,8 +485,6 @@
                 });
                 $btnUpdate.on('click', function () {
 
-                    console.log(editedNodes);
-
                     let nodesData = [];
                     for (let i = 0; i < editedNodes.length; i++) {
 
@@ -510,21 +508,21 @@
                             if ($selectMaterialName.val() !== MULTIPLE_VALUE) {
                                 nodeData.material_name = $selectMaterialName.val();
                             } else {
-                                nodeData.material_name = editedNodes[i].material.name;
+                                nodeData.material_name = editedNodes[i].material_name;
                             }
                         }
                         if ($inputDefinitionName.length > 0) {
                             if(!$inputDefinitionName.ladbTextinputText('isMultiple')) {
                                 nodeData.definition_name = $inputDefinitionName.val();
                             } else {
-                                nodeData.definition_name = editedNodes[i].definition.name;
+                                nodeData.definition_name = editedNodes[i].definition_name;
                             }
                         }
                         if ($inputDescription.length > 0) {
                             if (!$inputDescription.ladbTextinputArea('isMultiple')) {
                                 nodeData.description = $inputDescription.val();
                             } else {
-                                nodeData.description = editedNodes[i].definition.description;
+                                nodeData.description = editedNodes[i].description;
                             }
                         }
                         if ($inputUrl.length > 0) {
@@ -542,8 +540,6 @@
                         }
 
                     }
-
-                    console.log(nodesData);
 
                     rubyCallCommand('outliner_update', { nodes_data: nodesData }, function (response) {
 

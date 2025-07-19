@@ -388,6 +388,12 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-material-type-5:before {
     content: "\e950";
 }
+.ladb-opencutlist-icon-eye-close-multiple:before {
+    content: "\e9b7";
+}
+.ladb-opencutlist-icon-eye-open-multiple:before {
+    content: "\e9b8";
+}
 .ladb-opencutlist-icon-qr-code:before {
     content: "\e9b1";
 }

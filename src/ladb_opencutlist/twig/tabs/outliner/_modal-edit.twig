@@ -4,7 +4,7 @@
 {% if node.type == 0 %}{# 0 = TYPE_MODEL #}
     {% set title = 'tab.outliner.edit_node.title_model'|i18next %}
 {% else %}
-    {% set title = 'tab.outliner.edit_node.title_instance'|i18next({ 'name':node.name }) %}
+    {% set title = multiple ? ('tab.cutlist.edit_part.title_multiple'|i18next) : 'tab.outliner.edit_node.title_instance'|i18next({ 'name':node.name }) %}
 {% endif %}
 
 {% block headerToolsInner %}
