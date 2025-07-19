@@ -22,7 +22,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.outliner.error.no_model' ] } unless model
 
-      node_defs = @ids.map { |id| @outliner_def.get_node_def_by_id(id) }
+      node_defs = @ids.map { |id| @outliner_def.get_node_def_by_id(id) }.compact
       return { :errors => [ 'tab.outliner.error.node_not_found' ] } if node_defs.empty?
 
       # Start model modification operation

@@ -8,16 +8,18 @@ module Ladb::OpenCutList
 
     OVERLAY_ID = 'ladb_opencutlist.highlight_overlay'
 
-    def initialize(path, text, color = Kuix::COLOR_RED)
+    def initialize(highlight_defs)
       super(OVERLAY_ID, 'Highlight Overlay')
 
-      @drawing_def = CommonDrawingDecompositionWorker.new(path,
-         face_for_part: false,
-         ignore_surfaces: true,
-         ignore_edges: true,
-         ignore_clines: false
-      ).run
-      if @drawing_def
+      highlight_defs.each do |highlight_def|
+
+        @drawing_def = CommonDrawingDecompositionWorker.new(highlight_def.path,
+           face_for_part: false,
+           ignore_surfaces: true,
+           ignore_edges: true,
+           ignore_clines: false
+        ).run
+        if @drawing_def
 
         view = Sketchup.active_model.active_view
 
@@ -32,7 +34,7 @@ module Ladb::OpenCutList
             # Highlight faces
             k_mesh = Kuix::Mesh.new
             k_mesh.add_triangles(@drawing_def.face_manipulators.flat_map { |face_manipulator| face_manipulator.triangles })
-            k_mesh.background_color = ColorUtils.color_translucent(color, 80)
+            k_mesh.background_color = ColorUtils.color_translucent(highlight_def.color, 80)
             k_group.append(k_mesh)
 
           end
@@ -42,7 +44,7 @@ module Ladb::OpenCutList
             # Highlight clines
             k_segments = Kuix::Segments.new
             k_segments.add_segments(@drawing_def.cline_manipulators.flat_map { |cline_manipulator| cline_manipulator.segment })
-            k_segments.color = ColorUtils.color_translucent(color)
+            k_segments.color = ColorUtils.color_translucent(highlight_def.color)
             k_segments.line_width = 2
             k_group.append(k_segments)
 
@@ -51,7 +53,7 @@ module Ladb::OpenCutList
           # Box helper
           k_box = Kuix::BoxMotif.new
           k_box.bounds.copy!(@drawing_def.bounds)
-          k_box.color = color
+          k_box.color = highlight_def.color
           k_box.line_width = 1
           k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
           k_box.on_top = true
@@ -59,7 +61,7 @@ module Ladb::OpenCutList
 
         # 2D
 
-        unless text.nil? || text.empty?
+        unless highlight_def.text.nil? || highlight_def.text.empty?
 
           unit = get_unit(view)
 
@@ -102,18 +104,20 @@ module Ladb::OpenCutList
             end
           end
 
-          k_box = Kuix::Panel.new
-          k_box.layout_data = Kuix::StaticLayoutData.new(px, py, -1, -1, Kuix::Anchor.new(anchor_position))
-          k_box.layout = Kuix::GridLayout.new
-          k_box.padding.set!(unit, unit, unit * 0.7, unit)
-          k_box.set_style_attribute(:background_color, color)
-          @canvas.append(k_box)
+          k_panel = Kuix::Panel.new
+          k_panel.layout_data = Kuix::StaticLayoutData.new(px, py, -1, -1, Kuix::Anchor.new(anchor_position))
+          k_panel.layout = Kuix::GridLayout.new
+          k_panel.padding.set!(unit, unit, unit * 0.7, unit)
+          k_panel.set_style_attribute(:background_color, highlight_def.color)
+          @canvas.append(k_panel)
 
-            lbl = Kuix::Label.new(text)
-            lbl.text_size = unit * 3 * get_text_unit_factor
-            lbl.text_align = TextAlignLeft
-            lbl.set_style_attribute(:color, ColorUtils.color_is_dark?(color) ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK)
-            k_box.append(lbl)
+            k_lbl = Kuix::Label.new(highlight_def.text)
+            k_lbl.text_size = unit * 3 * get_text_unit_factor
+            k_lbl.text_align = TextAlignLeft
+            k_lbl.set_style_attribute(:color, ColorUtils.color_is_dark?(highlight_def.color) ? Kuix::COLOR_WHITE : Kuix::COLOR_BLACK)
+            k_panel.append(k_lbl)
+
+        end
 
         end
 
@@ -149,6 +153,15 @@ module Ladb::OpenCutList
         return 1.5
       else
         return 1.0
+      end
+    end
+
+    # -----
+
+    HighlightDef = Struct.new(:path, :text, :color) do
+      def initialize(*)
+        super
+        self.color = Kuix::COLOR_RED if self.color.nil?
       end
     end
 

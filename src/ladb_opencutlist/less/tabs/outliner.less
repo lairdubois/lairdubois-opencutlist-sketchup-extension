@@ -48,8 +48,18 @@
     font-size: 114%;
     cursor: pointer;
 
-    &:hover {
+    &:hover, &.ladb-hover {
       background-color: #f9f9f9;
+
+      td.table-cell-fluid {
+        background-color: darken(#f7f7f7, 5%);
+
+        > .table-cell-fluid-inner {
+          background-color: #f9f9f9;
+        }
+
+      }
+
     }
 
     &.ladb-hidden {
@@ -83,15 +93,6 @@
     td.table-cell-fluid {
       background-color: #f7f7f7;
       padding: 0;
-
-      &:hover {
-        background-color: darken(#f7f7f7, 5%);
-
-        > .table-cell-fluid-inner {
-          background-color: #f9f9f9;
-        }
-
-      }
 
       > .table-cell-fluid-inner {
         background-color: #fff;

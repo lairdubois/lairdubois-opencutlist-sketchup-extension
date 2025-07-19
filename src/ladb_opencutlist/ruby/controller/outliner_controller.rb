@@ -49,38 +49,38 @@ module Ladb::OpenCutList
       PLUGIN.register_command("outliner_stop_observing") do
         stop_observing_command
       end
-      PLUGIN.register_command("outliner_generate") do |settings|
-        generate_command(settings)
+      PLUGIN.register_command("outliner_generate") do |params|
+        generate_command(params)
       end
       PLUGIN.register_command("outliner_refresh") do
         refresh_command
       end
-      PLUGIN.register_command("outliner_set_active") do |node_data|
-        set_active_command(node_data)
+      PLUGIN.register_command("outliner_set_active") do |params|
+        set_active_command(params)
       end
-      PLUGIN.register_command("outliner_toggle_expanded") do |node_data|
-        toggle_expanded_command(node_data)
+      PLUGIN.register_command("outliner_toggle_expanded") do |params|
+        toggle_expanded_command(params)
       end
-      PLUGIN.register_command("outliner_toggle_visible") do |node_data|
-        toggle_visible_command(node_data)
+      PLUGIN.register_command("outliner_toggle_visible") do |params|
+        toggle_visible_command(params)
       end
-      PLUGIN.register_command("outliner_toggle_select") do |node_data|
-        toggle_select_command(node_data)
+      PLUGIN.register_command("outliner_toggle_select") do |params|
+        toggle_select_command(params)
       end
-      PLUGIN.register_command("outliner_toggle_select_all") do |node_data|
-        toggle_select_all_command(node_data)
+      PLUGIN.register_command("outliner_toggle_select_all") do
+        toggle_select_all_command
       end
-      PLUGIN.register_command("outliner_edit") do |node_data|
-        edit_command(node_data)
+      PLUGIN.register_command("outliner_edit") do |params|
+        edit_command(params)
       end
-      PLUGIN.register_command("outliner_update") do |node_data|
-        update_command(node_data)
+      PLUGIN.register_command("outliner_update") do |params|
+        update_command(params)
       end
-      PLUGIN.register_command("outliner_explode") do |node_data|
-        explode_command(node_data)
+      PLUGIN.register_command("outliner_explode") do |params|
+        explode_command(params)
       end
-      PLUGIN.register_command("outliner_highlight") do |node_data|
-        highlight_command(node_data)
+      PLUGIN.register_command("outliner_highlight") do |params|
+        highlight_command(params)
       end
 
     end
@@ -533,11 +533,11 @@ module Ladb::OpenCutList
       @observing = false
     end
 
-    def generate_command(settings)
+    def generate_command(params)
       require_relative '../worker/outliner/outliner_generate_worker'
 
       # Setup worker
-      worker = OutlinerGenerateWorker.new(**settings)
+      worker = OutlinerGenerateWorker.new(**params)
 
       # Run !
       @outliner_def = worker.run
@@ -552,45 +552,45 @@ module Ladb::OpenCutList
       @outliner_def.get_hashable.to_hash
     end
 
-    def set_active_command(node_data)
+    def set_active_command(params)
       require_relative '../worker/outliner/outliner_set_active_worker'
 
       # Setup worker
-      worker = OutlinerSetActiveWorker.new(@outliner_def, **node_data)
+      worker = OutlinerSetActiveWorker.new(@outliner_def, **params)
 
       # Run !
       worker.run
     end
 
-    def toggle_expanded_command(node_data)
+    def toggle_expanded_command(params)
 
       return unless @worker
 
-      trigger_boo if @worker.run(:toggle_expanded, node_data)
+      trigger_boo if @worker.run(:toggle_expanded, params)
 
     end
 
-    def toggle_visible_command(node_data)
+    def toggle_visible_command(params)
       require_relative '../worker/outliner/outliner_toggle_visible_worker'
 
       # Setup worker
-      worker = OutlinerToggleVisibleWorker.new(@outliner_def, **node_data)
+      worker = OutlinerToggleVisibleWorker.new(@outliner_def, **params)
 
       # Run !
       worker.run
     end
 
-    def toggle_select_command(node_data)
+    def toggle_select_command(params)
       require_relative '../worker/outliner/outliner_toggle_select_worker'
 
       # Setup worker
-      worker = OutlinerToggleSelectWorker.new(@outliner_def, **node_data)
+      worker = OutlinerToggleSelectWorker.new(@outliner_def, **params)
 
       # Run !
       worker.run
     end
 
-    def toggle_select_all_command(node_data)
+    def toggle_select_all_command
       require_relative '../worker/outliner/outliner_toggle_select_all_worker'
 
       # Setup worker
@@ -600,41 +600,41 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def edit_command(node_data)
+    def edit_command(params)
       require_relative '../worker/outliner/outliner_edit_worker'
 
       # Setup worker
-      worker = OutlinerEditWorker.new(@outliner_def, **node_data)
+      worker = OutlinerEditWorker.new(@outliner_def, **params)
 
       # Run !
       worker.run
     end
 
-    def update_command(node_data)
+    def update_command(params)
       require_relative '../worker/outliner/outliner_update_worker'
 
       # Setup worker
-      worker = OutlinerUpdateWorker.new(@outliner_def, **node_data)
+      worker = OutlinerUpdateWorker.new(@outliner_def, **params)
 
       # Run !
       worker.run
     end
 
-    def explode_command(node_data)
+    def explode_command(params)
       require_relative '../worker/outliner/outliner_explode_worker'
 
       # Setup worker
-      worker = OutlinerExplodeWorker.new(@outliner_def, **node_data)
+      worker = OutlinerExplodeWorker.new(@outliner_def, **params)
 
       # Run !
       worker.run
     end
 
-    def highlight_command(node_data)
+    def highlight_command(params)
       require_relative '../overlay/highlight_overlay'
 
-      id = node_data[:id]
-      highlighted = node_data[:highlighted]
+      ids = params[:ids]
+      highlighted = params[:highlighted]
       model = Sketchup.active_model
 
       return if model.nil?
@@ -643,13 +643,24 @@ module Ladb::OpenCutList
 
       if highlighted
 
-        node_def = @outliner_def.get_node_def_by_id(id)
-        if node_def && !node_def.is_a?(OutlinerNodeModelDef)
+        highlight_defs = []
+        ids.each do |id|
 
-          name = [ node_def.name, node_def.respond_to?(:definition_name) ? "<#{node_def.definition_name}>" : nil ].compact.join(' ')
-          color = node_def.computed_visible? ? Kuix::COLOR_RED : Kuix::COLOR_DARK_GREY
+          node_def = @outliner_def.get_node_def_by_id(id)
+          if node_def && !node_def.is_a?(OutlinerNodeModelDef)
 
-          @overlay = HighlightOverlay.new(node_def.path, name, color)
+            name = [ node_def.name, node_def.respond_to?(:definition_name) ? "<#{node_def.definition_name}>" : nil ].compact.join(' ')
+            color = node_def.computed_visible? ? Kuix::COLOR_RED : Kuix::COLOR_DARK_GREY
+
+            highlight_defs << HighlightOverlay::HighlightDef.new(node_def.path, name, color)
+
+          end
+
+        end
+
+        unless highlight_defs.empty?
+
+          @overlay = HighlightOverlay.new(highlight_defs)
           model.overlays.add(@overlay)
           @overlay.enabled = true
 

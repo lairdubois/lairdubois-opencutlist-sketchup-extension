@@ -181,16 +181,25 @@
                 }));
                 that.$tbody.append($row);
 
+                if (node.selected) {
+                    $row
+                        .on('mouseenter', function () {
+                            $('.ladb-outliner-row.ladb-selected').addClass('ladb-hover');
+                        })
+                        .on('mouseleave', function () {
+                            $('.ladb-outliner-row.ladb-selected').removeClass('ladb-hover');
+                        });
+                }
                 if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
                     $row
                         .on('mouseenter', function () {
                             if (!node.child_active && !node.active) {
-                                rubyCallCommand('outliner_highlight', { id: node.id, highlighted: true });
+                                rubyCallCommand('outliner_highlight', { ids: node.selected ? that.getSelectedNodes().map(node => node.id) : [ node.id ], highlighted: true });
                             }
                         })
                         .on('mouseleave', function () {
                             if (that.editedNode !== node) {
-                                rubyCallCommand('outliner_highlight', { id: node.id, highlighted: false });
+                                rubyCallCommand('outliner_highlight', { highlighted: false });
                             }
                         });
                 }
@@ -242,7 +251,7 @@
                 $('a.ladb-btn-node-toggle-visible', $row).on('click', function () {
                     $(this).blur();
 
-                    rubyCallCommand('outliner_toggle_visible', { id: node.id }, function (response) {
+                    rubyCallCommand('outliner_toggle_visible', { ids: node.selected ? that.getSelectedNodes().map(node => node.id) : [ node.id ] }, function (response) {
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
                         }
@@ -555,7 +564,7 @@
                 $modal
                     .on('shown.bs.modal', function () {
                         if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
-                            rubyCallCommand('outliner_highlight', { id: node.id, highlighted: true });
+                            rubyCallCommand('outliner_highlight', { ids: node.selected ? that.getSelectedNodes().map(node => node.id) : [ node.id ], highlighted: true });
                         }
                     })
                     .on('hidden.bs.modal', function () {
@@ -564,7 +573,7 @@
                         that.editedNode = null;
 
                         if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
-                            rubyCallCommand('outliner_highlight', { id: node.id, highlighted: false });
+                            rubyCallCommand('outliner_highlight', { highlighted: false });
                         }
                     })
                 ;

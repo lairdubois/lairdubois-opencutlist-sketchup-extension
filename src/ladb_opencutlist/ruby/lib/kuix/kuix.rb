@@ -452,6 +452,16 @@ module Ladb::OpenCutList
 
         end
 
+        def getExtents
+
+          # Check if space need to be revalidated
+          if @space.invalidated?
+            @space.do_layout(IDENTITY)
+          end
+
+          @space.extents
+        end
+
         # -----
 
         def inspect

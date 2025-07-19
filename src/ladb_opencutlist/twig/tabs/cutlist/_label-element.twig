@@ -16,7 +16,7 @@
         {% set transY = areaSize * -1 %}
     {% endif %}
     <rect class="ladb-label-element" x="{{ transX }}" y="{{ transY }}" width="{{ areaSize }}" height="{{ areaSize }}" fill="{% if noEmptyValue %}rgba(0,0,0,0.03){% else %}none{% endif %}" stroke="none" />
-    {% set plainStrokeWidth = minUnit / 5 %}
+    {% set plainStrokeWidth = minUnit / 7 %}
     {% set rectPartWidth = (areaSize - plainStrokeWidth) * (proportional ? entry.part.l_ratio : 1) %}
     {% set rectPartHeight = (areaSize - plainStrokeWidth) * (proportional ? entry.part.w_ratio : 1) %}
     <g transform="translate({{ transX + (areaSize - rectPartWidth) / 2 }} {{ transY + (areaSize - rectPartHeight) / 2 }})">
