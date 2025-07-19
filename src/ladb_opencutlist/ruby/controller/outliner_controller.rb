@@ -70,6 +70,9 @@ module Ladb::OpenCutList
       PLUGIN.register_command("outliner_toggle_select_all") do
         toggle_select_all_command
       end
+      PLUGIN.register_command("outliner_invert_select") do
+        invert_select_command
+      end
       PLUGIN.register_command("outliner_edit") do |params|
         edit_command(params)
       end
@@ -219,9 +222,9 @@ module Ladb::OpenCutList
         layer_def.invalidate
         layer_def.each_used_by do |node_def|
 
-          propagation = AbstractOutlinerNodeDef::PROPAGATION_SELF | AbstractOutlinerNodeDef::PROPAGATION_PARENT
+          propagation = OutlinerNodeDef::PROPAGATION_SELF | OutlinerNodeDef::PROPAGATION_PARENT
           if !node_def.invalidated? && node_def.get_hashable.computed_visible != node_def.computed_visible?
-            propagation |= AbstractOutlinerNodeDef::PROPAGATION_CHILDREN
+            propagation |= OutlinerNodeDef::PROPAGATION_CHILDREN
           end
           node_def.invalidate(propagation)
 
@@ -384,9 +387,9 @@ module Ladb::OpenCutList
             node_def.material_def = @outliner_def.available_material_defs[entity.material]
             node_def.layer_def = @outliner_def.available_layer_defs[entity.layer]
 
-            propagation = AbstractOutlinerNodeDef::PROPAGATION_SELF | AbstractOutlinerNodeDef::PROPAGATION_PARENT
+            propagation = OutlinerNodeDef::PROPAGATION_SELF | OutlinerNodeDef::PROPAGATION_PARENT
             if node_def.invalidated? || !node_def.invalidated? && (node_def.get_hashable.computed_visible != node_def.computed_visible? || node_def.get_hashable.computed_locked != node_def.computed_locked?)
-              propagation |= AbstractOutlinerNodeDef::PROPAGATION_CHILDREN
+              propagation |= OutlinerNodeDef::PROPAGATION_CHILDREN
             end
             node_def.invalidate(propagation)
 
@@ -595,6 +598,16 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = OutlinerToggleSelectAllWorker.new(@outliner_def)
+
+      # Run !
+      worker.run
+    end
+
+    def invert_select_command
+      require_relative '../worker/outliner/outliner_invert_select_worker'
+
+      # Setup worker
+      worker = OutlinerInvertSelectWorker.new(@outliner_def)
 
       # Run !
       worker.run

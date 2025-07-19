@@ -4,13 +4,13 @@ module Ladb::OpenCutList
 
     def initialize(outliner_def,
 
-                   ids:
+                   id:
 
     )
 
       @outliner_def = outliner_def
 
-      @ids = ids
+      @id = id
 
     end
 
@@ -22,17 +22,25 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.outliner.error.no_model' ] } unless model
 
-      node_defs = @ids.map { |id| @outliner_def.get_node_def_by_id(id) }.compact
-      return { :errors => [ 'tab.outliner.error.node_not_found' ] } if node_defs.empty?
+      node_def = @outliner_def.get_node_def_by_id(@id)
+      return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def
+
+      entity = node_def.entity
+      return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
 
       # Start model modification operation
       model.start_operation('OCL Outliner Toggle Visible', true, false, false)
 
 
-      node_defs.each do |node_def|
+      visible = !entity.visible?
 
-        node_def.entity.visible = !node_def.entity.visible?
-
+      if node_def.selected
+        # Apply visibility change to selected entities
+        model.selection.each do |entity|
+          entity.visible = visible
+        end
+      else
+        entity.visible = !entity.visible?
       end
 
 

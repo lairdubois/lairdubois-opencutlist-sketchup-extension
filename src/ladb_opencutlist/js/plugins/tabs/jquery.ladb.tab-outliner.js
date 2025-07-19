@@ -110,15 +110,16 @@
                     that.renderNodes();
                     return false;
                 });
-                $toggleSelectAllBtn.on('click', function () {
+                $toggleSelectAllBtn.on('click', function (e) {
                     $(this).blur();
 
-                    rubyCallCommand('outliner_toggle_select_all', null, function (response) {
+                    rubyCallCommand(e.shiftKey ? 'outliner_invert_select' : 'outliner_toggle_select_all', null, function (response) {
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
                         }
                     });
 
+                    return false;
                 });
 
                 // Restore button state
@@ -251,7 +252,7 @@
                 $('a.ladb-btn-node-toggle-visible', $row).on('click', function () {
                     $(this).blur();
 
-                    rubyCallCommand('outliner_toggle_visible', { ids: node.selected ? that.getSelectedNodes().map(node => node.id) : [ node.id ] }, function (response) {
+                    rubyCallCommand('outliner_toggle_visible', { id: node.id }, function (response) {
                         if (response.errors) {
                             that.dialog.notifyErrors(response.errors);
                         }

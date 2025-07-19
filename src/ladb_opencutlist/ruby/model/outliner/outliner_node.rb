@@ -5,7 +5,7 @@ module Ladb::OpenCutList
   require_relative '../../helper/hashable_helper'
   require_relative '../attributes/definition_attributes'
 
-  class AbstractOutlinerNode < DataContainer
+  class OutlinerNode < DataContainer
 
     include DefHelper
     include HashableHelper
@@ -38,7 +38,7 @@ module Ladb::OpenCutList
 
   end
 
-  class OutlinerNodeModel < AbstractOutlinerNode
+  class OutlinerNodeModel < OutlinerNode
 
     attr_reader :description
 
@@ -51,7 +51,7 @@ module Ladb::OpenCutList
 
   end
 
-  class OutlinerNodeGroup < AbstractOutlinerNode
+  class OutlinerNodeGroup < OutlinerNode
 
     attr_reader :material, :layer
 

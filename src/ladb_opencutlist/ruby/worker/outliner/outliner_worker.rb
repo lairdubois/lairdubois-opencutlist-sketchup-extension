@@ -109,7 +109,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       if model && model.active_path
 
-        active_node_def = @outliner_def.get_node_def_by_id(AbstractOutlinerNodeDef.generate_node_id(model.active_path))
+        active_node_def = @outliner_def.get_node_def_by_id(OutlinerNodeDef.generate_node_id(model.active_path))
         if active_node_def
 
           active_node_def.active = true
@@ -198,7 +198,7 @@ module Ladb::OpenCutList
         path += [ entity ]
 
         node_def = OutlinerNodeGroupDef.new(path)
-        node_def.default_name = PLUGIN.get_i18n_string("tab.outliner.type_#{AbstractOutlinerNodeDef::TYPE_GROUP}")
+        node_def.default_name = PLUGIN.get_i18n_string("tab.outliner.type_#{OutlinerNodeDef::TYPE_GROUP}")
         node_def.material_def = @outliner_def.available_material_defs[entity.material]
         node_def.layer_def = @outliner_def.available_layer_defs[entity.layer]
 

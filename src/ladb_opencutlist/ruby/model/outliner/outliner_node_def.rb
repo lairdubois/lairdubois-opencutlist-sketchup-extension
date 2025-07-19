@@ -2,11 +2,11 @@ module Ladb::OpenCutList
 
   require 'digest'
 
-  require_relative '../data_container'
   require_relative 'outliner_node'
+  require_relative '../data_container'
   require_relative '../../utils/path_utils'
 
-  class AbstractOutlinerNodeDef < DataContainer
+  class OutlinerNodeDef < DataContainer
 
     TYPE_MODEL     = 0
     TYPE_GROUP     = 1
@@ -35,7 +35,7 @@ module Ladb::OpenCutList
       @entity = @path.empty? ? Sketchup.active_model : @path.last
       @entity_id = @entity.entityID
 
-      @id = AbstractOutlinerNodeDef::generate_node_id(path)
+      @id = OutlinerNodeDef::generate_node_id(path)
       @depth = @path.length
 
       @default_name = nil
@@ -119,7 +119,7 @@ module Ladb::OpenCutList
 
   end
 
-  class OutlinerNodeModelDef < AbstractOutlinerNodeDef
+  class OutlinerNodeModelDef < OutlinerNodeDef
 
     def type
       TYPE_MODEL
@@ -134,7 +134,7 @@ module Ladb::OpenCutList
 
   end
 
-  class OutlinerNodeGroupDef < AbstractOutlinerNodeDef
+  class OutlinerNodeGroupDef < OutlinerNodeDef
 
     attr_accessor :material_def, :layer_def
 
