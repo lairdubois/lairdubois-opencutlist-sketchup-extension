@@ -726,7 +726,7 @@ tab:
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: 589 - Unidad incompatible con las opciones de estimación de la materia
-        multiplier_coefficient: '590 - '
+        multiplier_coefficient: 590 - Coeficiente multiplicador
       error:
         no_typed_material_parts: 591 - No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) para generar la estimación.
         entry_error: '592 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**.'
@@ -1061,7 +1061,7 @@ tab:
         872 - Permite mostrar u ocultar la forma real de las piezas, así como su mecanizado en el diagrama.
 
         *Esta opción debe activarse para que las formas puedan ser exportadas.*
-      option_colorization: '873 - '
+      option_colorization: 873 - Colorear las piezas
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Pantalla
       option_colorization_2: $t(default.yes) - Pantalla e impresión
@@ -1169,18 +1169,19 @@ tab:
         option_cuts_help: |
           965 - Permite activar la exportación de los cortes, así como elegir su color.
         warning:
-          is_bin_selection: '966 - '
+          is_bin_selection: 966 - Los **bloques con máscara** no se exportarán.
         error:
-          overflow_gt_spacing: '967 - '
+          overflow_gt_spacing: |
+            967 - El reborde de mecanizado ({{ overflow }}) debe ser inferior o igual al espacio ({{ spacing }}) configurado en el despiece.
       error:
         no_part: 968 - Ninguna parte.
         no_bin_1d: '969 - '
         no_bin_2d: '970 - '
         invalid_part_shapes: 971 - La forma de la parte '{{ name }}' no es válida.
-        no_solution: '972 - '
+        no_solution: 972 - No se ha encontrado ninguna solución para colocar **todas las piezas** en el material disponible.
         unplaced_parts: 973 - **1 parte** no pudo ser colocada.
         unplaced_parts_plural: 974 - **{{ count }} partes** no se pudo colocar.
-        unusable_part: '975 - '
+        unusable_part: 975 - Pieza demasiado grande
       warning:
         is_part_selection: 976 - Este diagrama de corte se limita a las **piezas seleccionadas**.
         cutting_dimensions: 977 - Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
@@ -1428,9 +1429,9 @@ tab:
         *Esta opción no permite detectar otros tipos de curva.*
       option_merge_holes: 1168 - Descomposición
       option_merge_holes_0: 1169 - Básico
-      option_merge_holes_1: '1170 - '
+      option_merge_holes_1: 1170 - Contorno + perforaciones + reborde
       option_merge_holes_help: '1171 - '
-      option_merge_holes_overflow: '1172 - '
+      option_merge_holes_overflow: 1172 - Reborde de mecanizado
       option_merge_holes_overflow_help: '1173 - '
       option_include_paths: 1174 - Trazados
       option_include_paths_0: $t(default.no)
@@ -1561,7 +1562,10 @@ tab:
       std_sections: 1276 - Secciones transversales estándar
       std_sections_help: '1277 - '
       std_sizes: 1278 - Tamaños de panel estándar
-      std_sizes_help: '1279 - '
+      std_sizes_help: |
+        1279 - Disponibles tamaños estándar para este material.
+
+        *Si no hay ninguna unidad especificada se aplicarán las unidades del modelo.*
       grained: 1280 - Dirección de fibra
       grained_help: 1281 - Configura la dirección de la fibra del material en relación con la longitud del tablero.
       grained_0: 1282 - Sin fibra
@@ -1581,15 +1585,18 @@ tab:
         El volumen total será la suma de los volúmenes de los paneles, hojas, barras o bandas de las piezas después del diagrama de corte.
       raw_estimated_0: 1290 - Volumen útil debitado
       raw_estimated_1: 1291 - Volumen de materia prima necesaria
-      multiplier_coefficient: '1292 - '
-      multiplier_coefficient_help: '1293 - '
+      multiplier_coefficient: 1292 - Coeficiente multiplicador
+      multiplier_coefficient_help: 1293 - Permite indicar el coeficiente multiplicador aplicado al volumen bruto medido.
       std_attributes_dim_placeholder: 1294 - Elige una talla
       std_volumic_masses: 1295 - Densidad
       std_volumic_masses_help: 1296 - Le permite definir la densidad para todos los tamaños y para cada tamaño estándar de material.
       std_prices: 1297 - Precio
       std_prices_help: 1298 - Le permite definir el precio para todos los tamaños, así como para cada tamaño estándar del material.
       std_cut_prices: 1299 - Precio de recorte
-      std_cut_prices_help: '1300 - '
+      std_cut_prices_help: |
+        1300 - Permite definir el precio de corte del material.
+
+        *Sólo los cortes rectos se incluyen en este valor.*
       texture_width: 1301 - Anchura
       texture_height: 1302 - Altura
       export_to_skm: 1303 - Exportar (.skm)
@@ -1599,7 +1606,13 @@ tab:
       title: 1305 - Exporte la imagen
     import_from_skm:
       title: 1306 - Importar fichero .skm
-      ask_replace: '1307 - '
+      ask_replace: |
+        1307 - El material "{{ name }}" ya existe.
+        ¿Quiere sustituirlo por que que está importando?
+
+        $t(default.yes) = Sustituir el material existente por el importado
+        $t(default.no) = Guardar ambos materiales
+        $t(default.cancel) = Abortar la operación
     export_to_skm:
       title: 1308 - Exportar a fichero .skm
     option:
@@ -1623,7 +1636,7 @@ tab:
       no_model: 1318 - Ningún modelo está abierto. Necesitarás darme más información ;)
       no_materials: 1319 - El modelo no contiene ningún material.
       material_not_found: 1320 - No se encontró ningún material.
-      no_texture: '1321 - '
+      no_texture: 1321 - El material no tiene textura.
       failed_import_skm_file: 1322 - Se produjo un error al importar desde el archivo .skm. **{{ error }}**
       failed_export_skm_file: 1323 - Ocurrió un error al exportar a un archivo .skm. **{{ error }}**
       failed_deleting_material: 1324 - Se produjo un error al eliminar este material. **{{ error }}**
@@ -1955,82 +1968,82 @@ tool:
     action_0: '1547 - '
     action_0_status: '1548 - '
     action_0_state_1_status: '1549 - '
-    action_1: '1550 - '
-    action_1_status: '1551 - '
-    action_1_state_1_radius_status: '1552 - '
-    action_1_state_1_diameter_status: '1553 - '
-    action_2: '1554 - '
-    action_2_status: '1555 - '
-    action_2_state_1_status: '1556 - '
-    action_x_state_2_status: '1557 - '
+    action_1: 1550 - Dibujar un círculo
+    action_1_status: 1551 - Dibujar un volumen de base circular
+    action_1_state_1_radius_status: 1552 - Hacer clic para definir el radio o introducir una distancia
+    action_1_state_1_diameter_status: 1553 - Hacer clic para definir el diámetro o introducir una distancia
+    action_2: 1554 - Dibujar un polígono
+    action_2_status: 1555 - Dibujar un volumen de base poligonal
+    action_2_state_1_status: 1556 - Hacer clic para indicar un nuevo punto o introducir una distancia
+    action_x_state_2_status: 1557 - Hacer clic para definir la elevación o introducir una distancia
     action_option_group_offset: 1558 - Desplazamiento
-    action_option_group_segments: '1559 - '
+    action_option_group_segments: 1559 - Segmentos
     action_option_group_options: 1560 - Opciones
     action_option_offset_shape_offset: 1561 - Desplazamiento
-    action_option_offset_shape_offset_status: '1562 - '
-    action_option_segments_segment_count: '1563 - '
-    action_option_segments_segment_count_status: '1564 - '
-    action_option_options_construction: '1565 - '
-    action_option_options_construction_status: '1566 - '
-    action_option_options_rectangle_centered: '1567 - '
-    action_option_options_rectangle_centered_status: '1568 - '
+    action_option_offset_shape_offset_status: 1562 - Permite aplicar un desfase al trazado de la forma dibujada
+    action_option_segments_segment_count: 1563 - Número de segmentos
+    action_option_segments_segment_count_status: 1564 - Permite definir le número de segmentos del círculo
+    action_option_options_construction: 1565 - Croquis
+    action_option_options_construction_status: 1566 - Dibujar croquis
+    action_option_options_rectangle_centered: 1567 - Rectángulo centrado
+    action_option_options_rectangle_centered_status: 1568 - Centrar el rectángulo en el primer punto
     action_option_options_smoothing: 1569 - Regularizado
-    action_option_options_smoothing_status: '1570 - '
-    action_option_options_measure_from_vertex_status: '1571 - '
-    action_option_options_measure_from_diameter: '1572 - '
-    action_option_options_measure_from_diameter_status: '1573 - '
-    action_option_options_measure_from_radius_status: '1574 - '
+    action_option_options_smoothing_status: 1570 - Alisar las curvas
+    action_option_options_measure_from_vertex_status: 1571 - Medir en relación al punto más alto cercano
+    action_option_options_measure_from_diameter: 1572 - Medida
+    action_option_options_measure_from_diameter_status: 1573 - Medir el diámetro del círculo
+    action_option_options_measure_from_radius_status: 1574 - Medir el radio del círculo
     action_option_options_measure_reversed: '1575 - '
-    action_option_options_measure_reversed_status: '1576 - '
-    action_option_options_pull_centered: '1577 - '
-    action_option_options_pull_centered_status: '1578 - '
-    action_option_options_ask_name: '1579 - '
+    action_option_options_measure_reversed_status: 1576 - Invertir la medida
+    action_option_options_pull_centered: 1577 - Elevación centrada
+    action_option_options_pull_centered_status: 1578 - Centrar la elevación en el primer punto
+    action_option_options_ask_name: 1579 - Nombrado de las piezas
     action_option_options_ask_name_status: '1580 - '
-    action_measure_locked_status: '1581 - '
-    action_toggle_move_copy_status: '1582 - '
-    action_change_move_anchor_status: '1583 - '
+    action_measure_locked_status: 1581 - Bloquear con la última medida
+    action_toggle_move_copy_status: 1582 - Alternar entre copiar / desplazar
+    action_change_move_anchor_status: 1583 - Cambiar el punto de inserción
     success:
-      part_created: '1584 - '
+      part_created: '1584 - Nueva pieza creada: {{ name }}'
   smart_handle:
-    title: '1585 - '
+    title: 1585 - Editar
     action_0: 1586 - Seleccione
-    action_0_status: '1587 - '
-    action_1: '1588 - '
-    action_1_status: '1589 - '
+    action_0_status: 1587 - Hacer clic sobre una pieza para seleccionarla
+    action_1: 1588 - Copiar en línea
+    action_1_status: 1589 - Hacer clic sobre una pieza para copiarla a lo largo de un eje
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: '1591 - '
-    action_2: '1592 - '
-    action_2_status: '1593 - '
+    action_1_state_2_status: 1591 - Hacer clic para situar la copia de la pieza o introducir una distancia
+    action_2: 1592 - Copiar en rejilla
+    action_2_status: 1593 - Hacer click sobre una pieza para copiarla a lo largo de una rejilla
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: '1595 - '
-    action_3: '1596 - '
-    action_3_status: '1597 - '
+    action_2_state_2_status: 1595 - Hacer clic para colocar las copias de la pieza o introducir dos distancias
+    action_3: 1596 - Mover
+    action_3_status: 1597 - Hacer clic sobre una pieza para desplazarla a lo largo de un eje
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: '1599 - '
-    action_4: '1600 - '
-    action_4_status: '1601 - '
+    action_3_state_2_status: 1599 - Hacer click para colocar la pieza o introducir una distancia
+    action_4: 1600 - Distribuir
+    action_4_status: 1601 - Hacer clic sobre una pieza para distribuirla a lo largo de un eje
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: '1603 - '
-    action_4_state_2_status: '1604 - '
-    action_5: '1605 - '
-    action_option_group_copy_measure_type: '1606 - '
-    action_option_group_move_measure_type: '1607 - '
+    action_4_state_1_status: 1603 - Hacer clic para indicar el primer punto de medida
+    action_4_state_2_status: 1604 - Hacer clic para indicar el segundo punto de medida o entrar una distancia
+    action_5: 1605 - Redimensionar
+    action_option_group_copy_measure_type: 1606 - Medida
+    action_option_group_move_measure_type: 1607 - Medida
     action_option_group_axes: 1608 - Ejes
     action_option_group_options: 1609 - Opciones
-    action_option_copy_measure_type_outside_status: '1610 - '
-    action_option_copy_measure_type_centered_status: '1611 - '
-    action_option_copy_measure_type_inside_status: '1612 - '
-    action_option_move_measure_type_outside_status: '1613 - '
-    action_option_move_measure_type_centered_status: '1614 - '
-    action_option_move_measure_type_inside_status: '1615 - '
-    action_option_axes_active_status: '1616 - '
-    action_option_axes_context_status: '1617 - '
-    action_option_axes_entity_status: '1618 - '
-    action_option_options_mirror_status: '1619 - '
+    action_option_copy_measure_type_outside_status: 1610 - Medir por el exterior
+    action_option_copy_measure_type_centered_status: 1611 - Medir de centro a centro
+    action_option_copy_measure_type_inside_status: 1612 - Medir entre las piezas
+    action_option_move_measure_type_outside_status: 1613 - Medir por el exterior
+    action_option_move_measure_type_centered_status: 1614 - Medir hasta el centro
+    action_option_move_measure_type_inside_status: 1615 - Medir por el interior
+    action_option_axes_active_status: 1616 - Cambiar la longitud de los ejes activos
+    action_option_axes_context_status: 1617 - Modificar la longitud de los ejes del grupo o componente que contienen la pieza
+    action_option_axes_entity_status: 1618 - Modificar la longitud de los ejes de la pieza
+    action_option_options_mirror_status: 1619 - Copiar simétricamente
     warning:
-      copies_disable_mirror: '1620 - '
+      copies_disable_mirror: 1620 - La copia múltiple desactiva la opción '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      min_distance: '1621 - '
+      min_distance: 1621 - La distancia {{ value1 }} es inferior al valor mínimo de {{ value2 }}
   smart_paint:
     title: 1622 - Colorear
     default_material: 1623 - Ningún material definido

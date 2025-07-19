@@ -66,7 +66,7 @@ default:
   unit_mass_1: 62 - Libra
   unit_angle_0: 63 - Stupně
   instance_single: 64 - položka
-  instance_plural: 65 - položky
+  instance_plural: 65 - kus
   part_single: 66 - díl
   part_plural: 67 - díly
   cut_single: 68 - řez
@@ -437,7 +437,9 @@ tab:
       cumulable_0: 353 - Nelze shrnout
       cumulable_1: 354 - Celkem délka
       cumulable_2: 355 - Celkem šířka
-      instance_count_by_part: 356 - Balení
+      instance_count_by_part: |-
+        356 - Balení
+        - kolik kusů obsahuje díl
       instance_count_by_part_help: |
         357 - Umožňuje zobrazit díl jako *balík* jedné nebo více *jednotek*.
         Množství přiřazené dílu v seznamu dřeva tedy představuje počet celých balení potřebných k tomu, aby obsahovala počet kusů skutečně přítomných v modelu.
@@ -446,9 +448,13 @@ tab:
         Balení = 2 kusy / díl*
       instance_count_by_part_1: 358 - 1 jednotka na díl
       instance_count_by_part_2: 359 - 2 jednotky na díl
-      mass: 360 - Hmotnost
+      mass: |-
+        360 - Hmotnost
+        - za díl
       mass_help: 361 - Hmotnost dílu bude použita při generování **Odhadu**.
-      price: 362 - Cena
+      price: |-
+        362 - Cena
+        - za díl
       price_help: 363 - Cena dílu bude použita při generování **Odhadu**.
       thickness_layer_count: 364 - Počet vrstev
       thickness_layer_count_help: |
@@ -1205,10 +1211,10 @@ tab:
         no_bin_1d: 969 - Nebyla vybrána žádná standardní deska ani olepování hran a nebyly k dispozici žádné zbytky.
         no_bin_2d: 970 - Nebyla vybrána žádná standardní tabule ani dýha a nebyly k dispozici žádné odřezky.
         invalid_part_shapes: 971 - Tvar části '{{ name }}' je neplatný.
-        no_solution: '972 - '
+        no_solution: 972 - Nebylo nalezeno žádné řešení, jak umístit **všechny díly** do dostupného materiálu.
         unplaced_parts: 973 - **1 díl** se nepodařilo umístit.
         unplaced_parts_plural: 974 - Nepodařilo se umístit **{{ count }} dílů**.
-        unusable_part: '975 - '
+        unusable_part: 975 - Příliš velká část
       warning:
         is_part_selection: 976 - Tento nářezový plán je omezen na **vybrané části**.
         cutting_dimensions: 977 - Tento nářezový plán používá **hrubé** rozměry dílů.
