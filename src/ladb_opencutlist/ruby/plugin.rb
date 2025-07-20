@@ -32,7 +32,7 @@ module Ladb::OpenCutList
   class Plugin
     
     IS_RBZ = PLUGIN_DIR.start_with?(Sketchup.find_support_file('Plugins', ''))
-    IS_DEV = false # EXTENSION_VERSION.end_with?('-dev')
+    IS_DEV = EXTENSION_VERSION.end_with?('-dev')
 
     require 'pp' if IS_DEV
 
