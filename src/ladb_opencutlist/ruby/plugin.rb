@@ -32,7 +32,7 @@ module Ladb::OpenCutList
   class Plugin
     
     IS_RBZ = PLUGIN_DIR.start_with?(Sketchup.find_support_file('Plugins', ''))
-    IS_DEV = EXTENSION_VERSION.end_with?('-dev')
+    IS_DEV = false # EXTENSION_VERSION.end_with?('-dev')
 
     require 'pp' if IS_DEV
 
@@ -113,6 +113,7 @@ module Ladb::OpenCutList
       @observers = []
 
       @started = false
+      @zzz = false
 
       @tabs_dialog = nil
       @tabs_dialog_maximized = false
@@ -792,22 +793,22 @@ module Ladb::OpenCutList
       submenu = menu.add_submenu(get_i18n_string('core.menu.submenu'))
       TABS_STRIPPED_NAMES.each do |stripped_name|
         submenu.add_item(get_i18n_string("tab.#{stripped_name}.title")) {
-          show_tabs_dialog(stripped_name)
+          show_tabs_dialog(stripped_name) if _assert_not_zzz
         }
       end
       submenu.add_separator
       submenu.add_item(get_i18n_string('core.menu.item.generate_cutlist')) {
-        execute_tabs_dialog_command_on_tab('cutlist', 'generate_cutlist')
+        execute_tabs_dialog_command_on_tab('cutlist', 'generate_cutlist') if _assert_not_zzz
       }
       submenu.add_separator
       edit_part_item = submenu.add_item(get_i18n_string('core.menu.item.edit_part_properties')) {
-        fn_edit_part_properties.call(fn_get_selected_component_entity.call)
+        fn_edit_part_properties.call(fn_get_selected_component_entity.call) if _assert_not_zzz
       }
       menu.set_validation_proc(edit_part_item) {
         fn_get_selected_component_entity.call.nil? ? MF_GRAYED : MF_ENABLED
       }
       edit_part_axes_item = submenu.add_item(get_i18n_string('core.menu.item.edit_part_axes_properties')) {
-        fn_edit_part_properties.call(fn_get_selected_component_entity.call, 'axes')
+        fn_edit_part_properties.call(fn_get_selected_component_entity.call, 'axes') if _assert_not_zzz
       }
       menu.set_validation_proc(edit_part_axes_item) {
         fn_get_selected_component_entity.call.nil? ? MF_GRAYED : MF_ENABLED
@@ -819,19 +820,19 @@ module Ladb::OpenCutList
 
         smart_tool_submenu = submenu.add_submenu(get_i18n_string("core.menu.item.smart_#{stripped_name}"))
         smart_tool_submenu.add_item(get_i18n_string("core.menu.item.smart_#{stripped_name}")) {
-          Sketchup.active_model.select_tool(clazz.new) if Sketchup.active_model
+          Sketchup.active_model.select_tool(clazz.new) if Sketchup.active_model && _assert_not_zzz
         }
         smart_tool_submenu.add_separator
         clazz::ACTIONS.each do |action_def|
           smart_tool_submenu.add_item(get_i18n_string("tool.smart_#{stripped_name}.action_#{action_def[:action]}")) {
-            Sketchup.active_model.select_tool(clazz.new(current_action: action_def[:action])) if Sketchup.active_model
+            Sketchup.active_model.select_tool(clazz.new(current_action: action_def[:action])) if Sketchup.active_model && _assert_not_zzz
           }
         end
 
       end
       submenu.add_separator
       submenu.add_item(get_i18n_string('core.menu.item.reset_dialog_position')) {
-        tabs_dialog_reset_position
+        tabs_dialog_reset_position if _assert_not_zzz
       }
 
       # Setup Context Menu
@@ -843,10 +844,10 @@ module Ladb::OpenCutList
 
           # Edit part item
           submenu.add_item(get_i18n_string('core.menu.item.edit_part_properties')) {
-            fn_edit_part_properties.call(entity)
+            fn_edit_part_properties.call(entity) if _assert_not_zzz
           }
           submenu.add_item(get_i18n_string('core.menu.item.edit_part_axes_properties')) {
-            fn_edit_part_properties.call(entity, 'axes')
+            fn_edit_part_properties.call(entity, 'axes') if _assert_not_zzz
           }
 
         end
@@ -856,7 +857,7 @@ module Ladb::OpenCutList
       toolbar = UI::Toolbar.new(get_i18n_string('core.toolbar.name'))
 
       cmd = UI::Command.new(get_i18n_string('core.toolbar.command.dialog')) {
-        toggle_tabs_dialog
+        toggle_tabs_dialog if _assert_not_zzz
       }
       cmd.small_icon = '../img/icon-dialog-72x72.png'
       cmd.large_icon = '../img/icon-dialog-114x114.png'
@@ -875,7 +876,7 @@ module Ladb::OpenCutList
         clazz = Object.const_get("Ladb::OpenCutList::Smart#{stripped_name.capitalize}Tool")
 
         cmd = UI::Command.new(get_i18n_string("core.toolbar.command.smart_#{stripped_name}")) {
-          if Sketchup.active_model
+          if Sketchup.active_model && _assert_not_zzz
             if clazz.active?
               Sketchup.active_model.select_tool(nil)
             else
@@ -895,7 +896,7 @@ module Ladb::OpenCutList
       end
 
       # cmd = UI::Command.new(get_i18n_string('core.toolbar.command.smart_axes') + '_2') {
-      #   if Sketchup.active_model
+      #   if Sketchup.active_model && _assert_not_zzz
       #     if Sketchup.active_model.tools.respond_to?(:active_tool) && Sketchup.active_model.tools.active_tool.is_a?(SmartAxesToolNew)
       #       Sketchup.active_model.select_tool(nil)
       #     else
@@ -1320,6 +1321,12 @@ module Ladb::OpenCutList
       puts '-' * heading.length
     end
 
+    def _assert_not_zzz
+      puts '_assert_not_zzz', @zzz
+      UI.messagebox(get_i18n_string('core.upgrade.success')) if @zzz
+      !@zzz
+    end
+
     # -- Commands ---
 
     def set_update_status_command(manifest:, update_available:, update_muted:)    # Expected params = { manifest: MANIFEST, update_available: BOOL, update_muted: BOOL }
@@ -1401,11 +1408,17 @@ module Ladb::OpenCutList
 
             if success
 
+              # Reset active tool
+              Sketchup.active_model.select_tool(nil)
+
               # Hide OCL dialog
               hide_tabs_dialog
 
               # Inform user to restart Sketchup
               UI.messagebox(get_i18n_string('core.upgrade.success'))
+
+              # Flag as sleeping (need to restart SketchUp to wake up)
+              @zzz = true
 
             end
 
