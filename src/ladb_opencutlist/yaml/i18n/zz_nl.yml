@@ -69,8 +69,8 @@ default:
   instance_plural: 65 - eenheden
   part_single: 66 - deel
   part_plural: 67 - onderdelen
-  cut_single: '68 - '
-  cut_plural: '69 - '
+  cut_single: 68 - snede
+  cut_plural: 69 - sneden
   thickness_layer_single: 70 - Laag
   thickness_layer_plural: 71 - Lagen
   setup_model_units: 72 - Configureer modeleenheden
@@ -572,8 +572,8 @@ tab:
         443 - Herschik de volgende eigenschappen om de volgorde te bepalen van de weergave van de afmeting kolommen.
       property_material_type: 444 - Type materiaal
       property_material_name: 445 - Naam van materiaal
-      property_std_width: '446 - '
-      property_std_thickness: '447 - '
+      property_std_width: 446 - Standaard breedte
+      property_std_thickness: 447 - Standaard dikte
       property_thickness: 448 - Dikte
       property_length: 449 - Lengte
       property_width: 450 - Breedte
@@ -979,8 +979,8 @@ tab:
     packing:
       title: 796 - Zaagschema
       option_problem_type: 797 - Type
-      option_problem_type_rectangle: '798 - '
-      option_problem_type_rectangleguillotine: '799 - '
+      option_problem_type_rectangle: 798 - Rechthoek
+      option_problem_type_rectangleguillotine: 799 - Guillotine
       option_problem_type_onedimensional: 800 - Plank
       option_problem_type_irregular: '801 - '
       options_material: 802 - Materiaal
@@ -997,8 +997,8 @@ tab:
       option_scrap_bin_1d_sizes_placeholder: 813 - lengte x aantal ; ...
       option_scrap_bin_1d_sizes_help: '814 - '
       option_scrap_bin_1d_none: 815 - Geen enkele
-      option_std_bin_2d_sheet_good: '816 - '
-      option_std_bin_2d_veneer: '817 - '
+      option_std_bin_2d_sheet_good: 816 - Standaard panelen
+      option_std_bin_2d_veneer: 817 - Standaard fineervellen
       option_std_bin_2d_help: '818 - '
       option_std_bin_2d_add: 819 - Voeg een afmeting toe
       option_std_bin_2d_none: 820 - Geen enkele
@@ -1007,8 +1007,9 @@ tab:
       option_scrap_bin_2d_sizes_placeholder: 823 - lengte x breedte x aantal ; ...
       option_scrap_bin_2d_sizes_help: '824 - '
       option_scrap_bin_2d_none: 825 - Geen enkele
-      option_optimization_mode: '826 - '
-      option_optimization_mode_help: '827 - '
+      option_optimization_mode: 826 - Optimalisatiemodus
+      option_optimization_mode_help: |
+        827 - Definieert de optimalisatiemodus, met of zonder tijdslimiet.
       option_objective: 828 - Doel
       option_objective_help: '829 - '
       option_rectangleguillotine_cut_type: 830 - Type snede
@@ -1017,17 +1018,18 @@ tab:
       option_rectangleguillotine_cut_type_non_exact: '832 - '
       option_rectangleguillotine_cut_type_exact: '833 - '
       option_rectangleguillotine_cut_type_homogenous: '834 - '
-      option_rectangleguillotine_number_of_stages: '835 - '
-      option_rectangleguillotine_number_of_stages_help: '836 - '
+      option_rectangleguillotine_number_of_stages: 835 - Aantal niveaus
+      option_rectangleguillotine_number_of_stages_help: |
+        836 - Definieert het maximum aantal snijniveaus.
       option_rectangleguillotine_first_stage_orientation: 837 - Richting eerste snede
       option_rectangleguillotine_first_stage_orientation_help: |
         838 - Bepaalt de richting van de eerste snede.
       option_rectangleguillotine_first_stage_orientation_horizontal: 839 - Horizontaal
       option_rectangleguillotine_first_stage_orientation_vertical: 840 - Verticaal
-      option_rectangleguillotine_first_stage_orientation_any: '841 - '
+      option_rectangleguillotine_first_stage_orientation_any: 841 - Elke
       option_rectangleguillotine_keep: 842 - Minimale valgrootte
       option_rectangleguillotine_keep_help: 843 - Rest met twee afmetingen groter dan de minimumgrootte worden gemarkeerd met **om te bewaren**.
-      option_irregular_allowed_rotations: '844 - '
+      option_irregular_allowed_rotations: 844 - Toegestane rotaties
       option_irregular_allowed_rotations_help: '845 - '
       option_irregular_allowed_rotations_0: 846 - Geen
       option_irregular_allowed_rotations_90: 847 - Stappen van 90°
@@ -1061,8 +1063,8 @@ tab:
          *Deze optie moet ingeschakeld zijn om vormen te kunnen exporteren.*
       option_colorization: '873 - '
       option_colorization_0: $t(default.no)
-      option_colorization_1: '875 - '
-      option_colorization_2: '876 - '
+      option_colorization_1: $t(default.yes) - Scherm
+      option_colorization_2: $t(default.yes) - Scherm en afdrukken
       option_colorization_help: '877 - '
       option_origin_corner: 878 - Positie van de oorsprong
       option_origin_corner_0: 879 - Linker bovenhoek
