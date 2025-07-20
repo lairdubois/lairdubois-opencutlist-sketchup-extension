@@ -1055,7 +1055,7 @@ module Ladb::OpenCutList
               :min_width => TABS_DIALOG_MINIMIZED_WIDTH,
               :min_height => TABS_DIALOG_MINIMIZED_HEIGHT,
               :style => UI::HtmlDialog::STYLE_DIALOG,
-              :use_content_size => true,
+              :use_content_size => platform_is_win? || Sketchup.version_number >= 2600000000,
           })
       @tabs_dialog.set_on_closed {
         @tabs_dialog = nil
