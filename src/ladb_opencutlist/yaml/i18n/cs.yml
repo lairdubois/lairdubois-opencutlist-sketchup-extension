@@ -71,7 +71,7 @@ default:
   unit_mass_1: Libra
   unit_angle_0: Stupně
   instance_single: položka
-  instance_plural: položky
+  instance_plural: kus
   part_single: díl
   part_plural: díly
   cut_single: řez
@@ -442,7 +442,7 @@ tab:
       cumulable_0: Nelze shrnout
       cumulable_1: Celkem délka
       cumulable_2: Celkem šířka
-      instance_count_by_part: Balení
+      instance_count_by_part: "Balení\n- kolik kusů obsahuje díl"
       instance_count_by_part_help: |
         Umožňuje zobrazit díl jako *balík* jedné nebo více *jednotek*.
         Množství přiřazené dílu v seznamu dřeva tedy představuje počet celých balení potřebných k tomu, aby obsahovala počet kusů skutečně přítomných v modelu.
@@ -451,9 +451,9 @@ tab:
         Balení = 2 kusy / díl*
       instance_count_by_part_1: 1 jednotka na díl
       instance_count_by_part_2: 2 jednotky na díl
-      mass: Hmotnost
+      mass: "Hmotnost\n- za díl"
       mass_help: Hmotnost dílu bude použita při generování **Odhadu**.
-      price: Cena
+      price: "Cena\n- za díl"
       price_help: Cena dílu bude použita při generování **Odhadu**.
       thickness_layer_count: Počet vrstev
       thickness_layer_count_help: |
@@ -1210,10 +1210,10 @@ tab:
         no_bin_1d: Nebyla vybrána žádná standardní deska ani olepování hran a nebyly k dispozici žádné zbytky.
         no_bin_2d: Nebyla vybrána žádná standardní tabule ani dýha a nebyly k dispozici žádné odřezky.
         invalid_part_shapes: "Tvar části '{{ name }}' je neplatný."
-        no_solution: ""
+        no_solution: "Nebylo nalezeno žádné řešení, jak umístit **všechny díly** do dostupného materiálu."
         unplaced_parts: "**1 díl** se nepodařilo umístit."
         unplaced_parts_plural: "Nepodařilo se umístit **{{ count }} dílů**."
-        unusable_part: ""
+        unusable_part: Příliš velká část
       warning:
         is_part_selection: Tento nářezový plán je omezen na **vybrané části**.
         cutting_dimensions: Tento nářezový plán používá **hrubé** rozměry dílů.

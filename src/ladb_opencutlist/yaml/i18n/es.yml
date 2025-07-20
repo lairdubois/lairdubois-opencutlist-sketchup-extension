@@ -731,7 +731,7 @@ tab:
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: Unidad incompatible con las opciones de estimación de la materia
-        multiplier_coefficient: ""
+        multiplier_coefficient: Coeficiente multiplicador
       error:
         no_typed_material_parts: "No hay piezas con un tipo de material definido (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** o **$t(tab.materials.type_5)**) para generar la estimación."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
@@ -1066,7 +1066,7 @@ tab:
         Permite mostrar u ocultar la forma real de las piezas, así como su mecanizado en el diagrama.
 
         *Esta opción debe activarse para que las formas puedan ser exportadas.*
-      option_colorization: ""
+      option_colorization: Colorear las piezas
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Pantalla
       option_colorization_2: $t(default.yes) - Pantalla e impresión
@@ -1174,18 +1174,19 @@ tab:
         option_cuts_help: |
           Permite activar la exportación de los cortes, así como elegir su color.
         warning:
-          is_bin_selection: ""
+          is_bin_selection: Los **bloques con máscara** no se exportarán.
         error:
           overflow_gt_spacing: |
+            El reborde de mecanizado ({{ overflow }}) debe ser inferior o igual al espacio ({{ spacing }}) configurado en el despiece.
       error:
         no_part: Ninguna parte.
         no_bin_1d: ""
         no_bin_2d: ""
         invalid_part_shapes: "La forma de la parte '{{ name }}' no es válida."
-        no_solution: ""
+        no_solution: No se ha encontrado ninguna solución para colocar **todas las piezas** en el material disponible.
         unplaced_parts: "**1 parte** no pudo ser colocada."
         unplaced_parts_plural: "**{{ count }} partes** no se pudo colocar."
-        unusable_part: ""
+        unusable_part: Pieza demasiado grande
       warning:
         is_part_selection: Este diagrama de corte se limita a las **piezas seleccionadas**.
         cutting_dimensions: Este diagrama de corte muestra las piezas con sus dimensiones en **bruto**.
@@ -1433,9 +1434,9 @@ tab:
         *Esta opción no permite detectar otros tipos de curva.*
       option_merge_holes: Descomposición
       option_merge_holes_0: Básico
-      option_merge_holes_1: ""
+      option_merge_holes_1: Contorno + perforaciones + reborde
       option_merge_holes_help: |
-      option_merge_holes_overflow: ""
+      option_merge_holes_overflow: Reborde de mecanizado
       option_merge_holes_overflow_help: |
       option_include_paths: Trazados
       option_include_paths_0: $t(default.no)
@@ -1567,6 +1568,9 @@ tab:
       std_sections_help: |
       std_sizes: Tamaños de panel estándar
       std_sizes_help: |
+        Disponibles tamaños estándar para este material.
+
+        *Si no hay ninguna unidad especificada se aplicarán las unidades del modelo.*
       grained: Dirección de fibra
       grained_help: Configura la dirección de la fibra del material en relación con la longitud del tablero.
       grained_0: Sin fibra
@@ -1586,8 +1590,8 @@ tab:
         El volumen total será la suma de los volúmenes de los paneles, hojas, barras o bandas de las piezas después del diagrama de corte.
       raw_estimated_0: Volumen útil debitado
       raw_estimated_1: Volumen de materia prima necesaria
-      multiplier_coefficient: ""
-      multiplier_coefficient_help: ""
+      multiplier_coefficient: Coeficiente multiplicador
+      multiplier_coefficient_help: Permite indicar el coeficiente multiplicador aplicado al volumen bruto medido.
       std_attributes_dim_placeholder: Elige una talla
       std_volumic_masses: Densidad
       std_volumic_masses_help: Le permite definir la densidad para todos los tamaños y para cada tamaño estándar de material.
@@ -1595,6 +1599,9 @@ tab:
       std_prices_help: "Le permite definir el precio para todos los tamaños, así como para cada tamaño estándar del material."
       std_cut_prices: Precio de recorte
       std_cut_prices_help: |
+        Permite definir el precio de corte del material.
+
+        *Sólo los cortes rectos se incluyen en este valor.*
       texture_width: Anchura
       texture_height: Altura
       export_to_skm: Exportar (.skm)
@@ -1605,6 +1612,12 @@ tab:
     import_from_skm:
       title: Importar fichero .skm
       ask_replace: |
+        El material "{{ name }}" ya existe.
+        ¿Quiere sustituirlo por que que está importando?
+
+        $t(default.yes) = Sustituir el material existente por el importado
+        $t(default.no) = Guardar ambos materiales
+        $t(default.cancel) = Abortar la operación
     export_to_skm:
       title: Exportar a fichero .skm
     option:
@@ -1628,7 +1641,7 @@ tab:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_materials: El modelo no contiene ningún material.
       material_not_found: No se encontró ningún material.
-      no_texture: ""
+      no_texture: El material no tiene textura.
       failed_import_skm_file: "Se produjo un error al importar desde el archivo .skm. **{{ error }}**"
       failed_export_skm_file: "Ocurrió un error al exportar a un archivo .skm. **{{ error }}**"
       failed_deleting_material: "Se produjo un error al eliminar este material. **{{ error }}**"
@@ -1960,82 +1973,82 @@ tool:
     action_0: ""
     action_0_status: ""
     action_0_state_1_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_1_state_1_radius_status: ""
-    action_1_state_1_diameter_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_2_state_1_status: ""
-    action_x_state_2_status: ""
+    action_1: Dibujar un círculo
+    action_1_status: Dibujar un volumen de base circular
+    action_1_state_1_radius_status: Hacer clic para definir el radio o introducir una distancia
+    action_1_state_1_diameter_status: Hacer clic para definir el diámetro o introducir una distancia
+    action_2: Dibujar un polígono
+    action_2_status: Dibujar un volumen de base poligonal
+    action_2_state_1_status: Hacer clic para indicar un nuevo punto o introducir una distancia
+    action_x_state_2_status: Hacer clic para definir la elevación o introducir una distancia
     action_option_group_offset: Desplazamiento
-    action_option_group_segments: ""
+    action_option_group_segments: Segmentos
     action_option_group_options: Opciones
     action_option_offset_shape_offset: Desplazamiento
-    action_option_offset_shape_offset_status: ""
-    action_option_segments_segment_count: ""
-    action_option_segments_segment_count_status: ""
-    action_option_options_construction: ""
-    action_option_options_construction_status: ""
-    action_option_options_rectangle_centered: ""
-    action_option_options_rectangle_centered_status: ""
+    action_option_offset_shape_offset_status: Permite aplicar un desfase al trazado de la forma dibujada
+    action_option_segments_segment_count: Número de segmentos
+    action_option_segments_segment_count_status: Permite definir le número de segmentos del círculo
+    action_option_options_construction: Croquis
+    action_option_options_construction_status: Dibujar croquis
+    action_option_options_rectangle_centered: Rectángulo centrado
+    action_option_options_rectangle_centered_status: Centrar el rectángulo en el primer punto
     action_option_options_smoothing: Regularizado
-    action_option_options_smoothing_status: ""
-    action_option_options_measure_from_vertex_status: ""
-    action_option_options_measure_from_diameter: ""
-    action_option_options_measure_from_diameter_status: ""
-    action_option_options_measure_from_radius_status: ""
+    action_option_options_smoothing_status: Alisar las curvas
+    action_option_options_measure_from_vertex_status: Medir en relación al punto más alto cercano
+    action_option_options_measure_from_diameter: Medida
+    action_option_options_measure_from_diameter_status: Medir el diámetro del círculo
+    action_option_options_measure_from_radius_status: Medir el radio del círculo
     action_option_options_measure_reversed: ""
-    action_option_options_measure_reversed_status: ""
-    action_option_options_pull_centered: ""
-    action_option_options_pull_centered_status: ""
-    action_option_options_ask_name: ""
+    action_option_options_measure_reversed_status: Invertir la medida
+    action_option_options_pull_centered: Elevación centrada
+    action_option_options_pull_centered_status: Centrar la elevación en el primer punto
+    action_option_options_ask_name: Nombrado de las piezas
     action_option_options_ask_name_status: ""
-    action_measure_locked_status: ""
-    action_toggle_move_copy_status: ""
-    action_change_move_anchor_status: ""
+    action_measure_locked_status: Bloquear con la última medida
+    action_toggle_move_copy_status: Alternar entre copiar / desplazar
+    action_change_move_anchor_status: Cambiar el punto de inserción
     success:
-      part_created: ""
+      part_created: "Nueva pieza creada: {{ name }}"
   smart_handle:
-    title: ""
+    title: Editar
     action_0: Seleccione
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
+    action_0_status: Hacer clic sobre una pieza para seleccionarla
+    action_1: Copiar en línea
+    action_1_status: Hacer clic sobre una pieza para copiarla a lo largo de un eje
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: ""
-    action_2: ""
-    action_2_status: ""
+    action_1_state_2_status: Hacer clic para situar la copia de la pieza o introducir una distancia
+    action_2: Copiar en rejilla
+    action_2_status: Hacer click sobre una pieza para copiarla a lo largo de una rejilla
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: ""
-    action_3: ""
-    action_3_status: ""
+    action_2_state_2_status: Hacer clic para colocar las copias de la pieza o introducir dos distancias
+    action_3: Mover
+    action_3_status: Hacer clic sobre una pieza para desplazarla a lo largo de un eje
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: ""
-    action_4: ""
-    action_4_status: ""
+    action_3_state_2_status: Hacer click para colocar la pieza o introducir una distancia
+    action_4: Distribuir
+    action_4_status: Hacer clic sobre una pieza para distribuirla a lo largo de un eje
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: ""
-    action_4_state_2_status: ""
-    action_5: ""
-    action_option_group_copy_measure_type: ""
-    action_option_group_move_measure_type: ""
+    action_4_state_1_status: Hacer clic para indicar el primer punto de medida
+    action_4_state_2_status: Hacer clic para indicar el segundo punto de medida o entrar una distancia
+    action_5: Redimensionar
+    action_option_group_copy_measure_type: Medida
+    action_option_group_move_measure_type: Medida
     action_option_group_axes: Ejes
     action_option_group_options: Opciones
-    action_option_copy_measure_type_outside_status: ""
-    action_option_copy_measure_type_centered_status: ""
-    action_option_copy_measure_type_inside_status: ""
-    action_option_move_measure_type_outside_status: ""
-    action_option_move_measure_type_centered_status: ""
-    action_option_move_measure_type_inside_status: ""
-    action_option_axes_active_status: ""
-    action_option_axes_context_status: ""
-    action_option_axes_entity_status: ""
-    action_option_options_mirror_status: ""
+    action_option_copy_measure_type_outside_status: Medir por el exterior
+    action_option_copy_measure_type_centered_status: Medir de centro a centro
+    action_option_copy_measure_type_inside_status: Medir entre las piezas
+    action_option_move_measure_type_outside_status: Medir por el exterior
+    action_option_move_measure_type_centered_status: Medir hasta el centro
+    action_option_move_measure_type_inside_status: Medir por el interior
+    action_option_axes_active_status: Cambiar la longitud de los ejes activos
+    action_option_axes_context_status: Modificar la longitud de los ejes del grupo o componente que contienen la pieza
+    action_option_axes_entity_status: Modificar la longitud de los ejes de la pieza
+    action_option_options_mirror_status: Copiar simétricamente
     warning:
-      copies_disable_mirror: ""
+      copies_disable_mirror: La copia múltiple desactiva la opción '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      min_distance: ""
+      min_distance: "La distancia {{ value1 }} es inferior al valor mínimo de {{ value2 }}"
   smart_paint:
     title: Colorear
     default_material: Ningún material definido
