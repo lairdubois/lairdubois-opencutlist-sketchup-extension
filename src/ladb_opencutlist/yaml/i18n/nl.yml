@@ -74,8 +74,8 @@ default:
   instance_plural: eenheden
   part_single: deel
   part_plural: onderdelen
-  cut_single: ""
-  cut_plural: ""
+  cut_single: snede
+  cut_plural: sneden
   thickness_layer_single: Laag
   thickness_layer_plural: Lagen
   setup_model_units: Configureer modeleenheden
@@ -577,8 +577,8 @@ tab:
         Herschik de volgende eigenschappen om de volgorde te bepalen van de weergave van de afmeting kolommen.
       property_material_type: Type materiaal
       property_material_name: Naam van materiaal
-      property_std_width: ""
-      property_std_thickness: ""
+      property_std_width: Standaard breedte
+      property_std_thickness: Standaard dikte
       property_thickness: Dikte
       property_length: Lengte
       property_width: Breedte
@@ -984,8 +984,8 @@ tab:
     packing:
       title: Zaagschema
       option_problem_type: Type
-      option_problem_type_rectangle: ""
-      option_problem_type_rectangleguillotine: ""
+      option_problem_type_rectangle: Rechthoek
+      option_problem_type_rectangleguillotine: Guillotine
       option_problem_type_onedimensional: Plank
       option_problem_type_irregular: ""
       options_material: Materiaal
@@ -1002,8 +1002,8 @@ tab:
       option_scrap_bin_1d_sizes_placeholder: lengte x aantal ; ...
       option_scrap_bin_1d_sizes_help: |
       option_scrap_bin_1d_none: Geen enkele
-      option_std_bin_2d_sheet_good: ""
-      option_std_bin_2d_veneer: ""
+      option_std_bin_2d_sheet_good: Standaard panelen
+      option_std_bin_2d_veneer: Standaard fineervellen
       option_std_bin_2d_help: |
       option_std_bin_2d_add: Voeg een afmeting toe
       option_std_bin_2d_none: Geen enkele
@@ -1012,8 +1012,9 @@ tab:
       option_scrap_bin_2d_sizes_placeholder: lengte x breedte x aantal ; ...
       option_scrap_bin_2d_sizes_help: |
       option_scrap_bin_2d_none: Geen enkele
-      option_optimization_mode: ""
+      option_optimization_mode: Optimalisatiemodus
       option_optimization_mode_help: |
+        Definieert de optimalisatiemodus, met of zonder tijdslimiet.
       option_objective: Doel
       option_objective_help: |
       option_rectangleguillotine_cut_type: Type snede
@@ -1022,17 +1023,18 @@ tab:
       option_rectangleguillotine_cut_type_non_exact: ""
       option_rectangleguillotine_cut_type_exact: ""
       option_rectangleguillotine_cut_type_homogenous: ""
-      option_rectangleguillotine_number_of_stages: ""
+      option_rectangleguillotine_number_of_stages: Aantal niveaus
       option_rectangleguillotine_number_of_stages_help: |
+        Definieert het maximum aantal snijniveaus.
       option_rectangleguillotine_first_stage_orientation: Richting eerste snede
       option_rectangleguillotine_first_stage_orientation_help: |
         Bepaalt de richting van de eerste snede.
       option_rectangleguillotine_first_stage_orientation_horizontal: Horizontaal
       option_rectangleguillotine_first_stage_orientation_vertical: Verticaal
-      option_rectangleguillotine_first_stage_orientation_any: ""
+      option_rectangleguillotine_first_stage_orientation_any: Elke
       option_rectangleguillotine_keep: Minimale valgrootte
       option_rectangleguillotine_keep_help: Rest met twee afmetingen groter dan de minimumgrootte worden gemarkeerd met **om te bewaren**.
-      option_irregular_allowed_rotations: ""
+      option_irregular_allowed_rotations: Toegestane rotaties
       option_irregular_allowed_rotations_help: |
       option_irregular_allowed_rotations_0: Geen
       option_irregular_allowed_rotations_90: Stappen van 90°
@@ -1066,8 +1068,8 @@ tab:
          *Deze optie moet ingeschakeld zijn om vormen te kunnen exporteren.*
       option_colorization: ""
       option_colorization_0: $t(default.no)
-      option_colorization_1: ""
-      option_colorization_2: ""
+      option_colorization_1: $t(default.yes) - Scherm
+      option_colorization_2: $t(default.yes) - Scherm en afdrukken
       option_colorization_help: |
       option_origin_corner: Positie van de oorsprong
       option_origin_corner_0: Linker bovenhoek

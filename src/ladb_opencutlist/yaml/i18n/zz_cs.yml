@@ -67,7 +67,7 @@ default:
   unit_angle_0: 63 - Stupně
   instance_single: 64 - položka
   instance_plural: 65 - kus
-  part_single: 66 - díl
+  part_single: 66 - díl ... díl může obsahovat více kusů
   part_plural: 67 - díly
   cut_single: 68 - řez
   cut_plural: 69 - řezy
@@ -437,9 +437,7 @@ tab:
       cumulable_0: 353 - Nelze shrnout
       cumulable_1: 354 - Celkem délka
       cumulable_2: 355 - Celkem šířka
-      instance_count_by_part: |-
-        356 - Balení
-        - kolik kusů obsahuje díl
+      instance_count_by_part: 356 - Balení
       instance_count_by_part_help: |
         357 - Umožňuje zobrazit díl jako *balík* jedné nebo více *jednotek*.
         Množství přiřazené dílu v seznamu dřeva tedy představuje počet celých balení potřebných k tomu, aby obsahovala počet kusů skutečně přítomných v modelu.
@@ -448,13 +446,9 @@ tab:
         Balení = 2 kusy / díl*
       instance_count_by_part_1: 358 - 1 jednotka na díl
       instance_count_by_part_2: 359 - 2 jednotky na díl
-      mass: |-
-        360 - Hmotnost
-        - za díl
+      mass: 360 - Hmotnost
       mass_help: 361 - Hmotnost dílu bude použita při generování **Odhadu**.
-      price: |-
-        362 - Cena
-        - za díl
+      price: 362 - Cena
       price_help: 363 - Cena dílu bude použita při generování **Odhadu**.
       thickness_layer_count: 364 - Počet vrstev
       thickness_layer_count_help: |
