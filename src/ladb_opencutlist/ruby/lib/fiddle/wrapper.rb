@@ -66,9 +66,13 @@ module Ladb::OpenCutList::Fiddle
         # - The system locks the file after loading. By uploading a copy, the file can still be updated.
         # - Fiddle lib loader seems to have troubles with non-ASCII encoded path :( -> temp dir is short file name compatible.
 
-        tmp_lib_path = File.join(Ladb::OpenCutList::PLUGIN.temp_dir, "#{Ladb::OpenCutList::EXTENSION_BUILD}_#{lib_file}")
+        tmp_lib_dir = File.join(Ladb::OpenCutList::PLUGIN.temp_dir, 'fiddle')
+        tmp_lib_path = File.join(tmp_lib_dir, "#{Ladb::OpenCutList::EXTENSION_BUILD}_#{lib_file}")
 
-        # Copy lib (preserve = true to keep file if it exists)
+        # Create directory if it doesn't exist
+        Dir.mkdir(tmp_lib_dir) unless Dir.exist?(tmp_lib_dir)
+
+        # Copy lib (preserve = true to keep file if it exists and avoid error if already loaded and locked by the system.)
         FileUtils.copy_file(lib_path, tmp_lib_path, true)
 
         # Load lib
