@@ -204,29 +204,30 @@
                             }
                         });
                 }
-                $row.on('click', function (e) {
-                    if (!node.computed_locked) {
-                        that.editNode(node, null, function ($modal) {
-                            const $target = $(e.target);
-                            if ($target.hasClass('ladb-outliner-node-name')) {
-                                $('#ladb_outliner_node_input_name', $modal)
-                                    .focus()
-                                    .select()
-                                ;
-                            } else if ($target.hasClass('ladb-outliner-node-definition-name')) {
-                                $('#ladb_outliner_node_input_definition_name', $modal)
-                                    .focus()
-                                    .select()
-                                ;
-                            } else if ($target.closest('.ladb-material-color-drop').length > 0) {
-                                $('#ladb_outliner_node_select_material_name', $modal).focus();
-                            } else if ($target.closest('.ladb-outliner-node-layers').length > 0) {
-                                $('#ladb_outliner_node_input_layer_name', $modal).focus();
-                            }
-                        });
-                    }
-                    return false;
-                });
+                $row
+                    .on('click', function (e) {
+                        if (!node.computed_locked) {
+                            that.editNode(node, null, function ($modal) {
+                                const $target = $(e.target);
+                                if ($target.hasClass('ladb-outliner-node-name')) {
+                                    $('#ladb_outliner_node_input_name', $modal)
+                                        .focus()
+                                        .select()
+                                    ;
+                                } else if ($target.hasClass('ladb-outliner-node-definition-name')) {
+                                    $('#ladb_outliner_node_input_definition_name', $modal)
+                                        .focus()
+                                        .select()
+                                    ;
+                                } else if ($target.closest('.ladb-material-color-drop').length > 0) {
+                                    $('#ladb_outliner_node_select_material_name', $modal).focus();
+                                } else if ($target.closest('.ladb-outliner-node-layers').length > 0) {
+                                    $('#ladb_outliner_node_input_layer_name', $modal).focus();
+                                }
+                            });
+                        }
+                        return false;
+                    });
                 $('a.ladb-btn-node-toggle-folding', $row).on('click', function () {
                     $(this).blur();
 
