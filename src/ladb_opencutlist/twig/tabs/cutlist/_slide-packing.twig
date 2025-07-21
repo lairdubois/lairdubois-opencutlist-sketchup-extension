@@ -165,7 +165,7 @@
                 </tr>
                 {% if solution.bins|length > 1 %}
                     <tr>
-                        <td colspan="7">
+                        <td colspan="{{ 5 + dimensionColumnOrderStrategy|length }}">
                             <div class="ladb-cutlist-packing-preview">
                                 {% for bin in solution.bins %}
                                     <a href="[data-bin-index={{ loop.index }}]" class="ladb-btn-scrollto" data-toggle="tooltip" data-html="true" title="{{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2~'_type_'~bin.type)|i18next }}<br>{{ bin.length|escape('html') }}{% if not group.material_is_1d %} x {{ bin.width|escape('html') }}{% endif %}">
@@ -180,11 +180,12 @@
                 <tr>
                     <td class="text-center" style="vertical-align: middle !important;">{{ ('tab.cutlist.packing.list.bin_'~binSuffix1~'_'~binSuffix2)|i18next }}</td>
                     <td class="text-center" style="vertical-align: middle !important;" width="5%">{{ 'tab.cutlist.packing.list.count'|i18next }}</td>
-                    <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.length'|i18next }}</td>
+                    {% for property in dimensionColumnOrderStrategy %}
+                        <td class="text-center" width="10%">{{ ('tab.cutlist.packing.list.'~property)|i18next }}</td>
+                    {% endfor %}
                     {% if group.material_is_1d %}
                         <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.total_length'|i18next }}</td>
                     {% else %}
-                        <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.width'|i18next }}</td>
                         <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.total_area'|i18next }}</td>
                     {% endif %}
                     <td class="text-center" width="10%">{{ 'tab.cutlist.packing.list.total_cost'|i18next }}</td>
@@ -207,17 +208,16 @@
                         <td class="text-center">
                             {{ bin_type_stats.count ? bin_type_stats.count : '-' }}
                         </td>
-                        <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                            {{ bin_type_stats.length }}
-                        </td>
+                        {% for property in dimensionColumnOrderStrategy %}
+                            <td class="ladb-cutlist-value ladb-cutlist-value-right">
+                                {{ bin_type_stats[property] }}
+                            </td>
+                        {% endfor %}
                         {% if group.material_is_1d %}
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">
                                 {{ bin_type_stats.total_length ? bin_type_stats.total_length : '-' }}
                             </td>
                         {% else %}
-                            <td class="ladb-cutlist-value ladb-cutlist-value-right">
-                                {{ bin_type_stats.width }}
-                            </td>
                             <td class="ladb-cutlist-value ladb-cutlist-value-right">
                                 {{ bin_type_stats.total_area ? bin_type_stats.total_area : '-' }}
                             </td>
