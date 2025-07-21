@@ -73,6 +73,7 @@ module Ladb::OpenCutList
                                      (Sketchup.version_number >= 2110000000 ? 0 : 38)
                                    end +
                                    80 + 80 * 3     # = 1 + 3 Tab buttons
+    TABS_DIALOG_DEFAULT_SIDE_FOLDED_WIDTH = 700
     TABS_DIALOG_DEFAULT_MAXIMIZED_WIDTH = 1150
     TABS_DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 640
     TABS_DIALOG_DEFAULT_LEFT = 60
@@ -117,6 +118,7 @@ module Ladb::OpenCutList
 
       @tabs_dialog = nil
       @tabs_dialog_maximized = false
+      @tabs_dialog_side_folded = false
       @tabs_dialog_startup_tab_name = nil
       @tabs_dialog_maximized_width = read_default(SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH, TABS_DIALOG_DEFAULT_MAXIMIZED_WIDTH)
       @tabs_dialog_maximized_height = read_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, TABS_DIALOG_DEFAULT_MAXIMIZED_HEIGHT)
@@ -985,7 +987,7 @@ module Ladb::OpenCutList
           tabs_dialog_minimize_command
         end
         register_command('core_tabs_dialog_maximize') do |params|
-          tabs_dialog_maximize_command
+          tabs_dialog_maximize_command(**params)
         end
         register_command('core_tabs_dialog_hide') do |params|
           tabs_dialog_hide_command
@@ -1147,7 +1149,7 @@ module Ladb::OpenCutList
     end
 
     def tabs_dialog_store_size(width, height)
-      @tabs_dialog_maximized_width = [ width, TABS_DIALOG_DEFAULT_MAXIMIZED_WIDTH ].max
+      @tabs_dialog_maximized_width = [ width, TABS_DIALOG_DEFAULT_MAXIMIZED_WIDTH ].max unless @tabs_dialog_side_folded
       @tabs_dialog_maximized_height = [ height, TABS_DIALOG_DEFAULT_MAXIMIZED_HEIGHT ].max
       write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH, width)
       write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, height)
@@ -1558,6 +1560,7 @@ module Ladb::OpenCutList
         tabs_dialog_store_current_size
         tabs_dialog_set_size(TABS_DIALOG_MINIMIZED_WIDTH, TABS_DIALOG_MINIMIZED_HEIGHT)
         @tabs_dialog_maximized = false
+        @tabs_dialog_side_folded = false
 
         # Focus SketchUp
         Sketchup.focus if Sketchup.respond_to?(:focus)
@@ -1568,11 +1571,13 @@ module Ladb::OpenCutList
       end
     end
 
-    def tabs_dialog_maximize_command
+    def tabs_dialog_maximize_command(side_folded: false)
       if @tabs_dialog
 
-        tabs_dialog_set_size(@tabs_dialog_maximized_width, @tabs_dialog_maximized_height)
+        tabs_dialog_store_current_size if @tabs_dialog_maximized
+        tabs_dialog_set_size(side_folded ? TABS_DIALOG_DEFAULT_SIDE_FOLDED_WIDTH : @tabs_dialog_maximized_width, @tabs_dialog_maximized_height)
         @tabs_dialog_maximized = true
+        @tabs_dialog_side_folded = side_folded
 
         # Trigger event
         trigger_event('on_tabs_dialog_maximized', {})

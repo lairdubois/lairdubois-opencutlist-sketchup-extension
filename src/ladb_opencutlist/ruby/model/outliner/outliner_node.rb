@@ -32,7 +32,7 @@ module Ladb::OpenCutList
       @active = _def.active
       @selected = _def.selected
 
-      @children = _def.expanded || _def.child_active || _def.active ? _def.children.map { |node_def| node_def.get_hashable } : []
+      @children = _def.expanded || _def.child_active || _def.active ? _def.children.select { |node_def| !node_def.entity.deleted? }.map { |node_def| node_def.get_hashable } : []
 
     end
 

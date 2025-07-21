@@ -28,21 +28,21 @@
                 {% if node.layer is defined %}
                     <div class="form-group">
                         <label class="control-label col-xs-3">{{ 'tab.outliner.edit_node.layer_name'|i18next }}</label>
-                        <div class="col-xs-7">
+                        <div class="col-xs-8 col-sm-7">
                             <input type="text" class="form-control" id="ladb_outliner_node_input_layer_name" {% if node.layer == -1 %}data-multiple="true"{% else %}value="{{ node.layer.name|escape('html') }}"{% endif %}>
                         </div>
                     </div>
                 {% endif %}
                 <div class="form-group">
                     <label class="control-label col-xs-3">{% if node.type == 0 %}{# 0 = TYPE_MODEL #}{{ 'tab.outliner.edit_node.name'|i18next }}{% else %}{{ 'tab.outliner.edit_node.instance_name'|i18next }}{% endif %}</label>
-                    <div class="col-xs-7">
+                    <div class="col-xs-8 col-sm-7">
                         <input type="text" class="form-control" id="ladb_outliner_node_input_name" {% if node.name == -1 %}data-multiple="true"{% else %}value="{{ node.name|escape }}"{% endif %}>
                     </div>
                 </div>
                 {% if node.material is defined %}
                     <div class="form-group">
                         <label class="control-label col-xs-3">{{ 'tab.outliner.edit_node.material'|i18next }}</label>
-                        <div class="col-xs-7">
+                        <div class="col-xs-8 col-sm-7">
                             <select class="form-control" id="ladb_outliner_node_select_material_name">
                                 {% include 'tabs/cutlist/_material-usages.twig' with { 'value':node.material == -1 ? -1 : node.material.name } %}
                             </select>
@@ -53,7 +53,7 @@
                     <hr>
                     <div class="form-group">
                         <label class="control-label col-xs-3">{{ 'tab.outliner.edit_node.definition_name'|i18next }}</label>
-                        <div class="col-xs-7">
+                        <div class="col-xs-8 col-sm-7">
                             <input type="text" class="form-control" id="ladb_outliner_node_input_definition_name" value="{{ node.definition_name|escape('html') }}">
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                     {% if not node.definition_name is defined %}<hr>{% endif %}
                     <div class="form-group">
                         <label class="control-label col-xs-3">{{ 'tab.outliner.edit_node.description'|i18next }}</label>
-                        <div class="col-xs-7">
+                        <div class="col-xs-8 col-sm-7">
                             <textarea class="form-control" id="ladb_outliner_node_input_description"{% if node.description == -1 %} data-multiple="true"{% endif %}>{% if node.description != -1 %}{{ node.description|escape('html') }}{% endif %}</textarea>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                 {% if node.url is defined %}
                     <div class="form-group">
                         <label class="control-label col-xs-3">{{ 'tab.outliner.edit_node.url'|i18next }}</label>
-                        <div class="col-xs-7">
+                        <div class="col-xs-8 col-sm-7">
                             <input type="text" class="form-control" id="ladb_outliner_node_input_url" {% if node.url == -1 %}data-multiple="true"{% else %}value="{{ node.url|escape('html') }}"{% endif %}>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                 {% if node.tags is defined %}
                     <div class="form-group">
                         <label class="control-label col-xs-3">{{ 'tab.outliner.edit_node.tags'|i18next }}</label>
-                        <div class="col-xs-7">
+                        <div class="col-xs-8 col-sm-7">
                             <input type="text" class="form-control" id="ladb_outliner_node_input_tags" value="{{ node.tags|join(';')|escape }}">
                             {% if multiple %}
                                 <div class="help-block"><small><i class="ladb-opencutlist-icon-info"></i> {{ 'tab.cutlist.edit_part.tags_multiple_info'|i18next }}</small></div>

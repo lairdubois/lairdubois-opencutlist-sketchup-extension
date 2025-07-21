@@ -178,9 +178,10 @@
             that.dialog.minimize();
         });
         this.$btnMaximize.on('click', function () {
-            that.dialog.maximize();
             if (!that.dialog.activeTabName) {
                 that.dialog.selectTab(that.dialog.options.defaultTabName);
+            } else {
+                that.dialog.maximize(that.dialog.getActiveTab().data('side-folded'));
             }
         });
         this.$btnNews.on('click', function() {

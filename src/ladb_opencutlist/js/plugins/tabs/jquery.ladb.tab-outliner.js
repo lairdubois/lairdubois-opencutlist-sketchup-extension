@@ -22,6 +22,7 @@
         this.$fileTabs = $('.ladb-file-tabs', this.$header);
         this.$btnGenerate = $('#ladb_btn_generate', this.$header);
         this.$btnOptions = $('#ladb_btn_options', this.$header);
+        this.$btnSideFold = $('#ladb_btn_side_fold', this.$header);
 
         this.$page = $('.ladb-page', this.$element);
 
@@ -788,6 +789,12 @@
         this.$btnOptions.on('click', function () {
             that.editOptions();
             this.blur();
+        });
+        this.$btnSideFold.on('click', function () {
+            that.$btnSideFold.toggleClass('active');
+            that.dialog.maximize(that.$btnSideFold.hasClass('active'));
+            this.blur();
+            return false;
         });
 
         // Events

@@ -40,6 +40,9 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-side-fold:before {
+    content: "\e9b9";
+}
 .ladb-opencutlist-icon-circle-checked:before {
     content: "\e9b5";
 }

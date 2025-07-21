@@ -252,15 +252,16 @@
         }
     };
 
-    LadbDialogTabs.prototype.maximize = function () {
+    LadbDialogTabs.prototype.maximize = function (sideFolded = false) {
         const that = this;
-        if (!that.maximized && !that.maximizing) {
+        if (/*!that.maximized && */!that.maximizing) {
             that.maximizing = true;
             that.$element.trigger(jQuery.Event('maximizing.ladb.dialog'));
-            rubyCallCommand('core_tabs_dialog_maximize', null, function () {
+            rubyCallCommand('core_tabs_dialog_maximize', { side_folded: sideFolded }, function () {
                 that.maximizing = false;
                 that.$wrapper.show();
                 that.maximized = true;
+                that.getActiveTab().data('side-folded', sideFolded);
                 that.$element.trigger(jQuery.Event('maximized.ladb.dialog'));
             });
         }
@@ -392,7 +393,7 @@
         }
 
         // By default maximize the dialog
-        this.maximize();
+        this.maximize($tab.data('side-folded'));
 
         // If fresh tab, callback is invoked through 'initializedCallback'
         if (!isFreshTab) {
@@ -592,7 +593,6 @@
         // Bind buttons
         $.each(this.$tabBtns, function (tabName, $tabBtn) {
             $tabBtn.on('click', function () {
-                that.maximize();
                 that.selectTab(tabName);
             });
         });
