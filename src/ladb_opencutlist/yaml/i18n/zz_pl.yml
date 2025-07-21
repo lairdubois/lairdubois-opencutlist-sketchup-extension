@@ -1205,10 +1205,10 @@ tab:
         no_bin_1d: 969 - Nie wybrano żadnej standardowej płyty lub okleiny i nie zdefiniowano żadnych resztek.
         no_bin_2d: 970 - Nie wybrano żadnego standardowego panelu lub arkusza forniru i nie zdefiniowano żadnych resztek.
         invalid_part_shapes: 971 - Kształt części '{{ name }}' jest nieprawidłowy.
-        no_solution: '972 - '
+        no_solution: 972 - Nie znaleziono rozwiązania pozwalającego na umieszczenie **wszystkich części** w dostępnym materiale.
         unplaced_parts: 973 - **1 element** nie mógł być umieszczony.
         unplaced_parts_plural: 974 - Nie można umieścić **{{ count }} części**.
-        unusable_part: '975 - '
+        unusable_part: 975 - Zbyt duża część
       warning:
         is_part_selection: 976 - Ten schemat cięcia jest ograniczony do **wybranych części**.
         cutting_dimensions: 977 - Ten rozkrój używa **wstępnych** wymiarów części.

@@ -66,8 +66,8 @@ default:
   unit_mass_1: 62 - Libra
   unit_angle_0: 63 - Stupně
   instance_single: 64 - položka
-  instance_plural: 65 - kus
-  part_single: 66 - díl ... díl může obsahovat více kusů
+  instance_plural: 65 - položka
+  part_single: 66 - díl
   part_plural: 67 - díly
   cut_single: 68 - řez
   cut_plural: 69 - řezy
@@ -1965,7 +1965,7 @@ tab:
         failed_to_import_invalid_hexdigest: 1512 - Tento soubor byl upraven. Nelze jej importovat.
         failed_to_import_bad_file_format: 1513 - Neplatný formát souboru.
   about:
-    label: 1514 - O plaginu ...
+    label: 1514 - O pluginu
     title: 1515 - O plaginu ...
     version: 1516 - Verze
     credits: 1517 - Technické kredity
