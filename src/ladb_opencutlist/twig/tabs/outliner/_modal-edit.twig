@@ -13,12 +13,9 @@
 
 {% block headerInner %}
     {{ parent() }}
-    <ul class="nav nav-tabs nav-justified" role="tablist">
-        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_node_general" role="tab" data-toggle="tab">{{ 'tab.outliner.edit_node.general'|i18next }}</a></li>
-{#        {% if not node.type == 0 %}#}{# 0 = TYPE_MODEL #}
-{#            <li role="presentation"{% if tab == 'preview' %} class="active"{% endif %}><a href="#tab_edit_node_preview" role="tab" data-toggle="tab">{{ 'tab.outliner.edit_node.preview'|i18next }}</a></li>#}
-{#        {% endif %}#}
-    </ul>
+{#    <ul class="nav nav-tabs nav-justified" role="tablist">#}
+{#        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_node_general" role="tab" data-toggle="tab">{{ 'tab.outliner.edit_node.general'|i18next }}</a></li>#}
+{#    </ul>#}
 {% endblock %}
 
 {% block bodyInner %}
@@ -91,9 +88,6 @@
                 {% endif %}
             </div>
         </div>
-{#        {% if not node.type == 0 %}#}{# 0 = TYPE_MODEL #}
-{#            <div role="tabpanel" class="tab-pane{% if tab == 'preview' %} active{% endif %}" id="tab_edit_node_preview"></div>#}
-{#        {% endif %}#}
     </div>
 {% endblock %}
 

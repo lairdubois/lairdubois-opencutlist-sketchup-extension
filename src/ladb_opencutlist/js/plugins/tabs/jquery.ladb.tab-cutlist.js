@@ -2771,11 +2771,14 @@
 
                             const solution = response.solution;
 
+                            let dimensionColumnOrderStrategy = that.generateOptions.dimension_column_order_strategy.split('>').filter((p) => p !== 'thickness');
+                            if (group.material_is_1d) dimensionColumnOrderStrategy = dimensionColumnOrderStrategy.filter((p) => p !== 'width');
+
                             let $slide = that.pushNewSlide('ladb_cutlist_slide_packing', 'tabs/cutlist/_slide-packing.twig', $.extend({
                                 capabilities: that.dialog.capabilities,
                                 generateOptions: that.generateOptions,
                                 packingOptions: packingOptions,
-                                dimensionColumnOrderStrategy: that.generateOptions.dimension_column_order_strategy.split('>'),
+                                dimensionColumnOrderStrategy: dimensionColumnOrderStrategy,
                                 filename: that.filename,
                                 modelName: that.modelName,
                                 modelDescription: that.modelDescription,
@@ -3163,7 +3166,7 @@
                             rubyCallCommand('cutlist_group_packing_start', $.extend({
                                 part_ids: partIds,
                                 hide_material_colors: that.generateOptions.hide_material_colors
-                        }, packingOptions), function (response) {
+                            }, packingOptions), function (response) {
 
                                 if (response.running) {
                                     let waitingForResponse = false;

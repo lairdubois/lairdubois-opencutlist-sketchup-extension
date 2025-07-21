@@ -1728,7 +1728,6 @@ tab:
       title_model: "Propriétés du modèle"
       title_instance: "Propriétés de l'instance **{{ name }}**"
       general: Générales
-      preview: Aperçu
       name: Nom
       instance_name: Instance
       material: Matière

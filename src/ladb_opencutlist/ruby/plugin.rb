@@ -1322,7 +1322,7 @@ module Ladb::OpenCutList
     end
 
     def _assert_not_zzz
-      puts '_assert_not_zzz', @zzz
+      # Plugin is sleeping (zzz) right after updating itself.
       UI.messagebox(get_i18n_string('core.upgrade.success')) if @zzz
       !@zzz
     end
