@@ -1210,10 +1210,10 @@ tab:
         no_bin_1d: Nie wybrano żadnej standardowej płyty lub okleiny i nie zdefiniowano żadnych resztek.
         no_bin_2d: Nie wybrano żadnego standardowego panelu lub arkusza forniru i nie zdefiniowano żadnych resztek.
         invalid_part_shapes: "Kształt części '{{ name }}' jest nieprawidłowy."
-        no_solution: ""
+        no_solution: Nie znaleziono rozwiązania pozwalającego na umieszczenie **wszystkich części** w dostępnym materiale.
         unplaced_parts: "**1 element** nie mógł być umieszczony."
         unplaced_parts_plural: "Nie można umieścić **{{ count }} części**."
-        unusable_part: ""
+        unusable_part: Zbyt duża część
       warning:
         is_part_selection: Ten schemat cięcia jest ograniczony do **wybranych części**.
         cutting_dimensions: Ten rozkrój używa **wstępnych** wymiarów części.
