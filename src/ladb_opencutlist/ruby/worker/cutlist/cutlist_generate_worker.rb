@@ -1189,14 +1189,12 @@ module Ladb::OpenCutList
       width_f = DimensionUtils.to_ocl_precision_f(width)
       thickness_f = DimensionUtils.to_ocl_precision_f(thickness)
       std_sections.each do |std_section|
-        std_section_width = [ std_section.width, std_section.height ].max   # Force width to be max dim
-        std_section_height = [ std_section.width, std_section.height ].min  # Force height to be min dim
-        std_width_f = DimensionUtils.to_ocl_precision_f(std_section_width)
-        std_height_f = DimensionUtils.to_ocl_precision_f(std_section_height)
-        if width_f == std_width_f && thickness_f == std_height_f || width_f == std_height_f && thickness_f == std_width_f
+        std_width_f = DimensionUtils.to_ocl_precision_f(std_section.width)
+        std_height_f = DimensionUtils.to_ocl_precision_f(std_section.height)
+        if width_f == std_width_f && thickness_f == std_height_f
           return {
               :available => true,
-              :value => Section.new(std_section_width, std_section_height)
+              :value => Section.new(std_section.width, std_section.height)
           }
         end
       end

@@ -17,8 +17,8 @@ module Ladb::OpenCutList
         width = f_width.to_l
         height = f_height.to_l
       end
-      @width = [ width, height ].max
-      @height = [ width, height ].min
+      @width = width
+      @height = height
     end
 
     # -----
