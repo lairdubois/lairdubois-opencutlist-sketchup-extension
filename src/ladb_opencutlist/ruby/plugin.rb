@@ -1151,8 +1151,8 @@ module Ladb::OpenCutList
     def tabs_dialog_store_size(width, height)
       @tabs_dialog_maximized_width = [ width, TABS_DIALOG_DEFAULT_MAXIMIZED_WIDTH ].max unless @tabs_dialog_side_folded
       @tabs_dialog_maximized_height = [ height, TABS_DIALOG_DEFAULT_MAXIMIZED_HEIGHT ].max
-      write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH, width)
-      write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, height)
+      write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_WIDTH, @tabs_dialog_maximized_width)
+      write_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, @tabs_dialog_maximized_height)
     end
 
     def tabs_dialog_store_current_size
