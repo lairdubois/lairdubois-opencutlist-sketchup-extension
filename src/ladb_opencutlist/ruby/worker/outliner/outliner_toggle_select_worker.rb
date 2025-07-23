@@ -32,7 +32,8 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Select', true, false, false)
 
 
-      if Sketchup.version_number >= 2000000000 && node_def.parent && !node_def.parent.active
+      # As native behavior, change active path to parent of selected element (SU 2020+)
+      if model.respond_to?(:active_path=) && node_def.parent && !node_def.parent.active
         model.active_path = node_def.parent.path
       end
 
