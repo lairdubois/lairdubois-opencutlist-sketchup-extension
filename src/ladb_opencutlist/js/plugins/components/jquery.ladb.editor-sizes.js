@@ -231,7 +231,7 @@
     };
 
     LadbEditorSizes.prototype.setAvailableSizesAndSizes = function (availableSizes, sizes) {
-        var that = this;
+        const that = this;
 
         this.availableSizeDefs = [];
 
@@ -259,7 +259,7 @@
     };
 
     LadbEditorSizes.prototype.setSizes = function (sizes) {
-        var that = this;
+        const that = this;
 
         // Keep given value for instant valid getter
         this.val = sizes;

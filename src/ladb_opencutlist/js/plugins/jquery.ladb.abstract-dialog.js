@@ -42,6 +42,7 @@ function LadbAbstractDialog(element, options) {
     this.settings = {};
 
     this._$modal = null;
+    this._$contextMenu = null;
 
 }
 
@@ -352,6 +353,84 @@ LadbAbstractDialog.prototype.notifySuccess = function (text, buttons) {
     this.notify('<i class="ladb-opencutlist-icon-check-mark"></i> ' + text, 'success', buttons);
 };
 
+// ContextMenu /////
+
+LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items, callback) {
+    const that = this;
+
+    const fnGetMenuPosition = function ($menu, mouse, direction, scrollDir) {
+        let win = $(window)[direction](),
+            scroll = $(window)[scrollDir](),
+            menu = $menu[direction](),
+            position = mouse + scroll;
+
+        // Opening menu would pass the side of the page
+        if (mouse + menu > win && menu < mouse) {
+            position -= menu;
+        }
+
+        return position;
+    }
+
+    let $body = $('body');
+    let $contextMenu = $('<div class="context-menu" />');
+    let $backdrop = $('<div class="context-menu-backdrop" />');
+    let $menu = $('<ul class="dropdown-menu" />');
+
+    const fnRemoveContextMenu = function () {
+        if (that._$contextMenu != null) {
+            that._$contextMenu.remove();
+            that._$contextMenu = null;
+            $('body')
+                .off('mousedown, keydown', fnRemoveContextMenu)
+            ;
+            if (typeof callback === 'function') {
+                callback();
+            }
+        }
+    }
+    fnRemoveContextMenu();
+
+    $backdrop.on('mousedown', fnRemoveContextMenu);
+
+    for (const item of items) {
+        if (typeof item.callback === 'function') {
+            $menu.append(
+                $('<li>').append(
+                    $('<a href="#">')
+                        .on('click', function(e) {
+                            fnRemoveContextMenu();
+                            item.callback();
+                        })
+                        .html(Twig.twig({ data: "{{ text|escape('html') }}" }).render({ text: item.text }))
+                ).addClass(item.class)
+            )
+        } else if (item.separator) {
+            $menu.append(
+                $('<li role="separator" class="divider">')
+            )
+        } else {
+            $menu.append(
+                $('<li class="dropdown-header">').html(Twig.twig({ data: "{{ text|escape('html') }}" }).render({ text: item.text }))
+            )
+        }
+    }
+    $menu.css({
+        left: fnGetMenuPosition($menu, clientX, 'width', 'scrollLeft'),
+        top: fnGetMenuPosition($menu, clientY, 'height', 'scrollTop'),
+        display: 'block'
+    });
+    $contextMenu.append($backdrop);
+    $contextMenu.append($menu);
+    $body.append($contextMenu);
+    this._$contextMenu = $contextMenu;
+
+    $body
+        .on('mousedown, keydown', fnRemoveContextMenu)
+    ;
+
+}
+
 // Tooltips & Popovers /////
 
 LadbAbstractDialog.prototype.setupTooltips = function ($element) {
@@ -448,7 +527,7 @@ LadbAbstractDialog.prototype.copyToClipboard = function (text, notifySuccess) {
 
     } else {
 
-        var that = this;
+        const that = this;
 
         rubyCallCommand('core_copy_to_clipboard', {
             data: text
@@ -482,13 +561,6 @@ LadbAbstractDialog.prototype.init = function () {
     const that = this;
 
     // Add twig functions
-    Twig.extendFunction('compatible_with', function(value) {
-        switch (value) {
-            case 'svg.height-auto':
-                return !($('body').hasClass('ie') || $('body').hasClass('edge'));
-        }
-        return true;
-    });
     Twig.extendFunction('blend_colors', function (color1, color2, percentage) {
 
         // Code from : https://coderwall.com/p/z8uxzw/javascript-color-blender

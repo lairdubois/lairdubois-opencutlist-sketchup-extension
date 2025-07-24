@@ -33,8 +33,19 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Explode', true, false, false)
 
 
-      unless entity.explode
-        return { :errors => [ 'default.error' ] }
+      entities_to_explode = []
+      if node_def.selected
+        entities_to_explode.concat(model.selection.to_a.select { |e| e.respond_to?(:explode) })
+      else
+        entities_to_explode.push(entity)
+      end
+      model.selection.clear
+
+      entities_to_explode.each do |entity_to_explode|
+        unless (exploded_entities = entity_to_explode.explode)
+          return { :errors => [ 'default.error' ] }
+        end
+        model.selection.add(exploded_entities.select { |e| e.is_a?(Sketchup::Drawingelement) })
       end
 
 

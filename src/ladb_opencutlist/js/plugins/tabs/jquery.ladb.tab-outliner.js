@@ -183,28 +183,37 @@
                 }));
                 that.$tbody.append($row);
 
-                if (node.selected) {
-                    $row
-                        .on('mouseenter', function () {
-                            $('.ladb-outliner-row.ladb-selected').addClass('ladb-hover');
-                        })
-                        .on('mouseleave', function () {
-                            $('.ladb-outliner-row.ladb-selected').removeClass('ladb-hover');
-                        });
-                }
-                if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
-                    $row
-                        .on('mouseenter', function () {
-                            if (!node.child_active && !node.active) {
-                                rubyCallCommand('outliner_highlight', { ids: node.selected ? that.getSelectedNodes().map(node => node.id) : [ node.id ], highlighted: true });
-                            }
-                        })
-                        .on('mouseleave', function () {
-                            if (that.editedNode !== node) {
-                                rubyCallCommand('outliner_highlight', { highlighted: false });
-                            }
-                        });
-                }
+                const fnMouseEnter = function () {
+                    $row.addClass('ladb-hover');
+                    if (node.selected) {
+                        $row.siblings('.ladb-selected').addClass('ladb-hover');
+                    }
+                    if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
+                        if (!node.child_active && !node.active) {
+                            rubyCallCommand('outliner_highlight', {
+                                ids: node.selected ? that.getSelectedNodes().map(node => node.id) : [node.id],
+                                highlighted: true
+                            });
+                        }
+                    }
+                };
+                const fnMouseLeave = function () {
+                    if (that.editedNode !== node) {
+                        $row.removeClass('ladb-hover');
+                        if (node.selected) {
+                            $row.siblings('.ladb-selected').removeClass('ladb-hover');
+                        }
+                        if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
+                            rubyCallCommand('outliner_highlight', {highlighted: false});
+                        }
+                    }
+                };
+
+                $row
+                    .on('mouseenter', fnMouseEnter)
+                    .on('mouseleave', fnMouseLeave)
+                ;
+
                 $row
                     .on('click', function (e) {
                         if (!node.computed_locked) {
@@ -228,7 +237,33 @@
                             });
                         }
                         return false;
-                    });
+                    })
+                    .on('contextmenu', function (e) {
+                        if (node.type > 0) {    // > TYPE_MODEL
+                            that.editedNode = node;
+                            fnMouseEnter();
+                            let items = [];
+                            if (node.selected) {
+                                items.push({ text: that.getSelectedNodes().length + ' ' + i18next.t('tab.outliner.nodes') });
+                            } else {
+                                items.push({ text: that.computeNodeDisplayName(node) });
+                            }
+                            items.push({ separator: true });
+                            items.push({
+                                text: i18next.t('tab.outliner.edit_node.explode') + '...',
+                                class: 'dropdown-item-danger',
+                                callback: function () {
+                                    that.explodeNode(node);
+                                }
+                            });
+                            that.dialog.showContextMenu(e.clientX, e.clientY, items, function () {
+                                that.editedNode = null;
+                                fnMouseLeave();
+                            });
+                        }
+                        e.preventDefault();
+                    })
+                ;
                 $('a.ladb-btn-node-toggle-folding', $row).on('click', function () {
                     $(this).blur();
 
@@ -446,45 +481,15 @@
 
                 // Bind buttons
                 $btnExplode.on('click', function () {
+                    that.explodeNode(that.editedNode, function () {
 
-                    const names = [];
-                    if (that.editedNode.name) {
-                        names.push(that.editedNode.name);
-                    }
-                    if (that.editedNode.definition_name) {
-                        let definitionName = that.editedNode.definition_name
-                        if (that.editedNode.type === 2 || that.editedNode.type === 3) {   // 2 = TYPE_COMPONENT, 3 = TYPE_PART
-                            definitionName = '<' + definitionName + '>'
-                        }
-                        names.push(definitionName);
-                    }
+                        // Reset edited material
+                        that.editedNode = null;
 
-                    that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.edit_node.explode_message', { name: names.join(' ') }), function () {
+                        // Hide modal
+                        $modal.modal('hide');
 
-                        rubyCallCommand('outliner_explode', { id: that.editedNode.id }, function (response) {
-
-                            if (response.errors) {
-                                that.dialog.notifyErrors(response.errors);
-                            } else {
-
-                                // Reload the list
-                                that.generateOutliner();
-
-                                // Reset edited material
-                                that.editedNode = null;
-
-                                // Hide modal
-                                $modal.modal('hide');
-
-                            }
-
-                        });
-
-                    }, {
-                        confirmBtnType: 'danger',
-                        confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
                     });
-
                 });
                 $btnUpdate.on('click', function () {
 
@@ -596,6 +601,53 @@
 
         });
 
+    };
+
+    LadbTabOutliner.prototype.explodeNode = function (node, callback = undefined) {
+        let that = this;
+
+        that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.edit_node.explode_message', {
+            name: node.selected ? that.getSelectedNodes().length + ' ' + i18next.t('tab.outliner.nodes') : this.computeNodeDisplayName(node)
+        }), function () {
+
+            rubyCallCommand('outliner_explode', { id: node.id }, function (response) {
+
+                if (response.errors) {
+                    that.dialog.notifyErrors(response.errors);
+                } else {
+
+                    // Callback
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+
+                }
+
+            });
+
+        }, {
+            confirmBtnType: 'danger',
+            confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
+        });
+
+    }
+
+    LadbTabOutliner.prototype.computeNodeDisplayName = function (node) {
+        const names = [];
+        if (node.name) {
+            names.push(node.name);
+        }
+        if (node.definition_name) {
+            let definitionName = node.definition_name
+            if (node.type === 2 || node.type === 3) {   // 2 = TYPE_COMPONENT, 3 = TYPE_PART
+                definitionName = '<' + definitionName + '>'
+            }
+            names.push(definitionName);
+        }
+        if (names.length === 0) {    // 1 = TYPE_GROUP
+            names.push(i18next.t('tab.outliner.type_' + node.type));
+        }
+        return names.join(' ');
     };
 
     // Options /////
