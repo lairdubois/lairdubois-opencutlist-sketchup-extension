@@ -51,17 +51,17 @@
                 <div class="form-group">
                     {% include 'components/_editor-sizes.twig' with { 'id':'ladb_editor_scrap_bin_sizes', 'fieldName':('tab.cutlist.packing.option_scrap_bin_'~binSuffix1~'_'~binSuffix2~'_sizes')|i18next, 'fieldHelp':('tab.cutlist.packing.option_scrap_bin_'~binSuffix1~'_sizes_help')|i18next, 'emptyLabel': ('tab.cutlist.packing.option_scrap_bin_'~binSuffix1~'_none')|i18next } %}
                 </div>
-                {% if group.material_is_2d %}
                     <p class="help-block text-center">
-                        <small class="ladb-clickable" title="{{ 'tab.materials.edit_material.grained_help'|i18next }}" data-toggle="tooltip" data-html="true" data-material-properties-tab="formats"><i class="ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(material_attributes.grained ? '1' : '0'))|i18next }}</small>
+                        {% if group.material_is_2d %}
+                            <small class="ladb-clickable" title="{{ 'tab.materials.edit_material.grained_help'|i18next }}" data-toggle="tooltip" data-html="true" data-material-properties-tab="formats"><i class="ladb-opencutlist-icon-grained-{{ material_attributes.grained ? '1' : '0' }}"></i> {{ ('tab.materials.edit_material.grained_'~(material_attributes.grained ? '1' : '0'))|i18next }}</small>
+                        {% endif %}
                         {% if material_attributes.length_increase %}
-                            <span class="ladb-cutting-increase-help ladb-horizontal-left-separator"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i> <small class="ladb-clickable" title="{{ 'tab.materials.edit_material.length_increase_help'|i18next }}" data-toggle="tooltip" data-html="true" data-material-properties-tab="cut_options">{{ 'tab.materials.edit_material.length_increase'|i18next }} : <strong>{{ material_attributes.length_increase }}</strong></small></span>
+                            <span class="ladb-cutting-increase-help{% if group.material_is_2d %} ladb-horizontal-left-separator{% endif %}"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i> <small class="ladb-clickable" title="{{ 'tab.materials.edit_material.length_increase_help'|i18next }}" data-toggle="tooltip" data-html="true" data-material-properties-tab="cut_options">{{ 'tab.materials.edit_material.length_increase'|i18next }} : <strong>{{ material_attributes.length_increase }}</strong></small></span>
                         {% endif %}
                         {% if material_attributes.width_increase %}
                             <span class="ladb-cutting-increase-help ladb-horizontal-left-separator"><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i> <small class="ladb-clickable" title="{{ 'tab.materials.edit_material.width_increase_help'|i18next }}" data-toggle="tooltip" data-html="true" data-material-properties-tab="cut_options">{{ 'tab.materials.edit_material.width_increase'|i18next }} : <strong>{{ material_attributes.width_increase }}</strong></small></span>
                         {% endif %}
                     </p>
-                {% endif %}
             </div>
         </div>
         <div role="tabpanel" class="tab-pane{% if tab == 'config' %} active{% endif %}" id="tab_packing_options_config">

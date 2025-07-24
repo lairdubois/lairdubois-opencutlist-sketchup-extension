@@ -1662,6 +1662,10 @@ namespace Packy {
                 builder.instance_builder().set_item_bin_minimum_spacing(j["item_bin_minimum_spacing"].get<irregular::LengthDbl>());
             }
 
+            if (j.contains("fake_trimming_y")) {
+                fake_trimming_y_ = j["fake_trimming_y"].get<irregular::LengthDbl>();
+            }
+
         }
 
         ItemTypeId read_item_type(
@@ -1724,6 +1728,42 @@ namespace Packy {
             Profit cost = j.value("cost", static_cast<Profit>(-1));
             BinPos copies = j.value("copies", static_cast<BinPos>(1));
             BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
+
+            if (/*shape.is_rectangle() && */fake_trimming_y_ > 0) {
+                auto[min, max] = shape.compute_min_max();
+
+                // TODO find a best way to enlarge the shape
+
+                auto x = min.x;
+                auto y = min.y;
+                auto width = max.x - min.x;
+                auto height = max.y - min.y + fake_trimming_y_ * 2;
+
+                Shape fake_shape;
+                ShapeElement element_1;
+                ShapeElement element_2;
+                ShapeElement element_3;
+                ShapeElement element_4;
+                element_1.type = ShapeElementType::LineSegment;
+                element_2.type = ShapeElementType::LineSegment;
+                element_3.type = ShapeElementType::LineSegment;
+                element_4.type = ShapeElementType::LineSegment;
+                element_1.start = {x, y};
+                element_1.end = {x + width, y};
+                element_2.start = {x + width, y};
+                element_2.end = {x + width, y + height};
+                element_3.start = {x + width, y + height};
+                element_3.end = {x, y + height};
+                element_4.start = {x, y + height};
+                element_4.end = {x, y};
+                fake_shape.elements.push_back(element_1);
+                fake_shape.elements.push_back(element_2);
+                fake_shape.elements.push_back(element_3);
+                fake_shape.elements.push_back(element_4);
+
+                shape = fake_shape;
+
+            }
 
             BinTypeId bin_type_id = builder.instance_builder().add_bin_type(
                     shape,
@@ -1825,7 +1865,7 @@ namespace Packy {
                     j_items.emplace_back(json{
                             {"item_type_id", item_type_meta.orig_item_type_id},
                             {"x",            to_length_dbl(item.bl_corner.x)},
-                            {"y",            to_length_dbl(item.bl_corner.y)},
+                            {"y",            to_length_dbl(item.bl_corner.y - fake_trimming_y_)},
                             {"angle",        item.angle},  // Returns angle in degrees
                             {"mirror",       item.mirror}
                     });
@@ -1916,6 +1956,8 @@ namespace Packy {
         };
 
     private:
+
+        irregular::LengthDbl fake_trimming_y_ = false;
 
         bool label_offsets_ = false;
 

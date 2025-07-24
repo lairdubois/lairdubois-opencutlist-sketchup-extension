@@ -530,14 +530,11 @@ module Ladb::OpenCutList
           instance_parameters.merge!({ keep_width: _to_packy_length(@rectangleguillotine_keep_length) }) unless @rectangleguillotine_keep_length.nil?
           instance_parameters.merge!({ keep_height: _to_packy_length(@rectangleguillotine_keep_width) }) unless @rectangleguillotine_keep_width.nil?
         elsif @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
-          parameters.merge!(
-            {
-              label_offsets: true
-            }
-          )
+          parameters.merge!({ label_offsets: true })
           instance_parameters = {
+            item_item_minimum_spacing: _to_packy_length(@spacing),
             item_bin_minimum_spacing: _to_packy_length(@trimming),
-            item_item_minimum_spacing: _to_packy_length(@spacing)
+            fake_trimming_y: @group.material_is_1d ? _to_packy_length(@trimming) : 0
           }
         end
 
@@ -818,7 +815,7 @@ module Ladb::OpenCutList
       l.to_l
     end
 
-    def _render_bin_def_svg(bin_def, light = false, longest_bin_def = nil, widest_bin_def = nil)
+    def _render_bin_def_svg(bin_def, light, longest_bin_def, widest_bin_def)
 
       if light
         _set_pixel_to_inch_factor(200 / widest_bin_def.bin_type_def.width)
@@ -857,7 +854,7 @@ module Ladb::OpenCutList
       px_trimming = _to_px(@trimming)
       px_spacing = _to_px(@spacing)
 
-      is_1d = @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
+      is_1d = @group.material_is_1d
       is_2d = !is_1d
       is_irregular = @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
       is_cut_bg = px_spacing >= 5 && !light
