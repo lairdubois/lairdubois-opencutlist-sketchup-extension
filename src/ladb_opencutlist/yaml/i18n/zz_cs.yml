@@ -66,7 +66,7 @@ default:
   unit_mass_1: 62 - Libra
   unit_angle_0: 63 - Stupně
   instance_single: 64 - položka
-  instance_plural: 65 - položka
+  instance_plural: 65 - položky
   part_single: 66 - díl
   part_plural: 67 - díly
   cut_single: 68 - řez
@@ -89,7 +89,7 @@ default:
   length: 85 - Délka
   width: 86 - Šířka
   thickness: 87 - Tloušťka
-  height: 88 - Výška papíru
+  height: 88 - Výška
   deprecated: 89 - Zastaralé
 core:
   menu:
@@ -1617,7 +1617,7 @@ tab:
         1277 - Pro tento materiál jsou k dispozici standardní průřezy.
 
         *Pokud není zadána žádná jednotka, použije se modelová jednotka.*
-      std_sizes: 1278 - Standardní velikosti panelů
+      std_sizes: 1278 - Standardní velikosti tabule
       std_sizes_help: |
         1279 - Pro tento materiál jsou k dispozici standardní velikosti.
 
@@ -1648,13 +1648,13 @@ tab:
       std_volumic_masses_help: 1296 - Umožňuje nastavit hustotu pro všechny velikosti i pro každou standardní velikost materiálu.
       std_prices: 1297 - Cena
       std_prices_help: 1298 - Umožňuje definovat cenu pro všechny velikosti i pro každou standardní velikost materiálu.
-      std_cut_prices: 1299 - Standardní slevová cena
+      std_cut_prices: 1299 - Cena řezu
       std_cut_prices_help: |
         1300 - Umožňuje definovat cenu řezu materiálu.
 
         *Tato hodnota ovlivňuje pouze rovné řezy.*
-      texture_width: 1301 - Šířka papíru
-      texture_height: 1302 - Výška papíru
+      texture_width: 1301 - Šířka
+      texture_height: 1302 - Výška
       export_to_skm: 1303 - Export (.skm)
     texture_load:
       title: 1304 - Načíst obrázek
