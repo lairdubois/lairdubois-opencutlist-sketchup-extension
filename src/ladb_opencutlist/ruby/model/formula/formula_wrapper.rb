@@ -224,6 +224,26 @@ module Ladb::OpenCutList
       super(value, Sketchup::Color)
     end
 
+    # -- Privatisation
+
+    def alpha=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def blue=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def green=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def red=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    # -----
+
     def export
       self.to_s
     end
