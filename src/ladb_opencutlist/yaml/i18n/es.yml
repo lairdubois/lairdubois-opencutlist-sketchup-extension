@@ -568,6 +568,8 @@ tab:
       sorting: Clasificación
       group_order_strategy: Clasificación de grupos
       group_order_strategy_help: |
+        Reorganizar las siguientes propiedades para definir el criterio de clasificación de los grupos.
+        Cada propiedad puede clasificarse en orden <i class="ladb-opencutlist-icon-sort-asc"></i> *ascendente* o <i class="ladb-opencutlist-icon-sort-desc"></i>*descendente*.
       part_order_strategy: Clasificación de piezas
       part_order_strategy_help: |
         Reorganice las siguientes propiedades para definir el orden de clasificación dentro de cada grupo.
@@ -625,6 +627,7 @@ tab:
     export:
       title: Exportación
       info_0: |
+        Esta función permite exportar los datos de la *tabla de despiede* al portapapeles o a un fichero en formato [CSV](https://es.wikipedia.org/wiki/Valores_separados_por_comas) o [XLSX](https://es.wikipedia.org/wiki/Office_Open_XML).
       customize_help: |
         Reordenar, Ocultar, Añadir, Eliminar o Seleccionar una columna de la lista para personalizar su **título** y la **fórmula** que genera el valor mostrado para cada fila exportada.
       add_column: Añadir una columna
@@ -651,7 +654,7 @@ tab:
       option_csv_col_sep_comma: Coma
       option_csv_col_sep_semicolon: Punto y coma
       option_csv_encoding: Codificación
-      copy_all: ""
+      copy_all: Títulos + valores
       copy_values: Sólo valores
       number: No.
       path: Camino
@@ -738,7 +741,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errores**."
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no se contabilizarán.
-        is_part_selection: ""
+        is_part_selection: La estimación incluye únicamente las **piezas seleccionadas**.
       tip:
         not_enough_data: |
           Para que esta estimación se calcule correctamente:
@@ -987,36 +990,53 @@ tab:
       option_problem_type_rectangle: Rectángulo
       option_problem_type_rectangleguillotine: Guillotina
       option_problem_type_onedimensional: Liston
-      option_problem_type_irregular: ""
+      option_problem_type_irregular: Solapado
       options_material: Material
       options_config: Configuración
       options_display: Visualización
       options_tuning: Tuning
       option_std_bin_1d_dimensional: Listones estándar
-      option_std_bin_1d_edge: ""
+      option_std_bin_1d_edge: Cantos estándar
       option_std_bin_1d_help: |
+        Seleccionar las dimensiones de listón o canto estándar que se duplicarán para incluir lo mejor posible todas las piezas.
+
+        Esta lista se define en el campo **$t(tab.materials.edit_material.std_lengths)** del material.
+
+        *Editar las propiedades del material '{{ material_name }}' para actualizar la lista.*
       option_std_bin_1d_add: Agregar un tamaño de panel
       option_std_bin_1d_none: Ninguna
       option_scrap_bin_1d_dimensional_sizes: Tableros de corte
       option_scrap_bin_1d_edge_sizes: Restos de Canto
       option_scrap_bin_1d_sizes_placeholder: largo x cantidad ; ...
       option_scrap_bin_1d_sizes_help: |
+        Indicar aquí la lista de los restos de listón o cantos para incluir en el despiece.
+
+        *Si no se especifica ninguna unidad se aplicarán las unidades del modelo.*
       option_scrap_bin_1d_none: No
       option_std_bin_2d_sheet_good: Tableros estándar
-      option_std_bin_2d_veneer: ""
+      option_std_bin_2d_veneer: Chapado estándar
       option_std_bin_2d_help: |
+        Seleccionar las dimensiones de tablero o chapado que se duplicarán para incluir lo mejor posible todas las piezas.
+
+        Esta lista se define en el campo**$t(tab.materials.edit_material.std_sizes)** del material.
+
+        *Editar las propiedades del material '{{ material_name }}' para actualizar la lista.*
       option_std_bin_2d_add: Agregar un tamaño de panel
       option_std_bin_2d_none: No
       option_scrap_bin_2d_sheet_good_sizes: Productos en piezas cortadas
       option_scrap_bin_2d_veneer_sizes: Restos de hojas
       option_scrap_bin_2d_sizes_placeholder: largo x ancho x cantidad; ...
       option_scrap_bin_2d_sizes_help: |
+        Indicar aquí la lista de los restos de tablero o chapado para incluir en el despiece.
+
+        *Si no se especifica ninguna unidad se aplicarán las del modelo.*
       option_scrap_bin_2d_none: No
       option_optimization_mode: Modo de optimización
       option_optimization_mode_help: |
         Define el modo de optimización, con o sin límite de tiempo.
       option_objective: Objetivo
       option_objective_help: |
+        Define el objetivo del despiece.
       option_rectangleguillotine_cut_type: Tipo de corte
       option_rectangleguillotine_cut_type_help: |
         Determina el tipo de corte.
@@ -1036,20 +1056,27 @@ tab:
       option_rectangleguillotine_keep_help: Los recortes cuyas dos dimensiones sean mayores que el tamaño mínimo se marcarán con **conservar**.
       option_irregular_allowed_rotations: Rotaciones autorizadas
       option_irregular_allowed_rotations_help: |
+        Define el paso de los ángulos de rotación posibles de la pieza para su ubicación.
+
+        *Los materiales machihembrados sólo admiten los ángulos de 0 y 180º.*
       option_irregular_allowed_rotations_0: Ninguna
       option_irregular_allowed_rotations_90: Pasos de 90°
       option_irregular_allowed_rotations_180: Pasos de 180°
-      option_irregular_allow_mirroring: ""
+      option_irregular_allow_mirroring: Simetría válida
       option_irregular_allow_mirroring_help: |
+        Indica si la simetría de la pieza es válida en la ubicación.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: Espaciado
       option_spacing_help: |
+        Espacio mínimo entre cada pieza.
+        Este valor puede corresponder a la longitud de la hoja o del útil de corte.
       option_trimming: Margen
-      option_trimming_1d_help: ""
-      option_trimming_2d_help: ""
+      option_trimming_1d_help: Margen de saneado en cada extremo del listón o canto que se considerará como desperdicio.
+      option_trimming_2d_help: Margen de saneado en todo el contorno del panel o chapado que se considerará como desperdicio.
       option_items_formula: Fórmula
       option_items_formula_help: |
+        Permite escribir código *Ruby* para personalizar el texto de identificación de las piezas en el diagrama.
       option_hide_part_list: Listado de piezas
       option_hide_part_list_1d_dimensional_0: Mostrado para cada tablero
       option_hide_part_list_1d_edge_0: Mostrado para cada tira de canto
@@ -1077,7 +1104,7 @@ tab:
       option_origin_corner_1: Esquina inferior izquierda
       option_origin_corner_2: Esquina superior derecha
       option_origin_corner_3: Esquina inferior derecha
-      option_origin_corner_help: ""
+      option_origin_corner_help: "Permite elegir el punto de origen de colocación de las piezas en tableros, chapados, listones o cantos."
       option_highlight_primary_cuts: Cortes primarios
       option_highlight_primary_cuts_0: Sólo en vista general
       option_highlight_primary_cuts_1: Siempre visible
@@ -1091,7 +1118,7 @@ tab:
         Establece el tiempo permitido para el cálculo
       tooltip:
         scroll_to_block_1d: Desplazate al primer tabla o tiro de canto
-        scroll_to_block_2d: ""
+        scroll_to_block_2d: Desplazarse al primer tablero o chapado
       list:
         summary: Resumen
         trimming: Margen
@@ -1180,8 +1207,8 @@ tab:
             El reborde de mecanizado ({{ overflow }}) debe ser inferior o igual al espacio ({{ spacing }}) configurado en el despiece.
       error:
         no_part: Ninguna parte.
-        no_bin_1d: ""
-        no_bin_2d: ""
+        no_bin_1d: No se ha seleccionado ningún listón o canto estándar ni se ha definido ningún resto.
+        no_bin_2d: No se ha seleccionado ningún tablero ni chapado estándar ni se ha definido ningún resto.
         invalid_part_shapes: "La forma de la parte '{{ name }}' no es válida."
         no_solution: No se ha encontrado ninguna solución para colocar **todas las piezas** en el material disponible.
         unplaced_parts: "**1 parte** no pudo ser colocada."
@@ -1420,6 +1447,11 @@ tab:
       option_anchor_0: Automático
       option_anchor_1: Proyectar el origen de la pieza
       option_anchor_help: |
+        **Automático**
+        La esquina superior izquierda de la caja que contiene la geometría exportada se usa como punto de anclaje.
+
+        **Proyectar el origen de la pieza**
+        Permite activar la proyección del origen de los ejes de la pieza como punto de anclaje.
       option_switch_yz: Eje vertical
       option_switch_yz_0: Z vertical
       option_switch_yz_1: Y vertical
@@ -1436,8 +1468,14 @@ tab:
       option_merge_holes_0: Básico
       option_merge_holes_1: Contorno + perforaciones + reborde
       option_merge_holes_help: |
+        **Básico**
+        La forma de la pieza se exporta con la proyección de cada cara en una capa según su profundidad.
+
+        **Contorno + Perforaciones + Reborde**
+        Activa la separación del reborde exterior de las piezas de sus perforaciones, así como el cálculo del reborde de mecanizado aplicado a las superficies que se encuentran junto al perímetro y los huecos.
       option_merge_holes_overflow: Reborde de mecanizado
       option_merge_holes_overflow_help: |
+        Permite definir la distancia del reborde de mecanizado aplicado a las superficies junto al borde y en torno a los huecos.
       option_include_paths: Trazados
       option_include_paths_0: $t(default.no)
       option_include_paths_1: Utilizar aristas no asociadas a una cara
@@ -1446,8 +1484,11 @@ tab:
       option_parts: Piezas
       option_parts_help: |
         Permite elegir el color de las piezas.
-      option_parts_depths: ""
+      option_parts_depths: Huecos
       option_parts_depths_help: |
+        Permite elegir los colores de los huecos de las piezas.
+
+        *Por defecto, el color empleado es un degradado proporcional a la profundidad del hueco entre el color de las piezas y el de las perforaciones.*
       option_parts_holes: Perforaciones
       option_parts_holes_help: |
         Permite elegir el color de las perforaciones de las piezas.
@@ -1552,6 +1593,9 @@ tab:
       attributes: Atributos
       thickness: Espesor
       thickness_help: |
+        Espesor final del material.
+
+        *Si no se indica ninguna unidad, se aplicará la del modelo.*
       length_increase: Longitud sobremedida
       length_increase_help: Sobredimensionado aplicado a la longitud para definir la **longitud bruta**.
       width_increase: Ancho sobremedida
@@ -1560,12 +1604,24 @@ tab:
       thickness_increase_help: Sobredimensionado aplicado al espesor para definir el **espesor bruto**.
       std_lengths: Longitudes estándar
       std_lengths_help: |
+        Disponibles longitudes estándar para este material.
+
+        *Si no se indica ninguna unidad, se aplicará la del modelo.*
       std_widths: Anchos estándar
       std_widths_help: |
+        Disponibles anchuras estándar para este material.
+
+        *Si no se indica ninguna unidad, se aplicará la del modelo.*
       std_thicknesses: Espesores estándar
       std_thicknesses_help: |
+        Disponibles espesores **en bruto** estándar para este material.
+
+        *Si no se indica ninguna unidad, se aplicará la del modelo.*
       std_sections: Secciones transversales estándar
       std_sections_help: |
+        Disponibles secciones estándar para este material.
+
+        *Si no se indica ninguna unidad, se aplicará la del modelo.*
       std_sizes: Tamaños de panel estándar
       std_sizes_help: |
         Disponibles tamaños estándar para este material.
@@ -1660,7 +1716,7 @@ tab:
     type_3: Pieza
     tooltip:
       hide_node: Oculte
-      unhide_node: ""
+      unhide_node: Mostrar
       locked_node: Cerrado
       is_active_node: Instancia activa en el modelo
       set_active_node: Editar en el modelo
@@ -1686,13 +1742,13 @@ tab:
     option:
       general: General
       show_hidden_instances: Mostrar instancias ocultas
-      show_hidden_instances_help: ""
+      show_hidden_instances_help: "Si esta opción está activada, las copias con máscara del modelo se detallarán en el árbol de estructura."
       hide_descriptions: Oculte las descripciones
       hide_descriptions_help: "Si se selecciona esta opción, no se mostrarán las **descripciones** colocadas en las piezas."
       hide_tags: Ocultar etiquetas
       hide_tags_help: "Si se selecciona esta opción, se ocultarán las **etiquetas**."
       minimize_on_set_active: Minimizar después de '$t(tab.outliner.tooltip.set_active_node)'
-      minimize_on_set_active_help: ""
+      minimize_on_set_active_help: "Si se activa esta opción, la ventana OpenCutList se minimizará hasta que se use la función *'$t(tab.outliner.tooltip.set_active_node)'*."
     error:
       no_model: Ningún modelo está abierto. Necesitarás darme más información ;)
       no_entities: Su modelo se encuentra vacío
@@ -1789,6 +1845,10 @@ tab:
       Encuentre aquí una lista no exhaustiva de videos hechos por la comunidad sobre el uso de *OpenCutList*.
     submit: Enviar un video
     submit_info: |
+      ¿Ha realizado un vídeo de presentación del uso de **OpenCutList** y desea verlo aquí?
+      ¡Háganoslo saber escribiéndonos a **opencutlist@lairdubois.fr** !
+
+      *El video debe publicarse y alojarse en YouTube.*
     error:
       fail_to_load_list: No se puede descargar la lista de videos.
   news:
@@ -1918,7 +1978,7 @@ tab:
       *OpenCutList* fue desarrollado por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) y [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liste todos los [contribuyentes](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traducciones
     credits_translators: |
-      - Raquel Caballero Guillén (*español*), [Leonardo Romero Giménez](https://latablamarilla.com/)
+      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*español*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglés*, *alemán*)
       - Gildas Boureau (documentación *francés*)
       - Vladimir Badulya (*ruso*)
@@ -1964,15 +2024,15 @@ tool:
       invalid_multiplicator: "Factor {{ value }} no es válido"
       invalid_divider: "Divisor {{ value }} no es válido"
       invalid_offset: "Desplazamiento {{ value }} no es válido"
-      invalid_segment_count: ""
+      invalid_segment_count: "El número de segmentos {{ value }} no es válido. Debe estar comprendido entre 3 y 999."
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
     title: Dibujar
-    action_0: ""
-    action_0_status: ""
-    action_0_state_1_status: ""
+    action_0: Dibujar un rectángulo
+    action_0_status: Dibujar un volumen de base rectangular
+    action_0_state_1_status: Hacer clic para definir el ángulo opuesto o introducir longitud y anchura
     action_1: Dibujar un círculo
     action_1_status: Dibujar un volumen de base circular
     action_1_state_1_radius_status: Hacer clic para definir el radio o introducir una distancia
@@ -1998,12 +2058,12 @@ tool:
     action_option_options_measure_from_diameter: Medida
     action_option_options_measure_from_diameter_status: Medir el diámetro del círculo
     action_option_options_measure_from_radius_status: Medir el radio del círculo
-    action_option_options_measure_reversed: ""
+    action_option_options_measure_reversed: Medida inversa
     action_option_options_measure_reversed_status: Invertir la medida
     action_option_options_pull_centered: Elevación centrada
     action_option_options_pull_centered_status: Centrar la elevación en el primer punto
     action_option_options_ask_name: Nombrado de las piezas
-    action_option_options_ask_name_status: ""
+    action_option_options_ask_name_status: Elegir manualmente el número de piezas
     action_measure_locked_status: Bloquear con la última medida
     action_toggle_move_copy_status: Alternar entre copiar / desplazar
     action_change_move_anchor_status: Cambiar el punto de inserción
