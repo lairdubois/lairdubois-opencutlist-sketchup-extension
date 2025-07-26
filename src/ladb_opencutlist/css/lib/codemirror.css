@@ -9,7 +9,7 @@
   flex-grow: 1;
 }
 .CodeMirror-empty {
-  min-height: 34px;
+  min-height: 32px;
   color: #999;
 }
 
