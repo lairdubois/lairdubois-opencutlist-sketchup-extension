@@ -1877,6 +1877,21 @@ tab:
       Az *OpenCutList*-et [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) és [Martin Müller](https://www.lairdubois.fr/@mobilarte) fejleszti. *Az összes [közreműködő](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) listája*.
     credits_translations: Fordítások
     credits_translators: |
+      - Zoltán Nagy (*magyar*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*angol*, *német*)
+      - Gildas Boureau (*francia* dokumentáció)
+      - Vladimir Badulya (*orosz*)
+      - Pierluigi Colombo (*olasz*)
+      - Nayton Sanches Barbosa, ellenőrizte és javította [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portugál*)
+      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*spanyol*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*cseh*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*lengyel*)
+      - Sergey Isupov (*héber*), RTL felület még nem támogatott
+      - Soul Issam (*arab*), RTL felület még nem támogatott
+      - Nguyen Ngoc Tan (*vietnámi*)
+      - Andriy Toporivsky, Kostyantyn Shcherbey (*ukrán*)
+      - [刘涛](https://www.liutao91.cn) (*egyszerűsített kínai*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holland*)
     credits_description: |
       A bővítmény fejlesztése az [L'Air du Bois](https://www.lairdubois.fr) megosztási platform projekthez kapcsolódik.
       Ez a bővítmény szintén *nyílt forráskódú* és elérhető [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licenc alatt a [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension)-on.
