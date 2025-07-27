@@ -1904,6 +1904,20 @@ tab:
       *OpenCutList* is ontwikkeld door [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) en [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Bijdragende](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) opsommen*.
     credits_translations: Vertalingen
     credits_translators: |
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Nederlands*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Engels*, *Duits*)
+      - Gildas Boureau (*Franse* documentatie)
+      - Vladimir Badulya (*Russisch*)
+      - Pierluigi Colombo, Massimo Risca (*Italiaans*)
+      - Nayton Sanches Barbosa, gecorrigeerd en beoordeeld door [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*Portugees*)
+      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spaans*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Tsjechisch*)
+      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*Pools*)
+      - Sergey Isupov (*Hebreeuws*), zonder interface van rechts naar links
+      - Soul Issam (*Arabisch*), zonder interface van rechts naar links
+      - Nguyen Ngoc Tan (*Vietnamees*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*Oekraïener*)
+      - [刘涛](https://www.liutao91.cn) (*vereenvoudigd Chinees*)
     credits_description: |
       De ontwikkeling van deze uitbreiding maakt deel uit van het project [L'Air du Bois](https://www.lairdubois.fr), een uitwisselingsplatform voor houtbewerkers.
       In die zin is het ook *open source* en voor iedereen beschikbaar onder licentie [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) op [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
