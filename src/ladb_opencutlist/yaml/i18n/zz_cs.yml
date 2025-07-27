@@ -1549,7 +1549,7 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: 1230 - Směr let
-      raw_estimated_0: 1231 - Odhad podle čistého objemu materiálu
+      raw_estimated_0: 1231 - Odhad podle čisté spotřeby materiálu
       colorized: 1232 - Tento barevný odstín bude aplikován na texturu tohoto materiálu, když je vykreslen v modelu
       texture_load: 1233 - Načíst nový obrázek
       texture_export: 1234 - Exportovat obrázek
@@ -1630,17 +1630,17 @@ tab:
       edge_decremented_help: 1285 - Umožňuje určit, zda mají být být rozměry dílců zmenšeny o tloušťku olepování hran.
       edge_decremented_0: 1286 - Bez redukce
       edge_decremented_1: 1287 - Odečíst tloušťku hrany
-      raw_estimated: 1288 - Použitý objem
+      raw_estimated: 1288 - Použitá spotřeba
       raw_estimated_help: |
-        1289 - Definuje objem použitý k odhadu hmotnosti a celkových nákladů dílů vyrobených z tohoto materiálu.
+        1289 - Definuje spotřebu materiálu k odhadu hmotnosti a celkových nákladů dílů vyrobených z tohoto materiálu.
 
-        **Hrubý objem materiálu**
-        Celkový objem bude součtem objemů dílů, což je ohraničující rámeček včetně nadmír.
+        **Hrubá spotřeba materiálu**
+        Celková spotřeba materiálu bude součtem čiské spotřeby materiálu na díly i všetně všech zbytků. V kalkulaci vidíme i cenu za řezání.
 
-        **Čistý objem materiálu**
-        Celkový objem bude součtem objemů dílů, plechů, desek nebo hran po řezání.
-      raw_estimated_0: 1290 - Čistý objem materiálu
-      raw_estimated_1: 1291 - Hrubý objem materiálu
+        **Čistá spotřeba materiálu**
+        Celková spotřeba materiálu bude pouze součtem čiské spotřeby materiálu na díly. V kalkulaci NEvidíme cenu za řezání.
+      raw_estimated_0: 1290 - Čistá spotřeba materiálu
+      raw_estimated_1: 1291 - Hrubá spotřeba materiálu
       multiplier_coefficient: 1292 - Koeficient
       multiplier_coefficient_help: 1293 - Používá se k označení multiplikačního koeficientu použitého na hrubý objem.
       std_attributes_dim_placeholder: 1294 - Vyberte velikost
