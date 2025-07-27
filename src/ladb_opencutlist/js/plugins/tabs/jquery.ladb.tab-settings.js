@@ -290,7 +290,7 @@
         // Bind
         $selectLanguage.on('change', function () {
             let language = $selectLanguage.val();
-            if (that.dialog.capabilities.languages[language]) {
+            if (that.dialog.capabilities.languages[language] || language === 'auto') {
                 that.dialog.capabilities.language = $selectLanguage.val();
                 fnGlobalUpdate();
                 that.showReloadAlert();
