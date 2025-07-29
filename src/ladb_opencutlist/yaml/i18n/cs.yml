@@ -1637,10 +1637,10 @@ tab:
       edge_decremented_1: Odečíst tloušťku hrany
       raw_estimated: Použitá spotřeba
       raw_estimated_help: |
-        Definuje spotřebu materiálu k odhadu hmotnosti a celkových nákladů dílů vyrobených z tohoto materiálu.
+        Definuje spotřebu materiálu k odhadu hmotnosti a celkových nákladů na díly vyrobených z tohoto materiálu.
 
         **Hrubá spotřeba materiálu**
-        Celková spotřeba materiálu bude součtem čiské spotřeby materiálu na díly i všetně všech zbytků. V kalkulaci vidíme i cenu za řezání.
+        Celková spotřeba materiálu bude součtem čiské spotřeby materiálu na díly i včetně všech zbytků. V kalkulaci vidíme i cenu za řezání.
 
         **Čistá spotřeba materiálu**
         Celková spotřeba materiálu bude pouze součtem čiské spotřeby materiálu na díly. V kalkulaci NEvidíme cenu za řezání.
