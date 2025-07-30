@@ -230,6 +230,16 @@
                 </div>
                 <hr>
                 <div class="form-group">
+                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.packing.option_bin_folding_'~binSuffix1~'_help')|i18next }}<br>{{ 'tab.cutlist.packing.option_bin_folding_warning'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                    <label class="control-label col-xs-5">{{ ('tab.cutlist.packing.option_bin_folding_'~binSuffix1~'_'~binSuffix2)|i18next }}</label>
+                    <div class="col-xs-6">
+                        <select class="form-control" id="ladb_select_bin_folding">
+                            <option value="1" data-content="{{ 'tab.cutlist.packing.option_bin_folding_1'|i18next }}"></option>
+                            <option value="0" data-content="{{ 'tab.cutlist.packing.option_bin_folding_0'|i18next }}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.packing.option_hide_part_list_'~binSuffix1~'_help')|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_hide_part_list'|i18next }}</label>
                     <div class="col-xs-6">

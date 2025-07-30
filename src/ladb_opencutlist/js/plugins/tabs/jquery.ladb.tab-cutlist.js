@@ -2455,6 +2455,7 @@
                 const $inputTrimming = $('#ladb_input_trimming', $modal);
                 const $textareaItemsFormula = $('#ladb_textarea_items_formula', $modal);
                 const $selectOriginCorner = $('#ladb_select_origin_corner', $modal);
+                const $selectBinFolding = $('#ladb_select_bin_folding', $modal);
                 const $selectHidePartList = $('#ladb_select_hide_part_list', $modal);
                 const $selectPartDrawingType = $('#ladb_select_part_drawing_type', $modal);
                 const $selectColorization = $('#ladb_select_colorization', $modal);
@@ -2495,6 +2496,7 @@
                     options.trimming = $inputTrimming.val();
                     options.items_formula = $textareaItemsFormula.val();
                     options.origin_corner = that.toInt($selectOriginCorner.val());
+                    options.bin_folding = $selectBinFolding.val() === '1';
                     options.hide_part_list = $selectHidePartList.val() === '1';
                     options.part_drawing_type = that.toInt($selectPartDrawingType.val());
                     options.colorization = that.toInt($selectColorization.val());
@@ -2519,6 +2521,7 @@
                     $inputTrimming.val(options.trimming);
                     $textareaItemsFormula.ladbTextinputCode('val', [ typeof options.items_formula == 'string' ? options.items_formula : '' ]);
                     $selectOriginCorner.selectpicker('val', options.origin_corner);
+                    $selectBinFolding.selectpicker('val', options.bin_folding ? '1' : '0');
                     $selectHidePartList.selectpicker('val', options.hide_part_list ? '1' : '0');
                     $selectPartDrawingType.selectpicker('val', options.part_drawing_type);
                     $selectColorization.selectpicker('val', options.colorization);
@@ -2683,6 +2686,7 @@
                     ]
                 });
                 $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectBinFolding.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectColorization.selectpicker(SELECT_PICKER_OPTIONS);

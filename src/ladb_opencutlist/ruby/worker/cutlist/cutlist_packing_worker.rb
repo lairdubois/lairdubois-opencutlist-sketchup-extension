@@ -233,6 +233,7 @@ module Ladb::OpenCutList
                    input_to_json_bin_dir: '',
 
                    items_formula: '',
+                   bin_folding: true,
                    hide_part_list: false,
                    part_drawing_type: PART_DRAWING_TYPE_NONE,
                    colorization: COLORIZATION_SCREEN,
@@ -274,6 +275,7 @@ module Ladb::OpenCutList
       @input_to_json_bin_dir = input_to_json_bin_dir
 
       @items_formula = items_formula.empty? ? '@number' : items_formula
+      @bin_folding = @items_formula.include?('@instance_name') || @items_formula.include?('@component_instance') ? false : bin_folding  # Disable bin folding if items_formula uses instance attribute.
       @hide_part_list = hide_part_list
       @part_drawing_type = part_drawing_type.to_i
       @colorization = colorization
@@ -686,61 +688,64 @@ module Ladb::OpenCutList
             usable = raw_item_type_stats.fetch('usable', true)
             PackingPartInfoDef.new(part: item_type_def.part, count: unused_copies, usable: usable)
           }.compact.sort_by! { |part_info_def| part_info_def._sorter } : [],
-          bin_defs: raw_solution['bins'].map { |raw_bin|
+          bin_defs: raw_solution['bins'].flat_map { |raw_bin|
             bin_type_def = @bin_type_defs[raw_bin['bin_type_id']]
-            PackingBinDef.new(
-              bin_type_def: bin_type_def,
-              count: raw_bin['copies'],
-              efficiency: raw_bin['efficiency'],
-              item_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
-                item_type_def = @item_type_defs[raw_item['item_type_id']]
-                label_offset = label_offsets_by_item_type_def[item_type_def]
-                PackingItemDef.new(
-                  item_type_def: item_type_def,
-                  instance_info: instance_info_by_item_type_def[item_type_def].is_a?(Array) ? instance_info_by_item_type_def[item_type_def].shift : nil,
-                  x: _from_packy_length(raw_item.fetch('x', 0)),
-                  y: _from_packy_length(raw_item.fetch('y', 0)),
-                  angle: raw_item.fetch('angle', 0),
-                  mirror: raw_item.fetch('mirror', false),
-                  label_offset: label_offset ? label_offset : Geom::Vector3d.new(0, 0)
-                )
-              } : [],
-              leftover_defs: raw_bin['leftovers'].is_a?(Array) ? raw_bin['leftovers'].map { |raw_leftover|
-                PackingLeftoverDef.new(
-                  x: _from_packy_length(raw_leftover.fetch('x', 0)),
-                  y: _from_packy_length(raw_leftover.fetch('y', 0)),
-                  length: _from_packy_length(raw_leftover.fetch('width', 0)),
-                  width: _from_packy_length(raw_leftover.fetch('height', 0)),
-                  kept: raw_leftover.fetch('kept', false),
-                )
-              } : [],
-              cut_defs: raw_bin['cuts'].is_a?(Array) ? raw_bin['cuts'].map { |raw_cut|
-                PackingCutDef.new(
-                  depth: raw_cut['depth'],
-                  x: _from_packy_length(raw_cut.fetch('x', 0)),
-                  y: _from_packy_length(raw_cut.fetch('y', 0)),
-                  length: (raw_cut['length'] ? _from_packy_length(raw_cut['length']) : bin_type_def.width.to_l),
-                  orientation: raw_cut.fetch('orientation', 'vertical')
-                )
-              }.sort_by { |cut_def| [ cut_def.depth, cut_def.x, cut_def.y ] } : [],
-              part_info_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
-                @item_type_defs[raw_item['item_type_id']]
-              }.group_by { |i| i }.map { |item_type_def, v|
-                PackingPartInfoDef.new(
-                  part: item_type_def.part,
-                  count: v.length
-                )
-              }.sort_by { |part_info_def| part_info_def._sorter } : [],
-              number_of_items: raw_bin.fetch('number_of_items', 0),
-              number_of_leftovers: raw_bin.fetch('number_of_leftovers', 0),
-              number_of_leftovers_to_keep: raw_bin.fetch('number_of_leftovers_to_keep', 0),
-              number_of_cuts: raw_bin.fetch('number_of_cuts', 0),
-              cut_length: _from_packy_length(raw_bin.fetch('cut_length', 0)),
-              x_min: _from_packy_length(raw_bin.fetch('x_min', 0)),
-              x_max: _from_packy_length(raw_bin.fetch('x_max', 0)),
-              y_min: _from_packy_length(raw_bin.fetch('y_min', 0)),
-              y_max: _from_packy_length(raw_bin.fetch('y_max', 0))
-            )
+            bin_copies = raw_bin['copies']
+            (0...(@bin_folding ? 1 : bin_copies)).map {
+              PackingBinDef.new(
+                bin_type_def: bin_type_def,
+                count: @bin_folding ? bin_copies : 1,
+                efficiency: raw_bin['efficiency'],
+                item_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
+                  item_type_def = @item_type_defs[raw_item['item_type_id']]
+                  label_offset = label_offsets_by_item_type_def[item_type_def]
+                  PackingItemDef.new(
+                    item_type_def: item_type_def,
+                    instance_info: instance_info_by_item_type_def[item_type_def].is_a?(Array) ? instance_info_by_item_type_def[item_type_def].shift : nil,
+                    x: _from_packy_length(raw_item.fetch('x', 0)),
+                    y: _from_packy_length(raw_item.fetch('y', 0)),
+                    angle: raw_item.fetch('angle', 0),
+                    mirror: raw_item.fetch('mirror', false),
+                    label_offset: label_offset ? label_offset : Geom::Vector3d.new(0, 0)
+                  )
+                } : [],
+                leftover_defs: raw_bin['leftovers'].is_a?(Array) ? raw_bin['leftovers'].map { |raw_leftover|
+                  PackingLeftoverDef.new(
+                    x: _from_packy_length(raw_leftover.fetch('x', 0)),
+                    y: _from_packy_length(raw_leftover.fetch('y', 0)),
+                    length: _from_packy_length(raw_leftover.fetch('width', 0)),
+                    width: _from_packy_length(raw_leftover.fetch('height', 0)),
+                    kept: raw_leftover.fetch('kept', false),
+                  )
+                } : [],
+                cut_defs: raw_bin['cuts'].is_a?(Array) ? raw_bin['cuts'].map { |raw_cut|
+                  PackingCutDef.new(
+                    depth: raw_cut['depth'],
+                    x: _from_packy_length(raw_cut.fetch('x', 0)),
+                    y: _from_packy_length(raw_cut.fetch('y', 0)),
+                    length: (raw_cut['length'] ? _from_packy_length(raw_cut['length']) : bin_type_def.width.to_l),
+                    orientation: raw_cut.fetch('orientation', 'vertical')
+                  )
+                }.sort_by { |cut_def| [ cut_def.depth, cut_def.x, cut_def.y ] } : [],
+                part_info_defs: raw_bin['items'].is_a?(Array) ? raw_bin['items'].map { |raw_item|
+                  @item_type_defs[raw_item['item_type_id']]
+                }.group_by { |i| i }.map { |item_type_def, v|
+                  PackingPartInfoDef.new(
+                    part: item_type_def.part,
+                    count: v.length
+                  )
+                }.sort_by { |part_info_def| part_info_def._sorter } : [],
+                number_of_items: raw_bin.fetch('number_of_items', 0),
+                number_of_leftovers: raw_bin.fetch('number_of_leftovers', 0),
+                number_of_leftovers_to_keep: raw_bin.fetch('number_of_leftovers_to_keep', 0),
+                number_of_cuts: raw_bin.fetch('number_of_cuts', 0),
+                cut_length: _from_packy_length(raw_bin.fetch('cut_length', 0)),
+                x_min: _from_packy_length(raw_bin.fetch('x_min', 0)),
+                x_max: _from_packy_length(raw_bin.fetch('x_max', 0)),
+                y_min: _from_packy_length(raw_bin.fetch('y_min', 0)),
+                y_max: _from_packy_length(raw_bin.fetch('y_max', 0))
+              )
+            }
           }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.count ] }
         )
       )
