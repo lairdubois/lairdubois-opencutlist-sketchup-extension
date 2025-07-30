@@ -1081,14 +1081,14 @@ tab:
       option_bin_folding_1d_edge: Regrouper les bandes identiques
       option_bin_folding_2d_sheet_good: Regrouper les panneaux identiques
       option_bin_folding_2d_veneer: Regrouper les feuilles identiques
-      option_bin_folding_0: Non
-      option_bin_folding_1: Oui
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
       option_bin_folding_1d_help: |
         Permet de regrouper les barres ou bandes contenant les mêmes pièces et les mêmes coupes.
       option_bin_folding_2d_help: |
         Permet de regrouper les panneaux ou feuilles contenant les mêmes pièces et les mêmes coupes.
       option_bin_folding_warning: |
-        *Cette option sera désactivée si vous utilisez des propriétés d'instance dans la formule de personnalisation du text d'identification.*
+        *Cette option sera désactivée si vous utilisez des propriétés d'instance dans la formule de personnalisation du texte d'identification.*
       option_hide_part_list: Liste des pièces
       option_hide_part_list_1d_dimensional_0: Affichée pour chaque barre
       option_hide_part_list_1d_edge_0: Affichée pour chaque bande
