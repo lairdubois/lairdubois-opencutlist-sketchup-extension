@@ -1050,6 +1050,17 @@ tab:
       option_trimming_2d_help: ""
       option_items_formula: Formule
       option_items_formula_help: |
+      option_bin_folding_1d_dimensional: Groepeer identieke planken
+      option_bin_folding_1d_edge: Groepeer overeenkomstige randen
+      option_bin_folding_2d_sheet_good: Groepeer identieke panelen
+      option_bin_folding_2d_veneer: Groepeer identieke fineren
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        Groepeer panelen of kantenband met gelijke delen en zaagsneden.
+      option_bin_folding_2d_help: |
+        Hiermee kunt u panelen combineren die dezelfde onderdelen en sneden bevatten.
+      option_bin_folding_warning: |
       option_hide_part_list: Onderdelen lijst
       option_hide_part_list_1d_dimensional_0: Weergegeven voor elke plank
       option_hide_part_list_1d_edge_0: Toon voor alle kantenband
@@ -1517,7 +1528,7 @@ tab:
       texture_export: ""
       texture_clear: Heldere textuur
       edit: "Wijzig de eigenschappen van '{{ name }}'"
-      set_current: "Kleur onderdelen met '{{ name }}'."
+      set_current: "Kleur onderdelen met '{{ name }}'"
       open_url: Materiaal-URL openen
       import_from_skm: Importeer een materiaal (.skm)
     menu:
@@ -1658,7 +1669,6 @@ tab:
       title_model: "Modeleigenschappen"
       title_instance: "**{{ name }}** instantie-eigenschappen"
       general: Algemeen
-      preview: In zicht
       name: Beschrijving
       instance_name: Instantie
       material: Materiaal

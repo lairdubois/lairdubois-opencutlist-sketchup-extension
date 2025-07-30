@@ -1077,6 +1077,17 @@ tab:
       option_items_formula: נוסחה
       option_items_formula_help: |
         מאפשר לכתוב קוד *Ruby* כדי להתאים אישית את טקסט זיהוי החלק בתוכנית חיתוך.
+      option_bin_folding_1d_dimensional: לערוך מחדש קרשים זהים
+      option_bin_folding_1d_edge: קבץ קאנטים זהים
+      option_bin_folding_2d_sheet_good: לערוך מחדש לוחות זהים
+      option_bin_folding_2d_veneer: קבץ לוחות פורניר זהים
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        מאפשר לקבץ את הלוחות או הקאנטים המכילים אותם חלקים ואותם חתכים.
+      option_bin_folding_2d_help: |
+        משמש לקיבוץ פאנלים או לוחות המכילים את אותם חלקים וחתכים.
+      option_bin_folding_warning: |
       option_hide_part_list: רשימת חלקים
       option_hide_part_list_1d_dimensional_0: הצג לכל קרש
       option_hide_part_list_1d_edge_0: מוצג לכל קאנט
@@ -1666,7 +1677,6 @@ tab:
       title_model: "מאפייני דגם"
       title_instance: "מאפייני דגם **{{ name }}**"
       general: כללי
-      preview: סקירה כללית
       name: תיאור
       instance_name: אדגם
       material: חומר
