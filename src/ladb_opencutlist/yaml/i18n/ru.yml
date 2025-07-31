@@ -1077,6 +1077,18 @@ tab:
       option_items_formula: Формула
       option_items_formula_help: |
         Позволяет написать код на языке *Ruby* для настройки текста идентификации деталей на диаграмме.
+      option_bin_folding_1d_dimensional: Группировать одинаковые
+      option_bin_folding_1d_edge: Группировать одинаковые кромки
+      option_bin_folding_2d_sheet_good: Группировать одинаковые панели
+      option_bin_folding_2d_veneer: Группировать одинаковые листы
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        Позволяет группировать погонаж или кромку, содержащие одинаковые детали и одинаковые отрезки.
+      option_bin_folding_2d_help: |
+        Позволяет группировать панели или листы, содержащие одинаковые детали и раскрои.
+      option_bin_folding_warning: |
+        *Эта опция будет отключена, если вы будете использовать свойства экземпляра в формуле настройки текста-идентификатора.*
       option_hide_part_list: Список деталей
       option_hide_part_list_1d_dimensional_0: Отображать для каждой доски
       option_hide_part_list_1d_edge_0: Отображать для каждой кромки
@@ -1728,7 +1740,6 @@ tab:
       title_model: "Свойства модели"
       title_instance: "Свойства экземпляра **{{ name }}**"
       general: Общие
-      preview: Обзор
       name: Определение
       instance_name: Экземпляр
       material: Материал
@@ -1991,7 +2002,7 @@ tab:
       - Nguyen Ngoc Tan (*Вьетнамский*)
       - Андрей Топоривский, Константин Щербей (*Украинский*)
       - [刘涛](https://www.liutao91.cn) (*упрощенный китайский*)
-      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*голландский*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Голландский*)
     credits_description: |
       Разработка этого расширения связана с проектом совместной платформы [L'Air du Bois](https://www.lairdubois.fr).
       Это расширение является *Open Source*, а также доступно в разделе [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) с лицензией [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

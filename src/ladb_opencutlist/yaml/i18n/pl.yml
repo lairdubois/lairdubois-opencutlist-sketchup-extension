@@ -1077,6 +1077,17 @@ tab:
       option_items_formula: Wzór
       option_items_formula_help: |
         Umożliwia pisanie kodu *Ruby* w celu dostosowania tekstu identyfikacyjnego elementów na diagramie.
+      option_bin_folding_1d_dimensional: Grupuj podobne płyty
+      option_bin_folding_1d_edge: Grupuj podobne obrzeża
+      option_bin_folding_2d_sheet_good: Grupuj podobne arkusze
+      option_bin_folding_2d_veneer: Grupuj podobne arkusze forniru
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        Grupuj płyty lub obrzeża zawierające takie same części i cięcia.
+      option_bin_folding_2d_help: |
+        Grupuj panele lub arkusze mające te same części i cięcia.
+      option_bin_folding_warning: |
       option_hide_part_list: Lista części
       option_hide_part_list_1d_dimensional_0: Wyświetlana dla każdej płyty
       option_hide_part_list_1d_edge_0: Wyświetlane dla każdego obrzeża
@@ -1728,7 +1739,6 @@ tab:
       title_model: "Właściwości modelu"
       title_instance: "Właściwości instancji **{{ name }}**"
       general: Główne
-      preview: Przegląd
       name: Nazwa
       instance_name: Instancja
       material: Materiał

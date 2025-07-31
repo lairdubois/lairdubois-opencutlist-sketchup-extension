@@ -1077,6 +1077,17 @@ tab:
       option_items_formula: Fórmula
       option_items_formula_help: |
         Permite escribir código *Ruby* para personalizar el texto de identificación de las piezas en el diagrama.
+      option_bin_folding_1d_dimensional: Agrupar tableros similares
+      option_bin_folding_1d_edge: Agrupar tiros de canto similares
+      option_bin_folding_2d_sheet_good: Agrupar paneles similares
+      option_bin_folding_2d_veneer: Agrupación de hojas idénticas
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        Permite agrupar tableros o tiros de canto que contengan las mismas piezas y cortes.
+      option_bin_folding_2d_help: |
+        Permite agrupar paneles o hojas que contengan las mismas piezas y cortes.
+      option_bin_folding_warning: |
       option_hide_part_list: Listado de piezas
       option_hide_part_list_1d_dimensional_0: Mostrado para cada tablero
       option_hide_part_list_1d_edge_0: Mostrado para cada tira de canto
@@ -1728,7 +1739,6 @@ tab:
       title_model: "Propiedades del modelo"
       title_instance: "Propiedades del elemento **{{ name }}**"
       general: General
-      preview: Vista previa
       name: Nombre
       instance_name: Instancia
       material: Material

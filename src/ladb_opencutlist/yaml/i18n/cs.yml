@@ -1077,6 +1077,17 @@ tab:
       option_items_formula: Vzorec
       option_items_formula_help: |
         Umožňuje napsat kód v *Ruby* pro úpravu textu identifikace součásti v diagramu.
+      option_bin_folding_1d_dimensional: Seskupit podobné desky
+      option_bin_folding_1d_edge: Seskupte podobné hrany
+      option_bin_folding_2d_sheet_good: Seskupte podobné panely
+      option_bin_folding_2d_veneer: Skupina podobných dýhovaných listů
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        Seskupte desky nebo hrany obsahující stejné části a řezy.
+      option_bin_folding_2d_help: |
+        Seskupte panely nebo listy se stejnými díly a řezy.
+      option_bin_folding_warning: |
       option_hide_part_list: Kusovník
       option_hide_part_list_1d_dimensional_0: Zobrazit všechny desky
       option_hide_part_list_1d_edge_0: Zobrazit všechno hranování
@@ -1728,7 +1739,6 @@ tab:
       title_model: "Vlastnosti modelu"
       title_instance: "Vlastnosti instance **{{ name }}**"
       general: Všeobecné
-      preview: Přehled
       name: Název
       instance_name: Instance
       material: Materiál

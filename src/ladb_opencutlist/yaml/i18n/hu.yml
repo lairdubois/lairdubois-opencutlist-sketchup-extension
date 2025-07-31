@@ -1045,6 +1045,17 @@ tab:
       option_trimming_2d_help: ""
       option_items_formula: Képlet
       option_items_formula_help: |
+      option_bin_folding_1d_dimensional: Hasonló deszkák csoportosítása
+      option_bin_folding_1d_edge: Hasonló élzárók csoportosítása
+      option_bin_folding_2d_sheet_good: Hasonló táblák csoportosítása
+      option_bin_folding_2d_veneer: Hasonló furnérlapok csoportosítása
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        Azonos alkatrészeket és vágásokat tartalmazó deszkák vagy élzárók csoportosítása.
+      option_bin_folding_2d_help: |
+        Azonos alkatrészeket és vágásokat tartalmazó táblák vagy furnérlapok csoportosítása.
+      option_bin_folding_warning: |
       option_hide_part_list: $t(tab.cutlist.title)
       option_hide_part_list_1d_dimensional_0: Megjelenítve minden deszkánál
       option_hide_part_list_1d_edge_0: Megjelenítve minden élzárónál
@@ -1631,7 +1642,6 @@ tab:
       title_model: "A modell tulajdonságai"
       title_instance: "**{{ name }}** példány tulajdonságai"
       general: Általános
-      preview: Áttekintés
       name: Név
       instance_name: Példány
       material: Anyag

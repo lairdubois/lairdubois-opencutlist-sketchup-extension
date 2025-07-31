@@ -1044,7 +1044,7 @@ tab:
       option_irregular_allow_mirroring: 允許鏡象
       option_irregular_allow_mirroring_help: |
       option_irregular_allow_mirroring_0: $t(default.no)
-      option_irregular_allow_mirroring_1: ""
+      option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: 間距
       option_spacing_help: |
       option_trimming: 修边
@@ -1052,6 +1052,17 @@ tab:
       option_trimming_2d_help: ""
       option_items_formula: 公式
       option_items_formula_help: |
+      option_bin_folding_1d_dimensional: 分组相似的板材
+      option_bin_folding_1d_edge: 分组相似的边条
+      option_bin_folding_2d_sheet_good: 分组相似的面板
+      option_bin_folding_2d_veneer: 分组相似的贴面板
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        分组包含相同部件和切割的板材或边条.
+      option_bin_folding_2d_help: |
+        分组包含相同部件和切割的板材或贴面板.
+      option_bin_folding_warning: |
       option_hide_part_list: 部件清单
       option_hide_part_list_1d_dimensional_0: 显示在每块板上
       option_hide_part_list_1d_edge_0: 显示在每个边条上
@@ -1635,7 +1646,6 @@ tab:
       title_model: "模型属性"
       title_instance: " **{{ name }}**实例属性"
       general: 常规
-      preview: 预览
       name: 名称
       instance_name: 实例
       material: 材质

@@ -1077,6 +1077,18 @@ tab:
       option_items_formula: Formel
       option_items_formula_help: |
         Hier können Sie *Ruby*-Code schreiben, um den Text zur Identifizierung der Teile im Schnittplan anzupassen.
+      option_bin_folding_1d_dimensional: Gleiche Stangen zusammenfassen
+      option_bin_folding_1d_edge: Gleiche Kantenbänder zusammenfassen
+      option_bin_folding_2d_sheet_good: Gleiche Platten zusammenfassen
+      option_bin_folding_2d_veneer: Gleiche Furniere zusammenfassen
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        Ermöglicht das Zusammenfassen von Platten oder Furnierblätter, die dieselben Teile und Schnitte enthalten.
+      option_bin_folding_2d_help: |
+        Ermöglicht das Zusammenfassen von Platten oder Furnierblätter, die dieselben Teile und Schnitte enthalten.
+      option_bin_folding_warning: |
+        *Diese Option wird deaktiviert, wenn Sie in der Formel zum Anpassen des Identifikationstextes Instanzeigenschaften verwenden.*
       option_hide_part_list: Liste der Teile
       option_hide_part_list_1d_dimensional_0: Anzeigen für jede Stange
       option_hide_part_list_1d_edge_0: Anzeigen für jedes Kantenband
@@ -1728,7 +1740,6 @@ tab:
       title_model: "Eigenschaften des Modells"
       title_instance: "Eigenschaften der Instanz **{{ name }}**"
       general: Allgemein
-      preview: Übersicht
       name: Bezeichnung
       instance_name: Instanz
       material: Material

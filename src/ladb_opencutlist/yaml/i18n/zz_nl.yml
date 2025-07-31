@@ -1045,861 +1045,871 @@ tab:
       option_trimming_2d_help: '857 - '
       option_items_formula: 858 - Formule
       option_items_formula_help: '859 - '
-      option_hide_part_list: 860 - Onderdelen lijst
-      option_hide_part_list_1d_dimensional_0: 861 - Weergegeven voor elke plank
-      option_hide_part_list_1d_edge_0: 862 - Toon voor alle kantenband
-      option_hide_part_list_2d_sheet_good_0: 863 - Weergegeven voor elk paneel
-      option_hide_part_list_2d_veneer_0: 864 - Displays voor elk fineervel
-      option_hide_part_list_1: 865 - Verborgen
-      option_hide_part_list_1d_help: 866 - Toon of verberg de lijst van onderdelen in elke plank of kantenband.
-      option_hide_part_list_2d_help: 867 - Toon of verberg de lijst van onderdelen voor elke plaat.
-      option_part_drawing_type: 868 - Vormen van onderdelen
-      option_part_drawing_type_0: 869 - Gemaskeerd
-      option_part_drawing_type_1: 870 - Getekend vooraanzicht
-      option_part_drawing_type_2: 871 - Getekende weergave Achterkant
+      option_bin_folding_1d_dimensional: 860 - Groepeer identieke planken
+      option_bin_folding_1d_edge: 861 - Groepeer overeenkomstige randen
+      option_bin_folding_2d_sheet_good: 862 - Groepeer identieke panelen
+      option_bin_folding_2d_veneer: 863 - Groepeer identieke fineren
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        866 - Groepeer panelen of kantenband met gelijke delen en zaagsneden.
+      option_bin_folding_2d_help: |
+        867 - Hiermee kunt u panelen combineren die dezelfde onderdelen en sneden bevatten.
+      option_bin_folding_warning: '868 - '
+      option_hide_part_list: 869 - Onderdelen lijst
+      option_hide_part_list_1d_dimensional_0: 870 - Weergegeven voor elke plank
+      option_hide_part_list_1d_edge_0: 871 - Toon voor alle kantenband
+      option_hide_part_list_2d_sheet_good_0: 872 - Weergegeven voor elk paneel
+      option_hide_part_list_2d_veneer_0: 873 - Displays voor elk fineervel
+      option_hide_part_list_1: 874 - Verborgen
+      option_hide_part_list_1d_help: 875 - Toon of verberg de lijst van onderdelen in elke plank of kantenband.
+      option_hide_part_list_2d_help: 876 - Toon of verberg de lijst van onderdelen voor elke plaat.
+      option_part_drawing_type: 877 - Vormen van onderdelen
+      option_part_drawing_type_0: 878 - Gemaskeerd
+      option_part_drawing_type_1: 879 - Getekend vooraanzicht
+      option_part_drawing_type_2: 880 - Getekende weergave Achterkant
       option_part_drawing_type_help: |
-        872 - Hiermee kunt u de werkelijke vorm van onderdelen en hun bewerking op het diagram weergeven of verbergen.
+        881 - Hiermee kunt u de werkelijke vorm van onderdelen en hun bewerking op het diagram weergeven of verbergen.
 
          *Deze optie moet ingeschakeld zijn om vormen te kunnen exporteren.*
-      option_colorization: '873 - '
+      option_colorization: '882 - '
       option_colorization_0: $t(default.no)
       option_colorization_1: $t(default.yes) - Scherm
       option_colorization_2: $t(default.yes) - Scherm en afdrukken
-      option_colorization_help: '877 - '
-      option_origin_corner: 878 - Positie van de oorsprong
-      option_origin_corner_0: 879 - Linker bovenhoek
-      option_origin_corner_1: 880 - Linker benedenhoek
-      option_origin_corner_2: 881 - Rechter bovenhoek
-      option_origin_corner_3: 882 - Rechter benedenhoek
-      option_origin_corner_help: '883 - '
-      option_highlight_primary_cuts: 884 - Primaire snedes
-      option_highlight_primary_cuts_0: 885 - Enkel overzicht
-      option_highlight_primary_cuts_1: 886 - Altijd zichtbaar
-      option_highlight_primary_cuts_help: 887 - Laat toe om primaire snedes uit te lichten.
-      option_hide_edges_preview: 888 - Randband weergave
-      option_hide_edges_preview_0: 889 - Weergegeven in het zaagschema
-      option_hide_edges_preview_1: 890 - Verborgen in het zaagschema
-      option_hide_edges_preview_help: 891 - Hiermee kunt u de visuele weergave van de kantenbanden voor elk onderdeel in het zaagschema tonen of verbergen.
-      option_time_limit: 892 - Tijdslimiet
+      option_colorization_help: '886 - '
+      option_origin_corner: 887 - Positie van de oorsprong
+      option_origin_corner_0: 888 - Linker bovenhoek
+      option_origin_corner_1: 889 - Linker benedenhoek
+      option_origin_corner_2: 890 - Rechter bovenhoek
+      option_origin_corner_3: 891 - Rechter benedenhoek
+      option_origin_corner_help: '892 - '
+      option_highlight_primary_cuts: 893 - Primaire snedes
+      option_highlight_primary_cuts_0: 894 - Enkel overzicht
+      option_highlight_primary_cuts_1: 895 - Altijd zichtbaar
+      option_highlight_primary_cuts_help: 896 - Laat toe om primaire snedes uit te lichten.
+      option_hide_edges_preview: 897 - Randband weergave
+      option_hide_edges_preview_0: 898 - Weergegeven in het zaagschema
+      option_hide_edges_preview_1: 899 - Verborgen in het zaagschema
+      option_hide_edges_preview_help: 900 - Hiermee kunt u de visuele weergave van de kantenbanden voor elk onderdeel in het zaagschema tonen of verbergen.
+      option_time_limit: 901 - Tijdslimiet
       option_time_limit_help: |
-        893 - Stelt de toegestane tijd voor de berekening in
+        902 - Stelt de toegestane tijd voor de berekening in
       tooltip:
-        scroll_to_block_1d: 894 - Scroll naar de eerste plank of kantenband
-        scroll_to_block_2d: '895 - '
+        scroll_to_block_1d: 903 - Scroll naar de eerste plank of kantenband
+        scroll_to_block_2d: '904 - '
       list:
-        summary: 896 - Overzicht
-        trimming: 897 - Marge
-        settings: 898 - Instellingen
-        stats: 899 - Statistieken
-        time: 900 - Tijd
-        total_efficiency: 901 - Algehele efficiëntie
-        total_fill_rate: '902 - '
-        total_cut_count: 903 - Aantal sneden
-        total_cut_length: 904 - Lengte van de zaagsnedes
-        efficiency: 905 - Efficiëntie
-        count: 906 - Aant.
-        length: 907 - Lengte
-        width: 908 - Breedte
-        total_length: 909 - Σ Lengtes
-        total_area: 910 - Σ Oppervlaktes
-        total_cost: 911 - Σ Kosten
-        total_part_count: 912 - Σ Onderdelen
-        total_used: 913 - Totaal gebruikt
-        bin_1d_dimensional: 914 - Plank
-        bin_1d_dimensional_type_0: 915 - Standaard plank
-        bin_1d_dimensional_type_1: 916 - Plank overschot
-        bin_1d_edge: 917 - Band
-        bin_1d_edge_type_0: 918 - Standaard kantenband
-        bin_1d_edge_type_1: 919 - Kantenband overschot
-        bin_2d_sheet_good: 920 - Paneel
-        bin_2d_sheet_good_type_0: 921 - Standaard paneel
-        bin_2d_sheet_good_type_1: 922 - Paneel overschot
-        bin_2d_veneer: 923 - Blad
-        bin_2d_veneer_type_0: 924 - Standaard fineervel
-        bin_2d_veneer_type_1: 925 - Fineerresten
-        unused: 926 - Ongebruikt
-        unplaced_parts: '927 - '
-        unplaced_parts_plural: 928 - Ongeplaatste onderdelen
-        parts: 929 - Stuk
-        parts_plural: 930 - Stukken
-        leftovers: 931 - Overschot
-        leftovers_plural: 932 - Overschot
-        leftovers_to_keep: 933 - Vallen om te houden
-        leftovers_to_keep_plural: 934 - Rest om te bewaren
-        cut: 935 - Snede
-        cut_plural: 936 - Sneden
-        cut_trimming: 937 - Zuivere snit
-        cut_primary: '938 - '
-        cut_primary_plural: 939 - Primaire snedes
-        cut_none: 940 - Geen
-        cut_depth: '941 - '
+        summary: 905 - Overzicht
+        trimming: 906 - Marge
+        settings: 907 - Instellingen
+        stats: 908 - Statistieken
+        time: 909 - Tijd
+        total_efficiency: 910 - Algehele efficiëntie
+        total_fill_rate: '911 - '
+        total_cut_count: 912 - Aantal sneden
+        total_cut_length: 913 - Lengte van de zaagsnedes
+        efficiency: 914 - Efficiëntie
+        count: 915 - Aant.
+        length: 916 - Lengte
+        width: 917 - Breedte
+        total_length: 918 - Σ Lengtes
+        total_area: 919 - Σ Oppervlaktes
+        total_cost: 920 - Σ Kosten
+        total_part_count: 921 - Σ Onderdelen
+        total_used: 922 - Totaal gebruikt
+        bin_1d_dimensional: 923 - Plank
+        bin_1d_dimensional_type_0: 924 - Standaard plank
+        bin_1d_dimensional_type_1: 925 - Plank overschot
+        bin_1d_edge: 926 - Band
+        bin_1d_edge_type_0: 927 - Standaard kantenband
+        bin_1d_edge_type_1: 928 - Kantenband overschot
+        bin_2d_sheet_good: 929 - Paneel
+        bin_2d_sheet_good_type_0: 930 - Standaard paneel
+        bin_2d_sheet_good_type_1: 931 - Paneel overschot
+        bin_2d_veneer: 932 - Blad
+        bin_2d_veneer_type_0: 933 - Standaard fineervel
+        bin_2d_veneer_type_1: 934 - Fineerresten
+        unused: 935 - Ongebruikt
+        unplaced_parts: '936 - '
+        unplaced_parts_plural: 937 - Ongeplaatste onderdelen
+        parts: 938 - Stuk
+        parts_plural: 939 - Stukken
+        leftovers: 940 - Overschot
+        leftovers_plural: 941 - Overschot
+        leftovers_to_keep: 942 - Vallen om te houden
+        leftovers_to_keep_plural: 943 - Rest om te bewaren
+        cut: 944 - Snede
+        cut_plural: 945 - Sneden
+        cut_trimming: 946 - Zuivere snit
+        cut_primary: '947 - '
+        cut_primary_plural: 948 - Primaire snedes
+        cut_none: 949 - Geen
+        cut_depth: '950 - '
       write:
-        title: 942 - De lay-out exporteren
+        title: 951 - De lay-out exporteren
         info_0: |
-          943 - Met deze module kunt u de **geometrie** van de *lay-out* exporteren als een lijst met bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
-        option_bin_sheet_good: 944 - Paneel
+          952 - Met deze module kunt u de **geometrie** van de *lay-out* exporteren als een lijst met bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF).
+        option_bin_sheet_good: 953 - Paneel
         option_bin_sheet_good_help: |
-          945 - Hiermee kunt u de export van het paneel activeren en de kleuren ervan kiezen.
-        option_bin_veneer: 946 - Blad
+          954 - Hiermee kunt u de export van het paneel activeren en de kleuren ervan kiezen.
+        option_bin_veneer: 955 - Blad
         option_bin_veneer_help: |
-          947 - Hiermee kunt u de export van het blad activeren en de kleuren ervan kiezen.
-        option_bin_dimensional: 948 - Plank
+          956 - Hiermee kunt u de export van het blad activeren en de kleuren ervan kiezen.
+        option_bin_dimensional: 957 - Plank
         option_bin_dimensional_help: |
-          949 - Hiermee kunt u de export van de balk activeren en de kleuren ervan kiezen.
-        option_bin_edge: 950 - Band
+          958 - Hiermee kunt u de export van de balk activeren en de kleuren ervan kiezen.
+        option_bin_edge: 959 - Band
         option_bin_edge_help: |
-          951 - Hiermee kunt u de export van de band activeren en de kleuren ervan kiezen.
-        option_parts: 952 - Stukken
+          960 - Hiermee kunt u de export van de band activeren en de kleuren ervan kiezen.
+        option_parts: 961 - Stukken
         option_parts_help: |
-          953 - Hiermee kunt u de export van onderdelen activeren en hun kleuren kiezen.
+          962 - Hiermee kunt u de export van onderdelen activeren en hun kleuren kiezen.
         option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
         option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
         option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
         option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: 960 - Identificaties
+        option_texts: 969 - Identificaties
         option_texts_help: |
-          961 - Hiermee kunt u de export van onderdeelidentificatieteksten activeren en de kleuren ervan kiezen.
-        option_leftovers: 962 - Overschot
+          970 - Hiermee kunt u de export van onderdeelidentificatieteksten activeren en de kleuren ervan kiezen.
+        option_leftovers: 971 - Overschot
         option_leftovers_help: |
-          963 - Hiermee kunt u de export van klad activeren en de kleuren ervan kiezen.
-        option_cuts: 964 - Sneden
+          972 - Hiermee kunt u de export van klad activeren en de kleuren ervan kiezen.
+        option_cuts: 973 - Sneden
         option_cuts_help: |
-          965 - Hiermee kunt u de export van uitsneden activeren en de kleur ervan kiezen.
+          974 - Hiermee kunt u de export van uitsneden activeren en de kleur ervan kiezen.
         warning:
-          is_bin_selection: '966 - '
+          is_bin_selection: '975 - '
         error:
-          overflow_gt_spacing: '967 - '
+          overflow_gt_spacing: '976 - '
       error:
-        no_part: 968 - Geen enkel onderdeel.
-        no_bin_1d: '969 - '
-        no_bin_2d: '970 - '
-        invalid_part_shapes: '971 - '
-        no_solution: '972 - '
-        unplaced_parts: '973 - '
-        unplaced_parts_plural: '974 - '
-        unusable_part: '975 - '
+        no_part: 977 - Geen enkel onderdeel.
+        no_bin_1d: '978 - '
+        no_bin_2d: '979 - '
+        invalid_part_shapes: '980 - '
+        no_solution: '981 - '
+        unplaced_parts: '982 - '
+        unplaced_parts_plural: '983 - '
+        unusable_part: '984 - '
       warning:
-        is_part_selection: 976 - Het zaagplan beperkt zich tot **geselecteerde onderdelen**.
-        cutting_dimensions: 977 - Dit zaagplan gebruikt de **ruwe afmetingen** van de onderdelen.
-        cutting_dimensions_increase_1d: 978 - Afmetingen vermeerderd met meerwaarde van de lengte (**{{ length_increase }}**) die geconfigureerd werd in het materiaal '{{ material_name }}'.
-        cutting_dimensions_increase_2d: 979 - Afmetingen vermeerderd met de meerwaarde die geconfigureerd werd in het materiaal '{{ material_name }}' in de lengte (**{{ length_increase }}**) en de breedte (**{{ width_increase }}**).
-        cutting_dimensions_edge_decrement: 980 - Afmetingen verminderd met de dikte van de kantenband. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: 985 - Het zaagplan beperkt zich tot **geselecteerde onderdelen**.
+        cutting_dimensions: 986 - Dit zaagplan gebruikt de **ruwe afmetingen** van de onderdelen.
+        cutting_dimensions_increase_1d: 987 - Afmetingen vermeerderd met meerwaarde van de lengte (**{{ length_increase }}**) die geconfigureerd werd in het materiaal '{{ material_name }}'.
+        cutting_dimensions_increase_2d: 988 - Afmetingen vermeerderd met de meerwaarde die geconfigureerd werd in het materiaal '{{ material_name }}' in de lengte (**{{ length_increase }}**) en de breedte (**{{ width_increase }}**).
+        cutting_dimensions_edge_decrement: 989 - Afmetingen verminderd met de dikte van de kantenband. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      title: 981 - Etiketten
-      options_layout: 982 - Layout
-      options_settings: 983 - Configuratie
-      options_part_order_strategy: 984 - Sortering
-      options_offset: 985 - Offset
-      size: 986 - Ware grootte van het etiket
-      add_element: 987 - Voeg een element toe
+      title: 990 - Etiketten
+      options_layout: 991 - Layout
+      options_settings: 992 - Configuratie
+      options_part_order_strategy: 993 - Sortering
+      options_offset: 994 - Offset
+      size: 995 - Ware grootte van het etiket
+      add_element: 996 - Voeg een element toe
       duplicate_element: $t(default.duplicate)
       remove_element: $t(default.remove)
       remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
-        991 - Rangschik de volgende eigenschappen om de sorteervolgorde van de etiketten te bepalen.
+        1000 - Rangschik de volgende eigenschappen om de sorteervolgorde van de etiketten te bepalen.
         Elke eigenschap kan <i class="ladb-opencutlist-icon-sort-asc"></i> *oplopend* of <i class="ladb-opencutlist-icon-sort-desc"></i> *aflopend* gesorteerd worden.
       offset_help: |
-        992 - De *marge* laat u toe om de positie van het **eerste etiket** op de **eerste pagina** te bepalen.
+        1001 - De *marge* laat u toe om de positie van het **eerste etiket** op de **eerste pagina** te bepalen.
         Selecteer de box die overeenkomt met uw keuze.
-      option_page: 993 - Papier
-      option_page_format: 994 - Formaat
-      option_page_format_portrait: 995 - Portret
-      option_page_format_landscape: 996 - Landschap
-      option_page_format_custom: 997 - Gepersonaliseerd
-      option_page_width: 998 - Breedte
-      option_page_height: 999 - Hoogte
-      option_margin: 1000 - Marges
-      option_margin_top: 1001 - Boven
-      option_margin_right: 1002 - Rechts
-      option_margin_bottom: 1003 - Onder
-      option_margin_left: 1004 - Links
-      option_spacing: 1005 - Kolomwit
-      option_spacing_h: 1006 - Horizontaal
-      option_spacing_v: 1007 - Verticaal
-      option_grid: 1008 - Aantal etiketten per pagina
-      option_col_count: 1009 - Kolommen
-      option_row_count: 1010 - Rijen
-      option_cutting_marks: 1011 - Markeringen
-      option_cutting_marks_0: 1012 - Geen enkele
-      option_cutting_marks_1: 1013 - Afgedrukt
-      option_formula: 1014 - Waarde
-      option_size: 1015 - Afmeting
-      option_custom_formula: 1016 - Formule
-      option_anchor: 1017 - Anker
-      option_anchor_start: 1018 - Start - Bodem
-      option_anchor_middle: 1019 - Midden - Bodem
-      option_anchor_end: 1020 - Einde - Bodem
-      option_anchor_start_top: 1021 - Start - Top
-      option_anchor_middle_top: 1022 - Middem - Top
-      option_anchor_end_top: 1023 - Einde - Top
-      option_color: 1024 - Kleur
+      option_page: 1002 - Papier
+      option_page_format: 1003 - Formaat
+      option_page_format_portrait: 1004 - Portret
+      option_page_format_landscape: 1005 - Landschap
+      option_page_format_custom: 1006 - Gepersonaliseerd
+      option_page_width: 1007 - Breedte
+      option_page_height: 1008 - Hoogte
+      option_margin: 1009 - Marges
+      option_margin_top: 1010 - Boven
+      option_margin_right: 1011 - Rechts
+      option_margin_bottom: 1012 - Onder
+      option_margin_left: 1013 - Links
+      option_spacing: 1014 - Kolomwit
+      option_spacing_h: 1015 - Horizontaal
+      option_spacing_v: 1016 - Verticaal
+      option_grid: 1017 - Aantal etiketten per pagina
+      option_col_count: 1018 - Kolommen
+      option_row_count: 1019 - Rijen
+      option_cutting_marks: 1020 - Markeringen
+      option_cutting_marks_0: 1021 - Geen enkele
+      option_cutting_marks_1: 1022 - Afgedrukt
+      option_formula: 1023 - Waarde
+      option_size: 1024 - Afmeting
+      option_custom_formula: 1025 - Formule
+      option_anchor: 1026 - Anker
+      option_anchor_start: 1027 - Start - Bodem
+      option_anchor_middle: 1028 - Midden - Bodem
+      option_anchor_end: 1029 - Einde - Bodem
+      option_anchor_start_top: 1030 - Start - Top
+      option_anchor_middle_top: 1031 - Middem - Top
+      option_anchor_end_top: 1032 - Einde - Top
+      option_color: 1033 - Kleur
       formula:
-        custom: 1025 - Formule
-        custom_qr_code: 1026 - QR-code
-        part_number: 1027 - Nummer
-        part_name: 1028 - Beschrijving
-        part_description: 1029 - Beschrijving
-        part_entity_named_path: 1030 - Instantie pad
-        part_entity_name: 1031 - Naam onderdeel
-        part_bin: 1032 - Container
-        part_cutting_size: 1033 - Ruwe afmetingen
-        part_cutting_length: 1034 - Ruwe lengte
-        part_cutting_width: 1035 - Ruwe breedte
-        part_cutting_thickness: 1036 - Ruwe dikte
-        part_edge_cutting_size: 1037 - Randstroomgrootte
-        part_edge_cutting_length: 1038 - Lengte van de randstroom
-        part_edge_cutting_width: 1039 - Randstroombreedte
-        part_size: 1040 - Afmeting
-        part_length: 1041 - Lengte
-        part_width: 1042 - Breedte
-        part_thickness: 1043 - Dikte
-        part_tags: 1044 - Badges
-        part_batch: 1045 - Lot
-        part_edge_ymin: 1046 - Kantenband lengte 1
-        part_edge_ymax: 1047 - Kantenband lengte 2
-        part_edge_xmin: 1048 - Kantenband breedte 1
-        part_edge_xmax: 1049 - Kantenband breedte 2
-        part_face_zmin: 1050 - Fineer achterkant
-        part_face_zmax: 1051 - Fineer voorzijde
-        thumbnail_proportional_drawing: '1052 - '
-        thumbnail_proportional_drawing_bottom: '1053 - '
-        thumbnail_proportional: 1054 - Proportionele voorvertoning
-        thumbnail_square: 1055 - Vierkante voorvertoning
-        group_material: 1056 - Materiaal / Afmeting
-        group_material_name: 1057 - Naam van het materiaal
-        group_std_dimension: 1058 - Standaard afmetingen
-        filename: 1059 - Bestandsnaam
-        model_name: 1060 - Naam van het model
-        page_name: 1061 - Naam van de scène
-        length_unit: 1062 - Eenheid
-        generated_at: 1063 - Datum en uur
+        custom: 1034 - Formule
+        custom_qr_code: 1035 - QR-code
+        part_number: 1036 - Nummer
+        part_name: 1037 - Beschrijving
+        part_description: 1038 - Beschrijving
+        part_entity_named_path: 1039 - Instantie pad
+        part_entity_name: 1040 - Naam onderdeel
+        part_bin: 1041 - Container
+        part_cutting_size: 1042 - Ruwe afmetingen
+        part_cutting_length: 1043 - Ruwe lengte
+        part_cutting_width: 1044 - Ruwe breedte
+        part_cutting_thickness: 1045 - Ruwe dikte
+        part_edge_cutting_size: 1046 - Randstroomgrootte
+        part_edge_cutting_length: 1047 - Lengte van de randstroom
+        part_edge_cutting_width: 1048 - Randstroombreedte
+        part_size: 1049 - Afmeting
+        part_length: 1050 - Lengte
+        part_width: 1051 - Breedte
+        part_thickness: 1052 - Dikte
+        part_tags: 1053 - Badges
+        part_batch: 1054 - Lot
+        part_edge_ymin: 1055 - Kantenband lengte 1
+        part_edge_ymax: 1056 - Kantenband lengte 2
+        part_edge_xmin: 1057 - Kantenband breedte 1
+        part_edge_xmax: 1058 - Kantenband breedte 2
+        part_face_zmin: 1059 - Fineer achterkant
+        part_face_zmax: 1060 - Fineer voorzijde
+        thumbnail_proportional_drawing: '1061 - '
+        thumbnail_proportional_drawing_bottom: '1062 - '
+        thumbnail_proportional: 1063 - Proportionele voorvertoning
+        thumbnail_square: 1064 - Vierkante voorvertoning
+        group_material: 1065 - Materiaal / Afmeting
+        group_material_name: 1066 - Naam van het materiaal
+        group_std_dimension: 1067 - Standaard afmetingen
+        filename: 1068 - Bestandsnaam
+        model_name: 1069 - Naam van het model
+        page_name: 1070 - Naam van de scène
+        length_unit: 1071 - Eenheid
+        generated_at: 1072 - Datum en uur
       error:
-        invalid_size: 1064 - De ingegeven paramaters laten niet toe om geldige label afmetingen in te stellen.
+        invalid_size: 1073 - De ingegeven paramaters laten niet toe om geldige label afmetingen in te stellen.
       warning:
-        is_group_selection: 1065 - De onderdelen in de **verborgen groepen** van je betaalpas hebben geen label.
-        is_part_selection: 1066 - Deze labels zijn beperkt tot **geselecteerde onderdelen**.
-        formula_not_available: 1067 - Niet beschikbaar in deze context
+        is_group_selection: 1074 - De onderdelen in de **verborgen groepen** van je betaalpas hebben geen label.
+        is_part_selection: 1075 - Deze labels zijn beperkt tot **geselecteerde onderdelen**.
+        formula_not_available: 1076 - Niet beschikbaar in deze context
     layout:
-      title: 1068 - Tekening
-      to_layout: 1069 - Exporteren naar Layout
-      options_layout: 1070 - Layout
-      options_settings: 1071 - Configuratie
-      option_parts: 1072 - Stukken
-      option_parts_colored: 1073 - Kleur
-      option_parts_colored_0: 1074 - Zonder kleur
-      option_parts_colored_1: 1075 - Kleur van materiaal
-      option_parts_colored_help: 1076 - Hier kunt u het uiterlijk van de stukken kiezen.
-      option_parts_opacity: 1077 - Dekking
-      option_parts_opacity_0: 1078 - Transparant
-      option_parts_opacity_1: 1079 - Opaak
-      option_parts_opacity_help: 1080 - Selecteer de opaciteit van de delen.
-      option_pins: 1081 - Pinnen
-      option_pins_hidden: 1082 - Weergave
-      option_pins_hidden_0: 1083 - Met pinnen
-      option_pins_hidden_1: 1084 - Zonder pinnen
-      option_pins_hidden_help: 1085 - Toont of verbergt de labels die naar onderdelen wijzen om hun nummer of aanduiding aan te geven.
-      option_pins_colored: 1086 - Kleur
-      option_pins_colored_0: 1087 - Zonder kleur
-      option_pins_colored_1: 1088 - stuk kleur
-      option_pins_colored_help: 1089 - Hiermee kunt u de kleur van de label dots kiezen.
-      option_pins_formula: 1090 - Formule
-      option_pins_formula_help: 1091 - Hiermee kunt u *Ruby*-code schrijven om de tekst van de label dots aan te passen.
-      option_pins_length: 1092 - Lengte
-      option_pins_length_0: 1093 - Zonder pijl
-      option_pins_length_1: 1094 - Klein
-      option_pins_length_2: 1095 - Medium
-      option_pins_length_3: 1096 - Lang
-      option_pins_length_help: 1097 - Hiermee kunt u de lengte van de labelpijl kiezen.
-      option_pins_direction: 1098 - Richting
-      option_pins_direction_0: 1099 - Langs de Rode as
-      option_pins_direction_1: 1100 - Langs de Groene as
-      option_pins_direction_2: 1101 - Langs de Blauwe as
-      option_pins_direction_3: 1102 - Wijst naar het midden van de bovenliggende groep
-      option_pins_direction_4: 1103 - Wijst naar het midden van de selectie
-      option_pins_direction_help: 1104 - Hiermee kunt u de richting van de labels kiezen om hun leesbaarheid aan te passen aan de tekening.
-      option_page: 1105 - Papier
-      option_page_format: 1106 - Formaat
-      option_page_format_portrait: 1107 - Portret
-      option_page_format_landscape: 1108 - Landschap
-      option_page_format_custom: 1109 - Gepersonaliseerd
-      option_page_width: 1110 - Breedte
-      option_page_height: 1111 - Hoogte
-      option_page_header: 1112 - In gedachten
-      option_page_header_0: 1113 - Zonder
-      option_page_header_1: 1114 - Met
+      title: 1077 - Tekening
+      to_layout: 1078 - Exporteren naar Layout
+      options_layout: 1079 - Layout
+      options_settings: 1080 - Configuratie
+      option_parts: 1081 - Stukken
+      option_parts_colored: 1082 - Kleur
+      option_parts_colored_0: 1083 - Zonder kleur
+      option_parts_colored_1: 1084 - Kleur van materiaal
+      option_parts_colored_help: 1085 - Hier kunt u het uiterlijk van de stukken kiezen.
+      option_parts_opacity: 1086 - Dekking
+      option_parts_opacity_0: 1087 - Transparant
+      option_parts_opacity_1: 1088 - Opaak
+      option_parts_opacity_help: 1089 - Selecteer de opaciteit van de delen.
+      option_pins: 1090 - Pinnen
+      option_pins_hidden: 1091 - Weergave
+      option_pins_hidden_0: 1092 - Met pinnen
+      option_pins_hidden_1: 1093 - Zonder pinnen
+      option_pins_hidden_help: 1094 - Toont of verbergt de labels die naar onderdelen wijzen om hun nummer of aanduiding aan te geven.
+      option_pins_colored: 1095 - Kleur
+      option_pins_colored_0: 1096 - Zonder kleur
+      option_pins_colored_1: 1097 - stuk kleur
+      option_pins_colored_help: 1098 - Hiermee kunt u de kleur van de label dots kiezen.
+      option_pins_formula: 1099 - Formule
+      option_pins_formula_help: 1100 - Hiermee kunt u *Ruby*-code schrijven om de tekst van de label dots aan te passen.
+      option_pins_length: 1101 - Lengte
+      option_pins_length_0: 1102 - Zonder pijl
+      option_pins_length_1: 1103 - Klein
+      option_pins_length_2: 1104 - Medium
+      option_pins_length_3: 1105 - Lang
+      option_pins_length_help: 1106 - Hiermee kunt u de lengte van de labelpijl kiezen.
+      option_pins_direction: 1107 - Richting
+      option_pins_direction_0: 1108 - Langs de Rode as
+      option_pins_direction_1: 1109 - Langs de Groene as
+      option_pins_direction_2: 1110 - Langs de Blauwe as
+      option_pins_direction_3: 1111 - Wijst naar het midden van de bovenliggende groep
+      option_pins_direction_4: 1112 - Wijst naar het midden van de selectie
+      option_pins_direction_help: 1113 - Hiermee kunt u de richting van de labels kiezen om hun leesbaarheid aan te passen aan de tekening.
+      option_page: 1114 - Papier
+      option_page_format: 1115 - Formaat
+      option_page_format_portrait: 1116 - Portret
+      option_page_format_landscape: 1117 - Landschap
+      option_page_format_custom: 1118 - Gepersonaliseerd
+      option_page_width: 1119 - Breedte
+      option_page_height: 1120 - Hoogte
+      option_page_header: 1121 - In gedachten
+      option_page_header_0: 1122 - Zonder
+      option_page_header_1: 1123 - Met
       option_page_header_help: |
-        1115 - Hiermee kunt u kiezen of de af te drukken pagina een koptekst bevat met de naam van het document, de beschrijving ervan, de datum, de eenheid en de schaal.
+        1124 - Hiermee kunt u kiezen of de af te drukken pagina een koptekst bevat met de naam van het document, de beschrijving ervan, de datum, de eenheid en de schaal.
         Zonder koptekst beslaat de totaaltekening de hele pagina.
-      option_camera: 1116 - Camera
-      option_camera_view: 1117 - Weergave
-      option_camera_view_custom: 1118 - Gepersonaliseerd
-      option_camera_zoom: 1119 - Ladder
-      option_camera_zoom_auto: 1120 - Automaat
-      option_camera_zoom_custom: 1121 - Gepersonaliseerd
-      option_camera_target: 1122 - Positie
-      option_camera_target_auto: 1123 - Automaat
-      option_camera_target_custom: 1124 - Gepersonaliseerd
-      option_explode: 1125 - Sprankelend
+      option_camera: 1125 - Camera
+      option_camera_view: 1126 - Weergave
+      option_camera_view_custom: 1127 - Gepersonaliseerd
+      option_camera_zoom: 1128 - Ladder
+      option_camera_zoom_auto: 1129 - Automaat
+      option_camera_zoom_custom: 1130 - Gepersonaliseerd
+      option_camera_target: 1131 - Positie
+      option_camera_target_auto: 1132 - Automaat
+      option_camera_target_custom: 1133 - Gepersonaliseerd
+      option_explode: 1134 - Sprankelend
       error:
-        no_part: 1126 - Er is geen ruimte om te tekenen.
-        failed_to_save_as_skp: 1127 - Kan het SKP-bestand niet schrijven om naar Layout te verzenden.
+        no_part: 1135 - Er is geen ruimte om te tekenen.
+        failed_to_save_as_skp: 1136 - Kan het SKP-bestand niet schrijven om naar Layout te verzenden.
         failed_to_layout: |
-          1128 - Fout bij het schrijven van het Layout-bestand *{{ error }}*
+          1137 - Fout bij het schrijven van het Layout-bestand *{{ error }}*
 
           **Controleer of het bestand niet geopend is in Layout.**
       warning:
-        is_group_selection: 1129 - De documenten in de **verborgen groepen** van uw debetblad worden niet getekend.
-        is_part_selection: 1130 - Deze totaaltekening is beperkt tot **geselecteerde onderdelen**.
+        is_group_selection: 1138 - De documenten in de **verborgen groepen** van uw debetblad worden niet getekend.
+        is_part_selection: 1139 - Deze totaaltekening is beperkt tot **geselecteerde onderdelen**.
       message:
         adding_new_page: |
-          1131 - Wil je een nieuwe pagina toevoegen?
+          1140 - Wil je een nieuwe pagina toevoegen?
         incompatible_page_format: |
-          1132 - Het doelbestand is niet geconfigureerd met hetzelfde papierformaat.
+          1141 - Het doelbestand is niet geconfigureerd met hetzelfde papierformaat.
 
           Gelezen: {{ old_page_format }}
           Geëxporteerd: {{ new_page_format }}
 
           Alle pagina's worden verwijderd.
         changing_units: |
-          1133 - Het doelbestand heeft standaard niet dezelfde eenheid.
+          1142 - Het doelbestand heeft standaard niet dezelfde eenheid.
 
           Gelezen: {{ old_units }}
           Geëxporteerd: {{ new_units }}
 
           Wilt u de nieuwe eenheden gebruiken?
         changing_precision: |
-          1134 - Het doelbestand heeft standaard niet dezelfde precisie.
+          1143 - Het doelbestand heeft standaard niet dezelfde precisie.
 
           Gelezen: {{ old_precision }}
           Geëxporteerd: {{ new_precision }}
 
           Wilt u de nieuwe precisie gebruiken?
     write:
-      title: 1135 - Miniatuurvoorbeeld Onderdelen exporteren
+      title: 1144 - Miniatuurvoorbeeld Onderdelen exporteren
       info_2d: |
-        1136 - Miniatuurvoorbeeld Onderdelen exporteren Met deze module kunt u de **2D-projectie** van de onderdelen exporteren als bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) formaat.
+        1145 - Miniatuurvoorbeeld Onderdelen exporteren Met deze module kunt u de **2D-projectie** van de onderdelen exporteren als bestanden in [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) of [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) formaat.
       info_3d: |
-        1137 - Met deze module kunt u de **3D-geometrie** van onderdelen exporteren als bestanden [STL](https://wikipedia.org/wiki/STL_(file_format)) of [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
-      option_file_format: 1138 - Formaat
+        1146 - Met deze module kunt u de **3D-geometrie** van onderdelen exporteren als bestanden [STL](https://wikipedia.org/wiki/STL_(file_format)) of [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file).
+      option_file_format: 1147 - Formaat
       option_file_format_help: |
-        1139 - Hiermee kunt u het bestandsformaat kiezen dat u wilt exporteren.
-      option_dxf_structure: 1140 - DXF-structuur
-      option_dxf_structure_1: 1141 - Lagen
-      option_dxf_structure_2: 1142 - Lagen + Blokken
+        1148 - Hiermee kunt u het bestandsformaat kiezen dat u wilt exporteren.
+      option_dxf_structure: 1149 - DXF-structuur
+      option_dxf_structure_1: 1150 - Lagen
+      option_dxf_structure_2: 1151 - Lagen + Blokken
       option_dxf_structure_help: |
-        1143 - Hiermee kunt u de structuur van het DXF-bestand kiezen.
+        1152 - Hiermee kunt u de structuur van het DXF-bestand kiezen.
 
         - De **Lagen**-structuur tekent alle lijnen plat, waarbij de verschillende soorten lijnen alleen in lagen worden onderscheiden. *Deze structuur biedt betere compatibiliteit met software van derden.*
         - De structuur **Lagen + Blokken** maakt één blok per stuk en voegt deze blokken net zo vaak in als de stukken worden herhaald. *Deze structuur biedt meer flexibiliteit bij het bewerken van het bestand.*
-      option_unit: 1144 - Eenheid
+      option_unit: 1153 - Eenheid
       option_unit_help: |
-        1145 - Hiermee kunt u de eenheid kiezen die in het geëxporteerde bestand wordt gebruikt.
-      option_use_count: 1146 - Hoeveelheden
-      option_use_count_0: 1147 - Eén bestand per onderdeel
-      option_use_count_1: 1148 - Eén bestand per onderdeelinstantie
+        1154 - Hiermee kunt u de eenheid kiezen die in het geëxporteerde bestand wordt gebruikt.
+      option_use_count: 1155 - Hoeveelheden
+      option_use_count_0: 1156 - Eén bestand per onderdeel
+      option_use_count_1: 1157 - Eén bestand per onderdeelinstantie
       option_use_count_help: |
-        1149 - Bepaalt of er rekening wordt gehouden met het aantal instanties van een component.
-      option_part_drawing_type: 1150 - Projectie
+        1158 - Bepaalt of er rekening wordt gehouden met het aantal instanties van een component.
+      option_part_drawing_type: 1159 - Projectie
       option_part_drawing_type_help: |
-        1151 - Hiermee kunt u de geëxporteerde weergave kiezen.
-      option_faces: 1152 - Fineren
-      option_faces_0: 1153 - Gebruik alleen het beoogde gezicht
-      option_faces_1: 1154 - Gebruik alle zijden van het onderdeel
+        1160 - Hiermee kunt u de geëxporteerde weergave kiezen.
+      option_faces: 1161 - Fineren
+      option_faces_0: 1162 - Gebruik alleen het beoogde gezicht
+      option_faces_1: 1163 - Gebruik alle zijden van het onderdeel
       option_faces_help: |
-        1155 - Hiermee kunt u kiezen of er naar de vorm van het onderdeel wordt gezocht op alle vlakken of alleen op het beoogde vlak.
-      option_anchor: 1156 - Anker
-      option_anchor_0: 1157 - Automaat
-      option_anchor_1: 1158 - Projecteer de oorsprong van het onderdeel
-      option_anchor_help: '1159 - '
-      option_switch_yz: 1160 - Verticale as
-      option_switch_yz_0: 1161 - Z verticaal
-      option_switch_yz_1: 1162 - Y verticaal
+        1164 - Hiermee kunt u kiezen of er naar de vorm van het onderdeel wordt gezocht op alle vlakken of alleen op het beoogde vlak.
+      option_anchor: 1165 - Anker
+      option_anchor_0: 1166 - Automaat
+      option_anchor_1: 1167 - Projecteer de oorsprong van het onderdeel
+      option_anchor_help: '1168 - '
+      option_switch_yz: 1169 - Verticale as
+      option_switch_yz_0: 1170 - Z verticaal
+      option_switch_yz_1: 1171 - Y verticaal
       option_switch_yz_help: |
-        1163 - Wisselt de Y- en Z-as om de verticale as van het onderdeel te definiëren.
-      option_smoothing: 1164 - Gladmaken
+        1172 - Wisselt de Y- en Z-as om de verticale as van het onderdeel te definiëren.
+      option_smoothing: 1173 - Gladmaken
       option_smoothing_0: $t(default.no)
-      option_smoothing_1: 1166 - Gladde cirkels en bogen (experimenteel)
+      option_smoothing_1: 1175 - Gladde cirkels en bogen (experimenteel)
       option_smoothing_help: |
-        1167 - Hiermee kunt u de detectie van cirkels en bogen activeren.
+        1176 - Hiermee kunt u de detectie van cirkels en bogen activeren.
 
         *Deze optie detecteert geen andere soorten curven.*
-      option_merge_holes: 1168 - Ontleding
-      option_merge_holes_0: '1169 - '
-      option_merge_holes_1: '1170 - '
-      option_merge_holes_help: '1171 - '
-      option_merge_holes_overflow: '1172 - '
-      option_merge_holes_overflow_help: '1173 - '
-      option_include_paths: 1174 - Sporen
+      option_merge_holes: 1177 - Ontleding
+      option_merge_holes_0: '1178 - '
+      option_merge_holes_1: '1179 - '
+      option_merge_holes_help: '1180 - '
+      option_merge_holes_overflow: '1181 - '
+      option_merge_holes_overflow_help: '1182 - '
+      option_include_paths: 1183 - Sporen
       option_include_paths_0: $t(default.no)
-      option_include_paths_1: 1176 - Gebruik randen die niet aan een gezicht zijn gekoppeld
+      option_include_paths_1: 1185 - Gebruik randen die niet aan een gezicht zijn gekoppeld
       option_include_paths_help: |
-        1177 - Hiermee kunt u het gebruik activeren van randen die niet aan een vlak zijn gekoppeld en wel in het onderdeel zijn opgenomen, en deze als plot exporteren.
-      option_parts: 1178 - Stukken
+        1186 - Hiermee kunt u het gebruik activeren van randen die niet aan een vlak zijn gekoppeld en wel in het onderdeel zijn opgenomen, en deze als plot exporteren.
+      option_parts: 1187 - Stukken
       option_parts_help: |
-        1179 - Hiermee kunt u de kleuren van de onderdelen kiezen.
-      option_parts_depths: '1180 - '
-      option_parts_depths_help: '1181 - '
-      option_parts_holes: 1182 - Boringen
+        1188 - Hiermee kunt u de kleuren van de onderdelen kiezen.
+      option_parts_depths: '1189 - '
+      option_parts_depths_help: '1190 - '
+      option_parts_holes: 1191 - Boringen
       option_parts_holes_help: |
-        1183 - Hiermee kunt u de kleuren van de onderdeelgaten kiezen.
-      option_parts_paths: 1184 - Sporen
+        1192 - Hiermee kunt u de kleuren van de onderdeelgaten kiezen.
+      option_parts_paths: 1193 - Sporen
       option_parts_paths_help: |
-        1185 - Hiermee kun je de padkleuren kiezen.
+        1194 - Hiermee kun je de padkleuren kiezen.
 
         *De vulkleur wordt alleen gebruikt voor gesloten paden.*
       error:
-        no_part: 1186 - Geen onderdelen om te exporteren.
+        no_part: 1195 - Geen onderdelen om te exporteren.
       warning:
-        is_group_selection: 1187 - Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
-        is_part_selection: 1188 - Exporteren is beperkt tot **geselecteerde onderdelen**.
+        is_group_selection: 1196 - Onderdelen in de **gemaskeerde groepen** van uw stuklijst worden niet geëxporteerd.
+        is_part_selection: 1197 - Exporteren is beperkt tot **geselecteerde onderdelen**.
     snippet:
-      hello: 1189 - Hallo
-      number: 1190 - Nummer
-      name: 1191 - Beschrijving
-      number_and_name: 1192 - Nummer en aanduiding
-      number_without_hardware: 1193 - Aantal (zonder accessoires)
-      size: 1194 - Afmeting
-      area: 1195 - Geschikt oppervlakte
-      volume: 1196 - Geschikt volume
+      hello: 1198 - Hallo
+      number: 1199 - Nummer
+      name: 1200 - Beschrijving
+      number_and_name: 1201 - Nummer en aanduiding
+      number_without_hardware: 1202 - Aantal (zonder accessoires)
+      size: 1203 - Afmeting
+      area: 1204 - Geschikt oppervlakte
+      volume: 1205 - Geschikt volume
     error:
-      no_model: 1197 - Er is geen enkel model open. U moet me wat meer informatie geven ;)
-      no_entities: 1198 - Uw model is leeg. U moet me iets meer geven ;)
-      no_component_in_selection: 1199 - Geen enkele component instantie werd gevonden in uw selectie.
-      no_component_in_model: 1200 - Geen enkele component instantie werd gevonden in uw scène.
-      unknow_part: 1201 - Het geselecteerde onderdeel bestaat niet in de stuklijst.
-      obsolete_cutlist: 1202 - Onmogelijk. De stuklijst is vervallen. Genereer hem opnieuw.
+      no_model: 1206 - Er is geen enkel model open. U moet me wat meer informatie geven ;)
+      no_entities: 1207 - Uw model is leeg. U moet me iets meer geven ;)
+      no_component_in_selection: 1208 - Geen enkele component instantie werd gevonden in uw selectie.
+      no_component_in_model: 1209 - Geen enkele component instantie werd gevonden in uw scène.
+      unknow_part: 1210 - Het geselecteerde onderdeel bestaat niet in de stuklijst.
+      obsolete_cutlist: 1211 - Onmogelijk. De stuklijst is vervallen. Genereer hem opnieuw.
     warning:
-      is_entity_selection: 1203 - Deze stuklijst is een gedeeltelijke weergave van uw model omdat hij enkel de geselecteerde elementen bevat.
-      no_typed_materials_in_model: 1204 - Uw model gebruikt geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 1205 - Uw selectie bevat geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**).
-      export_empty: 1206 - Uw export bevat geen enkel onderdeel.
+      is_entity_selection: 1212 - Deze stuklijst is een gedeeltelijke weergave van uw model omdat hij enkel de geselecteerde elementen bevat.
+      no_typed_materials_in_model: 1213 - Uw model gebruikt geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 1214 - Uw selectie bevat geen enkel materiaal van het type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**).
+      export_empty: 1215 - Uw export bevat geen enkel onderdeel.
     success:
-      part_selected: 1207 - {{ count }} deel geselecteerd op het debietblad.
-      part_selected_plural: 1208 - {{ count }} munten geselecteerd op de debietblad.
+      part_selected: 1216 - {{ count }} deel geselecteerd op het debietblad.
+      part_selected_plural: 1217 - {{ count }} munten geselecteerd op de debietblad.
     tip:
       no_component: |
-        1209 - De onderdelen die u wil weergeven in de *stuklijst* moeten **component** instances zijn.
+        1218 - De onderdelen die u wil weergeven in de *stuklijst* moeten **component** instances zijn.
         Wanneer je enkel groepen gebruikt, zet die dan om in componenten.
         Het gebruik van componenten laat toe om identieke onderdelen te repliceren zonder ze te hoeven dupliceren.
-      no_typed_materials: 1210 - Pas een materiaal toe op de onderdelen die je wil zien in je stuklijst en definieer het type van dat materiaal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**) in de tab <i class="ladb-opencutlist-icon-materials"></i> **Materialen**.
-    obsolete_base: 1211 - Om gesynchroniseerd te blijven moet je de stuklijst opnieuw genereren.
+      no_typed_materials: 1219 - Pas een materiaal toe op de onderdelen die je wil zien in je stuklijst en definieer het type van dat materiaal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** of **$t(tab.materials.type_5)**) in de tab <i class="ladb-opencutlist-icon-materials"></i> **Materialen**.
+    obsolete_base: 1220 - Om gesynchroniseerd te blijven moet je de stuklijst opnieuw genereren.
   materials:
-    label: 1212 - Materialen
-    title: 1213 - Materialen
-    type_0: 1214 - Niet gedefinieerd
-    type_1: 1215 - Massief hout
-    type_2: 1216 - Paneel
-    type_3: 1217 - Plank
-    type_4: 1218 - Kantenband
-    type_5: 1219 - Accessoire
-    type_6: 1220 - Fineer
+    label: 1221 - Materialen
+    title: 1222 - Materialen
+    type_0: 1223 - Niet gedefinieerd
+    type_1: 1224 - Massief hout
+    type_2: 1225 - Paneel
+    type_3: 1226 - Plank
+    type_4: 1227 - Kantenband
+    type_5: 1228 - Accessoire
+    type_6: 1229 - Fineer
     tooltip:
-      type_0: 1221 - Materiaal type '$t(tab.materials.type_0)'
-      type_1: 1222 - Materiaal type '$t(tab.materials.type_1)'
-      type_2: 1223 - Materiaal type '$t(tab.materials.type_2)'
-      type_3: 1224 - Materiaal type '$t(tab.materials.type_3)'
-      type_4: 1225 - Materiaal type '$t(tab.materials.type_4)'
-      type_5: 1226 - Materiaal type '$t(tab.materials.type_5)'
-      type_6: 1227 - Materiaal type '$t(tab.materials.type_6)'
+      type_0: 1230 - Materiaal type '$t(tab.materials.type_0)'
+      type_1: 1231 - Materiaal type '$t(tab.materials.type_1)'
+      type_2: 1232 - Materiaal type '$t(tab.materials.type_2)'
+      type_3: 1233 - Materiaal type '$t(tab.materials.type_3)'
+      type_4: 1234 - Materiaal type '$t(tab.materials.type_4)'
+      type_5: 1235 - Materiaal type '$t(tab.materials.type_5)'
+      type_6: 1236 - Materiaal type '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: 1230 - Nerf richting
-      raw_estimated_0: 1231 - Geschat op basis van het nuttige debiet volume
-      colorized: 1232 - Deze tint zal toegepast worden op de textuur van dit materiaal wanneer het in het model toegepast wordt
-      texture_load: '1233 - '
-      texture_export: '1234 - '
-      texture_clear: 1235 - Heldere textuur
-      edit: 1236 - Wijzig de eigenschappen van '{{ name }}'
-      set_current: 1237 - Kleur onderdelen met '{{ name }}'.
-      open_url: 1238 - Materiaal-URL openen
-      import_from_skm: 1239 - Importeer een materiaal (.skm)
+      grain_direction: 1239 - Nerf richting
+      raw_estimated_0: 1240 - Geschat op basis van het nuttige debiet volume
+      colorized: 1241 - Deze tint zal toegepast worden op de textuur van dit materiaal wanneer het in het model toegepast wordt
+      texture_load: '1242 - '
+      texture_export: '1243 - '
+      texture_clear: 1244 - Heldere textuur
+      edit: 1245 - Wijzig de eigenschappen van '{{ name }}'
+      set_current: 1246 - Kleur onderdelen met '{{ name }}'
+      open_url: 1247 - Materiaal-URL openen
+      import_from_skm: 1248 - Importeer een materiaal (.skm)
     menu:
-      purge_unused: 1240 - Verwijder ongebruikte materialen
-      reset_prices: 1241 - Reset de prijzen van alle materialen
+      purge_unused: 1249 - Verwijder ongebruikte materialen
+      reset_prices: 1250 - Reset de prijzen van alle materialen
       reset_prices_confirm: |
-        1242 - U staat op het punt om de prijzen van alle materialen in uw model opnieuw in te stellen.
+        1251 - U staat op het punt om de prijzen van alle materialen in uw model opnieuw in te stellen.
         Deze actie is definitief. **Alle prijzen worden op nul gezet.**
         Bevestig om door te gaan.
-      reset_prices_success: 1243 - De prijzen van alle materialen zijn opnieuw vastgesteld.
+      reset_prices_success: 1252 - De prijzen van alle materialen zijn opnieuw vastgesteld.
     new_material:
-      title: 1244 - Maak een nieuw materiaal
-      name: 1245 - Beschrijving
-      name_warning: 1246 - Ongeldige naam
-      color: 1247 - Kleur
-      color_warning: 1248 - Ongeldige kleur
-      type: 1249 - Type
-    edit_material:
-      title: 1250 - Eigenschappen van materiaal '{{ name }}'
-      general: 1251 - Algemeen
-      texture: 1252 - Textuur
-      no_texture: 1253 - Zonder textuur
+      title: 1253 - Maak een nieuw materiaal
       name: 1254 - Beschrijving
-      type: 1255 - Type
-      description: 1256 - Beschrijving
-      url: 1257 - URL
-      formats: '1258 - '
-      cut_options: 1259 - Onderdelen opties
-      estimate_options: 1260 - Schattingsopties
-      attributes: 1261 - Attributen
-      thickness: 1262 - Dikte
-      thickness_help: '1263 - '
-      length_increase: 1264 - Lengte overmaat
-      length_increase_help: '1265 - '
-      width_increase: 1266 - Breedte overmaat
-      width_increase_help: '1267 - '
-      thickness_increase: 1268 - Dikte overmaat
-      thickness_increase_help: '1269 - '
-      std_lengths: 1270 - Standaard lengtes
-      std_lengths_help: '1271 - '
-      std_widths: 1272 - Standaard breedtes
-      std_widths_help: '1273 - '
-      std_thicknesses: 1274 - Standaard diktes
-      std_thicknesses_help: '1275 - '
-      std_sections: 1276 - Standaard secties
-      std_sections_help: '1277 - '
-      std_sizes: 1278 - Standaard afmetingen
-      std_sizes_help: '1279 - '
-      grained: 1280 - Nerf
-      grained_help: 1281 - Laat toe om de oriëntatie van de oppervlakte nerf aan te duiden ten opzichte van de lengte van het paneel.
-      grained_0: 1282 - Geen nerf
-      grained_1: 1283 - De nerf volgt de lengte
-      edge_decremented: 1284 - Reductie
-      edge_decremented_help: 1285 - Laat toe om aan te geven dat de afmetingen van de stuklijst verminderd moeten worden met de diktes van de kantenband.
-      edge_decremented_0: 1286 - Geen reductie
-      edge_decremented_1: 1287 - Veminder de afmeting met de dikte van de kantenband
-      raw_estimated: 1288 - Gebruikt volume
+      name_warning: 1255 - Ongeldige naam
+      color: 1256 - Kleur
+      color_warning: 1257 - Ongeldige kleur
+      type: 1258 - Type
+    edit_material:
+      title: 1259 - Eigenschappen van materiaal '{{ name }}'
+      general: 1260 - Algemeen
+      texture: 1261 - Textuur
+      no_texture: 1262 - Zonder textuur
+      name: 1263 - Beschrijving
+      type: 1264 - Type
+      description: 1265 - Beschrijving
+      url: 1266 - URL
+      formats: '1267 - '
+      cut_options: 1268 - Onderdelen opties
+      estimate_options: 1269 - Schattingsopties
+      attributes: 1270 - Attributen
+      thickness: 1271 - Dikte
+      thickness_help: '1272 - '
+      length_increase: 1273 - Lengte overmaat
+      length_increase_help: '1274 - '
+      width_increase: 1275 - Breedte overmaat
+      width_increase_help: '1276 - '
+      thickness_increase: 1277 - Dikte overmaat
+      thickness_increase_help: '1278 - '
+      std_lengths: 1279 - Standaard lengtes
+      std_lengths_help: '1280 - '
+      std_widths: 1281 - Standaard breedtes
+      std_widths_help: '1282 - '
+      std_thicknesses: 1283 - Standaard diktes
+      std_thicknesses_help: '1284 - '
+      std_sections: 1285 - Standaard secties
+      std_sections_help: '1286 - '
+      std_sizes: 1287 - Standaard afmetingen
+      std_sizes_help: '1288 - '
+      grained: 1289 - Nerf
+      grained_help: 1290 - Laat toe om de oriëntatie van de oppervlakte nerf aan te duiden ten opzichte van de lengte van het paneel.
+      grained_0: 1291 - Geen nerf
+      grained_1: 1292 - De nerf volgt de lengte
+      edge_decremented: 1293 - Reductie
+      edge_decremented_help: 1294 - Laat toe om aan te geven dat de afmetingen van de stuklijst verminderd moeten worden met de diktes van de kantenband.
+      edge_decremented_0: 1295 - Geen reductie
+      edge_decremented_1: 1296 - Veminder de afmeting met de dikte van de kantenband
+      raw_estimated: 1297 - Gebruikt volume
       raw_estimated_help: |
-        1289 - Hiermee kunt u het volume definiëren dat wordt gebruikt om de massa en de totale kosten van de onderdelen van dit materiaal te schatten.
+        1298 - Hiermee kunt u het volume definiëren dat wordt gebruikt om de massa en de totale kosten van de onderdelen van dit materiaal te schatten.
 
         **Bruikbaar doorvoervolume**
         Het totale volume is de som van de doorvoervolumes van de onderdelen.
 
         ** Eerst materiaalvolume nodig**
         Het totale volume is de som van de volumes van de panelen, platen, staven of strips van de onderdelen na lay-out.
-      raw_estimated_0: 1290 - Nuttige debiet volume
-      raw_estimated_1: 1291 - Benodigd grondstof volume
-      multiplier_coefficient: '1292 - '
-      multiplier_coefficient_help: '1293 - '
-      std_attributes_dim_placeholder: 1294 - Kies een afmeting
-      std_volumic_masses: 1295 - Dichtheid
-      std_volumic_masses_help: 1296 - Hiermee kunt u de dichtheid voor alle maten en voor elke standaardmaat van het materiaal definiëren.
-      std_prices: 1297 - Prijs
-      std_prices_help: 1298 - Laat toe om de prijs voor alle afmetingen aan te duiden alsook voor elke standaard afmeting van het materiaal.
-      std_cut_prices: '1299 - '
-      std_cut_prices_help: '1300 - '
-      texture_width: 1301 - Breedte
-      texture_height: 1302 - Hoogte
-      export_to_skm: 1303 - Exporteren (.skm)
+      raw_estimated_0: 1299 - Nuttige debiet volume
+      raw_estimated_1: 1300 - Benodigd grondstof volume
+      multiplier_coefficient: '1301 - '
+      multiplier_coefficient_help: '1302 - '
+      std_attributes_dim_placeholder: 1303 - Kies een afmeting
+      std_volumic_masses: 1304 - Dichtheid
+      std_volumic_masses_help: 1305 - Hiermee kunt u de dichtheid voor alle maten en voor elke standaardmaat van het materiaal definiëren.
+      std_prices: 1306 - Prijs
+      std_prices_help: 1307 - Laat toe om de prijs voor alle afmetingen aan te duiden alsook voor elke standaard afmeting van het materiaal.
+      std_cut_prices: '1308 - '
+      std_cut_prices_help: '1309 - '
+      texture_width: 1310 - Breedte
+      texture_height: 1311 - Hoogte
+      export_to_skm: 1312 - Exporteren (.skm)
     texture_load:
-      title: 1304 - Upload een afbeelding
+      title: 1313 - Upload een afbeelding
     texture_export:
-      title: '1305 - '
+      title: '1314 - '
     import_from_skm:
-      title: 1306 - Importeer een .skm bestand
-      ask_replace: '1307 - '
+      title: 1315 - Importeer een .skm bestand
+      ask_replace: '1316 - '
     export_to_skm:
-      title: 1308 - Exporteer een .skm bestand
+      title: 1317 - Exporteer een .skm bestand
     option:
-      minimize_on_smart_paint: 1309 - Verminderen na *'Kleurdelen met...'*
-      minimize_on_smart_paint_help: 1310 - Als deze optie is ingeschakeld, wordt het venster OpenCutList geminimaliseerd wanneer de functie *'Kleur onderdelen met...'* wordt gebruikt.
-      general: 1311 - Algemeen
-      material_order_strategy: 1312 - Sortering van materialen
+      minimize_on_smart_paint: 1318 - Verminderen na *'Kleurdelen met...'*
+      minimize_on_smart_paint_help: 1319 - Als deze optie is ingeschakeld, wordt het venster OpenCutList geminimaliseerd wanneer de functie *'Kleur onderdelen met...'* wordt gebruikt.
+      general: 1320 - Algemeen
+      material_order_strategy: 1321 - Sortering van materialen
       material_order_strategy_help: |
-        1313 - Herschik de volgende kenmerken om de sorteer strategie te bepalen van de materialen in de lijst.
+        1322 - Herschik de volgende kenmerken om de sorteer strategie te bepalen van de materialen in de lijst.
         Elk kenmerk kan in <i class="ladb-opencutlist-icon-sort-asc"></i> *oplopend* of <i class="ladb-opencutlist-icon-sort-desc"></i> *aflopend* gesorteerd worden.
-      property_type: 1314 - Type
-      property_name: 1315 - Beschrijving
+      property_type: 1323 - Type
+      property_name: 1324 - Beschrijving
     delete:
       message: |
-        1316 - U staat op het punt om het materiaal **{{ material_name }}** uit uw model te verwijderen.
+        1325 - U staat op het punt om het materiaal **{{ material_name }}** uit uw model te verwijderen.
         Bevestig om verder te gaan.
     duplicate:
       message: |
-        1317 - Specificeer de naam van het nieuwe materiaal dat wordt gekopieerd uit **{{ material_name }}**.
+        1326 - Specificeer de naam van het nieuwe materiaal dat wordt gekopieerd uit **{{ material_name }}**.
     error:
-      no_model: 1318 - Er is geen enkel model open. U moet me wat meer informatie geven ;)
-      no_materials: 1319 - Uw model bevat geen enkel materiaal.
-      material_not_found: 1320 - Materiaal niet gevonden.
-      no_texture: '1321 - '
-      failed_import_skm_file: 1322 - Er heeft zich een fout voorgedaan bij het importeren van het .skm bestand. **{{ error }}**
-      failed_export_skm_file: 1323 - Er heeft zich een fout voorgedaan bij het exporteren van het .skm bestand. **{{ error }}**
-      failed_deleting_material: 1324 - Er heeft zich een fout voorgedaan bij het verwijderen van het materiaal. **{{ error }}**
-      failed_duplicating_material: 1325 - Er is een fout opgetreden tijdens het dupliceren van het materiaal. **{{ error }}**
-      invalid_image_file: 1326 - Ongeldige afbeelding
-    obsolete_base: 1327 - Om gesynchroniseerd te blijven moet u de materialen lijst verversen.
+      no_model: 1327 - Er is geen enkel model open. U moet me wat meer informatie geven ;)
+      no_materials: 1328 - Uw model bevat geen enkel materiaal.
+      material_not_found: 1329 - Materiaal niet gevonden.
+      no_texture: '1330 - '
+      failed_import_skm_file: 1331 - Er heeft zich een fout voorgedaan bij het importeren van het .skm bestand. **{{ error }}**
+      failed_export_skm_file: 1332 - Er heeft zich een fout voorgedaan bij het exporteren van het .skm bestand. **{{ error }}**
+      failed_deleting_material: 1333 - Er heeft zich een fout voorgedaan bij het verwijderen van het materiaal. **{{ error }}**
+      failed_duplicating_material: 1334 - Er is een fout opgetreden tijdens het dupliceren van het materiaal. **{{ error }}**
+      invalid_image_file: 1335 - Ongeldige afbeelding
+    obsolete_base: 1336 - Om gesynchroniseerd te blijven moet u de materialen lijst verversen.
   outliner:
-    label: 1328 - Structuur
-    title: 1329 - Structuur
-    list: 1330 - Boomstructuur entiteiten
-    nodes: 1331 - Instanties
-    toggle_hidden: 1332 - Verborgen instanties
-    type_0: 1333 - Model
-    type_1: 1334 - Groep
-    type_2: 1335 - Onderdeel
-    type_3: 1336 - Stuk
+    label: 1337 - Structuur
+    title: 1338 - Structuur
+    list: 1339 - Boomstructuur entiteiten
+    nodes: 1340 - Instanties
+    toggle_hidden: 1341 - Verborgen instanties
+    type_0: 1342 - Model
+    type_1: 1343 - Groep
+    type_2: 1344 - Onderdeel
+    type_3: 1345 - Stuk
     tooltip:
-      hide_node: '1337 - '
-      unhide_node: '1338 - '
-      locked_node: '1339 - '
-      is_active_node: '1340 - '
-      set_active_node: '1341 - '
-      edit_node_properties: '1342 - '
-      select_node: '1343 - '
-      unselect_node: '1344 - '
-      open_node_url: 1345 - Open onderdeel-URL
+      hide_node: '1346 - '
+      unhide_node: '1347 - '
+      locked_node: '1348 - '
+      is_active_node: '1349 - '
+      set_active_node: '1350 - '
+      edit_node_properties: '1351 - '
+      select_node: '1352 - '
+      unselect_node: '1353 - '
+      open_node_url: 1354 - Open onderdeel-URL
     edit_node:
-      title_model: 1346 - Modeleigenschappen
-      title_instance: 1347 - **{{ name }}** instantie-eigenschappen
-      general: 1348 - Algemeen
-      preview: 1349 - In zicht
-      name: 1350 - Beschrijving
-      instance_name: 1351 - Instantie
-      material: 1352 - Materiaal
-      definition_name: 1353 - Definitie
-      description: 1354 - Beschrijving
-      url: 1355 - URL
-      tags: 1356 - Badges
-      layer_name: 1357 - Tag
-      explode: 1358 - Uitbarsten/ splitsing 
-      explode_message: 1359 - Bevestigt u de splitsing van de **{{ name }}** instantie?
+      title_model: 1355 - Modeleigenschappen
+      title_instance: 1356 - **{{ name }}** instantie-eigenschappen
+      general: 1357 - Algemeen
+      name: 1358 - Beschrijving
+      instance_name: 1359 - Instantie
+      material: 1360 - Materiaal
+      definition_name: 1361 - Definitie
+      description: 1362 - Beschrijving
+      url: 1363 - URL
+      tags: 1364 - Badges
+      layer_name: 1365 - Tag
+      explode: 1366 - Uitbarsten/ splitsing 
+      explode_message: 1367 - Bevestigt u de splitsing van de **{{ name }}** instantie?
     option:
-      general: 1360 - Algemeen
-      show_hidden_instances: '1361 - '
-      show_hidden_instances_help: '1362 - '
-      hide_descriptions: 1363 - Beschrijvingen verbergen
-      hide_descriptions_help: 1364 - Als deze optie is geselecteerd, worden de **beschrijvingen** van de onderdelen niet weergegeven.
-      hide_tags: 1365 - Verberg de badges
-      hide_tags_help: 1366 - Wanneer deze optie ingeschakeld is, dan zullen de **badges** die op de onderdelen geplaatst werden niet weergegeven worden.
-      minimize_on_set_active: '1367 - '
-      minimize_on_set_active_help: '1368 - '
+      general: 1368 - Algemeen
+      show_hidden_instances: '1369 - '
+      show_hidden_instances_help: '1370 - '
+      hide_descriptions: 1371 - Beschrijvingen verbergen
+      hide_descriptions_help: 1372 - Als deze optie is geselecteerd, worden de **beschrijvingen** van de onderdelen niet weergegeven.
+      hide_tags: 1373 - Verberg de badges
+      hide_tags_help: 1374 - Wanneer deze optie ingeschakeld is, dan zullen de **badges** die op de onderdelen geplaatst werden niet weergegeven worden.
+      minimize_on_set_active: '1375 - '
+      minimize_on_set_active_help: '1376 - '
     error:
-      no_model: 1369 - Er is geen enkel model open. U moet me wat meer informatie geven ;)
-      no_entities: 1370 - Je model is leeg!
-      node_not_found: 1371 - Knooppunt niet gevonden
-      entity_not_found: 1372 - Instantie niet gevonden
-      obsolete_outliner: 1373 - Onmogelijk, de gegenereerde structuur is verouderd. Regenereer daar.
+      no_model: 1377 - Er is geen enkel model open. U moet me wat meer informatie geven ;)
+      no_entities: 1378 - Je model is leeg!
+      node_not_found: 1379 - Knooppunt niet gevonden
+      entity_not_found: 1380 - Instantie niet gevonden
+      obsolete_outliner: 1381 - Onmogelijk, de gegenereerde structuur is verouderd. Regenereer daar.
     tip:
       no_node: |
-        1374 - Uw model heeft momenteel geen instanties om hier weer te geven.
+        1382 - Uw model heeft momenteel geen instanties om hier weer te geven.
         Een instantie is een **groep** of **component** die in de scène is geplaatst.
-    obsolete_base: 1375 - Om gesynchroniseerd te blijven, moet u de structuur opnieuw genereren.
+    obsolete_base: 1383 - Om gesynchroniseerd te blijven, moet u de structuur opnieuw genereren.
   importer:
-    label: 1376 - Importeren
-    title: 1377 - Onderdelen importeren
+    label: 1384 - Importeren
+    title: 1385 - Onderdelen importeren
     help: |
-      1378 - Op deze pagina kunt u onderdelen (gedefinieerd door een rechthoekig selectiekader) in uw model importeren vanuit een [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand) bestand.
+      1386 - Op deze pagina kunt u onderdelen (gedefinieerd door een rechthoekig selectiekader) in uw model importeren vanuit een [CSV](https://nl.wikipedia.org/wiki/Kommagescheiden_bestand) bestand.
       U kunt dan de functies van *OpenCutList* gebruiken voor onderdelen die zijn gegenereerd door andere software dan *SketchUp*.
       Klik op de knop **CSV-bestand openen** om te beginnen.
-    open_csv: 1379 - Open CSV bestand
-    import_to_model: 1380 - Importeer in het model
+    open_csv: 1387 - Open CSV bestand
+    import_to_model: 1388 - Importeer in het model
     load:
-      title: 1381 - CSV bestand laden
+      title: 1389 - CSV bestand laden
       info_0: |
-        1382 - Kies de noodzakelijke opties om het bestand correct te lezen:
+        1390 - Kies de noodzakelijke opties om het bestand correct te lezen:
         **{{ filename }}**.
       info_1: |
-        1383 - *De eenheid geconfigureerd in het model is: **{{ unit }}**.
+        1391 - *De eenheid geconfigureerd in het model is: **{{ unit }}**.
         Deze eenheid zal gebruikt worden voor de afmetingen waarvan geen eenheid is opgegeven*.
-      options: 1384 - Laad opties
-      option_col_sep: 1385 - Scheidingsteken
-      option_col_sep_tab: 1386 - TAB-teken
-      option_col_sep_comma: 1387 - Komma
-      option_col_sep_semicolon: 1388 - Punt komma
-      option_first_line_headers: 1389 - Eerste lijn
-      option_first_line_headers_0: 1390 - Gegevens
-      option_first_line_headers_1: 1391 - Kolom titels
+      options: 1392 - Laad opties
+      option_col_sep: 1393 - Scheidingsteken
+      option_col_sep_tab: 1394 - TAB-teken
+      option_col_sep_comma: 1395 - Komma
+      option_col_sep_semicolon: 1396 - Punt komma
+      option_first_line_headers: 1397 - Eerste lijn
+      option_first_line_headers_0: 1398 - Gegevens
+      option_first_line_headers_1: 1399 - Kolom titels
     import:
-      title: 1392 - Importeer onderdelen in het model
+      title: 1400 - Importeer onderdelen in het model
       info_0: |
-        1393 - U staat op het punt om **{{ count }} onderdeel** te importeren in het model.
+        1401 - U staat op het punt om **{{ count }} onderdeel** te importeren in het model.
         Dit onderdeel zal in de hoofdscène op de oorsprong geplaatst worden.
       info_0_plural: |
-        1394 - U staat op het punt om **{{ count }} onderdelen** te importeren in het model.
+        1402 - U staat op het punt om **{{ count }} onderdelen** te importeren in het model.
         Deze onderdelen zullen in de hoofdscène gestapeld op de oorsprong geplaatst worden.
-      info_1: 1395 - Klik op **Import** om door te gaan..
+      info_1: 1403 - Klik op **Import** om door te gaan..
       options: |
-        1396 - Dit model bevat reeds *onderdelen*, *definities* of *materialen*.
+        1404 - Dit model bevat reeds *onderdelen*, *definities* of *materialen*.
         Kies de gewenste importeer opties..
-      option_remove_all_?: 1397 - Wat nu?
-      option_remove_all_false: 1398 - Voeg onderdelen toe aan bestaande
-      option_remove_all_true: 1399 - Alles vrij!
-      option_keep_definitions_settings: 1400 - Bewaar instellingen voor definities
-      option_keep_materials_settings: 1401 - Materiaalparameters behouden
+      option_remove_all_?: 1405 - Wat nu?
+      option_remove_all_false: 1406 - Voeg onderdelen toe aan bestaande
+      option_remove_all_true: 1407 - Alles vrij!
+      option_keep_definitions_settings: 1408 - Bewaar instellingen voor definities
+      option_keep_materials_settings: 1409 - Materiaalparameters behouden
     column:
-      unused: 1402 - Niet gebruikt
-      mandatory: 1403 - Verplichte kolommen
-      optional: 1404 - Optionele kolommen
-      name: 1405 - Beschrijving
-      count: 1406 - Hoeveelheid
-      bbox_length: 1407 - Lengte
-      bbox_width: 1408 - Breedte
-      bbox_thickness: 1409 - Dikte
-      material: 1410 - Materiaal
-      tags: 1411 - Badges
+      unused: 1410 - Niet gebruikt
+      mandatory: 1411 - Verplichte kolommen
+      optional: 1412 - Optionele kolommen
+      name: 1413 - Beschrijving
+      count: 1414 - Hoeveelheid
+      bbox_length: 1415 - Lengte
+      bbox_width: 1416 - Breedte
+      bbox_thickness: 1417 - Dikte
+      material: 1418 - Materiaal
+      tags: 1419 - Badges
     tooltip:
-      errors: 1412 - Dit deel wordt niet geïmporteerd omdat het de volgende fouten bevat
-      warnings: 1413 - Dit deel is geïmporteerd, maar het bevat de volgende fouten
+      errors: 1420 - Dit deel wordt niet geïmporteerd omdat het de volgende fouten bevat
+      warnings: 1421 - Dit deel is geïmporteerd, maar het bevat de volgende fouten
     error:
-      no_model: 1414 - Geen model is open. Je kunt geen onderdelen in de leegte importeren ;)
-      file_not_found: '1415 - Bestand niet gevonden: **{{ filename }}**'
-      bad_extension: 1416 - Het bestand *{{ filename }}* heeft geen **.CSV** of **.TSV** extensie.
+      no_model: 1422 - Geen model is open. Je kunt geen onderdelen in de leegte importeren ;)
+      file_not_found: '1423 - Bestand niet gevonden: **{{ filename }}**'
+      bad_extension: 1424 - Het bestand *{{ filename }}* heeft geen **.CSV** of **.TSV** extensie.
       failed_to_load_csv_file: |
-        1417 - Het CSV-bestand kan niet worden geladen: **{{ error }}**
+        1425 - Het CSV-bestand kan niet worden geladen: **{{ error }}**
         *Controleer of u het juiste gegevensscheidingsteken hebt gekozen.*
-      empty_file: 1418 - Het bestand lijkt leeg te zijn of kon niet correct worden gelezen.
-      no_importable_part: 1419 - Er kunnen geen onderdelen worden ingevoerd. Wijs de gewenste velden toe aan de overeenkomstige kolommen.
-      invalid_name: 1420 - Ongeldige beschrijving
-      invalid_length: 1421 - Ongeldige lengte
-      invalid_width: 1422 - Ongeldige breedte
-      invalid_thickness: 1423 - Ongeldige dikte
-      failed_to_import: 1424 - De import is mislukt.
+      empty_file: 1426 - Het bestand lijkt leeg te zijn of kon niet correct worden gelezen.
+      no_importable_part: 1427 - Er kunnen geen onderdelen worden ingevoerd. Wijs de gewenste velden toe aan de overeenkomstige kolommen.
+      invalid_name: 1428 - Ongeldige beschrijving
+      invalid_length: 1429 - Ongeldige lengte
+      invalid_width: 1430 - Ongeldige breedte
+      invalid_thickness: 1431 - Ongeldige dikte
+      failed_to_import: 1432 - De import is mislukt.
     warning:
-      invalid_count: 1425 - Ongeldig aantal stuks
-      invalid_material: 1426 - Ongeldig materiaal
+      invalid_count: 1433 - Ongeldig aantal stuks
+      invalid_material: 1434 - Ongeldig materiaal
     success:
-      imported_title: 1427 - Import voltooid
-      imported_body: 1428 - {{ count }} deel succesvol geïmporteerd!
-      imported_body_plural: 1429 - {{ count }} onderdelen succesvol geïmporteerd!
-    obsolete_base: 1430 - Om gesynchroniseerd te blijven, moet u het CSV-bestand opnieuw laden.
+      imported_title: 1435 - Import voltooid
+      imported_body: 1436 - {{ count }} deel succesvol geïmporteerd!
+      imported_body_plural: 1437 - {{ count }} onderdelen succesvol geïmporteerd!
+    obsolete_base: 1438 - Om gesynchroniseerd te blijven, moet u het CSV-bestand opnieuw laden.
   tutorials:
-    label: 1431 - Tutorials
-    title: 1432 - Tutorials
+    label: 1439 - Tutorials
+    title: 1440 - Tutorials
     help: |
-      1433 - Hier is een niet-uitputtende lijst van video's gemaakt door de gemeenschap rond het gebruik van *OpenCutList*.
-    submit: 1434 - Video insturen
-    submit_info: '1435 - '
+      1441 - Hier is een niet-uitputtende lijst van video's gemaakt door de gemeenschap rond het gebruik van *OpenCutList*.
+    submit: 1442 - Video insturen
+    submit_info: '1443 - '
     error:
-      fail_to_load_list: 1436 - Videolijst kan niet worden geladen.
+      fail_to_load_list: 1444 - Videolijst kan niet worden geladen.
   news:
-    label: 1437 - Nieuws
-    title: 1438 - Nieuws
+    label: 1445 - Nieuws
+    title: 1446 - Nieuws
     help: |
-      1439 - Het laatste nieuws van *OpenCutList*.
-    comment: 1440 - Commentaar
+      1447 - Het laatste nieuws van *OpenCutList*.
+    comment: 1448 - Commentaar
     error:
-      fail_to_load_list: 1441 - Berichtenlijst kon niet worden geladen.
+      fail_to_load_list: 1449 - Berichtenlijst kon niet worden geladen.
   forum:
-    label: 1442 - Forum
-    title: 1443 - Forum
+    label: 1450 - Forum
+    title: 1451 - Forum
     help: |
-      1444 - In deze sectie kunt u communiceren met de *OpenCutList* gemeenschap en het team.
-    create_conversation: 1445 - Start discussie
-    reply: 1446 - Antwoord
-    tags: 1447 - Tags
+      1452 - In deze sectie kunt u communiceren met de *OpenCutList* gemeenschap en het team.
+    create_conversation: 1453 - Start discussie
+    reply: 1454 - Antwoord
+    tags: 1455 - Tags
     redirection: |
-      1448 - U wordt doorgestuurd naar het **Open Collective** platform dat dit discussieforum host.
+      1456 - U wordt doorgestuurd naar het **Open Collective** platform dat dit discussieforum host.
       Om gesprekken te *beginnen* of te *beantwoorden*, moet u een account aanmaken en inloggen.
       *Het is gratis, geen verplichting, en een simpel email adres is voldoende.*
 
       Bevestig om door te gaan.
     error:
-      fail_to_load_list: 1449 - De conversatielijst kon niet worden geladen.
+      fail_to_load_list: 1457 - De conversatielijst kon niet worden geladen.
   sponsor:
-    label: 1450 - Sponsoring
-    title: 1451 - Sponsoring
+    label: 1458 - Sponsoring
+    title: 1459 - Sponsoring
     description: |
-      1452 - **OpenCutList** is *Open Source* software ondersteund door zijn gebruikers via <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      1460 - **OpenCutList** is *Open Source* software ondersteund door zijn gebruikers via <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
       Steun dit project door een financiële bijdrage te leveren!
-    contribute: 1453 - Bijdragen
-    backers: 1454 - {{ count }} financiele sponsor
-    backers_plural: 1455 - {{ count }} financiele sponsors
-    ad: '1456 - '
-    objective: 1457 - Doel
-    objective_slogan: 1458 - OpenCutList zijn we allemaal
+    contribute: 1461 - Bijdragen
+    backers: 1462 - {{ count }} financiele sponsor
+    backers_plural: 1463 - {{ count }} financiele sponsors
+    ad: '1464 - '
+    objective: 1465 - Doel
+    objective_slogan: 1466 - OpenCutList zijn we allemaal
     objective_title:
-      default: 1459 - Doelen
-      cuttingdiagram_export: 1460 - Financiering van de uitvoer van zaagschema's
+      default: 1467 - Doelen
+      cuttingdiagram_export: 1468 - Financiering van de uitvoer van zaagschema's
     objective_details:
       default: |
-        1461 - De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update!
+        1469 - De voortdurende verbetering van *OpenCutList* is belangrijk voor ons en het project heeft nog steeds uw hulp nodig voor de volgende update!
       cuttingdiagram_export: |
-        1462 - Wij vinden het belangrijk dat *OpenCutList* zich kan aanpassen aan de zeer uiteenlopende verwachtingen van gebruikers voor de *layout*-functie.
+        1470 - Wij vinden het belangrijk dat *OpenCutList* zich kan aanpassen aan de zeer uiteenlopende verwachtingen van gebruikers voor de *layout*-functie.
         Om de mogelijkheden verder uit te breiden, willen we het mogelijk maken om lay-outdiagrammen in **SVG**- en **DXF**-formaat te exporteren.
         Door ons de middelen te geven om aan deze exporten te werken, geeft u ons de mogelijkheid om u te helpen het maximale uit *OpenCutList* te halen.
     objective_crowdfunding: |
-      1463 - De ontwikkeling van deze nieuwe functie zal gebeuren via **participatiefinanciering** en kan beginnen zodra het **financiële doel** is bereikt.
+      1471 - De ontwikkeling van deze nieuwe functie zal gebeuren via **participatiefinanciering** en kan beginnen zodra het **financiële doel** is bereikt.
     objective_thanks: |
-      1464 - Dank u voor uw bijdrage!
-    objective_funded_progress: 1465 - gefinancierd aan {{ progress }} %
+      1472 - Dank u voor uw bijdrage!
+    objective_funded_progress: 1473 - gefinancierd aan {{ progress }} %
   settings:
-    label: 1466 - Gebruikersinstellingen
-    title: 1467 - Gebruikersinstellingen
-    global_settings: 1468 - Globale instellingen
-    language: 1469 - Taal
-    language_auto: 1470 - Automaat
-    zoom: 1471 - Lettergrootte
-    zoom_normal: 1472 - Normaal
-    zoom_small: 1473 - Klein
-    zoom_tiny: 1474 - Zeer klein
-    print_margin: 1475 - Marges afdrukken
-    print_margin_normal: 1476 - Normale
-    print_margin_small: 1477 - Kleine
-    table_row_size: 1478 - Grootte van tabelrijen
-    table_row_size_normal: 1479 - Normaal
-    table_row_size_compact: 1480 - Compact
-    size_and_position: 1481 - Grootte en positie van het venster
-    model_settings: 1482 - Modelinstellingen
-    length_unit: 1483 - Lengte-eenheid
-    length_format: 1484 - Formaat
+    label: 1474 - Gebruikersinstellingen
+    title: 1475 - Gebruikersinstellingen
+    global_settings: 1476 - Globale instellingen
+    language: 1477 - Taal
+    language_auto: 1478 - Automaat
+    zoom: 1479 - Lettergrootte
+    zoom_normal: 1480 - Normaal
+    zoom_small: 1481 - Klein
+    zoom_tiny: 1482 - Zeer klein
+    print_margin: 1483 - Marges afdrukken
+    print_margin_normal: 1484 - Normale
+    print_margin_small: 1485 - Kleine
+    table_row_size: 1486 - Grootte van tabelrijen
+    table_row_size_normal: 1487 - Normaal
+    table_row_size_compact: 1488 - Compact
+    size_and_position: 1489 - Grootte en positie van het venster
+    model_settings: 1490 - Modelinstellingen
+    length_unit: 1491 - Lengte-eenheid
+    length_format: 1492 - Formaat
     length_format_0: $t(default.decimal)
-    length_format_1: 1486 - Architectonisch
-    length_format_2: 1487 - Ingenieur
+    length_format_1: 1494 - Architectonisch
+    length_format_2: 1495 - Ingenieur
     length_format_3: $t(default.fractional)
-    length_precision: 1489 - Nauwkeurigheid
-    suppress_units_display: 1490 - Toon de lengte-eenheid voor elke waarde
-    mass_unit: 1491 - Eenheid van massa
-    mass_precision: 1492 - Nauwkeurigheid
-    currency_symbol: 1493 - Valutateken
-    currency_precision: 1494 - Nauwkeurigheid
+    length_precision: 1497 - Nauwkeurigheid
+    suppress_units_display: 1498 - Toon de lengte-eenheid voor elke waarde
+    mass_unit: 1499 - Eenheid van massa
+    mass_precision: 1500 - Nauwkeurigheid
+    currency_symbol: 1501 - Valutateken
+    currency_precision: 1502 - Nauwkeurigheid
     presets:
-      export_global_presets: 1495 - Voorinstellingen exporteren
+      export_global_presets: 1503 - Voorinstellingen exporteren
       export_global_presets_help: |
-        1496 - Met deze functie kunt u uw voorinstellingen exporteren naar een **.json**-bestand.
+        1504 - Met deze functie kunt u uw voorinstellingen exporteren naar een **.json**-bestand.
          Selecteer daar de presets die u wilt exporteren.
-      export_global_presets_success: 1497 - De presets zijn succesvol geëxporteerd.
-      import_global_presets: 1498 - Voorinstellingen importeren
+      export_global_presets_success: 1505 - De presets zijn succesvol geëxporteerd.
+      import_global_presets: 1506 - Voorinstellingen importeren
       import_global_presets_help: |
-        1499 - Selecteer de voorinstellingen in het **.json**-bestand dat u wilt importeren
+        1507 - Selecteer de voorinstellingen in het **.json**-bestand dat u wilt importeren
         Let op: als er al een preset met een identieke naam bestaat, wordt deze vervangen door de geïmporteerde versie.
       import_global_presets_success: |
-        1500 - De *OpenCutList*-voorinstellingen zijn succesvol geïmporteerd.
+        1508 - De *OpenCutList*-voorinstellingen zijn succesvol geïmporteerd.
         Om rekening te houden met de wijzigingen, moet u het OpenCutList-venster **sluiten** en **heropenen**.
-      dump_global_presets: 1501 - reset de voorkeursinstellingen
-      dump_model_presets: 1502 - reset model voorkeursinstellingen
-      reset_global_presets: 1503 - reset alle voorkeursinstellingen
+      dump_global_presets: 1509 - reset de voorkeursinstellingen
+      dump_model_presets: 1510 - reset model voorkeursinstellingen
+      reset_global_presets: 1511 - reset alle voorkeursinstellingen
       reset_global_presets_confirm: |
-        1504 - U staat op het punt om al uw opgeslagen *OpenCutList* voorinstellingen te resetten.
+        1512 - U staat op het punt om al uw opgeslagen *OpenCutList* voorinstellingen te resetten.
         Deze actie is definitief. **Alle voorinstellingen gaan verloren**.
         Bevestig om door te gaan.
       reset_global_presets_success: |
-        1505 - De *OpenCutList* voorkeuren zijn opnieuw ingesteld.
+        1513 - De *OpenCutList* voorkeuren zijn opnieuw ingesteld.
         Om de wijzigingen weer te geven, moet u het venster OpenCutList **sluiten** en **opnieuw openen**.
-      reset_model_presets: 1506 - Reset modelvoorinstellingen
+      reset_model_presets: 1514 - Reset modelvoorinstellingen
       reset_model_presets_confirm: |
-        1507 - U staat op het punt om alle *OpenCutList* instellingen voor het huidige model te resetten.
+        1515 - U staat op het punt om alle *OpenCutList* instellingen voor het huidige model te resetten.
         Deze actie is definitief. **Alle instellingen worden teruggezet naar de standaardwaarden.**
         Bevestig om door te gaan.
       reset_model_presets_success: |
-        1508 - De instellingen van *OpenCutList* voor het huidige model zijn gereset.
+        1516 - De instellingen van *OpenCutList* voor het huidige model zijn gereset.
         Om de wijzigingen weer te geven, moet u het venster OpenCutList **sluiten** en **opnieuw openen**.
       error:
-        no_preset_to_export: 1509 - Geen voorinstellingen om te exporteren.
-        no_preset_to_import: 1510 - Geen voorinstellingen om te importeren.
-        failed_to_import: '1511 - Kan voorinstellingen niet importeren: **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1512 - Dit bestand is gewijzigd. Het kan niet worden geïmporteerd.
-        failed_to_import_bad_file_format: 1513 - Ongeldig bestandsformaat.
+        no_preset_to_export: 1517 - Geen voorinstellingen om te exporteren.
+        no_preset_to_import: 1518 - Geen voorinstellingen om te importeren.
+        failed_to_import: '1519 - Kan voorinstellingen niet importeren: **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1520 - Dit bestand is gewijzigd. Het kan niet worden geïmporteerd.
+        failed_to_import_bad_file_format: 1521 - Ongeldig bestandsformaat.
   about:
-    label: 1514 - Over
-    title: 1515 - Over
-    version: 1516 - Versie
-    credits: 1517 - Ontwikkeling en programmering
+    label: 1522 - Over
+    title: 1523 - Over
+    version: 1524 - Versie
+    credits: 1525 - Ontwikkeling en programmering
     credits_authors: |
-      1518 - *OpenCutList* is ontwikkeld door [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) en [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Bijdragende](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) opsommen*.
-    credits_translations: 1519 - Vertalingen
+      1526 - *OpenCutList* is ontwikkeld door [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) en [Martin Müller](https://www.lairdubois.fr/@mobilarte). *[Bijdragende](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) opsommen*.
+    credits_translations: 1527 - Vertalingen
     credits_translators: |
-      1520 - - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Nederlands*)
+      1528 - - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Nederlands*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*Engels*, *Duits*)
       - Gildas Boureau (*Franse* documentatie)
       - Vladimir Badulya (*Russisch*)
@@ -1914,213 +1924,213 @@ tab:
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*Oekraïener*)
       - [刘涛](https://www.liutao91.cn) (*vereenvoudigd Chinees*)
     credits_description: |
-      1521 - De ontwikkeling van deze uitbreiding maakt deel uit van het project [L'Air du Bois](https://www.lairdubois.fr), een uitwisselingsplatform voor houtbewerkers.
+      1529 - De ontwikkeling van deze uitbreiding maakt deel uit van het project [L'Air du Bois](https://www.lairdubois.fr), een uitwisselingsplatform voor houtbewerkers.
       In die zin is het ook *open source* en voor iedereen beschikbaar onder licentie [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) op [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1522 - Runtime
-    credits_development: 1523 - Ontwikkelingsomgeving
+    credits_runtime: 1530 - Runtime
+    credits_development: 1531 - Ontwikkelingsomgeving
     credits_vendors: |
-      1524 - Dit avontuur zou niet mogelijk zijn geweest zonder het werk van de auteurs van de volgende *Open Source* componenten:
+      1532 - Dit avontuur zou niet mogelijk zijn geweest zonder het werk van de auteurs van de volgende *Open Source* componenten:
     credits_thanks: |
-      1525 - Speciale dank aan:
+      1533 - Speciale dank aan:
       - [JetBrains](https://www.jetbrains.com) voor hun steun aan dit project via een [Free Open Source License](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) voor hun steun aan open source projecten.
       - [GitBook](https://www.gitbook.com) voor hun steun aan open source projecten.
 tool:
   default:
-    transparency: 1526 - Transparant
-    zoom_extents: 1527 - Alles tonen
-    toggle_depth: 1528 - Onderdelen op de achtergrond
-    more: 1529 - Meer
-    end_point: 1530 - Einde
-    middle_point: 1531 - Middelpunt
-    third_point: 1532 - Punt van derden
-    vcb_length: 1533 - Lengte
-    vcb_size: 1534 - Afmetingen
-    vcb_radius: 1535 - Radius
-    vcb_diameter: 1536 - Diameter
-    vcb_distance: 1537 - Afstand
+    transparency: 1534 - Transparant
+    zoom_extents: 1535 - Alles tonen
+    toggle_depth: 1536 - Onderdelen op de achtergrond
+    more: 1537 - Meer
+    end_point: 1538 - Einde
+    middle_point: 1539 - Middelpunt
+    third_point: 1540 - Punt van derden
+    vcb_length: 1541 - Lengte
+    vcb_size: 1542 - Afmetingen
+    vcb_radius: 1543 - Radius
+    vcb_diameter: 1544 - Diameter
+    vcb_distance: 1545 - Afstand
     error:
-      no_direction: '1538 - '
-      invalid_length: '1539 - '
-      invalid_multiplicator: '1540 - '
-      invalid_divider: '1541 - '
-      invalid_offset: '1542 - '
-      invalid_segment_count: '1543 - '
+      no_direction: '1546 - '
+      invalid_length: '1547 - '
+      invalid_multiplicator: '1548 - '
+      invalid_divider: '1549 - '
+      invalid_offset: '1550 - '
+      invalid_segment_count: '1551 - '
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1546 - Tekenen
-    action_0: '1547 - '
-    action_0_status: '1548 - '
-    action_0_state_1_status: '1549 - '
-    action_1: '1550 - '
-    action_1_status: '1551 - '
-    action_1_state_1_radius_status: '1552 - '
-    action_1_state_1_diameter_status: '1553 - '
-    action_2: '1554 - '
-    action_2_status: '1555 - '
-    action_2_state_1_status: '1556 - '
-    action_x_state_2_status: '1557 - '
-    action_option_group_offset: 1558 - Offset
-    action_option_group_segments: '1559 - '
-    action_option_group_options: 1560 - Opties
-    action_option_offset_shape_offset: 1561 - Offset
-    action_option_offset_shape_offset_status: '1562 - '
-    action_option_segments_segment_count: '1563 - '
-    action_option_segments_segment_count_status: '1564 - '
-    action_option_options_construction: '1565 - '
-    action_option_options_construction_status: '1566 - '
-    action_option_options_rectangle_centered: '1567 - '
-    action_option_options_rectangle_centered_status: '1568 - '
-    action_option_options_smoothing: 1569 - Gladmaken
-    action_option_options_smoothing_status: '1570 - '
-    action_option_options_measure_from_vertex_status: '1571 - '
-    action_option_options_measure_from_diameter: 1572 - Meten
-    action_option_options_measure_from_diameter_status: '1573 - '
-    action_option_options_measure_from_radius_status: '1574 - '
-    action_option_options_measure_reversed: '1575 - '
-    action_option_options_measure_reversed_status: '1576 - '
-    action_option_options_pull_centered: '1577 - '
-    action_option_options_pull_centered_status: '1578 - '
-    action_option_options_ask_name: '1579 - '
-    action_option_options_ask_name_status: '1580 - '
-    action_measure_locked_status: '1581 - '
-    action_toggle_move_copy_status: '1582 - '
-    action_change_move_anchor_status: '1583 - '
+    title: 1554 - Tekenen
+    action_0: '1555 - '
+    action_0_status: '1556 - '
+    action_0_state_1_status: '1557 - '
+    action_1: '1558 - '
+    action_1_status: '1559 - '
+    action_1_state_1_radius_status: '1560 - '
+    action_1_state_1_diameter_status: '1561 - '
+    action_2: '1562 - '
+    action_2_status: '1563 - '
+    action_2_state_1_status: '1564 - '
+    action_x_state_2_status: '1565 - '
+    action_option_group_offset: 1566 - Offset
+    action_option_group_segments: '1567 - '
+    action_option_group_options: 1568 - Opties
+    action_option_offset_shape_offset: 1569 - Offset
+    action_option_offset_shape_offset_status: '1570 - '
+    action_option_segments_segment_count: '1571 - '
+    action_option_segments_segment_count_status: '1572 - '
+    action_option_options_construction: '1573 - '
+    action_option_options_construction_status: '1574 - '
+    action_option_options_rectangle_centered: '1575 - '
+    action_option_options_rectangle_centered_status: '1576 - '
+    action_option_options_smoothing: 1577 - Gladmaken
+    action_option_options_smoothing_status: '1578 - '
+    action_option_options_measure_from_vertex_status: '1579 - '
+    action_option_options_measure_from_diameter: 1580 - Meten
+    action_option_options_measure_from_diameter_status: '1581 - '
+    action_option_options_measure_from_radius_status: '1582 - '
+    action_option_options_measure_reversed: '1583 - '
+    action_option_options_measure_reversed_status: '1584 - '
+    action_option_options_pull_centered: '1585 - '
+    action_option_options_pull_centered_status: '1586 - '
+    action_option_options_ask_name: '1587 - '
+    action_option_options_ask_name_status: '1588 - '
+    action_measure_locked_status: '1589 - '
+    action_toggle_move_copy_status: '1590 - '
+    action_change_move_anchor_status: '1591 - '
     success:
-      part_created: '1584 - '
+      part_created: '1592 - '
   smart_handle:
-    title: '1585 - '
-    action_0: '1586 - '
-    action_0_status: '1587 - '
-    action_1: '1588 - '
-    action_1_status: '1589 - '
+    title: '1593 - '
+    action_0: '1594 - '
+    action_0_status: '1595 - '
+    action_1: '1596 - '
+    action_1_status: '1597 - '
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: '1591 - '
-    action_2: '1592 - '
-    action_2_status: '1593 - '
+    action_1_state_2_status: '1599 - '
+    action_2: '1600 - '
+    action_2_status: '1601 - '
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: '1595 - '
-    action_3: '1596 - '
-    action_3_status: '1597 - '
+    action_2_state_2_status: '1603 - '
+    action_3: '1604 - '
+    action_3_status: '1605 - '
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: '1599 - '
-    action_4: '1600 - '
-    action_4_status: '1601 - '
+    action_3_state_2_status: '1607 - '
+    action_4: '1608 - '
+    action_4_status: '1609 - '
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: '1603 - '
-    action_4_state_2_status: '1604 - '
-    action_5: '1605 - '
-    action_option_group_copy_measure_type: 1606 - Meten
-    action_option_group_move_measure_type: 1607 - Meten
-    action_option_group_axes: 1608 - Assen
-    action_option_group_options: 1609 - Opties
-    action_option_copy_measure_type_outside_status: '1610 - '
-    action_option_copy_measure_type_centered_status: '1611 - '
-    action_option_copy_measure_type_inside_status: '1612 - '
-    action_option_move_measure_type_outside_status: '1613 - '
-    action_option_move_measure_type_centered_status: '1614 - '
-    action_option_move_measure_type_inside_status: '1615 - '
-    action_option_axes_active_status: '1616 - '
-    action_option_axes_context_status: '1617 - '
-    action_option_axes_entity_status: '1618 - '
-    action_option_options_mirror_status: '1619 - '
+    action_4_state_1_status: '1611 - '
+    action_4_state_2_status: '1612 - '
+    action_5: '1613 - '
+    action_option_group_copy_measure_type: 1614 - Meten
+    action_option_group_move_measure_type: 1615 - Meten
+    action_option_group_axes: 1616 - Assen
+    action_option_group_options: 1617 - Opties
+    action_option_copy_measure_type_outside_status: '1618 - '
+    action_option_copy_measure_type_centered_status: '1619 - '
+    action_option_copy_measure_type_inside_status: '1620 - '
+    action_option_move_measure_type_outside_status: '1621 - '
+    action_option_move_measure_type_centered_status: '1622 - '
+    action_option_move_measure_type_inside_status: '1623 - '
+    action_option_axes_active_status: '1624 - '
+    action_option_axes_context_status: '1625 - '
+    action_option_axes_entity_status: '1626 - '
+    action_option_options_mirror_status: '1627 - '
     warning:
-      copies_disable_mirror: '1620 - '
+      copies_disable_mirror: '1628 - '
     error:
-      min_distance: '1621 - '
+      min_distance: '1629 - '
   smart_paint:
-    title: 1622 - Kleur
-    default_material: 1623 - Geen materiaal gedefinieerd
-    filters: 1624 - Filters
-    filter_0: 1625 - Zonder type
+    title: 1630 - Kleur
+    default_material: 1631 - Geen materiaal gedefinieerd
+    filters: 1632 - Filters
+    filter_0: 1633 - Zonder type
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1632 - Kleur stukken
-    action_0_status: 1633 - Klik op een onderdeel om een ​​materiaal op zijn exemplaar toe te passen
-    action_1: 1634 - Kleur het object
-    action_1_status: 1635 - Klik op een rand van een paneelonderdeel om er een materiaal '$t(tab.materials.type_4)' op toe te passen
-    action_2: 1636 - Vlak opschonen
-    action_2_status: 1637 - Klik op een vlak van een paneelonderdeel om er een materiaal '$t(tab.materials.type_6)' op toe te passen
-    action_3: 1638 - Object opschonen
-    action_3_status: 1639 - Klik op een gezicht om een ​​monster van het materiaal te nemen
-    action_4: 1640 - Schoonmaken
-    action_4_status: 1641 - Klik op een onderdeel om alle materialen en alle instanties ervan uit de definitie te verwijderen
-    action_option_group_instances: 1642 - Aantal exemplaren
-    action_option_group_edges: 1643 - Aantal kantenbanden
-    action_option_group_faces: 1644 - Aantal aanzichten
-    action_option_instances_0_status: 1645 - Kleur alleen de beoogde onderdeelinstantie
-    action_option_instances_1_status: 1646 - Kleur alle exemplaren van het beoogde onderdeel
-    action_option_edges_0_status: 1647 - Kleur alleen het beoogde nummer
-    action_option_edges_1_status: 1648 - Kleur het doelnummer en het tegenovergestelde nummer van het stuk
-    action_option_edges_2_status: 1649 - Kleur de 4 nummers van het beoogde stuk
-    action_option_faces_0_status: 1650 - Kleur alleen het beoogde aanzicht
-    action_option_faces_1_status: 1651 - Kleur 2 zijden van het beoogde stuk
-    edges: 1652 - {{ count }} nummer
-    edges_plural: 1653 - {{ count }} nummers
-    edge_ymin: 1654 - Lengte 1
-    edge_ymax: 1655 - Lengte 2
-    edge_xmin: 1656 - Breedte 1
-    edge_xmax: 1657 - Breedte 2
-    faces: 1658 - {{ count }} zijde
-    faces_plural: 1659 - {{ count }} zijdes
-    face_zmin: 1660 - Achterkant
-    face_zmax: 1661 - Voorzijde
+    action_0: 1640 - Kleur stukken
+    action_0_status: 1641 - Klik op een onderdeel om een ​​materiaal op zijn exemplaar toe te passen
+    action_1: 1642 - Kleur het object
+    action_1_status: 1643 - Klik op een rand van een paneelonderdeel om er een materiaal '$t(tab.materials.type_4)' op toe te passen
+    action_2: 1644 - Vlak opschonen
+    action_2_status: 1645 - Klik op een vlak van een paneelonderdeel om er een materiaal '$t(tab.materials.type_6)' op toe te passen
+    action_3: 1646 - Object opschonen
+    action_3_status: 1647 - Klik op een gezicht om een ​​monster van het materiaal te nemen
+    action_4: 1648 - Schoonmaken
+    action_4_status: 1649 - Klik op een onderdeel om alle materialen en alle instanties ervan uit de definitie te verwijderen
+    action_option_group_instances: 1650 - Aantal exemplaren
+    action_option_group_edges: 1651 - Aantal kantenbanden
+    action_option_group_faces: 1652 - Aantal aanzichten
+    action_option_instances_0_status: 1653 - Kleur alleen de beoogde onderdeelinstantie
+    action_option_instances_1_status: 1654 - Kleur alle exemplaren van het beoogde onderdeel
+    action_option_edges_0_status: 1655 - Kleur alleen het beoogde nummer
+    action_option_edges_1_status: 1656 - Kleur het doelnummer en het tegenovergestelde nummer van het stuk
+    action_option_edges_2_status: 1657 - Kleur de 4 nummers van het beoogde stuk
+    action_option_faces_0_status: 1658 - Kleur alleen het beoogde aanzicht
+    action_option_faces_1_status: 1659 - Kleur 2 zijden van het beoogde stuk
+    edges: 1660 - {{ count }} nummer
+    edges_plural: 1661 - {{ count }} nummers
+    edge_ymin: 1662 - Lengte 1
+    edge_ymax: 1663 - Lengte 2
+    edge_xmin: 1664 - Breedte 1
+    edge_xmax: 1665 - Breedte 2
+    faces: 1666 - {{ count }} zijde
+    faces_plural: 1667 - {{ count }} zijdes
+    face_zmin: 1668 - Achterkant
+    face_zmax: 1669 - Voorzijde
     warning:
-      no_material: 1662 - Uw model bevat geen materialen!
-      no_material_type: 1663 - Geen materiaal van type '{{ type }}'
+      no_material: 1670 - Uw model bevat geen materialen!
+      no_material_type: 1671 - Geen materiaal van type '{{ type }}'
     error:
-      not_part: 1664 - Het beoogde object is geen onderdeel (component)
-      not_edge: 1665 - Het doelvlak is geen paneelrand
-      not_face: 1666 - Het doelvlak is geen paneelvlak
-      wrong_material_type: 1667 - Het beoogde deel moet van het type '{{ type }}' zijn
+      not_part: 1672 - Het beoogde object is geen onderdeel (component)
+      not_edge: 1673 - Het doelvlak is geen paneelrand
+      not_face: 1674 - Het doelvlak is geen paneelvlak
+      wrong_material_type: 1675 - Het beoogde deel moet van het type '{{ type }}' zijn
   smart_axes:
-    title: 1668 - Oriënteren
-    action_0: 1669 - Terugkeren
-    action_0_status: 1670 - Klik op een onderdeel om het exemplaar ervan langs een van de afmetingen te spiegelen
-    action_1: 1671 - Wissel lengte ↔ breedte
-    action_1_status: 1672 - Klik op een onderdeel om de lengte te verwisselen met de breedte
-    action_2: 1673 - Wissel gezicht ↔ Tegengezicht
-    action_2_status: 1674 - Klik op een stuk om de aflezing van de voorkant te verwisselen met de achterkant
-    action_3: 1675 - Pas de assen aan
-    action_3_status: 1676 - Richt op een gebied van een onderdeel en klik op een rand om de assen aan te passen.
-    action_4: 1677 - Oorsprong verplaatsen
-    action_4_status: 1678 - Richt op een vlak van een onderdeel en klik op een punt om de oorsprong daar te plaatsen
-    action_option_group_direction: 1679 - Richting
-    action_option_direction_0: 1680 - LO
-    action_option_direction_1: 1681 - La
-    action_option_direction_2: 1682 - Ep
-    action_option_direction_0_status: 1683 - Draai het stuk in de lengte om
-    action_option_direction_1_status: 1684 - Draai het stuk naar de breedte
-    action_option_direction_2_status: 1685 - Draai het stuk om in zijn dikte
+    title: 1676 - Oriënteren
+    action_0: 1677 - Terugkeren
+    action_0_status: 1678 - Klik op een onderdeel om het exemplaar ervan langs een van de afmetingen te spiegelen
+    action_1: 1679 - Wissel lengte ↔ breedte
+    action_1_status: 1680 - Klik op een onderdeel om de lengte te verwisselen met de breedte
+    action_2: 1681 - Wissel gezicht ↔ Tegengezicht
+    action_2_status: 1682 - Klik op een stuk om de aflezing van de voorkant te verwisselen met de achterkant
+    action_3: 1683 - Pas de assen aan
+    action_3_status: 1684 - Richt op een gebied van een onderdeel en klik op een rand om de assen aan te passen.
+    action_4: 1685 - Oorsprong verplaatsen
+    action_4_status: 1686 - Richt op een vlak van een onderdeel en klik op een punt om de oorsprong daar te plaatsen
+    action_option_group_direction: 1687 - Richting
+    action_option_direction_0: 1688 - LO
+    action_option_direction_1: 1689 - La
+    action_option_direction_2: 1690 - Ep
+    action_option_direction_0_status: 1691 - Draai het stuk in de lengte om
+    action_option_direction_1_status: 1692 - Draai het stuk naar de breedte
+    action_option_direction_2_status: 1693 - Draai het stuk om in zijn dikte
     warning:
-      more_entities: 1686 - {{ count_used }} instanties die dezelfde definitie delen, worden aangepast
+      more_entities: 1694 - {{ count_used }} instanties die dezelfde definitie delen, worden aangepast
     error:
-      not_part: 1687 - Het beoogde object is geen onderdeel (component)
-      not_orientable: 1688 - Het type van dit onderdeel maakt het niet mogelijk om het te oriënteren
+      not_part: 1695 - Het beoogde object is geen onderdeel (component)
+      not_orientable: 1696 - Het type van dit onderdeel maakt het niet mogelijk om het te oriënteren
   smart_export:
-    title: 1689 - Exporteren
-    action_0: 1690 - Exporteer een 3D-onderdeel
-    action_0_status: 1691 - Klik op een onderdeel
-    action_1: 1692 - Exporteer een 2D-onderdeel
-    action_1_status: 1693 - Klik op de voorkant van een stuk
-    action_2: 1694 - Een aanzicht exporteren
-    action_2_status: 1695 - Klik op een aanzicht
-    action_3: 1696 - Een deel exporteren
-    action_3_status: 1697 - Klik op een rand
-    action_option_group_file_format: 1698 - Formaat
-    action_option_group_unit: 1699 - Eenheid
-    action_option_group_faces: 1700 - Fineren
-    action_option_group_options: 1701 - Opties
-    action_option_file_format_dxf_status: 1702 - Exporteren naar DXF-bestand
-    action_option_file_format_stl_status: 1703 - Exporteren naar STL-bestand
-    action_option_file_format_obj_status: 1704 - Exporteren naar OBJ-bestand
-    action_option_file_format_svg_status: 1705 - Exporteren naar SVG-bestand
+    title: 1697 - Exporteren
+    action_0: 1698 - Exporteer een 3D-onderdeel
+    action_0_status: 1699 - Klik op een onderdeel
+    action_1: 1700 - Exporteer een 2D-onderdeel
+    action_1_status: 1701 - Klik op de voorkant van een stuk
+    action_2: 1702 - Een aanzicht exporteren
+    action_2_status: 1703 - Klik op een aanzicht
+    action_3: 1704 - Een deel exporteren
+    action_3_status: 1705 - Klik op een rand
+    action_option_group_file_format: 1706 - Formaat
+    action_option_group_unit: 1707 - Eenheid
+    action_option_group_faces: 1708 - Fineren
+    action_option_group_options: 1709 - Opties
+    action_option_file_format_dxf_status: 1710 - Exporteren naar DXF-bestand
+    action_option_file_format_stl_status: 1711 - Exporteren naar STL-bestand
+    action_option_file_format_obj_status: 1712 - Exporteren naar OBJ-bestand
+    action_option_file_format_svg_status: 1713 - Exporteren naar SVG-bestand
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2130,9 +2140,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1715 - Isoleer doorlopende gaten en voeg de diepten voor elke holte samen
-    action_option_options_include_paths_status: 1716 - Exporteer de randen die niet zijn gekoppeld aan een vlak in het onderdeel
+    action_option_options_merge_holes_status: 1723 - Isoleer doorlopende gaten en voeg de diepten voor elke holte samen
+    action_option_options_include_paths_status: 1724 - Exporteer de randen die niet zijn gekoppeld aan een vlak in het onderdeel
     error:
-      not_part: 1717 - Dit vlak maakt geen deel uit van een onderdeel (component)
-      not_flat_face: 1718 - Dit oppervlak is niet vlak
-      incompatible_active_path: 1719 - Het actieve pad staat niet toe om dit onderdeel te exporteren
+      not_part: 1725 - Dit vlak maakt geen deel uit van een onderdeel (component)
+      not_flat_face: 1726 - Dit oppervlak is niet vlak
+      incompatible_active_path: 1727 - Het actieve pad staat niet toe om dit onderdeel te exporteren

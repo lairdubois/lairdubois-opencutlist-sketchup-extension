@@ -1040,839 +1040,849 @@ tab:
       option_trimming_2d_help: '857 - '
       option_items_formula: 858 - Képlet
       option_items_formula_help: '859 - '
+      option_bin_folding_1d_dimensional: 860 - Hasonló deszkák csoportosítása
+      option_bin_folding_1d_edge: 861 - Hasonló élzárók csoportosítása
+      option_bin_folding_2d_sheet_good: 862 - Hasonló táblák csoportosítása
+      option_bin_folding_2d_veneer: 863 - Hasonló furnérlapok csoportosítása
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        866 - Azonos alkatrészeket és vágásokat tartalmazó deszkák vagy élzárók csoportosítása.
+      option_bin_folding_2d_help: |
+        867 - Azonos alkatrészeket és vágásokat tartalmazó táblák vagy furnérlapok csoportosítása.
+      option_bin_folding_warning: '868 - '
       option_hide_part_list: $t(tab.cutlist.title)
-      option_hide_part_list_1d_dimensional_0: 861 - Megjelenítve minden deszkánál
-      option_hide_part_list_1d_edge_0: 862 - Megjelenítve minden élzárónál
-      option_hide_part_list_2d_sheet_good_0: 863 - Megjelenítve minden táblánál
-      option_hide_part_list_2d_veneer_0: 864 - Megjelenítve minden furnérlapnál
-      option_hide_part_list_1: 865 - Elrejtve
-      option_hide_part_list_1d_help: 866 - Alkatrészlista megjelenítése vagy elrejtése minden deszkánál vagy élzárónál.
-      option_hide_part_list_2d_help: 867 - Alkatrészlista megjelenítése vagy elrejtése minden táblánál vagy furnérlapnál.
-      option_part_drawing_type: 868 - Alkatrészek alakja
-      option_part_drawing_type_0: 869 - Elrejtve
-      option_part_drawing_type_1: 870 - Előlap megjelenítése
-      option_part_drawing_type_2: 871 - Hátlap megjelenítése
+      option_hide_part_list_1d_dimensional_0: 870 - Megjelenítve minden deszkánál
+      option_hide_part_list_1d_edge_0: 871 - Megjelenítve minden élzárónál
+      option_hide_part_list_2d_sheet_good_0: 872 - Megjelenítve minden táblánál
+      option_hide_part_list_2d_veneer_0: 873 - Megjelenítve minden furnérlapnál
+      option_hide_part_list_1: 874 - Elrejtve
+      option_hide_part_list_1d_help: 875 - Alkatrészlista megjelenítése vagy elrejtése minden deszkánál vagy élzárónál.
+      option_hide_part_list_2d_help: 876 - Alkatrészlista megjelenítése vagy elrejtése minden táblánál vagy furnérlapnál.
+      option_part_drawing_type: 877 - Alkatrészek alakja
+      option_part_drawing_type_0: 878 - Elrejtve
+      option_part_drawing_type_1: 879 - Előlap megjelenítése
+      option_part_drawing_type_2: 880 - Hátlap megjelenítése
       option_part_drawing_type_help: |
-        872 - Megjeleníti vagy elrejti az alkatrészek tényleges alakját és megmunkálását a diagramon.
+        881 - Megjeleníti vagy elrejti az alkatrészek tényleges alakját és megmunkálását a diagramon.
 
         *Ezt az opciót engedélyezni kell az alakzatok exportálásához.*
-      option_colorization: '873 - '
+      option_colorization: '882 - '
       option_colorization_0: $t(default.no)
-      option_colorization_1: '875 - '
-      option_colorization_2: '876 - '
-      option_colorization_help: '877 - '
-      option_origin_corner: 878 - Origó pozíciója
-      option_origin_corner_0: 879 - Bal felső sarok
-      option_origin_corner_1: 880 - Bal alsó sarok
-      option_origin_corner_2: 881 - Jobb felső sarok
-      option_origin_corner_3: 882 - Jobb alsó sarok
-      option_origin_corner_help: '883 - '
-      option_highlight_primary_cuts: 884 - Elsődleges vágások
-      option_highlight_primary_cuts_0: 885 - Csak rámutatáskor
-      option_highlight_primary_cuts_1: 886 - Mindig látható
-      option_highlight_primary_cuts_help: 887 - Lehetővé teszi az elsődleges vágások állandó kiemelését.
-      option_hide_edges_preview: 888 - Élzárók megjelenítése
-      option_hide_edges_preview_0: 889 - Megjelenítve a szabásterven
-      option_hide_edges_preview_1: 890 - Elrejtve a szabásterven
-      option_hide_edges_preview_help: 891 - Lehetővé teszi az élzárók vizuális megjelenítésének mutatását vagy elrejtését minden alkatrésznél a szabásterven.
-      option_time_limit: '892 - '
-      option_time_limit_help: '893 - '
+      option_colorization_1: '884 - '
+      option_colorization_2: '885 - '
+      option_colorization_help: '886 - '
+      option_origin_corner: 887 - Origó pozíciója
+      option_origin_corner_0: 888 - Bal felső sarok
+      option_origin_corner_1: 889 - Bal alsó sarok
+      option_origin_corner_2: 890 - Jobb felső sarok
+      option_origin_corner_3: 891 - Jobb alsó sarok
+      option_origin_corner_help: '892 - '
+      option_highlight_primary_cuts: 893 - Elsődleges vágások
+      option_highlight_primary_cuts_0: 894 - Csak rámutatáskor
+      option_highlight_primary_cuts_1: 895 - Mindig látható
+      option_highlight_primary_cuts_help: 896 - Lehetővé teszi az elsődleges vágások állandó kiemelését.
+      option_hide_edges_preview: 897 - Élzárók megjelenítése
+      option_hide_edges_preview_0: 898 - Megjelenítve a szabásterven
+      option_hide_edges_preview_1: 899 - Elrejtve a szabásterven
+      option_hide_edges_preview_help: 900 - Lehetővé teszi az élzárók vizuális megjelenítésének mutatását vagy elrejtését minden alkatrésznél a szabásterven.
+      option_time_limit: '901 - '
+      option_time_limit_help: '902 - '
       tooltip:
-        scroll_to_block_1d: 894 - Görgetés az első deszkához vagy élzáróhoz
-        scroll_to_block_2d: '895 - '
+        scroll_to_block_1d: 903 - Görgetés az első deszkához vagy élzáróhoz
+        scroll_to_block_2d: '904 - '
       list:
-        summary: 896 - Összesítés
-        trimming: 897 - Tisztítóvágás
-        settings: 898 - Beállítások
-        stats: 899 - Statisztika
-        time: '900 - '
-        total_efficiency: 901 - Teljes hatékonyság
-        total_fill_rate: '902 - '
-        total_cut_count: 903 - Vágások száma
-        total_cut_length: 904 - Vágások hossza
-        efficiency: 905 - Hatékonyság
-        count: '906 - '
-        length: 907 - Hosszúság
-        width: 908 - Szélesség
-        total_length: 909 - Σ Hossz
-        total_area: 910 - Σ Terület
-        total_cost: 911 - Σ Költség
-        total_part_count: '912 - # Alkatrész'
-        total_used: 913 - Összes felhasznált
-        bin_1d_dimensional: 914 - Tömör fa szabvány
-        bin_1d_dimensional_type_0: 915 - Szabványos méretű
-        bin_1d_dimensional_type_1: 916 - Maradék deszka
-        bin_1d_edge: 917 - Élzáró
-        bin_1d_edge_type_0: 918 - Szabványos élzáró
-        bin_1d_edge_type_1: 919 - Maradék élzáró
-        bin_2d_sheet_good: 920 - Táblásanyag
-        bin_2d_sheet_good_type_0: 921 - Szabványos tábla
-        bin_2d_sheet_good_type_1: 922 - Maradék tábla
-        bin_2d_veneer: 923 - Furnér
-        bin_2d_veneer_type_0: 924 - Szabványos furnér
-        bin_2d_veneer_type_1: 925 - Maradék furnér
-        unused: 926 - Nem használt
-        unplaced_parts: '927 - '
-        unplaced_parts_plural: 928 - El nem helyezett alkatrészek
-        parts: 929 - Alkatrész
-        parts_plural: 930 - Alkatrészek
-        leftovers: 931 - Maradék
-        leftovers_plural: 932 - Maradékok
-        leftovers_to_keep: 933 - Megtartandó maradék
-        leftovers_to_keep_plural: 934 - Megtartandó maradékok
-        cut: 935 - Vágás
-        cut_plural: 936 - Vágások
-        cut_trimming: 937 - Tisztítóvágás
-        cut_primary: '938 - '
-        cut_primary_plural: 939 - Elsődleges vágások
-        cut_none: 940 - Nincs
-        cut_depth: '941 - '
+        summary: 905 - Összesítés
+        trimming: 906 - Tisztítóvágás
+        settings: 907 - Beállítások
+        stats: 908 - Statisztika
+        time: '909 - '
+        total_efficiency: 910 - Teljes hatékonyság
+        total_fill_rate: '911 - '
+        total_cut_count: 912 - Vágások száma
+        total_cut_length: 913 - Vágások hossza
+        efficiency: 914 - Hatékonyság
+        count: '915 - '
+        length: 916 - Hosszúság
+        width: 917 - Szélesség
+        total_length: 918 - Σ Hossz
+        total_area: 919 - Σ Terület
+        total_cost: 920 - Σ Költség
+        total_part_count: '921 - # Alkatrész'
+        total_used: 922 - Összes felhasznált
+        bin_1d_dimensional: 923 - Tömör fa szabvány
+        bin_1d_dimensional_type_0: 924 - Szabványos méretű
+        bin_1d_dimensional_type_1: 925 - Maradék deszka
+        bin_1d_edge: 926 - Élzáró
+        bin_1d_edge_type_0: 927 - Szabványos élzáró
+        bin_1d_edge_type_1: 928 - Maradék élzáró
+        bin_2d_sheet_good: 929 - Táblásanyag
+        bin_2d_sheet_good_type_0: 930 - Szabványos tábla
+        bin_2d_sheet_good_type_1: 931 - Maradék tábla
+        bin_2d_veneer: 932 - Furnér
+        bin_2d_veneer_type_0: 933 - Szabványos furnér
+        bin_2d_veneer_type_1: 934 - Maradék furnér
+        unused: 935 - Nem használt
+        unplaced_parts: '936 - '
+        unplaced_parts_plural: 937 - El nem helyezett alkatrészek
+        parts: 938 - Alkatrész
+        parts_plural: 939 - Alkatrészek
+        leftovers: 940 - Maradék
+        leftovers_plural: 941 - Maradékok
+        leftovers_to_keep: 942 - Megtartandó maradék
+        leftovers_to_keep_plural: 943 - Megtartandó maradékok
+        cut: 944 - Vágás
+        cut_plural: 945 - Vágások
+        cut_trimming: 946 - Tisztítóvágás
+        cut_primary: '947 - '
+        cut_primary_plural: 948 - Elsődleges vágások
+        cut_none: 949 - Nincs
+        cut_depth: '950 - '
       write:
-        title: 942 - Szabásterv exportálása
+        title: 951 - Szabásterv exportálása
         info_0: |
-          943 - Ez a modul lehetővé teszi a *szabásterv* **geometriájának** exportálását [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) vagy [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) formátumban.
-        option_bin_sheet_good: 944 - Táblásanyag
+          952 - Ez a modul lehetővé teszi a *szabásterv* **geometriájának** exportálását [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) vagy [DXF](https://en.wikipedia.org/wiki/AutoCAD_DXF) formátumban.
+        option_bin_sheet_good: 953 - Táblásanyag
         option_bin_sheet_good_help: |
-          945 - Engedélyezi a tábla exportálását és a szín kiválasztását.
-        option_bin_veneer: 946 - Furnér
+          954 - Engedélyezi a tábla exportálását és a szín kiválasztását.
+        option_bin_veneer: 955 - Furnér
         option_bin_veneer_help: |
-          947 - Engedélyezi a furnérlap exportálását és a szín kiválasztását.
-        option_bin_dimensional: 948 - Tömör fa szabvány
+          956 - Engedélyezi a furnérlap exportálását és a szín kiválasztását.
+        option_bin_dimensional: 957 - Tömör fa szabvány
         option_bin_dimensional_help: |
-          949 - Engedélyezi a tömör fa exportálását és a szín kiválasztását.
-        option_bin_edge: 950 - Élzáró
+          958 - Engedélyezi a tömör fa exportálását és a szín kiválasztását.
+        option_bin_edge: 959 - Élzáró
         option_bin_edge_help: |
-          951 - Engedélyezi az élzáró exportálását és a szín kiválasztását.
-        option_parts: 952 - Alkatrészek
+          960 - Engedélyezi az élzáró exportálását és a szín kiválasztását.
+        option_parts: 961 - Alkatrészek
         option_parts_help: |
-          953 - Engedélyezi az alkatrészek exportálását és a szín kiválasztását.
+          962 - Engedélyezi az alkatrészek exportálását és a szín kiválasztását.
         option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
         option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
         option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
         option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: 960 - Azonosítók
+        option_texts: 969 - Azonosítók
         option_texts_help: |
-          961 - Engedélyezi az alkatrész azonosító szövegek exportálását és a szín kiválasztását.
-        option_leftovers: 962 - Maradékok
+          970 - Engedélyezi az alkatrész azonosító szövegek exportálását és a szín kiválasztását.
+        option_leftovers: 971 - Maradékok
         option_leftovers_help: |
-          963 - Engedélyezi a maradékok exportálását és a szín kiválasztását.
-        option_cuts: 964 - Vágások
+          972 - Engedélyezi a maradékok exportálását és a szín kiválasztását.
+        option_cuts: 973 - Vágások
         option_cuts_help: |
-          965 - Válassza ki, hogy a vágások megjelenjenek-e, és válassza ki a színüket.
+          974 - Válassza ki, hogy a vágások megjelenjenek-e, és válassza ki a színüket.
         warning:
-          is_bin_selection: '966 - '
+          is_bin_selection: '975 - '
         error:
-          overflow_gt_spacing: '967 - '
+          overflow_gt_spacing: '976 - '
       error:
-        no_part: 968 - Nincsenek alkatrészek.
-        no_bin_1d: '969 - '
-        no_bin_2d: '970 - '
-        invalid_part_shapes: '971 - '
-        no_solution: '972 - '
-        unplaced_parts: '973 - '
-        unplaced_parts_plural: '974 - '
-        unusable_part: '975 - '
+        no_part: 977 - Nincsenek alkatrészek.
+        no_bin_1d: '978 - '
+        no_bin_2d: '979 - '
+        invalid_part_shapes: '980 - '
+        no_solution: '981 - '
+        unplaced_parts: '982 - '
+        unplaced_parts_plural: '983 - '
+        unusable_part: '984 - '
       warning:
-        is_part_selection: 976 - Ez a szabásterv csak a **kiválasztott alkatrészekre** korlátozódik.
-        cutting_dimensions: 977 - Ez a szabásterv az alkatrészek **nyers** méreteit használja.
-        cutting_dimensions_increase_1d: '978 - Ezek a nyers méretek a ''{{ material_name }}'' anyagnál lettek beállítva: hossz ráhagyás (**{{ length_increase }}**).'
-        cutting_dimensions_increase_2d: '979 - Ezek a nyers méretek a ''{{ material_name }}'' anyagnál lettek beállítva: hossz ráhagyás (**{{ length_increase }}**) és szélesség ráhagyás (**{{ width_increase }}**).'
-        cutting_dimensions_edge_decrement: 980 - Az élzáró vastagságával csökkentett méretek. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+        is_part_selection: 985 - Ez a szabásterv csak a **kiválasztott alkatrészekre** korlátozódik.
+        cutting_dimensions: 986 - Ez a szabásterv az alkatrészek **nyers** méreteit használja.
+        cutting_dimensions_increase_1d: '987 - Ezek a nyers méretek a ''{{ material_name }}'' anyagnál lettek beállítva: hossz ráhagyás (**{{ length_increase }}**).'
+        cutting_dimensions_increase_2d: '988 - Ezek a nyers méretek a ''{{ material_name }}'' anyagnál lettek beállítva: hossz ráhagyás (**{{ length_increase }}**) és szélesség ráhagyás (**{{ width_increase }}**).'
+        cutting_dimensions_edge_decrement: 989 - Az élzáró vastagságával csökkentett méretek. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     labels:
-      title: 981 - Címkék
-      options_layout: 982 - Elrendezés
-      options_settings: 983 - Beállítások
-      options_part_order_strategy: 984 - Rendezés
-      options_offset: 985 - Eltolás
-      size: 986 - Címke valós mérete
-      add_element: 987 - Elem hozzáadása
+      title: 990 - Címkék
+      options_layout: 991 - Elrendezés
+      options_settings: 992 - Beállítások
+      options_part_order_strategy: 993 - Rendezés
+      options_offset: 994 - Eltolás
+      size: 995 - Címke valós mérete
+      add_element: 996 - Elem hozzáadása
       duplicate_element: $t(default.duplicate)
       remove_element: $t(default.remove)
       remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
-        991 - Rendezze át a csempéket a címkék sorrendjének meghatározásához.
+        1000 - Rendezze át a csempéket a címkék sorrendjének meghatározásához.
         A tulajdonságok <i class="ladb-opencutlist-icon-sort-asc"></i> *növekvő* vagy <i class="ladb-opencutlist-icon-sort-desc"></i> *csökkenő* sorrendbe rendezhetők.
       offset_help: |
-        992 - Az *eltolás* határozza meg az **első címke** pozícióját az **első oldalon**.
+        1001 - Az *eltolás* határozza meg az **első címke** pozícióját az **első oldalon**.
         Válassza ki a kívánt pozíciónak megfelelő négyzetet.
-      option_page: 993 - Papírméret
-      option_page_format: 994 - Formátum
-      option_page_format_portrait: 995 - Álló
-      option_page_format_landscape: 996 - Fekvő
-      option_page_format_custom: 997 - Egyéni
-      option_page_width: 998 - Szélesség
-      option_page_height: 999 - Magasság
-      option_margin: 1000 - Margók
-      option_margin_top: 1001 - Felső
-      option_margin_right: 1002 - Jobb
-      option_margin_bottom: 1003 - Alsó
-      option_margin_left: 1004 - Bal
-      option_spacing: 1005 - Térköz mérete
-      option_spacing_h: 1006 - Vízszintes
-      option_spacing_v: 1007 - Függőleges
-      option_grid: 1008 - Címkék oldalanként
-      option_col_count: 1009 - Oszlopok
-      option_row_count: 1010 - Sorok
-      option_cutting_marks: 1011 - Vágójelek
-      option_cutting_marks_0: 1012 - Nincs
-      option_cutting_marks_1: 1013 - Nyomtatott
-      option_formula: 1014 - Mezőnév
-      option_size: 1015 - Méret
-      option_custom_formula: 1016 - Képlet
-      option_anchor: 1017 - Horgony
-      option_anchor_start: 1018 - Kezdet - Alul
-      option_anchor_middle: 1019 - Közép - Alul
-      option_anchor_end: 1020 - Vég - Alul
-      option_anchor_start_top: 1021 - Kezdet - Felül
-      option_anchor_middle_top: 1022 - Közép - Felül
-      option_anchor_end_top: 1023 - Vég - Felül
-      option_color: 1024 - Szín
+      option_page: 1002 - Papírméret
+      option_page_format: 1003 - Formátum
+      option_page_format_portrait: 1004 - Álló
+      option_page_format_landscape: 1005 - Fekvő
+      option_page_format_custom: 1006 - Egyéni
+      option_page_width: 1007 - Szélesség
+      option_page_height: 1008 - Magasság
+      option_margin: 1009 - Margók
+      option_margin_top: 1010 - Felső
+      option_margin_right: 1011 - Jobb
+      option_margin_bottom: 1012 - Alsó
+      option_margin_left: 1013 - Bal
+      option_spacing: 1014 - Térköz mérete
+      option_spacing_h: 1015 - Vízszintes
+      option_spacing_v: 1016 - Függőleges
+      option_grid: 1017 - Címkék oldalanként
+      option_col_count: 1018 - Oszlopok
+      option_row_count: 1019 - Sorok
+      option_cutting_marks: 1020 - Vágójelek
+      option_cutting_marks_0: 1021 - Nincs
+      option_cutting_marks_1: 1022 - Nyomtatott
+      option_formula: 1023 - Mezőnév
+      option_size: 1024 - Méret
+      option_custom_formula: 1025 - Képlet
+      option_anchor: 1026 - Horgony
+      option_anchor_start: 1027 - Kezdet - Alul
+      option_anchor_middle: 1028 - Közép - Alul
+      option_anchor_end: 1029 - Vég - Alul
+      option_anchor_start_top: 1030 - Kezdet - Felül
+      option_anchor_middle_top: 1031 - Közép - Felül
+      option_anchor_end_top: 1032 - Vég - Felül
+      option_color: 1033 - Szín
       formula:
-        custom: 1025 - Képlet
-        custom_qr_code: 1026 - QR-kód
-        part_number: 1027 - Szám
-        part_name: 1028 - Megnevezés
-        part_description: 1029 - Leírás
-        part_entity_named_path: 1030 - Példány útvonala
-        part_entity_name: 1031 - Példány neve
-        part_bin: 1032 - Tároló
-        part_cutting_size: 1033 - Nyers méretek
-        part_cutting_length: 1034 - Hosszúság - nyers
-        part_cutting_width: 1035 - Szélesség - nyers
-        part_cutting_thickness: 1036 - Vastagság - nyers
-        part_edge_cutting_size: 1037 - Élméretek
-        part_edge_cutting_length: 1038 - Élhosszúság - nyers
-        part_edge_cutting_width: 1039 - Élszélesség - nyers
-        part_size: 1040 - Méret
-        part_length: 1041 - Hosszúság
-        part_width: 1042 - Szélesség
-        part_thickness: 1043 - Vastagság
-        part_tags: 1044 - Címkék
-        part_batch: 1045 - Köteg
-        part_edge_ymin: 1046 - Élhosszúság 1
-        part_edge_ymax: 1047 - Élhosszúság 2
-        part_edge_xmin: 1048 - Élszélesség 1
-        part_edge_xmax: 1049 - Élszélesség 2
-        part_face_zmin: 1050 - Furnér hátoldal
-        part_face_zmax: 1051 - Furnér előlap
-        thumbnail_proportional_drawing: '1052 - '
-        thumbnail_proportional_drawing_bottom: '1053 - '
-        thumbnail_proportional: 1054 - Arányos miniatűr
-        thumbnail_square: 1055 - Négyzetes miniatűr
-        group_material: 1056 - Anyag / Méretek
-        group_material_name: 1057 - Anyag neve
-        group_std_dimension: 1058 - Szabványos méretek
-        filename: 1059 - Fájlnév
-        model_name: 1060 - Modell neve
-        page_name: 1061 - Jelenet neve
-        length_unit: 1062 - Mértékegység
-        generated_at: 1063 - Dátum és idő
+        custom: 1034 - Képlet
+        custom_qr_code: 1035 - QR-kód
+        part_number: 1036 - Szám
+        part_name: 1037 - Megnevezés
+        part_description: 1038 - Leírás
+        part_entity_named_path: 1039 - Példány útvonala
+        part_entity_name: 1040 - Példány neve
+        part_bin: 1041 - Tároló
+        part_cutting_size: 1042 - Nyers méretek
+        part_cutting_length: 1043 - Hosszúság - nyers
+        part_cutting_width: 1044 - Szélesség - nyers
+        part_cutting_thickness: 1045 - Vastagság - nyers
+        part_edge_cutting_size: 1046 - Élméretek
+        part_edge_cutting_length: 1047 - Élhosszúság - nyers
+        part_edge_cutting_width: 1048 - Élszélesség - nyers
+        part_size: 1049 - Méret
+        part_length: 1050 - Hosszúság
+        part_width: 1051 - Szélesség
+        part_thickness: 1052 - Vastagság
+        part_tags: 1053 - Címkék
+        part_batch: 1054 - Köteg
+        part_edge_ymin: 1055 - Élhosszúság 1
+        part_edge_ymax: 1056 - Élhosszúság 2
+        part_edge_xmin: 1057 - Élszélesség 1
+        part_edge_xmax: 1058 - Élszélesség 2
+        part_face_zmin: 1059 - Furnér hátoldal
+        part_face_zmax: 1060 - Furnér előlap
+        thumbnail_proportional_drawing: '1061 - '
+        thumbnail_proportional_drawing_bottom: '1062 - '
+        thumbnail_proportional: 1063 - Arányos miniatűr
+        thumbnail_square: 1064 - Négyzetes miniatűr
+        group_material: 1065 - Anyag / Méretek
+        group_material_name: 1066 - Anyag neve
+        group_std_dimension: 1067 - Szabványos méretek
+        filename: 1068 - Fájlnév
+        model_name: 1069 - Modell neve
+        page_name: 1070 - Jelenet neve
+        length_unit: 1071 - Mértékegység
+        generated_at: 1072 - Dátum és idő
       error:
-        invalid_size: 1064 - A megadott konfigurációs paraméterek nem teszik lehetővé érvényes címkeméret beállítását.
+        invalid_size: 1073 - A megadott konfigurációs paraméterek nem teszik lehetővé érvényes címkeméret beállítását.
       warning:
-        is_group_selection: '1065 - '
-        is_part_selection: 1066 - Ezek a címkék csak a **kiválasztott alkatrészekre** korlátozódnak.
-        formula_not_available: '1067 - '
+        is_group_selection: '1074 - '
+        is_part_selection: 1075 - Ezek a címkék csak a **kiválasztott alkatrészekre** korlátozódnak.
+        formula_not_available: '1076 - '
     layout:
-      title: 1068 - Rajz
-      to_layout: 1069 - Exportálás Layout-ba
-      options_layout: 1070 - Elrendezés
-      options_settings: 1071 - Beállítások
-      option_parts: 1072 - Alkatrészek
-      option_parts_colored: 1073 - Szín
-      option_parts_colored_0: 1074 - Szín nélkül
-      option_parts_colored_1: 1075 - Anyag színe
-      option_parts_colored_help: 1076 - Válassza ki az alkatrészek megjelenését.
-      option_parts_opacity: 1077 - Átlátszóság
-      option_parts_opacity_0: 1078 - Átlátszó
-      option_parts_opacity_1: 1079 - Átlátszatlan
-      option_parts_opacity_help: 1080 - Válassza ki az alkatrészek átlátszóságát.
-      option_pins: 1081 - Címkék
-      option_pins_hidden: 1082 - Megjelenítés
-      option_pins_hidden_0: 1083 - Címkékkel
-      option_pins_hidden_1: 1084 - Címkék nélkül
-      option_pins_hidden_help: 1085 - Alkatrész címkék megjelenítése vagy elrejtése számmal vagy megnevezéssel.
-      option_pins_colored: 1086 - Szín
-      option_pins_colored_0: 1087 - Szín nélkül
-      option_pins_colored_1: 1088 - Alkatrész színe
-      option_pins_colored_help: 1089 - Válassza ki a címkék színét.
-      option_pins_formula: 1090 - Képlet
-      option_pins_formula_help: 1091 - Lehetővé teszi *Ruby* kód írását a címke szövegének testreszabásához.
-      option_pins_length: 1092 - Hosszúság
-      option_pins_length_0: 1093 - Vezetővonal nélkül
-      option_pins_length_1: 1094 - Rövid
-      option_pins_length_2: 1095 - Közepes
-      option_pins_length_3: 1096 - Hosszú
-      option_pins_length_help: 1097 - Válassza ki a vezetővonal hosszát.
-      option_pins_direction: 1098 - Irány
-      option_pins_direction_0: 1099 - Piros tengely mentén
-      option_pins_direction_1: 1100 - Zöld tengely mentén
-      option_pins_direction_2: 1101 - Kék tengely mentén
-      option_pins_direction_3: 1102 - A szülő csoport középpontja felé mutat
-      option_pins_direction_4: 1103 - A kijelölés középpontja felé mutat
-      option_pins_direction_help: 1104 - Válassza ki a címkék vezetővonalainak irányát a jobb olvashatóság érdekében.
-      option_page: 1105 - Papírméret
-      option_page_format: 1106 - Formátum
-      option_page_format_portrait: 1107 - Álló
-      option_page_format_landscape: 1108 - Fekvő
-      option_page_format_custom: 1109 - Egyéni
-      option_page_width: 1110 - Szélesség
-      option_page_height: 1111 - Magasság
-      option_page_header: 1112 - Fejléc
-      option_page_header_0: 1113 - Fejléc nélkül
-      option_page_header_1: 1114 - Fejléccel
+      title: 1077 - Rajz
+      to_layout: 1078 - Exportálás Layout-ba
+      options_layout: 1079 - Elrendezés
+      options_settings: 1080 - Beállítások
+      option_parts: 1081 - Alkatrészek
+      option_parts_colored: 1082 - Szín
+      option_parts_colored_0: 1083 - Szín nélkül
+      option_parts_colored_1: 1084 - Anyag színe
+      option_parts_colored_help: 1085 - Válassza ki az alkatrészek megjelenését.
+      option_parts_opacity: 1086 - Átlátszóság
+      option_parts_opacity_0: 1087 - Átlátszó
+      option_parts_opacity_1: 1088 - Átlátszatlan
+      option_parts_opacity_help: 1089 - Válassza ki az alkatrészek átlátszóságát.
+      option_pins: 1090 - Címkék
+      option_pins_hidden: 1091 - Megjelenítés
+      option_pins_hidden_0: 1092 - Címkékkel
+      option_pins_hidden_1: 1093 - Címkék nélkül
+      option_pins_hidden_help: 1094 - Alkatrész címkék megjelenítése vagy elrejtése számmal vagy megnevezéssel.
+      option_pins_colored: 1095 - Szín
+      option_pins_colored_0: 1096 - Szín nélkül
+      option_pins_colored_1: 1097 - Alkatrész színe
+      option_pins_colored_help: 1098 - Válassza ki a címkék színét.
+      option_pins_formula: 1099 - Képlet
+      option_pins_formula_help: 1100 - Lehetővé teszi *Ruby* kód írását a címke szövegének testreszabásához.
+      option_pins_length: 1101 - Hosszúság
+      option_pins_length_0: 1102 - Vezetővonal nélkül
+      option_pins_length_1: 1103 - Rövid
+      option_pins_length_2: 1104 - Közepes
+      option_pins_length_3: 1105 - Hosszú
+      option_pins_length_help: 1106 - Válassza ki a vezetővonal hosszát.
+      option_pins_direction: 1107 - Irány
+      option_pins_direction_0: 1108 - Piros tengely mentén
+      option_pins_direction_1: 1109 - Zöld tengely mentén
+      option_pins_direction_2: 1110 - Kék tengely mentén
+      option_pins_direction_3: 1111 - A szülő csoport középpontja felé mutat
+      option_pins_direction_4: 1112 - A kijelölés középpontja felé mutat
+      option_pins_direction_help: 1113 - Válassza ki a címkék vezetővonalainak irányát a jobb olvashatóság érdekében.
+      option_page: 1114 - Papírméret
+      option_page_format: 1115 - Formátum
+      option_page_format_portrait: 1116 - Álló
+      option_page_format_landscape: 1117 - Fekvő
+      option_page_format_custom: 1118 - Egyéni
+      option_page_width: 1119 - Szélesség
+      option_page_height: 1120 - Magasság
+      option_page_header: 1121 - Fejléc
+      option_page_header_0: 1122 - Fejléc nélkül
+      option_page_header_1: 1123 - Fejléccel
       option_page_header_help: |
-        1115 - Válassza ki, hogy a nyomtatandó oldal tartalmazzon-e fejlécet a dokumentum nevével, leírásával és a dátummal.
+        1124 - Válassza ki, hogy a nyomtatandó oldal tartalmazzon-e fejlécet a dokumentum nevével, leírásával és a dátummal.
         Fejléc nélkül az áttekintő rajz kitölti az egész oldalt.
-      option_camera: 1116 - Kamera
-      option_camera_view: 1117 - Nézet
-      option_camera_view_custom: 1118 - Egyéni
-      option_camera_zoom: 1119 - Méretarány
-      option_camera_zoom_auto: 1120 - Automatikus
-      option_camera_zoom_custom: 1121 - Egyéni
-      option_camera_target: 1122 - Pozíció
-      option_camera_target_auto: 1123 - Automatikus
-      option_camera_target_custom: 1124 - Egyéni
-      option_explode: 1125 - Robbantott nézet
+      option_camera: 1125 - Kamera
+      option_camera_view: 1126 - Nézet
+      option_camera_view_custom: 1127 - Egyéni
+      option_camera_zoom: 1128 - Méretarány
+      option_camera_zoom_auto: 1129 - Automatikus
+      option_camera_zoom_custom: 1130 - Egyéni
+      option_camera_target: 1131 - Pozíció
+      option_camera_target_auto: 1132 - Automatikus
+      option_camera_target_custom: 1133 - Egyéni
+      option_explode: 1134 - Robbantott nézet
       error:
-        no_part: 1126 - Nincsenek rajzolható alkatrészek.
-        failed_to_save_as_skp: 1127 - Nem sikerült az SKP fájl írása a Layout-ba küldéshez.
+        no_part: 1135 - Nincsenek rajzolható alkatrészek.
+        failed_to_save_as_skp: 1136 - Nem sikerült az SKP fájl írása a Layout-ba küldéshez.
         failed_to_layout: |
-          1128 - Hiba a Layout fájl írása közben: *{{ error }}*
+          1137 - Hiba a Layout fájl írása közben: *{{ error }}*
 
           **Győződjön meg róla, hogy a fájl nincs megnyitva a Layout-ban.**
       warning:
-        is_group_selection: 1129 - Az alkatrészlistában lévő **rejtett csoportok** alkatrészei nem lesznek megrajzolva.
-        is_part_selection: 1130 - Ez az áttekintő rajz csak a **kiválasztott alkatrészekre** korlátozódik.
+        is_group_selection: 1138 - Az alkatrészlistában lévő **rejtett csoportok** alkatrészei nem lesznek megrajzolva.
+        is_part_selection: 1139 - Ez az áttekintő rajz csak a **kiválasztott alkatrészekre** korlátozódik.
       message:
         adding_new_page: |
-          1131 - Szeretne egy új oldalt hozzáadni?
-        incompatible_page_format: '1132 - '
-        changing_units: '1133 - '
-        changing_precision: '1134 - '
+          1140 - Szeretne egy új oldalt hozzáadni?
+        incompatible_page_format: '1141 - '
+        changing_units: '1142 - '
+        changing_precision: '1143 - '
     write:
-      title: 1135 - Alkatrészek exportálása
+      title: 1144 - Alkatrészek exportálása
       info_2d: |
-        1136 - Ez a modul lehetővé teszi az alkatrészek 2D **vetületének** exportálását [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) vagy [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) formátumban.
+        1145 - Ez a modul lehetővé teszi az alkatrészek 2D **vetületének** exportálását [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) vagy [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) formátumban.
       info_3d: |
-        1137 - Ez a modul lehetővé teszi az alkatrészek **3D geometriájának** exportálását [STL](https://wikipedia.org/wiki/STL_(file_format)) vagy [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) formátumban.
-      option_file_format: 1138 - Formátum
+        1146 - Ez a modul lehetővé teszi az alkatrészek **3D geometriájának** exportálását [STL](https://wikipedia.org/wiki/STL_(file_format)) vagy [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) formátumban.
+      option_file_format: 1147 - Formátum
       option_file_format_help: |
-        1139 - Válassza ki az exportált fájl formátumát.
-      option_dxf_structure: 1140 - DXF struktúra
-      option_dxf_structure_1: 1141 - Rétegek
-      option_dxf_structure_2: 1142 - Rétegek + Blokkok
+        1148 - Válassza ki az exportált fájl formátumát.
+      option_dxf_structure: 1149 - DXF struktúra
+      option_dxf_structure_1: 1150 - Rétegek
+      option_dxf_structure_2: 1151 - Rétegek + Blokkok
       option_dxf_structure_help: |
-        1143 - Válassza ki a DXF fájl struktúráját.
+        1152 - Válassza ki a DXF fájl struktúráját.
 
         - A **Rétegek** struktúra minden vonalat síkban rajzol, csak rétegekkel különböztetve meg a különböző vonaltípusokat. *Ez a struktúra nagyobb kompatibilitást biztosít a külső szoftverekkel.*
         - A **Rétegek + Blokkok** struktúra minden alkatrészhez egy blokkot hoz létre, és ezeket a blokkokat illeszti be annyiszor, ahányszor az alkatrészek ismétlődnek. *Ez a struktúra nagyobb rugalmasságot biztosít a fájl szerkesztéséhez.*
-      option_unit: 1144 - Mértékegység
+      option_unit: 1153 - Mértékegység
       option_unit_help: |
-        1145 - Válassza ki az exportált fájlban használt mértékegységet.
-      option_use_count: 1146 - Mennyiségek
-      option_use_count_0: 1147 - Szobánként egy fájl
-      option_use_count_1: 1148 - Egy fájl alkatrészpéldányonként
+        1154 - Válassza ki az exportált fájlban használt mértékegységet.
+      option_use_count: 1155 - Mennyiségek
+      option_use_count_0: 1156 - Szobánként egy fájl
+      option_use_count_1: 1157 - Egy fájl alkatrészpéldányonként
       option_use_count_help: |
-        1149 - Kiválasztja, hogy az alkatrész példányainak számát figyelembe veszik-e.
-      option_part_drawing_type: 1150 - Vetület
+        1158 - Kiválasztja, hogy az alkatrész példányainak számát figyelembe veszik-e.
+      option_part_drawing_type: 1159 - Vetület
       option_part_drawing_type_help: |
-        1151 - Válassza ki az exportálandó nézetet.
-      option_faces: 1152 - Felületek
-      option_faces_0: 1153 - Csak a célfelületet használja
-      option_faces_1: 1154 - Az alkatrész összes felületét használja
+        1160 - Válassza ki az exportálandó nézetet.
+      option_faces: 1161 - Felületek
+      option_faces_0: 1162 - Csak a célfelületet használja
+      option_faces_1: 1163 - Az alkatrész összes felületét használja
       option_faces_help: |
-        1155 - Lehetővé teszi annak kiválasztását, hogy az alkatrész alakjának keresése az összes felületén vagy csak a célfelületen történjen.
-      option_anchor: 1156 - Referenciapontok
-      option_anchor_0: 1157 - Automatikus
-      option_anchor_1: 1158 - Az alkatrész origójának vetítése
-      option_anchor_help: '1159 - '
-      option_switch_yz: 1160 - Függőleges tengely
-      option_switch_yz_0: 1161 - Z függőleges
-      option_switch_yz_1: 1162 - Y függőleges
-      option_switch_yz_help: '1163 - '
-      option_smoothing: 1164 - Simítás
+        1164 - Lehetővé teszi annak kiválasztását, hogy az alkatrész alakjának keresése az összes felületén vagy csak a célfelületen történjen.
+      option_anchor: 1165 - Referenciapontok
+      option_anchor_0: 1166 - Automatikus
+      option_anchor_1: 1167 - Az alkatrész origójának vetítése
+      option_anchor_help: '1168 - '
+      option_switch_yz: 1169 - Függőleges tengely
+      option_switch_yz_0: 1170 - Z függőleges
+      option_switch_yz_1: 1171 - Y függőleges
+      option_switch_yz_help: '1172 - '
+      option_smoothing: 1173 - Simítás
       option_smoothing_0: $t(default.no)
-      option_smoothing_1: 1166 - Körök és ívek simítása (Kísérleti)
+      option_smoothing_1: 1175 - Körök és ívek simítása (Kísérleti)
       option_smoothing_help: |
-        1167 - Válassza ki, hogy a körök és ívek felismerésre kerüljenek-e.
+        1176 - Válassza ki, hogy a körök és ívek felismerésre kerüljenek-e.
 
         *Ez az opció nem ismeri fel a többi görbe típust.*
-      option_merge_holes: 1168 - Egyesítési mód
-      option_merge_holes_0: '1169 - '
-      option_merge_holes_1: '1170 - '
-      option_merge_holes_help: '1171 - '
-      option_merge_holes_overflow: '1172 - '
-      option_merge_holes_overflow_help: '1173 - '
-      option_include_paths: 1174 - Útvonalak
+      option_merge_holes: 1177 - Egyesítési mód
+      option_merge_holes_0: '1178 - '
+      option_merge_holes_1: '1179 - '
+      option_merge_holes_help: '1180 - '
+      option_merge_holes_overflow: '1181 - '
+      option_merge_holes_overflow_help: '1182 - '
+      option_include_paths: 1183 - Útvonalak
       option_include_paths_0: $t(default.no)
-      option_include_paths_1: 1176 - Felülethez nem kapcsolódó élek használata
+      option_include_paths_1: 1185 - Felülethez nem kapcsolódó élek használata
       option_include_paths_help: |
-        1177 - Lehetővé teszi az alkatrészben található, felülethez nem kapcsolódó élek használatát útvonalként való exportáláshoz.
-      option_parts: 1178 - Alkatrészek
+        1186 - Lehetővé teszi az alkatrészben található, felülethez nem kapcsolódó élek használatát útvonalként való exportáláshoz.
+      option_parts: 1187 - Alkatrészek
       option_parts_help: |
-        1179 - Válassza ki az alkatrészek színét.
-      option_parts_depths: '1180 - '
-      option_parts_depths_help: '1181 - '
-      option_parts_holes: 1182 - Furatok
+        1188 - Válassza ki az alkatrészek színét.
+      option_parts_depths: '1189 - '
+      option_parts_depths_help: '1190 - '
+      option_parts_holes: 1191 - Furatok
       option_parts_holes_help: |
-        1183 - Válassza ki a furatok színét.
-      option_parts_paths: 1184 - Útvonalak
+        1192 - Válassza ki a furatok színét.
+      option_parts_paths: 1193 - Útvonalak
       option_parts_paths_help: |
-        1185 - Válassza ki az útvonalak színét.
+        1194 - Válassza ki az útvonalak színét.
       error:
-        no_part: 1186 - Nincs exportálható alkatrész.
+        no_part: 1195 - Nincs exportálható alkatrész.
       warning:
-        is_group_selection: 1187 - Az alkatrészlistában lévő **rejtett csoportok** alkatrészei nem kerülnek exportálásra.
-        is_part_selection: 1188 - Az exportálás csak a **kiválasztott alkatrészekre** korlátozódik.
+        is_group_selection: 1196 - Az alkatrészlistában lévő **rejtett csoportok** alkatrészei nem kerülnek exportálásra.
+        is_part_selection: 1197 - Az exportálás csak a **kiválasztott alkatrészekre** korlátozódik.
     snippet:
-      hello: 1189 - Helló
-      number: 1190 - Szám
-      name: 1191 - Megnevezés
-      number_and_name: 1192 - Szám és megnevezés
-      number_without_hardware: 1193 - Szám (kiegészítők nélkül)
-      size: 1194 - Méret
-      area: 1195 - Terület
-      volume: 1196 - Térfogat
+      hello: 1198 - Helló
+      number: 1199 - Szám
+      name: 1200 - Megnevezés
+      number_and_name: 1201 - Szám és megnevezés
+      number_without_hardware: 1202 - Szám (kiegészítők nélkül)
+      size: 1203 - Méret
+      area: 1204 - Terület
+      volume: 1205 - Térfogat
     error:
-      no_model: 1197 - Nincs megnyitott modell. További információra lesz szükségem ;)
-      no_entities: 1198 - A modell üres. További információra lesz szükségem ;)
-      no_component_in_selection: 1199 - Nem található látható komponens példány a kijelölésben.
-      no_component_in_model: 1200 - Nem található látható komponens példány a jelenetben.
-      unknow_part: 1201 - A kiválasztott alkatrész nem létezik az alkatrészlistában.
-      obsolete_cutlist: 1202 - Nem lehetséges, az alkatrészlista elavult. Kérem, generálja újra.
+      no_model: 1206 - Nincs megnyitott modell. További információra lesz szükségem ;)
+      no_entities: 1207 - A modell üres. További információra lesz szükségem ;)
+      no_component_in_selection: 1208 - Nem található látható komponens példány a kijelölésben.
+      no_component_in_model: 1209 - Nem található látható komponens példány a jelenetben.
+      unknow_part: 1210 - A kiválasztott alkatrész nem létezik az alkatrészlistában.
+      obsolete_cutlist: 1211 - Nem lehetséges, az alkatrészlista elavult. Kérem, generálja újra.
     warning:
-      is_entity_selection: 1203 - Csak a modellben kiválasztott alkatrészek lettek figyelembe véve.
-      no_typed_materials_in_model: 1204 - A modell nem használ definiált anyagot (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** vagy **$t(tab.materials.type_5)**).
-      no_typed_materials_in_selection: 1205 - A kijelölés nem használ definiált anyagot (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** vagy **$t(tab.materials.type_5)**).
-      export_empty: 1206 - Az exportálási kijelölés nem tartalmaz alkatrészt.
+      is_entity_selection: 1212 - Csak a modellben kiválasztott alkatrészek lettek figyelembe véve.
+      no_typed_materials_in_model: 1213 - A modell nem használ definiált anyagot (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** vagy **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 1214 - A kijelölés nem használ definiált anyagot (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** vagy **$t(tab.materials.type_5)**).
+      export_empty: 1215 - Az exportálási kijelölés nem tartalmaz alkatrészt.
     success:
-      part_selected: 1207 - {{ count }} alkatrész kiválasztva az Alkatrészlistában.
-      part_selected_plural: 1208 - {{ count }} alkatrész kiválasztva az Alkatrészlistában.
+      part_selected: 1216 - {{ count }} alkatrész kiválasztva az Alkatrészlistában.
+      part_selected_plural: 1217 - {{ count }} alkatrész kiválasztva az Alkatrészlistában.
     tip:
       no_component: |
-        1209 - Az *alkatrészlistába* felveendő alkatrészeknek **komponens** példányoknak kell lenniük.
+        1218 - Az *alkatrészlistába* felveendő alkatrészeknek **komponens** példányoknak kell lenniük.
         Ha csak csoportokat használ, alakítsa át őket komponensekké.
         A komponensek használata lehetővé teszi az azonos alkatrészek másolását azok megkettőzése nélkül.
-      no_typed_materials: 1210 - Alkalmazzon anyagot az alkatrészlistába felveendő alkatrészekre, és határozza meg az anyag tulajdonságait (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** vagy **$t(tab.materials.type_5)**) az <i class="ladb-opencutlist-icon-materials"></i> **Anyagok** fülön.
-    obsolete_base: 1211 - A szinkronban maradáshoz frissítenie kell az alkatrészlistát.
+      no_typed_materials: 1219 - Alkalmazzon anyagot az alkatrészlistába felveendő alkatrészekre, és határozza meg az anyag tulajdonságait (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** vagy **$t(tab.materials.type_5)**) az <i class="ladb-opencutlist-icon-materials"></i> **Anyagok** fülön.
+    obsolete_base: 1220 - A szinkronban maradáshoz frissítenie kell az alkatrészlistát.
   materials:
-    label: 1212 - Anyagok
-    title: 1213 - Anyagok
-    type_0: 1214 - Meghatározatlan
-    type_1: 1215 - Tömör fa
-    type_2: 1216 - Táblásanyag
-    type_3: 1217 - Tömör fa szabvány
-    type_4: 1218 - Élzáró
-    type_5: 1219 - Vasalat
-    type_6: 1220 - Furnér
+    label: 1221 - Anyagok
+    title: 1222 - Anyagok
+    type_0: 1223 - Meghatározatlan
+    type_1: 1224 - Tömör fa
+    type_2: 1225 - Táblásanyag
+    type_3: 1226 - Tömör fa szabvány
+    type_4: 1227 - Élzáró
+    type_5: 1228 - Vasalat
+    type_6: 1229 - Furnér
     tooltip:
-      type_0: '1221 - Anyagtípus: $t(tab.materials.type_0)'
-      type_1: '1222 - Anyagtípus: $t(tab.materials.type_1)'
-      type_2: '1223 - Anyagtípus: $t(tab.materials.type_2)'
-      type_3: '1224 - Anyagtípus: $t(tab.materials.type_3)'
-      type_4: '1225 - Anyagtípus: $t(tab.materials.type_4)'
-      type_5: '1226 - Anyagtípus: $t(tab.materials.type_5)'
-      type_6: '1227 - Anyagtípus: $t(tab.materials.type_6)'
+      type_0: '1230 - Anyagtípus: $t(tab.materials.type_0)'
+      type_1: '1231 - Anyagtípus: $t(tab.materials.type_1)'
+      type_2: '1232 - Anyagtípus: $t(tab.materials.type_2)'
+      type_3: '1233 - Anyagtípus: $t(tab.materials.type_3)'
+      type_4: '1234 - Anyagtípus: $t(tab.materials.type_4)'
+      type_5: '1235 - Anyagtípus: $t(tab.materials.type_5)'
+      type_6: '1236 - Anyagtípus: $t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
-      grain_direction: 1230 - Száliránya
-      raw_estimated_0: 1231 - A tényleges térfogat alapján becsült
-      colorized: 1232 - Ez az árnyalat lesz alkalmazva a textúrára, amikor a modellben megjelenik
-      texture_load: '1233 - '
-      texture_export: '1234 - '
-      texture_clear: 1235 - Textúra eltávolítása
-      edit: 1236 - '{{ name }}' tulajdonságainak szerkesztése
-      set_current: 1237 - Alkatrészek festése '{{ name }}' anyaggal
-      open_url: 1238 - Anyag URL megnyitása
-      import_from_skm: 1239 - Anyag importálása (.skm)
+      grain_direction: 1239 - Száliránya
+      raw_estimated_0: 1240 - A tényleges térfogat alapján becsült
+      colorized: 1241 - Ez az árnyalat lesz alkalmazva a textúrára, amikor a modellben megjelenik
+      texture_load: '1242 - '
+      texture_export: '1243 - '
+      texture_clear: 1244 - Textúra eltávolítása
+      edit: 1245 - '{{ name }}' tulajdonságainak szerkesztése
+      set_current: 1246 - Alkatrészek festése '{{ name }}' anyaggal
+      open_url: 1247 - Anyag URL megnyitása
+      import_from_skm: 1248 - Anyag importálása (.skm)
     menu:
-      purge_unused: 1240 - Nem használt anyagok törlése
-      reset_prices: 1241 - Minden anyag árának nullázása
+      purge_unused: 1249 - Nem használt anyagok törlése
+      reset_prices: 1250 - Minden anyag árának nullázása
       reset_prices_confirm: |
-        1242 - Minden anyag árát nullázni fogja a modellben.
+        1251 - Minden anyag árát nullázni fogja a modellben.
         Ez a művelet nem vonható vissza. **Minden ár nullára lesz állítva.**
         Erősítse meg a folytatáshoz.
-      reset_prices_success: 1243 - Minden anyag ára nullázva lett.
+      reset_prices_success: 1252 - Minden anyag ára nullázva lett.
     new_material:
-      title: 1244 - Új anyag létrehozása
-      name: 1245 - Név
-      name_warning: 1246 - Érvénytelen név
-      color: 1247 - Szín
-      color_warning: 1248 - Érvénytelen szín
-      type: 1249 - Típus
-    edit_material:
-      title: 1250 - '{{ name }}' anyag tulajdonságai
-      general: 1251 - Általános
-      texture: 1252 - Textúra
-      no_texture: 1253 - Textúra nélkül
+      title: 1253 - Új anyag létrehozása
       name: 1254 - Név
-      type: 1255 - Típus
-      description: 1256 - Leírás
-      url: 1257 - URL
-      formats: '1258 - '
-      cut_options: 1259 - Vágási paraméterek
-      estimate_options: 1260 - Becslési beállítások
-      attributes: 1261 - Tulajdonságok
-      thickness: 1262 - Vastagság
-      thickness_help: '1263 - '
-      length_increase: 1264 - Hossz ráhagyás
-      length_increase_help: '1265 - '
-      width_increase: 1266 - Szélesség ráhagyás
-      width_increase_help: '1267 - '
-      thickness_increase: 1268 - Vastagság ráhagyás
-      thickness_increase_help: '1269 - '
-      std_lengths: 1270 - Standard hosszak
-      std_lengths_help: '1271 - '
-      std_widths: 1272 - Standard szélességek
-      std_widths_help: '1273 - '
-      std_thicknesses: 1274 - Standard vastagságok
-      std_thicknesses_help: '1275 - '
-      std_sections: 1276 - Standard keresztmetszetek
-      std_sections_help: '1277 - '
-      std_sizes: 1278 - Standard laptáblák méretei
-      std_sizes_help: '1279 - '
-      grained: 1280 - Szálirány
-      grained_help: 1281 - Válassza ki a szálirány orientációját a panel hosszához viszonyítva.
-      grained_0: 1282 - Nincs szálirány
-      grained_1: 1283 - Szálirány a hosszal párhuzamos
-      edge_decremented: 1284 - Méretek csökkentése
-      edge_decremented_help: 1285 - Megadhatja, hogy az alkatrészek méreteit csökkenteni kell-e az élzáró vastagságával.
-      edge_decremented_0: 1286 - Nincs csökkentés
-      edge_decremented_1: 1287 - Csökkentés az élzáró vastagságával
-      raw_estimated: 1288 - Használt térfogat
+      name_warning: 1255 - Érvénytelen név
+      color: 1256 - Szín
+      color_warning: 1257 - Érvénytelen szín
+      type: 1258 - Típus
+    edit_material:
+      title: 1259 - '{{ name }}' anyag tulajdonságai
+      general: 1260 - Általános
+      texture: 1261 - Textúra
+      no_texture: 1262 - Textúra nélkül
+      name: 1263 - Név
+      type: 1264 - Típus
+      description: 1265 - Leírás
+      url: 1266 - URL
+      formats: '1267 - '
+      cut_options: 1268 - Vágási paraméterek
+      estimate_options: 1269 - Becslési beállítások
+      attributes: 1270 - Tulajdonságok
+      thickness: 1271 - Vastagság
+      thickness_help: '1272 - '
+      length_increase: 1273 - Hossz ráhagyás
+      length_increase_help: '1274 - '
+      width_increase: 1275 - Szélesség ráhagyás
+      width_increase_help: '1276 - '
+      thickness_increase: 1277 - Vastagság ráhagyás
+      thickness_increase_help: '1278 - '
+      std_lengths: 1279 - Standard hosszak
+      std_lengths_help: '1280 - '
+      std_widths: 1281 - Standard szélességek
+      std_widths_help: '1282 - '
+      std_thicknesses: 1283 - Standard vastagságok
+      std_thicknesses_help: '1284 - '
+      std_sections: 1285 - Standard keresztmetszetek
+      std_sections_help: '1286 - '
+      std_sizes: 1287 - Standard laptáblák méretei
+      std_sizes_help: '1288 - '
+      grained: 1289 - Szálirány
+      grained_help: 1290 - Válassza ki a szálirány orientációját a panel hosszához viszonyítva.
+      grained_0: 1291 - Nincs szálirány
+      grained_1: 1292 - Szálirány a hosszal párhuzamos
+      edge_decremented: 1293 - Méretek csökkentése
+      edge_decremented_help: 1294 - Megadhatja, hogy az alkatrészek méreteit csökkenteni kell-e az élzáró vastagságával.
+      edge_decremented_0: 1295 - Nincs csökkentés
+      edge_decremented_1: 1296 - Csökkentés az élzáró vastagságával
+      raw_estimated: 1297 - Használt térfogat
       raw_estimated_help: |
-        1289 - Meghatározza az ebből az anyagból készült alkatrészek súlyának és teljes költségének becsléséhez használt térfogatot.
+        1298 - Meghatározza az ebből az anyagból készült alkatrészek súlyának és teljes költségének becsléséhez használt térfogatot.
 
         **Effektív térfogat**
         A teljes térfogat az alkatrészek effektív térfogatainak összege lesz, amely a ráhagyásokat is tartalmazó befoglaló doboz.
 
         **Szükséges nyersanyag térfogata**
         A teljes térfogat a vágás utáni panelek, táblák, deszkák vagy élzárók térfogatainak összege lesz.
-      raw_estimated_0: 1290 - Effektív térfogat
-      raw_estimated_1: 1291 - Szükséges nyersanyag térfogata
-      multiplier_coefficient: '1292 - '
-      multiplier_coefficient_help: '1293 - '
-      std_attributes_dim_placeholder: 1294 - Válasszon méretet
-      std_volumic_masses: 1295 - Sűrűség
-      std_volumic_masses_help: 1296 - Lehetővé teszi a sűrűség beállítását minden méretre, valamint minden standard anyagméretre.
-      std_prices: 1297 - Ár
-      std_prices_help: 1298 - Lehetővé teszi az ár meghatározását minden méretre, valamint minden standard anyagméretre.
-      std_cut_prices: '1299 - '
-      std_cut_prices_help: '1300 - '
-      texture_width: 1301 - Szélesség
-      texture_height: 1302 - Magasság
-      export_to_skm: 1303 - Exportálás (.skm)
+      raw_estimated_0: 1299 - Effektív térfogat
+      raw_estimated_1: 1300 - Szükséges nyersanyag térfogata
+      multiplier_coefficient: '1301 - '
+      multiplier_coefficient_help: '1302 - '
+      std_attributes_dim_placeholder: 1303 - Válasszon méretet
+      std_volumic_masses: 1304 - Sűrűség
+      std_volumic_masses_help: 1305 - Lehetővé teszi a sűrűség beállítását minden méretre, valamint minden standard anyagméretre.
+      std_prices: 1306 - Ár
+      std_prices_help: 1307 - Lehetővé teszi az ár meghatározását minden méretre, valamint minden standard anyagméretre.
+      std_cut_prices: '1308 - '
+      std_cut_prices_help: '1309 - '
+      texture_width: 1310 - Szélesség
+      texture_height: 1311 - Magasság
+      export_to_skm: 1312 - Exportálás (.skm)
     texture_load:
-      title: 1304 - Kép betöltése
+      title: 1313 - Kép betöltése
     texture_export:
-      title: '1305 - '
+      title: '1314 - '
     import_from_skm:
-      title: 1306 - .skm fájl importálása
-      ask_replace: '1307 - '
+      title: 1315 - .skm fájl importálása
+      ask_replace: '1316 - '
     export_to_skm:
-      title: 1308 - Exportálás .skm fájlba
+      title: 1317 - Exportálás .skm fájlba
     option:
-      minimize_on_smart_paint: '1309 - '
-      minimize_on_smart_paint_help: '1310 - '
-      general: 1311 - Általános
-      material_order_strategy: 1312 - Anyagok rendezése
+      minimize_on_smart_paint: '1318 - '
+      minimize_on_smart_paint_help: '1319 - '
+      general: 1320 - Általános
+      material_order_strategy: 1321 - Anyagok rendezése
       material_order_strategy_help: |
-        1313 - Rendezze át a csempéket az anyaglista rendezési stratégiájának meghatározásához.
+        1322 - Rendezze át a csempéket az anyaglista rendezési stratégiájának meghatározásához.
         A tulajdonságok <i class="ladb-opencutlist-icon-sort-asc"></i> *növekvő* vagy <i class="ladb-opencutlist-icon-sort-desc"></i> *csökkenő* sorrendbe rendezhetők.
-      property_type: 1314 - Típus
-      property_name: 1315 - Név
+      property_type: 1323 - Típus
+      property_name: 1324 - Név
     delete:
       message: |
-        1316 - Az **{{ material_name }}** anyagot törölni fogja a modellből.
+        1325 - Az **{{ material_name }}** anyagot törölni fogja a modellből.
         Erősítse meg a folytatáshoz.
     duplicate:
       message: |
-        1317 - Adja meg az új anyag nevét, amely az **{{ material_name }}** másolata lesz.
+        1326 - Adja meg az új anyag nevét, amely az **{{ material_name }}** másolata lesz.
     error:
-      no_model: 1318 - Nincs nyitott modell. További információra van szükségem ;)
-      no_materials: 1319 - A modell nem tartalmaz anyagokat.
-      material_not_found: 1320 - Nem található anyag.
-      no_texture: '1321 - '
-      failed_import_skm_file: 1322 - Hiba történt a .skm fájl importálása közben. **{{ error }}**
-      failed_export_skm_file: 1323 - Hiba történt a .skm fájlba exportálás közben. **{{ error }}**
-      failed_deleting_material: 1324 - Hiba történt az anyag törlése közben. **{{ error }}**
-      failed_duplicating_material: 1325 - Hiba történt az anyag másolása közben. **{{ error }}**
-      invalid_image_file: 1326 - Érvénytelen kép
-    obsolete_base: 1327 - A szinkronizáláshoz frissítenie kell az anyaglistát.
+      no_model: 1327 - Nincs nyitott modell. További információra van szükségem ;)
+      no_materials: 1328 - A modell nem tartalmaz anyagokat.
+      material_not_found: 1329 - Nem található anyag.
+      no_texture: '1330 - '
+      failed_import_skm_file: 1331 - Hiba történt a .skm fájl importálása közben. **{{ error }}**
+      failed_export_skm_file: 1332 - Hiba történt a .skm fájlba exportálás közben. **{{ error }}**
+      failed_deleting_material: 1333 - Hiba történt az anyag törlése közben. **{{ error }}**
+      failed_duplicating_material: 1334 - Hiba történt az anyag másolása közben. **{{ error }}**
+      invalid_image_file: 1335 - Érvénytelen kép
+    obsolete_base: 1336 - A szinkronizáláshoz frissítenie kell az anyaglistát.
   outliner:
-    label: 1328 - Szerkezet
-    title: 1329 - Szerkezet
-    list: 1330 - Elemek fastruktúrája
-    nodes: 1331 - Példányok
-    toggle_hidden: 1332 - Rejtett példányok
-    type_0: 1333 - Modell
-    type_1: 1334 - Csoport
-    type_2: 1335 - Komponens
-    type_3: 1336 - Alkatrész
+    label: 1337 - Szerkezet
+    title: 1338 - Szerkezet
+    list: 1339 - Elemek fastruktúrája
+    nodes: 1340 - Példányok
+    toggle_hidden: 1341 - Rejtett példányok
+    type_0: 1342 - Modell
+    type_1: 1343 - Csoport
+    type_2: 1344 - Komponens
+    type_3: 1345 - Alkatrész
     tooltip:
-      hide_node: '1337 - '
-      unhide_node: '1338 - '
-      locked_node: '1339 - '
-      is_active_node: '1340 - '
-      set_active_node: '1341 - '
-      edit_node_properties: '1342 - '
-      select_node: '1343 - '
-      unselect_node: '1344 - '
-      open_node_url: 1345 - Példány URL megnyitása
+      hide_node: '1346 - '
+      unhide_node: '1347 - '
+      locked_node: '1348 - '
+      is_active_node: '1349 - '
+      set_active_node: '1350 - '
+      edit_node_properties: '1351 - '
+      select_node: '1352 - '
+      unselect_node: '1353 - '
+      open_node_url: 1354 - Példány URL megnyitása
     edit_node:
-      title_model: 1346 - A modell tulajdonságai
-      title_instance: 1347 - **{{ name }}** példány tulajdonságai
-      general: 1348 - Általános
-      preview: 1349 - Áttekintés
-      name: 1350 - Név
-      instance_name: 1351 - Példány
-      material: 1352 - Anyag
-      definition_name: 1353 - Definíció
-      description: 1354 - Leírás
-      url: 1355 - URL
-      tags: '1356 - '
-      layer_name: 1357 - Címke
-      explode: 1358 - Szétrobbantás
-      explode_message: 1359 - Biztosan szét szeretné robbantani a **{{ name }}** példányt?
+      title_model: 1355 - A modell tulajdonságai
+      title_instance: 1356 - **{{ name }}** példány tulajdonságai
+      general: 1357 - Általános
+      name: 1358 - Név
+      instance_name: 1359 - Példány
+      material: 1360 - Anyag
+      definition_name: 1361 - Definíció
+      description: 1362 - Leírás
+      url: 1363 - URL
+      tags: '1364 - '
+      layer_name: 1365 - Címke
+      explode: 1366 - Szétrobbantás
+      explode_message: 1367 - Biztosan szét szeretné robbantani a **{{ name }}** példányt?
     option:
-      general: 1360 - Általános
-      show_hidden_instances: '1361 - '
-      show_hidden_instances_help: '1362 - '
-      hide_descriptions: 1363 - Leírások elrejtése
-      hide_descriptions_help: 1364 - Ha ez az opció be van kapcsolva, az alkatrészekre helyezett **leírások** nem lesznek megjelenítve.
-      hide_tags: 1365 - Címkék elrejtése
-      hide_tags_help: 1366 - Ha ez az opció be van kapcsolva, az alkatrészek **címkéi** nem lesznek megjelenítve.
-      minimize_on_set_active: '1367 - '
-      minimize_on_set_active_help: '1368 - '
+      general: 1368 - Általános
+      show_hidden_instances: '1369 - '
+      show_hidden_instances_help: '1370 - '
+      hide_descriptions: 1371 - Leírások elrejtése
+      hide_descriptions_help: 1372 - Ha ez az opció be van kapcsolva, az alkatrészekre helyezett **leírások** nem lesznek megjelenítve.
+      hide_tags: 1373 - Címkék elrejtése
+      hide_tags_help: 1374 - Ha ez az opció be van kapcsolva, az alkatrészek **címkéi** nem lesznek megjelenítve.
+      minimize_on_set_active: '1375 - '
+      minimize_on_set_active_help: '1376 - '
     error:
-      no_model: 1369 - Nincs nyitott modell. További információra van szükségem ;)
-      no_entities: 1370 - A modell üres!
-      node_not_found: 1371 - Csomópont nem található
-      entity_not_found: 1372 - Példány nem található
-      obsolete_outliner: 1373 - Nem lehetséges, a generált szerkezet elavult. Kérem, generálja újra.
+      no_model: 1377 - Nincs nyitott modell. További információra van szükségem ;)
+      no_entities: 1378 - A modell üres!
+      node_not_found: 1379 - Csomópont nem található
+      entity_not_found: 1380 - Példány nem található
+      obsolete_outliner: 1381 - Nem lehetséges, a generált szerkezet elavult. Kérem, generálja újra.
     tip:
       no_node: |
-        1374 - A modell nem tartalmaz megjeleníthető példányokat.
+        1382 - A modell nem tartalmaz megjeleníthető példányokat.
         A példány lehet **csoport** vagy **komponens** a jelenetben.
-    obsolete_base: 1375 - A szinkronizáláshoz frissítenie kell a szerkezetet.
+    obsolete_base: 1383 - A szinkronizáláshoz frissítenie kell a szerkezetet.
   importer:
-    label: 1376 - Importálás
-    title: 1377 - Alkatrészek importálása
+    label: 1384 - Importálás
+    title: 1385 - Alkatrészek importálása
     help: |
-      1378 - Ezen az oldalon alkatrészeket importálhat (téglalap alakú befoglaló dobozzal meghatározva) a modelljébe [CSV](https://hu.wikipedia.org/wiki/CSV) fájlból.
+      1386 - Ezen az oldalon alkatrészeket importálhat (téglalap alakú befoglaló dobozzal meghatározva) a modelljébe [CSV](https://hu.wikipedia.org/wiki/CSV) fájlból.
       Így az *OpenCutList* funkcióit olyan alkatrészekhez is használhatja, amelyeket nem a *SketchUp*-ban hozott létre.
       Kattintson a **CSV fájl megnyitása** gombra a kezdéshez.
-    open_csv: 1379 - CSV fájl megnyitása
-    import_to_model: 1380 - Importálás a modellbe
+    open_csv: 1387 - CSV fájl megnyitása
+    import_to_model: 1388 - Importálás a modellbe
     load:
-      title: 1381 - CSV fájl feltöltése
+      title: 1389 - CSV fájl feltöltése
       info_0: |
-        1382 - Válassza ki a fájl olvasásához szükséges beállításokat:
+        1390 - Válassza ki a fájl olvasásához szükséges beállításokat:
         **{{ filename }}**.
       info_1: |
-        1383 - *A modellben beállított mértékegység: **{{ unit }}**.
+        1391 - *A modellben beállított mértékegység: **{{ unit }}**.
         Ez a mértékegység lesz használva azoknál a méreteknél, ahol nincs megadva mértékegység*.
-      options: 1384 - Betöltési beállítások
-      option_col_sep: 1385 - Elválasztó
-      option_col_sep_tab: 1386 - Tabulátor
-      option_col_sep_comma: 1387 - Vessző
-      option_col_sep_semicolon: 1388 - Pontosvessző
-      option_first_line_headers: 1389 - Első sor
-      option_first_line_headers_0: 1390 - Adat
-      option_first_line_headers_1: 1391 - Oszlopcímek
+      options: 1392 - Betöltési beállítások
+      option_col_sep: 1393 - Elválasztó
+      option_col_sep_tab: 1394 - Tabulátor
+      option_col_sep_comma: 1395 - Vessző
+      option_col_sep_semicolon: 1396 - Pontosvessző
+      option_first_line_headers: 1397 - Első sor
+      option_first_line_headers_0: 1398 - Adat
+      option_first_line_headers_1: 1399 - Oszlopcímek
     import:
-      title: 1392 - Alkatrészek importálása a modellbe
+      title: 1400 - Alkatrészek importálása a modellbe
       info_0: |
-        1393 - **{{ count }} alkatrész** fog importálni a modellbe.
+        1401 - **{{ count }} alkatrész** fog importálni a modellbe.
         Ez az alkatrész egy csoportba kerül a fő jelenet origójában.
       info_0_plural: |
-        1394 - **{{ count }} alkatrész** fog importálni a modellbe.
+        1402 - **{{ count }} alkatrész** fog importálni a modellbe.
         Ezek az alkatrészek egymásra halmozva egy csoportba kerülnek a fő jelenet origójától kezdve.
-      info_1: 1395 - Kattintson az **Importálás** gombra a megerősítéshez.
+      info_1: 1403 - Kattintson az **Importálás** gombra a megerősítéshez.
       options: |
-        1396 - A modell már tartalmaz *alkatrészeket*, *definíciókat* vagy *anyagokat*.
+        1404 - A modell már tartalmaz *alkatrészeket*, *definíciókat* vagy *anyagokat*.
         Válassza ki a megfelelő importálási beállításokat.
-      option_remove_all_?: '1397 - Válassza ki a következő lépést:'
-      option_remove_all_false: 1398 - Hozzáadás a meglévőkhöz
-      option_remove_all_true: 1399 - Meglévők törlése!
-      option_keep_definitions_settings: 1400 - Definíció beállítások megtartása
-      option_keep_materials_settings: 1401 - Anyag beállítások megtartása
+      option_remove_all_?: '1405 - Válassza ki a következő lépést:'
+      option_remove_all_false: 1406 - Hozzáadás a meglévőkhöz
+      option_remove_all_true: 1407 - Meglévők törlése!
+      option_keep_definitions_settings: 1408 - Definíció beállítások megtartása
+      option_keep_materials_settings: 1409 - Anyag beállítások megtartása
     column:
-      unused: 1402 - Nem használt
-      mandatory: 1403 - Kötelező mezők
-      optional: 1404 - Opcionális mezők
-      name: 1405 - Megnevezés
-      count: 1406 - Mennyiség
-      bbox_length: 1407 - Hosszúság
-      bbox_width: 1408 - Szélesség
-      bbox_thickness: 1409 - Vastagság
-      material: 1410 - Anyag
-      tags: 1411 - Címkék
+      unused: 1410 - Nem használt
+      mandatory: 1411 - Kötelező mezők
+      optional: 1412 - Opcionális mezők
+      name: 1413 - Megnevezés
+      count: 1414 - Mennyiség
+      bbox_length: 1415 - Hosszúság
+      bbox_width: 1416 - Szélesség
+      bbox_thickness: 1417 - Vastagság
+      material: 1418 - Anyag
+      tags: 1419 - Címkék
     tooltip:
-      errors: 1412 - Ez az alkatrész nem lesz importálva a következő hibák miatt
-      warnings: 1413 - Ez az alkatrész importálva lesz, de a következő figyelmeztetéseket generálta
+      errors: 1420 - Ez az alkatrész nem lesz importálva a következő hibák miatt
+      warnings: 1421 - Ez az alkatrész importálva lesz, de a következő figyelmeztetéseket generálta
     error:
-      no_model: 1414 - Nincs nyitott modell. Nem lehet alkatrészeket importálni a semmibe ;)
-      file_not_found: '1415 - Fájl nem található: **{{ filename }}**'
-      bad_extension: 1416 - A *{{ filename }}* fájl nem rendelkezik **.CSV** vagy **.TSV** kiterjesztéssel.
+      no_model: 1422 - Nincs nyitott modell. Nem lehet alkatrészeket importálni a semmibe ;)
+      file_not_found: '1423 - Fájl nem található: **{{ filename }}**'
+      bad_extension: 1424 - A *{{ filename }}* fájl nem rendelkezik **.CSV** vagy **.TSV** kiterjesztéssel.
       failed_to_load_csv_file: |
-        1417 - Nem sikerült betölteni a CSV fájlt: **{{ error }}**
+        1425 - Nem sikerült betölteni a CSV fájlt: **{{ error }}**
         *Ellenőrizze, hogy a megfelelő mezőelválasztót választotta-e ki.*
-      empty_file: 1418 - A fájl üresnek tűnik vagy nem olvasható megfelelően.
-      no_importable_part: 1419 - Nem importálható egyetlen alkatrész sem. Rendelje hozzá a kötelező mezőket a megfelelő oszlopokhoz.
-      invalid_name: 1420 - Érvénytelen megnevezés
-      invalid_length: 1421 - Érvénytelen hosszúság
-      invalid_width: 1422 - Érvénytelen szélesség
-      invalid_thickness: 1423 - Érvénytelen vastagság
-      failed_to_import: 1424 - Az importálás sikertelen.
+      empty_file: 1426 - A fájl üresnek tűnik vagy nem olvasható megfelelően.
+      no_importable_part: 1427 - Nem importálható egyetlen alkatrész sem. Rendelje hozzá a kötelező mezőket a megfelelő oszlopokhoz.
+      invalid_name: 1428 - Érvénytelen megnevezés
+      invalid_length: 1429 - Érvénytelen hosszúság
+      invalid_width: 1430 - Érvénytelen szélesség
+      invalid_thickness: 1431 - Érvénytelen vastagság
+      failed_to_import: 1432 - Az importálás sikertelen.
     warning:
-      invalid_count: 1425 - Érvénytelen mennyiség
-      invalid_material: 1426 - Érvénytelen anyag
+      invalid_count: 1433 - Érvénytelen mennyiség
+      invalid_material: 1434 - Érvénytelen anyag
     success:
-      imported_title: 1427 - Importálás kész
-      imported_body: 1428 - {{ count }} alkatrész sikeresen importálva!
-      imported_body_plural: 1429 - {{ count }} alkatrész sikeresen importálva!
-    obsolete_base: 1430 - A szinkronizáláshoz újra be kell töltenie a CSV fájlt.
+      imported_title: 1435 - Importálás kész
+      imported_body: 1436 - {{ count }} alkatrész sikeresen importálva!
+      imported_body_plural: 1437 - {{ count }} alkatrész sikeresen importálva!
+    obsolete_base: 1438 - A szinkronizáláshoz újra be kell töltenie a CSV fájlt.
   tutorials:
-    label: 1431 - Oktatóanyagok
-    title: 1432 - Oktatóanyagok
+    label: 1439 - Oktatóanyagok
+    title: 1440 - Oktatóanyagok
     help: |
-      1433 - Itt találhatók a közösség által készített videók az *OpenCutList* használatáról.
-    submit: 1434 - Videó beküldése
-    submit_info: '1435 - '
+      1441 - Itt találhatók a közösség által készített videók az *OpenCutList* használatáról.
+    submit: 1442 - Videó beküldése
+    submit_info: '1443 - '
     error:
-      fail_to_load_list: 1436 - Nem sikerült betölteni a videólistát.
+      fail_to_load_list: 1444 - Nem sikerült betölteni a videólistát.
   news:
-    label: 1437 - Hírek
-    title: 1438 - Hírek
+    label: 1445 - Hírek
+    title: 1446 - Hírek
     help: |
-      1439 - Az *OpenCutList* legfrissebb hírei.
-    comment: 1440 - Hozzászólás
+      1447 - Az *OpenCutList* legfrissebb hírei.
+    comment: 1448 - Hozzászólás
     error:
-      fail_to_load_list: 1441 - Nem sikerült betölteni a hírlistát.
+      fail_to_load_list: 1449 - Nem sikerült betölteni a hírlistát.
   forum:
-    label: 1442 - Fórum
-    title: 1443 - Fórum
+    label: 1450 - Fórum
+    title: 1451 - Fórum
     help: |
-      1444 - Ez a fórum lehetővé teszi a felhasználói közösséggel és az *OpenCutList* csapatával való kommunikációt.
-    create_conversation: 1445 - Téma indítása
-    reply: 1446 - Válasz
-    tags: 1447 - Címkék
+      1452 - Ez a fórum lehetővé teszi a felhasználói közösséggel és az *OpenCutList* csapatával való kommunikációt.
+    create_conversation: 1453 - Téma indítása
+    reply: 1454 - Válasz
+    tags: 1455 - Címkék
     redirection: |
-      1448 - Át lesz irányítva az **Open Collective** platformra, amely ezt a fórumot üzemelteti.
+      1456 - Át lesz irányítva az **Open Collective** platformra, amely ezt a fórumot üzemelteti.
       A *beszélgetések indításához* vagy a *válaszoláshoz* fiókot kell létrehoznia és be kell jelentkeznie.
       *Ingyenes, kötelezettségmentes és csak egy e-mail cím szükséges hozzá.*
 
       Kattintson a folytatáshoz.
     error:
-      fail_to_load_list: 1449 - Nem sikerült betölteni a témalistát.
+      fail_to_load_list: 1457 - Nem sikerült betölteni a témalistát.
   sponsor:
-    label: 1450 - Támogatás
-    title: 1451 - Támogatás
+    label: 1458 - Támogatás
+    title: 1459 - Támogatás
     description: |
-      1452 - Az **OpenCutList** egy *nyílt forráskódú* szoftver, amelyet a felhasználói támogatnak az <a href="https://opencollective.com/" target="_blank">Open Collective</a> platformon keresztül.
+      1460 - Az **OpenCutList** egy *nyílt forráskódú* szoftver, amelyet a felhasználói támogatnak az <a href="https://opencollective.com/" target="_blank">Open Collective</a> platformon keresztül.
       Támogassa a projektet anyagi hozzájárulással!
-    contribute: 1453 - Támogatás
-    backers: 1454 - {{ count }} anyagi támogató
-    backers_plural: 1455 - {{ count }} anyagi támogató
-    ad: '1456 - '
-    objective: 1457 - Célkitűzés
-    objective_slogan: 1458 - Az OpenCutList mindannyiunké
+    contribute: 1461 - Támogatás
+    backers: 1462 - {{ count }} anyagi támogató
+    backers_plural: 1463 - {{ count }} anyagi támogató
+    ad: '1464 - '
+    objective: 1465 - Célkitűzés
+    objective_slogan: 1466 - Az OpenCutList mindannyiunké
     objective_title:
-      default: 1459 - Célkitűzések
-      cuttingdiagram_export: 1460 - A vágási diagram exportálás finanszírozása
+      default: 1467 - Célkitűzések
+      cuttingdiagram_export: 1468 - A vágási diagram exportálás finanszírozása
     objective_details:
       default: |
-        1461 - Az *OpenCutList* folyamatos fejlesztése fontos számunkra, és a projektnek továbbra is szüksége van a segítségére a következő frissítéshez!
+        1469 - Az *OpenCutList* folyamatos fejlesztése fontos számunkra, és a projektnek továbbra is szüksége van a segítségére a következő frissítéshez!
       cuttingdiagram_export: |
-        1462 - Fontos számunkra, hogy az *OpenCutList* alkalmazkodni tudjon a felhasználók nagyon különböző elvárásaihoz a *vágási diagram* funkció terén.
+        1470 - Fontos számunkra, hogy az *OpenCutList* alkalmazkodni tudjon a felhasználók nagyon különböző elvárásaihoz a *vágási diagram* funkció terén.
         A lehetőségek további bővítéséhez szeretnénk lehetővé tenni az elrendezési diagramok exportálását **SVG** és **DXF** formátumban.
         Azzal, hogy biztosítja számunkra az eszközöket ezeken az exportokon való munkához, lehetőséget ad nekünk arra, hogy segítsünk Önnek a legtöbbet kihozni az *OpenCutList*-ből.
     objective_crowdfunding: |
-      1463 - Az új funkciók fejlesztése **Közösségi finanszírozáson** keresztül történik, és akkor kezdődik, amikor a **Pénzügyi cél** teljesül.
+      1471 - Az új funkciók fejlesztése **Közösségi finanszírozáson** keresztül történik, és akkor kezdődik, amikor a **Pénzügyi cél** teljesül.
     objective_thanks: |
-      1464 - Köszönjük a hozzájárulását!
-    objective_funded_progress: 1465 - {{ progress }}%-ban finanszírozva
+      1472 - Köszönjük a hozzájárulását!
+    objective_funded_progress: 1473 - {{ progress }}%-ban finanszírozva
   settings:
-    label: 1466 - Beállítások
-    title: 1467 - Beállítások
-    global_settings: 1468 - Globális beállítások
-    language: 1469 - Nyelv
-    language_auto: 1470 - Automatikus
-    zoom: 1471 - Betűméret
-    zoom_normal: 1472 - Normál
-    zoom_small: 1473 - Kicsi
-    zoom_tiny: 1474 - Nagyon kicsi
-    print_margin: 1475 - Nyomtatási margók
-    print_margin_normal: 1476 - Normál
-    print_margin_small: 1477 - Kicsi
-    table_row_size: 1478 - Táblázat sormagasság
-    table_row_size_normal: 1479 - Normál
-    table_row_size_compact: 1480 - Kompakt
-    size_and_position: 1481 - Ablak mérete és pozíciója
-    model_settings: 1482 - Modell beállítások
-    length_unit: 1483 - Hosszmértékegység
-    length_format: 1484 - Formátum
+    label: 1474 - Beállítások
+    title: 1475 - Beállítások
+    global_settings: 1476 - Globális beállítások
+    language: 1477 - Nyelv
+    language_auto: 1478 - Automatikus
+    zoom: 1479 - Betűméret
+    zoom_normal: 1480 - Normál
+    zoom_small: 1481 - Kicsi
+    zoom_tiny: 1482 - Nagyon kicsi
+    print_margin: 1483 - Nyomtatási margók
+    print_margin_normal: 1484 - Normál
+    print_margin_small: 1485 - Kicsi
+    table_row_size: 1486 - Táblázat sormagasság
+    table_row_size_normal: 1487 - Normál
+    table_row_size_compact: 1488 - Kompakt
+    size_and_position: 1489 - Ablak mérete és pozíciója
+    model_settings: 1490 - Modell beállítások
+    length_unit: 1491 - Hosszmértékegység
+    length_format: 1492 - Formátum
     length_format_0: $t(default.decimal)
-    length_format_1: 1486 - Építészeti
-    length_format_2: 1487 - Mérnöki
+    length_format_1: 1494 - Építészeti
+    length_format_2: 1495 - Mérnöki
     length_format_3: $t(default.fractional)
-    length_precision: 1489 - Pontosság
-    suppress_units_display: 1490 - Hosszmértékegység megjelenítése minden értéknél
-    mass_unit: 1491 - Tömeg mértékegység
-    mass_precision: 1492 - Pontosság
-    currency_symbol: 1493 - Pénznem szimbólum
-    currency_precision: 1494 - Pontosság
+    length_precision: 1497 - Pontosság
+    suppress_units_display: 1498 - Hosszmértékegység megjelenítése minden értéknél
+    mass_unit: 1499 - Tömeg mértékegység
+    mass_precision: 1500 - Pontosság
+    currency_symbol: 1501 - Pénznem szimbólum
+    currency_precision: 1502 - Pontosság
     presets:
-      export_global_presets: 1495 - Beállítások exportálása
+      export_global_presets: 1503 - Beállítások exportálása
       export_global_presets_help: |
-        1496 - Ez a funkció lehetővé teszi a beállítások exportálását egy **.json** fájlba.
+        1504 - Ez a funkció lehetővé teszi a beállítások exportálását egy **.json** fájlba.
         Válassza ki az exportálni kívánt beállításokat.
-      export_global_presets_success: 1497 - A beállítások sikeresen exportálva.
-      import_global_presets: 1498 - Beállítások importálása
+      export_global_presets_success: 1505 - A beállítások sikeresen exportálva.
+      import_global_presets: 1506 - Beállítások importálása
       import_global_presets_help: |
-        1499 - Válassza ki a **.json** fájlból importálni kívánt beállításokat.
+        1507 - Válassza ki a **.json** fájlból importálni kívánt beállításokat.
         Megjegyzés: ha már létezik azonos nevű beállítás, azt felülírja az importált verzió.
       import_global_presets_success: |
-        1500 - Az *OpenCutList* beállítások sikeresen importálva.
+        1508 - Az *OpenCutList* beállítások sikeresen importálva.
         A változtatások érvényesítéséhez **be kell zárnia** és **újra kell nyitnia** az OpenCutList ablakot.
-      dump_global_presets: 1501 - Beállítások mentése
-      dump_model_presets: 1502 - Modell beállítások mentése
-      reset_global_presets: 1503 - Beállítások alaphelyzetbe állítása
+      dump_global_presets: 1509 - Beállítások mentése
+      dump_model_presets: 1510 - Modell beállítások mentése
+      reset_global_presets: 1511 - Beállítások alaphelyzetbe állítása
       reset_global_presets_confirm: |
-        1504 - Az összes mentett *OpenCutList* beállítást alaphelyzetbe fogja állítani.
+        1512 - Az összes mentett *OpenCutList* beállítást alaphelyzetbe fogja állítani.
         Ez a művelet nem vonható vissza. **Minden beállítás elvész.**
         Erősítse meg a folytatáshoz.
       reset_global_presets_success: |
-        1505 - Az *OpenCutList* beállítások alaphelyzetbe állítva.
+        1513 - Az *OpenCutList* beállítások alaphelyzetbe állítva.
         A változtatások érvényesítéséhez **be kell zárnia** és **újra kell nyitnia** az OpenCutList ablakot.
-      reset_model_presets: 1506 - Modell beállítások alaphelyzetbe állítása
+      reset_model_presets: 1514 - Modell beállítások alaphelyzetbe állítása
       reset_model_presets_confirm: |
-        1507 - Az aktuális modell összes *OpenCutList* beállítását alaphelyzetbe fogja állítani.
+        1515 - Az aktuális modell összes *OpenCutList* beállítását alaphelyzetbe fogja állítani.
         Ez a művelet nem vonható vissza. **Minden beállítás visszaáll az alapértelmezett értékre.**
         Erősítse meg a folytatáshoz.
       reset_model_presets_success: |
-        1508 - Az aktuális modell *OpenCutList* beállításai alaphelyzetbe állítva.
+        1516 - Az aktuális modell *OpenCutList* beállításai alaphelyzetbe állítva.
         A változtatások érvényesítéséhez **be kell zárnia** és **újra kell nyitnia** az OpenCutList ablakot.
       error:
-        no_preset_to_export: 1509 - Nincs exportálható beállítás.
-        no_preset_to_import: 1510 - Nincs importálható beállítás.
-        failed_to_import: '1511 - Nem sikerült importálni a beállításokat: **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1512 - Ez a fájl módosítva lett. Nem importálható.
-        failed_to_import_bad_file_format: 1513 - Érvénytelen fájlformátum.
+        no_preset_to_export: 1517 - Nincs exportálható beállítás.
+        no_preset_to_import: 1518 - Nincs importálható beállítás.
+        failed_to_import: '1519 - Nem sikerült importálni a beállításokat: **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1520 - Ez a fájl módosítva lett. Nem importálható.
+        failed_to_import_bad_file_format: 1521 - Érvénytelen fájlformátum.
   about:
-    label: 1514 - Névjegy
-    title: 1515 - Névjegy
-    version: 1516 - Verzió
-    credits: 1517 - Technikai közreműködők
+    label: 1522 - Névjegy
+    title: 1523 - Névjegy
+    version: 1524 - Verzió
+    credits: 1525 - Technikai közreműködők
     credits_authors: |
-      1518 - Az *OpenCutList*-et [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) és [Martin Müller](https://www.lairdubois.fr/@mobilarte) fejleszti. *Az összes [közreműködő](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) listája*.
-    credits_translations: 1519 - Fordítások
+      1526 - Az *OpenCutList*-et [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) és [Martin Müller](https://www.lairdubois.fr/@mobilarte) fejleszti. *Az összes [közreműködő](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) listája*.
+    credits_translations: 1527 - Fordítások
     credits_translators: |
-      1520 - - Zoltán Nagy (*magyar*)
+      1528 - - Zoltán Nagy (*magyar*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*angol*, *német*)
       - Gildas Boureau (*francia* dokumentáció)
       - Vladimir Badulya (*orosz*)
@@ -1888,213 +1898,213 @@ tab:
       - [刘涛](https://www.liutao91.cn) (*egyszerűsített kínai*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holland*)
     credits_description: |
-      1521 - A bővítmény fejlesztése az [L'Air du Bois](https://www.lairdubois.fr) megosztási platform projekthez kapcsolódik.
+      1529 - A bővítmény fejlesztése az [L'Air du Bois](https://www.lairdubois.fr) megosztási platform projekthez kapcsolódik.
       Ez a bővítmény szintén *nyílt forráskódú* és elérhető [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licenc alatt a [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension)-on.
-    credits_runtime: 1522 - Futtatókörnyezet
-    credits_development: 1523 - Fejlesztői környezet
+    credits_runtime: 1530 - Futtatókörnyezet
+    credits_development: 1531 - Fejlesztői környezet
     credits_vendors: |
-      1524 - A kaland nem lenne lehetséges a következő *nyílt forráskódú* komponensek szerzőinek munkája nélkül:
+      1532 - A kaland nem lenne lehetséges a következő *nyílt forráskódú* komponensek szerzőinek munkája nélkül:
     credits_thanks: |
-      1525 - Külön köszönet:
+      1533 - Külön köszönet:
       - A [JetBrains](https://www.jetbrains.com)-nek a projekthez nyújtott támogatásukért [Ingyenes Nyílt Forráskódú Licenc](https://www.jetbrains.com/buy/opensource/) formájában.
       - A [Transifex](https://www.transifex.com)-nek a nyílt forráskódú projektek támogatásáért.
       - A [GitBook](https://www.gitbook.com)-nak a nyílt forráskódú projektek támogatásáért.
 tool:
   default:
-    transparency: 1526 - Átlátszóság
-    zoom_extents: 1527 - Teljes nézet
-    toggle_depth: 1528 - Háttér alkatrészek
-    more: 1529 - Több
-    end_point: 1530 - Vége
-    middle_point: 1531 - Középső pont
-    third_point: '1532 - '
-    vcb_length: 1533 - Hosszúság
-    vcb_size: '1534 - '
-    vcb_radius: 1535 - Radius
-    vcb_diameter: 1536 - Átmérő
-    vcb_distance: 1537 - Távolság
+    transparency: 1534 - Átlátszóság
+    zoom_extents: 1535 - Teljes nézet
+    toggle_depth: 1536 - Háttér alkatrészek
+    more: 1537 - Több
+    end_point: 1538 - Vége
+    middle_point: 1539 - Középső pont
+    third_point: '1540 - '
+    vcb_length: 1541 - Hosszúság
+    vcb_size: '1542 - '
+    vcb_radius: 1543 - Radius
+    vcb_diameter: 1544 - Átmérő
+    vcb_distance: 1545 - Távolság
     error:
-      no_direction: '1538 - '
-      invalid_length: '1539 - '
-      invalid_multiplicator: '1540 - '
-      invalid_divider: '1541 - '
-      invalid_offset: '1542 - '
-      invalid_segment_count: '1543 - '
+      no_direction: '1546 - '
+      invalid_length: '1547 - '
+      invalid_multiplicator: '1548 - '
+      invalid_divider: '1549 - '
+      invalid_offset: '1550 - '
+      invalid_segment_count: '1551 - '
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1546 - Rajzol
-    action_0: '1547 - '
-    action_0_status: '1548 - '
-    action_0_state_1_status: '1549 - '
-    action_1: '1550 - '
-    action_1_status: '1551 - '
-    action_1_state_1_radius_status: '1552 - '
-    action_1_state_1_diameter_status: '1553 - '
-    action_2: '1554 - '
-    action_2_status: '1555 - '
-    action_2_state_1_status: '1556 - '
-    action_x_state_2_status: '1557 - '
-    action_option_group_offset: 1558 - Eltolás
-    action_option_group_segments: '1559 - '
-    action_option_group_options: 1560 - Beállítások
-    action_option_offset_shape_offset: 1561 - Eltolás
-    action_option_offset_shape_offset_status: '1562 - '
-    action_option_segments_segment_count: '1563 - '
-    action_option_segments_segment_count_status: '1564 - '
-    action_option_options_construction: '1565 - '
-    action_option_options_construction_status: '1566 - '
-    action_option_options_rectangle_centered: '1567 - '
-    action_option_options_rectangle_centered_status: '1568 - '
-    action_option_options_smoothing: 1569 - Simítás
-    action_option_options_smoothing_status: '1570 - '
-    action_option_options_measure_from_vertex_status: '1571 - '
-    action_option_options_measure_from_diameter: '1572 - '
-    action_option_options_measure_from_diameter_status: '1573 - '
-    action_option_options_measure_from_radius_status: '1574 - '
-    action_option_options_measure_reversed: '1575 - '
-    action_option_options_measure_reversed_status: '1576 - '
-    action_option_options_pull_centered: '1577 - '
-    action_option_options_pull_centered_status: '1578 - '
-    action_option_options_ask_name: '1579 - '
-    action_option_options_ask_name_status: '1580 - '
-    action_measure_locked_status: '1581 - '
-    action_toggle_move_copy_status: '1582 - '
-    action_change_move_anchor_status: '1583 - '
+    title: 1554 - Rajzol
+    action_0: '1555 - '
+    action_0_status: '1556 - '
+    action_0_state_1_status: '1557 - '
+    action_1: '1558 - '
+    action_1_status: '1559 - '
+    action_1_state_1_radius_status: '1560 - '
+    action_1_state_1_diameter_status: '1561 - '
+    action_2: '1562 - '
+    action_2_status: '1563 - '
+    action_2_state_1_status: '1564 - '
+    action_x_state_2_status: '1565 - '
+    action_option_group_offset: 1566 - Eltolás
+    action_option_group_segments: '1567 - '
+    action_option_group_options: 1568 - Beállítások
+    action_option_offset_shape_offset: 1569 - Eltolás
+    action_option_offset_shape_offset_status: '1570 - '
+    action_option_segments_segment_count: '1571 - '
+    action_option_segments_segment_count_status: '1572 - '
+    action_option_options_construction: '1573 - '
+    action_option_options_construction_status: '1574 - '
+    action_option_options_rectangle_centered: '1575 - '
+    action_option_options_rectangle_centered_status: '1576 - '
+    action_option_options_smoothing: 1577 - Simítás
+    action_option_options_smoothing_status: '1578 - '
+    action_option_options_measure_from_vertex_status: '1579 - '
+    action_option_options_measure_from_diameter: '1580 - '
+    action_option_options_measure_from_diameter_status: '1581 - '
+    action_option_options_measure_from_radius_status: '1582 - '
+    action_option_options_measure_reversed: '1583 - '
+    action_option_options_measure_reversed_status: '1584 - '
+    action_option_options_pull_centered: '1585 - '
+    action_option_options_pull_centered_status: '1586 - '
+    action_option_options_ask_name: '1587 - '
+    action_option_options_ask_name_status: '1588 - '
+    action_measure_locked_status: '1589 - '
+    action_toggle_move_copy_status: '1590 - '
+    action_change_move_anchor_status: '1591 - '
     success:
-      part_created: '1584 - '
+      part_created: '1592 - '
   smart_handle:
-    title: '1585 - '
-    action_0: '1586 - '
-    action_0_status: '1587 - '
-    action_1: '1588 - '
-    action_1_status: '1589 - '
+    title: '1593 - '
+    action_0: '1594 - '
+    action_0_status: '1595 - '
+    action_1: '1596 - '
+    action_1_status: '1597 - '
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: '1591 - '
-    action_2: '1592 - '
-    action_2_status: '1593 - '
+    action_1_state_2_status: '1599 - '
+    action_2: '1600 - '
+    action_2_status: '1601 - '
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: '1595 - '
-    action_3: '1596 - '
-    action_3_status: '1597 - '
+    action_2_state_2_status: '1603 - '
+    action_3: '1604 - '
+    action_3_status: '1605 - '
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: '1599 - '
-    action_4: '1600 - '
-    action_4_status: '1601 - '
+    action_3_state_2_status: '1607 - '
+    action_4: '1608 - '
+    action_4_status: '1609 - '
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: '1603 - '
-    action_4_state_2_status: '1604 - '
-    action_5: '1605 - '
-    action_option_group_copy_measure_type: '1606 - '
-    action_option_group_move_measure_type: '1607 - '
-    action_option_group_axes: 1608 - Tengelyek
-    action_option_group_options: 1609 - Beállítások
-    action_option_copy_measure_type_outside_status: '1610 - '
-    action_option_copy_measure_type_centered_status: '1611 - '
-    action_option_copy_measure_type_inside_status: '1612 - '
-    action_option_move_measure_type_outside_status: '1613 - '
-    action_option_move_measure_type_centered_status: '1614 - '
-    action_option_move_measure_type_inside_status: '1615 - '
-    action_option_axes_active_status: '1616 - '
-    action_option_axes_context_status: '1617 - '
-    action_option_axes_entity_status: '1618 - '
-    action_option_options_mirror_status: '1619 - '
+    action_4_state_1_status: '1611 - '
+    action_4_state_2_status: '1612 - '
+    action_5: '1613 - '
+    action_option_group_copy_measure_type: '1614 - '
+    action_option_group_move_measure_type: '1615 - '
+    action_option_group_axes: 1616 - Tengelyek
+    action_option_group_options: 1617 - Beállítások
+    action_option_copy_measure_type_outside_status: '1618 - '
+    action_option_copy_measure_type_centered_status: '1619 - '
+    action_option_copy_measure_type_inside_status: '1620 - '
+    action_option_move_measure_type_outside_status: '1621 - '
+    action_option_move_measure_type_centered_status: '1622 - '
+    action_option_move_measure_type_inside_status: '1623 - '
+    action_option_axes_active_status: '1624 - '
+    action_option_axes_context_status: '1625 - '
+    action_option_axes_entity_status: '1626 - '
+    action_option_options_mirror_status: '1627 - '
     warning:
-      copies_disable_mirror: '1620 - '
+      copies_disable_mirror: '1628 - '
     error:
-      min_distance: '1621 - '
+      min_distance: '1629 - '
   smart_paint:
-    title: 1622 - Festés
-    default_material: 1623 - Nincs definiált anyag
-    filters: 1624 - Szűrők
-    filter_0: 1625 - Típus nélkül
+    title: 1630 - Festés
+    default_material: 1631 - Nincs definiált anyag
+    filters: 1632 - Szűrők
+    filter_0: 1633 - Típus nélkül
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1632 - Alkatrészek festése
-    action_0_status: 1633 - Kattintson egy alkatrészre annak példányának festéséhez
-    action_1: 1634 - Élek festése
-    action_1_status: 1635 - Kattintson egy panel élére a '$t(tab.materials.type_4)' anyag alkalmazásához
-    action_2: 1636 - Felületek festése
-    action_2_status: 1637 - Kattintson egy panel felületére a '$t(tab.materials.type_6)' anyag alkalmazásához
-    action_3: 1638 - Mintavétel
-    action_3_status: 1639 - Kattintson egy felületre az anyagának mintavételezéséhez
-    action_4: 1640 - Tisztítás
-    action_4_status: 1641 - Kattintson egy alkatrészre az összes anyag eltávolításához annak definíciójából és minden példányából
-    action_option_group_instances: 1642 - Példányok száma
-    action_option_group_edges: 1643 - Élzárók száma
-    action_option_group_faces: 1644 - Felületek száma
-    action_option_instances_0_status: 1645 - Csak a célalkatrész példányának színezése
-    action_option_instances_1_status: 1646 - A célalkatrész minden példányának színezése
-    action_option_edges_0_status: 1647 - Csak a célél színezése
-    action_option_edges_1_status: 1648 - A célél és az alkatrész szemközti élének színezése
-    action_option_edges_2_status: 1649 - A célalkatrész mind a 4 élének színezése
-    action_option_faces_0_status: 1650 - Csak a célfelület színezése
-    action_option_faces_1_status: 1651 - A célalkatrész mindkét felületének színezése
-    edges: 1652 - {{ count }} él
-    edges_plural: 1653 - {{ count }} él
-    edge_ymin: 1654 - Hossz 1
-    edge_ymax: 1655 - Hossz 2
-    edge_xmin: 1656 - Szélesség 1
-    edge_xmax: 1657 - Szélesség 2
-    faces: 1658 - {{ count }} felület
-    faces_plural: 1659 - {{ count }} felület
-    face_zmin: 1660 - Hátoldal
-    face_zmax: 1661 - Előlap
+    action_0: 1640 - Alkatrészek festése
+    action_0_status: 1641 - Kattintson egy alkatrészre annak példányának festéséhez
+    action_1: 1642 - Élek festése
+    action_1_status: 1643 - Kattintson egy panel élére a '$t(tab.materials.type_4)' anyag alkalmazásához
+    action_2: 1644 - Felületek festése
+    action_2_status: 1645 - Kattintson egy panel felületére a '$t(tab.materials.type_6)' anyag alkalmazásához
+    action_3: 1646 - Mintavétel
+    action_3_status: 1647 - Kattintson egy felületre az anyagának mintavételezéséhez
+    action_4: 1648 - Tisztítás
+    action_4_status: 1649 - Kattintson egy alkatrészre az összes anyag eltávolításához annak definíciójából és minden példányából
+    action_option_group_instances: 1650 - Példányok száma
+    action_option_group_edges: 1651 - Élzárók száma
+    action_option_group_faces: 1652 - Felületek száma
+    action_option_instances_0_status: 1653 - Csak a célalkatrész példányának színezése
+    action_option_instances_1_status: 1654 - A célalkatrész minden példányának színezése
+    action_option_edges_0_status: 1655 - Csak a célél színezése
+    action_option_edges_1_status: 1656 - A célél és az alkatrész szemközti élének színezése
+    action_option_edges_2_status: 1657 - A célalkatrész mind a 4 élének színezése
+    action_option_faces_0_status: 1658 - Csak a célfelület színezése
+    action_option_faces_1_status: 1659 - A célalkatrész mindkét felületének színezése
+    edges: 1660 - {{ count }} él
+    edges_plural: 1661 - {{ count }} él
+    edge_ymin: 1662 - Hossz 1
+    edge_ymax: 1663 - Hossz 2
+    edge_xmin: 1664 - Szélesség 1
+    edge_xmax: 1665 - Szélesség 2
+    faces: 1666 - {{ count }} felület
+    faces_plural: 1667 - {{ count }} felület
+    face_zmin: 1668 - Hátoldal
+    face_zmax: 1669 - Előlap
     warning:
-      no_material: 1662 - Nincs anyag
-      no_material_type: 1663 - Nincs '{{ type }}' típusú anyag
+      no_material: 1670 - Nincs anyag
+      no_material_type: 1671 - Nincs '{{ type }}' típusú anyag
     error:
-      not_part: 1664 - A célobjektum nem alkatrész (komponens)
-      not_edge: 1665 - A célfelület nem panelél
-      not_face: 1666 - A célfelület nem panelfelület
-      wrong_material_type: 1667 - A célalkatrésznek '{{ type }}' típusúnak kell lennie
+      not_part: 1672 - A célobjektum nem alkatrész (komponens)
+      not_edge: 1673 - A célfelület nem panelél
+      not_face: 1674 - A célfelület nem panelfelület
+      wrong_material_type: 1675 - A célalkatrésznek '{{ type }}' típusúnak kell lennie
   smart_axes:
-    title: 1668 - Tájolás
-    action_0: 1669 - Átfordítás
-    action_0_status: 1670 - Kattintson egy alkatrészre annak példányának átfordításához valamelyik mérete mentén
-    action_1: 1671 - Hossz ↔ Szélesség csere
-    action_1_status: 1672 - Kattintson egy alkatrészre a Hosszának és Szélességének felcseréléséhez
-    action_2: 1673 - Elő- ↔ hátlap csere
-    action_2_status: 1674 - Kattintson egy alkatrészre az elő- és hátlapjának felcseréléséhez
-    action_3: 1675 - Tengelyek igazítása
-    action_3_status: 1676 - Kattintson egy alkatrész felületére vagy élére a tengelyeinek igazításához
-    action_4: 1677 - Eredet áthelyezése
-    action_4_status: '1678 - '
-    action_option_group_direction: 1679 - Irány
-    action_option_direction_0: 1680 - H
-    action_option_direction_1: 1681 - SZ
-    action_option_direction_2: 1682 - V
-    action_option_direction_0_status: 1683 - Alkatrész átfordítása hosszirányban
-    action_option_direction_1_status: 1684 - Alkatrész átfordítása szélességirányban
-    action_option_direction_2_status: 1685 - Alkatrész átfordítása vastagsága mentén
+    title: 1676 - Tájolás
+    action_0: 1677 - Átfordítás
+    action_0_status: 1678 - Kattintson egy alkatrészre annak példányának átfordításához valamelyik mérete mentén
+    action_1: 1679 - Hossz ↔ Szélesség csere
+    action_1_status: 1680 - Kattintson egy alkatrészre a Hosszának és Szélességének felcseréléséhez
+    action_2: 1681 - Elő- ↔ hátlap csere
+    action_2_status: 1682 - Kattintson egy alkatrészre az elő- és hátlapjának felcseréléséhez
+    action_3: 1683 - Tengelyek igazítása
+    action_3_status: 1684 - Kattintson egy alkatrész felületére vagy élére a tengelyeinek igazításához
+    action_4: 1685 - Eredet áthelyezése
+    action_4_status: '1686 - '
+    action_option_group_direction: 1687 - Irány
+    action_option_direction_0: 1688 - H
+    action_option_direction_1: 1689 - SZ
+    action_option_direction_2: 1690 - V
+    action_option_direction_0_status: 1691 - Alkatrész átfordítása hosszirányban
+    action_option_direction_1_status: 1692 - Alkatrész átfordítása szélességirányban
+    action_option_direction_2_status: 1693 - Alkatrész átfordítása vastagsága mentén
     warning:
-      more_entities: 1686 - {{ count_used }} azonos definíciót használó példány módosul
+      more_entities: 1694 - {{ count_used }} azonos definíciót használó példány módosul
     error:
-      not_part: 1687 - A célobjektum nem alkatrész (komponens)
-      not_orientable: 1688 - Ennek az alkatrésznek a típusa nem teszi lehetővé a tájolását
+      not_part: 1695 - A célobjektum nem alkatrész (komponens)
+      not_orientable: 1696 - Ennek az alkatrésznek a típusa nem teszi lehetővé a tájolását
   smart_export:
-    title: 1689 - Exportálás
-    action_0: 1690 - 3D alkatrész exportálása
-    action_0_status: 1691 - Kattintson egy alkatrészre
-    action_1: 1692 - 2D alkatrész exportálása
-    action_1_status: 1693 - Kattintson egy alkatrész felületére
-    action_2: 1694 - Felület exportálása
-    action_2_status: 1695 - Kattintson egy felületre
-    action_3: 1696 - Útvonal exportálása
-    action_3_status: 1697 - Kattintson egy élre
-    action_option_group_file_format: 1698 - Formátum
-    action_option_group_unit: 1699 - Mértékegység
-    action_option_group_faces: 1700 - Felületek
-    action_option_group_options: 1701 - Beállítások
-    action_option_file_format_dxf_status: 1702 - Exportálás DXF fájlba
-    action_option_file_format_stl_status: 1703 - Exportálás STL fájlba
-    action_option_file_format_obj_status: 1704 - Exportálás OBJ fájlba
-    action_option_file_format_svg_status: 1705 - Exportálás SVG fájlba
+    title: 1697 - Exportálás
+    action_0: 1698 - 3D alkatrész exportálása
+    action_0_status: 1699 - Kattintson egy alkatrészre
+    action_1: 1700 - 2D alkatrész exportálása
+    action_1_status: 1701 - Kattintson egy alkatrész felületére
+    action_2: 1702 - Felület exportálása
+    action_2_status: 1703 - Kattintson egy felületre
+    action_3: 1704 - Útvonal exportálása
+    action_3_status: 1705 - Kattintson egy élre
+    action_option_group_file_format: 1706 - Formátum
+    action_option_group_unit: 1707 - Mértékegység
+    action_option_group_faces: 1708 - Felületek
+    action_option_group_options: 1709 - Beállítások
+    action_option_file_format_dxf_status: 1710 - Exportálás DXF fájlba
+    action_option_file_format_stl_status: 1711 - Exportálás STL fájlba
+    action_option_file_format_obj_status: 1712 - Exportálás OBJ fájlba
+    action_option_file_format_svg_status: 1713 - Exportálás SVG fájlba
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2104,9 +2114,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1715 - Átmenő furatok elkülönítése és mélységek egyesítése minden üreghez
-    action_option_options_include_paths_status: 1716 - Az alkatrészben lévő nem-felület élek exportálása útvonalként
+    action_option_options_merge_holes_status: 1723 - Átmenő furatok elkülönítése és mélységek egyesítése minden üreghez
+    action_option_options_include_paths_status: 1724 - Az alkatrészben lévő nem-felület élek exportálása útvonalként
     error:
-      not_part: 1717 - Ez a felület nem tartozik alkatrészhez (komponenshez)
-      not_flat_face: 1718 - Ez a felület nem sík
-      incompatible_active_path: 1719 - Az aktív útvonal nem teszi lehetővé ennek az alkatrésznek az exportálását
+      not_part: 1725 - Ez a felület nem tartozik alkatrészhez (komponenshez)
+      not_flat_face: 1726 - Ez a felület nem sík
+      incompatible_active_path: 1727 - Az aktív útvonal nem teszi lehetővé ennek az alkatrésznek az exportálását
