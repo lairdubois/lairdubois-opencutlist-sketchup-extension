@@ -1249,7 +1249,7 @@
 
                 const steps = response.steps
 
-                that.dialog.startProgress(response.steps,
+                that.dialog.startProgress(steps,
                     function () {
                         rubyCallCommand('cutlist_estimate_cancel');
                     },
@@ -1258,7 +1258,7 @@
                     }
                 );
 
-                let fnCreateSlide = function (response) {
+                const fnCreateSlide = function (response) {
 
                     let $slide = that.pushNewSlide('ladb_cutlist_slide_estimate', 'tabs/cutlist/_slide-estimate.twig', {
                         capabilities: that.dialog.capabilities,
@@ -1439,7 +1439,7 @@
                                             solution: response.solution
                                         }));
                                         if (response.run_index === steps - 1) {
-                                            that.dialog.changeNextBtnLabelProgress(i18next.t('default.stop'));
+                                            that.dialog.changeNextBtnLabelProgress(i18next.t('default.stop'), 'stop');
                                         }
                                     }
                                 }
@@ -2438,8 +2438,6 @@
                 const $editorScrapBinSizes = $('#ladb_editor_scrap_bin_sizes', $modal);
                 const $btnsProblemType = $('label.btn-radio', $modal);
                 const $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
-                const $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
-                const $selectObjective = $('#ladb_select_objective', $modal);
                 const $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
                 const $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
                 const $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
@@ -2461,6 +2459,8 @@
                 const $selectColorization = $('#ladb_select_colorization', $modal);
                 const $selectHighlightPrimaryCuts = $('#ladb_select_highlight_primary_cuts', $modal);
                 const $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
+                const $selectObjective = $('#ladb_select_objective', $modal);
+                const $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
                 const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 const $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
                 const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
@@ -2625,8 +2625,6 @@
                     })
                     .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes)
                 ;
-                $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectRectangleguillotineNumberOfStages.selectpicker(SELECT_PICKER_OPTIONS);
@@ -2692,6 +2690,8 @@
                 $selectColorization.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS)
                 $inputTimeLimit.ladbTextinputText();
                 $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
                 $selectVerbosityLevel.selectpicker(SELECT_PICKER_OPTIONS);

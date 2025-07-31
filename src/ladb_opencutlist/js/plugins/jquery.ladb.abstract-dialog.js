@@ -94,15 +94,18 @@ LadbAbstractDialog.prototype.getSetting = function (key, defaultValue) {
 
 LadbAbstractDialog.prototype.startProgress = function (maxSteps, cancelCallback, nextCallback) {
 
-    this.progressMaxSteps = Math.max(1, maxSteps);
+    this.progressMaxSteps = Math.max(0, maxSteps);
     this.progressStep = 0;
 
     this.$progress = $(Twig.twig({ref: 'core/_progress.twig'}).render({
-        hiddenProgressBar: true,
+        hiddenProgressBar: this.progressMaxSteps > 0,
         noCancelButton: typeof cancelCallback != 'function',
         noNextButton: typeof nextCallback != 'function'
     }));
-    this.$progressBar = $('.progress-bar', this.$progress);
+    this.$progressBar = $('.progress-bar:last-child', this.$progress);
+    if (this.progressMaxSteps === 0) {
+        this.$progressBar.css('width', '100%');
+    }
     if (typeof cancelCallback == 'function') {
         $('.ladb-progress-btn-cancel', this.$progress).on('click', cancelCallback);
     }
@@ -126,14 +129,14 @@ LadbAbstractDialog.prototype.cancelProgress = function () {
 }
 
 LadbAbstractDialog.prototype.incProgress = function (step) {
-    if (this.$progress) {
+    if (this.$progress && this.progressMaxSteps > 0) {
         this.progressStep = Math.min(this.progressMaxSteps, this.progressStep + step);
         this.setProgress(this.progressStep);
     }
 };
 
 LadbAbstractDialog.prototype.setProgress = function (step) {
-    if (this.$progress) {
+    if (this.$progress && this.progressMaxSteps > 0) {
         this.progressStep = Math.min(this.progressMaxSteps, step);
         this.$progressBar.css('width', ((this.progressStep / this.progressMaxSteps) * 100) + '%');
         $('.progress', this.$progress).show();
@@ -164,15 +167,15 @@ LadbAbstractDialog.prototype.changeLabelProgress = function (html) {
     }
 };
 
-LadbAbstractDialog.prototype.changeCancelBtnLabelProgress = function (html) {
+LadbAbstractDialog.prototype.changeCancelBtnLabelProgress = function (text, icon = 'stop') {
     if (this.$progress) {
-        $('.ladb-progress-btn-cancel', this.$progress).html(html);
+        $('.ladb-progress-btn-cancel', this.$progress).html("<i class='ladb-opencutlist-icon-" + icon + "'></i> " + text);
     }
 };
 
-LadbAbstractDialog.prototype.changeNextBtnLabelProgress = function (html) {
+LadbAbstractDialog.prototype.changeNextBtnLabelProgress = function (text, icon = 'skip-forward') {
     if (this.$progress) {
-        $('.ladb-progress-btn-next', this.$progress).html(html);
+        $('.ladb-progress-btn-next', this.$progress).html("<i class='ladb-opencutlist-icon-" + icon + "'></i> " + text);
     }
 };
 

@@ -223,8 +223,8 @@ module Ladb::OpenCutList
                    scrap_bin_2d_sizes: '',
 
                    problem_type: Packy::PROBLEM_TYPE_RECTANGLEGUILLOTINE,
-                   optimization_mode: Packy::OPTIMIZATION_MODE_AUTO,
                    objective: Packy::OBJECTIVE_AUTO,
+                   optimization_mode: Packy::OPTIMIZATION_MODE_AUTO,
                    spacing: '20mm',
                    trimming: '10mm',
                    time_limit: 20,
@@ -265,11 +265,11 @@ module Ladb::OpenCutList
       @scrap_bin_2d_sizes = DimensionUtils.dxdxq_to_ifloats(scrap_bin_2d_sizes)
 
       @problem_type = problem_type
-      @optimization_mode = optimization_mode
       @objective = objective
+      @optimization_mode = optimization_mode
       @spacing = DimensionUtils.str_to_ifloat(spacing).to_l.to_f
       @trimming = DimensionUtils.str_to_ifloat(trimming).to_l.to_f
-      @time_limit = [ 1 , time_limit.to_i ].max
+      @time_limit = Plugin::IS_RBZ ? 300 : [ 0 , time_limit.to_i ].max # Only dev from src uses custom time limit
       @not_anytime_tree_search_queue_size = [ 1 , not_anytime_tree_search_queue_size.to_i ].max
       @verbosity_level = verbosity_level.to_i
       @input_to_json_bin_dir = input_to_json_bin_dir
@@ -512,10 +512,10 @@ module Ladb::OpenCutList
                              else
                                @optimization_mode
                              end,
-          time_limit: @time_limit,
           not_anytime_tree_search_queue_size: @not_anytime_tree_search_queue_size,
           verbosity_level: @verbosity_level
         }
+        parameters.merge!({ time_limit: @time_limit }) if @time_limit > 0 # time_limit = 0 == not time limit
         instance_parameters = {}
         if @problem_type == Packy::PROBLEM_TYPE_RECTANGLE || @problem_type == Packy::PROBLEM_TYPE_ONEDIMENSIONAL
           instance_parameters = {

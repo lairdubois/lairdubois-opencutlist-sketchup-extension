@@ -39,7 +39,7 @@
     "colorization": 1, /* COLORIZATION_SCREEN */
     "highlight_primary_cuts": false,
     "hide_edges_preview": true,
-    "time_limit": 20,
+    "time_limit": 0,
     "not_anytime_tree_search_queue_size": 16,
     "verbosity_level": 0,
     "input_to_json_bin_dir": "",

@@ -62,18 +62,27 @@ module Ladb::OpenCutList::Fiddle
 
         raise "'#{_lib_name}' lib not found : #{lib_path}" unless File.exist?(lib_path)
 
-        # Copy lib to temp dir for 2 reasons:
-        # - The system locks the file after loading. By uploading a copy, the file can still be updated.
-        # - Fiddle lib loader seems to have troubles with non-ASCII encoded path :( -> temp dir is short file name compatible.
+        if Ladb::OpenCutList::Plugin::IS_RBZ
 
-        tmp_lib_dir = File.join(Ladb::OpenCutList::PLUGIN.temp_dir, 'fiddle')
-        tmp_lib_path = File.join(tmp_lib_dir, "#{Ladb::OpenCutList::EXTENSION_BUILD}_#{lib_file}")
+          # Copy lib to temp dir for 2 reasons:
+          # - The system locks the file after loading. By uploading a copy, the file can still be updated.
+          # - Fiddle lib loader seems to have troubles with non-ASCII encoded path :( -> temp dir is short file name compatible.
 
-        # Create directory if it doesn't exist
-        Dir.mkdir(tmp_lib_dir) unless Dir.exist?(tmp_lib_dir)
+          tmp_lib_dir = File.join(Ladb::OpenCutList::PLUGIN.temp_dir, 'fiddle')
+          tmp_lib_path = File.join(tmp_lib_dir, "#{Ladb::OpenCutList::EXTENSION_BUILD}_#{lib_file}")
 
-        # Copy lib (preserve = true to keep file if it exists and avoid error if already loaded and locked by the system.)
-        FileUtils.copy_file(lib_path, tmp_lib_path, true)
+          # Create directory if it doesn't exist
+          Dir.mkdir(tmp_lib_dir) unless Dir.exist?(tmp_lib_dir)
+
+          # Copy lib (preserve = true to keep file if it exists and avoid error if already loaded and locked by the system.)
+          FileUtils.copy_file(lib_path, tmp_lib_path, true)
+
+        else
+
+          # Load lib from SRC
+          tmp_lib_path = lib_path
+
+        end
 
         # Load lib
         dlload(tmp_lib_path)

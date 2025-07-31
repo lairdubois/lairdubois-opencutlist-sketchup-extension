@@ -5,7 +5,7 @@
             <div class="ladb-progress-btn-group">
                 {% if not noNextButton|default(false) %}
                     <span class="ladb-progress-step" style="color:#fff;"></span>
-                    <button class="btn btn-xs ladb-progress-btn-next">{{ 'default.next'|i18next }}</button>
+                    <button class="btn btn-xs ladb-progress-btn-next"><i class="ladb-opencutlist-icon-skip-forward"></i> {{ 'default.next'|i18next }}</button>
                 {% endif %}
                 {% if not noCancelButton|default(false) %}
                     <button class="btn btn-xs ladb-progress-btn-cancel">{{ 'default.cancel'|i18next }}</button>
@@ -14,7 +14,7 @@
             <div class="ladb-progress-label text-{% if noCancelButton and noNextButton %}center{% else %}left{% endif %}">{{ 'core.progress.please_wait'|i18next }}...</div>
         </div>
         <div class="progress"{% if hiddenProgressBar|default(false) %} style="display: none"{% endif %}>
-            <div class="progress-bar" style="width:0;"></div>
+            <div class="progress-bar progress-bar-striped active" style="width:0;"></div>
         </div>
     </div>
 </div>
