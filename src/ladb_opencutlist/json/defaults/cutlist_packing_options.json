@@ -21,8 +21,6 @@
     "scrap_bin_1d_sizes": "",
     "scrap_bin_2d_sizes": "",
     "problem_type": "rectangleguillotine",
-    "optimization_mode": "auto",
-    "objective": "auto",
     "rectangleguillotine_cut_type": "non-exact",
     "rectangleguillotine_number_of_stages": 3,
     "rectangleguillotine_first_stage_orientation": "any",
@@ -39,6 +37,8 @@
     "colorization": 1, /* COLORIZATION_SCREEN */
     "highlight_primary_cuts": false,
     "hide_edges_preview": true,
+    "objective": "auto",
+    "optimization_mode": "auto",
     "time_limit": 0,
     "not_anytime_tree_search_queue_size": 16,
     "verbosity_level": 0,

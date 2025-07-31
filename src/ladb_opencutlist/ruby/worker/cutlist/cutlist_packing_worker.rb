@@ -227,7 +227,7 @@ module Ladb::OpenCutList
                    optimization_mode: Packy::OPTIMIZATION_MODE_AUTO,
                    spacing: '20mm',
                    trimming: '10mm',
-                   time_limit: 20,
+                   time_limit: 0,
                    not_anytime_tree_search_queue_size: 16,
                    verbosity_level: 0,
                    input_to_json_bin_dir: '',
@@ -250,6 +250,8 @@ module Ladb::OpenCutList
                    irregular_allow_mirroring: false,
 
                    hide_material_colors: false,
+
+                   no_cache: false,
 
                    hidden_group_ids: []   # Unused locally, but necessary for UI
 
@@ -300,6 +302,8 @@ module Ladb::OpenCutList
       @irregular_allow_mirroring = irregular_allow_mirroring
 
       @hide_material_colors = hide_material_colors
+
+      @no_cache = no_cache
 
       # Internals
 
@@ -572,7 +576,7 @@ module Ladb::OpenCutList
         end
 
         Packy.optimize_cancel_all
-        output = Packy.optimize_start(input)
+        output = Packy.optimize_start(input, @no_cache)
 
         @_run_id = output.fetch('run_id', nil)
 
