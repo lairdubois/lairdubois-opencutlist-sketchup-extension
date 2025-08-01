@@ -164,7 +164,7 @@
                         </small>
                     </td>
                 </tr>
-                {% if solution.bins|length > 1 %}
+                {% if solution.bins|length > 1 and solution.bins|length < 12 %}
                     <tr>
                         <td colspan="{{ 5 + dimensionColumnOrderStrategy|length }}">
                             <div class="ladb-cutlist-packing-preview">
