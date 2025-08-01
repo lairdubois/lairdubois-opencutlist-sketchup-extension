@@ -2588,179 +2588,7 @@
                     }, options));
 
                 };
-
-                $widgetPreset.ladbWidgetPreset({
-                    dialog: that.dialog,
-                    dictionary: 'cutlist_packing_options',
-                    fnFetchOptions: fnFetchOptions,
-                    fnFillInputs: fnFillInputs
-                });
-                $editorStdBinSizes
-                    .ladbEditorSizes({
-                        format: group.material_is_1d ? FORMAT_D : FORMAT_D_D,
-                        d1Placeholder: i18next.t('default.length'),
-                        d2Placeholder: i18next.t('default.width'),
-                        qPlaceholder: '∞',
-                        qHidden: false,
-                        emptyVal: '0',
-                        dropdownActionLabel: '<i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.packing.option_std_bin_' + (group.material_is_1d ? '1' : '2') + 'd_add'),
-                        dropdownActionCallback: function () {
-                            fnEditMaterial({
-                                callback: function ($editMaterialModal) {
-                                    setTimeout(function () {
-                                        $('#ladb_materials_editor_std_' + (group.material_is_1d ? 'lengths' : 'sizes'), $editMaterialModal).ladbEditorSizes('appendRow', [{}, {autoFocus: true}]);
-                                    }, 200);
-                                }
-                            })
-                        }
-                    })
-                    .ladbEditorSizes('setAvailableSizesAndSizes', [ group.material_is_1d ? response.std_lengths : response.std_sizes, group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes ])
-                ;
-                $editorScrapBinSizes
-                    .ladbEditorSizes({
-                        format: group.material_is_1d ? FORMAT_D_Q : FORMAT_D_D_Q,
-                        d1Placeholder: i18next.t('default.length'),
-                        d2Placeholder: i18next.t('default.width'),
-                        emptyVal: '0'
-                    })
-                    .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes)
-                ;
-                $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectRectangleguillotineNumberOfStages.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputRectangleguillotineKeepSize.ladbTextinputSize({
-                    resetValue: '',
-                    d1Placeholder: i18next.t('default.length'),
-                    d2Placeholder: i18next.t('default.width'),
-                    qDisabled: true,
-                    qHidden: true,
-                    dSeparatorLabel: 'x'
-                });
-                $selectIrregularAllowedRotations.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_OPTIONS);
-                $inputSpacing.ladbTextinputDimension();
-                $inputTrimming.ladbTextinputDimension();
-                $textareaItemsFormula.ladbTextinputCode({
-                    variableDefs: fnConvertToVariableDefs([
-                        { name: 'number', type: 'string' },
-                        { name: 'path', type: 'array' },
-                        { name: 'instance_name', type: 'string' },
-                        { name: 'name', type: 'string' },
-                        { name: 'cutting_length', type: 'length' },
-                        { name: 'cutting_width', type: 'length' },
-                        { name: 'cutting_thickness', type: 'length' },
-                        { name: 'edge_cutting_length', type: 'length' },
-                        { name: 'edge_cutting_width', type: 'length' },
-                        { name: 'bbox_length', type: 'length' },
-                        { name: 'bbox_width', type: 'length' },
-                        { name: 'bbox_thickness', type: 'length' },
-                        { name: 'final_area', type: 'area' },
-                        { name: 'material', type: 'material' },
-                        { name: 'material_type', type: 'material-type' },
-                        { name: 'material_name', type: 'string' },
-                        { name: 'material_description', type: 'string' },
-                        { name: 'material_url', type: 'string' },
-                        { name: 'description', type: 'string' },
-                        { name: 'url', type: 'string' },
-                        { name: 'tags', type: 'array' },
-                        { name: 'edge_ymin', type: 'edge' },
-                        { name: 'edge_ymax', type: 'edge' },
-                        { name: 'edge_xmin', type: 'edge' },
-                        { name: 'edge_xmax', type: 'edge' },
-                        { name: 'face_zmax', type: 'veneer' },
-                        { name: 'face_zmin', type: 'veneer' },
-                        { name: 'layer', type: 'string' },
-                        { name: 'component_definition', type: 'component_definition' },
-                        { name: 'component_instance', type: 'component_instance' },
-                    ]),
-                    snippetDefs: [
-                        { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
-                        { name: i18next.t('tab.cutlist.snippet.name'), value: '@name' },
-                        { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
-                        { name: '-' },
-                        { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
-                        { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
-                        { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
-                    ]
-                });
-                $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectBinFolding.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectColorization.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS)
-                $inputTimeLimit.ladbTextinputText();
-                $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
-                $selectVerbosityLevel.selectpicker(SELECT_PICKER_OPTIONS);
-                $selectInputToJsonBinDir.selectpicker(SELECT_PICKER_OPTIONS);
-
-                fnFillInputs(packingOptions);
-
-                // Bind radios
-                $btnsProblemType.on('click', function (e) {
-                    if ($(this).hasClass('disabled')) {
-                        e.preventDefault();
-                        return false;
-                    }
-                });
-                $radiosProblemType.on('change', fnUpdateFieldsVisibility);
-
-                // Bind tabs
-                $tabs.on('shown.bs.tab', function (e) {
-                    that.lastPackingOptionsTab = $(e.target).attr('href').substring('#tab_packing_options_'.length);
-                });
-
-                // Bind collapses
-                $('#ladb-cutlist-packing-collapse-expert')
-                    .on('shown.bs.collapse', function () {
-                        $('i', $btnExpert)
-                            .removeClass('ladb-opencutlist-icon-plus')
-                            .addClass('ladb-opencutlist-icon-minus')
-                        ;
-                    })
-                    .on('hidden.bs.collapse', function () {
-                        $('i', $btnExpert)
-                            .addClass('ladb-opencutlist-icon-plus')
-                            .removeClass('ladb-opencutlist-icon-minus')
-                        ;
-                    })
-                ;
-
-                // Bind clickable
-                $('.ladb-clickable[data-material-properties-tab]').on('click', function (e) {
-                    fnEditMaterial({
-                        propertiesTab: $(this).data('material-properties-tab')
-                    })
-                })
-
-                // Bind buttons
-                $btnEditMaterial.on('click', function () {
-                    fnEditMaterial();
-                });
-                $btnUnloadLib.on('click', function () {
-                    rubyCallCommand('core_unload_c_lib', {lib: 'packy'}, function (response) {
-                        if (response.errors) {
-                            that.dialog.notifyErrors(response.errors);
-                        }
-                        if (response.success) {
-                            that.dialog.notifySuccess('Packy unloaded');
-                        }
-                    });
-                });
-                $btnExpert.on('click', function () {
-                    $('#ladb-cutlist-packing-collapse-expert').collapse('toggle');
-                    $(this).blur();
-                })
-                $btnGenerate.on('click', function () {
-
-                    // Fetch options
-                    fnFetchOptions(packingOptions);
-
-                    // Store options
-                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_packing_options', values: packingOptions, section: section });
+                const fnGenerate = function (noCache = false) {
 
                     if (typeof generateCallback === 'function') {
 
@@ -2771,7 +2599,7 @@
 
                     } else {
 
-                        let fnCreateSlide = function (response) {
+                        const fnCreateSlide = function (response) {
 
                             const solution = response.solution;
 
@@ -2803,6 +2631,7 @@
                             const $btnExport = $('#ladb_btn_export', $slide);
                             const $btnLabels = $('#ladb_btn_labels', $slide);
                             const $btnClose = $('#ladb_btn_close', $slide);
+                            const $btnGenerateNoCache = $('#ladb_btn_generate_no_cache', $slide);
 
                             // Bind buttons
                             $btnPacking.on('click', function () {
@@ -3079,6 +2908,9 @@
                             $btnClose.on('click', function () {
                                 that.popSlide();
                             });
+                            $btnGenerateNoCache.on('click', function () {
+                               fnGenerate(true);
+                            });
                             $('.ladb-btn-setup-model-units', $slide).on('click', function () {
                                 $(this).blur();
                                 that.dialog.executeCommandOnTab('settings', 'highlight_panel', {panel: 'model'});
@@ -3169,7 +3001,8 @@
                             });
                             rubyCallCommand('cutlist_group_packing_start', $.extend({
                                 part_ids: partIds,
-                                hide_material_colors: that.generateOptions.hide_material_colors
+                                hide_material_colors: that.generateOptions.hide_material_colors,
+                                no_cache: noCache
                             }, packingOptions), function (response) {
 
                                 if (response.running) {
@@ -3231,6 +3064,183 @@
                         $modal.modal('hide');
 
                     }
+
+                };
+
+                $widgetPreset.ladbWidgetPreset({
+                    dialog: that.dialog,
+                    dictionary: 'cutlist_packing_options',
+                    fnFetchOptions: fnFetchOptions,
+                    fnFillInputs: fnFillInputs
+                });
+                $editorStdBinSizes
+                    .ladbEditorSizes({
+                        format: group.material_is_1d ? FORMAT_D : FORMAT_D_D,
+                        d1Placeholder: i18next.t('default.length'),
+                        d2Placeholder: i18next.t('default.width'),
+                        qPlaceholder: '∞',
+                        qHidden: false,
+                        emptyVal: '0',
+                        dropdownActionLabel: '<i class="ladb-opencutlist-icon-plus"></i> ' + i18next.t('tab.cutlist.packing.option_std_bin_' + (group.material_is_1d ? '1' : '2') + 'd_add'),
+                        dropdownActionCallback: function () {
+                            fnEditMaterial({
+                                callback: function ($editMaterialModal) {
+                                    setTimeout(function () {
+                                        $('#ladb_materials_editor_std_' + (group.material_is_1d ? 'lengths' : 'sizes'), $editMaterialModal).ladbEditorSizes('appendRow', [{}, {autoFocus: true}]);
+                                    }, 200);
+                                }
+                            })
+                        }
+                    })
+                    .ladbEditorSizes('setAvailableSizesAndSizes', [ group.material_is_1d ? response.std_lengths : response.std_sizes, group.material_is_1d ? packingOptions.std_bin_1d_sizes : packingOptions.std_bin_2d_sizes ])
+                ;
+                $editorScrapBinSizes
+                    .ladbEditorSizes({
+                        format: group.material_is_1d ? FORMAT_D_Q : FORMAT_D_D_Q,
+                        d1Placeholder: i18next.t('default.length'),
+                        d2Placeholder: i18next.t('default.width'),
+                        emptyVal: '0'
+                    })
+                    .ladbEditorSizes('setSizes', group.material_is_1d ? packingOptions.scrap_bin_1d_sizes : packingOptions.scrap_bin_2d_sizes)
+                ;
+                $selectRectangleguillotineFirstStageOrientation.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectRectangleguillotineCutType.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectRectangleguillotineNumberOfStages.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputRectangleguillotineKeepSize.ladbTextinputSize({
+                    resetValue: '',
+                    d1Placeholder: i18next.t('default.length'),
+                    d2Placeholder: i18next.t('default.width'),
+                    qDisabled: true,
+                    qHidden: true,
+                    dSeparatorLabel: 'x'
+                });
+                $selectIrregularAllowedRotations.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectIrregularAllowMirroring.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputSpacing.ladbTextinputDimension();
+                $inputTrimming.ladbTextinputDimension();
+                $textareaItemsFormula.ladbTextinputCode({
+                    variableDefs: fnConvertToVariableDefs([
+                        { name: 'number', type: 'string' },
+                        { name: 'path', type: 'array' },
+                        { name: 'instance_name', type: 'string' },
+                        { name: 'name', type: 'string' },
+                        { name: 'cutting_length', type: 'length' },
+                        { name: 'cutting_width', type: 'length' },
+                        { name: 'cutting_thickness', type: 'length' },
+                        { name: 'edge_cutting_length', type: 'length' },
+                        { name: 'edge_cutting_width', type: 'length' },
+                        { name: 'bbox_length', type: 'length' },
+                        { name: 'bbox_width', type: 'length' },
+                        { name: 'bbox_thickness', type: 'length' },
+                        { name: 'final_area', type: 'area' },
+                        { name: 'material', type: 'material' },
+                        { name: 'material_type', type: 'material-type' },
+                        { name: 'material_name', type: 'string' },
+                        { name: 'material_description', type: 'string' },
+                        { name: 'material_url', type: 'string' },
+                        { name: 'description', type: 'string' },
+                        { name: 'url', type: 'string' },
+                        { name: 'tags', type: 'array' },
+                        { name: 'edge_ymin', type: 'edge' },
+                        { name: 'edge_ymax', type: 'edge' },
+                        { name: 'edge_xmin', type: 'edge' },
+                        { name: 'edge_xmax', type: 'edge' },
+                        { name: 'face_zmax', type: 'veneer' },
+                        { name: 'face_zmin', type: 'veneer' },
+                        { name: 'layer', type: 'string' },
+                        { name: 'component_definition', type: 'component_definition' },
+                        { name: 'component_instance', type: 'component_instance' },
+                    ]),
+                    snippetDefs: [
+                        { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },
+                        { name: i18next.t('tab.cutlist.snippet.name'), value: '@name' },
+                        { name: i18next.t('tab.cutlist.snippet.number_and_name'), value: '@number + " - " + @name' },
+                        { name: '-' },
+                        { name: i18next.t('tab.cutlist.snippet.size'), value: '@bbox_length + " x " + @bbox_width' },
+                        { name: i18next.t('tab.cutlist.snippet.area'), value: '@bbox_length * @bbox_width' },
+                        { name: i18next.t('tab.cutlist.snippet.volume'), value: '@bbox_length * @bbox_width * @bbox_thickness' },
+                    ]
+                });
+                $selectOriginCorner.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectBinFolding.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectHidePartList.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectPartDrawingType.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectColorization.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS)
+                $inputTimeLimit.ladbTextinputText();
+                $inputNotAnytimeTreeSearchQueueSize.ladbTextinputText();
+                $selectVerbosityLevel.selectpicker(SELECT_PICKER_OPTIONS);
+                $selectInputToJsonBinDir.selectpicker(SELECT_PICKER_OPTIONS);
+
+                fnFillInputs(packingOptions);
+
+                // Bind radios
+                $btnsProblemType.on('click', function (e) {
+                    if ($(this).hasClass('disabled')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+                $radiosProblemType.on('change', fnUpdateFieldsVisibility);
+
+                // Bind tabs
+                $tabs.on('shown.bs.tab', function (e) {
+                    that.lastPackingOptionsTab = $(e.target).attr('href').substring('#tab_packing_options_'.length);
+                });
+
+                // Bind collapses
+                $('#ladb-cutlist-packing-collapse-expert')
+                    .on('shown.bs.collapse', function () {
+                        $('i', $btnExpert)
+                            .removeClass('ladb-opencutlist-icon-plus')
+                            .addClass('ladb-opencutlist-icon-minus')
+                        ;
+                    })
+                    .on('hidden.bs.collapse', function () {
+                        $('i', $btnExpert)
+                            .addClass('ladb-opencutlist-icon-plus')
+                            .removeClass('ladb-opencutlist-icon-minus')
+                        ;
+                    })
+                ;
+
+                // Bind clickable
+                $('.ladb-clickable[data-material-properties-tab]').on('click', function (e) {
+                    fnEditMaterial({
+                        propertiesTab: $(this).data('material-properties-tab')
+                    })
+                })
+
+                // Bind buttons
+                $btnEditMaterial.on('click', function () {
+                    fnEditMaterial();
+                });
+                $btnUnloadLib.on('click', function () {
+                    rubyCallCommand('core_unload_c_lib', {lib: 'packy'}, function (response) {
+                        if (response.errors) {
+                            that.dialog.notifyErrors(response.errors);
+                        }
+                        if (response.success) {
+                            that.dialog.notifySuccess('Packy unloaded');
+                        }
+                    });
+                });
+                $btnExpert.on('click', function () {
+                    $('#ladb-cutlist-packing-collapse-expert').collapse('toggle');
+                    $(this).blur();
+                })
+                $btnGenerate.on('click', function () {
+
+                    // Fetch options
+                    fnFetchOptions(packingOptions);
+
+                    // Store options
+                    rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_packing_options', values: packingOptions, section: section });
+
+                    fnGenerate(false);
 
                 });
 

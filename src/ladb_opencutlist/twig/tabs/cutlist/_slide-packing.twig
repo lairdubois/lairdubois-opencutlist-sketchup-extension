@@ -123,6 +123,7 @@
                 <tr class="table-heading">
                     <td colspan="7">
                         <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+                        {% if cached %}<div class="no-print pull-right"><span style="margin-right: 10px; font-style: italic; line-height: 30px;">{{ 'tab.cutlist.packing.list.cached'|i18next }}</span><button id="ladb_btn_generate_no_cache" class="btn btn-default btn-sm">{{ 'default.regenerate'|i18next }}</button></div>{% endif %}
                         <div class="ladb-heading">{{ 'tab.cutlist.packing.list.summary'|i18next }}</div>
                     </td>
                 </tr>

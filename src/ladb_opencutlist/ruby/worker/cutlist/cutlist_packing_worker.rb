@@ -751,7 +751,8 @@ module Ladb::OpenCutList
               )
             }
           }.sort_by { |bin_def| [ -bin_def.bin_type_def.type, bin_def.bin_type_def.length, -bin_def.efficiency, -bin_def.count ] }
-        )
+        ),
+        cached: output[:cached].is_a?(TrueClass)
       )
 
       # Computed values

@@ -22,6 +22,7 @@ default:
   clear: Effacer
   refresh: Rafraîchir
   generate: Générer
+  regenerate: Regénérer
   print: Imprimer
   export: Exporter
   import: Importer
@@ -1077,7 +1078,7 @@ tab:
       option_items_formula: Formule
       option_items_formula_help: |
         Permet d'écrire du code *Ruby* pour personnaliser le texte d'identification des pièces sur le diagramme.
-      option_bin_folding_1d_dimensional: Regrouper les barres identiques  # TODO from tab.cutlist.cuttingdiagram.option_sheet_folding_xxx
+      option_bin_folding_1d_dimensional: Regrouper les barres identiques
       option_bin_folding_1d_edge: Regrouper les bandes identiques
       option_bin_folding_2d_sheet_good: Regrouper les panneaux identiques
       option_bin_folding_2d_veneer: Regrouper les feuilles identiques
@@ -1133,6 +1134,7 @@ tab:
         scroll_to_block_2d: Défiler vers le premier panneau ou feuille
       list:
         summary: Récapitulatif
+        cached: Chargé depuis le cache
         trimming: Marge
         settings: Paramètres
         stats: Statistiques

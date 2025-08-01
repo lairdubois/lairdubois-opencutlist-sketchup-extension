@@ -8,13 +8,15 @@ module Ladb::OpenCutList
     attr_reader :group,
                 :errors, :warnings,
                 :running, :cancelled,
-                :solution_def
+                :solution_def,
+                :cached
 
     def initialize(group: nil,
                    errors: [],
                    warnings: [],
                    running: false, cancelled: false,
-                   solution_def: nil)
+                   solution_def: nil,
+                   cached: false)
       @group = group
 
       @errors = errors
@@ -24,6 +26,8 @@ module Ladb::OpenCutList
       @cancelled = cancelled
 
       @solution_def = solution_def
+
+      @cached = cached
 
     end
 

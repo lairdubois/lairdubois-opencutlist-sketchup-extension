@@ -14,7 +14,8 @@ module Ladb::OpenCutList
 
     attr_reader :errors, :warnings,
                 :running, :cancelled,
-                :solution
+                :solution,
+                :cached
 
     def initialize(_def)
       @_def = _def
@@ -26,6 +27,8 @@ module Ladb::OpenCutList
       @cancelled = _def.cancelled
 
       @solution = _def.solution_def.create_solution if _def.solution_def.is_a?(PackingSolutionDef)
+
+      @cached = _def.cached
 
     end
 

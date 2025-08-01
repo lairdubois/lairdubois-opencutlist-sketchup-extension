@@ -66,7 +66,7 @@ module Ladb::OpenCutList::Fiddle
       input_json = input.to_json
       input_md5 = Digest::MD5.hexdigest(input_json)
       if !no_cache && @cached_outputs.key?(input_md5)
-        return @cached_outputs[input_md5]
+        return @cached_outputs[input_md5].merge({ cached: true })
       end
       @running_input_md5 = input_md5
       JSON.parse(c_optimize_start(input_json).to_s)
