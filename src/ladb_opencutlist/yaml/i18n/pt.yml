@@ -22,6 +22,7 @@ default:
   clear: Apagar
   refresh: Atualizar
   generate: Gerar
+  regenerate: Regenerar
   print: Imprimir
   export: Exportar
   import: Importar
@@ -1088,6 +1089,7 @@ tab:
       option_bin_folding_2d_help: |
         Permite agrupar painéis ou chapas contendo peças iguais ou os mesmos cortes.
       option_bin_folding_warning: |
+        *Essa opção será desativada se você usar propriedades de instância na fórmula de personalização do texto de identificação.*
       option_hide_part_list: Lista de peças
       option_hide_part_list_1d_dimensional_0: Exibido para cada barra
       option_hide_part_list_1d_edge_0: Exibido para cada fita de borda
@@ -1132,6 +1134,7 @@ tab:
         scroll_to_block_2d: Rolar até a primeira chapa ou laminado
       list:
         summary: Resumo
+        cached: Carregado do cache
         trimming: Apara
         settings: Configurações
         stats: Estatísticas

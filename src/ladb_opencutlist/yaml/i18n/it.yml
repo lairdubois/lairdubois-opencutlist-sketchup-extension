@@ -22,6 +22,7 @@ default:
   clear: Reset
   refresh: Rigenera
   generate: Genera
+  regenerate: Rigenera
   print: Stampa
   export: Esporta
   import: Importa
@@ -1088,6 +1089,7 @@ tab:
       option_bin_folding_2d_help: |
         Raggruppa pannelli o fogli con dimensioni e tagli identici.
       option_bin_folding_warning: |
+        *Questa opzione sarà disattivata se si utilizzano proprietà di istanza nella formula di personalizzazione del testo di identificazione.*
       option_hide_part_list: Distinta
       option_hide_part_list_1d_dimensional_0: Visualizza per ogni tavola
       option_hide_part_list_1d_edge_0: Visualizza per ogni bordo
@@ -1132,6 +1134,7 @@ tab:
         scroll_to_block_2d: Vai al primo pannello o piallaccio
       list:
         summary: Sommario
+        cached: Caricato dalla cache
         trimming: Scarto perimetro
         settings: Impostazioni
         stats: Statistiche
