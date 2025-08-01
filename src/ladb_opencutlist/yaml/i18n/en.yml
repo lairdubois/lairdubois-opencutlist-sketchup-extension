@@ -22,6 +22,7 @@ default:
   clear: Clear
   refresh: Refresh
   generate: Generate
+  regenerate: Regenerate
   print: Print
   export: Export
   import: Import
@@ -1133,6 +1134,7 @@ tab:
         scroll_to_block_2d: Scroll to first panel or veneer sheet
       list:
         summary: Summary
+        cached: Loaded from the cache
         trimming: Trimming
         settings: Settings
         stats: Statistics

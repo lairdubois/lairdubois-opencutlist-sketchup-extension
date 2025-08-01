@@ -22,6 +22,7 @@ default:
   clear: Borrar
   refresh: Actualizar
   generate: Generar
+  regenerate: Regenerar
   print: Imprimir
   export: Exportar
   import: Importar
@@ -1088,6 +1089,7 @@ tab:
       option_bin_folding_2d_help: |
         Permite agrupar paneles o hojas que contengan las mismas piezas y cortes.
       option_bin_folding_warning: |
+        *Esta opción se desactivará si utiliza propiedades de instancia en la fórmula de personalización del texto de identificación.*
       option_hide_part_list: Listado de piezas
       option_hide_part_list_1d_dimensional_0: Mostrado para cada tablero
       option_hide_part_list_1d_edge_0: Mostrado para cada tira de canto
@@ -1132,6 +1134,7 @@ tab:
         scroll_to_block_2d: Desplazarse al primer tablero o chapado
       list:
         summary: Resumen
+        cached: Cargado desde caché
         trimming: Margen
         settings: Configuraciones
         stats: Estadísticas
