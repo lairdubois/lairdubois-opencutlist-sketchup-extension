@@ -148,6 +148,9 @@
                                             <li><strong>{{ 'tab.cutlist.packing.option_irregular_allowed_rotations'|i18next }} : </strong>{{ ('tab.cutlist.packing.option_irregular_allowed_rotations_'~solution.options.irregular_allowed_rotations)|i18next }}</li>
                                             <li><strong>{{ 'tab.cutlist.packing.option_irregular_allow_mirroring'|i18next }} : </strong>{{ ('tab.cutlist.packing.option_irregular_allow_mirroring_'~(solution.options.irregular_allow_mirroring ? '1' : '0'))|i18next }}</li>
                                         {% endif %}
+                                        {% if solution.options.part_drawing_type != 1 %} {# 1 = PART_DRAWING_TYPE_2D_TOP #}
+                                            <li><strong>{{ 'tab.cutlist.packing.option_part_drawing_type'|i18next }} : </strong><i class="ladb-opencutlist-icon-warning ladb-color-warning"></i> {{ ('tab.cutlist.packing.option_part_drawing_type_'~solution.options.part_drawing_type)|i18next }}</li>
+                                        {% endif %}
                                     </ul>
                                 </div>
                                 <div class="col-xs-6">
@@ -323,7 +326,7 @@
                         {% endif %}
                         <td colspan="{{ dimColspan }}">{{ 'tab.cutlist.list.bbox'|i18next }}</td>
                         {% if showEdges %}
-                            <td colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}</td>
+                            <td colspan="4">{{ ('tab.cutlist.list.edges')|i18next }}{% if solution.options.part_drawing_type != 1 %} <small>({{ 'core.component.three_viewer.view'|i18next({ 'view': 'tab.cutlist.tooltip.face_zmax'|i18next }) }})</small>{% endif %}</td> {# 1 = PART_DRAWING_TYPE_2D_TOP #}
                         {% endif %}
                         {% if showFaces %}
                             <td colspan="4">{{ ('tab.cutlist.list.faces')|i18next }}</td>

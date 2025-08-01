@@ -136,6 +136,15 @@ module Ladb::OpenCutList
       nil
     end
 
+
+    def _get_part_edge_keys_by_drawing_type(part_drawing_type)
+      case part_drawing_type
+      when PART_DRAWING_TYPE_2D_BOTTOM
+        return [ :xmax, :xmin, :ymin, :ymax ]
+      end
+      [ :xmin, :xmax, :ymin, :ymax ]
+    end
+
   end
 
 end

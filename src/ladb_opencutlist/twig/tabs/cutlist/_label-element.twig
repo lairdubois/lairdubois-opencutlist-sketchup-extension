@@ -23,16 +23,17 @@
         {% if drawing %}
             {% set scale = max(rectPartWidth, rectPartHeight) %}
             {% set drawingStrokeWidth = minUnit / (20 * scale) %}
+            {% set custom_value = entry.custom_values[index] %}
             <g transform="scale({{ scale }} {{ scale }}) translate(0 {{ entry.part.w_ratio }})">
-                {% for layer in entry.custom_values[index] %}
+                {% for layer in custom_value.layers %}
                     <path d="{{ layer.path }}" stroke="{{ elementDef.color }}" stroke-width="{{ drawingStrokeWidth }}" fill="#ffffff" />
                 {% endfor %}
             </g>
             <g>
-                {% if entry.part.edge_material_names.ymax %}<line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color: entry.part.edge_material_colors.ymax }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
-                {% if entry.part.edge_material_names.ymin %}<line x1="{{ rectPartWidth }}" y1="{{ rectPartHeight }}" x2="0" y2="{{ rectPartHeight }}" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : entry.part.edge_material_colors.ymin }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
-                {% if entry.part.edge_material_names.xmax %}<line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : entry.part.edge_material_colors.xmax }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
-                {% if entry.part.edge_material_names.xmin %}<line x1="0" y1="{{ rectPartHeight }}" x2="0" y2="0" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : entry.part.edge_material_colors.xmin }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
+                {% if custom_value.edge_material_names.top %}<line x1="0" y1="0" x2="{{ rectPartWidth }}" y2="0" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color: custom_value.edge_material_colors.top }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
+                {% if custom_value.edge_material_names.bottom %}<line x1="{{ rectPartWidth }}" y1="{{ rectPartHeight }}" x2="0" y2="{{ rectPartHeight }}" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : custom_value.edge_material_colors.bottom }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
+                {% if custom_value.edge_material_names.right %}<line x1="{{ rectPartWidth }}" y1="0" x2="{{ rectPartWidth }}" y2="{{ rectPartHeight }}" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : custom_value.edge_material_colors.right }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
+                {% if custom_value.edge_material_names.left %}<line x1="0" y1="{{ rectPartHeight }}" x2="0" y2="0" stroke-linecap="square" stroke="{{ hideMaterialColors ? elementDef.color : custom_value.edge_material_colors.left }}" stroke-width="{{ plainStrokeWidth }}" />{% endif %}
             </g>
         {% else %}
             {% set dashedStrokeWidth = minUnit / 20 %}

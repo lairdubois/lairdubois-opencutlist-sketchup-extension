@@ -985,11 +985,13 @@ module Ladb::OpenCutList
 
               if !@hide_edges_preview && part_def.edge_count > 0
 
+                left, right, bottom, top = _get_part_edge_keys_by_drawing_type(@part_drawing_type)
+
                 svg += "<g class='item-projection' transform='translate(#{px_item_rect_half_width} #{-px_item_rect_half_height})#{" rotate(#{-item_def.angle})" if item_def.angle != 0}'>"
-                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{px_item_width / 2 - px_node_edge_offset - px_edge_width}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[:ymin])}'/>" unless part_def.edge_material_names[:ymin].nil?
-                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[:ymax])}'/>" unless part_def.edge_material_names[:ymax].nil?
-                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[:xmin])}'/>" unless part_def.edge_material_names[:xmin].nil?
-                  svg += "<rect x='#{px_item_length / 2 - px_node_edge_offset - px_edge_width}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[:xmax])}'/>" unless part_def.edge_material_names[:xmax].nil?
+                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{px_item_width / 2 - px_node_edge_offset - px_edge_width}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[bottom])}'/>" unless part_def.edge_material_names[bottom].nil?
+                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_item_length - 2 * px_node_edge_offset}' height='#{px_edge_width}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[top])}'/>" unless part_def.edge_material_names[top].nil?
+                  svg += "<rect x='#{-px_item_length / 2 + px_node_edge_offset}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[left])}'/>" unless part_def.edge_material_names[left].nil?
+                  svg += "<rect x='#{px_item_length / 2 - px_node_edge_offset - px_edge_width}' y='#{-px_item_width / 2 + px_node_edge_offset}' width='#{px_edge_width}' height='#{px_item_width - 2 * px_node_edge_offset}' fill='#{@hide_material_colors ? EDGE_DEFAULT_COLOR : ColorUtils.color_to_hex(part_def.edge_material_colors[right])}'/>" unless part_def.edge_material_names[right].nil?
                 svg += '</g>'
 
               end
@@ -1146,6 +1148,7 @@ module Ladb::OpenCutList
       tt += "<div class=\"tt-data\"><i class=\"ladb-opencutlist-icon-size-length-width\"></i> #{CGI::escape_html(part.cutting_length)}&nbsp;x&nbsp;#{CGI::escape_html(part.cutting_width)}</div>"
       if part.edge_count > 0
         tt += "<div class=\"tt-section\">"
+          tt += "<div><i class=\"ladb-opencutlist-icon-warning\"></i> <em>#{PLUGIN.get_i18n_string('core.component.three_viewer.view', { 'view': PLUGIN.get_i18n_string('tab.cutlist.tooltip.face_zmax') })}</em></div>" if @part_drawing_type != PART_DRAWING_TYPE_2D_TOP
           tt += "<div><i class=\"ladb-opencutlist-icon-edge-0010\"></i>&nbsp;#{CGI::escape_html(part.edge_material_names[:ymin])}&nbsp;<small>#{CGI::escape_html(part.edge_std_dimensions[:ymin])}</small></div>" if part.edge_material_names[:ymin]
           tt += "<div><i class=\"ladb-opencutlist-icon-edge-1000\"></i>&nbsp;#{CGI::escape_html(part.edge_material_names[:ymax])}&nbsp;<small>#{CGI::escape_html(part.edge_std_dimensions[:ymax])}</small></div>" if part.edge_material_names[:ymax]
           tt += "<div><i class=\"ladb-opencutlist-icon-edge-0001\"></i>&nbsp;#{CGI::escape_html(part.edge_material_names[:xmin])}&nbsp;<small>#{CGI::escape_html(part.edge_std_dimensions[:xmin])}</small></div>" if part.edge_material_names[:xmin]

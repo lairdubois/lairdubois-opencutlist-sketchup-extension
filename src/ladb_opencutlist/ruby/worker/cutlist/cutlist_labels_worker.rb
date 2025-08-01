@@ -182,12 +182,18 @@ module Ladb::OpenCutList
           scale = 1 / [ part.def.size.length, part.def.size.width ].max
           transformation = Geom::Transformation.scaling(scale, -scale, 1.0)
 
-          projection_def = _compute_part_projection_def(element_def['formula'].end_with?('.bottom') ? PART_DRAWING_TYPE_2D_BOTTOM : PART_DRAWING_TYPE_2D_TOP, part)
+          part_drawing_type = element_def['formula'].end_with?('.bottom') ? PART_DRAWING_TYPE_2D_BOTTOM : PART_DRAWING_TYPE_2D_TOP
+          projection_def = _compute_part_projection_def(part_drawing_type, part)
           if projection_def.is_a?(DrawingProjectionDef)
-            entry.custom_values << projection_def.layer_defs.map { |layer_def|
-              {
-                :depth => layer_def.depth,
-                :path => "#{layer_def.poly_defs.map { |poly_def| "M #{poly_def.points.map { |point| point.transform(transformation).to_a[0..1].map { |v| v.to_f.round(6) }.join(',') }.join(' L ')} Z" }.join(' ')}",
+            entry.custom_values << {
+              :edge_material_names => [ :left, :right, :bottom, :top ].zip(_get_part_edge_keys_by_drawing_type(part_drawing_type).map { |key| part.edge_material_names[key] }).to_h,
+              :edge_material_colors => [ :left, :right, :bottom, :top ].zip(_get_part_edge_keys_by_drawing_type(part_drawing_type).map { |key| part.edge_material_colors[key] }).to_h,
+              :layers => projection_def.layer_defs.map { |layer_def|
+                {
+                  :depth => layer_def.depth,
+                  :path => "#{layer_def.poly_defs.map { |poly_def| "M #{poly_def.points.map { |point| point.transform(transformation).to_a[0..1].map { |v| v.to_f.round(6) }.join(',') }.join(' L ')} Z" }.join(' ')}",
+
+                }
               }
             }
           end
