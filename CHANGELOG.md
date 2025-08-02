@@ -40,6 +40,9 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   ### BETA
 
+  * 2025-08-02
+    * Added progress timer 
+    * Added VI language
   * 2025-08-01
     * Fixed packing + labels back face edge preview
     * Added cutting diagram regenerate button to bypass cache
