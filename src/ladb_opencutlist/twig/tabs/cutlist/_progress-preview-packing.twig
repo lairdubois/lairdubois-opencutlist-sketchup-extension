@@ -5,7 +5,7 @@
     </div>
     {% if solution.summary.total_used_count > 1 %}
         {% if solution.summary.total_used_count > 2 %}
-            <div class="ladb-progress-preview-thumbnail-counter">...</div>
+            <div class="ladb-progress-preview-thumbnail-separator">...</div>
         {% endif %}
         <div class="ladb-progress-preview-thumbnail">
             {{ solution.bins[solution.bins.length - 1].light_svg }}

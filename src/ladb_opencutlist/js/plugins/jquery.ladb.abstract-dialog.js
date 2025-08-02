@@ -93,6 +93,7 @@ LadbAbstractDialog.prototype.getSetting = function (key, defaultValue) {
 // Progress /////
 
 LadbAbstractDialog.prototype.startProgress = function (maxSteps, cancelCallback, nextCallback) {
+    let that = this;
 
     this.progressMaxSteps = Math.max(0, maxSteps);
     this.progressStep = 0;
@@ -114,6 +115,13 @@ LadbAbstractDialog.prototype.startProgress = function (maxSteps, cancelCallback,
     }
 
     $('body').append(this.$progress);
+
+    if (this.progressMaxSteps === 0) {
+        this.progressStartedAt = Date.now();
+        this.progressTimerId = setInterval(function () {
+            $('.ladb-progress-timer', that.$progress).html(Math.ceil((Date.now() - that.progressStartedAt) / 1000) + 's');
+        }, 1000);
+    }
 
 };
 
@@ -151,6 +159,10 @@ LadbAbstractDialog.prototype.finishProgress = function () {
         this.progressStep = 0;
         this.$progress.remove();
         this.$progress = null;
+    }
+    if (this.progressTimerId) {
+        clearInterval(this.progressTimerId);
+        this.progressTimerId = null;
     }
 };
 

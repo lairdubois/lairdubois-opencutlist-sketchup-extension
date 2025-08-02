@@ -3,11 +3,12 @@
     <div class="ladb-progress-box">
         <div>
             <div class="ladb-progress-btn-group">
-                {% if not noNextButton|default(false) %}
-                    <span class="ladb-progress-step" style="color:#fff;"></span>
+                <span class="ladb-progress-timer"></span>
+                {% if not noNextButton %}
+                    <span class="ladb-progress-step"></span>
                     <button class="btn btn-xs ladb-progress-btn-next"><i class="ladb-opencutlist-icon-skip-forward"></i> {{ 'default.next'|i18next }}</button>
                 {% endif %}
-                {% if not noCancelButton|default(false) %}
+                {% if not noCancelButton %}
                     <button class="btn btn-xs ladb-progress-btn-cancel">{{ 'default.cancel'|i18next }}</button>
                 {% endif %}
             </div>
