@@ -1150,22 +1150,33 @@ module Ladb::OpenCutList
           end
         }
         menu.add_separator
-        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance_properties')) {
+        locked_validation_proc = Proc.new {
+          if @active_part_entity_path && @active_part_entity_path.find { |entity| entity.locked? }.nil?
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
+        }
+        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance_properties')) {
           require_relative '../model/outliner/outliner_node_def'
           _select_active_part_entity
           PLUGIN.execute_tabs_dialog_command_on_tab('outliner', 'edit_node', "{ node_id: '#{OutlinerNodePartDef.generate_node_id(@active_part_entity_path)}', tab: 'general' }")
         }
+        menu.set_validation_proc(item, &locked_validation_proc)
         unless Sketchup.version_number < 2000000000
-          menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance')) {
+          item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance')) {
             Sketchup.active_model.active_path = @active_part_entity_path
           }
-          menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_parent_part_instance')) {
+          menu.set_validation_proc(item, &locked_validation_proc)
+          item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_parent_part_instance')) {
             Sketchup.active_model.active_path = @active_part_entity_path[0...-1]
           }
+          menu.set_validation_proc(item, &locked_validation_proc)
         end
-        menu.add_item(PLUGIN.get_i18n_string("core.menu.item.#{@active_part_entity_path.last.visible? ? "hide" : "unhide"}_part_instance")) {
+        item = menu.add_item(PLUGIN.get_i18n_string("core.menu.item.#{@active_part_entity_path.last.visible? ? "hide" : "unhide"}_part_instance")) {
           @active_part_entity_path.last.visible = !@active_part_entity_path.last.visible?
         }
+        menu.set_validation_proc(item, &locked_validation_proc)
       else
         menu.add_item(PLUGIN.get_i18n_string('default.close')) {
           quit
@@ -1971,10 +1982,17 @@ module Ladb::OpenCutList
           end
         }
         menu.add_separator
-        menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance_properties')) {
+        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance_properties')) {
           require_relative '../model/outliner/outliner_node_def'
           _select_active_part_entity
           PLUGIN.execute_tabs_dialog_command_on_tab('outliner', 'edit_node', "{ node_id: '#{OutlinerNodePartDef.generate_node_id(@active_part_entity_path)}', tab: 'general' }")
+        }
+        menu.set_validation_proc(item) {
+          if @active_part_entity_path && @active_part_entity_path.find { |entity| entity.locked? }.nil?
+            MF_ENABLED
+          else
+            MF_GRAYED
+          end
         }
         unless Sketchup.version_number < 2000000000
           menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_instance')) {

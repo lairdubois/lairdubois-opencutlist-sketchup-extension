@@ -414,11 +414,13 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
                 $('<li>').append(
                     $('<a href="#">')
                         .on('click', function(e) {
-                            fnRemoveContextMenu();
-                            item.callback();
+                            if (item.enabled) {
+                                fnRemoveContextMenu();
+                                item.callback();
+                            }
                         })
                         .html(Twig.twig({ data: "{{ text|escape('html') }}" }).render({ text: item.text }))
-                ).addClass(item.class)
+                ).addClass(item.class).addClass(item.enabled ? '' : 'disabled')
             )
         } else if (item.separator) {
             $menu.append(

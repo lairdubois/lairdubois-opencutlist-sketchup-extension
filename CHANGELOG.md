@@ -40,6 +40,12 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   ### BETA
 
+  * 2025-08-01
+    * Fixed packing + labels back face edge preview
+    * Added cutting diagram regenerate button to bypass cache
+    * Updated translations
+  * 2025-07-27
+    * Added ES language
   * 2025-07-07
     * Updaded AR language
 
