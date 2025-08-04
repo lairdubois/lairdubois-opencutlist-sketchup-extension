@@ -22,6 +22,7 @@ default:
   clear: 清除
   refresh: 刷新
   generate: 生成
+  regenerate: 重新生成
   print: 打印
   export: 导出
   import: 导入
@@ -106,11 +107,11 @@ core:
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
-      edit_part_instance: 編輯實例
-      edit_parent_part_instance: 編輯群組或包含實例的元件
-      hide_part_instance: 隱藏實例
-      unhide_part_instance: 顯示實例
-      edit_part_instance_properties: 編輯實例屬性
+      edit_part_instance: 编辑实例
+      edit_parent_part_instance: 编辑群组或包含实例的元件
+      hide_part_instance: 隐藏实例
+      unhide_part_instance: 显示实例
+      edit_part_instance_properties: 编辑实例属性
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_paint: $t(core.toolbar.command.smart_paint)
@@ -122,8 +123,8 @@ core:
     tools: 工具
     command:
       dialog: OpenCutList
-      smart_draw: 繪製部件
-      smart_handle: ""
+      smart_draw: 绘制部件
+      smart_handle: 控制部件
       smart_paint: 部件材质
       smart_axes: 部件方向
       smart_export: 导出部件
@@ -253,7 +254,7 @@ core:
       snippets: 公式示例
       help: 输入 **@** 以获取变量列表.
     textinput_size:
-      quantity: ""
+      quantity: 数量
     three_viewer:
       view: "{{ view }} 视图"
       view_isometric: 等轴
@@ -294,12 +295,12 @@ tab:
     edit_part_size_increase_properties: 编辑部件的属性 (尺寸超差)
     edit_part_edges_properties: 编辑部件的属性 (边缘)
     edit_part_faces_properties: 编辑部件的属性 (面)
-    part_drawing_type_1: 2D 頂立面圖
-    part_drawing_type_2: 2D 底立面圖
-    part_drawing_type_3: 2D 左立面圖
-    part_drawing_type_4: 2D 右立面圖
-    part_drawing_type_5: 2D 正立面圖
-    part_drawing_type_6: 2D 後立面圖
+    part_drawing_type_1: 2D 顶立面图
+    part_drawing_type_2: 2D 底立面图
+    part_drawing_type_3: 2D 左立面图
+    part_drawing_type_4: 2D 右立面图
+    part_drawing_type_5: 2D 正立面图
+    part_drawing_type_6: 2D 后立面图
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: 显示 / 隐藏组
@@ -402,7 +403,7 @@ tab:
       numbers_save: 保存部件编号
       numbers_reset: 重新初始化部件编号
       highlight_parts: $t(tab.cutlist.highlight_parts)
-      labels_parts: 列印標籤
+      labels_parts: 列印标签
       write_2d: 2D 投影
       write_3d: 3D 几何图形
       write_2d_parts: 导出零件的 2D 投影
@@ -415,7 +416,7 @@ tab:
       group_cuttingdiagram: 切割图
       group_packing: 切割图
       group_labels: 打印组内部件的标签
-      group_export: 匯出群組
+      group_export: 汇出群组
       group_estimate: 估算群組
       edit_material: "编辑材质 '{{ material_name }}'"
       expand_all: 展开所有行
@@ -575,13 +576,13 @@ tab:
       dimension_column_order_strategy: 尺寸排序
       dimension_column_order_strategy_help: |
         重新安排以下尺寸属性, 以定义列的显示顺序.
-      property_material_type: 物料類別
-      property_material_name: 物料名稱
-      property_std_width: 標準闊度
-      property_std_thickness: 標準厚度
+      property_material_type: 物料类别
+      property_material_name: 物料名称
+      property_std_width: 标准阔度
+      property_std_thickness: 标准厚度
       property_thickness: 厚度
       property_length: 長度
-      property_width: 闊度
+      property_width: 阔度
       property_name: 名称
       property_count: 数量
       property_edge_pattern: 封边数量
@@ -608,7 +609,7 @@ tab:
       volume: 体积
       number: 编号
       name: 名称
-      count: ""
+      count: 数量
       cutting: 部件
       bbox: 完成
       final: 实际
@@ -718,7 +719,7 @@ tab:
       total_unused: 未使用
       total_mass: Σ 重量
       total_cost: Σ 成本
-      total_count: ""
+      total_count: 数量
       total_instance_count: Σ 单位
       total_volume: Σ 体积
       total_area: Σ 面积
@@ -739,7 +740,7 @@ tab:
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**."
       warning:
         is_group_selection: 部件清单 **隐藏组** 内的部件将不会被计入.
-        is_part_selection: ""
+        is_part_selection: 估算只限于**已选择的部件**
       tip:
         not_enough_data: |
           为了正确计算这个估算值:
@@ -867,7 +868,7 @@ tab:
       list:
         unplaced_parts: 未放置的部件
         summary: 摘要
-        count: ""
+        count: 数量
         bar: 尺寸
         sheet: 面板
         length: 引线
@@ -993,8 +994,8 @@ tab:
       options_config: 配置
       options_display: 显示
       options_tuning: ""
-      option_std_bin_1d_dimensional: 標準呎吋
-      option_std_bin_1d_edge: 標準封邊
+      option_std_bin_1d_dimensional: 标准呎吋
+      option_std_bin_1d_edge: 标准封边
       option_std_bin_1d_help: |
       option_std_bin_1d_add: 添加一个长度
       option_std_bin_1d_none: 无
@@ -1003,8 +1004,8 @@ tab:
       option_scrap_bin_1d_sizes_placeholder: 长度 x 数量 ; ...
       option_scrap_bin_1d_sizes_help: |
       option_scrap_bin_1d_none: 无
-      option_std_bin_2d_sheet_good: 標準板材
-      option_std_bin_2d_veneer: 標準木皮
+      option_std_bin_2d_sheet_good: 标准板材
+      option_std_bin_2d_veneer: 标准木皮
       option_std_bin_2d_help: |
       option_std_bin_2d_add: 添加一个长度
       option_std_bin_2d_none: 无
@@ -1015,11 +1016,12 @@ tab:
       option_scrap_bin_2d_none: 无
       option_optimization_mode: 最佳化模式
       option_optimization_mode_help: |
-        設定最佳化模式, 有或沒有時限
+        设定最佳化模式, 有或没有时限
       option_objective: 目标
       option_objective_help: |
-      option_rectangleguillotine_cut_type: ""
+      option_rectangleguillotine_cut_type: 切割种类
       option_rectangleguillotine_cut_type_help: |
+        设定切割种类
       option_rectangleguillotine_cut_type_non_exact: ""
       option_rectangleguillotine_cut_type_exact: ""
       option_rectangleguillotine_cut_type_homogenous: ""
@@ -1079,7 +1081,7 @@ tab:
         允许您在图表上显示或隐藏零件的实际形状及其加工情况。
 
         *必须启用此选项才能导出形状*
-      option_colorization: ""
+      option_colorization: 涂抹部件
       option_colorization_0: $t(default.no)
       option_colorization_1: ""
       option_colorization_2: ""
@@ -1098,23 +1100,24 @@ tab:
       option_hide_edges_preview_0: 在切割图中显示
       option_hide_edges_preview_1: 在切割图中隐藏
       option_hide_edges_preview_help: 允许您在切割图中显示或隐藏部件的边条的可视显示.
-      option_time_limit: ""
+      option_time_limit: 时限
       option_time_limit_help: |
       tooltip:
         scroll_to_block_1d: 滚动到第一块板材或边缘封边
         scroll_to_block_2d: ""
       list:
         summary: 摘要
+        cached: 从快取读取
         trimming: 修边
         settings: 设置
         stats: 统计数据
-        time: ""
+        time: 时间
         total_efficiency: 整体效率
         total_fill_rate: ""
         total_cut_count: 切割数量
         total_cut_length: 切割长度
         efficiency: 效率
-        count: ""
+        count: 数量
         length: 引线
         width: 宽度
         total_length: Σ 长度
@@ -1185,7 +1188,7 @@ tab:
         option_cuts_help: |
           允许您激活部分的导出以及选择其颜色。
         warning:
-          is_bin_selection: ""
+          is_bin_selection: "**隐藏的部件**将不会被汇出"
         error:
           overflow_gt_spacing: |
       error:
@@ -1196,7 +1199,7 @@ tab:
         no_solution: ""
         unplaced_parts: ""
         unplaced_parts_plural: ""
-        unusable_part: ""
+        unusable_part: 部件太大
       warning:
         is_part_selection: 此切割图仅限于 **所选的部件**.
         cutting_dimensions: 切割图使用部件的 **原始** 尺寸.
@@ -1254,7 +1257,7 @@ tab:
       option_color: 颜色
       formula:
         custom: 公式
-        custom_qr_code: ""
+        custom_qr_code: 二维码
         part_number: 编号
         part_name: 名称
         part_description: 描述
@@ -1280,8 +1283,8 @@ tab:
         part_edge_xmax: 边缘宽度 2
         part_face_zmin: 薄饰板背面
         part_face_zmax: 薄饰板正面
-        thumbnail_proportional_drawing: ""
-        thumbnail_proportional_drawing_bottom: ""
+        thumbnail_proportional_drawing: 缩略图(正面)
+        thumbnail_proportional_drawing_bottom: 缩略图(背面)
         thumbnail_proportional: 按比例缩略图
         thumbnail_square: 正方形缩略图
         group_material: 材质 / 厚度
@@ -1501,8 +1504,8 @@ tab:
       grain_direction: 纹理方向
       raw_estimated_0: 有效体积估算
       colorized: 此色调将在模型中渲染纹理时应用
-      texture_load: ""
-      texture_export: ""
+      texture_load: 读取新的图片
+      texture_export: 汇出图片
       texture_clear: 删除纹理
       edit: "编辑 '{{ name }}' 的属性"
       set_current: ""
@@ -1532,7 +1535,7 @@ tab:
       type: 类型
       description: 描述
       url: URL
-      formats: ""
+      formats: 格式
       cut_options: 切割参数
       estimate_options: 估算方案
       attributes: 属性
@@ -1588,7 +1591,7 @@ tab:
     texture_load:
       title: 加载图片
     texture_export:
-      title: ""
+      title: 汇出图片
     import_from_skm:
       title: 导入 .skm 文件
       ask_replace: |
@@ -1615,7 +1618,7 @@ tab:
       no_model: 没有打开的模型. 您需要提供更多信息 ;)
       no_materials: 您的模型不包含任何材质.
       material_not_found: 未找到任何材质.
-      no_texture: ""
+      no_texture: 这物料没有纹理
       failed_import_skm_file: "从 .skm 文件导入时发生错误. **{{ error }}**"
       failed_export_skm_file: "导出到 .skm 文件时发生错误. **{{ error }}**"
       failed_deleting_material: "删除此材质时发生错误. **{{ error }}**"
@@ -1633,9 +1636,9 @@ tab:
     type_2: 组件
     type_3: 部件
     tooltip:
-      hide_node: ""
-      unhide_node: ""
-      locked_node: ""
+      hide_node: 隐藏
+      unhide_node: 显示
+      locked_node: 已锁定
       is_active_node: ""
       set_active_node: ""
       edit_node_properties: ""
