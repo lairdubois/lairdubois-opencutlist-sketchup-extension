@@ -396,7 +396,7 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
         if (that._$contextMenu != null) {
             that._$contextMenu.remove();
             that._$contextMenu = null;
-            $('body').off('mousedown, keydown', fnRemoveContextMenu);
+            $('body').off('keydown', fnRemoveContextMenu);
             if (typeof callback === 'function') {
                 callback();
             }
@@ -440,7 +440,7 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
     $body.append($contextMenu);
     this._$contextMenu = $contextMenu;
 
-    $body.on('mousedown, keydown', fnRemoveContextMenu);
+    $body.on('keydown', fnRemoveContextMenu);
 
 }
 
