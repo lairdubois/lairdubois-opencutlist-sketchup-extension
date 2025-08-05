@@ -87,11 +87,43 @@
                 // Bind rows
                 $('.ladb-material-box', that.$page).each(function (index) {
                     const $box = $(this);
-                    $box.on('click', function (e) {
-                        $(this).blur();
-                        $('.ladb-click-tool', $(this)).click();
-                        return false;
-                    });
+                    $box
+                        .on('click', function (e) {
+                            $(this).blur();
+                            $('.ladb-click-tool', $(this)).click();
+                            return false;
+                        })
+                        .on('contextmenu', function (e) {
+                            e.preventDefault();
+                            const materialId = $box.data('material-id');
+                            const material = that.findMaterialById(materialId);
+                            that.dialog.showContextMenu(e.clientX, e.clientY, [
+                                { text: material.name },
+                                { separator: true },
+                                {
+                                    text: i18next.t('default.duplicate') + '...',
+                                    callback: function (e) {
+                                        that.duplicateMaterial(material);
+                                    }
+                                },
+                                {
+                                    text: i18next.t('tab.materials.edit_material.export_to_skm') + '...',
+                                    callback: function (e) {
+                                        that.exportToSkm(material);
+                                    }
+                                },
+                                { separator: true },
+                                {
+                                    text: i18next.t('default.delete') + '...',
+                                    class: 'dropdown-item-danger',
+                                    callback: function (e) {
+                                        that.deleteMaterial(material);
+                                    }
+                                }
+                            ]);
+                            return false;
+                        })
+                    ;
                 });
                 $('.ladb-btn-edit-material', that.$page).on('click', function() {
                     $(this).blur();

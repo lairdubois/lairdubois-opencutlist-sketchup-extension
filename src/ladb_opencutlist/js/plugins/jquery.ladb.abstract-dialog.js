@@ -396,9 +396,7 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
         if (that._$contextMenu != null) {
             that._$contextMenu.remove();
             that._$contextMenu = null;
-            $('body')
-                .off('mousedown, keydown', fnRemoveContextMenu)
-            ;
+            $('body').off('mousedown, keydown', fnRemoveContextMenu);
             if (typeof callback === 'function') {
                 callback();
             }
@@ -414,13 +412,13 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
                 $('<li>').append(
                     $('<a href="#">')
                         .on('click', function(e) {
-                            if (item.enabled) {
+                            if (!item.disabled) {
                                 fnRemoveContextMenu();
                                 item.callback();
                             }
                         })
                         .html(Twig.twig({ data: "{{ text|escape('html') }}" }).render({ text: item.text }))
-                ).addClass(item.class).addClass(item.enabled ? '' : 'disabled')
+                ).addClass(item.class).addClass(item.disabled ? 'disabled' : '')
             )
         } else if (item.separator) {
             $menu.append(
@@ -442,9 +440,7 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
     $body.append($contextMenu);
     this._$contextMenu = $contextMenu;
 
-    $body
-        .on('mousedown, keydown', fnRemoveContextMenu)
-    ;
+    $body.on('mousedown, keydown', fnRemoveContextMenu);
 
 }
 

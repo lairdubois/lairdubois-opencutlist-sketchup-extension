@@ -255,7 +255,7 @@
                                 callback: function () {
                                     that.explodeNode(node);
                                 },
-                                enabled: !node.computed_locked
+                                disabled: node.computed_locked
                             });
                             that.dialog.showContextMenu(e.clientX, e.clientY, items, function () {
                                 that.editedNode = null;

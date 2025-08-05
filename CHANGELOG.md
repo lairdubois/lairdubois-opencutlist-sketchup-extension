@@ -41,6 +41,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   ### BETA
 
   * 2025-08-05
+    * Open newly greated material properties after duplication 
     * Updated ZH language
   * 2025-08-02
     * Added progress timer 
