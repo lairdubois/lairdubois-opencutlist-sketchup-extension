@@ -618,10 +618,10 @@
                     that.dialog.notifyErrors(response.errors);
                 } else {
 
-                    // Reload the list
+                    // Reload the list + edit the new material
                     const materialId = response.id;
                     that.loadList(function() {
-                        that.scrollSlideToTarget(null, $('#ladb_material_' + materialId, that.$page), false, true);
+                        that.editMaterial(materialId);
                     });
 
                 }
