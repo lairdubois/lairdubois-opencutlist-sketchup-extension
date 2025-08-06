@@ -46,7 +46,8 @@ module Ladb::OpenCutList
     COLOR_ARROW = Kuix::COLOR_WHITE
     COLOR_ARROW_AUTO_ORIENTED = Sketchup::Color.new(123, 213, 239).freeze
 
-    attr_accessor :last_mouse_x, :last_mouse_y
+    attr_accessor :tab_name_to_show_on_quit,
+                  :last_mouse_x, :last_mouse_y
 
     def initialize(
 

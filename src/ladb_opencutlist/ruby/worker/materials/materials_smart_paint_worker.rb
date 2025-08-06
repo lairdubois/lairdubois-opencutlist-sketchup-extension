@@ -31,6 +31,11 @@ module Ladb::OpenCutList
 
       return { :errors => [ 'tab.materials.error.material_not_found' ] } unless material
 
+      # Deactivate the tab_name_to_show_on_quit if active tool is SmartTool (only SketchUp 2019+)
+      if model.tools.respond_to?(:active_tool) && (active_tool = model.tools.active_tool).is_a?(SmartTool)
+        active_tool.tab_name_to_show_on_quit = nil
+      end
+
       # Select Smart Paint Tool
       model.select_tool(SmartPaintTool.new(
         tab_name_to_show_on_quit: @tab_name_to_show_on_quit,

@@ -980,19 +980,19 @@ module Ladb::OpenCutList
         register_command('core_dialog_loaded') do |params|
           dialog_loaded_command(**params)
         end
-        register_command('core_dialog_ready') do |params|
+        register_command('core_dialog_ready') do
           dialog_ready_command
         end
-        register_command('core_tabs_dialog_minimize') do |params|
+        register_command('core_tabs_dialog_minimize') do
           tabs_dialog_minimize_command
         end
         register_command('core_tabs_dialog_maximize') do |params|
           tabs_dialog_maximize_command(**params)
         end
-        register_command('core_tabs_dialog_hide') do |params|
+        register_command('core_tabs_dialog_hide') do
           tabs_dialog_hide_command
         end
-        register_command('core_modal_dialog_hide') do |params|
+        register_command('core_modal_dialog_hide') do
           modal_dialog_hide_command
         end
         register_command('core_open_external_file') do |params|
@@ -1001,7 +1001,7 @@ module Ladb::OpenCutList
         register_command('core_open_url') do |params|
           open_url_command(**params)
         end
-        register_command('core_zoom_extents') do |params|
+        register_command('core_zoom_extents') do
           zoom_extents_command
         end
         register_command('core_play_sound') do |params|

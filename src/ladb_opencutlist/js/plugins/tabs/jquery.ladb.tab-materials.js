@@ -97,30 +97,30 @@
                             e.preventDefault();
                             const materialId = $box.data('material-id');
                             const material = that.findMaterialById(materialId);
-                            that.dialog.showContextMenu(e.clientX, e.clientY, [
-                                { text: material.name },
-                                { separator: true },
-                                {
-                                    text: i18next.t('default.duplicate') + '...',
-                                    callback: function (e) {
-                                        that.duplicateMaterial(material);
-                                    }
-                                },
-                                {
-                                    text: i18next.t('tab.materials.edit_material.export_to_skm') + '...',
-                                    callback: function (e) {
-                                        that.exportToSkm(material);
-                                    }
-                                },
-                                { separator: true },
-                                {
-                                    text: i18next.t('default.delete') + '...',
-                                    class: 'dropdown-item-danger',
-                                    callback: function (e) {
-                                        that.deleteMaterial(material);
-                                    }
+                            let items = [];
+                            items.push({ text: material.name });
+                            items.push({ separator: true });
+                            items.push({
+                                text: i18next.t('default.duplicate') + '...',
+                                callback: function (e) {
+                                    that.duplicateMaterial(material);
                                 }
-                            ]);
+                            });
+                            items.push({
+                                text: i18next.t('tab.materials.edit_material.export_to_skm') + '...',
+                                callback: function (e) {
+                                    that.exportToSkm(material);
+                                }
+                            });
+                            items.push({ separator: true });
+                            items.push({
+                                text: i18next.t('default.delete') + '...',
+                                class: 'dropdown-item-danger',
+                                callback: function (e) {
+                                    that.deleteMaterial(material);
+                                }
+                            });
+                            that.dialog.showContextMenu(e.clientX, e.clientY, items);
                             return false;
                         })
                     ;

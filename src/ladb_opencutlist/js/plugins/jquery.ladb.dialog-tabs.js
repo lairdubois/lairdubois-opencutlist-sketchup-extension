@@ -239,9 +239,9 @@
 
     LadbDialogTabs.prototype.minimize = function () {
         const that = this;
-        if (that.maximized && !that.minimizing) {
-            that.minimizing = true;
-            that.$element.trigger(jQuery.Event('minimizing.ladb.dialog'));
+        if (this.maximized && !this.minimizing) {
+            this.minimizing = true;
+            this.$element.trigger(jQuery.Event('minimizing.ladb.dialog'));
             rubyCallCommand('core_tabs_dialog_minimize', null, function () {
                 that.minimizing = false;
                 Noty.closeAll();
@@ -254,9 +254,9 @@
 
     LadbDialogTabs.prototype.maximize = function (sideFolded = false) {
         const that = this;
-        if (/*!that.maximized && */!that.maximizing) {
-            that.maximizing = true;
-            that.$element.trigger(jQuery.Event('maximizing.ladb.dialog'));
+        if (/*!that.maximized && */!this.maximizing) {
+            this.maximizing = true;
+            this.$element.trigger(jQuery.Event('maximizing.ladb.dialog'));
             rubyCallCommand('core_tabs_dialog_maximize', { side_folded: sideFolded }, function () {
                 that.maximizing = false;
                 that.$wrapper.show();
