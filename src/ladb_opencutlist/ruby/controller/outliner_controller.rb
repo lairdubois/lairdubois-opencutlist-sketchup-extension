@@ -132,6 +132,28 @@ module Ladb::OpenCutList
 
     alias_method :onSelectedRemoved, :onSelectionRemoved
 
+    def onSelectionAdded(selection, entity)
+      # puts "onSelectionAdded: #{selection}, #{entity}"
+
+      return unless @worker
+
+      @worker.run(:compute_selection)
+
+      trigger_boo
+
+    end
+
+    def onSelectionRemoved(selection, entity)
+      # puts "onSelectionRemoved: #{selection}, #{entity}"
+
+      return unless @worker
+
+      @worker.run(:compute_selection)
+
+      trigger_boo
+
+    end
+
     def onSelectionBulkChange(selection)
       # puts "onSelectionBulkChange: #{selection}"
 
@@ -291,7 +313,7 @@ module Ladb::OpenCutList
 
     end
 
-    # Definitions obeserver
+    # Definitions Observer
 
     def onComponentAdded(definitions, definition)
       # puts "onComponentAdded: #{definition} (#{definition.object_id})"

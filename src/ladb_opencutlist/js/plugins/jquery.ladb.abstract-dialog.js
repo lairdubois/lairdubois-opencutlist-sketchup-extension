@@ -373,9 +373,15 @@ LadbAbstractDialog.prototype.notifySuccess = function (text, buttons) {
 LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items, callback) {
     const that = this;
 
+    let $window = $(window);
+    let $body = $('body');
+    let $contextMenu = $('<div class="context-menu" />');
+    let $backdrop = $('<div class="context-menu-backdrop" />');
+    let $menu = $('<ul class="dropdown-menu" />');
+
     const fnGetMenuPosition = function ($menu, mouse, direction, scrollDir) {
-        let win = $(window)[direction](),
-            scroll = $(window)[scrollDir](),
+        let win = $window[direction](),
+            scroll = $window[scrollDir](),
             menu = $menu[direction](),
             position = mouse + scroll;
 
@@ -387,16 +393,12 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
         return position;
     }
 
-    let $body = $('body');
-    let $contextMenu = $('<div class="context-menu" />');
-    let $backdrop = $('<div class="context-menu-backdrop" />');
-    let $menu = $('<ul class="dropdown-menu" />');
-
     const fnRemoveContextMenu = function () {
         if (that._$contextMenu != null) {
             that._$contextMenu.remove();
             that._$contextMenu = null;
-            $('body').off('keydown', fnRemoveContextMenu);
+            $window.off('blur', fnRemoveContextMenu);
+            $body.off('keydown', fnRemoveContextMenu);
             if (typeof callback === 'function') {
                 callback();
             }
@@ -440,6 +442,7 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
     $body.append($contextMenu);
     this._$contextMenu = $contextMenu;
 
+    $window.on('blur', fnRemoveContextMenu);
     $body.on('keydown', fnRemoveContextMenu);
 
 }
