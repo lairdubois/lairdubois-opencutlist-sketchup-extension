@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative 'smart_tool'
   require_relative 'smart_handle_tool'
+  require_relative '../lib/geometrix/finder/centroid_finder'
   require_relative '../lib/geometrix/finder/circle_finder'
   require_relative '../lib/fiddle/clippy/clippy'
   require_relative '../manipulator/vertex_manipulator'
@@ -356,6 +357,7 @@ module Ladb::OpenCutList
     def onToolMouseMove(tool, flags, x, y, view)
 
       @mouse_snap_point = nil
+      @mouse_snap_centroid = nil
       @mouse_ip.pick(view, x, y, _get_previous_input_point)
 
       # SKETCHUP_CONSOLE.clear
@@ -431,7 +433,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START
-        @picked_shape_start_point = @mouse_down_point
+        @picked_shape_start_point = @mouse_snap_centroid.nil? ? @mouse_down_point : @mouse_snap_centroid
         @mouse_down_point = nil
         set_state(STATE_SHAPE)
         _refresh
@@ -763,9 +765,17 @@ module Ladb::OpenCutList
           # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
           # @tool.append_3d(k_mesh)
 
+          if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY)
+
+            # Compute face centroid
+            @mouse_snap_point = @mouse_snap_centroid = Geometrix::CentroidFinder.find_centroid(face_manipulator.outer_loop_manipulator.points)
+
+          end
+
           if @mouse_ip.degrees_of_freedom == 2 && _fetch_option_measure_from_vertex
 
-            @nearest_vertex_manipulator = face_manipulator.outer_loop_manipulator.nearest_vertex_manipulator_to(@mouse_ip.position, false)
+            # Compute nearest
+            @nearest_vertex_manipulator = face_manipulator.outer_loop_manipulator.nearest_vertex_manipulator_to(@mouse_snap_point.nil? ? @mouse_ip.position : @mouse_snap_point, false)
             @nearest_edge_manipulators = @nearest_vertex_manipulator.edge_manipulators.select { |edge_manipulator| edge_manipulator.edge.faces.include?(@mouse_ip.face) }
 
           end
@@ -813,7 +823,8 @@ module Ladb::OpenCutList
       if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY) && @@last_pull_measure > 0
         measure = @@last_pull_measure
         measure /= 2 if _fetch_option_pull_centered
-        @mouse_snap_point = @picked_shape_end_point.offset(@picked_shape_end_point.vector_to(@mouse_snap_point), measure) if measure > 0
+        v = @picked_shape_end_point.vector_to(@mouse_snap_point)
+        @mouse_snap_point = @picked_shape_end_point.offset(v, measure) if measure > 0 && v.valid?
       end
 
     end
@@ -821,6 +832,17 @@ module Ladb::OpenCutList
     # -----
 
     def _preview_shape_start(view)
+
+      unless @mouse_snap_centroid.nil?
+
+        k_points = _create_floating_points(
+          points: @mouse_snap_centroid,
+          style: Kuix::POINT_STYLE_CROSS,
+          stroke_color: Kuix::COLOR_RED
+        )
+        @tool.append_3d(k_points)
+
+      end
 
       unless @nearest_vertex_manipulator.nil? || @nearest_edge_manipulators.nil?
 
@@ -1153,6 +1175,7 @@ module Ladb::OpenCutList
       @mouse_ip.clear
       @mouse_down_point = nil
       @mouse_snap_point = nil
+      @mouse_snap_centroid = nil
       @nearest_vertex_manipulator = nil
       @nearest_edge_manipulators = nil
       @picked_shape_start_point = nil
