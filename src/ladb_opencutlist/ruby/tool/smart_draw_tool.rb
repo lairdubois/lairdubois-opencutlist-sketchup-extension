@@ -2284,7 +2284,8 @@ module Ladb::OpenCutList
       # Lock on the last radius measure
       if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY) && @@last_radius_measure > 0
         measure = @@last_radius_measure
-        @mouse_snap_point = @picked_shape_start_point.offset(@picked_shape_start_point.vector_to(@mouse_snap_point), measure) if measure > 0
+        v = @picked_shape_start_point.vector_to(@mouse_snap_point)
+        @mouse_snap_point = @picked_shape_start_point.offset(v, measure) if measure > 0 && v.valid?
       end
 
       super
