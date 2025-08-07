@@ -505,6 +505,11 @@ module Ladb::OpenCutList
 
       when STATE_SHAPE_START, STATE_SHAPE
 
+        if @state == STATE_SHAPE_START && key == CONSTRAIN_MODIFIER_KEY
+          _refresh
+          return true
+        end
+
         if key == VK_RIGHT
           x_axis = _get_active_x_axis
           if @locked_normal == x_axis
@@ -561,7 +566,10 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START
-        if key == COPY_MODIFIER_KEY && is_quick
+        if key == CONSTRAIN_MODIFIER_KEY
+          _refresh
+          return true
+        elsif key == COPY_MODIFIER_KEY && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
           @previous_action_handler = nil
           _remove_floating_tools
@@ -837,8 +845,9 @@ module Ladb::OpenCutList
 
         k_points = _create_floating_points(
           points: @mouse_snap_centroid,
-          style: Kuix::POINT_STYLE_CROSS,
-          stroke_color: Kuix::COLOR_RED
+          style: Kuix::POINT_STYLE_CIRCLE,
+          fill_color: Sketchup::Color.new(17, 98, 160),
+          stroke_color: Kuix::COLOR_WHITE
         )
         @tool.append_3d(k_points)
 
