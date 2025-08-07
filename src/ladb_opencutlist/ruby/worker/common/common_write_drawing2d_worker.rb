@@ -15,7 +15,6 @@ module Ladb::OpenCutList
     include SanitizerHelper
 
     LAYER_PART = 'OCL_PART'.freeze
-    LAYER_EDGE = 'OCL_EDGE'.freeze
     LAYER_ANCHOR = 'OCL_ANCHOR'.freeze
 
     SUPPORTED_FILE_FORMATS = [ FILE_FORMAT_SVG, FILE_FORMAT_DXF ]

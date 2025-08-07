@@ -121,10 +121,6 @@ module Ladb::OpenCutList
         group_packing_cancel_command
       end
 
-      PLUGIN.register_command("cutlist_packing_improve") do |settings|
-        packing_improve_command(settings)
-      end
-
       PLUGIN.register_command("cutlist_packing_write") do |settings|
         packing_write_command(settings)
       end
@@ -418,16 +414,6 @@ module Ladb::OpenCutList
       @packing = packing unless packing.running
 
       packing.to_hash
-    end
-
-    def packing_improve_command(settings)
-      require_relative '../worker/cutlist/cutlist_packing_improve_worker'
-
-      # Setup worker
-      worker = CutlistPackingImproveWorker.new(@cutlist, @packing, **settings)
-
-      # Run !
-      worker.run
     end
 
     def packing_write_command(settings)

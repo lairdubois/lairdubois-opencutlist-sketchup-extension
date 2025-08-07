@@ -98,10 +98,9 @@ module Ladb::OpenCutList
           f_paths = face_manipulator.loop_manipulators.map { |loop_manipulator| loop_manipulator.points }.map { |points| Clippy.points_to_rpath(points) }
         end
 
-        pld = plds[f_depth.round(3)]
+        pld = plds[key = f_depth.round(3)]
         if pld.nil?
-          pld = PathsLayerDef.new(f_depth, f_paths, [], [], [], DrawingProjectionLayerDef::TYPE_DEFAULT)
-          plds[f_depth.round(3)] = pld
+          plds[key] = PathsLayerDef.new(f_depth, f_paths, [], [], [], DrawingProjectionLayerDef::TYPE_DEFAULT)
         else
           pld.closed_paths.concat(f_paths) # Just concat, union will be call later in one unique call
         end
@@ -114,10 +113,9 @@ module Ladb::OpenCutList
         e_depth = (z_max - edge_manipulator.z_max)
         e_path = Clippy.points_to_rpath(edge_manipulator.points)
 
-        pld = plds[e_depth.round(3)]
+        pld = plds[(key = e_depth.round(3))]
         if pld.nil?
-          pld = PathsLayerDef.new(e_depth, [], [ e_path ], [], [], DrawingProjectionLayerDef::TYPE_DEFAULT)
-          plds[e_depth.round(3)] = pld
+          plds[key] = PathsLayerDef.new(e_depth, [], [ e_path ], [], [], DrawingProjectionLayerDef::TYPE_DEFAULT)
         else
           pld.open_paths.push(e_path)
         end
@@ -128,10 +126,9 @@ module Ladb::OpenCutList
         c_depth = (z_max - curve_manipulator.z_max)
         c_path = Clippy.points_to_rpath(curve_manipulator.points)
 
-        pld = plds[c_depth.round(3)]
+        pld = plds[(key = c_depth.round(3))]
         if pld.nil?
-          pld = PathsLayerDef.new(c_depth, [], [ c_path ], [], [], DrawingProjectionLayerDef::TYPE_DEFAULT)
-          plds[c_depth.round(3)] = pld
+          plds[key] = PathsLayerDef.new(c_depth, [], [ c_path ], [], [], DrawingProjectionLayerDef::TYPE_DEFAULT)
         else
           pld.open_paths.push(c_path)
         end
