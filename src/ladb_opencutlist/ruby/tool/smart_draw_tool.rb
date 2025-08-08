@@ -773,18 +773,26 @@ module Ladb::OpenCutList
           # k_mesh.background_color = Sketchup::Color.new(255, 0, 255, 50)
           # @tool.append_3d(k_mesh)
 
+          position = @mouse_ip.position
+          degrees_of_freedom = @mouse_ip.degrees_of_freedom
+          face = @mouse_ip.face
+
           if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY)
 
             # Compute face centroid
             @mouse_snap_point = @mouse_snap_centroid = Geometrix::CentroidFinder.find_centroid(face_manipulator.outer_loop_manipulator.points)
+            unless @mouse_snap_point.nil?
+              position = @mouse_snap_point
+              @mouse_ip.clear
+            end
 
           end
 
-          if @mouse_ip.degrees_of_freedom == 2 && _fetch_option_measure_from_vertex
+          if degrees_of_freedom == 2 && _fetch_option_measure_from_vertex
 
             # Compute nearest
-            @nearest_vertex_manipulator = face_manipulator.outer_loop_manipulator.nearest_vertex_manipulator_to(@mouse_snap_point.nil? ? @mouse_ip.position : @mouse_snap_point, false)
-            @nearest_edge_manipulators = @nearest_vertex_manipulator.edge_manipulators.select { |edge_manipulator| edge_manipulator.edge.faces.include?(@mouse_ip.face) }
+            @nearest_vertex_manipulator = face_manipulator.outer_loop_manipulator.nearest_vertex_manipulator_to(position, false)
+            @nearest_edge_manipulators = @nearest_vertex_manipulator.edge_manipulators.select { |edge_manipulator| edge_manipulator.edge.faces.include?(face) }
 
           end
 
