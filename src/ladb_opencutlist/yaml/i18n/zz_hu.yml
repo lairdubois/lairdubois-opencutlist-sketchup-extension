@@ -3,8 +3,8 @@ _disabled_msg: |
   2 - Ezt a nyelvet még nem fordították le **teljesen**.
 
   A fordítás véglegesítéséhez kérjük, tekintse meg az [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general) dokumentumot.
-_reload_msg: 3 - A változtatások érvényesítéséhez **be kell zárnia** és **újra kell nyitnia** az OpenCutList ablakot.
-_description: 4 - Szabáslista és Szabásterv Készítő Faipari Szakembereknek. Nyílt forráskódú, közösségi finanszírozású és könnyen használható ;)
+_reload_msg: 3 - A változtatások érvényesítéséhez **be kell zárnia** és **újra meg kell nyitnia** az OpenCutList ablakot.
+_description: 4 - Faipari Szakembereknek Szabáslista és Szabásterv készítő program. Nyílt forráskódú, közösségi finanszírozású és könnyen használható ;)
 default:
   minimize: 5 - Kis méret
   maximize: 6 - Teljes méret
@@ -19,7 +19,7 @@ default:
   clear: 15 - Töröl
   refresh: 16 - Frissít
   generate: 17 - Generál
-  regenerate: 18 - Újragenerálás
+  regenerate: 18 - Újra generál
   print: 19 - Nyomtat
   export: 20 - Exportál
   import: 21 - Importál
@@ -623,7 +623,7 @@ tab:
     export:
       title: 491 - Export
       info_0: |
-        492 - Ez a funkció lehetővé teszi a darabjegyzék adatainak exportálását a vágólapra, vagy [CSV](https://hu.wikipedia.org/wiki/CSV) illetve [XLSX](https://hu.wikipedia.org/wiki/XLSX) formátumú fájlba.
+        492 - Ez a funkció lehetővé teszi a *darabjegyzék adatainak* exportálását a vágólapra, vagy [CSV](https://hu.wikipedia.org/wiki/CSV) illetve [XLSX](https://hu.wikipedia.org/wiki/XLSX) formátumú fájlba.
       customize_help: |
         493 - Rendezze át, rejtse el, adjon hozzá, távolítson el vagy válasszon oszlopot a listából a **cím** és a **képlet** testreszabásához, amely minden exportált sorhoz értékeket generál.
       add_column: 494 - Oszlop hozzáadása
@@ -993,7 +993,12 @@ tab:
       options_tuning: 806 - Finomhangolás
       option_std_bin_1d_dimensional: 807 - Szabványos fűrészáru
       option_std_bin_1d_edge: 808 - Szabványos élzáró
-      option_std_bin_1d_help: "809 - Válassza ki azokat a szabványos deszka- vagy élzáró méreteket, amelyeket a rendszer meg fog duplikálni annak érdekében, hogy minden alkatrészt tartalmazzanak. \n\nEz a lista az anyag **$t(tab.materials.edit_material.std_lengths)** mezőjében van meghatározva.\n\n*A(z) '{{ material_name }}' anyag tulajdonságainak szerkesztésével frissítheti ezt a listát.*\n"
+      option_std_bin_1d_help: |
+        809 - Válassza ki azokat a szabványos deszka- vagy élzáró méreteket, amelyeket a rendszer meg fog duplikálni annak érdekében, hogy minden alkatrészt tartalmazzanak.
+
+        Ez a lista az anyag **$t(tab.materials.edit_material.std_lengths)** mezőjében van meghatározva.
+
+        *A(z) '{{ material_name }}' anyag tulajdonságainak szerkesztésével frissítheti ezt a listát.*
       option_std_bin_1d_add: 810 - Méret hozzáadása
       option_std_bin_1d_none: 811 - Nincs
       option_scrap_bin_1d_dimensional_sizes: 812 - Maradék deszkák
@@ -1316,9 +1321,9 @@ tab:
       error:
         invalid_size: 1075 - A megadott konfigurációs paraméterek nem teszik lehetővé érvényes címkeméret beállítását.
       warning:
-        is_group_selection: 1076 - A szabástervben szereplő, rejtett csoportokban lévő alkatrészek nem kapnak címkét.
+        is_group_selection: 1076 - A szabástervben szereplő, **rejtett csoportokban lévő** alkatrészek nem kapnak címkét.
         is_part_selection: 1077 - Ezek a címkék csak a **kiválasztott alkatrészekre** korlátozódnak.
-        formula_not_available: 1078 - Ebben a kontextusban nem érhető el.
+        formula_not_available: 1078 - Ebben a kontextusban nem érhető el
     layout:
       title: 1079 - Rajz
       to_layout: 1080 - Exportálás Layout-ba
@@ -1517,7 +1522,7 @@ tab:
       no_model: 1208 - Nincs megnyitott modell. További információra lesz szükségem ;)
       no_entities: 1209 - A modell üres. További információra lesz szükségem ;)
       no_component_in_selection: 1210 - Nem található látható komponens példány a kijelölésben.
-      no_component_in_model: 1211 - Nem található látható komponens példány a jelenetben
+      no_component_in_model: 1211 - Nem található látható komponens példány a jelenetben.
       unknow_part: 1212 - A kiválasztott alkatrész nem létezik az alkatrészlistában.
       obsolete_cutlist: 1213 - Nem lehetséges, az alkatrészlista elavult. Kérem, generálja újra.
     warning:
@@ -1979,7 +1984,7 @@ tab:
       1528 - Az *OpenCutList*-et [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) és [Martin Müller](https://www.lairdubois.fr/@mobilarte) fejleszti. *Az összes [közreműködő](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) listája*.
     credits_translations: 1529 - Fordítások
     credits_translators: |
-      1530 - - Kovács Roland és Zoltán Nagy (*magyar*)
+      1530 - - Zoltán Nagy és Roland Kovács (*magyar*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*angol*, *német*)
       - Gildas Boureau (*francia* dokumentáció)
       - Vladimir Badulya (*orosz*)
@@ -2078,37 +2083,37 @@ tool:
     action_1: 1598 - Másolás vonal mentén
     action_1_status: 1599 - Kattintson egy alkatrészre annak tengely menti másolásához
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: '1601 - '
-    action_2: '1602 - '
-    action_2_status: '1603 - '
+    action_1_state_2_status: 1601 - Kattintson a másolat elhelyezéséhez, vagy adjon meg egy távolságot
+    action_2: 1602 - Másolás rács mentén
+    action_2_status: 1603 - Kattintson egy alkatrészre annak rács menti másolásához
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: '1605 - '
-    action_3: '1606 - '
-    action_3_status: '1607 - '
+    action_2_state_2_status: 1605 - Kattintson a másolatok elhelyezéséhez, vagy adjon meg egy távolságot
+    action_3: 1606 - Mozgatás
+    action_3_status: 1607 - Kattintson egy alkatrészre annak tengely menti mozgatásához
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: '1609 - '
-    action_4: '1610 - '
-    action_4_status: '1611 - '
+    action_3_state_2_status: 1609 - Kattintson az alkatrész elhelyezéséhez, vagy adjon meg egy távolságot
+    action_4: 1610 - Elosztás
+    action_4_status: 1611 - Kattintson egy alkatrészre annak tengely menti elosztásához
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: '1613 - '
-    action_4_state_2_status: '1614 - '
-    action_5: '1615 - '
+    action_4_state_1_status: 1613 - Kattintson az első mérési pont meghatározásához
+    action_4_state_2_status: 1614 - Kattintson a második mérési pont meghatározásához, vagy adjon meg egy távolságot
+    action_5: 1615 - Átméretezés
     action_option_group_copy_measure_type: 1616 - Mérés
     action_option_group_move_measure_type: 1617 - Mérés
     action_option_group_axes: 1618 - Tengelyek
     action_option_group_options: 1619 - Beállítások
-    action_option_copy_measure_type_outside_status: '1620 - '
-    action_option_copy_measure_type_centered_status: '1621 - '
-    action_option_copy_measure_type_inside_status: '1622 - '
-    action_option_move_measure_type_outside_status: '1623 - '
-    action_option_move_measure_type_centered_status: '1624 - '
-    action_option_move_measure_type_inside_status: '1625 - '
-    action_option_axes_active_status: '1626 - '
-    action_option_axes_context_status: 1627 - Mozgatás az alkatrészt tartalmazó csoport vagy komponens tengelyei mentén
-    action_option_axes_entity_status: '1628 - '
-    action_option_options_mirror_status: '1629 - '
+    action_option_copy_measure_type_outside_status: 1620 - Külső mérés
+    action_option_copy_measure_type_centered_status: 1621 - Középponttól középpontig történő mérés
+    action_option_copy_measure_type_inside_status: 1622 - Mérés az alkatrészek között
+    action_option_move_measure_type_outside_status: 1623 - Külső mérés
+    action_option_move_measure_type_centered_status: 1624 - Mérés középpontból
+    action_option_move_measure_type_inside_status: 1625 - Belső mérés
+    action_option_axes_active_status: 1626 - Kezelés az aktív tengelyek mentén
+    action_option_axes_context_status: 1627 - Kezelés annak a csoportnak vagy komponensnek a tengelyei mentén, amely tartalmazza az alkatrészt
+    action_option_axes_entity_status: 1628 - Kezelés az alkatrész tengelyei mentén
+    action_option_options_mirror_status: 1629 - Szimmetrikus másolás
     warning:
-      copies_disable_mirror: '1630 - '
+      copies_disable_mirror: 1630 - Több másolat esetén a '$t(tool.smart_handle.action_option_options_mirror_status)' opció kikapcsolásra kerül
     error:
       min_distance: '1631 - A(z) {{ value1 }} távolság nem éri el a minimálisan megengedett értéket ami: {{ value2 }}'
   smart_paint:
@@ -2171,7 +2176,7 @@ tool:
     action_3: 1685 - Tengelyek igazítása
     action_3_status: 1686 - Kattintson egy alkatrész felületére vagy élére a tengelyeinek igazításához
     action_4: 1687 - Eredet áthelyezése
-    action_4_status: '1688 - '
+    action_4_status: 1688 - Jelöljön ki egy alkatrész felületet, majd kattintson egy pontra az origó elhelyezéséhez
     action_option_group_direction: 1689 - Irány
     action_option_direction_0: 1690 - H
     action_option_direction_1: 1691 - SZ
