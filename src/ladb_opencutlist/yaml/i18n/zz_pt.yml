@@ -1074,8 +1074,8 @@ tab:
       option_items_formula_help: |
         860 - Permite usar código *Ruby* para mudar como as peças são identificadas no plano de corte.
       option_bin_folding_1d_dimensional: 861 - Agrupar barras similares
-      option_bin_folding_1d_edge: 862 - Agrupamento de fitas de borda idênticas
-      option_bin_folding_2d_sheet_good: 863 - Agrupar Chapas Similares
+      option_bin_folding_1d_edge: 862 - Agrupar fitas de borda idênticas
+      option_bin_folding_2d_sheet_good: 863 - Agrupar chapas similares
       option_bin_folding_2d_veneer: 864 - Agrupar chapas laminadas similares
       option_bin_folding_0: $t(default.no)
       option_bin_folding_1: $t(default.yes)

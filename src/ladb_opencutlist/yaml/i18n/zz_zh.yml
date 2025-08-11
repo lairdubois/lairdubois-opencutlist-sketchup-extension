@@ -216,8 +216,8 @@ core:
       cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
       cutlist_cuttingdiagram2d_options: $t(default.deprecated)
       cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
-      cutlist_packing_options: '175 - '
-      cutlist_packing_write_options: '176 - '
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
@@ -563,7 +563,9 @@ tab:
       general: 437 - 常规
       sorting: 438 - 排序
       group_order_strategy: 439 - 群組排序
-      group_order_strategy_help: '440 - '
+      group_order_strategy_help: |
+        440 - 重新排列以下属性，以定义分组的排序策略。
+        每个属性可以按 <i class="ladb-opencutlist-icon-sort-asc"></i>升序 或 <i class="ladb-opencutlist-icon-sort-desc"></i>降序 排列。
       part_order_strategy: 441 - 部件排序
       part_order_strategy_help: |
         442 - 重新排列或调整下列的项目以定义每组部件内的项目排序顺序.
@@ -988,40 +990,58 @@ tab:
       options_material: 803 - 材质
       options_config: 804 - 配置
       options_display: 805 - 显示
-      options_tuning: '806 - '
+      options_tuning: 806 - 调整
       option_std_bin_1d_dimensional: 807 - 标准呎吋
       option_std_bin_1d_edge: 808 - 标准封边
-      option_std_bin_1d_help: '809 - '
+      option_std_bin_1d_help: |
+        809 - 选择标准板材或封边条的尺寸，这些尺寸将被复制以包含所有部件。
+
+        此清单定义在材料的 **$t(tab.materials.edit_material.std_lengths)** 栏位中。
+
+        *编辑材料 '{{ material_name }}' 以更新此清单*
       option_std_bin_1d_add: 810 - 添加一个长度
       option_std_bin_1d_none: 811 - 无
       option_scrap_bin_1d_dimensional_sizes: 812 - 余料板材
       option_scrap_bin_1d_edge_sizes: 813 - 余料边缘封边
       option_scrap_bin_1d_sizes_placeholder: 814 - 长度 x 数量 ; ...
-      option_scrap_bin_1d_sizes_help: '815 - '
+      option_scrap_bin_1d_sizes_help: |
+        815 - 列出所有要纳入裁切图的剩料板材或封边条
+
+        *未标注单位的尺寸将视为模型单位*
       option_scrap_bin_1d_none: 816 - 无
       option_std_bin_2d_sheet_good: 817 - 标准板材
       option_std_bin_2d_veneer: 818 - 标准木皮
-      option_std_bin_2d_help: '819 - '
+      option_std_bin_2d_help: |
+        819 - 选择标准板材或木皮的尺寸，这些尺寸将被复制以计算最佳方式排板。
+
+        此清单定义在材料的**$t(tab.materials.edit_material.std_sizes)**栏位中。
+
+        *请编辑材料'{{ material_name }}'以更新此清单*
       option_std_bin_2d_add: 820 - 添加一个长度
       option_std_bin_2d_none: 821 - 无
       option_scrap_bin_2d_sheet_good_sizes: 822 - 面板余料
       option_scrap_bin_2d_veneer_sizes: 823 - 薄饰板余料
       option_scrap_bin_2d_sizes_placeholder: 824 - 长度 x 宽度 x 数量 ; ...
-      option_scrap_bin_2d_sizes_help: '825 - '
+      option_scrap_bin_2d_sizes_help: |
+        825 - 列出所有要纳入裁切图的剩料板材或木皮。
+
+        *未标注单位的尺寸将视为模型单位*
       option_scrap_bin_2d_none: 826 - 无
       option_optimization_mode: 827 - 最佳化模式
       option_optimization_mode_help: |
         828 - 设定最佳化模式, 有或没有时限
       option_objective: 829 - 目标
-      option_objective_help: '830 - '
+      option_objective_help: |
+        830 - 设定排料规划目标
       option_rectangleguillotine_cut_type: 831 - 切割种类
       option_rectangleguillotine_cut_type_help: |
         832 - 设定切割种类
-      option_rectangleguillotine_cut_type_non_exact: '833 - '
-      option_rectangleguillotine_cut_type_exact: '834 - '
-      option_rectangleguillotine_cut_type_homogenous: '835 - '
-      option_rectangleguillotine_number_of_stages: '836 - '
-      option_rectangleguillotine_number_of_stages_help: '837 - '
+      option_rectangleguillotine_cut_type_non_exact: 833 - 非精确
+      option_rectangleguillotine_cut_type_exact: 834 - 精确
+      option_rectangleguillotine_cut_type_homogenous: 835 - 均匀
+      option_rectangleguillotine_number_of_stages: 836 - 层数
+      option_rectangleguillotine_number_of_stages_help: |
+        837 - 设置最大切割层数
       option_rectangleguillotine_first_stage_orientation: 838 - 首切方向
       option_rectangleguillotine_first_stage_orientation_help: |
         839 - 設定首切方向
@@ -1039,16 +1059,20 @@ tab:
       option_irregular_allowed_rotations_90: 848 - 間隔90°
       option_irregular_allowed_rotations_180: 849 - 間隔180°
       option_irregular_allow_mirroring: 850 - 允許鏡象
-      option_irregular_allow_mirroring_help: '851 - '
+      option_irregular_allow_mirroring_help: |
+        851 - 定义是否允许对部件进行镜像放置
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: 854 - 間距
-      option_spacing_help: '855 - '
+      option_spacing_help: |
+        855 - 每个部件之间的最小间距
+        该数值可对应锯片或切割工具的宽度
       option_trimming: 856 - 修边
-      option_trimming_1d_help: '857 - '
-      option_trimming_2d_help: '858 - '
+      option_trimming_1d_help: 857 - 板材或封边条两端需预留保护边，保护边视为废料。
+      option_trimming_2d_help: 858 - 板材和木皮四周需预留保护边，保护边视为废料。
       option_items_formula: 859 - 公式
-      option_items_formula_help: '860 - '
+      option_items_formula_help: |
+        860 - 允许编写 *Ruby* 代码，自定义图纸中零件的标识文字。
       option_bin_folding_1d_dimensional: 861 - 分组相似的板材
       option_bin_folding_1d_edge: 862 - 分组相似的边条
       option_bin_folding_2d_sheet_good: 863 - 分组相似的面板
@@ -1059,7 +1083,8 @@ tab:
         867 - 分组包含相同部件和切割的板材或边条.
       option_bin_folding_2d_help: |
         868 - 分组包含相同部件和切割的板材或贴面板.
-      option_bin_folding_warning: '869 - '
+      option_bin_folding_warning: |
+        869 - *如果在标识文本自定义公式中使用实例属性，此选项将被禁用*
       option_hide_part_list: 870 - 部件清单
       option_hide_part_list_1d_dimensional_0: 871 - 显示在每块板上
       option_hide_part_list_1d_edge_0: 872 - 显示在每个边条上
@@ -1078,15 +1103,16 @@ tab:
         *必须启用此选项才能导出形状*
       option_colorization: 883 - 涂抹部件
       option_colorization_0: $t(default.no)
-      option_colorization_1: '885 - '
-      option_colorization_2: '886 - '
-      option_colorization_help: '887 - '
+      option_colorization_1: $t(default.yes) - 屏幕
+      option_colorization_2: $t(default.yes) - 屏幕与打印
+      option_colorization_help: |
+        887 - 允许设置是否使用随机颜色区分图纸中的部件
       option_origin_corner: 888 - 原点的位置
       option_origin_corner_0: 889 - 左上角
       option_origin_corner_1: 890 - 左下角
       option_origin_corner_2: 891 - 右上角
       option_origin_corner_3: 892 - 右下角
-      option_origin_corner_help: '893 - '
+      option_origin_corner_help: 893 - 确定显示部件在板材、木皮、规格木料或封边条上的坐标原点位置
       option_highlight_primary_cuts: 894 - 主要切割
       option_highlight_primary_cuts_0: 895 - 仅在悬停时显示
       option_highlight_primary_cuts_1: 896 - 始终可见
@@ -1096,10 +1122,11 @@ tab:
       option_hide_edges_preview_1: 900 - 在切割图中隐藏
       option_hide_edges_preview_help: 901 - 允许您在切割图中显示或隐藏部件的边条的可视显示.
       option_time_limit: 902 - 时限
-      option_time_limit_help: '903 - '
+      option_time_limit_help: |
+        903 - 设置计算的时间限制
       tooltip:
         scroll_to_block_1d: 904 - 滚动到第一块板材或边缘封边
-        scroll_to_block_2d: '905 - '
+        scroll_to_block_2d: 905 - 滚动至第一个板材或木皮
       list:
         summary: 906 - 摘要
         cached: 907 - 从快取读取
@@ -1108,7 +1135,7 @@ tab:
         stats: 910 - 统计数据
         time: 911 - 时间
         total_efficiency: 912 - 整体效率
-        total_fill_rate: '913 - '
+        total_fill_rate: 913 - 填充率
         total_cut_count: 914 - 切割数量
         total_cut_length: 915 - 切割长度
         efficiency: 916 - 效率
@@ -1133,7 +1160,7 @@ tab:
         bin_2d_veneer_type_0: 935 - 标准薄饰板
         bin_2d_veneer_type_1: 936 - 薄饰板余料
         unused: 937 - 未使用
-        unplaced_parts: '938 - '
+        unplaced_parts: 938 - 未放置的部件
         unplaced_parts_plural: 939 - 未放置的部件
         parts: 940 - 部件
         parts_plural: 941 - 部件
@@ -1144,10 +1171,10 @@ tab:
         cut: 946 - 切割
         cut_plural: 947 - 切割
         cut_trimming: 948 - 修边切割
-        cut_primary: '949 - '
+        cut_primary: 949 - 初次切割
         cut_primary_plural: 950 - 主要切割
         cut_none: 951 - 无
-        cut_depth: '952 - '
+        cut_depth: 952 - 层级 {{ depth }}
       write:
         title: 953 - 导出布局
         info_0: |
@@ -1188,12 +1215,12 @@ tab:
           overflow_gt_spacing: '978 - '
       error:
         no_part: 979 - 没有部件.
-        no_bin_1d: '980 - '
-        no_bin_2d: '981 - '
-        invalid_part_shapes: '982 - '
-        no_solution: '983 - '
-        unplaced_parts: '984 - '
-        unplaced_parts_plural: '985 - '
+        no_bin_1d: 980 - 未选择标准板材或封边条，且无剩余料。
+        no_bin_2d: 981 - 未选择标准板材或木皮，且无剩余料定义。
+        invalid_part_shapes: 982 - 部件 '{{ name }}' 的形状无效。
+        no_solution: 983 - 无法找到将**所有部件**安放在可用材料中的方案。
+        unplaced_parts: 984 - **1 个部件**未能安放
+        unplaced_parts_plural: 985 - 有**{{ count }} 个部件**未能安放。
         unusable_part: 986 - 部件太大
       warning:
         is_part_selection: 987 - 此切割图仅限于 **所选的部件**.
@@ -1293,7 +1320,7 @@ tab:
       error:
         invalid_size: 1075 - 输入的配置参数不允许设置有效的标签尺寸.
       warning:
-        is_group_selection: '1076 - '
+        is_group_selection: 1076 - 位于**隐藏分组**的部件在部件清单中将不会有标签。
         is_part_selection: 1077 - 这些标签仅限于 **所选的部件**.
         formula_not_available: 1078 - 在此上下文中不可用公式
     layout:
@@ -1368,10 +1395,29 @@ tab:
         is_group_selection: 1140 - 部件列表中的 **隐藏组件** 内的部件将不会被绘制.
         is_part_selection: 1141 - 此概览图仅限于 **选定的部件**.
       message:
-        adding_new_page: '1142 - '
-        incompatible_page_format: '1143 - '
-        changing_units: '1144 - '
-        changing_precision: '1145 - '
+        adding_new_page: |
+          1142 - 是否要添加新页面？
+        incompatible_page_format: |
+          1143 - 目标文件的纸张格式与当前设置不一致
+
+          读取 : {{ old_page_format }}
+          导出 : {{ new_page_format }}
+
+          所有页面将被删除
+        changing_units: |
+          1144 - 目标文件的单位跟默认单位不一致
+
+          读取 : {{ old_units }}
+          导出 : {{ new_units }}
+
+          是否使用新单位？
+        changing_precision: |
+          1145 - 目标文件的精度跟默认精度不一致
+
+          读取 : {{ old_precision }}
+          导出 : {{ new_precision }}
+
+          是否使用新精度？
     write:
       title: 1146 - 部件导出
       info_2d: |
@@ -1392,10 +1438,11 @@ tab:
       option_unit: 1155 - 单位
       option_unit_help: |
         1156 - 选择导出文件中使用的单位
-      option_use_count: '1157 - '
-      option_use_count_0: '1158 - '
-      option_use_count_1: '1159 - '
-      option_use_count_help: '1160 - '
+      option_use_count: 1157 - 数量
+      option_use_count_0: 1158 - 每个部件一个文件
+      option_use_count_1: 1159 - 每个部件实例一个文件
+      option_use_count_help: |
+        1160 - 选择是否考虑部件实例数量
       option_part_drawing_type: 1161 - 投影
       option_part_drawing_type_help: |
         1162 - 选择要导出的视图
@@ -1637,8 +1684,8 @@ tab:
       is_active_node: '1351 - '
       set_active_node: '1352 - '
       edit_node_properties: '1353 - '
-      select_node: '1354 - '
-      unselect_node: '1355 - '
+      select_node: 1354 - 选择
+      unselect_node: 1355 - 取消选择
       open_node_url: 1356 - 打开部件 URL
     edit_node:
       title_model: 1357 - 模型属性
@@ -1982,8 +2029,8 @@ tool:
       part_created: '1594 - '
   smart_handle:
     title: '1595 - '
-    action_0: '1596 - '
-    action_0_status: '1597 - '
+    action_0: 1596 - 选择
+    action_0_status: 1597 - 点击部件以选中它
     action_1: '1598 - '
     action_1_status: '1599 - '
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)

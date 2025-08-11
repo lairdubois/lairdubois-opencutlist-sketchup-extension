@@ -795,9 +795,9 @@ tab:
       option_highlight_primary_cuts_0: 646 - Solo al passaggio del mouse
       option_highlight_primary_cuts_1: 647 - Sempre visibile
       option_highlight_primary_cuts_help: 648 - Consente di evidenziare i tagli principali.
-      option_hide_edges_preview: 649 - Indicatori di bordo per la placcatura
-      option_hide_edges_preview_0: 650 - Visualizzato sullo schema di taglio
-      option_hide_edges_preview_1: 651 - Mascherato sul schema di taglio
+      option_hide_edges_preview: 649 - Indicatori di bordatura
+      option_hide_edges_preview_0: 650 - Visibili
+      option_hide_edges_preview_1: 651 - Nascosti
       option_hide_edges_preview_help: 652 - Consente di mostrare o nascondere l'indicazione visiva dei bordi da placcare per ogni parte del schema di taglio.
       option_part_drawing_type: 653 - Forma degli elementi
       option_part_drawing_type_0: 654 - Nascosto
@@ -984,7 +984,7 @@ tab:
       title: 797 - Schema di taglio
       option_problem_type: 798 - Tipo
       option_problem_type_rectangle: 799 - Nesting perimetri
-      option_problem_type_rectangleguillotine: 800 - Rettangoli affiancati
+      option_problem_type_rectangleguillotine: 800 - Rettangoli
       option_problem_type_onedimensional: 801 - Fasce
       option_problem_type_irregular: 802 - Nesting forme
       options_material: 803 - Materiale
@@ -1117,9 +1117,9 @@ tab:
       option_highlight_primary_cuts_0: 895 - Solo al passaggio del mouse
       option_highlight_primary_cuts_1: 896 - Sempre visibile
       option_highlight_primary_cuts_help: 897 - Consente di evidenziare i tagli principali.
-      option_hide_edges_preview: 898 - Indicatori di bordo per la placcatura
-      option_hide_edges_preview_0: 899 - Visualizzato sul schema di taglio
-      option_hide_edges_preview_1: 900 - Mascherato sul schema di taglio
+      option_hide_edges_preview: 898 - Indicatori di bordatura
+      option_hide_edges_preview_0: 899 - Visibili
+      option_hide_edges_preview_1: 900 - Nascosti
       option_hide_edges_preview_help: 901 - Consente di mostrare o nascondere l'indicazione visiva dei bordi da placcare per ogni parte del schema di taglio.
       option_time_limit: 902 - Limite di tempo
       option_time_limit_help: |
