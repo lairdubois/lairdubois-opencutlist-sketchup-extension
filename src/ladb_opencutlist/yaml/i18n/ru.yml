@@ -22,6 +22,7 @@ default:
   clear: Очистить
   refresh: Обновить
   generate: Рассчитать
+  regenerate: Восстановить
   print: Печать
   export: Экспорт
   import: Импорт
@@ -1133,6 +1134,7 @@ tab:
         scroll_to_block_2d: Прокрутка до первой панели или листа
       list:
         summary: Спецификация
+        cached: Загружено из кеша
         trimming: Обрезка
         settings: Настройки
         stats: Статистика
