@@ -2095,7 +2095,7 @@ tool:
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: "Click to place copies of the part, or enter two distances"
     action_3: Move
-    action_3_status: Click on a part to move it along a grid
+    action_3_status: Click on a part to move it along an axis
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
     action_3_state_2_status: "Click to place the part, or enter a distance"
     action_4: Distribute
