@@ -618,7 +618,7 @@ namespace Packy {
             j["time"] = output.time;
 
             j["full_waste"] = to_area_dbl(solution.full_waste());
-            j["full_efficiency"] = 1 - solution.full_waste_percentage();
+            j["full_efficiency"] = solution.number_of_bins() > 0 ? 1 - solution.full_waste_percentage() : 0.0;
             j["cost"] = solution.cost();
             j["profit"] = solution.profit();
 
