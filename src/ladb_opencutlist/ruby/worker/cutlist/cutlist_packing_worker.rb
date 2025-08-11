@@ -269,8 +269,8 @@ module Ladb::OpenCutList
       @problem_type = problem_type
       @objective = objective
       @optimization_mode = optimization_mode
-      @spacing = DimensionUtils.str_to_ifloat(spacing).to_l.to_f
-      @trimming = DimensionUtils.str_to_ifloat(trimming).to_l.to_f
+      @spacing = DimensionUtils.str_to_ifloat(DimensionUtils.str_add_units(spacing)).to_l.to_f
+      @trimming = DimensionUtils.str_to_ifloat(DimensionUtils.str_add_units(trimming)).to_l.to_f
       @time_limit = Plugin::IS_RBZ ? 300 : [ 0 , time_limit.to_i ].max # Only dev from src uses custom time limit
       @not_anytime_tree_search_queue_size = [ 1 , not_anytime_tree_search_queue_size.to_i ].max
       @verbosity_level = verbosity_level.to_i

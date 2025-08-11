@@ -40,6 +40,9 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   ### BETA
 
+  * 2025-08-11
+    * Added HU language
+    * Updated IT, PT, RU
   * 2025-08-08
     * Fixed SmartDrawTool
     * Fixed Packing irregular modal

@@ -227,8 +227,7 @@
       return '0' if !s.is_a?(String) || s.is_a?(String) && s.empty?
 
       s = s.strip
-      s = s.gsub(/,/, decimal_separator) # convert separator to native
-      s = s.gsub(/\./, decimal_separator) # convert separator to native
+      s = s.gsub(/[,.]/, decimal_separator) # convert separator to native
 
       unit = nil
       if (match = s.match(/^\s*-*\s*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
@@ -262,8 +261,7 @@
 
       s = s.sub(/~/, '') # strip approximate sign away
       s = s.strip
-      s = s.gsub(/,/, decimal_separator) # convert separator to native
-      s = s.gsub(/\./, decimal_separator) # convert separator to native
+      s = s.gsub(/[,.]/, decimal_separator) # convert separator to native
 
       # Make sure the entry starts with the proper magic
       s = s.gsub(/\s*(m|cm|mm|\'|\"|yd)\s*/, '\1') # Remove space around unit (to be compatible SU 2017+)
