@@ -1508,7 +1508,9 @@ tab:
         Válassza ki a furatok színét.
       option_parts_paths: Útvonalak
       option_parts_paths_help: |
-        Válassza ki az útvonalak színét.
+        Lehetővé teszi a vonalak színének kiválasztását.
+
+        *A kitöltési szín csak zárt vonalak esetén kerül felhasználásra.*
       error:
         no_part: Nincs exportálható alkatrész.
       warning:

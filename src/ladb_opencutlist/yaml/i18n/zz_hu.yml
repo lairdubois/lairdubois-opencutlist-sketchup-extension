@@ -1503,7 +1503,9 @@ tab:
         1194 - Válassza ki a furatok színét.
       option_parts_paths: 1195 - Útvonalak
       option_parts_paths_help: |
-        1196 - Válassza ki az útvonalak színét.
+        1196 - Lehetővé teszi a vonalak színének kiválasztását.
+
+        *A kitöltési szín csak zárt vonalak esetén kerül felhasználásra.*
       error:
         no_part: 1197 - Nincs exportálható alkatrész.
       warning:
