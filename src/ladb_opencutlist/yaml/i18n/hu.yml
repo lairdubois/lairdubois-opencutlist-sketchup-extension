@@ -21,7 +21,7 @@ default:
   close: Bezár
   clear: Töröl
   refresh: Frissít
-  generate: Generál
+  generate: Generálás
   regenerate: Újra generál
   print: Nyomtat
   export: Exportál
@@ -279,8 +279,8 @@ tab:
     label: Alkatrészek
     title: Alkatrészlista
     help: |
-      Válassza ki az aktuális jelenetben azok az alkatrészeket, amiket az Alkatrészlistában akarsz látni/használni, majd kattintson a **Generálás** gombra.
-      Ha nincs kijelölve komponens, akkor a jelenet összes látható komponense figyelembe lesz véve.
+      Válassza ki az aktuális jelenetben azokat az alkatrészeket, amiket az Alkatrészlistában akarsz látni/használni, majd kattintson a **Generálás** gombra.
+      Ha nincs kijelölve komponens, akkor a jelenet összes látható komponense felhasználásra kerül.
     is_selection: Csak kijelölés
     select_part: Alkatrész kijelölése
     select_part_plural: Alkatrészek kijelölése
@@ -2065,7 +2065,7 @@ tool:
     action_option_options_construction: Segédvonalak
     action_option_options_construction_status: Rajzolás segédvonalként
     action_option_options_rectangle_centered: Középre igazított téglalap
-    action_option_options_rectangle_centered_status: A téglalap középpontját az első pontra helyezi
+    action_option_options_rectangle_centered_status: A téglalap középpontját az kiinduló pontból indítja
     action_option_options_smoothing: Simítás
     action_option_options_smoothing_status: Görbék simítása
     action_option_options_measure_from_vertex_status: Mérés a legközelebbi csúcshoz viszonyítva
@@ -2074,8 +2074,8 @@ tool:
     action_option_options_measure_from_radius_status: Kör mérése sugár alapján
     action_option_options_measure_reversed: Fordított mérés
     action_option_options_measure_reversed_status: A mérés irányának megfordítása
-    action_option_options_pull_centered: Középpontos mozgatás
-    action_option_options_pull_centered_status: A középpontos mozgatás az első pontra történik
+    action_option_options_pull_centered: Középpontos magasság állítás
+    action_option_options_pull_centered_status: A középpontól indul kétirányba az emelés
     action_option_options_ask_name: Alkatrészek elnevezése
     action_option_options_ask_name_status: Az alkatrész nevének kézi megadása
     action_measure_locked_status: Rögzítés az utolsó méréshez
