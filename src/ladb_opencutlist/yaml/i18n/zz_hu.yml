@@ -18,7 +18,7 @@ default:
   close: 14 - Bezár
   clear: 15 - Töröl
   refresh: 16 - Frissít
-  generate: 17 - Generál
+  generate: 17 - Generálás
   regenerate: 18 - Újra generál
   print: 19 - Nyomtat
   export: 20 - Exportál
@@ -274,8 +274,8 @@ tab:
     label: 217 - Alkatrészek
     title: 218 - Alkatrészlista
     help: |
-      219 - Válassza ki az aktuális jelenetben azok az alkatrészeket, amiket az Alkatrészlistában akarsz látni/használni, majd kattintson a **Generálás** gombra.
-      Ha nincs kijelölve komponens, akkor a jelenet összes látható komponense figyelembe lesz véve.
+      219 - Válassza ki az aktuális jelenetben azokat az alkatrészeket, amiket az Alkatrészlistában akarsz látni/használni, majd kattintson a **Generálás** gombra.
+      Ha nincs kijelölve komponens, akkor a jelenet összes látható komponense felhasználásra kerül.
     is_selection: 220 - Csak kijelölés
     select_part: 221 - Alkatrész kijelölése
     select_part_plural: 222 - Alkatrészek kijelölése
@@ -2060,7 +2060,7 @@ tool:
     action_option_options_construction: 1575 - Segédvonalak
     action_option_options_construction_status: 1576 - Rajzolás segédvonalként
     action_option_options_rectangle_centered: 1577 - Középre igazított téglalap
-    action_option_options_rectangle_centered_status: 1578 - A téglalap középpontját az első pontra helyezi
+    action_option_options_rectangle_centered_status: 1578 - A téglalap középpontját az kiinduló pontból indítja
     action_option_options_smoothing: 1579 - Simítás
     action_option_options_smoothing_status: 1580 - Görbék simítása
     action_option_options_measure_from_vertex_status: 1581 - Mérés a legközelebbi csúcshoz viszonyítva
@@ -2069,8 +2069,8 @@ tool:
     action_option_options_measure_from_radius_status: 1584 - Kör mérése sugár alapján
     action_option_options_measure_reversed: 1585 - Fordított mérés
     action_option_options_measure_reversed_status: 1586 - A mérés irányának megfordítása
-    action_option_options_pull_centered: 1587 - Középpontos mozgatás
-    action_option_options_pull_centered_status: 1588 - A középpontos mozgatás az első pontra történik
+    action_option_options_pull_centered: 1587 - Középpontos magasság állítás
+    action_option_options_pull_centered_status: 1588 - A középpontól indul kétirányba az emelés
     action_option_options_ask_name: 1589 - Alkatrészek elnevezése
     action_option_options_ask_name_status: 1590 - Az alkatrész nevének kézi megadása
     action_measure_locked_status: 1591 - Rögzítés az utolsó méréshez
