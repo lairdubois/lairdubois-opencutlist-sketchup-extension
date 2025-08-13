@@ -762,6 +762,10 @@ module Ladb::OpenCutList
 
     end
 
+    def any?
+      !@material.nil?
+    end
+
     def empty?
       @material.nil?
     end
