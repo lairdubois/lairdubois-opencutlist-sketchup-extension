@@ -143,7 +143,7 @@ module Ladb::OpenCutList
       end
 
       # Sort on depth ASC
-      splds = plds.values.sort_by { |layer_def| [ layer_def.depth, layer_def.su_layer.nil? ? 1 : 0 ] }
+      splds = plds.values.sort_by { |layer_def| [ layer_def.depth.round(3), layer_def.su_layer.nil? ? 1 : 0 ] }
 
       # Union paths on each layer
       splds.each do |layer_def|

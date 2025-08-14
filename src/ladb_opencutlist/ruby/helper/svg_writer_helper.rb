@@ -166,7 +166,7 @@ module Ladb::OpenCutList
 
         if layer_def.type_path?
           attributes = {
-            stroke: _svg_stroke_color_hex(layer_def.has_color? ?layer_def.color : paths_stroke_color),
+            stroke: _svg_stroke_color_hex(layer_def.has_color? ? layer_def.color : paths_stroke_color),
             fill: layer_def.type_closed_path? ? _svg_fill_color_hex(paths_fill_color) : 'none',
             id: id,
             'serif:id': id,
