@@ -77,6 +77,7 @@ module Ladb::OpenCutList
     COLOR_PART_DEPTH = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.5).freeze
     COLOR_PART_BORDERS = Kuix::COLOR_WHITE
     COLOR_PART_PATH = Kuix::COLOR_CYAN
+    COLOR_PART_PATH_WITH_NAME = Sketchup::Color.new(0, 255, 124).freeze
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
     def initialize(
@@ -407,7 +408,7 @@ module Ladb::OpenCutList
                 elsif layer_def.type_holes?
                   color = COLOR_PART_HOLES
                 elsif layer_def.type_path?
-                  color = COLOR_PART_PATH
+                  color = layer_def.has_color? ? layer_def.color : COLOR_PART_PATH
                 elsif layer_def.type_borders?
                   color = border_color
                 else
@@ -663,11 +664,11 @@ module Ladb::OpenCutList
             k_group.transformation = @active_drawing_def.transformation * projection_def.transformation
             @overlay_layer.append(k_group)
 
-            fn_append_polyline = lambda do |points, line_width, line_stipple, closed|
+            fn_append_polyline = lambda do |points, color, line_width, line_stipple, closed|
 
               k_polyline = Kuix::Polyline.new
               k_polyline.add_points(points)
-              k_polyline.color = COLOR_PART_PATH
+              k_polyline.color = color
               k_polyline.line_width = highlighted ? line_width + 1 : line_width
               k_polyline.line_stipple = line_stipple
               k_polyline.on_top = true
@@ -682,14 +683,15 @@ module Ladb::OpenCutList
 
               layer_def.poly_defs.each do |poly_def|
 
+                color = layer_def.has_color? ? layer_def.color : COLOR_PART_PATH
                 line_stipple = Kuix::LINE_STIPPLE_SOLID
 
                 if fetch_action_option_boolean(ACTION_EXPORT_PATHS, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_SMOOTHING) && !poly_def.curve_def.nil?
                   poly_def.curve_def.portions.each do |portion|
-                    fn_append_polyline.call(portion.points, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
+                    fn_append_polyline.call(portion.points, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
                   end
                 else
-                  fn_append_polyline.call(poly_def.points, 2, line_stipple, true)
+                  fn_append_polyline.call(poly_def.points, color, 2, line_stipple, true)
                 end
 
                 if poly_def.is_a?(DrawingProjectionPolylineDef)

@@ -132,6 +132,7 @@ module Ladb::OpenCutList
       a << 'OUTER' if layer_def.type_outer?
       a << 'HOLES' if layer_def.type_holes?
       a << 'PATH' if layer_def.type_path?
+      a << layer_def.name if layer_def.has_name?
       _svg_sanitize_identifier(a.compact.join('_'))
     end
 
@@ -165,7 +166,7 @@ module Ladb::OpenCutList
 
         if layer_def.type_path?
           attributes = {
-            stroke: _svg_stroke_color_hex(paths_stroke_color),
+            stroke: _svg_stroke_color_hex(layer_def.has_color? ?layer_def.color : paths_stroke_color),
             fill: layer_def.type_closed_path? ? _svg_fill_color_hex(paths_fill_color) : 'none',
             id: id,
             'serif:id': id,

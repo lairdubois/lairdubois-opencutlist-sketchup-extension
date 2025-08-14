@@ -1222,6 +1222,7 @@ module Ladb::OpenCutList
       a << 'OUTER' if layer_def.type_outer?
       a << 'HOLES' if layer_def.type_holes?
       a << 'PATH' if layer_def.type_path?
+      a << layer_def.name if layer_def.has_name?
       _dxf_sanitize_identifier(a.compact.join('_'))
     end
 
@@ -1242,7 +1243,7 @@ module Ladb::OpenCutList
 
         layer_name = _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
         if layer_def.type_path?
-          layer_color = paths_color
+          layer_color = layer_def.has_color? ? layer_def.color : paths_color
         elsif layer_def.type_holes?
           layer_color = holes_color
         elsif layer_def.type_outer?

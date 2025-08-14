@@ -86,13 +86,14 @@ module Ladb::OpenCutList
     TYPE_CLOSED_PATH = 5
     TYPE_BORDERS = 6
 
-    attr_reader :depth, :type, :name, :poly_defs
+    attr_reader :depth, :type, :name, :color, :poly_defs
 
-    def initialize(depth, type, name, poly_defs)
+    def initialize(depth, type, poly_defs, name = nil, color = nil)
       @depth = depth
       @type = type
-      @name = name
       @poly_defs = poly_defs
+      @name = name
+      @color = color
     end
 
     def type_upper?
@@ -121,6 +122,14 @@ module Ladb::OpenCutList
 
     def type_closed_path?
       @type == TYPE_CLOSED_PATH
+    end
+
+    def has_name?
+      @name.is_a?(String) && !@name.empty?
+    end
+
+    def has_color?
+      @color.is_a?(Sketchup::Color)
     end
 
   end
