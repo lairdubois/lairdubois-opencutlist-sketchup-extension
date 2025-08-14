@@ -77,7 +77,6 @@ module Ladb::OpenCutList
     COLOR_PART_DEPTH = COLOR_PART_UPPER.blend(Kuix::COLOR_WHITE, 0.5).freeze
     COLOR_PART_BORDERS = Kuix::COLOR_WHITE
     COLOR_PART_PATH = Kuix::COLOR_CYAN
-    COLOR_PART_PATH_WITH_NAME = Sketchup::Color.new(0, 255, 124).freeze
     COLOR_ACTION = Kuix::COLOR_MAGENTA
 
     def initialize(
