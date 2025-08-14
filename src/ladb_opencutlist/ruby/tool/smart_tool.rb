@@ -2663,6 +2663,7 @@ module Ladb::OpenCutList
 
     def picked_plane_manipulator
       return FaceManipulator.new(@picked_face, Sketchup::InstancePath.new(@picked_face_path).transformation) unless @picked_face.nil? || @picked_face_path.nil?
+      return PlaneManipulator.new([ @picked_edge.start.position, Z_AXIS ], Sketchup::InstancePath.new(@picked_edge_path).transformation) unless @picked_edge.nil? || @picked_edge_path.nil? || !@picked_edge.line[1].perpendicular?(Z_AXIS)
       nil
     end
 
@@ -2742,7 +2743,7 @@ module Ladb::OpenCutList
 
       # First stage : pick "context" (aperture = 0)
 
-      if @pick_context_by_face && picked_face.nil? || @pick_context_by_edge && picked_edge.nil?
+      if !context_locked && (@pick_context_by_face && picked_face.nil? || @pick_context_by_edge && picked_edge.nil?)
         @pick_helper.do_pick(@pick_position.x, @pick_position.y)
         @pick_helper.count.times do |index|
 

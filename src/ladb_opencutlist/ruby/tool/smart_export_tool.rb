@@ -166,8 +166,10 @@ module Ladb::OpenCutList
       case action
       when ACTION_EXPORT_PART_3D
         return SmartPicker.new(tool: self)
-      when ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE, ACTION_EXPORT_PATHS
+      when ACTION_EXPORT_PART_2D, ACTION_EXPORT_FACE
         return SmartPicker.new(tool: self, pick_edges: true, pick_clines: true, pick_axes: true)
+      when ACTION_EXPORT_PATHS
+        return SmartPicker.new(tool: self, pick_context_by_edge: true, pick_edges: true, pick_clines: true, pick_axes: true)
       end
 
       super
@@ -690,7 +692,7 @@ module Ladb::OpenCutList
                     fn_append_polyline.call(portion.points, color, portion.is_a?(Geometrix::ArcCurvePortionDef) ? 4 : 2, line_stipple, false)
                   end
                 else
-                  fn_append_polyline.call(poly_def.points, color, 2, line_stipple, true)
+                  fn_append_polyline.call(poly_def.points, color, 2, line_stipple, poly_def.is_a?(DrawingProjectionPolygonDef))
                 end
 
                 if poly_def.is_a?(DrawingProjectionPolylineDef)

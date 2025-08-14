@@ -337,7 +337,11 @@ module Ladb::OpenCutList
     def _get_input_axes(input_plane_manipulator, input_line_manipulator = nil)
 
       if input_line_manipulator.nil? || !input_plane_manipulator.normal.perpendicular?(input_line_manipulator.direction)
-        input_line_manipulator = EdgeManipulator.new(input_plane_manipulator.longest_outer_edge, input_plane_manipulator.transformation)
+        if input_plane_manipulator.respond_to?(:longest_outer_edge)
+          input_line_manipulator = EdgeManipulator.new(input_plane_manipulator.longest_outer_edge, input_plane_manipulator.transformation)
+        else
+          input_line_manipulator = LineManipulator.new([ ORIGIN, X_AXIS ], input_plane_manipulator.transformation)
+        end
       end
 
       z_axis = input_plane_manipulator.normal
