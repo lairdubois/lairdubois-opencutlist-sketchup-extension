@@ -322,7 +322,7 @@ module Ladb::OpenCutList
     end
 
     def _dxf_convert_color_to_aci(color, default = 7)
-      return color if color.is_a?(Integer) && color >= 0 && color <= 255
+      return color if color.is_a?(Integer) && color > 0 && color <= 255
       return default unless color.is_a?(Sketchup::Color)
       match_index = 0
       match_dist = 195076 # Max dist 255**2 + 255**2 + 255**2 + 1
@@ -333,6 +333,7 @@ module Ladb::OpenCutList
           match_dist = dist
         end
       end
+      return default if match_index == 0
       match_index
     end
 

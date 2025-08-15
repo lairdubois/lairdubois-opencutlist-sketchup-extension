@@ -40,6 +40,8 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   ### BETA
 
+  * 2025-08-15
+    * Fixed DXF black color
   * 2025-08-14
     * Added support for SketchUp tags (name + color) for DXF/SVG export of paths
   * 2025-08-12

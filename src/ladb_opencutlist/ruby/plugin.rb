@@ -68,7 +68,7 @@ module Ladb::OpenCutList
 
     TABS_DIALOG_MINIMIZED_WIDTH = 90
     TABS_DIALOG_MINIMIZED_HEIGHT = if Sketchup.platform == :platform_osx
-                                     (Sketchup.version_number >= 2600000000 ? 0 : 28)
+                                     (Sketchup.version_number >= 2700000000 ? 0 : 28)
                                    elsif Sketchup.platform == :platform_win
                                      (Sketchup.version_number >= 2110000000 ? 0 : 38)
                                    end +
@@ -1058,7 +1058,7 @@ module Ladb::OpenCutList
               :min_width => TABS_DIALOG_MINIMIZED_WIDTH,
               :min_height => TABS_DIALOG_MINIMIZED_HEIGHT,
               :style => UI::HtmlDialog::STYLE_DIALOG,
-              :use_content_size => platform_is_win? || Sketchup.version_number >= 2600000000,
+              :use_content_size => platform_is_win? || Sketchup.version_number >= 2700000000,
           })
       @tabs_dialog.set_on_closed {
         @tabs_dialog = nil
