@@ -695,11 +695,52 @@
                     that.generateCutlist();
                     return false;
                 });
-                $('.ladb-cutlist-row', that.$page).on('click', function () {
-                    $(this).blur();
-                    $('.ladb-click-tool', $(this)).first().click();
-                    return false;
-                });
+                $('.ladb-cutlist-row', that.$page)
+                    .on('click', function () {
+                        $(this).blur();
+                        $('.ladb-click-tool', $(this)).first().click();
+                        return false;
+                    })
+                    .on('contextmenu', function(e) {
+                        const partId = $(this).data('part-id');
+                        if (partId) {
+                            const groupAndPart = that.findGroupAndPartById(partId);
+                            const isMultiple = that.selectionGroupId === groupAndPart.group.id && that.selectionPartIds.includes(groupAndPart.part.id) && that.selectionPartIds.length > 1;
+                            let items = [];
+                            items.push({ text: isMultiple ? that.selectionPartIds.length + ' ' + i18next.t('default.part_plural') : groupAndPart.part.name});
+                            items.push({ separator: true });
+                            items.push({
+                                text: i18next.t('tab.cutlist.highlight_part' + (isMultiple ? 's' : '')),
+                                callback: function () {
+                                    that.highlightPart(partId);
+                                }
+                            });
+                            items.push({ separator: true });
+                            items.push({
+                                text: i18next.t('default.export') + ' / ' + i18next.t('tab.cutlist.menu.write_2d') + '...',
+                                callback: function () {
+                                    if (isMultiple) {
+                                        that.writeGroupParts(groupAndPart.group.id, true);
+                                    } else {
+                                        that.writePart(partId, true);
+                                    }
+                                }
+                            });
+                            items.push({
+                                text: i18next.t('default.export') + ' / ' + i18next.t('tab.cutlist.menu.write_3d') + '...',
+                                callback: function () {
+                                    if (isMultiple) {
+                                        that.writeGroupParts(groupAndPart.group.id, false);
+                                    } else {
+                                        that.writePart(partId, false);
+                                    }
+                                }
+                            });
+                            that.dialog.showContextMenu(e.clientX, e.clientY, items);
+                            e.preventDefault();
+                        }
+                    })
+                ;
 
                 // Restore button state
                 that.$btnGenerate.prop('disabled', false);

@@ -204,7 +204,7 @@
                             $row.siblings('.ladb-selected').removeClass('ladb-hover');
                         }
                         if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
-                            rubyCallCommand('outliner_highlight', {highlighted: false});
+                            rubyCallCommand('outliner_highlight', { highlighted: false });
                         }
                     }
                 };
