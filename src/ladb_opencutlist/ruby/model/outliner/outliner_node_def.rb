@@ -207,6 +207,10 @@ module Ladb::OpenCutList
       @entity.definition.description
     end
 
+    def live_component?
+      !@entity.nil? && !@entity.deleted? && @entity.definition.respond_to?(:live_component?) && @entity.definition.live_component?
+    end
+
     # -----
 
     def get_hashable

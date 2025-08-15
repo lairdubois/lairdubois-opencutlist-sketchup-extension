@@ -20,10 +20,16 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Select All', true, false, false)
 
 
-      if model.selection.empty?
-        model.selection.add(model.active_entities.to_a)
-      else
-        model.selection.clear
+      begin
+
+        if model.selection.empty?
+          model.selection.add(model.active_entities.to_a)
+        else
+          model.selection.clear
+        end
+
+      rescue
+        return { :errors => [ 'default.error' ] }
       end
 
 

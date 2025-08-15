@@ -9,13 +9,14 @@
                 {% endif %}
             </div>
             <div class="ladb-minitools ladb-minitools-right">
+                {% if node.live_component %}<span class="label label-default">Live</span>{% endif %}
                 <span class="ladb-separator no-print"></span>
                 {% if node.url is not empty %}<a href="{{ node.url }}" class="ladb-btn-node-open-url" data-toggle="tooltip" title="{{ 'tab.outliner.tooltip.open_node_url'|i18next }}"><i class="ladb-opencutlist-icon-link"></i></a>{% endif %}
                 {% if node.computed_locked %}
                     <a href="#" class="ladb-tool-black" data-toggle="tooltip" title="{{ 'tab.outliner.tooltip.locked_node'|i18next }}"><i class="ladb-opencutlist-icon-lock"></i></a>
                 {% else %}
                     {% if node.type != 0 %}{# 0 = TYPE_MODEL #}<a href="#" class="ladb-btn-node-toggle-visible{% if not node.visible %} ladb-tool-dark{% endif %}" data-toggle="tooltip" title="{{ ('tab.outliner.tooltip.'~(node.visible ? 'hide' : 'unhide')~'_node')|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if node.visible %}open{% else %}close{% endif %}{% if node.selected %}-multiple{% endif %}"></i></a>{% endif %}
-                    {% if capabilities.sketchup_version_number >= 2000000000 %}<a href="#" class="ladb-btn-node-set-active{% if node.active %} ladb-tool-info{% endif %}" data-toggle="tooltip" title="{{ ('tab.outliner.tooltip.'~(node.active ? 'is' : 'set')~'_active_node')|i18next }}"><i class="ladb-opencutlist-icon-target"></i></a>{% endif %}
+                    {% if capabilities.sketchup_version_number >= 2000000000 and not node.live_component %}<a href="#" class="ladb-btn-node-set-active{% if node.active %} ladb-tool-info{% endif %}" data-toggle="tooltip" title="{{ ('tab.outliner.tooltip.'~(node.active ? 'is' : 'set')~'_active_node')|i18next }}"><i class="ladb-opencutlist-icon-target"></i></a>{% endif %}
                     <a href="#" class="ladb-btn-node-edit ladb-click-tool" data-toggle="tooltip" title="{{ 'tab.outliner.tooltip.edit_node_properties'|i18next }}"><i class="ladb-opencutlist-icon-edit{% if node.selected %}-multiple{% endif %}"></i></a>
                     {% if node.type == 0 %}{# 0 = TYPE_MODEL #}
                         <span style="display: inline-block; width: 20px;">&nbsp;</span>

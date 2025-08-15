@@ -32,15 +32,21 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Toggle Visible', true, false, false)
 
 
-      visible = !entity.visible?
+      begin
 
-      if node_def.selected
-        # Apply visibility change to selected entities
-        model.selection.each do |entity|
-          entity.visible = visible
+        visible = !entity.visible?
+
+        if node_def.selected
+          # Apply visibility change to selected entities
+          model.selection.each do |entity|
+            entity.visible = visible
+          end
+        else
+          entity.visible = !entity.visible?
         end
-      else
-        entity.visible = !entity.visible?
+
+      rescue
+        return { :errors => [ 'default.error' ] }
       end
 
 

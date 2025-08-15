@@ -231,7 +231,7 @@ module Ladb::OpenCutList
 
         @outliner_def.add_node_def(node_def)
 
-        create_children_node_defs(node_def: node_def, entities: entity.definition.entities, path: path, face_bounds_cache: face_bounds_cache)
+        create_children_node_defs(node_def: node_def, entities: entity.definition.entities, path: path, face_bounds_cache: face_bounds_cache) unless node_def.live_component?
 
       elsif entity.is_a?(Sketchup::Model)
 

@@ -32,12 +32,18 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Select', true, false, false)
 
 
-      # As native behavior, change active path to parent of selected element (SU 2020+)
-      if model.respond_to?(:active_path=) && node_def.parent && !node_def.parent.active
-        model.active_path = node_def.parent.path
-      end
+      begin
 
-      model.selection.toggle(entity)
+        # As native behavior, change active path to parent of selected element (SU 2020+)
+        if model.respond_to?(:active_path=) && node_def.parent && !node_def.parent.active
+          model.active_path = node_def.parent.path
+        end
+
+        model.selection.toggle(entity)
+
+      rescue
+        return { :errors => [ 'default.error' ] }
+      end
 
 
       # Commit model modification operation

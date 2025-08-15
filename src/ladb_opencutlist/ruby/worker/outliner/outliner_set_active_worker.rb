@@ -32,10 +32,16 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Set Active', true, false, true)
 
 
-      model.active_path = node_def.path
+      begin
 
-      # Zoom on active entities
-      ViewUtils.zoom_active_entities(model.active_view)
+        model.active_path = node_def.path
+
+        # Zoom on active entities
+        ViewUtils.zoom_active_entities(model.active_view)
+
+      rescue
+        return { :errors => [ 'default.error' ] }
+      end
 
 
       # Commit model modification operation

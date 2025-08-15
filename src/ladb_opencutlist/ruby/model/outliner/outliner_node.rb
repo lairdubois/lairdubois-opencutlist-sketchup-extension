@@ -67,7 +67,9 @@ module Ladb::OpenCutList
 
   class OutlinerNodeComponent < OutlinerNodeGroup
 
-    attr_reader :definition_name, :description, :url, :tags
+    attr_reader :definition_name, :description,
+                :live_component,
+                :url, :tags
 
     def initialize(_def)
       super
@@ -75,6 +77,8 @@ module Ladb::OpenCutList
       @default_name = _def.default_name
       @definition_name = _def.definition_name
       @description = _def.description
+
+      @live_component = _def.live_component?
 
       definition_attributes = DefinitionAttributes.new(_def.entity.definition)
       @url = definition_attributes.url
