@@ -2178,10 +2178,10 @@
                     $selectIncludePaths.selectpicker('val', options.include_paths ? '1' : '0');
                     $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
                     $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
-                    $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
-                    $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
                     $inputPartsDepthsStrokeColor.ladbTextinputColor('val', options.parts_depths_stroke_color);
                     $inputPartsDepthsFillColor.ladbTextinputColor('val', options.parts_depths_fill_color);
+                    $inputPartsHolesStrokeColor.ladbTextinputColor('val', options.parts_holes_stroke_color);
+                    $inputPartsHolesFillColor.ladbTextinputColor('val', options.parts_holes_fill_color);
                     $inputPartsPathsStrokeColor.ladbTextinputColor('val', options.parts_paths_stroke_color);
                     $inputPartsPathsFillColor.ladbTextinputColor('val', options.parts_paths_fill_color);
                     fnUpdateFieldsVisibility();
@@ -2191,12 +2191,14 @@
                     const isMergeHoles = $selectMergeHoles.val() === '1';
                     const isIncludePaths = $selectIncludePaths.val() === '1';
                     if (isMergeHoles) $formGroupMergeHolesOverflow.show(); else $formGroupMergeHolesOverflow.hide();
+                    $inputPartsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
+                    $inputPartsDepthsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
                     if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
                     $inputPartsHolesStrokeColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
-                    $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
+                    $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles || isDxf ? 'disable' : 'enable');
                     if (!isIncludePaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
                     $inputPartsPathsStrokeColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
-                    $inputPartsPathsFillColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
+                    $inputPartsPathsFillColor.ladbTextinputColor(!isIncludePaths || isDxf ? 'disable' : 'enable');
                     $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
                 };
                 const fnUpdateButtonLabel = function () {
@@ -2776,13 +2778,13 @@
                                         $inputPartsFillColor.ladbTextinputColor(isPartsHidden || isDxf ? 'disable' : 'enable');
                                         if (isPartsHidden) $formGroupPartsDepths.hide(); else $formGroupPartsDepths.show();
                                         $inputPartsDepthsStrokeColor.ladbTextinputColor(isPartsHidden ? 'disable' : 'enable');
-                                        $inputPartsDepthsFillColor.ladbTextinputColor(isPartsHidden ? 'disable' : 'enable');
+                                        $inputPartsDepthsFillColor.ladbTextinputColor(isPartsHidden || isDxf ? 'disable' : 'enable');
                                         if (isPartsHidden || !isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
                                         $inputPartsHolesStrokeColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
-                                        $inputPartsHolesFillColor.ladbTextinputColor(isPartsHidden || !isMergeHoles ? 'disable' : 'enable');
+                                        $inputPartsHolesFillColor.ladbTextinputColor(isPartsHidden || !isMergeHoles || isDxf ? 'disable' : 'enable');
                                         if (isPartsHidden || !isIncludePaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
                                         $inputPartsPathsStrokeColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
-                                        $inputPartsPathsFillColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
+                                        $inputPartsPathsFillColor.ladbTextinputColor(!isIncludePaths || isDxf ? 'disable' : 'enable');
                                         if (isPartsHidden) $formGroupTexts.hide(); else $formGroupTexts.show();
                                         $inputTextsColor.ladbTextinputColor(isTextsHidden ? 'disable' : 'enable');
                                         $inputLeftoversStrokeColor.ladbTextinputColor(isLeftoversHidden ? 'disable' : 'enable');

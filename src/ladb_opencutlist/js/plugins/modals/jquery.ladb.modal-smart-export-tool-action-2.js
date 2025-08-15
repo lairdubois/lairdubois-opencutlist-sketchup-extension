@@ -49,6 +49,12 @@
                 $selectSmoothing.selectpicker('val', options.smoothing ? '1' : '0');
                 $inputPartsStrokeColor.ladbTextinputColor('val', options.parts_stroke_color);
                 $inputPartsFillColor.ladbTextinputColor('val', options.parts_fill_color);
+                fnUpdateFieldsVisibility();
+            };
+            const fnUpdateFieldsVisibility = function () {
+                const isDxf = $selectFileFormat.val() === 'dxf';
+                $inputPartsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
+                $('.ladb-form-fill-color').css('opacity', isDxf ? 0.3 : 1);
             };
 
             $widgetPreset.ladbWidgetPreset({
@@ -58,7 +64,10 @@
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
-            $selectFileFormat.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectFileFormat
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', fnUpdateFieldsVisibility)
+            ;
             $selectUnit.selectpicker(SELECT_PICKER_OPTIONS);
             $selectSmoothing.selectpicker(SELECT_PICKER_OPTIONS);
             $inputPartsStrokeColor.ladbTextinputColor(TEXTINPUT_COLOR_OPTIONS);

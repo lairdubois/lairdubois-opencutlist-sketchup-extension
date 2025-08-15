@@ -95,6 +95,7 @@
                 if (!isMergeHoles) $formGroupPartsHoles.hide(); else $formGroupPartsHoles.show();
                 if (!isIncludePaths) $formGroupPartsPaths.hide(); else $formGroupPartsPaths.show();
                 $inputPartsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
+                $inputPartsDepthsFillColor.ladbTextinputColor(isDxf ? 'disable' : 'enable');
                 $inputPartsHolesStrokeColor.ladbTextinputColor(!isMergeHoles ? 'disable' : 'enable');
                 $inputPartsHolesFillColor.ladbTextinputColor(!isMergeHoles || isDxf ? 'disable' : 'enable');
                 $inputPartsPathsStrokeColor.ladbTextinputColor(!isIncludePaths ? 'disable' : 'enable');
