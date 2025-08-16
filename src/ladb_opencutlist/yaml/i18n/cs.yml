@@ -22,6 +22,7 @@ default:
   clear: Smazat
   refresh: Obnovit
   generate: Generovat
+  regenerate: ""
   print: Tisk
   export: Export
   import: Import
@@ -1132,6 +1133,7 @@ tab:
         scroll_to_block_2d: Přejděte na první tabuli
       list:
         summary: Shrnutí
+        cached: ""
         trimming: Okraj
         settings: Nastavení
         stats: Statistiky
