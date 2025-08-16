@@ -245,6 +245,20 @@
                         $('#ladb_cutlist_tags_filter-tokenfield', that.$page).focus();
                     });
                 }
+                const fnMouseEnter = function () {
+                    const $row = $(this);
+                    $row.addClass('ladb-hover');
+                    if ($row.hasClass('ladb-selected')) {
+                        $row.siblings('.ladb-selected').addClass('ladb-hover');
+                    }
+                };
+                const fnMouseLeave = function () {
+                    const $row = $(this);
+                    $row.removeClass('ladb-hover');
+                    if ($row.hasClass('ladb-selected')) {
+                        $row.siblings('.ladb-selected').removeClass('ladb-hover');
+                    }
+                };
 
                 // Bind inputs
                 $('#ladb_cutlist_tags_filter', that.$page)
@@ -696,14 +710,18 @@
                     return false;
                 });
                 $('.ladb-cutlist-row', that.$page)
+                    .on('mouseenter', fnMouseEnter)
+                    .on('mouseleave', fnMouseLeave)
                     .on('click', function () {
                         $(this).blur();
                         $('.ladb-click-tool', $(this)).first().click();
                         return false;
                     })
                     .on('contextmenu', function(e) {
-                        const partId = $(this).data('part-id');
+                        const row = this;
+                        const partId = $(row).data('part-id');
                         if (partId) {
+                            fnMouseEnter.call(row)
                             const groupAndPart = that.findGroupAndPartById(partId);
                             const isMultiple = that.selectionGroupId === groupAndPart.group.id && that.selectionPartIds.includes(groupAndPart.part.id) && that.selectionPartIds.length > 1;
                             let items = [];
@@ -736,7 +754,7 @@
                                     }
                                 }
                             });
-                            that.dialog.showContextMenu(e.clientX, e.clientY, items);
+                            that.dialog.showContextMenu(e.clientX, e.clientY, items, function () { fnMouseLeave.call(row) });
                             e.preventDefault();
                         }
                     })
@@ -3827,6 +3845,7 @@
         const $selectPartBtn = $('a.ladb-btn-select-part', $row);
 
         if (selected) {
+            $row.addClass('ladb-selected');
             $selectPartBtn.addClass('ladb-active');
             $highlightPartBtn
                 .prop('title', i18next.t('tab.cutlist.tooltip.highlight_parts'))
@@ -3838,6 +3857,7 @@
             $('i', $editPartBtn).addClass('ladb-opencutlist-icon-edit-multiple');
             $('i', $selectPartBtn).addClass('ladb-opencutlist-icon-check-box-with-check-sign');
         } else {
+            $row.removeClass('ladb-selected');
             $selectPartBtn.removeClass('ladb-active');
             if ($('i', $highlightPartBtn).hasClass('ladb-opencutlist-icon-magnifier')) {
                 $highlightPartBtn
@@ -4273,7 +4293,7 @@
                 $inputOrientationLockedOnAxis.prop('checked', !oriented);
                 fnDisplayAxisDimensions();
 
-                // By default set origin position to 'min'
+                // By default, set origin position to 'min'
                 $selectPartAxesOriginPosition
                     .selectpicker('val', 'min')
                     .trigger('change')
