@@ -1460,10 +1460,16 @@ tab:
       option_anchor_0: 自动
       option_anchor_1: 投影零件的原点
       option_anchor_help: |
-      option_switch_yz: ""
-      option_switch_yz_0: ""
-      option_switch_yz_1: ""
+        **自动**
+        使用导出几何体外包框的左下角作为锚点
+
+        **投影零件原点**
+        启用时，将部件坐标轴的原点投影为锚点
+      option_switch_yz: 垂直轴
+      option_switch_yz_0: Z 轴垂直
+      option_switch_yz_1: Y 轴垂直
       option_switch_yz_help: |
+        交换 Y 轴和 Z 轴，以定义部件的垂直轴
       option_smoothing: 平滑处理
       option_smoothing_0: $t(default.no)
       option_smoothing_1: 平滑圆和圆弧（实验性的）
@@ -1472,10 +1478,15 @@ tab:
 
         *该选项不检测其他类型的曲线。*
       option_merge_holes: 合并模式
-      option_merge_holes_0: ""
-      option_merge_holes_1: ""
+      option_merge_holes_0: 基本
+      option_merge_holes_1: 轮廓 + 钻孔 + 加工溢出
       option_merge_holes_help: |
-      option_merge_holes_overflow: ""
+        **基本**
+        部件的形状会被导出，每个面的投影会放在对应其深度的图层上
+
+        **轮廓 + 钻孔 + 加工溢出**
+        能够将零件的外轮廓与其孔分离，并融合每个孔的深度
+      option_merge_holes_overflow: 加工溢出
       option_merge_holes_overflow_help: |
       option_include_paths: 路径
       option_include_paths_0: $t(default.no)
@@ -1630,8 +1641,11 @@ tab:
       std_volumic_masses_help: 定义材质的密度
       std_prices: 价格
       std_prices_help: 允许您定义所有尺寸以及每个标准尺寸的材质价格.
-      std_cut_prices: ""
+      std_cut_prices: 切割价格
       std_cut_prices_help: |
+        允许设定材料的切割价格
+
+        *此数值仅影响直线切割*
       texture_width: 宽度
       texture_height: 高度
       export_to_skm: 导出 (.skm)
@@ -1642,6 +1656,12 @@ tab:
     import_from_skm:
       title: 导入 .skm 文件
       ask_replace: |
+        材质 "{{ name }}" 已经存在
+        您是否希望用正在导入的材质替换它？
+
+        $t(default.yes) = 用导入的材质替换现有材质
+        $t(default.no) = 保留两个材质
+        $t(default.cancel) = 取消操作
     export_to_skm:
       title: 导出到 .skm 文件
     option:
@@ -1677,7 +1697,7 @@ tab:
     title: 结构
     list: 实体的树状结构
     nodes: 实例
-    toggle_hidden: ""
+    toggle_hidden: 隐藏的实例
     type_0: 模型
     type_1: 组
     type_2: 组件
@@ -1686,9 +1706,9 @@ tab:
       hide_node: 隐藏
       unhide_node: 显示
       locked_node: 已锁定
-      is_active_node: ""
-      set_active_node: ""
-      edit_node_properties: ""
+      is_active_node: 激活模型中的实例
+      set_active_node: 在模型中编辑
+      edit_node_properties: 编辑属性
       select_node: 选择
       unselect_node: 取消选择
       open_node_url: 打开部件 URL
@@ -1708,14 +1728,14 @@ tab:
       explode_message: "你是否认可 **{{ name }}** 实例爆炸结果?"
     option:
       general: 常规
-      show_hidden_instances: ""
-      show_hidden_instances_help: ""
+      show_hidden_instances: 显示隐藏的实例
+      show_hidden_instances_help: 如果启用此选项，模型中被隐藏的实例将在结构树中显示
       hide_descriptions: 隐藏描述
       hide_descriptions_help: "如果选择此选项, 将不会显示部件上的 **描述** ."
       hide_tags: 隐藏标签
       hide_tags_help: "如果选择此选项, 将不会显示 **标签** ."
-      minimize_on_set_active: ""
-      minimize_on_set_active_help: ""
+      minimize_on_set_active: 完成后最小化'$t(tab.outliner.tooltip.set_active_node)'
+      minimize_on_set_active_help: "如果启用此选项，当使用功能*'$t(tab.outliner.tooltip.set_active_node)'*时，OpenCutList 窗口将被最小化"
     error:
       no_model: 没有打开的模型. 您需要提供更多信息 ;)
       no_entities: 您的模型为空！
@@ -1812,6 +1832,10 @@ tab:
       在此查找社区围绕使用 *OpenCutList* 制作的视频的非详尽列表.
     submit: 提交视频
     submit_info: |
+      您制作了一段展示 **OpenCutList** 使用方法的视频，并希望它出现在这里吗？
+      请通过邮件至 **opencutlist@lairdubois.fr** 告诉我们！
+
+      *视频必须公开，并托管在 YouTube 上*
     error:
       fail_to_load_list: 无法加载视频列表.
   news:
@@ -1847,7 +1871,7 @@ tab:
     contribute: 贡献
     backers: "{{ count }} 名资金贡献者"
     backers_plural: "{{ count }} 名资金贡献者"
-    ad: ""
+    ad: "OpenCutList 不是免费的"
     objective: 目标
     objective_slogan: "OpenCutList 我们所有人的"
     objective_title:
@@ -1973,70 +1997,70 @@ tool:
     zoom_extents: 缩放到全部显示
     toggle_depth: 背景部件
     more: 更多
-    end_point: ""
-    middle_point: ""
-    third_point: ""
+    end_point: 端点
+    middle_point: 中点
+    third_point: 三分点
     vcb_length: 引线
-    vcb_size: ""
-    vcb_radius: ""
-    vcb_diameter: ""
-    vcb_distance: ""
+    vcb_size: 尺寸
+    vcb_radius: 半径
+    vcb_diameter: 直径
+    vcb_distance: 距离
     error:
-      no_direction: ""
-      invalid_length: ""
-      invalid_multiplicator: ""
-      invalid_divider: ""
-      invalid_offset: ""
-      invalid_segment_count: ""
+      no_direction: 请用鼠标指示一个方向
+      invalid_length: "长度 {{ value }} 无效"
+      invalid_multiplicator: "倍数 {{ value }} 无效"
+      invalid_divider: "除数 {{ value }} 无效"
+      invalid_offset: "偏移 {{ value }} 无效"
+      invalid_segment_count: "段数 {{ value }} 无效。必须介于 3 到 999 之间"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
     title: 绘制
-    action_0: ""
-    action_0_status: ""
-    action_0_state_1_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_1_state_1_radius_status: ""
-    action_1_state_1_diameter_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_2_state_1_status: ""
-    action_x_state_2_status: ""
+    action_0: 绘制矩形
+    action_0_status: 在矩形形状的基础上绘制体积
+    action_0_state_1_status: 点击以定义对角点，或输入长度和宽度
+    action_1: 绘制圆形
+    action_1_status: 在圆形的基础上绘制体积
+    action_1_state_1_radius_status: 点击以设置半径，或输入距离
+    action_1_state_1_diameter_status: 点击以设置直径，或输入距离
+    action_2: 绘制多边形
+    action_2_status: 在多边形的基础上绘制体积
+    action_2_state_1_status: 点击以定义一个新点，或输入距离
+    action_x_state_2_status: 点击以设置高度，或输入距离
     action_option_group_offset: 偏移
-    action_option_group_segments: ""
+    action_option_group_segments: 段
     action_option_group_options: 选项
     action_option_offset_shape_offset: 偏移
-    action_option_offset_shape_offset_status: ""
-    action_option_segments_segment_count: ""
-    action_option_segments_segment_count_status: ""
-    action_option_options_construction: ""
-    action_option_options_construction_status: ""
-    action_option_options_rectangle_centered: ""
-    action_option_options_rectangle_centered_status: ""
+    action_option_offset_shape_offset_status: 在形状线应用偏移
+    action_option_segments_segment_count: 段数
+    action_option_segments_segment_count_status: 設定圓的段数
+    action_option_options_construction: 辅助线
+    action_option_options_construction_status: 以辅助线绘制
+    action_option_options_rectangle_centered: 中心矩形
+    action_option_options_rectangle_centered_status: 以第一个点为中心绘制矩形
     action_option_options_smoothing: 平滑处理
-    action_option_options_smoothing_status: ""
-    action_option_options_measure_from_vertex_status: ""
-    action_option_options_measure_from_diameter: ""
-    action_option_options_measure_from_diameter_status: ""
-    action_option_options_measure_from_radius_status: ""
-    action_option_options_measure_reversed: ""
-    action_option_options_measure_reversed_status: ""
-    action_option_options_pull_centered: ""
-    action_option_options_pull_centered_status: ""
-    action_option_options_ask_name: ""
-    action_option_options_ask_name_status: ""
-    action_measure_locked_status: ""
-    action_toggle_move_copy_status: ""
-    action_change_move_anchor_status: ""
+    action_option_options_smoothing_status: 平滑曲线
+    action_option_options_measure_from_vertex_status: 以最近顶点为参考测量
+    action_option_options_measure_from_diameter: 测量
+    action_option_options_measure_from_diameter_status: 按直径测量圆
+    action_option_options_measure_from_radius_status: 按半径测量圆
+    action_option_options_measure_reversed: 反向测量
+    action_option_options_measure_reversed_status: 反转测量
+    action_option_options_pull_centered: 高度居中
+    action_option_options_pull_centered_status: 以第一个点为基准居中高度
+    action_option_options_ask_name: 部件命名
+    action_option_options_ask_name_status: 手动输入部件名称
+    action_measure_locked_status: 锁定为上一次测量
+    action_toggle_move_copy_status: 切换复制/移动
+    action_change_move_anchor_status: 更改锚点
     success:
-      part_created: ""
+      part_created: "新建部件: {{ name }}"
   smart_handle:
     title: ""
     action_0: 选择
     action_0_status: 点击部件以选中它
-    action_1: ""
+    action_1: 沿直线复制
     action_1_status: ""
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: ""
@@ -2054,8 +2078,8 @@ tool:
     action_4_state_1_status: ""
     action_4_state_2_status: ""
     action_5: ""
-    action_option_group_copy_measure_type: ""
-    action_option_group_move_measure_type: ""
+    action_option_group_copy_measure_type: 测量
+    action_option_group_move_measure_type: 测量
     action_option_group_axes: 坐标轴
     action_option_group_options: 选项
     action_option_copy_measure_type_outside_status: ""
