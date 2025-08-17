@@ -1454,11 +1454,17 @@ tab:
       option_anchor: 1167 - 锚点
       option_anchor_0: 1168 - 自动
       option_anchor_1: 1169 - 投影零件的原点
-      option_anchor_help: '1170 - '
-      option_switch_yz: '1171 - '
-      option_switch_yz_0: '1172 - '
-      option_switch_yz_1: '1173 - '
-      option_switch_yz_help: '1174 - '
+      option_anchor_help: |
+        1170 - **自动**
+        使用导出几何体外包框的左下角作为锚点
+
+        **投影零件原点**
+        启用时，将部件坐标轴的原点投影为锚点
+      option_switch_yz: 1171 - 垂直轴
+      option_switch_yz_0: 1172 - Z 轴垂直
+      option_switch_yz_1: 1173 - Y 轴垂直
+      option_switch_yz_help: |
+        1174 - 交换 Y 轴和 Z 轴，以定义部件的垂直轴
       option_smoothing: 1175 - 平滑处理
       option_smoothing_0: $t(default.no)
       option_smoothing_1: 1177 - 平滑圆和圆弧（实验性的）
@@ -1467,10 +1473,15 @@ tab:
 
         *该选项不检测其他类型的曲线。*
       option_merge_holes: 1179 - 合并模式
-      option_merge_holes_0: '1180 - '
-      option_merge_holes_1: '1181 - '
-      option_merge_holes_help: '1182 - '
-      option_merge_holes_overflow: '1183 - '
+      option_merge_holes_0: 1180 - 基本
+      option_merge_holes_1: 1181 - 轮廓 + 钻孔 + 加工溢出
+      option_merge_holes_help: |
+        1182 - **基本**
+        部件的形状会被导出，每个面的投影会放在对应其深度的图层上
+
+        **轮廓 + 钻孔 + 加工溢出**
+        能够将零件的外轮廓与其孔分离，并融合每个孔的深度
+      option_merge_holes_overflow: 1183 - 加工溢出
       option_merge_holes_overflow_help: '1184 - '
       option_include_paths: 1185 - 路径
       option_include_paths_0: $t(default.no)
@@ -1625,8 +1636,11 @@ tab:
       std_volumic_masses_help: 1307 - 定义材质的密度
       std_prices: 1308 - 价格
       std_prices_help: 1309 - 允许您定义所有尺寸以及每个标准尺寸的材质价格.
-      std_cut_prices: '1310 - '
-      std_cut_prices_help: '1311 - '
+      std_cut_prices: 1310 - 切割价格
+      std_cut_prices_help: |
+        1311 - 允许设定材料的切割价格
+
+        *此数值仅影响直线切割*
       texture_width: 1312 - 宽度
       texture_height: 1313 - 高度
       export_to_skm: 1314 - 导出 (.skm)
@@ -1636,7 +1650,13 @@ tab:
       title: 1316 - 汇出图片
     import_from_skm:
       title: 1317 - 导入 .skm 文件
-      ask_replace: '1318 - '
+      ask_replace: |
+        1318 - 材质 "{{ name }}" 已经存在
+        您是否希望用正在导入的材质替换它？
+
+        $t(default.yes) = 用导入的材质替换现有材质
+        $t(default.no) = 保留两个材质
+        $t(default.cancel) = 取消操作
     export_to_skm:
       title: 1319 - 导出到 .skm 文件
     option:
@@ -1672,7 +1692,7 @@ tab:
     title: 1340 - 结构
     list: 1341 - 实体的树状结构
     nodes: 1342 - 实例
-    toggle_hidden: '1343 - '
+    toggle_hidden: 1343 - 隐藏的实例
     type_0: 1344 - 模型
     type_1: 1345 - 组
     type_2: 1346 - 组件
@@ -1681,9 +1701,9 @@ tab:
       hide_node: 1348 - 隐藏
       unhide_node: 1349 - 显示
       locked_node: 1350 - 已锁定
-      is_active_node: '1351 - '
-      set_active_node: '1352 - '
-      edit_node_properties: '1353 - '
+      is_active_node: 1351 - 激活模型中的实例
+      set_active_node: 1352 - 在模型中编辑
+      edit_node_properties: 1353 - 编辑属性
       select_node: 1354 - 选择
       unselect_node: 1355 - 取消选择
       open_node_url: 1356 - 打开部件 URL
@@ -1703,14 +1723,14 @@ tab:
       explode_message: 1369 - 你是否认可 **{{ name }}** 实例爆炸结果?
     option:
       general: 1370 - 常规
-      show_hidden_instances: '1371 - '
-      show_hidden_instances_help: '1372 - '
+      show_hidden_instances: 1371 - 显示隐藏的实例
+      show_hidden_instances_help: 1372 - 如果启用此选项，模型中被隐藏的实例将在结构树中显示
       hide_descriptions: 1373 - 隐藏描述
       hide_descriptions_help: 1374 - 如果选择此选项, 将不会显示部件上的 **描述** .
       hide_tags: 1375 - 隐藏标签
       hide_tags_help: 1376 - 如果选择此选项, 将不会显示 **标签** .
-      minimize_on_set_active: '1377 - '
-      minimize_on_set_active_help: '1378 - '
+      minimize_on_set_active: 1377 - 完成后最小化'$t(tab.outliner.tooltip.set_active_node)'
+      minimize_on_set_active_help: 1378 - 如果启用此选项，当使用功能*'$t(tab.outliner.tooltip.set_active_node)'*时，OpenCutList 窗口将被最小化
     error:
       no_model: 1379 - 没有打开的模型. 您需要提供更多信息 ;)
       no_entities: 1380 - 您的模型为空！
@@ -1806,7 +1826,11 @@ tab:
     help: |
       1443 - 在此查找社区围绕使用 *OpenCutList* 制作的视频的非详尽列表.
     submit: 1444 - 提交视频
-    submit_info: '1445 - '
+    submit_info: |
+      1445 - 您制作了一段展示 **OpenCutList** 使用方法的视频，并希望它出现在这里吗？
+      请通过邮件至 **opencutlist@lairdubois.fr** 告诉我们！
+
+      *视频必须公开，并托管在 YouTube 上*
     error:
       fail_to_load_list: 1446 - 无法加载视频列表.
   news:
@@ -1842,7 +1866,7 @@ tab:
     contribute: 1463 - 贡献
     backers: 1464 - {{ count }} 名资金贡献者
     backers_plural: 1465 - {{ count }} 名资金贡献者
-    ad: '1466 - '
+    ad: 1466 - OpenCutList 不是免费的
     objective: 1467 - 目标
     objective_slogan: 1468 - OpenCutList 我们所有人的
     objective_title:
@@ -1968,70 +1992,70 @@ tool:
     zoom_extents: 1537 - 缩放到全部显示
     toggle_depth: 1538 - 背景部件
     more: 1539 - 更多
-    end_point: '1540 - '
-    middle_point: '1541 - '
-    third_point: '1542 - '
+    end_point: 1540 - 端点
+    middle_point: 1541 - 中点
+    third_point: 1542 - 三分点
     vcb_length: 1543 - 引线
-    vcb_size: '1544 - '
-    vcb_radius: '1545 - '
-    vcb_diameter: '1546 - '
-    vcb_distance: '1547 - '
+    vcb_size: 1544 - 尺寸
+    vcb_radius: 1545 - 半径
+    vcb_diameter: 1546 - 直径
+    vcb_distance: 1547 - 距离
     error:
-      no_direction: '1548 - '
-      invalid_length: '1549 - '
-      invalid_multiplicator: '1550 - '
-      invalid_divider: '1551 - '
-      invalid_offset: '1552 - '
-      invalid_segment_count: '1553 - '
+      no_direction: 1548 - 请用鼠标指示一个方向
+      invalid_length: 1549 - 长度 {{ value }} 无效
+      invalid_multiplicator: 1550 - 倍数 {{ value }} 无效
+      invalid_divider: 1551 - 除数 {{ value }} 无效
+      invalid_offset: 1552 - 偏移 {{ value }} 无效
+      invalid_segment_count: 1553 - 段数 {{ value }} 无效。必须介于 3 到 999 之间
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
     title: 1556 - 绘制
-    action_0: '1557 - '
-    action_0_status: '1558 - '
-    action_0_state_1_status: '1559 - '
-    action_1: '1560 - '
-    action_1_status: '1561 - '
-    action_1_state_1_radius_status: '1562 - '
-    action_1_state_1_diameter_status: '1563 - '
-    action_2: '1564 - '
-    action_2_status: '1565 - '
-    action_2_state_1_status: '1566 - '
-    action_x_state_2_status: '1567 - '
+    action_0: 1557 - 绘制矩形
+    action_0_status: 1558 - 在矩形形状的基础上绘制体积
+    action_0_state_1_status: 1559 - 点击以定义对角点，或输入长度和宽度
+    action_1: 1560 - 绘制圆形
+    action_1_status: 1561 - 在圆形的基础上绘制体积
+    action_1_state_1_radius_status: 1562 - 点击以设置半径，或输入距离
+    action_1_state_1_diameter_status: 1563 - 点击以设置直径，或输入距离
+    action_2: 1564 - 绘制多边形
+    action_2_status: 1565 - 在多边形的基础上绘制体积
+    action_2_state_1_status: 1566 - 点击以定义一个新点，或输入距离
+    action_x_state_2_status: 1567 - 点击以设置高度，或输入距离
     action_option_group_offset: 1568 - 偏移
-    action_option_group_segments: '1569 - '
+    action_option_group_segments: 1569 - 段
     action_option_group_options: 1570 - 选项
     action_option_offset_shape_offset: 1571 - 偏移
-    action_option_offset_shape_offset_status: '1572 - '
-    action_option_segments_segment_count: '1573 - '
-    action_option_segments_segment_count_status: '1574 - '
-    action_option_options_construction: '1575 - '
-    action_option_options_construction_status: '1576 - '
-    action_option_options_rectangle_centered: '1577 - '
-    action_option_options_rectangle_centered_status: '1578 - '
+    action_option_offset_shape_offset_status: 1572 - 在形状线应用偏移
+    action_option_segments_segment_count: 1573 - 段数
+    action_option_segments_segment_count_status: 1574 - 設定圓的段数
+    action_option_options_construction: 1575 - 辅助线
+    action_option_options_construction_status: 1576 - 以辅助线绘制
+    action_option_options_rectangle_centered: 1577 - 中心矩形
+    action_option_options_rectangle_centered_status: 1578 - 以第一个点为中心绘制矩形
     action_option_options_smoothing: 1579 - 平滑处理
-    action_option_options_smoothing_status: '1580 - '
-    action_option_options_measure_from_vertex_status: '1581 - '
-    action_option_options_measure_from_diameter: '1582 - '
-    action_option_options_measure_from_diameter_status: '1583 - '
-    action_option_options_measure_from_radius_status: '1584 - '
-    action_option_options_measure_reversed: '1585 - '
-    action_option_options_measure_reversed_status: '1586 - '
-    action_option_options_pull_centered: '1587 - '
-    action_option_options_pull_centered_status: '1588 - '
-    action_option_options_ask_name: '1589 - '
-    action_option_options_ask_name_status: '1590 - '
-    action_measure_locked_status: '1591 - '
-    action_toggle_move_copy_status: '1592 - '
-    action_change_move_anchor_status: '1593 - '
+    action_option_options_smoothing_status: 1580 - 平滑曲线
+    action_option_options_measure_from_vertex_status: 1581 - 以最近顶点为参考测量
+    action_option_options_measure_from_diameter: 1582 - 测量
+    action_option_options_measure_from_diameter_status: 1583 - 按直径测量圆
+    action_option_options_measure_from_radius_status: 1584 - 按半径测量圆
+    action_option_options_measure_reversed: 1585 - 反向测量
+    action_option_options_measure_reversed_status: 1586 - 反转测量
+    action_option_options_pull_centered: 1587 - 高度居中
+    action_option_options_pull_centered_status: 1588 - 以第一个点为基准居中高度
+    action_option_options_ask_name: 1589 - 部件命名
+    action_option_options_ask_name_status: 1590 - 手动输入部件名称
+    action_measure_locked_status: 1591 - 锁定为上一次测量
+    action_toggle_move_copy_status: 1592 - 切换复制/移动
+    action_change_move_anchor_status: 1593 - 更改锚点
     success:
-      part_created: '1594 - '
+      part_created: '1594 - 新建部件: {{ name }}'
   smart_handle:
     title: '1595 - '
     action_0: 1596 - 选择
     action_0_status: 1597 - 点击部件以选中它
-    action_1: '1598 - '
+    action_1: 1598 - 沿直线复制
     action_1_status: '1599 - '
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: '1601 - '
@@ -2049,8 +2073,8 @@ tool:
     action_4_state_1_status: '1613 - '
     action_4_state_2_status: '1614 - '
     action_5: '1615 - '
-    action_option_group_copy_measure_type: '1616 - '
-    action_option_group_move_measure_type: '1617 - '
+    action_option_group_copy_measure_type: 1616 - 测量
+    action_option_group_move_measure_type: 1617 - 测量
     action_option_group_axes: 1618 - 坐标轴
     action_option_group_options: 1619 - 选项
     action_option_copy_measure_type_outside_status: '1620 - '
