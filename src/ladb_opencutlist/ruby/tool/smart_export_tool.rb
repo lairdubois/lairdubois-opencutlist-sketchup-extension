@@ -408,7 +408,7 @@ module Ladb::OpenCutList
                   color = COLOR_PART_UPPER
                 elsif layer_def.type_holes?
                   color = COLOR_PART_HOLES
-                elsif layer_def.type_path?
+                elsif layer_def.type_paths?
                   color = layer_def.has_color? ? layer_def.color : COLOR_PART_PATH
                 elsif layer_def.type_borders?
                   color = border_color

@@ -36,7 +36,7 @@ module Ladb::OpenCutList::Kuix
     # --
 
     def to_s
-      "#{self.class.name} (width=#{@width}, height=#{@height}, depth=#{depth})"
+      "#{self.class.name} (width=#{@width}, height=#{@height}, depth=#{@depth})"
     end
 
   end

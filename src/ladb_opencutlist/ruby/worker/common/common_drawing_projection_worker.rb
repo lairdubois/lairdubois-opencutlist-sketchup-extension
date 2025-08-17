@@ -322,9 +322,15 @@ module Ladb::OpenCutList
           end
         end
 
-        # Changed upper layer to "outer"
-        upper_layer_def.type = DrawingProjectionLayerDef::TYPE_OUTER
-        upper_layer_def.closed_paths = outer_paths
+        # Remove or clear closed path in upper layer
+        if upper_layer_def.open_paths.any?
+          upper_layer_def.closed_paths = []
+        else
+          splds.delete(upper_layer_def)
+        end
+
+        # Added "outer" layer
+        splds << PathsLayerDef.new(max_depth, outer_paths, [], [], [], DrawingProjectionLayerDef::TYPE_OUTER)
 
       end
 
@@ -352,8 +358,8 @@ module Ladb::OpenCutList
           name = pld.su_layer.nil? ? nil : pld.su_layer.name
           color = pld.su_layer.nil? ? nil : pld.su_layer.color
           # TODO : Reconnect closed input paths ?
-          projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_OPEN_PATH, polylines, name, color) unless polylines.empty?
-          projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_CLOSED_PATH, polygons, name, color) unless polygons.empty?
+          projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_OPEN_PATHS, polylines, name, color) unless polylines.empty?
+          projection_def.layer_defs << DrawingProjectionLayerDef.new(pld.depth, DrawingProjectionLayerDef::TYPE_CLOSED_PATHS, polygons, name, color) unless polygons.empty?
 
         end
 

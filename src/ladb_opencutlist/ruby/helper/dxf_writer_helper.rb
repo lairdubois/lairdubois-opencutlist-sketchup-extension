@@ -1231,10 +1231,10 @@ module Ladb::OpenCutList
       require_relative '../model/drawing/drawing_projection_def'
 
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
-      a = [ prefix, 'DEPTH', ('%0.03f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x.round(3) ]).rjust(8, '_') ]
+      a = [ prefix, ('%0.03fZ' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x.round(3) ]).rjust(9, '_') ]
       a << 'OUTER' if layer_def.type_outer?
       a << 'HOLES' if layer_def.type_holes?
-      a << 'PATH' if layer_def.type_path?
+      a << 'PATHS' if layer_def.type_paths?
       a << layer_def.name if layer_def.has_name?
       _dxf_sanitize_identifier(a.compact.join('_'))
     end
@@ -1255,7 +1255,7 @@ module Ladb::OpenCutList
       projection_def.layer_defs.each do |layer_def|
 
         layer_name = _dxf_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
-        if layer_def.type_path?
+        if layer_def.type_paths?
           layer_color = layer_def.has_color? ? layer_def.color : paths_color
         elsif layer_def.type_holes?
           layer_color = holes_color
@@ -1317,7 +1317,7 @@ module Ladb::OpenCutList
 
       return unless projection_def.is_a?(DrawingProjectionDef)
 
-      projection_def.layer_defs.sort_by { |v| [v.type_path? ? 1 : 0, -v.depth ] }.each do |layer_def| # Path's layers always on top
+      projection_def.layer_defs.sort_by { |v| [v.type_paths? ? 1 : 0, -v.depth ] }.each do |layer_def| # Path's layers always on top
         _dxf_write_projection_layer_def_geometry(file, layer_def,
                                                  smoothing: smoothing,
                                                  transformation: transformation,

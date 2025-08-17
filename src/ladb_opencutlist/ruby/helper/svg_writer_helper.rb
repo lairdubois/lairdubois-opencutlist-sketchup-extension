@@ -128,10 +128,10 @@ module Ladb::OpenCutList
 
     def _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix = nil)
       return '' unless layer_def.is_a?(DrawingProjectionLayerDef)
-      a = [ prefix, 'DEPTH', ('%0.03f' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x.round(3) ]).rjust(8, '_') ]
+      a = [ prefix, ('%0.03fZ' % [ Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x.round(3) ]).rjust(9, '_') ]
       a << 'OUTER' if layer_def.type_outer?
       a << 'HOLES' if layer_def.type_holes?
-      a << 'PATH' if layer_def.type_path?
+      a << 'PATHS' if layer_def.type_paths?
       a << layer_def.name if layer_def.has_name?
       _svg_sanitize_identifier(a.compact.join('_'))
     end
@@ -160,14 +160,14 @@ module Ladb::OpenCutList
       flipped = TransformationUtils.flipped?(transformation)
       rot_x, rot_y, rot_z = TransformationUtils.euler_angles(transformation)
 
-      projection_def.layer_defs.sort_by { |v| [v.type_path? ? 1 : 0, v.depth ] }.each do |layer_def|   # Path's layers always on top
+      projection_def.layer_defs.sort_by { |v| [v.type_paths? ? 1 : 0, v.depth ] }.each do |layer_def|   # Path's layers always on top
 
         id = _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
 
-        if layer_def.type_path?
+        if layer_def.type_paths?
           attributes = {
             stroke: _svg_stroke_color_hex(layer_def.has_color? ? layer_def.color : paths_stroke_color),
-            fill: layer_def.type_closed_path? ? _svg_fill_color_hex(paths_fill_color) : 'none',
+            fill: layer_def.type_closed_paths? ? _svg_fill_color_hex(paths_fill_color) : 'none',
             id: id,
             'serif:id': id,
             'inkscape:label': id
