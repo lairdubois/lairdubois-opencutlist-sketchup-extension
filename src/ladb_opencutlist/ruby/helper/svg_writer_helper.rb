@@ -160,7 +160,7 @@ module Ladb::OpenCutList
       flipped = TransformationUtils.flipped?(transformation)
       rot_x, rot_y, rot_z = TransformationUtils.euler_angles(transformation)
 
-      projection_def.layer_defs.sort_by { |v| [v.type_paths? ? 1 : 0, v.depth ] }.each do |layer_def|   # Path's layers always on top
+      projection_def.layer_defs.sort_by { |v| [ v.type_outer? ? 0 : v.depth, v.type_paths? ? 1 : 0 ] }.each do |layer_def|   # Outer always on back and Path's layers on top of same depth layers
 
         id = _svg_get_projection_layer_def_identifier(layer_def, unit_transformation, prefix)
 
@@ -190,7 +190,7 @@ module Ladb::OpenCutList
             'serif:id': id,
             'inkscape:label': id
           }
-          attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(projection_def.max_depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if projection_def.max_depth > 0
+          attributes.merge!({ 'shaper:cutDepth': "#{_svg_value(Geom::Point3d.new(layer_def.depth, 0).transform(unit_transformation).x)}#{unit_sign}" }) if layer_def.depth > 0
         else
           attributes = {
             stroke: if depths_stroke_color

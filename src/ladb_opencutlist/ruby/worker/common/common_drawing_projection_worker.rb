@@ -329,7 +329,7 @@ module Ladb::OpenCutList
           splds.delete(upper_layer_def)
         end
 
-        # Added "outer" layer
+        # Append "outer" layer
         splds << PathsLayerDef.new(max_depth, outer_paths, [], [], [], DrawingProjectionLayerDef::TYPE_OUTER)
 
       end
