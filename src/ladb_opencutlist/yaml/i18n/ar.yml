@@ -22,6 +22,7 @@ default:
   clear: مسح
   refresh: تحديث
   generate: استحداث
+  regenerate: استحداث
   print: طباعة
   export: تصدير
   import: استيراد
@@ -1088,6 +1089,7 @@ tab:
       option_bin_folding_2d_help: |
         اجمع الألواح أو الأوراق المحتوية على نفس القِطع و التقطيعات.
       option_bin_folding_warning: |
+        *سيعطل هذا الخيار إذا كنت تستخدم خصائص المثيل في صيغة تخصيص نص التعريف*
       option_hide_part_list: قائمة القطع
       option_hide_part_list_1d_dimensional_0: معروض لكل قضيب
       option_hide_part_list_1d_edge_0: معروض لكل شريط حاشية
@@ -1132,6 +1134,7 @@ tab:
         scroll_to_block_2d: التمرير إلى اللوح الخشبي أو ورقة قشرة الخشب الأولى
       list:
         summary: ملخص
+        cached: تم التحميل من الذاكرة المؤقتة
         trimming: تقليم
         settings: الإعدادات
         stats: إحصاءات
