@@ -27,9 +27,9 @@ default:
   preview: 23 - Обзор
   options: 24 - Опции
   caution: 25 - Внимание!
-  remove: 26 - Удалить
+  remove: 26 - Извлечь
   remove_all: 27 - Удалить все
-  delete: 28 - Добавить
+  delete: 28 - Удалить
   create: 29 - Создать
   duplicate: 30 - Дубликат
   ignore: 31 - Пропустить
