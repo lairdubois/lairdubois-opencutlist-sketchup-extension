@@ -30,9 +30,9 @@ default:
   preview: Обзор
   options: Опции
   caution: Внимание!
-  remove: Удалить
+  remove: Извлечь
   remove_all: Удалить все
-  delete: Добавить
+  delete: Удалить
   create: Создать
   duplicate: Дубликат
   ignore: Пропустить
