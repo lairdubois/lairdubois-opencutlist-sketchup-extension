@@ -22,6 +22,7 @@ default:
   clear: לנקות
   refresh: לרענן
   generate: לחשב
+  regenerate: ""
   print: הדפסה
   export: ייצוא
   import: ייבוא
@@ -1131,6 +1132,7 @@ tab:
         scroll_to_block_2d: ""
       list:
         summary: סיכום
+        cached: ""
         trimming: שוליים
         settings: הגדרות
         stats: סטטיסטיקה
@@ -1936,6 +1938,7 @@ tab:
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*אוקראינית*)
       - [刘涛](https://www.liutao91.cn) (*סינית פשוטה*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*הולנדית*)
+      - Zoltán Nagy, Roland Kovács (*הונגרי*)
     credits_description: |
       פיתוח הרחבה זו הוא חלק מפרויקט פלטפורמת השיתוף [L'Air du Bois](https://www.lairdubois.fr).
       ובנוסף, הוא גם *קוד פתוח* וזמין ברישיון [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE)sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

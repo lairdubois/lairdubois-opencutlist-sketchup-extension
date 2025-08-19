@@ -22,6 +22,7 @@ default:
   clear: Wyczyść
   refresh: Odśwież
   generate: Generuj
+  regenerate: ""
   print: Wydrukuj
   export: Eksportuj
   import: Importuj
@@ -1132,6 +1133,7 @@ tab:
         scroll_to_block_2d: Przewiń do pierwszego panelu lub arkusza forniru
       list:
         summary: Podsumowanie
+        cached: ""
         trimming: Rozmiar przycinania
         settings: Ustawienia
         stats: Statystyki
@@ -2002,6 +2004,7 @@ tab:
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*Ukraina*)
       - [刘涛](https://www.liutao91.cn) (*chiński uproszczony*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holenderski*)
+      - Zoltán Nagy, Roland Kovács (*węgierski*)
     credits_description: |
       Rozwój tego rozszerzenia jest częścią projektu platformy udostępniania [L'Air du Bois](https://www.lairdubois.fr).
       To rozszerzenie jest *Open Source* i jest dostępne na licencji [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) w swoim repozytorium [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
