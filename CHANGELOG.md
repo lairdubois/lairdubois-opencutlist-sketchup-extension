@@ -40,6 +40,9 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   ### BETA
 
+  * 2025-08-19
+    * Updated AR and RU languages
+    * Minor improvements in Smart Export Tool
   * 2025-08-18
     * **Changed** DXF / SVG layer naming (replace _DEPTH_0000_000_ by _0000_000Z_)
     * Added cutlist row context menu
