@@ -45,7 +45,7 @@ module Ladb::OpenCutList::Kuix
 
     # -- LAYOUT --
 
-    def append(entity)
+    def invalidate
       super
       @scroll_btns_panel.visible = self.num_children > layout.num_cols * layout.num_rows unless @scroll_btns_panel.nil?
     end
