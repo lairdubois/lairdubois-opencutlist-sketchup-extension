@@ -17,12 +17,22 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    float: right;
     display: flex;
 
     & li {
-      display: inline-block;
       border-left: 1px solid #ddd;
+      white-space: nowrap;
+
+      &.ladb-last-news {
+        flex-grow: 1;
+
+        & > a {
+          @media (max-width: 900px) {
+            display: none;
+          }
+        }
+
+      }
 
       &.ladb-highlighted-sponsor {
         background-color: @ladb-brand-sponsor;
@@ -47,11 +57,11 @@
       & > a {
         color: #3e3b33;
         display: inline-block;
+        width: 100%;
         line-height: 30px;
         text-align: center;
         position: relative;
         padding: 0 10px 0 10px;
-
       }
 
       > a:hover, & > a.ladb-active {

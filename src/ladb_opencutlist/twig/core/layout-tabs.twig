@@ -48,6 +48,7 @@
     {% endif %}
     <div id="ladb_bottombar" class="ladb-bottombar no-print">
         <ul>
+            <li class="ladb-last-news"></li>
             <li><a href="https://www.lairdubois.fr" target="_blank"><i class="ladb-opencutlist-icon-link"></i> www.lairdubois.fr</a></li>
             <li{% if capabilities.is_dev and capabilities.is_rbz %} class="ladb-highlighted-bug-report"{% endif %}><a href="mailto:opencutlist@lairdubois.fr?subject=[Bug Report] OpenCutList {{ capabilities.version }} / {{ capabilities.language }} (build: {{ capabilities.build }}) - SketchUp {{ capabilities.sketchup_version }} - {{ capabilities.platform_name }}" target="_blank"><i class="ladb-opencutlist-icon-bug"></i> {{ 'core.bottombar.report_a_bug'|i18next }}</a></li>
             {% for tabDef in tabDefs if tabDef.bar == 'bottombar' %}

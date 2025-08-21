@@ -49,6 +49,24 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-side-fold:before {
     content: "\e9b9";
 }
+.ladb-opencutlist-icon-qr-code:before {
+    content: "\e9b1";
+}
+.ladb-opencutlist-icon-align-left:before {
+    content: "\e98f";
+}
+.ladb-opencutlist-icon-align-center:before {
+    content: "\e990";
+}
+.ladb-opencutlist-icon-align-right:before {
+    content: "\e991";
+}
+.ladb-opencutlist-icon-news:before {
+    content: "\e925";
+}
+.ladb-opencutlist-icon-news-fill:before {
+    content: "\e9bc";
+}
 .ladb-opencutlist-icon-circle-checked:before {
     content: "\e9b5";
 }
@@ -238,9 +256,6 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-tutorials:before {
     content: "\e924";
 }
-.ladb-opencutlist-icon-news:before {
-    content: "\e925";
-}
 .ladb-opencutlist-icon-forum:before {
     content: "\e926";
 }
@@ -402,18 +417,6 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-eye-open-multiple:before {
     content: "\e9b8";
-}
-.ladb-opencutlist-icon-qr-code:before {
-    content: "\e9b1";
-}
-.ladb-opencutlist-icon-align-left:before {
-    content: "\e98f";
-}
-.ladb-opencutlist-icon-align-center:before {
-    content: "\e990";
-}
-.ladb-opencutlist-icon-align-right:before {
-    content: "\e991";
 }
 .ladb-opencutlist-icon-zzz:before {
     content: "\e952";

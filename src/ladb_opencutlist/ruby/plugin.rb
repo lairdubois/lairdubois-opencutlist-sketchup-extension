@@ -107,6 +107,7 @@ module Ladb::OpenCutList
       @update_available = nil
       @update_muted = false
       @last_news_timestamp = nil
+      @last_news_title = nil
 
       @commands = {}
       @event_callbacks = {}
@@ -1337,8 +1338,9 @@ module Ladb::OpenCutList
       @update_muted = update_muted
     end
 
-    def set_news_status_command(last_news_timestamp:)    # Expected params = { last_news_timestamp: TIMESTAMP }
+    def set_news_status_command(last_news_timestamp:, last_news_title:)    # Expected params = { last_news_timestamp: TIMESTAMP }
       @last_news_timestamp = last_news_timestamp
+      @last_news_title = last_news_title
     end
 
     def upgrade_command(url:)    # Expected params = { url: 'RBZ_URL' }
@@ -1527,6 +1529,7 @@ module Ladb::OpenCutList
             :update_available => @update_available,
             :update_muted => @update_muted,
             :last_news_timestamp => @last_news_timestamp,
+            :last_news_title => @last_news_title,
             :tabs_dialog_print_margin => @tabs_dialog_print_margin,
             :tabs_dialog_table_row_size => @tabs_dialog_table_row_size,
             :tabs_dialog_startup_tab_name => @tabs_dialog_startup_tab_name # nil if none

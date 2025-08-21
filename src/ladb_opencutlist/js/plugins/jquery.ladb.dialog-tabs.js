@@ -33,6 +33,7 @@
         this.$wrapper = null;
         this.$wrapperSlides = null;
         this.$leftbar = null;
+        this.$bottombar = null;
 
     };
     LadbDialogTabs.prototype = Object.create(LadbAbstractDialog.prototype);
@@ -177,6 +178,7 @@
                                 "updates(limit: 1, onlyPublishedUpdates: true) { " +
                                     "nodes { " +
                                         "publishedAt " +
+                                        "title " +
                                     "}" +
                                 "}" +
                             "}" +
@@ -188,7 +190,10 @@
                 success: function (response) {
                     if (response.data && response.data.collective.updates.nodes.length > 0) {
 
-                        const lastNewsTimestamp = Date.parse(response.data.collective.updates.nodes[0].publishedAt);
+                        const node = response.data.collective.updates.nodes[0];
+
+                        const lastNewsTimestamp = Date.parse(node.publishedAt);
+                        const lastNewsTitle = node.title;
 
                         if (that.lastListedNewsTimestamp == null) {
 
@@ -199,21 +204,27 @@
 
                             // Fresh news are available, notify it :)
                             that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_news' ])
+                            if (lastNewsTitle) {
+                                that.$bottombar.ladbBottombar('notifyLastNews', [ lastNewsTitle ]);
+                            }
 
                         }
 
-                        // Save timestamp
+                        // Save timestamp and title
                         that.capabilities.last_news_timestamp = lastNewsTimestamp;
+                        that.capabilities.last_news_title = lastNewsTitle;
 
                         // Send news status to ruby
                         rubyCallCommand('core_set_news_status', {
-                            last_news_timestamp: that.capabilities.last_news_timestamp
+                            last_news_timestamp: that.capabilities.last_news_timestamp,
+                            last_news_title: that.capabilities.last_news_title
                         });
 
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     that.capabilities.last_news_timestamp = null;
+                    that.capabilities.last_news_title = null;
                 }
             });
         }
@@ -743,6 +754,7 @@
                     that.$wrapper = $('#ladb_wrapper', that.$element);
                     that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
                     that.$leftbar = $('#ladb_leftbar', that.$element).ladbLeftbar({ dialog: that });
+                    that.$bottombar = $('#ladb_bottombar', that.$element).ladbBottombar({ dialog: that });
                     for (let i = 0; i < that.options.tabDefs.length; i++) {
                         const tabDef = that.options.tabDefs[i];
                         that.$tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
@@ -758,6 +770,9 @@
                     }
                     if (that.capabilities.last_news_timestamp > that.lastListedNewsTimestamp) {
                         that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_news', { silent: true } ]);
+                        if (that.capabilities.last_news_title != null) {
+                            that.$bottombar.ladbBottombar('notifyLastNews', [ that.capabilities.last_news_title ]);
+                        }
                     }
 
                     that.bind();
@@ -773,7 +788,7 @@
                     // Dev alert
                     const $devAlert = $('#ladb_dev_alert');
                     if ($devAlert.length > 0) {
-                        const devAlertTotalTime = 20000;
+                        const devAlertTotalTime = 15000;
                         let devAlertRemaining = devAlertTotalTime;
                         const fnDevAlertCountdown = function () {
                             if ($devAlert.is(':visible')) {
