@@ -176,51 +176,99 @@ module Ladb::OpenCutList
         motif.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
         @materials_add_btn.append(motif)
 
-      # Materials Filters button
-
-      @materials_filters_btn = Kuix::Button.new
-      @materials_filters_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
-      @materials_filters_btn.layout = Kuix::StaticLayout.new
-      @materials_filters_btn.min_size.set!(@unit * 8, @unit * 8)
-      @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
-      @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
-      @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
-      @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
-      @materials_filters_btn.on(:click) { |button|
-        @materials_filters_panel.visible = !@materials_filters_panel.visible?
-        button.selected = @materials_filters_panel.visible?
-      }
-      @materials_panel.append(@materials_filters_btn)
-
-        panel = Kuix::Panel.new
-        panel.layout_data = Kuix::StaticLayoutData.new(0.5, 0, 0, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP))
-        panel.layout = Kuix::InlineLayout.new
-        @materials_filters_btn.append(panel)
-
-          motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
-          motif.padding.set_all!(@unit * 2)
-          motif.min_size.set_all!(@unit * 6)
-          motif.line_width = @unit <= 4 ? 1 : 2
-          motif.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-          motif.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-          motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
-          panel.append(motif)
-
-          @materials_filters_btn_lbl = Kuix::Label.new('glop')
-          @materials_filters_btn_lbl.padding.set!(0, @unit * 2, 0, 0)
-          @materials_filters_btn_lbl.text_size = @unit * 3
-          @materials_filters_btn_lbl.visible = false
-          @materials_filters_btn_lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
-          @materials_filters_btn_lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
-          @materials_filters_btn_lbl.set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
-          panel.append(@materials_filters_btn_lbl)
-
       # Materials Buttons panel
 
-      @materials_btns_panel = Kuix::Panel.new
+      @materials_btns_panel = Kuix::ScrollPanel.new
       @materials_btns_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
       @materials_btns_panel.set_style_attribute(:background_color, COLOR_BRAND_DARK)
       @materials_panel.append(@materials_btns_panel)
+
+      # Materials East panel
+
+      east_panel = Kuix::Panel.new
+      east_panel.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::EAST)
+      east_panel.layout = Kuix::BorderLayout.new
+      @materials_panel.append(east_panel)
+
+        # Materials Filters button
+
+        @materials_filters_btn = Kuix::Button.new
+        @materials_filters_btn.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::CENTER)
+        @materials_filters_btn.layout = Kuix::StaticLayout.new
+        @materials_filters_btn.min_size.set!(@unit * 8, @unit * 8)
+        @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+        @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+        @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :active)
+        @materials_filters_btn.set_style_attribute(:background_color, COLOR_BRAND, :selected)
+        @materials_filters_btn.on(:click) { |button|
+          @materials_filters_panel.visible = !@materials_filters_panel.visible?
+          button.selected = @materials_filters_panel.visible?
+        }
+        east_panel.append(@materials_filters_btn)
+
+          panel = Kuix::Panel.new
+          panel.layout_data = Kuix::StaticLayoutData.new(0.5, 0, 0, @unit * 10, Kuix::Anchor.new(Kuix::Anchor::TOP))
+          panel.layout = Kuix::InlineLayout.new
+          @materials_filters_btn.append(panel)
+
+            motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.4,1L0.4,0.5L0.1,0.2L0.1,0L0.9,0L0.9,0.2L0.6,0.5L0.6,0.9L0.4,1'))
+            motif.padding.set_all!(@unit * 2)
+            motif.min_size.set_all!(@unit * 6)
+            motif.line_width = @unit <= 4 ? 1 : 2
+            motif.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+            motif.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+            motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
+            panel.append(motif)
+
+            @materials_filters_btn_lbl = Kuix::Label.new('glop')
+            @materials_filters_btn_lbl.padding.set!(0, @unit * 2, 0, 0)
+            @materials_filters_btn_lbl.text_size = @unit * 3
+            @materials_filters_btn_lbl.visible = false
+            @materials_filters_btn_lbl.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+            @materials_filters_btn_lbl.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+            @materials_filters_btn_lbl.set_style_attribute(:color, Kuix::COLOR_WHITE, :selected)
+            panel.append(@materials_filters_btn_lbl)
+
+        scroll_btns = Kuix::Panel.new
+        scroll_btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
+        scroll_btns.layout = Kuix::GridLayout.new(1, 2)
+        scroll_btns.visible = true
+        east_panel.append(scroll_btns)
+        @materials_btns_panel.bind_scroll_btns_panel(scroll_btns)
+
+          btn = Kuix::Button.new
+          btn.layout = Kuix::StaticLayout.new
+          btn.min_size.set!(@unit * 8, @unit * 8)
+          btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+          btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+          scroll_btns.append(btn)
+          @materials_btns_panel.bind_scroll_up_button(btn)
+
+            motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L1,1L0.5,0L0,1Z'))
+            motif.padding.set_all!(@unit * 2)
+            motif.min_size.set_all!(@unit * 6)
+            motif.line_width = @unit <= 4 ? 1 : 2
+            motif.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+            motif.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+            motif.set_style_attribute(:color, Kuix::COLOR_DARK_GREY, :disabled)
+            btn.append(motif)
+
+          btn = Kuix::Button.new
+          btn.layout = Kuix::StaticLayout.new
+          btn.min_size.set!(@unit * 8, @unit * 8)
+          btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
+          btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
+          scroll_btns.append(btn)
+          @materials_btns_panel.bind_scroll_down_button(btn)
+
+            motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0L0.5,1L0,0Z'))
+            motif.padding.set_all!(@unit * 2)
+            motif.min_size.set_all!(@unit * 6)
+            motif.line_width = @unit <= 4 ? 1 : 2
+            motif.set_style_attribute(:color, COLOR_BRAND_LIGHT)
+            motif.set_style_attribute(:color, COLOR_BRAND_DARK, :hover)
+            motif.set_style_attribute(:color, Kuix::COLOR_DARK_GREY, :disabled)
+            btn.append(motif)
 
       # Materials Filters panel
 
@@ -1075,7 +1123,6 @@ module Ladb::OpenCutList
     def _setup_material_buttons
 
       @materials_btns_panel.remove_all
-      @materials_btns_panel.layout = Kuix::GridLayout.new([[@material_defs.length + 1, 5 ].max, 10 ].min, ((@material_defs.length + 1) / 10.0).ceil)
 
       @material_buttons = []
 
@@ -1171,6 +1218,8 @@ module Ladb::OpenCutList
         end
 
       end
+
+      @materials_btns_panel.set_viewport([[@material_defs.length + 1, 5 ].max, 10 ].min, [((@material_defs.length + 1) / 10.0).ceil, 4 ].min)
 
     end
 

@@ -115,8 +115,8 @@ module Ladb::OpenCutList::Kuix
 
     # -- Tests --
 
-    def is_empty?
-      @size.is_empty?
+    def empty?
+      @size.empty?
     end
 
     def inside?(x, y)
@@ -139,7 +139,7 @@ module Ladb::OpenCutList::Kuix
     end
 
     def union!(bounds)
-      if is_empty?
+      if empty?
         copy!(bounds)
       else
         set!(

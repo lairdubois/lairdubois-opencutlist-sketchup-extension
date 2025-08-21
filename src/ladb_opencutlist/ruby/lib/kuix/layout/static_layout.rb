@@ -61,7 +61,7 @@ module Ladb::OpenCutList::Kuix
           preferred_size = entity.get_preferred_size(available_width)
           entity_bounds = Bounds2d.new
 
-          if entity.layout_data && entity.layout_data.is_a?(StaticLayoutData)
+          if entity.layout_data.is_a?(StaticLayoutData)
 
             if entity.layout_data.is_a?(StaticLayoutDataWithSnap)
 

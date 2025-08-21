@@ -110,7 +110,22 @@ module Ladb::OpenCutList::Kuix
       end
     end
 
+    def num_children
+      return 0 if @child.nil?
+      num_children = 0
+      entity = @child
+      until entity.nil?
+        num_children += 1
+        entity = entity.next
+      end
+      num_children
+    end
+
     # -- LAYOUT --
+
+    def valid?
+      true
+    end
 
     def visible=(value)
       return if @visible == value
@@ -138,7 +153,7 @@ module Ladb::OpenCutList::Kuix
     # -- RENDER --
 
     def paint(graphics)
-      paint_itself(graphics) if self.visible?
+      paint_itself(graphics) if visible? && valid?
       paint_sibling(graphics)
     end
 

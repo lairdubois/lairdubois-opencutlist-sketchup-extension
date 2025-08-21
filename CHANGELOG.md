@@ -30,6 +30,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Improved export drawing to Layout : adding the ability to add in a new page of an existing file
   * Improved labels formulas
   * Improved smart tools picker
+  * Improved Smart Paint Tool by adding scrolling in materials list
   * Improved surface detection
   * Improved Material import from SKM (allows new or replace)
   * Improved Layout feature to be able to align on active view axes
@@ -40,6 +41,8 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   ### BETA
 
+  * 2025-08-21
+    * Improved Smart Paint Tool by adding scrolling in materials list
   * 2025-08-19
     * Updated AR and RU languages
     * Minor improvements in Smart Export Tool

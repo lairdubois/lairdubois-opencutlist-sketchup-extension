@@ -4,7 +4,7 @@ module Ladb::OpenCutList::Kuix
 
     attr_reader :min, :max, :value
 
-    def initialize(min = 0.0, max = 1.0)
+    def initialize(min = 0.0, max = 1.0, id = '')
       super(id)
 
       @min = min

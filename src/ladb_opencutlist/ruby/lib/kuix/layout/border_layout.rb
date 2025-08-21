@@ -29,8 +29,8 @@ module Ladb::OpenCutList::Kuix
       @vertical_gap = vertical_gap.to_i
     end
 
-    def measure_preferred_size(target, prefered_width, size)
-      _compute(target, prefered_width, size, false)
+    def measure_preferred_size(target, preferred_width, size)
+      _compute(target, preferred_width, size, false)
     end
 
     def do_layout(target)
@@ -63,7 +63,7 @@ module Ladb::OpenCutList::Kuix
       until entity.nil?
         if entity.visible?
 
-          if entity.layout_data && entity.layout_data.is_a?(BorderLayoutData)
+          if entity.layout_data.is_a?(BorderLayoutData)
 
             case entity.layout_data.position
             when BorderLayoutData::NORTH

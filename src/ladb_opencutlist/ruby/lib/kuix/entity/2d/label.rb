@@ -4,7 +4,7 @@ module Ladb::OpenCutList::Kuix
 
     attr_reader :text, :text_options
 
-    def initialize(text = '', id = '')
+    def initialize(text = '', id = nil)
       super(id)
       @text = text
       @text_options = {

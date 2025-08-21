@@ -2,14 +2,12 @@ module Ladb::OpenCutList::Kuix
 
   class Button < Entity2d
 
+    include EventHandlerHelper
+
     attr_accessor :selected, :disabled
 
     def initialize(id = nil)
-      super(id)
-
-      # Event handlers
-      @handlers = {}
-
+      super
     end
 
     # -- PROPERTIES --
@@ -28,6 +26,7 @@ module Ladb::OpenCutList::Kuix
 
     def disabled=(value)
       if value
+        onMouseLeave if has_pseudo_class?(:hover)
         activate_pseudo_class(:disabled)
       else
         deactivate_pseudo_class(:disabled)
@@ -68,20 +67,9 @@ module Ladb::OpenCutList::Kuix
 
     # -- EVENTS --
 
-    def on(events, &block)
-      events = [ events ] unless events.is_a?(Array)
-      events.each { |event| @handlers[event] = block }
-    end
-
-    def off(events)
-      events = [ events ] unless events.is_a?(Array)
-      events.each { |event| @handlers.delete!(event) }
-    end
-
     def fire(events, *args)
       return if disabled?
-      events = [ events ] unless events.is_a?(Array)
-      events.each { |event| @handlers[event].call(self, args) if @handlers[event] }
+      super
     end
 
     def onMouseEnter(flags)
@@ -111,6 +99,12 @@ module Ladb::OpenCutList::Kuix
       return if disabled?
       super
       fire(:doubleclick, flags)
+    end
+
+    def onMouseWheel(flags, delta)
+      return if disabled?
+      super
+      fire(:wheel, flags, delta)
     end
 
   end

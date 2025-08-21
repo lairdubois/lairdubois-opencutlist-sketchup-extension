@@ -27,7 +27,7 @@ module Ladb::OpenCutList::Kuix
 
     # -- Tests --
 
-    def is_empty?
+    def empty?
       @width == 0 || @height == 0
     end
 

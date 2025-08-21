@@ -55,10 +55,10 @@ module Ladb::OpenCutList::Kuix
       )
     end
 
-    def get_preferred_size(prefered_width)
+    def get_preferred_size(preferred_width)
       size = Size2d.new
       if @layout
-        @layout.measure_preferred_size(self, prefered_width, size)
+        @layout.measure_preferred_size(self, preferred_width, size)
       else
         insets = self.insets
         size.set!(
@@ -73,8 +73,12 @@ module Ladb::OpenCutList::Kuix
       @hittable = value
     end
 
-    def hittable?
+    def hittable?(event = nil)
       @hittable && (@background_color || @border_color)
+    end
+
+    def valid?
+      !@bounds.empty?
     end
 
     # -- STYLE --
@@ -190,7 +194,7 @@ module Ladb::OpenCutList::Kuix
 
     # -- Hit --
 
-    def hit_widget(x, y)
+    def hit_widget(x, y, event = nil)
       widget = nil
       hit_bounds = Bounds2d.new(   # Exclude margin from hit test
         @bounds.origin.x + @margin.left,
@@ -202,16 +206,13 @@ module Ladb::OpenCutList::Kuix
         if @last_child
           widget = @last_child.hit_widget(
             x - hit_bounds.origin.x - @border.left - @padding.left,
-            y - hit_bounds.origin.y - @border.top - @padding.top
+            y - hit_bounds.origin.y - @border.top - @padding.top,
+            event
           )
         end
-        if hittable?
-          widget = self unless widget
-        end
+        widget = self if widget.nil? && self.hittable?(event)
       end
-      if widget.nil? && @previous
-        widget = @previous.hit_widget(x, y)
-      end
+      widget = @previous.hit_widget(x, y, event) if widget.nil? && @previous
       widget
     end
 
@@ -238,10 +239,46 @@ module Ladb::OpenCutList::Kuix
       deactivate_pseudo_class(:active)
     end
 
+    def onMouseWheel(flags, delta)
+    end
+
     # --
 
     def to_s
       "#{self.class.name} (id=#{@id}, bounds=#{@bounds})"
+    end
+
+  end
+
+  module EventHandlerHelper
+
+    def hittable?(event = nil)
+      super && (event.nil? || @handlers && @handlers[event])
+    end
+
+    def on(events, &block)
+      @handlers = {} if @handlers.nil?
+      events = [ events ] unless events.is_a?(Array)
+      events.each { |event| @handlers[event] = block }
+    end
+
+    def off(events)
+      return if @handlers.nil?
+      events = [ events ] unless events.is_a?(Array)
+      events.each { |event| @handlers.delete!(event) }
+    end
+
+    def fire(events, *args)
+      return if @handlers.nil?
+      events = [ events ] unless events.is_a?(Array)
+      events.map { |event|
+        if @handlers[event]
+          @handlers[event].call(self, *args)
+          true
+        else
+          false
+        end
+      }.include?(true)
     end
 
   end

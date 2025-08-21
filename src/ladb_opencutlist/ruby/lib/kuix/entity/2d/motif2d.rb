@@ -5,7 +5,7 @@ module Ladb::OpenCutList::Kuix
     attr_reader :patterns_transformation
     attr_accessor :line_width, :line_stipple
 
-    def initialize(patterns = [], id = '')
+    def initialize(patterns = [], id = nil)
       super(id)
 
       @patterns = patterns  # Normalized Array<Array<Kuix::Point2d>>

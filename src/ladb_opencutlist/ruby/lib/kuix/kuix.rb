@@ -93,6 +93,7 @@ module Ladb::OpenCutList
     require_relative 'entity/2d/motif2d'
     require_relative 'entity/2d/button'
     require_relative 'entity/2d/progress'
+    require_relative 'entity/2d/scroll_panel'
     require_relative 'entity/3d/entity3d'
     require_relative 'entity/3d/space'
     require_relative 'entity/3d/group'
@@ -391,6 +392,8 @@ module Ladb::OpenCutList
       end
 
       def onMouseWheel(flags, delta, x, y, view)
+        hit_widget = @canvas.hit_widget(x, y, :wheel)
+        return true if hit_widget && hit_widget.in_dom? && hit_widget.onMouseWheel(flags, delta)
         false
       end
 

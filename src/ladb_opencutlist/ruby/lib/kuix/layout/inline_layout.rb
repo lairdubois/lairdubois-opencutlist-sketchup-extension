@@ -8,8 +8,8 @@ module Ladb::OpenCutList::Kuix
       @anchor = anchor
     end
 
-    def measure_preferred_size(target, prefered_width, size)
-      _compute(target, prefered_width, size, false)
+    def measure_preferred_size(target, preferred_width, size)
+      _compute(target, preferred_width, size, false)
     end
 
     def do_layout(target)
