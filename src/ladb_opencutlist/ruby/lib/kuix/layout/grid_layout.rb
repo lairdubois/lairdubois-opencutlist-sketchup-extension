@@ -43,8 +43,8 @@ module Ladb::OpenCutList::Kuix
 
       col = 0
       row = 0
-      prefered_cell_width = 0
-      prefered_cell_height = 0
+      preferred_cell_width = 0
+      preferred_cell_height = 0
 
       # Loop on children
       entity = target.child
@@ -66,9 +66,9 @@ module Ladb::OpenCutList::Kuix
             )
             entity.do_layout
           else
-            prefered_size = entity.get_prefered_size(available_width)
-            prefered_cell_width = [ prefered_cell_width, prefered_size.width ].max
-            prefered_cell_height = [ prefered_cell_height, prefered_size.height ].max
+            preferred_size = entity.get_preferred_size(available_width)
+            preferred_cell_width = [ preferred_cell_width, preferred_size.width ].max
+            preferred_cell_height = [ preferred_cell_height, preferred_size.height ].max
           end
 
           col += col_span
@@ -86,8 +86,8 @@ module Ladb::OpenCutList::Kuix
 
       unless layout
         size.set!(
-          insets.left + [ target.min_size.width, prefered_cell_width * @num_cols + total_horizontal_gap ].max + insets.right,
-          insets.top + [ target.min_size.height, prefered_cell_height * @num_rows + total_vertical_gap ].max + insets.bottom
+          insets.left + [ target.min_size.width, preferred_cell_width * @num_cols + total_horizontal_gap ].max + insets.right,
+          insets.top + [ target.min_size.height, preferred_cell_height * @num_rows + total_vertical_gap ].max + insets.bottom
         )
       end
 

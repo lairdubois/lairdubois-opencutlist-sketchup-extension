@@ -99,35 +99,35 @@ module Ladb::OpenCutList::Kuix
 
       # North
       if north_entity
-        prefered_size = north_entity.get_prefered_size(available_width)
+        prefered_size = north_entity.get_preferred_size(available_width)
         center_width = prefered_size.width
         top_height = prefered_size.height
       end
 
       # West
       if west_entity
-        prefered_size = west_entity.get_prefered_size(available_width - total_horizontal_gap)
+        prefered_size = west_entity.get_preferred_size(available_width - total_horizontal_gap)
         left_width = prefered_size.width
         center_height = prefered_size.height
       end
 
       # East
       if east_entity
-        prefered_size = east_entity.get_prefered_size(available_width - left_width - total_horizontal_gap)
+        prefered_size = east_entity.get_preferred_size(available_width - left_width - total_horizontal_gap)
         right_width = prefered_size.width
         center_height = [ center_height, prefered_size.height].max
       end
 
       # South
       if south_entity
-        prefered_size = south_entity.get_prefered_size(available_width)
+        prefered_size = south_entity.get_preferred_size(available_width)
         center_width = [ center_width, prefered_size.width ].max
         bottom_height = prefered_size.height
       end
 
       # Center
       if center_entity
-        prefered_size = center_entity.get_prefered_size(available_width - left_width - right_width - total_horizontal_gap)
+        prefered_size = center_entity.get_preferred_size(available_width - left_width - right_width - total_horizontal_gap)
         center_width = [ center_width, prefered_size.width ].max
         center_height = [ center_height, prefered_size.height].max
       end

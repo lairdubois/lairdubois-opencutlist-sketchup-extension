@@ -55,7 +55,7 @@ module Ladb::OpenCutList::Kuix
       )
     end
 
-    def get_prefered_size(prefered_width)
+    def get_preferred_size(prefered_width)
       size = Size2d.new
       if @layout
         @layout.measure_preferred_size(self, prefered_width, size)

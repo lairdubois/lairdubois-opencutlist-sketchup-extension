@@ -33,7 +33,7 @@ module Ladb::OpenCutList::Kuix
       until entity.nil?
         if entity.visible?
 
-          preferred_size = entity.get_prefered_size(available_width)
+          preferred_size = entity.get_preferred_size(available_width)
           child_defs.push({
                             :entity => entity,
                             :preferred_size => preferred_size
