@@ -232,7 +232,7 @@ module Ladb::OpenCutList
         scroll_btns = Kuix::Panel.new
         scroll_btns.layout_data = Kuix::BorderLayoutData.new(Kuix::BorderLayoutData::SOUTH)
         scroll_btns.layout = Kuix::GridLayout.new(1, 2)
-        scroll_btns.visible = true
+        scroll_btns.visible = false
         east_panel.append(scroll_btns)
         @materials_btns_panel.bind_scroll_btns_panel(scroll_btns)
 
@@ -242,7 +242,7 @@ module Ladb::OpenCutList
           btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
           btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
           scroll_btns.append(btn)
-          @materials_btns_panel.bind_scroll_up_button(btn)
+          @materials_btns_panel.bind_scroll_up_btn(btn)
 
             motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L1,1L0.5,0L0,1Z'))
             motif.padding.set_all!(@unit * 2)
@@ -259,7 +259,7 @@ module Ladb::OpenCutList
           btn.set_style_attribute(:background_color, COLOR_BRAND_DARK)
           btn.set_style_attribute(:background_color, COLOR_BRAND_LIGHT, :hover)
           scroll_btns.append(btn)
-          @materials_btns_panel.bind_scroll_down_button(btn)
+          @materials_btns_panel.bind_scroll_down_btn(btn)
 
             motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,0L1,0L0.5,1L0,0Z'))
             motif.padding.set_all!(@unit * 2)

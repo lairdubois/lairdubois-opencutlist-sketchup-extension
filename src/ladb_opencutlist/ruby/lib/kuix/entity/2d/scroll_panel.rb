@@ -23,31 +23,27 @@ module Ladb::OpenCutList::Kuix
     def set_viewport(num_cols, num_rows)
       self.layout = GridLayout.new(num_cols, num_rows)
       self.scroll(0)
+      @scroll_btns_panel.visible = self.num_children > num_cols * num_rows unless @scroll_btns_panel.nil?
     end
+
+    # -- BUTTONS --
 
     def bind_scroll_btns_panel(panel)
       @scroll_btns_panel = panel
     end
 
-    def bind_scroll_up_button(button)
-      @scroll_up_button = button
-      button.on([ :click, :doubleclick ]) do
+    def bind_scroll_up_btn(btn)
+      @scroll_up_button = btn
+      btn.on([ :click, :doubleclick ]) do
         scroll(-1)
       end
     end
 
-    def bind_scroll_down_button(button)
-      @scroll_down_button = button
-      button.on([ :click, :doubleclick ]) do
+    def bind_scroll_down_btn(btn)
+      @scroll_down_button = btn
+      btn.on([ :click, :doubleclick ]) do
         scroll(1)
       end
-    end
-
-    # -- LAYOUT --
-
-    def invalidate
-      super
-      @scroll_btns_panel.visible = self.num_children > layout.num_cols * layout.num_rows unless @scroll_btns_panel.nil?
     end
 
     # -- SCROLL --

@@ -252,9 +252,13 @@ module Ladb::OpenCutList::Kuix
 
   module EventHandlerHelper
 
+    # -- PROPERTIES --
+
     def hittable?(event = nil)
       super && (event.nil? || @handlers && @handlers[event])
     end
+
+    # -- EVENTS --
 
     def on(events, &block)
       @handlers = {} if @handlers.nil?
