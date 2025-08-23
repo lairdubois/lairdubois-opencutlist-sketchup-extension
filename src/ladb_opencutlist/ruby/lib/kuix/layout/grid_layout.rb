@@ -75,6 +75,8 @@ module Ladb::OpenCutList::Kuix
         entity = entity.next
       end
 
+      # Returns max row index
+      return row - 1 if col == 0
       row
     end
 
