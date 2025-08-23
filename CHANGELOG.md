@@ -42,6 +42,8 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   ### BETA
 
   * 2025-08-22
+    * Added toggle group visibility button on each row of parts list summary
+  * 2025-08-22
     * Improved Smart Paint Tool by adding scrolling in materials list
   * 2025-08-19
     * Updated AR and RU languages

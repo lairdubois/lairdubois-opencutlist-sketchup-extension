@@ -58,7 +58,7 @@
                 <thead>
                 <tr class="table-heading">
                     <td colspan="{{ colspan }}">
-                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-open"></i></button>
                         {% if not generateOptions.part_folding %}
                             <div class="btn-group pull-right">
                                 <button class="no-print btn btn-default btn-sm ladb-btn-hiddable" id="ladb_btn_select_unused_parts" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.select_parts_in_cutlist'|i18next({ 'count':unused_parts|length }) }}"><i class="ladb-opencutlist-icon-check-box-with-check-sign"></i> {{ 'tab.cutlist.select_part'|i18next({ 'count':unused_parts|length }) }}</button>
@@ -122,7 +122,7 @@
                 <thead>
                 <tr class="table-heading">
                     <td colspan="7">
-                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-open"></i></button>
                         {% if cached %}<div class="no-print pull-right"><span style="margin-right: 10px; font-style: italic; line-height: 30px;">{{ 'tab.cutlist.packing.list.cached'|i18next }}</span><button id="ladb_btn_generate_no_cache" class="btn btn-default btn-sm">{{ 'default.regenerate'|i18next }}</button></div>{% endif %}
                         <div class="ladb-heading">{{ 'tab.cutlist.packing.list.summary'|i18next }}</div>
                     </td>
@@ -277,7 +277,7 @@
                 <thead>
                 <tr class="table-heading">
                     <td colspan="{{ colspan }}">
-                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-close"></i></button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-toggle-no-print pull-left"><i class="ladb-opencutlist-icon-eye-open"></i></button>
                         {% if bin|length > 1 %}
                             <div class="no-print btn-group pull-right" role="group">
                                 <button class="btn btn-default btn-sm ladb-btn-scrollto-prev-group" {% if loop.first %}disabled{% endif %}><i class="ladb-opencutlist-icon-chevron-left"></i></button>

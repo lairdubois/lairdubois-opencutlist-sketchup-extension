@@ -480,6 +480,14 @@
                     });
                     return false;
                 });
+                $('a.ladb-btn-toggle-visible', that.$page).on('click', function () {
+                    $(this).blur();
+                    const $target = $($(this).attr('href'));
+                    if ($target.data('group-id')) {
+                        that.toggleGroup($target);
+                    }
+                    return false;
+                });
                 $('a.ladb-btn-add-std-dimension-to-material', that.$page).on('click', function () {
                     $(this).blur();
                     const $group = $(this).parents('.ladb-cutlist-group');
@@ -4826,16 +4834,27 @@
         rubyCallCommand('core_set_model_preset', { dictionary: presetDictionary, values: presetValues, section: presetSection });
     };
 
+    LadbTabCutlist.prototype.toggleGroup = function ($group, doNotSaveState, doNotFlushSettings, presetValues, presetDictionary, presetSection) {
+        if ($group.hasClass('no-print')) {
+            this.showGroup($group, doNotSaveState, doNotFlushSettings, presetValues, presetDictionary, presetSection);
+        } else {
+            this.hideGroup($group, doNotSaveState, doNotFlushSettings, presetValues, presetDictionary, presetSection);
+        }
+    };
+
     LadbTabCutlist.prototype.showGroup = function ($group, doNotSaveState, doNotFlushSettings, presetValues, presetDictionary, presetSection) {
         const groupId = $group.data('group-id');
         const $btn = $('.ladb-btn-toggle-no-print', $group);
         const $i = $('i', $btn);
         const $summaryRow = $('#' + $group.attr('id') + '_summary');
+        const $summaryToggleIconBtn = $('.ladb-btn-toggle-visible i', $summaryRow);
 
         $group.removeClass('no-print');
-        $i.addClass('ladb-opencutlist-icon-eye-close');
-        $i.removeClass('ladb-opencutlist-icon-eye-open');
+        $i.addClass('ladb-opencutlist-icon-eye-open');
+        $i.removeClass('ladb-opencutlist-icon-eye-close');
         $summaryRow.removeClass('ladb-mute');
+        $summaryToggleIconBtn.addClass('ladb-opencutlist-icon-eye-open');
+        $summaryToggleIconBtn.removeClass('ladb-opencutlist-icon-eye-close');
 
         if (doNotSaveState === undefined || !doNotSaveState) {
             if (presetValues === undefined) presetValues = this.generateOptions;
@@ -4855,11 +4874,14 @@
         const $btn = $('.ladb-btn-toggle-no-print', $group);
         const $i = $('i', $btn);
         const $summaryRow = $('#' + $group.attr('id') + '_summary');
+        const $summaryToggleIconBtn = $('.ladb-btn-toggle-visible i', $summaryRow);
 
         $group.addClass('no-print');
-        $i.removeClass('ladb-opencutlist-icon-eye-close');
-        $i.addClass('ladb-opencutlist-icon-eye-open');
+        $i.removeClass('ladb-opencutlist-icon-eye-open');
+        $i.addClass('ladb-opencutlist-icon-eye-close');
         $summaryRow.addClass('ladb-mute');
+        $summaryToggleIconBtn.removeClass('ladb-opencutlist-icon-eye-open');
+        $summaryToggleIconBtn.addClass('ladb-opencutlist-icon-eye-close');
 
         if (doNotSaveState === undefined || !doNotSaveState) {
             if (presetValues === undefined) presetValues = this.generateOptions;
