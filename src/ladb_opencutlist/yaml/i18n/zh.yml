@@ -735,7 +735,7 @@ tab:
       type_-1: $t(default.cut_plural)
       tooltip:
         incompatible_unit: 与材料估算选项不兼容的单位
-        multiplier_coefficient: ""
+        multiplier_coefficient: 倍数系数
       error:
         no_typed_material_parts: "未提供具有定义的材质类型 (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** 或 **$t(tab.materials.type_5)**) 以生成估算."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**."
@@ -1218,6 +1218,7 @@ tab:
           is_bin_selection: "**隐藏的部件**将不会被汇出"
         error:
           overflow_gt_spacing: |
+            加工溢出量 ({{ overflow }}) 必须小于或等于此排版图中设定的间距 ({{ spacing }}) 
       error:
         no_part: 没有部件.
         no_bin_1d: 未选择标准板材或封边条，且无剩余料。
@@ -1488,6 +1489,7 @@ tab:
         能够将零件的外轮廓与其孔分离，并融合每个孔的深度
       option_merge_holes_overflow: 加工溢出
       option_merge_holes_overflow_help: |
+        设定边界轮廓与孔洞表面的加工溢出距离
       option_include_paths: 路径
       option_include_paths_0: $t(default.no)
       option_include_paths_1: 使用非多面边
@@ -1496,13 +1498,19 @@ tab:
       option_parts: 部件
       option_parts_help: |
         选择零件的颜色.
-      option_parts_depths: ""
+      option_parts_depths: 孔洞
       option_parts_depths_help: |
+        允许选择零件孔洞的颜色。
+
+        *预设情况下，系统会依孔洞深度，在零件颜色与孔洞颜色之间套用渐层效果*
       option_parts_holes: 钻孔
       option_parts_holes_help: |
         选择钻孔的颜色.
       option_parts_paths: 路径
       option_parts_paths_help: |
+        允许选择绘图颜色
+
+        *填充颜​​色仅适用于封闭路径*
       error:
         no_part: 没有需要导出的部件
       warning:
@@ -1566,7 +1574,7 @@ tab:
       texture_export: 汇出图片
       texture_clear: 删除纹理
       edit: "编辑 '{{ name }}' 的属性"
-      set_current: ""
+      set_current: "將部件上色為 '{{ name }}'"
       open_url: 打开材料 URL
       import_from_skm: 导入材质 (.skm)
     menu:
@@ -1599,6 +1607,9 @@ tab:
       attributes: 属性
       thickness: 厚度
       thickness_help: |
+        材料的成品厚度
+
+        *若未指定单位，则会套用模型的单位*
       length_increase: 长度尺寸超差
       length_increase_help: 应用于长度以定义 **原始长度** 的尺寸超差.
       width_increase: 宽度尺寸超差
@@ -1607,14 +1618,29 @@ tab:
       thickness_increase_help: 应用于厚度以定义 **原始厚度** 的尺寸超差.
       std_lengths: 标准长度
       std_lengths_help: |
+        此材料可用的标准长度
+
+        *若未指定单位，则会套用模型的单位*
       std_widths: 标准宽度
       std_widths_help: |
+        此材料可用的标准宽度
+
+        *若未指定单位，则会套用模型的单位*
       std_thicknesses: 标准厚度
       std_thicknesses_help: |
+        此材料可用的标准**粗略**厚度
+
+        *若未指定单位，则会套用模型的单位*
       std_sections: 标准横截面
       std_sections_help: |
+        此材料可用的标准截面
+
+        *若未指定单位，则会套用模型的单位*
       std_sizes: 标准面板尺寸
       std_sizes_help: |
+        此材料可用的标准尺寸
+
+        *若未指定单位，则会套用模型的单位*
       grained: 纹理方向
       grained_help: 设置材质的纹理方向.
       grained_0: 无纹理
@@ -1634,7 +1660,7 @@ tab:
         总体积是部件切割后的面板、薄板、木板或封边的体积总和。
       raw_estimated_0: 有效体积
       raw_estimated_1: 所需原材料的体积
-      multiplier_coefficient: ""
+      multiplier_coefficient: 倍数系数
       multiplier_coefficient_help: ""
       std_attributes_dim_placeholder: 选择一个尺寸
       std_volumic_masses: 密度
@@ -2069,8 +2095,8 @@ tool:
     action_2_status: ""
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: ""
-    action_3: ""
-    action_3_status: ""
+    action_3: 移动
+    action_3_status: 点击部件以沿轴移动
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
     action_3_state_2_status: ""
     action_4: ""
