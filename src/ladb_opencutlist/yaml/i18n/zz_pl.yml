@@ -19,7 +19,7 @@ default:
   clear: 15 - Wyczyść
   refresh: 16 - Odśwież
   generate: 17 - Generuj
-  regenerate: '18 - '
+  regenerate: 18 - Regenerować
   print: 19 - Wydrukuj
   export: 20 - Eksportuj
   import: 21 - Importuj
@@ -1083,7 +1083,8 @@ tab:
         867 - Grupuj płyty lub obrzeża zawierające takie same części i cięcia.
       option_bin_folding_2d_help: |
         868 - Grupuj panele lub arkusze mające te same części i cięcia.
-      option_bin_folding_warning: '869 - '
+      option_bin_folding_warning: |
+        869 - *Ta opcja zostanie wyłączona, jeśli używasz właściwości instancji w formule dostosowywania tekstu identyfikacyjnego.*
       option_hide_part_list: 870 - Lista części
       option_hide_part_list_1d_dimensional_0: 871 - Wyświetlana dla każdej płyty
       option_hide_part_list_1d_edge_0: 872 - Wyświetlane dla każdego obrzeża
@@ -1128,7 +1129,7 @@ tab:
         scroll_to_block_2d: 905 - Przewiń do pierwszego panelu lub arkusza forniru
       list:
         summary: 906 - Podsumowanie
-        cached: '907 - '
+        cached: 907 - Pobrane z pamięci podręcznej
         trimming: 908 - Rozmiar przycinania
         settings: 909 - Ustawienia
         stats: 910 - Statystyki

@@ -22,7 +22,7 @@ default:
   clear: Wyczyść
   refresh: Odśwież
   generate: Generuj
-  regenerate: ""
+  regenerate: Regenerować
   print: Wydrukuj
   export: Eksportuj
   import: Importuj
@@ -1089,6 +1089,7 @@ tab:
       option_bin_folding_2d_help: |
         Grupuj panele lub arkusze mające te same części i cięcia.
       option_bin_folding_warning: |
+        *Ta opcja zostanie wyłączona, jeśli używasz właściwości instancji w formule dostosowywania tekstu identyfikacyjnego.*
       option_hide_part_list: Lista części
       option_hide_part_list_1d_dimensional_0: Wyświetlana dla każdej płyty
       option_hide_part_list_1d_edge_0: Wyświetlane dla każdego obrzeża
@@ -1133,7 +1134,7 @@ tab:
         scroll_to_block_2d: Przewiń do pierwszego panelu lub arkusza forniru
       list:
         summary: Podsumowanie
-        cached: ""
+        cached: Pobrane z pamięci podręcznej
         trimming: Rozmiar przycinania
         settings: Ustawienia
         stats: Statystyki
