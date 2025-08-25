@@ -96,7 +96,7 @@ default:
   width: 宽度
   thickness: 厚度
   height: 高度
-  deprecated: ""
+  deprecated: 已过时
 core:
   menu:
     submenu: OpenCutList
@@ -655,7 +655,7 @@ tab:
       option_csv_col_sep_comma: 逗号
       option_csv_col_sep_semicolon: 分号
       option_csv_encoding: 编码
-      copy_all: ""
+      copy_all: 标题 + 数值
       copy_values: 仅值
       number: 编号
       path: 路径
@@ -989,7 +989,7 @@ tab:
       title: 切割图
       option_problem_type: 类型
       option_problem_type_rectangle: 矩形
-      option_problem_type_rectangleguillotine: ""
+      option_problem_type_rectangleguillotine: 直线裁切
       option_problem_type_onedimensional: 尺寸
       option_problem_type_irregular: 套料
       options_material: 材质
@@ -1661,7 +1661,7 @@ tab:
       raw_estimated_0: 有效体积
       raw_estimated_1: 所需原材料的体积
       multiplier_coefficient: 倍数系数
-      multiplier_coefficient_help: ""
+      multiplier_coefficient_help: 用于标示套用在原始体积上的倍数系数
       std_attributes_dim_placeholder: 选择一个尺寸
       std_volumic_masses: 密度
       std_volumic_masses_help: 定义材质的密度
@@ -1691,8 +1691,8 @@ tab:
     export_to_skm:
       title: 导出到 .skm 文件
     option:
-      minimize_on_smart_paint: ""
-      minimize_on_smart_paint_help: ""
+      minimize_on_smart_paint: " *'将部件上色为...'* 之后收合"
+      minimize_on_smart_paint_help: "如果启用此选项，当使用*'将部件上色为...'* 功能时，OpenCutList 视窗将会自动最小化"
       general: 常规
       material_order_strategy: 材质排序
       material_order_strategy_help: |
@@ -2084,45 +2084,45 @@ tool:
     success:
       part_created: "新建部件: {{ name }}"
   smart_handle:
-    title: ""
+    title: 操控点
     action_0: 选择
     action_0_status: 点击部件以选中它
     action_1: 沿直线复制
-    action_1_status: ""
+    action_1_status: 点击部件以沿轴复制
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: ""
-    action_2: ""
-    action_2_status: ""
+    action_1_state_2_status: 点击以放置部件复制或输入距离
+    action_2: 以网格方式复制
+    action_2_status: 点击部件以沿网格复制
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: ""
+    action_2_state_2_status: 点击以放置部件复制或输入两个距离
     action_3: 移动
     action_3_status: 点击部件以沿轴移动
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: ""
-    action_4: ""
-    action_4_status: ""
+    action_3_state_2_status: 点击以放置部件或输入距离
+    action_4: 均分排列
+    action_4_status: 点击部件以沿轴均分排列
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: ""
-    action_4_state_2_status: ""
-    action_5: ""
+    action_4_state_1_status: 点击以确定第一个测量点
+    action_4_state_2_status: 点击以确定第二个测量点或输入距离
+    action_5: 重新设定尺寸
     action_option_group_copy_measure_type: 测量
     action_option_group_move_measure_type: 测量
     action_option_group_axes: 坐标轴
     action_option_group_options: 选项
-    action_option_copy_measure_type_outside_status: ""
-    action_option_copy_measure_type_centered_status: ""
-    action_option_copy_measure_type_inside_status: ""
-    action_option_move_measure_type_outside_status: ""
-    action_option_move_measure_type_centered_status: ""
-    action_option_move_measure_type_inside_status: ""
-    action_option_axes_active_status: ""
-    action_option_axes_context_status: ""
-    action_option_axes_entity_status: ""
-    action_option_options_mirror_status: ""
+    action_option_copy_measure_type_outside_status: 外部测量
+    action_option_copy_measure_type_centered_status: 中心到中心测量
+    action_option_copy_measure_type_inside_status: 测量部件之间的距离
+    action_option_move_measure_type_outside_status: 外部测量
+    action_option_move_measure_type_centered_status: 以中心测量
+    action_option_move_measure_type_inside_status: 内部测量
+    action_option_axes_active_status: 沿活动轴操作
+    action_option_axes_context_status: 沿群组轴或包含部件的元件的轴操作
+    action_option_axes_entity_status: 沿部件轴操作
+    action_option_options_mirror_status: 对称复制
     warning:
-      copies_disable_mirror: ""
+      copies_disable_mirror: 多重复制会停用 '$t(tool.smart_handle.action_option_options_mirror_status)' 选项
     error:
-      min_distance: ""
+      min_distance: "距离 {{ value1 }} 小于最小距离 {{ value2 }}"
   smart_paint:
     title: 绘制
     default_material: 无材质
@@ -2181,9 +2181,9 @@ tool:
     action_2: 交换正面 ↔ 背面
     action_2_status: 点击部件以交换其正面与背面
     action_3: 调整坐标轴
-    action_3_status: ""
+    action_3_status: 选择部件的一个面，并点击一条边以调整其轴
     action_4: 移动原点
-    action_4_status: ""
+    action_4_status: 选择部件的一个面，并点击一个点以将其原点放置于该处
     action_option_group_direction: 方向
     action_option_direction_0: L
     action_option_direction_1: W

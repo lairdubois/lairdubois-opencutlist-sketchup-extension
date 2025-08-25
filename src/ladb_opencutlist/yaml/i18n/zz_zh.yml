@@ -91,7 +91,7 @@ default:
   width: 87 - 宽度
   thickness: 88 - 厚度
   height: 89 - 高度
-  deprecated: '90 - '
+  deprecated: 90 - 已过时
 core:
   menu:
     submenu: 91 - OpenCutList
@@ -650,7 +650,7 @@ tab:
       option_csv_col_sep_comma: 513 - 逗号
       option_csv_col_sep_semicolon: 514 - 分号
       option_csv_encoding: 515 - 编码
-      copy_all: '516 - '
+      copy_all: 516 - 标题 + 数值
       copy_values: 517 - 仅值
       number: 518 - 编号
       path: 519 - 路径
@@ -984,7 +984,7 @@ tab:
       title: 797 - 切割图
       option_problem_type: 798 - 类型
       option_problem_type_rectangle: 799 - 矩形
-      option_problem_type_rectangleguillotine: '800 - '
+      option_problem_type_rectangleguillotine: 800 - 直线裁切
       option_problem_type_onedimensional: 801 - 尺寸
       option_problem_type_irregular: 802 - 套料
       options_material: 803 - 材质
@@ -1656,7 +1656,7 @@ tab:
       raw_estimated_0: 1301 - 有效体积
       raw_estimated_1: 1302 - 所需原材料的体积
       multiplier_coefficient: 1303 - 倍数系数
-      multiplier_coefficient_help: '1304 - '
+      multiplier_coefficient_help: 1304 - 用于标示套用在原始体积上的倍数系数
       std_attributes_dim_placeholder: 1305 - 选择一个尺寸
       std_volumic_masses: 1306 - 密度
       std_volumic_masses_help: 1307 - 定义材质的密度
@@ -1686,8 +1686,8 @@ tab:
     export_to_skm:
       title: 1319 - 导出到 .skm 文件
     option:
-      minimize_on_smart_paint: '1320 - '
-      minimize_on_smart_paint_help: '1321 - '
+      minimize_on_smart_paint: 1320 -  *'将部件上色为...'* 之后收合
+      minimize_on_smart_paint_help: 1321 - 如果启用此选项，当使用*'将部件上色为...'* 功能时，OpenCutList 视窗将会自动最小化
       general: 1322 - 常规
       material_order_strategy: 1323 - 材质排序
       material_order_strategy_help: |
@@ -2079,45 +2079,45 @@ tool:
     success:
       part_created: '1594 - 新建部件: {{ name }}'
   smart_handle:
-    title: '1595 - '
+    title: 1595 - 操控点
     action_0: 1596 - 选择
     action_0_status: 1597 - 点击部件以选中它
     action_1: 1598 - 沿直线复制
-    action_1_status: '1599 - '
+    action_1_status: 1599 - 点击部件以沿轴复制
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: '1601 - '
-    action_2: '1602 - '
-    action_2_status: '1603 - '
+    action_1_state_2_status: 1601 - 点击以放置部件复制或输入距离
+    action_2: 1602 - 以网格方式复制
+    action_2_status: 1603 - 点击部件以沿网格复制
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: '1605 - '
+    action_2_state_2_status: 1605 - 点击以放置部件复制或输入两个距离
     action_3: 1606 - 移动
     action_3_status: 1607 - 点击部件以沿轴移动
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: '1609 - '
-    action_4: '1610 - '
-    action_4_status: '1611 - '
+    action_3_state_2_status: 1609 - 点击以放置部件或输入距离
+    action_4: 1610 - 均分排列
+    action_4_status: 1611 - 点击部件以沿轴均分排列
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: '1613 - '
-    action_4_state_2_status: '1614 - '
-    action_5: '1615 - '
+    action_4_state_1_status: 1613 - 点击以确定第一个测量点
+    action_4_state_2_status: 1614 - 点击以确定第二个测量点或输入距离
+    action_5: 1615 - 重新设定尺寸
     action_option_group_copy_measure_type: 1616 - 测量
     action_option_group_move_measure_type: 1617 - 测量
     action_option_group_axes: 1618 - 坐标轴
     action_option_group_options: 1619 - 选项
-    action_option_copy_measure_type_outside_status: '1620 - '
-    action_option_copy_measure_type_centered_status: '1621 - '
-    action_option_copy_measure_type_inside_status: '1622 - '
-    action_option_move_measure_type_outside_status: '1623 - '
-    action_option_move_measure_type_centered_status: '1624 - '
-    action_option_move_measure_type_inside_status: '1625 - '
-    action_option_axes_active_status: '1626 - '
-    action_option_axes_context_status: '1627 - '
-    action_option_axes_entity_status: '1628 - '
-    action_option_options_mirror_status: '1629 - '
+    action_option_copy_measure_type_outside_status: 1620 - 外部测量
+    action_option_copy_measure_type_centered_status: 1621 - 中心到中心测量
+    action_option_copy_measure_type_inside_status: 1622 - 测量部件之间的距离
+    action_option_move_measure_type_outside_status: 1623 - 外部测量
+    action_option_move_measure_type_centered_status: 1624 - 以中心测量
+    action_option_move_measure_type_inside_status: 1625 - 内部测量
+    action_option_axes_active_status: 1626 - 沿活动轴操作
+    action_option_axes_context_status: 1627 - 沿群组轴或包含部件的元件的轴操作
+    action_option_axes_entity_status: 1628 - 沿部件轴操作
+    action_option_options_mirror_status: 1629 - 对称复制
     warning:
-      copies_disable_mirror: '1630 - '
+      copies_disable_mirror: 1630 - 多重复制会停用 '$t(tool.smart_handle.action_option_options_mirror_status)' 选项
     error:
-      min_distance: '1631 - '
+      min_distance: 1631 - 距离 {{ value1 }} 小于最小距离 {{ value2 }}
   smart_paint:
     title: 1632 - 绘制
     default_material: 1633 - 无材质
@@ -2176,9 +2176,9 @@ tool:
     action_2: 1683 - 交换正面 ↔ 背面
     action_2_status: 1684 - 点击部件以交换其正面与背面
     action_3: 1685 - 调整坐标轴
-    action_3_status: '1686 - '
+    action_3_status: 1686 - 选择部件的一个面，并点击一条边以调整其轴
     action_4: 1687 - 移动原点
-    action_4_status: '1688 - '
+    action_4_status: 1688 - 选择部件的一个面，并点击一个点以将其原点放置于该处
     action_option_group_direction: 1689 - 方向
     action_option_direction_0: 1690 - L
     action_option_direction_1: 1691 - W
