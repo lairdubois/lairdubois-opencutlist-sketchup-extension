@@ -224,7 +224,7 @@
 
     def width_increase
       case @type
-        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_VENEER
+        when TYPE_SOLID_WOOD, TYPE_SHEET_GOOD, TYPE_VENEER, TYPE_EDGE
           @width_increase
         else
           PLUGIN.get_app_defaults(DEFAULTS_DICTIONARY, @type)['width_increase']

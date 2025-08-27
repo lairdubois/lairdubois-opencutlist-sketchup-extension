@@ -47,6 +47,7 @@ module Ladb::OpenCutList
       @std_volumic_masses = attributes.fetch('std_volumic_masses')
       @std_prices = attributes.fetch('std_prices')
       @std_cut_prices = attributes.fetch('std_cut_prices')
+
     end
 
     # -----

@@ -1299,7 +1299,7 @@ module Ladb::OpenCutList
       material_attributes = _get_material_attributes(material)
 
       std_width_info = _find_std_value(
-          thickness,
+          (thickness + material_attributes.l_width_increase).to_l,
           material_attributes.l_std_widths,
           true
       )

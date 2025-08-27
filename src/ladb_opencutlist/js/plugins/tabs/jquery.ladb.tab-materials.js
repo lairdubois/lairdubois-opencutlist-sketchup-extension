@@ -1103,7 +1103,7 @@
                     $inputThickness.closest('section').show();
                     $inputThickness.closest('.form-group').show();
                     $inputLengthIncrease.closest('.form-group').show();
-                    $inputWidthIncrease.closest('.form-group').hide();
+                    $inputWidthIncrease.closest('.form-group').show();
                     $inputThicknessIncrease.closest('.form-group').hide();
                     $editorStdSections.closest('.form-group').hide();
                     $editorStdLengths.closest('.form-group').show();
