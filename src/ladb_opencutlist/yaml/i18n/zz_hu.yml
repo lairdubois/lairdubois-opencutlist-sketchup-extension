@@ -1160,7 +1160,7 @@ tab:
         bin_2d_veneer_type_0: 935 - Szabványos furnérlap
         bin_2d_veneer_type_1: 936 - Maradék furnérlap
         unused: 937 - Nem használt
-        unplaced_parts: 938 - Nem elhelyezett alkatrész
+        unplaced_parts: 938 - alkatrész nem elhelyezhető
         unplaced_parts_plural: 939 - El nem helyezett alkatrészek
         parts: 940 - Alkatrész
         parts_plural: 941 - Alkatrészek

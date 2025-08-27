@@ -1165,7 +1165,7 @@ tab:
         bin_2d_veneer_type_0: Szabványos furnérlap
         bin_2d_veneer_type_1: Maradék furnérlap
         unused: Nem használt
-        unplaced_parts: Nem elhelyezett alkatrész
+        unplaced_parts: alkatrész nem elhelyezhető
         unplaced_parts_plural: El nem helyezett alkatrészek
         parts: Alkatrész
         parts_plural: Alkatrészek

@@ -27,7 +27,7 @@ default:
   preview: 23 - 预览
   options: 24 - 选项
   caution: 25 - 警告
-  remove: 26 - 删除
+  remove: 26 - 移除
   remove_all: 27 - 全部移除
   delete: 28 - 删除
   create: 29 - 创建
@@ -87,7 +87,7 @@ default:
   file_plural: 83 - 文件
   stroke_color: 84 - 线条颜色
   fill_color: 85 - 填充颜色
-  length: 86 - 引线
+  length: 86 - 长度
   width: 87 - 宽度
   thickness: 88 - 厚度
   height: 89 - 高度
@@ -149,7 +149,7 @@ core:
 
       报告错误: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
-    extern: '128 - 外部錯誤 : **{{ error }}**'
+    extern: '128 - 外部错误 : **{{ error }}**'
     feature_unavailable: 129 - 此功能需要 SketchUp {{ version }} 或更高版本
     failed_export_to: |
       130 - 在导出至 *{{ path }}*时发生错误。
