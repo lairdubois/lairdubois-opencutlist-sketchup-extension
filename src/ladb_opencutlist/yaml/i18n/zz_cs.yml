@@ -19,7 +19,7 @@ default:
   clear: 15 - Smazat
   refresh: 16 - Obnovit
   generate: 17 - Generovat
-  regenerate: '18 - '
+  regenerate: 18 - Regenerovat
   print: 19 - Tisk
   export: 20 - Export
   import: 21 - Import
@@ -1083,7 +1083,8 @@ tab:
         867 - Seskupte desky nebo hrany obsahující stejné části a řezy.
       option_bin_folding_2d_help: |
         868 - Seskupte panely nebo listy se stejnými díly a řezy.
-      option_bin_folding_warning: '869 - '
+      option_bin_folding_warning: |
+        869 - *Tato možnost bude deaktivována, pokud v vzorci pro přizpůsobení identifikačního textu používáte vlastnosti instance.*
       option_hide_part_list: 870 - Kusovník
       option_hide_part_list_1d_dimensional_0: 871 - Zobrazit všechny desky
       option_hide_part_list_1d_edge_0: 872 - Zobrazit všechno hranování
@@ -1128,7 +1129,7 @@ tab:
         scroll_to_block_2d: 905 - Přejděte na první tabuli
       list:
         summary: 906 - Shrnutí
-        cached: '907 - '
+        cached: 907 - Načteno z mezipaměti
         trimming: 908 - Okraj
         settings: 909 - Nastavení
         stats: 910 - Statistiky
