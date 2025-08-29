@@ -1089,7 +1089,7 @@ tab:
       option_bin_folding_2d_help: |
         Seskupte panely nebo listy se stejnými díly a řezy.
       option_bin_folding_warning: |
-        *Tato možnost bude deaktivována, pokud v vzorci pro přizpůsobení identifikačního textu používáte vlastnosti instance.*
+        *Tato možnost bude deaktivována, pokud ve vzorci pro přizpůsobení identifikačního textu používáte vlastnosti instance.*
       option_hide_part_list: Kusovník
       option_hide_part_list_1d_dimensional_0: Zobrazit všechny desky
       option_hide_part_list_1d_edge_0: Zobrazit všechno hranování
