@@ -154,7 +154,7 @@ core:
     failed_export_to: |
       130 - 在导出至 *{{ path }}*时发生错误。
       **{{ error }}**
-    unsupported_file_format: '131 - 不支援檔案格式 : **{{ format }}**'
+    unsupported_file_format: '131 - 不支援档案格式 : **{{ format }}**'
   success:
     exported_to: 132 - 成功导出到 {{ path }}.
     copied_to_clipboard: 133 - 已复制到剪贴板.
@@ -260,7 +260,7 @@ core:
       view_left: 209 - 左边
       view_right: 210 - 右边
       zoom: 211 - {{ zoom }} 比例
-      explode_factor: 212 - 爆炸幅度
+      explode_factor: 212 - 爆炸视图幅度
       toggle_box_helper: 213 - 显示/隐藏边界框
       toggle_box_dimensions_helper: 214 - 显示/隐藏尺寸
       toggle_axes_helper: 215 - 显示/隐藏部件坐标轴
@@ -283,9 +283,9 @@ tab:
     not_available_std_width: 224 - 宽度未定义
     not_available_std_thickness: 225 - 厚度未定义
     not_available_std_section: 226 - 横截面未定义
-    highlight_part: 227 - 在模型中突出显示
-    highlight_parts: 228 - 在模型中突出显示
-    edit_part_properties: 229 - 编辑部件特性
+    highlight_part: 227 - 在模型中突显部件
+    highlight_parts: 228 - 在模型中突显部件
+    edit_part_properties: 229 - 编辑部件属性
     edit_part_axes_properties: 230 - 编辑部件的属性 (轴)
     edit_part_size_increase_properties: 231 - 编辑部件的属性 (尺寸超差)
     edit_part_edges_properties: 232 - 编辑部件的属性 (边缘)
@@ -346,7 +346,7 @@ tab:
       symmetrical: 268 - 镜像部件检测在此部件上被禁用
       ignore_grain_direction: 269 - 此部件上忽略了纹理方向
       auto_oriented: 270 - 此部件已自动重新定向
-      oko_label_filter: 271 - 包含/排除 ce 标志
+      oko_label_filter: 271 - 包含/排除此标志
       add_label_filter: 272 - 根据 '{{ label }}' 进行筛选
       remove_label_filter: 273 - 删除 '{{ label }}' 上的筛选
       add_edge_material_name_filter: 274 - 根据 '{{ material_name }}' 进行筛选
@@ -387,8 +387,8 @@ tab:
       dblclick_to_sort_axes: 309 - 双击此处以根据部件的尺寸自动重新排序轴
       part_axes: 310 - 部件的内部轴
       select_unselect_all_parts: 311 - 选择 / 取消选择该组中的所有部件
-      select_parts_in_cutlist: 312 - 所选部件在部件列表中不存在.
-      select_parts_in_cutlist_plural: 313 - 在零件列表中选择 {{ count }} 零件
+      select_parts_in_cutlist: 312 - 在部件列表中选择部件
+      select_parts_in_cutlist_plural: 313 - 在部件列表中选择 {{ count }} 部件
       setup_group_cuttingdiagram: 314 - 配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图
       setup_group_packing: 315 - 配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图
       open_part_url: 316 - 打开部件 URL
@@ -401,10 +401,10 @@ tab:
       labels_parts: 322 - 列印标签
       write_2d: 323 - 2D 投影
       write_3d: 324 - 3D 几何图形
-      write_2d_parts: 325 - 导出零件的 2D 投影
-      write_3d_parts: 326 - 导出零件的 3D 几何图形
-      group_write_2d_parts: 327 - 导出组中零件的 2D 投影
-      group_write_3d_parts: 328 - 导出组中零件的 3D 几何图形
+      write_2d_parts: 325 - 导出部件的 2D 投影
+      write_3d_parts: 326 - 导出部件的 3D 几何图形
+      group_write_2d_parts: 327 - 导出组中部件的 2D 投影
+      group_write_3d_parts: 328 - 导出组中部件的 3D 几何图形
       group_layout_parts: 329 - 绘制组内部件的概览
       group_numbers_save: 330 - 保存该组的部件编号
       group_numbers_reset: 331 - 重新初始化该组的部件编号
