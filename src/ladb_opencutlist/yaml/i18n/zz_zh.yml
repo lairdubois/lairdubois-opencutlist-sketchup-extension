@@ -103,7 +103,7 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: 98 - 编辑实例
-      edit_parent_part_instance: 99 - 编辑群组或包含实例的元件
+      edit_parent_part_instance: 99 - 编辑群组或包含实例的组件
       hide_part_instance: 100 - 隐藏实例
       unhide_part_instance: 101 - 显示实例
       edit_part_instance_properties: 102 - 编辑实例属性
@@ -154,7 +154,7 @@ core:
     failed_export_to: |
       130 - 在导出至 *{{ path }}*时发生错误。
       **{{ error }}**
-    unsupported_file_format: '131 - 不支援檔案格式 : **{{ format }}**'
+    unsupported_file_format: '131 - 不支援档案格式 : **{{ format }}**'
   success:
     exported_to: 132 - 成功导出到 {{ path }}.
     copied_to_clipboard: 133 - 已复制到剪贴板.
@@ -260,7 +260,7 @@ core:
       view_left: 209 - 左边
       view_right: 210 - 右边
       zoom: 211 - {{ zoom }} 比例
-      explode_factor: 212 - 爆炸幅度
+      explode_factor: 212 - 爆炸视图幅度
       toggle_box_helper: 213 - 显示/隐藏边界框
       toggle_box_dimensions_helper: 214 - 显示/隐藏尺寸
       toggle_axes_helper: 215 - 显示/隐藏部件坐标轴
@@ -283,9 +283,9 @@ tab:
     not_available_std_width: 224 - 宽度未定义
     not_available_std_thickness: 225 - 厚度未定义
     not_available_std_section: 226 - 横截面未定义
-    highlight_part: 227 - 在模型中突出显示
-    highlight_parts: 228 - 在模型中突出显示
-    edit_part_properties: 229 - 编辑部件特性
+    highlight_part: 227 - 在模型中突显部件
+    highlight_parts: 228 - 在模型中突显部件
+    edit_part_properties: 229 - 编辑部件属性
     edit_part_axes_properties: 230 - 编辑部件的属性 (轴)
     edit_part_size_increase_properties: 231 - 编辑部件的属性 (尺寸超差)
     edit_part_edges_properties: 232 - 编辑部件的属性 (边缘)
@@ -346,7 +346,7 @@ tab:
       symmetrical: 268 - 镜像部件检测在此部件上被禁用
       ignore_grain_direction: 269 - 此部件上忽略了纹理方向
       auto_oriented: 270 - 此部件已自动重新定向
-      oko_label_filter: 271 - 包含/排除 ce 标志
+      oko_label_filter: 271 - 包含/排除此标志
       add_label_filter: 272 - 根据 '{{ label }}' 进行筛选
       remove_label_filter: 273 - 删除 '{{ label }}' 上的筛选
       add_edge_material_name_filter: 274 - 根据 '{{ material_name }}' 进行筛选
@@ -387,8 +387,8 @@ tab:
       dblclick_to_sort_axes: 309 - 双击此处以根据部件的尺寸自动重新排序轴
       part_axes: 310 - 部件的内部轴
       select_unselect_all_parts: 311 - 选择 / 取消选择该组中的所有部件
-      select_parts_in_cutlist: 312 - 所选部件在部件列表中不存在.
-      select_parts_in_cutlist_plural: 313 - 在零件列表中选择 {{ count }} 零件
+      select_parts_in_cutlist: 312 - 在部件列表中选择部件
+      select_parts_in_cutlist_plural: 313 - 在部件列表中选择 {{ count }} 部件
       setup_group_cuttingdiagram: 314 - 配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图
       setup_group_packing: 315 - 配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图
       open_part_url: 316 - 打开部件 URL
@@ -401,10 +401,10 @@ tab:
       labels_parts: 322 - 列印标签
       write_2d: 323 - 2D 投影
       write_3d: 324 - 3D 几何图形
-      write_2d_parts: 325 - 导出零件的 2D 投影
-      write_3d_parts: 326 - 导出零件的 3D 几何图形
-      group_write_2d_parts: 327 - 导出组中零件的 2D 投影
-      group_write_3d_parts: 328 - 导出组中零件的 3D 几何图形
+      write_2d_parts: 325 - 导出部件的 2D 投影
+      write_3d_parts: 326 - 导出部件的 3D 几何图形
+      group_write_2d_parts: 327 - 导出组中部件的 2D 投影
+      group_write_3d_parts: 328 - 导出组中部件的 3D 几何图形
       group_layout_parts: 329 - 绘制组内部件的概览
       group_numbers_save: 330 - 保存该组的部件编号
       group_numbers_reset: 331 - 重新初始化该组的部件编号
@@ -607,7 +607,7 @@ tab:
       number: 475 - 编号
       name: 476 - 名称
       count: 477 - 数量
-      cutting: 478 - 部件
+      cutting: 478 - 粗略
       bbox: 479 - 完成
       final: 480 - 实际
       total_cutting: 481 - Σ 粗略
@@ -623,7 +623,7 @@ tab:
     export:
       title: 491 - 导出
       info_0: |
-        492 - 此功能允許你從*部件列表*匯出資料到複製板或[CSV](https://fr.wikipedia.org/wiki/Comma-separated_values) 或 [XLSX](https://fr.wikipedia.org/wiki/XLSX)格式.
+        492 - 此功能允许你从*部件列表*汇出资料到复制板或[CSV](https://fr.wikipedia.org/wiki/Comma-separated_values) 或 [XLSX](https://fr.wikipedia.org/wiki/XLSX)格式.
       customize_help: |
         493 - 重新排序, 隐藏, 添加, 删除或从列表中选择一列以自定义其 **标题** 和为每个导出的行生成值的 **公式** .
       add_column: 494 - 添加一列
@@ -672,10 +672,10 @@ tab:
       count: 535 - 数量
       part_count: 536 - 部件数量
       material: 537 - 材质
-      material_type: 538 - 物料種類
-      material_name: 539 - 物料名稱
-      material_description: 540 - 材料说明
-      material_url: 541 - 材料 URL
+      material_type: 538 - 材质种类
+      material_name: 539 - 材质名称
+      material_description: 540 - 材质说明
+      material_url: 541 - 材质 URL
       material_std_dimension: 542 - 标准尺寸
       entity_names: 543 - 实例名称
       description: 544 - 描述
@@ -691,9 +691,9 @@ tab:
       layers: 554 - 标签
       batch: 555 - 批次
       bin: 556 - 存储箱
-      component_definition: 557 - 元件定義
-      component_instance: 558 - 元件實例
-      component_instances: 559 - 元件實例_複數
+      component_definition: 557 - 组件定义
+      component_instance: 558 - 组件实例
+      component_instances: 559 - 组件实例
       filename: 560 - 文件名
       model_name: 561 - 模型名称
       model_description: 562 - 模型描述
@@ -704,7 +704,7 @@ tab:
         no_column_formula_native: 566 - 列 '{{ col_name }}' 的本地值
         no_column_formula: 567 - 输入一个公式
       warning:
-        is_group_selection: 568 - 部件列表中的 **隐藏组件** 内的部件将不会被导出.
+        is_group_selection: 568 - 部件列表中的 **隐藏群组** 内的部件将不会被导出.
         is_part_selection: 569 - 导出仅限于 **选定的部件**
     estimate:
       title: 570 - 估算
@@ -736,7 +736,7 @@ tab:
         entry_error: '593 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**.'
         entry_error_plural: '594 - *{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**.'
       warning:
-        is_group_selection: 595 - 部件清单 **隐藏组** 内的部件将不会被计入.
+        is_group_selection: 595 - 部件清单 **隐藏群组** 内的部件将不会被计入.
         is_part_selection: 596 - 估算只限于**已选择的部件**
       tip:
         not_enough_data: |
@@ -787,7 +787,7 @@ tab:
       option_full_width_diagram_help: 638 - 如果选择了此选项, 切割图将使用可用宽度进行显示. 否则, 它们的宽度将由一个根据所有图表的缩放因子来定义.
       option_wrap_length: 639 - 包裹长度
       option_wrap_length_help: 640 - 板材或边缘封边在超过最大长度后将被分成多行显示.
-      option_hide_cross: 641 - 边角料
+      option_hide_cross: 641 - 废料
       option_hide_cross_0: 642 - 尺寸和十字标记
       option_hide_cross_1: 643 - 仅尺寸
       option_hide_cross_help: 644 - 显示或隐藏在图表上标示为余料的部件的十字标记.
@@ -810,7 +810,7 @@ tab:
       option_saw_kerf: 658 - 锯片厚度
       option_saw_kerf_help: 659 - 锯片切割所去除的材料宽度.
       option_spacing: 660 - 間距
-      option_spacing_help: 661 - 組件之間的最少間距
+      option_spacing_help: 661 - 组件之间的最少间距
       option_trimming: 662 - 修边
       option_trimming_help_1d: 663 - 板材或边条两端要被视为废料的材料量.
       option_trimming_help_2d: 664 - 这指的是在制造过程中需要去除的板材或边条两端的额外材料, 以便获得所需的尺寸.
@@ -861,14 +861,14 @@ tab:
       tooltip:
         scroll_to_block_1d: 695 - 滚动到第一块板材或边缘封边
         scroll_to_block_2d: 696 - 滚动到第一块面板
-        copy_leftovers_to_clipboard: 697 - 将边角料复制到剪贴板
+        copy_leftovers_to_clipboard: 697 - 将废料复制到剪贴板
       list:
         unplaced_parts: 698 - 未放置的部件
         summary: 699 - 摘要
         count: 700 - 数量
         bar: 701 - 尺寸
         sheet: 702 - 面板
-        length: 703 - 引线
+        length: 703 - 長度
         width: 704 - 宽度
         total_length: 705 - Σ 长度
         total_area: 706 - Σ 面积
@@ -880,7 +880,7 @@ tab:
         total_cut_length: 712 - 切割长度
         overall_efficiency: 713 - 整体效率
         efficiency: 714 - 效率
-        leftover: 715 - 剩余物
+        leftover: 715 - 废料
         leftover_to_keep: 716 - 需要保留的废料
         leftover_to_keep_plural: 717 - 需要保留的废料
         leftover_to_throw_away: 718 - 需要丢弃的废料
@@ -893,13 +893,13 @@ tab:
         cut_internal_through_plural: 725 - 主要切割 (2 级)
         cut_none: 726 - 无
         bar_dimensional_type_0: 727 - 标准尺寸
-        bar_dimensional_type_1: 728 - 余料板材
+        bar_dimensional_type_1: 728 - 板材废料
         bar_edge_type_0: 729 - 标准封边
-        bar_edge_type_1: 730 - 余料边缘封边
+        bar_edge_type_1: 730 - 边缘封边废料
         sheet_good_type_0: 731 - 标准面板
-        sheet_good_type_1: 732 - 面板余料
+        sheet_good_type_1: 732 - 面板废料
         sheet_veneer_type_0: 733 - 标准薄饰板
-        sheet_veneer_type_1: 734 - 薄饰板余料
+        sheet_veneer_type_1: 734 - 薄饰板废料
         unused: 735 - 未使用
         parts: 736 - {{ count }} 部件
         parts_plural: 737 - {{ count }} 个部件
@@ -2111,7 +2111,7 @@ tool:
     action_option_move_measure_type_centered_status: 1624 - 以中心测量
     action_option_move_measure_type_inside_status: 1625 - 内部测量
     action_option_axes_active_status: 1626 - 沿活动轴操作
-    action_option_axes_context_status: 1627 - 沿群组轴或包含部件的元件的轴操作
+    action_option_axes_context_status: 1627 - 沿群组轴或包含部件的组件的轴操作
     action_option_axes_entity_status: 1628 - 沿部件轴操作
     action_option_options_mirror_status: 1629 - 对称复制
     warning:

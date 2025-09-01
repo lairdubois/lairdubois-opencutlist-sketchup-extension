@@ -108,7 +108,7 @@ core:
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: 编辑实例
-      edit_parent_part_instance: 编辑群组或包含实例的元件
+      edit_parent_part_instance: 编辑群组或包含实例的组件
       hide_part_instance: 隐藏实例
       unhide_part_instance: 显示实例
       edit_part_instance_properties: 编辑实例属性
@@ -159,7 +159,7 @@ core:
     failed_export_to: |
       在导出至 *{{ path }}*时发生错误。
       **{{ error }}**
-    unsupported_file_format: "不支援檔案格式 : **{{ format }}**"
+    unsupported_file_format: "不支援档案格式 : **{{ format }}**"
   success:
     exported_to: "成功导出到 {{ path }}."
     copied_to_clipboard: 已复制到剪贴板.
@@ -265,7 +265,7 @@ core:
       view_left: 左边
       view_right: 右边
       zoom: "{{ zoom }} 比例"
-      explode_factor: 爆炸幅度
+      explode_factor: 爆炸视图幅度
       toggle_box_helper: 显示/隐藏边界框
       toggle_box_dimensions_helper: 显示/隐藏尺寸
       toggle_axes_helper: 显示/隐藏部件坐标轴
@@ -288,9 +288,9 @@ tab:
     not_available_std_width: 宽度未定义
     not_available_std_thickness: 厚度未定义
     not_available_std_section: 横截面未定义
-    highlight_part: 在模型中突出显示
-    highlight_parts: 在模型中突出显示
-    edit_part_properties: 编辑部件特性
+    highlight_part: 在模型中突显部件
+    highlight_parts: 在模型中突显部件
+    edit_part_properties: 编辑部件属性
     edit_part_axes_properties: 编辑部件的属性 (轴)
     edit_part_size_increase_properties: 编辑部件的属性 (尺寸超差)
     edit_part_edges_properties: 编辑部件的属性 (边缘)
@@ -351,7 +351,7 @@ tab:
       symmetrical: 镜像部件检测在此部件上被禁用
       ignore_grain_direction: 此部件上忽略了纹理方向
       auto_oriented: 此部件已自动重新定向
-      oko_label_filter: "包含/排除 ce 标志"
+      oko_label_filter: "包含/排除此标志"
       add_label_filter: "根据 '{{ label }}' 进行筛选"
       remove_label_filter: "删除 '{{ label }}' 上的筛选"
       add_edge_material_name_filter: "根据 '{{ material_name }}' 进行筛选"
@@ -392,8 +392,8 @@ tab:
       dblclick_to_sort_axes: 双击此处以根据部件的尺寸自动重新排序轴
       part_axes: 部件的内部轴
       select_unselect_all_parts: 选择 / 取消选择该组中的所有部件
-      select_parts_in_cutlist: 所选部件在部件列表中不存在.
-      select_parts_in_cutlist_plural: "在零件列表中选择 {{ count }} 零件"
+      select_parts_in_cutlist: 在部件列表中选择部件
+      select_parts_in_cutlist_plural: "在部件列表中选择 {{ count }} 部件"
       setup_group_cuttingdiagram: "配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图"
       setup_group_packing: "配置 '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' 的切割图"
       open_part_url: 打开部件 URL
@@ -406,10 +406,10 @@ tab:
       labels_parts: 列印标签
       write_2d: 2D 投影
       write_3d: 3D 几何图形
-      write_2d_parts: 导出零件的 2D 投影
-      write_3d_parts: 导出零件的 3D 几何图形
-      group_write_2d_parts: 导出组中零件的 2D 投影
-      group_write_3d_parts: 导出组中零件的 3D 几何图形
+      write_2d_parts: 导出部件的 2D 投影
+      write_3d_parts: 导出部件的 3D 几何图形
+      group_write_2d_parts: 导出组中部件的 2D 投影
+      group_write_3d_parts: 导出组中部件的 3D 几何图形
       group_layout_parts: 绘制组内部件的概览
       group_numbers_save: 保存该组的部件编号
       group_numbers_reset: 重新初始化该组的部件编号
@@ -612,7 +612,7 @@ tab:
       number: 编号
       name: 名称
       count: 数量
-      cutting: 部件
+      cutting: 粗略
       bbox: 完成
       final: 实际
       total_cutting: Σ 粗略
@@ -628,7 +628,7 @@ tab:
     export:
       title: 导出
       info_0: |
-        此功能允許你從*部件列表*匯出資料到複製板或[CSV](https://fr.wikipedia.org/wiki/Comma-separated_values) 或 [XLSX](https://fr.wikipedia.org/wiki/XLSX)格式.
+        此功能允许你从*部件列表*汇出资料到复制板或[CSV](https://fr.wikipedia.org/wiki/Comma-separated_values) 或 [XLSX](https://fr.wikipedia.org/wiki/XLSX)格式.
       customize_help: |
         重新排序, 隐藏, 添加, 删除或从列表中选择一列以自定义其 **标题** 和为每个导出的行生成值的 **公式** .
       add_column: 添加一列
@@ -677,10 +677,10 @@ tab:
       count: 数量
       part_count: 部件数量
       material: 材质
-      material_type: 物料種類
-      material_name: 物料名稱
-      material_description: 材料说明
-      material_url: 材料 URL
+      material_type: 材质种类
+      material_name: 材质名称
+      material_description: 材质说明
+      material_url: 材质 URL
       material_std_dimension: 标准尺寸
       entity_names: 实例名称
       description: 描述
@@ -696,9 +696,9 @@ tab:
       layers: 标签
       batch: 批次
       bin: 存储箱
-      component_definition: 元件定義
-      component_instance: 元件實例
-      component_instances: 元件實例_複數
+      component_definition: 组件定义
+      component_instance: 组件实例
+      component_instances: 组件实例
       filename: 文件名
       model_name: 模型名称
       model_description: 模型描述
@@ -709,7 +709,7 @@ tab:
         no_column_formula_native: "列 '{{ col_name }}' 的本地值"
         no_column_formula: 输入一个公式
       warning:
-        is_group_selection: 部件列表中的 **隐藏组件** 内的部件将不会被导出.
+        is_group_selection: 部件列表中的 **隐藏群组** 内的部件将不会被导出.
         is_part_selection: 导出仅限于 **选定的部件**
     estimate:
       title: 估算
@@ -741,7 +741,7 @@ tab:
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} 错误**."
       warning:
-        is_group_selection: 部件清单 **隐藏组** 内的部件将不会被计入.
+        is_group_selection: 部件清单 **隐藏群组** 内的部件将不会被计入.
         is_part_selection: 估算只限于**已选择的部件**
       tip:
         not_enough_data: |
@@ -792,7 +792,7 @@ tab:
       option_full_width_diagram_help: "如果选择了此选项, 切割图将使用可用宽度进行显示. 否则, 它们的宽度将由一个根据所有图表的缩放因子来定义."
       option_wrap_length: 包裹长度
       option_wrap_length_help: 板材或边缘封边在超过最大长度后将被分成多行显示.
-      option_hide_cross: 边角料
+      option_hide_cross: 废料
       option_hide_cross_0: 尺寸和十字标记
       option_hide_cross_1: 仅尺寸
       option_hide_cross_help: 显示或隐藏在图表上标示为余料的部件的十字标记.
@@ -815,7 +815,7 @@ tab:
       option_saw_kerf: 锯片厚度
       option_saw_kerf_help: 锯片切割所去除的材料宽度.
       option_spacing: 間距
-      option_spacing_help: 組件之間的最少間距
+      option_spacing_help: 组件之间的最少间距
       option_trimming: 修边
       option_trimming_help_1d: 板材或边条两端要被视为废料的材料量.
       option_trimming_help_2d: "这指的是在制造过程中需要去除的板材或边条两端的额外材料, 以便获得所需的尺寸."
@@ -866,14 +866,14 @@ tab:
       tooltip:
         scroll_to_block_1d: 滚动到第一块板材或边缘封边
         scroll_to_block_2d: 滚动到第一块面板
-        copy_leftovers_to_clipboard: 将边角料复制到剪贴板
+        copy_leftovers_to_clipboard: 将废料复制到剪贴板
       list:
         unplaced_parts: 未放置的部件
         summary: 摘要
         count: 数量
         bar: 尺寸
         sheet: 面板
-        length: 引线
+        length: 長度
         width: 宽度
         total_length: Σ 长度
         total_area: Σ 面积
@@ -885,7 +885,7 @@ tab:
         total_cut_length: 切割长度
         overall_efficiency: 整体效率
         efficiency: 效率
-        leftover: 剩余物
+        leftover: 废料
         leftover_to_keep: 需要保留的废料
         leftover_to_keep_plural: 需要保留的废料
         leftover_to_throw_away: 需要丢弃的废料
@@ -898,13 +898,13 @@ tab:
         cut_internal_through_plural: 主要切割 (2 级)
         cut_none: 无
         bar_dimensional_type_0: 标准尺寸
-        bar_dimensional_type_1: 余料板材
+        bar_dimensional_type_1: 板材废料
         bar_edge_type_0: 标准封边
-        bar_edge_type_1: 余料边缘封边
+        bar_edge_type_1: 边缘封边废料
         sheet_good_type_0: 标准面板
-        sheet_good_type_1: 面板余料
+        sheet_good_type_1: 面板废料
         sheet_veneer_type_0: 标准薄饰板
-        sheet_veneer_type_1: 薄饰板余料
+        sheet_veneer_type_1: 薄饰板废料
         unused: 未使用
         parts: "{{ count }} 部件"
         parts_plural: "{{ count }} 个部件"
@@ -2116,7 +2116,7 @@ tool:
     action_option_move_measure_type_centered_status: 以中心测量
     action_option_move_measure_type_inside_status: 内部测量
     action_option_axes_active_status: 沿活动轴操作
-    action_option_axes_context_status: 沿群组轴或包含部件的元件的轴操作
+    action_option_axes_context_status: 沿群组轴或包含部件的组件的轴操作
     action_option_axes_entity_status: 沿部件轴操作
     action_option_options_mirror_status: 对称复制
     warning:
