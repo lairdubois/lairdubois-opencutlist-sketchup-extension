@@ -25,6 +25,7 @@ module Ladb::OpenCutList
 
     def reset_cache
       super
+      @z_min = nil
       @z_max = nil
       @normal = nil
       @triangles = nil
@@ -44,6 +45,11 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def z_min
+      @z_min ||= outer_loop_manipulator.points.min { |p1, p2| p1.z <=> p2.z }.z
+      @z_min
+    end
 
     def z_max
       @z_max ||= outer_loop_manipulator.points.max { |p1, p2| p1.z <=> p2.z }.z
