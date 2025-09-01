@@ -1791,12 +1791,13 @@ namespace Packy {
 
             using namespace irregular;
 
-            auto [shape_orig, shape_scaled, shape_inflated, type] = read_defect(j);
+            DefectTypeId type = j.value("defect_type", static_cast<DefectTypeId>(-1));
+            ShapeWithHoles shape = ShapeWithHoles::from_json(j);
 
             builder.instance_builder().add_defect(
                     bin_type_id,
                     type,
-                    shape_orig
+                    shape
             );
 
         }
@@ -1971,19 +1972,6 @@ namespace Packy {
             item_shape.shape_orig = ShapeWithHoles::from_json(j);
 
             return std::move(item_shape);
-        }
-
-        static irregular::Defect read_defect(
-                basic_json<>& j
-        ) {
-
-            using namespace irregular;
-
-            Defect defect;
-            defect.shape_orig = ShapeWithHoles::from_json(j);
-            defect.type = j.value("defect_type", static_cast<DefectTypeId>(-1));
-
-            return std::move(defect);
         }
 
     };
