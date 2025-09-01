@@ -797,10 +797,10 @@ namespace Packy {
 
             Length width = read_length(j, "width", -1);
             Length height = read_length(j, "height", -1);
-            Profit profit = j.value("profit", static_cast<Profit>(-1));
-            ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
-            bool oriented = j.value("oriented", false);
-            GroupId group_id = j.value("group_id", static_cast<GroupId>(0));
+            const Profit profit = j.value("profit", static_cast<Profit>(-1));
+            const ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
+            const bool oriented = j.value("oriented", false);
+            const GroupId group_id = j.value("group_id", static_cast<GroupId>(0));
 
             if (fake_spacing_ > 0) {
                 if (width >= 0) width += fake_spacing_;
@@ -826,9 +826,9 @@ namespace Packy {
 
             Length width = read_length(j, "width", -1);
             Length height = read_length(j, "height", -1);
-            Profit cost = j.value("cost", static_cast<Profit>(-1));
-            BinPos copies = j.value("copies", static_cast<BinPos>(1));
-            BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
+            const Profit cost = j.value("cost", static_cast<Profit>(-1));
+            const BinPos copies = j.value("copies", static_cast<BinPos>(1));
+            const BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
             if (fake_trimming_ > 0) {
                 if (width >= 0) width -= fake_trimming_ * 2;
@@ -1052,10 +1052,10 @@ namespace Packy {
 
             Length width = read_length(j, "width", -1);
             Length height = read_length(j, "height", -1);
-            Profit profit = j.value("profit", static_cast<Profit>(-1));
-            ItemPos copies = j.value("copies", static_cast<ItemPos>(-1));
-            bool oriented = j.value("oriented", false);
-            StackId stack_id = j.value("stack_id", static_cast<StackId>(-1));
+            const Profit profit = j.value("profit", static_cast<Profit>(-1));
+            const ItemPos copies = j.value("copies", static_cast<ItemPos>(-1));
+            const bool oriented = j.value("oriented", false);
+            const StackId stack_id = j.value("stack_id", static_cast<StackId>(-1));
 
             ItemTypeId item_type_id = builder.instance_builder().add_item_type(
                     width,
@@ -1078,9 +1078,9 @@ namespace Packy {
 
             Length width = read_length(j, "width", -1);
             Length height = read_length(j, "height", -1);
-            Profit cost = j.value("cost", static_cast<Profit>(-1));
-            BinPos copies = j.value("copies", static_cast<BinPos>(1));
-            BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
+            const Profit cost = j.value("cost", static_cast<Profit>(-1));
+            const BinPos copies = j.value("copies", static_cast<BinPos>(1));
+            const BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
             BinTypeId bin_type_id = builder.instance_builder().add_bin_type(
                     width,
@@ -1454,8 +1454,8 @@ namespace Packy {
         ) override {
 
             Length width = read_length(j, "width", -1);
-            Profit profit = j.value("profit", static_cast<Profit>(-1));
-            ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
+            const Profit profit = j.value("profit", static_cast<Profit>(-1));
+            const ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
 
             if (fake_spacing_ > 0) {
                 if (width >= 0) width += fake_spacing_;
@@ -1476,9 +1476,9 @@ namespace Packy {
         ) override {
 
             Length width = read_length(j, "width", -1);
-            Profit cost = j.value("cost", static_cast<Profit>(-1));
-            BinPos copies = j.value("copies", static_cast<BinPos>(1));
-            BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
+            const Profit cost = j.value("cost", static_cast<Profit>(-1));
+            const BinPos copies = j.value("copies", static_cast<BinPos>(1));
+            const BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
             if (fake_trimming_ > 0) {
                 if (width >= 0) width -= fake_trimming_ * 2;
@@ -1690,8 +1690,8 @@ namespace Packy {
 
             }
 
-            Profit profit = j.value("profit", static_cast<Profit>(-1));
-            ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
+            const Profit profit = j.value("profit", static_cast<Profit>(-1));
+            const ItemPos copies = j.value("copies", static_cast<ItemPos>(1));
 
             // Read allowed rotations. (Angles are read in degrees)
             std::vector<std::pair<Angle, Angle>> allowed_rotations;
@@ -1711,7 +1711,7 @@ namespace Packy {
                     allowed_rotations
             );
 
-            bool allow_mirroring = j.value("allow_mirroring", false);
+            const bool allow_mirroring = j.value("allow_mirroring", false);
             builder.instance_builder().set_item_type_allow_mirroring(item_type_id, allow_mirroring);
 
             return item_type_id;
@@ -1725,9 +1725,9 @@ namespace Packy {
             using namespace irregular;
 
             Shape shape = Shape::from_json(j);
-            Profit cost = j.value("cost", static_cast<Profit>(-1));
-            BinPos copies = j.value("copies", static_cast<BinPos>(1));
-            BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
+            const Profit cost = j.value("cost", static_cast<Profit>(-1));
+            const BinPos copies = j.value("copies", static_cast<BinPos>(1));
+            const BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
 
             if (/*shape.is_rectangle() && */fake_trimming_y_ > 0) {
                 auto[min, max] = shape.compute_min_max();
@@ -1791,8 +1791,8 @@ namespace Packy {
 
             using namespace irregular;
 
-            DefectTypeId type = j.value("defect_type", static_cast<DefectTypeId>(-1));
-            ShapeWithHoles shape = ShapeWithHoles::from_json(j);
+            const DefectTypeId type = j.value("defect_type", static_cast<DefectTypeId>(-1));
+            const ShapeWithHoles shape = ShapeWithHoles::from_json(j);
 
             builder.instance_builder().add_defect(
                     bin_type_id,
