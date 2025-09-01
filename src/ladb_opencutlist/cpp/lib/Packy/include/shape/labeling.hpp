@@ -17,7 +17,6 @@ namespace shape
  * @return A point representing the computed labeling position.
  */
 Point find_label_position(
-        const Shape& shape,
-        const std::vector<Shape>& holes = {});
+        const ShapeWithHoles& shape);
 
 }

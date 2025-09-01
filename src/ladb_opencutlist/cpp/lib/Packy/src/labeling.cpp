@@ -318,14 +318,13 @@ void polygon_centroid(
 }
 
 Point shape::find_label_position(
-        const Shape& shape,
-        const std::vector<Shape>& holes)
+        const ShapeWithHoles& shape)
 {
 
     // Convert shape and holes to one unique Polys where the first Poly child is the outer polygon.
     Polys polys;
-    polys.emplace_back(shape_to_poly(shape, true));
-    for (const auto& hole : holes) {
+    polys.emplace_back(shape_to_poly(shape.shape, true));
+    for (const auto& hole : shape.holes) {
         polys.emplace_back(shape_to_poly(hole, false));
     }
 

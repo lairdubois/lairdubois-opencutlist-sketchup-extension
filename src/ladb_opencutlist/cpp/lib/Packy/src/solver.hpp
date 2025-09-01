@@ -1724,7 +1724,7 @@ namespace Packy {
 
             using namespace irregular;
 
-            Shape shape = read_shape(j);
+            Shape shape = Shape::from_json(j);
             Profit cost = j.value("cost", static_cast<Profit>(-1));
             BinPos copies = j.value("copies", static_cast<BinPos>(1));
             BinPos copies_min = j.value("copies_min", static_cast<BinPos>(0));
@@ -1791,7 +1791,7 @@ namespace Packy {
 
             using namespace irregular;
 
-            auto [shape_orig, shape_scaled, holes_orig, holes_scaled, shape_inflated, holes_deflated, type] = read_defect(j);
+            auto [shape_orig, shape_scaled, shape_inflated, type] = read_defect(j);
 
             builder.instance_builder().add_defect(
                     bin_type_id,
@@ -1916,8 +1916,8 @@ namespace Packy {
                         if (shape_min_max.second.x > min_max.second.x) min_max.second.x = shape_min_max.second.x;
                         if (shape_min_max.second.y > min_max.second.y) min_max.second.y = shape_min_max.second.y;
 
-                        shape::AreaDbl area = item_shape.shape_orig.compute_area();
-                        for (const auto& hole : item_shape.holes_orig) {
+                        shape::AreaDbl area = item_shape.shape_orig.shape.compute_area();
+                        for (const auto& hole : item_shape.shape_orig.holes) {
                             area -= hole.compute_area();
                         }
 
@@ -1943,7 +1943,7 @@ namespace Packy {
                 auto item_width = min_max.second.y - min_max.first.y;
 
                 // Find label position
-                shape::Point label_position = shape::find_label_position(largest_item_shape.shape_orig, largest_item_shape.holes_orig);
+                shape::Point label_position = shape::find_label_position(largest_item_shape.shape_orig);
 
                 // Write the label offset (relative to the item shapes center)
                 j_item_type_stats["label_offset"] = json{
@@ -1961,93 +1961,6 @@ namespace Packy {
 
         bool label_offsets_ = false;
 
-        static irregular::Shape read_shape(
-                basic_json<>& j
-        ) {
-
-            using namespace irregular;
-
-            Shape shape;
-            if (j["type"] == "circle") {
-
-                LengthDbl x = j.value("x", static_cast<LengthDbl>(0));
-                LengthDbl y = j.value("y", static_cast<LengthDbl>(0));
-                LengthDbl radius = j.value("radius", static_cast<LengthDbl>(-1));
-
-                ShapeElement element;
-                element.type = ShapeElementType::CircularArc;
-                element.center = {x, y};
-                element.start = {x + radius, y};
-                element.end = element.start;
-                shape.elements.push_back(element);
-
-            } else if (j["type"] == "rectangle") {
-
-                LengthDbl x = j.value("x", static_cast<LengthDbl>(0));
-                LengthDbl y = j.value("y", static_cast<LengthDbl>(0));
-                LengthDbl width = j.value("width", static_cast<LengthDbl>(-1));
-                LengthDbl height = j.value("height", static_cast<LengthDbl>(-1));
-
-                ShapeElement element_1;
-                ShapeElement element_2;
-                ShapeElement element_3;
-                ShapeElement element_4;
-                element_1.type = ShapeElementType::LineSegment;
-                element_2.type = ShapeElementType::LineSegment;
-                element_3.type = ShapeElementType::LineSegment;
-                element_4.type = ShapeElementType::LineSegment;
-                element_1.start = {x, y};
-                element_1.end = {x + width, y};
-                element_2.start = {x + width, y};
-                element_2.end = {x + width, y + height};
-                element_3.start = {x + width, y + height};
-                element_3.end = {x, y + height};
-                element_4.start = {x, y + height};
-                element_4.end = {x, y};
-                shape.elements.push_back(element_1);
-                shape.elements.push_back(element_2);
-                shape.elements.push_back(element_3);
-                shape.elements.push_back(element_4);
-
-            } else if (j["type"] == "polygon") {
-
-                for (auto it = j["vertices"].begin(); it != j["vertices"].end(); ++it) {
-                    auto it_next = it + 1;
-                    if (it_next == j["vertices"].end()) {
-                        it_next = j["vertices"].begin();
-                    }
-                    ShapeElement element;
-                    element.type = ShapeElementType::LineSegment;
-                    element.start = {(*it)["x"], (*it)["y"]};
-                    element.end = {(*it_next)["x"], (*it_next)["y"]};
-                    shape.elements.push_back(element);
-                }
-
-            } else if (j["type"] == "general") {
-
-                for (auto it = j["elements"].begin(); it != j["elements"].end(); ++it) {
-                    auto json_element = *it;
-                    ShapeElement element;
-                    element.type = str2element(json_element["type"]);
-                    element.start.x = json_element["start"]["x"];
-                    element.start.y = json_element["start"]["y"];
-                    element.end.x = json_element["end"]["x"];
-                    element.end.y = json_element["end"]["y"];
-                    if (element.type == ShapeElementType::CircularArc) {
-                        element.center.x = json_element["center"]["x"];
-                        element.center.y = json_element["center"]["y"];
-                        element.anticlockwise = json_element["anticlockwise"];
-                    }
-                    shape.elements.push_back(element);
-                }
-
-            } else {
-                throw std::invalid_argument("Unknown shape type");
-            }
-
-            return std::move(shape);
-        }
-
         static irregular::ItemShape read_item_shape(
                 basic_json<>& j
         ) {
@@ -2055,14 +1968,7 @@ namespace Packy {
             using namespace irregular;
 
             ItemShape item_shape;
-            item_shape.shape_orig = read_shape(j);
-
-            if (j.contains("holes")) {
-                for (auto& j_item: j["holes"].items()) {
-                    Shape hole = read_shape(j_item.value());
-                    item_shape.holes_orig.push_back(hole);
-                }
-            }
+            item_shape.shape_orig = ShapeWithHoles::from_json(j);
 
             return std::move(item_shape);
         }
@@ -2074,15 +1980,7 @@ namespace Packy {
             using namespace irregular;
 
             Defect defect;
-            defect.shape_orig = read_shape(j);
-
-            if (j.contains("holes")) {
-                for (auto& j_item: j["holes"].items()) {
-                    Shape hole = read_shape(j_item.value());
-                    defect.holes_orig.push_back(hole);
-                }
-            }
-
+            defect.shape_orig = ShapeWithHoles::from_json(j);
             defect.type = j.value("defect_type", static_cast<DefectTypeId>(-1));
 
             return std::move(defect);
