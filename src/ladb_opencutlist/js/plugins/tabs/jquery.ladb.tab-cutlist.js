@@ -412,15 +412,15 @@
                     that.generateFilters.veneer_material_names_filter = [];
                     that.generateCutlist();
                 });
-                $('.ladb-btn-toggle-groups-visibility', that.$page).on('click', function () {
-                    if (that.generateOptions.hidden_group_ids.length <= 2
-                        && !that.generateOptions.hidden_group_ids.includes('summary')
-                        && !that.generateOptions.hidden_group_ids.includes('filters')
-                    ) {
-                        that.hideAllGroups([ 'summary', 'filters' ]);
+                $('#ladb_cutlist_btn_toggle_groups_visibility', that.$page).on('click', function () {
+                    $(this).blur();
+                    const excludedGroupIds = [ 'summary', 'filters' ];
+                    if (that.generateOptions.hidden_group_ids.filter(function(v) { return !excludedGroupIds.includes(v); }).length === 0) {
+                        that.hideAllGroups(excludedGroupIds);
                     } else {
-                        that.showAllGroups([ 'summary', 'filters' ]);
+                        that.showAllGroups(excludedGroupIds);
                     }
+                    return false;
                 });
                 $('.ladb-btn-toggle-no-print', that.$page).on('click', function () {
                     $(this).blur();
