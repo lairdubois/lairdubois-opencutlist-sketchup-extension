@@ -718,35 +718,35 @@ namespace Packy {
 
         double to_length_dbl(
                 const Length length,
-                const int precision = 8
+                const int8_t precision = 8
         ) const {
             return round(static_cast<double>(length) / length_truncate_factor_, precision);
         }
 
         static double to_length_dbl(
                 const double length_dbl,
-                const int precision = 8
+                const int8_t precision = 8
         ) {
             return round(length_dbl, precision);
         }
 
         double to_area_dbl(
                 const Area area,
-                const int precision = 8
+                const int8_t precision = 8
         ) const {
             return round(static_cast<double>(area) / (length_truncate_factor_ * length_truncate_factor_), precision);
         }
 
         static double to_area_dbl(
                 const double area_dbl,
-                const int precision = 8
+                const int8_t precision = 8
         ) {
             return round(area_dbl, precision);
         }
 
         static double round(
                 const double value,
-                const int precision = 8
+                const int8_t precision = 8
         ) {
             return std::round(value * std::pow(10, precision)) / std::pow(10, precision);
         }
@@ -1235,7 +1235,7 @@ namespace Packy {
                 });
 
                 Length cut_length = 0;
-                int number_of_leftovers_to_keep = 0;
+                int32_t number_of_leftovers_to_keep = 0;
 
                 // Items, Leftovers & Cuts.
                 basic_json<>& j_items = j_bin["items"] = json::array();
