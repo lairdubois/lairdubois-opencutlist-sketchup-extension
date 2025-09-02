@@ -1865,8 +1865,9 @@ module Ladb::OpenCutList
     # -----
 
     def _get_edit_transformation
-      return Sketchup.active_model.axes.transformation if Sketchup.active_model.nil? || Sketchup.active_model.edit_transform.nil?
-      Sketchup.active_model.edit_transform * Sketchup.active_model.axes.transformation
+      model = Sketchup.active_model
+      return model.axes.transformation if model.nil? || (edit_transform = model.edit_transform).nil? || edit_transform.identity?
+      edit_transform
     end
 
     def _get_active_x_axis
@@ -2227,7 +2228,8 @@ module Ladb::OpenCutList
       @global_context_transformation = default
       if @active_part_entity_path.is_a?(Array) &&
          @active_part_entity_path.length > 1 &&
-         (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-2])
+         !(model = Sketchup.active_model).nil? &&
+         (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_part_entity_path[-2])
         @global_context_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-2], IDENTITY)
       end
       @global_context_transformation
@@ -2238,7 +2240,8 @@ module Ladb::OpenCutList
       @global_instance_transformation = default
       if @active_part_entity_path.is_a?(Array) &&
          @active_part_entity_path.length > 0 &&
-         (!Sketchup.active_model.active_path.is_a?(Array) || Sketchup.active_model.active_path.last != @active_part_entity_path[-1])
+         !(model = Sketchup.active_model).nil? &&
+         (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_part_entity_path[-1])
         @global_instance_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-1], IDENTITY)
       end
       @global_instance_transformation
