@@ -1865,7 +1865,7 @@ module Ladb::OpenCutList
     # -----
 
     def _get_edit_transformation
-      return IDENTITY if Sketchup.active_model.nil? || Sketchup.active_model.edit_transform.nil?
+      return Sketchup.active_model.axes.transformation if Sketchup.active_model.nil? || Sketchup.active_model.edit_transform.nil?
       Sketchup.active_model.edit_transform * Sketchup.active_model.axes.transformation
     end
 

@@ -41,6 +41,9 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   ### BETA
 
+  * 2025-09-02
+    * Fixed Smart Handle Tool when model axes are changed
+    * Updated ZH languages
   * 2025-08-27
     * Finalized translations
     * Added width oversize attribute for edge banding material type
