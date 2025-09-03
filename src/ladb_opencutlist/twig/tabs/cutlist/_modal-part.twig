@@ -655,9 +655,12 @@
 {% block footerLeftInner %}
     {% if not part.virtual %}
         {% if multiple %}
-            <button class="btn btn-default" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier-multiple"></i> {{ 'tab.cutlist.highlight_parts'|i18next }}</button>
+            <button class="btn btn-default" id="ladb_cutlist_part_highlight" data-toggle="tooltip" title="{{ 'tab.cutlist.highlight_parts'|i18next }}"><i class="ladb-opencutlist-icon-magnifier-multiple"></i></button>
         {% else %}
-            <button class="btn btn-default" id="ladb_cutlist_part_highlight"><i class="ladb-opencutlist-icon-magnifier"></i> {{ 'tab.cutlist.highlight_part'|i18next }}</button>
+            <button class="btn btn-default" id="ladb_cutlist_part_highlight" data-toggle="tooltip" title="{{ 'tab.cutlist.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></button>
+        {% endif %}
+        {% if not multiple %}
+            <button class="btn btn-default" id="ladb_cutlist_part_layout"><i class="ladb-opencutlist-icon-layout-selection"></i> {{ 'default.draw'|i18next }}...</button>
         {% endif %}
         <div class="btn-group dropup">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

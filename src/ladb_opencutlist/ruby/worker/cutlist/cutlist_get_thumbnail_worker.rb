@@ -57,9 +57,7 @@ module Ladb::OpenCutList
 
           temp_dir = PLUGIN.temp_dir
           component_thumbnails_dir = File.join(temp_dir, 'components_thumbnails')
-          unless Dir.exist?(component_thumbnails_dir)
-            Dir.mkdir(component_thumbnails_dir)
-          end
+          Dir.mkdir(component_thumbnails_dir) unless Dir.exist?(component_thumbnails_dir)
 
           thumbnail_file = File.join(component_thumbnails_dir, "#{definition.guid}.png")
           definition.save_thumbnail(thumbnail_file)

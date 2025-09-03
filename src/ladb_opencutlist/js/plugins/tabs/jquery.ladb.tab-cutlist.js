@@ -742,6 +742,7 @@
                             fnMouseEnter.call(row)
                             const groupAndPart = that.findGroupAndPartById(partId);
                             const isMultiple = that.selectionGroupId === groupAndPart.group.id && that.selectionPartIds.includes(groupAndPart.part.id) && that.selectionPartIds.length > 1;
+                            const isFolder = groupAndPart.part.children && groupAndPart.part.children.length > 0
                             let items = [];
                             items.push({ text: isMultiple ? that.selectionPartIds.length + ' ' + i18next.t('default.part_plural') : groupAndPart.part.name});
                             items.push({ separator: true });
@@ -751,6 +752,15 @@
                                     that.highlightPart(partId);
                                 }
                             });
+                            if (!isMultiple && !isFolder) {
+                                items.push({ separator: true });
+                                items.push({
+                                    text: i18next.t('default.draw') + '...',
+                                    callback: function () {
+                                        that.layoutPart(partId);
+                                    }
+                                });
+                            }
                             items.push({ separator: true });
                             items.push({
                                 text: i18next.t('default.export') + ' / ' + i18next.t('tab.cutlist.menu.write_2d') + '...',
@@ -1619,10 +1629,34 @@
         this.layoutParts(partIdsWithContext.partIds, partIdsWithContext.context);
     };
 
-    LadbTabCutlist.prototype.layoutParts = function (partIds, context, forceDefaultTab) {
+    LadbTabCutlist.prototype.layoutPart = function (partId) {
+        const groupAndPart = this.findGroupAndPartById(partId);
+        if (groupAndPart) {
+
+            const group = groupAndPart.group;
+            const part = groupAndPart.part;
+
+            const isFolder = part.children && part.children.length > 0;
+            const isSelected = this.selectionGroupId === group.id && this.selectionPartIds.includes(partId) && this.selectionPartIds.length > 1;
+
+            let partIds;
+            if (isFolder) {
+                partIds = [ partId ];
+            } else if (isSelected) {
+                partIds = this.selectionPartIds;
+            } else {
+                partIds = [ partId ];
+            }
+
+            this.layoutParts(partIds, { targetPart: part, targetGroup: group }, null, false);
+
+        }
+    };
+
+    LadbTabCutlist.prototype.layoutParts = function (partIds, context = null, forceDefaultTab = false, allInstances = true) {
         const that = this;
 
-        const section = context && context.targetGroup ? context.targetGroup.id : null;
+        const section = context && context.targetPart ? context.targetPart.id : context.targetGroup ? context.targetGroup.id : null;
 
         // Retrieve layout options
         rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_layout_options', section: section }, function (response) {
@@ -1630,7 +1664,7 @@
             const layoutOptions = response.preset;
 
             const $modal = that.appendModalInside('ladb_cutlist_modal_layout', 'tabs/cutlist/_modal-layout.twig', {
-                group: context.targetGroup,
+                group: context ? context.targetGroup : null,
                 isGroupSelection: context ? context.isGroupSelection : false,
                 isPartSelection: context ? context.isPartSelection : false,
                 tab: forceDefaultTab || that.lastLayoutOptionsTab == null ? 'layout' : that.lastLayoutOptionsTab,
@@ -1658,8 +1692,10 @@
             const $inputCameraZoom = $('#ladb_input_camera_zoom', $modal);
             const $inputCameraTarget = $('#ladb_input_camera_target', $modal);
             const $inputExplodeFactor = $('#ladb_input_explode_factor', $modal);
+            const $sectionPins = $('#ladb_cutlist_layout_section_pins', $modal);
             const $formGroupPins = $('.ladb-cutlist-layout-form-group-pins', $modal);
             const $formGroupPinsDirection = $('.ladb-cutlist-layout-form-group-pins-direction', $modal);
+            const $sectionExplode = $('#ladb_cutlist_layout_section_explode', $modal);
             const $btnGenerate = $('#ladb_cutlist_layout_btn_generate', $modal);
 
             const fnUpdatePageSizeFieldsAvailability = function () {
@@ -1673,14 +1709,19 @@
                 }
             }
             const fnUpdateFieldsVisibility = function () {
-                if ($selectPinsHidden.val() === '1') {
-                    $formGroupPins.hide();
+                if (!allInstances) {
+                    $sectionPins.hide();
+                    $sectionExplode.hide();
                 } else {
-                    $formGroupPins.show();
-                    if ($selectPinsLength.val() === '0') {
-                        $formGroupPinsDirection.hide();
+                    if ($selectPinsHidden.val() === '1') {
+                        $formGroupPins.hide();
                     } else {
-                        $formGroupPinsDirection.show();
+                        $formGroupPins.show();
+                        if ($selectPinsLength.val() === '0') {
+                            $formGroupPinsDirection.hide();
+                        } else {
+                            $formGroupPinsDirection.show();
+                        }
                     }
                 }
             }
@@ -1871,6 +1912,7 @@
                         // Generate layout
                         rubyCallCommand('cutlist_layout_parts', {
                             part_ids: partIds,
+                            all_instances: allInstances,
                             parts_colored: layoutOptions.parts_colored,
                             pins_formula: layoutOptions.pins_formula
                         }, function (response) {
@@ -1881,6 +1923,14 @@
                                 exploded_model_radius: 1
                             }
 
+                            let pageName = that.pageName;
+                            let pageDescription = that.pageDescription;
+
+                            if (!allInstances && context && context.targetPart) {
+                                pageName = context.targetPart.name;
+                                pageDescription = context.targetPart.description;
+                            }
+
                             const $slide = that.pushNewSlide('ladb_cutlist_slide_layout', 'tabs/cutlist/_slide-layout.twig', {
                                 capabilities: that.dialog.capabilities,
                                 errors: response.errors,
@@ -1888,12 +1938,12 @@
                                 modelName: that.modelName,
                                 modelDescription: that.modelDescription,
                                 modelActivePath: that.modelActivePath,
-                                pageName: that.pageName,
-                                pageDescription: that.pageDescription,
+                                pageName: pageName,
+                                pageDescription: pageDescription,
                                 isEntitySelection: that.isEntitySelection,
                                 lengthUnit: that.lengthUnit,
                                 generatedAt: new Date().getTime() / 1000,
-                                group: context.targetGroup,
+                                group: context ? context.targetGroup : null,
                                 pageHeader: layoutOptions.page_header,
                                 THREE_CAMERA_VIEWS: THREE_CAMERA_VIEWS
                             }, function () {
@@ -1913,7 +1963,7 @@
 
                             // Bind buttons
                             $btnLayout.on('click', function () {
-                                that.layoutParts(partIds, context);
+                                that.layoutParts(partIds, context, false, allInstances);
                             });
                             $btnPrint.on('click', function () {
                                 $(this).blur();
@@ -4156,6 +4206,7 @@
             const $labelFaceZminTextureAngle = $('#ladb_cutlist_part_label_face_zmin_texture_angle', $modal);
             const $labelFaceZmaxTextureAngle = $('#ladb_cutlist_part_label_face_zmax_texture_angle', $modal);
             const $btnHighlight = $('#ladb_cutlist_part_highlight', $modal);
+            const $btnLayout = $('#ladb_cutlist_part_layout', $modal);
             const $btnExportToFile = $('a.ladb-cutlist-write-parts', $modal);
             const $btnUpdate = $('#ladb_cutlist_part_update', $modal);
 
@@ -4603,6 +4654,11 @@
             $btnHighlight.on('click', function () {
                 this.blur();
                 that.highlightPart(part.id);
+                return false;
+            });
+            $btnLayout.on('click', function () {
+                this.blur();
+                that.layoutPart(part.id);
                 return false;
             });
             $btnExportToFile.on('click', function () {

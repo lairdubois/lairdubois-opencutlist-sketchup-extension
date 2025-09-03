@@ -919,7 +919,7 @@ const fnSetupModel = function(modelDef, partsColored, partsOpacity, pinsHidden, 
     if (partsOpacity < 1) {
         meshMaterial.opacity = partsOpacity;
         meshMaterial.transparent = true;
-        pinLineMaterial.transparent = true; // To force pin line to be oin the same sort than parts
+        pinLineMaterial.transparent = true; // To force pin line to be on the same sort as parts
     }
 
     model = fnAddObjectDef(modelDef, modelDef, scene, partsColored);
