@@ -1648,13 +1648,15 @@
                 partIds = [ partId ];
             }
 
-            this.layoutParts(partIds, { targetPart: part, targetGroup: group }, null, false);
+            this.layoutParts(partIds, { targetPart: part, targetGroup: group });
 
         }
     };
 
-    LadbTabCutlist.prototype.layoutParts = function (partIds, context = null, forceDefaultTab = false, allInstances = true) {
+    LadbTabCutlist.prototype.layoutParts = function (partIds, context = null, forceDefaultTab = false) {
         const that = this;
+
+        const isSinglePart = context && context.targetPart && partIds.length === 1;
 
         const section = context && context.targetPart ? context.targetPart.id : context.targetGroup ? context.targetGroup.id : null;
 
@@ -1709,7 +1711,7 @@
                 }
             }
             const fnUpdateFieldsVisibility = function () {
-                if (!allInstances) {
+                if (isSinglePart) {
                     $sectionPins.hide();
                     $sectionExplode.hide();
                 } else {
@@ -1912,7 +1914,7 @@
                         // Generate layout
                         rubyCallCommand('cutlist_layout_parts', {
                             part_ids: partIds,
-                            all_instances: allInstances,
+                            all_instances: !isSinglePart,
                             parts_colored: layoutOptions.parts_colored,
                             pins_formula: layoutOptions.pins_formula
                         }, function (response) {
@@ -1926,7 +1928,7 @@
                             let pageName = that.pageName;
                             let pageDescription = that.pageDescription;
 
-                            if (!allInstances && context && context.targetPart) {
+                            if (isSinglePart) {
                                 pageName = context.targetPart.name;
                                 pageDescription = context.targetPart.description;
                             }
@@ -1963,7 +1965,7 @@
 
                             // Bind buttons
                             $btnLayout.on('click', function () {
-                                that.layoutParts(partIds, context, false, allInstances);
+                                that.layoutParts(partIds, context);
                             });
                             $btnPrint.on('click', function () {
                                 $(this).blur();
@@ -1980,6 +1982,7 @@
                                     $viewer.ladbThreeViewer('callCommand', ['get_exploded_parts_matrices', null, function (data) {
 
                                         rubyCallCommand('cutlist_layout_to_layout', {
+                                            is_single_part: isSinglePart,
                                             parts_infos: data.parts_infos,
                                             pins_infos: data.pins_infos,
                                             target_group_id: context && context.targetGroup ? context.targetGroup.id : null,

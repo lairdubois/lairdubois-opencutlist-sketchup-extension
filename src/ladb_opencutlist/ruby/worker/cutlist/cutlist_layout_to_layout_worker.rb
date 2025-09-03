@@ -11,6 +11,8 @@ module Ladb::OpenCutList
 
     def initialize(cutlist,
 
+                   is_single_part: true,
+
                    parts_infos: nil,
                    pins_infos: nil,
                    target_group_id: nil,
@@ -31,6 +33,8 @@ module Ladb::OpenCutList
     )
 
       @cutlist = cutlist
+
+      @is_single_part = is_single_part
 
       @parts_infos = parts_infos
       @pins_infos = pins_infos
@@ -66,8 +70,24 @@ module Ladb::OpenCutList
       # Retrieve target group
       target_group = @cutlist.get_group(@target_group_id)
 
+      # Retieve page infos
+      page_name = @cutlist.page_name
+      page_description = @cutlist.page_description
+
+      # Replace page infos by part infos if single part
+      if @is_single_part && @parts_infos.one?
+
+        # Retrieve part
+        part = @cutlist.get_real_parts([ @parts_infos.first['id'] ]).first
+        unless part.nil?
+          page_name = part.name
+          page_description = part.description
+        end
+
+      end
+
       # Base document name
-      doc_name = "#{@cutlist.model_name.empty? ? File.basename(@cutlist.filename, '.skp') : @cutlist.model_name}#{@cutlist.page_name.empty? ? '' : " - #{@cutlist.page_name}"}#{@cutlist.model_active_path.nil? || @cutlist.model_active_path.empty? ? '' : " - #{@cutlist.model_active_path.join('/')}"}#{target_group && target_group.material_type != MaterialAttributes::TYPE_UNKNOWN ? " - #{target_group.material_name} #{target_group.std_dimension}" : ''}"
+      doc_name = "#{@cutlist.model_name.empty? ? File.basename(@cutlist.filename, '.skp') : @cutlist.model_name}#{page_name.empty? ? '' : " - #{page_name}"}#{@cutlist.model_active_path.nil? || @cutlist.model_active_path.empty? ? '' : " - #{@cutlist.model_active_path.join('/')}"}#{target_group && target_group.material_type != MaterialAttributes::TYPE_UNKNOWN ? " - #{target_group.material_name} #{target_group.std_dimension}" : ''}"
 
       # Ask for layout file path
       layout_path = UI.savepanel(PLUGIN.get_i18n_string('tab.cutlist.export.title'), @cutlist.dir, "#{_sanitize_filename(doc_name)}.layout")
@@ -278,8 +298,8 @@ module Ladb::OpenCutList
               current_y = model_description_text.drawing_bounds.lower_left.y
             end
 
-            unless @cutlist.page_description.empty?
-              page_description_text = _add_formated_text(doc, layer, page, @cutlist.page_description, Geom::Point2d.new(page_width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
+            unless page_description.empty?
+              page_description_text = _add_formated_text(doc, layer, page, page_description, Geom::Point2d.new(page_width / 2, current_y), Layout::FormattedText::ANCHOR_TYPE_TOP_CENTER, { :font_family => font_family, :font_size => 9, :text_alignment => Layout::Style::ALIGN_CENTER })
               current_y = page_description_text.drawing_bounds.lower_left.y
             end
 
