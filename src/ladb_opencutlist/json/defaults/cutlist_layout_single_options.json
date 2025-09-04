@@ -1,0 +1,22 @@
+{
+  "_preprocessors": {
+    "page_width": 1, /* PRESETS_PREPROCESSOR_D */
+    "page_height": 1 /* PRESETS_PREPROCESSOR_D */
+  },
+  "0": {
+    "page_width": { "metric": "210mm", "imperial": "8.5\"" },
+    "page_height": { "metric": "297mm", "imperial": "11\"" },
+    "page_header": true,
+    "parts_colored": false,
+    "parts_opacity": 1,
+    "pins_hidden": true,
+    "pins_colored": false,
+    "pins_formula": "",
+    "pins_length": 1, /* PINS_LENGTH_SHORT */
+    "pins_direction": 4, /* PINS_DIRECTION_MODEL_CENTER */
+    "camera_view": [ 0.5774, -0.5774, 0.5774 ], /* CAMERA_VIEW_ISOMETRIC */
+    "camera_zoom": null,
+    "camera_target": null,
+    "explode_factor": 0
+  }
+}

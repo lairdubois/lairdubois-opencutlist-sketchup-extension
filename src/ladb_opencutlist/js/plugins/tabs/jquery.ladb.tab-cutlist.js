@@ -237,6 +237,8 @@
                     that.saveUIOptionsHiddenGroupIds();
                 }
 
+                let editedPartRow = null;
+
                 // Useful function
                 const fnGenerateWithTagsFilter = function () {
                     const tokenList = $('#ladb_cutlist_tags_filter', that.$page).tokenfield('getTokensList');
@@ -244,7 +246,7 @@
                     that.generateCutlist(function () {
                         $('#ladb_cutlist_tags_filter-tokenfield', that.$page).focus();
                     });
-                }
+                };
                 const fnMouseEnter = function () {
                     const $row = $(this);
                     $row.addClass('ladb-hover');
@@ -253,10 +255,12 @@
                     }
                 };
                 const fnMouseLeave = function () {
-                    const $row = $(this);
-                    $row.removeClass('ladb-hover');
-                    if ($row.hasClass('ladb-selected')) {
-                        $row.siblings('.ladb-selected').removeClass('ladb-hover');
+                    if (editedPartRow !== this) {
+                        const $row = $(this);
+                        $row.removeClass('ladb-hover');
+                        if ($row.hasClass('ladb-selected')) {
+                            $row.siblings('.ladb-selected').removeClass('ladb-hover');
+                        }
                     }
                 };
 
@@ -704,9 +708,14 @@
                 });
                 $('a.ladb-btn-edit-part', that.$page).on('click', function () {
                     $(this).blur();
-                    const $part = $(this).parents('.ladb-cutlist-row');
-                    const partId = $part.data('part-id');
-                    that.editPart(partId);
+                    const $row = $(this).parents('.ladb-cutlist-row');
+                    const partId = $row.data('part-id');
+                    editedPartRow = $row.get(0);
+                    fnMouseEnter.call($row.get(0));
+                    that.editPart(partId, null, null, null, function ($model) {
+                        editedPartRow = null;
+                        fnMouseLeave.call($row.get(0));
+                    });
                     return false;
                 });
                 $('a.ladb-btn-folding-toggle-row', that.$page).on('click', function () {
@@ -739,6 +748,7 @@
                         const row = this;
                         const partId = $(row).data('part-id');
                         if (partId) {
+                            editedPartRow = this;
                             fnMouseEnter.call(row)
                             const groupAndPart = that.findGroupAndPartById(partId);
                             const isMultiple = that.selectionGroupId === groupAndPart.group.id && that.selectionPartIds.includes(groupAndPart.part.id) && that.selectionPartIds.length > 1;
@@ -786,7 +796,10 @@
                                     }
                                 }
                             });
-                            that.dialog.showContextMenu(e.clientX, e.clientY, items, function () { fnMouseLeave.call(row) });
+                            that.dialog.showContextMenu(e.clientX, e.clientY, items, function () {
+                                editedPartRow = null;
+                                fnMouseLeave.call(row);
+                            });
                             e.preventDefault();
                         }
                     })
@@ -1662,10 +1675,11 @@
 
         const isSinglePart = context && context.targetPart && partIds.length === 1;
 
+        const dictionary = 'cutlist_layout_' + (isSinglePart ? 'single_' : '') + 'options';
         const section = context && context.targetPart ? context.targetPart.id : context.targetGroup ? context.targetGroup.id : null;
 
         // Retrieve layout options
-        rubyCallCommand('core_get_model_preset', { dictionary: 'cutlist_layout_options', section: section }, function (response) {
+        rubyCallCommand('core_get_model_preset', { dictionary: dictionary, section: section }, function (response) {
 
             const layoutOptions = response.preset;
 
@@ -1794,7 +1808,7 @@
 
             $widgetPreset.ladbWidgetPreset({
                 dialog: that.dialog,
-                dictionary: 'cutlist_layout_options',
+                dictionary: dictionary,
                 fnFetchOptions: fnFetchOptions,
                 fnFillInputs: fnFillInputs
             });
@@ -1906,7 +1920,7 @@
                 fnFetchOptions(layoutOptions);
 
                 // Store options
-                rubyCallCommand('core_set_model_preset', { dictionary: 'cutlist_layout_options', values: layoutOptions, section: section });
+                rubyCallCommand('core_set_model_preset', { dictionary: dictionary, values: layoutOptions, section: section });
 
                 fnConvertPageSettings(layoutOptions.page_width, layoutOptions.page_height, function (pageWidth, pageHeight) {
 
@@ -2072,7 +2086,7 @@
                                     }
                                     storeOptionsTimeoutId = setTimeout(function () {
                                         rubyCallCommand('core_set_model_preset', {
-                                            dictionary: 'cutlist_layout_options',
+                                            dictionary: dictionary,
                                             values: layoutOptions,
                                             section: section
                                         });
@@ -4018,7 +4032,7 @@
         }
     };
 
-    LadbTabCutlist.prototype.editPart = function (id, serializedPath, tab, updatedCallback) {
+    LadbTabCutlist.prototype.editPart = function (id, serializedPath, tab, updatedCallback = undefined, hiddenCallback = undefined) {
         const that = this;
 
         const groupAndPart = id ? this.findGroupAndPartById(id) : (serializedPath ? this.findGroupAndPartBySerializedPath(serializedPath) : null);
@@ -4804,9 +4818,24 @@
             });
 
             // Bind modal
-            $modal.on('hide.bs.modal', function () {
-                $inputTags.ladbTextinputTokenfield('destroy');
-            });
+            $modal
+                .on('shown.bs.modal', function () {
+
+                    // Setup popovers and tooltips
+                    that.dialog.setupPopovers();
+                    that.dialog.setupTooltips();
+
+                })
+                .on('hidden.bs.modal', function () {
+
+                    $inputTags.ladbTextinputTokenfield('destroy');
+
+                    if (typeof hiddenCallback === 'function') {
+                        hiddenCallback($modal);
+                    }
+
+                })
+            ;
 
             // Init edges preview
             fnUpdateEdgesPreview();
@@ -4816,10 +4845,6 @@
 
             // Show modal
             $modal.modal('show');
-
-            // Setup popovers and tooltips
-            that.dialog.setupPopovers();
-            that.dialog.setupTooltips();
 
             // Change event
             $('input, select', $modal).on('change', function () {

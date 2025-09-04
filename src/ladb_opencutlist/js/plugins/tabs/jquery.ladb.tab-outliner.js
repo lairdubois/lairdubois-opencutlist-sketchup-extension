@@ -14,7 +14,6 @@
     const LadbTabOutliner = function (element, options, dialog) {
         LadbAbstractTab.call(this, element, options, dialog);
 
-        this.editedNode = null;
         this.lastOptionsTab = null;
         this.lastEditNodeTab = null;
 
@@ -183,6 +182,8 @@
                 }));
                 that.$tbody.append($row);
 
+                let $editedRow = null;
+
                 const fnMouseEnter = function () {
                     $row.addClass('ladb-hover');
                     if (node.selected) {
@@ -198,7 +199,7 @@
                     }
                 };
                 const fnMouseLeave = function () {
-                    if (that.editedNode !== node) {
+                    if ($editedRow !== $row) {
                         $row.removeClass('ladb-hover');
                         if (node.selected) {
                             $row.siblings('.ladb-selected').removeClass('ladb-hover');
@@ -217,30 +218,38 @@
                 $row
                     .on('click', function (e) {
                         if (!node.computed_locked) {
-                            that.editNode(node, null, function ($modal) {
-                                const $target = $(e.target);
-                                if ($target.hasClass('ladb-outliner-node-name')) {
-                                    $('#ladb_outliner_node_input_name', $modal)
-                                        .focus()
-                                        .select()
-                                    ;
-                                } else if ($target.hasClass('ladb-outliner-node-definition-name')) {
-                                    $('#ladb_outliner_node_input_definition_name', $modal)
-                                        .focus()
-                                        .select()
-                                    ;
-                                } else if ($target.closest('.ladb-material-color-drop').length > 0) {
-                                    $('#ladb_outliner_node_select_material_name', $modal).focus();
-                                } else if ($target.closest('.ladb-outliner-node-layers').length > 0) {
-                                    $('#ladb_outliner_node_input_layer_name', $modal).focus();
+                            $editedRow = $row;
+                            fnMouseEnter();
+                            that.editNode(node, null,
+                                function ($modal) {
+                                    const $target = $(e.target);
+                                    if ($target.hasClass('ladb-outliner-node-name')) {
+                                        $('#ladb_outliner_node_input_name', $modal)
+                                            .focus()
+                                            .select()
+                                        ;
+                                    } else if ($target.hasClass('ladb-outliner-node-definition-name')) {
+                                        $('#ladb_outliner_node_input_definition_name', $modal)
+                                            .focus()
+                                            .select()
+                                        ;
+                                    } else if ($target.closest('.ladb-material-color-drop').length > 0) {
+                                        $('#ladb_outliner_node_select_material_name', $modal).focus();
+                                    } else if ($target.closest('.ladb-outliner-node-layers').length > 0) {
+                                        $('#ladb_outliner_node_input_layer_name', $modal).focus();
+                                    }
+                                },
+                                function ($modal) {
+                                    $editedRow = null;
+                                    fnMouseLeave();
                                 }
-                            });
+                            );
                         }
                         return false;
                     })
                     .on('contextmenu', function (e) {
                         if (node.type > 0) {    // > TYPE_MODEL
-                            that.editedNode = node;
+                            $editedRow = $row;
                             fnMouseEnter();
                             let items = [];
                             if (node.selected) {
@@ -258,7 +267,7 @@
                                 disabled: node.computed_locked
                             });
                             that.dialog.showContextMenu(e.clientX, e.clientY, items, function () {
-                                that.editedNode = null;
+                                $editedRow = null;
                                 fnMouseLeave();
                             });
                         }
@@ -345,7 +354,7 @@
 
     }
 
-    LadbTabOutliner.prototype.editNode = function (node, tab, callback) {
+    LadbTabOutliner.prototype.editNode = function (node, tab = null, shownCallback = undefined, hiddenCallback = undefined) {
         const that = this;
 
         const editedNode = JSON.parse(JSON.stringify(node));  // Create a clone
@@ -400,9 +409,6 @@
             tab = 'general';
         }
         this.lastEditNodeTab = tab;
-
-        // Keep the edited node
-        this.editedNode = node;
 
         rubyCallCommand('outliner_edit', { ids: editedNodes.map(node => node.id) }, function (response) {
 
@@ -482,10 +488,7 @@
 
                 // Bind buttons
                 $btnExplode.on('click', function () {
-                    that.explodeNode(that.editedNode, function () {
-
-                        // Reset edited material
-                        that.editedNode = null;
+                    that.explodeNode(editedNode, function () {
 
                         // Hide modal
                         $modal.modal('hide');
@@ -568,35 +571,40 @@
                 // Bind model
                 $modal
                     .on('shown.bs.modal', function () {
+
                         if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
                             rubyCallCommand('outliner_highlight', { ids: node.selected ? that.getSelectedNodes().map(node => node.id) : [ node.id ], highlighted: true });
                         }
+
+                        // Focus
+                        $inputName.focus();
+
+                        // Setup tooltips & popovers
+                        that.dialog.setupTooltips();
+                        that.dialog.setupPopovers();
+
+                        // Callback
+                        if (typeof shownCallback === 'function') {
+                            shownCallback($modal);
+                        }
+
                     })
                     .on('hidden.bs.modal', function () {
-
-                        // Reset edited node
-                        that.editedNode = null;
 
                         if (that.dialog.capabilities.sketchup_version_number >= 2300000000) {
                             rubyCallCommand('outliner_highlight', { highlighted: false });
                         }
+
+                        // Callback
+                        if (typeof hiddenCallback === 'function') {
+                            hiddenCallback($modal);
+                        }
+
                     })
                 ;
 
                 // Show modal
                 $modal.modal('show');
-
-                // Focus
-                $inputName.focus();
-
-                // Setup tooltips & popovers
-                that.dialog.setupTooltips();
-                that.dialog.setupPopovers();
-
-                // Callback
-                if (typeof callback === 'function') {
-                    callback($modal);
-                }
 
             }
 

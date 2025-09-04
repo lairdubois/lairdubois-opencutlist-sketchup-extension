@@ -371,7 +371,7 @@ LadbAbstractDialog.prototype.notifySuccess = function (text, buttons) {
 
 // ContextMenu /////
 
-LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items, callback) {
+LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items, removedCallback) {
     const that = this;
 
     let $window = $(window);
@@ -400,8 +400,8 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
             that._$contextMenu = null;
             $window.off('blur', fnRemoveContextMenu);
             $body.off('keydown', fnRemoveContextMenu);
-            if (typeof callback === 'function') {
-                callback();
+            if (typeof removedCallback === 'function') {
+                removedCallback();
             }
         }
     }
