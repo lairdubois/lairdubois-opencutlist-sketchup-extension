@@ -747,6 +747,7 @@
                             items.push({ text: isMultiple ? that.selectionPartIds.length + ' ' + i18next.t('default.part_plural') : groupAndPart.part.name});
                             items.push({ separator: true });
                             items.push({
+                                icon: 'magnifier',
                                 text: i18next.t('tab.cutlist.highlight_part' + (isMultiple ? 's' : '')),
                                 callback: function () {
                                     that.highlightPart(partId);
@@ -755,6 +756,7 @@
                             if (!isMultiple && !isFolder) {
                                 items.push({ separator: true });
                                 items.push({
+                                    icon: 'layout',
                                     text: i18next.t('default.draw') + '...',
                                     callback: function () {
                                         that.layoutPart(partId);
@@ -763,6 +765,7 @@
                             }
                             items.push({ separator: true });
                             items.push({
+                                icon: '2d',
                                 text: i18next.t('default.export') + ' / ' + i18next.t('tab.cutlist.menu.write_2d') + '...',
                                 callback: function () {
                                     if (isMultiple) {
@@ -773,6 +776,7 @@
                                 }
                             });
                             items.push({
+                                icon: '3d',
                                 text: i18next.t('default.export') + ' / ' + i18next.t('tab.cutlist.menu.write_3d') + '...',
                                 callback: function () {
                                     if (isMultiple) {

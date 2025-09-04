@@ -101,12 +101,14 @@
                             items.push({ text: material.name });
                             items.push({ separator: true });
                             items.push({
+                                icon: 'copy',
                                 text: i18next.t('default.duplicate') + '...',
                                 callback: function (e) {
                                     that.duplicateMaterial(material);
                                 }
                             });
                             items.push({
+                                icon: 'export',
                                 text: i18next.t('tab.materials.edit_material.export_to_skm') + '...',
                                 callback: function (e) {
                                     that.exportToSkm(material);
@@ -114,6 +116,7 @@
                             });
                             items.push({ separator: true });
                             items.push({
+                                icon: 'trash',
                                 text: i18next.t('default.delete') + '...',
                                 class: 'dropdown-item-danger',
                                 callback: function (e) {
