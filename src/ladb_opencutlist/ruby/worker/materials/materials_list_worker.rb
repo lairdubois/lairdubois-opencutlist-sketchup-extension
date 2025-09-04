@@ -65,8 +65,8 @@ module Ladb::OpenCutList
                   :thumbnail_file => thumbnail_file,
                   :color => ColorUtils.color_to_hex(material.color),
                   :alpha => material.alpha,
-                  :colorized => material.materialType == 2, # 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
-                  :textured => (material.materialType == 1 || material.materialType == 2),  # 1 = Sketchup::Material::MATERIAL_TEXTURED, 2 = Sketchup::Material::MATERIAL_COLORIZED_TEXTURED
+                  :colorized => material.materialType == Sketchup::Material::MATERIAL_COLORIZED_TEXTURED,
+                  :textured => (material.materialType == Sketchup::Material::MATERIAL_TEXTURED || material.materialType == Sketchup::Material::MATERIAL_COLORIZED_TEXTURED),
                   :texture_rotation => 0,
                   :texture_file => nil,
                   :texture_width => material.texture.nil? ? nil : material.texture.width.to_l.to_s,

@@ -4916,12 +4916,14 @@
         const $btn = $('.ladb-btn-toggle-no-print', $group);
         const $i = $('i', $btn);
         const $summaryRow = $('#' + $group.attr('id') + '_summary');
-        const $summaryToggleIconBtn = $('.ladb-btn-toggle-visible i', $summaryRow);
+        const $summaryToggleBtn = $('.ladb-btn-toggle-visible', $summaryRow);
+        const $summaryToggleIconBtn = $('i', $summaryToggleBtn);
 
         $group.removeClass('no-print');
         $i.addClass('ladb-opencutlist-icon-eye-open');
         $i.removeClass('ladb-opencutlist-icon-eye-close');
-        $summaryRow.removeClass('ladb-mute');
+        $summaryRow.removeClass('ladb-hidden');
+        $summaryToggleBtn.removeClass('ladb-tool-dark');
         $summaryToggleIconBtn.addClass('ladb-opencutlist-icon-eye-open');
         $summaryToggleIconBtn.removeClass('ladb-opencutlist-icon-eye-close');
 
@@ -4943,12 +4945,14 @@
         const $btn = $('.ladb-btn-toggle-no-print', $group);
         const $i = $('i', $btn);
         const $summaryRow = $('#' + $group.attr('id') + '_summary');
-        const $summaryToggleIconBtn = $('.ladb-btn-toggle-visible i', $summaryRow);
+        const $summaryToggleBtn = $('.ladb-btn-toggle-visible', $summaryRow);
+        const $summaryToggleIconBtn = $('i', $summaryToggleBtn);
 
         $group.addClass('no-print');
         $i.removeClass('ladb-opencutlist-icon-eye-open');
         $i.addClass('ladb-opencutlist-icon-eye-close');
-        $summaryRow.addClass('ladb-mute');
+        $summaryRow.addClass('ladb-hidden');
+        $summaryToggleBtn.addClass('ladb-tool-dark');
         $summaryToggleIconBtn.removeClass('ladb-opencutlist-icon-eye-open');
         $summaryToggleIconBtn.addClass('ladb-opencutlist-icon-eye-close');
 

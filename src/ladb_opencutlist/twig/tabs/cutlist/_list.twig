@@ -149,7 +149,7 @@
         <tbody>
         {% for group in groups %}
             {% set hidden = group.id in generateOptions.hidden_group_ids %}
-            <tr id="ladb_group_{{ group.id }}_summary" class="ladb-cutlist-row ladb-minitools-holder{% if hidden %} ladb-mute{% endif %} text-middle">
+            <tr id="ladb_group_{{ group.id }}_summary" class="ladb-cutlist-row ladb-minitools-holder{% if hidden %} ladb-hidden{% endif %}">
                 <td class="text-center">{% if group.material_display_name is not empty %}{% include 'tabs/materials/_material-type-icon.twig' with { 'type':group.material_type, 'filled':group.material_type > 0 } %}{% else %}-{% endif %}</td>
                 <td>
                     <div class="ladb-minitools ladb-minitools-right no-print">
@@ -168,7 +168,7 @@
                         {% if group.material_id %}
                             <a href="#" class="ladb-btn-edit-material" data-material-id="{{ group.material_id }}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':group.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a>
                         {% endif %}
-                        <a href="#ladb_group_{{ group.id }}" class="ladb-btn-toggle-visible" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if hidden %}close{% else %}open{% endif %}"></i></a>
+                        <a href="#ladb_group_{{ group.id }}" class="ladb-btn-toggle-visible{% if hidden %} ladb-tool-dark{% endif %}" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.show_hide_block'|i18next }}"><i class="ladb-opencutlist-icon-eye-{% if hidden %}close{% else %}open{% endif %}"></i></a>
                     </div>
                     {% include 'tabs/cutlist/_group-label.twig' %}
                     {% if not generateOptions.hide_descriptions and group.material_description is not empty %}
@@ -377,7 +377,7 @@
             </tr>
             {% if part.children %}
                 {% for partChild in part.children %}
-                    <tr id="ladb_part_{{ partChild.id }}" data-part-id="{{ partChild.id }}" class="ladb-cutlist-row ladb-cutlist-row-child hide" data-folder-id="{{ part.id }}">
+                    <tr id="ladb_part_{{ partChild.id }}" data-part-id="{{ partChild.id }}" class="ladb-cutlist-row ladb-cutlist-row-child ladb-minitools-holder hide" data-folder-id="{{ part.id }}">
                         {% include 'tabs/cutlist/_list-row-col-number.twig' with { 'part':partChild } %}
                         {% include 'tabs/cutlist/_list-row-col-name.twig' with { 'part':partChild, 'isChild':true } %}
                         {% include 'tabs/cutlist/_list-row-col-count.twig' with { 'part':partChild } %}
