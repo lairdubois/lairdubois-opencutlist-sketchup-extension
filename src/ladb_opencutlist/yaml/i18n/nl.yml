@@ -1848,7 +1848,7 @@ tab:
     language: Taal
     language_auto: Automaat
     zoom: Lettergrootte
-    zoom_normal: Normaal
+    zoom_normal: $t(default.automatic)
     zoom_small: Klein
     zoom_tiny: Zeer klein
     print_margin: Marges afdrukken

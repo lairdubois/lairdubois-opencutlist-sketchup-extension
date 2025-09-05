@@ -1923,7 +1923,7 @@ tab:
     language: Мова
     language_auto: Автоматичний
     zoom: Розмір тексту
-    zoom_normal: Нормальний
+    zoom_normal: $t(default.automatic)
     zoom_small: Мала
     zoom_tiny: Дуже малий
     print_margin: Поля друку

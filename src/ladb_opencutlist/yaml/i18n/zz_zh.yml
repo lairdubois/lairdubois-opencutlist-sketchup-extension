@@ -1918,7 +1918,7 @@ tab:
     language: 1480 - 语言
     language_auto: 1481 - 自动
     zoom: 1482 - 字体大小
-    zoom_normal: 1483 - 正常
+    zoom_normal: $t(default.automatic)
     zoom_small: 1484 - 短
     zoom_tiny: 1485 - 极小
     print_margin: 1486 - 打印页边距

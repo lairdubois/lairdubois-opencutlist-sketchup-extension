@@ -1851,7 +1851,7 @@ tab:
     language: 1480 - שפה
     language_auto: 1481 - אוטומטי
     zoom: 1482 - גודל טקסט
-    zoom_normal: 1483 - רגיל
+    zoom_normal: $t(default.automatic)
     zoom_small: 1484 - קטן
     zoom_tiny: 1485 - קטן מאוד
     print_margin: 1486 - שוליים להדפסה
