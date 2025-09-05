@@ -2,6 +2,32 @@
 // Base
 //
 
+@media screen and (min-width: @ladb-leftbar-width) and (max-height: 900px) {
+  html.ladb-zoom-auto {
+    font-size: 90%;
+  }
+}
+
+@media screen and (min-width: @ladb-leftbar-width) and (max-height: 700px) {
+  html.ladb-zoom-auto {
+    font-size: 80%;
+  }
+}
+
+@media screen and (max-width: @ladb-leftbar-width) {
+  html {
+    font-size: 100% !important;
+  }
+}
+
+html.ladb-zoom-small {
+  font-size: 90%;
+}
+
+html.ladb-zoom-tiny {
+  font-size: 80%;
+}
+
 body {
   overflow-x: hidden;
 

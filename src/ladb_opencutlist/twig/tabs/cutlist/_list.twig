@@ -244,10 +244,10 @@
                         {% endif %}
                     {% endif %}
                     {% if group.material_type > 0 and group.material_type != 5 %}    {# 5 = TYPE_HARDWARE #}
-                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-labels" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.group_labels'|i18next }}..."><i class="ladb-opencutlist-icon-labels" style="font-size: 14px;"></i></button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-labels" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.group_labels'|i18next }}..."><i class="ladb-opencutlist-icon-labels" style="font-size: 1.2em;"></i></button>
                     {% endif %}
                     {% if capabilities.sketchup_version_number >= 1800000000 and capabilities.webgl_available and group.material_type != 4 and group.material_type != 6 %}    {# 4 = TYPE_EDGE, 6 = TYPE_VENEER  #}
-                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-layout" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.group_layout_parts'|i18next }}..."><i class="ladb-opencutlist-icon-layout" style="font-size: 14px;"></i></button>
+                        <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-layout" data-toggle="tooltip" title="{{ 'tab.cutlist.menu.group_layout_parts'|i18next }}..."><i class="ladb-opencutlist-icon-layout" style="font-size: 1.2em;"></i></button>
                     {% endif %}
                     <button class="no-print btn btn-default btn-sm ladb-btn-hiddable ladb-btn-group-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ladb-opencutlist-icon-submenu"></i> <span class="caret"></span></button>
                     <ul class="dropdown-menu">

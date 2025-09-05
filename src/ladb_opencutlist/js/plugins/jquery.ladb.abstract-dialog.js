@@ -36,6 +36,7 @@ function LadbAbstractDialog(element, options) {
         update_muted: options.update_muted,
         last_news_timestamp: options.last_news_timestamp,
         last_news_title: options.last_news_title,
+        tabs_dialog_zoom: options.tabs_dialog_zoom,
         tabs_dialog_print_margin: options.tabs_dialog_print_margin,
         tabs_dialog_table_row_size: options.tabs_dialog_table_row_size,
     };
@@ -89,6 +90,25 @@ LadbAbstractDialog.prototype.getSetting = function (key, defaultValue) {
         return value;
     }
     return defaultValue;
+};
+
+// UI /////
+
+LadbAbstractDialog.prototype.setZoom = function (zoom) {
+    const $html = $('html');
+    if (zoom === 1) {
+        $html.removeClass('ladb-zoom-auto');
+        $html.addClass('ladb-zoom-small');
+        $html.removeClass('ladb-zoom-tiny');
+    } else if (zoom === 2) {
+        $html.removeClass('ladb-zoom-auto');
+        $html.removeClass('ladb-zoom-small');
+        $html.addClass('ladb-zoom-tiny');
+    } else {
+        $html.addClass('ladb-zoom-auto');
+        $html.removeClass('ladb-zoom-small');
+        $html.removeClass('ladb-zoom-tiny');
+    }
 };
 
 // Progress /////

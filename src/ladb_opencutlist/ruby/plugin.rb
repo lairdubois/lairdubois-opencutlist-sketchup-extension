@@ -61,6 +61,7 @@ module Ladb::OpenCutList
     SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT = 'settings.dialog_maximized_height'
     SETTINGS_KEY_DIALOG_LEFT = 'settings.dialog_left'
     SETTINGS_KEY_DIALOG_TOP = 'settings.dialog_top'
+    SETTINGS_KEY_DIALOG_ZOOM = 'settings.dialog_zoom'
     SETTINGS_KEY_DIALOG_PRINT_MARGIN = 'settings.dialog_print_margin'
     SETTINGS_KEY_DIALOG_TABLE_ROW_SIZE = 'settings.dialog_table_row_size'
     SETTINGS_KEY_COMPONENTS_LAST_DIR = 'settings.components_last_dir'
@@ -78,6 +79,7 @@ module Ladb::OpenCutList
     TABS_DIALOG_DEFAULT_MAXIMIZED_HEIGHT = 640
     TABS_DIALOG_DEFAULT_LEFT = 60
     TABS_DIALOG_DEFAULT_TOP = 100
+    TABS_DIALOG_DEFAULT_ZOOM = 0   # 0 = Auto (100%), 1 = Small (90%), 2 = Tiny (80%)
     TABS_DIALOG_DEFAULT_PRINT_MARGIN = 0   # 0 = Normal, 1 = Small
     TABS_DIALOG_DEFAULT_TABLE_ROW_SIZE = 0   # 0 = Normal, 1 = Compact
     TABS_DIALOG_PREF_KEY = 'fr.lairdubois.opencutlist'
@@ -125,6 +127,7 @@ module Ladb::OpenCutList
       @tabs_dialog_maximized_height = read_default(SETTINGS_KEY_DIALOG_MAXIMIZED_HEIGHT, TABS_DIALOG_DEFAULT_MAXIMIZED_HEIGHT)
       @tabs_dialog_left = read_default(SETTINGS_KEY_DIALOG_LEFT, TABS_DIALOG_DEFAULT_LEFT)
       @tabs_dialog_top = read_default(SETTINGS_KEY_DIALOG_TOP, TABS_DIALOG_DEFAULT_TOP)
+      @tabs_dialog_zoom = read_default(SETTINGS_KEY_DIALOG_ZOOM, TABS_DIALOG_DEFAULT_ZOOM)
       @tabs_dialog_print_margin = read_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, TABS_DIALOG_DEFAULT_PRINT_MARGIN)
       @tabs_dialog_table_row_size = read_default(SETTINGS_KEY_DIALOG_TABLE_ROW_SIZE, TABS_DIALOG_DEFAULT_TABLE_ROW_SIZE)
 
@@ -1201,6 +1204,11 @@ module Ladb::OpenCutList
       tabs_dialog_set_position(@tabs_dialog_left, @tabs_dialog_top)
     end
 
+    def tabs_dialog_set_zoom(zoom, persist = false)
+      @tabs_dialog_zoom = zoom
+      write_default(SETTINGS_KEY_DIALOG_ZOOM, zoom) if persist
+    end
+
     def tabs_dialog_set_print_margin(print_margin, persist = false)
       @tabs_dialog_print_margin = print_margin
       write_default(SETTINGS_KEY_DIALOG_PRINT_MARGIN, print_margin) if persist
@@ -1530,6 +1538,7 @@ module Ladb::OpenCutList
             :update_muted => @update_muted,
             :last_news_timestamp => @last_news_timestamp,
             :last_news_title => @last_news_title,
+            :tabs_dialog_zoom => @tabs_dialog_zoom,
             :tabs_dialog_print_margin => @tabs_dialog_print_margin,
             :tabs_dialog_table_row_size => @tabs_dialog_table_row_size,
             :tabs_dialog_startup_tab_name => @tabs_dialog_startup_tab_name # nil if none
@@ -1541,6 +1550,7 @@ module Ladb::OpenCutList
                 })
       when 'modal'
         return base_capabilities.merge({
+                                         :tabs_dialog_zoom => @tabs_dialog_zoom,
                                          :webgl_available => webgl_available,
                                          :dialog_type => dialog_type,
                                          :dialog_params => dialog_params

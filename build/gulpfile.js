@@ -16,6 +16,7 @@ var yaml = require('js-yaml');
 var path = require('path');
 var cleanCSS = require('gulp-clean-css');
 var uglify = require('gulp-uglify');
+var pxtorem = require('gulp-pxtorem');
 var run = require('gulp-run');
 
 var knownOptions = {
@@ -33,11 +34,12 @@ gulp.task('less_compile', function () {
         .pipe(gulp.dest('../src/ladb_opencutlist/css'));
 });
 
-// Minify .css files
+// Minify .css files + replace px to rem
 gulp.task('css_minify', function () {
     return gulp.src('../src/ladb_opencutlist/css/**/!(*.min).css')
         .pipe(cleanCSS())
         .pipe(rename({ suffix: '.min' }))
+        .pipe(pxtorem({ minPixelValue: 1, propList: [ 'font', 'font-size', 'line-height', 'letter-spacing', 'width', 'min-width', 'height', 'min-height', 'padding', 'margin', 'top', 'right', 'bottom', 'left', 'border-width' ] }))
         .pipe(gulp.dest('../src/ladb_opencutlist/css'));
 });
 

@@ -2,6 +2,7 @@
 /src/ladb_opencutlist/css/ladb-opencutlist.css
 /src/ladb_opencutlist/css/ladb-opencutlist.min.css
 /src/ladb_opencutlist/css/ladb-opencutlist-icons.min.css
+/src/ladb_opencutlist/css/lib/*.min.css
 /src/ladb_opencutlist/js/templates/
 /src/ladb_opencutlist/js/i18n/
 /src/ladb_opencutlist/js/lib/three-orbit-controls.js

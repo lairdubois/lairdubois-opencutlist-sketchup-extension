@@ -126,6 +126,8 @@
 
         this.bind();
 
+        that.setZoom(that.options.tabs_dialog_zoom);
+
         // Load startup modal
         if (this.options.dialog_params && this.options.dialog_params.startup_modal_name) {
             this.loadModal(this.options.dialog_params.startup_modal_name, this.options.dialog_params.params);

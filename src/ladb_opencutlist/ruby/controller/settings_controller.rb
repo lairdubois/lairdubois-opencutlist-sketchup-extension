@@ -57,8 +57,9 @@ module Ladb::OpenCutList
 
     # -- Commands --
 
-    def dialog_settings_command(language: nil, print_margin: Plugin::TABS_DIALOG_DEFAULT_PRINT_MARGIN, table_row_size: Plugin::TABS_DIALOG_DEFAULT_TABLE_ROW_SIZE)
+    def dialog_settings_command(language: nil, zoom: , print_margin: Plugin::TABS_DIALOG_DEFAULT_PRINT_MARGIN, table_row_size: Plugin::TABS_DIALOG_DEFAULT_TABLE_ROW_SIZE)
       PLUGIN.set_language(language, true)
+      PLUGIN.tabs_dialog_set_zoom(zoom, true)
       PLUGIN.tabs_dialog_set_print_margin(print_margin, true)
       PLUGIN.tabs_dialog_set_table_row_size(table_row_size, true)
     end
