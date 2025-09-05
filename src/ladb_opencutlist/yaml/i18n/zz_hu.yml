@@ -1086,7 +1086,7 @@ tab:
         869 - Azonos alkatrészeket és vágásokat tartalmazó táblák vagy furnérok csoportosítása.
       option_bin_folding_warning: |
         870 - *Ha példánytulajdonságokat használsz az azonosító szöveg testreszabási képletében, ez a beállítás automatikusan kikapcsol.*
-      option_hide_part_list: $t(tab.cutlist.title)
+      option_hide_part_list: 871 - Alkatrészlista
       option_hide_part_list_1d_dimensional_0: 872 - Megjelenítve minden deszkánál
       option_hide_part_list_1d_edge_0: 873 - Megjelenítve minden élzárónál
       option_hide_part_list_2d_sheet_good_0: 874 - Megjelenítve minden táblánál
@@ -1918,7 +1918,7 @@ tab:
     language: 1480 - Nyelv
     language_auto: 1481 - Automatikus
     zoom: 1482 - Betűméret
-    zoom_normal: 1483 - Normál
+    zoom_normal: $t(default.automatic)
     zoom_small: 1484 - Kicsi
     zoom_tiny: 1485 - Nagyon kicsi
     print_margin: 1486 - Nyomtatási margók

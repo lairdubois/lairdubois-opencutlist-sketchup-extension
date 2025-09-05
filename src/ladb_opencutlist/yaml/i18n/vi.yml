@@ -1923,7 +1923,7 @@ tab:
     language: Ngôn ngữ
     language_auto: Tự động
     zoom: Cỡ chữ
-    zoom_normal: Bình thường
+    zoom_normal: $t(default.automatic)
     zoom_small: Ngắn
     zoom_tiny: Bé xíu
     print_margin: Lề in

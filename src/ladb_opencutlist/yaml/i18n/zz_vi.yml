@@ -1918,7 +1918,7 @@ tab:
     language: 1480 - Ngôn ngữ
     language_auto: 1481 - Tự động
     zoom: 1482 - Cỡ chữ
-    zoom_normal: 1483 - Bình thường
+    zoom_normal: $t(default.automatic)
     zoom_small: 1484 - Ngắn
     zoom_tiny: 1485 - Bé xíu
     print_margin: 1486 - Lề in

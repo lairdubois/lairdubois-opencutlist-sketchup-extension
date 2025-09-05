@@ -1,5 +1,5 @@
 # this label must be in your language
-_label: Francuski
+_label: Srpski
 # the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
   Ovaj jezik još nije u potpunosti preveden.
@@ -226,6 +226,7 @@ core:
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_layout_single_options: ""
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
       cutlist_report_options: $t(default.deprecated)
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
@@ -1737,7 +1738,7 @@ tab:
     language: Jezik
     language_auto: ""
     zoom: Veličina fonta
-    zoom_normal: Normalno
+    zoom_normal: $t(default.automatic)
     zoom_small: Malo
     zoom_tiny: Sitno
     print_margin: ""

@@ -1856,7 +1856,7 @@ tab:
     language: שפה
     language_auto: אוטומטי
     zoom: גודל טקסט
-    zoom_normal: רגיל
+    zoom_normal: $t(default.automatic)
     zoom_small: קטן
     zoom_tiny: קטן מאוד
     print_margin: שוליים להדפסה

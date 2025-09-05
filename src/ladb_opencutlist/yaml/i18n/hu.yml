@@ -1923,7 +1923,7 @@ tab:
     language: Nyelv
     language_auto: Automatikus
     zoom: Betűméret
-    zoom_normal: Normál
+    zoom_normal: $t(default.automatic)
     zoom_small: Kicsi
     zoom_tiny: Nagyon kicsi
     print_margin: Nyomtatási margók

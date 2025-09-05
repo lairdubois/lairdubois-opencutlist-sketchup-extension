@@ -1843,7 +1843,7 @@ tab:
     language: 1480 - Taal
     language_auto: 1481 - Automaat
     zoom: 1482 - Lettergrootte
-    zoom_normal: 1483 - Normaal
+    zoom_normal: $t(default.automatic)
     zoom_small: 1484 - Klein
     zoom_tiny: 1485 - Zeer klein
     print_margin: 1486 - Marges afdrukken

@@ -1923,7 +1923,7 @@ tab:
     language: Langue
     language_auto: Automatique
     zoom: Taille de texte
-    zoom_normal: $t(default.automatic)  # TODO
+    zoom_normal: $t(default.automatic)
     zoom_small: Petite
     zoom_tiny: Très petite
     print_margin: Marges d'impression

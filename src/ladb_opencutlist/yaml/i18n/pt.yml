@@ -1923,7 +1923,7 @@ tab:
     language: Idioma
     language_auto: Automático
     zoom: Tamanho da fonte
-    zoom_normal: Normal
+    zoom_normal: $t(default.automatic)
     zoom_small: Pequena
     zoom_tiny: Minúscula
     print_margin: Margens de impressão
