@@ -326,7 +326,7 @@ LadbAbstractDialog.prototype.prompt = function (title, text, value, callback, op
 
 // Notify /////
 
-LadbAbstractDialog.prototype.notify = function (text, type, buttons, timeout) {
+LadbAbstractDialog.prototype.notify = function (text, type, buttons, timeout, layout) {
     if (undefined === type) {
         type = 'alert';
     }
@@ -338,7 +338,7 @@ LadbAbstractDialog.prototype.notify = function (text, type, buttons, timeout) {
     }
     const n = new Noty({
         type: type,
-        layout: this.options.noty_layout,
+        layout: layout === undefined ? this.options.noty_layout : layout,
         theme: 'bootstrap-v3',
         text: text,
         timeout: timeout,

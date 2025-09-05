@@ -30,22 +30,6 @@
 </nav>
 <div id="ladb_wrapper" style="display: none;">
     <div id="ladb_wrapper_slides"></div>
-    {% if capabilities.is_rbz and capabilities.is_dev %}
-        <div id="ladb_dev_alert" class="no-print alert alert-warning">
-            <div class="media">
-                <div class="media-left">
-                    <i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i>
-                </div>
-                <div class="media-body">
-                    <h4 class="media-heading">{{ 'default.caution'|i18next }}</h4>
-                    <p>{{ 'core.warning.dev'|i18next({ 'version':capabilities.version, 'build':capabilities.build }) }}</p>
-                </div>
-            </div>
-            <div class="countdown">
-                <div class="countdown-bar" style="width: 100%;"></div>
-            </div>
-        </div>
-    {% endif %}
     <div id="ladb_bottombar" class="ladb-bottombar no-print">
         <ul>
             <li class="ladb-last-news"></li>

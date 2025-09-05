@@ -1,4 +1,4 @@
-#noty_layout__dialogTabs, #noty_layout__dialogModal {
+#noty_layout__dialogTabs, #noty_layout__dialogTabsLeft, #noty_layout__dialogModal {
     position: fixed;
     margin: 0;
     padding: 0;
@@ -13,6 +13,11 @@
     left: 50%;
     margin-left: 45px;
     transform: translate(-50%) translateZ(0) scale(1, 1);
+}
+
+#noty_layout__dialogTabsLeft {
+    bottom: 40px;
+    left: 110px;
 }
 
 #noty_layout__dialogModal {

@@ -463,7 +463,7 @@
     LadbDialogTabs.prototype.showSponsorAd = function () {
 
         // Render ad in bottombar
-        $('#ladb_bottombar').append(Twig.twig({ ref: "tabs/sponsor/_ad.twig" }).render());
+        $('#ladb_bottombar').append(Twig.twig({ ref: 'tabs/sponsor/_ad.twig' }).render());
         setTimeout(function () {
             $('#ladb_sponsor_ad').effect('bounce', { times: 3, distance: 10 }, 500);
         }, 100);
@@ -753,8 +753,8 @@
                     // Fetch useful elements
                     that.$wrapper = $('#ladb_wrapper', that.$element);
                     that.$wrapperSlides = $('#ladb_wrapper_slides', that.$element);
-                    that.$leftbar = $('#ladb_leftbar', that.$element).ladbLeftbar({ dialog: that });
-                    that.$bottombar = $('#ladb_bottombar', that.$element).ladbBottombar({ dialog: that });
+                    that.$leftbar = $('#ladb_leftbar', that.$element).ladbLeftbar({dialog: that});
+                    that.$bottombar = $('#ladb_bottombar', that.$element).ladbBottombar({dialog: that});
                     for (let i = 0; i < that.options.tabDefs.length; i++) {
                         const tabDef = that.options.tabDefs[i];
                         that.$tabBtns[tabDef.name] = $('#ladb_tab_btn_' + tabDef.name, that.$element);
@@ -763,13 +763,13 @@
                     // Push desired notifications
                     if (that.capabilities.update_available) {
                         if (that.capabilities.update_muted) {
-                            that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_upgrade', { muted: true } ]);
+                            that.$leftbar.ladbLeftbar('pushNotification', ['#ladb_leftbar_btn_upgrade', {muted: true}]);
                         } else {
-                            that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_upgrade', { silent: true } ]);
+                            that.$leftbar.ladbLeftbar('pushNotification', ['#ladb_leftbar_btn_upgrade', {silent: true}]);
                         }
                     }
                     if (that.capabilities.last_news_timestamp > that.lastListedNewsTimestamp) {
-                        that.$leftbar.ladbLeftbar('pushNotification', [ '#ladb_leftbar_btn_news', { silent: true } ]);
+                        that.$leftbar.ladbLeftbar('pushNotification', ['#ladb_leftbar_btn_news', {silent: true}]);
                         if (that.capabilities.last_news_title != null) {
                             that.$bottombar.ladbBottombar('notifyLastNews', [ that.capabilities.last_news_title ]);
                         }
@@ -786,24 +786,12 @@
                     }
 
                     // Dev alert
-                    const $devAlert = $('#ladb_dev_alert');
-                    if ($devAlert.length > 0) {
-                        const devAlertTotalTime = 15000;
-                        let devAlertRemaining = devAlertTotalTime;
-                        const fnDevAlertCountdown = function () {
-                            if ($devAlert.is(':visible')) {
-                                devAlertRemaining -= 200;
-                                $('.countdown-bar', $devAlert).css('width', Math.max((devAlertRemaining / devAlertTotalTime) * 100, 0) + '%');
-                                if (devAlertRemaining < 0) {
-                                    $devAlert.hide();
-                                    return;
-                                }
-                            }
-                            setTimeout(function () {
-                                window.requestAnimationFrame(fnDevAlertCountdown);
-                            }, 200);
+                    if (that.capabilities.is_rbz && that.capabilities.is_dev) {
+                        const fnShowDevAlert = function () {
+                            that.notify(Twig.twig({ ref: 'core/_notify-dev.twig' }).render({ capabilities: that.capabilities }), 'warning', [], 10000, 'dialogTabsLeft');
+                            that.$element.off('maximized.ladb.dialog', fnShowDevAlert);
                         }
-                        window.requestAnimationFrame(fnDevAlertCountdown);
+                        that.$element.on('maximized.ladb.dialog', fnShowDevAlert)
                     }
 
                 }
