@@ -226,6 +226,7 @@ core:
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_layout_single_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title) ($t(default.part_single))
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
       cutlist_report_options: $t(default.deprecated)
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
@@ -761,10 +762,10 @@ tab:
       option_bar_folding_1: 是
       option_bar_folding_help: 分组包含相同部件和切割的板材或边条.
       option_sheet_folding_good: 分组相似的面板
-      option_sheet_folding_veneer: 分组相似的贴面板
+      option_sheet_folding_veneer: 分组相似的木皮板
       option_sheet_folding_0: 否
       option_sheet_folding_1: 是
-      option_sheet_folding_help: 分组包含相同部件和切割的板材或贴面板.
+      option_sheet_folding_help: 分组包含相同部件和切割的板材或木皮板.
       option_hide_part_list: 部件清单
       option_hide_part_list_1d_dimensional_0: 显示在每块板上
       option_hide_part_list_1d_edge_0: 显示在每个边条上
@@ -1015,7 +1016,7 @@ tab:
         *未标注单位的尺寸将视为模型单位*
       option_scrap_bin_1d_none: 无
       option_std_bin_2d_sheet_good: 标准板材
-      option_std_bin_2d_veneer: 标准木皮
+      option_std_bin_2d_veneer: 标准木皮板
       option_std_bin_2d_help: |
         选择标准板材或木皮的尺寸，这些尺寸将被复制以计算最佳方式排板。
 
@@ -1055,20 +1056,20 @@ tab:
       option_rectangleguillotine_first_stage_orientation_any: 任何
       option_rectangleguillotine_keep: 废料最小尺寸
       option_rectangleguillotine_keep_help: 两个尺寸大于最小尺寸的边角料将被标记为**保留**。
-      option_irregular_allowed_rotations: 允許旋轉
+      option_irregular_allowed_rotations: 允许旋转
       option_irregular_allowed_rotations_help: |
-        定義工件在排料時可旋轉的角度間距。
+        定义工件在排料时可旋转的角度间距。
 
-        *有紋理方向的材料只允許 0 度與 180 度的旋轉角度。*
+        *有纹理方向的材料只允许 0 度与 180 度的旋转角度。 *
       option_irregular_allowed_rotations_0: 无
-      option_irregular_allowed_rotations_90: 間隔90°
-      option_irregular_allowed_rotations_180: 間隔180°
-      option_irregular_allow_mirroring: 允許鏡象
+      option_irregular_allowed_rotations_90: 间隔90°
+      option_irregular_allowed_rotations_180: 间隔180°
+      option_irregular_allow_mirroring: 允许镜象
       option_irregular_allow_mirroring_help: |
         定义是否允许对部件进行镜像放置
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
-      option_spacing: 間距
+      option_spacing: 间距
       option_spacing_help: |
         每个部件之间的最小间距
         该数值可对应锯片或切割工具的宽度
@@ -1081,7 +1082,7 @@ tab:
       option_bin_folding_1d_dimensional: 分组相似的板材
       option_bin_folding_1d_edge: 分组相似的边条
       option_bin_folding_2d_sheet_good: 分组相似的面板
-      option_bin_folding_2d_veneer: 分组相似的贴面板
+      option_bin_folding_2d_veneer: 分组相似的木皮板
       option_bin_folding_0: $t(default.no)
       option_bin_folding_1: $t(default.yes)
       option_bin_folding_1d_help: |

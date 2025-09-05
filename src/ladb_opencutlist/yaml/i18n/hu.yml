@@ -226,6 +226,7 @@ core:
       cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
       cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
       cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_layout_single_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title) ($t(default.part_single))
       cutlist_options: $t(tab.cutlist.label) / $t(default.options)
       cutlist_report_options: $t(default.deprecated)
       cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
@@ -647,7 +648,7 @@ tab:
       options_customize: Testreszabás
       option_source: Forrás
       option_source_summary: $t(tab.cutlist.list.summary)
-      option_source_cutlist: $t(tab.cutlist.title)
+      option_source_cutlist: Alkatrészlista
       option_source_instances_list: Példányok listája
       option_format: Formátum
       option_csv_col_sep: Elválasztó
@@ -1090,7 +1091,7 @@ tab:
         Azonos alkatrészeket és vágásokat tartalmazó táblák vagy furnérok csoportosítása.
       option_bin_folding_warning: |
         *Ha példánytulajdonságokat használsz az azonosító szöveg testreszabási képletében, ez a beállítás automatikusan kikapcsol.*
-      option_hide_part_list: $t(tab.cutlist.title)
+      option_hide_part_list: Alkatrészlista
       option_hide_part_list_1d_dimensional_0: Megjelenítve minden deszkánál
       option_hide_part_list_1d_edge_0: Megjelenítve minden élzárónál
       option_hide_part_list_2d_sheet_good_0: Megjelenítve minden táblánál
