@@ -3,8 +3,8 @@
 {% block headerToolsInner %}
     {{ parent() }}
     <button id="ladb_btn_generate" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.generate'|i18next }}</button>
-    <button id="ladb_btn_print" class="btn btn-default" disabled><i class="ladb-opencutlist-icon-print"></i><span class="hidden-sm hidden-xs">  {{ 'default.print'|i18next }}</span></button>
-    <button id="ladb_btn_export" class="btn btn-default" disabled><i class="ladb-opencutlist-icon-export"></i><span class="hidden-sm hidden-xs">  {{ 'default.export'|i18next }}</span></button>
+    <button id="ladb_btn_print" class="btn btn-default" disabled><i class="ladb-opencutlist-icon-print"></i><span class="hidden-sm hidden-xs"> {{ 'default.print'|i18next }}</span></button>
+    <button id="ladb_btn_export" class="btn btn-default" disabled><i class="ladb-opencutlist-icon-export"></i><span class="hidden-sm hidden-xs"> {{ 'default.export'|i18next }}</span></button>
     &nbsp;
     {% if capabilities.sketchup_version_number >= 1800000000 and capabilities.webgl_available %}
         <button id="ladb_btn_layout" class="btn btn-default{# btn-sponsored#}" disabled><i class="ladb-opencutlist-icon-layout"></i> {{ 'default.draw'|i18next }}</button>
