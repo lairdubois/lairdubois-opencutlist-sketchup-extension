@@ -266,7 +266,7 @@ core:
       view_left: 左边
       view_right: 右边
       zoom: "{{ zoom }} 比例"
-      explode_factor: 爆炸视图幅度
+      explode_factor: 分解视图幅度
       toggle_box_helper: 显示/隐藏边界框
       toggle_box_dimensions_helper: 显示/隐藏尺寸
       toggle_axes_helper: 显示/隐藏部件坐标轴
@@ -944,9 +944,9 @@ tab:
         option_sheet_veneer: 薄板
         option_sheet_veneer_help: |
           允许您启用薄板的导出以及选择其颜色。
-        option_bar_dimensional: 尺寸
+        option_bar_dimensional: 棒材
         option_bar_dimensional_help: |
-          允许您激活条形图的导出以及选择其颜色。
+          允许您激活棒材的导出以及选择其颜色。
         option_bar_band: 封边
         option_bar_band_help: |
           允许您启用封边条的导出以及选择其颜色。
@@ -961,9 +961,9 @@ tab:
         option_texts: 标识符
         option_texts_help: |
           允许您启用零件识别文本的导出以及选择其颜色。
-        option_leftovers: 边角料
+        option_leftovers: 废料
         option_leftovers_help: |
-          允许您启用边角料的导出以及选择它们的颜色。
+          允许您启用废料的导出以及选择它们的颜色。
         option_cuts: 切割
         option_cuts_help: |
           允许您激活部分的导出以及选择其颜色。
@@ -1095,10 +1095,10 @@ tab:
       option_hide_part_list_1d_dimensional_0: 显示在每块板上
       option_hide_part_list_1d_edge_0: 显示在每个边条上
       option_hide_part_list_2d_sheet_good_0: 显示在每块面板上
-      option_hide_part_list_2d_veneer_0: 显示在每块贴面板上
+      option_hide_part_list_2d_veneer_0: 显示在每块木皮片上
       option_hide_part_list_1: 隐藏
       option_hide_part_list_1d_help: 显示或隐藏每块板或边条上的部件清单.
-      option_hide_part_list_2d_help: 显示或隐藏每块面板或贴面板上的部件清单.
+      option_hide_part_list_2d_help: 显示或隐藏每块面板或木皮片上的部件清单.
       option_part_drawing_type: 部件的形状
       option_part_drawing_type_0: 隐藏
       option_part_drawing_type_1: 正视图绘制
@@ -1146,7 +1146,7 @@ tab:
         total_cut_length: 切割长度
         efficiency: 效率
         count: 数量
-        length: 引线
+        length: 長度
         width: 宽度
         total_length: Σ 长度
         total_area: Σ 面积
@@ -1155,23 +1155,23 @@ tab:
         total_used: 使用总量
         bin_1d_dimensional: 尺寸
         bin_1d_dimensional_type_0: 标准尺寸
-        bin_1d_dimensional_type_1: 余料板材
+        bin_1d_dimensional_type_1: 板材余料
         bin_1d_edge: 封边
         bin_1d_edge_type_0: 标准封边
         bin_1d_edge_type_1: 余料边缘封边
         bin_2d_sheet_good: 面板
         bin_2d_sheet_good_type_0: 标准面板
         bin_2d_sheet_good_type_1: 面板余料
-        bin_2d_veneer: 薄板
-        bin_2d_veneer_type_0: 标准薄饰板
-        bin_2d_veneer_type_1: 薄饰板余料
+        bin_2d_veneer: 木皮片
+        bin_2d_veneer_type_0: 标准木皮片
+        bin_2d_veneer_type_1: 木皮片余料
         unused: 未使用
         unplaced_parts: 未放置的部件
         unplaced_parts_plural: 未放置的部件
         parts: 部件
         parts_plural: 部件
-        leftovers: 剩余物
-        leftovers_plural: 边角料
+        leftovers: 废料
+        leftovers_plural: 废料
         leftovers_to_keep: 需要保留的废料
         leftovers_to_keep_plural: 需要保留的废料
         cut: 切割
@@ -1188,12 +1188,12 @@ tab:
         option_bin_sheet_good: 面板
         option_bin_sheet_good_help: |
           允许您启用面板的导出以及选择其颜色。
-        option_bin_veneer: 薄板
+        option_bin_veneer: 木皮片
         option_bin_veneer_help: |
-          允许您启用薄板的导出以及选择其颜色。
+          允许您启用木皮片的导出以及选择其颜色。
         option_bin_dimensional: 尺寸
         option_bin_dimensional_help: |
-          允许您激活条形图的导出以及选择其颜色。
+          允许您激活棒材的导出以及选择其颜色。
         option_bin_edge: 封边
         option_bin_edge_help: |
           允许您启用封边条的导出以及选择其颜色。
@@ -1209,9 +1209,9 @@ tab:
         option_texts: 标识符
         option_texts_help: |
           允许您启用零件识别文本的导出以及选择其颜色。
-        option_leftovers: 边角料
+        option_leftovers: 废料
         option_leftovers_help: |
-          允许您启用边角料的导出以及选择它们的颜色。
+          允许您启用废料的导出以及选择它们的颜色。
         option_cuts: 切割
         option_cuts_help: |
           允许您激活部分的导出以及选择其颜色。
@@ -1310,8 +1310,8 @@ tab:
         part_edge_ymax: 边缘长度 2
         part_edge_xmin: 边缘宽度 1
         part_edge_xmax: 边缘宽度 2
-        part_face_zmin: 薄饰板背面
-        part_face_zmax: 薄饰板正面
+        part_face_zmin: 木皮片背面
+        part_face_zmax: 木皮片正面
         thumbnail_proportional_drawing: 缩略图(正面)
         thumbnail_proportional_drawing_bottom: 缩略图(背面)
         thumbnail_proportional: 按比例缩略图
@@ -1355,7 +1355,7 @@ tab:
       option_pins_colored_help: 选择标签的颜色.
       option_pins_formula: 公式
       option_pins_formula_help: 允许您编写 *Ruby* 代码来自定义标签文本.
-      option_pins_length: 引线
+      option_pins_length: 長度
       option_pins_length_0: 没有引线
       option_pins_length_1: 短
       option_pins_length_2: 中等
@@ -1430,7 +1430,7 @@ tab:
       info_2d: |
         此模块允许您将零件的 **2D 投影**导出为 [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) 或 [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) 格式的文件。
       info_3d: |
-        此模块允许您将零件的**3D几何图形**导出为[STL]（https://wikipedia.org/wiki/STL_（file_format））或[OBJ]（https://wikipedia.org/wiki/Wavefront_.obj_file）格式的文件。
+        此模块允许您将零件的**3D几何图形**导出为 [STL](https://wikipedia.org/wiki/STL_(file_format)) 或 [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) 格式的文件。
       option_file_format: 格式
       option_file_format_help: |
         选择导出文件的格式
@@ -1553,11 +1553,11 @@ tab:
     title: 材质
     type_0: 未定义
     type_1: 实木
-    type_2: 面板
-    type_3: 尺寸
+    type_2: 板材
+    type_3: 棒材
     type_4: 封边
     type_5: 五金
-    type_6: 贴面
+    type_6: 木皮
     tooltip:
       type_0: 材质类型 '$t(tab.materials.type_0)'
       type_1: 材质类型 '$t(tab.materials.type_1)'
@@ -1637,7 +1637,7 @@ tab:
         此材料可用的标准截面
 
         *若未指定单位，则会套用模型的单位*
-      std_sizes: 标准面板尺寸
+      std_sizes: 标准尺寸
       std_sizes_help: |
         此材料可用的标准尺寸
 
@@ -1746,7 +1746,7 @@ tab:
       name: 名称
       instance_name: 实例
       material: 材质
-      definition_name: 范围
+      definition_name: 定义
       description: 描述
       url: URL
       tags: 标签
@@ -1778,7 +1778,7 @@ tab:
     label: 导入
     title: 导入部件
     help: |
-      此页面允许您从 [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) 文件中导入部件（由矩形边界框定义）到您的模型中.
+      此页面允许您从[CSV](https://zh.wikipedia.org/wiki/%E9%80%97%E5%8F%B7%E5%88%86%E9%9A%94%E5%80%BC)文件中导入部件（由矩形边界框定义）到您的模型中.
       然后, 您可以使用 *OpenCutList* 的功能处理由除 *SketchUp* 之外的软件生成的部件.
       点击 **打开 CSV 文件** 按钮开始.
     open_csv: 打开 CSV 文件
@@ -2169,7 +2169,7 @@ tool:
       no_material: 无材质
       no_material_type: "没有类型为 '{{ type }}' 的材质"
     error:
-      not_part: 目标对象不是组件
+      not_part: 目标对象不是部件 (组件)
       not_edge: 目标面不是面板边缘
       not_face: 目标面不是面板面
       wrong_material_type: "目标部件的类型必须为 '{{ type }}'"
@@ -2195,7 +2195,7 @@ tool:
     warning:
       more_entities: "将修改 {{ count_used }} 个共享相同定义的实例"
     error:
-      not_part: 目标对象不是(组件)
+      not_part: 目标对象不是部件 (组件)
       not_orientable: 此部件类型不允许进行定向操作
   smart_export:
     title: 导出
