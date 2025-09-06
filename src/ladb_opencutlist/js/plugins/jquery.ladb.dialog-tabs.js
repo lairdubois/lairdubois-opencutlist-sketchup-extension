@@ -777,7 +777,7 @@
 
                     that.bind();
 
-                    that.setZoom(that.options.tabs_dialog_zoom);
+                    that.setFontSize(that.options.tabs_dialog_font_size);
                     if (that.options.tabs_dialog_table_row_size) {
                         that.setCompact(true);
                     }

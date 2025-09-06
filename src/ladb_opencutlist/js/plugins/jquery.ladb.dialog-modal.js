@@ -126,7 +126,7 @@
 
         this.bind();
 
-        that.setZoom(that.options.tabs_dialog_zoom);
+        that.setFontSize(that.options.tabs_dialog_font_size);
 
         // Load startup modal
         if (this.options.dialog_params && this.options.dialog_params.startup_modal_name) {

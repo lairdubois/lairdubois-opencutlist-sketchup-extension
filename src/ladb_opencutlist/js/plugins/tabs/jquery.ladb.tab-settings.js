@@ -251,9 +251,9 @@
 
         const $btnReset = $('#ladb_btn_reset', this.$element);
         const $selectLanguage = $('#ladb_select_language', this.$element);
-        const $selectZoom = $('#ladb_select_zoom', this.$element);
-        const $selectPrintMargin = $('#ladb_select_print_margin', this.$element);
+        const $selectFontSize = $('#ladb_select_font_size', this.$element);
         const $selectTableRowSize = $('#ladb_select_table_row_size', this.$element);
+        const $selectPrintMargin = $('#ladb_select_print_margin', this.$element);
         const $btnWidthUp = $('#ladb_btn_width_up', this.$element);
         const $btnWidthDown = $('#ladb_btn_width_down', this.$element);
         const $btnHeightUp = $('#ladb_btn_height_up', this.$element);
@@ -266,29 +266,29 @@
 
         const fnGlobalUpdate = function () {
 
-            // Send to ruby
+            // Send it to ruby
             rubyCallCommand('settings_dialog_settings', {
                 language: that.dialog.capabilities.language,
-                zoom: that.dialog.capabilities.tabs_dialog_zoom,
-                print_margin: that.dialog.capabilities.tabs_dialog_print_margin,
-                table_row_size: that.dialog.capabilities.tabs_dialog_table_row_size
+                font_size: that.dialog.capabilities.tabs_dialog_font_size,
+                table_row_size: that.dialog.capabilities.tabs_dialog_table_row_size,
+                print_margin: that.dialog.capabilities.tabs_dialog_print_margin
             });
 
-            that.dialog.setZoom(that.dialog.capabilities.tabs_dialog_zoom);
+            that.dialog.setFontSize(that.dialog.capabilities.tabs_dialog_font_size);
             that.dialog.setCompact(that.dialog.capabilities.tabs_dialog_table_row_size === 1);
 
         };
         const fnGlobalFillInputs = function () {
             $selectLanguage.selectpicker('val', that.dialog.capabilities.language);
-            $selectZoom.selectpicker('val', that.dialog.capabilities.tabs_dialog_zoom);
-            $selectPrintMargin.selectpicker('val', that.dialog.capabilities.tabs_dialog_print_margin);
+            $selectFontSize.selectpicker('val', that.dialog.capabilities.tabs_dialog_font_size);
             $selectTableRowSize.selectpicker('val', that.dialog.capabilities.tabs_dialog_table_row_size);
+            $selectPrintMargin.selectpicker('val', that.dialog.capabilities.tabs_dialog_print_margin);
         }
 
         $selectLanguage.selectpicker($.extend({}, SELECT_PICKER_OPTIONS, { size: that.dialog.capabilities.languages.length + 1 }));
-        $selectZoom.selectpicker(SELECT_PICKER_OPTIONS);
-        $selectPrintMargin.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectFontSize.selectpicker(SELECT_PICKER_OPTIONS);
         $selectTableRowSize.selectpicker(SELECT_PICKER_OPTIONS);
+        $selectPrintMargin.selectpicker(SELECT_PICKER_OPTIONS);
 
         fnGlobalFillInputs();
 
@@ -304,23 +304,23 @@
                 that.dialog.alert(i18next.t('language.' + language), i18next.t('language_disabled_msg.' + language));
             }
         });
-        $selectZoom.on('change', function () {
-            that.dialog.capabilities.tabs_dialog_zoom = parseInt($selectZoom.val());
-            fnGlobalUpdate();
-        });
-        $selectPrintMargin.on('change', function () {
-            that.dialog.capabilities.tabs_dialog_print_margin = parseInt($selectPrintMargin.val());
+        $selectFontSize.on('change', function () {
+            that.dialog.capabilities.tabs_dialog_font_size = parseInt($selectFontSize.val());
             fnGlobalUpdate();
         });
         $selectTableRowSize.on('change', function () {
             that.dialog.capabilities.tabs_dialog_table_row_size = parseInt($selectTableRowSize.val());
             fnGlobalUpdate();
         });
+        $selectPrintMargin.on('change', function () {
+            that.dialog.capabilities.tabs_dialog_print_margin = parseInt($selectPrintMargin.val());
+            fnGlobalUpdate();
+        });
         $btnReset.on('click', function () {
             $(this).blur();
             that.dialog.capabilities.language = 'auto';
-            that.dialog.capabilities.tabs_dialog_print_margin = 0;
             that.dialog.capabilities.tabs_dialog_table_row_size = 0;
+            that.dialog.capabilities.tabs_dialog_print_margin = 0;
             fnGlobalUpdate();
             fnGlobalFillInputs();
             that.showReloadAlert();

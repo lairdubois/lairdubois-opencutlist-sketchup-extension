@@ -14,6 +14,19 @@
     <p>
         <span class="ladb-capabilities-version">{{ capabilities.version }}</span>&nbsp;/&nbsp;<span class="ladb-capabilities-language">{{ capabilities.language }}</span>&nbsp;&nbsp;<small class="ladb-capabilities-build">( build: {{ capabilities.build }} )</small><a id="ladb_link_changelog" href="#" class="ladb-changelog-link">CHANGELOG</a>
     </p>
+    {% if capabilities.is_dev %}
+        <div class="alert alert-warning">
+            <div class="media">
+                <div class="media-left">
+                    <i class="ladb-opencutlist-icon-warning" style="font-size: 150%;"></i>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">{{'default.caution'|i18next}}</h4>
+                    <p>{{'core.warning.dev'|i18next({ 'version': capabilities.version, 'build': capabilities.build })}}</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
     <h3>{{ 'tab.about.credits'|i18next }}</h3>
     <p>{{ 'tab.about.credits_authors'|i18next }}</p>
     <h4>{{ 'tab.about.credits_translations'|i18next }}</h4>

@@ -36,9 +36,9 @@ function LadbAbstractDialog(element, options) {
         update_muted: options.update_muted,
         last_news_timestamp: options.last_news_timestamp,
         last_news_title: options.last_news_title,
-        tabs_dialog_zoom: options.tabs_dialog_zoom,
-        tabs_dialog_print_margin: options.tabs_dialog_print_margin,
+        tabs_dialog_font_size: options.tabs_dialog_font_size,
         tabs_dialog_table_row_size: options.tabs_dialog_table_row_size,
+        tabs_dialog_print_margin: options.tabs_dialog_print_margin,
     };
 
     this.settings = {};
@@ -94,20 +94,20 @@ LadbAbstractDialog.prototype.getSetting = function (key, defaultValue) {
 
 // UI /////
 
-LadbAbstractDialog.prototype.setZoom = function (zoom) {
+LadbAbstractDialog.prototype.setFontSize = function (font_size) {
     const $html = $('html');
-    if (zoom === 1) {
-        $html.removeClass('ladb-zoom-auto');
-        $html.addClass('ladb-zoom-small');
-        $html.removeClass('ladb-zoom-tiny');
-    } else if (zoom === 2) {
-        $html.removeClass('ladb-zoom-auto');
-        $html.removeClass('ladb-zoom-small');
-        $html.addClass('ladb-zoom-tiny');
+    if (font_size === 1) {
+        $html.removeClass('ladb-font-size-auto');
+        $html.addClass('ladb-font-size-small');
+        $html.removeClass('ladb-font-size-tiny');
+    } else if (font_size === 2) {
+        $html.removeClass('ladb-font-size-auto');
+        $html.removeClass('ladb-font-size-small');
+        $html.addClass('ladb-font-size-tiny');
     } else {
-        $html.addClass('ladb-zoom-auto');
-        $html.removeClass('ladb-zoom-small');
-        $html.removeClass('ladb-zoom-tiny');
+        $html.addClass('ladb-font-size-auto');
+        $html.removeClass('ladb-font-size-small');
+        $html.removeClass('ladb-font-size-tiny');
     }
 };
 
