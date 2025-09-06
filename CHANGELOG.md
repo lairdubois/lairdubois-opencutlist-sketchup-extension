@@ -43,6 +43,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * 2025-09-06
     * Added font size option in the settings tab 
+    * Fixed various packing solver bugs
     * Updated languages
   * 2025-09-03
     * Fixed Smart Handle Tool when model axes are changed
