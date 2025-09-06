@@ -301,13 +301,15 @@ module Ladb::OpenCutList
                 :count,
                 :part,
                 :projection_def,
-                :color
+                :color,
+                :boxed
 
     def initialize(length:, width:,
                    count:,
                    part:,
                    projection_def:,
-                   color:)
+                   color:,
+                   boxed:)
 
       @length = length
       @width = width
@@ -315,6 +317,7 @@ module Ladb::OpenCutList
       @part = part
       @projection_def = projection_def
       @color = color
+      @boxed = boxed
 
     end
 

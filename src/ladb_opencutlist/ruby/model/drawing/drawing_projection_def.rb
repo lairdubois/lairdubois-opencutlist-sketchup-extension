@@ -161,8 +161,8 @@ module Ladb::OpenCutList
 
     def initialize
 
-      @outer_poly_def = nil # DrawingProjectionPolyDef
-      @holes_poly_defs = [] # Array<DrawingProjectionPolyDef>
+      @outer_poly_def = nil # DrawingProjectionPolygonDef
+      @holes_poly_defs = [] # Array<DrawingProjectionPolygonDef>
 
     end
 

@@ -2708,7 +2708,6 @@
                     $('option[value=0]', $selectPartDrawingType).prop('disabled', isIrregular);
                     if ($selectPartDrawingType.val() === null) $selectPartDrawingType.selectpicker('val', 1);   // PART_DRAWING_TYPE_2D_TOP
                     $selectPartDrawingType.selectpicker('refresh');
-                    $('.ladb-cutting-increase-help > small', $modal).css('text-decoration', isIrregular ? 'line-through' : 'none')
                     $('.ladb-cutting-increase-help > i', $modal).css('display', isIrregular ? 'inline' : 'none')
                     $('.nav li .ladb-cutting-increase-warning', $modal).css('display', isIrregular && (response.length_increase !== "0" || response.width_increase !== "0") ? 'inline' : 'none')
                 };

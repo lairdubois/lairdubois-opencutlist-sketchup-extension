@@ -277,6 +277,9 @@ module Ladb::OpenCutList
     DXF_TEXT_VALIGN_MIDDLE = 2
     DXF_TEXT_VALIGN_TOP = 3
 
+    DXF_LINE_TYPE_CONTINUOUS = 'CONTINUOUS'.freeze
+    DXF_LINE_TYPE_DOT2 = 'DOT2'.freeze
+
     def _dxf_get_unit_factor(su_unit)
 
       case su_unit
@@ -629,7 +632,7 @@ module Ladb::OpenCutList
 
     def _dxf_write_section_tables(file, vport_min = Geom::Point3d.new, vport_max = Geom::Point3d.new(1000.0, 1000.0, 1000.0), layer_defs = [])  # layer_defs = [ DxfLayerDef, ... ]
 
-      layer_defs = [ DxfLayerDef.new('0', nil) ] + layer_defs
+      layer_defs = [ DxfLayerDef.new('0', nil, nil) ] + layer_defs
 
       _dxf_write_section(file, 'TABLES') do
 
@@ -745,7 +748,7 @@ module Ladb::OpenCutList
             _dxf_write(file, 2, layer_def.name)
             _dxf_write(file, 70, 0)
             _dxf_write(file, 62, _dxf_convert_color_to_aci(layer_def.color))  # Docs : https://ezdxf.mozman.at/docs/concepts/aci.html
-            _dxf_write(file, 6, 'CONTINUOUS')
+            _dxf_write(file, 6, layer_def.line_type)
           end
 
         _dxf_write(file, 0, 'ENDTAB')
@@ -1491,7 +1494,12 @@ module Ladb::OpenCutList
 
     # -----
 
-    DxfLayerDef = Struct.new(:name, :color)
+    DxfLayerDef = Struct.new(:name, :color, :line_type) do
+      def initialize(*)
+        super
+        self.line_type = DXF_LINE_TYPE_CONTINUOUS if self.line_type.nil?
+      end
+    end
     DxfVertexDef = Struct.new(:x, :y, :bulge)
 
   end

@@ -66,7 +66,7 @@ module Ladb::OpenCutList
       nil
     end
 
-    def _compute_part_box(part_drawing_type, part, drawing_def)
+    def _compute_part_cut_box(part_drawing_type, part, drawing_def)
       part_def = part.def
       group_def = part.group.def
       part_length_increase = part_def.length_increase

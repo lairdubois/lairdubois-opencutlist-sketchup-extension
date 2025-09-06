@@ -182,6 +182,8 @@ module Ladb::OpenCutList
       width = _svg_value(size.x)
       height = _svg_value(size.y)
 
+      virtual_rect_cuts_attributes = []
+
       _svg_write_start(file, 0, 0, width, height, unit_sign)
 
       unless @bin_hidden
@@ -296,6 +298,16 @@ module Ladb::OpenCutList
 
           end
 
+          virtual_rect_cuts_attributes << {
+            x: _svg_value(position.x),
+            y: _svg_value(position.y),
+            width: _svg_value(size.x),
+            height: _svg_value(size.y),
+            stroke: _svg_stroke_color_hex(@cuts_color),
+            fill: 'none',
+            'stroke-dasharray': '5,5'
+          } unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
+
         end
         _svg_write_group_end(file)
       end
@@ -324,7 +336,7 @@ module Ladb::OpenCutList
               width: _svg_value(size.x),
               height: _svg_value(size.y),
               stroke: _svg_stroke_color_hex(@leftovers_stroke_color, @leftovers_fill_color),
-              fill: _svg_fill_color_hex(@leftovers_fill_color),
+              fill: _svg_fill_color_hex(@leftovers_fill_color)
             })
 
           end
@@ -333,6 +345,9 @@ module Ladb::OpenCutList
 
       unless @cuts_hidden
         _svg_write_group_start(file, id: LAYER_CUT)
+          virtual_rect_cuts_attributes.each do |attributes|
+            _svg_write_tag(file, 'rect', attributes)
+          end
           bin_def.cut_defs.each do |cut_def|
 
             if cut_def.horizontal?
@@ -370,6 +385,7 @@ module Ladb::OpenCutList
               x2: _svg_value(position2.x),
               y2: _svg_value(position2.y),
               stroke: _svg_stroke_color_hex(@cuts_color),
+              'stroke-dasharray': '5,5'
             })
 
           end
@@ -406,7 +422,7 @@ module Ladb::OpenCutList
       layer_defs << DxfLayerDef.new(LAYER_BIN, @bin_stroke_color) unless @bin_hidden
       layer_defs << DxfLayerDef.new(LAYER_PART, @parts_stroke_color) unless @parts_hidden || @dxf_structure != DXF_STRUCTURE_LAYER_AND_BLOCK && @part_drawing_type != PART_DRAWING_TYPE_NONE
       layer_defs << DxfLayerDef.new(LAYER_LEFTOVER, @leftovers_stroke_color) unless @leftovers_hidden
-      layer_defs << DxfLayerDef.new(LAYER_CUT, @cuts_color) unless @cuts_hidden
+      layer_defs << DxfLayerDef.new(LAYER_CUT, @cuts_color, DXF_LINE_TYPE_DOT2) unless @cuts_hidden
       layer_defs << DxfLayerDef.new(LAYER_TEXT, @texts_color) unless @parts_hidden || @texts_hidden
 
       unless @parts_hidden
@@ -499,6 +515,7 @@ module Ladb::OpenCutList
                                                 transformation: transformation,
                                                 unit_transformation: unit_transformation,
                                                 layer: LAYER_PART) do
+                  _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
                   _dxf_write_label(file, position.x, position.y, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, 0, LAYER_TEXT) unless @texts_hidden
                 end
 
@@ -506,6 +523,7 @@ module Ladb::OpenCutList
 
                 _dxf_write_section_blocks_block(file, fn_part_block_name.call(part), @_dxf_model_space_id) do
                   _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_PART)
+                  _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
                   _dxf_write_label(file, position.x, position.y, size.x, size.y, text, size_.y, position_.x, position_.y, 0, LAYER_TEXT) unless @texts_hidden
                 end
 
@@ -599,6 +617,7 @@ module Ladb::OpenCutList
 
               end
 
+              _dxf_write_rect(file, position.x, position.y, size.x, size.y, LAYER_CUT) unless @cuts_hidden || options_def.problem_type != Packy::PROBLEM_TYPE_RECTANGLE && (options_def.problem_type != Packy::PROBLEM_TYPE_IRREGULAR || !item_type_def.boxed)
               _dxf_write_label(file, position.x, position.y, size.x, size.y, text, size_.x, size_.y, position_.x, position_.y, item_def.angle, LAYER_TEXT) unless @texts_hidden
 
             end

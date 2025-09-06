@@ -457,17 +457,27 @@ module Ladb::OpenCutList
 
           if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
 
-            length = part.def.edge_cutting_length
-            width = part.def.edge_cutting_width
-
-            shapes = projection_def.shell_def.shape_defs.map { |shape_def| {
-              type: 'polygon',
-              vertices: shape_def.outer_poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } },
-              holes: shape_def.holes_poly_defs.map { |poly_def| {
+            if (cut_box = _compute_part_cut_box(@part_drawing_type, part, projection_def.drawing_def))
+              shapes = [{
                 type: 'polygon',
-                vertices: poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } }
-              }},
-            }}
+                vertices: cut_box.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } }
+              }]
+              length = part.def.cutting_length
+              width = part.def.cutting_width
+              boxed = true
+            else
+              shapes = projection_def.shell_def.shape_defs.map { |shape_def| {
+                type: 'polygon',
+                vertices: shape_def.outer_poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } },
+                holes: shape_def.holes_poly_defs.map { |poly_def| {
+                  type: 'polygon',
+                  vertices: poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } }
+                }},
+              }}
+              length = part.def.edge_cutting_length
+              width = part.def.edge_cutting_width
+              boxed = false
+            end
 
             return _create_packing(errors: [ [ [ 'tab.cutlist.packing.error.invalid_part_shapes' ], { :name => part.name } ] ]) if shapes.empty?
 
@@ -482,6 +492,7 @@ module Ladb::OpenCutList
 
             length = part.def.cutting_length
             width = part.def.cutting_width
+            boxed = true
 
             item_types << {
               copies: count,
@@ -498,7 +509,8 @@ module Ladb::OpenCutList
             count: count,
             part: part,
             projection_def: projection_def,
-            color: @colorization > COLORIZATION_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil
+            color: @colorization > COLORIZATION_NONE ? ColorUtils.color_lighten(ColorUtils.color_create("##{Digest::SHA1.hexdigest(part.number.to_s)[0..5]}"), 0.8) : nil,
+            boxed: boxed
           )
 
         end
@@ -966,9 +978,9 @@ module Ladb::OpenCutList
           px_item_rect_y = px_bin_width - _compute_y_with_origin_corner(@problem_type, @origin_corner, px_item_y + bounds.min.y.to_f, px_item_rect_height, px_bin_width)
 
           svg += "<g class='item' transform='translate(#{px_item_rect_x} #{px_item_rect_y})'#{" data-toggle='tooltip' data-html='true' title='#{_render_item_def_tooltip(item_def)}' data-part-id='#{part.id}'" unless light}>"
-            svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" style='fill:#{projection_def.nil? && colorized ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'};stroke:#555'" if light || (projection_def.nil? && colorized)}/>" unless is_irregular
+            svg += "<rect class='item-outer' x='0' y='#{-px_item_rect_height}' width='#{px_item_rect_width}' height='#{px_item_rect_height}'#{" style='fill:#{projection_def.nil? && colorized ? ColorUtils.color_to_hex(item_type_def.color) : '#eee'};stroke:#555'" if light || (projection_def.nil? && colorized)}/>" unless is_irregular && !item_type_def.boxed
 
-            unless projection_def.nil? || light && !is_irregular
+            unless projection_def.nil? || light && (!is_irregular || item_type_def.boxed)
               if light
                 # Projection from Shell
                 d = projection_def.shell_def.shape_defs.map { |shape_def| "M #{shape_def.outer_poly_def.points.map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z #{shape_def.holes_poly_defs.map { |poly_def| "M #{poly_def.points.reverse.map { |point| "#{_to_px(point.x).round(2)},#{-_to_px(point.y).round(2)}" }.join(' L ')} Z" }.join(' ')}" }.join(' ')
