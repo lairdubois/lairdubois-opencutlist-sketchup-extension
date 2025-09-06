@@ -151,7 +151,7 @@ module Ladb::OpenCutList
         layer_def.closed_paths, op = Clippy.execute_union(closed_subjects: layer_def.closed_paths)
       end
 
-      # Intersect with mask if it exists
+      # Intersect with the mask if it exists
       unless @mask.nil?
 
         mask_paths = [ Clippy.points_to_rpath(@mask) ]

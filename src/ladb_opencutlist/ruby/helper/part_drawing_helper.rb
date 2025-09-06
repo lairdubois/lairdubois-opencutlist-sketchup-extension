@@ -66,11 +66,44 @@ module Ladb::OpenCutList
       nil
     end
 
+    def _compute_part_box(part_drawing_type, part, drawing_def)
+      part_def = part.def
+      group_def = part.group.def
+      part_length_increase = part_def.length_increase
+      part_width_increase = part_def.width_increase
+      material_length_increase = group_def.material_attributes.l_length_increase
+      material_width_increase = group_def.material_attributes.l_width_increase
+      if (part_length_increase > 0 || part_width_increase > 0 ||
+        material_length_increase > 0 || material_width_increase > 0) &&
+         (part_drawing_type == PART_DRAWING_TYPE_2D_TOP || part_drawing_type == PART_DRAWING_TYPE_2D_BOTTOM)
+
+         # Create a box (rectangle shape) corresponding to the dim oversize
+
+         face_bounds = drawing_def.faces_bounds
+         min = face_bounds.min
+         max = face_bounds.max
+
+         min.offset!(Geom::Vector3d.new(-material_length_increase / 2.0, -material_width_increase / 2.0))
+         max.offset!(Geom::Vector3d.new(material_length_increase / 2.0 + part_length_increase, material_width_increase / 2.0 + part_width_increase))
+
+         box_bounds = Geom::BoundingBox.new
+         box_bounds.add(min, max)
+
+         return [
+           box_bounds.corner(0),
+           box_bounds.corner(1),
+           box_bounds.corner(3),
+           box_bounds.corner(2)
+         ]
+      end
+      nil
+    end
+
     def _compute_part_mask(part_drawing_type, part, drawing_def)
       if (part_def = part.def).edge_decremented &&
          (part_drawing_type == PART_DRAWING_TYPE_2D_TOP || part_drawing_type == PART_DRAWING_TYPE_2D_BOTTOM)
 
-        # Create a mask (rectangle shape) corresponding to edge decrement
+        # Create a mask (rectangle shape) corresponding to the edge decrement
 
         face_bounds = drawing_def.faces_bounds
         min = face_bounds.min
