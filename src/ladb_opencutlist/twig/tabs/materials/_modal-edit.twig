@@ -78,7 +78,7 @@
 {% endblock %}
 
 {% block footerLeftInner %}
-    <button class="btn btn-danger" id="ladb_materials_delete"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-trash"></i> {{ 'default.delete'|i18next }}...</button>
+    <button class="btn btn-danger" id="ladb_materials_delete" data-toggle="tooltip" title="{{ 'default.delete'|i18next }}..."><i class="ladb-opencutlist-icon ladb-opencutlist-icon-trash"></i></button>
     <button class="btn btn-default" id="ladb_materials_duplicate"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-copy"></i> {{ 'default.duplicate'|i18next }}...</button>
     <button class="btn btn-default" id="ladb_materials_export_to_skm"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'tab.materials.edit_material.export_to_skm'|i18next }}...</button>
 {% endblock %}
