@@ -457,15 +457,32 @@ module Ladb::OpenCutList
 
           if @problem_type == Packy::PROBLEM_TYPE_IRREGULAR
 
-            if (cut_box = _compute_part_cut_box(@part_drawing_type, part, projection_def.drawing_def))
-              shapes = [{
-                type: 'polygon',
-                vertices: cut_box.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } }
-              }]
+            part_def = part.def
+            group_def = part.group.def
+            part_length_increase = part_def.length_increase
+            part_width_increase = part_def.width_increase
+            material_length_increase = group_def.material_attributes.l_length_increase
+            material_width_increase = group_def.material_attributes.l_width_increase
+
+            if part_length_increase > 0 || part_width_increase > 0 ||
+              material_length_increase > 0 || material_width_increase > 0
+
+              # Part is oversized: use cutting rect instead of the real part shape
+
               length = part.def.cutting_length
               width = part.def.cutting_width
               boxed = true
+
+              shapes = [{
+                type: 'rectangle',
+                width: _to_packy_length(length),
+                height: _to_packy_length(width),
+              }]
+
             else
+
+              # Use the real part shape
+
               shapes = projection_def.shell_def.shape_defs.map { |shape_def| {
                 type: 'polygon',
                 vertices: shape_def.outer_poly_def.points.map { |point| { x: _to_packy_length(point.x), y: _to_packy_length(point.y) } },
@@ -477,6 +494,7 @@ module Ladb::OpenCutList
               length = part.def.edge_cutting_length
               width = part.def.edge_cutting_width
               boxed = false
+
             end
 
             return _create_packing(errors: [ [ [ 'tab.cutlist.packing.error.invalid_part_shapes' ], { :name => part.name } ] ]) if shapes.empty?
