@@ -3,13 +3,13 @@
 //
 
 @media screen and (min-width: @ladb-leftbar-width) and (max-height: 900px) {
-  html.ladb-font-size-auto {
+  html.ladb-dialog-tabs.ladb-font-size-auto {
     font-size: 90%;
   }
 }
 
 @media screen and (min-width: @ladb-leftbar-width) and (max-height: 700px) {
-  html.ladb-font-size-auto {
+  html.ladb-dialog-tabs.ladb-font-size-auto {
     font-size: 80%;
   }
 }
@@ -30,11 +30,10 @@ html.ladb-font-size-tiny {
 
 body {
   overflow-x: hidden;
+}
 
-  &.ladb-dialog-tabs {
-    background-color: @ladb-brand-dark;
-  }
-
+.ladb-dialog-tabs body {
+  background-color: @ladb-brand-dark;
 }
 
 blockquote {
