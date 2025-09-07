@@ -1,8 +1,8 @@
-_label: 1 - Srpski
+_label: 1 - Francuski
 _disabled_msg: |
-  2 - Ovaj jezik još nije u potpunosti preveden.
+  2 - Ovaj jezik još nije u **potpunosti preveden**.
 
-  Da biste pomogli u završetku prevoda, pogledajte  [Documentation OpenCutList](https://docs.opencutlist.org/for-translators/general).
+  Da biste pomogli u završetku prevoda, pogledajte [Documentation OpenCutList](https://docs.opencutlist.org/for-translators/general).
 _reload_msg: 3 - Da bi ste primenili sve izmene, morate **zatvoriti** i **ponovo otvoriti** OpenCutList prozor.
 _description: 4 - Generator lista i dijagrama rezanja za stolare. Otvoreni kod, finansiran dobrovoljnim prilozima i jednostavan za upotrebu;)
 default:
@@ -97,7 +97,7 @@ core:
     submenu: 91 - OpenCutList
     item:
       generate_cutlist: 92 - Generiši krojnu listu
-      edit_part_properties: 93 - $(tab.cutlist.edit_part_properties)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
       edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
@@ -152,7 +152,7 @@ core:
     extern: '128 - Spoljašnja greška: {{ error }}'
     feature_unavailable: 129 - Ova funkcija zahteva SketchUp {{ version }} ili noviji.
     failed_export_to: |
-      130 - Došlo je do greške prilikom izvoza u  *{{ path }}*.
+      130 - Došlo je do greške prilikom izvoza u *{{ path }}*.
        **{{ error }} **
     unsupported_file_format: '131 - Format datoteke nije podržan : **{{ format }}**'
   success:
@@ -161,10 +161,10 @@ core:
   event:
     model_change: 134 - Aktivni model je promenjen.
     options_change: 135 - Promenjene su opcije u modelu.
-    material_change: 136 - Promenjen je barem jedan materijal
-    selection_change: 137 - Selekcija u aktivnom modelu je promenjena
+    material_change: 136 - Promenjen je barem jedan materijal.
+    selection_change: 137 - Selekcija u aktivnom modelu je promenjena.
     layers_change: 138 - Oznake u aktivnom modelu su promenjene.
-    drawing_change: 139 - Aktivni model je izmenjen
+    drawing_change: 139 - Aktivni model je izmenjen.
   upgrade:
     unavailable: 140 - Najnovija verzija *OpenCutList* nije pronađena.
     available: |
@@ -202,14 +202,14 @@ core:
     delete_confirm_title: 160 - Uklanjanje
     delete_confirm: 161 - Da li ste sigurni da želite obrisati podešavanja **"{{ name }}"**?
     override_confirm_title: 162 - Ažuriranje
-    override_confirm: 163 - Potvrđujete li izmenu podešavanja **"{{name}}" ** sa ovim parametrima?
+    override_confirm: 163 - Potvrđujete li izmenu podešavanja **"{{ name }}"** sa ovim parametrima?
     new_success: 164 - Podešavanja **"{{ name }}"** su kreirana
     override_success: 165 - Podešavanja **"{{ name }}"** su izmenjena
     restore_success: 166 - Obrazac je popunjen sa unapred definisanim podešavanjima **"{{ name }}"**
     delete_success: 167 - Podešavanja **"{{ name }}"** su izbrisana
     tooltip:
       save_to: 168 - Ažurirajte podešavanja '{{ name }}'
-      delete: 169 - Izbriši podešavanja '{{name}}'
+      delete: 169 - Izbriši podešavanja '{{ name }}'
     dictionary:
       component_textinput_color: 170 - Paleta boja
       cutlist_cuttingdiagram1d_options: $t(default.deprecated)
@@ -301,8 +301,8 @@ tab:
     tooltip:
       show_hide_block: 242 - Prikaži / sakrij grupu
       scroll_to_block: 243 - Pomaknite se do grupe
-      not_available_std_width: 244 - Širina *{{ std_dimension_real }}* nije definisana u standardnim širinama materijala '{{ material_name }}'.
-      not_available_std_thickness: 245 - Debljina *{{ std_dimension }}* nije definisana u standardnim debljinama materijala '{{ material_name }}'
+      not_available_std_width: 244 - Širina *{{ std_dimension_real }}* nije definisana u standardnim širinama materijala '{{ material_name }}'
+      not_available_std_thickness: 245 - Debljina *{{ std_dimension_real }}* nije definisana u standardnim debljinama materijala '{{ material_name }}'
       not_available_std_section: 246 - Presek *{{ std_dimension_real }}* nije definisan u standardnim presecima materijala '{{ material_name }}'
       add_std_width_to_material: |
         247 - Dodaj širinu *{{ std_dimension }}*
@@ -428,7 +428,7 @@ tab:
       title_multiple: 345 - Svojstva grupe delova
       multiple_alert: 346 - Uobičajena svojstva grupe od {{ part_count }} delova.
       general: 347 - Uopšteno
-      extra_help: 348 - Lista svojstava specifičnih za tip materijala  "**$t(tab.materials.type_{{ material_type }})**".
+      extra_help: 348 - Lista svojstava specifičnih za tip materijala "**$t(tab.materials.type_{{ material_type }})**".
       edges: 349 - Kant trake
       faces: 350 - Površine
       name: 351 - Opis
@@ -515,12 +515,7 @@ tab:
       loading_preview: 403 - Učitavanje pregleda
     option:
       auto_orient: 404 - Automatska orijentacija delova
-      auto_orient_help: |
-        405 - Ako je odabrana ova opcija, 3 dimenzije delova se sortiraju tako da najveća vrednost predstavlja *dužinu*, a najmanja *debljinu*.
-
-        Inače, *dužina* se čita na <span style='color:red'> crvena </span> os,
-        - *širina* na <span style='color:green'> zelena </span> os i
-        - *debljina* na <span style='color:blue'> plava </span> osa
+      auto_orient_help: "405 - Ako je odabrana ova opcija, 3 dimenzije delova se sortiraju tako da najveća vrednost predstavlja *dužinu*, a najmanja *debljinu*.\n\nInače, \n- *dužina* se čita na <span style='color:red'>crvena</span> os,\n- *širina* na <span style='color:green'>zelena</span> os i\n- *debljina* na <span style='color:blue'>plava</span> osa\n"
       flipped_detection: 406 - Prepoznavanje simetričnih komada
       flipped_detection_help: |
         407 - Ako je ova opcija uključena, simetrični komadi biće prepoznati i prikazani kao novi komad.
@@ -545,7 +540,7 @@ tab:
       hide_tags: 422 - Sakrij oznake
       hide_tags_help: 423 - Označite ovu opciju da se oznake na komadima ne prikazuju.
       hide_cutting_dimensions: 424 - Sakrij dimenzije za sečenje
-      hide_cutting_dimensions_help: 425 - Označite ovu opciju da se dimenzije za sečenje komada ne prikazuju
+      hide_cutting_dimensions_help: 425 - Označite ovu opciju da se dimenzije za sečenje komada ne prikazuju.
       hide_bbox_dimensions: 426 - Sakrij gotove dimenzije
       hide_bbox_dimensions_help: 427 - Označite ovu opciju da se proizvodne dimenzije komada ne prikazuju.
       hide_final_areas: 428 - Sakrij obrađene površine *Ploča*
@@ -594,7 +589,7 @@ tab:
       edge_material_names_filter: 465 - Filtriraj prema materijalu za kant trake
       veneer_material_names_filter: 466 - Filtriranje materijala za furniranje
       tags_filter: 467 - Filtriraj po oznakama
-      dimensions_help: 468 - Razumevanje dimenzija...
+      dimensions_help: 468 - Razumevanje dimenzija
       summary: 469 - Sažetak
       material_type: 470 - Tip
       material_thickness: 471 - Materijal / debljina
@@ -621,7 +616,7 @@ tab:
     export:
       title: 492 - Izvoz u CSV format
       info_0: |
-        493 - Izvoz podataka u privremenu memoriju ili [CSV] (https://fr.wikipedia.org/wiki/Comma-separated_values) ou [XLSX](https://fr.wikipedia.org/wiki/XLSX).
+        493 - Ova funkcija vam omogućava da izvezete podatke iz *Spiska delova* u međuspremnik ili u [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) ili [XLSX](https://en.wikipedia.org/wiki/Office_Open_XML) datoteku.
       customize_help: |
         494 - Preuredite, sakrijte, dodajte, uklonite ili izaberite kolonu u listi kako biste prilagodili njen **naslovi** **formulu** koja generiše vrednost prikazanu za svaki izvezeni red.
       add_column: 495 - Dodaj kolonu
@@ -801,7 +796,10 @@ tab:
       option_part_drawing_type_0: 655 - Ne prikazuj
       option_part_drawing_type_1: 656 - Prednji pogled
       option_part_drawing_type_2: 657 - Pogled sa zadnje strane
-      option_part_drawing_type_help: '658 - '
+      option_part_drawing_type_help: |
+        658 - Omogućava prikazivanje ili sakrivanje stvarnog oblika komada, uključujući obradu, na dijagramu.
+
+        *Ova opcija mora biti uključena da bi oblici mogli biti izvezeni.*
       option_saw_kerf: 659 - Debljina testere
       option_saw_kerf_help: '660 - Širina materijala uklonjenog sečenjem testere. '
       option_spacing: 661 - Razmak
@@ -901,13 +899,18 @@ tab:
         settings: 739 - Podešavanja
       write:
         title: 740 - Eksportovanje šeme slaganja
-        info_0: '741 - '
+        info_0: |
+          741 - Ovaj modul vam omogućava da izvezete **geometriju** *rasporeda komada* u obliku liste fajlova u [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ili [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) formatu.
         option_file_format: $t(tab.cutlist.write.option_file_format)
         option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
         option_dxf_structure: 744 - DXF struktura
         option_dxf_structure_1: 745 - Slojevi
         option_dxf_structure_2: 746 - Slojevi + Blokovi
-        option_dxf_structure_help: '747 - '
+        option_dxf_structure_help: |
+          747 - Omogućava izbor strukture DXF fajla.
+
+          - Struktura **Slojevi** crta sve linije u ravni i razlikuje vrste linija isključivo pomoću slojeva. *Ova struktura pruža bolju kompatibilnost sa drugim softverima.*
+          - Struktura **Slojevi + Blokovi** kreira blok za svaki deo i ubacuje ga onoliko puta koliko se deo ponavlja. *Ova struktura pruža veću fleksibilnost pri izmeni fajla.*
         option_unit: $t(tab.cutlist.write.option_unit)
         option_unit_help: $t(tab.cutlist.write.option_unit_help)
         option_smoothing: $t(tab.cutlist.write.option_smoothing)
@@ -932,29 +935,35 @@ tab:
         option_bar_dimensional_help: |
           767 - Omogući eksport komada i izaberi boje.
         option_bar_band: 768 - Traka
-        option_bar_band_help: '769 - '
-        option_parts: '770 - '
-        option_parts_help: '771 - '
-        option_parts_holes: '772 - '
-        option_parts_holes_help: '773 - '
+        option_bar_band_help: |
+          769 - Omogućava aktiviranje izvoza trake, kao i izbor njenih boja.
+        option_parts: 770 - Delovi
+        option_parts_help: |
+          771 - Omogućava aktiviranje izvoza komada, kao i izbor njihovih boja.
+        option_parts_holes: 772 - Bušenja
+        option_parts_holes_help: |
+          773 - Omogućava izbor boje bušenja na komadima.
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: '776 - '
-        option_texts_help: '777 - '
+        option_texts: 776 - Oznake
+        option_texts_help: |
+          777 - Aktiviranje izvoza oznaka komada, kao i izbor njihovih boja.
         option_leftovers: 778 - Preseci
-        option_leftovers_help: '779 - '
+        option_leftovers_help: |
+          779 - Aktiviranje izvoza otpada, kao i izbor njegovih boja.
         option_cuts: 780 - Rezovi
-        option_cuts_help: '781 - '
+        option_cuts_help: |
+          781 - Aktiviranje izvoza sečenja, kao i izbor njihove boje.
         warning:
-          is_sheet_selection: '782 - '
+          is_sheet_selection: 782 - **Sakriveni paneli** neće biti izvezeni.
       error:
-        no_bar_dimensional: '783 - '
-        no_bar_edge: '784 - '
+        no_bar_dimensional: 783 - Standardna ploča nije ispravno podešena i nijedan ostatak nije definisan.
+        no_bar_edge: 784 - Standardna traka nije ispravno podešena i nijedan ostatak nije definisan.
         parameters: 785 - Parametri su neispravni. Veličina krajcovanja veća je od 25% najduže ploče ili kant trake.
         no_parts: 786 - Nema dela.
         no_sheet: 787 - Standardne veličine panela su pogrešno konfigurisane i nisu dostupni nikakvi rezovi.
-        no_placement_possible_1d: '788 - '
-        no_placement_possible_2d: '789 - '
+        no_placement_possible_1d: 788 - Nijedan komad nije mogao biti postavljen (standardna traka je premala, margina je prevelika, debljina testere je prevelika, ...).
+        no_placement_possible_2d: 789 - Postavljanje nemoguće (veličina sečenja je prevelika, standardni panel je premali, debljina testere je prevelika, ...).
         bad_error: 790 - Algoritamska greška, kontaktirajte programere, ovo je interesantan slučaj.
         unplaced_parts: 791 - **1 deo** nije moguće postaviti, jer je prevelik.
         unplaced_parts_plural: 792 - **{{ count }} delovi** koji se ne mogu smestiti jer su preveliki da bi mogli stati.
@@ -967,77 +976,108 @@ tab:
     packing:
       title: 798 - Dijagram rezanja
       option_problem_type: 799 - Tip
-      option_problem_type_rectangle: '800 - '
-      option_problem_type_rectangleguillotine: '801 - '
+      option_problem_type_rectangle: 800 - Pravougaonik
+      option_problem_type_rectangleguillotine: 801 - Testera
       option_problem_type_onedimensional: 802 - Dimenzioni
-      option_problem_type_irregular: '803 - '
+      option_problem_type_irregular: 803 - Ugnježđeno
       options_material: 804 - Materijal
       options_config: 805 - Konfiguracija
       options_display: 806 - Prikaz
-      options_tuning: '807 - '
-      option_std_bin_1d_dimensional: '808 - '
-      option_std_bin_1d_edge: '809 - '
-      option_std_bin_1d_help: '810 - '
+      options_tuning: 807 - Fino podešavanje
+      option_std_bin_1d_dimensional: 808 - Standardne trake
+      option_std_bin_1d_edge: 809 - Standardne trake
+      option_std_bin_1d_help: |
+        810 - Izaberite veličine standardne ploče ili trake koje će biti duplirane kako bi najbolje obuhvatile sve komade.
+
+        Ova lista je definisana poljem **$t(tab.materials.edit_material.std_lengths)** materijala.
+
+        Izmenite osobine materijala '{{ material_name }}' da biste ažurirali ovu listu.
       option_std_bin_1d_add: 811 - Dodaj veličinu panela
       option_std_bin_1d_none: 812 - Nema
       option_scrap_bin_1d_dimensional_sizes: 813 - Ostatci komada
       option_scrap_bin_1d_edge_sizes: 814 - Ostatci trake
       option_scrap_bin_1d_sizes_placeholder: 815 - dužina x količina; ...
-      option_scrap_bin_1d_sizes_help: '816 - '
+      option_scrap_bin_1d_sizes_help: |
+        816 - Navedite listu preostalih traka ili ploča koje treba uzeti u obzir za raspored sečenja.
+
+        *Ako nije navedena nijedna jedinica, primeniće se jedinica iz modela.*
       option_scrap_bin_1d_none: 817 - Nema
-      option_std_bin_2d_sheet_good: '818 - '
-      option_std_bin_2d_veneer: '819 - '
-      option_std_bin_2d_help: '820 - '
+      option_std_bin_2d_sheet_good: 818 - Standardne ploče
+      option_std_bin_2d_veneer: 819 - Standardne folije
+      option_std_bin_2d_help: |
+        820 - Ovde izaberite standardne dimenzije ploče ili lista koje će biti duplirane tako da što bolje obuhvate sve delove.
+
+        Ova lista je određena poljem **$t(tab.materials.edit_material.std_sizes)** materijala.
+
+        *Izmenite osobine materijala '{{ material_name }}' da biste ažurirali ovu listu.*
       option_std_bin_2d_add: 821 - Dodajte veličinu panela
       option_std_bin_2d_none: 822 - Nema
       option_scrap_bin_2d_sheet_good_sizes: 823 - Ostatci ploča
       option_scrap_bin_2d_veneer_sizes: 824 - Ostatci folija
       option_scrap_bin_2d_sizes_placeholder: 825 - dužina x širina x količina; ...
-      option_scrap_bin_2d_sizes_help: '826 - '
+      option_scrap_bin_2d_sizes_help: |
+        826 - Ovde navedite listu ostataka ploča ili listova koji će se uzeti u obzir pri rasporedu.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       option_scrap_bin_2d_none: 827 - Nema
-      option_optimization_mode: '828 - '
-      option_optimization_mode_help: '829 - '
+      option_optimization_mode: 828 - Režim optimizacije
+      option_optimization_mode_help: |
+        829 - Izaberite režim optimizacije, sa ili bez vremenskog ograničenja.
       option_objective: 830 - Cilj
-      option_objective_help: '831 - '
-      option_rectangleguillotine_cut_type: '832 - '
-      option_rectangleguillotine_cut_type_help: '833 - '
-      option_rectangleguillotine_cut_type_non_exact: '834 - '
-      option_rectangleguillotine_cut_type_exact: '835 - '
-      option_rectangleguillotine_cut_type_homogenous: '836 - '
-      option_rectangleguillotine_number_of_stages: '837 - '
-      option_rectangleguillotine_number_of_stages_help: '838 - '
-      option_rectangleguillotine_first_stage_orientation: '839 - '
-      option_rectangleguillotine_first_stage_orientation_help: '840 - '
-      option_rectangleguillotine_first_stage_orientation_horizontal: '841 - '
-      option_rectangleguillotine_first_stage_orientation_vertical: '842 - '
-      option_rectangleguillotine_first_stage_orientation_any: '843 - '
+      option_objective_help: |
+        831 - Odredite cilj rasporeda sečenja.
+      option_rectangleguillotine_cut_type: 832 - Tip sečenja
+      option_rectangleguillotine_cut_type_help: |
+        833 - Odaberite tip sečenja.
+      option_rectangleguillotine_cut_type_non_exact: 834 - Neprecizno
+      option_rectangleguillotine_cut_type_exact: 835 - Precizno
+      option_rectangleguillotine_cut_type_homogenous: 836 - Ujednačeno
+      option_rectangleguillotine_number_of_stages: 837 - Broj nivoa
+      option_rectangleguillotine_number_of_stages_help: |
+        838 - Određuje maksimalan broj nivoa sečenja.
+      option_rectangleguillotine_first_stage_orientation: 839 - Prvi rez
+      option_rectangleguillotine_first_stage_orientation_help: |
+        840 - Određuje pravac prvog reza.
+      option_rectangleguillotine_first_stage_orientation_horizontal: 841 - Horizontalno
+      option_rectangleguillotine_first_stage_orientation_vertical: 842 - Vertikalno
+      option_rectangleguillotine_first_stage_orientation_any: 843 - Bilo koji
       option_rectangleguillotine_keep: 844 - Minimalna veličina otpada
       option_rectangleguillotine_keep_help: 845 - Ostaci veći od minimalne veličine biće za **čuvanje**.
-      option_irregular_allowed_rotations: '846 - '
-      option_irregular_allowed_rotations_help: '847 - '
+      option_irregular_allowed_rotations: 846 - Dozvoljene rotacije
+      option_irregular_allowed_rotations_help: |
+        847 - Određuje korak uglova rotacije dela pri njegovom raspoređivanju.
+
+        *Materijali sa vlaknom dozvoljavaju samo korake od 0° i 180°.*
       option_irregular_allowed_rotations_0: 848 - Nema
-      option_irregular_allowed_rotations_90: '849 - '
-      option_irregular_allowed_rotations_180: '850 - '
-      option_irregular_allow_mirroring: '851 - '
-      option_irregular_allow_mirroring_help: '852 - '
+      option_irregular_allowed_rotations_90: 849 - Bez 90°
+      option_irregular_allowed_rotations_180: 850 - Bez 180°
+      option_irregular_allow_mirroring: 851 - Dozvoljeno okretanje u ogledalu
+      option_irregular_allow_mirroring_help: |
+        852 - Određuje da li je dozvoljeno preslikavanje dela prilikom raspoređivanja.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
       option_spacing: 855 - Razmak
-      option_spacing_help: '856 - '
+      option_spacing_help: |
+        856 - Minimalni razmak između svakog dela.
+        Ova vrednost može odgovarati širini testere ili alata za sečenje.
       option_trimming: 857 - Krajcovanje
-      option_trimming_1d_help: '858 - '
-      option_trimming_2d_help: '859 - '
+      option_trimming_1d_help: 858 - Krajc na svakom kraju letve ili trake koji se računa kao otpad.
+      option_trimming_2d_help: 859 - Krajc oko cele ploče ili lista koji se računa kao otpad.
       option_items_formula: 860 - Formula
-      option_items_formula_help: '861 - '
+      option_items_formula_help: |
+        861 - Omogućava pisanje *Ruby* koda za prilagođavanje teksta identifikacije delova na dijagramu.
       option_bin_folding_1d_dimensional: 862 - Grupiši identične ploče
       option_bin_folding_1d_edge: 863 - Grupiši identične trake
       option_bin_folding_2d_sheet_good: 864 - Grupiši identične panele
       option_bin_folding_2d_veneer: 865 - Grupiši identične folije
       option_bin_folding_0: $t(default.no)
       option_bin_folding_1: $t(default.yes)
-      option_bin_folding_1d_help: '868 - '
-      option_bin_folding_2d_help: '869 - '
-      option_bin_folding_warning: '870 - '
+      option_bin_folding_1d_help: |
+        868 - Grupiše letve ili trake koje sadrže iste delove i iste rezove.
+      option_bin_folding_2d_help: |
+        869 - Grupiše ploče ili listove koji sadrže iste delove i iste rezove.
+      option_bin_folding_warning: |
+        870 - *Ova opcija će biti onemogućena ako u formuli za prilagođavanje teksta identifikacije koristite osobine instance.*
       option_hide_part_list: 871 - Popis delova
       option_hide_part_list_1d_dimensional_0: 872 - Prikazano za svaku ploču
       option_hide_part_list_1d_edge_0: 873 - Prikazano za svaku traku
@@ -1050,18 +1090,22 @@ tab:
       option_part_drawing_type_0: 880 - Ne prikazuj
       option_part_drawing_type_1: 881 - Prednji pogled
       option_part_drawing_type_2: 882 - Pogled sa zadnje strane
-      option_part_drawing_type_help: '883 - '
-      option_colorization: '884 - '
+      option_part_drawing_type_help: |
+        883 - Omogućava prikazivanje ili sakrivanje stvarnog oblika komada, uključujući obradu, na dijagramu.
+
+        *Ova opcija mora biti uključena da bi oblici mogli biti izvezeni.*
+      option_colorization: 884 - Oboji delove
       option_colorization_0: $t(default.no)
-      option_colorization_1: '886 - '
-      option_colorization_2: '887 - '
-      option_colorization_help: '888 - '
+      option_colorization_1: $t(default.yes) - Ekran
+      option_colorization_2: $t(default.yes) - Ekran i Štampa
+      option_colorization_help: |
+        888 - Određuje da li se koristi nasumična boja za razlikovanje delova na dijagramu.
       option_origin_corner: 889 - Pozicija početka
       option_origin_corner_0: 890 - Gornji levi ugao
       option_origin_corner_1: 891 - Donji levi ugao
       option_origin_corner_2: 892 - Gornji desni ugao
       option_origin_corner_3: 893 - Donji desni ugao
-      option_origin_corner_help: '894 - '
+      option_origin_corner_help: 894 - Izbor ugla od kojeg počinje raspoređivanje delova na pločama, listovima, letvama ili trakama.
       option_highlight_primary_cuts: 895 - Primarni rezovi
       option_highlight_primary_cuts_0: 896 - Samo prikaz pri prelasku
       option_highlight_primary_cuts_1: 897 - Uvek vidljivo
@@ -1070,20 +1114,21 @@ tab:
       option_hide_edges_preview_0: 900 - Prikaz na dijagramu
       option_hide_edges_preview_1: 901 - Ne prikazuj na dijagramu
       option_hide_edges_preview_help: 902 - Prikaži/sakrij oznake kantova za svaki deo.
-      option_time_limit: '903 - '
-      option_time_limit_help: '904 - '
+      option_time_limit: 903 - Vremensko ograničenje
+      option_time_limit_help: |
+        904 - Vreme proračuna
       tooltip:
         scroll_to_block_1d: 905 - Pomaknite se do prve ploče ili trake
-        scroll_to_block_2d: '906 - '
+        scroll_to_block_2d: 906 - Idi na prvu ploču/list.
       list:
         summary: 907 - Sažetak
-        cached: '908 - '
+        cached: 908 - Učitano iz keša
         trimming: 909 - Krajcovanje
         settings: 910 - Podešavanja
         stats: 911 - Statistics
-        time: '912 - '
+        time: 912 - Vreme
         total_efficiency: 913 - Ukupna efikasnost
-        total_fill_rate: '914 - '
+        total_fill_rate: 914 - Popunjenost
         total_cut_count: 915 - Broj rezova
         total_cut_length: 916 - Dužina rezanja
         efficiency: 917 - Efikasnost
@@ -1108,10 +1153,10 @@ tab:
         bin_2d_veneer_type_0: 936 - Standardna folija
         bin_2d_veneer_type_1: 937 - Ostatak folije
         unused: 938 - Neiskorišćeno
-        unplaced_parts: '939 - '
+        unplaced_parts: 939 - Nije postavljeno.
         unplaced_parts_plural: 940 - Neiskorišćeni delovi
-        parts: '941 - '
-        parts_plural: '942 - '
+        parts: 941 - Komad
+        parts_plural: 942 - Delovi
         leftovers: 943 - Ostatak-otpad
         leftovers_plural: 944 - Ostatci-otpad
         leftovers_to_keep: 945 - Ostatak koji se čuva
@@ -1119,13 +1164,14 @@ tab:
         cut: 947 - Rez
         cut_plural: 948 - Rezovi
         cut_trimming: 949 - Rez krajcovanja
-        cut_primary: '950 - '
+        cut_primary: 950 - Primarni rez
         cut_primary_plural: 951 - Primarni rezovi
         cut_none: 952 - Bez odabira
-        cut_depth: '953 - '
+        cut_depth: 953 - Nivo {{ depth }}
       write:
         title: 954 - Eksportovanje šeme slaganja
-        info_0: '955 - '
+        info_0: |
+          955 - Ovaj modul vam omogućava da izvezete **geometriju** *rasporeda komada* u obliku liste fajlova u [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ili [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) formatu.
         option_bin_sheet_good: 956 - Panel
         option_bin_sheet_good_help: |
           957 - Omogući eksport ploče i izaberi boje.
@@ -1136,34 +1182,40 @@ tab:
         option_bin_dimensional_help: |
           961 - Omogući eksport komada i izaberi boje.
         option_bin_edge: 962 - Traka
-        option_bin_edge_help: '963 - '
-        option_parts: '964 - '
-        option_parts_help: '965 - '
+        option_bin_edge_help: |
+          963 - Omogućava aktiviranje izvoza trake, kao i izbor njenih boja.
+        option_parts: 964 - Delovi
+        option_parts_help: |
+          965 - Omogućava aktiviranje izvoza komada, kao i izbor njihovih boja.
         option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
         option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
         option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
         option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
         option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
         option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
-        option_texts: '972 - '
-        option_texts_help: '973 - '
+        option_texts: 972 - Oznake
+        option_texts_help: |
+          973 - Aktiviranje izvoza oznaka komada, kao i izbor njihovih boja.
         option_leftovers: 974 - Ostatci-otpad
-        option_leftovers_help: '975 - '
+        option_leftovers_help: |
+          975 - Aktiviranje izvoza otpada, kao i izbor njegovih boja.
         option_cuts: 976 - Rezovi
-        option_cuts_help: '977 - '
+        option_cuts_help: |
+          977 - Aktiviranje izvoza sečenja, kao i izbor njihove boje.
         warning:
-          is_bin_selection: '978 - '
+          is_bin_selection: 978 - **Sakriveni blokovi** neće biti izvezeni.
         error:
-          overflow_gt_spacing: '979 - '
+          overflow_gt_spacing: |
+            979 - Dodatak za obradu ({{ overflow }}) mora biti manji ili jednak razmaku ({{ spacing }}) podešenom u ovom rasporedu.
       error:
         no_part: 980 - Nema dela.
-        no_bin_1d: '981 - '
-        no_bin_2d: '982 - '
-        invalid_part_shapes: '983 - '
-        no_solution: '984 - '
-        unplaced_parts: '985 - '
-        unplaced_parts_plural: '986 - '
-        unusable_part: '987 - '
+        no_bin_1d: 981 - Nijedan standardni komad ili traka nije izabrana i nijedan ostatak nije definisan.
+        no_bin_2d: 982 - Nijedna standardna ploča ili list nije izabran i nijedan ostatak nije definisan.
+        invalid_part_shapes: 983 - Oblik dela '{{ name }}' nije važeći.
+        no_solution: 984 - Nije pronađeno rešenje za postavljanje svih delova u raspoloživi materijal.
+        unplaced_parts: 985 - **1 deo** nije mogao biti postavljen.
+        unplaced_parts_plural: 986 - **{{ count }} delova** nije moglo biti postavljeno.
+        unusable_part: 987 - Prevelik deo
       warning:
         is_part_selection: 988 - **Šema slaganja samo za izabrane delove**.
         cutting_dimensions: 989 - Ova šema sečenja koristi dimenzije umanjene za kantovanje.
@@ -1174,8 +1226,8 @@ tab:
       title: 993 - Oznake
       options_layout: 994 - Izgled
       options_settings: 995 - Konfiguracija
-      options_part_order_strategy: '996 - '
-      options_offset: '997 - '
+      options_part_order_strategy: 996 - Sortiranje
+      options_offset: 997 - Pomak
       size: 998 - Stvarna veličina nalepnice
       add_element: 999 - Dodajte element
       duplicate_element: $t(default.duplicate)
@@ -1211,24 +1263,24 @@ tab:
       option_anchor_start: 1030 - Početak - Dole
       option_anchor_middle: 1031 - Sredina - Dole
       option_anchor_end: 1032 - Kraj - Dole
-      option_anchor_start_top: '1033 - '
-      option_anchor_middle_top: '1034 - '
-      option_anchor_end_top: '1035 - '
+      option_anchor_start_top: 1033 - Početak – Gore
+      option_anchor_middle_top: 1034 - Sredina – Gore
+      option_anchor_end_top: 1035 - Kraj – Gore
       option_color: 1036 - Boja
       formula:
         custom: 1037 - Formula
-        custom_qr_code: '1038 - '
+        custom_qr_code: 1038 - QR kod
         part_number: 1039 - Broj
         part_name: 1040 - Naziv
         part_description: 1041 - Opis
-        part_entity_named_path: '1042 - '
+        part_entity_named_path: 1042 - Putanja instance
         part_entity_name: 1043 - Naziv instance
         part_bin: '1044 - Kontejner '
         part_cutting_size: 1045 - Grube dimenzije
         part_cutting_length: 1046 - Gruba dužina
         part_cutting_width: 1047 - Gruba širina
-        part_cutting_thickness: '1048 - '
-        part_edge_cutting_size: '1049 - '
+        part_cutting_thickness: 1048 - Debljina sečenja
+        part_edge_cutting_size: 1049 - Dimenzija sa kant trakom
         part_edge_cutting_length: 1050 - Dužina rezanih ivica
         part_edge_cutting_width: 1051 - Širina rezanih ivica
         part_size: 1052 - Upotrebljiva veličina
@@ -1237,14 +1289,14 @@ tab:
         part_thickness: 1055 - Upotrebljiva debljina
         part_tags: 1056 - Oznake
         part_batch: 1057 - Serija
-        part_edge_ymin: '1058 - '
-        part_edge_ymax: '1059 - '
-        part_edge_xmin: '1060 - '
-        part_edge_xmax: '1061 - '
-        part_face_zmin: '1062 - '
-        part_face_zmax: '1063 - '
-        thumbnail_proportional_drawing: '1064 - '
-        thumbnail_proportional_drawing_bottom: '1065 - '
+        part_edge_ymin: 1058 - Ivica dužina 1
+        part_edge_ymax: 1059 - Ivica dužina 2
+        part_edge_xmin: 1060 - Ivica širina 1
+        part_edge_xmax: 1061 - Ivica širina 2
+        part_face_zmin: 1062 - Naličje furnira
+        part_face_zmax: 1063 - Lice
+        thumbnail_proportional_drawing: 1064 - Pregledna sličica (Prednji prikaz)
+        thumbnail_proportional_drawing_bottom: 1065 - Pregledna sličica (Prikaz sa zadnje strane)
         thumbnail_proportional: 1066 - Proporcionalna sličica
         thumbnail_square: 1067 - Kvadratna sličica
         group_material: 1068 - Materijal / debljina
@@ -1258,46 +1310,46 @@ tab:
       error:
         invalid_size: 1076 - Nevažeća veličina etikete zbog trenutnih parametara konfiguracije.
       warning:
-        is_group_selection: '1077 - '
+        is_group_selection: 1077 - Delovi koji se nalaze u **sakrivenim grupama** u vašem planu sečenja neće imati oznaku.
         is_part_selection: '1078 - '
-        formula_not_available: '1079 - '
+        formula_not_available: 1079 - Nije dostupno u ovom kontekstu
     layout:
-      title: '1080 - '
-      to_layout: '1081 - '
+      title: 1080 - Crtež
+      to_layout: 1081 - Izvezi u Layout
       options_layout: 1082 - Izgled
       options_settings: 1083 - Konfiguracija
-      option_parts: '1084 - '
+      option_parts: 1084 - Delovi
       option_parts_colored: 1085 - Boja
-      option_parts_colored_0: '1086 - '
-      option_parts_colored_1: '1087 - '
-      option_parts_colored_help: '1088 - '
-      option_parts_opacity: '1089 - '
-      option_parts_opacity_0: '1090 - '
-      option_parts_opacity_1: '1091 - '
-      option_parts_opacity_help: '1092 - '
-      option_pins: '1093 - '
+      option_parts_colored_0: 1086 - Bez boje
+      option_parts_colored_1: 1087 - Boja materijala
+      option_parts_colored_help: 1088 - Izgled delova.
+      option_parts_opacity: 1089 - Prozirnost
+      option_parts_opacity_0: 1090 - Proziran
+      option_parts_opacity_1: 1091 - Neproziran
+      option_parts_opacity_help: 1092 - Providnost delova.
+      option_pins: 1093 - Čiode
       option_pins_hidden: 1094 - Prikaz
-      option_pins_hidden_0: '1095 - '
-      option_pins_hidden_1: '1096 - '
-      option_pins_hidden_help: '1097 - '
+      option_pins_hidden_0: 1095 - Sklopiti šrafovima
+      option_pins_hidden_1: 1096 - Bez šrafova
+      option_pins_hidden_help: 1097 - Prikaži/sakrij oznake delova.
       option_pins_colored: 1098 - Boja
-      option_pins_colored_0: '1099 - '
-      option_pins_colored_1: '1100 - '
-      option_pins_colored_help: '1101 - '
+      option_pins_colored_0: 1099 - Bez boje
+      option_pins_colored_1: 1100 - Boja dela
+      option_pins_colored_help: 1101 - Boja oznaka na delovima
       option_pins_formula: 1102 - Formula
-      option_pins_formula_help: '1103 - '
+      option_pins_formula_help: 1103 - Ruby kod za tekst oznaka.
       option_pins_length: 1104 - Dužina
-      option_pins_length_0: '1105 - '
+      option_pins_length_0: 1105 - Bez strelice
       option_pins_length_1: 1106 - Mala
-      option_pins_length_2: '1107 - '
-      option_pins_length_3: '1108 - '
-      option_pins_length_help: '1109 - '
-      option_pins_direction: '1110 - '
-      option_pins_direction_0: '1111 - '
-      option_pins_direction_1: '1112 - '
-      option_pins_direction_2: '1113 - '
-      option_pins_direction_3: '1114 - '
-      option_pins_direction_4: '1115 - '
+      option_pins_length_2: 1107 - Prosečno
+      option_pins_length_3: 1108 - Veliko
+      option_pins_length_help: 1109 - Dužina strelice oznaka
+      option_pins_direction: 1110 - Pravac
+      option_pins_direction_0: 1111 - Duž crvene ose
+      option_pins_direction_1: 1112 - Duž zelene ose
+      option_pins_direction_2: 1113 - Duž plave ose
+      option_pins_direction_3: 1114 - Cilj na centar grupe
+      option_pins_direction_4: 1115 - Postavi u centar roditeljske grupe
       option_pins_direction_help: '1116 - '
       option_page: 1117 - Veličina papira
       option_page_format: 1118 - Format
@@ -1306,20 +1358,20 @@ tab:
       option_page_format_custom: 1121 - Prilagođeno
       option_page_width: 1122 - Širina
       option_page_height: 1123 - Visina
-      option_page_header: '1124 - '
-      option_page_header_0: '1125 - '
-      option_page_header_1: '1126 - '
+      option_page_header: 1124 - Zaglavlje
+      option_page_header_0: 1125 - Bez
+      option_page_header_1: 1126 - Sa
       option_page_header_help: '1127 - '
-      option_camera: '1128 - '
-      option_camera_view: '1129 - '
-      option_camera_view_custom: '1130 - '
-      option_camera_zoom: '1131 - '
+      option_camera: 1128 - Kamera
+      option_camera_view: 1129 - Pogled
+      option_camera_view_custom: 1130 - Prilagođeno
+      option_camera_zoom: 1131 - Skala
       option_camera_zoom_auto: 1132 - Automatski
-      option_camera_zoom_custom: '1133 - '
-      option_camera_target: '1134 - '
+      option_camera_zoom_custom: 1133 - Prilagođeno
+      option_camera_target: 1134 - Pozicija
       option_camera_target_auto: 1135 - Automatski
-      option_camera_target_custom: '1136 - '
-      option_explode: '1137 - '
+      option_camera_target_custom: 1136 - Prilagođeno
+      option_explode: 1137 - Eksplodiran prikaz
       error:
         no_part: '1138 - '
         failed_to_save_as_skp: '1139 - '
@@ -1341,95 +1393,100 @@ tab:
       option_dxf_structure: 1152 - DXF struktura
       option_dxf_structure_1: 1153 - Slojevi
       option_dxf_structure_2: 1154 - Slojevi + Blokovi
-      option_dxf_structure_help: '1155 - '
+      option_dxf_structure_help: |
+        1155 - Omogućava izbor strukture DXF fajla.
+
+        - Struktura **Slojevi** crta sve linije u ravni i razlikuje vrste linija isključivo pomoću slojeva. *Ova struktura pruža bolju kompatibilnost sa drugim softverima.*
+        - Struktura **Slojevi + Blokovi** kreira blok za svaki deo i ubacuje ga onoliko puta koliko se deo ponavlja. *Ova struktura pruža veću fleksibilnost pri izmeni fajla.*
       option_unit: 1156 - Jedinica
-      option_unit_help: '1157 - '
-      option_use_count: '1158 - '
-      option_use_count_0: '1159 - '
-      option_use_count_1: '1160 - '
+      option_unit_help: |
+        1157 -  Jedinica izvezenog fajla.
+      option_use_count: 1158 - Količine
+      option_use_count_0: 1159 - Jedan fajl po delu
+      option_use_count_1: 1160 - Jedan fajl po instanci dela
       option_use_count_help: '1161 - '
-      option_part_drawing_type: '1162 - '
+      option_part_drawing_type: 1162 - Projekcija
       option_part_drawing_type_help: '1163 - '
       option_faces: 1164 - Površine
       option_faces_0: '1165 - '
       option_faces_1: '1166 - '
       option_faces_help: '1167 - '
-      option_anchor: '1168 - '
+      option_anchor: 1168 - Tačka učvršćenja
       option_anchor_0: 1169 - Automatski
       option_anchor_1: '1170 - '
       option_anchor_help: '1171 - '
-      option_switch_yz: '1172 - '
-      option_switch_yz_0: '1173 - '
-      option_switch_yz_1: '1174 - '
+      option_switch_yz: 1172 - Vertikalna osa
+      option_switch_yz_0: 1173 - Z vertikalno
+      option_switch_yz_1: 1174 - Y vertikalno
       option_switch_yz_help: '1175 - '
-      option_smoothing: '1176 - '
+      option_smoothing: 1176 - Izgladnjivanje
       option_smoothing_0: $t(default.no)
       option_smoothing_1: '1178 - '
       option_smoothing_help: '1179 - '
-      option_merge_holes: '1180 - '
-      option_merge_holes_0: '1181 - '
+      option_merge_holes: 1180 - Razlaganje
+      option_merge_holes_0: 1181 - Osnovno
       option_merge_holes_1: '1182 - '
       option_merge_holes_help: '1183 - '
       option_merge_holes_overflow: '1184 - '
       option_merge_holes_overflow_help: '1185 - '
-      option_include_paths: '1186 - '
+      option_include_paths: 1186 - Crteži
       option_include_paths_0: $t(default.no)
       option_include_paths_1: '1188 - '
       option_include_paths_help: '1189 - '
-      option_parts: '1190 - '
+      option_parts: 1190 - Delovi
       option_parts_help: '1191 - '
-      option_parts_depths: '1192 - '
+      option_parts_depths: 1192 - Udubljenja
       option_parts_depths_help: '1193 - '
-      option_parts_holes: '1194 - '
+      option_parts_holes: 1194 - Bušenja
       option_parts_holes_help: '1195 - '
-      option_parts_paths: '1196 - '
+      option_parts_paths: 1196 - Crteži
       option_parts_paths_help: '1197 - '
       error:
-        no_part: '1198 - '
+        no_part: 1198 - Nema delova za izvoz.
       warning:
         is_group_selection: 1199 - Delovi koji se nalaze u **sakrivenim grupama** vaše liste za obradu neće biti izvezeni.
         is_part_selection: 1200 - Izvoz je ograničen na **odabrane delove**.
     snippet:
-      hello: '1201 - '
+      hello: 1201 - Zdravo
       number: 1202 - Broj
       name: 1203 - Opis
-      number_and_name: '1204 - '
-      number_without_hardware: '1205 - '
+      number_and_name: 1204 - Broj i oznaka
+      number_without_hardware: 1205 - Broj (bez dodataka)
       size: 1206 - Upotrebljiva veličina
-      area: '1207 - '
-      volume: '1208 - '
+      area: 1207 - Upotrebljiva površina
+      volume: 1208 - Upotrebljiv volumen
     error:
       no_model: 1209 - Nijedan model nije otvoren. Morate mi dati više informacija;)
       no_entities: 1210 - Vaš model je prazan. Morate mi dati više informacija ;)
       no_component_in_selection: 1211 - U vašem odabiru nije otkrivena nijedna instanca vidljive komponente.
       no_component_in_model: 1212 - U vašoj sceni nije otkrivena nijedna instanca vidljive komponente.
-      unknow_part: 1213 - Odabrani dio ne postoji na popisu dijelova.
-      obsolete_cutlist: 1214 - Nemoguće, lista dijelova je zastarjela. Osvjžite je.
+      unknow_part: 1213 - Izabrani komad ne postoji u krojnoj listi.
+      obsolete_cutlist: 1214 - Nije moguće, generisana krojna lista je zastarela. Ponovo je generišite.
     warning:
       is_entity_selection: '1215 - '
-      no_typed_materials_in_model: "1216 - Ovaj model ne koristi nijedan definisani materijal \n(**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ili **$t(tab.materials.type_5)**)."
-      no_typed_materials_in_selection: 1217 - U odabiru se ne koristi nikakav definisani materijal (**Masivno drvo**, **Pločasti materijali** ili **Dimenzionalni**).
-      export_empty: 1218 - Vaš izbor za izvoz ne sadrži nijedan dio.
+      no_typed_materials_in_model: 1216 - Ovaj model ne koristi nijedan definisani materijal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ili **$t(tab.materials.type_5)**).
+      no_typed_materials_in_selection: 1217 - U odabiru se ne koristi definisani materijal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**).
+      export_empty: 1218 - Vaš izbor za izvoz ne sadrži nijedan deo.
     success:
       part_selected: '1219 - '
       part_selected_plural: '1220 - '
     tip:
       no_component: |
-        1221 - Dijelovi koji se uključuju na *listu dijelova* moraju biti primjerci **komponente**.
+        1221 - Delovi koji se uključuju na *listu dilova* moraju biti primerci **komponente**.
         Ako koristite samo grupe, pretvorite ih u komponente.
-        Korištenjem komponenata za dijelove, oni se mogu replicirati bez dupliciranja.
-      no_typed_materials: 1222 - Primjeni materijal na dijelove koji će biti uključeni u popis dijelova i na kartici definišite svojstva ovog materijala (**Masivno drvo**, **Pločasti materijali** ili **Dimenzionisani**). <i class="ladb-opencutlist-icon-materials"> </i> **Materijali**.
-    obsolete_base: 1223 - Da biste bili sinkronizovani, morate ponovno generisati popis dijelova.
+        Korišćenjem komponenata za delove, oni se mogu ponoviti bez dupliranja.
+      no_typed_materials: 1222 - Nanesite materijal na komade koji će biti uključeni u listu delova i definišite osobine tog materijala. (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**) dans l'onglet <i class="ladb-opencutlist-icon-materials"></i>**Matières**.
+    obsolete_base: 1223 - Da biste ostali sinhronizovani, morate ponovo generisati krojnu listu
   materials:
     label: 1224 - Materijali
     title: 1225 - Materijali
     type_0: 1226 - Nedefinisano
     type_1: 1227 - Masivno drvo
     type_2: 1228 - Pločasti materijali
-    type_3: 1229 - Dimenzioni
+    type_3: 1229 - Ploča.
     type_4: 1230 - Kantovanje
     type_5: 1231 - Dodaci
-    type_6: '1232 - '
+    type_6: 1232 - Furnirski list
     tooltip:
       type_0: 1233 - Tip materijala $t(tab.materials.type_0)
       type_1: 1234 - Tip materijala $t(tab.materials.type_1)
@@ -1441,20 +1498,20 @@ tab:
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: 1242 - Smer teksture
-      raw_estimated_0: '1243 - '
-      colorized: 1244 - Ovaj ton primijenit će se na teksturu ovog materijala kada je izveden u modelu
-      texture_load: '1245 - '
-      texture_export: '1246 - '
-      texture_clear: '1247 - '
-      edit: 1248 - Izimjenite svojstva '{{ name }}'
-      set_current: 1249 - Odaberite '{{ name }}' *Koristiti dvoklik*
-      open_url: '1250 - '
+      raw_estimated_0: 1243 - Procenjeno po korisnom sečenom volumenu
+      colorized: 1244 - Ova nijansa biće primenjena na teksturu prilikom renderovanja u modelu.
+      texture_load: 1245 - Učitaj novu teksturu
+      texture_export: 1246 - Izvezi sliku.
+      texture_clear: 1247 - Obriši teksturu
+      edit: 1248 - Izmenite svojstva '{{ name }}'
+      set_current: 1249 - Oboji komade pomoću '{{ name }}'
+      open_url: 1250 - Otvori URL materijala
       import_from_skm: 1251 - Uvezite materijal (.skm)
     menu:
-      purge_unused: 1252 - Obrišite nekorištene materijale
-      reset_prices: '1253 - '
+      purge_unused: 1252 - Obrišite nekorišćene materijale
+      reset_prices: 1253 - Resetuj cene svih materijala
       reset_prices_confirm: '1254 - '
-      reset_prices_success: '1255 - '
+      reset_prices_success: 1255 - Cene svih materijala su resetovane.
     new_material:
       title: 1256 - Kreirajte materijal
       name: 1257 - Naziv
@@ -1466,22 +1523,22 @@ tab:
       title: 1262 - Svojstva materijala '{{ name }}'
       general: 1263 - Uopšteno
       texture: 1264 - Tekstura
-      no_texture: '1265 - '
+      no_texture: 1265 - Bez teksture
       name: 1266 - Ime
-      type: 1267 - Tip
+      type: 1267 - Vrsta
       description: 1268 - Opis
       url: 1269 - URL
-      formats: '1270 - '
+      formats: 1270 - Formati
       cut_options: 1271 - Parametri rezanja
-      estimate_options: '1272 - '
+      estimate_options: 1272 - Opcije procene
       attributes: 1273 - Atributi
       thickness: 1274 - Debljina
       thickness_help: '1275 - '
-      length_increase: 1276 - Prekoračenje dužine
+      length_increase: 1276 - Dodatak na dužinu
       length_increase_help: '1277 - '
-      width_increase: 1278 - Prekoračenje širine
+      width_increase: 1278 - Dodatak na širinu
       width_increase_help: '1279 - '
-      thickness_increase: 1280 - Prekoračenje debljine
+      thickness_increase: 1280 - Dodatak na debljinu
       thickness_increase_help: 1281 - Prekoračenje debljine se dodaje na konačnu debljinu da bi se definisala **sirova debljina**.
       std_lengths: 1282 - Standardne dužine
       std_lengths_help: '1283 - '
@@ -1489,38 +1546,38 @@ tab:
       std_widths_help: '1285 - '
       std_thicknesses: 1286 - Standardne debljine
       std_thicknesses_help: '1287 - '
-      std_sections: 1288 - Standardni presjeci
+      std_sections: 1288 - Standardni preseci
       std_sections_help: '1289 - '
       std_sizes: 1290 - Standardne veličine panela
       std_sizes_help: '1291 - '
-      grained: 1292 - Pravac zrna/šare
-      grained_help: 1293 - Konfiguracija smjera zrna/šare materijala.
-      grained_0: 1294 - Nema šare
-      grained_1: 1295 - Šara ide u pravcu dužine
-      edge_decremented: 1296 - Smanji
-      edge_decremented_help: 1297 - Omogućava vam da naznačite da li se dimenzije dijelova moraju smanjiti za debljinu kant trake.
+      grained: 1292 - Pravac teksture
+      grained_help: 1293 - Omogućava da se naznači pravac teksture površine u odnosu na dužinu panela.
+      grained_0: 1294 - Nema teksture
+      grained_1: 1295 - Šara prati dužinu
+      edge_decremented: 1296 - Redukuj dimenziju
+      edge_decremented_help: 1297 - Smanji dimenzije za debljinu ivica
       edge_decremented_0: 1298 - Bez umanjenja
       edge_decremented_1: 1299 - Smanji za debljinu kant trake
-      raw_estimated: '1300 - '
+      raw_estimated: 1300 - Korišćeni volumen
       raw_estimated_help: '1301 - '
-      raw_estimated_0: '1302 - '
-      raw_estimated_1: '1303 - '
-      multiplier_coefficient: 1304 - Coefficient multiplicateur
-      multiplier_coefficient_help: '1305 - '
-      std_attributes_dim_placeholder: '1306 - '
-      std_volumic_masses: '1307 - '
-      std_volumic_masses_help: '1308 - '
-      std_prices: 1309 - Cijena
-      std_prices_help: 1310 - Omogućuje vam definisanje cijene za sve veličine kao i za svaku standardnu ​​veličinu materijala.
-      std_cut_prices: '1311 - '
+      raw_estimated_0: 1302 - Iskorišćeni volumen
+      raw_estimated_1: 1303 - Potrebni materijal
+      multiplier_coefficient: 1304 - Koeficijent množenja
+      multiplier_coefficient_help: 1305 - Koeficijent primenjen na bruto volumen.
+      std_attributes_dim_placeholder: 1306 - Izaberite veličinu
+      std_volumic_masses: 1307 - Gustina
+      std_volumic_masses_help: 1308 - Definiši gustinu za sve veličine i standardne veličine materijala.
+      std_prices: 1309 - Cena
+      std_prices_help: 1310 - Definiši cenu za sve veličine i standardne veličine materijala
+      std_cut_prices: 1311 - Cena sečenja.
       std_cut_prices_help: '1312 - '
       texture_width: 1313 - Širina
       texture_height: 1314 - Visina
       export_to_skm: 1315 - Izvezi (.skm)
     texture_load:
-      title: '1316 - '
+      title: 1316 - Učitaj sliku.
     texture_export:
-      title: '1317 - '
+      title: 1317 - Izvezi sliku.
     import_from_skm:
       title: 1318 - Uvezi .skm datoteku
       ask_replace: '1319 - '
@@ -1532,16 +1589,16 @@ tab:
       general: 1323 - Uopšteno
       material_order_strategy: 1324 - Sortiranje materijala
       material_order_strategy_help: |
-        1325 - Promijenite redoslijed sljedećih svojstava da biste definisali strategiju sortiranja materijala s popisa.
-        Svako svojstvo može se sortirati u <i class="ladb-opencutlist-icon-sort-asc"> </i> *uzlazno* ili <i class="ladb-opencutlist-icon-sort-desc"> </i> *silazni* redoslijed.
+        1325 - Promenite redosled sledećih svojstava da bi ste definisali strategiju sortiranja materijala sa popisa.
+        Svako svojstvo može se sortirati u <i class="ladb-opencutlist-icon-sort-asc"> </i> *uzlazno* ili <i class="ladb-opencutlist-icon-sort-desc"> </i> *silazni* redosled.
       property_type: 1326 - Tip
-      property_name: 1327 - Ime
+      property_name: 1327 - Naziv
     delete:
       message: '1328 - '
     duplicate:
       message: '1329 - '
     error:
-      no_model: 1330 - Nijedan model nije otvoren. Morat ćete mi dati više informacija;)
+      no_model: 1330 - Nijedan model nije otvoren. Morate mi dati više informacija ;)
       no_materials: 1331 - Vaš model ne sadrži nikakve materijale.
       material_not_found: 1332 - Nije pronađen materijal.
       no_texture: '1333 - '
@@ -1549,72 +1606,72 @@ tab:
       failed_export_skm_file: 1335 - Došlo je do greške prilikom izvoza u .skm datoteku. **{{ error }}**
       failed_deleting_material: '1336 - '
       failed_duplicating_material: '1337 - '
-      invalid_image_file: '1338 - '
-    obsolete_base: 1339 - Da biste bili sinkronizovani, morate ažurirati popis materijala.
+      invalid_image_file: 1338 - Pogrešna slika
+    obsolete_base: 1339 - Da bi ste bili sinhronizovani, morate ažurirati popis materijala.
   outliner:
-    label: '1340 - '
-    title: '1341 - '
-    list: '1342 - '
-    nodes: '1343 - '
-    toggle_hidden: '1344 - '
-    type_0: '1345 - '
-    type_1: '1346 - '
-    type_2: '1347 - '
-    type_3: '1348 - '
+    label: 1340 - Struktura
+    title: 1341 - Struktura
+    list: 1342 - Struktura entiteta
+    nodes: 1343 - Instance
+    toggle_hidden: 1344 - Sakrivene instance
+    type_0: 1345 - Model
+    type_1: 1346 - Grupa
+    type_2: 1347 - Komponenta
+    type_3: 1348 - Komad
     tooltip:
-      hide_node: '1349 - '
-      unhide_node: '1350 - '
-      locked_node: '1351 - '
-      is_active_node: '1352 - '
-      set_active_node: '1353 - '
-      edit_node_properties: '1354 - '
-      select_node: '1355 - '
-      unselect_node: '1356 - '
+      hide_node: 1349 - Sakriti
+      unhide_node: 1350 - Prikaži
+      locked_node: 1351 - Zaključano
+      is_active_node: 1352 - Aktivna instanca u modelu
+      set_active_node: 1353 - Izmeni u modelu
+      edit_node_properties: 1354 - Izmena osobina
+      select_node: 1355 - Odabrati
+      unselect_node: 1356 - Poništi izbor
       open_node_url: 1357 - Otvori URL komada
     edit_node:
-      title_model: '1358 - '
-      title_instance: '1359 - '
+      title_model: 1358 - Osobine modela
+      title_instance: 1359 - Osobine instance **{{ name }}**
       general: 1360 - Uopšteno
-      name: 1361 - Opis
+      name: 1361 - Naziv
       instance_name: 1362 - Instance
       material: 1363 - Materijal
-      definition_name: '1364 - '
+      definition_name: 1364 - Definicija
       description: 1365 - Opis
       url: 1366 - URL
       tags: 1367 - Oznake
       layer_name: 1368 - Oznaka
-      explode: '1369 - '
-      explode_message: '1370 - '
+      explode: 1369 - Eksplodirati
+      explode_message: 1370 - Da li potvrđujete razlaganje instance **{{ name }}** ?
     option:
       general: 1371 - Uopšteno
-      show_hidden_instances: '1372 - '
+      show_hidden_instances: 1372 - Prikaži sakrivene instance
       show_hidden_instances_help: '1373 - '
-      hide_descriptions: 1374 - Hide descriptions
-      hide_descriptions_help: 1375 - If this option is selected, the **descriptions** placed on the parts will not be displayed.
+      hide_descriptions: 1374 - Sakrij opise
+      hide_descriptions_help: 1375 - Ako je ova opcija uključena, **opisi** postavljeni na komade se neće prikazivati.
       hide_tags: 1376 - Sakrij oznake
       hide_tags_help: 1377 - Ako je ova opcija odabrana, **oznake** neće biti prikazane.
       minimize_on_set_active: '1378 - '
       minimize_on_set_active_help: '1379 - '
     error:
-      no_model: 1380 - Nijedan model nije otvoren. Morat ćete mi dati više informacija;)
+      no_model: 1380 - Nijedan model nije otvoren. Morate mi dati više informacija ;)
       no_entities: '1381 - '
-      node_not_found: '1382 - '
-      entity_not_found: '1383 - '
+      node_not_found: 1382 - Nepostojeći čvor
+      entity_not_found: 1383 - Nepostojeća instanca
       obsolete_outliner: '1384 - '
     tip:
       no_node: '1385 - '
     obsolete_base: '1386 - '
   importer:
     label: 1387 - Uvezi
-    title: 1388 - Uvezi dijelove
+    title: 1388 - Uvezi delove
     help: |
-      1389 - Ova stranica vam omogućava uvoz dijelova (definisanih pravokutnim okvirom za ograničavanje) u vaš model iz datoteke [CSV](https://en.wikipedia.org/wiki/Comma-separated_values).
-      Tada možete koristiti značajke *OpenCutList* za dijelove koje je generisao softver koji nije *SketchUp*.
-      Kliknite dugme **Otvori CSV datoteku** za početak..
-    open_csv: 1390 - Otvorite CSV datoteku
+      1389 - Ova stranica vam omogućava uvoz komada (u obliku paralelepipeda) u vaš model iz [CSV] fajla (https://fr.wikipedia.org/wiki/Comma-separated_values).
+      Na taj način možete iskoristiti prednosti liste sečenja iz OpenCutList-a tako što ćete svoje komade generisati u nekom drugom softveru, a ne u *SketchUp-u*.
+      Kliknite dugme **Otvori CSV fajl** da započnete.
+    open_csv: 1390 - Otvorite CSV fajl
     import_to_model: 1391 - Uvezi u model
     load:
-      title: 1392 - Učitavanje CSV datoteku
+      title: 1392 - Učitavanje CSV fajla
       info_0: |
         1393 - Odaberite opcije potrebne za ispravno čitanje datoteke:
         **{{ filename }}**.
@@ -1628,88 +1685,88 @@ tab:
       option_col_sep_semicolon: 1399 - Tačka, zarez
       option_first_line_headers: 1400 - Zaglavlje
       option_first_line_headers_0: 1401 - Podaci
-      option_first_line_headers_1: 1402 - Naslovi stupaca
+      option_first_line_headers_1: 1402 - Naslovi kolona
     import:
-      title: 1403 - Uvezi dijelove u model
+      title: 1403 - Uvezi delove u model
       info_0: |
-        1404 - Uvozit ćete **{{ count }} dijelova** u model.
-        Ovaj će dio biti postavljen na ishodište glavne scene.
+        1404 - Uvozite **{{ count }} komad** u model.
+        Ovaj komad biće postavljen na glavnu scenu, u koordinatnom početku.
       info_0_plural: |
-        1405 - Spremate se da uvezete **{{ count }} dijelova** u model.
-        Ti će dijelovi biti naslagani počevši od ishodišta glavne scene.
+        1405 - Uvozite **{{ count }} komada** u model.
+        Ovi komadi biće poređani jedan na drugi na glavnoj sceni, počevši od koordinatnog početka.
       info_1: 1406 - Kliknite **Uvezi** da biste potvrdili radnju.
       options: |
-        1407 - Model već sadrži *dijelove*, *definicije* ili *materijale*.
+        1407 - Model već sadrži *delove*, *definicije* ili *materijale*.
         Odaberite opcije uvoza koje su vam potrebne.
       option_remove_all_?: 1408 - Šta dalje?
-      option_remove_all_false: 1409 - Dodajte dijelove postojećim
+      option_remove_all_false: 1409 - Dodajte delove postojećim
       option_remove_all_true: 1410 - Uklonite postojeće!
       option_keep_definitions_settings: 1411 - Zadrži podešavanja
-      option_keep_materials_settings: 1412 - Zadrži postavke materijala
+      option_keep_materials_settings: 1412 - Zadrži podešavanja materijala
     column:
       unused: 1413 - Neiskorišteno
       mandatory: 1414 - Obavezna polja
       optional: 1415 - Opciona polja
       name: 1416 - Opis
       count: 1417 - Količina
-      bbox_length: 1418 - Dužina
-      bbox_width: 1419 - Širina
-      bbox_thickness: 1420 - Debljina
+      bbox_length: '1418 - Upotrebljiva dužina '
+      bbox_width: 1419 - Upotrebljiva širina
+      bbox_thickness: 1420 - Upotrebljiva debljina
       material: 1421 - Materijal
       tags: 1422 - Oznake
     tooltip:
-      errors: 1423 - Ovaj dio se neće uvesti jer je izazvao sljedeće greške
-      warnings: 1424 - Ovaj će se dio uvesti, ali je dao sljedeća upozorenja
+      errors: 1423 - Ovaj komad neće biti uvezen jer sadrži sledeće greške
+      warnings: 1424 - Ovaj komad će biti uvezen, ali sadrži sledeća upozorenja
     error:
-      no_model: 1425 - Nijedan model nije otvoren. Nije moguće uvesti dijelove u prazan model;)
+      no_model: 1425 - Nijedan model nije otvoren. Nije moguće uvesti delove u prazan model ;)
       file_not_found: '1426 - Datoteka nije pronađena: **{{ filename }}**'
       bad_extension: 1427 - Datoteka *{{ filename }}* nema ekstenziju **.CSV** ili **.TSV**.
       failed_to_load_csv_file: |
         1428 - Nije moguće učitati CSV datoteku: **{{ error }}**
-        *Provjerite jeste li odabrali ispravan separator polja.*
+        *Proverite da li ste odabrali ispravan separator polja.*
       empty_file: 1429 - Datoteka izgleda prazna ili je nije moguće interpretirati.
-      no_importable_part: 1430 - Nijedan dio se ne može uvesti. Dodijelite obavezna polja odgovarajućim stupcima.
+      no_importable_part: 1430 - Nijedan deo se ne može uvesti. Dodelite obavezna polja odgovarajućim kolonama.
       invalid_name: 1431 - Pogrešan opis
       invalid_length: 1432 - Pogrešna dužina
       invalid_width: 1433 - Pogrešna širina
       invalid_thickness: 1434 - Pogrešna debljina
-      failed_to_import: 1435 - Uvoz nije uspio.
+      failed_to_import: 1435 - Uvoz nije uspeo.
     warning:
       invalid_count: 1436 - Neispravan broj
       invalid_material: 1437 - Nesipravan materijal
     success:
-      imported_title: 1438 - Uvoz je uspješno završen
-      imported_body: 1439 - {{ count }} dio/dijelova je uspješno uvezen!
-      imported_body_plural: 1440 - {{ count }} dijelova je uspješno uvezeno!
-    obsolete_base: 1441 - Da biste ostali sinkronizovani, morate ponovo učitati CSV datoteku.
+      imported_title: 1438 - Uvoz završen
+      imported_body: 1439 - {{ count }} deo uspešno uvezen !
+      imported_body_plural: 1440 - {{ count }} delova uspešno uvezeno !
+    obsolete_base: 1441 - Da bi ste ostali sinhronizovani, morate ponovo učitati CSV fajl.
   tutorials:
     label: 1442 - Uputstvo
     title: 1443 - Uputstvo
     help: |
-      1444 - Ovdje pronađite nepotpunu listu videozapisa koje je zajednica napravila kako se upotrebljava *OpenCutList*.
+      1444 - Ovdje pronađite nepotpunu listu video zapisa koje je zajednica napravila kako se upotrebljava *OpenCutList*.
     submit: 1445 - Pošaljite videozapis
     submit_info: '1446 - '
     error:
-      fail_to_load_list: 1447 - Nije moguće učitati popis videozapisa.
+      fail_to_load_list: 1447 - Nije moguće učitati popis video zapisa.
   news:
     label: 1448 - Novosti
     title: 1449 - Novosti
     help: |
-      1450 - Najnovije vijesti od *OpenCutList*.
+      1450 - Najnovije vesti od *OpenCutList*.
     comment: 1451 - Komentar
     error:
-      fail_to_load_list: 1452 - Nije moguće učitati listu vijesti.
+      fail_to_load_list: 1452 - Nije moguće učitati listu vesti.
   forum:
     label: 1453 - Forum
     title: 1454 - Forum
     help: |
-      1455 - Ovaj forum omogućava vam razmjenu poruka sa korisničkom zajednicom i timom *OpenCutList*.
+      1455 - Ovaj forum omogućava vam razmenu poruka sa korisničkom zajednicom i timom *OpenCutList*.
     create_conversation: 1456 - Započnite temu
     reply: 1457 - Odgovori
     tags: 1458 - Oznake
     redirection: |
-      1459 - Bit ćete preusmjereni na **Open Collective** platformu koja je domaćin ovom forumu za diskusiju.
-      Da biste *započeli razgovore* ili *odgovorili*, morat ćete otvoriti nalog i prijaviti se.
+      1459 - Bićete preusmereni na **Open Collective** platformu koja je domaćin ovom forumu za diskusiju.
+      Da bi ste *započeli razgovore* ili *odgovorili*, morate otvoriti nalog i prijaviti se.
       *Besplatno je, bez obaveza i jednostavno potrebna je samo e-mail adresa.
 
       *Prijavite se za nastavak.
@@ -1732,29 +1789,29 @@ tab:
       cuttingdiagram_export: '1471 - '
     objective_details:
       default: |
-        1472 - Stalno poboljšanje *OpenCutList* nam je važno i projekt će i dalje trebati vašu pomoć za svoje sljedeće ažuriranje **3.0**!
+        1472 - Stalno poboljšanje *OpenCutList* nam je važno i projekt će i dalje trebati vašu pomoć za svoje sledeće ažuriranje **3.0**!
       cuttingdiagram_export: '1473 - '
     objective_crowdfunding: |
-      1474 - Razvoj ove nove funkcionalnosti izvršit će se putem **participativnog financiranja** i započet će kada se postigne njegov **financijski cilj**.
+      1474 - Razvoj ove nove funkcionalnosti izvršiće se putem **participativnog finansiranja** i započeće kada se postigne njegov **finansijski cilj**.
     objective_thanks: |
       1475 - Hvala vam na doprinosu!
     objective_funded_progress: 1476 - finansirano u iznosu od {{ progress }}%
   settings:
-    label: 1477 - Postavke
-    title: 1478 - Postavke
-    global_settings: 1479 - Globalne postavke
+    label: 1477 - Podešavanja
+    title: 1478 - Podešavanja
+    global_settings: 1479 - Globalna podešavanja
     language: 1480 - Jezik
     language_auto: 1481 - Automatski
     zoom: 1482 - Veličina fonta
     zoom_normal: $t(default.automatic)
     zoom_small: 1484 - Malo
     zoom_tiny: 1485 - Sitno
-    print_margin: '1486 - '
-    print_margin_normal: '1487 - '
-    print_margin_small: '1488 - '
+    print_margin: 1486 - Margine štampe
+    print_margin_normal: 1487 - Normale
+    print_margin_small: 1488 - Male
     table_row_size: '1489 - '
     table_row_size_normal: 1490 - Normalno
-    table_row_size_compact: '1491 - '
+    table_row_size_compact: 1491 - Kompaktno
     size_and_position: 1492 - Veličina i položaj prozora
     model_settings: 1493 - Postavke modela
     length_unit: 1494 - Jedinica dužine
@@ -1764,8 +1821,8 @@ tab:
     length_format_2: 1498 - Inženjering
     length_format_3: $t(default.fractional)
     length_precision: 1500 - Preciznost
-    suppress_units_display: 1501 - Prikaži jedinicu dužine za svaku vrijednost
-    mass_unit: 1502 - Jedinica mase
+    suppress_units_display: 1501 - Prikaži jedinicu dužine za svaku vrednost
+    mass_unit: 1502 - Jedinica težine
     mass_precision: 1503 - Preciznost
     currency_symbol: 1504 - Simbol valute
     currency_precision: 1505 - Preciznost
@@ -1785,14 +1842,14 @@ tab:
       reset_model_presets_confirm: '1518 - '
       reset_model_presets_success: '1519 - '
       error:
-        no_preset_to_export: '1520 - '
-        no_preset_to_import: '1521 - '
+        no_preset_to_export: 1520 - Nema unapred podešenih vrednosti za izvoz.
+        no_preset_to_import: 1521 - Nema unapred podešenih vrednosti za uvoz.
         failed_to_import: '1522 - '
         failed_to_import_invalid_hexdigest: '1523 - '
         failed_to_import_bad_file_format: '1524 - '
   about:
-    label: 1525 - O
-    title: 1526 - O
+    label: 1525 - O programu
+    title: 1526 - O programu
     version: 1527 - Verzija
     credits: 1528 - Tehničke zasluge
     credits_authors: |
@@ -1800,31 +1857,31 @@ tab:
     credits_translations: 1530 - Prevodi
     credits_translators: '1531 - '
     credits_description: |
-      1532 - The developpment of this extension is linked to the sharing plateform project [L'Air du Bois](https://www.lairdubois.fr).
-      This extension is *Open Source* as well and available under [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) license on [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1533 - Vrijeme rada
+      1532 - Razvoj ovog dodatka deo je projekta platforme za deljenje  [L'Air du Bois](https://www.lairdubois.fr).
+      Kao takav, dodatak je takođe Open Source i dostupan je pod [GNU GPLv3] (https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencom na svom [GitHub] (https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) repozitorijumu.
+    credits_runtime: 1533 - Vreme rada
     credits_development: 1534 - Razvoj
     credits_vendors: |
-      1535 - Avantura ne bi bila moguća bez rada autora sljedećih Open Source komponenata:
+      1535 - Ali ova avantura ne bi bila moguća bez rada autora sledećih *Open Source* softverskih komponenti :
     credits_thanks: |
-      1536 - Posebna zahvala ide:
-      - [JetBrains](https://www.jetbrains.com) za podršku ovom projektu putem njihove [Besplatne licence za otvoreni izvor] (https://www.jetbrains.com/buy/opensource/).
+      1536 - Posebna zahvalnica za:
+      - [JetBrains](https://www.jetbrains.com) za podršku ovom projektu putem njihove [Besplatne licence za otvoreni izvor](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) za podršku projektima otvorenog koda.
       - [GitBook](https://www.gitbook.com) za podršku projektima otvorenog koda.
 tool:
   default:
-    transparency: '1537 - '
-    zoom_extents: '1538 - '
+    transparency: 1537 - Prozirnost
+    zoom_extents: 1538 - Prošireni prikaz
     toggle_depth: '1539 - '
     more: 1540 - Još
-    end_point: '1541 - '
+    end_point: 1541 - Kraj
     middle_point: '1542 - '
     third_point: '1543 - '
     vcb_length: 1544 - Dužina
-    vcb_size: '1545 - '
-    vcb_radius: '1546 - '
-    vcb_diameter: '1547 - '
-    vcb_distance: '1548 - '
+    vcb_size: 1545 - Dimenzije
+    vcb_radius: 1546 - Poluprečnik
+    vcb_diameter: 1547 - Prečnik
+    vcb_distance: 1548 - Udaljenost
     error:
       no_direction: '1549 - '
       invalid_length: '1550 - '
@@ -1836,7 +1893,7 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1557 - Crtež
+    title: 1557 - Crtaj
     action_0: '1558 - '
     action_0_status: '1559 - '
     action_0_state_1_status: '1560 - '
@@ -1849,7 +1906,7 @@ tool:
     action_2_state_1_status: '1567 - '
     action_x_state_2_status: '1568 - '
     action_option_group_offset: 1569 - Offset
-    action_option_group_segments: '1570 - '
+    action_option_group_segments: 1570 - Segmenti
     action_option_group_options: 1571 - Opcije
     action_option_offset_shape_offset: 1572 - Offset
     action_option_offset_shape_offset_status: '1573 - '
@@ -1859,10 +1916,10 @@ tool:
     action_option_options_construction_status: '1577 - '
     action_option_options_rectangle_centered: '1578 - '
     action_option_options_rectangle_centered_status: '1579 - '
-    action_option_options_smoothing: '1580 - '
+    action_option_options_smoothing: 1580 - Izgladnjivanje
     action_option_options_smoothing_status: '1581 - '
     action_option_options_measure_from_vertex_status: '1582 - '
-    action_option_options_measure_from_diameter: '1583 - '
+    action_option_options_measure_from_diameter: 1583 - Merenje
     action_option_options_measure_from_diameter_status: '1584 - '
     action_option_options_measure_from_radius_status: '1585 - '
     action_option_options_measure_reversed: '1586 - '
@@ -1877,8 +1934,8 @@ tool:
     success:
       part_created: '1595 - '
   smart_handle:
-    title: '1596 - '
-    action_0: '1597 - '
+    title: 1596 - Rukovati
+    action_0: 1597 - Odabrati
     action_0_status: '1598 - '
     action_1: '1599 - '
     action_1_status: '1600 - '
@@ -1888,19 +1945,19 @@ tool:
     action_2_status: '1604 - '
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: '1606 - '
-    action_3: '1607 - '
+    action_3: 1607 - Premestiti
     action_3_status: '1608 - '
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
     action_3_state_2_status: '1610 - '
-    action_4: '1611 - '
+    action_4: 1611 - Rasporediti
     action_4_status: '1612 - '
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_1_status: '1614 - '
     action_4_state_2_status: '1615 - '
-    action_5: '1616 - '
-    action_option_group_copy_measure_type: '1617 - '
-    action_option_group_move_measure_type: '1618 - '
-    action_option_group_axes: 1619 - Osi
+    action_5: 1616 - Predimenzionisati
+    action_option_group_copy_measure_type: 1617 - Merenje
+    action_option_group_move_measure_type: 1618 - Merenje
+    action_option_group_axes: 1619 - Ose
     action_option_group_options: 1620 - Opcije
     action_option_copy_measure_type_outside_status: '1621 - '
     action_option_copy_measure_type_centered_status: '1622 - '
@@ -1917,27 +1974,27 @@ tool:
     error:
       min_distance: '1632 - '
   smart_paint:
-    title: '1633 - '
+    title: 1633 - Bojiti
     default_material: 1634 - Nije definisan materijal
     filters: 1635 - Filtriraj
-    filter_0: '1636 - '
+    filter_0: 1636 - Bez tipa
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: '1643 - '
+    action_0: 1643 - Obojiti komponente
     action_0_status: '1644 - '
-    action_1: '1645 - '
+    action_1: 1645 - Oboj kantove
     action_1_status: '1646 - '
-    action_2: '1647 - '
+    action_2: 1647 - Oboj lica
     action_2_status: '1648 - '
-    action_3: '1649 - '
+    action_3: 1649 - Odabrati
     action_3_status: '1650 - '
-    action_4: '1651 - '
+    action_4: 1651 - Očistiti
     action_4_status: '1652 - '
-    action_option_group_instances: '1653 - '
+    action_option_group_instances: 1653 - Broj instanci
     action_option_group_edges: 1654 - Broj kant traka
     action_option_group_faces: '1655 - '
     action_option_instances_0_status: '1656 - '
@@ -1949,10 +2006,10 @@ tool:
     action_option_faces_1_status: '1662 - '
     edges: '1663 - '
     edges_plural: '1664 - '
-    edge_ymin: '1665 - '
-    edge_ymax: '1666 - '
-    edge_xmin: '1667 - '
-    edge_xmax: '1668 - '
+    edge_ymin: 1665 - Dužina 1
+    edge_ymax: 1666 - Dužina 2
+    edge_xmin: 1667 - Širina 1
+    edge_xmax: 1668 - Širina 2
     faces: '1669 - '
     faces_plural: '1670 - '
     face_zmin: 1671 - Furnir naličje
@@ -1966,8 +2023,8 @@ tool:
       not_face: '1677 - '
       wrong_material_type: '1678 - '
   smart_axes:
-    title: '1679 - '
-    action_0: '1680 - '
+    title: 1679 - Orijentisati
+    action_0: 1680 - Okrenuti
     action_0_status: '1681 - '
     action_1: '1682 - '
     action_1_status: '1683 - '
@@ -1977,10 +2034,10 @@ tool:
     action_3_status: '1687 - '
     action_4: '1688 - '
     action_4_status: '1689 - '
-    action_option_group_direction: '1690 - '
-    action_option_direction_0: '1691 - '
-    action_option_direction_1: '1692 - '
-    action_option_direction_2: '1693 - '
+    action_option_group_direction: 1690 - Pravac
+    action_option_direction_0: 1691 - Lo
+    action_option_direction_1: 1692 - La
+    action_option_direction_2: 1693 - Ep
     action_option_direction_0_status: '1694 - '
     action_option_direction_1_status: '1695 - '
     action_option_direction_2_status: '1696 - '
