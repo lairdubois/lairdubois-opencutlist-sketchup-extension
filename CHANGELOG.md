@@ -17,20 +17,20 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Switch YZ axes option to Smart Export Tool on Export 3D part action
   * Added Material type separators in materials tabs when sorted by type
   * Added Export 2D projections left, right, front, back
-  * Added QRCodes in labels editor
+  * Added QRCodes in the label editor
   * Added Duplicate element in labels editor
   * Added Duplicate column in export editor
-  * Added Labels button to Parts List
+  * Added the Labels button to the Parts List
   * Added _use_count_ parameter to 2D and 3D drawing writers
   * Added handle to manually reorder material prices list
   * Added an option to customize group sorting
   * Added Export parts list to XLSX
   * Added Export drawing with overflows
   * Changed solid wood coefficient from estimate params to material attributes
-  * Improved export drawing to Layout : adding the ability to add in a new page of an existing file
+  * Improved export drawing to Layout: adding the ability to add in a new page of an existing file
   * Improved labels formulas
   * Improved smart tools picker
-  * Improved Smart Paint Tool by adding scrolling in materials list
+  * Improved Smart Paint Tool by adding scrolling in the materials list
   * Improved surface detection
   * Improved Material import from SKM (allows new or replace)
   * Improved Layout feature to be able to align on active view axes
@@ -41,6 +41,9 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   ### BETA
 
+  * 2025-09-07
+    * Added rectangular cuts export for Rectangle and Irregular cutting diagram types 
+    * Updated EN, ZH, CR languages
   * 2025-09-06
     * Added font size option in the settings tab 
     * Fixed various packing solver bugs
