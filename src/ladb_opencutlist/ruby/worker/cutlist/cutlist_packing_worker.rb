@@ -824,13 +824,11 @@ module Ladb::OpenCutList
       if @group.parts.length != @part_ids.length
         packing_def.warnings << 'tab.cutlist.packing.warning.is_part_selection'
       end
-      if @problem_type != Packy::PROBLEM_TYPE_IRREGULAR
-        if @group.def.material_attributes.l_length_increase > 0 || @group.def.material_attributes.l_width_increase > 0 || @group.edge_decremented
-          packing_def.warnings << 'tab.cutlist.packing.warning.cutting_dimensions'
-        end
-        if @group.def.material_attributes.l_length_increase > 0 || @group.def.material_attributes.l_width_increase > 0
-          packing_def.warnings << [ "tab.cutlist.packing.warning.cutting_dimensions_increase_#{@group.material_is_1d ? '1d' : '2d'}", { :material_name => @group.material_name, :length_increase => @group.def.material_attributes.length_increase, :width_increase => @group.def.material_attributes.width_increase } ]
-        end
+      if @group.def.material_attributes.l_length_increase > 0 || @group.def.material_attributes.l_width_increase > 0 || @group.edge_decremented
+        packing_def.warnings << 'tab.cutlist.packing.warning.cutting_dimensions'
+      end
+      if @group.def.material_attributes.l_length_increase > 0 || @group.def.material_attributes.l_width_increase > 0
+        packing_def.warnings << [ "tab.cutlist.packing.warning.cutting_dimensions_increase_#{@group.material_is_1d ? '1d' : '2d'}", { :material_name => @group.material_name, :length_increase => @group.def.material_attributes.length_increase, :width_increase => @group.def.material_attributes.width_increase } ]
       end
       if @group.edge_decremented
         packing_def.warnings << 'tab.cutlist.packing.warning.cutting_dimensions_edge_decrement'
