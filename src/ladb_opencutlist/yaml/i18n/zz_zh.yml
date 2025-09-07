@@ -261,7 +261,7 @@ core:
       view_left: 210 - 左边
       view_right: 211 - 右边
       zoom: 212 - {{ zoom }} 比例
-      explode_factor: 213 - 爆炸视图幅度
+      explode_factor: 213 - 分解视图幅度
       toggle_box_helper: 214 - 显示/隐藏边界框
       toggle_box_dimensions_helper: 215 - 显示/隐藏尺寸
       toggle_axes_helper: 216 - 显示/隐藏部件坐标轴
@@ -939,9 +939,9 @@ tab:
         option_sheet_veneer: 764 - 薄板
         option_sheet_veneer_help: |
           765 - 允许您启用薄板的导出以及选择其颜色。
-        option_bar_dimensional: 766 - 尺寸
+        option_bar_dimensional: 766 - 棒材
         option_bar_dimensional_help: |
-          767 - 允许您激活条形图的导出以及选择其颜色。
+          767 - 允许您激活棒材的导出以及选择其颜色。
         option_bar_band: 768 - 封边
         option_bar_band_help: |
           769 - 允许您启用封边条的导出以及选择其颜色。
@@ -956,9 +956,9 @@ tab:
         option_texts: 776 - 标识符
         option_texts_help: |
           777 - 允许您启用零件识别文本的导出以及选择其颜色。
-        option_leftovers: 778 - 边角料
+        option_leftovers: 778 - 废料
         option_leftovers_help: |
-          779 - 允许您启用边角料的导出以及选择它们的颜色。
+          779 - 允许您启用废料的导出以及选择它们的颜色。
         option_cuts: 780 - 切割
         option_cuts_help: |
           781 - 允许您激活部分的导出以及选择其颜色。
@@ -1090,10 +1090,10 @@ tab:
       option_hide_part_list_1d_dimensional_0: 872 - 显示在每块板上
       option_hide_part_list_1d_edge_0: 873 - 显示在每个边条上
       option_hide_part_list_2d_sheet_good_0: 874 - 显示在每块面板上
-      option_hide_part_list_2d_veneer_0: 875 - 显示在每块贴面板上
+      option_hide_part_list_2d_veneer_0: 875 - 显示在每块木皮片上
       option_hide_part_list_1: 876 - 隐藏
       option_hide_part_list_1d_help: 877 - 显示或隐藏每块板或边条上的部件清单.
-      option_hide_part_list_2d_help: 878 - 显示或隐藏每块面板或贴面板上的部件清单.
+      option_hide_part_list_2d_help: 878 - 显示或隐藏每块面板或木皮片上的部件清单.
       option_part_drawing_type: 879 - 部件的形状
       option_part_drawing_type_0: 880 - 隐藏
       option_part_drawing_type_1: 881 - 正视图绘制
@@ -1141,7 +1141,7 @@ tab:
         total_cut_length: 916 - 切割长度
         efficiency: 917 - 效率
         count: 918 - 数量
-        length: 919 - 引线
+        length: 919 - 長度
         width: 920 - 宽度
         total_length: 921 - Σ 长度
         total_area: 922 - Σ 面积
@@ -1150,23 +1150,23 @@ tab:
         total_used: 925 - 使用总量
         bin_1d_dimensional: 926 - 尺寸
         bin_1d_dimensional_type_0: 927 - 标准尺寸
-        bin_1d_dimensional_type_1: 928 - 余料板材
+        bin_1d_dimensional_type_1: 928 - 板材余料
         bin_1d_edge: 929 - 封边
         bin_1d_edge_type_0: 930 - 标准封边
         bin_1d_edge_type_1: 931 - 余料边缘封边
         bin_2d_sheet_good: 932 - 面板
         bin_2d_sheet_good_type_0: 933 - 标准面板
         bin_2d_sheet_good_type_1: 934 - 面板余料
-        bin_2d_veneer: 935 - 薄板
-        bin_2d_veneer_type_0: 936 - 标准薄饰板
-        bin_2d_veneer_type_1: 937 - 薄饰板余料
+        bin_2d_veneer: 935 - 木皮片
+        bin_2d_veneer_type_0: 936 - 标准木皮片
+        bin_2d_veneer_type_1: 937 - 木皮片余料
         unused: 938 - 未使用
         unplaced_parts: 939 - 未放置的部件
         unplaced_parts_plural: 940 - 未放置的部件
         parts: 941 - 部件
         parts_plural: 942 - 部件
-        leftovers: 943 - 剩余物
-        leftovers_plural: 944 - 边角料
+        leftovers: 943 - 废料
+        leftovers_plural: 944 - 废料
         leftovers_to_keep: 945 - 需要保留的废料
         leftovers_to_keep_plural: 946 - 需要保留的废料
         cut: 947 - 切割
@@ -1183,12 +1183,12 @@ tab:
         option_bin_sheet_good: 956 - 面板
         option_bin_sheet_good_help: |
           957 - 允许您启用面板的导出以及选择其颜色。
-        option_bin_veneer: 958 - 薄板
+        option_bin_veneer: 958 - 木皮片
         option_bin_veneer_help: |
-          959 - 允许您启用薄板的导出以及选择其颜色。
+          959 - 允许您启用木皮片的导出以及选择其颜色。
         option_bin_dimensional: 960 - 尺寸
         option_bin_dimensional_help: |
-          961 - 允许您激活条形图的导出以及选择其颜色。
+          961 - 允许您激活棒材的导出以及选择其颜色。
         option_bin_edge: 962 - 封边
         option_bin_edge_help: |
           963 - 允许您启用封边条的导出以及选择其颜色。
@@ -1204,9 +1204,9 @@ tab:
         option_texts: 972 - 标识符
         option_texts_help: |
           973 - 允许您启用零件识别文本的导出以及选择其颜色。
-        option_leftovers: 974 - 边角料
+        option_leftovers: 974 - 废料
         option_leftovers_help: |
-          975 - 允许您启用边角料的导出以及选择它们的颜色。
+          975 - 允许您启用废料的导出以及选择它们的颜色。
         option_cuts: 976 - 切割
         option_cuts_help: |
           977 - 允许您激活部分的导出以及选择其颜色。
@@ -1305,8 +1305,8 @@ tab:
         part_edge_ymax: 1059 - 边缘长度 2
         part_edge_xmin: 1060 - 边缘宽度 1
         part_edge_xmax: 1061 - 边缘宽度 2
-        part_face_zmin: 1062 - 薄饰板背面
-        part_face_zmax: 1063 - 薄饰板正面
+        part_face_zmin: 1062 - 木皮片背面
+        part_face_zmax: 1063 - 木皮片正面
         thumbnail_proportional_drawing: 1064 - 缩略图(正面)
         thumbnail_proportional_drawing_bottom: 1065 - 缩略图(背面)
         thumbnail_proportional: 1066 - 按比例缩略图
@@ -1350,7 +1350,7 @@ tab:
       option_pins_colored_help: 1101 - 选择标签的颜色.
       option_pins_formula: 1102 - 公式
       option_pins_formula_help: 1103 - 允许您编写 *Ruby* 代码来自定义标签文本.
-      option_pins_length: 1104 - 引线
+      option_pins_length: 1104 - 長度
       option_pins_length_0: 1105 - 没有引线
       option_pins_length_1: 1106 - 短
       option_pins_length_2: 1107 - 中等
@@ -1425,7 +1425,7 @@ tab:
       info_2d: |
         1148 - 此模块允许您将零件的 **2D 投影**导出为 [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) 或 [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) 格式的文件。
       info_3d: |
-        1149 - 此模块允许您将零件的**3D几何图形**导出为[STL]（https://wikipedia.org/wiki/STL_（file_format））或[OBJ]（https://wikipedia.org/wiki/Wavefront_.obj_file）格式的文件。
+        1149 - 此模块允许您将零件的**3D几何图形**导出为 [STL](https://wikipedia.org/wiki/STL_(file_format)) 或 [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) 格式的文件。
       option_file_format: 1150 - 格式
       option_file_format_help: |
         1151 - 选择导出文件的格式
@@ -1548,11 +1548,11 @@ tab:
     title: 1225 - 材质
     type_0: 1226 - 未定义
     type_1: 1227 - 实木
-    type_2: 1228 - 面板
-    type_3: 1229 - 尺寸
+    type_2: 1228 - 板材
+    type_3: 1229 - 棒材
     type_4: 1230 - 封边
     type_5: 1231 - 五金
-    type_6: 1232 - 贴面
+    type_6: 1232 - 木皮
     tooltip:
       type_0: 1233 - 材质类型 '$t(tab.materials.type_0)'
       type_1: 1234 - 材质类型 '$t(tab.materials.type_1)'
@@ -1632,7 +1632,7 @@ tab:
         1289 - 此材料可用的标准截面
 
         *若未指定单位，则会套用模型的单位*
-      std_sizes: 1290 - 标准面板尺寸
+      std_sizes: 1290 - 标准尺寸
       std_sizes_help: |
         1291 - 此材料可用的标准尺寸
 
@@ -1741,7 +1741,7 @@ tab:
       name: 1361 - 名称
       instance_name: 1362 - 实例
       material: 1363 - 材质
-      definition_name: 1364 - 范围
+      definition_name: 1364 - 定义
       description: 1365 - 描述
       url: 1366 - URL
       tags: 1367 - 标签
@@ -1773,7 +1773,7 @@ tab:
     label: 1387 - 导入
     title: 1388 - 导入部件
     help: |
-      1389 - 此页面允许您从 [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) 文件中导入部件（由矩形边界框定义）到您的模型中.
+      1389 - 此页面允许您从[CSV](https://zh.wikipedia.org/wiki/%E9%80%97%E5%8F%B7%E5%88%86%E9%9A%94%E5%80%BC)文件中导入部件（由矩形边界框定义）到您的模型中.
       然后, 您可以使用 *OpenCutList* 的功能处理由除 *SketchUp* 之外的软件生成的部件.
       点击 **打开 CSV 文件** 按钮开始.
     open_csv: 1390 - 打开 CSV 文件
@@ -2164,7 +2164,7 @@ tool:
       no_material: 1673 - 无材质
       no_material_type: 1674 - 没有类型为 '{{ type }}' 的材质
     error:
-      not_part: 1675 - 目标对象不是组件
+      not_part: 1675 - 目标对象不是部件 (组件)
       not_edge: 1676 - 目标面不是面板边缘
       not_face: 1677 - 目标面不是面板面
       wrong_material_type: 1678 - 目标部件的类型必须为 '{{ type }}'
@@ -2190,7 +2190,7 @@ tool:
     warning:
       more_entities: 1697 - 将修改 {{ count_used }} 个共享相同定义的实例
     error:
-      not_part: 1698 - 目标对象不是(组件)
+      not_part: 1698 - 目标对象不是部件 (组件)
       not_orientable: 1699 - 此部件类型不允许进行定向操作
   smart_export:
     title: 1700 - 导出

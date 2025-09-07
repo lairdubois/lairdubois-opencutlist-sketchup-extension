@@ -1917,7 +1917,7 @@ tab:
     global_settings: 1479 - Global Preferences
     language: 1480 - Language
     language_auto: 1481 - Automatic
-    zoom: 1482 - Font size
+    zoom: 1482 - Font Size
     zoom_normal: $t(default.automatic)
     zoom_small: 1484 - Small
     zoom_tiny: 1485 - Tiny

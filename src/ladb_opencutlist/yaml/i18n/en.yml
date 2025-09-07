@@ -1922,7 +1922,7 @@ tab:
     global_settings: Global Preferences
     language: Language
     language_auto: Automatic
-    zoom: Font size
+    zoom: Font Size
     zoom_normal: $t(default.automatic)
     zoom_small: Small
     zoom_tiny: Tiny
