@@ -1280,6 +1280,7 @@ module Ladb::OpenCutList
 
         # Show dialog
         @modal_dialog.show
+        @modal_dialog.set_size(MODAL_DIALOG_DEFAULT_WIDTH, MODAL_DIALOG_DEFAULT_HEIGHT)
         @modal_dialog.center
 
       end
