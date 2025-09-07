@@ -763,7 +763,7 @@
                                     that.highlightPart(partId);
                                 }
                             });
-                            if (!isMultiple && !isFolder) {
+                            if (!isMultiple && !isFolder && that.dialog.capabilities.sketchup_version_number >= 1800000000) {
                                 items.push({ separator: true });
                                 items.push({
                                     icon: 'layout',
