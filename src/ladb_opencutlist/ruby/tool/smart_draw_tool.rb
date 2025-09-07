@@ -3123,14 +3123,14 @@ module Ladb::OpenCutList
 
       super
 
-      if @picked_points.length >= 2
+      if @picked_points.length >= 2 && @mouse_ip.degrees_of_freedom > 1
 
         po = _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last
         if (v = po.vector_to(@mouse_snap_point)).valid?
 
           line = [ po, v ]
 
-          ph = view.pick_helper(x, y, 50)
+          ph = view.pick_helper(x, y, 30)
 
           # Test previously picked points
           @picked_points.each do |point|
