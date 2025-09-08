@@ -285,7 +285,7 @@
             $selectPrintMargin.selectpicker('val', that.dialog.capabilities.tabs_dialog_print_margin);
         }
 
-        $selectLanguage.selectpicker($.extend({}, SELECT_PICKER_OPTIONS, { size: that.dialog.capabilities.languages.length + 1 }));
+        $selectLanguage.selectpicker($.extend({}, SELECT_PICKER_OPTIONS, { container: null, size: that.dialog.capabilities.languages.length + 1 }));
         $selectFontSize.selectpicker(SELECT_PICKER_OPTIONS);
         $selectTableRowSize.selectpicker(SELECT_PICKER_OPTIONS);
         $selectPrintMargin.selectpicker(SELECT_PICKER_OPTIONS);
