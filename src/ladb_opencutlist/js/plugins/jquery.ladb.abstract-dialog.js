@@ -479,7 +479,8 @@ LadbAbstractDialog.prototype.setupTooltips = function ($element) {
 
 LadbAbstractDialog.prototype.setupPopovers = function ($element) {
     $('[data-toggle="popover"]', $element).popover({
-        html: true
+        html: true,
+        container: 'body'
     });
 };
 

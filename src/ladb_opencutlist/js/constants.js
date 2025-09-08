@@ -7,6 +7,7 @@ const EXTENSION_BUILD = '202509070609';   // /!\ Auto-generated line, do not edi
 
 const SELECT_PICKER_OPTIONS = {
     size: 10,
+    container: 'body',
     iconBase: 'ladb-opencutlist-icon',
     tickIcon: 'ladb-opencutlist-icon-tick',
     showTick: true,
