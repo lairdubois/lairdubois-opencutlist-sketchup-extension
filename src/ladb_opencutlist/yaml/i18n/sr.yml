@@ -1,5 +1,5 @@
 # this label must be in your language
-_label: Francuski
+_label: "Srpski -- Molim te, ostavi ovo, ovo je tvoj jezik! --"
 # the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
   Ovaj jezik još nije u **potpunosti preveden**.
@@ -80,7 +80,7 @@ default:
   thickness_layer_single: Sloj
   thickness_layer_plural: Slojevi
   setup_model_units: Podešavanje jedinice modela
-  load_more: Učitaj više ...
+  load_more: Učitaj više
   reset_to_app_defaults: Vrati na izvorne vrednosti
   constrain_key: Maj
   copy_key_win: Ctrl
@@ -155,7 +155,7 @@ core:
       Da biste prijavili grešku: <a href="mailto:opencutlist@lairdubois.fr?Subject=Bug%20Report%20OpenCutList%20 {{ version }}%20(build: {{ build }})" target="_ blank">opencutlist@lairdubois.fr</a>.
   error:
     extern: "Spoljašnja greška: {{ error }}"
-    feature_unavailable: "Ova funkcija zahteva SketchUp {{ version }} ili noviji."
+    feature_unavailable: "Ova funkcija zahteva SketchUp {{ version }} ili noviji"
     failed_export_to: |
       Došlo je do greške prilikom izvoza u *{{ path }}*.
        **{{ error }} **
@@ -179,7 +179,7 @@ core:
       Već imate najnoviju verziju *​​OpenCutList*.
 
       *Razmislite o sponzorstvu ovog projekta da biste nam pomogli da dodamo još više mogućnosti!*
-    downloading: Preuzimanje je u toku...
+    downloading: Preuzimanje je u toku
     changelog: "Što je novo?"
     ignore_update: Preskoči ovo ažuriranje
     download_rescue: "Problem s preuzimanjem?"
@@ -506,7 +506,7 @@ tab:
         Imajte na umu da ako opcija *Automatsko orijentisanje delova* nije aktivna ili je deo *zaključan na svojim osama*, tada:
         - **dužina** se čita na <strong style='color:red'> crvena </strong> os,
         - **širina** na <strong style='color:green'> zelena </strong> os i
-        - **debljina** na <strong style='color:blue'> plava </strong> os.
+        - **debljina** na <strong style='color:blue'> plava </strong> os
       axes_origin_position_none: Ne menjaj početnu tačku
       axes_origin_position_min: Postavi početnu tačku na kraj
       axes_origin_position_center: Postavi početnu tačku u sredinu
@@ -523,7 +523,7 @@ tab:
       auto_orient_help: |
         Ako je odabrana ova opcija, 3 dimenzije delova se sortiraju tako da najveća vrednost predstavlja *dužinu*, a najmanja *debljinu*.
 
-        Inače, 
+        Inače,
         - *dužina* se čita na <span style='color:red'>crvena</span> os,
         - *širina* na <span style='color:green'>zelena</span> os i
         - *debljina* na <span style='color:blue'>plava</span> osa
@@ -733,7 +733,7 @@ tab:
       type_6: $t(tab.materials.type_6)
       type_-1: $t(default.cut_plural)
       tooltip:
-        incompatible_unit: Jedinica nije kompatibilna sa opcijama za procenu materijala.
+        incompatible_unit: Jedinica nije kompatibilna sa opcijama za procenu materijala
         multiplier_coefficient: Multiplikativni koeficijent
       error:
         no_typed_material_parts: "Nijedan deo sa definisanim tipom materijala (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** ili **$t(tab.materials.type_5)**) su obezbeđeni za generisanje izveštaja."
@@ -814,7 +814,7 @@ tab:
       option_saw_kerf: Debljina testere
       option_saw_kerf_help: "Širina materijala uklonjenog sečenjem testere. "
       option_spacing: Razmak
-      option_spacing_help: Minimalni razmak između delova
+      option_spacing_help: Minimalni razmak između delova.
       option_trimming: Krajcovanje
       option_trimming_help_1d: Količina materijala na svakom kraju ploče ili kant trake koja će se tretirati kao otpad.
       option_trimming_help_2d: Količina materijala na svakom kraju ploče koja će se tretirati kao otpad.
@@ -852,7 +852,7 @@ tab:
         Odaberite standardni panel koji će se dupliirati kako bi se izračunao najbolji mogući položaj.
         Ova lista je definisana u polju **$t(tab.materials.edit_material.std_sizes)** materijala.
         Uredi materijal '{{ material_name }}' za popunjavanje ove liste.
-      option_std_sheet_add: Dodajte veličinu panela ...
+      option_std_sheet_add: Dodajte veličinu panela
       option_std_sheet_none: Nijedan
       option_scrap_sheet_good_sizes: Ostatci ploča
       option_scrap_sheet_veneer_sizes: Ostatci folija
@@ -1130,7 +1130,7 @@ tab:
         Vreme proračuna
       tooltip:
         scroll_to_block_1d: Pomaknite se do prve ploče ili trake
-        scroll_to_block_2d: Idi na prvu ploču/list.
+        scroll_to_block_2d: Idi na prvu ploču/list
       list:
         summary: Sažetak
         cached: Učitano iz keša
@@ -1164,7 +1164,7 @@ tab:
         bin_2d_veneer_type_0: Standardna folija
         bin_2d_veneer_type_1: Ostatak folije
         unused: Neiskorišćeno
-        unplaced_parts: Nije postavljeno.
+        unplaced_parts: Nije postavljeno
         unplaced_parts_plural: Neiskorišćeni delovi
         parts: Komad
         parts_plural: Delovi
@@ -1245,7 +1245,11 @@ tab:
       remove_element: $t(default.remove)
       remove_all_elements: $t(default.remove_all)
       part_order_strategy_help: |
+        Podesite redosled svojstava za sortiranje oznaka.
+        Svako svojstvo može biti <i class="ladb-opencutlist-icon-sort-asc"></i> *rastuće* ili <i class="ladb-opencutlist-icon-sort-desc"></i> *opadajuće*.
       offset_help: |
+        *Pomak* određuje poziciju prve oznake na **prvoj stranici**.
+         Odaberite odgovarajuće polje.
       option_page: Veličina papira
       option_page_format: Format
       option_page_format_portrait: Uspravno
@@ -1322,7 +1326,7 @@ tab:
         invalid_size: Nevažeća veličina etikete zbog trenutnih parametara konfiguracije.
       warning:
         is_group_selection: Delovi koji se nalaze u **sakrivenim grupama** u vašem planu sečenja neće imati oznaku.
-        is_part_selection: ""
+        is_part_selection: Ove etikete se odnose samo na **izabrane komade**.
         formula_not_available: Nije dostupno u ovom kontekstu
     layout:
       title: Crtež
@@ -1354,14 +1358,14 @@ tab:
       option_pins_length_1: Mala
       option_pins_length_2: Prosečno
       option_pins_length_3: Veliko
-      option_pins_length_help: Dužina strelice oznaka
+      option_pins_length_help: Dužina strelice oznaka.
       option_pins_direction: Pravac
       option_pins_direction_0: Duž crvene ose
       option_pins_direction_1: Duž zelene ose
       option_pins_direction_2: Duž plave ose
       option_pins_direction_3: Cilj na centar grupe
       option_pins_direction_4: Postavi u centar roditeljske grupe
-      option_pins_direction_help: ""
+      option_pins_direction_help: Omogućava izbor smera oznaka radi bolje čitljivosti u zavisnosti od crteža.
       option_page: Veličina papira
       option_page_format: Format
       option_page_format_portrait: Uspravno
@@ -1373,6 +1377,8 @@ tab:
       option_page_header_0: Bez
       option_page_header_1: Sa
       option_page_header_help: |
+        Omogućava da izaberete da li će štampana stranica sadržati zaglavlje sa nazivom dokumenta, njegovim opisom, datumom, jedinicom i razmerom.
+        Ako nema zaglavlja, crtež će zauzeti celu stranicu.
       option_camera: Kamera
       option_camera_view: Pogled
       option_camera_view_custom: Prilagođeno
@@ -1384,23 +1390,48 @@ tab:
       option_camera_target_custom: Prilagođeno
       option_explode: Eksplodiran prikaz
       error:
-        no_part: ""
-        failed_to_save_as_skp: ""
+        no_part: Trenutno nema komada za crtanje.
+        failed_to_save_as_skp: Neuspešno slanje SKP fajla u Layout.
         failed_to_layout: |
+          Neuspešno upisivanje Layout fajla: *{{ error }}*.
+
+          **Proverite da li je fajl otvoren.**
       warning:
-        is_group_selection: ""
-        is_part_selection: ""
+        is_group_selection: Komadi iz **sakrivenih grupa** neće biti prikazani na crtežu.
+        is_part_selection: Crtež obuhvata samo **izabrane komade**.
       message:
         adding_new_page: |
+          Da li želite da dodate novu stranicu?
         incompatible_page_format: |
+          Format papira u odredišnoj datoteci se razlikuje.
+
+          Trenutni: {{ old_page_format }}
+          Izvezen: {{ new_page_format }}
+
+          Sve stranice biće izbrisane.
         changing_units: |
+          Jedinice u odredišnoj datoteci se razlikuju.
+
+          Trenutne: {{ old_units }}
+          Izvezeno: {{ new_units }}
+
+          Da li želite da pređete na novu jedinicu?
         changing_precision: |
+          Preciznost u odredišnoj datoteci se razlikuje.
+
+          Trenutna: {{ old_precision }}
+          Izvezeno: {{ new_precision }}
+
+          Da li želite da pređete na novu preciznost?
     write:
-      title: ""
+      title: Izvoz komada
       info_2d: |
+        Ovaj modul vam omogućava da izvezete **2D projekciju** elemenata u obliku datoteka u [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) ili [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) formatu.
       info_3d: |
+        Ovaj modul omogućava izvoz **3D modela** elemenata kao datoteke u [STL](https://wikipedia.org/wiki/STL_(file_format)) ili [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) formatu.
       option_file_format: Format
       option_file_format_help: |
+        Omogućava izbor formata fajla za izvoz.
       option_dxf_structure: DXF struktura
       option_dxf_structure_1: Slojevi
       option_dxf_structure_2: Slojevi + Blokovi
@@ -1416,40 +1447,61 @@ tab:
       option_use_count_0: Jedan fajl po delu
       option_use_count_1: Jedan fajl po instanci dela
       option_use_count_help: |
+        Odredite da li se broj primeraka komada uzima u obzir.
       option_part_drawing_type: Projekcija
       option_part_drawing_type_help: |
+        Odaberite prikaz za izvoz.
       option_faces: Površine
-      option_faces_0: ""
-      option_faces_1: ""
+      option_faces_0: Samo ciljana površina
+      option_faces_1: Koristi sve površine komada
       option_faces_help: |
+        Odaberite da li se oblik komada pretražuje po svim površinama ili samo po cilјanoj.
       option_anchor: Tačka učvršćenja
       option_anchor_0: Automatski
-      option_anchor_1: ""
+      option_anchor_1: Prikaži početnu tačku komada
       option_anchor_help: |
+        **Automatski**
+        Donji levi ugao obuhvatnog okvira izvezene geometrije koristi se kao referentna tačka.
+
+        **Projiciraj početak elementa**
+        Omogućava da se početna tačka osa elementa koristi kao referentna tačka.
       option_switch_yz: Vertikalna osa
       option_switch_yz_0: Z vertikalno
       option_switch_yz_1: Y vertikalno
       option_switch_yz_help: |
+        Zameni ose Y i Z za definisanje vertikalne ose komada.
       option_smoothing: Izgladnjivanje
       option_smoothing_0: $t(default.no)
-      option_smoothing_1: ""
+      option_smoothing_1: Izravnjavanje krugova i lukova (Eksperimentalno)
       option_smoothing_help: |
+        Omogućava prepoznavanje kružnica i lukova.
+
+        *Ne prepoznaje druge oblike krivih.*
       option_merge_holes: Razlaganje
       option_merge_holes_0: Osnovno
-      option_merge_holes_1: ""
+      option_merge_holes_1: Kontura + Bušenja + Ivice
       option_merge_holes_help: |
-      option_merge_holes_overflow: ""
+        **Osnovno**
+        Oblik elementa se izvozi sa projekcijom svake strane na sloj po dubini.
+
+        **Kontura + Bušenja + Ivice**
+        Aktivira razdvajanje spoljne konture od bušenja i računa ivice obrade na površinama uz konture i šupljine.
+      option_merge_holes_overflow: Kantovi obrade
       option_merge_holes_overflow_help: |
+        Omogućava definisanje udaljenosti kantova obrade za površine uz rubove kontura i šupljina.
       option_include_paths: Crteži
       option_include_paths_0: $t(default.no)
-      option_include_paths_1: ""
+      option_include_paths_1: Uključi ivice koje nemaju površinu
       option_include_paths_help: |
+        Aktivira izvoz ivica koje nemaju povezanu površinu unutar elementa kao crtežnu putanju.
       option_parts: Delovi
       option_parts_help: |
+        Dozvoljava podešavanje boja elemenata.
       option_parts_depths: Udubljenja
       option_parts_depths_help: |
       option_parts_holes: Bušenja
       option_parts_holes_help: |
+        Dozvoljava podešavanje boja bušenja elemenata.
       option_parts_paths: Crteži
       option_parts_paths_help: |
       error:
@@ -1474,27 +1526,27 @@ tab:
       unknow_part: Izabrani komad ne postoji u krojnoj listi.
       obsolete_cutlist: "Nije moguće, generisana krojna lista je zastarela. Ponovo je generišite."
     warning:
-      is_entity_selection: ""
+      is_entity_selection: Uzeti su u obzir samo selektovani elementi u modelu.
       no_typed_materials_in_model: "Ovaj model ne koristi nijedan definisani materijal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ili **$t(tab.materials.type_5)**)."
       no_typed_materials_in_selection: "U odabiru se ne koristi definisani materijal (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**)."
       export_empty: Vaš izbor za izvoz ne sadrži nijedan deo.
     success:
-      part_selected: ""
-      part_selected_plural: ""
+      part_selected: "{{ count }} element izabran u listi rezanja."
+      part_selected_plural: "{{ count }} elemenata izabrano u listi rezanja."
     tip:
       no_component: |
         Delovi koji se uključuju na *listu dilova* moraju biti primerci **komponente**.
         Ako koristite samo grupe, pretvorite ih u komponente.
         Korišćenjem komponenata za delove, oni se mogu ponoviti bez dupliranja.
       no_typed_materials: "Nanesite materijal na komade koji će biti uključeni u listu delova i definišite osobine tog materijala. (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** ou **$t(tab.materials.type_5)**) dans l'onglet <i class=\"ladb-opencutlist-icon-materials\"></i>**Matières**."
-    obsolete_base: "Da biste ostali sinhronizovani, morate ponovo generisati krojnu listu"
+    obsolete_base: "Da biste ostali sinhronizovani, morate ponovo generisati krojnu listu."
   materials:
     label: Materijali
     title: Materijali
     type_0: Nedefinisano
     type_1: Masivno drvo
     type_2: Pločasti materijali
-    type_3: Ploča.
+    type_3: Ploča
     type_4: Kantovanje
     type_5: Dodaci
     type_6: Furnirski list
@@ -1505,14 +1557,14 @@ tab:
       type_3: Tip materijala $t(tab.materials.type_3)
       type_4: Tip materijala $t(tab.materials.type_4)
       type_5: Tip materijala $t(tab.materials.type_5)
-      type_6: ""
+      type_6: Tip materijala '$t(tab.materials.type_6)'
       grained_0: $t(tab.materials.edit_material.grained_0)
       grained_1: $t(tab.materials.edit_material.grained_1)
       grain_direction: Smer teksture
       raw_estimated_0: Procenjeno po korisnom sečenom volumenu
-      colorized: Ova nijansa biće primenjena na teksturu prilikom renderovanja u modelu.
+      colorized: Ova nijansa biće primenjena na teksturu prilikom renderovanja u modelu
       texture_load: Učitaj novu teksturu
-      texture_export: Izvezi sliku.
+      texture_export: Izvezi sliku
       texture_clear: Obriši teksturu
       edit: "Izmenite svojstva '{{ name }}'"
       set_current: "Oboji komade pomoću '{{ name }}'"
@@ -1566,7 +1618,7 @@ tab:
       grained_0: Nema teksture
       grained_1: Šara prati dužinu
       edge_decremented: Redukuj dimenziju
-      edge_decremented_help: Smanji dimenzije za debljinu ivica
+      edge_decremented_help: Smanji dimenzije za debljinu ivica.
       edge_decremented_0: Bez umanjenja
       edge_decremented_1: Smanji za debljinu kant trake
       raw_estimated: Korišćeni volumen
@@ -1579,16 +1631,16 @@ tab:
       std_volumic_masses: Gustina
       std_volumic_masses_help: Definiši gustinu za sve veličine i standardne veličine materijala.
       std_prices: Cena
-      std_prices_help: Definiši cenu za sve veličine i standardne veličine materijala
-      std_cut_prices: Cena sečenja.
+      std_prices_help: Definiši cenu za sve veličine i standardne veličine materijala.
+      std_cut_prices: Cena sečenja
       std_cut_prices_help: |
       texture_width: Širina
       texture_height: Visina
       export_to_skm: Izvezi (.skm)
     texture_load:
-      title: Učitaj sliku.
+      title: Učitaj sliku
     texture_export:
-      title: Izvezi sliku.
+      title: Izvezi sliku
     import_from_skm:
       title: Uvezi .skm datoteku
       ask_replace: |
@@ -1608,15 +1660,16 @@ tab:
       message: |
     duplicate:
       message: |
+        Odaberite ime za kopiju materijala **{{ material_name }}**.
     error:
       no_model: Nijedan model nije otvoren. Morate mi dati više informacija ;)
       no_materials: Vaš model ne sadrži nikakve materijale.
       material_not_found: Nije pronađen materijal.
-      no_texture: ""
+      no_texture: Za materijal nije definisana tekstura.
       failed_import_skm_file: "Došlo je do greške prilikom uvoza iz .skm datoteke. **{{ error }}**"
       failed_export_skm_file: "Došlo je do greške prilikom izvoza u .skm datoteku. **{{ error }}**"
-      failed_deleting_material: ""
-      failed_duplicating_material: ""
+      failed_deleting_material: "Greška pri brisanju materijala. **{{ error }}**"
+      failed_duplicating_material: "Greška pri kopiranju materijala. **{{ error }}**"
       invalid_image_file: Pogrešna slika
     obsolete_base: "Da bi ste bili sinhronizovani, morate ažurirati popis materijala."
   outliner:
@@ -1662,16 +1715,18 @@ tab:
       hide_tags: Sakrij oznake
       hide_tags_help: "Ako je ova opcija odabrana, **oznake** neće biti prikazane."
       minimize_on_set_active: ""
-      minimize_on_set_active_help: ""
+      minimize_on_set_active_help: "Kada je opcija aktivna, prozor OpenCutList se minimizira prilikom korišćenja funkcije *'$t(tab.outliner.tooltip.set_active_node)'*."
     error:
       no_model: Nijedan model nije otvoren. Morate mi dati više informacija ;)
-      no_entities: ""
+      no_entities: Nema sadržaja u vašem modelu !
       node_not_found: Nepostojeći čvor
       entity_not_found: Nepostojeća instanca
-      obsolete_outliner: ""
+      obsolete_outliner: "Ne može se izvršiti – struktura je zastarela. Generišite je ponovo."
     tip:
       no_node: |
-    obsolete_base: ""
+        Trenutno nema instanci u vašem modelu za prikaz.
+        Instanca može biti **grupa** ili **komponenta** u sceni.
+    obsolete_base: "Za sinhronizaciju je potrebno ponovo generisati strukturu."
   importer:
     label: Uvezi
     title: Uvezi delove
@@ -1757,6 +1812,10 @@ tab:
       Ovdje pronađite nepotpunu listu video zapisa koje je zajednica napravila kako se upotrebljava *OpenCutList*.
     submit: Pošaljite videozapis
     submit_info: |
+      Ako ste napravili video o korišćenju **OpenCutList** i želite da ga prikažemo ovde?
+       Pošaljite nam email na **opencutlist@lairdubois.fr**!
+
+      *Video mora biti javan i na YouTube-u.*
     error:
       fail_to_load_list: Nije moguće učitati popis video zapisa.
   news:
@@ -1792,16 +1851,19 @@ tab:
     contribute: Doprinesi
     backers: "{{ count }} podržali finansijski"
     backers_plural: "{{ count }} podržali finansijski"
-    ad: ""
+    ad: "OpenCutList je plaćeni softver"
     objective: Cilj
     objective_slogan: "OpenCutList smo svi mi"
     objective_title:
       default: Ciljevi
-      cuttingdiagram_export: ""
+      cuttingdiagram_export: Plaćanje za izvoz liste rezanja
     objective_details:
       default: |
         Stalno poboljšanje *OpenCutList* nam je važno i projekt će i dalje trebati vašu pomoć za svoje sledeće ažuriranje **3.0**!
       cuttingdiagram_export: |
+        Cilj nam je da *OpenCutList* zadovolji različite potrebe korisnika u funkciji *calepinage*.
+        Da bismo proširili opcije, želimo omogućiti izvoz dijagrama calepinage u **SVG** i **DXF** formatu.
+        Vaš doprinos u radu na ovim izvozima nam pomaže da vam omogućimo najbolje iskustvo sa *OpenCutList*.
     objective_crowdfunding: |
       Razvoj ove nove funkcionalnosti izvršiće se putem **participativnog finansiranja** i započeće kada se postigne njegov **finansijski cilj**.
     objective_thanks: |
@@ -1820,7 +1882,7 @@ tab:
     print_margin: Margine štampe
     print_margin_normal: Normale
     print_margin_small: Male
-    table_row_size: ""
+    table_row_size: Debljina linija tabele
     table_row_size_normal: Normalno
     table_row_size_compact: Kompaktno
     size_and_position: Veličina i položaj prozora
@@ -1838,26 +1900,37 @@ tab:
     currency_symbol: Simbol valute
     currency_precision: Preciznost
     presets:
-      export_global_presets: ""
+      export_global_presets: Izvezi podešavanja
       export_global_presets_help: |
-      export_global_presets_success: ""
-      import_global_presets: ""
+        Omogućava izvoz vaših podešavanja u **.json**. datoteku.
+        Odaberite podešavanja za izvoz.
+      export_global_presets_success: Podešavanja su uspešno izvezena.
+      import_global_presets: Uvezi podešavanja
       import_global_presets_help: |
+        Odaberite podešavanja iz **.json** datoteke za uvoz.
+        Upozorenje: postojeća podešavanja sa istim imenom biće zamenjena uvezenom verzijom.
       import_global_presets_success: |
-      dump_global_presets: ""
-      dump_model_presets: ""
-      reset_global_presets: ""
+        Podešavanja *OpenCutList* su uspešno uvezena.
+        Za primenu promena, **zatvorite** i ponovo **otvorite** prozor OpenCutList.
+      dump_global_presets: Izvoz podešavanja
+      dump_model_presets: Izvoz podešavanja modela
+      reset_global_presets: Resetuj podešavanja
       reset_global_presets_confirm: |
+        Spremate se da obrišete sva sačuvana *OpenCutList* podešavanja.
+        Ova akcija je nepovratna. **Sva podešavanja će biti izgubljena.**
+        Potvrdite za nastavak.
       reset_global_presets_success: |
-      reset_model_presets: ""
+        Podešavanja *OpenCutList* su vraćena na podrazumevane vrednosti.
+        Za primenu promena, **zatvorite** i ponovo **otvorite** prozor OpenCutList.
+      reset_model_presets: Resetuj podešavanja modela
       reset_model_presets_confirm: |
       reset_model_presets_success: |
       error:
         no_preset_to_export: Nema unapred podešenih vrednosti za izvoz.
         no_preset_to_import: Nema unapred podešenih vrednosti za uvoz.
-        failed_to_import: ""
-        failed_to_import_invalid_hexdigest: ""
-        failed_to_import_bad_file_format: ""
+        failed_to_import: "Greška pri uvozu podešavanja : **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Datoteka je promenjena i nije moguće izvršiti uvoz.
+        failed_to_import_bad_file_format: Format datoteke nije podržan.
   about:
     label: O programu
     title: O programu
@@ -1868,8 +1941,8 @@ tab:
     credits_translations: Prevodi
     credits_translators: |
     credits_description: |
-      Razvoj ovog dodatka deo je projekta platforme za deljenje  [L'Air du Bois](https://www.lairdubois.fr).
-      Kao takav, dodatak je takođe Open Source i dostupan je pod [GNU GPLv3] (https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencom na svom [GitHub] (https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) repozitorijumu.
+      Razvoj ovog dodatka deo je projekta platforme za deljenje [L'Air du Bois](https://www.lairdubois.fr).
+      Kao takav, dodatak je takođe Open Source i dostupan je pod [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencom na svom [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) repozitorijumu.
     credits_runtime: Vreme rada
     credits_development: Razvoj
     credits_vendors: |
@@ -1886,104 +1959,104 @@ tool:
     toggle_depth: ""
     more: Još
     end_point: Kraj
-    middle_point: ""
-    third_point: ""
+    middle_point: Središnja tačka
+    third_point: Tačka na trećini
     vcb_length: Dužina
     vcb_size: Dimenzije
     vcb_radius: Poluprečnik
     vcb_diameter: Prečnik
     vcb_distance: Udaljenost
     error:
-      no_direction: ""
-      invalid_length: ""
-      invalid_multiplicator: ""
-      invalid_divider: ""
-      invalid_offset: ""
-      invalid_segment_count: ""
+      no_direction: Odredite smer mišem
+      invalid_length: "Dužina {{ value }} nije validna"
+      invalid_multiplicator: "Množilac {{ value }} nije validan"
+      invalid_divider: "Delilac {{ value }} nije validan"
+      invalid_offset: "Pomak {{ value }} nije validan"
+      invalid_segment_count: "Broj segmenata {{ value }} nije validan, dozvoljeno: 3–999."
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
     title: Crtaj
-    action_0: ""
-    action_0_status: ""
-    action_0_state_1_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_1_state_1_radius_status: ""
-    action_1_state_1_diameter_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_2_state_1_status: ""
-    action_x_state_2_status: ""
+    action_0: Nacrtaj pravougaonik
+    action_0_status: Nacrtaj zapreminu po pravougaonoj osnovi
+    action_0_state_1_status: Kliknite za suprotni ugao ili unesite dužinu i širinu
+    action_1: Nacrtaj krug
+    action_1_status: Nacrtaj zapreminu na osnovu kružne forme
+    action_1_state_1_radius_status: Kliknite za poluprečnik ili unesite rastojanje
+    action_1_state_1_diameter_status: Kliknite za poluprečnik ili unesite rastojanje
+    action_2: Nacrtaj poligon
+    action_2_status: Nacrtaj zapreminu po poligonalnoj osnovi
+    action_2_state_1_status: Kliknite za novu tačku ili unesite rastojanje
+    action_x_state_2_status: Kliknite za visinu ili unesite rastojanje
     action_option_group_offset: Offset
     action_option_group_segments: Segmenti
     action_option_group_options: Opcije
     action_option_offset_shape_offset: Offset
-    action_option_offset_shape_offset_status: ""
-    action_option_segments_segment_count: ""
-    action_option_segments_segment_count_status: ""
-    action_option_options_construction: ""
-    action_option_options_construction_status: ""
-    action_option_options_rectangle_centered: ""
-    action_option_options_rectangle_centered_status: ""
+    action_option_offset_shape_offset_status: Primeni pomak na obris nacrtane forme
+    action_option_segments_segment_count: Broj segmenata
+    action_option_segments_segment_count_status: Postavi broj segmenata kruga
+    action_option_options_construction: Pomoćne linije
+    action_option_options_construction_status: Nacrtaj kao pomoćne linije
+    action_option_options_rectangle_centered: Centrirani pravougaonik
+    action_option_options_rectangle_centered_status: Centriraj pravougaonik na prvoj tački
     action_option_options_smoothing: Izgladnjivanje
-    action_option_options_smoothing_status: ""
-    action_option_options_measure_from_vertex_status: ""
+    action_option_options_smoothing_status: Izravnaj krive
+    action_option_options_measure_from_vertex_status: Merite u odnosu na najbliži vrh
     action_option_options_measure_from_diameter: Merenje
-    action_option_options_measure_from_diameter_status: ""
-    action_option_options_measure_from_radius_status: ""
-    action_option_options_measure_reversed: ""
-    action_option_options_measure_reversed_status: ""
-    action_option_options_pull_centered: ""
-    action_option_options_pull_centered_status: ""
-    action_option_options_ask_name: ""
-    action_option_options_ask_name_status: ""
-    action_measure_locked_status: ""
-    action_toggle_move_copy_status: ""
-    action_change_move_anchor_status: ""
+    action_option_options_measure_from_diameter_status: Merite krug po prečniku
+    action_option_options_measure_from_radius_status: Merite krug po poluprečniku
+    action_option_options_measure_reversed: Obrnuto merenje
+    action_option_options_measure_reversed_status: Obrni merenje
+    action_option_options_pull_centered: Centrirana visina
+    action_option_options_pull_centered_status: Centriraj visinu na prvoj tački
+    action_option_options_ask_name: Imenovanje komada
+    action_option_options_ask_name_status: Ručno unosite ime komada
+    action_measure_locked_status: Zaključaj na poslednje merenje
+    action_toggle_move_copy_status: Menjaj između kopiraj/pomeraj
+    action_change_move_anchor_status: Promeni tačku sidrenja
     success:
-      part_created: ""
+      part_created: "Kreiran novi komad : {{ name }}"
   smart_handle:
     title: Rukovati
     action_0: Odabrati
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
+    action_0_status: Kliknite na komad za izbor
+    action_1: Kopiraj po liniji
+    action_1_status: Kliknite na komad za kopiranje duž ose
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: ""
-    action_2: ""
-    action_2_status: ""
+    action_1_state_2_status: Kliknite za postavljanje kopije komada ili unesite rastojanje
+    action_2: Kopiraj po mreži
+    action_2_status: Kliknite na komad za kopiranje po mreži
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: ""
+    action_2_state_2_status: Kliknite za postavljanje kopija komada ili unesite dve udaljenosti
     action_3: Premestiti
-    action_3_status: ""
+    action_3_status: Kliknite na komad za pomeranje duž ose
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: ""
+    action_3_state_2_status: Kliknite za postavljanje komada ili unesite rastojanje
     action_4: Rasporediti
-    action_4_status: ""
+    action_4_status: Kliknite na komad za raspoređivanje duž ose
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: ""
-    action_4_state_2_status: ""
+    action_4_state_1_status: Kliknite za prvu tačku merenja
+    action_4_state_2_status: Kliknite za drugu tačku merenja ili unesite rastojanje
     action_5: Predimenzionisati
     action_option_group_copy_measure_type: Merenje
     action_option_group_move_measure_type: Merenje
     action_option_group_axes: Ose
     action_option_group_options: Opcije
-    action_option_copy_measure_type_outside_status: ""
-    action_option_copy_measure_type_centered_status: ""
-    action_option_copy_measure_type_inside_status: ""
-    action_option_move_measure_type_outside_status: ""
-    action_option_move_measure_type_centered_status: ""
-    action_option_move_measure_type_inside_status: ""
-    action_option_axes_active_status: ""
-    action_option_axes_context_status: ""
-    action_option_axes_entity_status: ""
-    action_option_options_mirror_status: ""
+    action_option_copy_measure_type_outside_status: Merite spolja
+    action_option_copy_measure_type_centered_status: Merite od centra do centra
+    action_option_copy_measure_type_inside_status: Merite između komada
+    action_option_move_measure_type_outside_status: Merite spolja
+    action_option_move_measure_type_centered_status: Merite po centru
+    action_option_move_measure_type_inside_status: Merite iznutra
+    action_option_axes_active_status: Manipuliši po aktivnim osama
+    action_option_axes_context_status: Manipuliši po osama grupe/komponente koja sadrži komad
+    action_option_axes_entity_status: Manipuliši po osama komada
+    action_option_options_mirror_status: Kopiraj simetrično
     warning:
-      copies_disable_mirror: ""
+      copies_disable_mirror: Višestruka kopija onemogućava opciju '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      min_distance: ""
+      min_distance: "Rastojanje {{ value1 }} je manje od minimalnog rastojanja {{ value2 }}"
   smart_paint:
     title: Bojiti
     default_material: Nije definisan materijal
@@ -1996,67 +2069,67 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Obojiti komponente
-    action_0_status: ""
+    action_0_status: Kliknite na komad za primenu materijala na instancu
     action_1: Oboj kantove
-    action_1_status: ""
+    action_1_status: Kliknite na ivicu komada panela da mu primenite materijal '$t(tab.materials.type_4)'
     action_2: Oboj lica
-    action_2_status: ""
+    action_2_status: Kliknite na površinu komada panela da joj primenite materijal '$t(tab.materials.type_6)'
     action_3: Odabrati
-    action_3_status: ""
+    action_3_status: Kliknite na površinu za uzorak materijala
     action_4: Očistiti
-    action_4_status: ""
+    action_4_status: Kliknite na komad za uklanjanje svih materijala
     action_option_group_instances: Broj instanci
     action_option_group_edges: Broj kant traka
     action_option_group_faces: ""
     action_option_instances_0_status: ""
     action_option_instances_1_status: ""
     action_option_edges_0_status: ""
-    action_option_edges_1_status: ""
-    action_option_edges_2_status: ""
-    action_option_faces_0_status: ""
-    action_option_faces_1_status: ""
-    edges: ""
-    edges_plural: ""
+    action_option_edges_1_status: Oboji odabranu ivicu i suprotnu ivicu komada
+    action_option_edges_2_status: Oboji 4 kanta odabranog komada
+    action_option_faces_0_status: Oboji samo odabranu površinu
+    action_option_faces_1_status: Oboji 2 površine odabranog komada
+    edges: "{{ count }} kanta"
+    edges_plural: "{{ count }} kantova"
     edge_ymin: Dužina 1
     edge_ymax: Dužina 2
     edge_xmin: Širina 1
     edge_xmax: Širina 2
-    faces: ""
-    faces_plural: ""
+    faces: "{{ count }} površine"
+    faces_plural: "{{ count }} površina"
     face_zmin: Furnir naličje
     face_zmax: Furnir lice
     warning:
-      no_material: ""
-      no_material_type: ""
+      no_material: Nema materijala
+      no_material_type: "Nema materijala tipa '{{ type }}'"
     error:
-      not_part: ""
-      not_edge: ""
-      not_face: ""
-      wrong_material_type: ""
+      not_part: Odabrani objekat nije komad (komponenta)
+      not_edge: Odabrana površina nije kant panela
+      not_face: Odabrana površina nije površina panela
+      wrong_material_type: "Ciljani element mora biti tipa '{{ type }}'"
   smart_axes:
     title: Orijentisati
     action_0: Okrenuti
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
-    action_4: ""
-    action_4_status: ""
+    action_0_status: Kliknite na element da biste ga rotirali po jednoj od dimenzija
+    action_1: Zameni dužinu ↔ širinu
+    action_1_status: Kliknite na element da obrnete dužinu i širinu
+    action_2: Zameni površinu ↔ suprotnu površinu
+    action_2_status: Kliknite na element da obrnete prikaz strane i suprotne strane
+    action_3: Prilagodi ose
+    action_3_status: Izaberite stranu elementa i kliknite na ivicu da uskladite ose
+    action_4: Pomeri početnu tačku
+    action_4_status: Izaberite stranu elementa i kliknite na tačku da postavite njegovu početnu poziciju
     action_option_group_direction: Pravac
     action_option_direction_0: Lo
     action_option_direction_1: La
     action_option_direction_2: Ep
-    action_option_direction_0_status: ""
-    action_option_direction_1_status: ""
-    action_option_direction_2_status: ""
+    action_option_direction_0_status: Rotiraj element po dužini
+    action_option_direction_1_status: Rotiraj element po širini
+    action_option_direction_2_status: Rotiraj element po debljini
     warning:
-      more_entities: ""
+      more_entities: "{{ count_used }} instance koje dele istu definiciju biće izmenjene"
     error:
-      not_part: ""
-      not_orientable: ""
+      not_part: Odabrani objekat nije komad (komponenta)
+      not_orientable: Ovaj tip elementa se ne može rotirati
   smart_export:
     title: Izvoz
     action_0: ""
