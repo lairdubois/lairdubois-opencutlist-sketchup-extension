@@ -1918,7 +1918,10 @@ tab:
         1516 - Podešavanja *OpenCutList* su vraćena na podrazumevane vrednosti.
         Za primenu promena, **zatvorite** i ponovo **otvorite** prozor OpenCutList.
       reset_model_presets: 1517 - Resetuj podešavanja modela
-      reset_model_presets_confirm: '1518 - '
+      reset_model_presets_confirm: |
+        1518 - Spremate se da resetujete sva *OpenCutList* podešavanja za trenutni model.
+        Ova radnja je nepovratna. **Sva podešavanja će biti vraćena na početne vrednosti.**
+        Potvrdite za nastavak.
       reset_model_presets_success: '1519 - '
       error:
         no_preset_to_export: 1520 - Nema unapred podešenih vrednosti za izvoz.

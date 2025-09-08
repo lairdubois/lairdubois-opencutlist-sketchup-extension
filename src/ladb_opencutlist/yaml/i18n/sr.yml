@@ -1924,6 +1924,9 @@ tab:
         Za primenu promena, **zatvorite** i ponovo **otvorite** prozor OpenCutList.
       reset_model_presets: Resetuj podešavanja modela
       reset_model_presets_confirm: |
+        Spremate se da resetujete sva *OpenCutList* podešavanja za trenutni model.
+        Ova radnja je nepovratna. **Sva podešavanja će biti vraćena na početne vrednosti.**
+        Potvrdite za nastavak.
       reset_model_presets_success: |
       error:
         no_preset_to_export: Nema unapred podešenih vrednosti za izvoz.
