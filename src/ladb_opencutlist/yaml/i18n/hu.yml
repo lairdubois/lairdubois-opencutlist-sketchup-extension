@@ -2005,8 +2005,9 @@ tab:
       - Soul Issam (*arab*), RTL felület még nem támogatott
       - Nguyen Ngoc Tan (*vietnámi*)
       - Andriy Toporivsky, Kostyantyn Shcherbey (*ukrán*)
-      - [刘涛](https://www.liutao91.cn) (*egyszerűsített kínai*)
+      - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*egyszerűsített kínai*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holland*)
+      - Milan Divovic (*szerb*)
     credits_description: |
       A bővítmény fejlesztése az [L'Air du Bois](https://www.lairdubois.fr) megosztási platform projekthez kapcsolódik.
       Ez a bővítmény szintén *nyílt forráskódú* és elérhető [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licenc alatt a [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension)-on.

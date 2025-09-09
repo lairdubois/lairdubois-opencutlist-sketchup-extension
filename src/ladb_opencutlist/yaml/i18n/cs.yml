@@ -1985,7 +1985,7 @@ tab:
         failed_to_import_bad_file_format: Neplatný formát souboru.
   about:
     label: O pluginu
-    title: O plaginu ...
+    title: O plaginu
     version: Verze
     credits: Technické kredity
     credits_authors: |
@@ -2004,9 +2004,10 @@ tab:
       - Soul Issam (*arabština*), bez RTL rozhraní
       - Nguyen Ngoc Tan (*vietnamština*)
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*ukrajina*)
-      - [刘涛](https://www.liutao91.cn) (*zjednodušená čínština*)
+      - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*zjednodušená čínština*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holandský*)
       - Zoltán Nagy, Roland Kovács (*maďarský*)
+      - Milan Divović (*srbsko*)
     credits_description: |
       Vývoj tohoto rozšíření souvisí s projektem sdílení platforem [L'Air du Bois](https://www.lairdubois.fr).
       Toto rozšíření je také *Open Source* a je k dispozici pod licencí [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) na [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

@@ -1987,7 +1987,7 @@ tab:
       1529 - *OpenCutList* 由 [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) 和 [Martin Müller](https://www.lairdubois.fr/@mobilarte) 开发. *列出所有 [贡献者](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: 1530 - 翻译
     credits_translators: |
-      1531 - - [刘涛](https://www.liutao91.cn) (*简体中文*)
+      1531 - - Martin Pan Chiu Ng, [刘涛](https://www.liutao91.cn) (*简体中文*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*英语*、*德语*)
       - Gildas Boureau（*法语*文档)
       - Vladimir Badulya (*俄语*)
@@ -2002,6 +2002,7 @@ tab:
       - Andriy Toporivsky, Kostyantyn Shcherbey (*乌克兰语*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere（*荷兰语*)
       - Zoltán Nagy, Roland Kovács（*匈牙利人*）
+      - Milan Divovic（*塞尔维亚人*）
     credits_description: |
       1532 - 这个插件项目的开发与共享平台项目 [L'Air du Bois](https://www.lairdubois.fr) 有关.
       此插件也是 *开源* 的，并可根据 [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) 许可证在 [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension)上使用.

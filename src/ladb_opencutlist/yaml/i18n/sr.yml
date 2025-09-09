@@ -1,5 +1,5 @@
 # this label must be in your language
-_label: "Srpski -- Molim te, ostavi ovo, ovo je tvoj jezik! --"
+_label: Srpski
 # the disabled message will be displayed when the language is not fully translated
 _disabled_msg: |
   Ovaj jezik još nije u **potpunosti preveden**.
@@ -152,7 +152,7 @@ core:
       Ova verzija je dostupna samo za testiranje.
       Ne preporučuje se upotreba u proizvodnji.
 
-      Da biste prijavili grešku: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>
+      Da biste prijavili grešku: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
   error:
     extern: "Spoljašnja greška: **{{ error }}**"
     feature_unavailable: "Ova funkcija zahteva SketchUp {{ version }} ili noviji"
@@ -557,11 +557,11 @@ tab:
       hide_bbox_dimensions: Sakrij gotove dimenzije
       hide_bbox_dimensions_help: "Označite ovu opciju, da se **gotove** dimenzije komada ne prikazuju."
       hide_final_areas: Sakrij obrađene površine *Ploča*
-      hide_final_areas_help: "Označite ovu opciju da se **obrađene površine** komada tipa *Ploča* ne prikazuju."
+      hide_final_areas_help: "Označite ovu opciju, da se **obrađene površine** komada tipa *Ploča* ne prikazuju."
       hide_edges: Sakrij kolone za ivice
-      hide_edges_help: "Označite ovu opciju da se **kolone za kantove** komada tipa *Ploča* ne prikazuju."
+      hide_edges_help: "Označite ovu opciju, da se **kolone za kantove** komada tipa *Ploča* ne prikazuju."
       hide_faces: Sakrij kolone
-      hide_faces_help: "Aktiviranjem ove opcije sakrivaju se **kolone lica** kod delova tipa *Panel*."
+      hide_faces_help: "Aktiviranjem ove opcije, sakrivaju se **kolone lica** kod delova tipa *Panel*."
       hide_material_colors: Sakrij boje materijala
       hide_material_colors_help: "Aktiviranjem ove opcije sakrivaju se boje materijala."
       minimize_on_highlight: Umanji nakon *'$t(tab.cutlist.highlight_part)...'*
@@ -983,8 +983,8 @@ tab:
       warning:
         is_part_selection: Šema slaganja samo za **izabrane delove**.
         cutting_dimensions: Ovaj dijagram rezanja koristi **sirove** dimenzije delova.
-        cutting_dimensions_increase_1d: "Ove sirove dimenzije su konfigurisane na materijalu '{{ material_name }}': prekoračenje dužine (**{{ length_increase }}**)."
-        cutting_dimensions_increase_2d: "Ove sirove dimenzije su konfigurisane na materijalu '{{ material_name }}': prekoračenje dužine (**{{ length_increase }}**) i prekoračenje širine (**{{ width_increase }}**)."
+        cutting_dimensions_increase_1d: "Ove sirove dimenzije su konfigurisane na materijalu '{{ material_name }}' prekoračenje dužine (**{{ length_increase }}**).*"
+        cutting_dimensions_increase_2d: "Ove sirove dimenzije su konfigurisane na materijalu '{{ material_name }}' prekoračenje dužine (**{{ length_increase }}**) i prekoračenje širine (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Dimenzije smanjene za debljinu kant trake. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     packing:
       title: Dijagram rezanja
@@ -1354,7 +1354,7 @@ tab:
       option_pins_colored_1: Boja dela
       option_pins_colored_help: Boja oznaka na delovima.
       option_pins_formula: Formula
-      option_pins_formula_help: "*Ruby* kod za tekst oznaka."
+      option_pins_formula_help: Omogućava pisanje *Ruby* koda za prilagođavanje teksta oznaka pinova.
       option_pins_length: Dužina
       option_pins_length_0: Bez strelice
       option_pins_length_1: Mala
@@ -1906,7 +1906,7 @@ tab:
       cuttingdiagram_export: Plaćanje za izvoz liste rezanja
     objective_details:
       default: |
-        Stalno poboljšanje *OpenCutList* nam je važno i projekt će i dalje trebati vašu pomoć za svoje sledeće ažuriranje 3.0 !
+        Stalno poboljšanje *OpenCutList* nam je važno i projekt će i dalje trebati vašu pomoć za svoje sledeće ažuriranje !
       cuttingdiagram_export: |
         Cilj nam je da *OpenCutList* zadovolji različite potrebe korisnika u funkciji *calepinage*.
         Da bismo proširili opcije, želimo omogućiti izvoz dijagrama calepinage u **SVG** i **DXF** formatu.
@@ -2005,12 +2005,12 @@ tab:
       - Soul Issam (*arapski*), bez interfejsa s desna na levo
       - Nguyen Ngoc Tan (*vijetnamski*)
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*ukrajinski*)
-      - [刘涛](https://www.liutao91.cn) (pojednostavljeni *kineski*)
+      - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (pojednostavljeni *kineski*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*nizozemski*)
       - Zoltán Nagy, Roland Kovács (*mađarski*)
     credits_description: |
       Razvoj ovog dodatka deo je projekta platforme za deljenje [L'Air du Bois](https://www.lairdubois.fr).
-      Kao takav, dodatak je takođe *Open Source* i dostupan je pod [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencom na svom [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) repozitorijumu.
+      Kao takav, dodatak je takođe *Open Source* i dostupan je pod [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencom na svom [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
     credits_runtime: Vreme rada
     credits_development: Razvoj
     credits_vendors: |
