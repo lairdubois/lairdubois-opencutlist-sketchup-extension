@@ -71,11 +71,11 @@ module Ladb::OpenCutList::Fiddle
           tmp_lib_dir = File.join(Ladb::OpenCutList::PLUGIN.temp_dir, 'fiddle')
           tmp_lib_path = File.join(tmp_lib_dir, "#{Ladb::OpenCutList::EXTENSION_BUILD}_#{lib_file}")
 
-          # Create directory if it doesn't exist
+          # Create the directory if it doesn't exist
           Dir.mkdir(tmp_lib_dir) unless Dir.exist?(tmp_lib_dir)
 
-          # Copy lib (preserve = true to keep file if it exists and avoid error if already loaded and locked by the system.)
-          FileUtils.copy_file(lib_path, tmp_lib_path, true)
+          # Copy lib unless it exists to avoid error if already loaded and locked by the system.)
+          FileUtils.copy_file(lib_path, tmp_lib_path) unless File.exist?(tmp_lib_path)
 
         else
 

@@ -1,0 +1,253 @@
+{% extends 'core/_modal.twig' %}
+
+{# set is_new #}
+
+{% set id = 'ladb_materials_modal_material' %}
+{% set title = is_new ? 'tab.materials.new_material.title'|i18next : 'tab.materials.edit_material.title'|i18next({ 'name':material.display_name }) %}
+
+{% block headerToolsInner %}
+    <button class="btn btn-default btn-xs" data-help-page="materials.edit"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block headerInner %}
+    {{ parent() }}
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+        <li role="presentation"{% if tab == 'general' %} class="active"{% endif %}><a href="#tab_edit_material_general" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.general'|i18next }}</a></li>
+        <li role="presentation"{% if tab == 'texture' %} class="active"{% endif %}><a id="ladb_materials_btn_tab_texture" href="#tab_edit_material_texture" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-texture"></i> {{ 'tab.materials.edit_material.texture'|i18next }}</a></li>
+    </ul>
+{% endblock %}
+
+{% block bodyInner %}
+    <div class="form form-horizontal">
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_material_general">
+                <div class="form form-horizontal" style="margin-top: 15px;">
+                    <div class="form-group">
+                        <div id="ladb_materials_input_name_warning" class="ladb-minitools ladb-minitools-right ladb-minitools-lgw" style="display: none;"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.materials.new_material.name_warning'|i18next }}"><i class="ladb-opencutlist-icon-warning ladb-color-danger"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.name'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_materials_input_name" value="{{ material.display_name|escape }}" data-ladb-invalid="false" autofocus>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div id="ladb_materials_input_color_warning" class="ladb-minitools ladb-minitools-right ladb-minitools-lgw" style="display: none;"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.warning'|i18next }}" data-content="{{ 'tab.materials.new_material.color_warning'|i18next }}"><i class="ladb-opencutlist-icon-warning ladb-color-danger"></i></a></div>
+                        <label class="control-label col-xs-4">{{ 'tab.materials.new_material.color'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_materials_input_color" value="{{ material.color }}" data-ladb-invalid="false">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.description'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <textarea class="form-control" id="ladb_materials_input_description">{{ material.description|escape }}</textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.url'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <input type="text" class="form-control" id="ladb_materials_input_url" value="{{ material.url|escape }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.type'|i18next }}</label>
+                        <div class="col-xs-7">
+                            <select class="form-control" id="ladb_materials_input_type">
+                                <option value="0" data-content="<span style='color: #ccc; font-style: italic;'>{{ 'tab.materials.type_0'|i18next }}</span>"{% if material.type == 0 %} selected{% endif %}>0</option>
+                                <option value="1" data-content="<i class='ladb-opencutlist-icon-material-type-1'></i> {{ 'tab.materials.type_1'|i18next }}"{% if material.type == 1 %} selected{% endif %}>1</option>
+                                <option value="2" data-content="<i class='ladb-opencutlist-icon-material-type-2'></i> {{ 'tab.materials.type_2'|i18next }}"{% if material.type == 2 %} selected{% endif %}>2</option>
+                                <option value="3" data-content="<i class='ladb-opencutlist-icon-material-type-3'></i> {{ 'tab.materials.type_3'|i18next }}"{% if material.type == 3 %} selected{% endif %}>3</option>
+                                <option value="4" data-content="<i class='ladb-opencutlist-icon-material-type-4'></i> {{ 'tab.materials.type_4'|i18next }}"{% if material.type == 4 %} selected{% endif %}>4</option>
+                                <option value="6" data-content="<i class='ladb-opencutlist-icon-material-type-6'></i> {{ 'tab.materials.type_6'|i18next }}"{% if material.type == 6 %} selected{% endif %}>6</option>
+                                <option value="5" data-content="<i class='ladb-opencutlist-icon-material-type-5'></i> {{ 'tab.materials.type_5'|i18next }}"{% if material.type == 5 %} selected{% endif %}>5</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <section style="position: relative; margin-top: 30px;">
+                    {% include 'components/_widget-preset.twig' with { 'top':8, 'right':10 } %}
+                    <ul class="nav nav-tabs" role="tablist" style="padding-left: 30px;">
+                        <li role="presentation"{% if properties_tab == 'formats' %} class="active"{% endif %}><a href="#tab_edit_material_general_formats" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.formats'|i18next }}</a></li>
+                        <li role="presentation"{% if properties_tab == 'attributes' %} class="active"{% endif %}><a id="ladb_materials_btn_tab_general_attributes" href="#tab_edit_material_general_attributes" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.attributes'|i18next }}</a></li>
+                        <li role="presentation"{% if properties_tab == 'cut_options' %} class="active"{% endif %}><a href="#tab_edit_material_general_cut_options" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.cut_options'|i18next }}</a></li>
+                        <li role="presentation"{% if properties_tab == 'estimate_options' %} class="active"{% endif %} id="nav_tab_edit_material_general_estimate_options"><a href="#tab_edit_material_general_estimate_options" role="tab" data-toggle="tab">{{ 'tab.materials.edit_material.estimate_options'|i18next }}</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane{% if properties_tab == 'formats' %} active{% endif %}" id="tab_edit_material_general_formats">
+                            <div class="form form-horizontal" style="margin-top: 25px;">
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.grained_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.grained'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <select class="form-control" id="ladb_materials_select_grained">
+                                            <option value="0" data-content="<i class='ladb-opencutlist-icon-grained-0'></i> {{ 'tab.materials.edit_material.grained_0'|i18next }}"></option>
+                                            <option value="1" data-content="<i class='ladb-opencutlist-icon-grained-1'></i> {{ 'tab.materials.edit_material.grained_1'|i18next }}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.thickness_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.thickness'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <input type="text" class="form-control" id="ladb_materials_input_thickness">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    {% include 'components/_editor-sizes.twig' with { 'id':'ladb_materials_editor_std_sections', 'fieldName':'tab.materials.edit_material.std_sections'|i18next, 'fieldHelp':'tab.materials.edit_material.std_sections_help'|i18next, 'emptyLabel':'vide' } %}
+                                </div>
+                                <div class="form-group">
+                                    {% include 'components/_editor-sizes.twig' with { 'id':'ladb_materials_editor_std_lengths', 'fieldName':'tab.materials.edit_material.std_lengths'|i18next, 'fieldHelp':'tab.materials.edit_material.std_lengths_help'|i18next, 'emptyLabel':'vide' } %}
+                                </div>
+                                <div class="form-group">
+                                    {% include 'components/_editor-sizes.twig' with { 'id':'ladb_materials_editor_std_widths', 'fieldName':'tab.materials.edit_material.std_widths'|i18next, 'fieldHelp':'tab.materials.edit_material.std_widths_help'|i18next, 'emptyLabel':'vide' } %}
+                                </div>
+                                <div class="form-group">
+                                    {% include 'components/_editor-sizes.twig' with { 'id':'ladb_materials_editor_std_thicknesses', 'fieldName':'tab.materials.edit_material.std_thicknesses'|i18next, 'fieldHelp':'tab.materials.edit_material.std_thicknesses_help'|i18next, 'emptyLabel':'vide' } %}
+                                </div>
+                                <div class="form-group">
+                                    {% include 'components/_editor-sizes.twig' with { 'id':'ladb_materials_editor_std_sizes', 'fieldName':'tab.materials.edit_material.std_sizes'|i18next, 'fieldHelp':'tab.materials.edit_material.std_sizes_help'|i18next, 'emptyLabel':'vide' } %}
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane{% if properties_tab == 'attributes' %} active{% endif %}" id="tab_edit_material_general_attributes" style="margin-top: 15px;">
+                            <div class="form form-horizontal" style="margin-top: 25px;">
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.std_volumic_masses_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    {% include 'components/_editor-std-attributes.twig' with { 'id':'ladb_materials_editor_std_volumic_masses', 'strippedName':'volumic_masses' } %}
+                                </div>
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.std_prices_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    {% include 'components/_editor-std-attributes.twig' with { 'id':'ladb_materials_editor_std_prices', 'strippedName':'prices' } %}
+                                </div>
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.std_cut_prices_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    {% include 'components/_editor-std-attributes.twig' with { 'id':'ladb_materials_editor_std_cut_prices', 'strippedName':'cut_prices' } %}
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane{% if properties_tab == 'cut_options' %} active{% endif %}" id="tab_edit_material_general_cut_options">
+                            <div class="form form-horizontal" style="margin-top: 25px;">
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.length_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.length_increase'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <input type="text" class="form-control" id="ladb_materials_input_length_increase">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.width_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.width_increase'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <input type="text" class="form-control" id="ladb_materials_input_width_increase">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.thickness_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.thickness_increase'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <input type="text" class="form-control" id="ladb_materials_input_thickness_increase">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.edge_decremented_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.edge_decremented'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <select class="form-control" id="ladb_materials_select_edge_decremented">
+                                            <option value="0" data-content="{{ 'tab.materials.edit_material.edge_decremented_0'|i18next }}"></option>
+                                            <option value="1" data-content="<i class='ladb-opencutlist-icon-edge-decremented'></i> {{ 'tab.materials.edit_material.edge_decremented_1'|i18next }}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane{% if properties_tab == 'estimate_options' %} active{% endif %}" id="tab_edit_material_general_estimate_options" style="margin-top: 15px;">
+                            <div class="form form-horizontal" style="margin-top: 25px;">
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.raw_estimated_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.raw_estimated'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <select class="form-control" id="ladb_materials_select_raw_estimated">
+                                            <option value="0" data-content="<i class='ladb-opencutlist-icon-raw-estimated-0'></i> {{ 'tab.materials.edit_material.raw_estimated_0'|i18next }}"></option>
+                                            <option value="1" data-content="<i class='ladb-opencutlist-icon-raw-estimated-1'></i> {{ 'tab.materials.edit_material.raw_estimated_1'|i18next }}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.materials.edit_material.multiplier_coefficient_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-4">{{ 'tab.materials.edit_material.multiplier_coefficient'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <input type="text" class="form-control" id="ladb_materials_input_multiplier_coefficient">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div role="tabpanel" class="tab-pane{% if tab == 'texture' %} active{% endif %}" id="tab_edit_material_texture">
+                <div class="ladb-material-texture-preview-wrapper">
+                    <div class="ladb-material-texture-preview">
+                        <div id="ladb_materials_div_texture_thumbnail" class="thumbnail ladb-hidden-no-texture" style="display: none;">
+                            <img id="ladb_materials_img_texture" src="">
+                            <div style="position: absolute; left: 0; bottom: 10px; right: 0; font-size: 80%; width: 100%; color: #fff; text-shadow: 1px 1px 2px black;"><span id="ladb_materials_span_texture_width">{{ material.texture_image_width }}</span> x <span id="ladb_materials_span_texture_height">{{ material.texture_image_height }}</span> px</div>
+                        </div>
+                        <span class="text-muted ladb-hidden-textured" style="display: none;">{{ 'tab.materials.edit_material.no_texture'|i18next }}</span>
+                    </div>
+                </div>
+                <div class="text-center">
+                    {% set areaWidth = 280 %}
+                    {% set areaHeight = 30 %}
+                    <svg viewBox="0 0 {{ areaWidth }} {{ areaHeight }}" class="ladb-hidden-no-texture" style="width: {{ areaWidth }}px; height: {{ areaHeight }}px;">
+                        {% include 'core/_grain-direction-arrow.twig' with { 'centerX':areaWidth / 2, 'centerY':areaHeight / 2 } %}
+                    </svg>
+                </div>
+                <div class="text-center">
+                    <input id="ladb_materials_input_texture_changed" type="hidden" value="false"/>
+                    <input id="ladb_materials_input_texture_ratio" type="hidden" value="{{ material.texture_ratio }}"/>
+                    <input id="ladb_materials_input_texture_rotation" type="hidden" value="{{ material.texture_rotation }}"/>
+                    <button id="ladb_materials_btn_texture_load" class="btn btn-default" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.texture_load'|i18next }}"><i class="ladb-opencutlist-icon-plus"></i> {{ 'default.load'|i18next }}...</button>
+                    {% if not is_new %}<button id="ladb_materials_btn_texture_export" class="btn btn-default ladb-hidden-no-texture" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.texture_export'|i18next }}"><i class="ladb-opencutlist-icon-export"></i> {{ 'default.export'|i18next }}...</button>{% endif %}
+                    <div style="display: inline-block; width: 20px;" class="ladb-hidden-no-texture"></div>
+                    <button id="ladb_materials_btn_texture_rotate_left" class="btn btn-default ladb-hidden-no-texture"><i class="ladb-opencutlist-icon-rotate-left" style="font-size: 120%"></i></button>
+                    <button id="ladb_materials_btn_texture_rotate_right" class="btn btn-default ladb-hidden-no-texture"><i class="ladb-opencutlist-icon-rotate-right" style="font-size: 120%"></i></button>
+                    <div style="display: inline-block; width: 20px;" class="ladb-hidden-no-texture"></div>
+                    <button id="ladb_materials_btn_texture_clear" class="btn btn-danger ladb-hidden-no-texture" data-toggle="tooltip" title="{{ 'tab.materials.tooltip.texture_clear'|i18next }}"><i class="ladb-opencutlist-icon-clear"></i> {{ 'default.clear'|i18next }}</button>
+                </div>
+                <hr class="ladb-hidden-no-texture">
+                <div class="row ladb-hidden-no-texture">
+                    <div class="col-xs-10" style="display: table;">
+                        <div style="display: table-cell;">
+                            <div class="form-group">
+                                <label class="control-label col-xs-5">{{ 'tab.materials.edit_material.texture_width'|i18next }}</label>
+                                <div class="col-xs-7">
+                                    <input type="text" class="form-control" id="ladb_materials_input_texture_width" value="{{ material.texture_width|escape('html') }}">
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="control-label col-xs-5">{{ 'tab.materials.edit_material.texture_height'|i18next }}</label>
+                                <div class="col-xs-7">
+                                    <input type="text" class="form-control" id="ladb_materials_input_texture_height" value="{{ material.texture_height|escape('html') }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: table-cell; vertical-align: middle; text-align: center;">
+                            <button id="ladb_material_btn_texture_size_lock" class="btn btn-default btn-sm active" data-locked="true"><i class="ladb-opencutlist-icon-lock"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerLeftInner %}
+    {% if not is_new %}
+        <button class="btn btn-danger" id="ladb_materials_delete" data-toggle="tooltip" title="{{ 'default.delete'|i18next }}..."><i class="ladb-opencutlist-icon ladb-opencutlist-icon-trash"></i></button>
+        <button class="btn btn-default" id="ladb_materials_duplicate"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-copy"></i> {{ 'default.duplicate'|i18next }}...</button>
+        <button class="btn btn-default" id="ladb_materials_export_to_skm"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-export"></i> {{ 'tab.materials.edit_material.export_to_skm'|i18next }}...</button>
+    {% endif %}
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary btn-validate-modal" id="ladb_materials_validate">{{ ('default.'~(is_new ? 'create' : 'validate'))|i18next }}</button>
+{% endblock %}

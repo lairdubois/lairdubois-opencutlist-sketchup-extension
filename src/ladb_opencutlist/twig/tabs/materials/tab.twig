@@ -3,7 +3,7 @@
 {% block headerHeadingInner %}<span id="ladb_filename" class="text-muted pull-right"></span>{{ parent() }}{% endblock %}
 
 {% block headerToolsInner %}
-    <button id="ladb_btn_list" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i> {{ 'default.refresh'|i18next }}</button>
+    <button id="ladb_btn_list" class="btn btn-primary"><i class="ladb-opencutlist-icon-refresh"></i><span class="hidden-xs"> {{ 'default.refresh'|i18next }}</span></button>
     &nbsp;
     <button id="ladb_btn_new" class="btn btn-default"><i class="ladb-opencutlist-icon-plus"></i><span class="hidden-sm hidden-xs">  {{ 'default.create'|i18next }}</span></button>
     <button id="ladb_btn_import" class="btn btn-default" data-toggle="tooltip" data-placement="bottom"  title="{{ 'tab.materials.tooltip.import_from_skm'|i18next }}"><i class="ladb-opencutlist-icon-import"></i><span class="hidden-sm hidden-xs">  {{ 'default.import'|i18next }}</span></button>

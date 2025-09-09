@@ -261,6 +261,11 @@
     LadbEditorSizes.prototype.setSizes = function (sizes) {
         const that = this;
 
+        // Sanitize
+        if (typeof sizes !== 'string') {
+            sizes = '';
+        }
+
         // Keep given value for instant valid getter
         this.val = sizes;
 

@@ -210,7 +210,7 @@
                 }));
 
                 // Setup tooltips
-                that.dialog.setupTooltips();
+                that.dialog.setupTooltips(that.$page);
 
                 // Cleanup and Render selection
                 that.cleanupSelection();
@@ -1382,7 +1382,7 @@
                         isPartSelection: context ? context.isPartSelection : false,
                         estimate: response
                     }, function () {
-                        that.dialog.setupTooltips();
+                        that.dialog.setupTooltips($slide);
                     });
 
                     // Fetch UI elements
@@ -2771,7 +2771,7 @@
                                 generatedAt: new Date().getTime() / 1000,
                                 group: group
                             }, response), function () {
-                                that.dialog.setupTooltips();
+                                that.dialog.setupTooltips($slide);
                             });
 
                             // Fetch UI elements
@@ -3688,7 +3688,7 @@
                             pages: pages,
                             hideMaterialColors: that.generateOptions.hide_material_colors
                         }, labelsOptions), function () {
-                            that.dialog.setupTooltips();
+                            that.dialog.setupTooltips($slide);
                         });
 
                         // Fetch UI elements
@@ -4821,8 +4821,8 @@
                 .on('shown.bs.modal', function () {
 
                     // Setup popovers and tooltips
-                    that.dialog.setupPopovers();
-                    that.dialog.setupTooltips();
+                    that.dialog.setupPopovers($modal);
+                    that.dialog.setupTooltips($modal);
 
                 })
                 .on('hidden.bs.modal', function () {
@@ -5197,7 +5197,7 @@
                                             generatedAt: new Date().getTime() / 1000,
                                             group: group
                                         }, response), function () {
-                                            that.dialog.setupTooltips();
+                                            that.dialog.setupTooltips($slide);
                                         });
 
                                         // Fetch UI elements
@@ -5767,7 +5767,7 @@
                                             generatedAt: new Date().getTime() / 1000,
                                             group: group
                                         }, response), function () {
-                                            that.dialog.setupTooltips();
+                                            that.dialog.setupTooltips($slide);
                                         });
 
                                         // Fetch UI elements

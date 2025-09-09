@@ -348,7 +348,7 @@
             fnRenderNode(this.rootNode, true);
 
             // Setup tooltips
-            this.dialog.setupTooltips();
+            this.dialog.setupTooltips(this.$page);
 
         }
 

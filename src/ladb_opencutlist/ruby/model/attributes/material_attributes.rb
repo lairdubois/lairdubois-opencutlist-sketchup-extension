@@ -84,8 +84,8 @@
           end
           case property
           when 'type'
-            a_value = [ type_order(material_a[:attributes][:type]) ]
-            b_value = [ type_order(material_b[:attributes][:type]) ]
+            a_value = [ type_order(material_a[:type]) ]
+            b_value = [ type_order(material_b[:type]) ]
           when 'name'
             a_value = [ material_a[:display_name] ]
             b_value = [ material_b[:display_name] ]
