@@ -1157,12 +1157,19 @@
                     // Reset previous rotation
                     fnResetTextureRotation();
 
-                    // Add texture infos
+                    // Add texture info
                     $inputTextureRatio.val(response.texture_ratio);
                     $inputTextureChanged.val(true);
 
-                    // Update img src with generated texture file
+                    // Update img src with a generated texture file
                     $imgTexture.attr('src', response.texture_file);
+
+                    // Update name
+                    if (response.texture_name && $inputName.val().length === 0) {
+                        $inputName.val(response.texture_name);
+                        fnCheckInputNameValue(true);
+                        fnUpdateBtnValidateStatus();
+                    }
 
                     // Re-compute size
                     fnComputeSizeAspectRatio(true);
@@ -1220,17 +1227,17 @@
             });
             $btnDelete.on('click', function () {
                 $modal.modal('hide');   // Hide modal
-                that.deleteMaterial(material);
                 this.blur();
+                that.deleteMaterial(material);
             });
             $btnDuplicate.on('click', function () {
                 $modal.modal('hide');   // Hide modal
-                that.duplicateMaterial(material);
                 this.blur();
+                that.duplicateMaterial(material);
             });
             $btnExportToSkm.on('click', function () {
-                that.exportToSkm(material, true);
                 this.blur();
+                that.exportToSkm(material, true);
             });
         }
         $btnValidate.on('click', function () {
@@ -1288,10 +1295,6 @@
 
         // Focus
         $inputName.focus();
-
-        // Setup tooltips & popovers
-        this.dialog.setupTooltips($modal);
-        this.dialog.setupPopovers($modal);
 
         // Initials
         fnComputeFieldsVisibility(material.type);

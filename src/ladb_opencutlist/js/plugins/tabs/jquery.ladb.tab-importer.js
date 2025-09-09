@@ -172,7 +172,7 @@
                 }));
 
                 // Setup tooltips
-                that.dialog.setupTooltips();
+                that.dialog.setupTooltips(that.$page);
 
                 // Apply column mapping
                 for (i = 0; i < columns.length; i++) {

@@ -4817,24 +4817,15 @@
             });
 
             // Bind modal
-            $modal
-                .on('shown.bs.modal', function () {
+            $modal.on('hidden.bs.modal', function () {
 
-                    // Setup popovers and tooltips
-                    that.dialog.setupPopovers($modal);
-                    that.dialog.setupTooltips($modal);
+                $inputTags.ladbTextinputTokenfield('destroy');
 
-                })
-                .on('hidden.bs.modal', function () {
+                if (typeof hiddenCallback === 'function') {
+                    hiddenCallback($modal);
+                }
 
-                    $inputTags.ladbTextinputTokenfield('destroy');
-
-                    if (typeof hiddenCallback === 'function') {
-                        hiddenCallback($modal);
-                    }
-
-                })
-            ;
+            });
 
             // Init edges preview
             fnUpdateEdgesPreview();

@@ -38,10 +38,6 @@
         const jQueryPluginFn = 'ladbModal' + modalName.camelize().capitalize();
         $modal[jQueryPluginFn]($.extend({ dialog: this }, typeof params === 'object' && params));
 
-        // Setup tooltips & popovers
-        this.setupTooltips($modal);
-        this.setupPopovers($modal);
-
         // Bind help buttons (if exist)
         this.bindHelpButtonsInParent($modal);
 

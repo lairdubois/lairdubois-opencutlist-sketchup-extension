@@ -226,13 +226,22 @@ LadbAbstractDialog.prototype.appendModal = function (id, twigFile, renderParams)
     this._$modal = $(Twig.twig({ref: twigFile}).render(renderParams));
 
     // Bind modal
-    this._$modal.on('hidden.bs.modal', function () {
-        $(this)
-            .data('bs.modal', null)
-            .remove();
-        that._$modal = null;
-        $('input[autofocus]', that._$modal).first().focus();
-    });
+    this._$modal
+        .on('hidden.bs.modal', function () {
+            $(this)
+                .data('bs.modal', null)
+                .remove();
+            that._$modal = null;
+            $('input[autofocus]', that._$modal).first().focus();
+            that.setupTooltips(that._$modal);
+            that.setupPopovers(that._$modal);
+        })
+        .on('hidden.bs.modal', function () {
+            that.hideTooltips();
+            that.hidePopovers();
+        })
+
+    ;
 
     // Append modal
     this.$element.append(this._$modal);
@@ -471,17 +480,26 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
 // Tooltips & Popovers /////
 
 LadbAbstractDialog.prototype.setupTooltips = function ($element) {
-    $('.tooltip').tooltip('hide'); // Assume that previouly created tooltips are closed
+    this.hideTooltips();
     $('[data-toggle="tooltip"]', $element).tooltip({
         container: 'body'
     });
 };
 
+LadbAbstractDialog.prototype.hideTooltips = function () {
+    $('.tooltip').tooltip('hide');
+};
+
 LadbAbstractDialog.prototype.setupPopovers = function ($element) {
+    this.hidePopovers();
     $('[data-toggle="popover"]', $element).popover({
         html: true,
         container: 'body'
     });
+};
+
+LadbAbstractDialog.prototype.hidePopovers = function () {
+    $('.popover').popover('hide');
 };
 
 // Utils /////

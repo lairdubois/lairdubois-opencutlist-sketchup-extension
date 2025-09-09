@@ -47,6 +47,7 @@ module Ladb::OpenCutList
           response[:texture_image_height] = texture_image_height
 
           response[:texture_file] = texture_file
+          response[:texture_name] = File.basename(texture_file, File.extname(texture_file))
 
         else
           return { :errors => [ 'tab.materials.error.invalid_image_file' ] }

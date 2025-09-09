@@ -250,21 +250,27 @@ LadbAbstractTab.prototype.appendModalInside = function (id, twigFile, renderPara
     this._$modal.addClass('modal-inside');
 
     // Bind modal
-    this._$modal.on('shown.bs.modal', function () {
-        $('body > .modal-backdrop').first().appendTo(that.$element);
-        $('body')
-            .removeClass('modal-open')
-            .css('padding-right', 0);
-        that.$element.addClass('modal-open');
-        $('input[autofocus]', that._$modal).first().focus();
-    });
-    this._$modal.on('hidden.bs.modal', function () {
-        $(this)
-            .data('bs.modal', null)
-            .remove();
-        that.$element.removeClass('modal-open');
-        that._$modal = null;
-    });
+    this._$modal
+        .on('shown.bs.modal', function () {
+            $('body > .modal-backdrop').first().appendTo(that.$element);
+            $('body')
+                .removeClass('modal-open')
+                .css('padding-right', 0);
+            that.$element.addClass('modal-open');
+            $('input[autofocus]', that._$modal).first().focus();
+            that.dialog.setupTooltips(that._$modal);
+            that.dialog.setupPopovers(that._$modal);
+        })
+        .on('hidden.bs.modal', function () {
+            $(this)
+                .data('bs.modal', null)
+                .remove();
+            that.$element.removeClass('modal-open');
+            that._$modal = null;
+            that.dialog.hideTooltips();
+            that.dialog.hidePopovers();
+        })
+    ;
 
     // Append modal
     this.$element.append(this._$modal);
