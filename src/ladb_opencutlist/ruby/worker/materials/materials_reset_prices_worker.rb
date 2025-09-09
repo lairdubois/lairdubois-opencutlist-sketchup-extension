@@ -19,6 +19,7 @@ module Ladb::OpenCutList
           material_attributes = MaterialAttributes.new(material)
 
           material_attributes.std_prices = nil
+          material_attributes.std_cut_prices = nil
           material_attributes.write_to_attributes
 
         }
