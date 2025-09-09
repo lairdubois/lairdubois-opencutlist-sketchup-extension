@@ -32,7 +32,7 @@ module Ladb::OpenCutList
 
         texture_file = File.join(material_textures_dir, "#{SecureRandom.uuid}#{extname}")
 
-        # Copy file to temp folder
+        # Copy file to the temp folder
         FileUtils.cp(path, texture_file)
 
         # Load image
@@ -47,7 +47,7 @@ module Ladb::OpenCutList
           response[:texture_image_height] = texture_image_height
 
           response[:texture_file] = texture_file
-          response[:texture_name] = File.basename(texture_file, File.extname(texture_file))
+          response[:texture_name] = File.basename(path, File.extname(path))
 
         else
           return { :errors => [ 'tab.materials.error.invalid_image_file' ] }
