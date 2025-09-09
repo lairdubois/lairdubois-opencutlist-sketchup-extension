@@ -149,7 +149,7 @@ core:
 
       Da biste prijavili grešku: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>
   error:
-    extern: '128 - Spoljašnja greška : **{{ error }}**'
+    extern: '128 - Spoljašnja greška: **{{ error }}**'
     feature_unavailable: 129 - Ova funkcija zahteva SketchUp {{ version }} ili noviji
     failed_export_to: |
       130 - Došlo je do greške prilikom izvoza u *{{ path }}*.
@@ -441,10 +441,10 @@ tab:
       cumulable_2: 357 - Sumirano po širini
       instance_count_by_part: 358 - Podesi
       instance_count_by_part_help: |
-        359 - Omogućava vam brojanje delova u potrebnom broju *setova* umesto broja jedinica u *modelu*.
-        Delovi u setu moraju imati istu definiciju.
+        359 - Omogućava vam brojanje delova u potrebnom broju *setova*.
+        Umesto broja jedinica u modelu delovi u setu moraju imati istu definiciju.
 
-        *Primer: Broji samo 1 komad za par klizača fioka :
+        *Primer : Broji samo 1 komad za par klizača fioka :
         Pakovanje = 2 jedinice / komad*
       instance_count_by_part_1: 360 - 1 jedinica po komadu
       instance_count_by_part_2: 361 - 2 jedinice po komadu
@@ -481,7 +481,7 @@ tab:
         - *debljina* na <span style='color:blue'> plava </span> osa
       symmetrical: 378 - Isključi detekciju simetrije na ovom komadu
       symmetrical_help: |
-        379 - Ako je ovo polje označeno, detekcija *simetričnog komada* neće biti primenjena na ovaj komad.
+        379 - Ako je ovo polje označeno, detekcija *simetrično okrenutog komada* neće biti primenjena na ovaj komad.
       ignore_grain_direction: 380 - Zanemari pravac teksture
       ignore_grain_direction_help: |
         381 - Ako je ovo polje označeno, pravac teksture se zanemaruje za ovaj komad.
@@ -537,7 +537,10 @@ tab:
       part_number_sequence_by_group: 414 - Ponovno incijaliziujte označavanje delova za svaku grupu
       part_number_sequence_by_group_help: 415 - Ako je odabrana ova opcija, označavanje delova ponovo se inicijalizuje na 1 (ili A) za svaku grupu (popis delova iste vrste i debljine materijala).
       part_folding: 416 - Grupišite slične delove
-      part_folding_help: "417 - Ako je ova opcija odabrana, delovi od **masivnog drveta, panela ili dimenzionisanog**, \nsa **istom upotrebljivom veličinom**, sa **istim oznakama** i sa **istom obrađenom površinom** \n*(ako prikaz ove površine nije skriven)* \nbiće grupisani u istom redu u *listi sečenja*.\n\nDelovi će se i dalje smatrati različitim za štampu etiketa i raspored ploča.\n\n"
+      part_folding_help: |
+        417 - Ako je ova opcija odabrana, delovi od **masivnog drveta, panela ili dimenzionisanog**, sa **istom upotrebljivom veličinom**, sa **istim oznakama** i sa **istom obrađenom površinom** *(ako prikaz ove površine nije skriven)* biće grupisani u istom redu u *listi sečenja*.
+
+        Delovi će se i dalje smatrati različitim za štampu etiketa i raspored ploča.
       hide_entity_names: 418 - Sakrij nazive instanci
       hide_entity_names_help: 419 - Označite ovu opciju da se **nazivi instanci** komada ne prikazuju.
       hide_descriptions: 420 - Sakrij opise
@@ -545,9 +548,9 @@ tab:
       hide_tags: 422 - Sakrij oznake
       hide_tags_help: 423 - Označite ovu opciju da se **oznake** na komadima ne prikazuju.
       hide_cutting_dimensions: 424 - Sakrij dimenzije za sečenje
-      hide_cutting_dimensions_help: 425 - Označite ovu opciju da se **sirove** dimenzije za sečenje komada ne prikazuju.
+      hide_cutting_dimensions_help: 425 - Označite ovu opciju, da se **sirove** dimenzije za sečenje komada ne prikazuju.
       hide_bbox_dimensions: 426 - Sakrij gotove dimenzije
-      hide_bbox_dimensions_help: 427 - Označite ovu opciju da se **gotove** dimenzije komada ne prikazuju.
+      hide_bbox_dimensions_help: 427 - Označite ovu opciju, da se **gotove** dimenzije komada ne prikazuju.
       hide_final_areas: 428 - Sakrij obrađene površine *Ploča*
       hide_final_areas_help: 429 - Označite ovu opciju da se **obrađene površine** komada tipa *Ploča* ne prikazuju.
       hide_edges: 430 - Sakrij kolone za ivice
@@ -1984,7 +1987,8 @@ tab:
       1529 - *OpenCutList* razvijaju [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) i [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Lista svih [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: 1530 - Prevodi
     credits_translators: |
-      1531 - - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*engleski* , *nemački*)
+      1531 - - Milan Divovic (*srpski*)
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*engleski*, *nemački*)
       - Gildas Boureau (dokumentacija na *francuskom*)
       - Vladimir Badulya (*ruski*)
       - Pierluigi Colombo, Massimo Risca (*italijanski*)
