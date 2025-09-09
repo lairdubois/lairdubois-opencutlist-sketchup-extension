@@ -1111,7 +1111,7 @@ module Ladb::OpenCutList
       # Sort material defs (type > name)
       @material_defs.sort_by! { |material_def| [ MaterialAttributes::type_order(material_def[:material_attributes].type), material_def[:material].display_name ] }
 
-      # Select default current material if necessary
+      # Select the default current material if necessary
       if model.materials.length == 0 || fetch_action_material(fetch_action) == false
         set_current_material(false)
       elsif !@material_defs.empty? && (!current_material_exists || fetch_action_material(fetch_action).nil?)

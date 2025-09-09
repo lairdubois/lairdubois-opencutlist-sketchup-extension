@@ -19,7 +19,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Export 2D projections left, right, front, back
   * Added QRCodes in the label editor
   * Added Duplicate element in labels editor
-  * Added Duplicate column in export editor
+  * Added Duplicate column in the export editor
   * Added the Labels button to the Parts List
   * Added _use_count_ parameter to 2D and 3D drawing writers
   * Added handle to manually reorder material prices list
@@ -33,6 +33,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Improved Smart Paint Tool by adding scrolling in the materials list
   * Improved surface detection
   * Improved Material import from SKM (allows new or replace)
+  * Improved Material forms (allows using texture on new material)
   * Improved Layout feature to be able to align on active view axes
   * Improved Material price attributes to add the ability to set price for thickness or section
   * Replaced Highlight Part Tool with Smart Axes Tool
@@ -41,6 +42,9 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   ### BETA
 
+  * 2025-09-09
+    * Improved material forms (allows using texture on new material)
+    * Fixed DLL loading crash when using multiple SketchUp instances on Windows
   * 2025-09-08
     * Various UI improvements
     * Updated CR languages
