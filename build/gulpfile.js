@@ -39,7 +39,18 @@ gulp.task('css_minify', function () {
     return gulp.src('../src/ladb_opencutlist/css/**/!(*.min).css')
         .pipe(cleanCSS())
         .pipe(rename({ suffix: '.min' }))
-        .pipe(pxtorem({ minPixelValue: 1, propList: [ 'font', 'font-size', 'line-height', 'letter-spacing', 'width', 'min-width', 'height', 'min-height', 'padding', 'margin', 'top', 'right', 'bottom', 'left', 'border-width' ] }))
+        .pipe(pxtorem({ minPixelValue: 1, propList: [
+            'font', 'font-size',
+                'line-height',
+                'letter-spacing',
+                'width', 'min-width',
+                'height', 'min-height',
+                'padding',// 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+                'margin',// 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+                'top', 'right', 'bottom', 'left',
+                'border-width',
+                'gap'
+            ] }))
         .pipe(gulp.dest('../src/ladb_opencutlist/css'));
 });
 
