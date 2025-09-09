@@ -154,7 +154,7 @@ core:
 
       Da biste prijavili grešku: <a href="mailto:opencutlist@lairdubois.fr?Subject=Bug%20Report%20OpenCutList%20 {{ version }}%20(build: {{ build }})" target="_ blank">opencutlist@lairdubois.fr</a>.
   error:
-    extern: "Spoljašnja greška: {{ error }}"
+    extern: "Spoljašnja greška: **{{ error }}**"
     feature_unavailable: "Ova funkcija zahteva SketchUp {{ version }} ili noviji"
     failed_export_to: |
       Došlo je do greške prilikom izvoza u *{{ path }}*.
@@ -544,6 +544,8 @@ tab:
       part_folding: Grupišite slične delove
       part_folding_help: |
         Ako je ova opcija odabrana, delovi sa **identičnom veličinom** i sa **identičnim oznakama** biće grupisani (sve dok prikaz ovog područja nije skriven).
+
+        Delovi se i dalje smatraju različitim za etikete i planove sečenja.
       hide_entity_names: Sakrij nazive instanci
       hide_entity_names_help: "Označite ovu opciju da se nazivi instanci komada ne prikazuju."
       hide_descriptions: Sakrij opise
@@ -1002,7 +1004,7 @@ tab:
 
         Ova lista je definisana poljem **$t(tab.materials.edit_material.std_lengths)** materijala.
 
-        Izmenite osobine materijala '{{ material_name }}' da biste ažurirali ovu listu.
+        *Izmenite osobine materijala '{{ material_name }}' da biste ažurirali ovu listu.*
       option_std_bin_1d_add: Dodaj veličinu panela
       option_std_bin_1d_none: Nema
       option_scrap_bin_1d_dimensional_sizes: Ostatci komada
@@ -1350,7 +1352,7 @@ tab:
       option_pins_colored: Boja
       option_pins_colored_0: Bez boje
       option_pins_colored_1: Boja dela
-      option_pins_colored_help: Boja oznaka na delovima
+      option_pins_colored_help: Boja oznaka na delovima.
       option_pins_formula: Formula
       option_pins_formula_help: Ruby kod za tekst oznaka.
       option_pins_length: Dužina
@@ -1499,11 +1501,17 @@ tab:
         Dozvoljava podešavanje boja elemenata.
       option_parts_depths: Udubljenja
       option_parts_depths_help: |
+        Omogućava izbor boja šupljina na delovima.
+
+        *Podrazumevano, koristi se postepeni prelaz boja proporcionalan dubini šupljine, između boje dela i boje otvora.*
       option_parts_holes: Bušenja
       option_parts_holes_help: |
         Dozvoljava podešavanje boja bušenja elemenata.
       option_parts_paths: Crteži
       option_parts_paths_help: |
+        Omogućava izbor boja linija - trasa.
+
+        *Boja ispune koristiće se samo za zatvorene trase - oblike.*
       error:
         no_part: Nema delova za izvoz.
       warning:
@@ -1574,6 +1582,9 @@ tab:
       purge_unused: Obrišite nekorišćene materijale
       reset_prices: Resetuj cene svih materijala
       reset_prices_confirm: |
+        Spremate se da resetujete cene svih materijala u svom modelu.
+        Ova radnja je trajna. **Sve cene će biti vraćene na nulu.**
+        Potvrdite za nastavak.
       reset_prices_success: Cene svih materijala su resetovane.
     new_material:
       title: Kreirajte materijal
@@ -1597,22 +1608,40 @@ tab:
       attributes: Atributi
       thickness: Debljina
       thickness_help: |
+        Završna debljina materijala.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       length_increase: Dodatak na dužinu
-      length_increase_help: ""
+      length_increase_help: Nadmera primenjena na iskoristivu dužinu delova radi određivanja njihove **dužine za isecanje**.
       width_increase: Dodatak na širinu
-      width_increase_help: ""
+      width_increase_help: Nadmera primenjena na iskoristivu širinu delova radi određivanja njihove **širine za sečenje**.
       thickness_increase: Dodatak na debljinu
       thickness_increase_help: Prekoračenje debljine se dodaje na konačnu debljinu da bi se definisala **sirova debljina**.
       std_lengths: Standardne dužine
       std_lengths_help: |
+        Standardne dužine dostupne za ovaj materijal.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       std_widths: Standardne širine
       std_widths_help: |
+        Standardne širine dostupne za ovaj materijal.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       std_thicknesses: Standardne debljine
       std_thicknesses_help: |
+        Standardne **neobrađene** debljine dostupne za ovaj materijal.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       std_sections: Standardni preseci
       std_sections_help: |
+        Standardni profili dostupni za ovaj materijal.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       std_sizes: Standardne veličine panela
       std_sizes_help: |
+        Standardne dimenzije dostupne za ovaj materijal.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       grained: Pravac teksture
       grained_help: Omogućava da se naznači pravac teksture površine u odnosu na dužinu panela.
       grained_0: Nema teksture
@@ -1623,6 +1652,13 @@ tab:
       edge_decremented_1: Smanji za debljinu kant trake
       raw_estimated: Korišćeni volumen
       raw_estimated_help: |
+        Omogućava podešavanje korišćenog volumena za procenu mase i ukupnog troška elemenata od ovog materijala.
+
+        **Korisni obračunati volumen**
+        Ukupan volumen biće zbir obračunatih volumena elemenata.
+
+        **Potrebni volumen sirovog materijala**
+        Ukupan volumen biće zbir volumena ploča, listova, štapova ili traka elemenata nakon rasporeda.
       raw_estimated_0: Iskorišćeni volumen
       raw_estimated_1: Potrebni materijal
       multiplier_coefficient: Koeficijent množenja
@@ -1634,6 +1670,9 @@ tab:
       std_prices_help: Definiši cenu za sve veličine i standardne veličine materijala.
       std_cut_prices: Cena sečenja
       std_cut_prices_help: |
+        Omogućava podešavanje cene sečenja materijala.
+
+        *Samo pravolinijska sečenja se uzimaju u obzir za ovu vrednost.*
       texture_width: Širina
       texture_height: Visina
       export_to_skm: Izvezi (.skm)
@@ -1644,11 +1683,17 @@ tab:
     import_from_skm:
       title: Uvezi .skm datoteku
       ask_replace: |
+        Materijal "{{ name }}" već postoji.
+        Da li želite da ga zamenite materijalom koji uvozite?
+
+        $t(default.yes) = Zameniti postojeći materijal uvezenim materijalom
+        $t(default.no) = Zadržati oba materijala
+        $t(default.cancel) = Prekinuti operaciju
     export_to_skm:
       title: Izvoz u .skm datoteku
     option:
-      minimize_on_smart_paint: ""
-      minimize_on_smart_paint_help: ""
+      minimize_on_smart_paint: Minimizuj prozor nakon *'Bojenje delova sa...*'
+      minimize_on_smart_paint_help: "Kada je opcija aktivna, prozor OpenCutList se minimizira prilikom korišćenja funkcije *'Bojenje delova sa...'*."
       general: Uopšteno
       material_order_strategy: Sortiranje materijala
       material_order_strategy_help: |
@@ -1658,6 +1703,8 @@ tab:
       property_name: Naziv
     delete:
       message: |
+        Upravo ćete ukloniti materijal **{{ material_name }}** iz modela.
+        Potvrdite za nastavak.
     duplicate:
       message: |
         Odaberite ime za kopiju materijala **{{ material_name }}**.
@@ -1709,12 +1756,12 @@ tab:
     option:
       general: Uopšteno
       show_hidden_instances: Prikaži sakrivene instance
-      show_hidden_instances_help: ""
+      show_hidden_instances_help: "Kada je opcija aktivna, sakrivene instance u modelu će se pojaviti u stablu strukture."
       hide_descriptions: Sakrij opise
       hide_descriptions_help: "Ako je ova opcija uključena, **opisi** postavljeni na komade se neće prikazivati."
       hide_tags: Sakrij oznake
       hide_tags_help: "Ako je ova opcija odabrana, **oznake** neće biti prikazane."
-      minimize_on_set_active: ""
+      minimize_on_set_active: Minimizuj nakon '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: "Kada je opcija aktivna, prozor OpenCutList se minimizira prilikom korišćenja funkcije *'$t(tab.outliner.tooltip.set_active_node)'*."
     error:
       no_model: Nijedan model nije otvoren. Morate mi dati više informacija ;)
@@ -1928,6 +1975,8 @@ tab:
         Ova radnja je nepovratna. **Sva podešavanja će biti vraćena na početne vrednosti.**
         Potvrdite za nastavak.
       reset_model_presets_success: |
+        Podešavanja *OpenCutList* za trenutni model su vraćena na podrazumevane vrednosti.
+        Za primenu promena, **zatvorite** i ponovo **otvorite** prozor OpenCutList.
       error:
         no_preset_to_export: Nema unapred podešenih vrednosti za izvoz.
         no_preset_to_import: Nema unapred podešenih vrednosti za uvoz.
@@ -1943,6 +1992,21 @@ tab:
       *OpenCutList* razvijaju [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) i [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Lista svih [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Prevodi
     credits_translators: |
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*engleski* , *nemački*)
+      - Gildas Boureau (dokumentacija na *francuskom*)
+      - Vladimir Badulya (*ruski*)
+      - Pierluigi Colombo, Massimo Risca (*italijanski*)
+      - Nayton Sanches Barbosa, ispravljeno i pregledano od strane [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portugalski*)
+      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*španski*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*češki*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*poljski*)
+      - Sergey Isupov (*hebrejski*), bez interfejsa s desna na levo
+      - Soul Issam (*arapski*), bez interfejsa s desna na levo
+      - Nguyen Ngoc Tan (*vijetnamski*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*ukrajinski*)
+      - [刘涛](https://www.liutao91.cn) (pojednostavljeni *kineski*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*nizozemski*)
+      - Zoltán Nagy, Roland Kovács (*mađarski*)
     credits_description: |
       Razvoj ovog dodatka deo je projekta platforme za deljenje [L'Air du Bois](https://www.lairdubois.fr).
       Kao takav, dodatak je takođe Open Source i dostupan je pod [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencom na svom [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) repozitorijumu.
@@ -1959,7 +2023,7 @@ tool:
   default:
     transparency: Prozirnost
     zoom_extents: Prošireni prikaz
-    toggle_depth: ""
+    toggle_depth: Elementi u pozadini
     more: Još
     end_point: Kraj
     middle_point: Središnja tačka
@@ -2083,10 +2147,10 @@ tool:
     action_4_status: Kliknite na komad za uklanjanje svih materijala
     action_option_group_instances: Broj instanci
     action_option_group_edges: Broj kant traka
-    action_option_group_faces: ""
-    action_option_instances_0_status: ""
-    action_option_instances_1_status: ""
-    action_option_edges_0_status: ""
+    action_option_group_faces: Broj strana
+    action_option_instances_0_status: Bojenje samo izabrane instance elementa
+    action_option_instances_1_status: Bojenje svih instanci izabranog dela
+    action_option_edges_0_status: Bojenje samo ciljanog kanta
     action_option_edges_1_status: Oboji odabranu ivicu i suprotnu ivicu komada
     action_option_edges_2_status: Oboji 4 kanta odabranog komada
     action_option_faces_0_status: Oboji samo odabranu površinu
@@ -2135,22 +2199,22 @@ tool:
       not_orientable: Ovaj tip elementa se ne može rotirati
   smart_export:
     title: Izvoz
-    action_0: ""
-    action_0_status: ""
-    action_1: ""
-    action_1_status: ""
-    action_2: ""
-    action_2_status: ""
-    action_3: ""
-    action_3_status: ""
+    action_0: Izvezi 3D element
+    action_0_status: Odaberite element klikom
+    action_1: Izvoz 2D elementa
+    action_1_status: Odaberite površinu dela klikom
+    action_2: Izvoz strane
+    action_2_status: Odaberite površinu klikom
+    action_3: Izvezi putanju
+    action_3_status: Odaberite ivicu klikom
     action_option_group_file_format: Format
     action_option_group_unit: Jedinica
     action_option_group_faces: Površine
     action_option_group_options: Opcije
-    action_option_file_format_dxf_status: ""
-    action_option_file_format_stl_status: ""
-    action_option_file_format_obj_status: ""
-    action_option_file_format_svg_status: ""
+    action_option_file_format_dxf_status: Izvoz u DXF
+    action_option_file_format_stl_status: Izvoz u STL
+    action_option_file_format_obj_status: Izvoz u OBJ
+    action_option_file_format_svg_status: Izvoz u SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2160,9 +2224,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: ""
-    action_option_options_include_paths_status: ""
+    action_option_options_merge_holes_status: Odvoji kroz rupe i objedini dubine po svakoj šupljini
+    action_option_options_include_paths_status: Izvoz ivica unutar elementa koje nemaju povezanu površinu kao putanje
     error:
-      not_part: ""
-      not_flat_face: ""
-      incompatible_active_path: ""
+      not_part: Ova površina ne pripada nijednom delu (komponenti)
+      not_flat_face: Površina nije ravna
+      incompatible_active_path: Trenutna putanja ne podržava izvoz ovog dela
