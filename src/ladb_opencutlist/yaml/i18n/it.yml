@@ -989,8 +989,8 @@ tab:
     packing:
       title: Schema di taglio
       option_problem_type: Tipo
-      option_problem_type_rectangle: Nesting perimetri
-      option_problem_type_rectangleguillotine: Rettangoli
+      option_problem_type_rectangle: Rettangolari
+      option_problem_type_rectangleguillotine: Ghigliottina
       option_problem_type_onedimensional: Fasce
       option_problem_type_irregular: Nesting forme
       options_material: Materiale

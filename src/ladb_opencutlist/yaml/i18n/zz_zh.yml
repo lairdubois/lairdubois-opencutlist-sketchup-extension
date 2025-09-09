@@ -814,7 +814,7 @@ tab:
       option_spacing_help: 662 - 组件之间的最少间距
       option_trimming: 663 - 修边
       option_trimming_help_1d: 664 - 板材或边条两端要被视为废料的材料量.
-      option_trimming_help_2d: 665 - 这指的是在制造过程中需要去除的板材或边条两端的额外材料, 以便获得所需的尺寸.
+      option_trimming_help_2d: 665 - 视为废料的板材边缘余量
       option_optimization: 666 - 优化级别
       option_optimization_help: 667 - 优化级别定义了计算的可能性数量, 从而也影响计算时间.
       option_optimization_0: 668 - 中等
