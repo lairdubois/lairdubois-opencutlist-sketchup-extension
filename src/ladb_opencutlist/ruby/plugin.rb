@@ -1588,8 +1588,20 @@ module Ladb::OpenCutList
     def tabs_dialog_maximize_command(side_folded: false)
       if @tabs_dialog
 
+        if side_folded
+          if @tabs_dialog_maximized_height <= 700 || @tabs_dialog_font_size == 2
+            width = TABS_DIALOG_DEFAULT_SIDE_FOLDED_WIDTH * 0.8
+          elsif @tabs_dialog_maximized_height <= 900 || @tabs_dialog_font_size == 1
+            width = TABS_DIALOG_DEFAULT_SIDE_FOLDED_WIDTH * 0.9
+          else
+            width = TABS_DIALOG_DEFAULT_SIDE_FOLDED_WIDTH
+          end
+        else
+          width = @tabs_dialog_maximized_width
+        end
+
         tabs_dialog_store_current_size if @tabs_dialog_maximized
-        tabs_dialog_set_size(side_folded ? TABS_DIALOG_DEFAULT_SIDE_FOLDED_WIDTH : @tabs_dialog_maximized_width, @tabs_dialog_maximized_height)
+        tabs_dialog_set_size(width, @tabs_dialog_maximized_height)
         @tabs_dialog_maximized = true
         @tabs_dialog_side_folded = side_folded
 

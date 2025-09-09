@@ -259,6 +259,7 @@
                             }
                             items.push({ separator: true });
                             items.push({
+                                icon: 'bomb',
                                 text: i18next.t('tab.outliner.edit_node.explode') + '...',
                                 class: 'dropdown-item-danger',
                                 callback: function () {
