@@ -149,7 +149,7 @@ core:
 
       Da biste prijavili grešku: <a href="mailto:opencutlist@lairdubois.fr?Subject=Bug%20Report%20OpenCutList%20 {{ version }}%20(build: {{ build }})" target="_ blank">opencutlist@lairdubois.fr</a>.
   error:
-    extern: '128 - Spoljašnja greška: {{ error }}'
+    extern: '128 - Spoljašnja greška: **{{ error }}**'
     feature_unavailable: 129 - Ova funkcija zahteva SketchUp {{ version }} ili noviji
     failed_export_to: |
       130 - Došlo je do greške prilikom izvoza u *{{ path }}*.
@@ -539,6 +539,8 @@ tab:
       part_folding: 416 - Grupišite slične delove
       part_folding_help: |
         417 - Ako je ova opcija odabrana, delovi sa **identičnom veličinom** i sa **identičnim oznakama** biće grupisani (sve dok prikaz ovog područja nije skriven).
+
+        Delovi se i dalje smatraju različitim za etikete i planove sečenja.
       hide_entity_names: 418 - Sakrij nazive instanci
       hide_entity_names_help: 419 - Označite ovu opciju da se nazivi instanci komada ne prikazuju.
       hide_descriptions: 420 - Sakrij opise
@@ -997,7 +999,7 @@ tab:
 
         Ova lista je definisana poljem **$t(tab.materials.edit_material.std_lengths)** materijala.
 
-        Izmenite osobine materijala '{{ material_name }}' da biste ažurirali ovu listu.
+        *Izmenite osobine materijala '{{ material_name }}' da biste ažurirali ovu listu.*
       option_std_bin_1d_add: 811 - Dodaj veličinu panela
       option_std_bin_1d_none: 812 - Nema
       option_scrap_bin_1d_dimensional_sizes: 813 - Ostatci komada
@@ -1345,7 +1347,7 @@ tab:
       option_pins_colored: 1098 - Boja
       option_pins_colored_0: 1099 - Bez boje
       option_pins_colored_1: 1100 - Boja dela
-      option_pins_colored_help: 1101 - Boja oznaka na delovima
+      option_pins_colored_help: 1101 - Boja oznaka na delovima.
       option_pins_formula: 1102 - Formula
       option_pins_formula_help: 1103 - Ruby kod za tekst oznaka.
       option_pins_length: 1104 - Dužina
@@ -1493,12 +1495,18 @@ tab:
       option_parts_help: |
         1191 - Dozvoljava podešavanje boja elemenata.
       option_parts_depths: 1192 - Udubljenja
-      option_parts_depths_help: '1193 - '
+      option_parts_depths_help: |
+        1193 - Omogućava izbor boja šupljina na delovima.
+
+        *Podrazumevano, koristi se postepeni prelaz boja proporcionalan dubini šupljine, između boje dela i boje otvora.*
       option_parts_holes: 1194 - Bušenja
       option_parts_holes_help: |
         1195 - Dozvoljava podešavanje boja bušenja elemenata.
       option_parts_paths: 1196 - Crteži
-      option_parts_paths_help: '1197 - '
+      option_parts_paths_help: |
+        1197 - Omogućava izbor boja linija - trasa.
+
+        *Boja ispune koristiće se samo za zatvorene trase - oblike.*
       error:
         no_part: 1198 - Nema delova za izvoz.
       warning:
@@ -1568,7 +1576,10 @@ tab:
     menu:
       purge_unused: 1252 - Obrišite nekorišćene materijale
       reset_prices: 1253 - Resetuj cene svih materijala
-      reset_prices_confirm: '1254 - '
+      reset_prices_confirm: |
+        1254 - Spremate se da resetujete cene svih materijala u svom modelu.
+        Ova radnja je trajna. **Sve cene će biti vraćene na nulu.**
+        Potvrdite za nastavak.
       reset_prices_success: 1255 - Cene svih materijala su resetovane.
     new_material:
       title: 1256 - Kreirajte materijal
@@ -1591,23 +1602,41 @@ tab:
       estimate_options: 1272 - Opcije procene
       attributes: 1273 - Atributi
       thickness: 1274 - Debljina
-      thickness_help: '1275 - '
+      thickness_help: |
+        1275 - Završna debljina materijala.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       length_increase: 1276 - Dodatak na dužinu
-      length_increase_help: '1277 - '
+      length_increase_help: 1277 - Nadmera primenjena na iskoristivu dužinu delova radi određivanja njihove **dužine za isecanje**.
       width_increase: 1278 - Dodatak na širinu
-      width_increase_help: '1279 - '
+      width_increase_help: 1279 - Nadmera primenjena na iskoristivu širinu delova radi određivanja njihove **širine za sečenje**.
       thickness_increase: 1280 - Dodatak na debljinu
       thickness_increase_help: 1281 - Prekoračenje debljine se dodaje na konačnu debljinu da bi se definisala **sirova debljina**.
       std_lengths: 1282 - Standardne dužine
-      std_lengths_help: '1283 - '
+      std_lengths_help: |
+        1283 - Standardne dužine dostupne za ovaj materijal.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       std_widths: 1284 - Standardne širine
-      std_widths_help: '1285 - '
+      std_widths_help: |
+        1285 - Standardne širine dostupne za ovaj materijal.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       std_thicknesses: 1286 - Standardne debljine
-      std_thicknesses_help: '1287 - '
+      std_thicknesses_help: |
+        1287 - Standardne **neobrađene** debljine dostupne za ovaj materijal.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       std_sections: 1288 - Standardni preseci
-      std_sections_help: '1289 - '
+      std_sections_help: |
+        1289 - Standardni profili dostupni za ovaj materijal.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       std_sizes: 1290 - Standardne veličine panela
-      std_sizes_help: '1291 - '
+      std_sizes_help: |
+        1291 - Standardne dimenzije dostupne za ovaj materijal.
+
+        *Ako jedinica nije navedena, koristiće se jedinica modela.*
       grained: 1292 - Pravac teksture
       grained_help: 1293 - Omogućava da se naznači pravac teksture površine u odnosu na dužinu panela.
       grained_0: 1294 - Nema teksture
@@ -1617,7 +1646,14 @@ tab:
       edge_decremented_0: 1298 - Bez umanjenja
       edge_decremented_1: 1299 - Smanji za debljinu kant trake
       raw_estimated: 1300 - Korišćeni volumen
-      raw_estimated_help: '1301 - '
+      raw_estimated_help: |
+        1301 - Omogućava podešavanje korišćenog volumena za procenu mase i ukupnog troška elemenata od ovog materijala.
+
+        **Korisni obračunati volumen**
+        Ukupan volumen biće zbir obračunatih volumena elemenata.
+
+        **Potrebni volumen sirovog materijala**
+        Ukupan volumen biće zbir volumena ploča, listova, štapova ili traka elemenata nakon rasporeda.
       raw_estimated_0: 1302 - Iskorišćeni volumen
       raw_estimated_1: 1303 - Potrebni materijal
       multiplier_coefficient: 1304 - Koeficijent množenja
@@ -1628,7 +1664,10 @@ tab:
       std_prices: 1309 - Cena
       std_prices_help: 1310 - Definiši cenu za sve veličine i standardne veličine materijala.
       std_cut_prices: 1311 - Cena sečenja
-      std_cut_prices_help: '1312 - '
+      std_cut_prices_help: |
+        1312 - Omogućava podešavanje cene sečenja materijala.
+
+        *Samo pravolinijska sečenja se uzimaju u obzir za ovu vrednost.*
       texture_width: 1313 - Širina
       texture_height: 1314 - Visina
       export_to_skm: 1315 - Izvezi (.skm)
@@ -1638,12 +1677,18 @@ tab:
       title: 1317 - Izvezi sliku
     import_from_skm:
       title: 1318 - Uvezi .skm datoteku
-      ask_replace: '1319 - '
+      ask_replace: |
+        1319 - Materijal "{{ name }}" već postoji.
+        Da li želite da ga zamenite materijalom koji uvozite?
+
+        $t(default.yes) = Zameniti postojeći materijal uvezenim materijalom
+        $t(default.no) = Zadržati oba materijala
+        $t(default.cancel) = Prekinuti operaciju
     export_to_skm:
       title: 1320 - Izvoz u .skm datoteku
     option:
-      minimize_on_smart_paint: '1321 - '
-      minimize_on_smart_paint_help: '1322 - '
+      minimize_on_smart_paint: 1321 - Minimizuj prozor nakon *'Bojenje delova sa...*'
+      minimize_on_smart_paint_help: 1322 - Kada je opcija aktivna, prozor OpenCutList se minimizira prilikom korišćenja funkcije *'Bojenje delova sa...'*.
       general: 1323 - Uopšteno
       material_order_strategy: 1324 - Sortiranje materijala
       material_order_strategy_help: |
@@ -1652,7 +1697,9 @@ tab:
       property_type: 1326 - Tip
       property_name: 1327 - Naziv
     delete:
-      message: '1328 - '
+      message: |
+        1328 - Upravo ćete ukloniti materijal **{{ material_name }}** iz modela.
+        Potvrdite za nastavak.
     duplicate:
       message: |
         1329 - Odaberite ime za kopiju materijala **{{ material_name }}**.
@@ -1704,12 +1751,12 @@ tab:
     option:
       general: 1371 - Uopšteno
       show_hidden_instances: 1372 - Prikaži sakrivene instance
-      show_hidden_instances_help: '1373 - '
+      show_hidden_instances_help: 1373 - Kada je opcija aktivna, sakrivene instance u modelu će se pojaviti u stablu strukture.
       hide_descriptions: 1374 - Sakrij opise
       hide_descriptions_help: 1375 - Ako je ova opcija uključena, **opisi** postavljeni na komade se neće prikazivati.
       hide_tags: 1376 - Sakrij oznake
       hide_tags_help: 1377 - Ako je ova opcija odabrana, **oznake** neće biti prikazane.
-      minimize_on_set_active: '1378 - '
+      minimize_on_set_active: 1378 - Minimizuj nakon '$t(tab.outliner.tooltip.set_active_node)'
       minimize_on_set_active_help: 1379 - Kada je opcija aktivna, prozor OpenCutList se minimizira prilikom korišćenja funkcije *'$t(tab.outliner.tooltip.set_active_node)'*.
     error:
       no_model: 1380 - Nijedan model nije otvoren. Morate mi dati više informacija ;)
@@ -1922,7 +1969,9 @@ tab:
         1518 - Spremate se da resetujete sva *OpenCutList* podešavanja za trenutni model.
         Ova radnja je nepovratna. **Sva podešavanja će biti vraćena na početne vrednosti.**
         Potvrdite za nastavak.
-      reset_model_presets_success: '1519 - '
+      reset_model_presets_success: |
+        1519 - Podešavanja *OpenCutList* za trenutni model su vraćena na podrazumevane vrednosti.
+        Za primenu promena, **zatvorite** i ponovo **otvorite** prozor OpenCutList.
       error:
         no_preset_to_export: 1520 - Nema unapred podešenih vrednosti za izvoz.
         no_preset_to_import: 1521 - Nema unapred podešenih vrednosti za uvoz.
@@ -1937,7 +1986,22 @@ tab:
     credits_authors: |
       1529 - *OpenCutList* razvijaju [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) i [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Lista svih [contributors](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: 1530 - Prevodi
-    credits_translators: '1531 - '
+    credits_translators: |
+      1531 - - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*engleski* , *nemački*)
+      - Gildas Boureau (dokumentacija na *francuskom*)
+      - Vladimir Badulya (*ruski*)
+      - Pierluigi Colombo, Massimo Risca (*italijanski*)
+      - Nayton Sanches Barbosa, ispravljeno i pregledano od strane [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portugalski*)
+      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*španski*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*češki*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*poljski*)
+      - Sergey Isupov (*hebrejski*), bez interfejsa s desna na levo
+      - Soul Issam (*arapski*), bez interfejsa s desna na levo
+      - Nguyen Ngoc Tan (*vijetnamski*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*ukrajinski*)
+      - [刘涛](https://www.liutao91.cn) (pojednostavljeni *kineski*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*nizozemski*)
+      - Zoltán Nagy, Roland Kovács (*mađarski*)
     credits_description: |
       1532 - Razvoj ovog dodatka deo je projekta platforme za deljenje [L'Air du Bois](https://www.lairdubois.fr).
       Kao takav, dodatak je takođe Open Source i dostupan je pod [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencom na svom [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) repozitorijumu.
@@ -1954,7 +2018,7 @@ tool:
   default:
     transparency: 1537 - Prozirnost
     zoom_extents: 1538 - Prošireni prikaz
-    toggle_depth: '1539 - '
+    toggle_depth: 1539 - Elementi u pozadini
     more: 1540 - Još
     end_point: 1541 - Kraj
     middle_point: 1542 - Središnja tačka
@@ -2078,10 +2142,10 @@ tool:
     action_4_status: 1652 - Kliknite na komad za uklanjanje svih materijala
     action_option_group_instances: 1653 - Broj instanci
     action_option_group_edges: 1654 - Broj kant traka
-    action_option_group_faces: '1655 - '
-    action_option_instances_0_status: '1656 - '
-    action_option_instances_1_status: '1657 - '
-    action_option_edges_0_status: '1658 - '
+    action_option_group_faces: 1655 - Broj strana
+    action_option_instances_0_status: 1656 - Bojenje samo izabrane instance elementa
+    action_option_instances_1_status: 1657 - Bojenje svih instanci izabranog dela
+    action_option_edges_0_status: 1658 - Bojenje samo ciljanog kanta
     action_option_edges_1_status: 1659 - Oboji odabranu ivicu i suprotnu ivicu komada
     action_option_edges_2_status: 1660 - Oboji 4 kanta odabranog komada
     action_option_faces_0_status: 1661 - Oboji samo odabranu površinu
@@ -2130,22 +2194,22 @@ tool:
       not_orientable: 1699 - Ovaj tip elementa se ne može rotirati
   smart_export:
     title: 1700 - Izvoz
-    action_0: '1701 - '
-    action_0_status: '1702 - '
-    action_1: '1703 - '
-    action_1_status: '1704 - '
-    action_2: '1705 - '
-    action_2_status: '1706 - '
-    action_3: '1707 - '
-    action_3_status: '1708 - '
+    action_0: 1701 - Izvezi 3D element
+    action_0_status: 1702 - Odaberite element klikom
+    action_1: 1703 - Izvoz 2D elementa
+    action_1_status: 1704 - Odaberite površinu dela klikom
+    action_2: 1705 - Izvoz strane
+    action_2_status: 1706 - Odaberite površinu klikom
+    action_3: 1707 - Izvezi putanju
+    action_3_status: 1708 - Odaberite ivicu klikom
     action_option_group_file_format: 1709 - Format
     action_option_group_unit: 1710 - Jedinica
     action_option_group_faces: 1711 - Površine
     action_option_group_options: 1712 - Opcije
-    action_option_file_format_dxf_status: '1713 - '
-    action_option_file_format_stl_status: '1714 - '
-    action_option_file_format_obj_status: '1715 - '
-    action_option_file_format_svg_status: '1716 - '
+    action_option_file_format_dxf_status: 1713 - Izvoz u DXF
+    action_option_file_format_stl_status: 1714 - Izvoz u STL
+    action_option_file_format_obj_status: 1715 - Izvoz u OBJ
+    action_option_file_format_svg_status: 1716 - Izvoz u SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2155,9 +2219,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: '1726 - '
-    action_option_options_include_paths_status: '1727 - '
+    action_option_options_merge_holes_status: 1726 - Odvoji kroz rupe i objedini dubine po svakoj šupljini
+    action_option_options_include_paths_status: 1727 - Izvoz ivica unutar elementa koje nemaju povezanu površinu kao putanje
     error:
-      not_part: '1728 - '
-      not_flat_face: '1729 - '
-      incompatible_active_path: '1730 - '
+      not_part: 1728 - Ova površina ne pripada nijednom delu (komponenti)
+      not_flat_face: 1729 - Površina nije ravna
+      incompatible_active_path: 1730 - Trenutna putanja ne podržava izvoz ovog dela
