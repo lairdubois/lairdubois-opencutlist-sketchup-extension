@@ -146,7 +146,7 @@
             });
 
             // Setup tooltips
-            that.dialog.setupTooltips();
+            that.dialog.setupTooltips(that.$element);
 
         });
 

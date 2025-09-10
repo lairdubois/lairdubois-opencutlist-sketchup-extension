@@ -640,7 +640,7 @@
             confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
         });
 
-    }
+    };
 
     LadbTabOutliner.prototype.computeNodeDisplayName = function (node) {
         const names = [];

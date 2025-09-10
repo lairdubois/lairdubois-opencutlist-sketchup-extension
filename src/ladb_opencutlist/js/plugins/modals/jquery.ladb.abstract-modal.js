@@ -26,6 +26,10 @@ LadbAbstractModal.prototype.init = function () {
     // Bind element
     this.bind();
 
+    // Setup tooltips and popovers
+    this.dialog.setupTooltips(this.$element);
+    this.dialog.setupPopovers(this.$element);
+
 };
 
 // Modal /////
