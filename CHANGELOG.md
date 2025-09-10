@@ -42,6 +42,9 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   ### BETA
 
+  * 2025-09-10
+    * Improved UI
+    * Updated CR
   * 2025-09-09
     * Improved material forms (allows using texture on new material)
     * Fixed DLL loading crash when using multiple SketchUp instances on Windows
