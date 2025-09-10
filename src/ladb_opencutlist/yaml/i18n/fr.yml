@@ -2004,9 +2004,10 @@ tab:
       - Soul Issam (*arabe*), sans interface de droite à gauche
       - Nguyen Ngoc Tan (*vietnamien*)
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*ukrainien*)
-      - [刘涛](https://www.liutao91.cn) (*chinois simplifié*)
+      - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*chinois simplifié*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*néerlandais*)
       - Zoltán Nagy, Roland Kovács (*hongrois*)
+      - Milan Divovic (*serbe*)
     credits_description: |
       Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
       Et à ce titre, il est également *Open Source* et disponible sous licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

@@ -1997,16 +1997,17 @@ tab:
       - Gildas Boureau (documentación *francés*)
       - Vladimir Badulya (*ruso*)
       - Pierluigi Colombo, Massimo Risca (*italiano*)
-      - Nayton Sanches Barbosa, corregido y revisado por [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*portugués*)
+      - Nayton Sanches Barbosa, corregido y revisado por [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portugués*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*polaco*)
       - Sergey Isupov (*hebreo*), sin interfaz de derecha a izquierda - RTL
       - Soul Issam (*árabe*), sin interfaz de derecha a izquierda - RTL
       - Nguyen Ngoc Tan (*vietnamita*)
       - Andrii Toporivskyi, Kostiantyn Shcherbey (*ucraniano*)
-      - [刘涛](https://www.liutao91.cn) (*chino simplificado*)
+      - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*chino simplificado*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*holandés*)
       - Zoltán Nagy, Roland Kovács (*húngaro*)
+      - Milan Divovic (*serbio*)
     credits_description: |
       El desarrollo de esta extensión está vinculado al proyecto de plataforma de intercambio. [L'Air du Bois](https://www.lairdubois.fr).
       Esta extensión también es de *código abierto* y está disponible en [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) licencia en [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).

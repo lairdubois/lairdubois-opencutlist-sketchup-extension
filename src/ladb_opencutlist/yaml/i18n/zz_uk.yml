@@ -1999,9 +1999,10 @@ tab:
       - Sergey Isupov (*іврит*), без інтерфейсу зправа на ліво
       - Soul Issam (*арабська*), без інтерфейсу зправа на ліво
       - Nguyen Ngoc Tan (*в’єтнамська*)
-      - [刘涛](https://www.liutao91.cn) (*спрощена китайська*)
+      - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*спрощена китайська*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*голландський*)
       - Zoltán Nagy, Roland Kovács (*угорська*)
+      - Milan Divovic (*сербський*)
     credits_description: |
       1532 - Розробка цього розширення є частиною проекту платформи спільного доступу [L'Air du Bois](https://www.lairdubois.fr).
       І як такий, він також є *Open Source* і доступний під [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) на своєму [репозиторій GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
