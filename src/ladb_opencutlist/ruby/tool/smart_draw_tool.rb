@@ -1280,15 +1280,6 @@ module Ladb::OpenCutList
 
         if !_fetch_option_construction
 
-          # Flat drawing, just add to group
-
-          faces = _create_faces(group.definition, p1, p2)
-          faces.each do |face|
-            face.reverse! unless face.normal.samedirection?(Z_AXIS)
-          end
-
-        else
-
           # Construction
 
           _get_local_shapes_points_with_offset.each do |o_shape_points|
@@ -1306,13 +1297,22 @@ module Ladb::OpenCutList
 
           end
 
+        else
+
+          # Flat drawing, just add to the group
+
+          faces = _create_faces(group.definition, p1, p2)
+          faces.each do |face|
+            face.reverse! unless face.normal.samedirection?(Z_AXIS)
+          end
+
         end
 
         instance = group
 
       else
 
-        # Solid drawing create a component definition + instance
+        # Solid drawing creates a component definition + instance
 
         definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
 
