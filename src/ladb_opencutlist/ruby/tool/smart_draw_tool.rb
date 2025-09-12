@@ -1278,7 +1278,7 @@ module Ladb::OpenCutList
         group = model.active_entities.add_group
         group.transformation = t
 
-        if !_fetch_option_construction
+        if _fetch_option_construction
 
           # Construction
 
