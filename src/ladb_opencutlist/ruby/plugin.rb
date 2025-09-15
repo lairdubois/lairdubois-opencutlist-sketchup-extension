@@ -67,11 +67,40 @@ module Ladb::OpenCutList
     SETTINGS_KEY_COMPONENTS_LAST_DIR = 'settings.components_last_dir'
     SETTINGS_KEY_MATERIALS_LAST_DIR = 'settings.materials_last_dir'
 
+    TABS_DIALOG_STYLE = if Sketchup.platform == :platform_osx
+                          if Sketchup.version_number < 1800000000
+                            UI::HtmlDialog::STYLE_DIALOG
+                          else
+                            UI::HtmlDialog::STYLE_UTILITY
+                          end
+                        elsif Sketchup.platform == :platform_win
+                          if Sketchup.version_number < 2500000000
+                            UI::HtmlDialog::STYLE_DIALOG
+                          else
+                            UI::HtmlDialog::STYLE_UTILITY
+                          end
+                        end
     TABS_DIALOG_MINIMIZED_WIDTH = 90
     TABS_DIALOG_MINIMIZED_HEIGHT = if Sketchup.platform == :platform_osx
-                                     (Sketchup.version_number >= 2700000000 ? 0 : 28)
+                                     if Sketchup.version_number >= 2700000000
+                                       0
+                                     else
+                                       if TABS_DIALOG_STYLE == UI::HtmlDialog::STYLE_DIALOG
+                                         28
+                                       else
+                                         19
+                                       end
+                                     end
                                    elsif Sketchup.platform == :platform_win
-                                     (Sketchup.version_number >= 2200000000 ? 0 : 38)
+                                     if Sketchup.version_number >= 2200000000
+                                       0
+                                     else
+                                       if TABS_DIALOG_STYLE == UI::HtmlDialog::STYLE_DIALOG
+                                         38
+                                       else
+                                         30
+                                       end
+                                     end
                                    end +
                                    80 + 80 * 3     # = 1 + 3 Tab buttons
     TABS_DIALOG_DEFAULT_SIDE_FOLDED_WIDTH = 700
@@ -1061,7 +1090,7 @@ module Ladb::OpenCutList
               :top => @tabs_dialog_top,
               :min_width => TABS_DIALOG_MINIMIZED_WIDTH,
               :min_height => TABS_DIALOG_MINIMIZED_HEIGHT,
-              :style => UI::HtmlDialog::STYLE_DIALOG,
+              :style => TABS_DIALOG_STYLE,
               :use_content_size => platform_is_win? || Sketchup.version_number >= 2700000000,
           })
       @tabs_dialog.set_on_closed {
