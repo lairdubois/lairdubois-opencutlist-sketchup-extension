@@ -358,6 +358,7 @@ module Ladb::OpenCutList
 
       @mouse_snap_point = nil
       @mouse_snap_centroid = nil
+      @mouse_snap_face_manipulator = nil
       @mouse_ip.pick(view, x, y, _get_previous_input_point)
 
       # SKETCHUP_CONSOLE.clear
@@ -575,11 +576,22 @@ module Ladb::OpenCutList
           _refresh
           return true
         elsif tool.is_key_ctrl_or_option?(key) && is_quick
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
-          @previous_action_handler = nil
-          _remove_floating_tools
-          _refresh
-          return true
+          if tool.is_key_shift_down?
+            unless @mouse_snap_face_manipulator.nil?
+              if _set_picked_points_from_face_manipulator(@mouse_snap_face_manipulator, view)
+                @mouse_snap_face_manipulator = nil
+                set_state(STATE_PULL)
+                _refresh
+                return true
+              end
+            end
+          else
+            @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
+            @previous_action_handler = nil
+            _remove_floating_tools
+            _refresh
+            return true
+          end
         end
 
       when STATE_PULL
@@ -675,6 +687,10 @@ module Ladb::OpenCutList
 
     def _picked_shape_end_point?
       !@picked_shape_end_point.nil?
+    end
+
+    def _set_picked_points_from_face_manipulator(face_manipulator, view)
+      false
     end
 
     # -----
@@ -783,6 +799,10 @@ module Ladb::OpenCutList
           face = @mouse_ip.face
 
           if @tool.is_key_shift_down?
+
+            if @tool.is_key_ctrl_or_option_down?
+              @mouse_snap_face_manipulator = face_manipulator
+            end
 
             # Compute face centroid
             @mouse_snap_point = @mouse_snap_centroid = Geometrix::CentroidFinder.find_centroid(face_manipulator.outer_loop_manipulator.points)
@@ -1198,6 +1218,7 @@ module Ladb::OpenCutList
       @mouse_down_point = nil
       @mouse_snap_point = nil
       @mouse_snap_centroid = nil
+      @mouse_snap_face_manipulator = nil
       @nearest_vertex_manipulator = nil
       @nearest_edge_manipulators = nil
       @picked_shape_start_point = nil
@@ -2762,6 +2783,16 @@ module Ladb::OpenCutList
     end
 
     protected
+
+    def _set_picked_points_from_face_manipulator(face_manipulator, view)
+      points = face_manipulator.outer_loop_manipulator.points
+      @picked_shape_start_point = points.first
+      @picked_shape_end_point = points.last
+      points.each do |point|
+        _add_picked_point(point, view)
+      end
+      true
+    end
 
     def _add_picked_point(point, view)
 
