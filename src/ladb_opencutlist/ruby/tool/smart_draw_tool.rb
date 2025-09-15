@@ -494,7 +494,7 @@ module Ladb::OpenCutList
 
       if key <= 128
         key_char = key.chr
-        if key_char == 'X' && @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY)
+        if key_char == 'X' && @tool.is_key_shift_down?
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_CONSTRUCTION, !_fetch_option_construction, true)
           _refresh
           return true
@@ -505,9 +505,14 @@ module Ladb::OpenCutList
 
       when STATE_SHAPE_START, STATE_SHAPE
 
-        if @state == STATE_SHAPE_START && key == CONSTRAIN_MODIFIER_KEY
-          _refresh
-          return true
+        if @state == STATE_SHAPE_START
+          if tool.is_key_shift?(key)
+            _refresh
+            return true
+          elsif tool.is_key_ctrl_or_option?(key)
+            _refresh
+            return true
+          end
         end
 
         if key == VK_RIGHT
@@ -550,7 +555,7 @@ module Ladb::OpenCutList
 
       when STATE_PULL
 
-        if key == CONSTRAIN_MODIFIER_KEY
+        if tool.is_key_shift?(key)
           UI.beep if @@last_pull_measure == 0
           _refresh
           return true
@@ -566,10 +571,10 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START
-        if key == CONSTRAIN_MODIFIER_KEY
+        if tool.is_key_shift?(key)
           _refresh
           return true
-        elsif key == COPY_MODIFIER_KEY && is_quick
+        elsif tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
           @previous_action_handler = nil
           _remove_floating_tools
@@ -578,10 +583,10 @@ module Ladb::OpenCutList
         end
 
       when STATE_PULL
-        if key == CONSTRAIN_MODIFIER_KEY
+        if tool.is_key_shift?(key)
           _refresh
           return true
-        elsif key == COPY_MODIFIER_KEY && is_quick
+        elsif tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED, !_fetch_option_pull_centered, true)
           _refresh
           return true
@@ -777,7 +782,7 @@ module Ladb::OpenCutList
           degrees_of_freedom = @mouse_ip.degrees_of_freedom
           face = @mouse_ip.face
 
-          if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY)
+          if @tool.is_key_shift_down?
 
             # Compute face centroid
             @mouse_snap_point = @mouse_snap_centroid = Geometrix::CentroidFinder.find_centroid(face_manipulator.outer_loop_manipulator.points)
@@ -836,7 +841,7 @@ module Ladb::OpenCutList
       end
 
       # Lock on the last pull measure
-      if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY) && @@last_pull_measure > 0
+      if @tool.is_key_shift_down? && @@last_pull_measure > 0
         measure = @@last_pull_measure
         measure /= 2 if _fetch_option_pull_centered
         v = @picked_shape_end_point.vector_to(@mouse_snap_point)
@@ -1608,7 +1613,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE
-        if key == COPY_MODIFIER_KEY && is_quick
+        if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_RECTANGLE_CENTRED, !_fetch_option_rectangle_centered, true)
           _refresh
           return true
@@ -2239,7 +2244,7 @@ module Ladb::OpenCutList
 
       when STATE_SHAPE
 
-        if key == CONSTRAIN_MODIFIER_KEY
+        if tool.is_key_shift?(key)
           UI.beep if @@last_radius_measure == 0
           _refresh
           return true
@@ -2255,7 +2260,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE
-        if key == COPY_MODIFIER_KEY && is_quick
+        if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, !_fetch_option_measure_from_diameter, true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
           Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)
@@ -2299,7 +2304,7 @@ module Ladb::OpenCutList
       @direction = @picked_shape_start_point.vector_to(@mouse_snap_point.project_to_plane([ @picked_shape_start_point, @normal ])).normalize!
 
       # Lock on the last radius measure
-      if @tool.is_key_down?(CONSTRAIN_MODIFIER_KEY) && @@last_radius_measure > 0
+      if @tool.is_key_shift_down? && @@last_radius_measure > 0
         measure = @@last_radius_measure
         v = @picked_shape_start_point.vector_to(@mouse_snap_point)
         @mouse_snap_point = @picked_shape_start_point.offset(v, measure) if measure > 0 && v.valid?
@@ -2739,7 +2744,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE
-        if key == COPY_MODIFIER_KEY && is_quick
+        if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_REVERSED, !_fetch_option_measure_reversed, true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
           Sketchup.set_status_text(get_state_vcb_label(fetch_state), SB_VCB_LABEL)

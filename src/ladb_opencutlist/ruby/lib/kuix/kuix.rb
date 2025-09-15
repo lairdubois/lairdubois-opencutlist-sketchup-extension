@@ -248,7 +248,7 @@ module Ladb::OpenCutList
 
       def getExtents
 
-        # Check if space need to be revalidated
+        # Check if space needs to be revalidated
         if @space.invalidated?
           @space.do_layout(IDENTITY)
         end
@@ -258,8 +258,32 @@ module Ladb::OpenCutList
 
       # -- Keys --
 
+      def is_key_shift?(key)
+        key == CONSTRAIN_MODIFIER_KEY
+      end
+
+      def is_key_alt_or_command?(key)
+        key == ALT_MODIFIER_KEY
+      end
+
+      def is_key_ctrl_or_option?(key)
+        key == COPY_MODIFIER_KEY
+      end
+
       def is_key_down?(key)
         @key_down_times[key].is_a?(Time)
+      end
+
+      def is_key_shift_down?
+        is_key_down?(CONSTRAIN_MODIFIER_KEY)
+      end
+
+      def is_key_alt_or_command_down?
+        is_key_down?(ALT_MODIFIER_KEY)
+      end
+
+      def is_key_ctrl_or_option_down?
+        is_key_down?(COPY_MODIFIER_KEY)
       end
 
       # -- Events --

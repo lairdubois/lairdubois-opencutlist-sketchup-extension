@@ -735,7 +735,7 @@ module Ladb::OpenCutList
           button.next.fire(:click, flags)
           return true
         end
-      elsif key == ALT_MODIFIER_KEY
+      elsif is_key_alt_or_command?(key)
         push_action(ACTION_PICK) unless is_action_pick?
         return true
       elsif repeat == 1
@@ -749,7 +749,7 @@ module Ladb::OpenCutList
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       return true if super
-      if key == ALT_MODIFIER_KEY
+      if is_key_alt_or_command?(key)
         pop_action if is_action_pick?
         return true
       end

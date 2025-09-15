@@ -1327,7 +1327,7 @@ module Ladb::OpenCutList
         action_index = action_defs.index { |action_def| action_def[:action] == action }
         unless action_index.nil?
 
-          if is_key_down?(COPY_MODIFIER_KEY)
+          if is_key_ctrl_or_option_down?
 
             # Select next "modifier" if exists
 
@@ -1342,7 +1342,7 @@ module Ladb::OpenCutList
                 modifier_option_index = modifier_options.index(modifier_option)
                 unless modifier_option_index.nil?
 
-                  next_modifier_option_index = (modifier_option_index + (is_key_down?(CONSTRAIN_MODIFIER_KEY) ? -1 : 1)) % modifier_options.length
+                  next_modifier_option_index = (modifier_option_index + (is_key_shift_down? ? -1 : 1)) % modifier_options.length
                   next_modifier_option = modifier_options[next_modifier_option_index]
 
                   @actions_options_panels.each do |actions_options_panel|
@@ -1370,7 +1370,7 @@ module Ladb::OpenCutList
 
             # Select next action
 
-            next_action_index = (action_index + (is_key_down?(CONSTRAIN_MODIFIER_KEY) ? -1 : 1)) % action_defs.length
+            next_action_index = (action_index + (is_key_shift_down? ? -1 : 1)) % action_defs.length
             next_action = action_defs[next_action_index][:action]
             set_root_action(next_action)
 
@@ -2714,7 +2714,7 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyUp(tool, key, repeat, flags, view)
-      do_pick if key == VK_SHIFT
+      do_pick if tool.is_key_shift?(key)
       false
     end
 
@@ -2730,7 +2730,7 @@ module Ladb::OpenCutList
 
       active_path = @view.model.active_path.nil? ? [] : @view.model.active_path # Picker 'path_at' returns path only in active_path context
 
-      context_locked = @tool.is_key_down?(VK_SHIFT)
+      context_locked = @tool.is_key_shift_down?
 
       picked_face = context_locked && @pick_context_by_face ? @picked_face : nil
       picked_face_path = context_locked && @pick_context_by_face ? @picked_face_path : nil

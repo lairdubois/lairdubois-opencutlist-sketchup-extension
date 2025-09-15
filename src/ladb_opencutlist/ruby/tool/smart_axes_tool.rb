@@ -224,7 +224,7 @@ module Ladb::OpenCutList
 
     def onKeyDown(key, repeat, flags, view)
       return true if super
-      if key == ALT_MODIFIER_KEY
+      if is_key_alt_or_command?(key)
         push_action(ACTION_ADAPT_AXES) unless is_action_adapt_axes?
         return true
       end
@@ -233,7 +233,7 @@ module Ladb::OpenCutList
 
     def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
       return true if super
-      if key == ALT_MODIFIER_KEY
+      if is_key_alt_or_command?(key)
         pop_action if is_action_adapt_axes?
         return true
       end

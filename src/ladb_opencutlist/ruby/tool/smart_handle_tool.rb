@@ -439,7 +439,7 @@ module Ladb::OpenCutList
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
-      if key == ALT_MODIFIER_KEY && is_quick
+      if tool.is_key_alt_or_command?(key) && is_quick
         @tool.store_action_option_value(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR, !_fetch_option_mirror, true)
         _refresh
         return true
