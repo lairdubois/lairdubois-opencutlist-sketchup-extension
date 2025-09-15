@@ -67,32 +67,16 @@ module Ladb::OpenCutList
     SETTINGS_KEY_COMPONENTS_LAST_DIR = 'settings.components_last_dir'
     SETTINGS_KEY_MATERIALS_LAST_DIR = 'settings.materials_last_dir'
 
-    TABS_DIALOG_STYLE = if Sketchup.version_number < 2300000000
-                          UI::HtmlDialog::STYLE_DIALOG
-                        else
-                          UI::HtmlDialog::STYLE_UTILITY
-                        end
-    TABS_DIALOG_USE_CONTENT_SIZE = if Sketchup.version_number < 2300000000
-                                     false
-                                   else
-                                     Sketchup.platform == :platform_win
-                                   end
+    TABS_DIALOG_STYLE = Sketchup.version_number >= 2200000000 ? UI::HtmlDialog::STYLE_UTILITY : UI::HtmlDialog::STYLE_DIALOG
+    TABS_DIALOG_USE_CONTENT_SIZE = Sketchup.version_number >= 2200000000
     TABS_DIALOG_MINIMIZED_WIDTH = 90
-    TABS_DIALOG_MINIMIZED_HEIGHT = if Sketchup.platform == :platform_osx
-                                     if TABS_DIALOG_STYLE == UI::HtmlDialog::STYLE_DIALOG
-                                       28
-                                     else
-                                       19
-                                     end
-                                   elsif Sketchup.platform == :platform_win
-                                     if Sketchup.version_number >= 2300000000
-                                       0
-                                     else
-                                       if TABS_DIALOG_STYLE == UI::HtmlDialog::STYLE_DIALOG
-                                         38
-                                       else
-                                         30
-                                       end
+    TABS_DIALOG_MINIMIZED_HEIGHT = if TABS_DIALOG_USE_CONTENT_SIZE
+                                     0
+                                   else
+                                     if Sketchup.platform == :platform_osx
+                                      TABS_DIALOG_STYLE == UI::HtmlDialog::STYLE_DIALOG ? 28 : 19
+                                     elsif Sketchup.platform == :platform_win
+                                      TABS_DIALOG_STYLE == UI::HtmlDialog::STYLE_DIALOG ? 38 : 30
                                      end
                                    end +
                                    80 + 80 * 3     # = 1 + 3 Tab buttons
@@ -1183,14 +1167,14 @@ module Ladb::OpenCutList
 
     def tabs_dialog_store_current_size
       if @tabs_dialog && @tabs_dialog.respond_to?(:get_size) && @tabs_dialog_maximized
-        width, height = @tabs_dialog.get_size
+        width, height = TABS_DIALOG_USE_CONTENT_SIZE ? @tabs_dialog.get_content_size : @tabs_dialog.get_size
         return if width.nil? || height.nil?
         tabs_dialog_store_size(width, height) if width >= TABS_DIALOG_MINIMIZED_WIDTH && height >= TABS_DIALOG_MINIMIZED_HEIGHT
       end
     end
 
     def tabs_dialog_set_size(width, height)
-      @tabs_dialog.set_size(width, height) if @tabs_dialog
+      (TABS_DIALOG_USE_CONTENT_SIZE ? @tabs_dialog.set_content_size(width, height) : @tabs_dialog.set_size(width, height)) if @tabs_dialog
     end
 
     def tabs_dialog_inc_maximized_size(inc_width = 0, inc_height = 0)
