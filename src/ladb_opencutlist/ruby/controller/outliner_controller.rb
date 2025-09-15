@@ -368,7 +368,8 @@ module Ladb::OpenCutList
         parent_instances = parent.is_a?(Sketchup::ComponentDefinition) ? parent.instances : [ parent ]
         parent_instances.each do |instance|
 
-          node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)
+          entity_id = instance.is_a?(Sketchup::Entity) ? instance.entityID : 'model'
+          node_defs = @outliner_def.get_node_defs_by_entity_id(entity_id)
           if node_defs
             node_defs.each do |node_def|
 

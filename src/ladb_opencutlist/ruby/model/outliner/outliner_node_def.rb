@@ -33,7 +33,7 @@ module Ladb::OpenCutList
 
       @path = path
       @entity = @path.empty? ? Sketchup.active_model : @path.last
-      @entity_id = @entity.entityID
+      @entity_id = @entity.is_a?(Sketchup::Entity) ? @entity.entityID : 'model'
 
       @id = OutlinerNodeDef::generate_node_id(path)
       @depth = @path.length
