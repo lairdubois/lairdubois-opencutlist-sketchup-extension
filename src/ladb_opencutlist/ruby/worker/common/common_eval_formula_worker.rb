@@ -29,7 +29,7 @@ module Ladb::OpenCutList
         FormulaParser.new(@formula, @data).parse
 
       rescue ForbiddenFormulaError => e
-        return { :error => _sanitize_error_message(e) }
+        return { :error => _sanitize_error_message(e), error_type: 'forbidden' }
       end
 
       begin
@@ -38,7 +38,7 @@ module Ladb::OpenCutList
         value = value.export if value.is_a?(FormulaWrapper)
 
       rescue Exception => e
-        return { :error => _sanitize_error_message(e) }
+        return { :error => _sanitize_error_message(e), error_type: 'exception' }
       end
 
       value.to_s
