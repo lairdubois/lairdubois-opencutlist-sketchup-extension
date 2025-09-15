@@ -119,6 +119,8 @@ module Ladb::OpenCutList::Geometrix
         return nil unless yaxis.valid?
         yaxis.length = rmin
 
+      rescue ExceptionForMatrix::ErrNotRegular => e
+        return nil
       rescue Exception => e
         puts "[#{File.basename(__FILE__)}:#{__LINE__}] : #{e.message}"
         return nil
