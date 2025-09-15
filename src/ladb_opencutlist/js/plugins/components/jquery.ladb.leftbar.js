@@ -86,11 +86,11 @@
 
         }
 
-        if (isNew && !silent) {
-            rubyCallCommand('core_play_sound', {
-                filename: 'notification.wav'
-            });
-        }
+        // if (isNew && !silent) {
+            // rubyCallCommand('core_play_sound', {
+            //     filename: 'notification.wav'
+            // });
+        // }
 
         if (muted) {
             this.muteNotification(btnSelector);

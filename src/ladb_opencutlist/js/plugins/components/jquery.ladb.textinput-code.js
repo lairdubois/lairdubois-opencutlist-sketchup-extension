@@ -193,7 +193,7 @@
             // Refresh marks
             fnRefreshVariableMarks(cm, change.from, change.to);
 
-            // Keep textarea up to date
+            // Keep the textarea up to date
             that.$element
                 .val(cm.getValue())
                 .trigger('change')

@@ -659,7 +659,7 @@
         {% else %}
             <button class="btn btn-default" id="ladb_cutlist_part_highlight" data-toggle="tooltip" title="{{ 'tab.cutlist.highlight_part'|i18next }}"><i class="ladb-opencutlist-icon-magnifier"></i></button>
         {% endif %}
-        {% if not multiple %}
+        {% if not multiple and capabilities.sketchup_version_number >= 1800000000 %}
             <button class="btn btn-default" id="ladb_cutlist_part_layout"><i class="ladb-opencutlist-icon-layout-selection"></i> {{ 'default.draw'|i18next }}...</button>
         {% endif %}
         <div class="btn-group dropup">
