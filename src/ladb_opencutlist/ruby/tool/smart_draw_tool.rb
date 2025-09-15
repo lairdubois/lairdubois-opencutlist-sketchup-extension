@@ -1503,6 +1503,7 @@ module Ladb::OpenCutList
 
       tool_defs = [
         {
+          action: 1,
           path: 'M0,0.667L0.333,0.667L0.333,1L0,1L0,0.667 M0.667,0L1,0L1,0.333L0.667,0.333L0.667,0 M0.417,0.583L0.583,0.417',
           block: lambda {
             Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
@@ -1512,6 +1513,7 @@ module Ladb::OpenCutList
           }
         },
         {
+          action: 2,
           path: 'M0.333,0.667L0,0.667L0,1L0.333,1L0.333,0.667 M1,0.667L0.667,0.667L0.667,1L1,1L1,0.667 M0.333,0L0,0L0,0.333L0.333,0.333L0.333,0 M1,0L0.667,0L0.667,0.333L1,0.333L1,0 M0.167,0.417L0.167,0.583 M0.417,0.833L0.583,0.833',
           block: lambda {
             Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
@@ -1521,6 +1523,7 @@ module Ladb::OpenCutList
           }
         },
         {
+          action: 3,
           path: 'M0.666,0L1,0L1,0.334L0.666,0.334L0.666,0M0.083,0.917L0.583,0.417',
           block: lambda {
             Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
@@ -1530,6 +1533,7 @@ module Ladb::OpenCutList
           }
         },
         {
+          action: 4,
           path: 'M0.333,0.333L0.667,0.333L0.667,0.667L0.333,0.667L0.333,0.333 M0.083,0.917L0.25,0.75 M0.75,0.25L0.917,0.083',
           block: lambda {
             Sketchup.active_model.tools.push_tool(SmartHandleTool.new(
@@ -1559,12 +1563,14 @@ module Ladb::OpenCutList
         k_btn.on(:enter) do
           Sketchup.active_model.selection.clear
           Sketchup.active_model.selection.add(_get_instance)
+          @tool.show_message(PLUGIN.get_i18n_string("tool.smart_handle.action_#{tool_def[:action]}"))
         end
         k_btn.on(:leave) do
           Sketchup.active_model.selection.clear
+          @tool.hide_message
         end
         k_btn.on(:click) do
-          # k_panel.remove
+          @tool.hide_message
           tool_def[:block].call
         end
         k_panel.append(k_btn)
@@ -1580,6 +1586,7 @@ module Ladb::OpenCutList
     end
 
     def _remove_floating_tools
+      @tool.hide_message
       @tool.remove_2d(LAYER_2D_FLOATING_TOOLS)
     end
 
