@@ -67,18 +67,10 @@ module Ladb::OpenCutList
     SETTINGS_KEY_COMPONENTS_LAST_DIR = 'settings.components_last_dir'
     SETTINGS_KEY_MATERIALS_LAST_DIR = 'settings.materials_last_dir'
 
-    TABS_DIALOG_STYLE = if Sketchup.platform == :platform_osx
-                          if Sketchup.version_number < 1800000000
+    TABS_DIALOG_STYLE = if Sketchup.version_number < 1800000000
                             UI::HtmlDialog::STYLE_DIALOG
-                          else
-                            UI::HtmlDialog::STYLE_UTILITY
-                          end
-                        elsif Sketchup.platform == :platform_win
-                          if Sketchup.version_number < 2500000000
-                            UI::HtmlDialog::STYLE_DIALOG
-                          else
-                            UI::HtmlDialog::STYLE_UTILITY
-                          end
+                        else
+                          UI::HtmlDialog::STYLE_UTILITY
                         end
     TABS_DIALOG_MINIMIZED_WIDTH = 90
     TABS_DIALOG_MINIMIZED_HEIGHT = if Sketchup.platform == :platform_osx
