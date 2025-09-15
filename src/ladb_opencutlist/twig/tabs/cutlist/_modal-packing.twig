@@ -296,16 +296,18 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_hide_edges_preview_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_hide_edges_preview'|i18next }}</label>
-                    <div class="col-xs-6">
-                        <select class="form-control" id="ladb_select_hide_edges_preview">
-                            <option value="1" data-content="{{ 'tab.cutlist.packing.option_hide_edges_preview_1'|i18next }}"></option>
-                            <option value="0" data-content="{{ 'tab.cutlist.packing.option_hide_edges_preview_0'|i18next }}"></option>
-                        </select>
+                {% if not group.material_is_1d %}
+                    <div class="form-group">
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_hide_edges_preview_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_hide_edges_preview'|i18next }}</label>
+                        <div class="col-xs-6">
+                            <select class="form-control" id="ladb_select_hide_edges_preview">
+                                <option value="1" data-content="{{ 'tab.cutlist.packing.option_hide_edges_preview_1'|i18next }}"></option>
+                                <option value="0" data-content="{{ 'tab.cutlist.packing.option_hide_edges_preview_0'|i18next }}"></option>
+                            </select>
+                        </div>
                     </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>

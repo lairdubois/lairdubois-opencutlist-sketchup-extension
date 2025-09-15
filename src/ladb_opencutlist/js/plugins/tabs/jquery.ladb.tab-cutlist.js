@@ -2589,13 +2589,13 @@
                 const $btnsProblemType = $('label.btn-radio', $modal);
                 const $radiosProblemType = $('input[name=ladb_radios_problem_type]', $modal);
                 const $formGroupRectangleguillotine = $('.ladb-cutlist-packing-form-group-rectangleguillotine', $modal)
+                const $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
+                const $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
+                const $formGroupDebug = $('.ladb-cutlist-packing-form-group-debug', $modal)
                 const $selectRectangleguillotineFirstStageOrientation = $('#ladb_select_rectangleguillotine_first_stage_orientation', $modal);
                 const $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
                 const $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
                 const $inputRectangleguillotineKeepSize = $('#ladb_input_rectangleguillotine_keep_size', $modal);
-                const $formGroupIrregular = $('.ladb-cutlist-packing-form-group-irregular', $modal)
-                const $formGroupNotIrregular = $('.ladb-cutlist-packing-form-group-not-irregular', $modal)
-                const $formGroupDebug = $('.ladb-cutlist-packing-form-group-debug', $modal)
                 const $btnExpert = $('.ladb-cutlist-packing-btn-expert', $modal)
                 const $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
                 const $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
@@ -2701,8 +2701,8 @@
                     const isRectangleguillotine = $radiosProblemType.filter(':checked').val() === 'rectangleguillotine';
                     const isIrregular = $radiosProblemType.filter(':checked').val() === 'irregular';
                     const isDebug = that.dialog.capabilities.is_dev && !that.dialog.capabilities.is_rbz;
-                    if (isIrregular) $formGroupNotIrregular.hide(); else $formGroupNotIrregular.show();
                     if (isRectangleguillotine) $formGroupRectangleguillotine.show(); else $formGroupRectangleguillotine.hide();
+                    if (isIrregular) $formGroupNotIrregular.hide(); else $formGroupNotIrregular.show();
                     if (isIrregular) $formGroupIrregular.show(); else $formGroupIrregular.hide();
                     if (isDebug) $formGroupDebug.show(); else $formGroupDebug.hide();
                     $('option[value=0]', $selectPartDrawingType).prop('disabled', isIrregular);
