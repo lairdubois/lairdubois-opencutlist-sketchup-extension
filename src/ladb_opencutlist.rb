@@ -20,7 +20,7 @@ module Ladb
 
       # Create extension
       ex = SketchupExtension.new('OpenCutList', File.join(PLUGIN_DIR, 'ruby', 'main'))
-      ex.version     = "7.0.0-dev"  ## /!\ Auto-generated line, do not edit ##
+      ex.version     = "7.0.0"  ## /!\ Auto-generated line, do not edit ##
       ex.copyright   = "2016-#{Date.today.year} - GNU GPLv3"  ## /!\ Auto-generated line, do not edit ##
       ex.creator     = 'L\'Air du Bois - www.lairdubois.fr'
 
@@ -60,40 +60,6 @@ module Ladb
         ex.description = 'Danh sách cắt và Trình tạo sơ đồ cắt cho thợ mộc. Mã nguồn mở, được huy động vốn từ cộng đồng và dễ sử dụng;)'
       when 'zh'
         ex.description = '木工的切割清单和切割图生成器。 开源，众筹且易于使用 ;)'
-      when 'zz_ar'
-        ex.description = '4 - مولد لرسومات التقطيع التخطيطية و قوائم القَطع موجه للنجارين. مفتوح المصدر و ممول جماهيريا و سهل الاستخدام ;)'
-      when 'zz_cs'
-        ex.description = '4 - Kusovník a nářezový plán pro truhláře. Zdarma, financován z darů a snadno použitelný ;)'
-      when 'zz_de'
-        ex.description = '4 - Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)'
-      when 'zz_en'
-        ex.description = '4 - Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
-      when 'zz_es'
-        ex.description = '4 - Generador de lista de corte y diagrama de corte para carpinteros. Software de código abierto, financiado por crowdfunding, es fácil de usar ;)'
-      when 'zz_fr'
-        ex.description = '4 - Générateur de fiche de débit et calepinage de panneaux et barres pour les boiseux. Open Source, financé par les utilisateurs et facile à utiliser ;)'
-      when 'zz_he'
-        ex.description = '4 - תוסף לחישוב תוכניות חיתוך לנגרים ועוד. קוד פתוח, מימון המונים וקל לשימוש ;)'
-      when 'zz_hu'
-        ex.description = '4 - Faipari Szakembereknek Szabáslista és Szabásterv készítő program. Nyílt forráskódú, közösségi finanszírozású és könnyen használható ;)'
-      when 'zz_it'
-        ex.description = '4 - Generatore di Distinte Materiali e Schemi di Taglio per falegnami. Open Source, crowdfunded e facile da usare ;)'
-      when 'zz_nl'
-        ex.description = '4 - Genereer materiaallijsten, zaagschema\'s voor panelen en balken voor houtbewerkers. Open Source, crowdfunded en gebruiksvriendelijk ;)'
-      when 'zz_pl'
-        ex.description = '4 - Generator listy cięć i diagramów cięcia dla stolarzy. Open Source, finansowany społecznościowo i łatwy w użyciu ;)'
-      when 'zz_pt'
-        ex.description = '4 - Lista de Peças e Gerador de Plano de Corte de chapas e barras para marceneiros, carpinteiros e serralheiros. Código aberto, crowdfunded e fácil de usar ;)'
-      when 'zz_ru'
-        ex.description = '4 - Плагин расчета карт раскроя для деревообработчиков и не только. Открытый исходный код, краундфандинг и простота использования ;)'
-      when 'zz_sr'
-        ex.description = '4 - Generator lista i dijagrama rezanja za stolare. Otvoreni kod, finansiran dobrovoljnim prilozima i jednostavan za upotrebu ;)'
-      when 'zz_uk'
-        ex.description = '4 - Плагін розрахунку карт розкрою листового та погонного матеріалів для деревообробників і не тільки. Відкритий вихідний код, фінансується користувачами і простий у використанні ;)'
-      when 'zz_vi'
-        ex.description = '4 - Danh sách cắt và Trình tạo sơ đồ cắt cho thợ mộc. Mã nguồn mở, được huy động vốn từ cộng đồng và dễ sử dụng;)'
-      when 'zz_zh'
-        ex.description = '4 - 木工的切割清单和切割图生成器。 开源，众筹且易于使用 ;)'
       else
         ex.description = 'Cutlist and Cutting Diagram Generator for Woodworkers. Open Source, crowdfunded and easy to use ;)'
       ## DESCRIPTION_END ##
