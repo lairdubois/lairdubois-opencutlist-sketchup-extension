@@ -10,7 +10,7 @@
 
 ![OpenCutList](docs/img/capture-exploded-views.jpg)
 
-![OpenCutList](docs/img/capture-estimations.jpg)
+![OpenCutList](docs/img/capture-estimate.jpg)
 
 ![OpenCutList](docs/img/capture-labels.jpg)
 
