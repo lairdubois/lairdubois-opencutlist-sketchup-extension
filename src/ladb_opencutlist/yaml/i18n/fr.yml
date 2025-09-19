@@ -153,6 +153,7 @@ core:
       Il n'est pas conseillé de l'utiliser en production.
 
       Pour signaler un bug : <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: Non disponible dans ce contexte
   error:
     extern: "Erreur externe : **{{ error }}**"
     feature_unavailable: "Cette fonctionnalité nécessite SketchUp {{ version }} ou plus"
@@ -305,6 +306,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Afficher / Masquer ce groupe
+      show_hide_blocks: Afficher / Masquer tous les groupes
       scroll_to_block: Défiler vers le groupe
       not_available_std_width: "La largeur *{{ std_dimension_real }}* n'est pas définie dans les largeurs standards de la matière '{{ material_name }}'"
       not_available_std_thickness: "L'épaisseur *{{ std_dimension_real }}* n'est pas définie dans les épaisseurs standards de la matière '{{ material_name }}'"
@@ -1329,7 +1331,6 @@ tab:
       warning:
         is_group_selection: Les pièces contenues dans les **groupes masqués** de votre fiche de débit n'auront pas d'étiquette.
         is_part_selection: Ces étiquettes se limitent aux **pièces sélectionnées**.
-        formula_not_available: Non disponible dans ce contexte
     layout:
       title: Dessin
       to_layout: Exporter vers Layout
@@ -1736,6 +1737,7 @@ tab:
       is_active_node: Instance active dans le modèle
       set_active_node: Editer dans le modèle
       edit_node_properties: Editer les propriétés
+      select_active_nodes: Sélectionner / Déselectionner toutes les instances actives
       select_node: Sélectionner
       unselect_node: Désélectionner
       open_node_url: Ouvrir l'URL de la pièce
@@ -1922,10 +1924,10 @@ tab:
     global_settings: Préférences globales
     language: Langue
     language_auto: Automatique
-    zoom: Taille de texte
-    zoom_normal: $t(default.automatic)
-    zoom_small: Petite
-    zoom_tiny: Très petite
+    font_size: Taille de texte
+    font_size_auto: $t(default.automatic)
+    font_size_small: Petite
+    font_size_tiny: Très petite
     print_margin: Marges d'impression
     print_margin_normal: Normales
     print_margin_small: Petites
