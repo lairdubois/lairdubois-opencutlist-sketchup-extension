@@ -153,6 +153,7 @@ core:
       לא מומלץ להשתמש בה בייצור.
 
       לדיווח על שגיאה: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: ""
   error:
     extern: "שגיאה חיצונית: **{{ error }}**"
     feature_unavailable: "תכונה זו דורשת גרסת SketchUp {{ version }} ומעלה"
@@ -305,6 +306,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: הצג / הסתר קבוצה
+      show_hide_blocks: ""
       scroll_to_block: גלול לקבוצה
       not_available_std_width: "הרוחב *{{ std_dimension_real }}* אינו מוגדר ברוחב הסטנדרטי של החומר '{{ material_name }}'"
       not_available_std_thickness: "יהעובי *{{ std_dimension_real }}* אינו מוגדר בעוב הסטנדרטי של החומר '{{ material_name }}'"
@@ -1326,7 +1328,6 @@ tab:
       warning:
         is_group_selection: למסמכים הכלולים ב**קבוצות הנסתרות** של תוכנית חיתוך שלך לא תהיה תווית.
         is_part_selection: תוויות האלה מוגבלות ל-**חלקים נבחרים**.
-        formula_not_available: ""
     layout:
       title: שרטוט
       to_layout: ייצוא לפריסה
@@ -1673,6 +1674,7 @@ tab:
       is_active_node: ""
       set_active_node: ""
       edit_node_properties: ""
+      select_active_nodes: ""
       select_node: ""
       unselect_node: ""
       open_node_url: פתח קישור של החלק
@@ -1855,10 +1857,10 @@ tab:
     global_settings: הגדרות כלליות
     language: שפה
     language_auto: אוטומטי
-    zoom: גודל טקסט
-    zoom_normal: $t(default.automatic)
-    zoom_small: קטן
-    zoom_tiny: קטן מאוד
+    font_size: גודל טקסט
+    font_size_auto: $t(default.automatic)
+    font_size_small: קטן
+    font_size_tiny: קטן מאוד
     print_margin: שוליים להדפסה
     print_margin_normal: נורמלי
     print_margin_small: קטן
@@ -1930,8 +1932,8 @@ tab:
       - Gildas Boureau (תיעוד *צרפתי*)
       - Vladimir Badulya (*רוסית*)
       - Pierluigi Colombo, Massimo Risca (*איטלקית*)
-      - Nayton Sanches Barbosa, תוקן ונערך [Carlos Maciel ELT](https://www.inglesonline.pro.br) (*פורטוגזית*)
-      - [Leonardo Romero Giménez](https://latablamarilla.com/) (*ספרדית*)
+      - Nayton Sanches Barbosa, תוקן ונערך Carlos Maciel ELT (*פורטוגזית*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*ספרדית*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*צ'כית*)
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*פולנית*)
       - Soul Issam (*ערבית*), ללא ממשק מימין לשמאל

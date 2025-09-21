@@ -153,6 +153,7 @@ core:
       Ne preporučuje se upotreba u proizvodnji.
 
       Da biste prijavili grešku: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: Nije dostupno u ovom kontekstu
   error:
     extern: "Spoljašnja greška: **{{ error }}**"
     feature_unavailable: "Ova funkcija zahteva SketchUp {{ version }} ili noviji"
@@ -305,6 +306,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Prikaži / sakrij grupu
+      show_hide_blocks: ""
       scroll_to_block: Pomaknite se do grupe
       not_available_std_width: "Širina *{{ std_dimension_real }}* nije definisana u standardnim širinama materijala '{{ material_name }}'"
       not_available_std_thickness: "Debljina *{{ std_dimension_real }}* nije definisana u standardnim debljinama materijala '{{ material_name }}'"
@@ -1329,7 +1331,6 @@ tab:
       warning:
         is_group_selection: Delovi koji se nalaze u **sakrivenim grupama** u vašem planu sečenja neće imati oznaku.
         is_part_selection: Ove etikete se odnose samo na **izabrane komade**.
-        formula_not_available: Nije dostupno u ovom kontekstu
     layout:
       title: Crtež
       to_layout: Izvezi u Layout
@@ -1736,6 +1737,7 @@ tab:
       is_active_node: Aktivna instanca u modelu
       set_active_node: Izmeni u modelu
       edit_node_properties: Izmena osobina
+      select_active_nodes: ""
       select_node: Odabrati
       unselect_node: Poništi izbor
       open_node_url: Otvori URL komada
@@ -1922,10 +1924,10 @@ tab:
     global_settings: Globalna podešavanja
     language: Jezik
     language_auto: Automatski
-    zoom: Veličina fonta
-    zoom_normal: $t(default.automatic)
-    zoom_small: Malo
-    zoom_tiny: Sitno
+    font_size: Veličina fonta
+    font_size_auto: $t(default.automatic)
+    font_size_small: Mala
+    font_size_tiny: Sitno
     print_margin: Margine štampe
     print_margin_normal: Normale
     print_margin_small: Male
@@ -1997,8 +1999,8 @@ tab:
       - Gildas Boureau (dokumentacija na *francuskom*)
       - Vladimir Badulya (*ruski*)
       - Pierluigi Colombo, Massimo Risca (*italijanski*)
-      - Nayton Sanches Barbosa, ispravljeno i pregledano od strane [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portugalski*)
-      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*španski*)
+      - Nayton Sanches Barbosa, ispravljeno i pregledano od strane Carlos Maciel ELT, Henny Silva Ferreira (*portugalski*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*španski*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*češki*)
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*poljski*)
       - Sergey Isupov (*hebrejski*), bez interfejsa s desna na levo

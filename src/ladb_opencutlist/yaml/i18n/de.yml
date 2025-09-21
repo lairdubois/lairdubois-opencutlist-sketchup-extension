@@ -153,6 +153,7 @@ core:
       Es wird nicht empfohlen, diese in der Produktion zu verwenden.
 
       Um einen Fehler zu melden: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: In diesem Kontext nicht verfügbar
   error:
     extern: "Externer Fehler: **{{ error }}**"
     feature_unavailable: "Diese Funktion erfordert SketchUp {{ version }} oder höher"
@@ -305,6 +306,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Gruppe anzeigen / ausblenden
+      show_hide_blocks: Alle Gruppen anzeigen / ausblenden
       scroll_to_block: Zur Gruppe blättern
       not_available_std_width: "Die Breite *{{ std_dimension_real }}* ist nicht in den Standardbreiten des Materials '{{ material_name }}' definiert"
       not_available_std_thickness: "Die Dicke *{{ std_dimension_real }}* ist nicht in den Standarddicken des Materials '{{ material_name }}' definiert"
@@ -1329,7 +1331,6 @@ tab:
       warning:
         is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, erhalten kein Etikett."
         is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
-        formula_not_available: In diesem Kontext nicht zu Verfügung
     layout:
       title: Zeichnung
       to_layout: Nach Layout exportieren
@@ -1736,6 +1737,7 @@ tab:
       is_active_node: Aktive Instanz im Modell
       set_active_node: Im Modell bearbeiten
       edit_node_properties: Eigenschaften bearbeiten
+      select_active_nodes: Alle aktiven Instanzen selektieren / deselektieren
       select_node: Auswählen
       unselect_node: Deselektieren
       open_node_url: URL des Teils öffnen
@@ -1922,10 +1924,10 @@ tab:
     global_settings: Globale Einstellungen
     language: Sprache
     language_auto: Automatisch
-    zoom: Schriftgröße
-    zoom_normal: $t(default.automatic)
-    zoom_small: Klein
-    zoom_tiny: Sehr klein
+    font_size: Schriftgröße
+    font_size_auto: $t(default.automatic)
+    font_size_small: Klein
+    font_size_tiny: Sehr klein
     print_margin: Druckränder
     print_margin_normal: Normal
     print_margin_small: Klein
@@ -1996,8 +1998,8 @@ tab:
       - Gildas Boureau (*französische* Dokumentation)
       - Vladimir Badulya (*Russisch*)
       - Pierluigi Colombo, Massimo Risca (*Italienisch*)
-      - Nayton Sanches Barbosa, korrigiert und überarbeitet von [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*Portugiesisch*)
-      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spanish*)
+      - Nayton Sanches Barbosa, korrigiert und überarbeitet von Carlos Maciel ELT, Henny Silva Ferreira (*Portugiesisch*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*Spanish*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Tschechisch*)
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*Polnisch*)
       - Sergey Isupov (*Hebräisch*), noch ohne RTL Schnittstelle

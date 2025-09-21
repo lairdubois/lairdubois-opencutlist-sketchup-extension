@@ -153,6 +153,7 @@ core:
       It is not recommended to use it in production.
 
       To report a bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: Not available in this context
   error:
     extern: "External error: **{{ error }}**"
     feature_unavailable: "This function requires SketchUp {{ version }} or higher"
@@ -305,6 +306,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Show / Hide group
+      show_hide_blocks: Show / Hide all groups
       scroll_to_block: Scroll to group
       not_available_std_width: "The width *{{ std_dimension_real }}* is not defined in the standard widths of the material '{{ material_name }}'"
       not_available_std_thickness: "The thickness *{{ std_dimension_real }}* is not defined in the standard thicknesses of the material '{{ material_name }}'"
@@ -1329,7 +1331,6 @@ tab:
       warning:
         is_group_selection: Parts contained in **hidden groups** of the Parts List will not have labels.
         is_part_selection: These labels are limited to **selected parts**.
-        formula_not_available: Not available in this context
     layout:
       title: Drawing
       to_layout: Export to Layout
@@ -1736,6 +1737,7 @@ tab:
       is_active_node: Active instance in the model
       set_active_node: Edit in the model
       edit_node_properties: Edit properties
+      select_active_nodes: Select / Deselect all active instances
       select_node: Select
       unselect_node: Deselect
       open_node_url: Open part URL
@@ -1922,10 +1924,10 @@ tab:
     global_settings: Global Preferences
     language: Language
     language_auto: Automatic
-    zoom: Font Size
-    zoom_normal: $t(default.automatic)
-    zoom_small: Small
-    zoom_tiny: Tiny
+    font_size: Font Size
+    font_size_auto: $t(default.automatic)
+    font_size_small: Short
+    font_size_tiny: Tiny
     print_margin: Print Margins
     print_margin_normal: Normal
     print_margin_small: Small
@@ -1996,8 +1998,8 @@ tab:
       - Gildas Boureau (*French* documentation)
       - Vladimir Badulya (*Russian*)
       - Pierluigi Colombo, Massimo Risca (*Italian*)
-      - Nayton Sanches Barbosa, corrected and revised by [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*Portuguese*)
-      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*Spanish*)
+      - Nayton Sanches Barbosa, corrected and revised by Carlos Maciel ELT, Henny Silva Ferreira (*Portuguese*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*Spanish*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Czech*)
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*Polish*)
       - Sergey Isupov (*Hebrew*), RTL interface not yet supported

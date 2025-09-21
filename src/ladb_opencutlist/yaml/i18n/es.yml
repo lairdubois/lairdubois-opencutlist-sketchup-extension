@@ -153,6 +153,7 @@ core:
       No se recomienda su uso en producción.
 
       Para informar de un error: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: No disponible en este contexto
   error:
     extern: "Error externo: **{{ error }}**"
     feature_unavailable: "Esta función requiere SketchUp {{ version }} o superior"
@@ -305,6 +306,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Mostrar / Ocultar
+      show_hide_blocks: ""
       scroll_to_block: Desplaza al grupo
       not_available_std_width: "El ancho *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'"
       not_available_std_thickness: "El grosor *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'"
@@ -1329,7 +1331,6 @@ tab:
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no tendrán etiqueta.
         is_part_selection: Estas etiquetas se limitan a las **piezas seleccionadas**.
-        formula_not_available: No disponible en este contexto
     layout:
       title: Dibujo
       to_layout: Exportar a Layout
@@ -1736,6 +1737,7 @@ tab:
       is_active_node: Instancia activa en el modelo
       set_active_node: Editar en el modelo
       edit_node_properties: Editar propiedades
+      select_active_nodes: ""
       select_node: Seleccione
       unselect_node: Desmarque
       open_node_url: Abrir la URL de la pieza
@@ -1922,10 +1924,10 @@ tab:
     global_settings: Preferencias globales
     language: Idioma
     language_auto: Automático
-    zoom: Tamaño de letra
-    zoom_normal: $t(default.automatic)
-    zoom_small: Pequeño
-    zoom_tiny: Minúsculo
+    font_size: Tamaño de letra
+    font_size_auto: $t(default.automatic)
+    font_size_small: Pequeño
+    font_size_tiny: Minúsculo
     print_margin: Márgenes de impresión
     print_margin_normal: Normales
     print_margin_small: Pequeños
@@ -1992,12 +1994,12 @@ tab:
       *OpenCutList* fue desarrollado por [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) y [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Liste todos los [contribuyentes](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
     credits_translations: Traducciones
     credits_translators: |
-      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*español*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*español*)
       - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*inglés*, *alemán*)
       - Gildas Boureau (documentación *francés*)
       - Vladimir Badulya (*ruso*)
       - Pierluigi Colombo, Massimo Risca (*italiano*)
-      - Nayton Sanches Barbosa, corregido y revisado por [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portugués*)
+      - Nayton Sanches Barbosa, corregido y revisado por Carlos Maciel ELT, Henny Silva Ferreira (*portugués*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*checo*)
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*polaco*)
       - Sergey Isupov (*hebreo*), sin interfaz de derecha a izquierda - RTL

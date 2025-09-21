@@ -153,6 +153,7 @@ core:
       Не рекомендується використовувати її у виробництві.
 
       Щоб повідомити про помилку: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: Недоступно в цьому контексті
   error:
     extern: "Зовнішня помилка: **{{ error }}**"
     feature_unavailable: "Для цієї функції потрібен SketchUp {{ version }} або новіше"
@@ -305,6 +306,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Показати / Приховати цю групу
+      show_hide_blocks: ""
       scroll_to_block: Перейти до групи
       not_available_std_width: "Ширина *{{ std_dimension_real }}* не визначена в стандартній ширині матеріалу '{{ material_name }}'"
       not_available_std_thickness: "Товщина *{{ std_dimension_real }}* не визначена в стандартній товщині матеріалу '{{ material_name }}'"
@@ -1329,7 +1331,6 @@ tab:
       warning:
         is_group_selection: "Деталі, що містяться в **прихованих групах** вашого списку деталей, не матимуть міток."
         is_part_selection: Ці етикетки сформовані на основі **вибраних деталей**.
-        formula_not_available: Недоступно в цьому контексті
     layout:
       title: Креслення
       to_layout: Експорт до Layout
@@ -1736,6 +1737,7 @@ tab:
       is_active_node: Активний екземпляр у моделі
       set_active_node: Редагувати в моделі
       edit_node_properties: Редагувати властивості
+      select_active_nodes: ""
       select_node: Обрати
       unselect_node: Скасувати вибір
       open_node_url: Відкрити URL деталі
@@ -1922,10 +1924,10 @@ tab:
     global_settings: Загальні налаштування
     language: Мова
     language_auto: Автоматичний
-    zoom: Розмір тексту
-    zoom_normal: $t(default.automatic)
-    zoom_small: Мала
-    zoom_tiny: Дуже малий
+    font_size: Розмір тексту
+    font_size_auto: $t(default.automatic)
+    font_size_small: Мала
+    font_size_tiny: Дуже малий
     print_margin: Поля друку
     print_margin_normal: Нормальні
     print_margin_small: Малі
@@ -1997,8 +1999,8 @@ tab:
       - Gildas Boureau (*французька* документація)
       - Vladimir Badulya (*російська*)
       - Pierluigi Colombo, Massimo Risca (*італійська*)
-      - Nayton Sanches Barbosa, виправлення і рецензування [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*португальська*)
-      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*іспанська*)
+      - Nayton Sanches Barbosa, виправлення і рецензування Carlos Maciel ELT, Henny Silva Ferreira (*португальська*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*іспанська*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*чеська*)
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*польська*)
       - Sergey Isupov (*іврит*), без інтерфейсу зправа на ліво
