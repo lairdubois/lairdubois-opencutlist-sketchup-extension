@@ -301,7 +301,7 @@ tab:
     part_drawing_type_7: 242 - 3D
     tooltip:
       show_hide_block: 243 - Mostra / Nascondi
-      show_hide_blocks: '244 - '
+      show_hide_blocks: 244 - Mostra / Nascondi tutti i gruppi
       scroll_to_block: 245 - Scorri fino al gruppo
       not_available_std_width: 246 - La larghezza *{{ std_dimension_real }}* del materiale '{{ material_name }}' non è stata definita
       not_available_std_thickness: 247 - Lo spessore *{{ std_dimension_real }}* del materiale '{{ material_name }}' non è stato definito
@@ -1732,7 +1732,7 @@ tab:
       is_active_node: 1353 - Istanza attiva nel modello
       set_active_node: 1354 - Modifica nel modello
       edit_node_properties: 1355 - Modifica le proprietà
-      select_active_nodes: '1356 - '
+      select_active_nodes: 1356 - Seleziona / Deseleziona tutte le istanze attive
       select_node: 1357 - Seleziona
       unselect_node: 1358 - Deseleziona
       open_node_url: 1359 - Apri l'URL dell'elemento

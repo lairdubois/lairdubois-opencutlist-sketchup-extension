@@ -110,7 +110,7 @@ core:
       edit_part_instance: Modificar el elemento
       edit_parent_part_instance: Modificar el grupo/componente que contiene el elemento
       hide_part_instance: Ocultar el elemento
-      unhide_part_instance: Mostrar el elemento
+      unhide_part_instance: Mostrar la instancia
       edit_part_instance_properties: Editar las propiedades del elemento
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
@@ -268,9 +268,9 @@ core:
       view_right: Derecha
       zoom: "Escala {{ zoom }}"
       explode_factor: Amplitud de la explosión
-      toggle_box_helper: Mostrar/ocultar cuadro delimitador
-      toggle_box_dimensions_helper: Mostrar/ocultar dimensiones
-      toggle_axes_helper: Mostrar/ocultar ejes
+      toggle_box_helper: Mostrar u ocultar cuadro delimitador
+      toggle_box_dimensions_helper: Mostrar u ocultar dimensiones
+      toggle_axes_helper: Mostrar u ocultar ejes
   docs:
     error:
       failed_to_load: |
@@ -305,8 +305,8 @@ tab:
     part_drawing_type_6: 2D Vista trasera
     part_drawing_type_7: 3D
     tooltip:
-      show_hide_block: Mostrar / Ocultar
-      show_hide_blocks: ""
+      show_hide_block: Mostrar / Ocultar este grupo
+      show_hide_blocks: Mostrar / Ocultar todos los grupos
       scroll_to_block: Desplaza al grupo
       not_available_std_width: "El ancho *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'"
       not_available_std_thickness: "El grosor *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'"
@@ -1737,7 +1737,7 @@ tab:
       is_active_node: Instancia activa en el modelo
       set_active_node: Editar en el modelo
       edit_node_properties: Editar propiedades
-      select_active_nodes: ""
+      select_active_nodes: Seleccionar/Deseleccionar todas las instancias activas
       select_node: Seleccione
       unselect_node: Desmarque
       open_node_url: Abrir la URL de la pieza

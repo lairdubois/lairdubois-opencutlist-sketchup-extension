@@ -105,7 +105,7 @@ core:
       edit_part_instance: 98 - Modificar el elemento
       edit_parent_part_instance: 99 - Modificar el grupo/componente que contiene el elemento
       hide_part_instance: 100 - Ocultar el elemento
-      unhide_part_instance: 101 - Mostrar el elemento
+      unhide_part_instance: 101 - Mostrar la instancia
       edit_part_instance_properties: 102 - Editar las propiedades del elemento
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
@@ -263,9 +263,9 @@ core:
       view_right: 212 - Derecha
       zoom: 213 - Escala {{ zoom }}
       explode_factor: 214 - Amplitud de la explosión
-      toggle_box_helper: 215 - Mostrar/ocultar cuadro delimitador
-      toggle_box_dimensions_helper: 216 - Mostrar/ocultar dimensiones
-      toggle_axes_helper: 217 - Mostrar/ocultar ejes
+      toggle_box_helper: 215 - Mostrar u ocultar cuadro delimitador
+      toggle_box_dimensions_helper: 216 - Mostrar u ocultar dimensiones
+      toggle_axes_helper: 217 - Mostrar u ocultar ejes
   docs:
     error:
       failed_to_load: |
@@ -300,8 +300,8 @@ tab:
     part_drawing_type_6: 241 - 2D Vista trasera
     part_drawing_type_7: 242 - 3D
     tooltip:
-      show_hide_block: 243 - Mostrar / Ocultar
-      show_hide_blocks: '244 - '
+      show_hide_block: 243 - Mostrar / Ocultar este grupo
+      show_hide_blocks: 244 - Mostrar / Ocultar todos los grupos
       scroll_to_block: 245 - Desplaza al grupo
       not_available_std_width: 246 - El ancho *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'
       not_available_std_thickness: 247 - El grosor *{{ std_dimension_real }}* no se ha definido en el material '{{ material_name }}'
@@ -1732,7 +1732,7 @@ tab:
       is_active_node: 1353 - Instancia activa en el modelo
       set_active_node: 1354 - Editar en el modelo
       edit_node_properties: 1355 - Editar propiedades
-      select_active_nodes: '1356 - '
+      select_active_nodes: 1356 - Seleccionar/Deseleccionar todas las instancias activas
       select_node: 1357 - Seleccione
       unselect_node: 1358 - Desmarque
       open_node_url: 1359 - Abrir la URL de la pieza
