@@ -153,6 +153,7 @@ core:
       Nedoporučuje se jej používat ve výrobě.
 
       Chcete-li nahlásit chybu:<a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: Vzorec není v tomto kontextu k dispozici
   error:
     extern: "Externí chyba: **{{ error }}**"
     feature_unavailable: "Tato funkce vyžaduje aplikaci SketchUp {{ version }} nebo vyšší"
@@ -305,6 +306,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Zobrazit / Skrýt
+      show_hide_blocks: ""
       scroll_to_block: Přejděte na skupinu
       not_available_std_width: "Šířka *{{ std_dimension_real }}* nebyla nastavena na materiálu '{{ material_name }}'"
       not_available_std_thickness: "Tloušťka *{{ std_dimension_real }}* nebyla nastavena na materiálu '{{ material_name }}'"
@@ -1329,7 +1331,6 @@ tab:
       warning:
         is_group_selection: Díly obsažené ve **skrytých skupinách** seznamu dílů nedostanou štítky.
         is_part_selection: Tyto štítky jsou omezeny pouze na **vybrané části**.
-        formula_not_available: Vzorec není v tomto kontextu k dispozici
     layout:
       title: Kreslení
       to_layout: Export do Layout
@@ -1736,6 +1737,7 @@ tab:
       is_active_node: Aktivní instance - kopie - v modelu
       set_active_node: Upravit v modelu
       edit_node_properties: Upravit vlastnosti
+      select_active_nodes: ""
       select_node: Vybrat
       unselect_node: Zrušit výběr
       open_node_url: Otevřít URL adresu dílu
@@ -1922,10 +1924,10 @@ tab:
     global_settings: Globální preference
     language: Jazyk
     language_auto: Automatický
-    zoom: Velikost písma
-    zoom_normal: $t(default.automatic)
-    zoom_small: Malý
-    zoom_tiny: Drobný
+    font_size: Velikost písma
+    font_size_auto: $t(default.automatic)
+    font_size_small: Malý
+    font_size_tiny: Drobný
     print_margin: Tisk okrajů
     print_margin_normal: Normální
     print_margin_small: Malé
@@ -1997,8 +1999,8 @@ tab:
       - Gildas Boureau (*francouzská* dokumentace)
       - Vladimir Badulya (*ruský*)
       - Pierluigi Colombo, Massimo Risca (*italský*)
-      - Nayton Sanches Barbosa, opraveno a revidováno [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portugalský*)
-      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*španělsky*)
+      - Nayton Sanches Barbosa, opraveno a revidováno Carlos Maciel ELT, Henny Silva Ferreira (*portugalský*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*španělsky*)
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak(*polsky*)
       - Sergey Isupov (*hebrejsky*), bez RTL rozhraní
       - Soul Issam (*arabština*), bez RTL rozhraní

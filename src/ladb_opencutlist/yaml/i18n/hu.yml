@@ -153,6 +153,7 @@ core:
       Nem ajánlott éles környezetben használni.
 
       Hiba jelentéséhez: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: Ebben a kontextusban nem érhető el
   error:
     extern: "Külső hiba : **{{ error }}**"
     feature_unavailable: "Ez a funkció SketchUp {{ version }} vagy újabb verziót igényel"
@@ -305,6 +306,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: "Csoport Mutat / Elrejt "
+      show_hide_blocks: ""
       scroll_to_block: Görgetés a csoporthoz
       not_available_std_width: "A(z) *{{ std_dimension_real }}* keresztmetszet értéke nincs megadva a(z) '{{ material_name }}' anyag szabványos keresztmetszetei között"
       not_available_std_thickness: "A(z) *{{ std_dimension_real }}* vastagság értéke nincs megadva '{{ material_name }}' anyag szabványos vastagságai között"
@@ -1329,7 +1331,6 @@ tab:
       warning:
         is_group_selection: "A szabástervben szereplő, **rejtett csoportokban lévő** alkatrészek nem kapnak címkét."
         is_part_selection: Ezek a címkék csak a **kiválasztott alkatrészekre** korlátozódnak.
-        formula_not_available: Ebben a kontextusban nem érhető el
     layout:
       title: Rajz
       to_layout: Exportálás Layout-ba
@@ -1736,6 +1737,7 @@ tab:
       is_active_node: Aktív példány a modellben
       set_active_node: Modell szerkesztése
       edit_node_properties: Tulajdonságok szerkesztése
+      select_active_nodes: ""
       select_node: Kijelöl
       unselect_node: Kijelölés megszüntetése
       open_node_url: Példány URL megnyitása
@@ -1922,10 +1924,10 @@ tab:
     global_settings: Globális beállítások
     language: Nyelv
     language_auto: Automatikus
-    zoom: Betűméret
-    zoom_normal: $t(default.automatic)
-    zoom_small: Kicsi
-    zoom_tiny: Nagyon kicsi
+    font_size: Betűméret
+    font_size_auto: $t(default.automatic)
+    font_size_small: Kicsi
+    font_size_tiny: Nagyon kicsi
     print_margin: Nyomtatási margók
     print_margin_normal: Normál
     print_margin_small: Kicsi
@@ -1997,8 +1999,8 @@ tab:
       - Gildas Boureau (*francia* dokumentáció)
       - Vladimir Badulya (*orosz*)
       - Pierluigi Colombo (*olasz*)
-      - Nayton Sanches Barbosa, ellenőrizte és javította [Carlos Maciel ELT](https://www.inglesonline.pro.br), Henny Silva Ferreira (*portugál*)
-      - Raquel Caballero Guillén, [Leonardo Romero Giménez](https://latablamarilla.com/) (*spanyol*)
+      - Nayton Sanches Barbosa, ellenőrizte és javította Carlos Maciel ELT, Henny Silva Ferreira (*portugál*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*spanyol*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*cseh*)
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*lengyel*)
       - Sergey Isupov (*héber*), RTL felület még nem támogatott

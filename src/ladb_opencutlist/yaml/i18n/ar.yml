@@ -153,6 +153,7 @@ core:
       لا ينصح باستعمالها في الإنتاج
 
        <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a> للتبليغ عن خطإ برمجي:
+    not_available_in_context: المعادلة غير متاحة في هذا السياق
   error:
     extern: "خطأ خارجي : **{{ error }}**"
     feature_unavailable: "تتطلب هذه الخاصية توفر النسخة {{ version }} من SketchUp أو أعلى"
@@ -305,6 +306,7 @@ tab:
     part_drawing_type_7: ثلاثي الأبعاد
     tooltip:
       show_hide_block: أظهر / أخفِ المجموعة
+      show_hide_blocks: ""
       scroll_to_block: مُرَّ إلى المجموعة
       not_available_std_width: "لم يحدد العرض *{{ std_dimension_real }}* في العروض النظامية للخامة '{{ material_name }}'."
       not_available_std_thickness: "لم يحدد السمك *{{ std_dimension_real }}* ضمن السمك النظامي للخامة '{{ material_name }}'."
@@ -1329,7 +1331,6 @@ tab:
       warning:
         is_group_selection: لن تكون للقِطع الموجودة في المجموعات المخفية داخل قائمة القِطع ملصقات.
         is_part_selection: هذه الملصقات محدودة بـ **القطع المحددة** فحسب
-        formula_not_available: المعادلة غير متاحة في هذا السياق
     layout:
       title: الرسم
       to_layout: " Layout التصدير إلى"
@@ -1736,6 +1737,7 @@ tab:
       is_active_node: مثيل نشط في النموذج
       set_active_node: تعديل في النموذج
       edit_node_properties: تعديل الخصائص
+      select_active_nodes: ""
       select_node: تحديد
       unselect_node: إلغاء التحديد
       open_node_url: افتح رابط القِطعة
@@ -1922,10 +1924,10 @@ tab:
     global_settings: التفضيلات العامة
     language: اللغة
     language_auto: تلقائي
-    zoom: حجم الخط
-    zoom_normal: $t(default.automatic)
-    zoom_small: قصير
-    zoom_tiny: بالغ الصغر
+    font_size: حجم الخط
+    font_size_auto: $t(default.automatic)
+    font_size_small: قصير
+    font_size_tiny: بالغ الصغر
     print_margin: هوامش الطباعة
     print_margin_normal: العادية
     print_margin_small: صغيرة
@@ -1997,8 +1999,8 @@ tab:
       - Gildas Boureau (*وثائق فرنسية*)
       - Vladimir Badulya (*الروسية*)
       - Pierluigi Colombo, Massimo Risca (*الإيطالية*)
-      - Nayton Sanches Barbosa (*البرتغالية*) و صُحّحت من قبل [Carlos Maciel ELT](https://www.inglesonline.pro.br)
-      - Raquel Caballero Guillén [Leonardo Romero Giménez](https://latablamarilla.com/) (*الإسبانية*)
+      - Nayton Sanches Barbosa (*البرتغالية*) و صُحّحت من قبل Carlos Maciel ELT
+      - Raquel Caballero Guillén Leonardo Romero Giménez (*الإسبانية*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*التشيكية*)
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*البولندية*)
       - Sergey Isupov (*اللغة العبرية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
