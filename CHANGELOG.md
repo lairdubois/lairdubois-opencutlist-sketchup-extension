@@ -4,7 +4,13 @@ CHANGELOG
 This changelog references the relevant changes (bug and security fixes) done
 in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
+* 7.1.0 (WIP)
+
+  * Added NL mlanguage
+
 * 7.0.1 (WIP)
+
+  * Fixed old MacOS compatibility
 
 * 7.0.0 (2025-09-17)
 
