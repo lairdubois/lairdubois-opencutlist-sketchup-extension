@@ -6,7 +6,8 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 * 7.1.0 (WIP)
 
-  * Added NL mlanguage
+  * Added NL language
+  * Improved PathFormulaWrapper. It now contains instance objects
 
 * 7.0.1 (WIP)
 

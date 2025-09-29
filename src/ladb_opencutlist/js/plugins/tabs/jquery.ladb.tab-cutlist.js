@@ -3270,7 +3270,7 @@
                 $textareaItemsFormula.ladbTextinputCode({
                     variableDefs: fnConvertToVariableDefs([
                         { name: 'number', type: 'string' },
-                        { name: 'path', type: 'array' },
+                        { name: 'path', type: 'path' },
                         { name: 'instance_name', type: 'string' },
                         { name: 'name', type: 'string' },
                         { name: 'cutting_length', type: 'length' },

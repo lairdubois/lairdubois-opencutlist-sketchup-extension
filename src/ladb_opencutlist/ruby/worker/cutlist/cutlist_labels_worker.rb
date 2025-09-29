@@ -138,7 +138,7 @@ module Ladb::OpenCutList
           data = LabelData.new(
 
             number: StringFormulaWrapper.new(part.number),
-            path: PathFormulaWrapper.new(entity_named_path.split('.')),
+            path: PathFormulaWrapper.new(entity_path[0...-1]),
             instance_name: StringFormulaWrapper.new(entity_name),
             name: StringFormulaWrapper.new(part.name),
             cutting_length: LengthFormulaWrapper.new(part.def.cutting_length),

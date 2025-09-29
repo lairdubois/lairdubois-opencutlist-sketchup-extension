@@ -390,9 +390,13 @@ module Ladb::OpenCutList
       @value.get_attribute('dynamic_attributes', key.to_s.downcase) # DC attribute names are always stored lower case.
     end
 
-    def export
+    def to_s
       return '' if @value.nil?
       self.name
+    end
+
+    def export
+      self.to_s
     end
 
   end
@@ -479,7 +483,7 @@ module Ladb::OpenCutList
       _raise_no_method_error(__method__)
     end
 
-    def substract(*args)
+    def subtract(*args)
       _raise_no_method_error(__method__)
     end
 
@@ -509,9 +513,140 @@ module Ladb::OpenCutList
       @value.get_attribute('dynamic_attributes', key)
     end
 
-    def export
+    def to_s
       return '' if @value.nil?
       self.name
+    end
+
+    def export
+      self.to_s
+    end
+
+  end
+
+  class GroupFormulaWrapper < DrawingElementFormulaWrapper
+
+    def initialize(value, path = [])
+      super(value, Sketchup::Group)
+      @path = path
+    end
+
+    private def _local_position
+      ta = transformation.to_a
+      Geom::Point3d.new(ta[12], ta[13], ta[14])
+    end
+
+    def local_x
+      LengthFormulaWrapper.new(_local_position.x, true, true)
+    end
+
+    def local_y
+      LengthFormulaWrapper.new(_local_position.y, true, true)
+    end
+
+    def local_z
+      LengthFormulaWrapper.new(_local_position.z, true, true)
+    end
+
+    private def _world_position
+      ORIGIN.transform(PathUtils.get_transformation(@path, IDENTITY))
+    end
+
+    def world_x
+      LengthFormulaWrapper.new(_world_position.x, true, true)
+    end
+
+    def world_y
+      LengthFormulaWrapper.new(_world_position.y, true, true)
+    end
+
+    def world_z
+      LengthFormulaWrapper.new(_world_position.z, true, true)
+    end
+
+    # -- Privatisation
+
+    def name=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def definition=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def glue_to=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def locked=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def transformation=(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def make_unique(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def explode(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def split(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def trim(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def union(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def subtract(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def intersect(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def outer_shell(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def show_differences(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def move!(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def transform!(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    def to_component(*args)
+      _raise_no_method_error(__method__)
+    end
+
+    # -----
+
+    def get_dc_attribute(key)
+      @value.get_attribute('dynamic_attributes', key)
+    end
+
+    def to_s
+      return '' if @value.nil?
+      self.name
+    end
+
+    def export
+      self.to_s
     end
 
   end
@@ -659,9 +794,21 @@ module Ladb::OpenCutList
 
   class PathFormulaWrapper < ArrayFormulaWrapper
 
+    def initialize(value)
+      super(value.each_with_index.map { |v, i|
+        if v.is_a?(Sketchup::Group)
+          GroupFormulaWrapper.new(v, value[0..i])
+        elsif v.is_a?(Sketchup::ComponentInstance)
+          ComponentInstanceFormulaWrapper.new(v, value[0..i])
+        else
+          v
+        end
+      })
+    end
+
     def to_s
       return '' unless @value.is_a?(Array)
-      @value.join('/')
+      @value.select { |v| !v.to_s.empty? }.join('/')  # Select only entities that have an instance name
     end
 
   end

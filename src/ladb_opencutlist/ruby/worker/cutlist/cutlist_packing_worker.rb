@@ -71,7 +71,7 @@ module Ladb::OpenCutList
       data = PackingData.new(
 
         number: StringFormulaWrapper.new(part.number),
-        path: instance_info.nil? ? nil : PathFormulaWrapper.new(instance_info.named_path.split('.')),
+        path: instance_info.nil? ? nil : PathFormulaWrapper.new(instance_info.path[0...-1]),
         instance_name: instance_info.nil? ? nil : StringFormulaWrapper.new(instance_info.entity.name),
         name: StringFormulaWrapper.new(part.name),
         cutting_length: LengthFormulaWrapper.new(part.def.cutting_length),
