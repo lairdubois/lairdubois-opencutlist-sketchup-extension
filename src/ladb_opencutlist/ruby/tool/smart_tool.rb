@@ -2259,7 +2259,11 @@ module Ladb::OpenCutList
       _get_global_instance_transformation
       _get_drawing_def
       @unhide_local_instance_transformation = Geom::Transformation.new(instance.transformation)
-      instance.move!(Geom::Transformation.scaling(0, 0, 0))
+      begin
+        instance.move!(Geom::Transformation.scaling(0, 0, 0)) # Now failed since SU 2026 RC0 :(
+      rescue
+        @unhide_local_instance_transformation = nil
+      end
     end
 
     def _unhide_instance
