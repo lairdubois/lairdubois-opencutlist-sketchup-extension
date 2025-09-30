@@ -301,7 +301,7 @@ tab:
     part_drawing_type_7: 242 - 3D
     tooltip:
       show_hide_block: 243 - Mostrar / Ocultar este grupo
-      show_hide_blocks: '244 - '
+      show_hide_blocks: 244 - Mostrar / Ocultar todos os grupos
       scroll_to_block: 245 - Role para o grupo
       not_available_std_width: 246 - A largura *{{ std_dimension_real }}* não foi definida no material '{{ material_name }}'
       not_available_std_thickness: 247 - A espessura *{{ std_dimension_real }}* não foi definida no material '{{ material_name }}'
@@ -1732,7 +1732,7 @@ tab:
       is_active_node: 1353 - Instância ativa no modelo
       set_active_node: 1354 - Editar no modelo
       edit_node_properties: 1355 - Editar as propriedades
-      select_active_nodes: '1356 - '
+      select_active_nodes: 1356 - Selecionar / Desmarcar todas as instâncias ativas
       select_node: 1357 - Selecionar
       unselect_node: 1358 - Desmarcar
       open_node_url: 1359 - Abrir URL da peça

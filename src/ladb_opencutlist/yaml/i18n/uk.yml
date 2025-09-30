@@ -306,7 +306,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Показати / Приховати цю групу
-      show_hide_blocks: ""
+      show_hide_blocks: Показати / Приховати всі групи
       scroll_to_block: Перейти до групи
       not_available_std_width: "Ширина *{{ std_dimension_real }}* не визначена в стандартній ширині матеріалу '{{ material_name }}'"
       not_available_std_thickness: "Товщина *{{ std_dimension_real }}* не визначена в стандартній товщині матеріалу '{{ material_name }}'"
@@ -1737,7 +1737,7 @@ tab:
       is_active_node: Активний екземпляр у моделі
       set_active_node: Редагувати в моделі
       edit_node_properties: Редагувати властивості
-      select_active_nodes: ""
+      select_active_nodes: Вибрати / Скасувати вибір всіх активних екземплярів
       select_node: Обрати
       unselect_node: Скасувати вибір
       open_node_url: Відкрити URL деталі
