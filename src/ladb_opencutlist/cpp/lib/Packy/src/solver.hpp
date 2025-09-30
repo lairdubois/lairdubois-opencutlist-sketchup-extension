@@ -21,7 +21,6 @@
 #include "shape/labeling.hpp"
 
 #include <mutex>
-#include <cmath>
 
 using namespace packingsolver;
 using namespace nlohmann;
@@ -160,7 +159,7 @@ namespace Packy {
 
     };
 
-    template<typename InstanceBuilder, typename Instance, typename ItemType, typename BinType, typename OptimizeParameters, typename Output, typename Solution>
+    template<typename InstanceBuilder, typename Instance, typename ItemType, typename BinType, typename OptimizeParameters, typename Output, typename Solution, typename SolutionBin>
     class TypedSolver : public Solver {
 
     public:
@@ -628,7 +627,23 @@ namespace Packy {
 
             BinTypeStats bin_type_stats;
 
-            write_best_solution_bins(j, solution, bin_type_stats, builder);
+            basic_json<>& j_bins = j["bins"] = json::array();
+            for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
+
+                const auto& bin = solution.bin(bin_pos);
+                const auto& bin_type = instance.bin_type(bin.bin_type_id);
+                const BinTypeMeta& bin_type_meta = builder.bin_type_meta(bin.bin_type_id);
+
+                basic_json<>& j_bin = j_bins.emplace_back(json{
+                    {"bin_type_id", bin.bin_type_id},
+                    {"copies",      bin.copies},
+                });
+                populate_best_solution_bin(j_bin, bin_pos, solution, bin, bin_type, bin_type_meta, builder);
+
+                // Increment item copies stats
+                bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies * j_bin["number_of_items"].get<size_t>();
+
+            }
 
             basic_json<>& j_item_types_stats = j["item_types_stats"] = json::array();
             for (auto& [orig_item_type_id, item_type_meta] : orig_builder_.item_type_metas()) {
@@ -683,10 +698,13 @@ namespace Packy {
 
         }
 
-        virtual void write_best_solution_bins(
-            json& j,
+        virtual void populate_best_solution_bin(
+            basic_json<>& j_bin,
+            BinPos bin_pos,
             const Solution& solution,
-            BinTypeStats& bin_type_stats,
+            const SolutionBin& bin,
+            const BinType& bin_type,
+            const BinTypeMeta& bin_type_meta,
             TypedBuilder<InstanceBuilder>& builder
         ) = 0;
 
@@ -755,7 +773,7 @@ namespace Packy {
 
     };
 
-    class RectangleSolver : public TypedSolver<rectangle::InstanceBuilder, rectangle::Instance, rectangle::ItemType, rectangle::BinType, rectangle::OptimizeParameters, rectangle::Output, rectangle::Solution> {
+    class RectangleSolver : public TypedSolver<rectangle::InstanceBuilder, rectangle::Instance, rectangle::ItemType, rectangle::BinType, rectangle::OptimizeParameters, rectangle::Output, rectangle::Solution, rectangle::SolutionBin> {
 
     public:
 
@@ -902,75 +920,63 @@ namespace Packy {
             return std::move(rectangle::optimize(instance, parameters_));
         }
 
-        void write_best_solution_bins(
-                json& j,
-                const rectangle::Solution& solution,
-                BinTypeStats& bin_type_stats,
-                TypedBuilder<rectangle::InstanceBuilder>& builder
+        void populate_best_solution_bin(
+            basic_json<>& j_bin,
+            const BinPos bin_pos,
+            const rectangle::Solution& solution,
+            const rectangle::SolutionBin& bin,
+            const rectangle::BinType& bin_type,
+            const BinTypeMeta& bin_type_meta,
+            TypedBuilder<rectangle::InstanceBuilder>& builder
         ) override {
 
             using namespace rectangle;
 
-            const Instance& instance = solution.instance();
+            Area bin_space = bin_type.rect.x * bin_type.rect.y;
+            Area items_space = 0;
+            for (const auto& item : bin.items) {
+                const ItemType& item_type = solution.instance().item_type(item.item_type_id);
+                items_space += item_type.space();
+            }
 
-            basic_json<>& j_bins = j["bins"] = json::array();
-            for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
+            j_bin["space"] = to_area_dbl(bin_space);
+            j_bin["waste"] = to_area_dbl(bin_space - items_space);
+            j_bin["efficiency"] = static_cast<double>(items_space) / bin_space;
 
-                const SolutionBin& bin = solution.bin(bin_pos);
-                const BinType& bin_type = instance.bin_type(bin.bin_type_id);
-                const BinTypeMeta& bin_type_meta = builder.bin_type_meta(bin.bin_type_id);
+            // Add x_max and y_max attributes to the last bin
+            if (bin_pos == solution.number_of_different_bins() - 1) {
+                j_bin["x_max"] = to_length_dbl(fake_trimming_ + solution.x_max() - fake_spacing_);
+                j_bin["y_max"] = to_length_dbl(fake_trimming_ + solution.y_max() - fake_spacing_);
+            }
 
-                Area bin_space = bin_type.rect.x * bin_type.rect.y;
-                Area items_space = 0;
-                for (const auto& item : bin.items) {
-                    const ItemType& item_type = instance.item_type(item.item_type_id);
-                    items_space += item_type.space();
+            basic_json<>& j_items = j_bin["items"] = json::array();
+            for (const auto& item: bin.items) {
+
+                const ItemType& item_type = solution.instance().item_type(item.item_type_id);
+                const ItemTypeMeta& item_type_meta = builder.item_type_meta(item.item_type_id);
+
+                if (item.rotate) {
+                    j_items.emplace_back(json{
+                            {"item_type_id", item_type_meta.orig_item_type_id},
+                            {"x",            to_length_dbl(fake_trimming_ + item.bl_corner.x + item_type.rect.y - fake_spacing_)},
+                            {"y",            to_length_dbl(fake_trimming_ + item.bl_corner.y)},
+                            {"angle",        90.0}
+                    });
+                } else {
+                    j_items.emplace_back(json{
+                            {"item_type_id", item_type_meta.orig_item_type_id},
+                            {"x",            to_length_dbl(fake_trimming_ + item.bl_corner.x)},
+                            {"y",            to_length_dbl(fake_trimming_ + item.bl_corner.y)},
+                            {"angle",        0}
+                    });
                 }
 
-                basic_json<>& j_bin = j_bins.emplace_back(json{
-                        {"bin_type_id", bin.bin_type_id},
-                        {"copies",      bin.copies},
-                        {"space",       to_area_dbl(bin_space)},
-                        {"waste",       to_area_dbl(bin_space - items_space)},
-                        {"efficiency",  static_cast<double>(items_space) / bin_space}
-                });
-
-                // Add x_max and y_max attributes to the last bin
-                if (bin_pos == solution.number_of_different_bins() - 1) {
-                    j_bin["x_max"] = to_length_dbl(fake_trimming_ + solution.x_max() - fake_spacing_);
-                    j_bin["y_max"] = to_length_dbl(fake_trimming_ + solution.y_max() - fake_spacing_);
-                }
-
-                basic_json<>& j_items = j_bin["items"] = json::array();
-                for (const auto& item: bin.items) {
-
-                    const ItemType& item_type = solution.instance().item_type(item.item_type_id);
-                    const ItemTypeMeta& item_type_meta = builder.item_type_meta(item.item_type_id);
-
-                    if (item.rotate) {
-                        j_items.emplace_back(json{
-                                {"item_type_id", item_type_meta.orig_item_type_id},
-                                {"x",            to_length_dbl(fake_trimming_ + item.bl_corner.x + item_type.rect.y - fake_spacing_)},
-                                {"y",            to_length_dbl(fake_trimming_ + item.bl_corner.y)},
-                                {"angle",        90.0}
-                        });
-                    } else {
-                        j_items.emplace_back(json{
-                                {"item_type_id", item_type_meta.orig_item_type_id},
-                                {"x",            to_length_dbl(fake_trimming_ + item.bl_corner.x)},
-                                {"y",            to_length_dbl(fake_trimming_ + item.bl_corner.y)},
-                                {"angle",        0}
-                        });
-                    }
-
-                    // Increment item copies stats
-                    bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies;
-
-                }
-
-                j_bin["number_of_items"] = j_items.size();
+                // Increment item copies stats
+                // bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies;
 
             }
+
+            j_bin["number_of_items"] = j_items.size();
 
         }
 
@@ -981,7 +987,7 @@ namespace Packy {
 
     };
 
-    class RectangleguillotineSolver : public TypedSolver<rectangleguillotine::InstanceBuilder, rectangleguillotine::Instance, rectangleguillotine::ItemType, rectangleguillotine::BinType, rectangleguillotine::OptimizeParameters, rectangleguillotine::Output, rectangleguillotine::Solution> {
+    class RectangleguillotineSolver : public TypedSolver<rectangleguillotine::InstanceBuilder, rectangleguillotine::Instance, rectangleguillotine::ItemType, rectangleguillotine::BinType, rectangleguillotine::OptimizeParameters, rectangleguillotine::Output, rectangleguillotine::Solution, rectangleguillotine::SolutionBin> {
 
     public:
 
@@ -1199,210 +1205,194 @@ namespace Packy {
             return std::move(TypedSolver::post_process(output));
         }
 
-        void write_best_solution_bins(
-                json &j,
-                const rectangleguillotine::Solution& solution,
-                BinTypeStats& bin_type_stats,
-                TypedBuilder<rectangleguillotine::InstanceBuilder>& builder
+        void populate_best_solution_bin(
+            basic_json<>& j_bin,
+            const BinPos bin_pos,
+            const rectangleguillotine::Solution& solution,
+            const rectangleguillotine::SolutionBin& bin,
+            const rectangleguillotine::BinType& bin_type,
+            const BinTypeMeta& bin_type_meta,
+            TypedBuilder<rectangleguillotine::InstanceBuilder>& builder
         ) override {
 
             using namespace rectangleguillotine;
 
-            const Instance& instance = solution.instance();
+            Area bin_space = bin_type.rect.area(); // Workaround to PackingSolver bin_type.space() function that subtract trims
+            Area items_space = 0;
+            for (const auto& node : bin.nodes) {
+                if (node.item_type_id >= 0 && node.f >= 0) {
+                    const ItemType& item_type = solution.instance().item_type(node.item_type_id);
+                    items_space += item_type.rect.area();
+                }
+            }
 
-            // Bins.
-            basic_json<>& j_bins = j["bins"] = json::array();
-            for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
+            j_bin["space"] = to_area_dbl(bin_space);
+            j_bin["waste"] = to_area_dbl(bin_space - items_space);
+            j_bin["efficiency"] = static_cast<double>(items_space) / bin_space;
 
-                const SolutionBin& bin = solution.bin(bin_pos);
-                const BinType& bin_type = instance.bin_type(bin.bin_type_id);
-                const BinTypeMeta& bin_type_meta = builder.bin_type_meta(bin.bin_type_id);
+            Length cut_length = 0;
+            int32_t number_of_leftovers_to_keep = 0;
 
-                Area bin_space = bin_type.rect.area(); // Workaround to PackingSolver bin_type.space() function that subtract trims
-                Area items_space = 0;
-                for (const auto& node : bin.nodes) {
-                    if (node.item_type_id >= 0 && node.f >= 0) {
-                        const ItemType& item_type = instance.item_type(node.item_type_id);
-                        items_space += item_type.rect.area();
+            // Items, Leftovers & Cuts.
+            basic_json<>& j_items = j_bin["items"] = json::array();
+            basic_json<>& j_leftovers = j_bin["leftovers"] = json::array();
+            basic_json<>& j_cuts = j_bin["cuts"] = json::array();
+            for (const auto& node : bin.nodes) {
+
+                if (node.item_type_id >= 0 && node.f >= 0) {
+
+                    const ItemType& item_type = solution.instance().item_type(node.item_type_id);
+                    const ItemTypeMeta& item_type_meta = builder.item_type_meta(node.item_type_id);
+
+                    if (item_type.rect.w != node.r - node.l /* rotated */) {
+                        j_items.push_back(json{
+                                {"item_type_id", item_type_meta.orig_item_type_id},
+                                {"x",            to_length_dbl(node.r)},
+                                {"y",            to_length_dbl(node.b)},
+                                {"angle",        90.0},
+                        });
+                    } else {
+                        j_items.push_back(json{
+                                {"item_type_id", item_type_meta.orig_item_type_id},
+                                {"x",            to_length_dbl(node.l)},
+                                {"y",            to_length_dbl(node.b)},
+                                {"angle",        0.0},
+                        });
                     }
+
+                } else if (node.d > 0 && node.children.empty()) {
+
+                    if (node.r > node.l && node.t > node.b) {
+
+                        const Length width = node.r - node.l;
+                        const Length height = node.t - node.b;
+                        bool kept = width >= keep_width_ && height >= keep_height_;
+
+                        j_leftovers.push_back(json{
+                                {"x",      to_length_dbl(node.l)},
+                                {"y",      to_length_dbl(node.b)},
+                                {"width",  to_length_dbl(width)},
+                                {"height", to_length_dbl(height)},
+                                {"kept",   kept},
+                        });
+
+                        if (kept) {
+                            number_of_leftovers_to_keep++;
+                        }
+
+                    }
+
                 }
 
-                basic_json<>& j_bin = j_bins.emplace_back(json{
-                        {"bin_type_id", bin.bin_type_id},
-                        {"copies",      bin.copies},
-                        {"space",       to_area_dbl(bin_space)},
-                        {"waste",       to_area_dbl(bin_space - items_space)},
-                        {"efficiency",  static_cast<double>(items_space) / bin_space}
-                });
+                // Extract cuts
 
-                Length cut_length = 0;
-                int32_t number_of_leftovers_to_keep = 0;
+                if (node.d == 0) {
 
-                // Items, Leftovers & Cuts.
-                basic_json<>& j_items = j_bin["items"] = json::array();
-                basic_json<>& j_leftovers = j_bin["leftovers"] = json::array();
-                basic_json<>& j_cuts = j_bin["cuts"] = json::array();
-                for (const auto& node : bin.nodes) {
+                    if (bin_type.left_trim + bin_type.right_trim + bin_type.bottom_trim + bin_type.top_trim > 0 && !node.children.empty()) {
 
-                    if (node.item_type_id >= 0 && node.f >= 0) {
+                        // Bottom trim
+                        if (bin_type.bottom_trim_type == TrimType::Hard) {
+                            Length b_length = node.r - node.l + (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim + (bin_type.right_trim_type == TrimType::Hard ? bin_type.right_trim : 0) : 0);
+                            cut_length += b_length;
 
-                        const ItemType& item_type = instance.item_type(node.item_type_id);
-                        const ItemTypeMeta& item_type_meta = builder.item_type_meta(node.item_type_id);
-
-                        if (item_type.rect.w != node.r - node.l /* rotated */) {
-                            j_items.push_back(json{
-                                    {"item_type_id", item_type_meta.orig_item_type_id},
-                                    {"x",            to_length_dbl(node.r)},
-                                    {"y",            to_length_dbl(node.b)},
-                                    {"angle",        90.0},
-                            });
-                        } else {
-                            j_items.push_back(json{
-                                    {"item_type_id", item_type_meta.orig_item_type_id},
-                                    {"x",            to_length_dbl(node.l)},
-                                    {"y",            to_length_dbl(node.b)},
-                                    {"angle",        0.0},
+                            j_cuts.emplace_back(json{
+                                    {"depth",       node.d},
+                                    {"x",           to_length_dbl(node.l - (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
+                                    {"y",           to_length_dbl(node.b - solution.instance().parameters().cut_thickness)},
+                                    {"length",      to_length_dbl(b_length)},
+                                    {"orientation", "horizontal"}
                             });
                         }
 
-                        // Increment item copies stats
-                        bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies;
+                        // Top trim
+                        if (bin_type.top_trim_type == TrimType::Hard) {
+                            Length t_length = node.r - node.l + (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim + (bin_type.right_trim_type == TrimType::Hard ? bin_type.right_trim : 0) : 0);
+                            cut_length += t_length;
 
-                    } else if (node.d > 0 && node.children.empty()) {
-
-                        if (node.r > node.l && node.t > node.b) {
-
-                            const Length width = node.r - node.l;
-                            const Length height = node.t - node.b;
-                            bool kept = width >= keep_width_ && height >= keep_height_;
-
-                            j_leftovers.push_back(json{
-                                    {"x",      to_length_dbl(node.l)},
-                                    {"y",      to_length_dbl(node.b)},
-                                    {"width",  to_length_dbl(width)},
-                                    {"height", to_length_dbl(height)},
-                                    {"kept",   kept},
+                            j_cuts.emplace_back(json{
+                                    {"depth",       node.d},
+                                    {"x",           to_length_dbl(node.l - (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
+                                    {"y",           to_length_dbl(node.t)},
+                                    {"length",      to_length_dbl(t_length)},
+                                    {"orientation", "horizontal"}
                             });
-
-                            if (kept) {
-                                number_of_leftovers_to_keep++;
-                            }
-
                         }
 
-                    }
+                        // Left trim
+                        if (bin_type.left_trim_type == TrimType::Hard) {
+                            Length l_length = node.t - node.b + (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim + (bin_type.top_trim_type == TrimType::Hard ? bin_type.top_trim : 0) : 0);
+                            cut_length += l_length;
 
-                    // Extract cuts
-
-                    if (node.d == 0) {
-
-                        if (bin_type.left_trim + bin_type.right_trim + bin_type.bottom_trim + bin_type.top_trim > 0 && !node.children.empty()) {
-
-                            // Bottom trim
-                            if (bin_type.bottom_trim_type == TrimType::Hard) {
-                                Length b_length = node.r - node.l + (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim + (bin_type.right_trim_type == TrimType::Hard ? bin_type.right_trim : 0) : 0);
-                                cut_length += b_length;
-
-                                j_cuts.emplace_back(json{
-                                        {"depth",       node.d},
-                                        {"x",           to_length_dbl(node.l - (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
-                                        {"y",           to_length_dbl(node.b - instance.parameters().cut_thickness)},
-                                        {"length",      to_length_dbl(b_length)},
-                                        {"orientation", "horizontal"}
-                                });
-                            }
-
-                            // Top trim
-                            if (bin_type.top_trim_type == TrimType::Hard) {
-                                Length t_length = node.r - node.l + (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim + (bin_type.right_trim_type == TrimType::Hard ? bin_type.right_trim : 0) : 0);
-                                cut_length += t_length;
-
-                                j_cuts.emplace_back(json{
-                                        {"depth",       node.d},
-                                        {"x",           to_length_dbl(node.l - (bin.first_cut_orientation == CutOrientation::Horizontal ? bin_type.left_trim : 0))},
-                                        {"y",           to_length_dbl(node.t)},
-                                        {"length",      to_length_dbl(t_length)},
-                                        {"orientation", "horizontal"}
-                                });
-                            }
-
-                            // Left trim
-                            if (bin_type.left_trim_type == TrimType::Hard) {
-                                Length l_length = node.t - node.b + (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim + (bin_type.top_trim_type == TrimType::Hard ? bin_type.top_trim : 0) : 0);
-                                cut_length += l_length;
-
-                                j_cuts.emplace_back(json{
-                                        {"depth",       node.d},
-                                        {"x",           to_length_dbl(node.l - instance.parameters().cut_thickness)},
-                                        {"y",           to_length_dbl(node.b - (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
-                                        {"length",      to_length_dbl(l_length)},
-                                        {"orientation", "vertical"},
-                                });
-                            }
-
-                            // Right trim
-                            if (bin_type.right_trim_type == TrimType::Hard) {
-                                Length r_length = node.t - node.b + (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim + (bin_type.top_trim_type == TrimType::Hard ? bin_type.top_trim : 0) : 0);
-                                cut_length += r_length;
-
-                                j_cuts.emplace_back(json{
-                                        {"depth",       node.d},
-                                        {"x",           to_length_dbl(node.r)},
-                                        {"y",           to_length_dbl(node.b - (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
-                                        {"length",      to_length_dbl(r_length)},
-                                        {"orientation", "vertical"},
-                                });
-                            }
-
+                            j_cuts.emplace_back(json{
+                                    {"depth",       node.d},
+                                    {"x",           to_length_dbl(node.l - solution.instance().parameters().cut_thickness)},
+                                    {"y",           to_length_dbl(node.b - (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
+                                    {"length",      to_length_dbl(l_length)},
+                                    {"orientation", "vertical"},
+                            });
                         }
 
-                    } else if (node.d >= 0 && node.f >= 0) {
-
-                        const SolutionNode& father_node = bin.nodes[node.f];
-
-                        // Right
-                        if (node.r != father_node.r) {
-
-                            Length r_length = node.t - node.b;
+                        // Right trim
+                        if (bin_type.right_trim_type == TrimType::Hard) {
+                            Length r_length = node.t - node.b + (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim + (bin_type.top_trim_type == TrimType::Hard ? bin_type.top_trim : 0) : 0);
                             cut_length += r_length;
 
                             j_cuts.emplace_back(json{
                                     {"depth",       node.d},
                                     {"x",           to_length_dbl(node.r)},
-                                    {"y",           to_length_dbl(node.b)},
+                                    {"y",           to_length_dbl(node.b - (bin.first_cut_orientation == CutOrientation::Vertical ? bin_type.bottom_trim : 0))},
                                     {"length",      to_length_dbl(r_length)},
-                                    {"orientation", "vertical"}
+                                    {"orientation", "vertical"},
                             });
-
                         }
 
-                        // Top
-                        if (node.t != father_node.t) {
+                    }
 
-                            Length t_length = node.r - node.l;
-                            cut_length += t_length;
+                } else if (node.d >= 0 && node.f >= 0) {
 
-                            j_cuts.emplace_back(json{
-                                    {"depth",       node.d},
-                                    {"x",           to_length_dbl(node.l)},
-                                    {"y",           to_length_dbl(node.t)},
-                                    {"length",      to_length_dbl(t_length)},
-                                    {"orientation", "horizontal"},
-                            });
+                    const SolutionNode& father_node = bin.nodes[node.f];
 
-                        }
+                    // Right
+                    if (node.r != father_node.r) {
+
+                        Length r_length = node.t - node.b;
+                        cut_length += r_length;
+
+                        j_cuts.emplace_back(json{
+                                {"depth",       node.d},
+                                {"x",           to_length_dbl(node.r)},
+                                {"y",           to_length_dbl(node.b)},
+                                {"length",      to_length_dbl(r_length)},
+                                {"orientation", "vertical"}
+                        });
+
+                    }
+
+                    // Top
+                    if (node.t != father_node.t) {
+
+                        Length t_length = node.r - node.l;
+                        cut_length += t_length;
+
+                        j_cuts.emplace_back(json{
+                                {"depth",       node.d},
+                                {"x",           to_length_dbl(node.l)},
+                                {"y",           to_length_dbl(node.t)},
+                                {"length",      to_length_dbl(t_length)},
+                                {"orientation", "horizontal"},
+                        });
 
                     }
 
                 }
 
-                j_bin["number_of_items"] = j_items.size();
-                j_bin["number_of_leftovers"] = j_leftovers.size();
-                j_bin["number_of_leftovers_to_keep"] = number_of_leftovers_to_keep;
-                j_bin["number_of_cuts"] = j_cuts.size();
-                j_bin["cut_length"] = to_length_dbl(cut_length);
-
             }
+
+            j_bin["number_of_items"] = j_items.size();
+            j_bin["number_of_leftovers"] = j_leftovers.size();
+            j_bin["number_of_leftovers_to_keep"] = number_of_leftovers_to_keep;
+            j_bin["number_of_cuts"] = j_cuts.size();
+            j_bin["cut_length"] = to_length_dbl(cut_length);
 
         }
 
@@ -1413,7 +1403,7 @@ namespace Packy {
 
     };
 
-    class OnedimensionalSolver : public TypedSolver<onedimensional::InstanceBuilder, onedimensional::Instance, onedimensional::ItemType, onedimensional::BinType, onedimensional::OptimizeParameters, onedimensional::Output, onedimensional::Solution> {
+    class OnedimensionalSolver : public TypedSolver<onedimensional::InstanceBuilder, onedimensional::Instance, onedimensional::ItemType, onedimensional::BinType, onedimensional::OptimizeParameters, onedimensional::Output, onedimensional::Solution, onedimensional::SolutionBin> {
 
     public:
 
@@ -1513,92 +1503,77 @@ namespace Packy {
             return std::move(onedimensional::optimize(instance, parameters_));
         }
 
-        void write_best_solution_bins(
-                json& j,
-                const onedimensional::Solution& solution,
-                BinTypeStats& bin_type_stats,
-                TypedBuilder<onedimensional::InstanceBuilder>& builder
+        void populate_best_solution_bin(
+            basic_json<>& j_bin,
+            const BinPos bin_pos,
+            const onedimensional::Solution& solution,
+            const onedimensional::SolutionBin& bin,
+            const onedimensional::BinType& bin_type,
+            const BinTypeMeta& bin_type_meta,
+            TypedBuilder<onedimensional::InstanceBuilder>& builder
         ) override {
 
             using namespace onedimensional;
 
-            const Instance& instance = solution.instance();
+            Length bin_space = bin_type.length;
+            Length items_space = 0;
+            for (const auto& item : bin.items) {
+                const ItemType& item_type = solution.instance().item_type(item.item_type_id);
+                items_space += item_type.space();
+            }
 
-            basic_json<>& j_bins = j["bins"] = json::array();
-            for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
+            j_bin["space"] = to_length_dbl(bin_space);
+            j_bin["waste"] = to_length_dbl(bin_space - items_space);
+            j_bin["efficiency"] = static_cast<double>(items_space) / bin_space;
 
-                const SolutionBin& bin = solution.bin(bin_pos);
-                const BinType& bin_type = instance.bin_type(bin.bin_type_id);
-                const BinTypeMeta& bin_type_meta = builder.bin_type_meta(bin.bin_type_id);
+            // Items, Leftovers & Cuts.
+            basic_json<>& j_items = j_bin["items"] = json::array();
+            basic_json<>& j_leftovers = j_bin["leftovers"] = json::array();
+            basic_json<>& j_cuts = j_bin["cuts"] = json::array();
+            if (fake_trimming_ > 0) {
+                j_cuts.emplace_back(json{
+                        {"depth",  0},
+                        {"x",      to_length_dbl(fake_trimming_ - fake_spacing_)},
+                        {"length", bin_type_meta.height_dbl}
+                });
+            }
+            for (const auto& item: bin.items) {
 
-                Length bin_space = bin_type.length;
-                Length items_space = 0;
-                for (const auto& item : bin.items) {
-                    const ItemType& item_type = instance.item_type(item.item_type_id);
-                    items_space += item_type.space();
-                }
+                const ItemType& item_type = solution.instance().item_type(item.item_type_id);
+                const ItemTypeMeta& item_type_meta = builder.item_type_meta(item.item_type_id);
 
-                basic_json<>& j_bin = j_bins.emplace_back(json{
-                        {"bin_type_id", bin.bin_type_id},
-                        {"copies",      bin.copies},
-                        {"space",       to_length_dbl(bin_space)},
-                        {"waste",       to_length_dbl(bin_space - items_space)},
-                        {"efficiency",  static_cast<double>(items_space) / bin_space}
+                // Item
+                j_items.emplace_back(json{
+                        {"item_type_id", item_type_meta.orig_item_type_id},
+                        {"x",            to_length_dbl(fake_trimming_ + item.start)},
                 });
 
-                // Items, Leftovers & Cuts.
-                basic_json<>& j_items = j_bin["items"] = json::array();
-                basic_json<>& j_leftovers = j_bin["leftovers"] = json::array();
-                basic_json<>& j_cuts = j_bin["cuts"] = json::array();
-                if (fake_trimming_ > 0) {
+                // Cut
+                if (item.start + item_type.length < bin_type.length) {
+
                     j_cuts.emplace_back(json{
-                            {"depth",  0},
-                            {"x",      to_length_dbl(fake_trimming_ - fake_spacing_)},
+                            {"depth",  1},
+                            {"x",      to_length_dbl(fake_trimming_ + item.start + item_type.length - fake_spacing_)},
                             {"length", bin_type_meta.height_dbl}
-                    });
-                }
-                for (const auto& item: bin.items) {
 
-                    const ItemType& item_type = instance.item_type(item.item_type_id);
-                    const ItemTypeMeta& item_type_meta = builder.item_type_meta(item.item_type_id);
-
-                    // Item
-                    j_items.emplace_back(json{
-                            {"item_type_id", item_type_meta.orig_item_type_id},
-                            {"x",            to_length_dbl(fake_trimming_ + item.start)},
                     });
 
-                    // Increment item copies stats
-                    bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies;
-
-                    // Cut
-                    if (item.start + item_type.length < bin_type.length) {
-
-                        j_cuts.emplace_back(json{
-                                {"depth",  1},
-                                {"x",      to_length_dbl(fake_trimming_ + item.start + item_type.length - fake_spacing_)},
-                                {"length", bin_type_meta.height_dbl}
-
+                    // Leftover
+                    if (&item == &bin.items.back()) {
+                        j_leftovers.emplace_back(json{
+                                {"x",     to_length_dbl(fake_trimming_ + item.start + item_type.length)},
+                                {"width", to_length_dbl(bin_type.length - (item.start + item_type.length))},
                         });
-
-                        // Leftover
-                        if (&item == &bin.items.back()) {
-                            j_leftovers.emplace_back(json{
-                                    {"x",     to_length_dbl(fake_trimming_ + item.start + item_type.length)},
-                                    {"width", to_length_dbl(bin_type.length - (item.start + item_type.length))},
-                            });
-                        }
-
                     }
 
                 }
 
-                j_bin["number_of_items"] = j_items.size();
-                j_bin["number_of_leftovers"] = j_leftovers.size();
-                j_bin["number_of_cuts"] = j_cuts.size();
-                j_bin["cut_length"] = j_cuts.size() * bin_type_meta.height_dbl;
-
             }
+
+            j_bin["number_of_items"] = j_items.size();
+            j_bin["number_of_leftovers"] = j_leftovers.size();
+            j_bin["number_of_cuts"] = j_cuts.size();
+            j_bin["cut_length"] = j_cuts.size() * bin_type_meta.height_dbl;
 
         }
 
@@ -1609,7 +1584,7 @@ namespace Packy {
 
     };
 
-    class IrregularSolver : public TypedSolver<irregular::InstanceBuilder, irregular::Instance, irregular::ItemType, irregular::BinType, irregular::OptimizeParameters, irregular::Output, irregular::Solution> {
+    class IrregularSolver : public TypedSolver<irregular::InstanceBuilder, irregular::Instance, irregular::ItemType, irregular::BinType, irregular::OptimizeParameters, irregular::Output, irregular::Solution, irregular::SolutionBin> {
 
     public:
 
@@ -1818,70 +1793,55 @@ namespace Packy {
             return std::move(irregular::optimize(instance, parameters_));
         }
 
-        void write_best_solution_bins(
-                json& j,
-                const irregular::Solution& solution,
-                BinTypeStats& bin_type_stats,
-                TypedBuilder<irregular::InstanceBuilder>& builder
+        void populate_best_solution_bin(
+            basic_json<>& j_bin,
+            const BinPos bin_pos,
+            const irregular::Solution& solution,
+            const irregular::SolutionBin& bin,
+            const irregular::BinType& bin_type,
+            const BinTypeMeta& bin_type_meta,
+            TypedBuilder<irregular::InstanceBuilder>& builder
         ) override {
 
             using namespace irregular;
 
-            const Instance& instance = solution.instance();
+            AreaDbl bin_space = bin_type.space();
+            AreaDbl items_space = 0;
+            for (const auto& item : bin.items) {
+                const ItemType& item_type = solution.instance().item_type(item.item_type_id);
+                items_space += item_type.space();
+            }
 
-            basic_json<>& j_bins = j["bins"] = json::array();
-            for (BinPos bin_pos = 0; bin_pos < solution.number_of_different_bins(); ++bin_pos) {
+            j_bin["space"] = to_area_dbl(bin_space);
+            j_bin["waste"] = to_area_dbl(bin_space - items_space);
+            j_bin["efficiency"] = items_space / bin_space;
 
-                const SolutionBin& bin = solution.bin(bin_pos);
-                const BinType& bin_type = instance.bin_type(bin.bin_type_id);
-                BinTypeMeta& bin_type_meta = builder.bin_type_meta(bin.bin_type_id);
+            // Add x_min, x_max and y_min, y_max attributes to the last bin
+            if (bin_pos == solution.number_of_different_bins() - 1) {
+                j_bin["x_min"] = to_length_dbl(solution.x_min());
+                j_bin["x_max"] = to_length_dbl(solution.x_max());
+                j_bin["y_min"] = to_length_dbl(solution.y_min());
+                j_bin["y_max"] = to_length_dbl(solution.y_max());
+            }
 
-                AreaDbl bin_space = bin_type.space();
-                AreaDbl items_space = 0;
-                for (const auto& item : bin.items) {
-                    const ItemType& item_type = instance.item_type(item.item_type_id);
-                    items_space += item_type.space();
-                }
+            basic_json<>& j_items = j_bin["items"] = json::array();
+            for (const auto& item: bin.items) {
 
-                basic_json<>& j_bin = j_bins.emplace_back(json{
-                        {"bin_type_id", bin.bin_type_id},
-                        {"copies",      bin.copies},
-                        {"space",       to_area_dbl(bin_space)},
-                        {"waste",       to_area_dbl(bin_space - items_space)},
-                        {"efficiency",  items_space / bin_space}
+                ItemTypeMeta& item_type_meta = builder.item_type_meta(item.item_type_id);
+
+                j_items.emplace_back(json{
+                    {"item_type_id", item_type_meta.orig_item_type_id},
+                    {"x", to_length_dbl(item.bl_corner.x)},
+                    {"y", to_length_dbl(item.bl_corner.y - fake_trimming_y_)},
+                    {"angle", item.angle}, // Returns angle in degrees
+                    {"mirror", item.mirror}
                 });
 
-                // Add x_min, x_max and y_min, y_max attributes to the last bin
-                if (bin_pos == solution.number_of_different_bins() - 1) {
-                    j_bin["x_min"] = to_length_dbl(solution.x_min());
-                    j_bin["x_max"] = to_length_dbl(solution.x_max());
-                    j_bin["y_min"] = to_length_dbl(solution.y_min());
-                    j_bin["y_max"] = to_length_dbl(solution.y_max());
-                }
-
-                basic_json<>& j_items = j_bin["items"] = json::array();
-                for (const auto& item: bin.items) {
-
-                    ItemTypeMeta& item_type_meta = builder.item_type_meta(item.item_type_id);
-
-                    j_items.emplace_back(json{
-                            {"item_type_id", item_type_meta.orig_item_type_id},
-                            {"x",            to_length_dbl(item.bl_corner.x)},
-                            {"y",            to_length_dbl(item.bl_corner.y - fake_trimming_y_)},
-                            {"angle",        item.angle},  // Returns angle in degrees
-                            {"mirror",       item.mirror}
-                    });
-
-                    // Increment item copies stats
-                    bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies;
-
-                }
-
-                j_bin["number_of_items"] = j_items.size();
-                j_bin["number_of_leftovers"] = 0;
-                j_bin["number_of_cuts"] = 0;
-
             }
+
+            j_bin["number_of_items"] = j_items.size();
+            j_bin["number_of_leftovers"] = 0;
+            j_bin["number_of_cuts"] = 0;
 
         }
 
