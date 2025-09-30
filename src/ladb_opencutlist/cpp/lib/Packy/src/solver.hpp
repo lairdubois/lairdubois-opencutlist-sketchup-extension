@@ -21,6 +21,7 @@
 #include "shape/labeling.hpp"
 
 #include <mutex>
+#include <cmath>
 
 using namespace packingsolver;
 using namespace nlohmann;
@@ -711,7 +712,7 @@ namespace Packy {
                 const double length_dbl
         ) const {
             if (length_dbl > 0) {
-                return static_cast<Length>(length_dbl * length_truncate_factor_);
+                return static_cast<Length>(round(length_dbl * length_truncate_factor_, 8));
             }
             return static_cast<Length>(length_dbl);
         }
