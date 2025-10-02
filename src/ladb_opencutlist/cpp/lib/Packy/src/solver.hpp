@@ -641,7 +641,7 @@ namespace Packy {
                 populate_best_solution_bin(j_bin, bin_pos, solution, bin, bin_type, bin_type_meta, builder);
 
                 // Increment item copies stats
-                bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies * j_bin["number_of_items"].get<size_t>();
+                bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies * j_bin.value("number_of_items", 0);
 
             }
 
@@ -970,9 +970,6 @@ namespace Packy {
                             {"angle",        0}
                     });
                 }
-
-                // Increment item copies stats
-                // bin_type_stats.item_copies_by_bin_type[bin.bin_type_id] += bin.copies;
 
             }
 
@@ -1526,7 +1523,7 @@ namespace Packy {
             j_bin["waste"] = to_length_dbl(bin_space - items_space);
             j_bin["efficiency"] = static_cast<double>(items_space) / bin_space;
 
-            // Items, Leftovers & Cuts.
+            // Items, Leftover & Cuts.
             basic_json<>& j_items = j_bin["items"] = json::array();
             basic_json<>& j_leftovers = j_bin["leftovers"] = json::array();
             basic_json<>& j_cuts = j_bin["cuts"] = json::array();

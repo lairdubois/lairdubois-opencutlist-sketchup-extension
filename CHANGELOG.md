@@ -10,9 +10,9 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Improved PathFormulaWrapper. It now contains instance objects
   * Fixed rounding errors for metric dimensions in cutting diagrams
 
-* 7.0.1 (WIP)
+* 7.0.1 (2025-09-30)
 
-  * Fixed old MacOS compatibility
+  * Fixed old MacOS compatibility (min 10.13)
 
 * 7.0.0 (2025-09-17)
 
