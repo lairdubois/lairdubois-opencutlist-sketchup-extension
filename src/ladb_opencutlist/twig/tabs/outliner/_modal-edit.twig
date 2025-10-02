@@ -4,7 +4,7 @@
 {% if node.type == 0 %}{# 0 = TYPE_MODEL #}
     {% set title = 'tab.outliner.edit_node.title_model'|i18next %}
 {% else %}
-    {% set title = multiple ? ('tab.cutlist.edit_part.title_multiple'|i18next) : 'tab.outliner.edit_node.title_instance'|i18next({ 'name':node.name }) %}
+    {% set title = multiple ? ('tab.outliner.edit_node.title_instance_multiple'|i18next) : 'tab.outliner.edit_node.title_instance'|i18next({ 'name':node.name }) %}
 {% endif %}
 
 {% block headerToolsInner %}
@@ -21,7 +21,7 @@
 {% block bodyInner %}
     <div class="tab-content">
         {% if multiple %}
-            <div class="alert alert-info text-center">{{ 'tab.cutlist.edit_part.multiple_alert'|i18next({ 'part_count':nodeCount }) }}</div>
+            <div class="alert alert-info text-center">{{ 'tab.outliner.edit_node.multiple_alert'|i18next({ 'node_count':nodeCount }) }}</div>
         {% endif %}
         <div role="tabpanel" class="tab-pane{% if tab == 'general' %} active{% endif %}" id="tab_edit_node_general">
             <div class="form form-horizontal" style="margin-top: 15px;">
