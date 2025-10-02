@@ -1744,6 +1744,8 @@ tab:
     edit_node:
       title_model: "Properties of the model"
       title_instance: "Properties of instance **{{ name }}**"
+      title_instance_multiple: "Properties of the instance group"
+      multiple_alert: "Common properties of the group of {{ node_count }} instances."
       general: General
       name: Name
       instance_name: Instance

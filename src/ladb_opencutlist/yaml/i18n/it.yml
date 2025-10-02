@@ -1744,6 +1744,8 @@ tab:
     edit_node:
       title_model: "Proprietà del modello"
       title_instance: "Proprietà dell'occorrenza **{{ name }}**"
+      title_instance_multiple: "Proprietà del gruppo di istanze"
+      multiple_alert: "Proprietà comuni del gruppo di {{ node_count }} istanze."
       general: Generale
       name: Descrizione
       instance_name: Occorrenza
