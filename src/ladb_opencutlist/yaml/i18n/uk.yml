@@ -1744,6 +1744,8 @@ tab:
     edit_node:
       title_model: "Властивості моделі"
       title_instance: "Властивості екземпляра **{{ name }}**"
+      title_instance_multiple: "Властивості групи екземплярів"
+      multiple_alert: "Загальні властивості групи екземплярів {{ node_count }}."
       general: Загальні
       name: Ім’я
       instance_name: Екземпляр
