@@ -215,6 +215,10 @@ module Ladb::OpenCutList
       @instance_infos.values.first
     end
 
+    def merge_instance_infos(instance_infos)
+      @instance_infos.merge!(instance_infos)
+    end
+
     # ---
 
     def cutting_length

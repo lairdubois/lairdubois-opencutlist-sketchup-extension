@@ -27,6 +27,8 @@ module Ladb::OpenCutList
     EXPORT_OPTION_FORMAT_CSV = 'csv'.freeze
     EXPORT_OPTION_FORMAT_XLSX = 'xlsx'.freeze
 
+    FOLDING_CHECK_VARS = %w[component_definition component_instances layers]
+
     def initialize(cutlist,
 
                    part_ids: nil,
@@ -57,7 +59,7 @@ module Ladb::OpenCutList
       @col_defs = col_defs
       @no_header = no_header
 
-      @part_folding = _valid_part_folding(part_folding)
+      @part_folding = part_folding && source == EXPORT_OPTION_SOURCE_CUTLIST
 
     end
 
@@ -70,7 +72,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
-      parts = @cutlist.get_parts(@part_ids, real: false)
+      parts = @cutlist.get_parts(@part_ids, real: !@part_folding)
       return { :errors => [ 'tab.cutlist.error.no_part' ] } if parts.empty?
 
       parts_by_group = parts.group_by { |part| part.group }
@@ -264,18 +266,105 @@ module Ladb::OpenCutList
         # Header row
         rows << _evaluate_header unless @no_header
 
+        fn_compute_part_row = lambda do |group, part|
+
+          data = ExportCutlistRowFormulaData.new(
+
+            number: StringFormulaWrapper.new(part.number),
+            name: StringFormulaWrapper.new(part.name),
+            count: IntegerFormulaWrapper.new(part.count),
+            cutting_length: LengthFormulaWrapper.new(part.def.cutting_length),
+            cutting_width: LengthFormulaWrapper.new(part.def.cutting_width),
+            cutting_thickness: LengthFormulaWrapper.new(part.def.cutting_size.thickness),
+            edge_cutting_length: LengthFormulaWrapper.new(part.def.edge_cutting_length),
+            edge_cutting_width: LengthFormulaWrapper.new(part.def.edge_cutting_width),
+            bbox_length: LengthFormulaWrapper.new(part.def.size.length),
+            bbox_width: LengthFormulaWrapper.new(part.def.size.width),
+            bbox_thickness: LengthFormulaWrapper.new(part.def.size.thickness),
+            final_area: AreaFormulaWrapper.new(part.def.final_area),
+            material: MaterialFormulaWrapper.new(group.def.material, group.def),
+            entity_names: ArrayFormulaWrapper.new(part.entity_names.map(&:first)),
+            description: StringFormulaWrapper.new(part.description),
+            url: StringFormulaWrapper.new(part.url),
+            tags: ArrayFormulaWrapper.new(part.tags),
+            edge_ymin: EdgeFormulaWrapper.new(
+              part.def.edge_materials[:ymin],
+              part.def.edge_group_defs[:ymin]
+            ),
+            edge_ymax: EdgeFormulaWrapper.new(
+              part.def.edge_materials[:ymax],
+              part.def.edge_group_defs[:ymax]
+            ),
+            edge_xmin: EdgeFormulaWrapper.new(
+              part.def.edge_materials[:xmin],
+              part.def.edge_group_defs[:xmin]
+            ),
+            edge_xmax: EdgeFormulaWrapper.new(
+              part.def.edge_materials[:xmax],
+              part.def.edge_group_defs[:xmax]
+            ),
+            face_zmin: VeneerFormulaWrapper.new(
+              part.def.veneer_materials[:zmin],
+              part.def.veneer_group_defs[:zmin]
+            ),
+            face_zmax: VeneerFormulaWrapper.new(
+              part.def.veneer_materials[:zmax],
+              part.def.veneer_group_defs[:zmax]
+            ),
+            layers: ArrayFormulaWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
+
+            component_definition: ComponentDefinitionFormulaWrapper.new(part.def.definition),
+            component_instances: ArrayFormulaWrapper.new(part.def.instance_infos.values.map { |instance_info| ComponentInstanceFormulaWrapper.new(instance_info.entity) })
+
+          )
+
+          _evaluate_row(data)
+        end
+
         # Content rows
         parts_by_group.each do |group, parts|
           parts.each do |part|
 
-            parts = part.is_a?(FolderPart) && !@part_folding ? part.children : [ part ]
-            parts.each do |part|
+            if @part_folding && _get_folding_check_col_indices.any?
 
-              data = ExportCutlistRowFormulaData.new(
+              # Check if children rows are foldable on specific columns
+              children_rows = part.children.map { |child| fn_compute_part_row.call(group, child) }
+              if children_rows.map { |row| row.select.with_index { |col, index| _get_folding_check_col_indices.include?(index) } }.uniq.size > 1
+
+                # Not foldable: append children rows
+                rows.concat(children_rows)
+                next
+
+              end
+
+            end
+
+            rows << fn_compute_part_row.call(group, part)
+
+          end
+        end
+
+      when EXPORT_OPTION_SOURCE_INSTANCES_LIST
+
+        # Header row
+        rows << _evaluate_header unless @no_header
+
+        # Content rows
+        parts_by_group.each do |group, parts|
+          parts.each do |part|
+
+            next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
+            next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
+
+            # Ungroup parts
+            part.def.instance_infos.each do |serialized_path, instance_info|
+
+              data = ExportInstancesListRowFormulaData.new(
 
                 number: StringFormulaWrapper.new(part.number),
+                path: PathFormulaWrapper.new(instance_info.path[0...-1]),
+                instance_name: StringFormulaWrapper.new(instance_info.entity.name),
                 name: StringFormulaWrapper.new(part.name),
-                count: IntegerFormulaWrapper.new(part.count),
                 cutting_length: LengthFormulaWrapper.new(part.def.cutting_length),
                 cutting_width: LengthFormulaWrapper.new(part.def.cutting_width),
                 cutting_thickness: LengthFormulaWrapper.new(part.def.cutting_size.thickness),
@@ -286,7 +375,6 @@ module Ladb::OpenCutList
                 bbox_thickness: LengthFormulaWrapper.new(part.def.size.thickness),
                 final_area: AreaFormulaWrapper.new(part.def.final_area),
                 material: MaterialFormulaWrapper.new(group.def.material, group.def),
-                entity_names: ArrayFormulaWrapper.new(part.entity_names.map(&:first)),
                 description: StringFormulaWrapper.new(part.description),
                 url: StringFormulaWrapper.new(part.url),
                 tags: ArrayFormulaWrapper.new(part.tags),
@@ -314,10 +402,10 @@ module Ladb::OpenCutList
                   part.def.veneer_materials[:zmax],
                   part.def.veneer_group_defs[:zmax]
                 ),
-                layers: ArrayFormulaWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
+                layer: StringFormulaWrapper.new(instance_info.layer.name),
 
-                component_definition: ComponentDefinitionFormulaWrapper.new(part.def.definition),
-                component_instances: ArrayFormulaWrapper.new(part.def.instance_infos.values.map { |instance_info| ComponentInstanceFormulaWrapper.new(instance_info.entity) })
+                component_definition: ComponentDefinitionFormulaWrapper.new(instance_info.definition),
+                component_instance: ComponentInstanceFormulaWrapper.new(instance_info.entity),
 
               )
 
@@ -328,101 +416,9 @@ module Ladb::OpenCutList
           end
         end
 
-      when EXPORT_OPTION_SOURCE_INSTANCES_LIST
-
-        # Header row
-        rows << _evaluate_header unless @no_header
-
-        # Content rows
-        parts_by_group.each do |group, parts|
-          parts.each do |part|
-
-            next if group.material_type == MaterialAttributes::TYPE_EDGE      # Edges don't have instances
-            next if group.material_type == MaterialAttributes::TYPE_VENEER    # Veneers don't have instances
-
-            parts = part.is_a?(FolderPart) ? part.children : [ part ]
-            parts.each do |part|
-
-              # Ungroup parts
-              part.def.instance_infos.each { |serialized_path, instance_info|
-
-                data = ExportInstancesListRowFormulaData.new(
-
-                  number: StringFormulaWrapper.new(part.number),
-                  path: PathFormulaWrapper.new(instance_info.path[0...-1]),
-                  instance_name: StringFormulaWrapper.new(instance_info.entity.name),
-                  name: StringFormulaWrapper.new(part.name),
-                  cutting_length: LengthFormulaWrapper.new(part.def.cutting_length),
-                  cutting_width: LengthFormulaWrapper.new(part.def.cutting_width),
-                  cutting_thickness: LengthFormulaWrapper.new(part.def.cutting_size.thickness),
-                  edge_cutting_length: LengthFormulaWrapper.new(part.def.edge_cutting_length),
-                  edge_cutting_width: LengthFormulaWrapper.new(part.def.edge_cutting_width),
-                  bbox_length: LengthFormulaWrapper.new(part.def.size.length),
-                  bbox_width: LengthFormulaWrapper.new(part.def.size.width),
-                  bbox_thickness: LengthFormulaWrapper.new(part.def.size.thickness),
-                  final_area: AreaFormulaWrapper.new(part.def.final_area),
-                  material: MaterialFormulaWrapper.new(group.def.material, group.def),
-                  description: StringFormulaWrapper.new(part.description),
-                  url: StringFormulaWrapper.new(part.url),
-                  tags: ArrayFormulaWrapper.new(part.tags),
-                  edge_ymin: EdgeFormulaWrapper.new(
-                    part.def.edge_materials[:ymin],
-                    part.def.edge_group_defs[:ymin]
-                  ),
-                  edge_ymax: EdgeFormulaWrapper.new(
-                    part.def.edge_materials[:ymax],
-                    part.def.edge_group_defs[:ymax]
-                  ),
-                  edge_xmin: EdgeFormulaWrapper.new(
-                    part.def.edge_materials[:xmin],
-                    part.def.edge_group_defs[:xmin]
-                  ),
-                  edge_xmax: EdgeFormulaWrapper.new(
-                    part.def.edge_materials[:xmax],
-                    part.def.edge_group_defs[:xmax]
-                  ),
-                  face_zmin: VeneerFormulaWrapper.new(
-                    part.def.veneer_materials[:zmin],
-                    part.def.veneer_group_defs[:zmin]
-                  ),
-                  face_zmax: VeneerFormulaWrapper.new(
-                    part.def.veneer_materials[:zmax],
-                    part.def.veneer_group_defs[:zmax]
-                  ),
-                  layer: StringFormulaWrapper.new(instance_info.layer.name),
-
-                  component_definition: ComponentDefinitionFormulaWrapper.new(instance_info.definition),
-                  component_instance: ComponentInstanceFormulaWrapper.new(instance_info.entity),
-
-                )
-
-                rows << _evaluate_row(data)
-              }
-
-            end
-
-          end
-        end
-
       end
 
       rows
-    end
-
-    def _valid_part_folding(part_folding)
-      return false unless @source == EXPORT_OPTION_SOURCE_CUTLIST && part_folding
-      unfoldable_vars = %w[component_definition component_instance layers]
-      @col_defs.each do |col_def|
-        unless col_def['hidden']
-          if col_def['formula'].nil? || col_def['formula'].empty?
-            next if col_def['name'].nil? || col_def['name'].empty?
-            return false if unfoldable_vars.any? { |v| col_def['name'] == v }
-          else
-            return false if unfoldable_vars.any? { |v| col_def['formula'].include?("@#{v}") }
-          end
-        end
-      end
-      part_folding
     end
 
     def _evaluate_header
@@ -454,6 +450,25 @@ module Ladb::OpenCutList
         end
       end
       row
+    end
+
+    def _get_folding_check_col_indices
+      @_folding_check_col_indices ||= if @part_folding
+                                        @col_defs.map.with_index { |col_def, index| [ col_def, index ] }.select { |col_def, index|
+                                          if col_def['hidden']
+                                            false
+                                          else
+                                            if col_def['formula'].nil? || col_def['formula'].empty?
+                                              next if col_def['name'].nil? || col_def['name'].empty?
+                                              FOLDING_CHECK_VARS.any? { |v| col_def['name'] == v }
+                                            else
+                                              FOLDING_CHECK_VARS.any? { |v| col_def['formula'].include?("@#{v}") }
+                                            end
+                                          end
+                                        }.map { |col_def, index| index }
+                                      else
+                                        []
+                                      end
     end
 
   end

@@ -857,6 +857,7 @@ module Ladb::OpenCutList
 
               end
               folder_part_def.children.push(part_def)
+              folder_part_def.merge_instance_infos(part_def.instance_infos)
               folder_part_def.count += part_def.count
               folder_part_def.merge_entity_names(part_def.entity_names)
               folder_part_def.children_warning_count += 1 if part_def.not_aligned_on_axes

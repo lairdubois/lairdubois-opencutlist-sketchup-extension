@@ -207,7 +207,7 @@ module Ladb::OpenCutList
     end
 
     def to_s
-      @value.join(',')
+      @value.compact.map(&:to_s).reject(&:empty?).join(',')
     end
 
     def export
