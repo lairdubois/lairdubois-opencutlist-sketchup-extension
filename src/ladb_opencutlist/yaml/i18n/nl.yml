@@ -1129,6 +1129,11 @@ tab:
       option_hide_edges_preview_0: Weergegeven in het zaagschema
       option_hide_edges_preview_1: Verborgen in het zaagschema
       option_hide_edges_preview_help: Hiermee kunt u de visuele weergave van de kantenbanden voor elk onderdeel in het zaagschema tonen of verbergen.
+      option_zoom_threshold: Zoomdrempel
+      option_zoom_threshold_help: |
+        Hiermee kunt u de diagrambreedte instellen waaronder diagrammen automatisch worden vergroot.
+
+        *De vergroting wordt berekend op basis van het breedste diagram*.
       option_time_limit: Tijdslimiet
       option_time_limit_help: |
         Stelt de toegestane tijd voor de berekening in
@@ -1744,6 +1749,8 @@ tab:
     edit_node:
       title_model: "Modeleigenschappen"
       title_instance: "**{{ name }}** instantie-eigenschappen"
+      title_instance_multiple: "Eigenschappen van de instantiegroep"
+      multiple_alert: "Gemeenschappelijke eigenschappen van de groep van {{ node_count }} instanties."
       general: Algemeen
       name: Beschrijving
       instance_name: Instantie
@@ -1926,6 +1933,7 @@ tab:
     language_auto: Automaat
     font_size: Lettergrootte
     font_size_auto: $t(default.automatic)
+    font_size_normal: Normaal
     font_size_small: Klein
     font_size_tiny: Zeer klein
     print_margin: Marges afdrukken

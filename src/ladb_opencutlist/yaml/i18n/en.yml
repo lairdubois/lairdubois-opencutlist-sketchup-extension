@@ -1129,6 +1129,11 @@ tab:
       option_hide_edges_preview_0: Displayed in the cutting diagram
       option_hide_edges_preview_1: Hidden in the cutting diagram
       option_hide_edges_preview_help: Shows or hides the visual display of the edge bandings for each part in the cutting diagram.
+      option_zoom_threshold: Zoom threshold
+      option_zoom_threshold_help: |
+        Allows you to set the diagram width below which diagrams are automatically enlarged.
+
+        *The enlargement will be calculated based on the widest diagram*.
       option_time_limit: Time limit
       option_time_limit_help: |
         Fix time limit to computation
@@ -1928,6 +1933,7 @@ tab:
     language_auto: Automatic
     font_size: Font Size
     font_size_auto: $t(default.automatic)
+    font_size_normal: Normal
     font_size_small: Short
     font_size_tiny: Tiny
     print_margin: Print Margins

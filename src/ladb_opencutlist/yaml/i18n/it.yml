@@ -1129,6 +1129,11 @@ tab:
       option_hide_edges_preview_0: Visibili
       option_hide_edges_preview_1: Nascosti
       option_hide_edges_preview_help: Consente di mostrare o nascondere l'indicazione visiva dei bordi da placcare per ogni parte del schema di taglio.
+      option_zoom_threshold: Soglia di zoom
+      option_zoom_threshold_help: |
+        Consente di definire la larghezza del diagramma al di sotto della quale i diagrammi vengono automaticamente ingranditi.
+
+        *L'ingrandimento verrà calcolato sul diagramma più largo*.
       option_time_limit: Limite di tempo
       option_time_limit_help: |
         Definisce il limite di tempo per l'ottimizzazione
@@ -1928,6 +1933,7 @@ tab:
     language_auto: Automatico
     font_size: Dimensione del carattere
     font_size_auto: $t(default.automatic)
+    font_size_normal: Normale
     font_size_small: Corto
     font_size_tiny: Minuscolo
     print_margin: Margini di stampa

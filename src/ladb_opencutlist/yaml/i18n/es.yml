@@ -1129,6 +1129,11 @@ tab:
       option_hide_edges_preview_0: Visualizado en el diagrama
       option_hide_edges_preview_1: Enmascarado en el diagrama
       option_hide_edges_preview_help: Permite mostrar u ocultar la indicación visual de los cantos para cada parte del diagrama.
+      option_zoom_threshold: Umbral de zoom
+      option_zoom_threshold_help: |
+        Permite definir el ancho del diagrama por debajo del cual los diagramas se amplían automáticamente.
+
+        *La ampliación se calculará sobre el diagrama más ancho*.
       option_time_limit: Límite de tiempo
       option_time_limit_help: |
         Establece el tiempo permitido para el cálculo
@@ -1928,6 +1933,7 @@ tab:
     language_auto: Automático
     font_size: Tamaño de letra
     font_size_auto: $t(default.automatic)
+    font_size_normal: Normal
     font_size_small: Pequeño
     font_size_tiny: Minúsculo
     print_margin: Márgenes de impresión
