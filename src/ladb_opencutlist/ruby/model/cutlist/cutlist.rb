@@ -92,23 +92,20 @@ module Ladb::OpenCutList
     end
 
     def get_group(id)
-      @groups.each do |group|
-        return group if group.id == id
-      end
-      nil
+      @groups.find { |group| group.id == id }
     end
 
     # Parts
 
-    def get_part(id)
-      get_real_parts([ id ]).first
+    def get_part(id, real: true)
+      get_parts([ id ], nil, real: real).first
     end
 
-    def get_real_parts(ids = nil, material_types_filter = nil)
+    def get_parts(ids = nil, material_types_filter = nil, real: true)
       parts = []
       @groups.each do |group|
         next if material_types_filter && !material_types_filter.include?(group.def.material_attributes.type)
-        parts = parts + group.get_real_parts(ids)
+        parts = parts + group.get_parts(ids, real: real)
       end
       parts
     end

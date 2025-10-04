@@ -1129,6 +1129,11 @@ tab:
       option_hide_edges_preview_0: Affichés sur le diagramme
       option_hide_edges_preview_1: Masqués sur le diagramme
       option_hide_edges_preview_help: Permet d'afficher ou masquer l'indication visuel des chants à plaquer pour chaque pièce du diagramme.
+      option_zoom_threshold: Seuil de zoom
+      option_zoom_threshold_help: | # TODO find a better explanation
+        Permet de définir la largeur de diagramme en dessous de laquelle les diagrammes sont automatiquement agrandis.
+        
+        *L'agrandissement sera calculé sur le diagramme le plus large*.
       option_time_limit: Limite de temps
       option_time_limit_help: |
         Fixe le temps impartit au calcul
@@ -1928,6 +1933,7 @@ tab:
     language_auto: Automatique
     font_size: Taille de texte
     font_size_auto: $t(default.automatic)
+    font_size_normal: Normale
     font_size_small: Petite
     font_size_tiny: Très petite
     print_margin: Marges d'impression

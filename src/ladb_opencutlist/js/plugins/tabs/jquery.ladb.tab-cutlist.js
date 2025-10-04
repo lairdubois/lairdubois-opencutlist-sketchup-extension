@@ -931,7 +931,8 @@
                     source: exportOptions.source,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
                     format: 'pasteable',
-                    no_header: noHeader
+                    no_header: noHeader,
+                    part_folding: that.generateOptions.part_folding
                 }, function (response) {
                     if (response.errors) {
                         that.dialog.notifyErrors(response.errors);
@@ -1110,7 +1111,8 @@
                     part_ids: partIds,
                     source: exportOptions.source,
                     col_defs: exportOptions.source_col_defs[exportOptions.source],
-                    format: 'table'
+                    format: 'table',
+                    part_folding: that.generateOptions.part_folding
                 }, function (response) {
 
                     if (response.errors) {
@@ -1182,7 +1184,8 @@
                     format: exportOptions.format,
                     col_sep: exportOptions.col_sep,
                     encoding: exportOptions.encoding,
-                    col_defs: exportOptions.source_col_defs[exportOptions.source]
+                    col_defs: exportOptions.source_col_defs[exportOptions.source],
+                    part_folding: that.generateOptions.part_folding
                 }, function (response) {
 
                     if (response.errors) {
@@ -2596,7 +2599,6 @@
                 const $selectRectangleguillotineCutType = $('#ladb_select_rectangleguillotine_cut_type', $modal);
                 const $selectRectangleguillotineNumberOfStages = $('#ladb_select_rectangleguillotine_number_of_stages', $modal);
                 const $inputRectangleguillotineKeepSize = $('#ladb_input_rectangleguillotine_keep_size', $modal);
-                const $btnExpert = $('.ladb-cutlist-packing-btn-expert', $modal)
                 const $selectIrregularAllowedRotations = $('#ladb_select_irregular_allowed_rotations', $modal);
                 const $selectIrregularAllowMirroring = $('#ladb_select_irregular_allow_mirroring', $modal);
                 const $inputSpacing = $('#ladb_input_spacing', $modal);
@@ -2609,12 +2611,14 @@
                 const $selectColorization = $('#ladb_select_colorization', $modal);
                 const $selectHighlightPrimaryCuts = $('#ladb_select_highlight_primary_cuts', $modal);
                 const $selectHideEdgesPreview = $('#ladb_select_hide_edges_preview', $modal);
+                const $inputZoomThreshold = $('#ladb_input_zoom_threshold', $modal);
                 const $selectObjective = $('#ladb_select_objective', $modal);
                 const $selectOptimizationMode = $('#ladb_select_optimization_mode', $modal);
                 const $inputTimeLimit = $('#ladb_input_time_limit', $modal);
                 const $inputNotAnytimeTreeSearchQueueSize = $('#ladb_input_not_anytime_tree_search_queue_size', $modal);
                 const $selectVerbosityLevel = $('#ladb_select_verbosity_level', $modal);
                 const $selectInputToJsonBinDir = $('#ladb_select_input_to_json_bin_dir', $modal);
+                const $btnsModalFooterCollapseHandle = $('.modal-footer-collapse-handle-btn', $modal)
                 const $btnEditMaterial = $('#ladb_btn_edit_material', $modal);
                 const $btnUnloadLib = $('#ladb_btn_unload_lib', $modal);
                 const $btnGenerate = $('#ladb_btn_generate', $modal);
@@ -2652,6 +2656,7 @@
                     options.colorization = that.toInt($selectColorization.val());
                     options.highlight_primary_cuts = $selectHighlightPrimaryCuts.val() === '1';
                     options.hide_edges_preview = $selectHideEdgesPreview.val() === '1';
+                    options.zoom_threshold = $inputZoomThreshold.val();
                     options.time_limit = that.toInt($inputTimeLimit.val());
                     options.not_anytime_tree_search_queue_size = that.toInt($inputNotAnytimeTreeSearchQueueSize.val());
                     options.verbosity_level = that.toInt($selectVerbosityLevel.val());
@@ -2677,6 +2682,7 @@
                     $selectColorization.selectpicker('val', options.colorization);
                     $selectHighlightPrimaryCuts.selectpicker('val', options.highlight_primary_cuts ? '1' : '0');
                     $selectHideEdgesPreview.selectpicker('val', options.hide_edges_preview ? '1' : '0');
+                    $inputZoomThreshold.val(options.zoom_threshold);
                     $inputTimeLimit.val(options.time_limit);
                     $inputNotAnytimeTreeSearchQueueSize.val(options.not_anytime_tree_search_queue_size);
                     $selectVerbosityLevel.selectpicker('val', options.verbosity_level);
@@ -3317,6 +3323,7 @@
                 $selectColorization.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHighlightPrimaryCuts.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectHideEdgesPreview.selectpicker(SELECT_PICKER_OPTIONS);
+                $inputZoomThreshold.ladbTextinputDimension();
                 $selectObjective.selectpicker(SELECT_PICKER_OPTIONS);
                 $selectOptimizationMode.selectpicker(SELECT_PICKER_OPTIONS)
                 $inputTimeLimit.ladbTextinputText();
@@ -3341,20 +3348,23 @@
                 });
 
                 // Bind collapses
-                $('#ladb-cutlist-packing-collapse-expert')
-                    .on('shown.bs.collapse', function () {
-                        $('i', $btnExpert)
-                            .removeClass('ladb-opencutlist-icon-plus')
-                            .addClass('ladb-opencutlist-icon-minus')
-                        ;
-                    })
-                    .on('hidden.bs.collapse', function () {
-                        $('i', $btnExpert)
-                            .addClass('ladb-opencutlist-icon-plus')
-                            .removeClass('ladb-opencutlist-icon-minus')
-                        ;
-                    })
-                ;
+                $btnsModalFooterCollapseHandle.each(function () {
+                    const $btn = $(this);
+                    $('#' + $btn.data('collapse-id'))
+                        .on('shown.bs.collapse', function () {
+                            $('i', $btn)
+                                .removeClass('ladb-opencutlist-icon-plus')
+                                .addClass('ladb-opencutlist-icon-minus')
+                            ;
+                        })
+                        .on('hidden.bs.collapse', function () {
+                            $('i', $btn)
+                                .addClass('ladb-opencutlist-icon-plus')
+                                .removeClass('ladb-opencutlist-icon-minus')
+                            ;
+                        })
+                    ;
+                })
 
                 // Bind clickable
                 $('.ladb-clickable[data-material-properties-tab]').on('click', function (e) {
@@ -3377,8 +3387,8 @@
                         }
                     });
                 });
-                $btnExpert.on('click', function () {
-                    $('#ladb-cutlist-packing-collapse-expert').collapse('toggle');
+                $btnsModalFooterCollapseHandle.on('click', function () {
+                    $('#' + $(this).data('collapse-id')).collapse('toggle');
                     $(this).blur();
                 })
                 $btnGenerate.on('click', function () {

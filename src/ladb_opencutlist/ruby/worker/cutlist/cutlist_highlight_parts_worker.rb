@@ -30,7 +30,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
       # Retrieve parts
-      parts = @cutlist.get_real_parts(@part_ids)
+      parts = @cutlist.get_parts(@part_ids)
 
       # Compute part count
       instance_count = parts.inject(0) { |sum, part| sum + part.instance_count_by_part * part.count - part.unused_instance_count }

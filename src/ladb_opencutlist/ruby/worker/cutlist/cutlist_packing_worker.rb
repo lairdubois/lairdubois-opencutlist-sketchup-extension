@@ -240,6 +240,7 @@ module Ladb::OpenCutList
                    origin_corner: ORIGIN_CORNER_TOP_LEFT,
                    highlight_primary_cuts: false,
                    hide_edges_preview: true,
+                   zoom_threshold: 120,
 
                    rectangleguillotine_cut_type: Packy::RECTANGLEGUILLOTINE_CUT_TYPE_NON_EXACT,
                    rectangleguillotine_number_of_stages: 3,
@@ -292,6 +293,7 @@ module Ladb::OpenCutList
                             else
                               hide_edges_preview
                             end
+      @zoom_threshold = DimensionUtils.str_to_ifloat(DimensionUtils.str_add_units(zoom_threshold)).to_l.to_f
 
       @rectangleguillotine_cut_type = rectangleguillotine_cut_type
       @rectangleguillotine_number_of_stages = [ [ 2, rectangleguillotine_number_of_stages.to_i ].max, 3 ].min
@@ -325,7 +327,7 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         return _create_packing(errors: [ 'default.error' ]) unless model
 
-        parts = @cutlist.get_real_parts(@part_ids)
+        parts = @cutlist.get_parts(@part_ids)
         return _create_packing(errors: [ 'tab.cutlist.packing.error.no_part' ]) if parts.empty?
 
         parts_by_group = parts.group_by { |part| part.group }
@@ -858,8 +860,9 @@ module Ladb::OpenCutList
       if light
         _set_pixel_to_inch_factor(200 / widest_bin_def.bin_type_def.width)
       else
-        if !longest_bin_def.nil? && !widest_bin_def.nil? && ((max_size = [ longest_bin_def.bin_type_def.length, widest_bin_def.bin_type_def.width ].max) * DEFAULT_PIXEL_TO_INCH_FACTOR) < 960
-          _set_pixel_to_inch_factor(960 / max_size)
+        px_zoom_threshold = @zoom_threshold * DEFAULT_PIXEL_TO_INCH_FACTOR
+        if !longest_bin_def.nil? && !widest_bin_def.nil? && ((max_size = [ longest_bin_def.bin_type_def.length, widest_bin_def.bin_type_def.width ].max) * DEFAULT_PIXEL_TO_INCH_FACTOR) < px_zoom_threshold
+          _set_pixel_to_inch_factor(px_zoom_threshold / max_size)
         else
           _set_pixel_to_inch_factor(DEFAULT_PIXEL_TO_INCH_FACTOR)
         end

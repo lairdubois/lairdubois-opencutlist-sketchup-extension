@@ -143,7 +143,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="collapse" id="ladb-cutlist-packing-collapse-expert">
+                <div class="collapse" id="ladb_cutlist_packing_collapse_config">
                     <div class="form-group">
                         <hr>
                         <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_objective_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
@@ -214,7 +214,7 @@
                     </div>
                 </div>
                 <div class="modal-footer-collapse-handle">
-                    <button class="btn btn-default btn-sm ladb-cutlist-packing-btn-expert" type="button"><i class="ladb-opencutlist-icon-plus"></i></button>
+                    <button class="btn btn-default btn-sm modal-footer-collapse-handle-btn" type="button" data-collapse-id="ladb_cutlist_packing_collapse_config"><i class="ladb-opencutlist-icon-plus"></i></button>
                 </div>
             </div>
         </div>
@@ -286,13 +286,14 @@
                         </select>
                     </div>
                 </div>
+                <hr>
                 <div class="form-group ladb-cutlist-packing-form-group-rectangleguillotine">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_highlight_primary_cuts_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
                     <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_highlight_primary_cuts'|i18next }}</label>
                     <div class="col-xs-6">
                         <select class="form-control" id="ladb_select_highlight_primary_cuts">
-                            <option value="0" data-content="{{ 'tab.cutlist.packing.option_highlight_primary_cuts_0'|i18next }}"></option>
-                            <option value="1" data-content="{{ 'tab.cutlist.packing.option_highlight_primary_cuts_1'|i18next }}"></option>
+                            <option value="0" data-content="<i class='ladb-opencutlist-icon-cursor'></i> {{ 'tab.cutlist.packing.option_highlight_primary_cuts_0'|i18next }}"></option>
+                            <option value="1" data-content="<i class='ladb-opencutlist-icon-eye-open'></i> {{ 'tab.cutlist.packing.option_highlight_primary_cuts_1'|i18next }}"></option>
                         </select>
                     </div>
                 </div>
@@ -302,12 +303,25 @@
                         <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_hide_edges_preview'|i18next }}</label>
                         <div class="col-xs-6">
                             <select class="form-control" id="ladb_select_hide_edges_preview">
-                                <option value="1" data-content="{{ 'tab.cutlist.packing.option_hide_edges_preview_1'|i18next }}"></option>
-                                <option value="0" data-content="{{ 'tab.cutlist.packing.option_hide_edges_preview_0'|i18next }}"></option>
+                                <option value="1" data-content="<i class='ladb-opencutlist-icon-eye-close'></i> {{ 'tab.cutlist.packing.option_hide_edges_preview_1'|i18next }}"></option>
+                                <option value="0" data-content="<i class='ladb-opencutlist-icon-eye-open'></i> {{ 'tab.cutlist.packing.option_hide_edges_preview_0'|i18next }}"></option>
                             </select>
                         </div>
                     </div>
                 {% endif %}
+                <div class="collapse" id="ladb_cutlist_packing_collapse_display">
+                    <div class="form-group">
+                        <hr>
+                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_zoom_threshold_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                        <label class="control-label col-xs-5">{{ 'tab.cutlist.packing.option_zoom_threshold'|i18next }}</label>
+                        <div class="col-xs-6">
+                            <input type="text" class="form-control" id="ladb_input_zoom_threshold">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer-collapse-handle">
+                    <button class="btn btn-default btn-sm modal-footer-collapse-handle-btn" type="button" data-collapse-id="ladb_cutlist_packing_collapse_display"><i class="ladb-opencutlist-icon-plus"></i></button>
+                </div>
             </div>
         </div>
     </div>

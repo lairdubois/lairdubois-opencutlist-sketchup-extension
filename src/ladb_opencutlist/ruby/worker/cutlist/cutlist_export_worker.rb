@@ -38,7 +38,9 @@ module Ladb::OpenCutList
                    csv_encoding: EXPORT_OPTION_CSV_ENCODING_UTF8,
 
                    col_defs: {},
-                   no_header: false
+                   no_header: false,
+
+                   part_folding: true
 
     )
 
@@ -55,6 +57,8 @@ module Ladb::OpenCutList
       @col_defs = col_defs
       @no_header = no_header
 
+      @part_folding = _valid_part_folding(part_folding)
+
     end
 
     # -----
@@ -66,7 +70,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
-      parts = @cutlist.get_real_parts(@part_ids)
+      parts = @cutlist.get_parts(@part_ids, real: false)
       return { :errors => [ 'tab.cutlist.error.no_part' ] } if parts.empty?
 
       parts_by_group = parts.group_by { |part| part.group }
@@ -264,7 +268,7 @@ module Ladb::OpenCutList
         parts_by_group.each do |group, parts|
           parts.each do |part|
 
-            parts = part.is_a?(FolderPart) ? part.children : [ part ]
+            parts = part.is_a?(FolderPart) && !@part_folding ? part.children : [ part ]
             parts.each do |part|
 
               data = ExportCutlistRowFormulaData.new(
@@ -313,7 +317,7 @@ module Ladb::OpenCutList
                 layers: ArrayFormulaWrapper.new(part.def.instance_infos.values.map { |instance_info| instance_info.layer.name }.uniq),
 
                 component_definition: ComponentDefinitionFormulaWrapper.new(part.def.definition),
-                component_instances: part.def.instance_infos.values.map { |instance_info| ComponentInstanceFormulaWrapper.new(instance_info.entity) }
+                component_instances: ArrayFormulaWrapper.new(part.def.instance_infos.values.map { |instance_info| ComponentInstanceFormulaWrapper.new(instance_info.entity) })
 
               )
 
@@ -403,6 +407,22 @@ module Ladb::OpenCutList
       end
 
       rows
+    end
+
+    def _valid_part_folding(part_folding)
+      return false unless @source == EXPORT_OPTION_SOURCE_CUTLIST && part_folding
+      unfoldable_vars = %w[component_definition component_instance layers]
+      @col_defs.each do |col_def|
+        unless col_def['hidden']
+          if col_def['formula'].nil? || col_def['formula'].empty?
+            next if col_def['name'].nil? || col_def['name'].empty?
+            return false if unfoldable_vars.any? { |v| col_def['name'] == v }
+          else
+            return false if unfoldable_vars.any? { |v| col_def['formula'].include?("@#{v}") }
+          end
+        end
+      end
+      part_folding
     end
 
     def _evaluate_header

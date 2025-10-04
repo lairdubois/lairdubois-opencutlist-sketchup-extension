@@ -63,7 +63,7 @@ module Ladb::OpenCutList
       group = @cutlist.get_group(@group_id)
       return Cuttingdiagram1dDef.new(nil, [ 'default.error' ]).create_cuttingdiagram1d unless group
 
-      parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids)
+      parts = @part_ids.nil? ? group.parts : group.get_parts(@part_ids, real: false)
       return Cuttingdiagram1dDef.new(nil, [ 'default.error' ]).create_cuttingdiagram1d if parts.empty?
 
       _set_pixel_to_inch_factor(7)

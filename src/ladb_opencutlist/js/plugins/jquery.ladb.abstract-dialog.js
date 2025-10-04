@@ -98,16 +98,24 @@ LadbAbstractDialog.prototype.setFontSize = function (font_size) {
     const $html = $('html');
     if (font_size === 1) {
         $html.removeClass('ladb-font-size-auto');
-        $html.addClass('ladb-font-size-small');
+        $html.addClass('ladb-font-size-normal');
+        $html.removeClass('ladb-font-size-small');
         $html.removeClass('ladb-font-size-tiny');
     } else if (font_size === 2) {
         $html.removeClass('ladb-font-size-auto');
+        $html.removeClass('ladb-font-size-normal');
+        $html.addClass('ladb-font-size-small');
+        $html.removeClass('ladb-font-size-tiny');
+    } else if (font_size === 3) {
+        $html.removeClass('ladb-font-size-auto');
+        $html.removeClass('ladb-font-size-normal');
         $html.removeClass('ladb-font-size-small');
         $html.addClass('ladb-font-size-tiny');
     } else {
         $html.addClass('ladb-font-size-auto');
         $html.removeClass('ladb-font-size-small');
         $html.removeClass('ladb-font-size-tiny');
+        $html.removeClass('ladb-font-size-normal');
     }
 };
 
