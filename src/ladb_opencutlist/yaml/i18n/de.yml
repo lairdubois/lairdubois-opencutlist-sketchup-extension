@@ -1129,6 +1129,11 @@ tab:
       option_hide_edges_preview_0: Im Schnittplan angezeigt
       option_hide_edges_preview_1: Im Schnittplan ausgeblendet
       option_hide_edges_preview_help: Ermöglicht das Ein- oder Ausblenden der visuellen Anzeige der Kantenbänder für jedes Teil im Schnittplan.
+      option_zoom_threshold: Zoomschwelle
+      option_zoom_threshold_help: |
+        Ermöglicht die Festlegung der Diagrammbreite, unterhalb derer Diagramme automatisch vergrößert werden.
+
+        *Die Vergrößerung wird anhand des breitesten Diagramms berechnet*.
       option_time_limit: Zeitbegrenzung
       option_time_limit_help: |
         Legt die Zeit für die Berechnung fest
@@ -1928,6 +1933,7 @@ tab:
     language_auto: Automatisch
     font_size: Schriftgröße
     font_size_auto: $t(default.automatic)
+    font_size_normal: Normal
     font_size_small: Klein
     font_size_tiny: Sehr klein
     print_margin: Druckränder

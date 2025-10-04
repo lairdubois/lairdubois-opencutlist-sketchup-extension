@@ -1129,6 +1129,11 @@ tab:
       option_hide_edges_preview_0: Exibido no plano de corte
       option_hide_edges_preview_1: Oculto no plano de corte
       option_hide_edges_preview_help: Permite exibir ou ocultar a visualização das fitas de borda de cada peça no plano de corte.
+      option_zoom_threshold: Limite de zoom
+      option_zoom_threshold_help: |
+        Permite definir a largura do diagrama abaixo da qual os diagramas são automaticamente ampliados.
+
+        *A ampliação será calculada com base no diagrama mais largo*.
       option_time_limit: Limite de tempo
       option_time_limit_help: |
         Define o tempo limite para o cálculo
@@ -1928,6 +1933,7 @@ tab:
     language_auto: Automático
     font_size: Tamanho da fonte
     font_size_auto: $t(default.automatic)
+    font_size_normal: Normal
     font_size_small: Pequena
     font_size_tiny: Minúscula
     print_margin: Margens de impressão
