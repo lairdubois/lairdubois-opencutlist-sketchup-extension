@@ -27,7 +27,7 @@ module Ladb::OpenCutList
     EXPORT_OPTION_FORMAT_CSV = 'csv'.freeze
     EXPORT_OPTION_FORMAT_XLSX = 'xlsx'.freeze
 
-    FOLDING_CHECK_VARS = %w[component_definition component_instances layers]
+    FOLDING_CHECK_VARS = %w[component_definition component_instances description tags final_area layers]
 
     def initialize(cutlist,
 
