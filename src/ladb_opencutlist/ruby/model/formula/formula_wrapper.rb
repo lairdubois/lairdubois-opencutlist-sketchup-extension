@@ -808,7 +808,7 @@ module Ladb::OpenCutList
 
     def to_s
       return '' unless @value.is_a?(Array)
-      @value.select { |v| !v.to_s.empty? }.join('/')  # Select only entities that have an instance name
+      @value.compact.map(&:to_s).reject(&:empty?).join('/') # Select only entities that have an instance name
     end
 
   end

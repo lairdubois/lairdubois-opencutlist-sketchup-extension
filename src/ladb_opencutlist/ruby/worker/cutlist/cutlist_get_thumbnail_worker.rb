@@ -38,7 +38,7 @@ module Ladb::OpenCutList
 
           # Convert part drawing to ThreeJS
 
-          part = @cutlist.get_real_part(@id)
+          part = @cutlist.get_part(@id)
           return response unless part
 
           worker = CutlistConvertToThreeWorker.new([ part ])

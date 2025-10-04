@@ -325,7 +325,7 @@ module Ladb::OpenCutList
         parts_by_group.each do |group, parts|
           parts.each do |part|
 
-            if @part_folding && _get_folding_check_col_indices.any?
+            if part.is_a?(FolderPart) && @part_folding && _get_folding_check_col_indices.any?
 
               # Check if children rows are foldable on specific columns
               children_rows = part.children.map { |child| fn_compute_part_row.call(group, child) }
