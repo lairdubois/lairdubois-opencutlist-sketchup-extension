@@ -799,7 +799,7 @@ module Ladb::OpenCutList
         # Folding
         if @part_folding
           part_defs = []
-          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.tags, v.final_area.nil? ? 0 : v.final_area, v.cumulable ] }.each do |part_def|
+          group_def.part_defs.values.sort_by { |v| [ v.size.thickness, v.size.length, v.size.width, v.tags, v.final_area.nil? ? 0 : v.final_area, v.cumulable, v.definition_id ] }.each do |part_def|
             if !(folder_part_def = part_defs.last).nil? &&
                 ((folder_part_def.definition_id == part_def.definition_id && group_def.material_attributes.type == MaterialAttributes::TYPE_UNKNOWN) || group_def.material_attributes.type > MaterialAttributes::TYPE_UNKNOWN && group_def.material_attributes.type != MaterialAttributes::TYPE_HARDWARE) && # Part with TYPE_UNKNOWN materiel are folded only if they have the same definition | Part with TYPE_HARDWARE doesn't fold
                 folder_part_def.size == part_def.size &&
