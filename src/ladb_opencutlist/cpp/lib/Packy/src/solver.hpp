@@ -992,6 +992,17 @@ namespace Packy {
          * Read:
          */
 
+        void read_parameters(
+                basic_json<>& j
+        ) override {
+            TypedSolver::read_parameters(j);
+
+            if (j.contains("json_search_tree_path")) {
+                parameters_.json_search_tree_path = j["json_search_tree_path"].get<std::string>();
+            }
+
+        }
+
         void read_instance_parameters(
                 basic_json<>& j,
                 TypedBuilder<rectangleguillotine::InstanceBuilder>& builder
