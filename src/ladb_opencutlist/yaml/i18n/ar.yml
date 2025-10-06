@@ -306,7 +306,7 @@ tab:
     part_drawing_type_7: ثلاثي الأبعاد
     tooltip:
       show_hide_block: أظهر / أخفِ المجموعة
-      show_hide_blocks: ""
+      show_hide_blocks: أظهر / أخف كل المجموعات
       scroll_to_block: مُرَّ إلى المجموعة
       not_available_std_width: "لم يحدد العرض *{{ std_dimension_real }}* في العروض النظامية للخامة '{{ material_name }}'."
       not_available_std_thickness: "لم يحدد السمك *{{ std_dimension_real }}* ضمن السمك النظامي للخامة '{{ material_name }}'."
@@ -1129,6 +1129,11 @@ tab:
       option_hide_edges_preview_0: معروض في مخطط التقطيع
       option_hide_edges_preview_1: مخفي من مخطط التقطيع
       option_hide_edges_preview_help: يتيح لك إبراز أو إخفاء تصوير أشرطة الحواشي لكل قِطعة في مخطط التقطيع
+      option_zoom_threshold: عتبة التكبير
+      option_zoom_threshold_help: |
+        يتيح لك ضبط عرض الرسم التخطيطي الذي تكون الرسوم التخطيطية أسفله مُكبّرة تلقائيًا
+
+        *سيحسب التكبير بناء على الرسم التخطيطي الأعرض*
       option_time_limit: الحد الزمني
       option_time_limit_help: |
         يثبت الحد الزمني المخصص للحساب
@@ -1737,13 +1742,15 @@ tab:
       is_active_node: مثيل نشط في النموذج
       set_active_node: تعديل في النموذج
       edit_node_properties: تعديل الخصائص
-      select_active_nodes: ""
+      select_active_nodes: حدد / أزل التحديد عن كل المثيلات النشطة
       select_node: تحديد
       unselect_node: إلغاء التحديد
       open_node_url: افتح رابط القِطعة
     edit_node:
       title_model: "خصائص النموذج"
       title_instance: "خصائص المثيل **{{ name }}**"
+      title_instance_multiple: "خصائص مجموعة المثيلات"
+      multiple_alert: "الخصائص المشتركة لمجموعة {{ node_count }} مثيلا / مثيلات"
       general: عام
       name: الإسم
       instance_name: مثيل
@@ -1926,6 +1933,7 @@ tab:
     language_auto: تلقائي
     font_size: حجم الخط
     font_size_auto: $t(default.automatic)
+    font_size_normal: عادي
     font_size_small: قصير
     font_size_tiny: بالغ الصغر
     print_margin: هوامش الطباعة
