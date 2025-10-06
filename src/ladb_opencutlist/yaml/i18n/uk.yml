@@ -1129,6 +1129,11 @@ tab:
       option_hide_edges_preview_0: Відобразити на діаграмі
       option_hide_edges_preview_1: Приховати на діаграмі
       option_hide_edges_preview_help: "Дозволяє відображати або приховувати візуальну індикацію крайок, які потрібно облицювати для кожної деталі діаграми."
+      option_zoom_threshold: Поріг масштабування
+      option_zoom_threshold_help: |
+        Дозволяє встановити ширину діаграми, нижче якої діаграми автоматично збільшуються.
+
+        *Збільшення буде розраховано на основі найширшої діаграми*.
       option_time_limit: Ліміт часу
       option_time_limit_help: |
         Встановлює час, дозволений для розрахунку
@@ -1928,6 +1933,7 @@ tab:
     language_auto: Автоматичний
     font_size: Розмір тексту
     font_size_auto: $t(default.automatic)
+    font_size_normal: Нормальний
     font_size_small: Мала
     font_size_tiny: Дуже малий
     print_margin: Поля друку
