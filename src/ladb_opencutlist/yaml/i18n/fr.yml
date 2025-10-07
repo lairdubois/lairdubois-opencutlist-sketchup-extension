@@ -1761,7 +1761,9 @@ tab:
       tags: Badges
       layer_name: Balise
       explode: Eclater
-      explode_message: "Confirmez-vous l'éclatement de l'instance **{{ name }}** ?"
+      explode_message: "Confirmez-vous l'éclatement de **{{ name }}** ?"   # TODO text changed
+      erase: Effacer
+      erase_message: "Confirmez-vous l'effacement de **{{ name }}** ?"
     option:
       general: Générales
       show_hidden_instances: Afficher les instances masquées

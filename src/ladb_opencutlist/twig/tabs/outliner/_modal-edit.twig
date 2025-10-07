@@ -92,8 +92,9 @@
 {% endblock %}
 
 {% block footerLeftInner %}
-    {% if node.type != 0 and not multiple %}{# 0 = TYPE_MODEL #}
-        <button class="btn btn-danger" id="ladb_outliner_node_explode"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-bomb"></i> {{ 'tab.outliner.edit_node.explode'|i18next }}...</button>
+    {% if node.type != 0 %}{# 0 = TYPE_MODEL #}
+        <button class="btn btn-danger" id="ladb_outliner_node_erase" data-toggle="tooltip" title="{{ 'tab.outliner.edit_node.erase'|i18next }}..."><i class="ladb-opencutlist-icon ladb-opencutlist-icon-trash"></i></button>
+        <button class="btn btn-default" id="ladb_outliner_node_explode"><i class="ladb-opencutlist-icon ladb-opencutlist-icon-bomb"></i> {{ 'tab.outliner.edit_node.explode'|i18next }}...</button>
     {% endif %}
 {% endblock %}
 

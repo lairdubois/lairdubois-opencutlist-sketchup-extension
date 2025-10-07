@@ -82,6 +82,15 @@ module Ladb::OpenCutList
       PLUGIN.register_command("outliner_explode") do |params|
         explode_command(params)
       end
+      PLUGIN.register_command("outliner_erase") do |params|
+        erase_command(params)
+      end
+      PLUGIN.register_command("outliner_deep_make_unique") do |params|
+        deep_make_unique_command(params)
+      end
+      PLUGIN.register_command("outliner_deep_rename") do |params|
+        deep_rename_command(params)
+      end
       PLUGIN.register_command("outliner_highlight") do |params|
         highlight_command(params)
       end
@@ -661,6 +670,36 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = OutlinerExplodeWorker.new(@outliner_def, **params)
+
+      # Run !
+      worker.run
+    end
+
+    def erase_command(params)
+      require_relative '../worker/outliner/outliner_erase_worker'
+
+      # Setup worker
+      worker = OutlinerEraseWorker.new(@outliner_def, **params)
+
+      # Run !
+      worker.run
+    end
+
+    def deep_make_unique_command(params)
+      require_relative '../worker/outliner/outliner_deep_make_unique_worker'
+
+      # Setup worker
+      worker = OutlinerDeepMakeUniqueWorker.new(@outliner_def, **params)
+
+      # Run !
+      worker.run
+    end
+
+    def deep_rename_command(params)
+      require_relative '../worker/outliner/outliner_deep_rename_worker'
+
+      # Setup worker
+      worker = OutlinerDeepRenameWorker.new(@outliner_def, **params)
 
       # Run !
       worker.run

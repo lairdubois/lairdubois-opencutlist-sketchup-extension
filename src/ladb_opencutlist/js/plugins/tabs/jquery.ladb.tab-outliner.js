@@ -259,11 +259,36 @@
                             }
                             items.push({ separator: true });
                             items.push({
+                                icon: 'make-unique',
+                                text: 'Deep Make Unique...',
+                                callback: function () {
+                                    alert("TODO");
+                                },
+                                disabled: node.computed_locked
+                            });
+                            items.push({
+                                icon: 'input-field',
+                                text: 'Deep Rename...',
+                                callback: function () {
+                                    alert("TODO");
+                                },
+                                disabled: node.computed_locked
+                            });
+                            items.push({ separator: true });
+                            items.push({
                                 icon: 'bomb',
                                 text: i18next.t('tab.outliner.edit_node.explode') + '...',
-                                class: 'dropdown-item-danger',
                                 callback: function () {
                                     that.explodeNode(node);
+                                },
+                                disabled: node.computed_locked
+                            });
+                            items.push({
+                                icon: 'trash',
+                                text: i18next.t('tab.outliner.edit_node.erase') + '...',
+                                class: 'dropdown-item-danger',
+                                callback: function () {
+                                    that.eraseNode(node);
                                 },
                                 disabled: node.computed_locked
                             });
@@ -437,6 +462,7 @@
                 const $inputDescription = $('#ladb_outliner_node_input_description', $modal);
                 const $inputUrl = $('#ladb_outliner_node_input_url', $modal);
                 const $inputTags = $('#ladb_outliner_node_input_tags', $modal);
+                const $btnErase = $('#ladb_outliner_node_erase', $modal);
                 const $btnExplode = $('#ladb_outliner_node_explode', $modal);
                 const $btnUpdate = $('#ladb_outliner_node_update', $modal);
 
@@ -488,6 +514,14 @@
                     });
 
                 // Bind buttons
+                $btnErase.on('click', function () {
+                    that.eraseNode(editedNode, function () {
+
+                        // Hide modal
+                        $modal.modal('hide');
+
+                    });
+                });
                 $btnExplode.on('click', function () {
                     that.explodeNode(editedNode, function () {
 
@@ -638,6 +672,35 @@
         }, {
             confirmBtnType: 'danger',
             confirmBtnLabel: i18next.t('tab.outliner.edit_node.explode')
+        });
+
+    };
+
+    LadbTabOutliner.prototype.eraseNode = function (node, callback = undefined) {
+        let that = this;
+
+        that.dialog.confirm(i18next.t('default.caution'), i18next.t('tab.outliner.edit_node.erase_message', {
+            name: node.selected ? that.getSelectedNodes().length + ' ' + i18next.t('tab.outliner.nodes') : this.computeNodeDisplayName(node)
+        }), function () {
+
+            rubyCallCommand('outliner_erase', { id: node.id }, function (response) {
+
+                if (response.errors) {
+                    that.dialog.notifyErrors(response.errors);
+                } else {
+
+                    // Callback
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+
+                }
+
+            });
+
+        }, {
+            confirmBtnType: 'danger',
+            confirmBtnLabel: i18next.t('tab.outliner.edit_node.erase')
         });
 
     };

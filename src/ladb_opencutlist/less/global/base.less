@@ -4,6 +4,10 @@
 
 html {
 
+  @media (max-width: @ladb-leftbar-width * 2) {
+    font-size: 100% !important;
+  }
+
   &.ladb-font-size-auto {
     @media screen {
       @media (min-width: @ladb-leftbar-width) and (max-height: 900px) {
@@ -11,9 +15,6 @@ html {
       }
       @media (min-width: @ladb-leftbar-width) and (max-height: 700px) {
         font-size: 80%;
-      }
-      @media (max-width: @ladb-leftbar-width * 2) {
-        font-size: 100%;
       }
     }
   }

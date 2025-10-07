@@ -457,7 +457,7 @@ LadbAbstractDialog.prototype.showContextMenu = function (clientX, clientY, items
                                 item.callback();
                             }
                         })
-                        .html(Twig.twig({ data: "<i class='ladb-opencutlist-icon-{{ icon }}'></i>&nbsp;{{ text|escape('html') }}" }).render(item))
+                        .html(Twig.twig({ data: "<div style='width: 1.2rem; display: inline-block; text-align: center;'><i class='ladb-opencutlist-icon-{{ icon }}'></i></div>&nbsp;{{ text|escape('html') }}" }).render(item))
                 ).addClass(item.class).addClass(item.disabled ? 'disabled' : '')
             )
         } else if (item.separator) {

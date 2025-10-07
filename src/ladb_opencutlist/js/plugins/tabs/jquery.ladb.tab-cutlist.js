@@ -3917,8 +3917,7 @@
     LadbTabCutlist.prototype.renderSelectionOnGroup = function (id) {
         const that = this;
         const $group = $('#ladb_group_' + id, this.$page);
-        const defs = [ 'packing', 'labels', 'layout' ];
-        $.each(defs, function () {
+        $.each([ 'packing', 'labels', 'layout' ], function () {
             const $btn = $('button.ladb-btn-group-' + this, $group);
             const $i = $('i', $btn);
             const clazz = 'ladb-opencutlist-icon-' + this + '-selection';
