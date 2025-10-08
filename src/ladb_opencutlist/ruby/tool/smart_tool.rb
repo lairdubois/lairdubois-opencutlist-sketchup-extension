@@ -5,11 +5,12 @@ module Ladb::OpenCutList
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/sanitizer_helper'
-  require_relative '../worker/cutlist/cutlist_generate_worker'
+  require_relative '../helper/part_helper'
   require_relative '../utils/dimension_utils'
   require_relative '../utils/hash_utils'
   require_relative '../utils/view_utils'
   require_relative '../model/geom/size3d'
+  require_relative '../model/cutlist/cutlist'
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/line_manipulator'
@@ -20,6 +21,7 @@ module Ladb::OpenCutList
     include LayerVisibilityHelper
     include FaceTrianglesHelper
     include SanitizerHelper
+    include PartHelper
     include CutlistObserverHelper
 
     MESSAGE_TYPE_DEFAULT = 0
@@ -1632,37 +1634,6 @@ module Ladb::OpenCutList
       end
     end
 
-    def _get_part_entity_path_from_path(path)
-      part_path = path
-      path.reverse_each { |entity|
-        return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
-        part_path = part_path[0...-1]
-      }
-    end
-
-    def _generate_part_from_path(path)
-      return nil unless path.is_a?(Array)
-
-      entity = path.last
-      return nil unless entity.is_a?(Sketchup::Drawingelement)
-
-      worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: entity, active_path: path[0...-1] }))
-      cutlist = worker.run
-
-      part = nil
-      cutlist.groups.each { |group|
-        group.parts.each { |p|
-          if p.def.definition_id == entity.definition.name
-            part = p
-            break
-          end
-        }
-        break unless part.nil?
-      }
-
-      part
-    end
-
   end
 
   # -----
@@ -1898,6 +1869,7 @@ module Ladb::OpenCutList
   module SmartActionHandlerPartHelper
 
     include FaceTrianglesHelper
+    include PartHelper
 
     COLOR_PART = Sketchup::Color.new(254, 222, 11, 200).freeze
     COLOR_PART_HIGHLIGHTED = Sketchup::Color.new(254, 222, 11, 255).freeze
@@ -2304,37 +2276,6 @@ module Ladb::OpenCutList
     end
 
     # -- UTILS --
-
-    def _get_part_entity_path_from_path(path)
-      part_path = path
-      path.reverse_each { |entity|
-        return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
-        part_path = part_path[0...-1]
-      }
-    end
-
-    def _generate_part_from_path(path)
-      return nil unless path.is_a?(Array)
-
-      entity = path.last
-      return nil unless entity.is_a?(Sketchup::Drawingelement)
-
-      worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: entity, active_path: path[0...-1] }))
-      cutlist = worker.run
-
-      part = nil
-      cutlist.groups.each { |group|
-        group.parts.each { |p|
-          if p.def.definition_id == entity.definition.name
-            part = p
-            break
-          end
-        }
-        break unless part.nil?
-      }
-
-      part
-    end
 
     def _instances_to_paths(instances, instance_paths, entities, path = [])
       entities.each do |entity|

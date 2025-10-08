@@ -1764,6 +1764,18 @@ tab:
       explode_message: "Confirmez-vous l'éclatement de **{{ name }}** ?"   # TODO text changed
       erase: Effacer
       erase_message: "Confirmez-vous l'effacement de **{{ name }}** ?"
+    deep_make_unique:
+      title: Rendre unique
+    deep_rename_parts:
+      title: Renommer les pièces
+      info_0: |
+        Cette fonctionnalité vous permet de renommer les pièces présentes dans l'ensemble sélectionné en applicant la formule ci-dessous à chaque instance.
+      formula: Formule
+      formula_help: |
+        Blabla
+    create_container:
+      title_group: "Créer un groupe"
+      title_component: "Créer un composant"
     option:
       general: Générales
       show_hidden_instances: Afficher les instances masquées

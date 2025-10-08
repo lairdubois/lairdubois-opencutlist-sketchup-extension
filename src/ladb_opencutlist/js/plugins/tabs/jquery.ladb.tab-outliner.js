@@ -260,7 +260,7 @@
                             items.push({ separator: true });
                             items.push({
                                 icon: 'make-unique',
-                                text: 'Deep Make Unique...',
+                                text: i18next.t('tab.outliner.deep_make_unique.title'),
                                 callback: function () {
                                     rubyCallCommand('outliner_deep_make_unique', { id: node.id }, function (response) {
 
@@ -274,20 +274,20 @@
                             });
                             items.push({
                                 icon: 'input-field',
-                                text: 'Deep Rename...',
+                                text: i18next.t('tab.outliner.deep_rename_parts.title') + '...',
                                 callback: function () {
 
                                     // Retrieve cutting diagram options
-                                    rubyCallCommand('core_get_model_preset', { dictionary: 'outliner_deep_rename_options' }, function (response) {
+                                    rubyCallCommand('core_get_model_preset', { dictionary: 'outliner_deep_rename_parts_options' }, function (response) {
 
-                                        const deepRenameOptions = response.preset;
+                                        const deepRenamePartsOptions = response.preset;
 
-                                        const $modal = that.appendModalInside('ladb_outliner_modal_deep_rename', 'tabs/outliner/_modal-deep-rename.twig', {});
+                                        const $modal = that.appendModalInside('ladb_outliner_modal_deep_rename_parts', 'tabs/outliner/_modal-deep-rename-parts.twig', {});
 
                                         // Fetch UI elements
                                         const $widgetPreset = $('.ladb-widget-preset', $modal);
                                         const $textareaFormula = $('#ladb_textarea_formula', $modal);
-                                        const $btnRename = $('#ladb_outliner_deep_rename', $modal);
+                                        const $btnRename = $('#ladb_outliner_deep_rename_parts', $modal);
 
                                         // Define useful functions
                                         const fnConvertToVariableDefs = function (vars) {
@@ -313,7 +313,7 @@
 
                                         $widgetPreset.ladbWidgetPreset({
                                             dialog: that.dialog,
-                                            dictionary: 'outliner_deep_rename_options',
+                                            dictionary: 'outliner_deep_rename_parts_options',
                                             fnFetchOptions: fnFetchOptions,
                                             fnFillInputs: fnFillInputs
 
@@ -321,26 +321,51 @@
                                         $textareaFormula.ladbTextinputCode({
                                             variableDefs: fnConvertToVariableDefs([
                                                 { name: 'path', type: 'path' },
+                                                { name: 'instance_name', type: 'string' },
                                                 { name: 'name', type: 'string' },
+                                                { name: 'cutting_length', type: 'length' },
+                                                { name: 'cutting_width', type: 'length' },
+                                                { name: 'cutting_thickness', type: 'length' },
+                                                { name: 'edge_cutting_length', type: 'length' },
+                                                { name: 'edge_cutting_width', type: 'length' },
+                                                { name: 'bbox_length', type: 'length' },
+                                                { name: 'bbox_width', type: 'length' },
+                                                { name: 'bbox_thickness', type: 'length' },
+                                                { name: 'final_area', type: 'area' },
+                                                { name: 'material', type: 'material' },
+                                                { name: 'material_type', type: 'material-type' },
+                                                { name: 'material_name', type: 'string' },
+                                                { name: 'material_description', type: 'string' },
+                                                { name: 'material_url', type: 'string' },
+                                                { name: 'description', type: 'string' },
+                                                { name: 'url', type: 'string' },
+                                                { name: 'tags', type: 'array' },
+                                                { name: 'edge_ymin', type: 'edge' },
+                                                { name: 'edge_ymax', type: 'edge' },
+                                                { name: 'edge_xmin', type: 'edge' },
+                                                { name: 'edge_xmax', type: 'edge' },
+                                                { name: 'face_zmax', type: 'veneer' },
+                                                { name: 'face_zmin', type: 'veneer' },
+                                                { name: 'layer', type: 'string' },
                                                 { name: 'component_definition', type: 'component_definition' },
-                                                { name: 'component_instance', type: 'component_instance' }
+                                                { name: 'component_instance', type: 'component_instance' },
                                             ])
                                         });
 
-                                        fnFillInputs(deepRenameOptions);
+                                        fnFillInputs(deepRenamePartsOptions);
 
                                         // Bind buttons
                                         $btnRename.on('click', function () {
 
                                             // Fetch options
-                                            fnFetchOptions(deepRenameOptions);
+                                            fnFetchOptions(deepRenamePartsOptions);
 
                                             // Store options
-                                            rubyCallCommand('core_set_model_preset', { dictionary: 'outliner_deep_rename_options', values: deepRenameOptions });
+                                            rubyCallCommand('core_set_model_preset', { dictionary: 'outliner_deep_rename_parts_options', values: deepRenamePartsOptions });
 
-                                            rubyCallCommand('outliner_deep_rename', $.extend({
+                                            rubyCallCommand('outliner_deep_rename_parts', $.extend({
                                                 id: node.id,
-                                            }, deepRenameOptions), function (response) {
+                                            }, deepRenamePartsOptions), function (response) {
 
                                                 if (response.errors) {
                                                     that.dialog.notifyErrors(response.errors);
@@ -365,6 +390,48 @@
                                 disabled: node.computed_locked
                             });
                             items.push({ separator: true });
+                            if (node.selected) {
+                                items.push({
+                                    icon: 'group',
+                                    text: i18next.t('tab.outliner.create_container.title_group') + '...',
+                                    callback: function () {
+                                        that.dialog.prompt(i18next.t('tab.outliner.create_container.title_group'), i18next.t('tab.outliner.edit_node.instance_name'), null, function (name) {
+                                            rubyCallCommand('outliner_create_container', {
+                                                id: node.id,
+                                                name: name,
+                                                component: false
+                                            }, function (response) {
+
+                                                if (response.errors) {
+                                                    that.dialog.notifyErrors(response.errors);
+                                                }
+
+                                            });
+                                        }, { emptyValueAllowed: true });
+                                    },
+                                    disabled: node.computed_locked
+                                });
+                                items.push({
+                                    icon: 'component',
+                                    text: i18next.t('tab.outliner.create_container.title_component') + '...',
+                                    callback: function () {
+                                        that.dialog.prompt(i18next.t('tab.outliner.create_container.title_component'), i18next.t('tab.outliner.edit_node.definition_name'), i18next.t('tab.outliner.type_2'), function (name) {
+                                            rubyCallCommand('outliner_create_container', {
+                                                id: node.id,
+                                                name: name,
+                                                component: true
+                                            }, function (response) {
+
+                                                if (response.errors) {
+                                                    that.dialog.notifyErrors(response.errors);
+                                                }
+
+                                            });
+                                        });
+                                    },
+                                    disabled: node.computed_locked
+                                });
+                            }
                             items.push({
                                 icon: 'bomb',
                                 text: i18next.t('tab.outliner.edit_node.explode') + '...',
@@ -373,6 +440,7 @@
                                 },
                                 disabled: node.computed_locked
                             });
+                            items.push({ separator: true });
                             items.push({
                                 icon: 'trash',
                                 text: i18next.t('tab.outliner.edit_node.erase') + '...',

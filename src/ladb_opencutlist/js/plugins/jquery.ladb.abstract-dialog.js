@@ -328,14 +328,20 @@ LadbAbstractDialog.prototype.prompt = function (title, text, value, callback, op
         options: options
     });
 
+    options = $.extend({
+        emptyValueAllowed: false
+    }, options);
+
     // Fetch UI elements
     const $input = $('#ladb_prompt_input', $modal);
     const $btnValidate = $('#ladb_prompt_btn_validate', $modal);
 
     // Bind input
-    $input.on('keyup change', function () {
-        $btnValidate.prop('disabled', $(this).val().trim().length === 0);
-    });
+    if (options.emptyValueAllowed !== true) {
+        $input.on('keyup change', function () {
+            $btnValidate.prop('disabled', $(this).val().trim().length === 0);
+        });
+    }
 
     // Bind buttons
     $btnValidate.on('click', function() {
@@ -350,7 +356,9 @@ LadbAbstractDialog.prototype.prompt = function (title, text, value, callback, op
     });
 
     // State
-    $btnValidate.prop('disabled', $input.val().trim().length === 0);
+    if (options.emptyValueAllowed !== true) {
+        $btnValidate.prop('disabled', $input.val().trim().length === 0);
+    }
 
     // Show modal
     $modal.modal('show');

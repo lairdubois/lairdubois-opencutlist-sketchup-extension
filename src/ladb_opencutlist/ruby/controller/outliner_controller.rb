@@ -88,8 +88,11 @@ module Ladb::OpenCutList
       PLUGIN.register_command("outliner_deep_make_unique") do |params|
         deep_make_unique_command(params)
       end
-      PLUGIN.register_command("outliner_deep_rename") do |params|
-        deep_rename_command(params)
+      PLUGIN.register_command("outliner_deep_rename_parts") do |params|
+        deep_rename_parts_command(params)
+      end
+      PLUGIN.register_command("outliner_create_container") do |params|
+        create_container_command(params)
       end
       PLUGIN.register_command("outliner_highlight") do |params|
         highlight_command(params)
@@ -368,6 +371,7 @@ module Ladb::OpenCutList
       # puts "onElementAdded: #{entity} (#{entity.object_id}) in (#{entity.definition.object_id if entity.respond_to?(:definition)})"
 
       return unless @worker
+      return if entity.deleted?
 
       if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
 
@@ -409,6 +413,7 @@ module Ladb::OpenCutList
       # puts "onElementModified: #{entity} (#{entity.object_id})"
 
       return unless @worker
+      return if entity.deleted?
 
       if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Model)
 
@@ -695,15 +700,28 @@ module Ladb::OpenCutList
       worker.run
     end
 
-    def deep_rename_command(params)
-      require_relative '../worker/outliner/outliner_deep_rename_worker'
+    def deep_rename_parts_command(params)
+      require_relative '../worker/outliner/outliner_deep_rename_parts_worker'
 
       # Setup worker
-      worker = OutlinerDeepRenameWorker.new(@outliner_def, **params)
+      worker = OutlinerDeepRenamePartsWorker.new(@outliner_def, **params)
 
       # Run !
       worker.run
     end
+
+
+    def create_container_command(params)
+      require_relative '../worker/outliner/outliner_create_container_worker'
+
+      # Setup worker
+      worker = OutlinerCreateContainerWorker.new(@outliner_def, **params)
+
+      # Run !
+      worker.run
+    end
+
+
 
     def highlight_command(params)
       require_relative '../overlay/highlight_overlay'

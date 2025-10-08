@@ -1,0 +1,31 @@
+{% extends 'core/_modal.twig' %}
+
+{% set id = 'ladb_outliner_modal_deep_rename_parts' %}
+{% set title = 'tab.outliner.deep_rename_parts.title'|i18next %}
+
+{% block headerToolsInner %}
+    {% include 'components/_widget-preset.twig' %}
+    <button class="btn btn-default btn-xs" data-help-page="outliner.deep_rename_parts"><i class="ladb-opencutlist-icon-help"></i> {{ 'default.help'|i18next }}</button>
+{% endblock %}
+
+{% block bodyInner %}
+    <div class="row">
+        <div class="col-xs-push-1 col-xs-10">
+            {{ 'tab.outliner.deep_rename_parts.info_0'|i18next }}
+        </div>
+    </div>
+    <div class="form row">
+        <div class="form-group" style="padding-top: 10px;">
+            <label class="control-label col-xs-offset-1 col-xs-10">Formule <small style="font-weight: normal;">(Ruby)</small></label>
+            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.outliner.deep_rename_parts.option_formula_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+            <div class="col-xs-offset-1 col-xs-10">
+                <textarea id="ladb_textarea_formula" class="form-control" placeholder="{{ 'tab.cutlist.export.name'|i18next }}"></textarea>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footerRightInner %}
+    <button class="btn btn-default" data-dismiss="modal">{{ 'default.cancel'|i18next }}</button>
+    <button class="btn btn-primary" id="ladb_outliner_deep_rename_parts">{{ 'default.rename'|i18next }}</button>
+{% endblock %}

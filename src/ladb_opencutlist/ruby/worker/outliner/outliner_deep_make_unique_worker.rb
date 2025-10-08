@@ -27,44 +27,39 @@ module Ladb::OpenCutList
 
       entity = node_def.entity
       return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
-      return { :errors => [ 'default.error' ] } unless entity.respond_to?(:explode)
 
       # Start model modification operation
       model.start_operation('OCL Outliner Deep Make Unique', true, false, false)
 
 
-        root_entities = []
-        if node_def.selected
-          root_entities.concat(model.selection.to_a)
-        else
-          root_entities.push(entity)
-        end
+      if node_def.selected
+        node_defs = node_def.parent.children.map { |child_node_def| child_node_def if child_node_def.selected }.compact
+      else
+        node_defs = [ node_def ]
+      end
 
-        di = {}
-        fn_populate_di = lambda { |entity|
-          entity.make_unique if entity.is_a?(Sketchup::Group) # Force Groups to be unique
-          if entity.respond_to?(:definition)
-            if entity.definition.count_instances > 1
-              di[entity.definition] = [] unless di.has_key?(entity.definition)
-              di[entity.definition] << entity
-            end
-            entity.definition.entities.each do |e|
-              fn_populate_di.call(e)
-            end
-          end
-        }
-        root_entities.each do |e|
-          fn_populate_di.call(e)
+      di = {} # Definition => Instances
+      fn_populate_di = lambda { |node_def|
+        next if node_def.entity.deleted?
+        node_def.entity.make_unique if node_def.entity.is_a?(Sketchup::Group) # Force Groups to be unique
+        if node_def.entity.definition.count_instances > 1
+          di[node_def.entity.definition] = [] unless di.has_key?(node_def.entity.definition)
+          di[node_def.entity.definition] << node_def.entity
         end
+        node_def.children.each do |child_node_def|
+          fn_populate_di.call(child_node_def)
+        end
+      }
+      node_defs.each { |node_def| fn_populate_di.call(node_def) }
 
-        di.each do |definition, entities|
-          next if entities.size == definition.count_instances   # All instances are there
-          entities.uniq!
-          new_definition = entities.shift.make_unique.definition
-          entities.each do |e|
-            e.definition = new_definition
-          end
+      di.each do |definition, instances|
+        next if instances.size == definition.count_instances   # All instances are there
+        instances.uniq!
+        new_definition = instances.shift.make_unique.definition
+        instances.each do |instance|
+          instance.definition = new_definition
         end
+      end
 
 
       # Commit model modification operation

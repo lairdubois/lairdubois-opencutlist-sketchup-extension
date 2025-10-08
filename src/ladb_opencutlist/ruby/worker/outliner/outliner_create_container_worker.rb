@@ -1,16 +1,22 @@
 module Ladb::OpenCutList
 
-  class OutlinerEraseWorker
+  class OutlinerCreateContainerWorker
 
     def initialize(outliner_def,
 
-                   id:
+                   id:,
+
+                   name: nil,
+                   component: false
 
     )
 
       @outliner_def = outliner_def
 
       @id = id
+
+      @name = name
+      @component = component
 
     end
 
@@ -27,10 +33,9 @@ module Ladb::OpenCutList
 
       entity = node_def.entity
       return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
-      return { :errors => [ 'default.error' ] } unless entity.respond_to?(:explode)
 
       # Start model modification operation
-      model.start_operation('OCL Outliner Erease', true, false, false)
+      model.start_operation('OCL Outliner Create Container', true, false, false)
 
 
       if node_def.selected
@@ -39,14 +44,11 @@ module Ladb::OpenCutList
         node_defs = [ node_def ]
       end
 
-      model.selection.clear
-      node_defs
-        .map { |node_def| node_def.entity }
-        .select { |e| !e.deleted? }
-        .group_by { |e| e.parent }
-        .each do |parent, entities|
-        parent.entities.erase_entities(entities)
-      end
+      entities = node_defs.map { |node_def| node_def.entity }
+      group = entity.parent.entities.add_group(entities)
+
+      group.name = group.definition.name = @name unless @name.nil?
+      group.to_component if @component
 
 
       # Commit model modification operation
