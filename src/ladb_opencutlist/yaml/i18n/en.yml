@@ -1762,6 +1762,20 @@ tab:
       layer_name: Tag
       explode: Explode
       explode_message: "Do you confirm the explosion of instance **{{ name }}**?"
+      erase: Erase
+      erase_message: "Do you confirm the deletion of **{{ name }}**?"
+    deep_make_unique:
+      title: Make Unique
+    deep_rename_parts:
+      title: Rename Parts
+      info_0: |
+        Cette fonctionnalité vous permet de renommer les pièces présentes dans l'ensemble sélectionné en applicant la formule ci-dessous à chaque instance.
+      formula: Formule
+      formula_help: |
+        Blabla
+    create_container:
+      title_group: "Create a group"
+      title_component: "Create a component"
     option:
       general: General
       show_hidden_instances: Show hidden instances

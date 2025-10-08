@@ -1762,6 +1762,20 @@ tab:
       layer_name: Tag
       explode: Explodieren
       explode_message: "Bestätigen Sie die Explosion der Instanz **{{ name }}**?"
+      erase: Löschen
+      erase_message: "Bestätigen Sie die Löschung von **{{ name }}**?"
+    deep_make_unique:
+      title: Einzigartig machen
+    deep_rename_parts:
+      title: Teile umbenennen
+      info_0: |
+        Mit dieser Funktion können Sie die Teile in der Auswahl umbenennen, indem Sie die unten stehende Formel auf jede Instanz anwenden.
+      formula: Formel
+      formula_help: |
+        Geschwätz
+    create_container:
+      title_group: "Gruppe erstellen"
+      title_component: "Komponente erstellen"
     option:
       general: Allgemein
       show_hidden_instances: Ausgeblendete Instanzen anzeigen
