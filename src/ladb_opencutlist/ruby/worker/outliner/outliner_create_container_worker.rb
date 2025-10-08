@@ -45,10 +45,13 @@ module Ladb::OpenCutList
       end
 
       entities = node_defs.map { |node_def| node_def.entity }
-      group = entity.parent.entities.add_group(entities)
+      instance = group = entity.parent.entities.add_group(entities)
 
       group.name = group.definition.name = @name unless @name.nil?
-      group.to_component if @component
+      instance = group.to_component if @component
+
+      model.selection.clear
+      model.selection.add(instance)
 
 
       # Commit model modification operation
