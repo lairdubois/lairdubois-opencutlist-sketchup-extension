@@ -1129,6 +1129,11 @@ tab:
       option_hide_edges_preview_0: Отображать на диаграмме
       option_hide_edges_preview_1: Скрывать на диаграмме
       option_hide_edges_preview_help: "Позволяет отображать или скрывать визуальную индикацию краев поверхности, на которую необходимо нанести декоративное покрытие, для каждой детали на эскизе карты раскроя.."
+      option_zoom_threshold: Порог масштабирования
+      option_zoom_threshold_help: |
+        Позволяет задать ширину участка диаграммы, при которой диаграммы автоматически увеличиваются.
+
+        *Увеличение будет рассчитываться по самому широкому участку диаграммы*.
       option_time_limit: Ограничение по времени
       option_time_limit_help: |
         Устанавливает время, отведенное для расчета
@@ -1744,6 +1749,8 @@ tab:
     edit_node:
       title_model: "Свойства модели"
       title_instance: "Свойства экземпляра **{{ name }}**"
+      title_instance_multiple: "Свойства группы экземпляров"
+      multiple_alert: "Общие свойства группы из {{ node_count }} экземпляров."
       general: Общие
       name: Определение
       instance_name: Экземпляр
@@ -1926,6 +1933,7 @@ tab:
     language_auto: Автоматический
     font_size: Размер текста
     font_size_auto: $t(default.automatic)
+    font_size_normal: Нормальный
     font_size_small: Малый
     font_size_tiny: Маленький
     print_margin: Поля печати
