@@ -135,7 +135,7 @@ module Ladb::OpenCutList
           instances.each do |instance|
             instance.definition = new_definition
           end
-          new_definition.name = name
+          new_definition.name = name if name != new_definition.name
         end
 
         model.definitions.remove(definition) if definition.count_instances == 0

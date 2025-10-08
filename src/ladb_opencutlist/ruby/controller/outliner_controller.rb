@@ -368,13 +368,14 @@ module Ladb::OpenCutList
     # Entities Observer
 
     def onElementAdded(entities, entity)
-      # puts "onElementAdded: #{entity} (#{entity.object_id}) in (#{entity.definition.object_id if entity.respond_to?(:definition)})"
+      # puts "onElementAdded: #{entity} (#{entity.entityID}) in (#{entity.parent.entityID if entity.respond_to?(:entityID)})"
 
       return unless @worker
       return if entity.deleted?
 
       if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
 
+        need_to_compute_selection = false
         face_bounds_cache = {}
 
         parent = entity.parent
@@ -382,12 +383,12 @@ module Ladb::OpenCutList
         parent_instances.each do |instance|
 
           entity_id = instance.is_a?(Sketchup::Entity) ? instance.entityID : 'model'
-          node_defs = @outliner_def.get_node_defs_by_entity_id(entity_id)
-          if node_defs
+          unless (node_defs = @outliner_def.get_node_defs_by_entity_id(entity_id)).nil?
             node_defs.each do |node_def|
 
-              child_node_def = @worker.run(:create_node_def, { entity: entity, path: node_def.path, face_bounds_cache: face_bounds_cache })
-              if child_node_def
+              unless (child_node_def = @worker.run(:create_node_def, { entity: entity, path: node_def.path, face_bounds_cache: face_bounds_cache })).nil?
+
+                need_to_compute_selection = true if Sketchup.active_model.selection.include?(entity)
 
                 node_def.add_child(child_node_def)
                 node_def.invalidate
@@ -401,6 +402,8 @@ module Ladb::OpenCutList
           end
         end
 
+        @worker.run(:compute_selection) if need_to_compute_selection
+
         trigger_boo
 
         start_observing_entities(entity)
@@ -410,7 +413,7 @@ module Ladb::OpenCutList
     end
 
     def onElementModified(entities, entity)
-      # puts "onElementModified: #{entity} (#{entity.object_id})"
+      # puts "onElementModified: #{entity} (#{entity.entityID})"
 
       return unless @worker
       return if entity.deleted?
@@ -472,12 +475,22 @@ module Ladb::OpenCutList
       # puts "onElementRemoved: #{entity_id}"
 
       return unless @worker
+      begin
+        entities.parent # Fail if parent is deleted
+      rescue
+        return
+      end
 
-      node_defs = @outliner_def.get_node_defs_by_entity_id(entity_id)
-      if node_defs
+      unless (node_defs = @outliner_def.get_node_defs_by_entity_id(entity_id)).nil?
 
-        node_defs.each do |node_def|
-          @worker.run(:destroy_node_def, { node_def: node_def })
+        parent = entities.parent
+        parent_instances = parent.is_a?(Sketchup::ComponentDefinition) ? parent.instances : [ parent ]
+        parent_instances.each do |instance|
+
+          node_defs.each do |node_def|
+            @worker.run(:destroy_node_def, { node_def: node_def }) if node_def.parent.entity == instance
+          end
+
         end
 
         trigger_boo
