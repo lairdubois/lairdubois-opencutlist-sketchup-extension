@@ -33,7 +33,38 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Deep Make Unique', true, false, false)
 
 
-      # TODO
+        root_entities = []
+        if node_def.selected
+          root_entities.concat(model.selection.to_a)
+        else
+          root_entities.push(entity)
+        end
+
+        di = {}
+        fn_populate_di = lambda { |entity|
+          entity.make_unique if entity.is_a?(Sketchup::Group) # Force Groups to be unique
+          if entity.respond_to?(:definition)
+            if entity.definition.count_instances > 1
+              di[entity.definition] = [] unless di.has_key?(entity.definition)
+              di[entity.definition] << entity
+            end
+            entity.definition.entities.each do |e|
+              fn_populate_di.call(e)
+            end
+          end
+        }
+        root_entities.each do |e|
+          fn_populate_di.call(e)
+        end
+
+        di.each do |definition, entities|
+          next if entities.size == definition.count_instances   # All instances are there
+          entities.uniq!
+          new_definition = entities.shift.make_unique.definition
+          entities.each do |e|
+            e.definition = new_definition
+          end
+        end
 
 
       # Commit model modification operation

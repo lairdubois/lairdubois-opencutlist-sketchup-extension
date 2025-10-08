@@ -262,7 +262,13 @@
                                 icon: 'make-unique',
                                 text: 'Deep Make Unique...',
                                 callback: function () {
-                                    alert("TODO");
+                                    rubyCallCommand('outliner_deep_make_unique', { id: node.id }, function (response) {
+
+                                        if (response.errors) {
+                                            that.dialog.notifyErrors(response.errors);
+                                        }
+
+                                    });
                                 },
                                 disabled: node.computed_locked
                             });
@@ -270,7 +276,91 @@
                                 icon: 'input-field',
                                 text: 'Deep Rename...',
                                 callback: function () {
-                                    alert("TODO");
+
+                                    // Retrieve cutting diagram options
+                                    rubyCallCommand('core_get_model_preset', { dictionary: 'outliner_deep_rename_options' }, function (response) {
+
+                                        const deepRenameOptions = response.preset;
+
+                                        const $modal = that.appendModalInside('ladb_outliner_modal_deep_rename', 'tabs/outliner/_modal-deep-rename.twig', {});
+
+                                        // Fetch UI elements
+                                        const $widgetPreset = $('.ladb-widget-preset', $modal);
+                                        const $textareaFormula = $('#ladb_textarea_formula', $modal);
+                                        const $btnRename = $('#ladb_outliner_deep_rename', $modal);
+
+                                        // Define useful functions
+                                        const fnConvertToVariableDefs = function (vars) {
+
+                                            // Generate variableDefs for formula editor
+                                            const variableDefs = [];
+                                            for (let i = 0; i < vars.length; i++) {
+                                                variableDefs.push({
+                                                    text: vars[i].name,
+                                                    displayText: i18next.t('tab.cutlist.export.' + vars[i].name),
+                                                    type: vars[i].type
+                                                });
+                                            }
+
+                                            return variableDefs;
+                                        };
+                                        const fnFetchOptions = function (options) {
+                                            options.formula = $textareaFormula.val();
+                                        };
+                                        const fnFillInputs = function (options) {
+                                            $textareaFormula.ladbTextinputCode('val', [ typeof options.formula == 'string' ? options.formula : '' ]);
+                                        };
+
+                                        $widgetPreset.ladbWidgetPreset({
+                                            dialog: that.dialog,
+                                            dictionary: 'outliner_deep_rename_options',
+                                            fnFetchOptions: fnFetchOptions,
+                                            fnFillInputs: fnFillInputs
+
+                                        });
+                                        $textareaFormula.ladbTextinputCode({
+                                            variableDefs: fnConvertToVariableDefs([
+                                                { name: 'path', type: 'path' },
+                                                { name: 'name', type: 'string' },
+                                                { name: 'component_definition', type: 'component_definition' },
+                                                { name: 'component_instance', type: 'component_instance' }
+                                            ])
+                                        });
+
+                                        fnFillInputs(deepRenameOptions);
+
+                                        // Bind buttons
+                                        $btnRename.on('click', function () {
+
+                                            // Fetch options
+                                            fnFetchOptions(deepRenameOptions);
+
+                                            // Store options
+                                            rubyCallCommand('core_set_model_preset', { dictionary: 'outliner_deep_rename_options', values: deepRenameOptions });
+
+                                            rubyCallCommand('outliner_deep_rename', $.extend({
+                                                id: node.id,
+                                            }, deepRenameOptions), function (response) {
+
+                                                if (response.errors) {
+                                                    that.dialog.notifyErrors(response.errors);
+                                                }
+
+                                            });
+
+                                            // Hide modal
+                                            $modal.modal('hide');
+
+                                        });
+
+                                        // Show modal
+                                        $modal.modal('show');
+
+                                        // Setup popovers
+                                        that.dialog.setupPopovers();
+
+                                    });
+
                                 },
                                 disabled: node.computed_locked
                             });
