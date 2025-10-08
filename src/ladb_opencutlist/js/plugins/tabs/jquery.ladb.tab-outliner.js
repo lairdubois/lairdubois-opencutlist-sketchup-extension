@@ -259,20 +259,6 @@
                             }
                             items.push({ separator: true });
                             items.push({
-                                icon: 'make-unique',
-                                text: i18next.t('tab.outliner.deep_make_unique.title'),
-                                callback: function () {
-                                    rubyCallCommand('outliner_deep_make_unique', { id: node.id }, function (response) {
-
-                                        if (response.errors) {
-                                            that.dialog.notifyErrors(response.errors);
-                                        }
-
-                                    });
-                                },
-                                disabled: node.computed_locked
-                            });
-                            items.push({
                                 icon: 'input-field',
                                 text: i18next.t('tab.outliner.deep_rename_parts.title') + '...',
                                 callback: function () {
@@ -386,6 +372,20 @@
 
                                     });
 
+                                },
+                                disabled: node.computed_locked
+                            });
+                            items.push({
+                                icon: 'make-unique',
+                                text: i18next.t('tab.outliner.deep_make_unique.title'),
+                                callback: function () {
+                                    rubyCallCommand('outliner_deep_make_unique', { id: node.id }, function (response) {
+
+                                        if (response.errors) {
+                                            that.dialog.notifyErrors(response.errors);
+                                        }
+
+                                    });
                                 },
                                 disabled: node.computed_locked
                             });

@@ -121,13 +121,16 @@ module Ladb::OpenCutList
 
           name = CommonEvalFormulaWorker.new(formula: @formula, data: data).run
 
+          # Check name integrity
+          return { :errors => [ name[:error] ] } unless name.is_a?(String)
+          next if name == definition.name || name.empty?
+
           ni[name] = [] unless ni.has_key?(name)
           ni[name] << instance_info.entity
 
         end
 
         ni.each do |name, instances|
-          next if name == definition.name || !name.is_a?(String) || name.empty?
           new_definition = instances.first.make_unique.definition
           instances.each do |instance|
             instance.definition = new_definition
