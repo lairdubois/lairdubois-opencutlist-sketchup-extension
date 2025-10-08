@@ -96,7 +96,7 @@ module Ladb::OpenCutList
         # Force "layout" file extension
         layout_path = layout_path + '.layout' unless layout_path.end_with?('.layout')
 
-        # Start model modification operation
+        # Start a model modification operation
         model.start_operation('OCL Export To Layout', true, false, true)
 
         # CREATE SKP FILE

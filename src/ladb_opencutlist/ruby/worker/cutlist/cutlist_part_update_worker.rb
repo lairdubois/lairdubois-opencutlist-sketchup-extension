@@ -93,7 +93,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
-      # Start model modification operation
+      # Start a model modification operation
       model.start_operation('OCL Part Update', true, false, true)
 
       definitions = model.definitions

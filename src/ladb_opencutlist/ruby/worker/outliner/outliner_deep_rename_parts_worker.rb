@@ -38,7 +38,7 @@ module Ladb::OpenCutList
       entity = node_def.entity
       return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
 
-      # Start model modification operation
+      # Start a model modification operation
       model.start_operation('OCL Outliner Deep Rename', true, false, false)
 
 
@@ -122,7 +122,7 @@ module Ladb::OpenCutList
           name = CommonEvalFormulaWorker.new(formula: @formula, data: data).run
 
           # Check name integrity
-          return { :errors => [ name[:error] ] } unless name.is_a?(String)
+          return { :errors => [ [ 'core.error.extern', name ] ] } unless name.is_a?(String)
           next if name == definition.name || name.empty?
 
           ni[name] = [] unless ni.has_key?(name)
