@@ -2501,6 +2501,11 @@ module Ladb::OpenCutList
     def onToolKeyDown(tool, key, repeat, flags, view)
       return if @state != STATE_HANDLE
 
+      if tool.is_key_shift?(key)
+        _refresh
+        return true
+      end
+
       if key == VK_RIGHT
         x_axis = _get_active_x_axis
         if @locked_axis == x_axis
@@ -2532,6 +2537,16 @@ module Ladb::OpenCutList
         UI.beep
       end
 
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      if tool.is_key_shift?(key)
+        _refresh
+        return true
+      end
+
+      super
     end
 
     def onStateChanged(state)
@@ -2659,6 +2674,12 @@ module Ladb::OpenCutList
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
+      if @tool.is_key_shift_down?
+        ray = [ @picked_handle_start_point, @picked_handle_start_point.vector_to(@mouse_snap_point) ]
+        position, entity = Sketchup.active_model.raytest(ray)
+        @mouse_snap_point = position unless position.nil?
+      end
+
     end
 
     def _preview_handle(view)
@@ -2715,13 +2736,26 @@ module Ladb::OpenCutList
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
       k_edge = Kuix::EdgeMotif.new
-      k_edge.start.copy!(@mouse_ip.position)
+      k_edge.start.copy!(@tool.is_key_shift_down? ? @mouse_snap_point : @mouse_ip.position)
       k_edge.end.copy!(lpe)
       k_edge.line_width = 1.5
       k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_edge.color = Kuix::COLOR_DARK_GREY
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
+
+      if @tool.is_key_shift_down?
+
+        k_edge = Kuix::EdgeMotif.new
+        k_edge.start.copy!(@picked_handle_start_point)
+        k_edge.end.copy!(@mouse_snap_point)
+        k_edge.line_width = 2.0
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
+        k_edge.color = color
+        k_edge.end_arrow = true
+        @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
+
+      end
 
       @tool.append_3d(_create_floating_points(points: [ @picked_handle_start_point ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
       @tool.append_3d(_create_floating_points(points: [ @picked_handle_start_point ], style: Kuix::POINT_STYLE_CIRCLE, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
