@@ -2501,7 +2501,7 @@ module Ladb::OpenCutList
     def onToolKeyDown(tool, key, repeat, flags, view)
       return if @state != STATE_HANDLE
 
-      if tool.is_key_shift?(key)
+      if tool.is_key_ctrl_or_option?(key)
         _refresh
         return true
       end
@@ -2541,7 +2541,7 @@ module Ladb::OpenCutList
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
 
-      if tool.is_key_shift?(key)
+      if tool.is_key_ctrl_or_option?(key)
         _refresh
         return true
       end
@@ -2674,7 +2674,7 @@ module Ladb::OpenCutList
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
 
-      if @tool.is_key_shift_down?
+      if @tool.is_key_ctrl_or_option_down?
         ray = [ @picked_handle_start_point, @picked_handle_start_point.vector_to(@mouse_snap_point) ]
         position, entity = Sketchup.active_model.raytest(ray)
         @mouse_snap_point = position unless position.nil?
@@ -2744,7 +2744,7 @@ module Ladb::OpenCutList
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
-      if @tool.is_key_shift_down?
+      if @tool.is_key_ctrl_or_option_down?
 
         k_edge = Kuix::EdgeMotif.new
         k_edge.start.copy!(@picked_handle_start_point)
@@ -2753,6 +2753,7 @@ module Ladb::OpenCutList
         k_edge.line_stipple = Kuix::LINE_STIPPLE_SOLID
         k_edge.color = color
         k_edge.end_arrow = true
+        k_edge.arrow_size = @tool.get_unit * 2.0
         @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
       end

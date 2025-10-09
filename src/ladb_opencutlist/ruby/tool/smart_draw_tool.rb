@@ -561,6 +561,10 @@ module Ladb::OpenCutList
           _refresh
           return true
         end
+        if tool.is_key_ctrl_or_option?(key)
+          _refresh
+          return true
+        end
 
       end
 
@@ -575,7 +579,8 @@ module Ladb::OpenCutList
         if tool.is_key_shift?(key)
           _refresh
           return true
-        elsif tool.is_key_ctrl_or_option?(key) && is_quick
+        end
+        if tool.is_key_ctrl_or_option?(key) && is_quick
           if tool.is_key_shift_down?
             unless @mouse_snap_face_manipulator.nil?
               if _set_picked_points_from_face_manipulator(@mouse_snap_face_manipulator, view)
@@ -598,8 +603,9 @@ module Ladb::OpenCutList
         if tool.is_key_shift?(key)
           _refresh
           return true
-        elsif tool.is_key_ctrl_or_option?(key) && is_quick
-          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED, !_fetch_option_pull_centered, true)
+        end
+        if tool.is_key_ctrl_or_option?(key)
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_PULL_CENTRED, !_fetch_option_pull_centered, true) if is_quick
           _refresh
           return true
         end
@@ -866,6 +872,12 @@ module Ladb::OpenCutList
         measure /= 2 if _fetch_option_pull_centered
         v = @picked_shape_end_point.vector_to(@mouse_snap_point)
         @mouse_snap_point = @picked_shape_end_point.offset(v, measure) if measure > 0 && v.valid?
+
+      # Raytest
+      elsif @tool.is_key_ctrl_or_option_down?
+        ray = [ @picked_shape_end_point, @picked_shape_end_point.vector_to(@mouse_snap_point) ]
+        position, entity = Sketchup.active_model.raytest(ray)
+        @mouse_snap_point = position unless position.nil?
       end
 
     end
@@ -2271,7 +2283,6 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE
-
         if tool.is_key_shift?(key)
           UI.beep if @@last_radius_measure == 0
           _refresh
@@ -2288,6 +2299,10 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE
+        if tool.is_key_shift?(key)
+          _refresh
+          return true
+        end
         if tool.is_key_ctrl_or_option?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_DIAMETER, !_fetch_option_measure_from_diameter, true)
           Sketchup.set_status_text(get_state_status(fetch_state), SB_PROMPT)
