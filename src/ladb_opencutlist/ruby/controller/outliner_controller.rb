@@ -476,21 +476,17 @@ module Ladb::OpenCutList
 
       return unless @worker
       begin
-        entities.parent # Fail if parent is deleted
+        parent = entities.parent # Fail if parent is deleted
       rescue
         return
       end
 
       unless (node_defs = @outliner_def.get_node_defs_by_entity_id(entity_id)).nil?
 
-        parent = entities.parent
         parent_instances = parent.is_a?(Sketchup::ComponentDefinition) ? parent.instances : [ parent ]
-        parent_instances.each do |instance|
 
-          node_defs.each do |node_def|
-            @worker.run(:destroy_node_def, { node_def: node_def }) if node_def.parent.entity == instance
-          end
-
+        node_defs.each do |node_def|
+          @worker.run(:destroy_node_def, { node_def: node_def }) if parent_instances.include?(node_def.parent.entity)
         end
 
         trigger_boo

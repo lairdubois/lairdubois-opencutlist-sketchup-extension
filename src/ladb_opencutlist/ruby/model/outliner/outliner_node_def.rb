@@ -115,6 +115,13 @@ module Ladb::OpenCutList
       @children.each { |child_node_def| child_node_def.invalidate(PROPAGATION_SELF | PROPAGATION_CHILDREN) unless child_node_def.invalidated? } if (propagation & PROPAGATION_CHILDREN == PROPAGATION_CHILDREN)
     end
 
+    # -----
+
+    def get_valid_selection_siblings
+      return self.parent.children.select { |node_def| node_def.selected && node_def.valid? } if self.selected
+      [ self ]  # Not selected, returns only itself
+    end
+
     def get_hashable
       raise NotImplementedError
     end

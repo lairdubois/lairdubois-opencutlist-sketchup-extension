@@ -23,7 +23,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.outliner.error.no_model' ] } unless model
 
       node_def = @outliner_def.get_node_def_by_id(@id)
-      return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def
+      return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def && node_def.valid?
 
       entity = node_def.entity
       return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?

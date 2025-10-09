@@ -23,7 +23,7 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.outliner.error.no_model' ] } unless model
 
       node_def = @outliner_def.get_node_def_by_id(@id)
-      return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def
+      return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def && node_def.valid?
 
       entity = node_def.entity
       return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
@@ -37,12 +37,12 @@ module Ladb::OpenCutList
         visible = !entity.visible?
 
         if node_def.selected
-          # Apply visibility change to selected entities
-          model.selection.each do |entity|
-            entity.visible = visible
-          end
+          node_defs = node_def.parent.children.map { |child_node_def| child_node_def if child_node_def.selected && child_node_def.valid? }.compact
         else
-          entity.visible = !entity.visible?
+          node_defs = [ node_def ]
+        end
+        node_defs.each do |node_def|
+          node_def.visible = visible
         end
 
       rescue
