@@ -59,7 +59,9 @@ module Ladb::OpenCutList
     end
 
     def valid?
-      !@entity.nil? && @entity.valid?
+      return false unless @path.is_a?(Array) && !@path.empty?
+      return false if @path.empty?
+      @path.all? { |e| e.valid? }
     end
 
     def locked?

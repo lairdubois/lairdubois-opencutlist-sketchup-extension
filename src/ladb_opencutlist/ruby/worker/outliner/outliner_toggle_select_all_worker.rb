@@ -23,7 +23,7 @@ module Ladb::OpenCutList
       begin
 
         if model.selection.empty?
-          model.selection.add(model.active_entities.to_a)
+          model.selection.invert
         else
           model.selection.clear
         end

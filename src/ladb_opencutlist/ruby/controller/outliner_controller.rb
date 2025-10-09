@@ -753,7 +753,7 @@ module Ladb::OpenCutList
         ids.each do |id|
 
           node_def = @outliner_def.get_node_def_by_id(id)
-          if node_def && !node_def.is_a?(OutlinerNodeModelDef)
+          if node_def && !node_def.is_a?(OutlinerNodeModelDef) && node_def.valid?
 
             name = [ node_def.name, node_def.respond_to?(:definition_name) ? "<#{node_def.definition_name}>" : nil ].compact.join(' ')
             color = node_def.computed_visible? ? Kuix::COLOR_RED : Kuix::COLOR_DARK_GREY
