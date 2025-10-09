@@ -134,6 +134,10 @@ module Ladb::OpenCutList
       TYPE_MODEL
     end
 
+    def valid?
+      true
+    end
+
     # -----
 
     def get_hashable

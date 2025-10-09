@@ -85,6 +85,9 @@ module Ladb::OpenCutList
       PLUGIN.register_command("outliner_erase") do |params|
         erase_command(params)
       end
+      PLUGIN.register_command("outliner_move") do |params|
+        move_command(params)
+      end
       PLUGIN.register_command("outliner_deep_make_unique") do |params|
         deep_make_unique_command(params)
       end
@@ -331,7 +334,7 @@ module Ladb::OpenCutList
       # puts "onComponentAdded: #{definition} (#{definition.object_id})"
 
       # Refresh internally created groups definition
-      if definition.group? && definition.count_used_instances > 0
+      if definition.valid? && definition.group? && definition.count_used_instances > 0
 
         definition.instances.each do |instance|
 
@@ -694,6 +697,16 @@ module Ladb::OpenCutList
 
       # Setup worker
       worker = OutlinerEraseWorker.new(@outliner_def, **params)
+
+      # Run !
+      worker.run
+    end
+
+    def move_command(params)
+      require_relative '../worker/outliner/outliner_move_worker'
+
+      # Setup worker
+      worker = OutlinerMoveWorker.new(@outliner_def, **params)
 
       # Run !
       worker.run

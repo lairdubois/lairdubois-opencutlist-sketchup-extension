@@ -458,6 +458,43 @@
                         e.preventDefault();
                     })
                 ;
+
+                $row
+                    .on('dragstart', function (e) {
+                        fnMouseLeave();
+                        let dataTransfer = e.originalEvent.dataTransfer;
+                        dataTransfer.effectAllowed = 'move';
+                        dataTransfer.clearData();
+                        dataTransfer.setData("text/plain", that.computeNodeDisplayName(node));
+                        dataTransfer.setData("node_id", node.id);
+                    })
+                    .on('dragenter', function (e) {
+                        $row.addClass('ladb-dragover');
+                    })
+                    .on('dragleave', function (e) {
+                        $row.removeClass('ladb-dragover');
+                    })
+                    .on('dragover', function (e) {
+                        e.preventDefault();
+                        let dataTransfer = e.originalEvent.dataTransfer;
+                        dataTransfer.dropEffect = 'move';
+                    })
+                    .on('drop', function (e) {
+                        e.preventDefault();
+                        $row.removeClass('ladb-dragover');
+                        const draggedNode = that.findNodeById(e.originalEvent.dataTransfer.getData("node_id"));
+                        if (draggedNode) {
+                            console.log('drop', that.computeNodeDisplayName(draggedNode) + " -> " + that.computeNodeDisplayName(node));
+                            rubyCallCommand('outliner_move', { id: draggedNode.id, target_id: node.id }, function (response) {
+
+                                if (response.errors) {
+                                    that.dialog.notifyErrors(response.errors);
+                                }
+
+                            });
+                        }
+                    })
+                ;
                 $('a.ladb-btn-node-toggle-folding', $row).on('click', function () {
                     $(this).blur();
 

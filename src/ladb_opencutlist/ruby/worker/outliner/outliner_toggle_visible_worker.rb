@@ -42,10 +42,10 @@ module Ladb::OpenCutList
           node_defs = [ node_def ]
         end
         node_defs.each do |node_def|
-          node_def.visible = visible
+          node_def.entity.visible = visible
         end
 
-      rescue
+      rescue => e
         return { :errors => [ 'default.error' ] }
       end
 

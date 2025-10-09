@@ -62,6 +62,20 @@
 
     }
 
+    &.ladb-dragover {
+      background-color: lighten(@ladb-brand-success, 40%);
+
+      td.table-cell-fluid {
+        background-color: lighten(@ladb-brand-success, 30%);
+
+        > .table-cell-fluid-inner {
+          background-color: lighten(@ladb-brand-success, 40%);
+        }
+
+      }
+
+    }
+
     &.ladb-hidden {
       .ladb-outliner-node-type,
       .ladb-outliner-node-name,
