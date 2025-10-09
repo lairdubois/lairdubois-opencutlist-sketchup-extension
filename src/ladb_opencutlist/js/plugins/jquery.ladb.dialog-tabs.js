@@ -669,7 +669,7 @@
             } else if (e.keyCode === 13) {   // Only intercept "enter" key
 
                 const $target = $(e.target);
-                if (!$target.is('input[type=text]')) {  // Only intercept if focus is on input[type=text] field
+                if (!$target.is('input[type=text]') && !$target.is('.modal')) {  // Only intercept if focus is on input[type=text] field
                     return;
                 }
                 $target.blur(); // Blur target to be sure "change" event occur before
