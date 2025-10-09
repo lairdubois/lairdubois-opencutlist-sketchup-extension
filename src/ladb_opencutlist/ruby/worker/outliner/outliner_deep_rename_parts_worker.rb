@@ -44,12 +44,12 @@ module Ladb::OpenCutList
 
       node_defs = node_def.get_valid_selection_siblings
 
-      dp = {} # Definition => Parts
+      d_nps = {} # Definition => NodeDefs, Parts
       fn_populate_dn = lambda { |node_def|
         if node_def.type == OutlinerNodeModelDef::TYPE_PART && !node_def.entity.deleted?
           unless (part = _generate_part_from_path(node_def.path)).nil?
-            dp[node_def.entity.definition] = [] unless dp.has_key?(node_def.entity.definition)
-            dp[node_def.entity.definition] << part
+            d_nps[node_def.entity.definition] = [] unless d_nps.has_key?(node_def.entity.definition)
+            d_nps[node_def.entity.definition] << [ node_def, part ]
           end
         end
         node_def.children.each do |child_node_def|
@@ -58,10 +58,10 @@ module Ladb::OpenCutList
       }
       node_defs.each { |node_def| fn_populate_dn.call(node_def) }
 
-      dp.each do |definition, parts|
+      d_nps.each do |definition, nps|
 
-        ni = {} # NodeDef => Instances
-        parts.each do |part|
+        n_ns = {} # Name => NodeDefs
+        nps.each do |node_def, part|
 
           group = part.group
           instance_info = part.def.get_one_instance_info
@@ -121,15 +121,15 @@ module Ladb::OpenCutList
           return { :errors => [ [ 'core.error.extern', name ] ] } unless name.is_a?(String)
           next if name == definition.name || name.empty?
 
-          ni[name] = [] unless ni.has_key?(name)
-          ni[name] << instance_info.entity
+          n_ns[name] = [] unless n_ns.has_key?(name)
+          n_ns[name] << node_def
 
         end
 
-        ni.each do |name, instances|
-          new_definition = instances.first.make_unique.definition
-          instances.each do |instance|
-            instance.definition = new_definition
+        n_ns.each do |name, node_defs|
+          new_definition = node_defs.first.entity.make_unique.definition
+          node_defs.each do |node_def|
+            node_def.entity.definition = new_definition
           end
           new_definition.name = name if name != new_definition.name
         end
