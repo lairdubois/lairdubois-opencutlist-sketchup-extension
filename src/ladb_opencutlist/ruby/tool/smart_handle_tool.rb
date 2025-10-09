@@ -258,6 +258,9 @@ module Ladb::OpenCutList
     LAYER_3D_HANDLE_PREVIEW = 1
     LAYER_3D_AXES_PREVIEW = 2
 
+    attr_reader :picked_handle_start_point,
+                :picked_handle_end_point
+
     def initialize(action, tool, previous_action_handler = nil)
       super
 
@@ -2426,6 +2429,8 @@ module Ladb::OpenCutList
 
   class SmartHandleDistributeActionHandler < SmartHandleTwoStepActionHandler
 
+    attr_reader :number
+
     def initialize(tool, previous_action_handler = nil)
       super(SmartHandleTool::ACTION_DISTRIBUTE, tool, previous_action_handler)
 
@@ -2469,6 +2474,29 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def onToolLButtonDoubleClick(tool, flags, x, y, view)
+      if @previous_action_handler.is_a?(self.class)
+
+        unless @previous_action_handler.number.nil? ||
+               @previous_action_handler.picked_handle_start_point.nil? ||
+               @previous_action_handler.picked_handle_end_point.nil?
+
+          @number = @previous_action_handler.number
+          @picked_handle_start_point = @previous_action_handler.picked_handle_start_point
+          @picked_handle_end_point = @previous_action_handler.picked_handle_end_point
+
+          _handle_entity
+          set_state(STATE_HANDLE_COPIES)
+          _restart
+
+        end
+
+      else
+        UI.beep
+      end
+      true
+    end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
       return if @state != STATE_HANDLE
@@ -2827,12 +2855,12 @@ module Ladb::OpenCutList
         entities.erase_entities(old_instances) if old_instances.any?
         @instances = [ src_instance ]
 
-        (0...number).each do |i|
+        (1..number).each do |i|
 
-          mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * (i + 1) / (number + 1.0))))
+          mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * i / (number + 1.0))))
           mt *= @src_transformation
 
-          if i == 0
+          if i == 1
 
             src_instance.transformation = mt
 
