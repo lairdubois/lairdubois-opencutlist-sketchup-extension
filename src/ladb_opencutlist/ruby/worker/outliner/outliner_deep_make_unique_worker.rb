@@ -32,7 +32,7 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Deep Make Unique', true, false, false)
 
 
-      node_defs = node_def.get_valid_selection_siblings
+      node_defs = node_def.get_valid_unlocked_selection_siblings
 
       di = {} # Definition => Instances
       fn_populate_di = lambda { |node_def|

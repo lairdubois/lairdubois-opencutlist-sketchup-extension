@@ -52,7 +52,7 @@ module Ladb::OpenCutList
         target_entities = target_entity.entities
       end
 
-      node_defs = node_def.get_valid_selection_siblings
+      node_defs = node_def.get_valid_unlocked_selection_siblings
       node_defs.each do |node_def|
 
         # Compute node transformation
@@ -69,8 +69,10 @@ module Ladb::OpenCutList
 
       end
 
-      model.selection.clear
-      model.active_path = target_node_def.path if model.respond_to?(:active_path=) && !model.active_path.nil? && (target_node_def.path[0...-1] & model.active_path).empty?
+      unless node_defs.empty?
+        model.selection.clear
+        model.active_path = target_node_def.path if model.respond_to?(:active_path=) && !model.active_path.nil? && (target_node_def.path[0...-1] & model.active_path).empty?
+      end
 
 
       # Commit model modification operation

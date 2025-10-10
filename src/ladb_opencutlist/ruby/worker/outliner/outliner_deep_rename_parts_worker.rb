@@ -42,7 +42,7 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Deep Rename', true, false, false)
 
 
-      node_defs = node_def.get_valid_selection_siblings
+      node_defs = node_def.get_valid_unlocked_selection_siblings
 
       d_nps = {} # Definition => NodeDefs, Parts
       fn_populate_dn = lambda { |node_def|

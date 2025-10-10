@@ -117,8 +117,8 @@ module Ladb::OpenCutList
 
     # -----
 
-    def get_valid_selection_siblings
-      return self.parent.children.select { |node_def| node_def.selected && node_def.valid? } if self.selected
+    def get_valid_unlocked_selection_siblings
+      return self.parent.children.select { |node_def| node_def.selected && node_def.valid? && !node_def.computed_locked? } if self.selected
       [ self ]  # Not selected, returns only itself
     end
 

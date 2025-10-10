@@ -41,7 +41,7 @@ module Ladb::OpenCutList
         no_selection = true
       end
 
-      node_defs = node_def.get_valid_selection_siblings
+      node_defs = node_def.get_valid_unlocked_selection_siblings
 
       model.selection.clear
       node_defs

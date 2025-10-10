@@ -38,7 +38,7 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Create Container', true, false, false)
 
 
-      node_defs = node_def.get_valid_selection_siblings
+      node_defs = node_def.get_valid_unlocked_selection_siblings
 
       entities = node_defs.map { |node_def| node_def.entity }
       instance = group = entity.parent.entities.add_group(entities)
