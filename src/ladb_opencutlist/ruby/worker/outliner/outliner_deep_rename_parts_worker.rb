@@ -126,6 +126,7 @@ module Ladb::OpenCutList
 
         end
 
+        # Rename definitions
         n_ns.each do |name, node_defs|
           new_definition = node_defs.first.entity.make_unique.definition
           node_defs.each do |node_def|
@@ -134,10 +135,10 @@ module Ladb::OpenCutList
           new_definition.name = name if name != new_definition.name
         end
 
+        # Remove unused definitions
         model.definitions.remove(definition) if definition.count_instances == 0
 
       end
-
 
       # Commit model modification operation
       model.commit_operation

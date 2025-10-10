@@ -1791,6 +1791,7 @@ tab:
       no_entities: Votre modèle est vide !
       node_not_found: Noeud introuvable
       entity_not_found: Instance introuvable
+      invalid_target: L'instance ciblée ne permet pas cette opération
       obsolete_outliner: "Impossible, la structure générée est obsolète. Re-générez là."
     tip:
       no_node: |

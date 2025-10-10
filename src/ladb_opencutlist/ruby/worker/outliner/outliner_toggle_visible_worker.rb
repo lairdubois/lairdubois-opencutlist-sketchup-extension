@@ -36,11 +36,7 @@ module Ladb::OpenCutList
 
         visible = !entity.visible?
 
-        if node_def.selected
-          node_defs = node_def.parent.children.map { |child_node_def| child_node_def if child_node_def.selected && child_node_def.valid? }.compact
-        else
-          node_defs = [ node_def ]
-        end
+        node_defs = node_def.get_valid_unlocked_selection_siblings
         node_defs.each do |node_def|
           node_def.entity.visible = visible
         end

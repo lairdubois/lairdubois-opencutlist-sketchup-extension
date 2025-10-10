@@ -34,10 +34,8 @@ module Ladb::OpenCutList
 
       begin
 
-        # As native behavior, change active path to parent of selected element (SU 2020+)
-        if model.respond_to?(:active_path=) && node_def.parent && !node_def.parent.active
-          model.active_path = node_def.parent.path
-        end
+        # As native behavior, change the active path to the parent of the selected element (SU 2020+)
+        model.active_path = node_def.parent.path if model.respond_to?(:active_path=) && node_def.parent && model.active_path != node_def.parent.path
 
         model.selection.toggle(entity)
 

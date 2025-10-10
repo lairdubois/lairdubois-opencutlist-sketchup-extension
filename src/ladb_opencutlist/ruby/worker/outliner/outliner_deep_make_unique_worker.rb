@@ -34,13 +34,13 @@ module Ladb::OpenCutList
 
       node_defs = node_def.get_valid_unlocked_selection_siblings
 
-      di = {} # Definition => Instances
+      d_is = {} # Definition => Instances
       fn_populate_di = lambda { |node_def|
         next if node_def.entity.deleted?
         node_def.entity.make_unique if node_def.entity.is_a?(Sketchup::Group) # Force Groups to be unique
         if node_def.entity.definition.count_instances > 1
-          di[node_def.entity.definition] = [] unless di.has_key?(node_def.entity.definition)
-          di[node_def.entity.definition] << node_def.entity
+          d_is[node_def.entity.definition] = [] unless d_is.has_key?(node_def.entity.definition)
+          d_is[node_def.entity.definition] << node_def.entity
         end
         node_def.children.each do |child_node_def|
           fn_populate_di.call(child_node_def)
@@ -48,7 +48,7 @@ module Ladb::OpenCutList
       }
       node_defs.each { |node_def| fn_populate_di.call(node_def) }
 
-      di.each do |definition, instances|
+      d_is.each do |definition, instances|
         next if instances.size == definition.count_instances   # All instances are there
         instances.uniq!
         new_definition = instances.shift.make_unique.definition
