@@ -41,22 +41,36 @@ module Ladb::OpenCutList
       model.start_operation('OCL Outliner Move', true, false, false)
 
 
-      path = Sketchup::InstancePath.new(node_def.path)
-      target_path = Sketchup::InstancePath.new(target_node_def.path)
+      # Compute target node transformation
+      tt = Sketchup::InstancePath.new(target_node_def.path).transformation
+      tti = tt.inverse
 
+      # Extract target entities
       if target_entity.is_a?(Sketchup::ComponentInstance)
         target_entities = target_entity.definition.entities
       else
         target_entities = target_entity.entities
       end
 
-      new_entity = target_entities.add_instance(entity.definition, target_path.transformation.inverse * path.transformation)
+      node_defs = node_def.get_valid_selection_siblings
+      node_defs.each do |node_def|
 
-      _copy_instance_metas(entity, new_entity)
+        # Compute node transformation
+        t = Sketchup::InstancePath.new(node_def.path).transformation
 
-      entity.erase!
+        # Create a new instance on target
+        new_entity = target_entities.add_instance(node_def.entity.definition, tti * t)
+
+        # Copy instance metas
+        _copy_instance_metas(node_def.entity, new_entity)
+
+        # Erase original instance
+        node_def.entity.erase!
+
+      end
 
       model.selection.clear
+      model.active_path = target_node_def.path if model.respond_to?(:active_path=) && !model.active_path.nil? && (target_node_def.path[0...-1] & model.active_path).empty?
 
 
       # Commit model modification operation
