@@ -2736,7 +2736,7 @@ module Ladb::OpenCutList
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
       k_edge = Kuix::EdgeMotif.new
-      k_edge.start.copy!(@tool.is_key_shift_down? ? @mouse_snap_point : @mouse_ip.position)
+      k_edge.start.copy!(@tool.is_key_ctrl_or_option_down? ? @mouse_snap_point : @mouse_ip.position)
       k_edge.end.copy!(lpe)
       k_edge.line_width = 1.5
       k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED

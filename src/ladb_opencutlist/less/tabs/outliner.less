@@ -62,7 +62,7 @@
 
     }
 
-    &.ladb-dragover {
+    &.ladb-dragover-ok {
       background-color: lighten(@ladb-brand-success, 40%);
 
       td.table-cell-fluid {
@@ -70,6 +70,20 @@
 
         > .table-cell-fluid-inner {
           background-color: lighten(@ladb-brand-success, 40%);
+        }
+
+      }
+
+    }
+
+    &.ladb-dragover-ko {
+      background-color: lighten(@ladb-brand-danger, 35%);
+
+      td.table-cell-fluid {
+        background-color: lighten(@ladb-brand-danger, 30%);
+
+        > .table-cell-fluid-inner {
+          background-color: lighten(@ladb-brand-danger, 35%);
         }
 
       }

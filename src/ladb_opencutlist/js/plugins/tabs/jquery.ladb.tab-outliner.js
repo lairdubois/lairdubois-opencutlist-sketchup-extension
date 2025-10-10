@@ -469,29 +469,29 @@
                         dataTransfer.setData("node_id", node.id);
                     })
                     .on('dragenter', function (e) {
-                        $row.addClass('ladb-dragover');
+                        $row.addClass('ladb-dragover-ok');
                     })
                     .on('dragleave', function (e) {
-                        $row.removeClass('ladb-dragover');
+                        $row.removeClass('ladb-dragover-ok');
                     })
                     .on('dragover', function (e) {
                         e.preventDefault();
-                        let dataTransfer = e.originalEvent.dataTransfer;
-                        dataTransfer.dropEffect = 'move';
                     })
                     .on('drop', function (e) {
                         e.preventDefault();
-                        $row.removeClass('ladb-dragover');
-                        const draggedNode = that.findNodeById(e.originalEvent.dataTransfer.getData("node_id"));
-                        if (draggedNode) {
-                            console.log('drop', that.computeNodeDisplayName(draggedNode) + " -> " + that.computeNodeDisplayName(node));
-                            rubyCallCommand('outliner_move', { id: draggedNode.id, target_id: node.id }, function (response) {
+                        $row.removeClass('ladb-dragover-ok');
+                        const draggedNodeId = e.originalEvent.dataTransfer.getData("node_id");
+                        if (draggedNodeId && draggedNodeId !== node.id) {
+                            const draggedNode = that.findNodeById(draggedNodeId);
+                            if (draggedNode) {
+                                rubyCallCommand('outliner_move', { id: draggedNode.id, target_id: node.id }, function (response) {
 
-                                if (response.errors) {
-                                    that.dialog.notifyErrors(response.errors);
-                                }
+                                    if (response.errors) {
+                                        that.dialog.notifyErrors(response.errors);
+                                    }
 
-                            });
+                                });
+                            }
                         }
                     })
                 ;

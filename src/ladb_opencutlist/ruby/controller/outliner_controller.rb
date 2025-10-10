@@ -423,8 +423,7 @@ module Ladb::OpenCutList
 
       if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Model)
 
-        node_defs = @outliner_def.get_node_defs_by_entity_id(entity.entityID)
-        if node_defs
+        unless (node_defs = @outliner_def.get_node_defs_by_entity_id(entity.entityID)).nil?
           node_defs.each do |node_def|
 
             node_def.material_def = @outliner_def.available_material_defs[entity.material]
@@ -444,8 +443,7 @@ module Ladb::OpenCutList
       elsif entity.is_a?(Sketchup::ComponentDefinition)
 
         entity.instances.each do |instance|
-          node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)
-          if node_defs
+          unless (node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)).nil?
             node_defs.each do |node_def|
               node_def.invalidate
               @worker.run(:sort_children_node_defs, { children: node_def.parent.children }) if node_def.parent
@@ -458,8 +456,7 @@ module Ladb::OpenCutList
         if (entity.name == Plugin::ATTRIBUTE_DICTIONARY || entity.name == Plugin::SU_ATTRIBUTE_DICTIONARY) && entity.parent.parent.is_a?(Sketchup::ComponentDefinition)
 
           entity.parent.parent.instances.each do |instance|
-            node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)
-            if node_defs
+            unless (node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)).nil?
               node_defs.each do |node_def|
                 node_def.invalidate
               end
@@ -488,7 +485,7 @@ module Ladb::OpenCutList
 
         parent_instances = parent.is_a?(Sketchup::ComponentDefinition) ? parent.instances : [ parent ]
 
-        node_defs.each do |node_def|
+        node_defs.dup.each do |node_def|
           @worker.run(:destroy_node_def, { node_def: node_def }) if parent_instances.include?(node_def.parent.entity)
         end
 
