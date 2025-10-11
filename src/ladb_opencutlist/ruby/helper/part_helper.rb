@@ -6,10 +6,10 @@ module Ladb::OpenCutList
 
     def _get_part_entity_path_from_path(path)
       part_path = path
-      path.reverse_each { |entity|
+      path.reverse_each do |entity|
         return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
         part_path = part_path[0...-1]
-      }
+      end
     end
 
     def _generate_part_from_path(path)

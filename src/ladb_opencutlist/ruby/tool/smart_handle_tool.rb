@@ -254,6 +254,7 @@ module Ladb::OpenCutList
     STATE_HANDLE_START = 1
     STATE_HANDLE = 2
     STATE_HANDLE_COPIES = 3
+    STATE_SELECT_SIBLINGS = 4
 
     LAYER_3D_HANDLE_PREVIEW = 1
     LAYER_3D_AXES_PREVIEW = 2
@@ -286,13 +287,33 @@ module Ladb::OpenCutList
 
       # Try to select part from the current selection
       selection = model.selection
-      entity = selection.first
+      entity = selection.max { |a, b| a.entityID <=> b.entityID } # Bigger entityId == Newer entity
       if entity.is_a?(Sketchup::ComponentInstance)
-        path = (model.active_path.is_a?(Array) ? model.active_path : []) + [ entity ]
+        active_path = model.active_path.is_a?(Array) ? model.active_path : []
+        path = active_path + [ entity ]
         part_entity_path = _get_part_entity_path_from_path(path)
-        if (part = _generate_part_from_path(part_entity_path))
+        unless (part = _generate_part_from_path(part_entity_path)).nil?
+
           _set_active_part(part_entity_path, part)
+
+          part_entity = part_entity_path.last
+          part_definition = part_entity.definition
+
+          if _pick_part_siblings?
+            entities = selection.select { |e| e != part_entity && e.is_a?(Sketchup::ComponentInstance) && e.definition == part_definition }
+            entities.each do |entity|
+
+              sibling_path = active_path + [ entity ]
+              part_sibling_entity_path = _get_part_entity_path_from_path(sibling_path)
+              unless (sibling_part = _generate_part_from_path(part_sibling_entity_path)).nil?
+                _add_part_sibling(part_sibling_entity_path, sibling_part)
+              end
+
+            end
+          end
+
           onPartSelected
+
         end
       end
 
@@ -320,7 +341,7 @@ module Ladb::OpenCutList
     def get_state_picker(state)
 
       case state
-      when STATE_SELECT
+      when STATE_SELECT, STATE_SELECT_SIBLINGS
         return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
       end
 
@@ -412,11 +433,26 @@ module Ladb::OpenCutList
       super
     end
 
-    def onToolLButtonUp(tool, flags, x, y, view)
+    def onToolLButtonDown(tool, flags, x, y, view)
 
       case @state
 
       when STATE_SELECT
+
+        if @active_part_entity_path.is_a?(Array)
+          set_state(STATE_SELECT_SIBLINGS)
+          return true
+        end
+
+      end
+
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+
+      case @state
+
+      when STATE_SELECT_SIBLINGS
 
         if @active_part_entity_path.nil?
           UI.beep
@@ -479,6 +515,9 @@ module Ladb::OpenCutList
       when STATE_SELECT
         _pick_part(picker, view)
 
+      when STATE_SELECT_SIBLINGS
+        _pick_part_sibling(picker, view)
+
       end
 
       super
@@ -494,7 +533,10 @@ module Ladb::OpenCutList
     def onPartSelected
       return if (instance = _get_instance).nil?
 
+      sibling_instances = _get_sibling_instances
+
       @instances << instance
+      @instances.concat(sibling_instances) if sibling_instances.is_a?(Array)
       @definition = instance.definition
 
       @src_transformation = Geom::Transformation.new(instance.transformation)
@@ -833,6 +875,7 @@ module Ladb::OpenCutList
 
       Sketchup.active_model.selection.clear
       Sketchup.active_model.selection.add(_get_instance)
+      Sketchup.active_model.selection.add(_get_sibling_instances)
 
       set_state(STATE_SELECT)
       _refresh
@@ -842,6 +885,12 @@ module Ladb::OpenCutList
     # -----
 
     protected
+
+    def _pick_part_siblings?
+      true
+    end
+
+    # -----
 
     def _preview_edit_axes(with_box)
       # Does nothing
@@ -2094,14 +2143,13 @@ module Ladb::OpenCutList
 
       @locked_axis = nil
 
-      unless (instance = _get_instance).nil?
+      unless _get_instance.nil?
         if state == STATE_HANDLE
           @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
           _hide_instance
         else
           _unhide_instance
         end
-
       end
 
     end
@@ -2558,16 +2606,18 @@ module Ladb::OpenCutList
         if state == STATE_HANDLE
           @tool.set_3d_visibility(false, LAYER_3D_PART_PREVIEW) # Hide part preview
           _hide_instance
+          _hide_sibling_instances
         else
           @tool.set_3d_visibility(true, LAYER_3D_PART_PREVIEW) # Unhide part preview
           _unhide_instance
+          _unhide_sibling_instances
         end
       end
 
     end
 
     def onToolActionOptionStored(tool, action, option_group, option)
-      # Do not call super to keep hadle start point
+      # Do not call super to keep handle start point
 
       if !@active_part.nil? && option_group == SmartHandleTool::ACTION_OPTION_AXES
         @locked_axis = nil
@@ -2575,9 +2625,20 @@ module Ladb::OpenCutList
 
     end
 
+    def onPartSelected
+      super
+      @number = @instances.size
+    end
+
     # -----
 
     protected
+
+    # -----
+
+    def _pick_part_siblings?
+      true
+    end
 
     # -----
 
@@ -2703,10 +2764,9 @@ module Ladb::OpenCutList
       k_segments.transformation = drawing_def.transformation
       @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
 
-      count = 1
-      (0...count).each do |i|
+      (1..@number).each do |i|
 
-        mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * (i + 1) / (count + 1.0))))
+        mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * i / (@number + 1.0))))
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(drawing_def_segments)

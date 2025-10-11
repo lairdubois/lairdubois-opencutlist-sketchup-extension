@@ -1882,16 +1882,12 @@ module Ladb::OpenCutList
     # -----
 
     def onToolLButtonDown(tool, flags, x, y, view)
-      unless @active_part_entity_path.nil?
-        _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, true)
-      end
+      _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, true) if @active_part_entity_path.is_a?(Array)
       false
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
-      unless @active_part_entity_path.nil?
-        _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, false)
-      end
+      _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, false) if @active_part_entity_path.is_a?(Array)
       false
     end
 
@@ -2002,19 +1998,31 @@ module Ladb::OpenCutList
     # --
 
     def _pick_part(picker, view)
-      if picker.picked_face_path
-        picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)
-        unless picked_part_entity_path.nil?
-
-          picked_part = _generate_part_from_path(picked_part_entity_path)
-          unless picked_part.nil?
+      if picker.picked_face_path.is_a?(Array)
+        if (picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)).is_a?(Array)
+          if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
             _set_active_part(picked_part_entity_path, picked_part)
             return
           end
-
         end
       end
       _reset_active_part
+    end
+
+    def _pick_part_siblings?
+      false
+    end
+
+    def _pick_part_sibling(picker, view)
+      return unless _pick_part_siblings?
+      if @active_part_entity_path.is_a?(Array) && picker.picked_face_path.is_a?(Array)
+        if (picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)).is_a?(Array)
+          return if picked_part_entity_path == @active_part_entity_path
+          if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
+            _add_part_sibling(picked_part_entity_path, picked_part) if picked_part.id == @active_part.id
+          end
+        end
+      end
     end
 
     # --
@@ -2055,6 +2063,7 @@ module Ladb::OpenCutList
 
           # Only the current instance
           instance_paths << part_entity_path
+          instance_paths.concat(@active_part_sibling_entity_paths) if @active_part_sibling_entity_paths.is_a?(Array)
 
         end
 
@@ -2140,11 +2149,13 @@ module Ladb::OpenCutList
 
     def _set_active_part(part_entity_path, part, highlighted = false)
 
-      changed = @active_part_entity_path != part_entity_path
-      if changed
+      if @active_part_entity_path != part_entity_path # Has changed?
 
         @active_part_entity_path = part_entity_path
         @active_part = part
+
+        @active_part_sibling_entity_paths = nil
+        @active_part_siblings = nil
 
         onActivePartChanged(part_entity_path, part, highlighted)
 
@@ -2193,6 +2204,13 @@ module Ladb::OpenCutList
       end
     end
 
+    def _add_part_sibling(part_entity_path, part)
+      return if @active_part_sibling_entity_paths.is_a?(Array) && @active_part_sibling_entity_paths.include?(part_entity_path)
+      (@active_part_sibling_entity_paths ||= []) << part_entity_path
+      (@active_part_siblings ||= []) << part
+      onActivePartChanged(@active_part_entity_path, @active_part, false)
+    end
+
     # --
 
     def _get_global_context_transformation(default = IDENTITY)
@@ -2231,15 +2249,11 @@ module Ladb::OpenCutList
       _get_global_instance_transformation
       _get_drawing_def
       @unhide_local_instance_transformation = Geom::Transformation.new(instance.transformation)
-      begin
-        instance.move!(Geom::Transformation.scaling(0, 0, 0)) # Now failed since SU 2026 RC0 :(
-      rescue
-        @unhide_local_instance_transformation = nil
-      end
+      instance.move!(Geom::Transformation.scaling(0, 0, 0))
     end
 
     def _unhide_instance
-      return if @unhide_local_instance_transformation.nil? || (instance = _get_instance).nil?
+      return if !@unhide_local_instance_transformation.is_a?(Geom::Transformation) || (instance = _get_instance).nil?
       instance.move!(@unhide_local_instance_transformation)
       @unhide_local_instance_transformation = nil
     end
@@ -2250,6 +2264,32 @@ module Ladb::OpenCutList
         selection = model.selection
         selection.clear
         selection.add(instance)
+      end
+    end
+
+    def _get_sibling_instances
+      return @active_part_sibling_entity_paths.map { |path| path.last } if @active_part_sibling_entity_paths.is_a?(Array)
+      nil
+    end
+
+    def _hide_sibling_instances
+      return if (sibling_instances = _get_sibling_instances).nil?
+      @unhide_local_sibling_instance_transformations = sibling_instances.map { |sibling_instance| Geom::Transformation.new(sibling_instance.transformation) }
+      sibling_instances.each { |sibling_instance| sibling_instance.move!(Geom::Transformation.scaling(0)) unless sibling_instance.deleted? }
+    end
+
+    def _unhide_sibling_instances
+      return if !@unhide_local_sibling_instance_transformations.is_a?(Array) || (sibling_instances = _get_sibling_instances).nil?
+      sibling_instances.each_with_index { |sibling_instance, i| sibling_instance.move!(@unhide_local_sibling_instance_transformations[i]) unless sibling_instance.deleted? }
+      @unhide_local_sibling_instance_transformations = nil
+    end
+
+    def _select_sibling_instances
+      model = Sketchup.active_model
+      if model && !(sibling_instances = _get_sibling_instances).nil?
+        selection = model.selection
+        selection.clear
+        selection.add(sibling_instances)
       end
     end
 
