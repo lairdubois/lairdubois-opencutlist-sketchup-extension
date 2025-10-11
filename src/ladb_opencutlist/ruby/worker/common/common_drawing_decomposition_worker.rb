@@ -129,7 +129,7 @@ module Ladb::OpenCutList
 
       end
 
-      # Extract first level of child entities
+      # Extract the first level of child entities
       if drawing_element.is_a?(Sketchup::Model) || drawing_element.is_a?(Sketchup::Group)
         entities = drawing_element.entities
       elsif drawing_element.is_a?(Sketchup::ComponentInstance)
@@ -200,10 +200,12 @@ module Ladb::OpenCutList
         yz_plane = Geom.fit_plane_to_points(ORIGIN, Geom::Point3d.new(y_axis.to_a), Geom::Point3d.new(z_axis.to_a))
         x_axis = Geom::Vector3d.new(yz_plane[0..2])
 
-        # Reset Y axis as cross product Z * X and keep a real orthonormal system
+        # Reset Y axis as cross-product Z * X and keep a real orthonormal system
         y_axis = z_axis * x_axis
 
       end
+
+      return { :errors => [ 'default.error' ] } unless x_axis.valid? && y_axis.valid? && z_axis.valid?
 
       ta = Geom::Transformation.axes(origin, x_axis, y_axis, z_axis)
       tai = ta.inverse

@@ -251,13 +251,13 @@ module Ladb::OpenCutList
     include SmartActionHandlerPartHelper
 
     STATE_SELECT = 0
+    STATE_SELECT_SIBLINGS = 4
     STATE_HANDLE_START = 1
     STATE_HANDLE = 2
     STATE_HANDLE_COPIES = 3
-    STATE_SELECT_SIBLINGS = 4
 
-    LAYER_3D_HANDLE_PREVIEW = 1
-    LAYER_3D_AXES_PREVIEW = 2
+    LAYER_3D_HANDLE_PREVIEW = 10
+    LAYER_3D_AXES_PREVIEW = 20
 
     attr_reader :picked_handle_start_point,
                 :picked_handle_end_point
@@ -352,7 +352,7 @@ module Ladb::OpenCutList
 
       case state
 
-      when STATE_SELECT, STATE_HANDLE_START, STATE_HANDLE
+      when STATE_SELECT, STATE_SELECT_SIBLINGS, STATE_HANDLE_START, STATE_HANDLE
         return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_status") + '.'
 
       end
@@ -452,7 +452,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SELECT_SIBLINGS
+      when STATE_SELECT, STATE_SELECT_SIBLINGS
 
         if @active_part_entity_path.nil?
           UI.beep
@@ -905,9 +905,16 @@ module Ladb::OpenCutList
 
       @locked_axis = nil
 
-      @operator = '*'
+      @operator = '/'
       @number = 1
 
+    end
+
+    # -----
+
+    def stop
+      _unhide_sibling_instances
+      super
     end
 
     # -- STATE --
@@ -990,6 +997,16 @@ module Ladb::OpenCutList
 
       @locked_axis = nil
 
+      unless _get_instance.nil?
+        if state == STATE_HANDLE
+          @tool.set_3d_visibility(false, [ LAYER_3D_PART_SIBLING_PREVIEW ]) # Hide part preview
+          _hide_sibling_instances
+        else
+          @tool.set_3d_visibility(true, [ LAYER_3D_PART_SIBLING_PREVIEW ]) # Unhide part preview
+          _unhide_sibling_instances
+        end
+      end
+
     end
 
     def onToolActionOptionStored(tool, action, option_group, option)
@@ -1001,9 +1018,27 @@ module Ladb::OpenCutList
 
     end
 
+    def onPartSelected
+      super
+      @operator = '/'
+      @number = [ @instances.size - 1, 1 ].max
+      _refresh
+    end
+
     # -----
 
     protected
+
+    def _reset
+      @number = 1
+      super
+    end
+
+    # -----
+
+    def _pick_part_siblings?
+      true
+    end
 
     # -----
 
@@ -1112,21 +1147,48 @@ module Ladb::OpenCutList
 
       _preview_edit_axes(false, !mv.parallel?(_get_active_x_axis), !mv.parallel?(_get_active_y_axis), !mv.parallel?(_get_active_z_axis))
 
-      mt = Geom::Transformation.translation(mv)
-      if _fetch_option_mirror
-        mt = Geom::Transformation.scaling(mpe, *mv.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
-        mt *= Geom::Transformation.rotation(mpe, mv, Geometrix::ONE_PI)
-        mt *= Geom::Transformation.translation(mv)
-      end
-
       # Preview
 
-      k_segments = Kuix::Segments.new
-      k_segments.add_segments(drawing_def_segments)
-      k_segments.line_width = 1.5
-      k_segments.color = Kuix::COLOR_BLACK
-      k_segments.transformation = mt * drawing_def.transformation
-      @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
+      ux = mv.x / @number
+      uy = mv.y / @number
+      uz = mv.z / @number
+
+      (1..@number).each do |i|
+
+        mvu = Geom::Vector3d.new(ux * i, uy * i, uz * i)
+
+        mt = Geom::Transformation.translation(mvu)
+        if _fetch_option_mirror && i == @number && @number == 1
+          mt = Geom::Transformation.scaling(mpe, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
+          mt *= Geom::Transformation.rotation(mpe, mvu, Geometrix::ONE_PI)
+          mt *= Geom::Transformation.translation(mvu)
+        end
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(drawing_def_segments)
+        k_segments.line_width = 1.5
+        k_segments.color = Kuix::COLOR_BLACK
+        k_segments.transformation = mt * drawing_def.transformation
+        @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
+
+
+        # Preview bounds
+
+        k_box = Kuix::BoxMotif.new
+        k_box.bounds.copy!(eb)
+        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_box.color = color
+        k_box.transformation = et
+        @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
+
+        k_box = Kuix::BoxMotif.new
+        k_box.bounds.copy!(eb)
+        k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_box.color = color
+        k_box.transformation = mt * et
+        @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
+
+      end
 
       # Preview line
 
@@ -1149,22 +1211,6 @@ module Ladb::OpenCutList
 
       @tool.append_3d(_create_floating_points(points: [ mps, mpe ], style: Kuix::POINT_STYLE_PLUS, stroke_color: Kuix::COLOR_DARK_GREY), LAYER_3D_HANDLE_PREVIEW)
       @tool.append_3d(_create_floating_points(points: [ dps, dpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_HANDLE_PREVIEW)
-
-      # Preview bounds
-
-      k_box = Kuix::BoxMotif.new
-      k_box.bounds.copy!(eb)
-      k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-      k_box.color = color
-      k_box.transformation = et
-      @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
-
-      k_box = Kuix::BoxMotif.new
-      k_box.bounds.copy!(eb)
-      k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-      k_box.color = color
-      k_box.transformation = mt * et
-      @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
       # Preview mirror
 
@@ -1273,6 +1319,8 @@ module Ladb::OpenCutList
       mps = mps.transform(cti)
       mpe = mpe.transform(cti)
       mv = mps.vector_to(mpe)
+
+      _unhide_sibling_instances
 
       model = Sketchup.active_model
       model.start_operation('OCL Copy Part', true, false, !active?)
@@ -1544,6 +1592,12 @@ module Ladb::OpenCutList
     # -----
 
     protected
+
+    def _reset
+      @number_x = 1
+      @number_y = 1
+      super
+    end
 
     # -----
 
@@ -2407,7 +2461,7 @@ module Ladb::OpenCutList
       eti = et.inverse
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
-      # Compute in 'Edit' space
+      # Compute in the 'Edit' space
 
       ev = v.transform(eti)
 
@@ -2465,7 +2519,7 @@ module Ladb::OpenCutList
         drawing_def: drawing_def,
         drawing_def_segments: drawing_def_segments,
         et: et,
-        eb: eb,   # Expressed in 'Edit' space
+        eb: eb,   # Expressed in the 'Edit' space
         mps: mps,
         mpe: mpe,
         dps: dps,
@@ -2492,6 +2546,7 @@ module Ladb::OpenCutList
 
     def stop
       _unhide_instance
+      _unhide_sibling_instances
       super
     end
 
@@ -2604,11 +2659,11 @@ module Ladb::OpenCutList
 
       unless _get_instance.nil?
         if state == STATE_HANDLE
-          @tool.set_3d_visibility(false, LAYER_3D_PART_PREVIEW) # Hide part preview
+          @tool.set_3d_visibility(false, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Hide part preview
           _hide_instance
           _hide_sibling_instances
         else
-          @tool.set_3d_visibility(true, LAYER_3D_PART_PREVIEW) # Unhide part preview
+          @tool.set_3d_visibility(true, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Unhide part preview
           _unhide_instance
           _unhide_sibling_instances
         end
@@ -2628,11 +2683,17 @@ module Ladb::OpenCutList
     def onPartSelected
       super
       @number = @instances.size
+      _refresh
     end
 
     # -----
 
     protected
+
+    def _reset
+      @number = 1
+      super
+    end
 
     # -----
 
@@ -2934,6 +2995,7 @@ module Ladb::OpenCutList
       mv = mps.vector_to(mpe)
 
       _unhide_instance
+      _unhide_sibling_instances
 
       model = Sketchup.active_model
       model.start_operation('OCL Distribute Part', true, false, !active?)

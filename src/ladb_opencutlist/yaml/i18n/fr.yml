@@ -2114,6 +2114,8 @@ tool:
     title: Manipuler
     action_0: Sélectionner
     action_0_status: Cliquez sur une pièce pour la sélectionner
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: Glissez sur une pièce identique pour l'ajouter à la sélection et relâchez pour continuer
     action_1: Copier en ligne
     action_1_status: Cliquez sur une pièce pour la copier le long d'un axe
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2129,6 +2131,7 @@ tool:
     action_4: Répartir
     action_4_status: Cliquez sur une pièce pour la répartir le long d'un axe
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Cliquez pour déterminer le premier point de mesure
     action_4_state_2_status: Cliquez pour déterminer le second point de mesure ou entrez une distance
     action_5: Redimensionner

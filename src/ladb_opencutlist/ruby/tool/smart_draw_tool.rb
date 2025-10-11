@@ -227,8 +227,8 @@ module Ladb::OpenCutList
     STATE_SHAPE = 1
     STATE_PULL = 2
 
-    LAYER_2D_DIMENSIONS = 0
-    LAYER_2D_FLOATING_TOOLS = 1
+    LAYER_2D_DIMENSIONS = 10
+    LAYER_2D_FLOATING_TOOLS = 20
 
     @@last_pull_measure = 0
 

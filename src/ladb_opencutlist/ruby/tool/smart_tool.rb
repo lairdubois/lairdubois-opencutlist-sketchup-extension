@@ -1878,16 +1878,19 @@ module Ladb::OpenCutList
     COLOR_INSTANCE_HIGHLIGHTED = Sketchup::Color.new(254, 222, 11, 175).freeze
 
     LAYER_3D_PART_PREVIEW = 0
+    LAYER_3D_PART_SIBLING_PREVIEW = 1
 
     # -----
 
     def onToolLButtonDown(tool, flags, x, y, view)
       _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, true) if @active_part_entity_path.is_a?(Array)
+      _preview_part_siblings(LAYER_3D_PART_SIBLING_PREVIEW, true)
       false
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
       _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, false) if @active_part_entity_path.is_a?(Array)
+      _preview_part_siblings(LAYER_3D_PART_SIBLING_PREVIEW, false)
       false
     end
 
@@ -1896,6 +1899,7 @@ module Ladb::OpenCutList
       @global_instance_transformation = nil
       @drawing_def = nil
       _preview_part(part_entity_path, part, LAYER_3D_PART_PREVIEW, highlighted)
+      _preview_part_siblings(LAYER_3D_PART_SIBLING_PREVIEW, highlighted)
       false
     end
 
@@ -2063,7 +2067,7 @@ module Ladb::OpenCutList
 
           # Only the current instance
           instance_paths << part_entity_path
-          instance_paths.concat(@active_part_sibling_entity_paths) if @active_part_sibling_entity_paths.is_a?(Array)
+          # instance_paths.concat(@active_part_sibling_entity_paths) if @active_part_sibling_entity_paths.is_a?(Array)
 
         end
 
@@ -2129,6 +2133,27 @@ module Ladb::OpenCutList
                                     else
                                       path == @active_part_entity_path ? COLOR_PART : COLOR_INSTANCE
                                     end
+          k_mesh.transformation = t
+          @tool.append_3d(k_mesh, layer)
+
+        end
+
+      end
+    end
+
+    def _preview_part_siblings(layer = LAYER_3D_PART_SIBLING_PREVIEW, highlighted = false)
+      @tool.remove_3d(layer)
+      if @active_part_sibling_entity_paths.is_a?(Array)
+
+        # Mesh
+        @active_part_sibling_entity_paths.each do |path|
+
+          triangles = _compute_children_faces_triangles(path.last.definition.entities)
+          t = PathUtils::get_transformation(path)
+
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(triangles)
+          k_mesh.background_color = highlighted ? COLOR_PART_HIGHLIGHTED : COLOR_PART
           k_mesh.transformation = t
           @tool.append_3d(k_mesh, layer)
 
