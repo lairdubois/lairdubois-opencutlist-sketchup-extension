@@ -960,7 +960,7 @@ module Ladb::OpenCutList
               text_color: colors[index],
               border_color: colors[index]
             )
-            @tool.append_2d(k_label)
+            @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
           end
 
@@ -1059,7 +1059,7 @@ module Ladb::OpenCutList
           text_color: Kuix::COLOR_Z,
           border_color: _get_normal_color
         )
-        @tool.append_2d(k_label)
+        @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
       end
 
@@ -2069,7 +2069,7 @@ module Ladb::OpenCutList
               text_color: Kuix::COLOR_X,
               border_color: _get_normal_color
             )
-            @tool.append_2d(k_label)
+            @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
           end
 
@@ -2081,7 +2081,7 @@ module Ladb::OpenCutList
               text_color: Kuix::COLOR_Y,
               border_color: _get_normal_color
             )
-            @tool.append_2d(k_label)
+            @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
           end
 
@@ -2455,7 +2455,7 @@ module Ladb::OpenCutList
           text_color: Kuix::COLOR_X,
           border_color: _get_direction_color
         )
-        @tool.append_2d(k_label)
+        @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
       end
 
@@ -3355,7 +3355,7 @@ module Ladb::OpenCutList
               text: measure,
               border_color: _get_normal_color
             )
-            @tool.append_2d(k_label)
+            @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
           end
 

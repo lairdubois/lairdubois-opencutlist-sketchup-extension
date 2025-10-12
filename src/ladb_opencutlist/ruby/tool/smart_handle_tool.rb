@@ -287,7 +287,7 @@ module Ladb::OpenCutList
 
       # Try to select part from the current selection
       selection = model.selection
-      entity = selection.max { |a, b| a.entityID <=> b.entityID } # Bigger entityId == Newer entity
+      entity = selection.min { |a, b| a.entityID <=> b.entityID } # Smaller entityId == Older entity
       if entity.is_a?(Sketchup::ComponentInstance)
         active_path = model.active_path.is_a?(Array) ? model.active_path : []
         path = active_path + [ entity ]
@@ -296,21 +296,23 @@ module Ladb::OpenCutList
 
           _set_active_part(part_entity_path, part)
 
-          part_entity = part_entity_path.last
-          part_definition = part_entity.definition
-
-          if _pick_part_siblings?
-            entities = selection.select { |e| e != part_entity && e.is_a?(Sketchup::ComponentInstance) && e.definition == part_definition }
-            entities.each do |entity|
-
-              sibling_path = active_path + [ entity ]
-              part_sibling_entity_path = _get_part_entity_path_from_path(sibling_path)
-              unless (sibling_part = _generate_part_from_path(part_sibling_entity_path)).nil?
-                _add_part_sibling(part_sibling_entity_path, sibling_part)
-              end
-
-            end
-          end
+          # if _pick_part_siblings?
+          #
+          #   part_entity = part_entity_path.last
+          #   part_definition = part_entity.definition
+          #
+          #   entities = selection.select { |e| e != part_entity && e.is_a?(Sketchup::ComponentInstance) && e.definition == part_definition }
+          #   entities.each do |entity|
+          #
+          #     sibling_path = active_path + [ entity ]
+          #     part_sibling_entity_path = _get_part_entity_path_from_path(sibling_path)
+          #     unless (sibling_part = _generate_part_from_path(part_sibling_entity_path)).nil?
+          #       _add_part_sibling(part_sibling_entity_path, sibling_part)
+          #     end
+          #
+          #   end
+          #
+          # end
 
           onPartSelected
 
@@ -2540,6 +2542,8 @@ module Ladb::OpenCutList
 
       @number = 1
 
+      @raytest_path = nil
+
     end
 
     # -----
@@ -2798,8 +2802,10 @@ module Ladb::OpenCutList
 
       if @tool.is_key_ctrl_or_option_down?
         ray = [ @picked_handle_start_point, @picked_handle_start_point.vector_to(@mouse_snap_point) ]
-        position, entity = Sketchup.active_model.raytest(ray)
+        position, @raytest_path = Sketchup.active_model.raytest(ray)
         @mouse_snap_point = position unless position.nil?
+      else
+        @raytest_path = nil
       end
 
     end
@@ -2865,7 +2871,7 @@ module Ladb::OpenCutList
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
-      if @tool.is_key_ctrl_or_option_down?
+      unless @raytest_path.nil?
 
         k_edge = Kuix::EdgeMotif.new
         k_edge.start.copy!(@picked_handle_start_point)
