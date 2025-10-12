@@ -285,7 +285,7 @@ module Ladb::OpenCutList
       when STATE_SHAPE_START
         return super +
           ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' + X = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_construction_status') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_from_vertex_status') + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_measure_from_vertex_status') + '.'
 
       when STATE_SHAPE
         return PLUGIN.get_i18n_string("tool.smart_draw.action_#{@action}_state_#{state}_status") + '.'
@@ -507,10 +507,7 @@ module Ladb::OpenCutList
       when STATE_SHAPE_START, STATE_SHAPE
 
         if @state == STATE_SHAPE_START
-          if tool.is_key_shift?(key)
-            _refresh
-            return true
-          elsif tool.is_key_ctrl_or_option?(key)
+          if tool.is_key_shift?(key) || tool.is_key_ctrl_or_option?(key) || tool.is_key_alt_or_command?(key)
             _refresh
             return true
           end
@@ -582,20 +579,22 @@ module Ladb::OpenCutList
               if _set_picked_points_from_face_manipulator(@mouse_snap_face_manipulator, view)
                 @mouse_snap_face_manipulator = nil
                 set_state(STATE_PULL)
-                _refresh
-                return true
               end
             end
           end
           _refresh
           return true
         end
-        if tool.is_key_ctrl_or_option?(key)
+        if tool.is_key_alt_or_command?(key)
           if is_quick
             @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
             @previous_action_handler = nil
             _remove_floating_tools
           end
+          _refresh
+          return true
+        end
+        if tool.is_key_ctrl_or_option?(key)
           _refresh
           return true
         end
