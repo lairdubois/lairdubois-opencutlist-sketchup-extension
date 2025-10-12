@@ -1727,7 +1727,10 @@ module Ladb::OpenCutList
     end
 
     def onToolUserText(tool, text, view)
-      return true if @state == get_startup_state && !@previous_action_handler.nil? && @previous_action_handler.onToolUserText(tool, text, view)
+      if @state == get_startup_state && !@previous_action_handler.nil? && @previous_action_handler.onToolUserText(tool, text, view)
+        _refresh
+        return true
+      end
       false
     end
 
