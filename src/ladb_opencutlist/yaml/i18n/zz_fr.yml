@@ -1786,232 +1786,233 @@ tab:
       no_entities: 1396 - Votre modèle est vide !
       node_not_found: 1397 - Noeud introuvable
       entity_not_found: 1398 - Instance introuvable
-      obsolete_outliner: 1399 - Impossible, la structure générée est obsolète. Re-générez là.
+      invalid_target: 1399 - L'instance ciblée ne permet pas cette opération
+      obsolete_outliner: 1400 - Impossible, la structure générée est obsolète. Re-générez là.
     tip:
       no_node: |
-        1400 - Votre modèle ne dispose pour le moment d'aucune instance à afficher ici.
+        1401 - Votre modèle ne dispose pour le moment d'aucune instance à afficher ici.
         Une instance est un **groupe** ou un **composant** placé dans la scène.
-    obsolete_base: 1401 - Pour rester synchronisé, vous devez re-générer la structure.
+    obsolete_base: 1402 - Pour rester synchronisé, vous devez re-générer la structure.
   importer:
-    label: 1402 - Importer
-    title: 1403 - Importer des pièces
+    label: 1403 - Importer
+    title: 1404 - Importer des pièces
     help: |
-      1404 - Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
+      1405 - Cette page vous permet d'importer une série de pièces capables (de forme parallélépipédique) dans votre modèle depuis un fichier [CSV](https://fr.wikipedia.org/wiki/Comma-separated_values).
       Vous pourrez ainsi utiliser la puissance de la fiche de débit d'*OpenCutList* en générant vos pièces avec un autre logiciel que *SketchUp*.
       Cliquez sur le bouton **Ouvrir un fichier CSV** pour démarrer.
-    open_csv: 1405 - Ouvrir un fichier CSV
-    import_to_model: 1406 - Importer dans le modèle
+    open_csv: 1406 - Ouvrir un fichier CSV
+    import_to_model: 1407 - Importer dans le modèle
     load:
-      title: 1407 - Chargement d'un fichier CSV
+      title: 1408 - Chargement d'un fichier CSV
       info_0: |
-        1408 - Choisissez les options nécessaires à la bonne lecture du fichier :
+        1409 - Choisissez les options nécessaires à la bonne lecture du fichier :
         **{{ filename }}**.
       info_1: |
-        1409 - *L'unité configurée dans le modèle est : **{{ unit }}**.
+        1410 - *L'unité configurée dans le modèle est : **{{ unit }}**.
         Cette unité sera utilisée pour les dimensions dont l'unité n'est pas précisée*.
-      options: 1410 - Options de chargement
-      option_col_sep: 1411 - Séparateur
-      option_col_sep_tab: 1412 - Tabulation
-      option_col_sep_comma: 1413 - Virgule
-      option_col_sep_semicolon: 1414 - Point virgule
-      option_first_line_headers: 1415 - Première ligne
-      option_first_line_headers_0: 1416 - Données
-      option_first_line_headers_1: 1417 - Titres de colonne
+      options: 1411 - Options de chargement
+      option_col_sep: 1412 - Séparateur
+      option_col_sep_tab: 1413 - Tabulation
+      option_col_sep_comma: 1414 - Virgule
+      option_col_sep_semicolon: 1415 - Point virgule
+      option_first_line_headers: 1416 - Première ligne
+      option_first_line_headers_0: 1417 - Données
+      option_first_line_headers_1: 1418 - Titres de colonne
     import:
-      title: 1418 - Importation des pièces dans le modèle
+      title: 1419 - Importation des pièces dans le modèle
       info_0: |
-        1419 - Vous êtes sur le point d'importer **{{ count }} pièce** dans le modèle.
+        1420 - Vous êtes sur le point d'importer **{{ count }} pièce** dans le modèle.
         Cette pièce va être placée sur la scène principale, à l'origine.
       info_0_plural: |
-        1420 - Vous êtes sur le point d'importer **{{ count }} pièces** dans le modèle.
+        1421 - Vous êtes sur le point d'importer **{{ count }} pièces** dans le modèle.
         Ces pièces vont être empilées sur la scène principale depuis l'origine.
-      info_1: 1421 - Cliquez sur **Importer** pour confirmer l'action.
+      info_1: 1422 - Cliquez sur **Importer** pour confirmer l'action.
       options: |
-        1422 - Le modèle contient déjà des *pièces*, des *définitions* ou des *matières*.
+        1423 - Le modèle contient déjà des *pièces*, des *définitions* ou des *matières*.
         Choisissez les options d'importation qui correspondent à votre besoin.
-      option_remove_all_?: 1423 - Que faire ?
-      option_remove_all_false: 1424 - Ajouter les pièces à l'existant
-      option_remove_all_true: 1425 - Effacer tout !
-      option_keep_definitions_settings: 1426 - Conserver les paramètres sur les définitions
-      option_keep_materials_settings: 1427 - Conserver les paramètres sur les matières
+      option_remove_all_?: 1424 - Que faire ?
+      option_remove_all_false: 1425 - Ajouter les pièces à l'existant
+      option_remove_all_true: 1426 - Effacer tout !
+      option_keep_definitions_settings: 1427 - Conserver les paramètres sur les définitions
+      option_keep_materials_settings: 1428 - Conserver les paramètres sur les matières
     column:
-      unused: 1428 - Non utilisé
-      mandatory: 1429 - Champs obligatoires
-      optional: 1430 - Champs facultatifs
-      name: 1431 - Désignation
-      count: 1432 - Quantité
-      bbox_length: 1433 - Longueur capable
-      bbox_width: 1434 - Largeur capable
-      bbox_thickness: 1435 - Épaisseur capable
-      material: 1436 - Matière
-      tags: 1437 - Badges
+      unused: 1429 - Non utilisé
+      mandatory: 1430 - Champs obligatoires
+      optional: 1431 - Champs facultatifs
+      name: 1432 - Désignation
+      count: 1433 - Quantité
+      bbox_length: 1434 - Longueur capable
+      bbox_width: 1435 - Largeur capable
+      bbox_thickness: 1436 - Épaisseur capable
+      material: 1437 - Matière
+      tags: 1438 - Badges
     tooltip:
-      errors: 1438 - Cette pièce ne sera pas importée car elle contient les erreurs suivantes
-      warnings: 1439 - Cette pièce sera importée mais elle contient les avertissements suivants
+      errors: 1439 - Cette pièce ne sera pas importée car elle contient les erreurs suivantes
+      warnings: 1440 - Cette pièce sera importée mais elle contient les avertissements suivants
     error:
-      no_model: 1440 - Aucun modèle n'est ouvert. Il est impossible d'importer des pièces dans le néant ;)
-      file_not_found: '1441 - Fichier introuvable : **{{ filename }}**'
-      bad_extension: 1442 - Le fichier *{{ filename }}* n'a pas l'extension **.CSV** ou **.TSV**.
+      no_model: 1441 - Aucun modèle n'est ouvert. Il est impossible d'importer des pièces dans le néant ;)
+      file_not_found: '1442 - Fichier introuvable : **{{ filename }}**'
+      bad_extension: 1443 - Le fichier *{{ filename }}* n'a pas l'extension **.CSV** ou **.TSV**.
       failed_to_load_csv_file: |
-        1443 - Impossible de charger le fichier CSV : **{{ error }}**
+        1444 - Impossible de charger le fichier CSV : **{{ error }}**
         *Vérifiez que vous avez choisi le bon séparateur de données.*
-      empty_file: 1444 - Le fichier semble vide ou ne peut pas être correctement lu.
-      no_importable_part: 1445 - Aucune pièce ne peut être importée. Attribuez les champs obligatoires sur les colonnes correspondantes.
-      invalid_name: 1446 - Pas de désignation valide
-      invalid_length: 1447 - Pas de longueur valide
-      invalid_width: 1448 - Pas de largeur valide
-      invalid_thickness: 1449 - Pas d'épaisseur valide
-      failed_to_import: 1450 - L'importation a échoué.
+      empty_file: 1445 - Le fichier semble vide ou ne peut pas être correctement lu.
+      no_importable_part: 1446 - Aucune pièce ne peut être importée. Attribuez les champs obligatoires sur les colonnes correspondantes.
+      invalid_name: 1447 - Pas de désignation valide
+      invalid_length: 1448 - Pas de longueur valide
+      invalid_width: 1449 - Pas de largeur valide
+      invalid_thickness: 1450 - Pas d'épaisseur valide
+      failed_to_import: 1451 - L'importation a échoué.
     warning:
-      invalid_count: 1451 - Pas de quantité valide
-      invalid_material: 1452 - Pas de matière valide
+      invalid_count: 1452 - Pas de quantité valide
+      invalid_material: 1453 - Pas de matière valide
     success:
-      imported_title: 1453 - Importation terminée
-      imported_body: 1454 - {{ count }} pièce importée avec succès !
-      imported_body_plural: 1455 - {{ count }} pièces importées avec succès !
-    obsolete_base: 1456 - Pour rester synchronisé, vous devez recharger le fichier CSV.
+      imported_title: 1454 - Importation terminée
+      imported_body: 1455 - {{ count }} pièce importée avec succès !
+      imported_body_plural: 1456 - {{ count }} pièces importées avec succès !
+    obsolete_base: 1457 - Pour rester synchronisé, vous devez recharger le fichier CSV.
   tutorials:
-    label: 1457 - Tutoriels
-    title: 1458 - Tutoriels
+    label: 1458 - Tutoriels
+    title: 1459 - Tutoriels
     help: |
-      1459 - Retrouvez ici une liste non exhaustive de vidéos réalisées par la communauté autour de l'utilisation d'*OpenCutList*.
-    submit: 1460 - Proposer une vidéo
+      1460 - Retrouvez ici une liste non exhaustive de vidéos réalisées par la communauté autour de l'utilisation d'*OpenCutList*.
+    submit: 1461 - Proposer une vidéo
     submit_info: |
-      1461 - Vous avez réalisé une vidéo de présentation de l'utilisation d'**OpenCutList** et vous souhaitez la voir apparaitre ici ?
+      1462 - Vous avez réalisé une vidéo de présentation de l'utilisation d'**OpenCutList** et vous souhaitez la voir apparaitre ici ?
       Faites nous le savoir en nous écrivant à **opencutlist@lairdubois.fr** !
 
       *La vidéo doit être publique et hébergée sur YouTube.*
     error:
-      fail_to_load_list: 1462 - Impossible de charger la liste des vidéos.
+      fail_to_load_list: 1463 - Impossible de charger la liste des vidéos.
   news:
-    label: 1463 - Actualités
-    title: 1464 - Actualités
+    label: 1464 - Actualités
+    title: 1465 - Actualités
     help: |
-      1465 - Retrouvez ici les actualités d'*OpenCutList*.
-    comment: 1466 - Commenter
+      1466 - Retrouvez ici les actualités d'*OpenCutList*.
+    comment: 1467 - Commenter
     error:
-      fail_to_load_list: 1467 - Impossible de charger la liste des actualités.
+      fail_to_load_list: 1468 - Impossible de charger la liste des actualités.
   forum:
-    label: 1468 - Forum
-    title: 1469 - Forum
+    label: 1469 - Forum
+    title: 1470 - Forum
     help: |
-      1470 - Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
-    create_conversation: 1471 - Démarrer une conversation
-    reply: 1472 - Répondre
-    tags: 1473 - Tags
+      1471 - Cet espace vous permet d'échanger la communauté d'utilisateurs et l'équipe d'*OpenCutList*.
+    create_conversation: 1472 - Démarrer une conversation
+    reply: 1473 - Répondre
+    tags: 1474 - Tags
     redirection: |
-      1474 - Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
+      1475 - Vous allez être redirigé vers la plateforme **Open Collective** qui héberge ce forum de discussion.
       Pour *démarrer des conversations* ou y *répondre* vous devrez y créer un compte et vous y connecter.
       *C'est gratuit, sans engagement et une simple addresse email suffit.*
 
       Validez pour continuer.
     error:
-      fail_to_load_list: 1475 - Impossible de charger la liste des conversations.
+      fail_to_load_list: 1476 - Impossible de charger la liste des conversations.
   sponsor:
-    label: 1476 - Soutenir
-    title: 1477 - Soutenir
+    label: 1477 - Soutenir
+    title: 1478 - Soutenir
     description: |
-      1478 - **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
+      1479 - **OpenCutList** est un logiciel *Open Source* qui est financé par ses utilisateurs via la plateforme <a href="https://opencollective.com/" target="_blank">Open Collective</a>.
       Soutenez ce projet en contribuant vous aussi à son financement !
-    contribute: 1479 - Contribuer
-    backers: 1480 - {{ count }} contributeur financier
-    backers_plural: 1481 - {{ count }} contributeurs financiers
-    ad: 1482 - OpenCutList n'est pas gratuit
-    objective: 1483 - Objectif
-    objective_slogan: 1484 - OpenCutList, c'est nous tous
+    contribute: 1480 - Contribuer
+    backers: 1481 - {{ count }} contributeur financier
+    backers_plural: 1482 - {{ count }} contributeurs financiers
+    ad: 1483 - OpenCutList n'est pas gratuit
+    objective: 1484 - Objectif
+    objective_slogan: 1485 - OpenCutList, c'est nous tous
     objective_title:
-      default: 1485 - Objectifs
-      cuttingdiagram_export: 1486 - Financement des exports de calepinage
+      default: 1486 - Objectifs
+      cuttingdiagram_export: 1487 - Financement des exports de calepinage
     objective_details:
       default: |
-        1487 - L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour !
+        1488 - L'amélioration en continue d'*OpenCutList* nous tient à coeur et le projet continue d'avoir besoin de vous pour sa prochaine mise à jour !
       cuttingdiagram_export: |
-        1488 - Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
+        1489 - Il nous tient à coeur qu'*OpenCutList* puisse s'adapter aux attentes très variées des utilisateurs pour la fonction de *calepinage*.
         Pour élargir encore les possibilités, nous souhaitons permettre d'exporter les diagrammes de calepinage au format **SVG** et **DXF**.
         En nous fournissant les moyens de travailler sur ces exports, vous nous donnez l'occasion de vous permettre de tirer le meilleur d'*OpenCutList*.
     objective_crowdfunding: |
-      1489 - Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
+      1490 - Le développement des nouveautés se fera grâce au **financement participatif** et pourra débuter lorsque son **Objectif Financier** sera atteint.
     objective_thanks: |
-      1490 - Merci pour votre contribution !
-    objective_funded_progress: 1491 - financé à {{ progress }}%
+      1491 - Merci pour votre contribution !
+    objective_funded_progress: 1492 - financé à {{ progress }}%
   settings:
-    label: 1492 - Préférences
-    title: 1493 - Préférences
-    global_settings: 1494 - Préférences globales
-    language: 1495 - Langue
-    language_auto: 1496 - Automatique
-    font_size: 1497 - Taille de texte
+    label: 1493 - Préférences
+    title: 1494 - Préférences
+    global_settings: 1495 - Préférences globales
+    language: 1496 - Langue
+    language_auto: 1497 - Automatique
+    font_size: 1498 - Taille de texte
     font_size_auto: $t(default.automatic)
-    font_size_normal: 1499 - Normale
-    font_size_small: 1500 - Petite
-    font_size_tiny: 1501 - Très petite
-    print_margin: 1502 - Marges d'impression
-    print_margin_normal: 1503 - Normales
-    print_margin_small: 1504 - Petites
-    table_row_size: 1505 - Taille des lignes de tableau
-    table_row_size_normal: 1506 - Normale
-    table_row_size_compact: 1507 - Compacte
-    size_and_position: 1508 - Taille et position de la fenêtre
-    model_settings: 1509 - Préférences du modèle
-    length_unit: 1510 - Unité de longueur
-    length_format: 1511 - Format
+    font_size_normal: 1500 - Normale
+    font_size_small: 1501 - Petite
+    font_size_tiny: 1502 - Très petite
+    print_margin: 1503 - Marges d'impression
+    print_margin_normal: 1504 - Normales
+    print_margin_small: 1505 - Petites
+    table_row_size: 1506 - Taille des lignes de tableau
+    table_row_size_normal: 1507 - Normale
+    table_row_size_compact: 1508 - Compacte
+    size_and_position: 1509 - Taille et position de la fenêtre
+    model_settings: 1510 - Préférences du modèle
+    length_unit: 1511 - Unité de longueur
+    length_format: 1512 - Format
     length_format_0: $t(default.decimal)
-    length_format_1: 1513 - Architecture
-    length_format_2: 1514 - Ingénierie
+    length_format_1: 1514 - Architecture
+    length_format_2: 1515 - Ingénierie
     length_format_3: $t(default.fractional)
-    length_precision: 1516 - Précision
-    suppress_units_display: 1517 - Afficher l'unité de longueur à chaque valeur
-    mass_unit: 1518 - Unité de masse
-    mass_precision: 1519 - Précision
-    currency_symbol: 1520 - Symbole monétaire
-    currency_precision: 1521 - Précision
+    length_precision: 1517 - Précision
+    suppress_units_display: 1518 - Afficher l'unité de longueur à chaque valeur
+    mass_unit: 1519 - Unité de masse
+    mass_precision: 1520 - Précision
+    currency_symbol: 1521 - Symbole monétaire
+    currency_precision: 1522 - Précision
     presets:
-      export_global_presets: 1522 - Exporter les préréglages
+      export_global_presets: 1523 - Exporter les préréglages
       export_global_presets_help: |
-        1523 - Cette fonctionnalité vous permet d'exporter vos préréglages vers un fichier **.json**.
+        1524 - Cette fonctionnalité vous permet d'exporter vos préréglages vers un fichier **.json**.
         Sélectionnez les préréglages que vous souhaitez y exporter.
-      export_global_presets_success: 1524 - Les préréglages ont été exportés avec succès.
-      import_global_presets: 1525 - Importer des préréglages
+      export_global_presets_success: 1525 - Les préréglages ont été exportés avec succès.
+      import_global_presets: 1526 - Importer des préréglages
       import_global_presets_help: |
-        1526 - Sélectionnez les préréglages présents dans le fichier **.json** que vous souhaitez importer.
+        1527 - Sélectionnez les préréglages présents dans le fichier **.json** que vous souhaitez importer.
         Attention, si un préréglage avec un nom identique existe déjà, il sera remplacé par la version importée.
       import_global_presets_success: |
-        1527 - Les préréglages *OpenCutList* ont été importés avec succès.
+        1528 - Les préréglages *OpenCutList* ont été importés avec succès.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
-      dump_global_presets: 1528 - Dump des préréglages
-      dump_model_presets: 1529 - Dump des réglages du modèle
-      reset_global_presets: 1530 - Réinitialiser les préréglages
+      dump_global_presets: 1529 - Dump des préréglages
+      dump_model_presets: 1530 - Dump des réglages du modèle
+      reset_global_presets: 1531 - Réinitialiser les préréglages
       reset_global_presets_confirm: |
-        1531 - Vous êtes sur le point de réinitialiser tous vos préréglages *OpenCutList* enregistrés.
+        1532 - Vous êtes sur le point de réinitialiser tous vos préréglages *OpenCutList* enregistrés.
         Cette action est définitive. **Tous les préréglages seront perdus.**
         Confirmez pour continuer.
       reset_global_presets_success: |
-        1532 - Les préréglages *OpenCutList* ont été réinitialisés.
+        1533 - Les préréglages *OpenCutList* ont été réinitialisés.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
-      reset_model_presets: 1533 - Réinitialiser les réglages du modèle
+      reset_model_presets: 1534 - Réinitialiser les réglages du modèle
       reset_model_presets_confirm: |
-        1534 - Vous êtes sur le point de réinitialiser tous les réglages *OpenCutList* du modèle courant.
+        1535 - Vous êtes sur le point de réinitialiser tous les réglages *OpenCutList* du modèle courant.
         Cette action est définitive. **Tous les réglages seront rétablis à leur valeur par défaut.**
         Confirmez pour continuer.
       reset_model_presets_success: |
-        1535 - Les réglages *OpenCutList* du modèle courant ont été réinitialisés.
+        1536 - Les réglages *OpenCutList* du modèle courant ont été réinitialisés.
         Afin de prendre en compte les changements, vous devez **fermer** et **réouvrir** la fenêtre OpenCutList.
       error:
-        no_preset_to_export: 1536 - Aucun préréglage à exporter.
-        no_preset_to_import: 1537 - Aucun préréglage à importer.
-        failed_to_import: '1538 - Impossible d''importer les préréglages : **{{ error }}**.'
-        failed_to_import_invalid_hexdigest: 1539 - Ce fichier a été modifié. Il ne peut pas être importé.
-        failed_to_import_bad_file_format: 1540 - Format de fichier invalide.
+        no_preset_to_export: 1537 - Aucun préréglage à exporter.
+        no_preset_to_import: 1538 - Aucun préréglage à importer.
+        failed_to_import: '1539 - Impossible d''importer les préréglages : **{{ error }}**.'
+        failed_to_import_invalid_hexdigest: 1540 - Ce fichier a été modifié. Il ne peut pas être importé.
+        failed_to_import_bad_file_format: 1541 - Format de fichier invalide.
   about:
-    label: 1541 - A propos
-    title: 1542 - A propos
-    version: 1543 - Version
-    credits: 1544 - Crédits techniques
+    label: 1542 - A propos
+    title: 1543 - A propos
+    version: 1544 - Version
+    credits: 1545 - Crédits techniques
     credits_authors: |
-      1545 - *OpenCutList* est développé par [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) et [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
-    credits_translations: 1546 - Traductions
+      1546 - *OpenCutList* est développé par [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) et [Martin Müller](https://www.lairdubois.fr/@mobilarte). *Lister les [contributeurs](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors)*.
+    credits_translations: 1547 - Traductions
     credits_translators: |
-      1547 - - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglais*, *allemand*)
+      1548 - - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*anglais*, *allemand*)
       - Gildas Boureau (documentation *française*)
       - Vladimir Badulya (*russe*)
       - Pierluigi Colombo, Massimo Risca (*italien*)
@@ -2028,213 +2029,216 @@ tab:
       - Zoltán Nagy, Roland Kovács (*hongrois*)
       - Milan Divovic (*serbe*)
     credits_description: |
-      1548 - Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
+      1549 - Le développement de cette extension s'inscrit dans le projet de plateforme de partage [L'Air du Bois](https://www.lairdubois.fr).
       Et à ce titre, il est également *Open Source* et disponible sous licence [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) sur son [dépôt GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension).
-    credits_runtime: 1549 - Exécution
-    credits_development: 1550 - Développement
+    credits_runtime: 1550 - Exécution
+    credits_development: 1551 - Développement
     credits_vendors: |
-      1551 - Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
+      1552 - Mais l'aventure ne serait pas possible sans le travail des auteurs des briques logiciels *Open Source* suivantes :
     credits_thanks: |
-      1552 - Un remerciement particulier à :
+      1553 - Un remerciement particulier à :
       - [JetBrains](https://www.jetbrains.com) pour leur soutien à ce projet par leur [Licence spéciale pour les projets Open Source](https://www.jetbrains.com/buy/opensource/).
       - [Transifex](https://www.transifex.com) pour leur soutien de projet Open Source.
       - [GitBook](https://www.gitbook.com) pour leur soutien de projet Open Source.
 tool:
   default:
-    transparency: 1553 - Transparence
-    zoom_extents: 1554 - Zoom étendu
-    toggle_depth: 1555 - Pièces en arrière plan
-    more: 1556 - Plus
-    end_point: 1557 - Extrémité
-    middle_point: 1558 - Point du milieu
-    third_point: 1559 - Point au tiers
-    vcb_length: 1560 - Longueur
-    vcb_size: 1561 - Cotations
-    vcb_radius: 1562 - Rayon
-    vcb_diameter: 1563 - Diamètre
-    vcb_distance: 1564 - Distance
+    transparency: 1554 - Transparence
+    zoom_extents: 1555 - Zoom étendu
+    toggle_depth: 1556 - Pièces en arrière plan
+    more: 1557 - Plus
+    end_point: 1558 - Extrémité
+    middle_point: 1559 - Point du milieu
+    third_point: 1560 - Point au tiers
+    vcb_length: 1561 - Longueur
+    vcb_size: 1562 - Cotations
+    vcb_radius: 1563 - Rayon
+    vcb_diameter: 1564 - Diamètre
+    vcb_distance: 1565 - Distance
     error:
-      no_direction: 1565 - Veuillez indiquer une direction avec la souris
-      invalid_length: 1566 - La longueur {{ value }} est invalide
-      invalid_multiplicator: 1567 - Le multiplicateur {{ value }} est invalide
-      invalid_divider: 1568 - Le diviseur {{ value }} est invalide
-      invalid_offset: 1569 - Le décalage {{ value }} est invalide
-      invalid_segment_count: 1570 - Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999.
+      no_direction: 1566 - Veuillez indiquer une direction avec la souris
+      invalid_length: 1567 - La longueur {{ value }} est invalide
+      invalid_multiplicator: 1568 - Le multiplicateur {{ value }} est invalide
+      invalid_divider: 1569 - Le diviseur {{ value }} est invalide
+      invalid_offset: 1570 - Le décalage {{ value }} est invalide
+      invalid_segment_count: 1571 - Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999.
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1573 - Dessiner
-    action_0: 1574 - Dessiner un Rectangle
-    action_0_status: 1575 - Dessiner un volume sur la base d'une forme rectangulaire
-    action_0_state_1_status: 1576 - Cliquez pour définir l'angle opposé ou entrez une longueur, largeur
-    action_1: 1577 - Dessiner un Cercle
-    action_1_status: 1578 - Dessiner un volume sur la base d'une forme circulaire
-    action_1_state_1_radius_status: 1579 - Cliquez pour définir le rayon ou entrez une distance
-    action_1_state_1_diameter_status: 1580 - Cliquez pour définir le diamètre ou entrez une distance
-    action_2: 1581 - Dessiner un Polygone
-    action_2_status: 1582 - Dessiner un volume sur la base d'une forme polygonale
-    action_2_state_1_status: 1583 - Cliquez pour définir un nouveau point ou entrez une distance
-    action_x_state_2_status: 1584 - Cliquez pour définir l'élévation ou entrez une distance
-    action_option_group_offset: 1585 - Décalage
-    action_option_group_segments: 1586 - Segments
-    action_option_group_options: 1587 - Options
-    action_option_offset_shape_offset: 1588 - Décalage
-    action_option_offset_shape_offset_status: 1589 - Permet d'appliquer un décalage au tracé de la forme dessinée
-    action_option_segments_segment_count: 1590 - Nombre de segments
-    action_option_segments_segment_count_status: 1591 - Permet de définir le nombre de segments du cercle
-    action_option_options_construction: 1592 - Traits de construction
-    action_option_options_construction_status: 1593 - Dessiner en traits de construction
-    action_option_options_rectangle_centered: 1594 - Rectangle centré
-    action_option_options_rectangle_centered_status: 1595 - Centrer le rectangle sur le premier point
-    action_option_options_smoothing: 1596 - Lissage
-    action_option_options_smoothing_status: 1597 - Lisser les courbes
-    action_option_options_measure_from_vertex_status: 1598 - Mesurer relativement au sommet proche
-    action_option_options_measure_from_diameter: 1599 - Mesure
-    action_option_options_measure_from_diameter_status: 1600 - Mesurer le cercle par son diamètre
-    action_option_options_measure_from_radius_status: 1601 - Mesurer le cercle par son rayon
-    action_option_options_measure_reversed: 1602 - Mesure inversée
-    action_option_options_measure_reversed_status: 1603 - Inverser la mesure
-    action_option_options_pull_centered: 1604 - Élévation centrée
-    action_option_options_pull_centered_status: 1605 - Centrer l'élévation sur le premier point
-    action_option_options_ask_name: 1606 - Nommage des pièces
-    action_option_options_ask_name_status: 1607 - Saisir manuellement le nom des pièces
-    action_measure_locked_status: 1608 - Verrouiller sur la dernière mesure
-    action_toggle_move_copy_status: 1609 - Alterner entre copier/déplacer
-    action_change_move_anchor_status: 1610 - Changer le point d'ancrage
+    title: 1574 - Dessiner
+    action_0: 1575 - Dessiner un Rectangle
+    action_0_status: 1576 - Dessiner un volume sur la base d'une forme rectangulaire
+    action_0_state_1_status: 1577 - Cliquez pour définir l'angle opposé ou entrez une longueur, largeur
+    action_1: 1578 - Dessiner un Cercle
+    action_1_status: 1579 - Dessiner un volume sur la base d'une forme circulaire
+    action_1_state_1_radius_status: 1580 - Cliquez pour définir le rayon ou entrez une distance
+    action_1_state_1_diameter_status: 1581 - Cliquez pour définir le diamètre ou entrez une distance
+    action_2: 1582 - Dessiner un Polygone
+    action_2_status: 1583 - Dessiner un volume sur la base d'une forme polygonale
+    action_2_state_1_status: 1584 - Cliquez pour définir un nouveau point ou entrez une distance
+    action_x_state_2_status: 1585 - Cliquez pour définir l'élévation ou entrez une distance
+    action_option_group_offset: 1586 - Décalage
+    action_option_group_segments: 1587 - Segments
+    action_option_group_options: 1588 - Options
+    action_option_offset_shape_offset: 1589 - Décalage
+    action_option_offset_shape_offset_status: 1590 - Permet d'appliquer un décalage au tracé de la forme dessinée
+    action_option_segments_segment_count: 1591 - Nombre de segments
+    action_option_segments_segment_count_status: 1592 - Permet de définir le nombre de segments du cercle
+    action_option_options_construction: 1593 - Traits de construction
+    action_option_options_construction_status: 1594 - Dessiner en traits de construction
+    action_option_options_rectangle_centered: 1595 - Rectangle centré
+    action_option_options_rectangle_centered_status: 1596 - Centrer le rectangle sur le premier point
+    action_option_options_smoothing: 1597 - Lissage
+    action_option_options_smoothing_status: 1598 - Lisser les courbes
+    action_option_options_measure_from_vertex_status: 1599 - Mesurer relativement au sommet proche
+    action_option_options_measure_from_diameter: 1600 - Mesure
+    action_option_options_measure_from_diameter_status: 1601 - Mesurer le cercle par son diamètre
+    action_option_options_measure_from_radius_status: 1602 - Mesurer le cercle par son rayon
+    action_option_options_measure_reversed: 1603 - Mesure inversée
+    action_option_options_measure_reversed_status: 1604 - Inverser la mesure
+    action_option_options_pull_centered: 1605 - Élévation centrée
+    action_option_options_pull_centered_status: 1606 - Centrer l'élévation sur le premier point
+    action_option_options_ask_name: 1607 - Nommage des pièces
+    action_option_options_ask_name_status: 1608 - Saisir manuellement le nom des pièces
+    action_measure_locked_status: 1609 - Verrouiller sur la dernière mesure
+    action_toggle_move_copy_status: 1610 - Alterner entre copier/déplacer
+    action_change_move_anchor_status: 1611 - Changer le point d'ancrage
     success:
-      part_created: '1611 - Nouvelle pièce créée : {{ name }}'
+      part_created: '1612 - Nouvelle pièce créée : {{ name }}'
   smart_handle:
-    title: 1612 - Manipuler
-    action_0: 1613 - Sélectionner
-    action_0_status: 1614 - Cliquez sur une pièce pour la sélectionner
-    action_1: 1615 - Copier en ligne
-    action_1_status: 1616 - Cliquez sur une pièce pour la copier le long d'un axe
+    title: 1613 - Manipuler
+    action_0: 1614 - Sélectionner
+    action_0_status: 1615 - Cliquez sur une pièce pour la sélectionner
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: 1617 - Glissez sur une pièce identique pour l'ajouter à la sélection et relâchez pour continuer
+    action_1: 1618 - Copier en ligne
+    action_1_status: 1619 - Cliquez sur une pièce pour la copier le long d'un axe
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: 1618 - Cliquez pour placer la copie de la pièce ou entrez une distance
-    action_2: 1619 - Copier en grille
-    action_2_status: 1620 - Cliquez sur une pièce pour la copier le long d'une grille
+    action_1_state_2_status: 1621 - Cliquez pour placer la copie de la pièce ou entrez une distance
+    action_2: 1622 - Copier en grille
+    action_2_status: 1623 - Cliquez sur une pièce pour la copier le long d'une grille
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: 1622 - Cliquez pour placer les copies de la pièce ou entrez deux distances
-    action_3: 1623 - Déplacer
-    action_3_status: 1624 - Cliquez sur une pièce pour la déplacer le long d'un axe
+    action_2_state_2_status: 1625 - Cliquez pour placer les copies de la pièce ou entrez deux distances
+    action_3: 1626 - Déplacer
+    action_3_status: 1627 - Cliquez sur une pièce pour la déplacer le long d'un axe
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: 1626 - Cliquez pour placer la pièce ou entrez une distance
-    action_4: 1627 - Répartir
-    action_4_status: 1628 - Cliquez sur une pièce pour la répartir le long d'un axe
+    action_3_state_2_status: 1629 - Cliquez pour placer la pièce ou entrez une distance
+    action_4: 1630 - Répartir
+    action_4_status: 1631 - Cliquez sur une pièce pour la répartir le long d'un axe
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_1_status: 1630 - Cliquez pour déterminer le premier point de mesure
-    action_4_state_2_status: 1631 - Cliquez pour déterminer le second point de mesure ou entrez une distance
-    action_5: 1632 - Redimensionner
-    action_option_group_copy_measure_type: 1633 - Mesure
-    action_option_group_move_measure_type: 1634 - Mesure
-    action_option_group_axes: 1635 - Axes
-    action_option_group_options: 1636 - Options
-    action_option_copy_measure_type_outside_status: 1637 - Mesurer à l'extérieur
-    action_option_copy_measure_type_centered_status: 1638 - Mesurer de centre à centre
-    action_option_copy_measure_type_inside_status: 1639 - Mesurer entre les pièces
-    action_option_move_measure_type_outside_status: 1640 - Mesurer à l'extérieur
-    action_option_move_measure_type_centered_status: 1641 - Mesurer au centre
-    action_option_move_measure_type_inside_status: 1642 - Mesurer à l'intérieur
-    action_option_axes_active_status: 1643 - Manipuler le long des axes actifs
-    action_option_axes_context_status: 1644 - Manipuler le long des axes du groupe ou composant contenant la pièce
-    action_option_axes_entity_status: 1645 - Manipuler le long des axes de la pièce
-    action_option_options_mirror_status: 1646 - Copier en symétrie
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_state_1_status: 1634 - Cliquez pour déterminer le premier point de mesure
+    action_4_state_2_status: 1635 - Cliquez pour déterminer le second point de mesure ou entrez une distance
+    action_5: 1636 - Redimensionner
+    action_option_group_copy_measure_type: 1637 - Mesure
+    action_option_group_move_measure_type: 1638 - Mesure
+    action_option_group_axes: 1639 - Axes
+    action_option_group_options: 1640 - Options
+    action_option_copy_measure_type_outside_status: 1641 - Mesurer à l'extérieur
+    action_option_copy_measure_type_centered_status: 1642 - Mesurer de centre à centre
+    action_option_copy_measure_type_inside_status: 1643 - Mesurer entre les pièces
+    action_option_move_measure_type_outside_status: 1644 - Mesurer à l'extérieur
+    action_option_move_measure_type_centered_status: 1645 - Mesurer au centre
+    action_option_move_measure_type_inside_status: 1646 - Mesurer à l'intérieur
+    action_option_axes_active_status: 1647 - Manipuler le long des axes actifs
+    action_option_axes_context_status: 1648 - Manipuler le long des axes du groupe ou composant contenant la pièce
+    action_option_axes_entity_status: 1649 - Manipuler le long des axes de la pièce
+    action_option_options_mirror_status: 1650 - Copier en symétrie
     warning:
-      copies_disable_mirror: 1647 - La copie multiple désactive l'option '$t(tool.smart_handle.action_option_options_mirror_status)'
+      copies_disable_mirror: 1651 - La copie multiple désactive l'option '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      min_distance: 1648 - La distance {{ value1 }} est inférieure à la distance minimale de {{ value2 }}
+      min_distance: 1652 - La distance {{ value1 }} est inférieure à la distance minimale de {{ value2 }}
   smart_paint:
-    title: 1649 - Colorier
-    default_material: 1650 - Sans matière
-    filters: 1651 - Filtres
-    filter_0: 1652 - Sans type
+    title: 1653 - Colorier
+    default_material: 1654 - Sans matière
+    filters: 1655 - Filtres
+    filter_0: 1656 - Sans type
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1659 - Colorier pièces
-    action_0_status: 1660 - Cliquez sur une pièce pour appliquer une matière à son instance
-    action_1: 1661 - Colorier chants
-    action_1_status: 1662 - Cliquez sur un chant d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_4)'
-    action_2: 1663 - Colorier faces
-    action_2_status: 1664 - Cliquez sur une face d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
-    action_3: 1665 - Prélever
-    action_3_status: 1666 - Cliquez sur une face pour prélever un échantillon de la matière
-    action_4: 1667 - Nettoyer
-    action_4_status: 1668 - Cliquez sur une pièce pour supprimer toutes les matières de sa définition et de toutes ses instances
-    action_option_group_instances: 1669 - Nombre d'instances
-    action_option_group_edges: 1670 - Nombre de chants
-    action_option_group_faces: 1671 - Nombre de faces
-    action_option_instances_0_status: 1672 - Colorier seulement l'instance de la pièce ciblée
-    action_option_instances_1_status: 1673 - Colorier toutes les instances de la pièce ciblée
-    action_option_edges_0_status: 1674 - Colorier seulement le chant ciblé
-    action_option_edges_1_status: 1675 - Colorier le chant ciblé et le chant opposé de la pièce
-    action_option_edges_2_status: 1676 - Colorier les 4 chants de la pièce ciblée
-    action_option_faces_0_status: 1677 - Colorier seulement la face ciblée
-    action_option_faces_1_status: 1678 - Colorier les 2 faces de la pièce ciblée
-    edges: 1679 - {{ count }} chant
-    edges_plural: 1680 - {{ count }} chants
-    edge_ymin: 1681 - Longueur 1
-    edge_ymax: 1682 - Longueur 2
-    edge_xmin: 1683 - Largeur 1
-    edge_xmax: 1684 - Largeur 2
-    faces: 1685 - {{ count }} face
-    faces_plural: 1686 - {{ count }} faces
-    face_zmin: 1687 - Contre-face
-    face_zmax: 1688 - Face
+    action_0: 1663 - Colorier pièces
+    action_0_status: 1664 - Cliquez sur une pièce pour appliquer une matière à son instance
+    action_1: 1665 - Colorier chants
+    action_1_status: 1666 - Cliquez sur un chant d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_4)'
+    action_2: 1667 - Colorier faces
+    action_2_status: 1668 - Cliquez sur une face d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
+    action_3: 1669 - Prélever
+    action_3_status: 1670 - Cliquez sur une face pour prélever un échantillon de la matière
+    action_4: 1671 - Nettoyer
+    action_4_status: 1672 - Cliquez sur une pièce pour supprimer toutes les matières de sa définition et de toutes ses instances
+    action_option_group_instances: 1673 - Nombre d'instances
+    action_option_group_edges: 1674 - Nombre de chants
+    action_option_group_faces: 1675 - Nombre de faces
+    action_option_instances_0_status: 1676 - Colorier seulement l'instance de la pièce ciblée
+    action_option_instances_1_status: 1677 - Colorier toutes les instances de la pièce ciblée
+    action_option_edges_0_status: 1678 - Colorier seulement le chant ciblé
+    action_option_edges_1_status: 1679 - Colorier le chant ciblé et le chant opposé de la pièce
+    action_option_edges_2_status: 1680 - Colorier les 4 chants de la pièce ciblée
+    action_option_faces_0_status: 1681 - Colorier seulement la face ciblée
+    action_option_faces_1_status: 1682 - Colorier les 2 faces de la pièce ciblée
+    edges: 1683 - {{ count }} chant
+    edges_plural: 1684 - {{ count }} chants
+    edge_ymin: 1685 - Longueur 1
+    edge_ymax: 1686 - Longueur 2
+    edge_xmin: 1687 - Largeur 1
+    edge_xmax: 1688 - Largeur 2
+    faces: 1689 - {{ count }} face
+    faces_plural: 1690 - {{ count }} faces
+    face_zmin: 1691 - Contre-face
+    face_zmax: 1692 - Face
     warning:
-      no_material: 1689 - Aucune matière
-      no_material_type: 1690 - Aucune matière de type '{{ type }}'
+      no_material: 1693 - Aucune matière
+      no_material_type: 1694 - Aucune matière de type '{{ type }}'
     error:
-      not_part: 1691 - L'objet ciblé n'est pas une pièce (composant)
-      not_edge: 1692 - La face ciblée n'est pas un chant de panneau
-      not_face: 1693 - La face ciblée n'est pas une face de panneau
-      wrong_material_type: 1694 - La pièce ciblée doit être du type '{{ type }}'
+      not_part: 1695 - L'objet ciblé n'est pas une pièce (composant)
+      not_edge: 1696 - La face ciblée n'est pas un chant de panneau
+      not_face: 1697 - La face ciblée n'est pas une face de panneau
+      wrong_material_type: 1698 - La pièce ciblée doit être du type '{{ type }}'
   smart_axes:
-    title: 1695 - Orienter
-    action_0: 1696 - Retourner
-    action_0_status: 1697 - Cliquez sur une pièce pour retourner son instance le long de l'une de ses dimensions
-    action_1: 1698 - Permuter Longueur ↔ Largeur
-    action_1_status: 1699 - Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
-    action_2: 1700 - Permuter Face ↔ Contre-face
-    action_2_status: 1701 - Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
-    action_3: 1702 - Adapter les axes
-    action_3_status: 1703 - Ciblez une face d'une pièce et cliquez sur une arête pour y adapter ses axes
-    action_4: 1704 - Déplacer l'origine
-    action_4_status: 1705 - Ciblez une face d'une pièce et cliquez sur un point pour y placer son origine
-    action_option_group_direction: 1706 - Direction
-    action_option_direction_0: 1707 - Lo
-    action_option_direction_1: 1708 - La
-    action_option_direction_2: 1709 - Ep
-    action_option_direction_0_status: 1710 - Retourner la pièce dans sa longueur
-    action_option_direction_1_status: 1711 - Retourner la pièce dans sa largeur
-    action_option_direction_2_status: 1712 - Retourner la pièce dans son épaisseur
+    title: 1699 - Orienter
+    action_0: 1700 - Retourner
+    action_0_status: 1701 - Cliquez sur une pièce pour retourner son instance le long de l'une de ses dimensions
+    action_1: 1702 - Permuter Longueur ↔ Largeur
+    action_1_status: 1703 - Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
+    action_2: 1704 - Permuter Face ↔ Contre-face
+    action_2_status: 1705 - Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
+    action_3: 1706 - Adapter les axes
+    action_3_status: 1707 - Ciblez une face d'une pièce et cliquez sur une arête pour y adapter ses axes
+    action_4: 1708 - Déplacer l'origine
+    action_4_status: 1709 - Ciblez une face d'une pièce et cliquez sur un point pour y placer son origine
+    action_option_group_direction: 1710 - Direction
+    action_option_direction_0: 1711 - Lo
+    action_option_direction_1: 1712 - La
+    action_option_direction_2: 1713 - Ep
+    action_option_direction_0_status: 1714 - Retourner la pièce dans sa longueur
+    action_option_direction_1_status: 1715 - Retourner la pièce dans sa largeur
+    action_option_direction_2_status: 1716 - Retourner la pièce dans son épaisseur
     warning:
-      more_entities: 1713 - {{ count_used }} instances partageant la même définition seront modifiées
+      more_entities: 1717 - {{ count_used }} instances partageant la même définition seront modifiées
     error:
-      not_part: 1714 - L'objet ciblé n'est pas une pièce (composant)
-      not_orientable: 1715 - Le type de cette pièce ne permet pas de l'orienter
+      not_part: 1718 - L'objet ciblé n'est pas une pièce (composant)
+      not_orientable: 1719 - Le type de cette pièce ne permet pas de l'orienter
   smart_export:
-    title: 1716 - Exporter
-    action_0: 1717 - Exporter une pièce 3D
-    action_0_status: 1718 - Cliquez sur une pièce
-    action_1: 1719 - Exporter une pièce 2D
-    action_1_status: 1720 - Cliquez sur la face d'une pièce
-    action_2: 1721 - Exporter une face
-    action_2_status: 1722 - Cliquez sur une face
-    action_3: 1723 - Exporter un tracé
-    action_3_status: 1724 - Cliquez sur une arête
-    action_option_group_file_format: 1725 - Format
-    action_option_group_unit: 1726 - Unité
-    action_option_group_faces: 1727 - Faces
-    action_option_group_options: 1728 - Options
-    action_option_file_format_dxf_status: 1729 - Exporter vers un fichier DXF
-    action_option_file_format_stl_status: 1730 - Exporter vers un fichier STL
-    action_option_file_format_obj_status: 1731 - Exporter vers un fichier OBJ
-    action_option_file_format_svg_status: 1732 - Exporter vers un fichier SVG
+    title: 1720 - Exporter
+    action_0: 1721 - Exporter une pièce 3D
+    action_0_status: 1722 - Cliquez sur une pièce
+    action_1: 1723 - Exporter une pièce 2D
+    action_1_status: 1724 - Cliquez sur la face d'une pièce
+    action_2: 1725 - Exporter une face
+    action_2_status: 1726 - Cliquez sur une face
+    action_3: 1727 - Exporter un tracé
+    action_3_status: 1728 - Cliquez sur une arête
+    action_option_group_file_format: 1729 - Format
+    action_option_group_unit: 1730 - Unité
+    action_option_group_faces: 1731 - Faces
+    action_option_group_options: 1732 - Options
+    action_option_file_format_dxf_status: 1733 - Exporter vers un fichier DXF
+    action_option_file_format_stl_status: 1734 - Exporter vers un fichier STL
+    action_option_file_format_obj_status: 1735 - Exporter vers un fichier OBJ
+    action_option_file_format_svg_status: 1736 - Exporter vers un fichier SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2244,9 +2248,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1742 - Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
-    action_option_options_include_paths_status: 1743 - Exporter comme tracé les arêtes non associées à une face contenues dans la pièce
+    action_option_options_merge_holes_status: 1746 - Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
+    action_option_options_include_paths_status: 1747 - Exporter comme tracé les arêtes non associées à une face contenues dans la pièce
     error:
-      not_part: 1744 - Cette face ne fait pas partie d'une pièce (composant)
-      not_flat_face: 1745 - Cette surface n'est pas plane
-      incompatible_active_path: 1746 - Le chemin actif ne permet pas d'exporter cette pièce
+      not_part: 1748 - Cette face ne fait pas partie d'une pièce (composant)
+      not_flat_face: 1749 - Cette surface n'est pas plane
+      incompatible_active_path: 1750 - Le chemin actif ne permet pas d'exporter cette pièce
