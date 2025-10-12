@@ -13,7 +13,9 @@ module Ladb::OpenCutList
     def initialize(outliner_def,
 
                    id:,
-                   formula:
+                   formula:,
+
+                   preview_index: -1  # Apply renaming only if preview_index >= 0
 
     )
 
@@ -21,6 +23,8 @@ module Ladb::OpenCutList
 
       @id = id
       @formula = formula
+
+      @preview_index = preview_index
 
     end
 
@@ -39,9 +43,9 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
 
       # Start a model modification operation
-      model.start_operation('OCL Outliner Deep Rename', true, false, false)
+      model.start_operation('OCL Outliner Deep Rename', true, false, false) if @preview_index < 0
 
-
+      index = 0
       node_defs = node_def.get_valid_unlocked_selection_siblings
 
       d_nps = {} # Definition => NodeDefs, Parts
@@ -118,30 +122,53 @@ module Ladb::OpenCutList
           name = CommonEvalFormulaWorker.new(formula: @formula, data: data).run
 
           # Check name integrity
-          return { :errors => [ [ 'core.error.extern', name ] ] } unless name.is_a?(String)
-          next if name == definition.name || name.empty?
+          return { :errors => [ name ] } unless name.is_a?(String)
 
-          n_ns[name] = [] unless n_ns.has_key?(name)
-          n_ns[name] << node_def
+          if @preview_index < 0
 
-        end
+            next if name == definition.name || name.empty?
 
-        # Rename definitions
-        n_ns.each do |name, node_defs|
-          new_definition = node_defs.first.entity.make_unique.definition
-          node_defs.each do |node_def|
-            node_def.entity.definition = new_definition
+            n_ns[name] = [] unless n_ns.has_key?(name)
+            n_ns[name] << node_def
+
+          else
+
+            if index == @preview_index
+              return {
+                :success => true,
+                :preview => {
+                  :old => definition.name,
+                  :new => name.empty? ? definition.name : name,
+                }
+              }
+            end
+            index += 1
+
           end
-          new_definition.name = name if name != new_definition.name
+
         end
 
-        # Remove unused definitions
-        model.definitions.remove(definition) if definition.count_instances == 0
+        if @preview_index < 0
+
+          # Rename definitions
+          n_ns.each do |name, node_defs|
+            new_definition = node_defs.first.entity.make_unique.definition
+            node_defs.each do |node_def|
+              node_def.entity.definition = new_definition
+            end
+            new_definition.name = name if name != new_definition.name
+          end
+
+          # Remove unused definitions
+          model.definitions.remove(definition) if definition.count_instances == 0
+
+        end
 
       end
 
+
       # Commit model modification operation
-      model.commit_operation
+      model.commit_operation if @preview_index < 0
 
       { :success => true }
     end

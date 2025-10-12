@@ -2,9 +2,10 @@ module Ladb::OpenCutList
 
   require_relative '../../utils/unit_utils'
   require_relative '../../utils/path_utils'
+  require_relative '../../model/data_container'
   require_relative '../../model/attributes/material_attributes'
 
-  class FormulaWrapper
+  class FormulaWrapper < DataContainer
 
     def export
       ''

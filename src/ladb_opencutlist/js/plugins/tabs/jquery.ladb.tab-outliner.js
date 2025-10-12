@@ -273,6 +273,7 @@
                                         // Fetch UI elements
                                         const $widgetPreset = $('.ladb-widget-preset', $modal);
                                         const $textareaFormula = $('#ladb_textarea_formula', $modal);
+                                        const $divPreview = $('#ladb_div_preview', $modal);
                                         const $btnRename = $('#ladb_outliner_deep_rename_parts', $modal);
 
                                         // Define useful functions
@@ -304,7 +305,8 @@
                                             fnFillInputs: fnFillInputs
 
                                         });
-                                        $textareaFormula.ladbTextinputCode({
+                                        $textareaFormula
+                                            .ladbTextinputCode({
                                             variableDefs: fnConvertToVariableDefs([
                                                 { name: 'path', type: 'path' },
                                                 { name: 'instance_name', type: 'string' },
@@ -336,7 +338,41 @@
                                                 { name: 'component_definition', type: 'component_definition' },
                                                 { name: 'component_instance', type: 'component_instance' },
                                             ])
-                                        });
+                                        })
+                                            .on('change', function () {
+
+                                                // Fetch options
+                                                fnFetchOptions(deepRenamePartsOptions);
+
+                                                rubyCallCommand('outliner_deep_rename_parts', $.extend({
+                                                    id: node.id,
+                                                    preview_index: 0
+                                                }, deepRenamePartsOptions), function (response) {
+
+                                                    $divPreview.empty();
+
+                                                    let $panel = $('<div class="panel panel-default">');
+                                                    if (response.errors) {
+                                                        let $alert = $('<div class="alert alert-danger">');
+                                                        $.each(response.errors, function (index, error) {
+                                                            $alert.append($('<div>').html(i18next.t('core.error.' + error.error_type, error)));
+                                                        })
+                                                        $divPreview.append($alert);
+                                                    } else if (response.preview) {
+                                                        $divPreview.empty();
+                                                        let $panelHeading = $('<div class="panel-heading">')
+                                                            .html(i18next.t('default.preview'));
+                                                        let $panelBody = $('<div class="panel-body" style="display: flex; gap: 10px; align-items: center;">')
+                                                            .html('<span style="flex-grow: 1; text-align: center; color: #aaa;">' + response.preview.old + '</span><i class="ladb-opencutlist-icon-arrow-right"></i><span style="flex-grow: 1; text-align: center;">' + response.preview.new + '</span>');
+                                                        $panel.append($panelHeading)
+                                                        $panel.append($panelBody)
+                                                        $divPreview.append($panel);
+                                                    }
+
+                                                });
+
+                                            })
+                                        ;
 
                                         fnFillInputs(deepRenamePartsOptions);
 
