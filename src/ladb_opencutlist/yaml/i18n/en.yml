@@ -1791,6 +1791,7 @@ tab:
       no_entities: Your model is empty!
       node_not_found: Node not found
       entity_not_found: Instance not found
+      invalid_target: The targeted instance does not allow this operation
       obsolete_outliner: "Impossible, the generated structure is obsolete. Please, regenerate it."
     tip:
       no_node: |
@@ -2113,6 +2114,8 @@ tool:
     title: Handle
     action_0: Select
     action_0_status: Click on a part to select it
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: Slide over an identical piece to add it to the selection and release to continue
     action_1: Copy in Line
     action_1_status: Click on a part to copy it along an axis
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2128,6 +2131,7 @@ tool:
     action_4: Distribute
     action_4_status: Click on a part to distribute it along an axis
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Click to set the first measurement point
     action_4_state_2_status: Click to set the second measurement point or enter a distance
     action_5: Resize

@@ -1791,6 +1791,7 @@ tab:
       no_entities: Ihr Modell ist leer!
       node_not_found: Knoten nicht gefunden
       entity_not_found: Instanz nicht gefunden
+      invalid_target: Die Zielinstanz erlaubt diesen Vorgang nicht
       obsolete_outliner: "Unmöglich, die generierte Struktur ist nicht mehr aktuell. Bitte, aktualisieren Sie sie."
     tip:
       no_node: |
@@ -2113,6 +2114,8 @@ tool:
     title: Handhaben
     action_0: Auswählen
     action_0_status: "Klicken Sie auf ein Teil, um es auszuwählen"
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: Ziehen Sie ein identisches Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren
     action_1: In Linie kopieren
     action_1_status: "Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren"
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2128,6 +2131,7 @@ tool:
     action_4: Verteilen
     action_4_status: "Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen"
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: "Klicken Sie, um den ersten Messpunkt zu setzen"
     action_4_state_2_status: "Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein"
     action_5: Größe ändern
