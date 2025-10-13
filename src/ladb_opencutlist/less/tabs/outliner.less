@@ -279,21 +279,27 @@
 
   .ladb-panel-preview {
 
-    .ladb-panel-preview-content {
-      display: flex;
-      align-items: center;
+    .panel-body {
+      max-height: 35vh;
+      overflow-y: auto;
+    }
 
-      span {
-        flex-grow: 1;
-        text-align: center;
+    .ladb-panel-preview-content {
+
+      table {
+        margin: 0;
+      }
+
+      tr:first-child td {
+        border-top: none;
+      }
+
+      td {
 
         &.ladb-panel-preview-content-old {
           color: #aaa;
         }
 
-      }
-
-      .ladb-panel-preview-errors {
       }
 
     }

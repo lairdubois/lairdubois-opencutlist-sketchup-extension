@@ -15,7 +15,7 @@ module Ladb::OpenCutList
                    id:,
                    formula:,
 
-                   preview_index: -1  # Apply renaming only if preview_index >= 0
+                   dry_run: false
 
     )
 
@@ -24,7 +24,7 @@ module Ladb::OpenCutList
       @id = id
       @formula = formula
 
-      @preview_index = preview_index
+      @dry_run = dry_run
 
     end
 
@@ -43,10 +43,11 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
 
       # Start a model modification operation
-      model.start_operation('OCL Outliner Deep Rename', true, false, false) if @preview_index < 0
+      model.start_operation('OCL Outliner Deep Rename', true, false, false) unless @dry_run
 
-      index = 0
+
       node_defs = node_def.get_valid_unlocked_selection_siblings
+      preview = []
 
       d_nps = {} # Definition => NodeDefs, Parts
       fn_populate_dn = lambda { |node_def|
@@ -124,31 +125,23 @@ module Ladb::OpenCutList
           # Check name integrity
           return { :errors => [ name ] } unless name.is_a?(String)
 
-          if @preview_index < 0
+          next if (name == definition.name || name.empty?) && !@dry_run
 
-            next if name == definition.name || name.empty?
-
-            n_ns[name] = [] unless n_ns.has_key?(name)
-            n_ns[name] << node_def
-
-          else
-
-            if index == @preview_index
-              return {
-                :success => true,
-                :preview => {
-                  :old => definition.name,
-                  :new => name.empty? ? definition.name : name,
-                }
-              }
-            end
-            index += 1
-
-          end
+          n_ns[name] = [] unless n_ns.has_key?(name)
+          n_ns[name] << node_def
 
         end
 
-        if @preview_index < 0
+        if @dry_run
+
+          preview += n_ns.keys.map do |name|
+            [
+              definition.name,                      # Old
+              name.empty? ? definition.name : name, # New
+            ]
+          end
+
+        else
 
           # Rename definitions
           n_ns.each do |name, node_defs|
@@ -168,9 +161,11 @@ module Ladb::OpenCutList
 
 
       # Commit model modification operation
-      model.commit_operation if @preview_index < 0
+      model.commit_operation unless @dry_run
 
-      { :success => true }
+      response = { :success => true }
+      response[:preview] = preview unless preview.empty?
+      response
     end
 
     # -----

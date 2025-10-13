@@ -311,38 +311,38 @@
                                         });
                                         $textareaFormula
                                             .ladbTextinputCode({
-                                            variableDefs: fnConvertToVariableDefs([
-                                                { name: 'path', type: 'path' },
-                                                { name: 'instance_name', type: 'string' },
-                                                { name: 'name', type: 'string' },
-                                                { name: 'cutting_length', type: 'length' },
-                                                { name: 'cutting_width', type: 'length' },
-                                                { name: 'cutting_thickness', type: 'length' },
-                                                { name: 'edge_cutting_length', type: 'length' },
-                                                { name: 'edge_cutting_width', type: 'length' },
-                                                { name: 'bbox_length', type: 'length' },
-                                                { name: 'bbox_width', type: 'length' },
-                                                { name: 'bbox_thickness', type: 'length' },
-                                                { name: 'final_area', type: 'area' },
-                                                { name: 'material', type: 'material' },
-                                                { name: 'material_type', type: 'material-type' },
-                                                { name: 'material_name', type: 'string' },
-                                                { name: 'material_description', type: 'string' },
-                                                { name: 'material_url', type: 'string' },
-                                                { name: 'description', type: 'string' },
-                                                { name: 'url', type: 'string' },
-                                                { name: 'tags', type: 'array' },
-                                                { name: 'edge_ymin', type: 'edge' },
-                                                { name: 'edge_ymax', type: 'edge' },
-                                                { name: 'edge_xmin', type: 'edge' },
-                                                { name: 'edge_xmax', type: 'edge' },
-                                                { name: 'face_zmax', type: 'veneer' },
-                                                { name: 'face_zmin', type: 'veneer' },
-                                                { name: 'layer', type: 'string' },
-                                                { name: 'component_definition', type: 'component_definition' },
-                                                { name: 'component_instance', type: 'component_instance' },
-                                            ])
-                                        })
+                                                variableDefs: fnConvertToVariableDefs([
+                                                    { name: 'path', type: 'path' },
+                                                    { name: 'instance_name', type: 'string' },
+                                                    { name: 'name', type: 'string' },
+                                                    { name: 'cutting_length', type: 'length' },
+                                                    { name: 'cutting_width', type: 'length' },
+                                                    { name: 'cutting_thickness', type: 'length' },
+                                                    { name: 'edge_cutting_length', type: 'length' },
+                                                    { name: 'edge_cutting_width', type: 'length' },
+                                                    { name: 'bbox_length', type: 'length' },
+                                                    { name: 'bbox_width', type: 'length' },
+                                                    { name: 'bbox_thickness', type: 'length' },
+                                                    { name: 'final_area', type: 'area' },
+                                                    { name: 'material', type: 'material' },
+                                                    { name: 'material_type', type: 'material-type' },
+                                                    { name: 'material_name', type: 'string' },
+                                                    { name: 'material_description', type: 'string' },
+                                                    { name: 'material_url', type: 'string' },
+                                                    { name: 'description', type: 'string' },
+                                                    { name: 'url', type: 'string' },
+                                                    { name: 'tags', type: 'array' },
+                                                    { name: 'edge_ymin', type: 'edge' },
+                                                    { name: 'edge_ymax', type: 'edge' },
+                                                    { name: 'edge_xmin', type: 'edge' },
+                                                    { name: 'edge_xmax', type: 'edge' },
+                                                    { name: 'face_zmax', type: 'veneer' },
+                                                    { name: 'face_zmin', type: 'veneer' },
+                                                    { name: 'layer', type: 'string' },
+                                                    { name: 'component_definition', type: 'component_definition' },
+                                                    { name: 'component_instance', type: 'component_instance' },
+                                                ])
+                                            })
                                             .on('change', function () {
 
                                                 // Fetch options
@@ -350,7 +350,7 @@
 
                                                 rubyCallCommand('outliner_deep_rename_parts', $.extend({
                                                     id: node.id,
-                                                    preview_index: 0
+                                                    dry_run: true
                                                 }, deepRenamePartsOptions), function (response) {
 
                                                     if (response.errors) {
@@ -366,7 +366,7 @@
                                                         ;
                                                         $.each(response.errors, function (index, error) {
                                                             $panelPreviewErrors.append($('<div>').html(i18next.t('core.error.' + error.error_type, error)));
-                                                        })
+                                                        });
                                                     } else if (response.preview) {
                                                         $panelPreview
                                                             .show()
@@ -374,9 +374,22 @@
                                                             .removeClass('panel-danger')
                                                         ;
                                                         $panelPreviewErrors.hide();
-                                                        $panelPreviewContent.show();
-                                                        $panelPreviewContentOld.html(response.preview.old);
-                                                        $panelPreviewContentNew.html(response.preview.new);
+                                                        $panelPreviewContent
+                                                            .empty()
+                                                            .show()
+                                                        ;
+                                                        let $table = $('<table class="table table-sm">');
+                                                        $panelPreviewContent.append($table);
+                                                        let $tbody = $('<tbody>');
+                                                        $table.append($tbody);
+                                                        $.each(response.preview, function (index, row) {
+                                                            $tbody.append(Twig.twig({
+                                                                data: '<tr><td class="ladb-panel-preview-content-old" width="50%">{{ old }}</td><td class="ladb-panel-preview-content-new">{{ new }}</td></div>'
+                                                            }).render({
+                                                                old: row[0],
+                                                                new: row[1],
+                                                            }));
+                                                        });
                                                     } else {
                                                         $panelPreview.hide();
                                                     }
@@ -414,6 +427,9 @@
 
                                         // Show modal
                                         $modal.modal('show');
+
+                                        // Autofocus textarea
+                                        $textareaFormula.ladbTextinputCode('focus');
 
                                         // Setup popovers
                                         that.dialog.setupPopovers();
