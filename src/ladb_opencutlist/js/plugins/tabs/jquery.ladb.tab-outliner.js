@@ -275,8 +275,7 @@
                                         const $textareaFormula = $('#ladb_textarea_formula', $modal);
                                         const $panelPreview = $('#ladb_panel_preview', $modal);
                                         const $panelPreviewContent = $('#ladb_panel_preview_content', $modal);
-                                        const $panelPreviewContentOld = $('#ladb_panel_preview_content_old', $modal);
-                                        const $panelPreviewContentNew = $('#ladb_panel_preview_content_new', $modal);
+                                        const $panelPreviewContentTbody = $('tbody', $panelPreviewContent);
                                         const $panelPreviewErrors = $('#ladb_panel_preview_errors', $modal);
                                         const $btnRename = $('#ladb_outliner_deep_rename_parts', $modal);
 
@@ -374,20 +373,14 @@
                                                             .removeClass('panel-danger')
                                                         ;
                                                         $panelPreviewErrors.hide();
-                                                        $panelPreviewContent
-                                                            .empty()
-                                                            .show()
-                                                        ;
-                                                        let $table = $('<table class="table table-sm">');
-                                                        $panelPreviewContent.append($table);
-                                                        let $tbody = $('<tbody>');
-                                                        $table.append($tbody);
+                                                        $panelPreviewContent.show();
+                                                        $panelPreviewContentTbody.empty();
                                                         $.each(response.preview, function (index, row) {
-                                                            $tbody.append(Twig.twig({
-                                                                data: '<tr><td class="ladb-panel-preview-content-old" width="50%">{{ old }}</td><td class="ladb-panel-preview-content-new">{{ new }}</td></div>'
+                                                            $panelPreviewContentTbody.append(Twig.twig({
+                                                                data: '<tr><td class="ladb-muted" width="50%">{{ old_name }}</td><td{% if new_name is empty %} class="ladb-muted"{% endif %}>{{ new_name ? new_name : old_name }}</td></div>'
                                                             }).render({
-                                                                old: row[0],
-                                                                new: row[1],
+                                                                old_name: row[0],
+                                                                new_name: row[1],
                                                             }));
                                                         });
                                                     } else {

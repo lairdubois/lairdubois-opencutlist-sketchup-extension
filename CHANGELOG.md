@@ -8,8 +8,8 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
   * Added NL language
   * Added "normal" font size value to settings
-  * Added Outliner "Rename parts" feature
-  * Added Outliner "Make Unique" feature
+  * Added Outliner "Deep Rename parts" feature
+  * Added Outliner "Deep Make Unique" feature
   * Added Outliner "Create Group" feature
   * Added Outliner "Create Component" feature
   * Improved PathFormulaWrapper. It now contains instance objects

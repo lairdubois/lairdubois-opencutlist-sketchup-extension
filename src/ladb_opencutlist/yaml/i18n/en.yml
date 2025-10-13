@@ -155,6 +155,8 @@ core:
       To report a bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Not available in this context
   error:
+    exception: "Error : **{{ error }}**"
+    forbidden: "Forbidden : **{{ error }}**"
     extern: "External error: **{{ error }}**"
     feature_unavailable: "This function requires SketchUp {{ version }} or higher"
     failed_export_to: |
@@ -1773,6 +1775,8 @@ tab:
       formula: Formule
       formula_help: |
         Blabla
+      old_name: Original
+      new_name: Renamed
     create_container:
       title_group: "Create a group"
       title_component: "Create a component"

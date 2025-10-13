@@ -241,6 +241,10 @@ module Ladb::OpenCutList
       refresh
     end
 
+    def onTransactionCommit(model)
+      refresh
+    end
+
   end
 
   # -----
@@ -455,12 +459,10 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT, STATE_SELECT_SIBLINGS
-
         if @active_part_entity_path.nil?
           UI.beep
           return true
         end
-
         onPartSelected
 
       when STATE_HANDLE_START

@@ -28,7 +28,12 @@
             <div id="ladb_panel_preview" class="panel ladb-panel-preview" style="display: none;">
                 <div class="panel-heading">{{ 'default.preview'|i18next }}</div>
                 <div class="panel-body">
-                    <div id="ladb_panel_preview_content" class="ladb-panel-preview-content"></div>
+                    <div id="ladb_panel_preview_content" class="ladb-panel-preview-content">
+                        <table class="table table-condensed">
+                            <thead><tr><th>{{ 'tab.outliner.deep_rename_parts.old_name'|i18next }}</th><th>{{ 'tab.outliner.deep_rename_parts.new_name'|i18next }}</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                     <div id="ladb_panel_preview_errors" class="ladb-panel-preview-errors"></div>
                 </div>
             </div>

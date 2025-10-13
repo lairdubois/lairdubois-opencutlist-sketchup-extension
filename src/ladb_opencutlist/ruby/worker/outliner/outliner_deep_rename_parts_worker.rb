@@ -136,8 +136,8 @@ module Ladb::OpenCutList
 
           preview += n_ns.keys.map do |name|
             [
-              definition.name,                      # Old
-              name.empty? ? definition.name : name, # New
+              definition.name,  # Original
+              name,             # Renamed
             ]
           end
 
