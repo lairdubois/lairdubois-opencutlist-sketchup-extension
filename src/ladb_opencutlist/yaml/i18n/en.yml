@@ -1769,7 +1769,7 @@ tab:
     deep_rename_parts:
       title: Rename Parts
       info_0: |
-        Cette fonctionnalité vous permet de renommer les pièces présentes dans l'ensemble sélectionné en applicant la formule ci-dessous à chaque instance.
+        This feature allows you to rename the parts present in the selected set by applying the formula below to each instance.
       formula: Formule
       formula_help: |
         Blabla
