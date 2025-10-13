@@ -273,7 +273,11 @@
                                         // Fetch UI elements
                                         const $widgetPreset = $('.ladb-widget-preset', $modal);
                                         const $textareaFormula = $('#ladb_textarea_formula', $modal);
-                                        const $divPreview = $('#ladb_div_preview', $modal);
+                                        const $panelPreview = $('#ladb_panel_preview', $modal);
+                                        const $panelPreviewContent = $('#ladb_panel_preview_content', $modal);
+                                        const $panelPreviewContentOld = $('#ladb_panel_preview_content_old', $modal);
+                                        const $panelPreviewContentNew = $('#ladb_panel_preview_content_new', $modal);
+                                        const $panelPreviewErrors = $('#ladb_panel_preview_errors', $modal);
                                         const $btnRename = $('#ladb_outliner_deep_rename_parts', $modal);
 
                                         // Define useful functions
@@ -349,24 +353,32 @@
                                                     preview_index: 0
                                                 }, deepRenamePartsOptions), function (response) {
 
-                                                    $divPreview.empty();
-
-                                                    let $panel = $('<div class="panel panel-default">');
                                                     if (response.errors) {
-                                                        let $alert = $('<div class="alert alert-danger">');
+                                                        $panelPreview
+                                                            .show()
+                                                            .addClass('panel-danger')
+                                                            .removeClass('panel-default')
+                                                        ;
+                                                        $panelPreviewContent.hide();
+                                                        $panelPreviewErrors
+                                                            .empty()
+                                                            .show()
+                                                        ;
                                                         $.each(response.errors, function (index, error) {
-                                                            $alert.append($('<div>').html(i18next.t('core.error.' + error.error_type, error)));
+                                                            $panelPreviewErrors.append($('<div>').html(i18next.t('core.error.' + error.error_type, error)));
                                                         })
-                                                        $divPreview.append($alert);
                                                     } else if (response.preview) {
-                                                        $divPreview.empty();
-                                                        let $panelHeading = $('<div class="panel-heading">')
-                                                            .html(i18next.t('default.preview'));
-                                                        let $panelBody = $('<div class="panel-body" style="display: flex; gap: 10px; align-items: center;">')
-                                                            .html('<span style="flex-grow: 1; text-align: center; color: #aaa;">' + response.preview.old + '</span><i class="ladb-opencutlist-icon-arrow-right"></i><span style="flex-grow: 1; text-align: center;">' + response.preview.new + '</span>');
-                                                        $panel.append($panelHeading)
-                                                        $panel.append($panelBody)
-                                                        $divPreview.append($panel);
+                                                        $panelPreview
+                                                            .show()
+                                                            .addClass('panel-default')
+                                                            .removeClass('panel-danger')
+                                                        ;
+                                                        $panelPreviewErrors.hide();
+                                                        $panelPreviewContent.show();
+                                                        $panelPreviewContentOld.html(response.preview.old);
+                                                        $panelPreviewContentNew.html(response.preview.new);
+                                                    } else {
+                                                        $panelPreview.hide();
                                                     }
 
                                                 });

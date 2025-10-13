@@ -11,6 +11,10 @@ module Ladb::OpenCutList
       ''
     end
 
+    def to_str
+      to_s
+    end
+
     private
 
     def _raise_no_method_error(method_name)

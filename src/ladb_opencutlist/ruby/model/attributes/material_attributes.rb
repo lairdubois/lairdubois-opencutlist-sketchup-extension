@@ -49,8 +49,7 @@
     end
 
     def self.persist_cached_uuid_of(material)
-      cached_uuid = fetch_cached_uuid(material)
-      if cached_uuid
+      if (cached_uuid = fetch_cached_uuid(material))
         material.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', cached_uuid)
         MaterialAttributes.delete_cached_uuid(material)
       end
