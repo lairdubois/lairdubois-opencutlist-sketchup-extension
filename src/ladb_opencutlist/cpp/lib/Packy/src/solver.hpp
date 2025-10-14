@@ -730,7 +730,7 @@ namespace Packy {
                 const double length_dbl
         ) const {
             if (length_dbl > 0) {
-                return static_cast<Length>(round(length_dbl * length_truncate_factor_, 8));
+                return static_cast<Length>(round(length_dbl * length_truncate_factor_, 3));
             }
             return static_cast<Length>(length_dbl);
         }
