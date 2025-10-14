@@ -518,7 +518,7 @@
 
                 if (!node.computed_locked) {
                     $row
-                        .attr('draggable', true)
+                        .attr('draggable', node.type > 0) // 0 = TYPE_MODEL
                         .on('dragstart', function (e) {
                             fnMouseLeave();
                             let dataTransfer = e.originalEvent.dataTransfer;
