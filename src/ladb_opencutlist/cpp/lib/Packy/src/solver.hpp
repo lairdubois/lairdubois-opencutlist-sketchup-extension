@@ -218,6 +218,7 @@ namespace Packy {
 
         /** Packy parameters. */
         double length_truncate_factor_ = 1.0;
+        int8_t length_truncate_precision_ = 3;
 
         /** Builders. */
         TypedBuilder<InstanceBuilder> orig_builder_;
@@ -420,6 +421,12 @@ namespace Packy {
                 length_truncate_factor_ = j.value("length_truncate_factor", 1.0);
                 if (length_truncate_factor_ < 1.0) {
                     length_truncate_factor_ = 1.0;
+                }
+            }
+            if (j.contains("length_truncate_precision")) {
+                length_truncate_precision_ = j.value("length_truncate_precision", 3);
+                if (length_truncate_precision_ < 0) {
+                    length_truncate_precision_ = 0;
                 }
             }
 
@@ -730,7 +737,7 @@ namespace Packy {
                 const double length_dbl
         ) const {
             if (length_dbl > 0) {
-                return static_cast<Length>(round(length_dbl * length_truncate_factor_, 3));
+                return static_cast<Length>(round(length_dbl * length_truncate_factor_, length_truncate_precision_));
             }
             return static_cast<Length>(length_dbl);
         }
