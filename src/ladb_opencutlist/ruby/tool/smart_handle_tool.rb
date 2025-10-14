@@ -497,6 +497,10 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_HANDLE
+        if _read_handle_copies(tool, text, view)
+          _refresh
+          return true
+        end
         if _read_handle(tool, text, view)
           set_state(STATE_HANDLE_COPIES)
           _restart
@@ -558,7 +562,7 @@ module Ladb::OpenCutList
 
     def onToolActionOptionStored(tool, action, option_group, option)
 
-      if !@active_part.nil? && option_group == SmartHandleTool::ACTION_OPTION_AXES
+      if option_group == SmartHandleTool::ACTION_OPTION_AXES && !@active_part.nil?
 
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(_get_drawing_def, et)
@@ -1018,8 +1022,12 @@ module Ladb::OpenCutList
     def onToolActionOptionStored(tool, action, option_group, option)
       super
 
-      if !@active_part.nil? && option_group == SmartHandleTool::ACTION_OPTION_AXES
-        @locked_axis = nil
+      if option_group == SmartHandleTool::ACTION_OPTION_AXES
+         @locked_axis = nil unless @active_part.nil?
+      end
+
+      if option == SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR
+        tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if @number != 1
       end
 
     end
@@ -1155,9 +1163,15 @@ module Ladb::OpenCutList
 
       # Preview
 
-      ux = mv.x / @number
-      uy = mv.y / @number
-      uz = mv.z / @number
+      if @operator == '/'
+        ux = mv.x / @number
+        uy = mv.y / @number
+        uz = mv.z / @number
+      else
+        ux = mv.x
+        uy = mv.y
+        uz = mv.z
+      end
 
       (1..@number).each do |i|
 
@@ -1220,7 +1234,7 @@ module Ladb::OpenCutList
 
       # Preview mirror
 
-      if _fetch_option_mirror
+      if _fetch_option_mirror && @number == 1
 
         unit = @tool.get_unit(view)
 
@@ -1296,10 +1310,20 @@ module Ladb::OpenCutList
           return true
         end
 
-        # Warn if mirror
+        # Warn if the mirror option enabled
         tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror && number > 1
 
-        _copy_line_entity(operator, number)
+        case @state
+
+        when STATE_HANDLE
+          @operator = operator
+          @number = number
+
+        when STATE_HANDLE_COPIES
+          _copy_line_entity(operator, number)
+
+        end
+
         Sketchup.set_status_text('', SB_VCB_VALUE)
 
         return true
@@ -1589,8 +1613,12 @@ module Ladb::OpenCutList
     def onToolActionOptionStored(tool, action, option_group, option)
       super
 
-      if !@active_part.nil? && option_group == SmartHandleTool::ACTION_OPTION_AXES
-        @locked_normal = nil
+      if option_group == SmartHandleTool::ACTION_OPTION_AXES
+        @locked_normal = nil unless @active_part.nil?
+      end
+
+      if option == SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR
+        tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if @number_x != 1 || @number_y != 1
       end
 
     end
@@ -1696,25 +1724,38 @@ module Ladb::OpenCutList
 
       # Preview
 
-      (0..1).each do |x|
-        (0..1).each do |y|
+      if @operator_x == '/'
+        ux = mv_2d.x / @number_x
+        border_x = @number_x
+      else
+        ux = mv_2d.x
+        border_x = 1
+      end
+      if @operator_y == '/'
+        uy = mv_2d.y / @number_y
+        border_y = @number_y
+      else
+        uy = mv_2d.y
+        border_y = 1
+      end
 
-          mvu = Geom::Vector3d.new(mv_2d.x * x, mv_2d.y * y).transform(ht)
-          dvu = Geom::Vector3d.new(dv_2d.x * x, dv_2d.y * y).transform(ht)
+      (0..@number_x).each do |x|
+        (0..@number_y).each do |y|
+
+          mvu = Geom::Vector3d.new(ux * x, uy * y).transform(ht)
 
           mp = mps.offset(mvu)
-          dp = dps.offset(dvu)
 
           mt = Geom::Transformation.translation(mvu)
 
           unless x == 0 && y == 0
 
-            if _fetch_option_mirror
+            if _fetch_option_mirror && @number_x == 1 && @number_y == 1
 
-              if x == 1 && y == 1
+              if x == @number_x && y == @number_y
                 mt *= Geom::Transformation.rotation(mp, Z_AXIS.transform(ht), Geometrix::ONE_PI)
                 mt *= Geom::Transformation.translation(mvu + mvu)
-              elsif x == 1 || y == 1
+              elsif x == @number_x || y == @number_y
                 mt = Geom::Transformation.scaling(mp, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
                 mt *= Geom::Transformation.rotation(mp, x == 1 ? X_AXIS.transform(ht) : Y_AXIS.transform(ht), Geometrix::ONE_PI)
                 mt *= Geom::Transformation.translation(mvu)
@@ -1731,6 +1772,11 @@ module Ladb::OpenCutList
 
           end
 
+          next unless x == 0 && y == 0 || x == 0 && y == border_y || y == 0 && x == border_x || x == border_x && y == border_y
+
+          dvu = Geom::Vector3d.new(dv_2d.x * [ x, 1 ].min, dv_2d.y * [ y, 1 ].min).transform(ht)
+          dp = dps.offset(dvu)
+
           k_box = Kuix::BoxMotif.new
           k_box.bounds.copy!(eb)
           k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
@@ -1746,7 +1792,7 @@ module Ladb::OpenCutList
 
       # Preview mirror
 
-      if _fetch_option_mirror
+      if _fetch_option_mirror && @number_x == 1 && @number_y == 1
 
         unit = @tool.get_unit(view)
 
@@ -1867,7 +1913,19 @@ module Ladb::OpenCutList
         # Warn if mirror
         tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror && (number_1 > 1 || number_2 > 1)
 
-        _copy_grid_entity(operator_1, number_1, operator_2, number_2)
+        case @state
+
+        when STATE_HANDLE
+          @operator_x = operator_1
+          @number_x = number_1
+          @operator_y = operator_2
+          @number_y = number_2
+
+        when STATE_HANDLE_COPIES
+          _copy_grid_entity(operator_1, number_1, operator_2, number_2)
+
+        end
+
         Sketchup.set_status_text('', SB_VCB_VALUE)
 
         return true
@@ -2217,8 +2275,8 @@ module Ladb::OpenCutList
     def onToolActionOptionStored(tool, action, option_group, option)
       super
 
-      if !@active_part.nil? && option_group == SmartHandleTool::ACTION_OPTION_AXES
-        @locked_axis = nil
+      if option_group == SmartHandleTool::ACTION_OPTION_AXES
+        @locked_axis = nil unless @active_part.nil?
       end
 
     end
@@ -2682,8 +2740,8 @@ module Ladb::OpenCutList
     def onToolActionOptionStored(tool, action, option_group, option)
       # Do not call super to keep handle start point
 
-      if !@active_part.nil? && option_group == SmartHandleTool::ACTION_OPTION_AXES
-        @locked_axis = nil
+      if option_group == SmartHandleTool::ACTION_OPTION_AXES
+        @locked_axis = nil unless @active_part.nil?
       end
 
     end
@@ -2976,7 +3034,15 @@ module Ladb::OpenCutList
 
         count = operator == '/' ? number - 1 : number
 
-        _distribute_entity(count)
+        case @state
+
+        when STATE_HANDLE
+          @number = count
+
+        when STATE_HANDLE_COPIES
+          _distribute_entity(count)
+
+        end
         Sketchup.set_status_text('', SB_VCB_VALUE)
 
         return true
