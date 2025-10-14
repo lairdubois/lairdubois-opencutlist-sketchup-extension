@@ -97,7 +97,10 @@ module Ladb::OpenCutList
         @uuid = SecureRandom.uuid
 
         # Cache generated UUID
-        DefinitionAttributes.store_cached_uuid(@definition, @uuid)
+        # DefinitionAttributes.store_cached_uuid(@definition, @uuid)
+
+        # Store UUID in definition's attributes
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', @uuid)
 
       end
       @uuid
@@ -131,12 +134,10 @@ module Ladb::OpenCutList
       if @definition
 
         # Try to retrieve uuid from cached UUIDs
-        @uuid = DefinitionAttributes.fetch_cached_uuid(@definition)
+        # @uuid = DefinitionAttributes.fetch_cached_uuid(@definition)
 
-        if @uuid.nil?
-          # Try to retrieve uuid from definition's attributes
-          @uuid = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil)
-        end
+        # Try to retrieve uuid from definition's attributes
+        @uuid = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'uuid', nil)# if @uuid.nil?
 
         unless @uuid.nil?
           if force_unique_uuid && @@used_uuids.include?(@uuid)

@@ -23,6 +23,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ### 2025-10-14
   * Improved Smart Handle Tool by adding the possibility to change copies during preview
+  * Fixed Saved parts list numbers for Windows
 
 # 7.0.1 (2025-09-30)
 
