@@ -446,6 +446,12 @@ module Ladb::OpenCutList
       LengthFormulaWrapper.new(_world_position.z, true, true)
     end
 
+    # -- Overrides
+
+    def definition
+      ComponentDefinitionFormulaWrapper.new(@value.definition)
+    end
+
     # -- Privatisation
 
     def name=(*args)
