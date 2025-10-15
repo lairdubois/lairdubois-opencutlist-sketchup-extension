@@ -21,6 +21,8 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2025-10-xx
+  * Fixed Outliner "Deep Make Unique" feature with nested components
 ### 2025-10-14
   * Improved Smart Handle Tool by adding the possibility to change copies during preview
   * Fixed Saved parts list numbers for Windows

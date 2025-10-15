@@ -45,11 +45,9 @@ module Ladb::OpenCutList
             d_is[entity.definition] << entity
           end
         end
-        if entity.respond_to?(:definition)
-          entity.definition.entities.each do |child_entity|
-            next unless child_entity.respond_to?(:definition)
-            fn_populate_di.call(child_entity)
-          end
+        entity.definition.entities.each do |child_entity|
+          next unless child_entity.respond_to?(:definition)
+          fn_populate_di.call(child_entity)
         end
       }
       node_defs.each { |node_def| fn_populate_di.call(node_def.entity) }
