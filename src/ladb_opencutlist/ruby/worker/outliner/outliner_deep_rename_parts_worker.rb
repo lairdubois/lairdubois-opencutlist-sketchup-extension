@@ -136,8 +136,8 @@ module Ladb::OpenCutList
 
           preview += n_ns.keys.map do |name|
             [
-              definition.name,  # Original
-              name,             # Renamed
+              definition.name,  # Old name
+              name,             # New name
             ]
           end
 
@@ -164,7 +164,7 @@ module Ladb::OpenCutList
       model.commit_operation unless @dry_run
 
       response = { :success => true }
-      response[:preview] = preview unless preview.empty?
+      response[:preview] = preview.sort_by { |old, new| [ new.nil? || new.empty? ? 1 : 0, old ] } unless preview.empty?
       response
     end
 
