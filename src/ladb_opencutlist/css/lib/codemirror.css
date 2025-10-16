@@ -7,9 +7,12 @@
   direction: ltr;
   padding: 2px 8px;
   flex-grow: 1;
+  font-size: 13px;
+  line-height: 20px;
+  min-height: 34px;
 }
 .CodeMirror-empty {
-  min-height: 32px;
+  min-height: 34px;
   color: #999;
 }
 

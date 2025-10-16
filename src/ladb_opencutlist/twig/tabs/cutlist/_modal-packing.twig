@@ -219,14 +219,16 @@
             </div>
         </div>
         <div role="tabpanel" class="tab-pane{% if tab == 'display' %} active{% endif %}" id="tab_packing_options_display">
-            <div class="form form-horizontal" style="margin-top: 15px;">
+            <div class="form row" style="margin-top: 15px;">
                 <div class="form-group" style="padding-top: 10px;">
+                    <label class="control-label col-xs-offset-1 col-xs-11">{{ 'tab.cutlist.packing.option_items_formula'|i18next }} <small style="font-weight: normal;">(Ruby)</small></label>
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.packing.option_items_formula_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                    <label class="control-label col-xs-3">{{ 'tab.cutlist.packing.option_items_formula'|i18next }} <small style="font-weight: normal;">(Ruby)</small></label>
-                    <div class="col-xs-8">
+                    <div class="col-xs-offset-1 col-xs-10">
                         <textarea id="ladb_textarea_items_formula" class="form-control" placeholder="{{ 'tab.cutlist.export.number'|i18next }}"></textarea>
                     </div>
                 </div>
+            </div>
+            <div class="form form-horizontal" style="margin-top: 15px;">
                 <hr>
                 <div class="form-group">
                     <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ ('tab.cutlist.packing.option_bin_folding_'~binSuffix1~'_help')|i18next }}<br><i class='ladb-opencutlist-icon-warning'></i> {{ 'tab.cutlist.packing.option_bin_folding_warning'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
