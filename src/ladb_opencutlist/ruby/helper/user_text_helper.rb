@@ -48,6 +48,11 @@ module Ladb::OpenCutList
             tool.notify_errors([ [ 'tool.default.error.invalid_length', { :value => value } ] ])
             return nil
           end
+        elsif (match = /^(-*)@$/.match(text))
+          base_sign, _ = match[1, 1]
+          factor = 1
+          factor *= -1 if base_sign == '-'
+          length = base_length * factor
         else
           text = text.delete('@+')   # Remove possible extra @ or + characters
           begin
