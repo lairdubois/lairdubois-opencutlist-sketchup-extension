@@ -156,7 +156,7 @@ module Ladb::OpenCutList
           rescue => e
             puts e.message
             puts e.backtrace
-            response[:errors] << [ 'core.error.failed_export_to', { path => path, :error => e.message } ]
+            response[:errors] << [ 'core.error.failed_export_to', { :path => path, :error => e.message } ]
           end
 
         end

@@ -28,67 +28,109 @@ module Ladb::OpenCutList
       entity = node_def.entity
       return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
 
-      # Start a model modification operation
-      model.start_operation('OCL Outliner Deep Make Unique', true, false, false)
+      begin
 
+        a = 1 / 0
 
-      node_defs = node_def.get_valid_unlocked_selection_siblings
+        node_defs = node_def.get_valid_unlocked_selection_siblings
 
-      d_is = {} # Definition => Instances
-      fn_populate_di = lambda { |entity|
-        next if entity.deleted?
-        if entity.is_a?(Sketchup::Group)
-          entity = entity.make_unique # Force Groups to be unique immediately
-        else
-          if entity.definition.count_used_instances > 1
-            d_is[entity.definition] = [] unless d_is.has_key?(entity.definition)
-            d_is[entity.definition] << entity
+        # Flatten the tree by definition
+        d_rps = {}  # Definition => RPaths
+        fn_populate_drn = lambda { |rpath, node_def|
+          rnode = RNode.new(node_def.entity)
+          rnode.parent = rpath.last
+          rnode.parent.children << rnode unless rnode.parent.nil?
+          rpath = rpath + [ rnode ]
+          if node_def.children.empty? # Keep only leaf nodes
+            d_rps[node_def.entity.definition] = [] unless d_rps.has_key?(node_def.entity.definition)
+            d_rps[node_def.entity.definition] << rpath
+          else
+            node_def.children.each do |child_node_def|
+              fn_populate_drn.call(rpath, child_node_def)
+            end
           end
+        }
+        node_defs.each { |node_def| fn_populate_drn.call([], node_def) }
+
+        # Log flattened tree
+        # d_rprns.each do |definition, rpaths|
+        #   puts "Definition: #{definition.name}"
+        #   rpaths.each do |rpath|
+        #     rnode = rpath.last
+        #     puts "  #{rnode.entity.name} [#{rnode.entity_pos}] #{rpath.map { |rnode| rnode.entity.name }.join('.')}"
+        #   end
+        # end
+
+        # Start a model modification operation
+        model.start_operation('OCL Outliner Deep Make Unique', true, false, false)
+
+
+        d_rps.each do |definition, rpaths|
+
+          # Make unique the path if necessary
+          rpaths
+          .flatten
+          .uniq
+          .group_by { |rnode| rnode.entity.definition }
+          .each do |definition, rnodes|
+            next if rnodes.size == rnodes.first.entity.definition.count_used_instances
+            if definition.group?
+              rnodes.each do |rnode|
+                rnode.entity = rnode.entity.make_unique
+                new_definition = rnode.entity.definition
+                rnode.children.each do |child_rnode|
+                  child_rnode.entity = new_definition.entities[child_rnode.entity_pos]
+                end
+              end
+            else
+              new_entity = rnodes.first.entity.make_unique
+              new_definition = new_entity.definition
+              rnodes.each_with_index do |rnode, index|
+                if index == 0
+                  rnode.entity = new_entity
+                else
+                  rnode.entity.definition = new_definition
+                end
+                rnode.children.each do |child_rnode|
+                  child_rnode.entity = new_definition.entities[child_rnode.entity_pos]
+                end
+              end
+            end
+          end
+
         end
-        entity.definition.entities.each do |child_entity|
-          next unless child_entity.respond_to?(:definition)
-          fn_populate_di.call(child_entity)
-        end
-      }
-      node_defs.each { |node_def| fn_populate_di.call(node_def.entity) }
 
-      d_is.each do |definition, instances|
 
-        next if instances.size == definition.count_used_instances   # All instances are there, move next
+        # Commit model modification operation
+        model.commit_operation
 
-        # Make unique the first instance and retrieve the new definition
-        new_definition = instances.shift.make_unique.definition
-
-        # Change definition of all other instances
-        instances.each do |instance|
-          instance.definition = new_definition
-        end
-
-        # Retrieve old definition child instances
-        old_d_cis = definition.entities.to_a
-                  .select { |e| e.is_a?(Sketchup::ComponentInstance) }
-                  .group_by { |i| i.definition }
-
-        # Retrieve new definition child instances
-        new_d_cis = new_definition.entities.to_a
-                  .select { |e| e.is_a?(Sketchup::ComponentInstance) }
-                  .group_by { |i| i.definition }
-
-        # Replace old definition child instances by new definition child instances
-        old_d_cis.each do |d, is|
-          d_is[d].reject! { |i| is.include?(i) }.concat(new_d_cis[d])
-        end
-
+      rescue => e
+        PLUGIN.dump_exception(e)
+        return { :errors => [[ 'core.error.exception', { :error => e.message } ]] }
       end
-
-
-      # Commit model modification operation
-      model.commit_operation
 
       { :success => true }
     end
 
     # -----
+
+    class RNode
+
+      attr_reader :children,
+                  :entity_pos
+      attr_accessor :parent,
+                    :entity
+
+      def initialize(entity)
+        @entity = entity
+        @entity_pos = entity.parent.entities.to_a.index(entity)
+
+        @parent = nil
+        @children = []
+
+      end
+
+    end
 
   end
 

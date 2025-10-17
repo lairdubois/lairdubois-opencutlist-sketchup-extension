@@ -331,10 +331,11 @@ module Ladb::OpenCutList
     # Definitions Observer
 
     def onComponentAdded(definitions, definition)
-      # puts "onComponentAdded: #{definition} (#{definition.object_id})"
+      # puts "onComponentAdded: #{definition} (#{definition.entityID})"
 
       # Refresh internally created groups definition
-      if definition.valid? && definition.group? && definition.count_used_instances > 0
+      # if definition.valid? && definition.group? && definition.count_used_instances > 0
+      if definition.valid? && definition.count_used_instances > 0
 
         definition.instances.each do |instance|
 
@@ -729,7 +730,6 @@ module Ladb::OpenCutList
       worker.run
     end
 
-
     def create_container_command(params)
       require_relative '../worker/outliner/outliner_create_container_worker'
 
@@ -739,8 +739,6 @@ module Ladb::OpenCutList
       # Run !
       worker.run
     end
-
-
 
     def highlight_command(params)
       require_relative '../overlay/highlight_overlay'
