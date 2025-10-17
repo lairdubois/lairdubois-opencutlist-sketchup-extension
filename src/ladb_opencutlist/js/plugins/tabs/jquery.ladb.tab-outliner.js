@@ -377,10 +377,11 @@
                                                         $panelPreviewContentTbody.empty();
                                                         $.each(response.preview, function (index, row) {
                                                             $panelPreviewContentTbody.append(Twig.twig({
-                                                                data: '<tr><td class="ladb-muted" width="50%">{{ old_name }}</td><td{% if new_name is empty %} class="ladb-muted"{% endif %}>{{ new_name ? new_name : old_name }}</td></div>'
+                                                                data: '<tr><td class="ladb-muted" width="50%">{{ old_name }}</td><td{% if new_name is empty %} class="ladb-muted"{% endif %}>{{ new_name ? new_name : old_name }}</td><td>{{ count }}</td></td></div>'
                                                             }).render({
                                                                 old_name: row[0],
                                                                 new_name: row[1],
+                                                                count: row[2],
                                                             }));
                                                         });
                                                     } else {

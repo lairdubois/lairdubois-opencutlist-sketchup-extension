@@ -42,9 +42,6 @@ module Ladb::OpenCutList
       entity = node_def.entity
       return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
 
-      # Start a model modification operation
-      model.start_operation('OCL Outliner Deep Rename', true, false, false) unless @dry_run
-
 
       node_defs = node_def.get_valid_unlocked_selection_siblings
       preview = []
@@ -63,6 +60,7 @@ module Ladb::OpenCutList
       }
       node_defs.each { |node_def| fn_populate_dn.call(node_def) }
 
+      d_n_ns = {}
       d_nps.each do |definition, nps|
 
         n_ns = {} # Name => NodeDefs
@@ -125,7 +123,11 @@ module Ladb::OpenCutList
           # Check name integrity
           return { :errors => [ name ] } unless name.is_a?(String)
 
-          next if (name == definition.name || name.empty?) && !@dry_run
+          if @dry_run
+            name = '' if name == definition.name
+          else
+            next if name == definition.name || name.empty?
+          end
 
           n_ns[name] = [] unless n_ns.has_key?(name)
           n_ns[name] << node_def
@@ -138,30 +140,127 @@ module Ladb::OpenCutList
             [
               definition.name,  # Old name
               name,             # New name
+              n_ns[name].size
             ]
           end
 
         else
 
-          # Rename definitions
-          n_ns.each do |name, node_defs|
-            new_definition = node_defs.first.entity.make_unique.definition
-            node_defs.each do |node_def|
-              node_def.entity.definition = new_definition
-            end
-            new_definition.name = name if name != new_definition.name
-          end
-
-          # Remove unused definitions
-          model.definitions.remove(definition) if definition.count_instances == 0
+          d_n_ns[definition] = n_ns
 
         end
 
       end
 
+      unless @dry_run
 
-      # Commit model modification operation
-      model.commit_operation unless @dry_run
+        # Build a tree of nodes
+        p_rn = {} # Path => RNode
+        d_n_ns.each do |definition, n_ns|
+          n_ns.each do |name, node_defs|
+            node_defs.each do |node_def|
+              node_def.path.each_with_index do |entity, index|
+                path = node_def.path[0..index]
+                unless p_rn.has_key?(path)
+                  p_rn[path] = index == node_def.path.size - 1 ? RNodePart.new(entity, name) : RNode.new(entity)
+                  unless index == 0
+                    parent_path = node_def.path[0..index - 1]
+                    p_rn[parent_path].children << p_rn[path]
+                    p_rn[path].parent = p_rn[parent_path]
+                  end
+                end
+              end
+            end
+          end
+        end
+
+        # Log tree
+        # fn_log_rnode = lambda { |rnode, depth = 0|
+        #   pad = "".rjust(depth, " ")
+        #   puts "#{pad}#{rnode.entity.name} [#{rnode.entity_pos}] #{" (Rename: #{rnode.name})" if rnode.is_a?(RNodePart)}"
+        #   rnode.children.each do |child_rnode|
+        #     fn_log_rnode.call(child_rnode, depth + 1)
+        #   end
+        # }
+        # node_defs.each { |node_def| fn_log_rnode.call(p_rn[node_def.path]) }
+
+        # Flatten the tree by definition
+        d_n_rprns = {}  # Definition => Name => RPath, RNode
+        fn_populate_drn = lambda { |path, rnode|
+          if rnode.is_a?(RNodePart)
+            d_n_rprns[rnode.entity.definition] = {} unless d_n_rprns.has_key?(rnode.entity.definition)
+            d_n_rprns[rnode.entity.definition][rnode.name] = [] unless d_n_rprns[rnode.entity.definition].has_key?(rnode.name)
+            d_n_rprns[rnode.entity.definition][rnode.name] << [ path, rnode ]
+          end
+          rnode.children.each do |child_rnode|
+            fn_populate_drn.call(path + [ rnode ], child_rnode)
+          end
+        }
+        node_defs.each { |node_def| fn_populate_drn.call([], p_rn[node_def.path]) }
+
+        # Log flattened tree
+        # d_n_rprns.each do |definition, n_rprns|
+        #   puts "Definition: #{definition.name}"
+        #   n_rprns.each do |name, rprns|
+        #     puts "  Name: #{name}"
+        #     rprns.each do |rpath, rnode|
+        #       puts "   #{rnode.entity.name} [#{rnode.entity_pos}] #{" (Rename: #{rnode.name})" if rnode.is_a?(RNodePart)}"
+        #     end
+        #   end
+        # end
+
+        # Start a model modification operation
+        model.start_operation('OCL Outliner Deep Rename', true, false, false)
+
+
+        # Make unique and rename definitions
+        d_n_rprns.each do |definition, n_rprns|
+          n_rprns.each do |name, rprns|
+
+            rpaths, rnodes = rprns.transpose
+
+            next if name == definition.name || name.empty?  # No need to rename
+
+            # Make unique the path
+            rpaths.each do |rpath|
+              rpath.each do |rnode|
+                rnode.entity = rnode.entity.make_unique
+                new_definition = rnode.entity.definition
+                rnode.children.each do |child_rnode|
+                  child_rnode.entity = new_definition.entities[child_rnode.entity_pos]
+                end
+              end
+            end
+
+            # Make unique part nodes
+            new_entity = rnodes.first.entity.make_unique
+            new_definition = new_entity.definition
+            rnodes.each_with_index do |rnode, index|
+              if index == 0
+                rnode.entity = new_entity
+              else
+                rnode.entity.definition = new_definition
+              end
+              rnode.children.each do |child_rnode|
+                child_rnode.entity = new_definition.entities[child_rnode.entity_pos]
+              end
+            end
+
+            # Rename the new definition
+            new_definition.name = name
+
+          end
+
+          # Clean up old definition if no longer used
+          model.definitions.remove(definition) if definition.count_used_instances == 0
+
+        end
+
+
+        # Commit model modification operation
+        model.commit_operation
+
+      end
 
       response = { :success => true }
       response[:preview] = preview.sort_by { |old, new| [ new.nil? || new.empty? ? 1 : 0, old ] } unless preview.empty?
@@ -170,69 +269,100 @@ module Ladb::OpenCutList
 
     # -----
 
-  end
+    class OutlinerInstanceFormulaData < FormulaData
 
-  class OutlinerInstanceFormulaData < FormulaData
+      def initialize(
 
-    def initialize(
+        path:,
+        instance_name:,
+        name:,
+        cutting_length:,
+        cutting_width:,
+        cutting_thickness:,
+        edge_cutting_length:,
+        edge_cutting_width:,
+        bbox_length:,
+        bbox_width:,
+        bbox_thickness:,
+        final_area:,
+        material:,
+        description:,
+        url:,
+        tags:,
+        edge_ymin:,
+        edge_ymax:,
+        edge_xmin:,
+        edge_xmax:,
+        face_zmin:,
+        face_zmax:,
+        layer:,
 
-      path:,
-      instance_name:,
-      name:,
-      cutting_length:,
-      cutting_width:,
-      cutting_thickness:,
-      edge_cutting_length:,
-      edge_cutting_width:,
-      bbox_length:,
-      bbox_width:,
-      bbox_thickness:,
-      final_area:,
-      material:,
-      description:,
-      url:,
-      tags:,
-      edge_ymin:,
-      edge_ymax:,
-      edge_xmin:,
-      edge_xmax:,
-      face_zmin:,
-      face_zmax:,
-      layer:,
+        component_definition:,
+        component_instance:
 
-      component_definition:,
-      component_instance:
+      )
+        @path = path
+        @instance_name = instance_name
+        @name = name
+        @cutting_length = cutting_length
+        @cutting_width = cutting_width
+        @cutting_thickness = cutting_thickness
+        @edge_cutting_length = edge_cutting_length
+        @edge_cutting_width = edge_cutting_width
+        @bbox_length = bbox_length
+        @bbox_width = bbox_width
+        @bbox_thickness = bbox_thickness
+        @final_area = final_area
+        @material = material
+        @material_type = material.type
+        @material_name = material.name
+        @material_description = material.description
+        @material_url = material.url
+        @description = description
+        @url = url
+        @tags = tags
+        @edge_ymin = edge_ymin
+        @edge_ymax = edge_ymax
+        @edge_xmin = edge_xmin
+        @edge_xmax = edge_xmax
+        @face_zmin = face_zmin
+        @face_zmax = face_zmax
+        @layer = layer
+        @component_instance = component_instance
+        @component_definition = component_definition
+      end
 
-    )
-      @path = path
-      @instance_name = instance_name
-      @name = name
-      @cutting_length = cutting_length
-      @cutting_width = cutting_width
-      @cutting_thickness = cutting_thickness
-      @edge_cutting_length = edge_cutting_length
-      @edge_cutting_width = edge_cutting_width
-      @bbox_length = bbox_length
-      @bbox_width = bbox_width
-      @bbox_thickness = bbox_thickness
-      @final_area = final_area
-      @material = material
-      @material_type = material.type
-      @material_name = material.name
-      @material_description = material.description
-      @material_url = material.url
-      @description = description
-      @url = url
-      @tags = tags
-      @edge_ymin = edge_ymin
-      @edge_ymax = edge_ymax
-      @edge_xmin = edge_xmin
-      @edge_xmax = edge_xmax
-      @face_zmin = face_zmin
-      @face_zmax = face_zmax
-      @layer = layer
-      @component_instance = component_instance
-      @component_definition = component_definition
+    end
+
+    # -----
+
+    class RNode
+
+      attr_reader :children,
+                  :entity_pos
+      attr_accessor :parent,
+                    :entity
+
+      def initialize(entity)
+        @entity = entity
+        @entity_pos = entity.parent.entities.to_a.index(entity)
+
+        @parent = nil
+        @children = []
+
+      end
+
+    end
+
+    class RNodePart < RNode
+
+      attr_reader :name
+
+      def initialize(entity, name)
+        super(entity)
+        @name = name
+      end
+
     end
 
   end

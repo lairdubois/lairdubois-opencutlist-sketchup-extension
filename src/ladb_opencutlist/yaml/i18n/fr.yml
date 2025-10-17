@@ -1777,6 +1777,7 @@ tab:
         Blabla
       old_name: Nom d'origine
       new_name: Nouveau nom
+      count: Nb.
     create_container:
       title_group: "Créer un groupe"
       title_component: "Créer un composant"
