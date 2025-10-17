@@ -204,7 +204,7 @@ module Ladb::OpenCutList
         #   n_rprns.each do |name, rprns|
         #     puts "  Name: #{name}"
         #     rprns.each do |rpath, rnode|
-        #       puts "   #{rnode.entity.name} [#{rnode.entity_pos}] #{" (Rename: #{rnode.name})" if rnode.is_a?(RNodePart)}"
+        #       puts "   #{rnode.entity.name} [#{rnode.entity_pos}] #{" (Rename: #{rnode.name})" if rnode.is_a?(RNodePart)} #{rpath.map { |rnode| rnode.entity.name }.join('.')}"
         #     end
         #   end
         # end
@@ -221,11 +221,21 @@ module Ladb::OpenCutList
 
             next if name == definition.name || name.empty?  # No need to rename
 
-            # Make unique the path
-            rpaths.each do |rpath|
-              rpath.each do |rnode|
-                rnode.entity = rnode.entity.make_unique
-                new_definition = rnode.entity.definition
+            # Make unique the path if necessary
+            rpaths
+            .flatten
+            .uniq
+            .group_by { |rnode| rnode.entity.definition }
+            .each do |definition, rnodes|
+              next if rnodes.size == rnodes.first.entity.definition.count_used_instances
+              new_entity = rnodes.first.entity.make_unique
+              new_definition = new_entity.definition
+              rnodes.each_with_index do |rnode, index|
+                if index == 0
+                  rnode.entity = new_entity
+                else
+                  rnode.entity.definition = new_definition
+                end
                 rnode.children.each do |child_rnode|
                   child_rnode.entity = new_definition.entities[child_rnode.entity_pos]
                 end
