@@ -30,8 +30,6 @@ module Ladb::OpenCutList
 
       begin
 
-        a = 1 / 0
-
         node_defs = node_def.get_valid_unlocked_selection_siblings
 
         # Flatten the tree by definition
