@@ -623,7 +623,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START
-        return _read_shape_start(tool, text, view)
+        return _read_shape_start(tool, text, view) if _fetch_option_measure_from_vertex
 
       when STATE_SHAPE
         return _read_shape(tool, text, view)
