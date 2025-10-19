@@ -1777,6 +1777,7 @@ tab:
         Blabla
       old_name: Original name
       new_name: New name
+      count: Qty.
     create_container:
       title_group: "Create a group"
       title_component: "Create a component"

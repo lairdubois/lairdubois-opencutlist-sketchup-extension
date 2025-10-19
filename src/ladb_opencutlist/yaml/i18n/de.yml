@@ -1777,6 +1777,7 @@ tab:
         Geschwätz
       old_name: Ursprünglicher Name
       new_name: Neuer Name
+      count: Anz.
     create_container:
       title_group: "Gruppe erstellen"
       title_component: "Komponente erstellen"
