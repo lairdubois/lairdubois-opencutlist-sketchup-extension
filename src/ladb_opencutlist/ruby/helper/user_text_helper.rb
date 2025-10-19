@@ -34,8 +34,8 @@ module Ladb::OpenCutList
         # Step 1: Tokenization
         # --------------------
 
-        # 1. Add | around each token to make it easier to split it
-        tokens_string = text.gsub(/(@|\d+'\s*\d\s+\d+\/\d+"*|\d+'*\s*(?:\d+\/)?\d+"*|\d+\/\d+"*|(?:\d+(?:[.,]\d+)*|[.,]\d+)(?:\s*(?:mm|cm|m|"|'))?)/, '|\1|')
+        # 1. Add | around each token to make them easier to split it
+        tokens_string = text.gsub(/(@|\d+'(?:\s*\d\s+)?(?:\d+\/)?\d+"*|\d+'*\s+(?:\d+\/)?\d+"*|\d+\/\d+"*|(?:\d+(?:[.,]\d+)*|[.,]\d+)(?:\s*(?:mm|cm|m|"|'))?)/, '|\1|')
                             .gsub(/([()])/, '|\1|')
                             .gsub(/(-)/, '|\1|')
 
