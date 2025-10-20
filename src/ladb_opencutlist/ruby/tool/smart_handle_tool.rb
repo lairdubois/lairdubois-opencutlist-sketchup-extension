@@ -1104,7 +1104,7 @@ module Ladb::OpenCutList
 
         else
 
-          # Compute axis from 3D position
+          # Compute axis from the 3D position
 
           ps = @picked_handle_start_point
           pe = @mouse_ip.position
@@ -1453,16 +1453,18 @@ module Ladb::OpenCutList
 
       eve = evs.reverse
 
+      f = @operator == '/' ? @number : 1
+
       case type
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
-        dlmin = eve.length * 3
-        dmin = eve.length * 4
+        dlmin = eve.length * (2 * f + 1)
+        dmin = eve.length * (2 * f + 2)
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED
-        dlmin = eve.length * 2
-        dmin = eve.length * 2
+        dlmin = eve.length * 2 * f
+        dmin = eve.length * 2 * f
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE
-        dlmin = eve.length
-        dmin = 0
+        dlmin = eve.length * (2 * f - 1)
+        dmin = eve.length * (2 * f - 2)
       else
         return
       end
@@ -2110,22 +2112,25 @@ module Ladb::OpenCutList
       evs = evsx + evsy
       eve = evex + evey
 
+      f_x = @operator_x == '/' ? @number_x : 1
+      f_y = @operator_y == '/' ? @number_y : 1
+
       case type
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_OUTSIDE
-        dlminx = evex.length * 3
-        dlminy = evey.length * 3
-        dminx = evex.length * 4
-        dminy = evey.length * 4
+        dlminx = evex.length * (2 * f_x + 1)
+        dlminy = evey.length * (2 * f_y + 1)
+        dminx = evex.length * (2 * f_x + 2)
+        dminy = evey.length * (2 * f_y + 2)
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_CENTERED
-        dlminx = evex.length * 2
-        dlminy = evey.length * 2
-        dminx = evex.length * 2
-        dminy = evey.length * 2
+        dlminx = evex.length * 2 * f_x
+        dlminy = evey.length * 2 * f_y
+        dminx = evex.length * 2 * f_x
+        dminy = evey.length * 2 * f_y
       when SmartHandleTool::ACTION_OPTION_COPY_MEASURE_TYPE_INSIDE
-        dlminx = evex.length
-        dlminy = evey.length
-        dminx = 0
-        dminy = 0
+        dlminx = evex.length * (2 * f_x - 1)
+        dlminy = evey.length * (2 * f_y - 1)
+        dminx = evex.length * (2 * f_x - 2)
+        dminy = evey.length * (2 * f_y - 2)
       else
         return
       end
