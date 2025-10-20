@@ -207,6 +207,11 @@ module Ladb::OpenCutList
       super(value, Array)
     end
 
+    def +(value)
+      return to_s + value if value.is_a?(StringFormulaWrapper) || value.is_a?(String)
+      ArrayFormulaWrapper.new(@value + value)
+    end
+
     def to_ary
       @value.to_ary
     end
@@ -819,7 +824,7 @@ module Ladb::OpenCutList
 
     def names
       return '' unless @value.is_a?(Array)
-      @value.compact.map(&:to_s).reject(&:empty?) # Select only entities that have an instance name
+      ArrayFormulaWrapper.new(@value.compact.map(&:to_s).reject(&:empty?)) # Select only entities that have an instance name
     end
 
     def to_s
