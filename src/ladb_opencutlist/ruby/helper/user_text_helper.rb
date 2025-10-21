@@ -18,17 +18,17 @@ module Ladb::OpenCutList
     #  50       → 50mm
     #  +10      → 10mm
     #  -5       → -5mm
-    #  @        → 'base_length'
-    #  @+10     → 'base_length' + 10mm
-    #  @-15     → 'base_length' - 15mm
-    #  @*3      → 'base_length' * 3
-    #  @/2      → 'base_length' / 2
+    #  @        → 'targeted_length'
+    #  @+10     → 'targeted_length' + 10mm
+    #  @-15     → 'targeted_length' - 15mm
+    #  @*3      → 'targeted_length' * 3
+    #  @/2      → 'targeted_length' / 2
     #  2m*(2+3) → 10m
-    def _read_user_text_length(tool, text, base_length = 0)
-      return base_length if text.nil? || text.empty?
+    def _read_user_text_length(tool, text, targeted_length = 0)
+      return targeted_length if text.nil? || text.empty?
 
-      base_factor = base_length >= 0 ? 1 : -1
-      base_length = base_length.abs
+      base_factor = targeted_length >= 0 ? 1 : -1
+      targeted_length = targeted_length.abs
 
       # Step 1: Tokenization
       # --------------------
@@ -139,7 +139,7 @@ module Ladb::OpenCutList
           end
 
         elsif token == '@'
-          stack << base_length
+          stack << targeted_length
         else
           stack << token
         end
@@ -163,6 +163,40 @@ module Ladb::OpenCutList
       return nil
     end
 
+    # Read point from 'text'
+    # Returns nil if no point notation is detected
+    # Accepts 3D coordinates:
+    # - An absolute coordinate, such as [3',5',7'], returns a point relative to the current axes. Square brackets indicate an absolute coordinate.
+    # - A relative coordinate, such as <1.5m, 4m, 2.75m>, returns a point relative to the 'relative_point'. Angle brackets indicate a relative coordinate.
+    # https://help.sketchup.com/en/sketchup/introducing-drawing-basics-and-concepts
+    def _read_user_text_point(tool, text, targeted_point = ORIGIN, relative_point = ORIGIN)
+
+      # Check if it's an absolute point
+      if (match = text.match(/^\[([^\[\]]+)\]$/))
+        d1, d2, d3 = _split_user_text(match[1])
+        origin = ORIGIN
+
+      # Check if it's a relative point
+      elsif (match = text.match(/^<([^<>]+)>$/))
+        d1, d2, d3 = _split_user_text(match[1])
+        origin = relative_point
+
+      else
+        return nil
+
+      end
+
+      if d1 || d2 || d3
+        tx, ty, tz = (targeted_point - origin).to_a
+        return Geom::Point3d.new(
+          origin.x + _read_user_text_length(tool, d1, tx.abs),
+          origin.y + _read_user_text_length(tool, d2, ty.abs),
+          origin.z + _read_user_text_length(tool, d3, tz.abs)
+        )
+      end
+      nil
+    end
+
     # Split 'text' with regional list separator.
     # Allows '=' char to duplicate the current value.
     # Examples :
@@ -173,7 +207,7 @@ module Ladb::OpenCutList
     def _split_user_text(text)
       values = text.split(Sketchup::RegionalSettings.list_separator)
       values.map { |value|
-        if (match = value.match(/^([^=]+)(=+)$/))
+        if (match = value.strip.match(/^([^=]+)(=+)$/))
           v, equals = match[1, 2]
           Array.new(equals.length + 1) { v }
         else

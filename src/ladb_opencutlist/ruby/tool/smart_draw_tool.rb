@@ -623,7 +623,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START
-        return _read_shape_start(tool, text, view) if _fetch_option_measure_from_vertex
+        return _read_shape_start(tool, text, view)
 
       when STATE_SHAPE
         return _read_shape(tool, text, view)
@@ -1091,7 +1091,7 @@ module Ladb::OpenCutList
 
     def _read_shape_start(tool, text, view)
 
-      if @nearest_edge_manipulators.one?
+      if @nearest_edge_manipulators.is_a?(Array) && @nearest_edge_manipulators.one?
 
         p0 = @nearest_vertex_manipulator.point
         p1 = @mouse_snap_point.project_to_line(@nearest_edge_manipulators[0].line)
@@ -1106,7 +1106,7 @@ module Ladb::OpenCutList
         _refresh
 
         return true
-      else
+      elsif @nearest_vertex_manipulator
 
         d1, d2 = _split_user_text(text)
 
@@ -1122,6 +1122,20 @@ module Ladb::OpenCutList
           d2 = _read_user_text_length(tool, d2, n2.length)
 
           @picked_shape_start_point = Geom.intersect_line_line([ p0.offset(n1, d1), @nearest_edge_manipulators[0].direction], [ p0.offset(n2, d2), @nearest_edge_manipulators[1].direction])
+
+          set_state(STATE_SHAPE)
+          _refresh
+
+          return true
+        end
+
+      else
+
+        p = _read_user_text_point(tool, text, @mouse_snap_point)
+
+        if p
+
+          @picked_shape_start_point = p
 
           set_state(STATE_SHAPE)
           _refresh
@@ -3378,12 +3392,33 @@ module Ladb::OpenCutList
       return true if super
 
       measure_start = _fetch_option_measure_reversed ? @picked_points.first : @picked_points.last
-      measure_vector = measure_start.vector_to(@mouse_snap_point)
-      measure = measure_vector.length
-      measure = _read_user_text_length(tool, text, measure)
-      return true if measure.nil?
 
-      _add_picked_point(measure_start.offset(measure_vector, measure), view)
+      # Check if input is a point with <> and [] notation
+      p = _read_user_text_point(tool, text, @mouse_snap_point, measure_start)
+      if p
+
+        if @locked_normal || @picked_points.length >= 3
+          # Project the input point if picked points already form a plan
+          plane = [ @picked_shape_start_point, @normal ]
+          p = p.project_to_plane(plane)
+        elsif @picked_points.length >= 2
+          # Update normal
+          plane = Geom.fit_plane_to_points(@picked_points + [ p ])
+          @normal = PlaneManipulator.new(plane).normal
+        end
+
+      else
+
+        # Read a simple length
+        measure_vector = measure_start.vector_to(@mouse_snap_point)
+        measure = measure_vector.length
+        measure = _read_user_text_length(tool, text, measure)
+        return true if measure.nil?
+
+        p = measure_start.offset(measure_vector, measure)
+      end
+
+      _add_picked_point(p, view)
       _refresh
 
       true
