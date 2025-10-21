@@ -213,17 +213,17 @@ module Ladb::OpenCutList
 
       case action
       when ACTION_SELECT
-        set_action_handler(SmartHandleSelectActionHandler.new(self))
+        set_action_handler(SmartHandleSelectActionHandler.new(self, fetch_action_handler))
       when ACTION_COPY_LINE
-        set_action_handler(SmartHandleCopyLineActionHandler.new(self))
+        set_action_handler(SmartHandleCopyLineActionHandler.new(self, fetch_action_handler))
       when ACTION_COPY_GRID
-        set_action_handler(SmartHandleCopyGridActionHandler.new(self))
+        set_action_handler(SmartHandleCopyGridActionHandler.new(self, fetch_action_handler))
       when ACTION_MOVE_LINE
-        set_action_handler(SmartHandleMoveLineActionHandler.new(self))
+        set_action_handler(SmartHandleMoveLineActionHandler.new(self, fetch_action_handler))
       when ACTION_DISTRIBUTE
-        set_action_handler(SmartHandleDistributeActionHandler.new(self))
+        set_action_handler(SmartHandleDistributeActionHandler.new(self, fetch_action_handler))
       when ACTION_RESIZE
-        set_action_handler(SmartHandleResizeActionHandler.new(self))
+        set_action_handler(SmartHandleResizeActionHandler.new(self, fetch_action_handler))
       end
 
       super
@@ -288,43 +288,37 @@ module Ladb::OpenCutList
       super
 
       return if (model = Sketchup.active_model).nil?
-
-      # Try to select part from the current selection
       selection = model.selection
-      entity = selection.min { |a, b| a.entityID <=> b.entityID } # Smaller entityId == Older entity
-      if entity.is_a?(Sketchup::ComponentInstance)
-        active_path = model.active_path.is_a?(Array) ? model.active_path : []
-        path = active_path + [ entity ]
-        part_entity_path = _get_part_entity_path_from_path(path)
-        unless (part = _generate_part_from_path(part_entity_path)).nil?
 
-          _set_active_part(part_entity_path, part)
+      if @previous_action_handler &&
+         (part_entity_path = @previous_action_handler.get_active_part_entity_path)
 
-          # if _pick_part_siblings?
-          #
-          #   part_entity = part_entity_path.last
-          #   part_definition = part_entity.definition
-          #
-          #   entities = selection.select { |e| e != part_entity && e.is_a?(Sketchup::ComponentInstance) && e.definition == part_definition }
-          #   entities.each do |entity|
-          #
-          #     sibling_path = active_path + [ entity ]
-          #     part_sibling_entity_path = _get_part_entity_path_from_path(sibling_path)
-          #     unless (sibling_part = _generate_part_from_path(part_sibling_entity_path)).nil?
-          #       _add_part_sibling(part_sibling_entity_path, sibling_part)
-          #     end
-          #
-          #   end
-          #
-          # end
+        part = @previous_action_handler.get_active_part
 
-          onPartSelected
+        _set_active_part(part_entity_path, part)
+        onPartSelected
 
+      else
+
+        # Try to select part from the current selection
+        entity = selection.min { |a, b| a.entityID <=> b.entityID } # Smaller entityId == Older entity
+        if entity.is_a?(Sketchup::ComponentInstance)
+          active_path = model.active_path.is_a?(Array) ? model.active_path : []
+          path = active_path + [ entity ]
+          part_entity_path = _get_part_entity_path_from_path(path)
+          _make_unique_groups_in_path(part_entity_path)
+          unless (part = _generate_part_from_path(part_entity_path)).nil?
+
+            _set_active_part(part_entity_path, part)
+            onPartSelected
+
+          end
         end
+
       end
 
       # Clear current selection
-      selection.clear
+      selection.clear if _clear_selection_on_start
 
     end
 
@@ -374,25 +368,23 @@ module Ladb::OpenCutList
 
     def onToolCancel(tool, reason, view)
 
-      case @state
+      if @tool.callback_action_handler.nil?
 
-      when STATE_SELECT
-        _reset
+        case @state
 
-      when STATE_HANDLE_START, STATE_HANDLE
-        if @tool.callback_action_handler.nil?
+        when STATE_HANDLE_START, STATE_HANDLE
           @picked_shape_start_point = nil
-          set_state(STATE_SELECT)
-          _reset
-        else
-          stop
-          Sketchup.active_model.tools.pop_tool
-          return true
         end
 
-      end
-      _refresh
+        _reset
+        _refresh
 
+      else
+        stop
+        Sketchup.active_model.tools.pop_tool
+      end
+
+      true
     end
 
     def onToolMouseMove(tool, flags, x, y, view)
@@ -606,6 +598,12 @@ module Ladb::OpenCutList
         @tool.callback_action_handler.previous_action_handler = self
         Sketchup.active_model.tools.pop_tool if active?
       end
+    end
+
+    # -----
+
+    def _clear_selection_on_start
+      true
     end
 
     # -----
@@ -896,6 +894,12 @@ module Ladb::OpenCutList
 
     protected
 
+    def _clear_selection_on_start
+      false
+    end
+
+    # -----
+    #
     def _pick_part_siblings?
       true
     end

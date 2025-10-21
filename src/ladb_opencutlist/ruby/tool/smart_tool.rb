@@ -1989,6 +1989,24 @@ module Ladb::OpenCutList
       end
     end
 
+    # -- Part --
+
+    def get_active_part
+      @active_part
+    end
+
+    def get_active_part_entity_path
+      @active_part_entity_path
+    end
+
+    def get_active_part_sibling_entity_paths
+      @active_part_sibling_entity_paths
+    end
+
+    def get_active_part_siblings
+      @active_part_siblings
+    end
+
     protected
 
     # --
