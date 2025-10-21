@@ -2071,6 +2071,11 @@ tool:
       invalid_divider: "Divisor {{ value }} is invalid"
       invalid_offset: "Offset {{ value }} is invalid"
       invalid_segment_count: "The number of segments {{ value }} is invalid. It must be between 3 and 999."
+      syntax_error: "Syntax error: {{ error }}"
+      unexpected_close_parenthesis: "Unexpected closing parenthesis"
+      missing_close_parenthesis: "Missing closing parenthesis"
+      missing_operand: "Missing operand"
+      zero_division: "Division by zero"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)

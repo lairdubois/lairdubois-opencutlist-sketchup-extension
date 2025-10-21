@@ -2071,6 +2071,11 @@ tool:
       invalid_divider: "Der Teiler {{ value }} ist ungültig"
       invalid_offset: "Die Verschiebung {{ value }} ist ungültig"
       invalid_segment_count: "Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein."
+      syntax_error: "Syntaxfehler: {{ error }}"
+      unexpected_close_parenthesis: "Unerwartete schließende Klammer"
+      missing_close_parenthesis: "Schließende Klammer fehlt"
+      missing_operand: "Fehlender Operand"
+      zero_division: "Division durch Null"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)

@@ -1134,7 +1134,7 @@ tab:
       option_zoom_threshold: Seuil de zoom
       option_zoom_threshold_help: | # TODO find a better explanation
         Permet de définir la largeur de diagramme en dessous de laquelle les diagrammes sont automatiquement agrandis.
-        
+
         *L'agrandissement sera calculé sur le diagramme le plus large*.
       option_time_limit: Limite de temps
       option_time_limit_help: |
@@ -2073,8 +2073,8 @@ tool:
       invalid_segment_count: "Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999."
       syntax_error: "Erreur de syntaxe : {{ error }}"
       unexpected_close_parenthesis: "Parenthèse fermante inattendue"
-      missing_close_parenthesis: "Parenthèse fermante maquante"
-      missing_operand: "Opérande maquante"
+      missing_close_parenthesis: "Parenthèse fermante manquante"
+      missing_operand: "Opérande manquante"
       zero_division: "Division par zéro"
   highlight:
     transparency: $t(tool.default.transparency)

@@ -2066,184 +2066,189 @@ tool:
       invalid_divider: 1574 - Le diviseur {{ value }} est invalide
       invalid_offset: 1575 - Le décalage {{ value }} est invalide
       invalid_segment_count: 1576 - Le nombre de segments {{ value }} est invalide. Il doit être compris entre 3 et 999.
+      syntax_error: '1577 - Erreur de syntaxe : {{ error }}'
+      unexpected_close_parenthesis: 1578 - Parenthèse fermante inattendue
+      missing_close_parenthesis: 1579 - Parenthèse fermante manquante
+      missing_operand: 1580 - Opérande manquante
+      zero_division: 1581 - Division par zéro
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1579 - Dessiner
-    action_0: 1580 - Dessiner un Rectangle
-    action_0_status: 1581 - Dessiner un volume sur la base d'une forme rectangulaire
-    action_0_state_1_status: 1582 - Cliquez pour définir l'angle opposé ou entrez une longueur, largeur
-    action_1: 1583 - Dessiner un Cercle
-    action_1_status: 1584 - Dessiner un volume sur la base d'une forme circulaire
-    action_1_state_1_radius_status: 1585 - Cliquez pour définir le rayon ou entrez une distance
-    action_1_state_1_diameter_status: 1586 - Cliquez pour définir le diamètre ou entrez une distance
-    action_2: 1587 - Dessiner un Polygone
-    action_2_status: 1588 - Dessiner un volume sur la base d'une forme polygonale
-    action_2_state_1_status: 1589 - Cliquez pour définir un nouveau point ou entrez une distance
-    action_x_state_2_status: 1590 - Cliquez pour définir l'élévation ou entrez une distance
-    action_option_group_offset: 1591 - Décalage
-    action_option_group_segments: 1592 - Segments
-    action_option_group_options: 1593 - Options
-    action_option_offset_shape_offset: 1594 - Décalage
-    action_option_offset_shape_offset_status: 1595 - Permet d'appliquer un décalage au tracé de la forme dessinée
-    action_option_segments_segment_count: 1596 - Nombre de segments
-    action_option_segments_segment_count_status: 1597 - Permet de définir le nombre de segments du cercle
-    action_option_options_construction: 1598 - Traits de construction
-    action_option_options_construction_status: 1599 - Dessiner en traits de construction
-    action_option_options_rectangle_centered: 1600 - Rectangle centré
-    action_option_options_rectangle_centered_status: 1601 - Centrer le rectangle sur le premier point
-    action_option_options_smoothing: 1602 - Lissage
-    action_option_options_smoothing_status: 1603 - Lisser les courbes
-    action_option_options_measure_from_vertex_status: 1604 - Mesurer relativement au sommet proche
-    action_option_options_measure_from_diameter: 1605 - Mesure
-    action_option_options_measure_from_diameter_status: 1606 - Mesurer le cercle par son diamètre
-    action_option_options_measure_from_radius_status: 1607 - Mesurer le cercle par son rayon
-    action_option_options_measure_reversed: 1608 - Mesure inversée
-    action_option_options_measure_reversed_status: 1609 - Inverser la mesure
-    action_option_options_pull_centered: 1610 - Élévation centrée
-    action_option_options_pull_centered_status: 1611 - Centrer l'élévation sur le premier point
-    action_option_options_ask_name: 1612 - Nommage des pièces
-    action_option_options_ask_name_status: 1613 - Saisir manuellement le nom des pièces
-    action_measure_locked_status: 1614 - Verrouiller sur la dernière mesure
-    action_toggle_move_copy_status: 1615 - Alterner entre copier/déplacer
-    action_change_move_anchor_status: 1616 - Changer le point d'ancrage
+    title: 1584 - Dessiner
+    action_0: 1585 - Dessiner un Rectangle
+    action_0_status: 1586 - Dessiner un volume sur la base d'une forme rectangulaire
+    action_0_state_1_status: 1587 - Cliquez pour définir l'angle opposé ou entrez une longueur, largeur
+    action_1: 1588 - Dessiner un Cercle
+    action_1_status: 1589 - Dessiner un volume sur la base d'une forme circulaire
+    action_1_state_1_radius_status: 1590 - Cliquez pour définir le rayon ou entrez une distance
+    action_1_state_1_diameter_status: 1591 - Cliquez pour définir le diamètre ou entrez une distance
+    action_2: 1592 - Dessiner un Polygone
+    action_2_status: 1593 - Dessiner un volume sur la base d'une forme polygonale
+    action_2_state_1_status: 1594 - Cliquez pour définir un nouveau point ou entrez une distance
+    action_x_state_2_status: 1595 - Cliquez pour définir l'élévation ou entrez une distance
+    action_option_group_offset: 1596 - Décalage
+    action_option_group_segments: 1597 - Segments
+    action_option_group_options: 1598 - Options
+    action_option_offset_shape_offset: 1599 - Décalage
+    action_option_offset_shape_offset_status: 1600 - Permet d'appliquer un décalage au tracé de la forme dessinée
+    action_option_segments_segment_count: 1601 - Nombre de segments
+    action_option_segments_segment_count_status: 1602 - Permet de définir le nombre de segments du cercle
+    action_option_options_construction: 1603 - Traits de construction
+    action_option_options_construction_status: 1604 - Dessiner en traits de construction
+    action_option_options_rectangle_centered: 1605 - Rectangle centré
+    action_option_options_rectangle_centered_status: 1606 - Centrer le rectangle sur le premier point
+    action_option_options_smoothing: 1607 - Lissage
+    action_option_options_smoothing_status: 1608 - Lisser les courbes
+    action_option_options_measure_from_vertex_status: 1609 - Mesurer relativement au sommet proche
+    action_option_options_measure_from_diameter: 1610 - Mesure
+    action_option_options_measure_from_diameter_status: 1611 - Mesurer le cercle par son diamètre
+    action_option_options_measure_from_radius_status: 1612 - Mesurer le cercle par son rayon
+    action_option_options_measure_reversed: 1613 - Mesure inversée
+    action_option_options_measure_reversed_status: 1614 - Inverser la mesure
+    action_option_options_pull_centered: 1615 - Élévation centrée
+    action_option_options_pull_centered_status: 1616 - Centrer l'élévation sur le premier point
+    action_option_options_ask_name: 1617 - Nommage des pièces
+    action_option_options_ask_name_status: 1618 - Saisir manuellement le nom des pièces
+    action_measure_locked_status: 1619 - Verrouiller sur la dernière mesure
+    action_toggle_move_copy_status: 1620 - Alterner entre copier/déplacer
+    action_change_move_anchor_status: 1621 - Changer le point d'ancrage
     success:
-      part_created: '1617 - Nouvelle pièce créée : {{ name }}'
+      part_created: '1622 - Nouvelle pièce créée : {{ name }}'
   smart_handle:
-    title: 1618 - Manipuler
-    action_0: 1619 - Sélectionner
-    action_0_status: 1620 - Cliquez sur une pièce pour la sélectionner
+    title: 1623 - Manipuler
+    action_0: 1624 - Sélectionner
+    action_0_status: 1625 - Cliquez sur une pièce pour la sélectionner
     action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: 1622 - Glissez sur une pièce identique pour l'ajouter à la sélection et relâchez pour continuer
-    action_1: 1623 - Copier en ligne
-    action_1_status: 1624 - Cliquez sur une pièce pour la copier le long d'un axe
+    action_0_state_4_status: 1627 - Glissez sur une pièce identique pour l'ajouter à la sélection et relâchez pour continuer
+    action_1: 1628 - Copier en ligne
+    action_1_status: 1629 - Cliquez sur une pièce pour la copier le long d'un axe
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: 1626 - Cliquez pour placer la copie de la pièce ou entrez une distance
-    action_2: 1627 - Copier en grille
-    action_2_status: 1628 - Cliquez sur une pièce pour la copier le long d'une grille
+    action_1_state_2_status: 1631 - Cliquez pour placer la copie de la pièce ou entrez une distance
+    action_2: 1632 - Copier en grille
+    action_2_status: 1633 - Cliquez sur une pièce pour la copier le long d'une grille
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: 1630 - Cliquez pour placer les copies de la pièce ou entrez deux distances
-    action_3: 1631 - Déplacer
-    action_3_status: 1632 - Cliquez sur une pièce pour la déplacer le long d'un axe
+    action_2_state_2_status: 1635 - Cliquez pour placer les copies de la pièce ou entrez deux distances
+    action_3: 1636 - Déplacer
+    action_3_status: 1637 - Cliquez sur une pièce pour la déplacer le long d'un axe
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: 1634 - Cliquez pour placer la pièce ou entrez une distance
-    action_4: 1635 - Répartir
-    action_4_status: 1636 - Cliquez sur une pièce pour la répartir le long d'un axe
+    action_3_state_2_status: 1639 - Cliquez pour placer la pièce ou entrez une distance
+    action_4: 1640 - Répartir
+    action_4_status: 1641 - Cliquez sur une pièce pour la répartir le long d'un axe
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
-    action_4_state_1_status: 1639 - Cliquez pour déterminer le premier point de mesure
-    action_4_state_2_status: 1640 - Cliquez pour déterminer le second point de mesure ou entrez une distance
-    action_5: 1641 - Redimensionner
-    action_option_group_copy_measure_type: 1642 - Mesure
-    action_option_group_move_measure_type: 1643 - Mesure
-    action_option_group_axes: 1644 - Axes
-    action_option_group_options: 1645 - Options
-    action_option_copy_measure_type_outside_status: 1646 - Mesurer à l'extérieur
-    action_option_copy_measure_type_centered_status: 1647 - Mesurer de centre à centre
-    action_option_copy_measure_type_inside_status: 1648 - Mesurer entre les pièces
-    action_option_move_measure_type_outside_status: 1649 - Mesurer à l'extérieur
-    action_option_move_measure_type_centered_status: 1650 - Mesurer au centre
-    action_option_move_measure_type_inside_status: 1651 - Mesurer à l'intérieur
-    action_option_axes_active_status: 1652 - Manipuler le long des axes actifs
-    action_option_axes_context_status: 1653 - Manipuler le long des axes du groupe ou composant contenant la pièce
-    action_option_axes_entity_status: 1654 - Manipuler le long des axes de la pièce
-    action_option_options_mirror_status: 1655 - Copier en symétrie
+    action_4_state_1_status: 1644 - Cliquez pour déterminer le premier point de mesure
+    action_4_state_2_status: 1645 - Cliquez pour déterminer le second point de mesure ou entrez une distance
+    action_5: 1646 - Redimensionner
+    action_option_group_copy_measure_type: 1647 - Mesure
+    action_option_group_move_measure_type: 1648 - Mesure
+    action_option_group_axes: 1649 - Axes
+    action_option_group_options: 1650 - Options
+    action_option_copy_measure_type_outside_status: 1651 - Mesurer à l'extérieur
+    action_option_copy_measure_type_centered_status: 1652 - Mesurer de centre à centre
+    action_option_copy_measure_type_inside_status: 1653 - Mesurer entre les pièces
+    action_option_move_measure_type_outside_status: 1654 - Mesurer à l'extérieur
+    action_option_move_measure_type_centered_status: 1655 - Mesurer au centre
+    action_option_move_measure_type_inside_status: 1656 - Mesurer à l'intérieur
+    action_option_axes_active_status: 1657 - Manipuler le long des axes actifs
+    action_option_axes_context_status: 1658 - Manipuler le long des axes du groupe ou composant contenant la pièce
+    action_option_axes_entity_status: 1659 - Manipuler le long des axes de la pièce
+    action_option_options_mirror_status: 1660 - Copier en symétrie
     warning:
-      copies_disable_mirror: 1656 - La copie multiple désactive l'option '$t(tool.smart_handle.action_option_options_mirror_status)'
+      copies_disable_mirror: 1661 - La copie multiple désactive l'option '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      min_distance: 1657 - La distance {{ value1 }} est inférieure à la distance minimale de {{ value2 }}
+      min_distance: 1662 - La distance {{ value1 }} est inférieure à la distance minimale de {{ value2 }}
   smart_paint:
-    title: 1658 - Colorier
-    default_material: 1659 - Sans matière
-    filters: 1660 - Filtres
-    filter_0: 1661 - Sans type
+    title: 1663 - Colorier
+    default_material: 1664 - Sans matière
+    filters: 1665 - Filtres
+    filter_0: 1666 - Sans type
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1668 - Colorier pièces
-    action_0_status: 1669 - Cliquez sur une pièce pour appliquer une matière à son instance
-    action_1: 1670 - Colorier chants
-    action_1_status: 1671 - Cliquez sur un chant d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_4)'
-    action_2: 1672 - Colorier faces
-    action_2_status: 1673 - Cliquez sur une face d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
-    action_3: 1674 - Prélever
-    action_3_status: 1675 - Cliquez sur une face pour prélever un échantillon de la matière
-    action_4: 1676 - Nettoyer
-    action_4_status: 1677 - Cliquez sur une pièce pour supprimer toutes les matières de sa définition et de toutes ses instances
-    action_option_group_instances: 1678 - Nombre d'instances
-    action_option_group_edges: 1679 - Nombre de chants
-    action_option_group_faces: 1680 - Nombre de faces
-    action_option_instances_0_status: 1681 - Colorier seulement l'instance de la pièce ciblée
-    action_option_instances_1_status: 1682 - Colorier toutes les instances de la pièce ciblée
-    action_option_edges_0_status: 1683 - Colorier seulement le chant ciblé
-    action_option_edges_1_status: 1684 - Colorier le chant ciblé et le chant opposé de la pièce
-    action_option_edges_2_status: 1685 - Colorier les 4 chants de la pièce ciblée
-    action_option_faces_0_status: 1686 - Colorier seulement la face ciblée
-    action_option_faces_1_status: 1687 - Colorier les 2 faces de la pièce ciblée
-    edges: 1688 - {{ count }} chant
-    edges_plural: 1689 - {{ count }} chants
-    edge_ymin: 1690 - Longueur 1
-    edge_ymax: 1691 - Longueur 2
-    edge_xmin: 1692 - Largeur 1
-    edge_xmax: 1693 - Largeur 2
-    faces: 1694 - {{ count }} face
-    faces_plural: 1695 - {{ count }} faces
-    face_zmin: 1696 - Contre-face
-    face_zmax: 1697 - Face
+    action_0: 1673 - Colorier pièces
+    action_0_status: 1674 - Cliquez sur une pièce pour appliquer une matière à son instance
+    action_1: 1675 - Colorier chants
+    action_1_status: 1676 - Cliquez sur un chant d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_4)'
+    action_2: 1677 - Colorier faces
+    action_2_status: 1678 - Cliquez sur une face d'une pièce panneau pour lui appliquer une matière '$t(tab.materials.type_6)'
+    action_3: 1679 - Prélever
+    action_3_status: 1680 - Cliquez sur une face pour prélever un échantillon de la matière
+    action_4: 1681 - Nettoyer
+    action_4_status: 1682 - Cliquez sur une pièce pour supprimer toutes les matières de sa définition et de toutes ses instances
+    action_option_group_instances: 1683 - Nombre d'instances
+    action_option_group_edges: 1684 - Nombre de chants
+    action_option_group_faces: 1685 - Nombre de faces
+    action_option_instances_0_status: 1686 - Colorier seulement l'instance de la pièce ciblée
+    action_option_instances_1_status: 1687 - Colorier toutes les instances de la pièce ciblée
+    action_option_edges_0_status: 1688 - Colorier seulement le chant ciblé
+    action_option_edges_1_status: 1689 - Colorier le chant ciblé et le chant opposé de la pièce
+    action_option_edges_2_status: 1690 - Colorier les 4 chants de la pièce ciblée
+    action_option_faces_0_status: 1691 - Colorier seulement la face ciblée
+    action_option_faces_1_status: 1692 - Colorier les 2 faces de la pièce ciblée
+    edges: 1693 - {{ count }} chant
+    edges_plural: 1694 - {{ count }} chants
+    edge_ymin: 1695 - Longueur 1
+    edge_ymax: 1696 - Longueur 2
+    edge_xmin: 1697 - Largeur 1
+    edge_xmax: 1698 - Largeur 2
+    faces: 1699 - {{ count }} face
+    faces_plural: 1700 - {{ count }} faces
+    face_zmin: 1701 - Contre-face
+    face_zmax: 1702 - Face
     warning:
-      no_material: 1698 - Aucune matière
-      no_material_type: 1699 - Aucune matière de type '{{ type }}'
+      no_material: 1703 - Aucune matière
+      no_material_type: 1704 - Aucune matière de type '{{ type }}'
     error:
-      not_part: 1700 - L'objet ciblé n'est pas une pièce (composant)
-      not_edge: 1701 - La face ciblée n'est pas un chant de panneau
-      not_face: 1702 - La face ciblée n'est pas une face de panneau
-      wrong_material_type: 1703 - La pièce ciblée doit être du type '{{ type }}'
+      not_part: 1705 - L'objet ciblé n'est pas une pièce (composant)
+      not_edge: 1706 - La face ciblée n'est pas un chant de panneau
+      not_face: 1707 - La face ciblée n'est pas une face de panneau
+      wrong_material_type: 1708 - La pièce ciblée doit être du type '{{ type }}'
   smart_axes:
-    title: 1704 - Orienter
-    action_0: 1705 - Retourner
-    action_0_status: 1706 - Cliquez sur une pièce pour retourner son instance le long de l'une de ses dimensions
-    action_1: 1707 - Permuter Longueur ↔ Largeur
-    action_1_status: 1708 - Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
-    action_2: 1709 - Permuter Face ↔ Contre-face
-    action_2_status: 1710 - Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
-    action_3: 1711 - Adapter les axes
-    action_3_status: 1712 - Ciblez une face d'une pièce et cliquez sur une arête pour y adapter ses axes
-    action_4: 1713 - Déplacer l'origine
-    action_4_status: 1714 - Ciblez une face d'une pièce et cliquez sur un point pour y placer son origine
-    action_option_group_direction: 1715 - Direction
-    action_option_direction_0: 1716 - Lo
-    action_option_direction_1: 1717 - La
-    action_option_direction_2: 1718 - Ep
-    action_option_direction_0_status: 1719 - Retourner la pièce dans sa longueur
-    action_option_direction_1_status: 1720 - Retourner la pièce dans sa largeur
-    action_option_direction_2_status: 1721 - Retourner la pièce dans son épaisseur
+    title: 1709 - Orienter
+    action_0: 1710 - Retourner
+    action_0_status: 1711 - Cliquez sur une pièce pour retourner son instance le long de l'une de ses dimensions
+    action_1: 1712 - Permuter Longueur ↔ Largeur
+    action_1_status: 1713 - Cliquez sur une pièce pour permuter sa Longueur avec sa Largeur
+    action_2: 1714 - Permuter Face ↔ Contre-face
+    action_2_status: 1715 - Cliquez sur une pièce pour permuter la lecture de sa Face avec sa Contre-face
+    action_3: 1716 - Adapter les axes
+    action_3_status: 1717 - Ciblez une face d'une pièce et cliquez sur une arête pour y adapter ses axes
+    action_4: 1718 - Déplacer l'origine
+    action_4_status: 1719 - Ciblez une face d'une pièce et cliquez sur un point pour y placer son origine
+    action_option_group_direction: 1720 - Direction
+    action_option_direction_0: 1721 - Lo
+    action_option_direction_1: 1722 - La
+    action_option_direction_2: 1723 - Ep
+    action_option_direction_0_status: 1724 - Retourner la pièce dans sa longueur
+    action_option_direction_1_status: 1725 - Retourner la pièce dans sa largeur
+    action_option_direction_2_status: 1726 - Retourner la pièce dans son épaisseur
     warning:
-      more_entities: 1722 - {{ count_used }} instances partageant la même définition seront modifiées
+      more_entities: 1727 - {{ count_used }} instances partageant la même définition seront modifiées
     error:
-      not_part: 1723 - L'objet ciblé n'est pas une pièce (composant)
-      not_orientable: 1724 - Le type de cette pièce ne permet pas de l'orienter
+      not_part: 1728 - L'objet ciblé n'est pas une pièce (composant)
+      not_orientable: 1729 - Le type de cette pièce ne permet pas de l'orienter
   smart_export:
-    title: 1725 - Exporter
-    action_0: 1726 - Exporter une pièce 3D
-    action_0_status: 1727 - Cliquez sur une pièce
-    action_1: 1728 - Exporter une pièce 2D
-    action_1_status: 1729 - Cliquez sur la face d'une pièce
-    action_2: 1730 - Exporter une face
-    action_2_status: 1731 - Cliquez sur une face
-    action_3: 1732 - Exporter un tracé
-    action_3_status: 1733 - Cliquez sur une arête
-    action_option_group_file_format: 1734 - Format
-    action_option_group_unit: 1735 - Unité
-    action_option_group_faces: 1736 - Faces
-    action_option_group_options: 1737 - Options
-    action_option_file_format_dxf_status: 1738 - Exporter vers un fichier DXF
-    action_option_file_format_stl_status: 1739 - Exporter vers un fichier STL
-    action_option_file_format_obj_status: 1740 - Exporter vers un fichier OBJ
-    action_option_file_format_svg_status: 1741 - Exporter vers un fichier SVG
+    title: 1730 - Exporter
+    action_0: 1731 - Exporter une pièce 3D
+    action_0_status: 1732 - Cliquez sur une pièce
+    action_1: 1733 - Exporter une pièce 2D
+    action_1_status: 1734 - Cliquez sur la face d'une pièce
+    action_2: 1735 - Exporter une face
+    action_2_status: 1736 - Cliquez sur une face
+    action_3: 1737 - Exporter un tracé
+    action_3_status: 1738 - Cliquez sur une arête
+    action_option_group_file_format: 1739 - Format
+    action_option_group_unit: 1740 - Unité
+    action_option_group_faces: 1741 - Faces
+    action_option_group_options: 1742 - Options
+    action_option_file_format_dxf_status: 1743 - Exporter vers un fichier DXF
+    action_option_file_format_stl_status: 1744 - Exporter vers un fichier STL
+    action_option_file_format_obj_status: 1745 - Exporter vers un fichier OBJ
+    action_option_file_format_svg_status: 1746 - Exporter vers un fichier SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2253,9 +2258,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1751 - Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
-    action_option_options_include_paths_status: 1752 - Exporter comme tracé les arêtes non associées à une face contenues dans la pièce
+    action_option_options_merge_holes_status: 1756 - Isoler les trous traversants et fusionner les profondeurs pour chaque cavité
+    action_option_options_include_paths_status: 1757 - Exporter comme tracé les arêtes non associées à une face contenues dans la pièce
     error:
-      not_part: 1753 - Cette face ne fait pas partie d'une pièce (composant)
-      not_flat_face: 1754 - Cette surface n'est pas plane
-      incompatible_active_path: 1755 - Le chemin actif ne permet pas d'exporter cette pièce
+      not_part: 1758 - Cette face ne fait pas partie d'une pièce (composant)
+      not_flat_face: 1759 - Cette surface n'est pas plane
+      incompatible_active_path: 1760 - Le chemin actif ne permet pas d'exporter cette pièce
