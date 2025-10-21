@@ -2007,6 +2007,7 @@ module Ladb::OpenCutList
     def _pick_part(picker, view)
       if picker.picked_face_path.is_a?(Array)
         if (picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)).is_a?(Array)
+          _make_unique_groups_in_path(picked_part_entity_path)
           if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
             _set_active_part(picked_part_entity_path, picked_part)
             return
@@ -2357,6 +2358,19 @@ module Ladb::OpenCutList
             end
           elsif entity.is_a?(Sketchup::Group)
             _instances_to_paths(instances, instance_paths, entity.entities, path + [ entity ])
+          end
+        end
+      end
+    end
+
+    def _make_unique_groups_in_path(path)
+      path.each_with_index do |entity, index|
+        if entity.is_a?(Sketchup::Group)
+          new_entity = entity.make_unique
+          if new_entity != entity && index < path.size - 1
+            next_entity = path[index + 1]
+            next_entity_pos = entity.entities.to_a.index(next_entity)
+            path[index + 1] = new_entity.entities[next_entity_pos]
           end
         end
       end
