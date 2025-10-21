@@ -372,8 +372,10 @@ module Ladb::OpenCutList
 
         case @state
 
+        when STATE_SELECT
         when STATE_HANDLE_START, STATE_HANDLE
           @picked_shape_start_point = nil
+          _unhide_sibling_instances
         end
 
         _reset
