@@ -2025,7 +2025,8 @@ module Ladb::OpenCutList
       return unless _pick_part_siblings?
       if @active_part_entity_path.is_a?(Array) && picker.picked_face_path.is_a?(Array)
         if (picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)).is_a?(Array)
-          return if picked_part_entity_path == @active_part_entity_path
+          return if picked_part_entity_path == @active_part_entity_path                   # Abandon if part seems to be the active one
+          return if picked_part_entity_path[0...-1] != @active_part_entity_path[0...-1]   # Abandon if part does not have the same ancestors
           if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
             _add_part_sibling(picked_part_entity_path, picked_part) if picked_part.id == @active_part.id
           end
