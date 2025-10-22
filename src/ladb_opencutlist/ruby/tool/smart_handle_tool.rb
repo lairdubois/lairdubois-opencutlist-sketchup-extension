@@ -290,12 +290,26 @@ module Ladb::OpenCutList
       return if (model = Sketchup.active_model).nil?
       selection = model.selection
 
+      # Try to copy previous action handler selection
       if @previous_action_handler &&
-         (part_entity_path = @previous_action_handler.get_active_part_entity_path)
-
-        part = @previous_action_handler.get_active_part
+         (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
+         (part = @previous_action_handler.get_active_part)
 
         _set_active_part(part_entity_path, part)
+
+        if _pick_part_siblings?
+
+          if (part_sibling_entity_paths = @previous_action_handler.get_active_part_sibling_entity_paths) &&
+             (part_siblings = @previous_action_handler.get_active_part_siblings)
+
+            part_sibling_entity_paths.zip(part_siblings).each do |part_sibling_entity_path, part_sibling|
+              _add_part_sibling(part_sibling_entity_path, part_sibling)
+            end
+
+          end
+
+        end
+
         onPartSelected
 
       else
@@ -310,6 +324,25 @@ module Ladb::OpenCutList
           unless (part = _generate_part_from_path(part_entity_path)).nil?
 
             _set_active_part(part_entity_path, part)
+
+            if _pick_part_siblings?
+
+              part_entity = part_entity_path.last
+              part_definition = part_entity.definition
+
+              entities = selection.select { |e| e != part_entity && e.is_a?(Sketchup::ComponentInstance) && e.definition == part_definition }
+              entities.each do |entity|
+
+                sibling_path = active_path + [ entity ]
+                part_sibling_entity_path = _get_part_entity_path_from_path(sibling_path)
+                unless (part_sibling = _generate_part_from_path(part_sibling_entity_path)).nil?
+                  _add_part_sibling(part_sibling_entity_path, part_sibling)
+                end
+
+              end
+
+            end
+
             onPartSelected
 
           end
@@ -372,9 +405,9 @@ module Ladb::OpenCutList
 
         case @state
 
-        when STATE_SELECT
         when STATE_HANDLE_START, STATE_HANDLE
           @picked_shape_start_point = nil
+          _unhide_instance
           _unhide_sibling_instances
         end
 
