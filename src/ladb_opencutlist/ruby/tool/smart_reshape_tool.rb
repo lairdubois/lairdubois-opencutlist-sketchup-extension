@@ -1415,7 +1415,7 @@ module Ladb::OpenCutList
 
       # Preview distance
 
-      distance = v.length
+      distance = lps.distance(lpe)
 
       Sketchup.set_status_text(distance, SB_VCB_VALUE)
 
