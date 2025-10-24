@@ -355,7 +355,7 @@ module Ladb::OpenCutList
           @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
 
           k_mesh = Kuix::Mesh.new
-          k_mesh.add_quands(section.get_quads)
+          k_mesh.add_quads(section.get_quads)
           k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
           k_mesh.transformation = et
           @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)

@@ -2,6 +2,7 @@ module Ladb::OpenCutList
 
   require_relative 'smart_tool'
   require_relative '../lib/geometrix/finder/circle_finder'
+  require_relative '../lib/kuix/geom/bounds3d'
   require_relative '../manipulator/vertex_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/face_manipulator'
@@ -18,7 +19,6 @@ module Ladb::OpenCutList
     ACTION_COPY_GRID = 2
     ACTION_MOVE_LINE = 3
     ACTION_DISTRIBUTE = 4
-    ACTION_RESIZE = 5
 
     ACTION_OPTION_COPY_MEASURE_TYPE = 'copy_measure_type'
     ACTION_OPTION_MOVE_MEASURE_TYPE = 'move_measure_type'
@@ -71,10 +71,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ]
         }
-      },
-      # {
-      #   :action => ACTION_RESIZE,
-      # }
+      }
     ].freeze
 
     # -----
@@ -222,8 +219,6 @@ module Ladb::OpenCutList
         set_action_handler(SmartHandleMoveLineActionHandler.new(self, fetch_action_handler))
       when ACTION_DISTRIBUTE
         set_action_handler(SmartHandleDistributeActionHandler.new(self, fetch_action_handler))
-      when ACTION_RESIZE
-        set_action_handler(SmartHandleResizeActionHandler.new(self, fetch_action_handler))
       end
 
       super
@@ -290,7 +285,7 @@ module Ladb::OpenCutList
       return if (model = Sketchup.active_model).nil?
       selection = model.selection
 
-      # Try to copy previous action handler selection
+      # Try to copy the previous action handler selection
       if @previous_action_handler &&
          (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
          (part = @previous_action_handler.get_active_part)
@@ -456,6 +451,7 @@ module Ladb::OpenCutList
       view.tooltip = @mouse_ip.tooltip
       view.invalidate
 
+      false
     end
 
     def onToolMouseLeave(tool, view)
@@ -471,14 +467,14 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT
-
-        if @active_part_entity_path.is_a?(Array)
+        if @active_part_entity_path.is_a?(Array) && _pick_part_siblings?
           set_state(STATE_SELECT_SIBLINGS)
           return true
         end
 
       end
 
+      super
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
@@ -3027,7 +3023,7 @@ module Ladb::OpenCutList
           snap_point: lps.offset(lv, distance / 2),
           text: distance,
           text_color: Kuix::COLOR_X,
-          border_color: _get_vector_color(lv, Kuix::COLOR_DARK_GREY)
+          border_color: color
         )
         @tool.append_2d(k_label)
 
@@ -3223,85 +3219,6 @@ module Ladb::OpenCutList
         mps: mps,
         mpe: mpe
       }
-    end
-
-  end
-
-  class SmartHandleResizeActionHandler < SmartHandleActionHandler
-
-    def initialize(tool, previous_action_handler = nil)
-      super(SmartHandleTool::ACTION_RESIZE, tool, previous_action_handler)
-    end
-
-    # -----
-
-    def onPartSelected
-
-      instance = _get_instance
-
-      @instances << instance
-      @definition = instance.definition
-      @drawing_def = nil
-
-      @src_transformation = Geom::Transformation.new(instance.transformation)
-
-      set_state(STATE_HANDLE_START)
-      _refresh
-
-    end
-
-    # -----
-
-    protected
-
-    def _snap_handle_start(flags, x, y, view)
-
-      @mouse_ip.clear
-
-      drawing_def = _get_drawing_def
-      bounds = drawing_def.bounds
-
-      pk = view.pick_helper(x, y, 50)
-      (0..7).each do |i|
-        p = bounds.corner(i).transform(drawing_def.transformation)
-        if pk.test_point(p)
-
-          @mouse_snap_point = p
-          return
-
-        end
-      end
-
-    end
-
-    def _preview_edit_axes(with_box)
-      # Does nothing
-    end
-
-    def _preview_handle_start(view)
-      super
-
-      drawing_def = _get_drawing_def
-      bounds = drawing_def.bounds
-
-      k_box = Kuix::BoxMotif.new
-      k_box.bounds.copy!(bounds)
-      k_box.line_width = 1.5
-      k_box.color = Kuix::COLOR_YELLOW
-      k_box.transformation = drawing_def.transformation
-      @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
-
-      unless @mouse_snap_point.nil?
-        k_points = _create_floating_points(
-          points: @mouse_snap_point
-        )
-        @tool.append_3d(k_points, LAYER_3D_HANDLE_PREVIEW)
-      end
-
-    end
-
-    def _preview_handle(view)
-      super
     end
 
   end

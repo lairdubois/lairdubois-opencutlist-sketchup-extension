@@ -21,7 +21,7 @@ module Ladb::OpenCutList::Kuix
       @triangles.concat(triangles)
     end
 
-    def add_quands(quads) # Array<Geom::Point3d>
+    def add_quads(quads) # Array<Geom::Point3d>
       raise 'Points count must be a multiple of 4' if quads.length % 4 != 0
       @quads.concat(quads)
     end

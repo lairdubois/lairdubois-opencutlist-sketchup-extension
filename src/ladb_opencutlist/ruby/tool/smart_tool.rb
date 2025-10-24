@@ -1298,6 +1298,11 @@ module Ladb::OpenCutList
 
     end
 
+    def onSuspend(view)
+      super
+      return @action_handler.onToolSuspend(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolSuspend)
+    end
+
     def onResume(view)
       super
       refresh
@@ -2103,7 +2108,6 @@ module Ladb::OpenCutList
 
           # Only the current instance
           instance_paths << part_entity_path
-          # instance_paths.concat(@active_part_sibling_entity_paths) if @active_part_sibling_entity_paths.is_a?(Array)
 
         end
 
@@ -2306,7 +2310,7 @@ module Ladb::OpenCutList
     end
 
     def _hide_instance
-      return if (instance = _get_instance).nil?
+      return if (instance = _get_instance).nil? || @unhide_local_instance_transformation.is_a?(Geom::Transformation)
       _get_global_instance_transformation
       _get_drawing_def
       @unhide_local_instance_transformation = Geom::Transformation.new(instance.transformation)

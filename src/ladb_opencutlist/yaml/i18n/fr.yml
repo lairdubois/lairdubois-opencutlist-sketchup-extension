@@ -114,6 +114,7 @@ core:
       edit_part_instance_properties: Editer les propriétés de l'instance
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +126,7 @@ core:
       dialog: OpenCutList
       smart_draw: Dessiner des pièces
       smart_handle: Manipuler des pièces
+      smart_reshape: Remodeler des pièces
       smart_paint: Colorier des pièces
       smart_axes: Orienter des pièces
       smart_export: Exporter des pièces
@@ -2144,7 +2146,7 @@ tool:
     action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Cliquez pour déterminer le premier point de mesure
     action_4_state_2_status: Cliquez pour déterminer le second point de mesure ou entrez une distance
-    action_5: Redimensionner
+    action_5: Etirer
     action_option_group_copy_measure_type: Mesure
     action_option_group_move_measure_type: Mesure
     action_option_group_axes: Axes
@@ -2163,6 +2165,17 @@ tool:
       copies_disable_mirror: La copie multiple désactive l'option '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       min_distance: La distance {{ value1 }} est inférieure à la distance minimale de {{ value2 }}
+  smart_reshape:
+    title: Remodeler
+    action_0: Etirer
+    action_0_status: Cliquez sur une pièce pour la sélectionner
+    action_option_group_stretch_measure_type: Mesure
+    action_option_group_axes: Axes
+    action_option_stretch_measure_type_outside_status: Mesurer à l'extérieur
+    action_option_stretch_measure_type_offset_status: Mesurer la différence
+    action_option_axes_active_status: Manipuler le long des axes actifs
+    action_option_axes_context_status: Manipuler le long des axes du groupe ou composant contenant la pièce
+    action_option_axes_entity_status: Manipuler le long des axes de la pièce
   smart_paint:
     title: Colorier
     default_material: Sans matière
