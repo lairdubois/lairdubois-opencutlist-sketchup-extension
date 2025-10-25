@@ -113,6 +113,7 @@ core:
       unhide_part_instance: Instanz einblenden
       edit_part_instance_properties: Instanzeigenschaften bearbeiten
       smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_handle: $t(core.toolbar.command.smart_handle)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
@@ -125,6 +126,7 @@ core:
       dialog: OpenCutList
       smart_draw: Teile zeichnen
       smart_handle: Teile handhaben
+      smart_reshape: Teile umgestalten
       smart_paint: Teile einfärben
       smart_axes: Teile orientieren
       smart_export: Teile exportieren
@@ -2163,6 +2165,17 @@ tool:
       copies_disable_mirror: Mehrfaches Kopieren deaktiviert die Option '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       min_distance: "Der Abstand {{ value1 }} ist kleiner als der Minimalabstand {{ value2 }}"
+  smart_reshape:
+    title: Umgestalten
+    action_0: Dehnen
+    action_0_status: Klicken Sie auf ein Teil, um es auszuwählen.
+    action_option_group_stretch_measure_type: Maß
+    action_option_group_axes: Achsen
+    action_option_stretch_measure_type_outside_status: Außenmessung
+    action_option_stretch_measure_type_offset_status: Differenzwert messen
+    action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
+    action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
+    action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
   smart_paint:
     title: Malen
     default_material: Ohne Material
