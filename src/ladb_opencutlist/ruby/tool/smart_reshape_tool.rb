@@ -991,6 +991,7 @@ module Ladb::OpenCutList
     protected
 
     def _reset
+      @split_def = nil
       @snap_axis = nil
       @picked_grip_index = -1
       @picked_section_index = nil
@@ -1374,33 +1375,33 @@ module Ladb::OpenCutList
     def _preview_reshape(view)
       return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
 
-      et, v, lps, lpe, b_defs = stretch_def.values_at(:et, :v, :lps, :lpe, :b_defs)
+      et, emv, lps, lpe, section_defs = stretch_def.values_at(:et, :emv, :lps, :lpe, :section_defs)
 
       colors = [ Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA, Kuix::COLOR_YELLOW ]
 
-      b_defs.each do |b_def|
+      section_defs.each do |section_def|
 
-        if v.valid?
-          dv = Geom::Vector3d.new(v)
-          dv.length = dv.length * b_def[:index] / (b_defs.length - 1)
+        if emv.valid?
+          dv = Geom::Vector3d.new(emv)
+          dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
         end
 
-        if b_def[:pt_bbox].valid?
+        if section_def[:pt_bbox].valid?
           k_box = Kuix::BoxMotif.new
-          k_box.bounds.copy!(b_def[:pt_bbox])
-          k_box.bounds.translate!(*dv.to_a) if v.valid?
+          k_box.bounds.copy!(section_def[:pt_bbox])
+          k_box.bounds.translate!(*dv.to_a) if emv.valid?
           k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
           k_box.line_width = 2
-          k_box.color = colors[b_def[:index] % colors.length]
+          k_box.color = colors[section_def[:index] % colors.length]
           k_box.transformation = et
           @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
         end
 
-        unless b_def[:vertices].empty?
+        unless section_def[:vertex_defs].empty?
           k_points = _create_floating_points(
-            points: b_def[:vertices].map { |vertex| v.valid? ? vertex.position.offset(dv) : vertex.position },
+            points: section_def[:vertex_defs].map { |vertex_def| emv.valid? ? vertex_def[:position].offset(dv) : vertex_def[:position] },
             style: Kuix::POINT_STYLE_SQUARE,
-            stroke_color: colors[b_def[:index] % colors.length],
+            stroke_color: colors[section_def[:index] % colors.length],
             )
           k_points.transformation = et
           @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
@@ -1410,7 +1411,7 @@ module Ladb::OpenCutList
 
       # Preview line
 
-      color = _get_vector_color(v, Kuix::COLOR_DARK_GREY)
+      color = _get_vector_color(emv, Kuix::COLOR_DARK_GREY)
 
       k_edge = Kuix::EdgeMotif.new
       k_edge.start.copy!(lps)
@@ -1477,9 +1478,9 @@ module Ladb::OpenCutList
     def _stretch_entity
       return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
 
-      v, b_defs = stretch_def.values_at(:v, :b_defs)
+      emv, section_defs = stretch_def.values_at(:emv, :section_defs)
 
-      if v.valid?
+      if emv.valid?
 
         instance = _get_instance
         entities = instance.definition.entities
@@ -1489,15 +1490,19 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         model.start_operation('OCL Stretch Part', true, false, !active?)
 
-        b_defs.each do |b_def|
-          next if b_def[:vertices].empty?
+          section_defs.each do |section_def|
+            next if section_def[:vertex_defs].empty?
 
-          dv = Geom::Vector3d.new(v)
-          dv.length = dv.length * b_def[:index] / (b_defs.length - 1)
+            dv = Geom::Vector3d.new(emv)
+            dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
 
-          entities.transform_entities(Geom::Transformation.translation(dv), b_def[:vertices])
+            vertex_def0 = section_def[:vertex_defs].first
+            target = vertex_def0[:position].offset(dv)
+            target_dv = vertex_def0[:vertex].position.vector_to(target)
 
-        end
+            entities.transform_entities(Geom::Transformation.translation(target_dv), section_def[:vertex_defs].map { |vertex_def| vertex_def[:vertex] })
+
+          end
 
         model.commit_operation
 
@@ -1507,74 +1512,100 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_stretch_def(ps, pe)
+    def _get_split_def
+      return @split_def unless @split_def.nil?
+
       return nil if (drawing_def = _get_drawing_def).nil?
+      return nil if @picked_grip_index.nil?
 
       et = _get_edit_transformation
-      eti = et.inverse
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       b = Kuix::Bounds3d.new.copy!(eb)
-
-      v = ps.vector_to(pe).transform(eti)
 
       grip_index_0 = Kuix::Bounds3d.face_opposite(@picked_grip_index)
       grip_index_1 = @picked_grip_index
 
-      p0 = b.face_center(grip_index_0).to_p
-      p1 = b.face_center(grip_index_1).to_p
-      vmax = p0.vector_to(p1)
+      ep0 = b.face_center(grip_index_0).to_p
+      ep1 = b.face_center(grip_index_1).to_p
+      evp0p1 = ep0.vector_to(ep1)
 
       ref_quads = b.get_quad(grip_index_0).map { |point| point }
       quads = ref_quads.dup
 
-      b_defs = []
+      section_defs = []
 
       ratios = @sections[@snap_axis].sort
-      ratios.reverse!.map! { |ratio| 1 - ratio } unless vmax.samedirection?(@snap_axis)
+      ratios.uniq!
+      ratios.reverse!.map! { |ratio| 1 - ratio } unless evp0p1.samedirection?(@snap_axis)
       ratios << 1.0 unless ratios.last == 1.0
       ratios.each_with_index do |ratio, index|
 
         bbox = Geom::BoundingBox.new
         bbox.add(quads)
-        bbox.add(p0.offset(vmax, ratio * vmax.length))
+        bbox.add(ep0.offset(evp0p1, ratio * evp0p1.length))
 
-        quads = ref_quads.map { |point| point.offset(vmax, ratio * vmax.length) }
+        quads = ref_quads.map { |point| point.offset(evp0p1, ratio * evp0p1.length) }
 
-        b_defs << {
+        section_defs << {
           index: index,
           bbox: bbox,
           pt_bbox: Geom::BoundingBox.new,
-          vertices: []
+          vertex_defs: []
         }
 
       end
 
+      # Add vertices
       drawing_def.edge_manipulators.each do |em|
 
-        b_defs.each do |b|
+        section_defs.each do |s|
           em.edge.vertices.each do |vertex|
-            b[:vertices] << vertex if b[:bbox].contains?(vertex.position)
+            s[:vertex_defs] << {
+              position: vertex.position,
+              vertex: vertex,
+            } if s[:bbox].contains?(vertex.position)
           end
         end
 
       end
 
-      b_defs.each do |b|
-        b[:vertices].uniq!
-        b[:pt_bbox].add(b[:vertices].map { |vertex| vertex.position }) unless b[:vertices].empty?
+      # Compute real vertices bbox
+      section_defs.each do |s|
+        s[:vertex_defs].uniq! { |vertex_def| vertex_def[:vertex] }
+        s[:pt_bbox].add(s[:vertex_defs].map { |vertex_def| vertex_def[:position] }) unless s[:vertex_defs].empty?
       end
 
-      b_defs.reverse! if v.valid? && v.samedirection?(vmax)
-
-      {
+      @split_def = {
         drawing_def: drawing_def,
         et: et,
         eb: eb,   # Expressed in 'Edit' space
-        v: v,
-        vmax: vmax,
-        lps: _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE ? p0.transform(et) : ps,
+        ep0: ep0,
+        ep1: ep1,
+        evp0p1: evp0p1,
+        section_defs: section_defs,
+      }
+    end
+
+    def _get_stretch_def(ps, pe)
+      return nil if (split_def = _get_split_def).nil?
+
+      et, eb, ep0, evp0p1, section_defs = split_def.values_at(:et, :eb, :ep0, :evp0p1, :section_defs)
+      eti = et.inverse
+
+      mv = ps.vector_to(pe)
+      emv = mv.transform(eti)
+
+      section_defs = section_defs.dup
+      section_defs.reverse! if emv.valid? && emv.samedirection?(evp0p1)
+
+      {
+        split_def: split_def,
+        et: et,
+        eb: eb,   # Expressed in 'Edit' space
+        emv: emv,
+        lps: _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE ? ep0.transform(et) : ps,
         lpe: pe,
-        b_defs: b_defs
+        section_defs: section_defs
       }
     end
 
