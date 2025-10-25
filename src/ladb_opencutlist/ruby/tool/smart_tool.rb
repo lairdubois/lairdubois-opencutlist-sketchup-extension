@@ -2027,16 +2027,16 @@ module Ladb::OpenCutList
       super
     end
 
-    def _restart
-      @active_part_entity_path = nil
-      @active_part = nil
-      @active_part_sibling_entity_paths = nil
-      @active_part_siblings = nil
-      @global_context_transformation = nil
-      @global_instance_transformation = nil
-      @drawing_def = nil
-      super
-    end
+    # def _restart
+    #   @active_part_entity_path = nil
+    #   @active_part = nil
+    #   @active_part_sibling_entity_paths = nil
+    #   @active_part_siblings = nil
+    #   @global_context_transformation = nil
+    #   @global_instance_transformation = nil
+    #   @drawing_def = nil
+    #   super
+    # end
 
     # --
 

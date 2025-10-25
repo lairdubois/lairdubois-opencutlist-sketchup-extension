@@ -287,6 +287,7 @@ module Ladb::OpenCutList
 
       # Try to copy the previous action handler selection
       if @previous_action_handler &&
+         @previous_action_handler.class != self.class &&
          (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
          (part = @previous_action_handler.get_active_part)
 

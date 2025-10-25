@@ -192,6 +192,7 @@ module Ladb::OpenCutList
 
       @mouse_ip = SmartInputPoint.new(tool)
 
+      @mouse_down_point = nil
       @mouse_snap_point = nil
 
       @picked_reshape_start_point = nil
@@ -326,7 +327,12 @@ module Ladb::OpenCutList
 
         case @state
 
-        when STATE_RESHAPE_START, STATE_RESHAPE
+        when STATE_RESHAPE
+          set_state(STATE_RESHAPE_START)
+          _refresh
+          return true
+
+        when STATE_RESHAPE_START
           @picked_shape_start_point = nil
           _unhide_instance
           _unhide_sibling_instances
@@ -404,6 +410,8 @@ module Ladb::OpenCutList
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
+
+      @mouse_down_point = nil
 
       case @state
 
@@ -697,6 +705,10 @@ module Ladb::OpenCutList
 
     # -----
 
+    def start
+      super
+    end
+
     def stop
       _unhide_instance
       super
@@ -739,19 +751,17 @@ module Ladb::OpenCutList
           return true
         end
 
-        # if @picked_grip_index
-        #
-        #   drawing_def = _get_drawing_def
-        #   et = _get_edit_transformation
-        #   eb = _get_drawing_def_edit_bounds(drawing_def, et)
-        #   b = Kuix::Bounds3d.new.copy!(eb)
-        #
-        #   @picked_reshape_start_point = b.face_center(@picked_grip_index).to_p.transform(et)
-        #
-        #   set_state(STATE_RESHAPE)
-        #   _refresh
-        #   return true
-        # end
+        if @picked_grip_index
+
+          drawing_def = _get_drawing_def
+          et = _get_edit_transformation
+          eb = _get_drawing_def_edit_bounds(drawing_def, et)
+          b = Kuix::Bounds3d.new.copy!(eb)
+
+          @mouse_down_point = b.face_center(@picked_grip_index).to_p.transform(et)
+
+          return true
+        end
 
         return true
 
@@ -833,6 +843,13 @@ module Ladb::OpenCutList
       return true if super
 
       case @state
+
+      when STATE_RESHAPE_START
+        unless @mouse_down_point.nil? || @picked_grip_index.nil?
+          @picked_reshape_start_point = @mouse_down_point
+          @mouse_down_point = nil
+          set_state(STATE_RESHAPE)
+        end
 
       when STATE_RESHAPE_SECTION_MOVE
 
@@ -1047,6 +1064,7 @@ module Ladb::OpenCutList
 
       end
 
+      super
     end
 
     def _snap_handle_section_move(flags, x, y, view)

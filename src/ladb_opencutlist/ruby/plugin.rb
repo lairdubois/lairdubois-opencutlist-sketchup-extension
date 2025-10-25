@@ -99,8 +99,7 @@ module Ladb::OpenCutList
     DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev'
 
     TABS_STRIPPED_NAMES = %w[materials cutlist outliner importer]
-    # SMART_TOOLS_STRIPPED_NAMES = %w[draw handle reshape paint axes export]
-    SMART_TOOLS_STRIPPED_NAMES = %w[draw handle paint axes export]
+    SMART_TOOLS_STRIPPED_NAMES = IS_DEV && !IS_RBZ ? %w[draw handle reshape paint axes export] : %w[draw handle paint axes export]
 
     # -----
 

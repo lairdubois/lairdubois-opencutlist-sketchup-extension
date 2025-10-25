@@ -384,7 +384,7 @@ module Ladb::OpenCutList
       when STATE_SHAPE_START
         _snap_shape_start(flags, x, y, view)
         _preview_shape_start(view)
-        if !@mouse_down_point.nil? && @mouse_snap_point.distance(@mouse_down_point) > view.pixels_to_model(20, @mouse_snap_point)  # Drag handled only if distance is > 20px
+        if !@mouse_down_point.nil? && @mouse_snap_point.distance(@mouse_down_point) > view.pixels_to_model(20, @mouse_snap_point)  # Drag handled only if the distance is > 20px
           @picked_shape_start_point = @mouse_down_point
           @mouse_down_point = nil
           set_state(STATE_SHAPE)
