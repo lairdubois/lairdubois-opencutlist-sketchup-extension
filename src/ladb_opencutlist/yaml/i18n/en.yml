@@ -114,6 +114,7 @@ core:
       edit_part_instance_properties: Edit Instance Properties
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +126,7 @@ core:
       dialog: OpenCutList
       smart_draw: Draw Parts
       smart_handle: Handle Parts
+      smart_reshape: Redesigning Parts
       smart_paint: Paint Parts
       smart_axes: Orient Parts
       smart_export: Export Parts
@@ -2163,6 +2165,17 @@ tool:
       copies_disable_mirror: Multiple copies disable the '$t(tool.smart_handle.action_option_options_mirror_status)' option
     error:
       min_distance: "The distance {{ value1 }} is smaller than the minimal distance {{ value2 }}"
+  smart_reshape:
+    title: Remodeler
+    action_0: Stretch
+    action_0_status: Click on a part to select it
+    action_option_group_stretch_measure_type: Measure
+    action_option_group_axes: Axes
+    action_option_stretch_measure_type_outside_status: External measurement
+    action_option_stretch_measure_type_offset_status: Measure difference
+    action_option_axes_active_status: Manipulate along active axes
+    action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
+    action_option_axes_entity_status: Manipulate along part axes
   smart_paint:
     title: Paint
     default_material: Without material
