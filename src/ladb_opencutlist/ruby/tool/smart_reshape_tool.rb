@@ -753,12 +753,7 @@ module Ladb::OpenCutList
 
         if @picked_grip_index
 
-          drawing_def = _get_drawing_def
-          et = _get_edit_transformation
-          eb = _get_drawing_def_edit_bounds(drawing_def, et)
-          b = Kuix::Bounds3d.new.copy!(eb)
-
-          @mouse_down_point = b.face_center(@picked_grip_index).to_p.transform(et)
+          @mouse_down_point = Geom::Point3d.new(x, y,)
 
           return true
         end
@@ -783,9 +778,10 @@ module Ladb::OpenCutList
           drawing_def = _get_drawing_def
           et = _get_edit_transformation
           eb = _get_drawing_def_edit_bounds(drawing_def, et)
-          b = Kuix::Bounds3d.new.copy!(eb)
+          keb = Kuix::Bounds3d.new.copy!(eb)
 
-          @picked_reshape_start_point = b.face_center(@picked_grip_index).to_p.transform(et)
+          @picked_reshape_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
+          @mouse_down_point = nil
 
           set_state(STATE_RESHAPE)
           _refresh
@@ -818,37 +814,39 @@ module Ladb::OpenCutList
         end
         return true
 
-      # when STATE_RESHAPE
-      #   if @picked_grip_index
-      #     _reshape_entity
-      #     @drawing_def = nil
-      #     set_state(STATE_RESHAPE_START)
-      #     _refresh
-      #     return true
-      #   end
-
       end
 
       super
     end
 
     def onToolMouseMove(tool, flags, x, y, view)
+      check_super = true
       case @state
 
       when STATE_RESHAPE_START
-        @tool.remove_3d([ LAYER_3D_SECTIONS_PREVIEW, LAYER_3D_GRIPS_PREVIEW  ])
+        @tool.remove_3d([ LAYER_3D_SECTIONS_PREVIEW, LAYER_3D_GRIPS_PREVIEW ])
+        check_super = @mouse_down_point.nil?
 
       end
 
-      return true if super
+      return true if check_super && super
 
       case @state
 
       when STATE_RESHAPE_START
         unless @mouse_down_point.nil? || @picked_grip_index.nil?
-          @picked_reshape_start_point = @mouse_down_point
-          @mouse_down_point = nil
-          set_state(STATE_RESHAPE)
+          if Geom::Point3d.new(x, y).distance(@mouse_down_point) > 20  # Drag handled only if the distance is > 10px
+
+            drawing_def = _get_drawing_def
+            et = _get_edit_transformation
+            eb = _get_drawing_def_edit_bounds(drawing_def, et)
+            keb = Kuix::Bounds3d.new.copy!(eb)
+
+            @picked_reshape_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
+
+            @mouse_down_point = nil
+            set_state(STATE_RESHAPE)
+          end
         end
 
       when STATE_RESHAPE_SECTION_MOVE
@@ -894,15 +892,17 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_RESHAPE_START
-        if tool.is_key_ctrl_or_option?(key)
-          set_state(STATE_RESHAPE_SECTION_ADD)
-          _refresh
-          return true
-        end
-        if tool.is_key_alt_or_command?(key)
-          set_state(STATE_RESHAPE_SECTION_REMOVE)
-          _refresh
-          return true
+        unless @snap_axis.nil?
+          if tool.is_key_ctrl_or_option?(key)
+            set_state(STATE_RESHAPE_SECTION_ADD)
+            _refresh
+            return true
+          end
+          if tool.is_key_alt_or_command?(key)
+            set_state(STATE_RESHAPE_SECTION_REMOVE)
+            _refresh
+            return true
+          end
         end
 
       end
@@ -1010,11 +1010,11 @@ module Ladb::OpenCutList
       drawing_def = _get_drawing_def
       et = _get_edit_transformation
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
-      b = Kuix::Bounds3d.new.copy!(eb)
+      keb = Kuix::Bounds3d.new.copy!(eb)
 
       pk = view.pick_helper(x, y, 40)
       CENTER_INDICES.each do |i|
-        p = b.face_center(i).to_p.transform(et)
+        p = keb.face_center(i).to_p.transform(et)
         if pk.test_point(p)
           if i == Kuix::Bounds3d::TOP || i == Kuix::Bounds3d::BOTTOM
             @snap_axis = Z_AXIS
@@ -1024,6 +1024,7 @@ module Ladb::OpenCutList
             @snap_axis = Y_AXIS
           end
           @picked_grip_index = i
+          @split_def = nil
           @mouse_snap_point = p
           return true
         end
@@ -1046,7 +1047,7 @@ module Ladb::OpenCutList
           quad_index = Kuix::Bounds3d::BOTTOM
         end
 
-        quad_ref = b.inflate_all!(INFLATE_VALUE).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
+        quad_ref = keb.inflate_all!(INFLATE_VALUE).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
 
         p2d = Geom::Point3d.new(x, y)
         @sections[@snap_axis].each_with_index do |ratio, index|
@@ -1121,31 +1122,34 @@ module Ladb::OpenCutList
       @snap_ratio = nil
       @picked_section_index = nil
 
-      drawing_def = _get_drawing_def
-      et = _get_edit_transformation
-      eb = _get_drawing_def_edit_bounds(drawing_def, et)
-      direction = @snap_axis.transform(et)
+      unless @snap_axis.nil?
 
-      picked_point, _ = Geom::closest_points([ eb.min, direction ], view.pickray(x, y))
-      @mouse_snap_point = picked_point
-      @mouse_ip.clear
+        drawing_def = _get_drawing_def
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(drawing_def, et)
+        direction = @snap_axis.transform(et)
 
-      min = eb.min.transform(et)
-      max = eb.max.transform(et)
+        picked_point, _ = Geom::closest_points([ eb.min, direction ], view.pickray(x, y))
+        @mouse_snap_point = picked_point
 
-      min_plane = [ min, direction ]
-      max_plane = [ max, direction ]
+        min = eb.min.transform(et)
+        max = eb.max.transform(et)
 
-      pmin = @mouse_snap_point.project_to_plane(min_plane)
-      pmax = @mouse_snap_point.project_to_plane(max_plane)
+        min_plane = [ min, direction ]
+        max_plane = [ max, direction ]
 
-      v = pmin.vector_to(@mouse_snap_point)
-      vmax = pmin.vector_to(pmax)
+        pmin = @mouse_snap_point.project_to_plane(min_plane)
+        pmax = @mouse_snap_point.project_to_plane(max_plane)
 
-      if v.valid? && vmax.valid?
-        ratio = v.length / vmax.length
-        ratio *= -1 unless v.samedirection?(vmax)
-        @snap_ratio = [ [ 0, ratio ].max, 1 ].min
+        v = pmin.vector_to(@mouse_snap_point)
+        vmax = pmin.vector_to(pmax)
+
+        if v.valid? && vmax.valid?
+          ratio = v.length / vmax.length
+          ratio *= -1 unless v.samedirection?(vmax)
+          @snap_ratio = [ [ 0, ratio ].max, 1 ].min
+        end
+
       end
 
     end
@@ -1156,13 +1160,13 @@ module Ladb::OpenCutList
 
       @picked_section_index = nil
 
-      drawing_def = _get_drawing_def
-      et = _get_edit_transformation
-      eb = _get_drawing_def_edit_bounds(drawing_def, et)
-      b = Kuix::Bounds3d.new.copy!(eb)
-      direction = @snap_axis.transform(et)
-
       unless @sections.nil? || @snap_axis.nil?
+
+        drawing_def = _get_drawing_def
+        et = _get_edit_transformation
+        eb = _get_drawing_def_edit_bounds(drawing_def, et)
+        keb = Kuix::Bounds3d.new.copy!(eb)
+        direction = @snap_axis.transform(et)
 
         min = eb.min.transform(et)
         max = eb.max.transform(et)
@@ -1178,7 +1182,7 @@ module Ladb::OpenCutList
           quad_index = Kuix::Bounds3d::BOTTOM
         end
 
-        quad_ref = b.inflate_all!(INFLATE_VALUE).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
+        quad_ref = keb.inflate_all!(INFLATE_VALUE).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
 
         p2d = Geom::Point3d.new(x, y)
         @sections[@snap_axis].each_with_index do |ratio, index|
@@ -1225,7 +1229,7 @@ module Ladb::OpenCutList
 
       et = _get_edit_transformation
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
-      b = Kuix::Bounds3d.new.copy!(eb)
+      keb = Kuix::Bounds3d.new.copy!(eb)
 
       if @snap_axis
 
@@ -1233,11 +1237,11 @@ module Ladb::OpenCutList
 
         case @snap_axis
         when X_AXIS
-          section_ref = b.x_section_min.inflate!(0, INFLATE_VALUE, INFLATE_VALUE)
+          section_ref = keb.x_section_min.inflate!(0, INFLATE_VALUE, INFLATE_VALUE)
         when Y_AXIS
-          section_ref = b.y_section_min.inflate!(INFLATE_VALUE, 0, INFLATE_VALUE)
+          section_ref = keb.y_section_min.inflate!(INFLATE_VALUE, 0, INFLATE_VALUE)
         when Z_AXIS
-          section_ref = b.z_section_min.inflate!(INFLATE_VALUE, INFLATE_VALUE, 0)
+          section_ref = keb.z_section_min.inflate!(INFLATE_VALUE, INFLATE_VALUE, 0)
         end
 
         ratios = @sections[@snap_axis]
@@ -1245,9 +1249,9 @@ module Ladb::OpenCutList
         ratios.each_with_index do |ratio, index|
 
           section = Kuix::Bounds3d.new.copy!(section_ref)
-          section.origin.x += ratio * b.width if @snap_axis == X_AXIS
-          section.origin.y += ratio * b.height if @snap_axis == Y_AXIS
-          section.origin.z += ratio * b.depth if @snap_axis == Z_AXIS
+          section.origin.x += ratio * keb.width if @snap_axis == X_AXIS
+          section.origin.y += ratio * keb.height if @snap_axis == Y_AXIS
+          section.origin.z += ratio * keb.depth if @snap_axis == Z_AXIS
 
           is_picked_section = @picked_section_index == index
           is_remove = @state == STATE_RESHAPE_SECTION_REMOVE && is_picked_section
@@ -1281,7 +1285,7 @@ module Ladb::OpenCutList
 
       et = _get_edit_transformation
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
-      b = Kuix::Bounds3d.new.copy!(eb)
+      keb = Kuix::Bounds3d.new.copy!(eb)
 
       if @snap_axis
 
@@ -1289,14 +1293,14 @@ module Ladb::OpenCutList
 
         case @snap_axis
         when X_AXIS
-          p1 = b.face_center(Kuix::Bounds3d::LEFT).to_p
-          p2 = b.face_center(Kuix::Bounds3d::RIGHT).to_p
+          p1 = keb.face_center(Kuix::Bounds3d::LEFT).to_p
+          p2 = keb.face_center(Kuix::Bounds3d::RIGHT).to_p
         when Y_AXIS
-          p1 = b.face_center(Kuix::Bounds3d::FRONT).to_p
-          p2 = b.face_center(Kuix::Bounds3d::BACK).to_p
+          p1 = keb.face_center(Kuix::Bounds3d::FRONT).to_p
+          p2 = keb.face_center(Kuix::Bounds3d::BACK).to_p
         when Z_AXIS
-          p1 = b.face_center(Kuix::Bounds3d::BOTTOM).to_p
-          p2 = b.face_center(Kuix::Bounds3d::TOP).to_p
+          p1 = keb.face_center(Kuix::Bounds3d::BOTTOM).to_p
+          p2 = keb.face_center(Kuix::Bounds3d::TOP).to_p
         end
 
         k_edge = Kuix::EdgeMotif.new
@@ -1321,7 +1325,7 @@ module Ladb::OpenCutList
         if @picked_grip_index
 
           k_points = _create_floating_points(
-            points: b.face_center(@picked_grip_index).to_p,
+            points: keb.face_center(@picked_grip_index).to_p,
             style: Kuix::POINT_STYLE_CIRCLE,
             stroke_color: nil,
             fill_color: color
@@ -1338,16 +1342,15 @@ module Ladb::OpenCutList
       super
 
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
-      # return unless (drawing_def_segments = _get_drawing_def_segments(drawing_def)).is_a?(Array)
 
       et = _get_edit_transformation
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
+      keb = Kuix::Bounds3d.new.copy!(eb)
 
       # Grips
 
-      b = Kuix::Bounds3d.new.copy!(eb)
       k_points = _create_floating_points(
-        points: CENTER_INDICES.map { |center| b.face_center(center).to_p },
+        points: CENTER_INDICES.map { |center| keb.face_center(center).to_p },
         style: Kuix::POINT_STYLE_CIRCLE,
         stroke_color: Kuix::COLOR_DARK_GREY,
         fill_color: Kuix::COLOR_WHITE
@@ -1417,7 +1420,6 @@ module Ladb::OpenCutList
       k_edge.start.copy!(lps)
       k_edge.end.copy!(lpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_edge.line_width = 1.5 unless @locked_axis.nil?
       k_edge.color = ColorUtils.color_translucent(color, 60)
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
@@ -1426,7 +1428,6 @@ module Ladb::OpenCutList
       k_edge.start.copy!(lps)
       k_edge.end.copy!(lpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
-      k_edge.line_width = 1.5 unless @locked_axis.nil?
       k_edge.color = color
       @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
 
@@ -1520,16 +1521,16 @@ module Ladb::OpenCutList
 
       et = _get_edit_transformation
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
-      b = Kuix::Bounds3d.new.copy!(eb)
+      keb = Kuix::Bounds3d.new.copy!(eb)
 
       grip_index_0 = Kuix::Bounds3d.face_opposite(@picked_grip_index)
       grip_index_1 = @picked_grip_index
 
-      ep0 = b.face_center(grip_index_0).to_p
-      ep1 = b.face_center(grip_index_1).to_p
+      ep0 = keb.face_center(grip_index_0).to_p
+      ep1 = keb.face_center(grip_index_1).to_p
       evp0p1 = ep0.vector_to(ep1)
 
-      ref_quads = b.get_quad(grip_index_0).map { |point| point }
+      ref_quads = keb.get_quad(grip_index_0).map { |point| point }
       quads = ref_quads.dup
 
       section_defs = []
