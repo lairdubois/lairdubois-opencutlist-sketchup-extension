@@ -1378,37 +1378,47 @@ module Ladb::OpenCutList
     def _preview_reshape(view)
       return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
 
-      et, emv, lps, lpe, section_defs = stretch_def.values_at(:et, :emv, :lps, :lpe, :section_defs)
+      et, emv, lps, lpe, section_defs, edge_defs = stretch_def.values_at(:et, :emv, :lps, :lpe, :section_defs, :edge_defs)
 
       colors = [ Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA, Kuix::COLOR_YELLOW ]
 
-      section_defs.each do |section_def|
+      if emv.valid?
+        dvs = section_defs.map { |section_def| dv = Geom::Vector3d.new(emv); dv.length = dv.length * section_def[:index] / (section_defs.length - 1); [ section_def, dv ] }.to_h
+      end
 
-        if emv.valid?
-          dv = Geom::Vector3d.new(emv)
-          dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
-        end
+      unless edge_defs.empty?
 
-        # if section_def[:pt_bbox].valid?
-        #   k_box = Kuix::BoxMotif.new
-        #   k_box.bounds.copy!(section_def[:pt_bbox])
-        #   k_box.bounds.translate!(*dv.to_a) if emv.valid?
-        #   k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        #   k_box.line_width = 2
-        #   k_box.color = colors[section_def[:index] % colors.length]
-        #   k_box.transformation = et
-        #   @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
-        # end
-
-        unless section_def[:edge_defs].empty?
-          k_segments = Kuix::Segments.new
-          k_segments.add_segments(section_def[:edge_defs].flat_map { |edge_def| edge_def[:positions].map { |p| emv.valid? ? p.offset(dv) : p } })
-          k_segments.color = colors[section_def[:index] % colors.length]
-          k_segments.transformation = et
-          @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
-        end
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(edge_defs.flat_map { |edge_def| [
+          edge_def[:edge].start.position.offset(dvs[edge_def[:start_section_def]]),
+          edge_def[:edge].end.position.offset(dvs[edge_def[:end_section_def]])
+        ] })
+        k_segments.color = Kuix::COLOR_BLACK
+        k_segments.line_width = 1.5
+        k_segments.transformation = et
+        @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
 
       end
+
+      # section_defs.each do |section_def|
+      #
+      #   if emv.valid?
+      #     dv = Geom::Vector3d.new(emv)
+      #     dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
+      #   end
+      #
+      #   if section_def[:pt_bbox].valid?
+      #     k_box = Kuix::BoxMotif.new
+      #     k_box.bounds.copy!(section_def[:pt_bbox])
+      #     k_box.bounds.translate!(*dv.to_a) if emv.valid?
+      #     k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+      #     k_box.line_width = 2
+      #     k_box.color = colors[section_def[:index] % colors.length]
+      #     k_box.transformation = et
+      #     @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
+      #   end
+      #
+      # end
 
       # Preview line
 
@@ -1532,6 +1542,9 @@ module Ladb::OpenCutList
       quads = ref_quads.dup
 
       section_defs = []
+      edge_defs = []
+
+      v_s = {}  # Vertex => SectionDef
 
       ratios = @sections[@snap_axis].sort
       ratios.uniq!
@@ -1550,46 +1563,62 @@ module Ladb::OpenCutList
           bbox: bbox,
           pt_bbox: Geom::BoundingBox.new,
           edge_defs: [],
-          curve_defs: [],
-          vertex_defs: []
         }
 
       end
 
-      # Add vertices
+      # Add edges
 
       drawing_def.curve_manipulators.each do |cm|
 
-        section_defs.each do |s|
-          cbbox = Geom::BoundingBox.new.add(cm.curve.vertices.map { |vertex| vertex.position })
-          if cbbox.intersect(s[:bbox]).valid?
-            cm.curve.edges.each do |edge|
-              s[:edge_defs] << {
-                positions: edge.vertices.map { |vertex| vertex.position },
-                edge: edge
-              }
-            end
-            break
+        section = section_defs.find { |section_def| section_def[:bbox].intersect(Geom::BoundingBox.new.add(cm.curve.vertices.map { |vertex| vertex.position })).valid? }
+        unless section.nil?
+          cm.curve.edges.each do |edge|
+            section[:edge_defs] << {
+              positions: edge.vertices.map { |vertex| vertex.position },
+              edge: edge
+            }
+            edge_defs << {
+              edge: edge,
+              start_section_def: section,
+              end_section_def: section,
+            }
+            v_s[edge.start] = section
+            v_s[edge.end] = section
           end
         end
 
       end
       drawing_def.edge_manipulators.each do |em|
 
-        section_defs.each do |s|
-          if s[:bbox].contains?(em.edge.start.position) && s[:bbox].contains?(em.edge.end.position) &&
-             em.edge.start.edges.all? { |edge| edge.curve.nil? } && em.edge.end.edges.all? { |edge| edge.curve.nil? }
-            s[:edge_defs] << {
-              positions: em.edge.vertices.map { |vertex| vertex.position },
-              edge: em.edge,
-            }
-            break
-          end
+        start_section_def = v_s[em.edge.start]
+        if start_section_def.nil?
+          start_section_def = section_defs.find { |s| s[:bbox].contains?(em.edge.start.position) }
+          v_s[em.edge.start] = start_section_def
+        end
+        end_section_def = v_s[em.edge.end]
+        if end_section_def.nil?
+          end_section_def = section_defs.find { |s| s[:bbox].contains?(em.edge.end.position) }
+          v_s[em.edge.end] = end_section_def
+        end
+
+        edge_defs << {
+          edge: em.edge,
+          start_section_def: start_section_def,
+          end_section_def: end_section_def,
+        }
+
+        if start_section_def == end_section_def &&
+           em.edge.start.edges.all? { |edge| edge.curve.nil? } && em.edge.end.edges.all? { |edge| edge.curve.nil? }
+          start_section_def[:edge_defs] << {
+            positions: em.edge.vertices.map { |vertex| vertex.position },
+            edge: em.edge,
+          }
         end
 
       end
 
-      # Compute real vertices bbox
+      # Compute content bbox
       section_defs.each do |s|
         s[:pt_bbox].add(s[:edge_defs].flat_map { |edge_def| edge_def[:positions] }) unless s[:edge_defs].empty?
       end
@@ -1602,13 +1631,14 @@ module Ladb::OpenCutList
         ep1: ep1,
         evp0p1: evp0p1,
         section_defs: section_defs,
+        edge_defs: edge_defs,
       }
     end
 
     def _get_stretch_def(ps, pe)
       return nil if (split_def = _get_split_def).nil?
 
-      et, eb, ep0, evp0p1, section_defs = split_def.values_at(:et, :eb, :ep0, :evp0p1, :section_defs)
+      et, eb, ep0, evp0p1, section_defs, edge_defs = split_def.values_at(:et, :eb, :ep0, :evp0p1, :section_defs, :edge_defs)
       eti = et.inverse
 
       mv = ps.vector_to(pe)
@@ -1624,7 +1654,8 @@ module Ladb::OpenCutList
         emv: emv,
         lps: _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE ? ep0.transform(et) : ps,
         lpe: pe,
-        section_defs: section_defs
+        section_defs: section_defs,
+        edge_defs: edge_defs
       }
     end
 
