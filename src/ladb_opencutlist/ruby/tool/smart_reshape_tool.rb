@@ -1389,25 +1389,23 @@ module Ladb::OpenCutList
           dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
         end
 
-        if section_def[:pt_bbox].valid?
-          k_box = Kuix::BoxMotif.new
-          k_box.bounds.copy!(section_def[:pt_bbox])
-          k_box.bounds.translate!(*dv.to_a) if emv.valid?
-          k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          k_box.line_width = 2
-          k_box.color = colors[section_def[:index] % colors.length]
-          k_box.transformation = et
-          @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
-        end
+        # if section_def[:pt_bbox].valid?
+        #   k_box = Kuix::BoxMotif.new
+        #   k_box.bounds.copy!(section_def[:pt_bbox])
+        #   k_box.bounds.translate!(*dv.to_a) if emv.valid?
+        #   k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        #   k_box.line_width = 2
+        #   k_box.color = colors[section_def[:index] % colors.length]
+        #   k_box.transformation = et
+        #   @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
+        # end
 
-        unless section_def[:vertex_defs].empty?
-          k_points = _create_floating_points(
-            points: section_def[:vertex_defs].map { |vertex_def| emv.valid? ? vertex_def[:position].offset(dv) : vertex_def[:position] },
-            style: Kuix::POINT_STYLE_SQUARE,
-            stroke_color: colors[section_def[:index] % colors.length],
-            )
-          k_points.transformation = et
-          @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+        unless section_def[:edge_defs].empty?
+          k_segments = Kuix::Segments.new
+          k_segments.add_segments(section_def[:edge_defs].flat_map { |edge_def| edge_def[:positions].map { |p| emv.valid? ? p.offset(dv) : p } })
+          k_segments.color = colors[section_def[:index] % colors.length]
+          k_segments.transformation = et
+          @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
         end
 
       end
@@ -1492,16 +1490,16 @@ module Ladb::OpenCutList
         model.start_operation('OCL Stretch Part', true, false, !active?)
 
           section_defs.each do |section_def|
-            next if section_def[:vertex_defs].empty?
+            next if section_def[:edge_defs].empty?
 
             dv = Geom::Vector3d.new(emv)
             dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
 
-            vertex_def0 = section_def[:vertex_defs].first
-            target = vertex_def0[:position].offset(dv)
-            target_dv = vertex_def0[:vertex].position.vector_to(target)
+            edge_def0 = section_def[:edge_defs].first
+            target = edge_def0[:positions][0].offset(dv)
+            target_dv = edge_def0[:edge].start.position.vector_to(target)
 
-            entities.transform_entities(Geom::Transformation.translation(target_dv), section_def[:vertex_defs].map { |vertex_def| vertex_def[:vertex] })
+            entities.transform_entities(Geom::Transformation.translation(target_dv), section_def[:edge_defs].map { |curve_def| curve_def[:edge] })
 
           end
 
@@ -1551,20 +1549,41 @@ module Ladb::OpenCutList
           index: index,
           bbox: bbox,
           pt_bbox: Geom::BoundingBox.new,
+          edge_defs: [],
+          curve_defs: [],
           vertex_defs: []
         }
 
       end
 
       # Add vertices
+
+      drawing_def.curve_manipulators.each do |cm|
+
+        section_defs.each do |s|
+          cbbox = Geom::BoundingBox.new.add(cm.curve.vertices.map { |vertex| vertex.position })
+          if cbbox.intersect(s[:bbox]).valid?
+            cm.curve.edges.each do |edge|
+              s[:edge_defs] << {
+                positions: edge.vertices.map { |vertex| vertex.position },
+                edge: edge
+              }
+            end
+            break
+          end
+        end
+
+      end
       drawing_def.edge_manipulators.each do |em|
 
         section_defs.each do |s|
-          em.edge.vertices.each do |vertex|
-            s[:vertex_defs] << {
-              position: vertex.position,
-              vertex: vertex,
-            } if s[:bbox].contains?(vertex.position)
+          if s[:bbox].contains?(em.edge.start.position) && s[:bbox].contains?(em.edge.end.position) &&
+             em.edge.start.edges.all? { |edge| edge.curve.nil? } && em.edge.end.edges.all? { |edge| edge.curve.nil? }
+            s[:edge_defs] << {
+              positions: em.edge.vertices.map { |vertex| vertex.position },
+              edge: em.edge,
+            }
+            break
           end
         end
 
@@ -1572,8 +1591,7 @@ module Ladb::OpenCutList
 
       # Compute real vertices bbox
       section_defs.each do |s|
-        s[:vertex_defs].uniq! { |vertex_def| vertex_def[:vertex] }
-        s[:pt_bbox].add(s[:vertex_defs].map { |vertex_def| vertex_def[:position] }) unless s[:vertex_defs].empty?
+        s[:pt_bbox].add(s[:edge_defs].flat_map { |edge_def| edge_def[:positions] }) unless s[:edge_defs].empty?
       end
 
       @split_def = {
