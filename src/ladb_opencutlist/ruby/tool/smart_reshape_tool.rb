@@ -717,12 +717,12 @@ module Ladb::OpenCutList
     # -----
 
     def onToolSuspend(tool, view)
-      _unhide_instance if @state != STATE_SELECT
+      _unhide_instance if @state == STATE_RESHAPE
     end
 
     def onToolResume(tool, view)
       super
-      # _hide_instance if @state != STATE_SELECT
+      _hide_instance if @state == STATE_RESHAPE
     end
 
     def onToolLButtonDown(tool, flags, x, y, view)
@@ -1238,10 +1238,13 @@ module Ladb::OpenCutList
         case @snap_axis
         when X_AXIS
           section_ref = keb.x_section_min.inflate!(0, INFLATE_VALUE, INFLATE_VALUE)
+          patterns_transformation = Geom::Transformation.axes(ORIGIN, Z_AXIS, Y_AXIS, X_AXIS)
         when Y_AXIS
           section_ref = keb.y_section_min.inflate!(INFLATE_VALUE, 0, INFLATE_VALUE)
+          patterns_transformation = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS)
         when Z_AXIS
           section_ref = keb.z_section_min.inflate!(INFLATE_VALUE, INFLATE_VALUE, 0)
+          patterns_transformation = IDENTITY
         end
 
         ratios = @sections[@snap_axis]
@@ -1254,20 +1257,25 @@ module Ladb::OpenCutList
           section.origin.z += ratio * keb.depth if @snap_axis == Z_AXIS
 
           is_picked_section = @picked_section_index == index
-          is_remove = @state == STATE_RESHAPE_SECTION_REMOVE && is_picked_section
           is_add = @state == STATE_RESHAPE_SECTION_ADD && @snap_ratio && index == ratios.length - 1
+          is_remove = @state == STATE_RESHAPE_SECTION_REMOVE && is_picked_section
           is_highligted = is_picked_section && !is_remove
 
           section_color = color
           section_color = Kuix::COLOR_DARK_GREY if is_remove
 
-          k_box = Kuix::BoxMotif.new
-          k_box.bounds.copy!(section)
-          k_box.line_width = is_highligted ? 3 : (is_remove || is_add ? 2 : 1)
-          k_box.line_stipple = is_remove || is_add ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
-          k_box.color = section_color
-          k_box.transformation = et
-          @tool.append_3d(k_box, LAYER_3D_SECTIONS_PREVIEW)
+          k_rectangle = Kuix::RectangleMotif.new
+          k_rectangle.bounds.copy!(section)
+          k_rectangle.line_width = if is_highligted
+                               3
+                             else
+                               is_remove || is_add ? 2 : 1
+                             end
+          k_rectangle.line_stipple = is_remove || is_add ? Kuix::LINE_STIPPLE_SHORT_DASHES : Kuix::LINE_STIPPLE_SOLID
+          k_rectangle.color = section_color
+          k_rectangle.transformation = et
+          k_rectangle.patterns_transformation = patterns_transformation
+          @tool.append_3d(k_rectangle, LAYER_3D_SECTIONS_PREVIEW)
 
           k_mesh = Kuix::Mesh.new
           k_mesh.add_quads(section.get_quads)
@@ -1380,11 +1388,15 @@ module Ladb::OpenCutList
 
       et, emv, lps, lpe, section_defs, edge_defs = stretch_def.values_at(:et, :emv, :lps, :lpe, :section_defs, :edge_defs)
 
-      colors = [ Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA, Kuix::COLOR_YELLOW ]
-
-      if emv.valid?
-        dvs = section_defs.map { |section_def| dv = Geom::Vector3d.new(emv); dv.length = dv.length * section_def[:index] / (section_defs.length - 1); [ section_def, dv ] }.to_h
-      end
+      dvs = section_defs.map { |section_def|
+        if emv.valid?
+          dv = Geom::Vector3d.new(emv)
+          dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
+        else
+          dv = Geom::Vector3d.new
+        end
+        [ section_def, dv ]
+      }.to_h
 
       unless edge_defs.empty?
 
@@ -1400,6 +1412,8 @@ module Ladb::OpenCutList
 
       end
 
+      # colors = [ Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA, Kuix::COLOR_YELLOW ]
+      #
       # section_defs.each do |section_def|
       #
       #   if emv.valid?
