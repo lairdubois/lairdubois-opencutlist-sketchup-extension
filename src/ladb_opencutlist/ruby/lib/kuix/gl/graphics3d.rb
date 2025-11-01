@@ -71,31 +71,6 @@ module Ladb::OpenCutList::Kuix
 
         end
 
-      elsif style == POINT_STYLE_CUBE
-
-        half_size = size / 2.0
-
-        points = [ points ] if points.is_a?(Geom::Point3d)
-        points.each do |point|
-
-          bounds = Bounds3d.new
-          bounds.origin.copy!(point).translate!(-half_size, -half_size, -half_size)
-          bounds.size.set_all!(size)
-          quads = bounds.get_quads
-
-          unless fill_color.nil?
-            set_drawing_color(fill_color)
-            @view.draw(GL_QUADS, quads)
-          end
-          unless stroke_color.nil?
-            set_line_stipple(LINE_STIPPLE_SOLID)
-            set_line_width(stroke_width)
-            set_drawing_color(stroke_color)
-            @view.draw(GL_LINES, quads)
-          end
-
-        end
-
       else
 
         case style
