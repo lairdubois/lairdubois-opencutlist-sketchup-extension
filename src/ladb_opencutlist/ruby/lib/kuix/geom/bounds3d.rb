@@ -2,8 +2,8 @@ module Ladb::OpenCutList::Kuix
 
   class Bounds3d
 
-    TOP     = 0
-    BOTTOM  = 1
+    BOTTOM  = 0
+    TOP     = 1
     LEFT    = 2
     RIGHT   = 3
     FRONT   = 4
@@ -160,14 +160,34 @@ module Ladb::OpenCutList::Kuix
 
     def self.face_opposite(index)
       case index
-      when TOP then BOTTOM
       when BOTTOM then TOP
+      when TOP then BOTTOM
       when LEFT then RIGHT
       when RIGHT then LEFT
       when FRONT then BACK
       when BACK then FRONT
       else
-        throw "Invalid face_center index (index=#{index})"
+        throw "Invalid face_opposite index (index=#{index})"
+      end
+    end
+
+    def self.faces_by_axis(axis)
+      case axis
+      when X_AXIS then [ LEFT, RIGHT ]
+      when Y_AXIS then [ FRONT, BACK ]
+      when Z_AXIS then [ BOTTOM, TOP ]
+      else
+        throw "Invalid faces_by_axis axis (axis=#{axis})"
+      end
+    end
+
+    def self.axis_by_face(face)
+      case face
+      when LEFT, RIGHT then X_AXIS
+      when FRONT, BACK then Y_AXIS
+      when BOTTOM, TOP then Z_AXIS
+      else
+        throw "Invalid axis_by_face face (face=#{face})"
       end
     end
 
@@ -349,16 +369,16 @@ module Ladb::OpenCutList::Kuix
       when FRONT
         [
           Geom::Point3d.new(x_min , y_min  , z_min),
-          Geom::Point3d.new(x_max , y_min  , z_min),
+          Geom::Point3d.new(x_min , y_min  , z_max),
           Geom::Point3d.new(x_max , y_min  , z_max),
-          Geom::Point3d.new(x_min , y_min  , z_max)
+          Geom::Point3d.new(x_max , y_min  , z_min)
         ]
       when BACK
         [
           Geom::Point3d.new(x_min , y_max  , z_min),
-          Geom::Point3d.new(x_max , y_max  , z_min),
+          Geom::Point3d.new(x_min , y_max  , z_max),
           Geom::Point3d.new(x_max , y_max  , z_max),
-          Geom::Point3d.new(x_min , y_max  , z_max)
+          Geom::Point3d.new(x_max , y_max  , z_min)
         ]
       else
         throw "Invalid size index (index=#{index})"

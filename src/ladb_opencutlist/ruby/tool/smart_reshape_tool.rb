@@ -679,16 +679,7 @@ module Ladb::OpenCutList
     LAYER_3D_GRIPS_PREVIEW = 100
     LAYER_3D_SECTIONS_PREVIEW = 200
 
-    INFLATE_VALUE = 10
-
-    CENTER_INDICES = [
-      Kuix::Bounds3d::TOP,
-      Kuix::Bounds3d::BOTTOM,
-      Kuix::Bounds3d::LEFT,
-      Kuix::Bounds3d::RIGHT,
-      Kuix::Bounds3d::FRONT,
-      Kuix::Bounds3d::BACK,
-    ]
+    PX_INFLATE_VALUE = 50
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartReshapeTool::ACTION_STRETCH, tool, previous_action_handler)
@@ -788,6 +779,8 @@ module Ladb::OpenCutList
           return true
         end
         unless @picked_section_index
+          _reset
+          _refresh
           return true
         end
 
@@ -1013,20 +1006,17 @@ module Ladb::OpenCutList
       keb = Kuix::Bounds3d.new.copy!(eb)
 
       pk = view.pick_helper(x, y, 40)
-      CENTER_INDICES.each do |i|
-        p = keb.face_center(i).to_p.transform(et)
-        if pk.test_point(p)
-          if i == Kuix::Bounds3d::TOP || i == Kuix::Bounds3d::BOTTOM
-            @snap_axis = Z_AXIS
-          elsif i == Kuix::Bounds3d::LEFT || i == Kuix::Bounds3d::RIGHT
-            @snap_axis = X_AXIS
-          else
-            @snap_axis = Y_AXIS
+      [ X_AXIS, Y_AXIS, Z_AXIS].each do |axis|
+        grip_indices = Kuix::Bounds3d.faces_by_axis(axis)
+        grip_indices.each do |grip_index|
+          p = keb.face_center(grip_index).to_p.transform(et)
+          if pk.test_point(p)
+            @snap_axis = axis
+            @picked_grip_index = grip_index
+            @split_def = nil
+            @mouse_snap_point = p
+            return true
           end
-          @picked_grip_index = i
-          @split_def = nil
-          @mouse_snap_point = p
-          return true
         end
       end
 
@@ -1039,15 +1029,10 @@ module Ladb::OpenCutList
         max_plane = [ max, direction ]
         vmax = min.vector_to(min.project_to_plane(max_plane))
 
-        if @snap_axis == X_AXIS
-          quad_index = Kuix::Bounds3d::LEFT
-        elsif @snap_axis == Y_AXIS
-          quad_index = Kuix::Bounds3d::FRONT
-        elsif @snap_axis == Z_AXIS
-          quad_index = Kuix::Bounds3d::BOTTOM
-        end
+        inch_inflate_value = view.pixels_to_model(PX_INFLATE_VALUE, eb.center.transform(et))
 
-        quad_ref = keb.inflate_all!(INFLATE_VALUE).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
+        quad_index, _ = Kuix::Bounds3d.faces_by_axis(@snap_axis)
+        quad_ref = keb.inflate_all!(inch_inflate_value).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
 
         p2d = Geom::Point3d.new(x, y)
         @sections[@snap_axis].each_with_index do |ratio, index|
@@ -1127,22 +1112,16 @@ module Ladb::OpenCutList
         drawing_def = _get_drawing_def
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
+        ked = Kuix::Bounds3d.new.copy!(eb)
         direction = @snap_axis.transform(et)
 
-        picked_point, _ = Geom::closest_points([ eb.min, direction ], view.pickray(x, y))
+        min, max = Kuix::Bounds3d.faces_by_axis(@snap_axis).map { |index| ked.face_center(index).to_p.transform(et) }
+
+        picked_point, _ = Geom::closest_points([ min, direction ], view.pickray(x, y))
         @mouse_snap_point = picked_point
 
-        min = eb.min.transform(et)
-        max = eb.max.transform(et)
-
-        min_plane = [ min, direction ]
-        max_plane = [ max, direction ]
-
-        pmin = @mouse_snap_point.project_to_plane(min_plane)
-        pmax = @mouse_snap_point.project_to_plane(max_plane)
-
-        v = pmin.vector_to(@mouse_snap_point)
-        vmax = pmin.vector_to(pmax)
+        v = min.vector_to(@mouse_snap_point)
+        vmax = min.vector_to(max)
 
         if v.valid? && vmax.valid?
           ratio = v.length / vmax.length
@@ -1182,7 +1161,9 @@ module Ladb::OpenCutList
           quad_index = Kuix::Bounds3d::BOTTOM
         end
 
-        quad_ref = keb.inflate_all!(INFLATE_VALUE).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
+        inch_inflate_value = view.pixels_to_model(PX_INFLATE_VALUE, eb.center.transform(et))
+
+        quad_ref = keb.inflate_all!(inch_inflate_value).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
 
         p2d = Geom::Point3d.new(x, y)
         @sections[@snap_axis].each_with_index do |ratio, index|
@@ -1224,12 +1205,13 @@ module Ladb::OpenCutList
 
     end
 
-    def _preview_active_sections
+    def _preview_active_sections(view)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       et = _get_edit_transformation
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       keb = Kuix::Bounds3d.new.copy!(eb)
+      inch_inflate_value = view.pixels_to_model(PX_INFLATE_VALUE, eb.center.transform(et))
 
       if @snap_axis
 
@@ -1237,13 +1219,13 @@ module Ladb::OpenCutList
 
         case @snap_axis
         when X_AXIS
-          section_ref = keb.x_section_min.inflate!(0, INFLATE_VALUE, INFLATE_VALUE)
+          section_ref = keb.x_section_min.inflate!(0, inch_inflate_value, inch_inflate_value)
           patterns_transformation = Geom::Transformation.axes(ORIGIN, Z_AXIS, Y_AXIS, X_AXIS)
         when Y_AXIS
-          section_ref = keb.y_section_min.inflate!(INFLATE_VALUE, 0, INFLATE_VALUE)
+          section_ref = keb.y_section_min.inflate!(inch_inflate_value, 0, inch_inflate_value)
           patterns_transformation = Geom::Transformation.axes(ORIGIN, X_AXIS, Z_AXIS, Y_AXIS)
         when Z_AXIS
-          section_ref = keb.z_section_min.inflate!(INFLATE_VALUE, INFLATE_VALUE, 0)
+          section_ref = keb.z_section_min.inflate!(inch_inflate_value, inch_inflate_value, 0)
           patterns_transformation = IDENTITY
         end
 
@@ -1299,17 +1281,7 @@ module Ladb::OpenCutList
 
         color = _get_vector_color(@snap_axis.transform(et))
 
-        case @snap_axis
-        when X_AXIS
-          p1 = keb.face_center(Kuix::Bounds3d::LEFT).to_p
-          p2 = keb.face_center(Kuix::Bounds3d::RIGHT).to_p
-        when Y_AXIS
-          p1 = keb.face_center(Kuix::Bounds3d::FRONT).to_p
-          p2 = keb.face_center(Kuix::Bounds3d::BACK).to_p
-        when Z_AXIS
-          p1 = keb.face_center(Kuix::Bounds3d::BOTTOM).to_p
-          p2 = keb.face_center(Kuix::Bounds3d::TOP).to_p
-        end
+        p1, p2 = Kuix::Bounds3d.faces_by_axis(@snap_axis).map { |face| keb.face_center(face).to_p }
 
         k_edge = Kuix::EdgeMotif.new
         k_edge.start.copy!(p1)
@@ -1357,8 +1329,21 @@ module Ladb::OpenCutList
 
       # Grips
 
+      axes = [ X_AXIS, Y_AXIS, Z_AXIS ].delete_if { |axis| axis == @snap_axis }
+
+      axes.map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } }.each do |p0, p1|
+        k_edge = Kuix::EdgeMotif.new
+        k_edge.start.copy!(p0)
+        k_edge.end.copy!(p1)
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_edge.color = Kuix::COLOR_MEDIUM_GREY
+        k_edge.on_top = true
+        k_edge.transformation = et
+        @tool.append_3d(k_edge, LAYER_3D_GRIPS_PREVIEW)
+      end
+
       k_points = _create_floating_points(
-        points: CENTER_INDICES.map { |center| keb.face_center(center).to_p },
+        points: axes.flat_map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } },
         style: Kuix::POINT_STYLE_CIRCLE,
         stroke_color: Kuix::COLOR_DARK_GREY,
         fill_color: Kuix::COLOR_WHITE
@@ -1366,21 +1351,21 @@ module Ladb::OpenCutList
       k_points.transformation = et
       @tool.append_3d(k_points, LAYER_3D_GRIPS_PREVIEW)
 
-      _preview_active_sections
+      _preview_active_sections(view)
       _preview_active_axis
 
     end
 
     def _preview_reshape_section_move(view)
-      _preview_active_sections
+      _preview_active_sections(view)
     end
 
     def _preview_reshape_section_add(view)
-      _preview_active_sections
+      _preview_active_sections(view)
     end
 
     def _preview_reshape_section_remove(view)
-      _preview_active_sections
+      _preview_active_sections(view)
     end
 
     def _preview_reshape(view)
@@ -1436,7 +1421,7 @@ module Ladb::OpenCutList
 
       # Preview line
 
-      color = _get_vector_color(emv, Kuix::COLOR_DARK_GREY)
+      color = _get_vector_color(@snap_axis.transform(et), Kuix::COLOR_DARK_GREY)
 
       k_edge = Kuix::EdgeMotif.new
       k_edge.start.copy!(lps)

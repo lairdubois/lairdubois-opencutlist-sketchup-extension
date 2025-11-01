@@ -47,11 +47,10 @@ module Ladb::OpenCutList::Kuix
       super
       @_paths.each do |points|
         if @on_top
-          points2d = points.map { |point| graphics.view.screen_coords(point) }
-          graphics.set_drawing_color(@color)
+          graphics.set_drawing_color(@color) if @color.is_a?(Sketchup::Color)
           graphics.set_line_width(@line_width)
           graphics.set_line_stipple(@line_stipple)
-          graphics.view.draw2d(GL_LINE_STRIP, points2d)
+          graphics.view.draw2d(GL_LINE_STRIP, points.map { |point| graphics.view.screen_coords(point) })
         else
           graphics.draw_line_strip(
             points: points,
@@ -251,9 +250,14 @@ module Ladb::OpenCutList::Kuix
 
     def paint_content(graphics)
       @_paths.each do |points|
-        graphics.draw_quads(
-          points: points,
-          fill_color: @color)
+        if @on_top
+          graphics.set_drawing_color(@color)
+          graphics.view.draw2d(GL_QUADS, points.map { |point| graphics.view.screen_coords(point) })
+        else
+          graphics.draw_quads(
+            points: points,
+            fill_color: @color)
+        end
       end
     end
 
