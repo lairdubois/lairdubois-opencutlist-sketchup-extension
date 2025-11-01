@@ -1570,7 +1570,7 @@ module Ladb::OpenCutList
 
       drawing_def.curve_manipulators.each do |cm|
 
-        section = section_defs.find { |section_def| section_def[:bbox].intersect(Geom::BoundingBox.new.add(cm.curve.vertices.map { |vertex| vertex.position })).valid? }
+        section = section_defs.find { |section_def| section_def[:bbox].intersect(Geom::BoundingBox.new.add(cm.points)).valid? }
         unless section.nil?
           cm.curve.edges.each do |edge|
             section[:edge_defs] << {
@@ -1592,12 +1592,12 @@ module Ladb::OpenCutList
 
         start_section_def = v_s[em.edge.start]
         if start_section_def.nil?
-          start_section_def = section_defs.find { |s| s[:bbox].contains?(em.edge.start.position) }
+          start_section_def = section_defs.find { |s| s[:bbox].contains?(em.start_point) }
           v_s[em.edge.start] = start_section_def
         end
         end_section_def = v_s[em.edge.end]
         if end_section_def.nil?
-          end_section_def = section_defs.find { |s| s[:bbox].contains?(em.edge.end.position) }
+          end_section_def = section_defs.find { |s| s[:bbox].contains?(em.end_point) }
           v_s[em.edge.end] = end_section_def
         end
 
