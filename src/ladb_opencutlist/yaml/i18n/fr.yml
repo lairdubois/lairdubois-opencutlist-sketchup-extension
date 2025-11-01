@@ -1775,8 +1775,6 @@ tab:
       info_0: |
         Cette fonctionnalité vous permet de renommer les pièces présentes dans l'ensemble sélectionné en applicant la formule ci-dessous à chaque instance.
       formula: Formule
-      formula_help: |
-        Blabla
       old_name: Nom d'origine
       new_name: Nouveau nom
       count: Nb.
