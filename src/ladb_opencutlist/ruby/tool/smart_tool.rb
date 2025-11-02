@@ -2374,10 +2374,7 @@ module Ladb::OpenCutList
     def _get_drawing_def
       return nil if @active_part_entity_path.nil?
       return @drawing_def unless @drawing_def.nil?
-
-      model = Sketchup.active_model
-      return nil if model.nil?
-
+      return nil if Sketchup.active_model.nil?
       @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, **_get_drawing_def_parameters).run
     end
 

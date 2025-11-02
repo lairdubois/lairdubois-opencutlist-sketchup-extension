@@ -817,7 +817,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_RESHAPE_START
-        @tool.remove_3d([ LAYER_3D_SECTIONS_PREVIEW, LAYER_3D_GRIPS_PREVIEW ])
+        @tool.remove_3d([ LAYER_3D_PART_PREVIEW, LAYER_3D_SECTIONS_PREVIEW, LAYER_3D_GRIPS_PREVIEW ])
         check_super = @mouse_down_point.nil?
 
       end
@@ -1337,6 +1337,14 @@ module Ladb::OpenCutList
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       keb = Kuix::Bounds3d.new.copy!(eb)
 
+      # Box
+
+      k_box = Kuix::BoxMotif.new
+      k_box.bounds.copy!(eb)
+      k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+      k_box.transformation = et
+      @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+
       # Grips
 
       axes = [ X_AXIS, Y_AXIS, Z_AXIS ].delete_if { |axis| axis == @snap_axis }
@@ -1405,7 +1413,7 @@ module Ladb::OpenCutList
             edge.end.position.offset(dvs[edge_def[:end_section_def]].transform(ti)).transform(t)
           ]
         })
-        k_segments.color = Kuix::COLOR_BLACK
+        k_segments.color = _get_vector_color(lps.vector_to(lpe))
         k_segments.line_width = 1.5
         k_segments.transformation = et
         @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
@@ -1421,9 +1429,9 @@ module Ladb::OpenCutList
       #     dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
       #   end
       #
-      #   if section_def[:pt_bbox].valid?
+      #   if section_def[:bbox].valid?
       #     k_box = Kuix::BoxMotif.new
-      #     k_box.bounds.copy!(section_def[:pt_bbox])
+      #     k_box.bounds.copy!(section_def[:bbox])
       #     k_box.bounds.translate!(*dv.to_a) if emv.valid?
       #     k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
       #     k_box.line_width = 2
@@ -1431,6 +1439,17 @@ module Ladb::OpenCutList
       #     k_box.transformation = et
       #     @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
       #   end
+      #
+      #   # if section_def[:pt_bbox].valid?
+      #   #   k_box = Kuix::BoxMotif.new
+      #   #   k_box.bounds.copy!(section_def[:pt_bbox])
+      #   #   k_box.bounds.translate!(*dv.to_a) if emv.valid?
+      #   #   k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+      #   #   k_box.line_width = 2
+      #   #   k_box.color = colors[section_def[:index] % colors.length]
+      #   #   k_box.transformation = et
+      #   #   @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
+      #   # end
       #
       # end
 
@@ -1540,12 +1559,15 @@ module Ladb::OpenCutList
     def _get_split_def
       return @split_def unless @split_def.nil?
 
-      return nil if (drawing_def = _get_drawing_def).nil?
+      return nil unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
       return nil if @picked_grip_index.nil?
 
       et = _get_edit_transformation
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       keb = Kuix::Bounds3d.new.copy!(eb)
+
+      # Transform drawing_def to be expressed in the edit space and clear cache if transformed
+      @drawing_def = nil if drawing_def.transform!(drawing_def.transformation.inverse * et)
 
       grip_index_0 = Kuix::Bounds3d.face_opposite(@picked_grip_index)
       grip_index_1 = @picked_grip_index
@@ -1621,6 +1643,8 @@ module Ladb::OpenCutList
           end_section_def = section_defs.find { |s| s[:bbox].contains?(em.end_point) }
           v_s[em.edge.end] = end_section_def
         end
+
+        next if start_section_def.nil? || end_section_def.nil?  # TODO : Manage this case
 
         edge_defs << {
           edge: em.edge,

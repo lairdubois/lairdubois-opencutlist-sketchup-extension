@@ -45,7 +45,7 @@ module Ladb::OpenCutList
     end
 
     def transform!(transformation)
-      return if transformation.identity?
+      return false if !transformation.is_a?(Geom::Transformation) || transformation.identity?
 
       ti = transformation.inverse
 
@@ -99,6 +99,7 @@ module Ladb::OpenCutList
         cline_manipulator.transformation = ti * cline_manipulator.transformation
       end
 
+      true
     end
 
   end
