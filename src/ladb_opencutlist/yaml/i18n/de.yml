@@ -113,8 +113,8 @@ core:
       unhide_part_instance: Instanz einblenden
       edit_part_instance_properties: Instanzeigenschaften bearbeiten
       smart_draw: $t(core.toolbar.command.smart_draw)
-      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -158,13 +158,13 @@ core:
     not_available_in_context: In diesem Kontext nicht verfügbar
   error:
     exception: "Fehler: **{{ error }}**"
-    forbidden: "Verboten: **{{ error }}**"
+    forbidden: "Nicht erlaubt: **{{ error }}**"
     extern: "Externer Fehler: **{{ error }}**"
     feature_unavailable: "Diese Funktion erfordert SketchUp {{ version }} oder höher"
     failed_export_to: |
       Beim Exportieren in die Datei, *{{ path }}*, ist ein Fehler aufgetreten.
       **{{ error }}**
-    unsupported_file_format: "Nicht unterstütztes Dateiformat: **{{ format }}**"
+    unsupported_file_format: "Nicht unterstütztes Dateiformat : **{{ format }}**"
   success:
     exported_to: "Erfolgreicher Export nach {{ path }}."
     copied_to_clipboard: In die Zwischenablage kopiert
@@ -499,7 +499,7 @@ tab:
       size_increase: Übermaße
       size_increase_help: |
         Übermaße vergrössern die Dimensionen eines einzelnen Teils.
-        (*Beispiel: Übermaß für eine Fußleiste oder einen Anschlag, der bei der Montage noch angepasst wird.*)
+        (*Beispiel : Übermaß für eine Fußleiste oder einen Anschlag, der bei der Montage noch angepasst wird.*)
       length_increase: Längenzumaß
       length_increase_help: Übermaß welches die **effektive Länge** vergrössert.
       width_increase: Breitenzumaß
@@ -745,8 +745,8 @@ tab:
         multiplier_coefficient: Faktor
       error:
         no_typed_material_parts: "Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um die Kalkulation zu generieren."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}*: **{{ count }} Fehler**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}*: **{{ count }} Fehler**."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
       warning:
         is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht berücksichtigt."
         is_part_selection: Die Kalkulation beschränkt sich auf die **ausgewählten Teil**.
@@ -851,7 +851,7 @@ tab:
       option_scrap_bar_lengths_placeholder: Länge x Anzahl ; ...
       option_scrap_bar_lengths_help: |
         Geben Sie hier die Stangenreste oder Kantenbandreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
-        Erwartetes Format: **L**x**M**, wo **L** die *Länge* des Rests ist und **M** die Menge.
+        Erwartetes Format : **L**x**M**, wo **L** die *Länge* des Rests ist und **M** die Menge.
         Die Mengenangabe ist optional.
         *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
       option_std_sheet_good: Standard-Platte
@@ -1765,7 +1765,7 @@ tab:
       tags: Badges
       layer_name: Tag
       explode: Explodieren
-      explode_message: "Bestätigen Sie die Explosion der Instanz **{{ name }}**?"
+      explode_message: "Bestätigen Sie die Auflösung von **{{ name }}**?"
       erase: Löschen
       erase_message: "Bestätigen Sie die Löschung von **{{ name }}**?"
     deep_make_unique:
@@ -1773,10 +1773,8 @@ tab:
     deep_rename_parts:
       title: Teile umbenennen
       info_0: |
-        Mit dieser Funktion können Sie die Teile in der Auswahl umbenennen, indem Sie die unten stehende Formel auf jede Instanz anwenden.
+        Mithilfe dieser Funktion können Sie die ausgewählten Teile umbenennen, indem Sie die unten stehende Formel auf jede Instanz anwenden.
       formula: Formel
-      formula_help: |
-        Geschwätz
       old_name: Ursprünglicher Name
       new_name: Neuer Name
       count: Anz.
@@ -1866,7 +1864,7 @@ tab:
       file_not_found: "Datei nicht gefunden: **{{ filename }}**"
       bad_extension: "Die Datei *{{ filename }}* hat nicht eine **.CSV** oder **.TSV** Endung."
       failed_to_load_csv_file: |
-        Die CSV-Datei kann nicht geladen werden: **{{ error }}**
+        Die CSV-Datei kann nicht geladen werden : **{{ error }}**
         *Prüfen Sie, ob Sie das korrekte Datentrennzeichen gewählt haben.*
       empty_file: Die Datei scheint leer zu sein oder konnte nicht richtig gelesen werden.
       no_importable_part: Es können keine Teile importiert werden. Ordnen Sie die gewünschten Felder den entsprechenden Spalten zu.
@@ -2127,7 +2125,7 @@ tool:
     action_0: Auswählen
     action_0_status: "Klicken Sie auf ein Teil, um es auszuwählen"
     action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: Ziehen Sie ein identisches Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren
+    action_0_state_4_status: "Ziehen Sie ein identisches Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren."
     action_1: In Linie kopieren
     action_1_status: "Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren"
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2168,7 +2166,7 @@ tool:
   smart_reshape:
     title: Umgestalten
     action_0: Dehnen
-    action_0_status: Klicken Sie auf ein Teil, um es auszuwählen.
+    action_0_status: "Klicken Sie auf ein Teil, um es auszuwählen"
     action_option_group_stretch_measure_type: Maß
     action_option_group_axes: Achsen
     action_option_stretch_measure_type_outside_status: Außenmessung
