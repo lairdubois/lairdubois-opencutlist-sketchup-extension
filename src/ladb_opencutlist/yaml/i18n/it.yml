@@ -114,6 +114,7 @@ core:
       edit_part_instance_properties: Modificare le proprietà dell'istanza
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +126,7 @@ core:
       dialog: OpenCutList
       smart_draw: Disegnare parti
       smart_handle: Gestire i pezzi
+      smart_reshape: Rimodellare le parti
       smart_paint: Colorare parti
       smart_axes: Orienta gli elementi
       smart_export: Esporta elementi
@@ -155,6 +157,8 @@ core:
       Per segnalare un errore: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Non disponibile in questo contesto
   error:
+    exception: "Errore: **{{ error }}**"
+    forbidden: "Non autorizzato: **{{ error }}**"
     extern: "Errore esterno : **{{ error }}**"
     feature_unavailable: "Questa funzione richiede SketchUp {{ version }} o superiore"
     failed_export_to: |
@@ -1761,7 +1765,22 @@ tab:
       tags: Cartellini
       layer_name: Tag
       explode: Esplodi
-      explode_message: "Confermi l'esplosione dell'occorrenza **{{ name }}** ?"
+      explode_message: "Confermi la dissoluzione di **{{ name }}**?"
+      erase: Reset
+      erase_message: "Confermi la cancellazione di **{{ name }}**?"
+    deep_make_unique:
+      title: Rendere unico
+    deep_rename_parts:
+      title: Rinominare i parti
+      info_0: |
+        Questa funzione consente di rinominare i parti presenti nel set selezionato applicando la formula riportata di seguito a ciascuna istanza.
+      formula: Formula
+      old_name: Nome originale
+      new_name: Nuovo nome
+      count: Qtà
+    create_container:
+      title_group: "Creare un gruppo"
+      title_component: "Creare un componente"
     option:
       general: Generale
       show_hidden_instances: Visualizza le occorrenze nascoste
@@ -1777,6 +1796,7 @@ tab:
       no_entities: Il modello è vuoto!
       node_not_found: Nodo non trovato
       entity_not_found: Occorrenza non trovata
+      invalid_target: L'istanza di destinazione non consente questa operazione.
       obsolete_outliner: "Non consentito, la struttura è obsoleta. Si prega di rigenerarla."
     tip:
       no_node: |
@@ -2051,6 +2071,11 @@ tool:
       invalid_divider: "Il divisore {{ value }} non è valido"
       invalid_offset: "L'offset {{ value }} non è valido"
       invalid_segment_count: "Il numero di segmenti {{ value }} non è valido. Deve essere compreso tra 3 e 999."
+      syntax_error: "Errore di sintassi: {{ error }}"
+      unexpected_close_parenthesis: "Parentesi chiusa inaspettata"
+      missing_close_parenthesis: "Parentesi chiusa mancante"
+      missing_operand: "Operando mancante"
+      zero_division: "Divisione per zero"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2099,6 +2124,8 @@ tool:
     title: Manipolare
     action_0: Seleziona
     action_0_status: Clicca su un elemento per selezionarlo
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: Trascina su un pezzo identico per aggiungerlo alla selezione e rilascia per continuare
     action_1: Copia sulla linea
     action_1_status: Seleziona l'elemento da copiare lungo un asse
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2114,6 +2141,7 @@ tool:
     action_4: Distribuisci
     action_4_status: Seleziona l'elemento da distribuire lungo un asse
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Seleziona il primo punto della misura
     action_4_state_2_status: Seleziona il secondo punto della misura o digita una distanza
     action_5: Ridimensionare
@@ -2135,6 +2163,17 @@ tool:
       copies_disable_mirror: La copia multipla disabilita l'opzione '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       min_distance: "La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }} "
+  smart_reshape:
+    title: Rimodellare
+    action_0: Allungare
+    action_0_status: Clicca su un elemento per selezionarlo
+    action_option_group_stretch_measure_type: Misura
+    action_option_group_axes: Assi
+    action_option_stretch_measure_type_outside_status: Misura esterna
+    action_option_stretch_measure_type_offset_status: Misura la differenza
+    action_option_axes_active_status: Sposta lungo l'asse attivo
+    action_option_axes_context_status: Modificare lungo gli assi del gruppo o del componente contenente il pezzo
+    action_option_axes_entity_status: Modifica su un asse dell'elemento
   smart_paint:
     title: Assegna il materiale
     default_material: Nessun materiale definito

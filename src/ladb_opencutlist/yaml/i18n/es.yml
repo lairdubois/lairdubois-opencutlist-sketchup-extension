@@ -114,6 +114,7 @@ core:
       edit_part_instance_properties: Editar las propiedades del elemento
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +126,7 @@ core:
       dialog: OpenCutList
       smart_draw: Dibujar piezas
       smart_handle: Manipular las piezas
+      smart_reshape: Remodelar piezas
       smart_paint: Colorear piezas
       smart_axes: Orientar piezas
       smart_export: Exportar piezas
@@ -155,6 +157,8 @@ core:
       Para informar de un error: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: No disponible en este contexto
   error:
+    exception: "Error: **{{ error }}**"
+    forbidden: "No autorizado: **{{ error }}**"
     extern: "Error externo: **{{ error }}**"
     feature_unavailable: "Esta función requiere SketchUp {{ version }} o superior"
     failed_export_to: |
@@ -1761,7 +1765,22 @@ tab:
       tags: Etiquetas
       layer_name: Etiqueta
       explode: Desmontar
-      explode_message: "¿Confirma el desmontaje del elemento **{{ name }}**?"
+      explode_message: "¿Confirma la separación de **{{ name }}**?"
+      erase: Borrar
+      erase_message: "¿Confirma la eliminación de **{{ name }}**?"
+    deep_make_unique:
+      title: Hacer único
+    deep_rename_parts:
+      title: Renombrar las piezas
+      info_0: |
+        Esta función le permite renombrar las piezas presentes en el conjunto seleccionado aplicando la fórmula siguiente a cada instancia.
+      formula: Fórmula
+      old_name: Nombre original
+      new_name: Nuevo nombre
+      count: Cant.
+    create_container:
+      title_group: "Crear un grupo"
+      title_component: "Crear un componente"
     option:
       general: General
       show_hidden_instances: Mostrar instancias ocultas
@@ -1777,6 +1796,7 @@ tab:
       no_entities: Su modelo se encuentra vacío
       node_not_found: Nudo no encontrado
       entity_not_found: Elemento no encontrado
+      invalid_target: La instancia de destino no permite esta operación.
       obsolete_outliner: "Imposible, la estructura generada ha quedado obsoleta. Regenérela."
     tip:
       no_node: |
@@ -2051,6 +2071,11 @@ tool:
       invalid_divider: "Divisor {{ value }} no es válido"
       invalid_offset: "Desplazamiento {{ value }} no es válido"
       invalid_segment_count: "El número de segmentos {{ value }} no es válido. Debe estar comprendido entre 3 y 999."
+      syntax_error: "Error de sintaxis: {{ error }}"
+      unexpected_close_parenthesis: "Paréntesis de cierre inesperado"
+      missing_close_parenthesis: "Falta el cierre de paréntesis"
+      missing_operand: "Operando faltante"
+      zero_division: "División por cero"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2099,6 +2124,8 @@ tool:
     title: Editar
     action_0: Seleccione
     action_0_status: Hacer clic sobre una pieza para seleccionarla
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: Desliza el dedo sobre una pieza idéntica para añadirla a la selección y suelta para continuar.
     action_1: Copiar en línea
     action_1_status: Hacer clic sobre una pieza para copiarla a lo largo de un eje
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2114,6 +2141,7 @@ tool:
     action_4: Distribuir
     action_4_status: Hacer clic sobre una pieza para distribuirla a lo largo de un eje
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Hacer clic para indicar el primer punto de medida
     action_4_state_2_status: Hacer clic para indicar el segundo punto de medida o entrar una distancia
     action_5: Redimensionar
@@ -2135,6 +2163,17 @@ tool:
       copies_disable_mirror: La copia múltiple desactiva la opción '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       min_distance: "La distancia {{ value1 }} es inferior al valor mínimo de {{ value2 }}"
+  smart_reshape:
+    title: Remodelar
+    action_0: Estirar
+    action_0_status: Hacer clic sobre una pieza para seleccionarla
+    action_option_group_stretch_measure_type: Medida
+    action_option_group_axes: Ejes
+    action_option_stretch_measure_type_outside_status: Medir por el exterior
+    action_option_stretch_measure_type_offset_status: Medir la diferencia
+    action_option_axes_active_status: Cambiar la longitud de los ejes activos
+    action_option_axes_context_status: Modificar la longitud de los ejes del grupo o componente que contienen la pieza
+    action_option_axes_entity_status: Modificar la longitud de los ejes de la pieza
   smart_paint:
     title: Colorear
     default_material: Ningún material definido

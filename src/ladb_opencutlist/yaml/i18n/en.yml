@@ -126,7 +126,7 @@ core:
       dialog: OpenCutList
       smart_draw: Draw Parts
       smart_handle: Handle Parts
-      smart_reshape: Redesigning Parts
+      smart_reshape: Redesig Parts
       smart_paint: Paint Parts
       smart_axes: Orient Parts
       smart_export: Export Parts
@@ -158,7 +158,7 @@ core:
     not_available_in_context: Not available in this context
   error:
     exception: "Error: **{{ error }}**"
-    forbidden: "Forbidden: **{{ error }}**"
+    forbidden: "Unauthorized: **{{ error }}**"
     extern: "External error: **{{ error }}**"
     feature_unavailable: "This function requires SketchUp {{ version }} or higher"
     failed_export_to: |
@@ -501,11 +501,11 @@ tab:
         Oversizes increase the raw dimensions of a single part.
         (*Example: Oversize for a baseboard or a scribe molding that should be adjusted at assembly.*)
       length_increase: Length Oversize
-      length_increase_help: Oversize is applied to the final length to define the **raw length**.
+      length_increase_help: Oversize is applied to the final length to define the **finished length**.
       width_increase: Width Oversize
-      width_increase_help: Oversize is applied to the final width to define the **raw width**.
+      width_increase_help: Oversize is applied to the final width to define the **finished width**.
       thickness_increase: Thickness Oversize
-      thickness_increase_help: Oversize is applied to the final thickness to define the **raw thickness**.
+      thickness_increase_help: Oversize is applied to the final thickness to define the **finished thickness**.
       axes: Axes
       axes_help: Reorder the dimensions to match the desired axis colors in your part.
       axes_tip: |
@@ -745,8 +745,8 @@ tab:
         multiplier_coefficient: Coefficient
       error:
         no_typed_material_parts: "No part with a defined material type (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** or **$t(tab.materials.type_5)**) has been provided to generate the estimate."
-        entry_error: "*{{ material_name }} / {{ std_dimension }}*: **{{ count }} error**."
-        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}*: **{{ count }} errors**."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} error**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} errors**."
       warning:
         is_group_selection: Parts contained in **hidden groups** of the Parts List will not be accounted for.
         is_part_selection: The estimation is limited to **selected parts**.
@@ -1765,8 +1765,8 @@ tab:
       tags: Badges
       layer_name: Tag
       explode: Explode
-      explode_message: "Do you confirm the explosion of instance **{{ name }}**?"
-      erase: Erase
+      explode_message: "Do you confirm the breakup of **{{ name }}**?"
+      erase: Clear
       erase_message: "Do you confirm the deletion of **{{ name }}**?"
     deep_make_unique:
       title: Make Unique
@@ -1774,15 +1774,13 @@ tab:
       title: Rename Parts
       info_0: |
         This feature allows you to rename the parts present in the selected set by applying the formula below to each instance.
-      formula: Formule
-      formula_help: |
-        Blabla
+      formula: Formula
       old_name: Original name
       new_name: New name
       count: Qty.
     create_container:
-      title_group: "Create a group"
-      title_component: "Create a component"
+      title_group: "Create Group"
+      title_component: "Create Component"
     option:
       general: General
       show_hidden_instances: Show hidden instances
@@ -1798,7 +1796,7 @@ tab:
       no_entities: Your model is empty!
       node_not_found: Node not found
       entity_not_found: Instance not found
-      invalid_target: The targeted instance does not allow this operation
+      invalid_target: The targeted instance does not support this operation.
       obsolete_outliner: "Impossible, the generated structure is obsolete. Please, regenerate it."
     tip:
       no_node: |
@@ -1863,7 +1861,7 @@ tab:
       warnings: This part will be imported but it produced the following warnings
     error:
       no_model: No model is open. It is impossible to import parts into the void ;)
-      file_not_found: "File not found: **{{ filename }}**"
+      file_not_found: "File not found : **{{ filename }}**"
       bad_extension: "The file *{{ filename }}* does not have the extension **.CSV** or **.TSV**."
       failed_to_load_csv_file: |
         Unable to load the CSV file: **{{ error }}**
@@ -2127,7 +2125,7 @@ tool:
     action_0: Select
     action_0_status: Click on a part to select it
     action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: Slide over an identical piece to add it to the selection and release to continue
+    action_0_state_4_status: Slide over an identical piece to add it to the selection and release to continue.
     action_1: Copy in Line
     action_1_status: Click on a part to copy it along an axis
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2166,7 +2164,7 @@ tool:
     error:
       min_distance: "The distance {{ value1 }} is smaller than the minimal distance {{ value2 }}"
   smart_reshape:
-    title: Remodeler
+    title: Redesign
     action_0: Stretch
     action_0_status: Click on a part to select it
     action_option_group_stretch_measure_type: Measure
