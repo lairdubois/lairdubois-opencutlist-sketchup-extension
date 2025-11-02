@@ -632,7 +632,7 @@ module Ladb::OpenCutList
         ignore_faces: false,
         ignore_edges: false,
         ignore_soft_edges: false,
-        ignore_clines: false
+        ignore_clines: false,
       }
     end
 
@@ -1186,20 +1186,30 @@ module Ladb::OpenCutList
 
     def _snap_reshape(flags, x, y, view)
 
-      et = _get_edit_transformation
-      direction = @snap_axis.transform(et)
+      pk = view.pick_helper(x, y, 40)
+      if pk.test_point(@picked_reshape_start_point)
 
-      if @mouse_ip.degrees_of_freedom > 2 ||
-         @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1
-
-        picked_point, _ = Geom::closest_points([ @picked_reshape_start_point, direction ], view.pickray(x, y))
-        @mouse_snap_point = picked_point
+        @mouse_snap_point = @picked_reshape_start_point
         @mouse_ip.clear
 
       else
 
-        # Force picked point to be projected to shape the last picked point normal line
-        @mouse_snap_point = @mouse_ip.position.project_to_line([ @picked_reshape_start_point, direction ])
+        et = _get_edit_transformation
+        direction = @snap_axis.transform(et)
+
+        if @mouse_ip.degrees_of_freedom > 2 ||
+           @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1
+
+          picked_point, _ = Geom::closest_points([ @picked_reshape_start_point, direction ], view.pickray(x, y))
+          @mouse_snap_point = picked_point
+          @mouse_ip.clear
+
+        else
+
+          # Force picked point to be projected to shape the last picked point normal line
+          @mouse_snap_point = @mouse_ip.position.project_to_line([ @picked_reshape_start_point, direction ])
+
+        end
 
       end
 
@@ -1386,10 +1396,15 @@ module Ladb::OpenCutList
       unless edge_defs.empty?
 
         k_segments = Kuix::Segments.new
-        k_segments.add_segments(edge_defs.flat_map { |edge_def| [
-          edge_def[:edge].start.position.offset(dvs[edge_def[:start_section_def]]),
-          edge_def[:edge].end.position.offset(dvs[edge_def[:end_section_def]])
-        ] })
+        k_segments.add_segments(edge_defs.flat_map { |edge_def|
+          edge = edge_def[:edge]
+          t = edge_def[:transformation]
+          ti = t.inverse
+          [
+            edge.start.position.offset(dvs[edge_def[:start_section_def]].transform(ti)).transform(t),
+            edge.end.position.offset(dvs[edge_def[:end_section_def]].transform(ti)).transform(t)
+          ]
+        })
         k_segments.color = Kuix::COLOR_BLACK
         k_segments.line_width = 1.5
         k_segments.transformation = et
@@ -1439,6 +1454,7 @@ module Ladb::OpenCutList
       @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
 
       @tool.append_3d(_create_floating_points(points: [ lps, lpe ], style: Kuix::POINT_STYLE_CIRCLE, fill_color: Kuix::COLOR_WHITE, stroke_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
+      @tool.append_3d(_create_floating_points(points: @picked_reshape_start_point, style: Kuix::POINT_STYLE_CIRCLE, stroke_color: nil, fill_color: color, size: 2), LAYER_3D_RESHAPE_PREVIEW)
 
       # Preview distance
 
@@ -1490,9 +1506,6 @@ module Ladb::OpenCutList
 
       if emv.valid?
 
-        instance = _get_instance
-        entities = instance.definition.entities
-
         _unhide_instance
 
         model = Sketchup.active_model
@@ -1504,11 +1517,15 @@ module Ladb::OpenCutList
             dv = Geom::Vector3d.new(emv)
             dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
 
-            edge_def0 = section_def[:edge_defs].first
-            target = edge_def0[:positions][0].offset(dv)
-            target_dv = edge_def0[:edge].start.position.vector_to(target)
+            section_def[:edge_defs].group_by { |edge_def| edge_def[:edge].parent }.each do |parent, edge_defs|
 
-            entities.transform_entities(Geom::Transformation.translation(target_dv), section_def[:edge_defs].map { |curve_def| curve_def[:edge] })
+              edge_def0 = edge_defs.first
+              t = edge_def0[:transformation]
+              ti = t.inverse
+
+              parent.entities.transform_entities(Geom::Transformation.translation(dv.transform(ti)), edge_defs.map { |edge_def| edge_def[:edge] })
+
+            end
 
           end
 
@@ -1548,7 +1565,7 @@ module Ladb::OpenCutList
       ratios = @sections[@snap_axis].sort
       ratios.uniq!
       ratios.reverse!.map! { |ratio| 1 - ratio } unless evp0p1.samedirection?(@snap_axis)
-      ratios << 1.0 unless ratios.last == 1.0
+      ratios << 1.1 unless ratios.last >= 1.0 # Use 1.1 to be sure to avoid rounding problems
       ratios.each_with_index do |ratio, index|
 
         bbox = Geom::BoundingBox.new
@@ -1570,21 +1587,25 @@ module Ladb::OpenCutList
 
       drawing_def.curve_manipulators.each do |cm|
 
+        # Treat curves as a whole entity
+
         section = section_defs.find { |section_def| section_def[:bbox].intersect(Geom::BoundingBox.new.add(cm.points)).valid? }
         unless section.nil?
           cm.curve.edges.each do |edge|
             section[:edge_defs] << {
-              positions: edge.vertices.map { |vertex| vertex.position },
-              edge: edge
+              edge: edge,
+              transformation: cm.transformation,
             }
             edge_defs << {
               edge: edge,
+              transformation: cm.transformation,
               start_section_def: section,
               end_section_def: section,
             }
             v_s[edge.start] = section
             v_s[edge.end] = section
           end
+          section[:pt_bbox].add(cm.points)  # Add to content bbox
         end
 
       end
@@ -1603,6 +1624,7 @@ module Ladb::OpenCutList
 
         edge_defs << {
           edge: em.edge,
+          transformation: em.transformation,
           start_section_def: start_section_def,
           end_section_def: end_section_def,
         }
@@ -1610,16 +1632,12 @@ module Ladb::OpenCutList
         if start_section_def == end_section_def &&
            em.edge.start.edges.all? { |edge| edge.curve.nil? } && em.edge.end.edges.all? { |edge| edge.curve.nil? }
           start_section_def[:edge_defs] << {
-            positions: em.edge.vertices.map { |vertex| vertex.position },
             edge: em.edge,
+            transformation: em.transformation,
           }
+          start_section_def[:pt_bbox].add(em.points)  # Add to content bbox
         end
 
-      end
-
-      # Compute content bbox
-      section_defs.each do |s|
-        s[:pt_bbox].add(s[:edge_defs].flat_map { |edge_def| edge_def[:positions] }) unless s[:edge_defs].empty?
       end
 
       @split_def = {

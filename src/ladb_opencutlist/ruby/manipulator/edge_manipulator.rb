@@ -39,11 +39,11 @@ module Ladb::OpenCutList
     end
 
     def start_point
-      points.first
+      flipped? ? points.last : points.first
     end
 
     def end_point
-      points.last
+      flipped? ? points.first : points.last
     end
 
     def middle_point
