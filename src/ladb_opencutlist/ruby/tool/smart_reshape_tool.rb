@@ -632,7 +632,9 @@ module Ladb::OpenCutList
         ignore_faces: false,
         ignore_edges: false,
         ignore_soft_edges: false,
-        ignore_clines: false,
+        ignore_clines: true,
+        face_for_part: true,
+        edge_for_part: true,
       }
     end
 
@@ -650,10 +652,16 @@ module Ladb::OpenCutList
       eb = Geom::BoundingBox.new
       if drawing_def.is_a?(DrawingDef)
 
-        points = drawing_def.face_manipulators.flat_map { |manipulator| manipulator.outer_loop_manipulator.points }
         eti = et.inverse
 
-        eb.add(points.map { |point| point.transform(eti * drawing_def.transformation) })
+        eb.add(drawing_def.face_manipulators
+                          .flat_map { |manipulator| manipulator.outer_loop_manipulator.points }
+                          .map { |point| point.transform(eti * drawing_def.transformation) }
+        ) if drawing_def.face_manipulators.any?
+        eb.add(drawing_def.cline_manipulators
+                          .flat_map { |manipulator| manipulator.points }
+                          .map { |point| point.transform(eti * drawing_def.transformation) }
+        ) if drawing_def.cline_manipulators.any?
 
       end
       eb
@@ -1005,6 +1013,8 @@ module Ladb::OpenCutList
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       keb = Kuix::Bounds3d.new.copy!(eb)
 
+      # Snap to grip?
+
       pk = view.pick_helper(x, y, 40)
       [ X_AXIS, Y_AXIS, Z_AXIS].each do |axis|
         grip_indices = Kuix::Bounds3d.faces_by_axis(axis)
@@ -1021,6 +1031,8 @@ module Ladb::OpenCutList
       end
 
       unless @sections.nil? || @snap_axis.nil?
+
+        # Snap to a section?
 
         direction = @snap_axis.transform(et)
         min = eb.min.transform(et)
@@ -1115,18 +1127,36 @@ module Ladb::OpenCutList
         ked = Kuix::Bounds3d.new.copy!(eb)
         direction = @snap_axis.transform(et)
 
-        min, max = Kuix::Bounds3d.faces_by_axis(@snap_axis).map { |index| ked.face_center(index).to_p.transform(et) }
+        case @snap_axis
+        when X_AXIS
+          plane = [ eb.center, eb.height > eb.depth ? _get_active_z_axis : _get_active_y_axis ]
+        when Y_AXIS
+          plane = [ eb.center, eb.width > eb.depth ? _get_active_z_axis : _get_active_x_axis ]
+        when Z_AXIS
+          plane = [ eb.center, eb.height > eb.width ? _get_active_x_axis : _get_active_y_axis ]
+        else
+          plane = nil
+        end
+        unless plane.nil?
 
-        picked_point, _ = Geom::closest_points([ min, direction ], view.pickray(x, y))
-        @mouse_snap_point = picked_point
+          hit = Geom.intersect_line_plane(view.pickray(x, y), plane)
+          unless hit.nil?
 
-        v = min.vector_to(@mouse_snap_point)
-        vmax = min.vector_to(max)
+            @mouse_snap_point = hit.project_to_line(eb.center, direction)
 
-        if v.valid? && vmax.valid?
-          ratio = v.length / vmax.length
-          ratio *= -1 unless v.samedirection?(vmax)
-          @snap_ratio = [ [ 0, ratio ].max, 1 ].min
+            min, max = Kuix::Bounds3d.faces_by_axis(@snap_axis).map { |index| ked.face_center(index).to_p.transform(et) }
+
+            v = min.vector_to(@mouse_snap_point)
+            vmax = min.vector_to(max)
+
+            if v.valid? && vmax.valid?
+              ratio = v.length / vmax.length
+              ratio *= -1 unless v.samedirection?(vmax)
+              @snap_ratio = [ [ 0, ratio ].max, 1 ].min
+            end
+
+          end
+
         end
 
       end
@@ -1198,7 +1228,9 @@ module Ladb::OpenCutList
         direction = @snap_axis.transform(et)
 
         if @mouse_ip.degrees_of_freedom > 2 ||
-           @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1
+           @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1 ||
+           @mouse_ip.face && @mouse_ip.face == @mouse_ip.instance_path.leaf && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(direction) ||
+           @mouse_ip.edge && @mouse_ip.degrees_of_freedom == 1 && !@mouse_ip.edge.start.position.vector_to(@mouse_ip.edge.end.position).transform(@mouse_ip.transformation).perpendicular?(direction)
 
           picked_point, _ = Geom::closest_points([ @picked_reshape_start_point, direction ], view.pickray(x, y))
           @mouse_snap_point = picked_point
@@ -1429,20 +1461,9 @@ module Ladb::OpenCutList
       #     dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
       #   end
       #
-      #   if section_def[:bbox].valid?
-      #     k_box = Kuix::BoxMotif.new
-      #     k_box.bounds.copy!(section_def[:bbox])
-      #     k_box.bounds.translate!(*dv.to_a) if emv.valid?
-      #     k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-      #     k_box.line_width = 2
-      #     k_box.color = colors[section_def[:index] % colors.length]
-      #     k_box.transformation = et
-      #     @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
-      #   end
-      #
-      #   # if section_def[:pt_bbox].valid?
+      #   # if section_def[:bbox].valid?
       #   #   k_box = Kuix::BoxMotif.new
-      #   #   k_box.bounds.copy!(section_def[:pt_bbox])
+      #   #   k_box.bounds.copy!(section_def[:bbox])
       #   #   k_box.bounds.translate!(*dv.to_a) if emv.valid?
       #   #   k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
       #   #   k_box.line_width = 2
@@ -1450,6 +1471,17 @@ module Ladb::OpenCutList
       #   #   k_box.transformation = et
       #   #   @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
       #   # end
+      #
+      #   if section_def[:pt_bbox].valid?
+      #     k_box = Kuix::BoxMotif.new
+      #     k_box.bounds.copy!(section_def[:pt_bbox])
+      #     k_box.bounds.translate!(*dv.to_a) if emv.valid?
+      #     k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+      #     k_box.line_width = 2
+      #     k_box.color = colors[section_def[:index] % colors.length]
+      #     k_box.transformation = et
+      #     @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
+      #   end
       #
       # end
 
@@ -1521,7 +1553,7 @@ module Ladb::OpenCutList
     def _stretch_entity
       return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
 
-      emv, section_defs = stretch_def.values_at(:emv, :section_defs)
+      emv, section_defs, edge_defs = stretch_def.values_at(:emv, :section_defs, :edge_defs)
 
       if emv.valid?
 
@@ -1530,13 +1562,16 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         model.start_operation('OCL Stretch Part', true, false, !active?)
 
-          section_defs.each do |section_def|
-            next if section_def[:edge_defs].empty?
+          edge_defs
+            .select { |edge_def| edge_def[:start_section_def] == edge_def[:end_section_def] }
+            .sort_by { |edge_def| edge_def[:start_section_def][:index] }
+            .group_by { |edge_def| edge_def[:start_section_def] }
+            .each do |section_def, edge_defs|
 
             dv = Geom::Vector3d.new(emv)
             dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
 
-            section_def[:edge_defs].group_by { |edge_def| edge_def[:edge].parent }.each do |parent, edge_defs|
+            edge_defs.group_by { |edge_def| edge_def[:edge].parent }.each do |parent, edge_defs|
 
               edge_def0 = edge_defs.first
               t = edge_def0[:transformation]
@@ -1600,7 +1635,6 @@ module Ladb::OpenCutList
           index: index,
           bbox: bbox,
           pt_bbox: Geom::BoundingBox.new,
-          edge_defs: [],
         }
 
       end
@@ -1611,23 +1645,19 @@ module Ladb::OpenCutList
 
         # Treat curves as a whole entity
 
-        section = section_defs.find { |section_def| section_def[:bbox].intersect(Geom::BoundingBox.new.add(cm.points)).valid? }
-        unless section.nil?
+        section_def = section_defs.find { |section_def| section_def[:bbox].intersect(Geom::BoundingBox.new.add(cm.points)).valid? }
+        unless section_def.nil?
           cm.curve.edges.each do |edge|
-            section[:edge_defs] << {
-              edge: edge,
-              transformation: cm.transformation,
-            }
             edge_defs << {
               edge: edge,
               transformation: cm.transformation,
-              start_section_def: section,
-              end_section_def: section,
+              start_section_def: section_def,
+              end_section_def: section_def,
             }
-            v_s[edge.start] = section
-            v_s[edge.end] = section
+            v_s[edge.start] = section_def
+            v_s[edge.end] = section_def
           end
-          section[:pt_bbox].add(cm.points)  # Add to content bbox
+          section_def[:pt_bbox].add(cm.points)  # Add to content bbox
         end
 
       end
@@ -1655,10 +1685,6 @@ module Ladb::OpenCutList
 
         if start_section_def == end_section_def &&
            em.edge.start.edges.all? { |edge| edge.curve.nil? } && em.edge.end.edges.all? { |edge| edge.curve.nil? }
-          start_section_def[:edge_defs] << {
-            edge: em.edge,
-            transformation: em.transformation,
-          }
           start_section_def[:pt_bbox].add(em.points)  # Add to content bbox
         end
 
@@ -1696,7 +1722,7 @@ module Ladb::OpenCutList
         lps: _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE ? ep0.transform(et) : ps,
         lpe: pe,
         section_defs: section_defs,
-        edge_defs: edge_defs
+        edge_defs: edge_defs,
       }
     end
 

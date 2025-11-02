@@ -390,7 +390,7 @@ module Ladb::OpenCutList
             next if entity.soft? && @ignore_soft_edges
             manipulator = EdgeManipulator.new(entity, transformation)
             if !block_given? || yield(manipulator)
-              if entity.curve.nil? || entity.curve.edges.length < 2  # Exclude curve that contains only one edge.
+              if entity.curve.nil? || entity.curve.edges.length < 2  # Exclude curves that contain only one edge.
                 drawing_def.edge_manipulators.push(manipulator)
               else
                 curve_manipulator = _get_curve_manipulator_by_edge(drawing_def, entity, transformation)
