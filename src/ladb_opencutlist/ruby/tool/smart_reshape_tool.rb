@@ -700,6 +700,8 @@ module Ladb::OpenCutList
       @picked_cutter_index = nil
       @picked_cutter_start_point = nil
 
+      @locked_axis = nil
+
     end
 
     # -----
@@ -893,6 +895,35 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_RESHAPE_START
+        if key == VK_RIGHT
+          if @locked_axis == X_AXIS
+            @locked_axis = nil
+          else
+            @locked_axis = X_AXIS
+          end
+          _refresh
+          return true
+        elsif key == VK_LEFT
+          if @locked_axis == Y_AXIS
+            @locked_axis = nil
+          else
+            @locked_axis = Y_AXIS
+          end
+          _refresh
+          return true
+        elsif key == VK_UP
+          if @locked_axis == Z_AXIS
+            @locked_axis = nil
+          else
+            @locked_axis = Z_AXIS
+          end
+          _refresh
+          return true
+        elsif key == VK_DOWN
+          @locked_axis = nil
+          _refresh
+          return true
+        end
         unless @snap_axis.nil?
           if tool.is_key_ctrl_or_option?(key)
             set_state(STATE_RESHAPE_CUTTER_ADD)
@@ -1013,10 +1044,12 @@ module Ladb::OpenCutList
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       keb = Kuix::Bounds3d.new.copy!(eb)
 
+      @snap_axis = @locked_axis unless @locked_axis.nil?
+
       # Snap to grip?
 
       pk = view.pick_helper(x, y, 40)
-      [ X_AXIS, Y_AXIS, Z_AXIS].each do |axis|
+      [ X_AXIS, Y_AXIS, Z_AXIS ].select { |axis| @locked_axis.nil? || axis == @locked_axis }.each do |axis|
         grip_indices = Kuix::Bounds3d.faces_by_axis(axis)
         grip_indices.each do |grip_index|
           p = keb.face_center(grip_index).to_p.transform(et)
@@ -1329,7 +1362,7 @@ module Ladb::OpenCutList
         k_edge = Kuix::EdgeMotif.new
         k_edge.start.copy!(p1)
         k_edge.end.copy!(p2)
-        k_edge.line_width = 1.5
+        k_edge.line_width = @snap_axis == @locked_axis ? 2 : 1.5
         k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
         k_edge.color = color
         k_edge.on_top = true
@@ -1378,29 +1411,33 @@ module Ladb::OpenCutList
       k_box.transformation = et
       @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
 
-      # Grips
+      # Grips + lines
 
-      axes = [ X_AXIS, Y_AXIS, Z_AXIS ].delete_if { |axis| axis == @snap_axis }
+      if @locked_axis.nil?
 
-      axes.map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } }.each do |p0, p1|
-        k_edge = Kuix::EdgeMotif.new
-        k_edge.start.copy!(p0)
-        k_edge.end.copy!(p1)
-        k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-        k_edge.color = Kuix::COLOR_MEDIUM_GREY
-        k_edge.on_top = true
-        k_edge.transformation = et
-        @tool.append_3d(k_edge, LAYER_3D_GRIPS_PREVIEW)
+        axes = [ X_AXIS, Y_AXIS, Z_AXIS ].delete_if { |axis| axis == @snap_axis }
+
+        axes.map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } }.each do |p0, p1|
+          k_edge = Kuix::EdgeMotif.new
+          k_edge.start.copy!(p0)
+          k_edge.end.copy!(p1)
+          k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_edge.color = Kuix::COLOR_MEDIUM_GREY
+          k_edge.on_top = true
+          k_edge.transformation = et
+          @tool.append_3d(k_edge, LAYER_3D_GRIPS_PREVIEW)
+        end
+
+        k_points = _create_floating_points(
+          points: axes.flat_map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } },
+          style: Kuix::POINT_STYLE_CIRCLE,
+          stroke_color: Kuix::COLOR_DARK_GREY,
+          fill_color: Kuix::COLOR_WHITE
+        )
+        k_points.transformation = et
+        @tool.append_3d(k_points, LAYER_3D_GRIPS_PREVIEW)
+
       end
-
-      k_points = _create_floating_points(
-        points: axes.flat_map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } },
-        style: Kuix::POINT_STYLE_CIRCLE,
-        stroke_color: Kuix::COLOR_DARK_GREY,
-        fill_color: Kuix::COLOR_WHITE
-      )
-      k_points.transformation = et
-      @tool.append_3d(k_points, LAYER_3D_GRIPS_PREVIEW)
 
       _preview_active_cutters(view)
       _preview_active_axis
