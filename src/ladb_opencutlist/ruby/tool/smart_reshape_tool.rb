@@ -1125,15 +1125,16 @@ module Ladb::OpenCutList
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
         ked = Kuix::Bounds3d.new.copy!(eb)
+        center = eb.center.transform(et)
         direction = @snap_axis.transform(et)
 
         case @snap_axis
         when X_AXIS
-          plane = [ eb.center, eb.height > eb.depth ? _get_active_z_axis : _get_active_y_axis ]
+          plane = [ center, eb.height > eb.depth ? _get_active_z_axis : _get_active_y_axis ]
         when Y_AXIS
-          plane = [ eb.center, eb.width > eb.depth ? _get_active_z_axis : _get_active_x_axis ]
+          plane = [ center, eb.width > eb.depth ? _get_active_z_axis : _get_active_x_axis ]
         when Z_AXIS
-          plane = [ eb.center, eb.height > eb.width ? _get_active_x_axis : _get_active_y_axis ]
+          plane = [ center, eb.height > eb.width ? _get_active_x_axis : _get_active_y_axis ]
         else
           plane = nil
         end
@@ -1142,7 +1143,7 @@ module Ladb::OpenCutList
           hit = Geom.intersect_line_plane(view.pickray(x, y), plane)
           unless hit.nil?
 
-            @mouse_snap_point = hit.project_to_line(eb.center, direction)
+            @mouse_snap_point = hit.project_to_line([ center, direction ])
 
             min, max = Kuix::Bounds3d.faces_by_axis(@snap_axis).map { |index| ked.face_center(index).to_p.transform(et) }
 
