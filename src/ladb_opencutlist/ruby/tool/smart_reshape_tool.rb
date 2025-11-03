@@ -680,12 +680,12 @@ module Ladb::OpenCutList
 
   class SmartReshapeStretchActionHandler < SmartReshapeActionHandler
 
-    STATE_RESHAPE_SECTION_MOVE = 10
-    STATE_RESHAPE_SECTION_ADD = 11
-    STATE_RESHAPE_SECTION_REMOVE = 12
+    STATE_RESHAPE_CUTTER_MOVE = 10
+    STATE_RESHAPE_CUTTER_ADD = 11
+    STATE_RESHAPE_CUTTER_REMOVE = 12
 
     LAYER_3D_GRIPS_PREVIEW = 100
-    LAYER_3D_SECTIONS_PREVIEW = 200
+    LAYER_3D_CUTTERS_PREVIEW = 200
 
     PX_INFLATE_VALUE = 50
 
@@ -695,10 +695,10 @@ module Ladb::OpenCutList
       @snap_axis = nil
       @picked_grip_index = -1
 
-      @sections = nil
+      @cutters = nil
 
-      @picked_section_index = nil
-      @picked_section_start_point = nil
+      @picked_cutter_index = nil
+      @picked_cutter_start_point = nil
 
     end
 
@@ -729,7 +729,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_RESHAPE_START
-        if @picked_section_index
+        if @picked_cutter_index
 
           drawing_def = _get_drawing_def
           et = _get_edit_transformation
@@ -741,11 +741,11 @@ module Ladb::OpenCutList
           max_plane = [ max, direction ]
           vmax = min.vector_to(min.project_to_plane(max_plane))
 
-          plane = [min.offset(vmax, vmax.length * @sections[@snap_axis][@picked_section_index]), direction ]
+          plane = [min.offset(vmax, vmax.length * @cutters[@snap_axis][@picked_cutter_index]), direction ]
 
-          @picked_section_start_point = Geom.intersect_line_plane(view.pickray(x, y), plane)
+          @picked_cutter_start_point = Geom.intersect_line_plane(view.pickray(x, y), plane)
 
-          set_state(STATE_RESHAPE_SECTION_MOVE)
+          set_state(STATE_RESHAPE_CUTTER_MOVE)
           _refresh
           return true
         end
@@ -759,7 +759,7 @@ module Ladb::OpenCutList
 
         return true
 
-      when STATE_RESHAPE_SECTION_ADD, STATE_RESHAPE_SECTION_REMOVE
+      when STATE_RESHAPE_CUTTER_ADD, STATE_RESHAPE_CUTTER_REMOVE
         return true
 
       end
@@ -786,31 +786,31 @@ module Ladb::OpenCutList
           _refresh
           return true
         end
-        unless @picked_section_index
+        unless @picked_cutter_index
           _reset
           _refresh
           return true
         end
 
-      when STATE_RESHAPE_SECTION_MOVE
-        if @picked_section_index
+      when STATE_RESHAPE_CUTTER_MOVE
+        if @picked_cutter_index
           set_state(STATE_RESHAPE_START)
           _refresh
           return true
         end
 
-      when STATE_RESHAPE_SECTION_ADD
+      when STATE_RESHAPE_CUTTER_ADD
         if @snap_ratio
-          @sections[@snap_axis] << @snap_ratio
+          @cutters[@snap_axis] << @snap_ratio
           @snap_ratio = nil
           _refresh
         end
         return true
 
-      when STATE_RESHAPE_SECTION_REMOVE
-        if @picked_section_index
-          @sections[@snap_axis].delete_at(@picked_section_index)
-          @picked_section_index = nil
+      when STATE_RESHAPE_CUTTER_REMOVE
+        if @picked_cutter_index
+          @cutters[@snap_axis].delete_at(@picked_cutter_index)
+          @picked_cutter_index = nil
           _refresh
         end
         return true
@@ -825,7 +825,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_RESHAPE_START
-        @tool.remove_3d([ LAYER_3D_PART_PREVIEW, LAYER_3D_SECTIONS_PREVIEW, LAYER_3D_GRIPS_PREVIEW ])
+        @tool.remove_3d([LAYER_3D_PART_PREVIEW, LAYER_3D_CUTTERS_PREVIEW, LAYER_3D_GRIPS_PREVIEW ])
         check_super = @mouse_down_point.nil?
 
       end
@@ -850,38 +850,38 @@ module Ladb::OpenCutList
           end
         end
 
-      when STATE_RESHAPE_SECTION_MOVE
+      when STATE_RESHAPE_CUTTER_MOVE
 
         @mouse_snap_point = nil
         @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
-        @tool.remove_3d([ LAYER_3D_SECTIONS_PREVIEW ])
+        @tool.remove_3d([LAYER_3D_CUTTERS_PREVIEW ])
 
-        _snap_handle_section_move(flags, x, y, view)
-        _preview_reshape_section_move(view)
+        _snap_reshape_cutter_move(flags, x, y, view)
+        _preview_reshape_cutter_move(view)
 
-      when STATE_RESHAPE_SECTION_ADD
-
-        @mouse_snap_point = nil
-        @mouse_ip.pick(view, x, y)
-
-        @tool.remove_all_2d
-        @tool.remove_3d([ LAYER_3D_SECTIONS_PREVIEW ])
-
-        _snap_reshape_section_add(flags, x, y, view)
-        _preview_reshape_section_add(view)
-
-      when STATE_RESHAPE_SECTION_REMOVE
+      when STATE_RESHAPE_CUTTER_ADD
 
         @mouse_snap_point = nil
         @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
-        @tool.remove_3d([ LAYER_3D_SECTIONS_PREVIEW ])
+        @tool.remove_3d([LAYER_3D_CUTTERS_PREVIEW ])
 
-        _snap_reshape_section_remove(flags, x, y, view)
-        _preview_reshape_section_remove(view)
+        _snap_reshape_cutter_add(flags, x, y, view)
+        _preview_reshape_cutter_add(view)
+
+      when STATE_RESHAPE_CUTTER_REMOVE
+
+        @mouse_snap_point = nil
+        @mouse_ip.pick(view, x, y)
+
+        @tool.remove_all_2d
+        @tool.remove_3d([LAYER_3D_CUTTERS_PREVIEW ])
+
+        _snap_reshape_cutter_remove(flags, x, y, view)
+        _preview_reshape_cutter_remove(view)
 
       end
 
@@ -895,12 +895,12 @@ module Ladb::OpenCutList
       when STATE_RESHAPE_START
         unless @snap_axis.nil?
           if tool.is_key_ctrl_or_option?(key)
-            set_state(STATE_RESHAPE_SECTION_ADD)
+            set_state(STATE_RESHAPE_CUTTER_ADD)
             _refresh
             return true
           end
           if tool.is_key_alt_or_command?(key)
-            set_state(STATE_RESHAPE_SECTION_REMOVE)
+            set_state(STATE_RESHAPE_CUTTER_REMOVE)
             _refresh
             return true
           end
@@ -916,7 +916,7 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_RESHAPE_SECTION_ADD, STATE_RESHAPE_SECTION_REMOVE
+      when STATE_RESHAPE_CUTTER_ADD, STATE_RESHAPE_CUTTER_REMOVE
         if tool.is_key_ctrl_or_option?(key)
           @snap_ratio = nil
           set_state(STATE_RESHAPE_START)
@@ -948,16 +948,16 @@ module Ladb::OpenCutList
           @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
           _unhide_instance
 
-        when STATE_RESHAPE_SECTION_MOVE
+        when STATE_RESHAPE_CUTTER_MOVE
           @tool.remove_3d(LAYER_3D_GRIPS_PREVIEW)
           _unhide_instance
 
-        when STATE_RESHAPE_SECTION_ADD, STATE_RESHAPE_SECTION_REMOVE
+        when STATE_RESHAPE_CUTTER_ADD, STATE_RESHAPE_CUTTER_REMOVE
           @tool.remove_3d(LAYER_3D_GRIPS_PREVIEW)
           _unhide_instance
 
         when STATE_RESHAPE
-          @tool.remove_3d([ LAYER_3D_GRIPS_PREVIEW, LAYER_3D_SECTIONS_PREVIEW ])
+          @tool.remove_3d([LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
           _hide_instance
 
         end
@@ -976,7 +976,7 @@ module Ladb::OpenCutList
 
       @src_transformation = Geom::Transformation.new(instance.transformation)
 
-      @sections = {
+      @cutters = {
         X_AXIS => [ 0.5 ],
         Y_AXIS => [ 0.5 ],
         Z_AXIS => [ 0.5 ],
@@ -995,7 +995,7 @@ module Ladb::OpenCutList
       @split_def = nil
       @snap_axis = nil
       @picked_grip_index = -1
-      @picked_section_index = nil
+      @picked_cutter_index = nil
       super
     end
 
@@ -1006,7 +1006,7 @@ module Ladb::OpenCutList
       @mouse_ip.clear
 
       @picked_grip_index = nil
-      @picked_section_index = nil
+      @picked_cutter_index = nil
 
       drawing_def = _get_drawing_def
       et = _get_edit_transformation
@@ -1030,7 +1030,7 @@ module Ladb::OpenCutList
         end
       end
 
-      unless @sections.nil? || @snap_axis.nil?
+      unless @cutters.nil? || @snap_axis.nil?
 
         # Snap to a section?
 
@@ -1047,7 +1047,7 @@ module Ladb::OpenCutList
         quad_ref = keb.inflate_all!(inch_inflate_value).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
 
         p2d = Geom::Point3d.new(x, y)
-        @sections[@snap_axis].each_with_index do |ratio, index|
+        @cutters[@snap_axis].each_with_index do |ratio, index|
 
           v = Geom::Vector3d.new(vmax)
           v.length = vmax.length * ratio
@@ -1055,7 +1055,7 @@ module Ladb::OpenCutList
 
           polygon = quad_ref.map { |point| view.screen_coords(point.transform(t)) }
           if Geom.point_in_polygon_2D(p2d, polygon, true)
-            @picked_section_index = index
+            @picked_cutter_index = index
             return true
           end
 
@@ -1066,7 +1066,7 @@ module Ladb::OpenCutList
       super
     end
 
-    def _snap_handle_section_move(flags, x, y, view)
+    def _snap_reshape_cutter_move(flags, x, y, view)
 
       drawing_def = _get_drawing_def
       et = _get_edit_transformation
@@ -1077,7 +1077,7 @@ module Ladb::OpenCutList
       # if @mouse_ip.degrees_of_freedom > 2 ||
       #    @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1
 
-      picked_point, _ = Geom::closest_points([ @picked_section_start_point, direction ], view.pickray(x, y))
+      picked_point, _ = Geom::closest_points([@picked_cutter_start_point, direction ], view.pickray(x, y))
       @mouse_snap_point = picked_point
       @mouse_ip.clear
 
@@ -1108,16 +1108,16 @@ module Ladb::OpenCutList
         ratio = 0
       end
 
-      @sections[@snap_axis][@picked_section_index] = ratio
+      @cutters[@snap_axis][@picked_cutter_index] = ratio
 
     end
 
-    def _snap_reshape_section_add(flags, x, y, view)
+    def _snap_reshape_cutter_add(flags, x, y, view)
 
       @mouse_ip.clear
 
       @snap_ratio = nil
-      @picked_section_index = nil
+      @picked_cutter_index = nil
 
       unless @snap_axis.nil?
 
@@ -1164,13 +1164,13 @@ module Ladb::OpenCutList
 
     end
 
-    def _snap_reshape_section_remove(flags, x, y, view)
+    def _snap_reshape_cutter_remove(flags, x, y, view)
 
       @mouse_ip.clear
 
-      @picked_section_index = nil
+      @picked_cutter_index = nil
 
-      unless @sections.nil? || @snap_axis.nil?
+      unless @cutters.nil? || @snap_axis.nil?
 
         drawing_def = _get_drawing_def
         et = _get_edit_transformation
@@ -1197,7 +1197,7 @@ module Ladb::OpenCutList
         quad_ref = keb.inflate_all!(inch_inflate_value).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
 
         p2d = Geom::Point3d.new(x, y)
-        @sections[@snap_axis].each_with_index do |ratio, index|
+        @cutters[@snap_axis].each_with_index do |ratio, index|
 
           v = Geom::Vector3d.new(vmax)
           v.length = vmax.length * ratio
@@ -1205,7 +1205,7 @@ module Ladb::OpenCutList
 
           polygon = quad_ref.map { |point| view.screen_coords(point.transform(t)) }
           if Geom.point_in_polygon_2D(p2d, polygon, true)
-            @picked_section_index = index
+            @picked_cutter_index = index
             return true
           end
 
@@ -1248,7 +1248,7 @@ module Ladb::OpenCutList
 
     end
 
-    def _preview_active_sections(view)
+    def _preview_active_cutters(view)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       et = _get_edit_transformation
@@ -1272,7 +1272,7 @@ module Ladb::OpenCutList
           patterns_transformation = IDENTITY
         end
 
-        ratios = @sections[@snap_axis]
+        ratios = @cutters[@snap_axis]
         ratios = ratios.dup.push(@snap_ratio) if @snap_ratio
         ratios.each_with_index do |ratio, index|
 
@@ -1281,9 +1281,9 @@ module Ladb::OpenCutList
           section.origin.y += ratio * keb.height if @snap_axis == Y_AXIS
           section.origin.z += ratio * keb.depth if @snap_axis == Z_AXIS
 
-          is_picked_section = @picked_section_index == index
-          is_add = @state == STATE_RESHAPE_SECTION_ADD && @snap_ratio && index == ratios.length - 1
-          is_remove = @state == STATE_RESHAPE_SECTION_REMOVE && is_picked_section
+          is_picked_section = @picked_cutter_index == index
+          is_add = @state == STATE_RESHAPE_CUTTER_ADD && @snap_ratio && index == ratios.length - 1
+          is_remove = @state == STATE_RESHAPE_CUTTER_REMOVE && is_picked_section
           is_highligted = is_picked_section && !is_remove
 
           section_color = color
@@ -1300,13 +1300,13 @@ module Ladb::OpenCutList
           k_rectangle.color = section_color
           k_rectangle.transformation = et
           k_rectangle.patterns_transformation = patterns_transformation
-          @tool.append_3d(k_rectangle, LAYER_3D_SECTIONS_PREVIEW)
+          @tool.append_3d(k_rectangle, LAYER_3D_CUTTERS_PREVIEW)
 
           k_mesh = Kuix::Mesh.new
           k_mesh.add_quads(section.get_quads)
           k_mesh.background_color = ColorUtils.color_translucent(section_color, is_highligted ? 0.6 : 0.3)
           k_mesh.transformation = et
-          @tool.append_3d(k_mesh, LAYER_3D_SECTIONS_PREVIEW)
+          @tool.append_3d(k_mesh, LAYER_3D_CUTTERS_PREVIEW)
 
         end
 
@@ -1402,21 +1402,21 @@ module Ladb::OpenCutList
       k_points.transformation = et
       @tool.append_3d(k_points, LAYER_3D_GRIPS_PREVIEW)
 
-      _preview_active_sections(view)
+      _preview_active_cutters(view)
       _preview_active_axis
 
     end
 
-    def _preview_reshape_section_move(view)
-      _preview_active_sections(view)
+    def _preview_reshape_cutter_move(view)
+      _preview_active_cutters(view)
     end
 
-    def _preview_reshape_section_add(view)
-      _preview_active_sections(view)
+    def _preview_reshape_cutter_add(view)
+      _preview_active_cutters(view)
     end
 
-    def _preview_reshape_section_remove(view)
-      _preview_active_sections(view)
+    def _preview_reshape_cutter_remove(view)
+      _preview_active_cutters(view)
     end
 
     def _preview_reshape(view)
@@ -1624,7 +1624,7 @@ module Ladb::OpenCutList
 
       v_s = {}  # Vertex => SectionDef
 
-      ratios = @sections[@snap_axis].sort
+      ratios = @cutters[@snap_axis].sort
       ratios.uniq!
       ratios.reverse!.map! { |ratio| 1 - ratio } unless evp0p1.samedirection?(@snap_axis)
       ratios << 1.1 unless ratios.last >= 1.0 # Use 1.1 to be sure to avoid rounding problems
@@ -1645,12 +1645,26 @@ module Ladb::OpenCutList
       end
 
       # Extract edges
+      # -------------
 
-      drawing_def.curve_manipulators.each do |cm|
+      # 1. Sort curves according to their "min" point relative to the active grip
 
-        # Treat curves as a whole entity
+      reversed = evp0p1.valid? && !evp0p1.samedirection?(@snap_axis)
+      min_method = reversed ? :max : :min
+      xyz_method = { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@snap_axis]
 
-        section_def = section_defs.find { |section_def| section_def[:bbox].intersect(Geom::BoundingBox.new.add(cm.points)).valid? }
+      curve_manipulators = drawing_def.curve_manipulators.sort_by { |cm| cm.bounds.send(min_method).send(xyz_method) }
+      curve_manipulators.reverse! if reversed
+
+      # 2. Iterate on curves
+
+      curve_manipulators.each do |cm|
+
+        # Treat curves as a whole undeformable entity
+
+        section_def = v_s[cm.curve.first_edge.start]
+        section_def = v_s[cm.curve.last_edge.end] if section_def.nil?
+        section_def = section_defs.find { |section_def| section_def[:bbox].intersect(Geom::BoundingBox.new.add(cm.points)).valid? } if section_def.nil?
         unless section_def.nil?
           cm.curve.edges.each do |edge|
             edge_defs << {

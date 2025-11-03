@@ -41,9 +41,9 @@ module Ladb::OpenCutList
     def reset_cache
       super
       @outer_loops_points = nil
+      @bounds = nil
       @z_min = nil
       @z_max = nil
-      @bounds = nil
     end
 
     # -----
@@ -65,6 +65,11 @@ module Ladb::OpenCutList
         @outer_loops_points.reverse! if flipped?
       end
       @outer_loops_points
+    end
+
+    def bounds
+      @bounds ||= Geom::BoundingBox.new.add(outer_loops_points)
+      @bounds
     end
 
     def z_min
