@@ -1422,7 +1422,8 @@ module Ladb::OpenCutList
     def _preview_reshape(view)
       return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
 
-      et, emv, lps, lpe, section_defs, edge_defs = stretch_def.values_at(:et, :emv, :lps, :lpe, :section_defs, :edge_defs)
+      split_def, emv, lps, lpe = stretch_def.values_at(:split_def, :emv, :lps, :lpe)
+      et, section_defs, edge_defs = split_def.values_at(:et, :section_defs, :edge_defs)
 
       dvs = section_defs.map { |section_def|
         if emv.valid?
@@ -1554,7 +1555,8 @@ module Ladb::OpenCutList
     def _stretch_entity
       return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
 
-      emv, section_defs, edge_defs = stretch_def.values_at(:emv, :section_defs, :edge_defs)
+      split_def, emv = stretch_def.values_at(:split_def, :emv)
+      evp0p1, section_defs, edge_defs = split_def.values_at(:evp0p1, :section_defs, :edge_defs)
 
       if emv.valid?
 
@@ -1563,10 +1565,12 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         model.start_operation('OCL Stretch Part', true, false, !active?)
 
+          sorting_order = (emv.valid? && emv.samedirection?(evp0p1)) ? -1 : 1
+
           edge_defs
             .select { |edge_def| edge_def[:start_section_def] == edge_def[:end_section_def] }
-            .sort_by { |edge_def| edge_def[:start_section_def][:index] }
             .group_by { |edge_def| edge_def[:start_section_def] }
+            .sort_by { |section_def, _| section_def[:index] * sorting_order }.to_h
             .each do |section_def, edge_defs|
 
             dv = Geom::Vector3d.new(emv)
@@ -1706,24 +1710,20 @@ module Ladb::OpenCutList
     def _get_stretch_def(ps, pe)
       return nil if (split_def = _get_split_def).nil?
 
-      et, eb, ep0, evp0p1, section_defs, edge_defs = split_def.values_at(:et, :eb, :ep0, :evp0p1, :section_defs, :edge_defs)
+      et, ep0 = split_def.values_at(:et, :eb, :ep0, :evp0p1, :section_defs, :edge_defs)
       eti = et.inverse
 
       mv = ps.vector_to(pe)
       emv = mv.transform(eti)
 
-      section_defs = section_defs.dup
-      section_defs.reverse! if emv.valid? && emv.samedirection?(evp0p1)
+      # section_defs = section_defs.dup
+      # section_defs.reverse! if emv.valid? && emv.samedirection?(evp0p1)
 
       {
         split_def: split_def,
-        et: et,
-        eb: eb,   # Expressed in 'Edit' space
         emv: emv,
         lps: _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE ? ep0.transform(et) : ps,
         lpe: pe,
-        section_defs: section_defs,
-        edge_defs: edge_defs,
       }
     end
 
