@@ -1644,7 +1644,7 @@ module Ladb::OpenCutList
 
       end
 
-      # Add edges
+      # Extract edges
 
       drawing_def.curve_manipulators.each do |cm|
 
@@ -1710,14 +1710,11 @@ module Ladb::OpenCutList
     def _get_stretch_def(ps, pe)
       return nil if (split_def = _get_split_def).nil?
 
-      et, ep0 = split_def.values_at(:et, :eb, :ep0, :evp0p1, :section_defs, :edge_defs)
+      et, ep0 = split_def.values_at(:et, :ep0)
       eti = et.inverse
 
       mv = ps.vector_to(pe)
       emv = mv.transform(eti)
-
-      # section_defs = section_defs.dup
-      # section_defs.reverse! if emv.valid? && emv.samedirection?(evp0p1)
 
       {
         split_def: split_def,
