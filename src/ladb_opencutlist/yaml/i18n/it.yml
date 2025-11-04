@@ -1796,7 +1796,7 @@ tab:
       no_entities: Il modello è vuoto!
       node_not_found: Nodo non trovato
       entity_not_found: Occorrenza non trovata
-      invalid_target: L'istanza di destinazione non consente questa operazione.
+      invalid_target: L'istanza di destinazione non consente questa operazione
       obsolete_outliner: "Non consentito, la struttura è obsoleta. Si prega di rigenerarla."
     tip:
       no_node: |
@@ -2144,7 +2144,6 @@ tool:
     action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Seleziona il primo punto della misura
     action_4_state_2_status: Seleziona il secondo punto della misura o digita una distanza
-    action_5: Ridimensionare
     action_option_group_copy_measure_type: Misura
     action_option_group_move_measure_type: Misura
     action_option_group_axes: Assi

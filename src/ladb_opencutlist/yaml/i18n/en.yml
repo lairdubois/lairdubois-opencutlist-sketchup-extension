@@ -1765,7 +1765,7 @@ tab:
       tags: Badges
       layer_name: Tag
       explode: Explode
-      explode_message: "Do you confirm the breakup of **{{ name }}**?"
+      explode_message: "Do you confirm the breakup of **{{ name }}**?"   # TODO text changed
       erase: Clear
       erase_message: "Do you confirm the deletion of **{{ name }}**?"
     deep_make_unique:
@@ -2144,7 +2144,6 @@ tool:
     action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Click to set the first measurement point
     action_4_state_2_status: Click to set the second measurement point or enter a distance
-    action_5: Resize
     action_option_group_copy_measure_type: Measure
     action_option_group_move_measure_type: Measure
     action_option_group_axes: Axes

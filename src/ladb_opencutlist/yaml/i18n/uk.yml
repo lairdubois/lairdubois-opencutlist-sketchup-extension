@@ -114,6 +114,7 @@ core:
       edit_part_instance_properties: Редагувати властивості екземпляра
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +126,7 @@ core:
       dialog: OpenCutList
       smart_draw: Креслення деталей
       smart_handle: Обробка деталей
+      smart_reshape: Редагування деталей
       smart_paint: Нанесення матеріалів на деталі
       smart_axes: Орієнтація деталей
       smart_export: Експорт деталей
@@ -155,6 +157,8 @@ core:
       Щоб повідомити про помилку: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Недоступно в цьому контексті
   error:
+    exception: "Помилка: **{{ error }}**"
+    forbidden: "Не дозволено: **{{ error }}**"
     extern: "Зовнішня помилка: **{{ error }}**"
     feature_unavailable: "Для цієї функції потрібен SketchUp {{ version }} або новіше"
     failed_export_to: |
@@ -1761,7 +1765,22 @@ tab:
       tags: Мітки
       layer_name: Тег
       explode: Розбити
-      explode_message: "Підтверджуєте розрив екземпляра **{{ name }}**?"
+      explode_message: "Підтверджуєте вибух **{{ name }}** ?"   # TODO text changed
+      erase: Стерти
+      erase_message: "Підтверджуєте видалення **{{ name }}**?"
+    deep_make_unique:
+      title: Зробити унікальним
+    deep_rename_parts:
+      title: Перейменувати деталі
+      info_0: |
+        Ця функція дозволяє перейменовувати деталі у вибраному наборі, застосовуючи формулу нижче до кожного екземпляра.
+      formula: Формула
+      old_name: Оригінальна назва
+      new_name: Нове ім'я
+      count: Примітка
+    create_container:
+      title_group: "Створення групи"
+      title_component: "Створення компонента"
     option:
       general: Загальні
       show_hidden_instances: Показати приховані екземпляри
@@ -1777,6 +1796,7 @@ tab:
       no_entities: Ваша модель порожня!
       node_not_found: Вузол не знайдено
       entity_not_found: Екземпляр не знайдено
+      invalid_target: Цільовий екземпляр не дозволяє цю операцію
       obsolete_outliner: "Неможливо. Згенерована структура застаріла. Перегенеруйте її."
     tip:
       no_node: |
@@ -2051,6 +2071,11 @@ tool:
       invalid_divider: "Дільник {{ value }} недійсний"
       invalid_offset: "Зміщення {{ value }} недійсне"
       invalid_segment_count: "Кількість сегментів {{ value }} недійсна. Вона повинна бути від 3 до 999."
+      syntax_error: "Синтаксична помилка: {{ error }}"
+      unexpected_close_parenthesis: "Неочікувана закриваюча дужка"
+      missing_close_parenthesis: "Відсутня закриваюча дужка"
+      missing_operand: "Відсутній операнд"
+      zero_division: "Ділення на нуль"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2099,6 +2124,8 @@ tool:
     title: Редагувати
     action_0: Обрати
     action_0_status: "Натисніть на деталь, щоб вибрати її"
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: "Перетягніть ідентичну деталь, щоб додати її до виділення, і відпустіть, щоб продовжити"
     action_1: Копіювати по лінії
     action_1_status: "Натисніть на деталі, щоб скопіювати її вздовж осі"
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2114,9 +2141,9 @@ tool:
     action_4: Розподілити
     action_4_status: "Натисніть на деталь, щоб розподілити її по осі"
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: "Натисніть, щоб визначити першу точку вимірювання"
     action_4_state_2_status: "Натисніть, щоб визначити другу точку вимірювання або ввести відстань"
-    action_5: Змінити розмір
     action_option_group_copy_measure_type: Вимірювання
     action_option_group_move_measure_type: Вимірювання
     action_option_group_axes: Осі
@@ -2135,6 +2162,17 @@ tool:
       copies_disable_mirror: Мультикопіювання вимикає опцію '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       min_distance: "Відстань {{ value1 }} менша за мінімальну відстань {{ value2 }}"
+  smart_reshape:
+    title: Реконструювати
+    action_0: Розтягнути
+    action_0_status: "Натисніть на деталь, щоб вибрати її"
+    action_option_group_stretch_measure_type: Вимірювання
+    action_option_group_axes: Осі
+    action_option_stretch_measure_type_outside_status: Зовнішнє вимірювання
+    action_option_stretch_measure_type_offset_status: Виміряти різницю
+    action_option_axes_active_status: Переміщення вздовж активних осей
+    action_option_axes_context_status: "Переміщення вздовж осей групи або компонента, що містить деталь"
+    action_option_axes_entity_status: Переміщення по осях деталі
   smart_paint:
     title: Нанесення матеріалів
     default_material: Матеріал не заданий
