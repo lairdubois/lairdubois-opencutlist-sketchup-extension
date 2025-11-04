@@ -1796,7 +1796,7 @@ tab:
       no_entities: Su modelo se encuentra vacío
       node_not_found: Nudo no encontrado
       entity_not_found: Elemento no encontrado
-      invalid_target: La instancia de destino no permite esta operación.
+      invalid_target: La instancia de destino no permite esta operación
       obsolete_outliner: "Imposible, la estructura generada ha quedado obsoleta. Regenérela."
     tip:
       no_node: |
@@ -2125,7 +2125,7 @@ tool:
     action_0: Seleccione
     action_0_status: Hacer clic sobre una pieza para seleccionarla
     action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: Desliza el dedo sobre una pieza idéntica para añadirla a la selección y suelta para continuar.
+    action_0_state_4_status: Desliza el dedo sobre una pieza idéntica para añadirla a la selección y suelta para continuar
     action_1: Copiar en línea
     action_1_status: Hacer clic sobre una pieza para copiarla a lo largo de un eje
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2144,7 +2144,6 @@ tool:
     action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Hacer clic para indicar el primer punto de medida
     action_4_state_2_status: Hacer clic para indicar el segundo punto de medida o entrar una distancia
-    action_5: Redimensionar
     action_option_group_copy_measure_type: Medida
     action_option_group_move_measure_type: Medida
     action_option_group_axes: Ejes

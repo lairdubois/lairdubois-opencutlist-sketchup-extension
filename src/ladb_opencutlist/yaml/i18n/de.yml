@@ -1765,7 +1765,7 @@ tab:
       tags: Badges
       layer_name: Tag
       explode: Explodieren
-      explode_message: "Bestätigen Sie die Auflösung von **{{ name }}**?"
+      explode_message: "Bestätigen Sie die Auflösung von **{{ name }}**?"   # TODO text changed
       erase: Löschen
       erase_message: "Bestätigen Sie die Löschung von **{{ name }}**?"
     deep_make_unique:
@@ -2144,7 +2144,6 @@ tool:
     action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: "Klicken Sie, um den ersten Messpunkt zu setzen"
     action_4_state_2_status: "Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein"
-    action_5: Größe ändern
     action_option_group_copy_measure_type: Maß
     action_option_group_move_measure_type: Maß
     action_option_group_axes: Achsen
