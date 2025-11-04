@@ -4,8 +4,8 @@ module Ladb::OpenCutList
 
   class PlaneManipulator < Manipulator
 
-    def initialize(plane, transformation = IDENTITY, container_path = [])
-      super(transformation, container_path)
+    def initialize(plane, transformation = IDENTITY)
+      super(transformation)
       raise "Bad plane data structure. Must be an Array." unless plane.is_a?(Array)
       if plane.length == 2
         raise "Bad plane data structure. Must be [ Geom::Point3d, Geom::Vector3d ]." unless plane[0].is_a?(Geom::Point3d) && plane[1].is_a?(Geom::Vector3d)

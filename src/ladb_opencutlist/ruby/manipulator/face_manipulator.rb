@@ -13,8 +13,8 @@ module Ladb::OpenCutList
     attr_reader :face
     attr_accessor :surface_manipulator
 
-    def initialize(face, transformation = IDENTITY, container_path = [])
-      super(face.plane, transformation, container_path)
+    def initialize(face, transformation = IDENTITY)
+      super(face.plane, transformation)
       raise "face must be a Sketchup::Face." unless face.is_a?(Sketchup::Face)
       @face = face
       @surface_manipulator = nil
@@ -68,12 +68,12 @@ module Ladb::OpenCutList
     # -----
 
     def outer_loop_manipulator
-      @outer_loop_manipulator ||= LoopManipulator.new(@face.outer_loop, @transformation, @container_path)
+      @outer_loop_manipulator ||= LoopManipulator.new(@face.outer_loop, @transformation)
       @outer_loop_manipulator
     end
 
     def loop_manipulators
-      @loop_manipulators ||= @face.loops.map { |loop| loop.outer? ? outer_loop_manipulator : LoopManipulator.new(loop, @transformation, @container_path) }
+      @loop_manipulators ||= @face.loops.map { |loop| loop.outer? ? outer_loop_manipulator : LoopManipulator.new(loop, @transformation) }
       @loop_manipulators
     end
 

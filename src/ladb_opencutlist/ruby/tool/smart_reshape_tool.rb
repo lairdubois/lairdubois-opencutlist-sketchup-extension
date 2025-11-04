@@ -650,7 +650,7 @@ module Ladb::OpenCutList
 
     def _get_drawing_def_edit_bounds(drawing_def, et)
       eb = Geom::BoundingBox.new
-      if drawing_def.is_a?(DrawingDef)
+      if drawing_def.is_a?(DrawingContentDef)
 
         eti = et.inverse
 
@@ -1593,7 +1593,7 @@ module Ladb::OpenCutList
       return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
 
       split_def, emv = stretch_def.values_at(:split_def, :emv)
-      evp0p1, section_defs, edge_defs = split_def.values_at(:evp0p1, :section_defs, :edge_defs)
+      evp0p1, section_defs, edge_defs, container_defs = split_def.values_at(:evp0p1, :section_defs, :edge_defs, :container_defs)
 
       if emv.valid?
 
@@ -1602,10 +1602,24 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         model.start_operation('OCL Stretch Part', true, false, !active?)
 
+          container_defs.each do |container_def|
+
+            path = container_def[:path]
+            section_def = container_def[:section_def]
+            t = container_def[:transformation]
+            container = path.last
+
+            dv = Geom::Vector3d.new(emv)
+            dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
+
+            container.transform!(Geom::Transformation.translation(dv.transform(t)))
+
+          end
+
           sorting_order = (emv.valid? && emv.samedirection?(evp0p1)) ? -1 : 1
 
           edge_defs
-            .select { |edge_def| edge_def[:start_section_def] == edge_def[:end_section_def] }
+            .select { |edge_def| !edge_def[:grabbed] && edge_def[:start_section_def] == edge_def[:end_section_def] }
             .group_by { |edge_def| edge_def[:start_section_def] }
             .sort_by { |section_def, _| section_def[:index] * sorting_order }.to_h
             .each do |section_def, edge_defs|
@@ -1643,8 +1657,10 @@ module Ladb::OpenCutList
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       keb = Kuix::Bounds3d.new.copy!(eb)
 
+      det = drawing_def.transformation.inverse * et
+
       # Transform drawing_def to be expressed in the edit space and clear cache if transformed
-      @drawing_def = nil if drawing_def.transform!(drawing_def.transformation.inverse * et)
+      @drawing_def = nil if drawing_def.transform!(det)
 
       grip_index_0 = Kuix::Bounds3d.face_opposite(@picked_grip_index)
       grip_index_1 = @picked_grip_index
@@ -1658,6 +1674,7 @@ module Ladb::OpenCutList
 
       section_defs = []
       edge_defs = []
+      container_defs = []
 
       v_s = {}  # Vertex => SectionDef
 
@@ -1681,10 +1698,61 @@ module Ladb::OpenCutList
 
       end
 
+      grabbed_paths = []
+      grabbed_curves = []
+      grabbed_edges = []
+
+      # Extract containers
+      # ------------------
+
+      tree_content_defs = [[ [], drawing_def ]] + drawing_def.tree_content_defs.to_a
+      tree_content_defs.each do |path, content_def|
+
+        # Ignore if the path is a child of a grabbed path
+        next if grabbed_paths.find { |caught_path| (caught_path & path) == caught_path }
+
+        # Check if content bounds is completely inside a section
+        if (section_def = section_defs.find { |section_def| section_def[:bbox].contains?(content_def.bounds) })
+
+          # Flag the path as grabbed
+          grabbed_paths << path
+
+          # Flag curves as grabbed
+          content_def.curve_manipulators.each do |cm|
+            grabbed_curves << cm.curve
+          end
+
+          # Flag edges as grabbed
+          content_def.edge_manipulators.each do |em|
+            grabbed_edges << em.edge
+          end
+
+          container_defs << {
+            path: path,
+            transformation: content_def.transformation,
+            section_def: section_def,
+          }
+
+          # Add to content bbox
+          section_def[:pt_bbox].add(content_def.bounds)
+
+          # k_box = Kuix::BoxMotif.new
+          # k_box.bounds.copy!(content_def.bounds)
+          # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          # k_box.line_width = section_def.nil? ? 1.5 : 2
+          # k_box.color = [ Kuix::COLOR_YELLOW, Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA ][(section_def[:index] % 3) - 1]
+          # k_box.transformation = et
+          # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+
+          next
+        end
+
+      end
+
       # Extract edges
       # -------------
 
-      # 1. Sort curves according to their "min" point relative to the active grip
+      # 1. Sort curves according to their "min" point relative to the opposite active grip
 
       reversed = evp0p1.valid? && !evp0p1.samedirection?(@snap_axis)
       min_method = reversed ? :max : :min
@@ -1697,11 +1765,13 @@ module Ladb::OpenCutList
 
       curve_manipulators.each do |cm|
 
+        grabbed = grabbed_curves.include?(cm.curve)
+
         # Treat curves as a whole undeformable entity
 
         section_def = v_s[cm.curve.first_edge.start]
         section_def = v_s[cm.curve.last_edge.end] if section_def.nil?
-        section_def = section_defs.find { |section_def| section_def[:bbox].intersect(Geom::BoundingBox.new.add(cm.points)).valid? } if section_def.nil?
+        section_def = section_defs.find { |s| s[:bbox].intersect(cm.bounds).valid? } if section_def.nil?
         unless section_def.nil?
           cm.curve.edges.each do |edge|
             edge_defs << {
@@ -1709,6 +1779,7 @@ module Ladb::OpenCutList
               transformation: cm.transformation,
               start_section_def: section_def,
               end_section_def: section_def,
+              grabbed: grabbed,
             }
             v_s[edge.start] = section_def
             v_s[edge.end] = section_def
@@ -1717,7 +1788,12 @@ module Ladb::OpenCutList
         end
 
       end
+
+      # 3. Iterate on edges
+
       drawing_def.edge_manipulators.each do |em|
+
+        grabbed = grabbed_edges.include?(em.edge)
 
         start_section_def = v_s[em.edge.start]
         if start_section_def.nil?
@@ -1737,6 +1813,7 @@ module Ladb::OpenCutList
           transformation: em.transformation,
           start_section_def: start_section_def,
           end_section_def: end_section_def,
+          grabbed: grabbed
         }
 
         if start_section_def == end_section_def &&
@@ -1755,6 +1832,7 @@ module Ladb::OpenCutList
         evp0p1: evp0p1,
         section_defs: section_defs,
         edge_defs: edge_defs,
+        container_defs: container_defs,
       }
     end
 

@@ -736,12 +736,12 @@ module Ladb::OpenCutList
       if plane_manipulator.nil?
         face, inner_path = _find_largest_face(instance_info.entity, instance_info.transformation)
         container_path = instance_info.path + inner_path
-        plane_manipulator = FaceManipulator.new(face, PathUtils.get_transformation(container_path, IDENTITY), container_path)
+        plane_manipulator = FaceManipulator.new(face, PathUtils.get_transformation(container_path, IDENTITY))
       end
 
       line_manipulator = @picker.picked_line_manipulator
       if line_manipulator.nil? || !line_manipulator.direction.perpendicular?(plane_manipulator.normal)
-        line_manipulator = EdgeManipulator.new(plane_manipulator.longest_outer_edge, plane_manipulator.transformation, plane_manipulator.container_path)
+        line_manipulator = EdgeManipulator.new(plane_manipulator.longest_outer_edge, plane_manipulator.transformation)
       end
 
       ti = instance_info.transformation.inverse

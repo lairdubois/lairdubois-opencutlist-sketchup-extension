@@ -4,8 +4,8 @@ module Ladb::OpenCutList
 
   class LineManipulator < Manipulator
 
-    def initialize(line, transformation = IDENTITY, container_path = [])
-      super(transformation, container_path)
+    def initialize(line, transformation = IDENTITY)
+      super(transformation)
       raise "Bad line data structure. Must be an Array." unless line.is_a?(Array)
       if line.length == 2
         raise "Bad plane data structure. Must be [ Geom::Point3d, Geom::Vector3d ]." unless line[0].is_a?(Geom::Point3d) && line[1].is_a?(Geom::Vector3d)

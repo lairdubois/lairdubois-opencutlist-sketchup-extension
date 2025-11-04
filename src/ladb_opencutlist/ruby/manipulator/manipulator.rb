@@ -2,13 +2,10 @@ module Ladb::OpenCutList
 
   class Manipulator
 
-    attr_reader :transformation,
-                :container_path
+    attr_reader :transformation
 
-    def initialize(transformation = IDENTITY, container_path = [])
+    def initialize(transformation = IDENTITY)
       raise "transformation must be a Geom::Transformation." unless transformation.is_a?(Geom::Transformation)
-      raise "container_path must be an Array." unless container_path.is_a?(Array)
-      @container_path = container_path
       @transformation = transformation
     end
 
@@ -36,15 +33,11 @@ module Ladb::OpenCutList
       @skewed
     end
 
-    def container
-      @container_path.last
-    end
-
     # -----
 
     def ==(other)
       return false unless other.is_a?(Manipulator)
-      (@transformation * other.transformation.inverse).identity? && @container_path == other.container_path
+      (@transformation * other.transformation.inverse).identity?
     end
 
   end
