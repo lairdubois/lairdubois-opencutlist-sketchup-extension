@@ -57,6 +57,7 @@ module Ladb::OpenCutList
     end
 
     def points
+      return nil if infinite?
       @points ||= [ start_point, end_point ]
       @points
     end

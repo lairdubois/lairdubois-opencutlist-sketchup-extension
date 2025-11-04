@@ -2,12 +2,6 @@ module Ladb::OpenCutList
 
   class Manipulator
 
-    attr_accessor :data
-
-    def initialize()
-      @data = {}
-    end
-
     # -----
 
     def reset_cache

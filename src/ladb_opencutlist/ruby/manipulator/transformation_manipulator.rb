@@ -1,7 +1,7 @@
 module Ladb::OpenCutList
 
   require_relative 'manipulator'
-  require_relative '../utils//transformation_utils'
+  require_relative '../utils/transformation_utils'
 
   class TransformationManipulator < Manipulator
 
@@ -40,7 +40,7 @@ module Ladb::OpenCutList
     # -----
 
     def ==(other)
-      return false unless other.is_a?(Manipulator)
+      return false unless other.is_a?(TransformationManipulator)
       (@transformation * other.transformation.inverse).identity?
     end
 

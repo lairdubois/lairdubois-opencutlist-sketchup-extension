@@ -74,7 +74,7 @@ module Ladb::OpenCutList
     end
 
     def loop_manipulators
-      @loop_manipulators ||= @face.loops.map { |loop| LoopManipulator.new(loop, @transformation) }
+      @loop_manipulators ||= @face.loops.map { |loop| loop.outer? ? outer_loop_manipulator : LoopManipulator.new(loop, @transformation) }
       @loop_manipulators
     end
 

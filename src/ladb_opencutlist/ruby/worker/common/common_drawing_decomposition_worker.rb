@@ -116,14 +116,14 @@ module Ladb::OpenCutList
 
           origin_transformation *= Geom::Transformation.axes(
             ORIGIN.transform(Sketchup.active_model.edit_transform),
-            X_AXIS.transform(Sketchup.active_model.edit_transform).normalize,
-            Y_AXIS.transform(Sketchup.active_model.edit_transform).normalize,
-            Z_AXIS.transform(Sketchup.active_model.edit_transform).normalize
+            X_AXIS.transform(Sketchup.active_model.edit_transform).normalize!,
+            Y_AXIS.transform(Sketchup.active_model.edit_transform).normalize!,
+            Z_AXIS.transform(Sketchup.active_model.edit_transform).normalize!
           )
 
-          @input_local_x_axis = @input_local_x_axis.transform(origin_transformation).normalize
-          @input_local_y_axis = @input_local_y_axis.transform(origin_transformation).normalize
-          @input_local_z_axis = @input_local_z_axis.transform(origin_transformation).normalize
+          @input_local_x_axis = @input_local_x_axis.transform(origin_transformation).normalize!
+          @input_local_y_axis = @input_local_y_axis.transform(origin_transformation).normalize!
+          @input_local_z_axis = @input_local_z_axis.transform(origin_transformation).normalize!
 
         end
 
@@ -215,7 +215,7 @@ module Ladb::OpenCutList
       drawing_def.input_plane_manipulator.transformation = tai * drawing_def.input_plane_manipulator.transformation unless drawing_def.input_plane_manipulator.nil?
       drawing_def.input_line_manipulator.transformation = tai * drawing_def.input_line_manipulator.transformation unless drawing_def.input_line_manipulator.nil?
 
-      # STEP 2 : Populate faces and edges manipulators
+      # STEP 2 : Populate faces, edges and clines manipulators
 
       # Faces
       unless @ignore_faces
