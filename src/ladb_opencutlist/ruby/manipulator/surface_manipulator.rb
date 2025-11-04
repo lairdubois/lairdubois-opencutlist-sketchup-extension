@@ -3,13 +3,13 @@ module Ladb::OpenCutList
   require_relative 'manipulator'
   require_relative '../helper/layer_visibility_helper'
 
-  class SurfaceManipulator < TransformationManipulator
+  class SurfaceManipulator < Manipulator
 
     include LayerVisibilityHelper
 
     attr_reader :faces
 
-    def initialize(transformation = IDENTITY)
+    def initialize(transformation = IDENTITY, container_path = [])
       super
       @faces = []
     end

@@ -1,11 +1,11 @@
 module Ladb::OpenCutList
 
-  require_relative 'transformation_manipulator'
+  require_relative 'manipulator'
 
-  class LineManipulator < TransformationManipulator
+  class LineManipulator < Manipulator
 
-    def initialize(line, transformation = IDENTITY)
-      super(transformation)
+    def initialize(line, transformation = IDENTITY, container_path = [])
+      super(transformation, container_path)
       raise "Bad line data structure. Must be an Array." unless line.is_a?(Array)
       if line.length == 2
         raise "Bad plane data structure. Must be [ Geom::Point3d, Geom::Vector3d ]." unless line[0].is_a?(Geom::Point3d) && line[1].is_a?(Geom::Vector3d)

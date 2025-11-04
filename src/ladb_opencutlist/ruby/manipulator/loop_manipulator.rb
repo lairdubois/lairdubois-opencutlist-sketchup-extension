@@ -1,13 +1,13 @@
 module Ladb::OpenCutList
 
-  require_relative 'transformation_manipulator'
+  require_relative 'manipulator'
 
-  class LoopManipulator < TransformationManipulator
+  class LoopManipulator < Manipulator
 
     attr_reader :loop
 
-    def initialize(loop, transformation = IDENTITY)
-      super(transformation)
+    def initialize(loop, transformation = IDENTITY, container_path = [])
+      super(transformation, container_path)
       raise "loop must be a Sketchup::Loop." unless loop.is_a?(Sketchup::Loop)
       @loop = loop
     end
@@ -52,7 +52,7 @@ module Ladb::OpenCutList
     # -----
 
     def vertex_manipulators
-      @vertex_manipulators ||= @loop.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation) }
+      @vertex_manipulators ||= @loop.vertices.map { |vertex| VertexManipulator.new(vertex, @transformation, @container_path) }
       @vertex_manipulators
     end
 
