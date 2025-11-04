@@ -114,6 +114,7 @@ core:
       edit_part_instance_properties: Edytuj właściwości instancji
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +126,7 @@ core:
       dialog: OpenCutList
       smart_draw: Lista części
       smart_handle: Importuj części
+      smart_reshape: "Przebudować pomieszczenia "
       smart_paint: Malowanie części
       smart_axes: Orientuj części
       smart_export: Eksportuj części
@@ -155,6 +157,8 @@ core:
       Aby zgłosić błąd: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Formuła nie jest dostępna w tym kontekście
   error:
+    exception: "Błąd: : **{{ error }}**"
+    forbidden: "Błąd. Brak autoryzacji: **{{ error }}**"
     extern: "Błąd zewnętrzny : **{{ error }}**"
     feature_unavailable: "Ta funkcja wymaga programu SketchUp {{ version }} lub nowszego"
     failed_export_to: |
@@ -306,7 +310,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Pokaż / ukryj grupę
-      show_hide_blocks: ""
+      show_hide_blocks: Pokaż / Ukryj wszystkie grupy
       scroll_to_block: Przewiń do grupy
       not_available_std_width: "Szerokość *{{ std_dimension_real }}* nie jest zdefiniowana w standardowych szerokościach materiału '{{ material_name }}'"
       not_available_std_thickness: "Grubość *{{ std_dimension_real }}* nie jest zdefiniowana w standardowych grubościach materiału '{{ material_name }}'"
@@ -1129,6 +1133,11 @@ tab:
       option_hide_edges_preview_0: Wyświetlane na schemacie cięcia
       option_hide_edges_preview_1: Ukryte na schemacie cięcia
       option_hide_edges_preview_help: Umożliwia pokazanie lub ukrycie wizualnego wyświetlania obrzeży dla każdej części na schemacie cięcia.
+      option_zoom_threshold: Próg powiększenia
+      option_zoom_threshold_help: |
+        Pozwala określić szerokość diagramu, poniżej której diagramy są automatycznie powiększane.
+
+        *Powiększenie zostanie obliczone na podstawie najszerszego diagramu*.
       option_time_limit: Limit czasu
       option_time_limit_help: |
         Ustala czas przeznaczony na obliczenia
@@ -1737,13 +1746,15 @@ tab:
       is_active_node: Aktywna instancja w modelu
       set_active_node: Edytuj na modelu
       edit_node_properties: Edytuj właściwości
-      select_active_nodes: ""
+      select_active_nodes: Zaznacz / Odznacz wszystkie aktywne instancje
       select_node: Zaznacz
       unselect_node: Odznacz
       open_node_url: Otwórz adres URL części
     edit_node:
       title_model: "Właściwości modelu"
       title_instance: "Właściwości instancji **{{ name }}**"
+      title_instance_multiple: "Właściwości grupy instancji"
+      multiple_alert: "Wspólne właściwości grupy {{ node_count }} instancji."
       general: Główne
       name: Nazwa
       instance_name: Instancja
@@ -1754,7 +1765,22 @@ tab:
       tags: Plakietki
       layer_name: Etykieta
       explode: Pękać
-      explode_message: "Czy potwierdzasz podział instancji **{{ name }}**?"
+      explode_message: "Czy potwierdzasz rozbicie **{{ name }}**?"
+      erase: Wyczyść
+      erase_message: "Czy na pewno chcesz usunąć **{{ name }}**?"
+    deep_make_unique:
+      title: Utwórz unikalny obiekt
+    deep_rename_parts:
+      title: Zmień nazwy części
+      info_0: |
+        Ta funkcja umożliwia zmianę nazw części znajdujących się w wybranym zestawie poprzez zastosowanie poniższego wzoru do każdej instancji.
+      formula: Wzór
+      old_name: Pierwotna nazwa
+      new_name: Nowa nazwa
+      count: Liczba
+    create_container:
+      title_group: "Utwórz grupę"
+      title_component: "Utwórz komponent "
     option:
       general: Główne
       show_hidden_instances: Pokaż ukryte instancje
@@ -1770,6 +1796,7 @@ tab:
       no_entities: Twój model jest pusty!
       node_not_found: Nie znaleziono węzła
       entity_not_found: Nie znaleziono instancji
+      invalid_target: Nie można wykonać tej operacji na wybranej instancji
       obsolete_outliner: "Niemożliwe, wygenerowana struktura jest przestarzała. Zaktualizuj ją."
     tip:
       no_node: |
@@ -1926,6 +1953,7 @@ tab:
     language_auto: Automatyczny
     font_size: Rozmiar czcionki
     font_size_auto: $t(default.automatic)
+    font_size_normal: Normalny
     font_size_small: Mały
     font_size_tiny: Bardzo mały
     print_margin: Marginesy druku
@@ -2043,6 +2071,11 @@ tool:
       invalid_divider: "Iloraz {{ value }} jest nieprawidłowa"
       invalid_offset: "Przesunięcie {{ value }} jest nieprawidłowa"
       invalid_segment_count: "Liczba segmentów {{ value }} jest nieprawidłowa. Musi wynosić od 3 do 999."
+      syntax_error: "Błąd składni: {{ error }}"
+      unexpected_close_parenthesis: "Nieoczekiwany nawias zamykający"
+      missing_close_parenthesis: "Brakujący nawias zamykający"
+      missing_operand: "Brak argumentu"
+      zero_division: "Dzielenie przez zero "
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2091,6 +2124,8 @@ tool:
     title: Uchwyt
     action_0: Zaznacz
     action_0_status: "Kliknij część, aby ją zaznaczyć"
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: "Przeciągnij po identycznym elemencie, aby dodać go do zaznaczenia, i puść, aby kontynuować"
     action_1: Kopiuj w linii
     action_1_status: "Kliknij część, aby skopiować ją wzdłuż osi"
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2106,9 +2141,9 @@ tool:
     action_4: Rozmieść
     action_4_status: "Kliknij część, aby rozmieścić ją wzdłuż osi"
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: "Kliknij, aby ustawić pierwszy punkt pomiarowy"
     action_4_state_2_status: "Kliknij, aby ustawić drugi punkt pomiarowy lub wprowadź odległość"
-    action_5: Zmień rozmiar
     action_option_group_copy_measure_type: Pomiary
     action_option_group_move_measure_type: Pomiary
     action_option_group_axes: Osie
@@ -2127,6 +2162,17 @@ tool:
       copies_disable_mirror: Kopiowanie wielokrotne wyłącza opcję '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       min_distance: "Odległość {{ value1 }} jest mniejsza niż minimalna odległość {{ value2 }}"
+  smart_reshape:
+    title: Przebudować
+    action_0: Rozciągnąć
+    action_0_status: "Kliknij część, aby ją zaznaczyć"
+    action_option_group_stretch_measure_type: Pomiary
+    action_option_group_axes: Osie
+    action_option_stretch_measure_type_outside_status: Pomiar zewnętrzny
+    action_option_stretch_measure_type_offset_status: Zmierz różnice
+    action_option_axes_active_status: Manipuluj wzdłuż aktywnych osi
+    action_option_axes_context_status: Manipuluj wzdłuż osi grupy lub komponentu zawierającego element
+    action_option_axes_entity_status: Manipuluj wzdłuż osi elementu
   smart_paint:
     title: Farba
     default_material: Brak zdefiniowanego materiału
