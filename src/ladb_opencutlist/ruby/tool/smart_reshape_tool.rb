@@ -805,6 +805,8 @@ module Ladb::OpenCutList
 
       when STATE_RESHAPE_CUTTER_MOVE
         if @picked_cutter_index
+          _store_cutters
+          _load_cutters # Reload to sanitize
           set_state(STATE_RESHAPE_START)
           _refresh
           return true
@@ -814,6 +816,8 @@ module Ladb::OpenCutList
         if @snap_ratio
           @cutters[@snap_axis] << @snap_ratio
           @snap_ratio = nil
+          _store_cutters
+          _load_cutters # Reload to sanitize
           _refresh
         end
         return true
@@ -822,6 +826,8 @@ module Ladb::OpenCutList
         if @picked_cutter_index
           @cutters[@snap_axis].delete_at(@picked_cutter_index)
           @picked_cutter_index = nil
+          _store_cutters
+          _load_cutters # Reload to sanitize
           _refresh
         end
         return true
@@ -1016,11 +1022,7 @@ module Ladb::OpenCutList
 
       @src_transformation = Geom::Transformation.new(instance.transformation)
 
-      @cutters = {
-        X_AXIS => [ 0.5 ],
-        Y_AXIS => [ 0.5 ],
-        Z_AXIS => [ 0.5 ],
-      }
+      _load_cutters
 
       set_state(STATE_RESHAPE_START)
       _refresh
@@ -1652,6 +1654,42 @@ module Ladb::OpenCutList
 
       end
 
+    end
+
+    # -----
+
+    def _store_cutters
+      if @active_part_entity_path && @cutters
+        if (entity = @active_part_entity_path.last).respond_to?(:definition)
+          PLUGIN.set_attribute(entity.definition, "stretch_cutters", {
+            x: @cutters[X_AXIS],
+            y: @cutters[Y_AXIS],
+            z: @cutters[Z_AXIS],
+          })
+        end
+      end
+    end
+
+    def _load_cutters
+      if @active_part_entity_path
+        if (entity = @active_part_entity_path.last).respond_to?(:definition)
+          cutters = PLUGIN.get_attribute(entity.definition, "stretch_cutters")
+          fn_valid_cutters = lambda { |cutters, xyz|
+            if cutters.is_a?(Hash) &&
+               cutters[xyz].is_a?(Array) &&
+               (valid_cutters = cutters[xyz].map { |v| v.to_f }.select { |v| v > 0 && v < 1.0 }).any?
+              valid_cutters
+            else
+              [ 0.5 ]
+            end
+          }
+          @cutters = {
+            X_AXIS => fn_valid_cutters.call(cutters, 'x'),
+            Y_AXIS => fn_valid_cutters.call(cutters, 'y'),
+            Z_AXIS => fn_valid_cutters.call(cutters, 'z'),
+          }
+        end
+      end
     end
 
     # -----
