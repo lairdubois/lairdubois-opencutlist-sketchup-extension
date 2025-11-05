@@ -1466,15 +1466,11 @@ module Ladb::OpenCutList
       return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
 
       split_def, emv, lps, lpe = stretch_def.values_at(:split_def, :emv, :lps, :lpe)
-      et, section_defs, edge_defs = split_def.values_at(:et, :section_defs, :edge_defs)
+      et, evp0p1, section_defs, edge_defs = split_def.values_at(:et, :evp0p1, :section_defs, :edge_defs)
 
       dvs = section_defs.map { |section_def|
-        if emv.valid?
-          dv = Geom::Vector3d.new(emv)
-          dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
-        else
-          dv = Geom::Vector3d.new
-        end
+        dv = Geom::Vector3d.new(emv)
+        dv.length = dv.length * section_def[:index] / (section_defs.length - 1) if emv.valid?
         [ section_def, dv ]
       }.to_h
 
@@ -1497,14 +1493,41 @@ module Ladb::OpenCutList
 
       end
 
+      # eti = et.inverse
+      # epo = [ lps.transform(eti), lpe.transform(eti) ]
+      # epo.reverse! unless evp0p1.samedirection?(@snap_axis)
+      # l = [ epo[0], evp0p1 ]
+      # sd = section_defs
+      # sd = sd.reverse unless evp0p1.samedirection?(@snap_axis)
+      # rs = sd
+      #        .select { |section_def| section_def[:pt_bbox].valid? }
+      #        .each_cons(2).map { |section_def0, section_def1|
+      #   [
+      #     section_def0[:pt_bbox].max.project_to_line(l).offset!(dvs[section_def0]),
+      #     section_def1[:pt_bbox].min.project_to_line(l).offset!(dvs[section_def1]),
+      #     Geom.linear_combination(0.5, section_def0[:pt_bbox].max.project_to_line(l).offset!(dvs[section_def0]),
+      #                             0.5, section_def1[:pt_bbox].min.project_to_line(l).offset!(dvs[section_def1]))
+      #   ]
+      # }
+      #
+      # rs.each do |pmin, pmax, pl|
+      #   k_points = _create_floating_points(points: [pmin, pmax], stroke_color: Kuix::COLOR_BLACK)
+      #   k_points.transformation = et
+      #   @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+      #   k_points = _create_floating_points(points: pl, stroke_color: Kuix::COLOR_YELLOW)
+      #   k_points.transformation = et
+      #   @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+      # end
+      # k_points = _create_floating_points(points: epo[0], fill_color: Kuix::COLOR_YELLOW)
+      # k_points.transformation = et
+      # @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+
+
       # colors = [ Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA, Kuix::COLOR_YELLOW ]
       #
       # section_defs.each do |section_def|
       #
-      #   if emv.valid?
-      #     dv = Geom::Vector3d.new(emv)
-      #     dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
-      #   end
+      #   dv = dvs[section_def]
       #
       #   # if section_def[:bbox].valid?
       #   #   k_box = Kuix::BoxMotif.new
@@ -1520,7 +1543,7 @@ module Ladb::OpenCutList
       #   if section_def[:pt_bbox].valid?
       #     k_box = Kuix::BoxMotif.new
       #     k_box.bounds.copy!(section_def[:pt_bbox])
-      #     k_box.bounds.translate!(*dv.to_a) if emv.valid?
+      #     k_box.bounds.translate!(*dv.to_a)
       #     k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
       #     k_box.line_width = 2
       #     k_box.color = colors[section_def[:index] % colors.length]
@@ -1598,8 +1621,14 @@ module Ladb::OpenCutList
     def _stretch_entity
       return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
 
-      split_def, emv = stretch_def.values_at(:split_def, :emv)
-      evp0p1, section_defs, edge_defs, container_defs = split_def.values_at(:evp0p1, :section_defs, :edge_defs, :container_defs)
+      split_def, emv, lps, lpe = stretch_def.values_at(:split_def, :emv, :lps, :lpe)
+      et, evp0p1, section_defs, edge_defs, container_defs = split_def.values_at(:et, :evp0p1, :section_defs, :edge_defs, :container_defs)
+
+      dvs = section_defs.map { |section_def|
+        dv = Geom::Vector3d.new(emv)
+        dv.length = dv.length * section_def[:index] / (section_defs.length - 1) if emv.valid?
+        [ section_def, dv ]
+      }.to_h
 
       _unhide_instance
 
@@ -1611,8 +1640,7 @@ module Ladb::OpenCutList
           .group_by { |container_def| container_def[:section_def] }
           .each do |section_def, container_defs|
 
-          dv = Geom::Vector3d.new(emv)
-          dv.length = dv.length * section_def[:index] / (section_defs.length - 1) if dv.valid?
+          dv = dvs[section_def]
 
           container_defs.each do |container_def|
 
@@ -1639,8 +1667,7 @@ module Ladb::OpenCutList
           .sort_by { |section_def, _| section_def[:index] * sorting_order }.to_h
           .each do |section_def, edge_defs|
 
-          dv = Geom::Vector3d.new(emv)
-          dv.length = dv.length * section_def[:index] / (section_defs.length - 1) if dv.valid?
+          dv = dvs[section_def]
 
           edge_defs.group_by { |edge_def| edge_def[:edge].parent }.each do |parent, edge_defs|
 
@@ -1657,9 +1684,26 @@ module Ladb::OpenCutList
 
           end
 
-        model.commit_operation
+        end
 
-      end
+        # Adjust cutters
+        eti = et.inverse
+        epo = [ lps.transform(eti), lpe.transform(eti) ]
+        epo.reverse! unless evp0p1.samedirection?(@snap_axis)
+        l = [ epo[0], evp0p1 ]
+        sd = section_defs
+        sd = sd.reverse unless evp0p1.samedirection?(@snap_axis)
+        @cutters[@snap_axis] = sd
+               .select { |section_def| section_def[:pt_bbox].valid? }
+               .each_cons(2).map { |section_def0, section_def1|
+          epc = Geom.linear_combination(0.5, section_def0[:pt_bbox].max.project_to_line(l).offset!(dvs[section_def0]),
+                                        0.5, section_def1[:pt_bbox].min.project_to_line(l).offset!(dvs[section_def1]))
+          epo[0].vector_to(epc).length / epo[0].distance(epo[1])
+        }
+        _store_cutters
+        _load_cutters
+
+      model.commit_operation
 
     end
 
