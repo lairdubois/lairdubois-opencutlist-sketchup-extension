@@ -45,17 +45,16 @@ module Ladb::OpenCutList
                    ignore_faces: false,
                    ignore_surfaces: false,
                    face_validator: FACE_VALIDATOR_ALL,
-                   face_recursive: true,
-                   face_for_part: true,
 
                    ignore_edges: false,
                    ignore_soft_edges: true,
                    edge_validator: EDGE_VALIDATOR_ALL,
-                   edge_recursive: true,
-                   edge_for_part: true,
 
                    ignore_clines: true,
-                   cline_recursive: true
+
+                   for_part: true,
+                   recursive: true,
+                   flatten: true
 
     )
 
@@ -73,17 +72,16 @@ module Ladb::OpenCutList
       @ignore_faces = ignore_faces
       @ignore_surfaces = ignore_surfaces
       @face_validator = face_validator
-      @face_recursive = face_recursive
-      @face_for_part = face_for_part
 
       @ignore_edges = ignore_edges
       @ignore_soft_edges = ignore_soft_edges
       @edge_validator = edge_validator
-      @edge_recursive = edge_recursive
-      @edge_for_part = edge_for_part
 
       @ignore_clines = ignore_clines
-      @cline_recursive = cline_recursive
+
+      @for_part = for_part
+      @recursive = recursive
+      @flatten = flatten
 
     end
 
@@ -105,10 +103,13 @@ module Ladb::OpenCutList
       # Extract container path
       if drawing_element.is_a?(Sketchup::Group) || drawing_element.is_a?(Sketchup::ComponentInstance)
         container_path = @path
+        container = drawing_element
       elsif drawing_element.is_a?(Sketchup::Face)
         container_path = @path[0...-1]
+        container = @path.last
       else
         container_path = []
+        container = model
       end
 
       # Adapt local axes if model.active_path is container_path
@@ -137,7 +138,7 @@ module Ladb::OpenCutList
       end
 
       # Create output data structure
-      drawing_def = DrawingDef.new
+      drawing_def = DrawingDef.new(container)
 
       # STEP 1 : Determine output axes
 
@@ -215,73 +216,51 @@ module Ladb::OpenCutList
 
       # STEP 2 : Populate faces, edges and clines manipulators
 
-      # Faces
-      unless @ignore_faces
-
-        validator = nil
-        if drawing_def.input_plane_manipulator
-          case @face_validator
-          when FACE_VALIDATOR_ONE
-            validator = lambda { |face_manipulator|
-              face_manipulator == drawing_def.input_plane_manipulator
-            }
-          when FACE_VALIDATOR_COPLANAR
-            validator = lambda { |face_manipulator|
-              face_manipulator.coplanar?(drawing_def.input_plane_manipulator)
-            }
-          when FACE_VALIDATOR_PARALLEL
-            validator = lambda { |face_manipulator|
-              face_manipulator.parallel?(drawing_def.input_plane_manipulator)
-            }
-          when FACE_VALIDATOR_EXPOSED
-            validator = lambda { |face_manipulator|
-              !face_manipulator.perpendicular?(drawing_def.input_plane_manipulator) && drawing_def.input_plane_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
-            }
-          end
+      face_validator = nil
+      if drawing_def.input_plane_manipulator
+        case @face_validator
+        when FACE_VALIDATOR_ONE
+          face_validator = lambda { |face_manipulator|
+            face_manipulator == drawing_def.input_plane_manipulator
+          }
+        when FACE_VALIDATOR_COPLANAR
+          face_validator = lambda { |face_manipulator|
+            face_manipulator.coplanar?(drawing_def.input_plane_manipulator)
+          }
+        when FACE_VALIDATOR_PARALLEL
+          face_validator = lambda { |face_manipulator|
+            face_manipulator.parallel?(drawing_def.input_plane_manipulator)
+          }
+        when FACE_VALIDATOR_EXPOSED
+          face_validator = lambda { |face_manipulator|
+            !face_manipulator.perpendicular?(drawing_def.input_plane_manipulator) && drawing_def.input_plane_manipulator.angle_between(face_manipulator) < Math::PI / 2.0
+          }
         end
-
-        _populate_face_manipulators(drawing_def, entities, [], ttai, @face_recursive, &validator)
-
       end
 
-      # Edges
-      unless @ignore_edges
-
-        validator = nil
-
-        case @edge_validator
-        when EDGE_VALIDATOR_COPLANAR
-          validator = lambda { |edge_manipulator|
-            return false if drawing_def.input_plane_manipulator.nil?
+      edge_validator = nil
+      case @edge_validator
+      when EDGE_VALIDATOR_COPLANAR
+        edge_validator = lambda { |edge_manipulator|
+          return false if drawing_def.input_plane_manipulator.nil?
+          edge_manipulator.direction.perpendicular?(drawing_def.input_plane_manipulator.normal) && edge_manipulator.position.on_plane?(drawing_def.input_plane_manipulator.plane)
+        }
+      when EDGE_VALIDATOR_STRAY
+        edge_validator = lambda { |edge_manipulator|
+          edge_manipulator.edge.faces.empty?
+        }
+      when EDGE_VALIDATOR_STRAY_COPLANAR
+        edge_validator = lambda { |edge_manipulator|
+          return false if drawing_def.input_plane_manipulator.nil?
+          if edge_manipulator.edge.faces.empty?
             edge_manipulator.direction.perpendicular?(drawing_def.input_plane_manipulator.normal) && edge_manipulator.position.on_plane?(drawing_def.input_plane_manipulator.plane)
-          }
-        when EDGE_VALIDATOR_STRAY
-          validator = lambda { |edge_manipulator|
-            edge_manipulator.edge.faces.empty?
-          }
-        when EDGE_VALIDATOR_STRAY_COPLANAR
-          validator = lambda { |edge_manipulator|
-            return false if drawing_def.input_plane_manipulator.nil?
-            if edge_manipulator.edge.faces.empty?
-              edge_manipulator.direction.perpendicular?(drawing_def.input_plane_manipulator.normal) && edge_manipulator.position.on_plane?(drawing_def.input_plane_manipulator.plane)
-            else
-              false
-            end
-          }
-        end
-
-        _populate_edge_manipulators(drawing_def, entities, [], ttai, @edge_recursive, &validator)
-
+          else
+            false
+          end
+        }
       end
 
-      # Clines
-      unless @ignore_clines
-
-        validator = nil
-
-        _populate_cline_manipulators(drawing_def, entities, [], ttai, @cline_recursive, &validator)
-
-      end
+      _populate_manipulators(drawing_def, entities, ttai, face_validator, edge_validator)
 
       # STEP 3 : Customize origin
 
@@ -292,7 +271,7 @@ module Ladb::OpenCutList
         when ORIGIN_POSITION_EDGES_BOUNDS_MIN
           drawing_def.translate_to!(drawing_def.edges_bounds.min) if drawing_def.edges_bounds.valid?
         when ORIGIN_POSITION_CLINES_BOUNDS_MIN
-          drawing_def.translate_to!(drawing_def.edges_bounds.min) if drawing_def.clines_bounds.valid?
+          drawing_def.translate_to!(drawing_def.clines_bounds.min) if drawing_def.clines_bounds.valid?
         when ORIGIN_POSITION_BOUNDS_MIN
           drawing_def.translate_to!(drawing_def.bounds.min)
         end
@@ -323,105 +302,74 @@ module Ladb::OpenCutList
       [ x_axis, y_axis, z_axis, input_line_manipulator ]
     end
 
-    def _populate_face_manipulators(drawing_def, entities, relative_path, transformation = IDENTITY, recursive = true, &validator)
+    def _populate_manipulators(drawing_container_def, entities, transformation = IDENTITY, face_validator = nil, edge_validator = nil)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
+            next if @ignore_faces
             manipulator = FaceManipulator.new(entity, transformation)
-            if !block_given? || yield(manipulator)
+            if face_validator.nil? || face_validator.call(manipulator)
               unless @ignore_surfaces
                 if manipulator.belongs_to_a_surface?
-                  surface_manipulator = _get_surface_manipulator_by_face(drawing_def, entity, transformation)
+                  surface_manipulator = _get_surface_manipulator_by_face(drawing_container_def, entity, transformation)
                   if surface_manipulator.nil?
                     surface_manipulator = SurfaceManipulator.new(transformation).populate_from_face(entity)
-                    drawing_def.add_manipulator(:surface_manipulators, surface_manipulator, relative_path)
+                    drawing_container_def.add_manipulator(:surface_manipulators, surface_manipulator)
                   end
                   manipulator.surface_manipulator = surface_manipulator
                 end
               end
-              drawing_def.add_manipulator(:face_manipulators, manipulator, relative_path)
+              drawing_container_def.add_manipulator(:face_manipulators, manipulator)
             end
-          elsif recursive
-            if entity.is_a?(Sketchup::Group)
-              p = relative_path + [ entity ]
-              drawing_def.add_container(p, transformation)
-              _populate_face_manipulators(drawing_def, entity.entities, p, transformation * entity.transformation, recursive, &validator)
-            elsif entity.is_a?(Sketchup::ComponentInstance) && (!@face_for_part || entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-              p = relative_path + [ entity ]
-              drawing_def.add_container(p, transformation)
-              _populate_face_manipulators(drawing_def, entity.definition.entities, p, transformation * entity.transformation, recursive, &validator)
-            end
-          end
-        end
-      end
-    end
-
-    def _populate_edge_manipulators(drawing_def, entities, relative_path, transformation = IDENTITY, recursive = true, &validator)
-      entities.each do |entity|
-        if entity.visible? && _layer_visible?(entity.layer)
-          if entity.is_a?(Sketchup::Edge)
-            next if entity.soft? && @ignore_soft_edges
+          elsif entity.is_a?(Sketchup::Edge)
+            next if @ignore_edges || entity.soft? && @ignore_soft_edges
             manipulator = EdgeManipulator.new(entity, transformation)
-            if !block_given? || yield(manipulator)
+            if edge_validator.nil? || edge_validator.call(manipulator)
               if entity.curve.nil? || entity.curve.edges.length < 2  # Exclude curves that contain only one edge.
-                drawing_def.add_manipulator(:edge_manipulators, manipulator, relative_path)
+                drawing_container_def.add_manipulator(:edge_manipulators, manipulator)
               else
-                curve_manipulator = _get_curve_manipulator_by_edge(drawing_def, entity, transformation)
+                curve_manipulator = _get_curve_manipulator_by_edge(drawing_container_def, entity, transformation)
                 if curve_manipulator.nil?
                   curve_manipulator = CurveManipulator.new(entity.curve, transformation)
-                  drawing_def.add_manipulator(:curve_manipulators, curve_manipulator, relative_path)
+                  drawing_container_def.add_manipulator(:curve_manipulators, curve_manipulator)
                 end
               end
             end
-          elsif recursive
-            if entity.is_a?(Sketchup::Group)
-              p = relative_path + [ entity ]
-              drawing_def.add_container(p, transformation)
-              _populate_edge_manipulators(drawing_def, entity.entities, p, transformation * entity.transformation, recursive, &validator)
-            elsif entity.is_a?(Sketchup::ComponentInstance) && (!@edge_for_part || entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-              p = relative_path + [ entity ]
-              drawing_def.add_container(p, transformation)
-              _populate_edge_manipulators(drawing_def, entity.definition.entities, p, transformation * entity.transformation, recursive, &validator)
-            end
-          end
-        end
-      end
-    end
-
-    def _populate_cline_manipulators(drawing_def, entities, relative_path, transformation = IDENTITY, recursive = true, &validator)
-      entities.each do |entity|
-        if entity.visible? && _layer_visible?(entity.layer)
-          if entity.is_a?(Sketchup::ConstructionLine)
-            next if entity.start.nil? # Exclude infinite Clines
+          elsif entity.is_a?(Sketchup::ConstructionLine)
+            next if @ignore_clines || entity.start.nil? # Exclude infinite Clines
             manipulator = ClineManipulator.new(entity, transformation)
-            if !block_given? || yield(manipulator)
-              drawing_def.add_manipulator(:cline_manipulators, manipulator, relative_path)
-            end
-          elsif recursive
+            drawing_container_def.add_manipulator(:cline_manipulators, manipulator)
+          elsif @recursive
             if entity.is_a?(Sketchup::Group)
-              p = relative_path + [ entity ]
-              drawing_def.add_container(p, transformation)
-              _populate_cline_manipulators(drawing_def, entity.entities, p, transformation * entity.transformation, recursive, &validator)
-            elsif entity.is_a?(Sketchup::ComponentInstance) && (!@edge_for_part || entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
-              p = relative_path + [ entity ]
-              drawing_def.add_container(p, transformation)
-              _populate_cline_manipulators(drawing_def, entity.definition.entities, p, transformation * entity.transformation, recursive, &validator)
+              if @flatten
+                child_drawing_container_def = drawing_container_def
+              else
+                child_drawing_container_def = drawing_container_def.add_container(entity, transformation)
+              end
+              _populate_manipulators(child_drawing_container_def, entity.entities, transformation * entity.transformation, face_validator, edge_validator)
+            elsif entity.is_a?(Sketchup::ComponentInstance) && (!@for_part || entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
+              if @flatten
+                child_drawing_container_def = drawing_container_def
+              else
+                child_drawing_container_def = drawing_container_def.add_container(entity, transformation)
+              end
+              _populate_manipulators(child_drawing_container_def, entity.definition.entities, transformation * entity.transformation, face_validator, edge_validator)
             end
           end
         end
       end
     end
 
-    def _get_surface_manipulator_by_face(drawing_def, face, transformation)
-      drawing_def.surface_manipulators.each do |surface_manipulator|
+    def _get_surface_manipulator_by_face(drawing_container_def, face, transformation)
+      drawing_container_def.surface_manipulators.each do |surface_manipulator|
         next unless surface_manipulator.transformation.equal?(transformation) # Check if same context
         return surface_manipulator if surface_manipulator.include?(face)
       end
       nil
     end
 
-    def _get_curve_manipulator_by_edge(drawing_def, edge, transformation)
-      drawing_def.curve_manipulators.each do |curve_manipulator|
+    def _get_curve_manipulator_by_edge(drawing_container_def, edge, transformation)
+      drawing_container_def.curve_manipulators.each do |curve_manipulator|
         next unless curve_manipulator.transformation.equal?(transformation) # Check if same context
         return curve_manipulator if curve_manipulator.curve.equal?(edge.curve)
       end

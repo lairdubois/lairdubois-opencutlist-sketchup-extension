@@ -13,10 +13,10 @@ module Ladb::OpenCutList
       highlight_defs.each do |highlight_def|
 
         @drawing_def = CommonDrawingDecompositionWorker.new(highlight_def.path,
-           face_for_part: false,
            ignore_surfaces: true,
            ignore_edges: true,
-           ignore_clines: false
+           ignore_clines: false,
+           for_part: false
         ).run
         if @drawing_def.is_a?(DrawingDef)
 

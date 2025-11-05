@@ -2,14 +2,16 @@ module Ladb::OpenCutList
 
   require_relative '../data_container'
 
-  class DrawingContentDef < DataContainer
+  class DrawingContainerDef < DataContainer
 
     attr_accessor :transformation
-    attr_reader :face_manipulators, :surface_manipulators, :edge_manipulators, :curve_manipulators, :cline_manipulators
+    attr_reader :face_manipulators, :surface_manipulators, :edge_manipulators, :curve_manipulators, :cline_manipulators,
+                :container, :container_defs
 
-    def initialize
+    def initialize(container, transformation = Geom::Transformation.new)
 
-      @transformation = Geom::Transformation.new
+      @container = container
+      @transformation = transformation
 
       @bounds = nil
       @faces_bounds = nil
@@ -22,6 +24,14 @@ module Ladb::OpenCutList
       @curve_manipulators = []
       @cline_manipulators = []
 
+      @container_defs = []
+
+    end
+
+    # -----
+
+    def is_root?
+      false
     end
 
     # -----
@@ -48,20 +58,28 @@ module Ladb::OpenCutList
 
     # -----
 
+    def add_container(container, transformation)
+      container_def = DrawingContainerDef.new(container, transformation)
+      @container_defs << container_def
+      container_def
+    end
+
+    def add_manipulator(symbol, manipulator)
+      send(symbol) << manipulator
+    end
+    
+    # -----
+
     def transform!(transformation)
       return false if !transformation.is_a?(Geom::Transformation) || transformation.identity?
 
-      @transformation *= transformation
-
-      transform_manipulators!(transformation)
-      reset_bounds
-      true
-    end
-
-    def transform_manipulators!(transformation)
-      return false if !transformation.is_a?(Geom::Transformation) || transformation.identity?
-
       ti = transformation.inverse
+
+      if is_root?
+        @transformation *= transformation
+      else
+        @transformation = ti * @transformation
+      end
 
       @face_manipulators.each do |face_manipulator|
         face_manipulator.transformation = ti * face_manipulator.transformation
@@ -81,16 +99,27 @@ module Ladb::OpenCutList
         cline_manipulator.transformation = ti * cline_manipulator.transformation
       end
 
+      @container_defs.each do |container_def|
+        container_def.transform!(transformation)
+      end
+
+      reset_bounds
       true
     end
 
     # -----
 
     def reset_bounds
+
       @bounds = nil
       @faces_bounds = nil
       @edges_bounds = nil
       @clines_bounds = nil
+
+      @container_defs.each do |container_def|
+        container_def.reset_bounds
+      end
+
     end
 
     def compute_bounds
@@ -118,11 +147,18 @@ module Ladb::OpenCutList
       end
       @bounds.add(@clines_bounds) if @clines_bounds.valid?
 
+      @container_defs.each do |container_def|
+        @bounds.add(container_def.bounds) if container_def.bounds.valid?
+        @faces_bounds.add(container_def.faces_bounds) if container_def.faces_bounds.valid?
+        @edges_bounds.add(container_def.edges_bounds) if container_def.edges_bounds.valid?
+        @clines_bounds.add(container_def.clines_bounds) if container_def.clines_bounds.valid?
+      end
+
     end
 
   end
 
-  class DrawingDef < DrawingContentDef
+  class DrawingDef < DrawingContainerDef
 
     INPUT_VIEW_CUSTOM = nil
     INPUT_VIEW_TOP = 'top'.freeze
@@ -132,13 +168,10 @@ module Ladb::OpenCutList
     INPUT_VIEW_FRONT = 'front'.freeze
     INPUT_VIEW_BACK = 'back'.freeze
 
-    attr_reader :tree_content_defs
     attr_accessor :input_plane_manipulator, :input_line_manipulator, :input_view
 
-    def initialize
+    def initialize(container)
       super
-
-      @tree_content_defs = {}
 
       @input_plane_manipulator = nil
       @input_line_manipulator = nil
@@ -148,22 +181,8 @@ module Ladb::OpenCutList
 
     # -----
 
-    def add_container(path, transformation = IDENTITY)
-      unless @tree_content_defs.has_key?(path)
-        @tree_content_defs[path] = DrawingContentDef.new
-        @tree_content_defs[path].transformation = transformation
-      end
-    end
-
-    def add_manipulator(symbol, manipulator, container_path = nil)
-      send(symbol) << manipulator
-      container_path
-        .map.with_index { |_, i| container_path.take(i + 1) }
-        .each { |path|
-        unless (content_def = @tree_content_defs[path]).nil?
-          content_def.send(symbol) << manipulator
-        end
-      } unless container_path.nil?
+    def is_root?
+      true
     end
 
     # -----
@@ -174,18 +193,12 @@ module Ladb::OpenCutList
     end
 
     def transform!(transformation)
-      return false if !transformation.is_a?(Geom::Transformation) || transformation.identity?
+      return false unless super(transformation)
 
       ti = transformation.inverse
 
       @input_plane_manipulator.transformation = ti * @input_plane_manipulator.transformation unless @input_plane_manipulator.nil?
       @input_line_manipulator.transformation = ti * @input_line_manipulator.transformation unless @input_line_manipulator.nil?
-
-      super
-      @tree_content_defs.each do |_, content_def|
-        content_def.transformation *= transformation
-        content_def.reset_bounds
-      end
 
       true
     end

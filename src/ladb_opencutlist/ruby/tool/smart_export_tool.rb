@@ -650,7 +650,7 @@ module Ladb::OpenCutList
           input_plane_manipulator: @picker.picked_plane_manipulator,
           input_line_manipulator: @picker.picked_line_manipulator,
           edge_validator: CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR,
-          edge_recursive: false
+          recursive: false
         ).run
         if @active_drawing_def.is_a?(DrawingDef)
 

@@ -633,8 +633,7 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: true,
-        face_for_part: true,
-        edge_for_part: true,
+        flatten: false,
       }
     end
 
@@ -650,18 +649,28 @@ module Ladb::OpenCutList
 
     def _get_drawing_def_edit_bounds(drawing_def, et)
       eb = Geom::BoundingBox.new
-      if drawing_def.is_a?(DrawingContentDef)
+      if drawing_def.is_a?(DrawingContainerDef)
 
         eti = et.inverse
 
-        eb.add(drawing_def.face_manipulators
-                          .flat_map { |manipulator| manipulator.outer_loop_manipulator.points }
-                          .map { |point| point.transform(eti * drawing_def.transformation) }
-        ) if drawing_def.face_manipulators.any?
-        eb.add(drawing_def.cline_manipulators
-                          .flat_map { |manipulator| manipulator.points }
-                          .map { |point| point.transform(eti * drawing_def.transformation) }
-        ) if drawing_def.cline_manipulators.any?
+        fn = lambda do |drawing_container_def|
+
+          eb.add(drawing_container_def.face_manipulators
+                            .flat_map { |manipulator| manipulator.outer_loop_manipulator.points }
+                            .map { |point| point.transform(eti * drawing_def.transformation) }
+          ) if drawing_container_def.face_manipulators.any?
+          eb.add(drawing_container_def.cline_manipulators
+                            .flat_map { |manipulator| manipulator.points }
+                            .map { |point| point.transform(eti * drawing_def.transformation) }
+          ) if drawing_container_def.cline_manipulators.any?
+
+          drawing_container_def.container_defs.each do |child_drawing_container_def|
+            fn.call(child_drawing_container_def)
+          end
+
+        end
+
+        fn.call(drawing_def)
 
       end
       eb
@@ -1604,15 +1613,15 @@ module Ladb::OpenCutList
 
           container_defs.each do |container_def|
 
-            path = container_def[:path]
+            container = container_def[:container]
             section_def = container_def[:section_def]
             t = container_def[:transformation]
-            container = path.last
+            ti = t.inverse
 
             dv = Geom::Vector3d.new(emv)
             dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
 
-            container.transform!(Geom::Transformation.translation(dv.transform(t)))
+            container.transform!(Geom::Transformation.translation(dv.transform(ti)))
 
           end
 
@@ -1698,130 +1707,123 @@ module Ladb::OpenCutList
 
       end
 
-      grabbed_paths = []
-      grabbed_curves = []
-      grabbed_edges = []
-
       # Extract containers
       # ------------------
 
-      tree_content_defs = [[ [], drawing_def ]] + drawing_def.tree_content_defs.to_a
-      tree_content_defs.each do |path, content_def|
+      fn = lambda do |drawing_container_def, grabbed = false, depth = 0|
 
-        # Ignore if the path is a child of a grabbed path
-        next if grabbed_paths.find { |caught_path| (caught_path & path) == caught_path }
+        # k_box = Kuix::BoxMotif.new
+        # k_box.bounds.copy!(drawing_container_def.bounds)
+        # k_box.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
+        # k_box.line_width = 2
+        # k_box.color = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_MAGENTA ][depth % 4]
+        # k_box.transformation = et
+        # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
 
         # Check if content bounds is completely inside a section
-        if (section_def = section_defs.find { |section_def| section_def[:bbox].contains?(content_def.bounds) })
-
-          # Flag the path as grabbed
-          grabbed_paths << path
-
-          # Flag curves as grabbed
-          content_def.curve_manipulators.each do |cm|
-            grabbed_curves << cm.curve
-          end
-
-          # Flag edges as grabbed
-          content_def.edge_manipulators.each do |em|
-            grabbed_edges << em.edge
-          end
+        if !grabbed && (section_def = section_defs.find { |section_def| section_def[:bbox].contains?(drawing_container_def.bounds) })
 
           container_defs << {
-            path: path,
-            transformation: content_def.transformation,
+            container: drawing_container_def.container,
+            transformation: drawing_container_def.transformation,
             section_def: section_def,
           }
 
           # Add to content bbox
-          section_def[:pt_bbox].add(content_def.bounds)
+          section_def[:pt_bbox].add(drawing_container_def.bounds)
 
-          # k_box = Kuix::BoxMotif.new
-          # k_box.bounds.copy!(content_def.bounds)
-          # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          # k_box.line_width = section_def.nil? ? 1.5 : 2
-          # k_box.color = [ Kuix::COLOR_YELLOW, Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA ][(section_def[:index] % 3) - 1]
-          # k_box.transformation = et
-          # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+          k_box = Kuix::BoxMotif.new
+          k_box.bounds.copy!(drawing_container_def.bounds)
+          k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          k_box.line_width = 2
+          k_box.color = [ Kuix::COLOR_YELLOW, Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA ][(section_def[:index] % 3) - 1]
+          k_box.transformation = et
+          @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
 
-          next
+          grabbed = true
         end
 
-      end
+        # Extract edges
+        # -------------
 
-      # Extract edges
-      # -------------
+        # 1. Sort curves according to their "min" point relative to the opposite active grip
 
-      # 1. Sort curves according to their "min" point relative to the opposite active grip
+        reversed = evp0p1.valid? && !evp0p1.samedirection?(@snap_axis)
+        min_method = reversed ? :max : :min
+        xyz_method = { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@snap_axis]
 
-      reversed = evp0p1.valid? && !evp0p1.samedirection?(@snap_axis)
-      min_method = reversed ? :max : :min
-      xyz_method = { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@snap_axis]
+        curve_manipulators = drawing_container_def.curve_manipulators.sort_by { |cm| cm.bounds.send(min_method).send(xyz_method) }
+        curve_manipulators.reverse! if reversed
 
-      curve_manipulators = drawing_def.curve_manipulators.sort_by { |cm| cm.bounds.send(min_method).send(xyz_method) }
-      curve_manipulators.reverse! if reversed
+        # 2. Iterate on curves
 
-      # 2. Iterate on curves
+        curve_manipulators.each do |cm|
 
-      curve_manipulators.each do |cm|
+          # Treat curves as a whole undeformable entity
 
-        grabbed = grabbed_curves.include?(cm.curve)
-
-        # Treat curves as a whole undeformable entity
-
-        section_def = v_s[cm.curve.first_edge.start]
-        section_def = v_s[cm.curve.last_edge.end] if section_def.nil?
-        section_def = section_defs.find { |s| s[:bbox].intersect(cm.bounds).valid? } if section_def.nil?
-        unless section_def.nil?
-          cm.curve.edges.each do |edge|
-            edge_defs << {
-              edge: edge,
-              transformation: cm.transformation,
-              start_section_def: section_def,
-              end_section_def: section_def,
-              grabbed: grabbed,
-            }
-            v_s[edge.start] = section_def
-            v_s[edge.end] = section_def
+          section_def = v_s[cm.curve.first_edge.start]
+          section_def = v_s[cm.curve.last_edge.end] if section_def.nil?
+          section_def = section_defs.find { |s| s[:bbox].intersect(cm.bounds).valid? } if section_def.nil?
+          unless section_def.nil?
+            cm.curve.edges.each do |edge|
+              edge_defs << {
+                edge: edge,
+                transformation: cm.transformation,
+                start_section_def: section_def,
+                end_section_def: section_def,
+                grabbed: grabbed,
+              }
+              v_s[edge.start] = section_def
+              v_s[edge.end] = section_def
+            end
+            section_def[:pt_bbox].add(cm.points)  # Add to content bbox
           end
-          section_def[:pt_bbox].add(cm.points)  # Add to content bbox
+
+        end
+
+        # 3. Iterate on edges
+
+        drawing_container_def.edge_manipulators.each do |em|
+
+          start_section_def = v_s[em.edge.start]
+          if start_section_def.nil?
+            start_section_def = section_defs.find { |s| s[:bbox].contains?(em.start_point) }
+            v_s[em.edge.start] = start_section_def
+          end
+          end_section_def = v_s[em.edge.end]
+          if end_section_def.nil?
+            end_section_def = section_defs.find { |s| s[:bbox].contains?(em.end_point) }
+            v_s[em.edge.end] = end_section_def
+          end
+
+          next if start_section_def.nil? || end_section_def.nil?  # TODO : Manage this case
+
+          edge_defs << {
+            edge: em.edge,
+            transformation: em.transformation,
+            start_section_def: start_section_def,
+            end_section_def: end_section_def,
+            grabbed: grabbed
+          }
+
+          if !grabbed &&
+             start_section_def == end_section_def &&
+             em.edge.start.edges.all? { |edge| edge.curve.nil? } && em.edge.end.edges.all? { |edge| edge.curve.nil? }
+            start_section_def[:pt_bbox].add(em.points)  # Add to content bbox
+          end
+
+        end
+
+        # 4. Iterate over children
+
+        depth += 1
+        drawing_container_def.container_defs.each do |child_drawing_container_def|
+          fn.call(child_drawing_container_def, grabbed, depth)
         end
 
       end
 
-      # 3. Iterate on edges
-
-      drawing_def.edge_manipulators.each do |em|
-
-        grabbed = grabbed_edges.include?(em.edge)
-
-        start_section_def = v_s[em.edge.start]
-        if start_section_def.nil?
-          start_section_def = section_defs.find { |s| s[:bbox].contains?(em.start_point) }
-          v_s[em.edge.start] = start_section_def
-        end
-        end_section_def = v_s[em.edge.end]
-        if end_section_def.nil?
-          end_section_def = section_defs.find { |s| s[:bbox].contains?(em.end_point) }
-          v_s[em.edge.end] = end_section_def
-        end
-
-        next if start_section_def.nil? || end_section_def.nil?  # TODO : Manage this case
-
-        edge_defs << {
-          edge: em.edge,
-          transformation: em.transformation,
-          start_section_def: start_section_def,
-          end_section_def: end_section_def,
-          grabbed: grabbed
-        }
-
-        if start_section_def == end_section_def &&
-           em.edge.start.edges.all? { |edge| edge.curve.nil? } && em.edge.end.edges.all? { |edge| edge.curve.nil? }
-          start_section_def[:pt_bbox].add(em.points)  # Add to content bbox
-        end
-
-      end
+      fn.call(drawing_def)
 
       @split_def = {
         drawing_def: drawing_def,
