@@ -202,6 +202,8 @@ module Ladb::OpenCutList
       @instances = []
       @drawing_def = nil
 
+      @startup_state = STATE_SELECT
+
     end
 
     # ------
@@ -280,7 +282,7 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def get_startup_state
-      STATE_SELECT
+      @startup_state
     end
 
     def get_state_cursor(state)
@@ -322,6 +324,7 @@ module Ladb::OpenCutList
     # -----
 
     def onToolCancel(tool, reason, view)
+      super
 
       if @tool.callback_action_handler.nil?
 
@@ -717,6 +720,15 @@ module Ladb::OpenCutList
 
     def start
       super
+
+      if @previous_action_handler &&
+         @previous_action_handler.is_a?(SmartReshapeStretchActionHandler)
+
+        # After a "restart" we want to catch VCB input so we change the "startup state"
+        @startup_state = @state
+
+      end
+
     end
 
     def stop
@@ -870,7 +882,6 @@ module Ladb::OpenCutList
       when STATE_RESHAPE_CUTTER_MOVE
 
         @mouse_snap_point = nil
-        @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
         @tool.remove_3d([LAYER_3D_CUTTERS_PREVIEW ])
@@ -881,7 +892,6 @@ module Ladb::OpenCutList
       when STATE_RESHAPE_CUTTER_ADD
 
         @mouse_snap_point = nil
-        @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
         @tool.remove_3d([LAYER_3D_CUTTERS_PREVIEW ])
@@ -892,7 +902,6 @@ module Ladb::OpenCutList
       when STATE_RESHAPE_CUTTER_REMOVE
 
         @mouse_snap_point = nil
-        @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
         @tool.remove_3d([LAYER_3D_CUTTERS_PREVIEW ])
@@ -1118,19 +1127,9 @@ module Ladb::OpenCutList
 
       direction = @snap_axis.transform(et)
 
-      # if @mouse_ip.degrees_of_freedom > 2 ||
-      #    @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1
-
       picked_point, _ = Geom::closest_points([@picked_cutter_start_point, direction ], view.pickray(x, y))
       @mouse_snap_point = picked_point
       @mouse_ip.clear
-
-      # else
-      #
-      #   # Force picked point to be projected to shape last picked point normal line
-      #   @mouse_snap_point = @mouse_ip.position.project_to_line([ @picked_section_start_point, direction ])
-      #
-      # end
 
       min = eb.min.transform(et)
       max = eb.max.transform(et)
@@ -1157,8 +1156,6 @@ module Ladb::OpenCutList
     end
 
     def _snap_reshape_cutter_add(flags, x, y, view)
-
-      @mouse_ip.clear
 
       @snap_ratio = nil
       @picked_cutter_index = nil
@@ -1209,8 +1206,6 @@ module Ladb::OpenCutList
     end
 
     def _snap_reshape_cutter_remove(flags, x, y, view)
-
-      @mouse_ip.clear
 
       @picked_cutter_index = nil
 
@@ -1606,47 +1601,59 @@ module Ladb::OpenCutList
       split_def, emv = stretch_def.values_at(:split_def, :emv)
       evp0p1, section_defs, edge_defs, container_defs = split_def.values_at(:evp0p1, :section_defs, :edge_defs, :container_defs)
 
-      if emv.valid?
+      _unhide_instance
 
-        _unhide_instance
+      model = Sketchup.active_model
+      model.start_operation('OCL Stretch Part', true, false, !active?)
 
-        model = Sketchup.active_model
-        model.start_operation('OCL Stretch Part', true, false, !active?)
+        # Move containers
+        container_defs
+          .group_by { |container_def| container_def[:section_def] }
+          .each do |section_def, container_defs|
+
+          dv = Geom::Vector3d.new(emv)
+          dv.length = dv.length * section_def[:index] / (section_defs.length - 1) if dv.valid?
 
           container_defs.each do |container_def|
 
             container = container_def[:container]
-            section_def = container_def[:section_def]
             t = container_def[:transformation]
-            ti = t.inverse
 
-            dv = Geom::Vector3d.new(emv)
-            dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
+            target_position = container_def[:ref_position]
+            target_position = target_position.offset(dv.transform(t.inverse)) if dv.valid?
+            current_position = ORIGIN.transform(container.transformation)
 
-            container.transform!(Geom::Transformation.translation(dv.transform(ti)))
+            v = current_position.vector_to(target_position)
+
+            container.transform!(Geom::Transformation.translation(v)) if v.valid?
 
           end
 
-          sorting_order = (emv.valid? && emv.samedirection?(evp0p1)) ? -1 : 1
+        end
 
-          edge_defs
-            .select { |edge_def| !edge_def[:grabbed] && edge_def[:start_section_def] == edge_def[:end_section_def] }
-            .group_by { |edge_def| edge_def[:start_section_def] }
-            .sort_by { |section_def, _| section_def[:index] * sorting_order }.to_h
-            .each do |section_def, edge_defs|
+        # Move edges
+        sorting_order = (emv.valid? && emv.samedirection?(evp0p1)) ? -1 : 1
+        edge_defs
+          .select { |edge_def| !edge_def[:grabbed] && edge_def[:start_section_def] == edge_def[:end_section_def] }
+          .group_by { |edge_def| edge_def[:start_section_def] }
+          .sort_by { |section_def, _| section_def[:index] * sorting_order }.to_h
+          .each do |section_def, edge_defs|
 
-            dv = Geom::Vector3d.new(emv)
-            dv.length = dv.length * section_def[:index] / (section_defs.length - 1)
+          dv = Geom::Vector3d.new(emv)
+          dv.length = dv.length * section_def[:index] / (section_defs.length - 1) if dv.valid?
 
-            edge_defs.group_by { |edge_def| edge_def[:edge].parent }.each do |parent, edge_defs|
+          edge_defs.group_by { |edge_def| edge_def[:edge].parent }.each do |parent, edge_defs|
 
-              edge_def0 = edge_defs.first
-              t = edge_def0[:transformation]
-              ti = t.inverse
+            edge_def0 = edge_defs.first
+            t = edge_def0[:transformation]
 
-              parent.entities.transform_entities(Geom::Transformation.translation(dv.transform(ti)), edge_defs.map { |edge_def| edge_def[:edge] })
+            target_position = edge_def0[:ref_position]
+            target_position = target_position.offset(dv.transform(t.inverse)) if dv.valid?
+            current_position = edge_def0[:edge].start.position
 
-            end
+            v = current_position.vector_to(target_position)
+
+            parent.entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def[:edge] }) if v.valid?
 
           end
 
@@ -1764,19 +1771,20 @@ module Ladb::OpenCutList
           container_defs << {
             container: drawing_container_def.container,
             transformation: drawing_container_def.transformation,
+            ref_position: ORIGIN.transform(drawing_container_def.container.transformation),
             section_def: section_def,
           }
 
           # Add to content bbox
           section_def[:pt_bbox].add(drawing_container_def.bounds)
 
-          k_box = Kuix::BoxMotif.new
-          k_box.bounds.copy!(drawing_container_def.bounds)
-          k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          k_box.line_width = 2
-          k_box.color = [ Kuix::COLOR_YELLOW, Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA ][(section_def[:index] % 3) - 1]
-          k_box.transformation = et
-          @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+          # k_box = Kuix::BoxMotif.new
+          # k_box.bounds.copy!(drawing_container_def.bounds)
+          # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+          # k_box.line_width = 2
+          # k_box.color = [ Kuix::COLOR_YELLOW, Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA ][(section_def[:index] % 3) - 1]
+          # k_box.transformation = et
+          # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
 
           grabbed = true
         end
@@ -1807,6 +1815,7 @@ module Ladb::OpenCutList
               edge_defs << {
                 edge: edge,
                 transformation: cm.transformation,
+                ref_position: edge.start.position,
                 start_section_def: section_def,
                 end_section_def: section_def,
                 grabbed: grabbed,
@@ -1839,6 +1848,7 @@ module Ladb::OpenCutList
           edge_defs << {
             edge: em.edge,
             transformation: em.transformation,
+            ref_position: em.edge.start.position,
             start_section_def: start_section_def,
             end_section_def: end_section_def,
             grabbed: grabbed

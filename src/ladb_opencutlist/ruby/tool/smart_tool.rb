@@ -1739,6 +1739,10 @@ module Ladb::OpenCutList
       false
     end
 
+    def onToolCancel(tool, reason, view)
+      @previous_action_handler = nil
+    end
+
     # -----
 
     def onStateChanged(state)

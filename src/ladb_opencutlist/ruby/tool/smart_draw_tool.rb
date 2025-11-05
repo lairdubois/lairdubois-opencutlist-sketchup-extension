@@ -335,6 +335,7 @@ module Ladb::OpenCutList
     end
 
     def onToolCancel(tool, reason, view)
+      super
 
       case @state
 

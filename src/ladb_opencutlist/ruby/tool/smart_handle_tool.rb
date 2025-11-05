@@ -396,6 +396,7 @@ module Ladb::OpenCutList
     # -----
 
     def onToolCancel(tool, reason, view)
+      super
 
       if @tool.callback_action_handler.nil?
 
