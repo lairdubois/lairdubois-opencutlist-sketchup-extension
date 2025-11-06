@@ -2182,6 +2182,8 @@ tool:
     action_option_axes_active_status: Manipuler le long des axes actifs
     action_option_axes_context_status: Manipuler le long des axes du groupe ou composant contenant la pièce
     action_option_axes_entity_status: Manipuler le long des axes de la pièce
+    error:
+      curve_intersect: L'un des plans de coupe traverse un élément non étirable (courbe ou accessoire)
   smart_paint:
     title: Colorier
     default_material: Sans matière

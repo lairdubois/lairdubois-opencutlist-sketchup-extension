@@ -813,7 +813,7 @@ module Ladb::OpenCutList
           @picked_reshape_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
           @mouse_down_point = nil
 
-          set_state(STATE_RESHAPE)
+          set_state(STATE_RESHAPE) if _assert_valid_cutters
           _refresh
           return true
         end
@@ -883,7 +883,7 @@ module Ladb::OpenCutList
             @picked_reshape_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
 
             @mouse_down_point = nil
-            set_state(STATE_RESHAPE)
+            set_state(STATE_RESHAPE) if _assert_valid_cutters
           end
         end
 
@@ -1531,7 +1531,7 @@ module Ladb::OpenCutList
 
       # colors = [ Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA, Kuix::COLOR_YELLOW ]
       #
-      # section_defs = split_def.values_at(:section_defs)
+      # section_defs, _ = split_def.values_at(:section_defs)
       # section_defs.each do |section_def|
       #
       #   dv = edvs[section_def]
@@ -1631,6 +1631,24 @@ module Ladb::OpenCutList
         flatten: false,
         for_part: true,
       }
+    end
+
+    # -----
+
+    def _assert_valid_cutters
+      return false if !@cutters.is_a?(Hash) ||
+                      @snap_axis.nil? ||
+                      !(ratios = @cutters[@snap_axis]).is_a?(Array) || ratios.empty? ||
+                      (section_defs, _ = _get_split_def.values_at(:section_defs)).nil?
+
+      # Check section bboxes
+      unless section_defs.all? { |section_def| section_def[:bbox].contains?(section_def[:pt_bbox]) }
+        UI.beep
+        @tool.notify_errors([ "tool.smart_reshape.error.curve_intersect" ])
+        return false
+      end
+
+      true
     end
 
     # -----
