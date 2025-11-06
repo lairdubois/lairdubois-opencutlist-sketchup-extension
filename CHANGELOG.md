@@ -22,6 +22,8 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2025-11-06
+  * Fixed PackingSolver [issue #267](https://github.com/fontanf/packingsolver/issues/267)
 ### 2025-10-21
   * Added absolute and relative point read from VCB - [discussion](https://forums.sketchup.com/t/explore-the-opencutlist-lab/341006/13)
 ### 2025-10-19
