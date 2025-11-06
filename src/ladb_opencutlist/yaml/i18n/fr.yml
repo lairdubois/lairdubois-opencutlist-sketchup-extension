@@ -2166,6 +2166,15 @@ tool:
     title: Remodeler
     action_0: Etirer
     action_0_status: Cliquez sur une pièce pour la sélectionner
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: Cliquez sur une poignée pour étirer
+    action_0_state_1a_status: Cliquez sur un plan de coupe pour le déplacer
+    action_0_state_1b_status: Ajouter un plan de coupe
+    action_0_state_1c_status: Effacer un plan de coupe
+    action_0_state_10_status: Faites glisser le plan de coupe pour le déplacer
+    action_0_state_11_status: Cliquez pour ajouter le plan de coupe
+    action_0_state_12_status: Cliquez sur un plan de coupe pour le supprimer
+    action_0_state_2_status: Cliquez pour valider l'étirement ou entrez une distance
     action_option_group_stretch_measure_type: Mesure
     action_option_group_axes: Axes
     action_option_stretch_measure_type_outside_status: Mesurer à l'extérieur

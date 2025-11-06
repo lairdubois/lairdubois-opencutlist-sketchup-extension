@@ -306,15 +306,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
-
-      case state
-
-      when STATE_SELECT, STATE_SELECT_SIBLINGS, STATE_RESHAPE_START, STATE_RESHAPE
-        return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_status") + '.'
-
-      end
-
-      super
+      PLUGIN.get_i18n_string("tool.smart_reshape.action_#{@action}_state_#{state}_status") + '.'
     end
 
     def get_state_vcb_label(state)
@@ -732,6 +724,23 @@ module Ladb::OpenCutList
 
     def stop
       _unhide_instance
+      super
+    end
+
+    # -----
+
+    def get_state_status(state)
+
+      case state
+
+      when STATE_RESHAPE_START
+        return super +
+               "#{(' ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1a_status") + '.') unless @snap_axis.nil?}" +
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1b_status") + '.' +
+               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1c_status") + '.'
+
+      end
+
       super
     end
 
