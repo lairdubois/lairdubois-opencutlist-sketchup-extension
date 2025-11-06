@@ -383,7 +383,7 @@ module Ladb::OpenCutList
 
     def onToolMouseLeave(tool, view)
       @tool.remove_all_2d
-      @tool.remove_3d([LAYER_3D_RESHAPE_PREVIEW ])
+      @tool.remove_3d([ LAYER_3D_RESHAPE_PREVIEW ])
       @mouse_ip.clear
       view.tooltip = ''
       super
@@ -492,19 +492,6 @@ module Ladb::OpenCutList
       eb = _get_drawing_def_edit_bounds(_get_drawing_def, et)
 
       @picked_reshape_start_point = eb.center.transform(et)
-
-    end
-
-    def onToolActionOptionStored(tool, action, option_group, option)
-
-      if option_group == SmartReshapeTool::ACTION_OPTION_AXES && !@active_part.nil?
-
-        et = _get_edit_transformation
-        eb = _get_drawing_def_edit_bounds(_get_drawing_def, et)
-
-        @picked_reshape_start_point = eb.center.transform(et)
-
-      end
 
     end
 
@@ -744,6 +731,17 @@ module Ladb::OpenCutList
       super
     end
 
+    def get_state_vcb_label(state)
+
+      case state
+
+      when STATE_RESHAPE
+        return PLUGIN.get_i18n_string("tool.default.vcb_distance")
+
+      end
+
+      super    end
+
     # -----
 
     def onToolSuspend(tool, view)
@@ -922,6 +920,11 @@ module Ladb::OpenCutList
       false
     end
 
+    def onToolMouseLeave(tool, view)
+      @tool.remove_3d([ LAYER_3D_PART_PREVIEW, LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
+      super
+    end
+
     def onToolKeyDown(tool, key, repeat, flags, view)
 
       case @state
@@ -995,6 +998,15 @@ module Ladb::OpenCutList
       end
 
       false
+    end
+
+    def onToolActionOptionStored(tool, action, option_group, option)
+
+      if option_group == SmartReshapeTool::ACTION_OPTION_AXES && @state > STATE_RESHAPE_START
+        set_state(STATE_RESHAPE_START)
+        _refresh
+      end
+
     end
 
     def onStateChanged(state)
@@ -1605,11 +1617,26 @@ module Ladb::OpenCutList
     def _read_reshape(tool, text, view)
       return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
 
-      lps, lpe = stretch_def.values_at(:lps, :lpe)
+      emv, lps, lpe, split_def = stretch_def.values_at(:emv, :lps, :lpe, :split_def)
+      max_compression_distance, reversed = split_def.values_at(:max_compression_distance, :reversed)
       v = lps.vector_to(lpe)
 
       distance = _read_user_text_length(tool, text, v.length)
       return true if distance.nil?
+
+      # Error if distance < 0 and the measure type is outside
+      if _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE && distance < 0
+        tool.notify_errors([ [ "tool.default.error.invalid_length", { :value => distance.to_l } ] ])
+        return false
+      end
+
+      # Error if max distance exceeded
+      compressed = emv.valid? && (reversed ? emv.samedirection?(@snap_axis) : !emv.samedirection?(@snap_axis))
+      compressed = !compressed if distance < 0
+      if compressed && @picked_reshape_start_point.distance(lps.offset(v, distance)) > max_compression_distance
+        tool.notify_errors([ [ "tool.smart_reshape.error.gt_max_distance", { :value1 => distance.abs.to_l, :value2 => max_compression_distance.abs.to_l } ] ])
+        return false
+      end
 
       @picked_reshape_end_point = lps.offset(v, distance)
 
@@ -1641,8 +1668,8 @@ module Ladb::OpenCutList
                       !(ratios = @cutters[@snap_axis]).is_a?(Array) || ratios.empty? ||
                       (section_defs, _ = _get_split_def.values_at(:section_defs)).nil?
 
-      # Check section bboxes
-      unless section_defs.all? { |section_def| section_def[:bbox].contains?(section_def[:pt_bbox]) }
+      # Check section pt_boxes oversize
+      unless section_defs.all? { |section_def| !section_def[:pt_bbox].valid? || section_def[:bbox].contains?(section_def[:pt_bbox]) }
         UI.beep
         @tool.notify_errors([ "tool.smart_reshape.error.curve_intersect" ])
         return false
@@ -1960,6 +1987,18 @@ module Ladb::OpenCutList
 
       fn_analyse.call(drawing_def)
 
+      # Compute max compression distance
+      el = [ eps, evpspe ]
+      sd = section_defs
+      sd = sd.reverse if reversed
+      min_distance = sd
+        .select { |section_def| section_def[:pt_bbox].valid? }
+        .each_cons(2).map { |section_def0, section_def1|
+          section_def0[:pt_bbox].max.project_to_line(el).transform(et).distance(section_def1[:pt_bbox].min.project_to_line(el).transform(et))
+        }
+        .min
+      max_compression_distance = [ (min_distance * (section_defs.size - 1)) - 1.mm, 0 ].max # Keep 1mm to avoid geometry merge problems
+
       @split_def = {
         drawing_def: drawing_def,
         et: et,
@@ -1970,6 +2009,7 @@ module Ladb::OpenCutList
         epe: epe,
         evpspe: evpspe,
         reversed: reversed,
+        max_compression_distance: max_compression_distance,
         section_defs: section_defs,
         edge_defs: edge_defs,
         container_defs: container_defs,
@@ -1979,13 +2019,21 @@ module Ladb::OpenCutList
     def _get_stretch_def(ps, pe)
       return nil if (split_def = _get_split_def).nil?
 
-      et, eps, section_defs = split_def.values_at(:et, :eps, :section_defs)
+      et, eps, max_compression_distance, section_defs, reversed = split_def.values_at(:et, :eps, :max_compression_distance, :section_defs, :reversed)
       eti = et.inverse
 
       mv = ps.vector_to(pe)     # Move vector in global space
       emv = mv.transform(eti)   # Move vector in edit space
 
-      # Move vectors for each section
+      # Limit move to max compression distance
+      compressed = emv.valid? && (reversed ? emv.samedirection?(@snap_axis) : !emv.samedirection?(@snap_axis))
+      if compressed && mv.length > max_compression_distance
+        pe = ps.offset(mv, max_compression_distance)
+        mv = ps.vector_to(pe)
+        emv = mv.transform(eti)
+      end
+
+      # Compute move vectors for each section
       edvs = section_defs.map { |section_def|
         edv = Geom::Vector3d.new(emv)
         edv.length = edv.length * section_def[:index] / (section_defs.length - 1) if emv.valid?

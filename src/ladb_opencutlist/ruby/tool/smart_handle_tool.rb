@@ -1315,7 +1315,7 @@ module Ladb::OpenCutList
 
       # Error if min distance
       if distance < dmin
-        tool.notify_errors([ [ "tool.smart_handle.error.min_distance", { :value1 => distance.to_l, :value2 => dmin.to_l } ] ])
+        tool.notify_errors([ [ "tool.default.error.lt_min_distance", { :value1 => distance.to_l, :value2 => dmin.to_l } ] ])
         return false
       end
 
@@ -1894,7 +1894,7 @@ module Ladb::OpenCutList
 
         # Error if min distance
         if distance_x < dminx
-          tool.notify_errors([ [ "tool.smart_handle.error.min_distance", { :value1 => distance_x.to_l, :value2 => dminx.to_l } ] ])
+          tool.notify_errors([ [ "tool.default.error.lt_min_distance", { :value1 => distance_x.to_l, :value2 => dminx.to_l } ] ])
           return false
         end
 
@@ -1903,7 +1903,7 @@ module Ladb::OpenCutList
 
         # Error if min distance
         if distance_y < dminy
-          tool.notify_errors([ [ "tool.smart_handle.error.min_distance", { :value1 => distance_y.to_l, :value2 => dminy.to_l } ] ])
+          tool.notify_errors([ [ "tool.default.error.lt_min_distance", { :value1 => distance_y.to_l, :value2 => dminy.to_l } ] ])
           return false
         end
 
