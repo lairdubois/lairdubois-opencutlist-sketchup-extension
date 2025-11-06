@@ -1964,21 +1964,25 @@ module Ladb::OpenCutList
       et, eps, section_defs = split_def.values_at(:et, :eps, :section_defs)
       eti = et.inverse
 
-      mv = ps.vector_to(pe)
-      emv = mv.transform(eti)
+      mv = ps.vector_to(pe)     # Move vector in global space
+      emv = mv.transform(eti)   # Move vector in edit space
 
+      # Move vectors for each section
       edvs = section_defs.map { |section_def|
         edv = Geom::Vector3d.new(emv)
         edv.length = edv.length * section_def[:index] / (section_defs.length - 1) if emv.valid?
         [ section_def, edv ]
       }.to_h
 
+      lps = _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE ? eps.transform(et) : ps
+      lpe = pe
+
       {
         split_def: split_def,
         emv: emv,
         edvs: edvs,
-        lps: _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE ? eps.transform(et) : ps,
-        lpe: pe,
+        lps: lps,
+        lpe: lpe,
       }
     end
 
