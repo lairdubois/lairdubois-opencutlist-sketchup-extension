@@ -1796,7 +1796,7 @@ tab:
       no_entities: Your model is empty!
       node_not_found: Node not found
       entity_not_found: Instance not found
-      invalid_target: The targeted instance does not support this operation.
+      invalid_target: The targeted instance does not support this operation
       obsolete_outliner: "Impossible, the generated structure is obsolete. Please, regenerate it."
     tip:
       no_node: |
@@ -2076,6 +2076,8 @@ tool:
       missing_close_parenthesis: "Missing closing parenthesis"
       missing_operand: "Missing operand"
       zero_division: "Division by zero"
+      lt_min_distance: The distance {{ value1 }} is less than the minimum distance of {{ value2 }}
+      gt_max_distance: The distance {{ value1 }} is greater than the maximum distance of {{ value2 }}
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2125,7 +2127,7 @@ tool:
     action_0: Select
     action_0_status: Click on a part to select it
     action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: Slide over an identical piece to add it to the selection and release to continue.
+    action_0_state_4_status: Slide over an identical piece to add it to the selection and release to continue
     action_1: Copy in Line
     action_1_status: Click on a part to copy it along an axis
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2166,6 +2168,15 @@ tool:
     title: Redesign
     action_0: Stretch
     action_0_status: Click on a part to select it
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: Click on a handle to stretch
+    action_0_state_1a_status: Clicking on a cutting plane to move it
+    action_0_state_1b_status: Add a cutting plane
+    action_0_state_1c_status: Delete a cutting plane
+    action_0_state_10_status: Drag the cutting plane to move it
+    action_0_state_11_status: Click to add the cutting plan
+    action_0_state_12_status: Click on the cutting plane to delete it
+    action_0_state_2_status: Click to confirm the stretch or enter a distance
     action_option_group_stretch_measure_type: Measure
     action_option_group_axes: Axes
     action_option_stretch_measure_type_outside_status: External measurement
@@ -2173,6 +2184,8 @@ tool:
     action_option_axes_active_status: Manipulate along active axes
     action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
     action_option_axes_entity_status: Manipulate along part axes
+    error:
+      curve_intersect: One of the cutting planes crosses a non-stretchable element (curve or accessory)
   smart_paint:
     title: Paint
     default_material: Without material
