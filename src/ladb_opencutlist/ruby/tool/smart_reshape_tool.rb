@@ -636,7 +636,6 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: true,
-        flatten: false,
       }
     end
 
@@ -1465,14 +1464,8 @@ module Ladb::OpenCutList
     def _preview_reshape(view)
       return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
 
-      split_def, emv, lps, lpe = stretch_def.values_at(:split_def, :emv, :lps, :lpe)
-      et, evp0p1, section_defs, edge_defs = split_def.values_at(:et, :evp0p1, :section_defs, :edge_defs)
-
-      dvs = section_defs.map { |section_def|
-        dv = Geom::Vector3d.new(emv)
-        dv.length = dv.length * section_def[:index] / (section_defs.length - 1) if emv.valid?
-        [ section_def, dv ]
-      }.to_h
+      split_def, edvs, lps, lpe = stretch_def.values_at(:split_def, :edvs, :lps, :lpe)
+      et, edge_defs = split_def.values_at(:et, :edge_defs)
 
       unless edge_defs.empty?
 
@@ -1482,8 +1475,8 @@ module Ladb::OpenCutList
           t = edge_def[:transformation]
           ti = t.inverse
           [
-            edge.start.position.offset(dvs[edge_def[:start_section_def]].transform(ti)).transform(t),
-            edge.end.position.offset(dvs[edge_def[:end_section_def]].transform(ti)).transform(t)
+            edge.start.position.offset(edvs[edge_def[:start_section_def]].transform(ti)).transform(t),
+            edge.end.position.offset(edvs[edge_def[:end_section_def]].transform(ti)).transform(t)
           ]
         })
         k_segments.color = _get_vector_color(lps.vector_to(lpe))
@@ -1494,19 +1487,20 @@ module Ladb::OpenCutList
       end
 
       # eti = et.inverse
-      # epo = [ lps.transform(eti), lpe.transform(eti) ]
-      # epo.reverse! unless evp0p1.samedirection?(@snap_axis)
-      # l = [ epo[0], evp0p1 ]
+      # epmin, eps, epe, evpspe, reversed, section_defs = split_def.values_at(:epmin, :eps, :epe, :evpspe, :reversed, :section_defs)
+      # l = [ epmin, evpspe ]
+      # epo = reversed ? lpe.transform(eti) : eps
+      # epomax = reversed ? eps : lpe.transform(eti)
       # sd = section_defs
-      # sd = sd.reverse unless evp0p1.samedirection?(@snap_axis)
+      # sd = sd.reverse if reversed
       # rs = sd
       #        .select { |section_def| section_def[:pt_bbox].valid? }
       #        .each_cons(2).map { |section_def0, section_def1|
       #   [
-      #     section_def0[:pt_bbox].max.project_to_line(l).offset!(dvs[section_def0]),
-      #     section_def1[:pt_bbox].min.project_to_line(l).offset!(dvs[section_def1]),
-      #     Geom.linear_combination(0.5, section_def0[:pt_bbox].max.project_to_line(l).offset!(dvs[section_def0]),
-      #                             0.5, section_def1[:pt_bbox].min.project_to_line(l).offset!(dvs[section_def1]))
+      #     section_def0[:pt_bbox].max.project_to_line(l).offset!(edvs[section_def0]),
+      #     section_def1[:pt_bbox].min.project_to_line(l).offset!(edvs[section_def1]),
+      #     Geom.linear_combination(0.5, section_def0[:pt_bbox].max.project_to_line(l).offset!(edvs[section_def0]),
+      #                             0.5, section_def1[:pt_bbox].min.project_to_line(l).offset!(edvs[section_def1]))
       #   ]
       # }
       #
@@ -1518,21 +1512,25 @@ module Ladb::OpenCutList
       #   k_points.transformation = et
       #   @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
       # end
-      # k_points = _create_floating_points(points: epo[0], fill_color: Kuix::COLOR_YELLOW)
+      # k_points = _create_floating_points(points: epo, fill_color: Kuix::COLOR_YELLOW)
+      # k_points.transformation = et
+      # @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
+      # k_points = _create_floating_points(points: epomax, fill_color: Kuix::COLOR_MAGENTA)
       # k_points.transformation = et
       # @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
 
 
       # colors = [ Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA, Kuix::COLOR_YELLOW ]
       #
+      # section_defs = split_def.values_at(:section_defs)
       # section_defs.each do |section_def|
       #
-      #   dv = dvs[section_def]
+      #   dv = edvs[section_def]
       #
       #   # if section_def[:bbox].valid?
       #   #   k_box = Kuix::BoxMotif.new
       #   #   k_box.bounds.copy!(section_def[:bbox])
-      #   #   k_box.bounds.translate!(*dv.to_a) if emv.valid?
+      #   #   k_box.bounds.translate!(*dv.to_a) if dv.valid?
       #   #   k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
       #   #   k_box.line_width = 2
       #   #   k_box.color = colors[section_def[:index] % colors.length]
@@ -1614,6 +1612,20 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _get_drawing_def_parameters
+      {
+        ignore_surfaces: true,
+        ignore_faces: false,
+        ignore_edges: false,
+        ignore_soft_edges: false,
+        ignore_clines: true,
+        flatten: false,
+        for_part: true,
+      }
+    end
+
+    # -----
+
     def _reshape_entity
       _stretch_entity
     end
@@ -1621,14 +1633,8 @@ module Ladb::OpenCutList
     def _stretch_entity
       return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
 
-      split_def, emv, lps, lpe = stretch_def.values_at(:split_def, :emv, :lps, :lpe)
-      et, evp0p1, section_defs, edge_defs, container_defs = split_def.values_at(:et, :evp0p1, :section_defs, :edge_defs, :container_defs)
-
-      dvs = section_defs.map { |section_def|
-        dv = Geom::Vector3d.new(emv)
-        dv.length = dv.length * section_def[:index] / (section_defs.length - 1) if emv.valid?
-        [ section_def, dv ]
-      }.to_h
+      split_def, emv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :edvs, :lpe)
+      et, eps, evpspe, reversed, section_defs, edge_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :edge_defs, :container_defs)
 
       _unhide_instance
 
@@ -1640,7 +1646,7 @@ module Ladb::OpenCutList
           .group_by { |container_def| container_def[:section_def] }
           .each do |section_def, container_defs|
 
-          dv = dvs[section_def]
+          edv = edvs[section_def]
 
           container_defs.each do |container_def|
 
@@ -1648,7 +1654,7 @@ module Ladb::OpenCutList
             t = container_def[:transformation]
 
             target_position = container_def[:ref_position]
-            target_position = target_position.offset(dv.transform(t.inverse)) if dv.valid?
+            target_position = target_position.offset(edv.transform(t.inverse)) if edv.valid?
             current_position = ORIGIN.transform(container.transformation)
 
             v = current_position.vector_to(target_position)
@@ -1660,14 +1666,14 @@ module Ladb::OpenCutList
         end
 
         # Move edges
-        sorting_order = (emv.valid? && emv.samedirection?(evp0p1)) ? -1 : 1
+        sorting_order = (emv.valid? && emv.samedirection?(evpspe)) ? -1 : 1
         edge_defs
           .select { |edge_def| !edge_def[:grabbed] && edge_def[:start_section_def] == edge_def[:end_section_def] }
           .group_by { |edge_def| edge_def[:start_section_def] }
           .sort_by { |section_def, _| section_def[:index] * sorting_order }.to_h
           .each do |section_def, edge_defs|
 
-          dv = dvs[section_def]
+          edv = edvs[section_def]
 
           edge_defs.group_by { |edge_def| edge_def[:edge].parent }.each do |parent, edge_defs|
 
@@ -1675,7 +1681,7 @@ module Ladb::OpenCutList
             t = edge_def0[:transformation]
 
             target_position = edge_def0[:ref_position]
-            target_position = target_position.offset(dv.transform(t.inverse)) if dv.valid?
+            target_position = target_position.offset(edv.transform(t.inverse)) if edv.valid?
             current_position = edge_def0[:edge].start.position
 
             v = current_position.vector_to(target_position)
@@ -1688,18 +1694,23 @@ module Ladb::OpenCutList
 
         # Adjust cutters
         eti = et.inverse
-        epo = [ lps.transform(eti), lpe.transform(eti) ]
-        epo.reverse! unless evp0p1.samedirection?(@snap_axis)
-        l = [ epo[0], evp0p1 ]
+        epo = reversed ? lpe.transform(eti) : eps
+        epomax = reversed ? eps : lpe.transform(eti)
+        distance = epo.distance(epomax)
+        el = [ epo, evpspe ]
         sd = section_defs
-        sd = sd.reverse unless evp0p1.samedirection?(@snap_axis)
+        sd = sd.reverse if reversed
         @cutters[@snap_axis] = sd
-               .select { |section_def| section_def[:pt_bbox].valid? }
-               .each_cons(2).map { |section_def0, section_def1|
-          epc = Geom.linear_combination(0.5, section_def0[:pt_bbox].max.project_to_line(l).offset!(dvs[section_def0]),
-                                        0.5, section_def1[:pt_bbox].min.project_to_line(l).offset!(dvs[section_def1]))
-          epo[0].vector_to(epc).length / epo[0].distance(epo[1])
-        }
+           .select { |section_def| section_def[:pt_bbox].valid? } # Exclude empty sections
+           .each_cons(2).map { |section_def0, section_def1|
+              max0 = section_def0[:pt_bbox].max.project_to_line(el).offset!(edvs[section_def0])
+              min1 = section_def1[:pt_bbox].min.project_to_line(el).offset!(edvs[section_def1])
+              if (v = max0.vector_to(min1)).valid? && v.samedirection?(@snap_axis)  # Exclude if pt_bboxes overlap
+                epc = Geom.linear_combination(0.5, max0, 0.5, min1)
+                epo.vector_to(epc).length / distance
+              end
+            }
+           .compact
         _store_cutters
         _load_cutters
 
@@ -1760,14 +1771,19 @@ module Ladb::OpenCutList
       # Transform drawing_def to be expressed in the edit space and clear cache if transformed
       @drawing_def = nil if drawing_def.transform!(det)
 
-      grip_index_0 = Kuix::Bounds3d.face_opposite(@picked_grip_index)
-      grip_index_1 = @picked_grip_index
+      grip_index_s = Kuix::Bounds3d.face_opposite(@picked_grip_index)
+      grip_index_e = @picked_grip_index
 
-      ep0 = keb.face_center(grip_index_0).to_p
-      ep1 = keb.face_center(grip_index_1).to_p
-      evp0p1 = ep0.vector_to(ep1)
+      eps = keb.face_center(grip_index_s).to_p
+      epe = keb.face_center(grip_index_e).to_p
+      evpspe = eps.vector_to(epe)
 
-      ref_quads = keb.get_quad(grip_index_0).map { |point| point }
+      reversed = !evpspe.samedirection?(@snap_axis)
+
+      epmin = reversed ? epe : eps
+      epmax = reversed ? eps : epe
+
+      ref_quads = keb.get_quad(grip_index_s).map { |point| point }
       quads = ref_quads.dup
 
       section_defs = []
@@ -1778,15 +1794,15 @@ module Ladb::OpenCutList
 
       ratios = @cutters[@snap_axis].sort
       ratios.uniq!
-      ratios.reverse!.map! { |ratio| 1 - ratio } unless evp0p1.samedirection?(@snap_axis)
+      ratios.reverse!.map! { |ratio| 1 - ratio } unless evpspe.samedirection?(@snap_axis)
       ratios << 1.1 unless ratios.last >= 1.0 # Use 1.1 to be sure to avoid rounding problems
       ratios.each_with_index do |ratio, index|
 
         bbox = Geom::BoundingBox.new
         bbox.add(quads)
-        bbox.add(ep0.offset(evp0p1, ratio * evp0p1.length))
+        bbox.add(eps.offset(evpspe, ratio * evpspe.length))
 
-        quads = ref_quads.map { |point| point.offset(evp0p1, ratio * evp0p1.length) }
+        quads = ref_quads.map { |point| point.offset(evpspe, ratio * evpspe.length) }
 
         section_defs << {
           index: index,
@@ -1796,10 +1812,10 @@ module Ladb::OpenCutList
 
       end
 
-      # Extract containers
-      # ------------------
+      fn_analyse = lambda do |drawing_container_def, grabbed = false, depth = 0|
 
-      fn = lambda do |drawing_container_def, grabbed = false, depth = 0|
+        # Extract containers
+        # ------------------
 
         # k_box = Kuix::BoxMotif.new
         # k_box.bounds.copy!(drawing_container_def.bounds)
@@ -1838,7 +1854,7 @@ module Ladb::OpenCutList
 
         # 1. Sort curves according to their "min" point relative to the opposite active grip
 
-        reversed = evp0p1.valid? && !evp0p1.samedirection?(@snap_axis)
+        reversed = evpspe.valid? && !evpspe.samedirection?(@snap_axis)
         min_method = reversed ? :max : :min
         xyz_method = { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@snap_axis]
 
@@ -1910,20 +1926,23 @@ module Ladb::OpenCutList
 
         depth += 1
         drawing_container_def.container_defs.each do |child_drawing_container_def|
-          fn.call(child_drawing_container_def, grabbed, depth)
+          fn_analyse.call(child_drawing_container_def, grabbed, depth)
         end
 
       end
 
-      fn.call(drawing_def)
+      fn_analyse.call(drawing_def)
 
       @split_def = {
         drawing_def: drawing_def,
         et: et,
         eb: eb,   # Expressed in 'Edit' space
-        ep0: ep0,
-        ep1: ep1,
-        evp0p1: evp0p1,
+        epmin: epmin,
+        epmax: epmax,
+        eps: eps,
+        epe: epe,
+        evpspe: evpspe,
+        reversed: reversed,
         section_defs: section_defs,
         edge_defs: edge_defs,
         container_defs: container_defs,
@@ -1933,16 +1952,23 @@ module Ladb::OpenCutList
     def _get_stretch_def(ps, pe)
       return nil if (split_def = _get_split_def).nil?
 
-      et, ep0 = split_def.values_at(:et, :ep0)
+      et, eps, section_defs = split_def.values_at(:et, :eps, :section_defs)
       eti = et.inverse
 
       mv = ps.vector_to(pe)
       emv = mv.transform(eti)
 
+      edvs = section_defs.map { |section_def|
+        edv = Geom::Vector3d.new(emv)
+        edv.length = edv.length * section_def[:index] / (section_defs.length - 1) if emv.valid?
+        [ section_def, edv ]
+      }.to_h
+
       {
         split_def: split_def,
         emv: emv,
-        lps: _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE ? ep0.transform(et) : ps,
+        edvs: edvs,
+        lps: _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE ? eps.transform(et) : ps,
         lpe: pe,
       }
     end
