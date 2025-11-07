@@ -582,6 +582,14 @@ module Ladb::OpenCutList
       @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE)
     end
 
+    def _fetch_option_stretch_measure_type_outside
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE)
+    end
+
+    def _fetch_option_stretch_measure_type_offset
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE, SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET)
+    end
+
     def _fetch_option_axes
       @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_AXES)
     end
@@ -1625,7 +1633,7 @@ module Ladb::OpenCutList
       return true if distance.nil?
 
       # Error if distance < 0 and the measure type is outside
-      if _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE && distance < 0
+      if _fetch_option_stretch_measure_type_outside && distance < 0
         tool.notify_errors([ [ "tool.default.error.invalid_length", { :value => distance.to_l } ] ])
         return false
       end
@@ -1695,6 +1703,33 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       model.start_operation('OCL Stretch Part', true, false, !active?)
 
+        # Move edges
+        sorting_order = (emv.valid? && emv.samedirection?(evpspe)) ? -1 : 1
+        edge_defs
+          .select { |edge_def| !edge_def[:grabbed] && edge_def[:start_section_def] == edge_def[:end_section_def] }
+          .group_by { |edge_def| edge_def[:start_section_def] }
+          .sort_by { |section_def, _| section_def[:index] * sorting_order }.to_h
+          .each do |section_def, edge_defs|
+
+          edv = edvs[section_def]
+
+          edge_defs.group_by { |edge_def| edge_def[:edge].parent }.each do |parent, edge_defs|
+
+            edge_def0 = edge_defs.first
+            t = edge_def0[:transformation]
+
+            target_position0 = edge_def0[:ref_position]
+            target_position0 = target_position0.offset(edv.transform(t.inverse)) if edv.valid?
+            current_position0 = edge_def0[:edge].start.position
+
+            v = current_position0.vector_to(target_position0)
+
+            parent.entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def[:edge] }) if v.valid?
+
+          end
+
+        end
+
         # Move containers
         container_defs
           .group_by { |container_def| container_def[:section_def] }
@@ -1714,33 +1749,6 @@ module Ladb::OpenCutList
             v = current_position.vector_to(target_position)
 
             container.transform!(Geom::Transformation.translation(v)) if v.valid?
-
-          end
-
-        end
-
-        # Move edges
-        sorting_order = (emv.valid? && emv.samedirection?(evpspe)) ? -1 : 1
-        edge_defs
-          .select { |edge_def| !edge_def[:grabbed] && edge_def[:start_section_def] == edge_def[:end_section_def] }
-          .group_by { |edge_def| edge_def[:start_section_def] }
-          .sort_by { |section_def, _| section_def[:index] * sorting_order }.to_h
-          .each do |section_def, edge_defs|
-
-          edv = edvs[section_def]
-
-          edge_defs.group_by { |edge_def| edge_def[:edge].parent }.each do |parent, edge_defs|
-
-            edge_def0 = edge_defs.first
-            t = edge_def0[:transformation]
-
-            target_position = edge_def0[:ref_position]
-            target_position = target_position.offset(edv.transform(t.inverse)) if edv.valid?
-            current_position = edge_def0[:edge].start.position
-
-            v = current_position.vector_to(target_position)
-
-            parent.entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def[:edge] }) if v.valid?
 
           end
 
@@ -2040,7 +2048,7 @@ module Ladb::OpenCutList
         [ section_def, edv ]
       }.to_h
 
-      lps = _fetch_option_stretch_measure_type == SmartReshapeTool::ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE ? eps.transform(et) : ps
+      lps = _fetch_option_stretch_measure_type_outside ? eps.transform(et) : ps
       lpe = pe
 
       {

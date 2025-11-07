@@ -340,14 +340,8 @@ module Ladb::OpenCutList
             manipulator = ClineManipulator.new(entity, transformation)
             drawing_container_def.add_manipulator(:cline_manipulators, manipulator)
           elsif @recursive
-            if entity.is_a?(Sketchup::Group)
-              if @flatten
-                child_drawing_container_def = drawing_container_def
-              else
-                child_drawing_container_def = drawing_container_def.add_container(entity, transformation)
-              end
-              _populate_manipulators(child_drawing_container_def, entity.entities, transformation * entity.transformation, face_validator, edge_validator)
-            elsif entity.is_a?(Sketchup::ComponentInstance) && (!@for_part || entity.definition.behavior.cuts_opening? || entity.definition.behavior.always_face_camera?)
+            if entity.respond_to?(:definition)
+              next if entity.is_a?(Sketchup::ComponentInstance) && @for_part && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
               if @flatten
                 child_drawing_container_def = drawing_container_def
               else
