@@ -2077,7 +2077,7 @@ tool:
       missing_operand: "Opérande manquante"
       zero_division: "Division par zéro"
       lt_min_distance: La distance {{ value1 }} est inférieure à la distance minimale de {{ value2 }}
-      gt_max_distance: La distance {{ value1 }} est suppérieure à la distance maximale de {{ value2 }}
+      gt_max_distance: La distance {{ value1 }} est supérieure à la distance maximale de {{ value2 }}
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)

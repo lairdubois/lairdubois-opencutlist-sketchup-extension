@@ -1791,7 +1791,7 @@ tab:
       no_entities: 1402 - Your model is empty!
       node_not_found: 1403 - Node not found
       entity_not_found: 1404 - Instance not found
-      invalid_target: 1405 - The targeted instance does not support this operation.
+      invalid_target: 1405 - The targeted instance does not support this operation
       obsolete_outliner: 1406 - Impossible, the generated structure is obsolete. Please, regenerate it.
     tip:
       no_node: |
@@ -2071,194 +2071,207 @@ tool:
       missing_close_parenthesis: 1580 - Missing closing parenthesis
       missing_operand: 1581 - Missing operand
       zero_division: 1582 - Division by zero
+      lt_min_distance: 1583 - The distance {{ value1 }} is less than the minimum distance of {{ value2 }}
+      gt_max_distance: 1584 - The distance {{ value1 }} is greater than the maximum distance of {{ value2 }}
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_draw:
-    title: 1585 - Draw
-    action_0: 1586 - Draw Rectangle
-    action_0_status: 1587 - Draw a volume on a rectangular shape
-    action_0_state_1_status: 1588 - Click to define opposite angle or enter length, width
-    action_1: 1589 - Draw Circle
-    action_1_status: 1590 - Draw a volume on a circular shape
-    action_1_state_1_radius_status: 1591 - Click to set radius or enter distance
-    action_1_state_1_diameter_status: 1592 - Click to set diameter or enter distance
-    action_2: 1593 - Draw Polygon
-    action_2_status: 1594 - Draw a volume on a polygonal shape
-    action_2_state_1_status: 1595 - Click to define a new point or enter distance
-    action_x_state_2_status: 1596 - Click to set elevation or enter distance
-    action_option_group_offset: 1597 - Offset
-    action_option_group_segments: 1598 - Segments
-    action_option_group_options: 1599 - Options
-    action_option_offset_shape_offset: 1600 - Offset
-    action_option_offset_shape_offset_status: 1601 - Apply an offset to the shape line
-    action_option_segments_segment_count: 1602 - Number of Segments
-    action_option_segments_segment_count_status: 1603 - Define the number of segments of a circle
-    action_option_options_construction: 1604 - Construction Lines
-    action_option_options_construction_status: 1605 - Draw as construction lines
-    action_option_options_rectangle_centered: 1606 - Rectangle Centered
-    action_option_options_rectangle_centered_status: 1607 - Center rectangle on the first point
-    action_option_options_smoothing: 1608 - Smoothing
-    action_option_options_smoothing_status: 1609 - Smooth curves
-    action_option_options_measure_from_vertex_status: 1610 - Measure relative to the nearest vertex
-    action_option_options_measure_from_diameter: 1611 - Measure
-    action_option_options_measure_from_diameter_status: 1612 - Measure circle by its diameter
-    action_option_options_measure_from_radius_status: 1613 - Measure circle by its radius
-    action_option_options_measure_reversed: 1614 - Inverted Measure
-    action_option_options_measure_reversed_status: 1615 - Reverse the measurement
-    action_option_options_pull_centered: 1616 - Elevation Centered
-    action_option_options_pull_centered_status: 1617 - Center elevation on the first point
-    action_option_options_ask_name: 1618 - Parts naming
-    action_option_options_ask_name_status: 1619 - Enter part names manually
-    action_measure_locked_status: 1620 - Lock on last measurement
-    action_toggle_move_copy_status: 1621 - Toggle between copy/move
-    action_change_move_anchor_status: 1622 - Change the anchor point
+    title: 1587 - Draw
+    action_0: 1588 - Draw Rectangle
+    action_0_status: 1589 - Draw a volume on a rectangular shape
+    action_0_state_1_status: 1590 - Click to define opposite angle or enter length, width
+    action_1: 1591 - Draw Circle
+    action_1_status: 1592 - Draw a volume on a circular shape
+    action_1_state_1_radius_status: 1593 - Click to set radius or enter distance
+    action_1_state_1_diameter_status: 1594 - Click to set diameter or enter distance
+    action_2: 1595 - Draw Polygon
+    action_2_status: 1596 - Draw a volume on a polygonal shape
+    action_2_state_1_status: 1597 - Click to define a new point or enter distance
+    action_x_state_2_status: 1598 - Click to set elevation or enter distance
+    action_option_group_offset: 1599 - Offset
+    action_option_group_segments: 1600 - Segments
+    action_option_group_options: 1601 - Options
+    action_option_offset_shape_offset: 1602 - Offset
+    action_option_offset_shape_offset_status: 1603 - Apply an offset to the shape line
+    action_option_segments_segment_count: 1604 - Number of Segments
+    action_option_segments_segment_count_status: 1605 - Define the number of segments of a circle
+    action_option_options_construction: 1606 - Construction Lines
+    action_option_options_construction_status: 1607 - Draw as construction lines
+    action_option_options_rectangle_centered: 1608 - Rectangle Centered
+    action_option_options_rectangle_centered_status: 1609 - Center rectangle on the first point
+    action_option_options_smoothing: 1610 - Smoothing
+    action_option_options_smoothing_status: 1611 - Smooth curves
+    action_option_options_measure_from_vertex_status: 1612 - Measure relative to the nearest vertex
+    action_option_options_measure_from_diameter: 1613 - Measure
+    action_option_options_measure_from_diameter_status: 1614 - Measure circle by its diameter
+    action_option_options_measure_from_radius_status: 1615 - Measure circle by its radius
+    action_option_options_measure_reversed: 1616 - Inverted Measure
+    action_option_options_measure_reversed_status: 1617 - Reverse the measurement
+    action_option_options_pull_centered: 1618 - Elevation Centered
+    action_option_options_pull_centered_status: 1619 - Center elevation on the first point
+    action_option_options_ask_name: 1620 - Parts naming
+    action_option_options_ask_name_status: 1621 - Enter part names manually
+    action_measure_locked_status: 1622 - Lock on last measurement
+    action_toggle_move_copy_status: 1623 - Toggle between copy/move
+    action_change_move_anchor_status: 1624 - Change the anchor point
     success:
-      part_created: '1623 - New part created: {{ name }}'
+      part_created: '1625 - New part created: {{ name }}'
   smart_handle:
-    title: 1624 - Handle
-    action_0: 1625 - Select
-    action_0_status: 1626 - Click on a part to select it
+    title: 1626 - Handle
+    action_0: 1627 - Select
+    action_0_status: 1628 - Click on a part to select it
     action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: 1628 - Slide over an identical piece to add it to the selection and release to continue.
-    action_1: 1629 - Copy in Line
-    action_1_status: 1630 - Click on a part to copy it along an axis
+    action_0_state_4_status: 1630 - Slide over an identical piece to add it to the selection and release to continue
+    action_1: 1631 - Copy in Line
+    action_1_status: 1632 - Click on a part to copy it along an axis
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: 1632 - Click to place the copy of the part or enter a distance
-    action_2: 1633 - Copy in Grid
-    action_2_status: 1634 - Click on a part to copy it along a grid
+    action_1_state_2_status: 1634 - Click to place the copy of the part or enter a distance
+    action_2: 1635 - Copy in Grid
+    action_2_status: 1636 - Click on a part to copy it along a grid
     action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: 1636 - Click to place copies of the part, or enter two distances
-    action_3: 1637 - Move
-    action_3_status: 1638 - Click on a part to move it along an axis
+    action_2_state_2_status: 1638 - Click to place copies of the part, or enter two distances
+    action_3: 1639 - Move
+    action_3_status: 1640 - Click on a part to move it along an axis
     action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: 1640 - Click to place the part, or enter a distance
-    action_4: 1641 - Distribute
-    action_4_status: 1642 - Click on a part to distribute it along an axis
+    action_3_state_2_status: 1642 - Click to place the part, or enter a distance
+    action_4: 1643 - Distribute
+    action_4_status: 1644 - Click on a part to distribute it along an axis
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
     action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
-    action_4_state_1_status: 1645 - Click to set the first measurement point
-    action_4_state_2_status: 1646 - Click to set the second measurement point or enter a distance
-    action_option_group_copy_measure_type: 1647 - Measure
-    action_option_group_move_measure_type: 1648 - Measure
-    action_option_group_axes: 1649 - Axes
-    action_option_group_options: 1650 - Options
-    action_option_copy_measure_type_outside_status: 1651 - External measurement
-    action_option_copy_measure_type_centered_status: 1652 - Central measurement
-    action_option_copy_measure_type_inside_status: 1653 - Measurement taken between parts
-    action_option_move_measure_type_outside_status: 1654 - External measurement
-    action_option_move_measure_type_centered_status: 1655 - Central measurement
-    action_option_move_measure_type_inside_status: 1656 - Internal measurement
-    action_option_axes_active_status: 1657 - Manipulate along active axes
-    action_option_axes_context_status: 1658 - Manipulate along the axes of the group or component containing the part
-    action_option_axes_entity_status: 1659 - Manipulate along part axes
-    action_option_options_mirror_status: 1660 - Symmetrical copying
+    action_4_state_1_status: 1647 - Click to set the first measurement point
+    action_4_state_2_status: 1648 - Click to set the second measurement point or enter a distance
+    action_option_group_copy_measure_type: 1649 - Measure
+    action_option_group_move_measure_type: 1650 - Measure
+    action_option_group_axes: 1651 - Axes
+    action_option_group_options: 1652 - Options
+    action_option_copy_measure_type_outside_status: 1653 - External measurement
+    action_option_copy_measure_type_centered_status: 1654 - Central measurement
+    action_option_copy_measure_type_inside_status: 1655 - Measurement taken between parts
+    action_option_move_measure_type_outside_status: 1656 - External measurement
+    action_option_move_measure_type_centered_status: 1657 - Central measurement
+    action_option_move_measure_type_inside_status: 1658 - Internal measurement
+    action_option_axes_active_status: 1659 - Manipulate along active axes
+    action_option_axes_context_status: 1660 - Manipulate along the axes of the group or component containing the part
+    action_option_axes_entity_status: 1661 - Manipulate along part axes
+    action_option_options_mirror_status: 1662 - Symmetrical copying
     warning:
-      copies_disable_mirror: 1661 - Multiple copies disable the '$t(tool.smart_handle.action_option_options_mirror_status)' option
+      copies_disable_mirror: 1663 - Multiple copies disable the '$t(tool.smart_handle.action_option_options_mirror_status)' option
     error:
-      min_distance: 1662 - The distance {{ value1 }} is smaller than the minimal distance {{ value2 }}
+      min_distance: 1664 - The distance {{ value1 }} is smaller than the minimal distance {{ value2 }}
   smart_reshape:
-    title: 1663 - Redesign
-    action_0: 1664 - Stretch
-    action_0_status: 1665 - Click on a part to select it
-    action_option_group_stretch_measure_type: 1666 - Measure
-    action_option_group_axes: 1667 - Axes
-    action_option_stretch_measure_type_outside_status: 1668 - External measurement
-    action_option_stretch_measure_type_offset_status: 1669 - Measure difference
-    action_option_axes_active_status: 1670 - Manipulate along active axes
-    action_option_axes_context_status: 1671 - Manipulate along the axes of the group or component containing the part
-    action_option_axes_entity_status: 1672 - Manipulate along part axes
+    title: 1665 - Redesign
+    action_0: 1666 - Stretch
+    action_0_status: 1667 - Click on a part to select it
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: 1669 - Click on a handle to stretch
+    action_0_state_1a_status: 1670 - Clicking on a cutting plane to move it
+    action_0_state_1b_status: 1671 - Add a cutting plane
+    action_0_state_1c_status: 1672 - Delete a cutting plane
+    action_0_state_10_status: 1673 - Drag the cutting plane to move it
+    action_0_state_11_status: 1674 - Click to add the cutting plan
+    action_0_state_12_status: 1675 - Click on the cutting plane to delete it
+    action_0_state_2_status: 1676 - Click to confirm the stretch or enter a distance
+    action_option_group_stretch_measure_type: 1677 - Measure
+    action_option_group_axes: 1678 - Axes
+    action_option_stretch_measure_type_outside_status: 1679 - External measurement
+    action_option_stretch_measure_type_offset_status: 1680 - Measure difference
+    action_option_axes_active_status: 1681 - Manipulate along active axes
+    action_option_axes_context_status: 1682 - Manipulate along the axes of the group or component containing the part
+    action_option_axes_entity_status: 1683 - Manipulate along part axes
+    error:
+      curve_intersect: 1684 - One of the cutting planes crosses a non-stretchable element (curve or accessory)
   smart_paint:
-    title: 1673 - Paint
-    default_material: 1674 - Without material
-    filters: 1675 - Filters
-    filter_0: 1676 - Without type
+    title: 1685 - Paint
+    default_material: 1686 - Without material
+    filters: 1687 - Filters
+    filter_0: 1688 - Without type
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1683 - Paint Parts
-    action_0_status: 1684 - Click on a part to apply material to its instance
-    action_1: 1685 - Paint Edges
-    action_1_status: 1686 - Click on the edge of a panel to apply material '$t(tab.materials.type_4)'
-    action_2: 1687 - Paint Faces
-    action_2_status: 1688 - Click on the face of a panel to apply material '$t(tab.materials.type_6)'
-    action_3: 1689 - Sample
-    action_3_status: 1690 - Click on a face to sample its material
-    action_4: 1691 - Clean
-    action_4_status: 1692 - Click on a part to remove all materials from its definition and from all its instances
-    action_option_group_instances: 1693 - Number of instances
-    action_option_group_edges: 1694 - Number of edge bandings
-    action_option_group_faces: 1695 - Number of faces
-    action_option_instances_0_status: 1696 - Color only the instance of the target part
-    action_option_instances_1_status: 1697 - Color all instances of the target part
-    action_option_edges_0_status: 1698 - Color only the target edge
-    action_option_edges_1_status: 1699 - Color the target edge and the opposite edge of the part
-    action_option_edges_2_status: 1700 - Color the 4 edges of the target part
-    action_option_faces_0_status: 1701 - Color only the target face
-    action_option_faces_1_status: 1702 - Color the 2 faces of the target part
-    edges: 1703 - {{ count }} edge
-    edges_plural: 1704 - {{ count }} edges
-    edge_ymin: 1705 - Length 1
-    edge_ymax: 1706 - Length 2
-    edge_xmin: 1707 - Width 1
-    edge_xmax: 1708 - Width 2
-    faces: 1709 - {{ count }} face
-    faces_plural: 1710 - {{ count }} faces
-    face_zmin: 1711 - Backside
-    face_zmax: 1712 - Frontside
+    action_0: 1695 - Paint Parts
+    action_0_status: 1696 - Click on a part to apply material to its instance
+    action_1: 1697 - Paint Edges
+    action_1_status: 1698 - Click on the edge of a panel to apply material '$t(tab.materials.type_4)'
+    action_2: 1699 - Paint Faces
+    action_2_status: 1700 - Click on the face of a panel to apply material '$t(tab.materials.type_6)'
+    action_3: 1701 - Sample
+    action_3_status: 1702 - Click on a face to sample its material
+    action_4: 1703 - Clean
+    action_4_status: 1704 - Click on a part to remove all materials from its definition and from all its instances
+    action_option_group_instances: 1705 - Number of instances
+    action_option_group_edges: 1706 - Number of edge bandings
+    action_option_group_faces: 1707 - Number of faces
+    action_option_instances_0_status: 1708 - Color only the instance of the target part
+    action_option_instances_1_status: 1709 - Color all instances of the target part
+    action_option_edges_0_status: 1710 - Color only the target edge
+    action_option_edges_1_status: 1711 - Color the target edge and the opposite edge of the part
+    action_option_edges_2_status: 1712 - Color the 4 edges of the target part
+    action_option_faces_0_status: 1713 - Color only the target face
+    action_option_faces_1_status: 1714 - Color the 2 faces of the target part
+    edges: 1715 - {{ count }} edge
+    edges_plural: 1716 - {{ count }} edges
+    edge_ymin: 1717 - Length 1
+    edge_ymax: 1718 - Length 2
+    edge_xmin: 1719 - Width 1
+    edge_xmax: 1720 - Width 2
+    faces: 1721 - {{ count }} face
+    faces_plural: 1722 - {{ count }} faces
+    face_zmin: 1723 - Backside
+    face_zmax: 1724 - Frontside
     warning:
-      no_material: 1713 - No material
-      no_material_type: 1714 - No material of type '{{ type }}'
+      no_material: 1725 - No material
+      no_material_type: 1726 - No material of type '{{ type }}'
     error:
-      not_part: 1715 - The target object is not a part (component)
-      not_edge: 1716 - The target face is not a panel edge
-      not_face: 1717 - The target face is not a panel face
-      wrong_material_type: 1718 - The target part must be of type '{{ type }}'
+      not_part: 1727 - The target object is not a part (component)
+      not_edge: 1728 - The target face is not a panel edge
+      not_face: 1729 - The target face is not a panel face
+      wrong_material_type: 1730 - The target part must be of type '{{ type }}'
   smart_axes:
-    title: 1719 - Orient
-    action_0: 1720 - Flip
-    action_0_status: 1721 - Click on a part to flip its instance along one of its dimensions
-    action_1: 1722 - Swap Length ↔ Width
-    action_1_status: 1723 - Click on a part to swap its Length with its Width
-    action_2: 1724 - Swap Front ↔ Backside
-    action_2_status: 1725 - Click on a part to swap its Front with its Backside
-    action_3: 1726 - Adapt Axes
-    action_3_status: 1727 - Target a face of a part and click on an edge to adapt its axes
-    action_4: 1728 - Move Origin
-    action_4_status: 1729 - Target a face of a part and click on a point to place its origin there
-    action_option_group_direction: 1730 - Direction
-    action_option_direction_0: 1731 - L
-    action_option_direction_1: 1732 - W
-    action_option_direction_2: 1733 - T
-    action_option_direction_0_status: 1734 - Turn the part over lengthwise
-    action_option_direction_1_status: 1735 - Turn the part over widthwise
-    action_option_direction_2_status: 1736 - Turn the part over in its thickness
+    title: 1731 - Orient
+    action_0: 1732 - Flip
+    action_0_status: 1733 - Click on a part to flip its instance along one of its dimensions
+    action_1: 1734 - Swap Length ↔ Width
+    action_1_status: 1735 - Click on a part to swap its Length with its Width
+    action_2: 1736 - Swap Front ↔ Backside
+    action_2_status: 1737 - Click on a part to swap its Front with its Backside
+    action_3: 1738 - Adapt Axes
+    action_3_status: 1739 - Target a face of a part and click on an edge to adapt its axes
+    action_4: 1740 - Move Origin
+    action_4_status: 1741 - Target a face of a part and click on a point to place its origin there
+    action_option_group_direction: 1742 - Direction
+    action_option_direction_0: 1743 - L
+    action_option_direction_1: 1744 - W
+    action_option_direction_2: 1745 - T
+    action_option_direction_0_status: 1746 - Turn the part over lengthwise
+    action_option_direction_1_status: 1747 - Turn the part over widthwise
+    action_option_direction_2_status: 1748 - Turn the part over in its thickness
     warning:
-      more_entities: 1737 - {{ count_used }} instances sharing the same definition will be modified
+      more_entities: 1749 - {{ count_used }} instances sharing the same definition will be modified
     error:
-      not_part: 1738 - The target object is not a part (component)
-      not_orientable: 1739 - The type of this part does not allow orienting it
+      not_part: 1750 - The target object is not a part (component)
+      not_orientable: 1751 - The type of this part does not allow orienting it
   smart_export:
-    title: 1740 - Export
-    action_0: 1741 - Export 3D Part
-    action_0_status: 1742 - Click on a part
-    action_1: 1743 - Export 2D Part
-    action_1_status: 1744 - Click on the face of a part
-    action_2: 1745 - Export Face
-    action_2_status: 1746 - Click on a face
-    action_3: 1747 - Export Path
-    action_3_status: 1748 - Click on an edge
-    action_option_group_file_format: 1749 - Format
-    action_option_group_unit: 1750 - Unit
-    action_option_group_faces: 1751 - Faces
-    action_option_group_options: 1752 - Options
-    action_option_file_format_dxf_status: 1753 - Export to DXF file
-    action_option_file_format_stl_status: 1754 - Export to STL file
-    action_option_file_format_obj_status: 1755 - Export to OBJ file
-    action_option_file_format_svg_status: 1756 - Export to SVG file
+    title: 1752 - Export
+    action_0: 1753 - Export 3D Part
+    action_0_status: 1754 - Click on a part
+    action_1: 1755 - Export 2D Part
+    action_1_status: 1756 - Click on the face of a part
+    action_2: 1757 - Export Face
+    action_2_status: 1758 - Click on a face
+    action_3: 1759 - Export Path
+    action_3_status: 1760 - Click on an edge
+    action_option_group_file_format: 1761 - Format
+    action_option_group_unit: 1762 - Unit
+    action_option_group_faces: 1763 - Faces
+    action_option_group_options: 1764 - Options
+    action_option_file_format_dxf_status: 1765 - Export to DXF file
+    action_option_file_format_stl_status: 1766 - Export to STL file
+    action_option_file_format_obj_status: 1767 - Export to OBJ file
+    action_option_file_format_svg_status: 1768 - Export to SVG file
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2268,9 +2281,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1766 - Isolate through-holes and merge depths for each cavity
-    action_option_options_include_paths_status: 1767 - Export non-face edges contained in the part as a path
+    action_option_options_merge_holes_status: 1778 - Isolate through-holes and merge depths for each cavity
+    action_option_options_include_paths_status: 1779 - Export non-face edges contained in the part as a path
     error:
-      not_part: 1768 - This face does not belong to a part (component)
-      not_flat_face: 1769 - This surface is not flat
-      incompatible_active_path: 1770 - The active path does not allow exporting this part
+      not_part: 1780 - This face does not belong to a part (component)
+      not_flat_face: 1781 - This surface is not flat
+      incompatible_active_path: 1782 - The active path does not allow exporting this part
