@@ -682,7 +682,7 @@ module Ladb::OpenCutList
     def initialize(tool, previous_action_handler = nil)
       super(SmartReshapeTool::ACTION_STRETCH, tool, previous_action_handler)
 
-      @snap_axis = nil
+      @picked_axis = nil
       @picked_grip_index = -1
 
       @cutters = nil
@@ -722,7 +722,7 @@ module Ladb::OpenCutList
 
       when STATE_RESHAPE_START
         return super +
-               "#{(' ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1a_status") + '.') unless @snap_axis.nil?}" +
+               "#{(' ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1a_status") + '.') unless @picked_axis.nil?}" +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1b_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1c_status") + '.'
 
@@ -764,13 +764,13 @@ module Ladb::OpenCutList
           et = _get_edit_transformation
           eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
-          direction = @snap_axis.transform(et)
+          direction = @picked_axis.transform(et)
           min = eb.min.transform(et)
           max = eb.max.transform(et)
           max_plane = [ max, direction ]
           vmax = min.vector_to(min.project_to_plane(max_plane))
 
-          plane = [min.offset(vmax, vmax.length * @cutters[@snap_axis][@picked_cutter_index]), direction ]
+          plane = [min.offset(vmax, vmax.length * @cutters[@picked_axis][@picked_cutter_index]), direction ]
 
           @picked_cutter_start_point = Geom.intersect_line_plane(view.pickray(x, y), plane)
 
@@ -832,7 +832,7 @@ module Ladb::OpenCutList
 
       when STATE_RESHAPE_CUTTER_ADD
         if @snap_ratio
-          @cutters[@snap_axis] << @snap_ratio
+          @cutters[@picked_axis] << @snap_ratio
           @snap_ratio = nil
           _store_cutters
           _load_cutters # Reload to sanitize
@@ -842,7 +842,7 @@ module Ladb::OpenCutList
 
       when STATE_RESHAPE_CUTTER_REMOVE
         if @picked_cutter_index
-          @cutters[@snap_axis].delete_at(@picked_cutter_index)
+          @cutters[@picked_axis].delete_at(@picked_cutter_index)
           @picked_cutter_index = nil
           _store_cutters
           _load_cutters # Reload to sanitize
@@ -959,7 +959,7 @@ module Ladb::OpenCutList
           _refresh
           return true
         end
-        unless @snap_axis.nil?
+        unless @picked_axis.nil?
           if tool.is_key_ctrl_or_option?(key)
             set_state(STATE_RESHAPE_CUTTER_ADD)
             _refresh
@@ -1064,7 +1064,7 @@ module Ladb::OpenCutList
 
     def _reset
       @split_def = nil
-      @snap_axis = nil
+      @picked_axis = nil
       @picked_grip_index = -1
       @picked_cutter_index = nil
       super
@@ -1084,7 +1084,7 @@ module Ladb::OpenCutList
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       keb = Kuix::Bounds3d.new.copy!(eb)
 
-      @snap_axis = @locked_axis unless @locked_axis.nil?
+      @picked_axis = @locked_axis unless @locked_axis.nil?
 
       # Snap to grip?
 
@@ -1094,7 +1094,7 @@ module Ladb::OpenCutList
         grip_indices.each do |grip_index|
           p = keb.face_center(grip_index).to_p.transform(et)
           if pk.test_point(p)
-            @snap_axis = axis
+            @picked_axis = axis
             @picked_grip_index = grip_index
             @split_def = nil
             @mouse_snap_point = p
@@ -1103,11 +1103,11 @@ module Ladb::OpenCutList
         end
       end
 
-      unless @cutters.nil? || @snap_axis.nil?
+      unless @cutters.nil? || @picked_axis.nil?
 
         # Snap to a section?
 
-        direction = @snap_axis.transform(et)
+        direction = @picked_axis.transform(et)
         min = eb.min.transform(et)
         max = eb.max.transform(et)
         min_plane = [ min, direction ]
@@ -1116,11 +1116,11 @@ module Ladb::OpenCutList
 
         inch_inflate_value = view.pixels_to_model(PX_INFLATE_VALUE, eb.center.transform(et))
 
-        quad_index, _ = Kuix::Bounds3d.faces_by_axis(@snap_axis)
+        quad_index, _ = Kuix::Bounds3d.faces_by_axis(@picked_axis)
         quad_ref = keb.inflate_all!(inch_inflate_value).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
 
         p2d = Geom::Point3d.new(x, y)
-        @cutters[@snap_axis].each_with_index do |ratio, index|
+        @cutters[@picked_axis].each_with_index do |ratio, index|
 
           v = Geom::Vector3d.new(vmax)
           v.length = vmax.length * ratio
@@ -1145,7 +1145,7 @@ module Ladb::OpenCutList
       et = _get_edit_transformation
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
-      direction = @snap_axis.transform(et)
+      direction = @picked_axis.transform(et)
 
       picked_point, _ = Geom::closest_points([@picked_cutter_start_point, direction ], view.pickray(x, y))
       @mouse_snap_point = picked_point
@@ -1171,7 +1171,7 @@ module Ladb::OpenCutList
         ratio = 0
       end
 
-      @cutters[@snap_axis][@picked_cutter_index] = ratio
+      @cutters[@picked_axis][@picked_cutter_index] = ratio
 
     end
 
@@ -1180,16 +1180,16 @@ module Ladb::OpenCutList
       @snap_ratio = nil
       @picked_cutter_index = nil
 
-      unless @snap_axis.nil?
+      unless @picked_axis.nil?
 
         drawing_def = _get_drawing_def
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
         ked = Kuix::Bounds3d.new.copy!(eb)
         center = eb.center.transform(et)
-        direction = @snap_axis.transform(et)
+        direction = @picked_axis.transform(et)
 
-        case @snap_axis
+        case @picked_axis
         when X_AXIS
           plane = [ center, eb.height > eb.depth ? _get_active_z_axis : _get_active_y_axis ]
         when Y_AXIS
@@ -1206,7 +1206,7 @@ module Ladb::OpenCutList
 
             @mouse_snap_point = hit.project_to_line([ center, direction ])
 
-            min, max = Kuix::Bounds3d.faces_by_axis(@snap_axis).map { |index| ked.face_center(index).to_p.transform(et) }
+            min, max = Kuix::Bounds3d.faces_by_axis(@picked_axis).map { |index| ked.face_center(index).to_p.transform(et) }
 
             v = min.vector_to(@mouse_snap_point)
             vmax = min.vector_to(max)
@@ -1229,13 +1229,13 @@ module Ladb::OpenCutList
 
       @picked_cutter_index = nil
 
-      unless @cutters.nil? || @snap_axis.nil?
+      unless @cutters.nil? || @picked_axis.nil?
 
         drawing_def = _get_drawing_def
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
         keb = Kuix::Bounds3d.new.copy!(eb)
-        direction = @snap_axis.transform(et)
+        direction = @picked_axis.transform(et)
 
         min = eb.min.transform(et)
         max = eb.max.transform(et)
@@ -1243,11 +1243,11 @@ module Ladb::OpenCutList
         max_plane = [ max, direction ]
         vmax = min.vector_to(min.project_to_plane(max_plane))
 
-        if @snap_axis == X_AXIS
+        if @picked_axis == X_AXIS
           quad_index = Kuix::Bounds3d::LEFT
-        elsif @snap_axis == Y_AXIS
+        elsif @picked_axis == Y_AXIS
           quad_index = Kuix::Bounds3d::FRONT
-        elsif @snap_axis == Z_AXIS
+        elsif @picked_axis == Z_AXIS
           quad_index = Kuix::Bounds3d::BOTTOM
         end
 
@@ -1256,7 +1256,7 @@ module Ladb::OpenCutList
         quad_ref = keb.inflate_all!(inch_inflate_value).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
 
         p2d = Geom::Point3d.new(x, y)
-        @cutters[@snap_axis].each_with_index do |ratio, index|
+        @cutters[@picked_axis].each_with_index do |ratio, index|
 
           v = Geom::Vector3d.new(vmax)
           v.length = vmax.length * ratio
@@ -1285,7 +1285,7 @@ module Ladb::OpenCutList
       else
 
         et = _get_edit_transformation
-        direction = @snap_axis.transform(et)
+        direction = @picked_axis.transform(et)
 
         if @mouse_ip.degrees_of_freedom > 2 ||
            @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1 ||
@@ -1315,11 +1315,11 @@ module Ladb::OpenCutList
       keb = Kuix::Bounds3d.new.copy!(eb)
       inch_inflate_value = view.pixels_to_model(PX_INFLATE_VALUE, eb.center.transform(et))
 
-      if @snap_axis
+      if @picked_axis
 
-        color = _get_vector_color(@snap_axis.transform(et))
+        color = _get_vector_color(@picked_axis.transform(et))
 
-        case @snap_axis
+        case @picked_axis
         when X_AXIS
           section_ref = keb.x_section_min.inflate!(0, inch_inflate_value, inch_inflate_value)
           patterns_transformation = Geom::Transformation.axes(ORIGIN, Z_AXIS, Y_AXIS, X_AXIS)
@@ -1331,14 +1331,14 @@ module Ladb::OpenCutList
           patterns_transformation = IDENTITY
         end
 
-        ratios = @cutters[@snap_axis]
+        ratios = @cutters[@picked_axis]
         ratios = ratios.dup.push(@snap_ratio) if @snap_ratio
         ratios.each_with_index do |ratio, index|
 
           section = Kuix::Bounds3d.new.copy!(section_ref)
-          section.origin.x += ratio * keb.width if @snap_axis == X_AXIS
-          section.origin.y += ratio * keb.height if @snap_axis == Y_AXIS
-          section.origin.z += ratio * keb.depth if @snap_axis == Z_AXIS
+          section.origin.x += ratio * keb.width if @picked_axis == X_AXIS
+          section.origin.y += ratio * keb.height if @picked_axis == Y_AXIS
+          section.origin.z += ratio * keb.depth if @picked_axis == Z_AXIS
 
           is_picked_section = @picked_cutter_index == index
           is_add = @state == STATE_RESHAPE_CUTTER_ADD && @snap_ratio && index == ratios.length - 1
@@ -1379,16 +1379,16 @@ module Ladb::OpenCutList
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       keb = Kuix::Bounds3d.new.copy!(eb)
 
-      if @snap_axis
+      if @picked_axis
 
-        color = _get_vector_color(@snap_axis.transform(et))
+        color = _get_vector_color(@picked_axis.transform(et))
 
-        p1, p2 = Kuix::Bounds3d.faces_by_axis(@snap_axis).map { |face| keb.face_center(face).to_p }
+        p1, p2 = Kuix::Bounds3d.faces_by_axis(@picked_axis).map { |face| keb.face_center(face).to_p }
 
         k_edge = Kuix::EdgeMotif.new
         k_edge.start.copy!(p1)
         k_edge.end.copy!(p2)
-        k_edge.line_width = @snap_axis == @locked_axis ? 2 : 1.5
+        k_edge.line_width = @picked_axis == @locked_axis ? 2 : 1.5
         k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
         k_edge.color = color
         k_edge.on_top = true
@@ -1441,7 +1441,7 @@ module Ladb::OpenCutList
 
       if @locked_axis.nil?
 
-        axes = [ X_AXIS, Y_AXIS, Z_AXIS ].delete_if { |axis| axis == @snap_axis }
+        axes = [ X_AXIS, Y_AXIS, Z_AXIS ].delete_if { |axis| axis == @picked_axis }
 
         axes.map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } }.each do |p0, p1|
           k_edge = Kuix::EdgeMotif.new
@@ -1574,7 +1574,7 @@ module Ladb::OpenCutList
 
       # Preview line
 
-      color = _get_vector_color(@snap_axis.transform(et), Kuix::COLOR_DARK_GREY)
+      color = _get_vector_color(@picked_axis.transform(et), Kuix::COLOR_DARK_GREY)
 
       k_edge = Kuix::EdgeMotif.new
       k_edge.start.copy!(lps)
@@ -1631,10 +1631,10 @@ module Ladb::OpenCutList
       end
 
       # Error if max distance exceeded
-      compressed = emv.valid? && (reversed ? emv.samedirection?(@snap_axis) : !emv.samedirection?(@snap_axis))
+      compressed = emv.valid? && (reversed ? emv.samedirection?(@picked_axis) : !emv.samedirection?(@picked_axis))
       compressed = !compressed if distance < 0
       if compressed && @picked_reshape_start_point.distance(lps.offset(v, distance)) > max_compression_distance
-        tool.notify_errors([ [ "tool.smart_reshape.error.gt_max_distance", { :value1 => distance.abs.to_l, :value2 => max_compression_distance.abs.to_l } ] ])
+        tool.notify_errors([ [ "tool.default.error.gt_max_distance", { :value1 => distance.abs.to_l, :value2 => max_compression_distance.abs.to_l } ] ])
         return false
       end
 
@@ -1664,8 +1664,8 @@ module Ladb::OpenCutList
 
     def _assert_valid_cutters
       return false if !@cutters.is_a?(Hash) ||
-                      @snap_axis.nil? ||
-                      !(ratios = @cutters[@snap_axis]).is_a?(Array) || ratios.empty? ||
+                      @picked_axis.nil? ||
+                      !(ratios = @cutters[@picked_axis]).is_a?(Array) || ratios.empty? ||
                       (section_defs, _ = _get_split_def.values_at(:section_defs)).nil?
 
       # Check section pt_boxes oversize
@@ -1754,12 +1754,12 @@ module Ladb::OpenCutList
         el = [ epo, evpspe ]
         sd = section_defs
         sd = sd.reverse if reversed
-        @cutters[@snap_axis] = sd
+        @cutters[@picked_axis] = sd
            .select { |section_def| section_def[:pt_bbox].valid? } # Exclude empty sections
            .each_cons(2).map { |section_def0, section_def1|
               max0 = section_def0[:pt_bbox].max.project_to_line(el).offset!(edvs[section_def0])
               min1 = section_def1[:pt_bbox].min.project_to_line(el).offset!(edvs[section_def1])
-              if (v = max0.vector_to(min1)).valid? && v.samedirection?(@snap_axis)  # Exclude if pt_bboxes overlap
+              if (v = max0.vector_to(min1)).valid? && v.samedirection?(@picked_axis)  # Exclude if pt_bboxes overlap
                 epc = Geom.linear_combination(0.5, max0, 0.5, min1)
                 epo.vector_to(epc).length / distance
               end
@@ -1832,12 +1832,12 @@ module Ladb::OpenCutList
       epe = keb.face_center(grip_index_e).to_p
       evpspe = eps.vector_to(epe)
 
-      reversed = !evpspe.samedirection?(@snap_axis)
+      reversed = !evpspe.samedirection?(@picked_axis)
 
       epmin = reversed ? epe : eps
       epmax = reversed ? eps : epe
 
-      ref_quads = keb.get_quad(grip_index_s).map { |point| point }
+      ref_quads = keb.get_quad(grip_index_s)
       quads = ref_quads.dup
 
       section_defs = []
@@ -1846,9 +1846,9 @@ module Ladb::OpenCutList
 
       v_s = {}  # Vertex => SectionDef
 
-      ratios = @cutters[@snap_axis].sort
+      ratios = @cutters[@picked_axis].sort
       ratios.uniq!
-      ratios.reverse!.map! { |ratio| 1 - ratio } unless evpspe.samedirection?(@snap_axis)
+      ratios.reverse!.map! { |ratio| 1 - ratio } unless evpspe.samedirection?(@picked_axis)
       ratios << 1.1 unless ratios.last >= 1.0 # Use 1.1 to be sure to avoid rounding problems
       ratios.each_with_index do |ratio, index|
 
@@ -1908,9 +1908,9 @@ module Ladb::OpenCutList
 
         # 1. Sort curves according to their "min" point relative to the opposite active grip
 
-        reversed = evpspe.valid? && !evpspe.samedirection?(@snap_axis)
+        reversed = evpspe.valid? && !evpspe.samedirection?(@picked_axis)
         min_method = reversed ? :max : :min
-        xyz_method = { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@snap_axis]
+        xyz_method = { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@picked_axis]
 
         curve_manipulators = drawing_container_def.curve_manipulators.sort_by { |cm| cm.bounds.send(min_method).send(xyz_method) }
         curve_manipulators.reverse! if reversed
@@ -2026,7 +2026,7 @@ module Ladb::OpenCutList
       emv = mv.transform(eti)   # Move vector in edit space
 
       # Limit move to max compression distance
-      compressed = emv.valid? && (reversed ? emv.samedirection?(@snap_axis) : !emv.samedirection?(@snap_axis))
+      compressed = emv.valid? && (reversed ? emv.samedirection?(@picked_axis) : !emv.samedirection?(@picked_axis))
       if compressed && mv.length > max_compression_distance
         pe = ps.offset(mv, max_compression_distance)
         mv = ps.vector_to(pe)
