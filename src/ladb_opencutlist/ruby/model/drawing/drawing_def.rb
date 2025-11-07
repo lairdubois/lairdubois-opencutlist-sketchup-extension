@@ -58,18 +58,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def add_container(container, transformation)
-      container_def = DrawingContainerDef.new(container, transformation)
-      @container_defs << container_def
-      container_def
-    end
-
-    def add_manipulator(symbol, manipulator)
-      send(symbol) << manipulator
-    end
-    
-    # -----
-
     def transform!(transformation)
       return false if !transformation.is_a?(Geom::Transformation) || transformation.identity?
 

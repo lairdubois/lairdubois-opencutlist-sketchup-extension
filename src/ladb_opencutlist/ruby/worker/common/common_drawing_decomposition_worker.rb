@@ -314,38 +314,39 @@ module Ladb::OpenCutList
                   surface_manipulator = _get_surface_manipulator_by_face(drawing_container_def, entity, transformation)
                   if surface_manipulator.nil?
                     surface_manipulator = SurfaceManipulator.new(transformation).populate_from_face(entity)
-                    drawing_container_def.add_manipulator(:surface_manipulators, surface_manipulator)
+                    drawing_container_def.surface_manipulators << surface_manipulator
                   end
                   manipulator.surface_manipulator = surface_manipulator
                 end
               end
-              drawing_container_def.add_manipulator(:face_manipulators, manipulator)
+              drawing_container_def.face_manipulators << manipulator
             end
           elsif entity.is_a?(Sketchup::Edge)
             next if @ignore_edges || entity.soft? && @ignore_soft_edges
             manipulator = EdgeManipulator.new(entity, transformation)
             if edge_validator.nil? || edge_validator.call(manipulator)
               if entity.curve.nil? || entity.curve.edges.length < 2  # Exclude curves that contain only one edge.
-                drawing_container_def.add_manipulator(:edge_manipulators, manipulator)
+                drawing_container_def.edge_manipulators << manipulator
               else
                 curve_manipulator = _get_curve_manipulator_by_edge(drawing_container_def, entity, transformation)
                 if curve_manipulator.nil?
                   curve_manipulator = CurveManipulator.new(entity.curve, transformation)
-                  drawing_container_def.add_manipulator(:curve_manipulators, curve_manipulator)
+                  drawing_container_def.curve_manipulators << curve_manipulator
                 end
               end
             end
           elsif entity.is_a?(Sketchup::ConstructionLine)
             next if @ignore_clines || entity.start.nil? # Exclude infinite Clines
             manipulator = ClineManipulator.new(entity, transformation)
-            drawing_container_def.add_manipulator(:cline_manipulators, manipulator)
+            drawing_container_def.cline_manipulators << manipulator
           elsif @recursive
             if entity.respond_to?(:definition)
               next if entity.is_a?(Sketchup::ComponentInstance) && @for_part && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
               if @flatten
                 child_drawing_container_def = drawing_container_def
               else
-                child_drawing_container_def = drawing_container_def.add_container(entity, transformation)
+                child_drawing_container_def = DrawingContainerDef.new(entity, transformation)
+                drawing_container_def.container_defs << child_drawing_container_def
               end
               _populate_manipulators(child_drawing_container_def, entity.definition.entities, transformation * entity.transformation, face_validator, edge_validator)
             end
