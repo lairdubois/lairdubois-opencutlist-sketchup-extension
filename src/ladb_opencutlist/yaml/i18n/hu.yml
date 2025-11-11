@@ -114,6 +114,7 @@ core:
       edit_part_instance_properties: Editer les propriétés de l'instance
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +126,7 @@ core:
       dialog: OpenCutList
       smart_draw: Alkatrész Rajzolása
       smart_handle: Alkatrészek Kezelése
+      smart_reshape: Alkatrészek átformálása
       smart_paint: Alkatrészek Festése
       smart_axes: Alkatrészek Tájolása
       smart_export: Alkatrészek Exportálása
@@ -155,6 +157,8 @@ core:
       Hiba jelentéséhez: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Ebben a kontextusban nem érhető el
   error:
+    exception: "Hiba: **{{ error }}**"
+    forbidden: "Nem engedélyezett: **{{ error }}**"
     extern: "Külső hiba : **{{ error }}**"
     feature_unavailable: "Ez a funkció SketchUp {{ version }} vagy újabb verziót igényel"
     failed_export_to: |
@@ -306,7 +310,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: "Csoport Mutat / Elrejt "
-      show_hide_blocks: ""
+      show_hide_blocks: Az összes csoport megjelenítése / elrejtése
       scroll_to_block: Görgetés a csoporthoz
       not_available_std_width: "A(z) *{{ std_dimension_real }}* keresztmetszet értéke nincs megadva a(z) '{{ material_name }}' anyag szabványos keresztmetszetei között"
       not_available_std_thickness: "A(z) *{{ std_dimension_real }}* vastagság értéke nincs megadva '{{ material_name }}' anyag szabványos vastagságai között"
@@ -1129,6 +1133,11 @@ tab:
       option_hide_edges_preview_0: Megjelenítve a szabásterven
       option_hide_edges_preview_1: Elrejtve a szabásterven
       option_hide_edges_preview_help: Lehetővé teszi az élzárók vizuális megjelenítésének mutatását vagy elrejtését minden alkatrésznél a szabásterven.
+      option_zoom_threshold: Nagyítás határa
+      option_zoom_threshold_help: |
+        Lehetővé teszi a diagram szélességének meghatározását, amely alatt a diagramok automatikusan nagyítódnak.
+
+        *A nagyítás a legszélesebb diagram alapján kerül kiszámításra*.
       option_time_limit: Időkorlát
       option_time_limit_help: |
         Rendelkezésre álló időkorlát a számításra
@@ -1737,13 +1746,15 @@ tab:
       is_active_node: Aktív példány a modellben
       set_active_node: Modell szerkesztése
       edit_node_properties: Tulajdonságok szerkesztése
-      select_active_nodes: ""
+      select_active_nodes: Az összes aktív példány kijelölése / kijelölésének törlése
       select_node: Kijelöl
       unselect_node: Kijelölés megszüntetése
       open_node_url: Példány URL megnyitása
     edit_node:
       title_model: "A modell tulajdonságai"
       title_instance: "**{{ name }}** példány tulajdonságai"
+      title_instance_multiple: "Példányok csoportjának tulajdonságai"
+      multiple_alert: "A {{ node_count }} példányból álló csoport közös tulajdonságai."
       general: Általános
       name: Név
       instance_name: Példány
@@ -1754,7 +1765,22 @@ tab:
       tags: Címkék
       layer_name: Címke
       explode: Szétrobbantás
-      explode_message: "Biztosan szét szeretné robbantani a **{{ name }}** példányt?"
+      explode_message: "Biztosan fel szeretnéd bontani a **{{ name }}** elemet?"
+      erase: Töröl
+      erase_message: "Biztosan törölni szeretnéd a **{{ name }}** elemet?"
+    deep_make_unique:
+      title: Egyedivé tétel
+    deep_rename_parts:
+      title: Alkatrészek átnevezése
+      info_0: |
+        Ez a funkció lehetővé teszi, hogy átnevezd a kiválasztott halmazban lévő alkatrészeket az alábbi képlet alkalmazásával minden példányra.
+      formula: Képlet
+      old_name: Eredeti név
+      new_name: Új név
+      count: Db.
+    create_container:
+      title_group: "Csoport létrehozása"
+      title_component: "Komponens létrehozása"
     option:
       general: Általános
       show_hidden_instances: Mutassa az elrejtett példányokat
@@ -1770,6 +1796,7 @@ tab:
       no_entities: A modell üres!
       node_not_found: Csomópont nem található
       entity_not_found: Példány nem található
+      invalid_target: A kiválasztott példány nem engedélyezi ezt a műveletet
       obsolete_outliner: "Nem lehetséges, a generált szerkezet elavult. Kérem, generálja újra."
     tip:
       no_node: |
@@ -1926,6 +1953,7 @@ tab:
     language_auto: Automatikus
     font_size: Betűméret
     font_size_auto: $t(default.automatic)
+    font_size_normal: Normál
     font_size_small: Kicsi
     font_size_tiny: Nagyon kicsi
     print_margin: Nyomtatási margók
@@ -2043,6 +2071,11 @@ tool:
       invalid_divider: "A(z) {{ value }} osztó nem használható"
       invalid_offset: "A(z) {{ value }} eltolás nem használható"
       invalid_segment_count: "A szegmensek száma {{ value }} nem megfelelő. Az értéknek 3 és 999 között kell lennie."
+      syntax_error: "Szintaktikai hiba: {{ error }}"
+      unexpected_close_parenthesis: "Nem várt záró zárójel"
+      missing_close_parenthesis: "Hiányzó záró zárójel"
+      missing_operand: "Hiányzó szám vagy érték"
+      zero_division: "Nem lehet nullával osztani"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2091,6 +2124,8 @@ tool:
     title: Kezelés
     action_0: Kijelöl
     action_0_status: Kattintson egy alkatrészre a kijelöléséhez
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: Húzd az egeret egy azonos alkatrészre a kijelöléshez való hozzáadásához
     action_1: Másolás vonal mentén
     action_1_status: Kattintson egy alkatrészre annak tengely menti másolásához
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2106,9 +2141,9 @@ tool:
     action_4: Elosztás
     action_4_status: Kattintson egy alkatrészre annak tengely menti elosztásához
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Kattintson az első mérési pont meghatározásához
     action_4_state_2_status: "Kattintson a második mérési pont meghatározásához, vagy adjon meg egy távolságot"
-    action_5: Átméretezés
     action_option_group_copy_measure_type: Mérés
     action_option_group_move_measure_type: Mérés
     action_option_group_axes: Tengelyek
@@ -2127,6 +2162,17 @@ tool:
       copies_disable_mirror: Több másolat esetén a '$t(tool.smart_handle.action_option_options_mirror_status)' opció kikapcsolásra kerül
     error:
       min_distance: "A(z) {{ value1 }} távolság nem éri el a minimálisan megengedett értéket ami: {{ value2 }}"
+  smart_reshape:
+    title: Módosítás
+    action_0: Húzás
+    action_0_status: Kattintson egy alkatrészre a kijelöléséhez
+    action_option_group_stretch_measure_type: Mérés
+    action_option_group_axes: Tengelyek
+    action_option_stretch_measure_type_outside_status: Külső mérés
+    action_option_stretch_measure_type_offset_status: A különbség mérése
+    action_option_axes_active_status: Kezelés az aktív tengelyek mentén
+    action_option_axes_context_status: "Kezelés annak a csoportnak vagy komponensnek a tengelyei mentén, amely tartalmazza az alkatrészt"
+    action_option_axes_entity_status: Kezelés az alkatrész tengelyei mentén
   smart_paint:
     title: Festés
     default_material: Nincs definiált anyag
