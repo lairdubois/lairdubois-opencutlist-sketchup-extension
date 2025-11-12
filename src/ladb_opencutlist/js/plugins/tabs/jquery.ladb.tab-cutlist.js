@@ -4122,15 +4122,6 @@
                 editedPart.tags = editedPart.tags.filter(function(tag) {  // Extract only commun tags
                     return -1 !== editedParts[i].tags.indexOf(tag);
                 });
-                if (editedPart.length_increase !== editedParts[i].length_increase) {
-                    editedPart.length_increase = MULTIPLE_VALUE;
-                }
-                if (editedPart.width_increase !== editedParts[i].width_increase) {
-                    editedPart.width_increase = MULTIPLE_VALUE;
-                }
-                if (editedPart.thickness_increase !== editedParts[i].thickness_increase) {
-                    editedPart.thickness_increase = MULTIPLE_VALUE;
-                }
                 if (editedPart.edge_material_names.ymin !== editedParts[i].edge_material_names.ymin) {
                     editedPart.edge_material_names.ymin = MULTIPLE_VALUE;
                 }
@@ -4201,9 +4192,6 @@
             const $sortablePartAxes = $('#ladb_sortable_part_axes', $modal);
             const $sortablePartAxesExtra = $('#ladb_sortable_part_axes_extra', $modal);
             const $selectPartAxesOriginPosition = $('#ladb_cutlist_part_select_axes_origin_position', $modal);
-            const $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
-            const $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
-            const $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
             const $selectEdgeYmax = $('#ladb_cutlist_part_select_edge_ymax', $modal);
             const $selectEdgeYmin = $('#ladb_cutlist_part_select_edge_ymin', $modal);
             const $selectEdgeXmin = $('#ladb_cutlist_part_select_edge_xmin', $modal);
@@ -4327,18 +4315,6 @@
                     }
                 }
             };
-            const fnUpdateIncreasesPreview = function() {
-                if ($inputLengthIncrease.val() == null || $inputLengthIncrease.val().length === 0 || $inputLengthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
-                    $rectIncreaseLength.removeClass('ladb-active');
-                } else {
-                    $rectIncreaseLength.addClass('ladb-active');
-                }
-                if ($inputWidthIncrease.val() == null || $inputWidthIncrease.val().length === 0 || $inputWidthIncrease.val().match(/^0([.,]{0,1}[0]*)(m|cm|mm|yd|'|")*$/g)) {
-                    $rectIncreaseWidth.removeClass('ladb-active');
-                } else {
-                    $rectIncreaseWidth.addClass('ladb-active');
-                }
-            };
             const fnNewCheck = function($select, type) {
                 if ($select.val() === 'new') {
                     that.dialog.executeCommandOnTab('materials', 'new_material', { type: type });
@@ -4457,7 +4433,6 @@
             }
 
             fnDisplayAxisDimensions();
-            fnUpdateIncreasesPreview();
 
             if (tab === 'general') {
                 fnLoadThumbnail();
@@ -4507,15 +4482,6 @@
                     delay: 100
                 }
             });
-            $inputLengthIncrease.on('change', function() {
-                fnUpdateIncreasesPreview();
-            });
-            $inputLengthIncrease.ladbTextinputDimension();
-            $inputWidthIncrease.on('change', function() {
-                fnUpdateIncreasesPreview();
-            });
-            $inputWidthIncrease.ladbTextinputDimension();
-            $inputThicknessIncrease.ladbTextinputDimension();
             $inputFaceZminTextureAngle
                 .ladbTextinputNumberWithUnit({
                     resetValue: 0,
@@ -4601,14 +4567,6 @@
                         fnUpdateFacesPreview();
                     }
                 });
-
-            // Bind increases
-            $rectIncreaseLength.on('click', function() {
-                $inputLengthIncrease.focus();
-            });
-            $rectIncreaseWidth.on('click', function() {
-                $inputWidthIncrease.focus();
-            });
 
             // Bind edges
             $rectEdgeYmin.on('click', function() {
@@ -4742,16 +4700,6 @@
                             return !editedPart.tags.includes(tag)
                         });
                         editedParts[i].tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
-
-                        if (!$inputLengthIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].length_increase = $inputLengthIncrease.val();
-                        }
-                        if (!$inputWidthIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].width_increase = $inputWidthIncrease.val();
-                        }
-                        if (!$inputThicknessIncrease.ladbTextinputDimension('isMultiple')) {
-                            editedParts[i].thickness_increase = $inputThicknessIncrease.val();
-                        }
 
                         if ($selectEdgeYmin.val() !== MULTIPLE_VALUE) {
                             editedParts[i].edge_material_names.ymin = $selectEdgeYmin.val();

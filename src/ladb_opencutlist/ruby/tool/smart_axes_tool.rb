@@ -299,20 +299,6 @@ module Ladb::OpenCutList
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
         arrow_line_width = 2
 
-        increases = [ 0, 0, 0 ]
-        if part.length_increased || part.width_increased || part.thickness_increased
-          part.def.size.axes.each_with_index do |axis, index|
-            case index
-            when 0
-              increases[axis == X_AXIS ? 0 : (axis == Y_AXIS ? 1 : 2)] = part.def.length_increase.to_f if part.length_increased
-            when 1
-              increases[axis == X_AXIS ? 0 : (axis == Y_AXIS ? 1 : 2)] = part.def.width_increase.to_f if part.width_increased
-            when 2
-              increases[axis == X_AXIS ? 0 : (axis == Y_AXIS ? 1 : 2)] = part.def.thickness_increase.to_f if part.thickness_increased
-            end
-          end
-        end
-
         k_group = Kuix::Group.new
         k_group.transformation = instance_info.transformation
         @overlay_layer.append(k_group)
@@ -359,9 +345,6 @@ module Ladb::OpenCutList
             # Box helper
             k_box = Kuix::BoxMotif.new
             k_box.bounds.copy!(bounds)
-            k_box.bounds.size.width += increases[0] / part.def.scale.x
-            k_box.bounds.size.height += increases[1] / part.def.scale.y
-            k_box.bounds.size.depth += increases[2] / part.def.scale.z
             k_box.color = COLOR_ACTION
             k_box.line_width = 1
             k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -498,9 +481,6 @@ module Ladb::OpenCutList
           # Bounding box helper
           k_box = Kuix::BoxMotif.new
           k_box.bounds.copy!(instance_info.definition_bounds)
-          k_box.bounds.size.width += increases[0] / part.def.scale.x
-          k_box.bounds.size.height += increases[1] / part.def.scale.y
-          k_box.bounds.size.depth += increases[2] / part.def.scale.z
           k_box.color = COLOR_BOX
           k_box.line_width = 1
           k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES

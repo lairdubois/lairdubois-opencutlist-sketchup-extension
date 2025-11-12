@@ -461,13 +461,10 @@ module Ladb::OpenCutList
 
             part_def = part.def
             group_def = part.group.def
-            part_length_increase = part_def.length_increase
-            part_width_increase = part_def.width_increase
             material_length_increase = group_def.material_attributes.l_length_increase
             material_width_increase = group_def.material_attributes.l_width_increase
 
-            if part_length_increase > 0 || part_width_increase > 0 ||
-              material_length_increase > 0 || material_width_increase > 0
+            if material_length_increase > 0 || material_width_increase > 0
 
               # Part is oversized: use cutting rect instead of the real part shape
 

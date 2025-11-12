@@ -1117,10 +1117,6 @@ module Ladb::OpenCutList
           _select_active_part_entity
           PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
         }
-        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
-          _select_active_part_entity
-          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'size_increase', dontGenerate: false }")
-        }
         menu.set_validation_proc(item) {
           if active_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
             active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD ||
@@ -1932,10 +1928,6 @@ module Ladb::OpenCutList
         menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
           _select_active_part_entity
           PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
-        }
-        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
-          _select_active_part_entity
-          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'size_increase', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
           if active_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||

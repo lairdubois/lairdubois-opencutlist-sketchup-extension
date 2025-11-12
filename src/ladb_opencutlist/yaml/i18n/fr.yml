@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Générer la fiche de débit
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Modifier l'instance
@@ -298,7 +297,6 @@ tab:
     highlight_parts: Voir les pièces dans le modèle
     edit_part_properties: Éditer les propriétés de la pièce
     edit_part_axes_properties: Éditer les propriétés (axes) de la pièce
-    edit_part_size_increase_properties: Éditer les propriétés (surcotes) de la pièce
     edit_part_edges_properties: Éditer les propriétés (chants) de la pièce
     edit_part_faces_properties: Éditer les propriétés (faces) de la pièce
     part_drawing_type_1: 2D Vue Face
@@ -382,7 +380,6 @@ tab:
       invalid_final_area: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièce (sur {{ total }}) a une surface finie invalide"
       invalid_final_area_plural: "Attention, cette surface cumulée n'a pas pu être calculée parce que {{ count }} pièces (sur {{ total }}) ont une surface finie invalide"
       is_dynamic_attributes_name: La désignation de cette pièce est extraite de l'attribut 'Name' du composant dynamique
-      size_increased: "Dimension majorée par une surcote de {{ value }}"
       has_edges: "Cette pièce contient {{ count }} chant plaqué"
       has_edges_plural: "Cette pièce contient {{ count }} chants plaqués"
       has_faces: "Cette pièce contient {{ count }} face plaquée"
@@ -496,16 +493,6 @@ tab:
       ignore_grain_direction: Ignorer la direction du fil
       ignore_grain_direction_help: |
         Si cette case est cochée, la direction du fil est ignorée sur cette pièce.
-      size_increase: Surcotes
-      size_increase_help: |
-        Les surcotes vous permettent de majorer les dimensions capables de la pièce.
-        (*Exemple : Surcote pour une plinthe ou un filer qui devrait être tabletté au montage.*)
-      length_increase: Surcote de longueur
-      length_increase_help: Surcote appliquée sur la longueur réelle pour définir la **longueur capable**.
-      width_increase: Surcote de largeur
-      width_increase_help: Surcote appliquée sur la largeur réelle pour définir la **largeur capable**.
-      thickness_increase: Surcote d'épaisseur
-      thickness_increase_help: Surcote appliquée sur l'épaisseur réelle pour définir l'**épaisseur capable**.
       axes: Axes
       axes_help: Réordonnez les dimensions pour les faire correspondre avec les couleurs d'axe désirées dans votre pièce.
       axes_tip: |
