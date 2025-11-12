@@ -1887,23 +1887,19 @@ module Ladb::OpenCutList
         # k_box.transformation = et
         # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
 
-        unless drawing_container_def.is_root?
+        unless drawing_container_def.is_root? || grabbed
 
-          if (glued_to = drawing_container_def.container.respond_to?(:glued_to) ? drawing_container_def.container.glued_to : nil)
+          # Check if the container is glued
+          if drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
+             drawing_container_def.container.respond_to?(:definition) && drawing_container_def.container.definition.behavior.always_face_camera?
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
-            origin_section_def = section_defs.find { |section_def| section_def[:bbox].contains?(container_origin) }
-
-            puts "#{drawing_container_def.container}\n origin section_def: #{origin_section_def.inspect} \n glued_to: #{glued_to}"
-
-            axes_helper = Kuix::AxesHelper.new
-            axes_helper.transformation = et * drawing_container_def.transformation * drawing_container_def.container.transformation
-            @tool.append_3d(axes_helper, LAYER_3D_PART_PREVIEW)
+            section_def = section_defs.find { |section_def| section_def[:bbox].contains?(container_origin) }
           else
-            origin_section_def = nil
+            # Check if content bounds is entirely inside a section
+            section_def = section_defs.find { |section_def| section_def[:bbox].contains?(drawing_container_def.bounds) }
           end
 
-          # Check if content bounds is entirely inside a section
-          if !grabbed && (section_def = section_defs.find { |section_def| section_def[:bbox].contains?(drawing_container_def.bounds) })
+          if section_def
 
             container_defs << {
               container: drawing_container_def.container,
@@ -2022,6 +2018,7 @@ module Ladb::OpenCutList
           section_def0[:pt_bbox].max.project_to_line(el).transform(et).distance(section_def1[:pt_bbox].min.project_to_line(el).transform(et))
         }
         .min
+      min_distance = 0 if min_distance.nil?
       max_compression_distance = [ (min_distance * (section_defs.size - 1)) - 1.mm, 0 ].max # Keep 1mm to avoid geometry merge problems
 
       @split_def = {
