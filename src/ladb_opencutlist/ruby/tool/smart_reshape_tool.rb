@@ -1887,28 +1887,45 @@ module Ladb::OpenCutList
         # k_box.transformation = et
         # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
 
-        # Check if content bounds is completely inside a section
-        if !grabbed && (section_def = section_defs.find { |section_def| section_def[:bbox].contains?(drawing_container_def.bounds) })
+        unless drawing_container_def.is_root?
 
-          container_defs << {
-            container: drawing_container_def.container,
-            transformation: drawing_container_def.transformation,
-            ref_position: ORIGIN.transform(drawing_container_def.container.transformation),
-            section_def: section_def,
-          }
+          if (glued_to = drawing_container_def.container.respond_to?(:glued_to) ? drawing_container_def.container.glued_to : nil)
+            container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
+            origin_section_def = section_defs.find { |section_def| section_def[:bbox].contains?(container_origin) }
 
-          # Add to content bbox
-          section_def[:pt_bbox].add(drawing_container_def.bounds)
+            puts "#{drawing_container_def.container}\n origin section_def: #{origin_section_def.inspect} \n glued_to: #{glued_to}"
 
-          # k_box = Kuix::BoxMotif.new
-          # k_box.bounds.copy!(drawing_container_def.bounds)
-          # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          # k_box.line_width = 2
-          # k_box.color = [ Kuix::COLOR_YELLOW, Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA ][(section_def[:index] % 3) - 1]
-          # k_box.transformation = et
-          # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+            axes_helper = Kuix::AxesHelper.new
+            axes_helper.transformation = et * drawing_container_def.transformation * drawing_container_def.container.transformation
+            @tool.append_3d(axes_helper, LAYER_3D_PART_PREVIEW)
+          else
+            origin_section_def = nil
+          end
 
-          grabbed = true
+          # Check if content bounds is entirely inside a section
+          if !grabbed && (section_def = section_defs.find { |section_def| section_def[:bbox].contains?(drawing_container_def.bounds) })
+
+            container_defs << {
+              container: drawing_container_def.container,
+              transformation: drawing_container_def.transformation,
+              ref_position: ORIGIN.transform(drawing_container_def.container.transformation),
+              section_def: section_def,
+            }
+
+            # Add to content bbox
+            section_def[:pt_bbox].add(drawing_container_def.bounds)
+
+            # k_box = Kuix::BoxMotif.new
+            # k_box.bounds.copy!(drawing_container_def.bounds)
+            # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+            # k_box.line_width = 2
+            # k_box.color = [ Kuix::COLOR_YELLOW, Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA ][(section_def[:index] % 3) - 1]
+            # k_box.transformation = et
+            # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+
+            grabbed = true
+          end
+
         end
 
         # Extract edges
