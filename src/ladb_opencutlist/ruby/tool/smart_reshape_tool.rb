@@ -1041,6 +1041,8 @@ module Ladb::OpenCutList
 
         when STATE_RESHAPE
           @tool.remove_3d([LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
+          @split_def = nil  # Reset previous split_def
+          _get_split_def    # Compute a new split_def
           _hide_instance
 
         end
@@ -1561,7 +1563,7 @@ module Ladb::OpenCutList
       #   #   k_box.bounds.copy!(section_def[:bbox])
       #   #   k_box.bounds.translate!(*dv.to_a) if dv.valid?
       #   #   k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-      #   #   k_box.line_width = 2
+      #   #   k_box.line_wi dth = 2
       #   #   k_box.color = colors[section_def[:index] % colors.length]
       #   #   k_box.transformation = et
       #   #   @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
@@ -1676,8 +1678,10 @@ module Ladb::OpenCutList
                       !(ratios = @cutters[@picked_axis]).is_a?(Array) || ratios.empty? ||
                       (section_defs, _ = _get_split_def.values_at(:section_defs)).nil?
 
+      xyz_method = { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@picked_axis]
+
       # Check section pt_boxes oversize
-      unless section_defs.all? { |section_def| !section_def[:pt_bbox].valid? || section_def[:bbox].contains?(section_def[:pt_bbox]) }
+      unless section_defs.all? { |section_def| !section_def[:pt_bbox].valid? || section_def[:min_xyz] <= section_def[:pt_bbox].min.send(xyz_method) && section_def[:max_xyz] >= section_def[:pt_bbox].max.send(xyz_method) }
         UI.beep
         @tool.notify_errors([ "tool.smart_reshape.error.curve_intersect" ])
         return false
@@ -1830,8 +1834,11 @@ module Ladb::OpenCutList
 
       det = drawing_def.transformation.inverse * et
 
-      # Transform drawing_def to be expressed in the edit space and clear cache if transformed
-      @drawing_def = nil if drawing_def.transform!(det)
+      # Compute a new drawing_def that include subparts
+      return nil unless (drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, **(_get_drawing_def_parameters.merge(for_part: false))).run).is_a?(DrawingDef)
+
+      # Transform drawing_def to be expressed in the edit space
+      drawing_def.transform!(det)
 
       grip_index_s = Kuix::Bounds3d.face_opposite(@picked_grip_index)
       grip_index_e = @picked_grip_index
@@ -1845,34 +1852,48 @@ module Ladb::OpenCutList
       epmin = reversed ? epe : eps
       epmax = reversed ? eps : epe
 
-      ref_quads = keb.get_quad(grip_index_s)
-      quads = ref_quads.dup
-
-      section_defs = []
       edge_defs = []
       container_defs = []
 
-      v_s = {}  # Vertex => SectionDef
+      v_s = {}  # Vertex => DrawingContainerDef => SectionDef
+
+      reversed = evpspe.valid? && !evpspe.samedirection?(@picked_axis)
+      xyz_method = { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@picked_axis]
 
       ratios = @cutters[@picked_axis].sort
       ratios.uniq!
-      ratios.reverse!.map! { |ratio| 1 - ratio } unless evpspe.samedirection?(@picked_axis)
-      ratios << 1.1 unless ratios.last >= 1.0 # Use 1.1 to be sure to avoid rounding problems
-      ratios.each_with_index do |ratio, index|
+      ratios.reverse!.map! { |ratio| 1 - ratio } if reversed
 
-        bbox = Geom::BoundingBox.new
-        bbox.add(quads)
-        bbox.add(eps.offset(evpspe, ratio * evpspe.length))
-
-        quads = ref_quads.map { |point| point.offset(evpspe, ratio * evpspe.length) }
-
-        section_defs << {
+      section_defs = ([ Float::INFINITY * (reversed ? 1 : -1) ] + ratios.map { |ratio| eps.send(xyz_method) + ratio * evpspe.length * (reversed ? -1 : 1) } + [ Float::INFINITY * (reversed ? -1 : 1) ]).each_cons(2).map.with_index { |min_max, index|
+        {
           index: index,
-          bbox: bbox,
+          min_xyz: min_max.min,
+          max_xyz: min_max.max,
           pt_bbox: Geom::BoundingBox.new,
         }
+      }
 
-      end
+      fn_store_vertex_section_def = lambda { |vertex, drawing_container_def, section_def|
+        v_s[vertex] ||= {}
+        v_s[vertex][drawing_container_def] = section_def
+      }
+
+      fn_fetch_vertex_section_def = lambda { |vertex, drawing_container_def|
+        v_s[vertex] ||= {}
+        v_s[vertex][drawing_container_def]
+      }
+
+      fn_section_contains_point = lambda { |section_def, point|
+        section_def[:min_xyz] <= point.send(xyz_method) && section_def[:max_xyz] >= point.send(xyz_method)
+      }
+
+      fn_section_contains_bounds = lambda { |section_def, bounds|
+        section_def[:min_xyz] <= bounds.min.send(xyz_method) && section_def[:max_xyz] >= bounds.max.send(xyz_method)
+      }
+
+      fn_section_intersects_bounds = lambda { |section_def, bounds|
+        section_def[:min_xyz] <= bounds.max.send(xyz_method) && section_def[:max_xyz] >= bounds.min.send(xyz_method)
+      }
 
       fn_analyse = lambda do |drawing_container_def, grabbed = false, depth = 0|
 
@@ -1889,14 +1910,14 @@ module Ladb::OpenCutList
 
         unless drawing_container_def.is_root? || grabbed
 
-          # Check if the container is glued
+          # Check if the container is glued of always face camera to search the section according to its origin only
           if drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
              drawing_container_def.container.respond_to?(:definition) && drawing_container_def.container.definition.behavior.always_face_camera?
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
-            section_def = section_defs.find { |section_def| section_def[:bbox].contains?(container_origin) }
+            section_def = section_defs.find { |section_def| fn_section_contains_point.call(section_def, container_origin) }
           else
-            # Check if content bounds is entirely inside a section
-            section_def = section_defs.find { |section_def| section_def[:bbox].contains?(drawing_container_def.bounds) }
+            # Check if container bounds is entirely inside a section
+            section_def = section_defs.find { |section_def| fn_section_contains_bounds.call(section_def, drawing_container_def.bounds) }
           end
 
           if section_def
@@ -1927,24 +1948,15 @@ module Ladb::OpenCutList
         # Extract edges
         # -------------
 
-        # 1. Sort curves according to their "min" point relative to the opposite active grip
+        # 1. Iterate on curves
 
-        reversed = evpspe.valid? && !evpspe.samedirection?(@picked_axis)
-        min_method = reversed ? :max : :min
-        xyz_method = { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@picked_axis]
-
-        curve_manipulators = drawing_container_def.curve_manipulators.sort_by { |cm| cm.bounds.send(min_method).send(xyz_method) }
-        curve_manipulators.reverse! if reversed
-
-        # 2. Iterate on curves
-
-        curve_manipulators.each do |cm|
+        drawing_container_def.curve_manipulators.each do |cm|
 
           # Treat curves as a whole undeformable entity
 
-          section_def = v_s[cm.curve.first_edge.start]
-          section_def = v_s[cm.curve.last_edge.end] if section_def.nil?
-          section_def = section_defs.find { |s| s[:bbox].intersect(cm.bounds).valid? } if section_def.nil?
+          section_def = fn_fetch_vertex_section_def.call(cm.curve.first_edge.start, drawing_container_def)
+          section_def = fn_fetch_vertex_section_def.call(cm.curve.last_edge.end, drawing_container_def) if section_def.nil?
+          section_def = section_defs.find { |s| fn_section_intersects_bounds.call(s, cm.bounds) } if section_def.nil?
           unless section_def.nil?
             cm.curve.edges.each do |edge|
               edge_defs << {
@@ -1955,27 +1967,27 @@ module Ladb::OpenCutList
                 end_section_def: section_def,
                 grabbed: grabbed,
               }
-              v_s[edge.start] = section_def
-              v_s[edge.end] = section_def
+              fn_store_vertex_section_def.call(edge.start, drawing_container_def, section_def)
+              fn_store_vertex_section_def.call(edge.end, drawing_container_def, section_def)
             end
             section_def[:pt_bbox].add(cm.points)  # Add to content bbox
           end
 
         end
 
-        # 3. Iterate on edges
+        # 2. Iterate on edges
 
         drawing_container_def.edge_manipulators.each do |em|
 
-          start_section_def = v_s[em.edge.start]
+          start_section_def = fn_fetch_vertex_section_def.call(em.edge.start, drawing_container_def)
           if start_section_def.nil?
-            start_section_def = section_defs.find { |s| s[:bbox].contains?(em.start_point) }
-            v_s[em.edge.start] = start_section_def
+            start_section_def = section_defs.find { |s| fn_section_contains_point.call(s, em.start_point) }
+            fn_store_vertex_section_def.call(em.edge.start, drawing_container_def, start_section_def)
           end
-          end_section_def = v_s[em.edge.end]
+          end_section_def = fn_fetch_vertex_section_def.call(em.edge.end, drawing_container_def)
           if end_section_def.nil?
-            end_section_def = section_defs.find { |s| s[:bbox].contains?(em.end_point) }
-            v_s[em.edge.end] = end_section_def
+            end_section_def = section_defs.find { |s| fn_section_contains_point.call(s, em.end_point) }
+            fn_store_vertex_section_def.call(em.edge.end, drawing_container_def, end_section_def)
           end
 
           next if start_section_def.nil? || end_section_def.nil?  # TODO : Manage this case
@@ -1997,7 +2009,7 @@ module Ladb::OpenCutList
 
         end
 
-        # 4. Iterate over children
+        # 3. Iterate over children
 
         depth += 1
         drawing_container_def.container_defs.each do |child_drawing_container_def|
