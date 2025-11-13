@@ -104,7 +104,6 @@ core:
       generate_cutlist:  استحداث قائمة القِطع
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: عدّل المثيل
@@ -114,6 +113,7 @@ core:
       edit_part_instance_properties: عدّل خصائص المثيل
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: ارسم قِطعا
       smart_handle: تعامل مع القِطع
+      smart_reshape: ""
       smart_paint: اصبغ القِطع
       smart_axes: وجِّه القطع
       smart_export: صدّر القِطع
@@ -155,6 +156,8 @@ core:
        <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a> للتبليغ عن خطإ برمجي:
     not_available_in_context: المعادلة غير متاحة في هذا السياق
   error:
+    exception: ""
+    forbidden: ""
     extern: "خطأ خارجي : **{{ error }}**"
     feature_unavailable: "تتطلب هذه الخاصية توفر النسخة {{ version }} من SketchUp أو أعلى"
     failed_export_to: |2
@@ -294,7 +297,6 @@ tab:
     highlight_parts: ركز على قطع في النموذج
     edit_part_properties: عدّل خصائص القطعة
     edit_part_axes_properties: عدّل خصائص (محاور) القطعة
-    edit_part_size_increase_properties: عدّل خصائص (تمديدات) القطعة
     edit_part_edges_properties: عدل خصائص (حواشي) القطعة
     edit_part_faces_properties: عدّل خصائص القطعة (قشرة الخشب)
     part_drawing_type_1: واجهة ثنائية الأبعاد
@@ -378,7 +380,6 @@ tab:
       invalid_final_area: "تنبيه، لا يمكن حساب هذه المساحة الإجمالية لأن {{ count }} قطعة (من أصل {{ total }}) بها مساحة غير صالحة"
       invalid_final_area_plural: "تنبيه، لا يمكن حساب هذه المساحة الإجمالية لأن {{ count }} قطعة/ قِطع (من أصل {{ total }}) بها مساحة غير صالحة"
       is_dynamic_attributes_name: وصف هذه القطعة مأخوذ من 'Name' الخاص بالعنصر الديناميكي
-      size_increased: "زاد البعد وفقا لتمديد قدره {{ value }}"
       has_edges: "تحتوي هذه القطعة على {{ count }} حاشية"
       has_edges_plural: "تحتوي هذه القطعة على {{ count }} حواشٍ"
       has_faces: "تحتوي هذه القطعة على {{ count }} سطح مكسو بقشرة خشب"
@@ -492,16 +493,6 @@ tab:
       ignore_grain_direction: تجاهل اتجاه تعرق الألياف في هذه القطعة
       ignore_grain_direction_help: |
         إذا تم تحديد هذا المربع، فإن اتجاه تعرق الألياف في هذه القطعة سيُهمَل.
-      size_increase: التمديدات
-      size_increase_help: |
-        تمكنك التمديدات من زيادة أبعاد القطعة.
-        (*مثال: تمديد من أجل وزرة يجب أن تعدل أثناء التركيب*)
-      length_increase: تمديد الطول
-      length_increase_help: طُبق تمديد على الطول النهائي لتحديد **الطول الأولي**
-      width_increase: تمديد العرض
-      width_increase_help: طُبّق تمديد على العُرض النهائي لتحديد **العرض الأولي**
-      thickness_increase: تمديد السُمك
-      thickness_increase_help: طُبّق تمديد على السُّمك النهائي لتحديد **السُّمك الأولي**
       axes: المحاور
       axes_help: أعد ترتيب الأبعاد لتتناسب مع ألوان المحور المطلوبة في قطعتك.
       axes_tip: |
@@ -1761,7 +1752,21 @@ tab:
       tags: الوسوم
       layer_name: وسم
       explode: تفجير
-      explode_message: "هل أنت واثق من رغبتك في تفجير المثيل **\"{{ name }}\"**؟"
+      explode_message: ""
+      erase: مسح
+      erase_message: ""
+    deep_make_unique:
+      title: ""
+    deep_rename_parts:
+      title: ""
+      info_0: |
+      formula: الصيغة
+      old_name: ""
+      new_name: ""
+      count: ""
+    create_container:
+      title_group: ""
+      title_component: ""
     option:
       general: عام
       show_hidden_instances: إظهار المثيلات المخفية
@@ -1777,6 +1782,7 @@ tab:
       no_entities: نموذجك فارغ!
       node_not_found: نقطة التقاطع غير موجودة
       entity_not_found: لم يُعثر على أي مثيل
+      invalid_target: ""
       obsolete_outliner: "غير ممكن، البُنية المولّدة قديمة. أعد استحداثها"
     tip:
       no_node: |
@@ -2051,6 +2057,13 @@ tool:
       invalid_divider: "القاسم {{ value }} غير صالح"
       invalid_offset: "الإزاحة {{ value }} غير صالحة"
       invalid_segment_count: "عدد القطع {{ value }} غير صالح. يجب أن يكون بين 3 و999"
+      syntax_error: ""
+      unexpected_close_parenthesis: ""
+      missing_close_parenthesis: ""
+      missing_operand: ""
+      zero_division: ""
+      lt_min_distance: "المسافة {{ value1 }} أقل من المسافة الدنيا البالغة {{ value2 }}"
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2099,6 +2112,8 @@ tool:
     title: معالجة
     action_0: تحديد
     action_0_status: انقر على قطعة لتحديدها
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: ""
     action_1: النسخ خطيا
     action_1_status: انقر على قِطعة لنسخها على طول محور معين
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2114,9 +2129,9 @@ tool:
     action_4: توزيع
     action_4_status: انقر على قطعة لتوزيعها على طول محور معين
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: انقر لتحديد نقطة القياس الأولى
     action_4_state_2_status: انقر لتحديد نقطة القياس الثانية أو أدخل مسافة معينة
-    action_5: إعادة تحديد الحجم
     action_option_group_copy_measure_type: قياس
     action_option_group_move_measure_type: قياس
     action_option_group_axes: المحاور
@@ -2135,6 +2150,28 @@ tool:
       copies_disable_mirror: النسخ المتعدد يعطل خيار '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       min_distance: "المسافة {{ value1 }} أقل من المسافة الدنيا البالغة {{ value2 }}"
+  smart_reshape:
+    title: ""
+    action_0: ""
+    action_0_status: انقر على قطعة لتحديدها
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
+    action_option_group_stretch_measure_type: قياس
+    action_option_group_axes: المحاور
+    action_option_stretch_measure_type_outside_status: القياس من الخارج
+    action_option_stretch_measure_type_offset_status: ""
+    action_option_axes_active_status: المعالجة على طول المحاور النشطة
+    action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر الذي يحتوي على القِطعة
+    action_option_axes_entity_status: المعالجة على طول محاور القطعة
+    error:
+      curve_intersect: ""
   smart_paint:
     title: لوِّن
     default_material: بلا خامة

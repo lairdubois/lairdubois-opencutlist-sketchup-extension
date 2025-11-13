@@ -104,7 +104,6 @@ core:
       generate_cutlist:  צור תוכנית חיתוך
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: ערוך פריט
@@ -114,6 +113,7 @@ core:
       edit_part_instance_properties: ערוך מאפייני חלק
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: צייר חלקים
       smart_handle: עיבוד חלקים
+      smart_reshape: ""
       smart_paint: צביעת חלקים
       smart_axes: כוון חלקים
       smart_export: יצוא חלקים
@@ -155,6 +156,8 @@ core:
       לדיווח על שגיאה: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: ""
   error:
+    exception: ""
+    forbidden: ""
     extern: "שגיאה חיצונית: **{{ error }}**"
     feature_unavailable: "תכונה זו דורשת גרסת SketchUp {{ version }} ומעלה"
     failed_export_to: |
@@ -294,7 +297,6 @@ tab:
     highlight_parts: ראה את החלקים במודל
     edit_part_properties: לערוך מאפייני חלק
     edit_part_axes_properties: ערוך את המאפיינים (צירים) של החלק
-    edit_part_size_increase_properties: ערוך את המאפיינים (מידות יתר) של החלק
     edit_part_edges_properties: ערוך את המאפיינים (קאנטים) של החלק
     edit_part_faces_properties: עריכת מאפייני חלק (פורנירים)
     part_drawing_type_1: מבט 2D קדמי
@@ -378,7 +380,6 @@ tab:
       invalid_final_area: "שים לב, לא ניתן לחשב שטח כולל מכיוון שחלק {{ count }} (מתוך {{ total }}) כולל שטח שגוי"
       invalid_final_area_plural: "שים לב, לא ניתן לחשב שטח כולל מכיוון של-{{ count }} חלקים (מתוך {{ total }}) יש שטח שגוי"
       is_dynamic_attributes_name: התיאור של החלק מופק מהתכונה 'Name' של הרכיב הדינמי
-      size_increased: "המידה עלתה ב-{{ value }}"
       has_edges: "החלק מכיל קאנט {{ count }}"
       has_edges_plural: "החלק מכיל {{ count }} קאנטים"
       has_faces: "החלק מכיל משטח פורניר {{ count }}"
@@ -492,16 +493,6 @@ tab:
       ignore_grain_direction: אל תשים לב על כיוון המרקם
       ignore_grain_direction_help: |
         אם תיבה זו מסומנת, כיוון המרקם בחלק זה מתעלם.
-      size_increase: תוספות
-      size_increase_help: |
-        תוספות מאפשרות להגדיל מידות מחושבות של החלק.
-        (*דוגמה: תוספת חייבת לקחת בחשבון את גודל פאנל, כרכוב או עקמומיות הקיר.*)
-      length_increase: תוספת לאורך
-      length_increase_help: תוספת מוחלת על האורך בפועל לקביעת **אורך החיתוך**.
-      width_increase: תוספת לרוחב
-      width_increase_help: תוספת מוחלת על הרוחב בפועל לקביעת **רוחב החיתוך**.
-      thickness_increase: תוספת לעובי
-      thickness_increase_help: תוספת מוחלת על העובי בפועל לקביעת **עובי החיתוך**.
       axes: צירים
       axes_help: הגדר את המידות כך שיתאימו לצבעי הציר של החלק.
       axes_tip: |
@@ -1128,6 +1119,8 @@ tab:
       option_hide_edges_preview_0: מוצג בתוכנית החיתוך
       option_hide_edges_preview_1: מוסתר בתוכנית החיתוך
       option_hide_edges_preview_help: מאפשר לך להציג או להסתיר את האינדיקציה החזותית של הקצוות לציפוי עבור כל חלק בתוכנית חיתוך.
+      option_zoom_threshold: ""
+      option_zoom_threshold_help: |
       option_time_limit: ""
       option_time_limit_help: |
       tooltip:
@@ -1681,6 +1674,8 @@ tab:
     edit_node:
       title_model: "מאפייני דגם"
       title_instance: "מאפייני דגם **{{ name }}**"
+      title_instance_multiple: ""
+      multiple_alert: ""
       general: כללי
       name: תיאור
       instance_name: אדגם
@@ -1691,7 +1686,21 @@ tab:
       tags: תגים
       layer_name: תג
       explode: פיצול
-      explode_message: "האם אתה מאשר את הפיצול של הפריט **{{ name }}**?"
+      explode_message: ""
+      erase: לנקות
+      erase_message: ""
+    deep_make_unique:
+      title: ""
+    deep_rename_parts:
+      title: ""
+      info_0: |
+      formula: נוסחה
+      old_name: ""
+      new_name: ""
+      count: ""
+    create_container:
+      title_group: ""
+      title_component: ""
     option:
       general: כללי
       show_hidden_instances: ""
@@ -1707,6 +1716,7 @@ tab:
       no_entities: הדגם שלך ריק!
       node_not_found: הצומת לא נמצא
       entity_not_found: פריט לא נמצא
+      invalid_target: ""
       obsolete_outliner: "בלתי אפשרי, המבנה שנוצר מיושן. תחשב מחדש."
     tip:
       no_node: |
@@ -1859,6 +1869,7 @@ tab:
     language_auto: אוטומטי
     font_size: גודל טקסט
     font_size_auto: $t(default.automatic)
+    font_size_normal: רגיל
     font_size_small: קטן
     font_size_tiny: קטן מאוד
     print_margin: שוליים להדפסה
@@ -1976,6 +1987,13 @@ tool:
       invalid_divider: ""
       invalid_offset: ""
       invalid_segment_count: ""
+      syntax_error: ""
+      unexpected_close_parenthesis: ""
+      missing_close_parenthesis: ""
+      missing_operand: ""
+      zero_division: ""
+      lt_min_distance: ""
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2024,6 +2042,8 @@ tool:
     title: ""
     action_0: ""
     action_0_status: ""
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: ""
     action_1: ""
     action_1_status: ""
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2039,9 +2059,9 @@ tool:
     action_4: ""
     action_4_status: ""
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: ""
     action_4_state_1_status: ""
     action_4_state_2_status: ""
-    action_5: ""
     action_option_group_copy_measure_type: ""
     action_option_group_move_measure_type: ""
     action_option_group_axes: צירים
@@ -2060,6 +2080,28 @@ tool:
       copies_disable_mirror: ""
     error:
       min_distance: ""
+  smart_reshape:
+    title: ""
+    action_0: ""
+    action_0_status: ""
+    action_0_state_0_status: ""
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
+    action_option_group_stretch_measure_type: ""
+    action_option_group_axes: צירים
+    action_option_stretch_measure_type_outside_status: ""
+    action_option_stretch_measure_type_offset_status: ""
+    action_option_axes_active_status: ""
+    action_option_axes_context_status: ""
+    action_option_axes_entity_status: ""
+    error:
+      curve_intersect: ""
   smart_paint:
     title: גוון
     default_material: חומר לא מוגדר

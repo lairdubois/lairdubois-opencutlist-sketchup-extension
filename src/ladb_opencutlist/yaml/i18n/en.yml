@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Generate Parts List
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Edit Instance
@@ -298,7 +297,6 @@ tab:
     highlight_parts: Highlight parts in the model
     edit_part_properties: Edit Part Properties
     edit_part_axes_properties: Edit the properties (axes) of the part
-    edit_part_size_increase_properties: Edit the properties (oversizes) of the part
     edit_part_edges_properties: Edit the properties (edges) of the part
     edit_part_faces_properties: Edit the properties (faces) of the part
     part_drawing_type_1: 2D Top View
@@ -382,7 +380,6 @@ tab:
       invalid_final_area: "Caution, this summable area could not be computed because {{ count }} part (of {{ total }}) has an invalid area"
       invalid_final_area_plural: "Caution, this summable area could not be computed because {{ count }} parts (of {{ total }}) have an invalid area"
       is_dynamic_attributes_name: The designation of this part is extracted from the attribute 'Name' of the dynamic component
-      size_increased: "Dimension is increased by an oversize of {{ value }}"
       has_edges: "This part contains {{ count }} edge banding"
       has_edges_plural: "This part contains {{ count }} edge bandings"
       has_faces: "This part contains {{ count }} veneered face"
@@ -496,16 +493,6 @@ tab:
       ignore_grain_direction: Ignore grain orientation on this part
       ignore_grain_direction_help: |
         If this option is selected, the grain orientation of the material will be ignored for this part.
-      size_increase: Oversizes
-      size_increase_help: |
-        Oversizes increase the raw dimensions of a single part.
-        (*Example: Oversize for a baseboard or a scribe molding that should be adjusted at assembly.*)
-      length_increase: Length Oversize
-      length_increase_help: Oversize is applied to the final length to define the **finished length**.
-      width_increase: Width Oversize
-      width_increase_help: Oversize is applied to the final width to define the **finished width**.
-      thickness_increase: Thickness Oversize
-      thickness_increase_help: Oversize is applied to the final thickness to define the **finished thickness**.
       axes: Axes
       axes_help: Reorder the dimensions to match the desired axis colors in your part.
       axes_tip: |
@@ -1765,7 +1752,7 @@ tab:
       tags: Badges
       layer_name: Tag
       explode: Explode
-      explode_message: "Do you confirm the breakup of **{{ name }}**?"   # TODO text changed
+      explode_message: "Do you confirm the breakup of **{{ name }}**?"
       erase: Clear
       erase_message: "Do you confirm the deletion of **{{ name }}**?"
     deep_make_unique:
@@ -2076,8 +2063,8 @@ tool:
       missing_close_parenthesis: "Missing closing parenthesis"
       missing_operand: "Missing operand"
       zero_division: "Division by zero"
-      lt_min_distance: The distance {{ value1 }} is less than the minimum distance of {{ value2 }}
-      gt_max_distance: The distance {{ value1 }} is greater than the maximum distance of {{ value2 }}
+      lt_min_distance: "The distance {{ value1 }} is less than the minimum distance of {{ value2 }}"
+      gt_max_distance: "The distance {{ value1 }} is greater than the maximum distance of {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2170,12 +2157,12 @@ tool:
     action_0_status: Click on a part to select it
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
     action_0_state_1_status: Click on a handle to stretch
-    action_0_state_1a_status: Clicking on a cutting plane to move it
+    action_0_state_1a_status: Click on a cutting plane to move it
     action_0_state_1b_status: Add a cutting plane
     action_0_state_1c_status: Delete a cutting plane
     action_0_state_10_status: Drag the cutting plane to move it
     action_0_state_11_status: Click to add the cutting plan
-    action_0_state_12_status: Click on the cutting plane to delete it
+    action_0_state_12_status: Click on a cutting plane to delete it
     action_0_state_2_status: Click to confirm the stretch or enter a distance
     action_option_group_stretch_measure_type: Measure
     action_option_group_axes: Axes

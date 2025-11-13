@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Genera la Lista degli elementi
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Modificare l'istanza
@@ -298,7 +297,6 @@ tab:
     highlight_parts: Evidenzia le parti nel modello
     edit_part_properties: Modifica le proprietà della parte
     edit_part_axes_properties: Modifica le proprietà (assi) della parte
-    edit_part_size_increase_properties: Modifica le proprietà (sovramateriale) della parte
     edit_part_edges_properties: Modifica le proprietà (finitura bordi) della parte
     edit_part_faces_properties: Modifica delle proprietà (impiallacciature) della parte
     part_drawing_type_1: Vista 2D anteriore
@@ -382,7 +380,6 @@ tab:
       invalid_final_area: "Attenzione, l'area non può essere calcolata perché {{ count }} parte (di {{ total }}) ha l'area invalida"
       invalid_final_area_plural: "Attenzione, l'area non può essere calcolata perché {{ count }} parti (di {{ total }}) hanno l'area invalida"
       is_dynamic_attributes_name: La designazione usa l'attributo 'Name' del componente dinamico
-      size_increased: "Dimensione maggiorata di {{ value }}"
       has_edges: "Questa parte contiene {{ count }} lati bordati"
       has_edges_plural: "Questa parte contiene {{ count }} lati bordati"
       has_faces: "Questa parte contiene {{ count }} superficie placcata"
@@ -496,16 +493,6 @@ tab:
       ignore_grain_direction: Ignora la direzione della venatura
       ignore_grain_direction_help: |
         Selezionando questa opzione, viene ignorata la direzione della venatura solo su questa parte.
-      size_increase: Sovramateriale
-      size_increase_help: |
-        Sovramateriale consente di incrementare la dimensione delle singole parti.
-        (*Esempio : Sovramateriale per uno zoccolo o una dima che deve essere aggiustata durante la posa in opera.*)
-      length_increase: Sovramateriale sulla lunghezza
-      length_increase_help: Il sovramateriale viene applicato alla lunghezza reale per definire la **lunghezza semilavorata**.
-      width_increase: Incremento larghezza
-      width_increase_help: Il sovramateriale viene applicato alla larghezza reale per definire la **larghezza semilavorata**.
-      thickness_increase: Sovramateriale sullo spessore
-      thickness_increase_help: Il sovramateriale viene applicato allo spessore per calcolare lo **spessore semilavorato**.
       axes: Assi
       axes_help: Riposiziona le dimensioni in modo da farle coincidere agli assi (colori) della parte.
       axes_tip: |
@@ -2076,6 +2063,8 @@ tool:
       missing_close_parenthesis: "Parentesi chiusa mancante"
       missing_operand: "Operando mancante"
       zero_division: "Divisione per zero"
+      lt_min_distance: "La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }} "
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2166,6 +2155,15 @@ tool:
     title: Rimodellare
     action_0: Allungare
     action_0_status: Clicca su un elemento per selezionarlo
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
     action_option_group_stretch_measure_type: Misura
     action_option_group_axes: Assi
     action_option_stretch_measure_type_outside_status: Misura esterna
@@ -2173,6 +2171,8 @@ tool:
     action_option_axes_active_status: Sposta lungo l'asse attivo
     action_option_axes_context_status: Modificare lungo gli assi del gruppo o del componente contenente il pezzo
     action_option_axes_entity_status: Modifica su un asse dell'elemento
+    error:
+      curve_intersect: ""
   smart_paint:
     title: Assegna il materiale
     default_material: Nessun materiale definito

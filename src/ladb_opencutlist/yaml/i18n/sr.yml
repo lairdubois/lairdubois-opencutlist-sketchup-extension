@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Generiši krojnu listu
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Izmeni instancu
@@ -114,6 +113,7 @@ core:
       edit_part_instance_properties: Izmeni podešavanja instance
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Nacrtaj komade
       smart_handle: Upravljaj komadima
+      smart_reshape: ""
       smart_paint: Oboji komade
       smart_axes: Orijentacija komada
       smart_export: Izvezi komade
@@ -155,6 +156,8 @@ core:
       Da biste prijavili grešku: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Nije dostupno u ovom kontekstu
   error:
+    exception: ""
+    forbidden: ""
     extern: "Spoljašnja greška: **{{ error }}**"
     feature_unavailable: "Ova funkcija zahteva SketchUp {{ version }} ili noviji"
     failed_export_to: |
@@ -294,7 +297,6 @@ tab:
     highlight_parts: Označite delove u modelu
     edit_part_properties: Izmenite parametre dela
     edit_part_axes_properties: Uredi svojstva (osi) dela
-    edit_part_size_increase_properties: Uredi svojstva (povećanje dimenzija) dela
     edit_part_edges_properties: Uredi svojstva (kant trake) dela
     edit_part_faces_properties: Podesite parametre (furniranja) komada
     part_drawing_type_1: 2D prikaz lica
@@ -378,7 +380,6 @@ tab:
       invalid_final_area: "Oprez, ovo sumirano polje nije moguće izračunati jer {{ count }} dio (od {{ total }}) ima pogrešno polje"
       invalid_final_area_plural: "Oprez, ovo sumirano područje nije moguće izračunati jer delovi {{ count }} (od {{ total }}) imaju pogrešno područje"
       is_dynamic_attributes_name: Opis ovog dela izdvojen je iz atributa 'Name' dinamičke komponente
-      size_increased: "Dimenzije se povećavaju za prekoračenje iznosa {{ value }}"
       has_edges: "Ovaj deo sadrži {{ count }} kant trake"
       has_edges_plural: "Ovaj deo sadrži {{ count }} kantovanih ivica"
       has_faces: "Ovaj komad sadrži {{ count }} obložene strane"
@@ -492,16 +493,6 @@ tab:
       ignore_grain_direction: Zanemari pravac teksture
       ignore_grain_direction_help: |
         Ako je ovo polje označeno, pravac teksture se zanemaruje za ovaj komad.
-      size_increase: Dodatak na dimenzije
-      size_increase_help: |
-        Dodatci na dimenzije omogućavaju vam da povećate dimenzije pojedinog dela.
-        (*Primer: Dodatak za lajsnu ili letvicu koje treba prilagoditi prilikom montaže.*)
-      length_increase: Dodatak na dužinu
-      length_increase_help: Dodatak se primenjuje na stvarnu dužinu kako bi se definisala **proizvodna dužina**.
-      width_increase: Dodatak na širinu
-      width_increase_help: Dodatak se primjenjuje na konačnu širinu kako bi se definisala **proizvodna širina**.
-      thickness_increase: Dodatak na debljinu
-      thickness_increase_help: Dodatak se primjenjuje na konačnu debljinu kako bi se definisala **proizvodna debljina**.
       axes: Ose
       axes_help: Reorganizujte dimenzije tako da odgovaraju željenim bojama ose u vašem delu.
       axes_tip: |
@@ -629,7 +620,7 @@ tab:
       edges: Kantovanje
       faces: Površine
     export:
-      title: Izvoz u CSV format
+      title: Izvoz
       info_0: |
         Ova funkcija vam omogućava da izvezete podatke iz *Spiska delova* u međuspremnik ili u [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) ili [XLSX](https://en.wikipedia.org/wiki/Office_Open_XML) datoteku.
       customize_help: |
@@ -985,7 +976,7 @@ tab:
       warning:
         is_part_selection: Šema slaganja samo za **izabrane delove**.
         cutting_dimensions: Ovaj dijagram rezanja koristi **sirove** dimenzije delova.
-        cutting_dimensions_increase_1d: "Ove sirove dimenzije su konfigurisane na materijalu '{{ material_name }}' prekoračenje dužine (**{{ length_increase }}**).*"
+        cutting_dimensions_increase_1d: "Ove sirove dimenzije su konfigurisane na materijalu '{{ material_name }}' prekoračenje dužine (**{{ length_increase }}**)."
         cutting_dimensions_increase_2d: "Ove sirove dimenzije su konfigurisane na materijalu '{{ material_name }}' prekoračenje dužine (**{{ length_increase }}**) i prekoračenje širine (**{{ width_increase }}**)."
         cutting_dimensions_edge_decrement: Dimenzije smanjene za debljinu kant trake. <i class='ladb-opencutlist-icon-edge-decremented'></i>
     packing:
@@ -1129,6 +1120,8 @@ tab:
       option_hide_edges_preview_0: Prikaz na dijagramu
       option_hide_edges_preview_1: Ne prikazuj na dijagramu
       option_hide_edges_preview_help: Prikaži/sakrij oznake kantova za svaki deo.
+      option_zoom_threshold: ""
+      option_zoom_threshold_help: |
       option_time_limit: Vremensko ograničenje
       option_time_limit_help: |
         Vreme proračuna
@@ -1744,6 +1737,8 @@ tab:
     edit_node:
       title_model: "Osobine modela"
       title_instance: "Osobine instance **{{ name }}**"
+      title_instance_multiple: ""
+      multiple_alert: ""
       general: Uopšteno
       name: Naziv
       instance_name: Instance
@@ -1754,7 +1749,21 @@ tab:
       tags: Oznake
       layer_name: Oznaka
       explode: Eksplodirati
-      explode_message: "Da li potvrđujete razlaganje instance **{{ name }}** ?"
+      explode_message: ""
+      erase: Očisti
+      erase_message: ""
+    deep_make_unique:
+      title: ""
+    deep_rename_parts:
+      title: ""
+      info_0: |
+      formula: Formula
+      old_name: ""
+      new_name: ""
+      count: ""
+    create_container:
+      title_group: ""
+      title_component: ""
     option:
       general: Uopšteno
       show_hidden_instances: Prikaži sakrivene instance
@@ -1770,6 +1779,7 @@ tab:
       no_entities: Nema sadržaja u vašem modelu !
       node_not_found: Nepostojeći čvor
       entity_not_found: Nepostojeća instanca
+      invalid_target: ""
       obsolete_outliner: "Ne može se izvršiti – struktura je zastarela. Generišite je ponovo."
     tip:
       no_node: |
@@ -1926,6 +1936,7 @@ tab:
     language_auto: Automatski
     font_size: Veličina fonta
     font_size_auto: $t(default.automatic)
+    font_size_normal: Normalno
     font_size_small: Mala
     font_size_tiny: Sitno
     print_margin: Margine štampe
@@ -2043,6 +2054,13 @@ tool:
       invalid_divider: "Delilac {{ value }} nije validan"
       invalid_offset: "Pomak {{ value }} nije validan"
       invalid_segment_count: "Broj segmenata {{ value }} nije validan, dozvoljeno: 3–999."
+      syntax_error: ""
+      unexpected_close_parenthesis: ""
+      missing_close_parenthesis: ""
+      missing_operand: ""
+      zero_division: ""
+      lt_min_distance: "Rastojanje {{ value1 }} je manje od minimalnog rastojanja {{ value2 }}"
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2091,6 +2109,8 @@ tool:
     title: Rukovati
     action_0: Odabrati
     action_0_status: Kliknite na komad za izbor
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: ""
     action_1: Kopiraj po liniji
     action_1_status: Kliknite na komad za kopiranje duž ose
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2106,9 +2126,9 @@ tool:
     action_4: Rasporediti
     action_4_status: Kliknite na komad za raspoređivanje duž ose
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Kliknite za prvu tačku merenja
     action_4_state_2_status: Kliknite za drugu tačku merenja ili unesite rastojanje
-    action_5: Predimenzionisati
     action_option_group_copy_measure_type: Merenje
     action_option_group_move_measure_type: Merenje
     action_option_group_axes: Ose
@@ -2127,6 +2147,28 @@ tool:
       copies_disable_mirror: Višestruka kopija onemogućava opciju '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       min_distance: "Rastojanje {{ value1 }} je manje od minimalnog rastojanja {{ value2 }}"
+  smart_reshape:
+    title: ""
+    action_0: ""
+    action_0_status: Kliknite na komad za izbor
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
+    action_option_group_stretch_measure_type: Merenje
+    action_option_group_axes: Ose
+    action_option_stretch_measure_type_outside_status: Merite spolja
+    action_option_stretch_measure_type_offset_status: ""
+    action_option_axes_active_status: Manipuliši po aktivnim osama
+    action_option_axes_context_status: Manipuliši po osama grupe/komponente koja sadrži komad
+    action_option_axes_entity_status: Manipuliši po osama komada
+    error:
+      curve_intersect: ""
   smart_paint:
     title: Bojiti
     default_material: Nije definisan materijal

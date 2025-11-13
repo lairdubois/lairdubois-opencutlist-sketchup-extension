@@ -104,16 +104,16 @@ core:
       generate_cutlist:  Tạo mới danh sách các bộ phận
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
-      edit_part_instance: Chỉnh sửa phiên bản
-      edit_parent_part_instance: Sửa đổi group/component chứa phiên bản
-      hide_part_instance: Ẩn phiên bản
-      unhide_part_instance: Hiện phiên bản
-      edit_part_instance_properties: Sửa thuộc tính phiên bản
+      edit_part_instance: Chỉnh sửa đối tượng
+      edit_parent_part_instance: Sửa đổi group/component chứa đối tượng
+      hide_part_instance: Ẩn đối tượng
+      unhide_part_instance: Hiện đối tượng
+      edit_part_instance_properties: Sửa thuộc tính đối tượng
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Vẽ các bộ phận
       smart_handle: Thao tác các bộ phận
+      smart_reshape: ""
       smart_paint: Tô màu các bộ phận
       smart_axes: Định hướng các bộ phận
       smart_export: Xuất các bộ phận
@@ -153,8 +154,10 @@ core:
       Nó không được khuyến khích sử dụng trong sản xuất.
 
       Để báo cáo lỗi: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    not_available_in_context: Công thức không khả dụng trong ngữ cảnh này
+    not_available_in_context: Không có sẳn trong bối cảnh này
   error:
+    exception: ""
+    forbidden: ""
     extern: "Lỗi bên ngoài : **{{ error }}**"
     feature_unavailable: "Chức năng này yêu cầu Sketchup phiên bản {{ version }} hoặc cao hơn"
     failed_export_to: |
@@ -294,7 +297,6 @@ tab:
     highlight_parts: Làm nổi bật các bộ phận trong mô hình
     edit_part_properties: Chỉnh sửa thuộc tính bộ phận
     edit_part_axes_properties: Chỉnh sửa thuộc tính (trục) của bộ phận
-    edit_part_size_increase_properties: Chỉnh sửa thuộc tính (ngoại cỡ) của bộ phận
     edit_part_edges_properties: Chỉnh sửa thuộc tính (dải cạnh) của bộ phận
     edit_part_faces_properties: Chỉnh sửa thuộc tính (bề mặt) của bộ phận
     part_drawing_type_1: Chế dộ xem 2D mặt trước
@@ -306,7 +308,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Hiện / Ẩn Group
-      show_hide_blocks: ""
+      show_hide_blocks: Hiện / Ẩn tất cả các nhóm
       scroll_to_block: Di chuyển đến Group
       not_available_std_width: "Chiều rộng *{{ std_dimension_real }}* không được xác định trong chiều rộng tiêu chuẩn của vật liệu '{{ material_name }}'"
       not_available_std_thickness: "Độ dày *{{ std_dimension_real }}* không được xác định trong độ dày tiêu chuẩn của vật liệu '{{ material_name }}'"
@@ -342,7 +344,7 @@ tab:
       edit_parts_properties: Chỉnh sửa thuộc tính group của bộ phận
       edit_material: $t(tab.cutlist.menu.edit_material)
       folding_part: Trải ra / Gấp lại
-      material_origin_1: Vật liệu của bộ phận này được xác định theo các phiên bản của nó
+      material_origin_1: Vật liệu của bộ phận này được xác định theo các đối tượng của nó
       material_origin_2: Vật liệu của bộ phận này được kế thừa từ một trong các phần tử cha của nó
       material_origin_3: Vật liệu của bộ phận này được trích xuất từ một phần tử con của nó
       orientation_locked_on_axis: Định hướng của bộ phận này bị khóa với hệ tọa độ của nó
@@ -378,7 +380,6 @@ tab:
       invalid_final_area: "Chú ý, không thể tính tổng diện tích này vì {{ count }} bộ phận (của {{ total }}) có diện tích không hợp lệ"
       invalid_final_area_plural: "Chú ý, không thể tính tổng diện tích này vì {{ count }} bộ phận (của {{ total }}) có diện tích không hợp lệ"
       is_dynamic_attributes_name: Tên gọi của bộ phận này được trích xuất từ ​​​​thuộc tính 'Name' của dynamic component
-      size_increased: "Kích thước được tăng theo kích thước quá khổ của {{ value }}"
       has_edges: "Bộ phận này chứa {{ count }} dải cạnh"
       has_edges_plural: "Bộ phận này chứa {{ count }} dải cạnh"
       has_faces: "Bộ phận này chứa {{ count }} mặt veneer"
@@ -492,16 +493,6 @@ tab:
       ignore_grain_direction: Bỏ qua hướng thớ trên bộ phận này
       ignore_grain_direction_help: |
         Nếu hộp này được chọn, hướng thớ gỗ của vật liệu sẽ bị bỏ qua cho bộ phận này.
-      size_increase: Quá khổ
-      size_increase_help: |
-        Quá khổ làm tăng kích thước của một bộ phận.
-        (*Ví dụ: Quá khổ cho ván chân tường hoặc khuôn mẫu nên được điều chỉnh khi lắp ráp.*)
-      length_increase: Chiều dài quá khổ
-      length_increase_help: Quá khổ được áp dụng cho độ dài cuối cùng để xác định **chiều dài thô**.
-      width_increase: Chiều rộng quá khổ
-      width_increase_help: Quá khổ được áp dụng cho chiều rộng cuối cùng để xác định **chiều rộng thô**.
-      thickness_increase: Độ dày quá khổ
-      thickness_increase_help: Quá khổ được áp dụng cho độ dày cuối cùng để xác định **độ dày thô**.
       axes: Trục
       axes_help: Sắp xếp lại các kích thước để khớp với màu trục mong muốn trong bộ phận của bạn.
       axes_tip: |
@@ -538,7 +529,7 @@ tab:
       dynamic_attributes_name_help: |
         Nếu tùy chọn này được chọn, ký hiệu của các bộ phận sẽ được trích xuất từ ​​thuộc tính *Tên*, nếu chúng được xác định.
 
-        <i class='ladb-opencutlist-icon-warning'></i> Các phiên bản của các bộ phận có cùng định nghĩa sẽ được tách ra nếu thuộc tính *Tên* không có cùng giá trị.
+        <i class='ladb-opencutlist-icon-warning'></i> Các đối tượng của các bộ phận có cùng định nghĩa sẽ được tách ra nếu thuộc tính *Tên* không có cùng giá trị.
       part_number_with_letters: Dùng chữ cái để liệt kê các bộ phận
       part_number_with_letters_help: "Nếu tùy chọn này được chọn, các bộ phận được liệt kê bằng các chữ cái (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Khởi tạo lại việc liệt kê các bộ phận cho mỗi nhóm
@@ -548,8 +539,8 @@ tab:
         Nếu tùy chọn này được bật, các bộ phận được làm bằng **Gỗ nguyên khối, Hàng dạng tấm hoặc Kích thước**, có **cùng kích thước thô**, với **cùng nhãn hiệu** và **cùng bề mặt hoàn thiện** *( nếu phần hiển thị của bề mặt này không bị ẩn)* sẽ được nhóm trên cùng một dòng trong *danh sách bộ phận*..
 
         Các bộ phận vẫn sẽ được coi là khác nhau cho mục đích ghi nhãn và sơ đồ cắt.
-      hide_entity_names: Ẩn tên các phiên bản
-      hide_entity_names_help: "Nếu tùy chọn này được chọn, **tên phiên bản** của các bộ phận sẽ không được hiển thị."
+      hide_entity_names: Ẩn tên các đối tượng
+      hide_entity_names_help: "Nếu tùy chọn này được chọn, **tên đối tượng** của các bộ phận sẽ không được hiển thị."
       hide_descriptions: Ẩn mô tả
       hide_descriptions_help: "Nếu tùy chọn này được chọn, **mô tả** được đặt trên các bộ phận sẽ không được hiển thị."
       hide_tags: Ẩn các nhãn hiệu
@@ -651,7 +642,7 @@ tab:
       option_source: Nguồn
       option_source_summary: $t(tab.cutlist.list.summary)
       option_source_cutlist: Danh sách các bộ phận
-      option_source_instances_list: Danh sách các phiên bản
+      option_source_instances_list: Danh sách các đối tượng
       option_format: Định dạng
       option_csv_col_sep: Dấu phân cách
       option_csv_col_sep_tab: Người lập
@@ -662,7 +653,7 @@ tab:
       copy_values: Chỉ các giá trị
       number: No.
       path: Đường dẫn
-      instance_name: Phiên bản
+      instance_name: Đối tượng
       name: Tên gọi
       total_cutting_length: Tổng chiều dài - thô
       total_cutting_area: Tổng diện tích - thô
@@ -685,7 +676,7 @@ tab:
       material_description: Ghi chú vật liệu
       material_url: URL của vật liệu
       material_std_dimension: Kích thước tiêu chuản
-      entity_names: Tên phiên bản
+      entity_names: Tên đối tượng
       description: Mô tả
       url: URL
       tags: Nhãn hiệu
@@ -700,8 +691,8 @@ tab:
       batch: Lô hàng
       bin: Thùng
       component_definition: Định nghĩa Component
-      component_instance: Phiên bản Component
-      component_instances: Các phiên bản Component
+      component_instance: Đối tượng Component
+      component_instances: Các đối tượng Component
       filename: Tên tập tin
       model_name: Tên mô hình
       model_description: Mô tả mô hình
@@ -1092,7 +1083,7 @@ tab:
       option_bin_folding_2d_help: |
         Nhóm các tấm hoặc tấm có các bộ phận và vết cắt giống nhau.
       option_bin_folding_warning: |
-        *Tùy chọn này sẽ bị vô hiệu hóa nếu bạn sử dụng các thuộc tính thể hiện trong công thức tùy chỉnh văn bản nhận dạng.*
+        *Tùy chọn này sẽ bị vô hiệu hóa nếu bạn sử dụng thuộc tính thể hiện trong công thức tùy chỉnh văn bản nhận dạng.*
       option_hide_part_list: Danh sách các bộ phận
       option_hide_part_list_1d_dimensional_0: Hiển thị cho mỗi bảng
       option_hide_part_list_1d_edge_0: Hiển thị cho mỗi dải cạnh
@@ -1129,6 +1120,11 @@ tab:
       option_hide_edges_preview_0: Hiển thị trong sơ đồ cắt
       option_hide_edges_preview_1: Ẩn trong sơ đồ cắt
       option_hide_edges_preview_help: Cho phép bạn hiển thị hoặc ẩn hiển thị trực quan của các dải cạnh cho từng bộ phận trong sơ đồ cắt.
+      option_zoom_threshold: Ngưỡng thu phóng
+      option_zoom_threshold_help: |
+        Cho phép bạn thiết lập chiều rộng sơ đồ để sơ đồ tự động được phóng to..
+
+        *Sự mở rộng sẽ được tính toán dựa trên sơ đồ rộng nhất*.
       option_time_limit: Giới hạn thời gian
       option_time_limit_help: |
         Sửa lỗi giới hạn thời gian tính toán
@@ -1292,7 +1288,7 @@ tab:
         part_number: Số
         part_name: Tên gọi
         part_description: Mô tả
-        part_entity_named_path: Đường dẫn phiên bản
+        part_entity_named_path: Đường dẫn đối tượng
         part_entity_name: Tên phiên bản
         part_bin: Thùng
         part_cutting_size: Kích thước thô
@@ -1448,9 +1444,9 @@ tab:
         Cho phép chọn đơn vị khi xuất tập tin.
       option_use_count: Số lượng
       option_use_count_0: Mỗi tệp tin cho mỗi bộ phận
-      option_use_count_1: Một tệp tin cho mỗi phần thể hiện
+      option_use_count_1: Một tệp tin cho mỗi bộ phận đối tượng
       option_use_count_help: |
-        Chọn xem số lượng phiên bản của một bộ phận có được xem xét hay không.
+        Chọn xem số lượng đối tượng của một bộ phận có được xem xét hay không.
       option_part_drawing_type: Hình chiếu
       option_part_drawing_type_help: |
         Cho phép chọn chế độ xem đã xuất.
@@ -1530,8 +1526,8 @@ tab:
     error:
       no_model: Không có mô hình nào được mở. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin;)
       no_entities: Mô hình của bạn rỗng. Bạn sẽ cần phải cung cấp cho tôi thêm thông tin ;)
-      no_component_in_selection: Không có phiên bản nào của component hiển thị được phát hiện trong lựa chọn của bạn.
-      no_component_in_model: Không có phiên bản nào của component hiển thị được phát hiện trong cảnh của bạn.
+      no_component_in_selection: Không có đối tượng nào của component hiển thị được phát hiện trong lựa chọn của bạn.
+      no_component_in_model: Không có đối tượng nào của component hiển thị được phát hiện trong cảnh của bạn.
       unknow_part: Bộ phận đã chọn không tồn tại trong danh sách bộ phận.
       obsolete_cutlist: "Không thể, danh sách các bộ phận đã lỗi thời. Xin vui lòng, tạo lại nó."
     warning:
@@ -1544,7 +1540,7 @@ tab:
       part_selected_plural: "{{ count }} bộ phận được chọn trong Danh sách bộ phận."
     tip:
       no_component: |
-        Các bộ phận được bao gồm trong *danh sách bộ phận* phải thuộc phiên bản của một **component**.
+        Các bộ phận được bao gồm trong *danh sách bộ phận* phải thuộc đối tượng của một **component**.
         Nếu bạn chỉ sử dụng các nhóm, hãy chuyển đổi chúng thành các components.
         Việc sử dụng các component giúp tự sao chép các bộ phận giống hệt nhau mà không cần sao chép chúng.
       no_typed_materials: "Áp dụng vật liệu cho các bộ phận sẽ được đưa vào danh sách bộ phận và xác định các thuộc tính của vật liệu này (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** hoặc **$t(tab.materials.type_5)**) trên tab <i class=\"ladb-opencutlist-icon-materials\"></i> **Vật liệu**."
@@ -1724,8 +1720,8 @@ tab:
     label: Kết cấu
     title: Kết cấu
     list: Cấu trúc cây của các thực thể
-    nodes: Các phiên bản
-    toggle_hidden: Các phiên bản bị ẩn
+    nodes: Các đối tượng
+    toggle_hidden: Các đối tượng bị ẩn
     type_0: Mô hình
     type_1: Group
     type_2: Component
@@ -1734,19 +1730,21 @@ tab:
       hide_node: Ẩn
       unhide_node: Hiện
       locked_node: Khóa
-      is_active_node: Phiên bản hoạt động trong mô hình
+      is_active_node: Đối tượng hoạt động trong mô hình
       set_active_node: Chỉnh sửa trong mô hình
       edit_node_properties: Chỉnh sửa thuộc tính
-      select_active_nodes: ""
+      select_active_nodes: Chọn / Bỏ chọn tất cả các đối tượng đang hoạt động
       select_node: Lựa chọn
       unselect_node: Bỏ chọn
       open_node_url: Mở URL bộ phận
     edit_node:
       title_model: "Thuộc tính của mô hình"
       title_instance: "Thuộc tính của đối tượng **{{ name }}**"
+      title_instance_multiple: "Thuộc tính của nhóm đối tượng"
+      multiple_alert: "Thuộc tính chung của nhóm đối tượng {{ node_count }}."
       general: Chung
       name: Tên
-      instance_name: Phiên bản
+      instance_name: Đối tượng
       material: Vật liệu
       definition_name: Định nghĩa
       description: Mô tả
@@ -1754,7 +1752,21 @@ tab:
       tags: Nhãn hiệu
       layer_name: Thẻ
       explode: Phân tách
-      explode_message: "Bạn có xác nhận phân tách phiên bản **{{ name }}**?"
+      explode_message: ""
+      erase: Trống
+      erase_message: ""
+    deep_make_unique:
+      title: ""
+    deep_rename_parts:
+      title: ""
+      info_0: |
+      formula: Công thức
+      old_name: ""
+      new_name: ""
+      count: ""
+    create_container:
+      title_group: ""
+      title_component: ""
     option:
       general: Chung
       show_hidden_instances: Hiển thị các đối tượng ẩn
@@ -1770,10 +1782,11 @@ tab:
       no_entities: Mô hình của bạn trống!
       node_not_found: Không tìm thấy nút
       entity_not_found: Không tìm thấy đối tượng
+      invalid_target: ""
       obsolete_outliner: "Không thể, cấu trúc được tạo ra đã lỗi thời. Xin vui lòng, tái tạo nó."
     tip:
       no_node: |
-        Mô hình của bạn không chứa phiên bản nào được hiển thị ở đây.
+        Mô hình của bạn không chứa đối tượng nào được hiển thị ở đây.
         Một đối tượng là **group** hoặc là **component** trong Scene.
     obsolete_base: "Để luôn đồng bộ, bạn cần làm mới cấu trúc."
   importer:
@@ -1926,6 +1939,7 @@ tab:
     language_auto: Tự động
     font_size: Cỡ chữ
     font_size_auto: $t(default.automatic)
+    font_size_normal: Bình thường
     font_size_small: Ngắn
     font_size_tiny: Bé xíu
     print_margin: Lề in
@@ -2043,6 +2057,13 @@ tool:
       invalid_divider: "Số chia {{ value }} không hợp lệ"
       invalid_offset: "Độ lệch {{ value }} không hợp lệ"
       invalid_segment_count: "Số lượng phân đoạn {{ value }} không hợp lệ. Nó phải nằm trong khoảng từ 3 đến 999."
+      syntax_error: ""
+      unexpected_close_parenthesis: ""
+      missing_close_parenthesis: ""
+      missing_operand: ""
+      zero_division: ""
+      lt_min_distance: "Khoảng cách {{ value1 }} nhỏ hơn khoảng cách tối thiểu {{ value2 }}"
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2091,6 +2112,8 @@ tool:
     title: Xử lý
     action_0: Lựa chọn
     action_0_status: Nhấp vào một bộ phận để chọn nó
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: ""
     action_1: Sao chép trong dòng
     action_1_status: Nhập bản dịch của bạn ở đây
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2106,9 +2129,9 @@ tool:
     action_4: Phân tán
     action_4_status: Nhấp vào một bộ phận để phân tán nó dọc theo một trục
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Nhấp để đặt điểm đo đầu tiên
     action_4_state_2_status: Nhấp để đặt điểm đo thứ hai hoặc nhập khoảng cách
-    action_5: Thay đổi kích thước
     action_option_group_copy_measure_type: Đo lường
     action_option_group_move_measure_type: Đo lường
     action_option_group_axes: Trục
@@ -2127,6 +2150,28 @@ tool:
       copies_disable_mirror: Nhiều bản sao vô hiệu hóa lựa chọn '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       min_distance: "Khoảng cách {{ value1 }} nhỏ hơn khoảng cách tối thiểu {{ value2 }}"
+  smart_reshape:
+    title: ""
+    action_0: ""
+    action_0_status: Nhấp vào một bộ phận để chọn nó
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
+    action_option_group_stretch_measure_type: Đo lường
+    action_option_group_axes: Trục
+    action_option_stretch_measure_type_outside_status: Đo lường bên ngoài
+    action_option_stretch_measure_type_offset_status: ""
+    action_option_axes_active_status: Thao tác dọc theo các trục đang hoạt động
+    action_option_axes_context_status: Thao tác dọc theo các trục của nhóm hoặc thành phần chứa bộ phận
+    action_option_axes_entity_status: Thao tác dọc theo trục bộ phận
+    error:
+      curve_intersect: ""
   smart_paint:
     title: Sơn
     default_material: Không có vật liệu
@@ -2139,7 +2184,7 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Sơn các bộ phận
-    action_0_status: Click vào bộ phận để thể hiện sơn
+    action_0_status: Nhấp vào một bộ phận để áp dụng vật liệu vào đối tượng
     action_1: Sơn các cạnh
     action_1_status: Click vào một cạnh của bảng để áp dụng '$t(tab.materials.type_4)'
     action_2: Sơn các bề mặt
@@ -2147,12 +2192,12 @@ tool:
     action_3: Vật mẫu
     action_3_status: Nhấp vào một mặt để lấy mẫu vật liệu của nó
     action_4: Dọn dẹp
-    action_4_status: Nhấp vào một bộ phận để xóa tất cả các vật liệu từ định nghĩa của nó và tất cả các phiên bản
-    action_option_group_instances: Số lượng các phiên bản
+    action_4_status: Nhấp vào một bộ phận để xóa tất cả các vật liệu từ định nghĩa của nó và tất cả các đối tượng
+    action_option_group_instances: Số lượng các đối tượng
     action_option_group_edges: Số dải cạnh
     action_option_group_faces: Số lượng bề mặt
     action_option_instances_0_status: Chỉ tô màu đối tượng của bộ phận mục tiêu
-    action_option_instances_1_status: Tô màu tất cả các phiên bản của bộ phận mục tiêu
+    action_option_instances_1_status: Tô màu tất cả các đối tượng của bộ phận mục tiêu
     action_option_edges_0_status: Chỉ tô màu cạnh mục tiêu
     action_option_edges_1_status: Tô màu cạnh mục tiêu và cạnh đối diện của bộ phận
     action_option_edges_2_status: Tô màu 4 cạnh của bộ phận mục tiêu
@@ -2179,7 +2224,7 @@ tool:
   smart_axes:
     title: Định hướng
     action_0: Lật
-    action_0_status: Nhấp vào một bộ phận để lật nó trường hợp dọc theo một trong các kích thước của nó
+    action_0_status: Nhấp vào một phần để lật đối tượng của nó dọc theo một trong các chiều của nó
     action_1: Hoán đổi chiều dài ↔ chiều rộng
     action_1_status: Nhấp vào một bộ phận để hoán đổi chiều dài của nó với chiều rộng của nó
     action_2: Hoán đổi mặt trước ↔ mặt sau
@@ -2196,7 +2241,7 @@ tool:
     action_option_direction_1_status: Xoay phần theo chiều rộng
     action_option_direction_2_status: Lật phần theo độ dày của nó
     warning:
-      more_entities: "{{ count_used }} các phiên bản chia sẻ cùng một định nghĩa sẽ được sửa đổi"
+      more_entities: "{{ count_used }} các đối tượng chia sẻ cùng một định nghĩa sẽ được sửa đổi"
     error:
       not_part: Đối tượng mục tiêu không phải là đối tượng của bộ phận (component)
       not_orientable: Loại bộ phận này không cho phép định hướng nó

@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Generovat kusovník
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Upravit instanci
@@ -114,6 +113,7 @@ core:
       edit_part_instance_properties: Upravit vlastnosti instance
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Kreslení dílů
       smart_handle: Práce s díly
+      smart_reshape: ""
       smart_paint: Materiály dílů
       smart_axes: Orientace dílů
       smart_export: Export dílů
@@ -155,6 +156,8 @@ core:
       Chcete-li nahlásit chybu:<a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Vzorec není v tomto kontextu k dispozici
   error:
+    exception: ""
+    forbidden: ""
     extern: "Externí chyba: **{{ error }}**"
     feature_unavailable: "Tato funkce vyžaduje aplikaci SketchUp {{ version }} nebo vyšší"
     failed_export_to: |
@@ -294,7 +297,6 @@ tab:
     highlight_parts: Zvýrazněte součásti v modelu
     edit_part_properties: Upravte vlastnosti součásti
     edit_part_axes_properties: Upravte vlastnosti (osy) součásti
-    edit_part_size_increase_properties: Upravte vlastnosti (nadměrné velikosti) součásti
     edit_part_edges_properties: Upravte vlastnosti (lemování okrajů) součásti
     edit_part_faces_properties: Upravte vlastnosti (dýhy) této součásti
     part_drawing_type_1: 2D čelní pohled
@@ -378,7 +380,6 @@ tab:
       invalid_final_area: "Pozor, tuto část nelze vypočítat, protože {{ count }} dílec (z {{ total }}) má neplatnou oblast"
       invalid_final_area_plural: "Pozor, tuto část nelze vypočítat, protože {{ count }} dílce (z {{ total }}) mají neplatnou oblast"
       is_dynamic_attributes_name: Označení této části se extrahován z atributu 'Name' dynamické komponenty
-      size_increased: "Rozměr je větší o nadmíru {{ value }}"
       has_edges: "Tento dílec obsahuje {{ count }} hranování"
       has_edges_plural: "Tento dílec obsahuje {{ count }} hranování"
       has_faces: "Tato část obsahuje {{ count }} dýhovaný povrch"
@@ -492,16 +493,6 @@ tab:
       ignore_grain_direction: Na této části ignorujte směr let
       ignore_grain_direction_help: |
         Pokud je toto políčko zaškrtnuto, bude směr zrna materiálu pro tuto část ignorován.
-      size_increase: Nadmíry
-      size_increase_help: |
-        Nadmíra vám umožní zvětšit rozměry tohoto dílce.
-        (*Například : Nadmíra pro sokl nebo lištu, kterou je třeba při montáži upravit.*)
-      length_increase: Nadmíra pro délku
-      length_increase_help: Na skutečnou délku se použije nadmíra **hrubá délka**.
-      width_increase: Nadmíra pro šířku
-      width_increase_help: Na skutečnou šířku se použije nadmíra **hrubá šířka**.
-      thickness_increase: Nadmíra pro tloušťku
-      thickness_increase_help: Na skutečnou tloušťku se použije nadmíra **hrubá tloušťka**.
       axes: Osy
       axes_help: "Uspořádejte rozměry tak, aby odpovídaly barvám os vašeho dílce."
       axes_tip: |
@@ -1129,6 +1120,8 @@ tab:
       option_hide_edges_preview_0: Zobrazeno ve schématu řezání
       option_hide_edges_preview_1: Skryto ve schématu řezání
       option_hide_edges_preview_help: Umožňuje zobrazit nebo skrýt vizuální zobrazení pásů hran pro každý díl ve schématu řezání.
+      option_zoom_threshold: ""
+      option_zoom_threshold_help: |
       option_time_limit: Časový limit
       option_time_limit_help: |
         Pevný časový limit pro výpočet
@@ -1744,6 +1737,8 @@ tab:
     edit_node:
       title_model: "Vlastnosti modelu"
       title_instance: "Vlastnosti instance **{{ name }}**"
+      title_instance_multiple: ""
+      multiple_alert: ""
       general: Všeobecné
       name: Název
       instance_name: Instance
@@ -1754,7 +1749,21 @@ tab:
       tags: Znaky
       layer_name: Štítek
       explode: Rozpad
-      explode_message: "Potvrďte rozpad instance **{{ name }}**?"
+      explode_message: ""
+      erase: Smazat
+      erase_message: ""
+    deep_make_unique:
+      title: ""
+    deep_rename_parts:
+      title: ""
+      info_0: |
+      formula: Vzorec
+      old_name: ""
+      new_name: ""
+      count: ""
+    create_container:
+      title_group: ""
+      title_component: ""
     option:
       general: Všeobecné
       show_hidden_instances: Zobrazit skryté instance
@@ -1770,6 +1779,7 @@ tab:
       no_entities: Váš model je prázdný!
       node_not_found: Uzel nenalezen
       entity_not_found: Instance nenalezena
+      invalid_target: ""
       obsolete_outliner: "Nemožné, vygenerovaná struktura je zastaralá. Prosím, zregeneruj to."
     tip:
       no_node: |
@@ -1926,6 +1936,7 @@ tab:
     language_auto: Automatický
     font_size: Velikost písma
     font_size_auto: $t(default.automatic)
+    font_size_normal: Normální
     font_size_small: Malý
     font_size_tiny: Drobný
     print_margin: Tisk okrajů
@@ -2043,6 +2054,13 @@ tool:
       invalid_divider: "Dělitel {{ value }} je neplatný"
       invalid_offset: "Offset {{ value }} je neplatný"
       invalid_segment_count: "Počet segmentů {{ value }} je neplatný. Musí být mezi 3 a 999."
+      syntax_error: ""
+      unexpected_close_parenthesis: ""
+      missing_close_parenthesis: ""
+      missing_operand: ""
+      zero_division: ""
+      lt_min_distance: "Vzdálenost {{ value1 }} je menší než minimální vzdálenost {{ value2 }}"
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2091,6 +2109,8 @@ tool:
     title: Práce s díly
     action_0: Vybrat
     action_0_status: Kliknutím na dílec ho vyberete
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: ""
     action_1: Kopie po ose
     action_1_status: Kliknutím na dílec ho zkopírujete podél osy
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2106,9 +2126,9 @@ tool:
     action_4: Rozložení
     action_4_status: Kliknutím na dílec ho rozmístíte podél osy
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Kliknutím nastavíte první bod měření
     action_4_state_2_status: Kliknutím nastavte druhý bod měření nebo zadejte vzdálenost
-    action_5: Změnit velikost
     action_option_group_copy_measure_type: Kopie dílce
     action_option_group_move_measure_type: Posun dílce
     action_option_group_axes: Osy
@@ -2127,6 +2147,28 @@ tool:
       copies_disable_mirror: Více kopií zakáže volbu '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       min_distance: "Vzdálenost {{ value1 }} je menší než minimální vzdálenost {{ value2 }}"
+  smart_reshape:
+    title: ""
+    action_0: ""
+    action_0_status: Kliknutím na dílec ho vyberete
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
+    action_option_group_stretch_measure_type: Kopie dílce
+    action_option_group_axes: Osy
+    action_option_stretch_measure_type_outside_status: Vzdálenost včetně dílce
+    action_option_stretch_measure_type_offset_status: ""
+    action_option_axes_active_status: Manipulace podél os
+    action_option_axes_context_status: Manipulovat podél os skupiny nebo dílců obsahující díl
+    action_option_axes_entity_status: Manipulace podél os dílu
+    error:
+      curve_intersect: ""
   smart_paint:
     title: Přiřazení materiálů
     default_material: Není definován žádný materiál
