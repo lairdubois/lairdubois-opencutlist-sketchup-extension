@@ -31,6 +31,10 @@ module Ladb::OpenCutList
     EDGE_VALIDATOR_STRAY = 2
     EDGE_VALIDATOR_STRAY_COPLANAR = 3
 
+    CONTAINER_VALIDATOR_ALL = 0
+    CONTAINER_VALIDATOR_NONE = 1
+    CONTAINER_VALIDATOR_PART = 2
+
     def initialize(path,
 
                    input_local_x_axis: X_AXIS,
@@ -52,8 +56,8 @@ module Ladb::OpenCutList
 
                    ignore_clines: true,
 
-                   for_part: true,
-                   recursive: true,
+                   container_validator: CONTAINER_VALIDATOR_ALL,
+
                    flatten: true
 
     )
@@ -79,8 +83,8 @@ module Ladb::OpenCutList
 
       @ignore_clines = ignore_clines
 
-      @for_part = for_part
-      @recursive = recursive
+      @container_validator = container_validator
+
       @flatten = flatten
 
     end
@@ -260,7 +264,19 @@ module Ladb::OpenCutList
         }
       end
 
-      _populate_manipulators(drawing_def, entities, ttai, face_validator, edge_validator)
+      container_validator = nil
+      case @container_validator
+      when CONTAINER_VALIDATOR_NONE
+        container_validator = lambda { |container|
+          false
+        }
+      when CONTAINER_VALIDATOR_PART
+        container_validator = lambda { |container|
+          !container.is_a?(Sketchup::ComponentInstance) || container.definition.behavior.cuts_opening? || container.definition.behavior.always_face_camera?
+        }
+      end
+
+      _populate_manipulators(drawing_def, entities, ttai, face_validator, edge_validator, container_validator)
 
       # STEP 3 : Customize origin
 
@@ -302,7 +318,7 @@ module Ladb::OpenCutList
       [ x_axis, y_axis, z_axis, input_line_manipulator ]
     end
 
-    def _populate_manipulators(drawing_container_def, entities, transformation = IDENTITY, face_validator = nil, edge_validator = nil)
+    def _populate_manipulators(drawing_container_def, entities, transformation = IDENTITY, face_validator = nil, edge_validator = nil, container_validator = nil)
       entities.each do |entity|
         if entity.visible? && _layer_visible?(entity.layer)
           if entity.is_a?(Sketchup::Face)
@@ -339,16 +355,15 @@ module Ladb::OpenCutList
             next if @ignore_clines || entity.start.nil? # Exclude infinite Clines
             manipulator = ClineManipulator.new(entity, transformation)
             drawing_container_def.cline_manipulators << manipulator
-          elsif @recursive
-            if entity.respond_to?(:definition)
-              next if entity.is_a?(Sketchup::ComponentInstance) && @for_part && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
+          elsif entity.respond_to?(:definition)
+            if container_validator.nil? || container_validator.call(entity)
               if @flatten
                 child_drawing_container_def = drawing_container_def
               else
                 child_drawing_container_def = DrawingContainerDef.new(entity, transformation)
                 drawing_container_def.container_defs << child_drawing_container_def
               end
-              _populate_manipulators(child_drawing_container_def, entity.definition.entities, transformation * entity.transformation, face_validator, edge_validator)
+              _populate_manipulators(child_drawing_container_def, entity.definition.entities, transformation * entity.transformation, face_validator, edge_validator, container_validator)
             end
           end
         end

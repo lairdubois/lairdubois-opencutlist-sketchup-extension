@@ -16,7 +16,6 @@ module Ladb::OpenCutList
            ignore_surfaces: true,
            ignore_edges: true,
            ignore_clines: false,
-           for_part: false
         ).run
         if @drawing_def.is_a?(DrawingDef)
 

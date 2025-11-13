@@ -1525,13 +1525,13 @@ module Ladb::OpenCutList
       # sd = section_defs
       # sd = sd.reverse if reversed
       # rs = sd
-      #        .select { |section_def| section_def[:pt_bbox].valid? }
+      #        .select { |section_def| section_def[:bounds].valid? }
       #        .each_cons(2).map { |section_def0, section_def1|
       #   [
-      #     section_def0[:pt_bbox].max.project_to_line(l).offset!(edvs[section_def0]),
-      #     section_def1[:pt_bbox].min.project_to_line(l).offset!(edvs[section_def1]),
-      #     Geom.linear_combination(0.5, section_def0[:pt_bbox].max.project_to_line(l).offset!(edvs[section_def0]),
-      #                             0.5, section_def1[:pt_bbox].min.project_to_line(l).offset!(edvs[section_def1]))
+      #     section_def0[:bounds].max.project_to_line(l).offset!(edvs[section_def0]),
+      #     section_def1[:bounds].min.project_to_line(l).offset!(edvs[section_def1]),
+      #     Geom.linear_combination(0.5, section_def0[:bounds].max.project_to_line(l).offset!(edvs[section_def0]),
+      #                             0.5, section_def1[:bounds].min.project_to_line(l).offset!(edvs[section_def1]))
       #   ]
       # }
       #
@@ -1569,9 +1569,9 @@ module Ladb::OpenCutList
       #   #   @tool.append_3d(k_box, LAYER_3D_RESHAPE_PREVIEW)
       #   # end
       #
-      #   if section_def[:pt_bbox].valid?
+      #   if section_def[:bounds].valid?
       #     k_box = Kuix::BoxMotif.new
-      #     k_box.bounds.copy!(section_def[:pt_bbox])
+      #     k_box.bounds.copy!(section_def[:bounds])
       #     k_box.bounds.translate!(*dv.to_a)
       #     k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
       #     k_box.line_width = 2
@@ -1665,12 +1665,16 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: true,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
         flatten: false,
-        for_part: true,
       }
     end
 
     # -----
+
+    def _get_xyz_method
+      { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@picked_axis]
+    end
 
     def _assert_valid_cutters
       return false if !@cutters.is_a?(Hash) ||
@@ -1678,10 +1682,10 @@ module Ladb::OpenCutList
                       !(ratios = @cutters[@picked_axis]).is_a?(Array) || ratios.empty? ||
                       (section_defs, _ = _get_split_def.values_at(:section_defs)).nil?
 
-      xyz_method = { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@picked_axis]
+      xyz_method = _get_xyz_method
 
       # Check section pt_boxes oversize
-      unless section_defs.all? { |section_def| !section_def[:pt_bbox].valid? || section_def[:min_xyz] <= section_def[:pt_bbox].min.send(xyz_method) && section_def[:max_xyz] >= section_def[:pt_bbox].max.send(xyz_method) }
+      unless section_defs.all? { |section_def| !section_def[:bounds].valid? || section_def[:min_xyz] <= section_def[:bounds].min.send(xyz_method) && section_def[:max_xyz] >= section_def[:bounds].max.send(xyz_method) }
         UI.beep
         @tool.notify_errors([ "tool.smart_reshape.error.curve_intersect" ])
         return false
@@ -1767,11 +1771,11 @@ module Ladb::OpenCutList
         sd = section_defs
         sd = sd.reverse if reversed
         @cutters[@picked_axis] = sd
-           .select { |section_def| section_def[:pt_bbox].valid? } # Exclude empty sections
+           .select { |section_def| section_def[:bounds].valid? } # Exclude empty sections
            .each_cons(2).map { |section_def0, section_def1|
-              max0 = section_def0[:pt_bbox].max.project_to_line(el).offset!(edvs[section_def0])
-              min1 = section_def1[:pt_bbox].min.project_to_line(el).offset!(edvs[section_def1])
-              if (v = max0.vector_to(min1)).valid? && v.samedirection?(@picked_axis)  # Exclude if pt_bboxes overlap
+              max0 = section_def0[:bounds].max.project_to_line(el).offset!(edvs[section_def0])
+              min1 = section_def1[:bounds].min.project_to_line(el).offset!(edvs[section_def1])
+              if (v = max0.vector_to(min1)).valid? && v.samedirection?(@picked_axis)  # Exclude if bounds overlap
                 epc = Geom.linear_combination(0.5, max0, 0.5, min1)
                 epo.vector_to(epc).length / distance
               end
@@ -1835,7 +1839,7 @@ module Ladb::OpenCutList
       det = drawing_def.transformation.inverse * et
 
       # Compute a new drawing_def that include subparts
-      return nil unless (drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, **(_get_drawing_def_parameters.merge(for_part: false))).run).is_a?(DrawingDef)
+      return nil unless (drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, **(_get_drawing_def_parameters.merge(container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL))).run).is_a?(DrawingDef)
 
       # Transform drawing_def to be expressed in the edit space
       drawing_def.transform!(det)
@@ -1858,7 +1862,7 @@ module Ladb::OpenCutList
       v_s = {}  # Vertex => DrawingContainerDef => SectionDef
 
       reversed = evpspe.valid? && !evpspe.samedirection?(@picked_axis)
-      xyz_method = { X_AXIS => :x, Y_AXIS => :y, Z_AXIS => :z }[@picked_axis]
+      xyz_method = _get_xyz_method
 
       ratios = @cutters[@picked_axis].sort
       ratios.uniq!
@@ -1869,7 +1873,7 @@ module Ladb::OpenCutList
           index: index,
           min_xyz: min_max.min,
           max_xyz: min_max.max,
-          pt_bbox: Geom::BoundingBox.new,
+          bounds: Geom::BoundingBox.new,
         }
       }
 
@@ -1877,7 +1881,6 @@ module Ladb::OpenCutList
         v_s[vertex] ||= {}
         v_s[vertex][drawing_container_def] = section_def
       }
-
       fn_fetch_vertex_section_def = lambda { |vertex, drawing_container_def|
         v_s[vertex] ||= {}
         v_s[vertex][drawing_container_def]
@@ -1886,11 +1889,9 @@ module Ladb::OpenCutList
       fn_section_contains_point = lambda { |section_def, point|
         section_def[:min_xyz] <= point.send(xyz_method) && section_def[:max_xyz] >= point.send(xyz_method)
       }
-
       fn_section_contains_bounds = lambda { |section_def, bounds|
         section_def[:min_xyz] <= bounds.min.send(xyz_method) && section_def[:max_xyz] >= bounds.max.send(xyz_method)
       }
-
       fn_section_intersects_bounds = lambda { |section_def, bounds|
         section_def[:min_xyz] <= bounds.max.send(xyz_method) && section_def[:max_xyz] >= bounds.min.send(xyz_method)
       }
@@ -1910,7 +1911,7 @@ module Ladb::OpenCutList
 
         unless drawing_container_def.is_root? || grabbed
 
-          # Check if the container is glued of always face camera to search the section according to its origin only
+          # Check if the container is glued or always face camera to search the section according to its origin only
           if drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
              drawing_container_def.container.respond_to?(:definition) && drawing_container_def.container.definition.behavior.always_face_camera?
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
@@ -1930,7 +1931,7 @@ module Ladb::OpenCutList
             }
 
             # Add to content bbox
-            section_def[:pt_bbox].add(drawing_container_def.bounds)
+            section_def[:bounds].add(drawing_container_def.bounds)
 
             # k_box = Kuix::BoxMotif.new
             # k_box.bounds.copy!(drawing_container_def.bounds)
@@ -1970,7 +1971,7 @@ module Ladb::OpenCutList
               fn_store_vertex_section_def.call(edge.start, drawing_container_def, section_def)
               fn_store_vertex_section_def.call(edge.end, drawing_container_def, section_def)
             end
-            section_def[:pt_bbox].add(cm.points)  # Add to content bbox
+            section_def[:bounds].add(cm.points)  # Add to content bbox
           end
 
         end
@@ -2004,7 +2005,7 @@ module Ladb::OpenCutList
           if !grabbed &&
              start_section_def == end_section_def &&
              em.edge.start.edges.all? { |edge| edge.curve.nil? } && em.edge.end.edges.all? { |edge| edge.curve.nil? }
-            start_section_def[:pt_bbox].add(em.points)  # Add to content bbox
+            start_section_def[:bounds].add(em.points)  # Add to content bbox
           end
 
         end
@@ -2025,9 +2026,9 @@ module Ladb::OpenCutList
       sd = section_defs
       sd = sd.reverse if reversed
       min_distance = sd
-        .select { |section_def| section_def[:pt_bbox].valid? }
+        .select { |section_def| section_def[:bounds].valid? }
         .each_cons(2).map { |section_def0, section_def1|
-          section_def0[:pt_bbox].max.project_to_line(el).transform(et).distance(section_def1[:pt_bbox].min.project_to_line(el).transform(et))
+          section_def0[:bounds].max.project_to_line(el).transform(et).distance(section_def1[:bounds].min.project_to_line(el).transform(et))
         }
         .min
       min_distance = 0 if min_distance.nil?

@@ -2363,7 +2363,8 @@ module Ladb::OpenCutList
         ignore_faces: false,
         ignore_edges: true,
         ignore_soft_edges: true,
-        ignore_clines: true
+        ignore_clines: true,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
       }
     end
 

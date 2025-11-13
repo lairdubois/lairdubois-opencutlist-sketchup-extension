@@ -319,7 +319,8 @@ module Ladb::OpenCutList
           @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
             origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
             ignore_surfaces: true,
-            ignore_edges: true
+            ignore_edges: true,
+            container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
           ).run
           if @active_drawing_def.is_a?(DrawingDef)
 
@@ -366,7 +367,8 @@ module Ladb::OpenCutList
             input_line_manipulator: @picker.picked_line_manipulator,
             face_validator: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::FACE_VALIDATOR_ONE : CommonDrawingDecompositionWorker::FACE_VALIDATOR_ALL,
             ignore_edges: !fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_INCLUDE_PATHS),
-            edge_validator: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY
+            edge_validator: fetch_action_option_boolean(ACTION_EXPORT_PART_2D, ACTION_OPTION_FACES, ACTION_OPTION_FACES_ONE) ? CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY_COPLANAR : CommonDrawingDecompositionWorker::EDGE_VALIDATOR_STRAY,
+            container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
           ).run
           if @active_drawing_def.is_a?(DrawingDef)
 
@@ -526,7 +528,8 @@ module Ladb::OpenCutList
         @active_drawing_def = CommonDrawingDecompositionWorker.new(@picker.picked_face_path,
           input_plane_manipulator: @picker.picked_plane_manipulator,
           input_line_manipulator: @picker.picked_line_manipulator,
-          ignore_edges: true
+          ignore_edges: true,
+          container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
         ).run
         if @active_drawing_def.is_a?(DrawingDef)
 
@@ -650,7 +653,7 @@ module Ladb::OpenCutList
           input_plane_manipulator: @picker.picked_plane_manipulator,
           input_line_manipulator: @picker.picked_line_manipulator,
           edge_validator: CommonDrawingDecompositionWorker::EDGE_VALIDATOR_COPLANAR,
-          recursive: false
+          container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_NONE,
         ).run
         if @active_drawing_def.is_a?(DrawingDef)
 
