@@ -1875,8 +1875,140 @@ module Ladb::OpenCutList
 
   end
 
+  module SmartActionHandlerSelectionHelper
+
+    # -----
+
+    def onActiveSelectionChanged(path, entities)
+      @global_context_transformation = nil
+      @global_instance_transformation = nil
+      @drawing_def = nil
+      false
+    end
+
+    # -----
+
+    def get_active_selection_path
+      @active_selection_path
+    end
+
+    def get_active_selection_instances
+      @active_selection_instances
+    end
+
+    # -----
+
+    protected
+
+    def _reset
+      @active_selection_path = nil
+      @active_selection_instances = nil
+      @global_context_transformation = nil
+      @global_instance_transformation = nil
+      @drawing_def = nil
+      super
+    end
+
+    # --
+
+    def _reset_active_selection
+      _set_active_selection(nil, nil)
+    end
+
+    def _set_active_selection(path, entities)
+      if @active_selection_path != path || @active_selection_instances != entities # Has changed?
+
+        @active_selection_path = path
+        @active_selection_instances = entities
+
+        onActiveSelectionChanged(path, entities)
+
+      end
+    end
+
+    # --
+
+    def _get_global_context_transformation(default = IDENTITY)
+      return @global_context_transformation unless @global_context_transformation.nil?
+      @global_context_transformation = default
+      if @active_selection_path.is_a?(Array) &&
+         !(model = Sketchup.active_model).nil? &&
+         (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_selection_path.last)
+        @global_context_transformation = PathUtils.get_transformation(@active_selection_path, IDENTITY)
+      end
+      @global_context_transformation
+    end
+
+    def _get_global_instance_transformation(default = IDENTITY)
+      return @global_instance_transformation unless @global_instance_transformation.nil?
+      @global_instance_transformation = default
+      if @active_selection_instances.is_a?(Array) && @active_selection_instances.one?
+        if @active_selection_path.is_a?(Array) &&
+           !(model = Sketchup.active_model).nil? &&
+           (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_selection_instances.first)
+          @global_instance_transformation = PathUtils.get_transformation(@active_selection_path + [ @active_selection_instances.first ], IDENTITY)
+        end
+      else
+        @global_instance_transformation = _get_global_context_transformation(default)
+      end
+      @global_instance_transformation
+    end
+
+    # -- Entities --
+
+    def _get_container
+      return @active_selection_path.last if @active_selection_path.is_a?(Array)
+      nil
+    end
+
+    def _get_instances
+      return @active_selection_instances if @active_selection_instances.is_a?(Array)
+      nil
+    end
+
+    def _hide_instances
+      return if (instances = _get_instances).nil? || @unhide_local_instances_transformations.is_a?(Hash)
+      _get_global_instance_transformation
+      _get_drawing_def
+      @unhide_local_instances_transformations = instances.map { |instance| [ instance, Geom::Transformation.new(instance.transformation) ] }.to_h
+      instances.each { |instance| instance.move!(Geom::Transformation.scaling(0, 0, 0)) }
+    end
+
+    def _unhide_instances
+      return if !@unhide_local_instances_transformations.is_a?(Hash) || (instances = _get_instances).nil?
+      instances.each { |instance| instance.move!(@unhide_local_instances_transformations[instance]) }
+      @unhide_local_instances_transformations = nil
+    end
+
+    # --
+
+    def _get_drawing_def_ipaths
+      return nil if (instances = _get_instances).nil?
+      instances.map { |instance| Sketchup::InstancePath.new(@active_selection_path + [ instance ]) }
+    end
+
+    def _get_drawing_def_parameters
+      {
+        ignore_surfaces: true,
+        ignore_faces: false,
+        ignore_edges: true,
+        ignore_soft_edges: true,
+        ignore_clines: true,
+      }
+    end
+
+    def _get_drawing_def
+      return nil if (ipaths = _get_drawing_def_ipaths).nil?
+      return @drawing_def unless @drawing_def.nil?
+      return nil if Sketchup.active_model.nil?
+      @drawing_def = CommonDrawingDecompositionWorker.new(ipaths, **_get_drawing_def_parameters).run
+    end
+
+  end
+
   module SmartActionHandlerPartHelper
 
+    include SmartActionHandlerSelectionHelper
     include FaceTrianglesHelper
     include PartHelper
 
@@ -1904,9 +2036,6 @@ module Ladb::OpenCutList
     end
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
-      @global_context_transformation = nil
-      @global_instance_transformation = nil
-      @drawing_def = nil
       _preview_part(part_entity_path, part, LAYER_3D_PART_PREVIEW, highlighted)
       _preview_part_siblings(LAYER_3D_PART_SIBLING_PREVIEW, highlighted)
       false
@@ -2018,9 +2147,6 @@ module Ladb::OpenCutList
       @active_part = nil
       @active_part_sibling_entity_paths = nil
       @active_part_siblings = nil
-      @global_context_transformation = nil
-      @global_instance_transformation = nil
-      @drawing_def = nil
       super
     end
 
@@ -2199,7 +2325,6 @@ module Ladb::OpenCutList
     end
 
     def _set_active_part(part_entity_path, part, highlighted = false)
-
       if @active_part_entity_path != part_entity_path # Has changed?
 
         @active_part_entity_path = part_entity_path
@@ -2208,10 +2333,15 @@ module Ladb::OpenCutList
         @active_part_sibling_entity_paths = nil
         @active_part_siblings = nil
 
+        if part_entity_path.is_a?(Array)
+          _set_active_selection(part_entity_path[0...-1], [ part_entity_path[-1] ])
+        else
+          _set_active_selection(nil, nil)
+        end
+
         onActivePartChanged(part_entity_path, part, highlighted)
 
       end
-
     end
 
     def _get_active_part_name(sanitize_for_filename = false)
@@ -2262,51 +2392,21 @@ module Ladb::OpenCutList
       onActivePartChanged(@active_part_entity_path, @active_part, false)
     end
 
-    # --
-
-    def _get_global_context_transformation(default = IDENTITY)
-      return @global_context_transformation unless @global_context_transformation.nil?
-      @global_context_transformation = default
-      if @active_part_entity_path.is_a?(Array) &&
-         @active_part_entity_path.length > 1 &&
-         !(model = Sketchup.active_model).nil? &&
-         (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_part_entity_path[-2])
-        @global_context_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-2], IDENTITY)
-      end
-      @global_context_transformation
-    end
-
-    def _get_global_instance_transformation(default = IDENTITY)
-      return @global_instance_transformation unless @global_instance_transformation.nil?
-      @global_instance_transformation = default
-      if @active_part_entity_path.is_a?(Array) &&
-         @active_part_entity_path.length > 0 &&
-         !(model = Sketchup.active_model).nil? &&
-         (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_part_entity_path[-1])
-        @global_instance_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-1], IDENTITY)
-      end
-      @global_instance_transformation
-    end
-
     # -- INSTANCE --
 
     def _get_instance
-      return @active_part_entity_path.last if @active_part_entity_path.is_a?(Array)
+      if (instances = _get_instances).is_a?(Array)
+        return instances.last
+      end
       nil
     end
 
     def _hide_instance
-      return if (instance = _get_instance).nil? || @unhide_local_instance_transformation.is_a?(Geom::Transformation)
-      _get_global_instance_transformation
-      _get_drawing_def
-      @unhide_local_instance_transformation = Geom::Transformation.new(instance.transformation)
-      instance.move!(Geom::Transformation.scaling(0, 0, 0))
+      _hide_instances
     end
 
     def _unhide_instance
-      return if !@unhide_local_instance_transformation.is_a?(Geom::Transformation) || (instance = _get_instance).nil?
-      instance.move!(@unhide_local_instance_transformation)
-      @unhide_local_instance_transformation = nil
+      _unhide_instances
     end
 
     def _select_instance
@@ -2346,10 +2446,6 @@ module Ladb::OpenCutList
 
     # --
 
-    def _get_drawing_def_ipaths
-      Sketchup::InstancePath.new(@active_part_entity_path) unless @active_part_entity_path.nil?
-    end
-
     def _get_drawing_def_parameters
       {
         ignore_surfaces: true,
@@ -2359,13 +2455,6 @@ module Ladb::OpenCutList
         ignore_clines: true,
         container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
       }
-    end
-
-    def _get_drawing_def
-      return nil if (ipaths = _get_drawing_def_ipaths).nil?
-      return @drawing_def unless @drawing_def.nil?
-      return nil if Sketchup.active_model.nil?
-      @drawing_def = CommonDrawingDecompositionWorker.new(ipaths, **_get_drawing_def_parameters).run
     end
 
     # -- UTILS --

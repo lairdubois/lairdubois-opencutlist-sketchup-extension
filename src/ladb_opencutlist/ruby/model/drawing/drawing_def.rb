@@ -97,7 +97,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    private
+    protected
 
     def _reset_bounds
 

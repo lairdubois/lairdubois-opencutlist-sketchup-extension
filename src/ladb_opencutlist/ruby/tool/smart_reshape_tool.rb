@@ -198,8 +198,6 @@ module Ladb::OpenCutList
       @picked_reshape_start_point = nil
       @picked_reshape_end_point = nil
 
-      @definition = nil
-      @instances = []
       @drawing_def = nil
 
       @startup_state = STATE_SELECT
@@ -215,65 +213,78 @@ module Ladb::OpenCutList
       selection = model.selection
 
       # Try to copy the previous action handler selection
-      if @previous_action_handler &&
-         (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
-         (part = @previous_action_handler.get_active_part)
+      if @previous_action_handler
 
-        _set_active_part(part_entity_path, part)
+        if (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
+           (part = @previous_action_handler.get_active_part)
 
-        if _pick_part_siblings?
+          _set_active_part(part_entity_path, part)
 
-          if (part_sibling_entity_paths = @previous_action_handler.get_active_part_sibling_entity_paths) &&
-             (part_siblings = @previous_action_handler.get_active_part_siblings)
+          if _pick_part_siblings?
 
-            part_sibling_entity_paths.zip(part_siblings).each do |part_sibling_entity_path, part_sibling|
-              _add_part_sibling(part_sibling_entity_path, part_sibling)
-            end
+            if (part_sibling_entity_paths = @previous_action_handler.get_active_part_sibling_entity_paths) &&
+               (part_siblings = @previous_action_handler.get_active_part_siblings)
 
-          end
-
-        end
-
-        onPartSelected
-
-      else
-
-        # active_path = model.active_path.is_a?(Array) ? model.active_path : []
-        # @ipaths = selection.map { |e| Sketchup::InstancePath.new(active_path + [ e ]) }
-
-        # Try to select part from the current selection
-        entity = selection.min { |a, b| a.entityID <=> b.entityID } # Smaller entityId == Older entity
-        if entity.is_a?(Sketchup::ComponentInstance)
-          active_path = model.active_path.is_a?(Array) ? model.active_path : []
-          path = active_path + [ entity ]
-          part_entity_path = _get_part_entity_path_from_path(path)
-          _make_unique_groups_in_path(part_entity_path)
-          unless (part = _generate_part_from_path(part_entity_path)).nil?
-
-            _set_active_part(part_entity_path, part)
-
-            if _pick_part_siblings?
-
-              part_entity = part_entity_path.last
-              part_definition = part_entity.definition
-
-              entities = selection.select { |e| e != part_entity && e.is_a?(Sketchup::ComponentInstance) && e.definition == part_definition }
-              entities.each do |entity|
-
-                sibling_path = active_path + [ entity ]
-                part_sibling_entity_path = _get_part_entity_path_from_path(sibling_path)
-                unless (part_sibling = _generate_part_from_path(part_sibling_entity_path)).nil?
-                  _add_part_sibling(part_sibling_entity_path, part_sibling)
-                end
-
+              part_sibling_entity_paths.zip(part_siblings).each do |part_sibling_entity_path, part_sibling|
+                _add_part_sibling(part_sibling_entity_path, part_sibling)
               end
 
             end
 
-            onPartSelected
-
           end
+
+          onPartSelected
+
+        elsif (selection_path = @previous_action_handler.get_active_selection_path) &&
+              (instances = @previous_action_handler.get_active_selection_instances)
+
+          _reset_active_part
+          _set_active_selection(selection_path, instances)
+
+          onPartSelected
+
         end
+
+      else
+
+        if (entities = selection.select { |entity| entity.respond_to?(:transformation) }).any?
+          _set_active_selection(model.active_path.is_a?(Array) ? model.active_path : [], entities)
+          onPartSelected
+        end
+
+        # Try to select part from the current selection
+        # entity = selection.min { |a, b| a.entityID <=> b.entityID } # Smaller entityId == Older entity
+        # if entity.is_a?(Sketchup::ComponentInstance)
+        #   active_path = model.active_path.is_a?(Array) ? model.active_path : []
+        #   path = active_path + [ entity ]
+        #   part_entity_path = _get_part_entity_path_from_path(path)
+        #   _make_unique_groups_in_path(part_entity_path)
+        #   unless (part = _generate_part_from_path(part_entity_path)).nil?
+        #
+        #     _set_active_part(part_entity_path, part)
+        #
+        #     if _pick_part_siblings?
+        #
+        #       part_entity = part_entity_path.last
+        #       part_definition = part_entity.definition
+        #
+        #       entities = selection.select { |e| e != part_entity && e.is_a?(Sketchup::ComponentInstance) && e.definition == part_definition }
+        #       entities.each do |entity|
+        #
+        #         sibling_path = active_path + [ entity ]
+        #         part_sibling_entity_path = _get_part_entity_path_from_path(sibling_path)
+        #         unless (part_sibling = _generate_part_from_path(part_sibling_entity_path)).nil?
+        #           _add_part_sibling(part_sibling_entity_path, part_sibling)
+        #         end
+        #
+        #       end
+        #
+        #     end
+        #
+        #     onPartSelected
+        #
+        #   end
+        # end
 
       end
 
@@ -477,25 +488,6 @@ module Ladb::OpenCutList
     end
 
     def onPartSelected
-      return if (instance = _get_instance).nil?
-
-      sibling_instances = _get_sibling_instances
-
-      @instances << instance
-      @instances.concat(sibling_instances) if sibling_instances.is_a?(Array)
-      @definition = instance.definition
-
-      @src_transformation = Geom::Transformation.new(instance.transformation)
-
-      @global_context_transformation = nil
-      @global_instance_transformation = nil
-      @drawing_def = nil
-
-      et = _get_edit_transformation
-      eb = _get_drawing_def_edit_bounds(_get_drawing_def, et)
-
-      @picked_reshape_start_point = eb.center.transform(et)
-
     end
 
     # -----
@@ -518,8 +510,6 @@ module Ladb::OpenCutList
       @mouse_snap_point = nil
       @picked_reshape_start_point = nil
       @picked_reshape_end_point = nil
-      @definition = nil
-      @instances.clear
       super
       set_state(STATE_SELECT)
     end
@@ -689,6 +679,8 @@ module Ladb::OpenCutList
     LAYER_3D_CUTTERS_PREVIEW = 200
 
     PX_INFLATE_VALUE = 50
+
+    @@last_cutters_data = nil
 
     def initialize(tool, previous_action_handler = nil)
       super(SmartReshapeTool::ACTION_STRETCH, tool, previous_action_handler)
@@ -1023,30 +1015,30 @@ module Ladb::OpenCutList
     def onStateChanged(state)
       super
 
-      unless _get_instance.nil?
+      unless _get_instances.nil?
 
         case state
 
         when STATE_SELECT
-          _unhide_instance
+          _unhide_instances
 
         when STATE_RESHAPE_START
           @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
-          _unhide_instance
+          _unhide_instances
 
         when STATE_RESHAPE_CUTTER_MOVE
           @tool.remove_3d(LAYER_3D_GRIPS_PREVIEW)
-          _unhide_instance
+          _unhide_instances
 
         when STATE_RESHAPE_CUTTER_ADD, STATE_RESHAPE_CUTTER_REMOVE
           @tool.remove_3d(LAYER_3D_GRIPS_PREVIEW)
-          _unhide_instance
+          _unhide_instances
 
         when STATE_RESHAPE
           @tool.remove_3d([LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
           @split_def = nil  # Reset previous split_def
           _get_split_def    # Compute a new split_def
-          _hide_instance
+          _hide_instances
 
         end
 
@@ -1056,13 +1048,7 @@ module Ladb::OpenCutList
 
     def onPartSelected
 
-      instance = _get_instance
-
-      @instances << instance
-      @definition = instance.definition
       @drawing_def = nil
-
-      @src_transformation = Geom::Transformation.new(instance.transformation)
 
       _load_cutters
 
@@ -1661,11 +1647,6 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _get_drawing_def_ipaths
-      return @ipaths if @ipaths.is_a?(Array) && @ipaths.any?
-      super
-    end
-
     def _get_drawing_def_parameters
       {
         ignore_surfaces: true,
@@ -1673,7 +1654,7 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: true,
-        container_validator: (ipaths = _get_drawing_def_ipaths).nil? || ipaths.empty? ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL,
+        container_validator: get_active_part ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL,
       }
     end
 
@@ -1797,38 +1778,49 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _get_cutters_holder
+      if (instances = _get_instances).is_a?(Array) && instances.one? &&
+         (instance = instances.first).respond_to?(:definition)
+        return instance.definition
+      end
+      nil
+    end
+
     def _store_cutters
-      if @active_part_entity_path && @cutters
-        if (entity = @active_part_entity_path.last).respond_to?(:definition)
-          PLUGIN.set_attribute(entity.definition, "stretch_cutters", {
-            x: @cutters[X_AXIS],
-            y: @cutters[Y_AXIS],
-            z: @cutters[Z_AXIS],
-          })
+      if @cutters
+        data = {
+          'x' => @cutters[X_AXIS],
+          'y' => @cutters[Y_AXIS],
+          'z' => @cutters[Z_AXIS],
+        }
+        if (holder = _get_cutters_holder)
+          PLUGIN.set_attribute(holder, "stretch_cutters", data)
+        else
+          @@last_cutters_data = data
         end
       end
     end
 
     def _load_cutters
-      if @active_part_entity_path
-        if (entity = @active_part_entity_path.last).respond_to?(:definition)
-          cutters = PLUGIN.get_attribute(entity.definition, "stretch_cutters")
-          fn_valid_cutters = lambda { |cutters, xyz|
-            if cutters.is_a?(Hash) &&
-               cutters[xyz].is_a?(Array) &&
-               (valid_cutters = cutters[xyz].map { |v| v.to_f }.select { |v| v > 0 && v < 1.0 }).any?
-              valid_cutters
-            else
-              [ 0.5 ]
-            end
-          }
-          @cutters = {
-            X_AXIS => fn_valid_cutters.call(cutters, 'x'),
-            Y_AXIS => fn_valid_cutters.call(cutters, 'y'),
-            Z_AXIS => fn_valid_cutters.call(cutters, 'z'),
-          }
-        end
+      if (holder = _get_cutters_holder)
+        data = PLUGIN.get_attribute(holder, "stretch_cutters")
+      else
+        data = @@last_cutters_data
       end
+      fn_valid_cutters = lambda { |cutters, xyz|
+        if cutters.is_a?(Hash) &&
+           cutters[xyz].is_a?(Array) &&
+           (valid_cutters = cutters[xyz].map { |v| v.to_f }.select { |v| v > 0 && v < 1.0 }).any?
+          valid_cutters
+        else
+          [ 0.5 ]
+        end
+      }
+      @cutters = {
+        X_AXIS => fn_valid_cutters.call(data, 'x'),
+        Y_AXIS => fn_valid_cutters.call(data, 'y'),
+        Z_AXIS => fn_valid_cutters.call(data, 'z'),
+      }
     end
 
     # -----
