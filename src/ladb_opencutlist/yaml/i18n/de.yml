@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Holzliste generieren
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Instanz bearbeiten
@@ -298,7 +297,6 @@ tab:
     highlight_parts: Teile im Modell hervorheben
     edit_part_properties: Eigenschaften des Teils bearbeiten
     edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
-    edit_part_size_increase_properties: Eigenschaften (Übermaße) des Teils bearbeiten
     edit_part_edges_properties: Eigenschaften (Kanten) des Teils bearbeiten
     edit_part_faces_properties: Eigenschaften (Flächen) des Teils bearbeiten
     part_drawing_type_1: 2D Draufsicht
@@ -382,7 +380,6 @@ tab:
       invalid_final_area: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche hat"
       invalid_final_area_plural: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teile (von {{ total }}) eine ungültige Fläche haben"
       is_dynamic_attributes_name: Die Bezeichnung dieses Teils wird aus dem Attribut 'Name' der dynamischen Komponente extrahiert
-      size_increased: "Dimension mit einem Übermaß von {{ value }}"
       has_edges: "Dieses Teil enthält {{ count }} Kantenband"
       has_edges_plural: "Dieses Teil enthält {{ count }} Kantenbänder"
       has_faces: "Dieses Teil enthält {{ count }} furnierte Fläche"
@@ -496,16 +493,6 @@ tab:
       ignore_grain_direction: Faserrichtung für dieses Teil nicht beachten
       ignore_grain_direction_help: |
         Wenn dieses Kästchen aktiviert ist, wird die Faserrichtung für dieses Teil ignoriert.
-      size_increase: Übermaße
-      size_increase_help: |
-        Übermaße vergrössern die Dimensionen eines einzelnen Teils.
-        (*Beispiel : Übermaß für eine Fußleiste oder einen Anschlag, der bei der Montage noch angepasst wird.*)
-      length_increase: Längenzumaß
-      length_increase_help: Übermaß welches die **effektive Länge** vergrössert.
-      width_increase: Breitenzumaß
-      width_increase_help: Übermaß welches die **effektive Breite** vergrössert.
-      thickness_increase: Dickenzumaß
-      thickness_increase_help: Übermaß welches die **effektive Dicke** vergrössert.
       axes: Achsen
       axes_help: "Ordnen Sie die Abmessungen so an, dass sie mit den gewünschten Achsenfarben in Ihrem Teil übereinstimmen."
       axes_tip: |
@@ -1765,7 +1752,7 @@ tab:
       tags: Badges
       layer_name: Tag
       explode: Explodieren
-      explode_message: "Bestätigen Sie die Auflösung von **{{ name }}**?"   # TODO text changed
+      explode_message: "Bestätigen Sie die Auflösung von **{{ name }}**?"
       erase: Löschen
       erase_message: "Bestätigen Sie die Löschung von **{{ name }}**?"
     deep_make_unique:
@@ -2076,8 +2063,8 @@ tool:
       missing_close_parenthesis: "Schließende Klammer fehlt"
       missing_operand: "Fehlender Operand"
       zero_division: "Division durch Null"
-      lt_min_distance: Der Abstand {{ value1 }} ist kleiner als der Mindestabstand von {{ value2 }}
-      gt_max_distance: Der Abstand {{ value1 }} ist größer als der Maximalabstand von {{ value2 }}
+      lt_min_distance: "Der Abstand {{ value1 }} ist kleiner als der Mindestabstand von {{ value2 }}"
+      gt_max_distance: "Der Abstand {{ value1 }} ist größer als der Maximalabstand von {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2127,7 +2114,7 @@ tool:
     action_0: Auswählen
     action_0_status: "Klicken Sie auf ein Teil, um es auszuwählen"
     action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: "Ziehen Sie ein identisches Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren."
+    action_0_state_4_status: "Ziehen Sie ein identisches Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren"
     action_1: In Linie kopieren
     action_1_status: "Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren"
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2169,14 +2156,14 @@ tool:
     action_0: Dehnen
     action_0_status: "Klicken Sie auf ein Teil, um es auszuwählen"
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: Klicken Sie auf einen Griff, um zu strecken
-    action_0_state_1a_status: Klicken Sie auf eine Schnittebene, um sie zu verschieben.
+    action_0_state_1_status: "Klicken Sie auf einen Griff, um zu strecken"
+    action_0_state_1a_status: "Klicken Sie auf eine Schnittebene, um sie zu verschieben"
     action_0_state_1b_status: Schnittebene hinzufügen
     action_0_state_1c_status: Schnittebene löschen
-    action_0_state_10_status: Ziehen Sie die Schnittebene, um sie zu verschieben.
-    action_0_state_11_status: Klicken Sie, um die Schnittebene hinzuzufügen.
-    action_0_state_12_status: Klicken Sie auf eine Schnittebene, um sie zu löschen.
-    action_0_state_2_status: Klicken Sie, um die Dehnung zu bestätigen, oder geben Sie einen Abstand ein.
+    action_0_state_10_status: "Ziehen Sie die Schnittebene, um sie zu verschieben"
+    action_0_state_11_status: "Klicken Sie, um die Schnittebene hinzuzufügen"
+    action_0_state_12_status: "cken Sie auf eine Schnittebene, um sie zu löschen"
+    action_0_state_2_status: "Klicken Sie, um die Dehnung zu bestätigen, oder geben Sie einen Abstand ein"
     action_option_group_stretch_measure_type: Maß
     action_option_group_axes: Achsen
     action_option_stretch_measure_type_outside_status: Außenmessung
@@ -2185,7 +2172,7 @@ tool:
     action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
     action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
     error:
-      curve_intersect: Eine der Schnittebenen verläuft durch ein nicht dehnbares Element, beispielsweise eine Kurve oder ein Zubehörteil.
+      curve_intersect: Eine der Schnittebenen verläuft durch ein nicht dehnbares Element (beispielsweise eine Kurve oder ein Zubehörteil)
   smart_paint:
     title: Malen
     default_material: Ohne Material

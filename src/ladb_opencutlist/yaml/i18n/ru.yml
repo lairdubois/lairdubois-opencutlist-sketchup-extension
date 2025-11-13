@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Создать карту раскроя
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Изменить экземпляр
@@ -298,7 +297,6 @@ tab:
     highlight_parts: Просмотр деталей в модели
     edit_part_properties: Редактировать свойства детали
     edit_part_axes_properties: Редактировать свойства (осей) детали
-    edit_part_size_increase_properties: Редактировать свойства (размеры) детали
     edit_part_edges_properties: Редактировать свойства (кромки) детали
     edit_part_faces_properties: Редактировать свойства детали (Шпон)
     part_drawing_type_1: 2D Вид спереди
@@ -382,7 +380,6 @@ tab:
       invalid_final_area: "Осторожно, эта общая площадь не может быть рассчитана, потому что {{ count }} деталь (of {{ total }}) имеет некорректную площадь"
       invalid_final_area_plural: "Внимание, эта общая площадь не может быть вычислена, поскольку {{ count }} составляющие части (of {{ total }}) имеют некорректную площадь"
       is_dynamic_attributes_name: Описание этой детали извлечено из атрибута 'Name' динамического компонента
-      size_increased: "Размер увеличен на величину {{ value }}"
       has_edges: "Эта деталь содержит {{ count }} кромки"
       has_edges_plural: "Эти детали содержат {{ count }} кромки"
       has_faces: "Эта деталь содержит {{ count }} облицованную поверхность"
@@ -496,16 +493,6 @@ tab:
       ignore_grain_direction: Игнорировать направление волокон фактуры
       ignore_grain_direction_help: |
         Если этот флажок установлен, карта раскроя будет сформирована без учета направления волокон на фактуре этой детали .
-      size_increase: Припуски
-      size_increase_help: |
-        Припуски это добавочные размеры ‘под подгонку’ которые увеличивают расчетные размеры детали.
-         (*Пример: Припуск ‘под подгонку’ должен учитывать размер плинтуса, молдинга или неровностей стены.*)
-      length_increase: Припуск к длине
-      length_increase_help: Припуск применяется к фактической длине для определения **пильной длины**.
-      width_increase: Припуск к ширине
-      width_increase_help: Припуск применяется к фактической ширине для определения **пильной ширины**.
-      thickness_increase: Припуск к толщине
-      thickness_increase_help: Припуск применяется к фактической толщине для определения **пильной толщины**.
       axes: Оси
       axes_help: "Задайте размеры так, чтобы они соответствовали цветам осей вашей детали."
       axes_tip: |
@@ -1765,7 +1752,7 @@ tab:
       tags: Маркеры
       layer_name: Маяк
       explode: Разброс
-      explode_message: "Подтвердите деление **{{ name }}** ?"   # TODO text changed
+      explode_message: "Подтвердите деление **{{ name }}** ?"
       erase: Очистить
       erase_message: "Подтвердите удаление **{{ name }}** ?"
     deep_make_unique:
@@ -1796,7 +1783,7 @@ tab:
       no_entities: Ваша модель пуста!
       node_not_found: Узел не найден
       entity_not_found: Экземпляр не найден
-      invalid_target: Целевой экземпляр не позволяет выполнить эту операцию.
+      invalid_target: Целевой экземпляр не позволяет выполнить эту операцию
       obsolete_outliner: "Невозможно, сгенерированная структура устарела. Рассчитать снова."
     tip:
       no_node: |
@@ -2076,6 +2063,8 @@ tool:
       missing_close_parenthesis: "Отсутствует закрывающая скобка"
       missing_operand: "Отсутствует операнд"
       zero_division: "Деление на ноль"
+      lt_min_distance: "Расстояние {{ value1 }} меньше минимального {{ value2 }}"
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2125,7 +2114,7 @@ tool:
     action_0: Выделить
     action_0_status: "Кликните на деталь, чтобы выделить ее"
     action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: "Наведите курсор на идентичный элемент, чтобы добавить его в выделение, и отпустите, чтобы продолжить."
+    action_0_state_4_status: "Наведите курсор на идентичный элемент, чтобы добавить его в выделение, и отпустите, чтобы продолжить"
     action_1: Копирование по линии
     action_1_status: "Кликните на деталь, чтобы скопировать ее вдоль оси"
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2166,6 +2155,15 @@ tool:
     title: Изменить
     action_0: Растянуть
     action_0_status: "Кликните на деталь, чтобы выделить ее"
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
     action_option_group_stretch_measure_type: Отсчет
     action_option_group_axes: Оси
     action_option_stretch_measure_type_outside_status: Внешнее измерение
@@ -2173,6 +2171,8 @@ tool:
     action_option_axes_active_status: Перемещение по активным осям
     action_option_axes_context_status: "Перемещение по осям группы или компонента, содержащего деталь"
     action_option_axes_entity_status: Перемещение по осям детали
+    error:
+      curve_intersect: ""
   smart_paint:
     title: Раскраска
     default_material: Материал не задан

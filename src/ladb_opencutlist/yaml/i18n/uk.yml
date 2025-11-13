@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Створити список деталей
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Модифікувати екземпляр
@@ -298,7 +297,6 @@ tab:
     highlight_parts: Перегляд деталей в моделі
     edit_part_properties: Редагувати властивості деталі
     edit_part_axes_properties: Редагувати властивості (осі) деталі
-    edit_part_size_increase_properties: Редагувати властивості (розміри) деталі
     edit_part_edges_properties: Редагувати властивості (крайки) деталі
     edit_part_faces_properties: Редагувати властивості деталі (грані)
     part_drawing_type_1: 2D Вигляд з Лиця
@@ -382,7 +380,6 @@ tab:
       invalid_final_area: "Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталь (із {{ total }}) має некоректну площу"
       invalid_final_area_plural: "Увага, цю загальну площу неможливо обчислити, оскільки {{ count }} деталей (із {{ total }}) мають некоректну площу"
       is_dynamic_attributes_name: Позначення цієї деталі взято з атрибуту 'Name' динамічного компонента
-      size_increased: "Розмір збільшено на {{ value }}"
       has_edges: "Ця деталь містить {{ count }} крайку"
       has_edges_plural: "Ця деталь містить {{ count }} крайки"
       has_faces: "Ця деталь містить {{ count }} облицьовану поверхню"
@@ -496,16 +493,6 @@ tab:
       ignore_grain_direction: Не враховувати напрямок текстури
       ignore_grain_direction_help: |
         Якщо цей прапорець встановлено, напрямок текстури на деталі ігнорується.
-      size_increase: Припуски
-      size_increase_help: |
-        Припуски дозволяють збільшити допустимі розміри деталі.
-        (*Приклад: Додатковий матеріал до довжини плінтусу для товщини пили, який слід врахувати під час розпилу.*)
-      length_increase: Припуск по довжині
-      length_increase_help: "Припуск застосовується до фактичної довжини, щоб визначити **пильну довжину**."
-      width_increase: Припуск по ширині
-      width_increase_help: "Припуск застосовується до фактичної ширини, щоб визначити **пильну ширину**."
-      thickness_increase: Припуск по товщині
-      thickness_increase_help: "Припуск застосовується до фактичної товщини, щоб визначити **пильну товщину**."
       axes: Осі
       axes_help: "Встановіть розміри так, щоб вони відповідали кольорам осей вашої деталі."
       axes_tip: |
@@ -1765,7 +1752,7 @@ tab:
       tags: Мітки
       layer_name: Тег
       explode: Розбити
-      explode_message: "Підтверджуєте вибух **{{ name }}** ?"   # TODO text changed
+      explode_message: "Підтверджуєте вибух **{{ name }}** ?"
       erase: Стерти
       erase_message: "Підтверджуєте видалення **{{ name }}**?"
     deep_make_unique:
@@ -2076,6 +2063,8 @@ tool:
       missing_close_parenthesis: "Відсутня закриваюча дужка"
       missing_operand: "Відсутній операнд"
       zero_division: "Ділення на нуль"
+      lt_min_distance: "Відстань {{ value1 }} менша за мінімальну відстань {{ value2 }}"
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2166,6 +2155,15 @@ tool:
     title: Реконструювати
     action_0: Розтягнути
     action_0_status: "Натисніть на деталь, щоб вибрати її"
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
     action_option_group_stretch_measure_type: Вимірювання
     action_option_group_axes: Осі
     action_option_stretch_measure_type_outside_status: Зовнішнє вимірювання
@@ -2173,6 +2171,8 @@ tool:
     action_option_axes_active_status: Переміщення вздовж активних осей
     action_option_axes_context_status: "Переміщення вздовж осей групи або компонента, що містить деталь"
     action_option_axes_entity_status: Переміщення по осях деталі
+    error:
+      curve_intersect: ""
   smart_paint:
     title: Нанесення матеріалів
     default_material: Матеріал не заданий

@@ -104,7 +104,6 @@ core:
       generate_cutlist:  生成部件清单
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: 编辑实例
@@ -114,6 +113,7 @@ core:
       edit_part_instance_properties: 编辑实例属性
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: 绘制部件
       smart_handle: 控制部件
+      smart_reshape: ""
       smart_paint: 部件材质
       smart_axes: 部件方向
       smart_export: 导出部件
@@ -155,6 +156,8 @@ core:
       报告错误: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: 在此上下文中不可用公式
   error:
+    exception: ""
+    forbidden: ""
     extern: "外部错误 : **{{ error }}**"
     feature_unavailable: "此功能需要 SketchUp {{ version }} 或更高版本"
     failed_export_to: |
@@ -294,7 +297,6 @@ tab:
     highlight_parts: 在模型中突显部件
     edit_part_properties: 编辑部件属性
     edit_part_axes_properties: 编辑部件的属性 (轴)
-    edit_part_size_increase_properties: 编辑部件的属性 (尺寸超差)
     edit_part_edges_properties: 编辑部件的属性 (边缘)
     edit_part_faces_properties: 编辑部件的属性 (面)
     part_drawing_type_1: 2D 顶立面图
@@ -378,7 +380,6 @@ tab:
       invalid_final_area: "注意, 由于 {{ count }} 个部件 (共 {{ total }}) 存在无效面积, 因此无法计算此可求和面积"
       invalid_final_area_plural: "注意, 由于 {{ count }} 个部件 (共 {{ total }}) 存在无效面积, 因此无法计算此可求和面积"
       is_dynamic_attributes_name: 此部件的名称是从动态组件的属性 'Name' 中提取的
-      size_increased: "尺寸增加了 {{ value }} 的尺寸超差"
       has_edges: "此部件包含 {{ count }} 条封边"
       has_edges_plural: "此部件包含 {{ count }} 条封边"
       has_faces: "此部件包含 {{ count }} 片贴面"
@@ -492,16 +493,6 @@ tab:
       ignore_grain_direction: 忽略该部件的纹理方向
       ignore_grain_direction_help: |
         如果选中此框, 将忽略该部件的材质纹理方向.
-      size_increase: 尺寸超差
-      size_increase_help: |
-        尺寸超差会增加单个部件的尺寸.
-        (*例如: 用于踢脚板或镶木线条, 需要在组装时进行调整.*)
-      length_increase: 长度尺寸超差
-      length_increase_help: "尺寸超差应用于最终长度, 以定义 **原始长度**."
-      width_increase: 宽度尺寸超差
-      width_increase_help: "尺寸超差应用于最终宽度, 以定义 **原始宽度**."
-      thickness_increase: 厚度尺寸超差
-      thickness_increase_help: "尺寸超差应用于最终厚度, 以定义 **原始厚度**."
       axes: 坐标轴
       axes_help: 重新排列尺寸以匹配部件中所需的坐标轴颜色.
       axes_tip: |
@@ -573,7 +564,7 @@ tab:
       group_order_strategy: 群組排序
       group_order_strategy_help: |
         重新排列以下属性，以定义分组的排序策略。
-        每个属性可以按 <i class="ladb-opencutlist-icon-sort-asc"></i>升序 或 <i class="ladb-opencutlist-icon-sort-desc"></i>降序 排列。
+        每个属性可以按 <i class="ladb-opencutlist-icon-sort-asc"></i>*升序 或* <i class="ladb-opencutlist-icon-sort-desc"></i>*降序 排列*。
       part_order_strategy: 部件排序
       part_order_strategy_help: |
         重新排列或调整下列的项目以定义每组部件内的项目排序顺序.
@@ -1129,6 +1120,8 @@ tab:
       option_hide_edges_preview_0: 在切割图中显示
       option_hide_edges_preview_1: 在切割图中隐藏
       option_hide_edges_preview_help: 允许您在切割图中显示或隐藏部件的边条的可视显示.
+      option_zoom_threshold: ""
+      option_zoom_threshold_help: |
       option_time_limit: 时限
       option_time_limit_help: |
         设置计算的时间限制
@@ -1744,6 +1737,8 @@ tab:
     edit_node:
       title_model: "模型属性"
       title_instance: " **{{ name }}**实例属性"
+      title_instance_multiple: ""
+      multiple_alert: ""
       general: 常规
       name: 名称
       instance_name: 实例
@@ -1754,7 +1749,21 @@ tab:
       tags: 标签
       layer_name: 标签
       explode: 爆炸图
-      explode_message: "你是否认可 **{{ name }}** 实例爆炸结果?"
+      explode_message: ""
+      erase: 清除
+      erase_message: ""
+    deep_make_unique:
+      title: ""
+    deep_rename_parts:
+      title: ""
+      info_0: |
+      formula: 公式
+      old_name: ""
+      new_name: ""
+      count: ""
+    create_container:
+      title_group: ""
+      title_component: ""
     option:
       general: 常规
       show_hidden_instances: 显示隐藏的实例
@@ -1770,6 +1779,7 @@ tab:
       no_entities: 您的模型为空！
       node_not_found: 未找到节点
       entity_not_found: 未找到实例
+      invalid_target: ""
       obsolete_outliner: "不可能，生成的结果已过期.请重新生成."
     tip:
       no_node: |
@@ -1926,6 +1936,7 @@ tab:
     language_auto: 自动
     font_size: 字体大小
     font_size_auto: $t(default.automatic)
+    font_size_normal: 正常
     font_size_small: 短
     font_size_tiny: 极小
     print_margin: 打印页边距
@@ -2043,6 +2054,13 @@ tool:
       invalid_divider: "除数 {{ value }} 无效"
       invalid_offset: "偏移 {{ value }} 无效"
       invalid_segment_count: "段数 {{ value }} 无效。必须介于 3 到 999 之间"
+      syntax_error: ""
+      unexpected_close_parenthesis: ""
+      missing_close_parenthesis: ""
+      missing_operand: ""
+      zero_division: ""
+      lt_min_distance: "距离 {{ value1 }} 小于最小距离 {{ value2 }}"
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2091,6 +2109,8 @@ tool:
     title: 操控点
     action_0: 选择
     action_0_status: 点击部件以选中它
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: ""
     action_1: 沿直线复制
     action_1_status: 点击部件以沿轴复制
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2106,9 +2126,9 @@ tool:
     action_4: 均分排列
     action_4_status: 点击部件以沿轴均分排列
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: 点击以确定第一个测量点
     action_4_state_2_status: 点击以确定第二个测量点或输入距离
-    action_5: 重新设定尺寸
     action_option_group_copy_measure_type: 测量
     action_option_group_move_measure_type: 测量
     action_option_group_axes: 坐标轴
@@ -2127,6 +2147,28 @@ tool:
       copies_disable_mirror: 多重复制会停用 '$t(tool.smart_handle.action_option_options_mirror_status)' 选项
     error:
       min_distance: "距离 {{ value1 }} 小于最小距离 {{ value2 }}"
+  smart_reshape:
+    title: ""
+    action_0: ""
+    action_0_status: 点击部件以选中它
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
+    action_option_group_stretch_measure_type: 测量
+    action_option_group_axes: 坐标轴
+    action_option_stretch_measure_type_outside_status: 外部测量
+    action_option_stretch_measure_type_offset_status: ""
+    action_option_axes_active_status: 沿活动轴操作
+    action_option_axes_context_status: 沿群组轴或包含部件的组件的轴操作
+    action_option_axes_entity_status: 沿部件轴操作
+    error:
+      curve_intersect: ""
   smart_paint:
     title: 绘制
     default_material: 无材质

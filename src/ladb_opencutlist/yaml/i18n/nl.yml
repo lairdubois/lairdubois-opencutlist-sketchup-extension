@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Genereer materiaallijst
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: De instantie wijzigen
@@ -114,6 +113,7 @@ core:
       edit_part_instance_properties: Instance-eigenschappen bewerken
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Onderdelen tekenen
       smart_handle: Onderdelen hanteren
+      smart_reshape: ""
       smart_paint: Kleur de onderdelen
       smart_axes: Oriënt Onderdelen
       smart_export: Onderdelen exporteren
@@ -155,6 +156,8 @@ core:
       Om een ​​bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Niet beschikbaar in deze context
   error:
+    exception: ""
+    forbidden: ""
     extern: "Externe fout : **{{ error }}**"
     feature_unavailable: "Deze functie vereist SketchUp {{ version }} of hoger"
     failed_export_to: |
@@ -294,7 +297,6 @@ tab:
     highlight_parts: Toon onderdelen in het model
     edit_part_properties: Bewerk eigenschappen van dit onderdeel
     edit_part_axes_properties: Bewerk de eigenschappen (assen) van het onderdeel
-    edit_part_size_increase_properties: Bewerk de eigenschappen (overmaat) van het onderdeel
     edit_part_edges_properties: Bewerk de eigenschappen (randbanden) van het onderdeel
     edit_part_faces_properties: Bewerk de eigenschappen (fineren) van het onderdeel
     part_drawing_type_1: 2D aanzicht
@@ -378,7 +380,6 @@ tab:
       invalid_final_area: "Let op, de oppervlakte kan niet worden berekend omdat {{ count }} deel (van {{ total }}) een ongeldige oppervakte heeft"
       invalid_final_area_plural: "Opgelet, Dit cumulatief oppervlak kan niet berekend worden omdat {{ count }} onderdelen (van {{ total }}) een ongeldig oppervlak hebben"
       is_dynamic_attributes_name: De beschrijving van dit onderdeel wordt overgenomen van het attribuut 'Name' van het dynamisch component
-      size_increased: "Deze afmeting wordt vergroot met een overmaat voor {{ value }} gegroepeerde onderdelen"
       has_edges: "Dit onderdeel bevat {{ count }} randafwerking"
       has_edges_plural: "Dit onderdeel bevat {{ count }} randafwerkingen"
       has_faces: "Dit deel bevat {{ count }} gefineerd oppervlak"
@@ -492,16 +493,6 @@ tab:
       ignore_grain_direction: Negeer de nerfrichting op dit onderdeel
       ignore_grain_direction_help: |
         Als dit vakje is aangevinkt, wordt de nerfrichting van het materiaal voor dit onderdeel genegeerd.
-      size_increase: Overlengtes
-      size_increase_help: |
-        Overlengtes laten je toe om de afmetingen van een onderdeel te verhogen.
-        (*Voorbeeld: Overlengte van een plint of een afschrijving die aangepast moet worden tijdens de montage.*)
-      length_increase: Lengte overmaat
-      length_increase_help: Overmaat wordt toegepast op de uiteindelijke lengte om de **brutto lengte** te bepalen.
-      width_increase: Breedte overmaat
-      width_increase_help: Overmaat wordt toegepast op de uiteindelijke breedte om de **brutto breedte** te bepalen.
-      thickness_increase: Dikte overmaat
-      thickness_increase_help: Overmaat wordt toegepast op de uiteindelijke dikte om de **brutto dikte** te bepalen.
       axes: Assen
       axes_help: Herschik de afmetingen zodat ze overeenkomen met de gewenste askleuren in uw onderdeel.
       axes_tip: |
@@ -1761,7 +1752,21 @@ tab:
       tags: Badges
       layer_name: Tag
       explode: Uitbarsten/ splitsing 
-      explode_message: "Bevestigt u de splitsing van de **{{ name }}** instantie?"
+      explode_message: ""
+      erase: Leeg maken
+      erase_message: ""
+    deep_make_unique:
+      title: ""
+    deep_rename_parts:
+      title: ""
+      info_0: |
+      formula: Formule
+      old_name: ""
+      new_name: ""
+      count: ""
+    create_container:
+      title_group: ""
+      title_component: ""
     option:
       general: Algemeen
       show_hidden_instances: Verborgen instanties weergeven
@@ -1777,6 +1782,7 @@ tab:
       no_entities: Je model is leeg!
       node_not_found: Knooppunt niet gevonden
       entity_not_found: Instantie niet gevonden
+      invalid_target: ""
       obsolete_outliner: "Onmogelijk, de gegenereerde structuur is verouderd. Regenereer daar."
     tip:
       no_node: |
@@ -2051,6 +2057,13 @@ tool:
       invalid_divider: "De deler {{ value }} is ongeldig"
       invalid_offset: "De verschuiving {{ value }} is ongeldig"
       invalid_segment_count: "Het aantal segmenten {{ value }} is ongeldig. Het moet tussen 3 en 999 liggen."
+      syntax_error: ""
+      unexpected_close_parenthesis: ""
+      missing_close_parenthesis: ""
+      missing_operand: ""
+      zero_division: ""
+      lt_min_distance: "De afstand {{ value1 }} is kleiner dan de minimale afstand van {{ value2 }}"
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2099,6 +2112,8 @@ tool:
     title: bewerken
     action_0: Selecteren
     action_0_status: Klik op een stuk om het te selecteren
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: ""
     action_1: In een lijn kopiëren
     action_1_status: Klik op een stuk om het langs een as te kopiëren
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2114,9 +2129,9 @@ tool:
     action_4: Verdelen
     action_4_status: Klik op een stuk om het langs een as te verdelen
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Klik om het eerste meetpunt te bepalen
     action_4_state_2_status: Klik om het tweede meetpunt te bepalen of voer een afstand in
-    action_5: Formaat wijzigen
     action_option_group_copy_measure_type: Meten
     action_option_group_move_measure_type: Meten
     action_option_group_axes: Assen
@@ -2135,6 +2150,28 @@ tool:
       copies_disable_mirror: Het meervoudig kopiëren schakelt de optie '$t(tool.smart_handle.action_option_options_mirror_status)' uit
     error:
       min_distance: "De afstand {{ value1 }} is kleiner dan de minimale afstand van {{ value2 }}"
+  smart_reshape:
+    title: ""
+    action_0: ""
+    action_0_status: Klik op een stuk om het te selecteren
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
+    action_option_group_stretch_measure_type: Meten
+    action_option_group_axes: Assen
+    action_option_stretch_measure_type_outside_status: Aan de buitenzijde meten
+    action_option_stretch_measure_type_offset_status: ""
+    action_option_axes_active_status: Verplaatsen langs de actieve assen
+    action_option_axes_context_status: Verplaatsen langs de assen van de groep of component die het stuk bevat
+    action_option_axes_entity_status: Verplaatsen langs de assen van het stuk
+    error:
+      curve_intersect: ""
   smart_paint:
     title: Kleur
     default_material: Geen materiaal gedefinieerd

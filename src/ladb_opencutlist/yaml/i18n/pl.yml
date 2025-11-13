@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Generowanie listy części
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Modyfikacja instancji
@@ -298,7 +297,6 @@ tab:
     highlight_parts: Zaznacz części w modelu
     edit_part_properties: Edytuj właściwości części
     edit_part_axes_properties: Edytuj właściwości (osie) części
-    edit_part_size_increase_properties: Edytuj właściwości (nadwymiary) części
     edit_part_edges_properties: Edytuj właściwości (obrzeża) części
     edit_part_faces_properties: Edytuj właściwości (powierzchnie) części
     part_drawing_type_1: 2D Widok z przodu
@@ -382,7 +380,6 @@ tab:
       invalid_final_area: "Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ część {{ count }} (z {{ total }}) ma nieprawidłowy obszar"
       invalid_final_area_plural: "Uwaga, nie można obliczyć tego sumarycznego obszaru, ponieważ {{ count }} części (z {{ total }}) mają nieprawidłowy obszar"
       is_dynamic_attributes_name: Oznaczenie tej części pochodzi z atrybutu 'Name' elementu dynamicznego
-      size_increased: "Wymiar zwiększony o {{ value }}"
       has_edges: "Ten kawałek zawiera {{ count }} stronnie oklejoną krawędź"
       has_edges_plural: "Ten kawałek zawiera {{ count }} formirowane krawędzie"
       has_faces: "Ta część zawiera {{ count }} powierzchnię fornirowaną"
@@ -496,16 +493,6 @@ tab:
       ignore_grain_direction: Ignoruj kierunek wzoru na tej części
       ignore_grain_direction_help: |
         Jeśli ta opcja jest zaznaczona, kierunek wzoru materiału będzie ignorowany dla tej części.
-      size_increase: Ponadwymiarowe
-      size_increase_help: |
-        Ponadwymiarowe pozwalają na zwiększenie wymiarów pojedynczej części.
-        (* Przykład: naddatek na listwę przypodłogową lub listwę rysunkową, którą należy wyregulować podczas montażu. *)
-      length_increase: Długość ponadwymiarowa
-      length_increase_help: Nadmiar jest stosowany do końcowej długości w celu określenia **długości wstępnej**.
-      width_increase: Szerokość ponadwymiarowa
-      width_increase_help: "Nadmiar jest stosowany do ostatecznej szerokości, aby zdefiniować **szerokość wstępną**."
-      thickness_increase: Grubość ponadwymiarowa
-      thickness_increase_help: "Nadmiar nakłada się na ostateczną grubość, aby określić **grubość wstępną**."
       axes: Osie
       axes_help: "Zmień kolejność wymiarów, aby dopasować je do żądanych kolorów osi w swojej części."
       axes_tip: |
@@ -2076,6 +2063,8 @@ tool:
       missing_close_parenthesis: "Brakujący nawias zamykający"
       missing_operand: "Brak argumentu"
       zero_division: "Dzielenie przez zero "
+      lt_min_distance: "Odległość {{ value1 }} jest mniejsza niż minimalna odległość {{ value2 }}"
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2166,6 +2155,15 @@ tool:
     title: Przebudować
     action_0: Rozciągnąć
     action_0_status: "Kliknij część, aby ją zaznaczyć"
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
     action_option_group_stretch_measure_type: Pomiary
     action_option_group_axes: Osie
     action_option_stretch_measure_type_outside_status: Pomiar zewnętrzny
@@ -2173,6 +2171,8 @@ tool:
     action_option_axes_active_status: Manipuluj wzdłuż aktywnych osi
     action_option_axes_context_status: Manipuluj wzdłuż osi grupy lub komponentu zawierającego element
     action_option_axes_entity_status: Manipuluj wzdłuż osi elementu
+    error:
+      curve_intersect: ""
   smart_paint:
     title: Farba
     default_material: Brak zdefiniowanego materiału

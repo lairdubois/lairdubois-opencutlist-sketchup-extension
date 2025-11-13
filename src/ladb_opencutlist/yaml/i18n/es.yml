@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Generar la lista de corte
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Modificar el elemento
@@ -298,7 +297,6 @@ tab:
     highlight_parts: Resalta piezas en el modelo
     edit_part_properties: Editar las propiedades de la pieza
     edit_part_axes_properties: Edita las propiedades (ejes) de la pieza
-    edit_part_size_increase_properties: Edita las propiedades (sobredimensionados) de la pieza
     edit_part_edges_properties: Edita las propiedades (tiras de los cantos) de la pieza
     edit_part_faces_properties: Edita las propiedades (chapas de madera) de la pieza
     part_drawing_type_1: 2D Vista frontal
@@ -382,7 +380,6 @@ tab:
       invalid_final_area: "Atención, esta área sumable no se pudo calcular porque {{ count }} parte (de {{ total }}) tiene un área no válida"
       invalid_final_area_plural: "Precaución, esta área sumable no se pudo calcular porque {{ count }} partes (de {{ total }}) tienen un área no válida"
       is_dynamic_attributes_name: La designación de esta parte se extrae del atributo 'Name' del componente dinámico
-      size_increased: "La dimensión aumenta con un tamaño superior a {{ value }}"
       has_edges: "Esta parte contiene {{ count }} tiras de los cantos"
       has_edges_plural: "Esta parte contiene {{ count }} tiras de los cantos"
       has_faces: "Esta parte contiene {{ count }} superficie chapada"
@@ -496,16 +493,6 @@ tab:
       ignore_grain_direction: Ignora la dirección de la fibra
       ignore_grain_direction_help: |
         Si esta casilla está marcada, la dirección de la fibra se ignora en esta parte.
-      size_increase: Aumento de tamaño
-      size_increase_help: |
-        El aumento de tamaño permite aumentar las dimensiones de una sola pieza.
-        (*Ejemplo: tamaño extragrande para un rodapié o una moldura de trazado que deben ajustarse al instalar.*)
-      length_increase: Longitud sobremedida
-      length_increase_help: El tamaño sobremedida se aplica a la longitud real para definir la **longitud bruta**.
-      width_increase: Ancho sobremedida
-      width_increase_help: El tamaño sobremedida se aplica al ancho real para definir el **ancho bruto**.
-      thickness_increase: Espesor sobremedida
-      thickness_increase_help: Se aplica sobredimensionado al espesor real para definir el **espesor bruto**.
       axes: Ejes
       axes_help: Organice las dimensiones para que coincidan con los colores de los ejes de su pieza.
       axes_tip: |
@@ -2076,6 +2063,8 @@ tool:
       missing_close_parenthesis: "Falta el cierre de paréntesis"
       missing_operand: "Operando faltante"
       zero_division: "División por cero"
+      lt_min_distance: "La distancia {{ value1 }} es inferior al valor mínimo de {{ value2 }}"
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2166,6 +2155,15 @@ tool:
     title: Remodelar
     action_0: Estirar
     action_0_status: Hacer clic sobre una pieza para seleccionarla
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Ejes
     action_option_stretch_measure_type_outside_status: Medir por el exterior
@@ -2173,6 +2171,8 @@ tool:
     action_option_axes_active_status: Cambiar la longitud de los ejes activos
     action_option_axes_context_status: Modificar la longitud de los ejes del grupo o componente que contienen la pieza
     action_option_axes_entity_status: Modificar la longitud de los ejes de la pieza
+    error:
+      curve_intersect: ""
   smart_paint:
     title: Colorear
     default_material: Ningún material definido

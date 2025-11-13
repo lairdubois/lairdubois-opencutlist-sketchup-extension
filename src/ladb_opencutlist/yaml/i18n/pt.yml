@@ -104,7 +104,6 @@ core:
       generate_cutlist:  Gerar a lista de peças
       edit_part_properties: $t(tab.cutlist.edit_part_properties)
       edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
-      edit_part_size_increase_properties: $t(tab.cutlist.edit_part_size_increase_properties)
       edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
       edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
       edit_part_instance: Modificar a instância
@@ -114,6 +113,7 @@ core:
       edit_part_instance_properties: Editar propriedades da instância
       smart_draw: $t(core.toolbar.command.smart_draw)
       smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
       smart_paint: $t(core.toolbar.command.smart_paint)
       smart_axes: $t(core.toolbar.command.smart_axes)
       smart_export: $t(core.toolbar.command.smart_export)
@@ -125,6 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Desenhar Peças
       smart_handle: Manipular Peças
+      smart_reshape: ""
       smart_paint: Pintar Peças
       smart_axes: Orientação das Peças
       smart_export: Exportar as Peças
@@ -155,6 +156,8 @@ core:
       Para relatar um bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Não disponível neste contexto
   error:
+    exception: ""
+    forbidden: ""
     extern: "Erro externo : **{{ error }}**"
     feature_unavailable: "Este recurso requer SketchUp {{ version }} ou superior"
     failed_export_to: |
@@ -294,7 +297,6 @@ tab:
     highlight_parts: Destacar peças no modelo
     edit_part_properties: Editar propriedades da peça
     edit_part_axes_properties: Editar as propriedades (eixos) da peça
-    edit_part_size_increase_properties: Editar as propriedades (superdimensionamento) da peça
     edit_part_edges_properties: Editar as propriedades (fitas de borda) da peça
     edit_part_faces_properties: Editar as propriedades (faces) da peça
     part_drawing_type_1: Vista Frontal 2D
@@ -378,7 +380,6 @@ tab:
       invalid_final_area: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peça (de {{ total }}) tem uma área inválida"
       invalid_final_area_plural: "Cuidado, a somatória desta área não pôde ser calculada porque {{ count }} peças (de {{ total }}) têm uma área inválida"
       is_dynamic_attributes_name: Designação extraída do atributo 'Name' do componente dinâmico
-      size_increased: "A dimensão foi aumentada pelo superdimensionamento de {{ value }}"
       has_edges: "Esta peça contém {{ count }} fitas de borda"
       has_edges_plural: "Esta peça contém {{ count }} fitas de borda"
       has_faces: "Esta peça contém {{ count }} superfície laminada"
@@ -492,16 +493,6 @@ tab:
       ignore_grain_direction: Ignorar a direção dos veios
       ignore_grain_direction_help: |
         Se esta caixa estiver marcada, a direção dos veios é ignorada.
-      size_increase: Superdimensionamento
-      size_increase_help: |
-        O superdimensionamento permite aumentar as dimensões de uma única parte.
-        (*Exemplo: Superdimensionar uma chapa ou uma moldura que precisa ser ajustada durante a instalação.*)
-      length_increase: Superdimensionamento do comprimento
-      length_increase_help: O superdimensionamento é aplicado ao comprimento real para definir o **comprimento bruto**.
-      width_increase: Superdimensionamento da largura
-      width_increase_help: O superdimensionamento é aplicado à largura real para definir a **largura aproximada**.
-      thickness_increase: Superdimensionamento da espessura
-      thickness_increase_help: O superdimensionamento é aplicado à espessura real para definir a **espessura aproximada**.
       axes: Eixos
       axes_help: Organize as dimensões para que correspondam às cores dos eixos da sua peça.
       axes_tip: |
@@ -1761,7 +1752,21 @@ tab:
       tags: Identificação
       layer_name: Etiqueta
       explode: Explodir
-      explode_message: "Você confirma a divisão da instância **{{ name }}** ?"
+      explode_message: ""
+      erase: Apagar
+      erase_message: ""
+    deep_make_unique:
+      title: ""
+    deep_rename_parts:
+      title: ""
+      info_0: |
+      formula: Fórmula
+      old_name: ""
+      new_name: ""
+      count: ""
+    create_container:
+      title_group: ""
+      title_component: ""
     option:
       general: Geral
       show_hidden_instances: Exibir as instâncias ocultas
@@ -1777,6 +1782,7 @@ tab:
       no_entities: O modelo está vazio!
       node_not_found: Nó não encontrado
       entity_not_found: Instância não encontrada
+      invalid_target: ""
       obsolete_outliner: "Impossível, a estrutura gerada está ultrapassada. Regenere-a."
     tip:
       no_node: |
@@ -2051,6 +2057,13 @@ tool:
       invalid_divider: "O divisor {{ value }} é inválido"
       invalid_offset: "O deslocamento {{ value }} é inválido"
       invalid_segment_count: "O número de segmentos {{ value }} é inválido. Ele deve estar entre 3 e 999."
+      syntax_error: ""
+      unexpected_close_parenthesis: ""
+      missing_close_parenthesis: ""
+      missing_operand: ""
+      zero_division: ""
+      lt_min_distance: "A distância {{ value1 }} é menor que a distância mínima de {{ value2 }}"
+      gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2099,6 +2112,8 @@ tool:
     title: Manipular
     action_0: Selecionar
     action_0_status: Clique em uma peça para selecioná-la
+    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_0_state_4_status: ""
     action_1: Copiar em Linha
     action_1_status: Clique em uma peça para copiá-la ao longo de um eixo
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2114,9 +2129,9 @@ tool:
     action_4: Distribuir
     action_4_status: Clique em uma peça para distribuí-la ao longo de um eixo
     action_4_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Clique para definir o primeiro ponto de medição
     action_4_state_2_status: Clique para definir o segundo ponto de medição ou insira uma distância
-    action_5: Redimensionar
     action_option_group_copy_measure_type: Medida
     action_option_group_move_measure_type: Medida
     action_option_group_axes: Eixos
@@ -2135,6 +2150,28 @@ tool:
       copies_disable_mirror: A cópia múltipla desativa a opção '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
       min_distance: "A distância {{ value1 }} é menor que a distância mínima de {{ value2 }}"
+  smart_reshape:
+    title: ""
+    action_0: ""
+    action_0_status: Clique em uma peça para selecioná-la
+    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_state_1_status: ""
+    action_0_state_1a_status: ""
+    action_0_state_1b_status: ""
+    action_0_state_1c_status: ""
+    action_0_state_10_status: ""
+    action_0_state_11_status: ""
+    action_0_state_12_status: ""
+    action_0_state_2_status: ""
+    action_option_group_stretch_measure_type: Medida
+    action_option_group_axes: Eixos
+    action_option_stretch_measure_type_outside_status: Medida externa
+    action_option_stretch_measure_type_offset_status: ""
+    action_option_axes_active_status: Manipular ao longo dos eixos ativos
+    action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente que contém a peça
+    action_option_axes_entity_status: Manipular ao longo dos eixos da peça
+    error:
+      curve_intersect: ""
   smart_paint:
     title: Pintar
     default_material: Nenhum material definido

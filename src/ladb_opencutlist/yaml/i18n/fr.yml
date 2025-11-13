@@ -1752,7 +1752,7 @@ tab:
       tags: Badges
       layer_name: Balise
       explode: Eclater
-      explode_message: "Confirmez-vous l'éclatement de **{{ name }}** ?"   # TODO text changed
+      explode_message: "Confirmez-vous l'éclatement de **{{ name }}** ?"
       erase: Effacer
       erase_message: "Confirmez-vous l'effacement de **{{ name }}** ?"
     deep_make_unique:
