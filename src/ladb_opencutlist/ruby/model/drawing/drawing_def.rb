@@ -8,7 +8,7 @@ module Ladb::OpenCutList
     attr_reader :face_manipulators, :surface_manipulators, :edge_manipulators, :curve_manipulators, :cline_manipulators,
                 :container, :container_defs
 
-    def initialize(container, transformation = Geom::Transformation.new)
+    def initialize(container, transformation = IDENTITY)
 
       @container = container
       @transformation = transformation
@@ -37,22 +37,22 @@ module Ladb::OpenCutList
     # -----
 
     def bounds
-      compute_bounds if @bounds.nil?
+      _compute_bounds if @bounds.nil?
       @bounds
     end
 
     def faces_bounds
-      compute_bounds if @bounds.nil?
+      _compute_bounds if @bounds.nil?
       @faces_bounds
     end
 
     def edges_bounds
-      compute_bounds if @bounds.nil?
+      _compute_bounds if @bounds.nil?
       @edges_bounds
     end
 
     def clines_bounds
-      compute_bounds if @bounds.nil?
+      _compute_bounds if @bounds.nil?
       @clines_bounds
     end
 
@@ -91,13 +91,15 @@ module Ladb::OpenCutList
         container_def.transform!(transformation)
       end
 
-      reset_bounds
+      _reset_bounds
       true
     end
 
     # -----
 
-    def reset_bounds
+    private
+
+    def _reset_bounds
 
       @bounds = nil
       @faces_bounds = nil
@@ -105,12 +107,15 @@ module Ladb::OpenCutList
       @clines_bounds = nil
 
       @container_defs.each do |container_def|
-        container_def.reset_bounds
+        container_def._reset_bounds
       end
 
     end
 
-    def compute_bounds
+    def _compute_bounds
+
+      # Note that bounds are expressed in the root container coordinate system
+      # and represent the entire tree content from the current container
 
       @bounds = Geom::BoundingBox.new
       @faces_bounds = Geom::BoundingBox.new

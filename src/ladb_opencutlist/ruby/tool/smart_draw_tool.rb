@@ -1462,7 +1462,7 @@ module Ladb::OpenCutList
       instance = _get_instance
       instance_path = (model.active_path.nil? ? [] : model.active_path) + [ instance ]
 
-      @drawing_def = CommonDrawingDecompositionWorker.new(instance_path,
+      @drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(instance_path),
         ignore_surfaces: true,
         ignore_faces: false,
         ignore_edges: true,

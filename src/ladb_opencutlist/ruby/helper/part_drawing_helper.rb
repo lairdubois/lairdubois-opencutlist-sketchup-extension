@@ -50,7 +50,7 @@ module Ladb::OpenCutList
         local_x_axis, local_y_axis, local_z_axis = local_x_axis.reverse, local_z_axis, local_y_axis
       end
 
-      drawing_def = CommonDrawingDecompositionWorker.new(instance_info.path,
+      drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(instance_info.path),
         input_local_x_axis: local_x_axis,
         input_local_y_axis: local_y_axis,
         input_local_z_axis: local_z_axis,

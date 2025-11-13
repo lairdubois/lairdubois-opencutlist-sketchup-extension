@@ -2024,17 +2024,6 @@ module Ladb::OpenCutList
       super
     end
 
-    # def _restart
-    #   @active_part_entity_path = nil
-    #   @active_part = nil
-    #   @active_part_sibling_entity_paths = nil
-    #   @active_part_siblings = nil
-    #   @global_context_transformation = nil
-    #   @global_instance_transformation = nil
-    #   @drawing_def = nil
-    #   super
-    # end
-
     # --
 
     def _pick_part(picker, view)
@@ -2357,6 +2346,10 @@ module Ladb::OpenCutList
 
     # --
 
+    def _get_drawing_def_ipaths
+      Sketchup::InstancePath.new(@active_part_entity_path) unless @active_part_entity_path.nil?
+    end
+
     def _get_drawing_def_parameters
       {
         ignore_surfaces: true,
@@ -2369,10 +2362,10 @@ module Ladb::OpenCutList
     end
 
     def _get_drawing_def
-      return nil if @active_part_entity_path.nil?
+      return nil if (ipaths = _get_drawing_def_ipaths).nil?
       return @drawing_def unless @drawing_def.nil?
       return nil if Sketchup.active_model.nil?
-      @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, **_get_drawing_def_parameters).run
+      @drawing_def = CommonDrawingDecompositionWorker.new(ipaths, **_get_drawing_def_parameters).run
     end
 
     # -- UTILS --

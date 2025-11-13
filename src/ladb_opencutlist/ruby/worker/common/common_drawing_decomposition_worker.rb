@@ -35,7 +35,7 @@ module Ladb::OpenCutList
     CONTAINER_VALIDATOR_NONE = 1
     CONTAINER_VALIDATOR_PART = 2
 
-    def initialize(path,
+    def initialize(ipaths,
 
                    input_local_x_axis: X_AXIS,
                    input_local_y_axis: Y_AXIS,
@@ -62,7 +62,7 @@ module Ladb::OpenCutList
 
     )
 
-      @path = path
+      @ipaths = ipaths.is_a?(Array) ? ipaths : [ ipaths ]
 
       @input_local_x_axis = input_local_x_axis
       @input_local_y_axis = input_local_y_axis
@@ -92,28 +92,47 @@ module Ladb::OpenCutList
     # -----
 
     def run
-      return { :errors => [ 'default.error' ] } unless @path.is_a?(Array)
+      return { :errors => [ 'default.error' ] } unless @ipaths.map { |ipath| ipath.is_a?(Sketchup::InstancePath) ? ipath.to_a[0...-1] : nil }.uniq.length == 1
       return { :errors => [ 'default.error' ] } if (model = Sketchup.active_model).nil?
 
-      # Extract drawing element
-      drawing_element = @path.last
-      drawing_element = model if drawing_element.nil?
+      if @ipaths.one?
 
-      return { :errors => [ 'default.error' ] } unless drawing_element.is_a?(Sketchup::Drawingelement) || drawing_element.is_a?(Sketchup::Model)
+        ipath = @ipaths.first
+        if (leaf = ipath.leaf)
+          container_path = ipath.to_a[0...-1]
+          container = container_path.last
+          entities = [ leaf ]
+        else
+          if ipath.size >= 1
+            container_path = ipath.to_a
+            container = container_path.last
+          else
+            container_path = []
+            container = model
+          end
+          if container.respond_to?(:entities)
+            entities = container.entities
+          elsif container.respond_to?(:definition) && container.definition.respond_to?(:entities)
+            entities = container.definition.entities
+          else
+            entities = [ container ]  # Should not occur
+          end
+        end
 
-      # Compute transformation to the drawing element
-      transformation = origin_transformation = PathUtils::get_transformation(@path, IDENTITY)
+        # Compute transformation to the last element
+        transformation = origin_transformation = ipath.transformation
 
-      # Extract container path
-      if drawing_element.is_a?(Sketchup::Group) || drawing_element.is_a?(Sketchup::ComponentInstance)
-        container_path = @path
-        container = drawing_element
-      elsif drawing_element.is_a?(Sketchup::Face)
-        container_path = @path[0...-1]
-        container = @path.last
       else
-        container_path = []
-        container = model
+
+        paths = @ipaths.map { |ipath| ipath.to_a }
+
+        container_path = paths.first[0...-1]
+        container = container_path.empty? ? model : container_path.last
+        entities = paths.map { |path| path.last }
+
+        # Compute transformation to the last common element
+        transformation = origin_transformation = Sketchup::InstancePath.new(container_path).transformation
+
       end
 
       # Adapt local axes if model.active_path is container_path
@@ -130,15 +149,6 @@ module Ladb::OpenCutList
         @input_local_y_axis = @input_local_y_axis.transform(origin_transformation).normalize!
         @input_local_z_axis = @input_local_z_axis.transform(origin_transformation).normalize!
 
-      end
-
-      # Extract the first level of child entities
-      if drawing_element.respond_to?(:entities)
-        entities = drawing_element.entities
-      elsif drawing_element.respond_to?(:definition) && drawing_element.definition.respond_to?(:entities)
-        entities = drawing_element.definition.entities
-      else
-        entities = [ drawing_element ]
       end
 
       # Create output data structure

@@ -12,7 +12,7 @@ module Ladb::OpenCutList
 
       highlight_defs.each do |highlight_def|
 
-        @drawing_def = CommonDrawingDecompositionWorker.new(highlight_def.path,
+        @drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(highlight_def.path),
            ignore_surfaces: true,
            ignore_edges: true,
            ignore_clines: false,

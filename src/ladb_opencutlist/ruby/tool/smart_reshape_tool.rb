@@ -238,6 +238,9 @@ module Ladb::OpenCutList
 
       else
 
+        # active_path = model.active_path.is_a?(Array) ? model.active_path : []
+        # @ipaths = selection.map { |e| Sketchup::InstancePath.new(active_path + [ e ]) }
+
         # Try to select part from the current selection
         entity = selection.min { |a, b| a.entityID <=> b.entityID } # Smaller entityId == Older entity
         if entity.is_a?(Sketchup::ComponentInstance)
@@ -1658,6 +1661,11 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _get_drawing_def_ipaths
+      return @ipaths if @ipaths.is_a?(Array) && @ipaths.any?
+      super
+    end
+
     def _get_drawing_def_parameters
       {
         ignore_surfaces: true,
@@ -1665,8 +1673,7 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: true,
-        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
-        flatten: false,
+        container_validator: (ipaths = _get_drawing_def_ipaths).nil? || ipaths.empty? ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL,
       }
     end
 
@@ -1839,7 +1846,10 @@ module Ladb::OpenCutList
       det = drawing_def.transformation.inverse * et
 
       # Compute a new drawing_def that include subparts
-      return nil unless (drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, **(_get_drawing_def_parameters.merge(container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL))).run).is_a?(DrawingDef)
+      return nil unless (drawing_def = CommonDrawingDecompositionWorker.new(_get_drawing_def_ipaths, **(_get_drawing_def_parameters.merge(
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL,
+        flatten: false,
+      ))).run).is_a?(DrawingDef)
 
       # Transform drawing_def to be expressed in the edit space
       drawing_def.transform!(det)

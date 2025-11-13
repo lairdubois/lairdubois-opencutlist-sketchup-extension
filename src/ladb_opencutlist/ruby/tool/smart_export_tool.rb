@@ -316,7 +316,7 @@ module Ladb::OpenCutList
 
           # Part 3D
 
-          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
+          @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(@active_part_entity_path),
             origin_position: fetch_action_option_boolean(ACTION_EXPORT_PART_3D, ACTION_OPTION_OPTIONS, ACTION_OPTION_OPTIONS_ANCHOR) ? CommonDrawingDecompositionWorker::ORIGIN_POSITION_DEFAULT : CommonDrawingDecompositionWorker::ORIGIN_POSITION_FACES_BOUNDS_MIN,
             ignore_surfaces: true,
             ignore_edges: true,
@@ -359,7 +359,7 @@ module Ladb::OpenCutList
           local_y_axis = part.def.size.oriented_axis(Y_AXIS)
           local_z_axis = part.def.size.oriented_axis(Z_AXIS)
 
-          @active_drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path,
+          @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(@active_part_entity_path),
             input_local_x_axis: local_x_axis,
             input_local_y_axis: local_y_axis,
             input_local_z_axis: local_z_axis,
@@ -525,7 +525,7 @@ module Ladb::OpenCutList
 
       if face
 
-        @active_drawing_def = CommonDrawingDecompositionWorker.new(@picker.picked_face_path,
+        @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(@picker.picked_face_path),
           input_plane_manipulator: @picker.picked_plane_manipulator,
           input_line_manipulator: @picker.picked_line_manipulator,
           ignore_edges: true,
@@ -648,7 +648,7 @@ module Ladb::OpenCutList
 
       if context_path
 
-        @active_drawing_def = CommonDrawingDecompositionWorker.new(context_path,
+        @active_drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(context_path),
           ignore_faces: true,
           input_plane_manipulator: @picker.picked_plane_manipulator,
           input_line_manipulator: @picker.picked_line_manipulator,
