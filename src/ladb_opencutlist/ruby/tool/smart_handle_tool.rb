@@ -469,7 +469,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT
-        if @active_part_entity_path.is_a?(Array) && _pick_part_siblings?
+        if has_active_part? && _pick_part_siblings?
           set_state(STATE_SELECT_SIBLINGS)
           return true
         end
@@ -484,7 +484,7 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT, STATE_SELECT_SIBLINGS
-        if @active_part_entity_path.nil?
+        unless has_active_part?
           UI.beep
           return true
         end

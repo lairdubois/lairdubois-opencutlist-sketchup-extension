@@ -1841,6 +1841,30 @@ module Ladb::OpenCutList
       k_label
     end
 
+    def _create_floating_rect(
+      start_point_2d:,
+      end_point_2d:,
+      border_color: Kuix::COLOR_BLACK,
+      background_color: nil
+    )
+
+      unit = @tool.get_unit
+
+      x = [ start_point_2d.x, end_point_2d.x ].min
+      y = [ start_point_2d.y, end_point_2d.y ].min
+      width = (end_point_2d.x - start_point_2d.x).abs
+      height = (end_point_2d.y - start_point_2d.y).abs
+
+      k_rect = Kuix::Panel.new
+      k_rect.layout_data = Kuix::StaticLayoutData.new(x, y, width, height, Kuix::Anchor.new(Kuix::Anchor::TOP_LEFT))
+      k_rect.set_style_attribute(:border_color, border_color)
+      k_rect.set_style_attribute(:background_color, background_color)
+      k_rect.border.set_all!(unit * 0.25)
+      k_rect.hittable = false
+
+      k_rect
+    end
+
     # -----
 
     def _get_edit_transformation
@@ -1887,6 +1911,10 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def has_active_selection?
+      @active_selection_path.is_a?(Array) && @active_selection_instances.is_a?(Array) && !@active_selection_instances.empty?
+    end
 
     def get_active_selection_path
       @active_selection_path
@@ -2121,6 +2149,10 @@ module Ladb::OpenCutList
     end
 
     # -- Part --
+
+    def has_active_part?
+      @active_part.is_a?(Part)
+    end
 
     def get_active_part
       @active_part

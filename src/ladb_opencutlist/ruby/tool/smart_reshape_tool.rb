@@ -178,6 +178,7 @@ module Ladb::OpenCutList
     include SmartActionHandlerPartHelper
 
     STATE_SELECT = 0
+    STATE_SELECT_RECT = 5
     STATE_SELECT_SIBLINGS = 4
     STATE_RESHAPE_START = 1
     STATE_RESHAPE = 2
@@ -365,6 +366,21 @@ module Ladb::OpenCutList
 
       case @state
 
+      when STATE_SELECT
+
+        if @mouse_down_point_2d && @mouse_down_point_2d.distance(Geom::Point3d.new(x, y, 0)) > 10
+          set_state(STATE_SELECT_RECT)
+        end
+
+      when STATE_SELECT_RECT
+
+        @tool.remove_all_2d
+
+        unless @mouse_down_point_2d.nil?
+          @mouse_move_point_2d = Geom::Point2d.new(x, y)
+          _preview_reshape_select_rect(view)
+        end
+
       when STATE_RESHAPE_START
 
         @mouse_snap_point = nil
@@ -408,8 +424,11 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT
-        if @active_part_entity_path.is_a?(Array) && _pick_part_siblings?
+        if has_active_part? && _pick_part_siblings?
           set_state(STATE_SELECT_SIBLINGS)
+          return true
+        else
+          @mouse_down_point_2d = Geom::Point3d.new(x, y)
           return true
         end
 
@@ -425,11 +444,50 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT, STATE_SELECT_SIBLINGS
-        if @active_part_entity_path.nil?
+        @mouse_down_point_2d = nil
+        @mouse_move_point_2d = nil
+        unless has_active_part?
           UI.beep
           return true
         end
         onPartSelected
+
+      when STATE_SELECT_RECT
+        if @mouse_down_point_2d.nil?
+          set_state(STATE_SELECT)
+          return true
+        else
+
+          ph = view.pick_helper(x, y)
+          ph.window_pick(@mouse_down_point_2d, Geom::Point3d.new(x, y), Sketchup::PickHelper::PICK_INSIDE)
+
+          @tool.remove_all_2d
+          @mouse_down_point_2d = nil
+          @mouse_move_point_2d = nil
+
+          if ph.count > 0
+
+            model = Sketchup.active_model
+            active_path = model.active_path.is_a?(Array) ? model.active_path : []
+
+            instances = (0...ph.count)
+                          .map { |i| ph.element_at(i) }
+                          .uniq
+                          .select { |entity| entity.respond_to?(:transformation) }
+            if instances.any?
+
+              _reset_active_part
+              _set_active_selection(active_path, instances)
+
+              onPartSelected
+
+              return true
+            end
+
+          end
+          UI.beep
+          set_state(STATE_SELECT)
+        end
 
       when STATE_RESHAPE_START
         @picked_reshape_start_point = @mouse_snap_point
@@ -482,6 +540,8 @@ module Ladb::OpenCutList
 
     def onStateChanged(state)
       super
+
+      puts "onStateChanged: #{state}"
 
       @tool.remove_tooltip
 
@@ -556,6 +616,16 @@ module Ladb::OpenCutList
     def _snap_reshape(flags, x, y, view)
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
+
+    end
+
+    def _preview_reshape_select_rect(view)
+
+      k_rect = _create_floating_rect(
+        start_point_2d: @mouse_down_point_2d,
+        end_point_2d: @mouse_move_point_2d,
+      )
+      @tool.append_2d(k_rect)
 
     end
 
