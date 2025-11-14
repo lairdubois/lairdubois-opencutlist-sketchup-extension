@@ -1671,7 +1671,7 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: true,
-        container_validator: get_active_part ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
       }
     end
 
@@ -1905,7 +1905,7 @@ module Ladb::OpenCutList
         v_s[vertex][drawing_container_def]
       }
 
-      fn_analyse = lambda do |drawing_container_def, grabbed = false, depth = 0|
+      fn_analyse = lambda do |drawing_container_def, parent_section_def = nil, depth = 0|
 
         # Extract containers
         # ------------------
@@ -1918,16 +1918,19 @@ module Ladb::OpenCutList
         # k_box.transformation = et
         # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
 
-        unless drawing_container_def.is_root? || grabbed
+        unless drawing_container_def.is_root? || parent_section_def
 
           # Check if the container is glued or always face camera to search the section according to its origin only
           if drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
-             drawing_container_def.container.respond_to?(:definition) && drawing_container_def.container.definition.behavior.always_face_camera?
+             drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 127)
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
             section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
+            # Note: container is not added to the content bbox
+            add_to_section_bounds = false
           else
             # Check if container bounds is entirely inside a section
             section_def = section_defs.find { |section_def| section_def.contains_bounds?(drawing_container_def.bounds, xyz_method) }
+            add_to_section_bounds = true
           end
 
           if section_def
@@ -1940,7 +1943,7 @@ module Ladb::OpenCutList
             )
 
             # Add to content bbox
-            section_def.bounds.add(drawing_container_def.bounds)
+            section_def.bounds.add(drawing_container_def.bounds) if add_to_section_bounds
 
             # k_box = Kuix::BoxMotif.new
             # k_box.bounds.copy!(drawing_container_def.bounds)
@@ -1950,7 +1953,7 @@ module Ladb::OpenCutList
             # k_box.transformation = et
             # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
 
-            grabbed = true
+            parent_section_def = section_def
           end
 
         end
@@ -1964,7 +1967,8 @@ module Ladb::OpenCutList
 
           # Treat curves as a whole undeformable entity
 
-          section_def = fn_fetch_vertex_section_def.call(cm.curve.first_edge.start, drawing_container_def)
+          section_def = parent_section_def
+          section_def = fn_fetch_vertex_section_def.call(cm.curve.first_edge.start, drawing_container_def) if section_def.nil?
           section_def = fn_fetch_vertex_section_def.call(cm.curve.last_edge.end, drawing_container_def) if section_def.nil?
           section_def = section_defs.find { |s| s.intersects_bounds?(cm.bounds, xyz_method) } if section_def.nil?
           unless section_def.nil?
@@ -1975,7 +1979,7 @@ module Ladb::OpenCutList
                 edge.start.position,
                 section_def,
                 section_def,
-                grabbed
+                !parent_section_def.nil?
               )
               fn_store_vertex_section_def.call(edge.start, drawing_container_def, section_def)
               fn_store_vertex_section_def.call(edge.end, drawing_container_def, section_def)
@@ -1989,18 +1993,24 @@ module Ladb::OpenCutList
 
         drawing_container_def.edge_manipulators.each do |em|
 
-          start_section_def = fn_fetch_vertex_section_def.call(em.edge.start, drawing_container_def)
-          if start_section_def.nil?
-            start_section_def = section_defs.find { |s| s.contains_point?(em.start_point, xyz_method) }
-            fn_store_vertex_section_def.call(em.edge.start, drawing_container_def, start_section_def)
-          end
-          end_section_def = fn_fetch_vertex_section_def.call(em.edge.end, drawing_container_def)
-          if end_section_def.nil?
-            end_section_def = section_defs.find { |s| s.contains_point?(em.end_point, xyz_method) }
-            fn_store_vertex_section_def.call(em.edge.end, drawing_container_def, end_section_def)
+          next if !parent_section_def.nil? && em.edge.soft? # Minor optimization - skip soft edges
+
+          if parent_section_def.nil?
+            start_section_def = fn_fetch_vertex_section_def.call(em.edge.start, drawing_container_def)
+            if start_section_def.nil?
+              start_section_def = section_defs.find { |s| s.contains_point?(em.start_point, xyz_method) }
+              fn_store_vertex_section_def.call(em.edge.start, drawing_container_def, start_section_def)
+            end
+            end_section_def = fn_fetch_vertex_section_def.call(em.edge.end, drawing_container_def)
+            if end_section_def.nil?
+              end_section_def = section_defs.find { |s| s.contains_point?(em.end_point, xyz_method) }
+              fn_store_vertex_section_def.call(em.edge.end, drawing_container_def, end_section_def)
+            end
+          else
+            start_section_def = end_section_def = parent_section_def
           end
 
-          next if start_section_def.nil? || end_section_def.nil?  # TODO : Manage this case
+          next if start_section_def.nil? || end_section_def.nil?  # TODO : this should not occur
 
           edge_defs << EdgeDef.new(
             em.edge,
@@ -2008,10 +2018,10 @@ module Ladb::OpenCutList
             em.edge.start.position,
             start_section_def,
             end_section_def,
-            grabbed
+            !parent_section_def.nil?
           )
 
-          if !grabbed &&
+          if parent_section_def.nil? &&
              start_section_def == end_section_def &&
              em.edge.start.edges.all? { |edge| edge.curve.nil? } && em.edge.end.edges.all? { |edge| edge.curve.nil? }
             start_section_def.bounds.add(em.points)  # Add to content bbox
@@ -2023,7 +2033,7 @@ module Ladb::OpenCutList
 
         depth += 1
         drawing_container_def.container_defs.each do |child_drawing_container_def|
-          fn_analyse.call(child_drawing_container_def, grabbed, depth)
+          fn_analyse.call(child_drawing_container_def, parent_section_def, depth)
         end
 
       end

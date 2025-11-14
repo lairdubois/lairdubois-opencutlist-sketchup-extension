@@ -2092,6 +2092,21 @@ module Ladb::OpenCutList
       @drawing_def_edit_bounds[et] = eb
     end
 
+    # -- UTILS
+
+    def _make_unique_groups_in_path(path)
+      path.each_with_index do |entity, index|
+        if entity.is_a?(Sketchup::Group)
+          new_entity = entity.make_unique
+          if new_entity != entity && index < path.size - 1
+            next_entity = path[index + 1]
+            next_entity_pos = entity.entities.to_a.index(next_entity)
+            path[index + 1] = new_entity.entities[next_entity_pos]
+          end
+        end
+      end
+    end
+
   end
 
   module SmartActionHandlerPartHelper
@@ -2563,19 +2578,6 @@ module Ladb::OpenCutList
             end
           elsif entity.is_a?(Sketchup::Group)
             _instances_to_paths(instances, instance_paths, entity.entities, path + [ entity ])
-          end
-        end
-      end
-    end
-
-    def _make_unique_groups_in_path(path)
-      path.each_with_index do |entity, index|
-        if entity.is_a?(Sketchup::Group)
-          new_entity = entity.make_unique
-          if new_entity != entity && index < path.size - 1
-            next_entity = path[index + 1]
-            next_entity_pos = entity.entities.to_a.index(next_entity)
-            path[index + 1] = new_entity.entities[next_entity_pos]
           end
         end
       end

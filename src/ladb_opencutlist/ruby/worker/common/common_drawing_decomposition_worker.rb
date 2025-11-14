@@ -282,7 +282,10 @@ module Ladb::OpenCutList
         }
       when CONTAINER_VALIDATOR_PART
         container_validator = lambda { |container|
-          !container.is_a?(Sketchup::ComponentInstance) || container.definition.behavior.cuts_opening? || container.definition.behavior.always_face_camera?
+            !container.is_a?(Sketchup::ComponentInstance) ||
+            container.definition.behavior.cuts_opening? ||
+            container.definition.behavior.always_face_camera? ||
+            container.definition.behavior.no_scale_mask? != 127
         }
       end
 
