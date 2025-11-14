@@ -30,9 +30,15 @@ module Ladb::OpenCutList::Kuix
 
     def do_layout(transformation)
       super
-      @_triangle_points = @triangles.map { |point| point.transform(transformation * @transformation) }
+      transformation = transformation * @transformation unless @transformation.identity?
+      if transformation.identity?
+        @_triangle_points = @triangles
+        @_quad_points = @quads
+      else
+        @_triangle_points = @triangles.map { |point| point.transform(transformation) }
+        @_quad_points = @quads.map { |point| point.transform(transformation) }
+      end
       @extents.add(@_triangle_points) unless @_triangle_points.empty?
-      @_quad_points = @quads.map { |point| point.transform(transformation * @transformation) }
       @extents.add(@_quad_points) unless @_quad_points.empty?
     end
 

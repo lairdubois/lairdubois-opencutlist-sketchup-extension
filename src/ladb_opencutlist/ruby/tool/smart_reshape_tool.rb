@@ -247,43 +247,24 @@ module Ladb::OpenCutList
       else
 
         if (entities = selection.select { |entity| entity.respond_to?(:transformation) }).any?
-          _set_active_selection(model.active_path.is_a?(Array) ? model.active_path : [], entities)
-          onPartSelected
-        end
 
-        # Try to select part from the current selection
-        # entity = selection.min { |a, b| a.entityID <=> b.entityID } # Smaller entityId == Older entity
-        # if entity.is_a?(Sketchup::ComponentInstance)
-        #   active_path = model.active_path.is_a?(Array) ? model.active_path : []
-        #   path = active_path + [ entity ]
-        #   part_entity_path = _get_part_entity_path_from_path(path)
-        #   _make_unique_groups_in_path(part_entity_path)
-        #   unless (part = _generate_part_from_path(part_entity_path)).nil?
-        #
-        #     _set_active_part(part_entity_path, part)
-        #
-        #     if _pick_part_siblings?
-        #
-        #       part_entity = part_entity_path.last
-        #       part_definition = part_entity.definition
-        #
-        #       entities = selection.select { |e| e != part_entity && e.is_a?(Sketchup::ComponentInstance) && e.definition == part_definition }
-        #       entities.each do |entity|
-        #
-        #         sibling_path = active_path + [ entity ]
-        #         part_sibling_entity_path = _get_part_entity_path_from_path(sibling_path)
-        #         unless (part_sibling = _generate_part_from_path(part_sibling_entity_path)).nil?
-        #           _add_part_sibling(part_sibling_entity_path, part_sibling)
-        #         end
-        #
-        #       end
-        #
-        #     end
-        #
-        #     onPartSelected
-        #
-        #   end
-        # end
+          active_path = model.active_path.is_a?(Array) ? model.active_path : []
+
+          if entities.one?
+            path = active_path + [ entities.first ]
+            part_entity_path = _get_part_entity_path_from_path(path)
+            unless (part = _generate_part_from_path(part_entity_path)).nil?
+              _set_active_part(part_entity_path, part)
+            end
+          end
+
+          unless has_active_part?
+            _set_active_selection(active_path, entities)
+          end
+
+          onPartSelected
+
+        end
 
       end
 
@@ -382,7 +363,6 @@ module Ladb::OpenCutList
       when STATE_RESHAPE_START
 
         @mouse_snap_point = nil
-        @mouse_ip.pick(view, x, y)
 
         @tool.remove_all_2d
         @tool.remove_3d([LAYER_3D_RESHAPE_PREVIEW ])
@@ -911,7 +891,7 @@ module Ladb::OpenCutList
 
       when STATE_RESHAPE_START
         unless @mouse_down_point.nil? || @picked_grip_index.nil?
-          if Geom::Point3d.new(x, y).distance(@mouse_down_point) > 20  # Drag handled only if the distance is > 10px
+          if Geom::Point3d.new(x, y).distance(@mouse_down_point) > 20  # Drag handled only if the distance is > 20px
 
             drawing_def = _get_drawing_def
             et = _get_edit_transformation
@@ -1101,7 +1081,7 @@ module Ladb::OpenCutList
     def _reset
       @split_def = nil
       @picked_axis = nil
-      @picked_grip_index = -1
+      @picked_grip_index = nil
       @picked_cutter_index = nil
       super
     end
@@ -1109,8 +1089,6 @@ module Ladb::OpenCutList
     # -----
 
     def _snap_reshape_start(flags, x, y, view)
-
-      @mouse_ip.clear
 
       @picked_grip_index = nil
       @picked_cutter_index = nil
@@ -1141,7 +1119,7 @@ module Ladb::OpenCutList
 
       unless @cutters.nil? || @picked_axis.nil?
 
-        # Snap to a section?
+        # Snap to a cutter?
 
         direction = @picked_axis.transform(et)
         min = eb.min.transform(et)
@@ -1480,6 +1458,7 @@ module Ladb::OpenCutList
         axes = [ X_AXIS, Y_AXIS, Z_AXIS ].delete_if { |axis| axis == @picked_axis }
 
         axes.map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } }.each do |p0, p1|
+
           k_edge = Kuix::EdgeMotif.new
           k_edge.start.copy!(p0)
           k_edge.end.copy!(p1)
@@ -1488,6 +1467,7 @@ module Ladb::OpenCutList
           k_edge.on_top = true
           k_edge.transformation = et
           @tool.append_3d(k_edge, LAYER_3D_GRIPS_PREVIEW)
+
         end
 
         k_points = _create_floating_points(
@@ -1925,16 +1905,6 @@ module Ladb::OpenCutList
         v_s[vertex][drawing_container_def]
       }
 
-      fn_section_contains_point = lambda { |section_def, point|
-        section_def.min_xyz <= point.send(xyz_method) && section_def.max_xyz >= point.send(xyz_method)
-      }
-      fn_section_contains_bounds = lambda { |section_def, bounds|
-        section_def.min_xyz <= bounds.min.send(xyz_method) && section_def.max_xyz >= bounds.max.send(xyz_method)
-      }
-      fn_section_intersects_bounds = lambda { |section_def, bounds|
-        section_def.min_xyz <= bounds.max.send(xyz_method) && section_def.max_xyz >= bounds.min.send(xyz_method)
-      }
-
       fn_analyse = lambda do |drawing_container_def, grabbed = false, depth = 0|
 
         # Extract containers
@@ -1954,10 +1924,10 @@ module Ladb::OpenCutList
           if drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
              drawing_container_def.container.respond_to?(:definition) && drawing_container_def.container.definition.behavior.always_face_camera?
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
-            section_def = section_defs.find { |section_def| fn_section_contains_point.call(section_def, container_origin) }
+            section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
           else
             # Check if container bounds is entirely inside a section
-            section_def = section_defs.find { |section_def| fn_section_contains_bounds.call(section_def, drawing_container_def.bounds) }
+            section_def = section_defs.find { |section_def| section_def.contains_bounds?(drawing_container_def.bounds, xyz_method) }
           end
 
           if section_def
@@ -1996,7 +1966,7 @@ module Ladb::OpenCutList
 
           section_def = fn_fetch_vertex_section_def.call(cm.curve.first_edge.start, drawing_container_def)
           section_def = fn_fetch_vertex_section_def.call(cm.curve.last_edge.end, drawing_container_def) if section_def.nil?
-          section_def = section_defs.find { |s| fn_section_intersects_bounds.call(s, cm.bounds) } if section_def.nil?
+          section_def = section_defs.find { |s| s.intersects_bounds?(cm.bounds, xyz_method) } if section_def.nil?
           unless section_def.nil?
             cm.curve.edges.each do |edge|
               edge_defs << EdgeDef.new(
@@ -2021,12 +1991,12 @@ module Ladb::OpenCutList
 
           start_section_def = fn_fetch_vertex_section_def.call(em.edge.start, drawing_container_def)
           if start_section_def.nil?
-            start_section_def = section_defs.find { |s| fn_section_contains_point.call(s, em.start_point) }
+            start_section_def = section_defs.find { |s| s.contains_point?(em.start_point, xyz_method) }
             fn_store_vertex_section_def.call(em.edge.start, drawing_container_def, start_section_def)
           end
           end_section_def = fn_fetch_vertex_section_def.call(em.edge.end, drawing_container_def)
           if end_section_def.nil?
-            end_section_def = section_defs.find { |s| fn_section_contains_point.call(s, em.end_point) }
+            end_section_def = section_defs.find { |s| s.contains_point?(em.end_point, xyz_method) }
             fn_store_vertex_section_def.call(em.edge.end, drawing_container_def, end_section_def)
           end
 
@@ -2128,7 +2098,17 @@ module Ladb::OpenCutList
 
     # -----
 
-    SectionDef = Struct.new(:index, :min_xyz, :max_xyz, :bounds)
+    SectionDef = Struct.new(:index, :min_xyz, :max_xyz, :bounds) {
+      def contains_point?(point, xyz_method)
+        min_xyz <= point.send(xyz_method) && max_xyz >= point.send(xyz_method)
+      end
+      def contains_bounds?(bounds, xyz_method)
+        min_xyz <= bounds.min.send(xyz_method) && max_xyz >= bounds.max.send(xyz_method)
+      end
+      def intersects_bounds?(bounds, xyz_method)
+        min_xyz <= bounds.max.send(xyz_method) && max_xyz >= bounds.min.send(xyz_method)
+      end
+    }
     ContainerDef = Struct.new(:container, :transformation, :ref_position, :section_def)
     EdgeDef = Struct.new(:edge, :transformation, :ref_position, :start_section_def, :end_section_def, :grabbed)
 

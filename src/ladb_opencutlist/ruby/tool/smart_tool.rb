@@ -2058,30 +2058,36 @@ module Ladb::OpenCutList
     def _get_drawing_def_edit_bounds(drawing_def, et)
       @drawing_def_edit_bounds ||= {}
       return @drawing_def_edit_bounds[et] if @drawing_def_edit_bounds.key?(et)
-      eb = Geom::BoundingBox.new
-      if drawing_def.is_a?(DrawingContainerDef)
+      if et == drawing_def.transformation
+        eb = drawing_def.bounds
+      else
+        eb = Geom::BoundingBox.new
+        if drawing_def.is_a?(DrawingContainerDef)
 
-        eti = et.inverse
+          eti = et.inverse
 
-        # TODO Improve the way to compute the edit bounds
+          # TODO Improve the way to compute the edit bounds
 
-        fn = lambda do |drawing_container_def|
+          fn = lambda do |drawing_container_def|
 
-          eb.add(drawing_container_def.face_manipulators
-                                      .flat_map { |manipulator| manipulator.outer_loop_manipulator.points.map { |point| point.transform(eti * drawing_def.transformation)} }
-          ) if drawing_container_def.face_manipulators.any?
-          eb.add(drawing_container_def.cline_manipulators
-                                      .flat_map { |manipulator| manipulator.points.map { |point| point.transform(eti * drawing_def.transformation) } }
-          ) if drawing_container_def.cline_manipulators.any?
+            eb.add(drawing_container_def.face_manipulators
+                                        .flat_map { |manipulator| manipulator.outer_loop_manipulator.points
+                                                                             .map { |point| point.transform(eti * drawing_def.transformation)} }
+            ) if drawing_container_def.face_manipulators.any?
+            eb.add(drawing_container_def.cline_manipulators
+                                        .flat_map { |manipulator| manipulator.points
+                                                                             .map { |point| point.transform(eti * drawing_def.transformation) } }
+            ) if drawing_container_def.cline_manipulators.any?
 
-          drawing_container_def.container_defs.each do |child_drawing_container_def|
-            fn.call(child_drawing_container_def)
+            drawing_container_def.container_defs.each do |child_drawing_container_def|
+              fn.call(child_drawing_container_def)
+            end
+
           end
 
+          fn.call(drawing_def)
+
         end
-
-        fn.call(drawing_def)
-
       end
       @drawing_def_edit_bounds[et] = eb
     end

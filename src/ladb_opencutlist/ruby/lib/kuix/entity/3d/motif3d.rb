@@ -26,14 +26,17 @@ module Ladb::OpenCutList::Kuix
 
     def do_layout(transformation)
       super
+      transformation = transformation * @transformation unless @transformation.identity?
+      no_transform = transformation.identity?
+      no_pattern_transform = @patterns_transformation.identity?
       @_paths.clear
       @patterns.each do |pattern|
         points = []
         pattern.each do |pattern_point|
           pt = Geom::Point3d.new(pattern_point)
-          pt.transform!(@patterns_transformation) unless @patterns_transformation.identity?
+          pt.transform!(@patterns_transformation) unless no_pattern_transform
           point = Geom::Point3d.new(@bounds.x + pt.x * @bounds.width, @bounds.y + pt.y * @bounds.height, @bounds.z + pt.z * @bounds.depth)
-          point.transform!(transformation * @transformation)
+          point.transform!(transformation) unless no_transform
           points << point
         end
         @_paths << points
