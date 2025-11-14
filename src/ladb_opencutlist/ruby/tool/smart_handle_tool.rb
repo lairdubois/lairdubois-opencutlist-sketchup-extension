@@ -273,7 +273,7 @@ module Ladb::OpenCutList
 
       @definition = nil
       @instances = []
-      @drawing_def = nil
+      _reset_drawing_def
 
     end
 
@@ -574,9 +574,8 @@ module Ladb::OpenCutList
 
       @src_transformation = Geom::Transformation.new(instance.transformation)
 
-      @global_context_transformation = nil
-      @global_instance_transformation = nil
-      @drawing_def = nil
+      _reset_transformations
+      _reset_drawing_def
 
       et = _get_edit_transformation
       eb = _get_drawing_def_edit_bounds(_get_drawing_def, et)
@@ -808,19 +807,6 @@ module Ladb::OpenCutList
         segments += drawing_def.curve_manipulators.flat_map { |manipulator| manipulator.segments }
       end
       segments
-    end
-
-    def _get_drawing_def_edit_bounds(drawing_def, et)
-      eb = Geom::BoundingBox.new
-      if drawing_def.is_a?(DrawingDef)
-
-        points = drawing_def.face_manipulators.flat_map { |manipulator| manipulator.outer_loop_manipulator.points }
-        eti = et.inverse
-
-        eb.add(points.map { |point| point.transform(eti * drawing_def.transformation) })
-
-      end
-      eb
     end
 
     # -- UTILS --

@@ -1651,11 +1651,26 @@ module Ladb::OpenCutList
 
       @picker = nil
 
+      # Internals
+
+      @_model_edit_transformation = IDENTITY
+      @_model_axes_transformation = IDENTITY
+
     end
 
     # -----
 
     def start
+
+      # Cache model useful transformations
+      model = Sketchup.active_model
+      unless model.nil?
+        @_model_edit_transformation = Sketchup.active_model.edit_transform
+        @_model_axes_transformation = Sketchup.active_model.axes.transformation
+      end
+
+      # ---------
+
       set_state(get_startup_state)
       onToolMouseMove(@tool, 0, @tool.last_mouse_x, @tool.last_mouse_y, Sketchup.active_model.active_view)
     end
@@ -1870,8 +1885,8 @@ module Ladb::OpenCutList
     def _get_edit_transformation
       model = Sketchup.active_model
       return IDENTITY if model.nil?
-      return model.axes.transformation if (edit_transform = model.edit_transform).nil? || edit_transform.identity?
-      edit_transform
+      return @_model_axes_transformation if @_model_edit_transformation.nil? || @_model_edit_transformation.identity?
+      @_model_edit_transformation
     end
 
     def _get_active_x_axis
@@ -1904,9 +1919,8 @@ module Ladb::OpenCutList
     # -----
 
     def onActiveSelectionChanged(path, entities)
-      @global_context_transformation = nil
-      @global_instance_transformation = nil
-      @drawing_def = nil
+      _reset_transformations
+      _reset_drawing_def
       false
     end
 
@@ -1931,10 +1945,19 @@ module Ladb::OpenCutList
     def _reset
       @active_selection_path = nil
       @active_selection_instances = nil
+      _reset_transformations
+      _reset_drawing_def
+      super
+    end
+
+    def _reset_transformations
       @global_context_transformation = nil
       @global_instance_transformation = nil
+    end
+
+    def _reset_drawing_def
       @drawing_def = nil
-      super
+      @drawing_def_edit_bounds = nil
     end
 
     # --
@@ -2030,6 +2053,37 @@ module Ladb::OpenCutList
       return @drawing_def unless @drawing_def.nil?
       return nil if Sketchup.active_model.nil?
       @drawing_def = CommonDrawingDecompositionWorker.new(ipaths, **_get_drawing_def_parameters).run
+    end
+
+    def _get_drawing_def_edit_bounds(drawing_def, et)
+      @drawing_def_edit_bounds ||= {}
+      return @drawing_def_edit_bounds[et] if @drawing_def_edit_bounds.key?(et)
+      eb = Geom::BoundingBox.new
+      if drawing_def.is_a?(DrawingContainerDef)
+
+        eti = et.inverse
+
+        # TODO Improve the way to compute the edit bounds
+
+        fn = lambda do |drawing_container_def|
+
+          eb.add(drawing_container_def.face_manipulators
+                                      .flat_map { |manipulator| manipulator.outer_loop_manipulator.points.map { |point| point.transform(eti * drawing_def.transformation)} }
+          ) if drawing_container_def.face_manipulators.any?
+          eb.add(drawing_container_def.cline_manipulators
+                                      .flat_map { |manipulator| manipulator.points.map { |point| point.transform(eti * drawing_def.transformation) } }
+          ) if drawing_container_def.cline_manipulators.any?
+
+          drawing_container_def.container_defs.each do |child_drawing_container_def|
+            fn.call(child_drawing_container_def)
+          end
+
+        end
+
+        fn.call(drawing_def)
+
+      end
+      @drawing_def_edit_bounds[et] = eb
     end
 
   end
