@@ -1,5 +1,6 @@
 module Ladb::OpenCutList
 
+  require 'digest'
   require_relative 'smart_tool'
   require_relative '../lib/geometrix/finder/circle_finder'
   require_relative '../lib/kuix/geom/bounds3d'
@@ -1053,7 +1054,6 @@ module Ladb::OpenCutList
 
         when STATE_RESHAPE
           @tool.remove_3d([LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
-          @split_def = nil  # Reset previous split_def
           _get_split_def    # Compute a new split_def
           _hide_instances
 
@@ -1502,12 +1502,14 @@ module Ladb::OpenCutList
       return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
 
       split_def, edvs, lps, lpe = stretch_def.values_at(:split_def, :edvs, :lps, :lpe)
-      et, edge_defs = split_def.values_at(:et, :edge_defs)
+      et, container_defs = split_def.values_at(:et, :container_defs)
 
-      unless edge_defs.empty?
+      color = _get_vector_color(lps.vector_to(lpe))
+
+      container_defs.each do |container_def|
 
         k_segments = Kuix::Segments.new
-        k_segments.add_segments(edge_defs.flat_map { |edge_def|
+        k_segments.add_segments(container_def.edge_defs.flat_map { |edge_def|
           edge = edge_def.edge
           t = edge_def.transformation
           ti = t.inverse
@@ -1516,7 +1518,7 @@ module Ladb::OpenCutList
             edge.end.position.offset(edvs[edge_def.end_section_def].transform(ti)).transform(t)
           ]
         })
-        k_segments.color = _get_vector_color(lps.vector_to(lpe))
+        k_segments.color = color
         k_segments.line_width = 1.5
         k_segments.transformation = et
         @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
@@ -1706,44 +1708,18 @@ module Ladb::OpenCutList
     end
 
     def _stretch_entity
-      return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
+      return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point, true)).nil?
 
       split_def, emv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :edvs, :lpe)
-      et, eps, evpspe, reversed, section_defs, edge_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :edge_defs, :container_defs)
+      et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
 
-      _unhide_instance
+      _unhide_instances
 
       model = Sketchup.active_model
       model.start_operation('OCL Stretch Part', true, false, !active?)
 
-        # Move edges
         sorting_order = (emv.valid? && emv.samedirection?(evpspe)) ? -1 : 1
-        edge_defs
-          .select { |edge_def| !edge_def.grabbed && edge_def.start_section_def == edge_def.end_section_def }
-          .group_by { |edge_def| edge_def.start_section_def }
-          .sort_by { |section_def, _| section_def.index * sorting_order }.to_h
-          .each do |section_def, edge_defs|
 
-          edv = edvs[section_def]
-
-          edge_defs.group_by { |edge_def| edge_def.edge.parent }.each do |parent, edge_defs|
-
-            edge_def0 = edge_defs.first
-            t = edge_def0.transformation
-
-            target_position0 = edge_def0.ref_position
-            target_position0 = target_position0.offset(edv.transform(t.inverse)) if edv.valid?
-            current_position0 = edge_def0.edge.start.position
-
-            v = current_position0.vector_to(target_position0)
-
-            parent.entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def.edge }) if v.valid?
-
-          end
-
-        end
-
-        # Move containers
         container_defs
           .group_by { |container_def| container_def.section_def }
           .each do |section_def, container_defs|
@@ -1752,8 +1728,40 @@ module Ladb::OpenCutList
 
           container_defs.each do |container_def|
 
-            container = container_def.container
-            t = container_def.transformation
+            drawing_container_def = container_def.drawing_container_def
+            container = drawing_container_def.container
+            entities = container.respond_to?(:entities) ? container.entities : container.definition.entities
+
+            # Move edges
+            # ----------
+
+            container_def.edge_defs
+                          .select { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
+                          .group_by { |edge_def| edge_def.start_section_def }
+                          .sort_by { |edge_section_def, _| edge_section_def.index * sorting_order }.to_h
+                          .each do |edge_section_def, edge_defs|
+
+              edge_edv = edvs[edge_section_def]
+
+              edge_def0 = edge_defs.first
+              t = edge_def0.transformation
+
+              target_position0 = edge_def0.ref_position
+              target_position0 = target_position0.offset(edge_edv.transform(t.inverse)) if edge_edv.valid?
+              current_position0 = edge_def0.edge.start.position
+
+              v = current_position0.vector_to(target_position0)
+
+              entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def.edge }) if v.valid?
+
+            end
+
+            # Move container
+            # --------------
+
+            next if container_def.operation != SplitContainerDef::OPERATION_MOVE || section_def.nil?
+
+            t = drawing_container_def.transformation
 
             target_position = container_def.ref_position
             target_position = target_position.offset(edv.transform(t.inverse)) if edv.valid?
@@ -1875,7 +1883,6 @@ module Ladb::OpenCutList
       epmin = reversed ? epe : eps
       epmax = reversed ? eps : epe
 
-      edge_defs = []
       container_defs = []
 
       v_s = {}  # Vertex => DrawingContainerDef => SectionDef
@@ -1888,7 +1895,7 @@ module Ladb::OpenCutList
       ratios.reverse!.map! { |ratio| 1 - ratio } if reversed
 
       section_defs = ([ Float::INFINITY * (reversed ? 1 : -1) ] + ratios.map { |ratio| eps.send(xyz_method) + ratio * evpspe.length * (reversed ? -1 : 1) } + [ Float::INFINITY * (reversed ? -1 : 1) ]).each_cons(2).map.with_index { |min_max, index|
-        SectionDef.new(
+        SplitSectionDef.new(
           index,
           min_max.min,
           min_max.max,
@@ -1907,8 +1914,8 @@ module Ladb::OpenCutList
 
       fn_analyse = lambda do |drawing_container_def, parent_section_def = nil, depth = 0|
 
-        # Extract containers
-        # ------------------
+        # Extract container
+        # -----------------
 
         # k_box = Kuix::BoxMotif.new
         # k_box.bounds.copy!(drawing_container_def.bounds)
@@ -1918,45 +1925,65 @@ module Ladb::OpenCutList
         # k_box.transformation = et
         # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
 
-        unless drawing_container_def.is_root? || parent_section_def
+        section_def = parent_section_def
+        if section_def.nil?
 
           # Check if the container is glued or always face camera to search the section according to its origin only
           if drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
              drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 127)
+
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
             section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
-            # Note: container is not added to the content bbox
-            add_to_section_bounds = false
+
+            operation = SplitContainerDef::OPERATION_MOVE
+
           else
+
             # Check if container bounds is entirely inside a section
             section_def = section_defs.find { |section_def| section_def.contains_bounds?(drawing_container_def.bounds, xyz_method) }
-            add_to_section_bounds = true
+            if section_def.nil?
+
+              # Default container section_def is where its bounds min is
+              # section_def = section_defs.find { |section_def| section_def.contains_point?(drawing_container_def.bounds.min, xyz_method) } if section_def.nil?
+
+              operation = SplitContainerDef::OPERATION_SPLIT
+
+            else
+
+              # Add to section bounds
+              section_def.bounds.add(drawing_container_def.bounds)
+
+              operation = SplitContainerDef::OPERATION_MOVE
+
+            end
+
           end
 
-          if section_def
-
-            container_defs << ContainerDef.new(
-              drawing_container_def.container,
-              drawing_container_def.transformation,
-              ORIGIN.transform(drawing_container_def.container.transformation),
-              section_def,
-            )
-
-            # Add to content bbox
-            section_def.bounds.add(drawing_container_def.bounds) if add_to_section_bounds
-
-            # k_box = Kuix::BoxMotif.new
-            # k_box.bounds.copy!(drawing_container_def.bounds)
-            # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-            # k_box.line_width = 2
-            # k_box.color = [ Kuix::COLOR_YELLOW, Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA ][(section_def.index % 3) - 1]
-            # k_box.transformation = et
-            # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
-
-            parent_section_def = section_def
-          end
-
+        else
+          operation = SplitContainerDef::OPERATION_NONE
         end
+
+        container_def = SplitContainerDef.new(
+          drawing_container_def,
+          depth,
+          drawing_container_def.container.respond_to?(:transformation) ? ORIGIN.transform(drawing_container_def.container.transformation) : nil,
+          section_def,
+          [],
+          [],
+          operation
+        )
+        container_defs << container_def
+
+        # Keep container section as entire parent section
+        parent_section_def = section_def
+
+        # k_box = Kuix::BoxMotif.new
+        # k_box.bounds.copy!(drawing_container_def.bounds)
+        # k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        # k_box.line_width = 2
+        # k_box.color = [ Kuix::COLOR_YELLOW, Kuix::COLOR_CYAN, Kuix::COLOR_MAGENTA ][(section_def.index % 3) - 1]
+        # k_box.transformation = et
+        # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
 
         # Extract edges
         # -------------
@@ -1973,18 +2000,18 @@ module Ladb::OpenCutList
           section_def = section_defs.find { |s| s.intersects_bounds?(cm.bounds, xyz_method) } if section_def.nil?
           unless section_def.nil?
             cm.curve.edges.each do |edge|
-              edge_defs << EdgeDef.new(
+              container_def.edge_defs << SplitEdgeDef.new(
                 edge,
                 cm.transformation,
                 edge.start.position,
                 section_def,
                 section_def,
-                !parent_section_def.nil?
+                operation == SplitContainerDef::OPERATION_NONE ? SplitEdgeDef::OPERATION_NONE : SplitEdgeDef::OPERATION_MOVE
               )
               fn_store_vertex_section_def.call(edge.start, drawing_container_def, section_def)
               fn_store_vertex_section_def.call(edge.end, drawing_container_def, section_def)
             end
-            section_def.bounds.add(cm.points)  # Add to content bbox
+            section_def.bounds.add(cm.points)  # Add to section bounds
           end
 
         end
@@ -1993,7 +2020,7 @@ module Ladb::OpenCutList
 
         drawing_container_def.edge_manipulators.each do |em|
 
-          next if !parent_section_def.nil? && em.edge.soft? # Minor optimization - skip soft edges
+          next if !parent_section_def.nil? && em.edge.soft? # Minor optimization - skip soft edges if container grabbed
 
           if parent_section_def.nil?
             start_section_def = fn_fetch_vertex_section_def.call(em.edge.start, drawing_container_def)
@@ -2012,13 +2039,17 @@ module Ladb::OpenCutList
 
           next if start_section_def.nil? || end_section_def.nil?  # TODO : this should not occur
 
-          edge_defs << EdgeDef.new(
+          container_def.edge_defs << SplitEdgeDef.new(
             em.edge,
             em.transformation,
             em.edge.start.position,
             start_section_def,
             end_section_def,
-            !parent_section_def.nil?
+            if operation == SplitContainerDef::OPERATION_SPLIT
+              start_section_def == end_section_def ? SplitEdgeDef::OPERATION_MOVE : SplitEdgeDef::OPERATION_SPLIT
+            else
+              SplitEdgeDef::OPERATION_NONE
+            end
           )
 
           if parent_section_def.nil? &&
@@ -2033,12 +2064,21 @@ module Ladb::OpenCutList
 
         depth += 1
         drawing_container_def.container_defs.each do |child_drawing_container_def|
-          fn_analyse.call(child_drawing_container_def, parent_section_def, depth)
+          container_def.children << fn_analyse.call(child_drawing_container_def, parent_section_def, depth)
         end
 
+        container_def
       end
 
       fn_analyse.call(drawing_def)
+
+      puts "----"
+      container_defs.each do |container_def|
+        puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5(@picked_axis)} "
+      end
+      puts "----"
+
+
 
       # Compute max compression distance
       el = [ eps, evpspe ]
@@ -2065,13 +2105,20 @@ module Ladb::OpenCutList
         reversed: reversed,
         max_compression_distance: max_compression_distance,
         section_defs: section_defs,
-        edge_defs: edge_defs,
         container_defs: container_defs,
       }
     end
 
-    def _get_stretch_def(ps, pe)
-      return nil if (split_def = _get_split_def).nil?
+    def _get_unique_split_def
+      return nil unless (split_def = _get_split_def).is_a?(Hash)
+
+      container_defs, _ = split_def.values_at(:container_defs)
+
+      split_def
+    end
+
+    def _get_stretch_def(ps, pe, make_unique = false)
+      return nil unless (split_def = (make_unique ? _get_unique_split_def : _get_split_def)).is_a?(Hash)
 
       et, eps, max_compression_distance, section_defs, reversed = split_def.values_at(:et, :eps, :max_compression_distance, :section_defs, :reversed)
       eti = et.inverse
@@ -2108,7 +2155,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    SectionDef = Struct.new(:index, :min_xyz, :max_xyz, :bounds) {
+    SplitSectionDef = Struct.new(:index, :min_xyz, :max_xyz, :bounds) {
       def contains_point?(point, xyz_method)
         min_xyz <= point.send(xyz_method) && max_xyz >= point.send(xyz_method)
       end
@@ -2119,8 +2166,46 @@ module Ladb::OpenCutList
         min_xyz <= bounds.max.send(xyz_method) && max_xyz >= bounds.min.send(xyz_method)
       end
     }
-    ContainerDef = Struct.new(:container, :transformation, :ref_position, :section_def)
-    EdgeDef = Struct.new(:edge, :transformation, :ref_position, :start_section_def, :end_section_def, :grabbed)
+
+    SplitContainerDef = Struct.new(:drawing_container_def, :depth, :ref_position, :section_def, :edge_defs, :children, :operation) {
+      def md5(axis)
+        if @md5.nil?
+          data = []
+          data = [ drawing_container_def.container.definition.object_id ] if drawing_container_def.container.respond_to?(:definition)
+          if operation == SplitContainerDef::OPERATION_SPLIT
+
+            unless drawing_container_def.is_root?
+              local_axis = axis.transform((drawing_container_def.transformation * drawing_container_def.container.transformation).inverse)
+              data << (local_axis.parallel?(axis) || local_axis.perpendicular?(axis)) if local_axis.valid?
+              data << local_axis.length if local_axis.valid?
+            end
+
+            data << edge_defs.map { |edge_def| edge_def.md5 }.join
+            data << children.map { |container_def| container_def.md5(axis) }.join
+
+          end
+          @md5 = Digest::MD5.hexdigest(data.to_json)
+        end
+        @md5
+      end
+    }
+    SplitContainerDef::OPERATION_NONE = 0
+    SplitContainerDef::OPERATION_MOVE = 1
+    SplitContainerDef::OPERATION_SPLIT = 2
+
+    SplitEdgeDef = Struct.new(:edge, :transformation, :ref_position, :start_section_def, :end_section_def, :operation) {
+      def md5
+        data = [
+          edge.object_id,
+          start_section_def.index,
+          end_section_def.index
+        ]
+        Digest::MD5.hexdigest(data.to_json)
+      end
+    }
+    SplitEdgeDef::OPERATION_NONE = 0
+    SplitEdgeDef::OPERATION_MOVE = 1
+    SplitEdgeDef::OPERATION_SPLIT = 2
 
   end
 
