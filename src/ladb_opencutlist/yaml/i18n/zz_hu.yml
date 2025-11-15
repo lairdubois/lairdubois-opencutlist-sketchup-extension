@@ -978,9 +978,9 @@ tab:
       title: 793 - Szabásterv
       option_problem_type: 794 - Típus
       option_problem_type_rectangle: 795 - Téglalap
-      option_problem_type_rectangleguillotine: 796 - Guillotine vágás
+      option_problem_type_rectangleguillotine: 796 - Átmenő vágások engedélyezése
       option_problem_type_onedimensional: 797 - Fűrészáru
-      option_problem_type_irregular: 798 - Beágyazásos elrendezés
+      option_problem_type_irregular: 798 - Kiosztott
       options_material: 799 - Anyag
       options_config: 800 - Beállítások
       options_display: 801 - Megjelenítés
@@ -992,7 +992,7 @@ tab:
 
         Ez a lista az anyag **$t(tab.materials.edit_material.std_lengths)** mezőjében van meghatározva.
 
-        *A(z) '{{ material_name }}' anyag tulajdonságainak szerkesztésével frissítheti ezt a listát.*
+        *Az '{{ material_name }}' anyag tulajdonságainak szerkesztésével frissítheti ezt a listát.*
       option_std_bin_1d_add: 806 - Méret hozzáadása
       option_std_bin_1d_none: 807 - Nincs
       option_scrap_bin_1d_dimensional_sizes: 808 - Maradék deszkák
@@ -1010,7 +1010,7 @@ tab:
 
         Ez a lista az adott anyag **$t(tab.materials.edit_material.std_sizes)** mezőjében van meghatározva.
 
-        *A(z) '{{ material_name }}' anyag tulajdonságainak szerkesztésével frissítheti ezt a listát.*
+        *Az '{{ material_name }}' anyag tulajdonságainak szerkesztésével frissítheti ezt a listát.*
       option_std_bin_2d_add: 816 - Méret hozzáadása
       option_std_bin_2d_none: 817 - Nincs
       option_scrap_bin_2d_sheet_good_sizes: 818 - Maradék táblák
@@ -1026,7 +1026,7 @@ tab:
         824 - Beállítja az optimalizálási módot, időkorláttal vagy anélkül.
       option_objective: 825 - Célkitűzés
       option_objective_help: |
-        826 - Beállítja a darabelrendezés célját.
+        826 - Meghatározza a kiosztás optimalizálás célját.
       option_rectangleguillotine_cut_type: 827 - Vágástípus
       option_rectangleguillotine_cut_type_help: |
         828 - Beállítja a vágás típusát.
@@ -1050,24 +1050,24 @@ tab:
 
         *Az erezett anyagok csak 0° és 180° szögben forgathatók.*
       option_irregular_allowed_rotations_0: 843 - Nincs
-      option_irregular_allowed_rotations_90: 844 - 90°-os elforgatási lépések
-      option_irregular_allowed_rotations_180: 845 - 180°-os elforgatási lépések
+      option_irregular_allowed_rotations_90: 844 - 90°-os elforgatás
+      option_irregular_allowed_rotations_180: 845 - 180°-os elforgatás
       option_irregular_allow_mirroring: 846 - Tükrözés engedélyezése
       option_irregular_allow_mirroring_help: |
         847 - Meghatározza, hogy az alkatrész tükrözése engedélyezett-e az elhelyezéshez.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
-      option_spacing: 850 - Távolságtartás
+      option_spacing: 850 - Vágásrés
       option_spacing_help: |
         851 - Minimális távolság az alkatrészek között.
         Ez az érték megfelelhet a fűrészlap vagy vágóeszköz szélességének.
-      option_trimming: 852 - Tisztítóvágás
+      option_trimming: 852 - Szélezés
       option_trimming_1d_help: 853 - Ez az érték megfelelhet a fűrészlap vagy vágóeszköz szélességének.
       option_trimming_2d_help: 854 - Tiszta vágáshoz ráhagyás a nyers tábla vagy furnérlap szélein, amelyet hulladékként kell kezelni.
       option_items_formula: 855 - Képlet
       option_items_formula_help: |
         856 - Lehetővé teszi, hogy *Ruby* kódot írj az alkatrészazonosító szövegének testreszabásához a diagramon.
-      option_bin_folding_1d_dimensional: 857 - Hasonló deszkák csoportosítása
+      option_bin_folding_1d_dimensional: 857 - Hasonló alkatrészek csoportosítása
       option_bin_folding_1d_edge: 858 - Hasonló élzárók csoportosítása
       option_bin_folding_2d_sheet_good: 859 - Hasonló táblák csoportosítása
       option_bin_folding_2d_veneer: 860 - Hasonló furnérlapok csoportosítása
@@ -1080,10 +1080,10 @@ tab:
       option_bin_folding_warning: |
         865 - *Ha példánytulajdonságokat használsz az azonosító szöveg testreszabási képletében, ez a beállítás automatikusan kikapcsol.*
       option_hide_part_list: 866 - Alkatrészlista
-      option_hide_part_list_1d_dimensional_0: 867 - Megjelenítve minden deszkánál
-      option_hide_part_list_1d_edge_0: 868 - Megjelenítve minden élzárónál
-      option_hide_part_list_2d_sheet_good_0: 869 - Megjelenítve minden táblánál
-      option_hide_part_list_2d_veneer_0: 870 - Megjelenítve minden furnérlapnál
+      option_hide_part_list_1d_dimensional_0: 867 - Minden anyag megjelenítve
+      option_hide_part_list_1d_edge_0: 868 - Minden anyag megjelenítve
+      option_hide_part_list_2d_sheet_good_0: 869 - Minden anyag megjelenítve
+      option_hide_part_list_2d_veneer_0: 870 - Minden anyag megjelenítve
       option_hide_part_list_1: 871 - Elrejtve
       option_hide_part_list_1d_help: 872 - Alkatrészlista megjelenítése vagy elrejtése minden deszkánál vagy élzárónál.
       option_hide_part_list_2d_help: 873 - Alkatrészlista megjelenítése vagy elrejtése minden táblánál vagy furnérlapnál.
@@ -1117,12 +1117,12 @@ tab:
       option_hide_edges_preview_help: 897 - Lehetővé teszi az élzárók vizuális megjelenítésének mutatását vagy elrejtését minden alkatrésznél a szabásterven.
       option_zoom_threshold: 898 - Nagyítás határa
       option_zoom_threshold_help: |
-        899 - Lehetővé teszi a diagram szélességének meghatározását, amely alatt a diagramok automatikusan nagyítódnak.
+        899 - Lehetővé teszi szabászati rajzok megjelenítését szabályozza, biztosítva, hogy a túl kicsi vágási ábrák is olvashatóak legyenek.
 
         *A nagyítás a legszélesebb diagram alapján kerül kiszámításra*.
-      option_time_limit: 900 - Időkorlát
+      option_time_limit: 900 - Optimalizálási Időkorlát
       option_time_limit_help: |
-        901 - Rendelkezésre álló időkorlát a számításra
+        901 - Beállítja a számításra rendelkezésre álló időt.
       tooltip:
         scroll_to_block_1d: 902 - Görgetés az első deszkához vagy élzáróhoz
         scroll_to_block_2d: 903 - Görgetés az első táblához vagy furnérlaphoz
@@ -1204,7 +1204,7 @@ tab:
           970 - Engedélyezi az alkatrész azonosító szövegek exportálását és a szín kiválasztását.
         option_leftovers: 971 - Lehullók
         option_leftovers_help: |
-          972 - Engedélyezi a lehullók exportálását és a szín kiválasztását.
+          972 - Lehetővé teszi a maradék anyag exportálásának aktiválását valamint a színek kiválasztását.
         option_cuts: 973 - Vágások
         option_cuts_help: |
           974 - Válassza ki, hogy a vágások megjelenjenek-e, és válassza ki a színüket.
@@ -1212,13 +1212,13 @@ tab:
           is_bin_selection: 975 - A **rejtett elemek** nem lesznek exportálva.
         error:
           overflow_gt_spacing: |
-            976 - A megmunkálási túlfutás ({{ overflow }}) nem haladhatja meg a kivágási rajzban beállított távolságot ({{ spacing }}).
+            976 - A megmunkálási túllógás ({{ overflow }}) nem haladhatja meg a kivágási rajzban beállított távolságot ({{ spacing }}).
       error:
         no_part: 977 - Nincsenek alkatrészek.
         no_bin_1d: 978 - Nem lett kiválasztva szabványos léc vagy élzáró szalag, és nincs megadva maradékanyag sem.
         no_bin_2d: 979 - Nem lett kiválasztva szabványos tábla vagy furnérlap, és nincs megadva maradékanyag sem.
-        invalid_part_shapes: 980 - A(z) '{{ name }}' nevű alkatrész alakja érvénytelen.
-        no_solution: 981 - Nem található megoldás az **összes alkatrész** elhelyezésére a rendelkezésre álló anyagban.
+        invalid_part_shapes: 980 - A '{{ name }}' nevű alkatrész alakja érvénytelen.
+        no_solution: 981 - Az összes alkatrész **összes alkatrész**  nem fért el a rendelkezésre álló anyagon.
         unplaced_parts: 982 - **1 alkatrészt** nem sikerült elhelyezni.
         unplaced_parts_plural: 983 - **{{ count }} alkatrészt** nem sikerült elhelyezni.
         unusable_part: 984 - Az alkatrész túl nagy
@@ -1283,8 +1283,8 @@ tab:
         part_number: 1036 - Szám
         part_name: 1037 - Megnevezés
         part_description: 1038 - Leírás
-        part_entity_named_path: 1039 - Példány útvonala
-        part_entity_name: 1040 - Példány neve
+        part_entity_named_path: 1039 - Alkatrész útvonala
+        part_entity_name: 1040 - Alkatrész neve
         part_bin: 1041 - Tároló
         part_cutting_size: 1042 - Nyers méretek
         part_cutting_length: 1043 - Hosszúság - nyers
@@ -1304,7 +1304,7 @@ tab:
         part_edge_xmin: 1057 - Élszélesség 1
         part_edge_xmax: 1058 - Élszélesség 2
         part_face_zmin: 1059 - Furnér hátoldal
-        part_face_zmax: 1060 - Furnér előlap
+        part_face_zmax: 1060 - Furnér szine
         thumbnail_proportional_drawing: 1061 - Előnézeti kép (elölnézet)
         thumbnail_proportional_drawing_bottom: 1062 - Előnézeti kép (hátulnézet)
         thumbnail_proportional: 1063 - Arányos miniatűr
@@ -1611,27 +1611,27 @@ tab:
       thickness_increase_help: 1277 - A **nyers vastagság** meghatározásához alkalmazott ráhagyás.
       std_lengths: 1278 - Szabványos hosszak
       std_lengths_help: |
-        1279 - Ehhez az anyaghoz választható szabványos hosszúság(ok)
+        1279 - Ehhez az anyaghoz választható szabványos hosszúságok
 
         *Ha nincs megadva mértékegység, a modell egysége lesz alkalmazva.*
       std_widths: 1280 - Szabványos szélességek
       std_widths_help: |
-        1281 - Ehhez az anyaghoz választható szabványos szélesség(ek)
+        1281 - Ehhez az anyaghoz választható szabványos szélességek.
 
         *Ha nincs megadva mértékegység, a modell egysége lesz alkalmazva.*
       std_thicknesses: 1282 - Szabványos vastagságok
       std_thicknesses_help: |
-        1283 - Ehhez az anyaghoz választható szabványos **nyers** vastagság(ok)
+        1283 - Ehhez az anyaghoz választható szabványos **nyers** vastagságok
 
         *Ha nincs megadva mértékegység, a modell egysége lesz alkalmazva.*
       std_sections: 1284 - Szabványos keresztmetszetek
       std_sections_help: |
-        1285 - Ehhez az anyaghoz választható szabványos keresztmetszet(ek).
+        1285 - Ehhez az anyaghoz választható szabványos keresztmetszetek.
 
         *Ha nincs megadva mértékegység, a modell alapértelmezett egysége kerül alkalmazásra.*
       std_sizes: 1286 - Szabványos méretek
       std_sizes_help: |
-        1287 - Ehhez az anyaghoz választható szabványos méret(ek)
+        1287 - Ehhez az anyaghoz választható szabványos méretek
 
         *Ha nincs megadva mértékegység, a modell egysége lesz alkalmazva.*
       grained: 1288 - Szálirány
@@ -1640,8 +1640,8 @@ tab:
       grained_1: 1291 - Szálirány a hosszal párhuzamos
       edge_decremented: 1292 - Méretek csökkentése
       edge_decremented_help: 1293 - Megadhatja, hogy az alkatrészek méreteit csökkenteni kell-e az élzáró vastagságával.
-      edge_decremented_0: 1294 - Nincs csökkentés
-      edge_decremented_1: 1295 - Csökkentés az élzáró vastagságával
+      edge_decremented_0: 1294 - Nincs levonás
+      edge_decremented_1: 1295 - A szabásméret csökkentése az élzárás vastagságával
       raw_estimated: 1296 - Használt térfogat
       raw_estimated_help: |
         1297 - Meghatározza az ebből az anyagból készült alkatrészek súlyának és teljes költségének becsléséhez használt térfogatot.
@@ -1651,13 +1651,13 @@ tab:
 
         **Szükséges nyersanyag térfogata**
         A teljes térfogat a vágás utáni táblák, lapok, deszkák vagy élzárók térfogatainak összege lesz.
-      raw_estimated_0: 1298 - Effektív térfogat
+      raw_estimated_0: 1298 - Hasznos kiszabott térfogat
       raw_estimated_1: 1299 - Szükséges nyersanyag térfogata
       multiplier_coefficient: 1300 - Szorzótényező
       multiplier_coefficient_help: 1301 - Lehetővé teszi a nyers térfogatra alkalmazott szorzó tényező megadását.
       std_attributes_dim_placeholder: 1302 - Válasszon méretet
       std_volumic_masses: 1303 - Sűrűség
-      std_volumic_masses_help: 1304 - Lehetővé teszi a sűrűség beállítását minden méretre, valamint minden szabványos anyagméretre.
+      std_volumic_masses_help: 1304 - Lehetővé teszi az anyag sűrűségének térfogattömegének beállítását minden mérethez, valamint minden egyes szabványos mérethez külön.
       std_prices: 1305 - Ár
       std_prices_help: 1306 - Lehetővé teszi az ár meghatározását minden méretre, valamint minden szabványos anyagméretre.
       std_cut_prices: 1307 - Szabványos vágási ár
@@ -1715,8 +1715,8 @@ tab:
     label: 1336 - Szerkezet
     title: 1337 - Szerkezet
     list: 1338 - Elemek fastruktúrája
-    nodes: 1339 - Példányok
-    toggle_hidden: 1340 - Rejtett példányok
+    nodes: 1339 - Alkatrészek
+    toggle_hidden: 1340 - Rejtett alkatrészek
     type_0: 1341 - Modell
     type_1: 1342 - Csoport
     type_2: 1343 - Komponens
@@ -1728,18 +1728,18 @@ tab:
       is_active_node: 1348 - Aktív példány a modellben
       set_active_node: 1349 - Modell szerkesztése
       edit_node_properties: 1350 - Tulajdonságok szerkesztése
-      select_active_nodes: 1351 - Az összes aktív példány kijelölése / kijelölésének törlése
+      select_active_nodes: 1351 - Az összes aktív alkatrész kijelölése / kijelölésének törlése
       select_node: 1352 - Kijelöl
       unselect_node: 1353 - Kijelölés megszüntetése
-      open_node_url: 1354 - Példány URL megnyitása
+      open_node_url: 1354 - Alkatrész URL megnyitása
     edit_node:
       title_model: 1355 - A modell tulajdonságai
       title_instance: 1356 - **{{ name }}** példány tulajdonságai
-      title_instance_multiple: 1357 - Példányok csoportjának tulajdonságai
-      multiple_alert: 1358 - A {{ node_count }} példányból álló csoport közös tulajdonságai.
+      title_instance_multiple: 1357 - Alkatrész csoportjának tulajdonságai
+      multiple_alert: 1358 - A {{ node_count }} alkatrész álló csoport közös tulajdonságai.
       general: 1359 - Általános
       name: 1360 - Név
-      instance_name: 1361 - Példány
+      instance_name: 1361 - Alkatrész
       material: 1362 - Anyag
       definition_name: 1363 - Definíció
       description: 1364 - Leírás
@@ -1777,20 +1777,20 @@ tab:
       no_model: 1390 - Nincs nyitott modell. További információra van szükségem ;)
       no_entities: 1391 - A modell üres!
       node_not_found: 1392 - Csomópont nem található
-      entity_not_found: 1393 - Példány nem található
-      invalid_target: 1394 - A kiválasztott példány nem engedélyezi ezt a műveletet
+      entity_not_found: 1393 - Alkatrész nem található
+      invalid_target: 1394 - A kiválasztott alkatrész nem engedélyezi ezt a műveletet
       obsolete_outliner: 1395 - Nem lehetséges, a generált szerkezet elavult. Kérem, generálja újra.
     tip:
       no_node: |
-        1396 - A modell nem tartalmaz megjeleníthető példányokat.
-        A példány lehet **csoport** vagy **komponens** a jelenetben.
+        1396 - A modell nem tartalmaz megjeleníthető alkatrészeket.
+        Az alkatrész lehet **csoport** vagy **komponens** a jelenetben.
     obsolete_base: 1397 - A friss adatokhoz újra kell generálni a szerkezetet.
   importer:
     label: 1398 - Importálás
     title: 1399 - Alkatrészek importálása
     help: |
-      1400 - Ezen az oldalon alkatrészeket importálhat (téglalap alakú befoglaló dobozzal meghatározva) a modelljébe [CSV](https://hu.wikipedia.org/wiki/CSV) fájlból.
-      Így az *OpenCutList* funkcióit olyan alkatrészekhez is használhatja, amelyeket nem a *SketchUp*-ban hozott létre.
+      1400 - Ezen az oldalon alkatrészeket importálhat téglalap alakú befoglaló dobozzal meghatározva a modelljébe [CSV](https://hu.wikipedia.org/wiki/CSV) fájlból.
+      Így az *OpenCutList* funkcióit olyan alkatrészekhez is használhatja amelyeket nem a *SketchUp*-ban hozott létre.
       Kattintson a **CSV fájl megnyitása** gombra a kezdéshez.
     open_csv: 1401 - CSV fájl megnyitása
     import_to_model: 1402 - Importálás a modellbe

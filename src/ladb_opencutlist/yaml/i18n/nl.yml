@@ -125,7 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Onderdelen tekenen
       smart_handle: Onderdelen hanteren
-      smart_reshape: ""
+      smart_reshape: "onderdelen aanpassen "
       smart_paint: Kleur de onderdelen
       smart_axes: Oriënt Onderdelen
       smart_export: Onderdelen exporteren
@@ -156,8 +156,8 @@ core:
       Om een ​​bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Niet beschikbaar in deze context
   error:
-    exception: ""
-    forbidden: ""
+    exception: "Foutmelding: **{{ error }}**"
+    forbidden: "Niet toegestaan: **{{ error }}**"
     extern: "Externe fout : **{{ error }}**"
     feature_unavailable: "Deze functie vereist SketchUp {{ version }} of hoger"
     failed_export_to: |
@@ -1752,21 +1752,22 @@ tab:
       tags: Badges
       layer_name: Tag
       explode: Uitbarsten/ splitsing 
-      explode_message: ""
+      explode_message: "Bevestigt u dat **{{ name }}** wordt uitgeklapt?"
       erase: Leeg maken
-      erase_message: ""
+      erase_message: "Weet u zeker dat u **{{ name }}** wilt verwijderen?"
     deep_make_unique:
-      title: ""
+      title: Uniek maken
     deep_rename_parts:
-      title: ""
+      title: De onderdelen hernoemen
       info_0: |
+        Met deze functie kunt u de onderdelen in de geselecteerde set hernoemen door onderstaande formule op elke instantie toe te passen.
       formula: Formule
-      old_name: ""
-      new_name: ""
-      count: ""
+      old_name: Naam van oorsprong
+      new_name: Nieuwe naam
+      count: Opmerking
     create_container:
-      title_group: ""
-      title_component: ""
+      title_group: "Een groep maken"
+      title_component: "een component maken"
     option:
       general: Algemeen
       show_hidden_instances: Verborgen instanties weergeven
@@ -1782,7 +1783,7 @@ tab:
       no_entities: Je model is leeg!
       node_not_found: Knooppunt niet gevonden
       entity_not_found: Instantie niet gevonden
-      invalid_target: ""
+      invalid_target: De doelinstantie laat deze handeling niet toe
       obsolete_outliner: "Onmogelijk, de gegenereerde structuur is verouderd. Regenereer daar."
     tip:
       no_node: |
@@ -2057,13 +2058,13 @@ tool:
       invalid_divider: "De deler {{ value }} is ongeldig"
       invalid_offset: "De verschuiving {{ value }} is ongeldig"
       invalid_segment_count: "Het aantal segmenten {{ value }} is ongeldig. Het moet tussen 3 en 999 liggen."
-      syntax_error: ""
-      unexpected_close_parenthesis: ""
-      missing_close_parenthesis: ""
-      missing_operand: ""
-      zero_division: ""
+      syntax_error: "Syntaxfout"
+      unexpected_close_parenthesis: "Onverwachte sluithaak"
+      missing_close_parenthesis: "Sluitende haak ontbreekt"
+      missing_operand: "Operand ontbreekt"
+      zero_division: "Deling door nul"
       lt_min_distance: "De afstand {{ value1 }} is kleiner dan de minimale afstand van {{ value2 }}"
-      gt_max_distance: ""
+      gt_max_distance: "De afstand {{ value1 }} is groter dan de maximale afstand van {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2113,7 +2114,7 @@ tool:
     action_0: Selecteren
     action_0_status: Klik op een stuk om het te selecteren
     action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: ""
+    action_0_state_4_status: Sleep over een identiek onderdeel om het aan de selectie toe te voegen en laat los om verder te gaan
     action_1: In een lijn kopiëren
     action_1_status: Klik op een stuk om het langs een as te kopiëren
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2151,27 +2152,27 @@ tool:
     error:
       min_distance: "De afstand {{ value1 }} is kleiner dan de minimale afstand van {{ value2 }}"
   smart_reshape:
-    title: ""
-    action_0: ""
+    title: Opnieuw vormgeven
+    action_0: verlengen
     action_0_status: Klik op een stuk om het te selecteren
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: ""
-    action_0_state_1a_status: ""
-    action_0_state_1b_status: ""
-    action_0_state_1c_status: ""
-    action_0_state_10_status: ""
-    action_0_state_11_status: ""
-    action_0_state_12_status: ""
-    action_0_state_2_status: ""
+    action_0_state_1_status: Klik op een handvat om uit te rekken / te verlengen
+    action_0_state_1a_status: Klik op een doorsnedevlak om het te verplaatsen
+    action_0_state_1b_status: Een doorsnedevlak toevoegen
+    action_0_state_1c_status: Een doorsnedevlak wissen
+    action_0_state_10_status: Sleep het doorsnedevlak om het te verplaatsen
+    action_0_state_11_status: Klik om het doorsnedevlak toe te voegen
+    action_0_state_12_status: Klik op een doorsnedevlak om het te verwijderen
+    action_0_state_2_status: Klik om het uitrekken te bevestigen of voer een afstand in
     action_option_group_stretch_measure_type: Meten
     action_option_group_axes: Assen
     action_option_stretch_measure_type_outside_status: Aan de buitenzijde meten
-    action_option_stretch_measure_type_offset_status: ""
+    action_option_stretch_measure_type_offset_status: Het verschil meten
     action_option_axes_active_status: Verplaatsen langs de actieve assen
     action_option_axes_context_status: Verplaatsen langs de assen van de groep of component die het stuk bevat
     action_option_axes_entity_status: Verplaatsen langs de assen van het stuk
     error:
-      curve_intersect: ""
+      curve_intersect: Een van de snijvlakken snijdt door een element dat niet kan worden uitgerekt (een bocht of accessoire)
   smart_paint:
     title: Kleur
     default_material: Geen materiaal gedefinieerd

@@ -2059,7 +2059,7 @@ tool:
       missing_operand: 1570 - Отсутствует операнд
       zero_division: 1571 - Деление на ноль
       lt_min_distance: 1572 - Расстояние {{ value1 }} меньше минимального {{ value2 }}
-      gt_max_distance: '1573 - '
+      gt_max_distance: 1573 - Расстояние {{ value1 }} превышает максимальное расстояние {{ value2 }}
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2151,14 +2151,14 @@ tool:
     action_0: 1655 - Растянуть
     action_0_status: 1656 - Кликните на деталь, чтобы выделить ее
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: '1658 - '
-    action_0_state_1a_status: '1659 - '
-    action_0_state_1b_status: '1660 - '
-    action_0_state_1c_status: '1661 - '
-    action_0_state_10_status: '1662 - '
-    action_0_state_11_status: '1663 - '
-    action_0_state_12_status: '1664 - '
-    action_0_state_2_status: '1665 - '
+    action_0_state_1_status: 1658 - Кликните на ручку, чтобы растянуть
+    action_0_state_1a_status: 1659 - Кликните на схему распила, чтобы переместить ее
+    action_0_state_1b_status: 1660 - Добавить схему распила
+    action_0_state_1c_status: 1661 - Удалить схему распила
+    action_0_state_10_status: 1662 - Перетащите схему распила, чтобы переместить ее
+    action_0_state_11_status: 1663 - Нажмите, чтобы добавить схему распила
+    action_0_state_12_status: 1664 - Нажмите на схему распила, чтобы удалить ее
+    action_0_state_2_status: 1665 - Кликните, чтобы подтвердить растяжение, или введите расстояние
     action_option_group_stretch_measure_type: 1666 - Отсчет
     action_option_group_axes: 1667 - Оси
     action_option_stretch_measure_type_outside_status: 1668 - Внешнее измерение
@@ -2167,7 +2167,7 @@ tool:
     action_option_axes_context_status: 1671 - Перемещение по осям группы или компонента, содержащего деталь
     action_option_axes_entity_status: 1672 - Перемещение по осям детали
     error:
-      curve_intersect: '1673 - '
+      curve_intersect: 1673 - Одна из плоскостей распила проходит через нерастяжимый элемент (кривую или аксессуар)
   smart_paint:
     title: 1674 - Раскраска
     default_material: 1675 - Материал не задан

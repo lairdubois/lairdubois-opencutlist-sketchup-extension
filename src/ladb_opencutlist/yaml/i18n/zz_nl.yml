@@ -120,7 +120,7 @@ core:
       dialog: 111 - OpenCutList
       smart_draw: 112 - Onderdelen tekenen
       smart_handle: 113 - Onderdelen hanteren
-      smart_reshape: '114 - '
+      smart_reshape: '114 - onderdelen aanpassen '
       smart_paint: 115 - Kleur de onderdelen
       smart_axes: 116 - Oriënt Onderdelen
       smart_export: 117 - Onderdelen exporteren
@@ -151,8 +151,8 @@ core:
       Om een ​​bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: 129 - Niet beschikbaar in deze context
   error:
-    exception: '130 - '
-    forbidden: '131 - '
+    exception: '130 - Foutmelding: **{{ error }}**'
+    forbidden: '131 - Niet toegestaan: **{{ error }}**'
     extern: '132 - Externe fout : **{{ error }}**'
     feature_unavailable: 133 - Deze functie vereist SketchUp {{ version }} of hoger
     failed_export_to: |
@@ -1747,21 +1747,22 @@ tab:
       tags: 1366 - Badges
       layer_name: 1367 - Tag
       explode: 1368 - Uitbarsten/ splitsing 
-      explode_message: '1369 - '
+      explode_message: 1369 - Bevestigt u dat **{{ name }}** wordt uitgeklapt?
       erase: 1370 - Leeg maken
-      erase_message: '1371 - '
+      erase_message: 1371 - Weet u zeker dat u **{{ name }}** wilt verwijderen?
     deep_make_unique:
-      title: '1372 - '
+      title: 1372 - Uniek maken
     deep_rename_parts:
-      title: '1373 - '
-      info_0: '1374 - '
+      title: 1373 - De onderdelen hernoemen
+      info_0: |
+        1374 - Met deze functie kunt u de onderdelen in de geselecteerde set hernoemen door onderstaande formule op elke instantie toe te passen.
       formula: 1375 - Formule
-      old_name: '1376 - '
-      new_name: '1377 - '
-      count: '1378 - '
+      old_name: 1376 - Naam van oorsprong
+      new_name: 1377 - Nieuwe naam
+      count: 1378 - Opmerking
     create_container:
-      title_group: '1379 - '
-      title_component: '1380 - '
+      title_group: 1379 - Een groep maken
+      title_component: 1380 - een component maken
     option:
       general: 1381 - Algemeen
       show_hidden_instances: 1382 - Verborgen instanties weergeven
@@ -1777,7 +1778,7 @@ tab:
       no_entities: 1391 - Je model is leeg!
       node_not_found: 1392 - Knooppunt niet gevonden
       entity_not_found: 1393 - Instantie niet gevonden
-      invalid_target: '1394 - '
+      invalid_target: 1394 - De doelinstantie laat deze handeling niet toe
       obsolete_outliner: 1395 - Onmogelijk, de gegenereerde structuur is verouderd. Regenereer daar.
     tip:
       no_node: |
@@ -2052,13 +2053,13 @@ tool:
       invalid_divider: 1564 - De deler {{ value }} is ongeldig
       invalid_offset: 1565 - De verschuiving {{ value }} is ongeldig
       invalid_segment_count: 1566 - Het aantal segmenten {{ value }} is ongeldig. Het moet tussen 3 en 999 liggen.
-      syntax_error: '1567 - '
-      unexpected_close_parenthesis: '1568 - '
-      missing_close_parenthesis: '1569 - '
-      missing_operand: '1570 - '
-      zero_division: '1571 - '
+      syntax_error: 1567 - Syntaxfout
+      unexpected_close_parenthesis: 1568 - Onverwachte sluithaak
+      missing_close_parenthesis: 1569 - Sluitende haak ontbreekt
+      missing_operand: 1570 - Operand ontbreekt
+      zero_division: 1571 - Deling door nul
       lt_min_distance: 1572 - De afstand {{ value1 }} is kleiner dan de minimale afstand van {{ value2 }}
-      gt_max_distance: '1573 - '
+      gt_max_distance: 1573 - De afstand {{ value1 }} is groter dan de maximale afstand van {{ value2 }}
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2108,7 +2109,7 @@ tool:
     action_0: 1616 - Selecteren
     action_0_status: 1617 - Klik op een stuk om het te selecteren
     action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: '1619 - '
+    action_0_state_4_status: 1619 - Sleep over een identiek onderdeel om het aan de selectie toe te voegen en laat los om verder te gaan
     action_1: 1620 - In een lijn kopiëren
     action_1_status: 1621 - Klik op een stuk om het langs een as te kopiëren
     action_1_state_0_status: $t(tool.smart_handle.action_0_status)
@@ -2146,27 +2147,27 @@ tool:
     error:
       min_distance: 1653 - De afstand {{ value1 }} is kleiner dan de minimale afstand van {{ value2 }}
   smart_reshape:
-    title: '1654 - '
-    action_0: '1655 - '
+    title: 1654 - Opnieuw vormgeven
+    action_0: 1655 - verlengen
     action_0_status: 1656 - Klik op een stuk om het te selecteren
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: '1658 - '
-    action_0_state_1a_status: '1659 - '
-    action_0_state_1b_status: '1660 - '
-    action_0_state_1c_status: '1661 - '
-    action_0_state_10_status: '1662 - '
-    action_0_state_11_status: '1663 - '
-    action_0_state_12_status: '1664 - '
-    action_0_state_2_status: '1665 - '
+    action_0_state_1_status: 1658 - Klik op een handvat om uit te rekken / te verlengen
+    action_0_state_1a_status: 1659 - Klik op een doorsnedevlak om het te verplaatsen
+    action_0_state_1b_status: 1660 - Een doorsnedevlak toevoegen
+    action_0_state_1c_status: 1661 - Een doorsnedevlak wissen
+    action_0_state_10_status: 1662 - Sleep het doorsnedevlak om het te verplaatsen
+    action_0_state_11_status: 1663 - Klik om het doorsnedevlak toe te voegen
+    action_0_state_12_status: 1664 - Klik op een doorsnedevlak om het te verwijderen
+    action_0_state_2_status: 1665 - Klik om het uitrekken te bevestigen of voer een afstand in
     action_option_group_stretch_measure_type: 1666 - Meten
     action_option_group_axes: 1667 - Assen
     action_option_stretch_measure_type_outside_status: 1668 - Aan de buitenzijde meten
-    action_option_stretch_measure_type_offset_status: '1669 - '
+    action_option_stretch_measure_type_offset_status: 1669 - Het verschil meten
     action_option_axes_active_status: 1670 - Verplaatsen langs de actieve assen
     action_option_axes_context_status: 1671 - Verplaatsen langs de assen van de groep of component die het stuk bevat
     action_option_axes_entity_status: 1672 - Verplaatsen langs de assen van het stuk
     error:
-      curve_intersect: '1673 - '
+      curve_intersect: 1673 - Een van de snijvlakken snijdt door een element dat niet kan worden uitgerekt (een bocht of accessoire)
   smart_paint:
     title: 1674 - Kleur
     default_material: 1675 - Geen materiaal gedefinieerd

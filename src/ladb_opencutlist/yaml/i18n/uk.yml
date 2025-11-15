@@ -2064,7 +2064,7 @@ tool:
       missing_operand: "Відсутній операнд"
       zero_division: "Ділення на нуль"
       lt_min_distance: "Відстань {{ value1 }} менша за мінімальну відстань {{ value2 }}"
-      gt_max_distance: ""
+      gt_max_distance: "Відстань {{ value1 }} більша за максимальну відстань {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2156,14 +2156,14 @@ tool:
     action_0: Розтягнути
     action_0_status: "Натисніть на деталь, щоб вибрати її"
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: ""
-    action_0_state_1a_status: ""
-    action_0_state_1b_status: ""
-    action_0_state_1c_status: ""
-    action_0_state_10_status: ""
-    action_0_state_11_status: ""
-    action_0_state_12_status: ""
-    action_0_state_2_status: ""
+    action_0_state_1_status: "Натисніть ручку, щоб розтягнути"
+    action_0_state_1a_status: "Натисніть на січну площину, щоб перемістити її"
+    action_0_state_1b_status: Додайте січну площину
+    action_0_state_1c_status: Видалити січну площину
+    action_0_state_10_status: "Перетягніть січну площину, щоб перемістити її"
+    action_0_state_11_status: "Натисніть, щоб додати січну площину"
+    action_0_state_12_status: "Натисніть на січну площину, щоб видалити її"
+    action_0_state_2_status: "Натисніть, щоб підтвердити розтяжку або ввести відстань"
     action_option_group_stretch_measure_type: Вимірювання
     action_option_group_axes: Осі
     action_option_stretch_measure_type_outside_status: Зовнішнє вимірювання
@@ -2172,7 +2172,7 @@ tool:
     action_option_axes_context_status: "Переміщення вздовж осей групи або компонента, що містить деталь"
     action_option_axes_entity_status: Переміщення по осях деталі
     error:
-      curve_intersect: ""
+      curve_intersect: Одна з січних площин перетинає нерозтягуваний елемент (криву або аксесуар)
   smart_paint:
     title: Нанесення матеріалів
     default_material: Матеріал не заданий
