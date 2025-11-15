@@ -983,9 +983,9 @@ tab:
       title: Szabásterv
       option_problem_type: Típus
       option_problem_type_rectangle: Téglalap
-      option_problem_type_rectangleguillotine: Guillotine vágás
+      option_problem_type_rectangleguillotine: Átmenő vágások engedélyezése
       option_problem_type_onedimensional: Fűrészáru
-      option_problem_type_irregular: Beágyazásos elrendezés
+      option_problem_type_irregular: Kiosztott
       options_material: Anyag
       options_config: Beállítások
       options_display: Megjelenítés
@@ -997,7 +997,7 @@ tab:
 
         Ez a lista az anyag **$t(tab.materials.edit_material.std_lengths)** mezőjében van meghatározva.
 
-        *A(z) '{{ material_name }}' anyag tulajdonságainak szerkesztésével frissítheti ezt a listát.*
+        *Az '{{ material_name }}' anyag tulajdonságainak szerkesztésével frissítheti ezt a listát.*
       option_std_bin_1d_add: Méret hozzáadása
       option_std_bin_1d_none: Nincs
       option_scrap_bin_1d_dimensional_sizes: Maradék deszkák
@@ -1015,7 +1015,7 @@ tab:
 
         Ez a lista az adott anyag **$t(tab.materials.edit_material.std_sizes)** mezőjében van meghatározva.
 
-        *A(z) '{{ material_name }}' anyag tulajdonságainak szerkesztésével frissítheti ezt a listát.*
+        *Az '{{ material_name }}' anyag tulajdonságainak szerkesztésével frissítheti ezt a listát.*
       option_std_bin_2d_add: Méret hozzáadása
       option_std_bin_2d_none: Nincs
       option_scrap_bin_2d_sheet_good_sizes: Maradék táblák
@@ -1031,7 +1031,7 @@ tab:
         Beállítja az optimalizálási módot, időkorláttal vagy anélkül.
       option_objective: Célkitűzés
       option_objective_help: |
-        Beállítja a darabelrendezés célját.
+        Meghatározza a kiosztás optimalizálás célját.
       option_rectangleguillotine_cut_type: Vágástípus
       option_rectangleguillotine_cut_type_help: |
         Beállítja a vágás típusát.
@@ -1055,24 +1055,24 @@ tab:
 
         *Az erezett anyagok csak 0° és 180° szögben forgathatók.*
       option_irregular_allowed_rotations_0: Nincs
-      option_irregular_allowed_rotations_90: 90°-os elforgatási lépések
-      option_irregular_allowed_rotations_180: 180°-os elforgatási lépések
+      option_irregular_allowed_rotations_90: 90°-os elforgatás
+      option_irregular_allowed_rotations_180: 180°-os elforgatás
       option_irregular_allow_mirroring: Tükrözés engedélyezése
       option_irregular_allow_mirroring_help: |
         Meghatározza, hogy az alkatrész tükrözése engedélyezett-e az elhelyezéshez.
       option_irregular_allow_mirroring_0: $t(default.no)
       option_irregular_allow_mirroring_1: $t(default.yes)
-      option_spacing: Távolságtartás
+      option_spacing: Vágásrés
       option_spacing_help: |
         Minimális távolság az alkatrészek között.
         Ez az érték megfelelhet a fűrészlap vagy vágóeszköz szélességének.
-      option_trimming: Tisztítóvágás
+      option_trimming: Szélezés
       option_trimming_1d_help: Ez az érték megfelelhet a fűrészlap vagy vágóeszköz szélességének.
       option_trimming_2d_help: "Tiszta vágáshoz ráhagyás a nyers tábla vagy furnérlap szélein, amelyet hulladékként kell kezelni."
       option_items_formula: Képlet
       option_items_formula_help: |
         Lehetővé teszi, hogy *Ruby* kódot írj az alkatrészazonosító szövegének testreszabásához a diagramon.
-      option_bin_folding_1d_dimensional: Hasonló deszkák csoportosítása
+      option_bin_folding_1d_dimensional: Hasonló alkatrészek csoportosítása
       option_bin_folding_1d_edge: Hasonló élzárók csoportosítása
       option_bin_folding_2d_sheet_good: Hasonló táblák csoportosítása
       option_bin_folding_2d_veneer: Hasonló furnérlapok csoportosítása
@@ -1085,10 +1085,10 @@ tab:
       option_bin_folding_warning: |
         *Ha példánytulajdonságokat használsz az azonosító szöveg testreszabási képletében, ez a beállítás automatikusan kikapcsol.*
       option_hide_part_list: Alkatrészlista
-      option_hide_part_list_1d_dimensional_0: Megjelenítve minden deszkánál
-      option_hide_part_list_1d_edge_0: Megjelenítve minden élzárónál
-      option_hide_part_list_2d_sheet_good_0: Megjelenítve minden táblánál
-      option_hide_part_list_2d_veneer_0: Megjelenítve minden furnérlapnál
+      option_hide_part_list_1d_dimensional_0: Minden anyag megjelenítve
+      option_hide_part_list_1d_edge_0: Minden anyag megjelenítve
+      option_hide_part_list_2d_sheet_good_0: Minden anyag megjelenítve
+      option_hide_part_list_2d_veneer_0: Minden anyag megjelenítve
       option_hide_part_list_1: Elrejtve
       option_hide_part_list_1d_help: Alkatrészlista megjelenítése vagy elrejtése minden deszkánál vagy élzárónál.
       option_hide_part_list_2d_help: Alkatrészlista megjelenítése vagy elrejtése minden táblánál vagy furnérlapnál.
@@ -1122,12 +1122,12 @@ tab:
       option_hide_edges_preview_help: Lehetővé teszi az élzárók vizuális megjelenítésének mutatását vagy elrejtését minden alkatrésznél a szabásterven.
       option_zoom_threshold: Nagyítás határa
       option_zoom_threshold_help: |
-        Lehetővé teszi a diagram szélességének meghatározását, amely alatt a diagramok automatikusan nagyítódnak.
+        Lehetővé teszi szabászati rajzok megjelenítését szabályozza, biztosítva, hogy a túl kicsi vágási ábrák is olvashatóak legyenek.
 
         *A nagyítás a legszélesebb diagram alapján kerül kiszámításra*.
-      option_time_limit: Időkorlát
+      option_time_limit: Optimalizálási Időkorlát
       option_time_limit_help: |
-        Rendelkezésre álló időkorlát a számításra
+        Beállítja a számításra rendelkezésre álló időt.
       tooltip:
         scroll_to_block_1d: Görgetés az első deszkához vagy élzáróhoz
         scroll_to_block_2d: Görgetés az első táblához vagy furnérlaphoz
@@ -1209,7 +1209,7 @@ tab:
           Engedélyezi az alkatrész azonosító szövegek exportálását és a szín kiválasztását.
         option_leftovers: Lehullók
         option_leftovers_help: |
-          Engedélyezi a lehullók exportálását és a szín kiválasztását.
+          Lehetővé teszi a maradék anyag exportálásának aktiválását valamint a színek kiválasztását.
         option_cuts: Vágások
         option_cuts_help: |
           Válassza ki, hogy a vágások megjelenjenek-e, és válassza ki a színüket.
@@ -1217,13 +1217,13 @@ tab:
           is_bin_selection: A **rejtett elemek** nem lesznek exportálva.
         error:
           overflow_gt_spacing: |
-            A megmunkálási túlfutás ({{ overflow }}) nem haladhatja meg a kivágási rajzban beállított távolságot ({{ spacing }}).
+            A megmunkálási túllógás ({{ overflow }}) nem haladhatja meg a kivágási rajzban beállított távolságot ({{ spacing }}).
       error:
         no_part: Nincsenek alkatrészek.
         no_bin_1d: "Nem lett kiválasztva szabványos léc vagy élzáró szalag, és nincs megadva maradékanyag sem."
         no_bin_2d: "Nem lett kiválasztva szabványos tábla vagy furnérlap, és nincs megadva maradékanyag sem."
-        invalid_part_shapes: "A(z) '{{ name }}' nevű alkatrész alakja érvénytelen."
-        no_solution: Nem található megoldás az **összes alkatrész** elhelyezésére a rendelkezésre álló anyagban.
+        invalid_part_shapes: "A '{{ name }}' nevű alkatrész alakja érvénytelen."
+        no_solution: Az összes alkatrész **összes alkatrész**  nem fért el a rendelkezésre álló anyagon.
         unplaced_parts: "**1 alkatrészt** nem sikerült elhelyezni."
         unplaced_parts_plural: "**{{ count }} alkatrészt** nem sikerült elhelyezni."
         unusable_part: Az alkatrész túl nagy
@@ -1288,8 +1288,8 @@ tab:
         part_number: Szám
         part_name: Megnevezés
         part_description: Leírás
-        part_entity_named_path: Példány útvonala
-        part_entity_name: Példány neve
+        part_entity_named_path: Alkatrész útvonala
+        part_entity_name: Alkatrész neve
         part_bin: Tároló
         part_cutting_size: Nyers méretek
         part_cutting_length: Hosszúság - nyers
@@ -1309,7 +1309,7 @@ tab:
         part_edge_xmin: Élszélesség 1
         part_edge_xmax: Élszélesség 2
         part_face_zmin: Furnér hátoldal
-        part_face_zmax: Furnér előlap
+        part_face_zmax: Furnér szine
         thumbnail_proportional_drawing: Előnézeti kép (elölnézet)
         thumbnail_proportional_drawing_bottom: Előnézeti kép (hátulnézet)
         thumbnail_proportional: Arányos miniatűr
@@ -1616,27 +1616,27 @@ tab:
       thickness_increase_help: A **nyers vastagság** meghatározásához alkalmazott ráhagyás.
       std_lengths: Szabványos hosszak
       std_lengths_help: |
-        Ehhez az anyaghoz választható szabványos hosszúság(ok)
+        Ehhez az anyaghoz választható szabványos hosszúságok
 
         *Ha nincs megadva mértékegység, a modell egysége lesz alkalmazva.*
       std_widths: Szabványos szélességek
       std_widths_help: |
-        Ehhez az anyaghoz választható szabványos szélesség(ek)
+        Ehhez az anyaghoz választható szabványos szélességek.
 
         *Ha nincs megadva mértékegység, a modell egysége lesz alkalmazva.*
       std_thicknesses: Szabványos vastagságok
       std_thicknesses_help: |
-        Ehhez az anyaghoz választható szabványos **nyers** vastagság(ok)
+        Ehhez az anyaghoz választható szabványos **nyers** vastagságok
 
         *Ha nincs megadva mértékegység, a modell egysége lesz alkalmazva.*
       std_sections: Szabványos keresztmetszetek
       std_sections_help: |
-        Ehhez az anyaghoz választható szabványos keresztmetszet(ek).
+        Ehhez az anyaghoz választható szabványos keresztmetszetek.
 
         *Ha nincs megadva mértékegység, a modell alapértelmezett egysége kerül alkalmazásra.*
       std_sizes: Szabványos méretek
       std_sizes_help: |
-        Ehhez az anyaghoz választható szabványos méret(ek)
+        Ehhez az anyaghoz választható szabványos méretek
 
         *Ha nincs megadva mértékegység, a modell egysége lesz alkalmazva.*
       grained: Szálirány
@@ -1645,8 +1645,8 @@ tab:
       grained_1: Szálirány a hosszal párhuzamos
       edge_decremented: Méretek csökkentése
       edge_decremented_help: "Megadhatja, hogy az alkatrészek méreteit csökkenteni kell-e az élzáró vastagságával."
-      edge_decremented_0: Nincs csökkentés
-      edge_decremented_1: Csökkentés az élzáró vastagságával
+      edge_decremented_0: Nincs levonás
+      edge_decremented_1: A szabásméret csökkentése az élzárás vastagságával
       raw_estimated: Használt térfogat
       raw_estimated_help: |
         Meghatározza az ebből az anyagból készült alkatrészek súlyának és teljes költségének becsléséhez használt térfogatot.
@@ -1656,13 +1656,13 @@ tab:
 
         **Szükséges nyersanyag térfogata**
         A teljes térfogat a vágás utáni táblák, lapok, deszkák vagy élzárók térfogatainak összege lesz.
-      raw_estimated_0: Effektív térfogat
+      raw_estimated_0: Hasznos kiszabott térfogat
       raw_estimated_1: Szükséges nyersanyag térfogata
       multiplier_coefficient: Szorzótényező
       multiplier_coefficient_help: Lehetővé teszi a nyers térfogatra alkalmazott szorzó tényező megadását.
       std_attributes_dim_placeholder: Válasszon méretet
       std_volumic_masses: Sűrűség
-      std_volumic_masses_help: "Lehetővé teszi a sűrűség beállítását minden méretre, valamint minden szabványos anyagméretre."
+      std_volumic_masses_help: "Lehetővé teszi az anyag sűrűségének térfogattömegének beállítását minden mérethez, valamint minden egyes szabványos mérethez külön."
       std_prices: Ár
       std_prices_help: "Lehetővé teszi az ár meghatározását minden méretre, valamint minden szabványos anyagméretre."
       std_cut_prices: Szabványos vágási ár
@@ -1720,8 +1720,8 @@ tab:
     label: Szerkezet
     title: Szerkezet
     list: Elemek fastruktúrája
-    nodes: Példányok
-    toggle_hidden: Rejtett példányok
+    nodes: Alkatrészek
+    toggle_hidden: Rejtett alkatrészek
     type_0: Modell
     type_1: Csoport
     type_2: Komponens
@@ -1733,18 +1733,18 @@ tab:
       is_active_node: Aktív példány a modellben
       set_active_node: Modell szerkesztése
       edit_node_properties: Tulajdonságok szerkesztése
-      select_active_nodes: Az összes aktív példány kijelölése / kijelölésének törlése
+      select_active_nodes: Az összes aktív alkatrész kijelölése / kijelölésének törlése
       select_node: Kijelöl
       unselect_node: Kijelölés megszüntetése
-      open_node_url: Példány URL megnyitása
+      open_node_url: Alkatrész URL megnyitása
     edit_node:
       title_model: "A modell tulajdonságai"
       title_instance: "**{{ name }}** példány tulajdonságai"
-      title_instance_multiple: "Példányok csoportjának tulajdonságai"
-      multiple_alert: "A {{ node_count }} példányból álló csoport közös tulajdonságai."
+      title_instance_multiple: "Alkatrész csoportjának tulajdonságai"
+      multiple_alert: "A {{ node_count }} alkatrész álló csoport közös tulajdonságai."
       general: Általános
       name: Név
-      instance_name: Példány
+      instance_name: Alkatrész
       material: Anyag
       definition_name: Definíció
       description: Leírás
@@ -1782,20 +1782,20 @@ tab:
       no_model: Nincs nyitott modell. További információra van szükségem ;)
       no_entities: A modell üres!
       node_not_found: Csomópont nem található
-      entity_not_found: Példány nem található
-      invalid_target: A kiválasztott példány nem engedélyezi ezt a műveletet
+      entity_not_found: Alkatrész nem található
+      invalid_target: A kiválasztott alkatrész nem engedélyezi ezt a műveletet
       obsolete_outliner: "Nem lehetséges, a generált szerkezet elavult. Kérem, generálja újra."
     tip:
       no_node: |
-        A modell nem tartalmaz megjeleníthető példányokat.
-        A példány lehet **csoport** vagy **komponens** a jelenetben.
+        A modell nem tartalmaz megjeleníthető alkatrészeket.
+        Az alkatrész lehet **csoport** vagy **komponens** a jelenetben.
     obsolete_base: "A friss adatokhoz újra kell generálni a szerkezetet."
   importer:
     label: Importálás
     title: Alkatrészek importálása
     help: |
-      Ezen az oldalon alkatrészeket importálhat (téglalap alakú befoglaló dobozzal meghatározva) a modelljébe [CSV](https://hu.wikipedia.org/wiki/CSV) fájlból.
-      Így az *OpenCutList* funkcióit olyan alkatrészekhez is használhatja, amelyeket nem a *SketchUp*-ban hozott létre.
+      Ezen az oldalon alkatrészeket importálhat téglalap alakú befoglaló dobozzal meghatározva a modelljébe [CSV](https://hu.wikipedia.org/wiki/CSV) fájlból.
+      Így az *OpenCutList* funkcióit olyan alkatrészekhez is használhatja amelyeket nem a *SketchUp*-ban hozott létre.
       Kattintson a **CSV fájl megnyitása** gombra a kezdéshez.
     open_csv: CSV fájl megnyitása
     import_to_model: Importálás a modellbe

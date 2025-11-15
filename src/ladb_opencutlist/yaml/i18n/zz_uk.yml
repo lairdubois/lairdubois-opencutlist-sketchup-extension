@@ -2059,7 +2059,7 @@ tool:
       missing_operand: 1570 - Відсутній операнд
       zero_division: 1571 - Ділення на нуль
       lt_min_distance: 1572 - Відстань {{ value1 }} менша за мінімальну відстань {{ value2 }}
-      gt_max_distance: '1573 - '
+      gt_max_distance: 1573 - Відстань {{ value1 }} більша за максимальну відстань {{ value2 }}
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2151,14 +2151,14 @@ tool:
     action_0: 1655 - Розтягнути
     action_0_status: 1656 - Натисніть на деталь, щоб вибрати її
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: '1658 - '
-    action_0_state_1a_status: '1659 - '
-    action_0_state_1b_status: '1660 - '
-    action_0_state_1c_status: '1661 - '
-    action_0_state_10_status: '1662 - '
-    action_0_state_11_status: '1663 - '
-    action_0_state_12_status: '1664 - '
-    action_0_state_2_status: '1665 - '
+    action_0_state_1_status: 1658 - Натисніть ручку, щоб розтягнути
+    action_0_state_1a_status: 1659 - Натисніть на січну площину, щоб перемістити її
+    action_0_state_1b_status: 1660 - Додайте січну площину
+    action_0_state_1c_status: 1661 - Видалити січну площину
+    action_0_state_10_status: 1662 - Перетягніть січну площину, щоб перемістити її
+    action_0_state_11_status: 1663 - Натисніть, щоб додати січну площину
+    action_0_state_12_status: 1664 - Натисніть на січну площину, щоб видалити її
+    action_0_state_2_status: 1665 - Натисніть, щоб підтвердити розтяжку або ввести відстань
     action_option_group_stretch_measure_type: 1666 - Вимірювання
     action_option_group_axes: 1667 - Осі
     action_option_stretch_measure_type_outside_status: 1668 - Зовнішнє вимірювання
@@ -2167,7 +2167,7 @@ tool:
     action_option_axes_context_status: 1671 - Переміщення вздовж осей групи або компонента, що містить деталь
     action_option_axes_entity_status: 1672 - Переміщення по осях деталі
     error:
-      curve_intersect: '1673 - '
+      curve_intersect: 1673 - Одна з січних площин перетинає нерозтягуваний елемент (криву або аксесуар)
   smart_paint:
     title: 1674 - Нанесення матеріалів
     default_material: 1675 - Матеріал не заданий
