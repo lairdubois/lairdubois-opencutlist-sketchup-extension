@@ -1127,7 +1127,7 @@ tab:
         *A nagyítás a legszélesebb diagram alapján kerül kiszámításra*.
       option_time_limit: Optimalizálási Időkorlát
       option_time_limit_help: |
-        Beállítja a számításra rendelkezésre álló időt.
+        Beállítja a számításra rendelkezésre álló időt
       tooltip:
         scroll_to_block_1d: Görgetés az első deszkához vagy élzáróhoz
         scroll_to_block_2d: Görgetés az első táblához vagy furnérlaphoz
@@ -1223,7 +1223,7 @@ tab:
         no_bin_1d: "Nem lett kiválasztva szabványos léc vagy élzáró szalag, és nincs megadva maradékanyag sem."
         no_bin_2d: "Nem lett kiválasztva szabványos tábla vagy furnérlap, és nincs megadva maradékanyag sem."
         invalid_part_shapes: "A '{{ name }}' nevű alkatrész alakja érvénytelen."
-        no_solution: Az összes alkatrész **összes alkatrész**  nem fért el a rendelkezésre álló anyagon.
+        no_solution: Az összes alkatrész **összes alkatrész** nem fért el a rendelkezésre álló anyagon.
         unplaced_parts: "**1 alkatrészt** nem sikerült elhelyezni."
         unplaced_parts_plural: "**{{ count }} alkatrészt** nem sikerült elhelyezni."
         unusable_part: Az alkatrész túl nagy
@@ -1739,7 +1739,7 @@ tab:
       open_node_url: Alkatrész URL megnyitása
     edit_node:
       title_model: "A modell tulajdonságai"
-      title_instance: "**{{ name }}** példány tulajdonságai"
+      title_instance: "**{{ name }}** alkatrész tulajdonságai"
       title_instance_multiple: "Alkatrész csoportjának tulajdonságai"
       multiple_alert: "A {{ node_count }} alkatrész álló csoport közös tulajdonságai."
       general: Általános
@@ -2041,18 +2041,18 @@ tool:
   default:
     transparency: Átlátszóság
     zoom_extents: Teljes nézet
-    toggle_depth: Háttér alkatrészek
+    toggle_depth: Háttérben lévő alkatrészek
     more: Több
     end_point: Vége
-    middle_point: Középső pont
-    third_point: Egyharmad pont
+    middle_point: Középpont
+    third_point: Egyharmad rész
     vcb_length: Hosszúság
     vcb_size: Méretek
     vcb_radius: Sugár
     vcb_diameter: Átmérő
     vcb_distance: Távolság
     error:
-      no_direction: "Kérjük, jelezze az irányt az egérrel"
+      no_direction: Jelöljön ki egy irányt az egérrel
       invalid_length: "A(z) {{ value }} hossz nem használható"
       invalid_multiplicator: "A(z) {{ value }} szorzó nem használható"
       invalid_divider: "A(z) {{ value }} osztó nem használható"
@@ -2064,7 +2064,7 @@ tool:
       missing_operand: "Hiányzó szám vagy érték"
       zero_division: "Nem lehet nullával osztani"
       lt_min_distance: "A(z) {{ value1 }} távolság nem éri el a minimálisan megengedett értéket ami: {{ value2 }}"
-      gt_max_distance: ""
+      gt_max_distance: "Az {{ value1 }} távolság nagyobb, mint az {{ value2 }} maximális távolság"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2072,7 +2072,7 @@ tool:
     title: Rajzol
     action_0: Téglalap rajzolása
     action_0_status: Térfogat rajzolása téglalap alakú forma alapján
-    action_0_state_1_status: "Kattintson az ellentétes szög meghatározásához, vagy adjon meg hosszúságot és szélességet"
+    action_0_state_1_status: "Kattintson az átellenes sarok megadásához, vagy írjon be egy hosszt és szélességet"
     action_1: Kör rajzolása
     action_1_status: Térfogat rajzolása kör alakú forma alapján
     action_1_state_1_radius_status: "Kattintson a sugár beállításához, vagy adjon meg egy távolságot"
@@ -2085,7 +2085,7 @@ tool:
     action_option_group_segments: Szegmensek
     action_option_group_options: Beállítások
     action_option_offset_shape_offset: Eltolás
-    action_option_offset_shape_offset_status: Lehetővé teszi eltolás alkalmazását a megrajzolt forma vonalára
+    action_option_offset_shape_offset_status: Lehetővé teszi a megrajzolt alakzat körvonalának eltolását
     action_option_segments_segment_count: Szegmensek száma
     action_option_segments_segment_count_status: Lehetővé teszi a kör szegmenseinek számának meghatározását
     action_option_options_construction: Segédvonalak
@@ -2104,7 +2104,7 @@ tool:
     action_option_options_pull_centered_status: A középpontól indul kétirányba az emelés
     action_option_options_ask_name: Alkatrészek elnevezése
     action_option_options_ask_name_status: Az alkatrész nevének kézi megadása
-    action_measure_locked_status: Rögzítés az utolsó méréshez
+    action_measure_locked_status: Zárolás az utolsó mérésre
     action_toggle_move_copy_status: Váltás másolás/mozgatás között
     action_change_move_anchor_status: Referenciapont módosítása
     success:
@@ -2140,9 +2140,9 @@ tool:
     action_option_copy_measure_type_outside_status: Külső mérés
     action_option_copy_measure_type_centered_status: Középponttól középpontig történő mérés
     action_option_copy_measure_type_inside_status: Mérés az alkatrészek között
-    action_option_move_measure_type_outside_status: Külső mérés
+    action_option_move_measure_type_outside_status: Kívülről mérve
     action_option_move_measure_type_centered_status: Mérés középpontból
-    action_option_move_measure_type_inside_status: Belső mérés
+    action_option_move_measure_type_inside_status: Belső méret mérése
     action_option_axes_active_status: Kezelés az aktív tengelyek mentén
     action_option_axes_context_status: "Kezelés annak a csoportnak vagy komponensnek a tengelyei mentén, amely tartalmazza az alkatrészt"
     action_option_axes_entity_status: Kezelés az alkatrész tengelyei mentén
@@ -2150,20 +2150,20 @@ tool:
     warning:
       copies_disable_mirror: Több másolat esetén a '$t(tool.smart_handle.action_option_options_mirror_status)' opció kikapcsolásra kerül
     error:
-      min_distance: "A(z) {{ value1 }} távolság nem éri el a minimálisan megengedett értéket ami: {{ value2 }}"
+      min_distance: "A {{ value1 }} távolság nem éri el a minimálisan megengedett értéket ami: {{ value2 }}"
   smart_reshape:
     title: Módosítás
     action_0: Húzás
     action_0_status: Kattintson egy alkatrészre a kijelöléséhez
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: ""
-    action_0_state_1a_status: ""
-    action_0_state_1b_status: ""
-    action_0_state_1c_status: ""
-    action_0_state_10_status: ""
-    action_0_state_11_status: ""
-    action_0_state_12_status: ""
-    action_0_state_2_status: ""
+    action_0_state_1_status: Kattintson egy fogópontra a nyújtáshoz
+    action_0_state_1a_status: Kattintson egy metszősíkra az áthelyezéséhez
+    action_0_state_1b_status: Metszősík hozzáadása
+    action_0_state_1c_status: Metszősík törlése
+    action_0_state_10_status: Húzza a metszősíkot az áthelyezéshez
+    action_0_state_11_status: Kattintson a metszősík hozzáadásához
+    action_0_state_12_status: Kattintson egy metszősíkra a törléséhez
+    action_0_state_2_status: "Kattintson a nyújtás véglegesítéséhez, vagy írjon be egy távolságot"
     action_option_group_stretch_measure_type: Mérés
     action_option_group_axes: Tengelyek
     action_option_stretch_measure_type_outside_status: Külső mérés
@@ -2172,7 +2172,7 @@ tool:
     action_option_axes_context_status: "Kezelés annak a csoportnak vagy komponensnek a tengelyei mentén, amely tartalmazza az alkatrészt"
     action_option_axes_entity_status: Kezelés az alkatrész tengelyei mentén
     error:
-      curve_intersect: ""
+      curve_intersect: Az egyik metszősík átszel egy nem nyújtható elemet (görbét vagy szerelvényt)
   smart_paint:
     title: Festés
     default_material: Nincs definiált anyag
@@ -2184,26 +2184,26 @@ tool:
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: Alkatrészek festése
+    action_0: Alkatrészek színezése
     action_0_status: Kattintson egy alkatrészre annak példányának festéséhez
     action_1: Élek festése
-    action_1_status: Kattintson egy tábla élére a(z) '$t(tab.materials.type_4)' anyag alkalmazásához
+    action_1_status: Kattintson egy tábla élére a '$t(tab.materials.type_4)' anyag alkalmazásához
     action_2: Felületek festése
     action_2_status: Kattintson egy tábla felületére a '$t(tab.materials.type_6)' anyag alkalmazásához
     action_3: Mintavétel
     action_3_status: Kattintson egy felületre az anyagának mintavételezéséhez
     action_4: Tisztítás
     action_4_status: Kattintson egy alkatrészre az összes anyag eltávolításához annak definíciójából és minden példányából
-    action_option_group_instances: Példányok száma
+    action_option_group_instances: Alkatrészek száma
     action_option_group_edges: Élzárók száma
     action_option_group_faces: Felületek száma
-    action_option_instances_0_status: Csak a célalkatrész példányának színezése
+    action_option_instances_0_status: Csak a célalkatrész színezése
     action_option_instances_1_status: A célalkatrész minden példányának színezése
-    action_option_edges_0_status: Csak a célél színezése
-    action_option_edges_1_status: A célél és az alkatrész szemközti élének színezése
-    action_option_edges_2_status: A célalkatrész mind a 4 élének színezése
+    action_option_edges_0_status: Csak a kiválasztott él színezése
+    action_option_edges_1_status: A kiválasztott él és az azzal szemközti él színezése
+    action_option_edges_2_status: Az alkatrész mind a 4 élének színezése
     action_option_faces_0_status: Csak a célfelület színezése
-    action_option_faces_1_status: A célalkatrész mindkét felületének színezése
+    action_option_faces_1_status: Az alkatrész mindkét lapjának színezése
     edges: "{{ count }} él"
     edges_plural: "{{ count }} él"
     edge_ymin: Hossz 1
@@ -2219,13 +2219,13 @@ tool:
       no_material_type: "Nincs '{{ type }}' típusú anyag"
     error:
       not_part: A célobjektum nem alkatrész (komponens)
-      not_edge: A célfelület nem táblaél
+      not_edge: A célfelület nem él
       not_face: A célfelület nem tábla felület
       wrong_material_type: "A célalkatrésznek '{{ type }}' típusúnak kell lennie"
   smart_axes:
     title: Tájolás
     action_0: Átfordítás
-    action_0_status: Kattintson egy alkatrészre annak példányának átfordításához valamelyik mérete mentén
+    action_0_status: Kattintson egy alkatrészre annak átfordításához valamelyik mérete mentén
     action_1: Hossz ↔ Szélesség csere
     action_1_status: Kattintson egy alkatrészre a Hosszának és Szélességének felcseréléséhez
     action_2: Elő- ↔ hátlap csere
@@ -2239,10 +2239,10 @@ tool:
     action_option_direction_1: SZ
     action_option_direction_2: V
     action_option_direction_0_status: Alkatrész átfordítása hosszirányban
-    action_option_direction_1_status: Alkatrész átfordítása szélességirányban
-    action_option_direction_2_status: Alkatrész átfordítása vastagsága mentén
+    action_option_direction_1_status: Alkatrész átfordítása szélességében
+    action_option_direction_2_status: Alkatrész átfordítása lapjában
     warning:
-      more_entities: "{{ count_used }} azonos definíciót használó példány módosul"
+      more_entities: "{{ count_used }} azonos definíciót használó alkatrész módosul"
     error:
       not_part: A célobjektum nem alkatrész (komponens)
       not_orientable: Ennek az alkatrésznek a típusa nem teszi lehetővé a tájolását
@@ -2274,7 +2274,7 @@ tool:
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
     action_option_options_merge_holes_status: Átmenő furatok elkülönítése és mélységek egyesítése minden üreghez
-    action_option_options_include_paths_status: Az alkatrészben lévő nem-felület élek exportálása útvonalként
+    action_option_options_include_paths_status: "Exportálás nyomvonalként azoknak az éleknek, amelyek az alkatrészben találhatók, de nem kapcsolódnak felülethez"
     error:
       not_part: Ez a felület nem tartozik alkatrészhez (komponenshez)
       not_flat_face: Ez a felület nem sík
