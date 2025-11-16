@@ -1975,7 +1975,7 @@ module Ladb::OpenCutList
         container_defs << container_def
 
         # Keep container section as entire parent section
-        parent_section_def = section_def
+        parent_section_def = section_def unless operation == SplitContainerDef::OPERATION_SPLIT
 
         # k_box = Kuix::BoxMotif.new
         # k_box.bounds.copy!(drawing_container_def.bounds)
@@ -2072,13 +2072,14 @@ module Ladb::OpenCutList
 
       fn_analyse.call(drawing_def)
 
-      puts "----"
-      container_defs.each do |container_def|
-        puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5(@picked_axis)} "
-      end
-      puts "----"
+      # Compute containers MD5
+      container_defs.first.compute_md5(@picked_axis)
 
-
+      # puts "----"
+      # container_defs.each do |container_def|
+      #   puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
+      # end
+      # puts "----"
 
       # Compute max compression distance
       el = [ eps, evpspe ]
@@ -2113,6 +2114,12 @@ module Ladb::OpenCutList
       return nil unless (split_def = _get_split_def).is_a?(Hash)
 
       container_defs, _ = split_def.values_at(:container_defs)
+
+      puts "----"
+      container_defs.each do |container_def|
+        puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
+      end
+      puts "----"
 
       split_def
     end
@@ -2168,7 +2175,10 @@ module Ladb::OpenCutList
     }
 
     SplitContainerDef = Struct.new(:drawing_container_def, :depth, :ref_position, :section_def, :edge_defs, :children, :operation) {
-      def md5(axis)
+      def md5
+        @md5
+      end
+      def compute_md5(axis)
         if @md5.nil?
           data = []
           data = [ drawing_container_def.container.definition.object_id ] if drawing_container_def.container.respond_to?(:definition)
@@ -2176,12 +2186,17 @@ module Ladb::OpenCutList
 
             unless drawing_container_def.is_root?
               local_axis = axis.transform((drawing_container_def.transformation * drawing_container_def.container.transformation).inverse)
-              data << (local_axis.parallel?(axis) || local_axis.perpendicular?(axis)) if local_axis.valid?
-              data << local_axis.length if local_axis.valid?
+              data << (local_axis.parallel?(axis) || local_axis.perpendicular?(axis)) if local_axis.valid?  # Differentiating rotations
+              data << local_axis.length if local_axis.valid?  # Differentiating scaling
             end
 
             data << edge_defs.map { |edge_def| edge_def.md5 }.join
-            data << children.map { |container_def| container_def.md5(axis) }.join
+            data << children.map { |container_def|
+              [
+                container_def.compute_md5(axis),
+                container_def.section_def.nil? ? -1 : container_def.section_def.index
+              ]
+            }.join
 
           end
           @md5 = Digest::MD5.hexdigest(data.to_json)
