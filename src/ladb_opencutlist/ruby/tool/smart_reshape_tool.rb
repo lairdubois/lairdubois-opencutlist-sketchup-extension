@@ -1735,10 +1735,10 @@ module Ladb::OpenCutList
           # ----------
 
           container_def.edge_defs
-                        .select { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
-                        .group_by { |edge_def| edge_def.start_section_def }
-                        .sort_by { |edge_section_def, _| edge_section_def.index * sorting_order }.to_h
-                        .each do |section_def, edge_defs|
+                       .select { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
+                       .group_by { |edge_def| edge_def.start_section_def }
+                       .sort_by { |section_def, _| section_def.index * sorting_order }.to_h # Sort to be sure that farest points are moved first
+                       .each do |section_def, edge_defs|
 
             edv = edvs[section_def]
 
@@ -1934,6 +1934,8 @@ module Ladb::OpenCutList
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
             section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
 
+            # Container bounds are not considered in this case
+
             operation = SplitContainerDef::OPERATION_MOVE
 
           else
@@ -1943,13 +1945,13 @@ module Ladb::OpenCutList
             if section_def.nil?
 
               # Default container section_def is where its bounds min is
-              section_def = section_defs.find { |section_def| section_def.contains_point?(drawing_container_def.bounds.min, xyz_method) } if section_def.nil?
+              section_def = section_defs.find { |section_def| section_def.contains_point?(drawing_container_def.bounds.min, xyz_method) }
 
               operation = SplitContainerDef::OPERATION_SPLIT
 
             else
 
-              # Add to section bounds
+              # Add the container bounds to the section bounds
               section_def.bounds.add(drawing_container_def.bounds)
 
               operation = SplitContainerDef::OPERATION_MOVE
@@ -2078,11 +2080,11 @@ module Ladb::OpenCutList
       # Compute containers MD5
       container_defs.first.compute_md5(@picked_axis)
 
-      # puts "----"
-      # container_defs.each do |container_def|
-      #   puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
-      # end
-      # puts "----"
+      puts "----"
+      container_defs.each do |container_def|
+        puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
+      end
+      puts "----"
 
       # Compute max compression distance
       el = [ eps, evpspe ]
