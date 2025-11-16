@@ -68,6 +68,16 @@ module Ladb::OpenCutList::Kuix
       @size.depth
     end
 
+    def dim_by_axis(axis)
+      case axis
+      when X_AXIS then width
+      when Y_AXIS then height
+      when Z_AXIS then depth
+      else
+        throw "Invalid dim_by_axis axis (axis=#{axis})"
+      end
+    end
+
     def x_min
       @origin.x
     end

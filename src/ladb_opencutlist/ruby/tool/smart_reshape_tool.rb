@@ -1098,12 +1098,13 @@ module Ladb::OpenCutList
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
       keb = Kuix::Bounds3d.new.copy!(eb)
 
+      @locked_axis = nil if @locked_axis && keb.dim_by_axis(@locked_axis) == 0
       @picked_axis = @locked_axis unless @locked_axis.nil?
 
       # Snap to grip?
 
       pk = view.pick_helper(x, y, 40)
-      [ X_AXIS, Y_AXIS, Z_AXIS ].select { |axis| @locked_axis.nil? || axis == @locked_axis }.each do |axis|
+      [ X_AXIS, Y_AXIS, Z_AXIS ].select { |axis| (@locked_axis.nil? || axis == @locked_axis) && keb.dim_by_axis(axis) > 0 }.each do |axis|
         grip_indices = Kuix::Bounds3d.faces_by_axis(axis)
         grip_indices.each do |grip_index|
           p = keb.face_center(grip_index).to_p.transform(et)
@@ -1128,22 +1129,26 @@ module Ladb::OpenCutList
         max_plane = [ max, direction ]
         vmax = min.vector_to(min.project_to_plane(max_plane))
 
-        inch_inflate_value = view.pixels_to_model(PX_INFLATE_VALUE, eb.center.transform(et))
+        if vmax.valid?
 
-        quad_index, _ = Kuix::Bounds3d.faces_by_axis(@picked_axis)
-        quad_ref = keb.inflate_all!(inch_inflate_value).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
+          inch_inflate_value = view.pixels_to_model(PX_INFLATE_VALUE, eb.center.transform(et))
 
-        p2d = Geom::Point3d.new(x, y)
-        @cutters[@picked_axis].each_with_index do |ratio, index|
+          quad_index, _ = Kuix::Bounds3d.faces_by_axis(@picked_axis)
+          quad_ref = keb.inflate_all!(inch_inflate_value).get_quad(quad_index).map { |point| point.transform(et).project_to_plane(min_plane)}
 
-          v = Geom::Vector3d.new(vmax)
-          v.length = vmax.length * ratio
-          t = Geom::Transformation.translation(v)
+          p2d = Geom::Point3d.new(x, y)
+          @cutters[@picked_axis].each_with_index do |ratio, index|
 
-          polygon = quad_ref.map { |point| view.screen_coords(point.transform(t)) }
-          if Geom.point_in_polygon_2D(p2d, polygon, true)
-            @picked_cutter_index = index
-            return true
+            v = Geom::Vector3d.new(vmax)
+            v.length = vmax.length * ratio
+            t = Geom::Transformation.translation(v)
+
+            polygon = quad_ref.map { |point| view.screen_coords(point.transform(t)) }
+            if Geom.point_in_polygon_2D(p2d, polygon, true)
+              @picked_cutter_index = index
+              return true
+            end
+
           end
 
         end
@@ -1455,7 +1460,7 @@ module Ladb::OpenCutList
 
       if @locked_axis.nil?
 
-        axes = [ X_AXIS, Y_AXIS, Z_AXIS ].delete_if { |axis| axis == @picked_axis }
+        axes = [ X_AXIS, Y_AXIS, Z_AXIS ].delete_if { |axis| axis == @picked_axis || keb.dim_by_axis(axis) == 0 }
 
         axes.map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } }.each do |p0, p1|
 
@@ -1720,58 +1725,52 @@ module Ladb::OpenCutList
 
         sorting_order = (emv.valid? && emv.samedirection?(evpspe)) ? -1 : 1
 
-        container_defs
-          .group_by { |container_def| container_def.section_def }
-          .each do |section_def, container_defs|
+        container_defs.each do |container_def|
 
-          edv = edvs[section_def]
+          drawing_container_def = container_def.drawing_container_def
+          container = drawing_container_def.container
+          entities = container.respond_to?(:entities) ? container.entities : container.definition.entities
 
-          container_defs.each do |container_def|
+          # Move edges
+          # ----------
 
-            drawing_container_def = container_def.drawing_container_def
-            container = drawing_container_def.container
-            entities = container.respond_to?(:entities) ? container.entities : container.definition.entities
+          container_def.edge_defs
+                        .select { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
+                        .group_by { |edge_def| edge_def.start_section_def }
+                        .sort_by { |edge_section_def, _| edge_section_def.index * sorting_order }.to_h
+                        .each do |section_def, edge_defs|
 
-            # Move edges
-            # ----------
+            edv = edvs[section_def]
 
-            container_def.edge_defs
-                          .select { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
-                          .group_by { |edge_def| edge_def.start_section_def }
-                          .sort_by { |edge_section_def, _| edge_section_def.index * sorting_order }.to_h
-                          .each do |edge_section_def, edge_defs|
+            edge_def0 = edge_defs.first
+            t = edge_def0.transformation
 
-              edge_edv = edvs[edge_section_def]
+            target_position0 = edge_def0.ref_position
+            target_position0 = target_position0.offset(edv.transform(t.inverse)) if edv.valid?
+            current_position0 = edge_def0.edge.start.position
 
-              edge_def0 = edge_defs.first
-              t = edge_def0.transformation
+            v = current_position0.vector_to(target_position0)
 
-              target_position0 = edge_def0.ref_position
-              target_position0 = target_position0.offset(edge_edv.transform(t.inverse)) if edge_edv.valid?
-              current_position0 = edge_def0.edge.start.position
-
-              v = current_position0.vector_to(target_position0)
-
-              entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def.edge }) if v.valid?
-
-            end
-
-            # Move container
-            # --------------
-
-            next if container_def.operation != SplitContainerDef::OPERATION_MOVE || section_def.nil?
-
-            t = drawing_container_def.transformation
-
-            target_position = container_def.ref_position
-            target_position = target_position.offset(edv.transform(t.inverse)) if edv.valid?
-            current_position = ORIGIN.transform(container.transformation)
-
-            v = current_position.vector_to(target_position)
-
-            container.transform!(Geom::Transformation.translation(v)) if v.valid?
+            entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def.edge }) if v.valid?
 
           end
+
+          # Move container
+          # --------------
+
+          next if container_def.operation != SplitContainerDef::OPERATION_MOVE || container_def.section_def.nil?
+
+          edv = edvs[container_def.section_def]
+
+          t = drawing_container_def.transformation
+
+          target_position = container_def.ref_position
+          target_position = target_position.offset(edv.transform(t.inverse)) if edv.valid?
+          current_position = ORIGIN.transform(container.transformation)
+
+          v = current_position.vector_to(target_position)
+
+          container.transform!(Geom::Transformation.translation(v)) if v.valid?
 
         end
 
@@ -1944,7 +1943,7 @@ module Ladb::OpenCutList
             if section_def.nil?
 
               # Default container section_def is where its bounds min is
-              # section_def = section_defs.find { |section_def| section_def.contains_point?(drawing_container_def.bounds.min, xyz_method) } if section_def.nil?
+              section_def = section_defs.find { |section_def| section_def.contains_point?(drawing_container_def.bounds.min, xyz_method) } if section_def.nil?
 
               operation = SplitContainerDef::OPERATION_SPLIT
 
@@ -2075,11 +2074,11 @@ module Ladb::OpenCutList
       # Compute containers MD5
       container_defs.first.compute_md5(@picked_axis)
 
-      # puts "----"
-      # container_defs.each do |container_def|
-      #   puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
-      # end
-      # puts "----"
+      puts "----"
+      container_defs.each do |container_def|
+        puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
+      end
+      puts "----"
 
       # Compute max compression distance
       el = [ eps, evpspe ]
@@ -2115,11 +2114,11 @@ module Ladb::OpenCutList
 
       container_defs, _ = split_def.values_at(:container_defs)
 
-      puts "----"
-      container_defs.each do |container_def|
-        puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
-      end
-      puts "----"
+      # puts "----"
+      # container_defs.each do |container_def|
+      #   puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
+      # end
+      # puts "----"
 
       split_def
     end
