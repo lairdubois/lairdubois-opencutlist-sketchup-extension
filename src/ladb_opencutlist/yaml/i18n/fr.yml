@@ -2166,11 +2166,13 @@ tool:
     action_0_state_2_status: Cliquez pour valider l'étirement ou entrez une distance
     action_option_group_stretch_measure_type: Mesure
     action_option_group_axes: Axes
+    action_option_group_options: Options
     action_option_stretch_measure_type_outside_status: Mesurer à l'extérieur
     action_option_stretch_measure_type_offset_status: Mesurer la différence
     action_option_axes_active_status: Manipuler le long des axes actifs
     action_option_axes_context_status: Manipuler le long des axes du groupe ou composant contenant la pièce
     action_option_axes_entity_status: Manipuler le long des axes de la pièce
+    action_option_options_make_unique_status: Rendre unique les éléments étirés
     error:
       curve_intersect: L'un des plans de coupe traverse un élément non étirable (courbe ou accessoire)
   smart_paint:

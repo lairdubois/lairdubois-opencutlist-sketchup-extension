@@ -28,12 +28,15 @@ module Ladb::OpenCutList
     ACTION_OPTION_AXES_CONTEXT = 'context'
     ACTION_OPTION_AXES_ENTITY = 'entity'
 
+    ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
+
     ACTIONS = [
       {
         :action => ACTION_STRETCH,
         :options => {
           ACTION_OPTION_STRETCH_MEASURE_TYPE => [ ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET ],
-          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ]
+          ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ],
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
         }
       }
     ].freeze
@@ -116,6 +119,11 @@ module Ladb::OpenCutList
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0L0.167,0.833L1,0.833 M0,0.167L0.167,0L0.333,0.167 M0.833,0.667L1,0.833L0.833,1 M0.5,0.083L0.5,0.5L0.917,0.5L0.917,0.083L0.5,0.083'))
         when ACTION_OPTION_AXES_ENTITY
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.25,0L0.25,0.75L1,0.75 M0.083,0.167L0.25,0L0.417,0.167 M0.833,0.583L1,0.75L0.833,0.917 M0.042,0.5L0.042,0.958L0.5,0.958L0.5,0.5L0.042,0.5'))
+        end
+      when ACTION_OPTION_OPTIONS
+        case option
+        when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0.167L0.167,0.833 M0.417,0.167L0.417,0.833 M0,0.333L0.583,0.333 M0,0.667L0.583,0.667 M0.75,0.333L1,0.167L1,0.833'))
         end
       end
 
@@ -632,6 +640,10 @@ module Ladb::OpenCutList
 
     def _fetch_option_axes
       @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_AXES)
+    end
+
+    def _fetch_option_options_make_unique
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE)
     end
 
     # -----
@@ -1737,7 +1749,7 @@ module Ladb::OpenCutList
           container_def.edge_defs
                        .select { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
                        .group_by { |edge_def| edge_def.start_section_def }
-                       .sort_by { |section_def, _| section_def.index * sorting_order }.to_h # Sort to be sure that farest points are moved first
+                       .sort_by { |section_def, _| section_def.index * sorting_order }.to_h # Sort edges to be sure that farest points are moved first
                        .each do |section_def, edge_defs|
 
             edv = edvs[section_def]
@@ -1745,8 +1757,13 @@ module Ladb::OpenCutList
             edge_def0 = edge_defs.first
             t = edge_def0.transformation
 
+            dv = edv
+            # TODO : min move
+            # dv -= edvs[container_def.section_def]
+            # dv.reverse! if container_def.section_def == section_def if dv.valid?
+
             target_position0 = edge_def0.ref_position
-            target_position0 = target_position0.offset(edv.transform(t.inverse)) if edv.valid?
+            target_position0 = target_position0.offset(dv.transform(t.inverse)) if dv.valid?
             current_position0 = edge_def0.edge.start.position
 
             v = current_position0.vector_to(target_position0)
@@ -1758,7 +1775,13 @@ module Ladb::OpenCutList
           # Move container
           # --------------
 
-          next if container_def.operation != SplitContainerDef::OPERATION_MOVE || container_def.section_def.nil?
+          next if container_def.operation != SplitContainerDef::OPERATION_MOVE ||
+                  container_def.section_def.nil? ||
+                  container.is_a?(Sketchup::Model)
+          # TODO : min move
+          # next if container_def.operation == SplitContainerDef::OPERATION_NONE ||
+          #         container_def.section_def.nil? ||
+          #         container.is_a?(Sketchup::Model)
 
           edv = edvs[container_def.section_def]
 
@@ -2086,6 +2109,15 @@ module Ladb::OpenCutList
       end
       puts "----"
 
+      container_defs.group_by { |container_def| container_def.definition }.to_h
+                    .each do |definition, container_defs|
+        puts "#{definition ? definition.name : 'Model'}:"
+        container_defs.group_by { |container_def| container_def.md5 }.to_h
+                      .each do |md5, container_defs|
+          puts "  #{md5}: #{container_defs.size} / #{definition ? definition.count_used_instances : 1} (op: #{container_defs.map {|container_def| container_def.operation }}))"
+        end
+      end
+
       # Compute max compression distance
       el = [ eps, evpspe ]
       sd = section_defs
@@ -2180,6 +2212,10 @@ module Ladb::OpenCutList
     }
 
     SplitContainerDef = Struct.new(:drawing_container_def, :depth, :ref_position, :section_def, :edge_defs, :children, :operation) {
+      def definition
+        return drawing_container_def.container.definition if drawing_container_def.container.respond_to?(:definition)
+        nil
+      end
       def md5
         @md5
       end
@@ -2187,23 +2223,22 @@ module Ladb::OpenCutList
         if @md5.nil?
           data = []
           data = [ drawing_container_def.container.definition.object_id ] if drawing_container_def.container.respond_to?(:definition)
-          if operation == SplitContainerDef::OPERATION_SPLIT
 
-            unless drawing_container_def.is_root?
-              local_axis = axis.transform((drawing_container_def.transformation * drawing_container_def.container.transformation).inverse)
-              data << (local_axis.parallel?(axis) || local_axis.perpendicular?(axis)) if local_axis.valid?  # Differentiating rotations
-              data << local_axis.length if local_axis.valid?  # Differentiating scaling
-            end
-
-            data << edge_defs.map { |edge_def| edge_def.md5 }.join
-            data << children.map { |container_def|
-              [
-                container_def.compute_md5(axis),
-                container_def.section_def.nil? ? -1 : container_def.section_def.index
-              ]
-            }.join
-
+          unless drawing_container_def.is_root?
+            local_axis = axis.transform((drawing_container_def.transformation * drawing_container_def.container.transformation).inverse)
+            data << (local_axis.parallel?(axis) || local_axis.perpendicular?(axis)) if local_axis.valid?  # Differentiating rotations
+            data << local_axis.length.to_f.round(6) if local_axis.valid? && operation == SplitContainerDef::OPERATION_SPLIT  # Differentiating scaling
           end
+
+          data << edge_defs.map { |edge_def| edge_def.md5 }.join if operation == SplitContainerDef::OPERATION_SPLIT  # TODO
+          # data << edge_defs.all? { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_NONE || edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
+          data << children.map { |container_def|
+            [
+              container_def.compute_md5(axis),
+              container_def.section_def.nil? ? -1 : container_def.section_def.index
+            ]
+          }.join
+
           @md5 = Digest::MD5.hexdigest(data.to_json)
         end
         @md5
