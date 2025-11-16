@@ -2100,23 +2100,30 @@ module Ladb::OpenCutList
 
       fn_analyse.call(drawing_def)
 
-      # Compute containers MD5
-      container_defs.first.compute_md5(@picked_axis)
 
-      puts "----"
-      container_defs.each do |container_def|
-        puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
-      end
-      puts "----"
+      # TODO
+      if _fetch_option_options_make_unique
 
-      container_defs.group_by { |container_def| container_def.definition }.to_h
-                    .each do |definition, container_defs|
-        puts "#{definition ? definition.name : 'Model'}:"
-        container_defs.group_by { |container_def| container_def.md5 }.to_h
-                      .each do |md5, container_defs|
-          puts "  #{md5}: #{container_defs.size} / #{definition ? definition.count_used_instances : 1} (op: #{container_defs.map {|container_def| container_def.operation }}))"
+        # Compute containers MD5
+        container_defs.first.compute_md5(@picked_axis)
+
+        puts "----"
+        container_defs.each do |container_def|
+          puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
         end
+        puts "----"
+
+        container_defs.group_by { |container_def| container_def.definition }.to_h
+                      .each do |definition, container_defs|
+          puts "#{definition ? definition.name : 'Model'}:"
+          container_defs.group_by { |container_def| container_def.md5 }.to_h
+                        .each do |md5, container_defs|
+            puts "  #{md5}: #{container_defs.size} / #{definition ? definition.count_used_instances : 1} (op: #{container_defs.map {|container_def| container_def.operation }}))"
+          end
+        end
+
       end
+
 
       # Compute max compression distance
       el = [ eps, evpspe ]
