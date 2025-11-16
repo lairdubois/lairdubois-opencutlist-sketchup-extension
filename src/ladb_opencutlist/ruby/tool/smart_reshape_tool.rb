@@ -2005,7 +2005,11 @@ module Ladb::OpenCutList
                 edge.start.position,
                 section_def,
                 section_def,
-                operation == SplitContainerDef::OPERATION_NONE ? SplitEdgeDef::OPERATION_NONE : SplitEdgeDef::OPERATION_MOVE
+                if operation == SplitContainerDef::OPERATION_SPLIT
+                  SplitEdgeDef::OPERATION_MOVE
+                else
+                  SplitEdgeDef::OPERATION_NONE
+                end
               )
               fn_store_vertex_section_def.call(edge.start, drawing_container_def, section_def)
               fn_store_vertex_section_def.call(edge.end, drawing_container_def, section_def)
@@ -2074,11 +2078,11 @@ module Ladb::OpenCutList
       # Compute containers MD5
       container_defs.first.compute_md5(@picked_axis)
 
-      puts "----"
-      container_defs.each do |container_def|
-        puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
-      end
-      puts "----"
+      # puts "----"
+      # container_defs.each do |container_def|
+      #   puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
+      # end
+      # puts "----"
 
       # Compute max compression distance
       el = [ eps, evpspe ]
