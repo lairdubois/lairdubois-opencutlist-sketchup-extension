@@ -53,7 +53,7 @@ module.exports = function (languageLabels, languageDisabledMsgs, languageReloadM
         try {
 
             var contents = file.contents.toString('utf8');
-            var ymlDocument = yaml.safeLoad(contents);
+            var ymlDocument = yaml.load(contents);
 
             deleteHiddenKeys(ymlDocument);
             markownValues(ymlDocument);
