@@ -1728,15 +1728,97 @@ module Ladb::OpenCutList
       return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
 
       split_def, emv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :edvs, :lpe)
+      et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
 
       _unhide_instances
+
+      # Prepare uniqueness data
+      container_defs.first.compute_md5(@picked_axis)
+      container_defs.first.compute_entity_pos
 
       model = Sketchup.active_model
       model.start_operation('OCL Stretch Part', true, false, !active?)
 
-        split_def = _make_unique_split_def(split_def)
+        # Make Unique routine
+        # -------------------
 
-        et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
+        make_unique_o = _fetch_option_options_make_unique
+
+        container_defs.group_by { |container_def| container_def.definition }
+                      .sort_by { |definition, container_defs| container_defs.map(&:depth).max }.to_h  # Ensure that lowest depth containers are processed first
+                      .each do |definition, container_defs|
+
+          next if definition.nil?
+
+          count_stretched_instances = container_defs.size
+
+          container_defs.sort_by { |container_def| container_def.operation }.reverse
+                        .group_by { |container_def| container_def.md5 }.to_h
+                        .each do |md5, container_defs|
+
+            make_unique_d = make_unique_o && count_stretched_instances < definition.count_used_instances
+            make_unique_c = (make_unique_d || container_defs.size < count_stretched_instances) && container_defs.any? { |container_def| container_def.operation == SplitContainerDef::OPERATION_SPLIT }
+
+            # puts "  make_unique_d: #{make_unique_d}"
+            # puts "  make_unique_c: #{make_unique_c}"
+            # puts "  #{md5}: #{container_defs.size} / #{count_stretched_instances} / #{definition.count_used_instances} (op: #{container_defs.map {|container_def| container_def.operation }}))"
+            # container_defs.each do |container_def|
+            #   puts "   ↳ C <#{definition.name}> (#{container_def.container.name}) #{container_def.entity_pos}"
+            #   # container_def.edge_defs.each do |edge_def|
+            #   #   puts "     ↳ E #{edge_def.entity_pos}"
+            #   # end
+            # end
+
+            if make_unique_c
+
+              if definition.group?
+
+                container_defs.each do |container_def|
+
+                  new_container = container_def.container.make_unique
+                  new_definition = new_container.definition
+
+                  container_def.container = new_container
+                  container_def.edge_defs.each do |edge_def|
+                    edge_def.edge = new_definition.entities[edge_def.entity_pos]
+                  end
+                  container_def.children.each do |container_def|
+                    container_def.container = new_definition.entities[container_def.entity_pos]
+                  end
+
+                end
+
+              else
+
+                container_def0 = container_defs.first
+
+                new_container = container_def0.container.make_unique
+                new_definition = new_container.definition
+
+                container_def0.container = new_container
+
+                container_defs.each do |container_def|
+                  container_def.container.definition = new_definition
+                  container_def.edge_defs.each do |edge_def|
+                    edge_def.edge = new_definition.entities[edge_def.entity_pos]
+                  end
+                  container_def.children.each do |container_def|
+                    container_def.container = new_definition.entities[container_def.entity_pos]
+                  end
+                end
+
+              end
+
+              count_stretched_instances -= container_defs.size
+
+            end
+
+          end
+
+        end
+
+        # Stretch routine
+        # ---------------
 
         sorting_order = (emv.valid? && emv.samedirection?(evpspe)) ? -1 : 1
 
@@ -2155,92 +2237,6 @@ module Ladb::OpenCutList
         section_defs: section_defs,
         container_defs: container_defs,
       }
-    end
-
-    def _make_unique_split_def(split_def)
-
-      container_defs, _ = split_def.values_at(:container_defs)
-
-      # Prepare uniqueness data
-      container_defs.first.compute_md5(@picked_axis)
-      container_defs.first.compute_entity_pos
-
-      make_unique_s = _fetch_option_options_make_unique
-
-      container_defs.sort_by { |container_def| container_def.depth }
-                    .group_by { |container_def| container_def.definition }.to_h
-                    .each do |definition, container_defs|
-
-        next if definition.nil?
-
-        count_stretched_instances = container_defs.size
-
-        container_defs.sort_by { |container_def| container_def.operation }.reverse
-                      .group_by { |container_def| container_def.md5 }.to_h
-                      .each do |md5, container_defs|
-
-          make_unique_d = make_unique_s && count_stretched_instances < definition.count_used_instances
-          make_unique_c = (make_unique_d || container_defs.size < count_stretched_instances) && container_defs.one? { |container_def| container_def.operation == SplitContainerDef::OPERATION_SPLIT }
-
-          # puts "  make_unique_d: #{make_unique_d}"
-          # puts "  make_unique_c: #{make_unique_c}"
-          # puts "  #{md5}: #{container_defs.size} / #{count_stretched_instances} / #{definition.count_used_instances} (op: #{container_defs.map {|container_def| container_def.operation }}))"
-          # container_defs.each do |container_def|
-          #   puts "   ↳ C (#{container_def.container.name}) #{container_def.entity_pos}"
-          #   # container_def.edge_defs.each do |edge_def|
-          #   #   puts "     ↳ E #{edge_def.entity_pos}"
-          #   # end
-          # end
-
-          if make_unique_c
-
-            if definition.group?
-
-              container_defs.each do |container_def|
-
-                new_container = container_def.container.make_unique
-                new_definition = new_container.definition
-
-                container_def.container = new_container
-                container_def.edge_defs.each do |edge_def|
-                  edge_def.edge = new_definition.entities[edge_def.entity_pos]
-                end
-                container_def.children.each do |container_def|
-                  container_def.container = new_definition.entities[container_def.entity_pos]
-                end
-
-              end
-
-            else
-
-              container_def0 = container_defs.first
-
-              new_container = container_def0.container.make_unique
-              new_definition = new_container.definition
-
-              container_def0.container = new_container
-
-              container_defs.each do |container_def|
-                container_def.container.definition = new_definition
-                container_def.edge_defs.each do |edge_def|
-                  edge_def.edge = new_definition.entities[edge_def.entity_pos]
-                end
-                container_def.children.each do |container_def|
-                  container_def.container = new_definition.entities[container_def.entity_pos]
-                end
-              end
-
-            end
-
-            count_stretched_instances -= 1
-
-          end
-
-        end
-
-      end
-
-      split_def
     end
 
     def _get_stretch_def(ps, pe)
