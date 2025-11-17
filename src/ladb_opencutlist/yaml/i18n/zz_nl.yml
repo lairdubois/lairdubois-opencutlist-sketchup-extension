@@ -2161,104 +2161,106 @@ tool:
     action_0_state_2_status: 1665 - Klik om het uitrekken te bevestigen of voer een afstand in
     action_option_group_stretch_measure_type: 1666 - Meten
     action_option_group_axes: 1667 - Assen
-    action_option_stretch_measure_type_outside_status: 1668 - Aan de buitenzijde meten
-    action_option_stretch_measure_type_offset_status: 1669 - Het verschil meten
-    action_option_axes_active_status: 1670 - Verplaatsen langs de actieve assen
-    action_option_axes_context_status: 1671 - Verplaatsen langs de assen van de groep of component die het stuk bevat
-    action_option_axes_entity_status: 1672 - Verplaatsen langs de assen van het stuk
+    action_option_group_options: 1668 - Opties
+    action_option_stretch_measure_type_outside_status: 1669 - Aan de buitenzijde meten
+    action_option_stretch_measure_type_offset_status: 1670 - Het verschil meten
+    action_option_axes_active_status: 1671 - Verplaatsen langs de actieve assen
+    action_option_axes_context_status: 1672 - Verplaatsen langs de assen van de groep of component die het stuk bevat
+    action_option_axes_entity_status: 1673 - Verplaatsen langs de assen van het stuk
+    action_option_options_make_unique_status: 1674 - Rekbare elementen uniek maken
     error:
-      curve_intersect: 1673 - Een van de snijvlakken snijdt door een element dat niet kan worden uitgerekt (een bocht of accessoire)
+      curve_intersect: 1675 - Een van de snijvlakken snijdt door een element dat niet kan worden uitgerekt (een bocht of accessoire)
   smart_paint:
-    title: 1674 - Kleur
-    default_material: 1675 - Geen materiaal gedefinieerd
-    filters: 1676 - Filters
-    filter_0: 1677 - Zonder type
+    title: 1676 - Kleur
+    default_material: 1677 - Geen materiaal gedefinieerd
+    filters: 1678 - Filters
+    filter_0: 1679 - Zonder type
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1684 - Kleur stukken
-    action_0_status: 1685 - Klik op een onderdeel om een ​​materiaal op zijn exemplaar toe te passen
-    action_1: 1686 - Kleur het object
-    action_1_status: 1687 - Klik op een rand van een paneelonderdeel om er een materiaal '$t(tab.materials.type_4)' op toe te passen
-    action_2: 1688 - Vlak opschonen
-    action_2_status: 1689 - Klik op een vlak van een paneelonderdeel om er een materiaal '$t(tab.materials.type_6)' op toe te passen
-    action_3: 1690 - Object opschonen
-    action_3_status: 1691 - Klik op een gezicht om een ​​monster van het materiaal te nemen
-    action_4: 1692 - Schoonmaken
-    action_4_status: 1693 - Klik op een onderdeel om alle materialen en alle instanties ervan uit de definitie te verwijderen
-    action_option_group_instances: 1694 - Aantal exemplaren
-    action_option_group_edges: 1695 - Aantal kantenbanden
-    action_option_group_faces: 1696 - Aantal aanzichten
-    action_option_instances_0_status: 1697 - Kleur alleen de beoogde onderdeelinstantie
-    action_option_instances_1_status: 1698 - Kleur alle exemplaren van het beoogde onderdeel
-    action_option_edges_0_status: 1699 - Kleur alleen het beoogde nummer
-    action_option_edges_1_status: 1700 - Kleur het doelnummer en het tegenovergestelde nummer van het stuk
-    action_option_edges_2_status: 1701 - Kleur de 4 nummers van het beoogde stuk
-    action_option_faces_0_status: 1702 - Kleur alleen het beoogde aanzicht
-    action_option_faces_1_status: 1703 - Kleur 2 zijden van het beoogde stuk
-    edges: 1704 - {{ count }} nummer
-    edges_plural: 1705 - {{ count }} nummers
-    edge_ymin: 1706 - Lengte 1
-    edge_ymax: 1707 - Lengte 2
-    edge_xmin: 1708 - Breedte 1
-    edge_xmax: 1709 - Breedte 2
-    faces: 1710 - {{ count }} zijde
-    faces_plural: 1711 - {{ count }} zijdes
-    face_zmin: 1712 - Achterkant
-    face_zmax: 1713 - Voorzijde
+    action_0: 1686 - Kleur stukken
+    action_0_status: 1687 - Klik op een onderdeel om een ​​materiaal op zijn exemplaar toe te passen
+    action_1: 1688 - Kleur het object
+    action_1_status: 1689 - Klik op een rand van een paneelonderdeel om er een materiaal '$t(tab.materials.type_4)' op toe te passen
+    action_2: 1690 - Vlak opschonen
+    action_2_status: 1691 - Klik op een vlak van een paneelonderdeel om er een materiaal '$t(tab.materials.type_6)' op toe te passen
+    action_3: 1692 - Object opschonen
+    action_3_status: 1693 - Klik op een gezicht om een ​​monster van het materiaal te nemen
+    action_4: 1694 - Schoonmaken
+    action_4_status: 1695 - Klik op een onderdeel om alle materialen en alle instanties ervan uit de definitie te verwijderen
+    action_option_group_instances: 1696 - Aantal exemplaren
+    action_option_group_edges: 1697 - Aantal kantenbanden
+    action_option_group_faces: 1698 - Aantal aanzichten
+    action_option_instances_0_status: 1699 - Kleur alleen de beoogde onderdeelinstantie
+    action_option_instances_1_status: 1700 - Kleur alle exemplaren van het beoogde onderdeel
+    action_option_edges_0_status: 1701 - Kleur alleen het beoogde nummer
+    action_option_edges_1_status: 1702 - Kleur het doelnummer en het tegenovergestelde nummer van het stuk
+    action_option_edges_2_status: 1703 - Kleur de 4 nummers van het beoogde stuk
+    action_option_faces_0_status: 1704 - Kleur alleen het beoogde aanzicht
+    action_option_faces_1_status: 1705 - Kleur 2 zijden van het beoogde stuk
+    edges: 1706 - {{ count }} nummer
+    edges_plural: 1707 - {{ count }} nummers
+    edge_ymin: 1708 - Lengte 1
+    edge_ymax: 1709 - Lengte 2
+    edge_xmin: 1710 - Breedte 1
+    edge_xmax: 1711 - Breedte 2
+    faces: 1712 - {{ count }} zijde
+    faces_plural: 1713 - {{ count }} zijdes
+    face_zmin: 1714 - Achterkant
+    face_zmax: 1715 - Voorzijde
     warning:
-      no_material: 1714 - Uw model bevat geen materialen!
-      no_material_type: 1715 - Geen materiaal van type '{{ type }}'
+      no_material: 1716 - Uw model bevat geen materialen!
+      no_material_type: 1717 - Geen materiaal van type '{{ type }}'
     error:
-      not_part: 1716 - Het beoogde object is geen onderdeel (component)
-      not_edge: 1717 - Het doelvlak is geen paneelrand
-      not_face: 1718 - Het doelvlak is geen paneelvlak
-      wrong_material_type: 1719 - Het beoogde deel moet van het type '{{ type }}' zijn
+      not_part: 1718 - Het beoogde object is geen onderdeel (component)
+      not_edge: 1719 - Het doelvlak is geen paneelrand
+      not_face: 1720 - Het doelvlak is geen paneelvlak
+      wrong_material_type: 1721 - Het beoogde deel moet van het type '{{ type }}' zijn
   smart_axes:
-    title: 1720 - Oriënteren
-    action_0: 1721 - Terugkeren
-    action_0_status: 1722 - Klik op een onderdeel om het exemplaar ervan langs een van de afmetingen te spiegelen
-    action_1: 1723 - Wissel lengte ↔ breedte
-    action_1_status: 1724 - Klik op een onderdeel om de lengte te verwisselen met de breedte
-    action_2: 1725 - Wissel gezicht ↔ Tegengezicht
-    action_2_status: 1726 - Klik op een stuk om de aflezing van de voorkant te verwisselen met de achterkant
-    action_3: 1727 - Pas de assen aan
-    action_3_status: 1728 - Richt op een gebied van een onderdeel en klik op een rand om de assen aan te passen
-    action_4: 1729 - Oorsprong verplaatsen
-    action_4_status: 1730 - Richt op een vlak van een onderdeel en klik op een punt om de oorsprong daar te plaatsen
-    action_option_group_direction: 1731 - Richting
-    action_option_direction_0: 1732 - LO
-    action_option_direction_1: 1733 - La
-    action_option_direction_2: 1734 - Ep
-    action_option_direction_0_status: 1735 - Draai het stuk in de lengte om
-    action_option_direction_1_status: 1736 - Draai het stuk naar de breedte
-    action_option_direction_2_status: 1737 - Draai het stuk om in zijn dikte
+    title: 1722 - Oriënteren
+    action_0: 1723 - Terugkeren
+    action_0_status: 1724 - Klik op een onderdeel om het exemplaar ervan langs een van de afmetingen te spiegelen
+    action_1: 1725 - Wissel lengte ↔ breedte
+    action_1_status: 1726 - Klik op een onderdeel om de lengte te verwisselen met de breedte
+    action_2: 1727 - Wissel gezicht ↔ Tegengezicht
+    action_2_status: 1728 - Klik op een stuk om de aflezing van de voorkant te verwisselen met de achterkant
+    action_3: 1729 - Pas de assen aan
+    action_3_status: 1730 - Richt op een gebied van een onderdeel en klik op een rand om de assen aan te passen
+    action_4: 1731 - Oorsprong verplaatsen
+    action_4_status: 1732 - Richt op een vlak van een onderdeel en klik op een punt om de oorsprong daar te plaatsen
+    action_option_group_direction: 1733 - Richting
+    action_option_direction_0: 1734 - LO
+    action_option_direction_1: 1735 - La
+    action_option_direction_2: 1736 - Ep
+    action_option_direction_0_status: 1737 - Draai het stuk in de lengte om
+    action_option_direction_1_status: 1738 - Draai het stuk naar de breedte
+    action_option_direction_2_status: 1739 - Draai het stuk om in zijn dikte
     warning:
-      more_entities: 1738 - {{ count_used }} instanties die dezelfde definitie delen, worden aangepast
+      more_entities: 1740 - {{ count_used }} instanties die dezelfde definitie delen, worden aangepast
     error:
-      not_part: 1739 - Het beoogde object is geen onderdeel (component)
-      not_orientable: 1740 - Het type van dit onderdeel maakt het niet mogelijk om het te oriënteren
+      not_part: 1741 - Het beoogde object is geen onderdeel (component)
+      not_orientable: 1742 - Het type van dit onderdeel maakt het niet mogelijk om het te oriënteren
   smart_export:
-    title: 1741 - Exporteren
-    action_0: 1742 - Exporteer een 3D-onderdeel
-    action_0_status: 1743 - Klik op een onderdeel
-    action_1: 1744 - Exporteer een 2D-onderdeel
-    action_1_status: 1745 - Klik op de voorkant van een stuk
-    action_2: 1746 - Een aanzicht exporteren
-    action_2_status: 1747 - Klik op een aanzicht
-    action_3: 1748 - Een deel exporteren
-    action_3_status: 1749 - Klik op een rand
-    action_option_group_file_format: 1750 - Formaat
-    action_option_group_unit: 1751 - Eenheid
-    action_option_group_faces: 1752 - Fineren
-    action_option_group_options: 1753 - Opties
-    action_option_file_format_dxf_status: 1754 - Exporteren naar DXF-bestand
-    action_option_file_format_stl_status: 1755 - Exporteren naar STL-bestand
-    action_option_file_format_obj_status: 1756 - Exporteren naar OBJ-bestand
-    action_option_file_format_svg_status: 1757 - Exporteren naar SVG-bestand
+    title: 1743 - Exporteren
+    action_0: 1744 - Exporteer een 3D-onderdeel
+    action_0_status: 1745 - Klik op een onderdeel
+    action_1: 1746 - Exporteer een 2D-onderdeel
+    action_1_status: 1747 - Klik op de voorkant van een stuk
+    action_2: 1748 - Een aanzicht exporteren
+    action_2_status: 1749 - Klik op een aanzicht
+    action_3: 1750 - Een deel exporteren
+    action_3_status: 1751 - Klik op een rand
+    action_option_group_file_format: 1752 - Formaat
+    action_option_group_unit: 1753 - Eenheid
+    action_option_group_faces: 1754 - Fineren
+    action_option_group_options: 1755 - Opties
+    action_option_file_format_dxf_status: 1756 - Exporteren naar DXF-bestand
+    action_option_file_format_stl_status: 1757 - Exporteren naar STL-bestand
+    action_option_file_format_obj_status: 1758 - Exporteren naar OBJ-bestand
+    action_option_file_format_svg_status: 1759 - Exporteren naar SVG-bestand
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2268,9 +2270,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1767 - Isoleer doorlopende gaten en voeg de diepten voor elke holte samen
-    action_option_options_include_paths_status: 1768 - Exporteer de randen die niet zijn gekoppeld aan een vlak in het onderdeel
+    action_option_options_merge_holes_status: 1769 - Isoleer doorlopende gaten en voeg de diepten voor elke holte samen
+    action_option_options_include_paths_status: 1770 - Exporteer de randen die niet zijn gekoppeld aan een vlak in het onderdeel
     error:
-      not_part: 1769 - Dit vlak maakt geen deel uit van een onderdeel (component)
-      not_flat_face: 1770 - Dit oppervlak is niet vlak
-      incompatible_active_path: 1771 - Het actieve pad staat niet toe om dit onderdeel te exporteren
+      not_part: 1771 - Dit vlak maakt geen deel uit van een onderdeel (component)
+      not_flat_face: 1772 - Dit oppervlak is niet vlak
+      incompatible_active_path: 1773 - Het actieve pad staat niet toe om dit onderdeel te exporteren

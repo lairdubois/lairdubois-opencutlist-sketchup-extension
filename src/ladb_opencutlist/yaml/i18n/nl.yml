@@ -2166,11 +2166,13 @@ tool:
     action_0_state_2_status: Klik om het uitrekken te bevestigen of voer een afstand in
     action_option_group_stretch_measure_type: Meten
     action_option_group_axes: Assen
+    action_option_group_options: Opties
     action_option_stretch_measure_type_outside_status: Aan de buitenzijde meten
     action_option_stretch_measure_type_offset_status: Het verschil meten
     action_option_axes_active_status: Verplaatsen langs de actieve assen
     action_option_axes_context_status: Verplaatsen langs de assen van de groep of component die het stuk bevat
     action_option_axes_entity_status: Verplaatsen langs de assen van het stuk
+    action_option_options_make_unique_status: Rekbare elementen uniek maken
     error:
       curve_intersect: Een van de snijvlakken snijdt door een element dat niet kan worden uitgerekt (een bocht of accessoire)
   smart_paint:

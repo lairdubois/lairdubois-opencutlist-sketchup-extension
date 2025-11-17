@@ -2064,7 +2064,7 @@ tool:
       missing_operand: "Operando mancante"
       zero_division: "Divisione per zero"
       lt_min_distance: "La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }} "
-      gt_max_distance: ""
+      gt_max_distance: "La distanza {{ value1 }} è superiore alla distanza massima di {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2156,23 +2156,25 @@ tool:
     action_0: Allungare
     action_0_status: Clicca su un elemento per selezionarlo
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: ""
-    action_0_state_1a_status: ""
-    action_0_state_1b_status: ""
-    action_0_state_1c_status: ""
-    action_0_state_10_status: ""
-    action_0_state_11_status: ""
-    action_0_state_12_status: ""
-    action_0_state_2_status: ""
+    action_0_state_1_status: Clicca su una maniglia per allungare
+    action_0_state_1a_status: Clicca su un piano di taglio per spostarlo
+    action_0_state_1b_status: Aggiungere un piano di taglio
+    action_0_state_1c_status: Cancellare un piano di taglio
+    action_0_state_10_status: Trascinare il piano di taglio per spostarlo
+    action_0_state_11_status: Clicca per aggiungere il piano di taglio
+    action_0_state_12_status: Clicca su un piano di taglio per eliminarlo
+    action_0_state_2_status: Clicca per confermare l'allungamento o inserisci una distanza
     action_option_group_stretch_measure_type: Misura
     action_option_group_axes: Assi
+    action_option_group_options: Opzioni
     action_option_stretch_measure_type_outside_status: Misura esterna
     action_option_stretch_measure_type_offset_status: Misura la differenza
     action_option_axes_active_status: Sposta lungo l'asse attivo
     action_option_axes_context_status: Modificare lungo gli assi del gruppo o del componente contenente il pezzo
     action_option_axes_entity_status: Modifica su un asse dell'elemento
+    action_option_options_make_unique_status: Rendere unici gli elementi allungati
     error:
-      curve_intersect: ""
+      curve_intersect: Uno dei piani di taglio attraversa un elemento non estensibile (curva o accessorio)
   smart_paint:
     title: Assegna il materiale
     default_material: Nessun materiale definito

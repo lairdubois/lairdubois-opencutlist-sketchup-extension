@@ -2059,7 +2059,7 @@ tool:
       missing_operand: 1570 - Operando mancante
       zero_division: 1571 - Divisione per zero
       lt_min_distance: '1572 - La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }} '
-      gt_max_distance: '1573 - '
+      gt_max_distance: 1573 - La distanza {{ value1 }} è superiore alla distanza massima di {{ value2 }}
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2151,114 +2151,116 @@ tool:
     action_0: 1655 - Allungare
     action_0_status: 1656 - Clicca su un elemento per selezionarlo
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: '1658 - '
-    action_0_state_1a_status: '1659 - '
-    action_0_state_1b_status: '1660 - '
-    action_0_state_1c_status: '1661 - '
-    action_0_state_10_status: '1662 - '
-    action_0_state_11_status: '1663 - '
-    action_0_state_12_status: '1664 - '
-    action_0_state_2_status: '1665 - '
+    action_0_state_1_status: 1658 - Clicca su una maniglia per allungare
+    action_0_state_1a_status: 1659 - Clicca su un piano di taglio per spostarlo
+    action_0_state_1b_status: 1660 - Aggiungere un piano di taglio
+    action_0_state_1c_status: 1661 - Cancellare un piano di taglio
+    action_0_state_10_status: 1662 - Trascinare il piano di taglio per spostarlo
+    action_0_state_11_status: 1663 - Clicca per aggiungere il piano di taglio
+    action_0_state_12_status: 1664 - Clicca su un piano di taglio per eliminarlo
+    action_0_state_2_status: 1665 - Clicca per confermare l'allungamento o inserisci una distanza
     action_option_group_stretch_measure_type: 1666 - Misura
     action_option_group_axes: 1667 - Assi
-    action_option_stretch_measure_type_outside_status: 1668 - Misura esterna
-    action_option_stretch_measure_type_offset_status: 1669 - Misura la differenza
-    action_option_axes_active_status: 1670 - Sposta lungo l'asse attivo
-    action_option_axes_context_status: 1671 - Modificare lungo gli assi del gruppo o del componente contenente il pezzo
-    action_option_axes_entity_status: 1672 - Modifica su un asse dell'elemento
+    action_option_group_options: 1668 - Opzioni
+    action_option_stretch_measure_type_outside_status: 1669 - Misura esterna
+    action_option_stretch_measure_type_offset_status: 1670 - Misura la differenza
+    action_option_axes_active_status: 1671 - Sposta lungo l'asse attivo
+    action_option_axes_context_status: 1672 - Modificare lungo gli assi del gruppo o del componente contenente il pezzo
+    action_option_axes_entity_status: 1673 - Modifica su un asse dell'elemento
+    action_option_options_make_unique_status: 1674 - Rendere unici gli elementi allungati
     error:
-      curve_intersect: '1673 - '
+      curve_intersect: 1675 - Uno dei piani di taglio attraversa un elemento non estensibile (curva o accessorio)
   smart_paint:
-    title: 1674 - Assegna il materiale
-    default_material: 1675 - Nessun materiale definito
-    filters: 1676 - Filtri
-    filter_0: 1677 - Tipo indefinito
+    title: 1676 - Assegna il materiale
+    default_material: 1677 - Nessun materiale definito
+    filters: 1678 - Filtri
+    filter_0: 1679 - Tipo indefinito
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1684 - Colorare parti
-    action_0_status: 1685 - Seleziona un elemento a cui applicare il materiale
-    action_1: 1686 - Assegna il materiale all'elemento
-    action_1_status: 1687 - Seleziona un bordo del pannello a cui applicare '$t(tab.materials.type_4)'
-    action_2: 1688 - Elimina il materiale della faccia
-    action_2_status: 1689 - Seleziona una faccia del pannello a cui applicare '$t(tab.materials.type_6)'
-    action_3: 1690 - Elimina il materiale dell'elemento
-    action_3_status: 1691 - Seleziona una faccia del pannello da cui copiare il materiale
-    action_4: 1692 - Pulire
-    action_4_status: 1693 - Seleziona un elemento per rimuovere tutti i materiali dalla sua definizione e da tutte le sue istanze
-    action_option_group_instances: 1694 - Numero di occorrenze
-    action_option_group_edges: 1695 - Numero delle bordature
-    action_option_group_faces: 1696 - Numero delle facce
-    action_option_instances_0_status: 1697 - Colora solo l'istanza dell'elemento destinazione
-    action_option_instances_1_status: 1698 - Colora tutte le occorrenze dell'elemento destinazione
-    action_option_edges_0_status: 1699 - Colora solo il bordo dell'elemento destinazione
-    action_option_edges_1_status: 1700 - Colora il bordo e il bordo opposto dell'elemento destinazione
-    action_option_edges_2_status: 1701 - Colora i 4 bordi dell'elemento destinazione
-    action_option_faces_0_status: 1702 - Colora solo la faccia destinazione
-    action_option_faces_1_status: 1703 - Colora le 2 facce dell'elemento destinazione
-    edges: 1704 - {{ count }} bordo
-    edges_plural: 1705 - {{ count }} bordi
-    edge_ymin: 1706 - Lunghezza 1
-    edge_ymax: 1707 - Lunghezza 2
-    edge_xmin: 1708 - Larghezza 1
-    edge_xmax: 1709 - Larghezza 2
-    faces: 1710 - {{ count }} faccia
-    faces_plural: 1711 - {{ count }} facce
-    face_zmin: 1712 - Piallaccio interno
-    face_zmax: 1713 - Piallaccio esterno
+    action_0: 1686 - Colorare parti
+    action_0_status: 1687 - Seleziona un elemento a cui applicare il materiale
+    action_1: 1688 - Assegna il materiale all'elemento
+    action_1_status: 1689 - Seleziona un bordo del pannello a cui applicare '$t(tab.materials.type_4)'
+    action_2: 1690 - Elimina il materiale della faccia
+    action_2_status: 1691 - Seleziona una faccia del pannello a cui applicare '$t(tab.materials.type_6)'
+    action_3: 1692 - Elimina il materiale dell'elemento
+    action_3_status: 1693 - Seleziona una faccia del pannello da cui copiare il materiale
+    action_4: 1694 - Pulire
+    action_4_status: 1695 - Seleziona un elemento per rimuovere tutti i materiali dalla sua definizione e da tutte le sue istanze
+    action_option_group_instances: 1696 - Numero di occorrenze
+    action_option_group_edges: 1697 - Numero delle bordature
+    action_option_group_faces: 1698 - Numero delle facce
+    action_option_instances_0_status: 1699 - Colora solo l'istanza dell'elemento destinazione
+    action_option_instances_1_status: 1700 - Colora tutte le occorrenze dell'elemento destinazione
+    action_option_edges_0_status: 1701 - Colora solo il bordo dell'elemento destinazione
+    action_option_edges_1_status: 1702 - Colora il bordo e il bordo opposto dell'elemento destinazione
+    action_option_edges_2_status: 1703 - Colora i 4 bordi dell'elemento destinazione
+    action_option_faces_0_status: 1704 - Colora solo la faccia destinazione
+    action_option_faces_1_status: 1705 - Colora le 2 facce dell'elemento destinazione
+    edges: 1706 - {{ count }} bordo
+    edges_plural: 1707 - {{ count }} bordi
+    edge_ymin: 1708 - Lunghezza 1
+    edge_ymax: 1709 - Lunghezza 2
+    edge_xmin: 1710 - Larghezza 1
+    edge_xmax: 1711 - Larghezza 2
+    faces: 1712 - {{ count }} faccia
+    faces_plural: 1713 - {{ count }} facce
+    face_zmin: 1714 - Piallaccio interno
+    face_zmax: 1715 - Piallaccio esterno
     warning:
-      no_material: 1714 - Il modello non contiene alcun materiale!
-      no_material_type: 1715 - Nessun materiale di tipo '{{ type }}'
+      no_material: 1716 - Il modello non contiene alcun materiale!
+      no_material_type: 1717 - Nessun materiale di tipo '{{ type }}'
     error:
-      not_part: 1716 - La destinazione non è un elemento (componente)
-      not_edge: 1717 - La faccia di destinazione non è un bordo
-      not_face: 1718 - La faccia di destinazione non è una faccia
-      wrong_material_type: 1719 - L'elemento di destinazione deve essere di tipo '{{ type }}'
+      not_part: 1718 - La destinazione non è un elemento (componente)
+      not_edge: 1719 - La faccia di destinazione non è un bordo
+      not_face: 1720 - La faccia di destinazione non è una faccia
+      wrong_material_type: 1721 - L'elemento di destinazione deve essere di tipo '{{ type }}'
   smart_axes:
-    title: 1720 - Orientare
-    action_0: 1721 - Invertire
-    action_0_status: 1722 - Selezionare un elemento per invertire una delle sue dimensioni
-    action_1: 1723 - Inverti Lunghezza ↔ Larghezza
-    action_1_status: 1724 - Seleziona una elemento per invertire la lunghezza con la larghezza
-    action_2: 1725 - Inverti fronte ↔ retro
-    action_2_status: 1726 - Seleziona un elemento per invertire il fronte con il retro
-    action_3: 1727 - Adatta gli assi
-    action_3_status: 1728 - Seleziona una faccia o un bordo di un elemento per adattare gli assi
-    action_4: 1729 - Sposta l'origine
-    action_4_status: 1730 - Selezionare una faccia di una parte e fare clic su un punto per posizionarvi l'origine
-    action_option_group_direction: 1731 - Direzione
-    action_option_direction_0: 1732 - L
-    action_option_direction_1: 1733 - La
-    action_option_direction_2: 1734 - Sp
-    action_option_direction_0_status: 1735 - Ruota l'elemento sulla lunghezza
-    action_option_direction_1_status: 1736 - Ruota l'elemento sulla larghezza
-    action_option_direction_2_status: 1737 - Ruota l'elemento sullo spessore
+    title: 1722 - Orientare
+    action_0: 1723 - Invertire
+    action_0_status: 1724 - Selezionare un elemento per invertire una delle sue dimensioni
+    action_1: 1725 - Inverti Lunghezza ↔ Larghezza
+    action_1_status: 1726 - Seleziona una elemento per invertire la lunghezza con la larghezza
+    action_2: 1727 - Inverti fronte ↔ retro
+    action_2_status: 1728 - Seleziona un elemento per invertire il fronte con il retro
+    action_3: 1729 - Adatta gli assi
+    action_3_status: 1730 - Seleziona una faccia o un bordo di un elemento per adattare gli assi
+    action_4: 1731 - Sposta l'origine
+    action_4_status: 1732 - Selezionare una faccia di una parte e fare clic su un punto per posizionarvi l'origine
+    action_option_group_direction: 1733 - Direzione
+    action_option_direction_0: 1734 - L
+    action_option_direction_1: 1735 - La
+    action_option_direction_2: 1736 - Sp
+    action_option_direction_0_status: 1737 - Ruota l'elemento sulla lunghezza
+    action_option_direction_1_status: 1738 - Ruota l'elemento sulla larghezza
+    action_option_direction_2_status: 1739 - Ruota l'elemento sullo spessore
     warning:
-      more_entities: 1738 - saranno modificate {{ count_used }} occorrenze che condividono la stessa definizione
+      more_entities: 1740 - saranno modificate {{ count_used }} occorrenze che condividono la stessa definizione
     error:
-      not_part: 1739 - La destinazione non è un elemento (componente)
-      not_orientable: 1740 - Questo elemento non consente di cambiarne l'orientamento
+      not_part: 1741 - La destinazione non è un elemento (componente)
+      not_orientable: 1742 - Questo elemento non consente di cambiarne l'orientamento
   smart_export:
-    title: 1741 - Esporta
-    action_0: 1742 - Esporta un elemento 3D
-    action_0_status: 1743 - Seleziona un elemento
-    action_1: 1744 - Esporta un elemento 2D
-    action_1_status: 1745 - Seleziona la faccia di un elemento
-    action_2: 1746 - Esporta una faccia
-    action_2_status: 1747 - Seleziona una faccia
-    action_3: 1748 - Esporta un percorso
-    action_3_status: 1749 - Seleziona un bordo
-    action_option_group_file_format: 1750 - Formato
-    action_option_group_unit: 1751 - Unità
-    action_option_group_faces: 1752 - Impiallacciatura
-    action_option_group_options: 1753 - Opzioni
-    action_option_file_format_dxf_status: 1754 - Esporta un file DXF
-    action_option_file_format_stl_status: 1755 - Esporta un file STL
-    action_option_file_format_obj_status: 1756 - Esporta un file OBJ
-    action_option_file_format_svg_status: 1757 - Esporta un file SVG
+    title: 1743 - Esporta
+    action_0: 1744 - Esporta un elemento 3D
+    action_0_status: 1745 - Seleziona un elemento
+    action_1: 1746 - Esporta un elemento 2D
+    action_1_status: 1747 - Seleziona la faccia di un elemento
+    action_2: 1748 - Esporta una faccia
+    action_2_status: 1749 - Seleziona una faccia
+    action_3: 1750 - Esporta un percorso
+    action_3_status: 1751 - Seleziona un bordo
+    action_option_group_file_format: 1752 - Formato
+    action_option_group_unit: 1753 - Unità
+    action_option_group_faces: 1754 - Impiallacciatura
+    action_option_group_options: 1755 - Opzioni
+    action_option_file_format_dxf_status: 1756 - Esporta un file DXF
+    action_option_file_format_stl_status: 1757 - Esporta un file STL
+    action_option_file_format_obj_status: 1758 - Esporta un file OBJ
+    action_option_file_format_svg_status: 1759 - Esporta un file SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2268,9 +2270,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1767 - Isola i fori passanti e unisci le profondità di ogni recesso
-    action_option_options_include_paths_status: 1768 - Esportazione di bordi non associati a una faccia contenuta nella parte come tracciato
+    action_option_options_merge_holes_status: 1769 - Isola i fori passanti e unisci le profondità di ogni recesso
+    action_option_options_include_paths_status: 1770 - Esportazione di bordi non associati a una faccia contenuta nella parte come tracciato
     error:
-      not_part: 1769 - Questa faccia non appartiene ad un elemento (componente)
-      not_flat_face: 1770 - Superficie non planare
-      incompatible_active_path: 1771 - Il percorso attivo non consente di esportare questo pezzo
+      not_part: 1771 - Questa faccia non appartiene ad un elemento (componente)
+      not_flat_face: 1772 - Superficie non planare
+      incompatible_active_path: 1773 - Il percorso attivo non consente di esportare questo pezzo

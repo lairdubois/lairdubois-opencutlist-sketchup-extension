@@ -2153,7 +2153,7 @@ tool:
       min_distance: "Der Abstand {{ value1 }} ist kleiner als der Minimalabstand {{ value2 }}"
   smart_reshape:
     title: Umgestalten
-    action_0: Dehnen
+    action_0: Strecken
     action_0_status: "Klicken Sie auf ein Teil, um es auszuwählen"
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
     action_0_state_1_status: "Klicken Sie auf einen Griff, um zu strecken"
@@ -2166,11 +2166,13 @@ tool:
     action_0_state_2_status: "Klicken Sie, um die Dehnung zu bestätigen, oder geben Sie einen Abstand ein"
     action_option_group_stretch_measure_type: Maß
     action_option_group_axes: Achsen
+    action_option_group_options: Optionen
     action_option_stretch_measure_type_outside_status: Außenmessung
     action_option_stretch_measure_type_offset_status: Differenzwert messen
     action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
     action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
     action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
+    action_option_options_make_unique_status: Gestreckte Elemente einzigartig machen
     error:
       curve_intersect: Eine der Schnittebenen verläuft durch ein nicht dehnbares Element (beispielsweise eine Kurve oder ein Zubehörteil)
   smart_paint:

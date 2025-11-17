@@ -2166,11 +2166,13 @@ tool:
     action_0_state_2_status: Click to confirm the stretch or enter a distance
     action_option_group_stretch_measure_type: Measure
     action_option_group_axes: Axes
+    action_option_group_options: Options
     action_option_stretch_measure_type_outside_status: External measurement
     action_option_stretch_measure_type_offset_status: Measure difference
     action_option_axes_active_status: Manipulate along active axes
     action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
     action_option_axes_entity_status: Manipulate along part axes
+    action_option_options_make_unique_status: Make stretched elements unique
     error:
       curve_intersect: One of the cutting planes crosses a non-stretchable element (curve or accessory)
   smart_paint:

@@ -2064,7 +2064,7 @@ tool:
       missing_operand: "Operando faltante"
       zero_division: "División por cero"
       lt_min_distance: "La distancia {{ value1 }} es inferior al valor mínimo de {{ value2 }}"
-      gt_max_distance: ""
+      gt_max_distance: "La distancia {{ value1 }} es superior a la distancia máxima de {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
@@ -2156,23 +2156,25 @@ tool:
     action_0: Estirar
     action_0_status: Hacer clic sobre una pieza para seleccionarla
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: ""
-    action_0_state_1a_status: ""
-    action_0_state_1b_status: ""
-    action_0_state_1c_status: ""
-    action_0_state_10_status: ""
-    action_0_state_11_status: ""
-    action_0_state_12_status: ""
-    action_0_state_2_status: ""
+    action_0_state_1_status: Haga clic en un tirador para estirar
+    action_0_state_1a_status: Haga clic en un plano de corte para moverlo
+    action_0_state_1b_status: Añadir un plano de corte
+    action_0_state_1c_status: Borrar un plano de corte
+    action_0_state_10_status: Arrastre el plano de corte para moverlo
+    action_0_state_11_status: Haga clic para añadir el plano de corte
+    action_0_state_12_status: Haga clic en un plano de corte para eliminarlo
+    action_0_state_2_status: Haga clic para validar el estiramiento o introduzca una distancia
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Ejes
+    action_option_group_options: Opciones
     action_option_stretch_measure_type_outside_status: Medir por el exterior
     action_option_stretch_measure_type_offset_status: Medir la diferencia
     action_option_axes_active_status: Cambiar la longitud de los ejes activos
     action_option_axes_context_status: Modificar la longitud de los ejes del grupo o componente que contienen la pieza
     action_option_axes_entity_status: Modificar la longitud de los ejes de la pieza
+    action_option_options_make_unique_status: Hacer únicos los elementos estirados
     error:
-      curve_intersect: ""
+      curve_intersect: Uno de los planos de corte atraviesa un elemento no extensible (curva o accesorio)
   smart_paint:
     title: Colorear
     default_material: Ningún material definido
