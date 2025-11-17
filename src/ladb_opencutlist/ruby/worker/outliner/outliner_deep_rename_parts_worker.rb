@@ -51,7 +51,7 @@ module Ladb::OpenCutList
         fn_populate_dn = lambda { |node_def|
           if node_def.type == OutlinerNodeModelDef::TYPE_PART && !node_def.entity.deleted?
             unless (part = _generate_part_from_path(node_def.path)).nil?
-              d_nps[node_def.entity.definition] = [] unless d_nps.has_key?(node_def.entity.definition)
+              d_nps[node_def.entity.definition] ||= []
               d_nps[node_def.entity.definition] << [ node_def, part ]
             end
           end

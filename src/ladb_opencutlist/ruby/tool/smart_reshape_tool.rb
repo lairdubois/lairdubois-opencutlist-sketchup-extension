@@ -1725,22 +1725,24 @@ module Ladb::OpenCutList
     end
 
     def _stretch_entity
-      return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point, true)).nil?
+      return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
 
       split_def, emv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :edvs, :lpe)
-      et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
 
       _unhide_instances
 
       model = Sketchup.active_model
       model.start_operation('OCL Stretch Part', true, false, !active?)
 
+        split_def = _make_unique_split_def(split_def)
+
+        et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
+
         sorting_order = (emv.valid? && emv.samedirection?(evpspe)) ? -1 : 1
 
         container_defs.each do |container_def|
 
-          drawing_container_def = container_def.drawing_container_def
-          container = drawing_container_def.container
+          container = container_def.container
           entities = container.respond_to?(:entities) ? container.entities : container.definition.entities
 
           # Move edges
@@ -1785,7 +1787,7 @@ module Ladb::OpenCutList
 
           edv = edvs[container_def.section_def]
 
-          t = drawing_container_def.transformation
+          t = container_def.transformation
 
           target_position = container_def.ref_position
           target_position = target_position.offset(edv.transform(t.inverse)) if edv.valid?
@@ -1988,12 +1990,11 @@ module Ladb::OpenCutList
         end
 
         container_def = SplitContainerDef.new(
-          drawing_container_def,
+          drawing_container_def.container,
+          drawing_container_def.transformation,
           depth,
           drawing_container_def.container.respond_to?(:transformation) ? ORIGIN.transform(drawing_container_def.container.transformation) : nil,
           section_def,
-          [],
-          [],
           operation
         )
         container_defs << container_def
@@ -2092,7 +2093,9 @@ module Ladb::OpenCutList
 
         depth += 1
         drawing_container_def.container_defs.each do |child_drawing_container_def|
-          container_def.children << fn_analyse.call(child_drawing_container_def, parent_section_def, depth)
+          child = fn_analyse.call(child_drawing_container_def, parent_section_def, depth)
+          child.parent = container_def
+          container_def.children << child
         end
 
         container_def
@@ -2102,27 +2105,27 @@ module Ladb::OpenCutList
 
 
       # TODO
-      if _fetch_option_options_make_unique
-
-        # Compute containers MD5
-        container_defs.first.compute_md5(@picked_axis)
-
-        puts "----"
-        container_defs.each do |container_def|
-          puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
-        end
-        puts "----"
-
-        container_defs.group_by { |container_def| container_def.definition }.to_h
-                      .each do |definition, container_defs|
-          puts "#{definition ? definition.name : 'Model'}:"
-          container_defs.group_by { |container_def| container_def.md5 }.to_h
-                        .each do |md5, container_defs|
-            puts "  #{md5}: #{container_defs.size} / #{definition ? definition.count_used_instances : 1} (op: #{container_defs.map {|container_def| container_def.operation }}))"
-          end
-        end
-
-      end
+      # if _fetch_option_options_make_unique
+      #
+      #   # Compute containers MD5
+      #   container_defs.first.compute_md5(@picked_axis)
+      #
+      #   puts "----"
+      #   container_defs.each do |container_def|
+      #     puts "#{"".rjust(container_def.depth)}#{container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
+      #   end
+      #   puts "----"
+      #
+      #   container_defs.group_by { |container_def| container_def.definition }.to_h
+      #                 .each do |definition, container_defs|
+      #     puts "#{definition ? definition.name : 'Model'}:"
+      #     container_defs.group_by { |container_def| container_def.md5 }.to_h
+      #                   .each do |md5, container_defs|
+      #       puts "  #{md5}: #{container_defs.size} / #{definition ? definition.count_used_instances : 1} (op: #{container_defs.map {|container_def| container_def.operation }}))"
+      #     end
+      #   end
+      #
+      # end
 
 
       # Compute max compression distance
@@ -2154,22 +2157,94 @@ module Ladb::OpenCutList
       }
     end
 
-    def _get_unique_split_def
-      return nil unless (split_def = _get_split_def).is_a?(Hash)
+    def _make_unique_split_def(split_def)
 
       container_defs, _ = split_def.values_at(:container_defs)
 
-      # puts "----"
-      # container_defs.each do |container_def|
-      #   puts "#{"".rjust(container_def.depth)}#{container_def.drawing_container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
-      # end
-      # puts "----"
+      # Prepare uniqueness data
+      container_defs.first.compute_md5(@picked_axis)
+      container_defs.first.compute_entity_pos
+
+      make_unique_s = _fetch_option_options_make_unique
+
+      container_defs.sort_by { |container_def| container_def.depth }
+                    .group_by { |container_def| container_def.definition }.to_h
+                    .each do |definition, container_defs|
+
+        next if definition.nil?
+
+        count_stretched_instances = container_defs.size
+
+        container_defs.sort_by { |container_def| container_def.operation }.reverse
+                      .group_by { |container_def| container_def.md5 }.to_h
+                      .each do |md5, container_defs|
+
+          make_unique_d = make_unique_s && count_stretched_instances < definition.count_used_instances
+          make_unique_c = (make_unique_d || container_defs.size < count_stretched_instances) && container_defs.one? { |container_def| container_def.operation == SplitContainerDef::OPERATION_SPLIT }
+
+          # puts "  make_unique_d: #{make_unique_d}"
+          # puts "  make_unique_c: #{make_unique_c}"
+          # puts "  #{md5}: #{container_defs.size} / #{count_stretched_instances} / #{definition.count_used_instances} (op: #{container_defs.map {|container_def| container_def.operation }}))"
+          # container_defs.each do |container_def|
+          #   puts "   ↳ C (#{container_def.container.name}) #{container_def.entity_pos}"
+          #   # container_def.edge_defs.each do |edge_def|
+          #   #   puts "     ↳ E #{edge_def.entity_pos}"
+          #   # end
+          # end
+
+          if make_unique_c
+
+            if definition.group?
+
+              container_defs.each do |container_def|
+
+                new_container = container_def.container.make_unique
+                new_definition = new_container.definition
+
+                container_def.container = new_container
+                container_def.edge_defs.each do |edge_def|
+                  edge_def.edge = new_definition.entities[edge_def.entity_pos]
+                end
+                container_def.children.each do |container_def|
+                  container_def.container = new_definition.entities[container_def.entity_pos]
+                end
+
+              end
+
+            else
+
+              container_def0 = container_defs.first
+
+              new_container = container_def0.container.make_unique
+              new_definition = new_container.definition
+
+              container_def0.container = new_container
+
+              container_defs.each do |container_def|
+                container_def.container.definition = new_definition
+                container_def.edge_defs.each do |edge_def|
+                  edge_def.edge = new_definition.entities[edge_def.entity_pos]
+                end
+                container_def.children.each do |container_def|
+                  container_def.container = new_definition.entities[container_def.entity_pos]
+                end
+              end
+
+            end
+
+            count_stretched_instances -= 1
+
+          end
+
+        end
+
+      end
 
       split_def
     end
 
-    def _get_stretch_def(ps, pe, make_unique = false)
-      return nil unless (split_def = (make_unique ? _get_unique_split_def : _get_split_def)).is_a?(Hash)
+    def _get_stretch_def(ps, pe)
+      return nil unless (split_def = _get_split_def).is_a?(Hash)
 
       et, eps, max_compression_distance, section_defs, reversed = split_def.values_at(:et, :eps, :max_compression_distance, :section_defs, :reversed)
       eti = et.inverse
@@ -2206,33 +2281,78 @@ module Ladb::OpenCutList
 
     # -----
 
-    SplitSectionDef = Struct.new(:index, :min_xyz, :max_xyz, :bounds) {
+    SplitSectionDef = Struct.new(
+      :index,
+      :min_xyz,
+      :max_xyz,
+      :bounds
+    ) do
+
       def contains_point?(point, xyz_method)
         min_xyz <= point.send(xyz_method) && max_xyz >= point.send(xyz_method)
       end
+
       def contains_bounds?(bounds, xyz_method)
         min_xyz <= bounds.min.send(xyz_method) && max_xyz >= bounds.max.send(xyz_method)
       end
+
       def intersects_bounds?(bounds, xyz_method)
         min_xyz <= bounds.max.send(xyz_method) && max_xyz >= bounds.min.send(xyz_method)
       end
-    }
 
-    SplitContainerDef = Struct.new(:drawing_container_def, :depth, :ref_position, :section_def, :edge_defs, :children, :operation) {
+    end
+
+    SplitContainerDef = Struct.new(
+      :container,
+      :transformation,
+      :depth,
+      :ref_position,
+      :section_def,
+      :operation,
+      :entity_pos,
+      :edge_defs,
+      :parent,
+      :children,
+    ) do
+
+      def initialize(
+        container,
+        transformation,
+        depth,
+        ref_position,
+        section_def,
+        operation,
+        entity_pos = -1,
+        edge_defs = [],
+        parent = nil,
+        children = []
+      )
+        super
+        @md5 = nil
+      end
+
       def definition
-        return drawing_container_def.container.definition if drawing_container_def.container.respond_to?(:definition)
+        return container.definition if container.respond_to?(:definition)
         nil
       end
+
+      def entities
+        return container.entities if container.respond_to?(:entities)
+        return definition.entities unless definition.nil?
+        nil
+      end
+
       def md5
         @md5
       end
+
       def compute_md5(axis)
         if @md5.nil?
           data = []
-          data = [ drawing_container_def.container.definition.object_id ] if drawing_container_def.container.respond_to?(:definition)
+          data = [ container.definition.object_id ] if container.respond_to?(:definition)
 
-          unless drawing_container_def.is_root?
-            local_axis = axis.transform((drawing_container_def.transformation * drawing_container_def.container.transformation).inverse)
+          unless parent.nil?
+            local_axis = axis.transform((transformation * container.transformation).inverse)
             data << (local_axis.parallel?(axis) || local_axis.perpendicular?(axis)) if local_axis.valid?  # Differentiating rotations
             data << local_axis.length.to_f.round(6) if local_axis.valid? && operation == SplitContainerDef::OPERATION_SPLIT  # Differentiating scaling
           end
@@ -2250,12 +2370,45 @@ module Ladb::OpenCutList
         end
         @md5
       end
-    }
+
+      def compute_entity_pos
+        return if (entities = self.entities).nil?
+        edge_defs.each do |edge_def|
+          edge_def.entity_pos = entities.to_a.index(edge_def.edge)
+        end
+        children.each do |container_def|
+          container_def.entity_pos = entities.to_a.index(container_def.container)
+          container_def.compute_entity_pos
+        end
+      end
+
+    end
     SplitContainerDef::OPERATION_NONE = 0
     SplitContainerDef::OPERATION_MOVE = 1
     SplitContainerDef::OPERATION_SPLIT = 2
 
-    SplitEdgeDef = Struct.new(:edge, :transformation, :ref_position, :start_section_def, :end_section_def, :operation) {
+    SplitEdgeDef = Struct.new(
+      :edge,
+      :transformation,
+      :ref_position,
+      :start_section_def,
+      :end_section_def,
+      :operation,
+      :entity_pos
+    ) do
+
+      def initialize(
+        edge,
+        transformation,
+        ref_position,
+        start_section_def,
+        end_section_def,
+        operation,
+        entity_pos = -1
+      )
+        super
+      end
+
       def md5
         data = [
           edge.object_id,
@@ -2264,7 +2417,8 @@ module Ladb::OpenCutList
         ]
         Digest::MD5.hexdigest(data.to_json)
       end
-    }
+
+    end
     SplitEdgeDef::OPERATION_NONE = 0
     SplitEdgeDef::OPERATION_MOVE = 1
     SplitEdgeDef::OPERATION_SPLIT = 2

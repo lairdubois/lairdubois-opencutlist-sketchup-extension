@@ -40,7 +40,7 @@ module Ladb::OpenCutList
           rnode.parent.children << rnode unless rnode.parent.nil?
           rpath = rpath + [ rnode ]
           if node_def.children.empty? # Keep only leaf nodes
-            d_rps[node_def.entity.definition] = [] unless d_rps.has_key?(node_def.entity.definition)
+            d_rps[node_def.entity.definition] ||= []
             d_rps[node_def.entity.definition] << rpath
           else
             node_def.children.each do |child_node_def|
