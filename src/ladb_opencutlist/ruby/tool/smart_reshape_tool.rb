@@ -2378,14 +2378,17 @@ module Ladb::OpenCutList
             data << local_axis.length.to_f.round(6) if local_axis.valid? && operation == SplitContainerDef::OPERATION_SPLIT  # Differentiating scaling
           end
 
-          data << edge_defs.map { |edge_def| edge_def.md5 }.join if operation == SplitContainerDef::OPERATION_SPLIT  # TODO
-          # data << edge_defs.all? { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_NONE || edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
-          data << children.map { |container_def|
-            [
-              container_def.compute_md5(axis),
-              container_def.section_def.nil? ? -1 : container_def.section_def.index
-            ]
-          }.join
+          if operation == SplitContainerDef::OPERATION_SPLIT
+            data << edge_defs.map { |edge_def|
+              [
+                edge_def.edge.object_id,
+                (section_def.index - edge_def.start_section_def.index).abs, # Use "delta" to be able to unify flipped elements
+                (section_def.index - edge_def.end_section_def.index).abs
+              ]
+            }
+          end
+
+          data << children.map { |container_def| container_def.compute_md5(axis) }
 
           @md5 = Digest::MD5.hexdigest(data.to_json)
         end
@@ -2428,15 +2431,6 @@ module Ladb::OpenCutList
         entity_pos = -1
       )
         super
-      end
-
-      def md5
-        data = [
-          edge.object_id,
-          start_section_def.index,
-          end_section_def.index
-        ]
-        Digest::MD5.hexdigest(data.to_json)
       end
 
     end
