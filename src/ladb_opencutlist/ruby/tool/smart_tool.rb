@@ -2034,7 +2034,7 @@ module Ladb::OpenCutList
     # --
 
     def _get_drawing_def_ipaths
-      return nil if (instances = _get_instances).nil?
+      return nil if @active_selection_path.nil? || (instances = _get_instances).nil?
       instances.map { |instance| Sketchup::InstancePath.new(@active_selection_path + [ instance ]) }
     end
 
