@@ -1737,7 +1737,7 @@ module Ladb::OpenCutList
       container_defs.first.compute_entity_pos
 
       model = Sketchup.active_model
-      model.start_operation('OCL Stretch Part', true, true, !active?) # Defined "next_transparent = true", otherwise the make_unique group operation would be visible.
+      model.start_operation('OCL Stretch Part', true, false, !active?) # TODO :Defined "next_transparent = true", otherwise the make_unique group operation would be visible.
 
         # Make Unique routine
         # -------------------
@@ -1753,7 +1753,7 @@ module Ladb::OpenCutList
           count_stretched_instances = container_defs.size
 
           # Groups with edges must be made unique because SketchUp make them unique when transform entities and this causing troubles with the stretching.
-          make_unique_g = definition.group? && container_defs.first.edge_defs.any? && count_stretched_instances > 1
+          make_unique_g = definition.group? && (container_defs.first.edge_defs.any? && count_stretched_instances > 1 || !make_unique_o)
 
           container_defs.sort_by { |container_def| container_def.operation }.reverse
                         .group_by { |container_def| container_def.md5 }.to_h
@@ -1850,7 +1850,7 @@ module Ladb::OpenCutList
 
               # Subtract container move
               edv -= edvs[container_def.section_def]
-              edv.reverse! if container_def.section_def == section_def if edv.valid?
+              edv.reverse! if container_def.section_def == section_def && edv.valid?
 
               target_position0 = edge_def0.ref_position
               target_position0 = target_position0.offset(edv.transform(t.inverse)) if edv.valid?
@@ -1884,7 +1884,7 @@ module Ladb::OpenCutList
           end
 
           target_position = container_def.ref_position
-          target_position = target_position.offset(edv.transform(t.inverse)) if edv.valid?
+          target_position = target_position.offset(edv.transform(container_def.depth == 0 ? t : t.inverse)) if edv.valid?
           current_position = ORIGIN.transform(container.transformation)
 
           v = current_position.vector_to(target_position)
@@ -1917,9 +1917,9 @@ module Ladb::OpenCutList
 
       model.commit_operation
 
-      # This empty operation allows terminating the "next_transparent = true" option while closing the native "make_unique" operations of the groups.
-      model.start_operation('OCL Stretch Part Workaround', true, false, !active?)
-      model.commit_operation
+      # TODO : This empty operation allows terminating the "next_transparent = true" option while closing the native "make_unique" operations of the groups.
+      # model.start_operation('OCL Stretch Part Workaround', true, false, !active?)
+      # model.commit_operation
 
     end
 
@@ -2060,7 +2060,7 @@ module Ladb::OpenCutList
           elsif drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
              drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 127)
 
-            container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
+            container_origin = ORIGIN.transform(drawing_container_def.transformation.inverse * drawing_container_def.container.transformation)
             section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
 
             # Container bounds are not considered in this case
@@ -2073,7 +2073,7 @@ module Ladb::OpenCutList
             section_def = section_defs.find { |section_def| section_def.contains_bounds?(drawing_container_def.bounds, xyz_method) }
             if section_def.nil?
 
-              container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
+              container_origin = ORIGIN.transform(drawing_container_def.transformation.inverse * drawing_container_def.container.transformation)
               min_max = [ drawing_container_def.bounds.min, drawing_container_def.bounds.max ].min_by { |point| (point.send(xyz_method) - container_origin.send(xyz_method)).abs }
 
               # Default container section_def is where the bounds extreme that is the nearest origin
@@ -2209,31 +2209,6 @@ module Ladb::OpenCutList
       end
 
       fn_analyse.call(drawing_def)
-
-
-      # TODO
-      # if _fetch_option_options_make_unique
-      #
-      #   # Compute containers MD5
-      #   container_defs.first.compute_md5(@picked_axis)
-      #
-      #   puts "----"
-      #   container_defs.each do |container_def|
-      #     puts "#{"".rjust(container_def.depth)}#{container_def.container.name} (op: #{container_def.operation}) -> #{container_def.md5} "
-      #   end
-      #   puts "----"
-      #
-      #   container_defs.group_by { |container_def| container_def.definition }.to_h
-      #                 .each do |definition, container_defs|
-      #     puts "#{definition ? definition.name : 'Model'}:"
-      #     container_defs.group_by { |container_def| container_def.md5 }.to_h
-      #                   .each do |md5, container_defs|
-      #       puts "  #{md5}: #{container_defs.size} / #{definition ? definition.count_used_instances : 1} (op: #{container_defs.map {|container_def| container_def.operation }}))"
-      #     end
-      #   end
-      #
-      # end
-
 
       # Compute max compression distance
       el = [ eps, evpspe ]
