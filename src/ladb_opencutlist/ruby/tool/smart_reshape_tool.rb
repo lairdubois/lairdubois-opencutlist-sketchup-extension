@@ -2073,8 +2073,11 @@ module Ladb::OpenCutList
             section_def = section_defs.find { |section_def| section_def.contains_bounds?(drawing_container_def.bounds, xyz_method) }
             if section_def.nil?
 
-              # Default container section_def is where its bounds min is
-              section_def = section_defs.find { |section_def| section_def.contains_point?(drawing_container_def.bounds.min, xyz_method) }
+              container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
+              min_max = [ drawing_container_def.bounds.min, drawing_container_def.bounds.max ].min_by { |point| (point.send(xyz_method) - container_origin.send(xyz_method)).abs }
+
+              # Default container section_def is where the bounds extreme that is the nearest origin
+              section_def = section_defs.find { |section_def| section_def.contains_point?(min_max, xyz_method) }
 
               operation = SplitContainerDef::OPERATION_SPLIT
 
