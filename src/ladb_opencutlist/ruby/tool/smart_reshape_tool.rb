@@ -1823,7 +1823,7 @@ module Ladb::OpenCutList
         # Stretch routine
         # ---------------
 
-        stretched_definitions = []
+        stretched_definitions = Set[]
 
         sorting_order = (emv.valid? && emv.samedirection?(evpspe)) ? -1 : 1
 
@@ -1835,9 +1835,7 @@ module Ladb::OpenCutList
           # Move edges
           # ----------
 
-          unless stretched_definitions.include?(container_def.definition)
-
-            # puts "Stretching #{container_def.definition} #{container_def.definition.group? unless container_def.definition.nil?}" if container_def.edge_defs.any?
+          unless stretched_definitions.include?(container_def.definition) # Stretch definition edges only once
 
             container_def.edge_defs
                          .select { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
@@ -1850,13 +1848,12 @@ module Ladb::OpenCutList
               edge_def0 = edge_defs.first
               t = edge_def0.transformation
 
-              dv = edv
-              # # TODO : min move
-              # dv -= edvs[container_def.section_def]
-              # dv.reverse! if container_def.section_def == section_def if dv.valid?
+              # Subtract container move
+              edv -= edvs[container_def.section_def]
+              edv.reverse! if container_def.section_def == section_def if edv.valid?
 
               target_position0 = edge_def0.ref_position
-              target_position0 = target_position0.offset(dv.transform(t.inverse)) if dv.valid?
+              target_position0 = target_position0.offset(edv.transform(t.inverse)) if edv.valid?
               current_position0 = edge_def0.edge.start.position
 
               v = current_position0.vector_to(target_position0)
@@ -1865,6 +1862,7 @@ module Ladb::OpenCutList
 
             end
 
+            # Flag definition as stretched
             stretched_definitions << container_def.definition
 
           end
@@ -1872,17 +1870,18 @@ module Ladb::OpenCutList
           # Move container
           # --------------
 
-          next if container_def.operation != SplitContainerDef::OPERATION_MOVE ||
-                  container_def.section_def.nil? ||
-                  container.is_a?(Sketchup::Model)
-          # TODO : min move
-          # next if container_def.operation == SplitContainerDef::OPERATION_NONE ||
-          #         container_def.section_def.nil? ||
-          #         container.is_a?(Sketchup::Model)
+          next if container_def.operation == SplitContainerDef::OPERATION_NONE ||
+                  container_def.section_def.nil?
 
           edv = edvs[container_def.section_def]
 
           t = container_def.transformation
+
+          # Subtract parent container move
+          unless container_def.parent.nil? || container_def.parent.section_def.nil?
+            edv -= edvs[container_def.parent.section_def]
+            edv.reverse! if container_def.parent.section_def == container_def.section_def if edv.valid?
+          end
 
           target_position = container_def.ref_position
           target_position = target_position.offset(edv.transform(t.inverse)) if edv.valid?
@@ -2051,8 +2050,14 @@ module Ladb::OpenCutList
         section_def = parent_section_def
         if section_def.nil?
 
+          if drawing_container_def.container.is_a?(Sketchup::Model)
+
+            # No section_def for the model
+
+            operation = SplitContainerDef::OPERATION_SPLIT
+
           # Check if the container is glued or always face camera to search the section according to its origin only
-          if drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
+          elsif drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
              drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 127)
 
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
