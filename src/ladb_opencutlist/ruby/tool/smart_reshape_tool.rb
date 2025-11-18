@@ -1737,7 +1737,7 @@ module Ladb::OpenCutList
       container_defs.first.compute_entity_pos
 
       model = Sketchup.active_model
-      model.start_operation('OCL Stretch Part', true, false, !active?)
+      model.start_operation('OCL Stretch Part', true, true, !active?) # Defined "next_transparent = true", otherwise the make_unique group operation would be visible.
 
         # Make Unique routine
         # -------------------
@@ -1752,18 +1752,21 @@ module Ladb::OpenCutList
 
           count_stretched_instances = container_defs.size
 
+          # Groups with edges must be made unique because SketchUp make them unique when transform entities and this causing troubles with the stretching.
+          make_unique_g = definition.group? && container_defs.first.edge_defs.any? && count_stretched_instances > 1
+
           container_defs.sort_by { |container_def| container_def.operation }.reverse
                         .group_by { |container_def| container_def.md5 }.to_h
                         .each do |md5, container_defs|
 
             make_unique_d = make_unique_o && count_stretched_instances < definition.count_used_instances
-            make_unique_c = (make_unique_d || container_defs.size < count_stretched_instances) && container_defs.any? { |container_def| container_def.operation == SplitContainerDef::OPERATION_SPLIT }
+            make_unique_c = (make_unique_g || make_unique_d || container_defs.size < count_stretched_instances) && container_defs.any? { |container_def| container_def.operation == SplitContainerDef::OPERATION_SPLIT }
 
             # puts "  make_unique_d: #{make_unique_d}"
             # puts "  make_unique_c: #{make_unique_c}"
             # puts "  #{md5}: #{container_defs.size} / #{count_stretched_instances} / #{definition.count_used_instances} (op: #{container_defs.map {|container_def| container_def.operation }}))"
             # container_defs.each do |container_def|
-            #   puts "   ↳ C <#{definition.name}> (#{container_def.container.name}) #{container_def.entity_pos}"
+            #   puts "   ↳ C <#{definition.name}> (#{container_def.container.name}) #{container_def.entity_pos} (edeges: #{container_def.edge_defs.size})"
             #   # container_def.edge_defs.each do |edge_def|
             #   #   puts "     ↳ E #{edge_def.entity_pos}"
             #   # end
@@ -1820,6 +1823,8 @@ module Ladb::OpenCutList
         # Stretch routine
         # ---------------
 
+        stretched_definitions = []
+
         sorting_order = (emv.valid? && emv.samedirection?(evpspe)) ? -1 : 1
 
         container_defs.each do |container_def|
@@ -1830,29 +1835,37 @@ module Ladb::OpenCutList
           # Move edges
           # ----------
 
-          container_def.edge_defs
-                       .select { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
-                       .group_by { |edge_def| edge_def.start_section_def }
-                       .sort_by { |section_def, _| section_def.index * sorting_order }.to_h # Sort edges to be sure that farest points are moved first
-                       .each do |section_def, edge_defs|
+          unless stretched_definitions.include?(container_def.definition)
 
-            edv = edvs[section_def]
+            # puts "Stretching #{container_def.definition} #{container_def.definition.group? unless container_def.definition.nil?}" if container_def.edge_defs.any?
 
-            edge_def0 = edge_defs.first
-            t = edge_def0.transformation
+            container_def.edge_defs
+                         .select { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
+                         .group_by { |edge_def| edge_def.start_section_def }
+                         .sort_by { |section_def, _| section_def.index * sorting_order }.to_h # Sort edges to be sure that farest points are moved first
+                         .each do |section_def, edge_defs|
 
-            dv = edv
-            # TODO : min move
-            # dv -= edvs[container_def.section_def]
-            # dv.reverse! if container_def.section_def == section_def if dv.valid?
+              edv = edvs[section_def]
 
-            target_position0 = edge_def0.ref_position
-            target_position0 = target_position0.offset(dv.transform(t.inverse)) if dv.valid?
-            current_position0 = edge_def0.edge.start.position
+              edge_def0 = edge_defs.first
+              t = edge_def0.transformation
 
-            v = current_position0.vector_to(target_position0)
+              dv = edv
+              # # TODO : min move
+              # dv -= edvs[container_def.section_def]
+              # dv.reverse! if container_def.section_def == section_def if dv.valid?
 
-            entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def.edge }) if v.valid?
+              target_position0 = edge_def0.ref_position
+              target_position0 = target_position0.offset(dv.transform(t.inverse)) if dv.valid?
+              current_position0 = edge_def0.edge.start.position
+
+              v = current_position0.vector_to(target_position0)
+
+              entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def.edge }) if v.valid?
+
+            end
+
+            stretched_definitions << container_def.definition
 
           end
 
@@ -1903,6 +1916,10 @@ module Ladb::OpenCutList
         _store_cutters
         _load_cutters
 
+      model.commit_operation
+
+      # This empty operation allows terminating the "next_transparent = true" option while closing the native "make_unique" operations of the groups.
+      model.start_operation('OCL Stretch Part Workaround', true, false, !active?)
       model.commit_operation
 
     end
