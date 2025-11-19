@@ -1748,7 +1748,7 @@ tab:
       layer_name: 1367 - Тег
       explode: 1368 - Розбити
       explode_message: 1369 - Підтверджуєте вибух **{{ name }}** ?
-      erase: 1370 - Стерти
+      erase: 1370 - Видалити
       erase_message: 1371 - Підтверджуєте видалення **{{ name }}**?
     deep_make_unique:
       title: 1372 - Зробити унікальним
@@ -2161,104 +2161,106 @@ tool:
     action_0_state_2_status: 1665 - Натисніть, щоб підтвердити розтяжку або ввести відстань
     action_option_group_stretch_measure_type: 1666 - Вимірювання
     action_option_group_axes: 1667 - Осі
-    action_option_stretch_measure_type_outside_status: 1668 - Зовнішнє вимірювання
-    action_option_stretch_measure_type_offset_status: 1669 - Виміряти різницю
-    action_option_axes_active_status: 1670 - Переміщення вздовж активних осей
-    action_option_axes_context_status: 1671 - Переміщення вздовж осей групи або компонента, що містить деталь
-    action_option_axes_entity_status: 1672 - Переміщення по осях деталі
+    action_option_group_options: 1668 - Опції
+    action_option_stretch_measure_type_outside_status: 1669 - Зовнішнє вимірювання
+    action_option_stretch_measure_type_offset_status: 1670 - Виміряти різницю
+    action_option_axes_active_status: 1671 - Переміщення вздовж активних осей
+    action_option_axes_context_status: 1672 - Переміщення вздовж осей групи або компонента, що містить деталь
+    action_option_axes_entity_status: 1673 - Переміщення по осях деталі
+    action_option_options_make_unique_status: 1674 - Зробити розтягнуті елементи унікальними
     error:
-      curve_intersect: 1673 - Одна з січних площин перетинає нерозтягуваний елемент (криву або аксесуар)
+      curve_intersect: 1675 - Одна з січних площин перетинає нерозтягуваний елемент (криву або аксесуар)
   smart_paint:
-    title: 1674 - Нанесення матеріалів
-    default_material: 1675 - Матеріал не заданий
-    filters: 1676 - Фільтри
-    filter_0: 1677 - Не визначений
+    title: 1676 - Нанесення матеріалів
+    default_material: 1677 - Матеріал не заданий
+    filters: 1678 - Фільтри
+    filter_0: 1679 - Не визначений
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1684 - Покриття деталей
-    action_0_status: 1685 - Натисніть на деталь, щоб застосувати матеріал до її екземпляра
-    action_1: 1686 - Покриття торців
-    action_1_status: 1687 - Натисніть на торець деталі, щоб застосувати до неї матеріал '$t(tab.materials.type_4)'
-    action_2: 1688 - Покриття граней
-    action_2_status: 1689 - Натисніть на награні деталі, щоб застосувати до неї матеріал '$t(tab.materials.type_6)'
-    action_3: 1690 - Взяти зразок
-    action_3_status: 1691 - Натисніть на грані, щоб взяти зразок матеріалу
-    action_4: 1692 - Очистити
-    action_4_status: 1693 - Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів
-    action_option_group_instances: 1694 - Кількість екземплярів
-    action_option_group_edges: 1695 - Торці
-    action_option_group_faces: 1696 - Площини
-    action_option_instances_0_status: 1697 - Покриття лише екземпляра цільової деталі
-    action_option_instances_1_status: 1698 - Покриття всіх екземплярів цільової деталі
-    action_option_edges_0_status: 1699 - Покриття лише цільового торця
-    action_option_edges_1_status: 1700 - Покриття цільового торця та протилежного у деталі
-    action_option_edges_2_status: 1701 - Покриття всіх 4 торців деталі, яку ви вибрали
-    action_option_faces_0_status: 1702 - Покриття лише цільової площини
-    action_option_faces_1_status: 1703 - Покриття 2 площин цільової деталі
-    edges: 1704 - {{ count }} торець
-    edges_plural: 1705 - {{ count }} торців
-    edge_ymin: 1706 - Довжина 1
-    edge_ymax: 1707 - Довжина 2
-    edge_xmin: 1708 - Ширина 1
-    edge_xmax: 1709 - Ширина 2
-    faces: 1710 - {{ count }} площина
-    faces_plural: 1711 - {{ count }} площин
-    face_zmin: 1712 - Тил
-    face_zmax: 1713 - Лице
+    action_0: 1686 - Покриття деталей
+    action_0_status: 1687 - Натисніть на деталь, щоб застосувати матеріал до її екземпляра
+    action_1: 1688 - Покриття торців
+    action_1_status: 1689 - Натисніть на торець деталі, щоб застосувати до неї матеріал '$t(tab.materials.type_4)'
+    action_2: 1690 - Покриття граней
+    action_2_status: 1691 - Натисніть на награні деталі, щоб застосувати до неї матеріал '$t(tab.materials.type_6)'
+    action_3: 1692 - Взяти зразок
+    action_3_status: 1693 - Натисніть на грані, щоб взяти зразок матеріалу
+    action_4: 1694 - Очистити
+    action_4_status: 1695 - Натисніть на деталь, щоб видалити всі матеріали з її визначення та всіх екземплярів
+    action_option_group_instances: 1696 - Кількість екземплярів
+    action_option_group_edges: 1697 - Торці
+    action_option_group_faces: 1698 - Площини
+    action_option_instances_0_status: 1699 - Покриття лише екземпляра цільової деталі
+    action_option_instances_1_status: 1700 - Покриття всіх екземплярів цільової деталі
+    action_option_edges_0_status: 1701 - Покриття лише цільового торця
+    action_option_edges_1_status: 1702 - Покриття цільового торця та протилежного у деталі
+    action_option_edges_2_status: 1703 - Покриття всіх 4 торців деталі, яку ви вибрали
+    action_option_faces_0_status: 1704 - Покриття лише цільової площини
+    action_option_faces_1_status: 1705 - Покриття 2 площин цільової деталі
+    edges: 1706 - {{ count }} торець
+    edges_plural: 1707 - {{ count }} торців
+    edge_ymin: 1708 - Довжина 1
+    edge_ymax: 1709 - Довжина 2
+    edge_xmin: 1710 - Ширина 1
+    edge_xmax: 1711 - Ширина 2
+    faces: 1712 - {{ count }} площина
+    faces_plural: 1713 - {{ count }} площин
+    face_zmin: 1714 - Тил
+    face_zmax: 1715 - Лице
     warning:
-      no_material: 1714 - Ваша модель не містить матеріалів!
-      no_material_type: 1715 - Незалежно від типу '{{ type }}'
+      no_material: 1716 - Ваша модель не містить матеріалів!
+      no_material_type: 1717 - Незалежно від типу '{{ type }}'
     error:
-      not_part: 1716 - Об'єкт, на який наведено, не є деталлю (компонентом)
-      not_edge: 1717 - Вказана грань не є торцем панелі
-      not_face: 1718 - Вказана грань не є площиною панелі
-      wrong_material_type: 1719 - Вказана деталь має бути типу '{{ type }}'
+      not_part: 1718 - Об'єкт, на який наведено, не є деталлю (компонентом)
+      not_edge: 1719 - Вказана грань не є торцем панелі
+      not_face: 1720 - Вказана грань не є площиною панелі
+      wrong_material_type: 1721 - Вказана деталь має бути типу '{{ type }}'
   smart_axes:
-    title: 1720 - Орієнтація
-    action_0: 1721 - Скасувати
-    action_0_status: 1722 - Натисніть на деталь, щоб перевернути її екземпляр уздовж одного з її розмірів
-    action_1: 1723 - Змінити Довжину ↔ Ширину
-    action_1_status: 1724 - Натисніть на деталь, щоб поміняти її довжину на ширину
-    action_2: 1725 - Змінити Лице ↔ Тил
-    action_2_status: 1726 - Клацніть на деталі, щоб поміняти читання її лиця на зворотню сторону
-    action_3: 1727 - Адаптувати осі
-    action_3_status: 1728 - Наведіть на грань деталі та натисніть на ребро, щоб адаптувати осі
-    action_4: 1729 - Змінити початок координат
-    action_4_status: 1730 - Наведіть вказівник на грань деталі та клацніть на точці, щоб розташувати її початок координат
-    action_option_group_direction: 1731 - Напрямок
-    action_option_direction_0: 1732 - Д
-    action_option_direction_1: 1733 - Ш
-    action_option_direction_2: 1734 - Т
-    action_option_direction_0_status: 1735 - Повернути деталь у довжину
-    action_option_direction_1_status: 1736 - Повернути деталь у ширину
-    action_option_direction_2_status: 1737 - Повернути деталь у її товщині
+    title: 1722 - Орієнтація
+    action_0: 1723 - Скасувати
+    action_0_status: 1724 - Натисніть на деталь, щоб перевернути її екземпляр уздовж одного з її розмірів
+    action_1: 1725 - Змінити Довжину ↔ Ширину
+    action_1_status: 1726 - Натисніть на деталь, щоб поміняти її довжину на ширину
+    action_2: 1727 - Змінити Лице ↔ Тил
+    action_2_status: 1728 - Клацніть на деталі, щоб поміняти читання її лиця на зворотню сторону
+    action_3: 1729 - Адаптувати осі
+    action_3_status: 1730 - Наведіть на грань деталі та натисніть на ребро, щоб адаптувати осі
+    action_4: 1731 - Змінити початок координат
+    action_4_status: 1732 - Наведіть вказівник на грань деталі та клацніть на точці, щоб розташувати її початок координат
+    action_option_group_direction: 1733 - Напрямок
+    action_option_direction_0: 1734 - Д
+    action_option_direction_1: 1735 - Ш
+    action_option_direction_2: 1736 - Т
+    action_option_direction_0_status: 1737 - Повернути деталь у довжину
+    action_option_direction_1_status: 1738 - Повернути деталь у ширину
+    action_option_direction_2_status: 1739 - Повернути деталь у її товщині
     warning:
-      more_entities: 1738 - {{ count_used }} екземпляри, що мають однакове визначення, будуть змінені
+      more_entities: 1740 - {{ count_used }} екземпляри, що мають однакове визначення, будуть змінені
     error:
-      not_part: 1739 - Об'єкт, на який наведено, не є деталлю (компонентом)
-      not_orientable: 1740 - Тип цієї деталі не дозволяє її зорієнтувати
+      not_part: 1741 - Об'єкт, на який наведено, не є деталлю (компонентом)
+      not_orientable: 1742 - Тип цієї деталі не дозволяє її зорієнтувати
   smart_export:
-    title: 1741 - Експорт
-    action_0: 1742 - Експортувати деталь 3D
-    action_0_status: 1743 - Натисніть на деталь
-    action_1: 1744 - Експортувати деталь 2D
-    action_1_status: 1745 - Натисніть на одну грань деталі
-    action_2: 1746 - Експортувати грань
-    action_2_status: 1747 - Натисніть на одну грань
-    action_3: 1748 - Експортувати траєкторію
-    action_3_status: 1749 - Натисніть на ребро
-    action_option_group_file_format: 1750 - Формат
-    action_option_group_unit: 1751 - Одиниці
-    action_option_group_faces: 1752 - Грані
-    action_option_group_options: 1753 - Опції
-    action_option_file_format_dxf_status: 1754 - Експорт до файлу DXF
-    action_option_file_format_stl_status: 1755 - Експортувати в файл STL
-    action_option_file_format_obj_status: 1756 - Експортувати до файлу OBJ
-    action_option_file_format_svg_status: 1757 - Експортувати до файлу SVG
+    title: 1743 - Експорт
+    action_0: 1744 - Експортувати деталь 3D
+    action_0_status: 1745 - Натисніть на деталь
+    action_1: 1746 - Експортувати деталь 2D
+    action_1_status: 1747 - Натисніть на одну грань деталі
+    action_2: 1748 - Експортувати грань
+    action_2_status: 1749 - Натисніть на одну грань
+    action_3: 1750 - Експортувати траєкторію
+    action_3_status: 1751 - Натисніть на ребро
+    action_option_group_file_format: 1752 - Формат
+    action_option_group_unit: 1753 - Одиниці
+    action_option_group_faces: 1754 - Грані
+    action_option_group_options: 1755 - Опції
+    action_option_file_format_dxf_status: 1756 - Експорт до файлу DXF
+    action_option_file_format_stl_status: 1757 - Експортувати в файл STL
+    action_option_file_format_obj_status: 1758 - Експортувати до файлу OBJ
+    action_option_file_format_svg_status: 1759 - Експортувати до файлу SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2268,9 +2270,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1767 - Виокремити отвори, що проходять крізь і злити глибини для кожної порожнини
-    action_option_options_include_paths_status: 1768 - Експортувати як шляхи непов'язаних з гранню ребер, що містяться в деталі
+    action_option_options_merge_holes_status: 1769 - Виокремити отвори, що проходять крізь і злити глибини для кожної порожнини
+    action_option_options_include_paths_status: 1770 - Експортувати як шляхи непов'язаних з гранню ребер, що містяться в деталі
     error:
-      not_part: 1769 - Ця площина не є частиною деталі (компонента)
-      not_flat_face: 1770 - Ця грань не є плоскою
-      incompatible_active_path: 1771 - Шлях активний не дозволяє експортувати цей елемент
+      not_part: 1771 - Ця площина не є частиною деталі (компонента)
+      not_flat_face: 1772 - Ця грань не є плоскою
+      incompatible_active_path: 1773 - Шлях активний не дозволяє експортувати цей елемент

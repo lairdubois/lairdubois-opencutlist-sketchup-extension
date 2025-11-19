@@ -120,7 +120,7 @@ core:
       dialog: 111 - OpenCutList
       smart_draw: 112 - Draw Parts
       smart_handle: 113 - Handle Parts
-      smart_reshape: 114 - Redesig Parts
+      smart_reshape: 114 - Reshape Parts
       smart_paint: 115 - Paint Parts
       smart_axes: 116 - Orient Parts
       smart_export: 117 - Export Parts
@@ -2147,7 +2147,7 @@ tool:
     error:
       min_distance: 1653 - The distance {{ value1 }} is smaller than the minimal distance {{ value2 }}
   smart_reshape:
-    title: 1654 - Redesign
+    title: 1654 - Reshape
     action_0: 1655 - Stretch
     action_0_status: 1656 - Click on a part to select it
     action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
