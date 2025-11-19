@@ -1115,7 +1115,7 @@ module Ladb::OpenCutList
 
       # Snap to grip?
 
-      ph = view.pick_helper(x, y, 40)
+      ph = view.pick_helper(x, y, 20)
       [ X_AXIS, Y_AXIS, Z_AXIS ].select { |axis| (@locked_axis.nil? || axis == @locked_axis) && keb.dim_by_axis(axis) > 0 }.each do |axis|
         grip_indices = Kuix::Bounds3d.faces_by_axis(axis)
         grip_indices.each do |grip_index|
@@ -1156,7 +1156,7 @@ module Ladb::OpenCutList
             t = Geom::Transformation.translation(v)
 
             polygon_3d = quad_ref.map { |point| point.transform(t) }
-            polygon_2d = polygon_3d.map { |point| view.screen_coords(point.transform(t)) }
+            polygon_2d = polygon_3d.map { |point| view.screen_coords(point) }
             if Geom.point_in_polygon_2D(p2d, polygon_2d, true)
               @picked_cutter_index = index
               return true
