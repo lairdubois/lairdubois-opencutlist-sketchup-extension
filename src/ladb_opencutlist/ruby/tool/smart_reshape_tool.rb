@@ -2056,7 +2056,7 @@ module Ladb::OpenCutList
         section_def = parent_section_def
         if section_def.nil?
 
-          if drawing_container_def.container.is_a?(Sketchup::Model)
+          if drawing_container_def.is_root? && !get_active_selection_instances.one?
 
             # No section_def for the model
 
