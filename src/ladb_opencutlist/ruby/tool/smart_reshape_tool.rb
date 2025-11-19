@@ -192,6 +192,9 @@ module Ladb::OpenCutList
     STATE_RESHAPE_START = 1
     STATE_RESHAPE = 2
 
+    LAYER_2D_DIMENSIONS = 10
+    LAYER_2D_FLOATING_TOOLS = 20
+
     LAYER_3D_RESHAPE_PREVIEW = 10
 
     attr_reader :picked_handle_start_point,
@@ -1683,7 +1686,7 @@ module Ladb::OpenCutList
           text_color: Kuix::COLOR_X,
           border_color: color
         )
-        @tool.append_2d(k_label)
+        @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
       end
 
