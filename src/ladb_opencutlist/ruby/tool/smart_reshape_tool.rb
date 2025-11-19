@@ -192,6 +192,9 @@ module Ladb::OpenCutList
     STATE_RESHAPE_START = 1
     STATE_RESHAPE = 2
 
+    LAYER_2D_DIMENSIONS = 10
+    LAYER_2D_FLOATING_TOOLS = 20
+
     LAYER_3D_RESHAPE_PREVIEW = 10
 
     attr_reader :picked_handle_start_point,
@@ -842,6 +845,7 @@ module Ladb::OpenCutList
           keb = Kuix::Bounds3d.new.copy!(eb)
 
           @picked_reshape_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
+          @picked_reshape_start_opposite_point = keb.face_center(Kuix::Bounds3d.face_opposite(@picked_grip_index)).to_p.transform(et)
           @mouse_down_point = nil
 
           set_state(STATE_RESHAPE) if _assert_valid_cutters
@@ -912,6 +916,7 @@ module Ladb::OpenCutList
             keb = Kuix::Bounds3d.new.copy!(eb)
 
             @picked_reshape_start_point = keb.face_center(@picked_grip_index).to_p.transform(et)
+            @picked_reshape_start_opposite_point = keb.face_center(Kuix::Bounds3d.face_opposite(@picked_grip_index)).to_p.transform(et)
 
             @mouse_down_point = nil
             set_state(STATE_RESHAPE) if _assert_valid_cutters
@@ -1091,6 +1096,7 @@ module Ladb::OpenCutList
     protected
 
     def _reset
+      @picked_reshape_start_opposite_point = nil
       @split_def = nil
       @picked_axis = nil
       @picked_grip_index = nil
@@ -1115,12 +1121,12 @@ module Ladb::OpenCutList
 
       # Snap to grip?
 
-      pk = view.pick_helper(x, y, 40)
+      ph = view.pick_helper(x, y, 20)
       [ X_AXIS, Y_AXIS, Z_AXIS ].select { |axis| (@locked_axis.nil? || axis == @locked_axis) && keb.dim_by_axis(axis) > 0 }.each do |axis|
         grip_indices = Kuix::Bounds3d.faces_by_axis(axis)
         grip_indices.each do |grip_index|
           p = keb.face_center(grip_index).to_p.transform(et)
-          if pk.test_point(p)
+          if ph.test_point(p)
             @picked_axis = axis
             @picked_grip_index = grip_index
             @split_def = nil
@@ -1155,11 +1161,18 @@ module Ladb::OpenCutList
             v.length = vmax.length * ratio
             t = Geom::Transformation.translation(v)
 
-            polygon = quad_ref.map { |point| view.screen_coords(point.transform(t)) }
-            if Geom.point_in_polygon_2D(p2d, polygon, true)
+            polygon_3d = quad_ref.map { |point| point.transform(t) }
+            polygon_2d = polygon_3d.map { |point| view.screen_coords(point) }
+            if Geom.point_in_polygon_2D(p2d, polygon_2d, true)
               @picked_cutter_index = index
               return true
             end
+            polygon_3d.each_cons(2) { |segment|
+              if ph.pick_segment(segment, x, y, 20)
+                @picked_cutter_index = index
+                return true
+              end
+            }
 
           end
 
@@ -1177,10 +1190,32 @@ module Ladb::OpenCutList
       eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
       direction = @picked_axis.transform(et)
+      ray = view.pickray(x, y)
 
-      picked_point, _ = Geom::closest_points([@picked_cutter_start_point, direction ], view.pickray(x, y))
-      @mouse_snap_point = picked_point
-      @mouse_ip.clear
+      begin
+        picked_point, _ = Geom::closest_points([@picked_cutter_start_point, direction ], ray)
+        @mouse_snap_point = picked_point
+        @mouse_ip.clear
+      rescue
+        center = eb.center.transform(et)
+        case @picked_axis
+        when X_AXIS
+          plane = [ center, eb.height > eb.depth ? _get_active_z_axis : _get_active_y_axis ]
+        when Y_AXIS
+          plane = [ center, eb.width > eb.depth ? _get_active_z_axis : _get_active_x_axis ]
+        when Z_AXIS
+          plane = [ center, eb.height > eb.width ? _get_active_x_axis : _get_active_y_axis ]
+        else
+          plane = nil
+        end
+        unless plane.nil?
+          hit = Geom.intersect_line_plane(ray, plane)
+          unless hit.nil?
+            @mouse_snap_point = hit.project_to_line([ center, direction ])
+            @mouse_ip.clear
+          end
+        end
+      end
 
       min = eb.min.transform(et)
       max = eb.max.transform(et)
@@ -1307,8 +1342,8 @@ module Ladb::OpenCutList
 
     def _snap_reshape(flags, x, y, view)
 
-      pk = view.pick_helper(x, y, 40)
-      if pk.test_point(@picked_reshape_start_point)
+      ph = view.pick_helper(x, y, 40)
+      if ph.test_point(@picked_reshape_start_point)
 
         @mouse_snap_point = @picked_reshape_start_point
         @mouse_ip.clear
@@ -1320,6 +1355,7 @@ module Ladb::OpenCutList
 
         if @mouse_ip.degrees_of_freedom > 2 ||
            @mouse_ip.instance_path.empty? && @mouse_ip.degrees_of_freedom > 1 ||
+           @mouse_ip.position.on_plane?([ @picked_reshape_start_opposite_point, direction ])
            @mouse_ip.face && @mouse_ip.face == @mouse_ip.instance_path.leaf && @mouse_ip.vertex.nil? && @mouse_ip.edge.nil? && !@mouse_ip.face.normal.transform(@mouse_ip.transformation).parallel?(direction) ||
            @mouse_ip.edge && @mouse_ip.degrees_of_freedom == 1 && !@mouse_ip.edge.start.position.vector_to(@mouse_ip.edge.end.position).transform(@mouse_ip.transformation).perpendicular?(direction)
 
@@ -1521,9 +1557,12 @@ module Ladb::OpenCutList
       split_def, edvs, lps, lpe = stretch_def.values_at(:split_def, :edvs, :lps, :lpe)
       et, container_defs = split_def.values_at(:et, :container_defs)
 
-      color = _get_vector_color(lps.vector_to(lpe))
+      axis_color = _get_vector_color(lps.vector_to(lpe))
+      no_scale_color = Kuix::COLOR_DARK_GREY
 
-      container_defs.each do |container_def|
+      fn_preview_container = lambda do |container_def, color|
+
+        color = no_scale_color if container_def.container.definition.behavior.no_scale_mask? == 127
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(container_def.edge_defs.flat_map { |edge_def|
@@ -1540,7 +1579,11 @@ module Ladb::OpenCutList
         k_segments.transformation = et
         @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
 
+        container_def.children.each { |container_def| fn_preview_container.call(container_def, color) }
+
       end
+
+      fn_preview_container.call(container_defs.first, axis_color)
 
       # eti = et.inverse
       # epmin, eps, epe, evpspe, reversed, section_defs = split_def.values_at(:epmin, :eps, :epe, :evpspe, :reversed, :section_defs)
@@ -1643,7 +1686,7 @@ module Ladb::OpenCutList
           text_color: Kuix::COLOR_X,
           border_color: color
         )
-        @tool.append_2d(k_label)
+        @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
 
       end
 
