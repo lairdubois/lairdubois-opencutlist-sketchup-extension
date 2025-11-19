@@ -1736,8 +1736,11 @@ module Ladb::OpenCutList
       container_defs.first.compute_md5(@picked_axis)
       container_defs.first.compute_entity_pos
 
+      # Divide in 2 operations to hide native make_unique group operations
+      # The first operation set with "next_transparent = true"
+
       model = Sketchup.active_model
-      model.start_operation('OCL Stretch Part', true, false, !active?) # TODO :Defined "next_transparent = true", otherwise the make_unique group operation would be visible.
+      model.start_operation('OCL Stretch', true, true, !active?)
 
         # Make Unique routine
         # -------------------
@@ -1820,11 +1823,18 @@ module Ladb::OpenCutList
 
         end
 
+      model.commit_operation
+
+      model = Sketchup.active_model
+      model.start_operation('OCL Stretch', true, false, !active?)
+
         # Stretch routine
         # ---------------
 
+        # Keep stretched definitions to avoid stretching the same definition twice
         stretched_definitions = Set[]
 
+        # Defined a sorting order to be sure that farest edges are moved first
         sorting_order = (emv.valid? && emv.samedirection?(evpspe)) ? -1 : 1
 
         container_defs.each do |container_def|
@@ -1893,7 +1903,7 @@ module Ladb::OpenCutList
 
         end
 
-        # Adjust cutters
+       # Adjust cutters
         eti = et.inverse
         epo = reversed ? lpe.transform(eti) : eps
         epomax = reversed ? eps : lpe.transform(eti)
@@ -1916,10 +1926,6 @@ module Ladb::OpenCutList
         _load_cutters
 
       model.commit_operation
-
-      # TODO : This empty operation allows terminating the "next_transparent = true" option while closing the native "make_unique" operations of the groups.
-      # model.start_operation('OCL Stretch Part Workaround', true, false, !active?)
-      # model.commit_operation
 
     end
 
@@ -2060,7 +2066,7 @@ module Ladb::OpenCutList
           elsif drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
              drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 127)
 
-            container_origin = ORIGIN.transform(drawing_container_def.transformation.inverse * drawing_container_def.container.transformation)
+            container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
             section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
 
             # Container bounds are not considered in this case
