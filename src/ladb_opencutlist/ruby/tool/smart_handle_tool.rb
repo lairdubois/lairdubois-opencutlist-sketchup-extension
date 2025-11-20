@@ -244,13 +244,11 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SmartHandleActionHandler < SmartActionHandler
+  class SmartHandleActionHandler < SmartSelectActionHandler
 
     include UserTextHelper
     include SmartActionHandlerPartHelper
 
-    STATE_SELECT = 0
-    STATE_SELECT_SIBLINGS = 4
     STATE_HANDLE_START = 1
     STATE_HANDLE = 2
     STATE_HANDLE_COPIES = 3
@@ -277,115 +275,17 @@ module Ladb::OpenCutList
 
     end
 
-    # ------
-
-    def start
-      super
-
-      return if (model = Sketchup.active_model).nil?
-      selection = model.selection
-
-      # Try to copy the previous action handler selection
-      if @previous_action_handler &&
-         @previous_action_handler.class != self.class &&
-         (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
-         (part = @previous_action_handler.get_active_part)
-
-        _set_active_part(part_entity_path, part)
-
-        if _pick_part_siblings?
-
-          if (part_sibling_entity_paths = @previous_action_handler.get_active_part_sibling_entity_paths) &&
-             (part_siblings = @previous_action_handler.get_active_part_siblings)
-
-            part_sibling_entity_paths.zip(part_siblings).each do |part_sibling_entity_path, part_sibling|
-              _add_part_sibling(part_sibling_entity_path, part_sibling)
-            end
-
-          end
-
-        end
-
-        onPartSelected
-
-      else
-
-        # Try to select part from the current selection
-        entity = selection.min { |a, b| a.entityID <=> b.entityID } # Smaller entityId == Older entity
-        if entity.is_a?(Sketchup::ComponentInstance)
-          active_path = model.active_path.is_a?(Array) ? model.active_path : []
-          path = active_path + [ entity ]
-          part_entity_path = _get_part_entity_path_from_path(path)
-          _make_unique_groups_in_path(part_entity_path)
-          unless (part = _generate_part_from_path(part_entity_path)).nil?
-
-            _set_active_part(part_entity_path, part)
-
-            if _pick_part_siblings?
-
-              part_entity = part_entity_path.last
-              part_definition = part_entity.definition
-
-              entities = selection.select { |e| e != part_entity && e.is_a?(Sketchup::ComponentInstance) && e.definition == part_definition }
-              entities.each do |entity|
-
-                sibling_path = active_path + [ entity ]
-                part_sibling_entity_path = _get_part_entity_path_from_path(sibling_path)
-                unless (part_sibling = _generate_part_from_path(part_sibling_entity_path)).nil?
-                  _add_part_sibling(part_sibling_entity_path, part_sibling)
-                end
-
-              end
-
-            end
-
-            onPartSelected
-
-          end
-        end
-
-      end
-
-      # Clear current selection
-      selection.clear if _clear_selection_on_start
-
-    end
-
     # -- STATE --
 
-    def get_startup_state
-      STATE_SELECT
-    end
-
     def get_state_cursor(state)
-
-      case state
-      when STATE_SELECT
-        return @tool.cursor_select_part
-      end
-
       super
     end
 
     def get_state_picker(state)
-
-      case state
-      when STATE_SELECT, STATE_SELECT_SIBLINGS
-        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
-      end
-
       super
     end
 
     def get_state_status(state)
-
-      case state
-
-      when STATE_SELECT, STATE_SELECT_SIBLINGS, STATE_HANDLE_START, STATE_HANDLE
-        return PLUGIN.get_i18n_string("tool.smart_handle.action_#{@action}_state_#{state}_status") + '.'
-
-      end
-
       super
     end
 
@@ -420,9 +320,7 @@ module Ladb::OpenCutList
     end
 
     def onToolMouseMove(tool, flags, x, y, view)
-      super
-
-      return true if x < 0 || y < 0
+      return true if super
 
       case @state
 
@@ -457,38 +355,17 @@ module Ladb::OpenCutList
     end
 
     def onToolMouseLeave(tool, view)
+      return true if super
       @tool.remove_all_2d
       @tool.remove_3d([ LAYER_3D_HANDLE_PREVIEW, LAYER_3D_AXES_PREVIEW ])
       @mouse_ip.clear
       view.tooltip = ''
-      super
-    end
-
-    def onToolLButtonDown(tool, flags, x, y, view)
-
-      case @state
-
-      when STATE_SELECT
-        if has_active_part? && _pick_part_siblings?
-          set_state(STATE_SELECT_SIBLINGS)
-          return true
-        end
-
-      end
-
-      super
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
+      return true if super
 
       case @state
-
-      when STATE_SELECT, STATE_SELECT_SIBLINGS
-        unless has_active_part?
-          UI.beep
-          return true
-        end
-        onPartSelected
 
       when STATE_HANDLE_START
         @picked_handle_start_point = @mouse_snap_point
@@ -506,6 +383,7 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      return true if super
 
       if tool.is_key_alt_or_command?(key) && is_quick
         @tool.store_action_option_value(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR, !_fetch_option_mirror, true)
@@ -541,25 +419,17 @@ module Ladb::OpenCutList
       false
     end
 
-    def onPickerChanged(picker, view)
-
-      case @state
-
-      when STATE_SELECT
-        _pick_part(picker, view)
-
-      when STATE_SELECT_SIBLINGS
-        _pick_part_sibling(picker, view)
-
-      end
-
-      super
-    end
-
     def onStateChanged(state)
       super
 
       @tool.remove_tooltip
+
+      case state
+
+      when STATE_HANDLE, STATE_HANDLE_START
+        @tool.remove_all_2d
+
+      end
 
     end
 
@@ -991,6 +861,7 @@ module Ladb::OpenCutList
     # -----
 
     def onToolKeyDown(tool, key, repeat, flags, view)
+      return true if super
       return if @state != STATE_HANDLE
 
       if key == VK_RIGHT
@@ -1389,13 +1260,13 @@ module Ladb::OpenCutList
           uz = mv.z
         end
 
-        src_instance = @active_part_entity_path[-1]
+        src_instance = get_active_selection_instances.first
         old_instances = @instances[1..-1]
 
-        if @active_part_entity_path.one?
+        if get_active_selection_path.empty?
           entities = model.active_entities
         else
-          entities = @active_part_entity_path[-2].definition.entities
+          entities = get_active_selection_path.last.definition.entities
         end
 
         entities.erase_entities(old_instances) if old_instances.any?
@@ -1594,6 +1465,7 @@ module Ladb::OpenCutList
     # -----
 
     def onToolKeyDown(tool, key, repeat, flags, view)
+      return true if super
       return if @state != STATE_HANDLE
 
       if key == VK_RIGHT
@@ -1992,13 +1864,13 @@ module Ladb::OpenCutList
           uy = mv_2d.y
         end
 
-        src_instance = @active_part_entity_path[-1]
+        src_instance = get_active_selection_instances.first
         old_instances = @instances[1..-1]
 
-        if @active_part_entity_path.one?
+        if get_active_selection_path.empty?
           entities = model.active_entities
         else
-          entities = @active_part_entity_path[-2].definition.entities
+          entities = get_active_selection_path.last.definition.entities
         end
 
         entities.erase_entities(old_instances) if old_instances.any?
@@ -2249,7 +2121,18 @@ module Ladb::OpenCutList
 
     # -----
 
+    def onToolSuspend(tool, view)
+      super
+      _unhide_instance if @state == STATE_HANDLE
+    end
+
+    def onToolResume(tool, view)
+      super
+      _hide_instance if @state == STATE_HANDLE
+    end
+
     def onToolKeyDown(tool, key, repeat, flags, view)
+      return true if super
       return if @state != STATE_HANDLE
 
       if key == VK_RIGHT
@@ -2697,6 +2580,7 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
+      return true if super
       return if @state != STATE_HANDLE
 
       if tool.is_key_ctrl_or_option?(key)
@@ -2738,13 +2622,13 @@ module Ladb::OpenCutList
     end
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+      return true if super
 
       if tool.is_key_ctrl_or_option?(key)
         _refresh
         return true
       end
 
-      super
     end
 
     def onStateChanged(state)
@@ -3105,13 +2989,13 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       model.start_operation('OCL Distribute Part', true, false, !active?)
 
-        src_instance = @active_part_entity_path[-1]
+        src_instance = get_active_selection_instances.first
         old_instances = @instances[1..-1]
 
-        if @active_part_entity_path.one?
+        if get_active_selection_path.empty?
           entities = model.active_entities
         else
-          entities = @active_part_entity_path[-2].definition.entities
+          entities = get_active_selection_path.last.definition.entities
         end
 
         entities.erase_entities(old_instances) if old_instances.any?

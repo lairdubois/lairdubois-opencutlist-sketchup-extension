@@ -2068,6 +2068,12 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Cliquez sur une pièce pour la sélectionner
+    state_0_to_6_status: Choisir un élément parent
+    state_4_status: Glissez sur une pièce identique ayant le même parent pour l'ajouter à la sélection et relâchez pour continuer
+    state_5_status: Faites glisser pour ajouter à la sélection et relâchez pour continuer
+    state_6_status: Choisisez un élément dans la liste
   smart_draw:
     title: Dessiner
     action_0: Dessiner un Rectangle
@@ -2113,24 +2119,18 @@ tool:
     title: Manipuler
     action_0: Sélectionner
     action_0_status: Cliquez sur une pièce pour la sélectionner
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
     action_0_state_4_status: Glissez sur une pièce identique pour l'ajouter à la sélection et relâchez pour continuer
     action_1: Copier en ligne
     action_1_status: Cliquez sur une pièce pour la copier le long d'un axe
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: Cliquez pour placer la copie de la pièce ou entrez une distance
     action_2: Copier en grille
     action_2_status: Cliquez sur une pièce pour la copier le long d'une grille
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: Cliquez pour placer les copies de la pièce ou entrez deux distances
     action_3: Déplacer
     action_3_status: Cliquez sur une pièce pour la déplacer le long d'un axe
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
     action_3_state_2_status: Cliquez pour placer la pièce ou entrez une distance
     action_4: Répartir
     action_4_status: Cliquez sur une pièce pour la répartir le long d'un axe
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
     action_4_state_1_status: Cliquez pour déterminer le premier point de mesure
     action_4_state_2_status: Cliquez pour déterminer le second point de mesure ou entrez une distance
     action_option_group_copy_measure_type: Mesure
@@ -2154,8 +2154,7 @@ tool:
   smart_reshape:
     title: Remodeler
     action_0: Etirer
-    action_0_status: Cliquez sur une pièce pour la sélectionner
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: Cliquez sur une pièce pour l'étirer
     action_0_state_1_status: Cliquez sur une poignée pour étirer
     action_0_state_1a_status: Cliquez sur un plan de coupe pour le déplacer
     action_0_state_1b_status: Ajouter un plan de coupe
