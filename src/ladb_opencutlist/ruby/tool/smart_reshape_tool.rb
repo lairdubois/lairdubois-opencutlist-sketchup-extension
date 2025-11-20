@@ -188,6 +188,7 @@ module Ladb::OpenCutList
 
     STATE_SELECT = 0
     STATE_SELECT_RECT = 5
+    STATE_SELECT_TREE = 6
     STATE_SELECT_SIBLINGS = 4
     STATE_RESHAPE_START = 1
     STATE_RESHAPE = 2
@@ -781,6 +782,7 @@ module Ladb::OpenCutList
     # -----
 
     def onToolSuspend(tool, view)
+      tool.remove_2d(LAYER_2D_FLOATING_TOOLS) if @state == STATE_SELECT
       _unhide_instance if @state == STATE_RESHAPE
     end
 
@@ -959,6 +961,7 @@ module Ladb::OpenCutList
     end
 
     def onToolMouseLeave(tool, view)
+      return true if @state == STATE_SELECT_TREE
       @tool.remove_3d([ LAYER_3D_PART_PREVIEW, LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
       super
     end
@@ -966,6 +969,12 @@ module Ladb::OpenCutList
     def onToolKeyDown(tool, key, repeat, flags, view)
 
       case @state
+
+      when STATE_SELECT
+        if has_active_part? && tool.is_key_ctrl_or_option?(key)
+          set_state(STATE_SELECT_TREE)
+          return true
+        end
 
       when STATE_RESHAPE_START
         if key == VK_RIGHT
@@ -1020,6 +1029,15 @@ module Ladb::OpenCutList
 
       case @state
 
+      when STATE_SELECT_TREE
+        if tool.is_key_ctrl_or_option?(key)
+          Sketchup.active_model.selection.clear
+          tool.remove_2d(LAYER_2D_FLOATING_TOOLS)
+          set_state(STATE_SELECT)
+          _refresh
+          return true
+        end
+
       when STATE_RESHAPE_CUTTER_ADD, STATE_RESHAPE_CUTTER_REMOVE
         if tool.is_key_ctrl_or_option?(key)
           @snap_ratio = nil
@@ -1057,7 +1075,79 @@ module Ladb::OpenCutList
         when STATE_SELECT
           _unhide_instances
 
+        when STATE_SELECT_TREE
+
+          part = get_active_part
+          path = get_active_part_entity_path
+          active_path_depth = Sketchup.active_model.active_path.is_a?(Array) ? Sketchup.active_model.active_path.size : 0
+
+          unit = @tool.get_unit
+
+          k_panel = Kuix::Panel.new
+          k_panel.layout_data = Kuix::StaticLayoutData.new(tool.last_mouse_x, tool.last_mouse_y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
+          k_panel.layout = Kuix::GridLayout.new(1, path.size, 0, unit * 0.25)
+          k_panel.padding.set_all!(unit * 0.25)
+          k_panel.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT)
+          @tool.append_2d(k_panel, LAYER_2D_FLOATING_TOOLS)
+
+          path.each_with_index do |entity, depth|
+
+            disabled = depth < active_path_depth
+            text_color = disabled ? SmartTool::COLOR_BRAND_LIGHT : Kuix::COLOR_BLACK
+
+            k_btn = Kuix::Button.new
+            k_btn.layout = Kuix::InlineLayout.new(true, unit * 0.5, Kuix::Anchor.new(Kuix::Anchor::LEFT))
+            k_btn.margin.left = unit * depth
+            k_btn.border.set_all!(unit * 0.5)
+            k_btn.padding.set_all!(unit)
+            k_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+            k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+            k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
+            k_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
+            k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
+            k_btn.disabled = disabled
+            k_btn.on(:enter) do
+              if entity == path.last
+                _preview_part(path, part)
+              else
+                tool.remove_3d(LAYER_3D_PART_PREVIEW)
+                Sketchup.active_model.selection.clear
+                Sketchup.active_model.selection.add(entity)
+              end
+            end
+            k_btn.on(:leave) do
+              tool.remove_3d(LAYER_3D_PART_PREVIEW)
+              Sketchup.active_model.selection.clear
+            end
+            k_btn.on(:click) do
+              Sketchup.active_model.selection.clear
+              _reset_active_part
+              _set_active_selection(path[0...depth-path.size], [ entity ])
+              onPartSelected
+            end
+            k_panel.append(k_btn)
+
+            unless entity.name.empty?
+              k_label = Kuix::Label.new
+              k_label.text = entity.name
+              k_label.text_size = unit * 3
+              k_label.text_bold = true
+              k_label.set_style_attribute(:color, text_color)
+              k_btn.append(k_label)
+            end
+
+            unless entity.definition.group? && !entity.name.empty?
+              k_label = Kuix::Label.new
+              k_label.text = entity.definition.group? ? PLUGIN.get_i18n_string('tab.outliner.type_1') : "<#{entity.definition.name}>"
+              k_label.text_size = unit * 3
+              k_label.set_style_attribute(:color, text_color)
+              k_btn.append(k_label)
+            end
+
+          end
+
         when STATE_RESHAPE_START
+          @tool.remove_all_2d
           @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
           _unhide_instances
 
