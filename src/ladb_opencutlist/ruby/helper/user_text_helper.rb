@@ -34,12 +34,12 @@ module Ladb::OpenCutList
       # --------------------
 
       # 1. Add | around each token to make them easier to split it
-      tokens_string = text.gsub(/(@|\d+'(?:\s*\d\s+)?(?:\d+\/)?\d+"*|\d+'*\s+(?:\d+\/)?\d+"*|\d+\/\d+"*|(?:\d+(?:[.,]\d+)*|[.,]\d+)(?:\s*(?:mm|cm|m|"|'))?)/, '|\1|')
+      tokens_string = text.gsub(/(@|\d+'(?:\s*\d\s+)?(?:\d+\/)?\d+"*|\d+'*\s+(?:\d+\/)?\d+"*|\d+\/\d+"*|(?:\d+(?:[.,]\d+)*|[.,]\d+)(?:\s*(?:mm|cm|m|"|'))?)/i, '|\1|')
                           .gsub(/([()])/, '|\1|')
                           .gsub(/(-)/, '|\1|')
 
       # 2. Split tokens by '|'
-      tokens = tokens_string.split(/\|+/).map { |token| token.strip unless token.nil? || token.empty? }.compact
+      tokens = tokens_string.downcase.split(/\|+/).map { |token| token.strip unless token.nil? || token.empty? }.compact
 
       # 3. Manage 'negative' operator
       tokens.each_with_index do |token, index|
