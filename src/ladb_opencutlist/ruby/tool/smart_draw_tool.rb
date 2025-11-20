@@ -1602,11 +1602,11 @@ module Ladb::OpenCutList
         end
         k_panel.append(k_btn)
 
-        k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(tool_def[:path]))
-        k_motif.min_size.set_all!(unit * 4)
-        k_motif.set_style_attribute(:color, Kuix::COLOR_BLACK)
-        k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
-        k_btn.append(k_motif)
+          k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path(tool_def[:path]))
+          k_motif.min_size.set_all!(unit * 4)
+          k_motif.set_style_attribute(:color, Kuix::COLOR_BLACK)
+          k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+          k_btn.append(k_motif)
 
       end
 
