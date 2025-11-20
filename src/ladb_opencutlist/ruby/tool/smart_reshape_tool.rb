@@ -181,20 +181,12 @@ module Ladb::OpenCutList
 
   # -----
 
-  class SmartReshapeActionHandler < SmartActionHandler
+  class SmartReshapeActionHandler < SmartSelectActionHandler
 
     include UserTextHelper
-    include SmartActionHandlerPartHelper
 
-    STATE_SELECT = 0
-    STATE_SELECT_RECT = 5
-    STATE_SELECT_TREE = 6
-    STATE_SELECT_SIBLINGS = 4
     STATE_RESHAPE_START = 1
     STATE_RESHAPE = 2
-
-    LAYER_2D_DIMENSIONS = 10
-    LAYER_2D_FLOATING_TOOLS = 20
 
     LAYER_3D_RESHAPE_PREVIEW = 10
 
@@ -212,108 +204,20 @@ module Ladb::OpenCutList
       @picked_reshape_start_point = nil
       @picked_reshape_end_point = nil
 
-      @startup_state = STATE_SELECT
-
-    end
-
-    # ------
-
-    def start
-      super
-
-      return if (model = Sketchup.active_model).nil?
-      selection = model.selection
-
-      # Try to copy the previous action handler selection
-      if @previous_action_handler
-
-        if (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
-           (part = @previous_action_handler.get_active_part)
-
-          _set_active_part(part_entity_path, part)
-
-          if _pick_part_siblings?
-
-            if (part_sibling_entity_paths = @previous_action_handler.get_active_part_sibling_entity_paths) &&
-               (part_siblings = @previous_action_handler.get_active_part_siblings)
-
-              part_sibling_entity_paths.zip(part_siblings).each do |part_sibling_entity_path, part_sibling|
-                _add_part_sibling(part_sibling_entity_path, part_sibling)
-              end
-
-            end
-
-          end
-
-          onPartSelected
-
-        elsif (selection_path = @previous_action_handler.get_active_selection_path) &&
-              (instances = @previous_action_handler.get_active_selection_instances)
-
-          _reset_active_part
-          _set_active_selection(selection_path, instances)
-
-          onPartSelected
-
-        end
-
-      else
-
-        if (entities = selection.select { |entity| entity.respond_to?(:transformation) }).any?
-
-          active_path = model.active_path.is_a?(Array) ? model.active_path : []
-
-          if entities.one?
-            path = active_path + [ entities.first ]
-            part_entity_path = _get_part_entity_path_from_path(path)
-            unless (part = _generate_part_from_path(part_entity_path)).nil?
-              _set_active_part(part_entity_path, part)
-            end
-          end
-
-          unless has_active_part?
-            _set_active_selection(active_path, entities)
-          end
-
-          onPartSelected
-
-        end
-
-      end
-
-      # Clear current selection
-      selection.clear if _clear_selection_on_start
-
     end
 
     # -- STATE --
 
-    def get_startup_state
-      @startup_state
-    end
-
     def get_state_cursor(state)
-
-      case state
-      when STATE_SELECT
-        return @tool.cursor_select_part
-      end
-
       super
     end
 
     def get_state_picker(state)
-
-      case state
-      when STATE_SELECT, STATE_SELECT_SIBLINGS
-        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
-      end
-
       super
     end
 
     def get_state_status(state)
-      PLUGIN.get_i18n_string("tool.smart_reshape.action_#{@action}_state_#{state}_status") + '.'
+      super
     end
 
     def get_state_vcb_label(state)
@@ -358,21 +262,6 @@ module Ladb::OpenCutList
 
       case @state
 
-      when STATE_SELECT
-
-        if @mouse_down_point_2d && @mouse_down_point_2d.distance(Geom::Point3d.new(x, y, 0)) > 20  # Drag handled only if the distance is > 10px
-          set_state(STATE_SELECT_RECT)
-        end
-
-      when STATE_SELECT_RECT
-
-        @tool.remove_all_2d
-
-        unless @mouse_down_point_2d.nil?
-          @mouse_move_point_2d = Geom::Point2d.new(x, y)
-          _preview_reshape_select_rect(view)
-        end
-
       when STATE_RESHAPE_START
 
         @mouse_snap_point = nil
@@ -403,29 +292,11 @@ module Ladb::OpenCutList
     end
 
     def onToolMouseLeave(tool, view)
+      return true if super
       @tool.remove_all_2d
       @tool.remove_3d([ LAYER_3D_RESHAPE_PREVIEW ])
       @mouse_ip.clear
       view.tooltip = ''
-      super
-    end
-
-    def onToolLButtonDown(tool, flags, x, y, view)
-
-      case @state
-
-      when STATE_SELECT
-        if has_active_part? && _pick_part_siblings?
-          set_state(STATE_SELECT_SIBLINGS)
-          return true
-        else
-          @mouse_down_point_2d = Geom::Point3d.new(x, y)
-          return true
-        end
-
-      end
-
-      super
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
@@ -433,52 +304,6 @@ module Ladb::OpenCutList
       @mouse_down_point = nil
 
       case @state
-
-      when STATE_SELECT, STATE_SELECT_SIBLINGS
-        @mouse_down_point_2d = nil
-        @mouse_move_point_2d = nil
-        unless has_active_part?
-          UI.beep
-          return true
-        end
-        onPartSelected
-
-      when STATE_SELECT_RECT
-        if @mouse_down_point_2d.nil?
-          set_state(STATE_SELECT)
-          return true
-        else
-
-          ph = view.pick_helper(x, y)
-          ph.window_pick(@mouse_down_point_2d, Geom::Point3d.new(x, y), Sketchup::PickHelper::PICK_INSIDE)
-
-          @tool.remove_all_2d
-          @mouse_down_point_2d = nil
-          @mouse_move_point_2d = nil
-
-          if ph.count > 0
-
-            model = Sketchup.active_model
-            active_path = model.active_path.is_a?(Array) ? model.active_path : []
-
-            instances = (0...ph.count)
-                          .map { |i| ph.element_at(i) }
-                          .uniq
-                          .select { |entity| entity.respond_to?(:transformation) }
-            if instances.any?
-
-              _reset_active_part
-              _set_active_selection(active_path, instances)
-
-              onPartSelected
-
-              return true
-            end
-
-          end
-          UI.beep
-          set_state(STATE_SELECT)
-        end
 
       when STATE_RESHAPE_START
         @picked_reshape_start_point = @mouse_snap_point
@@ -492,10 +317,7 @@ module Ladb::OpenCutList
 
       end
 
-    end
-
-    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
-      false
+      super
     end
 
     def onToolUserText(tool, text, view)
@@ -512,21 +334,6 @@ module Ladb::OpenCutList
       end
 
       false
-    end
-
-    def onPickerChanged(picker, view)
-
-      case @state
-
-      when STATE_SELECT
-        _pick_part(picker, view)
-
-      when STATE_SELECT_SIBLINGS
-        _pick_part_sibling(picker, view)
-
-      end
-
-      super
     end
 
     def onStateChanged(state)
@@ -605,16 +412,6 @@ module Ladb::OpenCutList
     def _snap_reshape(flags, x, y, view)
 
       @mouse_snap_point = @mouse_ip.position if @mouse_snap_point.nil?
-
-    end
-
-    def _preview_reshape_select_rect(view)
-
-      k_rect = _create_floating_rect(
-        start_point_2d: @mouse_down_point_2d,
-        end_point_2d: @mouse_move_point_2d,
-      )
-      @tool.append_2d(k_rect)
 
     end
 
@@ -757,6 +554,10 @@ module Ladb::OpenCutList
 
       case state
 
+      when STATE_SELECT
+        return super +
+               ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
+
       when STATE_RESHAPE_START
         return super +
                "#{(' ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1a_status") + '.') unless @picked_axis.nil?}" +
@@ -777,12 +578,13 @@ module Ladb::OpenCutList
 
       end
 
-      super    end
+      super
+    end
 
     # -----
 
     def onToolSuspend(tool, view)
-      tool.remove_2d(LAYER_2D_FLOATING_TOOLS) if @state == STATE_SELECT
+      super
       _unhide_instance if @state == STATE_RESHAPE
     end
 
@@ -961,20 +763,15 @@ module Ladb::OpenCutList
     end
 
     def onToolMouseLeave(tool, view)
-      return true if @state == STATE_SELECT_TREE
+      return true if super
       @tool.remove_3d([ LAYER_3D_PART_PREVIEW, LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
       super
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
+      return true if super
 
       case @state
-
-      when STATE_SELECT
-        if has_active_part? && tool.is_key_ctrl_or_option?(key)
-          set_state(STATE_SELECT_TREE)
-          return true
-        end
 
       when STATE_RESHAPE_START
         if key == VK_RIGHT
@@ -1027,16 +824,13 @@ module Ladb::OpenCutList
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
       return true if super
 
-      case @state
+      if tool.is_key_alt_or_command?(key) && is_quick
+        @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_MAKE_UNIQUE, !_fetch_option_options_make_unique, true)
+        _refresh
+        return true
+      end
 
-      when STATE_SELECT_TREE
-        if tool.is_key_ctrl_or_option?(key)
-          Sketchup.active_model.selection.clear
-          tool.remove_2d(LAYER_2D_FLOATING_TOOLS)
-          set_state(STATE_SELECT)
-          _refresh
-          return true
-        end
+      case @state
 
       when STATE_RESHAPE_CUTTER_ADD, STATE_RESHAPE_CUTTER_REMOVE
         if tool.is_key_ctrl_or_option?(key)
@@ -1072,83 +866,9 @@ module Ladb::OpenCutList
 
         case state
 
-        when STATE_SELECT
-          _unhide_instances
-
-        when STATE_SELECT_TREE
-
-          part = get_active_part
-          path = get_active_part_entity_path
-          active_path_depth = Sketchup.active_model.active_path.is_a?(Array) ? Sketchup.active_model.active_path.size : 0
-
-          unit = @tool.get_unit
-
-          k_panel = Kuix::Panel.new
-          k_panel.layout_data = Kuix::StaticLayoutData.new(tool.last_mouse_x, tool.last_mouse_y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
-          k_panel.layout = Kuix::GridLayout.new(1, path.size, 0, unit * 0.25)
-          k_panel.padding.set_all!(unit * 0.25)
-          k_panel.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT)
-          @tool.append_2d(k_panel, LAYER_2D_FLOATING_TOOLS)
-
-          path.each_with_index do |entity, depth|
-
-            disabled = depth < active_path_depth
-            text_color = disabled ? SmartTool::COLOR_BRAND_LIGHT : Kuix::COLOR_BLACK
-
-            k_btn = Kuix::Button.new
-            k_btn.layout = Kuix::InlineLayout.new(true, unit * 0.5, Kuix::Anchor.new(Kuix::Anchor::LEFT))
-            k_btn.margin.left = unit * depth
-            k_btn.border.set_all!(unit * 0.5)
-            k_btn.padding.set_all!(unit)
-            k_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
-            k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
-            k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
-            k_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
-            k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
-            k_btn.disabled = disabled
-            k_btn.on(:enter) do
-              if entity == path.last
-                _preview_part(path, part)
-              else
-                tool.remove_3d(LAYER_3D_PART_PREVIEW)
-                Sketchup.active_model.selection.clear
-                Sketchup.active_model.selection.add(entity)
-              end
-            end
-            k_btn.on(:leave) do
-              tool.remove_3d(LAYER_3D_PART_PREVIEW)
-              Sketchup.active_model.selection.clear
-            end
-            k_btn.on(:click) do
-              Sketchup.active_model.selection.clear
-              _reset_active_part
-              _set_active_selection(path[0...depth-path.size], [ entity ])
-              onPartSelected
-            end
-            k_panel.append(k_btn)
-
-            unless entity.name.empty?
-              k_label = Kuix::Label.new
-              k_label.text = entity.name
-              k_label.text_size = unit * 3
-              k_label.text_bold = true
-              k_label.set_style_attribute(:color, text_color)
-              k_btn.append(k_label)
-            end
-
-            unless entity.definition.group? && !entity.name.empty?
-              k_label = Kuix::Label.new
-              k_label.text = entity.definition.group? ? PLUGIN.get_i18n_string('tab.outliner.type_1') : "<#{entity.definition.name}>"
-              k_label.text_size = unit * 3
-              k_label.set_style_attribute(:color, text_color)
-              k_btn.append(k_label)
-            end
-
-          end
-
         when STATE_RESHAPE_START
           @tool.remove_all_2d
-          @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
+          @tool.remove_3d([ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ])  # Remove part preview
           _unhide_instances
 
         when STATE_RESHAPE_CUTTER_MOVE
@@ -1192,6 +912,27 @@ module Ladb::OpenCutList
       @picked_grip_index = nil
       @picked_cutter_index = nil
       super
+    end
+
+    # -----
+
+    def _pick_part_siblings?
+      true
+    end
+
+    def _start_with_previous_selection?
+      true
+    end
+
+    def _allows_multiple_selections?
+      true
+    end
+
+    # -----
+
+    def _add_part_sibling(part_entity_path, part)
+      return true if super
+      get_active_selection_instances << part_entity_path.last
     end
 
     # -----
@@ -1652,7 +1393,7 @@ module Ladb::OpenCutList
 
       fn_preview_container = lambda do |container_def, color|
 
-        color = no_scale_color if container_def.container.definition.behavior.no_scale_mask? == 127
+        color = no_scale_color if container_def.container.respond_to?(:definition) && container_def.container.definition.behavior.no_scale_mask? == 127
 
         k_segments = Kuix::Segments.new
         k_segments.add_segments(container_def.edge_defs.flat_map { |edge_def|
@@ -1776,7 +1517,7 @@ module Ladb::OpenCutList
           text_color: Kuix::COLOR_X,
           border_color: color
         )
-        @tool.append_2d(k_label, LAYER_2D_DIMENSIONS)
+        @tool.append_2d(k_label)
 
       end
 

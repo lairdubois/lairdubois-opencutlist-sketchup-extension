@@ -1708,7 +1708,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
-      @tool.get_action_status(@action)
+      PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_status") + '.'
     end
 
     def get_state_vcb_label(state)
@@ -2493,7 +2493,7 @@ module Ladb::OpenCutList
     end
 
     def _add_part_sibling(part_entity_path, part)
-      return if @active_part_sibling_entity_paths.is_a?(Array) && @active_part_sibling_entity_paths.include?(part_entity_path)
+      return true if @active_part_sibling_entity_paths.is_a?(Array) && @active_part_sibling_entity_paths.include?(part_entity_path)
       (@active_part_sibling_entity_paths ||= []) << part_entity_path
       (@active_part_siblings ||= []) << part
       onActivePartChanged(@active_part_entity_path, @active_part, false)
@@ -2581,6 +2581,425 @@ module Ladb::OpenCutList
           end
         end
       end
+    end
+
+  end
+
+  class SmartSelectActionHandler < SmartActionHandler
+
+    include SmartActionHandlerPartHelper
+
+    STATE_SELECT = 0
+    STATE_SELECT_RECT = 5
+    STATE_SELECT_TREE = 6
+    STATE_SELECT_SIBLINGS = 4
+
+    LAYER_2D_FLOATING_TOOLS = 10
+
+    def initialize(action, tool, previous_action_handler = nil)
+      super
+
+      @mouse_down_point_2d = nil
+      @mouse_move_point_2d = nil
+
+      @startup_state = STATE_SELECT
+
+    end
+
+    # ------
+
+    def start
+      super
+
+      return if (model = Sketchup.active_model).nil?
+      selection = model.selection
+
+      # Try to copy the previous action handler selection
+      if @previous_action_handler && _start_with_previous_selection?
+
+        if (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
+           (part = @previous_action_handler.get_active_part)
+
+          _set_active_part(part_entity_path, part)
+
+          if _pick_part_siblings?
+
+            if (part_sibling_entity_paths = @previous_action_handler.get_active_part_sibling_entity_paths) &&
+               (part_siblings = @previous_action_handler.get_active_part_siblings)
+
+              part_sibling_entity_paths.zip(part_siblings).each do |part_sibling_entity_path, part_sibling|
+                _add_part_sibling(part_sibling_entity_path, part_sibling)
+              end
+
+            end
+
+          end
+
+          onPartSelected
+
+        elsif (selection_path = @previous_action_handler.get_active_selection_path) &&
+              (instances = @previous_action_handler.get_active_selection_instances)
+
+          _reset_active_part
+          _set_active_selection(selection_path, instances)
+
+          onPartSelected
+
+        end
+
+      else
+
+        if (entities = selection.select { |entity| entity.respond_to?(:transformation) }).any?
+
+          entities = entities[0,1] unless _allows_multiple_selections?
+          active_path = model.active_path.is_a?(Array) ? model.active_path : []
+
+          if entities.one?
+            path = active_path + [ entities.first ]
+            part_entity_path = _get_part_entity_path_from_path(path)
+            unless (part = _generate_part_from_path(part_entity_path)).nil?
+              _set_active_part(part_entity_path, part)
+            end
+          end
+
+          unless has_active_part?
+            _set_active_selection(active_path, entities)
+          end
+
+          onPartSelected
+
+        end
+
+      end
+
+      # Clear current selection
+      selection.clear if _clear_selection_on_start
+
+    end
+
+    # -- STATE --
+
+    def get_startup_state
+      @startup_state
+    end
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT
+        return @tool.cursor_select_part
+      end
+
+      super
+    end
+
+    def get_state_picker(state)
+
+      case state
+      when STATE_SELECT, STATE_SELECT_SIBLINGS
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT
+        return PLUGIN.get_i18n_string("tool.smart_select.state_0_status") +
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_select.state_0_to_6_status") + '.'
+
+      when STATE_SELECT_SIBLINGS, STATE_SELECT_RECT, STATE_SELECT_TREE
+        return PLUGIN.get_i18n_string("tool.smart_select.state_#{state}_status") + '.'
+
+      end
+
+      super
+    end
+
+    # -----
+
+    def onToolSuspend(tool, view)
+      tool.remove_2d(LAYER_2D_FLOATING_TOOLS) if STATE_SELECT_TREE
+    end
+
+    def onToolMouseMove(tool, flags, x, y, view)
+      super
+
+      return true if x < 0 || y < 0
+
+      case @state
+
+      when STATE_SELECT
+
+        if @mouse_down_point_2d && @mouse_down_point_2d.distance(Geom::Point3d.new(x, y, 0)) > 20  # Drag handled only if the distance is > 10px
+          set_state(STATE_SELECT_RECT)
+        end
+
+      when STATE_SELECT_RECT
+
+        @tool.remove_all_2d
+
+        unless @mouse_down_point_2d.nil?
+          @mouse_move_point_2d = Geom::Point2d.new(x, y)
+          _preview_select_rect(view)
+        end
+
+      end
+
+      view.tooltip = @mouse_ip.tooltip
+      view.invalidate
+
+      false
+    end
+
+    def onToolLButtonDown(tool, flags, x, y, view)
+
+      case @state
+
+      when STATE_SELECT
+        if has_active_part? && _pick_part_siblings?
+          set_state(STATE_SELECT_SIBLINGS)
+          return true
+        else
+          @mouse_down_point_2d = Geom::Point3d.new(x, y)
+          return true
+        end
+
+      end
+
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+
+      @mouse_down_point = nil
+
+      case @state
+
+      when STATE_SELECT, STATE_SELECT_SIBLINGS
+        @mouse_down_point_2d = nil
+        @mouse_move_point_2d = nil
+        unless has_active_part?
+          UI.beep
+          return true
+        end
+        onPartSelected
+        return true
+
+      when STATE_SELECT_RECT
+        if @mouse_down_point_2d.nil?
+          set_state(STATE_SELECT)
+          return true
+        else
+
+          ph = view.pick_helper(x, y)
+          ph.window_pick(@mouse_down_point_2d, Geom::Point3d.new(x, y), Sketchup::PickHelper::PICK_INSIDE)
+
+          @tool.remove_all_2d
+          @mouse_down_point_2d = nil
+          @mouse_move_point_2d = nil
+
+          if ph.count > 0
+
+            model = Sketchup.active_model
+            active_path = model.active_path.is_a?(Array) ? model.active_path : []
+
+            instances = (0...ph.count)
+                          .map { |i| ph.element_at(i) }
+                          .uniq
+                          .select { |entity| entity.respond_to?(:transformation) }
+            if instances.any?
+
+              _reset_active_part
+              _set_active_selection(active_path, instances)
+
+              onPartSelected
+
+              return true
+            end
+
+          end
+          UI.beep
+          set_state(STATE_SELECT)
+        end
+
+      end
+
+    end
+
+    def onToolMouseLeave(tool, view)
+      return true if @state == STATE_SELECT_TREE
+      super
+    end
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      case @state
+
+      when STATE_SELECT
+        if has_active_part? && tool.is_key_ctrl_or_option?(key)
+          set_state(STATE_SELECT_TREE)
+          return true
+        end
+
+      end
+
+      false
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      case @state
+
+      when STATE_SELECT_TREE
+        if tool.is_key_ctrl_or_option?(key)
+          Sketchup.active_model.selection.clear
+          tool.remove_2d(LAYER_2D_FLOATING_TOOLS)
+          set_state(STATE_SELECT)
+          _refresh
+          return true
+        end
+
+      end
+
+      false
+    end
+
+    def onPickerChanged(picker, view)
+
+      case @state
+
+      when STATE_SELECT
+        _pick_part(picker, view)
+
+      when STATE_SELECT_SIBLINGS
+        _pick_part_sibling(picker, view)
+
+      end
+
+      super
+    end
+
+    def onStateChanged(state)
+      super
+
+      @tool.remove_tooltip
+
+      unless _get_instances.nil?
+
+        case state
+
+        when STATE_SELECT
+          _unhide_instances
+
+        when STATE_SELECT_TREE
+
+          part = get_active_part
+          path = get_active_part_entity_path
+          active_path_depth = Sketchup.active_model.active_path.is_a?(Array) ? Sketchup.active_model.active_path.size : 0
+
+          unit = @tool.get_unit
+
+          k_panel = Kuix::Panel.new
+          k_panel.layout_data = Kuix::StaticLayoutData.new(tool.last_mouse_x, tool.last_mouse_y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
+          k_panel.layout = Kuix::GridLayout.new(1, path.size, 0, unit * 0.25)
+          k_panel.border.set_all!(unit * 0.25)
+          k_panel.padding.set_all!(unit * 0.25)
+          k_panel.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT)
+          k_panel.set_style_attribute(:border_color, ColorUtils.color_darken(SmartTool::COLOR_BRAND_LIGHT, 0.1))
+          @tool.append_2d(k_panel, LAYER_2D_FLOATING_TOOLS)
+
+          path.each_with_index do |entity, depth|
+
+            disabled = depth < active_path_depth
+            text_color = disabled ? SmartTool::COLOR_BRAND_LIGHT : Kuix::COLOR_BLACK
+
+            k_btn = Kuix::Button.new
+            k_btn.layout = Kuix::InlineLayout.new(true, unit * 0.5, Kuix::Anchor.new(Kuix::Anchor::LEFT))
+            k_btn.margin.left = unit * depth
+            k_btn.border.set_all!(unit * 0.5)
+            k_btn.padding.set_all!(unit)
+            k_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+            k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+            k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
+            k_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
+            k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
+            k_btn.disabled = disabled
+            k_btn.on(:enter) do
+              if entity == path.last
+                _preview_part(path, part)
+              else
+                tool.remove_3d(LAYER_3D_PART_PREVIEW)
+                Sketchup.active_model.selection.clear
+                Sketchup.active_model.selection.add(entity)
+              end
+            end
+            k_btn.on(:leave) do
+              tool.remove_3d(LAYER_3D_PART_PREVIEW)
+              Sketchup.active_model.selection.clear
+            end
+            k_btn.on(:click) do
+              Sketchup.active_model.selection.clear
+              _reset_active_part
+              _set_active_selection(path[0...depth-path.size], [ entity ])
+              onPartSelected
+            end
+            k_panel.append(k_btn)
+
+            unless entity.name.empty?
+              k_label = Kuix::Label.new
+              k_label.text = entity.name
+              k_label.text_size = unit * 3
+              k_label.text_bold = true
+              k_label.set_style_attribute(:color, text_color)
+              k_label.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+              k_btn.append(k_label)
+            end
+
+            unless entity.definition.group? && !entity.name.empty?
+              k_label = Kuix::Label.new
+              k_label.text = entity.definition.group? ? PLUGIN.get_i18n_string('tab.outliner.type_1') : "<#{entity.definition.name}>"
+              k_label.text_size = unit * 3
+              k_label.set_style_attribute(:color, text_color)
+              k_label.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+              k_btn.append(k_label)
+            end
+
+          end
+
+        end
+
+      end
+
+    end
+
+    def onPartSelected
+    end
+
+    # -----
+
+    protected
+
+    def _start_with_previous_selection?
+      false
+    end
+
+    def _allows_multiple_selections?
+      false
+    end
+
+    # -----
+
+    def _preview_select_rect(view)
+
+      k_rect = _create_floating_rect(
+        start_point_2d: @mouse_down_point_2d,
+        end_point_2d: @mouse_move_point_2d,
+        )
+      @tool.append_2d(k_rect)
+
     end
 
   end
