@@ -2158,7 +2158,7 @@ tool:
   smart_reshape:
     title: Remodeler
     action_0: Etirer
-    action_0_status: Cliquez sur une pièce pour l'étirer
+    action_0_status: Etirer une pièce
     action_0_state_1_status: Cliquez sur une poignée pour étirer
     action_0_state_1a_status: Cliquez sur un plan de coupe pour le déplacer
     action_0_state_1b_status: Ajouter un plan de coupe
