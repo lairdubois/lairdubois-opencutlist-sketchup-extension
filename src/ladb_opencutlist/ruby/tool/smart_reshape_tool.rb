@@ -1528,7 +1528,7 @@ module Ladb::OpenCutList
       return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
 
       emv, lps, lpe, split_def = stretch_def.values_at(:emv, :lps, :lpe, :split_def)
-      max_compression_distance, reversed = split_def.values_at(:max_compression_distance, :reversed)
+      epmin, epmax, max_compression_distance, reversed = split_def.values_at(:epmin, :epmax, :max_compression_distance, :reversed)
       v = lps.vector_to(lpe)
 
       distance = _read_user_text_length(tool, text, v.length)
@@ -1544,7 +1544,11 @@ module Ladb::OpenCutList
       compressed = emv.valid? && (reversed ? emv.samedirection?(@picked_axis) : !emv.samedirection?(@picked_axis))
       compressed = !compressed if distance < 0
       if compressed && @picked_reshape_start_point.distance(lps.offset(v, distance)) > max_compression_distance
-        tool.notify_errors([ [ "tool.default.error.gt_max_distance", { :value1 => distance.abs.to_l, :value2 => max_compression_distance.abs.to_l } ] ])
+        if _fetch_option_stretch_measure_type_outside
+          tool.notify_errors([ [ "tool.default.error.lt_min_distance", { :value1 => distance.abs.to_l, :value2 => (epmin.distance(epmax) - max_compression_distance).abs.to_l } ] ])
+        else
+          tool.notify_errors([ [ "tool.default.error.gt_max_distance", { :value1 => distance.abs.to_l, :value2 => max_compression_distance.abs.to_l } ] ])
+        end
         return false
       end
 
