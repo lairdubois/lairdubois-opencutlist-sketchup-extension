@@ -2063,204 +2063,207 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
-  smart_draw:
-    title: 1576 - Zeichnen
-    action_0: 1577 - Rechteck zeichnen
-    action_0_status: 1578 - Volumen auf der Basis einer Rechteckform zeichnen
-    action_0_state_1_status: 1579 - Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein
-    action_1: 1580 - Kreis zeichnen
-    action_1_status: 1581 - Volumen auf der Basis einer Kreisform zeichnen
-    action_1_state_1_radius_status: 1582 - Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
-    action_1_state_1_diameter_status: 1583 - Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein
-    action_2: 1584 - Polygon zeichnen
-    action_2_status: 1585 - Volumen auf der Basis einer polygonalen Form zeichnen
-    action_2_state_1_status: 1586 - Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
-    action_x_state_2_status: 1587 - Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
-    action_option_group_offset: 1588 - Versatz
-    action_option_group_segments: 1589 - Segmente
-    action_option_group_options: 1590 - Optionen
-    action_option_offset_shape_offset: 1591 - Versatz
-    action_option_offset_shape_offset_status: 1592 - Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden
-    action_option_segments_segment_count: 1593 - Anzahl Segmente
-    action_option_segments_segment_count_status: 1594 - Ermöglicht das Festlegen der Anzahl der Kreissegmente
-    action_option_options_construction: 1595 - Konstruktionslinien
-    action_option_options_construction_status: 1596 - Als Konstruktionslinien zeichnen
-    action_option_options_rectangle_centered: 1597 - Rechteck zentriert
-    action_option_options_rectangle_centered_status: 1598 - Rechteck auf den ersten Punkt zentrieren
-    action_option_options_smoothing: 1599 - Glätten
-    action_option_options_smoothing_status: 1600 - Kurven glätten
-    action_option_options_measure_from_vertex_status: 1601 - Relativ zum nahen Scheitelpunkt messen
-    action_option_options_measure_from_diameter: 1602 - Maß
-    action_option_options_measure_from_diameter_status: 1603 - Den Kreis nach seinem Durchmesser messen
-    action_option_options_measure_from_radius_status: 1604 - Messung nach dem Radius
-    action_option_options_measure_reversed: 1605 - Invertierte Messung
-    action_option_options_measure_reversed_status: 1606 - Messung invertieren
-    action_option_options_pull_centered: 1607 - Erhebung zentriert
-    action_option_options_pull_centered_status: 1608 - Erhebung auf den ersten Punkt zentrieren
-    action_option_options_ask_name: 1609 - Benennung der Teile
-    action_option_options_ask_name_status: 1610 - Manuelle Eingabe der Benennung von Teilen
-    action_measure_locked_status: 1611 - Auf die letzte Messung fixieren
-    action_toggle_move_copy_status: 1612 - Abwechselnd kopieren/verschieben
-    action_change_move_anchor_status: 1613 - Ankerpunkt ändern
-    success:
-      part_created: '1614 - Neu erstelltes Teil: {{ name }}'
-  smart_handle:
-    title: 1615 - Handhaben
-    action_0: 1616 - Auswählen
-    action_0_status: 1617 - Klicken Sie auf ein Teil, um es auszuwählen
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: 1619 - Ziehen Sie ein identisches Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren
-    action_1: 1620 - In Linie kopieren
-    action_1_status: 1621 - Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: 1623 - Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Distanz ein
-    action_2: 1624 - In Raster kopieren
-    action_2_status: 1625 - Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: 1627 - Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie zwei Distanzen ein
-    action_3: 1628 - Verschieben
-    action_3_status: 1629 - Klicken Sie auf ein Teil, um es entlang einer Achse zu verschieben
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: 1631 - Klicken Sie, um das Teil zu platzieren, oder geben Sie eine Distanz ein
-    action_4: 1632 - Verteilen
-    action_4_status: 1633 - Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
-    action_4_state_1_status: 1636 - Klicken Sie, um den ersten Messpunkt zu setzen
-    action_4_state_2_status: 1637 - Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein
-    action_option_group_copy_measure_type: 1638 - Maß
-    action_option_group_move_measure_type: 1639 - Maß
-    action_option_group_axes: 1640 - Achsen
-    action_option_group_options: 1641 - Optionen
-    action_option_copy_measure_type_outside_status: 1642 - Außenmessung
-    action_option_copy_measure_type_centered_status: 1643 - Messung von Mitte zu Mitte
-    action_option_copy_measure_type_inside_status: 1644 - Messung zwischen den Teilen
-    action_option_move_measure_type_outside_status: 1645 - Außenmessung
-    action_option_move_measure_type_centered_status: 1646 - Messung in der Mitte
-    action_option_move_measure_type_inside_status: 1647 - Messung im Inneren
-    action_option_axes_active_status: 1648 - Manipulieren entlang der aktiven Achsen
-    action_option_axes_context_status: 1649 - Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält
-    action_option_axes_entity_status: 1650 - Manipulieren entlang der Achsen des Teils
-    action_option_options_mirror_status: 1651 - Symmetrisch kopieren
+  smart_select:
+    state_0_status: 1576 - Klicken Sie auf ein Teil, um es auszuwählen.
+    state_0_to_6_status: 1577 - Übergeordnetes Element auswählen
+    state_4_status: 1578 - Ziehen Sie ein identisches Teil mit demselben übergeordneten Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren.
+    state_5_status: 1579 - Zum Hinzufügen zur Auswahl ziehen und zum Fortfahren loslassen
+    state_6_status: 1580 - Wählen Sie einen Eintrag aus der Liste aus
     warning:
-      copies_disable_mirror: 1652 - Mehrfaches Kopieren deaktiviert die Option '$t(tool.smart_handle.action_option_options_mirror_status)'
+      no_active_part: 1581 - Vous devez d'abord survoler une pièce
+  smart_draw:
+    title: 1582 - Zeichnen
+    action_0: 1583 - Rechteck zeichnen
+    action_0_status: 1584 - Volumen auf der Basis einer Rechteckform zeichnen
+    action_0_state_0_status: 1585 - Klicken Sie, um den ersten Punkt des Rechtecks festzulegen.
+    action_0_state_1_status: 1586 - Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein
+    action_1: 1587 - Kreis zeichnen
+    action_1_state_0_status: 1588 - Klicken Sie, um den Mittelpunkt des Kreises festzulegen
+    action_1_status: 1589 - Volumen auf der Basis einer Kreisform zeichnen
+    action_1_state_1_radius_status: 1590 - Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein
+    action_1_state_1_diameter_status: 1591 - Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein
+    action_2: 1592 - Polygon zeichnen
+    action_2_state_0_status: 1593 - Klicken Sie, um den ersten Punkt des Polygons festzulegen
+    action_2_status: 1594 - Volumen auf der Basis einer polygonalen Form zeichnen
+    action_2_state_1_status: 1595 - Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein
+    action_x_state_2_status: 1596 - Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein
+    action_option_group_offset: 1597 - Versatz
+    action_option_group_segments: 1598 - Segmente
+    action_option_group_options: 1599 - Optionen
+    action_option_offset_shape_offset: 1600 - Versatz
+    action_option_offset_shape_offset_status: 1601 - Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden
+    action_option_segments_segment_count: 1602 - Anzahl Segmente
+    action_option_segments_segment_count_status: 1603 - Ermöglicht das Festlegen der Anzahl der Kreissegmente
+    action_option_options_construction: 1604 - Konstruktionslinien
+    action_option_options_construction_status: 1605 - Als Konstruktionslinien zeichnen
+    action_option_options_rectangle_centered: 1606 - Rechteck zentriert
+    action_option_options_rectangle_centered_status: 1607 - Rechteck auf den ersten Punkt zentrieren
+    action_option_options_smoothing: 1608 - Glätten
+    action_option_options_smoothing_status: 1609 - Kurven glätten
+    action_option_options_measure_from_vertex_status: 1610 - Relativ zum nahen Scheitelpunkt messen
+    action_option_options_measure_from_diameter: 1611 - Maß
+    action_option_options_measure_from_diameter_status: 1612 - Den Kreis nach seinem Durchmesser messen
+    action_option_options_measure_from_radius_status: 1613 - Messung nach dem Radius
+    action_option_options_measure_reversed: 1614 - Invertierte Messung
+    action_option_options_measure_reversed_status: 1615 - Messung invertieren
+    action_option_options_pull_centered: 1616 - Erhebung zentriert
+    action_option_options_pull_centered_status: 1617 - Erhebung auf den ersten Punkt zentrieren
+    action_option_options_ask_name: 1618 - Benennung der Teile
+    action_option_options_ask_name_status: 1619 - Manuelle Eingabe der Benennung von Teilen
+    action_measure_locked_status: 1620 - Auf die letzte Messung fixieren
+    action_toggle_move_copy_status: 1621 - Abwechselnd kopieren/verschieben
+    action_change_move_anchor_status: 1622 - Ankerpunkt ändern
+    success:
+      part_created: '1623 - Neu erstelltes Teil: {{ name }}'
+  smart_handle:
+    title: 1624 - Handhaben
+    action_0: 1625 - Auswählen
+    action_0_status: 1626 - Teil auszuwählen
+    action_1: 1627 - In Linie kopieren
+    action_1_status: 1628 - Teil entlang einer Achse kopieren
+    action_1_state_2_status: 1629 - Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie einen Abstand Distanz ein
+    action_2: 1630 - In Raster kopieren
+    action_2_status: 1631 - Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren
+    action_2_state_2_status: 1632 - Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie zwei Distanzen ein
+    action_3: 1633 - Verschieben
+    action_3_status: 1634 - Teil entlang einer Achse verschieben
+    action_3_state_2_status: 1635 - Klicken Sie, um das Teil zu platzieren, oder geben Sie eine Distanz ein
+    action_4: 1636 - Verteilen
+    action_4_status: 1637 - Teil entlang einer Achse zu verteilen
+    action_4_state_1_status: 1638 - Klicken Sie, um den ersten Messpunkt zu setzen
+    action_4_state_2_status: 1639 - Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein
+    action_option_group_copy_measure_type: 1640 - Maß
+    action_option_group_move_measure_type: 1641 - Maß
+    action_option_group_axes: 1642 - Achsen
+    action_option_group_options: 1643 - Optionen
+    action_option_copy_measure_type_outside_status: 1644 - Außenmessung
+    action_option_copy_measure_type_centered_status: 1645 - Messung von Mitte zu Mitte
+    action_option_copy_measure_type_inside_status: 1646 - Messung zwischen den Teilen
+    action_option_move_measure_type_outside_status: 1647 - Außenmessung
+    action_option_move_measure_type_centered_status: 1648 - Messung in der Mitte
+    action_option_move_measure_type_inside_status: 1649 - Messung im Inneren
+    action_option_axes_active_status: 1650 - Manipulieren entlang der aktiven Achsen
+    action_option_axes_context_status: 1651 - Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält
+    action_option_axes_entity_status: 1652 - Manipulieren entlang der Achsen des Teils
+    action_option_options_mirror_status: 1653 - Symmetrisch kopieren
+    warning:
+      copies_disable_mirror: 1654 - Mehrfaches Kopieren deaktiviert die Option '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      min_distance: 1653 - Der Abstand {{ value1 }} ist kleiner als der Minimalabstand {{ value2 }}
+      min_distance: 1655 - Der Abstand {{ value1 }} ist kleiner als der Minimalabstand {{ value2 }}
   smart_reshape:
-    title: 1654 - Umgestalten
-    action_0: 1655 - Strecken
-    action_0_status: 1656 - Klicken Sie auf ein Teil, um es auszuwählen
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: 1658 - Klicken Sie auf einen Griff, um zu strecken
-    action_0_state_1a_status: 1659 - Klicken Sie auf eine Schnittebene, um sie zu verschieben
-    action_0_state_1b_status: 1660 - Schnittebene hinzufügen
-    action_0_state_1c_status: 1661 - Schnittebene löschen
-    action_0_state_10_status: 1662 - Ziehen Sie die Schnittebene, um sie zu verschieben
-    action_0_state_11_status: 1663 - Klicken Sie, um die Schnittebene hinzuzufügen
-    action_0_state_12_status: 1664 - cken Sie auf eine Schnittebene, um sie zu löschen
-    action_0_state_2_status: 1665 - Klicken Sie, um die Dehnung zu bestätigen, oder geben Sie einen Abstand ein
-    action_option_group_stretch_measure_type: 1666 - Maß
-    action_option_group_axes: 1667 - Achsen
-    action_option_group_options: 1668 - Optionen
-    action_option_stretch_measure_type_outside_status: 1669 - Außenmessung
-    action_option_stretch_measure_type_offset_status: 1670 - Differenzwert messen
-    action_option_axes_active_status: 1671 - Manipulieren entlang der aktiven Achsen
-    action_option_axes_context_status: 1672 - Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält
-    action_option_axes_entity_status: 1673 - Manipulieren entlang der Achsen des Teils
-    action_option_options_make_unique_status: 1674 - Gestreckte Elemente einzigartig machen
+    title: 1656 - Umgestalten
+    action_0: 1657 - Strecken
+    action_0_status: 1658 - Klicken Sie auf ein Teil, um es auszuwählen
+    action_0_state_1_status: 1659 - Klicken Sie auf einen Griff, um zu strecken
+    action_0_state_1a_status: 1660 - Klicken Sie auf eine Schnittebene, um sie zu verschieben
+    action_0_state_1b_status: 1661 - Schnittebene hinzufügen
+    action_0_state_1c_status: 1662 - Schnittebene löschen
+    action_0_state_10_status: 1663 - Ziehen Sie die Schnittebene, um sie zu verschieben
+    action_0_state_11_status: 1664 - Klicken Sie, um die Schnittebene hinzuzufügen
+    action_0_state_12_status: 1665 - cken Sie auf eine Schnittebene, um sie zu löschen
+    action_0_state_2_status: 1666 - Klicken Sie, um die Dehnung zu bestätigen, oder geben Sie einen Abstand ein
+    action_option_group_stretch_measure_type: 1667 - Maß
+    action_option_group_axes: 1668 - Achsen
+    action_option_group_options: 1669 - Optionen
+    action_option_stretch_measure_type_outside_status: 1670 - Außenmessung
+    action_option_stretch_measure_type_offset_status: 1671 - Differenzwert messen
+    action_option_axes_active_status: 1672 - Manipulieren entlang der aktiven Achsen
+    action_option_axes_context_status: 1673 - Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält
+    action_option_axes_entity_status: 1674 - Manipulieren entlang der Achsen des Teils
+    action_option_options_make_unique_status: 1675 - Gestreckte Elemente einzigartig machen
     error:
-      curve_intersect: 1675 - Eine der Schnittebenen verläuft durch ein nicht dehnbares Element (beispielsweise eine Kurve oder ein Zubehörteil)
+      curve_intersect: 1676 - Eine der Schnittebenen verläuft durch ein nicht dehnbares Element (beispielsweise eine Kurve oder ein Zubehörteil)
   smart_paint:
-    title: 1676 - Malen
-    default_material: 1677 - Ohne Material
-    filters: 1678 - Filter
-    filter_0: 1679 - Ohne Typ
+    title: 1677 - Malen
+    default_material: 1678 - Ohne Material
+    filters: 1679 - Filter
+    filter_0: 1680 - Ohne Typ
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1686 - Teile bemalen
-    action_0_status: 1687 - Klicken Sie auf ein Teil, um die Instanz einzufärben
-    action_1: 1688 - Kanten bemalen
-    action_1_status: 1689 - Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden
-    action_2: 1690 - Flächen bemalen
-    action_2_status: 1691 - Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden
-    action_3: 1692 - Entnehmen
-    action_3_status: 1693 - Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
-    action_4: 1694 - Säubern
-    action_4_status: 1695 - Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu entfernen
-    action_option_group_instances: 1696 - Anzahl Instanzen
-    action_option_group_edges: 1697 - Anzahl Kantenbänder
-    action_option_group_faces: 1698 - Anzahl Flächen
-    action_option_instances_0_status: 1699 - Nur die Instanz des ausgewählten Teils einfärben
-    action_option_instances_1_status: 1700 - Alle Instanzen des ausgewählten Teils einfärben
-    action_option_edges_0_status: 1701 - Nur die ausgewählte Kante einfärben
-    action_option_edges_1_status: 1702 - Einfärben der Zielkante und der gegenüberliegenden Kante
-    action_option_edges_2_status: 1703 - Einfärben der 4 Kanten des Zielteils
-    action_option_faces_0_status: 1704 - Nur die Zielfläche einfärben
-    action_option_faces_1_status: 1705 - Einfärben der 2 Zielflächen
-    edges: 1706 - {{ count }} Kante
-    edges_plural: 1707 - {{ count }} Kanten
-    edge_ymin: 1708 - Länge 1
-    edge_ymax: 1709 - Länge 2
-    edge_xmin: 1710 - Breite 1
-    edge_xmax: 1711 - Breite 2
-    faces: 1712 - {{ count }} Fläche
-    faces_plural: 1713 - {{ count }} Flächen
-    face_zmin: 1714 - Rückseite
-    face_zmax: 1715 - Vorderseite
+    action_0: 1687 - Teile bemalen
+    action_0_status: 1688 - Klicken Sie auf ein Teil, um die Instanz einzufärben
+    action_1: 1689 - Kanten bemalen
+    action_1_status: 1690 - Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden
+    action_2: 1691 - Flächen bemalen
+    action_2_status: 1692 - Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden
+    action_3: 1693 - Entnehmen
+    action_3_status: 1694 - Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen
+    action_4: 1695 - Säubern
+    action_4_status: 1696 - Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu entfernen
+    action_option_group_instances: 1697 - Anzahl Instanzen
+    action_option_group_edges: 1698 - Anzahl Kantenbänder
+    action_option_group_faces: 1699 - Anzahl Flächen
+    action_option_instances_0_status: 1700 - Nur die Instanz des ausgewählten Teils einfärben
+    action_option_instances_1_status: 1701 - Alle Instanzen des ausgewählten Teils einfärben
+    action_option_edges_0_status: 1702 - Nur die ausgewählte Kante einfärben
+    action_option_edges_1_status: 1703 - Einfärben der Zielkante und der gegenüberliegenden Kante
+    action_option_edges_2_status: 1704 - Einfärben der 4 Kanten des Zielteils
+    action_option_faces_0_status: 1705 - Nur die Zielfläche einfärben
+    action_option_faces_1_status: 1706 - Einfärben der 2 Zielflächen
+    edges: 1707 - {{ count }} Kante
+    edges_plural: 1708 - {{ count }} Kanten
+    edge_ymin: 1709 - Länge 1
+    edge_ymax: 1710 - Länge 2
+    edge_xmin: 1711 - Breite 1
+    edge_xmax: 1712 - Breite 2
+    faces: 1713 - {{ count }} Fläche
+    faces_plural: 1714 - {{ count }} Flächen
+    face_zmin: 1715 - Rückseite
+    face_zmax: 1716 - Vorderseite
     warning:
-      no_material: 1716 - Kein Material
-      no_material_type: 1717 - Kein Material des Typs '{{ type }}'
+      no_material: 1717 - Kein Material
+      no_material_type: 1718 - Kein Material des Typs '{{ type }}'
     error:
-      not_part: 1718 - Das Zielobjekt ist kein Teil (Komponente)
-      not_edge: 1719 - Die Zielfläche ist keine Plattenkante
-      not_face: 1720 - Die Zielfläche ist keine Plattenfläche
-      wrong_material_type: 1721 - Das Zielteil muss vom Typ '{{ type }}' sein
+      not_part: 1719 - Das Zielobjekt ist kein Teil (Komponente)
+      not_edge: 1720 - Die Zielfläche ist keine Plattenkante
+      not_face: 1721 - Die Zielfläche ist keine Plattenfläche
+      wrong_material_type: 1722 - Das Zielteil muss vom Typ '{{ type }}' sein
   smart_axes:
-    title: 1722 - Ausrichten
-    action_0: 1723 - Spiegeln
-    action_0_status: 1724 - Klicken Sie auf ein Teil, um die Instanz entlang einer seiner Dimensionen zu spiegeln
-    action_1: 1725 - Länge ↔ Breite vertauschen
-    action_1_status: 1726 - Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen
-    action_2: 1727 - Vorderseite ↔ Rückseite vertauschen
-    action_2_status: 1728 - Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen
-    action_3: 1729 - Achsen ausrichten
-    action_3_status: 1730 - Zielen Sie auf die Fläche eines Teils und klicken Sie auf eine Kante, um die Achsen des Teils anzupassen
-    action_4: 1731 - Ursprung verschieben
-    action_4_status: 1732 - Zielen Sie auf die Fläche eines Teils und klicken Sie auf einen Punkt, um den Ursprung dort zu platzieren
-    action_option_group_direction: 1733 - Ausrichtung
-    action_option_direction_0: 1734 - L
-    action_option_direction_1: 1735 - B
-    action_option_direction_2: 1736 - D
-    action_option_direction_0_status: 1737 - Teil der Länge nach wenden
-    action_option_direction_1_status: 1738 - Teil der Breite nach wenden
-    action_option_direction_2_status: 1739 - Teil der Dicke nach wenden
+    title: 1723 - Ausrichten
+    action_0: 1724 - Spiegeln
+    action_0_status: 1725 - Klicken Sie auf ein Teil, um die Instanz entlang einer seiner Dimensionen zu spiegeln
+    action_1: 1726 - Länge ↔ Breite vertauschen
+    action_1_status: 1727 - Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen
+    action_2: 1728 - Vorderseite ↔ Rückseite vertauschen
+    action_2_status: 1729 - Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen
+    action_3: 1730 - Achsen ausrichten
+    action_3_status: 1731 - Zielen Sie auf die Fläche eines Teils und klicken Sie auf eine Kante, um die Achsen des Teils anzupassen
+    action_4: 1732 - Ursprung verschieben
+    action_4_status: 1733 - Zielen Sie auf die Fläche eines Teils und klicken Sie auf einen Punkt, um den Ursprung dort zu platzieren
+    action_option_group_direction: 1734 - Ausrichtung
+    action_option_direction_0: 1735 - L
+    action_option_direction_1: 1736 - B
+    action_option_direction_2: 1737 - D
+    action_option_direction_0_status: 1738 - Teil der Länge nach wenden
+    action_option_direction_1_status: 1739 - Teil der Breite nach wenden
+    action_option_direction_2_status: 1740 - Teil der Dicke nach wenden
     warning:
-      more_entities: 1740 - {{ count_used }} Instanzen mit derselben Definition werden geändert
+      more_entities: 1741 - {{ count_used }} Instanzen mit derselben Definition werden geändert
     error:
-      not_part: 1741 - Das Zielobjekt ist kein Teil (Komponente)
-      not_orientable: 1742 - Der Typ dieses Teils lässt keine Orientierung zu
+      not_part: 1742 - Das Zielobjekt ist kein Teil (Komponente)
+      not_orientable: 1743 - Der Typ dieses Teils lässt keine Orientierung zu
   smart_export:
-    title: 1743 - Exportieren
-    action_0: 1744 - 3D Teil exportieren
-    action_0_status: 1745 - Auf Teil klicken
-    action_1: 1746 - 2D Teil exportieren
-    action_1_status: 1747 - Auf Fläche eines Teils klicken
-    action_2: 1748 - Fläche exportieren
-    action_2_status: 1749 - Auf Fläche klicken
-    action_3: 1750 - Pfad exportieren
-    action_3_status: 1751 - Auf Kante klicken
-    action_option_group_file_format: 1752 - Format
-    action_option_group_unit: 1753 - Einheit
-    action_option_group_faces: 1754 - Flächen
-    action_option_group_options: 1755 - Optionen
-    action_option_file_format_dxf_status: 1756 - In DXF-Datei exportieren
-    action_option_file_format_stl_status: 1757 - In STL-Datei exportieren
-    action_option_file_format_obj_status: 1758 - In OBJ-Datei exportieren
-    action_option_file_format_svg_status: 1759 - In SVG-Datei exportieren
+    title: 1744 - Exportieren
+    action_0: 1745 - 3D Teil exportieren
+    action_0_status: 1746 - Auf Teil klicken
+    action_1: 1747 - 2D Teil exportieren
+    action_1_status: 1748 - Auf Fläche eines Teils klicken
+    action_2: 1749 - Fläche exportieren
+    action_2_status: 1750 - Auf Fläche klicken
+    action_3: 1751 - Pfad exportieren
+    action_3_status: 1752 - Auf Kante klicken
+    action_option_group_file_format: 1753 - Format
+    action_option_group_unit: 1754 - Einheit
+    action_option_group_faces: 1755 - Flächen
+    action_option_group_options: 1756 - Optionen
+    action_option_file_format_dxf_status: 1757 - In DXF-Datei exportieren
+    action_option_file_format_stl_status: 1758 - In STL-Datei exportieren
+    action_option_file_format_obj_status: 1759 - In OBJ-Datei exportieren
+    action_option_file_format_svg_status: 1760 - In SVG-Datei exportieren
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2270,9 +2273,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1769 - Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
-    action_option_options_include_paths_status: 1770 - Im Teil enthaltene, nicht mit einer Fläche verknüpfte Kanten als Plot exportieren
+    action_option_options_merge_holes_status: 1770 - Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
+    action_option_options_include_paths_status: 1771 - Im Teil enthaltene, nicht mit einer Fläche verknüpfte Kanten als Plot exportieren
     error:
-      not_part: 1771 - Diese Fläche gehört nicht zu einem Teil (Komponente)
-      not_flat_face: 1772 - Diese Fläche ist nicht eben
-      incompatible_active_path: 1773 - Der aktive Pfad ermöglicht es nicht, dieses Teil zu exportieren
+      not_part: 1772 - Diese Fläche gehört nicht zu einem Teil (Komponente)
+      not_flat_face: 1773 - Diese Fläche ist nicht eben
+      incompatible_active_path: 1774 - Der aktive Pfad ermöglicht es nicht, dieses Teil zu exportieren
