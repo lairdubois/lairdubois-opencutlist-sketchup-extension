@@ -2074,16 +2074,21 @@ tool:
     state_4_status: Glissez sur une pièce identique ayant le même parent pour l'ajouter à la sélection et relâchez pour continuer
     state_5_status: Faites glisser pour ajouter à la sélection et relâchez pour continuer
     state_6_status: Choisisez un élément dans la liste
+    warning:
+      no_active_part: Vous devez d'abord survoler une pièce
   smart_draw:
     title: Dessiner
     action_0: Dessiner un Rectangle
     action_0_status: Dessiner un volume sur la base d'une forme rectangulaire
+    action_0_state_0_status: Cliquez pour définir le premier point du rectangle
     action_0_state_1_status: Cliquez pour définir l'angle opposé ou entrez une longueur, largeur
     action_1: Dessiner un Cercle
+    action_1_state_0_status: Cliquez pour définir le centre du cercle
     action_1_status: Dessiner un volume sur la base d'une forme circulaire
     action_1_state_1_radius_status: Cliquez pour définir le rayon ou entrez une distance
     action_1_state_1_diameter_status: Cliquez pour définir le diamètre ou entrez une distance
     action_2: Dessiner un Polygone
+    action_2_state_0_status: Cliquez pour définir le premier point du polygone
     action_2_status: Dessiner un volume sur la base d'une forme polygonale
     action_2_state_1_status: Cliquez pour définir un nouveau point ou entrez une distance
     action_x_state_2_status: Cliquez pour définir l'élévation ou entrez une distance
@@ -2118,19 +2123,18 @@ tool:
   smart_handle:
     title: Manipuler
     action_0: Sélectionner
-    action_0_status: Cliquez sur une pièce pour la sélectionner
-    action_0_state_4_status: Glissez sur une pièce identique pour l'ajouter à la sélection et relâchez pour continuer
+    action_0_status: Sélectionner une pièce # TODO
     action_1: Copier en ligne
-    action_1_status: Cliquez sur une pièce pour la copier le long d'un axe
+    action_1_status: Copier une pièce le long d'un axe # TODO
     action_1_state_2_status: Cliquez pour placer la copie de la pièce ou entrez une distance
     action_2: Copier en grille
-    action_2_status: Cliquez sur une pièce pour la copier le long d'une grille
+    action_2_status: Copier une pièce le long d'une grille # TODO
     action_2_state_2_status: Cliquez pour placer les copies de la pièce ou entrez deux distances
     action_3: Déplacer
-    action_3_status: Cliquez sur une pièce pour la déplacer le long d'un axe
+    action_3_status: Déplacer une pièce le long d'un axe # TODO
     action_3_state_2_status: Cliquez pour placer la pièce ou entrez une distance
     action_4: Répartir
-    action_4_status: Cliquez sur une pièce pour la répartir le long d'un axe
+    action_4_status: Répartir une pièce le long d'un axe # TODO
     action_4_state_1_status: Cliquez pour déterminer le premier point de mesure
     action_4_state_2_status: Cliquez pour déterminer le second point de mesure ou entrez une distance
     action_option_group_copy_measure_type: Mesure
@@ -2173,7 +2177,7 @@ tool:
     action_option_axes_entity_status: Manipuler le long des axes de la pièce
     action_option_options_make_unique_status: Rendre unique les éléments étirés
     error:
-      curve_intersect: L'un des plans de coupe traverse un élément non étirable (courbe ou accessoire)
+      curve_intersect: L'un des plans de coupe traverse une courbe non étirable # TODO
   smart_paint:
     title: Colorier
     default_material: Sans matière

@@ -559,8 +559,9 @@ module Ladb::OpenCutList
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
 
       when STATE_RESHAPE_START
+        return super if @picked_axis.nil?
         return super +
-               "#{(' ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1a_status") + '.') unless @picked_axis.nil?}" +
+               ' ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1a_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1b_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1c_status") + '.'
 

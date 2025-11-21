@@ -2839,8 +2839,12 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT
-        if has_active_part? && tool.is_key_ctrl_or_option?(key)
-          set_state(STATE_SELECT_TREE)
+        if tool.is_key_ctrl_or_option?(key)
+          if has_active_part?
+            set_state(STATE_SELECT_TREE)
+          else
+            tool.notify_warnings([ 'tool.smart_select.warning.no_active_part' ])
+          end
           return true
         end
 
