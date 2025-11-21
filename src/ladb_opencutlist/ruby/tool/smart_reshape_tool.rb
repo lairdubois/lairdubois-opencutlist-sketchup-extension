@@ -1760,7 +1760,8 @@ module Ladb::OpenCutList
 
           edv = edvs[container_def.section_def]
 
-          t = container_def.transformation
+          # Special case if container_def is root. Use its container transformation because container_def.transformation is relative to model origin there
+          t = container_def.parent.nil? ? container_def.container.transformation : container_def.transformation
 
           # Subtract parent container move
           unless container_def.parent.nil? || container_def.parent.section_def.nil?
