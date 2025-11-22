@@ -2688,6 +2688,9 @@ module Ladb::OpenCutList
       case state
       when STATE_SELECT
         return @tool.cursor_select_part
+
+      when STATE_SELECT_SIBLINGS
+        return @tool.cursor_select_part_plus
       end
 
       super

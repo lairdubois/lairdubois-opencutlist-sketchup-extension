@@ -44,7 +44,7 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler,
-                :cursor_select, :cursor_select_part
+                :cursor_select, :cursor_select_part, :cursor_select_part_plus
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
@@ -54,6 +54,7 @@ module Ladb::OpenCutList
       # Create cursors
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_select_part = create_cursor('select-part', 0, 0)
+      @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
 
     end
 
@@ -1414,7 +1415,6 @@ module Ladb::OpenCutList
         container_def.children.each { |container_def| fn_preview_container.call(container_def, color) }
 
       end
-
       fn_preview_container.call(container_defs.first, axis_color)
 
       # eti = et.inverse
@@ -1783,7 +1783,7 @@ module Ladb::OpenCutList
 
         end
 
-       # Adjust cutters
+        # Adjust cutters
         eti = et.inverse
         epo = reversed ? lpe.transform(eti) : eps
         epomax = reversed ? eps : lpe.transform(eti)
@@ -1936,7 +1936,7 @@ module Ladb::OpenCutList
         section_def = parent_section_def
         if section_def.nil?
 
-          if drawing_container_def.is_root? && !get_active_selection_instances.one?
+          if drawing_container_def.is_root? # && !get_active_selection_instances.one?
 
             # No section_def for the model
 
@@ -1944,7 +1944,7 @@ module Ladb::OpenCutList
 
           # Check if the container is glued or always face camera to search the section according to its origin only
           elsif drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
-             drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 127)
+                drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 127)
 
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
             section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
@@ -1962,7 +1962,7 @@ module Ladb::OpenCutList
               container_origin = ORIGIN.transform(drawing_container_def.transformation.inverse * drawing_container_def.container.transformation)
               min_max = [ drawing_container_def.bounds.min, drawing_container_def.bounds.max ].min_by { |point| (point.send(xyz_method) - container_origin.send(xyz_method)).abs }
 
-              # Default container section_def is where the bounds extreme that is the nearest origin
+              # Default container section_def is where the bounds extreme is the nearest origin
               section_def = section_defs.find { |section_def| section_def.contains_point?(min_max, xyz_method) }
 
               operation = SplitContainerDef::OPERATION_SPLIT
@@ -2235,7 +2235,7 @@ module Ladb::OpenCutList
 
           unless parent.nil?
             local_axis = axis.transform((transformation * container.transformation).inverse)
-            data << (local_axis.parallel?(axis) || local_axis.perpendicular?(axis)) if local_axis.valid?  # Differentiating rotations
+            data << local_axis.angle_between(axis) % Math::PI if local_axis.valid?  # Differentiating rotations but not perfect aligned mirrors
             data << local_axis.length.to_f.round(6) if local_axis.valid? && operation == SplitContainerDef::OPERATION_SPLIT  # Differentiating scaling
           end
 

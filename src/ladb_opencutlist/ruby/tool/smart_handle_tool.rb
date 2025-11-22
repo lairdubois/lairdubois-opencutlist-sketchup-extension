@@ -77,7 +77,7 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler,
-                :cursor_select, :cursor_select_part, :cursor_select_copy_line, :cursor_select_copy_grid, :cursor_select_move_line, :cursor_select_distribute, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
+                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_copy_line, :cursor_select_copy_grid, :cursor_select_move_line, :cursor_select_distribute, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
@@ -87,6 +87,7 @@ module Ladb::OpenCutList
       # Create cursors
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_select_part = create_cursor('select-part', 0, 0)
+      @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
       @cursor_select_copy_line = create_cursor('select-copy-line', 0, 0)
       @cursor_select_copy_grid = create_cursor('select-copy-grid', 0, 0)
       @cursor_select_move_line = create_cursor('select-move-line', 0, 0)
