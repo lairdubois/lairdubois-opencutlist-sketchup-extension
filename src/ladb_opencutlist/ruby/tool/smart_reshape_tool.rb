@@ -44,7 +44,7 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler,
-                :cursor_select, :cursor_select_part
+                :cursor_select, :cursor_select_part, :cursor_select_part_plus
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
@@ -54,6 +54,7 @@ module Ladb::OpenCutList
       # Create cursors
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_select_part = create_cursor('select-part', 0, 0)
+      @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
 
     end
 
@@ -343,9 +344,6 @@ module Ladb::OpenCutList
 
     end
 
-    def onPartSelected
-    end
-
     # -----
 
     def draw(view)
@@ -544,7 +542,7 @@ module Ladb::OpenCutList
     end
 
     def stop
-      _unhide_instance
+      _unhide_instances
       super
     end
 
@@ -559,8 +557,9 @@ module Ladb::OpenCutList
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_option_options_make_unique_status") + '.'
 
       when STATE_RESHAPE_START
+        return super if @picked_axis.nil?
         return super +
-               "#{(' ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1a_status") + '.') unless @picked_axis.nil?}" +
+               ' ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1a_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1b_status") + '.' +
                ' | ' + PLUGIN.get_i18n_string("default.alt_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_reshape.action_0_state_1c_status") + '.'
 
@@ -585,12 +584,12 @@ module Ladb::OpenCutList
 
     def onToolSuspend(tool, view)
       super
-      _unhide_instance if @state == STATE_RESHAPE
+      _unhide_instances if @state == STATE_RESHAPE
     end
 
     def onToolResume(tool, view)
       super
-      _hide_instance if @state == STATE_RESHAPE
+      _hide_instances if @state == STATE_RESHAPE
     end
 
     def onToolLButtonDown(tool, flags, x, y, view)
@@ -613,6 +612,10 @@ module Ladb::OpenCutList
           plane = [min.offset(vmax, vmax.length * @cutters[@picked_axis][@picked_cutter_index]), direction ]
 
           @picked_cutter_start_point = Geom.intersect_line_plane(view.pickray(x, y), plane)
+          if @picked_cutter_start_point.nil?
+            # Ray is certainly parallel to the direction, so we use the intersection between direction and plan
+            @picked_cutter_start_point = Geom.intersect_line_plane([min, direction], plane)
+          end
 
           set_state(STATE_RESHAPE_CUTTER_MOVE)
           _refresh
@@ -880,7 +883,7 @@ module Ladb::OpenCutList
           _unhide_instances
 
         when STATE_RESHAPE
-          @tool.remove_3d([LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
+          @tool.remove_3d([ LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
           _get_split_def    # Compute a new split_def
           _hide_instances
 
@@ -950,9 +953,10 @@ module Ladb::OpenCutList
       @locked_axis = nil if @locked_axis && keb.dim_by_axis(@locked_axis) == 0
       @picked_axis = @locked_axis unless @locked_axis.nil?
 
+      ph = view.pick_helper(x, y, 20)
+
       # Snap to grip?
 
-      ph = view.pick_helper(x, y, 20)
       [ X_AXIS, Y_AXIS, Z_AXIS ].select { |axis| (@locked_axis.nil? || axis == @locked_axis) && keb.dim_by_axis(axis) > 0 }.each do |axis|
         grip_indices = Kuix::Bounds3d.faces_by_axis(axis)
         grip_indices.each do |grip_index|
@@ -1023,30 +1027,9 @@ module Ladb::OpenCutList
       direction = @picked_axis.transform(et)
       ray = view.pickray(x, y)
 
-      begin
-        picked_point, _ = Geom::closest_points([@picked_cutter_start_point, direction ], ray)
-        @mouse_snap_point = picked_point
-        @mouse_ip.clear
-      rescue
-        center = eb.center.transform(et)
-        case @picked_axis
-        when X_AXIS
-          plane = [ center, eb.height > eb.depth ? _get_active_z_axis : _get_active_y_axis ]
-        when Y_AXIS
-          plane = [ center, eb.width > eb.depth ? _get_active_z_axis : _get_active_x_axis ]
-        when Z_AXIS
-          plane = [ center, eb.height > eb.width ? _get_active_x_axis : _get_active_y_axis ]
-        else
-          plane = nil
-        end
-        unless plane.nil?
-          hit = Geom.intersect_line_plane(ray, plane)
-          unless hit.nil?
-            @mouse_snap_point = hit.project_to_line([ center, direction ])
-            @mouse_ip.clear
-          end
-        end
-      end
+      picked_point, _ = Geom::closest_points([ @picked_cutter_start_point, direction ], ray)
+      @mouse_snap_point = picked_point
+      @mouse_ip.clear
 
       min = eb.min.transform(et)
       max = eb.max.transform(et)
@@ -1098,22 +1081,26 @@ module Ladb::OpenCutList
         end
         unless plane.nil?
 
-          hit = Geom.intersect_line_plane(view.pickray(x, y), plane)
-          unless hit.nil?
+          ray = view.pickray(x, y)
+          ray_origin, _ = ray
 
+          hit = Geom.intersect_line_plane(ray, plane)
+          if hit.nil?
+            # Projection is certainly parallel to the direction
+            @mouse_snap_point = ray_origin.project_to_line([ center, direction ])
+          else
             @mouse_snap_point = hit.project_to_line([ center, direction ])
+          end
 
-            min, max = Kuix::Bounds3d.faces_by_axis(@picked_axis).map { |index| ked.face_center(index).to_p.transform(et) }
+          min, max = Kuix::Bounds3d.faces_by_axis(@picked_axis).map { |index| ked.face_center(index).to_p.transform(et) }
 
-            v = min.vector_to(@mouse_snap_point)
-            vmax = min.vector_to(max)
+          v = min.vector_to(@mouse_snap_point)
+          vmax = min.vector_to(max)
 
-            if v.valid? && vmax.valid?
-              ratio = v.length / vmax.length
-              ratio *= -1 unless v.samedirection?(vmax)
-              @snap_ratio = [ [ 0, ratio ].max, 1 ].min
-            end
-
+          if v.valid? && vmax.valid?
+            ratio = v.length / vmax.length
+            ratio *= -1 unless v.samedirection?(vmax)
+            @snap_ratio = [ [ 0, ratio ].max, 1 ].min
           end
 
         end
@@ -1127,6 +1114,8 @@ module Ladb::OpenCutList
       @picked_cutter_index = nil
 
       unless @cutters.nil? || @picked_axis.nil?
+
+        ph = view.pick_helper(x, y, 20)
 
         drawing_def = _get_drawing_def
         et = _get_edit_transformation
@@ -1159,11 +1148,18 @@ module Ladb::OpenCutList
           v.length = vmax.length * ratio
           t = Geom::Transformation.translation(v)
 
-          polygon = quad_ref.map { |point| view.screen_coords(point.transform(t)) }
-          if Geom.point_in_polygon_2D(p2d, polygon, true)
+          polygon_3d = quad_ref.map { |point| point.transform(t) }
+          polygon_2d = polygon_3d.map { |point| view.screen_coords(point) }
+          if Geom.point_in_polygon_2D(p2d, polygon_2d, true)
             @picked_cutter_index = index
             return true
           end
+          polygon_3d.each_cons(2) { |segment|
+            if ph.pick_segment(segment, x, y, 20)
+              @picked_cutter_index = index
+              return true
+            end
+          }
 
         end
 
@@ -1413,7 +1409,6 @@ module Ladb::OpenCutList
         container_def.children.each { |container_def| fn_preview_container.call(container_def, color) }
 
       end
-
       fn_preview_container.call(container_defs.first, axis_color)
 
       # eti = et.inverse
@@ -1527,7 +1522,7 @@ module Ladb::OpenCutList
       return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
 
       emv, lps, lpe, split_def = stretch_def.values_at(:emv, :lps, :lpe, :split_def)
-      max_compression_distance, reversed = split_def.values_at(:max_compression_distance, :reversed)
+      epmin, epmax, max_compression_distance, reversed = split_def.values_at(:epmin, :epmax, :max_compression_distance, :reversed)
       v = lps.vector_to(lpe)
 
       distance = _read_user_text_length(tool, text, v.length)
@@ -1543,7 +1538,11 @@ module Ladb::OpenCutList
       compressed = emv.valid? && (reversed ? emv.samedirection?(@picked_axis) : !emv.samedirection?(@picked_axis))
       compressed = !compressed if distance < 0
       if compressed && @picked_reshape_start_point.distance(lps.offset(v, distance)) > max_compression_distance
-        tool.notify_errors([ [ "tool.default.error.gt_max_distance", { :value1 => distance.abs.to_l, :value2 => max_compression_distance.abs.to_l } ] ])
+        if _fetch_option_stretch_measure_type_outside
+          tool.notify_errors([ [ "tool.default.error.lt_min_distance", { :value1 => distance.abs.to_l, :value2 => (epmin.distance(epmax) - max_compression_distance).abs.to_l } ] ])
+        else
+          tool.notify_errors([ [ "tool.default.error.gt_max_distance", { :value1 => distance.abs.to_l, :value2 => max_compression_distance.abs.to_l } ] ])
+        end
         return false
       end
 
@@ -1564,7 +1563,7 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: true,
-        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
+        container_validator: has_active_part? ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_NO_SCALE
       }
     end
 
@@ -1759,7 +1758,8 @@ module Ladb::OpenCutList
 
           edv = edvs[container_def.section_def]
 
-          t = container_def.transformation
+          # Special case if container_def is root. Use its container transformation because container_def.transformation is relative to model origin there
+          t = container_def.parent.nil? ? container_def.container.transformation : container_def.transformation
 
           # Subtract parent container move
           unless container_def.parent.nil? || container_def.parent.section_def.nil?
@@ -1777,7 +1777,7 @@ module Ladb::OpenCutList
 
         end
 
-       # Adjust cutters
+        # Adjust cutters
         eti = et.inverse
         epo = reversed ? lpe.transform(eti) : eps
         epomax = reversed ? eps : lpe.transform(eti)
@@ -1938,7 +1938,7 @@ module Ladb::OpenCutList
 
           # Check if the container is glued or always face camera to search the section according to its origin only
           elsif drawing_container_def.container.respond_to?(:glued_to) && drawing_container_def.container.glued_to ||
-             drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 127)
+                drawing_container_def.container.respond_to?(:definition) && (drawing_container_def.container.definition.behavior.always_face_camera? || drawing_container_def.container.definition.behavior.no_scale_mask? == 127)
 
             container_origin = ORIGIN.transform(drawing_container_def.transformation * drawing_container_def.container.transformation)
             section_def = section_defs.find { |section_def| section_def.contains_point?(container_origin, xyz_method) }
@@ -1953,13 +1953,28 @@ module Ladb::OpenCutList
             section_def = section_defs.find { |section_def| section_def.contains_bounds?(drawing_container_def.bounds, xyz_method) }
             if section_def.nil?
 
-              container_origin = ORIGIN.transform(drawing_container_def.transformation.inverse * drawing_container_def.container.transformation)
+              container_origin = ORIGIN.transform(drawing_container_def.is_root? ? IDENTITY : drawing_container_def.transformation * drawing_container_def.container.transformation)
               min_max = [ drawing_container_def.bounds.min, drawing_container_def.bounds.max ].min_by { |point| (point.send(xyz_method) - container_origin.send(xyz_method)).abs }
 
-              # Default container section_def is where the bounds extreme that is the nearest origin
+              # Default container section_def is where the bounds extreme is the nearest origin
               section_def = section_defs.find { |section_def| section_def.contains_point?(min_max, xyz_method) }
 
               operation = SplitContainerDef::OPERATION_SPLIT
+
+
+              # color = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_MAGENTA ][depth % 4]
+              #
+              # k_box = Kuix::BoxMotif.new
+              # k_box.bounds.copy!(drawing_container_def.bounds)
+              # k_box.color = color
+              # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+              #
+              # k_points = _create_floating_points(
+              #   points: container_origin,
+              #   fill_color: color,
+              #   size: [ 6, 4, 2, 1 ][depth % 4]
+              # )
+              # @tool.append_3d(k_points, LAYER_3D_PART_PREVIEW)
 
             else
 
@@ -2229,7 +2244,7 @@ module Ladb::OpenCutList
 
           unless parent.nil?
             local_axis = axis.transform((transformation * container.transformation).inverse)
-            data << (local_axis.parallel?(axis) || local_axis.perpendicular?(axis)) if local_axis.valid?  # Differentiating rotations
+            data << local_axis.angle_between(axis) % Math::PI if local_axis.valid?  # Differentiating rotations but not perfect aligned mirrors
             data << local_axis.length.to_f.round(6) if local_axis.valid? && operation == SplitContainerDef::OPERATION_SPLIT  # Differentiating scaling
           end
 

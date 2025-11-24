@@ -77,7 +77,7 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler,
-                :cursor_select, :cursor_select_part, :cursor_select_copy_line, :cursor_select_copy_grid, :cursor_select_move_line, :cursor_select_distribute, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
+                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_copy_line, :cursor_select_copy_grid, :cursor_select_move_line, :cursor_select_distribute, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
@@ -87,6 +87,7 @@ module Ladb::OpenCutList
       # Create cursors
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_select_part = create_cursor('select-part', 0, 0)
+      @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
       @cursor_select_copy_line = create_cursor('select-copy-line', 0, 0)
       @cursor_select_copy_grid = create_cursor('select-copy-grid', 0, 0)
       @cursor_select_move_line = create_cursor('select-move-line', 0, 0)
@@ -269,8 +270,8 @@ module Ladb::OpenCutList
       @picked_handle_start_point = nil
       @picked_handle_end_point = nil
 
-      @definition = nil
-      @instances = []
+      @cpy_instances = []
+      @src_transformations = {}
       _reset_drawing_def
 
     end
@@ -304,7 +305,7 @@ module Ladb::OpenCutList
 
         when STATE_HANDLE_START, STATE_HANDLE
           @picked_shape_start_point = nil
-          _unhide_instance
+          _unhide_instances
           _unhide_sibling_instances
         end
 
@@ -434,15 +435,13 @@ module Ladb::OpenCutList
     end
 
     def onPartSelected
-      return if (instance = _get_instance).nil?
+      return true if super
 
-      sibling_instances = _get_sibling_instances
+      if (sibling_instances = _get_sibling_instances).is_a?(Array)
+        @cpy_instances.concat(sibling_instances)
+      end
 
-      @instances << instance
-      @instances.concat(sibling_instances) if sibling_instances.is_a?(Array)
-      @definition = instance.definition
-
-      @src_transformation = Geom::Transformation.new(instance.transformation)
+      @src_transformations = get_active_selection_instances.map { |instance| [ instance, Geom::Transformation.new(instance.transformation) ] }.to_h
 
       _reset_transformations
       _reset_drawing_def
@@ -487,8 +486,8 @@ module Ladb::OpenCutList
       @mouse_snap_point = nil
       @picked_handle_start_point = nil
       @picked_handle_end_point = nil
-      @definition = nil
-      @instances.clear
+      @src_transformations.clear
+      @cpy_instances.clear
       super
       set_state(STATE_SELECT)
     end
@@ -504,7 +503,7 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _clear_selection_on_start
+    def _allows_multiple_selections?
       true
     end
 
@@ -665,7 +664,7 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: false,
-        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
+        container_validator: has_active_part? ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL
       }
     end
 
@@ -713,6 +712,12 @@ module Ladb::OpenCutList
       set_state(STATE_HANDLE)
       _refresh
 
+    end
+
+    # -----
+
+    def _clear_selection_on_start
+      true
     end
 
   end
@@ -770,7 +775,7 @@ module Ladb::OpenCutList
     def onPartSelected
 
       Sketchup.active_model.selection.clear
-      Sketchup.active_model.selection.add(_get_instance)
+      Sketchup.active_model.selection.add(_get_instances)
       if (sibling_instances = _get_sibling_instances).is_a?(Array)
         Sketchup.active_model.selection.add(sibling_instances)
       end
@@ -784,12 +789,6 @@ module Ladb::OpenCutList
 
     protected
 
-    def _clear_selection_on_start
-      false
-    end
-
-    # -----
-    #
     def _pick_part_siblings?
       true
     end
@@ -930,7 +929,7 @@ module Ladb::OpenCutList
     def onPartSelected
       super
       @operator = '/'
-      @number = [ @instances.size - 1, 1 ].max
+      @number = [ @cpy_instances.size, 1 ].max
       _refresh
     end
 
@@ -1187,7 +1186,7 @@ module Ladb::OpenCutList
 
     def _read_handle_copies(tool, text, view)
       return true if super
-      return if @definition.nil?
+      return if _get_instances.empty?
 
       v, _ = _split_user_text(text)
 
@@ -1260,8 +1259,7 @@ module Ladb::OpenCutList
           uz = mv.z
         end
 
-        src_instance = get_active_selection_instances.first
-        old_instances = @instances[1..-1]
+        src_instances = get_active_selection_instances
 
         if get_active_selection_path.empty?
           entities = model.active_entities
@@ -1269,27 +1267,32 @@ module Ladb::OpenCutList
           entities = get_active_selection_path.last.definition.entities
         end
 
-        entities.erase_entities(old_instances) if old_instances.any?
-        @instances = [ src_instance ]
+        entities.erase_entities(@cpy_instances) if @cpy_instances.any?
+        @cpy_instances.clear
 
-        (1..number).each do |i|
+        src_instances.each do |src_instance|
 
-          mvu = Geom::Vector3d.new(ux * i, uy * i, uz * i)
+          definition = src_instance.definition
 
-          mt = Geom::Transformation.translation(mvu)
-          if _fetch_option_mirror && i == number && number == 1
-            mt = Geom::Transformation.scaling(mpe, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
-            mt *= Geom::Transformation.rotation(mpe, mvu, Geometrix::ONE_PI)
-            mt *= Geom::Transformation.translation(mvu)
+          (1..number).each do |i|
+
+            mvu = Geom::Vector3d.new(ux * i, uy * i, uz * i)
+
+            mt = Geom::Transformation.translation(mvu)
+            if _fetch_option_mirror && i == number && number == 1
+              mt = Geom::Transformation.scaling(mpe, *mvu.normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
+              mt *= Geom::Transformation.rotation(mpe, mvu, Geometrix::ONE_PI)
+              mt *= Geom::Transformation.translation(mvu)
+            end
+            mt *= @src_transformations[src_instance]
+
+            dst_instance = entities.add_instance(definition, mt)
+
+            @cpy_instances << dst_instance
+
+            _copy_instance_metas(src_instance, dst_instance)
+
           end
-          mt *= @src_transformation
-
-          dst_instance = entities.add_instance(@definition, mt)
-
-          @instances << dst_instance
-
-          _copy_instance_metas(src_instance, dst_instance)
-
         end
 
         @operator = operator
@@ -1782,7 +1785,7 @@ module Ladb::OpenCutList
 
     def _read_handle_copies(tool, text, view)
       return true if super
-      return if @definition.nil?
+      return if _get_instances.empty?
 
       v1, v2 = _split_user_text(text)
 
@@ -1864,8 +1867,7 @@ module Ladb::OpenCutList
           uy = mv_2d.y
         end
 
-        src_instance = get_active_selection_instances.first
-        old_instances = @instances[1..-1]
+        src_instances = get_active_selection_instances
 
         if get_active_selection_path.empty?
           entities = model.active_entities
@@ -1873,45 +1875,51 @@ module Ladb::OpenCutList
           entities = get_active_selection_path.last.definition.entities
         end
 
-        entities.erase_entities(old_instances) if old_instances.any?
-        @instances = [ src_instance ]
+        entities.erase_entities(@cpy_instances) if @cpy_instances.any?
+        @cpy_instances.clear
 
-        ct = _get_global_context_transformation
-        cti = ct.inverse
+        src_instances.each do |src_instance|
 
-        (0..number_x).each do |x|
-          (0..number_y).each do |y|
+          definition = src_instance.definition
 
-            next if x == 0 && y == 0  # Ignore src instance
+          ct = _get_global_context_transformation
+          cti = ct.inverse
 
-            mvu = Geom::Vector3d.new(ux * x, uy * y).transform(ht)
+          (0..number_x).each do |x|
+            (0..number_y).each do |y|
 
-            mt = Geom::Transformation.translation(mvu.transform(cti))
-            if _fetch_option_mirror && number_x == 1 && number_y == 1
+              next if x == 0 && y == 0  # Ignore src instance
 
-              mp = mps.offset(mvu)
+              mvu = Geom::Vector3d.new(ux * x, uy * y).transform(ht)
 
-              mvux = Geom::Vector3d.new(ux * x, 0).transform(ht)
-              mvuy = Geom::Vector3d.new(0, uy * y).transform(ht)
+              mt = Geom::Transformation.translation(mvu.transform(cti))
+              if _fetch_option_mirror && number_x == 1 && number_y == 1
 
-              if x == number_x && y == number_y
-                mt *= Geom::Transformation.rotation(mp.transform(cti), (mvux * mvuy).transform(cti), Geometrix::ONE_PI)
-                mt *= Geom::Transformation.translation((mvu + mvu).transform(cti))
-              elsif x == number_x || y == number_y
-                mt = Geom::Transformation.scaling(mp.transform(cti), *mvu.transform(cti).normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
-                mt *= Geom::Transformation.rotation(mp.transform(cti), x == number_x ? mvux.transform(cti) : mvuy.transform(cti), Geometrix::ONE_PI)
-                mt *= Geom::Transformation.translation(mvu.transform(cti))
+                mp = mps.offset(mvu)
+
+                mvux = Geom::Vector3d.new(ux * x, 0).transform(ht)
+                mvuy = Geom::Vector3d.new(0, uy * y).transform(ht)
+
+                if x == number_x && y == number_y
+                  mt *= Geom::Transformation.rotation(mp.transform(cti), (mvux * mvuy).transform(cti), Geometrix::ONE_PI)
+                  mt *= Geom::Transformation.translation((mvu + mvu).transform(cti))
+                elsif x == number_x || y == number_y
+                  mt = Geom::Transformation.scaling(mp.transform(cti), *mvu.transform(cti).normalize.to_a.map { |f| (f.abs * -1) > 0 ? 1 : -1 })
+                  mt *= Geom::Transformation.rotation(mp.transform(cti), x == number_x ? mvux.transform(cti) : mvuy.transform(cti), Geometrix::ONE_PI)
+                  mt *= Geom::Transformation.translation(mvu.transform(cti))
+                end
+
               end
+              mt *= @src_transformations[src_instance]
+
+              dst_instance = entities.add_instance(definition, mt)
+              @cpy_instances << dst_instance
+
+              _copy_instance_metas(src_instance, dst_instance)
 
             end
-            mt *= @src_transformation
-
-            dst_instance = entities.add_instance(@definition, mt)
-            @instances << dst_instance
-
-            _copy_instance_metas(src_instance, dst_instance)
-
           end
+
         end
 
         @operator_x = operator_x
@@ -2091,7 +2099,7 @@ module Ladb::OpenCutList
     # -----
 
     def stop
-      _unhide_instance
+      _unhide_instances
       super
     end
 
@@ -2123,12 +2131,12 @@ module Ladb::OpenCutList
 
     def onToolSuspend(tool, view)
       super
-      _unhide_instance if @state == STATE_HANDLE
+      _unhide_instances if @state == STATE_HANDLE
     end
 
     def onToolResume(tool, view)
       super
-      _hide_instance if @state == STATE_HANDLE
+      _hide_instances if @state == STATE_HANDLE
     end
 
     def onToolKeyDown(tool, key, repeat, flags, view)
@@ -2176,9 +2184,9 @@ module Ladb::OpenCutList
       unless _get_instance.nil?
         if state == STATE_HANDLE
           @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
-          _hide_instance
+          _hide_instances
         else
-          _unhide_instance
+          _unhide_instances
         end
       end
 
@@ -2410,17 +2418,20 @@ module Ladb::OpenCutList
       mpe = mpe.transform(cti)
       mv = mps.vector_to(mpe)
 
-      _unhide_instance
+      _unhide_instances
 
       model = Sketchup.active_model
       model.start_operation('OCL Move Part', true, false, !active?)
 
-        src_instance = _get_instance
+        src_instances = get_active_selection_instances
+        src_instances.each do |src_instance|
 
-        mt = Geom::Transformation.translation(mv)
-        mt *= @src_transformation
+          mt = Geom::Transformation.translation(mv)
+          mt *= @src_transformations[src_instance]
 
-        src_instance.transformation = mt
+          src_instance.transformation = mt
+
+        end
 
       model.commit_operation
 
@@ -2523,7 +2534,7 @@ module Ladb::OpenCutList
     # -----
 
     def stop
-      _unhide_instance
+      _unhide_instances
       _unhide_sibling_instances
       super
     end
@@ -2555,6 +2566,16 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def onToolSuspend(tool, view)
+      super
+      _unhide_instances if @state == STATE_HANDLE
+    end
+
+    def onToolResume(tool, view)
+      super
+      _hide_instances if @state == STATE_HANDLE
+    end
 
     def onToolLButtonDoubleClick(tool, flags, x, y, view)
       if @previous_action_handler.is_a?(self.class)
@@ -2639,11 +2660,11 @@ module Ladb::OpenCutList
       unless _get_instance.nil?
         if state == STATE_HANDLE
           @tool.set_3d_visibility(false, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Hide part preview
-          _hide_instance
+          _hide_instances
           _hide_sibling_instances
         else
           @tool.set_3d_visibility(true, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Unhide part preview
-          _unhide_instance
+          _unhide_instances
           _unhide_sibling_instances
         end
       end
@@ -2661,7 +2682,7 @@ module Ladb::OpenCutList
 
     def onPartSelected
       super
-      @number = @instances.size
+      @number = @cpy_instances.size + 1
       _refresh
     end
 
@@ -2672,12 +2693,6 @@ module Ladb::OpenCutList
     def _reset
       @number = 1
       super
-    end
-
-    # -----
-
-    def _pick_part_siblings?
-      true
     end
 
     # -----
@@ -2983,14 +2998,14 @@ module Ladb::OpenCutList
       mpe = mpe.transform(cti)
       mv = mps.vector_to(mpe)
 
-      _unhide_instance
+      _unhide_instances
       _unhide_sibling_instances
 
       model = Sketchup.active_model
       model.start_operation('OCL Distribute Part', true, false, !active?)
 
-        src_instance = get_active_selection_instances.first
-        old_instances = @instances[1..-1]
+
+        src_instances = get_active_selection_instances
 
         if get_active_selection_path.empty?
           entities = model.active_entities
@@ -2998,25 +3013,31 @@ module Ladb::OpenCutList
           entities = get_active_selection_path.last.definition.entities
         end
 
-        entities.erase_entities(old_instances) if old_instances.any?
-        @instances = [ src_instance ]
+        entities.erase_entities(@cpy_instances) if @cpy_instances.any?
+        @cpy_instances.clear
 
-        (1..number).each do |i|
+        src_instances.each do |src_instance|
 
-          mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * i / (number + 1.0))))
-          mt *= @src_transformation
+          definition = src_instance.definition
 
-          if i == 1
+          (1..number).each do |i|
 
-            src_instance.transformation = mt
+            mt = Geom::Transformation.translation(center.vector_to(mps.offset(mv, mv.length * i / (number + 1.0))))
+            mt *= @src_transformations[src_instance]
 
-          else
+            if i == 1
 
-            dst_instance = entities.add_instance(@definition, mt)
+              src_instance.transformation = mt
 
-            @instances << dst_instance
+            else
 
-            _copy_instance_metas(src_instance, dst_instance)
+              dst_instance = entities.add_instance(definition, mt)
+
+              @cpy_instances << dst_instance
+
+              _copy_instance_metas(src_instance, dst_instance)
+
+            end
 
           end
 

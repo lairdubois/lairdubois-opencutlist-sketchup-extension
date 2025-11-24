@@ -34,6 +34,7 @@ module Ladb::OpenCutList
     CONTAINER_VALIDATOR_ALL = 0
     CONTAINER_VALIDATOR_NONE = 1
     CONTAINER_VALIDATOR_PART = 2
+    CONTAINER_VALIDATOR_NO_SCALE = 3
 
     def initialize(ipaths,
 
@@ -282,10 +283,13 @@ module Ladb::OpenCutList
         }
       when CONTAINER_VALIDATOR_PART
         container_validator = lambda { |container|
-            !container.is_a?(Sketchup::ComponentInstance) ||
-            container.definition.behavior.cuts_opening? ||
-            container.definition.behavior.always_face_camera? ||
-            container.definition.behavior.no_scale_mask? != 127
+          !container.is_a?(Sketchup::ComponentInstance) ||
+          container.definition.behavior.cuts_opening? ||
+          container.definition.behavior.always_face_camera?
+        }
+      when CONTAINER_VALIDATOR_NO_SCALE
+        container_validator = lambda { |container|
+          container.definition.behavior.no_scale_mask? != 127
         }
       end
 

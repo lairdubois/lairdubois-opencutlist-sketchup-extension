@@ -2166,11 +2166,13 @@ tool:
     action_0_state_2_status: "Кликните, чтобы подтвердить растяжение, или введите расстояние"
     action_option_group_stretch_measure_type: Отсчет
     action_option_group_axes: Оси
+    action_option_group_options: Опции
     action_option_stretch_measure_type_outside_status: Внешнее измерение
     action_option_stretch_measure_type_offset_status: Измерить размеры
     action_option_axes_active_status: Перемещение по активным осям
     action_option_axes_context_status: "Перемещение по осям группы или компонента, содержащего деталь"
     action_option_axes_entity_status: Перемещение по осям детали
+    action_option_options_make_unique_status: Сделать растянутые элементы уникальными
     error:
       curve_intersect: Одна из плоскостей распила проходит через нерастяжимый элемент (кривую или аксессуар)
   smart_paint:

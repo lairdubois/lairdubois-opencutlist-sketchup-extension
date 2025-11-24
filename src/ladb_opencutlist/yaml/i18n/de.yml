@@ -2068,16 +2068,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Klicken Sie auf ein Teil, um es auszuwählen.
+    state_0_to_6_status: Übergeordnetes Element auswählen
+    state_4_status: Ziehen Sie ein identisches Teil mit demselben übergeordneten Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren.
+    state_5_status: Zum Hinzufügen zur Auswahl ziehen und zum Fortfahren loslassen
+    state_6_status: Wählen Sie einen Eintrag aus der Liste aus
+    warning:
+      no_active_part: Vous devez d'abord survoler une pièce
   smart_draw:
     title: Zeichnen
     action_0: Rechteck zeichnen
     action_0_status: Volumen auf der Basis einer Rechteckform zeichnen
+    action_0_state_0_status: Klicken Sie, um den ersten Punkt des Rechtecks festzulegen.
     action_0_state_1_status: "Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein"
     action_1: Kreis zeichnen
+    action_1_state_0_status: Klicken Sie, um den Mittelpunkt des Kreises festzulegen
     action_1_status: Volumen auf der Basis einer Kreisform zeichnen
     action_1_state_1_radius_status: "Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein"
     action_1_state_1_diameter_status: "Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein"
     action_2: Polygon zeichnen
+    action_2_state_0_status: Klicken Sie, um den ersten Punkt des Polygons festzulegen
     action_2_status: Volumen auf der Basis einer polygonalen Form zeichnen
     action_2_state_1_status: "Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein"
     action_x_state_2_status: "Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein"
@@ -2112,25 +2123,18 @@ tool:
   smart_handle:
     title: Handhaben
     action_0: Auswählen
-    action_0_status: "Klicken Sie auf ein Teil, um es auszuwählen"
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: "Ziehen Sie ein identisches Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren"
+    action_0_status: Teil auszuwählen
     action_1: In Linie kopieren
-    action_1_status: "Klicken Sie auf ein Teil, um es entlang einer Achse zu kopieren"
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: "Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Distanz ein"
+    action_1_status: Teil entlang einer Achse kopieren
+    action_1_state_2_status: "Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie einen Abstand Distanz ein"
     action_2: In Raster kopieren
     action_2_status: "Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren"
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: "Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie zwei Distanzen ein"
     action_3: Verschieben
-    action_3_status: "Klicken Sie auf ein Teil, um es entlang einer Achse zu verschieben"
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: Teil entlang einer Achse verschieben
     action_3_state_2_status: "Klicken Sie, um das Teil zu platzieren, oder geben Sie eine Distanz ein"
     action_4: Verteilen
-    action_4_status: "Klicken Sie auf ein Teil, um es entlang einer Achse zu verteilen"
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: Teil entlang einer Achse zu verteilen
     action_4_state_1_status: "Klicken Sie, um den ersten Messpunkt zu setzen"
     action_4_state_2_status: "Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein"
     action_option_group_copy_measure_type: Maß
@@ -2155,7 +2159,6 @@ tool:
     title: Umgestalten
     action_0: Strecken
     action_0_status: "Klicken Sie auf ein Teil, um es auszuwählen"
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
     action_0_state_1_status: "Klicken Sie auf einen Griff, um zu strecken"
     action_0_state_1a_status: "Klicken Sie auf eine Schnittebene, um sie zu verschieben"
     action_0_state_1b_status: Schnittebene hinzufügen

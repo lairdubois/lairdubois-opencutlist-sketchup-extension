@@ -1070,7 +1070,7 @@ module Ladb::OpenCutList
 
     def _read_offset(tool, text, view)
 
-      if (match = /^(.+)x$/.match(text))
+      if (match = /^(.+)x$/i.match(text))
 
         value = match[1]
 
@@ -2520,7 +2520,7 @@ module Ladb::OpenCutList
     end
 
     def _read_segment_count(tool, text)
-      if (match = /^(.+)s$/.match(text))
+      if (match = /^(.+)s$/i.match(text))
 
         value = match[1]
         segment_count = value.to_i

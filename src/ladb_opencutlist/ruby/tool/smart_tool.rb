@@ -2019,7 +2019,7 @@ module Ladb::OpenCutList
 
     def _hide_instances
       return if (instances = _get_instances).nil? || @unhide_local_instances_transformations.is_a?(Hash)
-      _get_global_instance_transformation
+      _get_global_instance_transformation(nil)
       _get_drawing_def
       @unhide_local_instances_transformations = instances.map { |instance| [ instance, Geom::Transformation.new(instance.transformation) ] }.to_h
       instances.each { |instance| instance.move!(Geom::Transformation.scaling(0, 0, 0)) }
@@ -2688,6 +2688,9 @@ module Ladb::OpenCutList
       case state
       when STATE_SELECT
         return @tool.cursor_select_part
+
+      when STATE_SELECT_SIBLINGS
+        return @tool.cursor_select_part_plus
       end
 
       super
@@ -2839,8 +2842,12 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SELECT
-        if has_active_part? && tool.is_key_ctrl_or_option?(key)
-          set_state(STATE_SELECT_TREE)
+        if tool.is_key_ctrl_or_option?(key)
+          if has_active_part?
+            set_state(STATE_SELECT_TREE)
+          else
+            tool.notify_warnings([ 'tool.smart_select.warning.no_active_part' ])
+          end
           return true
         end
 
@@ -2899,6 +2906,10 @@ module Ladb::OpenCutList
           part = get_active_part
           path = get_active_part_entity_path
           active_path_depth = Sketchup.active_model.active_path.is_a?(Array) ? Sketchup.active_model.active_path.size : 0
+
+          @tool.remove_all_2d
+          @tool.remove_all_3d
+          _reset_active_part
 
           unit = @tool.get_unit
 
@@ -2987,6 +2998,10 @@ module Ladb::OpenCutList
     end
 
     def _allows_multiple_selections?
+      false
+    end
+
+    def _clear_selection_on_start
       false
     end
 

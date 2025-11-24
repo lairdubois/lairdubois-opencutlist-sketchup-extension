@@ -33,6 +33,11 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2025-11-24
+  * Fixed VCB arithmetic parser
+### 2025-11-20
+  * Added selection by context menu tree in Stretch Tool
+  * Added ability to Smart Handle Tool to hangle any group or component
 ### 2025-11-17
   * Updated HU language
 ### 2025-11-12
