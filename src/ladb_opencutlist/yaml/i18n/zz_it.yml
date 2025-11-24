@@ -2063,204 +2063,207 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
-  smart_draw:
-    title: 1576 - Disegna
-    action_0: 1577 - Disegnare un rettangolo
-    action_0_status: 1578 - Disegnare un volume basato su una forma rettangolare
-    action_0_state_1_status: 1579 - Fate clic per definire l'angolo opposto o immettete una lunghezza, una larghezza
-    action_1: 1580 - Disegnare un cerchio
-    action_1_status: 1581 - Disegnare un volume basato su una forma circolare
-    action_1_state_1_radius_status: 1582 - Fate clic per definire il raggio o per inserire una distanza
-    action_1_state_1_diameter_status: 1583 - Fare clic per definire il diametro o inserire una distanza
-    action_2: 1584 - Disegnare un poligono
-    action_2_status: 1585 - Disegnare un volume basato su una forma poligonale
-    action_2_state_1_status: 1586 - Fate clic per definire un nuovo punto o inserire una distanza
-    action_x_state_2_status: 1587 - Fate clic per impostare l' elevazione o inserire una distanza
-    action_option_group_offset: 1588 - Spostamento
-    action_option_group_segments: 1589 - Segmenti
-    action_option_group_options: 1590 - Opzioni
-    action_option_offset_shape_offset: 1591 - Spostamento
-    action_option_offset_shape_offset_status: 1592 - Applica un offset alla linea della forma disegnata
-    action_option_segments_segment_count: 1593 - Numero di segmenti
-    action_option_segments_segment_count_status: 1594 - Utilizzato per definire il numero di segmenti del cerchio
-    action_option_options_construction: 1595 - Linee di costruzione
-    action_option_options_construction_status: 1596 - Disegna come linee di costruzione
-    action_option_options_rectangle_centered: 1597 - Rettangolo centrato
-    action_option_options_rectangle_centered_status: 1598 - Centrare il rettangolo sul primo punto
-    action_option_options_smoothing: 1599 - Morbidezza
-    action_option_options_smoothing_status: 1600 - Liscare le curve
-    action_option_options_measure_from_vertex_status: 1601 - Misura relativa al vertice più vicino
-    action_option_options_measure_from_diameter: 1602 - Misura
-    action_option_options_measure_from_diameter_status: 1603 - Misurare il cerchio in base al suo diametro
-    action_option_options_measure_from_radius_status: 1604 - Misurare il cerchio in base al suo raggio
-    action_option_options_measure_reversed: 1605 - Misurazione inversa
-    action_option_options_measure_reversed_status: 1606 - Invertire la misura
-    action_option_options_pull_centered: 1607 - Elevazione centrata
-    action_option_options_pull_centered_status: 1608 - Centra l'elevazione sul primo punto
-    action_option_options_ask_name: 1609 - Nomenclatura delle parti
-    action_option_options_ask_name_status: 1610 - Definisci manualmente i nomi degli elementi
-    action_measure_locked_status: 1611 - Blocca sull'ultima misura
-    action_toggle_move_copy_status: 1612 - Commuta tra copia e sposta
-    action_change_move_anchor_status: 1613 - Cambia il punto di inserimento
-    success:
-      part_created: 1614 - Nuova parte creata: {{ name }}
-  smart_handle:
-    title: 1615 - Manipolare
-    action_0: 1616 - Seleziona
-    action_0_status: 1617 - Clicca su un elemento per selezionarlo
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: 1619 - Trascina su un pezzo identico per aggiungerlo alla selezione e rilascia per continuare
-    action_1: 1620 - Copia sulla linea
-    action_1_status: 1621 - Seleziona l'elemento da copiare lungo un asse
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_1_state_2_status: 1623 - Seleziona un punto dove copiare l'elemento o digita una distanza
-    action_2: 1624 - Copia in tabella
-    action_2_status: 1625 - Seleziona un elemento da copiare in griglia
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_2_state_2_status: 1627 - Seleziona un punto per copiare un elemento o digita due distanze
-    action_3: 1628 - Sposta
-    action_3_status: 1629 - Seleziona l'elemento da copiare in griglia
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_3_state_2_status: 1631 - Seleziona un punto dove posizionare l'elemento o digita una distanza
-    action_4: 1632 - Distribuisci
-    action_4_status: 1633 - Seleziona l'elemento da distribuire lungo un asse
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
-    action_4_state_1_status: 1636 - Seleziona il primo punto della misura
-    action_4_state_2_status: 1637 - Seleziona il secondo punto della misura o digita una distanza
-    action_option_group_copy_measure_type: 1638 - Misura
-    action_option_group_move_measure_type: 1639 - Misura
-    action_option_group_axes: 1640 - Assi
-    action_option_group_options: 1641 - Opzioni
-    action_option_copy_measure_type_outside_status: 1642 - Misura esterna
-    action_option_copy_measure_type_centered_status: 1643 - Misura da centro a centro
-    action_option_copy_measure_type_inside_status: 1644 - Misura tra i pezzi
-    action_option_move_measure_type_outside_status: 1645 - Misura esterna
-    action_option_move_measure_type_centered_status: 1646 - Misura al centro
-    action_option_move_measure_type_inside_status: 1647 - Misura interna
-    action_option_axes_active_status: 1648 - Sposta lungo l'asse attivo
-    action_option_axes_context_status: 1649 - Modificare lungo gli assi del gruppo o del componente contenente il pezzo
-    action_option_axes_entity_status: 1650 - Modifica su un asse dell'elemento
-    action_option_options_mirror_status: 1651 - Copia simmetrica
+  smart_select:
+    state_0_status: 1576 - Clicca su un elemento per selezionarlo
+    state_0_to_6_status: 1577 - Scegliere un elemento padre
+    state_4_status: 1578 - Trascina su un elemento identico con lo stesso genitore per aggiungerlo alla selezione, quindi rilascia per continuare
+    state_5_status: 1579 - Scorri per aggiungere alla selezione e rilascia per continuare
+    state_6_status: 1580 - Selezionare un elemento dall'elenco
     warning:
-      copies_disable_mirror: 1652 - La copia multipla disabilita l'opzione '$t(tool.smart_handle.action_option_options_mirror_status)'
+      no_active_part: 1581 - Devi prima passare con il mouse su una parte
+  smart_draw:
+    title: 1582 - Disegna
+    action_0: 1583 - Disegnare un rettangolo
+    action_0_status: 1584 - Disegnare un volume basato su una forma rettangolare
+    action_0_state_0_status: 1585 - Clicca per impostare il primo punto del rettangolo
+    action_0_state_1_status: 1586 - Fate clic per definire l'angolo opposto o immettete una lunghezza, una larghezza
+    action_1: 1587 - Disegnare un cerchio
+    action_1_state_0_status: 1588 - Clicca per impostare il centro del cerchio
+    action_1_status: 1589 - Disegnare un volume basato su una forma circolare
+    action_1_state_1_radius_status: 1590 - Fate clic per definire il raggio o per inserire una distanza
+    action_1_state_1_diameter_status: 1591 - Fare clic per definire il diametro o inserire una distanza
+    action_2: 1592 - Disegnare un poligono
+    action_2_state_0_status: 1593 - Clicca per impostare il primo punto del poligono
+    action_2_status: 1594 - Disegnare un volume basato su una forma poligonale
+    action_2_state_1_status: 1595 - Fate clic per definire un nuovo punto o inserire una distanza
+    action_x_state_2_status: 1596 - Fate clic per impostare l' elevazione o inserire una distanza
+    action_option_group_offset: 1597 - Spostamento
+    action_option_group_segments: 1598 - Segmenti
+    action_option_group_options: 1599 - Opzioni
+    action_option_offset_shape_offset: 1600 - Spostamento
+    action_option_offset_shape_offset_status: 1601 - Applica un offset alla linea della forma disegnata
+    action_option_segments_segment_count: 1602 - Numero di segmenti
+    action_option_segments_segment_count_status: 1603 - Utilizzato per definire il numero di segmenti del cerchio
+    action_option_options_construction: 1604 - Linee di costruzione
+    action_option_options_construction_status: 1605 - Disegna come linee di costruzione
+    action_option_options_rectangle_centered: 1606 - Rettangolo centrato
+    action_option_options_rectangle_centered_status: 1607 - Centrare il rettangolo sul primo punto
+    action_option_options_smoothing: 1608 - Morbidezza
+    action_option_options_smoothing_status: 1609 - Liscare le curve
+    action_option_options_measure_from_vertex_status: 1610 - Misura relativa al vertice più vicino
+    action_option_options_measure_from_diameter: 1611 - Misura
+    action_option_options_measure_from_diameter_status: 1612 - Misurare il cerchio in base al suo diametro
+    action_option_options_measure_from_radius_status: 1613 - Misurare il cerchio in base al suo raggio
+    action_option_options_measure_reversed: 1614 - Misurazione inversa
+    action_option_options_measure_reversed_status: 1615 - Invertire la misura
+    action_option_options_pull_centered: 1616 - Elevazione centrata
+    action_option_options_pull_centered_status: 1617 - Centra l'elevazione sul primo punto
+    action_option_options_ask_name: 1618 - Nomenclatura delle parti
+    action_option_options_ask_name_status: 1619 - Definisci manualmente i nomi degli elementi
+    action_measure_locked_status: 1620 - Blocca sull'ultima misura
+    action_toggle_move_copy_status: 1621 - Commuta tra copia e sposta
+    action_change_move_anchor_status: 1622 - Cambia il punto di inserimento
+    success:
+      part_created: 1623 - Nuova parte creata: {{ name }}
+  smart_handle:
+    title: 1624 - Manipolare
+    action_0: 1625 - Seleziona
+    action_0_status: 1626 - Seleziona un elemento
+    action_1: 1627 - Copia sulla linea
+    action_1_status: 1628 - Copiare un elemento lungo un asse
+    action_1_state_2_status: 1629 - Seleziona un punto dove copiare l'elemento o digita una distanza
+    action_2: 1630 - Copia in tabella
+    action_2_status: 1631 - Copia un elemento lungo una griglia
+    action_2_state_2_status: 1632 - Seleziona un punto per copiare un elemento o digita due distanze
+    action_3: 1633 - Sposta
+    action_3_status: 1634 - Spostare un elemento lungo un asse
+    action_3_state_2_status: 1635 - Seleziona un punto dove posizionare l'elemento o digita una distanza
+    action_4: 1636 - Distribuisci
+    action_4_status: 1637 - Distribuire un elemento lungo un asse
+    action_4_state_1_status: 1638 - Seleziona il primo punto della misura
+    action_4_state_2_status: 1639 - Seleziona il secondo punto della misura o digita una distanza
+    action_option_group_copy_measure_type: 1640 - Misura
+    action_option_group_move_measure_type: 1641 - Misura
+    action_option_group_axes: 1642 - Assi
+    action_option_group_options: 1643 - Opzioni
+    action_option_copy_measure_type_outside_status: 1644 - Misura esterna
+    action_option_copy_measure_type_centered_status: 1645 - Misura da centro a centro
+    action_option_copy_measure_type_inside_status: 1646 - Misura tra i pezzi
+    action_option_move_measure_type_outside_status: 1647 - Misura esterna
+    action_option_move_measure_type_centered_status: 1648 - Misura al centro
+    action_option_move_measure_type_inside_status: 1649 - Misura interna
+    action_option_axes_active_status: 1650 - Sposta lungo l'asse attivo
+    action_option_axes_context_status: 1651 - Modificare lungo gli assi del gruppo o del componente contenente il pezzo
+    action_option_axes_entity_status: 1652 - Modifica su un asse dell'elemento
+    action_option_options_mirror_status: 1653 - Copia simmetrica
+    warning:
+      copies_disable_mirror: 1654 - La copia multipla disabilita l'opzione '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      min_distance: '1653 - La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }} '
+      min_distance: '1655 - La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }} '
   smart_reshape:
-    title: 1654 - Rimodellare
-    action_0: 1655 - Allungare
-    action_0_status: 1656 - Clicca su un elemento per selezionarlo
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: 1658 - Clicca su una maniglia per allungare
-    action_0_state_1a_status: 1659 - Clicca su un piano di taglio per spostarlo
-    action_0_state_1b_status: 1660 - Aggiungere un piano di taglio
-    action_0_state_1c_status: 1661 - Cancellare un piano di taglio
-    action_0_state_10_status: 1662 - Trascinare il piano di taglio per spostarlo
-    action_0_state_11_status: 1663 - Clicca per aggiungere il piano di taglio
-    action_0_state_12_status: 1664 - Clicca su un piano di taglio per eliminarlo
-    action_0_state_2_status: 1665 - Clicca per confermare l'allungamento o inserisci una distanza
-    action_option_group_stretch_measure_type: 1666 - Misura
-    action_option_group_axes: 1667 - Assi
-    action_option_group_options: 1668 - Opzioni
-    action_option_stretch_measure_type_outside_status: 1669 - Misura esterna
-    action_option_stretch_measure_type_offset_status: 1670 - Misura la differenza
-    action_option_axes_active_status: 1671 - Sposta lungo l'asse attivo
-    action_option_axes_context_status: 1672 - Modificare lungo gli assi del gruppo o del componente contenente il pezzo
-    action_option_axes_entity_status: 1673 - Modifica su un asse dell'elemento
-    action_option_options_make_unique_status: 1674 - Rendere unici gli elementi allungati
+    title: 1656 - Rimodellare
+    action_0: 1657 - Allungare
+    action_0_status: 1658 - Allunga un elemento
+    action_0_state_1_status: 1659 - Clicca su una maniglia per allungare
+    action_0_state_1a_status: 1660 - Clicca su un piano di taglio per spostarlo
+    action_0_state_1b_status: 1661 - Aggiungere un piano di taglio
+    action_0_state_1c_status: 1662 - Cancellare un piano di taglio
+    action_0_state_10_status: 1663 - Trascinare il piano di taglio per spostarlo
+    action_0_state_11_status: 1664 - Clicca per aggiungere il piano di taglio
+    action_0_state_12_status: 1665 - Clicca su un piano di taglio per eliminarlo
+    action_0_state_2_status: 1666 - Clicca per confermare l'allungamento o inserisci una distanza
+    action_option_group_stretch_measure_type: 1667 - Misura
+    action_option_group_axes: 1668 - Assi
+    action_option_group_options: 1669 - Opzioni
+    action_option_stretch_measure_type_outside_status: 1670 - Misura esterna
+    action_option_stretch_measure_type_offset_status: 1671 - Misura la differenza
+    action_option_axes_active_status: 1672 - Sposta lungo l'asse attivo
+    action_option_axes_context_status: 1673 - Modificare lungo gli assi del gruppo o del componente contenente il pezzo
+    action_option_axes_entity_status: 1674 - Modifica su un asse dell'elemento
+    action_option_options_make_unique_status: 1675 - Rendere unici gli elementi allungati
     error:
-      curve_intersect: 1675 - Uno dei piani di taglio attraversa un elemento non estensibile (curva o accessorio)
+      curve_intersect: 1676 - Uno dei piani di taglio attraversa una curva non estensibile
   smart_paint:
-    title: 1676 - Assegna il materiale
-    default_material: 1677 - Nessun materiale definito
-    filters: 1678 - Filtri
-    filter_0: 1679 - Tipo indefinito
+    title: 1677 - Assegna il materiale
+    default_material: 1678 - Nessun materiale definito
+    filters: 1679 - Filtri
+    filter_0: 1680 - Tipo indefinito
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1686 - Colorare parti
-    action_0_status: 1687 - Seleziona un elemento a cui applicare il materiale
-    action_1: 1688 - Assegna il materiale all'elemento
-    action_1_status: 1689 - Seleziona un bordo del pannello a cui applicare '$t(tab.materials.type_4)'
-    action_2: 1690 - Elimina il materiale della faccia
-    action_2_status: 1691 - Seleziona una faccia del pannello a cui applicare '$t(tab.materials.type_6)'
-    action_3: 1692 - Elimina il materiale dell'elemento
-    action_3_status: 1693 - Seleziona una faccia del pannello da cui copiare il materiale
-    action_4: 1694 - Pulire
-    action_4_status: 1695 - Seleziona un elemento per rimuovere tutti i materiali dalla sua definizione e da tutte le sue istanze
-    action_option_group_instances: 1696 - Numero di occorrenze
-    action_option_group_edges: 1697 - Numero delle bordature
-    action_option_group_faces: 1698 - Numero delle facce
-    action_option_instances_0_status: 1699 - Colora solo l'istanza dell'elemento destinazione
-    action_option_instances_1_status: 1700 - Colora tutte le occorrenze dell'elemento destinazione
-    action_option_edges_0_status: 1701 - Colora solo il bordo dell'elemento destinazione
-    action_option_edges_1_status: 1702 - Colora il bordo e il bordo opposto dell'elemento destinazione
-    action_option_edges_2_status: 1703 - Colora i 4 bordi dell'elemento destinazione
-    action_option_faces_0_status: 1704 - Colora solo la faccia destinazione
-    action_option_faces_1_status: 1705 - Colora le 2 facce dell'elemento destinazione
-    edges: 1706 - {{ count }} bordo
-    edges_plural: 1707 - {{ count }} bordi
-    edge_ymin: 1708 - Lunghezza 1
-    edge_ymax: 1709 - Lunghezza 2
-    edge_xmin: 1710 - Larghezza 1
-    edge_xmax: 1711 - Larghezza 2
-    faces: 1712 - {{ count }} faccia
-    faces_plural: 1713 - {{ count }} facce
-    face_zmin: 1714 - Piallaccio interno
-    face_zmax: 1715 - Piallaccio esterno
+    action_0: 1687 - Colorare parti
+    action_0_status: 1688 - Seleziona un elemento a cui applicare il materiale
+    action_1: 1689 - Assegna il materiale all'elemento
+    action_1_status: 1690 - Seleziona un bordo del pannello a cui applicare '$t(tab.materials.type_4)'
+    action_2: 1691 - Elimina il materiale della faccia
+    action_2_status: 1692 - Seleziona una faccia del pannello a cui applicare '$t(tab.materials.type_6)'
+    action_3: 1693 - Elimina il materiale dell'elemento
+    action_3_status: 1694 - Seleziona una faccia del pannello da cui copiare il materiale
+    action_4: 1695 - Pulire
+    action_4_status: 1696 - Seleziona un elemento per rimuovere tutti i materiali dalla sua definizione e da tutte le sue istanze
+    action_option_group_instances: 1697 - Numero di occorrenze
+    action_option_group_edges: 1698 - Numero delle bordature
+    action_option_group_faces: 1699 - Numero delle facce
+    action_option_instances_0_status: 1700 - Colora solo l'istanza dell'elemento destinazione
+    action_option_instances_1_status: 1701 - Colora tutte le occorrenze dell'elemento destinazione
+    action_option_edges_0_status: 1702 - Colora solo il bordo dell'elemento destinazione
+    action_option_edges_1_status: 1703 - Colora il bordo e il bordo opposto dell'elemento destinazione
+    action_option_edges_2_status: 1704 - Colora i 4 bordi dell'elemento destinazione
+    action_option_faces_0_status: 1705 - Colora solo la faccia destinazione
+    action_option_faces_1_status: 1706 - Colora le 2 facce dell'elemento destinazione
+    edges: 1707 - {{ count }} bordo
+    edges_plural: 1708 - {{ count }} bordi
+    edge_ymin: 1709 - Lunghezza 1
+    edge_ymax: 1710 - Lunghezza 2
+    edge_xmin: 1711 - Larghezza 1
+    edge_xmax: 1712 - Larghezza 2
+    faces: 1713 - {{ count }} faccia
+    faces_plural: 1714 - {{ count }} facce
+    face_zmin: 1715 - Piallaccio interno
+    face_zmax: 1716 - Piallaccio esterno
     warning:
-      no_material: 1716 - Il modello non contiene alcun materiale!
-      no_material_type: 1717 - Nessun materiale di tipo '{{ type }}'
+      no_material: 1717 - Il modello non contiene alcun materiale!
+      no_material_type: 1718 - Nessun materiale di tipo '{{ type }}'
     error:
-      not_part: 1718 - La destinazione non è un elemento (componente)
-      not_edge: 1719 - La faccia di destinazione non è un bordo
-      not_face: 1720 - La faccia di destinazione non è una faccia
-      wrong_material_type: 1721 - L'elemento di destinazione deve essere di tipo '{{ type }}'
+      not_part: 1719 - La destinazione non è un elemento (componente)
+      not_edge: 1720 - La faccia di destinazione non è un bordo
+      not_face: 1721 - La faccia di destinazione non è una faccia
+      wrong_material_type: 1722 - L'elemento di destinazione deve essere di tipo '{{ type }}'
   smart_axes:
-    title: 1722 - Orientare
-    action_0: 1723 - Invertire
-    action_0_status: 1724 - Selezionare un elemento per invertire una delle sue dimensioni
-    action_1: 1725 - Inverti Lunghezza ↔ Larghezza
-    action_1_status: 1726 - Seleziona una elemento per invertire la lunghezza con la larghezza
-    action_2: 1727 - Inverti fronte ↔ retro
-    action_2_status: 1728 - Seleziona un elemento per invertire il fronte con il retro
-    action_3: 1729 - Adatta gli assi
-    action_3_status: 1730 - Seleziona una faccia o un bordo di un elemento per adattare gli assi
-    action_4: 1731 - Sposta l'origine
-    action_4_status: 1732 - Selezionare una faccia di una parte e fare clic su un punto per posizionarvi l'origine
-    action_option_group_direction: 1733 - Direzione
-    action_option_direction_0: 1734 - L
-    action_option_direction_1: 1735 - La
-    action_option_direction_2: 1736 - Sp
-    action_option_direction_0_status: 1737 - Ruota l'elemento sulla lunghezza
-    action_option_direction_1_status: 1738 - Ruota l'elemento sulla larghezza
-    action_option_direction_2_status: 1739 - Ruota l'elemento sullo spessore
+    title: 1723 - Orientare
+    action_0: 1724 - Invertire
+    action_0_status: 1725 - Selezionare un elemento per invertire una delle sue dimensioni
+    action_1: 1726 - Inverti Lunghezza ↔ Larghezza
+    action_1_status: 1727 - Seleziona una elemento per invertire la lunghezza con la larghezza
+    action_2: 1728 - Inverti fronte ↔ retro
+    action_2_status: 1729 - Seleziona un elemento per invertire il fronte con il retro
+    action_3: 1730 - Adatta gli assi
+    action_3_status: 1731 - Seleziona una faccia o un bordo di un elemento per adattare gli assi
+    action_4: 1732 - Sposta l'origine
+    action_4_status: 1733 - Selezionare una faccia di una parte e fare clic su un punto per posizionarvi l'origine
+    action_option_group_direction: 1734 - Direzione
+    action_option_direction_0: 1735 - L
+    action_option_direction_1: 1736 - La
+    action_option_direction_2: 1737 - Sp
+    action_option_direction_0_status: 1738 - Ruota l'elemento sulla lunghezza
+    action_option_direction_1_status: 1739 - Ruota l'elemento sulla larghezza
+    action_option_direction_2_status: 1740 - Ruota l'elemento sullo spessore
     warning:
-      more_entities: 1740 - saranno modificate {{ count_used }} occorrenze che condividono la stessa definizione
+      more_entities: 1741 - saranno modificate {{ count_used }} occorrenze che condividono la stessa definizione
     error:
-      not_part: 1741 - La destinazione non è un elemento (componente)
-      not_orientable: 1742 - Questo elemento non consente di cambiarne l'orientamento
+      not_part: 1742 - La destinazione non è un elemento (componente)
+      not_orientable: 1743 - Questo elemento non consente di cambiarne l'orientamento
   smart_export:
-    title: 1743 - Esporta
-    action_0: 1744 - Esporta un elemento 3D
-    action_0_status: 1745 - Seleziona un elemento
-    action_1: 1746 - Esporta un elemento 2D
-    action_1_status: 1747 - Seleziona la faccia di un elemento
-    action_2: 1748 - Esporta una faccia
-    action_2_status: 1749 - Seleziona una faccia
-    action_3: 1750 - Esporta un percorso
-    action_3_status: 1751 - Seleziona un bordo
-    action_option_group_file_format: 1752 - Formato
-    action_option_group_unit: 1753 - Unità
-    action_option_group_faces: 1754 - Impiallacciatura
-    action_option_group_options: 1755 - Opzioni
-    action_option_file_format_dxf_status: 1756 - Esporta un file DXF
-    action_option_file_format_stl_status: 1757 - Esporta un file STL
-    action_option_file_format_obj_status: 1758 - Esporta un file OBJ
-    action_option_file_format_svg_status: 1759 - Esporta un file SVG
+    title: 1744 - Esporta
+    action_0: 1745 - Esporta un elemento 3D
+    action_0_status: 1746 - Seleziona un elemento
+    action_1: 1747 - Esporta un elemento 2D
+    action_1_status: 1748 - Seleziona la faccia di un elemento
+    action_2: 1749 - Esporta una faccia
+    action_2_status: 1750 - Seleziona una faccia
+    action_3: 1751 - Esporta un percorso
+    action_3_status: 1752 - Seleziona un bordo
+    action_option_group_file_format: 1753 - Formato
+    action_option_group_unit: 1754 - Unità
+    action_option_group_faces: 1755 - Impiallacciatura
+    action_option_group_options: 1756 - Opzioni
+    action_option_file_format_dxf_status: 1757 - Esporta un file DXF
+    action_option_file_format_stl_status: 1758 - Esporta un file STL
+    action_option_file_format_obj_status: 1759 - Esporta un file OBJ
+    action_option_file_format_svg_status: 1760 - Esporta un file SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2270,9 +2273,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1769 - Isola i fori passanti e unisci le profondità di ogni recesso
-    action_option_options_include_paths_status: 1770 - Esportazione di bordi non associati a una faccia contenuta nella parte come tracciato
+    action_option_options_merge_holes_status: 1770 - Isola i fori passanti e unisci le profondità di ogni recesso
+    action_option_options_include_paths_status: 1771 - Esportazione di bordi non associati a una faccia contenuta nella parte come tracciato
     error:
-      not_part: 1771 - Questa faccia non appartiene ad un elemento (componente)
-      not_flat_face: 1772 - Superficie non planare
-      incompatible_active_path: 1773 - Il percorso attivo non consente di esportare questo pezzo
+      not_part: 1772 - Questa faccia non appartiene ad un elemento (componente)
+      not_flat_face: 1773 - Superficie non planare
+      incompatible_active_path: 1774 - Il percorso attivo non consente di esportare questo pezzo
