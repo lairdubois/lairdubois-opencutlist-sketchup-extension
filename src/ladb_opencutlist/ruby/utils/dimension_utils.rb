@@ -219,6 +219,14 @@
       end
     end
 
+    def self.get_unit_sign(s)
+      if (match = s.match(/^\s*-*\s*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
+        unit, = match.captures
+        return unit
+      end
+      nil
+    end
+
     # Take a single dimension as a string and
     # 1. add units if none are present, assuming that no units means model units
     # 2. convert garbage into 0
@@ -229,11 +237,9 @@
       s = s.strip
       s = s.gsub(/[,.]/, decimal_separator) # convert separator to native
 
-      unit = nil
-      if (match = s.match(/^\s*-*\s*(?:[0-9.,\/~']+\s*)+(m|cm|mm|\'|\"|yd)\s*$/))
-        unit, = match.captures
+      unless (unit = get_unit_sign(s)).nil?
         # puts("parsed unit = #{unit} in #{s}")
-        s = s.gsub(/\s*#{unit}\s*/, unit) # Remove space around unit (to be compatible SU 2017+)
+        s = s.gsub(/\s*#{unit}\s*/, unit) # Remove space around the unit (to be compatible SU 2017+)
       end
       begin # Try to convert to length
         x = s.to_l
@@ -264,7 +270,7 @@
       s = s.gsub(/[,.]/, decimal_separator) # convert separator to native
 
       # Make sure the entry starts with the proper magic
-      s = s.gsub(/\s*(m|cm|mm|\'|\"|yd)\s*/, '\1') # Remove space around unit (to be compatible SU 2017+)
+      s = s.gsub(/\s*(m|cm|mm|\'|\"|yd)\s*/, '\1') # Remove space around the unit (to be compatible SU 2017+)
       s = s.gsub(/\s*\/\s*/, '/') # remove blanks around /
       begin
         f = (s.to_l).to_f
@@ -524,7 +530,27 @@
       end
     end
 
-    # Take a float value that represent a length in current
+    # Take a value and returns is float representation
+    # in the current model unit.
+    def self.value_to_model_unit_float(v)
+      if v.is_a?(String)
+        if v.match(/^\s*-*\s*[0-9.,]+\s*$/)
+          # Only digits -> convert to float
+          v = v.to_f
+        else
+          # More than digits -> convert to length
+          v = v.to_l
+        end
+      end
+      if v.is_a?(Length)
+        # Length -> convert to model unit float
+        v = self.length_to_model_unit_float(v)
+      end
+      v = v.to_f unless v.is_a?(Float)
+      v
+    end
+
+    # Take a float value that represents a length in the current
     # model unit and convert it to a Length object.
     def self.model_unit_float_to_length(f)
       return nil unless f.is_a?(Float)

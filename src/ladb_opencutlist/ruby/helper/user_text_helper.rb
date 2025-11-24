@@ -29,6 +29,7 @@ module Ladb::OpenCutList
 
       base_factor = targeted_length >= 0 ? 1 : -1
       targeted_length = targeted_length.abs
+      targeted_length = DimensionUtils.value_to_model_unit_float(targeted_length.to_l)
 
       # Step 1: Tokenization
       # --------------------
@@ -106,7 +107,7 @@ module Ladb::OpenCutList
 
             raise PLUGIN.get_i18n_string('tool.default.error.missing_operand') unless right
 
-            right = right.to_l unless right.is_a?(Length)
+            right = DimensionUtils.value_to_model_unit_float(right)
             result = -right
 
             stack << result
@@ -117,29 +118,26 @@ module Ladb::OpenCutList
 
             raise PLUGIN.get_i18n_string('tool.default.error.missing_operand') unless left && right
 
-            left = left.to_l unless left.is_a?(Length)
-            right = right.to_l unless right.is_a?(Length)
+            left = DimensionUtils.value_to_model_unit_float(left)
+            right = DimensionUtils.value_to_model_unit_float(right)
+
             case token
             when "+"
               result = left + right
             when "-"
               result = left - right
             when "*"
-              left = DimensionUtils.length_to_model_unit_float(left)
-              right = DimensionUtils.length_to_model_unit_float(right)
-              result = DimensionUtils.model_unit_float_to_length(left * right)
+              result = left * right
             when "/"
-              left = DimensionUtils.length_to_model_unit_float(left)
               raise ZeroDivisionError.new(PLUGIN.get_i18n_string('tool.default.error.zero_division')) if right == 0.0
-              right = DimensionUtils.length_to_model_unit_float(right)
-              result = DimensionUtils.model_unit_float_to_length(left / right)
+              result = left / right
             end
 
             stack << result
           end
 
         elsif token == '@'
-          stack << targeted_length
+          stack << DimensionUtils.value_to_model_unit_float(targeted_length)
         else
           stack << token
         end
@@ -149,7 +147,7 @@ module Ladb::OpenCutList
       raise "" unless stack.size == 1
 
       # Use base_factor to return the length with a sign corresponding to the base_length
-      (stack.first.to_l * base_factor).to_l
+      (DimensionUtils.model_unit_float_to_length(DimensionUtils.value_to_model_unit_float(stack.first)) * base_factor).to_l
 
     rescue => e
       UI.beep
