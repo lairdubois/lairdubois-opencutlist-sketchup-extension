@@ -2161,104 +2161,106 @@ tool:
     action_0_state_2_status: 1665 - Кликните, чтобы подтвердить растяжение, или введите расстояние
     action_option_group_stretch_measure_type: 1666 - Отсчет
     action_option_group_axes: 1667 - Оси
-    action_option_stretch_measure_type_outside_status: 1668 - Внешнее измерение
-    action_option_stretch_measure_type_offset_status: 1669 - Измерить размеры
-    action_option_axes_active_status: 1670 - Перемещение по активным осям
-    action_option_axes_context_status: 1671 - Перемещение по осям группы или компонента, содержащего деталь
-    action_option_axes_entity_status: 1672 - Перемещение по осям детали
+    action_option_group_options: 1668 - Опции
+    action_option_stretch_measure_type_outside_status: 1669 - Внешнее измерение
+    action_option_stretch_measure_type_offset_status: 1670 - Измерить размеры
+    action_option_axes_active_status: 1671 - Перемещение по активным осям
+    action_option_axes_context_status: 1672 - Перемещение по осям группы или компонента, содержащего деталь
+    action_option_axes_entity_status: 1673 - Перемещение по осям детали
+    action_option_options_make_unique_status: 1674 - Сделать растянутые элементы уникальными
     error:
-      curve_intersect: 1673 - Одна из плоскостей распила проходит через нерастяжимый элемент (кривую или аксессуар)
+      curve_intersect: 1675 - Одна из плоскостей распила проходит через нерастяжимый элемент (кривую или аксессуар)
   smart_paint:
-    title: 1674 - Раскраска
-    default_material: 1675 - Материал не задан
-    filters: 1676 - Фильтры
-    filter_0: 1677 - Не определён
+    title: 1676 - Раскраска
+    default_material: 1677 - Материал не задан
+    filters: 1678 - Фильтры
+    filter_0: 1679 - Не определён
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
     filter_3: $t(tab.materials.type_3)
     filter_4: $t(tab.materials.type_4)
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
-    action_0: 1684 - Раскраска деталей
-    action_0_status: 1685 - Кликните на цветном окошке материала, которые есть внизу окна, затем кликните по детали которой требуется придать свойство выбранного материала
-    action_1: 1686 - Раскраска торцов
-    action_1_status: 1687 - Кликните на торец панели, чтобы применить к ней материал '$t(tab.materials.type_4)'
-    action_2: 1688 - Облицовка шпоном
-    action_2_status: 1689 - Кликните на лицевой стороне детали, чтобы применить к ней материал '$t(tab.materials.type_6)'
-    action_3: 1690 - Образец
-    action_3_status: 1691 - Кликните на сторону, чтобы взять образец материала
-    action_4: 1692 - Очистить
-    action_4_status: 1693 - Кликните на деталь, чтобы удалить все параметры материала, в том числе и у всех ее экземпляров
-    action_option_group_instances: 1694 - Количество экземпляров
-    action_option_group_edges: 1695 - Количество кромок
-    action_option_group_faces: 1696 - Количество сторон
-    action_option_instances_0_status: 1697 - Раскрасить только целевую деталь
-    action_option_instances_1_status: 1698 - Раскрасить все экземпляры сходные с целевой деталью
-    action_option_edges_0_status: 1699 - Окрасить только целевую композицию
-    action_option_edges_1_status: 1700 - Окрасить лицевую и тыльную сторону в детали
-    action_option_edges_2_status: 1701 - Окрасить все 4 стороны в выделенной детали
-    action_option_faces_0_status: 1702 - Окрасить только лицевую часть
-    action_option_faces_1_status: 1703 - Окрасить 2 стороны выделенной детали
-    edges: 1704 - {{ count }} торец
-    edges_plural: 1705 - {{ count }} торцов
-    edge_ymin: 1706 - Длина 1
-    edge_ymax: 1707 - Длина 2
-    edge_xmin: 1708 - Ширина 1
-    edge_xmax: 1709 - Ширина 2
-    faces: 1710 - {{ count }} лицевая
-    faces_plural: 1711 - {{ count }} лицевых
-    face_zmin: 1712 - Тыльная
-    face_zmax: 1713 - Лицевая
+    action_0: 1686 - Раскраска деталей
+    action_0_status: 1687 - Кликните на цветном окошке материала, которые есть внизу окна, затем кликните по детали которой требуется придать свойство выбранного материала
+    action_1: 1688 - Раскраска торцов
+    action_1_status: 1689 - Кликните на торец панели, чтобы применить к ней материал '$t(tab.materials.type_4)'
+    action_2: 1690 - Облицовка шпоном
+    action_2_status: 1691 - Кликните на лицевой стороне детали, чтобы применить к ней материал '$t(tab.materials.type_6)'
+    action_3: 1692 - Образец
+    action_3_status: 1693 - Кликните на сторону, чтобы взять образец материала
+    action_4: 1694 - Очистить
+    action_4_status: 1695 - Кликните на деталь, чтобы удалить все параметры материала, в том числе и у всех ее экземпляров
+    action_option_group_instances: 1696 - Количество экземпляров
+    action_option_group_edges: 1697 - Количество кромок
+    action_option_group_faces: 1698 - Количество сторон
+    action_option_instances_0_status: 1699 - Раскрасить только целевую деталь
+    action_option_instances_1_status: 1700 - Раскрасить все экземпляры сходные с целевой деталью
+    action_option_edges_0_status: 1701 - Окрасить только целевую композицию
+    action_option_edges_1_status: 1702 - Окрасить лицевую и тыльную сторону в детали
+    action_option_edges_2_status: 1703 - Окрасить все 4 стороны в выделенной детали
+    action_option_faces_0_status: 1704 - Окрасить только лицевую часть
+    action_option_faces_1_status: 1705 - Окрасить 2 стороны выделенной детали
+    edges: 1706 - {{ count }} торец
+    edges_plural: 1707 - {{ count }} торцов
+    edge_ymin: 1708 - Длина 1
+    edge_ymax: 1709 - Длина 2
+    edge_xmin: 1710 - Ширина 1
+    edge_xmax: 1711 - Ширина 2
+    faces: 1712 - {{ count }} лицевая
+    faces_plural: 1713 - {{ count }} лицевых
+    face_zmin: 1714 - Тыльная
+    face_zmax: 1715 - Лицевая
     warning:
-      no_material: 1714 - Ваша модель не содержит материалов!
-      no_material_type: 1715 - Нет материала типа '{{ type }}'
+      no_material: 1716 - Ваша модель не содержит материалов!
+      no_material_type: 1717 - Нет материала типа '{{ type }}'
     error:
-      not_part: 1716 - Целевой объект не является деталью (компонентом)
-      not_edge: 1717 - Целевая поверхность не является торцом панели
-      not_face: 1718 - Целевая поверхность не является лицевой
-      wrong_material_type: 1719 - Целевая деталь должна быть типа '{{ type }}'
+      not_part: 1718 - Целевой объект не является деталью (компонентом)
+      not_edge: 1719 - Целевая поверхность не является торцом панели
+      not_face: 1720 - Целевая поверхность не является лицевой
+      wrong_material_type: 1721 - Целевая деталь должна быть типа '{{ type }}'
   smart_axes:
-    title: 1720 - Ориентация осей
-    action_0: 1721 - Отменить
-    action_0_status: 1722 - Кликните на деталь, чтобы сориентировать ее экземпляр вдоль одного из размеров
-    action_1: 1723 - Переключить Длина ↔ Ширина
-    action_1_status: 1724 - Кликните на детали, чтобы поменять ее длину на ширину
-    action_2: 1725 - Переключить Лицевая ↔ Обратная
-    action_2_status: 1726 - Кликните на деталь, чтобы перевернуть отображение лицевой стороны на тыльную сторону
-    action_3: 1727 - Адаптировать оси
-    action_3_status: 1728 - Выберите грань детали и кликните по ней, чтобы изменить ее оси
-    action_4: 1729 - Изменить начало координат
-    action_4_status: 1730 - Для перемещения начала координат выберите точку на детали и кликните по ней
-    action_option_group_direction: 1731 - Измерение
-    action_option_direction_0: 1732 - Дл
-    action_option_direction_1: 1733 - Шр
-    action_option_direction_2: 1734 - Тл
-    action_option_direction_0_status: 1735 - Развернуть деталь по длине
-    action_option_direction_1_status: 1736 - Развернуть деталь по ширине
-    action_option_direction_2_status: 1737 - Развернуть деталь по толщине
+    title: 1722 - Ориентация осей
+    action_0: 1723 - Отменить
+    action_0_status: 1724 - Кликните на деталь, чтобы сориентировать ее экземпляр вдоль одного из размеров
+    action_1: 1725 - Переключить Длина ↔ Ширина
+    action_1_status: 1726 - Кликните на детали, чтобы поменять ее длину на ширину
+    action_2: 1727 - Переключить Лицевая ↔ Обратная
+    action_2_status: 1728 - Кликните на деталь, чтобы перевернуть отображение лицевой стороны на тыльную сторону
+    action_3: 1729 - Адаптировать оси
+    action_3_status: 1730 - Выберите грань детали и кликните по ней, чтобы изменить ее оси
+    action_4: 1731 - Изменить начало координат
+    action_4_status: 1732 - Для перемещения начала координат выберите точку на детали и кликните по ней
+    action_option_group_direction: 1733 - Измерение
+    action_option_direction_0: 1734 - Дл
+    action_option_direction_1: 1735 - Шр
+    action_option_direction_2: 1736 - Тл
+    action_option_direction_0_status: 1737 - Развернуть деталь по длине
+    action_option_direction_1_status: 1738 - Развернуть деталь по ширине
+    action_option_direction_2_status: 1739 - Развернуть деталь по толщине
     warning:
-      more_entities: 1738 - {{ count_used }} экземпляры, имеющие одинаковое определение, будут изменены
+      more_entities: 1740 - {{ count_used }} экземпляры, имеющие одинаковое определение, будут изменены
     error:
-      not_part: 1739 - Целевой объект не является частью (компонентом)
-      not_orientable: 1740 - Тип этой детали не позволяет сориентировать ее по осям
+      not_part: 1741 - Целевой объект не является частью (компонентом)
+      not_orientable: 1742 - Тип этой детали не позволяет сориентировать ее по осям
   smart_export:
-    title: 1741 - Экспорт
-    action_0: 1742 - Экспорт 3D-детали
-    action_0_status: 1743 - Кликните на деталь
-    action_1: 1744 - Экспорт 2D-детали
-    action_1_status: 1745 - Кликните на лицевую сторону детали
-    action_2: 1746 - Экспорт облицовки
-    action_2_status: '1747 - Кликните облицовку '
-    action_3: 1748 - Экспорт путей SVG
-    action_3_status: 1749 - Кликните на край
-    action_option_group_file_format: 1750 - Формат
-    action_option_group_unit: 1751 - Единицы
-    action_option_group_faces: 1752 - Лицевые
-    action_option_group_options: 1753 - Опции
-    action_option_file_format_dxf_status: 1754 - Экспорт в DFX
-    action_option_file_format_stl_status: 1755 - Экспорт в STL
-    action_option_file_format_obj_status: 1756 - Экспорт в OBJ
-    action_option_file_format_svg_status: 1757 - Экспорт в SVG
+    title: 1743 - Экспорт
+    action_0: 1744 - Экспорт 3D-детали
+    action_0_status: 1745 - Кликните на деталь
+    action_1: 1746 - Экспорт 2D-детали
+    action_1_status: 1747 - Кликните на лицевую сторону детали
+    action_2: 1748 - Экспорт облицовки
+    action_2_status: '1749 - Кликните облицовку '
+    action_3: 1750 - Экспорт путей SVG
+    action_3_status: 1751 - Кликните на край
+    action_option_group_file_format: 1752 - Формат
+    action_option_group_unit: 1753 - Единицы
+    action_option_group_faces: 1754 - Лицевые
+    action_option_group_options: 1755 - Опции
+    action_option_file_format_dxf_status: 1756 - Экспорт в DFX
+    action_option_file_format_stl_status: 1757 - Экспорт в STL
+    action_option_file_format_obj_status: 1758 - Экспорт в OBJ
+    action_option_file_format_svg_status: 1759 - Экспорт в SVG
     action_option_unit_0_status: $t(default.unit_0)
     action_option_unit_1_status: $t(default.unit_1)
     action_option_unit_2_status: $t(default.unit_2)
@@ -2268,9 +2270,9 @@ tool:
     action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
     action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
     action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
-    action_option_options_merge_holes_status: 1767 - Определите сквозные отверстия и размеры слияния для каждой полости
-    action_option_options_include_paths_status: 1768 - Экспортировать как контур ребра, не связанные с гранью, содержащиеся в детали
+    action_option_options_merge_holes_status: 1769 - Определите сквозные отверстия и размеры слияния для каждой полости
+    action_option_options_include_paths_status: 1770 - Экспортировать как контур ребра, не связанные с гранью, содержащиеся в детали
     error:
-      not_part: 1769 - Эта грань не является частью детали (компонента)
-      not_flat_face: 1770 - Эта поверхность не является плоской
-      incompatible_active_path: 1771 - Активный путь не позволяет экспортировать эту часть
+      not_part: 1771 - Эта грань не является частью детали (компонента)
+      not_flat_face: 1772 - Эта поверхность не является плоской
+      incompatible_active_path: 1773 - Активный путь не позволяет экспортировать эту часть
