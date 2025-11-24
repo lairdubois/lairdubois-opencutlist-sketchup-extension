@@ -344,9 +344,6 @@ module Ladb::OpenCutList
 
     end
 
-    def onPartSelected
-    end
-
     # -----
 
     def draw(view)
@@ -545,7 +542,7 @@ module Ladb::OpenCutList
     end
 
     def stop
-      _unhide_instance
+      _unhide_instances
       super
     end
 
@@ -587,12 +584,12 @@ module Ladb::OpenCutList
 
     def onToolSuspend(tool, view)
       super
-      _unhide_instance if @state == STATE_RESHAPE
+      _unhide_instances if @state == STATE_RESHAPE
     end
 
     def onToolResume(tool, view)
       super
-      _hide_instance if @state == STATE_RESHAPE
+      _hide_instances if @state == STATE_RESHAPE
     end
 
     def onToolLButtonDown(tool, flags, x, y, view)
@@ -886,7 +883,7 @@ module Ladb::OpenCutList
           _unhide_instances
 
         when STATE_RESHAPE
-          @tool.remove_3d([LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
+          @tool.remove_3d([ LAYER_3D_GRIPS_PREVIEW, LAYER_3D_CUTTERS_PREVIEW ])
           _get_split_def    # Compute a new split_def
           _hide_instances
 
@@ -1566,7 +1563,7 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: true,
-        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART
+        container_validator: has_active_part? ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_NO_SCALE
       }
     end
 

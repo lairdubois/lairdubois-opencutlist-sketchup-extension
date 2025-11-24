@@ -664,7 +664,7 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: false,
-        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
+        container_validator: has_active_part? ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL
       }
     end
 
