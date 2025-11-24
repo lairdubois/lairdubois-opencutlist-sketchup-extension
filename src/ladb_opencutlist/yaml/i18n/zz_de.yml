@@ -2064,18 +2064,18 @@ tool:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
-    state_0_status: 1576 - Klicken Sie auf ein Teil, um es auszuwählen.
+    state_0_status: 1576 - Teil auswählen
     state_0_to_6_status: 1577 - Übergeordnetes Element auswählen
-    state_4_status: 1578 - Ziehen Sie ein identisches Teil mit demselben übergeordneten Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren.
+    state_4_status: 1578 - Ziehen Sie ein identisches Teil mit demselben übergeordneten Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren
     state_5_status: 1579 - Zum Hinzufügen zur Auswahl ziehen und zum Fortfahren loslassen
     state_6_status: 1580 - Wählen Sie einen Eintrag aus der Liste aus
     warning:
-      no_active_part: 1581 - Vous devez d'abord survoler une pièce
+      no_active_part: 1581 - Sie müssen zunächst mit der Maus über ein Teil fahren
   smart_draw:
     title: 1582 - Zeichnen
     action_0: 1583 - Rechteck zeichnen
     action_0_status: 1584 - Volumen auf der Basis einer Rechteckform zeichnen
-    action_0_state_0_status: 1585 - Klicken Sie, um den ersten Punkt des Rechtecks festzulegen.
+    action_0_state_0_status: 1585 - Klicken Sie, um den ersten Punkt des Rechtecks festzulegen
     action_0_state_1_status: 1586 - Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein
     action_1: 1587 - Kreis zeichnen
     action_1_state_0_status: 1588 - Klicken Sie, um den Mittelpunkt des Kreises festzulegen
@@ -2102,14 +2102,14 @@ tool:
     action_option_options_smoothing_status: 1609 - Kurven glätten
     action_option_options_measure_from_vertex_status: 1610 - Relativ zum nahen Scheitelpunkt messen
     action_option_options_measure_from_diameter: 1611 - Maß
-    action_option_options_measure_from_diameter_status: 1612 - Den Kreis nach seinem Durchmesser messen
-    action_option_options_measure_from_radius_status: 1613 - Messung nach dem Radius
+    action_option_options_measure_from_diameter_status: 1612 - Kreis anhand seines Durchmessers messen
+    action_option_options_measure_from_radius_status: 1613 - Kreis anhand seines Radius messen
     action_option_options_measure_reversed: 1614 - Invertierte Messung
     action_option_options_measure_reversed_status: 1615 - Messung invertieren
     action_option_options_pull_centered: 1616 - Erhebung zentriert
     action_option_options_pull_centered_status: 1617 - Erhebung auf den ersten Punkt zentrieren
     action_option_options_ask_name: 1618 - Benennung der Teile
-    action_option_options_ask_name_status: 1619 - Manuelle Eingabe der Benennung von Teilen
+    action_option_options_ask_name_status: 1619 - Namen der Teile manuell eingeben
     action_measure_locked_status: 1620 - Auf die letzte Messung fixieren
     action_toggle_move_copy_status: 1621 - Abwechselnd kopieren/verschieben
     action_change_move_anchor_status: 1622 - Ankerpunkt ändern
@@ -2118,18 +2118,18 @@ tool:
   smart_handle:
     title: 1624 - Handhaben
     action_0: 1625 - Auswählen
-    action_0_status: 1626 - Teil auszuwählen
-    action_1: 1627 - In Linie kopieren
+    action_0_status: 1626 - Teil auswählen
+    action_1: 1627 - Entlang Linie kopieren
     action_1_status: 1628 - Teil entlang einer Achse kopieren
-    action_1_state_2_status: 1629 - Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie einen Abstand Distanz ein
-    action_2: 1630 - In Raster kopieren
-    action_2_status: 1631 - Klicken Sie auf ein Teil, um es entlang eines Rasters zu kopieren
+    action_1_state_2_status: 1629 - Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Distanz ein
+    action_2: 1630 - Entlang Raster kopieren
+    action_2_status: 1631 - Teil entlang eines Rasters kopieren
     action_2_state_2_status: 1632 - Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie zwei Distanzen ein
     action_3: 1633 - Verschieben
     action_3_status: 1634 - Teil entlang einer Achse verschieben
     action_3_state_2_status: 1635 - Klicken Sie, um das Teil zu platzieren, oder geben Sie eine Distanz ein
     action_4: 1636 - Verteilen
-    action_4_status: 1637 - Teil entlang einer Achse zu verteilen
+    action_4_status: 1637 - Teil entlang einer Achse verteilen
     action_4_state_1_status: 1638 - Klicken Sie, um den ersten Messpunkt zu setzen
     action_4_state_2_status: 1639 - Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein
     action_option_group_copy_measure_type: 1640 - Maß
@@ -2153,7 +2153,7 @@ tool:
   smart_reshape:
     title: 1656 - Umgestalten
     action_0: 1657 - Strecken
-    action_0_status: 1658 - Klicken Sie auf ein Teil, um es auszuwählen
+    action_0_status: 1658 - Teil strecken
     action_0_state_1_status: 1659 - Klicken Sie auf einen Griff, um zu strecken
     action_0_state_1a_status: 1660 - Klicken Sie auf eine Schnittebene, um sie zu verschieben
     action_0_state_1b_status: 1661 - Schnittebene hinzufügen
@@ -2172,7 +2172,7 @@ tool:
     action_option_axes_entity_status: 1674 - Manipulieren entlang der Achsen des Teils
     action_option_options_make_unique_status: 1675 - Gestreckte Elemente einzigartig machen
     error:
-      curve_intersect: 1676 - Eine der Schnittebenen verläuft durch ein nicht dehnbares Element (beispielsweise eine Kurve oder ein Zubehörteil)
+      curve_intersect: 1676 - Eine der Schnittebenen verläuft durch eine nicht dehnbare Kurve
   smart_paint:
     title: 1677 - Malen
     default_material: 1678 - Ohne Material

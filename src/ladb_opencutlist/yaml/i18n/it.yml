@@ -2068,16 +2068,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Clicca su un elemento per selezionarlo
+    state_0_to_6_status: Scegliere un elemento padre
+    state_4_status: "Trascina su un elemento identico con lo stesso genitore per aggiungerlo alla selezione, quindi rilascia per continuare"
+    state_5_status: Scorri per aggiungere alla selezione e rilascia per continuare
+    state_6_status: Selezionare un elemento dall'elenco
+    warning:
+      no_active_part: Devi prima passare con il mouse su una parte
   smart_draw:
     title: Disegna
     action_0: Disegnare un rettangolo
     action_0_status: Disegnare un volume basato su una forma rettangolare
+    action_0_state_0_status: Clicca per impostare il primo punto del rettangolo
     action_0_state_1_status: "Fate clic per definire l'angolo opposto o immettete una lunghezza, una larghezza"
     action_1: Disegnare un cerchio
+    action_1_state_0_status: Clicca per impostare il centro del cerchio
     action_1_status: Disegnare un volume basato su una forma circolare
     action_1_state_1_radius_status: Fate clic per definire il raggio o per inserire una distanza
     action_1_state_1_diameter_status: Fare clic per definire il diametro o inserire una distanza
     action_2: Disegnare un poligono
+    action_2_state_0_status: Clicca per impostare il primo punto del poligono
     action_2_status: Disegnare un volume basato su una forma poligonale
     action_2_state_1_status: Fate clic per definire un nuovo punto o inserire una distanza
     action_x_state_2_status: Fate clic per impostare l' elevazione o inserire una distanza
@@ -2112,25 +2123,18 @@ tool:
   smart_handle:
     title: Manipolare
     action_0: Seleziona
-    action_0_status: Clicca su un elemento per selezionarlo
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: Trascina su un pezzo identico per aggiungerlo alla selezione e rilascia per continuare
+    action_0_status: Seleziona un elemento
     action_1: Copia sulla linea
-    action_1_status: Seleziona l'elemento da copiare lungo un asse
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: Copiare un elemento lungo un asse
     action_1_state_2_status: Seleziona un punto dove copiare l'elemento o digita una distanza
     action_2: Copia in tabella
-    action_2_status: Seleziona un elemento da copiare in griglia
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: Copia un elemento lungo una griglia
     action_2_state_2_status: Seleziona un punto per copiare un elemento o digita due distanze
     action_3: Sposta
-    action_3_status: Seleziona l'elemento da copiare in griglia
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: Spostare un elemento lungo un asse
     action_3_state_2_status: Seleziona un punto dove posizionare l'elemento o digita una distanza
     action_4: Distribuisci
-    action_4_status: Seleziona l'elemento da distribuire lungo un asse
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: Distribuire un elemento lungo un asse
     action_4_state_1_status: Seleziona il primo punto della misura
     action_4_state_2_status: Seleziona il secondo punto della misura o digita una distanza
     action_option_group_copy_measure_type: Misura
@@ -2154,8 +2158,7 @@ tool:
   smart_reshape:
     title: Rimodellare
     action_0: Allungare
-    action_0_status: Clicca su un elemento per selezionarlo
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: Allunga un elemento
     action_0_state_1_status: Clicca su una maniglia per allungare
     action_0_state_1a_status: Clicca su un piano di taglio per spostarlo
     action_0_state_1b_status: Aggiungere un piano di taglio
@@ -2174,7 +2177,7 @@ tool:
     action_option_axes_entity_status: Modifica su un asse dell'elemento
     action_option_options_make_unique_status: Rendere unici gli elementi allungati
     error:
-      curve_intersect: Uno dei piani di taglio attraversa un elemento non estensibile (curva o accessorio)
+      curve_intersect: Uno dei piani di taglio attraversa una curva non estensibile
   smart_paint:
     title: Assegna il materiale
     default_material: Nessun materiale definito
