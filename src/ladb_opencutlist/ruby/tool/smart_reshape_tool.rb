@@ -1569,7 +1569,7 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: true,
-        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART
       }
     end
 
@@ -1936,7 +1936,7 @@ module Ladb::OpenCutList
         section_def = parent_section_def
         if section_def.nil?
 
-          if drawing_container_def.is_root? # && !get_active_selection_instances.one?
+          if drawing_container_def.is_root? && !get_active_selection_instances.one?
 
             # No section_def for the model
 
@@ -1959,13 +1959,28 @@ module Ladb::OpenCutList
             section_def = section_defs.find { |section_def| section_def.contains_bounds?(drawing_container_def.bounds, xyz_method) }
             if section_def.nil?
 
-              container_origin = ORIGIN.transform(drawing_container_def.transformation.inverse * drawing_container_def.container.transformation)
+              container_origin = ORIGIN.transform(drawing_container_def.is_root? ? IDENTITY : drawing_container_def.transformation * drawing_container_def.container.transformation)
               min_max = [ drawing_container_def.bounds.min, drawing_container_def.bounds.max ].min_by { |point| (point.send(xyz_method) - container_origin.send(xyz_method)).abs }
 
               # Default container section_def is where the bounds extreme is the nearest origin
               section_def = section_defs.find { |section_def| section_def.contains_point?(min_max, xyz_method) }
 
               operation = SplitContainerDef::OPERATION_SPLIT
+
+
+              # color = [ Kuix::COLOR_RED, Kuix::COLOR_GREEN, Kuix::COLOR_BLUE, Kuix::COLOR_MAGENTA ][depth % 4]
+              #
+              # k_box = Kuix::BoxMotif.new
+              # k_box.bounds.copy!(drawing_container_def.bounds)
+              # k_box.color = color
+              # @tool.append_3d(k_box, LAYER_3D_PART_PREVIEW)
+              #
+              # k_points = _create_floating_points(
+              #   points: container_origin,
+              #   fill_color: color,
+              #   size: [ 6, 4, 2, 1 ][depth % 4]
+              # )
+              # @tool.append_3d(k_points, LAYER_3D_PART_PREVIEW)
 
             else
 
