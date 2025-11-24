@@ -3001,6 +3001,10 @@ module Ladb::OpenCutList
       false
     end
 
+    def _clear_selection_on_start
+      false
+    end
+
     # -----
 
     def _preview_select_rect(view)
