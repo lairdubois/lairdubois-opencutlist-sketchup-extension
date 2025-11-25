@@ -190,7 +190,7 @@ gulp.task('i18n_compile', function () {
     });
 
     return gulp.src(yamlPath + (isProd ? '!(zz*)' : '*') + '.yml')
-        .pipe(ladb_i18n_compile(languageLabels, languageDisabledMsgs, languageReloadMsgs, sourceLanguage, defaultYmlDocument))
+        .pipe(ladb_i18n_compile(languageLabels, languageDisabledMsgs, languageReloadMsgs))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/i18n'));
 });
 
