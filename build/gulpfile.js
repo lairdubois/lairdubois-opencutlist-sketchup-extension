@@ -95,11 +95,58 @@ gulp.task('twig_compile', function () {
 // Convert yaml i18n to .js files
 gulp.task('i18n_compile', function () {
 
+    var sourceLanguage = 'fr';
+    var defaultLanguage = 'en';
+    var yamlPath = '../src/ladb_opencutlist/yaml/i18n/';
+
+    var contents = fs.readFileSync(yamlPath + defaultLanguage + '.yml');
+    var defaultYmlDocument = yaml.load(contents);
+
+
+    function fillDefaultValues(doc, defaultDoc, path = '') {
+        let changeCount = 0
+        for (var key in defaultDoc) {
+            if (typeof doc[key] !== typeof defaultDoc[key] || doc[key] === '') {
+                doc[key] = defaultDoc[key]; // Fill with the entire subtree is the typeof is "object"
+                changeCount += 1;
+            } else if (typeof defaultDoc[key] === 'object') {
+                changeCount += fillDefaultValues(doc[key], defaultDoc[key], path + "." + key);
+            }
+        }
+        return changeCount;
+    }
+
+    glob.sync(yamlPath + '!(zz*).yml').forEach(function (ymlFile) {
+        var contents = fs.readFileSync(ymlFile);
+        var ymlDocument = yaml.load(contents);
+        var language = path.basename(ymlFile, '.yml');
+
+        if (language !== sourceLanguage && language !== defaultLanguage) {
+
+            // Fill empty values with default values
+            let changeCount = fillDefaultValues(ymlDocument, defaultYmlDocument);
+            if (changeCount > 0) {
+
+                // console.log(language.toUpperCase() + " : " + changeCount + " keys filled");
+
+                // Rewrite the yml file
+                fs.writeFileSync(ymlFile, yaml.dump(ymlDocument, { lineWidth: -1, quotingType: '"' }), (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+
+            }
+
+        }
+    });
+
+
     var languageLabels = {};
     var languageDisabledMsgs = {};
     var languageReloadMsgs = {};
     var descriptions = {};
-    var ymlFiles = glob.sync('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz*)' : '*') + '.yml');
+    var ymlFiles = glob.sync(yamlPath + (isProd ? '!(zz*)' : '*') + '.yml');
     ymlFiles.forEach(function (ymlFile) {
         var contents = fs.readFileSync(ymlFile);
         var ymlDocument = yaml.load(contents);
@@ -121,7 +168,6 @@ gulp.task('i18n_compile', function () {
     // Update descriptions in ladb_opencutlist.rb
     gulp.src('../src/ladb_opencutlist.rb')
         .pipe(replace(/( {6}## DESCRIPTION_START ##)(.*?\n*\t*)( {6}## DESCRIPTION_END ##)/ms, function(match, p1, p2, p3, offset, string) {
-            var defaultLanguage = 'en';
             var whens = p1;
             for (var key in descriptions) {
                 if (key === defaultLanguage) {
@@ -143,8 +189,8 @@ gulp.task('i18n_compile', function () {
         force: true
     });
 
-    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz*)' : '*') + '.yml')
-        .pipe(ladb_i18n_compile(languageLabels, languageDisabledMsgs, languageReloadMsgs))
+    return gulp.src(yamlPath + (isProd ? '!(zz*)' : '*') + '.yml')
+        .pipe(ladb_i18n_compile(languageLabels, languageDisabledMsgs, languageReloadMsgs, sourceLanguage, defaultYmlDocument))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/i18n'));
 });
 
