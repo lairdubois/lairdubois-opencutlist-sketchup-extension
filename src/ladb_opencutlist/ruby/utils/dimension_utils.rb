@@ -536,6 +536,7 @@
       if v.is_a?(String)
         if v.match(/^\s*-*\s*[0-9.,]+\s*$/)
           # Only digits -> convert to float
+          v = v.gsub(',', '.') if decimal_separator == ','
           v = v.to_f
         else
           # More than digits -> convert to length
