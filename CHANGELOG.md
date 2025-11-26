@@ -10,6 +10,9 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2025-11-26
+  * Improved Smart Tools
+  * Fixed Sketchup 2020 packing preview display bug
 ### 2025-11-24
   * Improved Smart Reshape Tool
   * Fixed VCB arithmetic parser
