@@ -2697,6 +2697,12 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _pick_part_siblings?
+      true
+    end
+
+    # -----
+
     def _locked_x?
       return false if @locked_axis.nil?
       _get_active_x_axis.parallel?(@locked_axis)
