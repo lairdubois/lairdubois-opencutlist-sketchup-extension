@@ -534,7 +534,7 @@
     # in the current model unit.
     def self.value_to_model_unit_float(v)
       if v.is_a?(String)
-        if v.match(/^\s*-*\s*[0-9.,]+\s*$/)
+        if v.match(/^\s*-?(?:\d+(?:[.,]\d+)?|[.,]\d+)\s*$/)
           # Only digits -> convert to float
           v = v.gsub(',', '.') if decimal_separator == ','
           v = v.to_f
