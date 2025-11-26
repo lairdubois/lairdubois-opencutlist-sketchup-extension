@@ -2737,7 +2737,7 @@ module Ladb::OpenCutList
 
       when STATE_SELECT
 
-        if @mouse_down_point_2d && @mouse_down_point_2d.distance(Geom::Point3d.new(x, y, 0)) > 20  # Drag handled only if the distance is > 10px
+        if @mouse_down_point_2d && @mouse_down_point_2d.distance(Geom::Point3d.new(x, y, 0)) > 20  # Drag handled only if the distance is > 20px
           set_state(STATE_SELECT_RECT)
         end
 

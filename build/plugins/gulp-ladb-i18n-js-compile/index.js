@@ -18,22 +18,9 @@ var PluginError = require('plugin-error');
 
 module.exports = function (languageLabels, languageDisabledMsgs, languageReloadMsgs, opt) {
 
-    // Delete keys that starts by "_"
-    function deleteHiddenKeys(doc) {
-        for (var key in doc) {
-            if (doc.hasOwnProperty(key)) {
-                if (key.startsWith('_')) {
-                    delete doc[key];
-                } else if (typeof doc[key] == 'object') {
-                    deleteHiddenKeys(doc[key]);
-                }
-            }
-        }
-    }
-
-    // Process markdown on string values
+    // Process Markdown on string values
     function markownValues(doc) {
-        for (var key in doc) {
+        for (let key in doc) {
             if (doc.hasOwnProperty(key)) {
                 if (typeof doc[key] == 'string') {
                     doc[key] = md.renderInline(doc[key]);
@@ -47,39 +34,38 @@ module.exports = function (languageLabels, languageDisabledMsgs, languageReloadM
     function transform(file, enc, cb) {
 
         if (file.isNull()) return cb(null, file);
-        if (file.isStream()) return cb(new PluginError('gulp-ladb-i18n-compile', 'Streaming not supported'));
+        if (file.isStream()) return cb(new PluginError('gulp-ladb-i18n-js-compile', 'Streaming not supported'));
 
-        var data;
+        const language = file.stem;
+
+        let data;
         try {
 
-            var contents = file.contents.toString('utf8');
-            var ymlDocument = yaml.load(contents);
+            const contents = file.contents.toString('utf8');
+            const ymlDocument = yaml.load(contents);
 
-            deleteHiddenKeys(ymlDocument);
             markownValues(ymlDocument);
 
             // Append languages labels
             ymlDocument['language'] = languageLabels;
 
             // Append languages disabled msgs (and mardown them)
-            for (var key in languageDisabledMsgs) {
+            for (let key in languageDisabledMsgs) {
                 languageDisabledMsgs[key] = md.render(languageDisabledMsgs[key]);
             }
             ymlDocument['language_disabled_msg'] = languageDisabledMsgs;
 
             // Append languages reload msgs (and mardown them)
-            for (var key in languageReloadMsgs) {
+            for (let key in languageReloadMsgs) {
                 languageReloadMsgs[key] = md.render(languageReloadMsgs[key]);
             }
             ymlDocument['language_reload_msg'] = languageReloadMsgs;
 
-            var language = file.stem;
-
-            var resources = {};
+            const resources = {};
             resources[language] = {
                 translation: ymlDocument
             };
-            var i18nextOptions = {
+            const i18nextOptions = {
                 lng: language,
                 resources: resources
             };
@@ -87,7 +73,7 @@ module.exports = function (languageLabels, languageDisabledMsgs, languageReloadM
             data = 'i18next.init(' + JSON.stringify(i18nextOptions) + ');';
 
         } catch (err) {
-            return cb(new PluginError('gulp-ladb-i18n-compile', err));
+            return cb(new PluginError('gulp-ladb-i18n-js-compile', err));
         }
 
         file.contents = Buffer.from(data);

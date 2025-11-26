@@ -2124,10 +2124,10 @@ tool:
     title: Handle
     action_0: Select
     action_0_status: Select a part
-    action_1: Copy in Line
+    action_1: Copy along Line
     action_1_status: Copy a part along an axis
     action_1_state_2_status: Click to place the copy of the part or enter a distance
-    action_2: Copy in Grid
+    action_2: Copy along Grid
     action_2_status: Copy a part along a grid
     action_2_state_2_status: "Click to place copies of the part, or enter two distances"
     action_3: Move

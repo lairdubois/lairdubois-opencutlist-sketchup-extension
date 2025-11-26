@@ -503,6 +503,10 @@ module Ladb::OpenCutList
 
     # -----
 
+    def _start_with_previous_selection?
+      !@previous_action_handler.is_a?(self.class)
+    end
+
     def _allows_multiple_selections?
       true
     end
@@ -525,7 +529,7 @@ module Ladb::OpenCutList
 
     def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
       super
-      if part
+      if part && fetch_state == STATE_SELECT
 
         # Show part infos
         @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
@@ -2657,7 +2661,7 @@ module Ladb::OpenCutList
 
       @locked_axis = nil
 
-      unless _get_instance.nil?
+      if has_active_selection?
         if state == STATE_HANDLE
           @tool.set_3d_visibility(false, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Hide part preview
           _hide_instances
@@ -2693,6 +2697,12 @@ module Ladb::OpenCutList
     def _reset
       @number = 1
       super
+    end
+
+    # -----
+
+    def _pick_part_siblings?
+      true
     end
 
     # -----
