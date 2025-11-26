@@ -18,7 +18,7 @@ var PluginError = require('plugin-error');
 
 module.exports = function (languageLabels, languageDisabledMsgs, languageReloadMsgs, opt) {
 
-    // Process markdown on string values
+    // Process Markdown on string values
     function markownValues(doc) {
         for (let key in doc) {
             if (doc.hasOwnProperty(key)) {
@@ -29,7 +29,7 @@ module.exports = function (languageLabels, languageDisabledMsgs, languageReloadM
                 }
             }
         }
-    };
+    }
 
     function transform(file, enc, cb) {
 

@@ -3,8 +3,6 @@ var del = require('del');
 var minimist = require('minimist');
 var fs = require('fs');
 var ladb_twig_compile = require('./plugins/gulp-ladb-twig-compile');
-var ladb_i18n_yml_compile = require('./plugins/gulp-ladb-i18n-yml-compile');
-var ladb_i18n_yml_zz_compile = require('./plugins/gulp-ladb-i18n-yml-zz-compile');
 var ladb_i18n_js_compile = require('./plugins/gulp-ladb-i18n-js-compile');
 var ladb_i18n_dialog_compile = require('./plugins/gulp-ladb-i18n-dialog-compile');
 var concat = require('gulp-concat');
@@ -69,7 +67,7 @@ gulp.task('twig_compile', function () {
     'use strict';
 
     // Clean previously generated dialog files
-    del.sync('../src/ladb_opencutlist/js/templates/*twig-templates.js', {
+    del('../src/ladb_opencutlist/js/templates/*twig-templates.js', {
         force: true
     });
 
@@ -110,12 +108,22 @@ gulp.task('i18n_compile', function () {
     const languageReloadMsgs = {};
     const descriptions = {};
 
+    // Clean previously generated i18n yml files
+    del.sync(yamlDestPath + '*', {
+        force: true
+    });
+
+    // Clean previously generated i18n js files
+    del.sync('../src/ladb_opencutlist/js/i18n/*', {
+        force: true
+    });
+
     glob.sync(yamlSrcPath + '*.yml').forEach(function (ymlFile) {
         const contents = fs.readFileSync(ymlFile);
         const ymlDocument = yaml.load(contents);
         const language = path.basename(ymlFile, '.yml');
 
-        // Extract shared data
+        // Extract shared keys
         if ('_label' in ymlDocument) {
             languageLabels[language] = ymlDocument['_label'];
         }
@@ -129,9 +137,75 @@ gulp.task('i18n_compile', function () {
             languageReloadMsgs[language] = ymlDocument['_reload_msg'];
         }
 
+        function deleteHiddenKeys(doc) {
+            for (let key in doc) {
+                if (doc.hasOwnProperty(key)) {
+                    if (key.startsWith('_')) {
+                        delete doc[key];
+                    } else if (typeof doc[key] == 'object') {
+                        deleteHiddenKeys(doc[key]);
+                    }
+                }
+            }
+        }
+
+        function fillDefaultValues(doc, defaultDoc) {
+            for (let key in defaultDoc) {
+                if (typeof doc[key] !== typeof defaultDoc[key] || doc[key] === '') {
+                    doc[key] = defaultDoc[key]; // Fill with the entire subtree is the typeof is "object"
+                } else if (typeof defaultDoc[key] === 'object') {
+                    fillDefaultValues(doc[key], defaultDoc[key]);
+                }
+            }
+        }
+
+        const destYmlDocument = JSON.parse(JSON.stringify(ymlDocument));
+        deleteHiddenKeys(destYmlDocument);
+        if (language !== sourceLanguage && language !== defaultLanguage) {
+            fillDefaultValues(destYmlDocument, defaultYmlDocument);
+        }
+
+        fs.writeFile(yamlDestPath + language + '.yml', yaml.dump(destYmlDocument, {
+            lineWidth: -1,
+            quotingType: '"'
+        }), (err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
+
+        if (!isProd) {
+
+            const destZzYmlDocument = JSON.parse(JSON.stringify(ymlDocument));
+            let line = 0;
+            const fillZZValues = function (doc) {
+                for (var key in doc) {
+                    if (typeof doc[key] === 'string') {
+                        line++;
+                        if (!doc[key].match(/^\$t\([a-z_.]+\)$/i)) {
+                            doc[key] = line + ' - ' + doc[key];
+                        }
+                    } else if (typeof doc[key] === 'object') {
+                        fillZZValues(doc[key]);
+                    }
+                }
+            }
+
+            fillZZValues(destZzYmlDocument);
+
+            fs.writeFile(yamlDestPath + 'zz_' + language + '.yml', yaml.dump(destZzYmlDocument, {
+                lineWidth: -1,
+                quotingType: '"'
+            }), (err) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+
+        }
+
     });
 
-    // Update descriptions in ladb_opencutlist.rb
     gulp.src('../src/ladb_opencutlist.rb')
         .pipe(replace(/( {6}## DESCRIPTION_START ##)(.*?\n*\t*)( {6}## DESCRIPTION_END ##)/ms, function (match, p1, p2, p3, offset, string) {
             var whens = p1;
@@ -150,26 +224,6 @@ gulp.task('i18n_compile', function () {
         .pipe(gulp.dest('../src'))
         .pipe(touch());
 
-    // Clean previously generated i18n yml files
-    del.sync(yamlDestPath + '*', {
-        force: true
-    });
-
-    gulp.src(yamlSrcPath + '*.yml')
-        .pipe(ladb_i18n_yml_compile(sourceLanguage, defaultLanguage, defaultYmlDocument))
-        .pipe(gulp.dest('../src/ladb_opencutlist/yaml/i18n'));
-
-    if (!isProd) {
-        gulp.src(yamlSrcPath + '*.yml')
-            .pipe(ladb_i18n_yml_zz_compile())
-            .pipe(gulp.dest('../src/ladb_opencutlist/yaml/i18n'));
-    }
-
-    // Clean previously generated i18n js files
-    del.sync('../src/ladb_opencutlist/js/i18n/*', {
-        force: true
-    });
-
     return gulp.src(yamlDestPath + (isProd ? '!(zz*)' : '*') + '.yml')
         .pipe(ladb_i18n_js_compile(languageLabels, languageDisabledMsgs, languageReloadMsgs))
         .pipe(gulp.dest('../src/ladb_opencutlist/js/i18n'));
@@ -183,11 +237,11 @@ gulp.task('i18n_dialogs_compile', function () {
         force: true
     });
 
-    gulp.src('../src/ladb_opencutlist/yaml/i18n-src/' + (isProd ? '!(zz*)' : '*') + '.yml')
+    gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz*)' : '*') + '.yml')
         .pipe(ladb_i18n_dialog_compile('../src/ladb_opencutlist/twig/dialog-modal.twig', 'modal'))
         .pipe(gulp.dest('../src/ladb_opencutlist/html'));
 
-    return gulp.src('../src/ladb_opencutlist/yaml/i18n-src/' + (isProd ? '!(zz*)' : '*') + '.yml')
+    return gulp.src('../src/ladb_opencutlist/yaml/i18n/' + (isProd ? '!(zz*)' : '*') + '.yml')
         .pipe(ladb_i18n_dialog_compile('../src/ladb_opencutlist/twig/dialog-tabs.twig', 'tabs'))
         .pipe(gulp.dest('../src/ladb_opencutlist/html'));
 });
@@ -200,6 +254,7 @@ gulp.task('rbz_create', function () {
         '!src/**/twig/**',
         '!src/**/cpp/**',
         '!src/**/bin/**/!(*.dylib|*.dll)',
+        '!src/**/yaml/i18n-src/**',
     ];
     // Exclude not minified .js libs
     blob.push('!src/**/js/lib/!(*.min).js');
@@ -221,7 +276,7 @@ gulp.task('version', function () {
     var pkg = JSON.parse(fs.readFileSync('./package.json'));
     var version = pkg.version + (isProd ? '' : '-' + options.env.toLowerCase());
 
-    // Compute build from current date
+    // Compute build from the current date
     var nowISO = (new Date()).toISOString();
     var build = nowISO.slice(0,10).replace(/-/g, "") + nowISO.slice(11,16).replace(/:/g, "");
 
@@ -248,7 +303,7 @@ gulp.task('version', function () {
         .pipe(gulp.dest('../src/ladb_opencutlist/ruby'))
         .pipe(touch());
 
-    // Update version property in constants.rb
+    // Update version property in constants.js
     return gulp.src('../src/ladb_opencutlist/js/constants.js')
         .pipe(replace(/const EXTENSION_BUILD = '[0-9]{12}?';/g, "const EXTENSION_BUILD = '" + build + "';"))
         .pipe(gulp.dest('../src/ladb_opencutlist/js'))
