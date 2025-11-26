@@ -387,7 +387,7 @@ module Ladb::OpenCutList
 
     def _preview_part(part_entity_path, part, layer = 0, highlighted = false)
       super
-      if part
+      if part && fetch_state == STATE_SELECT
 
         # Show part infos
         @tool.show_tooltip([ "##{_get_active_part_name}", _get_active_part_material_name, '-', _get_active_part_size, _get_active_part_icons ])
@@ -1563,7 +1563,7 @@ module Ladb::OpenCutList
         ignore_edges: false,
         ignore_soft_edges: false,
         ignore_clines: true,
-        container_validator: has_active_part? ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_NO_SCALE
+        container_validator: has_active_part? ? CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART : CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL
       }
     end
 
