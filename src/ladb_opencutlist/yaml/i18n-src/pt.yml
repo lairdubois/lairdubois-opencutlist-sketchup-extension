@@ -125,7 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Desenhar Peças
       smart_handle: Manipular Peças
-      smart_reshape: ""
+      smart_reshape: Remodelar peças
       smart_paint: Pintar Peças
       smart_axes: Orientação das Peças
       smart_export: Exportar as Peças
@@ -156,8 +156,8 @@ core:
       Para relatar um bug: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Não disponível neste contexto
   error:
-    exception: ""
-    forbidden: ""
+    exception: "Erro: **{{ error }}**"
+    forbidden: "Não autorizado: **{{ error }}**"
     extern: "Erro externo : **{{ error }}**"
     feature_unavailable: "Este recurso requer SketchUp {{ version }} ou superior"
     failed_export_to: |
@@ -1752,21 +1752,22 @@ tab:
       tags: Identificação
       layer_name: Etiqueta
       explode: Explodir
-      explode_message: ""
+      explode_message: "Confirma a separação de **{{ name }}**?"
       erase: Apagar
-      erase_message: ""
+      erase_message: "Confirma a eliminação de **{{ name }}**?"
     deep_make_unique:
-      title: ""
+      title: Tornar único
     deep_rename_parts:
-      title: ""
+      title: Renomear peças
       info_0: |
+        Este recurso permite renomear as peças presentes no conjunto selecionado, aplicando a fórmula abaixo a cada instância.
       formula: Fórmula
-      old_name: ""
-      new_name: ""
-      count: ""
+      old_name: Nome original
+      new_name: Novo nome
+      count: Qtd.
     create_container:
-      title_group: ""
-      title_component: ""
+      title_group: "Criar um grupo"
+      title_component: "Criar um componente"
     option:
       general: Geral
       show_hidden_instances: Exibir as instâncias ocultas
@@ -1782,7 +1783,7 @@ tab:
       no_entities: O modelo está vazio!
       node_not_found: Nó não encontrado
       entity_not_found: Instância não encontrada
-      invalid_target: ""
+      invalid_target: A instância visada não permite esta operação
       obsolete_outliner: "Impossível, a estrutura gerada está ultrapassada. Regenere-a."
     tip:
       no_node: |
@@ -2057,26 +2058,37 @@ tool:
       invalid_divider: "O divisor {{ value }} é inválido"
       invalid_offset: "O deslocamento {{ value }} é inválido"
       invalid_segment_count: "O número de segmentos {{ value }} é inválido. Ele deve estar entre 3 e 999."
-      syntax_error: ""
-      unexpected_close_parenthesis: ""
-      missing_close_parenthesis: ""
-      missing_operand: ""
-      zero_division: ""
+      syntax_error: "Erro de sintaxe: {{ error }}"
+      unexpected_close_parenthesis: "Parêntese de fechamento inesperado"
+      missing_close_parenthesis: "Falta um parêntese de fechamento"
+      missing_operand: "Operando ausente"
+      zero_division: "Divisão por zero"
       lt_min_distance: "A distância {{ value1 }} é menor que a distância mínima de {{ value2 }}"
-      gt_max_distance: ""
+      gt_max_distance: "A distância {{ value1 }} é superior à distância máxima de {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Clique em uma peça para selecioná-la
+    state_0_to_6_status: Selecionar um elemento pai
+    state_4_status: Arraste uma peça idêntica com o mesmo pai para adicioná-la à seleção e solte para continuar
+    state_5_status: Deslize para adicionar à seleção e solte para continuar
+    state_6_status: Selecione um item da lista
+    warning:
+      no_active_part: "Primeiro, você deve passar o mouse sobre uma peça"
   smart_draw:
     title: Desenhar
     action_0: Desenhar um Retângulo
     action_0_status: Desenhar um volume com base em uma forma retangular
+    action_0_state_0_status: Clique para definir o primeiro ponto do retângulo
     action_0_state_1_status: Clique para definir o canto oposto ou insira comprimento e largura
     action_1: Desenhar um Círculo
+    action_1_state_0_status: Clique para definir o centro do círculo
     action_1_status: Desenhar um volume com base em uma forma circular
     action_1_state_1_radius_status: Clique para definir o raio ou insira uma distância
     action_1_state_1_diameter_status: Clique para definir o diâmetro ou insira uma distância
     action_2: Desenhar um Polígono
+    action_2_state_0_status: Clique para definir o primeiro ponto do polígono
     action_2_status: Desenhar um volume com base em uma forma poligonal
     action_2_state_1_status: Clique para definir um novo ponto ou insira uma distância
     action_x_state_2_status: Clique para definir a elevação ou insira uma distância
@@ -2111,25 +2123,18 @@ tool:
   smart_handle:
     title: Manipular
     action_0: Selecionar
-    action_0_status: Clique em uma peça para selecioná-la
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: ""
+    action_0_status: Selecione uma peça
     action_1: Copiar em Linha
-    action_1_status: Clique em uma peça para copiá-la ao longo de um eixo
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: Copiar uma peça ao longo de um eixo
     action_1_state_2_status: Clique para posicionar a cópia da peça ou insira uma distância
     action_2: Copiar em Grade
-    action_2_status: Clique em uma peça para copiá-la em uma grade
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: Copiar uma peça ao longo de uma grade
     action_2_state_2_status: Clique para posicionar as cópias da peça ou insira duas distâncias
     action_3: Mover
-    action_3_status: Clique em uma peça para movê-la ao longo de um eixo
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: Mover uma peça ao longo de um eixo
     action_3_state_2_status: Clique para posicionar a peça ou insira uma distância
     action_4: Distribuir
-    action_4_status: Clique em uma peça para distribuí-la ao longo de um eixo
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: Dividir uma peça ao longo de um eixo
     action_4_state_1_status: Clique para definir o primeiro ponto de medição
     action_4_state_2_status: Clique para definir o segundo ponto de medição ou insira uma distância
     action_option_group_copy_measure_type: Medida
@@ -2151,27 +2156,28 @@ tool:
     error:
       min_distance: "A distância {{ value1 }} é menor que a distância mínima de {{ value2 }}"
   smart_reshape:
-    title: ""
-    action_0: ""
-    action_0_status: Clique em uma peça para selecioná-la
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: ""
-    action_0_state_1a_status: ""
-    action_0_state_1b_status: ""
-    action_0_state_1c_status: ""
-    action_0_state_10_status: ""
-    action_0_state_11_status: ""
-    action_0_state_12_status: ""
-    action_0_state_2_status: ""
+    title: Remodelar
+    action_0: Esticar
+    action_0_status: Esticar uma parte
+    action_0_state_1_status: Clique em uma alça para esticar
+    action_0_state_1a_status: Clique em um plano de corte para movê-lo
+    action_0_state_1b_status: Adicionar um plano de corte
+    action_0_state_1c_status: Apagar um plano de corte
+    action_0_state_10_status: Arraste o plano de corte para movê-lo
+    action_0_state_11_status: Clique para adicionar o plano de corte
+    action_0_state_12_status: Clique em um plano de corte para excluí-lo
+    action_0_state_2_status: Clique para confirmar o estiramento ou insira uma distância
     action_option_group_stretch_measure_type: Medida
     action_option_group_axes: Eixos
+    action_option_group_options: Opções
     action_option_stretch_measure_type_outside_status: Medida externa
-    action_option_stretch_measure_type_offset_status: ""
+    action_option_stretch_measure_type_offset_status: Medir a diferença
     action_option_axes_active_status: Manipular ao longo dos eixos ativos
     action_option_axes_context_status: Manipular ao longo dos eixos do grupo ou componente que contém a peça
     action_option_axes_entity_status: Manipular ao longo dos eixos da peça
+    action_option_options_make_unique_status: Tornar elementos esticados únicos
     error:
-      curve_intersect: ""
+      curve_intersect: Um dos planos de corte cruza uma curva não extensível
   smart_paint:
     title: Pintar
     default_material: Nenhum material definido

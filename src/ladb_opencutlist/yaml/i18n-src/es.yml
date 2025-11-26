@@ -2068,16 +2068,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Hacer clic sobre una pieza para seleccionarla
+    state_0_to_6_status: Seleccionar un elemento principal
+    state_4_status: "Arrastra a una pieza idéntica con el mismo padre para añadirla a la selección y, a continuación, suelta para continuar"
+    state_5_status: Desliza el dedo para añadir a la selección y suelta para continuar
+    state_6_status: Seleccione un elemento de la lista
+    warning:
+      no_active_part: Primero debes pasar el cursor sobre una pieza
   smart_draw:
     title: Dibujar
     action_0: Dibujar un rectángulo
     action_0_status: Dibujar un volumen de base rectangular
+    action_0_state_0_status: Haga clic para establecer el primer punto del rectángulo
     action_0_state_1_status: Hacer clic para definir el ángulo opuesto o introducir longitud y anchura
     action_1: Dibujar un círculo
+    action_1_state_0_status: Haga clic para establecer el centro del círculo
     action_1_status: Dibujar un volumen de base circular
     action_1_state_1_radius_status: Hacer clic para definir el radio o introducir una distancia
     action_1_state_1_diameter_status: Hacer clic para definir el diámetro o introducir una distancia
     action_2: Dibujar un polígono
+    action_2_state_0_status: Haga clic para establecer el primer punto del polígono
     action_2_status: Dibujar un volumen de base poligonal
     action_2_state_1_status: Hacer clic para indicar un nuevo punto o introducir una distancia
     action_x_state_2_status: Hacer clic para definir la elevación o introducir una distancia
@@ -2112,25 +2123,18 @@ tool:
   smart_handle:
     title: Editar
     action_0: Seleccione
-    action_0_status: Hacer clic sobre una pieza para seleccionarla
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: Desliza el dedo sobre una pieza idéntica para añadirla a la selección y suelta para continuar
+    action_0_status: Seleccionar una pieza
     action_1: Copiar en línea
-    action_1_status: Hacer clic sobre una pieza para copiarla a lo largo de un eje
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: Copiar una pieza a lo largo de un eje
     action_1_state_2_status: Hacer clic para situar la copia de la pieza o introducir una distancia
     action_2: Copiar en rejilla
-    action_2_status: Hacer click sobre una pieza para copiarla a lo largo de una rejilla
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: Copiar una parte a lo largo de una rejilla
     action_2_state_2_status: Hacer clic para colocar las copias de la pieza o introducir dos distancias
     action_3: Mover
-    action_3_status: Hacer clic sobre una pieza para desplazarla a lo largo de un eje
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: Mover una pieza a lo largo de un eje
     action_3_state_2_status: Hacer click para colocar la pieza o introducir una distancia
     action_4: Distribuir
-    action_4_status: Hacer clic sobre una pieza para distribuirla a lo largo de un eje
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: Distribuir una pieza a lo largo de un eje
     action_4_state_1_status: Hacer clic para indicar el primer punto de medida
     action_4_state_2_status: Hacer clic para indicar el segundo punto de medida o entrar una distancia
     action_option_group_copy_measure_type: Medida
@@ -2154,8 +2158,7 @@ tool:
   smart_reshape:
     title: Remodelar
     action_0: Estirar
-    action_0_status: Hacer clic sobre una pieza para seleccionarla
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: Estirar una pieza
     action_0_state_1_status: Haga clic en un tirador para estirar
     action_0_state_1a_status: Haga clic en un plano de corte para moverlo
     action_0_state_1b_status: Añadir un plano de corte
@@ -2174,7 +2177,7 @@ tool:
     action_option_axes_entity_status: Modificar la longitud de los ejes de la pieza
     action_option_options_make_unique_status: Hacer únicos los elementos estirados
     error:
-      curve_intersect: Uno de los planos de corte atraviesa un elemento no extensible (curva o accesorio)
+      curve_intersect: Uno de los planos de corte cruza una curva no extensible
   smart_paint:
     title: Colorear
     default_material: Ningún material definido
