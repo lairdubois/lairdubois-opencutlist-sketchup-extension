@@ -779,11 +779,12 @@ module Ladb::OpenCutList
     def onPartSelected
 
       Sketchup.active_model.selection.clear
-      Sketchup.active_model.selection.add(_get_instances)
+      Sketchup.active_model.selection.add(get_active_selection_instances)
       if (sibling_instances = _get_sibling_instances).is_a?(Array)
         Sketchup.active_model.selection.add(sibling_instances)
       end
 
+      set_state(STATE_HANDLE)
       set_state(STATE_SELECT)
       _refresh
 

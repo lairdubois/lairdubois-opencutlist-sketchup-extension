@@ -2244,7 +2244,7 @@ module Ladb::OpenCutList
 
           unless parent.nil?
             local_axis = axis.transform((transformation * container.transformation).inverse)
-            data << local_axis.angle_between(axis) % Math::PI if local_axis.valid?  # Differentiating rotations but not perfect aligned mirrors
+            data << (local_axis.angle_between(axis) % Math::PI).round(6) if local_axis.valid?  # Differentiating rotations but not perfect aligned mirrors
             data << local_axis.length.to_f.round(6) if local_axis.valid? && operation == SplitContainerDef::OPERATION_SPLIT  # Differentiating scaling
           end
 
