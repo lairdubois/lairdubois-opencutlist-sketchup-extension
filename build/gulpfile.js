@@ -181,7 +181,7 @@ gulp.task('i18n_compile', function () {
                 for (var key in doc) {
                     if (typeof doc[key] === 'string') {
                         line++;
-                        if (!doc[key].match(/^\$t\([a-z_.]+\)$/i)) {
+                        if (!doc[key].match(/^\$t\([a-z0-9_.]+\)$/i)) {
                             doc[key] = line + ' - ' + doc[key];
                         }
                     } else if (typeof doc[key] === 'object') {
