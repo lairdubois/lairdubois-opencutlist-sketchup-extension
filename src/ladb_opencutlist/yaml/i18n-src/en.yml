@@ -2071,9 +2071,9 @@ tool:
   smart_select:
     state_0_status: Click on a part to select it
     state_0_to_6_status: Select a parent element
-    state_4_status: Drag onto an identical piece with the same parent to add it to the selection, then release to continue
+    state_4_status: "Drag onto an identical piece with the same parent to add it to the selection, then release to continue"
     state_5_status: Swipe to add to selection and release to continue
-    state_6_status: Select an item from the list
+    state_6_status: Select an element from the list
     warning:
       no_active_part: You must first hover over a part
   smart_draw:
@@ -2124,17 +2124,17 @@ tool:
     title: Handle
     action_0: Select
     action_0_status: Select a part
-    action_1: Copy along Line
+    action_1: Copy along line
     action_1_status: Copy a part along an axis
     action_1_state_2_status: Click to place the copy of the part or enter a distance
-    action_2: Copy along Grid
+    action_2: Copy along grid
     action_2_status: Copy a part along a grid
     action_2_state_2_status: "Click to place copies of the part, or enter two distances"
     action_3: Move
-    action_3_status: Click on a part to move it along an axis
+    action_3_status: Move a part along an axis
     action_3_state_2_status: "Click to place the part, or enter a distance"
     action_4: Distribute
-    action_4_status: Click on a part to distribute it along an axis
+    action_4_status: Distribute a part along an axis
     action_4_state_1_status: Click to set the first measurement point
     action_4_state_2_status: Click to set the second measurement point or enter a distance
     action_option_group_copy_measure_type: Measure
@@ -2158,7 +2158,7 @@ tool:
   smart_reshape:
     title: Reshape
     action_0: Stretch
-    action_0_status: Click on a part to select it
+    action_0_status: Stretch a part
     action_0_state_1_status: Click on a handle to stretch
     action_0_state_1a_status: Click on a cutting plane to move it
     action_0_state_1b_status: Add a cutting plane
