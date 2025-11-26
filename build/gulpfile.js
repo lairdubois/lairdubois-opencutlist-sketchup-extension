@@ -108,15 +108,14 @@ gulp.task('i18n_compile', function () {
     const languageReloadMsgs = {};
     const descriptions = {};
 
+    // Create the destination folder
+    fs.mkdirSync(yamlDestPath, { recursive: true });
+
     // Clean previously generated i18n yml files
-    del.sync(yamlDestPath + '*', {
-        force: true
-    });
+    del.sync(yamlDestPath + '*', { force: true });
 
     // Clean previously generated i18n js files
-    del.sync('../src/ladb_opencutlist/js/i18n/*', {
-        force: true
-    });
+    del.sync('../src/ladb_opencutlist/js/i18n/*', { force: true });
 
     glob.sync(yamlSrcPath + '*.yml').forEach(function (ymlFile) {
         const contents = fs.readFileSync(ymlFile);
@@ -165,7 +164,7 @@ gulp.task('i18n_compile', function () {
             fillDefaultValues(destYmlDocument, defaultYmlDocument);
         }
 
-        fs.writeFile(yamlDestPath + language + '.yml', yaml.dump(destYmlDocument, {
+        fs.writeFileSync(yamlDestPath + language + '.yml', yaml.dump(destYmlDocument, {
             lineWidth: -1,
             quotingType: '"'
         }), (err) => {
@@ -193,7 +192,7 @@ gulp.task('i18n_compile', function () {
 
             fillZZValues(destZzYmlDocument);
 
-            fs.writeFile(yamlDestPath + 'zz_' + language + '.yml', yaml.dump(destZzYmlDocument, {
+            fs.writeFileSync(yamlDestPath + 'zz_' + language + '.yml', yaml.dump(destZzYmlDocument, {
                 lineWidth: -1,
                 quotingType: '"'
             }), (err) => {
