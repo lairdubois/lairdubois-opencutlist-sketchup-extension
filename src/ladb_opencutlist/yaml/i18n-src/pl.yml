@@ -125,7 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Lista części
       smart_handle: Importuj części
-      smart_reshape: "Przebudować pomieszczenia "
+      smart_reshape: Przebudować pomieszczenia
       smart_paint: Malowanie części
       smart_axes: Orientuj części
       smart_export: Eksportuj części
@@ -1767,7 +1767,7 @@ tab:
       count: Liczba
     create_container:
       title_group: "Utwórz grupę"
-      title_component: "Utwórz komponent "
+      title_component: "Utwórz komponent"
     option:
       general: Główne
       show_hidden_instances: Pokaż ukryte instancje
@@ -2062,22 +2062,33 @@ tool:
       unexpected_close_parenthesis: "Nieoczekiwany nawias zamykający"
       missing_close_parenthesis: "Brakujący nawias zamykający"
       missing_operand: "Brak argumentu"
-      zero_division: "Dzielenie przez zero "
+      zero_division: "Dzielenie przez zero"
       lt_min_distance: "Odległość {{ value1 }} jest mniejsza niż minimalna odległość {{ value2 }}"
       gt_max_distance: ""
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: "Kliknij część, aby ją zaznaczyć"
+    state_0_to_6_status: ""
+    state_4_status: ""
+    state_5_status: ""
+    state_6_status: ""
+    warning:
+      no_active_part: ""
   smart_draw:
     title: Rysuj
     action_0: Rysowanie prostokąta
     action_0_status: Utwórz bryłę na bazie prostokątnego kształtu
+    action_0_state_0_status: ""
     action_0_state_1_status: "Kliknij, aby zdefiniować przeciwległy kąt lub wprowadź długość i szerokość"
     action_1: Rysowanie okręgu
+    action_1_state_0_status: ""
     action_1_status: Utwórz bryłę na bazie koła
     action_1_state_1_radius_status: "Kliknij, aby ustawić promień lub wprowadź odległość"
     action_1_state_1_diameter_status: "Kliknij, aby ustawić średnicę lub wprowadź odległość"
     action_2: Rysowanie wielokąta
+    action_2_state_0_status: ""
     action_2_status: Narysuj bryłę na bazie wielokąta
     action_2_state_1_status: "Kliknij, aby zdefiniować nowy punkt, lub wprowadź odległość"
     action_x_state_2_status: "Kliknij, aby ustawić wysokość lub wprowadź odległość"
@@ -2112,25 +2123,18 @@ tool:
   smart_handle:
     title: Uchwyt
     action_0: Zaznacz
-    action_0_status: "Kliknij część, aby ją zaznaczyć"
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: "Przeciągnij po identycznym elemencie, aby dodać go do zaznaczenia, i puść, aby kontynuować"
+    action_0_status: ""
     action_1: Kopiuj w linii
-    action_1_status: "Kliknij część, aby skopiować ją wzdłuż osi"
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: ""
     action_1_state_2_status: "Kliknij, aby umieścić kopię części lub wprowadź odległość"
     action_2: Kopiuj w siatce
-    action_2_status: "Kliknij część, aby skopiować ją wzdłuż siatki"
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: ""
     action_2_state_2_status: "Kliknij, aby umieścić kopie części lub wprowadź dwie odległości"
     action_3: Przesuń
-    action_3_status: "Kliknij część, aby przesunąć ją wzdłuż siatki"
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: ""
     action_3_state_2_status: "Kliknij, aby umieścić część lub wprowadź odległość"
     action_4: Rozmieść
-    action_4_status: "Kliknij część, aby rozmieścić ją wzdłuż osi"
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: ""
     action_4_state_1_status: "Kliknij, aby ustawić pierwszy punkt pomiarowy"
     action_4_state_2_status: "Kliknij, aby ustawić drugi punkt pomiarowy lub wprowadź odległość"
     action_option_group_copy_measure_type: Pomiary
@@ -2154,8 +2158,7 @@ tool:
   smart_reshape:
     title: Przebudować
     action_0: Rozciągnąć
-    action_0_status: "Kliknij część, aby ją zaznaczyć"
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: ""
     action_0_state_1_status: ""
     action_0_state_1a_status: ""
     action_0_state_1b_status: ""
@@ -2166,11 +2169,13 @@ tool:
     action_0_state_2_status: ""
     action_option_group_stretch_measure_type: Pomiary
     action_option_group_axes: Osie
+    action_option_group_options: Opcje
     action_option_stretch_measure_type_outside_status: Pomiar zewnętrzny
     action_option_stretch_measure_type_offset_status: Zmierz różnice
     action_option_axes_active_status: Manipuluj wzdłuż aktywnych osi
     action_option_axes_context_status: Manipuluj wzdłuż osi grupy lub komponentu zawierającego element
     action_option_axes_entity_status: Manipuluj wzdłuż osi elementu
+    action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""
   smart_paint:

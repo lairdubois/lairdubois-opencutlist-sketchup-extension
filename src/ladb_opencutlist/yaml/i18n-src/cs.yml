@@ -125,7 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Kreslení dílů
       smart_handle: Práce s díly
-      smart_reshape: ""
+      smart_reshape: Přetvořit díly
       smart_paint: Materiály dílů
       smart_axes: Orientace dílů
       smart_export: Export dílů
@@ -156,8 +156,8 @@ core:
       Chcete-li nahlásit chybu:<a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Vzorec není v tomto kontextu k dispozici
   error:
-    exception: ""
-    forbidden: ""
+    exception: "Chyba: **{{ error }}**"
+    forbidden: "Nepovolené: **{{ error }}**"
     extern: "Externí chyba: **{{ error }}**"
     feature_unavailable: "Tato funkce vyžaduje aplikaci SketchUp {{ version }} nebo vyšší"
     failed_export_to: |
@@ -308,7 +308,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: Zobrazit / Skrýt
-      show_hide_blocks: ""
+      show_hide_blocks: Zobrazit / Skrýt všechny skupiny
       scroll_to_block: Přejděte na skupinu
       not_available_std_width: "Šířka *{{ std_dimension_real }}* nebyla nastavena na materiálu '{{ material_name }}'"
       not_available_std_thickness: "Tloušťka *{{ std_dimension_real }}* nebyla nastavena na materiálu '{{ material_name }}'"
@@ -1120,8 +1120,11 @@ tab:
       option_hide_edges_preview_0: Zobrazeno ve schématu řezání
       option_hide_edges_preview_1: Skryto ve schématu řezání
       option_hide_edges_preview_help: Umožňuje zobrazit nebo skrýt vizuální zobrazení pásů hran pro každý díl ve schématu řezání.
-      option_zoom_threshold: ""
+      option_zoom_threshold: Prahová hodnota zoomu
       option_zoom_threshold_help: |
+        Umožňuje nastavit šířku diagramu, pod kterou se diagramy automaticky zvětší.
+
+        *Zvětšení se vypočítá na základě nejširšího diagramu*.
       option_time_limit: Časový limit
       option_time_limit_help: |
         Pevný časový limit pro výpočet
@@ -1730,15 +1733,15 @@ tab:
       is_active_node: Aktivní instance - kopie - v modelu
       set_active_node: Upravit v modelu
       edit_node_properties: Upravit vlastnosti
-      select_active_nodes: ""
+      select_active_nodes: Vybrat / Zrušit výběr všech aktivních instancí
       select_node: Vybrat
       unselect_node: Zrušit výběr
       open_node_url: Otevřít URL adresu dílu
     edit_node:
       title_model: "Vlastnosti modelu"
       title_instance: "Vlastnosti instance **{{ name }}**"
-      title_instance_multiple: ""
-      multiple_alert: ""
+      title_instance_multiple: "Vlastnosti skupiny instancí"
+      multiple_alert: "Společné vlastnosti skupiny {{ node_count }} instancí."
       general: Všeobecné
       name: Název
       instance_name: Instance
@@ -1749,21 +1752,22 @@ tab:
       tags: Znaky
       layer_name: Štítek
       explode: Rozpad
-      explode_message: ""
+      explode_message: "Potvrzujete rozdělení **{{ name }}**?"
       erase: Smazat
-      erase_message: ""
+      erase_message: "Potvrzujete smazání **{{ name }}**?"
     deep_make_unique:
-      title: ""
+      title: Učinit jedinečným
     deep_rename_parts:
-      title: ""
+      title: Přejmenovat díly
       info_0: |
+        Tato funkce umožňuje přejmenovat součásti přítomné ve vybrané sadě pomocí aplikace níže uvedeného vzorce na každou instanci.
       formula: Vzorec
-      old_name: ""
-      new_name: ""
-      count: ""
+      old_name: Původní název
+      new_name: Nové jméno
+      count: Počet
     create_container:
-      title_group: ""
-      title_component: ""
+      title_group: "Vytvořit skupinu"
+      title_component: "Vytvořit komponentu"
     option:
       general: Všeobecné
       show_hidden_instances: Zobrazit skryté instance
@@ -1779,7 +1783,7 @@ tab:
       no_entities: Váš model je prázdný!
       node_not_found: Uzel nenalezen
       entity_not_found: Instance nenalezena
-      invalid_target: ""
+      invalid_target: Cílová instance tuto operaci neumožňuje
       obsolete_outliner: "Nemožné, vygenerovaná struktura je zastaralá. Prosím, zregeneruj to."
     tip:
       no_node: |
@@ -2054,26 +2058,37 @@ tool:
       invalid_divider: "Dělitel {{ value }} je neplatný"
       invalid_offset: "Offset {{ value }} je neplatný"
       invalid_segment_count: "Počet segmentů {{ value }} je neplatný. Musí být mezi 3 a 999."
-      syntax_error: ""
-      unexpected_close_parenthesis: ""
-      missing_close_parenthesis: ""
-      missing_operand: ""
-      zero_division: ""
+      syntax_error: "Chyba syntaxe: {{ error }}"
+      unexpected_close_parenthesis: "Neočekávaná uzavírací závorka"
+      missing_close_parenthesis: "Chybějící uzavírací závorka"
+      missing_operand: "Chybějící operand"
+      zero_division: "Dělení nulou"
       lt_min_distance: "Vzdálenost {{ value1 }} je menší než minimální vzdálenost {{ value2 }}"
-      gt_max_distance: ""
+      gt_max_distance: "Vzdálenost {{ value1 }} je větší než maximální vzdálenost {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Kliknutím na dílec ho vyberete
+    state_0_to_6_status: Výběr nadřazeného prvku
+    state_4_status: "Přetáhněte na identický díl se stejným rodičem, abyste jej přidali do výběru, a poté uvolněte, abyste pokračovali"
+    state_5_status: "Přejeďte prstem, abyste přidali do výběru, a uvolněte, abyste pokračovali"
+    state_6_status: Vyberte položku ze seznamu
+    warning:
+      no_active_part: Nejprve musíte najet kurzorem na díl
   smart_draw:
     title: Kreslení dílů
     action_0: Nakreslit OBDÉLNÍK
     action_0_status: Vytvořte 3D těleso z obdélníkového tvaru
+    action_0_state_0_status: Kliknutím nastavte první bod obdélníku
     action_0_state_1_status: Kliknutím definujete protilehlý úhel nebo zadáte délku a šířku
     action_1: Nakreslit KRUH
+    action_1_state_0_status: Kliknutím nastavíte střed kruhu
     action_1_status: Vymodeluj 3D těleso z kruhové plochy
     action_1_state_1_radius_status: Kliknutím nastavíte poloměr nebo zadáte vzdálenost
     action_1_state_1_diameter_status: Kliknutím nastavíte průměr nebo zadáte vzdálenost
     action_2: Nakreslit POLYGON
+    action_2_state_0_status: Kliknutím nastavte první bod mnohoúhelníku
     action_2_status: Kreslení 3D tělesa z polygonu
     action_2_state_1_status: Kliknutím definujete nový bod nebo zadáte vzdálenost
     action_x_state_2_status: Kliknutím nastavíte výšku nebo zadáte vzdálenost
@@ -2108,25 +2123,18 @@ tool:
   smart_handle:
     title: Práce s díly
     action_0: Vybrat
-    action_0_status: Kliknutím na dílec ho vyberete
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: ""
+    action_0_status: Vyberte díl
     action_1: Kopie po ose
-    action_1_status: Kliknutím na dílec ho zkopírujete podél osy
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: Kopírování dílu podél osy
     action_1_state_2_status: Kliknutím umístěte kopii dílce nebo zadejte vzdálenost
     action_2: Kopie do mřížky
-    action_2_status: Kliknutím na dílec ho zkopírujete podél mřížky
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: Kopírování dílu podél mřížky
     action_2_state_2_status: Kliknutím umístěte kopie dílce nebo zadejte dvě vzdálenosti
     action_3: Posun
-    action_3_status: Kliknutím na dílec ho můžete přesunout podél mřížky
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: Pohybovat částí podél osy
     action_3_state_2_status: Kliknutím umístěte dílec nebo zadejte vzdálenost
     action_4: Rozložení
-    action_4_status: Kliknutím na dílec ho rozmístíte podél osy
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: Rozmístění části podél osy
     action_4_state_1_status: Kliknutím nastavíte první bod měření
     action_4_state_2_status: Kliknutím nastavte druhý bod měření nebo zadejte vzdálenost
     action_option_group_copy_measure_type: Kopie dílce
@@ -2148,27 +2156,28 @@ tool:
     error:
       min_distance: "Vzdálenost {{ value1 }} je menší než minimální vzdálenost {{ value2 }}"
   smart_reshape:
-    title: ""
-    action_0: ""
-    action_0_status: Kliknutím na dílec ho vyberete
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
-    action_0_state_1_status: ""
-    action_0_state_1a_status: ""
-    action_0_state_1b_status: ""
-    action_0_state_1c_status: ""
-    action_0_state_10_status: ""
-    action_0_state_11_status: ""
-    action_0_state_12_status: ""
-    action_0_state_2_status: ""
+    title: Přetvořit
+    action_0: Protažení
+    action_0_status: Natáhnout díl
+    action_0_state_1_status: Klikněte na úchytku pro roztažení
+    action_0_state_1a_status: Kliknutím na řezový plán jej přesunete
+    action_0_state_1b_status: Přidat řezací plán
+    action_0_state_1c_status: Vymazání řezného plánu
+    action_0_state_10_status: Přetažením řeznou rovinu přesuňte
+    action_0_state_11_status: Klikněte pro přidání řezacího plánu
+    action_0_state_12_status: Kliknutím na řeznou rovinu ji odstraníte
+    action_0_state_2_status: Kliknutím potvrďte roztažení nebo zadejte vzdálenost
     action_option_group_stretch_measure_type: Kopie dílce
     action_option_group_axes: Osy
+    action_option_group_options: Nastavení
     action_option_stretch_measure_type_outside_status: Vzdálenost včetně dílce
-    action_option_stretch_measure_type_offset_status: ""
+    action_option_stretch_measure_type_offset_status: Rozdíl v měření
     action_option_axes_active_status: Manipulace podél os
     action_option_axes_context_status: Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: Manipulace podél os dílu
+    action_option_options_make_unique_status: Udělejte roztažené prvky jedinečnými
     error:
-      curve_intersect: ""
+      curve_intersect: Jedna z řezných rovin protíná neroztažitelnou křivku
   smart_paint:
     title: Přiřazení materiálů
     default_material: Není definován žádný materiál

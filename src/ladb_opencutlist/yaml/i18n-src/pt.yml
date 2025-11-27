@@ -269,7 +269,7 @@ core:
       view_back: Fundo
       view_left: Esquerda
       view_right: Direita
-      zoom: "Escala {{ zoom }} "
+      zoom: "Escala {{ zoom }}"
       explode_factor: Amplitude de explosão
       toggle_box_helper: Exibir/Ocultar Caixa Limitadora
       toggle_box_dimensions_helper: Exibir/Ocultar Dimensões

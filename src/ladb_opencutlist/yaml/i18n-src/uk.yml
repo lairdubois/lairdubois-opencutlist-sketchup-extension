@@ -731,7 +731,7 @@ tab:
         incompatible_unit: Одиниця несумісна з параметрами оцінки матеріалу
         multiplier_coefficient: Коефіцієнт надбавки
       error:
-        no_typed_material_parts: "Для складання кошторису деталі повинні мати певний тип матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**)."
+        no_typed_material_parts: "Для складання кошторису деталі повинні мати певний тип матеріалу (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** або **$t(tab.materials.type_5)**)."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилка**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} помилок**."
       warning:
@@ -1004,7 +1004,7 @@ tab:
       option_scrap_bin_1d_edge_sizes: Залишок крайки
       option_scrap_bin_1d_sizes_placeholder: довжина х кількість ; ...
       option_scrap_bin_1d_sizes_help: |
-        Вкажіть тут список ваших залишків , які будуть враховані для розкрою.
+        Вкажіть тут список ваших залишків, які будуть враховані для розкрою.
 
         *Якщо одиниця не вказана, буде застосована одиниця моделі.*
       option_scrap_bin_1d_none: Ні
@@ -1649,7 +1649,7 @@ tab:
       edge_decremented_1: Відняти товщину крайок
       raw_estimated: Загальний обсяг
       raw_estimated_help: |
-        Дозволяє розрахувати об'єм для оцінки маси та вартості деталей з цього матеріалу. , погонажу або кромок після розкрою.
+        Дозволяє розрахувати об'єм для оцінки маси та вартості деталей з цього матеріалу, погонажу або кромок після розкрою.
 
         **Корисний обсяг матеріалу**
         Розрахунок загального обсягу із суми обсягів деталей картки розкрою.
@@ -2068,16 +2068,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: "Натисніть на деталь, щоб вибрати її"
+    state_0_to_6_status: ""
+    state_4_status: ""
+    state_5_status: ""
+    state_6_status: ""
+    warning:
+      no_active_part: ""
   smart_draw:
     title: Створити
     action_0: Прямокутник
     action_0_status: Малювання об'єму на основі прямокутної форми
+    action_0_state_0_status: ""
     action_0_state_1_status: "Натисніть, щоб встановити протилежний кут або ввести довжину, ширину"
     action_1: Коло
+    action_1_state_0_status: ""
     action_1_status: Малювання об'єму на основі круглої форми
     action_1_state_1_radius_status: "Натисніть, щоб встановити радіус або ввести відстань"
     action_1_state_1_diameter_status: "Натисніть, щоб встановити діаметр або ввести відстань"
     action_2: Багатокутник
+    action_2_state_0_status: ""
     action_2_status: Малювання об'єму на основі багатокутної форми
     action_2_state_1_status: "Натисніть, щоб встановити нову точку або ввести відстань"
     action_x_state_2_status: "Натисніть, щоб встановити висоту або ввести відстань"
@@ -2112,25 +2123,18 @@ tool:
   smart_handle:
     title: Редагувати
     action_0: Обрати
-    action_0_status: "Натисніть на деталь, щоб вибрати її"
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: "Перетягніть ідентичну деталь, щоб додати її до виділення, і відпустіть, щоб продовжити"
+    action_0_status: ""
     action_1: Копіювати по лінії
-    action_1_status: "Натисніть на деталі, щоб скопіювати її вздовж осі"
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: ""
     action_1_state_2_status: "Натисніть, щоб розмістити копію деталі, або введіть відстань"
     action_2: Копіювати по сітці
-    action_2_status: "Натисніть на деталі, щоб скопіювати її по сітці"
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: ""
     action_2_state_2_status: "Натисніть, щоб розмістити копії деталі, або введіть дві відстані"
     action_3: Перемістити
-    action_3_status: "Оберіть деталь, щоб перемістити її вздовж осі"
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: ""
     action_3_state_2_status: "Натисніть, щоб розмістити деталь або ввести відстань"
     action_4: Розподілити
-    action_4_status: "Натисніть на деталь, щоб розподілити її по осі"
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: ""
     action_4_state_1_status: "Натисніть, щоб визначити першу точку вимірювання"
     action_4_state_2_status: "Натисніть, щоб визначити другу точку вимірювання або ввести відстань"
     action_option_group_copy_measure_type: Вимірювання
@@ -2154,8 +2158,7 @@ tool:
   smart_reshape:
     title: Реконструювати
     action_0: Розтягнути
-    action_0_status: "Натисніть на деталь, щоб вибрати її"
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: ""
     action_0_state_1_status: "Натисніть ручку, щоб розтягнути"
     action_0_state_1a_status: "Натисніть на січну площину, щоб перемістити її"
     action_0_state_1b_status: Додайте січну площину
@@ -2174,7 +2177,7 @@ tool:
     action_option_axes_entity_status: Переміщення по осях деталі
     action_option_options_make_unique_status: Зробити розтягнуті елементи унікальними
     error:
-      curve_intersect: Одна з січних площин перетинає нерозтягуваний елемент (криву або аксесуар)
+      curve_intersect: ""
   smart_paint:
     title: Нанесення матеріалів
     default_material: Матеріал не заданий
