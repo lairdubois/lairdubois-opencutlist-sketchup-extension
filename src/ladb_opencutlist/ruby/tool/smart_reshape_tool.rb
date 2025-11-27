@@ -44,7 +44,7 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler,
-                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_stretch
+                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_rect, :cursor_select_stretch
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
@@ -55,6 +55,7 @@ module Ladb::OpenCutList
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_select_part = create_cursor('select-part', 0, 0)
       @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
+      @cursor_select_rect = create_cursor('select-rect', 0, 0)
       @cursor_select_stretch = create_cursor('select-stretch', 0, 0)
 
     end

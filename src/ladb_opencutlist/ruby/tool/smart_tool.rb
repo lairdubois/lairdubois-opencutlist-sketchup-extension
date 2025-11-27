@@ -2690,6 +2690,9 @@ module Ladb::OpenCutList
 
       when STATE_SELECT_SIBLINGS
         return @tool.cursor_select_part_plus
+
+      when STATE_SELECT_RECT
+        return @tool.cursor_select_rect
       end
 
       super
@@ -2784,7 +2787,7 @@ module Ladb::OpenCutList
         @mouse_down_point_2d = nil
         @mouse_move_point_2d = nil
         unless has_active_part?
-          UI.beep
+          Sketchup.active_model.selection.clear
           return true
         end
         onPartSelected
@@ -2796,11 +2799,13 @@ module Ladb::OpenCutList
           return true
         else
 
+          pick_type = Sketchup::PickHelper::PICK_CROSSING # TODO : @mouse_down_point_2d.x < x ? Sketchup::PickHelper::PICK_INSIDE : Sketchup::PickHelper::PICK_CROSSING
+
           ph = view.pick_helper(x, y)
           ph.window_pick(
             @mouse_down_point_2d,
             Geom::Point3d.new(x, y),
-            @mouse_down_point_2d.x < x ? Sketchup::PickHelper::PICK_INSIDE : Sketchup::PickHelper::PICK_CROSSING
+            pick_type
           )
 
           @tool.remove_all_2d
@@ -2811,15 +2816,26 @@ module Ladb::OpenCutList
 
             model = Sketchup.active_model
             active_path = model.active_path.is_a?(Array) ? model.active_path : []
+            active_path_length = active_path.length
 
-            instances = (0...ph.count)
-                          .map { |i| ph.element_at(i) }
-                          .uniq
-                          .select { |entity| entity.respond_to?(:transformation) }
+            instances = Set[]
+            (0...ph.count).each do |i|
+              path = ph.path_at(i)
+              next if path.first(active_path_length) != active_path
+              if path == active_path
+                model.active_entities.each do |entity|
+                  instances << entity if entity.respond_to?(:transformation)
+                end
+                next
+              end
+              entity, _ = path[active_path_length, 1]
+              instances << entity if entity.respond_to?(:transformation)
+            end
+
             if instances.any?
 
               _reset_active_part
-              _set_active_selection(active_path, instances)
+              _set_active_selection(active_path, instances.to_a)
 
               onPartSelected
 
@@ -2827,7 +2843,7 @@ module Ladb::OpenCutList
             end
 
           end
-          UI.beep
+          Sketchup.active_model.selection.clear
           set_state(STATE_SELECT)
         end
 
@@ -3015,7 +3031,7 @@ module Ladb::OpenCutList
       k_rect = _create_floating_rect(
         start_point_2d: @mouse_down_point_2d,
         end_point_2d: @mouse_move_point_2d,
-        line_stipple: @mouse_down_point_2d.x < @mouse_move_point_2d.x ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_LONG_DASHES,
+        line_stipple: Kuix::LINE_STIPPLE_LONG_DASHES # TODO : @mouse_down_point_2d.x < @mouse_move_point_2d.x ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_LONG_DASHES,
       )
       @tool.append_2d(k_rect)
 
