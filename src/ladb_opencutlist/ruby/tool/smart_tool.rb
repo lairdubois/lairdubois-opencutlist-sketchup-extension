@@ -2746,7 +2746,7 @@ module Ladb::OpenCutList
         @tool.remove_all_2d
 
         unless @mouse_down_point_2d.nil?
-          @mouse_move_point_2d = Geom::Point2d.new(x, y)
+          @mouse_move_point_2d = Geom::Point3d.new(x, y)
           _preview_select_rect(view)
         end
 
