@@ -337,7 +337,7 @@ module Ladb::OpenCutList
               k_group.append(k_mesh)
 
               # Box helper
-              k_box = Kuix::BoxMotif.new
+              k_box = Kuix::BoxMotif3d.new
               k_box.bounds.copy!(@active_drawing_def.bounds)
               k_box.bounds.inflate_all!(inch_offset)
               k_box.color = Kuix::COLOR_BLACK
@@ -464,7 +464,7 @@ module Ladb::OpenCutList
               end
 
               # Box helper
-              k_box = Kuix::RectangleMotif.new
+              k_box = Kuix::RectangleMotif3d.new
               k_box.bounds.origin.copy!(projection_def.bounds.min)
               k_box.bounds.size.copy!(projection_def.bounds)
               k_box.bounds.inflate!(inch_offset, inch_offset, 0)
@@ -592,7 +592,7 @@ module Ladb::OpenCutList
             # end
 
             # Box helper
-            k_rectangle = Kuix::RectangleMotif.new
+            k_rectangle = Kuix::RectangleMotif3d.new
             k_rectangle.bounds.origin.copy!(projection_def.bounds.min)
             k_rectangle.bounds.size.copy!(projection_def.bounds)
             k_rectangle.bounds.inflate!(inch_offset, inch_offset, 0)
@@ -728,7 +728,7 @@ module Ladb::OpenCutList
             end
 
             # Box helper
-            k_rectangle = Kuix::RectangleMotif.new
+            k_rectangle = Kuix::RectangleMotif3d.new
             k_rectangle.bounds.origin.copy!(projection_def.bounds.min)
             k_rectangle.bounds.size.copy!(projection_def.bounds)
             k_rectangle.bounds.inflate!(inch_offset, inch_offset, 0)

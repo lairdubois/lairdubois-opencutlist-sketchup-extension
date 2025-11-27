@@ -77,7 +77,7 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler,
-                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_copy_line, :cursor_select_copy_grid, :cursor_select_move_line, :cursor_select_distribute, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
+                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_rect, :cursor_select_copy_line, :cursor_select_copy_grid, :cursor_select_move_line, :cursor_select_distribute, :cursor_move, :cursor_move_copy, :cursor_pin_1, :cursor_pin_2
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
@@ -88,6 +88,7 @@ module Ladb::OpenCutList
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_select_part = create_cursor('select-part', 0, 0)
       @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
+      @cursor_select_rect = create_cursor('select-rect', 0, 0)
       @cursor_select_copy_line = create_cursor('select-copy-line', 0, 0)
       @cursor_select_copy_grid = create_cursor('select-copy-grid', 0, 0)
       @cursor_select_move_line = create_cursor('select-move-line', 0, 0)
@@ -560,7 +561,7 @@ module Ladb::OpenCutList
 
           dim = dim * 0.5 + px_offset
 
-          k_edge = Kuix::EdgeMotif.new
+          k_edge = Kuix::EdgeMotif3d.new
           k_edge.start.copy!(center.offset(axis.reverse, dim))
           k_edge.end.copy!(center.offset(axis, dim))
           k_edge.start_arrow = true
@@ -580,7 +581,7 @@ module Ladb::OpenCutList
 
         if with_box
 
-          k_box = Kuix::BoxMotif.new
+          k_box = Kuix::BoxMotif3d.new
           k_box.bounds.copy!(eb)
           k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
           k_box.color = Kuix::COLOR_BLACK
@@ -1019,17 +1020,17 @@ module Ladb::OpenCutList
 
             line = [ eb.center, v ]
 
-            plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+            plane_btm = [ eb.corner(0), Z_AXIS ]
             ibtm = Geom.intersect_line_plane(line, plane_btm)
             if !ibtm.nil? && eb.contains?(ibtm)
               move_axis = _get_active_z_axis
             else
-              plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+              plane_lft = [ eb.corner(0), X_AXIS ]
               ilft = Geom.intersect_line_plane(line, plane_lft)
               if !ilft.nil? && eb.contains?(ilft)
                 move_axis = _get_active_x_axis
               else
-                plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+                plane_frt = [ eb.corner(0), Y_AXIS ]
                 ifrt = Geom.intersect_line_plane(line, plane_frt)
                 if !ifrt.nil? && eb.contains?(ifrt)
                   move_axis = _get_active_y_axis
@@ -1093,14 +1094,14 @@ module Ladb::OpenCutList
 
         # Preview bounds
 
-        k_box = Kuix::BoxMotif.new
+        k_box = Kuix::BoxMotif3d.new
         k_box.bounds.copy!(eb)
         k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_box.color = color
         k_box.transformation = et
         @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
-        k_box = Kuix::BoxMotif.new
+        k_box = Kuix::BoxMotif3d.new
         k_box.bounds.copy!(eb)
         k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_box.color = color
@@ -1111,7 +1112,7 @@ module Ladb::OpenCutList
 
       # Preview line
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(dps)
       k_edge.end.copy!(dpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
@@ -1120,7 +1121,7 @@ module Ladb::OpenCutList
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(dps)
       k_edge.end.copy!(dpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
@@ -1138,7 +1139,7 @@ module Ladb::OpenCutList
         unit = @tool.get_unit(view)
 
         k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2'))
-        k_motif.layout_data = Kuix::StaticLayoutDataWithSnap.new(mpe.offset(ve, ve.length + view.pixels_to_model(40, mpe)), unit * 5, unit * 5, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        k_motif.layout_data = Kuix::StaticLayoutDataWithSnap.new(mpe.offset(mps.vector_to(mpe), ve.length + view.pixels_to_model(40, mpe)), unit * 5, unit * 5, Kuix::Anchor.new(Kuix::Anchor::CENTER))
         k_motif.padding.set_all!(unit)
         k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE)
         k_motif.set_style_attribute(:background_color, color)
@@ -1333,23 +1334,25 @@ module Ladb::OpenCutList
 
       eline = [ elps, ev ]
 
-      plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+      plane_btm = [ eb.corner(0), Z_AXIS ]
       ibtm = Geom.intersect_line_plane(eline, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
         evs = ibtm.vector_to(ecenter)
         evs.reverse! if evs.valid? && evs.samedirection?(ev)
       else
-        plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+        plane_lft = [ eb.corner(0), X_AXIS ]
         ilft = Geom.intersect_line_plane(eline, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
           evs = ilft.vector_to(ecenter)
           evs.reverse! if evs.valid? && evs.samedirection?(ev)
         else
-          plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+          plane_frt = [ eb.corner(0), Y_AXIS ]
           ifrt = Geom.intersect_line_plane(eline, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
             evs = ifrt.vector_to(ecenter)
             evs.reverse! if evs.valid? && evs.samedirection?(ev)
+          else
+            evs = Geom::Vector3d.new
           end
         end
       end
@@ -1611,7 +1614,7 @@ module Ladb::OpenCutList
 
       # Preview rectangle
 
-      k_rectangle = Kuix::RectangleMotif.new
+      k_rectangle = Kuix::RectangleMotif3d.new
       k_rectangle.bounds.copy!(db_2d)
       k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_rectangle.line_width = 1.5 unless @locked_normal.nil?
@@ -1620,7 +1623,7 @@ module Ladb::OpenCutList
       k_rectangle.transformation = ht
       @tool.append_3d(k_rectangle, LAYER_3D_HANDLE_PREVIEW)
 
-      k_rectangle = Kuix::RectangleMotif.new
+      k_rectangle = Kuix::RectangleMotif3d.new
       k_rectangle.bounds.copy!(db_2d)
       k_rectangle.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
       k_rectangle.line_width = 1.5 unless @locked_normal.nil?
@@ -1683,7 +1686,7 @@ module Ladb::OpenCutList
           dvu = Geom::Vector3d.new(dv_2d.x * [ x, 1 ].min, dv_2d.y * [ y, 1 ].min).transform(ht)
           dp = dps.offset(dvu)
 
-          k_box = Kuix::BoxMotif.new
+          k_box = Kuix::BoxMotif3d.new
           k_box.bounds.copy!(eb)
           k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
           k_box.color = color
@@ -1989,23 +1992,25 @@ module Ladb::OpenCutList
 
       fn_compute = lambda { |line, v|
 
-        plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+        plane_btm = [ eb.corner(0), Z_AXIS ]
         ibtm = Geom.intersect_line_plane(line, plane_btm)
         if !ibtm.nil? && eb.contains?(ibtm)
           evs = ibtm.vector_to(ecenter)
           evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
         else
-          plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+          plane_lft = [ eb.corner(0), X_AXIS ]
           ilft = Geom.intersect_line_plane(line, plane_lft)
           if !ilft.nil? && eb.contains?(ilft)
             evs = ilft.vector_to(ecenter)
             evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
           else
-            plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+            plane_frt = [ eb.corner(0), Y_AXIS ]
             ifrt = Geom.intersect_line_plane(line, plane_frt)
             if !ifrt.nil? && eb.contains?(ifrt)
               evs = ifrt.vector_to(ecenter)
               evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
+            else
+              evs = Geom::Vector3d.new
             end
           end
         end
@@ -2276,17 +2281,17 @@ module Ladb::OpenCutList
 
             line = [ eb.center, v ]
 
-            plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+            plane_btm = [ eb.corner(0), Z_AXIS ]
             ibtm = Geom.intersect_line_plane(line, plane_btm)
             if !ibtm.nil? && eb.contains?(ibtm)
               move_axis = _get_active_z_axis
             else
-              plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+              plane_lft = [ eb.corner(0), X_AXIS ]
               ilft = Geom.intersect_line_plane(line, plane_lft)
               if !ilft.nil? && eb.contains?(ilft)
                 move_axis = _get_active_x_axis
               else
-                plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+                plane_frt = [ eb.corner(0), Y_AXIS ]
                 ifrt = Geom.intersect_line_plane(line, plane_frt)
                 if !ifrt.nil? && eb.contains?(ifrt)
                   move_axis = _get_active_y_axis
@@ -2334,7 +2339,7 @@ module Ladb::OpenCutList
 
       # Preview line
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(dps)
       k_edge.end.copy!(dpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
@@ -2343,7 +2348,7 @@ module Ladb::OpenCutList
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(dps)
       k_edge.end.copy!(dpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
@@ -2356,14 +2361,14 @@ module Ladb::OpenCutList
 
       # Preview bounds
 
-      k_box = Kuix::BoxMotif.new
+      k_box = Kuix::BoxMotif3d.new
       k_box.bounds.copy!(eb)
       k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_box.color = color
       k_box.transformation = et
       @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
-      k_box = Kuix::BoxMotif.new
+      k_box = Kuix::BoxMotif3d.new
       k_box.bounds.copy!(eb)
       k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_box.color = color
@@ -2460,23 +2465,25 @@ module Ladb::OpenCutList
       ecenter = eb.center
       eline = [ ecenter, ev ]
 
-      plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+      plane_btm = [ eb.corner(0), Z_AXIS ]
       ibtm = Geom.intersect_line_plane(eline, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
         evs = ibtm.vector_to(ecenter)
         evs.reverse! if evs.valid? && evs.samedirection?(ev)
       else
-        plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+        plane_lft = [ eb.corner(0), X_AXIS ]
         ilft = Geom.intersect_line_plane(eline, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
           evs = ilft.vector_to(ecenter)
           evs.reverse! if evs.valid? && evs.samedirection?(ev)
         else
-          plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+          plane_frt = [ eb.corner(0), Y_AXIS ]
           ifrt = Geom.intersect_line_plane(eline, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
             evs = ifrt.vector_to(ecenter)
             evs.reverse! if evs.valid? && evs.samedirection?(ev)
+          else
+            evs = Geom::Vector3d.new
           end
         end
       end
@@ -2773,17 +2780,17 @@ module Ladb::OpenCutList
 
             line = [ ORIGIN, v ]
 
-            plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
+            plane_btm = [ bounds.corner(0), Z_AXIS ]
             ibtm = Geom.intersect_line_plane(line, plane_btm)
             if !ibtm.nil? && bounds.contains?(ibtm)
               move_axis = _get_active_z_axis
             else
-              plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
+              plane_lft = [ bounds.corner(0), X_AXIS ]
               ilft = Geom.intersect_line_plane(line, plane_lft)
               if !ilft.nil? && bounds.contains?(ilft)
                 move_axis = _get_active_x_axis
               else
-                plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
+                plane_frt = [ bounds.corner(0), Y_AXIS ]
                 ifrt = Geom.intersect_line_plane(line, plane_frt)
                 if !ifrt.nil? && bounds.contains?(ifrt)
                   move_axis = _get_active_y_axis
@@ -2843,7 +2850,7 @@ module Ladb::OpenCutList
         k_segments.transformation = mt * drawing_def.transformation
         @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
 
-        k_box = Kuix::BoxMotif.new
+        k_box = Kuix::BoxMotif3d.new
         k_box.bounds.copy!(eb)
         k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_box.color = color
@@ -2854,7 +2861,7 @@ module Ladb::OpenCutList
 
       # Preview line
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(@picked_handle_start_point)
       k_edge.end.copy!(lps)
       k_edge.line_width = 1.5
@@ -2863,7 +2870,7 @@ module Ladb::OpenCutList
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(@tool.is_key_ctrl_or_option_down? ? @mouse_snap_point : @mouse_ip.position)
       k_edge.end.copy!(lpe)
       k_edge.line_width = 1.5
@@ -2874,7 +2881,7 @@ module Ladb::OpenCutList
 
       unless @raytest_path.nil?
 
-        k_edge = Kuix::EdgeMotif.new
+        k_edge = Kuix::EdgeMotif3d.new
         k_edge.start.copy!(@picked_handle_start_point)
         k_edge.end.copy!(@mouse_snap_point)
         k_edge.line_width = 2.0
@@ -2891,7 +2898,7 @@ module Ladb::OpenCutList
 
       @tool.append_3d(_create_floating_points(points: [ center ], style: Kuix::POINT_STYLE_PLUS), LAYER_3D_HANDLE_PREVIEW)
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(lps)
       k_edge.end.copy!(lpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
@@ -2900,7 +2907,7 @@ module Ladb::OpenCutList
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_HANDLE_PREVIEW)
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(lps)
       k_edge.end.copy!(lpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
@@ -3078,23 +3085,25 @@ module Ladb::OpenCutList
       ecenter = eb.center
       eline = [ ecenter, ev ]
 
-      plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+      plane_btm = [ eb.corner(0), Z_AXIS ]
       ibtm = Geom.intersect_line_plane(eline, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
         evs = ecenter.vector_to(ibtm)
         evs.reverse! if evs.valid? && evs.samedirection?(ev)
       else
-        plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+        plane_lft = [ eb.corner(0), X_AXIS ]
         ilft = Geom.intersect_line_plane(eline, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
           evs = ecenter.vector_to(ilft)
           evs.reverse! if evs.valid? && evs.samedirection?(ev)
         else
-          plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+          plane_frt = [ eb.corner(0), Y_AXIS ]
           ifrt = Geom.intersect_line_plane(eline, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
             evs = ecenter.vector_to(ifrt)
             evs.reverse! if evs.valid? && evs.samedirection?(ev)
+          else
+            evs = Geom::Vector3d.new
           end
         end
       end

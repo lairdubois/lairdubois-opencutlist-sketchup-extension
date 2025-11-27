@@ -783,7 +783,7 @@ tab:
       option_full_width_diagram: Отображать по ширине экрана
       option_full_width_diagram_0: Нет
       option_full_width_diagram_1: Да
-      option_full_width_diagram_help: "Если выбрать опцию \"Да\" , карты раскроя будут отображены по доступной ширине экрана. В противном случае, их ширина определяется фиксированным коэффициентом масштабирования."
+      option_full_width_diagram_help: "Если выбрать опцию \"Да\", карты раскроя будут отображены по доступной ширине экрана. В противном случае, их ширина определяется фиксированным коэффициентом масштабирования."
       option_wrap_length: Длина разбивки
       option_wrap_length_help: Максимальная длина единичной части схематического отображения разбивки раскроя бухты кромочной полосы на отдельные отрезки.
       option_hide_cross: Обрезки
@@ -2068,16 +2068,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: "Кликните на деталь, чтобы выделить ее"
+    state_0_to_6_status: Выбор родительского элемента
+    state_4_status: "Перетащите идентичный элемент, имеющий того же родителя, чтобы добавить его в выделение, и отпустите, чтобы продолжить"
+    state_5_status: "Проведите указателем мыши, чтобы добавить в выделение, и отпустите, чтобы продолжить"
+    state_6_status: Выберите элемент из списка
+    warning:
+      no_active_part: Сначала вы должны выделить одну деталь
   smart_draw:
     title: Моделировать
     action_0: Создать параллелепипед
     action_0_status: Построение объема по прямоугольнику
+    action_0_state_0_status: "Кликните, чтобы задать первую точку прямоугольника"
     action_0_state_1_status: "Кликните, чтобы задать противоположный угол, или введите длину, ширину"
     action_1: Создать цилиндр
+    action_1_state_0_status: "Кликните, чтобы задать центр окружности"
     action_1_status: Построение объема по окружности
     action_1_state_1_radius_status: "Кликните, чтобы задать радиус или введите нужный размер"
     action_1_state_1_diameter_status: "Кликните, чтобы задать диаметр или введите нужный размер"
     action_2: Создать многоугольник
+    action_2_state_0_status: "Кликните, чтобы задать первую точку многоугольника"
     action_2_status: Построение объема на основе многоугольника
     action_2_state_1_status: "Кликните, чтобы задать новую точку или введите нужный размер"
     action_x_state_2_status: "Кликните, чтобы задать высоту или введите нужный размер"
@@ -2112,25 +2123,18 @@ tool:
   smart_handle:
     title: Конструктор
     action_0: Выделить
-    action_0_status: "Кликните на деталь, чтобы выделить ее"
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: "Наведите курсор на идентичный элемент, чтобы добавить его в выделение, и отпустите, чтобы продолжить"
+    action_0_status: Выделите деталь
     action_1: Копирование по линии
-    action_1_status: "Кликните на деталь, чтобы скопировать ее вдоль оси"
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: Копирование детали вдоль оси
     action_1_state_2_status: "Кликните, чтобы переместить копию детали, или введите необходимое расстояние"
     action_2: Копирование по сетке
-    action_2_status: "Кликните на деталь, чтобы скопировать ее по сетке"
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: Копирование детали вдоль сетки
     action_2_state_2_status: "Кликните, чтобы разнести копии детали или введите два нужных размера сетки"
     action_3: Переместить
-    action_3_status: "Кликните на деталь, чтобы переместить ее вдоль оси"
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: Перемещение детали вдоль оси
     action_3_state_2_status: "Кликните по нужной детали, сделайте выбор направления и задайте нужное расстояние"
     action_4: Распределить
-    action_4_status: "Для распределения копиий детали 1-ым кликом выделите нужную деталь, 2-ым кликом выберите направление и переместите. После 3 клика можно задать количество копий"
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: Расположить деталь вдоль оси
     action_4_state_1_status: "Кликните, чтобы задать первую точку измерения"
     action_4_state_2_status: "Кликните, чтобы задать вторую точку измерения или введите нужное расстояние"
     action_option_group_copy_measure_type: Отсчет
@@ -2154,8 +2158,7 @@ tool:
   smart_reshape:
     title: Изменить
     action_0: Растянуть
-    action_0_status: "Кликните на деталь, чтобы выделить ее"
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: Растянуть деталь
     action_0_state_1_status: "Кликните на ручку, чтобы растянуть"
     action_0_state_1a_status: "Кликните на схему распила, чтобы переместить ее"
     action_0_state_1b_status: Добавить схему распила
@@ -2174,7 +2177,7 @@ tool:
     action_option_axes_entity_status: Перемещение по осям детали
     action_option_options_make_unique_status: Сделать растянутые элементы уникальными
     error:
-      curve_intersect: Одна из плоскостей распила проходит через нерастяжимый элемент (кривую или аксессуар)
+      curve_intersect: Одна из плоскостей разреза проходит через нерастяжимую кривую
   smart_paint:
     title: Раскраска
     default_material: Материал не задан

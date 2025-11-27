@@ -44,7 +44,7 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler,
-                :cursor_select, :cursor_select_part, :cursor_select_part_plus
+                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_rect, :cursor_select_stretch
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
@@ -55,6 +55,8 @@ module Ladb::OpenCutList
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_select_part = create_cursor('select-part', 0, 0)
       @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
+      @cursor_select_rect = create_cursor('select-rect', 0, 0)
+      @cursor_select_stretch = create_cursor('select-stretch', 0, 0)
 
     end
 
@@ -548,6 +550,16 @@ module Ladb::OpenCutList
 
     # -----
 
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT, STATE_RESHAPE_START, STATE_RESHAPE
+        return @tool.cursor_select_stretch
+      end
+
+      super
+    end
+
     def get_state_status(state)
 
       case state
@@ -953,7 +965,7 @@ module Ladb::OpenCutList
       @locked_axis = nil if @locked_axis && keb.dim_by_axis(@locked_axis) == 0
       @picked_axis = @locked_axis unless @locked_axis.nil?
 
-      ph = view.pick_helper(x, y, 20)
+      ph = view.pick_helper(x, y)
 
       # Snap to grip?
 
@@ -961,7 +973,7 @@ module Ladb::OpenCutList
         grip_indices = Kuix::Bounds3d.faces_by_axis(axis)
         grip_indices.each do |grip_index|
           p = keb.face_center(grip_index).to_p.transform(et)
-          if ph.test_point(p)
+          if ph.test_point(p, x, y, @picked_axis.nil? || axis == @picked_axis ? 30 : 10)
             @picked_axis = axis
             @picked_grip_index = grip_index
             @split_def = nil
@@ -1242,7 +1254,7 @@ module Ladb::OpenCutList
           section_color = color
           section_color = Kuix::COLOR_DARK_GREY if is_remove
 
-          k_rectangle = Kuix::RectangleMotif.new
+          k_rectangle = Kuix::RectangleMotif3d.new
           k_rectangle.bounds.copy!(section)
           k_rectangle.line_width = if is_highligted
                                3
@@ -1279,7 +1291,7 @@ module Ladb::OpenCutList
 
         p1, p2 = Kuix::Bounds3d.faces_by_axis(@picked_axis).map { |face| keb.face_center(face).to_p }
 
-        k_edge = Kuix::EdgeMotif.new
+        k_edge = Kuix::EdgeMotif3d.new
         k_edge.start.copy!(p1)
         k_edge.end.copy!(p2)
         k_edge.line_width = @picked_axis == @locked_axis ? 2 : 1.5
@@ -1325,7 +1337,7 @@ module Ladb::OpenCutList
 
       # Box
 
-      k_box = Kuix::BoxMotif.new
+      k_box = Kuix::BoxMotif3d.new
       k_box.bounds.copy!(eb)
       k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_box.transformation = et
@@ -1339,7 +1351,7 @@ module Ladb::OpenCutList
 
         axes.map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } }.each do |p0, p1|
 
-          k_edge = Kuix::EdgeMotif.new
+          k_edge = Kuix::EdgeMotif3d.new
           k_edge.start.copy!(p0)
           k_edge.end.copy!(p1)
           k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -1480,7 +1492,7 @@ module Ladb::OpenCutList
 
       color = _get_vector_color(@picked_axis.transform(et), Kuix::COLOR_DARK_GREY)
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(lps)
       k_edge.end.copy!(lpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
@@ -1488,7 +1500,7 @@ module Ladb::OpenCutList
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(lps)
       k_edge.end.copy!(lpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
