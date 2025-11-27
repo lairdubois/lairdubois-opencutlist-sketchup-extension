@@ -2797,7 +2797,11 @@ module Ladb::OpenCutList
         else
 
           ph = view.pick_helper(x, y)
-          ph.window_pick(@mouse_down_point_2d, Geom::Point3d.new(x, y), Sketchup::PickHelper::PICK_INSIDE)
+          ph.window_pick(
+            @mouse_down_point_2d,
+            Geom::Point3d.new(x, y),
+            @mouse_down_point_2d.x < x ? Sketchup::PickHelper::PICK_INSIDE : Sketchup::PickHelper::PICK_CROSSING
+          )
 
           @tool.remove_all_2d
           @mouse_down_point_2d = nil
@@ -3011,7 +3015,8 @@ module Ladb::OpenCutList
       k_rect = _create_floating_rect(
         start_point_2d: @mouse_down_point_2d,
         end_point_2d: @mouse_move_point_2d,
-        )
+        line_stipple: @mouse_down_point_2d.x < @mouse_move_point_2d.x ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_LONG_DASHES,
+      )
       @tool.append_2d(k_rect)
 
     end

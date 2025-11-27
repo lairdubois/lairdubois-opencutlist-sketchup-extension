@@ -44,7 +44,7 @@ module Ladb::OpenCutList
     # -----
 
     attr_reader :callback_action_handler,
-                :cursor_select, :cursor_select_part, :cursor_select_part_plus
+                :cursor_select, :cursor_select_part, :cursor_select_part_plus, :cursor_select_stretch
 
     def initialize(current_action: nil, callback_action_handler: nil)
       super(current_action: current_action)
@@ -55,6 +55,7 @@ module Ladb::OpenCutList
       @cursor_select = create_cursor('select', 0, 0)
       @cursor_select_part = create_cursor('select-part', 0, 0)
       @cursor_select_part_plus = create_cursor('select-part-plus', 0, 0)
+      @cursor_select_stretch = create_cursor('select-stretch', 0, 0)
 
     end
 
@@ -547,6 +548,16 @@ module Ladb::OpenCutList
     end
 
     # -----
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT, STATE_RESHAPE_START, STATE_RESHAPE
+        return @tool.cursor_select_stretch
+      end
+
+      super
+    end
 
     def get_state_status(state)
 
