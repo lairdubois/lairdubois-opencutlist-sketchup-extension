@@ -965,7 +965,7 @@ module Ladb::OpenCutList
       @locked_axis = nil if @locked_axis && keb.dim_by_axis(@locked_axis) == 0
       @picked_axis = @locked_axis unless @locked_axis.nil?
 
-      ph = view.pick_helper(x, y, 20)
+      ph = view.pick_helper(x, y)
 
       # Snap to grip?
 
@@ -973,7 +973,7 @@ module Ladb::OpenCutList
         grip_indices = Kuix::Bounds3d.faces_by_axis(axis)
         grip_indices.each do |grip_index|
           p = keb.face_center(grip_index).to_p.transform(et)
-          if ph.test_point(p)
+          if ph.test_point(p, x, y, @picked_axis.nil? || axis == @picked_axis ? 30 : 15)
             @picked_axis = axis
             @picked_grip_index = grip_index
             @split_def = nil
