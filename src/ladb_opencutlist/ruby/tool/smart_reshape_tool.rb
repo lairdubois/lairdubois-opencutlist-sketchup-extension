@@ -1242,7 +1242,7 @@ module Ladb::OpenCutList
           section_color = color
           section_color = Kuix::COLOR_DARK_GREY if is_remove
 
-          k_rectangle = Kuix::RectangleMotif.new
+          k_rectangle = Kuix::RectangleMotif3d.new
           k_rectangle.bounds.copy!(section)
           k_rectangle.line_width = if is_highligted
                                3
@@ -1279,7 +1279,7 @@ module Ladb::OpenCutList
 
         p1, p2 = Kuix::Bounds3d.faces_by_axis(@picked_axis).map { |face| keb.face_center(face).to_p }
 
-        k_edge = Kuix::EdgeMotif.new
+        k_edge = Kuix::EdgeMotif3d.new
         k_edge.start.copy!(p1)
         k_edge.end.copy!(p2)
         k_edge.line_width = @picked_axis == @locked_axis ? 2 : 1.5
@@ -1325,7 +1325,7 @@ module Ladb::OpenCutList
 
       # Box
 
-      k_box = Kuix::BoxMotif.new
+      k_box = Kuix::BoxMotif3d.new
       k_box.bounds.copy!(eb)
       k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
       k_box.transformation = et
@@ -1339,7 +1339,7 @@ module Ladb::OpenCutList
 
         axes.map { |axis| Kuix::Bounds3d.faces_by_axis(axis).map { |face| keb.face_center(face).to_p } }.each do |p0, p1|
 
-          k_edge = Kuix::EdgeMotif.new
+          k_edge = Kuix::EdgeMotif3d.new
           k_edge.start.copy!(p0)
           k_edge.end.copy!(p1)
           k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -1480,7 +1480,7 @@ module Ladb::OpenCutList
 
       color = _get_vector_color(@picked_axis.transform(et), Kuix::COLOR_DARK_GREY)
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(lps)
       k_edge.end.copy!(lpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES
@@ -1488,7 +1488,7 @@ module Ladb::OpenCutList
       k_edge.on_top = true
       @tool.append_3d(k_edge, LAYER_3D_RESHAPE_PREVIEW)
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(lps)
       k_edge.end.copy!(lpe)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES

@@ -9,25 +9,25 @@ module Ladb::OpenCutList::Kuix
 
       @pixel_size = pixel_size
 
-      @box_0 = BoxFillMotif.new
+      @box_0 = BoxFillMotif3d.new
       @box_0.bounds.size.set!(0.05, 0.05, 0.05)
       @box_0.bounds.origin.set!(-0.025, -0.025, -0.025)
       @box_0.color = color_0
       append(@box_0)
 
-      @box_x = BoxFillMotif.new
+      @box_x = BoxFillMotif3d.new
       @box_x.bounds.size.set!(1, 0.05, 0.05)
       @box_x.bounds.origin.set!(0.025, -0.025, -0.025)
       @box_x.color = color_x
       append(@box_x)
 
-      @box_y = BoxFillMotif.new
+      @box_y = BoxFillMotif3d.new
       @box_y.bounds.size.set!(0.05, 1, 0.05)
       @box_y.bounds.origin.set!(-0.025, 0.025, -0.025)
       @box_y.color = color_y
       append(@box_y)
 
-      @box_z = BoxFillMotif.new
+      @box_z = BoxFillMotif3d.new
       @box_z.bounds.size.set!(0.05, 0.05, 1)
       @box_z.bounds.origin.set!(-0.025, -0.025, 0.025)
       @box_z.color = color_z

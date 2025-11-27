@@ -49,7 +49,7 @@ module Ladb::OpenCutList
             end
 
             # Box helper
-            k_box = Kuix::BoxMotif.new
+            k_box = Kuix::BoxMotif3d.new
             k_box.bounds.copy!(@drawing_def.bounds)
             k_box.color = highlight_def.color
             k_box.line_width = 1

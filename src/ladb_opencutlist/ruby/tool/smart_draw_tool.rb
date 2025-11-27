@@ -915,7 +915,7 @@ module Ladb::OpenCutList
 
           if pp.one?
 
-            k_edge = Kuix::EdgeMotif.new
+            k_edge = Kuix::EdgeMotif3d.new
             k_edge.start.copy!(p)
             k_edge.end.copy!(p0)
             k_edge.line_width = 1
@@ -926,7 +926,7 @@ module Ladb::OpenCutList
 
           else
 
-            k_edge = Kuix::EdgeMotif.new
+            k_edge = Kuix::EdgeMotif3d.new
             k_edge.start.copy!(p0)
             k_edge.end.copy!(p)
             k_edge.line_width = 1
@@ -934,7 +934,7 @@ module Ladb::OpenCutList
             k_edge.color = Kuix::COLOR_BLACK
             @tool.append_3d(k_edge)
 
-            k_edge = Kuix::EdgeMotif.new
+            k_edge = Kuix::EdgeMotif3d.new
             k_edge.start.copy!(p)
             k_edge.end.copy!(pm)
             k_edge.line_width = 1
@@ -996,7 +996,7 @@ module Ladb::OpenCutList
         @tool.append_3d(k_point)
 
         # Draw line from first picked point to snap point
-        k_edge = Kuix::EdgeMotif.new
+        k_edge = Kuix::EdgeMotif3d.new
         k_edge.start.copy!(@picked_shape_start_point)
         k_edge.end.copy!(@mouse_snap_point)
         k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -1974,7 +1974,7 @@ module Ladb::OpenCutList
 
       if offset != 0
 
-        k_rectangle = Kuix::RectangleMotif.new
+        k_rectangle = Kuix::RectangleMotif3d.new
         k_rectangle.bounds.size.set!(width, height)
         k_rectangle.line_width = 1
         k_rectangle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -1986,7 +1986,7 @@ module Ladb::OpenCutList
 
       end
 
-      k_rectangle = Kuix::RectangleMotif.new
+      k_rectangle = Kuix::RectangleMotif3d.new
       k_rectangle.bounds.origin.set!(-offset, -offset)
       k_rectangle.bounds.size.set!(width + 2 * offset, height + 2 * offset)
       k_rectangle.line_width = @locked_normal ? 3 : 1.5
@@ -2045,7 +2045,7 @@ module Ladb::OpenCutList
 
         if bounds.width == bounds.height && bounds.width != 0
 
-          k_edge = Kuix::EdgeMotif.new
+          k_edge = Kuix::EdgeMotif3d.new
           k_edge.start.copy!(_fetch_option_rectangle_centered ? @picked_shape_start_point.offset(@mouse_snap_point.vector_to(@picked_shape_start_point)) : @picked_shape_start_point)
           k_edge.end.copy!(@mouse_snap_point)
           k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -2064,7 +2064,7 @@ module Ladb::OpenCutList
 
           if bounds.width != bounds.height
 
-            k_edge = Kuix::EdgeMotif.new
+            k_edge = Kuix::EdgeMotif3d.new
             k_edge.start.copy!(@picked_shape_start_point)
             k_edge.end.copy!(@mouse_snap_point)
             k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -2389,7 +2389,7 @@ module Ladb::OpenCutList
 
       if offset != 0
 
-        k_circle = Kuix::CircleMotif.new(_fetch_option_segment_count)
+        k_circle = Kuix::CircleMotif3d.new(_fetch_option_segment_count)
         k_circle.bounds.size.set_all!(diameter)
         k_circle.line_width = 1
         k_circle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -2400,7 +2400,7 @@ module Ladb::OpenCutList
 
       end
 
-      k_circle = Kuix::CircleMotif.new(_fetch_option_segment_count)
+      k_circle = Kuix::CircleMotif3d.new(_fetch_option_segment_count)
       k_circle.bounds.size.set_all!(diameter + offset)
       k_circle.line_width = @locked_normal ? 3 : 1.5
       k_circle.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES if _fetch_option_construction
@@ -2423,7 +2423,7 @@ module Ladb::OpenCutList
       )
       @tool.append_3d(k_points)
 
-      k_edge = Kuix::EdgeMotif.new
+      k_edge = Kuix::EdgeMotif3d.new
       k_edge.start.copy!(measure_start)
       k_edge.end.copy!(@mouse_snap_point)
       k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -3221,7 +3221,7 @@ module Ladb::OpenCutList
               )
               @tool.append_3d(k_points)
 
-              k_edge = Kuix::EdgeMotif.new
+              k_edge = Kuix::EdgeMotif3d.new
               k_edge.start.copy!(point)
               k_edge.end.copy!(pp)
               k_edge.line_stipple = Kuix::LINE_STIPPLE_DOTTED

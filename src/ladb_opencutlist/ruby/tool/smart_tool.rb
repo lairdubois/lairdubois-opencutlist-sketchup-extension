@@ -438,7 +438,7 @@ module Ladb::OpenCutList
           if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
             # Back arrow
-            arrow = Kuix::ArrowMotif.new
+            arrow = Kuix::ArrowMotif3d.new
             arrow.patterns_transformation = size.oriented_transformation
             arrow.bounds.origin.copy!(bounds.min)
             arrow.bounds.size.copy!(bounds)
@@ -448,7 +448,7 @@ module Ladb::OpenCutList
             part_helper.append(arrow)
 
             # Front arrow
-            arrow = Kuix::ArrowMotif.new
+            arrow = Kuix::ArrowMotif3d.new
             arrow.patterns_transformation = size.oriented_transformation
             arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
             arrow.bounds.origin.copy!(bounds.min)
@@ -1859,22 +1859,21 @@ module Ladb::OpenCutList
     def _create_floating_rect(
       start_point_2d:,
       end_point_2d:,
-      border_color: Kuix::COLOR_BLACK,
-      background_color: nil
+      line_width: 1,
+      line_stipple: Kuix::LINE_STIPPLE_SOLID,
+      color: Kuix::COLOR_BLACK
     )
-
-      unit = @tool.get_unit
 
       x = [ start_point_2d.x, end_point_2d.x ].min
       y = [ start_point_2d.y, end_point_2d.y ].min
       width = (end_point_2d.x - start_point_2d.x).abs
       height = (end_point_2d.y - start_point_2d.y).abs
 
-      k_rect = Kuix::Panel.new
+      k_rect = Kuix::RectangleMotif2d.new
       k_rect.layout_data = Kuix::StaticLayoutData.new(x, y, width, height, Kuix::Anchor.new(Kuix::Anchor::TOP_LEFT))
-      k_rect.set_style_attribute(:border_color, border_color)
-      k_rect.set_style_attribute(:background_color, background_color)
-      k_rect.border.set_all!(unit * 0.25)
+      k_rect.line_width = line_width
+      k_rect.line_stipple = line_stipple
+      k_rect.set_style_attribute(:color, color)
       k_rect.hittable = false
 
       k_rect
@@ -2347,7 +2346,7 @@ module Ladb::OpenCutList
           if _preview_arrows?
 
             # Back arrow
-            k_arrow = Kuix::ArrowMotif.new
+            k_arrow = Kuix::ArrowMotif3d.new
             k_arrow.bounds.copy!(eb)
             k_arrow.color = Kuix::COLOR_WHITE
             k_arrow.line_width = 2
@@ -2356,7 +2355,7 @@ module Ladb::OpenCutList
             @tool.append_3d(k_arrow, layer)
 
             # Front arrow
-            k_arrow = Kuix::ArrowMotif.new
+            k_arrow = Kuix::ArrowMotif3d.new
             k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
             k_arrow.bounds.copy!(eb)
             k_arrow.color = Kuix::COLOR_WHITE
@@ -2368,7 +2367,7 @@ module Ladb::OpenCutList
 
           if _preview_box?
 
-            k_box = Kuix::BoxMotif.new
+            k_box = Kuix::BoxMotif3d.new
             k_box.bounds.copy!(eb)
             k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
             k_box.color = Kuix::COLOR_BLACK

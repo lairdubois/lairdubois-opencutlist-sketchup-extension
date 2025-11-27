@@ -68,7 +68,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class EdgeMotif < Motif3d
+  class EdgeMotif3d < Motif3d
 
     attr_reader :start, :end
     attr_accessor :start_arrow, :end_arrow,
@@ -168,7 +168,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class CircleMotif < Motif3d
+  class CircleMotif3d < Motif3d
 
     def initialize(segment_count = 24, id = nil)
       delta = 2 * Math::PI / segment_count
@@ -181,7 +181,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class RectangleMotif < Motif3d
+  class RectangleMotif3d < Motif3d
 
     def initialize(id = nil)
       super([[
@@ -197,7 +197,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class BoxMotif < Motif3d
+  class BoxMotif3d < Motif3d
 
     def initialize(id = nil)
       super([
@@ -236,7 +236,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class BoxFillMotif < Motif3d
+  class BoxFillMotif3d < Motif3d
 
     def initialize(id = nil)
       super([[
@@ -266,7 +266,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class ArrowMotif < Motif3d
+  class ArrowMotif3d < Motif3d
 
     def initialize(offset = 0.1, id = nil)
       super([[
