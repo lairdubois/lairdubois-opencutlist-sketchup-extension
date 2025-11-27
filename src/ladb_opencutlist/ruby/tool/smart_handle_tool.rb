@@ -1030,7 +1030,7 @@ module Ladb::OpenCutList
               if !ilft.nil? && eb.contains?(ilft)
                 move_axis = _get_active_x_axis
               else
-                plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+                plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(4), eb.corner(1))
                 ifrt = Geom.intersect_line_plane(line, plane_frt)
                 if !ifrt.nil? && eb.contains?(ifrt)
                   move_axis = _get_active_y_axis
@@ -1139,7 +1139,7 @@ module Ladb::OpenCutList
         unit = @tool.get_unit(view)
 
         k_motif = Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.5,0L0.5,0.2 M0.5,0.4L0.5,0.6 M0.5,0.8L0.5,1 M0,0.2L0.3,0.5L0,0.8L0,0.2 M1,0.2L0.7,0.5L1,0.8L1,0.2'))
-        k_motif.layout_data = Kuix::StaticLayoutDataWithSnap.new(mpe.offset(ve, ve.length + view.pixels_to_model(40, mpe)), unit * 5, unit * 5, Kuix::Anchor.new(Kuix::Anchor::CENTER))
+        k_motif.layout_data = Kuix::StaticLayoutDataWithSnap.new(mpe.offset(mps.vector_to(mpe), ve.length + view.pixels_to_model(40, mpe)), unit * 5, unit * 5, Kuix::Anchor.new(Kuix::Anchor::CENTER))
         k_motif.padding.set_all!(unit)
         k_motif.set_style_attribute(:color, Kuix::COLOR_WHITE)
         k_motif.set_style_attribute(:background_color, color)
@@ -1334,23 +1334,25 @@ module Ladb::OpenCutList
 
       eline = [ elps, ev ]
 
-      plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+      plane_btm = [ eb.corner(0), Z_AXIS ]
       ibtm = Geom.intersect_line_plane(eline, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
         evs = ibtm.vector_to(ecenter)
         evs.reverse! if evs.valid? && evs.samedirection?(ev)
       else
-        plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+        plane_lft = [ eb.corner(0), X_AXIS ]
         ilft = Geom.intersect_line_plane(eline, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
           evs = ilft.vector_to(ecenter)
           evs.reverse! if evs.valid? && evs.samedirection?(ev)
         else
-          plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+          plane_frt = [ eb.corner(0), Y_AXIS ]
           ifrt = Geom.intersect_line_plane(eline, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
             evs = ifrt.vector_to(ecenter)
             evs.reverse! if evs.valid? && evs.samedirection?(ev)
+          else
+            evs = Geom::Vector3d.new
           end
         end
       end
@@ -1990,23 +1992,25 @@ module Ladb::OpenCutList
 
       fn_compute = lambda { |line, v|
 
-        plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+        plane_btm = [ eb.corner(0), Z_AXIS ]
         ibtm = Geom.intersect_line_plane(line, plane_btm)
         if !ibtm.nil? && eb.contains?(ibtm)
           evs = ibtm.vector_to(ecenter)
           evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
         else
-          plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+          plane_lft = [ eb.corner(0), X_AXIS ]
           ilft = Geom.intersect_line_plane(line, plane_lft)
           if !ilft.nil? && eb.contains?(ilft)
             evs = ilft.vector_to(ecenter)
             evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
           else
-            plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+            plane_frt = [ eb.corner(0), Y_AXIS ]
             ifrt = Geom.intersect_line_plane(line, plane_frt)
             if !ifrt.nil? && eb.contains?(ifrt)
               evs = ifrt.vector_to(ecenter)
               evs.reverse! if v.valid? && evs.valid? && evs.samedirection?(v)
+            else
+              evs = Geom::Vector3d.new
             end
           end
         end
@@ -2287,7 +2291,7 @@ module Ladb::OpenCutList
               if !ilft.nil? && eb.contains?(ilft)
                 move_axis = _get_active_x_axis
               else
-                plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+                plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(4), eb.corner(1))
                 ifrt = Geom.intersect_line_plane(line, plane_frt)
                 if !ifrt.nil? && eb.contains?(ifrt)
                   move_axis = _get_active_y_axis
@@ -2461,23 +2465,25 @@ module Ladb::OpenCutList
       ecenter = eb.center
       eline = [ ecenter, ev ]
 
-      plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+      plane_btm = [ eb.corner(0), Z_AXIS ]
       ibtm = Geom.intersect_line_plane(eline, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
         evs = ibtm.vector_to(ecenter)
         evs.reverse! if evs.valid? && evs.samedirection?(ev)
       else
-        plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+        plane_lft = [ eb.corner(0), X_AXIS ]
         ilft = Geom.intersect_line_plane(eline, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
           evs = ilft.vector_to(ecenter)
           evs.reverse! if evs.valid? && evs.samedirection?(ev)
         else
-          plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+          plane_frt = [ eb.corner(0), Y_AXIS ]
           ifrt = Geom.intersect_line_plane(eline, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
             evs = ifrt.vector_to(ecenter)
             evs.reverse! if evs.valid? && evs.samedirection?(ev)
+          else
+            evs = Geom::Vector3d.new
           end
         end
       end
@@ -2784,7 +2790,7 @@ module Ladb::OpenCutList
               if !ilft.nil? && bounds.contains?(ilft)
                 move_axis = _get_active_x_axis
               else
-                plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(4))
+                plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(4), bounds.corner(1))
                 ifrt = Geom.intersect_line_plane(line, plane_frt)
                 if !ifrt.nil? && bounds.contains?(ifrt)
                   move_axis = _get_active_y_axis
@@ -3079,23 +3085,25 @@ module Ladb::OpenCutList
       ecenter = eb.center
       eline = [ ecenter, ev ]
 
-      plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+      plane_btm = [ eb.corner(0), Z_AXIS ]
       ibtm = Geom.intersect_line_plane(eline, plane_btm)
       if !ibtm.nil? && eb.contains?(ibtm)
         evs = ecenter.vector_to(ibtm)
         evs.reverse! if evs.valid? && evs.samedirection?(ev)
       else
-        plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+        plane_lft = [ eb.corner(0), X_AXIS ]
         ilft = Geom.intersect_line_plane(eline, plane_lft)
         if !ilft.nil? && eb.contains?(ilft)
           evs = ecenter.vector_to(ilft)
           evs.reverse! if evs.valid? && evs.samedirection?(ev)
         else
-          plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(4))
+          plane_frt = [ eb.corner(0), Y_AXIS ]
           ifrt = Geom.intersect_line_plane(eline, plane_frt)
           if !ifrt.nil? && eb.contains?(ifrt)
             evs = ecenter.vector_to(ifrt)
             evs.reverse! if evs.valid? && evs.samedirection?(ev)
+          else
+            evs = Geom::Vector3d.new
           end
         end
       end
