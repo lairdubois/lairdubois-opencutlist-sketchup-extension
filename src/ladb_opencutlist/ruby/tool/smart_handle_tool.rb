@@ -1020,17 +1020,17 @@ module Ladb::OpenCutList
 
             line = [ eb.center, v ]
 
-            plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+            plane_btm = [ eb.corner(0), Z_AXIS ]
             ibtm = Geom.intersect_line_plane(line, plane_btm)
             if !ibtm.nil? && eb.contains?(ibtm)
               move_axis = _get_active_z_axis
             else
-              plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+              plane_lft = [ eb.corner(0), X_AXIS ]
               ilft = Geom.intersect_line_plane(line, plane_lft)
               if !ilft.nil? && eb.contains?(ilft)
                 move_axis = _get_active_x_axis
               else
-                plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(4), eb.corner(1))
+                plane_frt = [ eb.corner(0), Y_AXIS ]
                 ifrt = Geom.intersect_line_plane(line, plane_frt)
                 if !ifrt.nil? && eb.contains?(ifrt)
                   move_axis = _get_active_y_axis
@@ -2281,17 +2281,17 @@ module Ladb::OpenCutList
 
             line = [ eb.center, v ]
 
-            plane_btm = Geom.fit_plane_to_points(eb.corner(0), eb.corner(1), eb.corner(2))
+            plane_btm = [ eb.corner(0), Z_AXIS ]
             ibtm = Geom.intersect_line_plane(line, plane_btm)
             if !ibtm.nil? && eb.contains?(ibtm)
               move_axis = _get_active_z_axis
             else
-              plane_lft = Geom.fit_plane_to_points(eb.corner(0), eb.corner(2), eb.corner(4))
+              plane_lft = [ eb.corner(0), X_AXIS ]
               ilft = Geom.intersect_line_plane(line, plane_lft)
               if !ilft.nil? && eb.contains?(ilft)
                 move_axis = _get_active_x_axis
               else
-                plane_frt = Geom.fit_plane_to_points(eb.corner(0), eb.corner(4), eb.corner(1))
+                plane_frt = [ eb.corner(0), Y_AXIS ]
                 ifrt = Geom.intersect_line_plane(line, plane_frt)
                 if !ifrt.nil? && eb.contains?(ifrt)
                   move_axis = _get_active_y_axis
@@ -2780,17 +2780,17 @@ module Ladb::OpenCutList
 
             line = [ ORIGIN, v ]
 
-            plane_btm = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(1), bounds.corner(2))
+            plane_btm = [ bounds.corner(0), Z_AXIS ]
             ibtm = Geom.intersect_line_plane(line, plane_btm)
             if !ibtm.nil? && bounds.contains?(ibtm)
               move_axis = _get_active_z_axis
             else
-              plane_lft = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(2), bounds.corner(4))
+              plane_lft = [ bounds.corner(0), X_AXIS ]
               ilft = Geom.intersect_line_plane(line, plane_lft)
               if !ilft.nil? && bounds.contains?(ilft)
                 move_axis = _get_active_x_axis
               else
-                plane_frt = Geom.fit_plane_to_points(bounds.corner(0), bounds.corner(4), bounds.corner(1))
+                plane_frt = [ bounds.corner(0), Y_AXIS ]
                 ifrt = Geom.intersect_line_plane(line, plane_frt)
                 if !ifrt.nil? && bounds.contains?(ifrt)
                   move_axis = _get_active_y_axis
