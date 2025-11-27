@@ -22,6 +22,8 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2025-11-27
+  * Fixed Smart Handle Tool with flat entities
 ### 2025-11-26
   * Fixed VCB float converter
   * Updated EN, ES, PT, RU languages
