@@ -175,13 +175,12 @@ gulp.task('i18n_compile', function () {
 
         if (!isProd) {
 
-            const destZzYmlDocument = JSON.parse(JSON.stringify(ymlDocument));
             let line = 0;
             const fillZZValues = function (doc) {
                 for (var key in doc) {
                     if (typeof doc[key] === 'string') {
                         line++;
-                        if (!doc[key].match(/^\$t\([a-z_.]+\)$/i)) {
+                        if (!doc[key].match(/^\$t\([a-z_0-9.]+\)$/i)) {
                             doc[key] = line + ' - ' + doc[key];
                         }
                     } else if (typeof doc[key] === 'object') {
@@ -189,10 +188,10 @@ gulp.task('i18n_compile', function () {
                     }
                 }
             }
+            // use the filled document as source for the zz_ file
+            fillZZValues(destYmlDocument);
 
-            fillZZValues(destZzYmlDocument);
-
-            fs.writeFileSync(yamlDestPath + 'zz_' + language + '.yml', yaml.dump(destZzYmlDocument, {
+            fs.writeFileSync(yamlDestPath + 'zz_' + language + '.yml', yaml.dump(destYmlDocument, {
                 lineWidth: -1,
                 quotingType: '"'
             }), (err) => {
