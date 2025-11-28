@@ -838,7 +838,7 @@ tab:
       option_scrap_bar_lengths_placeholder: 长度 x 数量 ; ...
       option_scrap_bar_lengths_help: |
         列出首先应在切割图中考虑的余料板材或边缘封边.
-        期望格式: **L**x**Q**, 其中 **L** 代表余料的 *长度* , 而 **Q** 代表数量.
+        期望格式: **L**x**Q**, 其中 **L** 代表余料的 *长度*, 而 **Q** 代表数量.
         数量是可选的.
         *没有单位的尺寸将被视为模型单位.*
       option_std_sheet_good: 标准面板
@@ -2064,16 +2064,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: 点击部件以选中它
+    state_0_to_6_status: ""
+    state_4_status: ""
+    state_5_status: ""
+    state_6_status: ""
+    warning:
+      no_active_part: ""
   smart_draw:
     title: 绘制
     action_0: 绘制矩形
     action_0_status: 在矩形形状的基础上绘制体积
+    action_0_state_0_status: ""
     action_0_state_1_status: 点击以定义对角点，或输入长度和宽度
     action_1: 绘制圆形
+    action_1_state_0_status: ""
     action_1_status: 在圆形的基础上绘制体积
     action_1_state_1_radius_status: 点击以设置半径，或输入距离
     action_1_state_1_diameter_status: 点击以设置直径，或输入距离
     action_2: 绘制多边形
+    action_2_state_0_status: ""
     action_2_status: 在多边形的基础上绘制体积
     action_2_state_1_status: 点击以定义一个新点，或输入距离
     action_x_state_2_status: 点击以设置高度，或输入距离
@@ -2108,25 +2119,18 @@ tool:
   smart_handle:
     title: 操控点
     action_0: 选择
-    action_0_status: 点击部件以选中它
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: ""
+    action_0_status: ""
     action_1: 沿直线复制
-    action_1_status: 点击部件以沿轴复制
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: ""
     action_1_state_2_status: 点击以放置部件复制或输入距离
     action_2: 以网格方式复制
-    action_2_status: 点击部件以沿网格复制
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: ""
     action_2_state_2_status: 点击以放置部件复制或输入两个距离
     action_3: 移动
-    action_3_status: 点击部件以沿轴移动
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: ""
     action_3_state_2_status: 点击以放置部件或输入距离
     action_4: 均分排列
-    action_4_status: 点击部件以沿轴均分排列
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: ""
     action_4_state_1_status: 点击以确定第一个测量点
     action_4_state_2_status: 点击以确定第二个测量点或输入距离
     action_option_group_copy_measure_type: 测量
@@ -2150,8 +2154,7 @@ tool:
   smart_reshape:
     title: ""
     action_0: ""
-    action_0_status: 点击部件以选中它
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: ""
     action_0_state_1_status: ""
     action_0_state_1a_status: ""
     action_0_state_1b_status: ""
@@ -2162,11 +2165,13 @@ tool:
     action_0_state_2_status: ""
     action_option_group_stretch_measure_type: 测量
     action_option_group_axes: 坐标轴
+    action_option_group_options: 选项
     action_option_stretch_measure_type_outside_status: 外部测量
     action_option_stretch_measure_type_offset_status: ""
     action_option_axes_active_status: 沿活动轴操作
     action_option_axes_context_status: 沿群组轴或包含部件的组件的轴操作
     action_option_axes_entity_status: 沿部件轴操作
+    action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""
   smart_paint:

@@ -449,10 +449,10 @@ tab:
       cumulable_2: Sumirano po širini
       instance_count_by_part: Podesi
       instance_count_by_part_help: |
-        Omogućava vam brojanje delova u potrebnom broju *setova*.
+        Dozvoljava da se deo posmatra kao *pakovanje* za jednu ili više *jedinica*.
         Umesto broja jedinica u modelu delovi u setu moraju imati istu definiciju.
 
-        *Primer : Broji samo 1 komad za par klizača fioka :
+        *Primer : Broji samo 1 komad za par klizača fioka:
         Pakovanje = 2 jedinice / komad*
       instance_count_by_part_1: 1 jedinica po komadu
       instance_count_by_part_2: 2 jedinice po komadu
@@ -689,11 +689,11 @@ tab:
       layer: Oznaka
       layers: Oznake
       batch: Serija
-      bin: "Kontejner "
+      bin: Kontejner
       component_definition: Definicija komponente
       component_instance: Instanca komponente
       component_instances: Sve instance komponente
-      filename: "Naziv fajla "
+      filename: Naziv fajla
       model_name: Naziv modela
       model_description: Opis modela
       page_name: Naziv scene
@@ -807,7 +807,7 @@ tab:
 
         *Ova opcija mora biti uključena da bi oblici mogli biti izvezeni.*
       option_saw_kerf: Debljina testere
-      option_saw_kerf_help: "Širina materijala uklonjenog sečenjem testere. "
+      option_saw_kerf_help: Širina materijala uklonjenog sečenjem testere.
       option_spacing: Razmak
       option_spacing_help: Minimalni razmak između delova.
       option_trimming: Krajcovanje
@@ -818,7 +818,7 @@ tab:
       option_optimization_0: Srednji
       option_optimization_1: Napredno
       option_stacking: Željeni pravac
-      option_stacking_help: "Smer slaganja delova koji imaju zajedničku dužinu ili širinu. "
+      option_stacking_help: Smer slaganja delova koji imaju zajedničku dužinu ili širinu.
       option_stacking_0: Bez postavki
       option_stacking_1: Uzdužno-podužno
       option_stacking_2: Po širini-poprečno
@@ -1287,7 +1287,7 @@ tab:
         part_description: Opis
         part_entity_named_path: Putanja instance
         part_entity_name: Naziv instance
-        part_bin: "Kontejner "
+        part_bin: Kontejner
         part_cutting_size: Grube dimenzije
         part_cutting_length: Gruba dužina
         part_cutting_width: Gruba širina
@@ -1296,7 +1296,7 @@ tab:
         part_edge_cutting_length: Dužina rezanih ivica
         part_edge_cutting_width: Širina rezanih ivica
         part_size: Upotrebljiva veličina
-        part_length: "Upotrebljiva dužina "
+        part_length: Upotrebljiva dužina
         part_width: Upotrebljiva širina
         part_thickness: Upotrebljiva debljina
         part_tags: Oznake
@@ -1314,7 +1314,7 @@ tab:
         group_material: Materijal / debljina
         group_material_name: Ime materijala
         group_std_dimension: Standardne dimenzije
-        filename: "Naziv fajla "
+        filename: Naziv fajla
         model_name: Naziv modela
         page_name: Naziv scene
         length_unit: Jedinica
@@ -1834,7 +1834,7 @@ tab:
       optional: Opciona polja
       name: Opis
       count: Količina
-      bbox_length: "Upotrebljiva dužina "
+      bbox_length: Upotrebljiva dužina
       bbox_width: Upotrebljiva širina
       bbox_thickness: Upotrebljiva debljina
       material: Materijal
@@ -2064,16 +2064,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Kliknite na komad za izbor
+    state_0_to_6_status: ""
+    state_4_status: ""
+    state_5_status: ""
+    state_6_status: ""
+    warning:
+      no_active_part: ""
   smart_draw:
     title: Crtaj
     action_0: Nacrtaj pravougaonik
     action_0_status: Nacrtaj zapreminu po pravougaonoj osnovi
+    action_0_state_0_status: ""
     action_0_state_1_status: Kliknite za suprotni ugao ili unesite dužinu i širinu
     action_1: Nacrtaj krug
+    action_1_state_0_status: ""
     action_1_status: Nacrtaj zapreminu na osnovu kružne forme
     action_1_state_1_radius_status: Kliknite za poluprečnik ili unesite rastojanje
     action_1_state_1_diameter_status: Kliknite za poluprečnik ili unesite rastojanje
     action_2: Nacrtaj poligon
+    action_2_state_0_status: ""
     action_2_status: Nacrtaj zapreminu po poligonalnoj osnovi
     action_2_state_1_status: Kliknite za novu tačku ili unesite rastojanje
     action_x_state_2_status: Kliknite za visinu ili unesite rastojanje
@@ -2108,25 +2119,18 @@ tool:
   smart_handle:
     title: Rukovati
     action_0: Odabrati
-    action_0_status: Kliknite na komad za izbor
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: ""
+    action_0_status: ""
     action_1: Kopiraj po liniji
-    action_1_status: Kliknite na komad za kopiranje duž ose
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: ""
     action_1_state_2_status: Kliknite za postavljanje kopije komada ili unesite rastojanje
     action_2: Kopiraj po mreži
-    action_2_status: Kliknite na komad za kopiranje po mreži
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: ""
     action_2_state_2_status: Kliknite za postavljanje kopija komada ili unesite dve udaljenosti
     action_3: Premestiti
-    action_3_status: Kliknite na komad za pomeranje duž ose
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: ""
     action_3_state_2_status: Kliknite za postavljanje komada ili unesite rastojanje
     action_4: Rasporediti
-    action_4_status: Kliknite na komad za raspoređivanje duž ose
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: ""
     action_4_state_1_status: Kliknite za prvu tačku merenja
     action_4_state_2_status: Kliknite za drugu tačku merenja ili unesite rastojanje
     action_option_group_copy_measure_type: Merenje
@@ -2150,8 +2154,7 @@ tool:
   smart_reshape:
     title: ""
     action_0: ""
-    action_0_status: Kliknite na komad za izbor
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: ""
     action_0_state_1_status: ""
     action_0_state_1a_status: ""
     action_0_state_1b_status: ""
@@ -2162,11 +2165,13 @@ tool:
     action_0_state_2_status: ""
     action_option_group_stretch_measure_type: Merenje
     action_option_group_axes: Ose
+    action_option_group_options: Opcije
     action_option_stretch_measure_type_outside_status: Merite spolja
     action_option_stretch_measure_type_offset_status: ""
     action_option_axes_active_status: Manipuliši po aktivnim osama
     action_option_axes_context_status: Manipuliši po osama grupe/komponente koja sadrži komad
     action_option_axes_entity_status: Manipuliši po osama komada
+    action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""
   smart_paint:

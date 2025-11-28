@@ -22,7 +22,7 @@ default:
   clear: לנקות
   refresh: לרענן
   generate: לחשב
-  regenerate: ""
+  regenerate: לחדש
   print: הדפסה
   export: ייצוא
   import: ייבוא
@@ -125,7 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: צייר חלקים
       smart_handle: עיבוד חלקים
-      smart_reshape: ""
+      smart_reshape: עדכון חלקים
       smart_paint: צביעת חלקים
       smart_axes: כוון חלקים
       smart_export: יצוא חלקים
@@ -154,10 +154,10 @@ core:
       לא מומלץ להשתמש בה בייצור.
 
       לדיווח על שגיאה: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
-    not_available_in_context: ""
+    not_available_in_context: לא זמין בהקשר זה
   error:
-    exception: ""
-    forbidden: ""
+    exception: "שגיאה: **{{ error }}**"
+    forbidden: "לא מורשה: **{{ error }}**"
     extern: "שגיאה חיצונית: **{{ error }}**"
     feature_unavailable: "תכונה זו דורשת גרסת SketchUp {{ version }} ומעלה"
     failed_export_to: |
@@ -308,7 +308,7 @@ tab:
     part_drawing_type_7: 3D
     tooltip:
       show_hide_block: הצג / הסתר קבוצה
-      show_hide_blocks: ""
+      show_hide_blocks: הצג/הסתר את כל הקבוצות
       scroll_to_block: גלול לקבוצה
       not_available_std_width: "הרוחב *{{ std_dimension_real }}* אינו מוגדר ברוחב הסטנדרטי של החומר '{{ material_name }}'"
       not_available_std_thickness: "יהעובי *{{ std_dimension_real }}* אינו מוגדר בעוב הסטנדרטי של החומר '{{ material_name }}'"
@@ -731,7 +731,7 @@ tab:
         incompatible_unit: היחידה לא תואמת לאפשרויות תחשיב החומר
         multiplier_coefficient: מקדם מכפיל
       error:
-        no_typed_material_parts: "אין חלק בעל חומר מסוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** , **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** או **$t(tab.materials.type_5)**) מסופקים כדי ליצור את התחשיב."
+        no_typed_material_parts: "אין חלק בעל חומר מסוג מוגדר (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** או **$t(tab.materials.type_5)**) מסופקים כדי ליצור את התחשיב."
         entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאה**."
         entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} שגיאות**."
       warning:
@@ -1119,22 +1119,23 @@ tab:
       option_hide_edges_preview_0: מוצג בתוכנית החיתוך
       option_hide_edges_preview_1: מוסתר בתוכנית החיתוך
       option_hide_edges_preview_help: מאפשר לך להציג או להסתיר את האינדיקציה החזותית של הקצוות לציפוי עבור כל חלק בתוכנית חיתוך.
-      option_zoom_threshold: ""
+      option_zoom_threshold: סף זום
       option_zoom_threshold_help: |
-      option_time_limit: ""
+      option_time_limit: מגבלת זמן
       option_time_limit_help: |
+        קובע את הזמן המוקצב לחישוב
       tooltip:
         scroll_to_block_1d: גלול ללוח או קאנט ראשון
-        scroll_to_block_2d: ""
+        scroll_to_block_2d: גלילה לחלונית או לגיליון הראשונים
       list:
         summary: סיכום
-        cached: ""
+        cached: נטען מהמטמון
         trimming: שוליים
         settings: הגדרות
         stats: סטטיסטיקה
-        time: ""
+        time: זמן חישוב
         total_efficiency: יעילות כללית
-        total_fill_rate: ""
+        total_fill_rate: יעילות תוכנית חיתוך
         total_cut_count: מספר חיתוכים
         total_cut_length: אורך חיתוך
         efficiency: יעילות
@@ -1159,7 +1160,7 @@ tab:
         bin_2d_veneer_type_0: פורניר סטנדרטי
         bin_2d_veneer_type_1: פחת פורניר
         unused: לא בשימוש
-        unplaced_parts: ""
+        unplaced_parts: חלק לא הונח
         unplaced_parts_plural: חלקים לא ממוקמים
         parts: חלק
         parts_plural: חלקים
@@ -1170,10 +1171,10 @@ tab:
         cut: חיתוך
         cut_plural: חיתוכים
         cut_trimming: ניתוך נטו
-        cut_primary: ""
+        cut_primary: חיתוך ראשוני
         cut_primary_plural: חיתוכים ראשוניים
         cut_none: אין
-        cut_depth: ""
+        cut_depth: "רמה {{ depth }}"
       write:
         title: ייצוא תוכנית חיתוך
         info_0: |
@@ -1209,7 +1210,7 @@ tab:
         option_cuts_help: |
           מאפשר להפעיל את ייצוא החתכים ולבחור את הצבעים שלהם.
         warning:
-          is_bin_selection: ""
+          is_bin_selection: "**הבלוקים המוסתרים** לא ייוצאו."
         error:
           overflow_gt_spacing: |
       error:
@@ -1220,7 +1221,7 @@ tab:
         no_solution: ""
         unplaced_parts: ""
         unplaced_parts_plural: ""
-        unusable_part: ""
+        unusable_part: חלק גדול מדי
       warning:
         is_part_selection: תוכנית חיתוך מוגבלת ל-**חלקים הנבחרים**.
         cutting_dimensions: תוכנית חיתוך זו משתמשת במידות **גולמיות** של החלקים.
@@ -1997,16 +1998,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: ""
+    state_0_to_6_status: ""
+    state_4_status: ""
+    state_5_status: ""
+    state_6_status: ""
+    warning:
+      no_active_part: ""
   smart_draw:
     title: שרטוט
     action_0: ""
     action_0_status: ""
+    action_0_state_0_status: ""
     action_0_state_1_status: ""
     action_1: ""
+    action_1_state_0_status: ""
     action_1_status: ""
     action_1_state_1_radius_status: ""
     action_1_state_1_diameter_status: ""
     action_2: ""
+    action_2_state_0_status: ""
     action_2_status: ""
     action_2_state_1_status: ""
     action_x_state_2_status: ""
@@ -2042,24 +2054,17 @@ tool:
     title: ""
     action_0: ""
     action_0_status: ""
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: ""
     action_1: ""
     action_1_status: ""
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
     action_1_state_2_status: ""
     action_2: ""
     action_2_status: ""
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
     action_2_state_2_status: ""
     action_3: ""
     action_3_status: ""
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
     action_3_state_2_status: ""
     action_4: ""
     action_4_status: ""
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: ""
     action_4_state_1_status: ""
     action_4_state_2_status: ""
     action_option_group_copy_measure_type: ""
@@ -2084,7 +2089,6 @@ tool:
     title: ""
     action_0: ""
     action_0_status: ""
-    action_0_state_0_status: ""
     action_0_state_1_status: ""
     action_0_state_1a_status: ""
     action_0_state_1b_status: ""
@@ -2095,11 +2099,13 @@ tool:
     action_0_state_2_status: ""
     action_option_group_stretch_measure_type: ""
     action_option_group_axes: צירים
+    action_option_group_options: אפשרויות
     action_option_stretch_measure_type_outside_status: ""
     action_option_stretch_measure_type_offset_status: ""
     action_option_axes_active_status: ""
     action_option_axes_context_status: ""
     action_option_axes_entity_status: ""
+    action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""
   smart_paint:
