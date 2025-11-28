@@ -159,10 +159,41 @@ gulp.task('i18n_compile', function () {
         }
 
         const destYmlDocument = JSON.parse(JSON.stringify(ymlDocument));
-        deleteHiddenKeys(destYmlDocument);
         if (language !== sourceLanguage && language !== defaultLanguage) {
             fillDefaultValues(destYmlDocument, defaultYmlDocument);
         }
+
+        if (!isProd) {
+
+            const destZzYmlDocument = JSON.parse(JSON.stringify(destYmlDocument));
+            let index = 0;
+            const fillZZValues = function (doc) {
+                for (var key in doc) {
+                    if (typeof doc[key] === 'string') {
+                        index++;
+                        if (!doc[key].match(/^\$t\([a-z0-9_.]+\)$/i)) {
+                            doc[key] = index + ' - ' + doc[key];
+                        }
+                    } else if (typeof doc[key] === 'object') {
+                        fillZZValues(doc[key]);
+                    }
+                }
+            }
+
+            fillZZValues(destZzYmlDocument);
+
+            fs.writeFileSync(yamlDestPath + 'zz_' + language + '.yml', yaml.dump(destZzYmlDocument, {
+                lineWidth: -1,
+                quotingType: '"'
+            }), (err) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+
+        }
+
+        deleteHiddenKeys(destYmlDocument);
 
         fs.writeFileSync(yamlDestPath + language + '.yml', yaml.dump(destYmlDocument, {
             lineWidth: -1,
@@ -173,34 +204,6 @@ gulp.task('i18n_compile', function () {
             }
         });
 
-        if (!isProd) {
-
-            let line = 0;
-            const fillZZValues = function (doc) {
-                for (var key in doc) {
-                    if (typeof doc[key] === 'string') {
-                        line++;
-                        if (!doc[key].match(/^\$t\([a-z_0-9.]+\)$/i)) {
-                            doc[key] = line + ' - ' + doc[key];
-                        }
-                    } else if (typeof doc[key] === 'object') {
-                        fillZZValues(doc[key]);
-                    }
-                }
-            }
-            // use the filled document as source for the zz_ file
-            fillZZValues(destYmlDocument);
-
-            fs.writeFileSync(yamlDestPath + 'zz_' + language + '.yml', yaml.dump(destYmlDocument, {
-                lineWidth: -1,
-                quotingType: '"'
-            }), (err) => {
-                if (err) {
-                    console.log(err);
-                }
-            });
-
-        }
 
     });
 
