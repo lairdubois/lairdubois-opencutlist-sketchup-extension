@@ -15,8 +15,11 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Outliner "Drag and Drop" feature
   * Improved PathFormulaWrapper. It now contains instance objects
   * Improved export with grouped parts activated
-  * Improved Smart Handle Tool by adding the possibility to change copies during preview
-  * Improved Smart Tools length capture by adding the possibility to use arithmetic operations
+  * Improved Smart Handle Tool: 
+    * Ability to edit copies during preview
+    * Ability to handle any single or multiple group
+    * Ability to select siblings of a part for "Select", "Copy in line" and "Distribute" actions
+  * Improved Smart Tools length capture by adding the possibility to use arithmetic operations (+-*/)
   * Fixed rounding errors for metric dimensions in cutting diagrams
   * Fixed DXF line type error
 
