@@ -2655,9 +2655,8 @@ module Ladb::OpenCutList
 
           if entities.one?
             path = active_path + [ entities.first ]
-            part_entity_path = _get_part_entity_path_from_path(path)
-            unless (part = _generate_part_from_path(part_entity_path)).nil?
-              _set_active_part(part_entity_path, part)
+            unless (part = _generate_part_from_path(path)).nil?
+              _set_active_part(path, part)
             end
           end
 
