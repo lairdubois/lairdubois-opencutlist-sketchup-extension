@@ -1311,6 +1311,7 @@ module Ladb::OpenCutList
     # -----
 
     def _get_move_def(ps, pe, type = 0)
+      return unless pe.is_a?(Geom::Point3d)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       et = _get_edit_transformation
@@ -1958,6 +1959,7 @@ module Ladb::OpenCutList
     end
 
     def _get_move_def(ps, pe, type = 0)
+      return unless pe.is_a?(Geom::Point3d)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       ht = _get_handle_transformation
@@ -2450,6 +2452,7 @@ module Ladb::OpenCutList
     # -----
 
     def _get_move_def(ps, pe, type = 0)
+      return unless ps.is_a?(Geom::Point3d) && pe.is_a?(Geom::Point3d)
       return unless (v = ps.vector_to(pe)).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
       return unless (drawing_def_segments = _get_drawing_def_segments(drawing_def)).is_a?(Array)
@@ -3070,6 +3073,7 @@ module Ladb::OpenCutList
     # -----
 
     def _get_move_def(ps, pe)
+      return unless ps.is_a?(Geom::Point3d) && pe.is_a?(Geom::Point3d)
       return unless (v = ps.vector_to(pe)).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
