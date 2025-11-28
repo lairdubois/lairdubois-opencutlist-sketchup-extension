@@ -1465,7 +1465,7 @@ tab:
         **Задать исходую точку детали**
         Включает проецирование исходной точки оси детали в качестве точки привязки.
       option_switch_yz: Ось вертикали
-      option_switch_yz_0: "Z вертикаль "
+      option_switch_yz_0: Z вертикаль
       option_switch_yz_1: Y вертикаль
       option_switch_yz_help: |
         Настройка определяет какая ось может быть вертикальной в детали или Y или Z.
@@ -2258,7 +2258,7 @@ tool:
     action_1: Экспорт 2D-детали
     action_1_status: Кликните на лицевую сторону детали
     action_2: Экспорт облицовки
-    action_2_status: "Кликните облицовку "
+    action_2_status: Кликните облицовку
     action_3: Экспорт путей SVG
     action_3_status: Кликните на край
     action_option_group_file_format: Формат

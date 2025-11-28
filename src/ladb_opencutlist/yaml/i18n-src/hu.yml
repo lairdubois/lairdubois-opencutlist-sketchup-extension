@@ -307,7 +307,7 @@ tab:
     part_drawing_type_6: 2D Hátulsó Nézet
     part_drawing_type_7: 3D
     tooltip:
-      show_hide_block: "Csoport Mutat / Elrejt "
+      show_hide_block: Csoport Mutat / Elrejt
       show_hide_blocks: Az összes csoport megjelenítése / elrejtése
       scroll_to_block: Görgetés a csoporthoz
       not_available_std_width: "Az*{{ std_dimension_real }}* keresztmetszet értéke nincs megadva az anyag szabványos keresztmetszetei között '{{ material_name }}'"
@@ -2068,16 +2068,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Kattintson egy alkatrészre a kijelöléséhez
+    state_0_to_6_status: ""
+    state_4_status: ""
+    state_5_status: ""
+    state_6_status: ""
+    warning:
+      no_active_part: ""
   smart_draw:
     title: Rajzol
     action_0: Téglalap rajzolása
     action_0_status: Térfogat rajzolása téglalap alakú forma alapján
+    action_0_state_0_status: ""
     action_0_state_1_status: "Kattintson az átellenes sarok megadásához, vagy írjon be egy hosszt és szélességet"
     action_1: Kör rajzolása
+    action_1_state_0_status: ""
     action_1_status: Térfogat rajzolása kör alakú forma alapján
     action_1_state_1_radius_status: "Kattintson a sugár beállításához, vagy adjon meg egy távolságot"
     action_1_state_1_diameter_status: "Kattintson az átmérő beállításához, vagy adjon meg egy távolságot"
     action_2: Sokszög rajzolása
+    action_2_state_0_status: ""
     action_2_status: Térfogat rajzolása sokszög alakú forma alapján
     action_2_state_1_status: "Kattintson egy új pont meghatározásához, vagy adjon meg egy távolságot"
     action_x_state_2_status: "Kattintson a magasság beállításához, vagy adjon meg egy távolságot"
@@ -2112,25 +2123,18 @@ tool:
   smart_handle:
     title: Kezelés
     action_0: Kijelöl
-    action_0_status: Kattintson egy alkatrészre a kijelöléséhez
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: Húzd az egeret egy azonos alkatrészre a kijelöléshez való hozzáadásához
+    action_0_status: ""
     action_1: Másolás vonal mentén
-    action_1_status: Kattintson egy alkatrészre annak tengely menti másolásához
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: ""
     action_1_state_2_status: "Kattintson a másolat elhelyezéséhez, vagy adjon meg egy távolságot"
     action_2: Másolás rács mentén
-    action_2_status: Kattintson egy alkatrészre annak rács menti másolásához
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: ""
     action_2_state_2_status: "Kattintson a másolatok elhelyezéséhez, vagy adjon meg egy távolságot"
     action_3: Mozgatás
-    action_3_status: Kattintson egy alkatrészre annak tengely menti mozgatásához
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: ""
     action_3_state_2_status: "Kattintson az alkatrész elhelyezéséhez, vagy adjon meg egy távolságot"
     action_4: Elosztás
-    action_4_status: Kattintson egy alkatrészre annak tengely menti elosztásához
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: ""
     action_4_state_1_status: Kattintson az első mérési pont meghatározásához
     action_4_state_2_status: "Kattintson a második mérési pont meghatározásához, vagy adjon meg egy távolságot"
     action_option_group_copy_measure_type: Mérés
@@ -2154,8 +2158,7 @@ tool:
   smart_reshape:
     title: Módosítás
     action_0: Húzás
-    action_0_status: Kattintson egy alkatrészre a kijelöléséhez
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: ""
     action_0_state_1_status: Kattintson egy fogópontra a nyújtáshoz
     action_0_state_1a_status: Kattintson egy metszősíkra az áthelyezéséhez
     action_0_state_1b_status: Metszősík hozzáadása
@@ -2166,13 +2169,15 @@ tool:
     action_0_state_2_status: "Kattintson a nyújtás véglegesítéséhez, vagy írjon be egy távolságot"
     action_option_group_stretch_measure_type: Mérés
     action_option_group_axes: Tengelyek
+    action_option_group_options: Beállítások
     action_option_stretch_measure_type_outside_status: Külső mérés
     action_option_stretch_measure_type_offset_status: A különbség mérése
     action_option_axes_active_status: Kezelés az aktív tengelyek mentén
     action_option_axes_context_status: "Kezelés annak a csoportnak vagy komponensnek a tengelyei mentén, amely tartalmazza az alkatrészt"
     action_option_axes_entity_status: Kezelés az alkatrész tengelyei mentén
+    action_option_options_make_unique_status: ""
     error:
-      curve_intersect: Az egyik metszősík átszel egy nem nyújtható elemet (görbét vagy szerelvényt)
+      curve_intersect: ""
   smart_paint:
     title: Festés
     default_material: Nincs definiált anyag
