@@ -2236,6 +2236,10 @@ module Ladb::OpenCutList
       @active_part_entity_path
     end
 
+    def has_active_part_siblings?
+      @active_part_siblings.is_a?(Array) && @active_part_siblings.any?
+    end
+
     def get_active_part_sibling_entity_paths
       @active_part_sibling_entity_paths
     end
@@ -2729,6 +2733,20 @@ module Ladb::OpenCutList
       tool.remove_2d(LAYER_2D_FLOATING_TOOLS) if STATE_SELECT_TREE
     end
 
+    def onToolCancel(tool, reason, view)
+      super
+
+      case @state
+
+      when STATE_SELECT_SIBLINGS, STATE_SELECT_RECT
+        @mouse_down_point_2d = nil
+        @mouse_move_point_2d = nil
+
+      end
+
+      true
+    end
+
     def onToolMouseMove(tool, flags, x, y, view)
       super
 
@@ -2918,6 +2936,10 @@ module Ladb::OpenCutList
 
         when STATE_SELECT
           _unhide_instances
+
+        when STATE_SELECT_RECT
+          _reset_active_part
+          _reset_active_selection
 
         when STATE_SELECT_TREE
 
