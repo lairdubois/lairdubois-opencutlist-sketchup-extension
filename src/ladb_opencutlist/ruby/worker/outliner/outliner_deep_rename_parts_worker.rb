@@ -274,7 +274,7 @@ module Ladb::OpenCutList
             end
 
             # Clean up old definition if no longer used
-            model.definitions.remove(definition) if definition.count_used_instances == 0
+            model.definitions.remove(definition) if definition.count_used_instances == 0 && Sketchup.version_number >= 1800000000
 
           end
 

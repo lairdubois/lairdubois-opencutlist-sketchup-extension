@@ -1307,7 +1307,7 @@ module Ladb::OpenCutList
       # Remove previously created entity if exists
       if @definition.is_a?(Sketchup::ComponentDefinition)
         model.active_entities.erase_entities(@definition.instances)
-        model.definitions.remove(@definition)
+        model.definitions.remove(@definition) if Sketchup.version_number >= 1800000000
         @definition = nil
       end
 
