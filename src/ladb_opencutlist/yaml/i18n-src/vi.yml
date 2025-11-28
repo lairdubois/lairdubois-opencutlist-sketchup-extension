@@ -2067,16 +2067,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Nhấp vào một bộ phận để chọn nó
+    state_0_to_6_status: ""
+    state_4_status: ""
+    state_5_status: ""
+    state_6_status: ""
+    warning:
+      no_active_part: ""
   smart_draw:
     title: Vẽ
     action_0: Vẽ hình chữ nhật
     action_0_status: Vẽ thể tích trên một hình chữ nhật
+    action_0_state_0_status: ""
     action_0_state_1_status: "Nhấp để xác định góc đối diện hoặc nhập chiều dài, chiều rộng"
     action_1: Vẽ hình tròn
+    action_1_state_0_status: ""
     action_1_status: Vẽ thể tích trên một hình tròn
     action_1_state_1_radius_status: Nhấp để đặt bán kính hoặc nhập khoảng cách
     action_1_state_1_diameter_status: Nhấp để đặt đường kính hoặc nhập khoảng cách
     action_2: Vẽ đa giác
+    action_2_state_0_status: ""
     action_2_status: Vẽ thể tích trên một hình đa giác
     action_2_state_1_status: Nhấp để xác định điểm mới hoặc nhập khoảng cách
     action_x_state_2_status: Nhấp để đặt độ cao hoặc nhập khoảng cách
@@ -2111,25 +2122,18 @@ tool:
   smart_handle:
     title: Xử lý
     action_0: Lựa chọn
-    action_0_status: Nhấp vào một bộ phận để chọn nó
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: ""
+    action_0_status: ""
     action_1: Sao chép trong dòng
-    action_1_status: Nhập bản dịch của bạn ở đây
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: ""
     action_1_state_2_status: Nhấp để đặt bản sao của bộ phận hoặc nhập khoảng cách
     action_2: Sao chép trong lưới
-    action_2_status: Nhấp vào một bộ phận để sao chép nó dọc theo lưới
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: ""
     action_2_state_2_status: Nhấp để đặt bản sao của bộ phận hoặc nhập hai khoảng cách
     action_3: Di chuyển
-    action_3_status: Nhấp vào một bộ phận để di chuyển nó dọc theo một trục
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: ""
     action_3_state_2_status: Nhấp để đặt bộ phận hoặc nhập khoảng cách
     action_4: Phân tán
-    action_4_status: Nhấp vào một bộ phận để phân tán nó dọc theo một trục
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: ""
     action_4_state_1_status: Nhấp để đặt điểm đo đầu tiên
     action_4_state_2_status: Nhấp để đặt điểm đo thứ hai hoặc nhập khoảng cách
     action_option_group_copy_measure_type: Đo lường
@@ -2153,8 +2157,7 @@ tool:
   smart_reshape:
     title: ""
     action_0: ""
-    action_0_status: Nhấp vào một bộ phận để chọn nó
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: ""
     action_0_state_1_status: ""
     action_0_state_1a_status: ""
     action_0_state_1b_status: ""
@@ -2165,11 +2168,13 @@ tool:
     action_0_state_2_status: ""
     action_option_group_stretch_measure_type: Đo lường
     action_option_group_axes: Trục
+    action_option_group_options: Tùy chọn
     action_option_stretch_measure_type_outside_status: Đo lường bên ngoài
     action_option_stretch_measure_type_offset_status: ""
     action_option_axes_active_status: Thao tác dọc theo các trục đang hoạt động
     action_option_axes_context_status: Thao tác dọc theo các trục của nhóm hoặc thành phần chứa bộ phận
     action_option_axes_entity_status: Thao tác dọc theo trục bộ phận
+    action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""
   smart_paint:

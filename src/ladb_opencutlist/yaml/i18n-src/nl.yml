@@ -153,7 +153,7 @@ core:
       Deze versie is alleen beschikbaar om te testen.
       Het wordt niet aanbevolen om deze tijdens productie te gebruiken.
 
-      Om een ​​bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+      Om een bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Niet beschikbaar in deze context
   error:
     exception: "Foutmelding: **{{ error }}**"
