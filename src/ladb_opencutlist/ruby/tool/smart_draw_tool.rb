@@ -587,11 +587,9 @@ module Ladb::OpenCutList
           return true
         end
         if tool.is_key_alt_or_command?(key)
-          if is_quick
-            @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
-            @previous_action_handler = nil
-            _remove_floating_tools
-          end
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
+          @previous_action_handler = nil
+          _remove_floating_tools
           _refresh
           return true
         end
