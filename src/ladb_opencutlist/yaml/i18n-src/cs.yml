@@ -422,7 +422,7 @@ tab:
       group_labels: Tisk štítků dílů ve skupině
       group_export: Export skupiny
       group_estimate: Kalkulace skupiny
-      edit_material: "Upravit materiál ‘{{ material_name }}'"
+      edit_material: "Upravit materiál '{{ material_name }}'"
       expand_all: Rozbalení všech řádků
       collapse_all: Sbalení všech řádků
       reset_prices: Resetování cen všech dílů
@@ -432,7 +432,7 @@ tab:
         Potvrďte pro pokračování.
       reset_prices_success: Ceny všech dílů byly obnoveny.
     edit_part:
-      title: "Vlastnosti dílce ‘{{ name }}’"
+      title: "Vlastnosti dílce '{{ name }}'"
       title_multiple: Vlastnosti skupiny dílců
       multiple_alert: "Společné vlastnosti skupiny {{ part_count }} dílců."
       general: Všeobecné
@@ -1278,7 +1278,7 @@ tab:
       option_anchor_start: Začátek - Dole
       option_anchor_middle: Uprostřed - Dole
       option_anchor_end: Konec - Dole
-      option_anchor_start_top: Začátek – Nahoře
+      option_anchor_start_top: Začátek - Nahoře
       option_anchor_middle_top: Uprostřed - Nahoře
       option_anchor_end_top: Konec - Nahoře
       option_color: Barva

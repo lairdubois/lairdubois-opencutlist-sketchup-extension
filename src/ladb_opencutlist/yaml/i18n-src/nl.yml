@@ -1015,7 +1015,7 @@ tab:
 
         Deze lijst wordt bepaald door het veld **$t(tab.materials.edit_material.std_sizes)** van het materiaal.
 
-        *Bewerk de materiaaleigenschappen van ‘{{ material_name }}’ om deze lijst bij te werken.*
+        *Bewerk de materiaaleigenschappen van '{{ material_name }}' om deze lijst bij te werken.*
       option_std_bin_2d_add: Voeg een afmeting toe
       option_std_bin_2d_none: Geen enkele
       option_scrap_bin_2d_sheet_good_sizes: Paneel overschotten

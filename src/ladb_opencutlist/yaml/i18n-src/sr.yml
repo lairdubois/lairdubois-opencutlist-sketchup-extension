@@ -149,7 +149,7 @@ core:
     report_a_bug: Prijavi grešku
   warning:
     dev: |
-      Koristite **razvojnu** verziju *​​OpenCutList*.
+      Koristite **razvojnu** verziju *OpenCutList*.
       Ova verzija je dostupna samo za testiranje.
       Ne preporučuje se upotreba u proizvodnji.
 
@@ -180,7 +180,7 @@ core:
       Dostupna je nova verzija *OpenCutList*.
       Ažurirajte da biste dobili najnovije funkcije!
     up_to_date: |
-      Već imate najnoviju verziju *​​OpenCutList*.
+      Već imate najnoviju verziju *OpenCutList*.
 
       *Razmislite o sponzorstvu ovog projekta da biste nam pomogli da dodamo još više mogućnosti!*
     downloading: Preuzimanje je u toku
@@ -529,7 +529,7 @@ tab:
       dynamic_attributes_name_help: |
         Ako je odabrana ova opcija, oznaka delova izvući će se iz atributa *Ime*, ako je definisana.
 
-        <i class='ladb-opencutlist-icon-warning'></i> Delovi sa ​​istom definicijom razdvojiće se ako atribut *Ime* nema istu vrednost.
+        <i class='ladb-opencutlist-icon-warning'></i> Delovi sa istom definicijom razdvojiće se ako atribut *Ime* nema istu vrednost.
       part_number_with_letters: Koristite slova za označavanje delova
       part_number_with_letters_help: "Ako je ova opcija odabrana, delovi se označavaju slovima (A, B, C, ... Z, AA, AB, ...)."
       part_number_sequence_by_group: Ponovno incijaliziujte označavanje delova za svaku grupu
@@ -1275,9 +1275,9 @@ tab:
       option_anchor_start: Početak - Dole
       option_anchor_middle: Sredina - Dole
       option_anchor_end: Kraj - Dole
-      option_anchor_start_top: Početak – Gore
-      option_anchor_middle_top: Sredina – Gore
-      option_anchor_end_top: Kraj – Gore
+      option_anchor_start_top: Početak - Gore
+      option_anchor_middle_top: Sredina - Gore
+      option_anchor_end_top: Kraj - Gore
       option_color: Boja
       formula:
         custom: Formula
@@ -1780,7 +1780,7 @@ tab:
       node_not_found: Nepostojeći čvor
       entity_not_found: Nepostojeća instanca
       invalid_target: ""
-      obsolete_outliner: "Ne može se izvršiti – struktura je zastarela. Generišite je ponovo."
+      obsolete_outliner: "Ne može se izvršiti - struktura je zastarela. Generišite je ponovo."
     tip:
       no_node: |
         Trenutno nema instanci u vašem modelu za prikaz.
@@ -2053,7 +2053,7 @@ tool:
       invalid_multiplicator: "Množilac {{ value }} nije validan"
       invalid_divider: "Delilac {{ value }} nije validan"
       invalid_offset: "Pomak {{ value }} nije validan"
-      invalid_segment_count: "Broj segmenata {{ value }} nije validan, dozvoljeno: 3–999."
+      invalid_segment_count: "Broj segmenata {{ value }} nije validan, dozvoljeno: 3-999."
       syntax_error: ""
       unexpected_close_parenthesis: ""
       missing_close_parenthesis: ""
