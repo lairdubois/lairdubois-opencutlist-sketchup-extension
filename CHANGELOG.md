@@ -13,6 +13,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Outliner "Create Group" feature
   * Added Outliner "Create Component" feature
   * Added Outliner "Drag and Drop" feature
+  * Added @batch variable in Packing formulas
   * Improved PathFormulaWrapper. It now contains instance objects
   * Improved export with grouped parts activated
   * Improved Smart Handle Tool: 

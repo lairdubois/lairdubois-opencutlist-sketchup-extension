@@ -208,7 +208,8 @@ module Ladb::OpenCutList
           item_type_def = item_def.item_type_def
           part = item_type_def.part
           part_def = part.def
-          text = _evaluate_item_text(options_def.items_formula, part, item_def.instance_info)
+          text = _evaluate_item_text(options_def.items_formula, part, item_def.instance_info, item_def.thickness_layer, item_def.position_in_batch)
+          text = '!!' unless text.is_a?(String)
           projection_def = _get_part_projection_def(part)
 
           id = _svg_sanitize_identifier("#{LAYER_PART}_#{part.number.to_s.rjust(3, '_')}")
@@ -477,7 +478,8 @@ module Ladb::OpenCutList
               item_type_def = item_def.item_type_def
               part = item_type_def.part
               part_def = part.def
-              text = _evaluate_item_text(options_def.items_formula, part, item_def.instance_info)
+              text = _evaluate_item_text(options_def.items_formula, part, item_def.instance_info, item_def.thickness_layer, item_def.position_in_batch)
+              text = '!!' unless text.is_a?(String)
               projection_def = _get_part_projection_def(part)
 
               item_length = item_type_def.length
@@ -575,7 +577,8 @@ module Ladb::OpenCutList
 
             else
 
-              text = _evaluate_item_text(options_def.items_formula, part, item_def.instance_info)
+              text = _evaluate_item_text(options_def.items_formula, part, item_def.instance_info, item_def.thickness_layer, item_def.position_in_batch)
+              text = '!!' unless text.is_a?(String)
 
               position = Geom::Point3d.new(
                 item_rect_x,

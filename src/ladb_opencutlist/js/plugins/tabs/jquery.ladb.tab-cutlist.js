@@ -3305,6 +3305,7 @@
                         { name: 'layer', type: 'string' },
                         { name: 'component_definition', type: 'component_definition' },
                         { name: 'component_instance', type: 'component_instance' },
+                        { name: 'batch', type: 'batch' },
                     ]),
                     snippetDefs: [
                         { name: i18next.t('tab.cutlist.snippet.number'), value: '@number' },

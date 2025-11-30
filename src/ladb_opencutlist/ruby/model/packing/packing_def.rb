@@ -327,16 +327,18 @@ module Ladb::OpenCutList
 
   class PackingItemDef < DataContainer
 
-    attr_reader :item_type_def, :instance_info,
+    attr_reader :item_type_def, :instance_info, :thickness_layer, :position_in_batch,
                 :x, :y, :angle, :mirror,
                 :label_offset
 
-    def initialize(item_type_def:, instance_info:,
+    def initialize(item_type_def:, instance_info:, thickness_layer:, position_in_batch:,
                    x:, y:, angle:, mirror:,
                    label_offset:)
 
       @item_type_def = item_type_def
       @instance_info = instance_info
+      @thickness_layer = thickness_layer
+      @position_in_batch = position_in_batch
 
       @x = x
       @y = y

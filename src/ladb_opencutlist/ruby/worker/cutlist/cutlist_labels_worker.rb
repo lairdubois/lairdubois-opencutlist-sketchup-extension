@@ -51,35 +51,36 @@ module Ladb::OpenCutList
       # Loop on parts
       parts.each do |part|
 
-        # Init thickness layer
-        thickness_layer = 0
+        # Init position in batch
+        position_in_batch = 0
 
-        # Loop on thickness layers
-        part.def.thickness_layer_count.times do
+        if part.virtual
 
-          thickness_layer += 1
+          # Use part count to loop on virtual instances
+          part.def.count.times do
 
-          # Init position in batch
-          position_in_batch = 0
+            position_in_batch += 1
+            bin = _shift_bin(part.id)
 
-          if part.virtual
+            entries << _create_entry(part, 1, position_in_batch, bin)
 
-            # Use part count to loop on virtual instances
-            part.def.count.times do
+            break if @compute_first_instance_only
+          end
 
-              position_in_batch += 1
-              bin = _shift_bin(part.id)
+        else
 
-              entries << _create_entry(part, thickness_layer, position_in_batch, bin)
+          # Loop on real instances
+          part.def.instance_infos.values
+              .sort_by! { |instance_info| instance_info.entity.name } # The sorting process must be identical to that of the packaging
+              .each do |instance_info|
 
-              break if @compute_first_instance_only
-            end
+            # Init thickness layer
+            thickness_layer = 0
 
-          else
+            # Loop on thickness layers
+            part.def.thickness_layer_count.times do
 
-            # Loop on real instances
-            part.def.instance_infos.each do |serialized_path, instance_info|
-
+              thickness_layer += 1
               position_in_batch += 1
               bin = _shift_bin(part.id)
 
