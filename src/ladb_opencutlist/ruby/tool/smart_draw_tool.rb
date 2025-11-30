@@ -510,7 +510,7 @@ module Ladb::OpenCutList
         if @state == STATE_SHAPE_START
           if tool.is_key_shift?(key) || tool.is_key_ctrl_or_option?(key) || tool.is_key_alt_or_command?(key)
             _refresh
-            return true
+            return true # Block default behavior for the ALT key on Windows
           end
         end
 
@@ -588,6 +588,7 @@ module Ladb::OpenCutList
         end
         if tool.is_key_alt_or_command?(key)
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
+          Sketchup.set_status_text('', SB_VCB_VALUE)
           @previous_action_handler = nil
           _remove_floating_tools
           _refresh
