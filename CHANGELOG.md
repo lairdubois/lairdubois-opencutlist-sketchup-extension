@@ -13,7 +13,7 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
   * Added Outliner "Create Group" feature
   * Added Outliner "Create Component" feature
   * Added Outliner "Drag and Drop" feature
-  * Added @batch variable in Packing formulas
+  * Added @batch variable in Packing designation formulas
   * Improved PathFormulaWrapper. It now contains instance objects
   * Improved export with grouped parts activated
   * Improved Smart Handle Tool: 
@@ -27,6 +27,9 @@ in 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2025-11-30
+  * Added @batch variable in Packing designation formulas
+  * Updated CS, ES, NL, SR languages
 ### 2025-11-27
   * Fixed Smart Handle Tool with flat entities
 ### 2025-11-26
