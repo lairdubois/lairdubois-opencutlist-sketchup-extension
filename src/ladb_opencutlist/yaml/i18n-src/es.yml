@@ -1323,7 +1323,7 @@ tab:
         length_unit: Unidad
         generated_at: Fecha y hora
       error:
-        invalid_size: Los parámetros de configuración ingresados ​​no permiten establecer un tamaño de etiqueta válido.
+        invalid_size: Los parámetros de configuración ingresados no permiten establecer un tamaño de etiqueta válido.
       warning:
         is_group_selection: Las piezas dentro de los **grupos ocultos** de su listado de partes no tendrán etiqueta.
         is_part_selection: Estas etiquetas se limitan a las **piezas seleccionadas**.

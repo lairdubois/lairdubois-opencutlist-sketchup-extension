@@ -125,7 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Onderdelen tekenen
       smart_handle: Onderdelen hanteren
-      smart_reshape: "onderdelen aanpassen "
+      smart_reshape: Onderdelen aanpassen
       smart_paint: Kleur de onderdelen
       smart_axes: Oriënt Onderdelen
       smart_export: Onderdelen exporteren
@@ -153,7 +153,7 @@ core:
       Deze versie is alleen beschikbaar om te testen.
       Het wordt niet aanbevolen om deze tijdens productie te gebruiken.
 
-      Om een ​​bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+      Om een bug te rapporteren: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
     not_available_in_context: Niet beschikbaar in deze context
   error:
     exception: "Foutmelding: **{{ error }}**"
@@ -1015,7 +1015,7 @@ tab:
 
         Deze lijst wordt bepaald door het veld **$t(tab.materials.edit_material.std_sizes)** van het materiaal.
 
-        *Bewerk de materiaaleigenschappen van ‘{{ material_name }}’ om deze lijst bij te werken.*
+        *Bewerk de materiaaleigenschappen van '{{ material_name }}' om deze lijst bij te werken.*
       option_std_bin_2d_add: Voeg een afmeting toe
       option_std_bin_2d_none: Geen enkele
       option_scrap_bin_2d_sheet_good_sizes: Paneel overschotten
@@ -1751,7 +1751,7 @@ tab:
       url: URL
       tags: Badges
       layer_name: Tag
-      explode: Uitbarsten/ splitsing 
+      explode: Uitbarsten/ splitsing
       explode_message: "Bevestigt u dat **{{ name }}** wordt uitgeklapt?"
       erase: Leeg maken
       erase_message: "Weet u zeker dat u **{{ name }}** wilt verwijderen?"
@@ -2068,16 +2068,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Klik op een stuk om het te selecteren
+    state_0_to_6_status: Selecteer een bovenliggend element
+    state_4_status: Sleep naar een identiek onderdeel met dezelfde bovenliggende component om het aan de selectie toe te voegen en laat vervolgens los om door te gaan
+    state_5_status: Veeg om toe te voegen aan selectie en laat los om door te gaan
+    state_6_status: Selecteer een element uit de lijst
+    warning:
+      no_active_part: U moet eerst met de muis over een onderdeel gaan
   smart_draw:
     title: Tekenen
     action_0: Teken een rechthoek
     action_0_status: Teken een volume op basis van een rechthoekige vorm
+    action_0_state_0_status: Klik om het eerste punt van de rechthoek in te stellen
     action_0_state_1_status: Klik om de tegenoverliggende hoek te bepalen of voer een lengte en breedte in
     action_1: Teken een cirkel
+    action_1_state_0_status: Klik om het midden van de cirkel in te stellen
     action_1_status: Teken een volume op basis van een cirkelvormige vorm
     action_1_state_1_radius_status: Klik om de straal te bepalen of voer een afstand in
     action_1_state_1_diameter_status: Klik om de diameter te bepalen of voer een afstand in
     action_2: Teken een veelhoek
+    action_2_state_0_status: Klik om het eerste punt van de veelhoek in te stellen
     action_2_status: Teken een volume op basis van een veelhoekige vorm
     action_2_state_1_status: Klik om een nieuw punt te bepalen of voer een afstand in
     action_x_state_2_status: Klik om de hoogte te bepalen of voer een afstand in
@@ -2112,25 +2123,18 @@ tool:
   smart_handle:
     title: bewerken
     action_0: Selecteren
-    action_0_status: Klik op een stuk om het te selecteren
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: Sleep over een identiek onderdeel om het aan de selectie toe te voegen en laat los om verder te gaan
+    action_0_status: Selecteer een onderdeel
     action_1: In een lijn kopiëren
-    action_1_status: Klik op een stuk om het langs een as te kopiëren
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: Een onderdeel langs een as kopiëren
     action_1_state_2_status: Klik om de kopie van het stuk te plaatsen of voer een afstand in
     action_2: In een raster kopiëren
-    action_2_status: Klik op een stuk om het langs een raster te kopiëren
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: Een onderdeel langs een raster kopiëren
     action_2_state_2_status: Klik om de kopieën van het stuk te plaatsen of voer twee afstanden in
     action_3: Verplaatsen
-    action_3_status: Klik op een stuk om het langs een as te verplaatsen
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: Een onderdeel langs een as verplaatsen
     action_3_state_2_status: Klik om het stuk te plaatsen of voer een afstand in
     action_4: Verdelen
-    action_4_status: Klik op een stuk om het langs een as te verdelen
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: Een onderdeel langs een as verdelen
     action_4_state_1_status: Klik om het eerste meetpunt te bepalen
     action_4_state_2_status: Klik om het tweede meetpunt te bepalen of voer een afstand in
     action_option_group_copy_measure_type: Meten
@@ -2154,8 +2158,7 @@ tool:
   smart_reshape:
     title: Opnieuw vormgeven
     action_0: verlengen
-    action_0_status: Klik op een stuk om het te selecteren
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: Een onderdeel uitrekken
     action_0_state_1_status: Klik op een handvat om uit te rekken / te verlengen
     action_0_state_1a_status: Klik op een doorsnedevlak om het te verplaatsen
     action_0_state_1b_status: Een doorsnedevlak toevoegen
@@ -2174,7 +2177,7 @@ tool:
     action_option_axes_entity_status: Verplaatsen langs de assen van het stuk
     action_option_options_make_unique_status: Rekbare elementen uniek maken
     error:
-      curve_intersect: Een van de snijvlakken snijdt door een element dat niet kan worden uitgerekt (een bocht of accessoire)
+      curve_intersect: Een van de snijvlakken snijdt een niet-rekbare curve
   smart_paint:
     title: Kleur
     default_material: Geen materiaal gedefinieerd
@@ -2187,13 +2190,13 @@ tool:
     filter_5: $t(tab.materials.type_5)
     filter_6: $t(tab.materials.type_6)
     action_0: Kleur stukken
-    action_0_status: Klik op een onderdeel om een ​​materiaal op zijn exemplaar toe te passen
+    action_0_status: Klik op een onderdeel om een materiaal op zijn exemplaar toe te passen
     action_1: Kleur het object
     action_1_status: Klik op een rand van een paneelonderdeel om er een materiaal '$t(tab.materials.type_4)' op toe te passen
     action_2: Vlak opschonen
     action_2_status: Klik op een vlak van een paneelonderdeel om er een materiaal '$t(tab.materials.type_6)' op toe te passen
     action_3: Object opschonen
-    action_3_status: Klik op een gezicht om een ​​monster van het materiaal te nemen
+    action_3_status: Klik op een gezicht om een monster van het materiaal te nemen
     action_4: Schoonmaken
     action_4_status: Klik op een onderdeel om alle materialen en alle instanties ervan uit de definitie te verwijderen
     action_option_group_instances: Aantal exemplaren

@@ -2019,8 +2019,8 @@ tab:
       - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*البولندية*)
       - Sergey Isupov (*اللغة العبرية*) واجهة العمل من اليمين إلى اليسار غير مدعومة بعد
       - Nguyen Ngoc Tan (*فيتنامي*)
-      - Andriy Toporivskyi، Kostyantyn Shcherbey (*الأوكرانية*)
-      - [刘涛](https://www.liutao91.cn) ,Martin Pan Chiu Ng (*الصينية المبسطة*)
+      - Andriy Toporivskyi, Kostyantyn Shcherbey (*الأوكرانية*)
+      - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*الصينية المبسطة*)
       - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*الهولندية*)
       - Zoltán Nagy, Roland Kovács (*المجري*)
       - Milan Divovic (*صربي*)
@@ -2067,16 +2067,27 @@ tool:
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: انقر على قطعة لتحديدها
+    state_0_to_6_status: ""
+    state_4_status: ""
+    state_5_status: ""
+    state_6_status: ""
+    warning:
+      no_active_part: ""
   smart_draw:
     title: ارسم
     action_0: ارسم مستطيلا
     action_0_status: ارسم جسما أساسه مستطيل
+    action_0_state_0_status: ""
     action_0_state_1_status: انقر لتحديد الزاوية المقابلة أو أدخل طولًا، عرضًا
     action_1: ارسم دائرة
+    action_1_state_0_status: ""
     action_1_status: ارسم جسما أساسه دائرة
     action_1_state_1_radius_status: انقر لتحديد نصف القطر أو أدخل مسافة
     action_1_state_1_diameter_status: انقر لتحديد القطر أو أدخل مسافة
     action_2: ارسم مضلعا
+    action_2_state_0_status: ""
     action_2_status: ارسم جسما أساسه مضلع
     action_2_state_1_status: انقر لتحديد نقطة جديدة أو أدخل مسافة
     action_x_state_2_status: انقر لتحديد الارتفاع أو أدخل مسافة
@@ -2111,25 +2122,18 @@ tool:
   smart_handle:
     title: معالجة
     action_0: تحديد
-    action_0_status: انقر على قطعة لتحديدها
-    action_0_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_0_state_4_status: ""
+    action_0_status: ""
     action_1: النسخ خطيا
-    action_1_status: انقر على قِطعة لنسخها على طول محور معين
-    action_1_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_1_status: ""
     action_1_state_2_status: انقر لوضع نسخة القِطعة أو أدخل مسافة معينة
     action_2: النسخ شبكيا
-    action_2_status: انقر على قطعة لنسخها على طول شبكة معينة
-    action_2_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_2_status: ""
     action_2_state_2_status: انقر لوضع نسخٍ من القطعة أو أدخل مسافتين
     action_3: نقل
-    action_3_status: انقر على قِطعة لنقلها على طول محور معين
-    action_3_state_0_status: $t(tool.smart_handle.action_0_status)
+    action_3_status: ""
     action_3_state_2_status: انقر لوضع القِطعة أو أدخل مسافة معينة
     action_4: توزيع
-    action_4_status: انقر على قطعة لتوزيعها على طول محور معين
-    action_4_state_0_status: $t(tool.smart_handle.action_0_status)
-    action_4_state_4_status: $t(tool.smart_handle.action_0_state_4_status)
+    action_4_status: ""
     action_4_state_1_status: انقر لتحديد نقطة القياس الأولى
     action_4_state_2_status: انقر لتحديد نقطة القياس الثانية أو أدخل مسافة معينة
     action_option_group_copy_measure_type: قياس
@@ -2153,8 +2157,7 @@ tool:
   smart_reshape:
     title: ""
     action_0: ""
-    action_0_status: انقر على قطعة لتحديدها
-    action_0_state_0_status: $t(tool.smart_reshape.action_0_status)
+    action_0_status: ""
     action_0_state_1_status: ""
     action_0_state_1a_status: ""
     action_0_state_1b_status: ""
@@ -2165,11 +2168,13 @@ tool:
     action_0_state_2_status: ""
     action_option_group_stretch_measure_type: قياس
     action_option_group_axes: المحاور
+    action_option_group_options: الخيارات
     action_option_stretch_measure_type_outside_status: القياس من الخارج
     action_option_stretch_measure_type_offset_status: ""
     action_option_axes_active_status: المعالجة على طول المحاور النشطة
     action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر الذي يحتوي على القِطعة
     action_option_axes_entity_status: المعالجة على طول محاور القطعة
+    action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""
   smart_paint:

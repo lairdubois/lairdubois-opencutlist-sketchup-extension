@@ -510,7 +510,7 @@ module Ladb::OpenCutList
         if @state == STATE_SHAPE_START
           if tool.is_key_shift?(key) || tool.is_key_ctrl_or_option?(key) || tool.is_key_alt_or_command?(key)
             _refresh
-            return true
+            return true # Block default behavior for the ALT key on Windows
           end
         end
 
@@ -587,11 +587,10 @@ module Ladb::OpenCutList
           return true
         end
         if tool.is_key_alt_or_command?(key)
-          if is_quick
-            @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
-            @previous_action_handler = nil
-            _remove_floating_tools
-          end
+          @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
+          Sketchup.set_status_text('', SB_VCB_VALUE)
+          @previous_action_handler = nil
+          _remove_floating_tools
           _refresh
           return true
         end
@@ -1307,7 +1306,7 @@ module Ladb::OpenCutList
       # Remove previously created entity if exists
       if @definition.is_a?(Sketchup::ComponentDefinition)
         model.active_entities.erase_entities(@definition.instances)
-        model.definitions.remove(@definition)
+        model.definitions.remove(@definition) if Sketchup.version_number >= 1800000000
         @definition = nil
       end
 

@@ -23,12 +23,13 @@ module Ladb::OpenCutList
       begin
 
         if model.selection.empty?
-          model.selection.invert
+          model.selection.invert if Sketchup.version_number >= 1920000000
         else
           model.selection.clear
         end
 
-      rescue
+      rescue => e
+        puts e
         return { :errors => [ 'default.error' ] }
       end
 

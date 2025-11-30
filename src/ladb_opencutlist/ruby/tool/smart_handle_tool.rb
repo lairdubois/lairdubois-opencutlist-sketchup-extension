@@ -384,10 +384,20 @@ module Ladb::OpenCutList
 
     end
 
+    def onToolKeyDown(tool, key, repeat, flags, view)
+      return true if super
+
+      if tool.is_key_alt_or_command?(key)
+        return true # Block default behavior for the ALT key on Windows
+      end
+
+      false
+    end
+
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
       return true if super
 
-      if tool.is_key_alt_or_command?(key) && is_quick
+      if tool.is_key_alt_or_command?(key)
         @tool.store_action_option_value(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR, !_fetch_option_mirror, true)
         _refresh
         return true
@@ -1311,6 +1321,7 @@ module Ladb::OpenCutList
     # -----
 
     def _get_move_def(ps, pe, type = 0)
+      return unless pe.is_a?(Geom::Point3d)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       et = _get_edit_transformation
@@ -1958,6 +1969,7 @@ module Ladb::OpenCutList
     end
 
     def _get_move_def(ps, pe, type = 0)
+      return unless pe.is_a?(Geom::Point3d)
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
       ht = _get_handle_transformation
@@ -2450,6 +2462,7 @@ module Ladb::OpenCutList
     # -----
 
     def _get_move_def(ps, pe, type = 0)
+      return unless ps.is_a?(Geom::Point3d) && pe.is_a?(Geom::Point3d)
       return unless (v = ps.vector_to(pe)).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
       return unless (drawing_def_segments = _get_drawing_def_segments(drawing_def)).is_a?(Array)
@@ -3070,6 +3083,7 @@ module Ladb::OpenCutList
     # -----
 
     def _get_move_def(ps, pe)
+      return unless ps.is_a?(Geom::Point3d) && pe.is_a?(Geom::Point3d)
       return unless (v = ps.vector_to(pe)).valid?
       return unless (drawing_def = _get_drawing_def).is_a?(DrawingDef)
 
