@@ -125,7 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Kreslení dílů
       smart_handle: Práce s díly
-      smart_reshape: Přetvořit díly
+      smart_reshape: Předělat díly
       smart_paint: Materiály dílů
       smart_axes: Orientace dílů
       smart_export: Export dílů
@@ -1763,7 +1763,7 @@ tab:
         Tato funkce umožňuje přejmenovat součásti přítomné ve vybrané sadě pomocí aplikace níže uvedeného vzorce na každou instanci.
       formula: Vzorec
       old_name: Původní název
-      new_name: Nové jméno
+      new_name: Nový název
       count: Počet
     create_container:
       title_group: "Vytvořit skupinu"
