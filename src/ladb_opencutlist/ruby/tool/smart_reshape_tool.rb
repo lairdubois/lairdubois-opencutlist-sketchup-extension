@@ -135,22 +135,6 @@ module Ladb::OpenCutList
 
     # -- Events --
 
-    def onActivate(view)
-      super
-
-      # Observe model events
-      view.model.add_observer(self)
-
-    end
-
-    def onDeactivate(view)
-      super
-
-      # Stop observing model events
-      view.model.remove_observer(self)
-
-    end
-
     def onActionChanged(action)
 
       remove_all_2d
@@ -173,6 +157,7 @@ module Ladb::OpenCutList
     end
 
     def onTransactionUndo(model)
+      super
       refresh
     end
 

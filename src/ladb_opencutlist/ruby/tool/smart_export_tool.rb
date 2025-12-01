@@ -254,7 +254,7 @@ module Ladb::OpenCutList
       super
 
       # Clear current selection
-      Sketchup.active_model.selection.clear if Sketchup.active_model
+      view.model.selection.clear
 
     end
 

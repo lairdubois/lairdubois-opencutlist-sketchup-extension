@@ -173,18 +173,7 @@ module Ladb::OpenCutList
       super
 
       # Clear current selection
-      Sketchup.active_model.selection.clear if Sketchup.active_model
-
-      # Observe model events
-      view.model.add_observer(self)
-
-    end
-
-    def onDeactivate(view)
-      super
-
-      # Stop observing model events
-      view.model.remove_observer(self)
+      view.model.selection.clear
 
     end
 
@@ -211,6 +200,7 @@ module Ladb::OpenCutList
     end
 
     def onTransactionUndo(model)
+      super
       refresh
     end
 

@@ -1271,9 +1271,6 @@ module Ladb::OpenCutList
       # Stop the current action handler
       @action_handler.stop if @action_handler.is_a?(SmartActionHandler)
 
-      # Stop observing view events
-      view.remove_observer(self)
-
       # Stop observing rendering options events
       view.model.rendering_options.remove_observer(self)
 

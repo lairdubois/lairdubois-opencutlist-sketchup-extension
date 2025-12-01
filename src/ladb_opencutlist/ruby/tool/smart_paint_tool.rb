@@ -661,19 +661,16 @@ module Ladb::OpenCutList
       super
 
       # Clear current selection
-      Sketchup.active_model.selection.clear if Sketchup.active_model
+      view.model.selection.clear
 
       # Force global current material to be valid
       unless get_current_material.nil?
         begin
-          get_current_material.model == Sketchup.active_model
+          get_current_material.model == view.model
         rescue => e # Reference to deleted Entity
           store_action_material(fetch_action, nil)
         end
       end
-
-      # Observe model events
-      view.model.add_observer(self)
 
       # Observe materials events
       view.model.materials.add_observer(self)
@@ -682,9 +679,6 @@ module Ladb::OpenCutList
 
     def onDeactivate(view)
       super
-
-      # Stop observing model events
-      view.model.remove_observer(self)
 
       # Stop observing materials events
       view.model.materials.remove_observer(self)
@@ -786,6 +780,7 @@ module Ladb::OpenCutList
     end
 
     def onTransactionUndo(model)
+      super
       _refresh_active_part
     end
 

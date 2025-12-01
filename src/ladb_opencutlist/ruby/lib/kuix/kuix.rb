@@ -291,6 +291,9 @@ module Ladb::OpenCutList
 
       def onActivate(view)
 
+        # Observe model events
+        view.model.add_observer(self)
+
         # Create the root canvas
         @canvas = Canvas.new(view)
 
@@ -304,8 +307,13 @@ module Ladb::OpenCutList
       end
 
       def onDeactivate(view)
+
+        # Stop observing model events
+        view.model.remove_observer(self)
+
         @canvas.remove_all
         @space.remove_all
+
         view.invalidate
       end
 
@@ -335,7 +343,7 @@ module Ladb::OpenCutList
         key_down_time = @key_down_times[key]
         after_down = key_down_time.is_a?(Time)
         @key_down_times.delete(key)
-        onKeyUpExtended(key, repeat, flags, view, after_down, after_down && (Time.new - key_down_time) <= 0.15) # < 150ms
+        onKeyUpExtended(key, repeat, flags, view, after_down, after_down && (Time.new - key_down_time) <= 0.2) # < 200ms
       end
 
       def onKeyUpExtended(key, repeat, flags, view, after_down, is_quick)
@@ -426,6 +434,10 @@ module Ladb::OpenCutList
         UI.set_cursor(@cursors.last)
       end
 
+      def onTransactionUndo(model)
+        @key_down_times.clear
+      end
+
       # -----
 
       def inspect
@@ -464,13 +476,13 @@ module Ladb::OpenCutList
 
           return unless @canvas
 
-          # Check if viewport has changed
+          # Check if the viewport has changed
           if view.vpwidth != @canvas.bounds.width || view.vpheight != @canvas.bounds.height
             @canvas.bounds.set!(0, 0, view.vpwidth, view.vpheight)
             @canvas.do_layout
           end
 
-          # Check if canvas need to be revalidated
+          # Check if canvas needs to be revalidated
           if @canvas.invalidated?
             @canvas.do_layout
           end

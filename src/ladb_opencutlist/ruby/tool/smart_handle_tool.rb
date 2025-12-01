@@ -189,22 +189,6 @@ module Ladb::OpenCutList
 
     # -- Events --
 
-    def onActivate(view)
-      super
-
-      # Observe model events
-      view.model.add_observer(self)
-
-    end
-
-    def onDeactivate(view)
-      super
-
-      # Stop observing model events
-      view.model.remove_observer(self)
-
-    end
-
     def onActionChanged(action)
 
       remove_all_2d
@@ -235,6 +219,7 @@ module Ladb::OpenCutList
     end
 
     def onTransactionUndo(model)
+      super
       refresh
     end
 
@@ -397,7 +382,7 @@ module Ladb::OpenCutList
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
       return true if super
 
-      if tool.is_key_alt_or_command?(key)
+      if tool.is_key_alt_or_command?(key) && is_quick
         @tool.store_action_option_value(@action, SmartHandleTool::ACTION_OPTION_OPTIONS, SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR, !_fetch_option_mirror, true)
         _refresh
         return true
