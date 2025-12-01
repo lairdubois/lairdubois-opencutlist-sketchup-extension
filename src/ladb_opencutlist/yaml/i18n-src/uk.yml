@@ -2070,25 +2070,25 @@ tool:
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: "Натисніть на деталь, щоб вибрати її"
-    state_0_to_6_status: ""
-    state_4_status: ""
-    state_5_status: ""
-    state_6_status: ""
+    state_0_to_6_status: Обрати батьківський елемент
+    state_4_status: "Перетягніть ідентичну частину з тим самим батьківським елементом, щоб додати її до виділення, і відпустіть, щоб продовжити"
+    state_5_status: "Перетягніть, щоб додати до вибору, і відпустіть, щоб продовжити"
+    state_6_status: Обрати пункт зі списку
     warning:
-      no_active_part: ""
+      no_active_part: Спочатку потрібно навести курсор на деталь
   smart_draw:
     title: Створити
     action_0: Прямокутник
     action_0_status: Малювання об'єму на основі прямокутної форми
-    action_0_state_0_status: ""
+    action_0_state_0_status: "Натисніть, щоб визначити першу точку прямокутника"
     action_0_state_1_status: "Натисніть, щоб встановити протилежний кут або ввести довжину, ширину"
     action_1: Коло
-    action_1_state_0_status: ""
+    action_1_state_0_status: "Натисніть, щоб встановити центр кола"
     action_1_status: Малювання об'єму на основі круглої форми
     action_1_state_1_radius_status: "Натисніть, щоб встановити радіус або ввести відстань"
     action_1_state_1_diameter_status: "Натисніть, щоб встановити діаметр або ввести відстань"
     action_2: Багатокутник
-    action_2_state_0_status: ""
+    action_2_state_0_status: "Клацніть, щоб визначити першу точку багатокутника"
     action_2_status: Малювання об'єму на основі багатокутної форми
     action_2_state_1_status: "Натисніть, щоб встановити нову точку або ввести відстань"
     action_x_state_2_status: "Натисніть, щоб встановити висоту або ввести відстань"
@@ -2123,18 +2123,18 @@ tool:
   smart_handle:
     title: Редагувати
     action_0: Обрати
-    action_0_status: ""
+    action_0_status: Обрати деталь
     action_1: Копіювати по лінії
-    action_1_status: ""
+    action_1_status: Скопіювати деталь уздовж осі
     action_1_state_2_status: "Натисніть, щоб розмістити копію деталі, або введіть відстань"
     action_2: Копіювати по сітці
-    action_2_status: ""
+    action_2_status: Скопіювати деталь уздовж сітки
     action_2_state_2_status: "Натисніть, щоб розмістити копії деталі, або введіть дві відстані"
     action_3: Перемістити
-    action_3_status: ""
+    action_3_status: Переміщення деталі вздовж осі
     action_3_state_2_status: "Натисніть, щоб розмістити деталь або ввести відстань"
     action_4: Розподілити
-    action_4_status: ""
+    action_4_status: Розподілити деталь по осі
     action_4_state_1_status: "Натисніть, щоб визначити першу точку вимірювання"
     action_4_state_2_status: "Натисніть, щоб визначити другу точку вимірювання або ввести відстань"
     action_option_group_copy_measure_type: Вимірювання
@@ -2158,7 +2158,7 @@ tool:
   smart_reshape:
     title: Реконструювати
     action_0: Розтягнути
-    action_0_status: ""
+    action_0_status: Розтягнути деталь
     action_0_state_1_status: "Натисніть ручку, щоб розтягнути"
     action_0_state_1a_status: "Натисніть на січну площину, щоб перемістити її"
     action_0_state_1b_status: Додайте січну площину
@@ -2177,7 +2177,7 @@ tool:
     action_option_axes_entity_status: Переміщення по осях деталі
     action_option_options_make_unique_status: Зробити розтягнуті елементи унікальними
     error:
-      curve_intersect: ""
+      curve_intersect: Одна з січних площин перетинає нерозтяжну криву
   smart_paint:
     title: Нанесення матеріалів
     default_material: Матеріал не заданий

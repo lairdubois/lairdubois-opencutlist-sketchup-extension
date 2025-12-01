@@ -2063,7 +2063,7 @@ tool:
       missing_close_parenthesis: "Parentesi chiusa mancante"
       missing_operand: "Operando mancante"
       zero_division: "Divisione per zero"
-      lt_min_distance: "La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }} "
+      lt_min_distance: "La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }}"
       gt_max_distance: "La distanza {{ value1 }} è superiore alla distanza massima di {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
@@ -2154,7 +2154,7 @@ tool:
     warning:
       copies_disable_mirror: La copia multipla disabilita l'opzione '$t(tool.smart_handle.action_option_options_mirror_status)'
     error:
-      min_distance: "La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }} "
+      min_distance: "La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }}"
   smart_reshape:
     title: Rimodellare
     action_0: Allungare
