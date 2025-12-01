@@ -79,7 +79,7 @@ module Ladb::OpenCutList
       # Action
       @current_action = current_action
 
-      # Setup action stack
+      # Init action stack
       @action_stack = []
 
       # Action handler

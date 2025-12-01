@@ -701,6 +701,7 @@ module Ladb::OpenCutList
       dst_instance.layer = src_instance.layer
       dst_instance.casts_shadows = src_instance.casts_shadows?
       dst_instance.receives_shadows = src_instance.receives_shadows?
+      dst_instance.glued_to = src_instance.glued_to unless src_instance.glued_to.nil?
       unless src_instance.attribute_dictionaries.nil?
         src_instance.attribute_dictionaries.each do |attribute_dictionary|
           attribute_dictionary.each do |key, value|
