@@ -262,6 +262,13 @@ module Ladb::OpenCutList
 
     end
 
+    # -----
+
+    def stop
+      Sketchup.active_model.selection.clear
+      super
+    end
+
     # -- STATE --
 
     def get_state_cursor(state)
@@ -416,14 +423,25 @@ module Ladb::OpenCutList
       false
     end
 
-    def onStateChanged(state)
+    def onStateChanged(old_state, new_state)
       super
 
       @tool.remove_tooltip
 
-      case state
+      case old_state
 
       when STATE_HANDLE, STATE_HANDLE_START
+        Sketchup.active_model.selection.clear
+
+      end
+
+      case new_state
+
+      when STATE_HANDLE, STATE_HANDLE_START
+        unless has_active_part?
+          Sketchup.active_model.selection.clear
+          Sketchup.active_model.selection.add(get_active_selection_instances)
+        end
         @tool.remove_all_2d
 
       end
@@ -781,7 +799,9 @@ module Ladb::OpenCutList
         Sketchup.active_model.selection.add(sibling_instances)
       end
 
-      set_state(STATE_HANDLE)
+      _reset_active_part
+      _reset_active_selection
+
       set_state(STATE_SELECT)
       _refresh
 
@@ -911,15 +931,16 @@ module Ladb::OpenCutList
         UI.beep
       end
 
+      false
     end
 
-    def onStateChanged(state)
+    def onStateChanged(old_state, new_state)
       super
 
       @locked_axis = nil
 
       unless _get_instance.nil?
-        if state == STATE_HANDLE
+        if new_state == STATE_HANDLE
           @tool.set_3d_visibility(false, [ LAYER_3D_PART_SIBLING_PREVIEW ]) # Hide part preview
           _hide_sibling_instances
         else
@@ -1101,7 +1122,6 @@ module Ladb::OpenCutList
         k_segments.color = Kuix::COLOR_BLACK
         k_segments.transformation = mt * drawing_def.transformation
         @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
-
 
         # Preview bounds
 
@@ -1545,9 +1565,10 @@ module Ladb::OpenCutList
         UI.beep
       end
 
+      false
     end
 
-    def onStateChanged(state)
+    def onStateChanged(old_state, new_state)
       super
 
       @locked_normal = nil
@@ -2204,7 +2225,8 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_LEFT
+      end
+      if key == VK_LEFT
         y_axis = _get_active_y_axis.reverse # Reverse to keep z axis on top
         if @locked_axis == y_axis
           @locked_axis = nil
@@ -2213,7 +2235,8 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_UP
+      end
+      if key == VK_UP
         z_axis = _get_active_z_axis
         if @locked_axis == z_axis
           @locked_axis = nil
@@ -2222,19 +2245,21 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_DOWN
+      end
+      if key == VK_DOWN
         UI.beep
       end
 
+      false
     end
 
-    def onStateChanged(state)
+    def onStateChanged(old_state, new_state)
       super
 
       @locked_axis = nil
 
       unless _get_instance.nil?
-        if state == STATE_HANDLE
+        if new_state == STATE_HANDLE
           @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
           _hide_instances
         else
@@ -2709,6 +2734,7 @@ module Ladb::OpenCutList
         UI.beep
       end
 
+      false
     end
 
     def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
@@ -2719,15 +2745,16 @@ module Ladb::OpenCutList
         return true
       end
 
+      false
     end
 
-    def onStateChanged(state)
+    def onStateChanged(old_state, new_state)
       super
 
       @locked_axis = nil
 
       if has_active_selection?
-        if state == STATE_HANDLE
+        if new_state == STATE_HANDLE
           @tool.set_3d_visibility(false, [ LAYER_3D_PART_PREVIEW, LAYER_3D_PART_SIBLING_PREVIEW ]) # Hide part preview
           _hide_instances
           _hide_sibling_instances
@@ -2889,12 +2916,12 @@ module Ladb::OpenCutList
 
       # Preview
 
-      k_segments = Kuix::Segments.new
-      k_segments.add_segments(drawing_def_segments)
-      k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-      k_segments.color = Kuix::COLOR_DARK_GREY
-      k_segments.transformation = drawing_def.transformation
-      @tool.append_3d(k_segments, LAYER_3D_HANDLE_PREVIEW)
+      k_box = Kuix::BoxMotif3d.new
+      k_box.bounds.copy!(eb)
+      k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+      k_box.color = Kuix::COLOR_DARK_GREY
+      k_box.transformation = et
+      @tool.append_3d(k_box, LAYER_3D_HANDLE_PREVIEW)
 
       (1..@number).each do |i|
 

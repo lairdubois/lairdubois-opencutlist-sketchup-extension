@@ -324,7 +324,7 @@ module Ladb::OpenCutList
       false
     end
 
-    def onStateChanged(state)
+    def onStateChanged(new_state, old_state)
       super
 
       @tool.remove_tooltip
@@ -782,7 +782,8 @@ module Ladb::OpenCutList
           end
           _refresh
           return true
-        elsif key == VK_LEFT
+        end
+        if key == VK_LEFT
           if @locked_axis == Y_AXIS
             @locked_axis = nil
           else
@@ -790,7 +791,8 @@ module Ladb::OpenCutList
           end
           _refresh
           return true
-        elsif key == VK_UP
+        end
+        if key == VK_UP
           if @locked_axis == Z_AXIS
             @locked_axis = nil
           else
@@ -798,7 +800,8 @@ module Ladb::OpenCutList
           end
           _refresh
           return true
-        elsif key == VK_DOWN
+        end
+        if key == VK_DOWN
           @locked_axis = nil
           _refresh
           return true
@@ -859,12 +862,12 @@ module Ladb::OpenCutList
 
     end
 
-    def onStateChanged(state)
+    def onStateChanged(old_state, new_state)
       super
 
       unless _get_instances.nil?
 
-        case state
+        case new_state
 
         when STATE_RESHAPE_START
           @tool.remove_all_2d

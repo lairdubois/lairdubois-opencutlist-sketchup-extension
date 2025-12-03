@@ -102,6 +102,8 @@ module Ladb::OpenCutList
       @layers_2d = {}
       @layers_3d = {}
 
+      # @unit = 5
+
     end
 
     def get_stripped_name
@@ -1684,8 +1686,7 @@ module Ladb::OpenCutList
     # -- STATE --
 
     def set_state(state)
-      @state = state
-      onStateChanged(state)
+      onStateChanged(@state, @state = state)
     end
 
     def fetch_state
@@ -1753,11 +1754,11 @@ module Ladb::OpenCutList
 
     # -----
 
-    def onStateChanged(state)
-      @tool.set_root_cursor(get_state_cursor(state))
-      @picker = get_state_picker(state)
-      Sketchup.set_status_text(get_state_status(state), SB_PROMPT)
-      Sketchup.set_status_text(get_state_vcb_label(state), SB_VCB_LABEL)
+    def onStateChanged(old_state, new_state)
+      @tool.set_root_cursor(get_state_cursor(new_state))
+      @picker = get_state_picker(new_state)
+      Sketchup.set_status_text(get_state_status(new_state), SB_PROMPT)
+      Sketchup.set_status_text(get_state_vcb_label(new_state), SB_VCB_LABEL)
       Sketchup.set_status_text('', SB_VCB_VALUE)
     end
 
@@ -2924,14 +2925,14 @@ module Ladb::OpenCutList
       super
     end
 
-    def onStateChanged(state)
+    def onStateChanged(old_state, new_state)
       super
 
       @tool.remove_tooltip
 
-      unless _get_instances.nil?
+      unless has_active_selection?
 
-        case state
+        case new_state
 
         when STATE_SELECT
           _unhide_instances

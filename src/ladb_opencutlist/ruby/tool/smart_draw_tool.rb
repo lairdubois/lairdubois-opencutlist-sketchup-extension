@@ -513,7 +513,8 @@ module Ladb::OpenCutList
           end
           _refresh
           return true
-        elsif key == VK_LEFT
+        end
+        if key == VK_LEFT
           y_axis = _get_active_y_axis.reverse # Reverse to keep z axis on top
           if @locked_normal == y_axis
             @locked_normal = nil
@@ -522,7 +523,8 @@ module Ladb::OpenCutList
           end
           _refresh
           return true
-        elsif key == VK_UP
+        end
+        if key == VK_UP
           z_axis = _get_active_z_axis
           if @locked_normal == z_axis
             @locked_normal = nil
@@ -531,7 +533,8 @@ module Ladb::OpenCutList
           end
           _refresh
           return true
-        elsif key == VK_DOWN
+        end
+        if key == VK_DOWN
           face_normal = @mouse_ip.valid? && @mouse_ip.face ? @mouse_ip.face.normal.transform(@mouse_ip.transformation).normalize! : nil
           if !@locked_normal.nil? && !face_normal.nil? && @locked_normal.samedirection?(face_normal)
             @locked_normal = nil
@@ -626,7 +629,7 @@ module Ladb::OpenCutList
       false
     end
 
-    def onStateChanged(state)
+    def onStateChanged(old_state, new_state)
       super
 
       # Remove floatin tools
@@ -2744,7 +2747,8 @@ module Ladb::OpenCutList
           end
           _refresh
           return true
-        elsif key == VK_LEFT
+        end
+        if key == VK_LEFT
           y_axis = _get_active_y_axis
           if !y_axis.perpendicular?(@normal) && @picked_points.length >= 3
             UI.beep
@@ -2760,7 +2764,8 @@ module Ladb::OpenCutList
           end
           _refresh
           return true
-        elsif key == VK_UP
+        end
+        if key == VK_UP
           z_axis = _get_active_z_axis
           if !z_axis.perpendicular?(@normal) && @picked_points.length >= 3
             UI.beep
@@ -2776,7 +2781,8 @@ module Ladb::OpenCutList
           end
           _refresh
           return true
-        elsif key == VK_DOWN
+        end
+        if key == VK_DOWN
           UI.beep
           return true
         end
