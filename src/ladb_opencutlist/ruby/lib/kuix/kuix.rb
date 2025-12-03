@@ -17,7 +17,10 @@ module Ladb::OpenCutList
       VK_NUMPAD7 = 55
       VK_NUMPAD8 = 56
       VK_NUMPAD9 = 57
+      VK_MULTIPLY = 42
       VK_ADD = 43
+      VK_SUBTRACT = 45
+      VK_DIVIDE = 47
     else
       VK_NUMPAD0 = 0x60
       VK_NUMPAD1 = 0x61
@@ -29,7 +32,10 @@ module Ladb::OpenCutList
       VK_NUMPAD7 = 0x67
       VK_NUMPAD8 = 0x68
       VK_NUMPAD9 = 0x69
+      VK_MULTIPLY = 0x6A
       VK_ADD = 0x6B
+      VK_SUBTRACT = 0x6D
+      VK_DIVIDE = 0x6F
     end
 
     # Color constants

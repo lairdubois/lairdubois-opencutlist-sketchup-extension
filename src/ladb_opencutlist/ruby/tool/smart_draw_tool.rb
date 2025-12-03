@@ -564,8 +564,8 @@ module Ladb::OpenCutList
       case @state
 
       when STATE_SHAPE_START
-        if tool.is_key_shift?(key)
-          if is_quick && tool.is_key_ctrl_or_option_down?
+        if tool.is_key_shift?(key) && is_quick
+          if tool.is_key_ctrl_or_option_down?
             unless @mouse_snap_face_manipulator.nil?
               if _set_picked_points_from_face_manipulator(@mouse_snap_face_manipulator, view)
                 @mouse_snap_face_manipulator = nil
@@ -576,7 +576,7 @@ module Ladb::OpenCutList
           _refresh
           return true
         end
-        if tool.is_key_alt_or_command?(key)
+        if tool.is_key_alt_or_command?(key) && is_quick
           @tool.store_action_option_value(@action, SmartDrawTool::ACTION_OPTION_OPTIONS, SmartDrawTool::ACTION_OPTION_OPTIONS_MEASURE_FROM_VERTEX, !_fetch_option_measure_from_vertex, true)
           Sketchup.set_status_text('', SB_VCB_VALUE)
           @previous_action_handler = nil

@@ -865,6 +865,18 @@ module Ladb::OpenCutList
       return true if super
       return if @state != STATE_HANDLE
 
+      if key == Kuix::VK_ADD
+        _warn_if_mirrored(@number + 1) if @number == 1
+        @number += 1
+        _refresh
+        return true
+      end
+      if key == Kuix::VK_SUBTRACT
+        @number = [ @number - 1, 1 ].max
+        _refresh
+        return true
+      end
+
       if key == VK_RIGHT
         x_axis = _get_active_x_axis
         if @locked_axis == x_axis
@@ -874,7 +886,8 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_LEFT
+      end
+      if key == VK_LEFT
         y_axis = _get_active_y_axis.reverse # Reverse to keep z axis on top
         if @locked_axis == y_axis
           @locked_axis = nil
@@ -883,7 +896,8 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_UP
+      end
+      if key == VK_UP
         z_axis = _get_active_z_axis
         if @locked_axis == z_axis
           @locked_axis = nil
@@ -892,7 +906,8 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_DOWN
+      end
+      if key == VK_DOWN
         UI.beep
       end
 
@@ -923,7 +938,7 @@ module Ladb::OpenCutList
       end
 
       if option == SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR
-        tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if @number != 1
+        _warn_if_mirrored(@number)
       end
 
     end
@@ -1206,8 +1221,7 @@ module Ladb::OpenCutList
           return true
         end
 
-        # Warn if the mirror option enabled
-        tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror && number > 1
+        _warn_if_mirrored(number)
 
         case @state
 
@@ -1414,6 +1428,13 @@ module Ladb::OpenCutList
       }
     end
 
+    # -----
+
+    def _warn_if_mirrored(number)
+      # Warn if the mirror option enabled
+      @tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror && number != 1
+    end
+
   end
 
   class SmartHandleCopyGridActionHandler < SmartHandleOneStepActionHandler
@@ -1476,6 +1497,20 @@ module Ladb::OpenCutList
       return true if super
       return if @state != STATE_HANDLE
 
+      if key == Kuix::VK_ADD
+        _warn_if_mirrored(@number_x + 1, @number_y + 1) if @number_x == 1 && @number_y == 1
+        @number_x += 1
+        @number_y += 1
+        _refresh
+        return true
+      end
+      if key == Kuix::VK_SUBTRACT
+        @number_x = [ @number_x - 1, 1 ].max
+        @number_y = [ @number_y - 1, 1 ].max
+        _refresh
+        return true
+      end
+
       if key == VK_RIGHT
         x_axis = _get_active_x_axis
         if @locked_normal == x_axis
@@ -1485,7 +1520,8 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_LEFT
+      end
+      if key == VK_LEFT
         y_axis = _get_active_y_axis
         if @locked_normal == y_axis
           @locked_normal = nil
@@ -1494,7 +1530,8 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_UP
+      end
+      if key == VK_UP
         z_axis = _get_active_z_axis
         if @locked_normal == z_axis
           @locked_normal = nil
@@ -1503,7 +1540,8 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_DOWN
+      end
+      if key == VK_DOWN
         UI.beep
       end
 
@@ -1524,7 +1562,7 @@ module Ladb::OpenCutList
       end
 
       if option == SmartHandleTool::ACTION_OPTION_OPTIONS_MIRROR
-        tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if @number_x != 1 || @number_y != 1
+        _warn_if_mirrored(@number_x, @number_y)
       end
 
     end
@@ -1816,8 +1854,7 @@ module Ladb::OpenCutList
           return true
         end
 
-        # Warn if mirror
-        tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror && (number_1 > 1 || number_2 > 1)
+        _warn_if_mirrored(number_1, number_2)
 
         case @state
 
@@ -2091,6 +2128,13 @@ module Ladb::OpenCutList
         dminx: dminx,
         dminy: dminy
       }
+    end
+
+    # -----
+
+    def _warn_if_mirrored(number_x, number_y)
+      # Warn if the mirror option enabled
+      @tool.notify_warnings([ [ "tool.smart_handle.warning.copies_disable_mirror" ] ]) if _fetch_option_mirror && (number_x != 1 || number_y != 1)
     end
 
   end
@@ -2620,6 +2664,17 @@ module Ladb::OpenCutList
         return true
       end
 
+      if key == Kuix::VK_ADD
+        @number += 1
+        _refresh
+        return true
+      end
+      if key == Kuix::VK_SUBTRACT
+        @number = [ @number - 1, 1 ].max
+        _refresh
+        return true
+      end
+
       if key == VK_RIGHT
         x_axis = _get_active_x_axis
         if @locked_axis == x_axis
@@ -2629,7 +2684,8 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_LEFT
+      end
+      if key == VK_LEFT
         y_axis = _get_active_y_axis.reverse # Reverse to keep z axis on top
         if @locked_axis == y_axis
           @locked_axis = nil
@@ -2638,7 +2694,8 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_UP
+      end
+      if key == VK_UP
         z_axis = _get_active_z_axis
         if @locked_axis == z_axis
           @locked_axis = nil
@@ -2647,7 +2704,8 @@ module Ladb::OpenCutList
         end
         _refresh
         return true
-      elsif key == VK_DOWN
+      end
+      if key == VK_DOWN
         UI.beep
       end
 
