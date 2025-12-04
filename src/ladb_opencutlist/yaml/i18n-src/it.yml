@@ -472,12 +472,12 @@ tab:
       url: URL
       url_help: |
         L' *URL* indica, per ogni elemento, un link personalizzato a una pagina esterna.
-      tags: Cartellini
+      tags: Tags
       tags_help: |
-        I *Cartellini* sono espressioni personalizzate che si possono aggiungere ai singoli elementi del progetto.
-        Ogni elemento può avere zero o più cartellini.
-        Il cartellino puo diventare un filtro di selezione per gli elementi visibili del progetto.
-      tags_multiple_info: Vengono mostrati solo i cartellini più usati
+        I *tags* sono espressioni personalizzate che si possono aggiungere ai singoli elementi del progetto.
+        Ogni elemento può avere zero o più tag.
+        Il tag puo diventare un filtro di selezione per gli elementi visibili del progetto.
+      tags_multiple_info: Vengono mostrati solo i tags più usati
       orientation: Orientamento
       orientation_locked_on_axis: Blocca l'orientamento sugli assi
       orientation_locked_on_axis_help: |
@@ -536,15 +536,15 @@ tab:
       part_number_sequence_by_group_help: "Selezionando questa opzione, la classificazione delle parti viene fatta ripartire 1 (o A) per ogni gruppo (parti con materiale e spessore identico)."
       part_folding: Raggruppa parti uguali
       part_folding_help: |
-        Selezionando questa opzione, gli elementi di tipo **Tavole, Pannello o Barre**, che hanno la **stessa dimensione grezza**, gli **stessi cartellini** e la **stessa finitura della superficie** *(se la visualizzazione di queste superfici è attiva)* vengono raggruppati sulla stessa linea nella *distinta*.
+        Selezionando questa opzione, gli elementi di tipo **Tavole, Pannello o Barre**, che hanno la **stessa dimensione grezza**, gli **stessi tags** e la **stessa finitura della superficie** *(se la visualizzazione di queste superfici è attiva)* vengono raggruppati sulla stessa linea nella *distinta*.
 
         Gli elementi vengono comunque considerarti differenti per l'etichettatura e la lista di taglio.
       hide_entity_names: Nascondi i nomi delle occorrenze
       hide_entity_names_help: "Selezionando questa opzione, il **nome occorrenza** delle parti non verrà mostrata."
       hide_descriptions: Nascondere le descrizioni
       hide_descriptions_help: "Selezionando questa opzione, le **descrizioni** poste sulle parte non vengono visualizzate."
-      hide_tags: Nascondi i cartellini
-      hide_tags_help: "Selezionando questa opzione i **cartellini** non verranno mostrati."
+      hide_tags: Nascondi i tags
+      hide_tags_help: "Selezionando questa opzione i **tags** non verranno mostrati."
       hide_cutting_dimensions: Nascondi le dimensioni semilavorate
       hide_cutting_dimensions_help: "Selezionando questa opzione, verranno escluse le dimensioni **semilavorate**."
       hide_bbox_dimensions: Nascondi le dimensioni finite
@@ -582,10 +582,10 @@ tab:
       property_name: Designazione
       property_count: Quantità
       property_edge_pattern: Numero delle bordature
-      property_tags: Cartellini
+      property_tags: Tags
       property_thickness_layer_count: Numero di strati
-      tags: Cartellini
-      tags_help: Lista di cartellini personalizzati visualizzata nelle proprietà degli elementi.
+      tags: Tags
+      tags_help: Lista di tags personalizzati visualizzata nelle proprietà degli elementi.
       tags_placeholder: Aggiungi un cartellino
     list:
       filters: Filtri
@@ -594,7 +594,7 @@ tab:
       filters_warning_plural: "Questo filtro mostra solo **{{ count }}** parti su un totale di {{ total }}."
       edge_material_names_filter: Filtro su materiale delle bordature
       veneer_material_names_filter: Filtro sul materiale da impiallacciatura
-      tags_filter: Filtro sui cartellini
+      tags_filter: Filtro sui tags
       dimensions_help: Schema delle dimensioni
       summary: Sommario
       material_type: Tipo
