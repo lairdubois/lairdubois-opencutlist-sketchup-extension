@@ -426,8 +426,6 @@ module Ladb::OpenCutList
     def onStateChanged(old_state, new_state)
       super
 
-      @tool.remove_tooltip
-
       case old_state
 
       when STATE_HANDLE, STATE_HANDLE_START

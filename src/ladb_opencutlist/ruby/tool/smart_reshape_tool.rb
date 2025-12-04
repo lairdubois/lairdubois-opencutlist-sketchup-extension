@@ -324,10 +324,26 @@ module Ladb::OpenCutList
       false
     end
 
-    def onStateChanged(new_state, old_state)
+    def onStateChanged(old_state, new_state)
       super
 
-      @tool.remove_tooltip
+      case old_state
+
+      when STATE_RESHAPE, STATE_RESHAPE_START
+        Sketchup.active_model.selection.clear
+
+      end
+
+      case new_state
+
+      when STATE_RESHAPE, STATE_RESHAPE_START
+        unless has_active_part?
+          Sketchup.active_model.selection.clear
+          Sketchup.active_model.selection.add(get_active_selection_instances)
+        end
+        @tool.remove_all_2d
+
+      end
 
     end
 
