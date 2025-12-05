@@ -883,17 +883,18 @@ module Ladb::OpenCutList
       return true if super
       return if @state != STATE_HANDLE
 
-      if key == Kuix::VK_ADD
-        _warn_if_mirrored(@number + 1) if @number == 1
-        @number += 1
-        _refresh
-        return true
-      end
-      if key == Kuix::VK_SUBTRACT
-        @number = [ @number - 1, 1 ].max
-        _refresh
-        return true
-      end
+      # TODO : incompatible with VCB input
+      # if key == Kuix::VK_ADD
+      #   _warn_if_mirrored(@number + 1) if @number == 1
+      #   @number += 1
+      #   _refresh
+      #   return true
+      # end
+      # if key == Kuix::VK_SUBTRACT
+      #   @number = [ @number - 1, 1 ].max
+      #   _refresh
+      #   return true
+      # end
 
       if key == VK_RIGHT
         x_axis = _get_active_x_axis
@@ -1515,19 +1516,20 @@ module Ladb::OpenCutList
       return true if super
       return if @state != STATE_HANDLE
 
-      if key == Kuix::VK_ADD
-        _warn_if_mirrored(@number_x + 1, @number_y + 1) if @number_x == 1 && @number_y == 1
-        @number_x += 1
-        @number_y += 1
-        _refresh
-        return true
-      end
-      if key == Kuix::VK_SUBTRACT
-        @number_x = [ @number_x - 1, 1 ].max
-        @number_y = [ @number_y - 1, 1 ].max
-        _refresh
-        return true
-      end
+      # TODO : incompatible with VCB input
+      # if key == Kuix::VK_ADD
+      #   _warn_if_mirrored(@number_x + 1, @number_y + 1) if @number_x == 1 && @number_y == 1
+      #   @number_x += 1
+      #   @number_y += 1
+      #   _refresh
+      #   return true
+      # end
+      # if key == Kuix::VK_SUBTRACT
+      #   @number_x = [ @number_x - 1, 1 ].max
+      #   @number_y = [ @number_y - 1, 1 ].max
+      #   _refresh
+      #   return true
+      # end
 
       if key == VK_RIGHT
         x_axis = _get_active_x_axis
@@ -2687,16 +2689,17 @@ module Ladb::OpenCutList
         return true
       end
 
-      if key == Kuix::VK_ADD
-        @number += 1
-        _refresh
-        return true
-      end
-      if key == Kuix::VK_SUBTRACT
-        @number = [ @number - 1, 1 ].max
-        _refresh
-        return true
-      end
+      # TODO : incompatible with VCB input
+      # if key == Kuix::VK_ADD
+      #   @number += 1
+      #   _refresh
+      #   return true
+      # end
+      # if key == Kuix::VK_SUBTRACT
+      #   @number = [ @number - 1, 1 ].max
+      #   _refresh
+      #   return true
+      # end
 
       if key == VK_RIGHT
         x_axis = _get_active_x_axis
