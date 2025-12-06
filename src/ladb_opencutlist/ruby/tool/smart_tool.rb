@@ -102,7 +102,7 @@ module Ladb::OpenCutList
       @layers_2d = {}
       @layers_3d = {}
 
-      # @unit = 5
+      # @unit = 6
 
     end
 
