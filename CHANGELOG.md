@@ -11,6 +11,8 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 
 ## Lab
 
+### 2025-12-06
+  * Various improvements
 ### 2025-11-30
   * Added @batch variable in Packing designation formulas
   * Updated CS, ES, NL, SR languages
