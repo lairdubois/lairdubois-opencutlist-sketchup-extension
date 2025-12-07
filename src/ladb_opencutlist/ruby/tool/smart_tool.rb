@@ -2069,14 +2069,26 @@ module Ladb::OpenCutList
 
           fn = lambda do |drawing_container_def|
 
-            eb.add(drawing_container_def.face_manipulators
-                                        .flat_map { |manipulator| manipulator.outer_loop_manipulator.points
-                                                                             .map { |point| point.transform(eti * drawing_def.transformation)} }
-            ) if drawing_container_def.face_manipulators.any?
-            eb.add(drawing_container_def.cline_manipulators
-                                        .flat_map { |manipulator| manipulator.points
-                                                                             .map { |point| point.transform(eti * drawing_def.transformation) } }
-            ) if drawing_container_def.cline_manipulators.any?
+            if drawing_container_def.faces_bounds.valid?
+              eb.add(drawing_container_def.face_manipulators
+                                          .flat_map { |manipulator| manipulator.outer_loop_manipulator.points
+                                                                               .map { |point| point.transform(eti * drawing_def.transformation)} }
+              ) if drawing_container_def.face_manipulators.any?
+            elsif drawing_container_def.edges_bounds.valid?
+              eb.add(drawing_container_def.edge_manipulators
+                                          .flat_map { |manipulator| manipulator.points
+                                                                               .map { |point| point.transform(eti * drawing_def.transformation)} }
+              ) if drawing_container_def.edge_manipulators.any?
+              eb.add(drawing_container_def.curve_manipulators
+                                          .flat_map { |manipulator| manipulator.points
+                                                                               .map { |point| point.transform(eti * drawing_def.transformation)} }
+              ) if drawing_container_def.curve_manipulators.any?
+            elsif drawing_container_def.clines_bounds.valid?
+              eb.add(drawing_container_def.cline_manipulators
+                                          .flat_map { |manipulator| manipulator.points
+                                                                               .map { |point| point.transform(eti * drawing_def.transformation) } }
+              ) if drawing_container_def.cline_manipulators.any?
+            end
 
             drawing_container_def.container_defs.each do |child_drawing_container_def|
               fn.call(child_drawing_container_def)
