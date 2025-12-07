@@ -193,6 +193,38 @@ module Ladb::OpenCutList
 
     # -----
 
+    def always_face_camera?
+      return false unless valid?
+      @entity.definition.behavior.always_face_camera?
+    end
+
+    def cuts_opening?
+      return false unless valid?
+      @entity.definition.behavior.cuts_opening?
+    end
+
+    def is2d?
+      return false unless valid?
+      @entity.definition.behavior.is2d?
+    end
+
+    def no_scale_mask?
+      return false unless valid?
+      @entity.definition.behavior.no_scale_mask?
+    end
+
+    def shadows_face_sun?
+      return false unless valid?
+      @entity.definition.behavior.shadows_face_sun?
+    end
+
+    def snapto
+      return false unless valid?
+      @entity.definition.behavior.snapto
+    end
+
+    # -----
+
     def get_hashable
       @hashable = OutlinerNodeGroup.new(self) if @hashable.nil?
       @hashable
@@ -221,7 +253,8 @@ module Ladb::OpenCutList
     end
 
     def live_component?
-      !@entity.nil? && !@entity.deleted? && @entity.definition.respond_to?(:live_component?) && @entity.definition.live_component?
+      return false unless valid?
+      @entity.definition.respond_to?(:live_component?) && @entity.definition.live_component?
     end
 
     # -----

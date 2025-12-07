@@ -15,7 +15,8 @@ module Ladb::OpenCutList
       :definition_name,
       :description,
       :url,
-      :tags
+      :tags,
+      :no_scale_mask
     )
 
     def initialize(outliner_def,
@@ -38,6 +39,7 @@ module Ladb::OpenCutList
           fn_sanitize_string.call(node_data.fetch('description', nil)),
           fn_sanitize_string.call(node_data.fetch('url', nil)),
           DefinitionAttributes.valid_tags(node_data.fetch('tags', nil)),
+          node_data.fetch('no_scale_mask', 0).to_i,
         )
       }
 
@@ -53,6 +55,7 @@ module Ladb::OpenCutList
 
       # Start a model modification operation
       model.start_operation('OCL Outliner Update', true, false, true)
+
 
       @nodes_data.each do |node_data|
 
@@ -108,6 +111,10 @@ module Ladb::OpenCutList
             end
             entity.layer = layer
           end
+        end
+
+        if entity.respond_to?(:definition) && node_data.no_scale_mask != entity.definition.behavior.no_scale_mask?
+          entity.definition.behavior.no_scale_mask = node_data.no_scale_mask  # TODO : fire change event
         end
 
       end

@@ -680,6 +680,13 @@
                     delete editedNode.url;
                     delete editedNode.tags;
                 }
+                if (editedNode.type !== 0) {    // 0 = TYPE_MODEL
+                    if (editedNode.no_scale_mask !== editedNodes[i].no_scale_mask) {
+                        editedNode.no_scale_mask = MULTIPLE_VALUE;
+                    }
+                } else {
+                    delete editedNode.no_scale_mask;
+                }
             }
 
         }
@@ -718,6 +725,7 @@
                 const $inputDescription = $('#ladb_outliner_node_input_description', $modal);
                 const $inputUrl = $('#ladb_outliner_node_input_url', $modal);
                 const $inputTags = $('#ladb_outliner_node_input_tags', $modal);
+                const $inputNoScaleMask = $('#ladb_outliner_node_input_no_scale_mask', $modal);
                 const $btnErase = $('#ladb_outliner_node_erase', $modal);
                 const $btnExplode = $('#ladb_outliner_node_explode', $modal);
                 const $btnUpdate = $('#ladb_outliner_node_update', $modal);
@@ -758,6 +766,7 @@
                 $inputTags.ladbTextinputTokenfield({
                     unique: true
                 });
+                $inputNoScaleMask.ladbTextinputText();
 
                 // Bind select
                 if (editedNode.material) {
@@ -840,6 +849,14 @@
                                 return !editedNode.tags.includes(tag)
                             });
                             nodeData.tags = untouchTags.concat($inputTags.tokenfield('getTokensList').split(';'));
+                        }
+
+                        if ($inputNoScaleMask.length > 0) {
+                            if (!$inputNoScaleMask.ladbTextinputText('isMultiple')) {
+                                nodeData.no_scale_mask = parseInt($inputNoScaleMask.val());
+                            } else {
+                                nodeData.no_scale_mask = editedNodes[i].no_scale_mask;
+                            }
                         }
 
                     }

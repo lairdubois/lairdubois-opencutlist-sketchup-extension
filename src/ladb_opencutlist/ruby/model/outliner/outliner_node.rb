@@ -56,13 +56,21 @@ module Ladb::OpenCutList
 
   class OutlinerNodeGroup < OutlinerNode
 
-    attr_reader :material, :layer
+    attr_reader :material, :layer,
+                :always_face_camera, :cuts_opening, :is2d, :no_scale_mask, :shadows_face_sun, :snapto
 
     def initialize(_def)
       super
 
       @material = _def.material_def ? _def.material_def.get_hashable : nil
       @layer = _def.layer_def ? _def.layer_def.get_hashable : nil
+
+      @always_face_camera = _def.always_face_camera?
+      @cuts_opening = _def.cuts_opening?
+      @is2d = _def.is2d?
+      @no_scale_mask = _def.no_scale_mask?
+      @shadows_face_sun = _def.shadows_face_sun?
+      @snapto = _def.snapto
 
     end
 

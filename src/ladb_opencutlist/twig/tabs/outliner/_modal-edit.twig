@@ -86,6 +86,15 @@
                         </div>
                     </div>
                 {% endif %}
+                {% if node.no_scale_mask is defined %}
+                    <hr>
+                    <div class="form-group">
+                        <label class="control-label col-xs-3">no_scale_mask</label>
+                        <div class="col-xs-8 col-sm-7">
+                            <input type="text" class="form-control" id="ladb_outliner_node_input_no_scale_mask" value="{{ node.no_scale_mask }}">
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
