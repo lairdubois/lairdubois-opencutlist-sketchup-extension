@@ -62,7 +62,7 @@ module Ladb::OpenCutList
     end
 
     def has_cuts_opening?
-      @face.get_glued_instances.select { |entity| entity.is_a?(Sketchup::ComponentInstance) && entity.definition.behavior.cuts_opening? }.any?
+      @face.get_glued_instances.select { |entity| entity.respond_to?(:definition) && entity.definition.behavior.cuts_opening? }.any?
     end
 
     # -----
