@@ -2123,18 +2123,18 @@ tool:
   smart_handle:
     title: Manipuler
     action_0: Sélectionner
-    action_0_status: Sélectionner une pièce # TODO
+    action_0_status: Sélectionner une pièce
     action_1: Copier en ligne
-    action_1_status: Copier une pièce le long d'un axe # TODO
+    action_1_status: Copier une pièce le long d'un axe
     action_1_state_2_status: Cliquez pour placer la copie de la pièce ou entrez une distance
     action_2: Copier en grille
-    action_2_status: Copier une pièce le long d'une grille # TODO
+    action_2_status: Copier une pièce le long d'une grille
     action_2_state_2_status: Cliquez pour placer les copies de la pièce ou entrez deux distances
     action_3: Déplacer
-    action_3_status: Déplacer une pièce le long d'un axe # TODO
+    action_3_status: Déplacer une pièce le long d'un axe
     action_3_state_2_status: Cliquez pour placer la pièce ou entrez une distance
     action_4: Répartir
-    action_4_status: Répartir une pièce le long d'un axe # TODO
+    action_4_status: Répartir une pièce le long d'un axe
     action_4_state_1_status: Cliquez pour déterminer le premier point de mesure
     action_4_state_2_status: Cliquez pour déterminer le second point de mesure ou entrez une distance
     action_option_group_copy_measure_type: Mesure
@@ -2176,7 +2176,7 @@ tool:
     action_option_options_centred_status: Centrer sur les éléments étirés
     action_option_options_make_unique_status: Rendre unique les éléments étirés
     error:
-      curve_intersect: L'un des plans de coupe traverse une courbe non étirable # TODO
+      curve_intersect: L'un des plans de coupe traverse une courbe non étirable
   smart_paint:
     title: Colorier
     default_material: Sans matière

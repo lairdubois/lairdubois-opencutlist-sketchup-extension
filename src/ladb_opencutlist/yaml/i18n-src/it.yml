@@ -2153,8 +2153,6 @@ tool:
     action_option_options_mirror_status: Copia simmetrica
     warning:
       copies_disable_mirror: La copia multipla disabilita l'opzione '$t(tool.smart_handle.action_option_options_mirror_status)'
-    error:
-      min_distance: "La distanza {{ value1 }} è inferiore alla distanza minima {{ value2 }}"
   smart_reshape:
     title: Rimodellare
     action_0: Allungare
@@ -2175,6 +2173,7 @@ tool:
     action_option_axes_active_status: Sposta lungo l'asse attivo
     action_option_axes_context_status: Modificare lungo gli assi del gruppo o del componente contenente il pezzo
     action_option_axes_entity_status: Modifica su un asse dell'elemento
+    action_option_options_centred_status: Centrare sugli elementi allungati
     action_option_options_make_unique_status: Rendere unici gli elementi allungati
     error:
       curve_intersect: Uno dei piani di taglio attraversa una curva non estensibile
