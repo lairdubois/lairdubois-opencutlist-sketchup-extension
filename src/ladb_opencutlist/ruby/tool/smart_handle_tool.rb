@@ -2260,7 +2260,7 @@ module Ladb::OpenCutList
 
       @locked_axis = nil
 
-      unless _get_instance.nil?
+      if has_active_selection?
         if new_state == STATE_HANDLE
           @tool.remove_3d(LAYER_3D_PART_PREVIEW)  # Remove part preview
           _hide_instances

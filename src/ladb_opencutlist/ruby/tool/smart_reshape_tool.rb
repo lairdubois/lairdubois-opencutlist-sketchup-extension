@@ -28,6 +28,7 @@ module Ladb::OpenCutList
     ACTION_OPTION_AXES_CONTEXT = 'context'
     ACTION_OPTION_AXES_ENTITY = 'entity'
 
+    ACTION_OPTION_OPTIONS_CENTRED = 'centred'
     ACTION_OPTION_OPTIONS_MAKE_UNIQUE = 'make_unique'
 
     ACTIONS = [
@@ -36,7 +37,7 @@ module Ladb::OpenCutList
         :options => {
           ACTION_OPTION_STRETCH_MEASURE_TYPE => [ ACTION_OPTION_STRETCH_MEASURE_TYPE_OUTSIDE, ACTION_OPTION_STRETCH_MEASURE_TYPE_OFFSET ],
           ACTION_OPTION_AXES => [ ACTION_OPTION_AXES_ACTIVE, ACTION_OPTION_AXES_CONTEXT, ACTION_OPTION_AXES_ENTITY ],
-          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
+          ACTION_OPTION_OPTIONS => [ ACTION_OPTION_OPTIONS_CENTRED, ACTION_OPTION_OPTIONS_MAKE_UNIQUE ]
         }
       }
     ].freeze
@@ -125,6 +126,8 @@ module Ladb::OpenCutList
         end
       when ACTION_OPTION_OPTIONS
         case option
+        when ACTION_OPTION_OPTIONS_CENTRED
+          return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0,1L0.667,1L1,0.667L1,0L0.333,0L0,0.333L0,1 M0,0.333L0.667,0.333L0.667,1 M0.667,0.333L1,0 M0.333,0.5L0.333,0.833 M0.167,0.667L0.5,0.667'))
         when ACTION_OPTION_OPTIONS_MAKE_UNIQUE
           return Kuix::Motif2d.new(Kuix::Motif2d.patterns_from_svg_path('M0.167,0.167L0.167,0.833 M0.417,0.167L0.417,0.833 M0,0.333L0.583,0.333 M0,0.667L0.583,0.667 M0.75,0.333L1,0.167L1,0.833'))
         end
@@ -442,6 +445,10 @@ module Ladb::OpenCutList
 
     def _fetch_option_axes
       @tool.fetch_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_AXES)
+    end
+
+    def _fetch_option_options_centred
+      @tool.fetch_action_option_boolean(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTRED)
     end
 
     def _fetch_option_options_make_unique
@@ -860,6 +867,13 @@ module Ladb::OpenCutList
         end
         if tool.is_key_alt_or_command?(key)
           set_state(STATE_RESHAPE_START)
+          _refresh
+          return true
+        end
+
+      when STATE_RESHAPE
+        if tool.is_key_ctrl_or_option?(key) && is_quick
+          @tool.store_action_option_value(@action, SmartReshapeTool::ACTION_OPTION_OPTIONS, SmartReshapeTool::ACTION_OPTION_OPTIONS_CENTRED, !_fetch_option_options_centred, true)
           _refresh
           return true
         end
@@ -1397,7 +1411,7 @@ module Ladb::OpenCutList
     def _preview_reshape(view)
       return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
 
-      split_def, edvs, lps, lpe = stretch_def.values_at(:split_def, :edvs, :lps, :lpe)
+      split_def, emv, edvs, lps, lpe = stretch_def.values_at(:split_def, :emv,:edvs, :lps, :lpe)
       et, container_defs = split_def.values_at(:et, :container_defs)
 
       axis_color = _get_vector_color(lps.vector_to(lpe))
@@ -1413,8 +1427,8 @@ module Ladb::OpenCutList
           t = edge_def.transformation
           ti = t.inverse
           [
-            edge.start.position.offset(edvs[edge_def.start_section_def].transform(ti)).transform(t),
-            edge.end.position.offset(edvs[edge_def.end_section_def].transform(ti)).transform(t)
+            edge.start.position.offset(edvs[edge_def.start_section_def].transform(ti)).transform(t).offset(emv),
+            edge.end.position.offset(edvs[edge_def.end_section_def].transform(ti)).transform(t).offset(emv)
           ]
         })
         k_segments.color = color
@@ -1537,32 +1551,49 @@ module Ladb::OpenCutList
     def _read_reshape(tool, text, view)
       return super if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @mouse_snap_point)).nil?
 
-      emv, lps, lpe, split_def = stretch_def.values_at(:emv, :lps, :lpe, :split_def)
-      epmin, epmax, max_compression_distance, reversed = split_def.values_at(:epmin, :epmax, :max_compression_distance, :reversed)
+      split_def, factor, esv, lps, lpe = stretch_def.values_at(:split_def, :factor, :esv, :lps, :lpe)
+      et, epmin, epmax, max_compression_distance, reversed = split_def.values_at(:et, :epmin, :epmax, :max_compression_distance, :reversed)
       v = lps.vector_to(lpe)
 
       distance = _read_user_text_length(tool, text, v.length)
       return true if distance.nil?
 
+      measure_type_outside = _fetch_option_stretch_measure_type_outside
+
       # Error if distance < 0 and the measure type is outside
-      if _fetch_option_stretch_measure_type_outside && distance < 0
+      if measure_type_outside && distance < 0
         tool.notify_errors([ [ "tool.default.error.invalid_length", { :value => distance.to_l } ] ])
         return false
       end
 
+      pmin = epmin.transform(et)
+      pmax = epmax.transform(et)
+
+      if measure_type_outside
+        real_distance = (distance - (pmax - pmin).length) / factor
+        compression_distance = (real_distance * factor).abs
+      else
+        real_distance = distance
+        compression_distance = real_distance.abs
+        max_compression_distance = max_compression_distance / factor
+      end
+      end_point = @picked_reshape_start_point.offset(v, real_distance)
+
+      return false if (stretch_def = _get_stretch_def(@picked_reshape_start_point, end_point)).nil?
+      esv, _ = stretch_def.values_at(:esv)
+
       # Error if max distance exceeded
-      compressed = emv.valid? && (reversed ? emv.samedirection?(@picked_axis) : !emv.samedirection?(@picked_axis))
-      compressed = !compressed if distance < 0
-      if compressed && @picked_reshape_start_point.distance(lps.offset(v, distance)) > max_compression_distance
-        if _fetch_option_stretch_measure_type_outside
-          tool.notify_errors([ [ "tool.default.error.lt_min_distance", { :value1 => distance.abs.to_l, :value2 => (epmin.distance(epmax) - max_compression_distance).abs.to_l } ] ])
+      compressed = esv.valid? && (reversed ? esv.samedirection?(@picked_axis) : !esv.samedirection?(@picked_axis))
+      if compressed && compression_distance > max_compression_distance
+        if measure_type_outside
+          tool.notify_errors([ [ "tool.default.error.lt_min_distance", { :value1 => distance.abs.to_l, :value2 => (pmin.distance(pmax) - max_compression_distance).abs.to_l } ] ])
         else
           tool.notify_errors([ [ "tool.default.error.gt_max_distance", { :value1 => distance.abs.to_l, :value2 => max_compression_distance.abs.to_l } ] ])
         end
         return false
       end
 
-      @picked_reshape_end_point = lps.offset(v, distance)
+      @picked_reshape_end_point = end_point
 
       _reshape_entity
       Sketchup.set_status_text('', SB_VCB_VALUE)
@@ -1616,8 +1647,8 @@ module Ladb::OpenCutList
     def _stretch_entity
       return if (stretch_def = _get_stretch_def(@picked_reshape_start_point, @picked_reshape_end_point)).nil?
 
-      split_def, emv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :edvs, :lpe)
-      et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
+      split_def, emv, esv, edvs, lpe = stretch_def.values_at(:split_def, :emv, :esv, :edvs, :lpe)
+      drawing_def, et, eps, evpspe, reversed, section_defs, container_defs = split_def.values_at(:drawing_def, :et, :eps, :evpspe, :reversed, :section_defs, :container_defs)
 
       _unhide_instances
 
@@ -1724,7 +1755,7 @@ module Ladb::OpenCutList
         stretched_definitions = Set[]
 
         # Defined a sorting order to be sure that farest edges are moved first
-        sorting_order = (emv.valid? && emv.samedirection?(evpspe)) ? -1 : 1
+        sorting_order = (esv.valid? && esv.samedirection?(evpspe)) ? -1 : 1
 
         container_defs.each do |container_def|
 
@@ -1793,10 +1824,25 @@ module Ladb::OpenCutList
 
         end
 
+        if emv.valid?
+
+          # Apply move translation (if the centred option is enabled)
+
+          mt = Geom::Transformation.translation(emv)
+          _get_instances.each do |instance|
+            if drawing_def.container == instance
+              instance.transform!(Geom::Transformation.translation(emv.transform(instance.transformation)))
+            else
+              instance.transform!(mt)
+            end
+          end
+
+        end
+
         # Adjust cutters
         eti = et.inverse
-        epo = reversed ? lpe.transform(eti) : eps
-        epomax = reversed ? eps : lpe.transform(eti)
+        epo = reversed ? lpe.transform(eti) : eps.offset(emv)
+        epomax = reversed ? eps.offset(emv) : lpe.transform(eti)
         distance = epo.distance(epomax)
         el = [ epo, evpspe ]
         sd = section_defs
@@ -1804,8 +1850,8 @@ module Ladb::OpenCutList
         @cutters[@picked_axis] = sd
            .select { |section_def| section_def.bounds.valid? } # Exclude empty sections
            .each_cons(2).map { |section_def0, section_def1|
-              max0 = section_def0.bounds.max.project_to_line(el).offset!(edvs[section_def0])
-              min1 = section_def1.bounds.min.project_to_line(el).offset!(edvs[section_def1])
+              max0 = section_def0.bounds.max.project_to_line(el).offset!(edvs[section_def0] + emv)
+              min1 = section_def1.bounds.min.project_to_line(el).offset!(edvs[section_def1] + emv)
               if (v = max0.vector_to(min1)).valid? && v.samedirection?(@picked_axis)  # Exclude if bounds overlap
                 epc = Geom.linear_combination(0.5, max0, 0.5, min1)
                 epo.vector_to(epc).length / distance
@@ -2151,35 +2197,51 @@ module Ladb::OpenCutList
     end
 
     def _get_stretch_def(ps, pe)
+      return nil unless ps.is_a?(Geom::Point3d) && pe.is_a?(Geom::Point3d)
       return nil unless (split_def = _get_split_def).is_a?(Hash)
 
       et, eps, max_compression_distance, section_defs, reversed = split_def.values_at(:et, :eps, :max_compression_distance, :section_defs, :reversed)
       eti = et.inverse
 
-      mv = ps.vector_to(pe)     # Move vector in global space
-      emv = mv.transform(eti)   # Move vector in edit space
+      v = ps.vector_to(pe)     # Move vector in global space
+      ev = v.transform(eti)
+
+      factor = _fetch_option_options_centred ? 2.0 : 1.0
 
       # Limit move to max compression distance
-      compressed = emv.valid? && (reversed ? emv.samedirection?(@picked_axis) : !emv.samedirection?(@picked_axis))
-      if compressed && mv.length > max_compression_distance
-        pe = ps.offset(mv, max_compression_distance)
-        mv = ps.vector_to(pe)
-        emv = mv.transform(eti)
+      compressed = ev.valid? && (reversed ? ev.samedirection?(@picked_axis) : !ev.samedirection?(@picked_axis))
+      if compressed && (v.length * factor > max_compression_distance)
+        pe = ps.offset(v, max_compression_distance / factor)
+        v = ps.vector_to(pe)
       end
+
+      if factor > 1.0
+        mv = v.reverse
+        sv = v
+        sv.length *= factor if sv.valid?
+      else
+        mv = Geom::Vector3d.new
+        sv = v
+      end
+
+      emv = mv.transform(eti)   # Move vector in edit space
+      esv = sv.transform(eti)   # Stretch vector in edit space
 
       # Compute move vectors for each section
       edvs = section_defs.map { |section_def|
-        edv = Geom::Vector3d.new(emv)
-        edv.length = edv.length * section_def.index / (section_defs.length - 1) if emv.valid?
+        edv = Geom::Vector3d.new(esv)
+        edv.length = edv.length * section_def.index / (section_defs.length - 1) if esv.valid?
         [ section_def, edv ]
       }.to_h
 
-      lps = _fetch_option_stretch_measure_type_outside ? eps.transform(et) : ps
+      lps = _fetch_option_stretch_measure_type_outside ? eps.transform(et).offset(mv) : ps
       lpe = pe
 
       {
         split_def: split_def,
+        factor: factor,
         emv: emv,
+        esv: esv,
         edvs: edvs,
         lps: lps,
         lpe: lpe,
