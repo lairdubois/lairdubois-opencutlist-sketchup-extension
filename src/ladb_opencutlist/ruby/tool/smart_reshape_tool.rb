@@ -2228,6 +2228,10 @@ module Ladb::OpenCutList
             end
           )
 
+          if parent_section_def.nil?
+            section_def.bounds.add(sm.position)  # Add to content bbox
+          end
+
         end
 
         # 4. Iterate over children
