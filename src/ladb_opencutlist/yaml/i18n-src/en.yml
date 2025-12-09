@@ -2153,8 +2153,6 @@ tool:
     action_option_options_mirror_status: Symmetrical copying
     warning:
       copies_disable_mirror: Multiple copies disable the '$t(tool.smart_handle.action_option_options_mirror_status)' option
-    error:
-      min_distance: "The distance {{ value1 }} is smaller than the minimal distance {{ value2 }}"
   smart_reshape:
     title: Reshape
     action_0: Stretch
@@ -2175,6 +2173,7 @@ tool:
     action_option_axes_active_status: Manipulate along active axes
     action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
     action_option_axes_entity_status: Manipulate along part axes
+    action_option_options_centred_status: Center on stretched elements
     action_option_options_make_unique_status: Make stretched elements unique
     error:
       curve_intersect: One of the cutting planes crosses a non-stretchable curve

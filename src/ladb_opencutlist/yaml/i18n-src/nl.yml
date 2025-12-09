@@ -2153,8 +2153,6 @@ tool:
     action_option_options_mirror_status: Symmetrisch kopiëren
     warning:
       copies_disable_mirror: Het meervoudig kopiëren schakelt de optie '$t(tool.smart_handle.action_option_options_mirror_status)' uit
-    error:
-      min_distance: "De afstand {{ value1 }} is kleiner dan de minimale afstand van {{ value2 }}"
   smart_reshape:
     title: Opnieuw vormgeven
     action_0: verlengen
@@ -2175,6 +2173,7 @@ tool:
     action_option_axes_active_status: Verplaatsen langs de actieve assen
     action_option_axes_context_status: Verplaatsen langs de assen van de groep of component die het stuk bevat
     action_option_axes_entity_status: Verplaatsen langs de assen van het stuk
+    action_option_options_centred_status: Centraal plaatsen op gestrekte elementen
     action_option_options_make_unique_status: Rekbare elementen uniek maken
     error:
       curve_intersect: Een van de snijvlakken snijdt een niet-rekbare curve
