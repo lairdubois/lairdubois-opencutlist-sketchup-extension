@@ -8,6 +8,7 @@ module Ladb::OpenCutList
   require_relative '../../manipulator/edge_manipulator'
   require_relative '../../manipulator/surface_manipulator'
   require_relative '../../manipulator/curve_manipulator'
+  require_relative '../../manipulator/snap_manipulator' if Object.const_defined?('Sketchup::Snap')
   require_relative '../../model/drawing/drawing_def'
 
   class CommonDrawingDecompositionWorker
@@ -57,6 +58,8 @@ module Ladb::OpenCutList
 
                    ignore_clines: true,
 
+                   ignore_snaps: true,
+
                    container_validator: CONTAINER_VALIDATOR_ALL,
 
                    flatten: true
@@ -83,6 +86,8 @@ module Ladb::OpenCutList
       @edge_validator = edge_validator
 
       @ignore_clines = ignore_clines
+
+      @ignore_snaps = ignore_snaps
 
       @container_validator = container_validator
 
@@ -372,6 +377,10 @@ module Ladb::OpenCutList
             next if @ignore_clines || entity.start.nil? # Exclude infinite Clines
             manipulator = ClineManipulator.new(entity, transformation)
             drawing_container_def.cline_manipulators << manipulator
+          elsif Object.const_defined?('Sketchup::Snap') && entity.is_a?(Sketchup::Snap)
+            next if @ignore_snaps
+            manipulator = SnapManipulator.new(entity, transformation)
+            drawing_container_def.snap_manipulators << manipulator
           elsif entity.respond_to?(:definition)
             if container_validator.nil? || container_validator.call(entity)
               if @flatten

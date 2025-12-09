@@ -5,7 +5,7 @@ module Ladb::OpenCutList
   class DrawingContainerDef < DataContainer
 
     attr_accessor :transformation
-    attr_reader :face_manipulators, :surface_manipulators, :edge_manipulators, :curve_manipulators, :cline_manipulators,
+    attr_reader :face_manipulators, :surface_manipulators, :edge_manipulators, :curve_manipulators, :cline_manipulators, :snap_manipulators,
                 :container, :container_defs
 
     def initialize(container, transformation = IDENTITY)
@@ -23,6 +23,7 @@ module Ladb::OpenCutList
       @edge_manipulators = []
       @curve_manipulators = []
       @cline_manipulators = []
+      @snap_manipulators = []
 
       @container_defs = []
 
@@ -54,6 +55,11 @@ module Ladb::OpenCutList
     def clines_bounds
       _compute_bounds if @bounds.nil?
       @clines_bounds
+    end
+
+    def snap_bounds
+      _compute_bounds if @bounds.nil?
+      @snap_bounds
     end
 
     # -----
@@ -121,6 +127,7 @@ module Ladb::OpenCutList
       @faces_bounds = Geom::BoundingBox.new
       @edges_bounds = Geom::BoundingBox.new
       @clines_bounds = Geom::BoundingBox.new
+      @snap_bounds = Geom::BoundingBox.new
 
       @face_manipulators.each do |face_manipulator|
         @faces_bounds.add(face_manipulator.outer_loop_manipulator.points)
@@ -140,11 +147,17 @@ module Ladb::OpenCutList
       end
       @bounds.add(@clines_bounds) if @clines_bounds.valid?
 
+      @snap_manipulators.each do |snap_manipulator|
+        @snap_bounds.add(snap_manipulator.position)
+      end
+      @bounds.add(@snap_bounds) if @snap_bounds.valid?
+
       @container_defs.each do |container_def|
         @bounds.add(container_def.bounds) if container_def.bounds.valid?
         @faces_bounds.add(container_def.faces_bounds) if container_def.faces_bounds.valid?
         @edges_bounds.add(container_def.edges_bounds) if container_def.edges_bounds.valid?
         @clines_bounds.add(container_def.clines_bounds) if container_def.clines_bounds.valid?
+        @snap_bounds.add(container_def.snap_bounds) if container_def.snap_bounds.valid?
       end
 
     end

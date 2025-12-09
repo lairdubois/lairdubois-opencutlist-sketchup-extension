@@ -1426,6 +1426,8 @@ module Ladb::OpenCutList
 
         color = no_scale_color if container_def.container.respond_to?(:definition) && container_def.container.definition.behavior.no_scale_mask? == 127
 
+        # Render edges
+
         k_segments = Kuix::Segments.new
         k_segments.add_segments(container_def.edge_defs.flat_map { |edge_def|
           edge = edge_def.edge
@@ -1440,6 +1442,22 @@ module Ladb::OpenCutList
         k_segments.line_width = 1.5
         k_segments.transformation = et
         @tool.append_3d(k_segments, LAYER_3D_RESHAPE_PREVIEW)
+
+        # Render snaps
+
+        k_points = _create_floating_points(
+          points: container_def.snap_defs.map { |snap_def|
+            snap = snap_def.snap
+            t = snap_def.transformation
+            ti = t.inverse
+            snap.position.offset(edvs[snap_def.section_def].transform(ti)).transform(t).offset(emv)
+          },
+          style: Kuix::POINT_STYLE_CIRCLE,
+          fill_color: Sketchup::Color.new(68, 152, 212),
+          stroke_color: Sketchup::Color.new(30, 64, 105),
+        )
+        k_points.transformation = et
+        @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
 
         container_def.children.each { |container_def| fn_preview_container.call(container_def, color) }
 
@@ -1767,10 +1785,10 @@ module Ladb::OpenCutList
           container = container_def.container
           entities = container.respond_to?(:entities) ? container.entities : container.definition.entities
 
-          # Move edges
-          # ----------
-
           unless stretched_definitions.include?(container_def.definition) # Stretch definition edges only once
+
+            # Move edges
+            # ----------
 
             container_def.edge_defs
                          .select { |edge_def| edge_def.operation == SplitEdgeDef::OPERATION_MOVE }
@@ -1794,6 +1812,33 @@ module Ladb::OpenCutList
               v = current_position0.vector_to(target_position0)
 
               entities.transform_entities(Geom::Transformation.translation(v), edge_defs.map { |edge_def| edge_def.edge }) if v.valid?
+
+            end
+
+            # Move snaps
+            # ----------
+
+            container_def.snap_defs
+                         .select { |snap_def| snap_def.operation == SplitSnapDef::OPERATION_MOVE }
+                         .group_by { |snap_def| snap_def.section_def }
+                         .each do |section_def, snap_defs|
+
+              edv = edvs[section_def]
+
+              snap_def0 = snap_defs.first
+              t = snap_def0.transformation
+
+              # Subtract container move
+              edv -= edvs[container_def.section_def]
+              edv.reverse! if container_def.section_def == section_def && edv.valid?
+
+              target_position0 = snap_def0.ref_position
+              target_position0 = target_position0.offset(edv.transform(t.inverse)) if edv.valid?
+              current_position0 = snap_def0.snap.position
+
+              v = current_position0.vector_to(target_position0)
+
+              entities.transform_entities(Geom::Transformation.translation(v), snap_defs.map { |snap_def| snap_def.snap }) if v.valid?
 
             end
 
@@ -1934,6 +1979,7 @@ module Ladb::OpenCutList
       # Compute a new drawing_def that include subparts
       return nil unless (drawing_def = CommonDrawingDecompositionWorker.new(_get_drawing_def_ipaths, **(_get_drawing_def_parameters.merge(
         container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_ALL,
+        ignore_snaps: false,
         flatten: false,
       ))).run).is_a?(DrawingDef)
 
@@ -2158,7 +2204,33 @@ module Ladb::OpenCutList
 
         end
 
-        # 3. Iterate over children
+        # 3. Iterate on snaps
+
+        drawing_container_def.snap_manipulators.each do |sm|
+
+          if parent_section_def.nil?
+            section_def = section_defs.find { |s| s.contains_point?(sm.position, xyz_method) }
+          else
+            section_def = parent_section_def
+          end
+
+          next if section_def.nil?  # TODO : this should not occur
+
+          container_def.snap_defs << SplitSnapDef.new(
+            sm.snap,
+            sm.transformation,
+            sm.snap.position,
+            section_def,
+            if operation == SplitContainerDef::OPERATION_SPLIT
+              SplitEdgeDef::OPERATION_MOVE
+            else
+              SplitEdgeDef::OPERATION_NONE
+            end
+          )
+
+        end
+
+        # 4. Iterate over children
 
         depth += 1
         drawing_container_def.container_defs.each do |child_drawing_container_def|
@@ -2285,6 +2357,7 @@ module Ladb::OpenCutList
       :operation,
       :entity_pos,
       :edge_defs,
+      :snap_defs,
       :parent,
       :children,
     ) do
@@ -2298,6 +2371,7 @@ module Ladb::OpenCutList
         operation,
         entity_pos = -1,
         edge_defs = [],
+        snap_defs = [],
         parent = nil,
         children = []
       )
@@ -2390,6 +2464,30 @@ module Ladb::OpenCutList
     SplitEdgeDef::OPERATION_NONE = 0
     SplitEdgeDef::OPERATION_MOVE = 1
     SplitEdgeDef::OPERATION_SPLIT = 2
+
+    SplitSnapDef = Struct.new(
+      :snap,
+      :transformation,
+      :ref_position,
+      :section_def,
+      :operation,
+      :entity_pos
+    ) do
+
+      def initialize(
+        snap,
+        transformation,
+        ref_position,
+        section_def,
+        operation,
+        entity_pos = -1
+      )
+        super
+      end
+
+    end
+    SplitSnapDef::OPERATION_NONE = 0
+    SplitSnapDef::OPERATION_MOVE = 1
 
   end
 
