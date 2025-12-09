@@ -2222,9 +2222,9 @@ module Ladb::OpenCutList
             sm.snap.position,
             section_def,
             if operation == SplitContainerDef::OPERATION_SPLIT
-              SplitEdgeDef::OPERATION_MOVE
+              SplitSnapDef::OPERATION_MOVE
             else
-              SplitEdgeDef::OPERATION_NONE
+              SplitSnapDef::OPERATION_NONE
             end
           )
 
@@ -2415,6 +2415,12 @@ module Ladb::OpenCutList
                 edge_def.edge.object_id,
                 (section_def.index - edge_def.start_section_def.index).abs, # Use "delta" to be able to unify flipped elements
                 (section_def.index - edge_def.end_section_def.index).abs
+              ]
+            }
+            data << snap_defs.map { |snap_def|
+              [
+                snap_def.snap.object_id,
+                (section_def.index - snap_def.section_def.index).abs, # Use "delta" to be able to unify flipped elements
               ]
             }
           end
