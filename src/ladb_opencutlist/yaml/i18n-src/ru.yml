@@ -2153,8 +2153,6 @@ tool:
     action_option_options_mirror_status: Симметричное копирование
     warning:
       copies_disable_mirror: Многократное копирование не работает $t(tool.smart_handle.action_option_options_mirror_status)'
-    error:
-      min_distance: "Расстояние {{ value1 }} меньше минимального {{ value2 }}"
   smart_reshape:
     title: Изменить
     action_0: Растянуть
@@ -2175,6 +2173,7 @@ tool:
     action_option_axes_active_status: Перемещение по активным осям
     action_option_axes_context_status: "Перемещение по осям группы или компонента, содержащего деталь"
     action_option_axes_entity_status: Перемещение по осям детали
+    action_option_options_centred_status: Центрировать по растянутым элементам
     action_option_options_make_unique_status: Сделать растянутые элементы уникальными
     error:
       curve_intersect: Одна из плоскостей разреза проходит через нерастяжимую кривую
