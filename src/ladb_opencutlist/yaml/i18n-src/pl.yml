@@ -2153,8 +2153,6 @@ tool:
     action_option_options_mirror_status: Kopiowanie symetryczne
     warning:
       copies_disable_mirror: Kopiowanie wielokrotne wyłącza opcję '$t(tool.smart_handle.action_option_options_mirror_status)'
-    error:
-      min_distance: "Odległość {{ value1 }} jest mniejsza niż minimalna odległość {{ value2 }}"
   smart_reshape:
     title: Przebudować
     action_0: Rozciągnąć
@@ -2175,6 +2173,7 @@ tool:
     action_option_axes_active_status: Manipuluj wzdłuż aktywnych osi
     action_option_axes_context_status: Manipuluj wzdłuż osi grupy lub komponentu zawierającego element
     action_option_axes_entity_status: Manipuluj wzdłuż osi elementu
+    action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""

@@ -1764,7 +1764,7 @@ tab:
       formula: Formule
       old_name: Naam van oorsprong
       new_name: Nieuwe naam
-      count: Opmerking
+      count: Aant.
     create_container:
       title_group: "Een groep maken"
       title_component: "een component maken"
@@ -2017,7 +2017,7 @@ tab:
       - Nayton Sanches Barbosa, gecorrigeerd en beoordeeld door Carlos Maciel ELT, Henny Silva Ferreira (*Portugees*)
       - Raquel Caballero Guillén, Leonardo Romero Giménez (*Spaans*)
       - [Radek Rýznar](https://onlinesketchup.cz) (*Tsjechisch*)
-      - [Jarek Ostaszewski](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*Pools*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*Pools*)
       - Sergey Isupov (*Hebreeuws*), zonder interface van rechts naar links
       - Soul Issam (*Arabisch*), zonder interface van rechts naar links
       - Nguyen Ngoc Tan (*Vietnamees*)
@@ -2153,8 +2153,6 @@ tool:
     action_option_options_mirror_status: Symmetrisch kopiëren
     warning:
       copies_disable_mirror: Het meervoudig kopiëren schakelt de optie '$t(tool.smart_handle.action_option_options_mirror_status)' uit
-    error:
-      min_distance: "De afstand {{ value1 }} is kleiner dan de minimale afstand van {{ value2 }}"
   smart_reshape:
     title: Opnieuw vormgeven
     action_0: verlengen
@@ -2175,6 +2173,7 @@ tool:
     action_option_axes_active_status: Verplaatsen langs de actieve assen
     action_option_axes_context_status: Verplaatsen langs de assen van de groep of component die het stuk bevat
     action_option_axes_entity_status: Verplaatsen langs de assen van het stuk
+    action_option_options_centred_status: Centraal plaatsen op gestrekte elementen
     action_option_options_make_unique_status: Rekbare elementen uniek maken
     error:
       curve_intersect: Een van de snijvlakken snijdt een niet-rekbare curve

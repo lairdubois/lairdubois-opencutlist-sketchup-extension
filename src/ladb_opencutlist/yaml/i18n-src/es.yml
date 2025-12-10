@@ -2153,8 +2153,6 @@ tool:
     action_option_options_mirror_status: Copiar simétricamente
     warning:
       copies_disable_mirror: La copia múltiple desactiva la opción '$t(tool.smart_handle.action_option_options_mirror_status)'
-    error:
-      min_distance: "La distancia {{ value1 }} es inferior al valor mínimo de {{ value2 }}"
   smart_reshape:
     title: Remodelar
     action_0: Estirar
@@ -2175,6 +2173,7 @@ tool:
     action_option_axes_active_status: Cambiar la longitud de los ejes activos
     action_option_axes_context_status: Modificar la longitud de los ejes del grupo o componente que contienen la pieza
     action_option_axes_entity_status: Modificar la longitud de los ejes de la pieza
+    action_option_options_centred_status: Centrar en los elementos estirados
     action_option_options_make_unique_status: Hacer únicos los elementos estirados
     error:
       curve_intersect: Uno de los planos de corte cruza una curva no extensible

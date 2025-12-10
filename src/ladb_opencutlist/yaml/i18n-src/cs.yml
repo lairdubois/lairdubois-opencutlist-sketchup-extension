@@ -125,7 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: Kreslení dílů
       smart_handle: Práce s díly
-      smart_reshape: Přetvořit díly
+      smart_reshape: Předělat díly
       smart_paint: Materiály dílů
       smart_axes: Orientace dílů
       smart_export: Export dílů
@@ -1763,7 +1763,7 @@ tab:
         Tato funkce umožňuje přejmenovat součásti přítomné ve vybrané sadě pomocí aplikace níže uvedeného vzorce na každou instanci.
       formula: Vzorec
       old_name: Původní název
-      new_name: Nové jméno
+      new_name: Nový název
       count: Počet
     create_container:
       title_group: "Vytvořit skupinu"
@@ -2153,8 +2153,6 @@ tool:
     action_option_options_mirror_status: Zrcadlení
     warning:
       copies_disable_mirror: Více kopií zakáže volbu '$t(tool.smart_handle.action_option_options_mirror_status)'
-    error:
-      min_distance: "Vzdálenost {{ value1 }} je menší než minimální vzdálenost {{ value2 }}"
   smart_reshape:
     title: Přetvořit
     action_0: Protažení
@@ -2175,6 +2173,7 @@ tool:
     action_option_axes_active_status: Manipulace podél os
     action_option_axes_context_status: Manipulovat podél os skupiny nebo dílců obsahující díl
     action_option_axes_entity_status: Manipulace podél os dílu
+    action_option_options_centred_status: Vycentrovat na protáhlé prvky
     action_option_options_make_unique_status: Udělejte roztažené prvky jedinečnými
     error:
       curve_intersect: Jedna z řezných rovin protíná neroztažitelnou křivku
