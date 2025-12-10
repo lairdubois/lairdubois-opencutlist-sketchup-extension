@@ -1,6 +1,6 @@
 {
   "name": "lairdubois-opencutlist-sketchup-extension",
-  "version": "7.0.1",
+  "version": "7.1.0",
   "description": "OpenCutList by L'Air du Bois =======================================",
   "main": "index.js",
   "directories": {
@@ -20,7 +20,7 @@
     "gulp-touch-custom": "1.0.3",
     "gulp-uglify": "^3.0.2",
     "gulp-zip": "4.2.0",
-    "js-yaml": "4.1.1",
+    "js-yaml": "4.1.0",
     "markdown-it": "14.1.0",
     "markdown-it-external-links": "0.0.6",
     "merge": "2.1.1",
@@ -43,7 +43,5 @@
   "bugs": {
     "url": "https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/issues"
   },
-  "homepage": "https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension#readme",
-  "dependencies": {
-  }
+  "homepage": "https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension#readme"
 }

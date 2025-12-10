@@ -40,6 +40,12 @@ i, span.ladb-opencutlist-icon:before {
 }
 
 
+.ladb-opencutlist-icon-make-unique:before {
+    content: "\e9be";
+}
+.ladb-opencutlist-icon-input-field:before {
+    content: "\e9bf";
+}
 .ladb-opencutlist-icon-bomb:before {
     content: "\e9bd";
 }
@@ -447,6 +453,12 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-packing-irregular:before {
     content: "\e9ad";
+}
+.ladb-opencutlist-icon-packing:before {
+    content: "\e9ad";
+}
+.ladb-opencutlist-icon-packing-irregular-selection:before {
+    content: "\e9ae";
 }
 .ladb-opencutlist-icon-packing-selection:before {
     content: "\e9ae";

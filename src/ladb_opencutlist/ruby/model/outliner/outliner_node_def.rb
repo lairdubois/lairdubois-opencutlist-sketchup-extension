@@ -59,7 +59,9 @@ module Ladb::OpenCutList
     end
 
     def valid?
-      !@entity.nil? && @entity.valid?
+      return false unless @path.is_a?(Array) && !@path.empty?
+      return false if @path.empty?
+      @path.all? { |e| e.valid? }
     end
 
     def locked?
@@ -113,6 +115,13 @@ module Ladb::OpenCutList
       @children.each { |child_node_def| child_node_def.invalidate(PROPAGATION_SELF | PROPAGATION_CHILDREN) unless child_node_def.invalidated? } if (propagation & PROPAGATION_CHILDREN == PROPAGATION_CHILDREN)
     end
 
+    # -----
+
+    def get_valid_unlocked_selection_siblings
+      return self.parent.children.select { |node_def| node_def.selected && node_def.valid? && !node_def.computed_locked? } if self.selected
+      [ self ]  # Not selected, returns only itself
+    end
+
     def get_hashable
       raise NotImplementedError
     end
@@ -123,6 +132,10 @@ module Ladb::OpenCutList
 
     def type
       TYPE_MODEL
+    end
+
+    def valid?
+      true
     end
 
     # -----

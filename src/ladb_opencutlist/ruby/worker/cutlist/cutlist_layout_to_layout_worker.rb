@@ -78,7 +78,7 @@ module Ladb::OpenCutList
       if @is_single_part && @parts_infos.one?
 
         # Retrieve part
-        part = @cutlist.get_real_parts([ @parts_infos.first['id'] ]).first
+        part = @cutlist.get_parts([ @parts_infos.first['id'] ]).first
         unless part.nil?
           page_name = part.name
           page_description = part.description
@@ -96,7 +96,7 @@ module Ladb::OpenCutList
         # Force "layout" file extension
         layout_path = layout_path + '.layout' unless layout_path.end_with?('.layout')
 
-        # Start model modification operation
+        # Start a model modification operation
         model.start_operation('OCL Export To Layout', true, false, true)
 
         # CREATE SKP FILE
@@ -116,7 +116,7 @@ module Ladb::OpenCutList
         @parts_infos.each do |part_info|
 
           # Retrieve part
-          part = @cutlist.get_real_parts([ part_info['id'] ]).first
+          part = @cutlist.get_parts([ part_info['id'] ]).first
 
           # Convert three matrix to transformation
           transformation = Geom::Transformation.new(part_info['matrix'])

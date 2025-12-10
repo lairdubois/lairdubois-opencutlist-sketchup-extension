@@ -26,6 +26,7 @@ module Ladb::OpenCutList
   require_relative 'tool/smart_axes_tool'
   require_relative 'tool/smart_axes_tool_new'
   require_relative 'tool/smart_export_tool'
+  require_relative 'tool/smart_reshape_tool'
 
   attr_reader :app_observer
 
@@ -98,7 +99,7 @@ module Ladb::OpenCutList
     DOCS_DEV_URL = 'https://www.lairdubois.fr/opencutlist/docs-dev'
 
     TABS_STRIPPED_NAMES = %w[materials cutlist outliner importer]
-    SMART_TOOLS_STRIPPED_NAMES = %w[draw handle paint axes export]
+    SMART_TOOLS_STRIPPED_NAMES = IS_DEV && !IS_RBZ ? %w[draw handle reshape paint axes export] : %w[draw handle paint axes export]
 
     # -----
 
@@ -616,7 +617,7 @@ module Ladb::OpenCutList
     def write_model_presets
       return unless Sketchup.active_model
 
-      # Start model modification operation
+      # Start a model modification operation
       Sketchup.active_model.start_operation('OCL Write Model Presets', true, false, true)
 
       set_attribute(Sketchup.active_model, PRESETS_KEY, @model_presets_cache)

@@ -9,5 +9,5 @@
 {% endblock %}
 
 {% block footerRightInner %}
-    <button id="ladb_confirm_btn_ok" class="btn btn-{{ options.okBtnType|default('primary') }}">{% if options.okBtnIcon is defined %}<i class="ladb-opencutlist-icon-{{ options.okBtnIcon }}"></i> {% endif %}{{ options.okBtnLabel|default('default.ok'|i18next) }}</button>
+    <button id="ladb_confirm_btn_ok" class="btn btn-{{ options.okBtnType|default('primary') }} btn-validate-modal">{% if options.okBtnIcon is defined %}<i class="ladb-opencutlist-icon-{{ options.okBtnIcon }}"></i> {% endif %}{{ options.okBtnLabel|default('default.ok'|i18next) }}</button>
 {% endblock %}

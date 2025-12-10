@@ -10,7 +10,6 @@ cmake_minimum_required(VERSION 3.18)
 
 if(APPLE)
   set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version" FORCE)
-  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "Available architectures" FORCE)
 endif()
 
 project("OpenCutList Dynamic Libraries"
@@ -30,6 +29,7 @@ if(WIN32)
   set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/src/ladb_opencutlist/bin/win/)
 endif()
 if(APPLE)
+  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "Available architectures" FORCE)
   set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/src/ladb_opencutlist/bin/osx/)
 endif()
 set(OCL_BUILD_MAIN OFF CACHE BOOL "Enables compilation of debug executables")

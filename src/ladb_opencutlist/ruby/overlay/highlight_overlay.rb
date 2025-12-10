@@ -12,11 +12,10 @@ module Ladb::OpenCutList
 
       highlight_defs.each do |highlight_def|
 
-        @drawing_def = CommonDrawingDecompositionWorker.new(highlight_def.path,
-           face_for_part: false,
+        @drawing_def = CommonDrawingDecompositionWorker.new(Sketchup::InstancePath.new(highlight_def.path),
            ignore_surfaces: true,
            ignore_edges: true,
-           ignore_clines: false
+           ignore_clines: false,
         ).run
         if @drawing_def.is_a?(DrawingDef)
 
@@ -50,7 +49,7 @@ module Ladb::OpenCutList
             end
 
             # Box helper
-            k_box = Kuix::BoxMotif.new
+            k_box = Kuix::BoxMotif3d.new
             k_box.bounds.copy!(@drawing_def.bounds)
             k_box.color = highlight_def.color
             k_box.line_width = 1

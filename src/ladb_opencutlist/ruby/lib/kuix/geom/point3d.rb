@@ -43,6 +43,10 @@ module Ladb::OpenCutList::Kuix
       set!(x + dx, y + dy, z + dz)
     end
 
+    def translate_all!(d)
+      translate!(d, d, d)
+    end
+
     # --
 
     def to_s

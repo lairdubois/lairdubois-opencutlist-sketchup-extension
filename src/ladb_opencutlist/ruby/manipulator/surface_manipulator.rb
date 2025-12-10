@@ -3,7 +3,7 @@ module Ladb::OpenCutList
   require_relative 'manipulator'
   require_relative '../helper/layer_visibility_helper'
 
-  class SurfaceManipulator < TransformationManipulator
+  class SurfaceManipulator < Manipulator
 
     include LayerVisibilityHelper
 
@@ -41,9 +41,9 @@ module Ladb::OpenCutList
     def reset_cache
       super
       @outer_loops_points = nil
+      @bounds = nil
       @z_min = nil
       @z_max = nil
-      @bounds = nil
     end
 
     # -----
@@ -67,14 +67,9 @@ module Ladb::OpenCutList
       @outer_loops_points
     end
 
-    def z_min
-      @z_min ||= outer_loops_points.min { |p1, p2| p1.z <=> p2.z }.z
-      @z_min
-    end
-
-    def z_max
-      @z_max ||= outer_loops_points.max { |p1, p2| p1.z <=> p2.z }.z
-      @z_max
+    def bounds
+      @bounds ||= Geom::BoundingBox.new.add(outer_loops_points)
+      @bounds
     end
 
     # -----

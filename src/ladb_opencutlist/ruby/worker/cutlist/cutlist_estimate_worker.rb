@@ -52,7 +52,7 @@ module Ladb::OpenCutList
         model = Sketchup.active_model
         return { :errors => [ 'tab.cutlist.error.no_model' ] } unless model
 
-        parts = @cutlist.get_real_parts(@part_ids)
+        parts = @cutlist.get_parts(@part_ids)
         return { :errors => [ 'tab.cutlist.error.no_part' ] } if parts.empty?
 
         @parts_by_group = parts.group_by { |part| part.group }

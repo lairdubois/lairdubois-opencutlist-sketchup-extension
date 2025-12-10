@@ -19,9 +19,6 @@
         {% if not multiple and not part.virtual %}
             <li role="presentation"{% if tab == 'axes' %} class="active"{% endif %}><a href="#tab_edit_part_axes" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-axes"></i>&nbsp;{{ 'tab.cutlist.edit_part.axes'|i18next }}</a></li>
         {% endif %}
-        {% if group.material_type == 1 or group.material_type == 2 or group.material_type == 3 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL #}
-            <li role="presentation"{% if tab == 'size_increase' %} class="active"{% endif %}><a href="#tab_edit_part_size_increase" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-size-increase"></i>&nbsp;{{ 'tab.cutlist.edit_part.size_increase'|i18next }}</a></li>
-        {% endif %}
         {% if group.material_type == 2 %} {# 2 = TYPE_SHEET_GOOD #}
             <li role="presentation"{% if tab == 'edges' %} class="active"{% endif %}><a href="#tab_edit_part_edges" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-edge-{{ part.edge_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.edges'|i18next }}</a></li>
             <li role="presentation"{% if tab == 'faces' %} class="active"{% endif %}><a href="#tab_edit_part_faces" role="tab" data-toggle="tab"><i class="ladb-opencutlist-icon-face-{{ part.face_pattern }}"></i>&nbsp;{{ 'tab.cutlist.edit_part.faces'|i18next }}</a></li>
@@ -217,85 +214,6 @@
                                 {{ 'tab.cutlist.edit_part.axes_tip'|i18next }}
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        {% endif %}
-        {% if group.material_type == 1 or group.material_type == 2 or group.material_type == 3 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 3 = TYPE_DIMENSIONAL #}
-            <div role="tabpanel" class="tab-pane{% if tab == 'size_increase' %} active{% endif %}" id="tab_edit_part_size_increase">
-                {% if not multiple %}
-                    <div class="text-center">
-                        {% embed 'tabs/cutlist/_svg-part.twig' %}
-                            {% set areaSize = 280 %}
-                            {% set axisWidth = 2 %}
-                            {% set axisLength = 20 %}
-                            {% set axisOffset = 10 %}
-                            {% set partOutlineWidth = 2 %}
-                            {% set edgeOutlineWidth = 4 %}
-                            {% set edgeWidth = 3 %}
-                            {% set partLength = (areaSize - 40) * part.l_ratio %}
-                            {% set partWidth = (areaSize - 40) * part.w_ratio %}
-                            {% set increaseOutlineWidth = 4 %}
-                            {% set increaseLWidth = min(20, partLength / 3) %}
-                            {% set increaseWWidth = min(20, partWidth / 3) %}
-                            {% block extra %}
-                                <defs>
-                                    <pattern id="diagonalHatch" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-                                        <line x1="0" y1="0" x2="0" y2="6" style="stroke:#ccc; stroke-width:1" />
-                                    </pattern>
-                                    <pattern id="diagonalHatchActive" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-                                        <line x1="0" y1="0" x2="0" y2="6" style="stroke:#5bc0de; stroke-width:2" />
-                                    </pattern>
-                                    <pattern id="diagonalHatchOver" width="6" height="6" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-                                        <line x1="0" y1="0" x2="0" y2="6" style="stroke:#f77f00; stroke-width:4" />
-                                    </pattern>
-                                </defs>
-                                <g class="increase increase-length"{% if (part.flipped b-xor part.axes_flipped) == 1 %} transform="rotate(180 {{ areaSize / 2 }} {{ areaSize / 2 }})"{% endif %}>
-                                    <rect x="{{ (areaSize + partLength) / 2 - partOutlineWidth - increaseLWidth }}" y="{{ (areaSize - partWidth) / 2 + partOutlineWidth }}" width="{{ increaseLWidth }}" height="{{ partWidth - 2 * partOutlineWidth }}" class="increase increase-area" />
-                                    <rect x="{{ (areaSize + partLength) / 2 - edgeWidth - edgeOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth + edgeOutlineWidth * 2 }}" height="{{ partWidth }}" class="edge edge-outer" />
-                                    <rect x="{{ (areaSize + partLength) / 2 - edgeWidth }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ edgeWidth }}" height="{{ partWidth }}" class="edge edge-inner" />
-                                </g>
-                                {% if group.material_type == 1 or group.material_type == 2 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
-                                    <g class="increase increase-width">
-                                        <rect x="{{ (areaSize - partLength) / 2 + partOutlineWidth }}" y="{{ (areaSize - partWidth) / 2 + edgeWidth }}" width="{{ partLength - 2 * partOutlineWidth }}" height="{{ increaseWWidth }}" class="increase increase-area"/>
-                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 + edgeOutlineWidth }}" width="{{ partLength }}" height="{{ edgeWidth + edgeOutlineWidth * 2 }}" class="edge edge-outer" />
-                                        <rect x="{{ (areaSize - partLength) / 2 }}" y="{{ (areaSize - partWidth) / 2 }}" width="{{ partLength }}" height="{{ edgeWidth }}" class="edge edge-inner" />
-                                    </g>
-                                {% endif %}
-                            {% endblock %}
-                        {% endembed %}
-                    </div>
-                {% endif %}
-                <div class="form form-horizontal">
-                    <div class="form-group">
-                        <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.length_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                        <label class="control-label col-xs-4">{{ 'tab.cutlist.edit_part.length_increase'|i18next }}</label>
-                        <div class="col-xs-6">
-                            <input type="text" class="form-control" id="ladb_cutlist_part_input_length_increase" {% if part.length_increase == -1 %}data-multiple="true"{% else %}value="{{ part.length_increase }}"{% endif %}>
-                        </div>
-                    </div>
-                    {% if group.material_type == 1 or group.material_type == 2 %} {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
-                        <div class="form-group">
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.width_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                            <label class="control-label col-xs-4">{{ 'tab.cutlist.edit_part.width_increase'|i18next }}</label>
-                            <div class="col-xs-6">
-                                <input type="text" class="form-control" id="ladb_cutlist_part_input_width_increase" {% if part.width_increase == -1 %}data-multiple="true"{% else %}value="{{ part.width_increase }}"{% endif %}>
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% if group.material_type == 1 %} {# 1 = TYPE_SOLID_WOOD #}
-                        <div class="form-group">
-                            <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.thickness_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
-                            <label class="control-label col-xs-4">{{ 'tab.cutlist.edit_part.thickness_increase'|i18next }}</label>
-                            <div class="col-xs-6">
-                                <input type="text" class="form-control" id="ladb_cutlist_part_input_thickness_increase" {% if part.thickness_increase == -1 %}data-multiple="true"{% else %}value="{{ part.thickness_increase }}"{% endif %}>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-                <div class="row">
-                    <div class="col-xs-offset-1 col-xs-10">
-                        <p class="help-block text-center"><small>{{ 'tab.cutlist.edit_part.size_increase_help'|i18next }}</small></p>
                     </div>
                 </div>
             </div>

@@ -21,7 +21,7 @@ module Ladb::OpenCutList
       model = Sketchup.active_model
       return { :errors => [ 'tab.materials.error.no_model' ] } unless model
 
-      # Start model modification operation
+      # Start a model modification operation
       model.start_operation('OCL Material Duplicate', true, false, true)
 
       materials = model.materials

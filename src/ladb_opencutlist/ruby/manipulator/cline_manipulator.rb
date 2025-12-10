@@ -4,6 +4,8 @@ module Ladb::OpenCutList
 
   class ClineManipulator < LineManipulator
 
+    attr_reader :cline
+
     def initialize(cline, transformation = IDENTITY)
       super([ cline.position, cline.direction ], transformation)
       raise "cline must be a Sketchup::ConstructionLine." unless cline.is_a?(Sketchup::ConstructionLine)
@@ -55,6 +57,7 @@ module Ladb::OpenCutList
     end
 
     def points
+      return nil if infinite?
       @points ||= [ start_point, end_point ]
       @points
     end

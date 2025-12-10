@@ -82,6 +82,21 @@ module Ladb::OpenCutList
       PLUGIN.register_command("outliner_explode") do |params|
         explode_command(params)
       end
+      PLUGIN.register_command("outliner_erase") do |params|
+        erase_command(params)
+      end
+      PLUGIN.register_command("outliner_move") do |params|
+        move_command(params)
+      end
+      PLUGIN.register_command("outliner_deep_make_unique") do |params|
+        deep_make_unique_command(params)
+      end
+      PLUGIN.register_command("outliner_deep_rename_parts") do |params|
+        deep_rename_parts_command(params)
+      end
+      PLUGIN.register_command("outliner_create_container") do |params|
+        create_container_command(params)
+      end
       PLUGIN.register_command("outliner_highlight") do |params|
         highlight_command(params)
       end
@@ -316,10 +331,11 @@ module Ladb::OpenCutList
     # Definitions Observer
 
     def onComponentAdded(definitions, definition)
-      # puts "onComponentAdded: #{definition} (#{definition.object_id})"
+      # puts "onComponentAdded: #{definition} (#{definition.entityID})"
 
       # Refresh internally created groups definition
-      if definition.group? && definition.count_used_instances > 0
+      # if definition.valid? && definition.group? && definition.count_used_instances > 0
+      if definition.valid? && definition.count_used_instances > 0
 
         definition.instances.each do |instance|
 
@@ -356,12 +372,14 @@ module Ladb::OpenCutList
     # Entities Observer
 
     def onElementAdded(entities, entity)
-      # puts "onElementAdded: #{entity} (#{entity.object_id}) in (#{entity.definition.object_id if entity.respond_to?(:definition)})"
+      # puts "onElementAdded: #{entity} (#{entity.entityID}) in (#{entity.parent.entityID if entity.respond_to?(:entityID)})"
 
       return unless @worker
+      return if entity.deleted?
 
       if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
 
+        need_to_compute_selection = false
         face_bounds_cache = {}
 
         parent = entity.parent
@@ -369,12 +387,12 @@ module Ladb::OpenCutList
         parent_instances.each do |instance|
 
           entity_id = instance.is_a?(Sketchup::Entity) ? instance.entityID : 'model'
-          node_defs = @outliner_def.get_node_defs_by_entity_id(entity_id)
-          if node_defs
+          unless (node_defs = @outliner_def.get_node_defs_by_entity_id(entity_id)).nil?
             node_defs.each do |node_def|
 
-              child_node_def = @worker.run(:create_node_def, { entity: entity, path: node_def.path, face_bounds_cache: face_bounds_cache })
-              if child_node_def
+              unless (child_node_def = @worker.run(:create_node_def, { entity: entity, path: node_def.path, face_bounds_cache: face_bounds_cache })).nil?
+
+                need_to_compute_selection = true if Sketchup.active_model.selection.include?(entity)
 
                 node_def.add_child(child_node_def)
                 node_def.invalidate
@@ -388,6 +406,8 @@ module Ladb::OpenCutList
           end
         end
 
+        @worker.run(:compute_selection) if need_to_compute_selection
+
         trigger_boo
 
         start_observing_entities(entity)
@@ -397,14 +417,14 @@ module Ladb::OpenCutList
     end
 
     def onElementModified(entities, entity)
-      # puts "onElementModified: #{entity} (#{entity.object_id})"
+      # puts "onElementModified: #{entity} (#{entity.entityID})"
 
       return unless @worker
+      return if entity.deleted?
 
       if entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance) || entity.is_a?(Sketchup::Model)
 
-        node_defs = @outliner_def.get_node_defs_by_entity_id(entity.entityID)
-        if node_defs
+        unless (node_defs = @outliner_def.get_node_defs_by_entity_id(entity.entityID)).nil?
           node_defs.each do |node_def|
 
             node_def.material_def = @outliner_def.available_material_defs[entity.material]
@@ -424,8 +444,7 @@ module Ladb::OpenCutList
       elsif entity.is_a?(Sketchup::ComponentDefinition)
 
         entity.instances.each do |instance|
-          node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)
-          if node_defs
+          unless (node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)).nil?
             node_defs.each do |node_def|
               node_def.invalidate
               @worker.run(:sort_children_node_defs, { children: node_def.parent.children }) if node_def.parent
@@ -438,8 +457,7 @@ module Ladb::OpenCutList
         if (entity.name == Plugin::ATTRIBUTE_DICTIONARY || entity.name == Plugin::SU_ATTRIBUTE_DICTIONARY) && entity.parent.parent.is_a?(Sketchup::ComponentDefinition)
 
           entity.parent.parent.instances.each do |instance|
-            node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)
-            if node_defs
+            unless (node_defs = @outliner_def.get_node_defs_by_entity_id(instance.entityID)).nil?
               node_defs.each do |node_def|
                 node_def.invalidate
               end
@@ -458,12 +476,18 @@ module Ladb::OpenCutList
       # puts "onElementRemoved: #{entity_id}"
 
       return unless @worker
+      begin
+        parent = entities.parent # Fail if parent is deleted
+      rescue
+        return
+      end
 
-      node_defs = @outliner_def.get_node_defs_by_entity_id(entity_id)
-      if node_defs
+      unless (node_defs = @outliner_def.get_node_defs_by_entity_id(entity_id)).nil?
 
-        node_defs.each do |node_def|
-          @worker.run(:destroy_node_def, { node_def: node_def })
+        parent_instances = parent.is_a?(Sketchup::ComponentDefinition) ? parent.instances : [ parent ]
+
+        node_defs.dup.each do |node_def|
+          @worker.run(:destroy_node_def, { node_def: node_def }) if parent_instances.include?(node_def.parent.entity)
         end
 
         trigger_boo
@@ -666,6 +690,56 @@ module Ladb::OpenCutList
       worker.run
     end
 
+    def erase_command(params)
+      require_relative '../worker/outliner/outliner_erase_worker'
+
+      # Setup worker
+      worker = OutlinerEraseWorker.new(@outliner_def, **params)
+
+      # Run !
+      worker.run
+    end
+
+    def move_command(params)
+      require_relative '../worker/outliner/outliner_move_worker'
+
+      # Setup worker
+      worker = OutlinerMoveWorker.new(@outliner_def, **params)
+
+      # Run !
+      worker.run
+    end
+
+    def deep_make_unique_command(params)
+      require_relative '../worker/outliner/outliner_deep_make_unique_worker'
+
+      # Setup worker
+      worker = OutlinerDeepMakeUniqueWorker.new(@outliner_def, **params)
+
+      # Run !
+      worker.run
+    end
+
+    def deep_rename_parts_command(params)
+      require_relative '../worker/outliner/outliner_deep_rename_parts_worker'
+
+      # Setup worker
+      worker = OutlinerDeepRenamePartsWorker.new(@outliner_def, **params)
+
+      # Run !
+      worker.run
+    end
+
+    def create_container_command(params)
+      require_relative '../worker/outliner/outliner_create_container_worker'
+
+      # Setup worker
+      worker = OutlinerCreateContainerWorker.new(@outliner_def, **params)
+
+      # Run !
+      worker.run
+    end
+
     def highlight_command(params)
       require_relative '../overlay/highlight_overlay'
 
@@ -683,7 +757,7 @@ module Ladb::OpenCutList
         ids.each do |id|
 
           node_def = @outliner_def.get_node_def_by_id(id)
-          if node_def && !node_def.is_a?(OutlinerNodeModelDef)
+          if node_def && !node_def.is_a?(OutlinerNodeModelDef) && node_def.valid?
 
             name = [ node_def.name, node_def.respond_to?(:definition_name) ? "<#{node_def.definition_name}>" : nil ].compact.join(' ')
             color = node_def.computed_visible? ? Kuix::COLOR_RED : Kuix::COLOR_DARK_GREY

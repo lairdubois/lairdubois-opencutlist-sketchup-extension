@@ -1,6 +1,5 @@
 module Ladb::OpenCutList
 
-  require_relative 'transformation_manipulator'
   require_relative 'plane_manipulator'
   require_relative 'loop_manipulator'
   require_relative '../helper/entities_helper'
@@ -25,8 +24,6 @@ module Ladb::OpenCutList
 
     def reset_cache
       super
-      @z_min = nil
-      @z_max = nil
       @normal = nil
       @triangles = nil
       @outer_loop_manipulator = nil
@@ -46,14 +43,8 @@ module Ladb::OpenCutList
 
     # -----
 
-    def z_min
-      @z_min ||= outer_loop_manipulator.points.min { |p1, p2| p1.z <=> p2.z }.z
-      @z_min
-    end
-
-    def z_max
-      @z_max ||= outer_loop_manipulator.points.max { |p1, p2| p1.z <=> p2.z }.z
-      @z_max
+    def bounds
+      outer_loop_manipulator.bounds
     end
 
     def mesh
@@ -82,7 +73,7 @@ module Ladb::OpenCutList
     end
 
     def loop_manipulators
-      @loop_manipulators ||= @face.loops.map { |loop| LoopManipulator.new(loop, @transformation) }
+      @loop_manipulators ||= @face.loops.map { |loop| loop.outer? ? outer_loop_manipulator : LoopManipulator.new(loop, @transformation) }
       @loop_manipulators
     end
 

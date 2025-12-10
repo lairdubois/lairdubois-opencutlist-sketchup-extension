@@ -23,21 +23,19 @@ module Ladb::OpenCutList
       return { :errors => [ 'tab.outliner.error.no_model' ] } unless model
 
       node_def = @outliner_def.get_node_def_by_id(@id)
-      return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def
+      return { :errors => [ 'tab.outliner.error.node_not_found' ] } unless node_def && node_def.valid?
 
       entity = node_def.entity
       return { :errors => [ 'tab.outliner.error.entity_not_found' ] } if !entity.is_a?(Sketchup::Entity) || entity.deleted?
 
-      # Start model modification operation
+      # Start a model modification operation
       model.start_operation('OCL Outliner Select', true, false, false)
 
 
       begin
 
-        # As native behavior, change active path to parent of selected element (SU 2020+)
-        if model.respond_to?(:active_path=) && node_def.parent && !node_def.parent.active
-          model.active_path = node_def.parent.path
-        end
+        # As native behavior, change the active path to the parent of the selected element (SU 2020+)
+        model.active_path = node_def.parent.path if model.respond_to?(:active_path=) && node_def.parent && model.active_path != node_def.parent.path
 
         model.selection.toggle(entity)
 

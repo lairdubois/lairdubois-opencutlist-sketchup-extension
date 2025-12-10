@@ -1,0 +1,7 @@
+{
+  "action_0": { /* ACTION_STRETCH */
+    "stretch_measure_type": "outside",
+    "axes": "entity",
+    "make_unique": true
+  }
+}

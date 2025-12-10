@@ -1,0 +1,2286 @@
+# this label must be in your language
+_label: Deutsch
+# the disabled message will be displayed when the language is not fully translated
+_disabled_msg: |
+  Diese Sprache wurde noch nicht **vollständig übersetzt**.
+
+  Um bei der Fertigstellung der Übersetzung zu helfen, konsultieren Sie bitte die [OpenCutList Documentation](https://docs.opencutlist.org/for-translators/general).
+# the reload message will be displayed when a user switches to this language
+_reload_msg: "Um alle Änderungen zu berücksichtigen, müssen Sie dieses Fenster **schließen** und **wieder öffnen**."
+_description: "Holzlistengenerator für Tischler/Schreiner/Zimmerer. Open Source, crowdfunded und einfach zu bedienen ;)"
+default:
+  minimize: Minimieren
+  maximize: Maximieren
+  cancel: Abbrechen
+  stop: Beenden
+  validate: Validieren
+  confirm: Bestätigen
+  ok: Ok
+  open: Öffnen
+  see: Anzeigen
+  close: Schließen
+  clear: Löschen
+  refresh: Aktualisieren
+  generate: Generieren
+  regenerate: Regenerieren
+  print: Drucken
+  export: Exportieren
+  import: Importieren
+  load: Laden
+  preview: Übersicht
+  options: Optionen
+  caution: Vorsicht
+  remove: Entfernen
+  remove_all: Alles entfernen
+  delete: Löschen
+  create: Anlegen
+  duplicate: Duplizieren
+  ignore: Ignorieren
+  download: Herunterladen
+  upgrade: Aktualisieren
+  copy: Kopieren
+  select_all: Alles auswählen
+  unselect_all: Nichts auswählen
+  draw: Zeichnen
+  estimate: Schätzen
+  rename: Umbenennen
+  next: Weiter
+  "yes": Ja
+  "no": Nein
+  automatic: Automatisch
+  empty_filename: Unbenannt.skp
+  help: Hilfe
+  error: Verflixt!
+  warning: Vorsicht
+  tip: Tipp
+  good: Gut
+  bad: Schlecht
+  by: von
+  # date format in use for language
+  date_format: "Y-m-d G:i"
+  # short date format in use for language
+  date_format_short: Y-m-d
+  decimal: Dezimal
+  fractional: Fraktional
+  unit_0: Zoll
+  unit_1: Fuß
+  unit_2: Millimeter
+  unit_3: Zentimeter
+  unit_4: Meter
+  unit_5: Yard
+  unit_mass_0: Kilogramm
+  unit_mass_1: Pfund
+  unit_angle_0: Grad
+  instance_single: Stk.
+  instance_plural: Stücke
+  part_single: Teil
+  part_plural: Teile
+  cut_single: Schnitt
+  cut_plural: Schnitte
+  thickness_layer_single: Lage
+  thickness_layer_plural: Lagen
+  setup_model_units: Modelleinheiten konfigurieren
+  load_more: Weitere laden
+  reset_to_app_defaults: Originalwerte wiederherstellen
+  constrain_key: Umschalttaste
+  copy_key_win: Strg
+  copy_key_mac: Option
+  alt_key_win: Alt
+  alt_key_mac: Command
+  tab_key: Tab
+  file: Datei
+  file_plural: Dateien
+  stroke_color: Strichfarbe
+  fill_color: Füllfarbe
+  length: Länge
+  width: Breite
+  thickness: Dicke
+  height: Höhe
+  deprecated: Veraltet
+core:
+  menu:
+    submenu: OpenCutList
+    item:
+      generate_cutlist:  Holzliste generieren
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_part_axes_properties: $t(tab.cutlist.edit_part_axes_properties)
+      edit_part_edges_properties: $t(tab.cutlist.edit_part_edges_properties)
+      edit_part_faces_properties: $t(tab.cutlist.edit_part_faces_properties)
+      edit_part_instance: Instanz bearbeiten
+      edit_parent_part_instance: "Ändern der Gruppe/Komponente, die die Instanz enthält"
+      hide_part_instance: Instanz ausblenden
+      unhide_part_instance: Instanz einblenden
+      edit_part_instance_properties: Instanzeigenschaften bearbeiten
+      smart_draw: $t(core.toolbar.command.smart_draw)
+      smart_handle: $t(core.toolbar.command.smart_handle)
+      smart_reshape: $t(core.toolbar.command.smart_reshape)
+      smart_paint: $t(core.toolbar.command.smart_paint)
+      smart_axes: $t(core.toolbar.command.smart_axes)
+      smart_export: $t(core.toolbar.command.smart_export)
+      reset_dialog_position: Fensterposition zurücksetzen
+  toolbar:
+    name: OpenCutList
+    tools: Werkzeuge
+    command:
+      dialog: OpenCutList
+      smart_draw: Teile zeichnen
+      smart_handle: Teile handhaben
+      smart_reshape: Teile umgestalten
+      smart_paint: Teile einfärben
+      smart_axes: Teile orientieren
+      smart_export: Teile exportieren
+  messagebox:
+    dir_override: |
+      « {{ target }} » existiert schon. Möchten Sie es ersetzen?
+
+      Ein Verzeichnis mit diesem Namen befindet sich schon im Verzeichnis {{ parent }}. Wenn Sie es ersetzen, geht der ursprüngliche Inhalt verloren.
+  savepanel:
+    export_to_file: "In {{ file_format }} Datei exportieren"
+  dialog:
+    title: OpenCutList by L'Air du Bois
+  leftbar:
+    more: Mehr
+    more_docs: Doku
+    more_reviews: Meinungen
+    more_plans: Pläne
+    more_extensions: Plugins
+    more_update: Aktualisieren
+  bottombar:
+    report_a_bug: Fehler melden
+  warning:
+    dev: |
+      Sie verwenden eine **Entwicklerversion** Version von *OpenCutList*.
+      Diese Version ist nur zum Testen verfügbar.
+      Es wird nicht empfohlen, diese in der Produktion zu verwenden.
+
+      Um einen Fehler zu melden: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
+    not_available_in_context: In diesem Kontext nicht verfügbar
+  error:
+    exception: "Fehler: **{{ error }}**"
+    forbidden: "Nicht erlaubt: **{{ error }}**"
+    extern: "Externer Fehler: **{{ error }}**"
+    feature_unavailable: "Diese Funktion erfordert SketchUp {{ version }} oder höher"
+    failed_export_to: |
+      Beim Exportieren in die Datei, *{{ path }}*, ist ein Fehler aufgetreten.
+      **{{ error }}**
+    unsupported_file_format: "Nicht unterstütztes Dateiformat : **{{ format }}**"
+  success:
+    exported_to: "Erfolgreicher Export nach {{ path }}."
+    copied_to_clipboard: In die Zwischenablage kopiert
+  event:
+    model_change: Das aktive Modell wurde verändert.
+    options_change: Die Optionen des Modells wurden verändert.
+    material_change: Mindestens ein Material wurde verändert.
+    selection_change: Die Auswahl im aktiven Modell wurde verändert.
+    layers_change: Tags im Modell wurden verändert.
+    drawing_change: Die Zeichung des aktiven Modells wurde geändert.
+  upgrade:
+    unavailable: Die neueste Version von *OpenCutList* wurde nicht gefunden.
+    available: |
+      Eine neue Version von *OpenCutList* ist verfügbar.
+      Aktualisieren Sie, um die neuesten Funktionen zu erhalten!
+    up_to_date: |
+      Sie haben die neueste Version von *OpenCutList*.
+
+      *Unterstützen Sie das Projekt finanziell, damit wir noch mehr Verbesserungen für Sie einbauen können!*
+    downloading: Ladevorgang läuft
+    changelog: "Was gibt's Neues?"
+    ignore_update: Diese Aktualisierung überspringen
+    download_rescue: "Probleme beim Herunterladen?"
+    manual_download: Manuelles Herunterladen
+    zzz: "Ich ruhe mich nach meiner Aktualisierung aus. Um mich wieder in Topform zu bringen, müssen Sie SketchUp neu starten."
+    success: |
+      Die Aktualisierung von OpenCutList ist abgeschlossen!
+
+      STARTEN SIE SKETCHUP neu, um die Änderungen zu aktivieren.
+    error:
+      download: Fehler beim Herunterladen des Archivs.
+      unzip: Fehler bei der Dekomprimierung des Archivs.
+  preset:
+    label: Voreinstellungen
+    manage: Voreinstellungen verwalten
+    save_to: Speichern als
+    restore_from: Wiederherstellen aus
+    app_defaults: Ursprüngliche Einstellung
+    user_defaults: Meine Voreinstellung
+    new: Neue Voreinstellung
+    new_prompt: |
+      *Durch das Erstellen einer benutzerdefinierten Voreinstellung können Sie die aktuellen Formulareinstellungen global beibehalten, damit Sie diese in allen Ihren Modellen wiederverwenden können.*
+
+      Geben Sie den Namen der Voreinstellung ein:
+    delete_confirm_title: Löschung
+    delete_confirm: "Möchten Sie die Voreinstellung **\"{{ name }}\"** wirklich löschen?"
+    override_confirm_title: Aktualisierung
+    override_confirm: "Bestätigen Sie die Aktualisierung der Voreinstellung **\"{{ name }}\"** mit den Formularparametern?"
+    new_success: "Voreinstellung **\"{{ name }}\"** erstellt"
+    override_success: "Voreinstellung **\"{{ name }}\"** aktualisiert"
+    restore_success: "Das Formular wurde mit der Voreinstellung **\"{{ name }}\"** ausgefüllt"
+    delete_success: "Voreinstellung **\"{{ name }}\"** gelöscht"
+    tooltip:
+      save_to: "Voreinstellung '{{ name }}' aktualisieren"
+      delete: "Voreinstellung '{{ name }}' löschen"
+    dictionary:
+      component_textinput_color: Farbpalette
+      cutlist_cuttingdiagram1d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram1d_write_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_options: $t(default.deprecated)
+      cutlist_cuttingdiagram2d_write_options: $t(default.deprecated)
+      cutlist_packing_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.title) 2D
+      cutlist_packing_write_options: $t(tab.cutlist.label) / $t(tab.cutlist.packing.write.title) 2D
+      cutlist_export_options: $t(tab.cutlist.label) / $t(tab.cutlist.export.title)
+      cutlist_labels_options: $t(tab.cutlist.label) / $t(tab.cutlist.labels.title)
+      cutlist_layout_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title)
+      cutlist_layout_single_options: $t(tab.cutlist.label) / $t(tab.cutlist.layout.title) ($t(default.part_single))
+      cutlist_options: $t(tab.cutlist.label) / $t(default.options)
+      cutlist_report_options: $t(default.deprecated)
+      cutlist_estimate_options: $t(tab.cutlist.label) / $t(tab.cutlist.estimate.title)
+      cutlist_write2d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 2D
+      cutlist_write3d_options: $t(tab.cutlist.label) / $t(tab.cutlist.write.title) 3D
+      importer_import_options: $t(tab.importer.label) / $t(default.import)
+      importer_load_options: $t(tab.importer.label) / $t(default.open)
+      materials_material_attributes: $t(tab.materials.label) / $t(tab.materials.edit_material.cut_options)
+      materials_options: $t(tab.materials.label) / $t(default.options)
+      outliner_options: $t(tab.outliner.label) / $t(default.options)
+      settings_model: $t(tab.settings.label) / Modell
+      tool_smart_draw_options: $t(core.toolbar.command.smart_draw)
+      tool_smart_handle_options: $t(core.toolbar.command.smart_handle)
+      tool_smart_paint_options: $t(core.toolbar.command.smart_paint)
+      tool_smart_axes_options: $t(core.toolbar.command.smart_axes)
+      tool_smart_export_options: $t(core.toolbar.command.smart_export)
+  progress:
+    please_wait: Berechnung einer Welt des Friedens
+  component:
+    textinput:
+      reset: Wert zurücksetzen
+    textinput_color:
+      store: Farbe speichern
+      remove: Farbe vergessen
+    textinput_code:
+      snippets: Beispielformeln
+      help: "Drücken Sie **@**, um die Liste der Datenvariablen zu öffnen."
+    textinput_size:
+      quantity: Anz.
+    three_viewer:
+      view: "Ansicht {{ view }}"
+      view_isometric: Isometrisch
+      view_top: Draufsicht
+      view_bottom: Untersicht
+      view_front: Vorderansicht
+      view_back: Rückansicht
+      view_left: Links
+      view_right: Rechts
+      zoom: "{{ zoom }} Maßstab"
+      explode_factor: Amplitude der Explosion
+      toggle_box_helper: Äußere Schale ein- oder ausblenden
+      toggle_box_dimensions_helper: Maße ein- oder ausblenden
+      toggle_axes_helper: Achsen ein- oder ausblenden
+  docs:
+    error:
+      failed_to_load: |
+        Die Dokumentation kann nicht geöffnet werden.
+        Vergewissern Sie sich, dass Sie mit dem Internet verbunden sind.
+tab:
+  cutlist:
+    label: Holzliste
+    title: Holzliste
+    help: |
+      Wählen Sie die Teile für Ihre Holzliste in der Szene aus und klicken Sie auf **Generieren**.
+      Falls die Auswahl leer ist, werden alle sichtbaren Komponenten der Szene für die Holzliste verwendet.
+    is_selection: Nur Auswahl
+    select_part: Teil auswählen
+    select_part_plural: Teile auswählen
+    material_undefined: Ohne Material
+    not_available_std_width: Breite nicht verfügbar
+    not_available_std_thickness: Dicke nicht verfügbar
+    not_available_std_section: Querschnitt nicht verfügbar
+    highlight_part: Teil im Modell hervorheben
+    highlight_parts: Teile im Modell hervorheben
+    edit_part_properties: Eigenschaften des Teils bearbeiten
+    edit_part_axes_properties: Eigenschaften (Achsen) des Teils bearbeiten
+    edit_part_edges_properties: Eigenschaften (Kanten) des Teils bearbeiten
+    edit_part_faces_properties: Eigenschaften (Flächen) des Teils bearbeiten
+    part_drawing_type_1: 2D Draufsicht
+    part_drawing_type_2: 2D Untersicht
+    part_drawing_type_3: 2D Seitelinks
+    part_drawing_type_4: 2D Seiterechts
+    part_drawing_type_5: 2D Vorderansicht
+    part_drawing_type_6: 2D Rückansicht
+    part_drawing_type_7: 3D
+    tooltip:
+      show_hide_block: Gruppe anzeigen / ausblenden
+      show_hide_blocks: Alle Gruppen anzeigen / ausblenden
+      scroll_to_block: Zur Gruppe blättern
+      not_available_std_width: "Die Breite *{{ std_dimension_real }}* ist nicht in den Standardbreiten des Materials '{{ material_name }}' definiert"
+      not_available_std_thickness: "Die Dicke *{{ std_dimension_real }}* ist nicht in den Standarddicken des Materials '{{ material_name }}' definiert"
+      not_available_std_section: "Der Querschnitt *{{ std_dimension_real }}* ist nicht in den Standardquerschnitten des Materials '{{ material_name }}' definiert"
+      add_std_width_to_material: |
+        Breite *{{ std_dimension }}*
+        dem Material '{{ material_name }}' hinzufügen
+      add_std_thickness_to_material: |
+        Dicke *{{ std_dimension }}*
+        dem Material '{{ material_name }}' hinzufügen
+      add_std_section_to_material: |
+        Querschnitt *{{ std_dimension }}*
+        dem Material '{{ material_name }}' hinzufügen
+      rounded_std_width: |
+        Die Breite *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
+        Tatsächliche Breite: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_thickness: |
+        Die Dicke *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
+        Tatsächliche Dicke: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_section: |
+        Der Querschnitt *{{ std_dimension }}* wird durch die Genauigkeit der Modelleinheit gerundet.
+        Tatsächlicher Querschnitt: *{{ std_dimension_real }}*
+        ---
+        $t(tab.cutlist.tooltip.rounded_std_footer)
+      rounded_std_footer: Stellen Sie die Genauigkeit in den *Modellinformationen* ein oder überprüfen Sie die Abmessungen der Teile in dieser Gruppe.
+      highlight_part: $t(tab.cutlist.highlight_part)
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      edit_part_properties: $t(tab.cutlist.edit_part_properties)
+      edit_parts_properties: Eigenschaften der Gruppe von Teilen bearbeiten
+      edit_material: $t(tab.cutlist.menu.edit_material)
+      folding_part: Aufklappen / Zuklappen
+      material_origin_1: Das für dieses Teil verwendete Material ist auf einer Instanz definiert
+      material_origin_2: Das für dieses Teil verwendete Material wird von einem übergeordneten Teil geerbt
+      material_origin_3: Das für dieses Teil verwendete Material wird aus einem enthaltenen Teil gewonnen
+      orientation_locked_on_axis: Die Orientierung dieses Teils ist an sein Koordinatensystem gebunden
+      number_saved: Die Nummer dieses Teils wurde gespeichert
+      number_hidden: "Die auf diesem Teil gespeicherte Nummer '{{ number }}' kann nicht verwendet werden, da sie bereits vergeben ist"
+      number_generated: Die Nummer dieses Teils wurde automatisch zugewiesen
+      resized: Dieses Teil wurde gegenüber der ursprünglichen Definition redimensioniert
+      flipped: Dieses Teil ist im Vergleich zur ursprünglichen Definition gespiegelt
+      symmetrical: Die Erkennung gespiegelter Teile ist bei diesem Teil deaktiviert
+      ignore_grain_direction: Die Faserrichtung wird für dieses Teil nicht beachtet
+      auto_oriented: Dieses Teil wurde automatisch orientiert
+      oko_label_filter: "Badge einschließen / ausschließen"
+      add_label_filter: "Nach '{{ label }}' auswählen"
+      remove_label_filter: "Auswahl nach '{{ label }}' aufheben"
+      add_edge_material_name_filter: "Nach '{{ material_name }}' auswählen"
+      remove_edge_material_name_filter: "Auswahl nach '{{ material_name }}' aufheben"
+      add_veneer_material_name_filter: "Nach '{{ material_name }}' auswählen"
+      remove_veneer_material_name_filter: "Auswahl nach '{{ material_name }}' aufheben"
+      not_aligned_on_axes: "Achtung, dieses Teil ist möglicherweise nicht korrekt auf seinen Achsen ausgerichtet"
+      instance_count_by_part: "Dieses Teil wird in **{{ count }}** Einheiten pro Packung gezählt."
+      unused_instance_count: "Achtung, **{{ count }}** Einheit der letzten Packung wird nicht verwendet."
+      unused_instance_count_plural: "Achtung, **{{ count }}** Einheiten der letzten Packung werden nicht verwendet."
+      used_instance_count: "**{{ count }}** / {{ total }} Einheit verwendet"
+      used_instance_count_plural: "**{{ count }}** / {{ total }} Einheiten verwendet"
+      thickness_layer_count: "Das fertige Teil besteht aus **{{ count }}** Lagen in der Dicke"
+      thickness_layered: "Die hier angegebene Menge entspricht der Anzahl der zu schneidenden Teile, um alle Lagen zu erhalten."
+      thickness_layered_equation: "**{{ count }}** *Teil* x **{{ layerCount }}** *Lagen* = **{{ cuttingPartCount }}**"
+      thickness_layered_equation_plural: "**{{ count }}** *Teile* x **{{ layerCount }}** *Lagen* = **{{ cuttingPartCount }}**"
+      multiple_content_layers: "Achtung, dieses Teil setzt sich aus Unterteilen zusammen, die sich in {{ count }} verschiedenen Ebenen, Tags oder Layers, befinden:<br>{{ layers }}"
+      children_warnings: "Achtung, es gibt {{ count }} Warnung in den gruppierten Teilen"
+      children_warnings_plural: "Achtung, es gibt {{ count }} Warnungen in den gruppierten Teilen"
+      children_size_increase: "Diese Dimension enthält ein Übermaß für {{ count }} der gruppierten Teile"
+      invalid_final_area: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teil (von {{ total }}) eine ungültige Fläche hat"
+      invalid_final_area_plural: "Achtung, diese summierbare Fläche konnte nicht berechnet werden, weil {{ count }} Teile (von {{ total }}) eine ungültige Fläche haben"
+      is_dynamic_attributes_name: Die Bezeichnung dieses Teils wird aus dem Attribut 'Name' der dynamischen Komponente extrahiert
+      has_edges: "Dieses Teil enthält {{ count }} Kantenband"
+      has_edges_plural: "Dieses Teil enthält {{ count }} Kantenbänder"
+      has_faces: "Dieses Teil enthält {{ count }} furnierte Fläche"
+      has_faces_plural: "Dieses Teil enthält {{ count }} furnierte Flächen"
+      edge_decremented: "Um Kantenbandbreite ({{ decrement }}) reduziert"
+      edge_ymin: Kantenband Länge 1
+      edge_ymax: Kantenband Länge 2
+      edge_xmin: Kantenband Breite 1
+      edge_xmax: Kantenband Breite 2
+      face_zmin: Rückseite
+      face_zmax: Vorderseite
+      dblclick_to_copy_all_edges: "Doppelklicken Sie hier, um diesen Wert auf die übrigen Kanten zu übertragen"
+      dblclick_to_copy_all_faces: "Doppelklicken Sie hier, um diesen Wert auf die andere Fläche zu übertragen"
+      dblclick_to_sort_axes: "Doppelklicken Sie hier, um die Achsen automatisch entsprechend den Abmessungen des Teils neu anzuordnen"
+      part_axes: Interne Achsen des Teils
+      select_unselect_all_parts: Alle Teile dieser Gruppe selektieren / deselektieren
+      select_parts_in_cutlist: Teil aus der Holzliste auswählen
+      select_parts_in_cutlist_plural: "{{ count }} Teile aus der Holzliste auswählen"
+      setup_group_cuttingdiagram: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' konfigurieren"
+      setup_group_packing: "Das Schnittdiagram für '{{ material_name }}&nbsp;/&nbsp;{{ std_dimension }}' konfigurieren"
+      open_part_url: URL des Teils öffnen
+    menu:
+      show_all_groups: Alle Gruppen einblenden
+      hide_all_other_groups: Alle anderen Gruppen ausblenden
+      numbers_save: Nummern der Teile speichern
+      numbers_reset: Nummern der Teile neu zuweisen
+      highlight_parts: $t(tab.cutlist.highlight_parts)
+      labels_parts: Etiketten drucken
+      write_2d: 2D-Projektion
+      write_3d: 3D-Geometrie
+      write_2d_parts: 2D-Teileprojektion exportieren
+      write_3d_parts: 3D-Teilegeometrie exportieren
+      group_write_2d_parts: 2D-Projektion der Teile in der Gruppe exportieren
+      group_write_3d_parts: 3D-Geometrie der Teile in der Gruppe exportieren
+      group_layout_parts: Gruppenübersicht zeichnen
+      group_numbers_save: Nummern der Gruppenteile speichern
+      group_numbers_reset: Nummern der Gruppenteile neu zuweisen
+      group_cuttingdiagram: Schnittplan
+      group_packing: Schnittplan
+      group_labels: Etiketten der Gruppenteile drucken
+      group_export: Gruppe exportieren
+      group_estimate: Gruppe schätzen
+      edit_material: "Material '{{ material_name }}' bearbeiten"
+      expand_all: Alle Zeilen aufklappen
+      collapse_all: Alle Zeilen zuklappen
+      reset_prices: Preise für alle Teile zurücksetzen
+      reset_prices_confirm: |
+        Sie sind dabei, die Preise für alle Teile Ihres Modells zurückzusetzen.
+        Dieser Vorgang ist endgültig. **Alle Preise werden auf Null zurückgesetzt.**
+        Bestätigen Sie, um fortzufahren.
+      reset_prices_success: Die Preise aller Teile wurden zurückgesetzt.
+    edit_part:
+      title: "Eigenschaften des Teils '{{ name }}'"
+      title_multiple: Eigenschaften der Gruppe von Teilen
+      multiple_alert: "Gemeinsame Eigenschaften der Gruppe von {{ part_count }} Teilen."
+      general: Allgemein
+      extra_help: "Liste der materialtypspezifischen Eigenschaften \"**$t(tab.materials.type_{{ material_type }})**\"."
+      edges: Kantenbänder
+      faces: Flächen
+      name: Name
+      material: Material
+      cumulable: Summierbar
+      cumulable_help: |
+        Ist diese Option aktiv, wird die **Länge** oder die **Breite** beim Sortieren der Holzliste als **Einheitslänge** oder **Einheitsbreite** mal Anzahl gerechnet.
+      cumulable_0: Nicht Summierbar
+      cumulable_1: Summierbar über die Längsachse
+      cumulable_2: Summierbar über die Breitachse
+      instance_count_by_part: Verpackung
+      instance_count_by_part_help: |
+        Erlaubt die Betrachtung des Teils als *Verpackung* einer oder mehrerer *Einheiten*.
+        Die Menge, die dem Teil in der Holzliste zugeordnet ist, stellt daher die Anzahl der ganzen Verpackungen dar, die benötigt werden, um die Anzahl der tatsächlich im Modell vorhandenen Stücke zu enthalten.
+
+        *Beispiel: Um nur 1 Teil für ein Paar Schubladenführungen zu zählen:
+        Verpackung = 2 Stücke / Teil*
+      instance_count_by_part_1: 1 Einheit pro Stück
+      instance_count_by_part_2: 2 Einheiten pro Stück
+      mass: Masse
+      mass_help: Die Masse des Teils wird bei der Erstellung der **Kalkulation** verwendet.
+      price: Preis
+      price_help: Der Preis des Teils wird bei der Erstellung der **Kalkulation** verwendet.
+      thickness_layer_count: Anzahl Lagen
+      thickness_layer_count_help: |
+        Definieren Sie hier die Anzahl der Schichten, die das gezeichnete Teil in seiner Dicke unterteilen.
+
+        *Beispiel:* Wenn Sie ein Teil mit einer Dicke von *38mm* gezeichnet haben und es durch Zusammenkleben von zwei *19mm* Platten herstellen wollen, geben Sie **2** in dieses Feld ein.
+        *OpenCutList zählt dann 2 Teile mit 19mm Dicke statt 1 Teil mit 38mm Dicke.*
+      description: Beschreibung
+      description_help: |
+        Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
+      url: URL
+      url_help: |
+        Die *URL* bietet einen personalisierten Link zu einer externen Seite auf jeder Teildefinition.
+      tags: Badges
+      tags_help: |
+        Mit *Badges* können Sie jede Teildefinition mit Schlüsselwörtern ergänzen.
+        Sie können beliebig viele Badges hinzufügen.
+        Anschließend können Sie die Auswahl der sichtbaren Teile der Holzliste anhand dieser Badges einschränken.
+      tags_multiple_info: Nur gemeinsame Badges werden angezeigt
+      orientation: Ausrichtung
+      orientation_locked_on_axis: An das Koordinatensystem binden
+      orientation_locked_on_axis_help: |
+        Ist diese Option aktiv, hat die Option *Automatische Orientierung der Teile* keinen Einfluss auf dieses Teil.
+
+        Es gilt somit,
+        - die *Länge* ist auf der <span style='color:red'>roten</span> Achse
+        - die *Breite* ist auf der <span style='color:green'>grünen</span> Achse
+        - die *Dicke* ist auf der <span style='color:blue'>blauen</span> Achse
+      symmetrical: Spiegelerkennung für dieses Teil deaktivieren
+      symmetrical_help: |
+        Wird dieses Kästchen aktiviert, hat die Erkennung von *Spiegelteilen* keine Auswirkung auf dieses Teil.
+      ignore_grain_direction: Faserrichtung für dieses Teil nicht beachten
+      ignore_grain_direction_help: |
+        Wenn dieses Kästchen aktiviert ist, wird die Faserrichtung für dieses Teil ignoriert.
+      axes: Achsen
+      axes_help: "Ordnen Sie die Abmessungen so an, dass sie mit den gewünschten Achsenfarben in Ihrem Teil übereinstimmen."
+      axes_tip: |
+        Als Hinweis gilt, wenn *Automatische Orientierung der Teile* nicht aktiviert ist oder das Teil *An das Koordinatensystem gebunden ist*, dann wird:
+         - die **Länge** auf der <strong style='color:red'>roten</strong> Achse,
+         - die **Breite** auf der <strong style='color:green'>grünen</strong> Achse und
+         - die **Dicke** auf der <strong style='color:blue'>blauen</strong> Achse gelesen
+      axes_origin_position_none: Koordinatenursprung nicht verändern
+      axes_origin_position_min: Ursprung an einer Ecke anlegen
+      axes_origin_position_center: Ursprung im Zentrum anlegen
+      axes_origin_position_front_min: Ursprung an einer Ecke der Vorderseite
+      axes_origin_position_front_center: Ursprung in der Mitte der Vorderseite anlegen
+      over_length: Der Länge nach
+      over_width: Der Breite nach
+      edge_disabled_help: "Diese Kante ist nicht konfigurierbar, weil dort im Modell keine materialtragende Fläche erkannt wurde."
+      face_disabled_help: "Diese Fläche ist nicht konfigurierbar, weil dort im Modell keine materialtragende Fläche erkannt wurde."
+      multiple_values: mehrfache Werte
+      loading_preview: Vorschau laden
+    option:
+      auto_orient: Automatische Ausrichtung der Teile
+      auto_orient_help: |
+        Ist diese Option aktiv, werden die Maße so sortiert, dass der größte Wert die *Länge* darstellt und der kleinste Wert die *Dicke*.
+
+        Ansonsten werden die Maße der lokalen Achsen übernommen, wobei:
+        - die *Länge* auf der <span style='color:red'>roten</span> Achse ist,
+        - die *Breite* auf der <span style='color:green'>grünen</span> Achse ist, und
+        - die *Dicke* auf der <span style='color:blue'>blauen</span> Achse ist
+      flipped_detection: Erkennung von gespiegelten Teilen
+      flipped_detection_help: |
+        Wenn diese Option aktiviert ist, werden gespiegelte Teile erkannt und als separate Teile angezeigt.
+      smart_material: "*Intelligente* Materialzuweisung"
+      smart_material_help: "Ist diese Option aktiv, wird ein geerbtes Material oder das Material eines enthaltenen Teils zugewiesen, falls dem Teil selber kein Material zugewiesen wurde."
+      dynamic_attributes_name: Attribut *Name* der dynamischen Komponenten verwenden
+      dynamic_attributes_name_help: |
+        Ist diese Option aktiv, wird die Bezeichnung aus dem Attribut *Name* der dynamischen Komponenten gelesen, sofern es definiert ist.
+
+        <i class='ladb-opencutlist-icon-warning'></i> Die Instanzen von Teilen mit der gleichen Definition werden separat berücksichtigt, falls das Attribut *Name* nicht identisch ist.
+      part_number_with_letters: Buchstaben zur Aufzählung der Teile verwenden
+      part_number_with_letters_help: "Ist diese Option aktiv, werden Teile mittels Buchstaben (A, B, C, ... Z, AA, AB, ...) durchnummeriert."
+      part_number_sequence_by_group: Teilenummerierung für jede Gruppe neu initialisieren
+      part_number_sequence_by_group_help: "Ist diese Option aktiv, wird die Teilenummerierung bei jeder Gruppe (Liste von Teilen mit gleichem Material und gleicher Bruttodicke) auf 1 (oder A) zurückgesetzt."
+      part_folding: Identische Teile zusammenfassen
+      part_folding_help: |
+        Ist diese Option aktiv, werden Teile aus dem Material **Massivholz, Platte oder Stange** mit **gleichen Rohmaßen** und mit **gleichen Badges** und **gleicher Fläche** *(sofern die Anzeige dieser Fläche nicht ausgeblendet ist)* in der *Holzliste* auf einer Zeile zusammengefasst .
+
+        Die Teile werden bei Etiketten und Schnittplänen weiterhin als unterschiedlich betrachtet.
+      hide_entity_names: Instanzbezeichnungen ausblenden
+      hide_entity_names_help: "Ist diese Option aktiv, werden **Instanzbezeichnungen** von Teilen nicht angezeigt."
+      hide_descriptions: Beschreibungen ausblenden
+      hide_descriptions_help: "Wenn diese Option aktiviert ist, werden die **Beschreibungen**, die auf den Teilen platziert sind, nicht angezeigt."
+      hide_tags: Badges ausblenden
+      hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
+      hide_cutting_dimensions: Rohmaße ausblenden
+      hide_cutting_dimensions_help: "Ist diese Option aktiv, werden die **Rohmaße** der Teile nicht angezeigt."
+      hide_bbox_dimensions: Fertigmaße ausblenden
+      hide_bbox_dimensions_help: "Ist diese Option aktiv, werden die **Fertigmaße** der Teile nicht angezeigt."
+      hide_final_areas: Effektive Flächen von *Plattenteilen* ausblenden
+      hide_final_areas_help: "Ist diese Option aktiv, werden die **effektiven Flächen** von Teilen des Typs *Platte* nicht angezeigt."
+      hide_edges: Spalten der Kanten ausblenden
+      hide_edges_help: "Ist diese Option aktiv, werden die **Spalten der Kantenbänder** der Teile des Typs *Platte* nicht angezeigt."
+      hide_faces: Spalten der Flächen ausblenden
+      hide_faces_help: "Ist diese Option aktiv, werden die **Spalten der Flächen** von Teilen des Typs *Platte* nicht angezeigt."
+      hide_material_colors: Farben von Materialien ausblenden
+      hide_material_colors_help: "Ist diese Option aktiv, werden die Farben der Materialien nicht angezeigt."
+      minimize_on_highlight: Minimieren nach *'$t(tab.cutlist.highlight_part)...'*
+      minimize_on_highlight_help: "Wenn diese Option aktiviert ist, wird das OpenCutList Fenster minimiert, wenn die Funktion *'$t(tab.cutlist.highlight_part)'* verwendet wird."
+      general: Allgemein
+      sorting: Sortierung
+      group_order_strategy: Gruppensortierung
+      group_order_strategy_help: |
+        Die Sortierreihenfolge der Gruppen wird durch die Anordnung der folgenden Kacheln definiert.
+        Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
+      part_order_strategy: Teilesortierung
+      part_order_strategy_help: |
+        Die Sortierreihenfolge der Teile wird durch die Anordnung der folgenden Kacheln definiert.
+        Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
+      dimension_column_order_strategy: Reihenfolge der Spalten
+      dimension_column_order_strategy_help: |
+        Die Reihenfolge der Dimensionsspalten wird durch die Anordnung der Kacheln definiert.
+      property_material_type: Materialtyp
+      property_material_name: Materialname
+      property_std_width: Standardbreite
+      property_std_thickness: Standarddicke
+      property_thickness: Dicke
+      property_length: Länge
+      property_width: Breite
+      property_name: Bezeichnung
+      property_count: Anzahl
+      property_edge_pattern: Anzahl Kantenbänder
+      property_tags: Badges
+      property_thickness_layer_count: Anzahl der Schichten
+      tags: Badges
+      tags_help: "Benutzerdefinierte Liste von Badges, die bei den Eigenschaften von Teilen vorgeschlagen werden."
+      tags_placeholder: Badge hinzufügen
+    list:
+      filters: Filter
+      filters_warning_0: "Dieser Filter verdeckt alle Teile!"
+      filters_warning: "Dieser Filter zeigt nur **{{ count }}** Teil von insgesamt {{ total }} Teilen an."
+      filters_warning_plural: "Dieser Filter zeigt **{{ count }}** Teile von insgesamt {{ total }} Teilen an."
+      edge_material_names_filter: Zu filternde Kantenmaterialien
+      veneer_material_names_filter: Zu filternde Furniere
+      tags_filter: Filtern nach Badges
+      dimensions_help: Erklärung zu den Dimensionen
+      summary: Übersicht
+      material_type: Typ
+      material_thickness: Material / Dicke
+      part_count: Anzahl
+      area: Fläche
+      area_short: Fl.
+      volume: Volumen
+      number: Nr.
+      name: Bezeichnung
+      count: Anz.
+      cutting: Rohmaß
+      bbox: Fertigmaß
+      final: Effektiv
+      total_cutting: Σ Rohmaße
+      total_final: Σ Effektiv
+      length: Länge
+      length_short: L
+      width: Breite
+      width_short: B
+      thickness: Dicke
+      thickness_short: D
+      edges: Kantenbänder
+      faces: Flächen
+    export:
+      title: Export
+      info_0: |
+        Mit dieser Funktion können Sie Daten der *Holzliste* in die Zwischenablage oder in eine Datei im [CSV](https://de.wikipedia.org/wiki/CSV_(Dateiformat)) oder [XLSX](https://de.wikipedia.org/wiki/Office_Open_XML) Format exportieren.
+      customize_help: |
+        Umordnen, Ausblenden, Hinzufügen, Entfernen oder Auswählen einer Spalte in der Liste, um ihren **Titel** und die **Formel** anzupassen, die den angezeigten Wert für jede exportierte Zeile erzeugt.
+      add_column: Spalte hinzufügen
+      add_native_columns: Native Spalte hinzufügen
+      duplicate_column: $t(default.duplicate)
+      remove_column: $t(default.remove)
+      remove_all_columns: $t(default.remove_all)
+      columns: Spalten
+      column_title: Titel
+      column_title_help: |
+        Im Feld **Titel** können Sie die Überschrift der Spalte anpassen.
+      column_formula: Formel
+      column_formula_help: |
+        Das Feld **Formel** ermöglicht es Ihnen, *Ruby*-Code zu schreiben, um den Wert der Spalte anzupassen.
+      options: Export-Optionen
+      options_customize: Spalten einrichten
+      option_source: Quelle
+      option_source_summary: $t(tab.cutlist.list.summary)
+      option_source_cutlist: Liste der Teile
+      option_source_instances_list: Liste der Instanzen
+      option_format: Format
+      option_csv_col_sep: Trennzeichen
+      option_csv_col_sep_tab: Tabulator
+      option_csv_col_sep_comma: Komma
+      option_csv_col_sep_semicolon: Semikolon
+      option_csv_encoding: Kodierung
+      copy_all: Überschriften + Werte
+      copy_values: Nur Inhalt
+      number: Nr.
+      path: Pfad
+      instance_name: Instanz
+      name: Bezeichnung
+      total_cutting_length: Länge - Summe roh
+      total_cutting_area: Fläche - Summe roh
+      total_cutting_volume: Volumen - Summe roh
+      total_final_area: Fläche - Summe fertig
+      cutting_length: Länge - roh
+      cutting_width: Breite - roh
+      cutting_thickness: Dicke - roh
+      edge_cutting_length: Länge Kante - roh
+      edge_cutting_width: Breite Kante - roh
+      bbox_length: Länge
+      bbox_width: Breite
+      bbox_thickness: Dicke
+      final_area: Fläche - fertig
+      count: Anzahl
+      part_count: Anzahl der Teile
+      material: Material
+      material_type: Materialtyp
+      material_name: Materialname
+      material_description: Materialbeschreibung
+      material_url: URL des Materials
+      material_std_dimension: Standarddimensionen
+      entity_names: Instanzbezeichnungen
+      description: Beschreibung
+      url: URL
+      tags: Badges
+      edge_ymin: Kantenband Länge 1
+      edge_ymax: Kantenband Länge 2
+      edge_xmin: Kantenband Breite 1
+      edge_xmax: Kantenband Breite 2
+      face_zmin: Rückseite
+      face_zmax: Vorderseite
+      layer: Tag
+      layers: Tags
+      batch: Los
+      bin: Behälter
+      component_definition: Definition der Komponente
+      component_instance: Instanz der Komponente
+      component_instances: Instanzen der Komponente
+      filename: Dateiname
+      model_name: Modellname
+      model_description: Modellbeschreibung
+      page_name: Szenenname
+      page_description: Szenenbeschreibung
+      placeholder:
+        no_column_title: Überschrift eingeben
+        no_column_formula_native: "Nativer Wert der Spalte '{{ col_name }}'"
+        no_column_formula: Formel eingeben
+      warning:
+        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht exportiert."
+        is_part_selection: Der Export beschränkt sich auf die **ausgewählten Teile**.
+    estimate:
+      title: Kalkulation
+      info_0: |
+        Erstellung eine Kalkulation der **Massen** und der **Kosten** der **Rohmaterialien**, die zur Herstellung der Teile der *Holzliste* benötigt werden.
+      options_general: Allgemein
+      total: Total
+      total_used: Verwendet
+      total_unused: Nicht verwendet
+      total_mass: Σ Massen
+      total_cost: Σ Kosten
+      total_count: Anz.
+      total_instance_count: Σ Einheiten
+      total_volume: Σ Volumen
+      total_area: Σ Flächen
+      total_length: Σ Längen
+      type_1: $t(tab.materials.type_1)
+      type_2: $t(tab.materials.type_2)
+      type_3: $t(tab.materials.type_3)
+      type_4: $t(tab.materials.type_4)
+      type_5: $t(tab.materials.type_5)
+      type_6: $t(tab.materials.type_6)
+      type_-1: $t(default.cut_plural)
+      tooltip:
+        incompatible_unit: Einheit nicht kompatibel mit den Kalkulationsoptionen des Materials
+        multiplier_coefficient: Faktor
+      error:
+        no_typed_material_parts: "Kein Teil mit einem definierten Materialtyp (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)**, **$t(tab.materials.type_4)**, **$t(tab.materials.type_6)** oder **$t(tab.materials.type_5)**) wurde ausgewählt um die Kalkulation zu generieren."
+        entry_error: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
+        entry_error_plural: "*{{ material_name }} / {{ std_dimension }}* : **{{ count }} Fehler**."
+      warning:
+        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht berücksichtigt."
+        is_part_selection: Die Kalkulation beschränkt sich auf die **ausgewählten Teil**.
+      tip:
+        not_enough_data: |
+          Damit sich diese Kalkulation richtig berechnen lässt, müssen:
+          - die verwendeten Materialien mindestens eine Rohdichte und einen Preis haben.
+          - die verwendeten Zubehöre mindestens ein Gewicht und einen Preis haben.
+    cuttingdiagram:
+      title: Schnittplan
+      start_msg: Optimierung läuft
+      end_msg: Optimierung abgeschlossen
+      options_material: Material
+      options_config: Konfiguration
+      options_display: Anzeige
+      option_bar_folding_dimensional: Gleiche Stangen zusammenfassen
+      option_bar_folding_edge: Gleiche Kantenbänder zusammenfassen
+      option_bar_folding_0: Nein
+      option_bar_folding_1: Ja
+      option_bar_folding_help: "Ermöglicht das Zusammenfassen von Stangen oder Kantenbänder, die dieselben Teile und Schnitte enthalten."
+      option_sheet_folding_good: Gleiche Platten zusammenfassen
+      option_sheet_folding_veneer: Gleiche Furniere zusammenfassen
+      option_sheet_folding_0: Nein
+      option_sheet_folding_1: Ja
+      option_sheet_folding_help: "Ermöglicht das Zusammenfassen von Platten oder Furnierblätter, die dieselben Teile und Schnitte enthalten."
+      option_hide_part_list: Liste der Teile
+      option_hide_part_list_1d_dimensional_0: Anzeigen für jede Stange
+      option_hide_part_list_1d_edge_0: Anzeigen für jedes Kantenband
+      option_hide_part_list_2d_good_0: Anzeigen für jede Platte
+      option_hide_part_list_2d_veneer_0: Anzeigen für jedes Furnierblatt
+      option_hide_part_list_1: Maskiert
+      option_hide_part_list_1d_help: Anzeigen oder Maskieren der Liste der Teile für jede Stange oder jedes Kantenband.
+      option_hide_part_list_2d_help: Anzeigen oder Maskieren der Liste der Teile für jede Platte oder jedes Furnierblatt.
+      option_use_names: Identifizierung der Teile
+      option_use_names_0: Nummer verwenden
+      option_use_names_1: Bezeichnung verwenden
+      option_use_names_help: "Wählen Sie zwischen **Nummer** und **Bezeichnung** wählen, um die Teile auf dem Schnittdiagramm zu identifizieren."
+      option_origin_corner: Position des Ursprungs
+      option_origin_corner_1d_0: Links
+      option_origin_corner_1d_1: Rechts
+      option_origin_corner_2d_0: Obere linke Ecke
+      option_origin_corner_2d_1: Untere linke Ecke
+      option_origin_corner_2d_2: Obere rechte Ecke
+      option_origin_corner_2d_3: Untere rechte Ecke
+      option_origin_corner_1d_help: Bestimmt die Position des Koordinatenursprungs zur Darstellung der Teile auf Stangen oder Kantenbänder.
+      option_origin_corner_2d_help: Bestimmt die Position des Koordinatenursprungs zur Darstellung der Teile auf Platten.
+      option_full_width_diagram: Anzeige in voller Breite
+      option_full_width_diagram_0: Nein
+      option_full_width_diagram_1: Ja
+      option_full_width_diagram_help: "Wenn diese Option aktiviert ist, werden die einzelnen Schnittdiagramme über die gesamte verfügbare Fensterbreite angezeigt. Andernfalls wird ihre Breite durch einen festen Skalierungsfaktor, der von den anderen Diagrammen abhängt, definiert."
+      option_wrap_length: Länge bis zum Umbruch
+      option_wrap_length_help: "Maximale Länge, darüber wird eine Stange oder ein Kantenband über mehrere Zeilen dargestellt."
+      option_hide_cross: Verschnitte
+      option_hide_cross_0: Dimensionen und Kreuz
+      option_hide_cross_1: Nur Dimensionen
+      option_hide_cross_help: "Blendet das Kreuz ein oder aus, das die Teile kennzeichnet, die im Diagramm als Verschnitt definiert sind."
+      option_highlight_primary_cuts: Primärschnitte
+      option_highlight_primary_cuts_0: Nur bei Übersicht
+      option_highlight_primary_cuts_1: Immer sichtbar
+      option_highlight_primary_cuts_help: "Ermöglicht es Ihnen, Primärschnitte hervorzuheben."
+      option_hide_edges_preview: Anzeige der Kantenbänder
+      option_hide_edges_preview_0: Im Schnittplan angezeigt
+      option_hide_edges_preview_1: Im Schnittplan ausgeblendet
+      option_hide_edges_preview_help: Ermöglicht das Ein- oder Ausblenden der visuellen Anzeige der Kantenbänder für jedes Teil im Schnittplan.
+      option_part_drawing_type: Formen der Teile
+      option_part_drawing_type_0: Ausgeblendet
+      option_part_drawing_type_1: Vorderansicht
+      option_part_drawing_type_2: Rückansicht
+      option_part_drawing_type_help: |
+        Ermöglicht es, die tatsächliche Form der Teile sowie ihre Bearbeitungen im Diagramm ein- oder auszublenden.
+
+        *Diese Option muss aktiviert sein, damit die Formen exportiert werden können.*
+      option_saw_kerf: Sägeblattdicke
+      option_saw_kerf_help: Breite des Materialverlustes durch die Sägeschnittfuge.
+      option_spacing: Abstand
+      option_spacing_help: Mindestabstand zwischen den einzelnen Teilen.
+      option_trimming: Randabfallbreite
+      option_trimming_help_1d: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
+      option_trimming_help_2d: Breite des Säuberungsschnittes auf allen vier Seiten der Platte oder des Furnierblattes.
+      option_optimization: Optimierungsstufe
+      option_optimization_help: "Die Optimierungsstufe definiert die Anzahl der berechneten Möglichkeiten und damit auch die Berechnungszeit."
+      option_optimization_0: Mittel
+      option_optimization_1: Fortgeschritten
+      option_stacking: Vorzugsrichtung
+      option_stacking_help: "Bevorzugte Stapelrichtung von Teilen, die eine gemeinsame Länge oder Breite haben, pro Platte falls mehrere benötigt werden."
+      option_stacking_0: Keine Präferenz
+      option_stacking_1: Der Länge nach
+      option_stacking_2: Der Breite nach
+      option_stacking_3: Alle Möglichkeiten
+      option_keep: Mindestgröße der Verschnitte
+      option_keep_help: "Verschnitte, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet."
+      option_std_bar_dimensional: Standard-Stange
+      option_std_bar_edge: Standard-Kantenband
+      option_std_bar_help: |
+        Wählen Sie hier die Standardstangenware oder das Standardkantenband, welche dupliziert werden um alle Teile zu enthalten.
+        Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
+        Editieren Sie das Material '{{ material_name }}' um diese Liste zu aktualisieren.
+      option_std_bar_add: Länge hinzufügen
+      option_std_bar_none: Keine
+      option_scrap_bar_dimensional_lengths: Stangenreste
+      option_scrap_bar_edge_lengths: Kantenbandreste
+      option_scrap_bar_lengths_placeholder: Länge x Anzahl ; ...
+      option_scrap_bar_lengths_help: |
+        Geben Sie hier die Stangenreste oder Kantenbandreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
+        Erwartetes Format : **L**x**M**, wo **L** die *Länge* des Rests ist und **M** die Menge.
+        Die Mengenangabe ist optional.
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      option_std_sheet_good: Standard-Platte
+      option_std_sheet_veneer: Standard-Furnierblatt
+      option_std_sheet_help: |
+        Wählen Sie die Standard-Platte oder das Standard-Furnierblatt, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
+        Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
+        Bearbeiten Sie das Material '{{ material_name }}' um diese Liste zu ergänzen.
+      option_std_sheet_add: Größe hinzufügen
+      option_std_sheet_none: Keine
+      option_scrap_sheet_good_sizes: Plattenreste
+      option_scrap_sheet_veneer_sizes: Furnierreste
+      option_scrap_sheet_sizes_placeholder: Länge x Breite x Anzahl ; ...
+      option_scrap_sheet_sizes_help: |
+        Geben Sie hier die Liste der Platten- oder Furnierreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
+        Erwartetes Format: **L**x**B**x**M**. wobei **L** und **B** die *Länge* und die *Breite* der Platte bezeichnen und **M** die Menge.
+        Die Mengenangabe ist optional.
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      tooltip:
+        scroll_to_block_1d: Zur ersten Stange oder Kantenband blättern
+        scroll_to_block_2d: Zur ersten Platte blättern
+        copy_leftovers_to_clipboard: Verschnitte in die Zwischenablage kopieren
+      list:
+        unplaced_parts: Nicht platzierte Teile
+        summary: Zusammenfassung
+        count: Anz.
+        bar: Stangenware
+        sheet: Platte
+        length: Länge
+        width: Breite
+        total_length: Σ Längen
+        total_area: Σ Flächen
+        total_part_count: "# Teile"
+        total_used: Insgesamt verwendet
+        trimming: Rand
+        stats: Statistiken
+        total_cut_count: Anzahl Schnitte
+        total_cut_length: Schnittlänge
+        overall_efficiency: Gesamteffizienz
+        efficiency: Effizienz
+        leftover: Verschnitt
+        leftover_to_keep: Verschnitt zur Aufbewahrung
+        leftover_to_keep_plural: Verschnitte zur Aufbewahrung
+        leftover_to_throw_away: Wegwerfbarer Verschnitt
+        cut: Schnitt
+        cut_plural: Schnitte
+        cut_trimming: Säuberungsschnitt
+        cut_bounding: Primärschnitt (Stufe 1)
+        cut_bounding_plural: Primäre Schnitte (Stufe 1)
+        cut_internal_through: Primärschnitt (Stufe 2)
+        cut_internal_through_plural: Primäre Schnitte (Stufe 2)
+        cut_none: Keine
+        bar_dimensional_type_0: Standard-Stange
+        bar_dimensional_type_1: Stangenrest
+        bar_edge_type_0: Standard-Kantenband
+        bar_edge_type_1: Kantenbandrest
+        sheet_good_type_0: Standard-Platte
+        sheet_good_type_1: Plattenrest
+        sheet_veneer_type_0: Standard-Furnierblatt
+        sheet_veneer_type_1: Furnierrest
+        unused: Nicht verwendet
+        parts: "{{ count }} Teil"
+        parts_plural: "{{ count }} Teile"
+        settings: Einstellungen
+      write:
+        title: Schnittplan exportieren
+        info_0: |
+          Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG](https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://de.wikipedia.org/wiki/DXF) exportieren.
+        option_file_format: $t(tab.cutlist.write.option_file_format)
+        option_file_format_help: $t(tab.cutlist.write.option_file_format_help)
+        option_dxf_structure: DXF Struktur
+        option_dxf_structure_1: Layers
+        option_dxf_structure_2: Layers + Blöcke
+        option_dxf_structure_help: |
+          Auswahl der DXF-Dateistruktur.
+
+          - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layers. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
+          - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
+        option_unit: $t(tab.cutlist.write.option_unit)
+        option_unit_help: $t(tab.cutlist.write.option_unit_help)
+        option_smoothing: $t(tab.cutlist.write.option_smoothing)
+        option_smoothing_0: $t(tab.cutlist.write.option_smoothing_0)
+        option_smoothing_1: $t(tab.cutlist.write.option_smoothing_1)
+        option_smoothing_help: $t(tab.cutlist.write.option_smoothing_help)
+        option_merge_holes: $t(tab.cutlist.write.option_merge_holes)
+        option_merge_holes_0: $t(tab.cutlist.write.option_merge_holes_0)
+        option_merge_holes_1: $t(tab.cutlist.write.option_merge_holes_1)
+        option_merge_holes_help: $t(tab.cutlist.write.option_merge_holes_help)
+        option_include_paths: $t(tab.cutlist.write.option_include_paths)
+        option_include_paths_0: $t(tab.cutlist.write.option_include_paths_0)
+        option_include_paths_1: $t(tab.cutlist.write.option_include_paths_1)
+        option_include_paths_help: $t(tab.cutlist.write.option_include_paths_help)
+        option_sheet_good: Platte
+        option_sheet_good_help: |
+          Ermöglicht den Export von Platten zu aktivieren und deren Farbe anzugeben.
+        option_sheet_veneer: Furnierblatt
+        option_sheet_veneer_help: |
+          Ermöglicht den Export von Furnierblätter zu aktivieren und deren Farbe anzugeben.
+        option_bar_dimensional: Stangenware
+        option_bar_dimensional_help: |
+          Ermöglicht den Export von Stangen zu aktivieren und deren Farbe anzugeben.
+        option_bar_band: Kantenband
+        option_bar_band_help: |
+          Ermöglicht den Export von Kanten zu aktivieren und deren Farbe anzugeben.
+        option_parts: Teile
+        option_parts_help: |
+          Ermöglicht den Export von Teilen zu aktivieren und deren Farbe anzugeben.
+        option_parts_holes: Bohrungen
+        option_parts_holes_help: |
+          Auswahl der Farbe von Bohrungen.
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Bezeichner
+        option_texts_help: |
+          Ermöglicht den Export von Texten zur Identifizierung von Teilen zu aktivieren sowie deren Farben anzugeben.
+        option_leftovers: Verschnitte
+        option_leftovers_help: |
+          Ermöglicht den Export von Verschnitten zu aktivieren und deren Farbe anzugeben.
+        option_cuts: Schnitte
+        option_cuts_help: |
+          Auswahl, ob die Schnitte gezeichnet werden sollen und ihre Farbe.
+        warning:
+          is_sheet_selection: "**Ausgeblendete Platten** werden nicht exportiert."
+      error:
+        no_bar_dimensional: Die Standard-Länge ist falsch konfiguriert und es stehen keine Stangenreste zu Verfügung.
+        no_bar_edge: Die Standard-Länge ist falsch konfiguriert und es stehen keine Kantenbandreste zu Verfügung.
+        parameters: Die Parameter sind nicht korrekt. Die Randabfallbreite ist grösser als 25 % der längsten Stange oder des längsten Kantenbands.
+        no_parts: Kein Teil.
+        no_sheet: Standard-Plattenmaße sind falsch konfiguriert und es stehen keine Plattenreste zu Verfügung.
+        no_placement_possible_1d: "Keine Platzierung möglich (Standard-Stange zu klein, Seitenrand zu groß, Sägeschnitt zu groß, ...)."
+        no_placement_possible_2d: "Keine Platzierung möglich (Standard-Platte zu klein, Seitenrand zu groß, Sägeschnitt zu groß, ...)."
+        bad_error: "Algorithmusfehler. Bitte kontaktieren Sie die Entwickler, da Sie einen interessanten Fall haben."
+        unplaced_parts: "**1 zu großes Teil** konnte nicht platziert werden."
+        unplaced_parts_plural: "**{{ count }} zu große Teile** konnten nicht platziert werden."
+      warning:
+        is_part_selection: Dieser Schnittplan beschränkt sich auf die **ausgewählten Teile**.
+        cutting_dimensions: Dieser Schnittplan verwendet die **Rohmaße** der Teile.
+        cutting_dimensions_increase_1d: "Übermaß wurde auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß von (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Übermaße wurden auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß (**{{ length_increase }}**) und Breitenzumaß (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Maße reduziert um die Materialstärke der Kantenbänder. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    packing:
+      title: Schnittplan
+      option_problem_type: Typ
+      option_problem_type_rectangle: Rechteck
+      option_problem_type_rectangleguillotine: Guillotine
+      option_problem_type_onedimensional: Stange
+      option_problem_type_irregular: Verschachtelt
+      options_material: Material
+      options_config: Konfiguration
+      options_display: Anzeige
+      options_tuning: Tuning
+      option_std_bin_1d_dimensional: Standard-Stangen
+      option_std_bin_1d_edge: Standard-Kantenbänder
+      option_std_bin_1d_help: |
+        Wählen Sie hier die Größen der Standardstangenware oder des Standardkantenbandes, die dupliziert werden, um alle Teile bestmöglich zu enthalten.
+
+        Diese Liste wird durch das Feld **$t(tab.materials.edit_material.std_lengths)** des Materials definiert.
+
+        *Editieren Sie die Eigenschaften des Materials '{{ material_name }}' um diese Liste zu ergänzen.*
+      option_std_bin_1d_add: Länge hinzufügen
+      option_std_bin_1d_none: Keine
+      option_scrap_bin_1d_dimensional_sizes: Stangenreste
+      option_scrap_bin_1d_edge_sizes: Kantenbandreste
+      option_scrap_bin_1d_sizes_placeholder: Länge x Anzahl ; ...
+      option_scrap_bin_1d_sizes_help: |
+        Geben Sie hier die Stangenreste oder Kantenbandreste an, welche für den Schnittplan berücksichtigt werden sollen.
+
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      option_scrap_bin_1d_none: Keine
+      option_std_bin_2d_sheet_good: Standard-Platten
+      option_std_bin_2d_veneer: Standard-Furnierblätter
+      option_std_bin_2d_help: |
+        Wählen Sie die Größen der Standard-Platte oder des Standard-Furnierblatts, das dupliziert werden soll, um die bestmögliche Platzierung zu berechnen.
+
+        Diese Liste wird über das Feld **$t(tab.materials.edit_material.std_sizes)** des Materials konfiguriert.
+
+        *Bearbeiten Sie die Eigenschaften des Materials '{{ material_name }}' um diese Liste zu ergänzen.*
+      option_std_bin_2d_add: Größe hinzufügen
+      option_std_bin_2d_none: Keine
+      option_scrap_bin_2d_sheet_good_sizes: Plattenreste
+      option_scrap_bin_2d_veneer_sizes: Furnierreste
+      option_scrap_bin_2d_sizes_placeholder: Länge x Breite x Anzahl ; ...
+      option_scrap_bin_2d_sizes_help: |
+        Geben Sie hier die Liste der Platten- oder Furnierreste an, welche vorrangig für den Schnittplan berücksichtigt werden sollen.
+
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      option_scrap_bin_2d_none: Keine
+      option_optimization_mode: Optimierungsmodus
+      option_optimization_mode_help: |
+        Legt den Optimierungsmodus fest, mit oder ohne Zeitlimit.
+      option_objective: Ziel
+      option_objective_help: |
+        Definiert das Ziel der Schnittplanoptimierung.
+      option_rectangleguillotine_cut_type: Schnitttyp
+      option_rectangleguillotine_cut_type_help: |
+        Legt den Schnitttyp fest.
+      option_rectangleguillotine_cut_type_non_exact: Nicht exakt
+      option_rectangleguillotine_cut_type_exact: Exakt
+      option_rectangleguillotine_cut_type_homogenous: Homogen
+      option_rectangleguillotine_number_of_stages: Anzahl der Stufen
+      option_rectangleguillotine_number_of_stages_help: |
+        Legt die maximale Anzahl der Schnittstufen fest.
+      option_rectangleguillotine_first_stage_orientation: Erster Schnitt
+      option_rectangleguillotine_first_stage_orientation_help: |
+        Bestimmt die Richtung des ersten Schnittes.
+      option_rectangleguillotine_first_stage_orientation_horizontal: Horizontal
+      option_rectangleguillotine_first_stage_orientation_vertical: Vertikal
+      option_rectangleguillotine_first_stage_orientation_any: Beliebig
+      option_rectangleguillotine_keep: Mindestgröße der Verschnitte
+      option_rectangleguillotine_keep_help: "Verschnitte, die größer als die Mindestlänge und -breite sind, werden mit **zur Aufbewahrung** gekennzeichnet."
+      option_irregular_allowed_rotations: Drehungen
+      option_irregular_allowed_rotations_help: |
+        Bestimmt die erlaubten Drehungen eines Teils.
+
+        *Materiale mit Faserrichtung erlauben nur 0 und 180° Drehungen.*
+      option_irregular_allowed_rotations_0: Keine
+      option_irregular_allowed_rotations_90: 90° Schritt
+      option_irregular_allowed_rotations_180: 180° Schritt
+      option_irregular_allow_mirroring: Spiegeln erlaubt
+      option_irregular_allow_mirroring_help: |
+        Bestimmt of eine Spiegelung des Teils zur Platzierung erlaubt ist.
+      option_irregular_allow_mirroring_0: $t(default.no)
+      option_irregular_allow_mirroring_1: $t(default.yes)
+      option_spacing: Abstand
+      option_spacing_help: |
+        Mindestabstand zwischen den einzelnen Teilen.
+        Dieser Wert entspricht der Breite des Sägeblattes oder des Schneidewerkzeugs.
+      option_trimming: Randabfallbreite
+      option_trimming_1d_help: Breite des Säuberungsschnittes an jedem Ende der Stange oder des Kantenbandes.
+      option_trimming_2d_help: Breite des Säuberungsschnittes auf allen vier Seiten der Platte oder des Furnierblattes.
+      option_items_formula: Formel
+      option_items_formula_help: |
+        Hier können Sie *Ruby*-Code schreiben, um den Text zur Identifizierung der Teile im Schnittplan anzupassen.
+      option_bin_folding_1d_dimensional: Gleiche Stangen zusammenfassen
+      option_bin_folding_1d_edge: Gleiche Kantenbänder zusammenfassen
+      option_bin_folding_2d_sheet_good: Gleiche Platten zusammenfassen
+      option_bin_folding_2d_veneer: Gleiche Furniere zusammenfassen
+      option_bin_folding_0: $t(default.no)
+      option_bin_folding_1: $t(default.yes)
+      option_bin_folding_1d_help: |
+        Ermöglicht das Zusammenfassen von Platten oder Furnierblätter, die dieselben Teile und Schnitte enthalten.
+      option_bin_folding_2d_help: |
+        Ermöglicht das Zusammenfassen von Platten oder Furnierblätter, die dieselben Teile und Schnitte enthalten.
+      option_bin_folding_warning: |
+        *Diese Option wird deaktiviert, wenn Sie in der Formel zum Anpassen des Identifikationstextes Instanzeigenschaften verwenden.*
+      option_hide_part_list: Liste der Teile
+      option_hide_part_list_1d_dimensional_0: Anzeigen für jede Stange
+      option_hide_part_list_1d_edge_0: Anzeigen für jedes Kantenband
+      option_hide_part_list_2d_sheet_good_0: Anzeigen für jede Platte
+      option_hide_part_list_2d_veneer_0: Anzeigen für jedes Furnierblatt
+      option_hide_part_list_1: Maskiert
+      option_hide_part_list_1d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Stange oder jedes Kantenband.
+      option_hide_part_list_2d_help: Anzeigen oder Ausblenden der Liste der Teile für jede Platte oder jedes Furnierblatt.
+      option_part_drawing_type: Formen der Teile
+      option_part_drawing_type_0: Maskiert
+      option_part_drawing_type_1: Draufsicht
+      option_part_drawing_type_2: Untersicht
+      option_part_drawing_type_help: |
+        Ermöglicht es, die tatsächliche Form der Teile sowie ihre Bearbeitungen im Diagramm ein- oder auszublenden.
+
+        *Diese Option muss aktiviert sein, damit die Formen exportiert werden können.*
+      option_colorization: Teile einfärben
+      option_colorization_0: $t(default.no)
+      option_colorization_1: $t(default.yes) - Bildschirm
+      option_colorization_2: $t(default.yes) - Bildschirm und Druck
+      option_colorization_help: |
+        Legt fest, ob eine zufällige Farbe verwendet wird, um die Teile im Schnittplan zu unterscheiden.
+      option_origin_corner: Position des Ursprungs
+      option_origin_corner_0: Obere linke Ecke
+      option_origin_corner_1: Untere linke Ecke
+      option_origin_corner_2: Obere rechte Ecke
+      option_origin_corner_3: Untere rechte Ecke
+      option_origin_corner_help: "Bestimmt die Position des Koordinatenursprungs zur Darstellung der Teile auf Platten, Furnierblätter, Stangen oder Kantenbänder."
+      option_highlight_primary_cuts: Primärschnitte
+      option_highlight_primary_cuts_0: Nur bei Übersicht
+      option_highlight_primary_cuts_1: Immer sichtbar
+      option_highlight_primary_cuts_help: "Ermöglicht es Ihnen, Primärschnitte hervorzuheben."
+      option_hide_edges_preview: Anzeige der Kantenbänder
+      option_hide_edges_preview_0: Im Schnittplan angezeigt
+      option_hide_edges_preview_1: Im Schnittplan ausgeblendet
+      option_hide_edges_preview_help: Ermöglicht das Ein- oder Ausblenden der visuellen Anzeige der Kantenbänder für jedes Teil im Schnittplan.
+      option_zoom_threshold: Zoomschwelle
+      option_zoom_threshold_help: |
+        Ermöglicht die Festlegung der Diagrammbreite, unterhalb derer Diagramme automatisch vergrößert werden.
+
+        *Die Vergrößerung wird anhand des breitesten Diagramms berechnet*.
+      option_time_limit: Zeitbegrenzung
+      option_time_limit_help: |
+        Legt die Zeit für die Berechnung fest
+      tooltip:
+        scroll_to_block_1d: Zur ersten Stange oder Kantenband blättern
+        scroll_to_block_2d: Zur ersten Platte oder Furnierblatt blättern
+      list:
+        summary: Zusammenfassung
+        cached: Aus dem Cache geladen
+        trimming: Rand
+        settings: Einstellungen
+        stats: Statistiken
+        time: Zeitaufwand
+        total_efficiency: Gesamteffizienz
+        total_fill_rate: Füllgrad
+        total_cut_count: Anzahl Schnitte
+        total_cut_length: Schnittlänge
+        efficiency: Effizienz
+        count: Anz.
+        length: Länge
+        width: Breite
+        total_length: Σ Längen
+        total_area: Σ Flächen
+        total_cost: Σ Kosten
+        total_part_count: "# Teile"
+        total_used: Insgesamt verwendet
+        bin_1d_dimensional: Stange
+        bin_1d_dimensional_type_0: Standard-Stange
+        bin_1d_dimensional_type_1: Stangenrest
+        bin_1d_edge: Kantenband
+        bin_1d_edge_type_0: Standard-Kantenband
+        bin_1d_edge_type_1: Kantenbandrest
+        bin_2d_sheet_good: Platte
+        bin_2d_sheet_good_type_0: Standard-Platte
+        bin_2d_sheet_good_type_1: Plattenrest
+        bin_2d_veneer: Furnierblatt
+        bin_2d_veneer_type_0: Standard-Furnierblatt
+        bin_2d_veneer_type_1: Furnierrest
+        unused: Nicht verwendet
+        unplaced_parts: Nicht platziertes Teil
+        unplaced_parts_plural: Nicht platzierte Teile
+        parts: Teil
+        parts_plural: Teile
+        leftovers: Verschnitt
+        leftovers_plural: Verschnitte
+        leftovers_to_keep: Verschnitt zur Aufbewahrung
+        leftovers_to_keep_plural: Verschnitte zur Aufbewahrung
+        cut: Schnitt
+        cut_plural: Schnitte
+        cut_trimming: Säuberungsschnitt
+        cut_primary: Primärschnitt
+        cut_primary_plural: Primärschnitte
+        cut_none: Keine
+        cut_depth: "Schnittstufe {{ depth }}"
+      write:
+        title: Schnittplan exportieren
+        info_0: |
+          Mit diesem Modul können Sie die **Geometrie** des *Schnittplans* als Datei im Format [SVG](https://de.wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://de.wikipedia.org/wiki/DXF) exportieren.
+        option_bin_sheet_good: Platte
+        option_bin_sheet_good_help: |
+          Ermöglicht den Export von Platten zu aktivieren und deren Farbe anzugeben.
+        option_bin_veneer: Furnierblatt
+        option_bin_veneer_help: |
+          Ermöglicht den Export von Furnierblätter zu aktivieren und deren Farbe anzugeben.
+        option_bin_dimensional: Stange
+        option_bin_dimensional_help: |
+          Ermöglicht den Export von Stangen zu aktivieren und deren Farbe anzugeben.
+        option_bin_edge: Kantenband
+        option_bin_edge_help: |
+          Ermöglicht den Export von Kanten zu aktivieren und deren Farbe anzugeben.
+        option_parts: Teile
+        option_parts_help: |
+          Ermöglicht den Export von Teilen zu aktivieren und deren Farbe anzugeben.
+        option_parts_depths: $t(tab.cutlist.write.option_parts_depths)
+        option_parts_depths_help: $t(tab.cutlist.write.option_parts_depths_help)
+        option_parts_holes: $t(tab.cutlist.write.option_parts_holes)
+        option_parts_holes_help: $t(tab.cutlist.write.option_parts_holes_help)
+        option_parts_paths: $t(tab.cutlist.write.option_parts_paths)
+        option_parts_paths_help: $t(tab.cutlist.write.option_parts_paths_help)
+        option_texts: Bezeichner
+        option_texts_help: |
+          Ermöglicht den Export von Texten zur Identifizierung von Teilen zu aktivieren sowie deren Farben anzugeben.
+        option_leftovers: Verschnitte
+        option_leftovers_help: |
+          Ermöglicht den Export von Verschnitten zu aktivieren und deren Farbe anzugeben.
+        option_cuts: Schnitte
+        option_cuts_help: |
+          Ermöglicht den Export von Schnitten zu aktivieren und deren Farbe anzugeben.
+        warning:
+          is_bin_selection: "**Ausgeblendete Elemente** werden nicht exportiert."
+        error:
+          overflow_gt_spacing: |
+            Der Bearbeitungsüberstand ({{ overflow }}) muss kleiner oder gleich dem Abstand ({{ spacing }}) sein, der in diesem Schnittplan konfiguriert ist.
+      error:
+        no_part: Kein Teil.
+        no_bin_1d: Keine Standard-Stange oder -Kantenband wurde ausgewählt und es stehen keine Reste zu Verfügung.
+        no_bin_2d: Keine Standard-Platte oder -Furnierblatt wurde ausgewählt und es stehen keine Reste zu Verfügung.
+        invalid_part_shapes: "Die Form des Teils '{{ name }}' ist ungültig."
+        no_solution: "Es wurde keine Lösung gefunden, um **alle Teile** in das verfügbare Material zu setzen."
+        unplaced_parts: "**1 Teil** konnte nicht platziert werden."
+        unplaced_parts_plural: "**{{ count }} Teile** konnten nicht platziert werden."
+        unusable_part: Teil ist zu gross
+      warning:
+        is_part_selection: Dieser Schnittplan beschränkt sich auf die **ausgewählten Teile**.
+        cutting_dimensions: Dieser Schnittplan verwendet die **Rohmaße** der Teile.
+        cutting_dimensions_increase_1d: "Übermaß wurde auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß von (**{{ length_increase }}**)."
+        cutting_dimensions_increase_2d: "Übermaße wurden auf dem Material '{{ material_name }}' konfiguriert: Längenzumaß (**{{ length_increase }}**) und Breitenzumaß (**{{ width_increase }}**)."
+        cutting_dimensions_edge_decrement: Maße reduziert um die Materialstärke der Kantenbänder. <i class='ladb-opencutlist-icon-edge-decremented'></i>
+    labels:
+      title: Etiketten
+      options_layout: Gestaltung
+      options_settings: Konfiguration
+      options_part_order_strategy: Sortierung
+      options_offset: Versatz
+      size: Tatsächliche Etikettengröße
+      add_element: Element hinzufügen
+      duplicate_element: $t(default.duplicate)
+      remove_element: $t(default.remove)
+      remove_all_elements: $t(default.remove_all)
+      part_order_strategy_help: |
+        Die Sortierreihenfolge der Etiketten wird durch die Anordnung der folgenden Kacheln definiert.
+        Jede Eigenschaft kann in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
+      offset_help: |
+        Mit dem *Versatz* können Sie die Position des **ersten Etiketts** auf der **ersten Seite** festlegen.
+        Wählen Sie das Kästchen aus, das Ihrer Wahl entspricht.
+      option_page: Papierformat
+      option_page_format: Format
+      option_page_format_portrait: Hochformat
+      option_page_format_landscape: Querformat
+      option_page_format_custom: Benutzerdefiniert
+      option_page_width: Breite
+      option_page_height: Höhe
+      option_margin: Seitenränder
+      option_margin_top: Oben
+      option_margin_right: Rechts
+      option_margin_bottom: Unten
+      option_margin_left: Links
+      option_spacing: Abstände
+      option_spacing_h: Horizontal
+      option_spacing_v: Vertikal
+      option_grid: Etiketten pro Seite
+      option_col_count: Spalten
+      option_row_count: Zeilen
+      option_cutting_marks: Schnittmarken
+      option_cutting_marks_0: Keine
+      option_cutting_marks_1: Sichtbar
+      option_formula: Feld
+      option_size: Grösse
+      option_custom_formula: Formel
+      option_anchor: Anker
+      option_anchor_start: Anfang - Unten
+      option_anchor_middle: Mitte - Unten
+      option_anchor_end: Ende - Unten
+      option_anchor_start_top: Anfang - Oben
+      option_anchor_middle_top: Mitte - Oben
+      option_anchor_end_top: Ende - Oben
+      option_color: Farbe
+      formula:
+        custom: Formel
+        custom_qr_code: QR Code
+        part_number: Nummer
+        part_name: Bezeichnung
+        part_description: Beschreibung
+        part_entity_named_path: Instanzpfad
+        part_entity_name: Instanzbezeichnung
+        part_bin: Behälter
+        part_cutting_size: Rohmaße
+        part_cutting_length: Länge - roh
+        part_cutting_width: Breite - roh
+        part_cutting_thickness: Dicke - roh
+        part_edge_cutting_size: Rohmaße Kanten
+        part_edge_cutting_length: Länge Kante - roh
+        part_edge_cutting_width: Breite Kante - roh
+        part_size: Fertigmaße
+        part_length: Länge
+        part_width: Breite
+        part_thickness: Dicke
+        part_tags: Badges
+        part_batch: Los
+        part_edge_ymin: Kantenband Länge 1
+        part_edge_ymax: Kantenband Länge 2
+        part_edge_xmin: Kantenband Breite 1
+        part_edge_xmax: Kantenband Breite 2
+        part_face_zmin: Furnier Rückseite
+        part_face_zmax: Furnier Vorderseite
+        thumbnail_proportional_drawing: Miniaturbild (Frontansicht)
+        thumbnail_proportional_drawing_bottom: Miniaturbild (Untersicht)
+        thumbnail_proportional: Proportionales Miniaturbild
+        thumbnail_square: Quadratisches Miniaturbild
+        group_material: Material / Dimensionen
+        group_material_name: Materialname
+        group_std_dimension: Standarddimensionen
+        filename: Dateiname
+        model_name: Modellname
+        page_name: Szenenname
+        length_unit: Einheit
+        generated_at: Datum und Uhrzeit
+      error:
+        invalid_size: Mit den eingegebenen Konfigurationsparametern kann keine gültige Etikettengröße festgelegt werden.
+      warning:
+        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, erhalten kein Etikett."
+        is_part_selection: Diese Etiketten beschränken sich auf **ausgewählte Teile**.
+    layout:
+      title: Zeichnung
+      to_layout: Nach Layout exportieren
+      options_layout: Gestaltung
+      options_settings: Konfiguration
+      option_parts: Teile
+      option_parts_colored: Farbe
+      option_parts_colored_0: Ohne Farbe
+      option_parts_colored_1: Farbe des Materials
+      option_parts_colored_help: Definiert das Erscheinungsbild der Teile.
+      option_parts_opacity: Opazität
+      option_parts_opacity_0: Durchsichtig
+      option_parts_opacity_1: Blickdicht
+      option_parts_opacity_help: Definiert die Deckkraft der Teile.
+      option_pins: Beschriftung
+      option_pins_hidden: Anzeige
+      option_pins_hidden_0: Mit Beschriftung
+      option_pins_hidden_1: Ohne Beschriftung
+      option_pins_hidden_help: Ein- oder Ausblenden der Beschriftung mit Nummer oder Bezeichnung.
+      option_pins_colored: Farbe
+      option_pins_colored_0: Ohne Farbe
+      option_pins_colored_1: Farbe des Teils
+      option_pins_colored_help: Definiert die Farbe des Beschriftungsfeldes.
+      option_pins_formula: Formel
+      option_pins_formula_help: "Ermöglicht das Schreiben von *Ruby*-Code, um den Text der Beschriftung anzupassen."
+      option_pins_length: Länge
+      option_pins_length_0: Ohne Verweislinie
+      option_pins_length_1: Klein
+      option_pins_length_2: Mittel
+      option_pins_length_3: Lang
+      option_pins_length_help: Definiert die Länge der Verweislinie.
+      option_pins_direction: Ausrichtung
+      option_pins_direction_0: Längs der roten Achse
+      option_pins_direction_1: Längs der grünen Achse
+      option_pins_direction_2: Längs der blauen Achse
+      option_pins_direction_3: Zum Mittelpunkt der übergeordneten Gruppe
+      option_pins_direction_4: Zum Mittelpunkt der Auswahl
+      option_pins_direction_help: Definiert die Platzierung der Beschriftung für eine bessere Lesbarkeit.
+      option_page: Papierformat
+      option_page_format: Format
+      option_page_format_portrait: Hochformat
+      option_page_format_landscape: Querformat
+      option_page_format_custom: Benutzerdefiniert
+      option_page_width: Breite
+      option_page_height: Höhe
+      option_page_header: Überschrift
+      option_page_header_0: Ohne
+      option_page_header_1: Mit
+      option_page_header_help: |
+        Wählen Sie, ob die zu druckende Seite eine Überschrift mit dem Namen des Dokuments, seiner Beschreibung und dem Datum enthält.
+        Ohne Überschrift nimmt die Übersichtszeichnung die gesamte Seite ein.
+      option_camera: Kamera
+      option_camera_view: Ansicht
+      option_camera_view_custom: Benutzerdefiniert
+      option_camera_zoom: Maßstab
+      option_camera_zoom_auto: Automatisch
+      option_camera_zoom_custom: Benutzerdefiniert
+      option_camera_target: Position
+      option_camera_target_auto: Automatisch
+      option_camera_target_custom: Benutzerdefiniert
+      option_explode: Explosionsdarstellung
+      error:
+        no_part: Es gibt keine Teile zum Zeichnen.
+        failed_to_save_as_skp: "Fehler beim Schreiben der SKP Datei, die an Layout gesendet werden soll."
+        failed_to_layout: |
+          Fehler beim Schreiben der Layout-Datei: *{{ error }}*
+
+          **Prüfen Sie, dass die Datei nicht in Layout geöffnet ist.**
+      warning:
+        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht gezeichnet."
+        is_part_selection: Diese Übersichtszeichnung ist auf die **ausgewählten Teile** beschränkt.
+      message:
+        adding_new_page: |
+          Möchten Sie eine neue Seite hinzufügen?
+        incompatible_page_format: |
+          Die Zieldatei ist nicht mit demselben Papierformat konfiguriert.
+
+          Gelesen: {{ old_page_format }}
+          Exportiert: {{ new_page_format }}
+
+          Alle Seiten werden gelöscht.
+        changing_units: |
+          Die Zieldatei hat standardmäßig nicht die gleiche Einheit.
+
+          Gelesen: {{ old_units }}
+          Exportiert: {{ new_units }}
+
+          Möchten Sie die neue Einheit verwenden?
+        changing_precision: |
+          Die Zieldatei hat standardmäßig nicht die gleiche Genauigkeit.
+
+          Gelesen: {{ old_precision }}
+          Exportiert: {{ new_precision }}
+
+          Möchten Sie die neue Genauigkeit verwenden?
+    write:
+      title: Teile-Export
+      info_2d: |
+        Mit diesem Modul können Sie die **2D-Projektion** von Teilen als Dateien im Format [SVG](https://wikipedia.org/wiki/Scalable_Vector_Graphics) oder [DXF](https://wikipedia.org/wiki/AutoCAD_DXF) exportieren.
+      info_3d: |
+        Mit diesem Modul können Sie die **3D-Geometrie** von Teilen als Dateien im Format [STL](https://wikipedia.org/wiki/STL_(file_format)) oder [OBJ](https://wikipedia.org/wiki/Wavefront_.obj_file) exportieren.
+      option_file_format: Format
+      option_file_format_help: |
+        Auswahl des Dateiformats für die exportierte Datei.
+      option_dxf_structure: DXF Struktur
+      option_dxf_structure_1: Layers
+      option_dxf_structure_2: Layers + Blöcke
+      option_dxf_structure_help: |
+        Auswahl der DXF-Dateistruktur.
+
+        - Die Struktur **Layers** zeichnet alle Linien flach und unterscheidet zwischen verschiedenen Linientypen nur durch Layers. *Diese Struktur bietet eine bessere Kompatibilität mit Software von Drittanbietern.*
+        - Die Struktur **Layers + Blöcke** erstellt einen Block pro Teil und fügt diese Blöcke so oft ein, wie die Teile wiederholt werden. *Diese Struktur bietet mehr Flexibilität beim Bearbeiten der Datei.*
+      option_unit: Einheit
+      option_unit_help: |
+        Auswahl der in der exportierten Datei verwendeten Einheit.
+      option_use_count: Anzahl
+      option_use_count_0: Eine Datei pro Teil
+      option_use_count_1: Eine Datei pro Teilinstanz
+      option_use_count_help: |
+        Auswahl ob die Anzahl der Instanzen berücksichtigt wird.
+      option_part_drawing_type: Projektion
+      option_part_drawing_type_help: |
+        Auswahl der Ansicht, die exportiert werden soll.
+      option_faces: Flächen
+      option_faces_0: Nur die Zielfläche verwenden
+      option_faces_1: Alle Flächen des Teils verwenden
+      option_faces_help: |
+        Auswahl ob die Suche nach der Form des Teils auf allen Flächen oder nur auf der Zielfläche durchgeführt werden soll.
+      option_anchor: Ankerpunkt
+      option_anchor_0: Automatisch
+      option_anchor_1: Ursprung des Teils projizieren
+      option_anchor_help: |
+        **Automatisch**
+        Die linke untere Ecke der umschließenden Box der exportierten Geometrie wird als Ankerpunkt verwendet.
+
+        **Projektion des Achsenursprungs**
+        Hiermit wird die Projektion des Achsenursprungs des Teils als Ankerpunkt aktiviert.
+      option_switch_yz: Vertikale Achse
+      option_switch_yz_0: Z vertikal
+      option_switch_yz_1: Y vertikal
+      option_switch_yz_help: |
+        Ermöglicht das Vertauschen der Y- und Z-Achse, um die vertikale Achse des Teils zu definieren.
+      option_smoothing: Glätten
+      option_smoothing_0: $t(default.no)
+      option_smoothing_1: Glätten von Kreisen und Bögen (Experimentell)
+      option_smoothing_help: |
+        Aktiviert die Erkennung von Kreisen und Bögen.
+
+        *Diese Option erkennt keine anderen Kurventypen.*
+      option_merge_holes: Zusammenführungsmodus
+      option_merge_holes_0: Einfach
+      option_merge_holes_1: Kontur + Bohrungen + Überstand
+      option_merge_holes_help: |
+        **Einfach**
+        Die Bauteilform wird mit einer Ebene pro Tiefe exportiert.
+
+        **Kontur + Bohrungen + Überstand**
+        Aktiviert die Trennung der Außenkontur der Teile von ihren Durchbrüchen sowie die Berechnung des Bearbeitungsüberstands, der auf die Flächen angewendet wird, die sich am Rand der Kontur und der Vertiefungen befinden.
+      option_merge_holes_overflow: Bearbeitungsüberstand
+      option_merge_holes_overflow_help: |
+        Legt den Abstand des Bearbeitungsüberstands, der auf Flächen angewendet wird, die sich am Rand der Kontur und der Vertiefungen befinden fest.
+      option_include_paths: Pfade
+      option_include_paths_0: $t(default.no)
+      option_include_paths_1: "Kanten verwenden, die nicht mit einer Fläche verbunden sind"
+      option_include_paths_help: |
+        Aktiviert die Verwendung von im Teil enthaltenen, nicht mit einer Fläche verknüpften Kanten, um sie als Pfad zu exportieren.
+      option_parts: Teile
+      option_parts_help: |
+        Auswahl der Farbe der Teile.
+      option_parts_depths: Vertiefungen
+      option_parts_depths_help: |
+        Ermöglicht es Ihnen, die Farben der Hohlräume in den Teilen auszuwählen.
+
+        *Standardmäßig wird eine zur Tiefe der Vertiefung proportionale Abstufung zwischen der Farbe der Teile und der Farbe der Bohrungen verwendet.*
+      option_parts_holes: Bohrungen
+      option_parts_holes_help: |
+        Auswahl der Farbe von Bohrungen.
+      option_parts_paths: Pfade
+      option_parts_paths_help: |
+        Auswahl der Pfadfarben.
+
+        *Die Füllfarbe wird nur bei geschlossenen Pfaden verwendet.*
+      error:
+        no_part: Kein Teil zum Exportieren.
+      warning:
+        is_group_selection: "Teile, die in **ausgeblendeten Gruppen** der Teileliste enthalten sind, werden nicht exportiert."
+        is_part_selection: Der Export beschränkt sich auf die **ausgewählten Teile**.
+    snippet:
+      hello: Hallo
+      number: Nummer
+      name: Bezeichnung
+      number_and_name: Nummer und Bezeichnung
+      number_without_hardware: Nummer (ausser Zubehör)
+      size: Fertigmaße
+      area: Fläche
+      volume: Volumen
+    error:
+      no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
+      no_entities: Ihr Modell ist leer. Sie müssen mir schon etwas mehr geben ;)
+      no_component_in_selection: Es wurden keine sichtbaren Komponenteninstanzen in Ihrer Auswahl gefunden.
+      no_component_in_model: Es wurden keine sichtbaren Komponenteninstanzen in Ihrer Szene gefunden.
+      unknow_part: Das ausgewählte Teil existiert nicht in der Holzliste.
+      obsolete_cutlist: "Unmöglich, die Holzliste ist nicht mehr aktuell. Bitte, aktualisieren Sie sie."
+    warning:
+      is_entity_selection: Nur die in Ihrem Modell ausgewählten Teile wurden berücksichtigt.
+      no_typed_materials_in_model: "Ihr Modell verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
+      no_typed_materials_in_selection: "Ihre Auswahl verwendet kein definiertes Material (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**)."
+      export_empty: Ihre Exportauswahl enthält keine Teile.
+    success:
+      part_selected: "{{ count }} ausgewähltes Teil aus der Holzliste."
+      part_selected_plural: "{{ count }} ausgewählte Teile aus der Holzliste."
+    tip:
+      no_component: |
+        Zur Berücksichtigung in der *Holzliste* müssen die Teile Instanzen einer **Komponente** sein.
+        Falls Sie ausschliesslich Gruppen verwenden, müssen Sie diese in Komponenten konvertieren.
+        Durch die Verwendung von Komponenten können Teile repliziert werden ohne sie zu kopieren.
+      no_typed_materials: "Tragen Sie ein Material auf die Teile auf, die Sie in Ihrer Holzliste sehen möchten und definieren Sie den Typ dieses Materials (**$t(tab.materials.type_1)**, **$t(tab.materials.type_2)**, **$t(tab.materials.type_3)** oder **$t(tab.materials.type_5)**) im Tab <i class=\"ladb-opencutlist-icon-materials\"></i> **Materialien**."
+    obsolete_base: "Um synchron zu bleiben, müssen Sie die Holzliste neu generieren."
+  materials:
+    label: Materialien
+    title: Materialien
+    type_0: Unbestimmt
+    type_1: Massivholz
+    type_2: Platte
+    type_3: Stangenware
+    type_4: Kantenband
+    type_5: Zubehör
+    type_6: Furnier
+    tooltip:
+      type_0: Materialtyp '$t(tab.materials.type_0)'
+      type_1: Materialtyp '$t(tab.materials.type_1)'
+      type_2: Materialtyp '$t(tab.materials.type_2)'
+      type_3: Materialtyp '$t(tab.materials.type_3)'
+      type_4: Materialtyp '$t(tab.materials.type_4)'
+      type_5: Materialtyp '$t(tab.materials.type_5)'
+      type_6: Materialtyp '$t(tab.materials.type_6)'
+      grained_0: $t(tab.materials.edit_material.grained_0)
+      grained_1: $t(tab.materials.edit_material.grained_1)
+      grain_direction: Faserrichtung
+      raw_estimated_0: Geschätzt nach effektivem Volumen
+      colorized: Dieser Farbton wird beim Rendern des Modells auf die Materialtextur angewendet
+      texture_load: Neues Bild laden
+      texture_export: Bild exportieren
+      texture_clear: Textur löschen
+      edit: "Eigenschaften von '{{ name }}' bearbeiten"
+      set_current: "Einfärben von Teilen mit '{{ name }}'"
+      open_url: URL des Materials öffnen
+      import_from_skm: Material importieren (.skm)
+    menu:
+      purge_unused: Unbenutzte Materialien löschen
+      reset_prices: Preise für alle Materialien zurücksetzen
+      reset_prices_confirm: |
+        Sie sind dabei, die Preise aller Materialien Ihres Modells zurückzusetzen.
+        Dieser Vorgang ist endgültig. **Alle Preise werden auf Null zurückgesetzt.**
+        Bestätigen Sie, um fortzufahren.
+      reset_prices_success: Die Preise für alle Materialien wurden zurückgesetzt.
+    new_material:
+      title: Neues Material erstellen
+      name: Name
+      name_warning: Ungültiger Name
+      color: Farbe
+      color_warning: Ungültige Farbe
+      type: Typ
+    edit_material:
+      title: "Eigenschaften des Materials '{{ name }}'"
+      general: Allgemein
+      texture: Textur
+      no_texture: Ohne Textur
+      name: Bezeichnung
+      type: Typ
+      description: Beschreibung
+      url: URL
+      formats: Formate
+      cut_options: Schnittparameter
+      estimate_options: Kalkulationsoptionen
+      attributes: Attribute
+      thickness: Dicke
+      thickness_help: |
+        Fertigmaß der Dicke des Materials.
+
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      length_increase: Längenzumaß
+      length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert.
+      width_increase: Breitenzumaß
+      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert.
+      thickness_increase: Dickenzumaß
+      thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert.
+      std_lengths: Standardlängen
+      std_lengths_help: |
+        Standardlängen für dieses Material.
+
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      std_widths: Standardbreiten
+      std_widths_help: |
+        Standardbreiten für dieses Material.
+
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      std_thicknesses: Standarddicken
+      std_thicknesses_help: |
+        **Standardrohdicken** für dieses Material.
+
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      std_sections: Standardquerschnitte
+      std_sections_help: |
+        Standardquerschnitte für dieses Material.
+
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      std_sizes: Standardmaße
+      std_sizes_help: |
+        Standardmaße für dieses Material.
+
+        *Maße ohne Einheit beziehen sich auf die Modellmaßeinheit.*
+      grained: Faserrichtung
+      grained_help: Gibt die Ausrichtung der Faser in Bezug auf die Länge der Platte an.
+      grained_0: Keine Faserrichtung
+      grained_1: Faser in Längsrichtung
+      edge_decremented: Reduzierung der Teile
+      edge_decremented_help: "Gibt an, ob die Maße der Teile der Holzliste um die Materialstärke der Kantenbänder reduziert werden sollen."
+      edge_decremented_0: keine Reduzierung
+      edge_decremented_1: Reduzierung um Dicke des Kantenbands
+      raw_estimated: Verwendetes Volumen
+      raw_estimated_help: |
+        Ermöglicht die Festlegung des Volumens, das zur Schätzung der Masse und der Gesamtkosten von Teilen aus diesem Material verwendet wird.
+
+        **Nutzvolumen**
+        Das Gesamtvolumen ist die Summe der Volumen der Teile.
+
+        **Volumen des benötigten Rohmaterials**
+        Das Gesamtvolumen ist die Summe der Volumen der Platten, Furnierblätter, Stangen oder Bänder der Teile nach dem Zuschnitt.
+      raw_estimated_0: Nutzvolumen der Teile
+      raw_estimated_1: Volumen des benötigten Rohmaterials
+      multiplier_coefficient: Faktor
+      multiplier_coefficient_help: "Ermöglicht die Angabe des Faktors, der auf das gemessene Bruttovolumen angewendet wird."
+      std_attributes_dim_placeholder: Wählen Sie eine Größe
+      std_volumic_masses: Rohdichte
+      std_volumic_masses_help: Ermöglicht das Festlegen der Rohdichte für alle Größen sowie für jede Standardgröße des Materials.
+      std_prices: Preis
+      std_prices_help: Ermöglicht die Definition des Preises für alle Größen sowie für jede einzelne Standardgröße des Materials.
+      std_cut_prices: Schnittpreis
+      std_cut_prices_help: |
+        Dient zur Festlegung des Preises für das Schneiden des Materials.
+
+        *Nur geradlinige Schnitte werden von diesem Wert berücksichtigt.*
+      texture_width: Breite
+      texture_height: Höhe
+      export_to_skm: Exportieren (.skm)
+    texture_load:
+      title: Bild laden
+    texture_export:
+      title: Bild exportieren
+    import_from_skm:
+      title: Aus .skm Datei importieren
+      ask_replace: |
+        Ein Material "{{ name }}" existiert bereits.
+        Möchten Sie es durch das von Ihnen importierte ersetzen?
+
+        $t(default.yes) = Existierendes Material durch importiertes Material ersetzen
+        $t(default.no) = Beide Materialien behalten
+        $t(default.cancel) = Operation abbrechen
+    export_to_skm:
+      title: In .skm Datei exportieren
+    option:
+      minimize_on_smart_paint: Reduzieren nach *'Teile einfärben mit...'*
+      minimize_on_smart_paint_help: "Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster verkleinert, wenn die Funktion *'Teile einfärben mit...'* verwendet wird."
+      general: Allgemein
+      material_order_strategy: Material-Sortierung
+      material_order_strategy_help: |
+        Die Sortierreihenfolge der Materialien wird durch die Anordnung der folgenden Kacheln definiert.
+        Eigenschaften können in <i class="ladb-opencutlist-icon-sort-asc"></i> *aufsteigender* oder <i class="ladb-opencutlist-icon-sort-desc"></i> *absteigender* Reihenfolge sortiert werden.
+      property_type: Typ
+      property_name: Bezeichnung
+    delete:
+      message: |
+        Sie sind dabei das Material **{{ material_name }}** aus Ihrem Modell zu löschen.
+        Bestätigen Sie, um fortzufahren.
+    duplicate:
+      message: |
+        Geben Sie den Namen des neuen Materials an, welches von **{{ material_name }}** kopiert wird.
+    error:
+      no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
+      no_materials: Ihr Modell enthält kein Material.
+      material_not_found: Kein Material gefunden.
+      no_texture: Das Material hat keine Textur.
+      failed_import_skm_file: "Beim Importieren der .skm-Datei ist ein Fehler aufgetreten. **{{ error }}**"
+      failed_export_skm_file: "Beim Exportieren der .skm Datei ist ein Fehler aufgetreten. **{{ error }}**"
+      failed_deleting_material: "Beim Löschen des Materials ist ein Fehler aufgetreten. **{{ error }}**"
+      failed_duplicating_material: "Beim Duplizieren des Materials ist ein Fehler aufgetreten. **{{ error }}**"
+      invalid_image_file: Ungültiges Bild
+    obsolete_base: "Um synchron zu bleiben, müssen Sie die Materialliste aktualisieren."
+  outliner:
+    label: Struktur
+    title: Struktur
+    list: Entitätsstrukturbaum
+    nodes: Entitäten
+    toggle_hidden: Ausgeblendete Instanzen
+    type_0: Modell
+    type_1: Gruppe
+    type_2: Komponente
+    type_3: Teil
+    tooltip:
+      hide_node: Maskieren
+      unhide_node: Zeigen
+      locked_node: Gesperrt
+      is_active_node: Aktive Instanz im Modell
+      set_active_node: Im Modell bearbeiten
+      edit_node_properties: Eigenschaften bearbeiten
+      select_active_nodes: Alle aktiven Instanzen selektieren / deselektieren
+      select_node: Auswählen
+      unselect_node: Deselektieren
+      open_node_url: URL des Teils öffnen
+    edit_node:
+      title_model: "Eigenschaften des Modells"
+      title_instance: "Eigenschaften der Instanz **{{ name }}**"
+      title_instance_multiple: "Eigenschaften der Instanzgruppe"
+      multiple_alert: "Gemeinsame Eigenschaften der Gruppe von {{ node_count }} Instanzen."
+      general: Allgemein
+      name: Bezeichnung
+      instance_name: Instanz
+      material: Material
+      definition_name: Definition
+      description: Beschreibung
+      url: URL
+      tags: Badges
+      layer_name: Tag
+      explode: Explodieren
+      explode_message: "Bestätigen Sie die Auflösung von **{{ name }}**?"
+      erase: Löschen
+      erase_message: "Bestätigen Sie die Löschung von **{{ name }}**?"
+    deep_make_unique:
+      title: Einzigartig machen
+    deep_rename_parts:
+      title: Teile umbenennen
+      info_0: |
+        Mithilfe dieser Funktion können Sie die ausgewählten Teile umbenennen, indem Sie die unten stehende Formel auf jede Instanz anwenden.
+      formula: Formel
+      old_name: Ursprünglicher Name
+      new_name: Neuer Name
+      count: Anz.
+    create_container:
+      title_group: "Gruppe erstellen"
+      title_component: "Komponente erstellen"
+    option:
+      general: Allgemein
+      show_hidden_instances: Ausgeblendete Instanzen anzeigen
+      show_hidden_instances_help: "Wenn diese Option aktiviert ist, werden die in der Modellansicht ausgeblendeten Instanzen im Strukturbaum angezeigt."
+      hide_descriptions: Beschreibungen ausblenden
+      hide_descriptions_help: "Wenn diese Option aktiviert ist, werden die **Beschreibungen**, die auf den Teilen angebracht sind, nicht angezeigt."
+      hide_tags: Badges ausblenden
+      hide_tags_help: "Ist diese Option aktiv, werden **Badges** nicht angezeigt."
+      minimize_on_set_active: Verkleinern nach '$t(tab.outliner.tooltip.set_active_node)'
+      minimize_on_set_active_help: "Wenn diese Option aktiviert ist, wird das OpenCutList-Fenster minimiert, wenn die Funktion *'$t(tab.outliner.tooltip.set_active_node)'* verwendet wird."
+    error:
+      no_model: Kein Modell ist offen. Sie müssen mir mehr Information geben ;)
+      no_entities: Ihr Modell ist leer!
+      node_not_found: Knoten nicht gefunden
+      entity_not_found: Instanz nicht gefunden
+      invalid_target: Die Zielinstanz erlaubt diesen Vorgang nicht
+      obsolete_outliner: "Unmöglich, die generierte Struktur ist nicht mehr aktuell. Bitte, aktualisieren Sie sie."
+    tip:
+      no_node: |
+        Ihr Modell enthält keine Instanzen zum Anzeigen.
+        Eine Instanz ist eine **Gruppe** oder eine **Komponente** in der Szene.
+    obsolete_base: "Um synchron zu bleiben, muss die Struktur neu generiert werden."
+  importer:
+    label: Importieren
+    title: Teile importieren
+    help: |
+      An dieser Stelle können Sie Teile, als rechteckige Volumen (quaderförmig), aus einer [CSV](https://de.wikipedia.org/wiki/Comma-separated_values) Datei in Ihr Modell importieren.
+      Sie können damit die Holzliste von *OpenCutList* verwenden, die Teile jedoch mit einer anderen Software als *SketchUp* generieren.
+      Klicken Sie auf **CSV-Datei öffnen** zum Starten.
+    open_csv: CSV-Datei öffnen
+    import_to_model: Ins Modell importieren
+    load:
+      title: Laden einer CSV-Datei
+      info_0: |
+        Wählen Sie die Optionen aus, die zum korrekten Lesen der Datei erforderlich sind:
+        **{{ filename }}**.
+      info_1: |
+        *Die Einheit des Modells ist: **{{ unit }}**.
+        Diese Einheit wird für Dimensionen verwendet, bei denen die Einheit nicht angegeben ist*.
+      options: Optionen zum Laden
+      option_col_sep: Trennzeichen
+      option_col_sep_tab: Tabulator
+      option_col_sep_comma: Komma
+      option_col_sep_semicolon: Semikolon
+      option_first_line_headers: Erste Zeile
+      option_first_line_headers_0: Daten
+      option_first_line_headers_1: Spaltenüberschriften
+    import:
+      title: Teile ins Modell importieren
+      info_0: |
+        Sie sind dabei **{{ count }} Teil** in das Modell zu importieren.
+        Dieses Teil wird in einer Gruppe im Ursprung der Hauptszene platziert.
+      info_0_plural: |
+        Sie sind dabei **{{ count }} Teile** in das Modell zu importieren.
+        Diese Teile werden in einer Gruppe im Ursprung der Hauptszene platziert.
+      info_1: "Klicken Sie auf **Importieren**, um den Vorgang zu bestätigen."
+      options: |
+        Das Modell enthält schon *Teile*, *Definitionen* oder *Materialien*.
+        Wählen Sie aus den Ladeoptionen.
+      option_remove_all_?: "Was tun?"
+      option_remove_all_false: Teile zu bestehenden hinzufügen
+      option_remove_all_true: Alles löschen!
+      option_keep_definitions_settings: Einstellungen zu Definitionen beibehalten
+      option_keep_materials_settings: Materialparameter beibehalten
+    column:
+      unused: Nicht verwendet
+      mandatory: Pflichtspalten
+      optional: Optionale Spalten
+      name: Bezeichnung
+      count: Anzahl
+      bbox_length: Länge
+      bbox_width: Breite
+      bbox_thickness: Dicke
+      material: Material
+      tags: Badges
+    tooltip:
+      errors: "Dieses Teil wird nicht importiert, weil es folgende Fehler enthält"
+      warnings: "Dieses Teil wird importiert, aber es enthält folgende Fehler"
+    error:
+      no_model: Kein Modell ist offen. Teile können nicht ins Leere importiert werden ;)
+      file_not_found: "Datei nicht gefunden: **{{ filename }}**"
+      bad_extension: "Die Datei *{{ filename }}* hat nicht eine **.CSV** oder **.TSV** Endung."
+      failed_to_load_csv_file: |
+        Die CSV-Datei kann nicht geladen werden : **{{ error }}**
+        *Prüfen Sie, ob Sie das korrekte Datentrennzeichen gewählt haben.*
+      empty_file: Die Datei scheint leer zu sein oder konnte nicht richtig gelesen werden.
+      no_importable_part: Es können keine Teile importiert werden. Ordnen Sie die gewünschten Felder den entsprechenden Spalten zu.
+      invalid_name: Ungültige Bezeichnung
+      invalid_length: Ungültige Länge
+      invalid_width: Ungültige Breite
+      invalid_thickness: Ungültige Dicke
+      failed_to_import: Der Import ist fehlgeschlagen.
+    warning:
+      invalid_count: Ungültige Stückzahl
+      invalid_material: Ungültiges Material
+    success:
+      imported_title: Importieren abgeschlossen
+      imported_body: "{{ count }} Teil erfolgreich importiert!"
+      imported_body_plural: "{{ count }} Teile erfolgreich importiert!"
+    obsolete_base: "Um synchron zu bleiben, müssen Sie die CSV-Datei neu laden."
+  tutorials:
+    label: Tutorials
+    title: Tutorials
+    help: |
+      Hier finden Sie eine nicht abschließende Liste von Videos, die von der Gemeinschaft rund um die Verwendung von *OpenCutList* erstellt wurden.
+    submit: Video einreichen
+    submit_info: |
+      Sie haben ein Video erstellt, in dem Sie die Verwendung von **OpenCutList** vorstellen und möchten, dass es hier erscheint?
+      Lassen Sie es uns wissen, indem Sie uns an **opencutlist@lairdubois.fr** schreiben!
+
+      *Das Video muss öffentlich sein und auf YouTube gehostet werden.*
+    error:
+      fail_to_load_list: Videoliste kann nicht geladen werden.
+  news:
+    label: Neuigkeiten
+    title: Neuigkeiten
+    help: |
+      Die aktuellen Nachrichten von *OpenCutList*.
+    comment: Kommentieren
+    error:
+      fail_to_load_list: Nachrichtenliste konnte nicht geladen werden.
+  forum:
+    label: Forum
+    title: Forum
+    help: |
+      In diesem Bereich können Sie sich mit der *OpenCutList*-Community und dem Team austauschen.
+    create_conversation: Diskussion starten
+    reply: Antworten
+    tags: Tags
+    redirection: |
+      Sie werden auf die Plattform **Open Collective** weitergeleitet, die dieses Diskussionsforum beherbergt.
+      Um *Gespräche zu beginnen* oder *zu antworten*, müssen Sie ein Konto erstellen und sich einloggen.
+      *Es ist kostenlos, unverbindlich und eine einfache E-Mail-Adresse genügt.*
+
+      Zum Fortfahren bestätigen.
+    error:
+      fail_to_load_list: Die Konversationsliste konnte nicht geladen werden.
+  sponsor:
+    label: Sponsoring
+    title: Sponsoring
+    description: |
+      **OpenCutList** ist *Open Source* Software, welche durch ihre Benutzer via <a href="https://opencollective.com/" target="_blank">Open Collective</a> unterstützt wird.
+      Unterstützen Sie dieses Projekt, indem Sie einen finanziellen Beitrag leisten!
+    contribute: Beitragen
+    backers: "{{ count }} finanzieller Sponsor"
+    backers_plural: "{{ count }} finanzielle Sponsoren"
+    ad: "OpenCutList ist nicht umsonst"
+    objective: Ziel
+    objective_slogan: "OpenCutList sind wir alle"
+    objective_title:
+      default: Ziele
+      cuttingdiagram_export: Finanzierung von Schnittplan-Exporten
+    objective_details:
+      default: |
+        Die kontinuierliche Verbesserung von *OpenCutList* ist uns wichtig und das Projekt braucht weiterhin Ihre Hilfe für das nächste Update!
+      cuttingdiagram_export: |
+        Es ist uns wichtig, dass *OpenCutList* an die vielfältigen Anforderungen der Anwender an die *Schnittplan*-Funktion angepasst werden kann.
+        Um die Möglichkeiten weiter auszubauen, möchten wir den Export von Schnittplänen im **SVG**- und **DXF**-Format ermöglichen.
+        Indem Sie uns die Mittel zur Verfügung stellen, um diese Exporte zu bearbeiten, geben Sie uns die Möglichkeit, Ihnen zu helfen, das Beste aus *OpenCutList* herauszuholen.
+    objective_crowdfunding: |
+      Die Entwicklung von neuen Funktionen wird durch **Beteiligungsfinanzierung** erfolgen und kann beginnen, sobald das **Finanzielle Ziel** erreicht ist.
+    objective_thanks: |
+      Vielen Dank für Ihren Beitrag!
+    objective_funded_progress: "zu {{ progress }} % finanziert"
+  settings:
+    label: Einstellungen
+    title: Einstellungen
+    global_settings: Globale Einstellungen
+    language: Sprache
+    language_auto: Automatisch
+    font_size: Schriftgröße
+    font_size_auto: $t(default.automatic)
+    font_size_normal: Normal
+    font_size_small: Klein
+    font_size_tiny: Sehr klein
+    print_margin: Druckränder
+    print_margin_normal: Normal
+    print_margin_small: Klein
+    table_row_size: Zeilenhöhe
+    table_row_size_normal: Normal
+    table_row_size_compact: Kompakt
+    size_and_position: Größe und Position des Fensters
+    model_settings: Modell-Einstellungen
+    length_unit: Längeneinheit
+    length_format: Format
+    length_format_0: $t(default.decimal)
+    length_format_1: Architektonisch
+    length_format_2: Ingenieurswesen
+    length_format_3: $t(default.fractional)
+    length_precision: Genauigkeit
+    suppress_units_display: Längeneinheiten für jeden Wert anzeigen
+    mass_unit: Masseneinheit
+    mass_precision: Genauigkeit
+    currency_symbol: Währungssymbol
+    currency_precision: Genauigkeit
+    presets:
+      export_global_presets: Voreinstellungen exportieren
+      export_global_presets_help: |
+        Mit dieser Funktion können Sie Ihre Voreinstellungen in eine **.json**-Datei exportieren.
+        Wählen Sie die Voreinstellungen aus, die Sie exportieren möchten.
+      export_global_presets_success: Die Voreinstellungen wurden erfolgreich exportiert.
+      import_global_presets: Voreinstellungen importieren
+      import_global_presets_help: |
+        Wählen Sie die Voreinstellungen in der **.json**-Datei aus, die Sie importieren möchten.
+        Bitte beachten Sie, dass eine bereits vorhandene Voreinstellung mit identischem Namen durch die importierte Version ersetzt wird.
+      import_global_presets_success: |
+        Die Voreinstellungen *OpenCutList* wurden erfolgreich importiert.
+        Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
+      dump_global_presets: Dump der Voreinstellungen
+      dump_model_presets: Dump der Modell-Einstellungen
+      reset_global_presets: Voreinstellungen reinitialisieren
+      reset_global_presets_confirm: |
+        Sie sind dabei, alle Ihre gespeicherten *OpenCutList*-Voreinstellungen zurückzusetzen.
+        Dieser Vorgang ist endgültig. **Alle Voreinstellungen gehen verloren**.
+        Bestätigen Sie, um fortzufahren.
+      reset_global_presets_success: |
+        Die *OpenCutList*-Voreinstellungen wurden zurückgesetzt.
+        Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
+      reset_model_presets: Modell-Einstellungen reinitialiseren
+      reset_model_presets_confirm: |
+        Sie sind dabei, alle *OpenCutList*-Einstellungen für das aktuelle Modell zurückzusetzen.
+        Dieser Vorgang ist endgültig. **Alle Einstellungen werden auf die Standardwerte zurückgesetzt.**
+        Bestätigen Sie, um fortzufahren.
+      reset_model_presets_success: |
+        Die Einstellungen von *OpenCutList* für das aktuelle Modell wurden zurückgesetzt.
+        Um die Änderungen zu berücksichtigen, müssen Sie das Fenster von OpenCutList **schließen** und **neu öffnen**.
+      error:
+        no_preset_to_export: Keine Voreinstellungen zu exportieren.
+        no_preset_to_import: Keine Voreinstellungen zu importieren.
+        failed_to_import: "Voreinstellungen konnten nicht importiert werden: **{{ error }}**."
+        failed_to_import_invalid_hexdigest: Diese Datei wurde verändert. Sie kann nicht importiert werden.
+        failed_to_import_bad_file_format: Ungültiges Dateiformat.
+  about:
+    label: Über
+    title: Über
+    version: Version
+    credits: Entwicklung und Programmierung
+    credits_authors: |
+      *OpenCutList* wird von [Boris Beaulant](https://www.lairdubois.fr/@borisbeaulant) und [Martin Müller](https://www.lairdubois.fr/@mobilarte) entwickelt. *[Beitragende](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/graphs/contributors) aufzählen*.
+    credits_translations: Übersetzungen
+    credits_translators: |
+      - [Martin Müller](https://www.lairdubois.fr/@mobilarte) (*English*, *Deutsch*)
+      - Gildas Boureau (*französische* Dokumentation)
+      - Vladimir Badulya (*Russisch*)
+      - Pierluigi Colombo, Massimo Risca (*Italienisch*)
+      - Nayton Sanches Barbosa, korrigiert und überarbeitet von Carlos Maciel ELT, Henny Silva Ferreira (*Portugiesisch*)
+      - Raquel Caballero Guillén, Leonardo Romero Giménez (*Spanish*)
+      - [Radek Rýznar](https://onlinesketchup.cz) (*Tschechisch*)
+      - [Jarek Ostaszewski †](https://www.domidrewno.pl), Greg Gregosky, Damian B, Florian Laniecki, [Hubert Przybyłek](https://www.drvo.pl/), Mateusz Szczepaniak (*Polnisch*)
+      - Sergey Isupov (*Hebräisch*), noch ohne RTL Schnittstelle
+      - Soul Issam (*Arabisch*), noch ohne RTL Schnittstelle
+      - Nguyen Ngoc Tan (*Vietnamesisch*)
+      - Andrii Toporivskyi, Kostiantyn Shcherbey (*Ukrainisch*)
+      - [刘涛](https://www.liutao91.cn), Martin Pan Chiu Ng (*vereinfachtes Chinesisch*)
+      - Dany Dhondt, Eric Lugtigheid, Koen Dejonckheere (*Niederländisch*)
+      - Zoltán Nagy, Roland Kovács (*Ungarisch*)
+      - Milan Divovic (*Serbisch*)
+    credits_description: |
+      Die Entwicklung dieser Erweiterung ist Teil des Projektes [L'Air du Bois](https://www.lairdubois.fr), eine Austauschplattform für Holzwerker.
+      In diesem Sinn ist auch sie *Open Source* und steht unter Lizenz [GNU GPLv3](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension/blob/master/LICENSE) auf [GitHub](https://github.com/lairdubois/lairdubois-opencutlist-sketchup-extension) allen zu Verfügung.
+    credits_runtime: Laufzeit
+    credits_development: Entwicklungsumgebung
+    credits_vendors: |
+      Dieses Abenteuer wäre nicht möglich gewesen ohne die Arbeit der Autoren folgender *Open Source* Komponenten:
+    credits_thanks: |
+      Ein spezieller Dank geht an:
+      - [JetBrains](https://www.jetbrains.com) für ihre Unterstützung dieses Projektes durch eine [Free Open Source Lizenz](https://www.jetbrains.com/buy/opensource/).
+      - [Transifex](https://www.transifex.com) für die Unterstützung von Open Source Projekten.
+      - [GitBook](https://www.gitbook.com) für die Unterstützung von Open Source Projekten.
+tool:
+  default:
+    transparency: Transparenz
+    zoom_extents: Alles zeigen
+    toggle_depth: Hintergrundteile
+    more: Mehr
+    end_point: Endpunkt
+    middle_point: Mittelpunkt
+    third_point: Punkt auf Drittel
+    vcb_length: Länge
+    vcb_size: Bemaßung
+    vcb_radius: Radius
+    vcb_diameter: Durchmesser
+    vcb_distance: Distanz
+    error:
+      no_direction: Bitte mit der Maus eine Richtung angeben
+      invalid_length: "Die Länge {{ value }} ist ungültig"
+      invalid_multiplicator: "Der Faktor {{ value }} ist ungültig"
+      invalid_divider: "Der Teiler {{ value }} ist ungültig"
+      invalid_offset: "Die Verschiebung {{ value }} ist ungültig"
+      invalid_segment_count: "Die Anzahl der Segmente {{ value }} ist ungültig. Sie muss zwischen 3 und 999 sein."
+      syntax_error: "Syntaxfehler: {{ error }}"
+      unexpected_close_parenthesis: "Unerwartete schließende Klammer"
+      missing_close_parenthesis: "Schließende Klammer fehlt"
+      missing_operand: "Fehlender Operand"
+      zero_division: "Division durch Null"
+      lt_min_distance: "Der Abstand {{ value1 }} ist kleiner als der Mindestabstand von {{ value2 }}"
+      gt_max_distance: "Der Abstand {{ value1 }} ist größer als der Maximalabstand von {{ value2 }}"
+  highlight:
+    transparency: $t(tool.default.transparency)
+    zoom_extents: $t(tool.default.zoom_extents)
+  smart_select:
+    state_0_status: Teil auswählen
+    state_0_to_6_status: Übergeordnetes Element auswählen
+    state_4_status: "Ziehen Sie ein identisches Teil mit demselben übergeordneten Teil, um es zur Auswahl hinzuzufügen, und lassen Sie es los, um fortzufahren"
+    state_5_status: Zum Hinzufügen zur Auswahl ziehen und zum Fortfahren loslassen
+    state_6_status: Wählen Sie einen Eintrag aus der Liste aus
+    warning:
+      no_active_part: Sie müssen zunächst mit der Maus über ein Teil fahren
+  smart_draw:
+    title: Zeichnen
+    action_0: Rechteck zeichnen
+    action_0_status: Volumen auf der Basis einer Rechteckform zeichnen
+    action_0_state_0_status: "Klicken Sie, um den ersten Punkt des Rechtecks festzulegen"
+    action_0_state_1_status: "Klicken Sie, um die gegenüberliegende Ecke zu definieren oder geben Sie Länge, Breite ein"
+    action_1: Kreis zeichnen
+    action_1_state_0_status: "Klicken Sie, um den Mittelpunkt des Kreises festzulegen"
+    action_1_status: Volumen auf der Basis einer Kreisform zeichnen
+    action_1_state_1_radius_status: "Klicken Sie, um den Radius festzulegen, oder geben Sie eine Distanz ein"
+    action_1_state_1_diameter_status: "Klicken Sie, um den Durchmesser festzulegen, oder geben Sie eine Distanz ein"
+    action_2: Polygon zeichnen
+    action_2_state_0_status: "Klicken Sie, um den ersten Punkt des Polygons festzulegen"
+    action_2_status: Volumen auf der Basis einer polygonalen Form zeichnen
+    action_2_state_1_status: "Klicken Sie, um einen neuen Punkt zu setzen, oder geben Sie eine Distanz ein"
+    action_x_state_2_status: "Klicken Sie, um die Höhe festzulegen, oder geben Sie eine Distanz ein"
+    action_option_group_offset: Versatz
+    action_option_group_segments: Segmente
+    action_option_group_options: Optionen
+    action_option_offset_shape_offset: Versatz
+    action_option_offset_shape_offset_status: "Ermöglicht es, einen Versatz auf die gezeichnete Form anzuwenden"
+    action_option_segments_segment_count: Anzahl Segmente
+    action_option_segments_segment_count_status: Ermöglicht das Festlegen der Anzahl der Kreissegmente
+    action_option_options_construction: Konstruktionslinien
+    action_option_options_construction_status: Als Konstruktionslinien zeichnen
+    action_option_options_rectangle_centered: Rechteck zentriert
+    action_option_options_rectangle_centered_status: Rechteck auf den ersten Punkt zentrieren
+    action_option_options_smoothing: Glätten
+    action_option_options_smoothing_status: Kurven glätten
+    action_option_options_measure_from_vertex_status: Relativ zum nahen Scheitelpunkt messen
+    action_option_options_measure_from_diameter: Maß
+    action_option_options_measure_from_diameter_status: Kreis anhand seines Durchmessers messen
+    action_option_options_measure_from_radius_status: Kreis anhand seines Radius messen
+    action_option_options_measure_reversed: Invertierte Messung
+    action_option_options_measure_reversed_status: Messung invertieren
+    action_option_options_pull_centered: Erhebung zentriert
+    action_option_options_pull_centered_status: Erhebung auf den ersten Punkt zentrieren
+    action_option_options_ask_name: Benennung der Teile
+    action_option_options_ask_name_status: Namen der Teile manuell eingeben
+    action_measure_locked_status: Auf die letzte Messung fixieren
+    action_toggle_move_copy_status: Abwechselnd kopieren/verschieben
+    action_change_move_anchor_status: Ankerpunkt ändern
+    success:
+      part_created: "Neu erstelltes Teil: {{ name }}"
+  smart_handle:
+    title: Handhaben
+    action_0: Auswählen
+    action_0_status: Teil auswählen
+    action_1: Entlang Linie kopieren
+    action_1_status: Teil entlang einer Achse kopieren
+    action_1_state_2_status: "Klicken Sie, um die Kopie des Teils zu platzieren, oder geben Sie eine Distanz ein"
+    action_2: Entlang Raster kopieren
+    action_2_status: Teil entlang eines Rasters kopieren
+    action_2_state_2_status: "Klicken Sie, um die Kopien des Teils zu platzieren, oder geben Sie zwei Distanzen ein"
+    action_3: Verschieben
+    action_3_status: Teil entlang einer Achse verschieben
+    action_3_state_2_status: "Klicken Sie, um das Teil zu platzieren, oder geben Sie eine Distanz ein"
+    action_4: Verteilen
+    action_4_status: Teil entlang einer Achse verteilen
+    action_4_state_1_status: "Klicken Sie, um den ersten Messpunkt zu setzen"
+    action_4_state_2_status: "Klicken Sie, um den zweiten Messpunkt zu setzen, oder geben Sie eine Distanz ein"
+    action_option_group_copy_measure_type: Maß
+    action_option_group_move_measure_type: Maß
+    action_option_group_axes: Achsen
+    action_option_group_options: Optionen
+    action_option_copy_measure_type_outside_status: Außenmessung
+    action_option_copy_measure_type_centered_status: Messung von Mitte zu Mitte
+    action_option_copy_measure_type_inside_status: Messung zwischen den Teilen
+    action_option_move_measure_type_outside_status: Außenmessung
+    action_option_move_measure_type_centered_status: Messung in der Mitte
+    action_option_move_measure_type_inside_status: Messung im Inneren
+    action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
+    action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
+    action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
+    action_option_options_mirror_status: Symmetrisch kopieren
+    warning:
+      copies_disable_mirror: Mehrfaches Kopieren deaktiviert die Option '$t(tool.smart_handle.action_option_options_mirror_status)'
+    error:
+      min_distance: "Der Abstand {{ value1 }} ist kleiner als der Minimalabstand {{ value2 }}"
+  smart_reshape:
+    title: Umgestalten
+    action_0: Strecken
+    action_0_status: Teil strecken
+    action_0_state_1_status: "Klicken Sie auf einen Griff, um zu strecken"
+    action_0_state_1a_status: "Klicken Sie auf eine Schnittebene, um sie zu verschieben"
+    action_0_state_1b_status: Schnittebene hinzufügen
+    action_0_state_1c_status: Schnittebene löschen
+    action_0_state_10_status: "Ziehen Sie die Schnittebene, um sie zu verschieben"
+    action_0_state_11_status: "Klicken Sie, um die Schnittebene hinzuzufügen"
+    action_0_state_12_status: "cken Sie auf eine Schnittebene, um sie zu löschen"
+    action_0_state_2_status: "Klicken Sie, um die Dehnung zu bestätigen, oder geben Sie einen Abstand ein"
+    action_option_group_stretch_measure_type: Maß
+    action_option_group_axes: Achsen
+    action_option_group_options: Optionen
+    action_option_stretch_measure_type_outside_status: Außenmessung
+    action_option_stretch_measure_type_offset_status: Differenzwert messen
+    action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
+    action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
+    action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
+    action_option_options_make_unique_status: Gestreckte Elemente einzigartig machen
+    error:
+      curve_intersect: Eine der Schnittebenen verläuft durch eine nicht dehnbare Kurve
+  smart_paint:
+    title: Malen
+    default_material: Ohne Material
+    filters: Filter
+    filter_0: Ohne Typ
+    filter_1: $t(tab.materials.type_1)
+    filter_2: $t(tab.materials.type_2)
+    filter_3: $t(tab.materials.type_3)
+    filter_4: $t(tab.materials.type_4)
+    filter_5: $t(tab.materials.type_5)
+    filter_6: $t(tab.materials.type_6)
+    action_0: Teile bemalen
+    action_0_status: "Klicken Sie auf ein Teil, um die Instanz einzufärben"
+    action_1: Kanten bemalen
+    action_1_status: "Klicken Sie auf eine Plattenkante, um ein Material '$t(tab.materials.type_4)' anzuwenden"
+    action_2: Flächen bemalen
+    action_2_status: "Klicken Sie auf eine Plattenfläche, um ein Material '$t(tab.materials.type_6)' anzuwenden"
+    action_3: Entnehmen
+    action_3_status: "Klicken Sie auf eine Fläche, um eine Probe des Materials zu entnehmen"
+    action_4: Säubern
+    action_4_status: "Klicken Sie auf ein Teil, um alle Materialien aus seiner Definition und aus allen Instanzen zu entfernen"
+    action_option_group_instances: Anzahl Instanzen
+    action_option_group_edges: Anzahl Kantenbänder
+    action_option_group_faces: Anzahl Flächen
+    action_option_instances_0_status: Nur die Instanz des ausgewählten Teils einfärben
+    action_option_instances_1_status: Alle Instanzen des ausgewählten Teils einfärben
+    action_option_edges_0_status: Nur die ausgewählte Kante einfärben
+    action_option_edges_1_status: Einfärben der Zielkante und der gegenüberliegenden Kante
+    action_option_edges_2_status: Einfärben der 4 Kanten des Zielteils
+    action_option_faces_0_status: Nur die Zielfläche einfärben
+    action_option_faces_1_status: Einfärben der 2 Zielflächen
+    edges: "{{ count }} Kante"
+    edges_plural: "{{ count }} Kanten"
+    edge_ymin: Länge 1
+    edge_ymax: Länge 2
+    edge_xmin: Breite 1
+    edge_xmax: Breite 2
+    faces: "{{ count }} Fläche"
+    faces_plural: "{{ count }} Flächen"
+    face_zmin: Rückseite
+    face_zmax: Vorderseite
+    warning:
+      no_material: Kein Material
+      no_material_type: "Kein Material des Typs '{{ type }}'"
+    error:
+      not_part: Das Zielobjekt ist kein Teil (Komponente)
+      not_edge: Die Zielfläche ist keine Plattenkante
+      not_face: Die Zielfläche ist keine Plattenfläche
+      wrong_material_type: "Das Zielteil muss vom Typ '{{ type }}' sein"
+  smart_axes:
+    title: Ausrichten
+    action_0: Spiegeln
+    action_0_status: "Klicken Sie auf ein Teil, um die Instanz entlang einer seiner Dimensionen zu spiegeln"
+    action_1: Länge ↔ Breite vertauschen
+    action_1_status: "Klicken Sie auf ein Teil, um seine Länge mit seiner Breite zu vertauschen"
+    action_2: Vorderseite ↔ Rückseite vertauschen
+    action_2_status: "Klicken Sie auf ein Teil, um seine Vorderseite mit seiner Rückseite zu vertauschen"
+    action_3: Achsen ausrichten
+    action_3_status: "Zielen Sie auf die Fläche eines Teils und klicken Sie auf eine Kante, um die Achsen des Teils anzupassen"
+    action_4: Ursprung verschieben
+    action_4_status: "Zielen Sie auf die Fläche eines Teils und klicken Sie auf einen Punkt, um den Ursprung dort zu platzieren"
+    action_option_group_direction: Ausrichtung
+    action_option_direction_0: L
+    action_option_direction_1: B
+    action_option_direction_2: D
+    action_option_direction_0_status: Teil der Länge nach wenden
+    action_option_direction_1_status: Teil der Breite nach wenden
+    action_option_direction_2_status: Teil der Dicke nach wenden
+    warning:
+      more_entities: "{{ count_used }} Instanzen mit derselben Definition werden geändert"
+    error:
+      not_part: Das Zielobjekt ist kein Teil (Komponente)
+      not_orientable: Der Typ dieses Teils lässt keine Orientierung zu
+  smart_export:
+    title: Exportieren
+    action_0: 3D Teil exportieren
+    action_0_status: Auf Teil klicken
+    action_1: 2D Teil exportieren
+    action_1_status: Auf Fläche eines Teils klicken
+    action_2: Fläche exportieren
+    action_2_status: Auf Fläche klicken
+    action_3: Pfad exportieren
+    action_3_status: Auf Kante klicken
+    action_option_group_file_format: Format
+    action_option_group_unit: Einheit
+    action_option_group_faces: Flächen
+    action_option_group_options: Optionen
+    action_option_file_format_dxf_status: In DXF-Datei exportieren
+    action_option_file_format_stl_status: In STL-Datei exportieren
+    action_option_file_format_obj_status: In OBJ-Datei exportieren
+    action_option_file_format_svg_status: In SVG-Datei exportieren
+    action_option_unit_0_status: $t(default.unit_0)
+    action_option_unit_1_status: $t(default.unit_1)
+    action_option_unit_2_status: $t(default.unit_2)
+    action_option_unit_3_status: $t(default.unit_3)
+    action_option_unit_4_status: $t(default.unit_4)
+    action_option_faces_0_status: $t(tab.cutlist.write.option_faces_0)
+    action_option_faces_1_status: $t(tab.cutlist.write.option_faces_1)
+    action_option_options_anchor_status: $t(tab.cutlist.write.option_anchor_1)
+    action_option_options_smoothing_status: $t(tab.cutlist.write.option_smoothing_1)
+    action_option_options_merge_holes_status: Isolieren von durchgehenden Bohrungen und Zusammenführen der Tiefen für jeden Hohlraum
+    action_option_options_include_paths_status: "Im Teil enthaltene, nicht mit einer Fläche verknüpfte Kanten als Plot exportieren"
+    error:
+      not_part: Diese Fläche gehört nicht zu einem Teil (Komponente)
+      not_flat_face: Diese Fläche ist nicht eben
+      incompatible_active_path: "Der aktive Pfad ermöglicht es nicht, dieses Teil zu exportieren"

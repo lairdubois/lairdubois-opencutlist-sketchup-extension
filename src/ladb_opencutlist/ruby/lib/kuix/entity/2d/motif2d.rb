@@ -79,4 +79,20 @@ module Ladb::OpenCutList::Kuix
 
   end
 
+  class RectangleMotif2d < Motif2d
+
+    def initialize(id = nil)
+      super([[
+
+               [ 0, 0 ],
+               [ 1, 0 ],
+               [ 1, 1 ],
+               [ 0, 1 ],
+               [ 0, 0 ],
+
+             ]], id)
+    end
+
+  end
+
 end

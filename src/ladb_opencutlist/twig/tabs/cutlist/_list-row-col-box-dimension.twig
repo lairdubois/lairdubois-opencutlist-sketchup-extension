@@ -1,7 +1,5 @@
 <td class="ladb-cutlist-value ladb-cutlist-value-right">
     <div class="ladb-flex">
-        {% if part.children and part['children_'~property~'_increased_count'] > 0 %}<span class="ladb-opencutlist-icon ladb-opencutlist-icon-size-increase" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.children_size_increase'|i18next({ 'count':part['children_'~property~'_increased_count'] }) }}">&nbsp;</span>{% endif %}
-        {% if part[property~'_increased'] %}<span class="ladb-opencutlist-icon ladb-opencutlist-icon-size-increase" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.size_increased'|i18next({ 'value':part[property~'_increase'] }) }}">&nbsp;</span>{% endif %}
         {% if not noValue|default(false) %}<span class="ladb-flex-grow-1">{{ part[property] }}</span>{% endif %}
     </div>
 </td>

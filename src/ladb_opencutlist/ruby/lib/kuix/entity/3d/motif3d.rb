@@ -26,14 +26,17 @@ module Ladb::OpenCutList::Kuix
 
     def do_layout(transformation)
       super
+      transformation = transformation * @transformation unless @transformation.identity?
+      no_transform = transformation.identity?
+      no_pattern_transform = @patterns_transformation.identity?
       @_paths.clear
       @patterns.each do |pattern|
         points = []
         pattern.each do |pattern_point|
           pt = Geom::Point3d.new(pattern_point)
-          pt.transform!(@patterns_transformation) unless @patterns_transformation.identity?
+          pt.transform!(@patterns_transformation) unless no_pattern_transform
           point = Geom::Point3d.new(@bounds.x + pt.x * @bounds.width, @bounds.y + pt.y * @bounds.height, @bounds.z + pt.z * @bounds.depth)
-          point.transform!(transformation * @transformation)
+          point.transform!(transformation) unless no_transform
           points << point
         end
         @_paths << points
@@ -47,11 +50,10 @@ module Ladb::OpenCutList::Kuix
       super
       @_paths.each do |points|
         if @on_top
-          points2d = points.map { |point| graphics.view.screen_coords(point) }
-          graphics.set_drawing_color(@color)
+          graphics.set_drawing_color(@color) if @color.is_a?(Sketchup::Color)
           graphics.set_line_width(@line_width)
           graphics.set_line_stipple(@line_stipple)
-          graphics.view.draw2d(GL_LINE_STRIP, points2d)
+          graphics.view.draw2d(GL_LINE_STRIP, points.map { |point| graphics.view.screen_coords(point) })
         else
           graphics.draw_line_strip(
             points: points,
@@ -66,7 +68,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class EdgeMotif < Motif3d
+  class EdgeMotif3d < Motif3d
 
     attr_reader :start, :end
     attr_accessor :start_arrow, :end_arrow,
@@ -166,7 +168,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class CircleMotif < Motif3d
+  class CircleMotif3d < Motif3d
 
     def initialize(segment_count = 24, id = nil)
       delta = 2 * Math::PI / segment_count
@@ -179,7 +181,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class RectangleMotif < Motif3d
+  class RectangleMotif3d < Motif3d
 
     def initialize(id = nil)
       super([[
@@ -195,7 +197,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class BoxMotif < Motif3d
+  class BoxMotif3d < Motif3d
 
     def initialize(id = nil)
       super([
@@ -234,7 +236,7 @@ module Ladb::OpenCutList::Kuix
 
   end
 
-  class BoxFillMotif < Motif3d
+  class BoxFillMotif3d < Motif3d
 
     def initialize(id = nil)
       super([[
@@ -251,15 +253,20 @@ module Ladb::OpenCutList::Kuix
 
     def paint_content(graphics)
       @_paths.each do |points|
-        graphics.draw_quads(
-          points: points,
-          fill_color: @color)
+        if @on_top
+          graphics.set_drawing_color(@color)
+          graphics.view.draw2d(GL_QUADS, points.map { |point| graphics.view.screen_coords(point) })
+        else
+          graphics.draw_quads(
+            points: points,
+            fill_color: @color)
+        end
       end
     end
 
   end
 
-  class ArrowMotif < Motif3d
+  class ArrowMotif3d < Motif3d
 
     def initialize(offset = 0.1, id = nil)
       super([[

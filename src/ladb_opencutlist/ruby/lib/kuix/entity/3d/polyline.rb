@@ -29,7 +29,12 @@ module Ladb::OpenCutList::Kuix
 
     def do_layout(transformation)
       super
-      @_points = @points.map { |point| point.transform(transformation * @transformation) }
+      transformation = transformation * @transformation unless @transformation.identity?
+      if transformation.identity?
+        @_points = @points
+      else
+        @_points = @points.map { |point| point.transform(transformation) }
+      end
       @extents.add(@_points) unless @on_top || @_points.empty?
     end
 

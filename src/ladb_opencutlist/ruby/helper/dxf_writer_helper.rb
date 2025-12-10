@@ -730,6 +730,23 @@ module Ladb::OpenCutList
           _dxf_write(file, 73, 0)
           _dxf_write(file, 40, 0.0)
 
+          _dxf_write(file, 0, 'LTYPE')
+          _dxf_write_id(file)
+          _dxf_write_owner_id(file, id)
+          _dxf_write_sub_classes(file, [ 'AcDbSymbolTableRecord', 'AcDbLinetypeTableRecord' ])
+          _dxf_write(file, 2, 'DOT2')
+          _dxf_write(file, 70, 0)
+          _dxf_write(file, 3, 'Dot (.5x) .....................................')
+          _dxf_write(file, 72, 65)
+          _dxf_write(file, 73, 2)
+          _dxf_write(file, 40, 3.175)
+          _dxf_write(file, 49, 0)
+          _dxf_write(file, 74, 0)
+          _dxf_write(file, 49, -3.175)
+          _dxf_write(file, 74, 0)
+
+          available_line_types = %w[CONTINUOUS DOT2]
+
         _dxf_write(file, 0, 'ENDTAB')
 
 
@@ -748,7 +765,7 @@ module Ladb::OpenCutList
             _dxf_write(file, 2, layer_def.name)
             _dxf_write(file, 70, 0)
             _dxf_write(file, 62, _dxf_convert_color_to_aci(layer_def.color))  # Docs : https://ezdxf.mozman.at/docs/concepts/aci.html
-            _dxf_write(file, 6, layer_def.line_type)
+            _dxf_write(file, 6, available_line_types.include?(layer_def.line_type) ? layer_def.line_type : 'CONTINUOUS')
           end
 
         _dxf_write(file, 0, 'ENDTAB')

@@ -2,21 +2,21 @@ module Ladb::OpenCutList::Kuix
 
   class Bounds3d
 
-    TOP = 0
-    BOTTOM = 1
-    LEFT = 2
-    RIGHT = 3
-    FRONT = 4
-    BACK = 5
+    BOTTOM  = 0
+    TOP     = 1
+    LEFT    = 2
+    RIGHT   = 3
+    FRONT   = 4
+    BACK    = 5
 
-    TOP_LEFT = 0
-    TOP_CENTER = 1
-    TOP_RIGHT = 2
-    CENTER_RIGHT = 3
-    BOTTOM_RIGHT = 4
-    BOTTOM_CENTER = 5
-    BOTTOM_LEFT = 6
-    CENTER_LEFT = 7
+    LEFT_FRONT_BOTTOM = 0
+    RIGHT_FRONT_BOTTOM = 1
+    LEFT_BACK_BOTTOM = 2
+    RIGHT_BACK_BOTTOM = 3
+    LEFT_FRONT_TOP = 4
+    RIGHT_FRONT_TOP = 5
+    LEFT_BACK_TOP = 6
+    RIGHT_BACK_TOP = 7
 
     attr_reader :origin, :size
 
@@ -68,6 +68,16 @@ module Ladb::OpenCutList::Kuix
       @size.depth
     end
 
+    def dim_by_axis(axis)
+      case axis
+      when X_AXIS then width
+      when Y_AXIS then height
+      when Z_AXIS then depth
+      else
+        throw "Invalid dim_by_axis axis (axis=#{axis})"
+      end
+    end
+
     def x_min
       @origin.x
     end
@@ -94,24 +104,100 @@ module Ladb::OpenCutList::Kuix
 
     def corner(index)
       case index
-      when TOP_LEFT
-        Point2d.new(x_min, y_min)
-      when TOP_CENTER
-        Point2d.new(x_min + (x_max - x_min) / 2, y_min)
-      when TOP_RIGHT
-        Point2d.new(x_max, y_min)
-      when CENTER_RIGHT
-        Point2d.new(x_max, y_min + (y_max - y_min) / 2)
-      when BOTTOM_RIGHT
-        Point2d.new(x_max, y_max)
-      when BOTTOM_CENTER
-        Point2d.new(x_min + (x_max - x_min) / 2, y_max)
-      when BOTTOM_LEFT
-        Point2d.new(x_min, y_max)
-      when CENTER_LEFT
-        Point2d.new(x_min, y_min + (y_max - y_min) / 2)
+      when LEFT_FRONT_BOTTOM
+        Point3d.new(x_min, y_min, z_min)
+      when RIGHT_FRONT_BOTTOM
+        Point3d.new(x_max, y_min, z_min)
+      when LEFT_BACK_BOTTOM
+        Point3d.new(x_min, y_max, z_min)
+      when RIGHT_BACK_BOTTOM
+        Point3d.new(x_max, y_max, z_min)
+      when LEFT_FRONT_TOP
+        Point3d.new(x_min, y_min, z_max)
+      when RIGHT_FRONT_TOP
+        Point3d.new(x_max, y_min, z_max)
+      when LEFT_BACK_TOP
+        Point3d.new(x_min, y_max, z_max)
+      when RIGHT_BACK_TOP
+        Point3d.new(x_max, y_max, z_max)
       else
         throw "Invalid corner index (index=#{index})"
+      end
+    end
+
+    def face_center(index)
+      case index
+      when TOP
+        Point3d.new(
+          x_min + (x_max - x_min) / 2,
+          y_min + (y_max - y_min) / 2,
+          z_max
+        )
+      when BOTTOM
+        Point3d.new(
+          x_min + (x_max - x_min) / 2,
+          y_min + (y_max - y_min) / 2,
+          z_min
+        )
+      when LEFT
+        Point3d.new(
+          x_min,
+          y_min + (y_max - y_min) / 2,
+          z_min + (z_max - z_min) / 2
+        )
+      when RIGHT
+        Point3d.new(
+          x_max,
+          y_min + (y_max - y_min) / 2,
+          z_min + (z_max - z_min) / 2
+        )
+      when FRONT
+        Point3d.new(
+          x_min + (x_max - x_min) / 2,
+          y_min,
+          z_min + (z_max - z_min) / 2
+        )
+      when BACK
+        Point3d.new(
+          x_min + (x_max - x_min) / 2,
+          y_max,
+          z_min + (z_max - z_min) / 2
+        )
+      else
+        throw "Invalid face_center index (index=#{index})"
+      end
+    end
+
+    def self.face_opposite(index)
+      case index
+      when BOTTOM then TOP
+      when TOP then BOTTOM
+      when LEFT then RIGHT
+      when RIGHT then LEFT
+      when FRONT then BACK
+      when BACK then FRONT
+      else
+        throw "Invalid face_opposite index (index=#{index})"
+      end
+    end
+
+    def self.faces_by_axis(axis)
+      case axis
+      when X_AXIS then [ LEFT, RIGHT ]
+      when Y_AXIS then [ FRONT, BACK ]
+      when Z_AXIS then [ BOTTOM, TOP ]
+      else
+        throw "Invalid faces_by_axis axis (axis=#{axis})"
+      end
+    end
+
+    def self.axis_by_face(face)
+      case face
+      when LEFT, RIGHT then X_AXIS
+      when FRONT, BACK then Y_AXIS
+      when BOTTOM, TOP then Z_AXIS
+      else
+        throw "Invalid axis_by_face face (face=#{face})"
       end
     end
 
@@ -143,12 +229,53 @@ module Ladb::OpenCutList::Kuix
       Bounds3d.new(center.x, y_min, z_min, 0, height, depth)
     end
 
+    def x_section_min
+      Bounds3d.new(x_min, y_min, z_min, 0, height, depth)
+    end
+
+    def x_section_max
+      Bounds3d.new(x_max, y_min, z_min, 0, height, depth)
+    end
+
     def y_section
       Bounds3d.new(x_min, center.y, z_min, width, 0, depth)
     end
 
+    def y_section_min
+      Bounds3d.new(x_min, y_min, z_min, width, 0, depth)
+    end
+
+    def y_section_max
+      Bounds3d.new(x_min, y_max, z_min, width, 0, depth)
+    end
+
     def z_section
       Bounds3d.new(x_min, y_min, center.z, width, height, 0)
+    end
+
+    def z_section_min
+      Bounds3d.new(x_min, y_min, z_min, width, height, 0)
+    end
+
+    def z_section_max
+      Bounds3d.new(x_min, y_min, z_max, width, height, 0)
+    end
+
+    def section(index)
+      case index
+      when TOP
+        z_section_max
+      when BOTTOM
+        z_section_min
+      when LEFT
+        x_section_min
+      when RIGHT
+        x_section_max
+      when FRONT
+        y_section_min
+      when BACK
+        y_section_max
+      end
     end
 
     # -- Tests --
@@ -166,18 +293,26 @@ module Ladb::OpenCutList::Kuix
     def add!(points)
       points = [ points ] unless points.is_a?(Array)
       points.each do |point|
-        set!(
-          [ x_min, point.x ].min,
-          [ y_min, point.y ].min,
-          [ z_min, point.z ].min,
-          [ x_max, point.x ].max - x_min,
-          [ z_max , point.z ].max - z_min,
-          [ y_max , point.y ].max - y_min
+        old_min = min
+        old_max = max
+        @origin.set!(
+          [ old_min.x, point.x ].min,
+          [ old_min.y, point.y ].min,
+          [ old_min.z, point.z ].min
+        )
+        @size.set!(
+          [ old_max.x, point.x ].max - x_min,
+          [ old_max.y, point.y ].max - y_min,
+          [ old_max.z, point.z ].max - z_min
         )
       end
       self
     end
 
+    def translate!(dx, dy, dz)
+      @origin.translate!(dx, dy, dz)
+      self
+    end
 
     def union!(bounds)
       if is_empty?
@@ -244,16 +379,16 @@ module Ladb::OpenCutList::Kuix
       when FRONT
         [
           Geom::Point3d.new(x_min , y_min  , z_min),
-          Geom::Point3d.new(x_max , y_min  , z_min),
+          Geom::Point3d.new(x_min , y_min  , z_max),
           Geom::Point3d.new(x_max , y_min  , z_max),
-          Geom::Point3d.new(x_min , y_min  , z_max)
+          Geom::Point3d.new(x_max , y_min  , z_min)
         ]
       when BACK
         [
           Geom::Point3d.new(x_min , y_max  , z_min),
-          Geom::Point3d.new(x_max , y_max  , z_min),
+          Geom::Point3d.new(x_min , y_max  , z_max),
           Geom::Point3d.new(x_max , y_max  , z_max),
-          Geom::Point3d.new(x_min , y_max  , z_max)
+          Geom::Point3d.new(x_max , y_max  , z_min)
         ]
       else
         throw "Invalid size index (index=#{index})"

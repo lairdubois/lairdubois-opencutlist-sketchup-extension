@@ -5,11 +5,12 @@ module Ladb::OpenCutList
   require_relative '../helper/layer_visibility_helper'
   require_relative '../helper/face_triangles_helper'
   require_relative '../helper/sanitizer_helper'
-  require_relative '../worker/cutlist/cutlist_generate_worker'
+  require_relative '../helper/part_helper'
   require_relative '../utils/dimension_utils'
   require_relative '../utils/hash_utils'
   require_relative '../utils/view_utils'
   require_relative '../model/geom/size3d'
+  require_relative '../model/cutlist/cutlist'
   require_relative '../manipulator/face_manipulator'
   require_relative '../manipulator/edge_manipulator'
   require_relative '../manipulator/line_manipulator'
@@ -20,6 +21,7 @@ module Ladb::OpenCutList
     include LayerVisibilityHelper
     include FaceTrianglesHelper
     include SanitizerHelper
+    include PartHelper
     include CutlistObserverHelper
 
     MESSAGE_TYPE_DEFAULT = 0
@@ -436,7 +438,7 @@ module Ladb::OpenCutList
           if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
             # Back arrow
-            arrow = Kuix::ArrowMotif.new
+            arrow = Kuix::ArrowMotif3d.new
             arrow.patterns_transformation = size.oriented_transformation
             arrow.bounds.origin.copy!(bounds.min)
             arrow.bounds.size.copy!(bounds)
@@ -446,7 +448,7 @@ module Ladb::OpenCutList
             part_helper.append(arrow)
 
             # Front arrow
-            arrow = Kuix::ArrowMotif.new
+            arrow = Kuix::ArrowMotif3d.new
             arrow.patterns_transformation = size.oriented_transformation
             arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
             arrow.bounds.origin.copy!(bounds.min)
@@ -1115,10 +1117,6 @@ module Ladb::OpenCutList
           _select_active_part_entity
           PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
         }
-        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
-          _select_active_part_entity
-          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'size_increase', dontGenerate: false }")
-        }
         menu.set_validation_proc(item) {
           if active_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
             active_part_material_type == MaterialAttributes::TYPE_SHEET_GOOD ||
@@ -1294,6 +1292,11 @@ module Ladb::OpenCutList
       # Maximize dialog if needed
       PLUGIN.show_tabs_dialog(@tab_name_to_show_on_quit, false) unless @tab_name_to_show_on_quit.nil?
 
+    end
+
+    def onSuspend(view)
+      super
+      return @action_handler.onToolSuspend(self, view) if !@action_handler.nil? && @action_handler.respond_to?(:onToolSuspend)
     end
 
     def onResume(view)
@@ -1632,37 +1635,6 @@ module Ladb::OpenCutList
       end
     end
 
-    def _get_part_entity_path_from_path(path)
-      part_path = path
-      path.reverse_each { |entity|
-        return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
-        part_path = part_path[0...-1]
-      }
-    end
-
-    def _generate_part_from_path(path)
-      return nil unless path.is_a?(Array)
-
-      entity = path.last
-      return nil unless entity.is_a?(Sketchup::Drawingelement)
-
-      worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: entity, active_path: path[0...-1] }))
-      cutlist = worker.run
-
-      part = nil
-      cutlist.groups.each { |group|
-        group.parts.each { |p|
-          if p.def.definition_id == entity.definition.name
-            part = p
-            break
-          end
-        }
-        break unless part.nil?
-      }
-
-      part
-    end
-
   end
 
   # -----
@@ -1679,11 +1651,26 @@ module Ladb::OpenCutList
 
       @picker = nil
 
+      # Internals
+
+      @_model_edit_transformation = IDENTITY
+      @_model_axes_transformation = IDENTITY
+
     end
 
     # -----
 
     def start
+
+      # Cache model useful transformations
+      model = Sketchup.active_model
+      unless model.nil?
+        @_model_edit_transformation = Sketchup.active_model.edit_transform
+        @_model_axes_transformation = Sketchup.active_model.axes.transformation
+      end
+
+      # ---------
+
       set_state(get_startup_state)
       onToolMouseMove(@tool, 0, @tool.last_mouse_x, @tool.last_mouse_y, Sketchup.active_model.active_view)
     end
@@ -1721,7 +1708,7 @@ module Ladb::OpenCutList
     end
 
     def get_state_status(state)
-      @tool.get_action_status(@action)
+      PLUGIN.get_i18n_string("tool.smart_#{@tool.get_stripped_name}.action_#{@action}_state_#{state}_status") + '.'
     end
 
     def get_state_vcb_label(state)
@@ -1756,8 +1743,15 @@ module Ladb::OpenCutList
     end
 
     def onToolUserText(tool, text, view)
-      return true if @state == get_startup_state && !@previous_action_handler.nil? && @previous_action_handler.onToolUserText(tool, text, view)
+      if @state == get_startup_state && !@previous_action_handler.nil? && @previous_action_handler.onToolUserText(tool, text, view)
+        _refresh
+        return true
+      end
       false
+    end
+
+    def onToolCancel(tool, reason, view)
+      @previous_action_handler = nil
     end
 
     # -----
@@ -1862,12 +1856,36 @@ module Ladb::OpenCutList
       k_label
     end
 
+    def _create_floating_rect(
+      start_point_2d:,
+      end_point_2d:,
+      line_width: 1,
+      line_stipple: Kuix::LINE_STIPPLE_SOLID,
+      color: Kuix::COLOR_BLACK
+    )
+
+      x = [ start_point_2d.x, end_point_2d.x ].min
+      y = [ start_point_2d.y, end_point_2d.y ].min
+      width = (end_point_2d.x - start_point_2d.x).abs
+      height = (end_point_2d.y - start_point_2d.y).abs
+
+      k_rect = Kuix::RectangleMotif2d.new
+      k_rect.layout_data = Kuix::StaticLayoutData.new(x, y, width, height, Kuix::Anchor.new(Kuix::Anchor::TOP_LEFT))
+      k_rect.line_width = line_width
+      k_rect.line_stipple = line_stipple
+      k_rect.set_style_attribute(:color, color)
+      k_rect.hittable = false
+
+      k_rect
+    end
+
     # -----
 
     def _get_edit_transformation
       model = Sketchup.active_model
-      return model.axes.transformation if model.nil? || (edit_transform = model.edit_transform).nil? || edit_transform.identity?
-      edit_transform
+      return IDENTITY if model.nil?
+      return @_model_axes_transformation if @_model_edit_transformation.nil? || @_model_edit_transformation.identity?
+      @_model_edit_transformation
     end
 
     def _get_active_x_axis
@@ -1895,9 +1913,206 @@ module Ladb::OpenCutList
 
   end
 
+  module SmartActionHandlerSelectionHelper
+
+    # -----
+
+    def onActiveSelectionChanged(path, entities)
+      _reset_transformations
+      _reset_drawing_def
+      false
+    end
+
+    # -----
+
+    def has_active_selection?
+      @active_selection_path.is_a?(Array) && @active_selection_instances.is_a?(Array) && !@active_selection_instances.empty?
+    end
+
+    def get_active_selection_path
+      @active_selection_path
+    end
+
+    def get_active_selection_instances
+      @active_selection_instances
+    end
+
+    # -----
+
+    protected
+
+    def _reset
+      @active_selection_path = nil
+      @active_selection_instances = nil
+      _reset_transformations
+      _reset_drawing_def
+      super
+    end
+
+    def _reset_transformations
+      @global_context_transformation = nil
+      @global_instance_transformation = nil
+    end
+
+    def _reset_drawing_def
+      @drawing_def = nil
+      @drawing_def_edit_bounds = nil
+    end
+
+    # --
+
+    def _reset_active_selection
+      _set_active_selection(nil, nil)
+    end
+
+    def _set_active_selection(path, entities)
+      if @active_selection_path != path || @active_selection_instances != entities # Has changed?
+
+        @active_selection_path = path
+        @active_selection_instances = entities
+
+        onActiveSelectionChanged(path, entities)
+
+      end
+    end
+
+    # --
+
+    def _get_global_context_transformation(default = IDENTITY)
+      return @global_context_transformation unless @global_context_transformation.nil?
+      @global_context_transformation = default
+      if @active_selection_path.is_a?(Array) &&
+         !(model = Sketchup.active_model).nil? &&
+         (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_selection_path.last)
+        @global_context_transformation = PathUtils.get_transformation(@active_selection_path, IDENTITY)
+      end
+      @global_context_transformation
+    end
+
+    def _get_global_instance_transformation(default = IDENTITY)
+      return @global_instance_transformation unless @global_instance_transformation.nil?
+      @global_instance_transformation = default
+      if @active_selection_instances.is_a?(Array) && @active_selection_instances.one?
+        if @active_selection_path.is_a?(Array) &&
+           !(model = Sketchup.active_model).nil? &&
+           (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_selection_instances.first)
+          @global_instance_transformation = PathUtils.get_transformation(@active_selection_path + [ @active_selection_instances.first ], IDENTITY)
+        end
+      else
+        @global_instance_transformation = _get_global_context_transformation(default)
+      end
+      @global_instance_transformation
+    end
+
+    # -- Entities --
+
+    def _get_container
+      return @active_selection_path.last if @active_selection_path.is_a?(Array)
+      nil
+    end
+
+    def _get_instances
+      return @active_selection_instances if @active_selection_instances.is_a?(Array)
+      nil
+    end
+
+    def _hide_instances
+      return if (instances = _get_instances).nil? || @unhide_local_instances_transformations.is_a?(Hash)
+      _get_global_instance_transformation(nil)
+      _get_drawing_def
+      @unhide_local_instances_transformations = instances.map { |instance| [ instance, Geom::Transformation.new(instance.transformation) ] }.to_h
+      instances.each { |instance| instance.move!(Geom::Transformation.scaling(0, 0, 0)) }
+    end
+
+    def _unhide_instances
+      return if !@unhide_local_instances_transformations.is_a?(Hash) || (instances = _get_instances).nil?
+      instances.each { |instance| instance.move!(@unhide_local_instances_transformations[instance]) }
+      @unhide_local_instances_transformations = nil
+    end
+
+    # --
+
+    def _get_drawing_def_ipaths
+      return nil if @active_selection_path.nil? || (instances = _get_instances).nil?
+      instances.map { |instance| Sketchup::InstancePath.new(@active_selection_path + [ instance ]) }
+    end
+
+    def _get_drawing_def_parameters
+      {
+        ignore_surfaces: true,
+        ignore_faces: false,
+        ignore_edges: true,
+        ignore_soft_edges: true,
+        ignore_clines: true,
+      }
+    end
+
+    def _get_drawing_def
+      return nil if (ipaths = _get_drawing_def_ipaths).nil?
+      return @drawing_def unless @drawing_def.nil?
+      return nil if Sketchup.active_model.nil?
+      @drawing_def = CommonDrawingDecompositionWorker.new(ipaths, **_get_drawing_def_parameters).run
+    end
+
+    def _get_drawing_def_edit_bounds(drawing_def, et)
+      @drawing_def_edit_bounds ||= {}
+      return @drawing_def_edit_bounds[et] if @drawing_def_edit_bounds.key?(et)
+      if et == drawing_def.transformation
+        eb = drawing_def.bounds
+      else
+        eb = Geom::BoundingBox.new
+        if drawing_def.is_a?(DrawingContainerDef)
+
+          eti = et.inverse
+
+          # TODO Improve the way to compute the edit bounds
+
+          fn = lambda do |drawing_container_def|
+
+            eb.add(drawing_container_def.face_manipulators
+                                        .flat_map { |manipulator| manipulator.outer_loop_manipulator.points
+                                                                             .map { |point| point.transform(eti * drawing_def.transformation)} }
+            ) if drawing_container_def.face_manipulators.any?
+            eb.add(drawing_container_def.cline_manipulators
+                                        .flat_map { |manipulator| manipulator.points
+                                                                             .map { |point| point.transform(eti * drawing_def.transformation) } }
+            ) if drawing_container_def.cline_manipulators.any?
+
+            drawing_container_def.container_defs.each do |child_drawing_container_def|
+              fn.call(child_drawing_container_def)
+            end
+
+          end
+
+          fn.call(drawing_def)
+
+        end
+      end
+      @drawing_def_edit_bounds[et] = eb
+    end
+
+    # -- UTILS
+
+    def _make_unique_groups_in_path(path)
+      path.each_with_index do |entity, index|
+        if entity.is_a?(Sketchup::Group)
+          new_entity = entity.make_unique
+          if new_entity != entity && index < path.size - 1
+            next_entity = path[index + 1]
+            next_entity_pos = entity.entities.to_a.index(next_entity)
+            path[index + 1] = new_entity.entities[next_entity_pos]
+          end
+        end
+      end
+    end
+
+  end
+
   module SmartActionHandlerPartHelper
 
+    include SmartActionHandlerSelectionHelper
     include FaceTrianglesHelper
+    include PartHelper
 
     COLOR_PART = Sketchup::Color.new(254, 222, 11, 200).freeze
     COLOR_PART_HIGHLIGHTED = Sketchup::Color.new(254, 222, 11, 255).freeze
@@ -1906,28 +2121,25 @@ module Ladb::OpenCutList
     COLOR_INSTANCE_HIGHLIGHTED = Sketchup::Color.new(254, 222, 11, 175).freeze
 
     LAYER_3D_PART_PREVIEW = 0
+    LAYER_3D_PART_SIBLING_PREVIEW = 1
 
     # -----
 
     def onToolLButtonDown(tool, flags, x, y, view)
-      unless @active_part_entity_path.nil?
-        _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, true)
-      end
+      _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, true) if @active_part_entity_path.is_a?(Array)
+      _preview_part_siblings(LAYER_3D_PART_SIBLING_PREVIEW, true)
       false
     end
 
     def onToolLButtonUp(tool, flags, x, y, view)
-      unless @active_part_entity_path.nil?
-        _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, false)
-      end
+      _preview_part(@active_part_entity_path, @active_part, LAYER_3D_PART_PREVIEW, false) if @active_part_entity_path.is_a?(Array)
+      _preview_part_siblings(LAYER_3D_PART_SIBLING_PREVIEW, false)
       false
     end
 
     def onActivePartChanged(part_entity_path, part, highlighted = false)
-      @global_context_transformation = nil
-      @global_instance_transformation = nil
-      @drawing_def = nil
       _preview_part(part_entity_path, part, LAYER_3D_PART_PREVIEW, highlighted)
+      _preview_part_siblings(LAYER_3D_PART_SIBLING_PREVIEW, highlighted)
       false
     end
 
@@ -1947,10 +2159,6 @@ module Ladb::OpenCutList
         menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_axes_properties')) {
           _select_active_part_entity
           PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'axes', dontGenerate: false }")
-        }
-        item = menu.add_item(PLUGIN.get_i18n_string('core.menu.item.edit_part_size_increase_properties')) {
-          _select_active_part_entity
-          PLUGIN.execute_tabs_dialog_command_on_tab('cutlist', 'edit_part', "{ part_id: '#{active_part_id}', tab: 'size_increase', dontGenerate: false }")
         }
         menu.set_validation_proc(item) {
           if active_part_material_type == MaterialAttributes::TYPE_SOLID_WOOD ||
@@ -2014,35 +2222,74 @@ module Ladb::OpenCutList
       end
     end
 
+    # -- Part --
+
+    def has_active_part?
+      @active_part.is_a?(Part)
+    end
+
+    def get_active_part
+      @active_part
+    end
+
+    def get_active_part_entity_path
+      @active_part_entity_path
+    end
+
+    def has_active_part_siblings?
+      @active_part_siblings.is_a?(Array) && @active_part_siblings.any?
+    end
+
+    def get_active_part_sibling_entity_paths
+      @active_part_sibling_entity_paths
+    end
+
+    def get_active_part_siblings
+      @active_part_siblings
+    end
+
     protected
 
     # --
 
     def _reset
-      super
       @active_part_entity_path = nil
       @active_part = nil
-      @global_context_transformation = nil
-      @global_instance_transformation = nil
-      @drawing_def = nil
+      @active_part_sibling_entity_paths = nil
+      @active_part_siblings = nil
+      super
     end
 
     # --
 
     def _pick_part(picker, view)
-      if picker.picked_face_path
-        picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)
-        unless picked_part_entity_path.nil?
-
-          picked_part = _generate_part_from_path(picked_part_entity_path)
-          unless picked_part.nil?
+      if picker.picked_face_path.is_a?(Array)
+        if (picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)).is_a?(Array)
+          _make_unique_groups_in_path(picked_part_entity_path)
+          if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
             _set_active_part(picked_part_entity_path, picked_part)
             return
           end
-
         end
       end
       _reset_active_part
+    end
+
+    def _pick_part_siblings?
+      false
+    end
+
+    def _pick_part_sibling(picker, view)
+      return unless _pick_part_siblings?
+      if @active_part_entity_path.is_a?(Array) && picker.picked_face_path.is_a?(Array)
+        if (picked_part_entity_path = _get_part_entity_path_from_path(picker.picked_face_path)).is_a?(Array)
+          return if picked_part_entity_path == @active_part_entity_path                   # Abandon if part seems to be the active one
+          return if picked_part_entity_path[0...-1] != @active_part_entity_path[0...-1]   # Abandon if part does not have the same ancestors
+          if (picked_part = _generate_part_from_path(picked_part_entity_path)).is_a?(Part)
+            _add_part_sibling(picked_part_entity_path, picked_part) if picked_part.id == @active_part.id
+          end
+        end
+      end
     end
 
     # --
@@ -2103,7 +2350,7 @@ module Ladb::OpenCutList
           if _preview_arrows?
 
             # Back arrow
-            k_arrow = Kuix::ArrowMotif.new
+            k_arrow = Kuix::ArrowMotif3d.new
             k_arrow.bounds.copy!(eb)
             k_arrow.color = Kuix::COLOR_WHITE
             k_arrow.line_width = 2
@@ -2112,7 +2359,7 @@ module Ladb::OpenCutList
             @tool.append_3d(k_arrow, layer)
 
             # Front arrow
-            k_arrow = Kuix::ArrowMotif.new
+            k_arrow = Kuix::ArrowMotif3d.new
             k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
             k_arrow.bounds.copy!(eb)
             k_arrow.color = Kuix::COLOR_WHITE
@@ -2124,7 +2371,7 @@ module Ladb::OpenCutList
 
           if _preview_box?
 
-            k_box = Kuix::BoxMotif.new
+            k_box = Kuix::BoxMotif3d.new
             k_box.bounds.copy!(eb)
             k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
             k_box.color = Kuix::COLOR_BLACK
@@ -2156,6 +2403,27 @@ module Ladb::OpenCutList
       end
     end
 
+    def _preview_part_siblings(layer = LAYER_3D_PART_SIBLING_PREVIEW, highlighted = false)
+      @tool.remove_3d(layer)
+      if @active_part_sibling_entity_paths.is_a?(Array)
+
+        # Mesh
+        @active_part_sibling_entity_paths.each do |path|
+
+          triangles = _compute_children_faces_triangles(path.last.definition.entities)
+          t = PathUtils::get_transformation(path)
+
+          k_mesh = Kuix::Mesh.new
+          k_mesh.add_triangles(triangles)
+          k_mesh.background_color = highlighted ? COLOR_PART_HIGHLIGHTED : COLOR_PART
+          k_mesh.transformation = t
+          @tool.append_3d(k_mesh, layer)
+
+        end
+
+      end
+    end
+
     # --
 
     def _refresh_active_part(highlighted = false)
@@ -2167,17 +2435,23 @@ module Ladb::OpenCutList
     end
 
     def _set_active_part(part_entity_path, part, highlighted = false)
-
-      changed = @active_part_entity_path != part_entity_path
-      if changed
+      if @active_part_entity_path != part_entity_path # Has changed?
 
         @active_part_entity_path = part_entity_path
         @active_part = part
 
+        @active_part_sibling_entity_paths = nil
+        @active_part_siblings = nil
+
+        if part_entity_path.is_a?(Array)
+          _set_active_selection(part_entity_path[0...-1], [ part_entity_path[-1] ])
+        else
+          _set_active_selection(nil, nil)
+        end
+
         onActivePartChanged(part_entity_path, part, highlighted)
 
       end
-
     end
 
     def _get_active_part_name(sanitize_for_filename = false)
@@ -2221,55 +2495,28 @@ module Ladb::OpenCutList
       end
     end
 
-    # --
-
-    def _get_global_context_transformation(default = IDENTITY)
-      return @global_context_transformation unless @global_context_transformation.nil?
-      @global_context_transformation = default
-      if @active_part_entity_path.is_a?(Array) &&
-         @active_part_entity_path.length > 1 &&
-         !(model = Sketchup.active_model).nil? &&
-         (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_part_entity_path[-2])
-        @global_context_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-2], IDENTITY)
-      end
-      @global_context_transformation
-    end
-
-    def _get_global_instance_transformation(default = IDENTITY)
-      return @global_instance_transformation unless @global_instance_transformation.nil?
-      @global_instance_transformation = default
-      if @active_part_entity_path.is_a?(Array) &&
-         @active_part_entity_path.length > 0 &&
-         !(model = Sketchup.active_model).nil? &&
-         (!(active_path = model.active_path).is_a?(Array) || active_path.last != @active_part_entity_path[-1])
-        @global_instance_transformation = PathUtils.get_transformation(@active_part_entity_path[0..-1], IDENTITY)
-      end
-      @global_instance_transformation
+    def _add_part_sibling(part_entity_path, part)
+      return true if @active_part_sibling_entity_paths.is_a?(Array) && @active_part_sibling_entity_paths.include?(part_entity_path)
+      (@active_part_sibling_entity_paths ||= []) << part_entity_path
+      (@active_part_siblings ||= []) << part
+      onActivePartChanged(@active_part_entity_path, @active_part, false)
     end
 
     # -- INSTANCE --
 
     def _get_instance
-      return @active_part_entity_path.last if @active_part_entity_path.is_a?(Array)
+      if (instances = _get_instances).is_a?(Array)
+        return instances.last
+      end
       nil
     end
 
     def _hide_instance
-      return if (instance = _get_instance).nil?
-      _get_global_instance_transformation
-      _get_drawing_def
-      @unhide_local_instance_transformation = Geom::Transformation.new(instance.transformation)
-      begin
-        instance.move!(Geom::Transformation.scaling(0, 0, 0)) # Now failed since SU 2026 RC0 :(
-      rescue
-        @unhide_local_instance_transformation = nil
-      end
+      _hide_instances
     end
 
     def _unhide_instance
-      return if @unhide_local_instance_transformation.nil? || (instance = _get_instance).nil?
-      instance.move!(@unhide_local_instance_transformation)
-      @unhide_local_instance_transformation = nil
+      _unhide_instances
     end
 
     def _select_instance
@@ -2281,6 +2528,32 @@ module Ladb::OpenCutList
       end
     end
 
+    def _get_sibling_instances
+      return @active_part_sibling_entity_paths.map { |path| path.last } if @active_part_sibling_entity_paths.is_a?(Array)
+      nil
+    end
+
+    def _hide_sibling_instances
+      return if (sibling_instances = _get_sibling_instances).nil?
+      @unhide_local_sibling_instance_transformations = sibling_instances.map { |sibling_instance| Geom::Transformation.new(sibling_instance.transformation) }
+      sibling_instances.each { |sibling_instance| sibling_instance.move!(Geom::Transformation.scaling(0)) unless sibling_instance.deleted? }
+    end
+
+    def _unhide_sibling_instances
+      return if !@unhide_local_sibling_instance_transformations.is_a?(Array) || (sibling_instances = _get_sibling_instances).nil?
+      sibling_instances.each_with_index { |sibling_instance, i| sibling_instance.move!(@unhide_local_sibling_instance_transformations[i]) unless sibling_instance.deleted? }
+      @unhide_local_sibling_instance_transformations = nil
+    end
+
+    def _select_sibling_instances
+      model = Sketchup.active_model
+      if model && !(sibling_instances = _get_sibling_instances).nil?
+        selection = model.selection
+        selection.clear
+        selection.add(sibling_instances)
+      end
+    end
+
     # --
 
     def _get_drawing_def_parameters
@@ -2289,52 +2562,12 @@ module Ladb::OpenCutList
         ignore_faces: false,
         ignore_edges: true,
         ignore_soft_edges: true,
-        ignore_clines: true
+        ignore_clines: true,
+        container_validator: CommonDrawingDecompositionWorker::CONTAINER_VALIDATOR_PART,
       }
-    end
-
-    def _get_drawing_def
-      return nil if @active_part_entity_path.nil?
-      return @drawing_def unless @drawing_def.nil?
-
-      model = Sketchup.active_model
-      return nil if model.nil?
-
-      @drawing_def = CommonDrawingDecompositionWorker.new(@active_part_entity_path, **_get_drawing_def_parameters).run
     end
 
     # -- UTILS --
-
-    def _get_part_entity_path_from_path(path)
-      part_path = path
-      path.reverse_each { |entity|
-        return part_path if entity.is_a?(Sketchup::ComponentInstance) && !entity.definition.behavior.cuts_opening? && !entity.definition.behavior.always_face_camera?
-        part_path = part_path[0...-1]
-      }
-    end
-
-    def _generate_part_from_path(path)
-      return nil unless path.is_a?(Array)
-
-      entity = path.last
-      return nil unless entity.is_a?(Sketchup::Drawingelement)
-
-      worker = CutlistGenerateWorker.new(**HashUtils.symbolize_keys(PLUGIN.get_model_preset('cutlist_options')).merge({ active_entity: entity, active_path: path[0...-1] }))
-      cutlist = worker.run
-
-      part = nil
-      cutlist.groups.each { |group|
-        group.parts.each { |p|
-          if p.def.definition_id == entity.definition.name
-            part = p
-            break
-          end
-        }
-        break unless part.nil?
-      }
-
-      part
-    end
 
     def _instances_to_paths(instances, instance_paths, entities, path = [])
       entities.each do |entity|
@@ -2351,6 +2584,478 @@ module Ladb::OpenCutList
           end
         end
       end
+    end
+
+  end
+
+  class SmartSelectActionHandler < SmartActionHandler
+
+    include SmartActionHandlerPartHelper
+
+    STATE_SELECT = 0
+    STATE_SELECT_RECT = 5
+    STATE_SELECT_TREE = 6
+    STATE_SELECT_SIBLINGS = 4
+
+    LAYER_2D_FLOATING_TOOLS = 10
+
+    def initialize(action, tool, previous_action_handler = nil)
+      super
+
+      @mouse_down_point_2d = nil
+      @mouse_move_point_2d = nil
+
+      @startup_state = STATE_SELECT
+
+    end
+
+    # ------
+
+    def start
+      super
+
+      return if (model = Sketchup.active_model).nil?
+      selection = model.selection
+
+      # Try to copy the previous action handler selection
+      if @previous_action_handler && _start_with_previous_selection?
+
+        if (part_entity_path = @previous_action_handler.get_active_part_entity_path) &&
+           (part = @previous_action_handler.get_active_part)
+
+          _set_active_part(part_entity_path, part)
+
+          if _pick_part_siblings?
+
+            if (part_sibling_entity_paths = @previous_action_handler.get_active_part_sibling_entity_paths) &&
+               (part_siblings = @previous_action_handler.get_active_part_siblings)
+
+              part_sibling_entity_paths.zip(part_siblings).each do |part_sibling_entity_path, part_sibling|
+                _add_part_sibling(part_sibling_entity_path, part_sibling)
+              end
+
+            end
+
+          end
+
+          onPartSelected
+
+        elsif (selection_path = @previous_action_handler.get_active_selection_path) &&
+              (instances = @previous_action_handler.get_active_selection_instances)
+
+          _reset_active_part
+          _set_active_selection(selection_path, instances)
+
+          onPartSelected
+
+        end
+
+      else
+
+        if (entities = selection.select { |entity| entity.respond_to?(:transformation) }).any?
+
+          entities = entities[0,1] unless _allows_multiple_selections?
+          active_path = model.active_path.is_a?(Array) ? model.active_path : []
+
+          if entities.one?
+            path = active_path + [ entities.first ]
+            unless (part = _generate_part_from_path(path)).nil?
+              _set_active_part(path, part)
+            end
+          end
+
+          unless has_active_part?
+            _set_active_selection(active_path, entities)
+          end
+
+          onPartSelected
+
+        end
+
+      end
+
+      # Clear current selection
+      selection.clear if _clear_selection_on_start
+
+    end
+
+    # -- STATE --
+
+    def get_startup_state
+      @startup_state
+    end
+
+    def get_state_cursor(state)
+
+      case state
+      when STATE_SELECT
+        return @tool.cursor_select_part
+
+      when STATE_SELECT_SIBLINGS
+        return @tool.cursor_select_part_plus
+
+      when STATE_SELECT_RECT
+        return @tool.cursor_select_rect
+      end
+
+      super
+    end
+
+    def get_state_picker(state)
+
+      case state
+      when STATE_SELECT, STATE_SELECT_SIBLINGS
+        return SmartPicker.new(tool: @tool, observer: self, pick_point: false)
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+
+      case state
+
+      when STATE_SELECT
+        return PLUGIN.get_i18n_string("tool.smart_select.state_0_status") +
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string("tool.smart_select.state_0_to_6_status") + '.'
+
+      when STATE_SELECT_SIBLINGS, STATE_SELECT_RECT, STATE_SELECT_TREE
+        return PLUGIN.get_i18n_string("tool.smart_select.state_#{state}_status") + '.'
+
+      end
+
+      super
+    end
+
+    # -----
+
+    def onToolSuspend(tool, view)
+      tool.remove_2d(LAYER_2D_FLOATING_TOOLS) if STATE_SELECT_TREE
+    end
+
+    def onToolCancel(tool, reason, view)
+      super
+
+      case @state
+
+      when STATE_SELECT_SIBLINGS, STATE_SELECT_RECT
+        @mouse_down_point_2d = nil
+        @mouse_move_point_2d = nil
+
+      end
+
+      true
+    end
+
+    def onToolMouseMove(tool, flags, x, y, view)
+      super
+
+      return true if x < 0 || y < 0
+
+      case @state
+
+      when STATE_SELECT
+
+        if @mouse_down_point_2d && @mouse_down_point_2d.distance(Geom::Point3d.new(x, y, 0)) > 20  # Drag handled only if the distance is > 20px
+          set_state(STATE_SELECT_RECT)
+        end
+
+      when STATE_SELECT_RECT
+
+        @tool.remove_all_2d
+
+        unless @mouse_down_point_2d.nil?
+          @mouse_move_point_2d = Geom::Point3d.new(x, y)
+          _preview_select_rect(view)
+        end
+
+      end
+
+      view.tooltip = @mouse_ip.tooltip
+      view.invalidate
+
+      false
+    end
+
+    def onToolLButtonDown(tool, flags, x, y, view)
+
+      case @state
+
+      when STATE_SELECT
+        if has_active_part? && _pick_part_siblings?
+          set_state(STATE_SELECT_SIBLINGS)
+          return true
+        else
+          @mouse_down_point_2d = Geom::Point3d.new(x, y)
+          return true
+        end
+
+      end
+
+    end
+
+    def onToolLButtonUp(tool, flags, x, y, view)
+
+      @mouse_down_point = nil
+
+      case @state
+
+      when STATE_SELECT, STATE_SELECT_SIBLINGS
+        @mouse_down_point_2d = nil
+        @mouse_move_point_2d = nil
+        unless has_active_part?
+          Sketchup.active_model.selection.clear
+          return true
+        end
+        onPartSelected
+        return true
+
+      when STATE_SELECT_RECT
+        if @mouse_down_point_2d.nil?
+          set_state(STATE_SELECT)
+          return true
+        else
+
+          pick_type = Sketchup::PickHelper::PICK_CROSSING # TODO : @mouse_down_point_2d.x < x ? Sketchup::PickHelper::PICK_INSIDE : Sketchup::PickHelper::PICK_CROSSING
+
+          ph = view.pick_helper(x, y)
+          ph.window_pick(
+            @mouse_down_point_2d,
+            Geom::Point3d.new(x, y),
+            pick_type
+          )
+
+          @tool.remove_all_2d
+          @mouse_down_point_2d = nil
+          @mouse_move_point_2d = nil
+
+          if ph.count > 0
+
+            model = Sketchup.active_model
+            active_path = model.active_path.is_a?(Array) ? model.active_path : []
+            active_path_length = active_path.length
+
+            instances = Set[]
+            (0...ph.count).each do |i|
+              path = ph.path_at(i)
+              next if path.first(active_path_length) != active_path
+              if path == active_path
+                model.active_entities.each do |entity|
+                  instances << entity if entity.respond_to?(:transformation)
+                end
+                next
+              end
+              entity, _ = path[active_path_length, 1]
+              instances << entity if entity.respond_to?(:transformation)
+            end
+
+            if instances.any?
+
+              _reset_active_part
+              _set_active_selection(active_path, instances.to_a)
+
+              onPartSelected
+
+              return true
+            end
+
+          end
+          Sketchup.active_model.selection.clear
+          set_state(STATE_SELECT)
+        end
+
+      end
+
+    end
+
+    def onToolMouseLeave(tool, view)
+      return true if @state == STATE_SELECT_TREE
+      super
+    end
+
+    def onToolKeyDown(tool, key, repeat, flags, view)
+
+      case @state
+
+      when STATE_SELECT
+        if tool.is_key_ctrl_or_option?(key)
+          if has_active_part?
+            set_state(STATE_SELECT_TREE)
+          else
+            tool.notify_warnings([ 'tool.smart_select.warning.no_active_part' ])
+          end
+          return true
+        end
+
+      end
+
+      false
+    end
+
+    def onToolKeyUpExtended(tool, key, repeat, flags, view, after_down, is_quick)
+
+      case @state
+
+      when STATE_SELECT_TREE
+        if tool.is_key_ctrl_or_option?(key)
+          Sketchup.active_model.selection.clear
+          tool.remove_2d(LAYER_2D_FLOATING_TOOLS)
+          set_state(STATE_SELECT)
+          _refresh
+          return true
+        end
+
+      end
+
+      false
+    end
+
+    def onPickerChanged(picker, view)
+
+      case @state
+
+      when STATE_SELECT
+        _pick_part(picker, view)
+
+      when STATE_SELECT_SIBLINGS
+        _pick_part_sibling(picker, view)
+
+      end
+
+      super
+    end
+
+    def onStateChanged(state)
+      super
+
+      @tool.remove_tooltip
+
+      unless _get_instances.nil?
+
+        case state
+
+        when STATE_SELECT
+          _unhide_instances
+
+        when STATE_SELECT_RECT
+          _reset_active_part
+          _reset_active_selection
+
+        when STATE_SELECT_TREE
+
+          part = get_active_part
+          path = get_active_part_entity_path
+          active_path_depth = Sketchup.active_model.active_path.is_a?(Array) ? Sketchup.active_model.active_path.size : 0
+
+          @tool.remove_all_2d
+          @tool.remove_all_3d
+          _reset_active_part
+
+          unit = @tool.get_unit
+
+          k_panel = Kuix::Panel.new
+          k_panel.layout_data = Kuix::StaticLayoutData.new(tool.last_mouse_x, tool.last_mouse_y, -1, -1, Kuix::Anchor.new(Kuix::Anchor::BOTTOM_RIGHT))
+          k_panel.layout = Kuix::GridLayout.new(1, path.size, 0, unit * 0.25)
+          k_panel.border.set_all!(unit * 0.25)
+          k_panel.padding.set_all!(unit * 0.25)
+          k_panel.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT)
+          k_panel.set_style_attribute(:border_color, ColorUtils.color_darken(SmartTool::COLOR_BRAND_LIGHT, 0.1))
+          @tool.append_2d(k_panel, LAYER_2D_FLOATING_TOOLS)
+
+          path.each_with_index do |entity, depth|
+
+            disabled = depth < active_path_depth
+            text_color = disabled ? SmartTool::COLOR_BRAND_LIGHT : Kuix::COLOR_BLACK
+
+            k_btn = Kuix::Button.new
+            k_btn.layout = Kuix::InlineLayout.new(true, unit * 0.5, Kuix::Anchor.new(Kuix::Anchor::LEFT))
+            k_btn.margin.left = unit * depth
+            k_btn.border.set_all!(unit * 0.5)
+            k_btn.padding.set_all!(unit)
+            k_btn.set_style_attribute(:background_color, Kuix::COLOR_WHITE)
+            k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND_LIGHT, :hover)
+            k_btn.set_style_attribute(:background_color, SmartTool::COLOR_BRAND, :active)
+            k_btn.set_style_attribute(:border_color, Kuix::COLOR_WHITE)
+            k_btn.set_style_attribute(:border_color, SmartTool::COLOR_BRAND, :hover)
+            k_btn.disabled = disabled
+            k_btn.on(:enter) do
+              if entity == path.last
+                _preview_part(path, part)
+              else
+                tool.remove_3d(LAYER_3D_PART_PREVIEW)
+                Sketchup.active_model.selection.clear
+                Sketchup.active_model.selection.add(entity)
+              end
+            end
+            k_btn.on(:leave) do
+              tool.remove_3d(LAYER_3D_PART_PREVIEW)
+              Sketchup.active_model.selection.clear
+            end
+            k_btn.on(:click) do
+              Sketchup.active_model.selection.clear
+              _reset_active_part
+              _set_active_selection(path[0...depth-path.size], [ entity ])
+              onPartSelected
+            end
+            k_panel.append(k_btn)
+
+            unless entity.name.empty?
+              k_label = Kuix::Label.new
+              k_label.text = entity.name
+              k_label.text_size = unit * 3
+              k_label.text_bold = true
+              k_label.set_style_attribute(:color, text_color)
+              k_label.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+              k_btn.append(k_label)
+            end
+
+            unless entity.definition.group? && !entity.name.empty?
+              k_label = Kuix::Label.new
+              k_label.text = entity.definition.group? ? PLUGIN.get_i18n_string('tab.outliner.type_1') : "<#{entity.definition.name}>"
+              k_label.text_size = unit * 3
+              k_label.set_style_attribute(:color, text_color)
+              k_label.set_style_attribute(:color, Kuix::COLOR_WHITE, :active)
+              k_btn.append(k_label)
+            end
+
+          end
+
+        end
+
+      end
+
+    end
+
+    def onPartSelected
+    end
+
+    # -----
+
+    protected
+
+    def _start_with_previous_selection?
+      false
+    end
+
+    def _allows_multiple_selections?
+      false
+    end
+
+    def _clear_selection_on_start
+      false
+    end
+
+    # -----
+
+    def _preview_select_rect(view)
+
+      k_rect = _create_floating_rect(
+        start_point_2d: @mouse_down_point_2d,
+        end_point_2d: @mouse_move_point_2d,
+        line_stipple: Kuix::LINE_STIPPLE_LONG_DASHES # TODO : @mouse_down_point_2d.x < @mouse_move_point_2d.x ? Kuix::LINE_STIPPLE_SOLID : Kuix::LINE_STIPPLE_LONG_DASHES,
+      )
+      @tool.append_2d(k_rect)
+
     end
 
   end

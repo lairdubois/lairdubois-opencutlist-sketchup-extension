@@ -299,20 +299,6 @@ module Ladb::OpenCutList
         arrow_color = part.auto_oriented ? COLOR_ARROW_AUTO_ORIENTED : COLOR_ARROW
         arrow_line_width = 2
 
-        increases = [ 0, 0, 0 ]
-        if part.length_increased || part.width_increased || part.thickness_increased
-          part.def.size.axes.each_with_index do |axis, index|
-            case index
-            when 0
-              increases[axis == X_AXIS ? 0 : (axis == Y_AXIS ? 1 : 2)] = part.def.length_increase.to_f if part.length_increased
-            when 1
-              increases[axis == X_AXIS ? 0 : (axis == Y_AXIS ? 1 : 2)] = part.def.width_increase.to_f if part.width_increased
-            when 2
-              increases[axis == X_AXIS ? 0 : (axis == Y_AXIS ? 1 : 2)] = part.def.thickness_increase.to_f if part.thickness_increased
-            end
-          end
-        end
-
         k_group = Kuix::Group.new
         k_group.transformation = instance_info.transformation
         @overlay_layer.append(k_group)
@@ -347,7 +333,7 @@ module Ladb::OpenCutList
             bounds.add(_compute_children_faces_triangles(instance_info.entity.definition.entities, t.inverse))
 
             # Front arrow
-            k_arrow = Kuix::ArrowMotif.new
+            k_arrow = Kuix::ArrowMotif3d.new
             k_arrow.patterns_transformation = Geom::Transformation.translation(Z_AXIS)
             k_arrow.bounds.origin.copy!(bounds.min)
             k_arrow.bounds.size.copy!(bounds)
@@ -357,11 +343,8 @@ module Ladb::OpenCutList
             k_group.append(k_arrow)
 
             # Box helper
-            k_box = Kuix::BoxMotif.new
+            k_box = Kuix::BoxMotif3d.new
             k_box.bounds.copy!(bounds)
-            k_box.bounds.size.width += increases[0] / part.def.scale.x
-            k_box.bounds.size.height += increases[1] / part.def.scale.y
-            k_box.bounds.size.depth += increases[2] / part.def.scale.z
             k_box.color = COLOR_ACTION
             k_box.line_width = 1
             k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -442,7 +425,7 @@ module Ladb::OpenCutList
           r_t *= Geom::Transformation.translation(Geom::Vector3d.new(r_width / -2.0, r_height / -2.0, 0))
           r_t *= Geom::Transformation.scaling(ORIGIN, r_width, r_height, 0)
 
-          k_rectangle = Kuix::RectangleMotif.new
+          k_rectangle = Kuix::RectangleMotif3d.new
           k_rectangle.bounds.size.set!(1, 1, 0)
           k_rectangle.transformation = r_t
           k_rectangle.color = r_color
@@ -476,7 +459,7 @@ module Ladb::OpenCutList
         if part.group.material_type != MaterialAttributes::TYPE_HARDWARE
 
           # Back arrow
-          k_arrow = Kuix::ArrowMotif.new
+          k_arrow = Kuix::ArrowMotif3d.new
           k_arrow.patterns_transformation = instance_info.size.oriented_transformation
           k_arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
           k_arrow.bounds.size.copy!(instance_info.definition_bounds)
@@ -486,7 +469,7 @@ module Ladb::OpenCutList
           k_group.append(k_arrow)
 
           # Front arrow
-          k_arrow = Kuix::ArrowMotif.new
+          k_arrow = Kuix::ArrowMotif3d.new
           k_arrow.patterns_transformation = instance_info.size.oriented_transformation
           k_arrow.patterns_transformation *= Geom::Transformation.translation(Z_AXIS)
           k_arrow.bounds.origin.copy!(instance_info.definition_bounds.min)
@@ -496,11 +479,8 @@ module Ladb::OpenCutList
           k_group.append(k_arrow)
 
           # Bounding box helper
-          k_box = Kuix::BoxMotif.new
+          k_box = Kuix::BoxMotif3d.new
           k_box.bounds.copy!(instance_info.definition_bounds)
-          k_box.bounds.size.width += increases[0] / part.def.scale.x
-          k_box.bounds.size.height += increases[1] / part.def.scale.y
-          k_box.bounds.size.depth += increases[2] / part.def.scale.z
           k_box.color = COLOR_BOX
           k_box.line_width = 1
           k_box.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
@@ -735,7 +715,8 @@ module Ladb::OpenCutList
       plane_manipulator = @picker.picked_plane_manipulator
       if plane_manipulator.nil?
         face, inner_path = _find_largest_face(instance_info.entity, instance_info.transformation)
-        plane_manipulator = FaceManipulator.new(face, PathUtils.get_transformation(instance_info.path + inner_path, IDENTITY))
+        container_path = instance_info.path + inner_path
+        plane_manipulator = FaceManipulator.new(face, PathUtils.get_transformation(container_path, IDENTITY))
       end
 
       line_manipulator = @picker.picked_line_manipulator

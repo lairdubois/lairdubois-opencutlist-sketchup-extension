@@ -1,8 +1,8 @@
 module Ladb::OpenCutList
 
-  require_relative 'transformation_manipulator'
+  require_relative 'manipulator'
 
-  class CurveManipulator < TransformationManipulator
+  class CurveManipulator < Manipulator
 
     attr_reader :curve
 
@@ -17,8 +17,7 @@ module Ladb::OpenCutList
     def reset_cache
       super
       @points = nil
-      @z_min = nil
-      @z_max = nil
+      @bounds = nil
       @segments = nil
       @plane_manipulator = nil
     end
@@ -39,14 +38,9 @@ module Ladb::OpenCutList
       @points
     end
 
-    def z_min
-      @z_min ||= points.min { |p1, p2| p1.z <=> p2.z }.z
-      @z_min
-    end
-
-    def z_max
-      @z_max ||= points.max { |p1, p2| p1.z <=> p2.z }.z
-      @z_max
+    def bounds
+      @bounds ||= Geom::BoundingBox.new.add(points)
+      @bounds
     end
 
     def plane
@@ -65,7 +59,7 @@ module Ladb::OpenCutList
     # -----
 
     def plane_manipulator
-      @plane_manipulator ||= PlaneManipulator.new(Geom.fit_plane_to_points(points))
+      @plane_manipulator ||= PlaneManipulator.new(Geom.fit_plane_to_points(points), IDENTITY)
       @plane_manipulator
     end
 

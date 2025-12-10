@@ -346,7 +346,7 @@ module Ladb::OpenCutList
 
         fn_preview_plane = lambda do |color, section|
 
-          k_box = Kuix::BoxMotif.new
+          k_box = Kuix::BoxMotif3d.new
           k_box.bounds.copy!(section)
           k_box.line_width = 2
           k_box.line_stipple = Kuix::LINE_STIPPLE_SOLID
@@ -355,7 +355,7 @@ module Ladb::OpenCutList
           @tool.append_3d(k_box, LAYER_3D_ACTION_PREVIEW)
 
           k_mesh = Kuix::Mesh.new
-          k_mesh.add_quands(section.get_quads)
+          k_mesh.add_quads(section.get_quads)
           k_mesh.background_color = ColorUtils.color_translucent(color, 0.3)
           k_mesh.transformation = et
           @tool.append_3d(k_mesh, LAYER_3D_ACTION_PREVIEW)
@@ -576,7 +576,7 @@ module Ladb::OpenCutList
         et = _get_edit_transformation
         eb = _get_drawing_def_edit_bounds(drawing_def, et)
 
-        k_box = Kuix::BoxMotif.new
+        k_box = Kuix::BoxMotif3d.new
         k_box.bounds.copy!(eb)
         k_box.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_box.color = Kuix::COLOR_BLACK
