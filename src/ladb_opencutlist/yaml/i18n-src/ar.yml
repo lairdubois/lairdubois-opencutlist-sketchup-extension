@@ -2152,8 +2152,6 @@ tool:
     action_option_options_mirror_status: نسخ بشكل متناظر
     warning:
       copies_disable_mirror: النسخ المتعدد يعطل خيار '$t(tool.smart_handle.action_option_options_mirror_status)'
-    error:
-      min_distance: "المسافة {{ value1 }} أقل من المسافة الدنيا البالغة {{ value2 }}"
   smart_reshape:
     title: ""
     action_0: ""
@@ -2174,6 +2172,7 @@ tool:
     action_option_axes_active_status: المعالجة على طول المحاور النشطة
     action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر الذي يحتوي على القِطعة
     action_option_axes_entity_status: المعالجة على طول محاور القطعة
+    action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""
