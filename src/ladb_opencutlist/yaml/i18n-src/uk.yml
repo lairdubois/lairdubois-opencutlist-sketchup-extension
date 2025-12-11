@@ -2173,7 +2173,7 @@ tool:
     action_option_axes_active_status: Переміщення вздовж активних осей
     action_option_axes_context_status: "Переміщення вздовж осей групи або компонента, що містить деталь"
     action_option_axes_entity_status: Переміщення по осях деталі
-    action_option_options_centred_status: ""
+    action_option_options_centred_status: Центрувати на розтягнутих елементах
     action_option_options_make_unique_status: Зробити розтягнуті елементи унікальними
     error:
       curve_intersect: Одна з січних площин перетинає нерозтяжну криву
