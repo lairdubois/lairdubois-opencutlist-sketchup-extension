@@ -2153,8 +2153,6 @@ tool:
     action_option_options_mirror_status: Szimmetrikus másolás
     warning:
       copies_disable_mirror: Több másolat esetén a '$t(tool.smart_handle.action_option_options_mirror_status)' opció kikapcsolásra kerül
-    error:
-      min_distance: "A {{ value1 }} távolság nem éri el a minimálisan megengedett értéket ami: {{ value2 }}"
   smart_reshape:
     title: Módosítás
     action_0: Húzás
@@ -2175,6 +2173,7 @@ tool:
     action_option_axes_active_status: Kezelés az aktív tengelyek mentén
     action_option_axes_context_status: "Kezelés annak a csoportnak vagy komponensnek a tengelyei mentén, amely tartalmazza az alkatrészt"
     action_option_axes_entity_status: Kezelés az alkatrész tengelyei mentén
+    action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""

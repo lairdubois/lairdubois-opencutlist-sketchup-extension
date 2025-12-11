@@ -2149,8 +2149,6 @@ tool:
     action_option_options_mirror_status: 对称复制
     warning:
       copies_disable_mirror: 多重复制会停用 '$t(tool.smart_handle.action_option_options_mirror_status)' 选项
-    error:
-      min_distance: "距离 {{ value1 }} 小于最小距离 {{ value2 }}"
   smart_reshape:
     title: ""
     action_0: ""
@@ -2171,6 +2169,7 @@ tool:
     action_option_axes_active_status: 沿活动轴操作
     action_option_axes_context_status: 沿群组轴或包含部件的组件的轴操作
     action_option_axes_entity_status: 沿部件轴操作
+    action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""

@@ -2153,8 +2153,6 @@ tool:
     action_option_options_mirror_status: Дзеркальне копіювання
     warning:
       copies_disable_mirror: Мультикопіювання вимикає опцію '$t(tool.smart_handle.action_option_options_mirror_status)'
-    error:
-      min_distance: "Відстань {{ value1 }} менша за мінімальну відстань {{ value2 }}"
   smart_reshape:
     title: Реконструювати
     action_0: Розтягнути
@@ -2175,6 +2173,7 @@ tool:
     action_option_axes_active_status: Переміщення вздовж активних осей
     action_option_axes_context_status: "Переміщення вздовж осей групи або компонента, що містить деталь"
     action_option_axes_entity_status: Переміщення по осях деталі
+    action_option_options_centred_status: ""
     action_option_options_make_unique_status: Зробити розтягнуті елементи унікальними
     error:
       curve_intersect: Одна з січних площин перетинає нерозтяжну криву

@@ -2149,8 +2149,6 @@ tool:
     action_option_options_mirror_status: Kopiraj simetrično
     warning:
       copies_disable_mirror: Višestruka kopija onemogućava opciju '$t(tool.smart_handle.action_option_options_mirror_status)'
-    error:
-      min_distance: "Rastojanje {{ value1 }} je manje od minimalnog rastojanja {{ value2 }}"
   smart_reshape:
     title: ""
     action_0: ""
@@ -2171,6 +2169,7 @@ tool:
     action_option_axes_active_status: Manipuliši po aktivnim osama
     action_option_axes_context_status: Manipuliši po osama grupe/komponente koja sadrži komad
     action_option_axes_entity_status: Manipuliši po osama komada
+    action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""
