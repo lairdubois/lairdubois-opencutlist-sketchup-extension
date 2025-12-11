@@ -149,15 +149,26 @@ module Ladb::OpenCutList::Kuix
         p1_2d = p_2d.offset(Geom::Vector3d.new(@arrow_size, @arrow_size)).transform(t)
         p2_2d = p_2d.offset(Geom::Vector3d.new(@arrow_size, -@arrow_size)).transform(t)
 
-        ray1 = view.pickray(p1_2d.x, p1_2d.y)
-        ray2 = view.pickray(p2_2d.x, p2_2d.y)
+        if @on_top
 
-        p1_3d = Geom.intersect_line_plane(ray1, [ p_3d, ray1.last ])
-        p2_3d = Geom.intersect_line_plane(ray2, [ p_3d, ray2.last ])
+          graphics.view.draw2d(
+            GL_LINE_STRIP,
+            [ p1_2d, p_2d, p2_2d ]
+          )
 
-        graphics.draw_line_strip(
-          points: [ p1_3d, p_3d, p2_3d ]
-        )
+        else
+
+          ray1 = view.pickray(p1_2d.x, p1_2d.y)
+          ray2 = view.pickray(p2_2d.x, p2_2d.y)
+
+          p1_3d = Geom.intersect_line_plane(ray1, [ p_3d, ray1.last ])
+          p2_3d = Geom.intersect_line_plane(ray2, [ p_3d, ray2.last ])
+
+          graphics.draw_line_strip(
+            points: [ p1_3d, p_3d, p2_3d ]
+          )
+
+        end
 
       end
 
