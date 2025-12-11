@@ -2152,8 +2152,6 @@ tool:
     action_option_options_mirror_status: Sao chép đối xứng
     warning:
       copies_disable_mirror: Nhiều bản sao vô hiệu hóa lựa chọn '$t(tool.smart_handle.action_option_options_mirror_status)'
-    error:
-      min_distance: "Khoảng cách {{ value1 }} nhỏ hơn khoảng cách tối thiểu {{ value2 }}"
   smart_reshape:
     title: ""
     action_0: ""
@@ -2174,6 +2172,7 @@ tool:
     action_option_axes_active_status: Thao tác dọc theo các trục đang hoạt động
     action_option_axes_context_status: Thao tác dọc theo các trục của nhóm hoặc thành phần chứa bộ phận
     action_option_axes_entity_status: Thao tác dọc theo trục bộ phận
+    action_option_options_centred_status: ""
     action_option_options_make_unique_status: ""
     error:
       curve_intersect: ""

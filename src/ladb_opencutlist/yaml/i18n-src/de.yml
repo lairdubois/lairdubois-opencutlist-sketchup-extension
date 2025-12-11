@@ -2153,8 +2153,6 @@ tool:
     action_option_options_mirror_status: Symmetrisch kopieren
     warning:
       copies_disable_mirror: Mehrfaches Kopieren deaktiviert die Option '$t(tool.smart_handle.action_option_options_mirror_status)'
-    error:
-      min_distance: "Der Abstand {{ value1 }} ist kleiner als der Minimalabstand {{ value2 }}"
   smart_reshape:
     title: Umgestalten
     action_0: Strecken
@@ -2175,6 +2173,7 @@ tool:
     action_option_axes_active_status: Manipulieren entlang der aktiven Achsen
     action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
     action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
+    action_option_options_centred_status: Auf die gestreckten Elemente zentrieren
     action_option_options_make_unique_status: Gestreckte Elemente einzigartig machen
     error:
       curve_intersect: Eine der Schnittebenen verläuft durch eine nicht dehnbare Kurve
