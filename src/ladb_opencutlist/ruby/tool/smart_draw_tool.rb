@@ -1013,10 +1013,44 @@ module Ladb::OpenCutList
 
       t, psb, pst, ps, p1, p3, centred, sheared, bt, tt = pull_def.values_at(:t, :psb, :pst, :ps, :p1, :p3, :centred, :sheared, :bt, :tt)
 
-      bounds = Geom::BoundingBox.new
-      bounds.add(p1, p3)
+      measure = psb.distance(pst)
 
       color = sheared ? _get_vector_color(@locked_pull_axis) : _get_normal_color
+
+      if _fetch_option_shape_offset != 0
+
+        shape_points = _get_local_shape_points
+        bottom_shape_points = shape_points.map { |point| point.transform(bt) }
+        top_shape_points = shape_points.map { |point| point.transform(tt) }
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(_points_to_segments(bottom_shape_points))
+        k_segments.add_segments(_points_to_segments(top_shape_points))
+        k_segments.add_segments(bottom_shape_points.zip(top_shape_points).flatten(1))
+        k_segments.line_width = 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
+        k_segments.color = color
+        k_segments.transformation = t
+        @tool.append_3d(k_segments)
+
+      end
+
+      _get_local_shapes_points_with_offset.each do |o_shape_points|
+
+        o_bottom_shape_points = o_shape_points.map { |point| point.transform(bt) }
+        o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
+
+        k_segments = Kuix::Segments.new
+        k_segments.add_segments(_points_to_segments(o_bottom_shape_points))
+        k_segments.add_segments(_points_to_segments(o_top_shape_points))
+        k_segments.add_segments(o_bottom_shape_points.zip(o_top_shape_points).flatten(1))
+        k_segments.line_width = _fetch_option_construction ? 1 : 1.5
+        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
+        k_segments.color = color
+        k_segments.transformation = t
+        @tool.append_3d(k_segments)
+
+      end
 
       if sheared
 
@@ -1073,48 +1107,13 @@ module Ladb::OpenCutList
 
       end
 
-      if _fetch_option_shape_offset != 0
+      Sketchup.set_status_text(measure, SB_VCB_VALUE)
 
-        shape_points = _get_local_shape_points
-        bottom_shape_points = shape_points.map { |point| point.transform(bt) }
-        top_shape_points = shape_points.map { |point| point.transform(tt) }
-
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(_points_to_segments(bottom_shape_points))
-        k_segments.add_segments(_points_to_segments(top_shape_points))
-        k_segments.add_segments(bottom_shape_points.zip(top_shape_points).flatten(1))
-        k_segments.line_width = 1.5
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
-        k_segments.color = color
-        k_segments.transformation = t
-        @tool.append_3d(k_segments)
-
-      end
-
-      _get_local_shapes_points_with_offset.each do |o_shape_points|
-
-        o_bottom_shape_points = o_shape_points.map { |point| point.transform(bt) }
-        o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
-
-        k_segments = Kuix::Segments.new
-        k_segments.add_segments(_points_to_segments(o_bottom_shape_points))
-        k_segments.add_segments(_points_to_segments(o_top_shape_points))
-        k_segments.add_segments(o_bottom_shape_points.zip(o_top_shape_points).flatten(1))
-        k_segments.line_width = _fetch_option_construction ? 1 : 1.5
-        k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
-        k_segments.color = color
-        k_segments.transformation = t
-        @tool.append_3d(k_segments)
-
-      end
-
-      Sketchup.set_status_text(bounds.depth, SB_VCB_VALUE)
-
-      if bounds.depth > 0
+      if measure > 0
 
         k_label = _create_floating_label(
           snap_point: Geom.linear_combination(0.5, psb, 0.5, pst).transform(t),
-          text: bounds.depth,
+          text: measure,
           text_color: Kuix::COLOR_Z,
           border_color: color
         )
@@ -1357,7 +1356,7 @@ module Ladb::OpenCutList
     def _create_entity
       return if (pull_def = _get_pull_def).nil?
 
-      t, ps, pe, p1, p3, bt, tt = pull_def.values_at(:t, :ps, :pe, :p1, :p3, :bt, :tt)
+      t, ps, pe, psb, pst, p1, p3, bt, tt = pull_def.values_at(:t, :ps, :pe, :psb, :pst, :p1, :p3, :bt, :tt)
 
       model = Sketchup.active_model
       model.start_operation('OCL Create Part', true, false, !active?)
@@ -1369,12 +1368,11 @@ module Ladb::OpenCutList
         @definition = nil
       end
 
-      bounds = Geom::BoundingBox.new
-      bounds.add(p1, p3)
+      measure = psb.distance(pst)
 
-      @@last_pull_measure = bounds.depth
+      @@last_pull_measure = measure
 
-      if _fetch_option_construction || bounds.depth == 0
+      if _fetch_option_construction || measure == 0
 
         group = model.active_entities.add_group
         group.transformation = t
@@ -1389,7 +1387,7 @@ module Ladb::OpenCutList
 
             _points_to_segments(o_bottom_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
 
-            if bounds.depth > 0
+            if measure > 0
 
               o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
 
@@ -1416,38 +1414,41 @@ module Ladb::OpenCutList
       else
 
         # Solid drawing creates a component definition + instance
+
         bti = bt.inverse
 
         definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
 
-        faces = _create_faces(definition, bt, ps, pe)
-        if bounds.depth > 0
-
-          pulled_faces = _create_faces(definition, tt, ps, pe)
-          pulled_faces.each do |face|
-            face.reverse! unless face.normal.samedirection?(Z_AXIS) || p3.z < p1.z
-          end
-
+        bottom_faces = _create_faces(definition, bt, ps, pe)
+        if measure > 0
+          top_faces = _create_faces(definition, tt, ps, pe)
+        else
+          top_faces = []
         end
-        faces.each do |face|
+        bottom_faces.zip(top_faces).each do |bottom_face, top_face|
 
-          if bounds.depth > 0
+          if !top_face.nil?
 
-            face.reverse! if face.normal.samedirection?(Z_AXIS) || p3.z < p1.z
+            if bottom_face.normal.samedirection?(psb.vector_to(pst))
+              bottom_face.reverse!
+            end
+            if top_face.normal.samedirection?(pst.vector_to(psb))
+              top_face.reverse!
+            end
 
-            entities = face.parent.entities
+            entities = bottom_face.parent.entities
             group = entities.add_group
-            is_smoothed = (curve = face.outer_loop.edges.first.curve).is_a?(Sketchup::ArcCurve) && !curve.is_polygon?
-            face.vertices.each do |vertex|
+            smoothed = (curve = bottom_face.outer_loop.edges.first.curve).is_a?(Sketchup::ArcCurve) && !curve.is_polygon?
+            bottom_face.vertices.each do |vertex|
               group.entities.add_edges([ vertex.position, vertex.position.transform(bti).transform(tt) ]).each do |edge|
-                edge.soft = edge.smooth = is_smoothed
+                edge.soft = edge.smooth = smoothed
               end
             end
             group.explode.grep(Sketchup::Edge).each { |edge| edge.find_faces }
 
           else
 
-            face.reverse! unless face.normal.samedirection?(Z_AXIS)
+            bottom_face.reverse! unless bottom_face.normal.samedirection?(Z_AXIS)
 
           end
 
