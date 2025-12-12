@@ -55,6 +55,8 @@ module Ladb::OpenCutList
     COLOR_X = Sketchup::Color.new(255, 0, 15).freeze
     COLOR_Y = Sketchup::Color.new(0, 187, 0).freeze
     COLOR_Z = Sketchup::Color.new(0, 50, 255).freeze
+    COLOR_SNAP_FILL = Sketchup::Color.new(68, 152, 212).freeze
+    COLOR_SNAP_STROKE = Sketchup::Color.new(30, 64, 105).freeze
 
     # Line stipple constants
 

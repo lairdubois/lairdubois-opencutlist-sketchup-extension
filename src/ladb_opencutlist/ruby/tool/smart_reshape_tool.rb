@@ -1453,8 +1453,8 @@ module Ladb::OpenCutList
             snap.position.offset(edvs[snap_def.section_def].transform(ti)).transform(t).offset(emv)
           },
           style: Kuix::POINT_STYLE_CIRCLE,
-          fill_color: Sketchup::Color.new(68, 152, 212),
-          stroke_color: Sketchup::Color.new(30, 64, 105),
+          fill_color: Kuix::COLOR_SNAP_FILL,
+          stroke_color: Kuix::COLOR_SNAP_STROKE,
         )
         k_points.transformation = et
         @tool.append_3d(k_points, LAYER_3D_RESHAPE_PREVIEW)
