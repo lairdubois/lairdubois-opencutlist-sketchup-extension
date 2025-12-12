@@ -1350,14 +1350,14 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _create_faces(definition, t, p1, p2)
+    def _create_faces(definition, t, ps, pe)
       _get_local_shapes_points_with_offset.map { |shape_points| definition.entities.add_face(shape_points.map { |p| p.transform(t) }) }
     end
 
     def _create_entity
       return if (pull_def = _get_pull_def).nil?
 
-      t, p1, p2, p3, bt, tt = pull_def.values_at(:t, :p1, :p2, :p3, :bt, :tt)
+      t, ps, pe, p1, p3, bt, tt = pull_def.values_at(:t, :ps, :pe, :p1, :p3, :bt, :tt)
 
       model = Sketchup.active_model
       model.start_operation('OCL Create Part', true, false, !active?)
@@ -1404,7 +1404,7 @@ module Ladb::OpenCutList
 
           # Flat drawing, just add to the group
 
-          faces = _create_faces(group.definition, IDENTITY, p1, p2)
+          faces = _create_faces(group.definition, IDENTITY, ps, pe)
           faces.each do |face|
             face.reverse! unless face.normal.samedirection?(Z_AXIS)
           end
@@ -1420,10 +1420,10 @@ module Ladb::OpenCutList
 
         definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
 
-        faces = _create_faces(definition, bt, p1, p2)
+        faces = _create_faces(definition, bt, ps, pe)
         if bounds.depth > 0
 
-          pulled_faces = _create_faces(definition, tt, p1, p2)
+          pulled_faces = _create_faces(definition, tt, ps, pe)
           pulled_faces.each do |face|
             face.reverse! unless face.normal.samedirection?(Z_AXIS) || p3.z < p1.z
           end
@@ -2736,12 +2736,12 @@ module Ladb::OpenCutList
 
     # -----
 
-    def _create_faces(definition, t, p1, p2)
-      @@last_radius_measure = p1.distance(p2)
+    def _create_faces(definition, t, ps, pe)
+      @@last_radius_measure = ps.distance(pe)
       if _fetch_option_smoothed
-        edge = definition.entities.add_circle(p1.transform(t), Z_AXIS, p1.distance(p2) + _fetch_option_shape_offset, _fetch_option_segment_count).first
+        edge = definition.entities.add_circle(ps.transform(t), Z_AXIS, ps.distance(pe) + _fetch_option_shape_offset, _fetch_option_segment_count).first
       else
-        edge = definition.entities.add_ngon(p1.transform(t), Z_AXIS, p1.distance(p2) + _fetch_option_shape_offset, _fetch_option_segment_count).first
+        edge = definition.entities.add_ngon(ps.transform(t), Z_AXIS, ps.distance(pe) + _fetch_option_shape_offset, _fetch_option_segment_count).first
       end
       edge.find_faces
       edge.faces
