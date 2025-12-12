@@ -242,7 +242,7 @@ module Ladb::OpenCutList
       @locked_direction = nil
       @locked_normal = nil
       @locked_axis = nil
-      @locked_pull = nil
+      @locked_pull_axis = nil
 
       @direction = nil
       @normal = _get_active_z_axis
@@ -560,40 +560,30 @@ module Ladb::OpenCutList
 
         if key == VK_RIGHT
           x_axis = _get_active_x_axis
-          if @locked_pull == x_axis
-            @locked_pull = nil
+          if @locked_pull_axis == x_axis
+            @locked_pull_axis = nil
           else
-            @locked_pull = x_axis
+            @locked_pull_axis = x_axis
           end
           _refresh
           return true
         end
         if key == VK_LEFT
           y_axis = _get_active_y_axis
-          if @locked_pull == y_axis
-            @locked_pull = nil
+          if @locked_pull_axis == y_axis
+            @locked_pull_axis = nil
           else
-            @locked_pull = y_axis
+            @locked_pull_axis = y_axis
           end
           _refresh
           return true
         end
         if key == VK_UP
           z_axis = _get_active_z_axis
-          if @locked_pull == z_axis
-            @locked_pull = nil
+          if @locked_pull_axis == z_axis
+            @locked_pull_axis = nil
           else
-            @locked_pull = z_axis
-          end
-          _refresh
-          return true
-        end
-        if key == VK_DOWN
-          face_normal = @mouse_ip.valid? && @mouse_ip.face ? @mouse_ip.face.normal.transform(@mouse_ip.transformation).normalize! : nil
-          if !@locked_pull.nil? && !face_normal.nil? && @locked_pull.samedirection?(face_normal)
-            @locked_pull = nil
-          else
-            @locked_pull = face_normal
+            @locked_pull_axis = z_axis
           end
           _refresh
           return true
@@ -713,11 +703,11 @@ module Ladb::OpenCutList
       points << @picked_pull_end_point unless @picked_pull_end_point.nil?
       points << @mouse_snap_point unless @mouse_snap_point.nil?
 
-      if _fetch_option_pull_centered && _picked_shape_end_point? && points.length > 2
-        offset = points[2].vector_to(points[1])
-        points[0] = points[0].offset(offset)
-        points[1] = points[1].offset(offset)
-      end
+      # if _fetch_option_pull_centered && _picked_shape_end_point? && points.length > 2
+      #   offset = points[2].vector_to(points[1])
+      #   points[0] = points[0].offset(offset)
+      #   points[1] = points[1].offset(offset)
+      # end
 
       points
     end
@@ -1019,8 +1009,53 @@ module Ladb::OpenCutList
     end
 
     def _preview_pull(view)
+      return if (pull_def = _get_pull_def).nil?
 
-      if _fetch_option_pull_centered
+      t, psb, pst, ps, p1, p3, centred, sheared, bt, tt = pull_def.values_at(:t, :psb, :pst, :ps, :p1, :p3, :centred, :sheared, :bt, :tt)
+
+      bounds = Geom::BoundingBox.new
+      bounds.add(p1, p3)
+
+      color = sheared ? _get_vector_color(@locked_pull_axis) : _get_normal_color
+
+      if sheared
+
+        # Draw thickness arrow
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(psb)
+        k_edge.end.copy!(pst)
+        k_edge.line_width = 1.5
+        k_edge.color = Kuix::COLOR_Z
+        k_edge.start_arrow = true
+        k_edge.end_arrow = true
+        k_edge.arrow_size = @tool.get_unit * 2.0
+        k_edge.on_top = true
+        k_edge.transformation = t
+        @tool.append_3d(k_edge)
+
+        # Bottom link to thickness arrow
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(psb)
+        k_edge.end.copy!(p1)
+        k_edge.line_width = 1
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_edge.color = Kuix::COLOR_DARK_GREY
+        k_edge.on_top = true
+        k_edge.transformation = t
+        @tool.append_3d(k_edge)
+
+        # Top link to thickness arrow
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(pst)
+        k_edge.end.copy!(ps.transform(tt))
+        k_edge.line_width = 1
+        k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
+        k_edge.color = Kuix::COLOR_DARK_GREY
+        k_edge.on_top = true
+        k_edge.transformation = t
+        @tool.append_3d(k_edge)
+
+      elsif centred
 
         # Draw the first picked point
         k_point = _create_floating_points(
@@ -1038,66 +1073,16 @@ module Ladb::OpenCutList
 
       end
 
-      t = _get_transformation(@picked_shape_start_point)
-      ti = t.inverse
-
-      points = _get_picked_points
-      p1 = points[0].transform(ti)
-      p2 = points[1].transform(ti)
-      p3 = points[2].transform(ti)
-
-      bounds = Geom::BoundingBox.new
-      bounds.add(p1, p3)
-
-      color = _get_normal_color
-
-      if @locked_pull.nil?
-        p4 = p3
-      else
-        p4 = Geom.intersect_line_plane([ p2, @locked_pull.transform(ti) ], [ p3, p2.vector_to(p3) ])
-        if p4.nil?
-          p4 = p3
-        else
-
-          p5 = Geom.intersect_line_plane([ p1, p2.vector_to(p3) ], [ p3, p2.vector_to(p3) ])
-
-          k_edge = Kuix::EdgeMotif3d.new
-          k_edge.start.copy!(p1)
-          k_edge.end.copy!(p5)
-          k_edge.line_width = 1.5
-          k_edge.color = Kuix::COLOR_BLUE
-          k_edge.start_arrow = true
-          k_edge.end_arrow = true
-          k_edge.arrow_size = 10
-          k_edge.on_top = true
-          k_edge.transformation = t
-          @tool.append_3d(k_edge)
-
-          k_edge = Kuix::EdgeMotif3d.new
-          k_edge.start.copy!(p5)
-          k_edge.end.copy!(p1.offset(p2.vector_to(p4)))
-          k_edge.line_width = 1
-          k_edge.line_stipple = Kuix::LINE_STIPPLE_SHORT_DASHES
-          k_edge.color = Kuix::COLOR_DARK_GREY
-          k_edge.on_top = true
-          k_edge.transformation = t
-          @tool.append_3d(k_edge)
-
-          color = _get_vector_color(@locked_pull)
-
-        end
-      end
-      tt = Geom::Transformation.translation(p2.vector_to(p4))
-
       if _fetch_option_shape_offset != 0
 
         shape_points = _get_local_shape_points
+        bottom_shape_points = shape_points.map { |point| point.transform(bt) }
         top_shape_points = shape_points.map { |point| point.transform(tt) }
 
         k_segments = Kuix::Segments.new
-        k_segments.add_segments(_points_to_segments(shape_points))
+        k_segments.add_segments(_points_to_segments(bottom_shape_points))
         k_segments.add_segments(_points_to_segments(top_shape_points))
-        k_segments.add_segments(shape_points.zip(top_shape_points).flatten(1))
+        k_segments.add_segments(bottom_shape_points.zip(top_shape_points).flatten(1))
         k_segments.line_width = 1.5
         k_segments.line_stipple = Kuix::LINE_STIPPLE_DOTTED
         k_segments.color = color
@@ -1108,12 +1093,13 @@ module Ladb::OpenCutList
 
       _get_local_shapes_points_with_offset.each do |o_shape_points|
 
+        o_bottom_shape_points = o_shape_points.map { |point| point.transform(bt) }
         o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
 
         k_segments = Kuix::Segments.new
-        k_segments.add_segments(_points_to_segments(o_shape_points))
+        k_segments.add_segments(_points_to_segments(o_bottom_shape_points))
         k_segments.add_segments(_points_to_segments(o_top_shape_points))
-        k_segments.add_segments(o_shape_points.zip(o_top_shape_points).flatten(1))
+        k_segments.add_segments(o_bottom_shape_points.zip(o_top_shape_points).flatten(1))
         k_segments.line_width = _fetch_option_construction ? 1 : 1.5
         k_segments.line_stipple = Kuix::LINE_STIPPLE_LONG_DASHES if _fetch_option_construction
         k_segments.color = color
@@ -1127,7 +1113,7 @@ module Ladb::OpenCutList
       if bounds.depth > 0
 
         k_label = _create_floating_label(
-          snap_point: p1.project_to_plane([ bounds.min, Z_AXIS ]).offset(Z_AXIS, bounds.depth / 2).transform(t),
+          snap_point: Geom.linear_combination(0.5, psb, 0.5, pst).transform(t),
           text: bounds.depth,
           text_color: Kuix::COLOR_Z,
           border_color: color
@@ -1231,20 +1217,16 @@ module Ladb::OpenCutList
     end
 
     def _read_pull(tool, text, view)
+      return if (pull_def = _get_pull_def).nil?
 
-      t = _get_transformation(@picked_shape_start_point)
-      ti = t.inverse
+      t, psb, pst, pe = pull_def.values_at(:t, :psb, :pst, :pe)
 
-      points = _get_picked_points
-      p2 = points[1].transform(ti)
-      p3 = points[2].transform(ti)
-
-      base_thickness = p3.z - p2.z
+      base_thickness = pst.z - psb.z
       thickness = _read_user_text_length(tool, text, base_thickness)
       return true if thickness.nil?
       thickness /= 2 if _fetch_option_pull_centered
 
-      @picked_pull_end_point = Geom::Point3d.new(p2.x, p2.y, thickness).transform(t)
+      @picked_pull_end_point = Geom::Point3d.new(pe.x, pe.y, thickness).transform(t)
 
       _create_entity
       _restart
@@ -1328,7 +1310,7 @@ module Ladb::OpenCutList
       @locked_direction = nil
       @locked_normal = nil
       @locked_axis = nil
-      @locked_pull = nil
+      @locked_pull_axis = nil
       super
       set_state(STATE_SHAPE_START)
     end
@@ -1373,6 +1355,9 @@ module Ladb::OpenCutList
     end
 
     def _create_entity
+      return if (pull_def = _get_pull_def).nil?
+
+      t, p1, p2, p3, bt, tt = pull_def.values_at(:t, :p1, :p2, :p3, :bt, :tt)
 
       model = Sketchup.active_model
       model.start_operation('OCL Create Part', true, false, !active?)
@@ -1383,14 +1368,6 @@ module Ladb::OpenCutList
         model.definitions.remove(@definition) if Sketchup.version_number >= 1800000000
         @definition = nil
       end
-
-      t = _get_transformation(@picked_shape_start_point)
-      ti = t.inverse
-
-      points = _get_picked_points
-      p1 = points[0].transform(ti)
-      p2 = points[1].transform(ti)
-      p3 = points[2].transform(ti)
 
       bounds = Geom::BoundingBox.new
       bounds.add(p1, p3)
@@ -1404,26 +1381,20 @@ module Ladb::OpenCutList
 
         if _fetch_option_construction
 
-          if @locked_pull.nil?
-            p4 = p3
-          else
-            p4 = Geom.intersect_line_plane([ p2, @locked_pull.transform(ti) ], [ p3, p2.vector_to(p3) ])
-            p4 = p3 if p4.nil?
-          end
-          tt = Geom::Transformation.translation(p2.vector_to(p4))
-
           # Construction
 
           _get_local_shapes_points_with_offset.each do |o_shape_points|
 
-            _points_to_segments(o_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
+            o_bottom_shape_points = o_shape_points.map { |point| point.transform(bt) }
+
+            _points_to_segments(o_bottom_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
 
             if bounds.depth > 0
 
               o_top_shape_points = o_shape_points.map { |point| point.transform(tt) }
 
               _points_to_segments(o_top_shape_points, true, false).each { |segment| group.entities.add_cline(*segment) }
-              o_shape_points.zip(o_top_shape_points).each { |segment| group.entities.add_cline(*segment) }
+              o_bottom_shape_points.zip(o_top_shape_points).each { |segment| group.entities.add_cline(*segment) }
 
             end
 
@@ -1433,7 +1404,7 @@ module Ladb::OpenCutList
 
           # Flat drawing, just add to the group
 
-          faces = _create_faces(group.definition, p1, p2)
+          faces = _create_faces(group.definition, IDENTITY, p1, p2)
           faces.each do |face|
             face.reverse! unless face.normal.samedirection?(Z_AXIS)
           end
@@ -1445,22 +1416,16 @@ module Ladb::OpenCutList
       else
 
         # Solid drawing creates a component definition + instance
+        bti = bt.inverse
 
         definition = model.definitions.add(PLUGIN.get_i18n_string('default.part_single').capitalize)
 
-        faces = _create_faces(definition, IDENTITY, p1, p2)
+        faces = _create_faces(definition, bt, p1, p2)
         if bounds.depth > 0
 
-          if @locked_pull.nil?
-            p4 = p3
-          else
-            p4 = Geom.intersect_line_plane([ p2, @locked_pull.transform(ti) ], [ p3, p2.vector_to(p3) ])
-            p4 = p3 if p4.nil?
-          end
-          pt = Geom::Transformation.translation(p2.vector_to(p4))
-          pulled_faces = _create_faces(definition, pt, p1, p2)
+          pulled_faces = _create_faces(definition, tt, p1, p2)
           pulled_faces.each do |face|
-            face.reverse! unless face.normal.samedirection?(Z_AXIS) && p3.z > p1.z
+            face.reverse! unless face.normal.samedirection?(Z_AXIS) || p3.z < p1.z
           end
 
         end
@@ -1474,14 +1439,11 @@ module Ladb::OpenCutList
             group = entities.add_group
             is_smoothed = (curve = face.outer_loop.edges.first.curve).is_a?(Sketchup::ArcCurve) && !curve.is_polygon?
             face.vertices.each do |vertex|
-              group.entities.add_edges([ vertex.position, vertex.position.transform(pt) ]).each do |edge|
+              group.entities.add_edges([ vertex.position, vertex.position.transform(bti).transform(tt) ]).each do |edge|
                 edge.soft = edge.smooth = is_smoothed
               end
             end
-            edges = group.explode
-            edges.each do |edge|
-              edge.find_faces
-            end
+            group.explode.grep(Sketchup::Edge).each { |edge| edge.find_faces }
 
           else
 
@@ -1550,6 +1512,75 @@ module Ladb::OpenCutList
       # Reset drawing def cache
       @drawing_def = nil
 
+    end
+
+    # --
+
+    def _get_pull_def
+      return nil unless @picked_shape_start_point.is_a?(Geom::Point3d) && @picked_shape_end_point.is_a?(Geom::Point3d)
+
+      centred = _fetch_option_pull_centered
+
+      t = _get_transformation(@picked_shape_start_point)
+      ti = t.inverse
+
+      points = _get_picked_points
+      ps = points[0].transform(ti)  # point start
+      pe = points[1].transform(ti)  # point end
+      pp = points[2].transform(ti)  # point pull
+
+      v = pe.vector_to(pp)
+
+      psb = centred ? ps.offset(v.reverse) : ps   # point start bottom
+      pst = ps.offset(v)                          # point start top
+
+      sheared = false
+
+      unless @locked_pull_axis.nil?
+        p3 = Geom.intersect_line_plane([ pe, @locked_pull_axis.transform(ti) ], [ pp, v ])
+        unless p3.nil?
+
+          offset = p3.vector_to(pe)
+          p1 = centred ? ps.offset(offset) : ps
+          p2 = centred ? pe.offset(offset) : pe
+
+          sheared = true
+
+        end
+      end
+
+      unless sheared
+
+        p1 = ps
+        p2 = pe
+        p3 = pp
+
+        if centred
+          offset = pp.vector_to(pe)
+          p1 = p1.offset(offset)
+          p2 = p2.offset(offset)
+        end
+
+      end
+
+      bt = Geom::Transformation.translation(pe.vector_to(p2))
+      tt = Geom::Transformation.translation(pe.vector_to(p3))
+
+      {
+        t: t,
+        ti:ti,
+        ps: ps,
+        pe: pe,
+        psb: psb,
+        pst: pst,
+        p1: p1,
+        p2: p2,
+        p3: p3,
+        centred: centred,
+        sheared: sheared,
+        bt: bt,
+        tt: tt,
+      }
     end
 
     # --
