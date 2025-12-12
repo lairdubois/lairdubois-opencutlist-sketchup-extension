@@ -7,12 +7,14 @@ in 8.x, 7.x, 6.x, 5.x, 4.x, 3.x, 2.x, 1.x and 0.x versions.
 # 8.0.0 (WIP)
 
   * Added Smart Reshape Tool
-  * Added + / - shortcuts in Smart Handle Tools
+  * Added SHIFT + (+/-) shortcuts in Smart Handle Tools
+  * Improved Smart Draw Tool with sheared pull
 
 ## Lab
 
-### 2025-12-xx
+### 2025-12-12
   * Improved Stretch Tool by moving snaps
+  * Improved Smart Draw Tool with sheared pull
 ### 2025-12-09
   * Updated PackingSolver dependency
 ### 2025-12-08
