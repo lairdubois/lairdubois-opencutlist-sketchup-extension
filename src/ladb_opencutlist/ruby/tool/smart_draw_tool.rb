@@ -243,6 +243,7 @@ module Ladb::OpenCutList
       @locked_normal = nil
       @locked_axis = nil
       @locked_pull_axis = nil
+      @locked_pull_manipulator = nil
 
       @direction = nil
       @normal = _get_active_z_axis
@@ -284,7 +285,8 @@ module Ladb::OpenCutList
       when STATE_PULL
         return PLUGIN.get_i18n_string("tool.smart_draw.action_x_state_#{state}_status") + '.' +
           ' | ' + PLUGIN.get_i18n_string("default.constrain_key") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_measure_locked_status') + '.' +
-          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_pull_centered_status') + '.'
+          ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_pull_centered_status') + '.' +
+          ' | ←↑→ = ' + PLUGIN.get_i18n_string('tool.smart_draw.action_option_options_pull_locked_status') + '.'
 
       end
 
@@ -565,6 +567,7 @@ module Ladb::OpenCutList
           else
             @locked_pull_axis = x_axis
           end
+          @locked_pull_manipulator = nil
           _refresh
           return true
         end
@@ -575,6 +578,7 @@ module Ladb::OpenCutList
           else
             @locked_pull_axis = y_axis
           end
+          @locked_pull_manipulator = nil
           _refresh
           return true
         end
@@ -584,6 +588,19 @@ module Ladb::OpenCutList
             @locked_pull_axis = nil
           else
             @locked_pull_axis = z_axis
+          end
+          @locked_pull_manipulator = nil
+          _refresh
+          return true
+        end
+        if key == VK_DOWN
+          edge_manipulator = @mouse_ip.valid? && @mouse_ip.edge ? EdgeManipulator.new(@mouse_ip.edge, @mouse_ip.transformation) : nil
+          if !@locked_pull_axis.nil? && (edge_manipulator.nil? || !edge_manipulator.nil? && @locked_pull_axis.samedirection?(edge_manipulator.direction))
+            @locked_pull_axis = nil
+            @locked_pull_manipulator = nil
+          elsif !edge_manipulator.nil?
+            @locked_pull_axis = edge_manipulator.direction
+            @locked_pull_manipulator = edge_manipulator
           end
           _refresh
           return true
@@ -663,6 +680,11 @@ module Ladb::OpenCutList
 
     def onStateChanged(old_state, new_state)
       super
+
+      if old_state == STATE_PULL
+        @locked_pull_axis = nil
+        @locked_pull_manipulator = nil
+      end
 
       # Remove floatin tools
       _remove_floating_tools
@@ -1011,11 +1033,23 @@ module Ladb::OpenCutList
     def _preview_pull(view)
       return if (pull_def = _get_pull_def).nil?
 
-      t, psb, pst, ps, p1, p3, centred, sheared, bt, tt = pull_def.values_at(:t, :psb, :pst, :ps, :p1, :p3, :centred, :sheared, :bt, :tt)
+      t, psb, pst, ps, p1, centred, sheared, bt, tt = pull_def.values_at(:t, :psb, :pst, :ps, :p1, :centred, :sheared, :bt, :tt)
 
       measure = psb.distance(pst)
 
-      color = sheared ? _get_vector_color(@locked_pull_axis) : _get_normal_color
+      color = sheared ? _get_vector_color(@locked_pull_axis, Kuix::COLOR_MAGENTA) : _get_normal_color
+
+      if @locked_pull_manipulator.is_a?(EdgeManipulator)
+
+        k_edge = Kuix::EdgeMotif3d.new
+        k_edge.start.copy!(@locked_pull_manipulator.start_point)
+        k_edge.end.copy!(@locked_pull_manipulator.end_point)
+        k_edge.color = Kuix::COLOR_MAGENTA
+        k_edge.line_width = 2
+        k_edge.on_top = true
+        @tool.append_3d(k_edge)
+
+      end
 
       if _fetch_option_shape_offset != 0
 
@@ -1310,6 +1344,7 @@ module Ladb::OpenCutList
       @locked_normal = nil
       @locked_axis = nil
       @locked_pull_axis = nil
+      @locked_pull_manipulator = nil
       super
       set_state(STATE_SHAPE_START)
     end
@@ -1356,7 +1391,7 @@ module Ladb::OpenCutList
     def _create_entity
       return if (pull_def = _get_pull_def).nil?
 
-      t, ps, pe, psb, pst, p1, p3, bt, tt = pull_def.values_at(:t, :ps, :pe, :psb, :pst, :p1, :p3, :bt, :tt)
+      t, ps, pe, psb, pst, bt, tt = pull_def.values_at(:t, :ps, :pe, :psb, :pst, :bt, :tt)
 
       model = Sketchup.active_model
       model.start_operation('OCL Create Part', true, false, !active?)

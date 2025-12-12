@@ -42,7 +42,7 @@ module Ladb::OpenCutList
     end
 
     def direction
-      @direction ||= @line_vector.transform(@transformation).normalize
+      @direction ||= @line_vector.transform(@transformation).normalize!
       @direction
     end
 
