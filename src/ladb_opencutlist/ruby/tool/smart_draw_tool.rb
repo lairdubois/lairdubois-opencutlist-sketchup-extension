@@ -538,11 +538,11 @@ module Ladb::OpenCutList
           return true
         end
         if key == VK_DOWN
-          face_normal = @mouse_ip.valid? && @mouse_ip.face ? @mouse_ip.face.normal.transform(@mouse_ip.transformation).normalize! : nil
-          if !@locked_normal.nil? && !face_normal.nil? && @locked_normal.samedirection?(face_normal)
+          face_manipulator = @mouse_ip.valid? && @mouse_ip.face ? FaceManipulator.new(@mouse_ip.face, @mouse_ip.transformation) : nil
+          if !@locked_normal.nil? && (face_manipulator.nil? || !face_manipulator.nil? && @locked_normal.samedirection?(face_manipulator.normal))
             @locked_normal = nil
-          else
-            @locked_normal = face_normal
+          elsif !face_manipulator.nil?
+            @locked_normal = face_manipulator.normal
           end
           _refresh
           return true
