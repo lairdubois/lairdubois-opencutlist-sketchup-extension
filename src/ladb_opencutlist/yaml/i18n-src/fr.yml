@@ -2152,6 +2152,7 @@ tool:
     action_option_axes_context_status: Manipuler le long des axes du groupe ou composant contenant la pièce
     action_option_axes_entity_status: Manipuler le long des axes de la pièce
     action_option_options_mirror_status: Copier en symétrie
+    action_toggle_raytest_status: Projeter sur le prochain point
     warning:
       copies_disable_mirror: La copie multiple désactive l'option '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:
