@@ -2113,6 +2113,7 @@ tool:
     action_option_options_measure_reversed_status: Reverse the measurement
     action_option_options_pull_centered: Elevation Centered
     action_option_options_pull_centered_status: Center elevation on the first point
+    action_option_options_pull_locked_status: Lock elevation on one axis
     action_option_options_ask_name: Parts naming
     action_option_options_ask_name_status: Enter part names manually
     action_measure_locked_status: Lock on last measurement

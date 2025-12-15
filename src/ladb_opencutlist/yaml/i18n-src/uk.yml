@@ -2113,6 +2113,7 @@ tool:
     action_option_options_measure_reversed_status: Зворотне вимірювання
     action_option_options_pull_centered: Центроване видавлювання
     action_option_options_pull_centered_status: Центроване видавлювання на першій точці
+    action_option_options_pull_locked_status: Блокування підйому по осі
     action_option_options_ask_name: Найменування деталей
     action_option_options_ask_name_status: Введення назв деталей вручну
     action_measure_locked_status: Фіксація під час останнього вимірювання
