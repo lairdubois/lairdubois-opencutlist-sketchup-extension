@@ -2113,6 +2113,7 @@ tool:
     action_option_options_measure_reversed_status: Obráťte měření
     action_option_options_pull_centered: Výškové vycentrování
     action_option_options_pull_centered_status: Kreslení 3D tělesa od středu
+    action_option_options_pull_locked_status: Zamknout výšku na jedné ose
     action_option_options_ask_name: Pojmenování dílců
     action_option_options_ask_name_status: Ruční zadání názvů dílců
     action_measure_locked_status: Zamknout poslední měření

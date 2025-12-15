@@ -2113,6 +2113,7 @@ tool:
     action_option_options_measure_reversed_status: Invertire la misura
     action_option_options_pull_centered: Elevazione centrata
     action_option_options_pull_centered_status: Centra l'elevazione sul primo punto
+    action_option_options_pull_locked_status: Bloccare l'elevazione su un asse
     action_option_options_ask_name: Nomenclatura delle parti
     action_option_options_ask_name_status: Definisci manualmente i nomi degli elementi
     action_measure_locked_status: Blocca sull'ultima misura

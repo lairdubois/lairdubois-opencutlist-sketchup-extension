@@ -2113,6 +2113,7 @@ tool:
     action_option_options_measure_reversed_status: A mérés irányának megfordítása
     action_option_options_pull_centered: Középpontos magasság állítás
     action_option_options_pull_centered_status: A középpontól indul kétirányba az emelés
+    action_option_options_pull_locked_status: A magasság rögzítése egy tengelyen
     action_option_options_ask_name: Alkatrészek elnevezése
     action_option_options_ask_name_status: Az alkatrész nevének kézi megadása
     action_measure_locked_status: Zárolás az utolsó mérésre

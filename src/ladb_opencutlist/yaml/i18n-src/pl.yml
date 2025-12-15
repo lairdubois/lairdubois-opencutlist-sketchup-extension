@@ -2064,16 +2064,16 @@ tool:
       missing_operand: "Brak argumentu"
       zero_division: "Dzielenie przez zero"
       lt_min_distance: "Odległość {{ value1 }} jest mniejsza niż minimalna odległość {{ value2 }}"
-      gt_max_distance: ""
+      gt_max_distance: "Odległość {{ value1 }} jest większa niż maksymalna odległość {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: "Kliknij część, aby ją zaznaczyć"
-    state_0_to_6_status: ""
+    state_0_to_6_status: Wybierz element nadrzędny
     state_4_status: ""
     state_5_status: ""
-    state_6_status: ""
+    state_6_status: Wybierz element z listy
     warning:
       no_active_part: ""
   smart_draw:
@@ -2123,7 +2123,7 @@ tool:
   smart_handle:
     title: Uchwyt
     action_0: Zaznacz
-    action_0_status: ""
+    action_0_status: Wybierz część
     action_1: Kopiuj w linii
     action_1_status: ""
     action_1_state_2_status: "Kliknij, aby umieścić kopię części lub wprowadź odległość"
