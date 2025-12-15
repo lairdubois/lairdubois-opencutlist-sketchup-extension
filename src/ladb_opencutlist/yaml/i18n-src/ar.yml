@@ -125,7 +125,7 @@ core:
       dialog: OpenCutList
       smart_draw: ارسم قِطعا
       smart_handle: تعامل مع القِطع
-      smart_reshape: ""
+      smart_reshape: إعادة تشكيل القِطع
       smart_paint: اصبغ القِطع
       smart_axes: وجِّه القطع
       smart_export: صدّر القِطع
@@ -156,8 +156,8 @@ core:
        <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a> للتبليغ عن خطإ برمجي:
     not_available_in_context: المعادلة غير متاحة في هذا السياق
   error:
-    exception: ""
-    forbidden: ""
+    exception: "خطأ : **{{ error }}**"
+    forbidden: "غير مصرّح به : **{{ error }}**"
     extern: "خطأ خارجي : **{{ error }}**"
     feature_unavailable: "تتطلب هذه الخاصية توفر النسخة {{ version }} من SketchUp أو أعلى"
     failed_export_to: |2
@@ -1752,21 +1752,22 @@ tab:
       tags: الوسوم
       layer_name: وسم
       explode: تفجير
-      explode_message: ""
+      explode_message: "هل تؤكد على تقسيم **{{ name }}**؟"
       erase: مسح
-      erase_message: ""
+      erase_message: "هل تؤكد على حذف **{{ name }}**؟"
     deep_make_unique:
-      title: ""
+      title: اجعله فريدا من نوعه
     deep_rename_parts:
-      title: ""
+      title: أعد تسمية القِطع
       info_0: |
+        تتيح لك هذه الخاصية إعادة تسمية القِطع الموجودة ضمن التحديد عبر تطبيق المعادلة أدناه على كل مثيل
       formula: الصيغة
-      old_name: ""
-      new_name: ""
-      count: ""
+      old_name: الاسم الأصلي
+      new_name: الاسم الجديد
+      count: العدد
     create_container:
-      title_group: ""
-      title_component: ""
+      title_group: "أنشيء مجموعة"
+      title_component: "أنشيء عنصرا"
     option:
       general: عام
       show_hidden_instances: إظهار المثيلات المخفية
@@ -1782,7 +1783,7 @@ tab:
       no_entities: نموذجك فارغ!
       node_not_found: نقطة التقاطع غير موجودة
       entity_not_found: لم يُعثر على أي مثيل
-      invalid_target: ""
+      invalid_target: لا يدعم المثيل المستهدف هذه العملية
       obsolete_outliner: "غير ممكن، البُنية المولّدة قديمة. أعد استحداثها"
     tip:
       no_node: |
@@ -2057,37 +2058,37 @@ tool:
       invalid_divider: "القاسم {{ value }} غير صالح"
       invalid_offset: "الإزاحة {{ value }} غير صالحة"
       invalid_segment_count: "عدد القطع {{ value }} غير صالح. يجب أن يكون بين 3 و999"
-      syntax_error: ""
-      unexpected_close_parenthesis: ""
-      missing_close_parenthesis: ""
-      missing_operand: ""
-      zero_division: ""
+      syntax_error: "خطأ في بناء الجملة : {{ error }}"
+      unexpected_close_parenthesis: "قوس إغلاق غير متوقع"
+      missing_close_parenthesis: "قوس إغلاق مفقود"
+      missing_operand: "متغير مفقود"
+      zero_division: "القسمة على الصفر"
       lt_min_distance: "المسافة {{ value1 }} أقل من المسافة الدنيا البالغة {{ value2 }}"
-      gt_max_distance: ""
+      gt_max_distance: "المسافة {{ value1 }} أكبر من المسافة القصوى {{ value2 }}"
   highlight:
     transparency: $t(tool.default.transparency)
     zoom_extents: $t(tool.default.zoom_extents)
   smart_select:
     state_0_status: انقر على قطعة لتحديدها
-    state_0_to_6_status: ""
-    state_4_status: ""
-    state_5_status: ""
-    state_6_status: ""
+    state_0_to_6_status: حدد عنصرا متبوعا
+    state_4_status: اسحب على قِطعة مماثلة ضمن نفس المتبوع لإضافتها إلى التحديد، ثم أفلت للمواصلة
+    state_5_status: مرر للإضافة إلى التحديد و أفلت للمواصلة
+    state_6_status: حدد عنصرا من القائمة
     warning:
-      no_active_part: ""
+      no_active_part: أولا عليك التمرير فوق قِطعة ما
   smart_draw:
     title: ارسم
     action_0: ارسم مستطيلا
     action_0_status: ارسم جسما أساسه مستطيل
-    action_0_state_0_status: ""
+    action_0_state_0_status: انقر لتعيين النقطة الأولى من المستطيل
     action_0_state_1_status: انقر لتحديد الزاوية المقابلة أو أدخل طولًا، عرضًا
     action_1: ارسم دائرة
-    action_1_state_0_status: ""
+    action_1_state_0_status: انقر لتعيين مركز الدائرة
     action_1_status: ارسم جسما أساسه دائرة
     action_1_state_1_radius_status: انقر لتحديد نصف القطر أو أدخل مسافة
     action_1_state_1_diameter_status: انقر لتحديد القطر أو أدخل مسافة
     action_2: ارسم مضلعا
-    action_2_state_0_status: ""
+    action_2_state_0_status: انقر لتعيين النقطة الأولى من المضلع
     action_2_status: ارسم جسما أساسه مضلع
     action_2_state_1_status: انقر لتحديد نقطة جديدة أو أدخل مسافة
     action_x_state_2_status: انقر لتحديد الارتفاع أو أدخل مسافة
@@ -2112,6 +2113,7 @@ tool:
     action_option_options_measure_reversed_status: عكس القياس
     action_option_options_pull_centered: ارتفاع انطلاقا من المركز
     action_option_options_pull_centered_status: توسيط الارتفاع على النقطة الأولى
+    action_option_options_pull_locked_status: قفل الارتفاع على محور واحد
     action_option_options_ask_name: تسمية القِطع
     action_option_options_ask_name_status: إدخال تسمية القِطع يدويًا
     action_measure_locked_status: قفل على آخر قياس
@@ -2122,18 +2124,18 @@ tool:
   smart_handle:
     title: معالجة
     action_0: تحديد
-    action_0_status: ""
+    action_0_status: حدد قِطعة
     action_1: النسخ خطيا
-    action_1_status: ""
+    action_1_status: انسخ قِطعة وفقا لمحور معين
     action_1_state_2_status: انقر لوضع نسخة القِطعة أو أدخل مسافة معينة
     action_2: النسخ شبكيا
-    action_2_status: ""
+    action_2_status: انسخ قِطعة وفقا لشبكة
     action_2_state_2_status: انقر لوضع نسخٍ من القطعة أو أدخل مسافتين
     action_3: نقل
-    action_3_status: ""
+    action_3_status: حرك قِطعة وفقا لمحور معين
     action_3_state_2_status: انقر لوضع القِطعة أو أدخل مسافة معينة
     action_4: توزيع
-    action_4_status: ""
+    action_4_status: وزع قِطعة على محور معين
     action_4_state_1_status: انقر لتحديد نقطة القياس الأولى
     action_4_state_2_status: انقر لتحديد نقطة القياس الثانية أو أدخل مسافة معينة
     action_option_group_copy_measure_type: قياس
@@ -2153,29 +2155,29 @@ tool:
     warning:
       copies_disable_mirror: النسخ المتعدد يعطل خيار '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:
-    title: ""
-    action_0: ""
-    action_0_status: ""
-    action_0_state_1_status: ""
-    action_0_state_1a_status: ""
-    action_0_state_1b_status: ""
-    action_0_state_1c_status: ""
-    action_0_state_10_status: ""
-    action_0_state_11_status: ""
-    action_0_state_12_status: ""
-    action_0_state_2_status: ""
+    title: أعد التشكيل
+    action_0: مدِّد
+    action_0_status: مدِّد قِطعة معينة
+    action_0_state_1_status: انقر على مقبض للتمديد
+    action_0_state_1a_status: انقر على مستوٍ قاطعٍ لتحريكه
+    action_0_state_1b_status: أضف مستويا قاطعا
+    action_0_state_1c_status: احذف مستويا قاطعا
+    action_0_state_10_status: اسحب مستويا قاطعا لتحريكه
+    action_0_state_11_status: انقر لإضافة المستوي القاطع
+    action_0_state_12_status: انقر على مستوٍ قاطعٍ لحذفه
+    action_0_state_2_status: انقر لتأكيد التمديد أو أدخل مسافة معينة
     action_option_group_stretch_measure_type: قياس
     action_option_group_axes: المحاور
     action_option_group_options: الخيارات
     action_option_stretch_measure_type_outside_status: القياس من الخارج
-    action_option_stretch_measure_type_offset_status: ""
+    action_option_stretch_measure_type_offset_status: قِس الفرق
     action_option_axes_active_status: المعالجة على طول المحاور النشطة
     action_option_axes_context_status: المعالجة على طول محاور المجموعة أو العنصر الذي يحتوي على القِطعة
     action_option_axes_entity_status: المعالجة على طول محاور القطعة
-    action_option_options_centred_status: ""
-    action_option_options_make_unique_status: ""
+    action_option_options_centred_status: توسيط العناصر الممددة
+    action_option_options_make_unique_status: اجعل العناصر الممددة فريدة من نوعها
     error:
-      curve_intersect: ""
+      curve_intersect: أحد المستويات القاطعة يمر عبر مستوٍ غير قابل للتمديد
   smart_paint:
     title: لوِّن
     default_material: بلا خامة
