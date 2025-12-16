@@ -4114,9 +4114,6 @@
                 if (editedPart.thickness_layer_count !== editedParts[i].thickness_layer_count) {
                     editedPart.thickness_layer_count = MULTIPLE_VALUE;
                 }
-                if (editedPart.increase_strategy !== editedParts[i].increase_strategy) {
-                    editedPart.increase_strategy = MULTIPLE_VALUE;
-                }
                 if (editedPart.length_increase !== editedParts[i].length_increase) {
                     editedPart.length_increase = MULTIPLE_VALUE;
                 }
@@ -4196,7 +4193,6 @@
             const $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
             const $sectionIncrease = $('#ladb_cutlist_part_section_increase', $modal);
             const $btnEditMaterial = $('.ladb-btn-edit-material', $modal);
-            const $selectIncreaseStrategy = $('#ladb_cutlist_part_select_increase_strategy', $modal);
             const $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
             const $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
             const $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
@@ -4247,26 +4243,6 @@
             let thumbnailLoaded = false;
 
             // Utils function
-            const fnUpdateIncreaseFieldsVisibility = function () {
-                const selectedIncreaseStrategy = $selectIncreaseStrategy.val();
-                switch (selectedIncreaseStrategy) {
-                    case '0':
-                        $('.ladb-part-increase-material', $sectionIncrease).show();
-                        $('.ladb-part-increase-plus', $sectionIncrease).hide();
-                        $('.ladb-part-increase-part', $sectionIncrease).hide();
-                        break;
-                    case '1':
-                        $('.ladb-part-increase-material', $sectionIncrease).hide();
-                        $('.ladb-part-increase-plus', $sectionIncrease).hide();
-                        $('.ladb-part-increase-part', $sectionIncrease).show();
-                        break;
-                    case '2':
-                        $('.ladb-part-increase-material', $sectionIncrease).show();
-                        $('.ladb-part-increase-plus', $sectionIncrease).show();
-                        $('.ladb-part-increase-part', $sectionIncrease).show();
-                        break;
-                }
-            }
             const fnComputeAxesOrder = function () {
                 const axes = [];
                 $sortablePartAxes.children('li').each(function () {
@@ -4554,11 +4530,6 @@
                 });
             $selectCumulable.val(editedPart.cumulable);
             $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
-            $selectIncreaseStrategy.val(editedPart.increase_strategy);
-            $selectIncreaseStrategy
-                .selectpicker(SELECT_PICKER_OPTIONS)
-                .on('changed.bs.select', fnUpdateIncreaseFieldsVisibility)
-            ;
             $selectPartAxesOriginPosition
                 .selectpicker(SELECT_PICKER_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -4746,9 +4717,6 @@
                         if (!$inputThicknessLayerCount.ladbTextinputNumberWithUnit('isMultiple')) {
                             editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : that.toInt($inputThicknessLayerCount.val()));
                         }
-                        if ($selectIncreaseStrategy.val() !== MULTIPLE_VALUE) {
-                            editedParts[i].increase_strategy = that.toInt($selectIncreaseStrategy.val());
-                        }
                         if (!$inputLengthIncrease.ladbTextinputDimension('isMultiple')) {
                             editedParts[i].length_increase = $inputLengthIncrease.val();
                         }
@@ -4854,9 +4822,6 @@
                 }
 
             });
-
-            // Init increase fields
-            fnUpdateIncreaseFieldsVisibility();
 
             // Init edges preview
             fnUpdateEdgesPreview();

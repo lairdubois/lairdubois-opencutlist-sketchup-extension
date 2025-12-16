@@ -19,7 +19,6 @@ module Ladb::OpenCutList
         :mass,
         :price,
         :thickness_layer_count,
-        :increase_strategy,
         :length_increase,
         :width_increase,
         :thickness_increase,
@@ -63,7 +62,6 @@ module Ladb::OpenCutList
             part_data.fetch('mass'),
             part_data.fetch('price'),
             part_data.fetch('thickness_layer_count'),
-            part_data.fetch('increase_strategy'),
             part_data.fetch('length_increase'),
             part_data.fetch('width_increase'),
             part_data.fetch('thickness_increase'),
@@ -133,7 +131,6 @@ module Ladb::OpenCutList
                 part_data.price != definition_attributes.price ||
                 part_data.url != definition_attributes.url ||
                 part_data.thickness_layer_count != definition_attributes.thickness_layer_count ||
-                part_data.increase_strategy != definition_attributes.increase_strategy ||
                 part_data.length_increase != definition_attributes.length_increase ||
                 part_data.width_increase != definition_attributes.width_increase ||
                 part_data.thickness_increase != definition_attributes.thickness_increase ||
@@ -147,7 +144,6 @@ module Ladb::OpenCutList
               definition_attributes.price = part_data.price
               definition_attributes.url = part_data.url
               definition_attributes.thickness_layer_count = part_data.thickness_layer_count
-              definition_attributes.increase_strategy = part_data.increase_strategy
               definition_attributes.length_increase = part_data.length_increase
               definition_attributes.width_increase = part_data.width_increase
               definition_attributes.thickness_increase = part_data.thickness_increase

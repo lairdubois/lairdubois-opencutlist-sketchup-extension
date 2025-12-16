@@ -384,6 +384,15 @@ tab:
       has_edges_plural: "Cette pièce contient {{ count }} chants plaqués"
       has_faces: "Cette pièce contient {{ count }} face plaquée"
       has_faces_plural: "Cette pièce contient {{ count }} faces plaquées"
+      size_increased_0: |
+        Augmenté de la surcote de la Matière
+        ({{ increase_1 }})
+      size_increased_1: |
+        Augmenté de la surcote de la Pièce
+        ({{ increase_2 }})
+      size_increased_2: |
+        Augmenté de la surcote de la Matière et la Pièce
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: "Réduit de l'épaisseur des chants ({{ decrement }})"
       edge_ymin: Chant Longueur 1
       edge_ymax: Chant Longueur 2
@@ -466,14 +475,7 @@ tab:
 
         *Exemple :* Si pour une pièce dessinée de *38mm* d'épaisseur, vous souhaiter la réaliser par un collage de deux panneaux de *19mm*, indiquez **2** dans ce champ.
         *OpenCutList comptabilisera alors 2 pièces de 19mm d'épaisseur au lieu de 1 pièce de 38mm.*
-      increase_strategy: Mode de surcote
-      increase_strategy_0: Surcotes Matière uniquement
-      increase_strategy_1: Surcotes Pièce uniquement
-      increase_strategy_2: Surcotes Matière + Pièce
-      increase_strategy_help: |
-        Le *Mode de surcote* vous permet de définir les surcotes utilisées dans le calcul des **dimensions de débit** de la pièce.
-        
-        Vous pouvez utiliser les surcotes définies sur la matière, sur la pièce ou la somme des deux.
+      cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
       length_increase_help: Surcote appliquée sur la longueur capable de la pièce pour définir sa **longueur de débit**.  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)

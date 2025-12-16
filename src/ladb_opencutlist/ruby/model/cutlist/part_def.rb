@@ -15,7 +15,7 @@ module Ladb::OpenCutList
                   :material_name, :material_origins,
                   :tags,
                   :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :symmetrical, :ignore_grain_direction,
-                  :increase_strategy, :length_increase, :width_increase, :thickness_increase,
+                  :length_increase, :length_increased, :width_increase, :width_increased, :thickness_increase, :thickness_increased,
                   :edge_count, :edge_pattern, :edge_entity_ids, :edge_decrements, :edge_length_decrement, :edge_width_decrement, :edge_decremented,
                   :face_count, :face_pattern, :face_entity_ids, :face_decrements, :face_texture_angles, :face_thickness_decrement, :face_decremented,
                   :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area,
@@ -54,10 +54,12 @@ module Ladb::OpenCutList
       @symmetrical = false
       @ignore_grain_direction = false
 
-      @increase_strategy = DefinitionAttributes::INCREASE_STRATEGY_MATERIAL
       @length_increase = 0
+      @length_increased = false
       @width_increase = 0
+      @width_increased = false
       @thickness_increase = 0
+      @thickness_increased = false
 
       @edge_count = 0
       @edge_pattern = nil                 # A string from 0000 to 1111

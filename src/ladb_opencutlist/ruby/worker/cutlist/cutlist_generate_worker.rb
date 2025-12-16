@@ -395,20 +395,9 @@ module Ladb::OpenCutList
         thickness = [ thickness - veneers_def[:thickness_decrement], 0 ].max.to_l if veneers_def && veneers_def[:thickness_decrement]
         thickness = (thickness / definition_attributes.thickness_layer_count).to_l if definition_attributes.thickness_layer_count > 1
         size = Size3d.new(instance_info.size.length, instance_info.size.width, thickness, instance_info.size.axes)
-        case definition_attributes.increase_strategy
-        when DefinitionAttributes::INCREASE_STRATEGY_MATERIAL
-          length_increase = material_attributes.l_length_increase
-          width_increase = material_attributes.l_width_increase
-          thickness_increase = material_attributes.l_thickness_increase
-        when DefinitionAttributes::INCREASE_STRATEGY_PART
-          length_increase = definition_attributes.l_length_increase
-          width_increase = definition_attributes.l_width_increase
-          thickness_increase = definition_attributes.l_thickness_increase
-        when DefinitionAttributes::INCREASE_STRATEGY_BOTH
-          length_increase = definition_attributes.l_length_increase + material_attributes.l_length_increase
-          width_increase = definition_attributes.l_width_increase + material_attributes.l_width_increase
-          thickness_increase = definition_attributes.l_thickness_increase + material_attributes.l_thickness_increase
-        end
+        length_increase = material_attributes.l_length_increase + definition_attributes.l_length_increase
+        width_increase = material_attributes.l_width_increase + definition_attributes.l_width_increase
+        thickness_increase = material_attributes.l_thickness_increase + definition_attributes.l_thickness_increase
         case material_attributes.type
           when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD
             std_thickness_info = _find_std_value(
@@ -534,10 +523,12 @@ module Ladb::OpenCutList
           part_def.price = definition_attributes.price
           part_def.url = definition_attributes.url
           part_def.thickness_layer_count = definition_attributes.thickness_layer_count
-          part_def.increase_strategy = definition_attributes.increase_strategy
           part_def.length_increase = definition_attributes.length_increase
+          part_def.length_increased = definition_attributes.l_length_increase > 0
           part_def.width_increase = definition_attributes.width_increase
+          part_def.width_increased = definition_attributes.l_width_increase > 0
           part_def.thickness_increase = definition_attributes.thickness_increase
+          part_def.thickness_increased = definition_attributes.l_thickness_increase > 0
           part_def.tags = definition_attributes.tags
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
           part_def.symmetrical = definition_attributes.symmetrical

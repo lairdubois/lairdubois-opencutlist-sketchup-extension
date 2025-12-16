@@ -20,7 +20,7 @@ module Ladb::OpenCutList
                 :tags,
                 :cumulable, :cumulative_cutting_length, :cumulative_cutting_width,
                 :instance_count_by_part, :mass, :price, :thickness_layer_count, :ignore_grain_direction,
-                :increase_strategy, :length_increase, :width_increase, :height_increase,
+                :length_increase, :length_increased, :width_increase, :width_increased, :height_increase, :height_increased,
                 :edge_count, :edge_pattern, :edge_material_names, :edge_material_colors, :edge_std_dimensions, :edge_decrements,
                 :face_count, :face_pattern, :face_material_names, :face_material_colors, :face_texture_angles, :face_std_dimensions, :face_decrements,
                 :entity_names, :final_area, :l_ratio, :w_ratio
@@ -60,10 +60,12 @@ module Ladb::OpenCutList
       @thickness_layer_count = _def.thickness_layer_count
       @ignore_grain_direction = _def.ignore_grain_direction
 
-      @increase_strategy = _def.increase_strategy
-      @length_increase = _def.length_increase
-      @width_increase = _def.width_increase
-      @thickness_increase = _def.thickness_increase
+      @length_increase = _def.length_increase.to_s
+      @length_increased = _def.length_increased
+      @width_increase = _def.width_increase.to_s
+      @width_increased = _def.width_increased
+      @thickness_increase = _def.thickness_increase.to_s
+      @thickness_increased = _def.thickness_increased
 
       @edge_count = _def.edge_count
       @edge_pattern = _def.edge_pattern

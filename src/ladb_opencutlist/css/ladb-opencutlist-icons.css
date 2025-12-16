@@ -196,6 +196,9 @@ i, span.ladb-opencutlist-icon:before {
 .ladb-opencutlist-icon-size-increase-2:before {
     content: "\e9c1";
 }
+.ladb-opencutlist-icon-edge-decremented:before {
+    content: "\e915";
+}
 .ladb-opencutlist-icon-obsolete:before {
     content: "\e90c";
 }
@@ -219,9 +222,6 @@ i, span.ladb-opencutlist-icon:before {
 }
 .ladb-opencutlist-icon-reorder:before {
     content: "\e914";
-}
-.ladb-opencutlist-icon-edge-decremented:before {
-    content: "\e915";
 }
 .ladb-opencutlist-icon-filter-on:before {
     content: "\e916";
