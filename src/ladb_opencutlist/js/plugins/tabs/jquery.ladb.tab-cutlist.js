@@ -4114,6 +4114,18 @@
                 if (editedPart.thickness_layer_count !== editedParts[i].thickness_layer_count) {
                     editedPart.thickness_layer_count = MULTIPLE_VALUE;
                 }
+                if (editedPart.increase_strategy !== editedParts[i].increase_strategy) {
+                    editedPart.increase_strategy = MULTIPLE_VALUE;
+                }
+                if (editedPart.length_increase !== editedParts[i].length_increase) {
+                    editedPart.length_increase = MULTIPLE_VALUE;
+                }
+                if (editedPart.width_increase !== editedParts[i].width_increase) {
+                    editedPart.width_increase = MULTIPLE_VALUE;
+                }
+                if (editedPart.thickness_increase !== editedParts[i].thickness_increase) {
+                    editedPart.thickness_increase = MULTIPLE_VALUE;
+                }
                 if (editedPart.description !== editedParts[i].description) {
                     editedPart.description = MULTIPLE_VALUE;
                 }
@@ -4182,6 +4194,12 @@
             const $inputMass = $('#ladb_cutlist_part_input_mass', $modal);
             const $inputPrice = $('#ladb_cutlist_part_input_price', $modal);
             const $inputThicknessLayerCount = $('#ladb_cutlist_part_input_thickness_layer_count', $modal);
+            const $sectionIncrease = $('#ladb_cutlist_part_section_increase', $modal);
+            const $btnEditMaterial = $('.ladb-btn-edit-material', $modal);
+            const $selectIncreaseStrategy = $('#ladb_cutlist_part_select_increase_strategy', $modal);
+            const $inputLengthIncrease = $('#ladb_cutlist_part_input_length_increase', $modal);
+            const $inputWidthIncrease = $('#ladb_cutlist_part_input_width_increase', $modal);
+            const $inputThicknessIncrease = $('#ladb_cutlist_part_input_thickness_increase', $modal);
             const $inputDescription = $('#ladb_cutlist_part_input_description', $modal);
             const $inputUrl = $('#ladb_cutlist_part_input_url', $modal);
             const $inputTags = $('#ladb_cutlist_part_input_tags', $modal);
@@ -4203,8 +4221,6 @@
             const $formGroupFaceZmaxTextureAngle = $('#ladb_cutlist_part_form_group_face_zmax_texture_angle', $modal);
             const $inputFaceZminTextureAngle = $('#ladb_cutlist_part_input_face_zmin_texture_angle', $modal);
             const $inputFaceZmaxTextureAngle = $('#ladb_cutlist_part_input_face_zmax_texture_angle', $modal);
-            const $rectIncreaseLength = $('svg .increase-length', $modal);
-            const $rectIncreaseWidth = $('svg .increase-width', $modal);
             const $rectEdgeYmin = $('svg .edge-ymin', $modal);
             const $rectEdgeYmax = $('svg .edge-ymax', $modal);
             const $rectEdgeXmin = $('svg .edge-xmin', $modal);
@@ -4231,6 +4247,26 @@
             let thumbnailLoaded = false;
 
             // Utils function
+            const fnUpdateIncreaseFieldsVisibility = function () {
+                const selectedIncreaseStrategy = $selectIncreaseStrategy.val();
+                switch (selectedIncreaseStrategy) {
+                    case '0':
+                        $('.ladb-part-increase-material', $sectionIncrease).show();
+                        $('.ladb-part-increase-plus', $sectionIncrease).hide();
+                        $('.ladb-part-increase-part', $sectionIncrease).hide();
+                        break;
+                    case '1':
+                        $('.ladb-part-increase-material', $sectionIncrease).hide();
+                        $('.ladb-part-increase-plus', $sectionIncrease).hide();
+                        $('.ladb-part-increase-part', $sectionIncrease).show();
+                        break;
+                    case '2':
+                        $('.ladb-part-increase-material', $sectionIncrease).show();
+                        $('.ladb-part-increase-plus', $sectionIncrease).show();
+                        $('.ladb-part-increase-part', $sectionIncrease).show();
+                        break;
+                }
+            }
             const fnComputeAxesOrder = function () {
                 const axes = [];
                 $sortablePartAxes.children('li').each(function () {
@@ -4474,6 +4510,9 @@
             $inputThicknessLayerCount.ladbTextinputNumberWithUnit({
                 resetValue: '1'
             });
+            $inputLengthIncrease.ladbTextinputDimension();
+            $inputWidthIncrease.ladbTextinputDimension();
+            $inputThicknessIncrease.ladbTextinputDimension();
             $inputDescription.ladbTextinputArea();
             $inputUrl.ladbTextinputUrl();
             $inputTags.ladbTextinputTokenfield({
@@ -4515,6 +4554,11 @@
                 });
             $selectCumulable.val(editedPart.cumulable);
             $selectCumulable.selectpicker(SELECT_PICKER_OPTIONS);
+            $selectIncreaseStrategy.val(editedPart.increase_strategy);
+            $selectIncreaseStrategy
+                .selectpicker(SELECT_PICKER_OPTIONS)
+                .on('changed.bs.select', fnUpdateIncreaseFieldsVisibility)
+            ;
             $selectPartAxesOriginPosition
                 .selectpicker(SELECT_PICKER_OPTIONS)
                 .on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
@@ -4639,6 +4683,18 @@
             });
 
             // Bind buttons
+            $btnEditMaterial.on('click', function () {
+
+                // Hide modal
+                $modal.modal('hide');
+
+                // Edit material
+                that.dialog.executeCommandOnTab('materials', 'edit_material', {
+                    materialId: group.material_id,
+                    propertiesTab: 'cut_options'
+                });
+
+            });
             $btnHighlight.on('click', function () {
                 this.blur();
                 that.highlightPart(part.id);
@@ -4690,6 +4746,18 @@
                         if (!$inputThicknessLayerCount.ladbTextinputNumberWithUnit('isMultiple')) {
                             editedParts[i].thickness_layer_count = Math.max(1, $inputThicknessLayerCount.val() === '' ? 1 : that.toInt($inputThicknessLayerCount.val()));
                         }
+                        if ($selectIncreaseStrategy.val() !== MULTIPLE_VALUE) {
+                            editedParts[i].increase_strategy = that.toInt($selectIncreaseStrategy.val());
+                        }
+                        if (!$inputLengthIncrease.ladbTextinputDimension('isMultiple')) {
+                            editedParts[i].length_increase = $inputLengthIncrease.val();
+                        }
+                        if (!$inputWidthIncrease.ladbTextinputDimension('isMultiple')) {
+                            editedParts[i].width_increase = $inputWidthIncrease.val();
+                        }
+                        if (!$inputThicknessIncrease.ladbTextinputDimension('isMultiple')) {
+                            editedParts[i].thickness_increase = $inputThicknessIncrease.val();
+                        }
                         if (!$inputDescription.ladbTextinputArea('isMultiple')) {
                             editedParts[i].description = $inputDescription.val().trim();
                         }
@@ -4732,6 +4800,8 @@
                     }
 
                 }
+
+                console.log(editedParts);
 
                 rubyCallCommand('cutlist_part_update', { auto_orient: that.generateOptions.auto_orient, parts_data: editedParts }, function (response) {
 
@@ -4784,6 +4854,9 @@
                 }
 
             });
+
+            // Init increase fields
+            fnUpdateIncreaseFieldsVisibility();
 
             // Init edges preview
             fnUpdateEdgesPreview();

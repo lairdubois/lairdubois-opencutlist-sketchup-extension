@@ -19,6 +19,10 @@ module Ladb::OpenCutList
         :mass,
         :price,
         :thickness_layer_count,
+        :increase_strategy,
+        :length_increase,
+        :width_increase,
+        :thickness_increase,
         :description,
         :url,
         :tags,
@@ -59,6 +63,10 @@ module Ladb::OpenCutList
             part_data.fetch('mass'),
             part_data.fetch('price'),
             part_data.fetch('thickness_layer_count'),
+            part_data.fetch('increase_strategy'),
+            part_data.fetch('length_increase'),
+            part_data.fetch('width_increase'),
+            part_data.fetch('thickness_increase'),
             part_data.fetch('description'),
             part_data.fetch('url'),
             DefinitionAttributes.valid_tags(part_data.fetch('tags')),
@@ -125,6 +133,10 @@ module Ladb::OpenCutList
                 part_data.price != definition_attributes.price ||
                 part_data.url != definition_attributes.url ||
                 part_data.thickness_layer_count != definition_attributes.thickness_layer_count ||
+                part_data.increase_strategy != definition_attributes.increase_strategy ||
+                part_data.length_increase != definition_attributes.length_increase ||
+                part_data.width_increase != definition_attributes.width_increase ||
+                part_data.thickness_increase != definition_attributes.thickness_increase ||
                 part_data.orientation_locked_on_axis != definition_attributes.orientation_locked_on_axis ||
                 part_data.symmetrical != definition_attributes.symmetrical ||
                 part_data.ignore_grain_direction != definition_attributes.ignore_grain_direction ||
@@ -135,6 +147,10 @@ module Ladb::OpenCutList
               definition_attributes.price = part_data.price
               definition_attributes.url = part_data.url
               definition_attributes.thickness_layer_count = part_data.thickness_layer_count
+              definition_attributes.increase_strategy = part_data.increase_strategy
+              definition_attributes.length_increase = part_data.length_increase
+              definition_attributes.width_increase = part_data.width_increase
+              definition_attributes.thickness_increase = part_data.thickness_increase
               definition_attributes.tags = part_data.tags
               definition_attributes.orientation_locked_on_axis = part_data.orientation_locked_on_axis
               definition_attributes.symmetrical = part_data.symmetrical
@@ -142,7 +158,7 @@ module Ladb::OpenCutList
               definition_attributes.write_to_attributes
             end
 
-            # Transform part axes if axes order exist
+            # Transform part axes if axes order exists
             if part_data.axes_order.is_a?(Array) && part_data.axes_order.length == 3
 
               axes_convertor = {

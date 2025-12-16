@@ -9,7 +9,16 @@ module Ladb::OpenCutList
     CUMULABLE_LENGTH = 1
     CUMULABLE_WIDTH = 2
 
-    attr_accessor :uuid, :cumulable, :instance_count_by_part, :mass, :price, :url, :symmetrical, :ignore_grain_direction, :tags, :orientation_locked_on_axis, :thickness_layer_count
+    INCREASE_STRATEGY_MATERIAL = 0
+    INCREASE_STRATEGY_PART = 1
+    INCREASE_STRATEGY_BOTH = 2
+
+    attr_accessor :uuid,
+                  :url, :tags,
+                  :cumulable, :instance_count_by_part,
+                  :mass, :price,
+                  :increase_strategy, :length_increase, :width_increase, :thickness_increase,
+                  :symmetrical, :ignore_grain_direction, :orientation_locked_on_axis, :thickness_layer_count
     attr_reader :definition
 
     @@cached_uuids = {}
@@ -106,6 +115,18 @@ module Ladb::OpenCutList
       @uuid
     end
 
+    def l_length_increase
+      DimensionUtils.d_to_ifloats(length_increase).to_l
+    end
+
+    def l_width_increase
+      DimensionUtils.d_to_ifloats(width_increase).to_l
+    end
+
+    def l_thickness_increase
+      DimensionUtils.d_to_ifloats(thickness_increase).to_l
+    end
+
     def h_mass
       unit, val = UnitUtils.split_unit_and_value(mass)
       { :unit => unit, :val => val }
@@ -140,14 +161,18 @@ module Ladb::OpenCutList
         rescue JSON::ParserError
           @numbers = {}
         end
+        @url = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Url', '')
+        @tags = DefinitionAttributes.valid_tags(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))) # BC for "labels" key
         @cumulable = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', CUMULABLE_NONE)
         @instance_count_by_part = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'instance_count_by_part', 1)
         @mass = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', '')
         @price = DefinitionAttributes.valid_price(@definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', ''))
-        @url = @definition.get_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Url', '')
+        @increase_strategy = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'increase_strategy', INCREASE_STRATEGY_MATERIAL)
+        @length_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', '0')
+        @width_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', '0')
+        @thickness_increase = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', '0')
         @symmetrical = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', false)
         @ignore_grain_direction = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'ignore_grain_direction', false)
-        @tags = DefinitionAttributes.valid_tags(@definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'labels', []))) # BC for "labels" key
         @orientation_locked_on_axis = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', false)
         @thickness_layer_count = @definition.get_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_layer_count', 1)
       end
@@ -162,14 +187,18 @@ module Ladb::OpenCutList
         end
 
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'numbers', @numbers.to_json)
+        @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Url', @url)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @tags)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'cumulable', @cumulable)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'instance_count_by_part', @instance_count_by_part)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'mass', @mass)
         @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Price', @price)
-        @definition.set_attribute(Plugin::SU_ATTRIBUTE_DICTIONARY, 'Url', @url)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'increase_strategy', @increase_strategy)
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'length_increase', DimensionUtils.str_add_units(@length_increase))
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'width_increase', DimensionUtils.str_add_units(@width_increase))
+        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_increase', DimensionUtils.str_add_units(@thickness_increase))
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'symmetrical', @symmetrical)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'ignore_grain_direction', @ignore_grain_direction)
-        @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'tags', @tags)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'orientation_locked_on_axis', @orientation_locked_on_axis)
         @definition.set_attribute(Plugin::ATTRIBUTE_DICTIONARY, 'thickness_layer_count', @thickness_layer_count)
       end

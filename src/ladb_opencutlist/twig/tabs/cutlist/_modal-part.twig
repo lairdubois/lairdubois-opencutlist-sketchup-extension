@@ -143,6 +143,79 @@
                             </div>
                         </div>
                     {% endif %}
+                    {% if group.material_type == 1 or group.material_type == 2 or group.material_type == 3 %}  {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD, 2 = TYPE_DIMENSIONAL #}
+                        <hr>
+                        <section id="ladb_cutlist_part_section_increase">
+                            <h4>Options de débit</h4>
+                            <div class="form-group">
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.increase_strategy_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.increase_strategy'|i18next }}</label>
+                                <div class="col-xs-7">
+                                    <select class="form-control" id="ladb_cutlist_part_select_increase_strategy">
+                                        {% if multiple and part.increase_strategy == '-1' %}
+                                            <option value="-1" data-content="<span style='color: #ccc; font-style: italic;'><i class='ladb-opencutlist-icon-multiple'></i> {{ 'tab.cutlist.edit_part.multiple_values'|i18next }}</span>"></option>
+                                            <option data-divider="true"></option>
+                                        {% endif %}
+                                        <option value="0" data-content="<i class='ladb-opencutlist-icon-size-increase-0'></i> {{ 'tab.cutlist.edit_part.increase_strategy_0'|i18next }}"></option>
+                                        <option value="1" data-content="<i class='ladb-opencutlist-icon-size-increase-1'></i> {{ 'tab.cutlist.edit_part.increase_strategy_1'|i18next }}"></option>
+                                        <option value="2" data-content="<i class='ladb-opencutlist-icon-size-increase-2'></i> {{ 'tab.cutlist.edit_part.increase_strategy_2'|i18next }}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                                <div class="form-group">
+                                <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.length_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.length_increase'|i18next }}</label>
+                                <div class="col-xs-7">
+                                    <div class="ladb-part-increase">
+                                        <div class="ladb-part-increase-material">
+                                            <span class="ladb-flex-grow-1">{{ group.material_length_increase }}</span>
+                                            <div class="ladb-minitools"><a href="#" class="ladb-btn-edit-material" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':group.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a></div>
+                                        </div>
+                                        <div class="ladb-part-increase-plus"><i class="ladb-opencutlist-icon-plus"></i></div>
+                                        <div class="ladb-part-increase-part">
+                                            <input type="text" class="ladb-flex-grow-1 form-control text-right" id="ladb_cutlist_part_input_length_increase" {% if part.length_increase == -1 %}data-multiple="true"{% else %}value="{{ part.length_increase }}"{% endif %}>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if group.material_type == 1 or group.material_type == 2  %}  {# 1 = TYPE_SOLID_WOOD, 2 = TYPE_SHEET_GOOD #}
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.width_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.width_increase'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <div class="ladb-part-increase">
+                                            <div class="ladb-part-increase-material">
+                                                <span class="ladb-flex-grow-1">{{ group.material_width_increase }}</span>
+                                                <div class="ladb-minitools"><a href="#" class="ladb-btn-edit-material" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':group.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a></div>
+                                            </div>
+                                            <div class="ladb-part-increase-plus"><i class="ladb-opencutlist-icon-plus"></i></div>
+                                            <div class="ladb-part-increase-part">
+                                                <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_width_increase" {% if part.width_increase == -1 %}data-multiple="true"{% else %}value="{{ part.width_increase }}"{% endif %}>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if group.material_type == 1 %}  {# 1 = TYPE_SOLID_WOOD #}
+                                <div class="form-group">
+                                    <div class="ladb-minitools ladb-minitools-right ladb-minitools-lgw"><a tabindex="-1" data-toggle="popover" data-trigger="hover" data-placement="left" title="{{ 'default.help'|i18next }}" data-content="{{ 'tab.cutlist.edit_part.thickness_increase_help'|i18next }}"><i class="ladb-opencutlist-icon-help"></i></a></div>
+                                    <label class="control-label col-xs-3">{{ 'tab.cutlist.edit_part.thickness_increase'|i18next }}</label>
+                                    <div class="col-xs-7">
+                                        <div class="ladb-part-increase">
+                                            <div class="ladb-part-increase-material">
+                                                <span class="ladb-flex-grow-1">{{ group.material_thickness_increase }}</span>
+                                                <div class="ladb-minitools"><a href="#" class="ladb-btn-edit-material" data-toggle="tooltip" title="{{ 'tab.cutlist.tooltip.edit_material'|i18next({ 'material_name':group.material_display_name }) }}..."><i class="ladb-opencutlist-icon-edit"></i></a></div>
+                                            </div>
+                                            <div class="ladb-part-increase-plus"><i class="ladb-opencutlist-icon-plus"></i></div>
+                                            <div class="ladb-part-increase-part">
+                                                <input type="text" class="form-control text-right" id="ladb_cutlist_part_input_thickness_increase" {% if part.thickness_increase == -1 %}data-multiple="true"{% else %}value="{{ part.thickness_increase }}"{% endif %}>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </section>
+                    {% endif %}
                 </div>
             </div>
         {% endif %}

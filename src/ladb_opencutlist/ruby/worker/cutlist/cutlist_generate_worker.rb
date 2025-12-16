@@ -202,9 +202,7 @@ module Ladb::OpenCutList
 
         material, material_origin = _get_material(instance_info.path, @smart_material)
         material_attributes = _get_material_attributes(material)
-        material_id = material ? material.entityID : ''
         material_name = material ? material.name : ''
-        material_display_name = material ? material.display_name : ''
 
         if material
 
@@ -213,7 +211,7 @@ module Ladb::OpenCutList
             material_usage.use_count += 1
           end
 
-          # Edge and veneer materials filter -> exclude all non sheet good parts
+          # Edge and veneer materials filter -> exclude all non-sheet good parts
           if (!@edge_material_names_filter.empty? || !@veneer_material_names_filter.empty?) && material_attributes.type != MaterialAttributes::TYPE_SHEET_GOOD
             cutlist.ignored_instance_count += 1
             next
@@ -227,6 +225,9 @@ module Ladb::OpenCutList
             definition_attributes.instance_count_by_part = 1
             definition_attributes.cumulable = DefinitionAttributes::CUMULABLE_NONE
             definition_attributes.thickness_layer_count = 1
+            definition_attributes.length_increase = 0
+            definition_attributes.width_increase = 0
+            definition_attributes.thickness_increase = 0
           when MaterialAttributes::TYPE_SOLID_WOOD
             definition_attributes.instance_count_by_part = 1
             definition_attributes.mass = ''
@@ -236,14 +237,20 @@ module Ladb::OpenCutList
             definition_attributes.instance_count_by_part = 1
             definition_attributes.mass = ''
             definition_attributes.price = ''
+            definition_attributes.thickness_increase = 0
           when MaterialAttributes::TYPE_DIMENSIONAL
             definition_attributes.instance_count_by_part = 1
             definition_attributes.mass = ''
             definition_attributes.price = ''
+            definition_attributes.width_increase = 0
+            definition_attributes.thickness_increase = 0
             definition_attributes.thickness_layer_count = 1
           when MaterialAttributes::TYPE_HARDWARE
             definition_attributes.cumulable = DefinitionAttributes::CUMULABLE_NONE
             definition_attributes.thickness_layer_count = 1
+            definition_attributes.length_increase = 0
+            definition_attributes.width_increase = 0
+            definition_attributes.thickness_increase = 0
         end
 
         # Compute face infos
@@ -388,10 +395,24 @@ module Ladb::OpenCutList
         thickness = [ thickness - veneers_def[:thickness_decrement], 0 ].max.to_l if veneers_def && veneers_def[:thickness_decrement]
         thickness = (thickness / definition_attributes.thickness_layer_count).to_l if definition_attributes.thickness_layer_count > 1
         size = Size3d.new(instance_info.size.length, instance_info.size.width, thickness, instance_info.size.axes)
+        case definition_attributes.increase_strategy
+        when DefinitionAttributes::INCREASE_STRATEGY_MATERIAL
+          length_increase = material_attributes.l_length_increase
+          width_increase = material_attributes.l_width_increase
+          thickness_increase = material_attributes.l_thickness_increase
+        when DefinitionAttributes::INCREASE_STRATEGY_PART
+          length_increase = definition_attributes.l_length_increase
+          width_increase = definition_attributes.l_width_increase
+          thickness_increase = definition_attributes.l_thickness_increase
+        when DefinitionAttributes::INCREASE_STRATEGY_BOTH
+          length_increase = definition_attributes.l_length_increase + material_attributes.l_length_increase
+          width_increase = definition_attributes.l_width_increase + material_attributes.l_width_increase
+          thickness_increase = definition_attributes.l_thickness_increase + material_attributes.l_thickness_increase
+        end
         case material_attributes.type
           when MaterialAttributes::TYPE_SOLID_WOOD, MaterialAttributes::TYPE_SHEET_GOOD
             std_thickness_info = _find_std_value(
-                (size.thickness + material_attributes.l_thickness_increase).to_l,
+                (size.thickness + thickness_increase).to_l,
                 material_attributes.l_std_thicknesses,
                 material_attributes.type == MaterialAttributes::TYPE_SOLID_WOOD
             )
@@ -404,8 +425,8 @@ module Ladb::OpenCutList
                 :width => 0,
                 :thickness => std_thickness_info[:value],
                 :cutting_size => Size3d.new(
-                    (size.length + material_attributes.l_length_increase).to_l,
-                    (size.width + material_attributes.l_width_increase).to_l,
+                    (size.length + length_increase).to_l,
+                    (size.width + width_increase).to_l,
                     std_thickness_info[:value]
                 )
             }
@@ -424,7 +445,7 @@ module Ladb::OpenCutList
                 :width => std_section_info[:value].width,
                 :thickness => std_section_info[:value].height,
                 :cutting_size => Size3d.new(
-                    (size.length + material_attributes.l_length_increase).to_l,
+                    (size.length + length_increase).to_l,
                     std_section_info[:value].width,
                     std_section_info[:value].height
                 )
@@ -459,7 +480,7 @@ module Ladb::OpenCutList
           group_def.std_dimension_rounded = std_info[:dimension_rounded]
           group_def.std_width = std_info[:width]
           group_def.std_thickness = std_info[:thickness]
-          group_def.show_cutting_dimensions = material_attributes.l_length_increase > 0 || material_attributes.l_width_increase > 0
+          group_def.show_cutting_dimensions = length_increase > 0 || width_increase > 0
 
           _store_group_def(group_def)
 
@@ -513,13 +534,17 @@ module Ladb::OpenCutList
           part_def.price = definition_attributes.price
           part_def.url = definition_attributes.url
           part_def.thickness_layer_count = definition_attributes.thickness_layer_count
+          part_def.increase_strategy = definition_attributes.increase_strategy
+          part_def.length_increase = definition_attributes.length_increase
+          part_def.width_increase = definition_attributes.width_increase
+          part_def.thickness_increase = definition_attributes.thickness_increase
           part_def.tags = definition_attributes.tags
           part_def.orientation_locked_on_axis = definition_attributes.orientation_locked_on_axis
           part_def.symmetrical = definition_attributes.symmetrical
           part_def.ignore_grain_direction = definition_attributes.ignore_grain_direction
           part_def.auto_oriented = size.auto_oriented?
 
-          # Propose cutting dimensions display if part is flaged as cumulable
+          # Propose cutting dimensions display if the part is flagged as cumulable
           if definition_attributes.cumulable != DefinitionAttributes::CUMULABLE_NONE
             group_def.show_cutting_dimensions = true
           end

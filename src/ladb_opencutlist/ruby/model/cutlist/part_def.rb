@@ -13,8 +13,9 @@ module Ladb::OpenCutList
     attr_accessor :id, :definition_id, :number, :saved_number, :name, :is_dynamic_attributes_name, :description, :url, :count,
                   :cutting_size, :size, :scale, :flipped,
                   :material_name, :material_origins,
-                  :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis,
-                  :tags, :symmetrical, :ignore_grain_direction,
+                  :tags,
+                  :cumulable, :instance_count_by_part, :mass, :price, :thickness_layer_count, :orientation_locked_on_axis, :symmetrical, :ignore_grain_direction,
+                  :increase_strategy, :length_increase, :width_increase, :thickness_increase,
                   :edge_count, :edge_pattern, :edge_entity_ids, :edge_decrements, :edge_length_decrement, :edge_width_decrement, :edge_decremented,
                   :face_count, :face_pattern, :face_entity_ids, :face_decrements, :face_texture_angles, :face_thickness_decrement, :face_decremented,
                   :auto_oriented, :not_aligned_on_axes, :unused_instance_count, :content_layers, :final_area,
@@ -33,21 +34,31 @@ module Ladb::OpenCutList
       @description = ''
       @url = ''
       @count = 0
+
       @cutting_size = Size3d.new
       @size = Size3d.new
       @scale = Scale3d.new
       @flipped = false
+
       @material_name = ''
       @material_origins = []
+
+      @tags = []
+
       @cumulable = DefinitionAttributes::CUMULABLE_NONE
       @instance_count_by_part = 1
       @mass = ''
       @price = ''
       @thickness_layer_count = 1
-      @tags = []
       @orientation_locked_on_axis = false
       @symmetrical = false
       @ignore_grain_direction = false
+
+      @increase_strategy = DefinitionAttributes::INCREASE_STRATEGY_MATERIAL
+      @length_increase = 0
+      @width_increase = 0
+      @thickness_increase = 0
+
       @edge_count = 0
       @edge_pattern = nil                 # A string from 0000 to 1111
       @edge_material_names = {}
@@ -59,6 +70,7 @@ module Ladb::OpenCutList
       @edge_width_decrement = 0
       @edge_decremented = false
       @edge_errors = []
+
       @face_count = 0
       @face_pattern = nil                 # A string from 00 to 11
       @face_material_names = {}
@@ -70,6 +82,7 @@ module Ladb::OpenCutList
       @face_thickness_decrement = 0
       @face_decremented = false
       @face_errors = []
+
       @entity_ids = []                    # All unique entity ids (array count could be smaller than @count)
       @entity_serialized_paths = []       # All Serialized paths to each entity (array count should be egals to @count)
       @entity_names = {}                  # All non empty entity instance names (key = name, value = array of 'named path')
