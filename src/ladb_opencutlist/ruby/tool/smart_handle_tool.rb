@@ -1485,7 +1485,6 @@ module Ladb::OpenCutList
       super
     end
 
-
     def get_state_status(state)
 
       case state
@@ -2629,6 +2628,19 @@ module Ladb::OpenCutList
 
       when STATE_SELECT
         return @tool.cursor_select_distribute
+
+      end
+
+      super
+    end
+
+    def get_state_status(state)
+
+      case state
+
+      when STATE_HANDLE
+        return super +
+               ' | ' + PLUGIN.get_i18n_string("default.copy_key_#{PLUGIN.platform_name}") + ' = ' + PLUGIN.get_i18n_string('tool.smart_handle.action_toggle_raytest_status') + '.'
 
       end
 
