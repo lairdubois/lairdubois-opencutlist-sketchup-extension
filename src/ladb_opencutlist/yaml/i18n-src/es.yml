@@ -18,7 +18,7 @@ default:
   ok: Ok
   open: Abrir
   see: Ver
-  close: Cerra
+  close: Cerrar
   clear: Borrar
   refresh: Actualizar
   generate: Generar
@@ -52,9 +52,9 @@ default:
   help: Ayuda
   error: ¡Upss!
   warning: Advertencia
-  tip: Propina
-  good: Bien
-  bad: Mal
+  tip: Truco
+  good: Correcto
+  bad: Incorrecto
   by: por
   # date format in use for language
   date_format: "d/m/Y g:ia"
@@ -64,8 +64,8 @@ default:
   fractional: Fraccional
   unit_0: Pulgada
   unit_1: Pie
-  unit_2: Milimetro
-  unit_3: Centimetro
+  unit_2: Milímetro
+  unit_3: Centímetro
   unit_4: Metro
   unit_5: Yarda
   unit_mass_0: Kilogramo
@@ -82,12 +82,12 @@ default:
   setup_model_units: Configurar las unidades del modelo
   load_more: Carga más
   reset_to_app_defaults: Restaurar a los valores originales
-  constrain_key: Shift
+  constrain_key: Mayúsculas
   copy_key_win: Ctrl
-  copy_key_mac: Option
+  copy_key_mac: Opción
   alt_key_win: Alt
   alt_key_mac: Command
-  tab_key: Tab
+  tab_key: Tabulador
   file: Archivo
   file_plural: Archivos
   stroke_color: Color de trazo
@@ -140,17 +140,17 @@ core:
     title: OpenCutList por L'Air du Bois
   leftbar:
     more: Más
-    more_docs: Doc.
-    more_reviews: Reseñas
+    more_docs: Documentos
+    more_reviews: Advertencias
     more_plans: Planos
     more_extensions: Extensiones
-    more_update: Actualizar
+    more_update: Actualización
   bottombar:
     report_a_bug: Informar de un error
   warning:
     dev: |
       Está utilizando una versión de **desarrollo** de *OpenCutList*.
-      Esta versión está disponible solo para pruebas.
+      Esta versión está disponible sólo para pruebas.
       No se recomienda su uso en producción.
 
       Para informar de un error: <a href="mailto:opencutlist@lairdubois.fr?subject=Bug%20Report%20OpenCutList%20{{ version }}%20(build: {{ build }})" target="_blank">opencutlist@lairdubois.fr</a>.
@@ -182,17 +182,17 @@ core:
     up_to_date: |
       Ya tienes la última versión de *OpenCutList*.
 
-      *¡Considera patrocinar este proyecto para ayudarnos a agregar aún más funciones!*
+      *¡Para ayudarnos a agregar aún más funciones, no dudes en colaborar económicamente con el proyecto!*
     downloading: Descarga en curso
-    changelog: "¿Qué hay de nuevo?"
+    changelog: "¿Qué novedades hay?"
     ignore_update: Omitir esta actualización
     download_rescue: "¿Problema con la descarga?"
     manual_download: Descarga manual
-    zzz: "Actualmente estoy descansando después de la actualización. Para despertarme, debes reiniciar SketchUp."
+    zzz: "Actualmente estoy descansando después de la actualización. Para activarme, debes reiniciar SketchUp."
     success: |
       ¡La actualización de OpenCutList ha finalizado!
 
-      VUELVE A CARGAR SKETCHUP para activar los cambios.
+      REINICIA SKETCHUP para activar los cambios.
     error:
       download: Error al descargar el archivo.
       unzip: Error al descomprimir el archivo.
@@ -254,25 +254,25 @@ core:
       reset: Restablecer este valor
     textinput_color:
       store: Memorizar este color
-      remove: Olvidar el color
+      remove: Olvidar este color
     textinput_code:
       snippets: Ejemplos de fórmulas
       help: Escriba **@** para abrir la lista de variables de datos.
     textinput_size:
-      quantity: Cant.
+      quantity: Cantidad
     three_viewer:
       view: "Vista {{ view }}"
       view_isometric: Isométrica
-      view_top: Planta
-      view_bottom: Abajo
+      view_top: Superior
+      view_bottom: Inferior
       view_front: Frontal
-      view_back: Atrás
+      view_back: Trasera
       view_left: Izquierda
       view_right: Derecha
       zoom: "Escala {{ zoom }}"
       explode_factor: Amplitud de la explosión
       toggle_box_helper: Mostrar u ocultar cuadro delimitador
-      toggle_box_dimensions_helper: Mostrar u ocultar dimensiones
+      toggle_box_dimensions_helper: Mostrar u ocultar dimensiones envolvente
       toggle_axes_helper: Mostrar u ocultar ejes
   docs:
     error:
@@ -290,11 +290,11 @@ tab:
     select_part: Seleccionar la pieza
     select_part_plural: Seleccionar las piezas
     material_undefined: Ningún material definido
-    not_available_std_width: Ancho no definido
-    not_available_std_thickness: Ancho no definido
-    not_available_std_section: Sección transversal no definida
-    highlight_part: Resalta pieza en el modelo
-    highlight_parts: Resalta piezas en el modelo
+    not_available_std_width: Ancho no estándar
+    not_available_std_thickness: Grosor no estándar
+    not_available_std_section: Sección no estándar
+    highlight_part: Mostrar la pieza en el modelo
+    highlight_parts: Mostrar las piezas en el modelo
     edit_part_properties: Editar las propiedades de la pieza
     edit_part_axes_properties: Edita las propiedades (ejes) de la pieza
     edit_part_edges_properties: Edita las propiedades (tiras de los cantos) de la pieza
@@ -2181,7 +2181,7 @@ tool:
   smart_paint:
     title: Colorear
     default_material: Ningún material definido
-    filters: Filtro
+    filters: Filtros
     filter_0: Sin tipo
     filter_1: $t(tab.materials.type_1)
     filter_2: $t(tab.materials.type_2)
@@ -2193,14 +2193,14 @@ tool:
     action_0_status: Haga clic en una pieza para aplicar un material a su instancia
     action_1: Colorear cantos
     action_1_status: Haga clic en un borde de una pieza del panel para aplicarle un material '$t(tab.materials.type_4)'
-    action_2: Recubrir cara
+    action_2: Colorear caras
     action_2_status: Haga clic en una cara de un panel para aplicarle un material '$t(tab.materials.type_6)'
     action_3: Limpiar pieza
     action_3_status: Haga clic en una cara para tomar una muestra del material
     action_4: Limpiar
     action_4_status: Haga clic en una pieza para eliminar todos los materiales de su definición y de todas sus instancias
     action_option_group_instances: Número de elementos
-    action_option_group_edges: Número de tiras de cantos
+    action_option_group_edges: Número de cantos
     action_option_group_faces: Número de caras
     action_option_instances_0_status: Colorear solamente el elemento de la pieza seleccionada
     action_option_instances_1_status: Colorear todos los elementos de la pieza seleccionada
@@ -2217,8 +2217,8 @@ tool:
     edge_xmax: Anchura 2
     faces: "{{ count }} cara"
     faces_plural: "{{ count }} caras"
-    face_zmin: Dorso
-    face_zmax: Frente
+    face_zmin: Reverso
+    face_zmax: Anverso
     warning:
       no_material: Su modelo no contiene ningún material!
       no_material_type: "No hay material '{{ type }}"
