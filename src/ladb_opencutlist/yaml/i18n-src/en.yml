@@ -384,6 +384,15 @@ tab:
       has_edges_plural: "This part contains {{ count }} edge bandings"
       has_faces: "This part contains {{ count }} veneered face"
       has_faces_plural: "This part contains {{ count }} veneered faces"
+      size_increased_0: |
+        Increased by the oversize for the Material
+        ({{ increase_1 }})
+      size_increased_1: |
+        Increased by the oversize for the Part
+        ({{ increase_2 }})
+      size_increased_2: |
+        Increased by the oversizes for the Material and the Part
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: "Reduced by the thickness of the edge banding ({{ decrement }})"
       edge_ymin: Edge Length 1
       edge_ymax: Edge Length 2
@@ -466,6 +475,13 @@ tab:
 
         *Example:* If you have a part designed with a thickness of *38mm* and you want to make it by gluing two panels of *19mm* together, enter **2** in this field.
         *OpenCutList will then count 2 parts of 19mm thickness instead of 1 part of 38mm.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: Oversize applied to the length to define the **raw length**.  # TODO: singular version of tab.materials.edit_material.length_increase
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: Oversize applied to the width to define the **raw width**. # TODO: singular version of tab.materials.edit_material.width_increase
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Description
       description_help: |
         The *Description* provides a personalized information on each part definition.
@@ -2152,6 +2168,7 @@ tool:
     action_option_axes_context_status: Manipulate along the axes of the group or component containing the part
     action_option_axes_entity_status: Manipulate along part axes
     action_option_options_mirror_status: Symmetrical copying
+    action_toggle_raytest_status: Project on the next point
     warning:
       copies_disable_mirror: Multiple copies disable the '$t(tool.smart_handle.action_option_options_mirror_status)' option
   smart_reshape:
