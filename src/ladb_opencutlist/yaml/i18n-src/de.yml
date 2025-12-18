@@ -384,6 +384,15 @@ tab:
       has_edges_plural: "Dieses Teil enthält {{ count }} Kantenbänder"
       has_faces: "Dieses Teil enthält {{ count }} furnierte Fläche"
       has_faces_plural: "Dieses Teil enthält {{ count }} furnierte Flächen"
+      size_increased_0: |
+        Verlängert um das Übermaß für das Material
+        ({{ increase_1 }})
+      size_increased_1: |
+        Verlängert um das Übermaß für das Teil
+        ({{ increase_2 }})
+      size_increased_2: |
+        Verlängert um das Übermaß für das Material und das Teil
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: "Um Kantenbandbreite ({{ decrement }}) reduziert"
       edge_ymin: Kantenband Länge 1
       edge_ymax: Kantenband Länge 2
@@ -466,6 +475,13 @@ tab:
 
         *Beispiel:* Wenn Sie ein Teil mit einer Dicke von *38mm* gezeichnet haben und es durch Zusammenkleben von zwei *19mm* Platten herstellen wollen, geben Sie **2** in dieses Feld ein.
         *OpenCutList zählt dann 2 Teile mit 19mm Dicke statt 1 Teil mit 38mm Dicke.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: Übermaß welches das **Längenrohmaß** vergrössert.  # TODO: singular version of tab.materials.edit_material.length_increase
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: Übermaß welches das **Breitenrohmaß** vergrössert. # TODO: singular version of tab.materials.edit_material.width_increase
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: Übermaß welches das **Dickerohmaß** vergrössert. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Beschreibung
       description_help: |
         Die *Beschreibung* ermöglicht es Ihnen, benutzerdefinierte Informationen zu jeder Teildefinition anzugeben.
@@ -2152,6 +2168,7 @@ tool:
     action_option_axes_context_status: "Manipulieren entlang der Achsen der Gruppe oder Komponente, die das Teil enthält"
     action_option_axes_entity_status: Manipulieren entlang der Achsen des Teils
     action_option_options_mirror_status: Symmetrisch kopieren
+    action_toggle_raytest_status: Projektion auf den nächsten Punkt
     warning:
       copies_disable_mirror: Mehrfaches Kopieren deaktiviert die Option '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:
