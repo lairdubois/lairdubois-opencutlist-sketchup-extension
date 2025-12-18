@@ -384,6 +384,15 @@ tab:
       has_edges_plural: "Ця деталь містить {{ count }} крайки"
       has_faces: "Ця деталь містить {{ count }} облицьовану поверхню"
       has_faces_plural: "Ця деталь містить {{ count }} облицьовані поверхні"
+      size_increased_0: |
+        Збільшено за розміром матеріалу
+        ({{ increase_1 }})
+      size_increased_1: |
+        Збільшено за розміром для деталі
+        ({{ increase_2 }})
+      size_increased_2: |
+        Збільшено за розміром матеріалу для деталі
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: "Віднімається товщина крайки ({{ decrement }})"
       edge_ymin: Крайка по довжині 1
       edge_ymax: Крайка по довжині 2
@@ -466,6 +475,13 @@ tab:
 
         *Приклад:* Якщо для намальованої деталі товщиною *38мм* ви бажаєте склеїти дві панелі *19мм*, вкажіть у цьому полі **2**.
         *Тоді OpenCutList зарахує 2 деталі товщиною 19мм замість 1 деталі 38мм.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: "Припуск, застосований до готової довжини, щоб визначити **необроблену довжину**."  # TODO: singular version of tab.materials.edit_material.length_increase
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: "Припуск, застосований до готової ширини, щоб визначити **необроблену ширину**." # TODO: singular version of tab.materials.edit_material.width_increase
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: "Припуск, застосований до готової товщини, щоб визначити **необроблену товщину**." # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Опис
       description_help: |
         *Опис* використовується для надання персоналізованої інформації щодо визначення кожної деталі.
@@ -2152,6 +2168,7 @@ tool:
     action_option_axes_context_status: "Переміщення вздовж осей групи або компонента, що містить деталь"
     action_option_axes_entity_status: Переміщення по осях деталі
     action_option_options_mirror_status: Дзеркальне копіювання
+    action_toggle_raytest_status: Проекція до наступної точки
     warning:
       copies_disable_mirror: Мультикопіювання вимикає опцію '$t(tool.smart_handle.action_option_options_mirror_status)'
   smart_reshape:

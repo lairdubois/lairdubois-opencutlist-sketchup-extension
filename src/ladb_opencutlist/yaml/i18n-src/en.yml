@@ -477,9 +477,9 @@ tab:
         *OpenCutList will then count 2 parts of 19mm thickness instead of 1 part of 38mm.*
       cut_options: $t(tab.materials.edit_material.cut_options)
       length_increase: $t(tab.materials.edit_material.length_increase)
-      length_increase_help: Oversize applied to the length to define the **raw length**.  # TODO: singular version of tab.materials.edit_material.length_increase
+      length_increase_help: Oversize applied to the finished length to define the **raw length**.  # TODO: singular version of tab.materials.edit_material.length_increase
       width_increase: $t(tab.materials.edit_material.width_increase)
-      width_increase_help: Oversize applied to the width to define the **raw width**. # TODO: singular version of tab.materials.edit_material.width_increase
+      width_increase_help: Oversize applied to the finished width to define the **raw width**. # TODO: singular version of tab.materials.edit_material.width_increase
       thickness_increase: $t(tab.materials.edit_material.thickness_increase)
       thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Description
@@ -552,7 +552,7 @@ tab:
       part_number_sequence_by_group_help: "If this option is selected, the enumeration of parts is reset to 1 (or A) for each group (list of parts with same material type and thickness)."
       part_folding: Group similar parts
       part_folding_help: |
-        If this option is enabled, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same rough size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
+        If this option is enabled, parts made of **Solid Wood, Sheet Goods or Dimensional**, having the **same raw size**, with the **same badges** and the **same finished surface** *(if the display of this surface is not hidden)* will be grouped on the same line in the *parts list*.
 
         The parts will still be considered different for labeling and cutting diagram purposes.
       hide_entity_names: Hide instance names
@@ -561,8 +561,8 @@ tab:
       hide_descriptions_help: "If this option is selected, the **descriptions** placed on the parts will not be displayed."
       hide_tags: Hide badges
       hide_tags_help: "If this option is selected, **badges** of parts will not be displayed."
-      hide_cutting_dimensions: Hide rough dimensions
-      hide_cutting_dimensions_help: "If this option is selected, the **rough** dimensions of parts will not be displayed."
+      hide_cutting_dimensions: Hide raw dimensions
+      hide_cutting_dimensions_help: "If this option is selected, the **raw** dimensions of parts will not be displayed."
       hide_bbox_dimensions: Hide finished dimensions
       hide_bbox_dimensions_help: "If this option is selected, the **finished** dimensions of parts will not be displayed."
       hide_final_areas: Hide actual area of parts of type *Sheet Goods*
@@ -622,10 +622,10 @@ tab:
       number: No.
       name: Designation
       count: Qty.
-      cutting: Rough
+      cutting: Raw
       bbox: Finished
       final: Actual
-      total_cutting: Σ Rough
+      total_cutting: Σ Raw
       total_final: Σ Actual
       length: Length
       length_short: L
@@ -1307,7 +1307,7 @@ tab:
         part_entity_named_path: Instance path
         part_entity_name: Instance name
         part_bin: Bin
-        part_cutting_size: Rough dimensions
+        part_cutting_size: Raw dimensions
         part_cutting_length: Length - raw
         part_cutting_width: Width - raw
         part_cutting_thickness: Thickness - raw
@@ -1625,11 +1625,11 @@ tab:
 
         *If no unit is specified, the model unit will be applied.*
       length_increase: Length Oversize
-      length_increase_help: Oversize applied to the length to define the **raw length**.
+      length_increase_help: Oversize applied to the finished length to define the **raw length**.
       width_increase: Width Oversize
-      width_increase_help: Oversize applied to the width to define the **raw width**.
+      width_increase_help: Oversize applied to the finished width to define the **raw width**.
       thickness_increase: Thickness Oversize
-      thickness_increase_help: Oversize applied to the thickness to define the **raw thickness**.
+      thickness_increase_help: Oversize applied to the finished thickness to define the **raw thickness**.
       std_lengths: Standard Lengths
       std_lengths_help: |
         Standard lengths available for this material.

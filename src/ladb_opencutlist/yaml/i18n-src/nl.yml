@@ -384,6 +384,15 @@ tab:
       has_edges_plural: "Dit onderdeel bevat {{ count }} randafwerkingen"
       has_faces: "Dit deel bevat {{ count }} gefineerd oppervlak"
       has_faces_plural: "Dit deel bevat {{ count }} gefineerde oppervlakken"
+      size_increased_0: |
+        Verhoogd met de overmaat van het materiaal
+        ({{ increase_1 }})
+      size_increased_1: |
+        Verhoogd met de overmaat van het onderdeel
+        ({{ increase_2 }})
+      size_increased_2: |
+        Verhoogd met de overmaat van het materiaal en het onderdeel
+        ({{ increase_1 }} + {{ increase_2 }})
       edge_decremented: "Verminderd met de dikte van de randafwerking ({{ decrement }})"
       edge_ymin: Kantenband lengte 1
       edge_ymax: Kantenband lengte 2
@@ -466,6 +475,13 @@ tab:
 
         *Voorbeeld:* Als u een stuk met een dikte van *38mm* hebt getekend en het wilt maken door twee *19mm* platen aan elkaar te lijmen, vult u **2** in dit veld in.
         *OpenCutList zal dan 2 stukken van 19mm dikte tellen in plaats van 1 stuk van 38mm dikte.*
+      cut_options: $t(tab.materials.edit_material.cut_options)
+      length_increase: $t(tab.materials.edit_material.length_increase)
+      length_increase_help: Overmaat toegepast op de netto lengte van het onderdeel om de **zaaglengte** te bepalen.  # TODO: singular version of tab.materials.edit_material.length_increase
+      width_increase: $t(tab.materials.edit_material.width_increase)
+      width_increase_help: Overmaat toegepast op de netto breedte van het onderdeel om de **zaagbreedte** te bepalen. # TODO: singular version of tab.materials.edit_material.width_increase
+      thickness_increase: $t(tab.materials.edit_material.thickness_increase)
+      thickness_increase_help: Overmaat toegepast op de netto dikte van het onderdeel om de **zaagdikte** te bepalen. # TODO: singular version of tab.materials.edit_material.thickness_increase
       description: Beschrijving
       description_help: |
         In de *Beschrijving* kunt u persoonlijke informatie invoeren voor elke sub-definitie.
@@ -2113,6 +2129,7 @@ tool:
     action_option_options_measure_reversed_status: De meting omkeren
     action_option_options_pull_centered: Gecentreerde hoogte
     action_option_options_pull_centered_status: De hoogte centreren op het eerste punt
+    action_option_options_pull_locked_status: Hoogte vergrendelen op een as
     action_option_options_ask_name: Naamgeving van de stukken
     action_option_options_ask_name_status: De naam van de stukken handmatig invoeren
     action_measure_locked_status: Vergrendelen op de laatste meting
@@ -2151,6 +2168,7 @@ tool:
     action_option_axes_context_status: Verplaatsen langs de assen van de groep of component die het stuk bevat
     action_option_axes_entity_status: Verplaatsen langs de assen van het stuk
     action_option_options_mirror_status: Symmetrisch kopiëren
+    action_toggle_raytest_status: Projectie naar het volgende punt
     warning:
       copies_disable_mirror: Het meervoudig kopiëren schakelt de optie '$t(tool.smart_handle.action_option_options_mirror_status)' uit
   smart_reshape:
